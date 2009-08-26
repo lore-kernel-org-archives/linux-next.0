@@ -1,39 +1,44 @@
-From: David Miller <davem@davemloft.net>
+From: Joe Perches <joe@perches.com>
 Subject: Re: [PATCH 0/9] drivers/net/s2io.c: Cleanups
-Date: Wed, 26 Aug 2009 15:33:53 -0700 (PDT)
-Message-ID: <20090826.153353.259743590.davem@davemloft.net>
+Date: Wed, 26 Aug 2009 15:47:58 -0700
+Message-ID: <1251326878.13026.52.camel@Joe-Laptop.home>
 References: <cover.1251170438.git.joe@perches.com>
+	 <20090826.153353.259743590.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:59731
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753768AbZHZWdk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 26 Aug 2009 18:33:40 -0400
-In-Reply-To: <cover.1251170438.git.joe@perches.com>
+Received: from mail.perches.com ([173.55.12.10]:1403 "EHLO mail.perches.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753155AbZHZWr5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 26 Aug 2009 18:47:57 -0400
+In-Reply-To: <20090826.153353.259743590.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: joe@perches.com
+To: David Miller <davem@davemloft.net>
 Cc: netdev@vger.kernel.org, anil.murthy@neterion.com, sreenivasa.honnur@neterion.com, sivakumar.subramani@neterion.com, santosh.rastapur@neterion.com, ram.vepa@neterion.com, akpm@linux-foundation.org, linux-next@vger.kernel.org
 
-From: Joe Perches <joe@perches.com>
-Date: Mon, 24 Aug 2009 20:29:39 -0700
-
-> Just a few cleanups, compiled, untested.  No hardware.
+On Wed, 2009-08-26 at 15:33 -0700, David Miller wrote:
+> From: Joe Perches <joe@perches.com>
+> Date: Mon, 24 Aug 2009 20:29:39 -0700
+> > Just a few cleanups, compiled, untested.  No hardware.
+> >   s2io.c: Use const for strings
+> >   s2io.c: Shorten code line length by using intermediate pointers
+> >   s2io.c: Use calculated size in kmallocs
+> >   s2io.c: use kzalloc
+> >   s2io.c: Make more conforming to normal kernel style
+> >   s2io.c: convert printks to pr_<level>
+> >   s2io.c: fix spelling explaination
+> >   s2io.c: Standardize statistics accessors
+> >   s2io.c: Convert skipped nic->config.tx_cfg[i]. to tx_cfg->
 > 
-> Joe Perches (9):
->   s2io.c: Use const for strings
->   s2io.c: Shorten code line length by using intermediate pointers
->   s2io.c: Use calculated size in kmallocs
->   s2io.c: use kzalloc
->   s2io.c: Make more conforming to normal kernel style
->   s2io.c: convert printks to pr_<level>
->   s2io.c: fix spelling explaination
->   s2io.c: Standardize statistics accessors
->   s2io.c: Convert skipped nic->config.tx_cfg[i]. to tx_cfg->
+> Since this is a pretty serious set of cleanups, I'd like to
+> let the S2IO driver folks have some time to look at this and
+> at least have a chance to ACK/NACK them.
 
-Since this is a pretty serious set of cleanups, I'd like to
-let the S2IO driver folks have some time to look at this and
-at least have a chance to ACK/NACK them.
+No worries.  That's fine.  It's only cleanups.
+
+I haven't heard from them though and they haven't
+submitted or signed a patch for s2io in over a year.
+
+Hey!  Neterion people!  Is anybody home?
