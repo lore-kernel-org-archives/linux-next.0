@@ -1,52 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: uwb tree build failure
-Date: Wed, 26 Aug 2009 22:34:52 +1000
-Message-ID: <20090826223452.3e28f2ba.sfr@canb.auug.org.au>
-References: <20090826171054.631ad39c.sfr@canb.auug.org.au>
-	<4A9521CA.80102@csr.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH 0/9] drivers/net/s2io.c: Cleanups
+Date: Wed, 26 Aug 2009 15:33:53 -0700 (PDT)
+Message-ID: <20090826.153353.259743590.davem@davemloft.net>
+References: <cover.1251170438.git.joe@perches.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__26_Aug_2009_22_34_52_+1000_TAmVwC=OM9BMEcUC"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54188 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932579AbZHZMfD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 26 Aug 2009 08:35:03 -0400
-In-Reply-To: <4A9521CA.80102@csr.com>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:59731
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753768AbZHZWdk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 26 Aug 2009 18:33:40 -0400
+In-Reply-To: <cover.1251170438.git.joe@perches.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Vrabel <david.vrabel@csr.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: joe@perches.com
+Cc: netdev@vger.kernel.org, anil.murthy@neterion.com, sreenivasa.honnur@neterion.com, sivakumar.subramani@neterion.com, santosh.rastapur@neterion.com, ram.vepa@neterion.com, akpm@linux-foundation.org, linux-next@vger.kernel.org
 
---Signature=_Wed__26_Aug_2009_22_34_52_+1000_TAmVwC=OM9BMEcUC
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Joe Perches <joe@perches.com>
+Date: Mon, 24 Aug 2009 20:29:39 -0700
 
-Hi David,
+> Just a few cleanups, compiled, untested.  No hardware.
+> 
+> Joe Perches (9):
+>   s2io.c: Use const for strings
+>   s2io.c: Shorten code line length by using intermediate pointers
+>   s2io.c: Use calculated size in kmallocs
+>   s2io.c: use kzalloc
+>   s2io.c: Make more conforming to normal kernel style
+>   s2io.c: convert printks to pr_<level>
+>   s2io.c: fix spelling explaination
+>   s2io.c: Standardize statistics accessors
+>   s2io.c: Convert skipped nic->config.tx_cfg[i]. to tx_cfg->
 
-On Wed, 26 Aug 2009 12:51:38 +0100 David Vrabel <david.vrabel@csr.com> wrot=
-e:
->
-> Should be fixed now.
-
-Thanks.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__26_Aug_2009_22_34_52_+1000_TAmVwC=OM9BMEcUC
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkqVK+wACgkQjjKRsyhoI8zSdQCfX1Z4yDjooyqjmuKP4xYjKGqn
-DJ4An1MDVUAGdx0gQ6sAAZWWkCXGvgck
-=+DzL
------END PGP SIGNATURE-----
-
---Signature=_Wed__26_Aug_2009_22_34_52_+1000_TAmVwC=OM9BMEcUC--
+Since this is a pretty serious set of cleanups, I'd like to
+let the S2IO driver folks have some time to look at this and
+at least have a chance to ACK/NACK them.
