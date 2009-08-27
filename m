@@ -1,60 +1,54 @@
-From: "Ramkrishna Vepa" <Ramkrishna.Vepa@neterion.com>
-Subject: RE: [PATCH 0/9] drivers/net/s2io.c: Cleanups
-Date: Wed, 26 Aug 2009 22:45:55 -0400
-Message-ID: <78C9135A3D2ECE4B8162EBDCE82CAD770597DEA5@nekter>
-References: <cover.1251170438.git.joe@perches.com> <20090826.153353.259743590.davem@davemloft.net> <1251326878.13026.52.camel@Joe-Laptop.home>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: ext4 tree build warning
+Date: Thu, 27 Aug 2009 17:17:04 +1000
+Message-ID: <20090827171704.28109c6f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__27_Aug_2009_17_17_04_+1000_M=JmUf10Dm2+CEcS"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx.neterion.com ([72.1.205.142]:53173 "EHLO owa.neterion.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:33970 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754309AbZH0Cpz convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 26 Aug 2009 22:45:55 -0400
-Content-class: urn:content-classes:message
-In-Reply-To: <1251326878.13026.52.camel@Joe-Laptop.home>
+	id S1751002AbZH0HRL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 27 Aug 2009 03:17:11 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Joe Perches <joe@perches.com>, David Miller <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, Anil Murthy <Anil.Murthy@neterion.com>, Sreenivasa Honnur <Sreenivasa.Honnur@neterion.com>, Sivakumar Subramani <Sivakumar.Subramani@neterion.com>, Rastapur Santosh <santosh.rastapur@neterion.com>, akpm@linux-foundation.org, linux-next@vger.kernel.org
+To: Theodore Tso <tytso@MIT.EDU>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Please give us a few days to review these patches. We should be done by
-the end of this week.
+--Signature=_Thu__27_Aug_2009_17_17_04_+1000_M=JmUf10Dm2+CEcS
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Ram
-> -----Original Message-----
-> From: Joe Perches [mailto:joe@perches.com]
-> Sent: Wednesday, August 26, 2009 3:48 PM
-> To: David Miller
-> Cc: netdev@vger.kernel.org; Anil Murthy; Sreenivasa Honnur; Sivakumar
-> Subramani; Rastapur Santosh; Ramkrishna Vepa;
-akpm@linux-foundation.org;
-> linux-next@vger.kernel.org
-> Subject: Re: [PATCH 0/9] drivers/net/s2io.c: Cleanups
-> 
-> On Wed, 2009-08-26 at 15:33 -0700, David Miller wrote:
-> > From: Joe Perches <joe@perches.com>
-> > Date: Mon, 24 Aug 2009 20:29:39 -0700
-> > > Just a few cleanups, compiled, untested.  No hardware.
-> > >   s2io.c: Use const for strings
-> > >   s2io.c: Shorten code line length by using intermediate pointers
-> > >   s2io.c: Use calculated size in kmallocs
-> > >   s2io.c: use kzalloc
-> > >   s2io.c: Make more conforming to normal kernel style
-> > >   s2io.c: convert printks to pr_<level>
-> > >   s2io.c: fix spelling explaination
-> > >   s2io.c: Standardize statistics accessors
-> > >   s2io.c: Convert skipped nic->config.tx_cfg[i]. to tx_cfg->
-> >
-> > Since this is a pretty serious set of cleanups, I'd like to
-> > let the S2IO driver folks have some time to look at this and
-> > at least have a chance to ACK/NACK them.
-> 
-> No worries.  That's fine.  It's only cleanups.
-> 
-> I haven't heard from them though and they haven't
-> submitted or signed a patch for s2io in over a year.
-> 
-> Hey!  Neterion people!  Is anybody home?
+Hi Ted,
+
+The linux-next builds (ppc64 allyesconfig) produce this warning:
+(I built with CONFIG_DEBUG_SECTION_MISMATCH=3Dy)
+
+WARNING: fs/ext4/ext4.o(.text+0x5b6c8): Section mismatch in reference from =
+the function .exit_ext4_mballoc() to the function .exit.text:.ext4_remove_d=
+ebugfs_entry()
+The function .exit_ext4_mballoc() references a function in an exit section.
+Often the function .ext4_remove_debugfs_entry() has valid usage outside the=
+ exit section
+and the fix is to remove the __exit annotation of .ext4_remove_debugfs_entr=
+y.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__27_Aug_2009_17_17_04_+1000_M=JmUf10Dm2+CEcS
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkqWMvAACgkQjjKRsyhoI8wRDQCgufm7lpAUiiH+Cs4I/6oLZWe0
+L78An1f6VMrJPTvnxLUDgc+xpqp6mV8Z
+=JZtM
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__27_Aug_2009_17_17_04_+1000_M=JmUf10Dm2+CEcS--
