@@ -1,37 +1,71 @@
-From: Len Brown <lenb@kernel.org>
-Subject: Re: [SFI-devel] linux-next: manual merge of the sfi tree with the acpi
- tree
-Date: Fri, 28 Aug 2009 19:47:34 -0400 (EDT)
-Message-ID: <alpine.LFD.2.00.0908281946220.27023@localhost.localdomain>
-References: <20090817180610.0de34cab.sfr@canb.auug.org.au>
+From: Jean Delvare <khali@linux-fr.org>
+Subject: Re: [PATCH]:Fix warnings from drivers/i2c/i2c-core.c
+Date: Sat, 29 Aug 2009 13:31:25 +0200
+Message-ID: <20090829133125.1ecebfb3@hyperion.delvare>
+References: <1249977226.2400.13.camel@HunTEr>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from vms173017pub.verizon.net ([206.46.173.17]:54095 "EHLO
-	vms173017pub.verizon.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750961AbZH1XsE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 28 Aug 2009 19:48:04 -0400
-In-reply-to: <20090817180610.0de34cab.sfr@canb.auug.org.au>
+Received: from bamako.nerim.net ([62.4.17.28]:50889 "EHLO bamako.nerim.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752204AbZH2Lb0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 29 Aug 2009 07:31:26 -0400
+In-Reply-To: <1249977226.2400.13.camel@HunTEr>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: sfi-devel@simplefirmware.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: vibi_sreenivasan@cms.com
+Cc: linux-next@vger.kernel.org, "Ben Dooks (embedded platforms)" <ben-linux@fluff.org>
 
-On Mon, 17 Aug 2009, Stephen Rothwell wrote:
+Hi Vibi,
 
-> Hi all,
+On Tue, 11 Aug 2009 13:23:46 +0530, vibi sreenivasan wrote:
 > 
-> Today's linux-next merge of the sfi tree got a conflict in
-> drivers/acpi/tables.c between commit
-> 44043a4299724bb386ac7915a57a18b176e9df07 ("ACPI: check acpi_disabled in
-> acpi_table_parse()") from the acpi tree and commit
-> 55ec50ee899aa3199c126bb4b740abb9a4ab51df ("ACPI: check acpi_disabled in
-> acpi_table_parse() and acpi_table_parse_entries()") from the sfi tree.
+> Fix Following Warnings
 > 
-> I used the sfi tree version.
+> drivers/i2c/i2c-core.c:234: warning: initialization from incompatible pointer type
+> drivers/i2c/i2c-core.c:537: warning: initialization from incompatible pointer type
 
-thanks.
-this should be fixed now, and both trees should again include
-the identical commits where they overlap.
+Thanks for reporting. Please add the linux-i2c list in Cc next time too.
 
--Len Brown, Intel Open Source Technology Center
+> Signed-off-by: vibi sreenivasan, CMS COMPUTERS LTD, INDIA <vibi_sreenivasan@cms.com>
+
+Signed-off-by lines should only include developer names, not companies
+names nor countries.
+
+> ---
+>  drivers/i2c/i2c-core.c |    4 ++--
+>  1 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
+> index eeb9ae5..8d80fce 100644
+> --- a/drivers/i2c/i2c-core.c
+> +++ b/drivers/i2c/i2c-core.c
+> @@ -214,7 +214,7 @@ static struct attribute_group i2c_dev_attr_group = {
+>         .attrs          = i2c_dev_attrs,
+>  };
+>  
+> -static struct attribute_group *i2c_dev_attr_groups[] = {
+> +static const struct attribute_group *i2c_dev_attr_groups[] = {
+>         &i2c_dev_attr_group,
+>         NULL
+>  };
+> @@ -528,7 +528,7 @@ static struct attribute_group i2c_adapter_attr_group = {
+>         .attrs          = i2c_adapter_attrs,
+>  };
+>  
+> -static struct attribute_group *i2c_adapter_attr_groups[] = {
+> +static const struct attribute_group *i2c_adapter_attr_groups[] = {
+>         &i2c_adapter_attr_group,
+>         NULL
+>  };
+
+Patch was corrupted by your e-mail client, I wasn't able to apply it.
+Please check your configuration for next time.
+
+Anyway, as these warnings are introduced by patches which have not been
+committed yet, I will update these patches rather than adding the fixes
+as a separate patch.
+
+-- 
+Jean Delvare
