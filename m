@@ -1,63 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: i2c tree build failure
-Date: Mon, 31 Aug 2009 22:21:02 +1000
-Message-ID: <20090831222102.f75ab10b.sfr@canb.auug.org.au>
-References: <20090831111935.5059565b.sfr@canb.auug.org.au>
-	<20090831120449.3f64aa74@hyperion.delvare>
-	<20090831210335.f382d7ff.sfr@canb.auug.org.au>
-	<20090831131647.3f609ad4@hyperion.delvare>
-	<20090831215905.caadce2f.sfr@canb.auug.org.au>
-	<20090831141546.6c52c7fb@hyperion.delvare>
+From: Fenghua Yu <fenghua.yu@intel.com>
+Subject: [PATCH] linux-next drm_cache.c: fix compilation error
+Date: Mon, 31 Aug 2009 12:28:35 -0700
+Message-ID: <20090831192834.GA10462@linux-os.sc.intel.com>
+References: <bug-504363-150293@bugzilla.redhat.com> <200908042017.n74KHsNw018095@bz-web1.app.phx.redhat.com> <20090804221119.GA21544@linux-os.sc.intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__31_Aug_2009_22_21_02_+1000_gvc4IZW9qAGb7A=e"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38834 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751168AbZHaMVI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 31 Aug 2009 08:21:08 -0400
-In-Reply-To: <20090831141546.6c52c7fb@hyperion.delvare>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jean Delvare <khali@linux-fr.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH <greg@kroah.com>
-
---Signature=_Mon__31_Aug_2009_22_21_02_+1000_gvc4IZW9qAGb7A=e
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-ia64-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20090804221119.GA21544@linux-os.sc.intel.com>
+Sender: linux-ia64-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@redhat.com>
+Cc: Tony luck <tony.luck@intel.com>, linux-ia64 <linux-ia64@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Jean,
+When compiling drm_cache.c on ia64, gcc reports undefined
+drm_clflush_ipi_handler() error. The problem is because drm_cache_ipi_handler is
+a typo.
 
-On Mon, 31 Aug 2009 14:15:46 +0200 Jean Delvare <khali@linux-fr.org> wrote:
->
-> I've made sure my patch has the same name as Greg's, to make it easier
-> for you to spot duplicates.
+One straightforward fix is changing drm_cache_ipi_handler to
+drm_clflush_ipi_handler.
 
-Thanks.
+But since drm_clflush_ipi_handler() does nothing on non-x86 platforms and ipi
+handling is costly, it would be better to just do nothing on non-x86 platforms
+and remove drm_clflush_ipi_handler() for those platforms.
 
-> > Just readd the patch :-)
->=20
-> OK, done. Hopefully the next merge window is coming soon now anyway, and
-> then the trouble with this specific patch will be solved.
+Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
 
-Indeed - and I can get more sleep :-)
+---
+The issue was introduced by commit c9c97b8c75019814d8c007059bc827bb475be917
+in linux-next.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+ drm_cache.c |    7 -------
+ 1 files changed, 7 deletions(-)
 
---Signature=_Mon__31_Aug_2009_22_21_02_+1000_gvc4IZW9qAGb7A=e
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkqbwC4ACgkQjjKRsyhoI8wuSACfXF3iS/YDICBS876JtD4Usdjt
-ZBkAnikLAE62GF0SLlB3Bwx9jsnyu33i
-=mNvE
------END PGP SIGNATURE-----
-
---Signature=_Mon__31_Aug_2009_22_21_02_+1000_gvc4IZW9qAGb7A=e--
+diff --git a/drivers/gpu/drm/drm_cache.c b/drivers/gpu/drm/drm_cache.c
+index 3a5575e..8054a5c 100644
+--- a/drivers/gpu/drm/drm_cache.c
++++ b/drivers/gpu/drm/drm_cache.c
+@@ -62,10 +62,6 @@ drm_clflush_ipi_handler(void *null)
+ {
+ 	wbinvd();
+ }
+-#elif !defined(__powerpc__)
+-static void drm_cache_ipi_handler(void *dummy)
+-{
+-}
+ #endif
+ void
+ drm_clflush_pages(struct page *pages[], unsigned long num_pages)
+@@ -94,9 +90,6 @@ drm_clflush_pages(struct page *pages[], unsigned long num_pages)
+ 				   (unsigned long)page_virtual + PAGE_SIZE);
+ 		kunmap_atomic(page_virtual, KM_USER0);
+ 	}
+-#else
+-	if (on_each_cpu(drm_clflush_ipi_handler, NULL, 1) != 0)
+-		printk(KERN_ERR "Timed out waiting for drm cache flush\n");
+ #endif
+ }
+ EXPORT_SYMBOL(drm_clflush_pages);
