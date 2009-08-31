@@ -1,63 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: i2c tree build failure
-Date: Mon, 31 Aug 2009 11:19:35 +1000
-Message-ID: <20090831111935.5059565b.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with the net tree
+Date: Mon, 31 Aug 2009 14:21:05 +1000
+Message-ID: <20090831142105.7c05ae77.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__31_Aug_2009_11_19_35_+1000_nUlOpoz6lYl43u.F"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60746 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35414 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751721AbZHaBTp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 30 Aug 2009 21:19:45 -0400
+	id S1750929AbZHaEVM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 31 Aug 2009 00:21:12 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jean Delvare <khali@linux-fr.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Hutchings <ben@decadent.org.uk>, Divy Le Ray <divy@chelsio.com>, "David S. Miller" <davem@davemloft.net>
 
---Signature=_Mon__31_Aug_2009_11_19_35_+1000_nUlOpoz6lYl43u.F
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Dave,
 
-Hi Jean,
+Today's linux-next merge of the drm tree got a conflict in
+firmware/Makefile between commit 2e8c07c35b3ffee7689406be61fd1448ee45d3cd
+("cxgb3: use request_firmware() for the EDC registers setup") from the
+net tree and commit ece2be7993cc5e269cbf0cad6442b401a2c31915 ("drm/mga:
+Use request_firmware() to load microcode") from the drm tree.
 
-Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-
-drivers/i2c/i2c-core.c:234: warning: initialization from incompatible point=
-er type
-drivers/i2c/i2c-core.c:537: warning: initialization from incompatible point=
-er type
-drivers/i2c/i2c-core.c: In function 'i2c_register_adapter':
-drivers/i2c/i2c-core.c:603: error: implicit declaration of function 'class_=
-compat_create_link'
-drivers/i2c/i2c-core.c: In function 'i2c_del_adapter':
-drivers/i2c/i2c-core.c:789: error: implicit declaration of function 'class_=
-compat_remove_link'
-drivers/i2c/i2c-core.c: In function 'i2c_init':
-drivers/i2c/i2c-core.c:999: error: implicit declaration of function 'class_=
-compat_register'
-drivers/i2c/i2c-core.c:999: warning: assignment makes pointer from integer =
-without a cast
-drivers/i2c/i2c-core.c:1012: error: implicit declaration of function 'class=
-_compat_unregister'
-
-I have used the i2c tree from next-20090828 for today.
---=20
+Just context changes. I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__31_Aug_2009_11_19_35_+1000_nUlOpoz6lYl43u.F
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkqbJScACgkQjjKRsyhoI8wMYgCffKxWeBabN6LfRYlF6CU8NnNR
-mjQAnjG4tjWKjvCR3Na4zUNHQFNu2RAS
-=OBgn
------END PGP SIGNATURE-----
-
---Signature=_Mon__31_Aug_2009_11_19_35_+1000_nUlOpoz6lYl43u.F--
+diff --cc firmware/Makefile
+index 878329c,d166a7f..0000000
+--- a/firmware/Makefile
++++ b/firmware/Makefile
+@@@ -42,10 -41,23 +42,26 @@@ fw-shipped-$(CONFIG_CASSINI) += sun/cas
+  fw-shipped-$(CONFIG_COMPUTONE) += intelliport2.bin
+  fw-shipped-$(CONFIG_CHELSIO_T3) += cxgb3/t3b_psram-1.1.0.bin \
+  				   cxgb3/t3c_psram-1.1.0.bin \
+ -				   cxgb3/t3fw-7.4.0.bin
+ +				   cxgb3/t3fw-7.4.0.bin \
+ +				   cxgb3/ael2005_opt_edc.bin \
+ +				   cxgb3/ael2005_twx_edc.bin \
+ +				   cxgb3/ael2020_twx_edc.bin
++ fw-shipped-$(CONFIG_DRM_MGA) += matrox/g200_warp.fw matrox/g400_warp.fw
++ fw-shipped-$(CONFIG_DRM_R128) += r128/r128_cce.bin
++ fw-shipped-$(CONFIG_DRM_RADEON) += radeon/R100_cp.bin radeon/R200_cp.bin \
++ 				   radeon/R300_cp.bin radeon/R420_cp.bin \
++ 				   radeon/RS690_cp.bin radeon/RS600_cp.bin \
++ 				   radeon/R520_cp.bin \
++ 				   radeon/R600_pfp.bin radeon/R600_me.bin \
++ 				   radeon/RV610_pfp.bin radeon/RV610_me.bin \
++ 				   radeon/RV630_pfp.bin radeon/RV630_me.bin \
++ 				   radeon/RV620_pfp.bin radeon/RV620_me.bin \
++ 				   radeon/RV635_pfp.bin radeon/RV635_me.bin \
++ 				   radeon/RV670_pfp.bin radeon/RV670_me.bin \
++ 				   radeon/RS780_pfp.bin radeon/RS780_me.bin \
++ 				   radeon/RV770_pfp.bin radeon/RV770_me.bin \
++ 				   radeon/RV730_pfp.bin radeon/RV730_me.bin \
++ 				   radeon/RV710_pfp.bin radeon/RV710_me.bin
+  fw-shipped-$(CONFIG_DVB_AV7110) += av7110/bootcode.bin
+  fw-shipped-$(CONFIG_DVB_TTUSB_BUDGET) += ttusb-budget/dspbootcode.bin
+  fw-shipped-$(CONFIG_E100) += e100/d101m_ucode.bin e100/d101s_ucode.bin \
