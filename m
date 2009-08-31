@@ -1,47 +1,63 @@
-From: Jean Delvare <khali@linux-fr.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: i2c tree build failure
-Date: Mon, 31 Aug 2009 14:15:46 +0200
-Message-ID: <20090831141546.6c52c7fb@hyperion.delvare>
+Date: Mon, 31 Aug 2009 22:21:02 +1000
+Message-ID: <20090831222102.f75ab10b.sfr@canb.auug.org.au>
 References: <20090831111935.5059565b.sfr@canb.auug.org.au>
 	<20090831120449.3f64aa74@hyperion.delvare>
 	<20090831210335.f382d7ff.sfr@canb.auug.org.au>
 	<20090831131647.3f609ad4@hyperion.delvare>
 	<20090831215905.caadce2f.sfr@canb.auug.org.au>
+	<20090831141546.6c52c7fb@hyperion.delvare>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1752740AbZHaMPv@vger.kernel.org>
-In-Reply-To: <20090831215905.caadce2f.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__31_Aug_2009_22_21_02_+1000_gvc4IZW9qAGb7A=e"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:38834 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751168AbZHaMVI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 31 Aug 2009 08:21:08 -0400
+In-Reply-To: <20090831141546.6c52c7fb@hyperion.delvare>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jean Delvare <khali@linux-fr.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH <greg@kroah.com>
-List-Id: linux-next.vger.kernel.org
 
-On Mon, 31 Aug 2009 21:59:05 +1000, Stephen Rothwell wrote:
-> On Mon, 31 Aug 2009 13:16:47 +0200 Jean Delvare <khali@linux-fr.org> wrote:
-> > I am also surprised that I would have to tell you. What is the purpose
-> > of the NEXT_BASE tag if you do not check for dependencies automatically?
-> 
-> I use the tag to choose the base when I import the quilt series into git.
-> So far I have not needed to automate the ordering of the imports.
-> 
-> > Anyway, if you say git can deal with duplicate patches OK, then I think
-> > I'll simply re-add the patch on my end. But I do not have a strong
-> > opinion on this either, so if you prefer clean dependencies and
-> > ordering without duplicate patches, it is just as easy for me to leave
-> > the redundant patch out and restore the NEXT_BASE tag.
-> 
-> I prefer less dependencies (so you could put the patch back in), however,
-> that means if Greg changes the patch, then we will have two slightly
-> different versions to merge.  I can cope with that as well.
+--Signature=_Mon__31_Aug_2009_22_21_02_+1000_gvc4IZW9qAGb7A=e
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I've made sure my patch has the same name as Greg's, to make it easier
-for you to spot duplicates.
+Hi Jean,
 
-> Just readd the patch :-)
+On Mon, 31 Aug 2009 14:15:46 +0200 Jean Delvare <khali@linux-fr.org> wrote:
+>
+> I've made sure my patch has the same name as Greg's, to make it easier
+> for you to spot duplicates.
 
-OK, done. Hopefully the next merge window is coming soon now anyway, and
-then the trouble with this specific patch will be solved.
+Thanks.
 
--- 
-Jean Delvare
+> > Just readd the patch :-)
+>=20
+> OK, done. Hopefully the next merge window is coming soon now anyway, and
+> then the trouble with this specific patch will be solved.
+
+Indeed - and I can get more sleep :-)
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__31_Aug_2009_22_21_02_+1000_gvc4IZW9qAGb7A=e
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkqbwC4ACgkQjjKRsyhoI8wuSACfXF3iS/YDICBS876JtD4Usdjt
+ZBkAnikLAE62GF0SLlB3Bwx9jsnyu33i
+=mNvE
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__31_Aug_2009_22_21_02_+1000_gvc4IZW9qAGb7A=e--
