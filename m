@@ -1,63 +1,59 @@
-From: "Sreenivasa Honnur" <Sreenivasa.Honnur@neterion.com>
-Subject: RE: [PATCH 0/9] drivers/net/s2io.c: Cleanups
-Date: Mon, 31 Aug 2009 01:21:36 -0400
-Message-ID: <78C9135A3D2ECE4B8162EBDCE82CAD7705A1DF76@nekter>
-References: <cover.1251170438.git.joe@perches.com> <20090826.153353.259743590.davem@davemloft.net> <1251326878.13026.52.camel@Joe-Laptop.home>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: dwmw2-iommu tree build failure
+Date: Mon, 31 Aug 2009 15:24:23 +1000
+Message-ID: <20090831152423.13e06c4a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx.neterion.com ([72.1.205.142]:56728 "EHLO owa.neterion.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:53694 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754380AbZHaFVb convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 31 Aug 2009 01:21:31 -0400
-Content-class: urn:content-classes:message
-In-Reply-To: <1251326878.13026.52.camel@Joe-Laptop.home>
+	id S1754388AbZHaFYZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 31 Aug 2009 01:24:25 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Joe Perches <joe@perches.com>, David Miller <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, Anil Murthy <Anil.Murthy@neterion.com>, Sivakumar Subramani <Sivakumar.Subramani@neterion.com>, Rastapur Santosh <santosh.rastapur@neterion.com>, Ramkrishna Vepa <Ramkrishna.Vepa@neterion.com>, akpm@linux-foundation.org, linux-next@vger.kernel.org
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>
 
-Joe,
-Patches look fine, I reviewed and tested these patches on latest
-davem-net-next-2.6 sources.
+Hi David,
 
-Acked-by: Sreenivasa Honnur <sreenivasa.honnur@neterion.com> 
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-Regs
-srini
+drivers/pci/intel-iommu.c: In function 'iommu_prepare_identity_map':
+drivers/pci/intel-iommu.c:1979: error: implicit declaration of function 'dmi_get_system_info'
 
------Original Message-----
-From: Joe Perches [mailto:joe@perches.com] 
-Sent: Thursday, August 27, 2009 4:18 AM
-To: David Miller
-Cc: netdev@vger.kernel.org; Anil Murthy; Sreenivasa Honnur; Sivakumar
-Subramani; Rastapur Santosh; Ramkrishna Vepa; akpm@linux-foundation.org;
-linux-next@vger.kernel.org
-Subject: Re: [PATCH 0/9] drivers/net/s2io.c: Cleanups
+Caused by commit 2ff729f5445cc47d1910386c36e53fc6b1c5e47a ("intel-iommu:
+Cope with yet another BIOS screwup causing crashes") from the dwmw2-iommu
+tree interacting with commit 2e15511d37cded52140573b72c3b5b085fdb7f80
+("ACPI: linux/acpi.h should not include linux/dmi.h") from he acpi tree.
 
-On Wed, 2009-08-26 at 15:33 -0700, David Miller wrote:
-> From: Joe Perches <joe@perches.com>
-> Date: Mon, 24 Aug 2009 20:29:39 -0700
-> > Just a few cleanups, compiled, untested.  No hardware.
-> >   s2io.c: Use const for strings
-> >   s2io.c: Shorten code line length by using intermediate pointers
-> >   s2io.c: Use calculated size in kmallocs
-> >   s2io.c: use kzalloc
-> >   s2io.c: Make more conforming to normal kernel style
-> >   s2io.c: convert printks to pr_<level>
-> >   s2io.c: fix spelling explaination
-> >   s2io.c: Standardize statistics accessors
-> >   s2io.c: Convert skipped nic->config.tx_cfg[i]. to tx_cfg->
-> 
-> Since this is a pretty serious set of cleanups, I'd like to let the 
-> S2IO driver folks have some time to look at this and at least have a 
-> chance to ACK/NACK them.
+This file needs to include linux/dmi.h directly ... I applied the
+following patch for today.
 
-No worries.  That's fine.  It's only cleanups.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 31 Aug 2009 15:20:33 +1000
+Subject: [PATCH] intel-iommu: include linux/dmi.h to use dmi_ routines
 
-I haven't heard from them though and they haven't submitted or signed a
-patch for s2io in over a year.
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/pci/intel-iommu.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-Hey!  Neterion people!  Is anybody home?
+diff --git a/drivers/pci/intel-iommu.c b/drivers/pci/intel-iommu.c
+index d36fa80..2ec5899 100644
+--- a/drivers/pci/intel-iommu.c
++++ b/drivers/pci/intel-iommu.c
+@@ -37,6 +37,7 @@
+ #include <linux/iommu.h>
+ #include <linux/intel-iommu.h>
+ #include <linux/sysdev.h>
++#include <linux/dmi.h>
+ #include <asm/cacheflush.h>
+ #include <asm/iommu.h>
+ #include "pci.h"
+-- 
+1.6.3.3
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
