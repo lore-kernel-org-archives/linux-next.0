@@ -1,42 +1,33 @@
-From: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
-Subject: Re: linux-next: manual merge of the block tree with the ubifs tree
-Date: Wed, 02 Sep 2009 08:42:44 +0300
-Message-ID: <4A9E05D4.4050206@nokia.com>
-References: <20090902153657.dc174bf6.sfr@canb.auug.org.au>
-Reply-To: Artem.Bityutskiy@nokia.com
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: manual merge of the net tree with Linus' tree
+Date: Wed, 02 Sep 2009 00:33:39 -0700 (PDT)
+Message-ID: <20090902.003339.204452262.davem@davemloft.net>
+References: <20090902133758.f96cac22.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.nokia.com ([192.100.105.134]:51619 "EHLO
-	mgw-mx09.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755776AbZIBFnu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Sep 2009 01:43:50 -0400
-In-Reply-To: <20090902153657.dc174bf6.sfr@canb.auug.org.au>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:41730
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755907AbZIBHdZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Sep 2009 03:33:25 -0400
+In-Reply-To: <20090902133758.f96cac22.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jens Axboe <jens.axboe@oracle.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: sfr@canb.auug.org.au
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, shemminger@vyatta.com, roel.kluin@gmail.com
 
-On 09/02/2009 08:36 AM, ext Stephen Rothwell wrote:
-> Hi Jens,
->
-> Today's linux-next merge of the block tree got a conflict in
-> fs/ubifs/super.c between commit 887ee17117fd23e962332b353d250ac9e090b=
-20f
-> ("UBIFS: remove unneeded call from ubifs_sync_fs") from the ubifs tre=
-e
-> and commit 0184fca792940a9e4058b2c63b3f334326a4c7af ("writeback: move
-> super_block argument to struct writeback_control") from the block tre=
-e.
->
-> The former removes the code that the latter changes.  I just used the
-> version from the ubifs tree.  I can carry this fixup as necessary.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 2 Sep 2009 13:37:58 +1000
 
-Yeah, I remove the call because it is not needed anymore.
+> Today's linux-next merge of the net tree got a conflict in
+> drivers/net/yellowfin.c between commit
+> e7a5965a81a29a13cd4994fa23a6a7a1488bcdb6 ("yellowfin: Fix buffer underrun
+> after dev_alloc_skb() failure") from Linus' tree and commit
+> 61357325f377889a1daffa14962d705dc814dd0e ("netdev: convert bulk of
+> drivers to netdev_tx_t") from the net tree.
+> 
+> Just context changes.  I fixed it up (see below) and will carry the fix
+> for a while.
 
---=20
-Best Regards,
-Artem Bityutskiy (=D0=90=D1=80=D1=82=D1=91=D0=BC =D0=91=D0=B8=D1=82=D1=8E=
-=D1=86=D0=BA=D0=B8=D0=B9)
+I just merged net-2.6 into net-next-2.6 to clear this up for you.
