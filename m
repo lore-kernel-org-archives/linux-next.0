@@ -1,52 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: xfs tree build failure
-Date: Wed, 2 Sep 2009 12:00:35 +1000
-Message-ID: <20090902120035.2f23b903.sfr@canb.auug.org.au>
-References: <20090902112509.739ce995.sfr@canb.auug.org.au>
-	<20090902012844.GA15549@lst.de>
-	<F0C21C0B-E90E-44DF-B094-CC5F1DA7EDCE@sgi.com>
+Subject: linux-next: manual merge of the v4l-dvb tree with Linus' tree
+Date: Wed, 2 Sep 2009 12:17:13 +1000
+Message-ID: <20090902121713.f709b1ce.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__2_Sep_2009_12_00_35_+1000_TXo/kl=Ign7qp17O"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58246 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:42770 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755533AbZIBCAk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 1 Sep 2009 22:00:40 -0400
-In-Reply-To: <F0C21C0B-E90E-44DF-B094-CC5F1DA7EDCE@sgi.com>
+	id S932098AbZIBCRP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 1 Sep 2009 22:17:15 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Felix Blyakher <felixb@sgi.com>
-Cc: Christoph Hellwig <hch@lst.de>, David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Elder <aelder@sgi.com>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Randy Dunlap <randy.dunlap@oracle.com>
 
---Signature=_Wed__2_Sep_2009_12_00_35_+1000_TXo/kl=Ign7qp17O
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Mauro,
 
-Hi Felix, Christoph,
+Today's linux-next merge of the v4l-dvb tree got a conflict in
+drivers/media/video/gspca/Kconfig between commit
+b6b85048c059e3f085095e48e12ed3f7a92c88d4 ("V4L/DVB (12502): gspca -
+sn9c20x: Fix gscpa sn9c20x build errors") from Linus' tree and commit
+7b5ab5558fbce09584d8795bc91eb64d8c685782 ("V4L/DVB (12452):
+gspca/Kconfig: Fix bad identation for USB_GSPCA_SN9C20X_EVDEV") from the
+v4l-dvb tree.
 
-On Tue, 1 Sep 2009 20:54:07 -0500 Felix Blyakher <felixb@sgi.com> wrote:
->
-> The fix is now in official xfs tree as well.
-
-Thanks, I will pick it up tomorrow.
-
---=20
+I fixed it up (see below) and will carry the fix for a while.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__2_Sep_2009_12_00_35_+1000_TXo/kl=Ign7qp17O
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkqd0cMACgkQjjKRsyhoI8wcFACdH2XmzoFvZodtx12fs91iNNZ/
-UToAn1ZrLIUg9z3SkO6NmLGVT5ABfoGB
-=Ovd8
------END PGP SIGNATURE-----
-
---Signature=_Wed__2_Sep_2009_12_00_35_+1000_TXo/kl=Ign7qp17O--
+diff --cc drivers/media/video/gspca/Kconfig
+index e994dca,6ae1522..0000000
+--- a/drivers/media/video/gspca/Kconfig
++++ b/drivers/media/video/gspca/Kconfig
+@@@ -113,10 -122,10 +122,10 @@@ config USB_GSPCA_SN9C20
+  	 module will be called gspca_sn9c20x.
+  
+  config USB_GSPCA_SN9C20X_EVDEV
+-        bool "Enable evdev support"
++ 	bool "Enable evdev support"
+ -	depends on USB_GSPCA_SN9C20X
+ +	depends on USB_GSPCA_SN9C20X && INPUT
+-        ---help---
+- 	 Say Y here in order to enable evdev support for sn9c20x webcam button.
++ 	---help---
++ 	  Say Y here in order to enable evdev support for sn9c20x webcam button.
+  
+  config USB_GSPCA_SONIXB
+  	tristate "SONIX Bayer USB Camera Driver"
