@@ -1,59 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: security-testing/net tree build failure
-Date: Thu, 3 Sep 2009 23:31:26 +1000
-Message-ID: <20090903233126.d62918b1.sfr@canb.auug.org.au>
-References: <20090903161432.44af630d.sfr@canb.auug.org.au>
-	<20090902.231607.200932036.davem@davemloft.net>
-	<200909030910.20884.paul.moore@hp.com>
+From: Jan Glauber <jang@linux.vnet.ibm.com>
+Subject: Re: linux-next / s390 crypto breakage
+Date: Thu, 03 Sep 2009 15:52:22 +0000
+Message-ID: <1251993142.7382.8.camel@bender>
+References: <20090902113526.GC4754@osiris.boeblingen.de.ibm.com>
+	 <1251914245.7382.6.camel@bender>
+	 <20090902220447.GA17101@gondor.apana.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__3_Sep_2009_23_31_26_+1000_CMPrUVLmG0wid_9Q"
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56674 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751950AbZICNbb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 3 Sep 2009 09:31:31 -0400
-In-Reply-To: <200909030910.20884.paul.moore@hp.com>
+Received: from mtagate1.de.ibm.com ([195.212.17.161]:57586 "EHLO
+	mtagate1.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753098AbZICNxF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Sep 2009 09:53:05 -0400
+Received: from d12nrmr1607.megacenter.de.ibm.com (d12nrmr1607.megacenter.de.ibm.com [9.149.167.49])
+	by mtagate1.de.ibm.com (8.13.1/8.13.1) with ESMTP id n83Dr758000878
+	for <linux-next@vger.kernel.org>; Thu, 3 Sep 2009 13:53:07 GMT
+Received: from d12av02.megacenter.de.ibm.com (d12av02.megacenter.de.ibm.com [9.149.165.228])
+	by d12nrmr1607.megacenter.de.ibm.com (8.13.8/8.13.8/NCO v10.0) with ESMTP id n83Dr7U32572490
+	for <linux-next@vger.kernel.org>; Thu, 3 Sep 2009 15:53:07 +0200
+Received: from d12av02.megacenter.de.ibm.com (loopback [127.0.0.1])
+	by d12av02.megacenter.de.ibm.com (8.12.11.20060308/8.13.3) with ESMTP id n83Dr7Mu032274
+	for <linux-next@vger.kernel.org>; Thu, 3 Sep 2009 15:53:07 +0200
+In-Reply-To: <20090902220447.GA17101@gondor.apana.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Moore <paul.moore@hp.com>
-Cc: David Miller <davem@davemloft.net>, jmorris@namei.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, mst@redhat.com
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>, linux-next@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>
 
---Signature=_Thu__3_Sep_2009_23_31_26_+1000_CMPrUVLmG0wid_9Q
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 2009-09-03 at 08:04 +1000, Herbert Xu wrote:
+> On Wed, Sep 02, 2009 at 05:57:25PM +0000, Jan Glauber wrote:
+> > That patch should fix the warnings.
+> 
+> Thanks, but where is the sign-off :)
 
-On Thu, 3 Sep 2009 09:10:20 -0400 Paul Moore <paul.moore@hp.com> wrote:
->
-> On Thursday 03 September 2009 02:16:07 am David Miller wrote:
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Date: Thu, 3 Sep 2009 16:14:32 +1000
-> >
-> > > I applied the following merge fix patch (which I can carry as necessa=
-ry):
-> >
-> > Looks good from here, thanks Stephen.
->=20
-> Looks good over here too, thanks.
+Oops. I need a script for that...
 
-Thanks for the confirmations.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__3_Sep_2009_23_31_26_+1000_CMPrUVLmG0wid_9Q
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkqfxS4ACgkQjjKRsyhoI8xBFgCbBI3kxa5GuNxUsR3oebwl5Bk5
-BdIAoIxe6a1lth0Pc6XW2pYqUzBD3C8o
-=0QYW
------END PGP SIGNATURE-----
-
---Signature=_Thu__3_Sep_2009_23_31_26_+1000_CMPrUVLmG0wid_9Q--
+Signed-off-by: Jan Glauber <jang@linux.vnet.ibm.com>
