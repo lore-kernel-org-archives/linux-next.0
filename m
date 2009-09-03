@@ -1,54 +1,44 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: tip tree build warnings
-Date: Thu, 3 Sep 2009 10:38:44 +0200
-Message-ID: <20090903083844.GA9912@elte.hu>
-References: <20090903182510.8fd4d4d1.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the percpu tree with the tip tree
+Date: Thu, 3 Sep 2009 19:11:38 +1000
+Message-ID: <20090903191138.be02fc01.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:39560 "EHLO mx3.mail.elte.hu"
+Received: from chilli.pcug.org.au ([203.10.76.44]:45311 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753586AbZICIi7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 3 Sep 2009 04:38:59 -0400
-Content-Disposition: inline
-In-Reply-To: <20090903182510.8fd4d4d1.sfr@canb.auug.org.au>
+	id S1754079AbZICJLk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 3 Sep 2009 05:11:40 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Xiao Guangrong <xiaoguangrong@cn.fujitsu.com>
+To: Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anirban Sinha <ASinha@zeugmasystems.com>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
+Hi all,
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Today's linux-next merge of the percpu tree got a conflict in
+kernel/sched.c between commit 84e9dabf6e6a78928c6a1a8ba235c9fb0908d0f8
+("sched: Rename init_cfs_rq => init_tg_cfs_rq") from the tip tree and
+commit b9bf3121af348d9255f1c917830fe8c2df52efcb ("percpu: use
+DEFINE_PER_CPU_SHARED_ALIGNED()") from the percpu tree.
 
-> Hi all,
-> 
-> Today's linux-next build (powerpc ppc64_defconfig) produced these warning:
-> 
-> In file included from include/trace/ftrace.h:285,
->                  from include/trace/define_trace.h:61,
->                  from include/trace/events/timer.h:342,
->                  from kernel/timer.c:50:
-> include/trace/events/timer.h: In function 'ftrace_raw_output_itimer_state':
-> include/trace/events/timer.h:280: warning: format '%lu' expects type 'long unsigned int', but argument 4 has type 'cputime_t'
-> include/trace/events/timer.h: In function 'ftrace_raw_output_itimer_expire':
-> include/trace/events/timer.h:317: warning: format '%lu' expects type 'long unsigned int', but argument 5 has type 'cputime_t'
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Should be harmless with no runtime effects - the fix would be to 
-harmonize the cputime_t types across architectures.
-
-> Introduced by commit 3f0a525ebf4b8ef041a332bbe4a73aee94bb064b ("timers: Add tracepoints for itimer") from the tip tree.
-> 
-> cputime_t is variously "u64", "unsigned long long" and "unsigned 
-> long" on different architectures.
-
-Should be unsigned long i think. Most architectures use it as 
-unsigned long via include/asm-generic/cputime.h, except these three:
-
- arch/ia64/include/asm/cputime.h:typedef u64 cputime_t;
- arch/powerpc/include/asm/cputime.h:typedef u64 cputime_t;
- arch/s390/include/asm/cputime.h:typedef unsigned long long cputime_t;
-
-Or we could eliminate the type altogether as well and standardize on 
-u64. Thomas?
-
-	Ingo
+diff --cc kernel/sched.c
+index 4061929,d3d7e76..0000000
+--- a/kernel/sched.c
++++ b/kernel/sched.c
+@@@ -318,7 -318,7 +318,7 @@@ struct task_group root_task_group
+  /* Default task group's sched entity on each cpu */
+  static DEFINE_PER_CPU(struct sched_entity, init_sched_entity);
+  /* Default task group's cfs_rq on each cpu */
+- static DEFINE_PER_CPU(struct cfs_rq, init_tg_cfs_rq) ____cacheline_aligned_in_smp;
+ -static DEFINE_PER_CPU_SHARED_ALIGNED(struct cfs_rq, init_cfs_rq);
+++static DEFINE_PER_CPU_SHARED_ALIGNED(struct cfs_rq, init_tg_cfs_rq);
+  #endif /* CONFIG_FAIR_GROUP_SCHED */
+  
+  #ifdef CONFIG_RT_GROUP_SCHED
