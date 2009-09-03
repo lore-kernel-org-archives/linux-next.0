@@ -1,44 +1,53 @@
-From: Mauro Carvalho Chehab <maurochehab@gmail.com>
-Subject: Re: linux-next: manual merge of the v4l-dvb tree with Linus' tree
-Date: Wed, 2 Sep 2009 23:12:14 -0300
-Message-ID: <20090902231214.495d4002@pedra.chehab.org>
-References: <20090902121713.f709b1ce.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the security-testing tree with the
+ parisc tree
+Date: Thu, 3 Sep 2009 15:46:36 +1000
+Message-ID: <20090903154636.e70c50da.sfr@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__3_Sep_2009_15_46_36_+1000_Ohoksu82jTWe4ByM"
+Return-path: <linux-parisc-owner@vger.kernel.org>
+Sender: linux-parisc-owner@vger.kernel.org
+To: James Morris <jmorris@namei.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Kyle McMartin <kyle@mcmartin.ca>, linux-parisc@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Thu__3_Sep_2009_15_46_36_+1000_Ohoksu82jTWe4ByM
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fg-out-1718.google.com ([72.14.220.156]:6671 "EHLO
-	fg-out-1718.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751528AbZICCMX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Sep 2009 22:12:23 -0400
-In-Reply-To: <20090902121713.f709b1ce.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Randy Dunlap <randy.dunlap@oracle.com>
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Em Wed, 2 Sep 2009 12:17:13 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> escreveu:
+Hi James,
 
-> Hi Mauro,
-> 
-> Today's linux-next merge of the v4l-dvb tree got a conflict in
-> drivers/media/video/gspca/Kconfig between commit
-> b6b85048c059e3f085095e48e12ed3f7a92c88d4 ("V4L/DVB (12502): gspca -
-> sn9c20x: Fix gscpa sn9c20x build errors") from Linus' tree and commit
-> 7b5ab5558fbce09584d8795bc91eb64d8c685782 ("V4L/DVB (12452):
-> gspca/Kconfig: Fix bad identation for USB_GSPCA_SN9C20X_EVDEV") from the
-> v4l-dvb tree.
-> 
-> I fixed it up (see below) and will carry the fix for a while.
+Today's linux-next merge of the security-testing tree got conflicts in
+arch/parisc/include/asm/thread_info.h, arch/parisc/kernel/entry.S and
+arch/parisc/kernel/signal.c between commit 9f4259771faf1ffd99888796d925adae=
+4c93630b ("parisc: add TIF_NOTIFY_RESUME and use tracehook_notify_resume") =
+from the parisc tree and
+commits d0420c83f39f79afb82010c2d2cafd150eef651b ("KEYS: Extend
+TIF_NOTIFY_RESUME to (almost) all architectures [try #6]") and
+ee18d64c1f632043a02e6f5ba5e045bb26a5465f ("KEYS: Add a keyctl to install
+a process's session keyring on its parent [try #6]") from the
+security-testing tree.
 
-Thanks.
+Overlapping changes.  I fixed it up (using the parisc versions and adding
+the extra change from the latter security-testing patch) and can carry
+the fixes as necessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-I've rebased it to fix this merge conflict between my devel tree and upstream.
-You probably can drop it on your next merge.
+--Signature=_Thu__3_Sep_2009_15_46_36_+1000_Ohoksu82jTWe4ByM
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
+iEYEARECAAYFAkqfWDwACgkQjjKRsyhoI8xO1wCguPqeZiR4YX5YW6vaTcxVS0fD
+Lz0AoKP3cYPaaA+nRb9uo7KiUZ/pPJO7
+=8v1y
+-----END PGP SIGNATURE-----
 
-Atenciosamente,
-Prof. Mauro Carvalho Chehab, MSc, CISSP
-maurochehab@gmail.com
+--Signature=_Thu__3_Sep_2009_15_46_36_+1000_Ohoksu82jTWe4ByM--
