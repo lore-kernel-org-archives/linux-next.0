@@ -1,51 +1,54 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the rr tree
-Date: Thu, 3 Sep 2009 18:25:45 +1000
-Message-ID: <20090903182545.46dcd1d0.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: tip tree build warnings
+Date: Thu, 3 Sep 2009 10:38:44 +0200
+Message-ID: <20090903083844.GA9912@elte.hu>
+References: <20090903182510.8fd4d4d1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58116 "EHLO smtps.tip.net.au"
+Received: from mx3.mail.elte.hu ([157.181.1.138]:39560 "EHLO mx3.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753287AbZICIZq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 3 Sep 2009 04:25:46 -0400
+	id S1753586AbZICIi7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 3 Sep 2009 04:38:59 -0400
+Content-Disposition: inline
+In-Reply-To: <20090903182510.8fd4d4d1.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Xiao Guangrong <xiaoguangrong@cn.fujitsu.com>
 
-Hi all,
 
-Today's linux-next merge of the tip tree got a conflict in
-arch/x86/kernel/setup.c between commit
-212eddcdef19bfbe9c2178257708eb7cf17931be
-("cpumask:remove-last-remaining-irqaction-mask") from the rr tree and
-commit 845b3944bbdf9e9247849bf037f27ff3a3f26d87 ("x86: Add timer_init to
-x86_init_ops") from the tip tree.
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-The latter moves the code that the former removes.  I fixed it up using
-the following patch (which I can carry as necessary).
+> Hi all,
+> 
+> Today's linux-next build (powerpc ppc64_defconfig) produced these warning:
+> 
+> In file included from include/trace/ftrace.h:285,
+>                  from include/trace/define_trace.h:61,
+>                  from include/trace/events/timer.h:342,
+>                  from kernel/timer.c:50:
+> include/trace/events/timer.h: In function 'ftrace_raw_output_itimer_state':
+> include/trace/events/timer.h:280: warning: format '%lu' expects type 'long unsigned int', but argument 4 has type 'cputime_t'
+> include/trace/events/timer.h: In function 'ftrace_raw_output_itimer_expire':
+> include/trace/events/timer.h:317: warning: format '%lu' expects type 'long unsigned int', but argument 5 has type 'cputime_t'
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: tip: fix merge for cupmask update
+Should be harmless with no runtime effects - the fix would be to 
+harmonize the cputime_t types across architectures.
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Introduced by commit 3f0a525ebf4b8ef041a332bbe4a73aee94bb064b ("timers: Add tracepoints for itimer") from the tip tree.
+> 
+> cputime_t is variously "u64", "unsigned long long" and "unsigned 
+> long" on different architectures.
 
-diff --git a/arch/x86/kernel/time.c b/arch/x86/kernel/time.c
-index fcece00..7883cf9 100644
---- a/arch/x86/kernel/time.c
-+++ b/arch/x86/kernel/time.c
-@@ -93,7 +93,6 @@ static struct irqaction irq0  = {
- 
- void __init setup_default_timer_irq(void)
- {
--	irq0.mask = cpumask_of_cpu(0);
- 	setup_irq(0, &irq0);
- }
- 
+Should be unsigned long i think. Most architectures use it as 
+unsigned long via include/asm-generic/cputime.h, except these three:
 
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+ arch/ia64/include/asm/cputime.h:typedef u64 cputime_t;
+ arch/powerpc/include/asm/cputime.h:typedef u64 cputime_t;
+ arch/s390/include/asm/cputime.h:typedef unsigned long long cputime_t;
+
+Or we could eliminate the type altogether as well and standardize on 
+u64. Thomas?
+
+	Ingo
