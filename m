@@ -1,51 +1,36 @@
-From: Borislav Petkov <borislav.petkov@amd.com>
-Subject: Re: linux-next: Tree for September 4
-Date: Fri, 4 Sep 2009 12:45:40 +0200
-Message-ID: <20090904104540.GC28389@aftab>
-References: <20090904182309.dbb05c96.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging tree with the net tree
+Date: Fri, 4 Sep 2009 07:52:06 -0700
+Message-ID: <20090904145206.GA15964@kroah.com>
+References: <20090904173225.0817003b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from tx2ehsobe004.messaging.microsoft.com ([65.55.88.14]:42816 "EHLO
-	TX2EHSOBE008.bigfish.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752779AbZIDKrM convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Sep 2009 06:47:12 -0400
+Received: from kroah.org ([198.145.64.141]:56621 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752452AbZIDOya (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 4 Sep 2009 10:54:30 -0400
 Content-Disposition: inline
-In-Reply-To: <20090904182309.dbb05c96.sfr@canb.auug.org.au>
+In-Reply-To: <20090904173225.0817003b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Hemminger <shemminger@vyatta.com>, Patrick McHardy <kaber@trash.net>, "David S. Miller" <davem@davemloft.net>
 
-Hi Stephen,
+On Fri, Sep 04, 2009 at 05:32:25PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the staging tree got a conflict in
+> drivers/staging/at76_usb/at76_usb.c between commits
+> 6ed106549d17474ca17a16057f4c0ed4eba5a7ca ("net: use NETDEV_TX_OK instead
+> of 0 in ndo_start_xmit() functions") and
+> 0fc0b732eaa38beb93a6fb62f77c7bd9622c76ec ("netdev: drivers should make
+> ethtool_ops const") from the net tree and commit
+> c0e03fabb4f2a6e48f6e0b55729b26a599a2bd02 ("Staging: remove at76_usb
+> wireless driver") from the staging tree.
+> 
+> The latter just removes the driver, so I did that.
 
-On Fri, Sep 04, 2009 at 06:23:09PM +1000, Stephen Rothwell wrote:
-> Hi all,
->=20
-> Changes since 20090903:
+Thanks, that's an easy fix :)
 
-=2E.
-
-> Merging edac-amd/for-next
-> CONFLICT (content): Merge conflict in arch/x86/kernel/smpboot.c
-> CONFLICT (content): Merge conflict in include/linux/topology.h
-
-current topology patches in -tip have significantly diverged from the
-versions I carry in the edac tree so please remove the last from the
-testing lineup temporarily. Will fix the issue after I'm back from my
-vacation the week after next.
-
-Thanks.
-
---=20
-Regards/Gruss,
-Boris.
-
-Operating | Advanced Micro Devices GmbH
-  System  | Karl-Hammerschmidt-Str. 34, 85609 Dornach b. M=FCnchen, Ger=
-many
- Research | Gesch=E4ftsf=FChrer: Andrew Bowd, Thomas M. McCoy, Giuliano=
- Meroni
-  Center  | Sitz: Dornach, Gemeinde Aschheim, Landkreis M=FCnchen
-  (OSRC)  | Registergericht M=FCnchen, HRB Nr. 43632
+greg k-h
