@@ -1,37 +1,51 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [Patch -next] Fix net/3c503.c build break
-Date: Fri, 04 Sep 2009 03:41:24 -0700 (PDT)
-Message-ID: <20090904.034124.45872368.davem@davemloft.net>
+From: Borislav Petkov <borislav.petkov@amd.com>
+Subject: Re: linux-next: Tree for September 4
+Date: Fri, 4 Sep 2009 12:45:40 +0200
+Message-ID: <20090904104540.GC28389@aftab>
 References: <20090904182309.dbb05c96.sfr@canb.auug.org.au>
-	<4AA0ED92.6070306@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:53606
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S933563AbZIDKlI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Sep 2009 06:41:08 -0400
-In-Reply-To: <4AA0ED92.6070306@in.ibm.com>
+Received: from tx2ehsobe004.messaging.microsoft.com ([65.55.88.14]:42816 "EHLO
+	TX2EHSOBE008.bigfish.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752779AbZIDKrM convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Sep 2009 06:47:12 -0400
+Content-Disposition: inline
+In-Reply-To: <20090904182309.dbb05c96.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sachinp@in.ibm.com
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Sachin Sant <sachinp@in.ibm.com>
-Date: Fri, 04 Sep 2009 16:06:02 +0530
+Hi Stephen,
 
-> Today's Next failed to build on a x86 box with following error.
-> 
-> drivers/net/3c503.c: In function 'el2_open':
-> drivers/net/3c503.c:406: error: 'reval' undeclared (first use in this
-> function)
-> drivers/net/3c503.c:406: error: (Each undeclared identifier is
-> reported only once
-> drivers/net/3c503.c:406: error: for each function it appears in.)
-> 
-> Most probably because of commit
-> ab08999d6029bb2c79c16be5405d63d2bedbdfea
-> The patch had a typo in it. Below patch fixes the issue for me.
+On Fri, Sep 04, 2009 at 06:23:09PM +1000, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> Changes since 20090903:
 
-Applied, thank you.
+=2E.
+
+> Merging edac-amd/for-next
+> CONFLICT (content): Merge conflict in arch/x86/kernel/smpboot.c
+> CONFLICT (content): Merge conflict in include/linux/topology.h
+
+current topology patches in -tip have significantly diverged from the
+versions I carry in the edac tree so please remove the last from the
+testing lineup temporarily. Will fix the issue after I'm back from my
+vacation the week after next.
+
+Thanks.
+
+--=20
+Regards/Gruss,
+Boris.
+
+Operating | Advanced Micro Devices GmbH
+  System  | Karl-Hammerschmidt-Str. 34, 85609 Dornach b. M=FCnchen, Ger=
+many
+ Research | Gesch=E4ftsf=FChrer: Andrew Bowd, Thomas M. McCoy, Giuliano=
+ Meroni
+  Center  | Sitz: Dornach, Gemeinde Aschheim, Landkreis M=FCnchen
+  (OSRC)  | Registergericht M=FCnchen, HRB Nr. 43632
