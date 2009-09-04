@@ -1,36 +1,39 @@
-From: Jens Axboe <jens.axboe@oracle.com>
-Subject: Re: linux-next: block tree build warning
-Date: Fri, 4 Sep 2009 09:57:27 +0200
-Message-ID: <20090904075726.GS18599@kernel.dk>
-References: <20090904175440.09a67ee7.sfr@canb.auug.org.au>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: linux-next: manual merge of the xfs tree with the ext3 tree
+Date: Fri, 4 Sep 2009 10:11:08 +0200
+Message-ID: <20090904081108.GA19857@duck.suse.cz>
+References: <20090904095500.04205407.sfr@canb.auug.org.au> <20090903235652.GA7674@lst.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from brick.kernel.dk ([93.163.65.50]:50326 "EHLO kernel.dk"
+Received: from cantor2.suse.de ([195.135.220.15]:49787 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932453AbZIDH5Y (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 4 Sep 2009 03:57:24 -0400
+	id S1755446AbZIDILI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 4 Sep 2009 04:11:08 -0400
 Content-Disposition: inline
-In-Reply-To: <20090904175440.09a67ee7.sfr@canb.auug.org.au>
+In-Reply-To: <20090903235652.GA7674@lst.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Christoph Hellwig <hch@lst.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>, Felix Blyakher <felixb@sgi.com>
 
-On Fri, Sep 04 2009, Stephen Rothwell wrote:
-> Hi Jens,
+On Fri 04-09-09 01:56:52, Christoph Hellwig wrote:
+> On Fri, Sep 04, 2009 at 09:55:00AM +1000, Stephen Rothwell wrote:
+> > 218604a0bf712976171798b1dd5c44d26d6d0ea4 ("xfs: Convert sync_page_range()
+> > to simple filemap_write_and_wait_range()") from the ext3 tree and commit
+> > 13e6d5cdde0e785aa943810f08b801cadd0935df ("xfs: merge fsync and O_SYNC
+> > handling") from the xfs tree.
+> > 
+> > They both do the same thing (to this bit of code) ... I used the version
+> > from the xfs tree.
 > 
-> Today's linux-next build (powerpc allnoconfig) produced this warning:
-> 
-> fs/fs-writeback.c: In function 'sync_inodes_sb':
-> fs/fs-writeback.c:1140: warning: overflow in implicit constant conversion
-> 
-> Introduced by commit bda31e6ac21d7d41525c4e57549ac24bacdcf622
-> ("writeback: get rid of generic_sync_sb_inodes() export").  This is a
-> 32bit build.
+> Yes, the xfs tree one is the better one, the one in Jan's tree only
+> does about half of it.
+  Should I drop the XFS chunk or will you rebase your XFS patch on top of
+my patch? The latter seems safer (since my patch series won't compile
+without the XFS change)...
 
-This is now fixed, I'll push out a new for-next in 2 seconds... And
-done, should be OK now.
-
+								Honza
 -- 
-Jens Axboe
+Jan Kara <jack@suse.cz>
+SUSE Labs, CR
