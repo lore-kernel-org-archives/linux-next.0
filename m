@@ -1,49 +1,29 @@
-From: Stephen Hemminger <shemminger@vyatta.com>
-Subject: Re: [PATCH net-next] wan: dlci/sdla transmit return dehacking
-Date: Fri, 4 Sep 2009 19:38:10 -0700
-Message-ID: <20090904193810.46543e3c@nehalam>
-References: <20090904143439.c44f61ee.sfr@canb.auug.org.au>
-	<20090903.213548.46609322.davem@davemloft.net>
-	<20090904083346.43885303@nehalam>
-	<m31vmmk0kt.fsf@intrepid.localdomain>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: linux-next / s390 crypto breakage
+Date: Sat, 5 Sep 2009 16:28:00 +1000
+Message-ID: <20090905062800.GA5554@gondor.apana.org.au>
+References: <20090902113526.GC4754@osiris.boeblingen.de.ibm.com> <1251914245.7382.6.camel@bender> <20090902220447.GA17101@gondor.apana.org.au> <1251993142.7382.8.camel@bender>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.vyatta.com ([76.74.103.46]:58371 "EHLO mail.vyatta.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756671AbZIECiO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 4 Sep 2009 22:38:14 -0400
-In-Reply-To: <m31vmmk0kt.fsf@intrepid.localdomain>
+Received: from rhun.apana.org.au ([64.62.148.172]:50910 "EHLO
+	arnor.apana.org.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1750870AbZIEG2F (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 5 Sep 2009 02:28:05 -0400
+Content-Disposition: inline
+In-Reply-To: <1251993142.7382.8.camel@bender>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Krzysztof Halasa <khc@pm.waw.pl>
-Cc: David Miller <davem@davemloft.net>, sfr@canb.auug.org.au, linux-next@vger.kernel.org, netdev@vger.kernel.org
+To: Jan Glauber <jang@linux.vnet.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>, linux-next@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>
 
-On Fri, 04 Sep 2009 20:48:50 +0200
-Krzysztof Halasa <khc@pm.waw.pl> wrote:
-
-> Stephen Hemminger <shemminger@vyatta.com> writes:
+On Thu, Sep 03, 2009 at 03:52:22PM +0000, Jan Glauber wrote:
 > 
-> > This is a brute force removal of the wierd slave interface done for
-> > DLCI -> SDLA transmit. Before it was using non-standard return values
-> > and freeing skb in caller. This changes it to using normal return
-> > values, and freeing in the callee. Luckly only one driver pair was
-> > doing this. Not tested on real hardware, in fact I wonder if this
-> > driver pair is even being used by any users.
-> 
-> The only hardware which seems to be driven by dlci.c is sdla.c =
-> old Sangoma ISA cards.
-> 
-> Sangoma seems to maintain their own drivers for their hw (including
-> these ISA cards).
-> 
-> Are the in-kernel drivers functional after all those years? I don't
-> know.
+> Signed-off-by: Jan Glauber <jang@linux.vnet.ibm.com>
 
-In the Vyatta product we use the Sangoma drivers, so we actually have
-to make and not configure in the existing WAN drivers.
-
-
-
+Patch applied.  Thanks!
 -- 
+Visit Openswan at http://www.openswan.org/
+Email: Herbert Xu ~{PmV>HI~} <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
