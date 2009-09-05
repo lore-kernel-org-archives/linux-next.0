@@ -1,40 +1,49 @@
-From: Krzysztof Halasa <khc@pm.waw.pl>
+From: Stephen Hemminger <shemminger@vyatta.com>
 Subject: Re: [PATCH net-next] wan: dlci/sdla transmit return dehacking
-Date: Fri, 04 Sep 2009 20:48:50 +0200
-Message-ID: <m31vmmk0kt.fsf@intrepid.localdomain>
+Date: Fri, 4 Sep 2009 19:38:10 -0700
+Message-ID: <20090904193810.46543e3c@nehalam>
 References: <20090904143439.c44f61ee.sfr@canb.auug.org.au>
 	<20090903.213548.46609322.davem@davemloft.net>
 	<20090904083346.43885303@nehalam>
+	<m31vmmk0kt.fsf@intrepid.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from khc.piap.pl ([195.187.100.11]:42138 "EHLO khc.piap.pl"
+Received: from mail.vyatta.com ([76.74.103.46]:58371 "EHLO mail.vyatta.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754109AbZIDSsu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 4 Sep 2009 14:48:50 -0400
-In-Reply-To: <20090904083346.43885303@nehalam> (Stephen Hemminger's message of
-	"Fri, 4 Sep 2009 08:33:46 -0700")
+	id S1756671AbZIECiO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 4 Sep 2009 22:38:14 -0400
+In-Reply-To: <m31vmmk0kt.fsf@intrepid.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Hemminger <shemminger@vyatta.com>
+To: Krzysztof Halasa <khc@pm.waw.pl>
 Cc: David Miller <davem@davemloft.net>, sfr@canb.auug.org.au, linux-next@vger.kernel.org, netdev@vger.kernel.org
 
-Stephen Hemminger <shemminger@vyatta.com> writes:
+On Fri, 04 Sep 2009 20:48:50 +0200
+Krzysztof Halasa <khc@pm.waw.pl> wrote:
 
-> This is a brute force removal of the wierd slave interface done for
-> DLCI -> SDLA transmit. Before it was using non-standard return values
-> and freeing skb in caller. This changes it to using normal return
-> values, and freeing in the callee. Luckly only one driver pair was
-> doing this. Not tested on real hardware, in fact I wonder if this
-> driver pair is even being used by any users.
+> Stephen Hemminger <shemminger@vyatta.com> writes:
+> 
+> > This is a brute force removal of the wierd slave interface done for
+> > DLCI -> SDLA transmit. Before it was using non-standard return values
+> > and freeing skb in caller. This changes it to using normal return
+> > values, and freeing in the callee. Luckly only one driver pair was
+> > doing this. Not tested on real hardware, in fact I wonder if this
+> > driver pair is even being used by any users.
+> 
+> The only hardware which seems to be driven by dlci.c is sdla.c =
+> old Sangoma ISA cards.
+> 
+> Sangoma seems to maintain their own drivers for their hw (including
+> these ISA cards).
+> 
+> Are the in-kernel drivers functional after all those years? I don't
+> know.
 
-The only hardware which seems to be driven by dlci.c is sdla.c =
-old Sangoma ISA cards.
+In the Vyatta product we use the Sangoma drivers, so we actually have
+to make and not configure in the existing WAN drivers.
 
-Sangoma seems to maintain their own drivers for their hw (including
-these ISA cards).
 
-Are the in-kernel drivers functional after all those years? I don't
-know.
+
 -- 
-Krzysztof Halasa
