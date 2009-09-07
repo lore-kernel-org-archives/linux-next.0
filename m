@@ -1,38 +1,83 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for September 7 (scsi/qla2x)
-Date: Mon, 7 Sep 2009 10:27:47 -0700
-Message-ID: <20090907102747.ac6b98ff.randy.dunlap@oracle.com>
-References: <20090907210206.7830ba68.sfr@canb.auug.org.au>
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: Re: linux-next: manual merge of the trivial tree with the scsi
+ tree
+Date: Mon, 7 Sep 2009 17:10:33 +0200 (CEST)
+Message-ID: <alpine.LNX.2.00.0909071708400.23856@wotan.suse.de>
+References: <20090907162349.3b3337e3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet12.oracle.com ([148.87.113.124]:48518 "EHLO
-	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752249AbZIGR2E (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Sep 2009 13:28:04 -0400
-In-Reply-To: <20090907210206.7830ba68.sfr@canb.auug.org.au>
+Received: from cantor2.suse.de ([195.135.220.15]:52167 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753527AbZIGPKe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 7 Sep 2009 11:10:34 -0400
+In-Reply-To: <20090907162349.3b3337e3.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-scsi@vger.kernel.org
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Vasquez <andrew.vasquez@qlogic.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kashyap@suse.de, Desai <kashyap.desai@lsi.com>, Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>
 
-On Mon, 7 Sep 2009 21:02:06 +1000 Stephen Rothwell wrote:
+On Mon, 7 Sep 2009, Stephen Rothwell wrote:
 
-> Hi all,
+> Hi Jiri,
 > 
-> Changes since 20090904:
+> Today's linux-next merge of the trivial tree got a conflict in
+> drivers/scsi/mpt2sas/mpt2sas_scsih.c between commit
+> 155dd4c763694222c125e65438d823f58ea653bc ("[SCSI] mpt2sas: Prevent
+> sending command to FW while Host Reset") from the scsi tree and commit
+> 8eaa1cbfd596aeb0d2fec7706faccab42eb4bf62 ("trivial: fix typos "man[ae]g?
+> ment" -> "management"") from the trivial tree.
+> 
+> Just context changes.  I fixed it up (see below) and can carry the fix as
+> necessary.
+> 
+> Jiri, maybe the scsi part of that trivial patch could be sent to the scsi
+> maintainer.
+
+Sure, here we go. James, could you please apply? (I have already dropped 
+it from trivial queue). Thanks.
 
 
-when CONFIG_MODULES=n:
 
-drivers/scsi/qla2xxx/qla_os.c:2685: error: dereferencing pointer to incomplete type
 
-in
-	kobject_uevent_env(&(&vha->hw->pdev->driver->driver)->owner->mkobj.kobj,
-	    KOBJ_CHANGE, envp);
+From: Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>
+Subject: trivial: fix typos "man[ae]g?ment" -> "management"
 
----
-~Randy
-LPC 2009, Sept. 23-25, Portland, Oregon
-http://linuxplumbersconf.org/2009/
+Signed-off-by: Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+
+diff --git a/drivers/scsi/mpt2sas/mpt2sas_base.h b/drivers/scsi/mpt2sas/mpt2sas_base.h
+index 286c185..fa85253 100644
+--- a/drivers/scsi/mpt2sas/mpt2sas_base.h
++++ b/drivers/scsi/mpt2sas/mpt2sas_base.h
+@@ -434,7 +434,7 @@ typedef void (*MPT_ADD_SGE)(void *paddr, u32 flags_length, dma_addr_t dma_addr);
+  * @ioc_reset_in_progress: host reset in progress
+  * @ioc_reset_in_progress_lock:
+  * @ioc_link_reset_in_progress: phy/hard reset in progress
+- * @ignore_loginfos: ignore loginfos during task managment
++ * @ignore_loginfos: ignore loginfos during task management
+  * @remove_host: flag for when driver unloads, to avoid sending dev resets
+  * @wait_for_port_enable_to_complete:
+  * @msix_enable: flag indicating msix is enabled
+diff --git a/drivers/scsi/mpt2sas/mpt2sas_scsih.c b/drivers/scsi/mpt2sas/mpt2sas_scsih.c
+index 2a01a5f..e849fc7 100644
+--- a/drivers/scsi/mpt2sas/mpt2sas_scsih.c
++++ b/drivers/scsi/mpt2sas/mpt2sas_scsih.c
+@@ -2633,7 +2633,7 @@ _scsih_qcmd(struct scsi_cmnd *scmd, void (*done)(struct scsi_cmnd *))
+ 		return 0;
+ 	}
+ 
+-	/* see if we are busy with task managment stuff */
++	/* see if we are busy with task management stuff */
+ 	spin_lock_irqsave(&ioc->ioc_reset_in_progress_lock, flags);
+ 	if (sas_target_priv_data->tm_busy ||
+ 	    ioc->shost_recovery || ioc->ioc_link_reset_in_progress) {
+@@ -5857,7 +5857,7 @@ _scsih_init(void)
+ 	 /* queuecommand callback hander */
+ 	scsi_io_cb_idx = mpt2sas_base_register_callback_handler(_scsih_io_done);
+ 
+-	/* task managment callback handler */
++	/* task management callback handler */
+ 	tm_cb_idx = mpt2sas_base_register_callback_handler(_scsih_tm_done);
+ 
+ 	/* base internal commands callback handler */
