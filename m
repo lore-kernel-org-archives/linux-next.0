@@ -1,99 +1,46 @@
-From: Jiri Kosina <jkosina@suse.cz>
+From: Russell King <rmk+lkml@arm.linux.org.uk>
 Subject: Re: linux-next: manual merge of the trivial tree with the arm tree
-Date: Mon, 7 Sep 2009 17:14:38 +0200 (CEST)
-Message-ID: <alpine.LNX.2.00.0909071713210.23856@wotan.suse.de>
-References: <20090907163201.72adc3f6.sfr@canb.auug.org.au>
+Date: Mon, 7 Sep 2009 16:17:27 +0100
+Message-ID: <20090907151727.GD6538@flint.arm.linux.org.uk>
+References: <20090907163201.72adc3f6.sfr@canb.auug.org.au> <alpine.LNX.2.00.0909071713210.23856@wotan.suse.de>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:52274 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753527AbZIGPOg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 7 Sep 2009 11:14:36 -0400
-In-Reply-To: <20090907163201.72adc3f6.sfr@canb.auug.org.au>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:56275 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751519AbZIGPRt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Sep 2009 11:17:49 -0400
+Content-Disposition: inline
+In-Reply-To: <alpine.LNX.2.00.0909071713210.23856@wotan.suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Russell King <rmk@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, wanzongshun <mcuos.com@gmail.com>
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, wanzongshun <mcuos.com@gmail.com>
 
-On Mon, 7 Sep 2009, Stephen Rothwell wrote:
-
-> Today's linux-next merge of the trivial tree got a conflict in
-> arch/arm/mach-w90x900/w90p910.c between commit
-> 35c9221acb133ecc9abd701a1fb6fa909d177a77 ("ARM: 5682/1: Add cpu.c and
-> dev.c and modify some files of w90p910 platform") from the arm tree and
-> commit 6f8fadf4a5c43f9f10f1910c71d8d9ff0b0a26ca ("trivial: remove
-> unnecessary semicolons") from the trivial tree.
+On Mon, Sep 07, 2009 at 05:14:38PM +0200, Jiri Kosina wrote:
+> On Mon, 7 Sep 2009, Stephen Rothwell wrote:
 > 
-> The former commit moved the code changed by the latter into a different
-> file (arch/arm/mach-w90x900/cpu.c - and removed the old file).  Its not
-> important enough to fix it there (so I just removed this file), but maybe
-> the part of the trivial commit touching this file could be sent to the
-> arm maintainer.
+> > Today's linux-next merge of the trivial tree got a conflict in
+> > arch/arm/mach-w90x900/w90p910.c between commit
+> > 35c9221acb133ecc9abd701a1fb6fa909d177a77 ("ARM: 5682/1: Add cpu.c and
+> > dev.c and modify some files of w90p910 platform") from the arm tree and
+> > commit 6f8fadf4a5c43f9f10f1910c71d8d9ff0b0a26ca ("trivial: remove
+> > unnecessary semicolons") from the trivial tree.
+> > 
+> > The former commit moved the code changed by the latter into a different
+> > file (arch/arm/mach-w90x900/cpu.c - and removed the old file).  Its not
+> > important enough to fix it there (so I just removed this file), but maybe
+> > the part of the trivial commit touching this file could be sent to the
+> > arm maintainer.
+> 
+> Sure, here we go. Russel, could you please apply this on top of your 
+> current tree? (I have already dropped the bits touching arch/arm from 
+> trivial queue). Thanks.
 
-Sure, here we go. Russel, could you please apply this on top of your 
-current tree? (I have already dropped the bits touching arch/arm from 
-trivial queue). Thanks.
+I'll have to split it up further, since I keep each platform class who
+choses to send their stuff via me in separate branches.
 
-
-
-From: Joe Perches <joe@perches.com>
-Subject: trivial: remove unnecessary semicolons
-
-Signed-off-by: Joe Perches <joe@perches.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-
----
-
-diff --git a/arch/arm/mach-at91/at91cap9_devices.c b/arch/arm/mach-at91/at91cap9_devices.c
-index 412aa49..799c11e 100644
---- a/arch/arm/mach-at91/at91cap9_devices.c
-+++ b/arch/arm/mach-at91/at91cap9_devices.c
-@@ -171,7 +171,7 @@ void __init at91_add_device_usba(struct usba_platform_data *data)
- 	 */
- 	usba_udc_data.pdata.vbus_pin = -EINVAL;
- 	usba_udc_data.pdata.num_ep = ARRAY_SIZE(usba_udc_ep);
--	memcpy(usba_udc_data.ep, usba_udc_ep, sizeof(usba_udc_ep));;
-+	memcpy(usba_udc_data.ep, usba_udc_ep, sizeof(usba_udc_ep));
- 
- 	if (data && data->vbus_pin > 0) {
- 		at91_set_gpio_input(data->vbus_pin, 0);
-diff --git a/arch/arm/mach-at91/at91sam9rl_devices.c b/arch/arm/mach-at91/at91sam9rl_devices.c
-index 7281865..e87237b 100644
---- a/arch/arm/mach-at91/at91sam9rl_devices.c
-+++ b/arch/arm/mach-at91/at91sam9rl_devices.c
-@@ -99,7 +99,7 @@ void __init at91_add_device_usba(struct usba_platform_data *data)
- 	 */
- 	usba_udc_data.pdata.vbus_pin = -EINVAL;
- 	usba_udc_data.pdata.num_ep = ARRAY_SIZE(usba_udc_ep);
--	memcpy(usba_udc_data.ep, usba_udc_ep, sizeof(usba_udc_ep));;
-+	memcpy(usba_udc_data.ep, usba_udc_ep, sizeof(usba_udc_ep));
- 
- 	if (data && data->vbus_pin > 0) {
- 		at91_set_gpio_input(data->vbus_pin, 0);
-diff --git a/arch/arm/mach-w90x900/w90p910.c b/arch/arm/mach-w90x900/w90p910.c
-index 1c97e49..0399a24 100644
---- a/arch/arm/mach-w90x900/w90p910.c
-+++ b/arch/arm/mach-w90x900/w90p910.c
-@@ -62,7 +62,7 @@ static DEFINE_CLK(atapi, 6);
- static DEFINE_CLK(emc, 7);
- static DEFINE_CLK(usbd, 8);
- static DEFINE_CLK(usbh, 9);
--static DEFINE_CLK(g2d, 10);;
-+static DEFINE_CLK(g2d, 10);
- static DEFINE_CLK(pwm, 18);
- static DEFINE_CLK(ps2, 24);
- static DEFINE_CLK(kpi, 25);
-diff --git a/arch/arm/plat-mxc/irq.c b/arch/arm/plat-mxc/irq.c
-index 8aee763..c2106d5 100644
---- a/arch/arm/plat-mxc/irq.c
-+++ b/arch/arm/plat-mxc/irq.c
-@@ -53,7 +53,7 @@ int imx_irq_set_priority(unsigned char irq, unsigned char prio)
- 	unsigned int mask = 0x0F << irq % 8 * 4;
- 
- 	if (irq >= MXC_INTERNAL_IRQS)
--		return -EINVAL;;
-+		return -EINVAL;
- 
- 	temp = __raw_readl(avic_base + AVIC_NIPRIORITY(irq / 8));
- 	temp &= ~mask;
+-- 
+Russell King
+ Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
+ maintainer of:
