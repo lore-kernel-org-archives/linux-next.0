@@ -1,55 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the battery tree with Linus' tree
-Date: Mon, 7 Sep 2009 14:52:01 +1000
-Message-ID: <20090907145201.34704d7b.sfr@canb.auug.org.au>
+Subject: linux-next: slab tree build failure
+Date: Mon, 7 Sep 2009 15:37:23 +1000
+Message-ID: <20090907153723.0c984c83.sfr@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__7_Sep_2009_15_37_23_+1000_YDEqp_F1M3WAiicy"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:48769 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755217AbZIGFhc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 7 Sep 2009 01:37:32 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Pekka Enberg <penberg@cs.helsinki.fi>, Christoph Lameter <cl@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Luis R. Rodriguez" <lrodriguez@atheros.com>, "John W. Linville" <linville@tuxdriver.com>
+
+--Signature=_Mon__7_Sep_2009_15_37_23_+1000_YDEqp_F1M3WAiicy
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754718AbZIGEwE@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Anton Vorontsov <avorontsov@ru.mvista.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>, Alexander Beregalov <a.beregalov@gmail.com>, Greg Kroah-Hartman <gregkh@suse.de>
-List-Id: linux-next.vger.kernel.org
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Anton,
+Hi all,
 
-Today's linux-next merge of the battery tree got a conflict in
-drivers/power/wm97xx_battery.c between commit
-38c7dc373029e4666b17850054dd43c1c96bb264 ("wm97xx_batery: replace
-driver_data with dev_get_drvdata()") from Linus' tree and commit
-b8bdc1d0cfc488ac0d94724639f9a61b0a5a1d40 ("wm97xx_battery: Use
-platform_data") from the battery tree.
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-Just context changes.  I fixed it up (see below) and can carry the fixes
-for a while.
--- 
+net/wireless/scan.c: In function 'cfg80211_inform_bss':
+net/wireless/scan.c:499: error: implicit declaration of function 'kmemleak_=
+ignore'
+
+Caused by commit 74ce35c0d2261896ed4d49799311a894520f7a94 ("cfg80211:
+clear cfg80211_inform_bss() from kmemleak reports") from the wireless
+tree (which should have included linux/kmemleak.h into
+net/wireless/scan.c).  Some interaction with the slab tree has exposed
+this.
+
+I have reverted the above commit for today.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/power/wm97xx_battery.c
-index b787335,c552082c..0000000
---- a/drivers/power/wm97xx_battery.c
-+++ b/drivers/power/wm97xx_battery.c
-@@@ -33,14 -33,20 +33,20 @@@ static enum power_supply_property *prop
-  
-  static unsigned long wm97xx_read_bat(struct power_supply *bat_ps)
-  {
-+ 	struct wm97xx_pdata *wmdata = bat_ps->dev->parent->platform_data;
-+ 	struct wm97xx_batt_pdata *pdata = wmdata->batt_pdata;
-+ 
- -	return wm97xx_read_aux_adc(bat_ps->dev->parent->driver_data,
- +	return wm97xx_read_aux_adc(dev_get_drvdata(bat_ps->dev->parent),
-  					pdata->batt_aux) * pdata->batt_mult /
-  					pdata->batt_div;
-  }
-  
-  static unsigned long wm97xx_read_temp(struct power_supply *bat_ps)
-  {
-+ 	struct wm97xx_pdata *wmdata = bat_ps->dev->parent->platform_data;
-+ 	struct wm97xx_batt_pdata *pdata = wmdata->batt_pdata;
-+ 
- -	return wm97xx_read_aux_adc(bat_ps->dev->parent->driver_data,
- +	return wm97xx_read_aux_adc(dev_get_drvdata(bat_ps->dev->parent),
-  					pdata->temp_aux) * pdata->temp_mult /
-  					pdata->temp_div;
-  }
+--Signature=_Mon__7_Sep_2009_15_37_23_+1000_YDEqp_F1M3WAiicy
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkqknBMACgkQjjKRsyhoI8yGfgCfRgbHPKfQ3vc+VIhyLYRWqzE8
+RkYAn3qZ5o1zhJBB1FYOi2WvBH0OQYQc
+=c0Ps
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__7_Sep_2009_15_37_23_+1000_YDEqp_F1M3WAiicy--
