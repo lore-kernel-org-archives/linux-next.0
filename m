@@ -1,54 +1,56 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Subject: [PATCH -next] Fix "W" macro in unified.h
-Date: Sun, 6 Sep 2009 01:02:40 +0400
-Message-ID: <20090905210240.GA3525@x200.localdomain>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: scsi tree build warnings
+Date: Mon, 7 Sep 2009 13:00:24 +1000
+Message-ID: <20090907130024.d67c032d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__7_Sep_2009_13_00_24_+1000_=CTRovQU6tJUWo/C"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ew0-f227.google.com ([209.85.219.227]:35101 "EHLO
-	mail-ew0-f227.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751853AbZIEVCn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 5 Sep 2009 17:02:43 -0400
-Received: by ewy27 with SMTP id 27so1885956ewy.40
-        for <linux-next@vger.kernel.org>; Sat, 05 Sep 2009 14:02:43 -0700 (PDT)
-Content-Disposition: inline
+Received: from chilli.pcug.org.au ([203.10.76.44]:53780 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753111AbZIGDAe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 6 Sep 2009 23:00:34 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: catalin.marinas@arm.com
-Cc: linux-next@vger.kernel.org, sfr@canb.auug.org.au
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Robert Love <robert.w.love@intel.com>
 
-Please, fold into 0becb088501886f37ade38762c8eaaf4263572cc
-aka "Thumb-2: Add macros for the unified assembler syntax"
+--Signature=_Mon__7_Sep_2009_13_00_24_+1000_=CTRovQU6tJUWo/C
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-otherwise:
+Hi James,
 
-	crypto/cast6.c:372:39: error: macro "W" passed 2 arguments, but takes just 1
+Today's linux-next build (x86_64 allmodconfig) produced these warnings:
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
+usr/include/scsi/fc/fc_els.h:165: found __[us]{8,16,32,64} type without #in=
+clude <linux/types.h>
+usr/include/scsi/fc/fc_fs.h:32: found __[us]{8,16,32,64} type without #incl=
+ude <linux/types.h>
+usr/include/scsi/fc/fc_gs.h:29: found __[us]{8,16,32,64} type without #incl=
+ude <linux/types.h>
+usr/include/scsi/fc/fc_ns.h:71: found __[us]{8,16,32,64} type without #incl=
+ude <linux/types.h>
 
- arch/arm/include/asm/unified.h |    4 ++++
- 1 file changed, 4 insertions(+)
+Introduced by commit 171bb4f9f6a20d405a3cb5111ce92ad83aae2302 ("[SCSI]
+libfc: Export FC headers").
 
---- a/arch/arm/include/asm/unified.h
-+++ b/arch/arm/include/asm/unified.h
-@@ -35,7 +35,9 @@
- 
- #define ARM(x...)
- #define THUMB(x...)	x
-+#ifdef __ASSEMBLY__
- #define W(instr)	instr.w
-+#endif
- #define BSYM(sym)	sym + 1
- 
- #else	/* !CONFIG_THUMB2_KERNEL */
-@@ -45,7 +47,9 @@
- 
- #define ARM(x...)	x
- #define THUMB(x...)
-+#ifdef __ASSEMBLY__
- #define W(instr)	instr
-+#endif
- #define BSYM(sym)	sym
- 
- #endif	/* CONFIG_THUMB2_KERNEL */
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__7_Sep_2009_13_00_24_+1000_=CTRovQU6tJUWo/C
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkqkd0gACgkQjjKRsyhoI8xdTQCgmn5p2bILNPvJHq+/hdByqcdh
+VYkAni1niZBynwgNcM/CMV46s4yHmn0/
+=YuWS
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__7_Sep_2009_13_00_24_+1000_=CTRovQU6tJUWo/C--
