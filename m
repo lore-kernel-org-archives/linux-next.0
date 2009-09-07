@@ -1,84 +1,121 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Joe Peterson <joe@skyrush.com>
 Subject: Re: linux-next: manual merge of the tty tree with the  tree
-Date: Mon, 7 Sep 2009 11:22:11 -0700 (PDT)
-Message-ID: <alpine.LFD.2.01.0909071104340.25628@localhost.localdomain>
-References: <20090907191347.fe010955.sfr@canb.auug.org.au>
+Date: Mon, 07 Sep 2009 15:55:44 -0600
+Message-ID: <4AA58160.7080908@skyrush.com>
+References: <20090907191347.fe010955.sfr@canb.auug.org.au> <alpine.LFD.2.01.0909071104340.25628@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/mixed;
+ boundary="------------050103040205070304010104"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:37257 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752045AbZIGSWS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Sep 2009 14:22:18 -0400
-In-Reply-To: <20090907191347.fe010955.sfr@canb.auug.org.au>
+Received: from mail-yx0-f175.google.com ([209.85.210.175]:64480 "EHLO
+	mail-yx0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751072AbZIGVzq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Sep 2009 17:55:46 -0400
+In-Reply-To: <alpine.LFD.2.01.0909071104340.25628@localhost.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Peterson <joe@skyrush.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
+This is a multi-part message in MIME format.
+--------------050103040205070304010104
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 
-
-On Mon, 7 Sep 2009, Stephen Rothwell wrote:
+Linus Torvalds wrote:
+> Hmm. I think that the "honor opost flag for echoes" patch is actually 
+> wrong.
 > 
-> Today's linux-next merge of the tty tree got a conflict in
-> drivers/char/n_tty.c between commit
-> 37f81fa1f63ad38e16125526bb2769ae0ea8d332 ("n_tty: do O_ONLCR translation
-> as a single write") from Linus' tree and commit
-> bb2d17d83926bf9d70b922031aeb49ca896e0b3d ("tty: n_tty: honor opost flag
-> for echoes") from the tty tree.
+> We check O_OPOST() in the _caller_ for the regular write case, and that
+> test actually looks like this:
 > 
-> I fixed it up (see below) and can carry the fix for a while.
+> 	if (O_OPOST(tty) && !(test_bit(TTY_HW_COOK_OUT, &tty->flags))) {
+> 
+> so at a minimum, if we add it to process_output() we should likely add it 
+> in the same format. But if we need that test, I'd rather do it in the 
+> caller anyway, like we already do for regular writes.
 
-Hmm. I think that the "honor opost flag for echoes" patch is actually 
-wrong.
+Yes, very true.  The old opost() function also contained the O_OPOST
+check (i.e. causing a double check for normal writes), and you are right
+that we should not reintroduce it (and it makes sense for the caller to
+check it).
 
-We check O_OPOST() in the _caller_ for the regular write case, and that 
-test actually looks like this:
+There is only the one case in which the O_OPOST check is needed before
+calling do_output_char() (in process_echoes()), so we could just inline
+the test there.  Take a look at my new attached patch (untested also).
+I'll test and resubmit, assuming there are no objections.
 
-	if (O_OPOST(tty) && !(test_bit(TTY_HW_COOK_OUT, &tty->flags))) {
+					-Thanks, Joe
 
-so at a minimum, if we add it to process_output() we should likely add it 
-in the same format. But if we need that test, I'd rather do it in the 
-caller anyway, like we already do for regular writes.
+--------------050103040205070304010104
+Content-Type: text/plain;
+ name="n_tty-honor-opost-flag-for-echoes.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="n_tty-honor-opost-flag-for-echoes.patch"
 
-So maybe the patch could be changed to something (UNTESTD!) like the 
-following instead? And thus avoid the conflict at the same time.
-
-		Linus
-
----
- drivers/char/n_tty.c |   14 +++++++++++++-
- 1 files changed, 13 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/char/n_tty.c b/drivers/char/n_tty.c
-index 4e28b35..9c04bb4 100644
---- a/drivers/char/n_tty.c
-+++ b/drivers/char/n_tty.c
-@@ -345,6 +345,18 @@ static int do_output_char(unsigned char c, struct tty_struct *tty, int space)
- 	return 1;
- }
- 
-+static int output_echo(unsigned char c, struct tty_struct *tty, int space)
-+{
-+	if (O_OPOST(tty) && !(test_bit(TTY_HW_COOK_OUT, &tty->flags)))
-+		return do_output_char(c, tty, space);
-+
-+	if (!space)
-+		return -1;
-+
-+	tty_put_char(tty, c);
-+	return 1;
-+}
-+
- /**
-  *	process_output			-	output post processor
+--- n_tty.c.orig	2009-09-07 13:54:32.460678337 -0600
++++ n_tty.c	2009-09-07 15:48:51.191033405 -0600
+@@ -272,7 +272,8 @@ static inline int is_continuation(unsign
+  *
+  *	This is a helper function that handles one output character
+  *	(including special characters like TAB, CR, LF, etc.),
+- *	putting the results in the tty driver's write buffer.
++ *	doing OPOST processing and putting the results in the
++ *	tty driver's write buffer.
+  *
+  *	Note that Linux currently ignores TABDLY, CRDLY, VTDLY, FFDLY
+  *	and NLDLY.  They simply aren't relevant in the world today.
+@@ -351,8 +352,9 @@ static int do_output_char(unsigned char 
   *	@c: character (or partial unicode symbol)
-@@ -607,7 +619,7 @@ static void process_echoes(struct tty_struct *tty)
- 		} else {
- 			int retval;
- 
--			retval = do_output_char(c, tty, space);
-+			retval = output_echo(c, tty, space);
- 			if (retval < 0)
+  *	@tty: terminal device
+  *
+- *	Perform OPOST processing.  Returns -1 when the output device is
+- *	full and the character must be retried.
++ *	Output one character with OPOST processing.
++ *	Returns -1 when the output device is full and the character
++ *	must be retried.
+  *
+  *	Locking: output_lock to protect column state and space left
+  *		 (also, this is called from n_tty_write under the
+@@ -378,8 +380,11 @@ static int process_output(unsigned char 
+ /**
+  *	process_output_block		-	block post processor
+  *	@tty: terminal device
+- *	@inbuf: user buffer
+- *	@nr: number of bytes
++ *	@buf: character buffer
++ *	@nr: number of bytes to output
++ *
++ *	Output a block of characters with OPOST processing.
++ *	Returns the number of characters output.
+  *
+  *	This path is used to speed up block console writes, among other
+  *	things when processing blocks of output data. It handles only
+@@ -606,12 +611,18 @@ static void process_echoes(struct tty_st
+ 			if (no_space_left)
  				break;
- 			space -= retval;
+ 		} else {
+-			int retval;
+-
+-			retval = do_output_char(c, tty, space);
+-			if (retval < 0)
+-				break;
+-			space -= retval;
++			if (O_OPOST(tty) &&
++			    !(test_bit(TTY_HW_COOK_OUT, &tty->flags))) {
++				int retval = do_output_char(c, tty, space);
++				if (retval < 0)
++					break;
++				space -= retval;
++			} else {
++				if (!space)
++					break;
++				tty_put_char(tty, c);
++				space -= 1;
++			}
+ 			cp += 1;
+ 			nr -= 1;
+ 		}
+
+--------------050103040205070304010104--
