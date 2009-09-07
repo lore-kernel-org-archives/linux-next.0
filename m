@@ -1,35 +1,49 @@
-From: Pekka Enberg <penberg@cs.helsinki.fi>
-Subject: Re: linux-next: slab tree build failure
-Date: Mon, 07 Sep 2009 10:43:46 +0300
-Message-ID: <1252309426.4964.3.camel@penberg-laptop>
-References: <20090907153723.0c984c83.sfr@canb.auug.org.au>
-	 <84144f020909062310u37ecdddfw31c6cc9a22ccabd9@mail.gmail.com>
-	 <20090907173108.3c0148d7.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the percpu tree with Linus' tree
+Date: Mon, 7 Sep 2009 18:22:29 +1000
+Message-ID: <20090907182229.734c31d2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__7_Sep_2009_18_22_29_+1000_4_uh0S8_iFiKIt3e"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from courier.cs.helsinki.fi ([128.214.9.1]:50980 "EHLO
-	mail.cs.helsinki.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751444AbZIGHnq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Sep 2009 03:43:46 -0400
-In-Reply-To: <20090907173108.3c0148d7.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:59959 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751871AbZIGIWf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 7 Sep 2009 04:22:35 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Christoph Lameter <cl@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Luis R. Rodriguez" <lrodriguez@atheros.com>, "John W. Linville" <linville@tuxdriver.com>, Catalin Marinas <catalin.marinas@arm.com>, npiggin@suse.de
+To: Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Stephen,
+--Signature=_Mon__7_Sep_2009_18_22_29_+1000_4_uh0S8_iFiKIt3e
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 7 Sep 2009 09:10:18 +0300 Pekka Enberg <penberg@cs.helsinki.fi> wrote:
-> > AFAICT, you're interested in kmemleak.git, not slab.git. Catalin?
+Hi all,
 
-On Mon, 2009-09-07 at 17:31 +1000, Stephen Rothwell wrote:
-> I first got the error after merging the slab tree ... the kmemleak tree
-> is merged much later.
+Today's linux-next merge of the percpu tree got a conflict in mm/percpu.c
+between commit 04a13c7c632e1fe04a5f6e6c83565d2559e37598 ("percpu: don't
+assume existence of cpu0") from Linus' tree and commit pcpu_chunk_page_occu=
+pied ("percpu: drop pcpu_chunk->page[]") from the percpu tree.
 
-Aah, let me guess, CONFIG_SLQB? I guess I'll just rebase the damn tree
-and make it non-default. We need that anyway if we want to merge it to
-2.6.32. I'll take a stab at it later this evening (my time zone).
+I *think* the changes in the percpu tree supercede those in Linus' tree,
+so I have used those.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-			Pekka
+--Signature=_Mon__7_Sep_2009_18_22_29_+1000_4_uh0S8_iFiKIt3e
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkqkwsUACgkQjjKRsyhoI8wxLQCfXhHLFOID5aHVu8nGQ4Zngt93
+HcwAoLDHefgqqjxiln4eMftZicxjsjb8
+=8J/L
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__7_Sep_2009_18_22_29_+1000_4_uh0S8_iFiKIt3e--
