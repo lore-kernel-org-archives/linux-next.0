@@ -1,50 +1,49 @@
-From: "Luis R. Rodriguez" <lrodriguez@atheros.com>
-Subject: Re: linux-next: slab tree build failure
-Date: Tue, 8 Sep 2009 09:32:36 -0700
-Message-ID: <20090908163236.GB8839@mosca>
-References: <20090907153723.0c984c83.sfr@canb.auug.org.au>
- <84144f020909062310u37ecdddfw31c6cc9a22ccabd9@mail.gmail.com>
- <1252312509.23780.15.camel@pc1117.cambridge.arm.com>
+From: "H Hartley Sweeten" <hartleys@visionengravers.com>
+Subject: RE: linux-next: manual merge of the mtd tree with the i2c tree
+Date: Tue, 8 Sep 2009 12:52:07 -0400
+Message-ID: <BD79186B4FD85F4B8E60E381CAEE190901CBE901@mi8nycmail19.Mi8.com>
+References: <20090907133621.3b4d4ce3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751762AbZIHQcg@vger.kernel.org>
-Received: from mail.atheros.com ([10.10.20.105])
-	by sidewinder.atheros.com
-	for <linux-next@vger.kernel.org>; Tue, 08 Sep 2009 09:32:38 -0700
-Content-Disposition: inline
-In-Reply-To: <1252312509.23780.15.camel@pc1117.cambridge.arm.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751584AbZIHQwK@vger.kernel.org>
+Content-class: urn:content-classes:message
+In-Reply-To: <20090907133621.3b4d4ce3.sfr@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Pekka Enberg <penberg@cs.helsinki.fi>, Stephen Rothwell <sfr@canb.auug.org.au>, Christoph Lameter <cl@linux-foundation.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Luis Rodriguez <Luis.Rodriguez@Atheros.com>, "John W. Linville" <linville@tuxdriver.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, David Woodhouse <dwmw2@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Brownell <dbrownell@users.sourceforge.net>, Greg Kroah-Hartman <gregkh@suse.de>, Jean Delvare <khali@linux-fr.org>, Andrew Morton <akpm@linux-foundation.org>, Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Sep 07, 2009 at 01:35:09AM -0700, Catalin Marinas wrote:
-> On Mon, 2009-09-07 at 09:10 +0300, Pekka Enberg wrote:
-> > Hi Stephen,
-> >
-> > On Mon, Sep 7, 2009 at 8:37 AM, Stephen Rothwell<sfr@canb.auug.org.au> wrote:
-> > > Hi all,
-> > >
-> > > Today's linux-next build (x86_64 allmodconfig) failed like this:
-> > >
-> > > net/wireless/scan.c: In function 'cfg80211_inform_bss':
-> > > net/wireless/scan.c:499: error: implicit declaration of function 'kmemleak_ignore'
-> > >
-> > > Caused by commit 74ce35c0d2261896ed4d49799311a894520f7a94 ("cfg80211:
-> > > clear cfg80211_inform_bss() from kmemleak reports") from the wireless
-> > > tree (which should have included linux/kmemleak.h into
-> > > net/wireless/scan.c).  Some interaction with the slab tree has exposed
-> > > this.
-> > >
-> > > I have reverted the above commit for today.
-> >
-> > AFAICT, you're interested in kmemleak.git, not slab.git. Catalin?
+On Sunday, September 06, 2009 8:36 PM, Stephen Rothwell wrote:
+> Hi David,
 > 
-> I think that's a commit from Luis. It shouldn't have been merged in the
-> first instance anyway (we shouldn't randomly ignore kmemleak reports
-> unless we know for sure why kmemleak thinks it is a leak and we should
-> write a comment explaining why).
+> Today's linux-next merge of the mtd tree got a conflict in
+> drivers/mtd/mtdcore.c between commit
+> c6ce12828f9146f12d0654241bcb39523c257c90 ("driver model: constify
+> attribute groups") from the i2c tree and commit
+> fca910883324d437a24d447b08f524fa19261a94 ("mtd: make few symbols static")
+> from the mtd tree.
+> 
+> Just overlapping changes.  I fixed it up (see below) and can carry the
+> fix as necessary.
 
-I asked John to revert it, feel free to do the same.
+Acked-by: H Hartley Sweeten <hsweeten@visionengravers.com>
 
-  Luis
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc drivers/mtd/mtdcore.c
+> index 69007a6,3f559c0..0000000
+> --- a/drivers/mtd/mtdcore.c
+> +++ b/drivers/mtd/mtdcore.c
+> @@@ -217,7 -217,7 +217,7 @@@ static struct attribute_group mtd_grou
+>   	.attrs		= mtd_attrs,
+>   };
+>   
+> - const struct attribute_group *mtd_groups[] = {
+>  -static struct attribute_group *mtd_groups[] = {
+> ++static const struct attribute_group *mtd_groups[] = {
+>   	&mtd_group,
+>   	NULL,
+>   };
