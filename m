@@ -1,51 +1,50 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the tty tree with the  tree
-Date: Tue, 8 Sep 2009 09:06:58 -0700
-Message-ID: <20090908160658.GA4739@kroah.com>
-References: <20090907191347.fe010955.sfr@canb.auug.org.au>
- <alpine.LFD.2.01.0909071104340.25628@localhost.localdomain>
- <4AA58160.7080908@skyrush.com>
+From: "Luis R. Rodriguez" <lrodriguez@atheros.com>
+Subject: Re: linux-next: slab tree build failure
+Date: Tue, 8 Sep 2009 09:32:36 -0700
+Message-ID: <20090908163236.GB8839@mosca>
+References: <20090907153723.0c984c83.sfr@canb.auug.org.au>
+ <84144f020909062310u37ecdddfw31c6cc9a22ccabd9@mail.gmail.com>
+ <1252312509.23780.15.camel@pc1117.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:57940 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750709AbZIHQJ0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 8 Sep 2009 12:09:26 -0400
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751762AbZIHQcg@vger.kernel.org>
+Received: from mail.atheros.com ([10.10.20.105])
+	by sidewinder.atheros.com
+	for <linux-next@vger.kernel.org>; Tue, 08 Sep 2009 09:32:38 -0700
 Content-Disposition: inline
-In-Reply-To: <4AA58160.7080908@skyrush.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Joe Peterson <joe@skyrush.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1252312509.23780.15.camel@pc1117.cambridge.arm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Pekka Enberg <penberg@cs.helsinki.fi>, Stephen Rothwell <sfr@canb.auug.org.au>, Christoph Lameter <cl@linux-foundation.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Luis Rodriguez <Luis.Rodriguez@Atheros.com>, "John W. Linville" <linville@tuxdriver.com>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Sep 07, 2009 at 03:55:44PM -0600, Joe Peterson wrote:
-> Linus Torvalds wrote:
-> > Hmm. I think that the "honor opost flag for echoes" patch is actually 
-> > wrong.
-> > 
-> > We check O_OPOST() in the _caller_ for the regular write case, and that
-> > test actually looks like this:
-> > 
-> > 	if (O_OPOST(tty) && !(test_bit(TTY_HW_COOK_OUT, &tty->flags))) {
-> > 
-> > so at a minimum, if we add it to process_output() we should likely add it 
-> > in the same format. But if we need that test, I'd rather do it in the 
-> > caller anyway, like we already do for regular writes.
+On Mon, Sep 07, 2009 at 01:35:09AM -0700, Catalin Marinas wrote:
+> On Mon, 2009-09-07 at 09:10 +0300, Pekka Enberg wrote:
+> > Hi Stephen,
+> >
+> > On Mon, Sep 7, 2009 at 8:37 AM, Stephen Rothwell<sfr@canb.auug.org.au> wrote:
+> > > Hi all,
+> > >
+> > > Today's linux-next build (x86_64 allmodconfig) failed like this:
+> > >
+> > > net/wireless/scan.c: In function 'cfg80211_inform_bss':
+> > > net/wireless/scan.c:499: error: implicit declaration of function 'kmemleak_ignore'
+> > >
+> > > Caused by commit 74ce35c0d2261896ed4d49799311a894520f7a94 ("cfg80211:
+> > > clear cfg80211_inform_bss() from kmemleak reports") from the wireless
+> > > tree (which should have included linux/kmemleak.h into
+> > > net/wireless/scan.c).  Some interaction with the slab tree has exposed
+> > > this.
+> > >
+> > > I have reverted the above commit for today.
+> >
+> > AFAICT, you're interested in kmemleak.git, not slab.git. Catalin?
 > 
-> Yes, very true.  The old opost() function also contained the O_OPOST
-> check (i.e. causing a double check for normal writes), and you are right
-> that we should not reintroduce it (and it makes sense for the caller to
-> check it).
-> 
-> There is only the one case in which the O_OPOST check is needed before
-> calling do_output_char() (in process_echoes()), so we could just inline
-> the test there.  Take a look at my new attached patch (untested also).
-> I'll test and resubmit, assuming there are no objections.
+> I think that's a commit from Luis. It shouldn't have been merged in the
+> first instance anyway (we shouldn't randomly ignore kmemleak reports
+> unless we know for sure why kmemleak thinks it is a leak and we should
+> write a comment explaining why).
 
-Thanks for doing this, I'll drop the patch from my tree and wait for you
-to test and resubmit this.
+I asked John to revert it, feel free to do the same.
 
-thanks,
-
-greg k-h
+  Luis
