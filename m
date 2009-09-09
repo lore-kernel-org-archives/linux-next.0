@@ -1,70 +1,103 @@
-From: Andrew Vasquez <andrew.vasquez@qlogic.com>
-Subject: Re: linux-next: Tree for September 7 (scsi/qla2x)
-Date: Tue, 8 Sep 2009 11:25:41 -0700
-Message-ID: <20090908182541.GB44157@plap4-2.local>
-References: <20090907210206.7830ba68.sfr@canb.auug.org.au>
- <20090907102747.ac6b98ff.randy.dunlap@oracle.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH 00/07] pm: remove late/early platform driver pm callbacks
+	V2
+Date: Tue, 8 Sep 2009 18:25:55 -0700
+Message-ID: <e9c3a7c20909081825i1578a522w5d7f4e5d678b5d74@mail.gmail.com>
+References: <20090624092306.14276.127.sendpatchset@rx1.opensource.se>
+	 <200907050145.15122.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-scsi-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20090907102747.ac6b98ff.randy.dunlap@oracle.com>
-Sender: linux-scsi-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Giridhar Malavali <giridhar.malavali@qlogic.com>
+Content-Type: multipart/mixed; boundary=000e0cd32810ea5aad04731af68a
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <200907050145.15122.rjw@sisk.pl>
+Sender: linux-omap-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org, gregkh@suse.de, pavel@ucw.cz, hskinnemoen@atmel.com, anemo@mba.ocn.ne.jp, linux-usb@vger.kernel.org, akpm@linux-foundation.org, stern@rowland.harvard.edu, ben-linux@fluff.org, linux-omap@vger.kernel.org, linux-pm@lists.linux-foundation.org, felipe.balbi@nokia.com, nicolas.ferre@atmel.com, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Mon, 07 Sep 2009, Randy Dunlap wrote:
+--000e0cd32810ea5aad04731af68a
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-> On Mon, 7 Sep 2009 21:02:06 +1000 Stephen Rothwell wrote:
-> 
-> > Hi all,
-> > 
-> > Changes since 20090904:
-> 
-> 
-> when CONFIG_MODULES=n:
-> 
-> drivers/scsi/qla2xxx/qla_os.c:2685: error: dereferencing pointer to incomplete type
-> 
-> in
-> 	kobject_uevent_env(&(&vha->hw->pdev->driver->driver)->owner->mkobj.kobj,
-> 	    KOBJ_CHANGE, envp);
+2009/7/4 Rafael J. Wysocki <rjw@sisk.pl>:
+> On Wednesday 24 June 2009, Magnus Damm wrote:
+>> pm: remove late/early platform driver pm callbacks V2
+>>
+>> [PATCH 01/07] arm: rework omap suspend_late()/resume_early()
+>> [PATCH 02/07] dma: rework dw_dmac suspend_late()/resume_early()
+>> [PATCH 03/07] dma: rework txx9dmac suspend_late()/resume_early()
+>> [PATCH 04/07] i2c: rework i2c-pxa suspend_late()/resume_early()
+>> [PATCH 05/07] i2c: rework i2c-s3c2410 suspend_late()/resume() V2
+>> [PATCH 06/07] usb: rework musb suspend()/resume_early()
+>> [PATCH 07/07] pm: remove platform device suspend_late()/resume_early() V=
+2
+>>
+>> These patches simply remove ->suspend_late() and ->resume_early()
+>> from struct platform_driver. Drivers are converted to dev_pm_ops
+>> with CONFIG_SUSPEND in mind. Untested.
+>>
+>> All patches except [02/07] are known to compile.
+>>
+>> Signed-off-by: Magnus Damm <damm@igel.co.jp>
+[..]
+>
+> The series is now in the linux-next branch of the suspend-2.6 tree. =A0I'=
+ll move
+> it into the for-linus branch, which is not rebased, if the patches are no=
+t
+> reported to cause any problems in the next few days.
+>
 
-Argg...  Some history here...  During several unwelcome
-hardware/firmware events (ISP system error, mailbox command timeouts,
-etc), the qla2xxx driver can store a 'firmware-dump' (essentially a
-snapshot of the current state of the ISP firmware).  This snapshot is
-then captured via a user-space tool querying a driver sysfs-node
-hanging off of a scsi_host's device tree:
+Hi,
 
-	/sys/class/scsi_host/host4/device/fw_dump
+My linux-next test builds for drivers/dma/ caught a missed conversion
+of the at_hdmac driver.  Please check the attached fix (compile tested
+only) and include it in this series.
 
-The dump is then used by our firmware engineering group to help triage
-the issue.
+Thanks and regards,
+Dan
 
-This recent change:
+--000e0cd32810ea5aad04731af68a
+Content-Type: application/octet-stream; name="at-hdmac-rework-suspend.patch"
+Content-Disposition: attachment; filename="at-hdmac-rework-suspend.patch"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_fzddz1gn0
 
-	commit 10a71b40153a19279428053ad9743e15ef414148
-	Author: Andrew Vasquez <andrew.vasquez@qlogic.com>
-	Date:   Tue Aug 25 11:36:15 2009 -0700
-
-	    [SCSI] qla2xxx: Add firmware-dump kobject uevent notification.
-
-	    Signed-off-by: Andrew Vasquez <andrew.vasquez@qlogic.com>
-	    Signed-off-by: Giridhar Malavali <giridhar.malavali@qlogic.com>
-	    Signed-off-by: James Bottomley <James.Bottomley@suse.de>
-
-attempted to help 'automate' the task of retrieval by signaling udev
-to automatically run the 'retrieval' script anytime the driver
-captured the firmware-dump.  Here's a snippet of the udev rule:
-
-	# qla2xxx driver
-	KERNEL=="qla2xxx", SUBSYSTEM=="module", ACTION=="change", RUN+="qla2xxx_udev.sh"
-
-Any suggestions here on an alternate driver-specific kobject an LLD
-can/should use for something like this?  I looked previously at other
-callers of kobject_uevent_env(), but didn't really see a simlar
-usage-pattern of a driver wanting to signal events to userspace...
-
-Thanks, AV
+YXRfaGRtYWM6IFJld29yayBzdXNwZW5kX2xhdGUoKS9yZXN1bWVfZWFybHkoKQoKRnJvbTogRGFu
+IFdpbGxpYW1zIDxkYW4uai53aWxsaWFtc0BpbnRlbC5jb20+CgpUaGlzIHBhdGNoIHJld29ya3Mg
+cGxhdGZvcm0gZHJpdmVyIHBvd2VyIG1hbmFnZW1lbnQgY29kZQpmb3IgYXRfaGRtYWMgZnJvbSBs
+ZWdhY3kgbGF0ZS9lYXJseSBjYWxsYmFja3MgdG8gZGV2X3BtX29wcy4KClRoZSBjYWxsYmFja3Mg
+YXJlIGNvbnZlcnRlZCBmb3IgQ09ORklHX1NVU1BFTkQgbGlrZSB0aGlzOgogIHN1c3BlbmRfbGF0
+ZSgpIC0+IHN1c3BlbmRfbm9pcnEoKQogIHJlc3VtZV9lYXJseSgpIC0+IHJlc3VtZV9ub2lycSgp
+CgpDYzogTWFnbnVzIERhbW0gPGRhbW1AaWdlbC5jby5qcD4KQ2M6IEdyZWcgS3JvYWgtSGFydG1h
+biA8Z3JlZ2toQHN1c2UuZGU+CkNjOiBQYXZlbCBNYWNoZWsgPHBhdmVsQHVjdy5jej4KQ2M6IFJh
+ZmFlbCBKLiBXeXNvY2tpIDxyandAc2lzay5wbD4KQ2M6IE5pY29sYXMgRmVycmUgPG5pY29sYXMu
+ZmVycmVAYXRtZWwuY29tPgpTaWduZWQtb2ZmLWJ5OiBEYW4gV2lsbGlhbXMgPGRhbi5qLndpbGxp
+YW1zQGludGVsLmNvbT4KLS0tCiBkcml2ZXJzL2RtYS9hdF9oZG1hYy5jIHwgICAxOSArKysrKysr
+KysrKystLS0tLS0tCiAxIGZpbGVzIGNoYW5nZWQsIDEyIGluc2VydGlvbnMoKyksIDcgZGVsZXRp
+b25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9kbWEvYXRfaGRtYWMuYyBiL2RyaXZlcnMvZG1h
+L2F0X2hkbWFjLmMKaW5kZXggMGFlYjU3OC4uNzU4NWM0MSAxMDA2NDQKLS0tIGEvZHJpdmVycy9k
+bWEvYXRfaGRtYWMuYworKysgYi9kcml2ZXJzL2RtYS9hdF9oZG1hYy5jCkBAIC0xMTY4LDMyICsx
+MTY4LDM3IEBAIHN0YXRpYyB2b2lkIGF0X2RtYV9zaHV0ZG93bihzdHJ1Y3QgcGxhdGZvcm1fZGV2
+aWNlICpwZGV2KQogCWNsa19kaXNhYmxlKGF0ZG1hLT5jbGspOwogfQogCi1zdGF0aWMgaW50IGF0
+X2RtYV9zdXNwZW5kX2xhdGUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldiwgcG1fbWVzc2Fn
+ZV90IG1lc2cpCitzdGF0aWMgaW50IGF0X2RtYV9zdXNwZW5kX25vaXJxKHN0cnVjdCBkZXZpY2Ug
+KmRldikKIHsKLQlzdHJ1Y3QgYXRfZG1hCSphdGRtYSA9IHBsYXRmb3JtX2dldF9kcnZkYXRhKHBk
+ZXYpOworCXN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYgPSB0b19wbGF0Zm9ybV9kZXZpY2Uo
+ZGV2KTsKKwlzdHJ1Y3QgYXRfZG1hICphdGRtYSA9IHBsYXRmb3JtX2dldF9kcnZkYXRhKHBkZXYp
+OwogCiAJYXRfZG1hX29mZihwbGF0Zm9ybV9nZXRfZHJ2ZGF0YShwZGV2KSk7CiAJY2xrX2Rpc2Fi
+bGUoYXRkbWEtPmNsayk7CiAJcmV0dXJuIDA7CiB9CiAKLXN0YXRpYyBpbnQgYXRfZG1hX3Jlc3Vt
+ZV9lYXJseShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQorc3RhdGljIGludCBhdF9kbWFf
+cmVzdW1lX25vaXJxKHN0cnVjdCBkZXZpY2UgKmRldikKIHsKLQlzdHJ1Y3QgYXRfZG1hCSphdGRt
+YSA9IHBsYXRmb3JtX2dldF9kcnZkYXRhKHBkZXYpOworCXN0cnVjdCBwbGF0Zm9ybV9kZXZpY2Ug
+KnBkZXYgPSB0b19wbGF0Zm9ybV9kZXZpY2UoZGV2KTsKKwlzdHJ1Y3QgYXRfZG1hICphdGRtYSA9
+IHBsYXRmb3JtX2dldF9kcnZkYXRhKHBkZXYpOwogCiAJY2xrX2VuYWJsZShhdGRtYS0+Y2xrKTsK
+IAlkbWFfd3JpdGVsKGF0ZG1hLCBFTiwgQVRfRE1BX0VOQUJMRSk7CiAJcmV0dXJuIDA7Ci0KIH0K
+IAorc3RhdGljIHN0cnVjdCBkZXZfcG1fb3BzIGF0X2RtYV9kZXZfcG1fb3BzID0geworCS5zdXNw
+ZW5kX25vaXJxID0gYXRfZG1hX3N1c3BlbmRfbm9pcnEsCisJLnJlc3VtZV9ub2lycSA9IGF0X2Rt
+YV9yZXN1bWVfbm9pcnEsCit9OworCiBzdGF0aWMgc3RydWN0IHBsYXRmb3JtX2RyaXZlciBhdF9k
+bWFfZHJpdmVyID0gewogCS5yZW1vdmUJCT0gX19leGl0X3AoYXRfZG1hX3JlbW92ZSksCiAJLnNo
+dXRkb3duCT0gYXRfZG1hX3NodXRkb3duLAotCS5zdXNwZW5kX2xhdGUJPSBhdF9kbWFfc3VzcGVu
+ZF9sYXRlLAotCS5yZXN1bWVfZWFybHkJPSBhdF9kbWFfcmVzdW1lX2Vhcmx5LAogCS5kcml2ZXIg
+PSB7CiAJCS5uYW1lCT0gImF0X2hkbWFjIiwKKwkJLnBtCT0gJmF0X2RtYV9kZXZfcG1fb3BzLAog
+CX0sCiB9OwogCg==
+--000e0cd32810ea5aad04731af68a--
