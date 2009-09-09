@@ -1,58 +1,26 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: rr tree build failure
-Date: Wed, 9 Sep 2009 13:47:52 +1000
-Message-ID: <20090909134752.f5b8c2e7.sfr@canb.auug.org.au>
+From: Len Brown <lenb@kernel.org>
+Subject: Re: linux-next: acpi tree build failure
+Date: Wed, 09 Sep 2009 00:02:03 -0400 (EDT)
+Message-ID: <alpine.LFD.2.00.0909082359480.20206@localhost.localdomain>
+References: <20090901125748.fb33b2ea.sfr@canb.auug.org.au>
+ <20090907234612.078bb650.sfr@canb.auug.org.au>
+ <1252370869.3483.420.camel@rzhang-dt>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__9_Sep_2009_13_47_52_+1000_fvckU9udN=5=v6t9"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34080 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752812AbZIIDr7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 8 Sep 2009 23:47:59 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Siarhei Liakh <sliakh.lkml@gmail.com>, Xuxian Jiang <jiang@cs.ncsu.edu>, Arjan van de Ven <arjan@linux.intel.com>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-reply-to: <1252370869.3483.420.camel@rzhang-dt>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__9_Sep_2009_13_47_52_+1000_fvckU9udN=5=v6t9
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> please revert the two ALS patches.
 
-Hi Rusty,
+done.
 
-Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+Sorry about the merge-conflict and build error, Stephen.
+You can update to the latest acpi-test tree now.
 
-kernel/module.c: In function 'set_section_ro_nx':
-kernel/module.c:1549: error: implicit declaration of function 'set_memory_r=
-o'
-kernel/module.c:1560: error: implicit declaration of function 'set_memory_n=
-x'
-kernel/module.c: In function 'unset_section_ro_nx':
-kernel/module.c:1575: error: implicit declaration of function 'set_memory_r=
-w'
+thanks,
+-Len Brown, Intel Open Source Technology Center
 
-Caused by commit 25306e21864c2a220d6fa2e0632425028aa9626c
-("module:ro-nx-protection") which uses these interfaces that are only
-defined on x86 ...
-
-I have used the version of the rr tree from next-20090908 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__9_Sep_2009_13_47_52_+1000_fvckU9udN=5=v6t9
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkqnJWgACgkQjjKRsyhoI8xXbACgq+Bc+RmETT3Uq4IoAtIOuRig
-XqwAnjUO3zqhuK7pBh8LFfL3qnsuTiq/
-=uYv4
------END PGP SIGNATURE-----
-
---Signature=_Wed__9_Sep_2009_13_47_52_+1000_fvckU9udN=5=v6t9--
