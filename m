@@ -1,28 +1,117 @@
-From: Avi Kivity <avi@redhat.com>
-Subject: New kvm.git branch for linux-next
-Date: Wed, 09 Sep 2009 20:55:18 +0300
-Message-ID: <4AA7EC06.1070109@redhat.com>
+From: Joe Peterson <joe@skyrush.com>
+Subject: [PATCH 1/2 (resubmission)] n_tty: honor opost flag for echoes
+Date: Wed, 09 Sep 2009 15:03:13 -0600
+Message-ID: <4AA81811.8020500@skyrush.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed;
+ boundary="------------060603040407070100010604"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:34068 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752572AbZIIRy6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 9 Sep 2009 13:54:58 -0400
+Received: from mail-fx0-f217.google.com ([209.85.220.217]:62433 "EHLO
+	mail-fx0-f217.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753676AbZIIVDP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 9 Sep 2009 17:03:15 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Marcelo Tosatti <mtosatti@redhat.com>, linux-next <linux-next@vger.kernel.org>, kvm-devel <kvm@vger.kernel.org>
+To: greg@kroah.com
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, Linux Kernel <linux-kernel@vger.kernel.org>, torvalds@linux-foundation.org
 
-Stephen, please pick up the 'linux-next' branch of kvm.git instead 
-'master' as you do now.  This will better reflect what is actually going 
-to -next, will cause fewer merge errors, and will improve -next 
-bisectability.
+This is a multi-part message in MIME format.
+--------------060603040407070100010604
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 
-(this is actually a symbolic ref to kvm-updates/2.6.32 which will be 
-updated when kvm-updates/2.6.33 is created)
+This (and the forthcoming part 2, which is the same patch with corrected
+offsets) are resubmissions to avoid the conflict with "n_tty: do O_ONLCR
+translation as a single write" and to move the O_OPOST test to the caller.
 
--- 
-I have a truly marvellous patch that fixes the bug which this
-signature is too narrow to contain.
+						-Joe
+
+
+--------------060603040407070100010604
+Content-Type: text/plain;
+ name="n_tty-honor-opost-flag-for-echoes.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="n_tty-honor-opost-flag-for-echoes.patch"
+
+Fixes the following bug:
+
+      http://bugs.linuxbase.org/show_bug.cgi?id=2692
+
+Causes processing of echoed characters (output from the echo buffer) to
+honor the O_OPOST flag, which is consistent with the old behavior.
+
+Note that this and the next patch ("n_tty: move echoctl check and
+clean up logic") were verified together by the bug reporters, and
+the test now passes.
+
+Signed-off-by: Joe Peterson <joe@skyrush.com>
+---
+
+diff -Nurp a/drivers/char/n_tty.c b/drivers/char/n_tty.c
+--- a/drivers/char/n_tty.c	2009-09-07 16:54:03.540366388 -0600
++++ b/drivers/char/n_tty.c	2009-09-07 16:53:53.880294497 -0600
+@@ -272,7 +272,8 @@ static inline int is_continuation(unsign
+  *
+  *	This is a helper function that handles one output character
+  *	(including special characters like TAB, CR, LF, etc.),
+- *	putting the results in the tty driver's write buffer.
++ *	doing OPOST processing and putting the results in the
++ *	tty driver's write buffer.
+  *
+  *	Note that Linux currently ignores TABDLY, CRDLY, VTDLY, FFDLY
+  *	and NLDLY.  They simply aren't relevant in the world today.
+@@ -351,8 +352,9 @@ static int do_output_char(unsigned char 
+  *	@c: character (or partial unicode symbol)
+  *	@tty: terminal device
+  *
+- *	Perform OPOST processing.  Returns -1 when the output device is
+- *	full and the character must be retried.
++ *	Output one character with OPOST processing.
++ *	Returns -1 when the output device is full and the character
++ *	must be retried.
+  *
+  *	Locking: output_lock to protect column state and space left
+  *		 (also, this is called from n_tty_write under the
+@@ -378,8 +380,11 @@ static int process_output(unsigned char 
+ /**
+  *	process_output_block		-	block post processor
+  *	@tty: terminal device
+- *	@inbuf: user buffer
+- *	@nr: number of bytes
++ *	@buf: character buffer
++ *	@nr: number of bytes to output
++ *
++ *	Output a block of characters with OPOST processing.
++ *	Returns the number of characters output.
+  *
+  *	This path is used to speed up block console writes, among other
+  *	things when processing blocks of output data. It handles only
+@@ -606,12 +611,18 @@ static void process_echoes(struct tty_st
+ 			if (no_space_left)
+ 				break;
+ 		} else {
+-			int retval;
+-
+-			retval = do_output_char(c, tty, space);
+-			if (retval < 0)
+-				break;
+-			space -= retval;
++			if (O_OPOST(tty) &&
++			    !(test_bit(TTY_HW_COOK_OUT, &tty->flags))) {
++				int retval = do_output_char(c, tty, space);
++				if (retval < 0)
++					break;
++				space -= retval;
++			} else {
++				if (!space)
++					break;
++				tty_put_char(tty, c);
++				space -= 1;
++			}
+ 			cp += 1;
+ 			nr -= 1;
+ 		}
+
+
+--------------060603040407070100010604--
