@@ -1,29 +1,53 @@
-From: Joe Peterson <joe@skyrush.com>
-Subject: Re: linux-next: manual merge of the tty tree with the tree
-Date: Wed, 9 Sep 2009 15:05:53 -0600
-Message-ID: <c19faac80909091405s567eb806ic5d8ede19a9d4274@mail.gmail.com>
-References: <20090907191347.fe010955.sfr@canb.auug.org.au>
-	 <alpine.LFD.2.01.0909071104340.25628@localhost.localdomain>
-	 <4AA58160.7080908@skyrush.com> <20090908160658.GA4739@kroah.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: [PATCH 00/07] pm: remove late/early platform driver pm callbacks V2
+Date: Thu, 10 Sep 2009 00:09:48 +0200
+Message-ID: <200909100009.48504.rjw@sisk.pl>
+References: <20090624092306.14276.127.sendpatchset@rx1.opensource.se> <200907050145.15122.rjw@sisk.pl> <e9c3a7c20909081825i1578a522w5d7f4e5d678b5d74@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-fx0-f217.google.com ([209.85.220.217]:58644 "EHLO
-	mail-fx0-f217.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752493AbZIIVFv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 9 Sep 2009 17:05:51 -0400
-In-Reply-To: <20090908160658.GA4739@kroah.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: Text/Plain;
+  charset="iso-8859-2"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <e9c3a7c20909081825i1578a522w5d7f4e5d678b5d74@mail.gmail.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org, gregkh@suse.de, pavel@ucw.cz, hskinnemoen@atmel.com, anemo@mba.ocn.ne.jp, linux-usb@vger.kernel.org, akpm@linux-foundation.org, stern@rowland.harvard.edu, ben-linux@fluff.org, linux-omap@vger.kernel.org, linux-pm@lists.linux-foundation.org, felipe.balbi@nokia.com, nicolas.ferre@atmel.com, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Sep 8, 2009 at 10:06, Greg KH<greg@kroah.com> wrote:
-> Thanks for doing this, I'll drop the patch from my tree and wait for you
-> to test and resubmit this.
+On Wednesday 09 September 2009, Dan Williams wrote:
+> 2009/7/4 Rafael J. Wysocki <rjw@sisk.pl>:
+> > On Wednesday 24 June 2009, Magnus Damm wrote:
+> >> pm: remove late/early platform driver pm callbacks V2
+> >>
+> >> [PATCH 01/07] arm: rework omap suspend_late()/resume_early()
+> >> [PATCH 02/07] dma: rework dw_dmac suspend_late()/resume_early()
+> >> [PATCH 03/07] dma: rework txx9dmac suspend_late()/resume_early()
+> >> [PATCH 04/07] i2c: rework i2c-pxa suspend_late()/resume_early()
+> >> [PATCH 05/07] i2c: rework i2c-s3c2410 suspend_late()/resume() V2
+> >> [PATCH 06/07] usb: rework musb suspend()/resume_early()
+> >> [PATCH 07/07] pm: remove platform device suspend_late()/resume_early() V2
+> >>
+> >> These patches simply remove ->suspend_late() and ->resume_early()
+> >> from struct platform_driver. Drivers are converted to dev_pm_ops
+> >> with CONFIG_SUSPEND in mind. Untested.
+> >>
+> >> All patches except [02/07] are known to compile.
+> >>
+> >> Signed-off-by: Magnus Damm <damm@igel.co.jp>
+> [..]
+> >
+> > The series is now in the linux-next branch of the suspend-2.6 tree.  I'll move
+> > it into the for-linus branch, which is not rebased, if the patches are not
+> > reported to cause any problems in the next few days.
+> >
+> 
+> Hi,
+> 
+> My linux-next test builds for drivers/dma/ caught a missed conversion
+> of the at_hdmac driver.  Please check the attached fix (compile tested
+> only) and include it in this series.
 
-No problem, Greg - see the two resubmitted patch parts I just sent
-out; and please excuse the double send (munged the addresses on the
-lists).
+Applied to suspend-2.6/linux-next, thanks.
 
--Joe
+Best,
+Rafael
