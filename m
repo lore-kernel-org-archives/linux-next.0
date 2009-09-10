@@ -1,52 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the block tree with the  tree
-Date: Thu, 10 Sep 2009 14:48:01 +1000
-Message-ID: <20090910144801.2b604ee7.sfr@canb.auug.org.au>
+Subject: linux-next: arm tree build failure
+Date: Thu, 10 Sep 2009 14:59:44 +1000
+Message-ID: <20090910145944.690c873f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__10_Sep_2009_14_59_44_+1000_qjUK=yInyJEtXQnj"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55582 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:54614 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750842AbZIJEsG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 10 Sep 2009 00:48:06 -0400
+	id S1751917AbZIJE7v (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 10 Sep 2009 00:59:51 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <jens.axboe@oracle.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ed Cashin <ecashin@coraid.com>
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, sedji gaouaou <sedji.gaouaou@atmel.com>
 
-Hi Jens,
+--Signature=_Thu__10_Sep_2009_14_59_44_+1000_qjUK=yInyJEtXQnj
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the block tree got a conflict in
-drivers/block/aoe/aoeblk.c between commit
-7135a71b19be1faf48b7148d77844d03bc0717d6 ("aoe: allocate unused
-request_queue for sysfs") from Linus' tree and commit
-5063fe01e7dc205ebca89877f8eb01d6a5b0ebd6 ("writeback: add name to
-backing_dev_info") from the block tree.
+Hi Russell,
 
-I fixed it up (see below) and can carry the fix for a while.
--- 
+The next-20090907 and later builds (arm at91cap9adk_defconfig) failed
+like this:
+
+arch/arm/mach-at91/at91cap9_devices.c:821: warning: 'struct atmel_ac97_data=
+' declared inside parameter list
+arch/arm/mach-at91/at91cap9_devices.c:821: warning: its scope is only this =
+definition or declaration, which is probably not what you want
+arch/arm/mach-at91/at91cap9_devices.c:821: error: conflicting types for 'at=
+91_add_device_ac97'
+arch/arm/mach-at91/include/mach/board.h:178: note: previous declaration of =
+'at91_add_device_ac97' was here
+arch/arm/mach-at91/board-cap9adk.c:367: error: variable 'cap9adk_ac97_data'=
+ has initializer but incomplete type
+arch/arm/mach-at91/board-cap9adk.c: In function 'cap9adk_board_init':
+arch/arm/mach-at91/board-cap9adk.c:397: warning: passing argument 1 of 'at9=
+1_add_device_ac97' from incompatible pointer type
+arch/arm/mach-at91/include/mach/board.h:178: note: expected 'struct ac97c_p=
+latform_data *' but argument is of type 'struct atmel_ac97_data *'
+
+Caused by commit d656f07a7405e788e1275d0238b67f593615f2bb ("ARM: 5640/1:
+This patch modifies the support of AC97 on the at91sam9263 ek board").
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/block/aoe/aoeblk.c
-index 1e15889,0efb8fc..0000000
---- a/drivers/block/aoe/aoeblk.c
-+++ b/drivers/block/aoe/aoeblk.c
-@@@ -264,12 -264,10 +264,13 @@@ aoeblk_gdalloc(void *vp
-  		goto err_disk;
-  	}
-  
- -	blk_queue_make_request(&d->blkq, aoeblk_make_request);
- -	d->blkq.backing_dev_info.name = "aoe";
- -	if (bdi_init(&d->blkq.backing_dev_info))
- +	d->blkq = blk_alloc_queue(GFP_KERNEL);
- +	if (!d->blkq)
-  		goto err_mempool;
- +	blk_queue_make_request(d->blkq, aoeblk_make_request);
-++	d->blkq->backing_dev_info.name = "aoe";
- +	if (bdi_init(&d->blkq->backing_dev_info))
- +		goto err_blkq;
-  	spin_lock_irqsave(&d->lock, flags);
-  	gd->major = AOE_MAJOR;
-  	gd->first_minor = d->sysminor * AOE_PARTITIONS;
+--Signature=_Thu__10_Sep_2009_14_59_44_+1000_qjUK=yInyJEtXQnj
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkqoh8EACgkQjjKRsyhoI8wvPgCfW6uUcrQQsRkHDBktkRhusikn
+yCwAn3/5hcmEpBfmk3/Qp+pNIUZ6FamI
+=uD+o
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__10_Sep_2009_14_59_44_+1000_qjUK=yInyJEtXQnj--
