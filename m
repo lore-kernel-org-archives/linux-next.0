@@ -1,53 +1,59 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH 00/07] pm: remove late/early platform driver pm callbacks V2
-Date: Thu, 10 Sep 2009 00:09:48 +0200
-Message-ID: <200909100009.48504.rjw@sisk.pl>
-References: <20090624092306.14276.127.sendpatchset@rx1.opensource.se> <200907050145.15122.rjw@sisk.pl> <e9c3a7c20909081825i1578a522w5d7f4e5d678b5d74@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: New kvm.git branch for linux-next
+Date: Thu, 10 Sep 2009 10:20:02 +1000
+Message-ID: <20090910102002.001b1fb7.sfr@canb.auug.org.au>
+References: <4AA7EC06.1070109@redhat.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-2"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <e9c3a7c20909081825i1578a522w5d7f4e5d678b5d74@mail.gmail.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org, gregkh@suse.de, pavel@ucw.cz, hskinnemoen@atmel.com, anemo@mba.ocn.ne.jp, linux-usb@vger.kernel.org, akpm@linux-foundation.org, stern@rowland.harvard.edu, ben-linux@fluff.org, linux-omap@vger.kernel.org, linux-pm@lists.linux-foundation.org, felipe.balbi@nokia.com, nicolas.ferre@atmel.com, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__10_Sep_2009_10_20_02_+1000_BFxSmUZ2MHzSaAya"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:48115 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752713AbZIJAUM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 9 Sep 2009 20:20:12 -0400
+In-Reply-To: <4AA7EC06.1070109@redhat.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Avi Kivity <avi@redhat.com>
+Cc: Marcelo Tosatti <mtosatti@redhat.com>, linux-next <linux-next@vger.kernel.org>, kvm-devel <kvm@vger.kernel.org>
 
-On Wednesday 09 September 2009, Dan Williams wrote:
-> 2009/7/4 Rafael J. Wysocki <rjw@sisk.pl>:
-> > On Wednesday 24 June 2009, Magnus Damm wrote:
-> >> pm: remove late/early platform driver pm callbacks V2
-> >>
-> >> [PATCH 01/07] arm: rework omap suspend_late()/resume_early()
-> >> [PATCH 02/07] dma: rework dw_dmac suspend_late()/resume_early()
-> >> [PATCH 03/07] dma: rework txx9dmac suspend_late()/resume_early()
-> >> [PATCH 04/07] i2c: rework i2c-pxa suspend_late()/resume_early()
-> >> [PATCH 05/07] i2c: rework i2c-s3c2410 suspend_late()/resume() V2
-> >> [PATCH 06/07] usb: rework musb suspend()/resume_early()
-> >> [PATCH 07/07] pm: remove platform device suspend_late()/resume_early() V2
-> >>
-> >> These patches simply remove ->suspend_late() and ->resume_early()
-> >> from struct platform_driver. Drivers are converted to dev_pm_ops
-> >> with CONFIG_SUSPEND in mind. Untested.
-> >>
-> >> All patches except [02/07] are known to compile.
-> >>
-> >> Signed-off-by: Magnus Damm <damm@igel.co.jp>
-> [..]
-> >
-> > The series is now in the linux-next branch of the suspend-2.6 tree.  I'll move
-> > it into the for-linus branch, which is not rebased, if the patches are not
-> > reported to cause any problems in the next few days.
-> >
-> 
-> Hi,
-> 
-> My linux-next test builds for drivers/dma/ caught a missed conversion
-> of the at_hdmac driver.  Please check the attached fix (compile tested
-> only) and include it in this series.
+--Signature=_Thu__10_Sep_2009_10_20_02_+1000_BFxSmUZ2MHzSaAya
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Applied to suspend-2.6/linux-next, thanks.
+Hi Avi,
 
-Best,
-Rafael
+On Wed, 09 Sep 2009 20:55:18 +0300 Avi Kivity <avi@redhat.com> wrote:
+>
+> Stephen, please pick up the 'linux-next' branch of kvm.git instead=20
+> 'master' as you do now.  This will better reflect what is actually going=
+=20
+> to -next, will cause fewer merge errors, and will improve -next=20
+> bisectability.
+>=20
+> (this is actually a symbolic ref to kvm-updates/2.6.32 which will be=20
+> updated when kvm-updates/2.6.33 is created)
+
+That sounds great.  I have changed over starting from today.
+
+Thanks.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__10_Sep_2009_10_20_02_+1000_BFxSmUZ2MHzSaAya
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkqoRjIACgkQjjKRsyhoI8zLHgCghxx0pL3W/YTpDVm+nDfkooHB
+5rUAniIlfv/I8dpaAztRCRInCv9Z+Y91
+=TsS6
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__10_Sep_2009_10_20_02_+1000_BFxSmUZ2MHzSaAya--
