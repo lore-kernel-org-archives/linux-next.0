@@ -1,59 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: New kvm.git branch for linux-next
-Date: Thu, 10 Sep 2009 10:20:02 +1000
-Message-ID: <20090910102002.001b1fb7.sfr@canb.auug.org.au>
-References: <4AA7EC06.1070109@redhat.com>
+Subject: linux-next: manual merge of the block tree with the  tree
+Date: Thu, 10 Sep 2009 14:48:01 +1000
+Message-ID: <20090910144801.2b604ee7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__10_Sep_2009_10_20_02_+1000_BFxSmUZ2MHzSaAya"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48115 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:55582 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752713AbZIJAUM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 9 Sep 2009 20:20:12 -0400
-In-Reply-To: <4AA7EC06.1070109@redhat.com>
+	id S1750842AbZIJEsG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 10 Sep 2009 00:48:06 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Avi Kivity <avi@redhat.com>
-Cc: Marcelo Tosatti <mtosatti@redhat.com>, linux-next <linux-next@vger.kernel.org>, kvm-devel <kvm@vger.kernel.org>
+To: Jens Axboe <jens.axboe@oracle.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ed Cashin <ecashin@coraid.com>
 
---Signature=_Thu__10_Sep_2009_10_20_02_+1000_BFxSmUZ2MHzSaAya
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Jens,
 
-Hi Avi,
+Today's linux-next merge of the block tree got a conflict in
+drivers/block/aoe/aoeblk.c between commit
+7135a71b19be1faf48b7148d77844d03bc0717d6 ("aoe: allocate unused
+request_queue for sysfs") from Linus' tree and commit
+5063fe01e7dc205ebca89877f8eb01d6a5b0ebd6 ("writeback: add name to
+backing_dev_info") from the block tree.
 
-On Wed, 09 Sep 2009 20:55:18 +0300 Avi Kivity <avi@redhat.com> wrote:
->
-> Stephen, please pick up the 'linux-next' branch of kvm.git instead=20
-> 'master' as you do now.  This will better reflect what is actually going=
-=20
-> to -next, will cause fewer merge errors, and will improve -next=20
-> bisectability.
->=20
-> (this is actually a symbolic ref to kvm-updates/2.6.32 which will be=20
-> updated when kvm-updates/2.6.33 is created)
-
-That sounds great.  I have changed over starting from today.
-
-Thanks.
-
---=20
+I fixed it up (see below) and can carry the fix for a while.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__10_Sep_2009_10_20_02_+1000_BFxSmUZ2MHzSaAya
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkqoRjIACgkQjjKRsyhoI8zLHgCghxx0pL3W/YTpDVm+nDfkooHB
-5rUAniIlfv/I8dpaAztRCRInCv9Z+Y91
-=TsS6
------END PGP SIGNATURE-----
-
---Signature=_Thu__10_Sep_2009_10_20_02_+1000_BFxSmUZ2MHzSaAya--
+diff --cc drivers/block/aoe/aoeblk.c
+index 1e15889,0efb8fc..0000000
+--- a/drivers/block/aoe/aoeblk.c
++++ b/drivers/block/aoe/aoeblk.c
+@@@ -264,12 -264,10 +264,13 @@@ aoeblk_gdalloc(void *vp
+  		goto err_disk;
+  	}
+  
+ -	blk_queue_make_request(&d->blkq, aoeblk_make_request);
+ -	d->blkq.backing_dev_info.name = "aoe";
+ -	if (bdi_init(&d->blkq.backing_dev_info))
+ +	d->blkq = blk_alloc_queue(GFP_KERNEL);
+ +	if (!d->blkq)
+  		goto err_mempool;
+ +	blk_queue_make_request(d->blkq, aoeblk_make_request);
+++	d->blkq->backing_dev_info.name = "aoe";
+ +	if (bdi_init(&d->blkq->backing_dev_info))
+ +		goto err_blkq;
+  	spin_lock_irqsave(&d->lock, flags);
+  	gd->major = AOE_MAJOR;
+  	gd->first_minor = d->sysminor * AOE_PARTITIONS;
