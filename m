@@ -1,42 +1,32 @@
-From: Greg Ungerer <gerg@snapgear.com>
-Subject: Re: linux-next: m86k/m68knommu tree build failure
-Date: Thu, 10 Sep 2009 15:37:57 +1000
-Message-ID: <4AA890B5.8000207@snapgear.com>
-References: <20090910151137.fb71c103.sfr@canb.auug.org.au>
+From: Jens Axboe <jens.axboe@oracle.com>
+Subject: Re: linux-next: manual merge of the block tree with the  tree
+Date: Thu, 10 Sep 2009 09:24:07 +0200
+Message-ID: <20090910072407.GO18599@kernel.dk>
+References: <20090910144801.2b604ee7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754300AbZIJFia@vger.kernel.org>
-In-Reply-To: <20090910151137.fb71c103.sfr@canb.auug.org.au>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755195AbZIJHYG@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20090910144801.2b604ee7.sfr@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ed Cashin <ecashin@coraid.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
-
-Stephen Rothwell wrote:
-> Today's linux-next build (m68k defconfig) failed like this:
+On Thu, Sep 10 2009, Stephen Rothwell wrote:
+> Hi Jens,
 > 
-> kernel/built-in.o: In function `ptrace_resume':
-> ptrace.c:(.text+0xc5d6): undefined reference to `user_disable_single_step'
-> ptrace.c:(.text+0xc5fe): undefined reference to `user_enable_single_step'
-> ptrace.c:(.text+0xc620): undefined reference to `user_disable_single_step'
+> Today's linux-next merge of the block tree got a conflict in
+> drivers/block/aoe/aoeblk.c between commit
+> 7135a71b19be1faf48b7148d77844d03bc0717d6 ("aoe: allocate unused
+> request_queue for sysfs") from Linus' tree and commit
+> 5063fe01e7dc205ebca89877f8eb01d6a5b0ebd6 ("writeback: add name to
+> backing_dev_info") from the block tree.
 > 
-> Caused by commit 5db612ef70d24be12f6dbf5d06b23bcd6bc2fc05 ("m68knommu:
-> define arch_has_single_step() and friends").  This commit added
-> definitions of these functions for m68knommu, but added declarations (and
-> arch_has_single_step()) in a common header file.
+> I fixed it up (see below) and can carry the fix for a while.
 
-Ah, yes, thanks. I'll fix that. I don't regularly build for m68k,
-so I missed that in my test builds.
+Thanks, I'll update my for-2.6.32 branch today and let that propagate
+into for-next to resolve this.
 
-Regards
-Greg
-
-
-------------------------------------------------------------------------
-Greg Ungerer  --  Principal Engineer        EMAIL:     gerg@snapgear.com
-SnapGear Group, McAfee                      PHONE:       +61 7 3435 2888
-825 Stanley St,                             FAX:         +61 7 3891 3630
-Woolloongabba, QLD, 4102, Australia         WEB: http://www.SnapGear.com
+-- 
+Jens Axboe
