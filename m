@@ -1,53 +1,42 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: m86k/m68knommu tree build failure
-Date: Thu, 10 Sep 2009 15:11:37 +1000
-Message-ID: <20090910151137.fb71c103.sfr@canb.auug.org.au>
+From: Greg Ungerer <gerg@snapgear.com>
+Subject: Re: linux-next: m86k/m68knommu tree build failure
+Date: Thu, 10 Sep 2009 15:37:57 +1000
+Message-ID: <4AA890B5.8000207@snapgear.com>
+References: <20090910151137.fb71c103.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__10_Sep_2009_15_11_37_+1000_UD/Nq27odJPT.AJ3"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37941 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751001AbZIJFLl (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 10 Sep 2009 01:11:41 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Greg Ungerer <gerg@snapgear.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754300AbZIJFia@vger.kernel.org>
+In-Reply-To: <20090910151137.fb71c103.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__10_Sep_2009_15_11_37_+1000_UD/Nq27odJPT.AJ3
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi Geert, Greg,
+Stephen Rothwell wrote:
+> Today's linux-next build (m68k defconfig) failed like this:
+> 
+> kernel/built-in.o: In function `ptrace_resume':
+> ptrace.c:(.text+0xc5d6): undefined reference to `user_disable_single_step'
+> ptrace.c:(.text+0xc5fe): undefined reference to `user_enable_single_step'
+> ptrace.c:(.text+0xc620): undefined reference to `user_disable_single_step'
+> 
+> Caused by commit 5db612ef70d24be12f6dbf5d06b23bcd6bc2fc05 ("m68knommu:
+> define arch_has_single_step() and friends").  This commit added
+> definitions of these functions for m68knommu, but added declarations (and
+> arch_has_single_step()) in a common header file.
 
-Today's linux-next build (m68k defconfig) failed like this:
+Ah, yes, thanks. I'll fix that. I don't regularly build for m68k,
+so I missed that in my test builds.
 
-kernel/built-in.o: In function `ptrace_resume':
-ptrace.c:(.text+0xc5d6): undefined reference to `user_disable_single_step'
-ptrace.c:(.text+0xc5fe): undefined reference to `user_enable_single_step'
-ptrace.c:(.text+0xc620): undefined reference to `user_disable_single_step'
+Regards
+Greg
 
-Caused by commit 5db612ef70d24be12f6dbf5d06b23bcd6bc2fc05 ("m68knommu:
-define arch_has_single_step() and friends").  This commit added
-definitions of these functions for m68knommu, but added declarations (and
-arch_has_single_step()) in a common header file.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__10_Sep_2009_15_11_37_+1000_UD/Nq27odJPT.AJ3
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkqoiokACgkQjjKRsyhoI8xFIgCeOmle5rZUKlgp9auBhFQCZ1TJ
-0ngAoK5GsvSFt0L6NkiG58c0NYEOHWGz
-=YOqN
------END PGP SIGNATURE-----
-
---Signature=_Thu__10_Sep_2009_15_11_37_+1000_UD/Nq27odJPT.AJ3--
+------------------------------------------------------------------------
+Greg Ungerer  --  Principal Engineer        EMAIL:     gerg@snapgear.com
+SnapGear Group, McAfee                      PHONE:       +61 7 3435 2888
+825 Stanley St,                             FAX:         +61 7 3891 3630
+Woolloongabba, QLD, 4102, Australia         WEB: http://www.SnapGear.com
