@@ -1,63 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: arm tree build failure
-Date: Thu, 10 Sep 2009 14:59:44 +1000
-Message-ID: <20090910145944.690c873f.sfr@canb.auug.org.au>
+Subject: linux-next: m86k/m68knommu tree build failure
+Date: Thu, 10 Sep 2009 15:11:37 +1000
+Message-ID: <20090910151137.fb71c103.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__10_Sep_2009_14_59_44_+1000_qjUK=yInyJEtXQnj"
+ boundary="Signature=_Thu__10_Sep_2009_15_11_37_+1000_UD/Nq27odJPT.AJ3"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54614 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37941 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751917AbZIJE7v (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 10 Sep 2009 00:59:51 -0400
+	id S1751001AbZIJFLl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 10 Sep 2009 01:11:41 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, sedji gaouaou <sedji.gaouaou@atmel.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Greg Ungerer <gerg@snapgear.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Thu__10_Sep_2009_14_59_44_+1000_qjUK=yInyJEtXQnj
+--Signature=_Thu__10_Sep_2009_15_11_37_+1000_UD/Nq27odJPT.AJ3
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Russell,
+Hi Geert, Greg,
 
-The next-20090907 and later builds (arm at91cap9adk_defconfig) failed
-like this:
+Today's linux-next build (m68k defconfig) failed like this:
 
-arch/arm/mach-at91/at91cap9_devices.c:821: warning: 'struct atmel_ac97_data=
-' declared inside parameter list
-arch/arm/mach-at91/at91cap9_devices.c:821: warning: its scope is only this =
-definition or declaration, which is probably not what you want
-arch/arm/mach-at91/at91cap9_devices.c:821: error: conflicting types for 'at=
-91_add_device_ac97'
-arch/arm/mach-at91/include/mach/board.h:178: note: previous declaration of =
-'at91_add_device_ac97' was here
-arch/arm/mach-at91/board-cap9adk.c:367: error: variable 'cap9adk_ac97_data'=
- has initializer but incomplete type
-arch/arm/mach-at91/board-cap9adk.c: In function 'cap9adk_board_init':
-arch/arm/mach-at91/board-cap9adk.c:397: warning: passing argument 1 of 'at9=
-1_add_device_ac97' from incompatible pointer type
-arch/arm/mach-at91/include/mach/board.h:178: note: expected 'struct ac97c_p=
-latform_data *' but argument is of type 'struct atmel_ac97_data *'
+kernel/built-in.o: In function `ptrace_resume':
+ptrace.c:(.text+0xc5d6): undefined reference to `user_disable_single_step'
+ptrace.c:(.text+0xc5fe): undefined reference to `user_enable_single_step'
+ptrace.c:(.text+0xc620): undefined reference to `user_disable_single_step'
 
-Caused by commit d656f07a7405e788e1275d0238b67f593615f2bb ("ARM: 5640/1:
-This patch modifies the support of AC97 on the at91sam9263 ek board").
+Caused by commit 5db612ef70d24be12f6dbf5d06b23bcd6bc2fc05 ("m68knommu:
+define arch_has_single_step() and friends").  This commit added
+definitions of these functions for m68knommu, but added declarations (and
+arch_has_single_step()) in a common header file.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__10_Sep_2009_14_59_44_+1000_qjUK=yInyJEtXQnj
+--Signature=_Thu__10_Sep_2009_15_11_37_+1000_UD/Nq27odJPT.AJ3
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkqoh8EACgkQjjKRsyhoI8wvPgCfW6uUcrQQsRkHDBktkRhusikn
-yCwAn3/5hcmEpBfmk3/Qp+pNIUZ6FamI
-=uD+o
+iEYEARECAAYFAkqoiokACgkQjjKRsyhoI8xFIgCeOmle5rZUKlgp9auBhFQCZ1TJ
+0ngAoK5GsvSFt0L6NkiG58c0NYEOHWGz
+=YOqN
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__10_Sep_2009_14_59_44_+1000_qjUK=yInyJEtXQnj--
+--Signature=_Thu__10_Sep_2009_15_11_37_+1000_UD/Nq27odJPT.AJ3--
