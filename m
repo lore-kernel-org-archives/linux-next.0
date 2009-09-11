@@ -1,26 +1,40 @@
 From: Joe Perches <joe@perches.com>
-Subject: [PATCH 0/3] kernel.h: move logging functions to separate file
-Date: Thu, 10 Sep 2009 20:29:39 -0700
-Message-ID: <cover.1252639195.git.joe@perches.com>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.perches.com ([173.55.12.10]:1087 "EHLO mail.perches.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751817AbZIKD3k (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 10 Sep 2009 23:29:40 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Subject: [PATCH 2/3] include/linux/logging.h: Reduce data usage of printk_once
+Date: Thu, 10 Sep 2009 20:29:41 -0700
+Message-ID: <0657138fc813c32c20a38949b5646f4c61790cad.1252639196.git.joe@perches.com>
+References: <cover.1252639195.git.joe@perches.com>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753943AbZIKD3p@vger.kernel.org>
+In-Reply-To: <cover.1252639195.git.joe@perches.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 Cc: Ingo Molnar <mingo@elte.hu>, Greg Kroah-Hartman <gregkh@suse.de>, Andrew Morton <akpm@linux-foundation.org>, Steven Rostedt <rostedt@goodmis.org>, Peter Zijlstra <a.p.zijlstra@chello.nl>
+List-Id: linux-next.vger.kernel.org
 
-kernel.h has gotten cluttered.
-Unclutter it and make it kernel style compatible.
+Use bool for int
+Don't initialize __printk_once, invert test
 
-Joe Perches (3):
-  include/linux/logging.h: Separate logging functions out of kernel.h
-  include/linux/logging.h: Reduce data usage of printk_once
-  include/linux/kernel.h: neaten and group functions and definitions
+Signed-off-by: Joe Perches <joe@perches.com>
+---
+ include/linux/logging.h |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
 
- include/linux/kernel.h  |  754 ++++++++++++++++-------------------------------
- include/linux/logging.h |  313 ++++++++++++++++++++
- 2 files changed, 573 insertions(+), 494 deletions(-)
- create mode 100644 include/linux/logging.h
+diff --git a/include/linux/logging.h b/include/linux/logging.h
+index 361d5ed..d76ccfa 100644
+--- a/include/linux/logging.h
++++ b/include/linux/logging.h
+@@ -91,10 +91,10 @@ extern bool printk_timed_ratelimit(unsigned long *caller_jiffies,
+  */
+ #define printk_once(fmt, ...) \
+ ({						\
+-	static int __print_once = 1;		\
++	static bool __print_once;		\
+ 						\
+-	if (__print_once) {			\
+-		__print_once = 0;		\
++	if (!__print_once) {			\
++		__print_once = true;		\
+ 		printk(fmt, ##__VA_ARGS__);	\
+ 	}					\
+ })
+-- 
+1.6.3.1.10.g659a0.dirty
