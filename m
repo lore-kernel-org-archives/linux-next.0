@@ -1,270 +1,75 @@
-From: Jaswinder Singh Rajput <jaswinder@kernel.org>
-Subject: Re: Warning from ring buffer code (Was: Re: linux-next: tip tree
- build warning)
-Date: Sat, 12 Sep 2009 16:42:37 +0530
-Message-ID: <1252753957.12217.10.camel@ht.satnam>
-References: <20090804161640.70817ee6.sfr@canb.auug.org.au>
-	 <1249403089.4634.139.camel@localhost.localdomain>
-	 <20090912165300.9d257283.sfr@canb.auug.org.au>
-	 <20090912073906.GA3972@elte.hu>
+From: James Bottomley <James.Bottomley@suse.de>
+Subject: Re: [PATCHv2] qla2xxx: Correct compilation issues when
+ CONFIG_MOUDLES=n.
+Date: Sat, 12 Sep 2009 09:30:07 -0500
+Message-ID: <1252765807.4238.74.camel@mulgrave.site>
+References: <20090907210206.7830ba68.sfr@canb.auug.org.au>
+	 <20090907102747.ac6b98ff.randy.dunlap@oracle.com>
+	 <20090908182541.GB44157@plap4-2.local> <20090911175341.GH710@plap4-2.local>
+	 <1252708951.13282.151.camel@mulgrave.site>
+	 <20090912000742.GB12098@plap4-2.local>
+	 <20090912001752.GC12098@plap4-2.local>
+	 <20090912003808.GD12098@plap4-2.local> <20090912005446.GA11691@kroah.com>
+	 <20090912025623.GA14824@plap4-2.local>  <20090912043333.GA12349@kroah.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hera.kernel.org ([140.211.167.34]:39914 "EHLO hera.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753543AbZILLNM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 12 Sep 2009 07:13:12 -0400
-In-Reply-To: <20090912073906.GA3972@elte.hu>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Steven Rostedt <srostedt@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754483AbZILOaQ@vger.kernel.org>
+In-Reply-To: <20090912043333.GA12349@kroah.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: Andrew Vasquez <andrew.vasquez@qlogic.com>, Linux SCSI Mailing List <linux-scsi@vger.kernel.org>, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Giridhar Malavali <giridhar.malavali@qlogic.com>, Ravi Anand <ravi.anand@qlogic.com>, Lalit Chandivade <lalit.chandivade@qlogic.com>
+List-Id: linux-next.vger.kernel.org
 
-On Sat, 2009-09-12 at 09:39 +0200, Ingo Molnar wrote:
-> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
-> > Hi Steve,
+On Fri, 2009-09-11 at 21:33 -0700, Greg KH wrote:
+> On Fri, Sep 11, 2009 at 07:56:23PM -0700, Andrew Vasquez wrote:
+> > On Fri, 11 Sep 2009, Greg KH wrote:
 > > 
-> > On Tue, 04 Aug 2009 12:24:49 -0400 Steven Rostedt <srostedt@redhat.com> wrote:
-> > >
-> > > On Tue, 2009-08-04 at 16:16 +1000, Stephen Rothwell wrote:
+> > > On Fri, Sep 11, 2009 at 05:38:08PM -0700, Andrew Vasquez wrote:
+> > > > Randy Dunlap noted:
 > > > > 
-> > > > Today's linux-next build (powerpc ppc64_defconfig) produced these warnings:
+> > > >   when CONFIG_MODULES=n:
 > > > > 
-> > > > kernel/trace/ring_buffer.c: In function 'rb_head_page_set':
-> > > > kernel/trace/ring_buffer.c:704: warning: initialization makes pointer from integer without a cast
-> > > > kernel/trace/ring_buffer.c:704: warning: initialization makes pointer from integer without a cast
-> > > > kernel/trace/ring_buffer.c: In function 'rb_head_page_replace':
-> > > > kernel/trace/ring_buffer.c:797: warning: initialization makes integer from pointer without a cast
+> > > > 	drivers/scsi/qla2xxx/qla_os.c:2685: error: dereferencing pointer to incomplete type
 > > > > 
-> > > > Introduced by commit 77ae365eca895061c8bf2b2e3ae1d9ea62869739
-> > > > ("ring-buffer: make lockless").
+> > > >   in
+> > > > 
+> > > > 	kobject_uevent_env(&(&vha->hw->pdev->driver->driver)->owner->mkobj.kobj,
+> > > > 		KOBJ_CHANGE, envp);
+> > > > 
+> > > > Trigger kobject event on the 'struct device' hanging off the pci_dev.
 > > > 
-> > > Thanks, I'll take a look at it.
+> > > Um, why?  What are you trying to do here?  kobject change should not be
+> > > for a device, or a "normal" kobject.
+> > > 
+> > > What do you expect userspace to do with this?  Where have you documented
+> > > it?
 > > 
-> > Now that this is in Linus' tree, can we have a fix for the waning, 
-> > please?
+> > The purpose was described here:
+> > 
+> > 	http://article.gmane.org/gmane.linux.scsi/54155
+> > 
+> > Basically we'd like to instruct user-space to retrieve a blob of data
+> > automatically.
 > 
-> The first warning got fixed 1.5 months ago - the second one at line 
-> 797 is still there but harmless - you can ignore it for now, it will 
-> be fixed.
+> Hm, like a firmware object perhaps?
 > 
+> > Original implementation used the kboject hanging off
+> > the module which does not exist when CONFIG_MODULES=n.  It was
+> > suggested that perhaps an alternative would be to use 'struct device'
+> > kobj.  Any tips on how to trigger such a driver-specific event,
+> > perhaps a dedicated kobject exported by the driver itself???
+> 
+> Why not use the firmware interface for it, that is what it is designed
+> for, and you will not have to craft any new udev rules.
 
-Here are some more trace related warnings in current linus (as well as
--tip) tree :
+The data is going the wrong way to use the current firmware interface,
+which is designed to load data from userspace into the kernel.  For this
+interface, we want the data to go the other way (i.e. the kernel has a
+blob of dump data it would like userspace to save if it can).
 
-  CHECK   arch/x86/kernel/ptrace.c
-include/trace/events/syscalls.h:18:1: warning: symbol 'ftrace_raw_output_sys_enter' was not declared. Should it be static?
-include/trace/events/syscalls.h:42:1: warning: symbol 'ftrace_raw_output_sys_exit' was not declared. Should it be static?
-include/trace/events/syscalls.h:18:1: warning: symbol 'ftrace_define_fields_sys_enter' was not declared. Should it be static?
-include/trace/events/syscalls.h:42:1: warning: symbol 'ftrace_define_fields_sys_exit' was not declared. Should it be static?
-include/trace/events/syscalls.h:18:1: error: bad constant expression
-include/trace/events/syscalls.h:42:1: error: bad constant expression
+I'd be amenable to updating the firmware interface to do this, but it
+looks like adding a completely new codepath, which it's not clear even
+belongs there.
 
-  CHECK   kernel/sched.c
-include/trace/events/sched.h:152:1: warning: symbol 'flags' shadows an earlier one
-include/trace/events/sched.h:152:1: originally declared here
-include/trace/events/sched.h:13:1: warning: symbol 'ftrace_raw_output_sched_kthread_stop' was not declared. Should it be static?
-include/trace/events/sched.h:35:1: warning: symbol 'ftrace_raw_output_sched_kthread_stop_ret' was not declared. Should it be static?
-include/trace/events/sched.h:58:1: warning: symbol 'ftrace_raw_output_sched_wait_task' was not declared. Should it be static?
-include/trace/events/sched.h:86:1: warning: symbol 'ftrace_raw_output_sched_wakeup' was not declared. Should it be static?
-include/trace/events/sched.h:119:1: warning: symbol 'ftrace_raw_output_sched_wakeup_new' was not declared. Should it be static?
-include/trace/events/sched.h:152:1: warning: symbol 'ftrace_raw_output_sched_switch' was not declared. Should it be static?
-include/trace/events/sched.h:192:1: warning: symbol 'ftrace_raw_output_sched_migrate_task' was not declared. Should it be static?
-include/trace/events/sched.h:222:1: warning: symbol 'ftrace_raw_output_sched_process_free' was not declared. Should it be static?
-include/trace/events/sched.h:247:1: warning: symbol 'ftrace_raw_output_sched_process_exit' was not declared. Should it be static?
-include/trace/events/sched.h:272:1: warning: symbol 'ftrace_raw_output_sched_process_wait' was not declared. Should it be static?
-include/trace/events/sched.h:297:1: warning: symbol 'ftrace_raw_output_sched_process_fork' was not declared. Should it be static?
-include/trace/events/sched.h:325:1: warning: symbol 'ftrace_raw_output_sched_signal_send' was not declared. Should it be static?
-include/trace/events/sched.h:356:1: warning: symbol 'ftrace_raw_output_sched_stat_wait' was not declared. Should it be static?
-include/trace/events/sched.h:386:1: warning: symbol 'ftrace_raw_output_sched_stat_sleep' was not declared. Should it be static?
-include/trace/events/sched.h:416:1: warning: symbol 'ftrace_raw_output_sched_stat_iowait' was not declared. Should it be static?
-include/trace/events/sched.h:13:1: warning: symbol 'ftrace_define_fields_sched_kthread_stop' was not declared. Should it be static?
-include/trace/events/sched.h:35:1: warning: symbol 'ftrace_define_fields_sched_kthread_stop_ret' was not declared. Should it be static?
-include/trace/events/sched.h:58:1: warning: symbol 'ftrace_define_fields_sched_wait_task' was not declared. Should it be static?
-include/trace/events/sched.h:86:1: warning: symbol 'ftrace_define_fields_sched_wakeup' was not declared. Should it be static?
-include/trace/events/sched.h:119:1: warning: symbol 'ftrace_define_fields_sched_wakeup_new' was not declared. Should it be static?
-include/trace/events/sched.h:152:1: warning: symbol 'ftrace_define_fields_sched_switch' was not declared. Should it be static?
-include/trace/events/sched.h:192:1: warning: symbol 'ftrace_define_fields_sched_migrate_task' was not declared. Should it be static?
-include/trace/events/sched.h:222:1: warning: symbol 'ftrace_define_fields_sched_process_free' was not declared. Should it be static?
-include/trace/events/sched.h:247:1: warning: symbol 'ftrace_define_fields_sched_process_exit' was not declared. Should it be static?
-include/trace/events/sched.h:272:1: warning: symbol 'ftrace_define_fields_sched_process_wait' was not declared. Should it be static?
-include/trace/events/sched.h:297:1: warning: symbol 'ftrace_define_fields_sched_process_fork' was not declared. Should it be static?
-include/trace/events/sched.h:325:1: warning: symbol 'ftrace_define_fields_sched_signal_send' was not declared. Should it be static?
-include/trace/events/sched.h:356:1: warning: symbol 'ftrace_define_fields_sched_stat_wait' was not declared. Should it be static?
-include/trace/events/sched.h:386:1: warning: symbol 'ftrace_define_fields_sched_stat_sleep' was not declared. Should it be static?
-include/trace/events/sched.h:416:1: warning: symbol 'ftrace_define_fields_sched_stat_iowait' was not declared. Should it be static?
-include/trace/events/sched.h:13:1: error: bad constant expression
-include/trace/events/sched.h:35:1: error: bad constant expression
-include/trace/events/sched.h:58:1: error: bad constant expression
-include/trace/events/sched.h:86:1: error: bad constant expression
-include/trace/events/sched.h:119:1: error: bad constant expression
-include/trace/events/sched.h:152:1: error: bad constant expression
-include/trace/events/sched.h:192:1: error: bad constant expression
-include/trace/events/sched.h:222:1: error: bad constant expression
-include/trace/events/sched.h:247:1: error: bad constant expression
-include/trace/events/sched.h:272:1: error: bad constant expression
-include/trace/events/sched.h:297:1: error: bad constant expression
-include/trace/events/sched.h:325:1: error: bad constant expression
-include/trace/events/sched.h:356:1: error: bad constant expression
-include/trace/events/sched.h:386:1: error: bad constant expression
-include/trace/events/sched.h:416:1: error: bad constant expression
-
-  CHECK   kernel/softirq.c
-include/trace/events/irq.h:34:1: warning: symbol 'ftrace_raw_output_irq_handler_entry' was not declared. Should it be static?
-include/trace/events/irq.h:64:1: warning: symbol 'ftrace_raw_output_irq_handler_exit' was not declared. Should it be static?
-include/trace/events/irq.h:95:1: warning: symbol 'ftrace_raw_output_softirq_entry' was not declared. Should it be static?
-include/trace/events/irq.h:124:1: warning: symbol 'ftrace_raw_output_softirq_exit' was not declared. Should it be static?
-include/trace/events/irq.h:34:1: warning: symbol 'ftrace_define_fields_irq_handler_entry' was not declared. Should it be static?
-include/trace/events/irq.h:64:1: warning: symbol 'ftrace_define_fields_irq_handler_exit' was not declared. Should it be static?
-include/trace/events/irq.h:95:1: warning: symbol 'ftrace_define_fields_softirq_entry' was not declared. Should it be static?
-include/trace/events/irq.h:124:1: warning: symbol 'ftrace_define_fields_softirq_exit' was not declared. Should it be static?
-include/trace/events/irq.h:34:1: error: bad constant expression
-include/trace/events/irq.h:64:1: error: bad constant expression
-include/trace/events/irq.h:95:1: error: bad constant expression
-include/trace/events/irq.h:124:1: error: bad constant expression
-
-  CHECK   kernel/ptrace.c
-kernel/ptrace.c:532:9: warning: cast adds address space to expression (<asn:1>)
-kernel/ptrace.c:532:9: warning: cast adds address space to expression (<asn:1>)
-kernel/ptrace.c:532:9: warning: cast adds address space to expression (<asn:1>)
-kernel/ptrace.c:532:9: warning: cast adds address space to expression (<asn:1>)
-kernel/ptrace.c:532:9: warning: cast adds address space to expression (<asn:1>)
-kernel/ptrace.c:532:9: warning: cast adds address space to expression (<asn:1>)
-kernel/ptrace.c:532:9: warning: cast adds address space to expression (<asn:1>)
-kernel/ptrace.c:532:9: warning: cast adds address space to expression (<asn:1>)
-kernel/ptrace.c:532:9: warning: cast adds address space to expression (<asn:1>)
-kernel/ptrace.c:532:9: warning: cast adds address space to expression (<asn:1>)
-kernel/ptrace.c:532:9: warning: cast adds address space to expression (<asn:1>)
-kernel/ptrace.c:532:9: warning: cast adds address space to expression (<asn:1>)
-kernel/ptrace.c:532:9: warning: cast adds address space to expression (<asn:1>)
-kernel/ptrace.c:538:32: warning: cast adds address space to expression (<asn:1>)
-kernel/ptrace.c:543:33: warning: cast adds address space to expression (<asn:1>)
-kernel/ptrace.c:653:9: warning: cast adds address space to expression (<asn:1>)
-kernel/ptrace.c:653:9: warning: cast adds address space to expression (<asn:1>)
-kernel/ptrace.c:653:9: warning: cast adds address space to expression (<asn:1>)
-kernel/ptrace.c:653:9: warning: cast adds address space to expression (<asn:1>)
-kernel/ptrace.c:653:9: warning: cast adds address space to expression (<asn:1>)
-kernel/ptrace.c:653:9: warning: cast adds address space to expression (<asn:1>)
-kernel/ptrace.c:653:9: warning: cast adds address space to expression (<asn:1>)
-kernel/ptrace.c:653:9: warning: cast adds address space to expression (<asn:1>)
-kernel/ptrace.c:653:9: warning: cast adds address space to expression (<asn:1>)
-kernel/ptrace.c:653:9: warning: cast adds address space to expression (<asn:1>)
-kernel/ptrace.c:653:9: warning: cast adds address space to expression (<asn:1>)
-kernel/ptrace.c:653:9: warning: cast adds address space to expression (<asn:1>)
-kernel/ptrace.c:653:9: warning: cast adds address space to expression (<asn:1>)
-include/linux/sched.h:2192:2: warning: context problem in 'ptrace_getsiginfo': '_spin_unlock_irqrestore' expected different context
-include/linux/sched.h:2192:2:    context 'lock': wanted >= 1, got 0
-include/linux/sched.h:2192:2: warning: context problem in 'ptrace_setsiginfo': '_spin_unlock_irqrestore' expected different context
-include/linux/sched.h:2192:2:    context 'lock': wanted >= 1, got 0
-
-  CHECK   kernel/workqueue.c
-include/trace/events/workqueue.h:11:1: warning: symbol 'ftrace_raw_output_workqueue_insertion' was not declared. Should it be static?
-include/trace/events/workqueue.h:33:1: warning: symbol 'ftrace_raw_output_workqueue_execution' was not declared. Should it be static?
-include/trace/events/workqueue.h:56:1: warning: symbol 'ftrace_raw_output_workqueue_creation' was not declared. Should it be static?
-include/trace/events/workqueue.h:78:1: warning: symbol 'ftrace_raw_output_workqueue_destruction' was not declared. Should it be static?
-include/trace/events/workqueue.h:11:1: error: incompatible types for operation (<)
-include/trace/events/workqueue.h:11:1:    left side has type void ( *[usertype] <noident> )( ... )
-include/trace/events/workqueue.h:11:1:    right side has type int
-include/trace/events/workqueue.h:33:1: error: incompatible types for operation (<)
-include/trace/events/workqueue.h:33:1:    left side has type void ( *[usertype] <noident> )( ... )
-include/trace/events/workqueue.h:33:1:    right side has type int
-include/trace/events/workqueue.h:11:1: error: bad constant expression
-include/trace/events/workqueue.h:33:1: error: bad constant expression
-include/trace/events/workqueue.h:56:1: error: bad constant expression
-include/trace/events/workqueue.h:78:1: error: bad constant expression
-
-  CHECK   kernel/trace/ring_buffer.c
-kernel/trace/ring_buffer.c:1752:2: warning: do-while statement is not a compound statement
-kernel/trace/ring_buffer.c:1917:2: warning: do-while statement is not a compound statement
-kernel/trace/ring_buffer.c:1752:2: error: bad constant expression
-kernel/trace/ring_buffer.c:1752:2: error: cannot size expression
-kernel/trace/ring_buffer.c:1917:2: error: bad constant expression
-kernel/trace/ring_buffer.c:1917:2: error: cannot size expression
-
-  CHECK   kernel/trace/trace.c
-kernel/trace/trace.c:3721:16: warning: symbol 'd_tracer' shadows an earlier one
-kernel/trace/trace.c:3693:22: originally declared here
-kernel/trace/trace.c:3744:16: warning: symbol 'd_percpu' shadows an earlier one
-kernel/trace/trace.c:3716:22: originally declared here
-kernel/trace/trace.c:3937:16: warning: symbol 'd_tracer' shadows an earlier one
-kernel/trace/trace.c:3693:22: originally declared here
-kernel/trace/trace.c:4051:16: warning: symbol 'd_tracer' shadows an earlier one
-kernel/trace/trace.c:3693:22: originally declared here
-kernel/trace/trace.c:2492:30: error: bad constant expression
-kernel/trace/trace.c:2642:30: error: bad constant expression
-
-  CHECK   kernel/trace/trace_events.c
-kernel/trace/trace_events.c:1190:23: warning: symbol 'trace_module_nb' was not declared. Should it be static?
-
-  CHECK   kernel/trace/trace_export.c
-kernel/trace/trace_event_types.h:63:1: warning: symbol 'event_special' was not declared. Should it be static?
-kernel/trace/trace_event_types.h:108:1: error: incompatible types for operation (<)
-kernel/trace/trace_event_types.h:108:1:    left side has type char *<noident>
-kernel/trace/trace_event_types.h:108:1:    right side has type int
-kernel/trace/trace_event_types.h:155:1: error: incompatible types for operation (<)
-kernel/trace/trace_event_types.h:155:1:    left side has type void const *<noident>
-kernel/trace/trace_event_types.h:155:1:    right side has type int
-kernel/trace/trace_event_types.h:169:1: error: incompatible types for operation (<)
-kernel/trace/trace_event_types.h:169:1:    left side has type void const *<noident>
-kernel/trace/trace_event_types.h:169:1:    right side has type int
-
-  CHECK   kernel/trace/trace_event_profile.c
-kernel/trace/trace_event_profile.c:10:5: warning: symbol 'ftrace_profile_enable' was not declared. Should it be static?
-kernel/trace/trace_event_profile.c:27:6: warning: symbol 'ftrace_profile_disable' was not declared. Should it be static?
-
-  CHECK   kernel/trace/trace_events_filter.c
-kernel/trace/trace_events_filter.c:634:44: warning: incorrect type in argument 3 (different signedness)
-kernel/trace/trace_events_filter.c:634:44:    expected long long *<noident>
-kernel/trace/trace_events_filter.c:634:44:    got unsigned long long *<noident>
-
-  CHECK   kernel/lockdep.c
-include/trace/events/lockdep.h:12:1: warning: symbol 'ftrace_raw_output_lock_acquire' was not declared. Should it be static?
-include/trace/events/lockdep.h:35:1: warning: symbol 'ftrace_raw_output_lock_release' was not declared. Should it be static?
-include/trace/events/lockdep.h:54:1: warning: symbol 'ftrace_raw_output_lock_contended' was not declared. Should it be static?
-include/trace/events/lockdep.h:71:1: warning: symbol 'ftrace_raw_output_lock_acquired' was not declared. Should it be static?
-include/trace/events/lockdep.h:12:1: warning: symbol 'ftrace_define_fields_lock_acquire' was not declared. Should it be static?
-include/trace/events/lockdep.h:35:1: warning: symbol 'ftrace_define_fields_lock_release' was not declared. Should it be static?
-include/trace/events/lockdep.h:54:1: warning: symbol 'ftrace_define_fields_lock_contended' was not declared. Should it be static?
-include/trace/events/lockdep.h:71:1: warning: symbol 'ftrace_define_fields_lock_acquired' was not declared. Should it be static?
-include/trace/events/lockdep.h:12:1: error: bad constant expression
-include/trace/events/lockdep.h:35:1: error: bad constant expression
-include/trace/events/lockdep.h:54:1: error: bad constant expression
-include/trace/events/lockdep.h:71:1: error: bad constant expression
-
-  CHECK   kernel/module.c
-include/trace/events/module.h:18:1: warning: symbol 'flags' shadows an earlier one
-include/trace/events/module.h:18:1: originally declared here
-kernel/module.c:247:20: warning: symbol 'arr' shadows an earlier one
-kernel/module.c:224:25: originally declared here
-kernel/module.c:2281:14: warning: symbol 'strtab' shadows an earlier one
-kernel/module.c:1948:38: originally declared here
-include/trace/events/module.h:98:1: error: cannot size expression
-include/trace/events/module.h:98:1: error: cannot size expression
-include/trace/events/module.h:18:1: error: bad constant expression
-include/trace/events/module.h:37:1: error: bad constant expression
-include/trace/events/module.h:54:1: error: bad constant expression
-include/trace/events/module.h:76:1: error: bad constant expression
-include/trace/events/module.h:98:1: error: bad constant expression
-
-  CHECK   kernel/tracepoint.c
-kernel/tracepoint.c:559:5: warning: symbol 'tracepoint_module_notify' was not declared. Should it be static?
-kernel/tracepoint.c:574:23: warning: symbol 'tracepoint_module_nb' was not declared. Should it be static?
-kernel/tracepoint.c:592:6: warning: symbol 'syscall_regfunc' was not declared. Should it be static?
-kernel/tracepoint.c:609:6: warning: symbol 'syscall_unregfunc' was not declared. Should it be static?
-
-And some includecheck warnings in -tip :
-
-arch/x86/kernel/dumpstack.c: linux/ftrace.h is included more than once.
-arch/x86/kernel/syscall_64.c: asm/unistd_64.h is included more than once.
-arch/x86/kernel/traps.c: asm/traps.h is included more than once.
-arch/x86/kvm/mmu.c: paging_tmpl.h is included more than once.
-arch/x86/mm/kmemcheck/shadow.c: linux/module.h is included more than once.
-arch/x86/vdso/vma.c: vextern.h is included more than once.
-
-I have send various patches to fix some of these warnings but no action taken.
-
-Thanks,
---
-JSR
+James
