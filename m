@@ -1,39 +1,21 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [build fail] rt2x00dev.c from next tree causes build fail
-Date: Sat, 12 Sep 2009 00:46:50 -0700 (PDT)
-Message-ID: <20090912.004650.21685836.davem@davemloft.net>
-References: <5a44caba0909120042x6592e261icca4b21c4184e0d3@mail.gmail.com>
+From: Ken Lewis <kennylewis@gmail.com>
+Subject: [Patch 0/1] rt2x00lib.h has wrong headers
+Date: Sat, 12 Sep 2009 09:18:00 +0100
+Message-ID: <5a44caba0909120118l56d83dacy6b739673f0317593@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=utf-8
-Content-Transfer-Encoding: base64
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <5a44caba0909120042x6592e261icca4b21c4184e0d3@mail.gmail.com>
-Sender: netdev-owner@vger.kernel.org
-To: kennylewis@gmail.com
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ew0-f206.google.com ([209.85.219.206]:62299 "EHLO
+	mail-ew0-f206.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751859AbZILIR6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 12 Sep 2009 04:17:58 -0400
+Received: by ewy2 with SMTP id 2so1691965ewy.17
+        for <linux-next@vger.kernel.org>; Sat, 12 Sep 2009 01:18:00 -0700 (PDT)
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org
 
-RnJvbTogS2VuIExld2lzIDxrZW5ueWxld2lzQGdtYWlsLmNvbT4NCkRhdGU6IFNhdCwgMTIgU2Vw
-IDIwMDkgMDg6NDI6MTcgKzAxMDANCg0KPiBJJ3ZlIGJlZW4gZ2V0dGluZyBidWlsZCBmYWlsdXJl
-cyBpbiB0aGUgbmV4dCB0cmVlIHNpbmNlIG5leHQtMjAwOTA5MDMsDQo+IGFsc28gZXhwZXJpZW5j
-ZWQgdXAgdG8gbmV4dC0yMDA5MDkxMCwgd2hpY2ggSSd2ZSBub3QgYmVlbiBhYmxlIHRvDQo+IGlu
-dmVzdGlnYXRlLCBkdWUgdG8gYSBsYWNrIG9mIHRpbWUgYW5kIGdpdC1mdS4gIHJ0MngwMGRldi5j
-IGNhdXNlcyB0aGUNCj4gZm9sbG93aW5nOg0KDQpQbGVhc2UgdXNlIG5ldGRldiBub3QgbGludXgt
-bmV0LCBmb3IgZGV2ZWxvcG1lbnQgZGlzY3Vzc2lvbg0KDQo+IA0KPiBMRCAgICAgIGRyaXZlcnMv
-bmV0L3dpcmVsZXNzL3J0MngwMC9idWlsdC1pbi5vDQo+ICBDQyBbTV0gIGRyaXZlcnMvbmV0L3dp
-cmVsZXNzL3J0MngwMC9ydDJ4MDBkZXYubw0KPiBkcml2ZXJzL25ldC93aXJlbGVzcy9ydDJ4MDAv
-cnQyeDAwZGV2LmM6IEluIGZ1bmN0aW9uIOKAmHJ0MngwMGxpYl9yeGRvbmXigJk6DQo+IGRyaXZl
-cnMvbmV0L3dpcmVsZXNzL3J0MngwMC9ydDJ4MDBkZXYuYzo0MDU6IHdhcm5pbmc6IHBhc3Npbmcg
-YXJndW1lbnQNCj4gMyBvZiDigJhydDJ4MDBjcnlwdG9fcnhfaW5zZXJ0X2l24oCZIG1ha2VzIGlu
-dGVnZXIgZnJvbSBwb2ludGVyIHdpdGhvdXQgYQ0KPiBjYXN0DQo+IGRyaXZlcnMvbmV0L3dpcmVs
-ZXNzL3J0MngwMC9ydDJ4MDBsaWIuaDozODM6IG5vdGU6IGV4cGVjdGVkIOKAmHVuc2lnbmVkDQo+
-IGludOKAmSBidXQgYXJndW1lbnQgaXMgb2YgdHlwZSDigJhzdHJ1Y3Qgcnhkb25lX2VudHJ5X2Rl
-c2MgKuKAmQ0KPiBkcml2ZXJzL25ldC93aXJlbGVzcy9ydDJ4MDAvcnQyeDAwZGV2LmM6NDA1OiBl
-cnJvcjogdG9vIGZldyBhcmd1bWVudHMNCj4gdG8gZnVuY3Rpb24g4oCYcnQyeDAwY3J5cHRvX3J4
-X2luc2VydF9pduKAmQ0KPiBtYWtlWzRdOiAqKiogW2RyaXZlcnMvbmV0L3dpcmVsZXNzL3J0Mngw
-MC9ydDJ4MDBkZXYub10gRXJyb3IgMQ0KPiBtYWtlWzNdOiAqKiogW2RyaXZlcnMvbmV0L3dpcmVs
-ZXNzL3J0MngwMF0gRXJyb3IgMg0KPiBtYWtlWzJdOiAqKiogW2RyaXZlcnMvbmV0L3dpcmVsZXNz
-XSBFcnJvciAyDQo+IG1ha2VbMV06ICoqKiBbZHJpdmVycy9uZXRdIEVycm9yIDINCj4gbWFrZTog
-KioqIFtkcml2ZXJzXSBFcnJvciAyDQo+IA0KPiBJJ3ZlIGF0dGFjaGVkIG15IC5jb25maWcgaWYg
-cmVsZXZhbnQuDQoNCkkgd29uZGVyIGlmIHRoaXMgd2FzIGNyZWF0ZWQgYnkgdGhlIGNyeXB0byBt
-ZXJnZS4NCg==
+Patch for net/drivers/wireless/rt2x00/rt2x00lib.h correct -- the
+headers don't match the function as used in rt2x00crypto.c
+
+I've had this problem since next-20090903 and it is resolved by the patch
