@@ -1,42 +1,84 @@
-From: Ken Lewis <kennylewis@gmail.com>
-Subject: [Patch 1/1] rt2x00lib.h has wrong headers
-Date: Sat, 12 Sep 2009 09:18:07 +0100
-Message-ID: <5a44caba0909120118q2f2eba89oba6fb07e3235669d@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Warning from ring buffer code (Was: Re: linux-next: tip tree
+ build warning)
+Date: Sat, 12 Sep 2009 20:46:30 +1000
+Message-ID: <20090912204630.b1e355c5.sfr@canb.auug.org.au>
+References: <20090804161640.70817ee6.sfr@canb.auug.org.au>
+	<1249403089.4634.139.camel@localhost.localdomain>
+	<20090912165300.9d257283.sfr@canb.auug.org.au>
+	<20090912073906.GA3972@elte.hu>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=0016e6d99d9f91de0604735d12ce
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sat__12_Sep_2009_20_46_30_+1000_Ww_T6._P.shjFgZs"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ew0-f206.google.com ([209.85.219.206]:62299 "EHLO
-	mail-ew0-f206.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751097AbZILISE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 12 Sep 2009 04:18:04 -0400
-Received: by mail-ew0-f206.google.com with SMTP id 2so1691965ewy.17
-        for <linux-next@vger.kernel.org>; Sat, 12 Sep 2009 01:18:07 -0700 (PDT)
+Received: from chilli.pcug.org.au ([203.10.76.44]:53161 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753538AbZILKqf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 12 Sep 2009 06:46:35 -0400
+In-Reply-To: <20090912073906.GA3972@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Steven Rostedt <srostedt@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---0016e6d99d9f91de0604735d12ce
-Content-Type: text/plain; charset=ISO-8859-1
+--Signature=_Sat__12_Sep_2009_20_46_30_+1000_Ww_T6._P.shjFgZs
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Patch for net/drivers/wireless/rt2x00/rt2x00lib.h correct -- the
-headers don't match the function as used in rt2x00crypto.c
+Hi Ingo,
 
-I've had this problem since next-20090903 and it is resolved by the patch
+On Sat, 12 Sep 2009 09:39:06 +0200 Ingo Molnar <mingo@elte.hu> wrote:
+>
+> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>=20
+> > On Tue, 04 Aug 2009 12:24:49 -0400 Steven Rostedt <srostedt@redhat.com>=
+ wrote:
+> > >
+> > > On Tue, 2009-08-04 at 16:16 +1000, Stephen Rothwell wrote:
+> > > >=20
+> > > > Today's linux-next build (powerpc ppc64_defconfig) produced these w=
+arnings:
+> > > >=20
+> > > > kernel/trace/ring_buffer.c: In function 'rb_head_page_set':
+> > > > kernel/trace/ring_buffer.c:704: warning: initialization makes point=
+er from integer without a cast
+> > > > kernel/trace/ring_buffer.c:704: warning: initialization makes point=
+er from integer without a cast
+> > > > kernel/trace/ring_buffer.c: In function 'rb_head_page_replace':
+> > > > kernel/trace/ring_buffer.c:797: warning: initialization makes integ=
+er from pointer without a cast
+> > > >=20
+> > > > Introduced by commit 77ae365eca895061c8bf2b2e3ae1d9ea62869739
+> > > > ("ring-buffer: make lockless").
+> > >=20
+> > > Thanks, I'll take a look at it.
+> >=20
+> > Now that this is in Linus' tree, can we have a fix for the waning,=20
+> > please?
+>=20
+> The first warning got fixed 1.5 months ago - the second one at line=20
+> 797 is still there but harmless - you can ignore it for now, it will=20
+> be fixed.
 
---0016e6d99d9f91de0604735d12ce
-Content-Type: text/x-diff; charset=US-ASCII; name="diff-fix-for-rt2x00lib.h.patch"
-Content-Disposition: attachment; filename="diff-fix-for-rt2x00lib.h.patch"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_fzi33wo60
+Well linux-next builds still gave both warnings yesterday, so I was just
+asking to make sure they were not forgotten.
 
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L3dpcmVsZXNzL3J0MngwMC9ydDJ4MDBsaWIuaCBiL2Ry
-aXZlcnMvbmV0L3dpcmVsZXNzL3J0MngwMC9ydDJ4MDBsaWIuaAppbmRleCA1NDYyY2I1Li41Njdm
-MDI5IDEwMDY0NAotLS0gYS9kcml2ZXJzL25ldC93aXJlbGVzcy9ydDJ4MDAvcnQyeDAwbGliLmgK
-KysrIGIvZHJpdmVycy9uZXQvd2lyZWxlc3MvcnQyeDAwL3J0MngwMGxpYi5oCkBAIC0zODAsNyAr
-MzgwLDcgQEAgc3RhdGljIGlubGluZSB2b2lkIHJ0MngwMGNyeXB0b190eF9pbnNlcnRfaXYoc3Ry
-dWN0IHNrX2J1ZmYgKnNrYiwKIHsKIH0KIAotc3RhdGljIGlubGluZSB2b2lkIHJ0MngwMGNyeXB0
-b19yeF9pbnNlcnRfaXYoc3RydWN0IHNrX2J1ZmYgKnNrYiwgYm9vbCBsMnBhZCwKK3N0YXRpYyBp
-bmxpbmUgdm9pZCBydDJ4MDBjcnlwdG9fcnhfaW5zZXJ0X2l2KHN0cnVjdCBza19idWZmICpza2Is
-CiAJCQkJCSAgICAgdW5zaWduZWQgaW50IGhlYWRlcl9sZW5ndGgsCiAJCQkJCSAgICAgc3RydWN0
-IHJ4ZG9uZV9lbnRyeV9kZXNjICpyeGRlc2MpCiB7Cg==
---0016e6d99d9f91de0604735d12ce--
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Sat__12_Sep_2009_20_46_30_+1000_Ww_T6._P.shjFgZs
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkqrfAYACgkQjjKRsyhoI8zBcQCfVziWSri2mxj63hABBKzQzgNd
+HKIAoLZKb57PMLLk4Id+M3U3Jzm9e61/
+=IXsh
+-----END PGP SIGNATURE-----
+
+--Signature=_Sat__12_Sep_2009_20_46_30_+1000_Ww_T6._P.shjFgZs--
