@@ -1,54 +1,92 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: tip tree build warning
-Date: Sun, 13 Sep 2009 22:20:54 +0200
-Message-ID: <10f740e80909131320j1b4f6552qf809fbf5049375d3@mail.gmail.com>
-References: <20090911185600.9641f38b.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [PATCHv3] qla2xxx: Correct compilation issues when
+ CONFIG_MODULES=n.
+Date: Sun, 13 Sep 2009 14:02:05 -0700
+Message-ID: <20090913140205.3a684f7c.randy.dunlap@oracle.com>
+References: <20090907210206.7830ba68.sfr@canb.auug.org.au>
+	<20090907102747.ac6b98ff.randy.dunlap@oracle.com>
+	<20090908182541.GB44157@plap4-2.local>
+	<20090911175341.GH710@plap4-2.local>
+	<1252708951.13282.151.camel@mulgrave.site>
+	<20090912000742.GB12098@plap4-2.local>
+	<20090912001752.GC12098@plap4-2.local>
+	<20090912003808.GD12098@plap4-2.local>
+	<1252728393.13282.485.camel@mulgrave.site>
+	<20090912164356.GA19451@plap4-2.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-px0-f189.google.com ([209.85.216.189]:54931 "EHLO
-	mail-px0-f189.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751805AbZIMUUu convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 13 Sep 2009 16:20:50 -0400
-In-Reply-To: <20090911185600.9641f38b.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-scsi-owner@vger.kernel.org>
+In-Reply-To: <20090912164356.GA19451@plap4-2.local>
+Sender: linux-scsi-owner@vger.kernel.org
+To: Andrew Vasquez <andrew.vasquez@qlogic.com>
+Cc: James Bottomley <James.Bottomley@suse.de>, Linux SCSI Mailing List <linux-scsi@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Giridhar Malavali <giridhar.malavali@qlogic.com>, Ravi Anand <ravi.anand@qlogic.com>, Lalit Chandivade <lalit.chandivade@qlogic.com>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Sep 11, 2009 at 10:56, Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
-> Hi all,
->
-> Today's linux-next build (powerpc allnoconfig) produced this warning:
->
-> kernel/sched.c:122: warning: 'double_rq_lock' declared 'static' but n=
-ever defined
->
-> Introduced by commit 18a3885fc1ffa92c2212ff0afdf033403d5b0fa0 ("sched=
-:
-> Remove reciprocal for cpu_power"). =C2=A0This is a build with CONFIG_=
-SMP
-> undefined.
+On Sat, 12 Sep 2009 09:43:56 -0700 Andrew Vasquez wrote:
 
-Yep. same here.
+> Randy Dunlap noted:
+> 
+>   when CONFIG_MODULES=n:
+> 
+> 	drivers/scsi/qla2xxx/qla_os.c:2685: error: dereferencing pointer to incomplete type
+> 
+>   in
+> 
+> 	kobject_uevent_env(&(&vha->hw->pdev->driver->driver)->owner->mkobj.kobj,
+> 		KOBJ_CHANGE, envp);
+> 
+> Trigger kobject event on the 'struct device' hanging off the pci_dev.
+> 
+> Signed-off-by: Andrew Vasquez <andrew.vasquez@qlogic.com>
 
-It's even more fishy:
-  - double_rq_lock() is useded inside #ifdef CONFIG_PREEMPT
-  - double_rq_lock() is defined inside #ifdef CONFIG_SMP
-  - double_rq_lock() is used inside #ifdef CONFIG_HOTPLUG_CPU
+That works.  Thanks for your persistence.
 
-Gr{oetje,eeting}s,
+Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
 
-						Geert
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
+> ---
+> 
+> 	On Fri, 11 Sep 2009, James Bottomley wrote:
+> 
+> 	> > diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+> 	> > index 29396c0..369a270 100644
+> 	> > --- a/drivers/scsi/qla2xxx/qla_os.c
+> 	> > +++ b/drivers/scsi/qla2xxx/qla_os.c
+> 	> > @@ -2683,8 +2683,7 @@ qla2x00_uevent_emit(struct scsi_qla_host *vha, u32 code)
+> 	> >  		/* do nothing */
+> 	> >  		break;
+> 	> >  	}
+> 	> > -	kobject_uevent_env(&(&vha->hw->pdev->driver->driver)->owner->mkobj.kobj,
+> 	> > -	    KOBJ_CHANGE, envp);
+> 	> > +	kobject_uevent_env(&(&vha->hw->pdev->dev)->kobj, KOBJ_CHANGE, envp);
+> 	> 
+> 	> Much better.  Of course to be perfect, you might like to remember that
+> 	> (&x)->y is actually x.y
+> 	> 
+> 	> so 
+> 	> 
+> 	> kobject_uevent_env(&vha->hw->pdev->dev.kobj, ...
+> 
+> 	Ahh, of course...  Perfection...the enemy of progress...
+> 
+> diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+> index 29396c0..86f337f 100644
+> --- a/drivers/scsi/qla2xxx/qla_os.c
+> +++ b/drivers/scsi/qla2xxx/qla_os.c
+> @@ -2683,8 +2683,7 @@ qla2x00_uevent_emit(struct scsi_qla_host *vha, u32 code)
+>  		/* do nothing */
+>  		break;
+>  	}
+> -	kobject_uevent_env(&(&vha->hw->pdev->driver->driver)->owner->mkobj.kobj,
+> -	    KOBJ_CHANGE, envp);
+> +	kobject_uevent_env(&vha->hw->pdev->dev.kobj, KOBJ_CHANGE, envp);
+>  }
+>  
+>  void
 
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-							    -- Linus Torvalds
+
+---
+~Randy
+LPC 2009, Sept. 23-25, Portland, Oregon
+http://linuxplumbersconf.org/2009/
