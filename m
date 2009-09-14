@@ -1,41 +1,67 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: Warning from ring buffer code (Was: Re: linux-next: tip tree
-	build warning)
-Date: Mon, 14 Sep 2009 20:41:24 +0200
-Message-ID: <20090914184123.GC6045@nowhere>
-References: <20090804161640.70817ee6.sfr@canb.auug.org.au> <1249403089.4634.139.camel@localhost.localdomain> <20090912165300.9d257283.sfr@canb.auug.org.au> <20090912073906.GA3972@elte.hu> <1252753957.12217.10.camel@ht.satnam> <1252941416.2964.143.camel@localhost.localdomain> <70318cbf0909141009v46581785m4c70edf31fcb79fa@mail.gmail.com> <1252952238.2964.154.camel@localhost.localdomain> <1252952621.31964.0.camel@twins> <1252953076.2964.156.camel@localhost.localdomain>
+ build warning)
+Date: Tue, 15 Sep 2009 08:36:01 +1000
+Message-ID: <20090915083601.41bf16e1.sfr@canb.auug.org.au>
+References: <20090804161640.70817ee6.sfr@canb.auug.org.au>
+	<1249403089.4634.139.camel@localhost.localdomain>
+	<20090912165300.9d257283.sfr@canb.auug.org.au>
+	<20090912073906.GA3972@elte.hu>
+	<1252936201.2964.59.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-sparse-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__15_Sep_2009_08_36_01_+1000_icbpFa729/f1lXND"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:40491 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757457AbZINWgH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 14 Sep 2009 18:36:07 -0400
+In-Reply-To: <1252936201.2964.59.camel@localhost.localdomain>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Steven Rostedt <srostedt@redhat.com>
+Cc: Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+
+--Signature=_Tue__15_Sep_2009_08_36_01_+1000_icbpFa729/f1lXND
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <1252953076.2964.156.camel@localhost.localdomain>
-Sender: linux-sparse-owner@vger.kernel.org
-To: Steven Rostedt <srostedt@redhat.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Christopher Li <sparse@chrisli.org>, Jaswinder Singh Rajput <jaswinder@kernel.org>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sparse@vger.kernel.org, Josh Triplett <josh@freedesktop.org>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 14, 2009 at 02:31:16PM -0400, Steven Rostedt wrote:
-> On Mon, 2009-09-14 at 20:23 +0200, Peter Zijlstra wrote:
-> > On Mon, 2009-09-14 at 14:17 -0400, Steven Rostedt wrote:
-> > > Frederic, how big can one of those events get. The ring buffer (and
-> > > TRACE_EVENT) allow up to almost a page size, which is very hefty for the
-> > > stack. This code needs to either be rewritten or we need to set a limit
-> > > to the size of a profile entry.
-> > 
-> > Yeah, that needs to get a re-write.. I've complained about this when it
-> > went in.
-> 
-> One answer is to create a per cpu buffer that is big enough to hold the
-> data needed. Then you can disable interrupts an use it without worry.
-> 
-> If you need to also handle NMIs, then create a per_cpu NMI buffer too,
-> and use that if "in_nmi()" is true.
-> 
-> -- Steve
+Hi Steve,
 
+On Mon, 14 Sep 2009 09:50:01 -0400 Steven Rostedt <srostedt@redhat.com> wro=
+te:
+>
+> On Sat, 2009-09-12 at 09:39 +0200, Ingo Molnar wrote:
+> > * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>=20
+> > > Now that this is in Linus' tree, can we have a fix for the waning,=20
+> > > please?
+> >=20
+> > The first warning got fixed 1.5 months ago - the second one at line=20
+> > 797 is still there but harmless - you can ignore it for now, it will=20
+> > be fixed.
+>=20
+> The first warning never got fixed. The typecast was placed in the wrong
+> spot (my fault). I sent another patch that fixes both warnings.
 
-Looks like a nice idea.
+Thanks for that.
 
-Peter, does that sound acceptable to you to disable interrupts during a
-profiled tracepoint event?
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
+--Signature=_Tue__15_Sep_2009_08_36_01_+1000_icbpFa729/f1lXND
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkquxVEACgkQjjKRsyhoI8wHFwCaAqaPkFm9aq3oOUc1i0OH52Vy
+29kAn2isI+Mtp/4iVipP4u0JYDu8rThJ
+=gFS3
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__15_Sep_2009_08_36_01_+1000_icbpFa729/f1lXND--
