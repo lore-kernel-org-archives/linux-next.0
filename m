@@ -1,45 +1,60 @@
-From: Christopher Li <sparse@chrisli.org>
+From: Steven Rostedt <srostedt@redhat.com>
 Subject: Re: Warning from ring buffer code (Was: Re: linux-next: tip tree
-	build warning)
-Date: Mon, 14 Sep 2009 10:09:27 -0700
-Message-ID: <70318cbf0909141009v46581785m4c70edf31fcb79fa@mail.gmail.com>
+ build warning)
+Date: Mon, 14 Sep 2009 14:17:18 -0400
+Message-ID: <1252952238.2964.154.camel@localhost.localdomain>
 References: <20090804161640.70817ee6.sfr@canb.auug.org.au>
 	 <1249403089.4634.139.camel@localhost.localdomain>
 	 <20090912165300.9d257283.sfr@canb.auug.org.au>
 	 <20090912073906.GA3972@elte.hu> <1252753957.12217.10.camel@ht.satnam>
 	 <1252941416.2964.143.camel@localhost.localdomain>
+	 <70318cbf0909141009v46581785m4c70edf31fcb79fa@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932075AbZINRJb@vger.kernel.org>
-In-Reply-To: <1252941416.2964.143.camel@localhost.localdomain>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Steven Rostedt <srostedt@redhat.com>
-Cc: Jaswinder Singh Rajput <jaswinder@kernel.org>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sparse@vger.kernel.org, Josh Triplett <josh@freedesktop.org>
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-sparse-owner@vger.kernel.org>
+In-Reply-To: <70318cbf0909141009v46581785m4c70edf31fcb79fa@mail.gmail.com>
+Sender: linux-sparse-owner@vger.kernel.org
+To: Christopher Li <sparse@chrisli.org>
+Cc: Jaswinder Singh Rajput <jaswinder@kernel.org>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sparse@vger.kernel.org, Josh Triplett <josh@freedesktop.org>, Frederic Weisbecker <fweisbec@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Sep 14, 2009 at 8:16 AM, Steven Rostedt <srostedt@redhat.com> w=
-rote:
-> static void func(int size_me) {
-> =A0 =A0 =A0 =A0char array[size_me];
->
-> =A0 =A0 =A0 =A0memcpy(array, "hello", size);
-> };
->
-> and sparse failed on it as well. Note, you need to have something cal=
-l
-> func, or sparse will ignore it.
+On Mon, 2009-09-14 at 10:09 -0700, Christopher Li wrote:
+> On Mon, Sep 14, 2009 at 8:16 AM, Steven Rostedt <srostedt@redhat.com> wrote:
+> > static void func(int size_me) {
+> >        char array[size_me];
+> >
+> >        memcpy(array, "hello", size);
+> > };
+> >
+> > and sparse failed on it as well. Note, you need to have something call
+> > func, or sparse will ignore it.
+> 
+> Gcc allows variable size. Sparse expects the size of an array is constant.
+> For the kernel using variable array size is consider bad. Because the kernel
+> has very limited stack size. (8K if I remember correctly). Using dynamic array
+> is very easy to overflow the stack without realizing it.
+> 
+> It deserves a warning. I agree the warning message can use a better description
+> though.
 
-Gcc allows variable size. Sparse expects the size of an array is consta=
-nt.
-=46or the kernel using variable array size is consider bad. Because the=
- kernel
-has very limited stack size. (8K if I remember correctly). Using dynami=
-c array
-is very easy to overflow the stack without realizing it.
+Good point!
 
-It deserves a warning. I agree the warning message can use a better des=
-cription
-though.
+I've added Frederic to the Cc list, since he wrote the code.
 
-Chris
+Frederic, how big can one of those events get. The ring buffer (and
+TRACE_EVENT) allow up to almost a page size, which is very hefty for the
+stack. This code needs to either be rewritten or we need to set a limit
+to the size of a profile entry.
+
+We could add:
+
+	if (__entry_size > 256)
+		return;
+
+Thoughts?
+
+-- Steve
+
+
+
