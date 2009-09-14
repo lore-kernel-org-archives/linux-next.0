@@ -1,39 +1,99 @@
-From: Ingo Molnar <mingo@elte.hu>
+From: Steven Rostedt <srostedt@redhat.com>
 Subject: Re: Warning from ring buffer code (Was: Re: linux-next: tip tree
-	build warning)
-Date: Mon, 14 Sep 2009 15:53:25 +0200
-Message-ID: <20090914135325.GA24454@elte.hu>
-References: <20090804161640.70817ee6.sfr@canb.auug.org.au> <1249403089.4634.139.camel@localhost.localdomain> <20090912165300.9d257283.sfr@canb.auug.org.au> <20090912073906.GA3972@elte.hu> <1252936201.2964.59.camel@localhost.localdomain>
+ build warning)
+Date: Mon, 14 Sep 2009 11:16:56 -0400
+Message-ID: <1252941416.2964.143.camel@localhost.localdomain>
+References: <20090804161640.70817ee6.sfr@canb.auug.org.au>
+	 <1249403089.4634.139.camel@localhost.localdomain>
+	 <20090912165300.9d257283.sfr@canb.auug.org.au>
+	 <20090912073906.GA3972@elte.hu>  <1252753957.12217.10.camel@ht.satnam>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:56474 "EHLO mx2.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751276AbZINNxo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 14 Sep 2009 09:53:44 -0400
-Content-Disposition: inline
-In-Reply-To: <1252936201.2964.59.camel@localhost.localdomain>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Steven Rostedt <srostedt@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-sparse-owner@vger.kernel.org>
+In-Reply-To: <1252753957.12217.10.camel@ht.satnam>
+Sender: linux-sparse-owner@vger.kernel.org
+To: Jaswinder Singh Rajput <jaswinder@kernel.org>
+Cc: Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sparse@vger.kernel.org, Christopher Li <sparse@chrisli.org>, Josh Triplett <josh@freedesktop.org>
+List-Id: linux-next.vger.kernel.org
 
+On Sat, 2009-09-12 at 16:42 +0530, Jaswinder Singh Rajput wrote:
 
-* Steven Rostedt <srostedt@redhat.com> wrote:
-
-> On Sat, 2009-09-12 at 09:39 +0200, Ingo Molnar wrote:
-> > * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > 
-> > > Now that this is in Linus' tree, can we have a fix for the waning, 
-> > > please?
-> > 
-> > The first warning got fixed 1.5 months ago - the second one at line 
-> > 797 is still there but harmless - you can ignore it for now, it will 
-> > be fixed.
+> Here are some more trace related warnings in current linus (as well as
+> -tip) tree :
 > 
-> The first warning never got fixed. The typecast was placed in the 
-> wrong spot (my fault). I sent another patch that fixes both warnings.
+>   CHECK   arch/x86/kernel/ptrace.c
+> include/trace/events/syscalls.h:18:1: warning: symbol 'ftrace_raw_output_sys_enter' was not declared. Should it be static?
+> include/trace/events/syscalls.h:42:1: warning: symbol 'ftrace_raw_output_sys_exit' was not declared. Should it be static?
+> include/trace/events/syscalls.h:18:1: warning: symbol 'ftrace_define_fields_sys_enter' was not declared. Should it be static?
+> include/trace/events/syscalls.h:42:1: warning: symbol 'ftrace_define_fields_sys_exit' was not declared. Should it be static?
 
-Pulled it, thanks Steve.
+I just wrote a patch to fix the above.
 
-	Ingo
+> include/trace/events/syscalls.h:18:1: error: bad constant expression
+> include/trace/events/syscalls.h:42:1: error: bad constant expression
+
+Not sure why sparse is failing on this. Looking at the sched.c code, I
+ran "make kernel/sched.i" and then removed the CPP expressions and then
+expanded the macros and here's where it is failing:
+
+static void ftrace_profile_sched_kthread_stop(struct task_struct *t)
+{
+	struct ftrace_data_offsets_sched_kthread_stop __attribute__((unused)) __data_offsets;
+	struct ftrace_event_call *event_call = &event_sched_kthread_stop;
+	extern void perf_tpcounter_event(int, u64, u64, void *, int);
+	struct ftrace_raw_sched_kthread_stop *entry;
+	u64 __addr = 0, __count = 1;
+	unsigned long irq_flags;
+	
+	int __entry_size;
+	int __data_size;
+	int pc;
+
+	do { ({ unsigned long __dummy;
+				typeof(irq_flags) __dummy2;
+				(void)(&__dummy == &__dummy2);
+				1;
+			});
+		do { (irq_flags) = __raw_local_save_flags();
+		} while (0);
+	} while (0);
+	pc = (current_thread_info()->preempt_count);
+	__data_size = ftrace_get_offsets_sched_kthread_stop(&__data_offsets, t);
+	__entry_size = (((__data_size + sizeof(*entry) + sizeof(u32))+((typeof(__data_size + sizeof(*entry) + sizeof(u32)))(sizeof(u64))-1))&~((typeof(__data_size + sizeof(*entry) + sizeof(u32)))(sizeof(u64))-1));
+	__entry_size -= sizeof(u32);
+	do {
+		char raw_data[__entry_size];   <<<<----------- FAILURE HERE
+		struct trace_entry *ent;
+		*(u64 *)(&raw_data[__entry_size - sizeof(u64)]) = 0ULL;
+		entry = (struct ftrace_raw_sched_kthread_stop *)raw_data;
+		ent = &entry->ent;
+		tracing_generic_entry_update(ent, irq_flags, pc);
+		ent->type = event_call->id;
+		{ memcpy(entry->comm, t->comm, 16);
+			entry->pid = t->pid;
+			;
+		} perf_tpcounter_event(event_call->id, __addr, __count, entry, __entry_size);
+	} while (0);
+};
+
+Sure enough, sparse does not like the __entry_size. I replaced it with
+"10" and sparse was happy with it. That is a perfectly legal entry, so
+this looks more like a bug with sparse.
+
+I just tested this too:
+
+static void func(int size_me) {
+	char array[size_me];
+
+	memcpy(array, "hello", size);
+};
+
+and sparse failed on it as well. Note, you need to have something call
+func, or sparse will ignore it.
+
+
+-- Steve
+
+
