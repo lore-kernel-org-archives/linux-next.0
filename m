@@ -1,37 +1,30 @@
-From: Russell King <rmk+lkml@arm.linux.org.uk>
+From: Kyle McMartin <kyle@mcmartin.ca>
 Subject: Re: linux-next: manual merge of the security-testing tree with the
-	arm tree
-Date: Mon, 14 Sep 2009 11:14:53 +0100
-Message-ID: <20090914101452.GA696@flint.arm.linux.org.uk>
-References: <20090903154700.2d4538cf.sfr@canb.auug.org.au> <20090914130355.ff26d669.sfr@canb.auug.org.au> <20090914081220.GA14204@flint.arm.linux.org.uk> <20090914185500.fc9cf713.sfr@canb.auug.org.au>
+	parisc tree
+Date: Mon, 14 Sep 2009 09:49:27 -0400
+Message-ID: <20090914134927.GF19494@bombadil.infradead.org>
+References: <20090903154636.e70c50da.sfr@canb.auug.org.au> <20090914153532.2c06eeae.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:43691 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750891AbZINKPI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 14 Sep 2009 06:15:08 -0400
+Received: from bombadil.infradead.org ([18.85.46.34]:54974 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752941AbZINNtZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 14 Sep 2009 09:49:25 -0400
 Content-Disposition: inline
-In-Reply-To: <20090914185500.fc9cf713.sfr@canb.auug.org.au>
+In-Reply-To: <20090914153532.2c06eeae.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mikael Pettersson <mikpe@it.uu.se>, James Morris <jmorris@namei.org>, David Howells <dhowells@redhat.com>
+Cc: Kyle McMartin <kyle@mcmartin.ca>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, James Morris <jmorris@namei.org>, linux-parisc@vger.kernel.org
 
-On Mon, Sep 14, 2009 at 06:55:00PM +1000, Stephen Rothwell wrote:
-> Actually Linus is probably clever enough to fix the conflict himself -
-> after all, I did :-)
+On Mon, Sep 14, 2009 at 03:35:32PM +1000, Stephen Rothwell wrote:
+> Hi Kyle,
+> > Overlapping changes.  I fixed it up (using the parisc versions and adding
+> > the extra change from the latter security-testing patch) and can carry
+> > the fixes as necessary.
+> 
+> This conflict is now between the parisc tree and Linus' tree ...
+> 
 
-In my experience, sending follow-up emails to Linus on issues to do with
-pull requests doesn't work - the pull happens long before Linus reads the
-follow-up email.  It's entirely possible that Linus has already pulled
-my tree, but hasn't published it yet - I've seen that happen several
-times when I submit pull requests over a weekend.
-
-If there's a problem, Linus will reply, possibly with a "check my
-conflict resolution" or "I've not pulled, please fix it up your tree".
-
--- 
-Russell King
- Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
- maintainer of:
+You don't say.
