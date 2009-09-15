@@ -1,67 +1,70 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Warning from ring buffer code (Was: Re: linux-next: tip tree
- build warning)
-Date: Tue, 15 Sep 2009 08:36:01 +1000
-Message-ID: <20090915083601.41bf16e1.sfr@canb.auug.org.au>
-References: <20090804161640.70817ee6.sfr@canb.auug.org.au>
-	<1249403089.4634.139.camel@localhost.localdomain>
-	<20090912165300.9d257283.sfr@canb.auug.org.au>
-	<20090912073906.GA3972@elte.hu>
-	<1252936201.2964.59.camel@localhost.localdomain>
+Subject: linux-next: manual merge of the rr tree with Linus' tree
+Date: Tue, 15 Sep 2009 13:26:26 +1000
+Message-ID: <20090915132626.1997607e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__15_Sep_2009_08_36_01_+1000_icbpFa729/f1lXND"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40491 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:48994 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757457AbZINWgH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 14 Sep 2009 18:36:07 -0400
-In-Reply-To: <1252936201.2964.59.camel@localhost.localdomain>
+	id S1752392AbZIOD01 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 14 Sep 2009 23:26:27 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Steven Rostedt <srostedt@redhat.com>
-Cc: Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Siarhei Liakh <sliakh.lkml@gmail.com>, Xuxian Jiang <jiang@cs.ncsu.edu>, Li Zefan <lizf@cn.fujitsu.com>
 
---Signature=_Tue__15_Sep_2009_08_36_01_+1000_icbpFa729/f1lXND
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Rusty,
 
-Hi Steve,
+Today's linux-next merge of the rr tree got a conflict in kernel/module.c
+between commit 7ead8b8313d92b3a69a1a61b0dcbc4cd66c960dc ("tracing/events:
+Add module tracepoints") from Linus' tree and commit
+25306e21864c2a220d6fa2e0632425028aa9626c ("module:ro-nx-protection") from
+the rr tree.
 
-On Mon, 14 Sep 2009 09:50:01 -0400 Steven Rostedt <srostedt@redhat.com> wro=
-te:
->
-> On Sat, 2009-09-12 at 09:39 +0200, Ingo Molnar wrote:
-> > * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->=20
-> > > Now that this is in Linus' tree, can we have a fix for the waning,=20
-> > > please?
-> >=20
-> > The first warning got fixed 1.5 months ago - the second one at line=20
-> > 797 is still there but harmless - you can ignore it for now, it will=20
-> > be fixed.
->=20
-> The first warning never got fixed. The typecast was placed in the wrong
-> spot (my fault). I sent another patch that fixes both warnings.
-
-Thanks for that.
-
---=20
+Just overlapping additions.  I fixed it up (see below) and can carry the
+fix for a while.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__15_Sep_2009_08_36_01_+1000_icbpFa729/f1lXND
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkquxVEACgkQjjKRsyhoI8wHFwCaAqaPkFm9aq3oOUc1i0OH52Vy
-29kAn2isI+Mtp/4iVipP4u0JYDu8rThJ
-=gFS3
------END PGP SIGNATURE-----
-
---Signature=_Tue__15_Sep_2009_08_36_01_+1000_icbpFa729/f1lXND--
+diff --cc kernel/module.c
+index 46580ed,6f84bb5..0000000
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@@ -54,12 -54,8 +54,13 @@@
+  #include <linux/async.h>
+  #include <linux/percpu.h>
+  #include <linux/kmemleak.h>
++ #include <linux/pfn.h>
+  
+ +#define CREATE_TRACE_POINTS
+ +#include <trace/events/module.h>
+ +
+ +EXPORT_TRACEPOINT_SYMBOL(module_get);
+ +
+  #if 0
+  #define DEBUGP printk
+  #else
+@@@ -2373,8 -2600,18 +2609,20 @@@ static noinline struct module *load_mod
+  	/* Get rid of temporary copy */
+  	vfree(hdr);
+  
++ 	/* Set RO and NX regions for core */
++ 	set_section_ro_nx(mod->module_core,
++ 			  mod->core_text_size,
++ 			  mod->core_ro_size,
++ 			  mod->core_size);
++ 
++ 	/* Set RO and NX regions for init */
++ 	set_section_ro_nx(mod->module_init,
++ 			  mod->init_text_size,
++ 			  mod->init_ro_size,
++ 			  mod->init_size);
++ 
+ +	trace_module_load(mod);
+ +
+  	/* Done! */
+  	return mod;
+  
