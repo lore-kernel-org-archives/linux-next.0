@@ -1,70 +1,65 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rr tree with Linus' tree
-Date: Tue, 15 Sep 2009 13:26:26 +1000
-Message-ID: <20090915132626.1997607e.sfr@canb.auug.org.au>
+Subject: Re: linux-next: rr tree build failure
+Date: Tue, 15 Sep 2009 13:27:48 +1000
+Message-ID: <20090915132748.18662dc9.sfr@canb.auug.org.au>
+References: <20090909134752.f5b8c2e7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__15_Sep_2009_13_27_48_+1000_fyhRmlMZqn5SsnSA"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48994 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:42912 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752392AbZIOD01 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 14 Sep 2009 23:26:27 -0400
+	id S1758047AbZIOD1x (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 14 Sep 2009 23:27:53 -0400
+In-Reply-To: <20090909134752.f5b8c2e7.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Siarhei Liakh <sliakh.lkml@gmail.com>, Xuxian Jiang <jiang@cs.ncsu.edu>, Li Zefan <lizf@cn.fujitsu.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Siarhei Liakh <sliakh.lkml@gmail.com>, Xuxian Jiang <jiang@cs.ncsu.edu>, Arjan van de Ven <arjan@linux.intel.com>
+
+--Signature=_Tue__15_Sep_2009_13_27_48_+1000_fyhRmlMZqn5SsnSA
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi Rusty,
 
-Today's linux-next merge of the rr tree got a conflict in kernel/module.c
-between commit 7ead8b8313d92b3a69a1a61b0dcbc4cd66c960dc ("tracing/events:
-Add module tracepoints") from Linus' tree and commit
-25306e21864c2a220d6fa2e0632425028aa9626c ("module:ro-nx-protection") from
-the rr tree.
+On Wed, 9 Sep 2009 13:47:52 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+>=20
+> kernel/module.c: In function 'set_section_ro_nx':
+> kernel/module.c:1549: error: implicit declaration of function 'set_memory=
+_ro'
+> kernel/module.c:1560: error: implicit declaration of function 'set_memory=
+_nx'
+> kernel/module.c: In function 'unset_section_ro_nx':
+> kernel/module.c:1575: error: implicit declaration of function 'set_memory=
+_rw'
+>=20
+> Caused by commit 25306e21864c2a220d6fa2e0632425028aa9626c
+> ("module:ro-nx-protection") which uses these interfaces that are only
+> defined on x86 ...
+>=20
+> I have used the version of the rr tree from next-20090908 for today.
 
-Just overlapping additions.  I fixed it up (see below) and can carry the
-fix for a while.
--- 
+Still happening ... Siarhei posted a replacement patch on Sept 11.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc kernel/module.c
-index 46580ed,6f84bb5..0000000
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@@ -54,12 -54,8 +54,13 @@@
-  #include <linux/async.h>
-  #include <linux/percpu.h>
-  #include <linux/kmemleak.h>
-+ #include <linux/pfn.h>
-  
- +#define CREATE_TRACE_POINTS
- +#include <trace/events/module.h>
- +
- +EXPORT_TRACEPOINT_SYMBOL(module_get);
- +
-  #if 0
-  #define DEBUGP printk
-  #else
-@@@ -2373,8 -2600,18 +2609,20 @@@ static noinline struct module *load_mod
-  	/* Get rid of temporary copy */
-  	vfree(hdr);
-  
-+ 	/* Set RO and NX regions for core */
-+ 	set_section_ro_nx(mod->module_core,
-+ 			  mod->core_text_size,
-+ 			  mod->core_ro_size,
-+ 			  mod->core_size);
-+ 
-+ 	/* Set RO and NX regions for init */
-+ 	set_section_ro_nx(mod->module_init,
-+ 			  mod->init_text_size,
-+ 			  mod->init_ro_size,
-+ 			  mod->init_size);
-+ 
- +	trace_module_load(mod);
- +
-  	/* Done! */
-  	return mod;
-  
+--Signature=_Tue__15_Sep_2009_13_27_48_+1000_fyhRmlMZqn5SsnSA
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkqvCbUACgkQjjKRsyhoI8yqqACgkgxuLn4nxtN4VDyjobo65O9C
+hVQAn2eZqpxPzY5NucnKs7PekPTqXLN4
+=bOJm
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__15_Sep_2009_13_27_48_+1000_fyhRmlMZqn5SsnSA--
