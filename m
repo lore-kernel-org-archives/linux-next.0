@@ -1,40 +1,56 @@
-From: Jens Axboe <jens.axboe-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Subject: Re: linux-next: drbd tree build failure
-Date: Tue, 15 Sep 2009 08:57:21 +0200
-Message-ID: <20090915065721.GQ14984@kernel.dk>
-References: <20090915160739.86e85ab3.sfr@canb.auug.org.au>
-	<20090915062306.GP14984@kernel.dk>
-	<20090915165309.f07381ec.sfr@canb.auug.org.au>
+From: Peter Zijlstra <peterz@infradead.org>
+Subject: Re: Warning from ring buffer code (Was: Re: linux-next: tip tree
+ build warning)
+Date: Tue, 15 Sep 2009 09:16:34 +0200
+Message-ID: <1252998994.5506.0.camel@laptop>
+References: <20090804161640.70817ee6.sfr@canb.auug.org.au>
+	 <1249403089.4634.139.camel@localhost.localdomain>
+	 <20090912165300.9d257283.sfr@canb.auug.org.au>
+	 <20090912073906.GA3972@elte.hu> <1252753957.12217.10.camel@ht.satnam>
+	 <1252941416.2964.143.camel@localhost.localdomain>
+	 <70318cbf0909141009v46581785m4c70edf31fcb79fa@mail.gmail.com>
+	 <1252952238.2964.154.camel@localhost.localdomain>
+	 <1252952621.31964.0.camel@twins>
+	 <1252953076.2964.156.camel@localhost.localdomain>
+	 <20090914184123.GC6045@nowhere>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Return-path: <drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20090915165309.f07381ec.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-List-Unsubscribe: <http://lists.linbit.com/mailman/options/drbd-dev>,
-	<mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linbit.com/pipermail/drbd-dev>
-List-Post: <mailto:drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org>
-List-Help: <mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.linbit.com/mailman/listinfo/drbd-dev>,
-	<mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=subscribe>
-Sender: drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
-Errors-To: drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
-To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Cc: Nikanth Karthikesan <knikanth-l3A5Bk7waGM@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Philipp Reisner <philipp.reisner-63ez5xqkn6DQT0dZR+AlfA@public.gmane.org>, drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from casper.infradead.org ([85.118.1.10]:42227 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755209AbZIOHRR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Sep 2009 03:17:17 -0400
+In-Reply-To: <20090914184123.GC6045@nowhere>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Steven Rostedt <srostedt@redhat.com>, Christopher Li <sparse@chrisli.org>, Jaswinder Singh Rajput <jaswinder@kernel.org>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sparse@vger.kernel.org, Josh Triplett <josh@freedesktop.org>
 
-On Tue, Sep 15 2009, Stephen Rothwell wrote:
-> Hi Jens,
+On Mon, 2009-09-14 at 20:41 +0200, Frederic Weisbecker wrote:
+> On Mon, Sep 14, 2009 at 02:31:16PM -0400, Steven Rostedt wrote:
+> > On Mon, 2009-09-14 at 20:23 +0200, Peter Zijlstra wrote:
+> > > On Mon, 2009-09-14 at 14:17 -0400, Steven Rostedt wrote:
+> > > > Frederic, how big can one of those events get. The ring buffer (and
+> > > > TRACE_EVENT) allow up to almost a page size, which is very hefty for the
+> > > > stack. This code needs to either be rewritten or we need to set a limit
+> > > > to the size of a profile entry.
+> > > 
+> > > Yeah, that needs to get a re-write.. I've complained about this when it
+> > > went in.
+> > 
+> > One answer is to create a per cpu buffer that is big enough to hold the
+> > data needed. Then you can disable interrupts an use it without worry.
+> > 
+> > If you need to also handle NMIs, then create a per_cpu NMI buffer too,
+> > and use that if "in_nmi()" is true.
+> > 
+> > -- Steve
 > 
-> On Tue, 15 Sep 2009 08:23:06 +0200 Jens Axboe <jens.axboe-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org> wrote:
-> >
-> > Fix looks correct.
 > 
-> Thanks for the confirmation.  So hopefully one of these trees will be
-> merged by Linus soon an this can be fixed up in the other.
+> Looks like a nice idea.
+> 
+> Peter, does that sound acceptable to you to disable interrupts during a
+> profiled tracepoint event?
 
-The block one is already merged, so drbd just needs to get fixed up.
-
--- 
-Jens Axboe
+It does anyway, a little further down the line, so sure.
