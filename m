@@ -1,43 +1,51 @@
-From: Joe Perches <joe@perches.com>
-Subject: [linux-next PATCH] MAINTAINERS: Generic UIO use M: "Michael S.
- Tsirkin" <mst@redhat.com>
-Date: Tue, 15 Sep 2009 00:23:44 -0700
-Message-ID: <1252999424.19910.6.camel@Joe-Laptop.home>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: drbd tree build failure
+Date: Tue, 15 Sep 2009 17:45:36 +1000
+Message-ID: <20090915174536.f204aade.sfr@canb.auug.org.au>
+References: <20090915160739.86e85ab3.sfr@canb.auug.org.au>
+	<20090915062306.GP14984@kernel.dk>
+	<20090915165309.f07381ec.sfr@canb.auug.org.au>
+	<20090915065721.GQ14984@kernel.dk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__15_Sep_2009_17_45_36_+1000_1dun0zJg9vLgVBSD"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.perches.com ([173.55.12.10]:1187 "EHLO mail.perches.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:43552 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758170AbZIOHXm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 15 Sep 2009 03:23:42 -0400
+	id S1752041AbZIOHpk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 15 Sep 2009 03:45:40 -0400
+In-Reply-To: <20090915065721.GQ14984@kernel.dk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+To: Jens Axboe <jens.axboe@oracle.com>
+Cc: Philipp Reisner <philipp.reisner@linbit.com>, drbd-dev@linbit.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nikanth Karthikesan <knikanth@suse.de>
 
-Hi Michael.
+--Signature=_Tue__15_Sep_2009_17_45_36_+1000_1dun0zJg9vLgVBSD
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Your new entry needs to be updated a bit.
-The P: entry is deprecated and M: is used for "name" <address>
+On Tue, 15 Sep 2009 08:57:21 +0200 Jens Axboe <jens.axboe@oracle.com> wrote:
+>
+> The block one is already merged, so drbd just needs to get fixed up.
 
-Your name also needs to be quoted so people can copy/paste
-it and that scripts/get_maintainer.pl works.
+Right, that happened after I started this morning.
 
-cheers, Joe
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Signed-off-by: Joe Perches <joe@perches.com>
+--Signature=_Tue__15_Sep_2009_17_45_36_+1000_1dun0zJg9vLgVBSD
+Content-Type: application/pgp-signature
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 70ca14b..1246238 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2237,7 +2237,7 @@ S:	Maintained
- F:	include/asm-generic
- 
- GENERIC UIO DRIVER FOR PCI DEVICES
--P:	Michael S. Tsirkin <mst@redhat.com>
-+M:	"Michael S. Tsirkin" <mst@redhat.com>
- L:	kvm@vger.kernel.org
- L:	linux-kernel@vger.kernel.org
- S:	Supported
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkqvRiAACgkQjjKRsyhoI8zq/wCgmMgQlE41OClWGa8XF4Q/ns73
+XrMAn2nUVM3mRj5kGzVUJlVAGpFjqvRq
+=Dtyr
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__15_Sep_2009_17_45_36_+1000_1dun0zJg9vLgVBSD--
