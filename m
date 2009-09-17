@@ -1,29 +1,61 @@
-From: Dave Jones <davej@redhat.com>
-Subject: Re: linux-next: cpufreq-current tree build warning
-Date: Wed, 16 Sep 2009 23:17:59 -0400
-Message-ID: <20090917031759.GB30706@redhat.com>
-References: <20090917120651.f0cdf4c2.sfr@canb.auug.org.au> <20090917022726.GA30706@redhat.com> <20090917125556.1125d8ae.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: nfsd tree build failure
+Date: Thu, 17 Sep 2009 17:10:31 +1000
+Message-ID: <20090917171031.128a846b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1759919AbZIQDSF@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20090917125556.1125d8ae.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kurt Roeckx <kurt@roeckx.be>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:49414 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756743AbZIQHKa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 17 Sep 2009 03:10:30 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "J. Bruce Fields" <bfields@fieldses.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Sep 17, 2009 at 12:55:56PM +1000, Stephen Rothwell wrote:
- > so, no.
- > (origin/master is Linus' tree of about 2 hours ago, commit
- > ab86e5765d41a5eb4239a1c04d613db87bea5ed8 "Merge
- > git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core-2.6")
- > 
- > Looking further, this is the cpureq-current tree I am complaining about,
- > in the cpufreq tree, you also have:
+Hi Bruce,
 
-Oh, from the 'fixes' branch ?  Just drop that for now, and only pick up 'next'
-(though next pull request went to linus today, so the whole thing should be
- gone soon).
+Today's linux-next build (sparc64_defconfig) failed like this:
 
-	Dave
+In file included from arch/sparc/kernel/sys_sparc32.c:32:
+include/linux/nfsd/nfsd.h: In function 'nfs4_state_start':
+include/linux/nfsd/nfsd.h:177: error: no return statement in function returning non-void
+
+Caused by commit 29ab23cc5d351658d01a4327d55e9106a73fd04f ("nfsd4: allow
+nfs4 state startup to fail").  Please, if you add code that depends on a
+CONFIG option, build with that option enabled and disabled.
+
+I have applied the following patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 17 Sep 2009 17:03:06 +1000
+Subject: [PATCH] nfsd: return success for non NFS4 nfs4_state_start
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/nfsd/nfsd.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/include/linux/nfsd/nfsd.h b/include/linux/nfsd/nfsd.h
+index 24fdf89..e9ffeb5 100644
+--- a/include/linux/nfsd/nfsd.h
++++ b/include/linux/nfsd/nfsd.h
+@@ -174,7 +174,7 @@ int nfs4_reset_recoverydir(char *recdir);
+ #else
+ static inline int nfs4_state_init(void) { return 0; }
+ static inline void nfsd4_free_slabs(void) { }
+-static inline int nfs4_state_start(void) { }
++static inline int nfs4_state_start(void) { return 1; }
+ static inline void nfs4_state_shutdown(void) { }
+ static inline time_t nfs4_lease_time(void) { return 0; }
+ static inline void nfs4_reset_lease(time_t leasetime) { }
+-- 
+1.6.3.3
+
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
