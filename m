@@ -1,52 +1,71 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the ext4 tree with Linus tree
-Date: Thu, 17 Sep 2009 23:30:53 +1000
-Message-ID: <20090917233053.6c0a7a41.sfr@canb.auug.org.au>
-References: <20090917115653.2e3b6b49.sfr@canb.auug.org.au>
-	<20090917132243.GB24438@mit.edu>
+From: "J. Bruce Fields" <bfields@fieldses.org>
+Subject: Re: linux-next: nfsd tree build failure
+Date: Thu, 17 Sep 2009 15:33:23 -0400
+Message-ID: <20090917193323.GB3123@fieldses.org>
+References: <20090917171031.128a846b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__17_Sep_2009_23_30_53_+1000_d+J8uH7yAIp1eI=1"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44214 "EHLO smtps.tip.net.au"
+Received: from fieldses.org ([174.143.236.118]:59695 "EHLO fieldses.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751757AbZIQNa5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 17 Sep 2009 09:30:57 -0400
-In-Reply-To: <20090917132243.GB24438@mit.edu>
+	id S1753534AbZIQTdU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 17 Sep 2009 15:33:20 -0400
+Content-Disposition: inline
+In-Reply-To: <20090917171031.128a846b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Theodore Tso <tytso@mit.edu>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jens Axboe <jens.axboe@oracle.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Thu__17_Sep_2009_23_30_53_+1000_d+J8uH7yAIp1eI=1
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Sep 17, 2009 at 05:10:31PM +1000, Stephen Rothwell wrote:
+> Today's linux-next build (sparc64_defconfig) failed like this:
+> 
+> In file included from arch/sparc/kernel/sys_sparc32.c:32:
+> include/linux/nfsd/nfsd.h: In function 'nfs4_state_start':
+> include/linux/nfsd/nfsd.h:177: error: no return statement in function returning non-void
 
-Hi Ted,
+Thanks for catching this!
 
-On Thu, 17 Sep 2009 09:22:43 -0400 Theodore Tso <tytso@mit.edu> wrote:
->
-> Thanks, this is in a patch series which I'm preparing to push to
-> Linus, so I've fixed it up on my end.
+> Caused by commit 29ab23cc5d351658d01a4327d55e9106a73fd04f ("nfsd4: allow
+> nfs4 state startup to fail").  Please, if you add code that depends on a
+> CONFIG option, build with that option enabled and disabled.
 
-OK, thanks.
+And, um, yes, I'll try to do better at that.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+> I have applied the following patch for today:
 
---Signature=_Thu__17_Sep_2009_23_30_53_+1000_d+J8uH7yAIp1eI=1
-Content-Type: application/pgp-signature
+Thanks, applied (with fixed return value).
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+--b.
 
-iEYEARECAAYFAkqyOg0ACgkQjjKRsyhoI8y5PwCgve5GDajqG0FHsmPYcHtsY3Oq
-7CYAoJlw3fwVZDHpl7e2btmfmgnMt+m/
-=iqIa
------END PGP SIGNATURE-----
-
---Signature=_Thu__17_Sep_2009_23_30_53_+1000_d+J8uH7yAIp1eI=1--
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 17 Sep 2009 17:03:06 +1000
+> Subject: [PATCH] nfsd: return success for non NFS4 nfs4_state_start
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  include/linux/nfsd/nfsd.h |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> diff --git a/include/linux/nfsd/nfsd.h b/include/linux/nfsd/nfsd.h
+> index 24fdf89..e9ffeb5 100644
+> --- a/include/linux/nfsd/nfsd.h
+> +++ b/include/linux/nfsd/nfsd.h
+> @@ -174,7 +174,7 @@ int nfs4_reset_recoverydir(char *recdir);
+>  #else
+>  static inline int nfs4_state_init(void) { return 0; }
+>  static inline void nfsd4_free_slabs(void) { }
+> -static inline int nfs4_state_start(void) { }
+> +static inline int nfs4_state_start(void) { return 1; }
+>  static inline void nfs4_state_shutdown(void) { }
+>  static inline time_t nfs4_lease_time(void) { return 0; }
+>  static inline void nfs4_reset_lease(time_t leasetime) { }
+> -- 
+> 1.6.3.3
+> 
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
