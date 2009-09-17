@@ -1,60 +1,79 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the blackfin tree with Linus' tree
-Date: Thu, 17 Sep 2009 11:26:04 +1000
-Message-ID: <20090917112604.acbae122.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ia64 tree with Linus' tree
+Date: Thu, 17 Sep 2009 11:33:30 +1000
+Message-ID: <20090917113330.34185775.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41820 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:33706 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755435AbZIQB0D (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Sep 2009 21:26:03 -0400
+	id S1758161AbZIQBd3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 16 Sep 2009 21:33:29 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mike Frysinger <vapier.adi@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Nelson Elhage <nelhage@ksplice.com>
 
-Hi Mike,
+Hi Tony,
 
-Today's linux-next merge of the blackfin tree got a conflict in
-arch/blackfin/mm/sram-alloc.c between commit
-b9bf3121af348d9255f1c917830fe8c2df52efcb ("percpu: use
-DEFINE_PER_CPU_SHARED_ALIGNED()") from Linus' tree and commit
-40bf94d6d1158fb6d6d67a666e6b16ab6ac3986e ("Blackfin: push SRAM locks down
-into related ifdefs") from the blackfin tree.
+Today's linux-next merge of the ia64 tree got a conflict in
+arch/ia64/kernel/vmlinux.lds.S between commit
+023bf6f1b8bf58dc4da7f0dc1cf4787b0d5297c1 ("linker script: unify usage of
+discard definition") from Linus' tree and commit
+6ae86350857bf3e862f8dcd10039ccb45e056f85 ("[IA64] Clean up linker script
+using standard macros") from the ia64 tree.
 
-The latter moved the code that the former modified.  I fixed it up (see
-below) and can carry the fix for a while.
+I fixed it up (I think - see below) and can carry the fix for a while.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/blackfin/mm/sram-alloc.c
-index 99e4dbb,e095094..0000000
---- a/arch/blackfin/mm/sram-alloc.c
-+++ b/arch/blackfin/mm/sram-alloc.c
-@@@ -55,6 -50,7 +50,7 @@@ struct sram_piece 
-  	struct sram_piece *next;
-  };
+diff --cc arch/ia64/kernel/vmlinux.lds.S
+index eb4214d,f69f411..0000000
+--- a/arch/ia64/kernel/vmlinux.lds.S
++++ b/arch/ia64/kernel/vmlinux.lds.S
+@@@ -284,39 -228,8 +228,10 @@@ SECTION
+    _end = .;
   
- -static DEFINE_PER_CPU(spinlock_t, l1sram_lock) ____cacheline_aligned_in_smp;
-++static DEFINE_PER_CPU_SHARED_ALIGNED(spinlock_t, l1sram_lock);
-  static DEFINE_PER_CPU(struct sram_piece, free_l1_ssram_head);
-  static DEFINE_PER_CPU(struct sram_piece, used_l1_ssram_head);
-  
-@@@ -68,7 -64,12 +64,12 @@@ static DEFINE_PER_CPU(struct sram_piece
-  static DEFINE_PER_CPU(struct sram_piece, used_l1_data_B_sram_head);
-  #endif
-  
-+ #if L1_DATA_A_LENGTH || L1_DATA_B_LENGTH
- -static DEFINE_PER_CPU(spinlock_t, l1_data_sram_lock) ____cacheline_aligned_in_smp;
-++static DEFINE_PER_CPU_SHARED_ALIGNED(spinlock_t, l1_data_sram_lock);
-+ #endif
+    code : { } :code
+-   /* Stabs debugging sections.  */
+-   .stab 0 : { *(.stab) }
+-   .stabstr 0 : { *(.stabstr) }
+-   .stab.excl 0 : { *(.stab.excl) }
+-   .stab.exclstr 0 : { *(.stab.exclstr) }
+-   .stab.index 0 : { *(.stab.index) }
+-   .stab.indexstr 0 : { *(.stab.indexstr) }
+-   /* DWARF debug sections.
+-      Symbols in the DWARF debugging sections are relative to the beginning
+-      of the section so we begin them at 0.  */
+-   /* DWARF 1 */
+-   .debug          0 : { *(.debug) }
+-   .line           0 : { *(.line) }
+-   /* GNU DWARF 1 extensions */
+-   .debug_srcinfo  0 : { *(.debug_srcinfo) }
+-   .debug_sfnames  0 : { *(.debug_sfnames) }
+-   /* DWARF 1.1 and DWARF 2 */
+-   .debug_aranges  0 : { *(.debug_aranges) }
+-   .debug_pubnames 0 : { *(.debug_pubnames) }
+-   /* DWARF 2 */
+-   .debug_info     0 : { *(.debug_info) }
+-   .debug_abbrev   0 : { *(.debug_abbrev) }
+-   .debug_line     0 : { *(.debug_line) }
+-   .debug_frame    0 : { *(.debug_frame) }
+-   .debug_str      0 : { *(.debug_str) }
+-   .debug_loc      0 : { *(.debug_loc) }
+-   .debug_macinfo  0 : { *(.debug_macinfo) }
+-   /* SGI/MIPS DWARF 2 extensions */
+-   .debug_weaknames 0 : { *(.debug_weaknames) }
+-   .debug_funcnames 0 : { *(.debug_funcnames) }
+-   .debug_typenames 0 : { *(.debug_typenames) }
+-   .debug_varnames  0 : { *(.debug_varnames) }
 + 
-  #if L1_CODE_LENGTH != 0
- -static DEFINE_PER_CPU(spinlock_t, l1_inst_sram_lock) ____cacheline_aligned_in_smp;
-++static DEFINE_PER_CPU_SHARED_ALIGNED(spinlock_t, l1_inst_sram_lock);
-  static DEFINE_PER_CPU(struct sram_piece, free_l1_inst_sram_head);
-  static DEFINE_PER_CPU(struct sram_piece, used_l1_inst_sram_head);
-  #endif
++   STABS_DEBUG
++   DWARF_DEBUG
+ -  /DISCARD/ : { *(.note) }
+ +
+ +  /* Default discards */
+ +  DISCARDS
+  }
