@@ -1,53 +1,32 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: cpufreq-current tree build warning
-Date: Thu, 17 Sep 2009 12:06:51 +1000
-Message-ID: <20090917120651.f0cdf4c2.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the tty.current tree with the
+ net-current tree
+Date: Wed, 16 Sep 2009 19:12:02 -0700
+Message-ID: <20090917021202.GA7757@kroah.com>
+References: <20090917105442.297b6ea1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__17_Sep_2009_12_06_51_+1000_N5PYZZoos2cvDhD0"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56245 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753401AbZIQCGz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Sep 2009 22:06:55 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Dave Jones <davej@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kurt Roeckx <kurt@roeckx.be>
-
---Signature=_Thu__17_Sep_2009_12_06_51_+1000_N5PYZZoos2cvDhD0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1759183AbZIQCMP@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20090917105442.297b6ea1.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>, Ken Kawasaki <ken_kawasaki@spring.nifty.jp>, "David S. Miller" <davem@davemloft.net>
+List-Id: linux-next.vger.kernel.org
 
-Hi Dave,
+On Thu, Sep 17, 2009 at 10:54:42AM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the tty.current tree got a conflict in
+> drivers/serial/serial_cs.c between commit
+> 531afd64d027e3d798c416b2b37b3cfb1de417d9 ("pcnet_cs: add cis of Linksys
+> multifunction pcmcia card") from the net-current tree and commit
+> 5cea4a4e15a918f19d32fd3dc9a5056f333847c3 ("tty: serial/pcmcia: add ID for
+> Advantech card") from the tty.current tree.
+> 
+> Just context changes.  I fixed it up (see below) and can carry the fix
+> for a while.
 
-Today's linux-next build (x86_64 allmodconfig) produced this warning:
+Thanks, I'll handle this when I sync back up with Linus's tree tomorrow.
 
-arch/x86/kernel/cpu/cpufreq/powernow-k8.c: In function 'fill_powernow_table=
-_fidvid':
-arch/x86/kernel/cpu/cpufreq/powernow-k8.c:1001: warning: passing argument 1=
- of 'invalidate_entry' from incompatible pointer type
-arch/x86/kernel/cpu/cpufreq/powernow-k8.c:608: note: expected 'struct cpufr=
-eq_frequency_table *' but argument is of type 'struct powernow_k8_data *'
-
-Introduced by commit 7fc1b26613587ab4369615445b5485040c60fef1 ("[CPUFREQ]
-Fix NULL ptr regression in powernow-k8").
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__17_Sep_2009_12_06_51_+1000_N5PYZZoos2cvDhD0
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkqxmbsACgkQjjKRsyhoI8wACQCfbPww4oRSXbT6m2zkPpXlB+qq
-DCQAoIs3zb20CmxkiRUdmnb8NBagNvXE
-=KAiK
------END PGP SIGNATURE-----
-
---Signature=_Thu__17_Sep_2009_12_06_51_+1000_N5PYZZoos2cvDhD0--
+greg k-h
