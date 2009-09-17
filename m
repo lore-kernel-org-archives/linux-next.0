@@ -1,51 +1,69 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tty.current tree with the
- net-current tree
-Date: Thu, 17 Sep 2009 10:54:42 +1000
-Message-ID: <20090917105442.297b6ea1.sfr@canb.auug.org.au>
+Subject: linux-next: input-current tree build failure
+Date: Thu, 17 Sep 2009 11:12:28 +1000
+Message-ID: <20090917111228.800851b0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__17_Sep_2009_11_12_28_+1000_.pvjPoyieskdnTOI"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56026 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:42358 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752077AbZIQAyn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Sep 2009 20:54:43 -0400
+	id S1754699AbZIQBMb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 16 Sep 2009 21:12:31 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>, Ken Kawasaki <ken_kawasaki@spring.nifty.jp>, "David S. Miller" <davem@davemloft.net>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Greg,
+--Signature=_Thu__17_Sep_2009_11_12_28_+1000_.pvjPoyieskdnTOI
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the tty.current tree got a conflict in
-drivers/serial/serial_cs.c between commit
-531afd64d027e3d798c416b2b37b3cfb1de417d9 ("pcnet_cs: add cis of Linksys
-multifunction pcmcia card") from the net-current tree and commit
-5cea4a4e15a918f19d32fd3dc9a5056f333847c3 ("tty: serial/pcmcia: add ID for
-Advantech card") from the tty.current tree.
+Hi Dmitry,
 
-Just context changes.  I fixed it up (see below) and can carry the fix
-for a while.
--- 
+Today's linux-next build (x86_64 allmodconfig) failed like this:
+
+In file included from drivers/input/serio/i8042.c:23:
+include/linux/i8042.h: In function 'i8042_check_port_owner':
+include/linux/i8042.h:58: error: parameter name omitted
+drivers/input/serio/i8042.c: At top level:
+drivers/input/serio/i8042.c:130: error: redefinition of 'i8042_lock_chip'
+include/linux/i8042.h:45: note: previous definition of 'i8042_lock_chip' wa=
+s here
+drivers/input/serio/i8042.c:136: error: redefinition of 'i8042_unlock_chip'
+include/linux/i8042.h:49: note: previous definition of 'i8042_unlock_chip' =
+was here
+drivers/input/serio/i8042.c:246: error: redefinition of 'i8042_command'
+include/linux/i8042.h:53: note: previous definition of 'i8042_command' was =
+here
+drivers/input/serio/i8042.c:1193: error: redefinition of 'i8042_check_port_=
+owner'
+include/linux/i8042.h:58: note: previous definition of 'i8042_check_port_ow=
+ner' was here
+
+Caused by commit 1f57f19e6245c5534c3518a8455419461ec06778 ("Input: libps2
+- additional locking for i8042 ports").
+
+Please, if you add code that depends on a CONFIG option, build it with
+and without the options set ...
+
+I have used the input-current tree from next-20090916 for today.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/serial/serial_cs.c
-index ed4648b,6ecb51b..0000000
---- a/drivers/serial/serial_cs.c
-+++ b/drivers/serial/serial_cs.c
-@@@ -883,10 -883,11 +883,11 @@@ static struct pcmcia_device_id serial_i
-  	PCMCIA_DEVICE_CIS_MANF_CARD(0x0192, 0x0710, "SW_7xx_SER.cis"),	/* Sierra Wireless AC710/AC750 GPRS Network Adapter R1 */
-  	PCMCIA_DEVICE_CIS_MANF_CARD(0x0192, 0xa555, "SW_555_SER.cis"),  /* Sierra Aircard 555 CDMA 1xrtt Modem -- pre update */
-  	PCMCIA_DEVICE_CIS_MANF_CARD(0x013f, 0xa555, "SW_555_SER.cis"),  /* Sierra Aircard 555 CDMA 1xrtt Modem -- post update */
- -	PCMCIA_DEVICE_CIS_PROD_ID12("MultiTech", "PCMCIA 56K DataFax", 0x842047ee, 0xc2efcf03, "MT5634ZLX.cis"),
- +	PCMCIA_DEVICE_CIS_PROD_ID12("MultiTech", "PCMCIA 56K DataFax", 0x842047ee, 0xc2efcf03, "cis/MT5634ZLX.cis"),
-+ 	PCMCIA_DEVICE_CIS_PROD_ID12("ADVANTECH", "COMpad-32/85B-2", 0x96913a85, 0x27ab5437, "COMpad2.cis"),
-  	PCMCIA_DEVICE_CIS_PROD_ID12("ADVANTECH", "COMpad-32/85B-4", 0x96913a85, 0xcec8f102, "COMpad4.cis"),
-  	PCMCIA_DEVICE_CIS_PROD_ID123("ADVANTECH", "COMpad-32/85", "1.0", 0x96913a85, 0x8fbe92ae, 0x0877b627, "COMpad2.cis"),
- -	PCMCIA_DEVICE_CIS_PROD_ID2("RS-COM 2P", 0xad20b156, "RS-COM-2P.cis"),
- +	PCMCIA_DEVICE_CIS_PROD_ID2("RS-COM 2P", 0xad20b156, "cis/RS-COM-2P.cis"),
-  	PCMCIA_DEVICE_CIS_MANF_CARD(0x0013, 0x0000, "GLOBETROTTER.cis"),
-  	PCMCIA_DEVICE_PROD_ID12("ELAN DIGITAL SYSTEMS LTD, c1997.","SERIAL CARD: SL100  1.00.",0x19ca78af,0xf964f42b),
-  	PCMCIA_DEVICE_PROD_ID12("ELAN DIGITAL SYSTEMS LTD, c1997.","SERIAL CARD: SL100",0x19ca78af,0x71d98e83),
+--Signature=_Thu__17_Sep_2009_11_12_28_+1000_.pvjPoyieskdnTOI
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkqxjPwACgkQjjKRsyhoI8xoEgCggU6VE6X91BvjBoS7ElKaE4hq
+qgkAninoQA/2VeLch2CRJ/7An2Nh9f6Y
+=3Ht2
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__17_Sep_2009_11_12_28_+1000_.pvjPoyieskdnTOI--
