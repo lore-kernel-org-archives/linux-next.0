@@ -1,59 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] edac: need to export cpu_llc_id
-Date: Thu, 17 Sep 2009 10:35:13 +1000
-Message-ID: <20090917103513.9a42bdbf.sfr@canb.auug.org.au>
-References: <20090916093935.6bc2c91f.sfr@canb.auug.org.au>
-	<20090916044151.GB5767@aftab>
-	<20090917014901.1011949d.sfr@canb.auug.org.au>
-	<20090916160420.GA12585@aftab>
+Subject: linux-next: manual merge of the tty.current tree with the
+ net-current tree
+Date: Thu, 17 Sep 2009 10:54:42 +1000
+Message-ID: <20090917105442.297b6ea1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__17_Sep_2009_10_35_13_+1000_QVSrMQEPrlDXi4X8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37593 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:56026 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752453AbZIQAfS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Sep 2009 20:35:18 -0400
-In-Reply-To: <20090916160420.GA12585@aftab>
+	id S1752077AbZIQAyn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 16 Sep 2009 20:54:43 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Borislav Petkov <borislav.petkov@amd.com>
-Cc: Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>, Ken Kawasaki <ken_kawasaki@spring.nifty.jp>, "David S. Miller" <davem@davemloft.net>
 
---Signature=_Thu__17_Sep_2009_10_35_13_+1000_QVSrMQEPrlDXi4X8
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Greg,
 
-Hi Boris,
+Today's linux-next merge of the tty.current tree got a conflict in
+drivers/serial/serial_cs.c between commit
+531afd64d027e3d798c416b2b37b3cfb1de417d9 ("pcnet_cs: add cis of Linksys
+multifunction pcmcia card") from the net-current tree and commit
+5cea4a4e15a918f19d32fd3dc9a5056f333847c3 ("tty: serial/pcmcia: add ID for
+Advantech card") from the tty.current tree.
 
-On Wed, 16 Sep 2009 18:04:20 +0200 Borislav Petkov <borislav.petkov@amd.com=
-> wrote:
->
-> By the way, fix is already underway to Linus so you might just wait
-> a while before applying it to your linux-next mix and pull it from
-> upstream instead.
-
-Since Linus hasn't merged your tree yet, I have cherry-picked that one
-commit from your tree into my "fixes" tree for today.  I will drop it
-when Linus takes your tree.
-
-Thanks.
---=20
+Just context changes.  I fixed it up (see below) and can carry the fix
+for a while.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__17_Sep_2009_10_35_13_+1000_QVSrMQEPrlDXi4X8
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkqxhEEACgkQjjKRsyhoI8wjYwCfSUVNG0SXFK7UL/aoRWrVdR7x
-zCIAnjy8FU8KoyNbfnhbBMWEXewX7kt5
-=yW0+
------END PGP SIGNATURE-----
-
---Signature=_Thu__17_Sep_2009_10_35_13_+1000_QVSrMQEPrlDXi4X8--
+diff --cc drivers/serial/serial_cs.c
+index ed4648b,6ecb51b..0000000
+--- a/drivers/serial/serial_cs.c
++++ b/drivers/serial/serial_cs.c
+@@@ -883,10 -883,11 +883,11 @@@ static struct pcmcia_device_id serial_i
+  	PCMCIA_DEVICE_CIS_MANF_CARD(0x0192, 0x0710, "SW_7xx_SER.cis"),	/* Sierra Wireless AC710/AC750 GPRS Network Adapter R1 */
+  	PCMCIA_DEVICE_CIS_MANF_CARD(0x0192, 0xa555, "SW_555_SER.cis"),  /* Sierra Aircard 555 CDMA 1xrtt Modem -- pre update */
+  	PCMCIA_DEVICE_CIS_MANF_CARD(0x013f, 0xa555, "SW_555_SER.cis"),  /* Sierra Aircard 555 CDMA 1xrtt Modem -- post update */
+ -	PCMCIA_DEVICE_CIS_PROD_ID12("MultiTech", "PCMCIA 56K DataFax", 0x842047ee, 0xc2efcf03, "MT5634ZLX.cis"),
+ +	PCMCIA_DEVICE_CIS_PROD_ID12("MultiTech", "PCMCIA 56K DataFax", 0x842047ee, 0xc2efcf03, "cis/MT5634ZLX.cis"),
++ 	PCMCIA_DEVICE_CIS_PROD_ID12("ADVANTECH", "COMpad-32/85B-2", 0x96913a85, 0x27ab5437, "COMpad2.cis"),
+  	PCMCIA_DEVICE_CIS_PROD_ID12("ADVANTECH", "COMpad-32/85B-4", 0x96913a85, 0xcec8f102, "COMpad4.cis"),
+  	PCMCIA_DEVICE_CIS_PROD_ID123("ADVANTECH", "COMpad-32/85", "1.0", 0x96913a85, 0x8fbe92ae, 0x0877b627, "COMpad2.cis"),
+ -	PCMCIA_DEVICE_CIS_PROD_ID2("RS-COM 2P", 0xad20b156, "RS-COM-2P.cis"),
+ +	PCMCIA_DEVICE_CIS_PROD_ID2("RS-COM 2P", 0xad20b156, "cis/RS-COM-2P.cis"),
+  	PCMCIA_DEVICE_CIS_MANF_CARD(0x0013, 0x0000, "GLOBETROTTER.cis"),
+  	PCMCIA_DEVICE_PROD_ID12("ELAN DIGITAL SYSTEMS LTD, c1997.","SERIAL CARD: SL100  1.00.",0x19ca78af,0xf964f42b),
+  	PCMCIA_DEVICE_PROD_ID12("ELAN DIGITAL SYSTEMS LTD, c1997.","SERIAL CARD: SL100",0x19ca78af,0x71d98e83),
