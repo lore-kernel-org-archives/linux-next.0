@@ -1,71 +1,50 @@
-From: "J. Bruce Fields" <bfields@fieldses.org>
-Subject: Re: linux-next: nfsd tree build failure
-Date: Thu, 17 Sep 2009 15:33:23 -0400
-Message-ID: <20090917193323.GB3123@fieldses.org>
-References: <20090917171031.128a846b.sfr@canb.auug.org.au>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: linux-next: input-current tree build failure
+Date: Thu, 17 Sep 2009 23:02:52 -0700
+Message-ID: <20090918060252.GD18668@core.coreip.homeip.net>
+References: <20090917111228.800851b0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fieldses.org ([174.143.236.118]:59695 "EHLO fieldses.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753534AbZIQTdU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 17 Sep 2009 15:33:20 -0400
+Received: from mail-yx0-f199.google.com ([209.85.210.199]:59159 "EHLO
+	mail-yx0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750822AbZIRGCy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 18 Sep 2009 02:02:54 -0400
 Content-Disposition: inline
-In-Reply-To: <20090917171031.128a846b.sfr@canb.auug.org.au>
+In-Reply-To: <20090917111228.800851b0.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Sep 17, 2009 at 05:10:31PM +1000, Stephen Rothwell wrote:
-> Today's linux-next build (sparc64_defconfig) failed like this:
+Hi Stephen,
+
+On Thu, Sep 17, 2009 at 11:12:28AM +1000, Stephen Rothwell wrote:
+> Hi Dmitry,
 > 
-> In file included from arch/sparc/kernel/sys_sparc32.c:32:
-> include/linux/nfsd/nfsd.h: In function 'nfs4_state_start':
-> include/linux/nfsd/nfsd.h:177: error: no return statement in function returning non-void
-
-Thanks for catching this!
-
-> Caused by commit 29ab23cc5d351658d01a4327d55e9106a73fd04f ("nfsd4: allow
-> nfs4 state startup to fail").  Please, if you add code that depends on a
-> CONFIG option, build with that option enabled and disabled.
-
-And, um, yes, I'll try to do better at that.
-
-> I have applied the following patch for today:
-
-Thanks, applied (with fixed return value).
-
---b.
-
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
 > 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Thu, 17 Sep 2009 17:03:06 +1000
-> Subject: [PATCH] nfsd: return success for non NFS4 nfs4_state_start
+> In file included from drivers/input/serio/i8042.c:23:
+> include/linux/i8042.h: In function 'i8042_check_port_owner':
+> include/linux/i8042.h:58: error: parameter name omitted
+> drivers/input/serio/i8042.c: At top level:
+> drivers/input/serio/i8042.c:130: error: redefinition of 'i8042_lock_chip'
+> include/linux/i8042.h:45: note: previous definition of 'i8042_lock_chip' was here
+> drivers/input/serio/i8042.c:136: error: redefinition of 'i8042_unlock_chip'
+> include/linux/i8042.h:49: note: previous definition of 'i8042_unlock_chip' was here
+> drivers/input/serio/i8042.c:246: error: redefinition of 'i8042_command'
+> include/linux/i8042.h:53: note: previous definition of 'i8042_command' was here
+> drivers/input/serio/i8042.c:1193: error: redefinition of 'i8042_check_port_owner'
+> include/linux/i8042.h:58: note: previous definition of 'i8042_check_port_owner' was here
 > 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  include/linux/nfsd/nfsd.h |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
+> Caused by commit 1f57f19e6245c5534c3518a8455419461ec06778 ("Input: libps2
+> - additional locking for i8042 ports").
 > 
-> diff --git a/include/linux/nfsd/nfsd.h b/include/linux/nfsd/nfsd.h
-> index 24fdf89..e9ffeb5 100644
-> --- a/include/linux/nfsd/nfsd.h
-> +++ b/include/linux/nfsd/nfsd.h
-> @@ -174,7 +174,7 @@ int nfs4_reset_recoverydir(char *recdir);
->  #else
->  static inline int nfs4_state_init(void) { return 0; }
->  static inline void nfsd4_free_slabs(void) { }
-> -static inline int nfs4_state_start(void) { }
-> +static inline int nfs4_state_start(void) { return 1; }
->  static inline void nfs4_state_shutdown(void) { }
->  static inline time_t nfs4_lease_time(void) { return 0; }
->  static inline void nfs4_reset_lease(time_t leasetime) { }
-> -- 
-> 1.6.3.3
+> Please, if you add code that depends on a CONFIG option, build it with
+> and without the options set ...
 > 
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
+
+I did ;) ... but not as module, sorry about this, will fix in a moment.
+
+-- 
+Dmitry
