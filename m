@@ -1,50 +1,58 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: linux-next: input-current tree build failure
-Date: Thu, 17 Sep 2009 23:02:52 -0700
-Message-ID: <20090918060252.GD18668@core.coreip.homeip.net>
-References: <20090917111228.800851b0.sfr@canb.auug.org.au>
+From: Greg Ungerer <gerg@snapgear.com>
+Subject: Re: linux-next: m86k/m68knommu tree build failure
+Date: Fri, 18 Sep 2009 16:09:37 +1000
+Message-ID: <4AB32421.5010207@snapgear.com>
+References: <20090910151137.fb71c103.sfr@canb.auug.org.au>	<4AA890B5.8000207@snapgear.com> <m363brb4yk.fsf@hase.home>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-yx0-f199.google.com ([209.85.210.199]:59159 "EHLO
-	mail-yx0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750822AbZIRGCy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 18 Sep 2009 02:02:54 -0400
-Content-Disposition: inline
-In-Reply-To: <20090917111228.800851b0.sfr@canb.auug.org.au>
+Received: from rex.securecomputing.com ([203.24.151.4]:50597 "EHLO
+	cyberguard.com.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751317AbZIRGKH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 18 Sep 2009 02:10:07 -0400
+In-Reply-To: <m363brb4yk.fsf@hase.home>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andreas Schwab <schwab@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Stephen,
+Hi Andreas,
 
-On Thu, Sep 17, 2009 at 11:12:28AM +1000, Stephen Rothwell wrote:
-> Hi Dmitry,
+Andreas Schwab wrote:
+> Greg Ungerer <gerg@snapgear.com> writes:
 > 
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
+>> Hi Stephen,
+>>
+>> Stephen Rothwell wrote:
+>>> Today's linux-next build (m68k defconfig) failed like this:
+>>>
+>>> kernel/built-in.o: In function `ptrace_resume':
+>>> ptrace.c:(.text+0xc5d6): undefined reference to `user_disable_single_step'
+>>> ptrace.c:(.text+0xc5fe): undefined reference to `user_enable_single_step'
+>>> ptrace.c:(.text+0xc620): undefined reference to `user_disable_single_step'
+>>>
+>>> Caused by commit 5db612ef70d24be12f6dbf5d06b23bcd6bc2fc05 ("m68knommu:
+>>> define arch_has_single_step() and friends").  This commit added
+>>> definitions of these functions for m68knommu, but added declarations (and
+>>> arch_has_single_step()) in a common header file.
+>> Ah, yes, thanks. I'll fix that. I don't regularly build for m68k,
+>> so I missed that in my test builds.
 > 
-> In file included from drivers/input/serio/i8042.c:23:
-> include/linux/i8042.h: In function 'i8042_check_port_owner':
-> include/linux/i8042.h:58: error: parameter name omitted
-> drivers/input/serio/i8042.c: At top level:
-> drivers/input/serio/i8042.c:130: error: redefinition of 'i8042_lock_chip'
-> include/linux/i8042.h:45: note: previous definition of 'i8042_lock_chip' was here
-> drivers/input/serio/i8042.c:136: error: redefinition of 'i8042_unlock_chip'
-> include/linux/i8042.h:49: note: previous definition of 'i8042_unlock_chip' was here
-> drivers/input/serio/i8042.c:246: error: redefinition of 'i8042_command'
-> include/linux/i8042.h:53: note: previous definition of 'i8042_command' was here
-> drivers/input/serio/i8042.c:1193: error: redefinition of 'i8042_check_port_owner'
-> include/linux/i8042.h:58: note: previous definition of 'i8042_check_port_owner' was here
-> 
-> Caused by commit 1f57f19e6245c5534c3518a8455419461ec06778 ("Input: libps2
-> - additional locking for i8042 ports").
-> 
-> Please, if you add code that depends on a CONFIG option, build it with
-> and without the options set ...
-> 
+> An m68k implementation is here
+> <http://permalink.gmane.org/gmane.linux.ports.m68k/721>.
 
-I did ;) ... but not as module, sorry about this, will fix in a moment.
+Thanks for the pointer. I have something similar I have been
+working on for m68knommu. I'll follow up here with the new
+patches soon.
 
--- 
-Dmitry
+Regards
+Greg
+
+
+
+------------------------------------------------------------------------
+Greg Ungerer  --  Principal Engineer        EMAIL:     gerg@snapgear.com
+SnapGear Group, McAfee                      PHONE:       +61 7 3435 2888
+825 Stanley St,                             FAX:         +61 7 3891 3630
+Woolloongabba, QLD, 4102, Australia         WEB: http://www.SnapGear.com
