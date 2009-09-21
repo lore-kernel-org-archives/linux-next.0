@@ -1,45 +1,56 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: no release for Sept 21
-Date: Mon, 21 Sep 2009 19:34:24 +1000
-Message-ID: <20090921193424.ca4d28d5.sfr@canb.auug.org.au>
+From: Dave Jones <davej@redhat.com>
+Subject: Re: [PATCH v6] RO/NX protection for loadable kernel modules
+Date: Mon, 21 Sep 2009 17:40:47 -0400
+Message-ID: <20090921214046.GA17243@redhat.com>
+References: <817ecb6f0909101950v2fc6dc6u5cbc40cd9a9dde77@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__21_Sep_2009_19_34_24_+1000__le16jDo+sIWBVSv"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48146 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755545AbZIUJeb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 21 Sep 2009 05:34:31 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
-
---Signature=_Mon__21_Sep_2009_19_34_24_+1000__le16jDo+sIWBVSv
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754613AbZIUX54@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <817ecb6f0909101950v2fc6dc6u5cbc40cd9a9dde77@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Siarhei Liakh <sliakh.lkml@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, Rusty Russell <rusty@rustcorp.com.au>, Stephen Rothwell <sfr@canb.auug.org.au>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+On Thu, Sep 10, 2009 at 10:50:47PM -0400, Siarhei Liakh wrote:
+ > This patch is a logical extension of the protection provided by
+ > CONFIG_DEBUG_RODATA to LKMs. The protection is provided by splitting
+ > module_core and module_init into three logical parts each and setting
+ > appropriate page access permissions for each individual section:
+ > 
+ >  1. Code: RO+X
+ >  2. RO data: RO+NX
+ >  3. RW data: RW+NX
 
-There will be no linux-next today (or probably tomorrow) as I am a bit
-under the weather.
+Hi Siarhei,
+ I tried out this patch on 2.6.31, and got the following trace during bootup..
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+------------[ cut here ]------------
+WARNING: at kernel/trace/ftrace.c:1003 ftrace_bug+0x198/0x27e() (Not tainted)
+Hardware name: VGN-Z540N
+Modules linked in: output(+)
+Pid: 115, comm: modprobe Not tainted 2.6.31-23.fc12.x86_64 #1
+Call Trace:
+ [<ffffffff81064244>] warn_slowpath_common+0x95/0xc3
+ [<ffffffffa0000193>] ? video_output_register+0x11/0x10a [output]
+ [<ffffffff81064299>] warn_slowpath_null+0x27/0x3d
+ [<ffffffff810d4a0e>] ftrace_bug+0x198/0x27e
+ [<ffffffffa0000193>] ? video_output_register+0x11/0x10a [output]
+ [<ffffffff810d5c66>] ftrace_convert_nops+0x201/0x2b9
+ [<ffffffffa0000193>] ? video_output_register+0x11/0x10a [output]
+ [<ffffffff810d5d6a>] ftrace_module_notify+0x4c/0x7f
+ [<ffffffff815099c5>] notifier_call_chain+0x72/0xba
+ [<ffffffff81086db1>] ? __blocking_notifier_call_chain+0x4c/0x8e
+ [<ffffffff81086dc8>] __blocking_notifier_call_chain+0x63/0x8e
+ [<ffffffff81086e1a>] blocking_notifier_call_chain+0x27/0x3d
+ [<ffffffff810a466a>] sys_init_module+0xb7/0x249
+ [<ffffffff81011f42>] system_call_fastpath+0x16/0x1b
+---[ end trace 95b33ebf87286ae6 ]---
+ftrace faulted on writing [<ffffffffa0000193>] video_output_register+0x11/0x10a [output]
 
---Signature=_Mon__21_Sep_2009_19_34_24_+1000__le16jDo+sIWBVSv
-Content-Type: application/pgp-signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+I guess ftrace is trying to NOP out something in the modules which
+are marked read-only ?
 
-iEYEARECAAYFAkq3SKEACgkQjjKRsyhoI8x+dACdFt7IteCK+iy+VTP3snddwcwH
-WLYAn0vCGv6StX7DxTLkf36PNKn9pTVz
-=HIWb
------END PGP SIGNATURE-----
-
---Signature=_Mon__21_Sep_2009_19_34_24_+1000__le16jDo+sIWBVSv--
+	Dave
