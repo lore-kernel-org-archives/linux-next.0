@@ -1,27 +1,48 @@
-From: Siarhei Liakh <sliakh.lkml@gmail.com>
-Subject: Re: [PATCH v6] RO/NX protection for loadable kernel modules
-Date: Tue, 22 Sep 2009 11:50:21 -0400
-Message-ID: <817ecb6f0909220850m4127b382h12fafd1e6182a292@mail.gmail.com>
-References: <817ecb6f0909101950v2fc6dc6u5cbc40cd9a9dde77@mail.gmail.com>
-	 <200909220929.32301.rusty@rustcorp.com.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: failed to fetch md-current and md trees
+Date: Wed, 23 Sep 2009 09:08:54 +1000
+Message-ID: <20090923090854.40f492df.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-security-module-owner@vger.kernel.org>
-In-Reply-To: <200909220929.32301.rusty@rustcorp.com.au>
-Sender: linux-security-module-owner@vger.kernel.org
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__23_Sep_2009_09_08_54_+1000_YIlHo8rx1pAKB6.o"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:33219 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751535AbZIVXIz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 22 Sep 2009 19:08:55 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Neil Brown <neilb@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> This is usually considered a bad idea. =A0Make a new config option,
-> CONFIG_HAVE_SET_MEMORY_PROTECTION, select it in arch/x86/Kconfig.
-> Then wrap the entire functions in one #ifdef CONFIG_HAVE_....
-> and put empty versions in the #else.
+--Signature=_Wed__23_Sep_2009_09_08_54_+1000_YIlHo8rx1pAKB6.o
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ok, will do.
---
-To unsubscribe from this list: send the line "unsubscribe linux-securit=
-y-module" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Hi Neil,
+
+Today's linux-next fetch of the md{,-curent} trees failed like this:
+
+md-current: git
+fatal: The remote end hung up unexpectedly
+
+I will use the version that I have previously fetched.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__23_Sep_2009_09_08_54_+1000_YIlHo8rx1pAKB6.o
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkq5WQYACgkQjjKRsyhoI8xJ/QCdFqKOkZxnjkDL7AdsBwAbiC0U
+QuwAoJWLUHBfzyunSQ6nJqKamd1TZnRk
+=bQwH
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__23_Sep_2009_09_08_54_+1000_YIlHo8rx1pAKB6.o--
