@@ -1,15 +1,14 @@
-From: Lars Ellenberg <lars.ellenberg-63ez5xqkn6DQT0dZR+AlfA@public.gmane.org>
+From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
 Subject: Re: linux-next: block tree build failure
-Date: Wed, 23 Sep 2009 13:12:25 +0200
-Message-ID: <20090923111225.GC8000@barkeeper1-xen.linbit>
+Date: Wed, 23 Sep 2009 21:56:59 +1000
+Message-ID: <20090923215659.2869830d.sfr@canb.auug.org.au>
 References: <20090923145100.1917fdd8.sfr@canb.auug.org.au>
 	<20090923071152.GA8000@barkeeper1-xen.linbit>
+	<20090923111225.GC8000@barkeeper1-xen.linbit>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="===============2429013998625863043=="
 Return-path: <drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20090923071152.GA8000-pI6ZZpWkm2Ob3Om96lsyHpni2hclXnRB@public.gmane.org>
+In-Reply-To: <20090923111225.GC8000-pI6ZZpWkm2Ob3Om96lsyHpni2hclXnRB@public.gmane.org>
 List-Unsubscribe: <http://lists.linbit.com/mailman/options/drbd-dev>,
 	<mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=unsubscribe>
 List-Archive: <http://lists.linbit.com/pipermail/drbd-dev>
@@ -17,49 +16,60 @@ List-Post: <mailto:drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org>
 List-Help: <mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=help>
 List-Subscribe: <http://lists.linbit.com/mailman/listinfo/drbd-dev>,
 	<mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=subscribe>
+Mime-version: 1.0
 Sender: drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
 Errors-To: drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
-To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Jens Axboe <jens.axboe-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Philipp Reisner <philipp.reisner-63ez5xqkn6DQT0dZR+AlfA@public.gmane.org>, dr
+To: Lars Ellenberg <lars.ellenberg-63ez5xqkn6DQT0dZR+AlfA@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Philipp Reisner <philipp.reisner-63ez5xqkn6DQT0dZR+AlfA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jens Axboe <jens.axboe-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>, drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Sep 23, 2009 at 09:11:52AM +0200, Lars Ellenberg wrote:
-> On Wed, Sep 23, 2009 at 02:51:00PM +1000, Stephen Rothwell wrote:
-> > Hi Jens,
-> > 
-> > Today's linux-next build (x86_64 allmodconfig) failed like this:
-> > 
-> > drivers/block/drbd/drbd_tracing.c:29:26: error: linux/marker.h: No such file or directory
-> > 
-> > Caused by commit 95eaef1cbc63f73df4ff8559dd66b1d29b462535 ("Replaced our
-> > own tracing stuff with Linux's tracepoints") from the block/drbd trees
-> > interacting with commit fc5377668c3d808e1d53c4aee152c836f55c3490
-> > ("tracing: Remove markers") from Linus' tree.
-> > 
-> > I have no idea what the correct thing to do is here, so I have reverted
-> > the merge of the drbd tree into the block tree and will have to drop the
-> > drbd tree for today.
-> 
-> We'll have a look.
+--===============2429013998625863043==
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__23_Sep_2009_21_56_59_+1000_w7R_=bQd.7aXcUls"
 
-Sorry that it took me so long to have that look.
-We can simply drop that include, we don't even use it.
+--Signature=_Wed__23_Sep_2009_21_56_59_+1000_w7R_=bQd.7aXcUls
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/block/drbd/drbd_tracing.c
-b/drivers/block/drbd/drbd_tracing.c
-index aefe986..d18d4f7 100644
---- a/drivers/block/drbd/drbd_tracing.c
-+++ b/drivers/block/drbd/drbd_tracing.c
-@@ -26,7 +26,6 @@
- #include <linux/module.h>
- #include <linux/drbd.h>
- #include <linux/ctype.h>
--#include <linux/marker.h>
- #include "drbd_int.h"
- #include "drbd_tracing.h"
- #include <linux/drbd_tag_magic.h>
+Hi Lars,
 
+On Wed, 23 Sep 2009 13:12:25 +0200 Lars Ellenberg <lars.ellenberg-63ez5xqkn6Bhl2p70BpVqQ@public.gmane.org=
+m> wrote:
+>
+> Sorry that it took me so long to have that look.
+> We can simply drop that include, we don't even use it.
 
-Will be visible in our tree shortly.
-Thanks,
+OK, great.  I guess Jens needs to remerge your tree.
 
-	Lars
+--=20
+Cheers,
+Stephen Rothwell                    sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__23_Sep_2009_21_56_59_+1000_w7R_=bQd.7aXcUls
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkq6DQsACgkQjjKRsyhoI8zzbQCgpilFr7Gbdiv59BTo3arCrv+0
+ynIAn3aNSg5+vQiMsV5lt7dr88Bz2cnW
+=e9Gn
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__23_Sep_2009_21_56_59_+1000_w7R_=bQd.7aXcUls--
+
+--===============2429013998625863043==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+drbd-dev mailing list
+drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
+http://lists.linbit.com/mailman/listinfo/drbd-dev
+
+--===============2429013998625863043==--
