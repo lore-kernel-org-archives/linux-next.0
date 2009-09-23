@@ -1,52 +1,50 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb tree with Linus' tree
-Date: Wed, 23 Sep 2009 16:38:17 +1000
-Message-ID: <20090923163817.44bcebb8.sfr@canb.auug.org.au>
+From: Lars Ellenberg <lars.ellenberg@linbit.com>
+Subject: Re: linux-next: block tree build failure
+Date: Wed, 23 Sep 2009 09:11:52 +0200
+Message-ID: <20090923071152.GA8000@barkeeper1-xen.linbit>
+References: <20090923145100.1917fdd8.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__23_Sep_2009_16_38_17_+1000_WpdwWgg0dAT3me5q"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48266 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754009AbZIWGiX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 23 Sep 2009 02:38:23 -0400
+Received: from mail09.linbit.com ([212.69.161.110]:42574 "EHLO
+	mail09.linbit.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754192AbZIWHLt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Sep 2009 03:11:49 -0400
+Content-Disposition: inline
+In-Reply-To: <20090923145100.1917fdd8.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Beulich <JBeulich@novell.com>, Jason Wessel <jason.wessel@windriver.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jens Axboe <jens.axboe@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Philipp Reisner <philipp.reisner@linbit.com>, drbd-dev@lists.linbit.com, Christoph Hellwig <hch@lst.de>
 
---Signature=_Wed__23_Sep_2009_16_38_17_+1000_WpdwWgg0dAT3me5q
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Sep 23, 2009 at 02:51:00PM +1000, Stephen Rothwell wrote:
+> Hi Jens,
+>=20
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
+>=20
+> drivers/block/drbd/drbd_tracing.c:29:26: error: linux/marker.h: No su=
+ch file or directory
+>=20
+> Caused by commit 95eaef1cbc63f73df4ff8559dd66b1d29b462535 ("Replaced =
+our
+> own tracing stuff with Linux's tracepoints") from the block/drbd tree=
+s
+> interacting with commit fc5377668c3d808e1d53c4aee152c836f55c3490
+> ("tracing: Remove markers") from Linus' tree.
+>=20
+> I have no idea what the correct thing to do is here, so I have revert=
+ed
+> the merge of the drbd tree into the block tree and will have to drop =
+the
+> drbd tree for today.
 
-Hi Greg,
-
-Today's linux-next merge of the usb tree got a conflict in
-arch/x86/kernel/early_printk.c between commit
-414128bd33fef3242747154dfa444970bc5caf4c ("x86: Increase timeout for EHCI
-debug port reset completion in early printk") from Linus' tree and commit
-bd965307ef6b7a56219f8883d5038f6573a94f6e ("USB: ehci,dbgp,early_printk:
-split ehci debug driver from early_printk.c") from the usb tree.
-
-The latter moved the code that the former modified.  A later USB patch
-used an even longer loop delay.
+We'll have a look.
+A quick fix should be to just disable CONFIG_DRBD_TRACE.
 
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+: Lars Ellenberg
+: LINBIT | Your Way to High Availability
+: DRBD/HA support and consulting http://www.linbit.com
 
---Signature=_Wed__23_Sep_2009_16_38_17_+1000_WpdwWgg0dAT3me5q
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkq5wlkACgkQjjKRsyhoI8wdtQCfZ3bZXLFENqu27HOlwlb4cfZQ
-vT0An32K63mky/leiybLDUeXs1/p7JIk
-=k1BN
------END PGP SIGNATURE-----
-
---Signature=_Wed__23_Sep_2009_16_38_17_+1000_WpdwWgg0dAT3me5q--
+DRBD=AE and LINBIT=AE are registered trademarks of LINBIT, Austria.
