@@ -1,51 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the jdelvare-hwmon tree with Linus'
- tree
-Date: Wed, 23 Sep 2009 11:42:57 +1000
-Message-ID: <20090923114257.e6e101cf.sfr@canb.auug.org.au>
+From: Joel Becker <Joel.Becker@oracle.com>
+Subject: Re: linux-next: manual merge of the ocfs2 tree with Linus' tree
+Date: Tue, 22 Sep 2009 20:14:50 -0700
+Message-ID: <20090923031450.GB29799@mail.oracle.com>
+References: <20090923104537.2885f67a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__23_Sep_2009_11_42_57_+1000_sMsBsdFOHSm=.uqM"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45325 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753563AbZIWBm7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 22 Sep 2009 21:42:59 -0400
+Received: from rcsinet12.oracle.com ([148.87.113.124]:23741 "EHLO
+	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753974AbZIWDQi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Sep 2009 23:16:38 -0400
+Content-Disposition: inline
+In-Reply-To: <20090923104537.2885f67a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jean Delvare <khali@linux-fr.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rudolf Marek <r.marek@assembler.cz>, Michael Riepe <michael.riepe@googlemail.com>, Andrew Morton <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Wed__23_Sep_2009_11_42_57_+1000_sMsBsdFOHSm=.uqM
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Sep 23, 2009 at 10:45:37AM +1000, Stephen Rothwell wrote:
+> Today's linux-next merge of the ocfs2 tree got conflicts in
+> arch/x86/ia32/ia32entry.S, arch/x86/include/asm/unistd_32.h,
+> arch/x86/include/asm/unistd_64.h and arch/x86/kernel/syscall_table_32.S
+> between various commits from Linus' tree and commit
+> 25767b48501de19421ae86c406b2dd42df37baf3 ("fs: Add the reflink()
+> operation and reflinkat(2) system call") from the ocfs2 tree.
+> 
+> I fixed it up (see below) and can carry the fix for a short while.  Given
+> the ongoing discussions about this patch with Linus, however, it may be
+> worth dropping for now?
 
-Hi Jean,
+	The syscall is dropping while it's reworked.  I should have a
+tree up shortly without the syscall.
 
-Today's linux-next merge of the jdelvare-hwmon tree got a conflict in
-drivers/hwmon/coretemp.c between commit
-0bf41d9f414a5cf558aff234a0ff486257537574 ("drivers/hwmon/coretemp.c:
-enable the Intel Atom") from Linus' tree and commit
-af663ff4d88e09c4e45661251e3c1eeff147ffc1 ("hwmon: (coretemp) Add support
-for Atom CPUs") from the jdelvare-hwmon tree.
+Joel
 
-I used the version from the jdelvare-hwmon for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+-- 
 
---Signature=_Wed__23_Sep_2009_11_42_57_+1000_sMsBsdFOHSm=.uqM
-Content-Type: application/pgp-signature
+Life's Little Instruction Book #15
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+	"Own a great stereo system."
 
-iEYEARECAAYFAkq5fSEACgkQjjKRsyhoI8yiXwCglPk0FAslayPp6fOaYL3Ih/rL
-HHQAnAnURWC2pE3JPHzSSaAhTLHlMx3E
-=6jUk
------END PGP SIGNATURE-----
-
---Signature=_Wed__23_Sep_2009_11_42_57_+1000_sMsBsdFOHSm=.uqM--
+Joel Becker
+Principal Software Developer
+Oracle
+E-mail: joel.becker@oracle.com
+Phone: (650) 506-8127
