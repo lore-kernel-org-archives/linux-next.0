@@ -1,58 +1,42 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
 Subject: Re: linux-next: manual merge of the usb tree with Linus' tree
-Date: Wed, 23 Sep 2009 22:50:26 +1000
-Message-ID: <20090923225026.c03c84c6.sfr@canb.auug.org.au>
+Date: Wed, 23 Sep 2009 06:20:30 -0700
+Message-ID: <20090923132030.GA30966@kroah.com>
 References: <20090923163817.44bcebb8.sfr@canb.auug.org.au>
-	<4ABA16BF.4020504@windriver.com>
+ <4ABA16BF.4020504@windriver.com>
+ <20090923225026.c03c84c6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__23_Sep_2009_22_50_26_+1000_THN2bTq4jdpYtd.K"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43303 "EHLO smtps.tip.net.au"
+Received: from kroah.org ([198.145.64.141]:43340 "EHLO coco.kroah.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751286AbZIWMu1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 23 Sep 2009 08:50:27 -0400
-In-Reply-To: <4ABA16BF.4020504@windriver.com>
+	id S1751482AbZIWNVE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 23 Sep 2009 09:21:04 -0400
+Content-Disposition: inline
+In-Reply-To: <20090923225026.c03c84c6.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jason Wessel <jason.wessel@windriver.com>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Beulich <JBeulich@novell.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jason Wessel <jason.wessel@windriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Beulich <JBeulich@novell.com>
 
---Signature=_Wed__23_Sep_2009_22_50_26_+1000_THN2bTq4jdpYtd.K
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Sep 23, 2009 at 10:50:26PM +1000, Stephen Rothwell wrote:
+> Hi Jason,
+> 
+> On Wed, 23 Sep 2009 07:38:23 -0500 Jason Wessel <jason.wessel@windriver.com> wrote:
+> >
+> > Please, let me know if there is something I need to do here.
+> > 
+> > Simply changing the context of the patch in Greg's branch should be
+> > enough.   There are many more fixes beyond just the timing loop in the
+> > dbgp series which cover, cold and warm restarts and various errata with
+> > the ehci debug controllers.
+> 
+> Yeah, I think Greg just needs to rebase his series on to a more recent
+> version of Linus' tree.  (and then test and submit it, of course :-))
 
-Hi Jason,
+It was a simple merge, I've now refreshed my tree with this change
+locally, and will push it out in a bit.
 
-On Wed, 23 Sep 2009 07:38:23 -0500 Jason Wessel <jason.wessel@windriver.com=
-> wrote:
->
-> Please, let me know if there is something I need to do here.
->=20
-> Simply changing the context of the patch in Greg's branch should be
-> enough.   There are many more fixes beyond just the timing loop in the
-> dbgp series which cover, cold and warm restarts and various errata with
-> the ehci debug controllers.
+thanks,
 
-Yeah, I think Greg just needs to rebase his series on to a more recent
-version of Linus' tree.  (and then test and submit it, of course :-))
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__23_Sep_2009_22_50_26_+1000_THN2bTq4jdpYtd.K
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkq6GZIACgkQjjKRsyhoI8zl5gCdGTVlxqiCHDEmc32sxSsNX3ic
-AMEAoIIKcfnGEDsMup+yu9aS/xbuNQNx
-=saFG
------END PGP SIGNATURE-----
-
---Signature=_Wed__23_Sep_2009_22_50_26_+1000_THN2bTq4jdpYtd.K--
+greg k-h
