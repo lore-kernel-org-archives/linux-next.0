@@ -1,75 +1,45 @@
-From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Subject: Re: linux-next: block tree build failure
-Date: Wed, 23 Sep 2009 21:56:59 +1000
-Message-ID: <20090923215659.2869830d.sfr@canb.auug.org.au>
-References: <20090923145100.1917fdd8.sfr@canb.auug.org.au>
-	<20090923071152.GA8000@barkeeper1-xen.linbit>
-	<20090923111225.GC8000@barkeeper1-xen.linbit>
+From: Jason Wessel <jason.wessel@windriver.com>
+Subject: Re: linux-next: manual merge of the usb tree with Linus' tree
+Date: Wed, 23 Sep 2009 07:38:23 -0500
+Message-ID: <4ABA16BF.4020504@windriver.com>
+References: <20090923163817.44bcebb8.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2429013998625863043=="
-Return-path: <drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org>
-In-Reply-To: <20090923111225.GC8000-pI6ZZpWkm2Ob3Om96lsyHpni2hclXnRB@public.gmane.org>
-List-Unsubscribe: <http://lists.linbit.com/mailman/options/drbd-dev>,
-	<mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linbit.com/pipermail/drbd-dev>
-List-Post: <mailto:drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org>
-List-Help: <mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.linbit.com/mailman/listinfo/drbd-dev>,
-	<mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=subscribe>
-Mime-version: 1.0
-Sender: drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
-Errors-To: drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
-To: Lars Ellenberg <lars.ellenberg-63ez5xqkn6DQT0dZR+AlfA@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Philipp Reisner <philipp.reisner-63ez5xqkn6DQT0dZR+AlfA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jens Axboe <jens.axboe-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Christoph Hellwig <hch-jcswGhMUV9g@public.gmane.org>, drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
-List-Id: linux-next.vger.kernel.org
-
---===============2429013998625863043==
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__23_Sep_2009_21_56_59_+1000_w7R_=bQd.7aXcUls"
-
---Signature=_Wed__23_Sep_2009_21_56_59_+1000_w7R_=bQd.7aXcUls
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Lars,
-
-On Wed, 23 Sep 2009 13:12:25 +0200 Lars Ellenberg <lars.ellenberg-63ez5xqkn6Bhl2p70BpVqQ@public.gmane.org=
-m> wrote:
->
-> Sorry that it took me so long to have that look.
-> We can simply drop that include, we don't even use it.
-
-OK, great.  I guess Jens needs to remerge your tree.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__23_Sep_2009_21_56_59_+1000_w7R_=bQd.7aXcUls
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkq6DQsACgkQjjKRsyhoI8zzbQCgpilFr7Gbdiv59BTo3arCrv+0
-ynIAn3aNSg5+vQiMsV5lt7dr88Bz2cnW
-=e9Gn
------END PGP SIGNATURE-----
-
---Signature=_Wed__23_Sep_2009_21_56_59_+1000_w7R_=bQd.7aXcUls--
-
---===============2429013998625863043==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.windriver.com ([147.11.1.11]:35356 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751102AbZIWMiw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Sep 2009 08:38:52 -0400
+In-Reply-To: <20090923163817.44bcebb8.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Beulich <JBeulich@novell.com>
 
-_______________________________________________
-drbd-dev mailing list
-drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
-http://lists.linbit.com/mailman/listinfo/drbd-dev
+Stephen Rothwell wrote:
+> Hi Greg,
+>
+> Today's linux-next merge of the usb tree got a conflict in
+> arch/x86/kernel/early_printk.c between commit
+> 414128bd33fef3242747154dfa444970bc5caf4c ("x86: Increase timeout for EHCI
+> debug port reset completion in early printk") from Linus' tree and commit
+> bd965307ef6b7a56219f8883d5038f6573a94f6e ("USB: ehci,dbgp,early_printk:
+> split ehci debug driver from early_printk.c") from the usb tree.
+>
+> The latter moved the code that the former modified.  A later USB patch
+> used an even longer loop delay.
+>
+>   
+Please, let me know if there is something I need to do here.
 
---===============2429013998625863043==--
+Simply changing the context of the patch in Greg's branch should be
+enough.   There are many more fixes beyond just the timing loop in the
+dbgp series which cover, cold and warm restarts and various errata with
+the ehci debug controllers.
+
+Hopefully we can get the dbgp series merged soon because this particular
+errata was fixed several months ago.  :-)
+
+Thanks,
+Jason.
