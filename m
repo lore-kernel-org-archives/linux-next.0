@@ -1,47 +1,133 @@
-From: Ken Lewis <kennylewis@gmail.com>
-Subject: PATCH 1/1: rt2x00dev.c / rt2x00lib.h fixes build breakage
-Date: Wed, 23 Sep 2009 21:59:47 +0100
-Message-ID: <5a44caba0909231359q5835a293h24882e7f22b0db95@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with Linus' tree
+Date: Thu, 24 Sep 2009 14:07:38 +1000
+Message-ID: <20090924140738.3b8ab138.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=0016364d1da1c05d37047444fe54
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ew0-f211.google.com ([209.85.219.211]:56859 "EHLO
-	mail-ew0-f211.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752425AbZIWU7p (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Sep 2009 16:59:45 -0400
+Received: from chilli.pcug.org.au ([203.10.76.44]:55052 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750717AbZIXEHj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 24 Sep 2009 00:07:39 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, netdev <netdev@vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>, Stefani Seibold <stefani@seibold.net>
 
---0016364d1da1c05d37047444fe54
-Content-Type: text/plain; charset=ISO-8859-1
+Hi all,
 
-The headers in drivers/net/wireless/rt2x00/rt2x00lib.h don't match the
-use of the function in rt2x00dev.c  The build fails as a result.
+Today's linux-next merge of the tip tree got a conflict in
+fs/proc/array.c between commit d899bf7b55f503ba7d3d07ed27c3a37e270fa7db
+("procfs: provide stack information for threads") from Linus' tree and
+commit d01d4827858cdc2e1c437c87ab65ec0a00fd40f8 ("sched: Always show
+Cpus_allowed field in /proc/<pid>/status") from the tip tree.
 
-This has been a problem in linux-next since early September.  I've
-e-mailed a patch to linux-next and to linux-net, but the 2.6.32 merge
-window has brought the problem to the mainline and so I'm re-sending
-my patch.  I've opened a bug on bugzilla:
-http://bugzilla.kernel.org/show_bug.cgi?id=14217
+Just overlapping additions.  I fixed it up (see below) and can cay the
+fix for a while. This appears to be fixed the same way in tip:master.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Take care.
-Ken
-
---0016364d1da1c05d37047444fe54
-Content-Type: text/x-diff; charset=US-ASCII; name="diff-fix-for-rt2x00lib.h.patch"
-Content-Disposition: attachment; filename="diff-fix-for-rt2x00lib.h.patch"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_fzyk4zkw0
-
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L3dpcmVsZXNzL3J0MngwMC9ydDJ4MDBsaWIuaCBiL2Ry
-aXZlcnMvbmV0L3dpcmVsZXNzL3J0MngwMC9ydDJ4MDBsaWIuaAppbmRleCA1NDYyY2I1Li41Njdm
-MDI5IDEwMDY0NAotLS0gYS9kcml2ZXJzL25ldC93aXJlbGVzcy9ydDJ4MDAvcnQyeDAwbGliLmgK
-KysrIGIvZHJpdmVycy9uZXQvd2lyZWxlc3MvcnQyeDAwL3J0MngwMGxpYi5oCkBAIC0zODAsNyAr
-MzgwLDcgQEAgc3RhdGljIGlubGluZSB2b2lkIHJ0MngwMGNyeXB0b190eF9pbnNlcnRfaXYoc3Ry
-dWN0IHNrX2J1ZmYgKnNrYiwKIHsKIH0KIAotc3RhdGljIGlubGluZSB2b2lkIHJ0MngwMGNyeXB0
-b19yeF9pbnNlcnRfaXYoc3RydWN0IHNrX2J1ZmYgKnNrYiwgYm9vbCBsMnBhZCwKK3N0YXRpYyBp
-bmxpbmUgdm9pZCBydDJ4MDBjcnlwdG9fcnhfaW5zZXJ0X2l2KHN0cnVjdCBza19idWZmICpza2Is
-CiAJCQkJCSAgICAgdW5zaWduZWQgaW50IGhlYWRlcl9sZW5ndGgsCiAJCQkJCSAgICAgc3RydWN0
-IHJ4ZG9uZV9lbnRyeV9kZXNjICpyeGRlc2MpCiB7Cg==
---0016364d1da1c05d37047444fe54--
+diff --cc fs/proc/array.c
+index 0c6bc60,762aea9..0000000
+--- a/fs/proc/array.c
++++ b/fs/proc/array.c
+@@@ -322,87 -321,16 +322,97 @@@ static inline void task_context_switch_
+  			p->nivcsw);
+  }
+  
+ +struct stack_stats {
+ +	struct vm_area_struct *vma;
+ +	unsigned long	startpage;
+ +	unsigned long	usage;
+ +};
+ +
+ +static int stack_usage_pte_range(pmd_t *pmd, unsigned long addr,
+ +				unsigned long end, struct mm_walk *walk)
+ +{
+ +	struct stack_stats *ss = walk->private;
+ +	struct vm_area_struct *vma = ss->vma;
+ +	pte_t *pte, ptent;
+ +	spinlock_t *ptl;
+ +	int ret = 0;
+ +
+ +	pte = pte_offset_map_lock(vma->vm_mm, pmd, addr, &ptl);
+ +	for (; addr != end; pte++, addr += PAGE_SIZE) {
+ +		ptent = *pte;
+ +
+ +#ifdef CONFIG_STACK_GROWSUP
+ +		if (pte_present(ptent) || is_swap_pte(ptent))
+ +			ss->usage = addr - ss->startpage + PAGE_SIZE;
+ +#else
+ +		if (pte_present(ptent) || is_swap_pte(ptent)) {
+ +			ss->usage = ss->startpage - addr + PAGE_SIZE;
+ +			pte++;
+ +			ret = 1;
+ +			break;
+ +		}
+ +#endif
+ +	}
+ +	pte_unmap_unlock(pte - 1, ptl);
+ +	cond_resched();
+ +	return ret;
+ +}
+ +
+ +static inline unsigned long get_stack_usage_in_bytes(struct vm_area_struct *vma,
+ +				struct task_struct *task)
+ +{
+ +	struct stack_stats ss;
+ +	struct mm_walk stack_walk = {
+ +		.pmd_entry = stack_usage_pte_range,
+ +		.mm = vma->vm_mm,
+ +		.private = &ss,
+ +	};
+ +
+ +	if (!vma->vm_mm || is_vm_hugetlb_page(vma))
+ +		return 0;
+ +
+ +	ss.vma = vma;
+ +	ss.startpage = task->stack_start & PAGE_MASK;
+ +	ss.usage = 0;
+ +
+ +#ifdef CONFIG_STACK_GROWSUP
+ +	walk_page_range(KSTK_ESP(task) & PAGE_MASK, vma->vm_end,
+ +		&stack_walk);
+ +#else
+ +	walk_page_range(vma->vm_start, (KSTK_ESP(task) & PAGE_MASK) + PAGE_SIZE,
+ +		&stack_walk);
+ +#endif
+ +	return ss.usage;
+ +}
+ +
+ +static inline void task_show_stack_usage(struct seq_file *m,
+ +						struct task_struct *task)
+ +{
+ +	struct vm_area_struct	*vma;
+ +	struct mm_struct	*mm = get_task_mm(task);
+ +
+ +	if (mm) {
+ +		down_read(&mm->mmap_sem);
+ +		vma = find_vma(mm, task->stack_start);
+ +		if (vma)
+ +			seq_printf(m, "Stack usage:\t%lu kB\n",
+ +				get_stack_usage_in_bytes(vma, task) >> 10);
+ +
+ +		up_read(&mm->mmap_sem);
+ +		mmput(mm);
+ +	}
+ +}
+ +
++ static void task_cpus_allowed(struct seq_file *m, struct task_struct *task)
++ {
++ 	seq_printf(m, "Cpus_allowed:\t");
++ 	seq_cpumask(m, &task->cpus_allowed);
++ 	seq_printf(m, "\n");
++ 	seq_printf(m, "Cpus_allowed_list:\t");
++ 	seq_cpumask_list(m, &task->cpus_allowed);
++ 	seq_printf(m, "\n");
++ }
++ 
+  int proc_pid_status(struct seq_file *m, struct pid_namespace *ns,
+  			struct pid *pid, struct task_struct *task)
+  {
