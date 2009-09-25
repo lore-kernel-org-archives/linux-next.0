@@ -1,40 +1,52 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next]  i2c: uses/select RT_MUTEXES
-Date: Fri, 25 Sep 2009 15:20:03 -0700
-Message-ID: <4ABD4213.9010700@oracle.com>
-References: <20090925133830.1ba29584.sfr@canb.auug.org.au>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH -next] input: serio_libps2 depends on serio_i8042
+Date: Fri, 25 Sep 2009 15:29:02 -0700
+Message-ID: <20090925222901.GC8618@core.coreip.homeip.net>
+References: <20090925133830.1ba29584.sfr@canb.auug.org.au> <4ABD4219.5000608@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753132AbZIYWT4@vger.kernel.org>
-In-Reply-To: <20090925133830.1ba29584.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, akpm <akpm@linux-foundation.org>, "Jean Delvare (PC drivers, core)" <khali@linux-fr.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-qy0-f174.google.com ([209.85.221.174]:38681 "EHLO
+	mail-qy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752831AbZIYW3D (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 25 Sep 2009 18:29:03 -0400
+Content-Disposition: inline
+In-Reply-To: <4ABD4219.5000608@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, akpm <akpm@linux-foundation.org>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+On Fri, Sep 25, 2009 at 03:20:09PM -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> SERIO_LIBPS2 code uses SERIO_I8042 code, so the former
+> needs to depend on the latter.
+>
 
-i2c-core uses rt mutexes, so it needs to select that
-kconfig symbol since there is no prompt for it.
+Umm, it should be useable without i8042... But I guess you have
+SERIO_LIBPS2=y but SERIO_I8042=m?
 
-ERROR: "rt_mutex_lock" [drivers/i2c/i2c-core.ko] undefined!
-ERROR: "__rt_mutex_init" [drivers/i2c/i2c-core.ko] undefined!
-ERROR: "rt_mutex_trylock" [drivers/i2c/i2c-core.ko] undefined!
-ERROR: "rt_mutex_unlock" [drivers/i2c/i2c-core.ko] undefined!
+> (.text+0x1f33ca): undefined reference to `i8042_check_port_owner'
+> (.text+0x1f33de): undefined reference to `i8042_unlock_chip'
+> (.text+0x1f3435): undefined reference to `i8042_check_port_owner'
+> (.text+0x1f3449): undefined reference to `i8042_lock_chip
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> ---
+>  drivers/input/serio/Kconfig |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> --- linux-next-20090925.orig/drivers/input/serio/Kconfig
+> +++ linux-next-20090925/drivers/input/serio/Kconfig
+> @@ -168,6 +168,7 @@ config SERIO_MACEPS2
+>  
+>  config SERIO_LIBPS2
+>  	tristate "PS/2 driver library" if EMBEDDED
+> +	depends on SERIO_I8042
+>  	help
+>  	  Say Y here if you are using a driver for device connected
+>  	  to a PS/2 port, such as PS/2 mouse or standard AT keyboard.
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- drivers/i2c/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
-
---- linux-next-20090925.orig/drivers/i2c/Kconfig
-+++ linux-next-20090925/drivers/i2c/Kconfig
-@@ -5,6 +5,7 @@
- menuconfig I2C
- 	tristate "I2C support"
- 	depends on HAS_IOMEM
-+	select RT_MUTEXES
- 	---help---
- 	  I2C (pronounce: I-square-C) is a slow serial bus protocol used in
- 	  many micro controller applications and developed by Philips.  SMBus,
+-- 
+Dmitry
