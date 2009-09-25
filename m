@@ -1,50 +1,40 @@
-From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Subject: linux-next: 20090925 - hvc driver build breaks with !HVC_CONSOLE
-Date: Fri, 25 Sep 2009 19:01:43 +0530
-Message-ID: <20090925133143.GD6831@linux.vnet.ibm.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] input: serio_libps2 depends on serio_i8042
+Date: Fri, 25 Sep 2009 15:20:09 -0700
+Message-ID: <4ABD4219.5000608@oracle.com>
 References: <20090925133830.1ba29584.sfr@canb.auug.org.au>
-Reply-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e23smtp07.au.ibm.com ([202.81.31.140]:33433 "EHLO
-	e23smtp07.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751786AbZIYNbn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 25 Sep 2009 09:31:43 -0400
-Content-Disposition: inline
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753117AbZIYWTs@vger.kernel.org>
 In-Reply-To: <20090925133830.1ba29584.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@ozlabs.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, akpm <akpm@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-	next-20090925 randconfig build breaks on hvcs driver on powerpc,
-with HVC_CONSOLE=n.
+SERIO_LIBPS2 code uses SERIO_I8042 code, so the former
+needs to depend on the latter.
 
-ERROR: ".hvc_put_chars" [drivers/char/hvcs.ko] undefined!
-ERROR: ".hvc_get_chars" [drivers/char/hvcs.ko] undefined!
+(.text+0x1f33ca): undefined reference to `i8042_check_port_owner'
+(.text+0x1f33de): undefined reference to `i8042_unlock_chip'
+(.text+0x1f3435): undefined reference to `i8042_check_port_owner'
+(.text+0x1f3449): undefined reference to `i8042_lock_chip
 
-adding the dependency of HVC_CONSOLE helped
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/input/serio/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
-Signed-off-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
---
- drivers/char/Kconfig |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/char/Kconfig b/drivers/char/Kconfig
-index a2a0e67..2583231 100644
---- a/drivers/char/Kconfig
-+++ b/drivers/char/Kconfig
-@@ -682,7 +682,7 @@ config VIRTIO_CONSOLE
+--- linux-next-20090925.orig/drivers/input/serio/Kconfig
++++ linux-next-20090925/drivers/input/serio/Kconfig
+@@ -168,6 +168,7 @@ config SERIO_MACEPS2
  
- config HVCS
- 	tristate "IBM Hypervisor Virtual Console Server support"
--	depends on PPC_PSERIES
-+	depends on PPC_PSERIES && HVC_CONSOLE
+ config SERIO_LIBPS2
+ 	tristate "PS/2 driver library" if EMBEDDED
++	depends on SERIO_I8042
  	help
- 	  Partitionable IBM Power5 ppc64 machines allow hosting of
- 	  firmware virtual consoles from one Linux partition by
-			
-			Kamalesh
+ 	  Say Y here if you are using a driver for device connected
+ 	  to a PS/2 port, such as PS/2 mouse or standard AT keyboard.
