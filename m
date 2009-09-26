@@ -1,96 +1,152 @@
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: Re: linux-next: 20090925 - build breaks with !CONFIG_AIO
-Date: Sat, 26 Sep 2009 13:37:02 +0200
-Message-ID: <20090926133702.44f315f7@mschwide.boeblingen.de.ibm.com>
-References: <20090925133830.1ba29584.sfr@canb.auug.org.au>
-	<20090925131958.GC6831@linux.vnet.ibm.com>
+From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Subject: [PATCH] linux-next: 20090926 - drop autoconf.h from DRBD driver
+Date: Sat, 26 Sep 2009 23:01:43 +0530
+Message-ID: <20090926173143.GA5041@linux.vnet.ibm.com>
+References: <20090926152800.a6568e53.sfr@canb.auug.org.au>
+Reply-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mtagate3.de.ibm.com ([195.212.17.163]:36663 "EHLO
-	mtagate3.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751013AbZIZLhG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 26 Sep 2009 07:37:06 -0400
-In-Reply-To: <20090925131958.GC6831@linux.vnet.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, heiko.carstens@de.ibm.com, linux-s390@vger.kernel.org, adobriyan@gmail.com
+Content-Type: text/plain; charset=iso-8859-1
+Return-path: <linux-kbuild-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20090926152800.a6568e53.sfr@canb.auug.org.au>
+Sender: linux-kbuild-owner@vger.kernel.org
+To: sam@ravnborg.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-kbuild@vger.kernel.org, sfr@canb.auug.org.au
+List-Id: linux-next.vger.kernel.org
 
-On Fri, 25 Sep 2009 18:49:58 +0530
-Kamalesh Babulal <kamalesh@linux.vnet.ibm.com> wrote:
+Hi Sam,
 
-> Hi Stephen,
-> 
-> 	next-20090925 randconfig build breaks on s390x, with CONFIG_AIO=n.
-> 
-> arch/s390/mm/pgtable.c: In function 's390_enable_sie':
-> arch/s390/mm/pgtable.c:282: error: 'struct mm_struct' has no member named 'ioctx_list'
-> arch/s390/mm/pgtable.c:298: error: 'struct mm_struct' has no member named 'ioctx_list'
-> make[1]: *** [arch/s390/mm/pgtable.o] Error 1
-> 
-> Reverting the below commit helps
-> 
-> commit 858f09930b32c11b40fd0c5c467982ba09b10894
-> Author: Alexey Dobriyan <adobriyan@gmail.com>
-> Date:   Wed Sep 23 15:57:32 2009 -0700
-> 
->     aio: ifdef fields in mm_struct
-> 
-> 	->ioctx_lock and ->ioctx_list are used only under CONFIG_AIO.
+	next-20090926 allyesconfig build breaks on powerpc,
 
-That should be fixed in the s390 pgtable.c code:
+drivers/block/drbd/drbd_proc.c:26:28: error: linux/autoconf.h: No such file or directory
+make[3]: *** [drivers/block/drbd/drbd_proc.o] Error 1
 
+dropping autoconf.h from drbd_proc.c helps. The cleanup patch drops the
+unneeded include autoconf.h.
+
+Signed-off-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
 --
-Subject: [PATCH] fix build breakage with CONFIG_AIO=n
+ drivers/block/drbd/drbd_main.c     |    1 -
+ drivers/block/drbd/drbd_nl.c       |    1 -
+ drivers/block/drbd/drbd_proc.c     |    1 -
+ drivers/block/drbd/drbd_receiver.c |    1 -
+ drivers/block/drbd/drbd_req.c      |    1 -
+ drivers/block/drbd/drbd_req.h      |    1 -
+ drivers/block/drbd/drbd_worker.c   |    1 -
+ drivers/staging/cowloop/cowloop.c  |    4 ----
+ drivers/staging/iio/ring_sw.h      |    1 -
+ 9 files changed, 0 insertions(+), 12 deletions(-)
 
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-
-next-20090925 randconfig build breaks on s390x, with CONFIG_AIO=n.
-
-arch/s390/mm/pgtable.c: In function 's390_enable_sie':
-arch/s390/mm/pgtable.c:282: error: 'struct mm_struct' has no member named 'ioctx_list'
-arch/s390/mm/pgtable.c:298: error: 'struct mm_struct' has no member named 'ioctx_list'
-make[1]: *** [arch/s390/mm/pgtable.o] Error 1
-
-Reported-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
----
-
- arch/s390/mm/pgtable.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff -urpN linux-2.6/arch/s390/mm/pgtable.c linux-2.6-patched/arch/s390/mm/pgtable.c
---- linux-2.6/arch/s390/mm/pgtable.c	2009-09-26 13:35:36.000000000 +0200
-+++ linux-2.6-patched/arch/s390/mm/pgtable.c	2009-09-26 13:35:47.000000000 +0200
-@@ -279,7 +279,10 @@ int s390_enable_sie(void)
- 	/* lets check if we are allowed to replace the mm */
- 	task_lock(tsk);
- 	if (!tsk->mm || atomic_read(&tsk->mm->mm_users) > 1 ||
--	    tsk->mm != tsk->active_mm || !hlist_empty(&tsk->mm->ioctx_list)) {
-+#ifdef CONFIG_AIO
-+	    !hlist_empty(&tsk->mm->ioctx_list) ||
-+#endif
-+	    tsk->mm != tsk->active_mm) {
- 		task_unlock(tsk);
- 		return -EINVAL;
- 	}
-@@ -295,7 +298,10 @@ int s390_enable_sie(void)
- 	/* Now lets check again if something happened */
- 	task_lock(tsk);
- 	if (!tsk->mm || atomic_read(&tsk->mm->mm_users) > 1 ||
--	    tsk->mm != tsk->active_mm || !hlist_empty(&tsk->mm->ioctx_list)) {
-+#ifdef CONFIG_AIO
-+	    !hlist_empty(&tsk->mm->ioctx_list) ||
-+#endif
-+	    tsk->mm != tsk->active_mm) {
- 		mmput(mm);
- 		task_unlock(tsk);
- 		return -EINVAL;
-
--- 
-blue skies,
-   Martin.
-
-"Reality continues to ruin my life." - Calvin.
+diff --git a/drivers/block/drbd/drbd_main.c b/drivers/block/drbd/drbd_main.c
+index edf0b80..80273f2 100644
+--- a/drivers/block/drbd/drbd_main.c
++++ b/drivers/block/drbd/drbd_main.c
+@@ -26,7 +26,6 @@
+ 
+  */
+ 
+-#include <linux/autoconf.h>
+ #include <linux/module.h>
+ #include <linux/version.h>
+ #include <linux/drbd.h>
+diff --git a/drivers/block/drbd/drbd_nl.c b/drivers/block/drbd/drbd_nl.c
+index 1927ace..cfde310 100644
+--- a/drivers/block/drbd/drbd_nl.c
++++ b/drivers/block/drbd/drbd_nl.c
+@@ -23,7 +23,6 @@
+ 
+  */
+ 
+-#include <linux/autoconf.h>
+ #include <linux/module.h>
+ #include <linux/drbd.h>
+ #include <linux/in.h>
+diff --git a/drivers/block/drbd/drbd_proc.c b/drivers/block/drbd/drbd_proc.c
+index 98fcb74..bdd0b49 100644
+--- a/drivers/block/drbd/drbd_proc.c
++++ b/drivers/block/drbd/drbd_proc.c
+@@ -23,7 +23,6 @@
+ 
+  */
+ 
+-#include <linux/autoconf.h>
+ #include <linux/module.h>
+ 
+ #include <asm/uaccess.h>
+diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
+index 63686c4..2f81821 100644
+--- a/drivers/block/drbd/drbd_receiver.c
++++ b/drivers/block/drbd/drbd_receiver.c
+@@ -23,7 +23,6 @@
+  */
+ 
+ 
+-#include <linux/autoconf.h>
+ #include <linux/module.h>
+ 
+ #include <asm/uaccess.h>
+diff --git a/drivers/block/drbd/drbd_req.c b/drivers/block/drbd/drbd_req.c
+index 0656cf1..1aaa397 100644
+--- a/drivers/block/drbd/drbd_req.c
++++ b/drivers/block/drbd/drbd_req.c
+@@ -23,7 +23,6 @@
+ 
+  */
+ 
+-#include <linux/autoconf.h>
+ #include <linux/module.h>
+ 
+ #include <linux/slab.h>
+diff --git a/drivers/block/drbd/drbd_req.h b/drivers/block/drbd/drbd_req.h
+index d37ab57..f22c1bc 100644
+--- a/drivers/block/drbd/drbd_req.h
++++ b/drivers/block/drbd/drbd_req.h
+@@ -25,7 +25,6 @@
+ #ifndef _DRBD_REQ_H
+ #define _DRBD_REQ_H
+ 
+-#include <linux/autoconf.h>
+ #include <linux/module.h>
+ 
+ #include <linux/slab.h>
+diff --git a/drivers/block/drbd/drbd_worker.c b/drivers/block/drbd/drbd_worker.c
+index 212e954..34a4b3e 100644
+--- a/drivers/block/drbd/drbd_worker.c
++++ b/drivers/block/drbd/drbd_worker.c
+@@ -23,7 +23,6 @@
+ 
+  */
+ 
+-#include <linux/autoconf.h>
+ #include <linux/module.h>
+ #include <linux/version.h>
+ #include <linux/drbd.h>
+diff --git a/drivers/staging/cowloop/cowloop.c b/drivers/staging/cowloop/cowloop.c
+index a71c743..a21b9b4 100644
+--- a/drivers/staging/cowloop/cowloop.c
++++ b/drivers/staging/cowloop/cowloop.c
+@@ -237,10 +237,6 @@ char revision[] = "$Revision: 3.1 $"; /* cowlo_init_module() has
+ #endif
+ 
+ #include <linux/types.h>
+-#include <linux/autoconf.h>
+-#ifndef AUTOCONF_INCLUDED
+-#include <linux/config.h>
+-#endif
+ #include <linux/module.h>
+ #include <linux/version.h>
+ #include <linux/moduleparam.h>
+diff --git a/drivers/staging/iio/ring_sw.h b/drivers/staging/iio/ring_sw.h
+index ae70ee0..4b0de7c 100644
+--- a/drivers/staging/iio/ring_sw.h
++++ b/drivers/staging/iio/ring_sw.h
+@@ -29,7 +29,6 @@
+  * driver requests - some may support multiple options */
+ 
+ 
+-#include <linux/autoconf.h>
+ #include "iio.h"
+ #include "ring_generic.h"
+ 
+			
+			Kamalesh
