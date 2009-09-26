@@ -1,54 +1,96 @@
-From: Jean Delvare <khali@linux-fr.org>
-Subject: Re: [PATCH -next]  i2c: uses/select RT_MUTEXES
-Date: Sat, 26 Sep 2009 11:47:40 +0200
-Message-ID: <20090926114740.182d8b70@hyperion.delvare>
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: Re: linux-next: 20090925 - build breaks with !CONFIG_AIO
+Date: Sat, 26 Sep 2009 13:37:02 +0200
+Message-ID: <20090926133702.44f315f7@mschwide.boeblingen.de.ibm.com>
 References: <20090925133830.1ba29584.sfr@canb.auug.org.au>
-	<4ABD4213.9010700@oracle.com>
+	<20090925131958.GC6831@linux.vnet.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from poutre.nerim.net ([62.4.16.124]:58358 "EHLO poutre.nerim.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751717AbZIZJri (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 26 Sep 2009 05:47:38 -0400
-In-Reply-To: <4ABD4213.9010700@oracle.com>
+Received: from mtagate3.de.ibm.com ([195.212.17.163]:36663 "EHLO
+	mtagate3.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751013AbZIZLhG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 26 Sep 2009 07:37:06 -0400
+In-Reply-To: <20090925131958.GC6831@linux.vnet.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mika Kuoppala <mika.kuoppala@nokia.com>, Peter Ujfalusi <peter.ujfalusi@nokia.com>
+To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, heiko.carstens@de.ibm.com, linux-s390@vger.kernel.org, adobriyan@gmail.com
 
-Hi Randy,
+On Fri, 25 Sep 2009 18:49:58 +0530
+Kamalesh Babulal <kamalesh@linux.vnet.ibm.com> wrote:
 
-On Fri, 25 Sep 2009 15:20:03 -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
+> Hi Stephen,
 > 
-> i2c-core uses rt mutexes, so it needs to select that
-> kconfig symbol since there is no prompt for it.
+> 	next-20090925 randconfig build breaks on s390x, with CONFIG_AIO=n.
 > 
-> ERROR: "rt_mutex_lock" [drivers/i2c/i2c-core.ko] undefined!
-> ERROR: "__rt_mutex_init" [drivers/i2c/i2c-core.ko] undefined!
-> ERROR: "rt_mutex_trylock" [drivers/i2c/i2c-core.ko] undefined!
-> ERROR: "rt_mutex_unlock" [drivers/i2c/i2c-core.ko] undefined!
+> arch/s390/mm/pgtable.c: In function 's390_enable_sie':
+> arch/s390/mm/pgtable.c:282: error: 'struct mm_struct' has no member named 'ioctx_list'
+> arch/s390/mm/pgtable.c:298: error: 'struct mm_struct' has no member named 'ioctx_list'
+> make[1]: *** [arch/s390/mm/pgtable.o] Error 1
 > 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> ---
->  drivers/i2c/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
+> Reverting the below commit helps
 > 
-> --- linux-next-20090925.orig/drivers/i2c/Kconfig
-> +++ linux-next-20090925/drivers/i2c/Kconfig
-> @@ -5,6 +5,7 @@
->  menuconfig I2C
->  	tristate "I2C support"
->  	depends on HAS_IOMEM
-> +	select RT_MUTEXES
->  	---help---
->  	  I2C (pronounce: I-square-C) is a slow serial bus protocol used in
->  	  many micro controller applications and developed by Philips.  SMBus,
+> commit 858f09930b32c11b40fd0c5c467982ba09b10894
+> Author: Alexey Dobriyan <adobriyan@gmail.com>
+> Date:   Wed Sep 23 15:57:32 2009 -0700
+> 
+>     aio: ifdef fields in mm_struct
+> 
+> 	->ioctx_lock and ->ioctx_list are used only under CONFIG_AIO.
 
-Thanks for the fix, I've folded it into
-i2c-prevent-priority-inversion-on-top-of-bus-lock.patch.
+That should be fixed in the s390 pgtable.c code:
+
+--
+Subject: [PATCH] fix build breakage with CONFIG_AIO=n
+
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+
+next-20090925 randconfig build breaks on s390x, with CONFIG_AIO=n.
+
+arch/s390/mm/pgtable.c: In function 's390_enable_sie':
+arch/s390/mm/pgtable.c:282: error: 'struct mm_struct' has no member named 'ioctx_list'
+arch/s390/mm/pgtable.c:298: error: 'struct mm_struct' has no member named 'ioctx_list'
+make[1]: *** [arch/s390/mm/pgtable.o] Error 1
+
+Reported-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+---
+
+ arch/s390/mm/pgtable.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff -urpN linux-2.6/arch/s390/mm/pgtable.c linux-2.6-patched/arch/s390/mm/pgtable.c
+--- linux-2.6/arch/s390/mm/pgtable.c	2009-09-26 13:35:36.000000000 +0200
++++ linux-2.6-patched/arch/s390/mm/pgtable.c	2009-09-26 13:35:47.000000000 +0200
+@@ -279,7 +279,10 @@ int s390_enable_sie(void)
+ 	/* lets check if we are allowed to replace the mm */
+ 	task_lock(tsk);
+ 	if (!tsk->mm || atomic_read(&tsk->mm->mm_users) > 1 ||
+-	    tsk->mm != tsk->active_mm || !hlist_empty(&tsk->mm->ioctx_list)) {
++#ifdef CONFIG_AIO
++	    !hlist_empty(&tsk->mm->ioctx_list) ||
++#endif
++	    tsk->mm != tsk->active_mm) {
+ 		task_unlock(tsk);
+ 		return -EINVAL;
+ 	}
+@@ -295,7 +298,10 @@ int s390_enable_sie(void)
+ 	/* Now lets check again if something happened */
+ 	task_lock(tsk);
+ 	if (!tsk->mm || atomic_read(&tsk->mm->mm_users) > 1 ||
+-	    tsk->mm != tsk->active_mm || !hlist_empty(&tsk->mm->ioctx_list)) {
++#ifdef CONFIG_AIO
++	    !hlist_empty(&tsk->mm->ioctx_list) ||
++#endif
++	    tsk->mm != tsk->active_mm) {
+ 		mmput(mm);
+ 		task_unlock(tsk);
+ 		return -EINVAL;
 
 -- 
-Jean Delvare
+blue skies,
+   Martin.
+
+"Reality continues to ruin my life." - Calvin.
