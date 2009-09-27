@@ -1,36 +1,184 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the sparc-current tree with Linus'
- tree
-Date: Sat, 26 Sep 2009 20:20:07 -0700 (PDT)
-Message-ID: <20090926.202007.257820623.davem@davemloft.net>
-References: <20090926110158.0fcd2763.sfr@canb.auug.org.au>
+From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Subject: Re: [PATCH] linux-next: 20090926 - drop autoconf.h from DRBD driver
+Date: Sun, 27 Sep 2009 11:13:36 +0530
+Message-ID: <20090927054336.GB4300@linux.vnet.ibm.com>
+References: <20090926152800.a6568e53.sfr@canb.auug.org.au> <20090926173143.GA5041@linux.vnet.ibm.com> <20090926200839.GA5220@merkur.ravnborg.org>
+Reply-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:60903
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752223AbZI0DTs (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Sat, 26 Sep 2009 23:19:48 -0400
-In-Reply-To: <20090926110158.0fcd2763.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, JBeulich@novell.com, akpm@linux-foundation.org
+Content-Type: text/plain; charset=iso-8859-1
+Return-path: <linux-kbuild-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20090926200839.GA5220@merkur.ravnborg.org>
+Sender: linux-kbuild-owner@vger.kernel.org
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-kbuild@vger.kernel.org, sfr@canb.auug.org.au
+List-Id: linux-next.vger.kernel.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Sat, 26 Sep 2009 11:01:58 +1000
+* Sam Ravnborg <sam@ravnborg.org> [2009-09-26 22:08:39]:
 
-> Today's linux-next merge of the sparc-current tree got a conflict in
-> arch/sparc/include/asm/vio.h between commit
-> 8c87df457cb58fe75b9b893007917cf8095660a0 ("BUILD_BUG_ON(): fix it and a
-> couple of bogus uses of it") from Linus' tree and commit
-> 87ba00515657eede6077fa195ca6592b98cc31e3 ("sparc64: vio: Kill BUILD_BUG_ON
-> () in vio_dring_avail()") from the sparc-current tree.
+> On Sat, Sep 26, 2009 at 11:01:43PM +0530, Kamalesh Babulal wrote:
+> > Hi Sam,
+> > 
+> > 	next-20090926 allyesconfig build breaks on powerpc,
+> > 
+> > drivers/block/drbd/drbd_proc.c:26:28: error: linux/autoconf.h: No such file or directory
+> > make[3]: *** [drivers/block/drbd/drbd_proc.o] Error 1
+> > 
+> > dropping autoconf.h from drbd_proc.c helps. The cleanup patch drops the
+> > unneeded include autoconf.h.
+> > 
+> > Signed-off-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
 > 
-> I just used the sparc-current version for today.
+> I only checked upstream - so this is no big suprise.
+> As there is no need to explicitly include autoconf.h this
+> change should be included by the drdb folks even if the
+> stuff I have does not hit upstream.
+> 
+> Can I ask you to audit the rest of -next for similar issues.
+> A 'git grep "autoconf\.h"' should be a qucik way to find other
+> spots to fix up.
 
-Thanks Stephen.  When Linus pulled in my tree he resolved the
-merge conflict and thus you shouldn't have to deal with this
-any more either.
+Sorry for being lazy here. The cleanup patch already drops 
+unneeded autoconf.h from next-20090926. Thanks to stephen
+for greping through the files.
+
+> 
+> Patch is:
+> 
+> Acked-by: Sam Ravnborg <sam@ravnborg.org>
+> 
+> 	Sam
+> 
+> > --
+> >  drivers/block/drbd/drbd_main.c     |    1 -
+> >  drivers/block/drbd/drbd_nl.c       |    1 -
+> >  drivers/block/drbd/drbd_proc.c     |    1 -
+> >  drivers/block/drbd/drbd_receiver.c |    1 -
+> >  drivers/block/drbd/drbd_req.c      |    1 -
+> >  drivers/block/drbd/drbd_req.h      |    1 -
+> >  drivers/block/drbd/drbd_worker.c   |    1 -
+> >  drivers/staging/cowloop/cowloop.c  |    4 ----
+> >  drivers/staging/iio/ring_sw.h      |    1 -
+> >  9 files changed, 0 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/drivers/block/drbd/drbd_main.c b/drivers/block/drbd/drbd_main.c
+> > index edf0b80..80273f2 100644
+> > --- a/drivers/block/drbd/drbd_main.c
+> > +++ b/drivers/block/drbd/drbd_main.c
+> > @@ -26,7 +26,6 @@
+> >  
+> >   */
+> >  
+> > -#include <linux/autoconf.h>
+> >  #include <linux/module.h>
+> >  #include <linux/version.h>
+> >  #include <linux/drbd.h>
+> > diff --git a/drivers/block/drbd/drbd_nl.c b/drivers/block/drbd/drbd_nl.c
+> > index 1927ace..cfde310 100644
+> > --- a/drivers/block/drbd/drbd_nl.c
+> > +++ b/drivers/block/drbd/drbd_nl.c
+> > @@ -23,7 +23,6 @@
+> >  
+> >   */
+> >  
+> > -#include <linux/autoconf.h>
+> >  #include <linux/module.h>
+> >  #include <linux/drbd.h>
+> >  #include <linux/in.h>
+> > diff --git a/drivers/block/drbd/drbd_proc.c b/drivers/block/drbd/drbd_proc.c
+> > index 98fcb74..bdd0b49 100644
+> > --- a/drivers/block/drbd/drbd_proc.c
+> > +++ b/drivers/block/drbd/drbd_proc.c
+> > @@ -23,7 +23,6 @@
+> >  
+> >   */
+> >  
+> > -#include <linux/autoconf.h>
+> >  #include <linux/module.h>
+> >  
+> >  #include <asm/uaccess.h>
+> > diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
+> > index 63686c4..2f81821 100644
+> > --- a/drivers/block/drbd/drbd_receiver.c
+> > +++ b/drivers/block/drbd/drbd_receiver.c
+> > @@ -23,7 +23,6 @@
+> >   */
+> >  
+> >  
+> > -#include <linux/autoconf.h>
+> >  #include <linux/module.h>
+> >  
+> >  #include <asm/uaccess.h>
+> > diff --git a/drivers/block/drbd/drbd_req.c b/drivers/block/drbd/drbd_req.c
+> > index 0656cf1..1aaa397 100644
+> > --- a/drivers/block/drbd/drbd_req.c
+> > +++ b/drivers/block/drbd/drbd_req.c
+> > @@ -23,7 +23,6 @@
+> >  
+> >   */
+> >  
+> > -#include <linux/autoconf.h>
+> >  #include <linux/module.h>
+> >  
+> >  #include <linux/slab.h>
+> > diff --git a/drivers/block/drbd/drbd_req.h b/drivers/block/drbd/drbd_req.h
+> > index d37ab57..f22c1bc 100644
+> > --- a/drivers/block/drbd/drbd_req.h
+> > +++ b/drivers/block/drbd/drbd_req.h
+> > @@ -25,7 +25,6 @@
+> >  #ifndef _DRBD_REQ_H
+> >  #define _DRBD_REQ_H
+> >  
+> > -#include <linux/autoconf.h>
+> >  #include <linux/module.h>
+> >  
+> >  #include <linux/slab.h>
+> > diff --git a/drivers/block/drbd/drbd_worker.c b/drivers/block/drbd/drbd_worker.c
+> > index 212e954..34a4b3e 100644
+> > --- a/drivers/block/drbd/drbd_worker.c
+> > +++ b/drivers/block/drbd/drbd_worker.c
+> > @@ -23,7 +23,6 @@
+> >  
+> >   */
+> >  
+> > -#include <linux/autoconf.h>
+> >  #include <linux/module.h>
+> >  #include <linux/version.h>
+> >  #include <linux/drbd.h>
+> > diff --git a/drivers/staging/cowloop/cowloop.c b/drivers/staging/cowloop/cowloop.c
+> > index a71c743..a21b9b4 100644
+> > --- a/drivers/staging/cowloop/cowloop.c
+> > +++ b/drivers/staging/cowloop/cowloop.c
+> > @@ -237,10 +237,6 @@ char revision[] = "$Revision: 3.1 $"; /* cowlo_init_module() has
+> >  #endif
+> >  
+> >  #include <linux/types.h>
+> > -#include <linux/autoconf.h>
+> > -#ifndef AUTOCONF_INCLUDED
+> > -#include <linux/config.h>
+> > -#endif
+> >  #include <linux/module.h>
+> >  #include <linux/version.h>
+> >  #include <linux/moduleparam.h>
+> > diff --git a/drivers/staging/iio/ring_sw.h b/drivers/staging/iio/ring_sw.h
+> > index ae70ee0..4b0de7c 100644
+> > --- a/drivers/staging/iio/ring_sw.h
+> > +++ b/drivers/staging/iio/ring_sw.h
+> > @@ -29,7 +29,6 @@
+> >   * driver requests - some may support multiple options */
+> >  
+> >  
+> > -#include <linux/autoconf.h>
+> >  #include "iio.h"
+> >  #include "ring_generic.h"
+> >  
+> > 			
+> > 			Kamalesh
+> > 
+> > 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-next" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+			
+			Kamalesh
