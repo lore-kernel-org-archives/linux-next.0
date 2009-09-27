@@ -1,78 +1,36 @@
-From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Subject: Re: [PATCH] linux-next: 20090926 - drop autoconf.h from
-	DRBD driver
-Date: Sun, 27 Sep 2009 12:59:43 +1000
-Message-ID: <20090927125943.50971de2.sfr@canb.auug.org.au>
-References: <20090926152800.a6568e53.sfr@canb.auug.org.au>
-	<20090926173143.GA5041@linux.vnet.ibm.com>
-	<20090926200839.GA5220@merkur.ravnborg.org>
-	<20090927125331.5367db08.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: manual merge of the sparc-current tree with Linus'
+ tree
+Date: Sat, 26 Sep 2009 20:20:07 -0700 (PDT)
+Message-ID: <20090926.202007.257820623.davem@davemloft.net>
+References: <20090926110158.0fcd2763.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============4217929682656845288=="
-Return-path: <drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org>
-In-Reply-To: <20090927125331.5367db08.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-List-Unsubscribe: <http://lists.linbit.com/mailman/options/drbd-dev>,
-	<mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linbit.com/pipermail/drbd-dev>
-List-Post: <mailto:drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org>
-List-Help: <mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.linbit.com/mailman/listinfo/drbd-dev>,
-	<mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=subscribe>
-Mime-version: 1.0
-Sender: drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
-Errors-To: drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
-To: Greg KH <greg-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>, Philipp Reisner <philipp.reisner-63ez5xqkn6DQT0dZR+AlfA@public.gmane.org>
-Cc: linux-kbuild-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kamalesh Babulal <kamalesh-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
-List-Id: linux-next.vger.kernel.org
-
---===============4217929682656845288==
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sun__27_Sep_2009_12_59_43_+1000_FZvg4XsJq/wFUs_t"
-
---Signature=_Sun__27_Sep_2009_12_59_43_+1000_FZvg4XsJq/wFUs_t
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, 27 Sep 2009 12:53:31 +1000 Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org> =
-wrote:
->
-> So for Greg and Philipp, Sam has added a patch that moves autoconf.h.
-> There is no need to include it anywhere anyway, so the above files need
-> cleaning up.  I have appended Kamalesh's patch below.  Greg, you may have
-> to write your own :-)
-
-I should read the patch :-).  Greg, obviously Kamalesh's patch hits the
-staging files as well.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Sun__27_Sep_2009_12_59_43_+1000_FZvg4XsJq/wFUs_t
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkq+1R8ACgkQjjKRsyhoI8z3uQCdGAPXCs4h76k/KwjwSSFrymFo
-/5cAn3fGlGDtV+xFIIhGli5JAdffcA8F
-=N1i5
------END PGP SIGNATURE-----
-
---Signature=_Sun__27_Sep_2009_12_59_43_+1000_FZvg4XsJq/wFUs_t--
-
---===============4217929682656845288==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:60903
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752223AbZI0DTs (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Sat, 26 Sep 2009 23:19:48 -0400
+In-Reply-To: <20090926110158.0fcd2763.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: sfr@canb.auug.org.au
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, JBeulich@novell.com, akpm@linux-foundation.org
 
-_______________________________________________
-drbd-dev mailing list
-drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
-http://lists.linbit.com/mailman/listinfo/drbd-dev
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Sat, 26 Sep 2009 11:01:58 +1000
 
---===============4217929682656845288==--
+> Today's linux-next merge of the sparc-current tree got a conflict in
+> arch/sparc/include/asm/vio.h between commit
+> 8c87df457cb58fe75b9b893007917cf8095660a0 ("BUILD_BUG_ON(): fix it and a
+> couple of bogus uses of it") from Linus' tree and commit
+> 87ba00515657eede6077fa195ca6592b98cc31e3 ("sparc64: vio: Kill BUILD_BUG_ON
+> () in vio_dring_avail()") from the sparc-current tree.
+> 
+> I just used the sparc-current version for today.
+
+Thanks Stephen.  When Linus pulled in my tree he resolved the
+merge conflict and thus you shouldn't have to deal with this
+any more either.
