@@ -1,31 +1,62 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Subject: Re: [PATCH -next] sh: fix up the machtypes.h move.
-Date: Mon, 28 Sep 2009 09:49:45 +0200
-Message-ID: <20090928074945.GA10791@merkur.ravnborg.org>
-References: <20090928073327.GC6668@linux-sh.org>
+From: Lars Ellenberg <lars.ellenberg@linbit.com>
+Subject: Re: [Drbd-dev] [PATCH] linux-next: 20090926 - drop autoconf.h from
+	DRBD driver
+Date: Mon, 28 Sep 2009 10:50:37 +0200
+Message-ID: <20090928085037.GA8048@barkeeper1-xen.linbit>
+References: <20090926152800.a6568e53.sfr@canb.auug.org.au> <20090926173143.GA5041@linux.vnet.ibm.com> <20090926200839.GA5220@merkur.ravnborg.org> <20090927125331.5367db08.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from [195.41.46.235] ([195.41.46.235]:44497 "EHLO pfepa.post.tele.dk"
-	rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
-	id S1751432AbZI1Htq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 28 Sep 2009 03:49:46 -0400
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kbuild-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20090928073327.GC6668@linux-sh.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Paul Mundt <lethal@linux-sh.org>
-Cc: linux-next@vger.kernel.org
+In-Reply-To: <20090927125331.5367db08.sfr@canb.auug.org.au>
+Sender: linux-kbuild-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, Philipp Reisner <philipp.reisner@linbit.com>, linux-kbuild@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, linux-next@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>, drbd-dev@lists.linbit.com
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Sep 28, 2009 at 04:33:27PM +0900, Paul Mundt wrote:
-> rts7751r2d PCI support is referencing the old asm/ version.
-> 
-> Signed-off-by: Paul Mundt <lethal@linux-sh.org>
+On Sun, Sep 27, 2009 at 12:53:31PM +1000, Stephen Rothwell wrote:
+> Hi Greg, Philipp,
+>=20
+> On Sat, 26 Sep 2009 22:08:39 +0200 Sam Ravnborg <sam@ravnborg.org> wr=
+ote:
+> >
+> > On Sat, Sep 26, 2009 at 11:01:43PM +0530, Kamalesh Babulal wrote:
+> > >=20
+> > > 	next-20090926 allyesconfig build breaks on powerpc,
+> > >=20
+> > > drivers/block/drbd/drbd_proc.c:26:28: error: linux/autoconf.h: No=
+ such file or directory
+> > > make[3]: *** [drivers/block/drbd/drbd_proc.o] Error 1
+> > >=20
+> > > dropping autoconf.h from drbd_proc.c helps. The cleanup patch dro=
+ps the
+> > > unneeded include autoconf.h.
+> > >=20
+> > > Signed-off-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+> >=20
+> > I only checked upstream - so this is no big suprise.
+> > As there is no need to explicitly include autoconf.h this
+> > change should be included by the drdb folks even if the
+> > stuff I have does not hit upstream.
+>=20
+> Maybe we should let them know (cc'd).
 
-Thanks.
-Linus did not take this patchset before -rc1 :-(
 
-So I think it may have to wait until next merge window in which case
-I will submit the sh specific bits to you with this patch included.
+Thanks ;)
+owed to our out-of-tree "backwards" compatibility for all 2.6 kernels
+back to 2.6.5 (I think...).
 
-	Sam
+includes have been dropped.
+
+--=20
+: Lars Ellenberg
+: LINBIT | Your Way to High Availability
+: DRBD/HA support and consulting http://www.linbit.com
+
+DRBD=AE and LINBIT=AE are registered trademarks of LINBIT, Austria.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-kbuild"=
+ in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
