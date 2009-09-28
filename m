@@ -1,40 +1,56 @@
-From: Len Brown <lenb@kernel.org>
-Subject: Re: linux-next: acpi tree build failure
-Date: Sun, 27 Sep 2009 03:54:34 -0400 (EDT)
-Message-ID: <alpine.LFD.2.00.0909270353100.16783@localhost.localdomain>
-References: <20090926121528.dfba135e.sfr@canb.auug.org.au>
- <1253934703.16789.21.camel@dc7800.home> <20090927012716.GB10173@crane-desktop>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: scsi tree boot filure
+Date: Mon, 28 Sep 2009 14:07:44 +1000
+Message-ID: <20090928140744.df394b1f.sfr@canb.auug.org.au>
+References: <20090927164314.9377c24c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__28_Sep_2009_14_07_44_+1000_t5d=lxyHuCrlLfeC"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from vms173009pub.verizon.net ([206.46.173.9]:11921 "EHLO
-	vms173009pub.verizon.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753340AbZI0Hyd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 27 Sep 2009 03:54:33 -0400
-In-reply-to: <20090927012716.GB10173@crane-desktop>
+Received: from chilli.pcug.org.au ([203.10.76.44]:56853 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750858AbZI1EHv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 28 Sep 2009 00:07:51 -0400
+In-Reply-To: <20090927164314.9377c24c.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Crane Cai <crane.cai@amd.com>
-Cc: Bjorn Helgaas <bjorn.helgaas@hp.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, James Smart <James.Smart@Emulex.Com>
 
+--Signature=_Mon__28_Sep_2009_14_07_44_+1000_t5d=lxyHuCrlLfeC
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > > drivers/i2c/busses/i2c-scmi.c: In function 'acpi_smbus_cmi_add':
-> > > drivers/i2c/busses/i2c-scmi.c:374: error: implicit declaration of function 'acpi_device_uid'
-> > > drivers/i2c/busses/i2c-scmi.c:374: warning: format '%s' expects type 'char *', but argument 5 has type 'int'
-> > > 
-> > > Caused by commit 6622d8cee73a26bce958484065c8f0e704911a62 ("ACPI: remove
-> > > acpi_device_uid() and related stuff") interacting with commit
-> > > dc9854212e0d7318d7133697906d98b78f3088b6 ("i2c: Add driver for SMBus
-> > > Control Method Interface") recently added to Linus' tree.
-> > > 
-> > > I have used the version of the acpi tree from next-20090925 for today.
-> > 
-> > I think we should use the following patch to remove the usage of
-> > acpi_device_uid().  Crane, do you agree, or is there some special
-> > reason you need it here?
+Hi James,
 
-> I agree.
+On Sun, 27 Sep 2009 16:43:14 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> I have bisected this down to commit
+> 4acd10521ee002137b5d6791e234d7110033c782 ("[SCSI] scsi_lib_dma.c : fix
+> bug /w dma maps on virtual vc ports") which was added between
+> next-20090925 and next-20090926.
+>=20
+> Reverting that single commit from next-20090926 allows it to boot.
 
-Thanks Crane, upstream now includes Bjorn's patch.
+I have reverted this commit from linux-next today.
 
--Len Brown, Intel Open Source Technology Center
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__28_Sep_2009_14_07_44_+1000_t5d=lxyHuCrlLfeC
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkrANpAACgkQjjKRsyhoI8yNyQCfaMdJQTerDopxwW4jqTN+pzo3
+yrwAnin9N8eUmVAgfxdz286Gx2iO0ohU
+=LDm7
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__28_Sep_2009_14_07_44_+1000_t5d=lxyHuCrlLfeC--
