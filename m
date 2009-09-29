@@ -1,206 +1,274 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: scsi tree boot filure
-Date: Tue, 29 Sep 2009 11:27:04 +1000
-Message-ID: <20090929112704.d1a022e1.sfr@canb.auug.org.au>
-References: <20090927164314.9377c24c.sfr@canb.auug.org.au>
-	<1254149694.4302.57.camel@mulgrave.site>
+Subject: linux-next: Tree for September 29
+Date: Tue, 29 Sep 2009 14:04:04 +1000
+Message-ID: <20090929140404.dfb2c5f5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__29_Sep_2009_11_27_04_+1000_kj21e/zFy650E1Ar"
+ boundary="Signature=_Tue__29_Sep_2009_14_04_04_+1000_BwJAtKdK/IXBrCBw"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46415 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:33344 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753853AbZI2B1N (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 28 Sep 2009 21:27:13 -0400
-In-Reply-To: <1254149694.4302.57.camel@mulgrave.site>
+	id S1750704AbZI2EEL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 29 Sep 2009 00:04:11 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <James.Bottomley@suse.de>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, James Smart <James.Smart@Emulex.Com>, linux-scsi <linux-scsi@vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Tue__29_Sep_2009_11_27_04_+1000_kj21e/zFy650E1Ar
+--Signature=_Tue__29_Sep_2009_14_04_04_+1000_BwJAtKdK/IXBrCBw
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi James,
+Hi all,
 
-On Mon, 28 Sep 2009 14:54:54 +0000 James Bottomley <James.Bottomley@suse.de=
-> wrote:
->
-> On Sun, 2009-09-27 at 16:43 +1000, Stephen Rothwell wrote:
-> >=20
-> > next-20090926 does not boot on some of my PowerPC partitions:
-> >=20
-> > calling  .ibmvscsi_module_init+0x0/0xb8 @ 1
-> > ibmvscsi 30000028: SRP_VERSION: 16.a
-> > scsi0 : IBM POWER Virtual SCSI Adapter 1.5.8
-> > ibmvscsi 30000028: partner initialization complete
-> > ibmvscsi 30000028: host srp version: 16.a, host partition 1-Didgo-VIOS =
-(1), OS 3, max io 1048576
-> > ibmvscsi 30000028: Client reserve enabled
-> > ibmvscsi 30000028: sent SRP login
-> > ibmvscsi 30000028: SRP_LOGIN succeeded
-> > Unable to handle kernel paging request for data at address 0x00000058
-> > Faulting instruction address: 0xc0000000003a6280
-> > Oops: Kernel access of bad area, sig: 11 [#1]
-> > SMP NR_CPUS=3D128 NUMA pSeries
-> > Modules linked in:
-> > NIP: c0000000003a6280 LR: c0000000003a63b4 CTR: 0000000000000000
-> > REGS: c00000007c3f3020 TRAP: 0300   Not tainted  (2.6.31-autokern1)
-> > MSR: 8000000000009032 <EE,ME,IR,DR>  CR: 24002042  XER: 00000001
-> > DAR: 0000000000000058, DSISR: 0000000040000000
-> > TASK =3D c00000007c3e8000[1] 'swapper' THREAD: c00000007c3f0000 CPU: 3
-> > GPR00: 0000000000000000 c00000007c3f32a0 c000000000bc5390 c000000000a76=
-420=20
-> > GPR04: c000000000b97818 c0000000015abc70 0000000000000000 c00000007c81c=
-918=20
-> > GPR08: c00000007c81c888 0000000002000000 0000000000000002 c0000000014ec=
-bcc=20
-> > GPR12: 0000000024000042 c000000000c1ea80 0000000003500000 c00000000074a=
-f10=20
-> > GPR16: c000000000749588 0000000000000000 0000000000000000 0000000000000=
-000=20
-> > GPR20: c00000007c3f3600 c000000079074c00 c00000007c81c000 0000000002f1f=
-8e0=20
-> > GPR24: 0000000000000000 0000000000000000 0000000000000000 c000000079074=
-c28=20
-> > GPR28: c00000007c81c000 0000000000000000 c000000000b353f0 c000000000b97=
-818=20
-> > NIP [c0000000003a6280] .__scsi_alloc_queue+0x2c/0x13c
-> > LR [c0000000003a63b4] .scsi_alloc_queue+0x24/0x84
-> > Call Trace:
-> > [c00000007c3f32a0] [c00000007c3f3330] 0xc00000007c3f3330 (unreliable)
-> > [c00000007c3f3330] [c0000000003a63b4] .scsi_alloc_queue+0x24/0x84
-> > [c00000007c3f33b0] [c0000000003a8f78] .scsi_alloc_sdev+0x198/0x2ac
-> > [c00000007c3f3470] [c0000000003a9450] .scsi_probe_and_add_lun+0x130/0xa=
-ac
-> > [c00000007c3f3580] [c0000000003aa20c] .__scsi_scan_target+0xf4/0x5fc
-> > [c00000007c3f36a0] [c0000000003aa768] .scsi_scan_channel+0x54/0xd0
-> > [c00000007c3f3740] [c0000000003aa8b0] .scsi_scan_host_selected+0xcc/0x1=
-44
-> > [c00000007c3f37f0] [c0000000003d5264] .ibmvscsi_probe+0x590/0x6e4
-> > [c00000007c3f38c0] [c000000000021e88] .vio_bus_probe+0x84/0xb0
-> > [c00000007c3f3960] [c00000000037cbac] .driver_probe_device+0xfc/0x1c0
-> > [c00000007c3f39f0] [c00000000037cd04] .__driver_attach+0x94/0xd8
-> > [c00000007c3f3a80] [c00000000037b9f8] .bus_for_each_dev+0x84/0xdc
-> > [c00000007c3f3b30] [c00000000037c954] .driver_attach+0x28/0x40
-> > [c00000007c3f3bb0] [c00000000037c290] .bus_add_driver+0x148/0x314
-> > [c00000007c3f3c60] [c00000000037d1b0] .driver_register+0xd4/0x1a8
-> > [c00000007c3f3d10] [c000000000021cbc] .vio_register_driver+0x40/0x5c
-> > [c00000007c3f3da0] [c00000000084f418] .ibmvscsi_module_init+0x80/0xb8
-> > [c00000007c3f3e30] [c0000000000094c8] .do_one_initcall+0x9c/0x1cc
-> > [c00000007c3f3ee0] [c000000000822cc0] .kernel_init+0x21c/0x298
-> > [c00000007c3f3f90] [c000000000026cb8] .kernel_thread+0x54/0x70
-> > Instruction dump:
-> > 4e800020 7c0802a6 fb81ffe0 fbe1fff8 fba1ffe8 7c7c1b78 f8010010 f821ff71=
-=20
-> > 7c9f2378 eba302a0 48000008 ebbd0000 <e81d0058> 7fa3eb78 2fa00000 419eff=
-f0=20
-> > ---[ end trace 18604a042ee6e0ba ]---
-> > Kernel panic - not syncing: Attempted to kill init!
-> >=20
-> > I have bisected this down to commit
-> > 4acd10521ee002137b5d6791e234d7110033c782 ("[SCSI] scsi_lib_dma.c : fix
-> > bug /w dma maps on virtual vc ports") which was added between
-> > next-20090925 and next-20090926.
-> >=20
-> > Reverting that single commit from next-20090926 allows it to boot.
->=20
-> OK, so my strongest suspicion is that the SCSI device is parented to
-> some IBM specific device that has no type.  This is causing SCSI to
-> wander up the tree until it hits a NULL device and panics on the deref.
->=20
-> Does this incremental diff fix it?
+Changes since 20090928:
 
-That fixes the above panic, but leaves me with this:
+My fixes tree contains a build fix for powerpc/kvm.
 
-calling  .ibmvscsi_module_init+0x0/0xb8 @ 1
-ibmvscsi 30000028: SRP_VERSION: 16.a
-scsi0 : IBM POWER Virtual SCSI Adapter 1.5.8
-ibmvscsi 30000028: partner initialization complete
-ibmvscsi 30000028: host srp version: 16.a, host partition 1-Didgo-VIOS (1),=
- OS 3, max io 1048576
-ibmvscsi 30000028: Client reserve enabled
-ibmvscsi 30000028: sent SRP login
-ibmvscsi 30000028: SRP_LOGIN succeeded
-Unable to handle kernel paging request for data at address 0x00000020
-Faulting instruction address: 0xc0000000003a8798
-Oops: Kernel access of bad area, sig: 11 [#1]
-SMP NR_CPUS=3D128 NUMA pSeries
-Modules linked in:
-NIP: c0000000003a8798 LR: c0000000003a8774 CTR: 0000000000000000
-REGS: c00000007c3f2aa0 TRAP: 0300   Not tainted  (2.6.31-autokern1-next-200=
-90926)
-MSR: 8000000000009032 <EE,ME,IR,DR>  CR: 44002022  XER: 00000001
-DAR: 0000000000000020, DSISR: 0000000040000000
-TASK =3D c00000007c3e8000[1] 'swapper' THREAD: c00000007c3f0000 CPU: 3
-GPR00: 0000000000000000 c00000007c3f2d20 c000000000bc5390 0000000000000000=
-=20
-GPR04: 0000000000000000 0000000000000000 c00000007a3f0bc0 0000000000000000=
-=20
-GPR08: 0000000024000000 0000000000000000 c00000007a3f0ae0 0000000000000001=
-=20
-GPR12: 0000000048002022 c000000000c1ea80 0000000003500000 c00000000074af10=
-=20
-GPR16: c000000000749588 0000000000000000 c00000007c5d4800 0000000000000003=
-=20
-GPR20: c00000007c3f34f0 c000000000b96a20 c00000007c5d4628 c00000007c5d4638=
-=20
-GPR24: 0000000000000000 0000000000000000 0000000000000002 0000000000000001=
-=20
-GPR28: c00000007c6e7c00 0000000000000002 c000000000b37630 c000000000a76420=
-=20
-NIP [c0000000003a8798] .scsi_dma_map+0xc8/0x130
-LR [c0000000003a8774] .scsi_dma_map+0xa4/0x130
-Call Trace:
-[c00000007c3f2d20] [c00000007c3e8000] 0xc00000007c3e8000 (unreliable)
-[c00000007c3f2dd0] [c0000000003d603c] .ibmvscsi_queuecommand+0x16c/0x570
-[c00000007c3f2ea0] [c00000000039f968] .scsi_dispatch_cmd+0x1d4/0x240
-[c00000007c3f2f40] [c0000000003a7cbc] .scsi_request_fn+0x434/0x47c
-[c00000007c3f2fe0] [c0000000002d0c4c] .__generic_unplug_device+0x60/0x78
-[c00000007c3f3060] [c0000000002dacec] .blk_execute_rq_nowait+0x70/0xcc
-[c00000007c3f30f0] [c0000000002dae24] .blk_execute_rq+0xdc/0x134
-[c00000007c3f32b0] [c0000000003a6fe8] .scsi_execute+0x120/0x1b4
-[c00000007c3f3380] [c0000000003a71b0] .scsi_execute_req+0x134/0x1c0
-[c00000007c3f3470] [c0000000003a95b8] .scsi_probe_and_add_lun+0x274/0xaac
-[c00000007c3f3580] [c0000000003aa230] .__scsi_scan_target+0xf4/0x5fc
-[c00000007c3f36a0] [c0000000003aa78c] .scsi_scan_channel+0x54/0xd0
-[c00000007c3f3740] [c0000000003aa8d4] .scsi_scan_host_selected+0xcc/0x144
-[c00000007c3f37f0] [c0000000003d5288] .ibmvscsi_probe+0x590/0x6e4
-[c00000007c3f38c0] [c000000000021e88] .vio_bus_probe+0x84/0xb0
-[c00000007c3f3960] [c00000000037cbac] .driver_probe_device+0xfc/0x1c0
-[c00000007c3f39f0] [c00000000037cd04] .__driver_attach+0x94/0xd8
-[c00000007c3f3a80] [c00000000037b9f8] .bus_for_each_dev+0x84/0xdc
-[c00000007c3f3b30] [c00000000037c954] .driver_attach+0x28/0x40
-[c00000007c3f3bb0] [c00000000037c290] .bus_add_driver+0x148/0x314
-[c00000007c3f3c60] [c00000000037d1b0] .driver_register+0xd4/0x1a8
-[c00000007c3f3d10] [c000000000021cbc] .vio_register_driver+0x40/0x5c
-[c00000007c3f3da0] [c00000000084f418] .ibmvscsi_module_init+0x80/0xb8
-[c00000007c3f3e30] [c0000000000094c8] .do_one_initcall+0x9c/0x1cc
-[c00000007c3f3ee0] [c000000000822cc0] .kernel_init+0x21c/0x298
-[c00000007c3f3f90] [c000000000026cb8] .kernel_thread+0x54/0x70
-Instruction dump:
-3ba00000 4800000c 4bf4f689 60000000 7f9dd800 381d0001 7c1d07b4 419cffec=20
-2b9a0002 7c000026 5400f7fe 0b000000 <e9390020> 7fe3fb78 7f84e378 7f65db78=20
----[ end trace fe14497cda58c66c ]---
-Kernel panic - not syncing: Attempted to kill init!
+I have still reverted a commit from the scsi tree that causes a boot
+failure.
+
+I have still added a patch to remove includes of autoconf.h that were
+causing some build failures.
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups (if any), it is also built with powerpc allnoconfig (32 and
+64 bit), ppc44x_defconfig and allyesconfig (minus
+CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
+and sparc64 defconfig. These builds also have
+CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
+CONFIG_DEBUG_INFO disabled when necessary.
+
+Below is a summary of the state of the merge.
+
+We are up to 139 trees (counting Linus' and 21 trees of patches pending for
+Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Jan Dittmer for adding the linux-next tree to his build tests
+at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
+Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__29_Sep_2009_11_27_04_+1000_kj21e/zFy650E1Ar
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master
+Merging fixes/fixes
+Merging arm-current/master
+Merging m68k-current/for-linus
+Merging powerpc-merge/merge
+Merging sparc-current/master
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sound-current/for-linus
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging kbuild-current/master
+Merging quilt/driver-core.current
+Merging quilt/tty.current
+Merging quilt/usb.current
+CONFLICT (content): Merge conflict in drivers/usb/host/xhci-hcd.c
+CONFLICT (content): Merge conflict in drivers/usb/host/xhci-mem.c
+CONFLICT (content): Merge conflict in drivers/usb/host/xhci-ring.c
+CONFLICT (content): Merge conflict in drivers/usb/host/xhci.h
+Merging cpufreq-current/fixes
+Merging input-current/for-linus
+Merging md-current/for-linus
+Merging audit-current/for-linus
+Merging crypto-current/master
+Merging ide-curent/master
+Merging dwmw2/master
+Merging arm/devel
+Merging davinci/for-next
+Merging pxa/for-next
+Merging thumb-2/thumb-2
+Merging avr32/avr32-arch
+Merging blackfin/for-linus
+Merging cris/for-next
+Merging ia64/test
+Merging m68k/for-next
+CONFLICT (content): Merge conflict in drivers/rtc/Kconfig
+Merging m68knommu/for-next
+Merging microblaze/next
+Merging mips/mips-for-linux-next
+CONFLICT (content): Merge conflict in arch/mips/Kconfig
+CONFLICT (add/add): Merge conflict in arch/mips/bcm63xx/Makefile
+CONFLICT (add/add): Merge conflict in arch/mips/bcm63xx/boards/board_bcm963=
+xx.c
+CONFLICT (delete/modify): arch/mips/lemote/lm2e/Makefile deleted in HEAD an=
+d modified in mips/mips-for-linux-next. Version mips/mips-for-linux-next of=
+ arch/mips/lemote/lm2e/Makefile left in tree.
+CONFLICT (delete/modify): arch/mips/lemote/lm2e/pci.c deleted in HEAD and m=
+odified in mips/mips-for-linux-next. Version mips/mips-for-linux-next of ar=
+ch/mips/lemote/lm2e/pci.c left in tree.
+CONFLICT (delete/modify): arch/mips/lemote/lm2e/prom.c deleted in HEAD and =
+modified in mips/mips-for-linux-next. Version mips/mips-for-linux-next of a=
+rch/mips/lemote/lm2e/prom.c left in tree.
+$ git rm -f arch/mips/lemote/lm2e/Makefile arch/mips/lemote/lm2e/pci.c arch=
+/mips/lemote/lm2e/prom.c
+Merging parisc/next
+CONFLICT (content): Merge conflict in arch/parisc/include/asm/thread_info.h
+CONFLICT (content): Merge conflict in arch/parisc/kernel/entry.S
+CONFLICT (content): Merge conflict in arch/parisc/kernel/signal.c
+Merging powerpc/next
+Merging 4xx/next
+Merging galak/next
+Merging s390/features
+Merging sh/master
+Merging sparc/master
+Merging xtensa/master
+Merging cifs/master
+Merging configfs/linux-next
+Merging ecryptfs/next
+Merging ext3/for_next
+Merging ext4/next
+Merging fatfs/master
+Merging fuse/for-next
+Merging gfs2/master
+Merging jfs/next
+Merging nfs/linux-next
+Merging nfsd/nfsd-next
+Merging nilfs2/for-next
+Merging ocfs2/linux-next
+Merging squashfs/master
+Merging udf/for_next
+Merging v9fs/for-next
+Merging ubifs/linux-next
+Merging xfs/master
+Merging vfs/for-next
+Merging pci/linux-next
+Merging hid/for-next
+Merging quilt/i2c
+Merging quilt/jdelvare-hwmon
+Merging quilt/kernel-doc
+Merging v4l-dvb/master
+Merging quota/for_next
+Merging kbuild/master
+Merging kconfig/for-next
+Merging ide/master
+Merging libata/NEXT
+Merging infiniband/for-next
+Merging acpi/test
+Merging ieee1394/for-next
+Merging ubi/linux-next
+Merging kvm/linux-next
+Merging dlm/next
+Merging scsi/master
+$ git am -3 ../patches/0001-Revert-SCSI-scsi_lib_dma.c-fix-bug-w-dma-maps-o=
+n-vir.patch
+Applying: Revert "[SCSI] scsi_lib_dma.c : fix bug /w dma maps on virtual vc=
+ ports"
+Merging async_tx/next
+Merging net/master
+Merging wireless/master
+Merging mtd/master
+Merging crypto/master
+Merging sound/for-next
+Merging cpufreq/next
+Merging quilt/rr
+Merging mmc/next
+Merging input/next
+Merging lsm/for-next
+Merging block/for-next
+CONFLICT (content): Merge conflict in fs/fs-writeback.c
+CONFLICT (content): Merge conflict in mm/page-writeback.c
+Merging quilt/device-mapper
+Merging embedded/master
+Merging firmware/master
+Merging pcmcia/master
+Merging battery/master
+Merging leds/for-mm
+Merging backlight/for-mm
+Merging kgdb/kgdb-next
+Merging slab/for-next
+Merging uclinux/for-next
+Merging md/for-next
+Merging mfd/for-next
+Merging hdlc/hdlc-next
+Merging drm/drm-next
+Merging voltage/for-next
+Merging security-testing/next
+Merging lblnet/master
+Merging agp/agp-next
+Merging uwb/for-upstream
+Merging watchdog/master
+Merging bdev/master
+Merging dwmw2-iommu/master
+Merging cputime/cputime
+Merging osd/linux-next
+Merging jc_docs/docs-next
+Merging nommu/master
+Merging trivial/for-next
+Merging audit/for-next
+Merging omap/for-next
+Merging quilt/aoe
+Merging suspend/linux-next
+Merging bluetooth/master
+Merging fsnotify/for-next
+Merging irda/for-next
+Merging hwlat/for-linus
+Merging drbd/drbd
+Merging kmemleak/kmemleak
+Merging tip/auto-latest
+Merging oprofile/for-next
+Merging percpu/for-next
+Merging sfi/sfi-test
+Merging asm-generic/next
+Merging hwpoison/hwpoison
+Merging quilt/driver-core
+Merging quilt/tty
+Merging quilt/usb
+CONFLICT (content): Merge conflict in arch/x86/kernel/early_printk.c
+CONFLICT (content): Merge conflict in drivers/usb/serial/sierra.c
+Merging quilt/staging
+Merging scsi-post-merge/master
+CONFLICT (content): Merge conflict in MAINTAINERS
+CONFLICT (content): Merge conflict in drivers/scsi/fcoe/fcoe.c
+CONFLICT (content): Merge conflict in drivers/scsi/fcoe/fcoe.h
+CONFLICT (content): Merge conflict in drivers/scsi/libfc/fc_elsct.c
+CONFLICT (content): Merge conflict in drivers/scsi/libfc/fc_lport.c
+CONFLICT (add/add): Merge conflict in drivers/scsi/pmcraid.c
+CONFLICT (add/add): Merge conflict in drivers/scsi/pmcraid.h
+CONFLICT (content): Merge conflict in include/scsi/fc_encode.h
+CONFLICT (content): Merge conflict in include/scsi/libfc.h
+CONFLICT (content): Merge conflict in kernel/sysctl.c
+Applying: linux-next: 20090926 - drop autoconf.h from DRBD driver
+
+--Signature=_Tue__29_Sep_2009_14_04_04_+1000_BwJAtKdK/IXBrCBw
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkrBYmkACgkQjjKRsyhoI8yHsQCfQMq//VHzbUtbDzuWhujfuIpv
-5J4AoINghamiBdpYJCNb/Uj3PDnTIKXI
-=04Dm
+iEYEARECAAYFAkrBhzQACgkQjjKRsyhoI8y2+QCfVMf/dLwjAv2fjbUt8stFtBCp
+KIYAniY6lsQ2FXr3YAeayJMxBWkv0ICT
+=M8AE
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__29_Sep_2009_11_27_04_+1000_kj21e/zFy650E1Ar--
+--Signature=_Tue__29_Sep_2009_14_04_04_+1000_BwJAtKdK/IXBrCBw--
