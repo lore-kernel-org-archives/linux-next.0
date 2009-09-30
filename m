@@ -1,72 +1,45 @@
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: Re: linux-next: Tree for September 30
-Date: Wed, 30 Sep 2009 14:16:41 +0200
-Message-ID: <20090930141641.3652fc99@mschwide.boeblingen.de.ibm.com>
-References: <20090930133745.36a6beea.sfr@canb.auug.org.au>
-	<20090930095254.GB5416@linux.vnet.ibm.com>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: [Drbd-dev] [PATCH -next] drbd: trace depends on TRACING
+Date: Wed, 30 Sep 2009 12:00:01 -0400
+Message-ID: <20090930160001.GA3765__9938.20227818123$1254326498$gmane$org@infradead.org>
+References: <20090925133830.1ba29584.sfr@canb.auug.org.au> <4ABD4C28.9070202@oracle.com> <200909291732.51383.philipp.reisner@linbit.com> <20090929153747.GA29621@infradead.org> <20090930080221.GA8032@barkeeper1-xen.linbit>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mtagate4.de.ibm.com ([195.212.17.164]:44945 "EHLO
-	mtagate4.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751709AbZI3MQk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Sep 2009 08:16:40 -0400
-In-Reply-To: <20090930095254.GB5416@linux.vnet.ibm.com>
+Received: from bombadil.infradead.org ([18.85.46.34]:45848 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754910AbZI3QAE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 30 Sep 2009 12:00:04 -0400
+Content-Disposition: inline
+In-Reply-To: <20090930080221.GA8032@barkeeper1-xen.linbit>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, sfr@canb.auug.org.au, heiko.carstens@de.ibm.com, linux-s390@vger.kernel.org
+To: Philipp Reisner <philipp.reisner@linbit.com>, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.ker
 
-On Wed, 30 Sep 2009 15:22:54 +0530
-Kamalesh Babulal <kamalesh@linux.vnet.ibm.com> wrote:
+On Wed, Sep 30, 2009 at 10:02:21AM +0200, Lars Ellenberg wrote:
+> TRACE_EVENT macros depend on, and use TRACE_POINTS.
+> And those trace points are what compiles away if !CONFIG_TRACEPOINTS, no?
 
-> 	next-20090930 randconfig build breaks, character driver
-> 
-> ERROR: "ccw_device_force_console" [drivers/s390/char/raw3270.ko] undefined!
-> make[1]: *** [__modpost] Error 1
+Everything compiles away when the right options are not selected.
 
-This patch should fix the build breakage:
---
-Subject: [PATCH] 3270 console build fix
+> If using tracepoints directly, not using the (admittedly elegant)
+> trace-events macro system, is in fact not wanted anymore, then
+> Documentation/trace/* should be changed accordingly.
 
-From: Sebastian Ott <sebott@linux.vnet.ibm.com>
+I could not find anything actively suggesting to use them.  And if you
+look at current mainline there is in fact no user of raw tracepoints
+left and none should be introduced.  If you add fancy new tracing it
+might be a good idea to run it past Ingo and Steve, btw.
 
-Fix this build failure:
-drivers/s390/built-in.o: In function `raw3270_pm_unfreeze':
-(.text+0x3ac04): undefined reference to `ccw_device_force_console'
-with:
-CONFIG_TN3270=y
-CONFIG_TN3270_CONSOLE=n
-CONFIG_TN3215_CONSOLE=n
+Ingo, now that we killed all raw tracepoints users, what do you think
+about removing Documentation/trace/tracepoints.txt and
+samples/tracepoints so that people have no easy way to use them?
 
-Reported-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Signed-off-by: Sebastian Ott <sebott@linux.vnet.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
----
+Even better would be making their use really hard, which is not too easy
+as they are used by TRACE_EVENT underneath.
 
- drivers/s390/char/raw3270.c |    2 ++
- 1 file changed, 2 insertions(+)
+> So what is the plan, going forward?
 
-diff -urpN linux-2.6/drivers/s390/char/raw3270.c linux-2.6-patched/drivers/s390/char/raw3270.c
---- linux-2.6/drivers/s390/char/raw3270.c	2009-09-10 00:13:59.000000000 +0200
-+++ linux-2.6-patched/drivers/s390/char/raw3270.c	2009-09-30 14:14:44.000000000 +0200
-@@ -1361,11 +1361,13 @@ static int raw3270_pm_start(struct ccw_d
- 
- void raw3270_pm_unfreeze(struct raw3270_view *view)
- {
-+#ifdef CONFIG_TN3270_CONSOLE
- 	struct raw3270 *rp;
- 
- 	rp = view->dev;
- 	if (rp && test_bit(RAW3270_FLAGS_FROZEN, &rp->flags))
- 		ccw_device_force_console();
-+#endif
- }
- 
- static struct ccw_device_id raw3270_id[] = {
--- 
-blue skies,
-   Martin.
-
-"Reality continues to ruin my life." - Calvin.
+The plan is that all new tracing should use TRACE_EVENT.  If that
+doesn't work for some reason bring it up with the tracing people
+for discussion.
