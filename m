@@ -1,129 +1,271 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm tree with the  tree
-Date: Wed, 30 Sep 2009 11:58:24 +1000
-Message-ID: <20090930115824.683a1dd1.sfr@canb.auug.org.au>
+Subject: linux-next: Tree for September 30
+Date: Wed, 30 Sep 2009 13:37:45 +1000
+Message-ID: <20090930133745.36a6beea.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__30_Sep_2009_13_37_45_+1000_6KLMRUcSJGcSMMXN"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40184 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37365 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752613AbZI3B6Z (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 29 Sep 2009 21:58:25 -0400
+	id S1751679AbZI3Dh6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 29 Sep 2009 23:37:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jerome Glisse <jglisse@redhat.com>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-Hi Dave,
+--Signature=_Wed__30_Sep_2009_13_37_45_+1000_6KLMRUcSJGcSMMXN
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the drm tree got a conflict in
-drivers/gpu/drm/radeon/radeon_asic.h between commit
-28d520433b6375740990ab99d69b0d0067fd656b ("drm/vgaarb: add VGA
-arbitration support to the drm and kms") from Linus' tree and commits
-d39c3b895876427c5083a936e00f3f5b7f0fc1b3 ("drm/radeon/kms: Convert RV515
-to new init path and associated cleanup") and
-f0ed1f655aa0375e2abba84cc4e8e6c853d48555 ("drm/radeon/kms: Convert R520
-to new init path and associated cleanup") from the drm tree.
+Hi all,
 
-I fixed it up (see below) and can carry the fix for a while.
--- 
+Changes since 20090929:
+
+My fixes tree contains a build fix for powerpc/kvm.
+
+The usb.current tree lost all its conflicts.
+
+I have still reverted a commit from the scsi tree that causes a boot
+failure.
+
+The drm tree gained a conflict against Linus' tree.
+
+The usb tree lost its conflicts.
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups (if any), it is also built with powerpc allnoconfig (32 and
+64 bit), ppc44x_defconfig and allyesconfig (minus
+CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
+and sparc64 defconfig. These builds also have
+CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
+CONFIG_DEBUG_INFO disabled when necessary.
+
+Below is a summary of the state of the merge.
+
+We are up to 139 trees (counting Linus' and 21 trees of patches pending for
+Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Jan Dittmer for adding the linux-next tree to his build tests
+at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
+Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/gpu/drm/radeon/radeon_asic.h
-index 8968f78,bce0cb0..0000000
---- a/drivers/gpu/drm/radeon/radeon_asic.h
-+++ b/drivers/gpu/drm/radeon/radeon_asic.h
-@@@ -431,25 -421,29 +428,30 @@@ void rv515_ring_start(struct radeon_dev
-  uint32_t rv515_pcie_rreg(struct radeon_device *rdev, uint32_t reg);
-  void rv515_pcie_wreg(struct radeon_device *rdev, uint32_t reg, uint32_t v);
-  void rv515_bandwidth_update(struct radeon_device *rdev);
-+ int rv515_resume(struct radeon_device *rdev);
-+ int rv515_suspend(struct radeon_device *rdev);
-  static struct radeon_asic rv515_asic = {
-  	.init = &rv515_init,
-- 	.errata = &rv515_errata,
-- 	.vram_info = &rv515_vram_info,
-+ 	.fini = &rv515_fini,
-+ 	.suspend = &rv515_suspend,
-+ 	.resume = &rv515_resume,
-+ 	.errata = NULL,
-+ 	.vram_info = NULL,
- +	.vga_set_state = &r100_vga_set_state,
-  	.gpu_reset = &rv515_gpu_reset,
-- 	.mc_init = &rv515_mc_init,
-- 	.mc_fini = &rv515_mc_fini,
-- 	.wb_init = &r100_wb_init,
-- 	.wb_fini = &r100_wb_fini,
-+ 	.mc_init = NULL,
-+ 	.mc_fini = NULL,
-+ 	.wb_init = NULL,
-+ 	.wb_fini = NULL,
-  	.gart_init = &rv370_pcie_gart_init,
-  	.gart_fini = &rv370_pcie_gart_fini,
-- 	.gart_enable = &rv370_pcie_gart_enable,
-- 	.gart_disable = &rv370_pcie_gart_disable,
-+ 	.gart_enable = NULL,
-+ 	.gart_disable = NULL,
-  	.gart_tlb_flush = &rv370_pcie_gart_tlb_flush,
-  	.gart_set_page = &rv370_pcie_gart_set_page,
-- 	.cp_init = &r100_cp_init,
-- 	.cp_fini = &r100_cp_fini,
-- 	.cp_disable = &r100_cp_disable,
-+ 	.cp_init = NULL,
-+ 	.cp_fini = NULL,
-+ 	.cp_disable = NULL,
-  	.cp_commit = &r100_cp_commit,
-  	.ring_start = &rv515_ring_start,
-  	.ring_test = &r100_ring_test,
-@@@ -476,30 -470,29 +478,30 @@@
-  /*
-   * r520,rv530,rv560,rv570,r580
-   */
-- void r520_errata(struct radeon_device *rdev);
-- void r520_vram_info(struct radeon_device *rdev);
-- int r520_mc_init(struct radeon_device *rdev);
-- void r520_mc_fini(struct radeon_device *rdev);
-- void r520_bandwidth_update(struct radeon_device *rdev);
-+ int r520_init(struct radeon_device *rdev);
-+ int r520_resume(struct radeon_device *rdev);
-  static struct radeon_asic r520_asic = {
-- 	.init = &rv515_init,
-- 	.errata = &r520_errata,
-- 	.vram_info = &r520_vram_info,
-+ 	.init = &r520_init,
-+ 	.fini = &rv515_fini,
-+ 	.suspend = &rv515_suspend,
-+ 	.resume = &r520_resume,
-+ 	.errata = NULL,
-+ 	.vram_info = NULL,
- +	.vga_set_state = &r100_vga_set_state,
-  	.gpu_reset = &rv515_gpu_reset,
-- 	.mc_init = &r520_mc_init,
-- 	.mc_fini = &r520_mc_fini,
-- 	.wb_init = &r100_wb_init,
-- 	.wb_fini = &r100_wb_fini,
-- 	.gart_init = &rv370_pcie_gart_init,
-- 	.gart_fini = &rv370_pcie_gart_fini,
-- 	.gart_enable = &rv370_pcie_gart_enable,
-- 	.gart_disable = &rv370_pcie_gart_disable,
-+ 	.mc_init = NULL,
-+ 	.mc_fini = NULL,
-+ 	.wb_init = NULL,
-+ 	.wb_fini = NULL,
-+ 	.gart_init = NULL,
-+ 	.gart_fini = NULL,
-+ 	.gart_enable = NULL,
-+ 	.gart_disable = NULL,
-  	.gart_tlb_flush = &rv370_pcie_gart_tlb_flush,
-  	.gart_set_page = &rv370_pcie_gart_set_page,
-- 	.cp_init = &r100_cp_init,
-- 	.cp_fini = &r100_cp_fini,
-- 	.cp_disable = &r100_cp_disable,
-+ 	.cp_init = NULL,
-+ 	.cp_fini = NULL,
-+ 	.cp_disable = NULL,
-  	.cp_commit = &r100_cp_commit,
-  	.ring_start = &rv515_ring_start,
-  	.ring_test = &r100_ring_test,
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master
+Merging fixes/fixes
+Merging arm-current/master
+Merging m68k-current/for-linus
+Merging powerpc-merge/merge
+Merging sparc-current/master
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sound-current/for-linus
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging kbuild-current/master
+Merging quilt/driver-core.current
+Merging quilt/tty.current
+Merging quilt/usb.current
+Merging cpufreq-current/fixes
+Merging input-current/for-linus
+Merging md-current/for-linus
+Merging audit-current/for-linus
+Merging crypto-current/master
+Merging ide-curent/master
+Merging dwmw2/master
+Merging arm/devel
+Merging davinci/for-next
+Merging pxa/for-next
+Merging thumb-2/thumb-2
+Merging avr32/avr32-arch
+Merging blackfin/for-linus
+Merging cris/for-next
+Merging ia64/test
+Merging m68k/for-next
+CONFLICT (content): Merge conflict in drivers/rtc/Kconfig
+Merging m68knommu/for-next
+Merging microblaze/next
+Merging mips/mips-for-linux-next
+CONFLICT (content): Merge conflict in arch/mips/Kconfig
+CONFLICT (add/add): Merge conflict in arch/mips/bcm63xx/Makefile
+CONFLICT (add/add): Merge conflict in arch/mips/bcm63xx/boards/board_bcm963=
+xx.c
+CONFLICT (delete/modify): arch/mips/lemote/lm2e/Makefile deleted in HEAD an=
+d modified in mips/mips-for-linux-next. Version mips/mips-for-linux-next of=
+ arch/mips/lemote/lm2e/Makefile left in tree.
+CONFLICT (delete/modify): arch/mips/lemote/lm2e/pci.c deleted in HEAD and m=
+odified in mips/mips-for-linux-next. Version mips/mips-for-linux-next of ar=
+ch/mips/lemote/lm2e/pci.c left in tree.
+CONFLICT (delete/modify): arch/mips/lemote/lm2e/prom.c deleted in HEAD and =
+modified in mips/mips-for-linux-next. Version mips/mips-for-linux-next of a=
+rch/mips/lemote/lm2e/prom.c left in tree.
+$ git rm -f arch/mips/lemote/lm2e/Makefile arch/mips/lemote/lm2e/pci.c arch=
+/mips/lemote/lm2e/prom.c
+Merging parisc/next
+CONFLICT (content): Merge conflict in arch/parisc/include/asm/thread_info.h
+CONFLICT (content): Merge conflict in arch/parisc/kernel/entry.S
+CONFLICT (content): Merge conflict in arch/parisc/kernel/signal.c
+Merging powerpc/next
+Merging 4xx/next
+Merging galak/next
+Merging s390/features
+Merging sh/master
+Merging sparc/master
+Merging xtensa/master
+Merging cifs/master
+Merging configfs/linux-next
+Merging ecryptfs/next
+Merging ext3/for_next
+Merging ext4/next
+Merging fatfs/master
+Merging fuse/for-next
+Merging gfs2/master
+Merging jfs/next
+Merging nfs/linux-next
+Merging nfsd/nfsd-next
+Merging nilfs2/for-next
+Merging ocfs2/linux-next
+Merging squashfs/master
+Merging udf/for_next
+Merging v9fs/for-next
+Merging ubifs/linux-next
+Merging xfs/master
+Merging vfs/for-next
+Merging pci/linux-next
+Merging hid/for-next
+Merging quilt/i2c
+Merging quilt/jdelvare-hwmon
+Merging quilt/kernel-doc
+Merging v4l-dvb/master
+Merging quota/for_next
+Merging kbuild/master
+Merging kconfig/for-next
+Merging ide/master
+Merging libata/NEXT
+Merging infiniband/for-next
+Merging acpi/test
+Merging ieee1394/for-next
+Merging ubi/linux-next
+Merging kvm/linux-next
+Merging dlm/next
+Merging scsi/master
+$ git am -3 ../patches/0001-Revert-SCSI-scsi_lib_dma.c-fix-bug-w-dma-maps-o=
+n-vir.patch
+Applying: Revert "[SCSI] scsi_lib_dma.c : fix bug /w dma maps on virtual vc=
+ ports"
+Merging async_tx/next
+Merging net/master
+Merging wireless/master
+Merging mtd/master
+Merging crypto/master
+Merging sound/for-next
+Merging cpufreq/next
+Merging quilt/rr
+Merging mmc/next
+Merging input/next
+Merging lsm/for-next
+Merging block/for-next
+CONFLICT (content): Merge conflict in fs/fs-writeback.c
+CONFLICT (content): Merge conflict in mm/page-writeback.c
+Merging quilt/device-mapper
+Merging embedded/master
+Merging firmware/master
+Merging pcmcia/master
+Merging battery/master
+Merging leds/for-mm
+Merging backlight/for-mm
+Merging kgdb/kgdb-next
+Merging slab/for-next
+Merging uclinux/for-next
+Merging md/for-next
+Merging mfd/for-next
+Merging hdlc/hdlc-next
+Merging drm/drm-next
+CONFLICT (content): Merge conflict in drivers/gpu/drm/radeon/radeon_asic.h
+Merging voltage/for-next
+Merging security-testing/next
+Merging lblnet/master
+Merging agp/agp-next
+Merging uwb/for-upstream
+Merging watchdog/master
+Merging bdev/master
+Merging dwmw2-iommu/master
+Merging cputime/cputime
+Merging osd/linux-next
+Merging jc_docs/docs-next
+Merging nommu/master
+Merging trivial/for-next
+Merging audit/for-next
+Merging omap/for-next
+Merging quilt/aoe
+Merging suspend/linux-next
+Merging bluetooth/master
+Merging fsnotify/for-next
+Merging irda/for-next
+Merging hwlat/for-linus
+Merging drbd/for-jens
+Merging kmemleak/kmemleak
+Merging tip/auto-latest
+Merging oprofile/for-next
+Merging percpu/for-next
+Merging sfi/sfi-test
+Merging asm-generic/next
+Merging hwpoison/hwpoison
+Merging quilt/driver-core
+Merging quilt/tty
+Merging quilt/usb
+Merging quilt/staging
+Merging scsi-post-merge/master
+CONFLICT (content): Merge conflict in MAINTAINERS
+CONFLICT (content): Merge conflict in drivers/scsi/fcoe/fcoe.c
+CONFLICT (content): Merge conflict in drivers/scsi/fcoe/fcoe.h
+CONFLICT (content): Merge conflict in drivers/scsi/libfc/fc_elsct.c
+CONFLICT (content): Merge conflict in drivers/scsi/libfc/fc_lport.c
+CONFLICT (add/add): Merge conflict in drivers/scsi/pmcraid.c
+CONFLICT (add/add): Merge conflict in drivers/scsi/pmcraid.h
+CONFLICT (content): Merge conflict in include/scsi/fc_encode.h
+CONFLICT (content): Merge conflict in include/scsi/libfc.h
+CONFLICT (content): Merge conflict in kernel/sysctl.c
+
+--Signature=_Wed__30_Sep_2009_13_37_45_+1000_6KLMRUcSJGcSMMXN
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkrC0okACgkQjjKRsyhoI8xsMwCgnhhF2SGoQ/MEyMF6ZJxH7BFl
+E18AoK+E8X/LDtp3/9LYRqyM1JlKs3Cv
+=55fQ
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__30_Sep_2009_13_37_45_+1000_6KLMRUcSJGcSMMXN--
