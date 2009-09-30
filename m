@@ -1,43 +1,129 @@
-From: Hollis Blanchard <hollisb-r/Jw6+rmf7HQT0dZR+AlfA@public.gmane.org>
-Subject: Re: linux-next: tree build failure
-Date: Tue, 29 Sep 2009 16:39:32 -0700
-Message-ID: <1254267572.15622.1621.camel@slab.beaverton.ibm.com>
-References: <4AC1E15502000078000516B5@vpn.id2.novell.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with the  tree
+Date: Wed, 30 Sep 2009 11:58:24 +1000
+Message-ID: <20090930115824.683a1dd1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <kvm-ppc-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4AC1E15502000078000516B5-Qfbpwmsw6RoS3W1tAdPHOtBPR1lH4CV8@public.gmane.org>
-Sender: kvm-ppc-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jan Beulich <jbeulich-Et1tbQHTxzrQT0dZR+AlfA@public.gmane.org>
-Cc: sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, kvm-ppc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:40184 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752613AbZI3B6Z (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 29 Sep 2009 21:58:25 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jerome Glisse <jglisse@redhat.com>
 
-On Tue, 2009-09-29 at 10:28 +0100, Jan Beulich wrote:
-> >>> Hollis Blanchard  09/29/09 2:00 AM >>>
-> >First, I think there is a real bug here, and the code should read like
-> >this (to match the comment):
-> >    /* type has to be known at build time for optimization */
-> >-    BUILD_BUG_ON(__builtin_constant_p(type));
-> >+    BUILD_BUG_ON(!__builtin_constant_p(type));
-> >
-> >However, I get the same build error *both* ways, i.e.
-> >__builtin_constant_p(type) evaluates to both 0 and 1? Either that, or
-> >the new BUILD_BUG_ON() macro isn't working...
-> 
-> No, at this point of the compilation process it's neither zero nor one,
-> it's simply considered non-constant by the compiler at that stage
-> (this builtin is used for optimization, not during parsing, and the
-> error gets generated when the body of the function gets parsed,
-> not when code gets generated from it).
+Hi Dave,
 
-I think I see what you're saying. Do you have a fix to suggest?
+Today's linux-next merge of the drm tree got a conflict in
+drivers/gpu/drm/radeon/radeon_asic.h between commit
+28d520433b6375740990ab99d69b0d0067fd656b ("drm/vgaarb: add VGA
+arbitration support to the drm and kms") from Linus' tree and commits
+d39c3b895876427c5083a936e00f3f5b7f0fc1b3 ("drm/radeon/kms: Convert RV515
+to new init path and associated cleanup") and
+f0ed1f655aa0375e2abba84cc4e8e6c853d48555 ("drm/radeon/kms: Convert R520
+to new init path and associated cleanup") from the drm tree.
 
+I fixed it up (see below) and can carry the fix for a while.
 -- 
-Hollis Blanchard
-IBM Linux Technology Center
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---
-To unsubscribe from this list: send the line "unsubscribe kvm-ppc" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --cc drivers/gpu/drm/radeon/radeon_asic.h
+index 8968f78,bce0cb0..0000000
+--- a/drivers/gpu/drm/radeon/radeon_asic.h
++++ b/drivers/gpu/drm/radeon/radeon_asic.h
+@@@ -431,25 -421,29 +428,30 @@@ void rv515_ring_start(struct radeon_dev
+  uint32_t rv515_pcie_rreg(struct radeon_device *rdev, uint32_t reg);
+  void rv515_pcie_wreg(struct radeon_device *rdev, uint32_t reg, uint32_t v);
+  void rv515_bandwidth_update(struct radeon_device *rdev);
++ int rv515_resume(struct radeon_device *rdev);
++ int rv515_suspend(struct radeon_device *rdev);
+  static struct radeon_asic rv515_asic = {
+  	.init = &rv515_init,
+- 	.errata = &rv515_errata,
+- 	.vram_info = &rv515_vram_info,
++ 	.fini = &rv515_fini,
++ 	.suspend = &rv515_suspend,
++ 	.resume = &rv515_resume,
++ 	.errata = NULL,
++ 	.vram_info = NULL,
+ +	.vga_set_state = &r100_vga_set_state,
+  	.gpu_reset = &rv515_gpu_reset,
+- 	.mc_init = &rv515_mc_init,
+- 	.mc_fini = &rv515_mc_fini,
+- 	.wb_init = &r100_wb_init,
+- 	.wb_fini = &r100_wb_fini,
++ 	.mc_init = NULL,
++ 	.mc_fini = NULL,
++ 	.wb_init = NULL,
++ 	.wb_fini = NULL,
+  	.gart_init = &rv370_pcie_gart_init,
+  	.gart_fini = &rv370_pcie_gart_fini,
+- 	.gart_enable = &rv370_pcie_gart_enable,
+- 	.gart_disable = &rv370_pcie_gart_disable,
++ 	.gart_enable = NULL,
++ 	.gart_disable = NULL,
+  	.gart_tlb_flush = &rv370_pcie_gart_tlb_flush,
+  	.gart_set_page = &rv370_pcie_gart_set_page,
+- 	.cp_init = &r100_cp_init,
+- 	.cp_fini = &r100_cp_fini,
+- 	.cp_disable = &r100_cp_disable,
++ 	.cp_init = NULL,
++ 	.cp_fini = NULL,
++ 	.cp_disable = NULL,
+  	.cp_commit = &r100_cp_commit,
+  	.ring_start = &rv515_ring_start,
+  	.ring_test = &r100_ring_test,
+@@@ -476,30 -470,29 +478,30 @@@
+  /*
+   * r520,rv530,rv560,rv570,r580
+   */
+- void r520_errata(struct radeon_device *rdev);
+- void r520_vram_info(struct radeon_device *rdev);
+- int r520_mc_init(struct radeon_device *rdev);
+- void r520_mc_fini(struct radeon_device *rdev);
+- void r520_bandwidth_update(struct radeon_device *rdev);
++ int r520_init(struct radeon_device *rdev);
++ int r520_resume(struct radeon_device *rdev);
+  static struct radeon_asic r520_asic = {
+- 	.init = &rv515_init,
+- 	.errata = &r520_errata,
+- 	.vram_info = &r520_vram_info,
++ 	.init = &r520_init,
++ 	.fini = &rv515_fini,
++ 	.suspend = &rv515_suspend,
++ 	.resume = &r520_resume,
++ 	.errata = NULL,
++ 	.vram_info = NULL,
+ +	.vga_set_state = &r100_vga_set_state,
+  	.gpu_reset = &rv515_gpu_reset,
+- 	.mc_init = &r520_mc_init,
+- 	.mc_fini = &r520_mc_fini,
+- 	.wb_init = &r100_wb_init,
+- 	.wb_fini = &r100_wb_fini,
+- 	.gart_init = &rv370_pcie_gart_init,
+- 	.gart_fini = &rv370_pcie_gart_fini,
+- 	.gart_enable = &rv370_pcie_gart_enable,
+- 	.gart_disable = &rv370_pcie_gart_disable,
++ 	.mc_init = NULL,
++ 	.mc_fini = NULL,
++ 	.wb_init = NULL,
++ 	.wb_fini = NULL,
++ 	.gart_init = NULL,
++ 	.gart_fini = NULL,
++ 	.gart_enable = NULL,
++ 	.gart_disable = NULL,
+  	.gart_tlb_flush = &rv370_pcie_gart_tlb_flush,
+  	.gart_set_page = &rv370_pcie_gart_set_page,
+- 	.cp_init = &r100_cp_init,
+- 	.cp_fini = &r100_cp_fini,
+- 	.cp_disable = &r100_cp_disable,
++ 	.cp_init = NULL,
++ 	.cp_fini = NULL,
++ 	.cp_disable = NULL,
+  	.cp_commit = &r100_cp_commit,
+  	.ring_start = &rv515_ring_start,
+  	.ring_test = &r100_ring_test,
