@@ -1,274 +1,136 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for October 1
-Date: Thu, 1 Oct 2009 14:08:07 +1000
-Message-ID: <20091001140807.c087ac65.sfr@canb.auug.org.au>
+From: Greg Ungerer <gerg@snapgear.com>
+Subject: Re: linux-next: m86k/m68knommu tree build failure
+Date: Thu, 01 Oct 2009 16:37:50 +1000
+Message-ID: <4AC44E3E.9000301@snapgear.com>
+References: <20090910151137.fb71c103.sfr@canb.auug.org.au>	<4AA890B5.8000207@snapgear.com> <m363brb4yk.fsf@hase.home>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__1_Oct_2009_14_08_07_+1000_8.I6=KkAMiK70kZM"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54429 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750706AbZJAEIM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 1 Oct 2009 00:08:12 -0400
+Received: from rex.securecomputing.com ([203.24.151.4]:44559 "EHLO
+	cyberguard.com.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1753368AbZJAGiO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 1 Oct 2009 02:38:14 -0400
+In-Reply-To: <m363brb4yk.fsf@hase.home>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Andreas Schwab <schwab@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Thu__1_Oct_2009_14_08_07_+1000_8.I6=KkAMiK70kZM
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Andreas,
 
-Hi all,
+Andreas Schwab wrote:
+> Greg Ungerer <gerg@snapgear.com> writes:
+> 
+>> Hi Stephen,
+>>
+>> Stephen Rothwell wrote:
+>>> Today's linux-next build (m68k defconfig) failed like this:
+>>>
+>>> kernel/built-in.o: In function `ptrace_resume':
+>>> ptrace.c:(.text+0xc5d6): undefined reference to `user_disable_single_step'
+>>> ptrace.c:(.text+0xc5fe): undefined reference to `user_enable_single_step'
+>>> ptrace.c:(.text+0xc620): undefined reference to `user_disable_single_step'
+>>>
+>>> Caused by commit 5db612ef70d24be12f6dbf5d06b23bcd6bc2fc05 ("m68knommu:
+>>> define arch_has_single_step() and friends").  This commit added
+>>> definitions of these functions for m68knommu, but added declarations (and
+>>> arch_has_single_step()) in a common header file.
+>> Ah, yes, thanks. I'll fix that. I don't regularly build for m68k,
+>> so I missed that in my test builds.
+> 
+> An m68k implementation is here
+> <http://permalink.gmane.org/gmane.linux.ports.m68k/721>.
 
-Changes since 20090930:
+I have 2 patches now for m68knommu (first is below, second following).
+If no complaints I'll add to the for-next branch of the m68knommu
+git tree.
 
-My fixes tree contains a build fix for powerpc/kvm.
+Regards
+Greg
 
-I have still reverted a commit from the scsi tree that causes a boot
-failure.
 
-The sound tree gained a build failure so I used the version from
-next-20090930.
 
-The block tree lost its conflicts, but gained a build failure for which I
-reverted a commit.
+m68knommu: define arch_has_single_step() and friends
 
-The drm tree lost its conflict.
+Towards adding CONFIG_UTRACE support for non-mmu m68k add
+arch_has_single_step, and its support functions
+user_enable_single_step() and user_disable_single_step().
 
-----------------------------------------------------------------------------
+Signed-off-by: Greg Ungerer <gerg@uclinux.org>
+---
+  arch/m68k/include/asm/ptrace.h |   12 ++++++++++++
+  arch/m68knommu/kernel/ptrace.c |   18 +++++++++++++++---
+  2 files changed, 27 insertions(+), 3 deletions(-)
 
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
+diff --git a/arch/m68k/include/asm/ptrace.h b/arch/m68k/include/asm/ptrace.h
+index 8c9194b..beb2091 100644
+--- a/arch/m68k/include/asm/ptrace.h
++++ b/arch/m68k/include/asm/ptrace.h
+@@ -82,6 +82,18 @@ struct switch_stack {
+  #define instruction_pointer(regs) ((regs)->pc)
+  #define profile_pc(regs) instruction_pointer(regs)
+  extern void show_regs(struct pt_regs *);
++
++/*
++ * These are defined as per linux/ptrace.h.
++ */
++struct task_struct;
++
++#ifndef CONFIG_MMU
++#define	arch_has_single_step()	(1)
++extern void user_enable_single_step(struct task_struct *);
++extern void user_disable_single_step(struct task_struct *);
++#endif
++
+  #endif /* __KERNEL__ */
+  #endif /* __ASSEMBLY__ */
+  #endif /* _M68K_PTRACE_H */
+diff --git a/arch/m68knommu/kernel/ptrace.c b/arch/m68knommu/kernel/ptrace.c
+index ef70ca0..4d38289 100644
+--- a/arch/m68knommu/kernel/ptrace.c
++++ b/arch/m68knommu/kernel/ptrace.c
+@@ -86,6 +86,20 @@ static inline int put_reg(struct task_struct *task, 
+int regno,
+  	return 0;
+  }
 
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
-and sparc64 defconfig. These builds also have
-CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
-CONFIG_DEBUG_INFO disabled when necessary.
++void user_enable_single_step(struct task_struct *task)
++{
++	unsigned long srflags;
++	srflags = get_reg(task, PT_SR) | (TRACE_BITS << 16);
++	put_reg(task, PT_SR, srflags);
++}
++
++void user_disable_single_step(struct task_struct *task)
++{
++	unsigned long srflags;
++	srflags = get_reg(task, PT_SR) & ~(TRACE_BITS << 16);
++	put_reg(task, PT_SR, srflags);
++}
++
+  /*
+   * Called by kernel/ptrace.c when detaching..
+   *
+@@ -93,10 +107,8 @@ static inline int put_reg(struct task_struct *task, 
+int regno,
+   */
+  void ptrace_disable(struct task_struct *child)
+  {
+-	unsigned long tmp;
+  	/* make sure the single step bit is not set. */
+-	tmp = get_reg(child, PT_SR) & ~(TRACE_BITS << 16);
+-	put_reg(child, PT_SR, tmp);
++	user_disable_single_step(child);
+  }
 
-Below is a summary of the state of the merge.
+  long arch_ptrace(struct task_struct *child, long request, long addr, 
+long data)
 
-We are up to 139 trees (counting Linus' and 21 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
 
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
 
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging fixes/fixes
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/tty.current
-Merging quilt/usb.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging ide-curent/master
-Merging dwmw2/master
-Merging arm/devel
-Merging davinci/for-next
-Merging pxa/for-next
-Merging thumb-2/thumb-2
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-CONFLICT (content): Merge conflict in drivers/rtc/Kconfig
-Merging m68knommu/for-next
-Merging microblaze/next
-Merging mips/mips-for-linux-next
-CONFLICT (content): Merge conflict in arch/mips/Kconfig
-CONFLICT (add/add): Merge conflict in arch/mips/bcm63xx/Makefile
-CONFLICT (add/add): Merge conflict in arch/mips/bcm63xx/boards/board_bcm963=
-xx.c
-CONFLICT (delete/modify): arch/mips/lemote/lm2e/Makefile deleted in HEAD an=
-d modified in mips/mips-for-linux-next. Version mips/mips-for-linux-next of=
- arch/mips/lemote/lm2e/Makefile left in tree.
-CONFLICT (delete/modify): arch/mips/lemote/lm2e/pci.c deleted in HEAD and m=
-odified in mips/mips-for-linux-next. Version mips/mips-for-linux-next of ar=
-ch/mips/lemote/lm2e/pci.c left in tree.
-CONFLICT (delete/modify): arch/mips/lemote/lm2e/prom.c deleted in HEAD and =
-modified in mips/mips-for-linux-next. Version mips/mips-for-linux-next of a=
-rch/mips/lemote/lm2e/prom.c left in tree.
-$ git rm -f arch/mips/lemote/lm2e/Makefile arch/mips/lemote/lm2e/pci.c arch=
-/mips/lemote/lm2e/prom.c
-Merging parisc/next
-CONFLICT (content): Merge conflict in arch/parisc/include/asm/thread_info.h
-CONFLICT (content): Merge conflict in arch/parisc/kernel/entry.S
-CONFLICT (content): Merge conflict in arch/parisc/kernel/signal.c
-Merging powerpc/next
-Merging 4xx/next
-Merging galak/next
-Merging s390/features
-Merging sh/master
-Merging sparc/master
-Merging xtensa/master
-Merging cifs/master
-Merging configfs/linux-next
-Merging ecryptfs/next
-Merging ext3/for_next
-Merging ext4/next
-Merging fatfs/master
-Merging fuse/for-next
-Merging gfs2/master
-Merging jfs/next
-Merging nfs/linux-next
-Merging nfsd/nfsd-next
-Merging nilfs2/for-next
-Merging ocfs2/linux-next
-Merging squashfs/master
-Merging udf/for_next
-Merging v9fs/for-next
-Merging ubifs/linux-next
-Merging xfs/master
-Merging vfs/for-next
-Merging pci/linux-next
-Merging hid/for-next
-Merging quilt/i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-Merging quota/for_next
-Merging kbuild/master
-Merging kconfig/for-next
-Merging ide/master
-Merging libata/NEXT
-Merging infiniband/for-next
-Merging acpi/test
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/linux-next
-Merging dlm/next
-Merging scsi/master
-$ git am -3 ../patches/0001-Revert-SCSI-scsi_lib_dma.c-fix-bug-w-dma-maps-o=
-n-vir.patch
-Applying: Revert "[SCSI] scsi_lib_dma.c : fix bug /w dma maps on virtual vc=
- ports"
-Merging async_tx/next
-Merging net/master
-Merging wireless/master
-Merging mtd/master
-Merging crypto/master
-Merging sound/for-next
-$ git reset --hard HEAD^
-Merging refs/next/20090930/sound
-Merging cpufreq/next
-Merging quilt/rr
-Merging mmc/next
-Merging input/next
-Merging lsm/for-next
-Merging block/for-next
-Merging quilt/device-mapper
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging voltage/for-next
-Merging security-testing/next
-Merging lblnet/master
-Merging agp/agp-next
-Merging uwb/for-upstream
-Merging watchdog/master
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-Merging audit/for-next
-Merging omap/for-next
-Merging quilt/aoe
-Merging suspend/linux-next
-Merging bluetooth/master
-Merging fsnotify/for-next
-Merging irda/for-next
-Merging hwlat/for-linus
-Merging drbd/for-jens
-Merging kmemleak/kmemleak
-Merging tip/auto-latest
-Merging oprofile/for-next
-Merging percpu/for-next
-Merging sfi/sfi-test
-Merging asm-generic/next
-Merging hwpoison/hwpoison
-Merging quilt/driver-core
-Merging quilt/tty
-Merging quilt/usb
-Merging quilt/staging
-Merging scsi-post-merge/master
-CONFLICT (content): Merge conflict in MAINTAINERS
-CONFLICT (content): Merge conflict in drivers/scsi/fcoe/fcoe.c
-CONFLICT (content): Merge conflict in drivers/scsi/fcoe/fcoe.h
-CONFLICT (content): Merge conflict in drivers/scsi/libfc/fc_elsct.c
-CONFLICT (content): Merge conflict in drivers/scsi/libfc/fc_lport.c
-CONFLICT (add/add): Merge conflict in drivers/scsi/pmcraid.c
-CONFLICT (add/add): Merge conflict in drivers/scsi/pmcraid.h
-CONFLICT (content): Merge conflict in include/scsi/fc_encode.h
-CONFLICT (content): Merge conflict in include/scsi/libfc.h
-CONFLICT (content): Merge conflict in kernel/sysctl.c
-[master 5c610af] Revert "Add missing blk_trace_remove_sysfs to be in pair w=
-ith blk_trace_init_sysfs"
-
---Signature=_Thu__1_Oct_2009_14_08_07_+1000_8.I6=KkAMiK70kZM
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkrEKycACgkQjjKRsyhoI8wQ2wCgoxatabIDwVNarCR3Neqdep3N
-2P8An1/I5uXm/Jzd9QtDb9xtKPAjaBEz
-=2ktM
------END PGP SIGNATURE-----
-
---Signature=_Thu__1_Oct_2009_14_08_07_+1000_8.I6=KkAMiK70kZM--
+------------------------------------------------------------------------
+Greg Ungerer  --  Principal Engineer        EMAIL:     gerg@snapgear.com
+SnapGear Group, McAfee                      PHONE:       +61 7 3435 2888
+825 Stanley St,                             FAX:         +61 7 3891 3630
+Woolloongabba, QLD, 4102, Australia         WEB: http://www.SnapGear.com
