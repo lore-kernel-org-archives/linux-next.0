@@ -1,60 +1,43 @@
-From: Hollis Blanchard <hollisb-r/Jw6+rmf7HQT0dZR+AlfA@public.gmane.org>
-Subject: Re: linux-next: tree build failure
-Date: Fri, 02 Oct 2009 08:48:36 -0700
-Message-ID: <1254498517.3839.17.camel@slab.beaverton.ibm.com>
-References: <4AC1E15502000078000516B5@vpn.id2.novell.com>
-	 <1254267572.15622.1621.camel@slab.beaverton.ibm.com>
-	 <4AC318450200007800017355@vpn.id2.novell.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for October 2: percpu compile warnings (i386)
+Date: Fri, 2 Oct 2009 09:40:30 -0700
+Message-ID: <20091002094030.ffbde6ca.randy.dunlap@oracle.com>
+References: <20091002134718.f577be51.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <kvm-ppc-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4AC318450200007800017355-Qfbpwmsw6RoS3W1tAdPHOtBPR1lH4CV8@public.gmane.org>
-Sender: kvm-ppc-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jan Beulich <JBeulich-Et1tbQHTxzrQT0dZR+AlfA@public.gmane.org>
-Cc: sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, kvm-ppc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from acsinet11.oracle.com ([141.146.126.233]:50689 "EHLO
+	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756663AbZJBQlh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 2 Oct 2009 12:41:37 -0400
+In-Reply-To: <20091002134718.f577be51.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Wed, 2009-09-30 at 07:35 +0100, Jan Beulich wrote:
-> >>> Hollis Blanchard <hollisb-r/Jw6+rmf7HQT0dZR+AlfA@public.gmane.org> 30.09.09 01:39 >>>
-> >On Tue, 2009-09-29 at 10:28 +0100, Jan Beulich wrote:
-> >> >>> Hollis Blanchard  09/29/09 2:00 AM >>>
-> >> >First, I think there is a real bug here, and the code should read like
-> >> >this (to match the comment):
-> >> >    /* type has to be known at build time for optimization */
-> >> >-    BUILD_BUG_ON(__builtin_constant_p(type));
-> >> >+    BUILD_BUG_ON(!__builtin_constant_p(type));
-> >> >
-> >> >However, I get the same build error *both* ways, i.e.
-> >> >__builtin_constant_p(type) evaluates to both 0 and 1? Either that, or
-> >> >the new BUILD_BUG_ON() macro isn't working...
-> >> 
-> >> No, at this point of the compilation process it's neither zero nor one,
-> >> it's simply considered non-constant by the compiler at that stage
-> >> (this builtin is used for optimization, not during parsing, and the
-> >> error gets generated when the body of the function gets parsed,
-> >> not when code gets generated from it).
-> >
-> >I think I see what you're saying. Do you have a fix to suggest?
-> 
-> The one Rusty suggested the other day may help here. I don't like it
-> as a drop-in replacement for BUILD_BUG_ON() though (due to it
-> deferring the error generated to the linking stage), I'd rather view
-> this as an improvement to MAYBE_BUILD_BUG_ON() (which should
-> then be used here).
+mm/percpu.c:1873: warning: comparison of distinct pointer types lacks a cast
+mm/percpu.c:1879: warning: format '%lx' expects type 'long unsigned int', but argument 2 has type 'size_t'
 
-Can you be more specific?
+The second one is easily fixed (s/%lx/%zu/), but is that the correct fix?
 
-I have no idea what Rusty suggested where. I can't even guess what
-MAYBE_BUILD_BUG_ON() is supposed to do (sounds like a terrible name).
+The first one is a max(size_t, unsigned long).
+The C99 spec says that the max value of a size_t is:
+	limit of size_t
+	SIZE_MAX 65535
+(from 7.8.13(2)), but max_distance (the size_t here) is being compared to
+unsigned long base_offset, which isn't limited to 65535 AFAICT.
 
-All I know is that this used to build...
+In fact, this test:
+	if (max_distance > (VMALLOC_END - VMALLOC_START) * 3 / 4) {
+checks max_distance > 0x000017ff_ffffffff (on x86_64).
 
--- 
-Hollis Blanchard
-IBM Linux Technology Center
+And it looks to me like there is some potential for some value truncation
+in the max() operation, even if size_t is not limited to SIZE_MAX.
 
---
-To unsubscribe from this list: send the line "unsubscribe kvm-ppc" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+So maybe the size_t(s) should be changed to unsigned long and the
+printk format doesn't need to be fixed... ?
+
+---
+~Randy
