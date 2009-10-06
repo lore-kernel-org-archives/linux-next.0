@@ -1,83 +1,45 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Subject: Re: [PATCH -next] wireless: fix CFG80211_WEXT build problems
-Date: Tue, 06 Oct 2009 23:33:49 +0200
-Message-ID: <1254864829.22426.44.camel@johannes.local>
-References: <20091006165220.b5cb1c44.sfr@canb.auug.org.au>
-	 <20091006132729.8b4f9345.rdunlap@xenotime.net>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: suspend tree build failure
+Date: Wed, 7 Oct 2009 00:31:55 +0200
+Message-ID: <200910070031.55135.rjw@sisk.pl>
+References: <20091006135505.f07ee40d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature"; boundary="=-mlIR3prWWHjimdDtAY9E"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S933548AbZJFVfM@vger.kernel.org>
-In-Reply-To: <20091006132729.8b4f9345.rdunlap@xenotime.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linville@tuxdriver.com, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-wireless@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: Text/Plain;
+  charset="iso-8859-2"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ogre.sisk.pl ([217.79.144.158]:57635 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933462AbZJFWbc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 6 Oct 2009 18:31:32 -0400
+In-Reply-To: <20091006135505.f07ee40d.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Hemminger <shemminger@vyatta.com>
 
+On Tuesday 06 October 2009, Stephen Rothwell wrote:
+> Hi Rafael,
+> 
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
+> 
+> kernel/freezer.c:27: error: expected ',' or ';' before '{' token
+> 
+> Caused by commit 9a4801cb8df76263abbb3049c0208625b7f34286 ("PM / freezer:
+> Make refrigerator cold") which neglected to include linux/compiler.h for
+> the definition of __cold.
 
---=-mlIR3prWWHjimdDtAY9E
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Thanks for the notification.
 
-On Tue, 2009-10-06 at 13:27 -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
->=20
-> Fix CFG80211_WEXT build dependencies/errors:
->=20
-> ERROR: "cfg80211_wext_siwscan" [drivers/net/wireless/orinoco/orinoco.ko] =
-undefined!
-> ERROR: "cfg80211_wext_siwmode" [drivers/net/wireless/orinoco/orinoco.ko] =
-undefined!
-> ERROR: "cfg80211_wext_giwrange" [drivers/net/wireless/orinoco/orinoco.ko]=
- undefined!
-> ERROR: "cfg80211_wext_giwmode" [drivers/net/wireless/orinoco/orinoco.ko] =
-undefined!
-> ERROR: "cfg80211_wext_giwname" [drivers/net/wireless/orinoco/orinoco.ko] =
-undefined!
-> ERROR: "cfg80211_wext_giwscan" [drivers/net/wireless/orinoco/orinoco.ko] =
-undefined!
-> ERROR: "cfg80211_wext_giwname" [drivers/net/wireless/ipw2x00/ipw2200.ko] =
-undefined!
->=20
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> ---
->  drivers/net/wireless/ipw2x00/Kconfig |    2 +-
->  drivers/net/wireless/orinoco/Kconfig |    2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
->=20
-> --- linux-next-20091006.orig/drivers/net/wireless/ipw2x00/Kconfig
-> +++ linux-next-20091006/drivers/net/wireless/ipw2x00/Kconfig
-> @@ -65,7 +65,7 @@ config IPW2100_DEBUG
-> =20
->  config IPW2200
->  	tristate "Intel PRO/Wireless 2200BG and 2915ABG Network Connection"
-> -	depends on PCI && WLAN_80211 && CFG80211
-> +	depends on PCI && WLAN_80211 && CFG80211 && CFG80211_WEXT
+Did you cross-compile it by chance?  It builds for me on native x86_64 with
+allmodconfig, which is why I missed this issue.
 
-Interesting approach, thanks. I completely forgot about the
-half-converted drivers. The alternative would be to ifdef the code
-blobs, but I'm happy with this.
+> I have used the version of the suspend tree from next-20091002 for today.
 
-johannes
+I added the #include <linux/compiler.h> to freezer.h, but obviously I couldn't
+verify if that fixed the problem.  Hopefully it did.
 
---=-mlIR3prWWHjimdDtAY9E
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+Pushing updated tree.
 
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABAgAGBQJKy7e6AAoJEODzc/N7+Qmat9QP/jU4JKxcY8zrwS3TBC8hWP4/
-LoVAXBV922pZ6mywE+J4DN3DCRYpBLYiMc7+6Ip5gosNSoRTv8p9+Nik3BeBKbR6
-9qxz1Nxq+9M+eQLkj0eMRI1CVGGFhh+2VyjPdN71WWUjL1/wyskLLVITL5La/aB6
-stbLBsnwNXnlgFvsEjWlgWUaGqjstpJrG2OK0mGMH9tDSF/RqLKnuwqxwTk4VyH8
-NLqhTbLHEBr3Pkjh0B/kM8HiZ43J7s0yvLpXZqPQaVOMHMGJ9onlFGc8n4Wit905
-hjxGLR0onTqijjkhw4ARXlGsb7iwGKbO7Q1uNkb5Lbdo3jg1XJlFNnf0gUBpmL+b
-3ws0l0yeUdNPRnKPVUlGkThyBgmtwE+ycyWRPusCoGt/efPwL1ssEAt9Jf2LJod/
-rEOzjGSTs1MYm3UVOQACqfGfo6CNFju47D7X7Kalb26M8vBRc7ItquaMN+1aWfMN
-aKowUw8Dhw6HjvcFS8ySfDn72tmXqquW806fAaJgQ9sQ2O8DK00UpZdpfNHWdC7v
-tZwRtlNlTKY6BX1FZnsCS2v2pZEtHSe3BV7MEu21qyW7WszbtxGnku19L5mhLcF2
-cY7/ZG3AzCIrnmNKt04U3XFlyr3Bf5yc1KCDoEUxq1jQD1uZDS6Wu6G/ko1hJ5KY
-hXsomFmGcu7ddhWxr1SY
-=Udyl
------END PGP SIGNATURE-----
-
---=-mlIR3prWWHjimdDtAY9E--
+Best,
+Rafael
