@@ -1,58 +1,63 @@
-From: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
-Subject: Re: linux-next: Tree for October 5 (android)
-Date: Tue,  6 Oct 2009 13:34:03 +0900 (JST)
-Message-ID: <20091006133202.5FAD.A69D9226@jp.fujitsu.com>
-References: <20091005190324.7013a4bb.sfr@canb.auug.org.au> <20091005162129.08749093.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: wireless/kbuild tree build failure
+Date: Tue, 6 Oct 2009 16:16:39 +1100
+Message-ID: <20091006161639.85e731bb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__6_Oct_2009_16_16_39_+1100_zrq0WW4pJcN1xEUw"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fgwmail5.fujitsu.co.jp ([192.51.44.35]:35382 "EHLO
-	fgwmail5.fujitsu.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751000AbZJFEen (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Oct 2009 00:34:43 -0400
-In-Reply-To: <20091005162129.08749093.randy.dunlap@oracle.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:55538 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750987AbZJFFRY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 6 Oct 2009 01:17:24 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: kosaki.motohiro@jp.fujitsu.com, Stephen Rothwell <sfr@canb.auug.org.au>, devel@driverdev.osuosl.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+To: "John W. Linville" <linville@tuxdriver.com>, Sam Ravnborg <sam@ravnborg.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi
+--Signature=_Tue__6_Oct_2009_16_16_39_+1100_zrq0WW4pJcN1xEUw
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi John,
 
-> > Hi all,
-> > 
-> > Changes since 20091002:
-> 
-> drivers/staging/android/lowmemorykiller.c: In function 'lowmem_shrink':
-> drivers/staging/android/lowmemorykiller.c:111: error: 'struct mm_struct' has no member named 'oom_adj'
+Today's linux-next build (i386 defconfig) failed like this:
 
-I've already fixed it and andrew pick it up to -mm at 11/Sep.
+net/wireless/ethtool.c:1:30: error: linux/utsrelease.h: No such file or dir=
+ectory
+net/wireless/ethtool.c: In function 'cfg80211_get_drvinfo':
+net/wireless/ethtool.c:13: error: 'UTS_RELEASE' undeclared (first use in th=
+is function)
 
+Caused by commit fdd4b63be177e74b9346a557b75f4b48f3a42ee1 ("wireless:
+implement basic ethtool support for cfg80211 devices").
 
-> 
-> config := config-and1
-> ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> drivers/staging/android/logger.c:165: error: 'TASK_INTERRUPTIBLE' undeclared (first use in this function)
-> drivers/staging/android/logger.c:165: error: (Each undeclared identifier is reported only once
-> drivers/staging/android/logger.c:165: error: for each function it appears in.)
-> drivers/staging/android/logger.c:178: error: implicit declaration of function 'signal_pending'
-> drivers/staging/android/logger.c:183: error: implicit declaration of function 'schedule'
-> drivers/staging/android/logger.c: In function 'logger_aio_write':
-> drivers/staging/android/logger.c:325: error: dereferencing pointer to incomplete type
-> drivers/staging/android/logger.c:333: error: dereferencing pointer to incomplete type
-> drivers/staging/android/logger.c:334: error: dereferencing pointer to incomplete type
-> drivers/staging/android/logger.c:337: error: dereferencing pointer to incomplete type
-> drivers/staging/android/logger.c:360: error: dereferencing pointer to incomplete type
-> drivers/staging/android/logger.c:363: error: dereferencing pointer to incomplete type
-> drivers/staging/android/logger.c:370: error: increment of pointer to unknown structure
-> drivers/staging/android/logger.c:370: error: arithmetic on pointer to an incomplete type
-> drivers/staging/android/logger.c:377: error: 'TASK_INTERRUPTIBLE' undeclared (first use in this function)
-> make[4]: *** [drivers/staging/android/logger.o] Error 1
-> 
-> config := config-and2
-> 
-> 
-> ---
-> ~Randy
+utsrelease.h is now in include/generated after commit
+bbae701f7f258b051ed199ef71c5e85e683c0fb8 ("kbuild: move utsrelease.h to
+include/generated") from the kbuild tree.  (My other builds only worked
+because utsrelease.h was left over in include/linux from previous builds.)
+
+I have reverted the kbuild commit for today.  Sam, we need to come up
+with a better solution ... maybe for one release we could have the old
+files including the new files ... maybe remove the old files after
+2.6.33-rc2 ...
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__6_Oct_2009_16_16_39_+1100_zrq0WW4pJcN1xEUw
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkrK0rcACgkQjjKRsyhoI8w+JgCeMv3CR293ZKr62Z6lN7XxEfxr
+zUEAnRUfTB9L7506VFkkDGBz0PzXfeDn
+=xj7U
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__6_Oct_2009_16_16_39_+1100_zrq0WW4pJcN1xEUw--
