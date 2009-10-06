@@ -1,41 +1,32 @@
-From: Jens Axboe <jens.axboe-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Subject: Re: linux-next: block/drbd tree build warning
-Date: Tue, 6 Oct 2009 09:31:16 +0200
-Message-ID: <20091006073116.GE5216@kernel.dk>
-References: <20091006140154.8d94d95c.sfr@canb.auug.org.au>
-	<20091006071700.GA7665@johann>
+From: Mike Frysinger <vapier.adi@gmail.com>
+Subject: Re: [PATCH] USB: isp1362: fix build warnings on 64-bit systems
+Date: Tue, 6 Oct 2009 04:32:29 -0400
+Message-ID: <8bd0f97a0910060132r1dd6b6a4u71eaa8763862aebd@mail.gmail.com>
+References: <1250046053-3097-1-git-send-email-vapier@gentoo.org>
+	<20090813234410.GB4406@kroah.com> <8bd0f97a0908131734h2588d240k9000bace38b58e7f@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20091006071700.GA7665@johann>
-List-Unsubscribe: <http://lists.linbit.com/mailman/options/drbd-dev>,
-	<mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linbit.com/pipermail/drbd-dev>
-List-Post: <mailto:drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org>
-List-Help: <mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.linbit.com/mailman/listinfo/drbd-dev>,
-	<mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=subscribe>
-Sender: drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
-Errors-To: drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
-To: Lars Ellenberg <lars.ellenberg-63ez5xqkn6DQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Philipp Reisner <philipp.reisner-63ez5xqkn6DQT0dZR+AlfA@public.gmane.org>, drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756573AbZJFId2@vger.kernel.org>
+In-Reply-To: <8bd0f97a0908131734h2588d240k9000bace38b58e7f@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lothar Wassmann <LW@karo-electronics.de>, Stephen Rothwell <sfr@canb.auug.org.au>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Oct 06 2009, Lars Ellenberg wrote:
-> On Tue, Oct 06, 2009 at 02:01:54PM +1100, Stephen Rothwell wrote:
-> > Hi Jens, Philipp,
-> > 
-> > Today's linux-next build (x86_64 allmodconfig) produced this warning:
-> > 
-> > drivers/block/drbd/drbd_nl.c: In function 'drbd_nl_init':
-> > drivers/block/drbd/drbd_nl.c:2309: warning: passing argument 3 of 'cn_add_callback' from incompatible pointer type
-> > include/linux/connector.h:167: note: expected 'void (*)(struct cn_msg *, struct netlink_skb_parms *)' but argument is of type 'void (*)(struct cn_msg *)'
-> 
-> Thanks, expected after our connector related patches got in.
+On Thu, Aug 13, 2009 at 20:34, Mike Frysinger wrote:
+> On Thu, Aug 13, 2009 at 19:44, Greg KH wrote:
+>> On Tue, Aug 11, 2009 at 11:00:53PM -0400, Mike Frysinger wrote:
+>>> A bunch of places assumed pointers were 32-bits in size (bit checking and
+>>> debug output), but none of these affected runtime functionality.
+>>>
+>>> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+>>> Signed-off-by: Mike Frysinger <vapier@gentoo.org>
+>>
+>> This patch doesn't apply to my tree, what did you make it against?
+>
+> it was reported against next, so i used that
 
-Thanks for fixing it quickly, I've added the patch and updated for-next.
-
--- 
-Jens Axboe
+so what tree do i need to use to get you to merge this ?  i'm guessing
+the semantic patch was what caused conflicts (my proposed patch
+already included that fix, but too late now).
+-mike
