@@ -1,59 +1,79 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: mfd tree build failure
-Date: Tue, 6 Oct 2009 14:54:25 +1100
-Message-ID: <20091006145425.a9cc611a.sfr@canb.auug.org.au>
+From: Haojian Zhuang <hzhuang1@marvell.com>
+Subject: RE: linux-next: mfd tree build failure
+Date: Mon, 5 Oct 2009 21:19:32 -0700
+Message-ID: <25B60CDC2F704E4E9D88FFD52780CB4C04B6A37960@SC-VEXCH1.marvell.com>
 References: <20091006130202.5e18a332.sfr@canb.auug.org.au>
 	<25B60CDC2F704E4E9D88FFD52780CB4C04B6A3794F@SC-VEXCH1.marvell.com>
+ <20091006145425.a9cc611a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__6_Oct_2009_14_54_25_+1100_JnI1TB.TLR+Y0j=C"
+Content-Type: multipart/mixed;
+	boundary="_002_25B60CDC2F704E4E9D88FFD52780CB4C04B6A37960SCVEXCH1marve_"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43987 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756097AbZJFDzK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 5 Oct 2009 23:55:10 -0400
-In-Reply-To: <25B60CDC2F704E4E9D88FFD52780CB4C04B6A3794F@SC-VEXCH1.marvell.com>
+Received: from galiil.marvell.com ([199.203.130.254]:39594 "EHLO
+	galiil.marvell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751376AbZJFEUQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Oct 2009 00:20:16 -0400
+In-Reply-To: <20091006145425.a9cc611a.sfr@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Haojian Zhuang <hzhuang1@marvell.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: Samuel Ortiz <sameo@openedhand.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
---Signature=_Tue__6_Oct_2009_14_54_25_+1100_JnI1TB.TLR+Y0j=C
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+--_002_25B60CDC2F704E4E9D88FFD52780CB4C04B6A37960SCVEXCH1marve_
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 
-Hi Haojian,
+SGkgU3RlcGhlbiwNCg0KVGhhbmtzIGEgbG90IGZvciB5b3VyIGhlbHAuIEkgZml4IGl0IG5vdy4g
+UGxlYXNlIGhlbHAgdG8gcmV2aWV3IGl0LiBJdCdzIGFscmVhZHkgcGFzc2VkIHRoZSBidWlsZCB0
+ZXN0Lg0KDQpCZXN0IFJlZ2FyZHMNCkhhb2ppYW4NCg0KLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0t
+LS0NCkZyb206IFN0ZXBoZW4gUm90aHdlbGwgW21haWx0bzpzZnJAY2FuYi5hdXVnLm9yZy5hdV0g
+DQpTZW50OiAyMDA5xOoxMNTCNsjVIDExOjU0IEFNDQpUbzogSGFvamlhbiBaaHVhbmcNCkNjOiBT
+YW11ZWwgT3J0aXo7IGxpbnV4LW5leHRAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdl
+ci5rZXJuZWwub3JnOyBNYXJrIEJyb3duDQpTdWJqZWN0OiBSZTogbGludXgtbmV4dDogbWZkIHRy
+ZWUgYnVpbGQgZmFpbHVyZQ0KDQpIaSBIYW9qaWFuLA0KDQpPbiBNb24sIDUgT2N0IDIwMDkgMTk6
+MzU6MDUgLTA3MDAgSGFvamlhbiBaaHVhbmcgPGh6aHVhbmcxQG1hcnZlbGwuY29tPiB3cm90ZToN
+Cj4NCj4gQ291bGQgeW91IHNlbmQgeW91ciAuY29uZmlnIGZpbGUgdG8gbWU/IFRoZSA4OHBtODYw
+NyBwYXRjaCBpcyBqdXN0IGZvciBtZmQtMi42IGdpdCB0cmVlLiBJIGRpZG4ndCB0cnkgaXQgaW4g
+bGludXgtbmV4dCBnaXQgdHJlZSBiZWZvcmUuIEkgY2FuIHRyeSBpdCBub3cuIElmIEkgY291bGQg
+aGF2ZSB5b3VyIC5jb25maWcgZmlsZSwgaXQgd291bGQgYmUgYmV0dGVyLg0KDQpJIGFtIHNvcnJ5
+LCBidXQgSSBkb24ndCBoYXZlIHRoZSBleGFjdCAuY29uZmlnIGZpbGUgYW55IG1vcmUgKEkgaGF2
+ZQ0KbW92ZWQgb24gaW4gbXkgY3JlYXRpb24gb2YgbGludXgtbmV4dCkgIGhvd2V2ZXIsIGFzIEkg
+c2FpZCwgdGhpcyB3YXMgYW4NCmFsbG1vZGNvbmZpZyBidWlsZCBvbiB4ODZfNjQuICBJIGFsc28g
+bm90ZWQgdGhhdCBDT05GSUdfSTJDPW0gYW5kDQpDT05GSUdfTUZEX0NPUkU9bSwgd2hpbGUgdGhl
+IGNvbmZpZyBlbnRyeSB0aGF0IGNvbnRyb2xzIHRoZSBidWlsZGluZyBvZg0KdGhpcyBkcml2ZXIg
+aXMgYSBib29sIHNvIG11c3QgaGF2ZSBiZWVuICd5Jy4gIFNvIGZyb20gYSBidWlsdGluIGRyaXZl
+ciwNCnlvdSBhcmUgcmVmZXJyaW5nIHRvIHN5bWJvbHMgdGhhdCBhcmUgb25seSBkZWZpbmVkIGlu
+IG1vZHVsZXMuDQoNCi0tIA0KQ2hlZXJzLA0KU3RlcGhlbiBSb3Rod2VsbCAgICAgICAgICAgICAg
+ICAgICAgc2ZyQGNhbmIuYXV1Zy5vcmcuYXUNCmh0dHA6Ly93d3cuY2FuYi5hdXVnLm9yZy5hdS9+
+c2ZyLw0K
 
-On Mon, 5 Oct 2009 19:35:05 -0700 Haojian Zhuang <hzhuang1@marvell.com> wro=
-te:
->
-> Could you send your .config file to me? The 88pm8607 patch is just for mf=
-d-2.6 git tree. I didn't try it in linux-next git tree before. I can try it=
- now. If I could have your .config file, it would be better.
+--_002_25B60CDC2F704E4E9D88FFD52780CB4C04B6A37960SCVEXCH1marve_
+Content-Type: application/octet-stream;
+	name="0002-mfd-fix-the-dependancy-issue-on-88PM8607.patch"
+Content-Description: 0002-mfd-fix-the-dependancy-issue-on-88PM8607.patch
+Content-Disposition: attachment;
+	filename="0002-mfd-fix-the-dependancy-issue-on-88PM8607.patch"; size=959;
+	creation-date="Mon, 05 Oct 2009 21:18:17 GMT";
+	modification-date="Mon, 05 Oct 2009 21:11:20 GMT"
+Content-Transfer-Encoding: base64
 
-I am sorry, but I don't have the exact .config file any more (I have
-moved on in my creation of linux-next)  however, as I said, this was an
-allmodconfig build on x86_64.  I also noted that CONFIG_I2C=3Dm and
-CONFIG_MFD_CORE=3Dm, while the config entry that controls the building of
-this driver is a bool so must have been 'y'.  So from a builtin driver,
-you are referring to symbols that are only defined in modules.
+RnJvbSA1NDNjNTY0YmExODE4OWFiYmFkYTNhMTYyMjhhNjE5M2M1NzU3MjEzIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBIYW9qaWFuIFpodWFuZyA8aGFvamlhbi56aHVhbmdAbWFydmVs
+bC5jb20+CkRhdGU6IFR1ZSwgNiBPY3QgMjAwOSAwODowODozNyAtMDQwMApTdWJqZWN0OiBbUEFU
+Q0hdIG1mZDogZml4IHRoZSBkZXBlbmRhbmN5IGlzc3VlIG9uIDg4UE04NjA3Cgo4OFBNODYwNyBk
+ZXBlbmRzIG9uIEkyQyBhbmQgTUZEX0NPUkUuIFNpbmNlIDg4UE04NjA3IGlzIGJ1aWx0LWluCmtl
+cm5lbCwgaXQgYWxzbyByZXF1aXJlcyB0aGF0IEkyQyBhbmQgTUZEX0NPUkUgYXJlIGJ1aWx0LWlu
+Cmtlcm5lbCBhbHNvLgoKU2lnbmVkLW9mZi1ieTogSGFvamlhbiBaaHVhbmcgPGhhb2ppYW4uemh1
+YW5nQG1hcnZlbGwuY29tPgotLS0KIGRyaXZlcnMvbWZkL0tjb25maWcgfCAgICAzICstLQogMSBm
+aWxlcyBjaGFuZ2VkLCAxIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0
+IGEvZHJpdmVycy9tZmQvS2NvbmZpZyBiL2RyaXZlcnMvbWZkL0tjb25maWcKaW5kZXggZmJlNjg0
+Yi4uNmU5ZWZjZCAxMDA2NDQKLS0tIGEvZHJpdmVycy9tZmQvS2NvbmZpZworKysgYi9kcml2ZXJz
+L21mZC9LY29uZmlnCkBAIC0zMDcsOCArMzA3LDcgQEAgY29uZmlnIEVaWF9QQ0FQCiAKIGNvbmZp
+ZyBNRkRfODhQTTg2MDcKIAlib29sICJTdXBwb3J0IE1hcnZlbGwgODhQTTg2MDciCi0JZGVwZW5k
+cyBvbiBJMkMKLQlzZWxlY3QgTUZEX0NPUkUKKwlkZXBlbmRzIG9uIEkyQz15ICYmIE1GRF9DT1JF
+PXkKIAloZWxwCiAJICBUaGlzIHN1cHBvcnRzIGZvciBNYXJ2ZWxsIDg4UE04NjA3IFBvd2VyIE1h
+bmFnZW1lbnQgSUMuIFRoaXMgaW5jbHVkZXMKIAkgIHRoZSBJMkMgZHJpdmVyIGFuZCB0aGUgY29y
+ZSBBUElzIF9vbmx5XywgeW91IGhhdmUgdG8gc2VsZWN0Ci0tIAoxLjUuNi41Cgo=
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__6_Oct_2009_14_54_25_+1100_JnI1TB.TLR+Y0j=C
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkrKv3EACgkQjjKRsyhoI8zD6QCfXQLIeQSMYelk1WOkuEU9q0yx
-0PQAn1bMHMavSvudvDTKt96LPukNr0v4
-=SYXZ
------END PGP SIGNATURE-----
-
---Signature=_Tue__6_Oct_2009_14_54_25_+1100_JnI1TB.TLR+Y0j=C--
+--_002_25B60CDC2F704E4E9D88FFD52780CB4C04B6A37960SCVEXCH1marve_--
