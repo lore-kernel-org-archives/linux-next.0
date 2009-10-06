@@ -1,72 +1,59 @@
-From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Subject: linux-next: block/drbd tree build warning
-Date: Tue, 6 Oct 2009 14:01:54 +1100
-Message-ID: <20091006140154.8d94d95c.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: mfd tree build failure
+Date: Tue, 6 Oct 2009 14:54:25 +1100
+Message-ID: <20091006145425.a9cc611a.sfr@canb.auug.org.au>
+References: <20091006130202.5e18a332.sfr@canb.auug.org.au>
+	<25B60CDC2F704E4E9D88FFD52780CB4C04B6A3794F@SC-VEXCH1.marvell.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============4178252788202406064=="
-Return-path: <drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org>
-List-Unsubscribe: <http://lists.linbit.com/mailman/options/drbd-dev>,
-	<mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linbit.com/pipermail/drbd-dev>
-List-Post: <mailto:drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org>
-List-Help: <mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.linbit.com/mailman/listinfo/drbd-dev>,
-	<mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=subscribe>
-Mime-version: 1.0
-Sender: drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
-Errors-To: drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
-To: Jens Axboe <jens.axboe-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Philipp Reisner <philipp.reisner-63ez5xqkn6DQT0dZR+AlfA@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
-
---===============4178252788202406064==
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__6_Oct_2009_14_01_54_+1100_Ai_VUbGcy5ILQKYg"
+ boundary="Signature=_Tue__6_Oct_2009_14_54_25_+1100_JnI1TB.TLR+Y0j=C"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:43987 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756097AbZJFDzK (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 5 Oct 2009 23:55:10 -0400
+In-Reply-To: <25B60CDC2F704E4E9D88FFD52780CB4C04B6A3794F@SC-VEXCH1.marvell.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Haojian Zhuang <hzhuang1@marvell.com>
+Cc: Samuel Ortiz <sameo@openedhand.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
---Signature=_Tue__6_Oct_2009_14_01_54_+1100_Ai_VUbGcy5ILQKYg
+--Signature=_Tue__6_Oct_2009_14_54_25_+1100_JnI1TB.TLR+Y0j=C
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jens, Philipp,
+Hi Haojian,
 
-Today's linux-next build (x86_64 allmodconfig) produced this warning:
+On Mon, 5 Oct 2009 19:35:05 -0700 Haojian Zhuang <hzhuang1@marvell.com> wro=
+te:
+>
+> Could you send your .config file to me? The 88pm8607 patch is just for mf=
+d-2.6 git tree. I didn't try it in linux-next git tree before. I can try it=
+ now. If I could have your .config file, it would be better.
 
-drivers/block/drbd/drbd_nl.c: In function 'drbd_nl_init':
-drivers/block/drbd/drbd_nl.c:2309: warning: passing argument 3 of 'cn_add_c=
-allback' from incompatible pointer type
-include/linux/connector.h:167: note: expected 'void (*)(struct cn_msg *, st=
-ruct netlink_skb_parms *)' but argument is of type 'void (*)(struct cn_msg =
-*)'
+I am sorry, but I don't have the exact .config file any more (I have
+moved on in my creation of linux-next)  however, as I said, this was an
+allmodconfig build on x86_64.  I also noted that CONFIG_I2C=3Dm and
+CONFIG_MFD_CORE=3Dm, while the config entry that controls the building of
+this driver is a bool so must have been 'y'.  So from a builtin driver,
+you are referring to symbols that are only defined in modules.
 
 --=20
 Cheers,
-Stephen Rothwell                    sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
+Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__6_Oct_2009_14_01_54_+1100_Ai_VUbGcy5ILQKYg
+--Signature=_Tue__6_Oct_2009_14_54_25_+1100_JnI1TB.TLR+Y0j=C
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkrKsyIACgkQjjKRsyhoI8y6UACfUuJLy6uEuHLILte0KEaJz3y/
-pvMAn30N9UidNRzWm5uwOBJnI+4tOuK+
-=0HZ9
+iEYEARECAAYFAkrKv3EACgkQjjKRsyhoI8zD6QCfXQLIeQSMYelk1WOkuEU9q0yx
+0PQAn1bMHMavSvudvDTKt96LPukNr0v4
+=SYXZ
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__6_Oct_2009_14_01_54_+1100_Ai_VUbGcy5ILQKYg--
-
---===============4178252788202406064==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-drbd-dev mailing list
-drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
-http://lists.linbit.com/mailman/listinfo/drbd-dev
-
---===============4178252788202406064==--
+--Signature=_Tue__6_Oct_2009_14_54_25_+1100_JnI1TB.TLR+Y0j=C--
