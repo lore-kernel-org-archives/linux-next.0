@@ -1,30 +1,60 @@
-From: Eric Paris <eparis@parisplace.org>
-Subject: Re: [PATCH -next] cpufreq: provide cpufreq_get stub
-Date: Tue, 6 Oct 2009 16:29:01 -0400
-Message-ID: <7e0fb38c0910061329x54b90f8djb2db59ce6152c19e@mail.gmail.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] wireless: fix CFG80211_WEXT build problems
+Date: Tue, 6 Oct 2009 13:27:29 -0700
+Message-ID: <20091006132729.8b4f9345.rdunlap@xenotime.net>
 References: <20091006165220.b5cb1c44.sfr@canb.auug.org.au>
-	 <20091006110211.139b91e5.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S933189AbZJFU3j@vger.kernel.org>
-In-Reply-To: <20091006110211.139b91e5.randy.dunlap@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>, Avi Kivity <avi@redhat.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, cpufreq@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from xenotime.net ([72.52.64.118]:39026 "HELO xenotime.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
+	id S1757692AbZJFUgA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 6 Oct 2009 16:36:00 -0400
+Received: from chimera.site ([96.253.169.185]) by xenotime.net for <linux-next@vger.kernel.org>; Tue, 6 Oct 2009 13:35:22 -0700
+In-Reply-To: <20091006165220.b5cb1c44.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linville@tuxdriver.com
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-wireless@vger.kernel.org
 
-On Tue, Oct 6, 2009 at 2:02 PM, Randy Dunlap <randy.dunlap@oracle.com> wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
->
-> When CONFIG_CPU_FREQ is disabled, cpufreq_get() needs a stub.
-> Used by kvm (although it looks like a bit of the kvm code could
-> be omitted when CONFIG_CPU_FREQ is disabled).
->
-> arch/x86/built-in.o: In function `kvm_arch_init':
-> (.text+0x10de7): undefined reference to `cpufreq_get'
->
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-It does what it says it does and gives me a building kernel again.
+Fix CFG80211_WEXT build dependencies/errors:
 
-Tested-by: Eric Paris <eparis@redhat.com>
+ERROR: "cfg80211_wext_siwscan" [drivers/net/wireless/orinoco/orinoco.ko] undefined!
+ERROR: "cfg80211_wext_siwmode" [drivers/net/wireless/orinoco/orinoco.ko] undefined!
+ERROR: "cfg80211_wext_giwrange" [drivers/net/wireless/orinoco/orinoco.ko] undefined!
+ERROR: "cfg80211_wext_giwmode" [drivers/net/wireless/orinoco/orinoco.ko] undefined!
+ERROR: "cfg80211_wext_giwname" [drivers/net/wireless/orinoco/orinoco.ko] undefined!
+ERROR: "cfg80211_wext_giwscan" [drivers/net/wireless/orinoco/orinoco.ko] undefined!
+ERROR: "cfg80211_wext_giwname" [drivers/net/wireless/ipw2x00/ipw2200.ko] undefined!
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/net/wireless/ipw2x00/Kconfig |    2 +-
+ drivers/net/wireless/orinoco/Kconfig |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+--- linux-next-20091006.orig/drivers/net/wireless/ipw2x00/Kconfig
++++ linux-next-20091006/drivers/net/wireless/ipw2x00/Kconfig
+@@ -65,7 +65,7 @@ config IPW2100_DEBUG
+ 
+ config IPW2200
+ 	tristate "Intel PRO/Wireless 2200BG and 2915ABG Network Connection"
+-	depends on PCI && WLAN_80211 && CFG80211
++	depends on PCI && WLAN_80211 && CFG80211 && CFG80211_WEXT
+ 	select WIRELESS_EXT
+ 	select WEXT_SPY
+ 	select WEXT_PRIV
+--- linux-next-20091006.orig/drivers/net/wireless/orinoco/Kconfig
++++ linux-next-20091006/drivers/net/wireless/orinoco/Kconfig
+@@ -1,7 +1,7 @@
+ config HERMES
+ 	tristate "Hermes chipset 802.11b support (Orinoco/Prism2/Symbol)"
+ 	depends on (PPC_PMAC || PCI || PCMCIA) && WLAN_80211
+-	depends on CFG80211
++	depends on CFG80211 && CFG80211_WEXT
+ 	select WIRELESS_EXT
+ 	select WEXT_SPY
+ 	select WEXT_PRIV
