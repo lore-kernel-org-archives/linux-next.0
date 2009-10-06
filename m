@@ -1,277 +1,83 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for October 6
-Date: Tue, 6 Oct 2009 16:52:20 +1100
-Message-ID: <20091006165220.b5cb1c44.sfr@canb.auug.org.au>
+From: Lars Ellenberg <lars.ellenberg-63ez5xqkn6DQT0dZR+AlfA@public.gmane.org>
+Subject: Re: linux-next: block/drbd tree build warning
+Date: Tue, 6 Oct 2009 09:17:00 +0200
+Message-ID: <20091006071700.GA7665@johann>
+References: <20091006140154.8d94d95c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__6_Oct_2009_16_52_20_+1100_tlJwOTDyl9H._lsQ"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756308AbZJFFxJ@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20091006140154.8d94d95c.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+List-Unsubscribe: <http://lists.linbit.com/mailman/options/drbd-dev>,
+	<mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linbit.com/pipermail/drbd-dev>
+List-Post: <mailto:drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org>
+List-Help: <mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.linbit.com/mailman/listinfo/drbd-dev>,
+	<mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=subscribe>
+Sender: drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
+Errors-To: drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Philipp Reisner <philipp.reisner-63ez5xqkn6DQT0dZR+AlfA@public.gmane.org>, Jens Axboe <jens.axboe-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__6_Oct_2009_16_52_20_+1100_tlJwOTDyl9H._lsQ
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Oct 06, 2009 at 02:01:54PM +1100, Stephen Rothwell wrote:
+> Hi Jens, Philipp,
+> 
+> Today's linux-next build (x86_64 allmodconfig) produced this warning:
+> 
+> drivers/block/drbd/drbd_nl.c: In function 'drbd_nl_init':
+> drivers/block/drbd/drbd_nl.c:2309: warning: passing argument 3 of 'cn_add_callback' from incompatible pointer type
+> include/linux/connector.h:167: note: expected 'void (*)(struct cn_msg *, struct netlink_skb_parms *)' but argument is of type 'void (*)(struct cn_msg *)'
 
-Hi all,
+Thanks, expected after our connector related patches got in.
 
-Changes since 20091005:
+-- 
+Author: Philipp Reisner <philipp.reisner-63ez5xqkn6DQT0dZR+AlfA@public.gmane.org>
+Date:   Tue Sep 29 13:35:30 2009 +0200
 
-Tree undropped: drbd
+drbd: Work on permission enforcement
 
-My fixes tree contains a build fix for powerpc/kvm.
+Now we have the capabilities of the sending process available,
+use them to enforce CAP_SYS_ADMIN.
 
-The sparc tree lost its build failure.
+Signed-off-by: Philipp Reisner <philipp.reisner-63ez5xqkn6DQT0dZR+AlfA@public.gmane.org>
 
-The wireless tree gained a build failure due to an interaction with the=20
-kbuild tree for which I reverted a commit form the kbuild tree.
-
-The block and drbd trees lost their build failure.
-
-The device-mapper tree lost its conflict.
-
-The mfd tree gained a build failure so I used the version from
-next-20091005.
-
-The drm tree gained a conflict against Linus' treee.
-
-The suspend tree lost its build failure, but gained another so I used the
-version from next-20091002.
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
-and sparc64 defconfig. These builds also have
-CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
-CONFIG_DEBUG_INFO disabled when necessary.
-
-Below is a summary of the state of the merge.
-
-We are up to 139 trees (counting Linus' and 21 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging fixes/fixes
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/tty.current
-Merging quilt/usb.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging ide-curent/master
-Merging dwmw2/master
-Merging arm/devel
-Merging davinci/for-next
-Merging pxa/for-next
-Merging thumb-2/thumb-2
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-CONFLICT (content): Merge conflict in drivers/rtc/Kconfig
-Merging m68knommu/for-next
-Merging microblaze/next
-Merging mips/mips-for-linux-next
-CONFLICT (content): Merge conflict in arch/mips/Kconfig
-CONFLICT (add/add): Merge conflict in arch/mips/bcm63xx/Makefile
-CONFLICT (add/add): Merge conflict in arch/mips/bcm63xx/boards/board_bcm963=
-xx.c
-CONFLICT (delete/modify): arch/mips/lemote/lm2e/Makefile deleted in HEAD an=
-d modified in mips/mips-for-linux-next. Version mips/mips-for-linux-next of=
- arch/mips/lemote/lm2e/Makefile left in tree.
-CONFLICT (delete/modify): arch/mips/lemote/lm2e/pci.c deleted in HEAD and m=
-odified in mips/mips-for-linux-next. Version mips/mips-for-linux-next of ar=
-ch/mips/lemote/lm2e/pci.c left in tree.
-CONFLICT (delete/modify): arch/mips/lemote/lm2e/prom.c deleted in HEAD and =
-modified in mips/mips-for-linux-next. Version mips/mips-for-linux-next of a=
-rch/mips/lemote/lm2e/prom.c left in tree.
-$ git rm -f arch/mips/lemote/lm2e/Makefile arch/mips/lemote/lm2e/pci.c arch=
-/mips/lemote/lm2e/prom.c
-Merging parisc/next
-CONFLICT (content): Merge conflict in arch/parisc/include/asm/thread_info.h
-CONFLICT (content): Merge conflict in arch/parisc/kernel/entry.S
-CONFLICT (content): Merge conflict in arch/parisc/kernel/signal.c
-Merging powerpc/next
-Merging 4xx/next
-Merging galak/next
-Merging s390/features
-Merging sh/master
-Merging sparc/master
-Merging xtensa/master
-Merging cifs/master
-Merging configfs/linux-next
-Merging ecryptfs/next
-Merging ext3/for_next
-Merging ext4/next
-Merging fatfs/master
-Merging fuse/for-next
-Merging gfs2/master
-Merging jfs/next
-Merging nfs/linux-next
-Merging nfsd/nfsd-next
-Merging nilfs2/for-next
-Merging ocfs2/linux-next
-Merging squashfs/master
-Merging udf/for_next
-Merging v9fs/for-next
-Merging ubifs/linux-next
-Merging xfs/master
-Merging vfs/for-next
-Merging pci/linux-next
-Merging hid/for-next
-Merging quilt/i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-Merging quota/for_next
-Merging kbuild/master
-Merging kconfig/for-next
-Merging ide/master
-Merging libata/NEXT
-Merging infiniband/for-next
-Merging acpi/test
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/linux-next
-Merging dlm/next
-Merging scsi/master
-Merging async_tx/next
-Merging net/master
-Merging wireless/master
-Merging mtd/master
-Merging crypto/master
-Merging sound/for-next
-Merging cpufreq/next
-Merging quilt/rr
-Merging mmc/next
-Merging input/next
-Merging lsm/for-next
-Merging block/for-next
-Merging quilt/device-mapper
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-$ git reset --hard HEAD^
-Merging refs/next/20091005/mfd
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-CONFLICT (content): Merge conflict in drivers/gpu/drm/radeon/radeon.h
-CONFLICT (content): Merge conflict in drivers/gpu/drm/radeon/radeon_asic.h
-CONFLICT (content): Merge conflict in drivers/gpu/drm/radeon/radeon_device.c
-Merging voltage/for-next
-Merging security-testing/next
-Merging lblnet/master
-Merging agp/agp-next
-Merging uwb/for-upstream
-Merging watchdog/master
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-Merging audit/for-next
-Merging omap/for-next
-Merging quilt/aoe
-Merging suspend/linux-next
-$ git reset --hard HEAD^
-Merging refs/next/20091002/suspend
-Merging bluetooth/master
-Merging fsnotify/for-next
-Merging irda/for-next
-Merging hwlat/for-linus
-Merging drbd/for-jens
-CONFLICT (add/add): Merge conflict in drivers/block/drbd/Kconfig
-CONFLICT (add/add): Merge conflict in drivers/block/drbd/Makefile
-CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_actlog.c
-CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_int.h
-CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_main.c
-CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_nl.c
-CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_receiver.c
-CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_req.c
-CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_worker.c
-Merging kmemleak/kmemleak
-Merging tip/auto-latest
-Merging oprofile/for-next
-Merging percpu/for-next
-Merging sfi/sfi-test
-Merging asm-generic/next
-Merging hwpoison/hwpoison
-Merging quilt/driver-core
-Merging quilt/tty
-Merging quilt/usb
-Merging quilt/staging
-Merging scsi-post-merge/master
-[master 4dca21e] Revert "kbuild: move utsrelease.h to include/generated"
-
---Signature=_Tue__6_Oct_2009_16_52_20_+1100_tlJwOTDyl9H._lsQ
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkrK2xQACgkQjjKRsyhoI8zZXwCeJO6Mp2NPrVKG47z81vjAwGoU
-y8sAn3j+hoK5c5r/k/s8zNMIN795Gqoq
-=XbgO
------END PGP SIGNATURE-----
-
---Signature=_Tue__6_Oct_2009_16_52_20_+1100_tlJwOTDyl9H._lsQ--
+diff --git a/drivers/block/drbd/drbd_nl.c b/drivers/block/drbd/drbd_nl.c
+index 1927ace..00ce3a4 100644
+--- a/drivers/block/drbd/drbd_nl.c
++++ b/drivers/block/drbd/drbd_nl.c
+@@ -2002,7 +2002,7 @@ static struct cn_handler_struct cnd_table[] = {
+ 	[ P_new_c_uuid ]	= { &drbd_nl_new_c_uuid,	0 },
+ };
+ 
+-static void drbd_connector_callback(struct cn_msg *req)
++static void drbd_connector_callback(struct cn_msg *req, struct netlink_skb_parms *nsp)
+ {
+ 	struct drbd_nl_cfg_req *nlp = (struct drbd_nl_cfg_req *)req->data;
+ 	struct cn_handler_struct *cm;
+@@ -2019,6 +2019,11 @@ static void drbd_connector_callback(struct cn_msg *req)
+ 		return;
+ 	}
+ 
++	if (!cap_raised(nsp->eff_cap, CAP_SYS_ADMIN)) {
++		retcode = ERR_PERM;
++		goto fail;
++	}
++
+ 	mdev = ensure_mdev(nlp);
+ 	if (!mdev) {
+ 		retcode = ERR_MINOR_INVALID;
+diff --git a/include/linux/drbd.h b/include/linux/drbd.h
+index 69dc711..233db5c 100644
+--- a/include/linux/drbd.h
++++ b/include/linux/drbd.h
+@@ -138,6 +138,7 @@ enum drbd_ret_codes {
+ 	ERR_VERIFY_RUNNING	= 149, /* DRBD 8.2 only */
+ 	ERR_DATA_NOT_CURRENT	= 150,
+ 	ERR_CONNECTED		= 151, /* DRBD 8.3 only */
++	ERR_PERM		= 152,
+ 
+ 	/* insert new ones above this line */
+ 	AFTER_LAST_ERR_CODE
