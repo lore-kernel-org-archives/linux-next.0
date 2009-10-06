@@ -1,60 +1,83 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] wireless: fix CFG80211_WEXT build problems
-Date: Tue, 6 Oct 2009 13:27:29 -0700
-Message-ID: <20091006132729.8b4f9345.rdunlap@xenotime.net>
+From: Johannes Berg <johannes@sipsolutions.net>
+Subject: Re: [PATCH -next] wireless: fix CFG80211_WEXT build problems
+Date: Tue, 06 Oct 2009 23:33:49 +0200
+Message-ID: <1254864829.22426.44.camel@johannes.local>
 References: <20091006165220.b5cb1c44.sfr@canb.auug.org.au>
+	 <20091006132729.8b4f9345.rdunlap@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from xenotime.net ([72.52.64.118]:39026 "HELO xenotime.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
-	id S1757692AbZJFUgA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 6 Oct 2009 16:36:00 -0400
-Received: from chimera.site ([96.253.169.185]) by xenotime.net for <linux-next@vger.kernel.org>; Tue, 6 Oct 2009 13:35:22 -0700
-In-Reply-To: <20091006165220.b5cb1c44.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linville@tuxdriver.com
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-wireless@vger.kernel.org
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature"; boundary="=-mlIR3prWWHjimdDtAY9E"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S933548AbZJFVfM@vger.kernel.org>
+In-Reply-To: <20091006132729.8b4f9345.rdunlap@xenotime.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linville@tuxdriver.com, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-wireless@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Fix CFG80211_WEXT build dependencies/errors:
+--=-mlIR3prWWHjimdDtAY9E
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-ERROR: "cfg80211_wext_siwscan" [drivers/net/wireless/orinoco/orinoco.ko] undefined!
-ERROR: "cfg80211_wext_siwmode" [drivers/net/wireless/orinoco/orinoco.ko] undefined!
-ERROR: "cfg80211_wext_giwrange" [drivers/net/wireless/orinoco/orinoco.ko] undefined!
-ERROR: "cfg80211_wext_giwmode" [drivers/net/wireless/orinoco/orinoco.ko] undefined!
-ERROR: "cfg80211_wext_giwname" [drivers/net/wireless/orinoco/orinoco.ko] undefined!
-ERROR: "cfg80211_wext_giwscan" [drivers/net/wireless/orinoco/orinoco.ko] undefined!
-ERROR: "cfg80211_wext_giwname" [drivers/net/wireless/ipw2x00/ipw2200.ko] undefined!
+On Tue, 2009-10-06 at 13:27 -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+>=20
+> Fix CFG80211_WEXT build dependencies/errors:
+>=20
+> ERROR: "cfg80211_wext_siwscan" [drivers/net/wireless/orinoco/orinoco.ko] =
+undefined!
+> ERROR: "cfg80211_wext_siwmode" [drivers/net/wireless/orinoco/orinoco.ko] =
+undefined!
+> ERROR: "cfg80211_wext_giwrange" [drivers/net/wireless/orinoco/orinoco.ko]=
+ undefined!
+> ERROR: "cfg80211_wext_giwmode" [drivers/net/wireless/orinoco/orinoco.ko] =
+undefined!
+> ERROR: "cfg80211_wext_giwname" [drivers/net/wireless/orinoco/orinoco.ko] =
+undefined!
+> ERROR: "cfg80211_wext_giwscan" [drivers/net/wireless/orinoco/orinoco.ko] =
+undefined!
+> ERROR: "cfg80211_wext_giwname" [drivers/net/wireless/ipw2x00/ipw2200.ko] =
+undefined!
+>=20
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> ---
+>  drivers/net/wireless/ipw2x00/Kconfig |    2 +-
+>  drivers/net/wireless/orinoco/Kconfig |    2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>=20
+> --- linux-next-20091006.orig/drivers/net/wireless/ipw2x00/Kconfig
+> +++ linux-next-20091006/drivers/net/wireless/ipw2x00/Kconfig
+> @@ -65,7 +65,7 @@ config IPW2100_DEBUG
+> =20
+>  config IPW2200
+>  	tristate "Intel PRO/Wireless 2200BG and 2915ABG Network Connection"
+> -	depends on PCI && WLAN_80211 && CFG80211
+> +	depends on PCI && WLAN_80211 && CFG80211 && CFG80211_WEXT
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- drivers/net/wireless/ipw2x00/Kconfig |    2 +-
- drivers/net/wireless/orinoco/Kconfig |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Interesting approach, thanks. I completely forgot about the
+half-converted drivers. The alternative would be to ifdef the code
+blobs, but I'm happy with this.
 
---- linux-next-20091006.orig/drivers/net/wireless/ipw2x00/Kconfig
-+++ linux-next-20091006/drivers/net/wireless/ipw2x00/Kconfig
-@@ -65,7 +65,7 @@ config IPW2100_DEBUG
- 
- config IPW2200
- 	tristate "Intel PRO/Wireless 2200BG and 2915ABG Network Connection"
--	depends on PCI && WLAN_80211 && CFG80211
-+	depends on PCI && WLAN_80211 && CFG80211 && CFG80211_WEXT
- 	select WIRELESS_EXT
- 	select WEXT_SPY
- 	select WEXT_PRIV
---- linux-next-20091006.orig/drivers/net/wireless/orinoco/Kconfig
-+++ linux-next-20091006/drivers/net/wireless/orinoco/Kconfig
-@@ -1,7 +1,7 @@
- config HERMES
- 	tristate "Hermes chipset 802.11b support (Orinoco/Prism2/Symbol)"
- 	depends on (PPC_PMAC || PCI || PCMCIA) && WLAN_80211
--	depends on CFG80211
-+	depends on CFG80211 && CFG80211_WEXT
- 	select WIRELESS_EXT
- 	select WEXT_SPY
- 	select WEXT_PRIV
+johannes
+
+--=-mlIR3prWWHjimdDtAY9E
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABAgAGBQJKy7e6AAoJEODzc/N7+Qmat9QP/jU4JKxcY8zrwS3TBC8hWP4/
+LoVAXBV922pZ6mywE+J4DN3DCRYpBLYiMc7+6Ip5gosNSoRTv8p9+Nik3BeBKbR6
+9qxz1Nxq+9M+eQLkj0eMRI1CVGGFhh+2VyjPdN71WWUjL1/wyskLLVITL5La/aB6
+stbLBsnwNXnlgFvsEjWlgWUaGqjstpJrG2OK0mGMH9tDSF/RqLKnuwqxwTk4VyH8
+NLqhTbLHEBr3Pkjh0B/kM8HiZ43J7s0yvLpXZqPQaVOMHMGJ9onlFGc8n4Wit905
+hjxGLR0onTqijjkhw4ARXlGsb7iwGKbO7Q1uNkb5Lbdo3jg1XJlFNnf0gUBpmL+b
+3ws0l0yeUdNPRnKPVUlGkThyBgmtwE+ycyWRPusCoGt/efPwL1ssEAt9Jf2LJod/
+rEOzjGSTs1MYm3UVOQACqfGfo6CNFju47D7X7Kalb26M8vBRc7ItquaMN+1aWfMN
+aKowUw8Dhw6HjvcFS8ySfDn72tmXqquW806fAaJgQ9sQ2O8DK00UpZdpfNHWdC7v
+tZwRtlNlTKY6BX1FZnsCS2v2pZEtHSe3BV7MEu21qyW7WszbtxGnku19L5mhLcF2
+cY7/ZG3AzCIrnmNKt04U3XFlyr3Bf5yc1KCDoEUxq1jQD1uZDS6Wu6G/ko1hJ5KY
+hXsomFmGcu7ddhWxr1SY
+=Udyl
+-----END PGP SIGNATURE-----
+
+--=-mlIR3prWWHjimdDtAY9E--
