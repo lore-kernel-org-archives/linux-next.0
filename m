@@ -1,39 +1,53 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: [PATCH] USB: isp1362: fix build warnings on 64-bit systems
-Date: Tue, 6 Oct 2009 07:34:28 -0700
-Message-ID: <20091006143428.GA27158@kroah.com>
-References: <1250046053-3097-1-git-send-email-vapier@gentoo.org> <20090813234410.GB4406@kroah.com> <8bd0f97a0908131734h2588d240k9000bace38b58e7f@mail.gmail.com> <8bd0f97a0910060132r1dd6b6a4u71eaa8763862aebd@mail.gmail.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] cpufreq: provide cpufreq_get stub
+Date: Tue, 6 Oct 2009 11:02:11 -0700
+Message-ID: <20091006110211.139b91e5.randy.dunlap@oracle.com>
+References: <20091006165220.b5cb1c44.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1757362AbZJFPEb@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <8bd0f97a0910060132r1dd6b6a4u71eaa8763862aebd@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mike Frysinger <vapier.adi@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lothar Wassmann <LW@karo-electronics.de>, Stephen Rothwell <sfr@canb.auug.org.au>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet11.oracle.com ([148.87.113.123]:25004 "EHLO
+	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932881AbZJFSL3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Oct 2009 14:11:29 -0400
+In-Reply-To: <20091006165220.b5cb1c44.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>, Avi Kivity <avi@redhat.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, cpufreq@vger.kernel.org
 
-On Tue, Oct 06, 2009 at 04:32:29AM -0400, Mike Frysinger wrote:
-> On Thu, Aug 13, 2009 at 20:34, Mike Frysinger wrote:
-> > On Thu, Aug 13, 2009 at 19:44, Greg KH wrote:
-> >> On Tue, Aug 11, 2009 at 11:00:53PM -0400, Mike Frysinger wrote:
-> >>> A bunch of places assumed pointers were 32-bits in size (bit checking and
-> >>> debug output), but none of these affected runtime functionality.
-> >>>
-> >>> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> >>> Signed-off-by: Mike Frysinger <vapier@gentoo.org>
-> >>
-> >> This patch doesn't apply to my tree, what did you make it against?
-> >
-> > it was reported against next, so i used that
-> 
-> so what tree do i need to use to get you to merge this ?  i'm guessing
-> the semantic patch was what caused conflicts (my proposed patch
-> already included that fix, but too late now).
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Right now, just do it against Linus's tree, or 2.6.32-rc3 and I can
-merge it.
+When CONFIG_CPU_FREQ is disabled, cpufreq_get() needs a stub.
+Used by kvm (although it looks like a bit of the kvm code could
+be omitted when CONFIG_CPU_FREQ is disabled).
 
-thanks,
+arch/x86/built-in.o: In function `kvm_arch_init':
+(.text+0x10de7): undefined reference to `cpufreq_get'
+ 
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ include/linux/cpufreq.h |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
-greg k-h
+--- linux-next-20091006.orig/include/linux/cpufreq.h
++++ linux-next-20091006/include/linux/cpufreq.h
+@@ -291,8 +291,15 @@ struct global_attr {
+ int cpufreq_get_policy(struct cpufreq_policy *policy, unsigned int cpu);
+ int cpufreq_update_policy(unsigned int cpu);
+ 
++#ifdef CONFIG_CPU_FREQ
+ /* query the current CPU frequency (in kHz). If zero, cpufreq couldn't detect it */
+ unsigned int cpufreq_get(unsigned int cpu);
++#else
++static inline unsigned int cpufreq_get(unsigned int cpu)
++{
++	return 0;
++}
++#endif
+ 
+ /* query the last known CPU freq (in kHz). If zero, cpufreq couldn't detect it */
+ #ifdef CONFIG_CPU_FREQ
+---
+~Randy
