@@ -1,45 +1,29 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: suspend tree build failure
-Date: Wed, 7 Oct 2009 00:31:55 +0200
-Message-ID: <200910070031.55135.rjw@sisk.pl>
-References: <20091006135505.f07ee40d.sfr@canb.auug.org.au>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: [PATCH v7] RO/NX protection for loadable kernel modules
+Date: Tue, 6 Oct 2009 20:47:09 +1030
+Message-ID: <200910062047.10901.rusty@rustcorp.com.au>
+References: <817ecb6f0910050450o29ee65a1j49c27cf350b77493@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
-  charset="iso-8859-2"
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:57635 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933462AbZJFWbc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 6 Oct 2009 18:31:32 -0400
-In-Reply-To: <20091006135505.f07ee40d.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Hemminger <shemminger@vyatta.com>
+Return-path: <linux-security-module-owner@vger.kernel.org>
+In-Reply-To: <817ecb6f0910050450o29ee65a1j49c27cf350b77493@mail.gmail.com>
+Content-Disposition: inline
+Sender: linux-security-module-owner@vger.kernel.org
+To: Siarhei Liakh <sliakh.lkml@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-On Tuesday 06 October 2009, Stephen Rothwell wrote:
-> Hi Rafael,
-> 
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
-> 
-> kernel/freezer.c:27: error: expected ',' or ';' before '{' token
-> 
-> Caused by commit 9a4801cb8df76263abbb3049c0208625b7f34286 ("PM / freezer:
-> Make refrigerator cold") which neglected to include linux/compiler.h for
-> the definition of __cold.
+On Mon, 5 Oct 2009 10:20:42 pm Siarhei Liakh wrote:
+> This patch is a logical extension of the protection provided by
+> CONFIG_DEBUG_RODATA to LKMs. The protection is provided by splitting
+> module_core and module_init into three logical parts each and setting
+> appropriate page access permissions for each individual section:
 
-Thanks for the notification.
+Thanks, applied!
 
-Did you cross-compile it by chance?  It builds for me on native x86_64 with
-allmodconfig, which is why I missed this issue.
+It will be in linux-next soon, and if all goes well, 2.6.33.
 
-> I have used the version of the suspend tree from next-20091002 for today.
-
-I added the #include <linux/compiler.h> to freezer.h, but obviously I couldn't
-verify if that fixed the problem.  Hopefully it did.
-
-Pushing updated tree.
-
-Best,
-Rafael
+Cheers,
+Rusty.
