@@ -1,53 +1,51 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm tree with Linus' tree
-Date: Tue, 6 Oct 2009 13:28:57 +1100
-Message-ID: <20091006132857.5bd1cc3a.sfr@canb.auug.org.au>
+From: Haojian Zhuang <hzhuang1@marvell.com>
+Subject: RE: linux-next: mfd tree build failure
+Date: Mon, 5 Oct 2009 19:35:05 -0700
+Message-ID: <25B60CDC2F704E4E9D88FFD52780CB4C04B6A3794F@SC-VEXCH1.marvell.com>
+References: <20091006130202.5e18a332.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__6_Oct_2009_13_28_57_+1100_rdZ=MCLIcAsQuAor"
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34382 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755731AbZJFC3o (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 5 Oct 2009 22:29:44 -0400
+Received: from galiil.marvell.com ([199.203.130.254]:4046 "EHLO
+	galiil.marvell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755900AbZJFCln (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Oct 2009 22:41:43 -0400
+In-Reply-To: <20091006130202.5e18a332.sfr@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jerome Glisse <jglisse@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Samuel Ortiz <sameo@openedhand.com>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
---Signature=_Tue__6_Oct_2009_13_28_57_+1100_rdZ=MCLIcAsQuAor
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Dave,
-
-Today's linux-next merge of the drm tree got a conflict in
-drivers/gpu/drm/radeon/radeon_device.c between commit
-28d520433b6375740990ab99d69b0d0067fd656b ("drm/vgaarb: add VGA
-arbitration support to the drm and kms") from Linus' tree and commit
-62a8ea3f7bb61e5f92db0a648b7cc566852c36ec ("drm/radeon/kms: Remove old
-init path as no hw use it anymore") from the drm tree.
-
-I have no idea how to reconcile these, so I have just used the version
-from the drm tree.  Please do the merge with Linus' tree and fix this up
-properly.  (There are also still conflicts in
-drivers/gpu/drm/radeon/radeon.h and drivers/gpu/drm/radeon/radeon_asic.h)
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__6_Oct_2009_13_28_57_+1100_rdZ=MCLIcAsQuAor
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkrKq2kACgkQjjKRsyhoI8wybgCfVuJA/yLfb7HIzh5sZ2FReO8+
-SQ8AoJZYQiYqP2sir/Bj7bd+s0QCPmlB
-=Hu2B
------END PGP SIGNATURE-----
-
---Signature=_Tue__6_Oct_2009_13_28_57_+1100_rdZ=MCLIcAsQuAor--
+SGkgU3RlcGhlbiwNCg0KQ291bGQgeW91IHNlbmQgeW91ciAuY29uZmlnIGZpbGUgdG8gbWU/IFRo
+ZSA4OHBtODYwNyBwYXRjaCBpcyBqdXN0IGZvciBtZmQtMi42IGdpdCB0cmVlLiBJIGRpZG4ndCB0
+cnkgaXQgaW4gbGludXgtbmV4dCBnaXQgdHJlZSBiZWZvcmUuIEkgY2FuIHRyeSBpdCBub3cuIElm
+IEkgY291bGQgaGF2ZSB5b3VyIC5jb25maWcgZmlsZSwgaXQgd291bGQgYmUgYmV0dGVyLg0KDQpU
+aGFua3MNCkhhb2ppYW4NCg0KLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCkZyb206IFN0ZXBo
+ZW4gUm90aHdlbGwgW21haWx0bzpzZnJAY2FuYi5hdXVnLm9yZy5hdV0gDQpTZW50OiAyMDA5xOox
+MNTCNsjVIDEwOjAyIEFNDQpUbzogU2FtdWVsIE9ydGl6DQpDYzogbGludXgtbmV4dEB2Z2VyLmtl
+cm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IEhhb2ppYW4gWmh1YW5nOyBN
+YXJrIEJyb3duDQpTdWJqZWN0OiBsaW51eC1uZXh0OiBtZmQgdHJlZSBidWlsZCBmYWlsdXJlDQoN
+CkhpIFNhbXVlbCwNCg0KVG9kYXkncyBsaW51eC1uZXh0IGJ1aWxkICh4ODZfNjQgYWxsbW9kY29u
+ZmlnKSBmYWlsZWQgbGlrZSB0aGlzOg0KDQpkcml2ZXJzL2J1aWx0LWluLm86IEluIGZ1bmN0aW9u
+IGBwbTg2MDdfd3JpdGVfZGV2aWNlJzoNCjg4cG04NjA3LmM6KC50ZXh0KzB4ZDAyZTkpOiB1bmRl
+ZmluZWQgcmVmZXJlbmNlIHRvIGBpMmNfbWFzdGVyX3NlbmQnDQpkcml2ZXJzL2J1aWx0LWluLm86
+IEluIGZ1bmN0aW9uIGBwbTg2MDdfcmVhZF9kZXZpY2UnOg0KODhwbTg2MDcuYzooLnRleHQrMHhk
+MDMzYik6IHVuZGVmaW5lZCByZWZlcmVuY2UgdG8gYGkyY19tYXN0ZXJfc2VuZCcNCjg4cG04NjA3
+LmM6KC50ZXh0KzB4ZDAzNWMpOiB1bmRlZmluZWQgcmVmZXJlbmNlIHRvIGBpMmNfbWFzdGVyX3Jl
+Y3YnDQpkcml2ZXJzL2J1aWx0LWluLm86IEluIGZ1bmN0aW9uIGBwbTg2MDdfaW5pdCc6DQo4OHBt
+ODYwNy5jOiguaW5pdC50ZXh0KzB4YTliZCk6IHVuZGVmaW5lZCByZWZlcmVuY2UgdG8gYGkyY19y
+ZWdpc3Rlcl9kcml2ZXInDQpkcml2ZXJzL2J1aWx0LWluLm86IEluIGZ1bmN0aW9uIGBwbTg2MDdf
+cHJvYmUnOg0KODhwbTg2MDcuYzooLmRldmluaXQudGV4dCsweDRkYjYpOiB1bmRlZmluZWQgcmVm
+ZXJlbmNlIHRvIGBtZmRfYWRkX2RldmljZXMnDQpkcml2ZXJzL2J1aWx0LWluLm86IEluIGZ1bmN0
+aW9uIGBwbTg2MDdfZXhpdCc6DQo4OHBtODYwNy5jOiguZXhpdC50ZXh0KzB4NTk4KTogdW5kZWZp
+bmVkIHJlZmVyZW5jZSB0byBgaTJjX2RlbF9kcml2ZXInDQpkcml2ZXJzL2J1aWx0LWluLm86IElu
+IGZ1bmN0aW9uIGBwbTg2MDdfcmVtb3ZlJzoNCjg4cG04NjA3LmM6KC5kZXZleGl0LnRleHQrMHgx
+OTgpOiB1bmRlZmluZWQgcmVmZXJlbmNlIHRvIGBtZmRfcmVtb3ZlX2RldmljZXMnDQoNCk9idmlv
+dXNseSBjYXVzZWQgYnkgY29tbWl0IDllYzZjZDhmMjIzNWRkZWVlNWIzOTA2ODk1NmYxNDIzOGEx
+MmE2MTcNCigibWZkOiBBZGQgODhQTTg2MDcgZHJpdmVyIikuDQoNClRoaXMgYnVpbGQgaGFzIENP
+TkZJR19JMkM9bSBhbmQgQ09ORklHX01GRF9DT1JFPW0uDQoNCkkgaGF2ZSB1c2VkIHRoZSB2ZXJz
+aW9uIG9mIHRoZSBtZmQgdHJlZSBmb3JtIG5leHQtMjAwOTEwMDUgZm9yIHRvZGF5Lg0KLS0gDQpD
+aGVlcnMsDQpTdGVwaGVuIFJvdGh3ZWxsICAgICAgICAgICAgICAgICAgICBzZnJAY2FuYi5hdXVn
+Lm9yZy5hdQ0KaHR0cDovL3d3dy5jYW5iLmF1dWcub3JnLmF1L35zZnIvDQo=
