@@ -1,44 +1,65 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: suspend tree build failure
-Date: Tue, 6 Oct 2009 01:55:18 +0200
-Message-ID: <200910060155.18965.rjw@sisk.pl>
-References: <20091005160044.d95daf41.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: mfd tree build failure
+Date: Tue, 6 Oct 2009 13:02:02 +1100
+Message-ID: <20091006130202.5e18a332.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-2"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__6_Oct_2009_13_02_02_+1100_iBWot3P=UnP1irTW"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:49580 "EHLO ogre.sisk.pl"
+Received: from chilli.pcug.org.au ([203.10.76.44]:60154 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754368AbZJEXyr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 5 Oct 2009 19:54:47 -0400
-In-Reply-To: <20091005160044.d95daf41.sfr@canb.auug.org.au>
+	id S1754677AbZJFCCt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 5 Oct 2009 22:02:49 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Samuel Ortiz <sameo@openedhand.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Haojian Zhuang <haojian.zhuang@marvell.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-On Monday 05 October 2009, Stephen Rothwell wrote:
-> Hi Rafael,
+--Signature=_Tue__6_Oct_2009_13_02_02_+1100_iBWot3P=UnP1irTW
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Samuel,
 
-> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-> 
-> drivers/built-in.o: In function `.device_initialize':
-> (.text+0x95cf4): undefined reference to `.device_pm_init'
-> drivers/built-in.o: In function `.device_del':
-> (.text+0x95ec4): undefined reference to `.device_pm_remove'
-> drivers/built-in.o: In function `.device_add':
-> (.text+0x965cc): undefined reference to `.device_pm_add'
-> 
-> Caused by commit 1db698d9d2c5a2f4032e620dd18c75b61eaca2c8 ("PM: Introduce
-> PM links framework").  This build has CONFIG_PM not set.
-> 
-> I have used the suspend tree from next-20091002 for today.
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-Thanks for the notification, I've just pushed the updated tree where this
-issue should be fixed.
+drivers/built-in.o: In function `pm8607_write_device':
+88pm8607.c:(.text+0xd02e9): undefined reference to `i2c_master_send'
+drivers/built-in.o: In function `pm8607_read_device':
+88pm8607.c:(.text+0xd033b): undefined reference to `i2c_master_send'
+88pm8607.c:(.text+0xd035c): undefined reference to `i2c_master_recv'
+drivers/built-in.o: In function `pm8607_init':
+88pm8607.c:(.init.text+0xa9bd): undefined reference to `i2c_register_driver'
+drivers/built-in.o: In function `pm8607_probe':
+88pm8607.c:(.devinit.text+0x4db6): undefined reference to `mfd_add_devices'
+drivers/built-in.o: In function `pm8607_exit':
+88pm8607.c:(.exit.text+0x598): undefined reference to `i2c_del_driver'
+drivers/built-in.o: In function `pm8607_remove':
+88pm8607.c:(.devexit.text+0x198): undefined reference to `mfd_remove_device=
+s'
 
-Best,
-Rafael
+Obviously caused by commit 9ec6cd8f2235ddeee5b39068956f14238a12a617
+("mfd: Add 88PM8607 driver").
+
+This build has CONFIG_I2C=3Dm and CONFIG_MFD_CORE=3Dm.
+
+I have used the version of the mfd tree form next-20091005 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__6_Oct_2009_13_02_02_+1100_iBWot3P=UnP1irTW
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkrKpRoACgkQjjKRsyhoI8xtTgCfa1x3CfmOs3HbefZeR/4Nw8g5
+118AoLQAMmh1lQ/pqxzwZJKqzp29+WYr
+=18is
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__6_Oct_2009_13_02_02_+1100_iBWot3P=UnP1irTW--
