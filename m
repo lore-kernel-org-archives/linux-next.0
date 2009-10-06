@@ -1,52 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: suspend tree build failure
-Date: Tue, 6 Oct 2009 13:39:03 +1100
-Message-ID: <20091006133903.99de471f.sfr@canb.auug.org.au>
-References: <20091005160044.d95daf41.sfr@canb.auug.org.au>
-	<200910060155.18965.rjw@sisk.pl>
+Subject: linux-next: suspend tree build failure
+Date: Tue, 6 Oct 2009 13:55:05 +1100
+Message-ID: <20091006135505.f07ee40d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__6_Oct_2009_13_39_03_+1100_FqwxZ1LqNxbCgPP3"
+ boundary="Signature=_Tue__6_Oct_2009_13_55_05_+1100_oi2wW5BLLATsgDku"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45925 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:47930 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755962AbZJFCjs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 5 Oct 2009 22:39:48 -0400
-In-Reply-To: <200910060155.18965.rjw@sisk.pl>
+	id S1754766AbZJFCzw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 5 Oct 2009 22:55:52 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Hemminger <shemminger@vyatta.com>
 
---Signature=_Tue__6_Oct_2009_13_39_03_+1100_FqwxZ1LqNxbCgPP3
+--Signature=_Tue__6_Oct_2009_13_55_05_+1100_oi2wW5BLLATsgDku
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Rafael,
 
-On Tue, 6 Oct 2009 01:55:18 +0200 "Rafael J. Wysocki" <rjw@sisk.pl> wrote:
->
-> Thanks for the notification, I've just pushed the updated tree where this
-> issue should be fixed.
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-Thanks.
+kernel/freezer.c:27: error: expected ',' or ';' before '{' token
 
+Caused by commit 9a4801cb8df76263abbb3049c0208625b7f34286 ("PM / freezer:
+Make refrigerator cold") which neglected to include linux/compiler.h for
+the definition of __cold.
+
+I have used the version of the suspend tree from next-20091002 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__6_Oct_2009_13_39_03_+1100_FqwxZ1LqNxbCgPP3
+--Signature=_Tue__6_Oct_2009_13_55_05_+1100_oi2wW5BLLATsgDku
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkrKrccACgkQjjKRsyhoI8yqWwCfc4zRgQlljbBK4cPrMEl/JcDO
-tE8AnjtdH2vgKgCY7KbOgAupmkJWyap8
-=b2q2
+iEYEARECAAYFAkrKsYkACgkQjjKRsyhoI8zO8QCgghkfYUSSdTzbDDLRGZJJRVTf
+xHAAn0Jo4wvLLj+kZ8HWp5QqmCc0GcTF
+=mmVj
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__6_Oct_2009_13_39_03_+1100_FqwxZ1LqNxbCgPP3--
+--Signature=_Tue__6_Oct_2009_13_55_05_+1100_oi2wW5BLLATsgDku--
