@@ -1,58 +1,46 @@
-From: Gregory Haskins <gregory.haskins@gmail.com>
-Subject: Re: [PATCH -next] vbus: proxy uses, select IOQ
-Date: Wed, 07 Oct 2009 14:19:24 -0400
-Message-ID: <4ACCDBAC.8040608@gmail.com>
-References: <20091007173517.abfcfa2a.sfr@canb.auug.org.au> <20091007102259.ae014b15.randy.dunlap@oracle.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: suspend tree build failure
+Date: Wed, 7 Oct 2009 22:41:54 +0200
+Message-ID: <200910072241.54869.rjw@sisk.pl>
+References: <20091006135505.f07ee40d.sfr@canb.auug.org.au> <200910070031.55135.rjw@sisk.pl> <20091007152914.8dadf6d7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="------------enig3497D467835B74A75CDDBDE3"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-fx0-f227.google.com ([209.85.220.227]:45829 "EHLO
-	mail-fx0-f227.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751585AbZJGSUG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Oct 2009 14:20:06 -0400
-In-Reply-To: <20091007102259.ae014b15.randy.dunlap@oracle.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Gregory Haskins <ghaskins@novell.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: Text/Plain;
+  charset="iso-8859-2"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1757750AbZJGUlO@vger.kernel.org>
+In-Reply-To: <20091007152914.8dadf6d7.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Hemminger <shemminger@vyatta.com>
+List-Id: linux-next.vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
---------------enig3497D467835B74A75CDDBDE3
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+On Wednesday 07 October 2009, Stephen Rothwell wrote:
+> Hi Rafael,
+> 
+> On Wed, 7 Oct 2009 00:31:55 +0200 "Rafael J. Wysocki" <rjw@sisk.pl> wrote:
+> >
+> > Thanks for the notification.
+> > 
+> > Did you cross-compile it by chance?  It builds for me on native x86_64 with
+> > allmodconfig, which is why I missed this issue.
+> 
+> I cross compile all my x86 builds as my big machines are all PowerPC.
+> 
+> > > I have used the version of the suspend tree from next-20091002 for today.
+> > 
+> > I added the #include <linux/compiler.h> to freezer.h, but obviously I couldn't
+> > verify if that fixed the problem.  Hopefully it did.
+> 
+> My guess was wrong.  You either need to leave the __cold off the
+> definition in kernel/freezer.c or move it before the function name.  No
+> other function definition in the kernel is marked __cold, but several
+> declarations are.
+> 
+> Also __cold only generates something for gcc >= 4.3 ...  I am using 4.4.
 
-Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
->=20
-> vbus-proxy also uses ioq, so it should select IOQ.
->=20
-> When CONFIG_VBUS_PROXY=3D[ym] and VBUS_PCIBRIDGE=3Dn:
->=20
-> ERROR: "ioq_init" [drivers/vbus/vbus-proxy.ko] undefined!
->=20
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> Cc: Gregory Haskins <ghaskins@novell.com>
+OK, I've dropped the patch altogether for now, will add it later.
 
-Thanks Randy, applied.
+Just pushed the updated tree.
 
-Kind Regards,
--Greg
-
-
---------------enig3497D467835B74A75CDDBDE3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG/MacGPG2 v2.0.11 (Darwin)
-Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
-
-iEYEARECAAYFAkrM26wACgkQP5K2CMvXmqFj2ACfWWEP31tPkL1FQBg1Iie0MseW
-+0oAniLB+DSGr7Oz1fULtSsExrenDKUk
-=3MnT
------END PGP SIGNATURE-----
-
---------------enig3497D467835B74A75CDDBDE3--
+Thanks,
+Rafael
