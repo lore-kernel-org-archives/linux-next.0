@@ -1,65 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: suspend tree build failure
-Date: Wed, 7 Oct 2009 15:29:14 +1100
-Message-ID: <20091007152914.8dadf6d7.sfr@canb.auug.org.au>
-References: <20091006135505.f07ee40d.sfr@canb.auug.org.au>
-	<200910070031.55135.rjw@sisk.pl>
+From: Jens Axboe <jens.axboe-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Subject: Re: linux-next: block tree build failure
+Date: Wed, 7 Oct 2009 08:33:54 +0200
+Message-ID: <20091007063354.GG5216@kernel.dk>
+References: <20091007135505.df1f058c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__7_Oct_2009_15_29_14_+1100_mOUsqxFhkX6AOlzY"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751342AbZJGEaB@vger.kernel.org>
-In-Reply-To: <200910070031.55135.rjw@sisk.pl>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Hemminger <shemminger@vyatta.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20091007135505.df1f058c.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+List-Unsubscribe: <http://lists.linbit.com/mailman/options/drbd-dev>,
+	<mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linbit.com/pipermail/drbd-dev>
+List-Post: <mailto:drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org>
+List-Help: <mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.linbit.com/mailman/listinfo/drbd-dev>,
+	<mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=subscribe>
+Sender: drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
+Errors-To: drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alasdair G Kergon <agk-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Philipp Reisner <philipp.reisner-63ez5xqkn6DQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__7_Oct_2009_15_29_14_+1100_mOUsqxFhkX6AOlzY
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Oct 07 2009, Stephen Rothwell wrote:
+> Hi Jens,
+> 
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
+> 
+> drivers/block/drbd/drbd_req.c: In function '_drbd_start_io_acct':
+> drivers/block/drbd/drbd_req.c:43: error: lvalue required as increment operand
+> drivers/block/drbd/drbd_req.c: In function '_drbd_end_io_acct':
+> drivers/block/drbd/drbd_req.c:56: error: lvalue required as decrement operand
+> 
+> This is back again :-(
+> 
+> I have used the block tree from next-20091006 for today.  I also had to
+> use the device-mapper tree from next-20091006 since that is based on the
+> block tree.
 
-Hi Rafael,
+Irk darn, I fixed this up. Sorry about that, Stephen. It was due to the
+in_flight counter being reverted for -rc3 and now back functional in my
+upstream branch.
 
-On Wed, 7 Oct 2009 00:31:55 +0200 "Rafael J. Wysocki" <rjw@sisk.pl> wrote:
->
-> Thanks for the notification.
->=20
-> Did you cross-compile it by chance?  It builds for me on native x86_64 wi=
-th
-> allmodconfig, which is why I missed this issue.
-
-I cross compile all my x86 builds as my big machines are all PowerPC.
-
-> > I have used the version of the suspend tree from next-20091002 for toda=
-y.
->=20
-> I added the #include <linux/compiler.h> to freezer.h, but obviously I cou=
-ldn't
-> verify if that fixed the problem.  Hopefully it did.
-
-My guess was wrong.  You either need to leave the __cold off the
-definition in kernel/freezer.c or move it before the function name.  No
-other function definition in the kernel is marked __cold, but several
-declarations are.
-
-Also __cold only generates something for gcc >=3D 4.3 ...  I am using 4.4.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__7_Oct_2009_15_29_14_+1100_mOUsqxFhkX6AOlzY
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkrMGRoACgkQjjKRsyhoI8wJGwCfW7yt0M/oUigA/Icj789ycPvA
-TRgAnR2lMJOS+N5WxY6pddk2rvSA4ckK
-=fSS5
------END PGP SIGNATURE-----
-
---Signature=_Wed__7_Oct_2009_15_29_14_+1100_mOUsqxFhkX6AOlzY--
+-- 
+Jens Axboe
