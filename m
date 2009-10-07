@@ -1,47 +1,42 @@
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: Re: next-20091007 - comedi driver build breaks on S390x
-Date: Wed, 7 Oct 2009 17:34:15 +0200
-Message-ID: <20091007173415.5155d995@mschwide.boeblingen.de.ibm.com>
-References: <20091007173517.abfcfa2a.sfr@canb.auug.org.au>
-	<20091007105458.GA5472@linux.vnet.ibm.com>
-	<20091007130744.GA26081@suse.de>
+From: Jesse Barnes <jbarnes@virtuousgeek.org>
+Subject: Re: linux-next: pci tree build failure
+Date: Wed, 7 Oct 2009 08:39:44 -0700
+Message-ID: <20091007083944.0d0d5059@jbarnes-g45>
+References: <20091007123821.043465c6.sfr@canb.auug.org.au>
+	<4ACBF2BF.5060707@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S934066AbZJGPfA@vger.kernel.org>
-In-Reply-To: <20091007130744.GA26081@suse.de>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S934139AbZJGPkj@vger.kernel.org>
+In-Reply-To: <4ACBF2BF.5060707@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <gregkh@suse.de>
-Cc: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, devel@driverdev.osuosl.org, heiko.carstens@de.ibm.com, linux-s390@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Wed, 7 Oct 2009 06:07:44 -0700
-Greg KH <gregkh@suse.de> wrote:
+On Wed, 07 Oct 2009 10:45:35 +0900
+Tejun Heo <tj@kernel.org> wrote:
 
-> On Wed, Oct 07, 2009 at 04:24:58PM +0530, Kamalesh Babulal wrote:
-> > Hi Greg,
+> Stephen Rothwell wrote:
+> > Hi Jesse,
 > > 
-> > 	next-20091007 randconfig build breaks on s390x with build error
+> > Today's linux-next build (x86_64 allmodconfig) failed like this:
 > > 
-> > drivers/staging/comedi/comedi_fops.c: In function 'comedi_mmap':
-> > drivers/staging/comedi/comedi_fops.c:1453: error: 'PAGE_SHARED' undeclared (first use in this function)
-> > drivers/staging/comedi/comedi_fops.c:1453: error: (Each undeclared identifier is reported only once
-> > drivers/staging/comedi/comedi_fops.c:1453: error: for each function it appears in.)
-> > make[3]: *** [drivers/staging/comedi/comedi_fops.o] Error 1
+> > ERROR: "pci_set_cacheline_size" [drivers/pcmcia/pcmcia_core.ko]
+> > undefined!
+> > 
+> > Caused by commit 018bc96e8e27bfcafec9357ff370bf51241a7ea7 ("pccard:
+> > configure CLS on attach") which neglected to EXPORT_SYMBOL
+> > pci_set_cacheline_size.
+> > 
+> > I have used the version of the pci tree from next-20091006 for
+> > today.
+> > 
 > 
-> Odd.  What changed in the header files to cause this?
+> Oops, Jesse, can you please add EXPORT_SYMBOL_GPL() there?
 
-The problem has always been present, only now did randconfig find it.
-The compile breaks because PAGE_SHARED is not defined for s390. The
-equivalent define for s390 is PAGE_RW. The problem has not shown up so
-far because all drivers who use the remap_pfn_range call with
-PAGE_SHARED has dependencies not available on s390, e.g. CONFIG_PCI.
+Sure, sorry I missed it.
 
-To fix this I see are two options: 1) add a PAGE_SHARED define to
-arch/s390/include/asm/pgtable.h, 2) make comedi depend on !S390.
-
+Thanks,
 -- 
-blue skies,
-   Martin.
-
-"Reality continues to ruin my life." - Calvin.
+Jesse Barnes, Intel Open Source Technology Center
