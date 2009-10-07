@@ -1,42 +1,49 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Subject: Re: linux-next: pci tree build failure
-Date: Wed, 7 Oct 2009 08:39:44 -0700
-Message-ID: <20091007083944.0d0d5059@jbarnes-g45>
-References: <20091007123821.043465c6.sfr@canb.auug.org.au>
-	<4ACBF2BF.5060707@kernel.org>
+From: Suresh Siddha <suresh.b.siddha@intel.com>
+Subject: Re: next-1007: dmar fails to build
+Date: Wed, 07 Oct 2009 10:05:45 -0700
+Message-ID: <1254935147.2635.0.camel@sbs-t61.sc.intel.com>
+References: <a4423d670910070150v6b8df19bt733eac1b32f04257@mail.gmail.com>
+	 <20091007085958.GA12537@orion>
+Reply-To: Suresh Siddha <suresh.b.siddha@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S934139AbZJGPkj@vger.kernel.org>
-In-Reply-To: <4ACBF2BF.5060707@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tejun Heo <tj@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga14.intel.com ([143.182.124.37]:15352 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751692AbZJGRHL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 7 Oct 2009 13:07:11 -0400
+In-Reply-To: <20091007085958.GA12537@orion>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: linux-next <linux-next@vger.kernel.org>, "Woodhouse, David" <david.woodhouse@intel.com>
 
-On Wed, 07 Oct 2009 10:45:35 +0900
-Tejun Heo <tj@kernel.org> wrote:
-
-> Stephen Rothwell wrote:
-> > Hi Jesse,
+On Wed, 2009-10-07 at 01:59 -0700, Alexander Beregalov wrote:
+> On Wed, Oct 07, 2009 at 12:50:39PM +0400, Alexander Beregalov wrote:
+> > drivers/pci/dmar.c: In function 'dmar_parse_one_rhsa':
+> > drivers/pci/dmar.c:360: error: implicit declaration of function
+> > 'acpi_map_pxm_to_node'
 > > 
-> > Today's linux-next build (x86_64 allmodconfig) failed like this:
-> > 
-> > ERROR: "pci_set_cacheline_size" [drivers/pcmcia/pcmcia_core.ko]
-> > undefined!
-> > 
-> > Caused by commit 018bc96e8e27bfcafec9357ff370bf51241a7ea7 ("pccard:
-> > configure CLS on attach") which neglected to EXPORT_SYMBOL
-> > pci_set_cacheline_size.
-> > 
-> > I have used the version of the pci tree from next-20091006 for
-> > today.
-> > 
+> > $ grep NUMA .config
+> > $
 > 
-> Oops, Jesse, can you please add EXPORT_SYMBOL_GPL() there?
+> By the way, shouldn't it be as following?
+> 
+> diff --git a/drivers/pci/dmar.c b/drivers/pci/dmar.c
+> index 63aa529..474c7e8 100644
+> --- a/drivers/pci/dmar.c
+> +++ b/drivers/pci/dmar.c
+> @@ -362,8 +362,8 @@ dmar_parse_one_rhsa(struct acpi_dmar_header *header)
+>  			if (!node_online(node))
+>  				node = -1;
+>  			drhd->iommu->node = node;
+> -		return 0;
+> -	}
+> +			return 0;
+> +		}
+>  
+>  	return -ENODEV;
+>  }
 
-Sure, sorry I missed it.
-
-Thanks,
--- 
-Jesse Barnes, Intel Open Source Technology Center
+Thanks. Just posted fixes for both these issues!
