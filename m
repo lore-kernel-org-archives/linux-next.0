@@ -1,46 +1,45 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: suspend tree build failure
-Date: Wed, 7 Oct 2009 22:41:54 +0200
-Message-ID: <200910072241.54869.rjw@sisk.pl>
-References: <20091006135505.f07ee40d.sfr@canb.auug.org.au> <200910070031.55135.rjw@sisk.pl> <20091007152914.8dadf6d7.sfr@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-2"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1757750AbZJGUlO@vger.kernel.org>
-In-Reply-To: <20091007152914.8dadf6d7.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Hemminger <shemminger@vyatta.com>
-List-Id: linux-next.vger.kernel.org
+From: "John W. Linville" <linville@tuxdriver.com>
+Subject: [PATCH] wireless: make WEXT_SPY and WEXT_PRIV select WEXT_CORE
+Date: Wed,  7 Oct 2009 17:07:52 -0400
+Message-ID: <1254949672-24022-1-git-send-email-linville@tuxdriver.com>
+References: <20091007105720.a2457e5b.randy.dunlap@oracle.com>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:48380 "EHLO
+	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751721AbZJGVQn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Oct 2009 17:16:43 -0400
+In-Reply-To: <20091007105720.a2457e5b.randy.dunlap@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-wireless@vger.kernel.org
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 
-On Wednesday 07 October 2009, Stephen Rothwell wrote:
-> Hi Rafael,
-> 
-> On Wed, 7 Oct 2009 00:31:55 +0200 "Rafael J. Wysocki" <rjw@sisk.pl> wrote:
-> >
-> > Thanks for the notification.
-> > 
-> > Did you cross-compile it by chance?  It builds for me on native x86_64 with
-> > allmodconfig, which is why I missed this issue.
-> 
-> I cross compile all my x86 builds as my big machines are all PowerPC.
-> 
-> > > I have used the version of the suspend tree from next-20091002 for today.
-> > 
-> > I added the #include <linux/compiler.h> to freezer.h, but obviously I couldn't
-> > verify if that fixed the problem.  Hopefully it did.
-> 
-> My guess was wrong.  You either need to leave the __cold off the
-> definition in kernel/freezer.c or move it before the function name.  No
-> other function definition in the kernel is marked __cold, but several
-> declarations are.
-> 
-> Also __cold only generates something for gcc >= 4.3 ...  I am using 4.4.
+Should prevent this build error reported by Randy...
 
-OK, I've dropped the patch altogether for now, will add it later.
+net/wireless/wext-priv.c:206: error: implicit declaration of function 'call_commit_handler'
+make[3]: *** [net/wireless/wext-priv.o] Error 1
 
-Just pushed the updated tree.
+Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
+Signed-off-by: John W. Linville <linville@tuxdriver.com>
+---
+ net/wireless/Kconfig |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-Thanks,
-Rafael
+diff --git a/net/wireless/Kconfig b/net/wireless/Kconfig
+index 614bdce..d3ecca3 100644
+--- a/net/wireless/Kconfig
++++ b/net/wireless/Kconfig
+@@ -12,9 +12,11 @@ config WEXT_PROC
+ 
+ config WEXT_SPY
+ 	bool
++	depends on WEXT_CORE
+ 
+ config WEXT_PRIV
+ 	bool
++	depends on WEXT_CORE
+ 
+ config CFG80211
+ 	tristate "cfg80211 - wireless configuration API"
+-- 
+1.6.2.5
