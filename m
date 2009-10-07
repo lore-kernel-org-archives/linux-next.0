@@ -1,290 +1,128 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for October 7
-Date: Wed, 7 Oct 2009 17:35:17 +1100
-Message-ID: <20091007173517.abfcfa2a.sfr@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__7_Oct_2009_17_35_17_+1100_9j596Lm3vjdCQ2rn"
+From: Mike Frysinger <vapier@gentoo.org>
+Subject: [PATCH v2] USB: isp1362: fix build warnings on 64-bit systems
+Date: Wed,  7 Oct 2009 04:29:31 -0400
+Message-ID: <1254904171-5093-1-git-send-email-vapier@gentoo.org>
+References: <20091006143428.GA27158@kroah.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57631 "EHLO smtps.tip.net.au"
+Received: from smtp.gentoo.org ([140.211.166.183]:44901 "EHLO smtp.gentoo.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751287AbZJGGgB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 7 Oct 2009 02:36:01 -0400
+	id S933198AbZJGIaK (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 7 Oct 2009 04:30:10 -0400
+In-Reply-To: <20091006143428.GA27158@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-usb@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lothar Wassmann <LW@karo-electronics.de>, Stephen Rothwell <sfr@canb.auug.org.au>
 
---Signature=_Wed__7_Oct_2009_17_35_17_+1100_9j596Lm3vjdCQ2rn
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+A bunch of places assumed pointers were 32-bits in size (bit checking and
+debug output), but none of these affected runtime functionality.
 
-Hi all,
+Signed-off-by: Mike Frysinger <vapier@gentoo.org>
+---
+v2
+	- update to latest tree
 
-Changes since 20091006:
+ drivers/usb/host/isp1362-hcd.c |   18 +++++++++---------
+ drivers/usb/host/isp1362.h     |   12 ++++++------
+ 2 files changed, 15 insertions(+), 15 deletions(-)
 
-Trees removed: thumb-2 and kmemleak (at the maintiners request)
-
-Trees added: catalin (replacing the 2 above)
-	tmio-mmc
-	alacrity
-
-My fixes tree contains a build fix for powerpc/kvm.
-
-The pci tree gained a build failure so I used the version from
-next-20091006.
-
-The wireless tree lost its build failure.
-
-The block tree regained its build failure so I used the version from
-next-20091006 (and the same for the device-mapper tree which depends on
-the block tree).
-
-The mfd tree still has a build failure so I used the version from
-next-20091005.
-
-The suspend tree still has a build failure so I used the version from
-next-20091002.
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
-and sparc64 defconfig. These builds also have
-CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
-CONFIG_DEBUG_INFO disabled when necessary.
-
-Below is a summary of the state of the merge.
-
-We are up to 140 trees (counting Linus' and 21 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging fixes/fixes
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/tty.current
-Merging quilt/usb.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging ide-curent/master
-Merging dwmw2/master
-Merging arm/devel
-Merging davinci/for-next
-Merging pxa/for-next
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-CONFLICT (content): Merge conflict in drivers/rtc/Kconfig
-Merging m68knommu/for-next
-Merging microblaze/next
-Merging mips/mips-for-linux-next
-CONFLICT (content): Merge conflict in arch/mips/Kconfig
-CONFLICT (add/add): Merge conflict in arch/mips/bcm63xx/Makefile
-CONFLICT (add/add): Merge conflict in arch/mips/bcm63xx/boards/board_bcm963=
-xx.c
-CONFLICT (delete/modify): arch/mips/lemote/lm2e/Makefile deleted in HEAD an=
-d modified in mips/mips-for-linux-next. Version mips/mips-for-linux-next of=
- arch/mips/lemote/lm2e/Makefile left in tree.
-CONFLICT (delete/modify): arch/mips/lemote/lm2e/pci.c deleted in HEAD and m=
-odified in mips/mips-for-linux-next. Version mips/mips-for-linux-next of ar=
-ch/mips/lemote/lm2e/pci.c left in tree.
-CONFLICT (delete/modify): arch/mips/lemote/lm2e/prom.c deleted in HEAD and =
-modified in mips/mips-for-linux-next. Version mips/mips-for-linux-next of a=
-rch/mips/lemote/lm2e/prom.c left in tree.
-$ git rm -f arch/mips/lemote/lm2e/Makefile arch/mips/lemote/lm2e/pci.c arch=
-/mips/lemote/lm2e/prom.c
-Merging parisc/next
-CONFLICT (content): Merge conflict in arch/parisc/include/asm/thread_info.h
-CONFLICT (content): Merge conflict in arch/parisc/kernel/entry.S
-CONFLICT (content): Merge conflict in arch/parisc/kernel/signal.c
-Merging powerpc/next
-Merging 4xx/next
-Merging galak/next
-Merging s390/features
-Merging sh/master
-Merging sparc/master
-Merging xtensa/master
-Merging cifs/master
-Merging configfs/linux-next
-Merging ecryptfs/next
-Merging ext3/for_next
-Merging ext4/next
-Merging fatfs/master
-Merging fuse/for-next
-Merging gfs2/master
-Merging jfs/next
-Merging nfs/linux-next
-Merging nfsd/nfsd-next
-Merging nilfs2/for-next
-Merging ocfs2/linux-next
-Merging squashfs/master
-Merging udf/for_next
-Merging v9fs/for-next
-Merging ubifs/linux-next
-Merging xfs/master
-Merging vfs/for-next
-Merging pci/linux-next
-$ git reset --hard HEAD^
-Merging refs/next/20091006/pci
-Merging hid/for-next
-Merging quilt/i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-Merging quota/for_next
-Merging kbuild/master
-Merging kconfig/for-next
-Merging ide/master
-Merging libata/NEXT
-Merging infiniband/for-next
-Merging acpi/test
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/linux-next
-Merging dlm/next
-Merging scsi/master
-Merging async_tx/next
-Merging net/master
-Merging wireless/master
-Merging mtd/master
-Merging crypto/master
-Merging sound/for-next
-Merging cpufreq/next
-Merging quilt/rr
-Merging mmc/next
-Merging tmio-mmc/linux-next
-Merging input/next
-Merging lsm/for-next
-Merging block/for-next
-$ git reset --hard HEAD^
-Merging refs/next/20091006/block
-Merging quilt/device-mapper
-$ git reset --hard HEAD^
-Merging refs/next/20091006/device-mapper
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-$ git reset --hard HEAD^
-Merging refs/next/20091005/mfd
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-CONFLICT (content): Merge conflict in drivers/gpu/drm/radeon/radeon.h
-CONFLICT (content): Merge conflict in drivers/gpu/drm/radeon/radeon_asic.h
-CONFLICT (content): Merge conflict in drivers/gpu/drm/radeon/radeon_device.c
-Merging voltage/for-next
-Merging security-testing/next
-Merging lblnet/master
-Merging agp/agp-next
-Merging uwb/for-upstream
-Merging watchdog/master
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-Merging audit/for-next
-Merging omap/for-next
-Merging quilt/aoe
-Merging suspend/linux-next
-$ git reset --hard HEAD^
-Merging refs/next/20091002/suspend
-Merging bluetooth/master
-Merging fsnotify/for-next
-Merging irda/for-next
-Merging hwlat/for-linus
-Merging drbd/for-jens
-CONFLICT (add/add): Merge conflict in drivers/block/drbd/Kconfig
-CONFLICT (add/add): Merge conflict in drivers/block/drbd/Makefile
-CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_actlog.c
-CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_int.h
-CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_main.c
-CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_nl.c
-CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_receiver.c
-CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_req.c
-CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_worker.c
-Merging catalin/for-next
-Merging alacrity/linux-next
-CONFLICT (content): Merge conflict in lib/Kconfig
-Merging tip/auto-latest
-Merging oprofile/for-next
-Merging percpu/for-next
-Merging sfi/sfi-test
-Merging asm-generic/next
-Merging hwpoison/hwpoison
-Merging quilt/driver-core
-Merging quilt/tty
-Merging quilt/usb
-Merging quilt/staging
-Merging scsi-post-merge/master
-
---Signature=_Wed__7_Oct_2009_17_35_17_+1100_9j596Lm3vjdCQ2rn
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkrMNqUACgkQjjKRsyhoI8zoqQCfV4SPOfYUwuZE0i3wo993vpoK
-5awAnA5ltSasjxpfpaRdT65zdKER8xrA
-=xBxO
------END PGP SIGNATURE-----
-
---Signature=_Wed__7_Oct_2009_17_35_17_+1100_9j596Lm3vjdCQ2rn--
+diff --git a/drivers/usb/host/isp1362-hcd.c b/drivers/usb/host/isp1362-hcd.c
+index e35d828..5c774ab 100644
+--- a/drivers/usb/host/isp1362-hcd.c
++++ b/drivers/usb/host/isp1362-hcd.c
+@@ -2284,10 +2284,10 @@ static int isp1362_mem_config(struct usb_hcd *hcd)
+ 	dev_info(hcd->self.controller, "ISP1362 Memory usage:\n");
+ 	dev_info(hcd->self.controller, "  ISTL:    2 * %4d:     %4d @ $%04x:$%04x\n",
+ 		 istl_size / 2, istl_size, 0, istl_size / 2);
+-	dev_info(hcd->self.controller, "  INTL: %4d * (%3u+8):  %4d @ $%04x\n",
++	dev_info(hcd->self.controller, "  INTL: %4d * (%3lu+8):  %4d @ $%04x\n",
+ 		 ISP1362_INTL_BUFFERS, intl_blksize - PTD_HEADER_SIZE,
+ 		 intl_size, istl_size);
+-	dev_info(hcd->self.controller, "  ATL : %4d * (%3u+8):  %4d @ $%04x\n",
++	dev_info(hcd->self.controller, "  ATL : %4d * (%3lu+8):  %4d @ $%04x\n",
+ 		 atl_buffers, atl_blksize - PTD_HEADER_SIZE,
+ 		 atl_size, istl_size + intl_size);
+ 	dev_info(hcd->self.controller, "  USED/FREE:   %4d      %4d\n", total,
+@@ -2677,12 +2677,12 @@ static int __devexit isp1362_remove(struct platform_device *pdev)
+ 	DBG(0, "%s: Removing HCD\n", __func__);
+ 	usb_remove_hcd(hcd);
+ 
+-	DBG(0, "%s: Unmapping data_reg @ %08x\n", __func__,
+-	    (u32)isp1362_hcd->data_reg);
++	DBG(0, "%s: Unmapping data_reg @ %p\n", __func__,
++	    isp1362_hcd->data_reg);
+ 	iounmap(isp1362_hcd->data_reg);
+ 
+-	DBG(0, "%s: Unmapping addr_reg @ %08x\n", __func__,
+-	    (u32)isp1362_hcd->addr_reg);
++	DBG(0, "%s: Unmapping addr_reg @ %p\n", __func__,
++	    isp1362_hcd->addr_reg);
+ 	iounmap(isp1362_hcd->addr_reg);
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+@@ -2810,16 +2810,16 @@ static int __init isp1362_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+  err6:
+-	DBG(0, "%s: Freeing dev %08x\n", __func__, (u32)isp1362_hcd);
++	DBG(0, "%s: Freeing dev %p\n", __func__, isp1362_hcd);
+ 	usb_put_hcd(hcd);
+  err5:
+-	DBG(0, "%s: Unmapping data_reg @ %08x\n", __func__, (u32)data_reg);
++	DBG(0, "%s: Unmapping data_reg @ %p\n", __func__, data_reg);
+ 	iounmap(data_reg);
+  err4:
+ 	DBG(0, "%s: Releasing mem region %08lx\n", __func__, (long unsigned int)data->start);
+ 	release_mem_region(data->start, resource_len(data));
+  err3:
+-	DBG(0, "%s: Unmapping addr_reg @ %08x\n", __func__, (u32)addr_reg);
++	DBG(0, "%s: Unmapping addr_reg @ %p\n", __func__, addr_reg);
+ 	iounmap(addr_reg);
+  err2:
+ 	DBG(0, "%s: Releasing mem region %08lx\n", __func__, (long unsigned int)addr->start);
+diff --git a/drivers/usb/host/isp1362.h b/drivers/usb/host/isp1362.h
+index fe60f62..1a253eb 100644
+--- a/drivers/usb/host/isp1362.h
++++ b/drivers/usb/host/isp1362.h
+@@ -580,7 +580,7 @@ static inline const char *ISP1362_INT_NAME(int n)
+ 
+ static inline void ALIGNSTAT(struct isp1362_hcd *isp1362_hcd, void *ptr)
+ {
+-	unsigned p = (unsigned)ptr;
++	unsigned long p = (unsigned long)ptr;
+ 	if (!(p & 0xf))
+ 		isp1362_hcd->stat16++;
+ 	else if (!(p & 0x7))
+@@ -770,7 +770,7 @@ static void isp1362_write_fifo(struct isp1362_hcd *isp1362_hcd, void *buf, u16 l
+ 	if (!len)
+ 		return;
+ 
+-	if ((unsigned)dp & 0x1) {
++	if ((unsigned long)dp & 0x1) {
+ 		/* not aligned */
+ 		for (; len > 1; len -= 2) {
+ 			data = *dp++;
+@@ -962,8 +962,8 @@ static void isp1362_read_buffer(struct isp1362_hcd *isp1362_hcd, void *buf, u16
+ 
+ 	isp1362_write_diraddr(isp1362_hcd, offset, len);
+ 
+-	DBG(3, "%s: Reading %d byte from buffer @%04x to memory @ %08x\n", __func__,
+-	    len, offset, (u32)buf);
++	DBG(3, "%s: Reading %d byte from buffer @%04x to memory @ %p\n",
++	    __func__, len, offset, buf);
+ 
+ 	isp1362_write_reg16(isp1362_hcd, HCuPINT, HCuPINT_EOT);
+ 	_WARN_ON((isp1362_read_reg16(isp1362_hcd, HCuPINT) & HCuPINT_EOT));
+@@ -982,8 +982,8 @@ static void isp1362_write_buffer(struct isp1362_hcd *isp1362_hcd, void *buf, u16
+ 
+ 	isp1362_write_diraddr(isp1362_hcd, offset, len);
+ 
+-	DBG(3, "%s: Writing %d byte to buffer @%04x from memory @ %08x\n", __func__,
+-	    len, offset, (u32)buf);
++	DBG(3, "%s: Writing %d byte to buffer @%04x from memory @ %p\n",
++	    __func__, len, offset, buf);
+ 
+ 	isp1362_write_reg16(isp1362_hcd, HCuPINT, HCuPINT_EOT);
+ 	_WARN_ON((isp1362_read_reg16(isp1362_hcd, HCuPINT) & HCuPINT_EOT));
+-- 
+1.6.5.rc2
