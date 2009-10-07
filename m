@@ -1,36 +1,58 @@
-From: Dan Williams <dcbw@redhat.com>
-Subject: Re: linux-next: Tree for October 7 (libertas build failure)
-Date: Wed, 07 Oct 2009 11:12:00 -0700
-Message-ID: <1254939120.16001.45.camel@localhost.localdomain>
-References: <20091007173517.abfcfa2a.sfr@canb.auug.org.au>
-	 <20091007105210.409a1991.randy.dunlap@oracle.com>
+From: Gregory Haskins <gregory.haskins@gmail.com>
+Subject: Re: [PATCH -next] vbus: proxy uses, select IOQ
+Date: Wed, 07 Oct 2009 14:19:24 -0400
+Message-ID: <4ACCDBAC.8040608@gmail.com>
+References: <20091007173517.abfcfa2a.sfr@canb.auug.org.au> <20091007102259.ae014b15.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S934345AbZJGSM4@vger.kernel.org>
-In-Reply-To: <20091007105210.409a1991.randy.dunlap@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="------------enig3497D467835B74A75CDDBDE3"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-fx0-f227.google.com ([209.85.220.227]:45829 "EHLO
+	mail-fx0-f227.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751585AbZJGSUG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Oct 2009 14:20:06 -0400
+In-Reply-To: <20091007102259.ae014b15.randy.dunlap@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-wireless@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, libertas-dev@lists.infradead.org, Holger Schurig <hs4233@mail.mn-solutions.de>
-List-Id: linux-next.vger.kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Gregory Haskins <ghaskins@novell.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Wed, 2009-10-07 at 10:52 -0700, Randy Dunlap wrote:
-> On Wed, 7 Oct 2009 17:35:17 +1100 Stephen Rothwell wrote:
-> 
-> > Hi all,
-> > 
-> > Changes since 20091006:
-> 
-> 
-> drivers/built-in.o: In function `lbs_cfg_free':
-> (.text+0x3479e0): undefined reference to `wiphy_unregister'
-> drivers/built-in.o: In function `lbs_cfg_free':
-> (.text+0x3479e7): undefined reference to `wiphy_free'
-> drivers/built-in.o: In function `lbs_cfg_register':
-> (.text+0x347a52): undefined reference to `wiphy_register'
-> drivers/built-in.o: In function `lbs_cfg_alloc':
-> (.text+0x347acf): undefined reference to `wiphy_new'
+This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
+--------------enig3497D467835B74A75CDDBDE3
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-Holger, perhaps we need some Kconfig updates to select cfg80211?
+Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+>=20
+> vbus-proxy also uses ioq, so it should select IOQ.
+>=20
+> When CONFIG_VBUS_PROXY=3D[ym] and VBUS_PCIBRIDGE=3Dn:
+>=20
+> ERROR: "ioq_init" [drivers/vbus/vbus-proxy.ko] undefined!
+>=20
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> Cc: Gregory Haskins <ghaskins@novell.com>
 
-Dan
+Thanks Randy, applied.
+
+Kind Regards,
+-Greg
+
+
+--------------enig3497D467835B74A75CDDBDE3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG/MacGPG2 v2.0.11 (Darwin)
+Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
+
+iEYEARECAAYFAkrM26wACgkQP5K2CMvXmqFj2ACfWWEP31tPkL1FQBg1Iie0MseW
++0oAniLB+DSGr7Oz1fULtSsExrenDKUk
+=3MnT
+-----END PGP SIGNATURE-----
+
+--------------enig3497D467835B74A75CDDBDE3--
