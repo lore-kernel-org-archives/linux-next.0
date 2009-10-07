@@ -1,69 +1,55 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Subject: Re: [PATCH] wireless: make WEXT_SPY and WEXT_PRIV select WEXT_CORE
-Date: Thu, 08 Oct 2009 01:14:16 +0200
-Message-ID: <1254957256.3713.10.camel@johannes.local>
-References: <20091007105720.a2457e5b.randy.dunlap@oracle.com>
-	 <1254949672-24022-1-git-send-email-linville@tuxdriver.com>
-	 <4ACD0E5A.7060106@oracle.com> <1254954842.3713.7.camel@johannes.local>
-	 <4ACD1C3D.3030506@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: suspend tree build failure
+Date: Thu, 8 Oct 2009 10:48:23 +1100
+Message-ID: <20091008104823.f41e796e.sfr@canb.auug.org.au>
+References: <20091006135505.f07ee40d.sfr@canb.auug.org.au>
+	<200910070031.55135.rjw@sisk.pl>
+	<20091007152914.8dadf6d7.sfr@canb.auug.org.au>
+	<200910072241.54869.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature"; boundary="=-i8HOQPuHxf1j810yA2nB"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__8_Oct_2009_10_48_23_+1100_DVHW5aAXTTzIHNMk"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from xc.sipsolutions.net ([83.246.72.84]:56059 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755942AbZJGXP3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Oct 2009 19:15:29 -0400
-In-Reply-To: <4ACD1C3D.3030506@oracle.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:52808 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756597AbZJGXtH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 7 Oct 2009 19:49:07 -0400
+In-Reply-To: <200910072241.54869.rjw@sisk.pl>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Hemminger <shemminger@vyatta.com>
 
-
---=-i8HOQPuHxf1j810yA2nB
-Content-Type: text/plain; charset="UTF-8"
+--Signature=_Thu__8_Oct_2009_10_48_23_+1100_DVHW5aAXTTzIHNMk
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2009-10-07 at 15:54 -0700, Randy Dunlap wrote:
+Hi Rafael,
 
-> > But they also select WIRELESS_EXT, which should cause WEXT_CORE to be
-> > turned on. Is it possible that is failing?
+On Wed, 7 Oct 2009 22:41:54 +0200 "Rafael J. Wysocki" <rjw@sisk.pl> wrote:
+>
+> OK, I've dropped the patch altogether for now, will add it later.
 >=20
-> # CONFIG_WIRELESS is not set
-> CONFIG_WIRELESS_EXT=3Dy
-> CONFIG_WEXT_SPY=3Dy
-> CONFIG_WEXT_PRIV=3Dy
->=20
-> WEXT_CORE is not enabled.  I haven't found the culprit, but I suspect "se=
-lect".
+> Just pushed the updated tree.
 
-Interesting.
+OK, thanks.
 
-> but what in WIRELESS_EXT would also cause WEXT_CORE to be enabled?
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Well, the way WEXT_CORE is defined as def_bool y ought to, no?
-
-johannes
-
---=-i8HOQPuHxf1j810yA2nB
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+--Signature=_Thu__8_Oct_2009_10_48_23_+1100_DVHW5aAXTTzIHNMk
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQIcBAABAgAGBQJKzSDEAAoJEODzc/N7+QmaM+kQAIgIGAE4zkKCsckaF4tY7/DA
-iXsK8Jk1GS0nBrwZJ/hM9ivYkSPORALkSWbWxH1FNuJhZ0abrea/4ZGgmicqPa6Y
-HODRn5fSb2wY3IkHs2xxkZa80HqzWUquNWLY2Ko4QAll3M2MSnVS+K99HcHVRaW0
-BfLGFWbLOzehObuwW/5s9/NNn3iqqd+oJ9Q+GIh0AcMglxdWfSpgDCazI95qCeiE
-oxjCbob/Bmko4qqILTIwSC1lqpo+Fr0pPZlZvCeYYEKtT1BUSYXFUJmEFVvKuNbe
-nRHcXiDywe7UJH3R+UH3tNMyIA8BaFy2L/u68ixok0zfCSJIHvGUXgssb8GUHEMG
-FMjyEZJC+zqlLVX+GiobRmi0tvrZ8K4vnFWc4sh6dzQAz6TeK5zx35iGipf6oMU/
-NNZo0dxoRzVmYOR2PJ44mo7fMJrtAShg/KbmSwiEsigjuNLE5Y6/ehF1hRN4672b
-jNSC99YpdUdt9/i+kHQ8Ak6BnEI+A+mZl+VKeq/u84/U6R1fox+g7elWZNnWasrt
-+MlctL4MiXmdL8QSiWkJE4y133KKKC2YKQbIqf1uYW88k2hV5oXVRV18qVxdj52r
-fTxcx3J/W9vva9kH0YSKIjAHaXhUeRICKXxEsh4ZoocCN1M1RKYz1eTsaWBN/3G7
-qRs+G5ya5Sc0bPCvydGD
-=sWN5
+iEUEARECAAYFAkrNKMcACgkQjjKRsyhoI8y7IQCfe9mMJFgzcpvUW+VlamRO72IV
+MbQAmKR1i+y/cvW6ZGC1EXJGtwTewM8=
+=ssWz
 -----END PGP SIGNATURE-----
 
---=-i8HOQPuHxf1j810yA2nB--
+--Signature=_Thu__8_Oct_2009_10_48_23_+1100_DVHW5aAXTTzIHNMk--
