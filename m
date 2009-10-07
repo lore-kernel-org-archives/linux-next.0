@@ -1,36 +1,37 @@
-From: Jens Axboe <jens.axboe-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH -next] drbd: needs __ratelimit()
-Date: Wed, 7 Oct 2009 19:26:26 +0200
-Message-ID: <20091007172626.GG8703@kernel.dk>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] drbd: needs __ratelimit()
+Date: Wed, 7 Oct 2009 10:21:53 -0700
+Message-ID: <20091007102153.1a19119b.randy.dunlap@oracle.com>
 References: <20091007173517.abfcfa2a.sfr@canb.auug.org.au>
-	<20091007102153.1a19119b.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20091007102153.1a19119b.randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <http://lists.linbit.com/mailman/options/drbd-dev>,
-	<mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linbit.com/pipermail/drbd-dev>
-List-Post: <mailto:drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org>
-List-Help: <mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.linbit.com/mailman/listinfo/drbd-dev>,
-	<mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=subscribe>
-Sender: drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
-Errors-To: drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
-To: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1759648AbZJGRXJ@vger.kernel.org>
+In-Reply-To: <20091007173517.abfcfa2a.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, drbd-dev@lists.linbit.com
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, jens.axboe@oracle.com
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Oct 07 2009, Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-> 
-> drbd_int.h uses __ratelimit(), so it needs to #include ratelimit.h:
-> 
-> drivers/block/drbd/drbd_int.h:1765: error: implicit declaration of function '__ratelimit'
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Thanks Randy, applied.
+drbd_int.h uses __ratelimit(), so it needs to #include ratelimit.h:
 
--- 
-Jens Axboe
+drivers/block/drbd/drbd_int.h:1765: error: implicit declaration of function '__ratelimit'
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: drbd-dev@lists.linbit.com
+---
+ drivers/block/drbd/drbd_int.h |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- linux-next-20091007.orig/drivers/block/drbd/drbd_int.h
++++ linux-next-20091007/drivers/block/drbd/drbd_int.h
+@@ -34,6 +34,7 @@
+ #include <linux/bitops.h>
+ #include <linux/slab.h>
+ #include <linux/crypto.h>
++#include <linux/ratelimit.h>
+ #include <linux/tcp.h>
+ #include <linux/mutex.h>
+ #include <linux/major.h>
