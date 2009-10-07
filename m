@@ -1,45 +1,49 @@
-From: "John W. Linville" <linville@tuxdriver.com>
-Subject: [PATCH] wireless: make WEXT_SPY and WEXT_PRIV select WEXT_CORE
-Date: Wed,  7 Oct 2009 17:07:52 -0400
-Message-ID: <1254949672-24022-1-git-send-email-linville@tuxdriver.com>
-References: <20091007105720.a2457e5b.randy.dunlap@oracle.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [PATCH] wireless: make WEXT_SPY and WEXT_PRIV select WEXT_CORE
+Date: Wed, 07 Oct 2009 14:55:38 -0700
+Message-ID: <4ACD0E5A.7060106@oracle.com>
+References: <20091007105720.a2457e5b.randy.dunlap@oracle.com> <1254949672-24022-1-git-send-email-linville@tuxdriver.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1251
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:48380 "EHLO
-	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751721AbZJGVQn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Oct 2009 17:16:43 -0400
-In-Reply-To: <20091007105720.a2457e5b.randy.dunlap@oracle.com>
+Received: from rcsinet12.oracle.com ([148.87.113.124]:40392 "EHLO
+	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754471AbZJGV4w (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Oct 2009 17:56:52 -0400
+In-Reply-To: <1254949672-24022-1-git-send-email-linville@tuxdriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-wireless@vger.kernel.org
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-wireless@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Should prevent this build error reported by Randy...
+John W. Linville wrote:
+> Should prevent this build error reported by Randy...
+> 
+> net/wireless/wext-priv.c:206: error: implicit declaration of function 'call_commit_handler'
+> make[3]: *** [net/wireless/wext-priv.o] Error 1
+> 
+> Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
+> Signed-off-by: John W. Linville <linville@tuxdriver.com>
 
-net/wireless/wext-priv.c:206: error: implicit declaration of function 'call_commit_handler'
+Sorry, it did not work for me.
+
+linux-next-20091007/net/wireless/wext-priv.c:206: error: implicit declaration of function 'call_commit_handler'
 make[3]: *** [net/wireless/wext-priv.o] Error 1
 
-Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
-Signed-off-by: John W. Linville <linville@tuxdriver.com>
----
- net/wireless/Kconfig |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+Drivers like hostap and orinoco (hermes) select WEXT_PRIV regardless
+of the setting of WEXT_CORE.  oh, and staging/ drivers do that also.
 
-diff --git a/net/wireless/Kconfig b/net/wireless/Kconfig
-index 614bdce..d3ecca3 100644
---- a/net/wireless/Kconfig
-+++ b/net/wireless/Kconfig
-@@ -12,9 +12,11 @@ config WEXT_PROC
- 
- config WEXT_SPY
- 	bool
-+	depends on WEXT_CORE
- 
- config WEXT_PRIV
- 	bool
-+	depends on WEXT_CORE
- 
- config CFG80211
- 	tristate "cfg80211 - wireless configuration API"
--- 
-1.6.2.5
+
+> @@ -12,9 +12,11 @@ config WEXT_PROC
+>  
+>  config WEXT_SPY
+>  	bool
+> +	depends on WEXT_CORE
+>  
+>  config WEXT_PRIV
+>  	bool
+> +	depends on WEXT_CORE
+>  
+>  config CFG80211
+>  	tristate "cfg80211 - wireless configuration API"
