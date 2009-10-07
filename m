@@ -1,49 +1,73 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
+From: Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>
 Subject: Re: [PATCH] wireless: make WEXT_SPY and WEXT_PRIV select WEXT_CORE
-Date: Wed, 07 Oct 2009 14:55:38 -0700
-Message-ID: <4ACD0E5A.7060106@oracle.com>
-References: <20091007105720.a2457e5b.randy.dunlap@oracle.com> <1254949672-24022-1-git-send-email-linville@tuxdriver.com>
+Date: Thu, 08 Oct 2009 00:34:02 +0200
+Message-ID: <1254954842.3713.7.camel@johannes.local>
+References: <20091007105720.a2457e5b.randy.dunlap@oracle.com>
+	 <1254949672-24022-1-git-send-email-linville@tuxdriver.com>
+	 <4ACD0E5A.7060106@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1251
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet12.oracle.com ([148.87.113.124]:40392 "EHLO
-	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754471AbZJGV4w (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Oct 2009 17:56:52 -0400
-In-Reply-To: <1254949672-24022-1-git-send-email-linville@tuxdriver.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-wireless@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature"; boundary="=-e0CVf0NC0EeLBaOtXwMm"
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <4ACD0E5A.7060106-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Cc: "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-John W. Linville wrote:
-> Should prevent this build error reported by Randy...
-> 
-> net/wireless/wext-priv.c:206: error: implicit declaration of function 'call_commit_handler'
+
+--=-e0CVf0NC0EeLBaOtXwMm
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, 2009-10-07 at 14:55 -0700, Randy Dunlap wrote:
+> John W. Linville wrote:
+> > Should prevent this build error reported by Randy...
+> >=20
+> > net/wireless/wext-priv.c:206: error: implicit declaration of function '=
+call_commit_handler'
+> > make[3]: *** [net/wireless/wext-priv.o] Error 1
+> >=20
+> > Reported-by: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+> > Signed-off-by: John W. Linville <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>
+>=20
+> Sorry, it did not work for me.
+
+> linux-next-20091007/net/wireless/wext-priv.c:206: error: implicit declara=
+tion of function 'call_commit_handler'
 > make[3]: *** [net/wireless/wext-priv.o] Error 1
-> 
-> Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
-> Signed-off-by: John W. Linville <linville@tuxdriver.com>
+>=20
+> Drivers like hostap and orinoco (hermes) select WEXT_PRIV regardless
+> of the setting of WEXT_CORE.  oh, and staging/ drivers do that also.
 
-Sorry, it did not work for me.
+But they also select WIRELESS_EXT, which should cause WEXT_CORE to be
+turned on. Is it possible that is failing?
 
-linux-next-20091007/net/wireless/wext-priv.c:206: error: implicit declaration of function 'call_commit_handler'
-make[3]: *** [net/wireless/wext-priv.o] Error 1
+johannes
 
-Drivers like hostap and orinoco (hermes) select WEXT_PRIV regardless
-of the setting of WEXT_CORE.  oh, and staging/ drivers do that also.
+--=-e0CVf0NC0EeLBaOtXwMm
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 
+-----BEGIN PGP SIGNATURE-----
 
-> @@ -12,9 +12,11 @@ config WEXT_PROC
->  
->  config WEXT_SPY
->  	bool
-> +	depends on WEXT_CORE
->  
->  config WEXT_PRIV
->  	bool
-> +	depends on WEXT_CORE
->  
->  config CFG80211
->  	tristate "cfg80211 - wireless configuration API"
+iQIcBAABAgAGBQJKzRdWAAoJEODzc/N7+QmavbMQALtPSgL2BphPT3Aw3V1x6YG0
+s0GGZSz8QNt8xBU/ZIjnAWSH7B8NTox4Kl9gZZY5VG2d5MkYv1Vpz1rWiftj1ezc
+vjfSUVWNQWa9uAZDXmlTTLbV3ag6XsY46eVwTi2jwSkuSyfTSPi9FQrXaxDk+Al8
++AkiY7Qdv5DChfkKMZGSI+1FZ3PFa/ol/YzMnXwBWq6zUH+RootUfYKG3nSlnLv2
+Tbigs2CBI0wXCkQaOqWWXkl0pM7KO2EwIq9ZB563TifLuGRcWV71k0KeY9U/ylnZ
+StfkT1w426ojxWJoljjjlstrq39T6VZgJ/zTZMNTMxRlwOogMDAiXwvbYierKcHR
+dBCadyzIExbRrGmOzDQ4xUJtUS/yO1Q3Qr/GxFn9/ZrqUAXbZECMhvTfwG7FLCwc
+RSTTnrYLjXpo8SUy3emROZSvhJAnoRyQYF8rZUAkwd6Zz9DiUbj+BYDCP0ozbI5z
+wQdfVEyxcNQTuoBi6QRySIY0N/vwN7SLDudBUawK93oNObx7LQnfTCL69nik58tb
+792auPqfTunxqBqgwqIn6CKiJ6XK6cYHUxZr2RPlguDVQUh6M7SBCejv9m4PKyy7
+2O+eG1SqNBt98ATe/TMgKZjNqgFxPtRMDopX5nFhUklncDzsC8phmM3/xUyT0NQp
+U+vyBOk//kjYIPGK4sf2
+=JxHo
+-----END PGP SIGNATURE-----
+
+--=-e0CVf0NC0EeLBaOtXwMm--
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
