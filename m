@@ -1,29 +1,48 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: [PATCH v7] RO/NX protection for loadable kernel modules
-Date: Tue, 6 Oct 2009 20:47:09 +1030
-Message-ID: <200910062047.10901.rusty@rustcorp.com.au>
-References: <817ecb6f0910050450o29ee65a1j49c27cf350b77493@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: pci tree build failure
+Date: Wed, 7 Oct 2009 12:38:21 +1100
+Message-ID: <20091007123821.043465c6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-security-module-owner@vger.kernel.org>
-In-Reply-To: <817ecb6f0910050450o29ee65a1j49c27cf350b77493@mail.gmail.com>
-Content-Disposition: inline
-Sender: linux-security-module-owner@vger.kernel.org
-To: Siarhei Liakh <sliakh.lkml@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__7_Oct_2009_12_38_21_+1100_PZKP670RRusRXtA."
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S933869AbZJGBjI@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, 5 Oct 2009 10:20:42 pm Siarhei Liakh wrote:
-> This patch is a logical extension of the protection provided by
-> CONFIG_DEBUG_RODATA to LKMs. The protection is provided by splitting
-> module_core and module_init into three logical parts each and setting
-> appropriate page access permissions for each individual section:
+--Signature=_Wed__7_Oct_2009_12_38_21_+1100_PZKP670RRusRXtA.
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, applied!
+Hi Jesse,
 
-It will be in linux-next soon, and if all goes well, 2.6.33.
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
+ERROR: "pci_set_cacheline_size" [drivers/pcmcia/pcmcia_core.ko] undefined!
+
+Caused by commit 018bc96e8e27bfcafec9357ff370bf51241a7ea7 ("pccard:
+configure CLS on attach") which neglected to EXPORT_SYMBOL
+pci_set_cacheline_size.
+
+I have used the version of the pci tree from next-20091006 for today.
+
+--=20
 Cheers,
-Rusty.
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__7_Oct_2009_12_38_21_+1100_PZKP670RRusRXtA.
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkrL8Q0ACgkQjjKRsyhoI8x81ACfSwL+80+AfzH5EA+Ka+DNXOT2
++rwAnRe7tXmfpu7GW7e29/kWAK8Xlr/H
+=cmtg
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__7_Oct_2009_12_38_21_+1100_PZKP670RRusRXtA.--
