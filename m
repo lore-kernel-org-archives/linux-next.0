@@ -1,50 +1,69 @@
-From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+From: Johannes Berg <johannes@sipsolutions.net>
 Subject: Re: [PATCH] wireless: make WEXT_SPY and WEXT_PRIV select WEXT_CORE
-Date: Wed, 07 Oct 2009 15:54:53 -0700
-Message-ID: <4ACD1C3D.3030506@oracle.com>
-References: <20091007105720.a2457e5b.randy.dunlap@oracle.com>	 <1254949672-24022-1-git-send-email-linville@tuxdriver.com>	 <4ACD0E5A.7060106@oracle.com> <1254954842.3713.7.camel@johannes.local>
+Date: Thu, 08 Oct 2009 01:14:16 +0200
+Message-ID: <1254957256.3713.10.camel@johannes.local>
+References: <20091007105720.a2457e5b.randy.dunlap@oracle.com>
+	 <1254949672-24022-1-git-send-email-linville@tuxdriver.com>
+	 <4ACD0E5A.7060106@oracle.com> <1254954842.3713.7.camel@johannes.local>
+	 <4ACD1C3D.3030506@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1251
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1254954842.3713.7.camel-YfaajirXv2244ywRPIzf9A@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>
-Cc: "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature"; boundary="=-i8HOQPuHxf1j810yA2nB"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from xc.sipsolutions.net ([83.246.72.84]:56059 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755942AbZJGXP3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Oct 2009 19:15:29 -0400
+In-Reply-To: <4ACD1C3D.3030506@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Johannes Berg wrote:
-> On Wed, 2009-10-07 at 14:55 -0700, Randy Dunlap wrote:
->> John W. Linville wrote:
->>> Should prevent this build error reported by Randy...
->>>
->>> net/wireless/wext-priv.c:206: error: implicit declaration of function 'call_commit_handler'
->>> make[3]: *** [net/wireless/wext-priv.o] Error 1
->>>
->>> Reported-by: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
->>> Signed-off-by: John W. Linville <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>
->> Sorry, it did not work for me.
-> 
->> linux-next-20091007/net/wireless/wext-priv.c:206: error: implicit declaration of function 'call_commit_handler'
->> make[3]: *** [net/wireless/wext-priv.o] Error 1
->>
->> Drivers like hostap and orinoco (hermes) select WEXT_PRIV regardless
->> of the setting of WEXT_CORE.  oh, and staging/ drivers do that also.
-> 
-> But they also select WIRELESS_EXT, which should cause WEXT_CORE to be
-> turned on. Is it possible that is failing?
 
-# CONFIG_WIRELESS is not set
-CONFIG_WIRELESS_EXT=y
-CONFIG_WEXT_SPY=y
-CONFIG_WEXT_PRIV=y
+--=-i8HOQPuHxf1j810yA2nB
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-WEXT_CORE is not enabled.  I haven't found the culprit, but I suspect "select".
+On Wed, 2009-10-07 at 15:54 -0700, Randy Dunlap wrote:
 
-but what in WIRELESS_EXT would also cause WEXT_CORE to be enabled?
+> > But they also select WIRELESS_EXT, which should cause WEXT_CORE to be
+> > turned on. Is it possible that is failing?
+>=20
+> # CONFIG_WIRELESS is not set
+> CONFIG_WIRELESS_EXT=3Dy
+> CONFIG_WEXT_SPY=3Dy
+> CONFIG_WEXT_PRIV=3Dy
+>=20
+> WEXT_CORE is not enabled.  I haven't found the culprit, but I suspect "se=
+lect".
 
-~Randy
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Interesting.
+
+> but what in WIRELESS_EXT would also cause WEXT_CORE to be enabled?
+
+Well, the way WEXT_CORE is defined as def_bool y ought to, no?
+
+johannes
+
+--=-i8HOQPuHxf1j810yA2nB
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABAgAGBQJKzSDEAAoJEODzc/N7+QmaM+kQAIgIGAE4zkKCsckaF4tY7/DA
+iXsK8Jk1GS0nBrwZJ/hM9ivYkSPORALkSWbWxH1FNuJhZ0abrea/4ZGgmicqPa6Y
+HODRn5fSb2wY3IkHs2xxkZa80HqzWUquNWLY2Ko4QAll3M2MSnVS+K99HcHVRaW0
+BfLGFWbLOzehObuwW/5s9/NNn3iqqd+oJ9Q+GIh0AcMglxdWfSpgDCazI95qCeiE
+oxjCbob/Bmko4qqILTIwSC1lqpo+Fr0pPZlZvCeYYEKtT1BUSYXFUJmEFVvKuNbe
+nRHcXiDywe7UJH3R+UH3tNMyIA8BaFy2L/u68ixok0zfCSJIHvGUXgssb8GUHEMG
+FMjyEZJC+zqlLVX+GiobRmi0tvrZ8K4vnFWc4sh6dzQAz6TeK5zx35iGipf6oMU/
+NNZo0dxoRzVmYOR2PJ44mo7fMJrtAShg/KbmSwiEsigjuNLE5Y6/ehF1hRN4672b
+jNSC99YpdUdt9/i+kHQ8Ak6BnEI+A+mZl+VKeq/u84/U6R1fox+g7elWZNnWasrt
++MlctL4MiXmdL8QSiWkJE4y133KKKC2YKQbIqf1uYW88k2hV5oXVRV18qVxdj52r
+fTxcx3J/W9vva9kH0YSKIjAHaXhUeRICKXxEsh4ZoocCN1M1RKYz1eTsaWBN/3G7
+qRs+G5ya5Sc0bPCvydGD
+=sWN5
+-----END PGP SIGNATURE-----
+
+--=-i8HOQPuHxf1j810yA2nB--
