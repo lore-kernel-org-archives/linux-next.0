@@ -1,71 +1,64 @@
 From: Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>
-Subject: Re: [PATCH] wireless: make WEXT_SPY and WEXT_PRIV select WEXT_CORE
-Date: Thu, 08 Oct 2009 00:34:02 +0200
-Message-ID: <1254954842.3713.7.camel@johannes.local>
-References: <20091007105720.a2457e5b.randy.dunlap@oracle.com>
-	 <1254949672-24022-1-git-send-email-linville@tuxdriver.com>
-	 <4ACD0E5A.7060106@oracle.com>
+Subject: Re: linux-next: Tree for October 7 (libertas build failure)
+Date: Thu, 08 Oct 2009 00:34:55 +0200
+Message-ID: <1254954895.3713.8.camel@johannes.local>
+References: <20091007173517.abfcfa2a.sfr@canb.auug.org.au>
+	 <20091007105210.409a1991.randy.dunlap@oracle.com>
+	 <1254939120.16001.45.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature"; boundary="=-e0CVf0NC0EeLBaOtXwMm"
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature"; boundary="=-JuxiytzgcjjyFdQt2Mmq"
 Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4ACD0E5A.7060106-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1254939120.16001.45.camel-bi+AKbBUZKY6gyzm1THtWbp2dZbC/Bob@public.gmane.org>
 Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dan Williams <dcbw-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Cc: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, libertas-dev-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Holger Schurig <hs4233-x6+DxXLjN1AJvtFkdXX2Hg4jNU5vUVPG@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
 
---=-e0CVf0NC0EeLBaOtXwMm
+--=-JuxiytzgcjjyFdQt2Mmq
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2009-10-07 at 14:55 -0700, Randy Dunlap wrote:
-> John W. Linville wrote:
-> > Should prevent this build error reported by Randy...
-> >=20
-> > net/wireless/wext-priv.c:206: error: implicit declaration of function '=
-call_commit_handler'
-> > make[3]: *** [net/wireless/wext-priv.o] Error 1
-> >=20
-> > Reported-by: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-> > Signed-off-by: John W. Linville <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>
->=20
-> Sorry, it did not work for me.
+On Wed, 2009-10-07 at 11:12 -0700, Dan Williams wrote:
 
-> linux-next-20091007/net/wireless/wext-priv.c:206: error: implicit declara=
-tion of function 'call_commit_handler'
-> make[3]: *** [net/wireless/wext-priv.o] Error 1
+> > drivers/built-in.o: In function `lbs_cfg_free':
+> > (.text+0x3479e0): undefined reference to `wiphy_unregister'
+> > drivers/built-in.o: In function `lbs_cfg_free':
+> > (.text+0x3479e7): undefined reference to `wiphy_free'
+> > drivers/built-in.o: In function `lbs_cfg_register':
+> > (.text+0x347a52): undefined reference to `wiphy_register'
+> > drivers/built-in.o: In function `lbs_cfg_alloc':
+> > (.text+0x347acf): undefined reference to `wiphy_new'
 >=20
-> Drivers like hostap and orinoco (hermes) select WEXT_PRIV regardless
-> of the setting of WEXT_CORE.  oh, and staging/ drivers do that also.
+> Holger, perhaps we need some Kconfig updates to select cfg80211?
 
-But they also select WIRELESS_EXT, which should cause WEXT_CORE to be
-turned on. Is it possible that is failing?
+Depend on, please -- cfg80211 has dependencies that would otherwise be
+messed up.
 
 johannes
 
---=-e0CVf0NC0EeLBaOtXwMm
+--=-JuxiytzgcjjyFdQt2Mmq
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAABAgAGBQJKzRdWAAoJEODzc/N7+QmavbMQALtPSgL2BphPT3Aw3V1x6YG0
-s0GGZSz8QNt8xBU/ZIjnAWSH7B8NTox4Kl9gZZY5VG2d5MkYv1Vpz1rWiftj1ezc
-vjfSUVWNQWa9uAZDXmlTTLbV3ag6XsY46eVwTi2jwSkuSyfTSPi9FQrXaxDk+Al8
-+AkiY7Qdv5DChfkKMZGSI+1FZ3PFa/ol/YzMnXwBWq6zUH+RootUfYKG3nSlnLv2
-Tbigs2CBI0wXCkQaOqWWXkl0pM7KO2EwIq9ZB563TifLuGRcWV71k0KeY9U/ylnZ
-StfkT1w426ojxWJoljjjlstrq39T6VZgJ/zTZMNTMxRlwOogMDAiXwvbYierKcHR
-dBCadyzIExbRrGmOzDQ4xUJtUS/yO1Q3Qr/GxFn9/ZrqUAXbZECMhvTfwG7FLCwc
-RSTTnrYLjXpo8SUy3emROZSvhJAnoRyQYF8rZUAkwd6Zz9DiUbj+BYDCP0ozbI5z
-wQdfVEyxcNQTuoBi6QRySIY0N/vwN7SLDudBUawK93oNObx7LQnfTCL69nik58tb
-792auPqfTunxqBqgwqIn6CKiJ6XK6cYHUxZr2RPlguDVQUh6M7SBCejv9m4PKyy7
-2O+eG1SqNBt98ATe/TMgKZjNqgFxPtRMDopX5nFhUklncDzsC8phmM3/xUyT0NQp
-U+vyBOk//kjYIPGK4sf2
-=JxHo
+iQIcBAABAgAGBQJKzReIAAoJEODzc/N7+QmaCgAP/1y+IhIC2lLiqthiOSO23gNf
+ecUTj1Gxs1AXltLj1azkul7WvhLcBuH0O2Y0NdgQrwBJO0tQqOiG4fySvvA71AzT
+a7Hx/NN6cV3qKCj7Iyx6FFHIj/Sm5d8xRoySm4vAmrkemj0Pk5Dz5YVFZHIGvizp
+uU/QRph4Do7R51XR22ePB8NxxfM3LDh9oNLjxkEQ9khJg4PpCRS5c99VLuwKaeOZ
+MQ6fD0yTT+5iAbHonRIGiBdlVCF/5Mbs+cDwJwWU0nJsMy4RHKaHH7x/UvHuorjH
+ygS8gHWaiYbIvJCyO+BdHwqHRRB8RTx5ys7NyjJEgb7SlfEg6wrU18q2pkIjmZ9Z
+/R1LX/zqKjX/42GFOAw9SkW1njm7NfwjLfkzOGp4CB7UnMpMZQc/ZUYBlGl6udQ8
+NULaMR5hBXOZhRF5iwTB8qmT50Xi2QaNjSc8bAcIysAy3I50cP/7K6ttBxzTRzJW
+oMtAE9RkZR1x/i0wJCviABjWeU0tmAdYaFI7YQgduw3x3vG63nDiU511rg866YIL
+DDdo4kt21AIqKsydTmeVUWUyOpl4JxY1uLuy+HTNi4oMaiZIBGeeExjf1Xxo9Kyg
+z8aMKUBcQcChhcmth/yiBDeZhGsEl2IkSClXOhJHzJHCTAF2GRfMbCld2zBTaqtD
+dJ+/KT3GwnWY0YxFFuZk
+=CkZN
 -----END PGP SIGNATURE-----
 
---=-e0CVf0NC0EeLBaOtXwMm--
+--=-JuxiytzgcjjyFdQt2Mmq--
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
