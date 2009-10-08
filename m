@@ -1,55 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: i7core_edac tree
-Date: Fri, 9 Oct 2009 10:16:53 +1100
-Message-ID: <20091009101653.44b2f448.sfr@canb.auug.org.au>
-References: <20091008142631.67812211@pedra.chehab.org>
+From: David Rientjes <rientjes@google.com>
+Subject: Re: [PATCH] linux-next: 20090929 - android driver build breaks
+Date: Thu, 8 Oct 2009 16:24:46 -0700 (PDT)
+Message-ID: <alpine.DEB.1.00.0910081621340.10613@chino.kir.corp.google.com>
+References: <20090929140404.dfb2c5f5.sfr@canb.auug.org.au> <20090929152027.GC4373@linux.vnet.ibm.com> <20091008224725.GA22949@kroah.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__9_Oct_2009_10_16_53_+1100_RU.0Ouj4p.0DS_+o"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35671 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933033AbZJHXRi (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 8 Oct 2009 19:17:38 -0400
-In-Reply-To: <20091008142631.67812211@pedra.chehab.org>
+Received: from smtp-out.google.com ([216.239.33.17]:35406 "EHLO
+	smtp-out.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756818AbZJHX0B (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Oct 2009 19:26:01 -0400
+In-Reply-To: <20091008224725.GA22949@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: linux-next@vger.kernel.org, dougthompson@xmission.com, bluesmoke-devel@lists.sourceforge.net
+To: Greg KH <greg@kroah.com>
+Cc: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, Greg Kroah-Hartman <gregkh@suse.de>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, sfr@canb.auug.org.au, Andrew Morton <akpm@linux-foundation.org>, Arve Hjonnevag <arve@android.com>, San Mehat <san@android.com>
 
---Signature=_Fri__9_Oct_2009_10_16_53_+1100_RU.0Ouj4p.0DS_+o
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 8 Oct 2009, Greg KH wrote:
 
-Hi Mauro,
+> > Hi Greg,
+> > 
+> > 	next-20090929 randconfig build breaks with
+> > CONFIG_ANDROID_LOW_MEMORY_KILLER=y
+> 
+> Due to no support from Google, I've dropped the android code from the
+> staging tree for 2.6.33.
+> 
 
-On Thu, 8 Oct 2009 14:26:31 -0300 Mauro Carvalho Chehab <mchehab@redhat.com=
-> wrote:
->
-> Could you please add my i7core_edac tree to linux-next?
->=20
-> It is available at branch linux-next:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/i7core.git linux-n=
-ext
+What are you specifically referring to?  Kamalesh provided a patch[*] that 
+fixes this particular compile error, which you said you were queueing.
 
-That tree has no "linux-next" branch ...
+If it's a criticism of the staleness of the Android code within the 
+staging tree or no recent activity, then we should probably loop in some 
+Android developers to find our about their plans.  I've added them to the 
+cc.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__9_Oct_2009_10_16_53_+1100_RU.0Ouj4p.0DS_+o
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkrOcuUACgkQjjKRsyhoI8zScACgqKnYj7z75iKM5njOo0miIijt
-aGgAoJB2uDxH9y53UEnRPdvGjpYOHX1H
-=qyDk
------END PGP SIGNATURE-----
-
---Signature=_Fri__9_Oct_2009_10_16_53_+1100_RU.0Ouj4p.0DS_+o--
+ [*] http://marc.info/?l=linux-kernel&m=125423765013043
