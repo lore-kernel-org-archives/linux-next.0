@@ -1,58 +1,47 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Subject: Re: [PATCH] wireless: make WEXT_SPY and WEXT_PRIV select WEXT_CORE
-Date: Thu, 08 Oct 2009 20:29:23 +0200
-Message-ID: <1255026563.3713.28.camel@johannes.local>
-References: <20091007105720.a2457e5b.randy.dunlap@oracle.com>
-	 <1254949672-24022-1-git-send-email-linville@tuxdriver.com>
-	 <4ACD0E5A.7060106@oracle.com> <1254954842.3713.7.camel@johannes.local>
-	 <4ACD1C3D.3030506@oracle.com> <1254957256.3713.10.camel@johannes.local>
-	 <20091007171235.d40f0cc2.randy.dunlap@oracle.com>
-	 <1254995282.3713.18.camel@johannes.local>
-	 <20091008080615.09c8b803.randy.dunlap@oracle.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: [PATCH suspend-2.6#linux-next] PM / freezer: add missing include
+Date: Thu, 8 Oct 2009 22:51:48 +0200
+Message-ID: <200910082251.48381.rjw@sisk.pl>
+References: <20091008153051.37f043fa.sfr@canb.auug.org.au> <4ACDAF18.2030705@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1759484AbZJHSus@vger.kernel.org>
-In-Reply-To: <20091008080615.09c8b803.randy.dunlap@oracle.com>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1760080AbZJHUvA@vger.kernel.org>
+In-Reply-To: <4ACDAF18.2030705@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Thu, 2009-10-08 at 08:06 -0700, Randy Dunlap wrote:
-
-> > It's kinda strange though that you can select wireless drivers without
-> > selecting WIRELESS. Maybe the solution is as simple as making WLAN
-> > (drivers/net/wireless/Kconfig) depend on WIRELESS?
+On Thursday 08 October 2009, Tejun Heo wrote:
+> Fix compile failure caused by a48145a7cbf3b0555ba3ad61aaf2c38719bab95d
+> forgetting to include delay.h.
 > 
-> Yes, I think that would be a very good start.
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-On the other hand, of course, the whole WIRELESS thing is somewhat
-stupid. How about this?
+I folded it into the original patch and pushed the updated tree.
 
-johannes
+Thanks,
+Rafael
 
-From: Johannes Berg <johannes@sipsolutions.net>
-Subject: wireless: make wireless drivers select core
 
-It is somewhat non-sensical to allow selecting wireless
-drivers without showing wireless core code options, and
-since the wext refactoring this has made it possible to
-generate configurations that will not build. Avoid this
-and make wireless drivers select the wireless options.
-
-Signed-off-by: Johannes Berg <johannes@sipsolutions.net>
----
- drivers/net/wireless/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
-
---- wireless-testing.orig/drivers/net/wireless/Kconfig	2009-10-08 20:25:04.000000000 +0200
-+++ wireless-testing/drivers/net/wireless/Kconfig	2009-10-08 20:27:38.000000000 +0200
-@@ -5,6 +5,7 @@
- menuconfig WLAN
- 	bool "Wireless LAN"
- 	depends on !S390
-+	select WIRELESS
- 	default y
- 	---help---
- 	  This section contains all the pre 802.11 and 802.11 wireless
+> ---
+>  kernel/power/process.c |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/kernel/power/process.c b/kernel/power/process.c
+> index 66161f0..5ade1bd 100644
+> --- a/kernel/power/process.c
+> +++ b/kernel/power/process.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/module.h>
+>  #include <linux/syscalls.h>
+>  #include <linux/freezer.h>
+> +#include <linux/delay.h>
+>  
+>  /* 
+>   * Timeout for stopping processes
+> 
+> 
