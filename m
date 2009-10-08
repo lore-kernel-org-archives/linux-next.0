@@ -1,53 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Changes to gregkh's kernel trees
-Date: Fri, 9 Oct 2009 10:18:15 +1100
-Message-ID: <20091009101815.1c61df54.sfr@canb.auug.org.au>
-References: <20091008184150.GA20399@kroah.com>
+Subject: Re: i7core_edac tree
+Date: Fri, 9 Oct 2009 10:16:53 +1100
+Message-ID: <20091009101653.44b2f448.sfr@canb.auug.org.au>
+References: <20091008142631.67812211@pedra.chehab.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__9_Oct_2009_10_18_15_+1100_9qoIzOYDvyOzvcz5"
+ boundary="Signature=_Fri__9_Oct_2009_10_16_53_+1100_RU.0Ouj4p.0DS_+o"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35705 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35671 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759965AbZJHXS5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 8 Oct 2009 19:18:57 -0400
-In-Reply-To: <20091008184150.GA20399@kroah.com>
+	id S933033AbZJHXRi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 8 Oct 2009 19:17:38 -0400
+In-Reply-To: <20091008142631.67812211@pedra.chehab.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: linux-next@vger.kernel.org, dougthompson@xmission.com, bluesmoke-devel@lists.sourceforge.net
 
---Signature=_Fri__9_Oct_2009_10_18_15_+1100_9qoIzOYDvyOzvcz5
+--Signature=_Fri__9_Oct_2009_10_16_53_+1100_RU.0Ouj4p.0DS_+o
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Mauro,
 
-On Thu, 8 Oct 2009 11:41:50 -0700 Greg KH <greg@kroah.com> wrote:
+On Thu, 8 Oct 2009 14:26:31 -0300 Mauro Carvalho Chehab <mchehab@redhat.com=
+> wrote:
 >
-> I've added a new tree to my kernel trees, the "staging.current" one.  It
-> works like the other "usb.current", "tty.current" and others in that it
-> contains patches from the staging tree that are going to be sent to
-> Linus for the "current" kernel release.
+> Could you please add my i7core_edac tree to linux-next?
+>=20
+> It is available at branch linux-next:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/i7core.git linux-n=
+ext
 
-I have added staging.current from today.
+That tree has no "linux-next" branch ...
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__9_Oct_2009_10_18_15_+1100_9qoIzOYDvyOzvcz5
+--Signature=_Fri__9_Oct_2009_10_16_53_+1100_RU.0Ouj4p.0DS_+o
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkrOczcACgkQjjKRsyhoI8ybVgCgiTP61oMbx+V0HXpFNrUxzj17
-0PkAnjh7SIz+ybLBbKyYC2pTdFICYpzH
-=lEAI
+iEYEARECAAYFAkrOcuUACgkQjjKRsyhoI8zScACgqKnYj7z75iKM5njOo0miIijt
+aGgAoJB2uDxH9y53UEnRPdvGjpYOHX1H
+=qyDk
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__9_Oct_2009_10_18_15_+1100_9qoIzOYDvyOzvcz5--
+--Signature=_Fri__9_Oct_2009_10_16_53_+1100_RU.0Ouj4p.0DS_+o--
