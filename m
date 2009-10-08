@@ -1,79 +1,81 @@
-From: Arjan van de Ven <arjan@infradead.org>
-Subject: Re: linux-next: build warnings (buffer size is not provably
- correct)
-Date: Thu, 8 Oct 2009 06:42:21 -0700
-Message-ID: <20091008064221.0453925a@infradead.org>
-References: <20091008154710.a351a56b.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [PATCH] wireless: make WEXT_SPY and WEXT_PRIV select WEXT_CORE
+Date: Thu, 8 Oct 2009 08:06:15 -0700
+Message-ID: <20091008080615.09c8b803.randy.dunlap@oracle.com>
+References: <20091007105720.a2457e5b.randy.dunlap@oracle.com>
+	<1254949672-24022-1-git-send-email-linville@tuxdriver.com>
+	<4ACD0E5A.7060106@oracle.com>
+	<1254954842.3713.7.camel@johannes.local>
+	<4ACD1C3D.3030506@oracle.com>
+	<1254957256.3713.10.camel@johannes.local>
+	<20091007171235.d40f0cc2.randy.dunlap@oracle.com>
+	<1254995282.3713.18.camel@johannes.local>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:45265 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757971AbZJHNmq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Oct 2009 09:42:46 -0400
-In-Reply-To: <20091008154710.a351a56b.sfr@canb.auug.org.au>
+Received: from acsinet11.oracle.com ([141.146.126.233]:25331 "EHLO
+	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757087AbZJHPLZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Oct 2009 11:11:25 -0400
+In-Reply-To: <1254995282.3713.18.camel@johannes.local>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Morris <jmorris@namei.org>, David Howells <dhowells@redhat.com>, Wim Van Sebroeck <wim@iguana.be>, Al Viro <viro@zeniv.linux.org.uk>, akpm@linuxfoundation.org
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 8 Oct 2009 15:47:10 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Thu, 08 Oct 2009 11:48:02 +0200 Johannes Berg wrote:
 
-> Hi all,
+> On Wed, 2009-10-07 at 17:12 -0700, Randy Dunlap wrote:
 > 
-> Today's linux-next build (i386 defconfig) produced these warnings:
+> > > > # CONFIG_WIRELESS is not set
+> > > > CONFIG_WIRELESS_EXT=y
+> > > > CONFIG_WEXT_SPY=y
+> > > > CONFIG_WEXT_PRIV=y
+> > > > 
+> > > > WEXT_CORE is not enabled.  I haven't found the culprit, but I suspect "select".
+> > > 
+> > > Interesting.
+> > > 
+> > > > but what in WIRELESS_EXT would also cause WEXT_CORE to be enabled?
+> > > 
+> > > Well, the way WEXT_CORE is defined as def_bool y ought to, no?
+> > 
+> > Ah, I see what you mean.
+> > 
+> > Here's what's happening:
+> > 
+> > net/wireless/Kconfig says:
+> > 
+> > config WEXT_CORE
+> > 	def_bool y
+> > 	depends on CFG80211_WEXT || WIRELESS_EXT
+> > 
+> > 
+> > and net/Kconfig says:
+> > 
+> > if WIRELESS
+> > 
+> > source "net/wireless/Kconfig"
+> > source "net/mac80211/Kconfig"
+> > 
+> > endif # WIRELESS
+> > 
+> > 
+> > so WEXT_CORE actually depends on NET && WIRELESS && (CFG80211_WEXT || WIRELESS_EXT)
+> > (that's what xconfig shows me).
+> > But WIRELESS is not enabled.  Pooh.
+> > 
+> > I was already toying with making CONFIG_WIRELESS a real/usable kconfig symbol.
+> > That may have to be done unless someone else comes up with another solution.
 > 
-> In file included from arch/x86/include/asm/uaccess.h:572,
->                  from kernel/capability.c:18:
-> arch/x86/include/asm/uaccess_32.h: In function 'sys_capset':
+> Ah!
+> 
+> It's kinda strange though that you can select wireless drivers without
+> selecting WIRELESS. Maybe the solution is as simple as making WLAN
+> (drivers/net/wireless/Kconfig) depend on WIRELESS?
 
-the following needs to go somewhere... Andrew ?
+Yes, I think that would be a very good start.
 
-From: Arjan van de Ven <arjan@linux.intel.com>
-Subject: [PATCH 7/9] Simplify bound checks in capabilities for copy_from_user
-CC: James Morris <jmorris@namei.org>
-
-The capabilities syscall has a copy_from_user() call where gcc currently
-cannot prove to itself that the copy is always within bounds.
-
-This patch adds a very explicity bound check to prove to gcc that 
-this copy_from_user cannot overflow its destination buffer.
-
-Signed-off-by: Arjan van de Ven <arjan@linux.intel.com>
-Acked-by: James Morris <jmorris@namei.org>
-
-diff --git a/kernel/capability.c b/kernel/capability.c
-index 4e17041..204f11f 100644
---- a/kernel/capability.c
-+++ b/kernel/capability.c
-@@ -238,7 +241,7 @@ SYSCALL_DEFINE2(capget, cap_user_header_t, header, cap_user_data_t, dataptr)
- SYSCALL_DEFINE2(capset, cap_user_header_t, header, const cap_user_data_t, data)
- {
- 	struct __user_cap_data_struct kdata[_KERNEL_CAPABILITY_U32S];
--	unsigned i, tocopy;
-+	unsigned i, tocopy, copybytes;
- 	kernel_cap_t inheritable, permitted, effective;
- 	struct cred *new;
- 	int ret;
-@@ -255,8 +258,11 @@ SYSCALL_DEFINE2(capset, cap_user_header_t, header, const cap_user_data_t, data)
- 	if (pid != 0 && pid != task_pid_vnr(current))
- 		return -EPERM;
- 
--	if (copy_from_user(&kdata, data,
--			   tocopy * sizeof(struct __user_cap_data_struct)))
-+	copybytes = tocopy * sizeof(struct __user_cap_data_struct);
-+	if (copybytes > sizeof(kdata))
-+		return -EFAULT;
-+
-+	if (copy_from_user(&kdata, data, copybytes))
- 		return -EFAULT;
- 
- 	for (i = 0; i < tocopy; i++) {
-
-
--- 
-Arjan van de Ven 	Intel Open Source Technology Centre
-For development, discussion and tips for power savings, 
-visit http://www.lesswatts.org
+---
+~Randy
