@@ -1,58 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the drm tree with Linus' tree
-Date: Thu, 8 Oct 2009 14:44:55 +1100
-Message-ID: <20091008144455.f89b3745.sfr@canb.auug.org.au>
-References: <20091006132857.5bd1cc3a.sfr@canb.auug.org.au>
-	<20091008133529.eda6d568.sfr@canb.auug.org.au>
-	<alpine.DEB.2.00.0910080437120.14330@skynet.skynet.ie>
+Subject: linux-next: pci tree build warning
+Date: Thu, 8 Oct 2009 15:27:25 +1100
+Message-ID: <20091008152725.1351485a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__8_Oct_2009_14_44_55_+1100_GjHZl+FCZr6TYQNJ"
+ boundary="Signature=_Thu__8_Oct_2009_15_27_25_+1100_+Pmt_soVCwyp6Dyq"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35061 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34563 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752356AbZJHDpk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 7 Oct 2009 23:45:40 -0400
-In-Reply-To: <alpine.DEB.2.00.0910080437120.14330@skynet.skynet.ie>
+	id S1751040AbZJHE2K (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 8 Oct 2009 00:28:10 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jerome Glisse <jglisse@redhat.com>
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
 
---Signature=_Thu__8_Oct_2009_14_44_55_+1100_GjHZl+FCZr6TYQNJ
+--Signature=_Thu__8_Oct_2009_15_27_25_+1100_+Pmt_soVCwyp6Dyq
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi Jesse,
 
-On Thu, 8 Oct 2009 04:38:04 +0100 (IST) Dave Airlie <airlied@linux.ie> wrot=
-e:
->
-> I'm testing the result of a merge at the moment, but I don't want to be=20
-> premature with pushing it out.
+Today's linux-next build (powerpc allnoconfig) produced this warning:
 
-Very sensible, thanks.
+WARNING: drivers/pci/built-in.o(.devinit.text+0x86a): Section mismatch in r=
+eference from the function pci_init() to the variable .init.data:pci_dfl_ca=
+che_line_size
+The function __devinit pci_init() references
+a variable __initdata pci_dfl_cache_line_size.
+If pci_dfl_cache_line_size is only used by pci_init then
+annotate pci_dfl_cache_line_size with a matching annotation.
 
-> hopefully be there tomorrow.
-
-Excellent.
-
+Introduced by commit b20dd110d21aac94b3f4063cffbcf9718656ce51 ("PCI:
+determine CLS more intelligently").
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__8_Oct_2009_14_44_55_+1100_GjHZl+FCZr6TYQNJ
+--Signature=_Thu__8_Oct_2009_15_27_25_+1100_+Pmt_soVCwyp6Dyq
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkrNYDcACgkQjjKRsyhoI8xuoQCeKs+35808BX7WktPqlmXkJ3u8
-Z0gAn37rCVZoyf4Qe8lqMWhFCzp8Doqj
-=KKa8
+iEYEARECAAYFAkrNai0ACgkQjjKRsyhoI8xg0ACfTLrfHSh3czsu9ZE4v8f+Dmzd
+MfQAnjmbn7NM4muoIA/J318T74lW8Oa8
+=mTe2
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__8_Oct_2009_14_44_55_+1100_GjHZl+FCZr6TYQNJ--
+--Signature=_Thu__8_Oct_2009_15_27_25_+1100_+Pmt_soVCwyp6Dyq--
