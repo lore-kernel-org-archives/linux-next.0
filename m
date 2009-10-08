@@ -1,81 +1,44 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH] wireless: make WEXT_SPY and WEXT_PRIV select WEXT_CORE
-Date: Thu, 8 Oct 2009 08:06:15 -0700
-Message-ID: <20091008080615.09c8b803.randy.dunlap@oracle.com>
-References: <20091007105720.a2457e5b.randy.dunlap@oracle.com>
-	<1254949672-24022-1-git-send-email-linville@tuxdriver.com>
-	<4ACD0E5A.7060106@oracle.com>
-	<1254954842.3713.7.camel@johannes.local>
-	<4ACD1C3D.3030506@oracle.com>
-	<1254957256.3713.10.camel@johannes.local>
-	<20091007171235.d40f0cc2.randy.dunlap@oracle.com>
-	<1254995282.3713.18.camel@johannes.local>
+From: Mauro Carvalho Chehab <mchehab@redhat.com>
+Subject: i7core_edac tree
+Date: Thu, 8 Oct 2009 14:26:31 -0300
+Message-ID: <20091008142631.67812211@pedra.chehab.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet11.oracle.com ([141.146.126.233]:25331 "EHLO
-	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757087AbZJHPLZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Oct 2009 11:11:25 -0400
-In-Reply-To: <1254995282.3713.18.camel@johannes.local>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <bluesmoke-devel-bounces@lists.sourceforge.net>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/bluesmoke-devel>,
+	<mailto:bluesmoke-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=bluesmoke-devel>
+List-Post: <mailto:bluesmoke-devel@lists.sourceforge.net>
+List-Help: <mailto:bluesmoke-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/bluesmoke-devel>,
+	<mailto:bluesmoke-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: bluesmoke-devel-bounces@lists.sourceforge.net
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, bluesmoke-devel@lists.sourceforge.net, dougthompson@xmission.com
+List-Id: linux-next.vger.kernel.org
 
-On Thu, 08 Oct 2009 11:48:02 +0200 Johannes Berg wrote:
+Hi Stephen,
 
-> On Wed, 2009-10-07 at 17:12 -0700, Randy Dunlap wrote:
-> 
-> > > > # CONFIG_WIRELESS is not set
-> > > > CONFIG_WIRELESS_EXT=y
-> > > > CONFIG_WEXT_SPY=y
-> > > > CONFIG_WEXT_PRIV=y
-> > > > 
-> > > > WEXT_CORE is not enabled.  I haven't found the culprit, but I suspect "select".
-> > > 
-> > > Interesting.
-> > > 
-> > > > but what in WIRELESS_EXT would also cause WEXT_CORE to be enabled?
-> > > 
-> > > Well, the way WEXT_CORE is defined as def_bool y ought to, no?
-> > 
-> > Ah, I see what you mean.
-> > 
-> > Here's what's happening:
-> > 
-> > net/wireless/Kconfig says:
-> > 
-> > config WEXT_CORE
-> > 	def_bool y
-> > 	depends on CFG80211_WEXT || WIRELESS_EXT
-> > 
-> > 
-> > and net/Kconfig says:
-> > 
-> > if WIRELESS
-> > 
-> > source "net/wireless/Kconfig"
-> > source "net/mac80211/Kconfig"
-> > 
-> > endif # WIRELESS
-> > 
-> > 
-> > so WEXT_CORE actually depends on NET && WIRELESS && (CFG80211_WEXT || WIRELESS_EXT)
-> > (that's what xconfig shows me).
-> > But WIRELESS is not enabled.  Pooh.
-> > 
-> > I was already toying with making CONFIG_WIRELESS a real/usable kconfig symbol.
-> > That may have to be done unless someone else comes up with another solution.
-> 
-> Ah!
-> 
-> It's kinda strange though that you can select wireless drivers without
-> selecting WIRELESS. Maybe the solution is as simple as making WLAN
-> (drivers/net/wireless/Kconfig) depend on WIRELESS?
+Could you please add my i7core_edac tree to linux-next?
 
-Yes, I think that would be a very good start.
+It is available at branch linux-next:
+	git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/i7core.git linux-next
 
----
-~Randy
+This tree contains the driver for Nehalem memory controller EDAC driver.
+
+My original intention were to submit it upstream, but the driver review were
+delayed, and they required some changes that it is better to test, letting it to
+be added upstream for 2.6.33.
+
+-- 
+
+Cheers,
+Mauro
+
+------------------------------------------------------------------------------
+Come build with us! The BlackBerry(R) Developer Conference in SF, CA
+is the only developer event you need to attend this year. Jumpstart your
+developing skills, take BlackBerry mobile applications to market and stay 
+ahead of the curve. Join us from November 9 - 12, 2009. Register now!
+http://p.sf.net/sfu/devconference
