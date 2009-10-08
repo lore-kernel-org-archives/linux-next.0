@@ -1,36 +1,105 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: [PATCH suspend-2.6#linux-next] PM / freezer: add missing include
-Date: Thu, 08 Oct 2009 18:21:28 +0900
-Message-ID: <4ACDAF18.2030705@kernel.org>
-References: <20091008153051.37f043fa.sfr@canb.auug.org.au>
+From: Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>
+Subject: Re: [PATCH] wireless: make WEXT_SPY and WEXT_PRIV select WEXT_CORE
+Date: Thu, 08 Oct 2009 11:48:02 +0200
+Message-ID: <1254995282.3713.18.camel@johannes.local>
+References: <20091007105720.a2457e5b.randy.dunlap@oracle.com>
+	 <1254949672-24022-1-git-send-email-linville@tuxdriver.com>
+	 <4ACD0E5A.7060106@oracle.com> <1254954842.3713.7.camel@johannes.local>
+	 <4ACD1C3D.3030506@oracle.com> <1254957256.3713.10.camel@johannes.local>
+	 <20091007171235.d40f0cc2.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756470AbZJHJWg@vger.kernel.org>
-In-Reply-To: <20091008153051.37f043fa.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature"; boundary="=-dfkZ1gzpcmc9jolCSbew"
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20091007171235.d40f0cc2.randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Cc: "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-next.vger.kernel.org
 
-Fix compile failure caused by a48145a7cbf3b0555ba3ad61aaf2c38719bab95d
-forgetting to include delay.h.
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- kernel/power/process.c |    1 +
- 1 file changed, 1 insertion(+)
+--=-dfkZ1gzpcmc9jolCSbew
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/kernel/power/process.c b/kernel/power/process.c
-index 66161f0..5ade1bd 100644
---- a/kernel/power/process.c
-+++ b/kernel/power/process.c
-@@ -14,6 +14,7 @@
- #include <linux/module.h>
- #include <linux/syscalls.h>
- #include <linux/freezer.h>
-+#include <linux/delay.h>
- 
- /* 
-  * Timeout for stopping processes
+On Wed, 2009-10-07 at 17:12 -0700, Randy Dunlap wrote:
+
+> > > # CONFIG_WIRELESS is not set
+> > > CONFIG_WIRELESS_EXT=3Dy
+> > > CONFIG_WEXT_SPY=3Dy
+> > > CONFIG_WEXT_PRIV=3Dy
+> > >=20
+> > > WEXT_CORE is not enabled.  I haven't found the culprit, but I suspect=
+ "select".
+> >=20
+> > Interesting.
+> >=20
+> > > but what in WIRELESS_EXT would also cause WEXT_CORE to be enabled?
+> >=20
+> > Well, the way WEXT_CORE is defined as def_bool y ought to, no?
+>=20
+> Ah, I see what you mean.
+>=20
+> Here's what's happening:
+>=20
+> net/wireless/Kconfig says:
+>=20
+> config WEXT_CORE
+> 	def_bool y
+> 	depends on CFG80211_WEXT || WIRELESS_EXT
+>=20
+>=20
+> and net/Kconfig says:
+>=20
+> if WIRELESS
+>=20
+> source "net/wireless/Kconfig"
+> source "net/mac80211/Kconfig"
+>=20
+> endif # WIRELESS
+>=20
+>=20
+> so WEXT_CORE actually depends on NET && WIRELESS && (CFG80211_WEXT || WIR=
+ELESS_EXT)
+> (that's what xconfig shows me).
+> But WIRELESS is not enabled.  Pooh.
+>=20
+> I was already toying with making CONFIG_WIRELESS a real/usable kconfig sy=
+mbol.
+> That may have to be done unless someone else comes up with another soluti=
+on.
+
+Ah!
+
+It's kinda strange though that you can select wireless drivers without
+selecting WIRELESS. Maybe the solution is as simple as making WLAN
+(drivers/net/wireless/Kconfig) depend on WIRELESS?
+
+johannes
+
+--=-dfkZ1gzpcmc9jolCSbew
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABAgAGBQJKzbVPAAoJEODzc/N7+QmakPEP/RMvVJ8rGd03pyvZ9/NjTewZ
+l/zyyE6HgrJE+nH73NOVUvF1MjJU/6mfYpvhuiSUozA5thzASE6qYVHwRXsn42KZ
+lWN4Be0p8yew/RoVmCT6jqcsKNXfcCr/1bV5esB2UqcdLUiR0urUzAZs25iyPtW0
+AXOcG/AxtJkfHp59oqesEixguJ26Soid0C3MHYRW11cW3MwrOBsZbPiplhlWRxDz
+k4y7KlknrMCq9gxmA27mqY2VQNgD/TBcR6zeqUYBdnP1uUyW8kKLCU7Q6Y1hvDk6
+gbTTHI+5SYeoQiXIE61iq1SYACfuCAb82ZZG9LpTF4D1pn9rcXtAKyQxP7z/VXnm
+7XCojJwIlqbTQcK0ItQBH1izfgiYL1k4D7Re2L7cy7w0TwGyjPrGabQBj32V9gXj
+eNMdsiE7+EnQ4cMpnqseJMCUjBnjcMZKbzry3LkCIBBv2NpfpVFpjhgdveNTj3pL
+/Le/rE8XE//Tl9io2PAbyv/zU+TsvNwxEg3XDzp1TPaa0plyEBiDy+oKEKomgB1A
+qHhwbbDJex8HC9NWqvy1ers3q74/uHAjVnKkDsZwN1RBU7a+9YPFVwtfLcvp7vp8
+tAcMCrEnxYlroaigKg1yJt6o7oev/eHqpWBlAE0tqiSV5LHy8uTu8gg8AOT8j8oZ
+SCNovKR/dHqnAYDcqU6k
+=it2l
+-----END PGP SIGNATURE-----
+
+--=-dfkZ1gzpcmc9jolCSbew--
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
