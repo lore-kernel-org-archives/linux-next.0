@@ -1,65 +1,36 @@
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: Re: next-20091007 - comedi driver build breaks on S390x
-Date: Thu, 8 Oct 2009 10:55:28 +0200
-Message-ID: <20091008105528.55616624@mschwide.boeblingen.de.ibm.com>
-References: <20091007173517.abfcfa2a.sfr@canb.auug.org.au>
-	<20091007105458.GA5472@linux.vnet.ibm.com>
-	<20091007130744.GA26081@suse.de>
-	<20091007173415.5155d995@mschwide.boeblingen.de.ibm.com>
-	<20091007172715.GA28562@suse.de>
+From: Tejun Heo <tj@kernel.org>
+Subject: [PATCH suspend-2.6#linux-next] PM / freezer: add missing include
+Date: Thu, 08 Oct 2009 18:21:28 +0900
+Message-ID: <4ACDAF18.2030705@kernel.org>
+References: <20091008153051.37f043fa.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mtagate7.de.ibm.com ([195.212.17.167]:44681 "EHLO
-	mtagate7.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752099AbZJHI4K (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Oct 2009 04:56:10 -0400
-In-Reply-To: <20091007172715.GA28562@suse.de>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <gregkh@suse.de>
-Cc: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, devel@driverdev.osuosl.org, heiko.carstens@de.ibm.com, linux-s390@vger.kernel.org
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756470AbZJHJWg@vger.kernel.org>
+In-Reply-To: <20091008153051.37f043fa.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 7 Oct 2009 10:27:15 -0700
-Greg KH <gregkh@suse.de> wrote:
+Fix compile failure caused by a48145a7cbf3b0555ba3ad61aaf2c38719bab95d
+forgetting to include delay.h.
 
-> On Wed, Oct 07, 2009 at 05:34:15PM +0200, Martin Schwidefsky wrote:
-> > On Wed, 7 Oct 2009 06:07:44 -0700
-> > Greg KH <gregkh@suse.de> wrote:
-> > 
-> > > On Wed, Oct 07, 2009 at 04:24:58PM +0530, Kamalesh Babulal wrote:
-> > > > Hi Greg,
-> > > > 
-> > > > 	next-20091007 randconfig build breaks on s390x with build error
-> > > > 
-> > > > drivers/staging/comedi/comedi_fops.c: In function 'comedi_mmap':
-> > > > drivers/staging/comedi/comedi_fops.c:1453: error: 'PAGE_SHARED' undeclared (first use in this function)
-> > > > drivers/staging/comedi/comedi_fops.c:1453: error: (Each undeclared identifier is reported only once
-> > > > drivers/staging/comedi/comedi_fops.c:1453: error: for each function it appears in.)
-> > > > make[3]: *** [drivers/staging/comedi/comedi_fops.o] Error 1
-> > > 
-> > > Odd.  What changed in the header files to cause this?
-> > 
-> > The problem has always been present, only now did randconfig find it.
-> > The compile breaks because PAGE_SHARED is not defined for s390. The
-> > equivalent define for s390 is PAGE_RW. The problem has not shown up so
-> > far because all drivers who use the remap_pfn_range call with
-> > PAGE_SHARED has dependencies not available on s390, e.g. CONFIG_PCI.
-> > 
-> > To fix this I see are two options: 1) add a PAGE_SHARED define to
-> > arch/s390/include/asm/pgtable.h, 2) make comedi depend on !S390.
-> 
-> I'll drop s390 support for comedi, it doesn't make sense at all for that
-> platform.
-> 
-> Actually, I'll just go off of PCI/ISA/USB/PCMCIA, that should drop s390
-> automatically, right?
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ kernel/power/process.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-Correct.
-
--- 
-blue skies,
-   Martin.
-
-"Reality continues to ruin my life." - Calvin.
+diff --git a/kernel/power/process.c b/kernel/power/process.c
+index 66161f0..5ade1bd 100644
+--- a/kernel/power/process.c
++++ b/kernel/power/process.c
+@@ -14,6 +14,7 @@
+ #include <linux/module.h>
+ #include <linux/syscalls.h>
+ #include <linux/freezer.h>
++#include <linux/delay.h>
+ 
+ /* 
+  * Timeout for stopping processes
