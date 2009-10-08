@@ -1,49 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: suspend tree build failure
-Date: Thu, 8 Oct 2009 15:30:51 +1100
-Message-ID: <20091008153051.37f043fa.sfr@canb.auug.org.au>
+Subject: linux-next: build warnings (buffer size is not provably correct)
+Date: Thu, 8 Oct 2009 15:47:10 +1100
+Message-ID: <20091008154710.a351a56b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__8_Oct_2009_15_30_51_+1100_o0TxhI25Q0XA2XZm"
+ boundary="Signature=_Thu__8_Oct_2009_15_47_10_+1100_xAHJ+Lc9Xea53ReZ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57219 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:40618 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751269AbZJHEbf (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 8 Oct 2009 00:31:35 -0400
+	id S1751733AbZJHEsA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 8 Oct 2009 00:48:00 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, David Howells <dhowells@redhat.com>, Wim Van Sebroeck <wim@iguana.be>, Al Viro <viro@zeniv.linux.org.uk>
 
---Signature=_Thu__8_Oct_2009_15_30_51_+1100_o0TxhI25Q0XA2XZm
+--Signature=_Thu__8_Oct_2009_15_47_10_+1100_xAHJ+Lc9Xea53ReZ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rafael,
+Hi all,
 
-Today's linux-next build (powerpc allyesconfig) failed like this:
+Today's linux-next build (i386 defconfig) produced these warnings:
 
-kernel/power/process.c: In function 'try_to_freeze_tasks':
-kernel/power/process.c:72: error: implicit declaration of function 'msleep'
+In file included from arch/x86/include/asm/uaccess.h:572,
+                 from kernel/capability.c:18:
+arch/x86/include/asm/uaccess_32.h: In function 'sys_capset':
+arch/x86/include/asm/uaccess_32.h:211: warning: call to 'copy_from_user_ove=
+rflow' declared with attribute warning: copy_from_user() buffer size is not=
+ provably correct
+In file included from arch/x86/include/asm/uaccess.h:572,
+                 from include/linux/poll.h:14,
+                 from include/linux/rtc.h:115,
+                 from include/linux/mc146818rtc.h:16,
+                 from drivers/char/nvram.c:108:
+arch/x86/include/asm/uaccess_32.h: In function 'nvram_write':
+arch/x86/include/asm/uaccess_32.h:211: warning: call to 'copy_from_user_ove=
+rflow' declared with attribute warning: copy_from_user() buffer size is not=
+ provably correct
 
-Caused by commit a48145a7cbf3b0555ba3ad61aaf2c38719bab95d ("PM / freezer:
-Don't get over-anxious while waiting") which I have reverted for today.
+Brought to light by commit 4a3127693001c61a21d1ce680db6340623f52e93
+("x86: Turn the copy_from_user check into an (optional) compile time
+warning") from the tip tree.
+
+Clearly these are not problems with the tip tree, but someone may want to
+look at them.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__8_Oct_2009_15_30_51_+1100_o0TxhI25Q0XA2XZm
+--Signature=_Thu__8_Oct_2009_15_47_10_+1100_xAHJ+Lc9Xea53ReZ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkrNavsACgkQjjKRsyhoI8xrYACfUuFruYf0aeTT3/w6twH4bI+I
-oEoAnR/K7ATthr65WuRrculCzujAWCst
-=Wnyx
+iEYEARECAAYFAkrNbs4ACgkQjjKRsyhoI8zecQCfRnatuV79grECDP6r1972T1Ub
+mdQAmwYBNQrdBRdkzbQJCcvkvgqT0Akr
+=gujZ
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__8_Oct_2009_15_30_51_+1100_o0TxhI25Q0XA2XZm--
+--Signature=_Thu__8_Oct_2009_15_47_10_+1100_xAHJ+Lc9Xea53ReZ--
