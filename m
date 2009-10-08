@@ -1,74 +1,56 @@
-From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] wireless: make WEXT_SPY and WEXT_PRIV select WEXT_CORE
-Date: Wed, 7 Oct 2009 17:12:35 -0700
-Message-ID: <20091007171235.d40f0cc2.randy.dunlap@oracle.com>
-References: <20091007105720.a2457e5b.randy.dunlap@oracle.com>
-	<1254949672-24022-1-git-send-email-linville@tuxdriver.com>
-	<4ACD0E5A.7060106@oracle.com>
-	<1254954842.3713.7.camel@johannes.local>
-	<4ACD1C3D.3030506@oracle.com>
-	<1254957256.3713.10.camel@johannes.local>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the drm tree with Linus' tree
+Date: Thu, 8 Oct 2009 13:35:29 +1100
+Message-ID: <20091008133529.eda6d568.sfr@canb.auug.org.au>
+References: <20091006132857.5bd1cc3a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1254957256.3713.10.camel-YfaajirXv2244ywRPIzf9A@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>
-Cc: "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__8_Oct_2009_13_35_29_+1100_2TqoJqJAu=dQykXL"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756996AbZJHCgP@vger.kernel.org>
+In-Reply-To: <20091006132857.5bd1cc3a.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jerome Glisse <jglisse@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, 08 Oct 2009 01:14:16 +0200 Johannes Berg wrote:
+--Signature=_Thu__8_Oct_2009_13_35_29_+1100_2TqoJqJAu=dQykXL
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Wed, 2009-10-07 at 15:54 -0700, Randy Dunlap wrote:
-> 
-> > > But they also select WIRELESS_EXT, which should cause WEXT_CORE to be
-> > > turned on. Is it possible that is failing?
-> > 
-> > # CONFIG_WIRELESS is not set
-> > CONFIG_WIRELESS_EXT=y
-> > CONFIG_WEXT_SPY=y
-> > CONFIG_WEXT_PRIV=y
-> > 
-> > WEXT_CORE is not enabled.  I haven't found the culprit, but I suspect "select".
-> 
-> Interesting.
-> 
-> > but what in WIRELESS_EXT would also cause WEXT_CORE to be enabled?
-> 
-> Well, the way WEXT_CORE is defined as def_bool y ought to, no?
+Hi Dave,
 
-Ah, I see what you mean.
+On Tue, 6 Oct 2009 13:28:57 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Today's linux-next merge of the drm tree got a conflict in
+> drivers/gpu/drm/radeon/radeon_device.c between commit
+> 28d520433b6375740990ab99d69b0d0067fd656b ("drm/vgaarb: add VGA
+> arbitration support to the drm and kms") from Linus' tree and commit
+> 62a8ea3f7bb61e5f92db0a648b7cc566852c36ec ("drm/radeon/kms: Remove old
+> init path as no hw use it anymore") from the drm tree.
+>=20
+> I have no idea how to reconcile these, so I have just used the version
+> from the drm tree.  Please do the merge with Linus' tree and fix this up
+> properly.  (There are also still conflicts in
+> drivers/gpu/drm/radeon/radeon.h and drivers/gpu/drm/radeon/radeon_asic.h)
 
-Here's what's happening:
+Got similar conflicts today ... any way you can sort this out, please?
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-net/wireless/Kconfig says:
+--Signature=_Thu__8_Oct_2009_13_35_29_+1100_2TqoJqJAu=dQykXL
+Content-Type: application/pgp-signature
 
-config WEXT_CORE
-	def_bool y
-	depends on CFG80211_WEXT || WIRELESS_EXT
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
+iEYEARECAAYFAkrNT/EACgkQjjKRsyhoI8yQIQCeIgAF4twy8z9PZ90RzU1MrSpS
+uisAn1xJ6uICfGagknMevuLavPHZ2+qR
+=1oLs
+-----END PGP SIGNATURE-----
 
-and net/Kconfig says:
-
-if WIRELESS
-
-source "net/wireless/Kconfig"
-source "net/mac80211/Kconfig"
-
-endif # WIRELESS
-
-
-so WEXT_CORE actually depends on NET && WIRELESS && (CFG80211_WEXT || WIRELESS_EXT)
-(that's what xconfig shows me).
-But WIRELESS is not enabled.  Pooh.
-
-I was already toying with making CONFIG_WIRELESS a real/usable kconfig symbol.
-That may have to be done unless someone else comes up with another solution.
-
----
-~Randy
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--Signature=_Thu__8_Oct_2009_13_35_29_+1100_2TqoJqJAu=dQykXL--
