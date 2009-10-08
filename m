@@ -1,44 +1,47 @@
-From: Mauro Carvalho Chehab <mchehab@redhat.com>
-Subject: i7core_edac tree
-Date: Thu, 8 Oct 2009 14:26:31 -0300
-Message-ID: <20091008142631.67812211@pedra.chehab.org>
+From: Jesse Barnes <jbarnes@virtuousgeek.org>
+Subject: Re: [PATCH pci-2.6#linux-next] pci: pci_dfl_cache_line_size is
+ __devinitdata
+Date: Thu, 8 Oct 2009 10:25:42 -0700
+Message-ID: <20091008102542.4006c04c@jbarnes-g45>
+References: <20091008152725.1351485a.sfr@canb.auug.org.au>
+	<4ACDB819.4060606@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <bluesmoke-devel-bounces@lists.sourceforge.net>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/bluesmoke-devel>,
-	<mailto:bluesmoke-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=bluesmoke-devel>
-List-Post: <mailto:bluesmoke-devel@lists.sourceforge.net>
-List-Help: <mailto:bluesmoke-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/bluesmoke-devel>,
-	<mailto:bluesmoke-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: bluesmoke-devel-bounces@lists.sourceforge.net
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, bluesmoke-devel@lists.sourceforge.net, dougthompson@xmission.com
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932861AbZJHR0g@vger.kernel.org>
+In-Reply-To: <4ACDB819.4060606@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+On Thu, 08 Oct 2009 18:59:53 +0900
+Tejun Heo <tj@kernel.org> wrote:
 
-Could you please add my i7core_edac tree to linux-next?
+> pci_dfl_cache_line_size is marked as __initdata but referenced by
+> pci_init() which is __devinit.  Make it __devinitdata instead of
+> __initdata.
+> 
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/pci/pci.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 1ae95df..a6e22fd 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -53,7 +53,7 @@ unsigned long pci_hotplug_mem_size =
+> DEFAULT_HOTPLUG_MEM_SIZE;
+>   * the dfl or actual value as it sees fit.  Don't forget this is
+>   * measured in 32-bit words, not bytes.
+>   */
+> -u8 pci_dfl_cache_line_size __initdata = L1_CACHE_BYTES >> 2;
+> +u8 pci_dfl_cache_line_size __devinitdata = L1_CACHE_BYTES >> 2;
+>  u8 pci_cache_line_size;
 
-It is available at branch linux-next:
-	git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/i7core.git linux-next
-
-This tree contains the driver for Nehalem memory controller EDAC driver.
-
-My original intention were to submit it upstream, but the driver review were
-delayed, and they required some changes that it is better to test, letting it to
-be added upstream for 2.6.33.
+Fix pushed, thanks for the quick turnaround Tejun.
 
 -- 
-
-Cheers,
-Mauro
-
-------------------------------------------------------------------------------
-Come build with us! The BlackBerry(R) Developer Conference in SF, CA
-is the only developer event you need to attend this year. Jumpstart your
-developing skills, take BlackBerry mobile applications to market and stay 
-ahead of the curve. Join us from November 9 - 12, 2009. Register now!
-http://p.sf.net/sfu/devconference
+Jesse Barnes, Intel Open Source Technology Center
