@@ -1,47 +1,32 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH suspend-2.6#linux-next] PM / freezer: add missing include
-Date: Thu, 8 Oct 2009 22:51:48 +0200
-Message-ID: <200910082251.48381.rjw@sisk.pl>
-References: <20091008153051.37f043fa.sfr@canb.auug.org.au> <4ACDAF18.2030705@kernel.org>
+From: Greg KH <greg@kroah.com>
+Subject: Re: [PATCH] linux-next: 20090929 - android driver build breaks
+Date: Thu, 8 Oct 2009 15:47:25 -0700
+Message-ID: <20091008224725.GA22949@kroah.com>
+References: <20090929140404.dfb2c5f5.sfr@canb.auug.org.au>
+ <20090929152027.GC4373@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1760080AbZJHUvA@vger.kernel.org>
-In-Reply-To: <4ACDAF18.2030705@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tejun Heo <tj@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from kroah.org ([198.145.64.141]:34442 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755827AbZJHXKb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 8 Oct 2009 19:10:31 -0400
+Content-Disposition: inline
+In-Reply-To: <20090929152027.GC4373@linux.vnet.ibm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Cc: gregkh@suse.de, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, sfr@canb.auug.org.au, akpm@linux-foundation.org, rientjes@google.com
 
-On Thursday 08 October 2009, Tejun Heo wrote:
-> Fix compile failure caused by a48145a7cbf3b0555ba3ad61aaf2c38719bab95d
-> forgetting to include delay.h.
+On Tue, Sep 29, 2009 at 08:50:27PM +0530, Kamalesh Babulal wrote:
+> Hi Greg,
 > 
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> 	next-20090929 randconfig build breaks with
+> CONFIG_ANDROID_LOW_MEMORY_KILLER=y
 
-I folded it into the original patch and pushed the updated tree.
+Due to no support from Google, I've dropped the android code from the
+staging tree for 2.6.33.
 
-Thanks,
-Rafael
+thanks,
 
-
-> ---
->  kernel/power/process.c |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/kernel/power/process.c b/kernel/power/process.c
-> index 66161f0..5ade1bd 100644
-> --- a/kernel/power/process.c
-> +++ b/kernel/power/process.c
-> @@ -14,6 +14,7 @@
->  #include <linux/module.h>
->  #include <linux/syscalls.h>
->  #include <linux/freezer.h>
-> +#include <linux/delay.h>
->  
->  /* 
->   * Timeout for stopping processes
-> 
-> 
+greg k-h
