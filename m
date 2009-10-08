@@ -1,33 +1,58 @@
-From: Greg KH <greg@kroah.com>
-Subject: Changes to gregkh's kernel trees
-Date: Thu, 8 Oct 2009 11:41:50 -0700
-Message-ID: <20091008184150.GA20399@kroah.com>
+From: Johannes Berg <johannes@sipsolutions.net>
+Subject: Re: [PATCH] wireless: make WEXT_SPY and WEXT_PRIV select WEXT_CORE
+Date: Thu, 08 Oct 2009 20:29:23 +0200
+Message-ID: <1255026563.3713.28.camel@johannes.local>
+References: <20091007105720.a2457e5b.randy.dunlap@oracle.com>
+	 <1254949672-24022-1-git-send-email-linville@tuxdriver.com>
+	 <4ACD0E5A.7060106@oracle.com> <1254954842.3713.7.camel@johannes.local>
+	 <4ACD1C3D.3030506@oracle.com> <1254957256.3713.10.camel@johannes.local>
+	 <20091007171235.d40f0cc2.randy.dunlap@oracle.com>
+	 <1254995282.3713.18.camel@johannes.local>
+	 <20091008080615.09c8b803.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:56831 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752439AbZJHSpD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 8 Oct 2009 14:45:03 -0400
-Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1759484AbZJHSus@vger.kernel.org>
+In-Reply-To: <20091008080615.09c8b803.randy.dunlap@oracle.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen.
+On Thu, 2009-10-08 at 08:06 -0700, Randy Dunlap wrote:
 
-I've added a new tree to my kernel trees, the "staging.current" one.  It
-works like the other "usb.current", "tty.current" and others in that it
-contains patches from the staging tree that are going to be sent to
-Linus for the "current" kernel release.
+> > It's kinda strange though that you can select wireless drivers without
+> > selecting WIRELESS. Maybe the solution is as simple as making WLAN
+> > (drivers/net/wireless/Kconfig) depend on WIRELESS?
+> 
+> Yes, I think that would be a very good start.
 
-I've adjusted all of the NEXT_BASE tags in the series files to pull
-from, and as always, it can all be found at:
-	http://www.kernel.org/pub/linux/kernel/people/gregkh/gregkh-2.6/
+On the other hand, of course, the whole WIRELESS thing is somewhat
+stupid. How about this?
 
-If you have any problems with this, please let me know.
+johannes
 
-thanks, and keep up the great work, it is much appreciated.
+From: Johannes Berg <johannes@sipsolutions.net>
+Subject: wireless: make wireless drivers select core
 
-greg k-h
+It is somewhat non-sensical to allow selecting wireless
+drivers without showing wireless core code options, and
+since the wext refactoring this has made it possible to
+generate configurations that will not build. Avoid this
+and make wireless drivers select the wireless options.
+
+Signed-off-by: Johannes Berg <johannes@sipsolutions.net>
+---
+ drivers/net/wireless/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- wireless-testing.orig/drivers/net/wireless/Kconfig	2009-10-08 20:25:04.000000000 +0200
++++ wireless-testing/drivers/net/wireless/Kconfig	2009-10-08 20:27:38.000000000 +0200
+@@ -5,6 +5,7 @@
+ menuconfig WLAN
+ 	bool "Wireless LAN"
+ 	depends on !S390
++	select WIRELESS
+ 	default y
+ 	---help---
+ 	  This section contains all the pre 802.11 and 802.11 wireless
