@@ -1,60 +1,51 @@
-From: Greg KH <gregkh@suse.de>
-Subject: Re: [PATCH] linux-next: 20090929 - android driver build breaks
-Date: Thu, 8 Oct 2009 17:22:30 -0700
-Message-ID: <20091009002230.GB28982@suse.de>
-References: <20090929140404.dfb2c5f5.sfr@canb.auug.org.au>
- <20090929152027.GC4373@linux.vnet.ibm.com>
- <20091008224725.GA22949@kroah.com>
- <alpine.DEB.1.00.0910081621340.10613@chino.kir.corp.google.com>
- <20091008232825.GA540@suse.de>
- <alpine.DEB.1.00.0910081644200.14247@chino.kir.corp.google.com>
+From: Mauro Carvalho Chehab <mchehab@redhat.com>
+Subject: Re: i7core_edac tree
+Date: Thu, 8 Oct 2009 22:52:34 -0400 (EDT)
+Message-ID: <126686523.1755491255056754615.JavaMail.root@zmail05.collab.prod.int.phx2.redhat.com>
+References: <20091009101653.44b2f448.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor.suse.de ([195.135.220.2]:53607 "EHLO mx1.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757291AbZJIAcU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 8 Oct 2009 20:32:20 -0400
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.1.00.0910081644200.14247@chino.kir.corp.google.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Rientjes <rientjes@google.com>
-Cc: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, sfr@canb.auug.org.au, Andrew Morton <akpm@linux-foundation.org>, Arve Hjonnevag <arve@android.com>, San Mehat <san@android.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <bluesmoke-devel-bounces@lists.sourceforge.net>
+In-Reply-To: <20091009101653.44b2f448.sfr@canb.auug.org.au>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/bluesmoke-devel>,
+	<mailto:bluesmoke-devel-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=bluesmoke-devel>
+List-Post: <mailto:bluesmoke-devel@lists.sourceforge.net>
+List-Help: <mailto:bluesmoke-devel-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/bluesmoke-devel>,
+	<mailto:bluesmoke-devel-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: bluesmoke-devel-bounces@lists.sourceforge.net
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, bluesmoke-devel@lists.sourceforge.net, dougthompson@xmission.com
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Oct 08, 2009 at 04:48:23PM -0700, David Rientjes wrote:
-> On Thu, 8 Oct 2009, Greg KH wrote:
+
+----- "Stephen Rothwell" <sfr@canb.auug.org.au> escreveu:
+
+> Hi Mauro,
 > 
-> > > What are you specifically referring to?  Kamalesh provided a patch[*] that 
-> > > fixes this particular compile error, which you said you were queueing.
+> On Thu, 8 Oct 2009 14:26:31 -0300 Mauro Carvalho Chehab
+> <mchehab@redhat.com> wrote:
+> >
+> > Could you please add my i7core_edac tree to linux-next?
 > > 
-> > Hm, I did say I was queueing it, but I still can't figure out if this is
-> > needed for the 2.6.32 tree.  Is it?
-> > 
+> > It is available at branch linux-next:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/i7core.git
+> linux-next
 > 
-> Yes, 28b83c5 was merged during the merge window for 2.6.32 so this needs 
-> to be pushed for the staging tree if it's not ripped out.
+> That tree has no "linux-next" branch ...
 
-Ok, I'll dig it up, thanks.
-
-> > > If it's a criticism of the staleness of the Android code within the 
-> > > staging tree or no recent activity, then we should probably loop in some 
-> > > Android developers to find our about their plans.  I've added them to the 
-> > > cc.
-> > 
-> > They know all about this and agreed that the code should be dropped for
-> > 2.6.33 if no one sends me patches.  If someone does, then I will remove
-> > my 'delete the android code' patch in the staging tree.
-> > 
+Hmm... it didn't created a new branch there... Fixed. The branch were already pushed.
 > 
-> I don't work with Android, but the "no support from Google" phrase caught 
-> my attention :)  It seems like this isn't necessarily about support or 
-> raised issues not being addressed, but rather about a lack of progress 
-> being made developmentally or a general lack of interest in upstream 
-> inclusion.
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
 
-Yes, that is exactly correct.
-
-thanks,
-
-greg k-h
+------------------------------------------------------------------------------
+Come build with us! The BlackBerry(R) Developer Conference in SF, CA
+is the only developer event you need to attend this year. Jumpstart your
+developing skills, take BlackBerry mobile applications to market and stay 
+ahead of the curve. Join us from November 9 - 12, 2009. Register now!
+http://p.sf.net/sfu/devconference
