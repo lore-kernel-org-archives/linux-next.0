@@ -1,84 +1,88 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: i7core_edac tree
-Date: Sat, 10 Oct 2009 00:48:15 +1100
-Message-ID: <20091010004815.481c0da7.sfr@canb.auug.org.au>
-References: <20091009101653.44b2f448.sfr@canb.auug.org.au>
-	<126686523.1755491255056754615.JavaMail.root@zmail05.collab.prod.int.phx2.redhat.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [PATCH] wireless: make WEXT_SPY and WEXT_PRIV select WEXT_CORE
+Date: Fri, 9 Oct 2009 09:06:01 -0700
+Message-ID: <20091009090601.73de5dc6.randy.dunlap@oracle.com>
+References: <20091007105720.a2457e5b.randy.dunlap@oracle.com>
+	<1254949672-24022-1-git-send-email-linville@tuxdriver.com>
+	<4ACD0E5A.7060106@oracle.com>
+	<1254954842.3713.7.camel@johannes.local>
+	<4ACD1C3D.3030506@oracle.com>
+	<1254957256.3713.10.camel@johannes.local>
+	<20091007171235.d40f0cc2.randy.dunlap@oracle.com>
+	<1254995282.3713.18.camel@johannes.local>
+	<20091008080615.09c8b803.randy.dunlap@oracle.com>
+	<1255026563.3713.28.camel@johannes.local>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sat__10_Oct_2009_00_48_15_+1100_q.aGd./rGAkUryNv"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36980 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1760848AbZJINs5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 9 Oct 2009 09:48:57 -0400
-In-Reply-To: <126686523.1755491255056754615.JavaMail.root@zmail05.collab.prod.int.phx2.redhat.com>
+Received: from rcsinet11.oracle.com ([148.87.113.123]:59585 "EHLO
+	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933516AbZJIQHy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 9 Oct 2009 12:07:54 -0400
+In-Reply-To: <1255026563.3713.28.camel@johannes.local>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: linux-next@vger.kernel.org, dougthompson@xmission.com, bluesmoke-devel@lists.sourceforge.net
+To: Johannes Berg <johannes@sipsolutions.net>, gregkh@suse.de, devel@driverdev.osuosl.org
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Sat__10_Oct_2009_00_48_15_+1100_q.aGd./rGAkUryNv
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 08 Oct 2009 20:29:23 +0200 Johannes Berg wrote:
 
-Hi Mauro,
+> On Thu, 2009-10-08 at 08:06 -0700, Randy Dunlap wrote:
+> 
+> > > It's kinda strange though that you can select wireless drivers without
+> > > selecting WIRELESS. Maybe the solution is as simple as making WLAN
+> > > (drivers/net/wireless/Kconfig) depend on WIRELESS?
+> > 
+> > Yes, I think that would be a very good start.
+> 
+> On the other hand, of course, the whole WIRELESS thing is somewhat
+> stupid. How about this?
+> 
+> johannes
+> 
+> From: Johannes Berg <johannes@sipsolutions.net>
+> Subject: wireless: make wireless drivers select core
+> 
+> It is somewhat non-sensical to allow selecting wireless
+> drivers without showing wireless core code options, and
+> since the wext refactoring this has made it possible to
+> generate configurations that will not build. Avoid this
+> and make wireless drivers select the wireless options.
+> 
+> Signed-off-by: Johannes Berg <johannes@sipsolutions.net>
+> ---
+>  drivers/net/wireless/Kconfig |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> --- wireless-testing.orig/drivers/net/wireless/Kconfig	2009-10-08 20:25:04.000000000 +0200
+> +++ wireless-testing/drivers/net/wireless/Kconfig	2009-10-08 20:27:38.000000000 +0200
+> @@ -5,6 +5,7 @@
+>  menuconfig WLAN
+>  	bool "Wireless LAN"
+>  	depends on !S390
+> +	select WIRELESS
+>  	default y
+>  	---help---
+>  	  This section contains all the pre 802.11 and 802.11 wireless
 
-On Thu, 8 Oct 2009 22:52:34 -0400 (EDT) Mauro Carvalho Chehab <mchehab@redh=
-at.com> wrote:
->
-> Hmm... it didn't created a new branch there... Fixed. The branch were alr=
-eady pushed.
 
-OK, I will add it on Monday.
+I suppose that's OK, although I prefer "depends" rather than "select".
 
-Boilerplate:
+I tracked down one of the problems that I was seeing:
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
+net/wireless/wext-priv.c:206: error: implicit declaration of function 'call_commit_handler'
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-	Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
+with:
+# CONFIG_WIRELESS is not set
+CONFIG_WIRELESS_EXT=y
+CONFIG_WEXT_PRIV=y
 
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+This is being caused by several drivers in drivers/staging/ doing
+	select WEXT_PRIV
+without using either enough dependencies or even more (ugly) selects.
+(or just because kconfig isn't sufficient)
 
---=20
-Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
 
-Legal Stuff:
-By participating in linux-next, your subsystem tree contributions are
-public and will be included in the linux-next trees.  You may be sent
-e-mail messages indicating errors or other issues when the
-patches/commits from your subsystem tree are merged and tested in
-linux-next.  These messages may also be cross-posted to the linux-next
-mailing list, the linux-kernel mailing list, etc.  The linux-next tree
-project and IBM (my employer) make no warranties regarding the linux-next
-project, the testing procedures, the results, the e-mails, etc.  If you
-don't agree to these ground rules, let me know and I'll remove your tree
-from participation in linux-next.
-
---Signature=_Sat__10_Oct_2009_00_48_15_+1100_q.aGd./rGAkUryNv
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkrPPx8ACgkQjjKRsyhoI8yMHwCdEjoDy2bbpyW/owy9THYazAL9
-fgEAn348CbJKYYM+I2B3wzJAJyBuwysE
-=2R9T
------END PGP SIGNATURE-----
-
---Signature=_Sat__10_Oct_2009_00_48_15_+1100_q.aGd./rGAkUryNv--
+---
+~Randy
