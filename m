@@ -1,45 +1,47 @@
-From: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
-Subject: Re: [PATCH -next] thinkpad_acpi: fix build, HOTKEY_POLL is optional
-Date: Fri, 9 Oct 2009 21:08:08 -0300
-Message-ID: <20091010000808.GA10637@khazad-dum.debian.net>
-References: <20091009190654.741eeffd.sfr@canb.auug.org.au>
- <20091009161723.b68b91a7.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the parisc tree with Linus' tree
+Date: Sat, 10 Oct 2009 12:23:01 +1100
+Message-ID: <20091010122301.620a98a7.sfr@canb.auug.org.au>
+References: <20091009112158.7d37ed23.sfr@canb.auug.org.au>
+	<20091009183914.GG11702@bombadil.infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out1.smtp.messagingengine.com ([66.111.4.25]:57562 "EHLO
-	out1.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1757322AbZJJAJO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 9 Oct 2009 20:09:14 -0400
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sat__10_Oct_2009_12_23_01_+1100_F8z1B7MgUfStaTLB"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1761574AbZJJBXo@vger.kernel.org>
+In-Reply-To: <20091009183914.GG11702@bombadil.infradead.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kyle McMartin <kyle@mcmartin.ca>
+Cc: linux-parisc@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Sat__10_Oct_2009_12_23_01_+1100_F8z1B7MgUfStaTLB
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20091009161723.b68b91a7.randy.dunlap@oracle.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>, Ingo Molnar <mingo@elte.hu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, lenb@kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 09 Oct 2009, Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> Fix optional part of driver to be built optionally:
+Hi Kyle,
 
-NAK!
+On Fri, 9 Oct 2009 14:39:14 -0400 Kyle McMartin <kyle@mcmartin.ca> wrote:
+>
+> Sorry, forgot to push out a new #next. Should be sorted now.
 
-This happens because of (linux-next) commit
-7f6443f7238a0aa9014b11a0a31ab76825d75cdf 
-"thinkpad-acpi: Fix build on !CONFIG_THINKPAD_ACPI_HOTKEY_POLL" by
-Ingo.
+No worries, thanks.
 
-That commit is wrong, it must NOT be applied as explained in the thread
-starting at http://lkml.org/lkml/2009/9/27/30.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Ingo, can you please check if you don't have that commit still in one of
-your trees that are fed into linux-next?  It broke the driver now that the
-"backlight/thinkpad-acpi: issue backlight class events" patch landed in
--next, just like I said it would happen...
+--Signature=_Sat__10_Oct_2009_12_23_01_+1100_F8z1B7MgUfStaTLB
+Content-Type: application/pgp-signature
 
--- 
-  "One disk to rule them all, One disk to find them. One disk to bring
-  them all and in the darkness grind them. In the Land of Redmond
-  where the shadows lie." -- The Silicon Valley Tarot
-  Henrique Holschuh
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkrP4fUACgkQjjKRsyhoI8xh1QCfSBU/CwNHttMRpAKL5pd0/FMQ
+WY0AoKdfzJT2wZSFOOwtrr6eVhbGicg0
+=3eoc
+-----END PGP SIGNATURE-----
+
+--Signature=_Sat__10_Oct_2009_12_23_01_+1100_F8z1B7MgUfStaTLB--
