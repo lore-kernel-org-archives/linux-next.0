@@ -1,38 +1,27 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the i7core_edac tree with Linus'
-	tree
-Date: Mon, 12 Oct 2009 12:24:50 +0200
-Message-ID: <20091012102450.GA20051@elte.hu>
-References: <20091012142328.710881fe.sfr@canb.auug.org.au> <20091012050534.GC7629@liondog.tnic>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: linux-next: voltage tree build failure
+Date: Mon, 12 Oct 2009 13:57:07 +0100
+Message-ID: <20091012125707.GE22233@sirena.org.uk>
+References: <20091012132628.2f709e40.sfr@canb.auug.org.au> <771cded00910111950y6104fe0fl4f1d10144d938243@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755582AbZJLKZm@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:52849 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753943AbZJLM5s (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Oct 2009 08:57:48 -0400
 Content-Disposition: inline
-In-Reply-To: <20091012050534.GC7629@liondog.tnic>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Borislav Petkov <petkovbb@googlemail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <771cded00910111950y6104fe0fl4f1d10144d938243@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Haojian Zhuang <haojian.zhuang@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Liam Girdwood <lrg@slimlogic.co.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>
 
+On Sun, Oct 11, 2009 at 10:50:54PM -0400, Haojian Zhuang wrote:
 
-* Borislav Petkov <petkovbb@googlemail.com> wrote:
+> Hi Samuel & Liam,
 
-> On Mon, Oct 12, 2009 at 02:23:28PM +1100, Stephen Rothwell wrote:
-> > Today's linux-next merge of the i7core_edac tree got a conflict in
-> > arch/x86/kernel/cpu/mcheck/mce.c between commit
-> > f436f8bb73138bc74eb1c6527723e00988ad8a8a ("x86: EDAC: MCE: Fix MCE
-> > decoding callback logic") from Linus' tree and commit
-> > 699a7dbe1ffdf4b25c1475e45590b181c3e23087 ("edac_mce: Add an interface
-> > driver to report mce errors via edac") from the i7core_edac tree.
-> 
-> The current way Ingo suggested is using an atomic notifier instead
-> from within print_mce to convey MCE info to an EDAC driver, see
-> http://marc.info/?l=linux-kernel&m=125455310112745&w=2
-> 
-> Ingo, what are your plans with that? I'm guessing the .33 timeframe?
+> Please help review and merge this fix patch. I'm sorry for inconvience.
 
-yeah, that looks like .33 material. (unless it fixes a regression)
-I have queued it up in tip:x86/mce.
-
-Thanks,
-
-	Ingo
+This is waiting for Samuel - it should go via the MFD tree.  I've CCed
+in Samuel's current e-mail address on the off-chance that that helps.
