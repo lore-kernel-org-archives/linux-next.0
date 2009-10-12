@@ -1,97 +1,48 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: suspend tree build failure
-Date: Mon, 12 Oct 2009 14:00:02 +1100
-Message-ID: <20091012140002.10f1f3d1.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the i7core_edac tree with Linus' tree
+Date: Mon, 12 Oct 2009 14:23:28 +1100
+Message-ID: <20091012142328.710881fe.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__12_Oct_2009_14_00_02_+1100_d50Ck6DeaY2oO09f"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36732 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753151AbZJLDAp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 11 Oct 2009 23:00:45 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+ boundary="Signature=_Mon__12_Oct_2009_14_23_28_+1100_Mi7unwoFi5_.c9kr"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753739AbZJLDYP@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ingo Molnar <mingo@elte.hu>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__12_Oct_2009_14_00_02_+1100_d50Ck6DeaY2oO09f
+--Signature=_Mon__12_Oct_2009_14_23_28_+1100_Mi7unwoFi5_.c9kr
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rafael,
+Hi Mauro,
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+Today's linux-next merge of the i7core_edac tree got a conflict in
+arch/x86/kernel/cpu/mcheck/mce.c between commit
+f436f8bb73138bc74eb1c6527723e00988ad8a8a ("x86: EDAC: MCE: Fix MCE
+decoding callback logic") from Linus' tree and commit
+699a7dbe1ffdf4b25c1475e45590b181c3e23087 ("edac_mce: Add an interface
+driver to report mce errors via edac") from the i7core_edac tree.
 
-drivers/base/power/main.c: In function 'device_pm_wait':
-drivers/base/power/main.c:218: error: 'TASK_UNINTERRUPTIBLE' undeclared (fi=
-rst use in this function)
-drivers/base/power/main.c:218: error: (Each undeclared identifier is report=
-ed only once
-drivers/base/power/main.c:218: error: for each function it appears in.)
-drivers/base/power/main.c:218: error: implicit declaration of function 'sch=
-edule'
-drivers/base/power/main.c: In function 'dbg_show_time':
-drivers/base/power/main.c:514: error: implicit declaration of function 'tas=
-k_pid_nr'
-drivers/base/power/main.c: In function '__device_resume_noirq':
-drivers/base/power/main.c:551: error: 'TASK_NORMAL' undeclared (first use i=
-n this function)
-drivers/base/power/main.c: In function '__device_resume':
-drivers/base/power/main.c:713: error: 'TASK_NORMAL' undeclared (first use i=
-n this function)
-drivers/base/power/main.c: In function '__device_suspend_noirq':
-drivers/base/power/main.c:970: error: 'TASK_NORMAL' undeclared (first use i=
-n this function)
-drivers/base/power/main.c: In function '__device_suspend':
-drivers/base/power/main.c:1145: error: 'TASK_NORMAL' undeclared (first use =
-in this function)
-
-Presumably caused by commit d43c36dc6b357fa1806800f18aa30123c747a6d1
-("headers: remove sched.h from interrupt.h") from Linus' tree.
-
-I have added the following patch for today.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 12 Oct 2009 13:48:27 +1100
-Subject: [PATCH] suspend: using TASK_ macros requires sched.h
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/base/power/main.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-index 3b09009..fb1c648 100644
---- a/drivers/base/power/main.c
-+++ b/drivers/base/power/main.c
-@@ -29,6 +29,7 @@
- #include <linux/async.h>
- #include <linux/completion.h>
- #include <linux/time.h>
-+#include <linux/sched.h>
-=20
- #include "../base.h"
- #include "power.h"
---=20
-1.6.4.3
+I don't know how to resolve these two commits so I have dropped the
+i7core_edac tree for today.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__12_Oct_2009_14_00_02_+1100_d50Ck6DeaY2oO09f
+--Signature=_Mon__12_Oct_2009_14_23_28_+1100_Mi7unwoFi5_.c9kr
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkrSm7IACgkQjjKRsyhoI8xzWgCfb/Q7QWl3x4slvEmrq/vec+HG
-qAIAoLmNXhCRAKa0jST2hOaWy7qm9UZq
-=MN54
+iEYEARECAAYFAkrSoTAACgkQjjKRsyhoI8yOwgCbB20h2D713gdYzbxRdYHo0ltJ
+F8oAn2myOfg18nSGSZrSVgtcNOmBXJHs
+=0fTt
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__12_Oct_2009_14_00_02_+1100_d50Ck6DeaY2oO09f--
+--Signature=_Mon__12_Oct_2009_14_23_28_+1100_Mi7unwoFi5_.c9kr--
