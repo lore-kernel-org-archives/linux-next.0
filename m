@@ -1,50 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: tip tree question
-Date: Mon, 12 Oct 2009 14:56:09 +1100
-Message-ID: <20091012145609.c3cc78aa.sfr@canb.auug.org.au>
+From: Borislav Petkov <petkovbb@googlemail.com>
+Subject: Re: linux-next: manual merge of the i7core_edac tree with Linus'
+ tree
+Date: Mon, 12 Oct 2009 07:05:34 +0200
+Message-ID: <20091012050534.GC7629@liondog.tnic>
+References: <20091012142328.710881fe.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__12_Oct_2009_14_56_09_+1100_wOeeOteqUezzpWH1"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753635AbZJLD45@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Mon__12_Oct_2009_14_56_09_+1100_wOeeOteqUezzpWH1
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-bw0-f210.google.com ([209.85.218.210]:55348 "EHLO
+	mail-bw0-f210.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751286AbZJLFGP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Oct 2009 01:06:15 -0400
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20091012142328.710881fe.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@elte.hu>
+Cc: Mauro Carvalho Chehab <mchehab@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi all,
+On Mon, Oct 12, 2009 at 02:23:28PM +1100, Stephen Rothwell wrote:
+> Today's linux-next merge of the i7core_edac tree got a conflict in
+> arch/x86/kernel/cpu/mcheck/mce.c between commit
+> f436f8bb73138bc74eb1c6527723e00988ad8a8a ("x86: EDAC: MCE: Fix MCE
+> decoding callback logic") from Linus' tree and commit
+> 699a7dbe1ffdf4b25c1475e45590b181c3e23087 ("edac_mce: Add an interface
+> driver to report mce errors via edac") from the i7core_edac tree.
 
-I noticed that the auto-latest branch of the tip tree (which is what is
-included in linux-next) has had the tip out-of-tree branch merged into
-it.  This seems to just introduce lots of commits into linux-next that
-have nothing to do with the tip tree (some of which contain fixes that
-are also in Linus' tree) and adds a localversion-tip file.
+The current way Ingo suggested is using an atomic notifier instead
+from within print_mce to convey MCE info to an EDAC driver, see
+http://marc.info/?l=linux-kernel&m=125455310112745&w=2
 
-I was wondering if this was done out of necessity or by oversight.
+Ingo, what are your plans with that? I'm guessing the .33 timeframe?
 
-I have reverted commit e67d8da85f7a4c2772fe3731de9396b6d01a045e ("Merge
-branch 'out-of-tree' into auto-latest") from linux-next for today and the
-x86_64 allmodconfig and powerpc ppc64_defconfig builds still seem OK.
+Thanks.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__12_Oct_2009_14_56_09_+1100_wOeeOteqUezzpWH1
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkrSqNkACgkQjjKRsyhoI8zYswCePQsZgVkcA2A920TiSBPrSrCH
-3SAAn22lk4/Yj5DYIVh6j6Om0/CLavzL
-=nWHp
------END PGP SIGNATURE-----
-
---Signature=_Mon__12_Oct_2009_14_56_09_+1100_wOeeOteqUezzpWH1--
+-- 
+Regards/Gruss,
+    Boris.
