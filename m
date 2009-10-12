@@ -1,39 +1,112 @@
-From: Borislav Petkov <petkovbb@googlemail.com>
-Subject: Re: linux-next: manual merge of the i7core_edac tree with Linus'
- tree
-Date: Mon, 12 Oct 2009 07:05:34 +0200
-Message-ID: <20091012050534.GC7629@liondog.tnic>
-References: <20091012142328.710881fe.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: sound tree build failure
+Date: Mon, 12 Oct 2009 16:08:16 +1100
+Message-ID: <20091012160816.90fe936d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bw0-f210.google.com ([209.85.218.210]:55348 "EHLO
-	mail-bw0-f210.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751286AbZJLFGP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Oct 2009 01:06:15 -0400
-Content-Disposition: inline
-In-Reply-To: <20091012142328.710881fe.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:56736 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751039AbZJLFI5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 12 Oct 2009 01:08:57 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@elte.hu>
-Cc: Mauro Carvalho Chehab <mchehab@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lydia Wang <lydiawang@viatech.com.cn>, Logan Li <loganli@viatech.com.cn>
 
-On Mon, Oct 12, 2009 at 02:23:28PM +1100, Stephen Rothwell wrote:
-> Today's linux-next merge of the i7core_edac tree got a conflict in
-> arch/x86/kernel/cpu/mcheck/mce.c between commit
-> f436f8bb73138bc74eb1c6527723e00988ad8a8a ("x86: EDAC: MCE: Fix MCE
-> decoding callback logic") from Linus' tree and commit
-> 699a7dbe1ffdf4b25c1475e45590b181c3e23087 ("edac_mce: Add an interface
-> driver to report mce errors via edac") from the i7core_edac tree.
+Hi Takashi,
 
-The current way Ingo suggested is using an atomic notifier instead
-from within print_mce to convey MCE info to an EDAC driver, see
-http://marc.info/?l=linux-kernel&m=125455310112745&w=2
+Today's linux-next build (i386 defconfig) failed like this:
 
-Ingo, what are your plans with that? I'm guessing the .33 timeframe?
+sound/pci/hda/patch_via.c: In function 'patch_vt1718S':
+sound/pci/hda/patch_via.c:4951: error: expected expression before 'return'
 
-Thanks.
+Caused by commit eb7188cafcb7aa1419b8889494cdbd4e6a01da1c ("ALSA: HDA
+VIA: Add VT1718S support").
+
+sound/pci/hda/patch_via.c: In function 'patch_vt1716S':
+sound/pci/hda/patch_via.c:5441: error: expected expression before 'return'
+
+Caused by commit f3db423df84570c9950754a5771ad26f0111235f ("ALSA: HDA
+VIA: Add VT1716S support").
+
+sound/pci/hda/patch_via.c: In function 'patch_vt2002P':
+sound/pci/hda/patch_via.c:5794: error: expected expression before 'return'
+
+Caused by commit 25eaba2f8a6877ba6f58197c4723c2433a316e09 ("ALSA: HDA VIA: Add VT2002P support").
+
+sound/pci/hda/patch_via.c: In function 'patch_vt1812':
+sound/pci/hda/patch_via.c:6148: error: expected expression before 'return'
+
+Caused by commit ab6734e7ea32e9f9cbe0f55eeddf4aa629ed1c3d ("ALSA: HDA VIA: Add VT1812 support").
+
+I applied the following patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 12 Oct 2009 15:56:17 +1100
+Subject: [PATCH] sound: use semicolons to end statements
+
+Fixes:
+
+sound/pci/hda/patch_via.c: In function 'patch_vt1718S':
+sound/pci/hda/patch_via.c:4951: error: expected expression before 'return'
+sound/pci/hda/patch_via.c: In function 'patch_vt1716S':
+sound/pci/hda/patch_via.c:5441: error: expected expression before 'return'
+sound/pci/hda/patch_via.c: In function 'patch_vt2002P':
+sound/pci/hda/patch_via.c:5794: error: expected expression before 'return'
+sound/pci/hda/patch_via.c: In function 'patch_vt1812':
+sound/pci/hda/patch_via.c:6148: error: expected expression before 'return'
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ sound/pci/hda/patch_via.c |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/sound/pci/hda/patch_via.c b/sound/pci/hda/patch_via.c
+index 30260e2..a294060 100644
+--- a/sound/pci/hda/patch_via.c
++++ b/sound/pci/hda/patch_via.c
+@@ -4942,7 +4942,7 @@ static int patch_vt1718S(struct hda_codec *codec)
+ 	codec->patch_ops = via_patch_ops;
+ 
+ 	codec->patch_ops.init = via_auto_init;
+-	codec->patch_ops.unsol_event = via_unsol_event,
++	codec->patch_ops.unsol_event = via_unsol_event;
+ 
+ #ifdef CONFIG_SND_HDA_POWER_SAVE
+ 	spec->loopback.amplist = vt1718S_loopbacks;
+@@ -5432,7 +5432,7 @@ static int patch_vt1716S(struct hda_codec *codec)
+ 	codec->patch_ops = via_patch_ops;
+ 
+ 	codec->patch_ops.init = via_auto_init;
+-	codec->patch_ops.unsol_event = via_unsol_event,
++	codec->patch_ops.unsol_event = via_unsol_event;
+ 
+ #ifdef CONFIG_SND_HDA_POWER_SAVE
+ 	spec->loopback.amplist = vt1716S_loopbacks;
+@@ -5785,7 +5785,7 @@ static int patch_vt2002P(struct hda_codec *codec)
+ 	codec->patch_ops = via_patch_ops;
+ 
+ 	codec->patch_ops.init = via_auto_init;
+-	codec->patch_ops.unsol_event = via_unsol_event,
++	codec->patch_ops.unsol_event = via_unsol_event;
+ 
+ #ifdef CONFIG_SND_HDA_POWER_SAVE
+ 	spec->loopback.amplist = vt2002P_loopbacks;
+@@ -6139,7 +6139,7 @@ static int patch_vt1812(struct hda_codec *codec)
+ 	codec->patch_ops = via_patch_ops;
+ 
+ 	codec->patch_ops.init = via_auto_init;
+-	codec->patch_ops.unsol_event = via_unsol_event,
++	codec->patch_ops.unsol_event = via_unsol_event;
+ 
+ #ifdef CONFIG_SND_HDA_POWER_SAVE
+ 	spec->loopback.amplist = vt1812_loopbacks;
+-- 
+1.6.4.3
 
 -- 
-Regards/Gruss,
-    Boris.
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
