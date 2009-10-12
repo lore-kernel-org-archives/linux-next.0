@@ -1,101 +1,97 @@
-From: Haojian Zhuang <haojian.zhuang@gmail.com>
-Subject: Re: linux-next: voltage tree build failure
-Date: Sun, 11 Oct 2009 22:50:54 -0400
-Message-ID: <771cded00910111950y6104fe0fl4f1d10144d938243@mail.gmail.com>
-References: <20091012132628.2f709e40.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: suspend tree build failure
+Date: Mon, 12 Oct 2009 14:00:02 +1100
+Message-ID: <20091012140002.10f1f3d1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__12_Oct_2009_14_00_02_+1100_d50Ck6DeaY2oO09f"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-iw0-f180.google.com ([209.85.223.180]:48552 "EHLO
-	mail-iw0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750725AbZJLCvd convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 11 Oct 2009 22:51:33 -0400
-In-Reply-To: <20091012132628.2f709e40.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:36732 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753151AbZJLDAp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 11 Oct 2009 23:00:45 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Liam Girdwood <lrg@slimlogic.co.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Samuel Ortiz <sameo@openedhand.com>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sun, Oct 11, 2009 at 10:26 PM, Stephen Rothwell <sfr@canb.auug.org.a=
-u> wrote:
-> Hi Liam,
->
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
->
-> drivers/built-in.o: In function `pm8607_write_device':
-> 88pm8607.c:(.text+0xd1359): undefined reference to `i2c_master_send'
-> drivers/built-in.o: In function `pm8607_read_device':
-> 88pm8607.c:(.text+0xd13ab): undefined reference to `i2c_master_send'
-> 88pm8607.c:(.text+0xd13cc): undefined reference to `i2c_master_recv'
-> drivers/built-in.o: In function `pm8607_init':
-> 88pm8607.c:(.init.text+0xaa22): undefined reference to `i2c_register_=
-driver'
-> drivers/built-in.o: In function `pm8607_probe':
-> 88pm8607.c:(.devinit.text+0x50fb): undefined reference to `mfd_add_de=
-vices'
-> drivers/built-in.o: In function `pm8607_exit':
-> 88pm8607.c:(.exit.text+0x5de): undefined reference to `i2c_del_driver=
-'
-> drivers/built-in.o: In function `pm8607_remove':
-> 88pm8607.c:(.devexit.text+0x1cc): undefined reference to `mfd_remove_=
-devices'
->
-> Caused by commit 258e3427f83a573d738344c2f5499da5e026e1df ("regulator=
-:
-> add 88PM8607 PMIC driver"). =A0This is the same driver that has cause=
-d the
-> mfd tree to fail in the same way since next-20091006. =A0I have used =
-the
-> version of the voltage tree from next-20091009 for today.
->
-> --
-> Cheers,
-> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
-=2Eorg.au
-> http://www.canb.auug.org.au/~sfr/
->
+--Signature=_Mon__12_Oct_2009_14_00_02_+1100_d50Ck6DeaY2oO09f
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Samuel & Liam,
+Hi Rafael,
 
-Please help review and merge this fix patch. I'm sorry for inconvience.
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-Stephen,
+drivers/base/power/main.c: In function 'device_pm_wait':
+drivers/base/power/main.c:218: error: 'TASK_UNINTERRUPTIBLE' undeclared (fi=
+rst use in this function)
+drivers/base/power/main.c:218: error: (Each undeclared identifier is report=
+ed only once
+drivers/base/power/main.c:218: error: for each function it appears in.)
+drivers/base/power/main.c:218: error: implicit declaration of function 'sch=
+edule'
+drivers/base/power/main.c: In function 'dbg_show_time':
+drivers/base/power/main.c:514: error: implicit declaration of function 'tas=
+k_pid_nr'
+drivers/base/power/main.c: In function '__device_resume_noirq':
+drivers/base/power/main.c:551: error: 'TASK_NORMAL' undeclared (first use i=
+n this function)
+drivers/base/power/main.c: In function '__device_resume':
+drivers/base/power/main.c:713: error: 'TASK_NORMAL' undeclared (first use i=
+n this function)
+drivers/base/power/main.c: In function '__device_suspend_noirq':
+drivers/base/power/main.c:970: error: 'TASK_NORMAL' undeclared (first use i=
+n this function)
+drivers/base/power/main.c: In function '__device_suspend':
+drivers/base/power/main.c:1145: error: 'TASK_NORMAL' undeclared (first use =
+in this function)
 
-Thanks for your check.
+Presumably caused by commit d43c36dc6b357fa1806800f18aa30123c747a6d1
+("headers: remove sched.h from interrupt.h") from Linus' tree.
 
-=46rom b7d3707263598c4c6671ac592eaaf13535a7b96a Mon Sep 17 00:00:00 200=
-1
-=46rom: Haojian Zhuang <haojian.zhuang@marvell.com>
-Date: Tue, 6 Oct 2009 08:08:37 -0400
-Subject: [PATCH] mfd: fix the dependancy issue on 88PM8607
+I have added the following patch for today.
 
-88PM8607 depends on I2C and MFD_CORE. Since 88PM8607 is built-in
-kernel, it also requires that I2C and MFD_CORE are built-in
-kernel also.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 12 Oct 2009 13:48:27 +1100
+Subject: [PATCH] suspend: using TASK_ macros requires sched.h
 
-Signed-off-by: Haojian Zhuang <haojian.zhuang@marvell.com>
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- drivers/mfd/Kconfig |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/base/power/main.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index fbe684b..00064e2 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -307,7 +307,7 @@ config EZX_PCAP
-
- config MFD_88PM8607
- 	bool "Support Marvell 88PM8607"
--	depends on I2C
-+	depends on I2C=3Dy
- 	select MFD_CORE
- 	help
- 	  This supports for Marvell 88PM8607 Power Management IC. This includ=
-es
+diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+index 3b09009..fb1c648 100644
+--- a/drivers/base/power/main.c
++++ b/drivers/base/power/main.c
+@@ -29,6 +29,7 @@
+ #include <linux/async.h>
+ #include <linux/completion.h>
+ #include <linux/time.h>
++#include <linux/sched.h>
+=20
+ #include "../base.h"
+ #include "power.h"
 --=20
-1.5.6.5
+1.6.4.3
 
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Best Regards
-Haojian
+--Signature=_Mon__12_Oct_2009_14_00_02_+1100_d50Ck6DeaY2oO09f
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkrSm7IACgkQjjKRsyhoI8xzWgCfb/Q7QWl3x4slvEmrq/vec+HG
+qAIAoLmNXhCRAKa0jST2hOaWy7qm9UZq
+=MN54
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__12_Oct_2009_14_00_02_+1100_d50Ck6DeaY2oO09f--
