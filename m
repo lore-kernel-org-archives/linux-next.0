@@ -1,34 +1,49 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Subject: Re: linux-next: voltage tree build failure
-Date: Mon, 12 Oct 2009 15:35:17 +0200
-Message-ID: <20091012133516.GA16662@sortiz.org>
-References: <20091012132628.2f709e40.sfr@canb.auug.org.au>
- <771cded00910111950y6104fe0fl4f1d10144d938243@mail.gmail.com>
- <20091012125707.GE22233@sirena.org.uk>
+From: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
+Subject: Re: [PATCH -next] thinkpad_acpi: fix build, HOTKEY_POLL is optional
+Date: Mon, 12 Oct 2009 12:41:47 -0300
+Message-ID: <20091012154147.GA16178@khazad-dum.debian.net>
+References: <20091009190654.741eeffd.sfr@canb.auug.org.au>
+ <20091009161723.b68b91a7.randy.dunlap@oracle.com>
+ <20091010000808.GA10637@khazad-dum.debian.net>
+ <20091012125942.GA25464@elte.hu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756175AbZJLNe0@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out1.smtp.messagingengine.com ([66.111.4.25]:33783 "EHLO
+	out1.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752790AbZJLPm3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 12 Oct 2009 11:42:29 -0400
 Content-Disposition: inline
-In-Reply-To: <20091012125707.GE22233@sirena.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Haojian Zhuang <haojian.zhuang@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Liam Girdwood <lrg@slimlogic.co.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20091012125942.GA25464@elte.hu>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, lenb@kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Mon, Oct 12, 2009 at 01:57:07PM +0100, Mark Brown wrote:
-> On Sun, Oct 11, 2009 at 10:50:54PM -0400, Haojian Zhuang wrote:
+On Mon, 12 Oct 2009, Ingo Molnar wrote:
+> * Henrique de Moraes Holschuh <hmh@hmh.eng.br> wrote:
+> > On Fri, 09 Oct 2009, Randy Dunlap wrote:
+> > > From: Randy Dunlap <randy.dunlap@oracle.com>
+> > > 
+> > > Fix optional part of driver to be built optionally:
+> > 
+> > NAK!
+> > 
+> > This happens because of (linux-next) commit
+> > 7f6443f7238a0aa9014b11a0a31ab76825d75cdf 
+> > "thinkpad-acpi: Fix build on !CONFIG_THINKPAD_ACPI_HOTKEY_POLL" by
+> > Ingo.
+> > 
+> > That commit is wrong, it must NOT be applied as explained in the 
+> > thread starting at http://lkml.org/lkml/2009/9/27/30.
 > 
-> > Hi Samuel & Liam,
-> 
-> > Please help review and merge this fix patch. I'm sorry for inconvience.
-> 
-> This is waiting for Samuel - it should go via the MFD tree.  I've CCed
-> in Samuel's current e-mail address on the off-chance that that helps.
-Patch applied and pushed. Sorry for the delay, I wasnt cc'ed at first.
+> Yep, that was wrong - it should be gone now.
 
-Cheers,
-Samuel.
+Thank you.
 
 -- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+  "One disk to rule them all, One disk to find them. One disk to bring
+  them all and in the darkness grind them. In the Land of Redmond
+  where the shadows lie." -- The Silicon Valley Tarot
+  Henrique Holschuh
