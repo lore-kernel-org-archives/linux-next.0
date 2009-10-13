@@ -1,41 +1,88 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH] wan: pci200syn needs capability.h
-Date: Tue, 13 Oct 2009 10:00:16 -0700
-Message-ID: <20091013100016.3c9bfad7.randy.dunlap@oracle.com>
+Subject: [PATCH] whci: fix type and format warnings
+Date: Tue, 13 Oct 2009 10:01:28 -0700
+Message-ID: <20091013100128.0f06d67c.randy.dunlap@oracle.com>
 References: <20091013162312.8b93998b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet11.oracle.com ([141.146.126.233]:43628 "EHLO
-	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751194AbZJMRBl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Oct 2009 13:01:41 -0400
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1760609AbZJMRDV@vger.kernel.org>
 In-Reply-To: <20091013162312.8b93998b.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, davem@davemloft.net, Krzysztof Halasa <khc@pm.waw.pl>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, David Vrabel <david.vrabel@csr.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, lud <linux-usb@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
 From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Driver is missing header file capability.h:
+Fix format and type warnings in whci driver:
 
-drivers/net/wan/pci200syn.c:212: error: implicit declaration of function 'capable'
-drivers/net/wan/pci200syn.c:212: error: 'CAP_NET_ADMIN' undeclared (first use in this function)
+drivers/usb/host/whci/qset.c:440: warning: comparison of distinct pointer types lacks a cast
+drivers/usb/host/whci/qset.c:442: warning: format '%d' expects type 'int', but argument 6 has type 'size_t'
+drivers/usb/host/whci/qset.c:488: warning: format '%d' expects type 'int', but argument 4 has type 'size_t'
+drivers/usb/host/whci/qset.c:509: warning: format '%08x' expects type 'unsigned int', but argument 5 has type 'dma_addr_t'
+drivers/usb/host/whci/qset.c:568: warning: comparison of distinct pointer types lacks a cast
+drivers/usb/host/whci/qset.c:571: warning: format '%d' expects type 'int', but argument 5 has type 'size_t'
+drivers/usb/host/whci/qset.c:590: warning: format '%d' expects type 'int', but argument 4 has type 'size_t'
+drivers/usb/host/whci/qset.c:590: warning: format '%d' expects type 'int', but argument 6 has type 'long int'
 
 Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 ---
- drivers/net/wan/pci200syn.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/host/whci/qset.c |   15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
---- linux-next-20091012.orig/drivers/net/wan/pci200syn.c
-+++ linux-next-20091012/drivers/net/wan/pci200syn.c
-@@ -18,6 +18,7 @@
- #include <linux/kernel.h>
- #include <linux/slab.h>
- #include <linux/types.h>
-+#include <linux/capability.h>
- #include <linux/fcntl.h>
- #include <linux/in.h>
- #include <linux/string.h>
+--- linux-next-20091012.orig/drivers/usb/host/whci/qset.c
++++ linux-next-20091012/drivers/usb/host/whci/qset.c
+@@ -437,9 +437,9 @@ static int qset_add_urb_sg(struct whc *w
+ 		}
+ 
+ 		dma_addr = sg_dma_address(sg);
+-		dma_remaining = min(sg_dma_len(sg), remaining);
++		dma_remaining = min_t(size_t, sg_dma_len(sg), remaining);
+ 
+-		dev_dbg(&whc->umc->dev, "adding sg[%d] %08x %d\n", i, (unsigned)dma_addr,
++		dev_dbg(&whc->umc->dev, "adding sg[%d] %08x %zu\n", i, (unsigned)dma_addr,
+ 			dma_remaining);
+ 
+ 		while (dma_remaining) {
+@@ -485,7 +485,7 @@ static int qset_add_urb_sg(struct whc *w
+ 				dma_len = ep - dma_addr;
+ 			}
+ 
+-			dev_dbg(&whc->umc->dev, "adding %d\n", dma_len);
++			dev_dbg(&whc->umc->dev, "adding %zu\n", dma_len);
+ 
+ 			std->len += dma_len;
+ 			std->ntds_remaining = -1; /* filled in later */
+@@ -506,7 +506,8 @@ static int qset_add_urb_sg(struct whc *w
+ 			}
+ 
+ 			for (;p < std->num_pointers; p++, entry++) {
+-				dev_dbg(&whc->umc->dev, "e[%d] %08x\n", p, dma_addr);
++				dev_dbg(&whc->umc->dev, "e[%d] %08llx\n", p,
++					(unsigned long long)dma_addr);
+ 				std->pl_virt[p].buf_ptr = cpu_to_le64(dma_addr);
+ 				dma_addr = (dma_addr + WHCI_PAGE_SIZE) & ~(WHCI_PAGE_SIZE-1);
+ 			}
+@@ -565,10 +566,10 @@ static int qset_add_urb_sg_linearize(str
+ 			break;
+ 		}
+ 
+-		sg_remaining = min(remaining, sg->length);
++		sg_remaining = min_t(size_t, remaining, sg->length);
+ 		orig = sg_virt(sg);
+ 
+-		dev_dbg(&whc->umc->dev, "adding sg[%d] %d\n", i, sg_remaining);
++		dev_dbg(&whc->umc->dev, "adding sg[%d] %zu\n", i, sg_remaining);
+ 
+ 		while (sg_remaining) {
+ 			if (!std || std->len == max_std_len) {
+@@ -587,7 +588,7 @@ static int qset_add_urb_sg_linearize(str
+ 
+ 			len = min(sg_remaining, max_std_len - std->len);
+ 
+-			dev_dbg(&whc->umc->dev, "added %d from sg[%d] @ offset %d\n",
++			dev_dbg(&whc->umc->dev, "added %zu from sg[%d] @ offset %td\n",
+ 				len, i, orig - sg_virt(sg));
+ 
+ 			if (is_out)
