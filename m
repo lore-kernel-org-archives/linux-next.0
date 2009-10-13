@@ -1,35 +1,37 @@
-From: David Vrabel <david.vrabel-kQvG35nSl+M@public.gmane.org>
+From: Randy Dunlap <randy.dunlap@oracle.com>
 Subject: Re: [PATCH] whci: fix type and format warnings
-Date: Tue, 13 Oct 2009 18:51:21 +0100
-Message-ID: <4AD4BE19.8040005@csr.com>
-References: <20091013162312.8b93998b.sfr@canb.auug.org.au> <20091013100128.0f06d67c.randy.dunlap@oracle.com>
+Date: Tue, 13 Oct 2009 11:07:34 -0700
+Message-ID: <20091013110734.56b0e027.randy.dunlap@oracle.com>
+References: <20091013162312.8b93998b.sfr@canb.auug.org.au>
+	<20091013100128.0f06d67c.randy.dunlap@oracle.com>
+	<4AD4BE19.8040005@csr.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20091013100128.0f06d67c.randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, gregkh-l3A5Bk7waGM@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, lud <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet12.oracle.com ([148.87.113.124]:48861 "EHLO
+	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760404AbZJMSKI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Oct 2009 14:10:08 -0400
+In-Reply-To: <4AD4BE19.8040005@csr.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Vrabel <david.vrabel@csr.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, lud <linux-usb@vger.kernel.org>
 
-Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+On Tue, 13 Oct 2009 18:51:21 +0100 David Vrabel wrote:
+
+> Randy Dunlap wrote:
+> > From: Randy Dunlap <randy.dunlap@oracle.com>
+> > 
+> > Fix format and type warnings in whci driver:
 > 
-> Fix format and type warnings in whci driver:
+> I'd prefer this fixed differently.  Those debug messages were left in by
+> mistake.  Randy, you want to respin this or shall I?
 
-I'd prefer this fixed differently.  Those debug messages were left in by
-mistake.  Randy, you want to respin this or shall I?
+You can do it.
 
-David
--- 
-David Vrabel, Senior Software Engineer, Drivers
-CSR, Churchill House, Cambridge Business Park,  Tel: +44 (0)1223 692562
-Cowley Road, Cambridge, CB4 0WZ                 http://www.csr.com/
+Thanks.
 
-
-Member of the CSR plc group of companies. CSR plc registered in England and Wales, registered number 4187346, registered office Churchill House, Cambridge Business Park, Cowley Road, Cambridge, CB4 0WZ, United Kingdom
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+---
+~Randy
