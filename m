@@ -1,50 +1,39 @@
-From: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Subject: Re: [BUILD-FAILURE] next-20091013 - s390x build breaks at mm/fault
-	with !CONFIG_S390_EXEC_PROTECT
-Date: Tue, 13 Oct 2009 16:27:20 +0530
-Message-ID: <20091013105720.GB7542@linux.vnet.ibm.com>
-References: <20091013162312.8b93998b.sfr@canb.auug.org.au> <20091013100648.GA7542@linux.vnet.ibm.com> <20091013123335.6d6820b3@mschwide.boeblingen.de.ibm.com>
-Reply-To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+From: Mauro Carvalho Chehab <mchehab@redhat.com>
+Subject: Re: linux-next: manual merge of the i7core_edac tree with Linus'
+ tree
+Date: Tue, 13 Oct 2009 07:50:36 -0400 (EDT)
+Message-ID: <1209036982.100421255434636304.JavaMail.root@zmail05.collab.prod.int.phx2.redhat.com>
+References: <20091012142328.710881fe.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e23smtp07.au.ibm.com ([202.81.31.140]:55305 "EHLO
-	e23smtp07.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754679AbZJMK6E (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Oct 2009 06:58:04 -0400
-Content-Disposition: inline
-In-Reply-To: <20091013123335.6d6820b3@mschwide.boeblingen.de.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, heiko.carstens@de.ibm.com, linux-s390@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1759565AbZJMLvM@vger.kernel.org>
+In-Reply-To: <20091012142328.710881fe.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ingo Molnar <mingo@elte.hu>
+List-Id: linux-next.vger.kernel.org
 
-* Martin Schwidefsky <schwidefsky@de.ibm.com> [2009-10-13 12:33:35]:
 
-> On Tue, 13 Oct 2009 15:36:48 +0530
-> Kamalesh Babulal <kamalesh@linux.vnet.ibm.com> wrote:
-> 
-> > 	next-20091013 randconfig build breaks on s390, with
-> > CONFIG_S390_EXEC_PROTECT=y
-> > 
-> > arch/s390/mm/fault.c: In function 'signal_return':
-> > arch/s390/mm/fault.c:221: error: implicit declaration of function 'is_compat_task'
-> > make[1]: *** [arch/s390/mm/fault.o] Error 1
-> > 
-> > is_compat_task is defined at asm/compat.h, including the 
-> > header, helps
-> 
-> I'll merge that info "[PATCH] fault handler performance optimization" if you
-> don't mind.
+----- "Stephen Rothwell" <sfr@canb.auug.org.au> escreveu:
 
-Please feel free to merge it.
+> Hi Mauro,
+> 
+> Today's linux-next merge of the i7core_edac tree got a conflict in
+> arch/x86/kernel/cpu/mcheck/mce.c between commit
+> f436f8bb73138bc74eb1c6527723e00988ad8a8a ("x86: EDAC: MCE: Fix MCE
+> decoding callback logic") from Linus' tree and commit
+> 699a7dbe1ffdf4b25c1475e45590b181c3e23087 ("edac_mce: Add an interface
+> driver to report mce errors via edac") from the i7core_edac tree.
+> 
+> I don't know how to resolve these two commits so I have dropped the
+> i7core_edac tree for today.
 
-> 
-> -- 
-> blue skies,
->    Martin.
-> 
-> "Reality continues to ruin my life." - Calvin.
-> 
-			
-			Kamalesh
+Thanks for letting me know. I've rebased it fixing the merge conflict. For now,
+I just removed the call to edac_mce_parse() for Uncorrected Errors, since I'll
+eventually replace that part of the code with something better.
+
+You should now be able to merge it without merging conflicts.
+
+Cheers,
+Mauro.
