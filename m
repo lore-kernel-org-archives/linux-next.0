@@ -1,31 +1,35 @@
-From: Krzysztof Halasa <khc@pm.waw.pl>
-Subject: Re: [PATCH] wan: pci200syn needs capability.h
-Date: Tue, 13 Oct 2009 19:19:47 +0200
-Message-ID: <m33a5n5hzg.fsf@intrepid.localdomain>
-References: <20091013162312.8b93998b.sfr@canb.auug.org.au>
-	<20091013100016.3c9bfad7.randy.dunlap@oracle.com>
+From: David Vrabel <david.vrabel-kQvG35nSl+M@public.gmane.org>
+Subject: Re: [PATCH] whci: fix type and format warnings
+Date: Tue, 13 Oct 2009 18:51:21 +0100
+Message-ID: <4AD4BE19.8040005@csr.com>
+References: <20091013162312.8b93998b.sfr@canb.auug.org.au> <20091013100128.0f06d67c.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from khc.piap.pl ([195.187.100.11]:48513 "EHLO khc.piap.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1760699AbZJMRU0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 13 Oct 2009 13:20:26 -0400
-In-Reply-To: <20091013100016.3c9bfad7.randy.dunlap@oracle.com> (Randy Dunlap's
-	message of "Tue, 13 Oct 2009 10:00:16 -0700")
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, davem@davemloft.net, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20091013100128.0f06d67c.randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, gregkh-l3A5Bk7waGM@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, lud <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-Randy Dunlap <randy.dunlap@oracle.com> writes:
+Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+> 
+> Fix format and type warnings in whci driver:
 
-> Driver is missing header file capability.h:
->
-> drivers/net/wan/pci200syn.c:212: error: implicit declaration of function 'capable'
-> drivers/net/wan/pci200syn.c:212: error: 'CAP_NET_ADMIN' undeclared (first use in this function)
+I'd prefer this fixed differently.  Those debug messages were left in by
+mistake.  Randy, you want to respin this or shall I?
 
-Thanks, but I think a patch for a bunch of WAN drivers has been already
-posted.
+David
 -- 
-Krzysztof Halasa
+David Vrabel, Senior Software Engineer, Drivers
+CSR, Churchill House, Cambridge Business Park,  Tel: +44 (0)1223 692562
+Cowley Road, Cambridge, CB4 0WZ                 http://www.csr.com/
+
+
+Member of the CSR plc group of companies. CSR plc registered in England and Wales, registered number 4187346, registered office Churchill House, Cambridge Business Park, Cowley Road, Cambridge, CB4 0WZ, United Kingdom
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
