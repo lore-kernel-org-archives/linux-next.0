@@ -1,41 +1,68 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Subject: Re: linux-next: manual merge of the pci tree with Linus' tree
-Date: Tue, 13 Oct 2009 17:38:42 -0700
-Message-ID: <20091013173842.3c926b0c@jbarnes-g45>
-References: <20091014110532.f543b915.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: kbuild tree build failure
+Date: Wed, 14 Oct 2009 12:20:24 +1100
+Message-ID: <20091014122024.f5fa52a2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__14_Oct_2009_12_20_24_+1100_Yz=1RTD15DFE9qrN"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from outbound-mail-11.bluehost.com ([69.89.18.111]:60499 "HELO
-	outbound-mail-11.bluehost.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with SMTP id S1751296AbZJNAjn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 13 Oct 2009 20:39:43 -0400
-In-Reply-To: <20091014110532.f543b915.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:36273 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751373AbZJNBVK (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 13 Oct 2009 21:21:10 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Woodhouse <David.Woodhouse@intel.com>, Tejun Heo <tj@kernel.org>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Arnaldo Carvalho de Melo <acme@redhat.com>
 
-On Wed, 14 Oct 2009 11:05:32 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+--Signature=_Wed__14_Oct_2009_12_20_24_+1100_Yz=1RTD15DFE9qrN
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Jesse,
-> 
-> Today's linux-next merge of the pci tree got a conflict in
-> drivers/pci/pci.c between commit
-> 8d86fb2c80ec376b35ae64ac858d406ae1d42a3f ("Rename pci_init() to
-> pci_apply_final_quirks(), move it to quirks.c") from Linus' tree and
-> commit b20dd110d21aac94b3f4063cffbcf9718656ce51 ("PCI: determine CLS
-> more intelligently") from the pci tree.
-> 
-> I fixed it up by removing the bits of pci_init() that had been moved
-> and leaving the newly added bits where they are.  Hopefully this will
-> be ok since the moved bits are actually run earlier now.  Obviously,
-> there is probably a better fix ...
+Hi Sam,
 
-Ah, thanks.  I'll check it out and update my linux-next branch.
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
--- 
-Jesse Barnes, Intel Open Source Technology Center
+In file included from arch/x86/kernel/syscall_64.c:28:
+arch/x86/include/asm/unistd_64.h:665: error: array index in initializer exc=
+eeds array bounds
+arch/x86/include/asm/unistd_64.h:665: error: (near initialization for 'sys_=
+call_table')
+arch/x86/include/asm/unistd_64.h:665: warning: excess elements in array ini=
+tializer
+arch/x86/include/asm/unistd_64.h:665: warning: (near initialization for 'sy=
+s_call_table')
+
+Exposed by commit a2e2725541fad72416326798c2d7fa4dafb7d337 ("net:
+Introduce recvmmsg socket syscall").  include/asm/asm-offsets.h did not
+get updated even though arch/x86/kernel/asm-offsets.s did.  Ah,
+generated/asm-offsets.h has been updated but my build tree still has the
+(generated in a previous build) include/asm/asm-offsets.h which is
+presumably found before the new arch/x86/include/asm/asm-offsets.h
+introduced by commit fe5ff47a5d79ca99ec7e3155eb19469b44905b2c ("kbuild:
+move asm-offsets.h to include/generated").
+
+Sam, can you think of a better migration path?
+
+I removed include/asm/asm_offsets.h from my object tree and everything
+builds ok.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__14_Oct_2009_12_20_24_+1100_Yz=1RTD15DFE9qrN
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkrVJ1gACgkQjjKRsyhoI8xV1QCdGTIB5hpulTSyMdnUvY4IVJQd
+LHMAoLTeBWSV9SXNRpKBA4bSJvywsjKb
+=w0HK
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__14_Oct_2009_12_20_24_+1100_Yz=1RTD15DFE9qrN--
