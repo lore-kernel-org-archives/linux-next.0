@@ -1,48 +1,74 @@
-From: Sam Ravnborg <sam@ravnborg.org>
-Subject: Re: linux-next: kbuild tree build failure
-Date: Wed, 14 Oct 2009 09:43:44 +0200
-Message-ID: <20091014074344.GA6330@merkur.ravnborg.org>
-References: <20091014122024.f5fa52a2.sfr@canb.auug.org.au>
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: Re: [BUILD_FAILURE] next-20091013 s390x - build breaks SCLP VT220
+ terminal driver
+Date: Wed, 14 Oct 2009 11:02:46 +0200
+Message-ID: <20091014110246.3c76f93f@mschwide.boeblingen.de.ibm.com>
+References: <20091013162312.8b93998b.sfr@canb.auug.org.au>
+	<20091013162809.GA27977@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pfepa.post.tele.dk ([195.41.46.235]:36520 "EHLO
-	pfepa.post.tele.dk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756149AbZJNHoV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Oct 2009 03:44:21 -0400
-Content-Disposition: inline
-In-Reply-To: <20091014122024.f5fa52a2.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Arnaldo Carvalho de Melo <acme@redhat.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1758219AbZJNJD1@vger.kernel.org>
+In-Reply-To: <20091013162809.GA27977@linux.vnet.ibm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Cc: Peter.Oberparleiter@de.ibm.com, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, heiko.carstens@de.ibm.com, linux-s390@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Oct 14, 2009 at 12:20:24PM +1100, Stephen Rothwell wrote:
-> Hi Sam,
-> 
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
-> 
-> In file included from arch/x86/kernel/syscall_64.c:28:
-> arch/x86/include/asm/unistd_64.h:665: error: array index in initializer exceeds array bounds
-> arch/x86/include/asm/unistd_64.h:665: error: (near initialization for 'sys_call_table')
-> arch/x86/include/asm/unistd_64.h:665: warning: excess elements in array initializer
-> arch/x86/include/asm/unistd_64.h:665: warning: (near initialization for 'sys_call_table')
-> 
-> Exposed by commit a2e2725541fad72416326798c2d7fa4dafb7d337 ("net:
-> Introduce recvmmsg socket syscall").  include/asm/asm-offsets.h did not
-> get updated even though arch/x86/kernel/asm-offsets.s did.  Ah,
-> generated/asm-offsets.h has been updated but my build tree still has the
-> (generated in a previous build) include/asm/asm-offsets.h which is
-> presumably found before the new arch/x86/include/asm/asm-offsets.h
-> introduced by commit fe5ff47a5d79ca99ec7e3155eb19469b44905b2c ("kbuild:
-> move asm-offsets.h to include/generated").
-> 
-> Sam, can you think of a better migration path?
+On Tue, 13 Oct 2009 21:58:09 +0530
+Kamalesh Babulal <kamalesh@linux.vnet.ibm.com> wrote:
 
-I once thought of forefully removing include/asm to avoid this.
-Maybe we could let "make clean" remove include/asm -
-I expect this would have helped in this situation?
+> 	next-20091013 randconfig build on s390x build breaks with
+> 
+> drivers/s390/built-in.o:(.data+0x3354): undefined reference to `sclp_vt220_pm_event_fn'
 
-I'm planning to redo the serie within the next couple of weeks anyway.
+This patch should take care of it:
 
-	Sam
+--
+Subject: [PATCH] sclp_vt220 build fix
+
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+
+Fix this build error:
+
+	next-20091013 randconfig build on s390x build breaks with
+
+drivers/s390/built-in.o:(.data+0x3354): undefined reference to `sclp_vt220_pm_event_fn'
+
+Reported-by: Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+---
+
+ drivers/s390/char/sclp_vt220.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff -urpN linux-2.6/drivers/s390/char/sclp_vt220.c linux-2.6-patched/drivers/s390/char/sclp_vt220.c
+--- linux-2.6/drivers/s390/char/sclp_vt220.c	2009-09-10 00:13:59.000000000 +0200
++++ linux-2.6-patched/drivers/s390/char/sclp_vt220.c	2009-10-14 11:00:22.000000000 +0200
+@@ -93,8 +93,10 @@ static int __initdata sclp_vt220_init_co
+ static int sclp_vt220_flush_later;
+ 
+ static void sclp_vt220_receiver_fn(struct evbuf_header *evbuf);
++#ifdef CONFIG_SCLP_VT220_CONSOLE
+ static void sclp_vt220_pm_event_fn(struct sclp_register *reg,
+ 				   enum sclp_pm_event sclp_pm_event);
++#endif
+ static int __sclp_vt220_emit(struct sclp_vt220_request *request);
+ static void sclp_vt220_emit_current(void);
+ 
+@@ -104,7 +106,9 @@ static struct sclp_register sclp_vt220_r
+ 	.receive_mask		= EVTYP_VT220MSG_MASK,
+ 	.state_change_fn	= NULL,
+ 	.receiver_fn		= sclp_vt220_receiver_fn,
++#ifdef CONFIG_SCLP_VT220_CONSOLE
+ 	.pm_event_fn		= sclp_vt220_pm_event_fn,
++#endif
+ };
+ 
+ 
+
+-- 
+blue skies,
+   Martin.
+
+"Reality continues to ruin my life." - Calvin.
