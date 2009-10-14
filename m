@@ -1,65 +1,83 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for October 14
-Date: Thu, 15 Oct 2009 08:12:45 +1100
-Message-ID: <20091015081245.832eed66.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] kvm: fix ia64 printk formats
+Date: Wed, 14 Oct 2009 15:10:08 -0700
+Message-ID: <20091014151008.3d48b9fe.randy.dunlap@oracle.com>
 References: <20091014163445.f0441473.sfr@canb.auug.org.au>
-	<20091014085515.f40067c1.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__15_Oct_2009_08_12_45_+1100_Mpvbiy1S5Et2J9nj"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33182 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759587AbZJNVN1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 14 Oct 2009 17:13:27 -0400
-In-Reply-To: <20091014085515.f40067c1.randy.dunlap@oracle.com>
+Received: from acsinet12.oracle.com ([141.146.126.234]:45296 "EHLO
+	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1761722AbZJNWMm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Oct 2009 18:12:42 -0400
+In-Reply-To: <20091014163445.f0441473.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Xiantao Zhang <xiantao.zhang@intel.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kvm-ia64@vger.kernel.org, akpm <akpm@linux-foundation.org>
 
---Signature=_Thu__15_Oct_2009_08_12_45_+1100_Mpvbiy1S5Et2J9nj
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Hi Randy,
+Fix printk formats in ia64/kvm:
 
-On Wed, 14 Oct 2009 08:55:15 -0700 Randy Dunlap <randy.dunlap@oracle.com> w=
-rote:
->
-> Where are today's .bz2 file and the .sign files?
+arch/ia64/kvm/kvm-ia64.c:250: warning: format '%lx' expects type 'long unsigned int', but argument 2 has type 'uint64_t'
+arch/ia64/kvm/kvm-ia64.c:774: warning: format '%lx' expects type 'long unsigned int', but argument 2 has type 'uint64_t'
+arch/ia64/kvm/kvm_fw.c:151: warning: format '%ld' expects type 'long int', but argument 3 has type 's64'
+arch/ia64/kvm/kvm_fw.c:151: warning: format '%lx' expects type 'long unsigned int', but argument 4 has type 'u64'
+arch/ia64/kvm/kvm_fw.c:151: warning: format '%lx' expects type 'long unsigned int', but argument 5 has type 'u64'
+arch/ia64/kvm/kvm_fw.c:548: warning: format '%lx' expects type 'long unsigned int', but argument 2 has type 'u64'
 
-I only upload the .gz and some global script creates the other files
-automatically.  That seems to have failed sometime yesterday but someone
-has fixed it, now.
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Xiantao Zhang <xiantao.zhang@intel.com>
+---
+ arch/ia64/kvm/kvm-ia64.c |    4 ++--
+ arch/ia64/kvm/kvm_fw.c   |    9 +++++----
+ 2 files changed, 7 insertions(+), 6 deletions(-)
 
-> and when did pub/kernel/people/sfr/linux-next/ disappear?
-
-/pub/linux/kernel/people/sfr/linux-next is still there (it is a symlink
-to /pub/linux/kernel/v2.6/next).
-
-> The kernel.org/kdist/finger_banner file now reports:
-> The latest linux-next version of the Linux kernel is:         next-200910=
-13
-
-That would probably be the same problem as above.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__15_Oct_2009_08_12_45_+1100_Mpvbiy1S5Et2J9nj
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkrWPs4ACgkQjjKRsyhoI8xsZgCgrqHgbd1VWG3OAEYuhJcrdY+/
-dWIAoLiha/b5g2DiZkZUJyTjAoAudQQ3
-=akhN
------END PGP SIGNATURE-----
-
---Signature=_Thu__15_Oct_2009_08_12_45_+1100_Mpvbiy1S5Et2J9nj--
+--- linux-next-20091014.orig/arch/ia64/kvm/kvm-ia64.c
++++ linux-next-20091014/arch/ia64/kvm/kvm-ia64.c
+@@ -247,7 +247,7 @@ mmio:
+ 		r = kvm_io_bus_write(&vcpu->kvm->mmio_bus, p->addr,
+ 				     p->size, &p->data);
+ 	if (r)
+-		printk(KERN_ERR"kvm: No iodevice found! addr:%lx\n", p->addr);
++		printk(KERN_ERR "kvm: No iodevice found! addr:%llx\n", p->addr);
+ 	p->state = STATE_IORESP_READY;
+ 
+ 	return 1;
+@@ -771,7 +771,7 @@ static struct kvm *kvm_alloc_kvm(void)
+ 	kvm = (struct kvm *)(vm_base +
+ 			offsetof(struct kvm_vm_data, kvm_vm_struct));
+ 	kvm->arch.vm_base = vm_base;
+-	printk(KERN_DEBUG"kvm: vm's data area:0x%lx\n", vm_base);
++	printk(KERN_DEBUG "kvm: vm's data area:0x%llx\n", vm_base);
+ 
+ 	return kvm;
+ }
+--- linux-next-20091014.orig/arch/ia64/kvm/kvm_fw.c
++++ linux-next-20091014/arch/ia64/kvm/kvm_fw.c
+@@ -146,9 +146,10 @@ static struct ia64_pal_retval pal_cache_
+ 						&result.v0);
+ 	local_irq_restore(psr);
+ 	if (result.status != 0)
+-		printk(KERN_ERR"vcpu:%p crashed due to cache_flush err:%ld"
++		printk(KERN_ERR "vcpu:%p crashed due to cache_flush err:%ld"
+ 				"in1:%lx,in2:%lx\n",
+-				vcpu, result.status, gr29, gr30);
++				vcpu, (long)result.status,
++				(unsigned long)gr29, (unsigned long)gr30);
+ 
+ #if 0
+ 	if (gr29 == PAL_CACHE_TYPE_COHERENT) {
+@@ -544,8 +545,8 @@ int kvm_pal_emul(struct kvm_vcpu *vcpu, 
+ 		break;
+ 	default:
+ 		INIT_PAL_STATUS_UNIMPLEMENTED(result);
+-		printk(KERN_WARNING"kvm: Unsupported pal call,"
+-					" index:0x%lx\n", gr28);
++		printk(KERN_WARNING "kvm: Unsupported pal call,"
++					" index:0x%lx\n", (unsigned long)gr28);
+ 	}
+ 	set_pal_result(vcpu, result);
+ 	return ret;
