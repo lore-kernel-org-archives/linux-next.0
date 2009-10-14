@@ -1,37 +1,80 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH] whci: fix type and format warnings
-Date: Tue, 13 Oct 2009 11:07:34 -0700
-Message-ID: <20091013110734.56b0e027.randy.dunlap@oracle.com>
-References: <20091013162312.8b93998b.sfr@canb.auug.org.au>
-	<20091013100128.0f06d67c.randy.dunlap@oracle.com>
-	<4AD4BE19.8040005@csr.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the pci tree with Linus' tree
+Date: Wed, 14 Oct 2009 11:05:32 +1100
+Message-ID: <20091014110532.f543b915.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet12.oracle.com ([148.87.113.124]:48861 "EHLO
-	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760404AbZJMSKI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Oct 2009 14:10:08 -0400
-In-Reply-To: <4AD4BE19.8040005@csr.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Vrabel <david.vrabel@csr.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, lud <linux-usb@vger.kernel.org>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S933383AbZJNAGP@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Woodhouse <David.Woodhouse@intel.com>, Tejun Heo <tj@kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, 13 Oct 2009 18:51:21 +0100 David Vrabel wrote:
+Hi Jesse,
 
-> Randy Dunlap wrote:
-> > From: Randy Dunlap <randy.dunlap@oracle.com>
-> > 
-> > Fix format and type warnings in whci driver:
-> 
-> I'd prefer this fixed differently.  Those debug messages were left in by
-> mistake.  Randy, you want to respin this or shall I?
+Today's linux-next merge of the pci tree got a conflict in
+drivers/pci/pci.c between commit 8d86fb2c80ec376b35ae64ac858d406ae1d42a3f
+("Rename pci_init() to pci_apply_final_quirks(), move it to quirks.c")
+from Linus' tree and commit b20dd110d21aac94b3f4063cffbcf9718656ce51
+("PCI: determine CLS more intelligently") from the pci tree.
 
-You can do it.
+I fixed it up by removing the bits of pci_init() that had been moved and
+leaving the newly added bits where they are.  Hopefully this will be ok
+since the moved bits are actually run earlier now.  Obviously, there is
+probably a better fix ...
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Thanks.
-
----
-~Randy
+diff --cc drivers/pci/pci.c
+index 4e4c295,a6e22fd..0000000
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@@ -2723,6 -2724,45 +2724,45 @@@ int __attribute__ ((weak)) pci_ext_cfg_
+  	return 1;
+  }
+  
++ static int __devinit pci_init(void)
++ {
++ 	struct pci_dev *dev = NULL;
++ 	u8 cls = 0;
++ 	u8 tmp;
++ 
++ 	if (pci_cache_line_size)
++ 		printk(KERN_DEBUG "PCI: CLS %u bytes\n",
++ 		       pci_cache_line_size << 2);
++ 
++ 	while ((dev = pci_get_device(PCI_ANY_ID, PCI_ANY_ID, dev)) != NULL) {
+ -		pci_fixup_device(pci_fixup_final, dev);
++ 		/*
++ 		 * If arch hasn't set it explicitly yet, use the CLS
++ 		 * value shared by all PCI devices.  If there's a
++ 		 * mismatch, fall back to the default value.
++ 		 */
++ 		if (!pci_cache_line_size) {
++ 			pci_read_config_byte(dev, PCI_CACHE_LINE_SIZE, &tmp);
++ 			if (!cls)
++ 				cls = tmp;
++ 			if (!tmp || cls == tmp)
++ 				continue;
++ 
++ 			printk(KERN_DEBUG "PCI: CLS mismatch (%u != %u), "
++ 			       "using %u bytes\n", cls << 2, tmp << 2,
++ 			       pci_dfl_cache_line_size << 2);
++ 			pci_cache_line_size = pci_dfl_cache_line_size;
++ 		}
++ 	}
++ 	if (!pci_cache_line_size) {
++ 		printk(KERN_DEBUG "PCI: CLS %u bytes, default %u\n",
++ 		       cls << 2, pci_dfl_cache_line_size << 2);
++ 		pci_cache_line_size = cls;
++ 	}
++ 
++ 	return 0;
++ }
+++device_initcall(pci_init);
++ 
+  static int __init pci_setup(char *str)
+  {
+  	while (str) {
