@@ -1,44 +1,35 @@
-From: Hollis Blanchard <hollisb@us.ibm.com>
-Subject: Re: linux-next: tree build failure
-Date: Wed, 14 Oct 2009 15:57:06 -0700
-Message-ID: <1255561026.29192.0.camel@slab.beaverton.ibm.com>
-References: <4AC1E15502000078000516B5@vpn.id2.novell.com>
-	<1254267572.15622.1621.camel@slab.beaverton.ibm.com>
-	<4AC318450200007800017355@vpn.id2.novell.com>
-	<1254498517.3839.17.camel@slab.beaverton.ibm.com>
-	<4AC9B5310200007800017EA1@vpn.id2.novell.com>
-	<1255115648.2546.71.camel@slab.beaverton.ibm.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: staging tree build failure
+Date: Wed, 14 Oct 2009 16:54:49 -0700
+Message-ID: <20091014235449.GA9709@kroah.com>
+References: <20091013150753.f738576e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <1255115648.2546.71.camel@slab.beaverton.ibm.com>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
-To: Jan Beulich <JBeulich@novell.com>
-Cc: sfr@canb.auug.org.au, Rusty Russell <rusty@rustcorp.com.au>, linux-kernel@vger.kernel.org, kvm-ppc@vger.kernel.org, linux-next@vger.kernel.org, akpm@linux-foundation.org, linuxppc-dev@lists.ozlabs.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from kroah.org ([198.145.64.141]:50255 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751389AbZJOAEF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 14 Oct 2009 20:04:05 -0400
+Content-Disposition: inline
+In-Reply-To: <20091013150753.f738576e.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>
 
-On Fri, 2009-10-09 at 12:14 -0700, Hollis Blanchard wrote:
-> Rusty's version of BUILD_BUG_ON() does indeed fix the build break, and
-> also exposes the bug in kvmppc_account_exit_stat(). So to recap:
+On Tue, Oct 13, 2009 at 03:07:53PM +1100, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> original: built but didn't work
-> Jan's: doesn't build
-> Rusty's: builds and works
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
 > 
-> Where do you want to go from here?
+> make[4]: *** No rule to make target `include/linux/hayesesp.h', needed by `usr/include/linux/.install'.  Stop.
+> 
+> Caused by commit a724aa0a5ad2b3c6b5ee48e79a09e9fbc5cf3ec9 ("tty: esp:
+> remove broken driver") which I have reverted for today.
 
-Jan, what are your thoughts? Your BUILD_BUG_ON patch has broken the
-build, and we still need to fix it.
+I've now fixed this up, it needed to be removed from
+include/linux/Kbuild file.
 
--- 
-Hollis Blanchard
-IBM Linux Technology Center
+thanks,
+
+greg k-h
