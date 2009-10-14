@@ -1,48 +1,71 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the pci tree with Linus' tree
-Date: Wed, 14 Oct 2009 13:10:30 +1100
-Message-ID: <20091014131030.54cfc37e.sfr@canb.auug.org.au>
-References: <20091014110532.f543b915.sfr@canb.auug.org.au>
-	<20091013173842.3c926b0c@jbarnes-g45>
+Subject: linux-next: net tree build warnings
+Date: Wed, 14 Oct 2009 15:20:00 +1100
+Message-ID: <20091014152000.15312908.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__14_Oct_2009_13_10_30_+1100_VLS34FieTb9uIOsv"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1761455AbZJNCLR@vger.kernel.org>
-In-Reply-To: <20091013173842.3c926b0c@jbarnes-g45>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jesse Barnes <jbarnes@virtuousgeek.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Woodhouse <David.Woodhouse@intel.com>, Tejun Heo <tj@kernel.org>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Wed__14_Oct_2009_15_20_00_+1100_KonpCOOA996HHN6Q"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:51465 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750765AbZJNEUo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 14 Oct 2009 00:20:44 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
 
---Signature=_Wed__14_Oct_2009_13_10_30_+1100_VLS34FieTb9uIOsv
+--Signature=_Wed__14_Oct_2009_15_20_00_+1100_KonpCOOA996HHN6Q
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jesse,
+Hi Dave,
 
-On Tue, 13 Oct 2009 17:38:42 -0700 Jesse Barnes <jbarnes@virtuousgeek.org> =
-wrote:
->
-> Ah, thanks.  I'll check it out and update my linux-next branch.
+Today's linux-next build (powerpc ppc44x_defconfig) produced these
+warnings:
 
-Excellent, thanks.
+In file included from net/socket.c:94:
+include/net/compat.h:45: warning: 'struct compat_mmsghdr' declared inside p=
+arameter list
+include/net/compat.h:45: warning: its scope is only this definition or decl=
+aration, which is probably not what you want
+In file included from net/core/scm.c:36:
+include/net/compat.h:45: warning: 'struct compat_mmsghdr' declared inside p=
+arameter list
+include/net/compat.h:45: warning: its scope is only this definition or decl=
+aration, which is probably not what you want
+In file included from net/ipv4/ip_sockglue.c:37:
+include/net/compat.h:45: warning: 'struct compat_mmsghdr' declared inside p=
+arameter list
+include/net/compat.h:45: warning: its scope is only this definition or decl=
+aration, which is probably not what you want
+In file included from net/ipv6/ipv6_sockglue.c:53:
+include/net/compat.h:45: warning: 'struct compat_mmsghdr' declared inside p=
+arameter list
+include/net/compat.h:45: warning: its scope is only this definition or decl=
+aration, which is probably not what you want
+
+CONFIG_COMPAT is not set.
+
+Caused by commit a2e2725541fad72416326798c2d7fa4dafb7d337 ("net:
+Introduce recvmmsg socket syscall").
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__14_Oct_2009_13_10_30_+1100_VLS34FieTb9uIOsv
+--Signature=_Wed__14_Oct_2009_15_20_00_+1100_KonpCOOA996HHN6Q
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkrVMxYACgkQjjKRsyhoI8ybKQCfXUiMv4bwuy5+DaAn5SjNOhcl
-s0EAn3MqR8H1AlULNewlP9BU3UOBvBfp
-=IFgQ
+iEYEARECAAYFAkrVUXAACgkQjjKRsyhoI8yLAACfTxhMS1cfJWwFvR0t3AiL0fae
+64YAn0quNkFMDkp8lnFoYIuZUJvODx8h
+=S7QU
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__14_Oct_2009_13_10_30_+1100_VLS34FieTb9uIOsv--
+--Signature=_Wed__14_Oct_2009_15_20_00_+1100_KonpCOOA996HHN6Q--
