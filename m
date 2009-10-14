@@ -1,38 +1,44 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: net tree build warnings
-Date: Wed, 14 Oct 2009 15:11:37 -0700 (PDT)
-Message-ID: <20091014.151137.30359959.davem@davemloft.net>
-References: <20091014152000.15312908.sfr@canb.auug.org.au>
-	<20091014153450.3110e34c.sfr@canb.auug.org.au>
+From: Hollis Blanchard <hollisb@us.ibm.com>
+Subject: Re: linux-next: tree build failure
+Date: Wed, 14 Oct 2009 15:57:06 -0700
+Message-ID: <1255561026.29192.0.camel@slab.beaverton.ibm.com>
+References: <4AC1E15502000078000516B5@vpn.id2.novell.com>
+	<1254267572.15622.1621.camel@slab.beaverton.ibm.com>
+	<4AC318450200007800017355@vpn.id2.novell.com>
+	<1254498517.3839.17.camel@slab.beaverton.ibm.com>
+	<4AC9B5310200007800017EA1@vpn.id2.novell.com>
+	<1255115648.2546.71.camel@slab.beaverton.ibm.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932540AbZJNWLn@vger.kernel.org>
-In-Reply-To: <20091014153450.3110e34c.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, acme@redhat.com
+Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <1255115648.2546.71.camel@slab.beaverton.ibm.com>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
+Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
+To: Jan Beulich <JBeulich@novell.com>
+Cc: sfr@canb.auug.org.au, Rusty Russell <rusty@rustcorp.com.au>, linux-kernel@vger.kernel.org, kvm-ppc@vger.kernel.org, linux-next@vger.kernel.org, akpm@linux-foundation.org, linuxppc-dev@lists.ozlabs.org
 List-Id: linux-next.vger.kernel.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 14 Oct 2009 15:34:50 +1100
-
-> On Wed, 14 Oct 2009 15:20:00 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> Today's linux-next build (powerpc ppc44x_defconfig) produced these
->> warnings:
->> 
->> In file included from net/socket.c:94:
->> include/net/compat.h:45: warning: 'struct compat_mmsghdr' declared inside parameter list
->> 
->> CONFIG_COMPAT is not set.
->> 
->> Caused by commit a2e2725541fad72416326798c2d7fa4dafb7d337 ("net:
->> Introduce recvmmsg socket syscall").
- ...
+On Fri, 2009-10-09 at 12:14 -0700, Hollis Blanchard wrote:
+> Rusty's version of BUILD_BUG_ON() does indeed fix the build break, and
+> also exposes the bug in kvmppc_account_exit_stat(). So to recap:
 > 
-> I also get these for i386 and sparc32 defconfig builds.
+> original: built but didn't work
+> Jan's: doesn't build
+> Rusty's: builds and works
+> 
+> Where do you want to go from here?
 
-I've asked Arnaldo to work on fixing this.
+Jan, what are your thoughts? Your BUILD_BUG_ON patch has broken the
+build, and we still need to fix it.
 
-Thanks!
+-- 
+Hollis Blanchard
+IBM Linux Technology Center
