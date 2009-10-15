@@ -1,95 +1,25 @@
-From: "Zhang, Xiantao" <xiantao.zhang@intel.com>
-Subject: RE: [PATCH -next] kvm: fix ia64 printk formats
-Date: Thu, 15 Oct 2009 10:32:49 +0800
-Message-ID: <706158FABBBA044BAD4FE898A02E4BC201C9B81776@pdsmsx503.ccr.corp.intel.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [Pv-drivers] [PATCH -next] vmxnet: fix 2 build problems
+Date: Wed, 14 Oct 2009 20:39:13 -0700 (PDT)
+Message-ID: <20091014.203913.55886159.davem@davemloft.net>
 References: <20091014163445.f0441473.sfr@canb.auug.org.au>
- <20091014151008.3d48b9fe.randy.dunlap@oracle.com>
+	<20091014181715.09a82630.randy.dunlap@oracle.com>
+	<06257446-AA46-489A-80D7-D7C70096A744@vmware.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:50428 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751608AbZJOCdt convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Oct 2009 22:33:49 -0400
-In-Reply-To: <20091014151008.3d48b9fe.randy.dunlap@oracle.com>
-Content-Language: en-US
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "kvm-ia64@vger.kernel.org" <kvm-ia64@vger.kernel.org>, akpm <akpm@linux-foundation.org>
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <06257446-AA46-489A-80D7-D7C70096A744@vmware.com>
+Sender: netdev-owner@vger.kernel.org
+To: bhavesh@vmware.com
+Cc: randy.dunlap@oracle.com, sfr@canb.auug.org.au, netdev@vger.kernel.org, sbhatewara@vmware.com, pv-drivers@vmware.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Seems strict checks are applied to latest kernel. Okay to me.  Thanks!
-Acked-By Xiantao Zhang <xiantao.zhang@intel.com>
-Xiantao
+From: Bhavesh Davda <bhavesh@vmware.com>
+Date: Wed, 14 Oct 2009 19:00:45 -0700
 
-Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
+> Looks great! Thanks for making this change!
 > 
-> Fix printk formats in ia64/kvm:
-> 
-> arch/ia64/kvm/kvm-ia64.c:250: warning: format '%lx' expects type
-> 'long unsigned int', but argument 2 has type 'uint64_t'
-> arch/ia64/kvm/kvm-ia64.c:774: warning: format '%lx' expects type
-> 'long unsigned int', but argument 2 has type 'uint64_t'
-> arch/ia64/kvm/kvm_fw.c:151: warning: format '%ld' expects type 'long
-> int', but argument 3 has type 's64' arch/ia64/kvm/kvm_fw.c:151:
-> warning: format '%lx' expects type 'long unsigned int', but argument
-> 4 has type 'u64' arch/ia64/kvm/kvm_fw.c:151: warning: format '%lx'
-> expects type 'long unsigned int', but argument 5 has type 'u64'
-> arch/ia64/kvm/kvm_fw.c:548: warning: format '%lx' expects type 'long
-> unsigned int', but argument 2 has type 'u64'     
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> Cc: Xiantao Zhang <xiantao.zhang@intel.com>
-> ---
->  arch/ia64/kvm/kvm-ia64.c |    4 ++--
->  arch/ia64/kvm/kvm_fw.c   |    9 +++++----
->  2 files changed, 7 insertions(+), 6 deletions(-)
-> 
-> --- linux-next-20091014.orig/arch/ia64/kvm/kvm-ia64.c
-> +++ linux-next-20091014/arch/ia64/kvm/kvm-ia64.c
-> @@ -247,7 +247,7 @@ mmio:
->  		r = kvm_io_bus_write(&vcpu->kvm->mmio_bus, p->addr,
->  				     p->size, &p->data);
->  	if (r)
-> -		printk(KERN_ERR"kvm: No iodevice found! addr:%lx\n", p->addr);
-> +		printk(KERN_ERR "kvm: No iodevice found! addr:%llx\n", p->addr);
->  	p->state = STATE_IORESP_READY;
-> 
->  	return 1;
-> @@ -771,7 +771,7 @@ static struct kvm *kvm_alloc_kvm(void)
->  	kvm = (struct kvm *)(vm_base +
->  			offsetof(struct kvm_vm_data, kvm_vm_struct));
->  	kvm->arch.vm_base = vm_base;
-> -	printk(KERN_DEBUG"kvm: vm's data area:0x%lx\n", vm_base);
-> +	printk(KERN_DEBUG "kvm: vm's data area:0x%llx\n", vm_base);
-> 
->  	return kvm;
->  }
-> --- linux-next-20091014.orig/arch/ia64/kvm/kvm_fw.c
-> +++ linux-next-20091014/arch/ia64/kvm/kvm_fw.c
-> @@ -146,9 +146,10 @@ static struct ia64_pal_retval pal_cache_
->  						&result.v0);
->  	local_irq_restore(psr);
->  	if (result.status != 0)
-> -		printk(KERN_ERR"vcpu:%p crashed due to cache_flush err:%ld"
-> +		printk(KERN_ERR "vcpu:%p crashed due to cache_flush err:%ld"
->  				"in1:%lx,in2:%lx\n",
-> -				vcpu, result.status, gr29, gr30);
-> +				vcpu, (long)result.status,
-> +				(unsigned long)gr29, (unsigned long)gr30);
-> 
->  #if 0
->  	if (gr29 == PAL_CACHE_TYPE_COHERENT) {
-> @@ -544,8 +545,8 @@ int kvm_pal_emul(struct kvm_vcpu *vcpu,
->  		break;
->  	default:
->  		INIT_PAL_STATUS_UNIMPLEMENTED(result);
-> -		printk(KERN_WARNING"kvm: Unsupported pal call,"
-> -					" index:0x%lx\n", gr28);
-> +		printk(KERN_WARNING "kvm: Unsupported pal call,"
-> +					" index:0x%lx\n", (unsigned long)gr28);
->  	}
->  	set_pal_result(vcpu, result);
->  	return ret;
+> Signed-off-by: Bhavesh davda <bhavesh@vmware.com<mailto:bhavesh@vmware.com>>
+
+Applied, thanks Randy.
