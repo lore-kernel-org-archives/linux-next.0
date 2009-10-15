@@ -1,40 +1,25 @@
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: linux-next: net tree build warnings
-Date: Wed, 14 Oct 2009 22:55:41 -0300
-Message-ID: <20091015015541.GC25141@ghostprotocols.net>
-References: <20091014152000.15312908.sfr@canb.auug.org.au> <20091014153450.3110e34c.sfr@canb.auug.org.au> <20091014.151137.30359959.davem@davemloft.net>
+From: Bhavesh Davda <bhavesh@vmware.com>
+Subject: Re: [Pv-drivers] [PATCH -next] vmxnet: fix 2 build problems
+Date: Wed, 14 Oct 2009 19:00:45 -0700
+Message-ID: <06257446-AA46-489A-80D7-D7C70096A744@vmware.com>
+References: <20091014163445.f0441473.sfr@canb.auug.org.au>
+ <20091014181715.09a82630.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1760945AbZJOB4T@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20091014.151137.30359959.davem@davemloft.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1761351AbZJOCB0@vger.kernel.org>
+In-Reply-To: <20091014181715.09a82630.randy.dunlap@oracle.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, netdev <netdev@vger.kernel.org>, Shreyas Bhatewara <sbhatewara@vmware.com>, "pv-drivers@vmware.com" <pv-drivers@vmware.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "davem@davemloft.net" <davem@davemloft.net>
 List-Id: linux-next.vger.kernel.org
 
-Em Wed, Oct 14, 2009 at 03:11:37PM -0700, David Miller escreveu:
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 14 Oct 2009 15:34:50 +1100
-> 
-> > On Wed, 14 Oct 2009 15:20:00 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >>
-> >> Today's linux-next build (powerpc ppc44x_defconfig) produced these
-> >> warnings:
-> >> 
-> >> In file included from net/socket.c:94:
-> >> include/net/compat.h:45: warning: 'struct compat_mmsghdr' declared inside parameter list
-> >> 
-> >> CONFIG_COMPAT is not set.
-> >> 
-> >> Caused by commit a2e2725541fad72416326798c2d7fa4dafb7d337 ("net:
-> >> Introduce recvmmsg socket syscall").
->  ...
-> > 
-> > I also get these for i386 and sparc32 defconfig builds.
-> 
-> I've asked Arnaldo to work on fixing this.
-
-I'll fix that early tomorrow.
-
-- Arnaldo
+TG9va3MgZ3JlYXQhIFRoYW5rcyBmb3IgbWFraW5nIHRoaXMgY2hhbmdlIQ0KDQpTaWduZWQtb2Zm
+LWJ5OiBCaGF2ZXNoIGRhdmRhIDxiaGF2ZXNoQHZtd2FyZS5jb208bWFpbHRvOmJoYXZlc2hAdm13
+YXJlLmNvbT4+DQoNCi0gQmhhdmVzaA0KDQpJJ20gdXN1YWxseSBub3QgYXMgYmFkIHdpdGggbXkg
+c3BlbGxpbmcgYXMgbXkgaVBob25lIG1ha2VzIGl0IGFwcGVhci4NCg0KDQpPbiBPY3QgMTQsIDIw
+MDksIGF0IDY6MTggUE0sICJSYW5keSBEdW5sYXAiIDxyYW5keS5kdW5sYXBAb3JhY2xlLmNvbTxt
+YWlsdG86cmFuZHkuZHVubGFwQG9yYWNsZS5jb20+PiB3cm90ZToNCg0KU2lnbmVkLW9mZi1ieTog
+UmFuZHkgRHVubGFwIDw8bWFpbHRvOnJhbmR5LmR1bmxhcEBvcmFjbGUuY29tPnJhbmR5LmR1bmxh
+cEBvcmFjbGUuY29tPG1haWx0bzpyYW5keS5kdW5sYXBAb3JhY2xlLmNvbT4+DQo=
