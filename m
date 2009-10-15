@@ -1,48 +1,67 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for October 15 (i7core_edac)
-Date: Thu, 15 Oct 2009 12:17:20 -0700
-Message-ID: <20091015121720.57710ad2.randy.dunlap@oracle.com>
-References: <20091015152538.74a1cb15.sfr@canb.auug.org.au>
+From: Gregory Haskins <gregory.haskins@gmail.com>
+Subject: Re: [BUILD-FAILURE] next-20091015 - vbus_enet driver breaks with
+ allmodconfig
+Date: Thu, 15 Oct 2009 18:25:05 -0400
+Message-ID: <4AD7A141.3060102@gmail.com>
+References: <20091015152538.74a1cb15.sfr@canb.auug.org.au>	<20091015104852.GA6740@linux.vnet.ibm.com>	<4AD6CD940200005A00056857@sinclair.provo.novell.com>	<4AD75E60.4020306@gmail.com> <20091015114210.65e1be72.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S935220AbZJOTSd@vger.kernel.org>
-In-Reply-To: <20091015152538.74a1cb15.sfr@canb.auug.org.au>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="------------enigF135C229963BF58A4FFDD8B8"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1763020AbZJOW0T@vger.kernel.org>
+In-Reply-To: <20091015114210.65e1be72.randy.dunlap@oracle.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Gregory Haskins <ghaskins@novell.com>, Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, sfr@canb.auug.org.au, greg@kroah.com, netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Thu, 15 Oct 2009 15:25:38 +1100 Stephen Rothwell wrote:
+This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
+--------------enigF135C229963BF58A4FFDD8B8
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-> Hi all,
-> 
-> Changes since 20091014:
+Randy Dunlap wrote:
+> On Thu, 15 Oct 2009 13:39:44 -0400 Gregory Haskins wrote:
+>=20
+>>
+>> I am having difficulty reproducing the problem.  When I look at the
+>> Kconfig, I see that VBUS_ENET has a "select VBUS_PROXY" as I would
+>> expect.  Additionally, if I run allmodconfig I can confirm that I get
+>> VBUS_ENET=3Dm, VBUS_PROXY=3Dy:
+>=20
+> Greg,
+>=20
+> Did you try to reproduce it with the ppc64 config file?
+> allmodconfig on what arch?
+>=20
+> I think the problem is that arch/x86/Kconfig says:
+>=20
+> source "drivers/vbus/Kconfig"
+>=20
+> and that should actually be in drivers/Kconfig, so that it applies
+> to ppc64 et al, not just x86.
+
+Ah, indeed.  I only have/tried x86, and that is the issue.  I will have
+to fix this (and the create_irq() dependency you mention in the next mail=
+).
+
+Thanks Randy.
+
+-Greg
 
 
-Hi Mauro,
+--------------enigF135C229963BF58A4FFDD8B8
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
-i7core_edac has a few glitches when building on X86_32 or on SMP=n.
-Should it be restricted to X86_64 and SMP=y?
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG/MacGPG2 v2.0.11 (Darwin)
+Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
 
+iEYEARECAAYFAkrXoUEACgkQP5K2CMvXmqHjPwCdGjUZb1/Cutbea5ZkZYkYI832
++x0Ani3clRM6y9kcGDoZouUZb4weaht/
+=OVu/
+-----END PGP SIGNATURE-----
 
-drivers/edac/i7core_edac.c:860: error: implicit declaration of function 'msleep'
---> #include <linux/delay.h>
-
-SMP=n:
-drivers/edac/i7core_edac.c:1700: error: 'struct cpuinfo_x86' has no member named 'phys_proc_id'
-
-
-X86_32=y:
-drivers/edac/i7core_edac.c:919: warning: left shift count >= width of type
-drivers/edac/i7core_edac.c:922: warning: left shift count >= width of type
-drivers/edac/i7core_edac.c:924: warning: left shift count >= width of type
-drivers/edac/i7core_edac.c:929: warning: left shift count >= width of type
-drivers/edac/i7core_edac.c:932: warning: left shift count >= width of type
-drivers/edac/i7core_edac.c:934: warning: left shift count >= width of type
-drivers/edac/i7core_edac.c:939: warning: left shift count >= width of type
-drivers/edac/i7core_edac.c:945: warning: left shift count >= width of type
-drivers/edac/i7core_edac.c:951: warning: left shift count >= width of type
-
----
-~Randy
+--------------enigF135C229963BF58A4FFDD8B8--
