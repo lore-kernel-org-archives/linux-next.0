@@ -1,35 +1,40 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH -next] ia64/sn: fix percpu warnings
-Date: Thu, 15 Oct 2009 10:33:57 +0900
-Message-ID: <4AD67C05.2030201@kernel.org>
-References: <20091014163445.f0441473.sfr@canb.auug.org.au> <20091014151003.0ef42973.randy.dunlap@oracle.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: Re: linux-next: net tree build warnings
+Date: Wed, 14 Oct 2009 22:55:41 -0300
+Message-ID: <20091015015541.GC25141@ghostprotocols.net>
+References: <20091014152000.15312908.sfr@canb.auug.org.au> <20091014153450.3110e34c.sfr@canb.auug.org.au> <20091014.151137.30359959.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-ia64-owner@vger.kernel.org>
-In-Reply-To: <20091014151003.0ef42973.randy.dunlap@oracle.com>
-Sender: linux-ia64-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jes Sorensen <jes@sgi.com>, linux-ia64@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, akpm <akpm@linux-foundation.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1760945AbZJOB4T@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20091014.151137.30359959.davem@davemloft.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
+Em Wed, Oct 14, 2009 at 03:11:37PM -0700, David Miller escreveu:
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 14 Oct 2009 15:34:50 +1100
 > 
-> Fix percpu types warning in ia64/sn:
+> > On Wed, 14 Oct 2009 15:20:00 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >>
+> >> Today's linux-next build (powerpc ppc44x_defconfig) produced these
+> >> warnings:
+> >> 
+> >> In file included from net/socket.c:94:
+> >> include/net/compat.h:45: warning: 'struct compat_mmsghdr' declared inside parameter list
+> >> 
+> >> CONFIG_COMPAT is not set.
+> >> 
+> >> Caused by commit a2e2725541fad72416326798c2d7fa4dafb7d337 ("net:
+> >> Introduce recvmmsg socket syscall").
+>  ...
+> > 
+> > I also get these for i386 and sparc32 defconfig builds.
 > 
-> arch/ia64/sn/kernel/setup.c:74: error: conflicting types for '__pcpu_scope___sn_cnodeid_to_nasid'
-> arch/ia64/include/asm/sn/arch.h:74: error: previous declaration of '__pcpu_scope___sn_cnodeid_to_nasid' was here
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> Cc: Jes Sorensen <jes@sgi.com>
+> I've asked Arnaldo to work on fixing this.
 
-Acked-by: Tejun Heo <tj@kernel.org>
+I'll fix that early tomorrow.
 
-Can this go through ia64 tree?  If not, I can route it through
-percpu#for-fixes.
-
-Thanks.
-
--- 
-tejun
+- Arnaldo
