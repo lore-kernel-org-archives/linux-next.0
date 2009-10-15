@@ -1,151 +1,186 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] vmxnet3: use dev_dbg, fix build for CONFIG_BLOCK=n
-Date: Thu, 15 Oct 2009 15:29:35 -0700
-Message-ID: <4AD7A24F.6000900@oracle.com>
-References: <20091015152538.74a1cb15.sfr@canb.auug.org.au>
+Subject: Re: [Pv-drivers] [PATCH -next] vmxnet3: use dev_dbg,	fix build for
+ CONFIG_BLOCK=n
+Date: Thu, 15 Oct 2009 15:42:49 -0700
+Message-ID: <4AD7A569.1040308@oracle.com>
+References: <20091015152538.74a1cb15.sfr@canb.auug.org.au> <4AD7A24F.6000900@oracle.com> <8B1F619C9F5F454E81D90D3C161698D7017DD56435@EXCH-MBX-3.vmware.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet11.oracle.com ([141.146.126.233]:23073 "EHLO
-	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757720AbZJOWaH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Oct 2009 18:30:07 -0400
-In-Reply-To: <20091015152538.74a1cb15.sfr@canb.auug.org.au>
+Received: from rcsinet12.oracle.com ([148.87.113.124]:53513 "EHLO
+	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752532AbZJOWmy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Oct 2009 18:42:54 -0400
+In-Reply-To: <8B1F619C9F5F454E81D90D3C161698D7017DD56435@EXCH-MBX-3.vmware.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>, David Miller <davem@davemloft.net>, Shreyas Bhatewara <sbhatewara@vmware.com>, pv-drivers@vmware.com
+To: Bhavesh Davda <bhavesh@vmware.com>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "pv-drivers@vmware.com" <pv-drivers@vmware.com>, netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, David Miller <davem@davemloft.net>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+Bhavesh Davda wrote:
+> Who ever compiles with CONFIG_BLOCK=n? Just kidding...
 
-vmxnet3 was using dprintk() for debugging output.  This was
-defined in <linux/dst.h> and was the only thing that was
-used from that header file.  This caused compile errors
-when CONFIG_BLOCK was not enabled due to bio* and BIO*
-uses in the header file, so change this driver to use
-dev_dbg() for debugging output.
+or why does networking need CONFIG_BLOCK at all?  ;)
 
-include/linux/dst.h:520: error: dereferencing pointer to incomplete type
-include/linux/dst.h:520: error: 'BIO_POOL_BITS' undeclared (first use in this function)
-include/linux/dst.h:521: error: dereferencing pointer to incomplete type
-include/linux/dst.h:522: error: dereferencing pointer to incomplete type
-include/linux/dst.h:525: error: dereferencing pointer to incomplete type
-make[4]: *** [drivers/net/vmxnet3/vmxnet3_drv.o] Error 1
+> Thanks again for making this change! Ship it!
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- drivers/net/vmxnet3/vmxnet3_drv.c |   27 ++++++++++++++++++---------
- drivers/net/vmxnet3/vmxnet3_int.h |    2 +-
- 2 files changed, 19 insertions(+), 10 deletions(-)
+So could I have used adapter->netdev->dev or adapter->pdev->dev ?
+either of them?  are they the same?
 
---- linux-next-20091015.orig/drivers/net/vmxnet3/vmxnet3_int.h
-+++ linux-next-20091015/drivers/net/vmxnet3/vmxnet3_int.h
-@@ -30,6 +30,7 @@
- #include <linux/types.h>
- #include <linux/ethtool.h>
- #include <linux/delay.h>
-+#include <linux/device.h>
- #include <linux/netdevice.h>
- #include <linux/pci.h>
- #include <linux/ethtool.h>
-@@ -59,7 +60,6 @@
- #include <linux/if_vlan.h>
- #include <linux/if_arp.h>
- #include <linux/inetdevice.h>
--#include <linux/dst.h>
- 
- #include "vmxnet3_defs.h"
- 
---- linux-next-20091015.orig/drivers/net/vmxnet3/vmxnet3_drv.c
-+++ linux-next-20091015/drivers/net/vmxnet3/vmxnet3_drv.c
-@@ -481,7 +481,8 @@ vmxnet3_rq_alloc_rx_buf(struct vmxnet3_r
- 	}
- 	rq->uncommitted[ring_idx] += num_allocated;
- 
--	dprintk(KERN_ERR "alloc_rx_buf: %d allocated, next2fill %u, next2comp "
-+	dev_dbg(&adapter->netdev->dev,
-+		"alloc_rx_buf: %d allocated, next2fill %u, next2comp "
- 		"%u, uncommited %u\n", num_allocated, ring->next2fill,
- 		ring->next2comp, rq->uncommitted[ring_idx]);
- 
-@@ -539,7 +540,8 @@ vmxnet3_map_pkt(struct sk_buff *skb, str
- 		tbi = tq->buf_info + tq->tx_ring.next2fill;
- 		tbi->map_type = VMXNET3_MAP_NONE;
- 
--		dprintk(KERN_ERR "txd[%u]: 0x%Lx 0x%x 0x%x\n",
-+		dev_dbg(&adapter->netdev->dev,
-+			"txd[%u]: 0x%Lx 0x%x 0x%x\n",
- 			tq->tx_ring.next2fill, ctx->sop_txd->txd.addr,
- 			ctx->sop_txd->dword[2], ctx->sop_txd->dword[3]);
- 		vmxnet3_cmd_ring_adv_next2fill(&tq->tx_ring);
-@@ -572,7 +574,8 @@ vmxnet3_map_pkt(struct sk_buff *skb, str
- 		gdesc->dword[2] = dw2 | buf_size;
- 		gdesc->dword[3] = 0;
- 
--		dprintk(KERN_ERR "txd[%u]: 0x%Lx 0x%x 0x%x\n",
-+		dev_dbg(&adapter->netdev->dev,
-+			"txd[%u]: 0x%Lx 0x%x 0x%x\n",
- 			tq->tx_ring.next2fill, gdesc->txd.addr,
- 			gdesc->dword[2], gdesc->dword[3]);
- 		vmxnet3_cmd_ring_adv_next2fill(&tq->tx_ring);
-@@ -600,7 +603,8 @@ vmxnet3_map_pkt(struct sk_buff *skb, str
- 		gdesc->dword[2] = dw2 | frag->size;
- 		gdesc->dword[3] = 0;
- 
--		dprintk(KERN_ERR "txd[%u]: 0x%llu %u %u\n",
-+		dev_dbg(&adapter->netdev->dev,
-+			"txd[%u]: 0x%llu %u %u\n",
- 			tq->tx_ring.next2fill, gdesc->txd.addr,
- 			gdesc->dword[2], gdesc->dword[3]);
- 		vmxnet3_cmd_ring_adv_next2fill(&tq->tx_ring);
-@@ -697,7 +701,8 @@ vmxnet3_parse_and_copy_hdr(struct sk_buf
- 	tdd = tq->data_ring.base + tq->tx_ring.next2fill;
- 
- 	memcpy(tdd->data, skb->data, ctx->copy_size);
--	dprintk(KERN_ERR "copy %u bytes to dataRing[%u]\n",
-+	dev_dbg(&adapter->netdev->dev,
-+		"copy %u bytes to dataRing[%u]\n",
- 		ctx->copy_size, tq->tx_ring.next2fill);
- 	return 1;
- 
-@@ -808,7 +813,8 @@ vmxnet3_tq_xmit(struct sk_buff *skb, str
- 
- 	if (count > vmxnet3_cmd_ring_desc_avail(&tq->tx_ring)) {
- 		tq->stats.tx_ring_full++;
--		dprintk(KERN_ERR "tx queue stopped on %s, next2comp %u"
-+		dev_dbg(&adapter->netdev->dev,
-+			"tx queue stopped on %s, next2comp %u"
- 			" next2fill %u\n", adapter->netdev->name,
- 			tq->tx_ring.next2comp, tq->tx_ring.next2fill);
- 
-@@ -853,7 +859,8 @@ vmxnet3_tq_xmit(struct sk_buff *skb, str
- 
- 	/* finally flips the GEN bit of the SOP desc */
- 	gdesc->dword[2] ^= VMXNET3_TXD_GEN;
--	dprintk(KERN_ERR "txd[%u]: SOP 0x%Lx 0x%x 0x%x\n",
-+	dev_dbg(&adapter->netdev->dev,
-+		"txd[%u]: SOP 0x%Lx 0x%x 0x%x\n",
- 		(u32)((union Vmxnet3_GenericDesc *)ctx.sop_txd -
- 		tq->tx_ring.base), gdesc->txd.addr, gdesc->dword[2],
- 		gdesc->dword[3]);
-@@ -990,7 +997,8 @@ vmxnet3_rq_rx_complete(struct vmxnet3_rx
- 			if (unlikely(rcd->len == 0)) {
- 				/* Pretend the rx buffer is skipped. */
- 				BUG_ON(!(rcd->sop && rcd->eop));
--				dprintk(KERN_ERR "rxRing[%u][%u] 0 length\n",
-+				dev_dbg(&adapter->netdev->dev,
-+					"rxRing[%u][%u] 0 length\n",
- 					ring_idx, idx);
- 				goto rcd_done;
- 			}
-@@ -1676,7 +1684,8 @@ vmxnet3_activate_dev(struct vmxnet3_adap
- 	int err;
- 	u32 ret;
- 
--	dprintk(KERN_ERR "%s: skb_buf_size %d, rx_buf_per_pkt %d, ring sizes"
-+	dev_dbg(&adapter->netdev->dev,
-+		"%s: skb_buf_size %d, rx_buf_per_pkt %d, ring sizes"
- 		" %u %u %u\n", adapter->netdev->name, adapter->skb_buf_size,
- 		adapter->rx_buf_per_pkt, adapter->tx_queue.tx_ring.size,
- 		adapter->rx_queue.rx_ring[0].size,
+
+> Signed-off-by: Bhavesh Davda <bhavesh@vmware.com>
+> 
+> - Bhavesh
+> 
+>> -----Original Message-----
+>> From: pv-drivers-bounces@vmware.com [mailto:pv-drivers-
+>> bounces@vmware.com] On Behalf Of Randy Dunlap
+>> Sent: Thursday, October 15, 2009 3:30 PM
+>> To: Stephen Rothwell
+>> Cc: pv-drivers@vmware.com; netdev; LKML; linux-next@vger.kernel.org;
+>> David Miller
+>> Subject: [Pv-drivers] [PATCH -next] vmxnet3: use dev_dbg, fix build for
+>> CONFIG_BLOCK=n
+>>
+>> From: Randy Dunlap <randy.dunlap@oracle.com>
+>>
+>> vmxnet3 was using dprintk() for debugging output.  This was
+>> defined in <linux/dst.h> and was the only thing that was
+>> used from that header file.  This caused compile errors
+>> when CONFIG_BLOCK was not enabled due to bio* and BIO*
+>> uses in the header file, so change this driver to use
+>> dev_dbg() for debugging output.
+>>
+>> include/linux/dst.h:520: error: dereferencing pointer to incomplete
+>> type
+>> include/linux/dst.h:520: error: 'BIO_POOL_BITS' undeclared (first use
+>> in this function)
+>> include/linux/dst.h:521: error: dereferencing pointer to incomplete
+>> type
+>> include/linux/dst.h:522: error: dereferencing pointer to incomplete
+>> type
+>> include/linux/dst.h:525: error: dereferencing pointer to incomplete
+>> type
+>> make[4]: *** [drivers/net/vmxnet3/vmxnet3_drv.o] Error 1
+>>
+>> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+>> ---
+>>  drivers/net/vmxnet3/vmxnet3_drv.c |   27 ++++++++++++++++++---------
+>>  drivers/net/vmxnet3/vmxnet3_int.h |    2 +-
+>>  2 files changed, 19 insertions(+), 10 deletions(-)
+>>
+>> --- linux-next-20091015.orig/drivers/net/vmxnet3/vmxnet3_int.h
+>> +++ linux-next-20091015/drivers/net/vmxnet3/vmxnet3_int.h
+>> @@ -30,6 +30,7 @@
+>>  #include <linux/types.h>
+>>  #include <linux/ethtool.h>
+>>  #include <linux/delay.h>
+>> +#include <linux/device.h>
+>>  #include <linux/netdevice.h>
+>>  #include <linux/pci.h>
+>>  #include <linux/ethtool.h>
+>> @@ -59,7 +60,6 @@
+>>  #include <linux/if_vlan.h>
+>>  #include <linux/if_arp.h>
+>>  #include <linux/inetdevice.h>
+>> -#include <linux/dst.h>
+>>
+>>  #include "vmxnet3_defs.h"
+>>
+>> --- linux-next-20091015.orig/drivers/net/vmxnet3/vmxnet3_drv.c
+>> +++ linux-next-20091015/drivers/net/vmxnet3/vmxnet3_drv.c
+>> @@ -481,7 +481,8 @@ vmxnet3_rq_alloc_rx_buf(struct vmxnet3_r
+>>  	}
+>>  	rq->uncommitted[ring_idx] += num_allocated;
+>>
+>> -	dprintk(KERN_ERR "alloc_rx_buf: %d allocated, next2fill %u,
+>> next2comp "
+>> +	dev_dbg(&adapter->netdev->dev,
+>> +		"alloc_rx_buf: %d allocated, next2fill %u, next2comp "
+>>  		"%u, uncommited %u\n", num_allocated, ring->next2fill,
+>>  		ring->next2comp, rq->uncommitted[ring_idx]);
+>>
+>> @@ -539,7 +540,8 @@ vmxnet3_map_pkt(struct sk_buff *skb, str
+>>  		tbi = tq->buf_info + tq->tx_ring.next2fill;
+>>  		tbi->map_type = VMXNET3_MAP_NONE;
+>>
+>> -		dprintk(KERN_ERR "txd[%u]: 0x%Lx 0x%x 0x%x\n",
+>> +		dev_dbg(&adapter->netdev->dev,
+>> +			"txd[%u]: 0x%Lx 0x%x 0x%x\n",
+>>  			tq->tx_ring.next2fill, ctx->sop_txd->txd.addr,
+>>  			ctx->sop_txd->dword[2], ctx->sop_txd->dword[3]);
+>>  		vmxnet3_cmd_ring_adv_next2fill(&tq->tx_ring);
+>> @@ -572,7 +574,8 @@ vmxnet3_map_pkt(struct sk_buff *skb, str
+>>  		gdesc->dword[2] = dw2 | buf_size;
+>>  		gdesc->dword[3] = 0;
+>>
+>> -		dprintk(KERN_ERR "txd[%u]: 0x%Lx 0x%x 0x%x\n",
+>> +		dev_dbg(&adapter->netdev->dev,
+>> +			"txd[%u]: 0x%Lx 0x%x 0x%x\n",
+>>  			tq->tx_ring.next2fill, gdesc->txd.addr,
+>>  			gdesc->dword[2], gdesc->dword[3]);
+>>  		vmxnet3_cmd_ring_adv_next2fill(&tq->tx_ring);
+>> @@ -600,7 +603,8 @@ vmxnet3_map_pkt(struct sk_buff *skb, str
+>>  		gdesc->dword[2] = dw2 | frag->size;
+>>  		gdesc->dword[3] = 0;
+>>
+>> -		dprintk(KERN_ERR "txd[%u]: 0x%llu %u %u\n",
+>> +		dev_dbg(&adapter->netdev->dev,
+>> +			"txd[%u]: 0x%llu %u %u\n",
+>>  			tq->tx_ring.next2fill, gdesc->txd.addr,
+>>  			gdesc->dword[2], gdesc->dword[3]);
+>>  		vmxnet3_cmd_ring_adv_next2fill(&tq->tx_ring);
+>> @@ -697,7 +701,8 @@ vmxnet3_parse_and_copy_hdr(struct sk_buf
+>>  	tdd = tq->data_ring.base + tq->tx_ring.next2fill;
+>>
+>>  	memcpy(tdd->data, skb->data, ctx->copy_size);
+>> -	dprintk(KERN_ERR "copy %u bytes to dataRing[%u]\n",
+>> +	dev_dbg(&adapter->netdev->dev,
+>> +		"copy %u bytes to dataRing[%u]\n",
+>>  		ctx->copy_size, tq->tx_ring.next2fill);
+>>  	return 1;
+>>
+>> @@ -808,7 +813,8 @@ vmxnet3_tq_xmit(struct sk_buff *skb, str
+>>
+>>  	if (count > vmxnet3_cmd_ring_desc_avail(&tq->tx_ring)) {
+>>  		tq->stats.tx_ring_full++;
+>> -		dprintk(KERN_ERR "tx queue stopped on %s, next2comp %u"
+>> +		dev_dbg(&adapter->netdev->dev,
+>> +			"tx queue stopped on %s, next2comp %u"
+>>  			" next2fill %u\n", adapter->netdev->name,
+>>  			tq->tx_ring.next2comp, tq->tx_ring.next2fill);
+>>
+>> @@ -853,7 +859,8 @@ vmxnet3_tq_xmit(struct sk_buff *skb, str
+>>
+>>  	/* finally flips the GEN bit of the SOP desc */
+>>  	gdesc->dword[2] ^= VMXNET3_TXD_GEN;
+>> -	dprintk(KERN_ERR "txd[%u]: SOP 0x%Lx 0x%x 0x%x\n",
+>> +	dev_dbg(&adapter->netdev->dev,
+>> +		"txd[%u]: SOP 0x%Lx 0x%x 0x%x\n",
+>>  		(u32)((union Vmxnet3_GenericDesc *)ctx.sop_txd -
+>>  		tq->tx_ring.base), gdesc->txd.addr, gdesc->dword[2],
+>>  		gdesc->dword[3]);
+>> @@ -990,7 +997,8 @@ vmxnet3_rq_rx_complete(struct vmxnet3_rx
+>>  			if (unlikely(rcd->len == 0)) {
+>>  				/* Pretend the rx buffer is skipped. */
+>>  				BUG_ON(!(rcd->sop && rcd->eop));
+>> -				dprintk(KERN_ERR "rxRing[%u][%u] 0 length\n",
+>> +				dev_dbg(&adapter->netdev->dev,
+>> +					"rxRing[%u][%u] 0 length\n",
+>>  					ring_idx, idx);
+>>  				goto rcd_done;
+>>  			}
+>> @@ -1676,7 +1684,8 @@ vmxnet3_activate_dev(struct vmxnet3_adap
+>>  	int err;
+>>  	u32 ret;
+>>
+>> -	dprintk(KERN_ERR "%s: skb_buf_size %d, rx_buf_per_pkt %d, ring
+>> sizes"
+>> +	dev_dbg(&adapter->netdev->dev,
+>> +		"%s: skb_buf_size %d, rx_buf_per_pkt %d, ring sizes"
+>>  		" %u %u %u\n", adapter->netdev->name, adapter-
+>>> skb_buf_size,
+>>  		adapter->rx_buf_per_pkt, adapter->tx_queue.tx_ring.size,
+>>  		adapter->rx_queue.rx_ring[0].size,
+>> _______________________________________________
