@@ -1,26 +1,36 @@
-From: Sage Weil <sage@newdream.net>
-Subject: ceph in linux-next
-Date: Fri, 16 Oct 2009 14:17:04 -0700 (PDT)
-Message-ID: <Pine.LNX.4.64.0910161411130.12397@cobra.newdream.net>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [Pv-drivers] [PATCH -next] vmxnet3: use dev_dbg, fix build for
+ CONFIG_BLOCK=n
+Date: Fri, 16 Oct 2009 17:54:13 -0700 (PDT)
+Message-ID: <20091016.175413.236830274.davem@davemloft.net>
+References: <20091015152538.74a1cb15.sfr@canb.auug.org.au>
+	<4AD7A24F.6000900@oracle.com>
+	<8B1F619C9F5F454E81D90D3C161698D7017DD56435@EXCH-MBX-3.vmware.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cobra.newdream.net ([66.33.216.30]:49213 "EHLO
-	cobra.newdream.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752117AbZJPVQ7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 16 Oct 2009 17:16:59 -0400
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:53017
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752362AbZJQAxv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 16 Oct 2009 20:53:51 -0400
+In-Reply-To: <8B1F619C9F5F454E81D90D3C161698D7017DD56435@EXCH-MBX-3.vmware.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org
+To: bhavesh@vmware.com
+Cc: randy.dunlap@oracle.com, sfr@canb.auug.org.au, pv-drivers@vmware.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-Hi Stephen,
+From: Bhavesh Davda <bhavesh@vmware.com>
+Date: Thu, 15 Oct 2009 15:35:02 -0700
 
-Can you please include the ceph tree in linux-next? 
+> Who ever compiles with CONFIG_BLOCK=n? Just kidding...
 
-	git://git.kernel.org/pub/scm/linux/kernel/sage/ceph-client.git for-next
+Who ever uses block layer debugging facilities in a networking
+driver?
 
-Any problems should be send to me at <sage@newdream.net>.
+> Thanks again for making this change! Ship it!
+> 
+> Signed-off-by: Bhavesh Davda <bhavesh@vmware.com>
 
-Thanks!
-sage
+Applied, thanks everyone.
