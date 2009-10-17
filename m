@@ -1,67 +1,53 @@
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 1/1] Re: linux-next: net tree build warnings
-Date: Fri, 16 Oct 2009 23:10:24 -0300
-Message-ID: <20091017021024.GI25141@ghostprotocols.net>
-References: <20091014152000.15312908.sfr@canb.auug.org.au> <20091014153450.3110e34c.sfr@canb.auug.org.au> <20091014.151137.30359959.davem@davemloft.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for October 16
+Date: Sun, 18 Oct 2009 00:18:51 +1100
+Message-ID: <20091018001851.e2ef2cd7.sfr@canb.auug.org.au>
+References: <20091016170112.71ec36c7.sfr@canb.auug.org.au>
+	<87zl7rw6ng.fsf@deeprootsystems.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sun__18_Oct_2009_00_18_51_+1100_vMCM3gqg6inAXPVL"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:26209 "EHLO mx1.redhat.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:43219 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751986AbZJQCK3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 16 Oct 2009 22:10:29 -0400
-Content-Disposition: inline
-In-Reply-To: <20091014.151137.30359959.davem@davemloft.net>
+	id S1751249AbZJQNSx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 17 Oct 2009 09:18:53 -0400
+In-Reply-To: <87zl7rw6ng.fsf@deeprootsystems.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kevin Hilman <khilman@deeprootsystems.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Em Wed, Oct 14, 2009 at 03:11:37PM -0700, David Miller escreveu:
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 14 Oct 2009 15:34:50 +1100
-> > On Wed, 14 Oct 2009 15:20:00 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >> Today's linux-next build (powerpc ppc44x_defconfig) produced these
-> >> warnings:
-> >> In file included from net/socket.c:94:
-> >> include/net/compat.h:45: warning: 'struct compat_mmsghdr' declared inside parameter list
-> >> CONFIG_COMPAT is not set.
-> >> Caused by commit a2e2725541fad72416326798c2d7fa4dafb7d337 ("net:
-> >> Introduce recvmmsg socket syscall").
+--Signature=_Sun__18_Oct_2009_00_18_51_+1100_vMCM3gqg6inAXPVL
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > I also get these for i386 and sparc32 defconfig builds.
+Hi Kevin,
 
-This one should fix it, thanks for the report!
+On Fri, 16 Oct 2009 11:11:31 -0700 Kevin Hilman <khilman@deeprootsystems.co=
+m> wrote:
+>
+> I've changed the branch names slightly for the davinci tree (patch
+> below against todays next/master branch.)  Both branches will remain
+> for a few days, then I'll drop the old one.
 
-- Arnaldo
+I have changed over to the new one.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
->From ea9776634ed9b0b4a92c53002ea225bca143f47e Mon Sep 17 00:00:00 2001
-From: Arnaldo Carvalho de Melo <acme@ghostprotocols.net>
-Date: Fri, 16 Oct 2009 23:07:15 -0300
-Subject: [PATCH] net: Avoid compiler warning for mmsghdr when CONFIG_COMPAT is not selected
+--Signature=_Sun__18_Oct_2009_00_18_51_+1100_vMCM3gqg6inAXPVL
+Content-Type: application/pgp-signature
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@ghostprotocols.net>
----
- include/net/compat.h |    6 +++++-
- 1 files changed, 5 insertions(+), 1 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-diff --git a/include/net/compat.h b/include/net/compat.h
-index 9679f05..3c7d4e3 100644
---- a/include/net/compat.h
-+++ b/include/net/compat.h
-@@ -33,7 +33,11 @@ extern int compat_sock_get_timestamp(struct sock *, struct timeval __user *);
- extern int compat_sock_get_timestampns(struct sock *, struct timespec __user *);
- 
- #else /* defined(CONFIG_COMPAT) */
--#define compat_msghdr	msghdr		/* to avoid compiler warnings */
-+/*
-+ * To avoid compiler warnings:
-+ */
-+#define compat_msghdr	msghdr
-+#define compat_mmsghdr	mmsghdr
- #endif /* defined(CONFIG_COMPAT) */
- 
- extern int get_compat_msghdr(struct msghdr *, struct compat_msghdr __user *);
--- 
-1.6.2.5
+iEYEARECAAYFAkrZxDsACgkQjjKRsyhoI8zR0QCguBQ77rtbtdt1ilTgmGPsV/Uo
+yZAAn35DKRsC82BMXRK2d+/bGjBqYac6
+=+wfO
+-----END PGP SIGNATURE-----
+
+--Signature=_Sun__18_Oct_2009_00_18_51_+1100_vMCM3gqg6inAXPVL--
