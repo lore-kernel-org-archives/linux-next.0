@@ -1,47 +1,82 @@
-From: Jiri Slaby <jirislaby@gmail.com>
-Subject: writable limits to -next [was: Adding to linux-next?]
-Date: Fri, 23 Oct 2009 10:36:26 +0200
-Message-ID: <4AE16B0A.7020400@gmail.com>
-References: <4AC6339B.7000905@gmail.com> <20091006225751.7d5f3eec.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: writable limits to -next [was: Adding to linux-next?]
+Date: Mon, 26 Oct 2009 09:47:41 +1100
+Message-ID: <20091026094741.5a1d492c.sfr@canb.auug.org.au>
+References: <4AC6339B.7000905@gmail.com>
+	<20091006225751.7d5f3eec.sfr@canb.auug.org.au>
+	<4AE16B0A.7020400@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-2
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__26_Oct_2009_09_47_41_+1100_hrU=pX7iLu20PEKY"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fg-out-1718.google.com ([72.14.220.154]:37336 "EHLO
-	fg-out-1718.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751083AbZJWIgZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 23 Oct 2009 04:36:25 -0400
-In-Reply-To: <20091006225751.7d5f3eec.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:58974 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754181AbZJYWrl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 25 Oct 2009 18:47:41 -0400
+In-Reply-To: <4AE16B0A.7020400@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Jiri Slaby <jirislaby@gmail.com>
+Cc: linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, James Morris <jmorris@namei.org>, Stephen Smalley <sds@tycho.nsa.gov>, Eric Paris <eparis@parisplace.org>, Andrew Morton <akpm@linux-foundation.org>
 
-On 10/06/2009 01:57 PM, Stephen Rothwell wrote:
-> Here is my boilerplate:
-> 
-> Thanks for adding your subsystem tree as a participant of linux-next.  As
-> you may know, this is not a judgment of your code.  The purpose of
-> linux-next is for integration testing and to lower the impact of
-> conflicts between subsystems in the next merge window. 
+--Signature=_Mon__26_Oct_2009_09_47_41_+1100_hrU=pX7iLu20PEKY
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi, could you please add git://decibel.fi.muni.cz/~xslaby/linux#limits
-into the -next tree?
+Hi Jiri,
 
-> You will need to ensure that the patches/commits in your tree/series have
-> been:
->      * submitted under GPL v2 (or later) and include the Contributor's
-> 	Signed-off-by,
->      * posted to the relevant mailing list,
+On Fri, 23 Oct 2009 10:36:26 +0200 Jiri Slaby <jirislaby@gmail.com> wrote:
+>
+> Hi, could you please add git://decibel.fi.muni.cz/~xslaby/linux#limits
+> into the -next tree?
 
-I posted the patches twice, nobody seems to want to pick them up.
-The last repost is at:
-http://lkml.org/lkml/2009/10/17/126
+I have added it from today.
 
->      * reviewed by you (or another maintainer of your subsystem tree),
->      * successfully unit tested, and 
->      * destined for the current or next Linux merge window.
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
 
-I'll try to merge it to 2.6.33.
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+	Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
 
-Thanks.
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+Legal Stuff:
+By participating in linux-next, your subsystem tree contributions are
+public and will be included in the linux-next trees.  You may be sent
+e-mail messages indicating errors or other issues when the
+patches/commits from your subsystem tree are merged and tested in
+linux-next.  These messages may also be cross-posted to the linux-next
+mailing list, the linux-kernel mailing list, etc.  The linux-next tree
+project and IBM (my employer) make no warranties regarding the linux-next
+project, the testing procedures, the results, the e-mails, etc.  If you
+don't agree to these ground rules, let me know and I'll remove your tree
+from participation in linux-next.
+
+--Signature=_Mon__26_Oct_2009_09_47_41_+1100_hrU=pX7iLu20PEKY
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkrk1Y0ACgkQjjKRsyhoI8xX7gCfcVYYxehwLxQw/WLvATw1Zcn5
+f/8An3zlgEZ1nBjaCon6K+Rb7eifPmzf
+=ADPC
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__26_Oct_2009_09_47_41_+1100_hrU=pX7iLu20PEKY--
