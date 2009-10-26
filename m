@@ -1,46 +1,42 @@
-From: Ben Hutchings <bhutchings@solarflare.com>
-Subject: Re: linux-next: manual merge of the net tree with the i2c tree
-Date: Mon, 26 Oct 2009 13:46:33 +0000
-Message-ID: <1256564793.2783.3.camel@achroite>
-References: <20091026133757.7cf87e49.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for October 26 (gfs2)
+Date: Mon, 26 Oct 2009 08:43:56 -0700
+Message-ID: <20091026084356.847d1ae2.randy.dunlap@oracle.com>
+References: <20091026172104.205f15af.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20091026133757.7cf87e49.sfr@canb.auug.org.au>
-Sender: netdev-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mika Kuoppala <mika.kuoppala@nokia.com>, Jean Delvare <khali@linux-fr.org>
+Return-path: <cluster-devel-bounces@redhat.com>
+In-Reply-To: <20091026172104.205f15af.sfr@canb.auug.org.au>
+List-Unsubscribe: <https://www.redhat.com/mailman/listinfo/cluster-devel>,
+	<mailto:cluster-devel-request@redhat.com?subject=unsubscribe>
+List-Archive: <https://www.redhat.com/archives/cluster-devel>
+List-Post: <mailto:cluster-devel@redhat.com>
+List-Help: <mailto:cluster-devel-request@redhat.com?subject=help>
+List-Subscribe: <https://www.redhat.com/mailman/listinfo/cluster-devel>,
+	<mailto:cluster-devel-request@redhat.com?subject=subscribe>
+Sender: cluster-devel-bounces@redhat.com
+Errors-To: cluster-devel-bounces@redhat.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Steven Whitehouse <swhiteho@redhat.com>
+Cc: cluster-devel@redhat.com, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, 2009-10-26 at 13:37 +1100, Stephen Rothwell wrote:
+On Mon, 26 Oct 2009 17:21:04 +1100 Stephen Rothwell wrote:
+
 > Hi all,
 > 
-> Today's linux-next merge of the net tree got a conflict in
-> drivers/net/sfc/sfe4001.c between commit
-> 3f7c0648f727a6d5baf6117653e4001dc877b90b ("i2c: Prevent priority
-> inversion on top of bus lock") from the i2c tree and commit
-> c9597d4f89565b6562bd3026adbe6eac6c317f47 ("sfc: Merge sfe4001.c into
-> falcon_boards.c") from the net tree.
-> 
-> I have applied the following merge fixup patch (after removing
-> drivers/net/sfc/sfe4001.c) and can carry it as necessary.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 26 Oct 2009 12:24:55 +1100
-> Subject: [PATCH] net: merge fixup for drivers/net/sfc/falcon_boards.c
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Acked-by: Ben Hutchings <bhutchings@solarflare.com>
+> Changes since 20091016:
 
-Ben.
 
--- 
-Ben Hutchings, Senior Software Engineer, Solarflare Communications
-Not speaking for my employer; that's the marketing department's job.
-They asked us to note that Solarflare product names are trademarked.
+on i386:
 
+(.text+0x723a8b): undefined reference to `__divdi3'
+
+super.c::gfs2_statfs_change():
+		percent = (100 * l_sc->sc_free) / m_sc->sc_free;
+
+
+I guess it needs to use div64() etc.
+
+---
+~Randy
