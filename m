@@ -1,79 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: writable limits to -next
-Date: Mon, 26 Oct 2009 12:04:57 +1100
-Message-ID: <20091026120457.39f7ab83.sfr@canb.auug.org.au>
-References: <4AC6339B.7000905@gmail.com>
-	<20091006225751.7d5f3eec.sfr@canb.auug.org.au>
-	<4AE16B0A.7020400@gmail.com>
-	<20091026094741.5a1d492c.sfr@canb.auug.org.au>
-	<m3eiorc7r4.fsf@intrepid.localdomain>
+Subject: linux-next: manual merge of the net tree with the i2c tree
+Date: Mon, 26 Oct 2009 13:37:57 +1100
+Message-ID: <20091026133757.7cf87e49.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__26_Oct_2009_12_04_57_+1100_mT4K+YDe6yHGZEsR"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59520 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37678 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752455AbZJZBE7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 25 Oct 2009 21:04:59 -0400
-In-Reply-To: <m3eiorc7r4.fsf@intrepid.localdomain>
+	id S1754520AbZJZCht (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 25 Oct 2009 22:37:49 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Krzysztof Halasa <khc@pm.waw.pl>
-Cc: Jiri Slaby <jirislaby@gmail.com>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, James Morris <jmorris@namei.org>, Stephen Smalley <sds@tycho.nsa.gov>, Eric Paris <eparis@parisplace.org>, Andrew Morton <akpm@linux-foundation.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mika Kuoppala <mika.kuoppala@nokia.com>, Jean Delvare <khali@linux-fr.org>, Ben Hutchings <bhutchings@solarflare.com>
 
---Signature=_Mon__26_Oct_2009_12_04_57_+1100_mT4K+YDe6yHGZEsR
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-Hi Krzysztof,
+Today's linux-next merge of the net tree got a conflict in
+drivers/net/sfc/sfe4001.c between commit
+3f7c0648f727a6d5baf6117653e4001dc877b90b ("i2c: Prevent priority
+inversion on top of bus lock") from the i2c tree and commit
+c9597d4f89565b6562bd3026adbe6eac6c317f47 ("sfc: Merge sfe4001.c into
+falcon_boards.c") from the net tree.
 
-On Mon, 26 Oct 2009 01:35:11 +0100 Krzysztof Halasa <khc@pm.waw.pl> wrote:
->
-> BTW you may want to check if the current wording is correct:
->=20
-> Stephen Rothwell <sfr@canb.auug.org.au> writes:
->=20
-> > You will need to ensure that the patches/commits in your tree/series ha=
-ve
-> > been:
-> >      * submitted under GPL v2 (or later) and include the Contributor's
->          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->=20
-> It's not ok to submit under e.g. GPL v3 only, I'd suggest "under GPL v2
-> and optionally other licence(s)" or something like that.
+I have applied the following merge fixup patch (after removing
+drivers/net/sfc/sfe4001.c) and can carry it as necessary.
 
-Or maybe "under a license compatible with the Linux kernel source".
-
-This was pointed out to me once before but I was hoping not to have to
-disturb the IBM lawyers again.  I guess I will run it past them and see
-what happens.
-
-> For example code under BSD-style licence (in addition to GPLv2) is
-> present in Linux, though I think any additional licence (the "later" as
-> in "GPL v2 or later", GPL v3, MS EULA etc.) is acceptable as long as it
-> is really additional, i.e., if one can ignore it and "use" GPLv2
-> exclusively.
->=20
-> IANAL of course.
-
-Me neither :-)
-
---=20
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__26_Oct_2009_12_04_57_+1100_mT4K+YDe6yHGZEsR
-Content-Type: application/pgp-signature
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 26 Oct 2009 12:24:55 +1100
+Subject: [PATCH] net: merge fixup for drivers/net/sfc/falcon_boards.c
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/net/sfc/falcon_boards.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-iEYEARECAAYFAkrk9bkACgkQjjKRsyhoI8w0cQCeNRTlGwQgk1UdvgDmqvsu7zln
-LTkAn2B4pdDvV0YD+FB6DVKnh2bUKgBx
-=M5l4
------END PGP SIGNATURE-----
-
---Signature=_Mon__26_Oct_2009_12_04_57_+1100_mT4K+YDe6yHGZEsR--
+diff --git a/drivers/net/sfc/falcon_boards.c b/drivers/net/sfc/falcon_boards.c
+index 99f7372..788b336 100644
+--- a/drivers/net/sfc/falcon_boards.c
++++ b/drivers/net/sfc/falcon_boards.c
+@@ -327,7 +327,7 @@ static int sfn4111t_reset(struct efx_nic *efx)
+ 	efx_oword_t reg;
+ 
+ 	/* GPIO 3 and the GPIO register are shared with I2C, so block that */
+-	mutex_lock(&efx->i2c_adap.bus_lock);
++	rt_mutex_lock(&efx->i2c_adap.bus_lock);
+ 
+ 	/* Pull RST_N (GPIO 2) low then let it up again, setting the
+ 	 * FLASH_CFG_1 strap (GPIO 3) appropriately.  Only change the
+@@ -343,7 +343,7 @@ static int sfn4111t_reset(struct efx_nic *efx)
+ 	efx_writeo(efx, &reg, FR_AB_GPIO_CTL);
+ 	msleep(1);
+ 
+-	mutex_unlock(&efx->i2c_adap.bus_lock);
++	rt_mutex_unlock(&efx->i2c_adap.bus_lock);
+ 
+ 	ssleep(1);
+ 	return 0;
+-- 
+1.6.5
