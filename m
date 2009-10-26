@@ -1,65 +1,35 @@
-From: Huang Ying <ying.huang@intel.com>
-Subject: Re: linux-next: Tree for October 26
-Date: Mon, 26 Oct 2009 15:57:19 +0800
-Message-ID: <1256543839.30470.29.camel@yhuang-dev.sh.intel.com>
-References: <20091026172104.205f15af.sfr@canb.auug.org.au>
-	 <a8e1da0910260050y527bdbcbt4171ad6d868fcb29@mail.gmail.com>
-	 <a8e1da0910260053r245ee675yca4dc984303187df@mail.gmail.com>
+From: Krzysztof Halasa <khc@pm.waw.pl>
+Subject: Re: writable limits to -next
+Date: Mon, 26 Oct 2009 14:04:30 +0100
+Message-ID: <m3r5sqmhlt.fsf@intrepid.localdomain>
+References: <4AC6339B.7000905@gmail.com>
+	<20091006225751.7d5f3eec.sfr@canb.auug.org.au>
+	<4AE16B0A.7020400@gmail.com>
+	<20091026094741.5a1d492c.sfr@canb.auug.org.au>
+	<m3eiorc7r4.fsf@intrepid.localdomain>
+	<20091026120457.39f7ab83.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:58398 "EHLO mga01.intel.com"
+Received: from khc.piap.pl ([195.187.100.11]:36773 "EHLO khc.piap.pl"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755143AbZJZH5Q (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 26 Oct 2009 03:57:16 -0400
-In-Reply-To: <a8e1da0910260053r245ee675yca4dc984303187df@mail.gmail.com>
+	id S1754376AbZJZNE3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 26 Oct 2009 09:04:29 -0400
+In-Reply-To: <20091026120457.39f7ab83.sfr@canb.auug.org.au> (Stephen
+	Rothwell's message of "Mon, 26 Oct 2009 12:04:57 +1100")
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Young <hidave.darkstar@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jiri Slaby <jirislaby@gmail.com>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, James Morris <jmorris@namei.org>, Stephen Smalley <sds@tycho.nsa.gov>, Eric Paris <eparis@parisplace.org>, Andrew Morton <akpm@linux-foundation.org>
 
-Sorry, this should be turned off for x86_32. I will fix this.
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-Best Regards,
-Huang Ying
+>> It's not ok to submit under e.g. GPL v3 only, I'd suggest "under GPL v2
+>> and optionally other licence(s)" or something like that.
+>
+> Or maybe "under a license compatible with the Linux kernel source".
 
-On Mon, 2009-10-26 at 15:53 +0800, Dave Young wrote: 
-> On Mon, Oct 26, 2009 at 3:50 PM, Dave Young <hidave.darkstar@gmail.com> wrote:
-> > Hi,
-> >
-> > build fails with ghash ghash-clmulni-intel_asm.S:
-> 
-> It is a x86_32 laptop
-> 
-> 
-> >
-> >  AS      arch/x86/crypto/ghash-clmulni-intel_asm.o
-> > arch/x86/crypto/ghash-clmulni-intel_asm.S: Assembler messages:
-> > arch/x86/crypto/ghash-clmulni-intel_asm.S:100: Error: bad register name `%rdi)'
-> > arch/x86/crypto/ghash-clmulni-intel_asm.S:101: Error: bad register name `%rsi)'
-> > arch/x86/crypto/ghash-clmulni-intel_asm.S:106: Error: bad register name `%rdi)'
-> > arch/x86/crypto/ghash-clmulni-intel_asm.S:114: Error: bad register name `%rdx'
-> > arch/x86/crypto/ghash-clmulni-intel_asm.S:117: Error: bad register name `%rdi)'
-> > arch/x86/crypto/ghash-clmulni-intel_asm.S:118: Error: bad register name `%rcx)'
-> > arch/x86/crypto/ghash-clmulni-intel_asm.S:122: Error: bad register name `%rsi)'
-> > arch/x86/crypto/ghash-clmulni-intel_asm.S:126: Error: bad register name `%rdx'
-> > arch/x86/crypto/ghash-clmulni-intel_asm.S:127: Error: bad register name `%rsi'
-> > arch/x86/crypto/ghash-clmulni-intel_asm.S:128: Error: bad register name `%rdx'
-> > arch/x86/crypto/ghash-clmulni-intel_asm.S:131: Error: bad register name `%rdi)'
-> > arch/x86/crypto/ghash-clmulni-intel_asm.S:142: Error: bad register name `%rsi)'
-> > arch/x86/crypto/ghash-clmulni-intel_asm.S:156: Error: bad register name `%rdi)'
-> > make[2]: *** [arch/x86/crypto/ghash-clmulni-intel_asm.o] Error 1
-> > make[1]: *** [arch/x86/crypto] Error 2
-> > make: *** [arch/x86] Error 2
-> > make: *** Waiting for unfinished jobs....
-> >
-> > cc herbert & huang ying
-> >
-> > --
-> > Regards
-> > dave
-> >
-> 
-> 
-> 
+Right, it looks better. Now I think the author doesn't even have to
+licence under GPLv2, e.g. BSD alone will do as well.
+-- 
+Krzysztof Halasa
