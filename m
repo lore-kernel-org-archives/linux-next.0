@@ -1,35 +1,46 @@
-From: Krzysztof Halasa <khc@pm.waw.pl>
-Subject: Re: writable limits to -next
-Date: Mon, 26 Oct 2009 14:04:30 +0100
-Message-ID: <m3r5sqmhlt.fsf@intrepid.localdomain>
-References: <4AC6339B.7000905@gmail.com>
-	<20091006225751.7d5f3eec.sfr@canb.auug.org.au>
-	<4AE16B0A.7020400@gmail.com>
-	<20091026094741.5a1d492c.sfr@canb.auug.org.au>
-	<m3eiorc7r4.fsf@intrepid.localdomain>
-	<20091026120457.39f7ab83.sfr@canb.auug.org.au>
+From: Ben Hutchings <bhutchings@solarflare.com>
+Subject: Re: linux-next: manual merge of the net tree with the i2c tree
+Date: Mon, 26 Oct 2009 13:46:33 +0000
+Message-ID: <1256564793.2783.3.camel@achroite>
+References: <20091026133757.7cf87e49.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from khc.piap.pl ([195.187.100.11]:36773 "EHLO khc.piap.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754376AbZJZNE3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 26 Oct 2009 09:04:29 -0400
-In-Reply-To: <20091026120457.39f7ab83.sfr@canb.auug.org.au> (Stephen
-	Rothwell's message of "Mon, 26 Oct 2009 12:04:57 +1100")
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20091026133757.7cf87e49.sfr@canb.auug.org.au>
+Sender: netdev-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jiri Slaby <jirislaby@gmail.com>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, James Morris <jmorris@namei.org>, Stephen Smalley <sds@tycho.nsa.gov>, Eric Paris <eparis@parisplace.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mika Kuoppala <mika.kuoppala@nokia.com>, Jean Delvare <khali@linux-fr.org>
+List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+On Mon, 2009-10-26 at 13:37 +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the net tree got a conflict in
+> drivers/net/sfc/sfe4001.c between commit
+> 3f7c0648f727a6d5baf6117653e4001dc877b90b ("i2c: Prevent priority
+> inversion on top of bus lock") from the i2c tree and commit
+> c9597d4f89565b6562bd3026adbe6eac6c317f47 ("sfc: Merge sfe4001.c into
+> falcon_boards.c") from the net tree.
+> 
+> I have applied the following merge fixup patch (after removing
+> drivers/net/sfc/sfe4001.c) and can carry it as necessary.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 26 Oct 2009 12:24:55 +1100
+> Subject: [PATCH] net: merge fixup for drivers/net/sfc/falcon_boards.c
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Acked-by: Ben Hutchings <bhutchings@solarflare.com>
 
->> It's not ok to submit under e.g. GPL v3 only, I'd suggest "under GPL v2
->> and optionally other licence(s)" or something like that.
->
-> Or maybe "under a license compatible with the Linux kernel source".
+Ben.
 
-Right, it looks better. Now I think the author doesn't even have to
-licence under GPLv2, e.g. BSD alone will do as well.
 -- 
-Krzysztof Halasa
+Ben Hutchings, Senior Software Engineer, Solarflare Communications
+Not speaking for my employer; that's the marketing department's job.
+They asked us to note that Solarflare product names are trademarked.
+
