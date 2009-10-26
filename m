@@ -1,41 +1,79 @@
-From: Krzysztof Halasa <khc@pm.waw.pl>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: writable limits to -next
-Date: Mon, 26 Oct 2009 01:35:11 +0100
-Message-ID: <m3eiorc7r4.fsf@intrepid.localdomain>
+Date: Mon, 26 Oct 2009 12:04:57 +1100
+Message-ID: <20091026120457.39f7ab83.sfr@canb.auug.org.au>
 References: <4AC6339B.7000905@gmail.com>
 	<20091006225751.7d5f3eec.sfr@canb.auug.org.au>
 	<4AE16B0A.7020400@gmail.com>
 	<20091026094741.5a1d492c.sfr@canb.auug.org.au>
+	<m3eiorc7r4.fsf@intrepid.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754356AbZJZAfL@vger.kernel.org>
-In-Reply-To: <20091026094741.5a1d492c.sfr@canb.auug.org.au> (Stephen
-	Rothwell's message of "Mon, 26 Oct 2009 09:47:41 +1100")
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__26_Oct_2009_12_04_57_+1100_mT4K+YDe6yHGZEsR"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:59520 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752455AbZJZBE7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 25 Oct 2009 21:04:59 -0400
+In-Reply-To: <m3eiorc7r4.fsf@intrepid.localdomain>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Krzysztof Halasa <khc@pm.waw.pl>
 Cc: Jiri Slaby <jirislaby@gmail.com>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, James Morris <jmorris@namei.org>, Stephen Smalley <sds@tycho.nsa.gov>, Eric Paris <eparis@parisplace.org>, Andrew Morton <akpm@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
 
-Hi,
+--Signature=_Mon__26_Oct_2009_12_04_57_+1100_mT4K+YDe6yHGZEsR
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-BTW you may want to check if the current wording is correct:
+Hi Krzysztof,
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+On Mon, 26 Oct 2009 01:35:11 +0100 Krzysztof Halasa <khc@pm.waw.pl> wrote:
+>
+> BTW you may want to check if the current wording is correct:
+>=20
+> Stephen Rothwell <sfr@canb.auug.org.au> writes:
+>=20
+> > You will need to ensure that the patches/commits in your tree/series ha=
+ve
+> > been:
+> >      * submitted under GPL v2 (or later) and include the Contributor's
+>          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>=20
+> It's not ok to submit under e.g. GPL v3 only, I'd suggest "under GPL v2
+> and optionally other licence(s)" or something like that.
 
-> You will need to ensure that the patches/commits in your tree/series have
-> been:
->      * submitted under GPL v2 (or later) and include the Contributor's
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Or maybe "under a license compatible with the Linux kernel source".
 
-It's not ok to submit under e.g. GPL v3 only, I'd suggest "under GPL v2
-and optionally other licence(s)" or something like that.
+This was pointed out to me once before but I was hoping not to have to
+disturb the IBM lawyers again.  I guess I will run it past them and see
+what happens.
 
-For example code under BSD-style licence (in addition to GPLv2) is
-present in Linux, though I think any additional licence (the "later" as
-in "GPL v2 or later", GPL v3, MS EULA etc.) is acceptable as long as it
-is really additional, i.e., if one can ignore it and "use" GPLv2
-exclusively.
+> For example code under BSD-style licence (in addition to GPLv2) is
+> present in Linux, though I think any additional licence (the "later" as
+> in "GPL v2 or later", GPL v3, MS EULA etc.) is acceptable as long as it
+> is really additional, i.e., if one can ignore it and "use" GPLv2
+> exclusively.
+>=20
+> IANAL of course.
 
-IANAL of course.
--- 
-Krzysztof Halasa
+Me neither :-)
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__26_Oct_2009_12_04_57_+1100_mT4K+YDe6yHGZEsR
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkrk9bkACgkQjjKRsyhoI8w0cQCeNRTlGwQgk1UdvgDmqvsu7zln
+LTkAn2B4pdDvV0YD+FB6DVKnh2bUKgBx
+=M5l4
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__26_Oct_2009_12_04_57_+1100_mT4K+YDe6yHGZEsR--
