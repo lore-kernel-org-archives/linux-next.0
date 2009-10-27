@@ -1,39 +1,37 @@
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-Subject: Re: [PATCH 9/9] pcmcia: remove pcmcia_get_{first,next}_tuple()
-Date: Tue, 27 Oct 2009 06:12:24 +0100
-Message-ID: <20091027051224.GA10891@isilmar.linta.de>
-References: <1255907255-28297-1-git-send-email-linux@dominikbrodowski.net> <1255907255-28297-2-git-send-email-linux@dominikbrodowski.net> <1255907255-28297-3-git-send-email-linux@dominikbrodowski.net> <1255907255-28297-4-git-send-email-linux@dominikbrodowski.net> <1255907255-28297-5-git-send-email-linux@dominikbrodowski.net> <1255907255-28297-6-git-send-email-linux@dominikbrodowski.net> <1255907255-28297-7-git-send-email-linux@dominikbrodowski.net> <1255907255-28297-8-git-send-email-linux@dominikbrodowski.net> <1255907255-28297-9-git-send-email-linux@dominikbrodowski.net> <20091026151958.a2e7871b.randy.dunlap@oracle.com>
+From: Jens Axboe <jens.axboe@oracle.com>
+Subject: Re: linux-next: block tree build failure
+Date: Tue, 27 Oct 2009 06:31:09 +0100
+Message-ID: <20091027053109.GO10727@kernel.dk>
+References: <20091027143433.bfe08a1b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from isilmar.linta.de ([213.133.102.198]:52284 "EHLO linta.de"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1754585AbZJ0FMW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 27 Oct 2009 01:12:22 -0400
+Received: from brick.kernel.dk ([93.163.65.50]:46960 "EHLO kernel.dk"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752090AbZJ0FbF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 27 Oct 2009 01:31:05 -0400
 Content-Disposition: inline
-In-Reply-To: <20091026151958.a2e7871b.randy.dunlap@oracle.com>
+In-Reply-To: <20091027143433.bfe08a1b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: devel@driverdev.osuosl.org, linux-next@vger.kernel.org, linux-pcmcia@lists.infradead.org, gregkh@suse.de
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Randy,
-
-On Mon, Oct 26, 2009 at 03:19:58PM -0700, Randy Dunlap wrote:
-> > Remove the pcmcia_get_{first,next}_tuple() calls no longer needed by
-> > (current) pcmcia device drivers.
+On Tue, Oct 27 2009, Stephen Rothwell wrote:
+> Hi Jens,
 > 
-> linux-next 20091026:
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
 > 
-> drivers/staging/comedi/drivers/cb_das16_cs.c:155: error: implicit declaration of function 'pcmcia_get_first_tuple'
-> drivers/staging/comedi/drivers/cb_das16_cs.c:156: error: implicit declaration of function 'pcmcia_get_tuple_data'
-> drivers/staging/comedi/drivers/cb_das16_cs.c:883: error: implicit declaration of function 'pcmcia_get_next_tuple'
+> drivers/block/drbd/drbd_req.c: In function '_drbd_start_io_acct':
+> drivers/block/drbd/drbd_req.c:43: error: lvalue required as increment operand
+> drivers/block/drbd/drbd_req.c: In function '_drbd_end_io_acct':
+> drivers/block/drbd/drbd_req.c:56: error: lvalue required as decrement operand
 > 
-> There are also other comedi/ drivers that this randconfig didn't attempt
-> to build that are still using these same interfaces.
+> This is the dual in_flight changes breaking again ... I have used the
+> block tree from next-20091026 for today.
 
-What are the current rules on drivers in staging/ ? Do they need to be
-updated as well on API changes?
+Sorry, not sure why that problem seems so persistent, I just merged the
+newer bits in. Will fix it.
 
-Thanks,
-	Dominik
+-- 
+Jens Axboe
