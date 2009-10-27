@@ -1,49 +1,107 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging tree with the
- net/wireless tree
-Date: Tue, 27 Oct 2009 09:23:14 -0700
-Message-ID: <20091027162314.GA23768@kroah.com>
-References: <20091027183503.5c398311.sfr@canb.auug.org.au>
- <20091027141325.GA17352@kroah.com>
- <20091027145631.GB15566@tuxdriver.com>
+From: Dhananjay Phadke <dhananjay.phadke@qlogic.com>
+Subject: RE: [PATCH -next] netxen: fix builds for SYSFS=n or MODULES=n
+Date: Tue, 27 Oct 2009 15:09:24 -0700
+Message-ID: <7608421F3572AB4292BB2532AE89D5658B0B8903CB@AVEXMB1.qlogic.org>
+References: <20091026172104.205f15af.sfr@canb.auug.org.au>
+ <20091026150945.3f35a811.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756118AbZJ0Q0L@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20091027145631.GB15566@tuxdriver.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Johannes Berg <johannes@sipsolutions.net>, Holger Schurig <hs4233@mail.mn-solutions.de>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from avexch1.qlogic.com ([198.70.193.115]:52408 "EHLO
+	avexch1.qlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752321AbZJ0WKU convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Oct 2009 18:10:20 -0400
+In-Reply-To: <20091026150945.3f35a811.randy.dunlap@oracle.com>
+Content-Language: en-US
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, netdev <netdev@vger.kernel.org>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "davem@davemloft.net" <davem@davemloft.net>
 
-On Tue, Oct 27, 2009 at 10:56:31AM -0400, John W. Linville wrote:
-> On Tue, Oct 27, 2009 at 07:13:25AM -0700, Greg KH wrote:
-> > On Tue, Oct 27, 2009 at 06:35:03PM +1100, Stephen Rothwell wrote:
-> > > Hi Greg,
-> > > 
-> > > Today's linux-next merge of the staging tree got conflicts in
-> > > drivers/net/wireless/Kconfig between commits
-> > > 3d23e349d807177eaf519d444677cee86b1a04cf ("wext: refactor") and
-> > > 0465af8e03bdc6cd0b49dc5548671387a8674b69 ("libertas: separate libertas'
-> > > Kconfig in it's own file") from the net/wireless tree and various commits
-> > > ("... move driver to staging") from the staging tree.
-> > > 
-> > > I fixed it up (see below) and added a merge fixup (see further below) and
-> > > can carry these as necessary (though it may be easier for everyone (i.e.
-> > > me :-)) if these 4 staging tree commits are moved to the wireless
-> > > tree ...).
-> > 
-> > John, I have no objection to these 4 commits going through your tree, if
-> > it will make these types of merge issues go away.  If so, I have 4 more
-> > patches that should be added, adding the TODO files for the drivers.  I
-> > can send them to you if you want to take them.
-> 
-> Sure, that would be fine.  I did get copies of the TODO addition
-> patches, but I deleted them as I had not yet seen this. :-(  Could
-> you resend them to me?
+Sorry, seems like I am keeping you busy with the build errors.
+Thanks for fixing it again (may be I need to setup all different build configs).
 
-Now sent.
+Acked-by: Dhananjay Phadke <dhananjay@netxen.com>
 
-thanks,
+-----Original Message-----
+From: Randy Dunlap [mailto:randy.dunlap@oracle.com] 
+Sent: Monday, October 26, 2009 3:10 PM
+To: Stephen Rothwell; netdev
+Cc: linux-next@vger.kernel.org; LKML; davem@davemloft.net; Dhananjay Phadke
+Subject: [PATCH -next] netxen: fix builds for SYSFS=n or MODULES=n
 
-greg k-h
+From: Randy Dunlap <randy.dunlap@oracle.com>
+
+When CONFIG_MODULES=n:
+drivers/net/netxen/netxen_nic_main.c:2751: error: dereferencing pointer to incomplete type
+drivers/net/netxen/netxen_nic_main.c:2764: error: dereferencing pointer to incomplete type
+
+Also needs addition of <linux/sysfs.h> for sysfs function prototypes or
+stubs when CONFIG_SYSFS=n.
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/net/netxen/netxen_nic_main.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+--- linux-next-20091026.orig/drivers/net/netxen/netxen_nic_main.c
++++ linux-next-20091026/drivers/net/netxen/netxen_nic_main.c
+@@ -34,6 +34,7 @@
+ #include <net/ip.h>
+ #include <linux/ipv6.h>
+ #include <linux/inetdevice.h>
++#include <linux/sysfs.h>
+ 
+ MODULE_DESCRIPTION("NetXen Multi port (1/10) Gigabit Network Driver");
+ MODULE_LICENSE("GPL");
+@@ -2500,6 +2501,7 @@ static struct bin_attribute bin_attr_mem
+ 	.write = netxen_sysfs_write_mem,
+ };
+ 
++#ifdef CONFIG_MODULES
+ static ssize_t
+ netxen_store_auto_fw_reset(struct module_attribute *mattr,
+ 		struct module *mod, const char *buf, size_t count)
+@@ -2534,6 +2536,7 @@ static struct module_attribute mod_attr_
+ 	.show = netxen_show_auto_fw_reset,
+ 	.store = netxen_store_auto_fw_reset,
+ };
++#endif
+ 
+ static void
+ netxen_create_sysfs_entries(struct netxen_adapter *adapter)
+@@ -2739,7 +2742,9 @@ static struct pci_driver netxen_driver =
+ 
+ static int __init netxen_init_module(void)
+ {
++#ifdef CONFIG_MODULES
+ 	struct module *mod = THIS_MODULE;
++#endif
+ 
+ 	printk(KERN_INFO "%s\n", netxen_nic_driver_string);
+ 
+@@ -2748,9 +2753,11 @@ static int __init netxen_init_module(voi
+ 	register_inetaddr_notifier(&netxen_inetaddr_cb);
+ #endif
+ 
++#ifdef CONFIG_MODULES
+ 	if (sysfs_create_file(&mod->mkobj.kobj, &mod_attr_fw_reset.attr))
+ 		printk(KERN_ERR "%s: Failed to create auto_fw_reset "
+ 				"sysfs entry.", netxen_nic_driver_name);
++#endif
+ 
+ 	return pci_register_driver(&netxen_driver);
+ }
+@@ -2759,9 +2766,11 @@ module_init(netxen_init_module);
+ 
+ static void __exit netxen_exit_module(void)
+ {
++#ifdef CONFIG_MODULES
+ 	struct module *mod = THIS_MODULE;
+ 
+ 	sysfs_remove_file(&mod->mkobj.kobj, &mod_attr_fw_reset.attr);
++#endif
+ 
+ 	pci_unregister_driver(&netxen_driver);
+ 
