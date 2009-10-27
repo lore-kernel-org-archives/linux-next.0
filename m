@@ -1,48 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: ceph tree build warning
-Date: Tue, 27 Oct 2009 15:43:13 +1100
-Message-ID: <20091027154313.1618c142.sfr@canb.auug.org.au>
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+Subject: Re: [PATCH 9/9] pcmcia: remove pcmcia_get_{first,next}_tuple()
+Date: Tue, 27 Oct 2009 06:12:24 +0100
+Message-ID: <20091027051224.GA10891@isilmar.linta.de>
+References: <1255907255-28297-1-git-send-email-linux@dominikbrodowski.net> <1255907255-28297-2-git-send-email-linux@dominikbrodowski.net> <1255907255-28297-3-git-send-email-linux@dominikbrodowski.net> <1255907255-28297-4-git-send-email-linux@dominikbrodowski.net> <1255907255-28297-5-git-send-email-linux@dominikbrodowski.net> <1255907255-28297-6-git-send-email-linux@dominikbrodowski.net> <1255907255-28297-7-git-send-email-linux@dominikbrodowski.net> <1255907255-28297-8-git-send-email-linux@dominikbrodowski.net> <1255907255-28297-9-git-send-email-linux@dominikbrodowski.net> <20091026151958.a2e7871b.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__27_Oct_2009_15_43_13_+1100_DmdgJooExra=c6X."
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33131 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753544AbZJ0EnU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 27 Oct 2009 00:43:20 -0400
+Received: from isilmar.linta.de ([213.133.102.198]:52284 "EHLO linta.de"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1754585AbZJ0FMW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 27 Oct 2009 01:12:22 -0400
+Content-Disposition: inline
+In-Reply-To: <20091026151958.a2e7871b.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sage Weil <sage@newdream.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: devel@driverdev.osuosl.org, linux-next@vger.kernel.org, linux-pcmcia@lists.infradead.org, gregkh@suse.de
 
---Signature=_Tue__27_Oct_2009_15_43_13_+1100_DmdgJooExra=c6X.
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Randy,
 
-Hi Sage,
+On Mon, Oct 26, 2009 at 03:19:58PM -0700, Randy Dunlap wrote:
+> > Remove the pcmcia_get_{first,next}_tuple() calls no longer needed by
+> > (current) pcmcia device drivers.
+> 
+> linux-next 20091026:
+> 
+> drivers/staging/comedi/drivers/cb_das16_cs.c:155: error: implicit declaration of function 'pcmcia_get_first_tuple'
+> drivers/staging/comedi/drivers/cb_das16_cs.c:156: error: implicit declaration of function 'pcmcia_get_tuple_data'
+> drivers/staging/comedi/drivers/cb_das16_cs.c:883: error: implicit declaration of function 'pcmcia_get_next_tuple'
+> 
+> There are also other comedi/ drivers that this randconfig didn't attempt
+> to build that are still using these same interfaces.
 
-Today's linux-next build (x86_64 allmodconfig) produced this warning:
+What are the current rules on drivers in staging/ ? Do they need to be
+updated as well on API changes?
 
-fs/ceph/super.c: In function 'parse_mount_args':
-fs/ceph/super.c:473: warning: the frame size of 4320 bytes is larger than 2=
-048 bytes
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__27_Oct_2009_15_43_13_+1100_DmdgJooExra=c6X.
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkrmemEACgkQjjKRsyhoI8wgYgCfRukVTBM4dqGKazEqgexLoEKO
-ytYAn0pQCOiQyyUAduSD/iIIoBtLrZLx
-=ihDe
------END PGP SIGNATURE-----
-
---Signature=_Tue__27_Oct_2009_15_43_13_+1100_DmdgJooExra=c6X.--
+Thanks,
+	Dominik
