@@ -1,73 +1,52 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: next tree for October 27:  znet build failure
-Date: Wed, 28 Oct 2009 01:37:21 +1100
-Message-ID: <20091028013721.049c0146.sfr@canb.auug.org.au>
-References: <20091027190850.9694fb39.sfr@canb.auug.org.au>
-	<4AE6BEC7.2030703@in.ibm.com>
+From: Greg KH <gregkh@suse.de>
+Subject: Re: [PATCH 9/9] pcmcia: remove pcmcia_get_{first,next}_tuple()
+Date: Tue, 27 Oct 2009 07:39:23 -0700
+Message-ID: <20091027143923.GA17627@suse.de>
+References: <1255907255-28297-2-git-send-email-linux@dominikbrodowski.net>
+ <1255907255-28297-3-git-send-email-linux@dominikbrodowski.net>
+ <1255907255-28297-4-git-send-email-linux@dominikbrodowski.net>
+ <1255907255-28297-5-git-send-email-linux@dominikbrodowski.net>
+ <1255907255-28297-6-git-send-email-linux@dominikbrodowski.net>
+ <1255907255-28297-7-git-send-email-linux@dominikbrodowski.net>
+ <1255907255-28297-8-git-send-email-linux@dominikbrodowski.net>
+ <1255907255-28297-9-git-send-email-linux@dominikbrodowski.net>
+ <20091026151958.a2e7871b.randy.dunlap@oracle.com>
+ <20091027051224.GA10891@isilmar.linta.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__28_Oct_2009_01_37_21_+1100_3o3/8wKb9Zsi6da2"
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <4AE6BEC7.2030703@in.ibm.com>
-Sender: netdev-owner@vger.kernel.org
-To: Sachin Sant <sachinp@in.ibm.com>
-Cc: linux-next@vger.kernel.org, netdev <netdev@vger.kernel.org>, David Miller <davem@davemloft.net>, "John W. Linville" <linville@tuxdriver.com>, Greg KH <greg@kroah.com>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Wed__28_Oct_2009_01_37_21_+1100_3o3/8wKb9Zsi6da2
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from cantor.suse.de ([195.135.220.2]:58922 "EHLO mx1.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752519AbZJ0Omz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 27 Oct 2009 10:42:55 -0400
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20091027051224.GA10891@isilmar.linta.de>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>, devel@driverdev.osuosl.org, linux-next@vger.kernel.org, linux-pcmcia@lists.infradead.org
 
-Just adding John and Greg to the cc list as this is caused by patches in
-the staging tree.
+On Tue, Oct 27, 2009 at 06:12:24AM +0100, Dominik Brodowski wrote:
+> Randy,
+> 
+> On Mon, Oct 26, 2009 at 03:19:58PM -0700, Randy Dunlap wrote:
+> > > Remove the pcmcia_get_{first,next}_tuple() calls no longer needed by
+> > > (current) pcmcia device drivers.
+> > 
+> > linux-next 20091026:
+> > 
+> > drivers/staging/comedi/drivers/cb_das16_cs.c:155: error: implicit declaration of function 'pcmcia_get_first_tuple'
+> > drivers/staging/comedi/drivers/cb_das16_cs.c:156: error: implicit declaration of function 'pcmcia_get_tuple_data'
+> > drivers/staging/comedi/drivers/cb_das16_cs.c:883: error: implicit declaration of function 'pcmcia_get_next_tuple'
+> > 
+> > There are also other comedi/ drivers that this randconfig didn't attempt
+> > to build that are still using these same interfaces.
+> 
+> What are the current rules on drivers in staging/ ? Do they need to be
+> updated as well on API changes?
 
-On Tue, 27 Oct 2009 15:05:03 +0530 Sachin Sant <sachinp@in.ibm.com> wrote:
->
-> Fails to build on x86_32 with lots of errors related to znet
->=20
-> drivers/net/znet.c:107:29: error: wireless/i82593.h: No such file or dire=
-ctory
-> drivers/net/znet.c:133: error: field 'i593_init' has incomplete type
-> drivers/net/znet.c: In function 'znet_set_multicast_list':
-> drivers/net/znet.c:235: error: invalid application of 'sizeof' to incompl=
-ete type 'struct i82593_conf_block'
-> drivers/net/znet.c:247: error: dereferencing pointer to incomplete type
-> .....
->=20
-> Commit 879e9304... moved wireless/i82593.h to drivers/staging/wavelan/i82=
-593.h
->=20
-> Thanks
-> -Sachin
->=20
->=20
-> --=20
->=20
-> ---------------------------------
-> Sachin Sant
-> IBM Linux Technology Center
-> India Systems and Technology Labs
-> Bangalore, India
-> ---------------------------------
->=20
+You don't have to do it, no.  I'll be glad to do so as long as I get a
+hint as to what needs to be done :)
 
+thanks,
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__28_Oct_2009_01_37_21_+1100_3o3/8wKb9Zsi6da2
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkrnBaEACgkQjjKRsyhoI8wQTACfYAhRQ4FqCL4tWGeQ4hUBMRe5
-wfEAnAooPN9lZEE8KJSXk71DpxKF2Ioi
-=Waq2
------END PGP SIGNATURE-----
-
---Signature=_Wed__28_Oct_2009_01_37_21_+1100_3o3/8wKb9Zsi6da2--
+greg k-h
