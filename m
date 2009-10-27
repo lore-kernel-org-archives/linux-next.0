@@ -1,349 +1,267 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the net/wireless
- tree
-Date: Tue, 27 Oct 2009 18:35:03 +1100
-Message-ID: <20091027183503.5c398311.sfr@canb.auug.org.au>
+Subject: linux-next: Tree for October 27
+Date: Tue, 27 Oct 2009 19:08:50 +1100
+Message-ID: <20091027190850.9694fb39.sfr@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__27_Oct_2009_19_08_50_+1100_1hxpLode7e4DDM60"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:41370 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932088AbZJ0IIx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 27 Oct 2009 04:08:53 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
+
+--Signature=_Tue__27_Oct_2009_19_08_50_+1100_1hxpLode7e4DDM60
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756154AbZJ0HfN@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, "David S. Miller" <davem@davemloft.net>, Johannes Berg <johannes@sipsolutions.net>, Holger Schurig <hs4233@mail.mn-solutions.de>
-List-Id: linux-next.vger.kernel.org
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi all,
 
-Today's linux-next merge of the staging tree got conflicts in
-drivers/net/wireless/Kconfig between commits
-3d23e349d807177eaf519d444677cee86b1a04cf ("wext: refactor") and
-0465af8e03bdc6cd0b49dc5548671387a8674b69 ("libertas: separate libertas'
-Kconfig in it's own file") from the net/wireless tree and various commits
-("... move driver to staging") from the staging tree.
+Changes since 20091026:
 
-I fixed it up (see below) and added a merge fixup (see further below) and
-can carry these as necessary (though it may be easier for everyone (i.e.
-me :-)) if these 4 staging tree commits are moved to the wireless
-tree ...).
--- 
+My fixes tree contains a build fix for powerpc/kvm.
+
+The pci tree lost its conflict.
+
+The block tree gained a build failure so I used the version from
+next-20091026.
+
+The staging tree gained a conflict against the net/wireless trees.
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups (if any), it is also built with powerpc allnoconfig (32 and
+64 bit), ppc44x_defconfig and allyesconfig (minus
+CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
+and sparc64 defconfig. These builds also have
+CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
+CONFIG_DEBUG_INFO disabled when necessary.
+
+Below is a summary of the state of the merge.
+
+We are up to 146 trees (counting Linus' and 22 trees of patches pending for
+Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Jan Dittmer for adding the linux-next tree to his build tests
+at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
+Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/net/wireless/Kconfig
-index 85f8bf4,18cadf0..0000000
---- a/drivers/net/wireless/Kconfig
-+++ b/drivers/net/wireless/Kconfig
-@@@ -5,132 -5,20 +5,23 @@@
-  menuconfig WLAN
-  	bool "Wireless LAN"
-  	depends on !S390
- +	select WIRELESS
-  	default y
-  	---help---
-- 	  This section contains all the pre 802.11 and 802.11 wireless
-- 	  device drivers. For a complete list of drivers and documentation
-+ 	  This section contains all the 802.11 wireless LAN device
-+ 	  drivers. For a complete list of drivers and documentation
-  	  on them refer to the wireless wiki:
-  
-  	  http://wireless.kernel.org/en/users/Drivers
-  
-  if WLAN
-  
-- menuconfig WLAN_PRE80211
-- 	bool "Wireless LAN (pre-802.11)"
-- 	depends on NETDEVICES
-- 	---help---
-- 	  Say Y if you have any pre-802.11 wireless LAN hardware.
-- 
-- 	  This option does not affect the kernel build, it only
-- 	  lets you choose drivers.
-- 
-- config STRIP
-- 	tristate "STRIP (Metricom starmode radio IP)"
-- 	depends on INET && WLAN_PRE80211
-- 	select WIRELESS_EXT
-- 	---help---
-- 	  Say Y if you have a Metricom radio and intend to use Starmode Radio
-- 	  IP. STRIP is a radio protocol developed for the MosquitoNet project
-- 	  to send Internet traffic using Metricom radios.  Metricom radios are
-- 	  small, battery powered, 100kbit/sec packet radio transceivers, about
-- 	  the size and weight of a cellular telephone. (You may also have heard
-- 	  them called "Metricom modems" but we avoid the term "modem" because
-- 	  it misleads many people into thinking that you can plug a Metricom
-- 	  modem into a phone line and use it as a modem.)
-- 
-- 	  You can use STRIP on any Linux machine with a serial port, although
-- 	  it is obviously most useful for people with laptop computers. If you
-- 	  think you might get a Metricom radio in the future, there is no harm
-- 	  in saying Y to STRIP now, except that it makes the kernel a bit
-- 	  bigger.
-- 
-- 	  To compile this as a module, choose M here: the module will be
-- 	  called strip.
-- 
-- config ARLAN
-- 	tristate "Aironet Arlan 655 & IC2200 DS support"
-- 	depends on ISA && !64BIT && WLAN_PRE80211
-- 	select WIRELESS_EXT
-- 	---help---
-- 	  Aironet makes Arlan, a class of wireless LAN adapters. These use the
-- 	  www.Telxon.com chip, which is also used on several similar cards.
-- 	  This driver is tested on the 655 and IC2200 series cards. Look at
-- 	  <http://www.ylenurme.ee/~elmer/655/> for the latest information.
-- 
-- 	  The driver is built as two modules, arlan and arlan-proc. The latter
-- 	  is the /proc interface and is not needed most of time.
-- 
-- 	  On some computers the card ends up in non-valid state after some
-- 	  time. Use a ping-reset script to clear it.
-- 
-- config WAVELAN
-- 	tristate "AT&T/Lucent old WaveLAN & DEC RoamAbout DS ISA support"
-- 	depends on ISA && WLAN_PRE80211
-- 	select WIRELESS_EXT
-- 	select WEXT_SPY
-- 	select WEXT_PRIV
-- 	---help---
-- 	  The Lucent WaveLAN (formerly NCR and AT&T; or DEC RoamAbout DS) is
-- 	  a Radio LAN (wireless Ethernet-like Local Area Network) using the
-- 	  radio frequencies 900 MHz and 2.4 GHz.
-- 
-- 	  If you want to use an ISA WaveLAN card under Linux, say Y and read
-- 	  the Ethernet-HOWTO, available from
-- 	  <http://www.tldp.org/docs.html#howto>. Some more specific
-- 	  information is contained in
-- 	  <file:Documentation/networking/wavelan.txt> and in the source code
-- 	  <file:drivers/net/wireless/wavelan.p.h>.
-- 
-- 	  You will also need the wireless tools package available from
-- 	  <http://www.hpl.hp.com/personal/Jean_Tourrilhes/Linux/Tools.html>.
-- 	  Please read the man pages contained therein.
-- 
-- 	  To compile this driver as a module, choose M here: the module will be
-- 	  called wavelan.
-- 
-- config PCMCIA_WAVELAN
-- 	tristate "AT&T/Lucent old WaveLAN Pcmcia wireless support"
-- 	depends on PCMCIA && WLAN_PRE80211
-- 	select WIRELESS_EXT
-- 	select WEXT_SPY
-- 	select WEXT_PRIV
-- 	help
-- 	  Say Y here if you intend to attach an AT&T/Lucent Wavelan PCMCIA
-- 	  (PC-card) wireless Ethernet networking card to your computer.  This
-- 	  driver is for the non-IEEE-802.11 Wavelan cards.
-- 
-- 	  To compile this driver as a module, choose M here: the module will be
-- 	  called wavelan_cs.  If unsure, say N.
-- 
-- config PCMCIA_NETWAVE
-- 	tristate "Xircom Netwave AirSurfer Pcmcia wireless support"
-- 	depends on PCMCIA && WLAN_PRE80211
-- 	select WIRELESS_EXT
-- 	select WEXT_PRIV
-- 	help
-- 	  Say Y here if you intend to attach this type of PCMCIA (PC-card)
-- 	  wireless Ethernet networking card to your computer.
-- 
-- 	  To compile this driver as a module, choose M here: the module will be
-- 	  called netwave_cs.  If unsure, say N.
-- 
-- 
-- menuconfig WLAN_80211
-- 	bool "Wireless LAN (IEEE 802.11)"
-- 	depends on NETDEVICES
-- 	---help---
-- 	  Say Y if you have any 802.11 wireless LAN hardware.
-- 
-- 	  This option does not affect the kernel build, it only
-- 	  lets you choose drivers.
-- 
-  config PCMCIA_RAYCS
-  	tristate "Aviator/Raytheon 2.4GHz wireless support"
-- 	depends on PCMCIA && WLAN_80211
-+ 	depends on PCMCIA
-  	select WIRELESS_EXT
- +	select WEXT_SPY
- +	select WEXT_PRIV
-  	---help---
-  	  Say Y here if you intend to attach an Aviator/Raytheon PCMCIA
-  	  (PC-card) wireless Ethernet networking card to your computer.
-@@@ -140,9 -28,48 +31,9 @@@
-  	  To compile this driver as a module, choose M here: the module will be
-  	  called ray_cs.  If unsure, say N.
-  
- -config LIBERTAS
- -	tristate "Marvell 8xxx Libertas WLAN driver support"
- -	select WIRELESS_EXT
- -	select LIB80211
- -	select FW_LOADER
- -	---help---
- -	  A library for Marvell Libertas 8xxx devices.
- -
- -config LIBERTAS_USB
- -	tristate "Marvell Libertas 8388 USB 802.11b/g cards"
- -	depends on LIBERTAS && USB
- -	---help---
- -	  A driver for Marvell Libertas 8388 USB devices.
- -
- -config LIBERTAS_CS
- -	tristate "Marvell Libertas 8385 CompactFlash 802.11b/g cards"
- -	depends on LIBERTAS && PCMCIA
- -	select FW_LOADER
- -	---help---
- -	  A driver for Marvell Libertas 8385 CompactFlash devices.
- -
- -config LIBERTAS_SDIO
- -	tristate "Marvell Libertas 8385/8686/8688 SDIO 802.11b/g cards"
- -	depends on LIBERTAS && MMC
- -	---help---
- -	  A driver for Marvell Libertas 8385/8686/8688 SDIO devices.
- -
- -config LIBERTAS_SPI
- -	tristate "Marvell Libertas 8686 SPI 802.11b/g cards"
- -	depends on LIBERTAS && SPI
- -	---help---
- -	  A driver for Marvell Libertas 8686 SPI devices.
- -
- -config LIBERTAS_DEBUG
- -	bool "Enable full debugging output in the Libertas module."
- -	depends on LIBERTAS
- -	---help---
- -	  Debugging support.
- -
-  config LIBERTAS_THINFIRM
-  	tristate "Marvell 8xxx Libertas WLAN driver support with thin firmware"
-- 	depends on WLAN_80211 && MAC80211
-+ 	depends on MAC80211
-  	select FW_LOADER
-  	---help---
-  	  A library for Marvell Libertas 8xxx devices using thinfirm.
-@@@ -155,11 -82,9 +46,11 @@@ config LIBERTAS_THINFIRM_US
-  
-  config AIRO
-  	tristate "Cisco/Aironet 34X/35X/4500/4800 ISA and PCI cards"
-- 	depends on ISA_DMA_API && WLAN_80211 && (PCI || BROKEN)
-+ 	depends on ISA_DMA_API && (PCI || BROKEN)
-  	select WIRELESS_EXT
-  	select CRYPTO
- +	select WEXT_SPY
- +	select WEXT_PRIV
-  	---help---
-  	  This is the standard Linux driver to support Cisco/Aironet ISA and
-  	  PCI 802.11 wireless cards.
-@@@ -175,9 -100,8 +66,9 @@@
-  
-  config ATMEL
-        tristate "Atmel at76c50x chipset  802.11b support"
--       depends on (PCI || PCMCIA) && WLAN_80211
-+       depends on (PCI || PCMCIA)
-        select WIRELESS_EXT
- +      select WEXT_PRIV
-        select FW_LOADER
-        select CRC32
-         ---help---
-@@@ -237,21 -161,18 +128,21 @@@ config AIRO_C
-  	  Cisco Linux utilities can be used to configure the card.
-  
-  config PCMCIA_WL3501
- -      tristate "Planet WL3501 PCMCIA cards"
- -      depends on EXPERIMENTAL && PCMCIA
- -      select WIRELESS_EXT
- -       ---help---
- -         A driver for WL3501 PCMCIA 802.11 wireless cards made by Planet.
- -	 It has basic support for Linux wireless extensions and initial
- -	 micro support for ethtool.
- +	tristate "Planet WL3501 PCMCIA cards"
-- 	depends on EXPERIMENTAL && PCMCIA && WLAN_80211
-++	depends on EXPERIMENTAL && PCMCIA
- +	select WIRELESS_EXT
- +	select WEXT_SPY
- +	help
- +	  A driver for WL3501 PCMCIA 802.11 wireless cards made by Planet.
- +	  It has basic support for Linux wireless extensions and initial
- +	  micro support for ethtool.
-  
-  config PRISM54
-  	tristate 'Intersil Prism GT/Duette/Indigo PCI/Cardbus (DEPRECATED)'
-- 	depends on PCI && EXPERIMENTAL && WLAN_80211
-+ 	depends on PCI && EXPERIMENTAL
-  	select WIRELESS_EXT
- +	select WEXT_SPY
- +	select WEXT_PRIV
-  	select FW_LOADER
-  	---help---
-  	  This enables support for FullMAC PCI/Cardbus prism54 devices. This
-@@@ -272,9 -193,8 +163,9 @@@
-  
-  config USB_ZD1201
-  	tristate "USB ZD1201 based Wireless device support"
-- 	depends on USB && WLAN_80211
-+ 	depends on USB
-  	select WIRELESS_EXT
- +	select WEXT_PRIV
-  	select FW_LOADER
-  	---help---
-  	  Say Y if you want to use wireless LAN adapters based on the ZyDAS
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master
+Merging fixes/fixes
+Merging arm-current/master
+Merging m68k-current/for-linus
+Merging powerpc-merge/merge
+Merging sparc-current/master
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sound-current/for-linus
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging kbuild-current/master
+Merging quilt/driver-core.current
+Merging quilt/tty.current
+Merging quilt/usb.current
+Merging quilt/staging.current
+Merging cpufreq-current/fixes
+Merging input-current/for-linus
+Merging md-current/for-linus
+Merging audit-current/for-linus
+Merging crypto-current/master
+Merging ide-curent/master
+Merging dwmw2/master
+Merging arm/devel
+Merging davinci/davinci-next
+Merging omap/for-next
+Merging pxa/for-next
+Merging avr32/avr32-arch
+Merging blackfin/for-linus
+Merging cris/for-next
+Merging ia64/test
+Merging m68k/for-next
+CONFLICT (content): Merge conflict in drivers/rtc/Kconfig
+Merging m68knommu/for-next
+Merging microblaze/next
+Merging mips/mips-for-linux-next
+Merging parisc/next
+Merging powerpc/next
+Merging 4xx/next
+Merging galak/next
+Merging s390/features
+Merging sh/master
+Merging sparc/master
+Merging xtensa/master
+Merging ceph/for-next
+Merging cifs/master
+Merging configfs/linux-next
+Merging ecryptfs/next
+Merging ext3/for_next
+Merging ext4/next
+Merging fatfs/master
+Merging fuse/for-next
+Merging gfs2/master
+Merging jfs/next
+Merging nfs/linux-next
+Merging nfsd/nfsd-next
+Merging nilfs2/for-next
+Merging ocfs2/linux-next
+Merging squashfs/master
+Merging udf/for_next
+Merging v9fs/for-next
+Merging ubifs/linux-next
+Merging xfs/master
+Merging reiserfs-bkl/reiserfs/kill-bkl
+Merging vfs/for-next
+Merging pci/linux-next
+Merging hid/for-next
+Merging quilt/i2c
+Merging quilt/jdelvare-hwmon
+Merging quilt/kernel-doc
+Merging v4l-dvb/master
+Merging quota/for_next
+Merging kbuild/master
+Merging kconfig/for-next
+Merging ide/master
+Merging libata/NEXT
+Merging infiniband/for-next
+Merging acpi/test
+Merging ieee1394/for-next
+Merging ubi/linux-next
+Merging kvm/linux-next
+CONFLICT (content): Merge conflict in arch/x86/kvm/mmu.c
+Merging dlm/next
+Merging scsi/master
+Merging async_tx/next
+Merging net/master
+CONFLICT (delete/modify): drivers/net/sfc/sfe4001.c deleted in net/master a=
+nd modified in HEAD. Version HEAD of drivers/net/sfc/sfe4001.c left in tree.
+$ git rm -f drivers/net/sfc/sfe4001.c
+Applying: net: merge fixup for drivers/net/sfc/falcon_boards.c
+Merging wireless/master
+Merging mtd/master
+Merging crypto/master
+Merging sound/for-next
+Merging cpufreq/next
+Merging quilt/rr
+Merging mmc/next
+Merging tmio-mmc/linux-next
+Merging input/next
+Merging lsm/for-next
+Merging block/for-next
+$ git reset --hard HEAD^
+Merging refs/next/20091026/block
+Merging quilt/device-mapper
+Merging embedded/master
+Merging firmware/master
+Merging pcmcia/master
+Merging battery/master
+Merging leds/for-mm
+Merging backlight/for-mm
+Merging kgdb/kgdb-next
+Merging slab/for-next
+Merging uclinux/for-next
+Merging md/for-next
+Merging mfd/for-next
+Merging hdlc/hdlc-next
+Merging drm/drm-next
+Merging voltage/for-next
+CONFLICT (content): Merge conflict in drivers/mfd/Kconfig
+CONFLICT (content): Merge conflict in drivers/mfd/Makefile
+Merging security-testing/next
+CONFLICT (content): Merge conflict in Documentation/dontdiff
+Merging lblnet/master
+Merging agp/agp-next
+Merging uwb/for-upstream
+Merging watchdog/master
+Merging bdev/master
+Merging dwmw2-iommu/master
+Merging cputime/cputime
+Merging osd/linux-next
+Merging jc_docs/docs-next
+Merging nommu/master
+Merging trivial/for-next
+CONFLICT (content): Merge conflict in drivers/acpi/video_detect.c
+Merging audit/for-next
+Merging quilt/aoe
+Merging suspend/linux-next
+Merging bluetooth/master
+Merging fsnotify/for-next
+Merging irda/for-next
+Merging hwlat/for-linus
+CONFLICT (content): Merge conflict in drivers/misc/Makefile
+Merging drbd/for-jens
+CONFLICT (add/add): Merge conflict in drivers/block/drbd/Kconfig
+CONFLICT (add/add): Merge conflict in drivers/block/drbd/Makefile
+CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_actlog.c
+CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_int.h
+CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_main.c
+CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_nl.c
+CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_receiver.c
+CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_req.c
+CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_worker.c
+CONFLICT (add/add): Merge conflict in include/linux/drbd.h
+Merging catalin/for-next
+Merging alacrity/linux-next
+CONFLICT (content): Merge conflict in drivers/net/Kconfig
+CONFLICT (content): Merge conflict in lib/Kconfig
+Merging i7core_edac/linux_next
+Merging devicetree/next-devicetree
+Merging limits/writable_limits
+Merging tip/auto-latest
+Merging oprofile/for-next
+Merging percpu/for-next
+Merging sfi/sfi-test
+Merging asm-generic/next
+Merging hwpoison/hwpoison
+Merging quilt/driver-core
+Merging quilt/tty
+Merging quilt/usb
+Merging quilt/staging
+CONFLICT (content): Merge conflict in drivers/net/wireless/Kconfig
+Applying: staging: merge fixup for wireless drivers move
+Merging scsi-post-merge/master
 
+--Signature=_Tue__27_Oct_2009_19_08_50_+1100_1hxpLode7e4DDM60
+Content-Type: application/pgp-signature
 
--------------------------------------------------------
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 27 Oct 2009 18:29:04 +1100
-Subject: [PATCH] staging: merge fixup for wireless drivers move
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/net/wireless/libertas/Kconfig |    2 +-
- drivers/staging/netwave/Kconfig       |    1 +
- drivers/staging/wavelan/Kconfig       |    4 ++++
- 3 files changed, 6 insertions(+), 1 deletions(-)
+iEYEARECAAYFAkrmqpIACgkQjjKRsyhoI8zkawCgtfJpkL79G/FvoqUHpl3zabV2
+8A8An1rRbMRww4mLnely8KTaq1fVQ7QS
+=ClGI
+-----END PGP SIGNATURE-----
 
-diff --git a/drivers/net/wireless/libertas/Kconfig b/drivers/net/wireless/libertas/Kconfig
-index 8f8d75b..30aa9d4 100644
---- a/drivers/net/wireless/libertas/Kconfig
-+++ b/drivers/net/wireless/libertas/Kconfig
-@@ -1,6 +1,6 @@
- config LIBERTAS
- 	tristate "Marvell 8xxx Libertas WLAN driver support"
--	depends on WLAN_80211 && CFG80211
-+	depends on CFG80211
- 	select WIRELESS_EXT
- 	select WEXT_SPY
- 	select LIB80211
-diff --git a/drivers/staging/netwave/Kconfig b/drivers/staging/netwave/Kconfig
-index b6f0f0a..c0c996c 100644
---- a/drivers/staging/netwave/Kconfig
-+++ b/drivers/staging/netwave/Kconfig
-@@ -2,6 +2,7 @@ config PCMCIA_NETWAVE
- 	tristate "Xircom Netwave AirSurfer Pcmcia wireless support"
- 	depends on PCMCIA
- 	select WIRELESS_EXT
-+	select WEXT_PRIV
- 	help
- 	  Say Y here if you intend to attach this type of PCMCIA (PC-card)
- 	  wireless Ethernet networking card to your computer.
-diff --git a/drivers/staging/wavelan/Kconfig b/drivers/staging/wavelan/Kconfig
-index ff349cd..786060e 100644
---- a/drivers/staging/wavelan/Kconfig
-+++ b/drivers/staging/wavelan/Kconfig
-@@ -2,6 +2,8 @@ config WAVELAN
- 	tristate "AT&T/Lucent old WaveLAN & DEC RoamAbout DS ISA support"
- 	depends on ISA
- 	select WIRELESS_EXT
-+	select WEXT_SPY
-+	select WEXT_PRIV
- 	---help---
- 	  The Lucent WaveLAN (formerly NCR and AT&T; or DEC RoamAbout DS) is
- 	  a Radio LAN (wireless Ethernet-like Local Area Network) using the
-@@ -25,6 +27,8 @@ config PCMCIA_WAVELAN
- 	tristate "AT&T/Lucent old WaveLAN Pcmcia wireless support"
- 	depends on PCMCIA
- 	select WIRELESS_EXT
-+	select WEXT_SPY
-+	select WEXT_PRIV
- 	help
- 	  Say Y here if you intend to attach an AT&T/Lucent Wavelan PCMCIA
- 	  (PC-card) wireless Ethernet networking card to your computer.  This
--- 
-1.6.5
+--Signature=_Tue__27_Oct_2009_19_08_50_+1100_1hxpLode7e4DDM60--
