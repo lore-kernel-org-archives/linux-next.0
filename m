@@ -1,35 +1,53 @@
-From: "Luck, Tony" <tony.luck@intel.com>
-Subject: RE: [PATCH -next] ia64/sn: fix percpu warnings
-Date: Mon, 26 Oct 2009 16:35:07 -0700
-Message-ID: <57C9024A16AD2D4C97DC78E552063EA3E345953E@orsmsx505.amr.corp.intel.com>
-References: <20091014163445.f0441473.sfr@canb.auug.org.au>
-	 <20091014151003.0ef42973.randy.dunlap@oracle.com>
-	 <4AD67C05.2030201@kernel.org>
- <12c511ca0910261124p64f2ad5emc88d00b9957482b3@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: block tree build failure
+Date: Tue, 27 Oct 2009 14:34:33 +1100
+Message-ID: <20091027143433.bfe08a1b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-ia64-owner@vger.kernel.org>
-In-Reply-To: <12c511ca0910261124p64f2ad5emc88d00b9957482b3@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-ia64-owner@vger.kernel.org
-To: Tejun Heo <tj@kernel.org>, Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jes Sorensen <jes@sgi.com>, "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, akpm <akpm@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__27_Oct_2009_14_34_33_+1100_dLutrKo/t/gblJhA"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:39807 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752790AbZJ0Deg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 26 Oct 2009 23:34:36 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jens Axboe <jens.axboe@oracle.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> WARNING: "per_cpu____sn_cnodeid_to_nasid" [drivers/misc/sgi-xp/xpc.ko] has no CRC!
+--Signature=_Tue__27_Oct_2009_14_34_33_+1100_dLutrKo/t/gblJhA
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi Jens,
 
-Note that this warning goes away if I fix the mismatch declaration so
-that we have:
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-DECLARE_PER_CPU(short, __sn_cnodeide_to_nasid[MAX_COMPACT_NODES]);
-in arch.h
+drivers/block/drbd/drbd_req.c: In function '_drbd_start_io_acct':
+drivers/block/drbd/drbd_req.c:43: error: lvalue required as increment opera=
+nd
+drivers/block/drbd/drbd_req.c: In function '_drbd_end_io_acct':
+drivers/block/drbd/drbd_req.c:56: error: lvalue required as decrement opera=
+nd
 
-and
+This is the dual in_flight changes breaking again ... I have used the
+block tree from next-20091026 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-DEFINE_PER_CPU(short, __sn_cnodeide_to_nasid[MAX_COMPACT_NODES]);
-in setup.c
+--Signature=_Tue__27_Oct_2009_14_34_33_+1100_dLutrKo/t/gblJhA
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
--Tony
+iEYEARECAAYFAkrmakkACgkQjjKRsyhoI8wlxwCfTt+6UIUjfLAO6Phy4Q8okJ5K
+KiUAoLOy3eq2iSFrpCZTjg/vNBF4EUOO
+=ojpF
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__27_Oct_2009_14_34_33_+1100_dLutrKo/t/gblJhA--
