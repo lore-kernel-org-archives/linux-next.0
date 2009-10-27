@@ -1,52 +1,51 @@
-From: Greg KH <gregkh@suse.de>
-Subject: Re: [PATCH 9/9] pcmcia: remove pcmcia_get_{first,next}_tuple()
-Date: Tue, 27 Oct 2009 07:39:23 -0700
-Message-ID: <20091027143923.GA17627@suse.de>
-References: <1255907255-28297-2-git-send-email-linux@dominikbrodowski.net>
- <1255907255-28297-3-git-send-email-linux@dominikbrodowski.net>
- <1255907255-28297-4-git-send-email-linux@dominikbrodowski.net>
- <1255907255-28297-5-git-send-email-linux@dominikbrodowski.net>
- <1255907255-28297-6-git-send-email-linux@dominikbrodowski.net>
- <1255907255-28297-7-git-send-email-linux@dominikbrodowski.net>
- <1255907255-28297-8-git-send-email-linux@dominikbrodowski.net>
- <1255907255-28297-9-git-send-email-linux@dominikbrodowski.net>
- <20091026151958.a2e7871b.randy.dunlap@oracle.com>
- <20091027051224.GA10891@isilmar.linta.de>
+From: "John W. Linville" <linville@tuxdriver.com>
+Subject: Re: linux-next: manual merge of the staging tree with the
+	net/wireless tree
+Date: Tue, 27 Oct 2009 10:56:31 -0400
+Message-ID: <20091027145631.GB15566@tuxdriver.com>
+References: <20091027183503.5c398311.sfr@canb.auug.org.au> <20091027141325.GA17352@kroah.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor.suse.de ([195.135.220.2]:58922 "EHLO mx1.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752519AbZJ0Omz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 27 Oct 2009 10:42:55 -0400
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:48651 "EHLO
+	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752020AbZJ0PBV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Oct 2009 11:01:21 -0400
 Content-Disposition: inline
-In-Reply-To: <20091027051224.GA10891@isilmar.linta.de>
+In-Reply-To: <20091027141325.GA17352@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>, devel@driverdev.osuosl.org, linux-next@vger.kernel.org, linux-pcmcia@lists.infradead.org
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Johannes Berg <johannes@sipsolutions.net>, Holger Schurig <hs4233@mail.mn-solutions.de>
 
-On Tue, Oct 27, 2009 at 06:12:24AM +0100, Dominik Brodowski wrote:
-> Randy,
+On Tue, Oct 27, 2009 at 07:13:25AM -0700, Greg KH wrote:
+> On Tue, Oct 27, 2009 at 06:35:03PM +1100, Stephen Rothwell wrote:
+> > Hi Greg,
+> > 
+> > Today's linux-next merge of the staging tree got conflicts in
+> > drivers/net/wireless/Kconfig between commits
+> > 3d23e349d807177eaf519d444677cee86b1a04cf ("wext: refactor") and
+> > 0465af8e03bdc6cd0b49dc5548671387a8674b69 ("libertas: separate libertas'
+> > Kconfig in it's own file") from the net/wireless tree and various commits
+> > ("... move driver to staging") from the staging tree.
+> > 
+> > I fixed it up (see below) and added a merge fixup (see further below) and
+> > can carry these as necessary (though it may be easier for everyone (i.e.
+> > me :-)) if these 4 staging tree commits are moved to the wireless
+> > tree ...).
 > 
-> On Mon, Oct 26, 2009 at 03:19:58PM -0700, Randy Dunlap wrote:
-> > > Remove the pcmcia_get_{first,next}_tuple() calls no longer needed by
-> > > (current) pcmcia device drivers.
-> > 
-> > linux-next 20091026:
-> > 
-> > drivers/staging/comedi/drivers/cb_das16_cs.c:155: error: implicit declaration of function 'pcmcia_get_first_tuple'
-> > drivers/staging/comedi/drivers/cb_das16_cs.c:156: error: implicit declaration of function 'pcmcia_get_tuple_data'
-> > drivers/staging/comedi/drivers/cb_das16_cs.c:883: error: implicit declaration of function 'pcmcia_get_next_tuple'
-> > 
-> > There are also other comedi/ drivers that this randconfig didn't attempt
-> > to build that are still using these same interfaces.
-> 
-> What are the current rules on drivers in staging/ ? Do they need to be
-> updated as well on API changes?
+> John, I have no objection to these 4 commits going through your tree, if
+> it will make these types of merge issues go away.  If so, I have 4 more
+> patches that should be added, adding the TODO files for the drivers.  I
+> can send them to you if you want to take them.
 
-You don't have to do it, no.  I'll be glad to do so as long as I get a
-hint as to what needs to be done :)
+Sure, that would be fine.  I did get copies of the TODO addition
+patches, but I deleted them as I had not yet seen this. :-(  Could
+you resend them to me?
 
-thanks,
+Thanks!
 
-greg k-h
+John
+-- 
+John W. Linville		Someday the world will need a hero, and you
+linville@tuxdriver.com			might be all we have.  Be ready.
