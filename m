@@ -1,107 +1,47 @@
-From: Dhananjay Phadke <dhananjay.phadke@qlogic.com>
-Subject: RE: [PATCH -next] netxen: fix builds for SYSFS=n or MODULES=n
-Date: Tue, 27 Oct 2009 15:09:24 -0700
-Message-ID: <7608421F3572AB4292BB2532AE89D5658B0B8903CB@AVEXMB1.qlogic.org>
-References: <20091026172104.205f15af.sfr@canb.auug.org.au>
- <20091026150945.3f35a811.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the sh tree with the powerpc-merge tree
+Date: Wed, 28 Oct 2009 13:13:56 +1100
+Message-ID: <20091028131356.7a6ba355.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from avexch1.qlogic.com ([198.70.193.115]:52408 "EHLO
-	avexch1.qlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752321AbZJ0WKU convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Oct 2009 18:10:20 -0400
-In-Reply-To: <20091026150945.3f35a811.randy.dunlap@oracle.com>
-Content-Language: en-US
+Received: from chilli.pcug.org.au ([203.10.76.44]:51787 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756940AbZJ1CNz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 27 Oct 2009 22:13:55 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, netdev <netdev@vger.kernel.org>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "davem@davemloft.net" <davem@davemloft.net>
+To: Paul Mundt <lethal@linux-sh.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kumar Gala <galak@kernel.crashing.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org
 
-Sorry, seems like I am keeping you busy with the build errors.
-Thanks for fixing it again (may be I need to setup all different build configs).
+Hi Paul,
 
-Acked-by: Dhananjay Phadke <dhananjay@netxen.com>
+Today's linux-next merge of the sh tree got a conflict in fs/Kconfig
+between commit 0cd9ad73b8d181737005ff4e506b9b6bd043f4dd ("powerpc: Limit
+hugetlbfs support to PPC64 Book-3S machines") from the powerpc-merge tree
+and commit ffb4a73d8906f71910e6c83ec2b499e70025ee8e ("sh: Fix hugetlbfs
+dependencies for SH-3 && MMU configurations") from the sh tree.
 
------Original Message-----
-From: Randy Dunlap [mailto:randy.dunlap@oracle.com] 
-Sent: Monday, October 26, 2009 3:10 PM
-To: Stephen Rothwell; netdev
-Cc: linux-next@vger.kernel.org; LKML; davem@davemloft.net; Dhananjay Phadke
-Subject: [PATCH -next] netxen: fix builds for SYSFS=n or MODULES=n
+I fixed it up (see below) and can carry the fix for a while (the
+powerpc-merge commit should be in Linus' tree soon).
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
-
-When CONFIG_MODULES=n:
-drivers/net/netxen/netxen_nic_main.c:2751: error: dereferencing pointer to incomplete type
-drivers/net/netxen/netxen_nic_main.c:2764: error: dereferencing pointer to incomplete type
-
-Also needs addition of <linux/sysfs.h> for sysfs function prototypes or
-stubs when CONFIG_SYSFS=n.
-
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- drivers/net/netxen/netxen_nic_main.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
-
---- linux-next-20091026.orig/drivers/net/netxen/netxen_nic_main.c
-+++ linux-next-20091026/drivers/net/netxen/netxen_nic_main.c
-@@ -34,6 +34,7 @@
- #include <net/ip.h>
- #include <linux/ipv6.h>
- #include <linux/inetdevice.h>
-+#include <linux/sysfs.h>
- 
- MODULE_DESCRIPTION("NetXen Multi port (1/10) Gigabit Network Driver");
- MODULE_LICENSE("GPL");
-@@ -2500,6 +2501,7 @@ static struct bin_attribute bin_attr_mem
- 	.write = netxen_sysfs_write_mem,
- };
- 
-+#ifdef CONFIG_MODULES
- static ssize_t
- netxen_store_auto_fw_reset(struct module_attribute *mattr,
- 		struct module *mod, const char *buf, size_t count)
-@@ -2534,6 +2536,7 @@ static struct module_attribute mod_attr_
- 	.show = netxen_show_auto_fw_reset,
- 	.store = netxen_store_auto_fw_reset,
- };
-+#endif
- 
- static void
- netxen_create_sysfs_entries(struct netxen_adapter *adapter)
-@@ -2739,7 +2742,9 @@ static struct pci_driver netxen_driver =
- 
- static int __init netxen_init_module(void)
- {
-+#ifdef CONFIG_MODULES
- 	struct module *mod = THIS_MODULE;
-+#endif
- 
- 	printk(KERN_INFO "%s\n", netxen_nic_driver_string);
- 
-@@ -2748,9 +2753,11 @@ static int __init netxen_init_module(voi
- 	register_inetaddr_notifier(&netxen_inetaddr_cb);
- #endif
- 
-+#ifdef CONFIG_MODULES
- 	if (sysfs_create_file(&mod->mkobj.kobj, &mod_attr_fw_reset.attr))
- 		printk(KERN_ERR "%s: Failed to create auto_fw_reset "
- 				"sysfs entry.", netxen_nic_driver_name);
-+#endif
- 
- 	return pci_register_driver(&netxen_driver);
- }
-@@ -2759,9 +2766,11 @@ module_init(netxen_init_module);
- 
- static void __exit netxen_exit_module(void)
- {
-+#ifdef CONFIG_MODULES
- 	struct module *mod = THIS_MODULE;
- 
- 	sysfs_remove_file(&mod->mkobj.kobj, &mod_attr_fw_reset.attr);
-+#endif
- 
- 	pci_unregister_driver(&netxen_driver);
- 
+diff --cc fs/Kconfig
+index f93d0ed,48b81f9..0000000
+--- a/fs/Kconfig
++++ b/fs/Kconfig
+@@@ -135,8 -135,8 +135,8 @@@ config TMPFS_POSIX_AC
+  
+  config HUGETLBFS
+  	bool "HugeTLB file system support"
+- 	depends on X86 || IA64 || PPC_BOOK3S_64 || SPARC64 || (SUPERH && MMU) || \
+ -	depends on X86 || IA64 || PPC64 || SPARC64 || (S390 && 64BIT) || \
+ -		   SYS_SUPPORTS_HUGETLBFS || BROKEN
+++	depends on X86 || IA64 || PPC_BOOK3S_64 || SPARC64 || \
+ +		   (S390 && 64BIT) || SYS_SUPPORTS_HUGETLBFS || BROKEN
+  	help
+  	  hugetlbfs is a filesystem backing for HugeTLB pages, based on
+  	  ramfs. For architectures that support it, say Y here and read
