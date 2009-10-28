@@ -1,45 +1,50 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] tpm: fix header for modular build
-Date: Wed, 28 Oct 2009 10:49:26 -0700
-Message-ID: <20091028104926.385d350f.randy.dunlap@oracle.com>
-References: <20091028190643.627f10aa.sfr@canb.auug.org.au>
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+Subject: Re: [PATCH 9/9] pcmcia: remove pcmcia_get_{first,next}_tuple()
+Date: Wed, 28 Oct 2009 22:27:00 +0100
+Message-ID: <20091028212700.GB31361@comet.dominikbrodowski.net>
+References: <1255907255-28297-3-git-send-email-linux@dominikbrodowski.net> <1255907255-28297-4-git-send-email-linux@dominikbrodowski.net> <1255907255-28297-5-git-send-email-linux@dominikbrodowski.net> <1255907255-28297-6-git-send-email-linux@dominikbrodowski.net> <1255907255-28297-7-git-send-email-linux@dominikbrodowski.net> <1255907255-28297-8-git-send-email-linux@dominikbrodowski.net> <1255907255-28297-9-git-send-email-linux@dominikbrodowski.net> <20091026151958.a2e7871b.randy.dunlap@oracle.com> <20091027051224.GA10891@isilmar.linta.de> <20091027143923.GA17627@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet11.oracle.com ([148.87.113.123]:18217 "EHLO
-	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755343AbZJ1R4M (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Oct 2009 13:56:12 -0400
-In-Reply-To: <20091028190643.627f10aa.sfr@canb.auug.org.au>
+Received: from isilmar.linta.de ([213.133.102.198]:33505 "EHLO linta.de"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1752622AbZJ1VcY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 28 Oct 2009 17:32:24 -0400
+Content-Disposition: inline
+In-Reply-To: <20091027143923.GA17627@suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, tpmdd-devel@lists.sourceforge.net
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, akpm <akpm@linux-foundation.org>
+To: Greg KH <gregkh@suse.de>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, devel@driverdev.osuosl.org, linux-next@vger.kernel.org, linux-pcmcia@lists.infradead.org
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+Greg,
 
-Fix build for TCG_TPM=m.  Header file doesn't handle this
-and incorrectly builds stubs.
+On Tue, Oct 27, 2009 at 07:39:23AM -0700, Greg KH wrote:
+> On Tue, Oct 27, 2009 at 06:12:24AM +0100, Dominik Brodowski wrote:
+> > Randy,
+> > 
+> > On Mon, Oct 26, 2009 at 03:19:58PM -0700, Randy Dunlap wrote:
+> > > > Remove the pcmcia_get_{first,next}_tuple() calls no longer needed by
+> > > > (current) pcmcia device drivers.
+> > > 
+> > > linux-next 20091026:
+> > > 
+> > > drivers/staging/comedi/drivers/cb_das16_cs.c:155: error: implicit declaration of function 'pcmcia_get_first_tuple'
+> > > drivers/staging/comedi/drivers/cb_das16_cs.c:156: error: implicit declaration of function 'pcmcia_get_tuple_data'
+> > > drivers/staging/comedi/drivers/cb_das16_cs.c:883: error: implicit declaration of function 'pcmcia_get_next_tuple'
+> > > 
+> > > There are also other comedi/ drivers that this randconfig didn't attempt
+> > > to build that are still using these same interfaces.
+> > 
+> > What are the current rules on drivers in staging/ ? Do they need to be
+> > updated as well on API changes?
+> 
+> You don't have to do it, no.  I'll be glad to do so as long as I get a
+> hint as to what needs to be done :)
 
-drivers/char/tpm/tpm.c:720: error: redefinition of 'tpm_pcr_read'
-include/linux/tpm.h:35: error:previous definition of 'tpm_pcr_read' was here
-drivers/char/tpm/tpm.c:752: error: redefinition of 'tpm_pcr_extend'
-include/linux/tpm.h:38: error:previous definition of 'tpm_pcr_extend' was here
+These hints are in Documentation/pcmcia/driver-changes.txt . However, I'll
+try to get some patches cooked up myself tonight for those drivers. Whom
+shall I submit them to, or shall I just add them to the PCMCIA tree?
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- include/linux/tpm.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- linux-next-20091028.orig/include/linux/tpm.h
-+++ linux-next-20091028/include/linux/tpm.h
-@@ -27,7 +27,7 @@
-  */
- #define	TPM_ANY_NUM 0xFFFF
- 
--#if defined(CONFIG_TCG_TPM)
-+#if defined(CONFIG_TCG_TPM) || defined(CONFIG_TCG_TPM_MODULE)
- 
- extern int tpm_pcr_read(u32 chip_num, int pcr_idx, u8 *res_buf);
- extern int tpm_pcr_extend(u32 chip_num, int pcr_idx, const u8 *hash);
+Best,
+	Dominik
