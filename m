@@ -1,65 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the kgdb tree
-Date: Wed, 28 Oct 2009 18:04:54 +1100
-Message-ID: <20091028180454.488609b7.sfr@canb.auug.org.au>
+Subject: linux-next: tip tree build warning
+Date: Wed, 28 Oct 2009 18:14:43 +1100
+Message-ID: <20091028181443.50a09dbb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__28_Oct_2009_18_14_43_+1100_J.=z8wB9j5=o1bhG"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57069 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:56316 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755557AbZJ1HE4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 28 Oct 2009 03:04:56 -0400
+	id S1757450AbZJ1HOq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 28 Oct 2009 03:14:46 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Wessel <jason.wessel@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+
+--Signature=_Wed__28_Oct_2009_18_14_43_+1100_J.=z8wB9j5=o1bhG
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the tip tree got a conflict in
-arch/x86/kernel/kgdb.c between commit
-1cde88814e04c3b2bbe60e20c0927a0b4e1748ab ("kgdb,i386: Fix corner case
-access to sp with NMI watch dog exception") from the kgdb tree and commit
-5ca6c0ca5dbf105d7b0ffdae2289519982189730 ("x86: use kernel_stack_pointer
-() in kgdb.c") from the tip tree.
+Today's linux-next build (x86_64 allmodconfig) produced this warning:
 
-I fixed it up (see below) but would like people to check as I am not sure
-of the fix.  I can carry this as necessary.
--- 
+In file included from arch/x86/include/asm/smp.h:13,
+                 from arch/x86/include/asm/mmzone_64.h:12,
+                 from arch/x86/include/asm/mmzone.h:4,
+                 from include/linux/mmzone.h:783,
+                 from include/linux/gfp.h:4,
+                 from include/linux/kmod.h:22,
+                 from include/linux/module.h:13,
+                 from arch/x86/kernel/apic/apic_noop.c:14:
+arch/x86/include/asm/apic.h: In function 'default_apicid_to_cpu_present':
+arch/x86/include/asm/apic.h:591: warning: the frame size of 8192 bytes is l=
+arger than 2048 bytes
+
+It may not have been caused by the tip tree, but I can't find what
+changed to cause this and a commit from the tip tree has exposed it
+(9844ab11c763bfed9f054c82366b19dcda66aca9 "x86, apic: Introduce the NOOP
+apic driver").
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/x86/kernel/kgdb.c
-index e9afae9,3310d84..0000000
---- a/arch/x86/kernel/kgdb.c
-+++ b/arch/x86/kernel/kgdb.c
-@@@ -85,15 -85,9 +85,15 @@@ void pt_regs_to_gdb_regs(unsigned long 
-  	gdb_regs[GDB_DS]	= regs->ds;
-  	gdb_regs[GDB_ES]	= regs->es;
-  	gdb_regs[GDB_CS]	= regs->cs;
- -	gdb_regs[GDB_SS]	= __KERNEL_DS;
-  	gdb_regs[GDB_FS]	= 0xFFFF;
-  	gdb_regs[GDB_GS]	= 0xFFFF;
- +	if (user_mode_vm(regs)) {
- +		gdb_regs[GDB_SS] = regs->ss;
- +		gdb_regs[GDB_SP] = regs->sp;
- +	} else {
- +		gdb_regs[GDB_SS] = __KERNEL_DS;
-- 		gdb_regs[GDB_SP] = (unsigned long)&regs->sp;
-++		gdb_regs[GDB_SP] = kernel_stack_pointer(regs);
- +	}
-  #else
-  	gdb_regs[GDB_R8]	= regs->r8;
-  	gdb_regs[GDB_R9]	= regs->r9;
-@@@ -106,8 -100,8 +106,8 @@@
-  	gdb_regs32[GDB_PS]	= regs->flags;
-  	gdb_regs32[GDB_CS]	= regs->cs;
-  	gdb_regs32[GDB_SS]	= regs->ss;
-- 	gdb_regs[GDB_SP]	= regs->sp;
- -#endif
-+ 	gdb_regs[GDB_SP]	= kernel_stack_pointer(regs);
- +#endif
-  }
-  
-  /**
+--Signature=_Wed__28_Oct_2009_18_14_43_+1100_J.=z8wB9j5=o1bhG
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkrn72QACgkQjjKRsyhoI8xKpACfclt8tyVD70IodF/OnNsRbv2/
+c/AAoIwdTq2BUM4FVEncr8nvw6/IABqy
+=3WQR
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__28_Oct_2009_18_14_43_+1100_J.=z8wB9j5=o1bhG--
