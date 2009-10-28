@@ -1,54 +1,70 @@
-From: Greg KH <gregkh@suse.de>
-Subject: Re: [PATCH 9/9] pcmcia: remove pcmcia_get_{first,next}_tuple()
-Date: Wed, 28 Oct 2009 14:36:12 -0700
-Message-ID: <20091028213612.GA24626@suse.de>
-References: <1255907255-28297-4-git-send-email-linux@dominikbrodowski.net> <1255907255-28297-5-git-send-email-linux@dominikbrodowski.net> <1255907255-28297-6-git-send-email-linux@dominikbrodowski.net> <1255907255-28297-7-git-send-email-linux@dominikbrodowski.net> <1255907255-28297-8-git-send-email-linux@dominikbrodowski.net> <1255907255-28297-9-git-send-email-linux@dominikbrodowski.net> <20091026151958.a2e7871b.randy.dunlap@oracle.com> <20091027051224.GA10891@isilmar.linta.de> <20091027143923.GA17627@suse.de> <20091028212700.GB31361@comet.dominikbrodowski.net>
+From: "Luck, Tony" <tony.luck@intel.com>
+Subject: RE: [PATCH -next] ia64/sn: fix percpu warnings
+Date: Wed, 28 Oct 2009 15:23:30 -0700
+Message-ID: <57C9024A16AD2D4C97DC78E552063EA3E34C0629@orsmsx505.amr.corp.intel.com>
+References: <20091014163445.f0441473.sfr@canb.auug.org.au>
+	 <20091014151003.0ef42973.randy.dunlap@oracle.com>
+	 <4AD67C05.2030201@kernel.org>
+ <12c511ca0910261124p64f2ad5emc88d00b9957482b3@mail.gmail.com>
+ <57C9024A16AD2D4C97DC78E552063EA3E345953E@orsmsx505.amr.corp.intel.com>
+ <4AE85D28.90809@kernel.org>
+ <57C9024A16AD2D4C97DC78E552063EA3E34C0108@orsmsx505.amr.corp.intel.com>
+ <4AE87344.6030708@kernel.org>
+ <57C9024A16AD2D4C97DC78E552063EA3E34C018B@orsmsx505.amr.corp.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor.suse.de ([195.135.220.2]:33600 "EHLO mx1.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755881AbZJ1Vg0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 28 Oct 2009 17:36:26 -0400
-Content-Disposition: inline
-In-Reply-To: <20091028212700.GB31361@comet.dominikbrodowski.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>, devel@driverdev.osuosl.org, linux-next@vger.kernel.org, linux-pcmcia@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753548AbZJ1WX3@vger.kernel.org>
+In-Reply-To: <57C9024A16AD2D4C97DC78E552063EA3E34C018B@orsmsx505.amr.corp.intel.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, akpm <akpm@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Oct 28, 2009 at 10:27:00PM +0100, Dominik Brodowski wrote:
-> Greg,
-> 
-> On Tue, Oct 27, 2009 at 07:39:23AM -0700, Greg KH wrote:
-> > On Tue, Oct 27, 2009 at 06:12:24AM +0100, Dominik Brodowski wrote:
-> > > Randy,
-> > > 
-> > > On Mon, Oct 26, 2009 at 03:19:58PM -0700, Randy Dunlap wrote:
-> > > > > Remove the pcmcia_get_{first,next}_tuple() calls no longer needed by
-> > > > > (current) pcmcia device drivers.
-> > > > 
-> > > > linux-next 20091026:
-> > > > 
-> > > > drivers/staging/comedi/drivers/cb_das16_cs.c:155: error: implicit declaration of function 'pcmcia_get_first_tuple'
-> > > > drivers/staging/comedi/drivers/cb_das16_cs.c:156: error: implicit declaration of function 'pcmcia_get_tuple_data'
-> > > > drivers/staging/comedi/drivers/cb_das16_cs.c:883: error: implicit declaration of function 'pcmcia_get_next_tuple'
-> > > > 
-> > > > There are also other comedi/ drivers that this randconfig didn't attempt
-> > > > to build that are still using these same interfaces.
-> > > 
-> > > What are the current rules on drivers in staging/ ? Do they need to be
-> > > updated as well on API changes?
-> > 
-> > You don't have to do it, no.  I'll be glad to do so as long as I get a
-> > hint as to what needs to be done :)
-> 
-> These hints are in Documentation/pcmcia/driver-changes.txt . However, I'll
-> try to get some patches cooked up myself tonight for those drivers. Whom
-> shall I submit them to, or shall I just add them to the PCMCIA tree?
+> I just tried an x86_64 build with a module also modified to access
+> softirq_work_list.  It did NOT get a CRC error.  So the x86_64
+> toolchain doesn't seem to have the same issue as ia64.
 
-You can send them to me, or you can take them in your tree if you want,
-whatever is easier for you.
+Ok.  x86 doesn't see this because the defconfig has
+  CONFIG_MODVERSIONS is not set
 
-thanks,
+If I turn MODVERSION off, then the problem disappears for me.
 
-greg k-h
+If I turn MODVERSIONS on for x86 (and fudge a driver to make use of
+softirq_work_list), then x86 gets the CRC warning too.
+
+
+So this isn't a tool chain problem. Neither x86 nor ia64
+can handle exported per-cpu array objects when CONFIG_MODVERSIONS
+is set.
+
+Looking at the __crc symbols in the vmlinux for x86 with
+CONFIG_MODVERSIONS=y I see:
+
+000000006dcaeb88 A __crc_per_cpu__kernel_stack
+00000000b3994c7a A __crc_per_cpu__kstat
+00000000d917c158 A __crc_per_cpu__node_number
+                 w __crc_per_cpu__softirq_work_list
+0000000036a1f502 A __crc_per_cpu__softnet_data
+0000000057adf756 A __crc_per_cpu__this_cpu_off
+
+which explains why "modpost" is unable to find a CRC.
+
+Maybe the comments in <linux/module.h> are supposed to be a
+clue? :
+
+#ifdef CONFIG_MODVERSIONS
+/* Mark the CRC weak since genksyms apparently decides not to
+ * generate a checksums for some symbols */
+#define __CRC_SYMBOL(sym, sec)                                  \
+        extern void *__crc_##sym __attribute__((weak));         \
+        static const unsigned long __kcrctab_##sym              \
+        __used                                                  \
+        __attribute__((section("__kcrctab" sec), unused))       \
+        = (unsigned long) &__crc_##sym;
+
+But not enough of a clue for me :-(
+
+
+-Tony
