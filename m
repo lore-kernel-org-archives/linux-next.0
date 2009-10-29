@@ -1,49 +1,22 @@
-From: David Rientjes <rientjes@google.com>
-Subject: Re: [PATCH -next] k8.h: add struct bootnode
-Date: Thu, 29 Oct 2009 02:31:23 -0700 (PDT)
-Message-ID: <alpine.DEB.2.00.0910290229490.21298@chino.kir.corp.google.com>
-References: <20091028190643.627f10aa.sfr@canb.auug.org.au> <20091028160955.d27ccb16.randy.dunlap@oracle.com>
+From: Alexander Beregalov <a.beregalov@gmail.com>
+Subject: next-20091029: fs/aio.c build failure
+Date: Thu, 29 Oct 2009 15:40:03 +0300
+Message-ID: <a4423d670910290540x21ab0692p90ebd04b5c3d62e@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp-out.google.com ([216.239.33.17]:45671 "EHLO
-	smtp-out.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751360AbZJ2Jbn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Oct 2009 05:31:43 -0400
-In-Reply-To: <20091028160955.d27ccb16.randy.dunlap@oracle.com>
+Received: from mail-ew0-f228.google.com ([209.85.219.228]:65212 "EHLO
+	mail-ew0-f228.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752488AbZJ2MpB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Oct 2009 08:45:01 -0400
+Received: by ewy28 with SMTP id 28so1872322ewy.18
+        for <linux-next@vger.kernel.org>; Thu, 29 Oct 2009 05:45:05 -0700 (PDT)
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>, Ingo Molnar <mingo@elte.hu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, x86@kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-next <linux-next@vger.kernel.org>, jmoyer@redhat.com, jens.axboe@oracle.com
 
-On Wed, 28 Oct 2009, Randy Dunlap wrote:
+Hi
 
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> k8.h uses struct bootnode but does not #include a header file
-> for it, so provide a simple declaration for it.
-> 
-> arch/x86/include/asm/k8.h:13: warning: 'struct bootnode' declared inside parameter list
-> arch/x86/include/asm/k8.h:13: warning: its scope is only this definition or declaration, which is probably not what you want
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+fs/aio.c:1575: error: implicit declaration of function 'blk_run_address_space'
 
-Acked-by: David Rientjes <rientjes@google.com>
-
-This is probably my fault originating from my patchset in Ingo's x86/mm 
-tree with some unexpected config option combination.  Thanks Randy!
-
-> ---
->  arch/x86/include/asm/k8.h |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> --- linux-next-20091028.orig/arch/x86/include/asm/k8.h
-> +++ linux-next-20091028/arch/x86/include/asm/k8.h
-> @@ -4,6 +4,7 @@
->  #include <linux/pci.h>
->  
->  extern struct pci_device_id k8_nb_ids[];
-> +struct bootnode;
->  
->  extern int early_is_k8_nb(u32 value);
->  extern struct pci_dev **k8_northbridges;
+CONFIG_BLOCK is not set.
