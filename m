@@ -1,49 +1,62 @@
-From: Masami Hiramatsu <mhiramat@redhat.com>
-Subject: Re: linux-next: Tree for October 29 (x86 posttest)
-Date: Thu, 29 Oct 2009 12:48:12 -0400
-Message-ID: <4AE9C74C.2040309@redhat.com>
-References: <20091029182919.4d6ec52c.sfr@canb.auug.org.au> <20091029090627.7857ed08.rdunlap@xenotime.net>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH] staging: fix wireless drivers depends
+Date: Thu, 29 Oct 2009 09:52:02 -0700
+Message-ID: <20091029095202.09161c1e.randy.dunlap@oracle.com>
+References: <20091029182919.4d6ec52c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:26703 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755495AbZJ2QsO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 29 Oct 2009 12:48:14 -0400
-In-Reply-To: <20091029090627.7857ed08.rdunlap@xenotime.net>
+Received: from acsinet11.oracle.com ([141.146.126.233]:20485 "EHLO
+	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752997AbZJ2Q44 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Oct 2009 12:56:56 -0400
+In-Reply-To: <20091029182919.4d6ec52c.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Randy Dunlap wrote:
-> On Thu, 29 Oct 2009 18:29:19 +1100 Stephen Rothwell wrote:
->
->> Hi all,
->>
->> [I accidentally deleted my merge log today, so sorry to anyone who
->> actually reads them :-), the summary still appears below.]
->
->
-> I'm getting this on x86_64:
->
->    TEST    posttest
-> Error: ffffffff810299e2:	f2 41 0f 28 52 b0    	repnz movaps -0x50(%r10),%xmm2
-> Error: objdump says 6 bytes, but insn_get_length() says 4 (attr:0)
-> make[2]: *** [posttest] Error 2
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Ah, that's should be fixed by AVX support patch which I've posted.
-http://git.kernel.org/tip/e0e492e99b372c6990a5daca9e4683c341f1330e
+These drivers can (erroneously) be enabled even when
+CONFIG_NET=n, CONFIG_NETDEVICES=n, CONFIG_WLAN=n, etc.
+Stop this.
 
-Thank you,
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/staging/rtl8187se/Kconfig |    2 +-
+ drivers/staging/rtl8192e/Kconfig  |    2 +-
+ drivers/staging/rtl8192su/Kconfig |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-
--- 
-Masami Hiramatsu
-
-Software Engineer
-Hitachi Computer Products (America), Inc.
-Software Solutions Division
-
-e-mail: mhiramat@redhat.com
+--- linux-next-20091029.orig/drivers/staging/rtl8187se/Kconfig
++++ linux-next-20091029/drivers/staging/rtl8187se/Kconfig
+@@ -1,6 +1,6 @@
+ config RTL8187SE
+ 	tristate "RealTek RTL8187SE Wireless LAN NIC driver"
+-	depends on PCI
++	depends on PCI && WLAN
+ 	select WIRELESS_EXT
+ 	select WEXT_PRIV
+ 	default N
+--- linux-next-20091029.orig/drivers/staging/rtl8192e/Kconfig
++++ linux-next-20091029/drivers/staging/rtl8192e/Kconfig
+@@ -1,6 +1,6 @@
+ config RTL8192E
+ 	tristate "RealTek RTL8192E Wireless LAN NIC driver"
+-	depends on PCI
++	depends on PCI && WLAN
+ 	select WIRELESS_EXT
+ 	select WEXT_PRIV
+ 	default N
+--- linux-next-20091029.orig/drivers/staging/rtl8192su/Kconfig
++++ linux-next-20091029/drivers/staging/rtl8192su/Kconfig
+@@ -1,6 +1,6 @@
+ config RTL8192SU
+ 	tristate "RealTek RTL8192SU Wireless LAN NIC driver"
+-	depends on PCI
++	depends on PCI && WLAN
+ 	depends on WIRELESS_EXT
+ 	default N
+ 	---help---
