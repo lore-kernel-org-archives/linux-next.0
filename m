@@ -1,70 +1,79 @@
-From: Ben Hutchings <bhutchings@solarflare.com>
-Subject: Re: Shared i2c adapter locking (Was: linux-next: manual merge of
-	the net tree with the i2c tree)
-Date: Thu, 29 Oct 2009 15:09:36 +0000
-Message-ID: <1256828976.2827.27.camel@achroite>
-References: <20091026133757.7cf87e49.sfr@canb.auug.org.au>
-	 <20091029154317.651904b9@hyperion.delvare>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH -next] ia64/sn: fix percpu warnings
+Date: Thu, 29 Oct 2009 16:43:14 +0100
+Message-ID: <4AE9B812.2080307@kernel.org>
+References: <20091014163445.f0441473.sfr@canb.auug.org.au>	 <20091014151003.0ef42973.randy.dunlap@oracle.com>	 <4AD67C05.2030201@kernel.org> <12c511ca0910261124p64f2ad5emc88d00b9957482b3@mail.gmail.com> <57C9024A16AD2D4C97DC78E552063EA3E345953E@orsmsx505.amr.corp.intel.com> <4AE85D28.90809@kernel.org> <57C9024A16AD2D4C97DC78E552063EA3E34C0108@orsmsx505.amr.corp.intel.com> <4AE87344.6030708@kernel.org> <57C9024A16AD2D4C97DC78E552063EA3E34C018B@orsmsx505.amr.corp.intel.com> <57C9024A16AD2D4C97DC78E552063EA3E34C0629@orsmsx505.amr.corp.intel.com> <4AE9AA0E.5070104@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.solarflare.com ([216.237.3.220]:33610 "EHLO
-	exchange.solarflare.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754596AbZJ2PJf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Oct 2009 11:09:35 -0400
-In-Reply-To: <20091029154317.651904b9@hyperion.delvare>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jean Delvare <khali@linux-fr.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mika Kuoppala <mika.kuoppala@nokia.com>, Linux I2C <linux-i2c@vger.kernel.org>
+Return-path: <linux-ia64-owner@vger.kernel.org>
+In-Reply-To: <4AE9AA0E.5070104@kernel.org>
+Sender: linux-ia64-owner@vger.kernel.org
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, akpm <akpm@linux-foundation.org>, Sam Ravnborg <sam@ravnborg.org>, Andreas Gruenbacher <agruen@suse.de>, Jan Beulich <JBeulich@novell.com>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, 2009-10-29 at 15:43 +0100, Jean Delvare wrote:
-> Hi Stephen,
-> 
-> On Mon, 26 Oct 2009 13:37:57 +1100, Stephen Rothwell wrote:
-> > Today's linux-next merge of the net tree got a conflict in
-> > drivers/net/sfc/sfe4001.c between commit
-> > 3f7c0648f727a6d5baf6117653e4001dc877b90b ("i2c: Prevent priority
-> > inversion on top of bus lock") from the i2c tree and commit
-> > c9597d4f89565b6562bd3026adbe6eac6c317f47 ("sfc: Merge sfe4001.c into
-> > falcon_boards.c") from the net tree.
-> > 
-> > I have applied the following merge fixup patch (after removing
-> > drivers/net/sfc/sfe4001.c) and can carry it as necessary.
-> 
-> Thanks for fixing it. The core problem here IMHO is that the sfc
-> network driver touches i2c internals which it would rather leave alone.
+Yiee... lexer/parser problem in genksyms.  cc'ing Andreas, Sam and Jan
+for help and quoting whole body.
 
-I'm just a little proud of having the idea that we could avoid using an
-I/O-expander on this board, but yes, the software side of this
-multiplexing is a hack.
+Hello,
 
-> This is the only driver I know of which does this.
+Tejun Heo wrote:
+> Hello,
 > 
-> I can think of 3 different ways to address the issue.
+> Luck, Tony wrote:
+>> Ok.  x86 doesn't see this because the defconfig has
+>>   CONFIG_MODVERSIONS is not set
+>>
+>> If I turn MODVERSION off, then the problem disappears for me.
+>>
+>> If I turn MODVERSIONS on for x86 (and fudge a driver to make use of
+>> softirq_work_list), then x86 gets the CRC warning too.
 > 
-> Method #1: add a public API to grab/release an I2C segment.
+> Right, I can reproduce it here too.
 > 
-> void i2c_adapter_lock(struct i2c_adapter *adapter)
-> {
-> 	rt_mutex_lock(&adapter->bus_lock);
-> }
+>> So this isn't a tool chain problem. Neither x86 nor ia64
+>> can handle exported per-cpu array objects when CONFIG_MODVERSIONS
+>> is set.
+>>
+>> Looking at the __crc symbols in the vmlinux for x86 with
+>> CONFIG_MODVERSIONS=y I see:
+>>
+>> 000000006dcaeb88 A __crc_per_cpu__kernel_stack
+>> 00000000b3994c7a A __crc_per_cpu__kstat
+>> 00000000d917c158 A __crc_per_cpu__node_number
+>>                  w __crc_per_cpu__softirq_work_list
+>> 0000000036a1f502 A __crc_per_cpu__softnet_data
+>> 0000000057adf756 A __crc_per_cpu__this_cpu_off
+>>
+>> which explains why "modpost" is unable to find a CRC.
+>>
+>> Maybe the comments in <linux/module.h> are supposed to be a
+>> clue? :
+>>
+>> #ifdef CONFIG_MODVERSIONS
+>> /* Mark the CRC weak since genksyms apparently decides not to
+>>  * generate a checksums for some symbols */
+>> #define __CRC_SYMBOL(sym, sec)                                  \
+>>         extern void *__crc_##sym __attribute__((weak));         \
+>>         static const unsigned long __kcrctab_##sym              \
+>>         __used                                                  \
+>>         __attribute__((section("__kcrctab" sec), unused))       \
+>>         = (unsigned long) &__crc_##sym;
+>>
+>> But not enough of a clue for me :-(
 > 
-> void i2c_adapter_unlock(struct i2c_adapter *adapter)
-> {
-> 	rt_mutex_unlock(&adapter->bus_lock);
-> }
-[...]
-> I'm not really sure if I have a preference yet, so please speak up if
-> you do.
+> I have no idea either.  I'll dig a bit and try to find out what's
+> going on.
 
-Indirect lock operations are a recipe for deadlock, and there doesn't
-seem to be any other user for this, so method 1 seems best.
+So, the problem is that genksyms can't understand the following.
 
-Ben.
+  __typeof__(int [10]) my_ar;
+  EXPORT_SYMBOL(my_ar);
+
+Would it be difficult to teach it how to parse it?
+
+Thanks.
 
 -- 
-Ben Hutchings, Senior Software Engineer, Solarflare Communications
-Not speaking for my employer; that's the marketing department's job.
-They asked us to note that Solarflare product names are trademarked.
+tejun
