@@ -1,95 +1,101 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH 9/9] pcmcia: remove pcmcia_get_{first,next}_tuple()
-Date: Thu, 29 Oct 2009 13:46:40 -0700
-Message-ID: <20091029134640.5e728e30.randy.dunlap@oracle.com>
-References: <1255907255-28297-4-git-send-email-linux@dominikbrodowski.net>
-	<1255907255-28297-5-git-send-email-linux@dominikbrodowski.net>
-	<1255907255-28297-6-git-send-email-linux@dominikbrodowski.net>
-	<1255907255-28297-7-git-send-email-linux@dominikbrodowski.net>
-	<1255907255-28297-8-git-send-email-linux@dominikbrodowski.net>
-	<1255907255-28297-9-git-send-email-linux@dominikbrodowski.net>
-	<20091026151958.a2e7871b.randy.dunlap@oracle.com>
-	<20091027051224.GA10891@isilmar.linta.de>
-	<20091027143923.GA17627@suse.de>
-	<20091028212700.GB31361@comet.dominikbrodowski.net>
-	<20091029000250.GA27418@comet.dominikbrodowski.net>
+From: Hollis Blanchard <hollisb@us.ibm.com>
+Subject: Re: [PATCH] BUILD_BUG_ON: make it handle more cases
+Date: Thu, 29 Oct 2009 14:30:50 -0700
+Message-ID: <1256851850.9044.114.camel@slab.beaverton.ibm.com>
+References: <4AC1E15502000078000516B5@vpn.id2.novell.com>
+	<200910201142.34006.rusty@rustcorp.com.au>
+	<1256002193.6546.2.camel@slab>
+	<200910201415.34361.rusty@rustcorp.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet12.oracle.com ([141.146.126.234]:28926 "EHLO
-	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755076AbZJ2Uw2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Oct 2009 16:52:28 -0400
-In-Reply-To: <20091029000250.GA27418@comet.dominikbrodowski.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Greg KH <gregkh@suse.de>, devel@driverdev.osuosl.org, linux-next@vger.kernel.org, linux-pcmcia@lists.infradead.org
+Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <200910201415.34361.rusty@rustcorp.com.au>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
+Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: sfr@canb.auug.org.au, linux-kernel@vger.kernel.org, kvm-ppc@vger.kernel.org, linux-next@vger.kernel.org, Jan Beulich <JBeulich@novell.com>, akpm@linux-foundation.org, linuxppc-dev@lists.ozlabs.org
+List-Id: linux-next.vger.kernel.org
 
-On Thu, 29 Oct 2009 01:02:50 +0100 Dominik Brodowski wrote:
-
-> On Wed, Oct 28, 2009 at 10:27:00PM +0100, Dominik Brodowski wrote:
-> > On Tue, Oct 27, 2009 at 07:39:23AM -0700, Greg KH wrote:
-> > > On Tue, Oct 27, 2009 at 06:12:24AM +0100, Dominik Brodowski wrote:
-> > > > Randy,
-> > > > 
-> > > > On Mon, Oct 26, 2009 at 03:19:58PM -0700, Randy Dunlap wrote:
-> > > > > > Remove the pcmcia_get_{first,next}_tuple() calls no longer needed by
-> > > > > > (current) pcmcia device drivers.
-> > > > > 
-> > > > > linux-next 20091026:
-> > > > > 
-> > > > > drivers/staging/comedi/drivers/cb_das16_cs.c:155: error: implicit declaration of function 'pcmcia_get_first_tuple'
-> > > > > drivers/staging/comedi/drivers/cb_das16_cs.c:156: error: implicit declaration of function 'pcmcia_get_tuple_data'
-> > > > > drivers/staging/comedi/drivers/cb_das16_cs.c:883: error: implicit declaration of function 'pcmcia_get_next_tuple'
-> > > > > 
-> > > > > There are also other comedi/ drivers that this randconfig didn't attempt
-> > > > > to build that are still using these same interfaces.
-> > > > 
-> > > > What are the current rules on drivers in staging/ ? Do they need to be
-> > > > updated as well on API changes?
-> > > 
-> > > You don't have to do it, no.  I'll be glad to do so as long as I get a
-> > > hint as to what needs to be done :)
-> > 
-> > These hints are in Documentation/pcmcia/driver-changes.txt . However, I'll
-> > try to get some patches cooked up myself tonight for those drivers. Whom
-> > shall I submit them to, or shall I just add them to the PCMCIA tree?
+On Tue, 2009-10-20 at 14:15 +1030, Rusty Russell wrote:
+> BUILD_BUG_ON used to use the optimizer to do code elimination or fail
+> at link time; it was changed to first the size of a negative array (a
+> nicer compile time error), then (in
+> 8c87df457cb58fe75b9b893007917cf8095660a0) to a bitfield.
 > 
-> Update all changes (already those not included in linux-next) which are in
-> the queue for 2.6.33 for all comedi PCMCIA drivers. Compile-tested only, and
-> I'll queue it up with the other PCMCIA patches.
+> bitfields: needs a literal constant at parse time, and can't be put under
+> 	"if (__builtin_constant_p(x))" for example.
+> negative array: can handle anything, but if the compiler can't tell it's
+> 	a constant, silently has no effect.
+> link time: breaks link if the compiler can't determine the value, but the
+> 	linker output is not usually as informative as a compiler error.
 > 
-
-Thanks for the update.  What is the patch made against?
-I cannot apply it cleanly to linux-next-2009102*.
-
-
+> If we use the negative-array-size method *and* the link time trick,
+> we get the ability to use BUILD_BUG_ON() under __builtin_constant_p()
+> branches, and maximal ability for the compiler to detect errors at
+> build time.
 > 
-> From: Dominik Brodowski <linux@dominikbrodowski.net>
-> Date: Thu, 29 Oct 2009 00:54:49 +0100
-> Subject: [PATCH 1/1] pcmcia/staging: update comedi drivers
+> Signed-off-by: Rusty Russell <rusty@rustcorp.com.au>
 > 
-> Update comedi PCMCIA drivers to work with recent PCMCIA changes documented
-> in Documentation/pcmcia/driver-changes.txt:
+> diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+> --- a/include/linux/kernel.h
+> +++ b/include/linux/kernel.h
+> @@ -683,12 +683,6 @@ struct sysinfo {
+>  	char _f[20-2*sizeof(long)-sizeof(int)];	/* Padding: libc5 uses this.. */
+>  };
 > 
-> - use pcmcia_config_loop()
-> - don't use PCMCIA_DEBUG, but use dev_dbg()
-> - don't use cs_error()
-> - re-use prod_id and card_id values already stored
+> -/* Force a compilation error if condition is true */
+> -#define BUILD_BUG_ON(condition) ((void)BUILD_BUG_ON_ZERO(condition))
+> -
+> -/* Force a compilation error if condition is constant and true */
+> -#define MAYBE_BUILD_BUG_ON(cond) ((void)sizeof(char[1 - 2 * !!(cond)]))
+> -
+>  /* Force a compilation error if condition is true, but also produce a
+>     result (of value 0 and type size_t), so the expression can be used
+>     e.g. in a structure initializer (or where-ever else comma expressions
+> @@ -696,6 +690,33 @@ struct sysinfo {
+>  #define BUILD_BUG_ON_ZERO(e) (sizeof(struct { int:-!!(e); }))
+>  #define BUILD_BUG_ON_NULL(e) ((void *)sizeof(struct { int:-!!(e); }))
 > 
-> Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
-> ---
->  drivers/staging/comedi/drivers/cb_das16_cs.c     |  220 +++++---------------
->  drivers/staging/comedi/drivers/das08_cs.c        |  202 +++++--------------
->  drivers/staging/comedi/drivers/ni_daq_700.c      |  236 +++++++---------------
->  drivers/staging/comedi/drivers/ni_daq_dio24.c    |  235 +++++++---------------
->  drivers/staging/comedi/drivers/ni_labpc_cs.c     |  224 +++++++--------------
->  drivers/staging/comedi/drivers/ni_mio_cs.c       |  127 +++---------
->  drivers/staging/comedi/drivers/quatech_daqp_cs.c |  215 +++++---------------
->  7 files changed, 424 insertions(+), 1035 deletions(-)
+> +/**
+> + * BUILD_BUG_ON - break compile if a condition is true.
+> + * @cond: the condition which the compiler should know is false.
+> + *
+> + * If you have some code which relies on certain constants being equal, or
+> + * other compile-time-evaluated condition, you should use BUILD_BUG_ON to
+> + * detect if someone changes it.
+> + *
+> + * The implementation uses gcc's reluctance to create a negative array, but
+> + * gcc (as of 4.4) only emits that error for obvious cases (eg. not arguments
+> + * to inline functions).  So as a fallback we use the optimizer; if it can't
+> + * prove the condition is false, it will cause a link error on the undefined
+> + * "__build_bug_on_failed".  This error message can be harder to track down
+> + * though, hence the two different methods.
+> + */
+> +#ifndef __OPTIMIZE__
+> +#define BUILD_BUG_ON(condition) ((void)sizeof(char[1 - 2*!!(condition)]))
+> +#else
+> +extern int __build_bug_on_failed;
+> +#define BUILD_BUG_ON(condition)					\
+> +	do {							\
+> +		((void)sizeof(char[1 - 2*!!(condition)]));	\
+> +		if (condition) __build_bug_on_failed = 1;	\
+> +	} while(0)
+> +#endif
+> +#define MAYBE_BUILD_BUG_ON(condition) BUILD_BUG_ON(condition)
+> +
+>  /* Trap pasters of __FUNCTION__ at compile-time */
+>  #define __FUNCTION__ (__func__)
 
+What's the state of this patch?
 
----
-~Randy
+-- 
+Hollis Blanchard
+IBM Linux Technology Center
