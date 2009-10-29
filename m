@@ -1,41 +1,49 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
+From: Masami Hiramatsu <mhiramat@redhat.com>
 Subject: Re: linux-next: Tree for October 29 (x86 posttest)
-Date: Thu, 29 Oct 2009 09:06:27 -0700
-Message-ID: <20091029090627.7857ed08.rdunlap@xenotime.net>
-References: <20091029182919.4d6ec52c.sfr@canb.auug.org.au>
+Date: Thu, 29 Oct 2009 12:48:12 -0400
+Message-ID: <4AE9C74C.2040309@redhat.com>
+References: <20091029182919.4d6ec52c.sfr@canb.auug.org.au> <20091029090627.7857ed08.rdunlap@xenotime.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from xenotime.net ([72.52.64.118]:55017 "HELO xenotime.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
-	id S1753221AbZJ2QKk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 29 Oct 2009 12:10:40 -0400
-Received: from chimera.site ([96.253.169.185]) by xenotime.net for <linux-next@vger.kernel.org>; Thu, 29 Oct 2009 09:10:43 -0700
-In-Reply-To: <20091029182919.4d6ec52c.sfr@canb.auug.org.au>
+Received: from mx1.redhat.com ([209.132.183.28]:26703 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755495AbZJ2QsO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 29 Oct 2009 12:48:14 -0400
+In-Reply-To: <20091029090627.7857ed08.rdunlap@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@redhat.com>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Thu, 29 Oct 2009 18:29:19 +1100 Stephen Rothwell wrote:
+Randy Dunlap wrote:
+> On Thu, 29 Oct 2009 18:29:19 +1100 Stephen Rothwell wrote:
+>
+>> Hi all,
+>>
+>> [I accidentally deleted my merge log today, so sorry to anyone who
+>> actually reads them :-), the summary still appears below.]
+>
+>
+> I'm getting this on x86_64:
+>
+>    TEST    posttest
+> Error: ffffffff810299e2:	f2 41 0f 28 52 b0    	repnz movaps -0x50(%r10),%xmm2
+> Error: objdump says 6 bytes, but insn_get_length() says 4 (attr:0)
+> make[2]: *** [posttest] Error 2
 
-> Hi all,
-> 
-> [I accidentally deleted my merge log today, so sorry to anyone who
-> actually reads them :-), the summary still appears below.]
+Ah, that's should be fixed by AVX support patch which I've posted.
+http://git.kernel.org/tip/e0e492e99b372c6990a5daca9e4683c341f1330e
+
+Thank you,
 
 
-I'm getting this on x86_64:
+-- 
+Masami Hiramatsu
 
-  TEST    posttest
-Error: ffffffff810299e2:	f2 41 0f 28 52 b0    	repnz movaps -0x50(%r10),%xmm2
-Error: objdump says 6 bytes, but insn_get_length() says 4 (attr:0)
-make[2]: *** [posttest] Error 2
+Software Engineer
+Hitachi Computer Products (America), Inc.
+Software Solutions Division
 
-
-any ideas?
-
-thanks,
----
-~Randy
+e-mail: mhiramat@redhat.com
