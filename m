@@ -1,45 +1,66 @@
-From: Jeff Moyer <jmoyer@redhat.com>
-Subject: Re: next-20091029: fs/aio.c build failure
-Date: Thu, 29 Oct 2009 09:07:38 -0400
-Message-ID: <x493a52pcv9.fsf@segfault.boston.devel.redhat.com>
-References: <a4423d670910290540x21ab0692p90ebd04b5c3d62e@mail.gmail.com>
-	<20091029125606.GK10727@kernel.dk> <20091029130135.GL10727@kernel.dk>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH -next] ia64/sn: fix percpu warnings
+Date: Thu, 29 Oct 2009 15:43:26 +0100
+Message-ID: <4AE9AA0E.5070104@kernel.org>
+References: <20091014163445.f0441473.sfr@canb.auug.org.au>	 <20091014151003.0ef42973.randy.dunlap@oracle.com>	 <4AD67C05.2030201@kernel.org> <12c511ca0910261124p64f2ad5emc88d00b9957482b3@mail.gmail.com> <57C9024A16AD2D4C97DC78E552063EA3E345953E@orsmsx505.amr.corp.intel.com> <4AE85D28.90809@kernel.org> <57C9024A16AD2D4C97DC78E552063EA3E34C0108@orsmsx505.amr.corp.intel.com> <4AE87344.6030708@kernel.org> <57C9024A16AD2D4C97DC78E552063EA3E34C018B@orsmsx505.amr.corp.intel.com> <57C9024A16AD2D4C97DC78E552063EA3E34C0629@orsmsx505.amr.corp.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:38765 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751676AbZJ2NHk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 29 Oct 2009 09:07:40 -0400
-In-Reply-To: <20091029130135.GL10727@kernel.dk> (Jens Axboe's message of "Thu,
-	29 Oct 2009 14:01:36 +0100")
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <jens.axboe@oracle.com>
-Cc: Alexander Beregalov <a.beregalov@gmail.com>, linux-next <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-ia64-owner@vger.kernel.org>
+In-Reply-To: <57C9024A16AD2D4C97DC78E552063EA3E34C0629@orsmsx505.amr.corp.intel.com>
+Sender: linux-ia64-owner@vger.kernel.org
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, akpm <akpm@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
-Jens Axboe <jens.axboe@oracle.com> writes:
+Hello,
 
-> On Thu, Oct 29 2009, Jens Axboe wrote:
->> On Thu, Oct 29 2009, Alexander Beregalov wrote:
->> > Hi
->> > 
->> > fs/aio.c:1575: error: implicit declaration of function 'blk_run_address_space'
->> > 
->> > CONFIG_BLOCK is not set.
->> 
->> Not the first time this has happened, I think we should just pull the
->> bdi/mapping unplug functions out of CONFIG_BLOCK protection. They work
->> on the backing_dev, so they aren't inherently tied to just block IO.
->
-> I committed this:
->
-> http://git.kernel.dk/?p=linux-2.6-block.git;a=commit;h=b9d128f1088ea5245109dfc9bbceb128b6371a77
->
-> Same as the posted version, but adds the backing-dev.h include to
-> fs/aio.c to make it visible as well. Passes compile/link testing here,
-> for both CONFIG_BLOCk and !CONFIG_BLOCK.
+Luck, Tony wrote:
+> Ok.  x86 doesn't see this because the defconfig has
+>   CONFIG_MODVERSIONS is not set
+> 
+> If I turn MODVERSION off, then the problem disappears for me.
+> 
+> If I turn MODVERSIONS on for x86 (and fudge a driver to make use of
+> softirq_work_list), then x86 gets the CRC warning too.
 
-Thanks for fixing that, Jens!
+Right, I can reproduce it here too.
 
-Acked-by: Jeff Moyer <jmoyer@redhat.com>
+> So this isn't a tool chain problem. Neither x86 nor ia64
+> can handle exported per-cpu array objects when CONFIG_MODVERSIONS
+> is set.
+> 
+> Looking at the __crc symbols in the vmlinux for x86 with
+> CONFIG_MODVERSIONS=y I see:
+> 
+> 000000006dcaeb88 A __crc_per_cpu__kernel_stack
+> 00000000b3994c7a A __crc_per_cpu__kstat
+> 00000000d917c158 A __crc_per_cpu__node_number
+>                  w __crc_per_cpu__softirq_work_list
+> 0000000036a1f502 A __crc_per_cpu__softnet_data
+> 0000000057adf756 A __crc_per_cpu__this_cpu_off
+> 
+> which explains why "modpost" is unable to find a CRC.
+> 
+> Maybe the comments in <linux/module.h> are supposed to be a
+> clue? :
+> 
+> #ifdef CONFIG_MODVERSIONS
+> /* Mark the CRC weak since genksyms apparently decides not to
+>  * generate a checksums for some symbols */
+> #define __CRC_SYMBOL(sym, sec)                                  \
+>         extern void *__crc_##sym __attribute__((weak));         \
+>         static const unsigned long __kcrctab_##sym              \
+>         __used                                                  \
+>         __attribute__((section("__kcrctab" sec), unused))       \
+>         = (unsigned long) &__crc_##sym;
+> 
+> But not enough of a clue for me :-(
+
+I have no idea either.  I'll dig a bit and try to find out what's
+going on.
+
+Thanks.
+
+-- 
+tejun
