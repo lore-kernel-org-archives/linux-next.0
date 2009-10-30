@@ -1,66 +1,69 @@
-From: Gregory Haskins <gregory.haskins@gmail.com>
-Subject: Re: linux-next: Tree for October 30
-Date: Fri, 30 Oct 2009 11:30:23 -0400
-Message-ID: <4AEB068F.3020607@gmail.com>
-References: <20091030200916.e9331f66.sfr@canb.auug.org.au>
+From: "Jan Beulich" <JBeulich@novell.com>
+Subject: Re: [PATCH -next] ia64/sn: fix percpu warnings
+Date: Fri, 30 Oct 2009 16:05:24 +0000
+Message-ID: <4AEB1CD4020000780001CD66@vpn.id2.novell.com>
+References: <20091014163445.f0441473.sfr@canb.auug.org.au>
+ <20091014151003.0ef42973.randy.dunlap@oracle.com>
+ <4AD67C05.2030201@kernel.org>
+ <12c511ca0910261124p64f2ad5emc88d00b9957482b3@mail.gmail.com>
+ <57C9024A16AD2D4C97DC78E552063EA3E345953E@orsmsx505.amr.corp.intel.com>
+ <4AE85D28.90809@kernel.org>
+ <57C9024A16AD2D4C97DC78E552063EA3E34C0108@orsmsx505.amr.corp.intel.com>
+ <4AE87344.6030708@kernel.org>
+ <57C9024A16AD2D4C97DC78E552063EA3E34C018B@orsmsx505.amr.corp.intel.com>
+ <57C9024A16AD2D4C97DC78E552063EA3E34C0629@orsmsx505.amr.corp.intel.com>
+ <4AE9AA0E.5070104@kernel.org> <4AE9B812.2080307@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="------------enigA3DD6397EDCD54BF79A446B7"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ey-out-2122.google.com ([74.125.78.25]:36565 "EHLO
-	ey-out-2122.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932376AbZJ3Pac (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 30 Oct 2009 11:30:32 -0400
-In-Reply-To: <20091030200916.e9331f66.sfr@canb.auug.org.au>
+In-Reply-To: <4AE9B812.2080307@kernel.org>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Tony Luck <tony.luck@intel.com>, Tejun Heo <tj@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, akpm <akpm@linux-foundation.org>, Randy Dunlap <randy.dunlap@oracle.com>, Sam Ravnborg <sam@ravnborg.org>, Andreas Gruenbacher <agruen@suse.de>, "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
---------------enigA3DD6397EDCD54BF79A446B7
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+>>> Tejun Heo <tj@kernel.org> 29.10.09 16:43 >>>
+>So, the problem is that genksyms can't understand the following.
+>
+>  __typeof__(int [10]) my_ar;
+>  EXPORT_SYMBOL(my_ar);
 
-Hi Stephen
+In fact almost no use of typeof() works with genksyms: Out of
 
-Stephen Rothwell wrote:
-> Hi all,
->=20
-> Changes since 20091029:
->=20
+#include <linux/module.h>
 
-< snip >
+extern int x;
 
-> Merging alacrity/linux-next
-> CONFLICT (content): Merge conflict in drivers/net/Kconfig
-> CONFLICT (content): Merge conflict in lib/Kconfig
+#define export(t, n) typeof(t) export_##n; EXPORT_SYMBOL(export_##n)
 
-So I've noticed this error in your reports for a while now, but I wasn't
-quite sure if there was an action-item for me to address it.
+export(x, a);
+export(&x, b);
+export(int, c);
+export(int*, d);
+export(int**, e);
+export(int[4], f);
+export(typeof(x), g);
+export(typeof(&x), h);
+export(typeof(x)*, i);
 
-Considering no one is complaining that the tree is broken, I assume
-these kinds of conflicts are automatically resolved, but I am wondering
-if there are steps I should take to prevent the conflict in the future?
+only c and d get a non-zero CRC. This is clearly due to the naive parsing
+scripts/genksyms/parse.y does:
 
-Kind Regards,
--Greg
+type_specifier:
+	simple_type_specifier
+	| cvar_qualifier
+	| TYPEOF_KEYW '(' decl_specifier_seq '*' ')'
+	| TYPEOF_KEYW '(' decl_specifier_seq ')'
+	...
 
+>Would it be difficult to teach it how to parse it?
 
+For someone familiar with bison/yacc this would seem not very difficult
+a job, but as far as I'm concerned this is not something I would feel
+comfortable trying to fix. Of course one could go the simplistic route
+and just add the array case here, but imo this wouldn't be the right
+way to deal with it.
 
---------------enigA3DD6397EDCD54BF79A446B7
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG/MacGPG2 v2.0.11 (Darwin)
-Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
-
-iEYEARECAAYFAkrrBo8ACgkQP5K2CMvXmqF2mgCaAyYKXqwliMbLSB14lm/H9nBo
-b0wAn33uwQvcRM6QKTlhtsGA8dkOlp4J
-=BKJP
------END PGP SIGNATURE-----
-
---------------enigA3DD6397EDCD54BF79A446B7--
+Jan
