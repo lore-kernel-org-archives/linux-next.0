@@ -1,69 +1,71 @@
-From: "Jan Beulich" <JBeulich@novell.com>
-Subject: Re: [PATCH -next] ia64/sn: fix percpu warnings
-Date: Fri, 30 Oct 2009 16:05:24 +0000
-Message-ID: <4AEB1CD4020000780001CD66@vpn.id2.novell.com>
-References: <20091014163445.f0441473.sfr@canb.auug.org.au>
- <20091014151003.0ef42973.randy.dunlap@oracle.com>
- <4AD67C05.2030201@kernel.org>
- <12c511ca0910261124p64f2ad5emc88d00b9957482b3@mail.gmail.com>
- <57C9024A16AD2D4C97DC78E552063EA3E345953E@orsmsx505.amr.corp.intel.com>
- <4AE85D28.90809@kernel.org>
- <57C9024A16AD2D4C97DC78E552063EA3E34C0108@orsmsx505.amr.corp.intel.com>
- <4AE87344.6030708@kernel.org>
- <57C9024A16AD2D4C97DC78E552063EA3E34C018B@orsmsx505.amr.corp.intel.com>
- <57C9024A16AD2D4C97DC78E552063EA3E34C0629@orsmsx505.amr.corp.intel.com>
- <4AE9AA0E.5070104@kernel.org> <4AE9B812.2080307@kernel.org>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] staging: fix wlags49 kconfigs
+Date: Fri, 30 Oct 2009 11:01:43 -0700
+Message-ID: <20091030110143.2d6d76d1.rdunlap@xenotime.net>
+References: <20091030200916.e9331f66.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-In-Reply-To: <4AE9B812.2080307@kernel.org>
-Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Tony Luck <tony.luck@intel.com>, Tejun Heo <tj@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, akpm <akpm@linux-foundation.org>, Randy Dunlap <randy.dunlap@oracle.com>, Sam Ravnborg <sam@ravnborg.org>, Andreas Gruenbacher <agruen@suse.de>, "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932788AbZJ3SF5@vger.kernel.org>
+In-Reply-To: <20091030200916.e9331f66.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
->>> Tejun Heo <tj@kernel.org> 29.10.09 16:43 >>>
->So, the problem is that genksyms can't understand the following.
->
->  __typeof__(int [10]) my_ar;
->  EXPORT_SYMBOL(my_ar);
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-In fact almost no use of typeof() works with genksyms: Out of
+Fix depends/selects in wlags49 drivers.
 
-#include <linux/module.h>
+ERROR: "wireless_spy_update" [drivers/staging/wlags49_h2/wlags49_h2_cs.ko] undefined!
+ERROR: "iw_handler_get_spy" [drivers/staging/wlags49_h2/wlags49_h2_cs.ko] undefined!
+ERROR: "iw_handler_set_spy" [drivers/staging/wlags49_h2/wlags49_h2_cs.ko] undefined!
 
-extern int x;
+ERROR: "pcmcia_dev_present" [drivers/staging/wlags49_h25/wlags49_h25_cs.ko] undefined!
+ERROR: "pcmcia_request_irq" [drivers/staging/wlags49_h25/wlags49_h25_cs.ko] undefined!
+ERROR: "pcmcia_register_driver" [drivers/staging/wlags49_h25/wlags49_h25_cs.ko] undefined!
+ERROR: "pcmcia_request_configuration" [drivers/staging/wlags49_h25/wlags49_h25_cs.ko] undefined!
+ERROR: "pcmcia_request_io" [drivers/staging/wlags49_h25/wlags49_h25_cs.ko] undefined!
+ERROR: "pcmcia_error_ret" [drivers/staging/wlags49_h25/wlags49_h25_cs.ko] undefined!
+ERROR: "pcmcia_error_func" [drivers/staging/wlags49_h25/wlags49_h25_cs.ko] undefined!
+ERROR: "pcmcia_unregister_driver" [drivers/staging/wlags49_h25/wlags49_h25_cs.ko] undefined!
+ERROR: "pcmcia_disable_device" [drivers/staging/wlags49_h25/wlags49_h25_cs.ko] undefined!
+ERROR: "pcmcia_dev_present" [drivers/staging/wlags49_h2/wlags49_h2_cs.ko] undefined!
+ERROR: "pcmcia_request_irq" [drivers/staging/wlags49_h2/wlags49_h2_cs.ko] undefined!
+ERROR: "pcmcia_register_driver" [drivers/staging/wlags49_h2/wlags49_h2_cs.ko] undefined!
+ERROR: "pcmcia_request_configuration" [drivers/staging/wlags49_h2/wlags49_h2_cs.ko] undefined!
+ERROR: "pcmcia_request_io" [drivers/staging/wlags49_h2/wlags49_h2_cs.ko] undefined!
+ERROR: "pcmcia_error_ret" [drivers/staging/wlags49_h2/wlags49_h2_cs.ko] undefined!
+ERROR: "pcmcia_error_func" [drivers/staging/wlags49_h2/wlags49_h2_cs.ko] undefined!
+ERROR: "pcmcia_unregister_driver" [drivers/staging/wlags49_h2/wlags49_h2_cs.ko] undefined!
+ERROR: "pcmcia_disable_device" [drivers/staging/wlags49_h2/wlags49_h2_cs.ko] undefined!
 
-#define export(t, n) typeof(t) export_##n; EXPORT_SYMBOL(export_##n)
 
-export(x, a);
-export(&x, b);
-export(int, c);
-export(int*, d);
-export(int**, e);
-export(int[4], f);
-export(typeof(x), g);
-export(typeof(&x), h);
-export(typeof(x)*, i);
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/staging/wlags49_h2/Kconfig  |    3 ++-
+ drivers/staging/wlags49_h25/Kconfig |    3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-only c and d get a non-zero CRC. This is clearly due to the naive parsing
-scripts/genksyms/parse.y does:
-
-type_specifier:
-	simple_type_specifier
-	| cvar_qualifier
-	| TYPEOF_KEYW '(' decl_specifier_seq '*' ')'
-	| TYPEOF_KEYW '(' decl_specifier_seq ')'
-	...
-
->Would it be difficult to teach it how to parse it?
-
-For someone familiar with bison/yacc this would seem not very difficult
-a job, but as far as I'm concerned this is not something I would feel
-comfortable trying to fix. Of course one could go the simplistic route
-and just add the array case here, but imo this wouldn't be the right
-way to deal with it.
-
-Jan
+--- linux-next-20091030.orig/drivers/staging/wlags49_h2/Kconfig
++++ linux-next-20091030/drivers/staging/wlags49_h2/Kconfig
+@@ -1,6 +1,7 @@
+ config WLAGS49_H2
+ 	tristate "Agere Systems HERMES II Wireless PC Card Model 0110"
+-	depends on WLAN_80211 && WIRELESS_EXT
++	depends on WLAN_80211 && WIRELESS_EXT && PCMCIA
++	select WEXT_SPY
+ 	---help---
+ 	  Driver for wireless cards using Agere's HERMES II chipset
+ 	  which are identified with Manufacture ID: 0156,0003
+--- linux-next-20091030.orig/drivers/staging/wlags49_h25/Kconfig
++++ linux-next-20091030/drivers/staging/wlags49_h25/Kconfig
+@@ -1,6 +1,7 @@
+ config WLAGS49_H25
+ 	tristate "Linksys HERMES II.5 WCF54G_Wireless-G_CompactFlash_Card"
+-	depends on WLAN_80211 && WIRELESS_EXT
++	depends on WLAN_80211 && WIRELESS_EXT && PCMCIA
++	select WEXT_SPY
+ 	---help---
+ 	  Driver for wireless cards using Agere's HERMES II.5 chipset
+ 	  which are identified with Manufacture ID: 0156,0004
