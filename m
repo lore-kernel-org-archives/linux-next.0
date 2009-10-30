@@ -1,37 +1,65 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: linux-next: manual merge of the percpu tree with Linus' tree
-Date: Fri, 30 Oct 2009 11:02:25 +0100
-Message-ID: <4AEAB9B1.4000304@kernel.org>
-References: <20091030192050.06a0f706.sfr@canb.auug.org.au>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: linux-next: manual merge of the omap tree with Linus' tree
+Date: Fri, 30 Oct 2009 07:45:18 -0700
+Message-ID: <20091030144517.GS7180@atomide.com>
+References: <20091030114642.61bbeb2c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hera.kernel.org ([140.211.167.34]:39458 "EHLO hera.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754074AbZJ3KDX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 30 Oct 2009 06:03:23 -0400
-In-Reply-To: <20091030192050.06a0f706.sfr@canb.auug.org.au>
+Received: from mho-02-ewr.mailhop.org ([204.13.248.72]:51626 "EHLO
+	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932238AbZJ3OpT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 30 Oct 2009 10:45:19 -0400
+Content-Disposition: inline
+In-Reply-To: <20091030114642.61bbeb2c.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>
+Cc: linux-omap@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>, Alexander Shishkin <virtuoso@slind.org>, Ladislav Michl <ladis@linux-mips.org>
 
-Stephen Rothwell wrote:
+* Stephen Rothwell <sfr@canb.auug.org.au> [091029 17:46]:
 > Hi all,
 > 
-> Today's linux-next merge of the percpu tree got a conflict in mm/percpu.c
-> between commit 403a91b1659cb149dbddc5885f892734ae4542d8 ("percpu: allow
-> pcpu_alloc() to be called with IRQs off") from Linus' tree and commit
-> 0f5e4816dbf38ce9488e611ca2296925c1e90d5e ("percpu: remove some sparse
-> warnings") from the percpu tree.
+> Today's linux-next merge of the omap tree got a conflict in
+> arch/arm/mach-omap1/serial.c between commit
+> c33da3a80074094303d643a90ef589330b491270 ("omap1: Fix redundant UARTs pin
+> muxing that can break other hardware support") from Linus' tree and
+> commits 84f90c9cc81d8db172d4f768fc4010f508897366 ("omap: Change low-level
+> serial init to use ioremap") and acb1aed4a5f23c545073b0d65302e5949f239fa0
+> ("omap: Eliminate OMAP_MAX_NR_PORTS") from the omap tree.
 > 
-> I fixed it up (see below) and can carry the fix as necessary.
+> I fixed it up (see below) and can carry the fix for a while.
 
-I'll pull master into for-next in a few days so that we can do sparse
-cleanup pass over the whole tree on the latest tree.
+Thanks, will rebase omap for-next patches today.
 
-Thanks.
+Regards,
 
--- 
-tejun
+Tony
+
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc arch/arm/mach-omap1/serial.c
+> index d23979b,f82f66e..0000000
+> --- a/arch/arm/mach-omap1/serial.c
+> +++ b/arch/arm/mach-omap1/serial.c
+> @@@ -130,7 -120,17 +120,15 @@@ void __init omap_serial_init(void
+>   		serial_platform_data[2].uartclk = OMAP1510_BASE_BAUD * 16;
+>   	}
+>   
+> - 	for (i = 0; i < OMAP_MAX_NR_PORTS; i++) {
+> + 	for (i = 0; i < ARRAY_SIZE(serial_platform_data) - 1; i++) {
+>  -		unsigned char reg;
+>  -
+> + 		/* Static mapping, never released */
+> + 		serial_platform_data[i].membase =
+> + 			ioremap(serial_platform_data[i].mapbase, SZ_2K);
+> + 		if (!serial_platform_data[i].membase) {
+> + 			printk(KERN_ERR "Could not ioremap uart%i\n", i);
+> + 			continue;
+> + 		}
+> + 
+>   		switch (i) {
+>   		case 0:
+>   			uart1_ck = clk_get(NULL, "uart1_ck");
