@@ -1,210 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the omap tree with Linus' tree
-Date: Fri, 30 Oct 2009 11:46:59 +1100
-Message-ID: <20091030114659.9afe9765.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net/wireless tree with the
+ staging.current tree
+Date: Fri, 30 Oct 2009 14:18:00 +1100
+Message-ID: <20091030141800.eb72e320.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60640 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755513AbZJ3Aq5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 29 Oct 2009 20:46:57 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754455AbZJ3DSE@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Randy Dunlap <randy.dunlap@oracle.com>, Greg Kroah-Hartman <gregkh@suse.de>, Larry Finger <Larry.Finger@lwfinger.net>, "John W. Linville" <linville@tuxdriver.com>
+List-Id: linux-next.vger.kernel.org
 
 Hi all,
 
-Today's linux-next merge of the omap tree got conflicts in
-arch/arm/mach-omap2/board-3430sdp.c, arch/arm/mach-omap2/board-ldp.c,
-arch/arm/mach-omap2/board-omap3evm.c,
-arch/arm/mach-omap2/board-omap3pandora.c,
-arch/arm/mach-omap2/board-rx51-peripherals.c,
-arch/arm/mach-omap2/board-rx51.c and arch/arm/mach-omap2/board-zoom2.c
-between commit 6135434a54719c45fdc6add1ba4965dea89ab069 ("omap: Fix
-omap-keypad by restoring old keypad.h without breaking omap2 boards that
-use matrix_keypad") from Linus' tree and commit
-ce491cf85466c3377228c5a852ea627ec5136956 ("omap: headers: Move remaining
-headers from include/mach to include/plat") from the omap tree.
+Today's linux-next merge of the net tree got conflicts in
+drivers/staging/rtl8187se/Kconfig and drivers/staging/rtl8192e/Kconfig
+between commit a26961e914c88e3e2ed46ef67f83a33ad7b57c36 ("Staging: fix
+wireless drivers depends") from the staging.current tree and commit
+125b181aec7a67c71234284ecf6d9c729d05deda ("staging: Add proper selection
+of WIRELESS_EXT and WEXT_PRIV") from the net/wireless tree.
 
-I fixed them up (see below) and can carry the fix for a while.
+Just context changes.  I fixed it up (see below) and can carry the fix
+for a while.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-omap2/board-3430sdp.c
-index 0acb556,607845b..0000000
---- a/arch/arm/mach-omap2/board-3430sdp.c
-+++ b/arch/arm/mach-omap2/board-3430sdp.c
-@@@ -30,16 -29,17 +30,16 @@@
-  #include <asm/mach/arch.h>
-  #include <asm/mach/map.h>
-  
-- #include <mach/mcspi.h>
-- #include <mach/mux.h>
-- #include <mach/board.h>
-- #include <mach/usb.h>
-- #include <mach/common.h>
-- #include <mach/dma.h>
-- #include <mach/gpmc.h>
-+ #include <plat/mcspi.h>
-+ #include <plat/mux.h>
-+ #include <plat/board.h>
-+ #include <plat/usb.h>
-+ #include <plat/common.h>
-+ #include <plat/dma.h>
-+ #include <plat/gpmc.h>
-  
-- #include <mach/control.h>
-- #include <mach/gpmc-smc91x.h>
-+ #include <plat/control.h>
- -#include <plat/keypad.h>
-+ #include <plat/gpmc-smc91x.h>
-  
-  #include "sdram-qimonda-hyb18m512160af-6.h"
-  #include "mmc-twl4030.h"
-diff --cc arch/arm/mach-omap2/board-ldp.c
-index d57ec2f,5c82560..0000000
---- a/arch/arm/mach-omap2/board-ldp.c
-+++ b/arch/arm/mach-omap2/board-ldp.c
-@@@ -33,15 -32,16 +33,15 @@@
-  #include <asm/mach/arch.h>
-  #include <asm/mach/map.h>
-  
-- #include <mach/mcspi.h>
-+ #include <plat/mcspi.h>
-  #include <mach/gpio.h>
-- #include <mach/board.h>
-- #include <mach/common.h>
-- #include <mach/gpmc.h>
-+ #include <plat/board.h>
-+ #include <plat/common.h>
-+ #include <plat/gpmc.h>
-  
-  #include <asm/delay.h>
-- #include <mach/control.h>
-- #include <mach/usb.h>
-+ #include <plat/control.h>
-+ #include <plat/usb.h>
- -#include <plat/keypad.h>
-  
-  #include "mmc-twl4030.h"
-  
-diff --cc arch/arm/mach-omap2/board-omap3evm.c
-index 4c4d7f8,5d2310e..0000000
---- a/arch/arm/mach-omap2/board-omap3evm.c
-+++ b/arch/arm/mach-omap2/board-omap3evm.c
-@@@ -33,11 -34,12 +35,11 @@@
-  #include <asm/mach/arch.h>
-  #include <asm/mach/map.h>
-  
-- #include <mach/board.h>
-- #include <mach/mux.h>
-- #include <mach/usb.h>
-- #include <mach/common.h>
-- #include <mach/mcspi.h>
-+ #include <plat/board.h>
-+ #include <plat/mux.h>
-+ #include <plat/usb.h>
-+ #include <plat/common.h>
-+ #include <plat/mcspi.h>
- -#include <plat/keypad.h>
-  
-  #include "sdram-micron-mt46h32m32lf-6.h"
-  #include "mmc-twl4030.h"
-diff --cc arch/arm/mach-omap2/board-omap3pandora.c
-index 5326e0d,d6bcfaa..0000000
---- a/arch/arm/mach-omap2/board-omap3pandora.c
-+++ b/arch/arm/mach-omap2/board-omap3pandora.c
-@@@ -34,13 -33,14 +34,13 @@@
-  #include <asm/mach/arch.h>
-  #include <asm/mach/map.h>
-  
-- #include <mach/board.h>
-- #include <mach/common.h>
-+ #include <plat/board.h>
-+ #include <plat/common.h>
-  #include <mach/gpio.h>
-  #include <mach/hardware.h>
-- #include <mach/mcspi.h>
-- #include <mach/usb.h>
-- #include <mach/mux.h>
-+ #include <plat/mcspi.h>
-+ #include <plat/usb.h>
- -#include <plat/keypad.h>
-+ #include <plat/mux.h>
-  
-  #include "sdram-micron-mt46h32m32lf-6.h"
-  #include "mmc-twl4030.h"
-diff --cc arch/arm/mach-omap2/board-rx51-peripherals.c
-index e34d96a,9e16d90..0000000
---- a/arch/arm/mach-omap2/board-rx51-peripherals.c
-+++ b/arch/arm/mach-omap2/board-rx51-peripherals.c
-@@@ -22,14 -21,15 +22,14 @@@
-  #include <linux/gpio.h>
-  #include <linux/mmc/host.h>
-  
-- #include <mach/mcspi.h>
-- #include <mach/mux.h>
-- #include <mach/board.h>
-- #include <mach/common.h>
-- #include <mach/dma.h>
-- #include <mach/gpmc.h>
-- #include <mach/onenand.h>
-- #include <mach/gpmc-smc91x.h>
-+ #include <plat/mcspi.h>
-+ #include <plat/mux.h>
-+ #include <plat/board.h>
-+ #include <plat/common.h>
-+ #include <plat/dma.h>
-+ #include <plat/gpmc.h>
- -#include <plat/keypad.h>
-+ #include <plat/onenand.h>
-+ #include <plat/gpmc-smc91x.h>
-  
-  #include "mmc-twl4030.h"
-  
-diff --cc arch/arm/mach-omap2/board-rx51.c
-index 78869a9,060245e..0000000
---- a/arch/arm/mach-omap2/board-rx51.c
-+++ b/arch/arm/mach-omap2/board-rx51.c
-@@@ -22,13 -22,14 +22,13 @@@
-  #include <asm/mach/arch.h>
-  #include <asm/mach/map.h>
-  
-- #include <mach/mcspi.h>
-- #include <mach/mux.h>
-- #include <mach/board.h>
-- #include <mach/common.h>
-- #include <mach/dma.h>
-- #include <mach/gpmc.h>
-- #include <mach/usb.h>
-+ #include <plat/mcspi.h>
-+ #include <plat/mux.h>
-+ #include <plat/board.h>
-+ #include <plat/common.h>
- -#include <plat/keypad.h>
-+ #include <plat/dma.h>
-+ #include <plat/gpmc.h>
-+ #include <plat/usb.h>
-  
-  static struct omap_lcd_config rx51_lcd_config = {
-  	.ctrl_name	= "internal",
-diff --cc arch/arm/mach-omap2/board-zoom2.c
-index ea00486,56f9d84..0000000
---- a/arch/arm/mach-omap2/board-zoom2.c
-+++ b/arch/arm/mach-omap2/board-zoom2.c
-@@@ -21,8 -20,9 +21,8 @@@
-  #include <asm/mach-types.h>
-  #include <asm/mach/arch.h>
-  
-- #include <mach/common.h>
-- #include <mach/usb.h>
-+ #include <plat/common.h>
-+ #include <plat/usb.h>
- -#include <plat/keypad.h>
-  
-  #include "mmc-twl4030.h"
-  #include "sdram-micron-mt46h32m32lf-6.h"
+diff --cc drivers/staging/rtl8187se/Kconfig
+index 203c79b,faf6c60..0000000
+--- a/drivers/staging/rtl8187se/Kconfig
++++ b/drivers/staging/rtl8187se/Kconfig
+@@@ -1,6 -1,7 +1,7 @@@
+  config RTL8187SE
+  	tristate "RealTek RTL8187SE Wireless LAN NIC driver"
+ -	depends on PCI
+ +	depends on PCI && WLAN
+- 	depends on WIRELESS_EXT
++ 	select WIRELESS_EXT
++ 	select WEXT_PRIV
+  	default N
+  	---help---
+diff --cc drivers/staging/rtl8192e/Kconfig
+index 37e4fde,5c077b9..0000000
+--- a/drivers/staging/rtl8192e/Kconfig
++++ b/drivers/staging/rtl8192e/Kconfig
+@@@ -1,6 -1,7 +1,7 @@@
+  config RTL8192E
+  	tristate "RealTek RTL8192E Wireless LAN NIC driver"
+ -	depends on PCI
+ +	depends on PCI && WLAN
+- 	depends on WIRELESS_EXT
++ 	select WIRELESS_EXT
++ 	select WEXT_PRIV
+  	default N
+  	---help---
