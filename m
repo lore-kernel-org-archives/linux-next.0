@@ -1,100 +1,283 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the percpu tree with the kvm tree
-Date: Fri, 30 Oct 2009 19:20:55 +1100
-Message-ID: <20091030192055.cbf6905b.sfr@canb.auug.org.au>
+Subject: linux-next: Tree for October 30
+Date: Fri, 30 Oct 2009 20:09:16 +1100
+Message-ID: <20091030200916.e9331f66.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__30_Oct_2009_20_09_16_+1100_xWZ704Cxo_b5H=_a"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49681 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:49698 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756214AbZJ3IUy (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 30 Oct 2009 04:20:54 -0400
+	id S1756535AbZJ3JJS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 30 Oct 2009 05:09:18 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zachary Amsden <zamsden@redhat.com>, Marcelo Tosatti <mtosatti@redhat.com>, Alexander Graf <agraf@suse.de>, Avi Kivity <avi@redhat.com>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
+
+--Signature=_Fri__30_Oct_2009_20_09_16_+1100_xWZ704Cxo_b5H=_a
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the percpu tree got a conflict in
-arch/x86/kvm/svm.c between commits
-41c39c658561cde3e27d3ae38c589598fc22f633 ("KVM: Activate Virtualization
-On Demand") and 971ea59279a67136729fda49311f7edb8c2092a1 ("KVM: Fix
-printk name error in svm.c") from the kvm tree and commit
-0fe1e009541e925adc1748a605d8b66188e4b2ab ("percpu: make percpu symbols in
-x86 unique") from the percpu tree.
+Changes since 20091029:
 
-Just context changes.  I fixed them up (see below) and can carry the
-changes as necessary.
+My fixes tree contains a build fix for powerpc/kvm.
 
-I do wonder if the local variable name changes in the percpu tree change
-were a good idea?
--- 
+The omap tree gained a few conflicts against Linus' tree.
+
+The sh tree lost its conflict.
+
+The net/wireless tree gained 2 conflicts against the staging.current tree.
+
+The percpu tree gained conflicts against Linus' tree and the kgdb and kvm
+trees.
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups (if any), it is also built with powerpc allnoconfig (32 and
+64 bit), ppc44x_defconfig and allyesconfig (minus
+CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
+and sparc64 defconfig. These builds also have
+CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
+CONFIG_DEBUG_INFO disabled when necessary.
+
+Below is a summary of the state of the merge.
+
+We are up to 145 trees (counting Linus' and 22 trees of patches pending for
+Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Jan Dittmer for adding the linux-next tree to his build tests
+at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
+Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/x86/kvm/svm.c
-index 279a2ae,6c79a14..0000000
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@@ -316,46 -316,40 +316,46 @@@ static void svm_hardware_disable(void *
-  	cpu_svm_disable();
-  }
-  
- -static void svm_hardware_enable(void *garbage)
- +static int svm_hardware_enable(void *garbage)
-  {
-  
-- 	struct svm_cpu_data *svm_data;
-+ 	struct svm_cpu_data *sd;
-  	uint64_t efer;
-  	struct descriptor_table gdt_descr;
-  	struct desc_struct *gdt;
-  	int me = raw_smp_processor_id();
-  
- +	rdmsrl(MSR_EFER, efer);
- +	if (efer & EFER_SVME)
- +		return -EBUSY;
- +
-  	if (!has_svm()) {
- -		printk(KERN_ERR "svm_cpu_init: err EOPNOTSUPP on %d\n", me);
- -		return;
- +		printk(KERN_ERR "svm_hardware_enable: err EOPNOTSUPP on %d\n",
- +		       me);
- +		return -EINVAL;
-  	}
-- 	svm_data = per_cpu(svm_data, me);
-+ 	sd = per_cpu(svm_data, me);
-  
-- 	if (!svm_data) {
-+ 	if (!sd) {
- -		printk(KERN_ERR "svm_cpu_init: svm_data is NULL on %d\n",
- +		printk(KERN_ERR "svm_hardware_enable: svm_data is NULL on %d\n",
-  		       me);
- -		return;
- +		return -EINVAL;
-  	}
-  
-- 	svm_data->asid_generation = 1;
-- 	svm_data->max_asid = cpuid_ebx(SVM_CPUID_FUNC) - 1;
-- 	svm_data->next_asid = svm_data->max_asid + 1;
-+ 	sd->asid_generation = 1;
-+ 	sd->max_asid = cpuid_ebx(SVM_CPUID_FUNC) - 1;
-+ 	sd->next_asid = sd->max_asid + 1;
-  
-  	kvm_get_gdt(&gdt_descr);
-  	gdt = (struct desc_struct *)gdt_descr.base;
-- 	svm_data->tss_desc = (struct kvm_ldttss_desc *)(gdt + GDT_ENTRY_TSS);
-+ 	sd->tss_desc = (struct kvm_ldttss_desc *)(gdt + GDT_ENTRY_TSS);
-  
-  	wrmsrl(MSR_EFER, efer | EFER_SVME);
-  
-  	wrmsrl(MSR_VM_HSAVE_PA,
-- 	       page_to_pfn(svm_data->save_area) << PAGE_SHIFT);
-+ 	       page_to_pfn(sd->save_area) << PAGE_SHIFT);
- +
- +	return 0;
-  }
-  
-  static void svm_cpu_uninit(int cpu)
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master
+Merging fixes/fixes
+Merging arm-current/master
+Merging m68k-current/for-linus
+Merging powerpc-merge/merge
+Merging sparc-current/master
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sound-current/for-linus
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging kbuild-current/master
+Merging quilt/driver-core.current
+Merging quilt/tty.current
+Merging quilt/usb.current
+Merging quilt/staging.current
+Merging cpufreq-current/fixes
+Merging input-current/for-linus
+Merging md-current/for-linus
+Merging audit-current/for-linus
+Merging crypto-current/master
+Merging ide-curent/master
+Merging dwmw2/master
+Merging arm/devel
+Merging davinci/davinci-next
+Merging omap/for-next
+CONFLICT (content): Merge conflict in arch/arm/mach-omap1/serial.c
+CONFLICT (content): Merge conflict in arch/arm/mach-omap2/board-3430sdp.c
+CONFLICT (content): Merge conflict in arch/arm/mach-omap2/board-ldp.c
+CONFLICT (content): Merge conflict in arch/arm/mach-omap2/board-omap3evm.c
+CONFLICT (content): Merge conflict in arch/arm/mach-omap2/board-omap3pandor=
+a.c
+CONFLICT (content): Merge conflict in arch/arm/mach-omap2/board-rx51-periph=
+erals.c
+CONFLICT (content): Merge conflict in arch/arm/mach-omap2/board-rx51.c
+CONFLICT (content): Merge conflict in arch/arm/mach-omap2/board-zoom2.c
+Merging pxa/for-next
+Merging avr32/avr32-arch
+Merging blackfin/for-linus
+Merging cris/for-next
+Merging ia64/test
+Merging m68k/for-next
+CONFLICT (content): Merge conflict in drivers/rtc/Kconfig
+Merging m68knommu/for-next
+Merging microblaze/next
+Merging mips/mips-for-linux-next
+Merging parisc/next
+Merging powerpc/next
+Merging 4xx/next
+Merging galak/next
+Merging s390/features
+Merging sh/master
+Merging sparc/master
+Merging xtensa/master
+Merging ceph/for-next
+Merging cifs/master
+Merging configfs/linux-next
+Merging ecryptfs/next
+Merging ext3/for_next
+Merging ext4/next
+Merging fatfs/master
+Merging fuse/for-next
+Merging gfs2/master
+Merging jfs/next
+Merging nfs/linux-next
+Merging nfsd/nfsd-next
+Merging nilfs2/for-next
+Merging ocfs2/linux-next
+Merging squashfs/master
+Merging udf/for_next
+Merging v9fs/for-next
+Merging ubifs/linux-next
+Merging xfs/master
+Merging reiserfs-bkl/reiserfs/kill-bkl
+Merging vfs/for-next
+Merging pci/linux-next
+Merging hid/for-next
+Merging quilt/i2c
+Merging quilt/jdelvare-hwmon
+CONFLICT (content): Merge conflict in drivers/hwmon/it87.c
+Merging quilt/kernel-doc
+Merging v4l-dvb/master
+Merging kbuild/master
+Merging kconfig/for-next
+Merging ide/master
+Merging libata/NEXT
+Merging infiniband/for-next
+Merging acpi/test
+Merging ieee1394/for-next
+Merging ubi/linux-next
+Merging kvm/linux-next
+CONFLICT (content): Merge conflict in arch/x86/kvm/mmu.c
+Merging dlm/next
+Merging scsi/master
+Merging async_tx/next
+Merging net/master
+CONFLICT (delete/modify): drivers/net/sfc/sfe4001.c deleted in net/master a=
+nd modified in HEAD. Version HEAD of drivers/net/sfc/sfe4001.c left in tree.
+CONFLICT (content): Merge conflict in drivers/net/wireless/libertas/cmd.c
+CONFLICT (content): Merge conflict in drivers/staging/rtl8187se/Kconfig
+CONFLICT (content): Merge conflict in drivers/staging/rtl8192e/Kconfig
+$ git rm -f drivers/net/sfc/sfe4001.c
+Applying: net: merge fixup for drivers/net/sfc/falcon_boards.c
+Merging wireless/master
+Merging mtd/master
+Merging crypto/master
+Merging sound/for-next
+Merging cpufreq/next
+Merging quilt/rr
+Merging mmc/next
+Merging tmio-mmc/linux-next
+Merging input/next
+Merging lsm/for-next
+Merging block/for-next
+Merging quilt/device-mapper
+Merging embedded/master
+Merging firmware/master
+Merging pcmcia/master
+Merging battery/master
+Merging leds/for-mm
+Merging backlight/for-mm
+Merging kgdb/kgdb-next
+Merging slab/for-next
+Merging uclinux/for-next
+Merging md/for-next
+Merging mfd/for-next
+Merging hdlc/hdlc-next
+Merging drm/drm-next
+Merging voltage/for-next
+CONFLICT (content): Merge conflict in drivers/mfd/Kconfig
+CONFLICT (content): Merge conflict in drivers/mfd/Makefile
+Merging security-testing/next
+CONFLICT (content): Merge conflict in Documentation/dontdiff
+Merging lblnet/master
+Merging agp/agp-next
+Merging uwb/for-upstream
+Merging watchdog/master
+Merging bdev/master
+Merging dwmw2-iommu/master
+Merging cputime/cputime
+Merging osd/linux-next
+Merging jc_docs/docs-next
+Merging nommu/master
+Merging trivial/for-next
+CONFLICT (content): Merge conflict in drivers/acpi/video_detect.c
+Merging audit/for-next
+Merging quilt/aoe
+Merging suspend/linux-next
+Merging bluetooth/master
+Merging fsnotify/for-next
+Merging irda/for-next
+Merging hwlat/for-linus
+CONFLICT (content): Merge conflict in drivers/misc/Makefile
+Merging drbd/for-jens
+CONFLICT (add/add): Merge conflict in drivers/block/drbd/Kconfig
+CONFLICT (add/add): Merge conflict in drivers/block/drbd/Makefile
+CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_actlog.c
+CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_int.h
+CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_main.c
+CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_nl.c
+CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_receiver.c
+CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_req.c
+CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_worker.c
+CONFLICT (add/add): Merge conflict in include/linux/drbd.h
+Merging catalin/for-next
+Merging alacrity/linux-next
+CONFLICT (content): Merge conflict in drivers/net/Kconfig
+CONFLICT (content): Merge conflict in lib/Kconfig
+Merging i7core_edac/linux_next
+Merging devicetree/next-devicetree
+Merging limits/writable_limits
+Merging tip/auto-latest
+CONFLICT (content): Merge conflict in arch/x86/kernel/kgdb.c
+Merging oprofile/for-next
+Merging percpu/for-next
+CONFLICT (content): Merge conflict in arch/x86/kvm/svm.c
+CONFLICT (content): Merge conflict in kernel/softlockup.c
+CONFLICT (content): Merge conflict in mm/percpu.c
+Applying: percpu: merge fixup for variable renaming
+Merging sfi/sfi-test
+Merging asm-generic/next
+Merging hwpoison/hwpoison
+Merging quilt/driver-core
+Merging quilt/tty
+Merging quilt/usb
+Merging quilt/staging
+Merging scsi-post-merge/master
+
+--Signature=_Fri__30_Oct_2009_20_09_16_+1100_xWZ704Cxo_b5H=_a
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkrqrTwACgkQjjKRsyhoI8yFWQCdHRG895Z66tMNNtiNvb41+qNW
+qTgAn3HhIh0SKjXrXERTCLfQ84gvzI+V
+=Jh66
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__30_Oct_2009_20_09_16_+1100_xWZ704Cxo_b5H=_a--
