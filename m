@@ -1,101 +1,55 @@
-From: Hollis Blanchard <hollisb@us.ibm.com>
-Subject: Re: [PATCH] BUILD_BUG_ON: make it handle more cases
-Date: Thu, 29 Oct 2009 14:30:50 -0700
-Message-ID: <1256851850.9044.114.camel@slab.beaverton.ibm.com>
-References: <4AC1E15502000078000516B5@vpn.id2.novell.com>
-	<200910201142.34006.rusty@rustcorp.com.au>
-	<1256002193.6546.2.camel@slab>
-	<200910201415.34361.rusty@rustcorp.com.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the omap tree with Linus' tree
+Date: Fri, 30 Oct 2009 11:46:42 +1100
+Message-ID: <20091030114642.61bbeb2c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <200910201415.34361.rusty@rustcorp.com.au>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: sfr@canb.auug.org.au, linux-kernel@vger.kernel.org, kvm-ppc@vger.kernel.org, linux-next@vger.kernel.org, Jan Beulich <JBeulich@novell.com>, akpm@linux-foundation.org, linuxppc-dev@lists.ozlabs.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:60628 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753033AbZJ3Aqo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 29 Oct 2009 20:46:44 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Janusz Krzysztofik <jkrzyszt@tis.icnet.pl>, Alexander Shishkin <virtuoso@slind.org>, Ladislav Michl <ladis@linux-mips.org>
 
-On Tue, 2009-10-20 at 14:15 +1030, Rusty Russell wrote:
-> BUILD_BUG_ON used to use the optimizer to do code elimination or fail
-> at link time; it was changed to first the size of a negative array (a
-> nicer compile time error), then (in
-> 8c87df457cb58fe75b9b893007917cf8095660a0) to a bitfield.
-> 
-> bitfields: needs a literal constant at parse time, and can't be put under
-> 	"if (__builtin_constant_p(x))" for example.
-> negative array: can handle anything, but if the compiler can't tell it's
-> 	a constant, silently has no effect.
-> link time: breaks link if the compiler can't determine the value, but the
-> 	linker output is not usually as informative as a compiler error.
-> 
-> If we use the negative-array-size method *and* the link time trick,
-> we get the ability to use BUILD_BUG_ON() under __builtin_constant_p()
-> branches, and maximal ability for the compiler to detect errors at
-> build time.
-> 
-> Signed-off-by: Rusty Russell <rusty@rustcorp.com.au>
-> 
-> diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-> --- a/include/linux/kernel.h
-> +++ b/include/linux/kernel.h
-> @@ -683,12 +683,6 @@ struct sysinfo {
->  	char _f[20-2*sizeof(long)-sizeof(int)];	/* Padding: libc5 uses this.. */
->  };
-> 
-> -/* Force a compilation error if condition is true */
-> -#define BUILD_BUG_ON(condition) ((void)BUILD_BUG_ON_ZERO(condition))
-> -
-> -/* Force a compilation error if condition is constant and true */
-> -#define MAYBE_BUILD_BUG_ON(cond) ((void)sizeof(char[1 - 2 * !!(cond)]))
-> -
->  /* Force a compilation error if condition is true, but also produce a
->     result (of value 0 and type size_t), so the expression can be used
->     e.g. in a structure initializer (or where-ever else comma expressions
-> @@ -696,6 +690,33 @@ struct sysinfo {
->  #define BUILD_BUG_ON_ZERO(e) (sizeof(struct { int:-!!(e); }))
->  #define BUILD_BUG_ON_NULL(e) ((void *)sizeof(struct { int:-!!(e); }))
-> 
-> +/**
-> + * BUILD_BUG_ON - break compile if a condition is true.
-> + * @cond: the condition which the compiler should know is false.
-> + *
-> + * If you have some code which relies on certain constants being equal, or
-> + * other compile-time-evaluated condition, you should use BUILD_BUG_ON to
-> + * detect if someone changes it.
-> + *
-> + * The implementation uses gcc's reluctance to create a negative array, but
-> + * gcc (as of 4.4) only emits that error for obvious cases (eg. not arguments
-> + * to inline functions).  So as a fallback we use the optimizer; if it can't
-> + * prove the condition is false, it will cause a link error on the undefined
-> + * "__build_bug_on_failed".  This error message can be harder to track down
-> + * though, hence the two different methods.
-> + */
-> +#ifndef __OPTIMIZE__
-> +#define BUILD_BUG_ON(condition) ((void)sizeof(char[1 - 2*!!(condition)]))
-> +#else
-> +extern int __build_bug_on_failed;
-> +#define BUILD_BUG_ON(condition)					\
-> +	do {							\
-> +		((void)sizeof(char[1 - 2*!!(condition)]));	\
-> +		if (condition) __build_bug_on_failed = 1;	\
-> +	} while(0)
-> +#endif
-> +#define MAYBE_BUILD_BUG_ON(condition) BUILD_BUG_ON(condition)
-> +
->  /* Trap pasters of __FUNCTION__ at compile-time */
->  #define __FUNCTION__ (__func__)
+Hi all,
 
-What's the state of this patch?
+Today's linux-next merge of the omap tree got a conflict in
+arch/arm/mach-omap1/serial.c between commit
+c33da3a80074094303d643a90ef589330b491270 ("omap1: Fix redundant UARTs pin
+muxing that can break other hardware support") from Linus' tree and
+commits 84f90c9cc81d8db172d4f768fc4010f508897366 ("omap: Change low-level
+serial init to use ioremap") and acb1aed4a5f23c545073b0d65302e5949f239fa0
+("omap: Eliminate OMAP_MAX_NR_PORTS") from the omap tree.
 
+I fixed it up (see below) and can carry the fix for a while.
 -- 
-Hollis Blanchard
-IBM Linux Technology Center
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/arm/mach-omap1/serial.c
+index d23979b,f82f66e..0000000
+--- a/arch/arm/mach-omap1/serial.c
++++ b/arch/arm/mach-omap1/serial.c
+@@@ -130,7 -120,17 +120,15 @@@ void __init omap_serial_init(void
+  		serial_platform_data[2].uartclk = OMAP1510_BASE_BAUD * 16;
+  	}
+  
+- 	for (i = 0; i < OMAP_MAX_NR_PORTS; i++) {
++ 	for (i = 0; i < ARRAY_SIZE(serial_platform_data) - 1; i++) {
+ -		unsigned char reg;
+ -
++ 		/* Static mapping, never released */
++ 		serial_platform_data[i].membase =
++ 			ioremap(serial_platform_data[i].mapbase, SZ_2K);
++ 		if (!serial_platform_data[i].membase) {
++ 			printk(KERN_ERR "Could not ioremap uart%i\n", i);
++ 			continue;
++ 		}
++ 
+  		switch (i) {
+  		case 0:
+  			uart1_ck = clk_get(NULL, "uart1_ck");
