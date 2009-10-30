@@ -1,57 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net/wireless tree with the
- staging.current tree
-Date: Fri, 30 Oct 2009 14:18:00 +1100
-Message-ID: <20091030141800.eb72e320.sfr@canb.auug.org.au>
+Subject: linux-next: origin tree build warning
+Date: Fri, 30 Oct 2009 14:30:03 +1100
+Message-ID: <20091030143003.5a961d65.sfr@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__30_Oct_2009_14_30_03_+1100_CIj_dIR_M1NtPTx3"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:43412 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752351AbZJ3DaG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 29 Oct 2009 23:30:06 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Brian King <brking@us.ibm.com>, "James E.J. Bottomley" <James.Bottomley@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>, Andrew Morton <akpm@linux-foundation.org>, linux-scsi@vger.kernel.org
+
+--Signature=_Fri__30_Oct_2009_14_30_03_+1100_CIj_dIR_M1NtPTx3
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754455AbZJ3DSE@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Randy Dunlap <randy.dunlap@oracle.com>, Greg Kroah-Hartman <gregkh@suse.de>, Larry Finger <Larry.Finger@lwfinger.net>, "John W. Linville" <linville@tuxdriver.com>
-List-Id: linux-next.vger.kernel.org
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the net tree got conflicts in
-drivers/staging/rtl8187se/Kconfig and drivers/staging/rtl8192e/Kconfig
-between commit a26961e914c88e3e2ed46ef67f83a33ad7b57c36 ("Staging: fix
-wireless drivers depends") from the staging.current tree and commit
-125b181aec7a67c71234284ecf6d9c729d05deda ("staging: Add proper selection
-of WIRELESS_EXT and WEXT_PRIV") from the net/wireless tree.
+Today's linux-next build (powerpc ppc64_defconfig) produced this warning:
 
-Just context changes.  I fixed it up (see below) and can carry the fix
-for a while.
--- 
+drivers/scsi/ipr.c: In function 'ipr_log_enhanced_dual_ioa_error':
+drivers/scsi/ipr.c:1336: warning: ignoring return value of 'strstrip', decl=
+ared with attribute warn_unused_result
+drivers/scsi/ipr.c: In function 'ipr_log_dual_ioa_error':
+drivers/scsi/ipr.c:1362: warning: ignoring return value of 'strstrip', decl=
+ared with attribute warn_unused_result
+
+Exposed by commit 0a1b71b4008d332e57b5605a8228ea7aa96687e8 ("strstrip():
+mark as as must_check").
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/staging/rtl8187se/Kconfig
-index 203c79b,faf6c60..0000000
---- a/drivers/staging/rtl8187se/Kconfig
-+++ b/drivers/staging/rtl8187se/Kconfig
-@@@ -1,6 -1,7 +1,7 @@@
-  config RTL8187SE
-  	tristate "RealTek RTL8187SE Wireless LAN NIC driver"
- -	depends on PCI
- +	depends on PCI && WLAN
-- 	depends on WIRELESS_EXT
-+ 	select WIRELESS_EXT
-+ 	select WEXT_PRIV
-  	default N
-  	---help---
-diff --cc drivers/staging/rtl8192e/Kconfig
-index 37e4fde,5c077b9..0000000
---- a/drivers/staging/rtl8192e/Kconfig
-+++ b/drivers/staging/rtl8192e/Kconfig
-@@@ -1,6 -1,7 +1,7 @@@
-  config RTL8192E
-  	tristate "RealTek RTL8192E Wireless LAN NIC driver"
- -	depends on PCI
- +	depends on PCI && WLAN
-- 	depends on WIRELESS_EXT
-+ 	select WIRELESS_EXT
-+ 	select WEXT_PRIV
-  	default N
-  	---help---
+--Signature=_Fri__30_Oct_2009_14_30_03_+1100_CIj_dIR_M1NtPTx3
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkrqXbsACgkQjjKRsyhoI8xwSQCeJMeebKCgtwj0J53e1LIvU7YR
+icAAnjqPCs9zZjOiWZvvzx16KFcFykAq
+=IZOi
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__30_Oct_2009_14_30_03_+1100_CIj_dIR_M1NtPTx3--
