@@ -1,71 +1,48 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: [PATCH -next] staging: fix wlags49 kconfigs
-Date: Fri, 30 Oct 2009 11:01:43 -0700
-Message-ID: <20091030110143.2d6d76d1.rdunlap@xenotime.net>
-References: <20091030200916.e9331f66.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the percpu tree with Linus' tree
+Date: Sat, 31 Oct 2009 15:23:47 +1100
+Message-ID: <20091031152347.12ee46fa.sfr@canb.auug.org.au>
+References: <20091030192050.06a0f706.sfr@canb.auug.org.au>
+	<4AEAB9B1.4000304@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932788AbZJ3SF5@vger.kernel.org>
-In-Reply-To: <20091030200916.e9331f66.sfr@canb.auug.org.au>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sat__31_Oct_2009_15_23_47_+1100_Se45z0q/lxxm6XJm"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751253AbZJaEXx@vger.kernel.org>
+In-Reply-To: <4AEAB9B1.4000304@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>
 List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+--Signature=_Sat__31_Oct_2009_15_23_47_+1100_Se45z0q/lxxm6XJm
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix depends/selects in wlags49 drivers.
+HI Tejun,
 
-ERROR: "wireless_spy_update" [drivers/staging/wlags49_h2/wlags49_h2_cs.ko] undefined!
-ERROR: "iw_handler_get_spy" [drivers/staging/wlags49_h2/wlags49_h2_cs.ko] undefined!
-ERROR: "iw_handler_set_spy" [drivers/staging/wlags49_h2/wlags49_h2_cs.ko] undefined!
+On Fri, 30 Oct 2009 11:02:25 +0100 Tejun Heo <tj@kernel.org> wrote:
+>
+> I'll pull master into for-next in a few days so that we can do sparse
+> cleanup pass over the whole tree on the latest tree.
 
-ERROR: "pcmcia_dev_present" [drivers/staging/wlags49_h25/wlags49_h25_cs.ko] undefined!
-ERROR: "pcmcia_request_irq" [drivers/staging/wlags49_h25/wlags49_h25_cs.ko] undefined!
-ERROR: "pcmcia_register_driver" [drivers/staging/wlags49_h25/wlags49_h25_cs.ko] undefined!
-ERROR: "pcmcia_request_configuration" [drivers/staging/wlags49_h25/wlags49_h25_cs.ko] undefined!
-ERROR: "pcmcia_request_io" [drivers/staging/wlags49_h25/wlags49_h25_cs.ko] undefined!
-ERROR: "pcmcia_error_ret" [drivers/staging/wlags49_h25/wlags49_h25_cs.ko] undefined!
-ERROR: "pcmcia_error_func" [drivers/staging/wlags49_h25/wlags49_h25_cs.ko] undefined!
-ERROR: "pcmcia_unregister_driver" [drivers/staging/wlags49_h25/wlags49_h25_cs.ko] undefined!
-ERROR: "pcmcia_disable_device" [drivers/staging/wlags49_h25/wlags49_h25_cs.ko] undefined!
-ERROR: "pcmcia_dev_present" [drivers/staging/wlags49_h2/wlags49_h2_cs.ko] undefined!
-ERROR: "pcmcia_request_irq" [drivers/staging/wlags49_h2/wlags49_h2_cs.ko] undefined!
-ERROR: "pcmcia_register_driver" [drivers/staging/wlags49_h2/wlags49_h2_cs.ko] undefined!
-ERROR: "pcmcia_request_configuration" [drivers/staging/wlags49_h2/wlags49_h2_cs.ko] undefined!
-ERROR: "pcmcia_request_io" [drivers/staging/wlags49_h2/wlags49_h2_cs.ko] undefined!
-ERROR: "pcmcia_error_ret" [drivers/staging/wlags49_h2/wlags49_h2_cs.ko] undefined!
-ERROR: "pcmcia_error_func" [drivers/staging/wlags49_h2/wlags49_h2_cs.ko] undefined!
-ERROR: "pcmcia_unregister_driver" [drivers/staging/wlags49_h2/wlags49_h2_cs.ko] undefined!
-ERROR: "pcmcia_disable_device" [drivers/staging/wlags49_h2/wlags49_h2_cs.ko] undefined!
+Great, thanks.
 
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- drivers/staging/wlags49_h2/Kconfig  |    3 ++-
- drivers/staging/wlags49_h25/Kconfig |    3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+--Signature=_Sat__31_Oct_2009_15_23_47_+1100_Se45z0q/lxxm6XJm
+Content-Type: application/pgp-signature
 
---- linux-next-20091030.orig/drivers/staging/wlags49_h2/Kconfig
-+++ linux-next-20091030/drivers/staging/wlags49_h2/Kconfig
-@@ -1,6 +1,7 @@
- config WLAGS49_H2
- 	tristate "Agere Systems HERMES II Wireless PC Card Model 0110"
--	depends on WLAN_80211 && WIRELESS_EXT
-+	depends on WLAN_80211 && WIRELESS_EXT && PCMCIA
-+	select WEXT_SPY
- 	---help---
- 	  Driver for wireless cards using Agere's HERMES II chipset
- 	  which are identified with Manufacture ID: 0156,0003
---- linux-next-20091030.orig/drivers/staging/wlags49_h25/Kconfig
-+++ linux-next-20091030/drivers/staging/wlags49_h25/Kconfig
-@@ -1,6 +1,7 @@
- config WLAGS49_H25
- 	tristate "Linksys HERMES II.5 WCF54G_Wireless-G_CompactFlash_Card"
--	depends on WLAN_80211 && WIRELESS_EXT
-+	depends on WLAN_80211 && WIRELESS_EXT && PCMCIA
-+	select WEXT_SPY
- 	---help---
- 	  Driver for wireless cards using Agere's HERMES II.5 chipset
- 	  which are identified with Manufacture ID: 0156,0004
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkrru9MACgkQjjKRsyhoI8wqJQCfbfDJvvuVKpgINBGqYjD9larh
+Iw4AoJznKITg9TAC5Z4xMUbHueADRQWT
+=tIn9
+-----END PGP SIGNATURE-----
+
+--Signature=_Sat__31_Oct_2009_15_23_47_+1100_Se45z0q/lxxm6XJm--
