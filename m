@@ -1,79 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the catalin tree with the arm-current
- tree
-Date: Mon, 2 Nov 2009 14:12:04 +1100
-Message-ID: <20091102141204.167b4aaa.sfr@canb.auug.org.au>
+Subject: linux-next: percpu/kvm/tip tree build failure
+Date: Mon, 2 Nov 2009 16:17:22 +1100
+Message-ID: <20091102161722.eea4358d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:39331 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:47077 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753087AbZKBDMH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 1 Nov 2009 22:12:07 -0500
+	id S1751048AbZKBFR0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 2 Nov 2009 00:17:26 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Philby John <pjohn@in.mvista.com>, Russell King <rmk@arm.linux.org.uk>
+To: Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Avi Kivity <avi@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
-Hi Catalin,
+Hi all,
 
-Today's linux-next merge of the catalin tree got a conflict in
-arch/arm/mach-realview/core.h arch/arm/mach-realview/realview_pb1176.c
-between commit 426fcd2a351e4bf662fee9fa2cf2603a48223164 ("ARM: 5774/1:
-Fix Realview ARM1176PB board reboot") from the arc-current tree and
-commit 35c6a7ecaa2aafd03dd5d62aa11fbc7a12b82520 ("RealView: Add default
-memory configuration") from the catalin tree.
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-Overlapping additions.  I fixed it up (see below) and can carry the fix as
-necessary.
+kernel/user-return-notifier.c: In function 'fire_user_return_notifiers':
+kernel/user-return-notifier.c:45: error: expected expression before ')' token
+
+Introduced by commit 7c68af6e32c73992bad24107311f3433c89016e2 ("core,
+x86: Add user return notifiers") from the tip and kvm trees but revealed
+by commit e0fdb0e050eae331046385643618f12452aa7e73 ("percpu: add __percpu
+for sparse") from the percpu tree.  Before that percpu tree commit,
+"put_cpu_var()" would compile without error (even though it really needs
+a parameter).
+
+I have applied the following patch for today.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 2 Nov 2009 15:54:43 +1100
+Subject: [PATCH] x86: fix put_cpu_var invocation in user return notifiers code
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ kernel/user-return-notifier.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/kernel/user-return-notifier.c b/kernel/user-return-notifier.c
+index 530ccb8..03e2d6f 100644
+--- a/kernel/user-return-notifier.c
++++ b/kernel/user-return-notifier.c
+@@ -42,5 +42,5 @@ void fire_user_return_notifiers(void)
+ 	head = &get_cpu_var(return_notifier_list);
+ 	hlist_for_each_entry_safe(urn, tmp1, tmp2, head, link)
+ 		urn->on_user_return(urn);
+-	put_cpu_var();
++	put_cpu_var(return_notifier_list);
+ }
+-- 
+1.6.5.2
+
+
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc arch/arm/mach-realview/core.h
-index 699671f,1398854..0000000
---- a/arch/arm/mach-realview/core.h
-+++ b/arch/arm/mach-realview/core.h
-@@@ -61,5 -64,7 +64,7 @@@ extern void realview_timer_init(unsigne
-  extern int realview_flash_register(struct resource *res, u32 num);
-  extern int realview_eth_register(const char *name, struct resource *res);
-  extern int realview_usb_register(struct resource *res);
-+ extern void realview_fixup(struct machine_desc *mdesc, struct tag *tags,
-+ 			   char **from, struct meminfo *meminfo);
- -
- +extern void (*realview_reset)(char);
-  #endif
-diff --cc arch/arm/mach-realview/realview_pb1176.c
-index a6ba147,b1cdd37..0000000
---- a/arch/arm/mach-realview/realview_pb1176.c
-+++ b/arch/arm/mach-realview/realview_pb1176.c
-@@@ -290,16 -290,18 +290,28 @@@ static struct sys_timer realview_pb1176
-  	.init		= realview_pb1176_timer_init,
-  };
-  
- +static void realview_pb1176_reset(char mode)
- +{
- +	void __iomem *hdr_ctrl = __io_address(REALVIEW_SYS_BASE) +
- +		REALVIEW_SYS_RESETCTL_OFFSET;
- +	void __iomem *rst_hdr_ctrl = __io_address(REALVIEW_SYS_BASE) +
- +		REALVIEW_SYS_LOCK_OFFSET;
- +	__raw_writel(REALVIEW_SYS_LOCKVAL_MASK, rst_hdr_ctrl);
- +	__raw_writel(REALVIEW_PB1176_SYS_LOCKVAL_RSTCTL, hdr_ctrl);
- +}
- +
-+ static void realview_pb1176_fixup(struct machine_desc *mdesc,
-+ 				  struct tag *tags, char **from,
-+ 				  struct meminfo *meminfo)
-+ {
-+ 	/*
-+ 	 * RealView PB1176 only has 128MB of RAM mapped at 0.
-+ 	 */
-+ 	meminfo->bank[0].start = 0;
-+ 	meminfo->bank[0].size = SZ_128M;
-+ 	meminfo->nr_banks = 1;
-+ }
-+ 
-  static void __init realview_pb1176_init(void)
-  {
-  	int i;
+http://www.canb.auug.org.au/~sfr/
