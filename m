@@ -1,286 +1,371 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for November 2
-Date: Mon, 2 Nov 2009 17:38:45 +1100
-Message-ID: <20091102173845.210d1c57.sfr@canb.auug.org.au>
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: [powerpc] Next tree Nov 2 : kernel BUG at mm/mmap.c:2135!
+Date: Mon, 02 Nov 2009 14:42:25 +0530
+Message-ID: <4AEEA279.4040106@in.ibm.com>
+References: <20091102173845.210d1c57.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__2_Nov_2009_17_38_45_+1100_LFuTsOZbdBpUrFgm"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47287 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753531AbZKBGir (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 2 Nov 2009 01:38:47 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="------------020501070806010101090303"
+Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <20091102173845.210d1c57.sfr@canb.auug.org.au>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
+Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
+To: Linux/PPC Development <linuxppc-dev@ozlabs.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__2_Nov_2009_17_38_45_+1100_LFuTsOZbdBpUrFgm
-Content-Type: text/plain; charset=US-ASCII
+This is a multi-part message in MIME format.
+--------------020501070806010101090303
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Stephen Rothwell wrote:
+> Hi all,
+>
+> Changes since 20091030:
+>   
+Today's next tree failed to boot on a POWER 6 box with :
+
+------------[ cut here ]------------
+kernel BUG at mm/mmap.c:2135!
+Oops: Exception in kernel mode, sig: 5 [#2]
+SMP NR_CPUS=1024 NUMA pSeries
+Modules linked in: ibmvscsic scsi_transport_srp scsi_tgt scsi_mod
+NIP: c00000000014e30c LR: c00000000014e2f8 CTR: c00000000014db88
+REGS: c0000000db703620 TRAP: 0700   Tainted: G      D     (2.6.32-rc5-autotest-next-20091102)
+MSR: 8000000000029032 <EE,ME,CE,IR,DR>  CR: 24022442  XER: 2000000c
+TASK = c0000000db7f6fe0[76] 'init' THREAD: c0000000db700000 CPU: 1
+GPR00: 0000000000000001 c0000000db7038a0 c000000000b19900 0000000000000000
+GPR04: c0000000db406a40 000000000000000c c0000000fe10c370 c000000000bb2800
+GPR08: 000000000000db40 0000000000000000 c0000000dfdc0e00 000000000000000c
+GPR12: 0000000044022442 c000000000bb2800 00000000ffffffff ffffffffffffffff
+GPR16: 0000000008430000 00000000003c0000 c0000000db703ea0 c0000000db569108
+GPR20: c0000000db568908 0000000000000000 c0000000db703d60 0000000000000000
+GPR24: 0000000000000001 0000000000040100 c0000000fe503580 c0000000db1ac180
+GPR28: 0000000000000000 c000000000f812d0 c000000000a84f00 0000000000000000
+NIP [c00000000014e30c] .exit_mmap+0x190/0x1b8
+LR [c00000000014e2f8] .exit_mmap+0x17c/0x1b8
+Call Trace:
+[c0000000db7038a0] [c00000000014e2f8] .exit_mmap+0x17c/0x1b8 (unreliable)
+[c0000000db703950] [c0000000000916cc] .mmput+0x54/0x164
+[c0000000db7039e0] [c0000000000968d8] .exit_mm+0x17c/0x1a0
+[c0000000db703a90] [c000000000098cb8] .do_exit+0x248/0x784
+[c0000000db703b70] [c0000000000992a8] .do_group_exit+0xb4/0xe8
+[c0000000db703c00] [c0000000000aca2c] .get_signal_to_deliver+0x3ec/0x478
+[c0000000db703cf0] [c0000000000134ac] .do_signal+0x6c/0x31c
+[c0000000db703e30] [c000000000008b7c] do_work+0x24/0x28
+Instruction dump:
+7c8407b4 387d0018 4800ab11 60000000 939d0008 7fe3fb78 4bfffdbd 7c7f1b79
+4082fff4 e81b00e8 3120ffff 7c090110 <0b000000> 382100b0 e8010010 eb61ffd8
+---[ end trace ec052ac77a8e7cb4 ]---
+Fixing recursive fault but reboot is needed!
+
+mm/mmap.c:2135 corresponds to :
+
+BUG_ON(mm->nr_ptes > (FIRST_USER_ADDRESS+PMD_SIZE-1)>>PMD_SHIFT);
+
+3:mon> di 0xc00000000014e300
+c00000000014e300  e81b00e8      ld      r0,232(r27)
+c00000000014e304  3120ffff      addic   r9,r0,-1
+c00000000014e308  7c090110      subfe   r0,r9,r0
+c00000000014e30c  0b000000      tdnei   r0,0
+c00000000014e310  382100b0      addi    r1,r1,176
+c00000000014e314  e8010010      ld      r0,16(r1)
+c00000000014e318  eb61ffd8      ld      r27,-40(r1)
+c00000000014e31c  7c0803a6      mtlr    r0
+c00000000014e320  eb81ffe0      ld      r28,-32(r1)
+c00000000014e324  eba1ffe8      ld      r29,-24(r1)
+c00000000014e328  ebc1fff0      ld      r30,-16(r1)
+c00000000014e32c  ebe1fff8      ld      r31,-8(r1)
+c00000000014e330  4e800020      blr
+c00000000014e334  fb21ffc8      std     r25,-56(r1)
+c00000000014e338  7c0802a6      mflr    r0
+c00000000014e33c  fb81ffe0      std     r28,-32(r1)
+3:mon> r
+R00 = 0000000000000001   R16 = 0000000030daf420
+R01 = c0000000fae37a60   R17 = 0000000000000002
+R02 = c000000000b19900   R18 = 0000000000000000
+R03 = 0000000000000000   R19 = 0000000030d903b0
+R04 = c0000000fabd8670   R20 = 0000000000000000
+R05 = c000000000a4d600   R21 = 0000000000000000
+R06 = 0000000000000003   R22 = 0000000000000000
+R07 = c000000000bb2c00   R23 = 0000000030daf340
+R08 = 000000000000fabd   R24 = 0000000000000001
+R09 = 0000000000000000   R25 = 00000fffc2402158
+R10 = c0000000fffb2958   R26 = 00000fffb793df80
+R11 = 0000000000000005   R27 = c0000000fa9aa580
+R12 = 0000000044000442   R28 = 0000000000000000
+R13 = c000000000bb2c00   R29 = c000000000fc12d0
+R14 = 00000000ffffffff   R30 = c000000000a84f00
+R15 = ffffffffffffffff   R31 = 0000000000000000
+pc  = c00000000014e30c .exit_mmap+0x190/0x1b8
+lr  = c00000000014e2f8 .exit_mmap+0x17c/0x1b8
+msr = 8000000000029032   cr  = 24000442
+ctr = c0000000002f0cb0   xer = 000000002000000a   trap =  700
+3:mon>
+
+Have attached the boot log. Next tree for 20091030 worked fine.
+
+Thanks
+-Sachin
+
+-- 
+
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
+
+
+--------------020501070806010101090303
+Content-Type: text/plain;
+ name="boot-log"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="boot-log"
+
+Using 007cf32f bytes for initrd buffer
+Please wait, loading kernel...
+Allocated 00f00000 bytes for kernel @ 02300000
+   Elf64 kernel loaded...
+Loading ramdisk...
+ramdisk loaded 007cf32f @ 03200000
+OF stdout device is: /vdevice/vty@30000000
+Preparing to boot Linux version 2.6.32-rc5-autotest-next-20091102 (root@mpower6lp5) (gcc version 4.3.2 [gcc-4_3-branch revision 141291] (SUSE Linux) ) #1 SMP Mon Nov 2 12:29:14 IST 2009
+Calling ibm,client-architecture-support... done
+command line: root=/dev/sda3 sysrq=8 insmod=sym53c8xx insmod=ipr crashkernel=512M-:256M IDENT=1257146334 
+memory layout at init:
+  memory_limit : 0000000000000000 (16 MB aligned)
+  alloc_bottom : 00000000039d0000
+  alloc_top    : 0000000008000000
+  alloc_top_hi : 0000000008000000
+  rmo_top      : 0000000008000000
+  ram_top      : 0000000008000000
+instantiating rtas at 0x00000000074e0000... done
+boot cpu hw idx 0000000000000000
+copying OF device tree...
+Building dt strings...
+Building dt structure...
+Device tree strings 0x00000000039e0000 -> 0x00000000039e15c2
+Device tree struct  0x00000000039f0000 -> 0x0000000003a10000
+Calling quiesce...
+returning from prom_init
+Crash kernel location must be 0x2000000
+Reserving 256MB of memory at 32MB for crashkernel (System RAM: 4096MB)
+Using pSeries machine description
+Using 1TB segments
+Found initrd at 0xc000000003200000:0xc0000000039cf32f
+bootconsole [udbg0] enabled
+Partition configured for 2 cpus.
+CPU maps initialized for 2 threads per core
+Starting Linux PPC64 #1 SMP Mon Nov 2 12:29:14 IST 2009
+-----------------------------------------------------
+ppc64_pft_size                = 0x1a
+physicalMemorySize            = 0x100000000
+htab_hash_mask                = 0x7ffff
+-----------------------------------------------------
+Initializing cgroup subsys cpuset
+Initializing cgroup subsys cpu
+Linux version 2.6.32-rc5-autotest-next-20091102 (root@mpower6lp5) (gcc version 4.3.2 [gcc-4_3-branch revision 141291] (SUSE Linux) ) #1 SMP Mon Nov 2 12:29:14 IST 2009
+[boot]0012 Setup Arch
+EEH: No capable adapters found
+PPC64 nvram contains 15360 bytes
+Zone PFN ranges:
+  DMA      0x00000000 -> 0x00010000
+  Normal   0x00010000 -> 0x00010000
+Movable zone start PFN for each node
+early_node_map[2] active PFN ranges
+    2: 0x00000000 -> 0x0000e000
+    3: 0x0000e000 -> 0x00010000
+Could not find start_pfn for node 0
+[boot]0015 Setup Done
+PERCPU: Embedded 2 pages/cpu @c000000000f00000 s89000 r0 d42072 u524288
+pcpu-alloc: s89000 r0 d42072 u524288 alloc=1*1048576
+pcpu-alloc: [0] 0 1 
+Built 3 zonelists in Node order, mobility grouping on.  Total pages: 65480
+Policy zone: DMA
+Kernel command line: root=/dev/sda3 sysrq=8 insmod=sym53c8xx insmod=ipr crashkernel=512M-:256M IDENT=1257146334 
+PID hash table entries: 4096 (order: -1, 32768 bytes)
+freeing bootmem node 2
+freeing bootmem node 3
+Memory: 3899776k/4194304k available (9216k kernel code, 294528k reserved, 2688k data, 2370k bss, 640k init)
+Hierarchical RCU implementation.
+RCU-based detection of stalled CPUs is enabled.
+NR_IRQS:512 nr_irqs:512
+[boot]0020 XICS Init
+[boot]0021 XICS Done
+clocksource: timebase mult[7d0000] shift[22] registered
+Console: colour dummy device 80x25
+console [hvc0] enabled, bootconsole disabled
+console [hvc0] enabled, bootconsole disabled
+allocated 2621440 bytes of page_cgroup
+please try 'cgroup_disable=memory' option if you don't want memory cgroups
+Security Framework initialized
+SELinux:  Disabled at boot.
+Dentry cache hash table entries: 524288 (order: 6, 4194304 bytes)
+Inode-cache hash table entries: 262144 (order: 5, 2097152 bytes)
+Mount-cache hash table entries: 4096
+Initializing cgroup subsys ns
+Initializing cgroup subsys cpuacct
+Initializing cgroup subsys memory
+Initializing cgroup subsys devices
+Initializing cgroup subsys freezer
+Processor 1 found.
+Brought up 2 CPUs
+NET: Registered protocol family 16
+IBM eBus Device Driver
+POWER6 performance monitor hardware support registered
+PCI: Probing PCI hardware
+bio: create slab <bio-0> at 0
+vgaarb: loaded
+usbcore: registered new interface driver usbfs
+usbcore: registered new interface driver hub
+usbcore: registered new device driver usb
+Switching to clocksource timebase
+NET: Registered protocol family 2
+IP route cache hash table entries: 32768 (order: 2, 262144 bytes)
+TCP established hash table entries: 131072 (order: 5, 2097152 bytes)
+TCP bind hash table entries: 65536 (order: 4, 1048576 bytes)
+TCP: Hash tables configured (established 131072 bind 65536)
+TCP reno registered
+UDP hash table entries: 4096 (order: 0, 65536 bytes)
+UDP-Lite hash table entries: 4096 (order: 0, 65536 bytes)
+NET: Registered protocol family 1
+Unpacking initramfs...
+IOMMU table initialized, virtual merging enabled
+audit: initializing netlink socket (disabled)
+type=2000 audit(1257150470.200:1): initialized
+rcu-torture:--- Start of test: nreaders=4 nfakewriters=4 stat_interval=0 verbose=0 test_no_idle_hz=0 shuffle_interval=3 stutter=5 irqreader=1
+HugeTLB registered 16 MB page size, pre-allocated 0 pages
+HugeTLB registered 16 GB page size, pre-allocated 0 pages
+VFS: Disk quotas dquot_6.5.2
+Dquot-cache hash table entries: 8192 (order 0, 65536 bytes)
+msgmni has been set to 7616
+alg: No test for stdrng (krng)
+Block layer SCSI generic (bsg) driver version 0.4 loaded (major 254)
+io scheduler noop registered
+io scheduler deadline registered
+io scheduler cfq registered (default)
+pci_hotplug: PCI Hot Plug PCI Core version: 0.5
+pciehp: PCI Express Hot Plug Controller Driver version: 0.4
+rpaphp: RPA HOT Plug PCI Controller Driver version: 0.1
+Generic RTC Driver v1.07
+Serial: 8250/16550 driver, 4 ports, IRQ sharing disabled
+pmac_zilog: 0.6 (Benjamin Herrenschmidt <benh@kernel.crashing.org>)
+input: Macintosh mouse button emulation as /devices/virtual/input/input0
+Uniform Multi-Platform E-IDE driver
+ide-gd driver 1.18
+ehci_hcd: USB 2.0 'Enhanced' Host Controller (EHCI) Driver
+ohci_hcd: USB 1.1 'Open' Host Controller (OHCI) Driver
+mice: PS/2 mouse device common for all mice
+EDAC MC: Ver: 2.1.0 Nov  2 2009
+usbcore: registered new interface driver hiddev
+usbcore: registered new interface driver usbhid
+usbhid: USB HID core driver
+TCP cubic registered
+NET: Registered protocol family 15
+registered taskstats version 1
+Freeing unused kernel memory: 640k freed
+doing fast boot
+------------[ cut here ]------------
+kernel BUG at mm/mmap.c:2135!
+Oops: Exception in kernel mode, sig: 5 [#1]
+SMP NR_CPUS=1024 NUMA pSeries
+Modules linked in:
+NIP: c00000000014e30c LR: c00000000014e2f8 CTR: c0000000002f0cb0
+REGS: c0000000db7337e0 TRAP: 0700   Not tainted  (2.6.32-rc5-autotest-next-20091102)
+MSR: 8000000000029032 <EE,ME,CE,IR,DR>  CR: 24000442  XER: 20000002
+TASK = c0000000db618a60[68] 'showconsole' THREAD: c0000000db730000 CPU: 0
+GPR00: 0000000000000001 c0000000db733a60 c000000000b19900 0000000000000000 
+GPR04: c0000000db408670 c000000000a4d600 0000000000000003 c000000000bb2600 
+GPR08: 000000000000db40 0000000000000000 c0000000dfdc0e00 0000000000000005 
+GPR12: 0000000044000442 c000000000bb2600 00000000ffffffff ffffffffffffffff 
+GPR16: 000000004206e7d0 0000000000000002 0000000000000000 00000000420503b0 
+GPR20: 0000000000000000 0000000000000000 0000000000000000 000000004206fd70 
+GPR24: 0000000000000001 00000fffc0ac9b08 00000fff99b1df80 c0000000db1aa580 
+GPR28: 0000000000000000 c000000000f012d0 c000000000a84f00 0000000000000000 
+NIP [c00000000014e30c] .exit_mmap+0x190/0x1b8
+LR [c00000000014e2f8] .exit_mmap+0x17c/0x1b8
+Call Trace:
+[c0000000db733a60] [c00000000014e2f8] .exit_mmap+0x17c/0x1b8 (unreliable)
+[c0000000db733b10] [c0000000000916cc] .mmput+0x54/0x164
+[c0000000db733ba0] [c0000000000968d8] .exit_mm+0x17c/0x1a0
+[c0000000db733c50] [c000000000098cb8] .do_exit+0x248/0x784
+[c0000000db733d30] [c0000000000992a8] .do_group_exit+0xb4/0xe8
+[c0000000db733dc0] [c0000000000992f0] .SyS_exit_group+0x14/0x28
+[c0000000db733e30] [c0000000000085b4] syscall_exit+0x0/0x40
+Instruction dump:
+7c8407b4 387d0018 4800ab11 60000000 939d0008 7fe3fb78 4bfffdbd 7c7f1b79 
+4082fff4 e81b00e8 3120ffff 7c090110 <0b000000> 382100b0 e8010010 eb61ffd8 
+SysRq : Changing Loglevel
+Loglevel set to 8
+---[ end trace ec052ac77a8e7cb3 ]---
+Fixing recursive fault but reboot is needed!
+SCSI subsystem initialized
+vio_register_driver: driver ibmvscsi registering
+ibmvscsi 30000007: SRP_VERSION: 16.a
+scsi0 : IBM POWER Virtual SCSI Adapter 1.5.8
+ibmvscsi 30000007: partner initialization complete
+ibmvscsi 30000007: host srp version: 16.a, host partition VIO Server (1), OS 3, max io 1048576
+ibmvscsi 30000007: Client reserve enabled
+ibmvscsi 30000007: sent SRP login
+ibmvscsi 30000007: SRP_LOGIN succeeded
+scsi 0:0:1:0: Direct-Access     AIX      VDASD            0001 PQ: 0 ANSI: 3
+scsi 0:0:2:0: CD-ROM            AIX      VOPTA                 PQ: 0 ANSI: 4
+Creating device nodes with udev
+------------[ cut here ]------------
+kernel BUG at mm/mmap.c:2135!
+Oops: Exception in kernel mode, sig: 5 [#2]
+SMP NR_CPUS=1024 NUMA pSeries
+Modules linked in: ibmvscsic scsi_transport_srp scsi_tgt scsi_mod
+NIP: c00000000014e30c LR: c00000000014e2f8 CTR: c00000000014db88
+REGS: c0000000db703620 TRAP: 0700   Tainted: G      D     (2.6.32-rc5-autotest-next-20091102)
+MSR: 8000000000029032 <EE,ME,CE,IR,DR>  CR: 24022442  XER: 2000000c
+TASK = c0000000db7f6fe0[76] 'init' THREAD: c0000000db700000 CPU: 1
+GPR00: 0000000000000001 c0000000db7038a0 c000000000b19900 0000000000000000 
+GPR04: c0000000db406a40 000000000000000c c0000000fe10c370 c000000000bb2800 
+GPR08: 000000000000db40 0000000000000000 c0000000dfdc0e00 000000000000000c 
+GPR12: 0000000044022442 c000000000bb2800 00000000ffffffff ffffffffffffffff 
+GPR16: 0000000008430000 00000000003c0000 c0000000db703ea0 c0000000db569108 
+GPR20: c0000000db568908 0000000000000000 c0000000db703d60 0000000000000000 
+GPR24: 0000000000000001 0000000000040100 c0000000fe503580 c0000000db1ac180 
+GPR28: 0000000000000000 c000000000f812d0 c000000000a84f00 0000000000000000 
+NIP [c00000000014e30c] .exit_mmap+0x190/0x1b8
+LR [c00000000014e2f8] .exit_mmap+0x17c/0x1b8
+Call Trace:
+[c0000000db7038a0] [c00000000014e2f8] .exit_mmap+0x17c/0x1b8 (unreliable)
+[c0000000db703950] [c0000000000916cc] .mmput+0x54/0x164
+[c0000000db7039e0] [c0000000000968d8] .exit_mm+0x17c/0x1a0
+[c0000000db703a90] [c000000000098cb8] .do_exit+0x248/0x784
+[c0000000db703b70] [c0000000000992a8] .do_group_exit+0xb4/0xe8
+[c0000000db703c00] [c0000000000aca2c] .get_signal_to_deliver+0x3ec/0x478
+[c0000000db703cf0] [c0000000000134ac] .do_signal+0x6c/0x31c
+[c0000000db703e30] [c000000000008b7c] do_work+0x24/0x28
+Instruction dump:
+7c8407b4 387d0018 4800ab11 60000000 939d0008 7fe3fb78 4bfffdbd 7c7f1b79 
+4082fff4 e81b00e8 3120ffff 7c090110 <0b000000> 382100b0 e8010010 eb61ffd8 
+---[ end trace ec052ac77a8e7cb4 ]---
+Fixing recursive fault but reboot is needed!
+
+
+
+
+--------------020501070806010101090303
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
-
-Changes since 20091030:
-
-My fixes tree contains a build fix for powerpc/kvm.
-
-The omap tree lost its conflicts.
-
-The jdelvare-hwmon tree lost its conflict.
-
-The kvm tree lost its conflict.
-
-The sound tree gained a conflict against the omap tree.
-
-The catalin tree gained 2 conflicts against the arm-current tree.
-
-The percpu tree revealed a build problem in the tip and kvm trees for
-which I applied a patch.
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
-and sparc64 defconfig. These builds also have
-CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
-CONFIG_DEBUG_INFO disabled when necessary.
-
-Below is a summary of the state of the merge.
-
-We are up to 145 trees (counting Linus' and 22 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging fixes/fixes
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/tty.current
-Merging quilt/usb.current
-Merging quilt/staging.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging ide-curent/master
-Merging dwmw2/master
-Merging arm/devel
-Merging davinci/davinci-next
-Merging omap/for-next
-Merging pxa/for-next
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-CONFLICT (content): Merge conflict in drivers/rtc/Kconfig
-Merging m68knommu/for-next
-Merging microblaze/next
-Merging mips/mips-for-linux-next
-Merging parisc/next
-Merging powerpc/next
-Merging 4xx/next
-Merging galak/next
-Merging s390/features
-Merging sh/master
-Merging sparc/master
-Merging xtensa/master
-Merging ceph/for-next
-Merging cifs/master
-Merging configfs/linux-next
-Merging ecryptfs/next
-Merging ext3/for_next
-Merging ext4/next
-Merging fatfs/master
-Merging fuse/for-next
-Merging gfs2/master
-Merging jfs/next
-Merging nfs/linux-next
-Merging nfsd/nfsd-next
-Merging nilfs2/for-next
-Merging ocfs2/linux-next
-Merging squashfs/master
-Merging udf/for_next
-Merging v9fs/for-next
-Merging ubifs/linux-next
-Merging xfs/master
-Merging reiserfs-bkl/reiserfs/kill-bkl
-Merging vfs/for-next
-Merging pci/linux-next
-Merging hid/for-next
-Merging quilt/i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-Merging kbuild/master
-Merging kconfig/for-next
-Merging ide/master
-Merging libata/NEXT
-Merging infiniband/for-next
-Merging acpi/test
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/linux-next
-CONFLICT (content): Merge conflict in arch/powerpc/kvm/timing.h
-Merging dlm/next
-Merging scsi/master
-Merging async_tx/next
-Merging net/master
-CONFLICT (delete/modify): drivers/net/sfc/sfe4001.c deleted in net/master a=
-nd modified in HEAD. Version HEAD of drivers/net/sfc/sfe4001.c left in tree.
-CONFLICT (content): Merge conflict in drivers/net/wireless/libertas/cmd.c
-CONFLICT (content): Merge conflict in drivers/staging/rtl8187se/Kconfig
-CONFLICT (content): Merge conflict in drivers/staging/rtl8192e/Kconfig
-$ git rm -f drivers/net/sfc/sfe4001.c
-Applying: net: merge fixup for drivers/net/sfc/falcon_boards.c
-Merging wireless/master
-CONFLICT (content): Merge conflict in drivers/staging/Kconfig
-CONFLICT (content): Merge conflict in drivers/staging/Makefile
-Merging mtd/master
-Merging crypto/master
-Merging sound/for-next
-CONFLICT (content): Merge conflict in arch/arm/mach-omap2/board-omap3evm.c
-Merging cpufreq/next
-Merging quilt/rr
-Merging mmc/next
-Merging tmio-mmc/linux-next
-Merging input/next
-Merging lsm/for-next
-Merging block/for-next
-Merging quilt/device-mapper
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging voltage/for-next
-CONFLICT (content): Merge conflict in drivers/mfd/Kconfig
-CONFLICT (content): Merge conflict in drivers/mfd/Makefile
-Merging security-testing/next
-CONFLICT (content): Merge conflict in Documentation/dontdiff
-Merging lblnet/master
-Merging agp/agp-next
-Merging uwb/for-upstream
-Merging watchdog/master
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-CONFLICT (content): Merge conflict in drivers/acpi/video_detect.c
-Merging audit/for-next
-Merging quilt/aoe
-Merging suspend/linux-next
-Merging bluetooth/master
-Merging fsnotify/for-next
-Merging irda/for-next
-Merging hwlat/for-linus
-CONFLICT (content): Merge conflict in drivers/misc/Makefile
-Merging drbd/for-jens
-CONFLICT (add/add): Merge conflict in drivers/block/drbd/Kconfig
-CONFLICT (add/add): Merge conflict in drivers/block/drbd/Makefile
-CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_actlog.c
-CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_int.h
-CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_main.c
-CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_nl.c
-CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_receiver.c
-CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_req.c
-CONFLICT (add/add): Merge conflict in drivers/block/drbd/drbd_worker.c
-CONFLICT (add/add): Merge conflict in include/linux/drbd.h
-Merging catalin/for-next
-CONFLICT (content): Merge conflict in arch/arm/mach-realview/core.h
-CONFLICT (content): Merge conflict in arch/arm/mach-realview/realview_pb117=
-6.c
-Merging alacrity/linux-next
-CONFLICT (content): Merge conflict in drivers/net/Kconfig
-CONFLICT (content): Merge conflict in lib/Kconfig
-Merging i7core_edac/linux_next
-Merging devicetree/next-devicetree
-Merging limits/writable_limits
-Merging tip/auto-latest
-CONFLICT (content): Merge conflict in arch/x86/kernel/kgdb.c
-Merging oprofile/for-next
-Merging percpu/for-next
-CONFLICT (content): Merge conflict in arch/x86/kvm/svm.c
-CONFLICT (content): Merge conflict in kernel/softlockup.c
-CONFLICT (content): Merge conflict in mm/percpu.c
-Applying: percpu: merge fixup for variable renaming
-Applying: x86: fix put_cpu_var invocation in user return notifiers code
-Merging sfi/sfi-test
-Merging asm-generic/next
-Merging hwpoison/hwpoison
-Merging quilt/driver-core
-Merging quilt/tty
-Merging quilt/usb
-Merging quilt/staging
-CONFLICT (content): Merge conflict in drivers/staging/Kconfig
-CONFLICT (content): Merge conflict in drivers/staging/Makefile
-Merging scsi-post-merge/master
-$ git cherry-pick df5281a73b4ba568ed0d266efc417856524c1e86
-
---Signature=_Mon__2_Nov_2009_17_38_45_+1100_LFuTsOZbdBpUrFgm
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkrufnUACgkQjjKRsyhoI8x8HwCfTJbxADKXhLswnEmJDx0makGd
-xioAoKs53DhJGFy7W4dS43aEBpVt4SSl
-=ju3L
------END PGP SIGNATURE-----
-
---Signature=_Mon__2_Nov_2009_17_38_45_+1100_LFuTsOZbdBpUrFgm--
+_______________________________________________
+Linuxppc-dev mailing list
+Linuxppc-dev@lists.ozlabs.org
+https://lists.ozlabs.org/listinfo/linuxppc-dev
+--------------020501070806010101090303--
