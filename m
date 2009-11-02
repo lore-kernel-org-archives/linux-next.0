@@ -1,60 +1,67 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: percpu/kvm/tip tree build failure
-Date: Mon, 2 Nov 2009 11:28:30 +0100
-Message-ID: <20091102102830.GA3724@elte.hu>
-References: <20091102161722.eea4358d.sfr@canb.auug.org.au> <4AEEAA82.8070705@redhat.com> <20091102100735.GB16963@elte.hu> <4AEEB0AF.5000904@redhat.com>
+From: Hollis Blanchard <hollisb@us.ibm.com>
+Subject: Re: KVM: powerpc: Fix BUILD_BUG_ON condition
+Date: Mon, 02 Nov 2009 08:42:31 -0800
+Message-ID: <1257180151.11206.3.camel@slab>
+References: <20091102170815.86e2daf7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:47599 "EHLO mx2.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754264AbZKBK3U (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 2 Nov 2009 05:29:20 -0500
-Content-Disposition: inline
-In-Reply-To: <4AEEB0AF.5000904@redhat.com>
+Received: from e39.co.us.ibm.com ([32.97.110.160]:42274 "EHLO
+	e39.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755952AbZKBQmv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Nov 2009 11:42:51 -0500
+In-Reply-To: <20091102170815.86e2daf7.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Avi Kivity <avi@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Avi Kivity <avi@redhat.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
+On Mon, 2009-11-02 at 17:08 +1100, Stephen Rothwell wrote:
+> Hi Hollis, Avi,
+> 
+> This commit was added to the kvm tree recently:
+> 
+> > Author: Hollis Blanchard <hollisb@us.ibm.com>
+> > Date:   Fri Oct 23 00:35:30 2009 +0000
+> > 
+> >     KVM: powerpc: Fix BUILD_BUG_ON condition
+> >     
+> >     The old BUILD_BUG_ON implementation didn't work with __builtin_constant_p().
+> >     Fixing that revealed this test had been inverted for a long time without
+> >     anybody noticing...
+> >     
+> >     Signed-off-by: Hollis Blanchard <hollisb@us.ibm.com>
+> >     Signed-off-by: Avi Kivity <avi@redhat.com>
+> > 
+> > diff --git a/arch/powerpc/kvm/timing.h b/arch/powerpc/kvm/timing.h
+> > index bb13b1f..a550f0f 100644
+> > --- a/arch/powerpc/kvm/timing.h
+> > +++ b/arch/powerpc/kvm/timing.h
+> > @@ -48,7 +48,7 @@ static inline void kvmppc_set_exit_type(struct kvm_vcpu *vcpu, int type) {}
+> >  static inline void kvmppc_account_exit_stat(struct kvm_vcpu *vcpu, int type)
+> >  {
+> >  	/* type has to be known at build time for optimization */
+> > -	BUILD_BUG_ON(__builtin_constant_p(type));
+> > +	BUILD_BUG_ON(!__builtin_constant_p(type));
+> >  	switch (type) {
+> >  	case EXT_INTR_EXITS:
+> >  		vcpu->stat.ext_intr_exits++;
+> 
+> It is OK as far as it goes.  It still does not build, though, due to the
+> new BUILD_BUG_ON macro.
 
-* Avi Kivity <avi@redhat.com> wrote:
+Correct.
 
-> On 11/02/2009 12:07 PM, Ingo Molnar wrote:
->>> Ingo, can you queue this on x86/entry?
->>>      
->> Already done, tested and pushed out.
->
-> Usually there is an ack from tip-bot?
+> So I have still commented out the BUILD_BUG_ON in linux-next.
 
-Yeah, the final, committed form of the patch (with small edits done in 
-99% of the cases) gets sent to the discussion thread on lkml and can be 
-reviewed (and double checked) there.
+I've pointed out a few times that Rusty's patch (Subject "BUILD_BUG_ON:
+make it handle more cases", Date "Tue, 20 Oct 2009 14:15:33 +1030") is
+needed to fix the problem with BUILD_BUG_ON().
 
-<plug> We use the tip-bot mechanism to:
+So far I haven't seen anybody acknowledge the patch or indicate it will
+actually be committed.
 
- - increase transparency (every commit gets posted into the lkml thread 
-   it originates from),
-
- - avoid patch-bombing/spamming lkml every week/month with new patches,
-
- - it also makes the patch postings much more on-topic and easier to
-   ignore for those who are not interested in a discussion,
-
- - it can also be used to fine-tune any workflow details - the specific
-   timings can be seen in the discussion, missed or incorrectly queued 
-   patches can be identified,
-
- - new discussions/bugreports can be started based on that commit
-   notification, on lkml.
-
-Developers and maintainers involved in the process absolutely love it as 
-it visibly increases workflow reliability and transparency and increases 
-the information density on lkml - you might want to consider something 
-similar too, for kvm.git ;-)
-
-</plug>
-
-Should be in your mbox any minute.
-
-	Ingo
+-- 
+Hollis Blanchard
+IBM Linux Technology Center
