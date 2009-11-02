@@ -1,46 +1,79 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the sound tree with the  tree
-Date: Mon, 2 Nov 2009 12:22:22 +1100
-Message-ID: <20091102122222.542dac88.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the catalin tree with the arm-current
+ tree
+Date: Mon, 2 Nov 2009 14:12:04 +1100
+Message-ID: <20091102141204.167b4aaa.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36770 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:39331 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752886AbZKBBWX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 1 Nov 2009 20:22:23 -0500
+	id S1753087AbZKBDMH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 1 Nov 2009 22:12:07 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@nokia.com>, Mike Rapoport <mike@compulab.co.il>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Philby John <pjohn@in.mvista.com>, Russell King <rmk@arm.linux.org.uk>
 
-Hi Takashi,
+Hi Catalin,
 
-Today's linux-next merge of the sound tree got a conflict in
-arch/arm/mach-omap2/board-omap3evm.c between commit
-fa48a99192e3ee862f6d26c5248347c772b33b84 ("omap3: evm: initialize vmmc
-and vmmc_aux regulators") from the omap tree and commit
-f8d9aad96d0d7b57d0bf2e4de21fdda3a42f4449 ("OMAP: Platform support for
-twl4030_codec MFD") from the sound tree.
+Today's linux-next merge of the catalin tree got a conflict in
+arch/arm/mach-realview/core.h arch/arm/mach-realview/realview_pb1176.c
+between commit 426fcd2a351e4bf662fee9fa2cf2603a48223164 ("ARM: 5774/1:
+Fix Realview ARM1176PB board reboot") from the arc-current tree and
+commit 35c6a7ecaa2aafd03dd5d62aa11fbc7a12b82520 ("RealView: Add default
+memory configuration") from the catalin tree.
 
-Just overlapping additions.  I fixed it up (see below) and can carry the
-fix as necessary.
+Overlapping additions.  I fixed it up (see below) and can carry the fix as
+necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-omap2/board-omap3evm.c
-index 660ef8c,d9a6103..0000000
---- a/arch/arm/mach-omap2/board-omap3evm.c
-+++ b/arch/arm/mach-omap2/board-omap3evm.c
-@@@ -247,8 -211,7 +255,9 @@@ static struct twl4030_platform_data oma
-  	.madc		= &omap3evm_madc_data,
-  	.usb		= &omap3evm_usb_data,
-  	.gpio		= &omap3evm_gpio_data,
- +	.vmmc1		= &omap3evm_vmmc1,
- +	.vsim		= &omap3evm_vsim,
-+ 	.codec		= &omap3evm_codec_data,
+diff --cc arch/arm/mach-realview/core.h
+index 699671f,1398854..0000000
+--- a/arch/arm/mach-realview/core.h
++++ b/arch/arm/mach-realview/core.h
+@@@ -61,5 -64,7 +64,7 @@@ extern void realview_timer_init(unsigne
+  extern int realview_flash_register(struct resource *res, u32 num);
+  extern int realview_eth_register(const char *name, struct resource *res);
+  extern int realview_usb_register(struct resource *res);
++ extern void realview_fixup(struct machine_desc *mdesc, struct tag *tags,
++ 			   char **from, struct meminfo *meminfo);
+ -
+ +extern void (*realview_reset)(char);
+  #endif
+diff --cc arch/arm/mach-realview/realview_pb1176.c
+index a6ba147,b1cdd37..0000000
+--- a/arch/arm/mach-realview/realview_pb1176.c
++++ b/arch/arm/mach-realview/realview_pb1176.c
+@@@ -290,16 -290,18 +290,28 @@@ static struct sys_timer realview_pb1176
+  	.init		= realview_pb1176_timer_init,
   };
   
-  static struct i2c_board_info __initdata omap3evm_i2c_boardinfo[] = {
+ +static void realview_pb1176_reset(char mode)
+ +{
+ +	void __iomem *hdr_ctrl = __io_address(REALVIEW_SYS_BASE) +
+ +		REALVIEW_SYS_RESETCTL_OFFSET;
+ +	void __iomem *rst_hdr_ctrl = __io_address(REALVIEW_SYS_BASE) +
+ +		REALVIEW_SYS_LOCK_OFFSET;
+ +	__raw_writel(REALVIEW_SYS_LOCKVAL_MASK, rst_hdr_ctrl);
+ +	__raw_writel(REALVIEW_PB1176_SYS_LOCKVAL_RSTCTL, hdr_ctrl);
+ +}
+ +
++ static void realview_pb1176_fixup(struct machine_desc *mdesc,
++ 				  struct tag *tags, char **from,
++ 				  struct meminfo *meminfo)
++ {
++ 	/*
++ 	 * RealView PB1176 only has 128MB of RAM mapped at 0.
++ 	 */
++ 	meminfo->bank[0].start = 0;
++ 	meminfo->bank[0].size = SZ_128M;
++ 	meminfo->nr_banks = 1;
++ }
++ 
+  static void __init realview_pb1176_init(void)
+  {
+  	int i;
