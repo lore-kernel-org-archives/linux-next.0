@@ -1,54 +1,46 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: nfs/nfsd trees fetch failed
-Date: Mon, 2 Nov 2009 09:41:51 +1100
-Message-ID: <20091102094151.3ad599a8.sfr@canb.auug.org.au>
-References: <20091102085835.651ddd02.sfr@canb.auug.org.au>
-	<1257113019.3916.6.camel@heimdal.trondhjem.org>
+Subject: linux-next: manual merge of the sound tree with the  tree
+Date: Mon, 2 Nov 2009 12:22:22 +1100
+Message-ID: <20091102122222.542dac88.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__2_Nov_2009_09_41_51_+1100_JYnBUOCevgefPyT9"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48141 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:36770 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753595AbZKAWlz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 1 Nov 2009 17:41:55 -0500
-In-Reply-To: <1257113019.3916.6.camel@heimdal.trondhjem.org>
+	id S1752886AbZKBBWX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 1 Nov 2009 20:22:23 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Trond Myklebust <trond.myklebust@fys.uio.no>
-Cc: "J. Bruce Fields" <bfields@fieldses.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@nokia.com>, Mike Rapoport <mike@compulab.co.il>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
 
---Signature=_Mon__2_Nov_2009_09_41_51_+1100_JYnBUOCevgefPyT9
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Takashi,
 
-Hi Trond,
+Today's linux-next merge of the sound tree got a conflict in
+arch/arm/mach-omap2/board-omap3evm.c between commit
+fa48a99192e3ee862f6d26c5248347c772b33b84 ("omap3: evm: initialize vmmc
+and vmmc_aux regulators") from the omap tree and commit
+f8d9aad96d0d7b57d0bf2e4de21fdda3a42f4449 ("OMAP: Platform support for
+twl4030_codec MFD") from the sound tree.
 
-On Sun, 01 Nov 2009 17:03:38 -0500 Trond Myklebust <trond.myklebust@fys.uio=
-.no> wrote:
->
-> Yes. It's a known problem: an upgrade+reboot that went awry combined
-> with a remote console failure. I'm hoping that Bruce might be able to
-> help out when he returns to the office tomorrow morning...
-
-OK, thanks.
-
---=20
+Just overlapping additions.  I fixed it up (see below) and can carry the
+fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__2_Nov_2009_09_41_51_+1100_JYnBUOCevgefPyT9
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkruDq8ACgkQjjKRsyhoI8zHfgCgiRU71ixMo5rMbTU7J/zUiL0+
-qbcAoKlXWPFMaOIxdQTMOFOm/WZq4mDs
-=SeZN
------END PGP SIGNATURE-----
-
---Signature=_Mon__2_Nov_2009_09_41_51_+1100_JYnBUOCevgefPyT9--
+diff --cc arch/arm/mach-omap2/board-omap3evm.c
+index 660ef8c,d9a6103..0000000
+--- a/arch/arm/mach-omap2/board-omap3evm.c
++++ b/arch/arm/mach-omap2/board-omap3evm.c
+@@@ -247,8 -211,7 +255,9 @@@ static struct twl4030_platform_data oma
+  	.madc		= &omap3evm_madc_data,
+  	.usb		= &omap3evm_usb_data,
+  	.gpio		= &omap3evm_gpio_data,
+ +	.vmmc1		= &omap3evm_vmmc1,
+ +	.vsim		= &omap3evm_vsim,
++ 	.codec		= &omap3evm_codec_data,
+  };
+  
+  static struct i2c_board_info __initdata omap3evm_i2c_boardinfo[] = {
