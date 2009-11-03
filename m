@@ -1,92 +1,45 @@
-From: Luciano Coelho <luciano.coelho@nokia.com>
-Subject: Re: linux-next: Tree for November 2 (wireless/wl1271)
-Date: Tue, 03 Nov 2009 08:03:59 +0200
-Message-ID: <4AEFC7CF.1020909@nokia.com>
-References: <20091102173845.210d1c57.sfr@canb.auug.org.au> <4AEF1E7F.50306@oracle.com> <20091102184449.GJ14046@tuxdriver.com> <20091102184843.GK14046@tuxdriver.com> <4AEF4ACB.5040302@nokia.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: No Tree for November 3
+Date: Tue, 3 Nov 2009 17:39:15 +1100
+Message-ID: <20091103173915.ebc02289.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__3_Nov_2009_17_39_15_+1100_8tpfBj_pfBitNE5K"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.nokia.com ([192.100.122.230]:50196 "EHLO
-	mgw-mx03.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751363AbZKCGEr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 3 Nov 2009 01:04:47 -0500
-In-Reply-To: <4AEF4ACB.5040302@nokia.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:56882 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751426AbZKCGjQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 3 Nov 2009 01:39:16 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "ext John W. Linville" <linville@tuxdriver.com>
-Cc: "Valo Kalle (Nokia-D/Tampere)" <Kalle.Valo@nokia.com>, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-Coelho Luciano (Nokia-D/Helsinki) wrote:
-> ext John W. Linville wrote:
->> Helps if I actually Cc: Luca...
-> 
-> Yes, it does. :) I would see this at some point but CCing me speed things up 
-> quite a lot.
+--Signature=_Tue__3_Nov_2009_17_39_15_+1100_8tpfBj_pfBitNE5K
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-BTW, I think we need this for wl1251 as well.  CC'ing Kalle too.
+Thee is no tree today due to a public holiday (that has nothing to do
+with a horse race in Melbourne :-)).
 
-
->> On Mon, Nov 02, 2009 at 01:44:49PM -0500, John W. Linville wrote:
->>> On Mon, Nov 02, 2009 at 10:01:35AM -0800, Randy Dunlap wrote:
->>>> Stephen Rothwell wrote:
->>>>> Hi all,
->>>>>
->>>>> Changes since 20091030:
->>>> wl1271 build fails when CONFIG_INET=n.
->>>> Should this driver depend on INET?
->>>>
->>>> Why does this driver, unlike all other wireless drivers,
->>>> want to use register_inetaddr_notifier()?
->>>>
->>>> wl1271_main.c:(.text+0x271052): undefined reference to `unregister_inetaddr_notifier'
->>>> wl1271_main.c:(.text+0x2714d7): undefined reference to `register_inetaddr_notifier'
->>> Yeah, that driver is doing some filtering based on IPv4.
->>>
->>> Luca, is that necessary?  If so, then we need a patch like the one below...?
-> 
-> Yes, this is necessary.  We are doing ARP filtering according to the IP address 
-> of the interface, as you have realized.  Our implementation is rather ugly at 
-> the moment, so the plan is to try to get rid of this dependency on INET, but we 
-> need it for now.
-> 
-> Thanks Randy for finding this and thanks John for fixing it.
-> 
->>> From ba823accfad68151d80503ff5fb04c049c9eadc2 Mon Sep 17 00:00:00 2001
->>> From: John W. Linville <linville@tuxdriver.com>
->>> Date: Mon, 2 Nov 2009 13:43:32 -0500
->>> Subject: [PATCH] wl1271: depend on INET
->>>
->>> wl1271_main.c:(.text+0x271052): undefined reference to `unregister_inetaddr_notifier'
->>> wl1271_main.c:(.text+0x2714d7): undefined reference to `register_inetaddr_notifier'
->>>
->>> Driver is doing some filtering based on IP addresses...
->>>
->>> Signed-off-by: John W. Linville <linville@tuxdriver.com>
->>> ---
->>>  drivers/net/wireless/wl12xx/Kconfig |    1 +
->>>  1 files changed, 1 insertions(+), 0 deletions(-)
->>>
->>> diff --git a/drivers/net/wireless/wl12xx/Kconfig b/drivers/net/wireless/wl12xx/Kconfig
->>> index 33de7fa..785e024 100644
->>> --- a/drivers/net/wireless/wl12xx/Kconfig
->>> +++ b/drivers/net/wireless/wl12xx/Kconfig
->>> @@ -42,6 +42,7 @@ config WL1251_SDIO
->>>  config WL1271
->>>  	tristate "TI wl1271 support"
->>>  	depends on WL12XX && SPI_MASTER && GENERIC_HARDIRQS
->>> +	depends on INET
->>>  	select FW_LOADER
->>>  	select CRC7
->>>  	---help---
->>> -- 
->>> 1.6.2.5
-> 
-> Acked-by: Luciano Coelho <luciano.coelho@nokia.com>
-> 
-
-
--- 
+--=20
 Cheers,
-Luca.
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__3_Nov_2009_17_39_15_+1100_8tpfBj_pfBitNE5K
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkrv0BMACgkQjjKRsyhoI8yEXQCgrRwYl0wP/OLkA73dl2XH4sEH
+3HcAoJc0H7K4GDUH5Hjr5S9Su7bPBrc4
+=5J5P
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__3_Nov_2009_17_39_15_+1100_8tpfBj_pfBitNE5K--
