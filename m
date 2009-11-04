@@ -1,46 +1,55 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH] staging: RTL8192SU depends on USB
-Date: Wed, 4 Nov 2009 13:56:23 -0800
-Message-ID: <20091104135623.8542c041.randy.dunlap@oracle.com>
-References: <20091102173845.210d1c57.sfr@canb.auug.org.au>
+Subject: [PATCH] edac: fix i7core build
+Date: Wed, 4 Nov 2009 13:57:33 -0800
+Message-ID: <20091104135733.cb878718.randy.dunlap@oracle.com>
+References: <20091104170931.4aa51b77.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet12.oracle.com ([148.87.113.124]:45607 "EHLO
-	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933004AbZKDV5x (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Nov 2009 16:57:53 -0500
-In-Reply-To: <20091102173845.210d1c57.sfr@canb.auug.org.au>
+Received: from rcsinet11.oracle.com ([148.87.113.123]:20181 "EHLO
+	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933042AbZKDV6D (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Nov 2009 16:58:03 -0500
+In-Reply-To: <20091104170931.4aa51b77.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@redhat.com>
 Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Randy Dunlap <randy.dunlap@oracle.com>
 
-USB device driver needs to depend on USB to prevent build errors:
+Fix build warning (missing header file) and
+build error when CONFIG_SMP=n.
 
-ERROR: "usb_kill_urb" [drivers/staging/rtl8192su/r8192s_usb.ko] undefined!
-ERROR: "usb_deregister" [drivers/staging/rtl8192su/r8192s_usb.ko] undefined!
-ERROR: "usb_control_msg" [drivers/staging/rtl8192su/r8192s_usb.ko] undefined!
-ERROR: "usb_submit_urb" [drivers/staging/rtl8192su/r8192s_usb.ko] undefined!
-ERROR: "usb_register_driver" [drivers/staging/rtl8192su/r8192s_usb.ko] undefined!
-ERROR: "usb_free_urb" [drivers/staging/rtl8192su/r8192s_usb.ko] undefined!
-ERROR: "usb_alloc_urb" [drivers/staging/rtl8192su/r8192s_usb.ko] undefined!
+drivers/edac/i7core_edac.c:860: error: implicit declaration of function 'msleep'
+drivers/edac/i7core_edac.c:1700: error: 'struct cpuinfo_x86' has no member named 'phys_proc_id'
 
 Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Mauro Carvalho Chehab <mchehab@redhat.com>
 ---
- drivers/staging/rtl8192su/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/edac/i7core_edac.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- linux-next-20091102.orig/drivers/staging/rtl8192su/Kconfig
-+++ linux-next-20091102/drivers/staging/rtl8192su/Kconfig
-@@ -1,6 +1,6 @@
- config RTL8192SU
- 	tristate "RealTek RTL8192SU Wireless LAN NIC driver"
--	depends on PCI && WLAN
-+	depends on PCI && WLAN && USB
- 	depends on WIRELESS_EXT
- 	default N
- 	---help---
+--- linux-next-20091104.orig/drivers/edac/i7core_edac.c
++++ linux-next-20091104/drivers/edac/i7core_edac.c
+@@ -25,6 +25,7 @@
+ #include <linux/pci.h>
+ #include <linux/pci_ids.h>
+ #include <linux/slab.h>
++#include <linux/delay.h>
+ #include <linux/edac.h>
+ #include <linux/mmzone.h>
+ #include <linux/edac_mce.h>
+@@ -1696,9 +1697,11 @@ static int i7core_mce_check_error(void *
+ 	if (mce->bank != 8)
+ 		return 0;
+ 
++#ifdef CONFIG_SMP
+ 	/* Only handle if it is the right mc controller */
+ 	if (cpu_data(mce->cpu).phys_proc_id != pvt->i7core_dev->socket)
+ 		return 0;
++#endif
+ 
+ 	smp_rmb();
+ 	if ((pvt->mce_out + 1) % MCE_LOG_LEN == pvt->mce_in) {
