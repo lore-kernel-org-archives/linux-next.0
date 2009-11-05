@@ -1,106 +1,36 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: [PATCH] BUILD_BUG_ON: make it handle more cases
-Date: Thu, 05 Nov 2009 17:01:26 +1100
-Message-ID: <1257400886.13611.98.camel@pasglop>
-References: <4AC1E15502000078000516B5@vpn.id2.novell.com>
-	<200910201142.34006.rusty@rustcorp.com.au>
-	<1256002193.6546.2.camel@slab>
-	<200910201415.34361.rusty@rustcorp.com.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH net-next-2.6] net: net/ipv4/devinet.c cleanups
+Date: Wed, 04 Nov 2009 22:05:24 -0800 (PST)
+Message-ID: <20091104.220524.156001126.davem@davemloft.net>
+References: <20091105133041.a2aa30f7.sfr@canb.auug.org.au>
+	<4AF2571C.7040700@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <200910201415.34361.rusty@rustcorp.com.au>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: sfr@canb.auug.org.au, Hollis Blanchard <hollisb@us.ibm.com>, linux-kernel@vger.kernel.org, kvm-ppc@vger.kernel.org, linux-next@vger.kernel.org, Jan Beulich <JBeulich@novell.com>, akpm@linux-foundation.org, linuxppc-dev@lists.ozlabs.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:59184
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751252AbZKEGE6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Nov 2009 01:04:58 -0500
+In-Reply-To: <4AF2571C.7040700@gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: eric.dumazet@gmail.com
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 2009-10-20 at 14:15 +1030, Rusty Russell wrote:
-> BUILD_BUG_ON used to use the optimizer to do code elimination or fail
-> at link time; it was changed to first the size of a negative array (a
-> nicer compile time error), then (in
-> 8c87df457cb58fe75b9b893007917cf8095660a0) to a bitfield.
+From: Eric Dumazet <eric.dumazet@gmail.com>
+Date: Thu, 05 Nov 2009 05:39:56 +0100
 
-What's the status with this patch ? The lack of it breaks my KVM stuff
-in powerpc...
-
-Cheers,
-Ben.
-
-> bitfields: needs a literal constant at parse time, and can't be put under
-> 	"if (__builtin_constant_p(x))" for example.
-> negative array: can handle anything, but if the compiler can't tell it's
-> 	a constant, silently has no effect.
-> link time: breaks link if the compiler can't determine the value, but the
-> 	linker output is not usually as informative as a compiler error.
+> [PATCH net-next-2.6] net: net/ipv4/devinet.c cleanups
 > 
-> If we use the negative-array-size method *and* the link time trick,
-> we get the ability to use BUILD_BUG_ON() under __builtin_constant_p()
-> branches, and maximal ability for the compiler to detect errors at
-> build time.
+> As pointed by Stephen Rothwell, commit c6d14c84 added a warning :
 > 
-> Signed-off-by: Rusty Russell <rusty@rustcorp.com.au>
+> net/ipv4/devinet.c: In function 'inet_select_addr':
+> net/ipv4/devinet.c:902: warning: label 'out' defined but not used
 > 
-> diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-> --- a/include/linux/kernel.h
-> +++ b/include/linux/kernel.h
-> @@ -683,12 +683,6 @@ struct sysinfo {
->  	char _f[20-2*sizeof(long)-sizeof(int)];	/* Padding: libc5 uses this.. */
->  };
->  
-> -/* Force a compilation error if condition is true */
-> -#define BUILD_BUG_ON(condition) ((void)BUILD_BUG_ON_ZERO(condition))
-> -
-> -/* Force a compilation error if condition is constant and true */
-> -#define MAYBE_BUILD_BUG_ON(cond) ((void)sizeof(char[1 - 2 * !!(cond)]))
-> -
->  /* Force a compilation error if condition is true, but also produce a
->     result (of value 0 and type size_t), so the expression can be used
->     e.g. in a structure initializer (or where-ever else comma expressions
-> @@ -696,6 +690,33 @@ struct sysinfo {
->  #define BUILD_BUG_ON_ZERO(e) (sizeof(struct { int:-!!(e); }))
->  #define BUILD_BUG_ON_NULL(e) ((void *)sizeof(struct { int:-!!(e); }))
->  
-> +/**
-> + * BUILD_BUG_ON - break compile if a condition is true.
-> + * @cond: the condition which the compiler should know is false.
-> + *
-> + * If you have some code which relies on certain constants being equal, or
-> + * other compile-time-evaluated condition, you should use BUILD_BUG_ON to
-> + * detect if someone changes it.
-> + *
-> + * The implementation uses gcc's reluctance to create a negative array, but
-> + * gcc (as of 4.4) only emits that error for obvious cases (eg. not arguments
-> + * to inline functions).  So as a fallback we use the optimizer; if it can't
-> + * prove the condition is false, it will cause a link error on the undefined
-> + * "__build_bug_on_failed".  This error message can be harder to track down
-> + * though, hence the two different methods.
-> + */
-> +#ifndef __OPTIMIZE__
-> +#define BUILD_BUG_ON(condition) ((void)sizeof(char[1 - 2*!!(condition)]))
-> +#else
-> +extern int __build_bug_on_failed;
-> +#define BUILD_BUG_ON(condition)					\
-> +	do {							\
-> +		((void)sizeof(char[1 - 2*!!(condition)]));	\
-> +		if (condition) __build_bug_on_failed = 1;	\
-> +	} while(0)
-> +#endif
-> +#define MAYBE_BUILD_BUG_ON(condition) BUILD_BUG_ON(condition)
-> +
->  /* Trap pasters of __FUNCTION__ at compile-time */
->  #define __FUNCTION__ (__func__)
->  
-> _______________________________________________
-> Linuxppc-dev mailing list
-> Linuxppc-dev@lists.ozlabs.org
-> https://lists.ozlabs.org/listinfo/linuxppc-dev
+> delete unused 'out' label and do some cleanups as well
+> 
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Eric Dumazet <eric.dumazet@gmail.com>
+
+Applied, thanks everyone.
