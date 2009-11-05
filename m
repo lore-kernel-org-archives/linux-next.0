@@ -1,49 +1,35 @@
-From: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
-Subject: Re: Shared i2c adapter locking
-Date: Thu, 5 Nov 2009 15:07:15 +0100
-Message-ID: <20091105150715.692b5200@hyperion.delvare>
-References: <20091026133757.7cf87e49.sfr@canb.auug.org.au>
-	<20091029154317.651904b9@hyperion.delvare>
-	<1256828976.2827.27.camel@achroite>
-	<20091105141122.56b6b4f8@hyperion.delvare>
-	<1257429444.2793.2.camel@achroite.uk.solarflarecom.com>
+From: Bjorn Helgaas <bjorn.helgaas@hp.com>
+Subject: Re: linux-next: Tree for November 5
+Date: Thu, 5 Nov 2009 10:31:04 -0600
+Message-ID: <200911050931.04838.bjorn.helgaas@hp.com>
+References: <20091105190426.c9cadada.sfr@canb.auug.org.au> <4AF2AB23.9000907@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1257429444.2793.2.camel-xQnnTUlwzDrdvaEqJLTMTA9jg9n5Vt1AMm0uRHvK7Nw@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ben Hutchings <bhutchings-s/n/eUQHGBpZroRs9YW3xA@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, David Miller <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mika Kuoppala <mika.kuoppala-xNZwKgViW5gAvxtiuMwx3w@public.gmane.org>, Linux I2C <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from g5t0006.atlanta.hp.com ([15.192.0.43]:43984 "EHLO
+	g5t0006.atlanta.hp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757262AbZKEQbA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Nov 2009 11:31:00 -0500
+In-Reply-To: <4AF2AB23.9000907@in.ibm.com>
+Content-Disposition: inline
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Sachin Sant <sachinp@in.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, jbarnes@virtuousgeek.org
 
-On Thu, 05 Nov 2009 13:57:24 +0000, Ben Hutchings wrote:
-> On Thu, 2009-11-05 at 14:11 +0100, Jean Delvare wrote:
-> [...]
-> > What about the following patch?
-> >=20
-> > From: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
-> > Subject: i2c: Add an interface to lock/unlock I2C bus segment
-> >=20
-> > Some drivers need to be able to prevent access to an I2C bus segmen=
-t
-> > for a specific period of time. Add an interface for them to do so
-> > without twiddling with i2c-core internals.
-> >=20
-> > Signed-off-by: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
-> > Cc: Ben Hutchings <bhutchings-s/n/eUQHGBpZroRs9YW3xA@public.gmane.org>
-> Acked-by: =EF=BB=BFBen Hutchings <bhutchings-s/n/eUQHGBpZroRs9YW3xA@public.gmane.org>
->=20
-> Presumably this is meant for net-next-2.6, and you'll implement
+On Thursday 05 November 2009 03:38:27 am Sachin Sant wrote:
+> Today's next tree fails to build on i386 with
+> 
+> arch/x86/pci/built-in.o: In function `align_resource':
+> arch/x86/pci/acpi.c:82: undefined reference to `__udivdi3'
+> 
+> The code in question was added by commit
+> 03db42adfeeabe856dbb6894dd3aaff55838330a.
 
-Actually I meant to push this to Linus immediately, through my i2c
-tree. This is essentially a no-op: the binary code will be the same as
-before the patch, so guaranteed to be safe, and this will solve
-conflicts in linux-next.
+I'll look into this.  I did build and test a 32-bit x86 kernel, but
+I built it on an x86_64 box using "linux32 make ...", which looks like
+it used gcc 4.3.2.
 
-> i2c_{lock,unlock}_adapter() using rt_mutex in your i2c tree?
-
-Correct.
-
---=20
-Jean Delvare
+Bjorn
