@@ -1,55 +1,99 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH] edac: fix i7core build
-Date: Wed, 4 Nov 2009 13:57:33 -0800
-Message-ID: <20091104135733.cb878718.randy.dunlap@oracle.com>
-References: <20091104170931.4aa51b77.sfr@canb.auug.org.au>
+From: David Gibson <dwg@au1.ibm.com>
+Subject: Re: [powerpc] Next tree Nov 2 : kernel BUG at mm/mmap.c:2135!
+Date: Thu, 5 Nov 2009 11:16:50 +1100
+Message-ID: <20091105001650.GD3613@yookeroo.seuss>
+References: <20091102173845.210d1c57.sfr@canb.auug.org.au>
+ <4AEEA279.4040106@in.ibm.com>
+ <4AF175D4.7030507@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet11.oracle.com ([148.87.113.123]:20181 "EHLO
-	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933042AbZKDV6D (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Nov 2009 16:58:03 -0500
-In-Reply-To: <20091104170931.4aa51b77.sfr@canb.auug.org.au>
+Received: from e23smtp04.au.ibm.com ([202.81.31.146]:59855 "EHLO
+	e23smtp04.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752873AbZKEAQt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Nov 2009 19:16:49 -0500
+Received: from d23relay03.au.ibm.com (d23relay03.au.ibm.com [202.81.31.245])
+	by e23smtp04.au.ibm.com (8.14.3/8.13.1) with ESMTP id nA50Dlrf014827
+	for <linux-next@vger.kernel.org>; Thu, 5 Nov 2009 11:13:47 +1100
+Received: from d23av04.au.ibm.com (d23av04.au.ibm.com [9.190.235.139])
+	by d23relay03.au.ibm.com (8.13.8/8.13.8/NCO v10.0) with ESMTP id nA50GrYK1200146
+	for <linux-next@vger.kernel.org>; Thu, 5 Nov 2009 11:16:53 +1100
+Received: from d23av04.au.ibm.com (loopback [127.0.0.1])
+	by d23av04.au.ibm.com (8.14.3/8.13.1/NCO v10.0 AVout) with ESMTP id nA50GqUf013219
+	for <linux-next@vger.kernel.org>; Thu, 5 Nov 2009 11:16:53 +1100
+Content-Disposition: inline
+In-Reply-To: <4AF175D4.7030507@in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Sachin Sant <sachinp@in.ibm.com>
+Cc: Linux/PPC Development <linuxppc-dev@ozlabs.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+On Wed, Nov 04, 2009 at 06:08:44PM +0530, Sachin Sant wrote:
+> Sachin Sant wrote:
+> >Today's next tree failed to boot on a POWER 6 box with :
+> >
+> >------------[ cut here ]------------
+> >kernel BUG at mm/mmap.c:2135!
+> >Oops: Exception in kernel mode, sig: 5 [#2]
+> >SMP NR_CPUS=1024 NUMA pSeries
+> Problem exists with today's next as well.
+> 
+> Likely cause for this problem seems to the following commit.
+> If i revert this patch the machine boots fine.
+> 
+> commit a0668cdc154e54bf0c85182e0535eea237d53146
+> powerpc/mm: Cleanup management of kmem_caches for pagetables
 
-Fix build warning (missing header file) and
-build error when CONFIG_SMP=n.
+Ugh.  Ok, it's not at all obvious how my patch could cause this bug.
+Can you send your .config?
 
-drivers/edac/i7core_edac.c:860: error: implicit declaration of function 'msleep'
-drivers/edac/i7core_edac.c:1700: error: 'struct cpuinfo_x86' has no member named 'phys_proc_id'
+> >Modules linked in: ibmvscsic scsi_transport_srp scsi_tgt scsi_mod
+> >NIP: c00000000014e30c LR: c00000000014e2f8 CTR: c00000000014db88
+> >REGS: c0000000db703620 TRAP: 0700   Tainted: G      D
+> >(2.6.32-rc5-autotest-next-20091102)
+> >MSR: 8000000000029032 <EE,ME,CE,IR,DR>  CR: 24022442  XER: 2000000c
+> >TASK = c0000000db7f6fe0[76] 'init' THREAD: c0000000db700000 CPU: 1
+> >GPR00: 0000000000000001 c0000000db7038a0 c000000000b19900
+> >0000000000000000
+> >GPR04: c0000000db406a40 000000000000000c c0000000fe10c370
+> >c000000000bb2800
+> >GPR08: 000000000000db40 0000000000000000 c0000000dfdc0e00
+> >000000000000000c
+> >GPR12: 0000000044022442 c000000000bb2800 00000000ffffffff
+> >ffffffffffffffff
+> >GPR16: 0000000008430000 00000000003c0000 c0000000db703ea0
+> >c0000000db569108
+> >GPR20: c0000000db568908 0000000000000000 c0000000db703d60
+> >0000000000000000
+> >GPR24: 0000000000000001 0000000000040100 c0000000fe503580
+> >c0000000db1ac180
+> >GPR28: 0000000000000000 c000000000f812d0 c000000000a84f00
+> >0000000000000000
+> >NIP [c00000000014e30c] .exit_mmap+0x190/0x1b8
+> >LR [c00000000014e2f8] .exit_mmap+0x17c/0x1b8
+> >Call Trace:
+> >[c0000000db7038a0] [c00000000014e2f8] .exit_mmap+0x17c/0x1b8 (unreliable)
+> >[c0000000db703950] [c0000000000916cc] .mmput+0x54/0x164
+> >[c0000000db7039e0] [c0000000000968d8] .exit_mm+0x17c/0x1a0
+> >[c0000000db703a90] [c000000000098cb8] .do_exit+0x248/0x784
+> >[c0000000db703b70] [c0000000000992a8] .do_group_exit+0xb4/0xe8
+> >[c0000000db703c00] [c0000000000aca2c] .get_signal_to_deliver+0x3ec/0x478
+> >[c0000000db703cf0] [c0000000000134ac] .do_signal+0x6c/0x31c
+> >[c0000000db703e30] [c000000000008b7c] do_work+0x24/0x28
+> >Instruction dump:
+> >7c8407b4 387d0018 4800ab11 60000000 939d0008 7fe3fb78 4bfffdbd 7c7f1b79
+> >4082fff4 e81b00e8 3120ffff 7c090110 <0b000000> 382100b0 e8010010 eb61ffd8
+> >---[ end trace ec052ac77a8e7cb4 ]---
+> >Fixing recursive fault but reboot is needed!
+> >
+> >mm/mmap.c:2135 corresponds to :
+> >
+> >BUG_ON(mm->nr_ptes > (FIRST_USER_ADDRESS+PMD_SIZE-1)>>PMD_SHIFT);
+> >
+> 
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Mauro Carvalho Chehab <mchehab@redhat.com>
----
- drivers/edac/i7core_edac.c |    3 +++
- 1 file changed, 3 insertions(+)
-
---- linux-next-20091104.orig/drivers/edac/i7core_edac.c
-+++ linux-next-20091104/drivers/edac/i7core_edac.c
-@@ -25,6 +25,7 @@
- #include <linux/pci.h>
- #include <linux/pci_ids.h>
- #include <linux/slab.h>
-+#include <linux/delay.h>
- #include <linux/edac.h>
- #include <linux/mmzone.h>
- #include <linux/edac_mce.h>
-@@ -1696,9 +1697,11 @@ static int i7core_mce_check_error(void *
- 	if (mce->bank != 8)
- 		return 0;
- 
-+#ifdef CONFIG_SMP
- 	/* Only handle if it is the right mc controller */
- 	if (cpu_data(mce->cpu).phys_proc_id != pvt->i7core_dev->socket)
- 		return 0;
-+#endif
- 
- 	smp_rmb();
- 	if ((pvt->mce_out + 1) % MCE_LOG_LEN == pvt->mce_in) {
+-- 
+David Gibson			| I'll have my music baroque, and my code
+david AT gibson.dropbear.id.au	| minimalist, thank you.  NOT _the_ _other_
+				| _way_ _around_!
+http://www.ozlabs.org/~dgibson
