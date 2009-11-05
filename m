@@ -1,71 +1,50 @@
-From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Subject: Re: [PATCH] BUILD_BUG_ON: make it handle more cases
-Date: Thu, 5 Nov 2009 11:20:20 +1100
-Message-ID: <20091105112020.33f02552.sfr@canb.auug.org.au>
-References: <4AC1E15502000078000516B5@vpn.id2.novell.com>
-	<200910201142.34006.rusty@rustcorp.com.au>
-	<1256002193.6546.2.camel@slab>
-	<200910201415.34361.rusty@rustcorp.com.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: net tree build warning
+Date: Thu, 5 Nov 2009 13:30:41 +1100
+Message-ID: <20091105133041.a2aa30f7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__5_Nov_2009_11_20_20_+1100_+dqOcjvsFQwyL1KA"
-Return-path: <kvm-ppc-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <200910201415.34361.rusty-8n+1lVoiYb80n/F98K4Iww@public.gmane.org>
-Sender: kvm-ppc-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rusty Russell <rusty-8n+1lVoiYb80n/F98K4Iww@public.gmane.org>
-Cc: Hollis Blanchard <hollisb-r/Jw6+rmf7HQT0dZR+AlfA@public.gmane.org>, Jan Beulich <JBeulich-Et1tbQHTxzrQT0dZR+AlfA@public.gmane.org>, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, kvm-ppc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Thu__5_Nov_2009_13_30_41_+1100_LCYfm.LQYhLZ=ufv"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:60925 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751499AbZKECan (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 4 Nov 2009 21:30:43 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>
 
---Signature=_Thu__5_Nov_2009_11_20_20_+1100_+dqOcjvsFQwyL1KA
+--Signature=_Thu__5_Nov_2009_13_30_41_+1100_LCYfm.LQYhLZ=ufv
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rusty,
+Hi Dave,
 
-On Tue, 20 Oct 2009 14:15:33 +1030 Rusty Russell <rusty-8n+1lVoiYb80n/F98K4Iww@public.gmane.org> wr=
-ote:
->
-> +#ifndef __OPTIMIZE__
-> +#define BUILD_BUG_ON(condition) ((void)sizeof(char[1 - 2*!!(condition)]))
-> +#else
-> +extern int __build_bug_on_failed;
-> +#define BUILD_BUG_ON(condition)					\
-> +	do {							\
-> +		((void)sizeof(char[1 - 2*!!(condition)]));	\
-> +		if (condition) __build_bug_on_failed =3D 1;	\
-> +	} while(0)
-> +#endif
-> +#define MAYBE_BUILD_BUG_ON(condition) BUILD_BUG_ON(condition)
-> +
+Today's linux-next build (x86_64 allmodconfig) produced this warning:
 
-I decided to try this in linux-next, but an x86_64 allmodconfig build
-gave this (gcc 4.4.0):
+net/ipv4/devinet.c: In function 'inet_select_addr':
+net/ipv4/devinet.c:902: warning: label 'out' defined but not used
 
-ERROR: "__build_bug_on_failed" [drivers/net/virtio_net.ko] undefined!
-ERROR: "__build_bug_on_failed" [drivers/block/virtio_blk.ko] undefined!
+Probably introduced by commit c6d14c84566d6b70ad9dc1618db0dec87cca9300
+("net: Introduce for_each_netdev_rcu() iterator").
 
-I assume that this is caused by the "MAYBE_BUILD_BUG_ON(fbit >=3D 32)" in
-virtio_has_feature() (in include/linux/virtio_config.h) which is called
-all over the place.  Unfortunately, virtio_has_feature() gets uninlined
-in those two files ...
-
-I have taken the patch back out again for today.
 --=20
 Cheers,
-Stephen Rothwell                    sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
+Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__5_Nov_2009_11_20_20_+1100_+dqOcjvsFQwyL1KA
+--Signature=_Thu__5_Nov_2009_13_30_41_+1100_LCYfm.LQYhLZ=ufv
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkryGkQACgkQjjKRsyhoI8yNnwCgqxtqC7HlRrQPSf2/86SIICQx
-NNUAn0WTwWtUTvocyofSmByl1KGyiCwd
-=1ISe
+iEYEARECAAYFAkryONEACgkQjjKRsyhoI8zAfwCgk0n+5CvpxH/5BlRGaZmNarIb
+5gIAniqdu11L4P3d0exa6ATIkobz9ZXN
+=9yq3
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__5_Nov_2009_11_20_20_+1100_+dqOcjvsFQwyL1KA--
+--Signature=_Thu__5_Nov_2009_13_30_41_+1100_LCYfm.LQYhLZ=ufv--
