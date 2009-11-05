@@ -1,87 +1,270 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: sparc tree build failure
-Date: Thu, 05 Nov 2009 00:00:12 -0800 (PST)
-Message-ID: <20091105.000012.61292273.davem@davemloft.net>
-References: <20091105185014.76dd0d31.sfr@canb.auug.org.au>
-	<20091104.235315.18303666.davem@davemloft.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Tree for November 5
+Date: Thu, 5 Nov 2009 19:04:26 +1100
+Message-ID: <20091105190426.c9cadada.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__5_Nov_2009_19_04_26_+1100_V2=NOVvB+N1DwT8E"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:52800
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751115AbZKEH7r (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Nov 2009 02:59:47 -0500
-In-Reply-To: <20091104.235315.18303666.davem@davemloft.net>
+Received: from chilli.pcug.org.au ([203.10.76.44]:47614 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755259AbZKEIE2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 5 Nov 2009 03:04:28 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, kristoffer@gaisler.com
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-From: David Miller <davem@davemloft.net>
-Date: Wed, 04 Nov 2009 23:53:15 -0800 (PST)
+--Signature=_Thu__5_Nov_2009_19_04_26_+1100_V2=NOVvB+N1DwT8E
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Thu, 5 Nov 2009 18:50:14 +1100
-> 
->> Caused by commit d4ac42a582e46d7f86f0acb4253a310423c72c4c ("sparc:
->> Support for GRLIB APBUART serial port").  I added the following patch for
->> today.
-> 
-> Thanks, the real fix is to simply remove that include, it isn't
-> actually needed and the CONFIG_OF dependency is sufficient.
+Hi all,
 
-Hmm, it took a tiny bit more than that :-)  Here's what I commited
-to fix this, thanks.
+Changes since 20091104:
 
-apbuart: Kill dependency on deprecated Sparc-only PROM interfaces.
+My fixes tree contains a build fix for powerpc/kvm.
 
-Use the proper modern OF ones instead.
+The pcmcia tree lost its build failure.
 
-Noticed by Stephen Rothwell.
+The drbd tree lost its conflicts.
 
-Signed-off-by: David S. Miller <davem@davemloft.net>
----
- drivers/serial/apbuart.c |   12 ++++++------
- 1 files changed, 6 insertions(+), 6 deletions(-)
+The catalin tree lots its conflicts.
 
-diff --git a/drivers/serial/apbuart.c b/drivers/serial/apbuart.c
-index c7883a3..5f9dec3 100644
---- a/drivers/serial/apbuart.c
-+++ b/drivers/serial/apbuart.c
-@@ -29,7 +29,6 @@
- #include <linux/io.h>
- #include <linux/serial_core.h>
- #include <asm/irq.h>
--#include <asm/oplib.h>
- 
- #include "apbuart.h"
- 
-@@ -596,10 +595,9 @@ static struct of_platform_driver grlib_apbuart_of_driver = {
- static void grlib_apbuart_configure(void)
- {
- 	static int enum_done;
--	struct device_node *np;
-+	struct device_node *np, *rp;
- 	struct uart_port *port = NULL;
--
--	int node;
-+	const u32 *prop;
- 	int freq_khz;
- 	int v = 0, d = 0;
- 	unsigned int addr;
-@@ -610,8 +608,10 @@ static void grlib_apbuart_configure(void)
- 		return;
- 
- 	/* Get bus frequency */
--	node = prom_getchild(prom_root_node);
--	freq_khz = prom_getint(node, "clock-frequency");
-+	rp = of_find_node_by_name(NULL, "/");
-+	rp = of_get_next_child(rp, NULL);
-+	prop = of_get_property(rp, "clock-frequency", NULL);
-+	freq_khz = *prop;
- 
- 	line = 0;
- 	for_each_matching_node(np, apbuart_match) {
--- 
-1.6.5.2
+The sparc tree gained a build failure for which I applied a patch.
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups (if any), it is also built with powerpc allnoconfig (32 and
+64 bit), ppc44x_defconfig and allyesconfig (minus
+CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
+and sparc64 defconfig. These builds also have
+CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
+CONFIG_DEBUG_INFO disabled when necessary.
+
+Below is a summary of the state of the merge.
+
+We are up to 146 trees (counting Linus' and 22 trees of patches pending for
+Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Jan Dittmer for adding the linux-next tree to his build tests
+at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
+Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master
+Merging fixes/fixes
+Merging arm-current/master
+Merging m68k-current/for-linus
+Merging powerpc-merge/merge
+Merging sparc-current/master
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sound-current/for-linus
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging kbuild-current/master
+Merging quilt/driver-core.current
+Merging quilt/tty.current
+Merging quilt/usb.current
+Merging quilt/staging.current
+Merging cpufreq-current/fixes
+Merging input-current/for-linus
+Merging md-current/for-linus
+Merging audit-current/for-linus
+Merging crypto-current/master
+Merging ide-curent/master
+Merging dwmw2/master
+Merging arm/devel
+Merging davinci/davinci-next
+Merging msm/for-next
+Merging omap/for-next
+Merging pxa/for-next
+Merging avr32/avr32-arch
+CONFLICT (content): Merge conflict in arch/avr32/mach-at32ap/include/mach/c=
+pu.h
+Merging blackfin/for-linus
+Merging cris/for-next
+Merging ia64/test
+Merging m68k/for-next
+CONFLICT (content): Merge conflict in drivers/rtc/Kconfig
+Merging m68knommu/for-next
+Merging microblaze/next
+Merging mips/mips-for-linux-next
+Merging parisc/next
+Merging powerpc/next
+Merging 4xx/next
+Merging galak/next
+Merging s390/features
+Merging sh/master
+Merging sparc/master
+Merging xtensa/master
+Merging ceph/for-next
+Merging cifs/master
+Merging configfs/linux-next
+Merging ecryptfs/next
+Merging ext3/for_next
+Merging ext4/next
+Merging fatfs/master
+Merging fuse/for-next
+Merging gfs2/master
+Merging jfs/next
+Merging nfs/linux-next
+Merging nfsd/nfsd-next
+Merging nilfs2/for-next
+Merging ocfs2/linux-next
+Merging squashfs/master
+Merging udf/for_next
+Merging v9fs/for-next
+Merging ubifs/linux-next
+Merging xfs/master
+Merging reiserfs-bkl/reiserfs/kill-bkl
+Merging vfs/for-next
+Merging pci/linux-next
+Merging hid/for-next
+Merging quilt/i2c
+Merging quilt/jdelvare-hwmon
+Merging quilt/kernel-doc
+Merging v4l-dvb/master
+Merging kbuild/master
+Merging kconfig/for-next
+Merging ide/master
+Merging libata/NEXT
+Merging infiniband/for-next
+Merging acpi/test
+Merging ieee1394/for-next
+Merging ubi/linux-next
+Merging kvm/linux-next
+CONFLICT (content): Merge conflict in arch/powerpc/kvm/timing.h
+Merging dlm/next
+Merging scsi/master
+Merging async_tx/next
+Merging net/master
+CONFLICT (delete/modify): drivers/net/sfc/sfe4001.c deleted in net/master a=
+nd modified in HEAD. Version HEAD of drivers/net/sfc/sfe4001.c left in tree.
+CONFLICT (content): Merge conflict in drivers/net/wireless/libertas/cmd.c
+CONFLICT (content): Merge conflict in drivers/staging/rtl8187se/Kconfig
+CONFLICT (content): Merge conflict in drivers/staging/rtl8192e/Kconfig
+$ git rm -f drivers/net/sfc/sfe4001.c
+Applying: net: merge fixup for drivers/net/sfc/falcon_boards.c
+Merging wireless/master
+CONFLICT (content): Merge conflict in drivers/staging/Kconfig
+CONFLICT (content): Merge conflict in drivers/staging/Makefile
+Merging mtd/master
+Merging crypto/master
+Merging sound/for-next
+CONFLICT (content): Merge conflict in arch/arm/mach-omap2/board-omap3evm.c
+Merging cpufreq/next
+Merging quilt/rr
+Merging mmc/next
+Merging tmio-mmc/linux-next
+Merging input/next
+Merging lsm/for-next
+Merging block/for-next
+Merging quilt/device-mapper
+Merging embedded/master
+Merging firmware/master
+Merging pcmcia/master
+CONFLICT (content): Merge conflict in drivers/pcmcia/Makefile
+Merging battery/master
+Merging leds/for-mm
+Merging backlight/for-mm
+Merging kgdb/kgdb-next
+Merging slab/for-next
+Merging uclinux/for-next
+Merging md/for-next
+Merging mfd/for-next
+Merging hdlc/hdlc-next
+Merging drm/drm-next
+Merging voltage/for-next
+CONFLICT (content): Merge conflict in drivers/mfd/Kconfig
+CONFLICT (content): Merge conflict in drivers/mfd/Makefile
+Merging security-testing/next
+CONFLICT (content): Merge conflict in Documentation/dontdiff
+Merging lblnet/master
+Merging agp/agp-next
+Merging uwb/for-upstream
+Merging watchdog/master
+Merging bdev/master
+Merging dwmw2-iommu/master
+Merging cputime/cputime
+Merging osd/linux-next
+Merging jc_docs/docs-next
+Merging nommu/master
+Merging trivial/for-next
+Merging audit/for-next
+Merging quilt/aoe
+Merging suspend/linux-next
+Merging bluetooth/master
+Merging fsnotify/for-next
+Merging irda/for-next
+Merging hwlat/for-linus
+CONFLICT (content): Merge conflict in drivers/misc/Makefile
+Merging drbd/for-jens
+Merging catalin/for-next
+Merging alacrity/linux-next
+CONFLICT (content): Merge conflict in drivers/net/Kconfig
+CONFLICT (content): Merge conflict in lib/Kconfig
+Merging i7core_edac/linux_next
+Merging devicetree/next-devicetree
+Merging limits/writable_limits
+Merging tip/auto-latest
+CONFLICT (content): Merge conflict in arch/x86/kernel/kgdb.c
+Merging oprofile/for-next
+Merging percpu/for-next
+CONFLICT (content): Merge conflict in arch/x86/kvm/svm.c
+CONFLICT (content): Merge conflict in kernel/softlockup.c
+CONFLICT (content): Merge conflict in mm/percpu.c
+Applying: percpu: merge fixup for variable renaming
+Merging sfi/sfi-test
+Merging asm-generic/next
+Merging hwpoison/hwpoison
+Merging quilt/driver-core
+Merging quilt/tty
+Merging quilt/usb
+Merging quilt/staging
+CONFLICT (content): Merge conflict in drivers/staging/Kconfig
+CONFLICT (content): Merge conflict in drivers/staging/Makefile
+Merging scsi-post-merge/master
+Applying: sparc: the GRLIB APBUART serial port will only build on sparc
+
+--Signature=_Thu__5_Nov_2009_19_04_26_+1100_V2=NOVvB+N1DwT8E
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkryhwoACgkQjjKRsyhoI8zhLwCgm3LNzrRWi6I50en+AnLmLEwY
+Lx8AoI8XB65IrRFq3RW8lVjC2x16HIRs
+=NiS3
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__5_Nov_2009_19_04_26_+1100_V2=NOVvB+N1DwT8E--
