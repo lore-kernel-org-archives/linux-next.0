@@ -1,71 +1,64 @@
-From: Paul Mundt <lethal@linux-sh.org>
-Subject: [PATCH -next] staging: iio: Fix up the module build.
-Date: Thu, 5 Nov 2009 15:09:00 +0900
-Message-ID: <20091105060900.GD26910@linux-sh.org>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: [PATCH] BUILD_BUG_ON: make it handle more cases
+Date: Thu, 5 Nov 2009 16:58:36 +1030
+Message-ID: <200911051658.36265.rusty@rustcorp.com.au>
+References: <4AC1E15502000078000516B5@vpn.id2.novell.com> <200910201415.34361.rusty@rustcorp.com.au> <20091105112020.33f02552.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 124x34x33x190.ap124.ftth.ucom.ne.jp ([124.34.33.190]:60224 "EHLO
-	master.linux-sh.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751944AbZKEGJR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Nov 2009 01:09:17 -0500
-Content-Disposition: inline
+Received: from ozlabs.org ([203.10.76.45]:35545 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750714AbZKEG2d (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 5 Nov 2009 01:28:33 -0500
+In-Reply-To: <20091105112020.33f02552.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg Kroah-Hartman <gregkh@suse.de>
-Cc: Jonathan Cameron <jic23@cam.ac.uk>, devel@driverdev.osuosl.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Hollis Blanchard <hollisb@us.ibm.com>, Jan Beulich <JBeulich@novell.com>, akpm@linux-foundation.org, linuxppc-dev@lists.ozlabs.org, kvm-ppc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-Both the max1363 and lis3l02dq modules rely on IIO trigger support in
-their ring buffer implementations, which is presently a separate config
-option. In the case of IIO_RING_BUFFER=y and IIO_TRIGGER=n, we end up
-with the following:
+On Thu, 5 Nov 2009 10:50:20 am Stephen Rothwell wrote:
+> Hi Rusty,
+> 
+> On Tue, 20 Oct 2009 14:15:33 +1030 Rusty Russell <rusty@rustcorp.com.au> wrote:
+> >
+> > +#ifndef __OPTIMIZE__
+> > +#define BUILD_BUG_ON(condition) ((void)sizeof(char[1 - 2*!!(condition)]))
+> > +#else
+> > +extern int __build_bug_on_failed;
+> > +#define BUILD_BUG_ON(condition)					\
+> > +	do {							\
+> > +		((void)sizeof(char[1 - 2*!!(condition)]));	\
+> > +		if (condition) __build_bug_on_failed = 1;	\
+> > +	} while(0)
+> > +#endif
+> > +#define MAYBE_BUILD_BUG_ON(condition) BUILD_BUG_ON(condition)
+> > +
+> 
+> I decided to try this in linux-next, but an x86_64 allmodconfig build
+> gave this (gcc 4.4.0):
+> 
+> ERROR: "__build_bug_on_failed" [drivers/net/virtio_net.ko] undefined!
+> ERROR: "__build_bug_on_failed" [drivers/block/virtio_blk.ko] undefined!
+> 
+> I assume that this is caused by the "MAYBE_BUILD_BUG_ON(fbit >= 32)" in
+> virtio_has_feature() (in include/linux/virtio_config.h) which is called
+> all over the place.  Unfortunately, virtio_has_feature() gets uninlined
+> in those two files ...
 
-ERROR: "iio_trigger_attach_poll_func" [drivers/staging/iio/adc/max1363.ko] undefined!
-ERROR: "iio_trigger_dettach_poll_func" [drivers/staging/iio/adc/max1363.ko] undefined!
-ERROR: "iio_trigger_unregister" [drivers/staging/iio/accel/lis3l02dq.ko] undefined!
-ERROR: "iio_trigger_notify_done" [drivers/staging/iio/accel/lis3l02dq.ko] undefined!
-ERROR: "iio_trigger_read_name" [drivers/staging/iio/accel/lis3l02dq.ko] undefined!
-ERROR: "iio_trigger_poll" [drivers/staging/iio/accel/lis3l02dq.ko] undefined!
-ERROR: "iio_trigger_attach_poll_func" [drivers/staging/iio/accel/lis3l02dq.ko] undefined!
-ERROR: "iio_trigger_register" [drivers/staging/iio/accel/lis3l02dq.ko] undefined!
-ERROR: "iio_free_trigger" [drivers/staging/iio/accel/lis3l02dq.ko] undefined!
-ERROR: "iio_trigger_dettach_poll_func" [drivers/staging/iio/accel/lis3l02dq.ko] undefined!
-ERROR: "iio_allocate_trigger" [drivers/staging/iio/accel/lis3l02dq.ko] undefined!
-make[1]: *** [__modpost] Error 1
-make: *** [modules] Error 2
+Huh?  virtio_has_feature does:
 
-This adds an IIO_TRIGGER select for these two drivers conditional on
-IIO ring buffer support. Caught with an SH randconfig in -next.
+	if (__builtin_constant_p(fbit))
+		BUILD_BUG_ON(fbit >= 32);
+	else
+		BUG_ON(fbit >= 32);
 
-Signed-off-by: Paul Mundt <lethal@linux-sh.org>
+So, if it's not a constant, gcc should throw away that first branch.  If it
+is, it should optimize it away (and no, these are not real bugs AFAICT).
 
----
+I did a 4.3.3 allmodconfig with this patch on 64-bit a few days back and all
+was fine.  Will try 4.4.0 now.
 
- drivers/staging/iio/accel/Kconfig |    1 +
- drivers/staging/iio/adc/Kconfig   |    1 +
- 2 files changed, 2 insertions(+)
-
-diff --git a/drivers/staging/iio/accel/Kconfig b/drivers/staging/iio/accel/Kconfig
-index fef3da4..c245644 100644
---- a/drivers/staging/iio/accel/Kconfig
-+++ b/drivers/staging/iio/accel/Kconfig
-@@ -13,6 +13,7 @@ config KXSD9
- config LIS3L02DQ
- 	tristate "ST Microelectronics LIS3L02DQ Accelerometer Driver"
- 	depends on SPI
-+	select IIO_TRIGGER if IIO_RING_BUFFER
- 	help
- 	  Say yes here to build SPI support for the ST microelectronics
- 	  accelerometer. The driver supplies direct access via sysfs files
-diff --git a/drivers/staging/iio/adc/Kconfig b/drivers/staging/iio/adc/Kconfig
-index b8c2858..a2f1626 100644
---- a/drivers/staging/iio/adc/Kconfig
-+++ b/drivers/staging/iio/adc/Kconfig
-@@ -6,6 +6,7 @@ comment "Analog to digital convertors"
- config MAX1363
- 	tristate "MAXIM max1363 ADC driver"
- 	depends on I2C
-+	select IIO_TRIGGER if IIO_RING_BUFFER
- 	help
- 	  Say yes here to build support for many MAXIM i2c analog to digital
- 	  convertors (ADC). (max1361, max1362, max1363, max1364, max1136,
+Thanks,
+Rusty.
