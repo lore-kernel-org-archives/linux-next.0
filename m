@@ -1,84 +1,77 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] BUILD_BUG_ON: make it handle more cases
-Date: Thu, 5 Nov 2009 17:38:42 +1100
-Message-ID: <20091105173842.c94ba501.sfr@canb.auug.org.au>
-References: <4AC1E15502000078000516B5@vpn.id2.novell.com>
-	<200910201415.34361.rusty@rustcorp.com.au>
-	<20091105112020.33f02552.sfr@canb.auug.org.au>
-	<200911051658.36265.rusty@rustcorp.com.au>
+Subject: linux-next: sparc tree build failure
+Date: Thu, 5 Nov 2009 18:50:14 +1100
+Message-ID: <20091105185014.76dd0d31.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__5_Nov_2009_17_38_42_+1100_SZeMKZxOLvyDot_C"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:39188 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:44192 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750965AbZKEGip (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 5 Nov 2009 01:38:45 -0500
-In-Reply-To: <200911051658.36265.rusty@rustcorp.com.au>
+	id S1750787AbZKEHuM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 5 Nov 2009 02:50:12 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: Hollis Blanchard <hollisb@us.ibm.com>, Jan Beulich <JBeulich@novell.com>, akpm@linux-foundation.org, linuxppc-dev@lists.ozlabs.org, kvm-ppc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kristoffer Glembo <kristoffer@gaisler.com>
 
---Signature=_Thu__5_Nov_2009_17_38_42_+1100_SZeMKZxOLvyDot_C
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Dave,
 
-Hi Rusty,
+Today's linux-next build (powerpc allyesconfig) failed like this:
 
-On Thu, 5 Nov 2009 16:58:36 +1030 Rusty Russell <rusty@rustcorp.com.au> wro=
-te:
->
-> Huh?  virtio_has_feature does:
->=20
-> 	if (__builtin_constant_p(fbit))
-> 		BUILD_BUG_ON(fbit >=3D 32);
-> 	else
-> 		BUG_ON(fbit >=3D 32);
+drivers/serial/apbuart.c:32:23: error: asm/oplib.h: No such file or directory
+drivers/serial/apbuart.c:586: error: variable 'grlib_apbuart_of_driver' has initializer but incomplete type
+drivers/serial/apbuart.c:587: error: unknown field 'match_table' specified in initializer
+drivers/serial/apbuart.c:587: warning: excess elements in struct initializer
+drivers/serial/apbuart.c:587: warning: (near initialization for 'grlib_apbuart_of_driver')
+drivers/serial/apbuart.c:588: error: unknown field 'probe' specified in initializer
+drivers/serial/apbuart.c:588: warning: excess elements in struct initializer
+drivers/serial/apbuart.c:588: warning: (near initialization for 'grlib_apbuart_of_driver')
+drivers/serial/apbuart.c:589: error: unknown field 'driver' specified in initializer
+drivers/serial/apbuart.c:589: error: extra brace group at end of initializer
+drivers/serial/apbuart.c:589: error: (near initialization for 'grlib_apbuart_of_driver')
+drivers/serial/apbuart.c:592: warning: excess elements in struct initializer
+drivers/serial/apbuart.c:592: warning: (near initialization for 'grlib_apbuart_of_driver')
+drivers/serial/apbuart.c: In function 'grlib_apbuart_configure':
+drivers/serial/apbuart.c:613: error: implicit declaration of function 'prom_getchild'
+drivers/serial/apbuart.c:613: error: 'prom_root_node' undeclared (first use in this function)
+drivers/serial/apbuart.c:613: error: (Each undeclared identifier is reported only once
+drivers/serial/apbuart.c:613: error: for each function it appears in.)
+drivers/serial/apbuart.c:614: error: implicit declaration of function 'prom_getint'
+drivers/serial/apbuart.c: In function 'grlib_apbuart_init':
+drivers/serial/apbuart.c:679: error: implicit declaration of function 'of_register_driver'
+drivers/serial/apbuart.c:679: error: 'of_platform_bus_type' undeclared (first use in this function)
 
-In Linus' tree (and linux-next) it looks like this:
+Caused by commit d4ac42a582e46d7f86f0acb4253a310423c72c4c ("sparc:
+Support for GRLIB APBUART serial port").  I added the following patch for
+today.
 
-static inline bool virtio_has_feature(const struct virtio_device *vdev,
-				      unsigned int fbit)
-{
-	/* Did you forget to fix assumptions on max features? */
-	MAYBE_BUILD_BUG_ON(fbit >=3D 32);
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 5 Nov 2009 18:40:55 +1100
+Subject: [PATCH] sparc: the GRLIB APBUART serial port will only build on sparc
 
-	if (fbit < VIRTIO_TRANSPORT_F_START)
-		virtio_check_driver_offered_feature(vdev, fbit);
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/serial/Kconfig |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-	return test_bit(fbit, vdev->features);
-}
+diff --git a/drivers/serial/Kconfig b/drivers/serial/Kconfig
+index 50943ff..7ec806d 100644
+--- a/drivers/serial/Kconfig
++++ b/drivers/serial/Kconfig
+@@ -1480,6 +1480,7 @@ config SERIAL_BCM63XX_CONSOLE
+ config SERIAL_GRLIB_GAISLER_APBUART
+ 	tristate "GRLIB APBUART serial support"
+ 	depends on OF
++	depends on SPARC
+ 	---help---
+ 	Add support for the GRLIB APBUART serial port.
+ 
+-- 
+1.6.5.2
 
-> So, if it's not a constant, gcc should throw away that first branch.  If =
-it
-> is, it should optimize it away (and no, these are not real bugs AFAICT).
 
-Your version above may well fix the problem.  Alternatively marking it
-__always_inline way work as well.
-
-> I did a 4.3.3 allmodconfig with this patch on 64-bit a few days back and =
-all
-> was fine.  Will try 4.4.0 now.
-
-4.4 is more problematic.
-
---=20
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__5_Nov_2009_17_38_42_+1100_SZeMKZxOLvyDot_C
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkrycvIACgkQjjKRsyhoI8zEUQCguFj9rHXs225EZcpiT0uBdE7x
-MjgAniNI+UanGyo+xLtXFeTHIez3L0hb
-=AB2V
------END PGP SIGNATURE-----
-
---Signature=_Thu__5_Nov_2009_17_38_42_+1100_SZeMKZxOLvyDot_C--
