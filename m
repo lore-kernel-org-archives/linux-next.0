@@ -1,54 +1,42 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Subject: Re: linux-next: Tree for November 5
-Date: Fri, 6 Nov 2009 14:00:42 -0800
-Message-ID: <20091106140042.1e29d82b@jbarnes-piketon>
-References: <20091105190426.c9cadada.sfr@canb.auug.org.au>
-	<4AF2AB23.9000907@in.ibm.com>
-	<200911050931.04838.bjorn.helgaas@hp.com>
-	<200911051017.12135.bjorn.helgaas@hp.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] kmemleak: fix kconfig for crc32 build error
+Date: Fri, 06 Nov 2009 15:33:45 -0800
+Message-ID: <4AF4B259.8030506@oracle.com>
+References: <20091106181330.80bca052.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1759843AbZKFWAf@vger.kernel.org>
-In-Reply-To: <200911051017.12135.bjorn.helgaas@hp.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Helgaas <bjorn.helgaas@hp.com>
-Cc: Sachin Sant <sachinp@in.ibm.com>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet12.oracle.com ([148.87.113.124]:65305 "EHLO
+	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932704AbZKFWdN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Nov 2009 17:33:13 -0500
+In-Reply-To: <20091106181330.80bca052.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>
 
-On Thu, 5 Nov 2009 11:17:11 -0600
-Bjorn Helgaas <bjorn.helgaas@hp.com> wrote:
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-> On Thursday 05 November 2009 09:31:04 am Bjorn Helgaas wrote:
-> > On Thursday 05 November 2009 03:38:27 am Sachin Sant wrote:
-> > > Today's next tree fails to build on i386 with
-> > > 
-> > > arch/x86/pci/built-in.o: In function `align_resource':
-> > > arch/x86/pci/acpi.c:82: undefined reference to `__udivdi3'
-> > > 
-> > > The code in question was added by commit
-> > > 03db42adfeeabe856dbb6894dd3aaff55838330a.
-> > 
-> > I'll look into this.  I did build and test a 32-bit x86 kernel, but
-> > I built it on an x86_64 box using "linux32 make ...", which looks
-> > like it used gcc 4.3.2.
-> 
-> Can you try the patch below, please?
-> 
-> 
-> commit 00f16f0a2f4826eadec0565e4b454ab8bc7824cc
-> Author: Bjorn Helgaas <bjorn.helgaas@hp.com>
-> Date:   Thu Nov 5 10:03:57 2009 -0700
-> 
->     x86/PCI: remove 64-bit division
->     
->     The roundup() caused a build error (undefined reference to
-> `__udivdi3'). We're aligning to power-of-two boundaries, so it's
-> simpler to just use ALIGN() anyway, which avoids the division.
->     
->     Signed-off-by: Bjorn Helgaas <bjorn.helgaas@hp.com>
+kmemleak uses crc32 functions so it needs to select CRC32.
+Fixes build error:
 
-Applied with Randy's ack.  Thanks.
+kmemleak.c:(.text+0x7ce62): undefined reference to `crc32_le'
 
--- 
-Jesse Barnes, Intel Open Source Technology Center
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+---
+ lib/Kconfig.debug |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- linux-next-20091106.orig/lib/Kconfig.debug
++++ linux-next-20091106/lib/Kconfig.debug
+@@ -372,6 +372,7 @@ config DEBUG_KMEMLEAK
+ 	select DEBUG_FS if SYSFS
+ 	select STACKTRACE if STACKTRACE_SUPPORT
+ 	select KALLSYMS
++	select CRC32
+ 	help
+ 	  Say Y here if you want to enable the memory leak
+ 	  detector. The memory allocation/freeing is traced in a way
