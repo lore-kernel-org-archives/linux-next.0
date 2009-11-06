@@ -1,71 +1,54 @@
-From: "Gregory Haskins" <ghaskins@novell.com>
-Subject: Re: [BUILD-FAILURE] next-20091015 - vbus_enet driver breaks
-	 with allmodconfig
-Date: Fri, 06 Nov 2009 12:02:41 -0700
-Message-ID: <4AF42C810200005A00058361@sinclair.provo.novell.com>
-References: <20091015152538.74a1cb15.sfr@canb.auug.org.au>
- <20091015104852.GA6740@linux.vnet.ibm.com>
- <4AD6CD940200005A00056857@sinclair.provo.novell.com>
- <4AD75E60.4020306@gmail.com>
- <20091015114210.65e1be72.randy.dunlap@oracle.com>
- <4AD7A141.3060102@gmail.com>
- <20091106093856.e9eac13e.randy.dunlap@oracle.com>
+From: Jesse Barnes <jbarnes@virtuousgeek.org>
+Subject: Re: linux-next: Tree for November 5
+Date: Fri, 6 Nov 2009 14:00:42 -0800
+Message-ID: <20091106140042.1e29d82b@jbarnes-piketon>
+References: <20091105190426.c9cadada.sfr@canb.auug.org.au>
+	<4AF2AB23.9000907@in.ibm.com>
+	<200911050931.04838.bjorn.helgaas@hp.com>
+	<200911051017.12135.bjorn.helgaas@hp.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-In-Reply-To: <20091106093856.e9eac13e.randy.dunlap@oracle.com>
-Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Gregory Haskins <gregory.haskins@gmail.com>, Randy Dunlap <randy.dunlap@oracle.com>
-Cc: sfr@canb.auug.org.au, greg@kroah.com, Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, netdev@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1759843AbZKFWAf@vger.kernel.org>
+In-Reply-To: <200911051017.12135.bjorn.helgaas@hp.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bjorn Helgaas <bjorn.helgaas@hp.com>
+Cc: Sachin Sant <sachinp@in.ibm.com>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
->>> On 11/6/2009 at 12:38 PM, in message
-<20091106093856.e9eac13e.randy.dunlap@oracle.com>, Randy Dunlap
-<randy.dunlap@oracle.com> wrote: 
-> On Thu, 15 Oct 2009 18:25:05 -0400 Gregory Haskins wrote:
-> 
->> Randy Dunlap wrote:
->> > On Thu, 15 Oct 2009 13:39:44 -0400 Gregory Haskins wrote:
->> > 
->> >>
->> >> I am having difficulty reproducing the problem.  When I look at the
->> >> Kconfig, I see that VBUS_ENET has a "select VBUS_PROXY" as I would
->> >> expect.  Additionally, if I run allmodconfig I can confirm that I get
->> >> VBUS_ENET=m, VBUS_PROXY=y:
->> > 
->> > Greg,
->> > 
->> > Did you try to reproduce it with the ppc64 config file?
->> > allmodconfig on what arch?
->> > 
->> > I think the problem is that arch/x86/Kconfig says:
->> > 
->> > source "drivers/vbus/Kconfig"
->> > 
->> > and that should actually be in drivers/Kconfig, so that it applies
->> > to ppc64 et al, not just x86.
->> 
->> Ah, indeed.  I only have/tried x86, and that is the issue.  I will have
->> to fix this (and the create_irq() dependency you mention in the next mail).
-> 
-> Hi Greg,
-> 
-> I'm still getting
-> pci-bridge.c:(.text+0x31b633): undefined reference to `create_irq'
-> 
-> on today's linux-next-20091106.
-> CONFIG_SMP=n
-> CONFIG_X86_UP_APIC=n
-> 
-> full config attached.
-> 
-> 
-> ---
-> ~Randy
+On Thu, 5 Nov 2009 11:17:11 -0600
+Bjorn Helgaas <bjorn.helgaas@hp.com> wrote:
 
-Indeed.  Looks like I need to be smarter about how the create_irq facility is used.  I will fix this. 
+> On Thursday 05 November 2009 09:31:04 am Bjorn Helgaas wrote:
+> > On Thursday 05 November 2009 03:38:27 am Sachin Sant wrote:
+> > > Today's next tree fails to build on i386 with
+> > > 
+> > > arch/x86/pci/built-in.o: In function `align_resource':
+> > > arch/x86/pci/acpi.c:82: undefined reference to `__udivdi3'
+> > > 
+> > > The code in question was added by commit
+> > > 03db42adfeeabe856dbb6894dd3aaff55838330a.
+> > 
+> > I'll look into this.  I did build and test a 32-bit x86 kernel, but
+> > I built it on an x86_64 box using "linux32 make ...", which looks
+> > like it used gcc 4.3.2.
+> 
+> Can you try the patch below, please?
+> 
+> 
+> commit 00f16f0a2f4826eadec0565e4b454ab8bc7824cc
+> Author: Bjorn Helgaas <bjorn.helgaas@hp.com>
+> Date:   Thu Nov 5 10:03:57 2009 -0700
+> 
+>     x86/PCI: remove 64-bit division
+>     
+>     The roundup() caused a build error (undefined reference to
+> `__udivdi3'). We're aligning to power-of-two boundaries, so it's
+> simpler to just use ALIGN() anyway, which avoids the division.
+>     
+>     Signed-off-by: Bjorn Helgaas <bjorn.helgaas@hp.com>
 
-Thanks Randy,
--Greg
+Applied with Randy's ack.  Thanks.
+
+-- 
+Jesse Barnes, Intel Open Source Technology Center
