@@ -1,36 +1,80 @@
-From: Rusty Russell <rusty-8n+1lVoiYb80n/F98K4Iww@public.gmane.org>
-Subject: Re: [PATCH] BUILD_BUG_ON: make it handle more cases
-Date: Fri, 6 Nov 2009 17:00:26 +1030
-Message-ID: <200911061700.27493.rusty@rustcorp.com.au>
-References: <4AC1E15502000078000516B5@vpn.id2.novell.com> <200911051658.36265.rusty@rustcorp.com.au> <20091105173842.c94ba501.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: sparc tree build failure
+Date: Fri, 6 Nov 2009 18:02:48 +1100
+Message-ID: <20091106180248.7a6aa9ba.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
-Return-path: <kvm-ppc-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20091105173842.c94ba501.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Sender: kvm-ppc-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Cc: Hollis Blanchard <hollisb-r/Jw6+rmf7HQT0dZR+AlfA@public.gmane.org>, Jan Beulich <JBeulich-Et1tbQHTxzrQT0dZR+AlfA@public.gmane.org>, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, kvm-ppc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__6_Nov_2009_18_02_48_+1100_7wPXTWHn9pxO5AaU"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:41022 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751530AbZKFHCu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 6 Nov 2009 02:02:50 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kristoffer Glembo <kristoffer@gaisler.com>
 
-On Thu, 5 Nov 2009 05:08:42 pm Stephen Rothwell wrote:
-> Hi Rusty,
-> 
-> On Thu, 5 Nov 2009 16:58:36 +1030 Rusty Russell <rusty-8n+1lVoiYb80n/F98K4Iww@public.gmane.org> wrote:
-> >
-> > Huh?  virtio_has_feature does:
-> > 
-> > 	if (__builtin_constant_p(fbit))
-> > 		BUILD_BUG_ON(fbit >= 32);
-> > 	else
-> > 		BUG_ON(fbit >= 32);
-> 
-> In Linus' tree (and linux-next) it looks like this:
+--Signature=_Fri__6_Nov_2009_18_02_48_+1100_7wPXTWHn9pxO5AaU
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ah.  My patch series fixes that as part of removing MAYBE_BUILD_BUG_ON.
+Hi Dave,
 
-I've put both in for linux-next.
+Today's linux-next build (powerpc allyesconfig) failed like this:
 
+drivers/serial/apbuart.c:585: error: variable 'grlib_apbuart_of_driver' has=
+ initializer but incomplete type
+drivers/serial/apbuart.c:586: error: unknown field 'match_table' specified =
+in initializer
+drivers/serial/apbuart.c:586: warning: excess elements in struct initializer
+drivers/serial/apbuart.c:586: warning: (near initialization for 'grlib_apbu=
+art_of_driver')
+drivers/serial/apbuart.c:587: error: unknown field 'probe' specified in ini=
+tializer
+drivers/serial/apbuart.c:587: warning: excess elements in struct initializer
+drivers/serial/apbuart.c:587: warning: (near initialization for 'grlib_apbu=
+art_of_driver')
+drivers/serial/apbuart.c:588: error: unknown field 'driver' specified in in=
+itializer
+drivers/serial/apbuart.c:588: error: extra brace group at end of initializer
+drivers/serial/apbuart.c:588: error: (near initialization for 'grlib_apbuar=
+t_of_driver')
+drivers/serial/apbuart.c:591: warning: excess elements in struct initializer
+drivers/serial/apbuart.c:591: warning: (near initialization for 'grlib_apbu=
+art_of_driver')
+drivers/serial/apbuart.c: In function 'grlib_apbuart_init':
+drivers/serial/apbuart.c:679: error: implicit declaration of function 'of_r=
+egister_driver'
+drivers/serial/apbuart.c:679: error: 'of_platform_bus_type' undeclared (fir=
+st use in this function)
+
+Caused by commit d4ac42a582e46d7f86f0acb4253a310423c72c4c ("sparc:
+Support for GRLIB APBUART serial port") (yes again :-)).  I have applied
+my patch to make it only build on SPARC again ...
+
+(Including linux/of_platform.h - where struct of_platform_driver,
+of_register_driver() and of_platform_bus_type are declared - would be a
+good start ...  and the code should probably be using
+of_register_platform_driver() instead of of_register_driver() in any
+case.)
+
+--=20
 Cheers,
-Rusty.
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__6_Nov_2009_18_02_48_+1100_7wPXTWHn9pxO5AaU
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkrzyhgACgkQjjKRsyhoI8y0fACgs/sjYC5V85Iks18ppdz+Fuhc
+4m0Ani4OqgrlJ8aFqXZaMnj/uNyweuX7
+=5YtY
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__6_Nov_2009_18_02_48_+1100_7wPXTWHn9pxO5AaU--
