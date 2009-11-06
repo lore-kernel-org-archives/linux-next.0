@@ -1,42 +1,73 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] kmemleak: fix kconfig for crc32 build error
-Date: Fri, 06 Nov 2009 15:33:45 -0800
-Message-ID: <4AF4B259.8030506@oracle.com>
+Subject: [PATCH -next] staging/wireless: don't build when NET etc. are not
+ enabled
+Date: Fri, 06 Nov 2009 15:35:15 -0800
+Message-ID: <4AF4B2B3.8020109@oracle.com>
 References: <20091106181330.80bca052.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet12.oracle.com ([148.87.113.124]:65305 "EHLO
-	rgminet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932704AbZKFWdN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Nov 2009 17:33:13 -0500
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1760523AbZKFWez@vger.kernel.org>
 In-Reply-To: <20091106181330.80bca052.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@suse.de>
+List-Id: linux-next.vger.kernel.org
 
 From: Randy Dunlap <randy.dunlap@oracle.com>
 
-kmemleak uses crc32 functions so it needs to select CRC32.
-Fixes build error:
+These wireless drivers in staging could be built when
+CONFIG_NET=n, CONFIG_NETDEVICES=n, causing this build error:
 
-kmemleak.c:(.text+0x7ce62): undefined reference to `crc32_le'
+net/wireless/wext-priv.c: In function 'ioctl_private_call':
+net/wireless/wext-priv.c:206: error: implicit declaration of function 'call_commit_handler'
+
+due to faulty selects.
 
 Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>
 ---
- lib/Kconfig.debug |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/staging/arlan/Kconfig   |    2 +-
+ drivers/staging/netwave/Kconfig |    2 +-
+ drivers/staging/wavelan/Kconfig |    4 ++--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
---- linux-next-20091106.orig/lib/Kconfig.debug
-+++ linux-next-20091106/lib/Kconfig.debug
-@@ -372,6 +372,7 @@ config DEBUG_KMEMLEAK
- 	select DEBUG_FS if SYSFS
- 	select STACKTRACE if STACKTRACE_SUPPORT
- 	select KALLSYMS
-+	select CRC32
+--- linux-next-20091106.orig/drivers/staging/arlan/Kconfig
++++ linux-next-20091106/drivers/staging/arlan/Kconfig
+@@ -1,6 +1,6 @@
+ config ARLAN
+ 	tristate "Aironet Arlan 655 & IC2200 DS support"
+-	depends on ISA && !64BIT
++	depends on ISA && !64BIT && WLAN
+ 	select WIRELESS_EXT
+ 	---help---
+ 	  Aironet makes Arlan, a class of wireless LAN adapters. These use the
+--- linux-next-20091106.orig/drivers/staging/netwave/Kconfig
++++ linux-next-20091106/drivers/staging/netwave/Kconfig
+@@ -1,6 +1,6 @@
+ config PCMCIA_NETWAVE
+ 	tristate "Xircom Netwave AirSurfer Pcmcia wireless support"
+-	depends on PCMCIA
++	depends on PCMCIA && WLAN
+ 	select WIRELESS_EXT
+ 	select WEXT_PRIV
  	help
- 	  Say Y here if you want to enable the memory leak
- 	  detector. The memory allocation/freeing is traced in a way
+--- linux-next-20091106.orig/drivers/staging/wavelan/Kconfig
++++ linux-next-20091106/drivers/staging/wavelan/Kconfig
+@@ -1,6 +1,6 @@
+ config WAVELAN
+ 	tristate "AT&T/Lucent old WaveLAN & DEC RoamAbout DS ISA support"
+-	depends on ISA
++	depends on ISA && WLAN
+ 	select WIRELESS_EXT
+ 	select WEXT_SPY
+ 	select WEXT_PRIV
+@@ -25,7 +25,7 @@ config WAVELAN
+ 
+ config PCMCIA_WAVELAN
+ 	tristate "AT&T/Lucent old WaveLAN Pcmcia wireless support"
+-	depends on PCMCIA
++	depends on PCMCIA && WLAN
+ 	select WIRELESS_EXT
+ 	select WEXT_SPY
+ 	select WEXT_PRIV
