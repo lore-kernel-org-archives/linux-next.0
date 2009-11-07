@@ -1,61 +1,94 @@
-From: Sachin Sant <sachinp@in.ibm.com>
-Subject: Re: linux-next: Tree for November 5
-Date: Sat, 07 Nov 2009 22:27:06 +0530
-Message-ID: <4AF5A6E2.5040306@in.ibm.com>
-References: <20091105190426.c9cadada.sfr@canb.auug.org.au> <200911050931.04838.bjorn.helgaas@hp.com> <200911051017.12135.bjorn.helgaas@hp.com> <200911060856.09405.bjorn.helgaas@hp.com>
+From: "John W. Linville" <linville@tuxdriver.com>
+Subject: Re: [PATCH -next] staging/wireless: don't build when NET etc. are
+	not enabled
+Date: Sat, 7 Nov 2009 18:32:05 -0500
+Message-ID: <20091107233204.GA26871@tuxdriver.com>
+References: <20091106181330.80bca052.sfr@canb.auug.org.au> <4AF4B2B3.8020109@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e23smtp09.au.ibm.com ([202.81.31.142]:60142 "EHLO
-	e23smtp09.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752386AbZKGQ5F (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 7 Nov 2009 11:57:05 -0500
-In-Reply-To: <200911060856.09405.bjorn.helgaas@hp.com>
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:48349 "EHLO
+	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753685AbZKGXpI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 7 Nov 2009 18:45:08 -0500
+Content-Disposition: inline
+In-Reply-To: <4AF4B2B3.8020109@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bjorn Helgaas <bjorn.helgaas@hp.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, jbarnes@virtuousgeek.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@suse.de>
 
-Bjorn Helgaas wrote:
-> On Thursday 05 November 2009 10:17:11 am Bjorn Helgaas wrote:
->   
->> On Thursday 05 November 2009 09:31:04 am Bjorn Helgaas wrote:
->>     
->>> On Thursday 05 November 2009 03:38:27 am Sachin Sant wrote:
->>>       
->>>> Today's next tree fails to build on i386 with
->>>>
->>>> arch/x86/pci/built-in.o: In function `align_resource':
->>>> arch/x86/pci/acpi.c:82: undefined reference to `__udivdi3'
->>>>
->>>> The code in question was added by commit
->>>> 03db42adfeeabe856dbb6894dd3aaff55838330a.
->>>>         
->>> I'll look into this.  I did build and test a 32-bit x86 kernel, but
->>> I built it on an x86_64 box using "linux32 make ...", which looks like
->>> it used gcc 4.3.2.
->>>       
->> Can you try the patch below, please?
->>     
->
-> Sachin, can you please try this patch and report whether it
-> fixes the undefined reference?  I hate to have linux-next
-> broken longer than necessary.
->   
-Sorry was away from office for a day. Yes the patch
-fixed the build break for me. 
+I'd better take this one...
 
-Thanks for the patch.
+Thanks, Randy!
 
-Regards
--Sachin
+John
+
+On Fri, Nov 06, 2009 at 03:35:15PM -0800, Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> These wireless drivers in staging could be built when
+> CONFIG_NET=n, CONFIG_NETDEVICES=n, causing this build error:
+> 
+> net/wireless/wext-priv.c: In function 'ioctl_private_call':
+> net/wireless/wext-priv.c:206: error: implicit declaration of function 'call_commit_handler'
+> 
+> due to faulty selects.
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> Cc: Greg Kroah-Hartman <gregkh@suse.de>
+> ---
+>  drivers/staging/arlan/Kconfig   |    2 +-
+>  drivers/staging/netwave/Kconfig |    2 +-
+>  drivers/staging/wavelan/Kconfig |    4 ++--
+>  3 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> --- linux-next-20091106.orig/drivers/staging/arlan/Kconfig
+> +++ linux-next-20091106/drivers/staging/arlan/Kconfig
+> @@ -1,6 +1,6 @@
+>  config ARLAN
+>  	tristate "Aironet Arlan 655 & IC2200 DS support"
+> -	depends on ISA && !64BIT
+> +	depends on ISA && !64BIT && WLAN
+>  	select WIRELESS_EXT
+>  	---help---
+>  	  Aironet makes Arlan, a class of wireless LAN adapters. These use the
+> --- linux-next-20091106.orig/drivers/staging/netwave/Kconfig
+> +++ linux-next-20091106/drivers/staging/netwave/Kconfig
+> @@ -1,6 +1,6 @@
+>  config PCMCIA_NETWAVE
+>  	tristate "Xircom Netwave AirSurfer Pcmcia wireless support"
+> -	depends on PCMCIA
+> +	depends on PCMCIA && WLAN
+>  	select WIRELESS_EXT
+>  	select WEXT_PRIV
+>  	help
+> --- linux-next-20091106.orig/drivers/staging/wavelan/Kconfig
+> +++ linux-next-20091106/drivers/staging/wavelan/Kconfig
+> @@ -1,6 +1,6 @@
+>  config WAVELAN
+>  	tristate "AT&T/Lucent old WaveLAN & DEC RoamAbout DS ISA support"
+> -	depends on ISA
+> +	depends on ISA && WLAN
+>  	select WIRELESS_EXT
+>  	select WEXT_SPY
+>  	select WEXT_PRIV
+> @@ -25,7 +25,7 @@ config WAVELAN
+>  
+>  config PCMCIA_WAVELAN
+>  	tristate "AT&T/Lucent old WaveLAN Pcmcia wireless support"
+> -	depends on PCMCIA
+> +	depends on PCMCIA && WLAN
+>  	select WIRELESS_EXT
+>  	select WEXT_SPY
+>  	select WEXT_PRIV
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
+> 
 
 -- 
-
----------------------------------
-Sachin Sant
-IBM Linux Technology Center
-India Systems and Technology Labs
-Bangalore, India
----------------------------------
+John W. Linville		Someday the world will need a hero, and you
+linville@tuxdriver.com			might be all we have.  Be ready.
