@@ -1,38 +1,61 @@
-From: Kalle Valo <kalle.valo@iki.fi>
-Subject: Re: linux-next: Tree for November 2 (wireless/wl1271)
-Date: Sat, 07 Nov 2009 12:37:43 +0200
-Message-ID: <87ljiifwnc.fsf@purkki.valot.fi>
-References: <20091102173845.210d1c57.sfr@canb.auug.org.au>
-	<4AEF1E7F.50306@oracle.com> <20091102184449.GJ14046@tuxdriver.com>
-	<20091102184843.GK14046@tuxdriver.com> <4AEF4ACB.5040302@nokia.com>
-	<4AEFC7CF.1020909@nokia.com>
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: Re: linux-next: Tree for November 5
+Date: Sat, 07 Nov 2009 22:27:06 +0530
+Message-ID: <4AF5A6E2.5040306@in.ibm.com>
+References: <20091105190426.c9cadada.sfr@canb.auug.org.au> <200911050931.04838.bjorn.helgaas@hp.com> <200911051017.12135.bjorn.helgaas@hp.com> <200911060856.09405.bjorn.helgaas@hp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ew0-f207.google.com ([209.85.219.207]:43788 "EHLO
-	mail-ew0-f207.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750859AbZKGKhm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 7 Nov 2009 05:37:42 -0500
-In-Reply-To: <4AEFC7CF.1020909@nokia.com> (Luciano Coelho's message of "Tue\, 03 Nov 2009 08\:03\:59 +0200")
+Received: from e23smtp09.au.ibm.com ([202.81.31.142]:60142 "EHLO
+	e23smtp09.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752386AbZKGQ5F (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 7 Nov 2009 11:57:05 -0500
+In-Reply-To: <200911060856.09405.bjorn.helgaas@hp.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Luciano Coelho <luciano.coelho@nokia.com>
-Cc: "ext John W. Linville" <linville@tuxdriver.com>, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+To: Bjorn Helgaas <bjorn.helgaas@hp.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, jbarnes@virtuousgeek.org
 
-Luciano Coelho <luciano.coelho@nokia.com> writes:
-
-> Coelho Luciano (Nokia-D/Helsinki) wrote:
->> ext John W. Linville wrote:
->>> Helps if I actually Cc: Luca...
->>
->> Yes, it does. :) I would see this at some point but CCing me speed
->> things up quite a lot.
+Bjorn Helgaas wrote:
+> On Thursday 05 November 2009 10:17:11 am Bjorn Helgaas wrote:
+>   
+>> On Thursday 05 November 2009 09:31:04 am Bjorn Helgaas wrote:
+>>     
+>>> On Thursday 05 November 2009 03:38:27 am Sachin Sant wrote:
+>>>       
+>>>> Today's next tree fails to build on i386 with
+>>>>
+>>>> arch/x86/pci/built-in.o: In function `align_resource':
+>>>> arch/x86/pci/acpi.c:82: undefined reference to `__udivdi3'
+>>>>
+>>>> The code in question was added by commit
+>>>> 03db42adfeeabe856dbb6894dd3aaff55838330a.
+>>>>         
+>>> I'll look into this.  I did build and test a 32-bit x86 kernel, but
+>>> I built it on an x86_64 box using "linux32 make ...", which looks like
+>>> it used gcc 4.3.2.
+>>>       
+>> Can you try the patch below, please?
+>>     
 >
->
-> BTW, I think we need this for wl1251 as well.  CC'ing Kalle too.
+> Sachin, can you please try this patch and report whether it
+> fixes the undefined reference?  I hate to have linux-next
+> broken longer than necessary.
+>   
+Sorry was away from office for a day. Yes the patch
+fixed the build break for me. 
 
-Thanks, but upstream wl1251 doesn't have ARP filter. There is an
-internal patch but I haven't submitted it, yet.
+Thanks for the patch.
+
+Regards
+-Sachin
 
 -- 
-Kalle Valo
+
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
