@@ -1,56 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: sparc tree build failure
-Date: Sat, 7 Nov 2009 13:35:56 +1100
-Message-ID: <20091107133556.3731592c.sfr@canb.auug.org.au>
-References: <20091106180248.7a6aa9ba.sfr@canb.auug.org.au>
-	<20091106.001930.121210402.davem@davemloft.net>
-	<20091106.002651.21006753.davem@davemloft.net>
+From: Kalle Valo <kalle.valo@iki.fi>
+Subject: Re: linux-next: Tree for November 2 (wireless/wl1271)
+Date: Sat, 07 Nov 2009 12:37:43 +0200
+Message-ID: <87ljiifwnc.fsf@purkki.valot.fi>
+References: <20091102173845.210d1c57.sfr@canb.auug.org.au>
+	<4AEF1E7F.50306@oracle.com> <20091102184449.GJ14046@tuxdriver.com>
+	<20091102184843.GK14046@tuxdriver.com> <4AEF4ACB.5040302@nokia.com>
+	<4AEFC7CF.1020909@nokia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sat__7_Nov_2009_13_35_56_+1100_aNRvTbHYo9ssllKm"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44922 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750883AbZKGCf4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 6 Nov 2009 21:35:56 -0500
-In-Reply-To: <20091106.002651.21006753.davem@davemloft.net>
+Received: from mail-ew0-f207.google.com ([209.85.219.207]:43788 "EHLO
+	mail-ew0-f207.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750859AbZKGKhm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 7 Nov 2009 05:37:42 -0500
+In-Reply-To: <4AEFC7CF.1020909@nokia.com> (Luciano Coelho's message of "Tue\, 03 Nov 2009 08\:03\:59 +0200")
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, kristoffer@gaisler.com
+To: Luciano Coelho <luciano.coelho@nokia.com>
+Cc: "ext John W. Linville" <linville@tuxdriver.com>, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
 
---Signature=_Sat__7_Nov_2009_13_35_56_+1100_aNRvTbHYo9ssllKm
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Luciano Coelho <luciano.coelho@nokia.com> writes:
 
-Hi Dave,
-
-On Fri, 06 Nov 2009 00:26:51 -0800 (PST) David Miller <davem@davemloft.net>=
- wrote:
+> Coelho Luciano (Nokia-D/Helsinki) wrote:
+>> ext John W. Linville wrote:
+>>> Helps if I actually Cc: Luca...
+>>
+>> Yes, it does. :) I would see this at some point but CCing me speed
+>> things up quite a lot.
 >
-> Stephen, can you let me know if this takes care of everything?
+>
+> BTW, I think we need this for wl1251 as well.  CC'ing Kalle too.
 
-Sorry, sleep intervened :-)
+Thanks, but upstream wl1251 doesn't have ARP filter. There is an
+internal patch but I haven't submitted it, yet.
 
-That patch fixes the build of the .o (I didn't do the link).
-
-Thanks.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Sat__7_Nov_2009_13_35_56_+1100_aNRvTbHYo9ssllKm
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkr03QwACgkQjjKRsyhoI8ztXQCfT6FcNMmQUhKxqAEEO6A9OVa1
-Cs8An0Vt6FrRET4V5jCKkyrlaruW7QFC
-=MM69
------END PGP SIGNATURE-----
-
---Signature=_Sat__7_Nov_2009_13_35_56_+1100_aNRvTbHYo9ssllKm--
+-- 
+Kalle Valo
