@@ -1,15 +1,15 @@
 From: Cyrill Gorcunov <gorcunov@gmail.com>
 Subject: Re: linux-next: tip tree build warning
-Date: Sun, 8 Nov 2009 16:43:59 +0300
-Message-ID: <20091108134359.GF5300@lenovo>
+Date: Sun, 8 Nov 2009 21:42:18 +0300
+Message-ID: <20091108184218.GG25940@lenovo>
 References: <20091028181443.50a09dbb.sfr@canb.auug.org.au> <20091028073145.GD6353@elte.hu> <20091028184126.b5f52d1b.sfr@canb.auug.org.au> <20091028184851.504752ef.sfr@canb.auug.org.au> <20091028075012.GD19402@elte.hu> <20091108131645.GD5300@lenovo> <20091108133247.GA14807@elte.hu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ew0-f207.google.com ([209.85.219.207]:41434 "EHLO
+Received: from mail-ew0-f207.google.com ([209.85.219.207]:42355 "EHLO
 	mail-ew0-f207.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752802AbZKHNn4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 8 Nov 2009 08:43:56 -0500
+	with ESMTP id S1754729AbZKHSmQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 8 Nov 2009 13:42:16 -0500
 Content-Disposition: inline
 In-Reply-To: <20091108133247.GA14807@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
@@ -18,8 +18,8 @@ To: Ingo Molnar <mingo@elte.hu>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
 [Ingo Molnar - Sun, Nov 08, 2009 at 02:32:47PM +0100]
-...
 | 
+...
 | > +
 | > +#ifdef CONFIG_X86_32
 | >  	.apicid_to_cpu_present		= default_apicid_to_cpu_present,
@@ -32,6 +32,100 @@ Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de
 | 	Ingo
 | 
 
-OK, wait a bit.
+[not for inclusion]
+
+Here is what I'm going to implement (it is not finished yet,
+but just to show the idea -- ie to get rid of physid_mask_t
+passed as an argument at all but use pointers instead since
+callers already have bitmask allocated).
+
+And physid_set_mask_of_physid already do the work for us.
+Hmm?
+
+(Ingo, I think you may apply the former patch just to
+ have the issue fixed this way temporary)
 
 	-- Cyrill
+---
+ arch/x86/include/asm/apic.h      |    7 +------
+ arch/x86/kernel/apic/apic_noop.c |    2 +-
+ arch/x86/kernel/apic/bigsmp_32.c |    7 +------
+ arch/x86/kernel/apic/probe_32.c  |    2 +-
+ 4 files changed, 4 insertions(+), 14 deletions(-)
+
+Index: linux-2.6.git/arch/x86/include/asm/apic.h
+=====================================================================
+--- linux-2.6.git.orig/arch/x86/include/asm/apic.h
++++ linux-2.6.git/arch/x86/include/asm/apic.h
+@@ -310,7 +310,7 @@ struct apic {
+ 	int (*apicid_to_node)(int logical_apicid);
+ 	int (*cpu_to_logical_apicid)(int cpu);
+ 	int (*cpu_present_to_apicid)(int mps_cpu);
+-	physid_mask_t (*apicid_to_cpu_present)(int phys_apicid);
++	void (*apicid_to_cpu_present)(int phys_apicid, physid_mask_t *bitmap);
+ 	void (*setup_portio_remap)(void);
+ 	int (*check_phys_apicid_present)(int phys_apicid);
+ 	void (*enable_apic_mode)(void);
+@@ -585,11 +585,6 @@ extern int default_cpu_present_to_apicid
+ extern int default_check_phys_apicid_present(int phys_apicid);
+ #endif
+ 
+-static inline physid_mask_t default_apicid_to_cpu_present(int phys_apicid)
+-{
+-	return physid_mask_of_physid(phys_apicid);
+-}
+-
+ #endif /* CONFIG_X86_LOCAL_APIC */
+ 
+ #ifdef CONFIG_X86_32
+Index: linux-2.6.git/arch/x86/kernel/apic/apic_noop.c
+=====================================================================
+--- linux-2.6.git.orig/arch/x86/kernel/apic/apic_noop.c
++++ linux-2.6.git/arch/x86/kernel/apic/apic_noop.c
+@@ -162,7 +162,7 @@ struct apic apic_noop = {
+ 
+ 	.cpu_to_logical_apicid		= noop_cpu_to_logical_apicid,
+ 	.cpu_present_to_apicid		= default_cpu_present_to_apicid,
+-	.apicid_to_cpu_present		= default_apicid_to_cpu_present,
++	.apicid_to_cpu_present		= physid_set_mask_of_physid,
+ 
+ 	.setup_portio_remap		= NULL,
+ 	.check_phys_apicid_present	= default_check_phys_apicid_present,
+Index: linux-2.6.git/arch/x86/kernel/apic/bigsmp_32.c
+=====================================================================
+--- linux-2.6.git.orig/arch/x86/kernel/apic/bigsmp_32.c
++++ linux-2.6.git/arch/x86/kernel/apic/bigsmp_32.c
+@@ -93,11 +93,6 @@ static int bigsmp_cpu_present_to_apicid(
+ 	return BAD_APICID;
+ }
+ 
+-static physid_mask_t bigsmp_apicid_to_cpu_present(int phys_apicid)
+-{
+-	return physid_mask_of_physid(phys_apicid);
+-}
+-
+ /* Mapping from cpu number to logical apicid */
+ static inline int bigsmp_cpu_to_logical_apicid(int cpu)
+ {
+@@ -230,7 +225,7 @@ struct apic apic_bigsmp = {
+ 	.apicid_to_node			= bigsmp_apicid_to_node,
+ 	.cpu_to_logical_apicid		= bigsmp_cpu_to_logical_apicid,
+ 	.cpu_present_to_apicid		= bigsmp_cpu_present_to_apicid,
+-	.apicid_to_cpu_present		= bigsmp_apicid_to_cpu_present,
++	.apicid_to_cpu_present		= physid_set_mask_of_physid,
+ 	.setup_portio_remap		= NULL,
+ 	.check_phys_apicid_present	= bigsmp_check_phys_apicid_present,
+ 	.enable_apic_mode		= NULL,
+Index: linux-2.6.git/arch/x86/kernel/apic/probe_32.c
+=====================================================================
+--- linux-2.6.git.orig/arch/x86/kernel/apic/probe_32.c
++++ linux-2.6.git/arch/x86/kernel/apic/probe_32.c
+@@ -108,7 +108,7 @@ struct apic apic_default = {
+ 	.apicid_to_node			= default_apicid_to_node,
+ 	.cpu_to_logical_apicid		= default_cpu_to_logical_apicid,
+ 	.cpu_present_to_apicid		= default_cpu_present_to_apicid,
+-	.apicid_to_cpu_present		= default_apicid_to_cpu_present,
++	.apicid_to_cpu_present		= physid_set_mask_of_physid,
+ 	.setup_portio_remap		= NULL,
+ 	.check_phys_apicid_present	= default_check_phys_apicid_present,
+ 	.enable_apic_mode		= NULL,
