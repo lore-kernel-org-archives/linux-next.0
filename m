@@ -1,94 +1,48 @@
-From: "John W. Linville" <linville@tuxdriver.com>
-Subject: Re: [PATCH -next] staging/wireless: don't build when NET etc. are
-	not enabled
-Date: Sat, 7 Nov 2009 18:32:05 -0500
-Message-ID: <20091107233204.GA26871@tuxdriver.com>
-References: <20091106181330.80bca052.sfr@canb.auug.org.au> <4AF4B2B3.8020109@oracle.com>
+From: Mauro Carvalho Chehab <mchehab@redhat.com>
+Subject: Re: [PATCH] edac: fix i7core build
+Date: Sun, 8 Nov 2009 01:45:51 -0200
+Message-ID: <20091108014551.2efb8f66@pedra.chehab.org>
+References: <20091104170931.4aa51b77.sfr@canb.auug.org.au>
+	<20091104135733.cb878718.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:48349 "EHLO
-	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753685AbZKGXpI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 7 Nov 2009 18:45:08 -0500
-Content-Disposition: inline
-In-Reply-To: <4AF4B2B3.8020109@oracle.com>
+Received: from mx1.redhat.com ([209.132.183.28]:4876 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753477AbZKHDqA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 7 Nov 2009 22:46:00 -0500
+In-Reply-To: <20091104135733.cb878718.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@suse.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-I'd better take this one...
+Em Wed, 4 Nov 2009 13:57:33 -0800
+Randy Dunlap <randy.dunlap@oracle.com> escreveu:
 
-Thanks, Randy!
-
-John
-
-On Fri, Nov 06, 2009 at 03:35:15PM -0800, Randy Dunlap wrote:
 > From: Randy Dunlap <randy.dunlap@oracle.com>
 > 
-> These wireless drivers in staging could be built when
-> CONFIG_NET=n, CONFIG_NETDEVICES=n, causing this build error:
+> Fix build warning (missing header file) and
+> build error when CONFIG_SMP=n.
 > 
-> net/wireless/wext-priv.c: In function 'ioctl_private_call':
-> net/wireless/wext-priv.c:206: error: implicit declaration of function 'call_commit_handler'
-> 
-> due to faulty selects.
+> drivers/edac/i7core_edac.c:860: error: implicit declaration of function 'msleep'
+> drivers/edac/i7core_edac.c:1700: error: 'struct cpuinfo_x86' has no member named 'phys_proc_id'
 > 
 > Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> Cc: Greg Kroah-Hartman <gregkh@suse.de>
-> ---
->  drivers/staging/arlan/Kconfig   |    2 +-
->  drivers/staging/netwave/Kconfig |    2 +-
->  drivers/staging/wavelan/Kconfig |    4 ++--
->  3 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> --- linux-next-20091106.orig/drivers/staging/arlan/Kconfig
-> +++ linux-next-20091106/drivers/staging/arlan/Kconfig
-> @@ -1,6 +1,6 @@
->  config ARLAN
->  	tristate "Aironet Arlan 655 & IC2200 DS support"
-> -	depends on ISA && !64BIT
-> +	depends on ISA && !64BIT && WLAN
->  	select WIRELESS_EXT
->  	---help---
->  	  Aironet makes Arlan, a class of wireless LAN adapters. These use the
-> --- linux-next-20091106.orig/drivers/staging/netwave/Kconfig
-> +++ linux-next-20091106/drivers/staging/netwave/Kconfig
-> @@ -1,6 +1,6 @@
->  config PCMCIA_NETWAVE
->  	tristate "Xircom Netwave AirSurfer Pcmcia wireless support"
-> -	depends on PCMCIA
-> +	depends on PCMCIA && WLAN
->  	select WIRELESS_EXT
->  	select WEXT_PRIV
->  	help
-> --- linux-next-20091106.orig/drivers/staging/wavelan/Kconfig
-> +++ linux-next-20091106/drivers/staging/wavelan/Kconfig
-> @@ -1,6 +1,6 @@
->  config WAVELAN
->  	tristate "AT&T/Lucent old WaveLAN & DEC RoamAbout DS ISA support"
-> -	depends on ISA
-> +	depends on ISA && WLAN
->  	select WIRELESS_EXT
->  	select WEXT_SPY
->  	select WEXT_PRIV
-> @@ -25,7 +25,7 @@ config WAVELAN
->  
->  config PCMCIA_WAVELAN
->  	tristate "AT&T/Lucent old WaveLAN Pcmcia wireless support"
-> -	depends on PCMCIA
-> +	depends on PCMCIA && WLAN
->  	select WIRELESS_EXT
->  	select WEXT_SPY
->  	select WEXT_PRIV
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
-> 
+> Cc: Mauro Carvalho Chehab <mchehab@redhat.com>
 
--- 
-John W. Linville		Someday the world will need a hero, and you
-linville@tuxdriver.com			might be all we have.  Be ready.
+Hi Randy,
+
+Thank you for the patch.
+
+FYI, I've just added your and Alan's fixes on my linux-next tree for i7core:
+
+http://git.kernel.org/?p=linux/kernel/git/mchehab/i7core.git;a=commit;h=0480ce880b999703fbb73912054f4de187da543a
+http://git.kernel.org/?p=linux/kernel/git/mchehab/i7core.git;a=commit;h=df0a7a70df5e9c5d612b249661f8b3883be41331
+
+Sorry for not doing it earlier. I was handling a big backlog I had here, due to
+a training course and my trip to Japan (that happened at the week after the training).
+
+Cheers,
+Mauro
