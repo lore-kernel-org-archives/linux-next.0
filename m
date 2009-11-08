@@ -1,57 +1,119 @@
 From: Cyrill Gorcunov <gorcunov@gmail.com>
 Subject: Re: linux-next: tip tree build warning
-Date: Sun, 8 Nov 2009 21:42:18 +0300
-Message-ID: <20091108184218.GG25940@lenovo>
-References: <20091028181443.50a09dbb.sfr@canb.auug.org.au> <20091028073145.GD6353@elte.hu> <20091028184126.b5f52d1b.sfr@canb.auug.org.au> <20091028184851.504752ef.sfr@canb.auug.org.au> <20091028075012.GD19402@elte.hu> <20091108131645.GD5300@lenovo> <20091108133247.GA14807@elte.hu>
+Date: Mon, 9 Nov 2009 00:30:55 +0300
+Message-ID: <20091108213055.GA13555@lenovo>
+References: <20091028181443.50a09dbb.sfr@canb.auug.org.au> <20091028073145.GD6353@elte.hu> <20091028184126.b5f52d1b.sfr@canb.auug.org.au> <20091028184851.504752ef.sfr@canb.auug.org.au> <20091028075012.GD19402@elte.hu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ew0-f207.google.com ([209.85.219.207]:42355 "EHLO
-	mail-ew0-f207.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754729AbZKHSmQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 8 Nov 2009 13:42:16 -0500
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755449AbZKHVa4@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20091108133247.GA14807@elte.hu>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+In-Reply-To: <20091028075012.GD19402@elte.hu>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Ingo Molnar <mingo@elte.hu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Maciej W. Rozycki" <macro@linux-mips.org>, Yinghai Lu <yinghai@kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-[Ingo Molnar - Sun, Nov 08, 2009 at 02:32:47PM +0100]
+[Ingo Molnar - Wed, Oct 28, 2009 at 08:50:12AM +0100]
 | 
-...
-| > +
-| > +#ifdef CONFIG_X86_32
-| >  	.apicid_to_cpu_present		= default_apicid_to_cpu_present,
-| > +#else
-| > +	.apicid_to_cpu_present		= NULL,
-| > +#endif
+| * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 | 
-| would be better to unify this instead ...
+| > Hi all,
+| > 
+| > On Wed, 28 Oct 2009 18:41:26 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+| > >
+| > > static inline physid_mask_t default_apicid_to_cpu_present(int phys_apicid)
+| > > {
+| > >         return physid_mask_of_physid(phys_apicid);
+| > > }
+| > 
+| > I just noticed that this function (default_apicid_to_cpu_present) is 
+| > declared "static inline in a header" but looks like it is only used by 
+| > assigning its address to a function pointer.  Its only use for x86_64 
+| > is in arch/x86/kernel/apic/apic_noop.c ...
+| 
+| yes, that might be a real problem - returning the mask like that is 
+| messy. Thanks, will check.
 | 
 | 	Ingo
-| 
+|
 
-[not for inclusion]
+ok, here is what I've just cooked. Please review, I've CC'ed a few
+"knowing-apic-code-quite-well" persons just to be sure.
 
-Here is what I'm going to implement (it is not finished yet,
-but just to show the idea -- ie to get rid of physid_mask_t
-passed as an argument at all but use pointers instead since
-callers already have bitmask allocated).
+Note that we still have a few items in "struct apic" which
+operate with physid_mask_t on stack.
 
-And physid_set_mask_of_physid already do the work for us.
-Hmm?
+I think perhaps it's a good idea to touch this data via pointers
+povided by caller:
 
-(Ingo, I think you may apply the former patch just to
- have the issue fixed this way temporary)
+	physid_mask_t (*ioapic_phys_id_map)(physid_mask_t map);
+
+I didn't manage to cover it today -- will do tomorrow if patch
+approach would be approved.
+
+Also, it's just warning (yet) since we don't use those routines
+in x86-64 so it doesn't harm.
+
+Anyway, please review, comment, complain and etc... would appreciate.
 
 	-- Cyrill
+
+p.s.: i don't have inet access in office so will be able to reply
+at tomorrow evening only.
+---
+x86,apic: Do not use stack'ed physid_mask_t in apicid_to_cpu_present
+
+Stephen Rothwell pointed out that apic-noop (when gets compiled
+in x86-84 environment) potentially may consume too much stack space.
+
+|
+| Hi all,
+|
+| Today's linux-next build (x86_64 allmodconfig) produced this warning:
+|
+| In file included from arch/x86/include/asm/smp.h:13,
+|                 from arch/x86/include/asm/mmzone_64.h:12,
+|                 from arch/x86/include/asm/mmzone.h:4,
+|                 from include/linux/mmzone.h:783,
+|                 from include/linux/gfp.h:4,
+|                 from include/linux/kmod.h:22,
+|                 from include/linux/module.h:13,
+|                 from arch/x86/kernel/apic/apic_noop.c:14:
+| arch/x86/include/asm/apic.h: In function 'default_apicid_to_cpu_present':
+| arch/x86/include/asm/apic.h:591: warning: the frame size of 8192 bytes is larger than 2048 bytes
+|
+| It may not have been caused by the tip tree, but I can't find what
+| changed to cause this and a commit from the tip tree has exposed it
+| (9844ab11c763bfed9f054c82366b19dcda66aca9 "x86, apic: Introduce the NOOP
+| apic driver").
+|
+
+So I would say this is a bug in apic-noop (in fact we don't use
+default_apicid_to_cpu_present if operate in 64bit mode but it's a sign
+that something is wrong with code design). The key problem is that
+physid_mask_t is an array with a size depending on MAX_APICS, which
+in turn is big enough on x86-64 to trigger compiler warning.
+
+So to prevent such a situation in future we should use physid_mask_t
+pointer leaving apic driver with a task to operate over data but not
+allocate it. Caller should instead.
+
+This allow us throw out some code as well since physid_set_mask_of_physid
+already implement the functionality we need.
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Cyrill Gorcunov <gorcunov@openvz.org>
 ---
  arch/x86/include/asm/apic.h      |    7 +------
  arch/x86/kernel/apic/apic_noop.c |    2 +-
  arch/x86/kernel/apic/bigsmp_32.c |    7 +------
+ arch/x86/kernel/apic/es7000_32.c |    8 ++------
+ arch/x86/kernel/apic/io_apic.c   |    4 ++--
+ arch/x86/kernel/apic/numaq_32.c  |    4 ++--
  arch/x86/kernel/apic/probe_32.c  |    2 +-
- 4 files changed, 4 insertions(+), 14 deletions(-)
+ arch/x86/kernel/apic/summit_32.c |    4 ++--
+ arch/x86/kernel/visws_quirks.c   |    2 +-
+ 9 files changed, 13 insertions(+), 27 deletions(-)
 
 Index: linux-2.6.git/arch/x86/include/asm/apic.h
 =====================================================================
@@ -62,7 +124,7 @@ Index: linux-2.6.git/arch/x86/include/asm/apic.h
  	int (*cpu_to_logical_apicid)(int cpu);
  	int (*cpu_present_to_apicid)(int mps_cpu);
 -	physid_mask_t (*apicid_to_cpu_present)(int phys_apicid);
-+	void (*apicid_to_cpu_present)(int phys_apicid, physid_mask_t *bitmap);
++	void (*apicid_to_cpu_present)(int phys_apicid, physid_mask_t *map);
  	void (*setup_portio_remap)(void);
  	int (*check_phys_apicid_present)(int phys_apicid);
  	void (*enable_apic_mode)(void);
@@ -116,6 +178,68 @@ Index: linux-2.6.git/arch/x86/kernel/apic/bigsmp_32.c
  	.setup_portio_remap		= NULL,
  	.check_phys_apicid_present	= bigsmp_check_phys_apicid_present,
  	.enable_apic_mode		= NULL,
+Index: linux-2.6.git/arch/x86/kernel/apic/es7000_32.c
+=====================================================================
+--- linux-2.6.git.orig/arch/x86/kernel/apic/es7000_32.c
++++ linux-2.6.git/arch/x86/kernel/apic/es7000_32.c
+@@ -539,14 +539,10 @@ static int es7000_cpu_present_to_apicid(
+ 
+ static int cpu_id;
+ 
+-static physid_mask_t es7000_apicid_to_cpu_present(int phys_apicid)
++static void es7000_apicid_to_cpu_present(int phys_apicid, physid_mask_t *map)
+ {
+-	physid_mask_t mask;
+-
+-	mask = physid_mask_of_physid(cpu_id);
++	physid_set_mask_of_physid(cpu_id, map);
+ 	++cpu_id;
+-
+-	return mask;
+ }
+ 
+ /* Mapping from cpu number to logical apicid */
+Index: linux-2.6.git/arch/x86/kernel/apic/io_apic.c
+=====================================================================
+--- linux-2.6.git.orig/arch/x86/kernel/apic/io_apic.c
++++ linux-2.6.git/arch/x86/kernel/apic/io_apic.c
+@@ -2073,7 +2073,7 @@ void __init setup_ioapic_ids_from_mpc(vo
+ 			mp_ioapics[apic_id].apicid = i;
+ 		} else {
+ 			physid_mask_t tmp;
+-			tmp = apic->apicid_to_cpu_present(mp_ioapics[apic_id].apicid);
++			apic->apicid_to_cpu_present(mp_ioapics[apic_id].apicid, &tmp);
+ 			apic_printk(APIC_VERBOSE, "Setting %d in the "
+ 					"phys_id_present_map\n",
+ 					mp_ioapics[apic_id].apicid);
+@@ -3969,7 +3969,7 @@ int __init io_apic_get_unique_id(int ioa
+ 		apic_id = i;
+ 	}
+ 
+-	tmp = apic->apicid_to_cpu_present(apic_id);
++	apic->apicid_to_cpu_present(apic_id, &tmp);
+ 	physids_or(apic_id_map, apic_id_map, tmp);
+ 
+ 	if (reg_00.bits.ID != apic_id) {
+Index: linux-2.6.git/arch/x86/kernel/apic/numaq_32.c
+=====================================================================
+--- linux-2.6.git.orig/arch/x86/kernel/apic/numaq_32.c
++++ linux-2.6.git/arch/x86/kernel/apic/numaq_32.c
+@@ -402,12 +402,12 @@ static inline int numaq_apicid_to_node(i
+ 	return logical_apicid >> 4;
+ }
+ 
+-static inline physid_mask_t numaq_apicid_to_cpu_present(int logical_apicid)
++static void numaq_apicid_to_cpu_present(int logical_apicid, physid_mask_t *map)
+ {
+ 	int node = numaq_apicid_to_node(logical_apicid);
+ 	int cpu = __ffs(logical_apicid & 0xf);
+ 
+-	return physid_mask_of_physid(cpu + 4*node);
++	physid_set_mask_of_physid(cpu + 4*node, map);
+ }
+ 
+ /* Where the IO area was mapped on multiquad, always 0 otherwise */
 Index: linux-2.6.git/arch/x86/kernel/apic/probe_32.c
 =====================================================================
 --- linux-2.6.git.orig/arch/x86/kernel/apic/probe_32.c
@@ -129,3 +253,32 @@ Index: linux-2.6.git/arch/x86/kernel/apic/probe_32.c
  	.setup_portio_remap		= NULL,
  	.check_phys_apicid_present	= default_check_phys_apicid_present,
  	.enable_apic_mode		= NULL,
+Index: linux-2.6.git/arch/x86/kernel/apic/summit_32.c
+=====================================================================
+--- linux-2.6.git.orig/arch/x86/kernel/apic/summit_32.c
++++ linux-2.6.git/arch/x86/kernel/apic/summit_32.c
+@@ -267,9 +267,9 @@ static physid_mask_t summit_ioapic_phys_
+ 	return physids_promote(0x0F);
+ }
+ 
+-static physid_mask_t summit_apicid_to_cpu_present(int apicid)
++static void summit_apicid_to_cpu_present(int apicid, physid_mask_t *map)
+ {
+-	return physid_mask_of_physid(0);
++	physid_set_mask_of_physid(0, map);
+ }
+ 
+ static int summit_check_phys_apicid_present(int physical_apicid)
+Index: linux-2.6.git/arch/x86/kernel/visws_quirks.c
+=====================================================================
+--- linux-2.6.git.orig/arch/x86/kernel/visws_quirks.c
++++ linux-2.6.git/arch/x86/kernel/visws_quirks.c
+@@ -183,7 +183,7 @@ static void __init MP_processor_info(str
+ 		return;
+ 	}
+ 
+-	apic_cpus = apic->apicid_to_cpu_present(m->apicid);
++	apic->apicid_to_cpu_present(m->apicid, &apic_cpus);
+ 	physids_or(phys_cpu_present_map, phys_cpu_present_map, apic_cpus);
+ 	/*
+ 	 * Validate version
