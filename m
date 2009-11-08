@@ -1,48 +1,78 @@
-From: Mauro Carvalho Chehab <mchehab@redhat.com>
-Subject: Re: [PATCH] edac: fix i7core build
-Date: Sun, 8 Nov 2009 01:45:51 -0200
-Message-ID: <20091108014551.2efb8f66@pedra.chehab.org>
-References: <20091104170931.4aa51b77.sfr@canb.auug.org.au>
-	<20091104135733.cb878718.randy.dunlap@oracle.com>
+From: Cyrill Gorcunov <gorcunov@openvz.org>
+Subject: Re: linux-next: tip tree build warning
+Date: Sun, 8 Nov 2009 16:16:45 +0300
+Message-ID: <20091108131645.GD5300@lenovo>
+References: <20091028181443.50a09dbb.sfr@canb.auug.org.au> <20091028073145.GD6353@elte.hu> <20091028184126.b5f52d1b.sfr@canb.auug.org.au> <20091028184851.504752ef.sfr@canb.auug.org.au> <20091028075012.GD19402@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:4876 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753477AbZKHDqA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 7 Nov 2009 22:46:00 -0500
-In-Reply-To: <20091104135733.cb878718.randy.dunlap@oracle.com>
+Received: from mail-ew0-f207.google.com ([209.85.219.207]:33385 "EHLO
+	mail-ew0-f207.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751125AbZKHNQo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 8 Nov 2009 08:16:44 -0500
+Content-Disposition: inline
+In-Reply-To: <20091028075012.GD19402@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Em Wed, 4 Nov 2009 13:57:33 -0800
-Randy Dunlap <randy.dunlap@oracle.com> escreveu:
+[Ingo Molnar - Wed, Oct 28, 2009 at 08:50:12AM +0100]
+| 
+| * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+| 
+| > Hi all,
+| > 
+| > On Wed, 28 Oct 2009 18:41:26 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+| > >
+| > > static inline physid_mask_t default_apicid_to_cpu_present(int phys_apicid)
+| > > {
+| > >         return physid_mask_of_physid(phys_apicid);
+| > > }
+| > 
+| > I just noticed that this function (default_apicid_to_cpu_present) is 
+| > declared "static inline in a header" but looks like it is only used by 
+| > assigning its address to a function pointer.  Its only use for x86_64 
+| > is in arch/x86/kernel/apic/apic_noop.c ...
+| 
+| yes, that might be a real problem - returning the mask like that is 
+| messy. Thanks, will check.
+| 
+| 	Ingo
+| 
 
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> Fix build warning (missing header file) and
-> build error when CONFIG_SMP=n.
-> 
-> drivers/edac/i7core_edac.c:860: error: implicit declaration of function 'msleep'
-> drivers/edac/i7core_edac.c:1700: error: 'struct cpuinfo_x86' has no member named 'phys_proc_id'
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> Cc: Mauro Carvalho Chehab <mchehab@redhat.com>
+Darn, my fault sorry! Here is an update which fixes the issue.
+(Btw, Stephen could you CC me next time if you get commit id
+ with me in authors, so I wouldn't miss problem).
 
-Hi Randy,
+Please review, comments/complains are quite welcome!
 
-Thank you for the patch.
+	-- Cyrill
+---
+x86,apic: Get rid of apicid_to_cpu_present assign on X86-64
 
-FYI, I've just added your and Alan's fixes on my linux-next tree for i7core:
+In fact it's never get used on x86-64 (for 64 bit platform
+we use differ technique to enumerate io-units).
 
-http://git.kernel.org/?p=linux/kernel/git/mchehab/i7core.git;a=commit;h=0480ce880b999703fbb73912054f4de187da543a
-http://git.kernel.org/?p=linux/kernel/git/mchehab/i7core.git;a=commit;h=df0a7a70df5e9c5d612b249661f8b3883be41331
+Signed-off-by: Cyrill Gorcunov <gorcunov@openvz.org>
+---
+ arch/x86/kernel/apic/apic_noop.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-Sorry for not doing it earlier. I was handling a big backlog I had here, due to
-a training course and my trip to Japan (that happened at the week after the training).
-
-Cheers,
-Mauro
+Index: linux-2.6.git/arch/x86/kernel/apic/apic_noop.c
+=====================================================================
+--- linux-2.6.git.orig/arch/x86/kernel/apic/apic_noop.c
++++ linux-2.6.git/arch/x86/kernel/apic/apic_noop.c
+@@ -162,7 +162,12 @@ struct apic apic_noop = {
+ 
+ 	.cpu_to_logical_apicid		= noop_cpu_to_logical_apicid,
+ 	.cpu_present_to_apicid		= default_cpu_present_to_apicid,
++
++#ifdef CONFIG_X86_32
+ 	.apicid_to_cpu_present		= default_apicid_to_cpu_present,
++#else
++	.apicid_to_cpu_present		= NULL,
++#endif
+ 
+ 	.setup_portio_remap		= NULL,
+ 	.check_phys_apicid_present	= default_check_phys_apicid_present,
