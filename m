@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the staging tree with the pcmcia tree
-Date: Mon, 9 Nov 2009 18:15:44 +1100
-Message-ID: <20091109181544.454695c0.sfr@canb.auug.org.au>
+Date: Mon, 9 Nov 2009 18:15:34 +1100
+Message-ID: <20091109181534.c844974d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__9_Nov_2009_18_15_44_+1100_2fcxF7pn=V6H_iMc"
+ boundary="Signature=_Mon__9_Nov_2009_18_15_34_+1100_4F.WK3f8NJzPvoq9"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:50789 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:50781 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753947AbZKIHPm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 9 Nov 2009 02:15:42 -0500
+	id S1753681AbZKIHPg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 9 Nov 2009 02:15:36 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dominik Brodowski <linux@dominikbrodowski.net>, Vadim Mutilin <mutilin@ispras.ru>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bart Massey <bart@cs.pdx.edu>, Dominik Brodowski <linux@dominikbrodowski.net>
 
---Signature=_Mon__9_Nov_2009_18_15_44_+1100_2fcxF7pn=V6H_iMc
+--Signature=_Mon__9_Nov_2009_18_15_34_+1100_4F.WK3f8NJzPvoq9
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,30 +24,30 @@ Content-Transfer-Encoding: quoted-printable
 Hi Greg,
 
 Today's linux-next merge of the staging tree got a conflict in
-drivers/staging/comedi/drivers/cb_das16_cs.c between commit
+drivers/staging/comedi/drivers/ni_labpc_cs.c between commit
 4e338b7f55b4c30e60fa3fa9ff3d21e930f40116 ("pcmcia/staging: update comedi
-drivers") from the pcmcia tree and commit
-e18c724339a542aac71d1d47b0695bf7b4a5c3a3 ("STAGING: comedi: cb_das16_cs:
-fixing coding style errors") from the staging tree.
+drivers") from the pcmcia tree and commits
+c22f24e5f0ed5a45e4b339577a1151c4bbb8977a ("Staging: comedi: ni_labpc_cs:
+added mandatory whitespace to comparison") and
+f195fbc2466c79cda709074fdbb969079e0787e0 ("Staging: comedi: ni_labpc_cs:
+wrapped long comments") from the staging tree.
 
-I fixed it up (using the pcmcia tree version when there is a clash) and
+I fixed it up (using the pcmcia tree version where there was a clash) and
 can carry the fix as necessary.
-
-[Greg, that staging tree commit has no SOB from its author ...]
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__9_Nov_2009_18_15_44_+1100_2fcxF7pn=V6H_iMc
+--Signature=_Mon__9_Nov_2009_18_15_34_+1100_4F.WK3f8NJzPvoq9
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkr3waAACgkQjjKRsyhoI8yw9QCgq2b7yw9Osbw7YUKCIAp9Tz4B
-sLcAniWH5Gyd+fE2S1/+jbOihbzM09yl
-=iSCA
+iEYEARECAAYFAkr3wZYACgkQjjKRsyhoI8xNdwCfUAkXq5DRDq2mxTmb91VJ/DV3
+lrUAoKpGJMiRyt/pSiDCzghvj+tcVfR6
+=4bsz
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__9_Nov_2009_18_15_44_+1100_2fcxF7pn=V6H_iMc--
+--Signature=_Mon__9_Nov_2009_18_15_34_+1100_4F.WK3f8NJzPvoq9--
