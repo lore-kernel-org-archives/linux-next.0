@@ -1,51 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pcmcia tree with the mtd tree
-Date: Mon, 9 Nov 2009 14:42:21 +1100
-Message-ID: <20091109144221.f27d7242.sfr@canb.auug.org.au>
+Subject: linux-next: pcmcia tree build warning
+Date: Mon, 9 Nov 2009 14:54:51 +1100
+Message-ID: <20091109145451.c9f1c4c3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__9_Nov_2009_14_42_21_+1100_+mm81Ncy9Jy7gnXR"
+ boundary="Signature=_Mon__9_Nov_2009_14_54_51_+1100_zOx8ZIjvcYUrwOYF"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51027 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:57227 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753248AbZKIDmW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 8 Nov 2009 22:42:22 -0500
+	id S1753478AbZKIDyv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 8 Nov 2009 22:54:51 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Woodhouse <David.Woodhouse@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__9_Nov_2009_14_42_21_+1100_+mm81Ncy9Jy7gnXR
+--Signature=_Mon__9_Nov_2009_14_54_51_+1100_zOx8ZIjvcYUrwOYF
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Dominik,
 
-Today's linux-next merge of the pcmcia tree got a conflict in
-drivers/mtd/maps/pcmciamtd.c between commit
-5da6bbe2f9e1db56b4a94cad2ace7d9992b1d666 ("pcmcia: convert pcmciamtd
-driver to use new CIS helpers") from the mtd tree and commit
-18b61b97294dad74dd00a1aa8efed0cfacb95aff ("pcmcia: convert pcmciamtd
-driver to use new CIS helpers") from the pcmcia tree.
+Today's linux-next build (x86_64 allmodconfig) produced this warning:
 
-Presumably two different versions of the same change?  I just used the
-version from the pcmcia tree for today.
+drivers/char/pcmcia/cm4000_cs.c: In function 'cmm_ioctl':
+/scratch/sfr/next/drivers/char/pcmcia/cm4000_cs.c:1630: warning: the frame =
+size of 2176 bytes is larger than 2048 bytes
+
+Introduced by commit 7194198b163c83725f52ce8e34b24cca053deea7 ("pcmcia:
+use dynamic debug infrastructure, deprecate CS_CHECK (char)") which
+unconditionalised "char *ioctl_names[CM_IOC_MAXNR + 1]" on the stack.
+CM_IOC_MAXNR is 255, so this adds 2k to the stack frame just to allow the
+printing of one of five ioctl names in a debug message.  It could be made
+static ...
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__9_Nov_2009_14_42_21_+1100_+mm81Ncy9Jy7gnXR
+--Signature=_Mon__9_Nov_2009_14_54_51_+1100_zOx8ZIjvcYUrwOYF
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkr3j50ACgkQjjKRsyhoI8ySLgCfWxoLcjJjocKa01dIi99qKpsf
-bw0An3E57X9zd3LdPM01/pXTNk+mpKAR
-=5nBT
+iEYEARECAAYFAkr3kosACgkQjjKRsyhoI8w6ZgCgvES2lGYx1ytihQj1qEI/ykd9
+gQMAn3adEVFJE7tUbFBc6l67f6Kc4Zh4
+=Yvcc
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__9_Nov_2009_14_42_21_+1100_+mm81Ncy9Jy7gnXR--
+--Signature=_Mon__9_Nov_2009_14_54_51_+1100_zOx8ZIjvcYUrwOYF--
