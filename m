@@ -1,36 +1,42 @@
-From: Luciano Coelho <luciano.coelho@nokia.com>
-Subject: Re: linux-next: Tree for November 2 (wireless/wl1271)
-Date: Mon, 09 Nov 2009 13:20:55 +0200
-Message-ID: <4AF7FB17.7020604@nokia.com>
-References: <20091102173845.210d1c57.sfr@canb.auug.org.au>	<4AEF1E7F.50306@oracle.com> <20091102184449.GJ14046@tuxdriver.com>	<20091102184843.GK14046@tuxdriver.com> <4AEF4ACB.5040302@nokia.com>	<4AEFC7CF.1020909@nokia.com> <87ljiifwnc.fsf@purkki.valot.fi>
+From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
+Subject: Re: linux-next: wireless tree build failure
+Date: Mon, 9 Nov 2009 14:37:14 +0100
+Message-ID: <200911091437.14465.bzolnier@gmail.com>
+References: <20091109190812.b2f75760.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754593AbZKILVp@vger.kernel.org>
-In-Reply-To: <87ljiifwnc.fsf@purkki.valot.fi>
-Sender: linux-kernel-owner@vger.kernel.org
-To: ext Kalle Valo <kalle.valo@iki.fi>
-Cc: "ext John W. Linville" <linville@tuxdriver.com>, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ew0-f207.google.com ([209.85.219.207]:48396 "EHLO
+	mail-ew0-f207.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755891AbZKINi6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Nov 2009 08:38:58 -0500
+In-Reply-To: <20091109190812.b2f75760.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-ext Kalle Valo wrote:
-> Luciano Coelho <luciano.coelho@nokia.com> writes:
+
+Hi,
+
+On Monday 09 November 2009 09:08:12 Stephen Rothwell wrote:
+> Hi John,
 > 
->> Coelho Luciano (Nokia-D/Helsinki) wrote:
->>> ext John W. Linville wrote:
->>>> Helps if I actually Cc: Luca...
->>> Yes, it does. :) I would see this at some point but CCing me speed
->>> things up quite a lot.
->>
->> BTW, I think we need this for wl1251 as well.  CC'ing Kalle too.
-> 
-> Thanks, but upstream wl1251 doesn't have ARP filter. There is an
-> internal patch but I haven't submitted it, yet.
+> Today's linux-next build (powerpc allyesconfig) failed like this:
 
-Oh, okay.  Sorry for not checking.  I just noticed that our wl1271 
-implementation was based on the implementation for wl1251, so I just assumed it 
-was needed as well.
+This was fixed yesterday by Hauke Mehrtens for wireless-testing
+(http://patchwork.kernel.org/patch/58495/) and in the way preserving
+bisectability in rt2800 tree.
 
--- 
-Cheers,
-Luca.
+Stephen, until someone explains me how they would like to coordinate
+patch-flow w/ rt2800 tree please do not cc: me on rt2x00 patches as
+I have completely no control over what people are doing with my patches
+posted to linux-wireless for review.
+
+[ Yesterday I've just noticed by accident (mail from Hauke) that older
+  versions of my patches were merged into wireless-testing. ]
+
+--
+Bartlomiej Zolnierkiewicz
