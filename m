@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the staging tree with the pcmcia tree
-Date: Mon, 9 Nov 2009 18:15:27 +1100
-Message-ID: <20091109181527.a42431bc.sfr@canb.auug.org.au>
+Date: Mon, 9 Nov 2009 18:15:44 +1100
+Message-ID: <20091109181544.454695c0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__9_Nov_2009_18_15_27_+1100_0Y.RKbU71jaoI5sj"
+ boundary="Signature=_Mon__9_Nov_2009_18_15_44_+1100_2fcxF7pn=V6H_iMc"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:50775 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:50789 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752449AbZKIHP0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 9 Nov 2009 02:15:26 -0500
+	id S1753947AbZKIHPm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 9 Nov 2009 02:15:42 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Patrick Johnson <teknotus@teknot.us>, Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dominik Brodowski <linux@dominikbrodowski.net>, Vadim Mutilin <mutilin@ispras.ru>
 
---Signature=_Mon__9_Nov_2009_18_15_27_+1100_0Y.RKbU71jaoI5sj
+--Signature=_Mon__9_Nov_2009_18_15_44_+1100_2fcxF7pn=V6H_iMc
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,28 +24,30 @@ Content-Transfer-Encoding: quoted-printable
 Hi Greg,
 
 Today's linux-next merge of the staging tree got a conflict in
-drivers/staging/comedi/drivers/ni_mio_cs.c between commit
+drivers/staging/comedi/drivers/cb_das16_cs.c between commit
 4e338b7f55b4c30e60fa3fa9ff3d21e930f40116 ("pcmcia/staging: update comedi
 drivers") from the pcmcia tree and commit
-bd7881ee58045b4b684f4400b24081656e0c6986 ("Staging: comedi: ni_mio_cs.c:
-coding style cleanup") from the staging tree.
+e18c724339a542aac71d1d47b0695bf7b4a5c3a3 ("STAGING: comedi: cb_das16_cs:
+fixing coding style errors") from the staging tree.
 
-I fixed it up (mainly using the pcmcia tree version when there was a
-clash) and can carry the fix as necessary.
+I fixed it up (using the pcmcia tree version when there is a clash) and
+can carry the fix as necessary.
+
+[Greg, that staging tree commit has no SOB from its author ...]
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-
---Signature=_Mon__9_Nov_2009_18_15_27_+1100_0Y.RKbU71jaoI5sj
+--Signature=_Mon__9_Nov_2009_18_15_44_+1100_2fcxF7pn=V6H_iMc
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkr3wY8ACgkQjjKRsyhoI8wsNQCdFiPsERpnsGmycpmfxYsl06m2
-HEkAn3gTkdJEYEgXRqyR1aSJTnjWgklC
-=qaTi
+iEYEARECAAYFAkr3waAACgkQjjKRsyhoI8yw9QCgq2b7yw9Osbw7YUKCIAp9Tz4B
+sLcAniWH5Gyd+fE2S1/+jbOihbzM09yl
+=iSCA
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__9_Nov_2009_18_15_27_+1100_0Y.RKbU71jaoI5sj--
+--Signature=_Mon__9_Nov_2009_18_15_44_+1100_2fcxF7pn=V6H_iMc--
