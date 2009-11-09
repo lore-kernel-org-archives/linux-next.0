@@ -1,42 +1,34 @@
 From: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Subject: Re: linux-next: wireless tree build failure
-Date: Mon, 9 Nov 2009 14:37:14 +0100
-Message-ID: <200911091437.14465.bzolnier@gmail.com>
-References: <20091109190812.b2f75760.sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the trivial tree with the  tree
+Date: Mon, 9 Nov 2009 16:08:36 +0100
+Message-ID: <200911091608.36757.bzolnier@gmail.com>
+References: <20091109154305.49d3eb7c.sfr@canb.auug.org.au> <alpine.LSU.2.00.0911090944200.15039@wotan.suse.de>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
   charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ew0-f207.google.com ([209.85.219.207]:48396 "EHLO
-	mail-ew0-f207.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755891AbZKINi6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Nov 2009 08:38:58 -0500
-In-Reply-To: <20091109190812.b2f75760.sfr@canb.auug.org.au>
+Received: from mail-bw0-f227.google.com ([209.85.218.227]:34770 "EHLO
+	mail-bw0-f227.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753952AbZKIPSs (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Nov 2009 10:18:48 -0500
+In-Reply-To: <alpine.LSU.2.00.0911090944200.15039@wotan.suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>
 
+On Monday 09 November 2009 09:45:50 Jiri Kosina wrote:
 
-Hi,
-
-On Monday 09 November 2009 09:08:12 Stephen Rothwell wrote:
-> Hi John,
+> From: Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>
+> Subject: rt2x00: fix some typos and punctuation in comments
 > 
-> Today's linux-next build (powerpc allyesconfig) failed like this:
+> fix some typos and punctuation in comments
+> 
+> Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>
+> Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 
-This was fixed yesterday by Hauke Mehrtens for wireless-testing
-(http://patchwork.kernel.org/patch/58495/) and in the way preserving
-bisectability in rt2800 tree.
+FWIW the patch is in rt2800 tree now.
 
-Stephen, until someone explains me how they would like to coordinate
-patch-flow w/ rt2800 tree please do not cc: me on rt2x00 patches as
-I have completely no control over what people are doing with my patches
-posted to linux-wireless for review.
-
-[ Yesterday I've just noticed by accident (mail from Hauke) that older
-  versions of my patches were merged into wireless-testing. ]
-
---
+-- 
 Bartlomiej Zolnierkiewicz
