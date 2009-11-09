@@ -1,92 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: wireless tree build failure
-Date: Mon, 9 Nov 2009 19:08:12 +1100
-Message-ID: <20091109190812.b2f75760.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: tip tree build warning
+Date: Mon, 9 Nov 2009 09:10:38 +0100
+Message-ID: <20091109081038.GJ453@elte.hu>
+References: <20091028181443.50a09dbb.sfr@canb.auug.org.au>
+ <20091028073145.GD6353@elte.hu>
+ <20091028184126.b5f52d1b.sfr@canb.auug.org.au>
+ <20091028184851.504752ef.sfr@canb.auug.org.au>
+ <20091028075012.GD19402@elte.hu>
+ <20091108213055.GA13555@lenovo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754394AbZKIIIP@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-List-Id: linux-next.vger.kernel.org
-
-Hi John,
-
-Today's linux-next build (powerpc allyesconfig) failed like this:
-
-In file included from drivers/net/wireless/rt2x00/rt2800lib.c:35:
-drivers/net/wireless/rt2x00/rt2x00usb.h: In function 'rt2x00usb_vendor_request_sw':
-drivers/net/wireless/rt2x00/rt2x00usb.h:205: error: 'USB_DIR_OUT' undeclared (first use in this function)
-drivers/net/wireless/rt2x00/rt2x00usb.h:205: error: 'USB_TYPE_VENDOR' undeclared (first use in this function)
-drivers/net/wireless/rt2x00/rt2x00usb.h:205: error: 'USB_RECIP_DEVICE' undeclared (first use in this function)
-drivers/net/wireless/rt2x00/rt2x00usb.h: In function 'rt2x00usb_eeprom_read':
-drivers/net/wireless/rt2x00/rt2x00usb.h:223: error: 'USB_DIR_IN' undeclared (first use in this function)
-drivers/net/wireless/rt2x00/rt2x00usb.h:223: error: 'USB_TYPE_VENDOR' undeclared (first use in this function)
-drivers/net/wireless/rt2x00/rt2x00usb.h:223: error: 'USB_RECIP_DEVICE' undeclared (first use in this function)
-drivers/net/wireless/rt2x00/rt2x00usb.h: In function 'rt2x00usb_register_read':
-drivers/net/wireless/rt2x00/rt2x00usb.h:243: error: 'USB_DIR_IN' undeclared (first use in this function)
-drivers/net/wireless/rt2x00/rt2x00usb.h:243: error: 'USB_TYPE_VENDOR' undeclared (first use in this function)
-drivers/net/wireless/rt2x00/rt2x00usb.h:243: error: 'USB_RECIP_DEVICE' undeclared (first use in this function)
-drivers/net/wireless/rt2x00/rt2x00usb.h: In function 'rt2x00usb_register_read_lock':
-drivers/net/wireless/rt2x00/rt2x00usb.h:263: error: 'USB_DIR_IN' undeclared (first use in this function)
-drivers/net/wireless/rt2x00/rt2x00usb.h:263: error: 'USB_TYPE_VENDOR' undeclared (first use in this function)
-drivers/net/wireless/rt2x00/rt2x00usb.h:263: error: 'USB_RECIP_DEVICE' undeclared (first use in this function)
-drivers/net/wireless/rt2x00/rt2x00usb.h: In function 'rt2x00usb_register_multiread':
-drivers/net/wireless/rt2x00/rt2x00usb.h:283: error: 'USB_DIR_IN' undeclared (first use in this function)
-drivers/net/wireless/rt2x00/rt2x00usb.h:283: error: 'USB_TYPE_VENDOR' undeclared (first use in this function)
-drivers/net/wireless/rt2x00/rt2x00usb.h:283: error: 'USB_RECIP_DEVICE' undeclared (first use in this function)
-drivers/net/wireless/rt2x00/rt2x00usb.h: In function 'rt2x00usb_register_write':
-drivers/net/wireless/rt2x00/rt2x00usb.h:303: error: 'USB_DIR_OUT' undeclared (first use in this function)
-drivers/net/wireless/rt2x00/rt2x00usb.h:303: error: 'USB_TYPE_VENDOR' undeclared (first use in this function)
-drivers/net/wireless/rt2x00/rt2x00usb.h:303: error: 'USB_RECIP_DEVICE' undeclared (first use in this function)
-drivers/net/wireless/rt2x00/rt2x00usb.h: In function 'rt2x00usb_register_write_lock':
-drivers/net/wireless/rt2x00/rt2x00usb.h:322: error: 'USB_DIR_OUT' undeclared (first use in this function)
-drivers/net/wireless/rt2x00/rt2x00usb.h:322: error: 'USB_TYPE_VENDOR' undeclared (first use in this function)
-drivers/net/wireless/rt2x00/rt2x00usb.h:322: error: 'USB_RECIP_DEVICE' undeclared (first use in this function)
-drivers/net/wireless/rt2x00/rt2x00usb.h: In function 'rt2x00usb_register_multiwrite':
-drivers/net/wireless/rt2x00/rt2x00usb.h:342: error: 'USB_DIR_OUT' undeclared (first use in this function)
-drivers/net/wireless/rt2x00/rt2x00usb.h:342: error: 'USB_TYPE_VENDOR' undeclared (first use in this function)
-drivers/net/wireless/rt2x00/rt2x00usb.h:342: error: 'USB_RECIP_DEVICE' undeclared (first use in this function)
-drivers/net/wireless/rt2x00/rt2x00usb.h: At top level:
-drivers/net/wireless/rt2x00/rt2x00usb.h:439: warning: 'struct usb_interface' declared inside parameter list
-drivers/net/wireless/rt2x00/rt2x00usb.h:439: warning: its scope is only this definition or declaration, which is probably not what you want
-drivers/net/wireless/rt2x00/rt2x00usb.h:440: warning: 'struct usb_interface' declared inside parameter list
-drivers/net/wireless/rt2x00/rt2x00usb.h:442: warning: 'struct usb_interface' declared inside parameter list
-drivers/net/wireless/rt2x00/rt2x00usb.h:443: warning: 'struct usb_interface' declared inside parameter list
-
-Presumably because drivers/net/wireless/rt2x00/rt2x00usb.h needs to have
-linux/usb/ch9.h included.
-
-I applied the following patch for today.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 9 Nov 2009 19:04:19 +1100
-Subject: [PATCH] wireless/rt2x00usb: include usb.h to get needed constants
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/net/wireless/rt2x00/rt2x00usb.h |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/net/wireless/rt2x00/rt2x00usb.h b/drivers/net/wireless/rt2x00/rt2x00usb.h
-index 9943e42..1c9d6ca 100644
---- a/drivers/net/wireless/rt2x00/rt2x00usb.h
-+++ b/drivers/net/wireless/rt2x00/rt2x00usb.h
-@@ -26,6 +26,8 @@
- #ifndef RT2X00USB_H
- #define RT2X00USB_H
- 
-+#include <linux/usb.h>
-+
- #define to_usb_device_intf(d) \
- ({ \
- 	struct usb_interface *intf = to_usb_interface(d); \
--- 
-1.6.5.2
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx2.mail.elte.hu ([157.181.151.9]:60176 "EHLO mx2.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754132AbZKIILC (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 9 Nov 2009 03:11:02 -0500
+Content-Disposition: inline
+In-Reply-To: <20091108213055.GA13555@lenovo>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Cyrill Gorcunov <gorcunov@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Maciej W. Rozycki" <macro@linux-mips.org>, Yinghai Lu <yinghai@kernel.org>
 
 
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+* Cyrill Gorcunov <gorcunov@gmail.com> wrote:
+
+> +++ linux-2.6.git/arch/x86/include/asm/apic.h
+> @@ -310,7 +310,7 @@ struct apic {
+>  	int (*apicid_to_node)(int logical_apicid);
+>  	int (*cpu_to_logical_apicid)(int cpu);
+>  	int (*cpu_present_to_apicid)(int mps_cpu);
+> -	physid_mask_t (*apicid_to_cpu_present)(int phys_apicid);
+> +	void (*apicid_to_cpu_present)(int phys_apicid, physid_mask_t *map);
+
+Yep, passing masks by reference is unconditonal goodness - that's the 
+cleanup we want.
+
+Mind sending a delta patch against tip:master?
+
+	Ingo
