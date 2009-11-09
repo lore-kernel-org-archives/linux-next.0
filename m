@@ -1,285 +1,193 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for November 9
-Date: Mon, 9 Nov 2009 19:22:46 +1100
-Message-ID: <20091109192246.aa0dfd93.sfr@canb.auug.org.au>
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: Re: linux-next: manual merge of the trivial tree with the  tree
+Date: Mon, 9 Nov 2009 09:45:50 +0100 (CET)
+Message-ID: <alpine.LSU.2.00.0911090944200.15039@wotan.suse.de>
+References: <20091109154305.49d3eb7c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__9_Nov_2009_19_22_46_+1100_a.riTJSR8Wezn7zj"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48586 "EHLO smtps.tip.net.au"
+Received: from cantor.suse.de ([195.135.220.2]:39718 "EHLO mx1.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752138AbZKIIWp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 9 Nov 2009 03:22:45 -0500
+	id S1754590AbZKIIpq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 9 Nov 2009 03:45:46 -0500
+In-Reply-To: <20091109154305.49d3eb7c.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
 
---Signature=_Mon__9_Nov_2009_19_22_46_+1100_a.riTJSR8Wezn7zj
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 9 Nov 2009, Stephen Rothwell wrote:
 
-Hi all,
+> Today's linux-next merge of the trivial tree got a conflict in
+> drivers/net/wireless/rt2x00/rt2800usb.c between commit
+> fcf5154118849cca3cdf424e83f863225d8173e7 ("rt2800: add rt2800lib (part
+> three)") from the wireless tree and commit
+> 305409a25f7df3c359ba67cbeb62763eeb7156e9 ("tree-wide: fix some typos and
+> punctuation in comments") from the trivial tree.
+> 
+> The misspelling is moved to a new file
+> (drivers/net/wireless/rt2x00/rt2800lib.c), but I didn't bother fixing it up.
 
-Changes since 20091106:
+Sure, thanks for letting me know.
 
-The sparc tree lost its build failure.
+John, I think it'd be best if you just take the appropriate hunks from 
+that tree-wide patch into your tree, if you don't mind.
 
-The net tree lost a conflict, but gained another against the net-current
-tree and a build failure for which I applied a patch.
+Please find the patch with extracted hunks below, and let me know if/when 
+you have applied it, so that I can drop it. Thanks.
 
-The wireless tree gained a build failure for which I applied a patch.
 
-The pcmcia tree gained a conflict against the mtd tree.
 
-The trivial tree gained a conflict against the wireless tree.
+From: Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>
+Subject: rt2x00: fix some typos and punctuation in comments
 
-The staging tree gained 3 conflicts against the pcmcia tree.
+fix some typos and punctuation in comments
 
-----------------------------------------------------------------------------
+Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
-and sparc64 defconfig. These builds also have
-CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
-CONFIG_DEBUG_INFO disabled when necessary.
-
-Below is a summary of the state of the merge.
-
-We are up to 146 trees (counting Linus' and 22 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging fixes/fixes
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/tty.current
-Merging quilt/usb.current
-Merging quilt/staging.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging ide-curent/master
-Merging dwmw2/master
-Merging arm/devel
-Merging davinci/davinci-next
-Merging msm/for-next
-Merging omap/for-next
-Merging pxa/for-next
-Merging avr32/avr32-arch
-CONFLICT (content): Merge conflict in arch/avr32/mach-at32ap/include/mach/c=
-pu.h
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-CONFLICT (content): Merge conflict in drivers/rtc/Kconfig
-Merging m68knommu/for-next
-Merging microblaze/next
-Merging mips/mips-for-linux-next
-Merging parisc/next
-Merging powerpc/next
-Merging 4xx/next
-Merging 52xx-and-virtex/next
-Merging galak/next
-Merging s390/features
-Merging sh/master
-Merging sparc/master
-Merging xtensa/master
-Merging ceph/for-next
-Merging cifs/master
-Merging configfs/linux-next
-Merging ecryptfs/next
-Merging ext3/for_next
-Merging ext4/next
-Merging fatfs/master
-Merging fuse/for-next
-Merging gfs2/master
-Merging jfs/next
-Merging nfs/linux-next
-Merging nfsd/nfsd-next
-Merging nilfs2/for-next
-Merging ocfs2/linux-next
-Merging squashfs/master
-Merging udf/for_next
-Merging v9fs/for-next
-Merging ubifs/linux-next
-Merging xfs/master
-Merging reiserfs-bkl/reiserfs/kill-bkl
-Merging vfs/for-next
-Merging pci/linux-next
-Merging hid/for-next
-Merging quilt/i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-Merging kbuild/master
-Merging kconfig/for-next
-Merging ide/master
-Merging libata/NEXT
-Merging infiniband/for-next
-Merging acpi/test
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/linux-next
-CONFLICT (content): Merge conflict in arch/powerpc/kvm/timing.h
-Merging dlm/next
-Merging scsi/master
-Merging async_tx/next
-Merging net/master
-CONFLICT (content): Merge conflict in drivers/net/can/usb/ems_usb.c
-CONFLICT (delete/modify): drivers/net/sfc/sfe4001.c deleted in net/master a=
-nd modified in HEAD. Version HEAD of drivers/net/sfc/sfe4001.c left in tree.
-CONFLICT (content): Merge conflict in drivers/net/wireless/libertas/cmd.c
-CONFLICT (content): Merge conflict in drivers/staging/rtl8187se/Kconfig
-CONFLICT (content): Merge conflict in drivers/staging/rtl8192e/Kconfig
-$ git rm -f drivers/net/sfc/sfe4001.c
-Applying: net: merge fixup for drivers/net/sfc/falcon_boards.c
-Merging wireless/master
-CONFLICT (content): Merge conflict in drivers/staging/Kconfig
-CONFLICT (content): Merge conflict in drivers/staging/Makefile
-Applying: net/appletalk: using compat_ptr needs inclusion of linux/compat.h
-Merging mtd/master
-Merging crypto/master
-Merging sound/for-next
-CONFLICT (content): Merge conflict in arch/arm/mach-omap2/board-omap3evm.c
-Merging cpufreq/next
-Merging quilt/rr
-Merging mmc/next
-Merging tmio-mmc/linux-next
-Merging input/next
-Merging lsm/for-next
-Merging block/for-next
-Merging quilt/device-mapper
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-CONFLICT (content): Merge conflict in drivers/mtd/maps/pcmciamtd.c
-CONFLICT (content): Merge conflict in drivers/pcmcia/Makefile
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging voltage/for-next
-CONFLICT (content): Merge conflict in drivers/mfd/Kconfig
-CONFLICT (content): Merge conflict in drivers/mfd/Makefile
-Merging security-testing/next
-CONFLICT (content): Merge conflict in Documentation/dontdiff
-Merging lblnet/master
-Merging agp/agp-next
-Merging uwb/for-upstream
-Merging watchdog/master
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-CONFLICT (content): Merge conflict in drivers/net/wireless/rt2x00/rt2800usb=
-.c
-Merging audit/for-next
-Merging quilt/aoe
-Merging suspend/linux-next
-Merging bluetooth/master
-Merging fsnotify/for-next
-Merging irda/for-next
-Merging hwlat/for-linus
-CONFLICT (content): Merge conflict in drivers/misc/Makefile
-Merging drbd/for-jens
-Merging catalin/for-next
-Merging alacrity/linux-next
-CONFLICT (content): Merge conflict in drivers/net/Kconfig
-CONFLICT (content): Merge conflict in lib/Kconfig
-Merging i7core_edac/linux_next
-Merging devicetree/next-devicetree
-Merging limits/writable_limits
-Merging tip/auto-latest
-CONFLICT (content): Merge conflict in arch/x86/kernel/kgdb.c
-Merging oprofile/for-next
-Merging percpu/for-next
-CONFLICT (content): Merge conflict in arch/x86/kvm/svm.c
-CONFLICT (content): Merge conflict in kernel/softlockup.c
-CONFLICT (content): Merge conflict in mm/percpu.c
-Applying: percpu: merge fixup for variable renaming
-Merging sfi/sfi-test
-Merging asm-generic/next
-Merging hwpoison/hwpoison
-Merging quilt/driver-core
-Merging quilt/tty
-Merging quilt/usb
-Merging quilt/staging
-CONFLICT (content): Merge conflict in drivers/staging/Kconfig
-CONFLICT (content): Merge conflict in drivers/staging/Makefile
-CONFLICT (content): Merge conflict in drivers/staging/comedi/drivers/cb_das=
-16_cs.c
-CONFLICT (content): Merge conflict in drivers/staging/comedi/drivers/ni_lab=
-pc_cs.c
-CONFLICT (content): Merge conflict in drivers/staging/comedi/drivers/ni_mio=
-_cs.c
-Merging scsi-post-merge/master
-Applying: wireless/rt2x00usb: include usb.h to get needed constants
-
---Signature=_Mon__9_Nov_2009_19_22_46_+1100_a.riTJSR8Wezn7zj
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkr30VYACgkQjjKRsyhoI8xJrACgiTd9ECXj6rsjN3MArq7WsWpp
-xLMAniLWymG6pLhQ2Bwgifrkwyx1BYWf
-=lXuS
------END PGP SIGNATURE-----
-
---Signature=_Mon__9_Nov_2009_19_22_46_+1100_a.riTJSR8Wezn7zj--
+diff --git a/drivers/net/wireless/rt2x00/rt2800usb.c b/drivers/net/wireless/rt2x00/rt2800usb.c
+index 9fe770f..68b43e3 100644
+--- a/drivers/net/wireless/rt2x00/rt2800usb.c
++++ b/drivers/net/wireless/rt2x00/rt2800usb.c
+@@ -1257,7 +1257,7 @@ static int rt2800usb_init_registers(struct rt2x00_dev *rt2x00dev)
+ 	unsigned int i;
+ 
+ 	/*
+-	 * Wait untill BBP and RF are ready.
++	 * Wait until BBP and RF are ready.
+ 	 */
+ 	for (i = 0; i < REGISTER_BUSY_COUNT; i++) {
+ 		rt2x00usb_register_read(rt2x00dev, MAC_CSR0, &reg);
+diff --git a/drivers/net/wireless/rt2x00/rt61pci.c b/drivers/net/wireless/rt2x00/rt61pci.c
+index b20e3ea..343e565 100644
+--- a/drivers/net/wireless/rt2x00/rt61pci.c
++++ b/drivers/net/wireless/rt2x00/rt61pci.c
+@@ -51,7 +51,7 @@ MODULE_PARM_DESC(nohwcrypt, "Disable hardware encryption.");
+  * These indirect registers work with busy bits,
+  * and we will try maximal REGISTER_BUSY_COUNT times to access
+  * the register while taking a REGISTER_BUSY_DELAY us delay
+- * between each attampt. When the busy bit is still set at that time,
++ * between each attempt. When the busy bit is still set at that time,
+  * the access attempt is considered to have failed,
+  * and we will print an error.
+  */
+@@ -386,7 +386,7 @@ static int rt61pci_config_shared_key(struct rt2x00_dev *rt2x00dev,
+ 		 * The driver does not support the IV/EIV generation
+ 		 * in hardware. However it doesn't support the IV/EIV
+ 		 * inside the ieee80211 frame either, but requires it
+-		 * to be provided seperately for the descriptor.
++		 * to be provided separately for the descriptor.
+ 		 * rt2x00lib will cut the IV/EIV data out of all frames
+ 		 * given to us by mac80211, but we must tell mac80211
+ 		 * to generate the IV/EIV data.
+@@ -397,7 +397,7 @@ static int rt61pci_config_shared_key(struct rt2x00_dev *rt2x00dev,
+ 	/*
+ 	 * SEC_CSR0 contains only single-bit fields to indicate
+ 	 * a particular key is valid. Because using the FIELD32()
+-	 * defines directly will cause a lot of overhead we use
++	 * defines directly will cause a lot of overhead, we use
+ 	 * a calculation to determine the correct bit directly.
+ 	 */
+ 	mask = 1 << key->hw_key_idx;
+@@ -425,11 +425,11 @@ static int rt61pci_config_pairwise_key(struct rt2x00_dev *rt2x00dev,
+ 		/*
+ 		 * rt2x00lib can't determine the correct free
+ 		 * key_idx for pairwise keys. We have 2 registers
+-		 * with key valid bits. The goal is simple, read
+-		 * the first register, if that is full move to
++		 * with key valid bits. The goal is simple: read
++		 * the first register. If that is full, move to
+ 		 * the next register.
+-		 * When both registers are full, we drop the key,
+-		 * otherwise we use the first invalid entry.
++		 * When both registers are full, we drop the key.
++		 * Otherwise, we use the first invalid entry.
+ 		 */
+ 		rt2x00pci_register_read(rt2x00dev, SEC_CSR2, &reg);
+ 		if (reg && reg == ~0) {
+@@ -464,8 +464,8 @@ static int rt61pci_config_pairwise_key(struct rt2x00_dev *rt2x00dev,
+ 					      &addr_entry, sizeof(addr_entry));
+ 
+ 		/*
+-		 * Enable pairwise lookup table for given BSS idx,
+-		 * without this received frames will not be decrypted
++		 * Enable pairwise lookup table for given BSS idx.
++		 * Without this, received frames will not be decrypted
+ 		 * by the hardware.
+ 		 */
+ 		rt2x00pci_register_read(rt2x00dev, SEC_CSR4, &reg);
+@@ -487,7 +487,7 @@ static int rt61pci_config_pairwise_key(struct rt2x00_dev *rt2x00dev,
+ 	/*
+ 	 * SEC_CSR2 and SEC_CSR3 contain only single-bit fields to indicate
+ 	 * a particular key is valid. Because using the FIELD32()
+-	 * defines directly will cause a lot of overhead we use
++	 * defines directly will cause a lot of overhead, we use
+ 	 * a calculation to determine the correct bit directly.
+ 	 */
+ 	if (key->hw_key_idx < 32) {
+@@ -556,7 +556,7 @@ static void rt61pci_config_intf(struct rt2x00_dev *rt2x00dev,
+ 	if (flags & CONFIG_UPDATE_TYPE) {
+ 		/*
+ 		 * Clear current synchronisation setup.
+-		 * For the Beacon base registers we only need to clear
++		 * For the Beacon base registers, we only need to clear
+ 		 * the first byte since that byte contains the VALID and OWNER
+ 		 * bits which (when set to 0) will invalidate the entire beacon.
+ 		 */
+@@ -1168,8 +1168,8 @@ static int rt61pci_check_firmware(struct rt2x00_dev *rt2x00dev,
+ 		return FW_BAD_LENGTH;
+ 
+ 	/*
+-	 * The last 2 bytes in the firmware array are the crc checksum itself,
+-	 * this means that we should never pass those 2 bytes to the crc
++	 * The last 2 bytes in the firmware array are the crc checksum itself.
++	 * This means that we should never pass those 2 bytes to the crc
+ 	 * algorithm.
+ 	 */
+ 	fw_crc = (data[len - 2] << 8 | data[len - 1]);
+@@ -1986,7 +1986,7 @@ static void rt61pci_fill_rxdone(struct queue_entry *entry,
+ 
+ 		/*
+ 		 * Hardware has stripped IV/EIV data from 802.11 frame during
+-		 * decryption. It has provided the data seperately but rt2x00lib
++		 * decryption. It has provided the data separately but rt2x00lib
+ 		 * should decide if it should be reinserted.
+ 		 */
+ 		rxdesc->flags |= RX_FLAG_IV_STRIPPED;
+@@ -2042,7 +2042,7 @@ static void rt61pci_txdone(struct rt2x00_dev *rt2x00dev)
+ 	 * During each loop we will compare the freshly read
+ 	 * STA_CSR4 register value with the value read from
+ 	 * the previous loop. If the 2 values are equal then
+-	 * we should stop processing because the chance it
++	 * we should stop processing because the chance is
+ 	 * quite big that the device has been unplugged and
+ 	 * we risk going into an endless loop.
+ 	 */
+@@ -2330,7 +2330,7 @@ static int rt61pci_init_eeprom(struct rt2x00_dev *rt2x00dev)
+ 		__set_bit(CONFIG_FRAME_TYPE, &rt2x00dev->flags);
+ 
+ 	/*
+-	 * Detect if this device has an hardware controlled radio.
++	 * Detect if this device has a hardware controlled radio.
+ 	 */
+ 	if (rt2x00_get_field16(eeprom, EEPROM_ANTENNA_HARDWARE_RADIO))
+ 		__set_bit(CONFIG_SUPPORT_HW_BUTTON, &rt2x00dev->flags);
+@@ -2355,7 +2355,7 @@ static int rt61pci_init_eeprom(struct rt2x00_dev *rt2x00dev)
+ 		__set_bit(CONFIG_EXTERNAL_LNA_BG, &rt2x00dev->flags);
+ 
+ 	/*
+-	 * When working with a RF2529 chip without double antenna
++	 * When working with a RF2529 chip without double antenna,
+ 	 * the antenna settings should be gathered from the NIC
+ 	 * eeprom word.
+ 	 */
+@@ -2668,7 +2668,7 @@ static int rt61pci_conf_tx(struct ieee80211_hw *hw, u16 queue_idx,
+ 
+ 	/*
+ 	 * We only need to perform additional register initialization
+-	 * for WMM queues/
++	 * for WMM queues.
+ 	 */
+ 	if (queue_idx >= 4)
+ 		return 0;
