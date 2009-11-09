@@ -1,51 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the trivial tree with the  tree
-Date: Mon, 9 Nov 2009 15:43:05 +1100
-Message-ID: <20091109154305.49d3eb7c.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: manual merge of the net tree with the net-current
+ tree
+Date: Sun, 08 Nov 2009 20:59:11 -0800 (PST)
+Message-ID: <20091108.205911.177751843.davem@davemloft.net>
+References: <20091109130323.5dcc7829.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__9_Nov_2009_15_43_05_+1100_GIwItpMIJCG+UgG7"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58434 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753571AbZKIEnF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 8 Nov 2009 23:43:05 -0500
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:51271
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754228AbZKIE6p (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 8 Nov 2009 23:58:45 -0500
+In-Reply-To: <20091109130323.5dcc7829.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, "John W. Linville" <linville@tuxdriver.com>
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, wg@grandegger.com, haas@ems-wuensche.com
 
---Signature=_Mon__9_Nov_2009_15_43_05_+1100_GIwItpMIJCG+UgG7
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 9 Nov 2009 13:03:23 +1100
 
-Hi Jiri,
+> Hi all,
+> 
+> Today's linux-next merge of the net tree got a conflict in
+> drivers/net/can/usb/ems_usb.c between commit
+> 2b2072e902848a63168570f500a5726744b3873a ("ems_usb: Fix byte order issues
+> on big endian machines") from the net-current tree and commit
+> 7b6856a0296a8f187bb88ba31fa83a08abba7966 ("can: provide library functions
+> for skb allocation") from the net tree.
+> 
+> Just context changes.  I fixed it up (see below) and can carry the fix
+> for a while.
 
-Today's linux-next merge of the trivial tree got a conflict in
-drivers/net/wireless/rt2x00/rt2800usb.c between commit
-fcf5154118849cca3cdf424e83f863225d8173e7 ("rt2800: add rt2800lib (part
-three)") from the wireless tree and commit
-305409a25f7df3c359ba67cbeb62763eeb7156e9 ("tree-wide: fix some typos and
-punctuation in comments") from the trivial tree.
-
-The misspelling is moved to a new file
-(drivers/net/wireless/rt2x00/rt2800lib.c), but I didn't bother fixing it up.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__9_Nov_2009_15_43_05_+1100_GIwItpMIJCG+UgG7
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkr3ndkACgkQjjKRsyhoI8xiAQCdFrHbrlrGmfpRLBm38zQSLWRJ
-b3YAn2g7kXIJnnTc1z6U47/E5aQ+P7yY
-=tnJK
------END PGP SIGNATURE-----
-
---Signature=_Mon__9_Nov_2009_15_43_05_+1100_GIwItpMIJCG+UgG7--
+I'll do a merge and resolve this, thanks Stephen!
