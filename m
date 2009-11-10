@@ -1,49 +1,63 @@
-From: Ben Hutchings <bhutchings@solarflare.com>
-Subject: Re: linux-next: manual merge of the net tree with the i2c tree
-Date: Tue, 10 Nov 2009 15:10:27 +0000
-Message-ID: <1257865827.2834.12.camel@achroite.uk.solarflarecom.com>
-References: <20091026133757.7cf87e49.sfr@canb.auug.org.au>
-	 <20091110124231.66141a0f@hyperion.delvare>
-	 <1257859379.2834.2.camel@achroite.uk.solarflarecom.com>
-	 <20091110160246.506b7789@hyperion.delvare>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] staging/rtl*: fix typos that cause build failures
+Date: Tue, 10 Nov 2009 09:04:23 -0800
+Message-ID: <20091110090423.ab8cc342.randy.dunlap@oracle.com>
+References: <20091109192246.aa0dfd93.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from exchange.solarflare.com ([216.237.3.220]:54132 "EHLO
-	exchange.solarflare.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756390AbZKJPKZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Nov 2009 10:10:25 -0500
-In-Reply-To: <20091110160246.506b7789@hyperion.delvare>
+Received: from acsinet11.oracle.com ([141.146.126.233]:32733 "EHLO
+	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755802AbZKJREg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Nov 2009 12:04:36 -0500
+In-Reply-To: <20091109192246.aa0dfd93.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jean Delvare <khali@linux-fr.org>, David Miller <davem@davemloft.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mika Kuoppala <mika.kuoppala@nokia.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, devel@driverdev.osuosl.org
 
-On Tue, 2009-11-10 at 16:02 +0100, Jean Delvare wrote:
-> On Tue, 10 Nov 2009 13:22:58 +0000, Ben Hutchings wrote:
-> > On Tue, 2009-11-10 at 12:42 +0100, Jean Delvare wrote:
-> > > Ben, you can adjust your own patches to make use of this API instead of
-> > > accessing the i2c_adapter mutex directly. That way, you are no longer
-> > > dependent of implementation changes, and this should solve the conflict.
-> > > 
-> > > Stephen, you can then drop your fixup patch.
-> > 
-> > I don't think so, since the conflict resulted from joining two files
-> > including sfe4001.c in net-next-2.6.
-> 
-> My patch series no longer touches sfe4001.c, so how would the conflict
-> remain?
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Because your patch to introduce i2c_{lock,unlock}_adapter() are not in
-net-next-2.6 yet.
+Correct sizef() typo to be sizeof().
+Correct strcpt() typo to be strcpy().
 
-David, you might want to pull from Linus and resolve this, giving
-Stephen a break.
+who build-tested these drivers?
 
-Ben.
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/staging/rtl8187se/r8180_core.c |    2 +-
+ drivers/staging/rtl8192e/r8192E_core.c |    4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
--- 
-Ben Hutchings, Senior Software Engineer, Solarflare Communications
-Not speaking for my employer; that's the marketing department's job.
-They asked us to note that Solarflare product names are trademarked.
+--- linux-next-20091109.orig/drivers/staging/rtl8187se/r8180_core.c
++++ linux-next-20091109/drivers/staging/rtl8187se/r8180_core.c
+@@ -79,7 +79,7 @@ MODULE_AUTHOR("Andrea Merello <andreamrl
+ MODULE_DESCRIPTION("Linux driver for Realtek RTL8180 / RTL8185 WiFi cards");
+ 
+ 
+-module_param_string(ifname, ifname, sizef(ifname), S_IRUGO|S_IWUSR);
++module_param_string(ifname, ifname, sizeof(ifname), S_IRUGO|S_IWUSR);
+ module_param(hwseqnum,int, S_IRUGO|S_IWUSR);
+ module_param(hwwep,int, S_IRUGO|S_IWUSR);
+ module_param(channels,int, S_IRUGO|S_IWUSR);
+--- linux-next-20091109.orig/drivers/staging/rtl8192e/r8192E_core.c
++++ linux-next-20091109/drivers/staging/rtl8192e/r8192E_core.c
+@@ -126,7 +126,7 @@ MODULE_DEVICE_TABLE(pci, rtl8192_pci_id_
+ MODULE_DESCRIPTION("Linux driver for Realtek RTL819x WiFi cards");
+ 
+ 
+-module_param_string(ifname, ifname, sizef(ifname), S_IRUGO|S_IWUSR);
++module_param_string(ifname, ifname, sizeof(ifname), S_IRUGO|S_IWUSR);
+ //module_param(hwseqnum,int, S_IRUGO|S_IWUSR);
+ module_param(hwwep,int, S_IRUGO|S_IWUSR);
+ module_param(channels,int, S_IRUGO|S_IWUSR);
+@@ -5972,7 +5972,7 @@ static int __devinit rtl8192_pci_probe(s
+ 
+ 	if (dev_alloc_name(dev, ifname) < 0){
+                 RT_TRACE(COMP_INIT, "Oops: devname already taken! Trying wlan%%d...\n");
+-		strcpt(ifname, "wlan%d");
++		strcpy(ifname, "wlan%d");
+ 		dev_alloc_name(dev, ifname);
+         }
+ 
