@@ -1,39 +1,57 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: linux-next: manual merge of the trivial tree with the  tree
-Date: Mon, 9 Nov 2009 16:25:29 +0100 (CET)
-Message-ID: <alpine.LSU.2.00.0911091624370.15039@wotan.suse.de>
-References: <20091109154305.49d3eb7c.sfr@canb.auug.org.au> <alpine.LSU.2.00.0911090944200.15039@wotan.suse.de> <200911091608.36757.bzolnier@gmail.com>
+From: Masami Hiramatsu <mhiramat@redhat.com>
+Subject: Re: linux-next: Tree for October 29 (x86 posttest)
+Date: Mon, 09 Nov 2009 19:40:11 -0500
+Message-ID: <4AF8B66B.3010405@redhat.com>
+References: <20091029182919.4d6ec52c.sfr@canb.auug.org.au>	<20091029090627.7857ed08.rdunlap@xenotime.net>	<4AE9C74C.2040309@redhat.com> <20091106085954.39eb2789.rdunlap@xenotime.net>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor.suse.de ([195.135.220.2]:54730 "EHLO mx1.suse.de"
+Received: from mx1.redhat.com ([209.132.183.28]:38688 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755864AbZKIPZ1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 9 Nov 2009 10:25:27 -0500
-In-Reply-To: <200911091608.36757.bzolnier@gmail.com>
+	id S1750954AbZKJAkQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 9 Nov 2009 19:40:16 -0500
+In-Reply-To: <20091106085954.39eb2789.rdunlap@xenotime.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Mon, 9 Nov 2009, Bartlomiej Zolnierkiewicz wrote:
+Randy Dunlap wrote:
+> On Thu, 29 Oct 2009 12:48:12 -0400 Masami Hiramatsu wrote:
+>
+>> Randy Dunlap wrote:
+>>> On Thu, 29 Oct 2009 18:29:19 +1100 Stephen Rothwell wrote:
+>>>
+>>>> Hi all,
+>>>>
+>>>> [I accidentally deleted my merge log today, so sorry to anyone who
+>>>> actually reads them :-), the summary still appears below.]
+>>>
+>>>
+>>> I'm getting this on x86_64:
+>>>
+>>>     TEST    posttest
+>>> Error: ffffffff810299e2:	f2 41 0f 28 52 b0    	repnz movaps -0x50(%r10),%xmm2
+>>> Error: objdump says 6 bytes, but insn_get_length() says 4 (attr:0)
+>>> make[2]: *** [posttest] Error 2
+>>
+>> Ah, that's should be fixed by AVX support patch which I've posted.
+>> http://git.kernel.org/tip/e0e492e99b372c6990a5daca9e4683c341f1330e
+>
+> Has that been merged into linux-next?
+> I'm still seeing this failure in linux-next-20091106.
 
-> > From: Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>
-> > Subject: rt2x00: fix some typos and punctuation in comments
-> > 
-> > fix some typos and punctuation in comments
-> > 
-> > Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>
-> > Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-> 
-> FWIW the patch is in rt2800 tree now.
+I checked it has been merged.
+So, it should disappear from linux-next-20091109. :-)
 
-I have dropped the respective hunk from my tree (I hope that being in your 
-tree means that it will get upstream one day, I must say I got completely 
-lost in the recent rt2x00 flames :) ).
-
-Thanks,
+Thanks!
 
 -- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+Masami Hiramatsu
+
+Software Engineer
+Hitachi Computer Products (America), Inc.
+Software Solutions Division
+
+e-mail: mhiramat@redhat.com
