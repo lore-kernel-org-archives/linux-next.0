@@ -1,44 +1,38 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: next tree for October 27:  znet build failure
-Date: Tue, 10 Nov 2009 09:19:45 -0800
-Message-ID: <20091110091945.c373e41e.randy.dunlap@oracle.com>
-References: <20091027190850.9694fb39.sfr@canb.auug.org.au>
-	<4AE6BEC7.2030703@in.ibm.com>
-	<20091028013721.049c0146.sfr@canb.auug.org.au>
+From: "HongKong and Shanghai Banking Corporation Limited"
+	<info@proposal.com>
+Subject: Hello
+Date: Tue, 10 Nov 2009 17:15:19 -0200
+Message-ID: <20091110171519.182251belaio9pzb@webmail.coopsal.com.ar>
+Reply-To: andrewflockhart.flockhart@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain;
+	charset=ISO-8859-1;
+	DelSp="Yes";
+	format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20091028013721.049c0146.sfr@canb.auug.org.au>
-Sender: netdev-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Sachin Sant <sachinp@in.ibm.com>, linux-next@vger.kernel.org, netdev <netdev@vger.kernel.org>, David Miller <davem@davemloft.net>, "John W. Linville" <linville@tuxdriver.com>, Greg KH <greg@kroah.com>
-List-Id: linux-next.vger.kernel.org
-
-On Wed, 28 Oct 2009 01:37:21 +1100 Stephen Rothwell wrote:
-
-> Just adding John and Greg to the cc list as this is caused by patches in
-> the staging tree.
-
-ping ping.  still a problem.
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.coopsal.com.ar ([201.251.77.131]:52205 "EHLO
+	mail.coopsal.com.ar" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757946AbZKJTx5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Nov 2009 14:53:57 -0500
+Content-Disposition: inline
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 
 
-> On Tue, 27 Oct 2009 15:05:03 +0530 Sachin Sant <sachinp@in.ibm.com> wrote:
-> >
-> > Fails to build on x86_32 with lots of errors related to znet
-> > 
-> > drivers/net/znet.c:107:29: error: wireless/i82593.h: No such file or directory
-> > drivers/net/znet.c:133: error: field 'i593_init' has incomplete type
-> > drivers/net/znet.c: In function 'znet_set_multicast_list':
-> > drivers/net/znet.c:235: error: invalid application of 'sizeof' to incomplete type 'struct i82593_conf_block'
-> > drivers/net/znet.c:247: error: dereferencing pointer to incomplete type
-> > .....
-> > 
-> > Commit 879e9304... moved wireless/i82593.h to drivers/staging/wavelan/i82593.h
-> > 
-> > Thanks
-> > -Sachin
+Hello
+I am Mr. Alexander Andrew Flockhart, Chief Executive Officer of the
+HongKong and Shanghai Banking Corporation Limited. I have a Business
+Proposal of $24,500,000.00 for you to handle with me from my bank.
+I will need you to assist me in executing this Business Project from  
+Hong Kong to
+your country. If interested, please reply with full contact details.
+Regards,
+A.A. Flockhart.
 
 
----
-~Randy
+
+
+
+----------------------------------------------------------------
+This message was sent using IMP, the Internet Messaging Program.
