@@ -1,49 +1,67 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: new tree: sysctl
-Date: Tue, 10 Nov 2009 15:33:09 +1100
-Message-ID: <20091110153309.57efaac2.sfr@canb.auug.org.au>
+From: Masami Hiramatsu <mhiramat@redhat.com>
+Subject: Re: linux-next: Tree for October 29 (x86 posttest)
+Date: Mon, 09 Nov 2009 23:55:21 -0500
+Message-ID: <4AF8F239.4030407@redhat.com>
+References: <20091029182919.4d6ec52c.sfr@canb.auug.org.au>	<20091029090627.7857ed08.rdunlap@xenotime.net>	<4AE9C74C.2040309@redhat.com>	<20091106085954.39eb2789.rdunlap@xenotime.net>	<4AF8B66B.3010405@redhat.com> <20091110130841.81d76a4b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__10_Nov_2009_15_33_09_+1100_EE6V8VN_SK6QXUAp"
+Content-Type: text/plain; charset=ISO-2022-JP
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51654 "EHLO smtps.tip.net.au"
+Received: from mx1.redhat.com ([209.132.183.28]:26140 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752578AbZKJEdN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 9 Nov 2009 23:33:13 -0500
+	id S1754152AbZKJEzU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 9 Nov 2009 23:55:20 -0500
+In-Reply-To: <20091110130841.81d76a4b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, "Eric W. Biederman" <ebiederm@xmission.com>, linux-arch@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>, Ralf Baechle <ralf@linux-mips.org>, Kyle McMartin <kyle@mcmartin.ca>, Thibaut Varene <T-Bone@parisc-linux.org>, Carsten Otte <cotte@de.ibm.com>, Christian Borntraeger <borntraeger@de.ibm.com>, "David S. Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Tue__10_Nov_2009_15_33_09_+1100_EE6V8VN_SK6QXUAp
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Stephen Rothwell wrote:
+> Hi all,
+> 
+> On Mon, 09 Nov 2009 19:40:11 -0500 Masami Hiramatsu<mhiramat@redhat.com>  wrote:
+>>
+>> Randy Dunlap wrote:
+>>> On Thu, 29 Oct 2009 12:48:12 -0400 Masami Hiramatsu wrote:
+>>>
+>>>> Randy Dunlap wrote:
+>>>>>
+>>>>> I'm getting this on x86_64:
+>>>>>
+>>>>>      TEST    posttest
+>>>>> Error: ffffffff810299e2:	f2 41 0f 28 52 b0    	repnz movaps -0x50(%r10),%xmm2
+>>>>> Error: objdump says 6 bytes, but insn_get_length() says 4 (attr:0)
+>>>>> make[2]: *** [posttest] Error 2
+>>>>
+>>>> Ah, that's should be fixed by AVX support patch which I've posted.
+>>>> http://git.kernel.org/tip/e0e492e99b372c6990a5daca9e4683c341f1330e
+>>>
+>>> Has that been merged into linux-next?
+>>> I'm still seeing this failure in linux-next-20091106.
+>>
+>> I checked it has been merged.
+>> So, it should disappear from linux-next-20091109. :-)
+> 
+> That commit (e0e492e99b372c6990a5daca9e4683c341f1330e "x86: AVX
+> instruction set decoder support") has been in linux-next since
+> next-20091104, so if Randy's problem still existed in next-20091106, then
+> it may be a different problem.
 
-Hi all,
+Hmm, this seems a bad sequence, movaps can't have repnz prefix,
+since movaps is not string operation... It might happen since
+AVX opcodes supporting processors are not released yet.
 
-Eric has requested that the tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/sysctl-2.6.git#master
-be added to linux-next and I will add it from today.
+Anyway, I think we'd better change the posttest to report it
+as warning instead of errors.
 
-Before anyone else jumps to the wrong conclusion (as I did :-)) this tree
-currently only contains the set of patches posted in the thread "generic
-compat_sys_sysctl".
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Thank you,
 
---Signature=_Tue__10_Nov_2009_15_33_09_+1100_EE6V8VN_SK6QXUAp
-Content-Type: application/pgp-signature
+-- 
+Masami Hiramatsu
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+Software Engineer
+Hitachi Computer Products (America), Inc.
+Software Solutions Division
 
-iEYEARECAAYFAkr47QUACgkQjjKRsyhoI8xp0QCfX3w2z7aeGKARtLucNQf4PgH2
-EWMAnRkCT8GeQg4weyuxCZJxmCOIdGQ0
-=qkkC
------END PGP SIGNATURE-----
-
---Signature=_Tue__10_Nov_2009_15_33_09_+1100_EE6V8VN_SK6QXUAp--
+e-mail: mhiramat@redhat.com
