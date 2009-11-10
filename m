@@ -1,75 +1,49 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: linux-next: rr tree build warnings
-Date: Tue, 10 Nov 2009 12:50:58 +1030
-Message-ID: <200911101250.58516.rusty@rustcorp.com.au>
-References: <20091109183104.2bf7add6.sfr@canb.auug.org.au> <20091109184046.2a802372.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: new tree: sysctl
+Date: Tue, 10 Nov 2009 15:33:09 +1100
+Message-ID: <20091110153309.57efaac2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__10_Nov_2009_15_33_09_+1100_EE6V8VN_SK6QXUAp"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:55726 "EHLO ozlabs.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:51654 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753583AbZKJCU5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 9 Nov 2009 21:20:57 -0500
-In-Reply-To: <20091109184046.2a802372.sfr@canb.auug.org.au>
+	id S1752578AbZKJEdN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 9 Nov 2009 23:33:13 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, "Eric W. Biederman" <ebiederm@xmission.com>, linux-arch@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>, Ralf Baechle <ralf@linux-mips.org>, Kyle McMartin <kyle@mcmartin.ca>, Thibaut Varene <T-Bone@parisc-linux.org>, Carsten Otte <cotte@de.ibm.com>, Christian Borntraeger <borntraeger@de.ibm.com>, "David S. Miller" <davem@davemloft.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>
 
-On Mon, 9 Nov 2009 06:10:46 pm Stephen Rothwell wrote:
-> I am also getting some section mismatch warnings like this:
-> 
-> WARNING: drivers/mtd/ubi/ubi.o(.data+0x1c0): Section mismatch in reference from the variable __ops_mtd to the function .init.text:ubi_mtd_param_parse()
-> The variable __ops_mtd references
-> the function __init ubi_mtd_param_parse()
+--Signature=_Tue__10_Nov_2009_15_33_09_+1100_EE6V8VN_SK6QXUAp
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Right.  This needs a new rule in modpost; here's what I've added:
+Hi all,
 
-diff --git a/include/linux/moduleparam.h b/include/linux/moduleparam.h
---- a/include/linux/moduleparam.h
-+++ b/include/linux/moduleparam.h
-@@ -97,10 +97,10 @@ struct kparam_array
- 
- /* Obsolete - use module_param_cb() */
- #define module_param_call(name, set, get, arg, perm)			\
--	static struct kernel_param_ops __ops_##name =			\
-+	static struct kernel_param_ops __param_ops_##name =		\
- 		 { (void *)set, (void *)get };				\
- 	__module_param_call(MODULE_PARAM_PREFIX,			\
--			    name, &__ops_##name, arg,			\
-+			    name, &__param_ops_##name, arg,		\
- 			    __same_type(*(arg), bool),			\
- 			    (perm) + sizeof(__check_old_set_param(set))*0)
- 
-diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
---- a/scripts/mod/modpost.c
-+++ b/scripts/mod/modpost.c
-@@ -951,6 +951,13 @@ static int section_mismatch(const char *
-  *   fromsec = .data*
-  *   atsym   =__param*
-  *
-+ * Pattern 1a:
-+ *   module_param_call() ops can refer to __init set function if permissions=0
-+ *   The pattern is identified by:
-+ *   tosec   = .init.text
-+ *   fromsec = .data*
-+ *   atsym   = __param_ops_*
-+ *
-  * Pattern 2:
-  *   Many drivers utilise a *driver container with references to
-  *   add, remove, probe functions etc.
-@@ -984,6 +991,12 @@ static int secref_whitelist(const char *
- 	    (strncmp(fromsym, "__param", strlen("__param")) == 0))
- 		return 0;
- 
-+	/* Check for pattern 1a */
-+	if (strcmp(tosec, ".init.text") == 0 &&
-+	    match(fromsec, data_sections) &&
-+	    (strncmp(fromsym, "__param_ops_", strlen("__param_ops_")) == 0))
-+		return 0;
-+
- 	/* Check for pattern 2 */
- 	if (match(tosec, init_exit_sections) &&
- 	    match(fromsec, data_sections) &&
+Eric has requested that the tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/sysctl-2.6.git#master
+be added to linux-next and I will add it from today.
+
+Before anyone else jumps to the wrong conclusion (as I did :-)) this tree
+currently only contains the set of patches posted in the thread "generic
+compat_sys_sysctl".
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__10_Nov_2009_15_33_09_+1100_EE6V8VN_SK6QXUAp
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkr47QUACgkQjjKRsyhoI8xp0QCfX3w2z7aeGKARtLucNQf4PgH2
+EWMAnRkCT8GeQg4weyuxCZJxmCOIdGQ0
+=qkkC
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__10_Nov_2009_15_33_09_+1100_EE6V8VN_SK6QXUAp--
