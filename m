@@ -1,67 +1,34 @@
-From: Masami Hiramatsu <mhiramat@redhat.com>
-Subject: Re: linux-next: Tree for October 29 (x86 posttest)
-Date: Mon, 09 Nov 2009 23:55:21 -0500
-Message-ID: <4AF8F239.4030407@redhat.com>
-References: <20091029182919.4d6ec52c.sfr@canb.auug.org.au>	<20091029090627.7857ed08.rdunlap@xenotime.net>	<4AE9C74C.2040309@redhat.com>	<20091106085954.39eb2789.rdunlap@xenotime.net>	<4AF8B66B.3010405@redhat.com> <20091110130841.81d76a4b.sfr@canb.auug.org.au>
+From: Sam Ravnborg <sam@ravnborg.org>
+Subject: Re: linux-next: rr tree build warnings
+Date: Tue, 10 Nov 2009 06:20:40 +0100
+Message-ID: <20091110052040.GA473@merkur.ravnborg.org>
+References: <20091109183104.2bf7add6.sfr@canb.auug.org.au> <20091109184046.2a802372.sfr@canb.auug.org.au> <200911101250.58516.rusty@rustcorp.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-2022-JP
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:26140 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754152AbZKJEzU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 9 Nov 2009 23:55:20 -0500
-In-Reply-To: <20091110130841.81d76a4b.sfr@canb.auug.org.au>
+Received: from pfepa.post.tele.dk ([195.41.46.235]:55225 "EHLO
+	pfepa.post.tele.dk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750876AbZKJFUs (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Nov 2009 00:20:48 -0500
+Content-Disposition: inline
+In-Reply-To: <200911101250.58516.rusty@rustcorp.com.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Stephen Rothwell wrote:
-> Hi all,
+On Tue, Nov 10, 2009 at 12:50:58PM +1030, Rusty Russell wrote:
+> On Mon, 9 Nov 2009 06:10:46 pm Stephen Rothwell wrote:
+> > I am also getting some section mismatch warnings like this:
+> > 
+> > WARNING: drivers/mtd/ubi/ubi.o(.data+0x1c0): Section mismatch in reference from the variable __ops_mtd to the function .init.text:ubi_mtd_param_parse()
+> > The variable __ops_mtd references
+> > the function __init ubi_mtd_param_parse()
 > 
-> On Mon, 09 Nov 2009 19:40:11 -0500 Masami Hiramatsu<mhiramat@redhat.com>  wrote:
->>
->> Randy Dunlap wrote:
->>> On Thu, 29 Oct 2009 12:48:12 -0400 Masami Hiramatsu wrote:
->>>
->>>> Randy Dunlap wrote:
->>>>>
->>>>> I'm getting this on x86_64:
->>>>>
->>>>>      TEST    posttest
->>>>> Error: ffffffff810299e2:	f2 41 0f 28 52 b0    	repnz movaps -0x50(%r10),%xmm2
->>>>> Error: objdump says 6 bytes, but insn_get_length() says 4 (attr:0)
->>>>> make[2]: *** [posttest] Error 2
->>>>
->>>> Ah, that's should be fixed by AVX support patch which I've posted.
->>>> http://git.kernel.org/tip/e0e492e99b372c6990a5daca9e4683c341f1330e
->>>
->>> Has that been merged into linux-next?
->>> I'm still seeing this failure in linux-next-20091106.
->>
->> I checked it has been merged.
->> So, it should disappear from linux-next-20091109. :-)
-> 
-> That commit (e0e492e99b372c6990a5daca9e4683c341f1330e "x86: AVX
-> instruction set decoder support") has been in linux-next since
-> next-20091104, so if Randy's problem still existed in next-20091106, then
-> it may be a different problem.
+> Right.  This needs a new rule in modpost; here's what I've added:
 
-Hmm, this seems a bad sequence, movaps can't have repnz prefix,
-since movaps is not string operation... It might happen since
-AVX opcodes supporting processors are not released yet.
+Looks fine.
 
-Anyway, I think we'd better change the posttest to report it
-as warning instead of errors.
+Acked-by: Sam Ravnborg <sam@ravnborg.org>
 
-Thank you,
-
--- 
-Masami Hiramatsu
-
-Software Engineer
-Hitachi Computer Products (America), Inc.
-Software Solutions Division
-
-e-mail: mhiramat@redhat.com
+	Sam
