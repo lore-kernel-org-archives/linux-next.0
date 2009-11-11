@@ -1,62 +1,52 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: linux-next: rr tree build failure
-Date: Wed, 11 Nov 2009 19:03:21 +1030
-Message-ID: <200911111903.21923.rusty@rustcorp.com.au>
-References: <20091111140126.044be7d2.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: tip tree build failure
+Date: Wed, 11 Nov 2009 20:13:02 +1100
+Message-ID: <20091111201302.da1bab60.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__11_Nov_2009_20_13_02_+1100_K1G64qEE317X8wHS"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:49884 "EHLO ozlabs.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:46110 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757038AbZKKIdS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 11 Nov 2009 03:33:18 -0500
-In-Reply-To: <20091111140126.044be7d2.sfr@canb.auug.org.au>
+	id S1751229AbZKKJM7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 Nov 2009 04:12:59 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, alan-jenkins@tuffmail.co.uk, x86@kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>
 
-On Wed, 11 Nov 2009 01:31:26 pm Stephen Rothwell wrote:
-> Hi Rusty,
-> 
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
-> 
-> .tmp_exports-asm.o: In function `__ksymtab_load_gs_index':
-> (__ksymtab_sorted+0x5b40): undefined reference to `load_gs_index'
-> 
-> I have used the version of the rr tree from next-20091110 for today.
+--Signature=_Wed__11_Nov_2009_20_13_02_+1100_K1G64qEE317X8wHS
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It's inline and exported when CONFIG_PARAVIRT=y.  Which is wrong.
+Hi all,
 
-Here's the patch I've put in my series for tomorrow's linux-next:
+Today's linux-next build (powerpc allyesconfig) failed like this:
 
-Subject: x86: don't export inline function
+lib/swiotlb.c: In function 'setup_io_tlb_npages':
+lib/swiotlb.c:114: error: 'swiotlb' undeclared (first use in this function)
 
-For CONFIG_PARAVIRT, load_gs_index is an inline function (it's #defined
-to native_load_gs_index otherwise).
+Caused by commit 75f1cdf1dda92cae037ec848ae63690d91913eac ("x86: Handle
+HW IOMMU initialization failure gracefully") from the tip tree.  It looks
+like the "swiotlb" variable only exists in x86 and ia64.
 
-Exporting an inline function breaks the new assembler-based alphabetical
-sorted symbol list:
+I have reverted that commit for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+--Signature=_Wed__11_Nov_2009_20_13_02_+1100_K1G64qEE317X8wHS
+Content-Type: application/pgp-signature
 
-	.tmp_exports-asm.o: In function `__ksymtab_load_gs_index':
-	(__ksymtab_sorted+0x5b40): undefined reference to `load_gs_index'
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-Signed-off-by: Rusty Russell <rusty@rustcorp.com.au>
-To: x86@kernel.org
-Cc: alan-jenkins@tuffmail.co.uk
+iEYEARECAAYFAkr6gB4ACgkQjjKRsyhoI8yhCwCglr6KvC+Hqff3xaMrf9shw7o+
+pKMAn3zfHYalVDFzvkwZ9EYRP2R8iuF0
+=N5oh
+-----END PGP SIGNATURE-----
 
-diff --git a/arch/x86/kernel/x8664_ksyms_64.c b/arch/x86/kernel/x8664_ksyms_64.c
---- a/arch/x86/kernel/x8664_ksyms_64.c
-+++ b/arch/x86/kernel/x8664_ksyms_64.c
-@@ -57,4 +57,6 @@ EXPORT_SYMBOL(__memcpy);
- 
- EXPORT_SYMBOL(empty_zero_page);
- EXPORT_SYMBOL(init_level4_pgt);
--EXPORT_SYMBOL(load_gs_index);
-+#ifndef CONFIG_PARAVIRT
-+EXPORT_SYMBOL(native_load_gs_index);
-+#endif
+--Signature=_Wed__11_Nov_2009_20_13_02_+1100_K1G64qEE317X8wHS--
