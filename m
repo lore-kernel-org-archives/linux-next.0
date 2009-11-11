@@ -1,47 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pcmcia tree with the wireless tree
-Date: Wed, 11 Nov 2009 15:33:02 +1100
-Message-ID: <20091111153302.0f5074ef.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the percpu tree with the tip tree
+Date: Wed, 11 Nov 2009 18:59:19 +1100
+Message-ID: <20091111185919.a442804d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__11_Nov_2009_18_59_19_+1100_d9+yh=mstGzlpuga"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:42415 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:41860 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756683AbZKKEc5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 Nov 2009 23:32:57 -0500
+	id S1755700AbZKKH7Z (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 Nov 2009 02:59:25 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>, "John W. Linville" <linville@tuxdriver.com>
+To: Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anton Blanchard <anton@samba.org>, Paul Mackerras <paulus@samba.org>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
-Hi Dominik,
+--Signature=_Wed__11_Nov_2009_18_59_19_+1100_d9+yh=mstGzlpuga
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the pcmcia tree got a conflict in
-drivers/net/wireless/ray_cs.c between commit
-40cca2919c1994c01addfac2320ee77f4b9e12cf ("drivers/net/wireless: correct
-check on CCS_START_NETWORK") from the wireless tree and commit
-624dd66957e53e15cf40e937b50597c4d41f0e99 ("pcmcia: use dynamic debug
-infrastructure, deprecate CS_CHECK (ray-cs.c)") from the pcmcia tree.
+Hi all,
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
--- 
+Today's linux-next merge of the percpu tree got a conflict in
+arch/powerpc/platforms/pseries/hvCall.S between commit
+c8cd093a6e9f96ea6b871576fd4e46d7c818bb89 ("powerpc: tracing: Add
+hypervisor call tracepoints") from the tip tree and commit
+dd17c8f72993f9461e9c19250e3f155d6d99df22 ("percpu: remove per_cpu__
+prefix") from the percpu tree.
+
+The former removed the code changed by the latter, so I just used the tip
+tree version.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/net/wireless/ray_cs.c
-index 5ee9d2a,28db791..0000000
---- a/drivers/net/wireless/ray_cs.c
-+++ b/drivers/net/wireless/ray_cs.c
-@@@ -2074,8 -2065,8 +2065,8 @@@ static irqreturn_t ray_interrupt(int ir
-  				del_timer(&local->timer);
-  				local->timer.expires = jiffies + HZ * 5;
-  				local->timer.data = (long)local;
- -				if (status == CCS_START_NETWORK) {
- +				if (cmd == CCS_START_NETWORK) {
-- 					DEBUG(0,
-+ 					dev_dbg(&link->dev,
-  					      "ray_cs interrupt network \"%s\" start failed\n",
-  					      local->sparm.b4.a_current_ess_id);
-  					local->timer.function = &start_net;
+--Signature=_Wed__11_Nov_2009_18_59_19_+1100_d9+yh=mstGzlpuga
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkr6btcACgkQjjKRsyhoI8yC5gCgg5gEn80a4+SUExELdsG2utyF
+fZAAoLfWbsb+1ih49RSHAMh2RgOUEZNJ
+=wjge
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__11_Nov_2009_18_59_19_+1100_d9+yh=mstGzlpuga--
