@@ -1,88 +1,52 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] staging/vt665*: fix printk formats
-Date: Wed, 11 Nov 2009 09:31:42 -0800
-Message-ID: <20091111093142.30ad84d0.randy.dunlap@oracle.com>
+Subject: [PATCH -next] pcmcia: fix printk formats
+Date: Wed, 11 Nov 2009 09:31:07 -0800
+Message-ID: <20091111093107.9032f4bb.randy.dunlap@oracle.com>
 References: <20091111203159.a2a6eeeb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet12.oracle.com ([141.146.126.234]:43031 "EHLO
-	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758150AbZKKRcJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Nov 2009 12:32:09 -0500
+Return-path: <linux-pcmcia-bounces+glkpd-linux-pcmcia=m.gmane.org@lists.infradead.org>
 In-Reply-To: <20091111203159.a2a6eeeb.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, devel@driverdev.osuosl.org
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, gregkh@suse.de
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-pcmcia>,
+	<mailto:linux-pcmcia-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-pcmcia/>
+List-Post: <mailto:linux-pcmcia@lists.infradead.org>
+List-Help: <mailto:linux-pcmcia-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-pcmcia>,
+	<mailto:linux-pcmcia-request@lists.infradead.org?subject=subscribe>
+Sender: linux-pcmcia-bounces@lists.infradead.org
+Errors-To: linux-pcmcia-bounces+glkpd-linux-pcmcia=m.gmane.org@lists.infradead.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-pcmcia@lists.infradead.org, Harald Welte <laforge@gnumonks.org>
+Cc: akpm <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, gregkh@suse.de
+List-Id: linux-next.vger.kernel.org
 
 From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Fix printk format warnings in vt665[56]:
+Fix printk format warnings on sizeof() [size_t] arguments.
 
-drivers/staging/vt6655/wpa.c:150: warning: format '%ld' expects type 'long int', but argument 3 has type 'unsigned int'
-drivers/staging/vt6655/wpa.c:181: warning: format '%ld' expects type 'long int', but argument 3 has type 'unsigned int'
-
-drivers/staging/vt6656/wpa.c:150: warning: format '%ld' expects type 'long int', but argument 3 has type 'unsigned int'
-drivers/staging/vt6656/wpa.c:181: warning: format '%ld' expects type 'long int', but argument 3 has type 'unsigned int'
-drivers/staging/vt6656/firmware.c:804: warning: format '%ld' expects type 'long int', but argument 3 has type 'unsigned int'
+drivers/char/pcmcia/cm4040_cs.c:267: warning: format '%lu' expects type 'long unsigned int', but argument 5 has type 'size_t'
+drivers/char/pcmcia/cm4040_cs.c:272: warning: format '%lu' expects type 'long unsigned int', but argument 5 has type 'size_t'
 
 Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 ---
- drivers/staging/vt6655/wpa.c      |    4 ++--
- drivers/staging/vt6656/firmware.c |    2 +-
- drivers/staging/vt6656/wpa.c      |    4 ++--
- 3 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/char/pcmcia/cm4040_cs.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- linux-next-20091110.orig/drivers/staging/vt6656/firmware.c
-+++ linux-next-20091110/drivers/staging/vt6656/firmware.c
-@@ -801,7 +801,7 @@ FIRMWAREbDownload(
-                                             &(pBuffer[ii])
-                                             );
+--- linux-next-20091110.orig/drivers/char/pcmcia/cm4040_cs.c
++++ linux-next-20091110/drivers/char/pcmcia/cm4040_cs.c
+@@ -264,12 +264,12 @@ static ssize_t cm4040_read(struct file *
  
--            DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"Download firmware...%d %ld\n", ii, sizeof(abyFirmware));
-+            DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"Download firmware...%d %zu\n", ii, sizeof(abyFirmware));
-             if (NdisStatus != STATUS_SUCCESS) {
-                 if (pBuffer)
-                     kfree(pBuffer);
---- linux-next-20091110.orig/drivers/staging/vt6656/wpa.c
-+++ linux-next-20091110/drivers/staging/vt6656/wpa.c
-@@ -147,7 +147,7 @@ WPA_ParseRSN (
-         if (pRSN->len >= 12) //oui1(4)+ver(2)+GKS(4)+PKSCnt(2)
-         {
-             j = 0;
--            DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"wPKCount: %d, sizeof(pBSSList->abyPKType): %ld\n", pRSN->wPKCount, sizeof(pBSSList->abyPKType));
-+            DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"wPKCount: %d, sizeof(pBSSList->abyPKType): %zu\n", pRSN->wPKCount, sizeof(pBSSList->abyPKType));
-             for(i = 0; (i < pRSN->wPKCount) && (j < sizeof(pBSSList->abyPKType)/sizeof(BYTE)); i++) {
-                 if(pRSN->len >= 12+i*4+4) { //oui1(4)+ver(2)+GKS(4)+PKSCnt(2)+PKS(4*i)
-                     if ( !memcmp(pRSN->PKSList[i].abyOUI, abyOUI00, 4))
-@@ -178,7 +178,7 @@ WPA_ParseRSN (
-             // overlay IE_RSN_Auth structure into correct place
-             pIE_RSN_Auth = (PWLAN_IE_RSN_AUTH) pRSN->PKSList[m].abyOUI;
-             j = 0;
--            DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"wAuthCount: %d, sizeof(pBSSList->abyAuthType): %ld\n",
-+            DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"wAuthCount: %d, sizeof(pBSSList->abyAuthType): %zu\n",
-                           pIE_RSN_Auth->wAuthCount, sizeof(pBSSList->abyAuthType));
-             for(i = 0; (i < pIE_RSN_Auth->wAuthCount) && (j < sizeof(pBSSList->abyAuthType)/sizeof(BYTE)); i++) {
-                 if(pRSN->len >= 14+4+(m+i)*4) { //oui1(4)+ver(2)+GKS(4)+PKSCnt(2)+PKS(4*m)+AKC(2)+AKS(4*i)
---- linux-next-20091110.orig/drivers/staging/vt6655/wpa.c
-+++ linux-next-20091110/drivers/staging/vt6655/wpa.c
-@@ -147,7 +147,7 @@ WPA_ParseRSN (
-         if (pRSN->len >= 12) //oui1(4)+ver(2)+GKS(4)+PKSCnt(2)
-         {
-             j = 0;
--            DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"wPKCount: %d, sizeof(pBSSList->abyPKType): %ld\n", pRSN->wPKCount, sizeof(pBSSList->abyPKType));
-+            DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"wPKCount: %d, sizeof(pBSSList->abyPKType): %zu\n", pRSN->wPKCount, sizeof(pBSSList->abyPKType));
-             for(i = 0; (i < pRSN->wPKCount) && (j < sizeof(pBSSList->abyPKType)/sizeof(BYTE)); i++) {
-                 if(pRSN->len >= 12+i*4+4) { //oui1(4)+ver(2)+GKS(4)+PKSCnt(2)+PKS(4*i)
-                     if ( !memcmp(pRSN->PKSList[i].abyOUI, abyOUI00, 4))
-@@ -178,7 +178,7 @@ WPA_ParseRSN (
-             // overlay IE_RSN_Auth structure into correct place
-             pIE_RSN_Auth = (PWLAN_IE_RSN_AUTH) pRSN->PKSList[m].abyOUI;
-             j = 0;
--            DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"wAuthCount: %d, sizeof(pBSSList->abyAuthType): %ld\n",
-+            DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO"wAuthCount: %d, sizeof(pBSSList->abyAuthType): %zu\n",
-                           pIE_RSN_Auth->wAuthCount, sizeof(pBSSList->abyAuthType));
-             for(i = 0; (i < pIE_RSN_Auth->wAuthCount) && (j < sizeof(pBSSList->abyAuthType)/sizeof(BYTE)); i++) {
-                 if(pRSN->len >= 14+4+(m+i)*4) { //oui1(4)+ver(2)+GKS(4)+PKSCnt(2)+PKS(4*m)+AKC(2)+AKS(4*i)
+ 	bytes_to_read = 5 + le32_to_cpu(*(__le32 *)&dev->r_buf[1]);
+ 
+-	DEBUGP(6, dev, "BytesToRead=%lu\n", bytes_to_read);
++	DEBUGP(6, dev, "BytesToRead=%zu\n", bytes_to_read);
+ 
+ 	min_bytes_to_read = min(count, bytes_to_read + 5);
+ 	min_bytes_to_read = min_t(size_t, min_bytes_to_read, READ_WRITE_BUFFER_SIZE);
+ 
+-	DEBUGP(6, dev, "Min=%lu\n", min_bytes_to_read);
++	DEBUGP(6, dev, "Min=%zu\n", min_bytes_to_read);
+ 
+ 	for (i = 0; i < (min_bytes_to_read-5); i++) {
+ 		rc = wait_for_bulk_in_ready(dev);
