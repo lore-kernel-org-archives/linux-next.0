@@ -1,49 +1,62 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb tree with the omap tree
-Date: Wed, 11 Nov 2009 19:30:13 +1100
-Message-ID: <20091111193013.9a4bca3e.sfr@canb.auug.org.au>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: linux-next: rr tree build failure
+Date: Wed, 11 Nov 2009 19:03:21 +1030
+Message-ID: <200911111903.21923.rusty@rustcorp.com.au>
+References: <20091111140126.044be7d2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__11_Nov_2009_19_30_13_+1100_IYRf/tMhfUe8qTga"
-Return-path: <linux-omap-owner@vger.kernel.org>
-Sender: linux-omap-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felipe Balbi <felipe.balbi@nokia.com>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:49884 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757038AbZKKIdS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 Nov 2009 03:33:18 -0500
+In-Reply-To: <20091111140126.044be7d2.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, alan-jenkins@tuffmail.co.uk, x86@kernel.org
 
---Signature=_Wed__11_Nov_2009_19_30_13_+1100_IYRf/tMhfUe8qTga
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 11 Nov 2009 01:31:26 pm Stephen Rothwell wrote:
+> Hi Rusty,
+> 
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
+> 
+> .tmp_exports-asm.o: In function `__ksymtab_load_gs_index':
+> (__ksymtab_sorted+0x5b40): undefined reference to `load_gs_index'
+> 
+> I have used the version of the rr tree from next-20091110 for today.
 
-Hi Greg,
+It's inline and exported when CONFIG_PARAVIRT=y.  Which is wrong.
 
-Today's linux-next merge of the usb tree got a conflict in
-drivers/usb/host/ehci-omap.c between commit
-7cb07f72711d3e10763ca7d7a9fcd7ac788aabf4 ("omap: ehci: Add platform init
-code") from the omap tree and commit
-9e92239693d7010d2e710a445f46d6a738b09171 ("USB: host: ehci: introduce
-omap ehci-hcd driver") from the usb tree.
+Here's the patch I've put in my series for tomorrow's linux-next:
 
-Both commits create this file but I used the omap tree version because
-commit ce491cf85466c3377228c5a852ea627ec5136956 ("omap: headers: Move
-remaining headers from include/mach to include/plat") from the omap tree
-moved one included header file (mach/usb.h -> plat/usb.h).
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Subject: x86: don't export inline function
 
---Signature=_Wed__11_Nov_2009_19_30_13_+1100_IYRf/tMhfUe8qTga
-Content-Type: application/pgp-signature
+For CONFIG_PARAVIRT, load_gs_index is an inline function (it's #defined
+to native_load_gs_index otherwise).
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+Exporting an inline function breaks the new assembler-based alphabetical
+sorted symbol list:
 
-iEYEARECAAYFAkr6dhUACgkQjjKRsyhoI8y2HACePvALDSAaw98WcGAOvILL7Yy7
-lzYAoIz9mHBive5w48qeS8O9Twt1/cMK
-=jVaI
------END PGP SIGNATURE-----
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
---Signature=_Wed__11_Nov_2009_19_30_13_+1100_IYRf/tMhfUe8qTga--
+	.tmp_exports-asm.o: In function `__ksymtab_load_gs_index':
+	(__ksymtab_sorted+0x5b40): undefined reference to `load_gs_index'
+
+Signed-off-by: Rusty Russell <rusty@rustcorp.com.au>
+To: x86@kernel.org
+Cc: alan-jenkins@tuffmail.co.uk
+
+diff --git a/arch/x86/kernel/x8664_ksyms_64.c b/arch/x86/kernel/x8664_ksyms_64.c
+--- a/arch/x86/kernel/x8664_ksyms_64.c
++++ b/arch/x86/kernel/x8664_ksyms_64.c
+@@ -57,4 +57,6 @@ EXPORT_SYMBOL(__memcpy);
+ 
+ EXPORT_SYMBOL(empty_zero_page);
+ EXPORT_SYMBOL(init_level4_pgt);
+-EXPORT_SYMBOL(load_gs_index);
++#ifndef CONFIG_PARAVIRT
++EXPORT_SYMBOL(native_load_gs_index);
++#endif
