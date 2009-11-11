@@ -1,48 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: md tree fetch error
-Date: Wed, 11 Nov 2009 10:10:15 +1100
-Message-ID: <20091111101015.9104301e.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net/wireless trees with the
+ wireless-current tree
+Date: Wed, 11 Nov 2009 13:01:19 +1100
+Message-ID: <20091111130119.ace8da65.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__11_Nov_2009_10_10_15_+1100_vgEOXppPObtYRMs7"
+ boundary="Signature=_Wed__11_Nov_2009_13_01_19_+1100_ZR6vHQUhgK2_/neB"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46189 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34179 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758606AbZKJXKN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 Nov 2009 18:10:13 -0500
+	id S1756709AbZKKCBT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 Nov 2009 21:01:19 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Neil Brown <neilb@suse.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wey-Yi Guy <wey-yi.w.guy@intel.com>, "John W. Linville" <linville@tuxdriver.com>
 
---Signature=_Wed__11_Nov_2009_10_10_15_+1100_vgEOXppPObtYRMs7
+--Signature=_Wed__11_Nov_2009_13_01_19_+1100_ZR6vHQUhgK2_/neB
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Neil,
+Hi all,
 
-Today's linux-next fetch of the md tree produced this error:
+Today's linux-next merge of the net tree got conflicts in
+drivers/net/wireless/iwlwifi/iwl-1000.c,
+drivers/net/wireless/iwlwifi/iwl-6000.c and
+drivers/net/wireless/iwlwifi/iwl-core.h between commits in the
+wireless-current tree and commits in the net (wireless) tree.
 
-neil.brown.name[0: 220.233.11.133]: errno=3DConnection timed out
-fatal: unable to connect a socket (Connection timed out)
-
-I will use the version of the md tree from next-20091110.
+I used the versions from the net tree except where obvious additions
+had been made in the wireless-current tree.   The fixes may not be
+correct - someone should merge the wireless-current tree into the
+net tree.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__11_Nov_2009_10_10_15_+1100_vgEOXppPObtYRMs7
+--Signature=_Wed__11_Nov_2009_13_01_19_+1100_ZR6vHQUhgK2_/neB
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkr58tcACgkQjjKRsyhoI8wSdACZAXgP/lhclAJKC1fxInfc5dW7
-iQoAoIKOLw/dVs2Dtc2hnb6RjCjF4Z61
-=FjFX
+iEYEARECAAYFAkr6Gu8ACgkQjjKRsyhoI8w+cwCfd3itX3LiuGq2Ht1/mRw+1QSz
+6SMAnRTd31/RxxVjEsNK3EQmEOxXTGUG
+=0SPX
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__11_Nov_2009_10_10_15_+1100_vgEOXppPObtYRMs7--
+--Signature=_Wed__11_Nov_2009_13_01_19_+1100_ZR6vHQUhgK2_/neB--
