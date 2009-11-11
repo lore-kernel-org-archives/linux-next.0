@@ -1,42 +1,46 @@
-From: Greg KH <greg-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
-Subject: Re: linux-next: Tree for November 2 (usb/whci)
-Date: Wed, 11 Nov 2009 09:30:15 -0800
-Message-ID: <20091111173015.GA9641@kroah.com>
-References: <20091102173845.210d1c57.sfr@canb.auug.org.au> <20091102091339.479a3ddb.randy.dunlap@oracle.com> <20091111090403.5fb0229e.randy.dunlap@oracle.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] staging/rtl8192u: depends on USB
+Date: Wed, 11 Nov 2009 09:31:23 -0800
+Message-ID: <20091111093123.f137a04c.randy.dunlap@oracle.com>
+References: <20091111203159.a2a6eeeb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20091111090403.5fb0229e.randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, David Vrabel <david.vrabel-kQvG35nSl+M@public.gmane.org>
-Cc: lud <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet11.oracle.com ([148.87.113.123]:19543 "EHLO
+	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756164AbZKKRbr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Nov 2009 12:31:47 -0500
+In-Reply-To: <20091111203159.a2a6eeeb.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, devel@driverdev.osuosl.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, gregkh@suse.de
 
-On Wed, Nov 11, 2009 at 09:04:03AM -0800, Randy Dunlap wrote:
-> On Mon, 2 Nov 2009 09:13:39 -0800 Randy Dunlap wrote:
-> 
-> > On Mon, 2 Nov 2009 17:38:45 +1100 Stephen Rothwell wrote:
-> > 
-> > > Hi all,
-> > > 
-> > > Changes since 20091030: <<<<<<<<<<<<<<<<<<<<<<<<<<
-> > 
-> > 
-> > whci build fails on i386 due to 64-bit multiply & divide:
-> > 
-> > ERROR: "__udivdi3" [drivers/usb/host/whci/whci-hcd.ko] undefined!
-> > ERROR: "__umoddi3" [drivers/usb/host/whci/whci-hcd.ko] undefined!
-> 
-> 
-> Still present in linux-next-20091111.
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-David, can you please look into this and resolve it?
+rtl8192u uses usb_* interfaces so it should depend on USB.
 
-thanks,
+ERROR: "usb_kill_urb" [drivers/staging/rtl8192u/r8192u_usb.ko] undefined!
+ERROR: "usb_deregister" [drivers/staging/rtl8192u/r8192u_usb.ko] undefined!
+ERROR: "usb_control_msg" [drivers/staging/rtl8192u/r8192u_usb.ko] undefined!
+ERROR: "usb_submit_urb" [drivers/staging/rtl8192u/r8192u_usb.ko] undefined!
+ERROR: "usb_register_driver" [drivers/staging/rtl8192u/r8192u_usb.ko] undefined!
+ERROR: "usb_free_urb" [drivers/staging/rtl8192u/r8192u_usb.ko] undefined!
+ERROR: "usb_alloc_urb" [drivers/staging/rtl8192u/r8192u_usb.ko] undefined!
 
-greg k-h
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/staging/rtl8192u/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20091110.orig/drivers/staging/rtl8192u/Kconfig
++++ linux-next-20091110/drivers/staging/rtl8192u/Kconfig
+@@ -1,6 +1,6 @@
+ config RTL8192U
+ 	tristate "RealTek RTL8192U Wireless LAN NIC driver"
+-	depends on PCI && WLAN
++	depends on PCI && WLAN && USB
+ 	depends on WIRELESS_EXT
+ 	default N
+ 	---help---
