@@ -1,56 +1,43 @@
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-Subject: Re: [PATCH -next] pcmcia: fix printk formats
-Date: Wed, 11 Nov 2009 19:27:46 +0100
-Message-ID: <20091111182746.GA10094@isilmar.linta.de>
-References: <20091111203159.a2a6eeeb.sfr@canb.auug.org.au> <20091111093107.9032f4bb.randy.dunlap@oracle.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: linux-next: manual merge of the usb tree with the omap tree
+Date: Wed, 11 Nov 2009 11:12:13 -0800
+Message-ID: <20091111191213.GH24837@atomide.com>
+References: <20091111193013.9a4bca3e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from isilmar.linta.de ([213.133.102.198]:58642 "EHLO linta.de"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1757948AbZKKS1m (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 11 Nov 2009 13:27:42 -0500
+Received: from mho-01-ewr.mailhop.org ([204.13.248.71]:52314 "EHLO
+	mho-01-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758549AbZKKTMM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Nov 2009 14:12:12 -0500
 Content-Disposition: inline
-In-Reply-To: <20091111093107.9032f4bb.randy.dunlap@oracle.com>
+In-Reply-To: <20091111193013.9a4bca3e.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-pcmcia@lists.infradead.org, Harald Welte <laforge@gnumonks.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, gregkh@suse.de, akpm <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felipe Balbi <felipe.balbi@nokia.com>, linux-omap@vger.kernel.org
 
-Applied to the PCMCIA tree, thanks.
+* Stephen Rothwell <sfr@canb.auug.org.au> [091111 00:29]:
+> Hi Greg,
+> 
+> Today's linux-next merge of the usb tree got a conflict in
+> drivers/usb/host/ehci-omap.c between commit
+> 7cb07f72711d3e10763ca7d7a9fcd7ac788aabf4 ("omap: ehci: Add platform init
+> code") from the omap tree and commit
+> 9e92239693d7010d2e710a445f46d6a738b09171 ("USB: host: ehci: introduce
+> omap ehci-hcd driver") from the usb tree.
+> 
+> Both commits create this file but I used the omap tree version because
+> commit ce491cf85466c3377228c5a852ea627ec5136956 ("omap: headers: Move
+> remaining headers from include/mach to include/plat") from the omap tree
+> moved one included header file (mach/usb.h -> plat/usb.h).
 
-On Wed, Nov 11, 2009 at 09:31:07AM -0800, Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> Fix printk format warnings on sizeof() [size_t] arguments.
-> 
-> drivers/char/pcmcia/cm4040_cs.c:267: warning: format '%lu' expects type 'long unsigned int', but argument 5 has type 'size_t'
-> drivers/char/pcmcia/cm4040_cs.c:272: warning: format '%lu' expects type 'long unsigned int', but argument 5 has type 'size_t'
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> ---
->  drivers/char/pcmcia/cm4040_cs.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> --- linux-next-20091110.orig/drivers/char/pcmcia/cm4040_cs.c
-> +++ linux-next-20091110/drivers/char/pcmcia/cm4040_cs.c
-> @@ -264,12 +264,12 @@ static ssize_t cm4040_read(struct file *
->  
->  	bytes_to_read = 5 + le32_to_cpu(*(__le32 *)&dev->r_buf[1]);
->  
-> -	DEBUGP(6, dev, "BytesToRead=%lu\n", bytes_to_read);
-> +	DEBUGP(6, dev, "BytesToRead=%zu\n", bytes_to_read);
->  
->  	min_bytes_to_read = min(count, bytes_to_read + 5);
->  	min_bytes_to_read = min_t(size_t, min_bytes_to_read, READ_WRITE_BUFFER_SIZE);
->  
-> -	DEBUGP(6, dev, "Min=%lu\n", min_bytes_to_read);
-> +	DEBUGP(6, dev, "Min=%zu\n", min_bytes_to_read);
->  
->  	for (i = 0; i < (min_bytes_to_read-5); i++) {
->  		rc = wait_for_bulk_in_ready(dev);
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+Oops, sorry. Looks like I accidentally included also drivers/usb/host/ehci-omap.c
+as we were testing it in the linux-omap tree.
+
+I'll drop the drivers/usb/host/ehci-omap.c part from my queue, it should get
+integrated via Greg's queue. I'll just merge the platform init code.
+
+Regards,
+
+Tony
