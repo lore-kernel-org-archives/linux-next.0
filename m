@@ -1,298 +1,102 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for November 11
-Date: Wed, 11 Nov 2009 20:31:59 +1100
-Message-ID: <20091111203159.a2a6eeeb.sfr@canb.auug.org.au>
+From: Jonathan Cameron <jic23@cam.ac.uk>
+Subject: Re: [PTCH -next] staging/iio: fix ring buffer build
+Date: Wed, 11 Nov 2009 13:58:49 +0000
+Message-ID: <4AFAC319.8040005@cam.ac.uk>
+References: <20091109192246.aa0dfd93.sfr@canb.auug.org.au> <20091110090428.08797a9a.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__11_Nov_2009_20_31_59_+1100_4kYZzVC/je/DgtFz"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753677AbZKKJcD@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Wed__11_Nov_2009_20_31_59_+1100_4kYZzVC/je/DgtFz
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ppsw-7.csi.cam.ac.uk ([131.111.8.137]:58347 "EHLO
+	ppsw-7.csi.cam.ac.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751371AbZKKN6S (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Nov 2009 08:58:18 -0500
+In-Reply-To: <20091110090428.08797a9a.randy.dunlap@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, devel@driverdev.osuosl.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, gregkh@suse.de
 
-Hi all,
+Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> max1363 uses both the iio hardware ring buffer and software
+> ring buffer interfaces, but its Makefile and Kconfig do not
+> reflect that usage, so its build breaks.  Add a new Kconfig
+> symbol to reflect that usage and change max1363.h & Makefile
+> to use the new Kconfig symbol.
+Hi Randy,
 
-Changes since 20091110:
+Thanks for the fix.
 
-The i2c tree lost its conflict.
+This is fine for now though I suspect there are similar cases
+in some of the other IIO drivers.  Will have a look when I have
+a few mins. The structure of the relevant code will change again
+when we add support for multiple ring buffer implementations
+(needed to phase this one out as it is hideous ;), but
+that isn't going to happen for a least a couple of weeks.
 
-The net tree gained a conflict against the wireless-current tree.
+Signed-off-by: Jonathan Cameron <jic23@cam.ac.uk>
 
-The wireless tree lost its build failure.
-
-The rr tree gained a build failure so I used the version from
-next-20091110.
-
-The pcmcia tree gained a conflict against the wireless tree.
-
-The tip tree gained a build failure for which I reverted a commit.
-
-The percpu tree gained a conflict against the tip tree.
-
-The usb tree gained a conflict against the omap tree.
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
-and sparc64 defconfig. These builds also have
-CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
-CONFIG_DEBUG_INFO disabled when necessary.
-
-Below is a summary of the state of the merge.
-
-We are up to 148 trees (counting Linus' and 22 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging fixes/fixes
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/tty.current
-Merging quilt/usb.current
-Merging quilt/staging.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging ide-curent/master
-Merging dwmw2/master
-Merging arm/devel
-Merging davinci/davinci-next
-Merging msm/for-next
-Merging omap/for-next
-Merging pxa/for-next
-Merging avr32/avr32-arch
-CONFLICT (content): Merge conflict in arch/avr32/mach-at32ap/include/mach/c=
-pu.h
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-CONFLICT (content): Merge conflict in drivers/rtc/Kconfig
-Merging m68knommu/for-next
-Merging microblaze/next
-Merging mips/mips-for-linux-next
-Merging parisc/next
-Merging powerpc/next
-Merging 4xx/next
-Merging 52xx-and-virtex/next
-Merging galak/next
-Merging s390/features
-Merging sh/master
-Merging sparc/master
-Merging xtensa/master
-Merging ceph/for-next
-Merging cifs/master
-Merging configfs/linux-next
-Merging ecryptfs/next
-Merging ext3/for_next
-Merging ext4/next
-Merging fatfs/master
-Merging fuse/for-next
-Merging gfs2/master
-Merging jfs/next
-Merging nfs/linux-next
-Merging nfsd/nfsd-next
-Merging nilfs2/for-next
-Merging ocfs2/linux-next
-Merging squashfs/master
-Merging udf/for_next
-Merging v9fs/for-next
-Merging ubifs/linux-next
-Merging xfs/master
-Merging reiserfs-bkl/reiserfs/kill-bkl
-Merging vfs/for-next
-Merging pci/linux-next
-Merging hid/for-next
-Merging quilt/i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-Merging kbuild/master
-Merging kconfig/for-next
-Merging ide/master
-Merging libata/NEXT
-Merging infiniband/for-next
-Merging acpi/test
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/linux-next
-CONFLICT (content): Merge conflict in arch/powerpc/kvm/timing.h
-Merging dlm/next
-Merging scsi/master
-Merging async_tx/next
-Merging net/master
-CONFLICT (delete/modify): drivers/net/sfc/sfe4001.c deleted in net/master a=
-nd modified in HEAD. Version HEAD of drivers/net/sfc/sfe4001.c left in tree.
-CONFLICT (content): Merge conflict in drivers/net/wireless/iwlwifi/iwl-1000=
-.c
-CONFLICT (content): Merge conflict in drivers/net/wireless/iwlwifi/iwl-6000=
-.c
-CONFLICT (content): Merge conflict in drivers/net/wireless/iwlwifi/iwl-core=
-.h
-CONFLICT (content): Merge conflict in drivers/net/wireless/libertas/cmd.c
-CONFLICT (content): Merge conflict in drivers/staging/Kconfig
-CONFLICT (content): Merge conflict in drivers/staging/Makefile
-CONFLICT (content): Merge conflict in drivers/staging/rtl8187se/Kconfig
-CONFLICT (content): Merge conflict in drivers/staging/rtl8192e/Kconfig
-$ git rm -f drivers/net/sfc/sfe4001.c
-Applying: net: merge fixup for drivers/net/sfc/falcon_boards.c
-Merging wireless/master
-Merging mtd/master
-Merging crypto/master
-Merging sound/for-next
-CONFLICT (content): Merge conflict in arch/arm/mach-omap2/board-omap3evm.c
-Merging cpufreq/next
-Merging quilt/rr
-$ git reset --hard HEAD^
-Merging refs/next/20091110/rr
-Merging mmc/next
-Merging tmio-mmc/linux-next
-Merging input/next
-Merging lsm/for-next
-Merging block/for-next
-Merging quilt/device-mapper
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-CONFLICT (content): Merge conflict in drivers/mtd/maps/pcmciamtd.c
-CONFLICT (content): Merge conflict in drivers/net/wireless/ray_cs.c
-CONFLICT (content): Merge conflict in drivers/pcmcia/Makefile
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging voltage/for-next
-CONFLICT (content): Merge conflict in drivers/mfd/Kconfig
-CONFLICT (content): Merge conflict in drivers/mfd/Makefile
-Merging security-testing/next
-CONFLICT (content): Merge conflict in Documentation/dontdiff
-Merging lblnet/master
-Merging agp/agp-next
-Merging uwb/for-upstream
-Merging watchdog/master
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-Merging audit/for-next
-Merging quilt/aoe
-Merging suspend/linux-next
-Merging bluetooth/master
-Merging fsnotify/for-next
-Merging irda/for-next
-Merging hwlat/for-linus
-CONFLICT (content): Merge conflict in drivers/misc/Makefile
-Merging drbd/for-jens
-Merging catalin/for-next
-Merging alacrity/linux-next
-CONFLICT (content): Merge conflict in drivers/net/Kconfig
-CONFLICT (content): Merge conflict in lib/Kconfig
-Merging i7core_edac/linux_next
-Merging devicetree/next-devicetree
-Merging limits/writable_limits
-Merging tip/auto-latest
-CONFLICT (content): Merge conflict in arch/x86/kernel/kgdb.c
-CONFLICT (content): Merge conflict in kernel/irq/chip.c
-Merging oprofile/for-next
-Merging percpu/for-next
-CONFLICT (content): Merge conflict in arch/powerpc/platforms/pseries/hvCall=
-.S
-CONFLICT (content): Merge conflict in arch/x86/kvm/svm.c
-CONFLICT (content): Merge conflict in kernel/softlockup.c
-CONFLICT (content): Merge conflict in mm/percpu.c
-Applying: percpu: merge fixup for variable renaming
-Merging sfi/sfi-test
-Merging asm-generic/next
-Merging hwpoison/hwpoison
-Merging sysctl/master
-Merging quilt/driver-core
-Merging quilt/tty
-Merging quilt/usb
-CONFLICT (content): Merge conflict in drivers/usb/Kconfig
-CONFLICT (content): Merge conflict in drivers/usb/host/ehci-hcd.c
-CONFLICT (add/add): Merge conflict in drivers/usb/host/ehci-omap.c
-Merging quilt/staging
-CONFLICT (content): Merge conflict in drivers/staging/Kconfig
-CONFLICT (content): Merge conflict in drivers/staging/Makefile
-CONFLICT (content): Merge conflict in drivers/staging/comedi/drivers/cb_das=
-16_cs.c
-CONFLICT (content): Merge conflict in drivers/staging/comedi/drivers/ni_lab=
-pc_cs.c
-CONFLICT (content): Merge conflict in drivers/staging/comedi/drivers/ni_mio=
-_cs.c
-Merging scsi-post-merge/master
-[master c75429b] Revert "x86: Handle HW IOMMU initialization failure gracef=
-ully"
-
---Signature=_Wed__11_Nov_2009_20_31_59_+1100_4kYZzVC/je/DgtFz
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkr6hI8ACgkQjjKRsyhoI8zr5wCeLO2m/GY25THl7wUYwhBDEdmi
-lHEAoKrd/ioU9IpXTUIfEZFyF1x+79/v
-=Kd6m
------END PGP SIGNATURE-----
-
---Signature=_Wed__11_Nov_2009_20_31_59_+1100_4kYZzVC/je/DgtFz--
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> Cc: Jonathan Cameron <jic23@cam.ac.uk>
+> ---
+>  drivers/staging/iio/adc/Kconfig   |    9 +++++++++
+>  drivers/staging/iio/adc/Makefile  |    2 +-
+>  drivers/staging/iio/adc/max1363.h |    6 +++---
+>  3 files changed, 13 insertions(+), 4 deletions(-)
+> 
+> --- linux-next-20091109.orig/drivers/staging/iio/adc/Kconfig
+> +++ linux-next-20091109/drivers/staging/iio/adc/Kconfig
+> @@ -12,3 +12,12 @@ config MAX1363
+>  	  convertors (ADC). (max1361, max1362, max1363, max1364, max1136,
+>  	  max1136, max1137, max1138, max1139, max1236, max1237, max11238,
+>  	  max1239) Provides direct access via sysfs.
+> +
+> +config MAX1363_RING_BUFFER
+> +	bool "MAXIM max1363: use ring buffer"
+> +	depends on MAX1363
+> +	select IIO_RING_BUFFER
+> +	select IIO_SW_RING
+> +	help
+> +	  Say yes here to include ring buffer support in the MAX1363
+> +	  ADC driver.
+> --- linux-next-20091109.orig/drivers/staging/iio/adc/Makefile
+> +++ linux-next-20091109/drivers/staging/iio/adc/Makefile
+> @@ -3,6 +3,6 @@
+>  #
+>  
+>  max1363-y := max1363_core.o
+> -max1363-$(CONFIG_IIO_RING_BUFFER) += max1363_ring.o
+> +max1363-$(CONFIG_MAX1363_RING_BUFFER) += max1363_ring.o
+>  
+>  obj-$(CONFIG_MAX1363) += max1363.o
+> --- linux-next-20091109.orig/drivers/staging/iio/adc/max1363.h
+> +++ linux-next-20091109/drivers/staging/iio/adc/max1363.h
+> @@ -228,7 +228,7 @@ struct max1363_state {
+>  	struct iio_trigger		*trig;
+>  	struct regulator		*reg;
+>  };
+> -#ifdef CONFIG_IIO_RING_BUFFER
+> +#ifdef CONFIG_MAX1363_RING_BUFFER
+>  
+>  ssize_t max1363_scan_from_ring(struct device *dev,
+>  			       struct device_attribute *attr,
+> @@ -239,7 +239,7 @@ void max1363_ring_cleanup(struct iio_dev
+>  int max1363_initialize_ring(struct iio_ring_buffer *ring);
+>  void max1363_uninitialize_ring(struct iio_ring_buffer *ring);
+>  
+> -#else /* CONFIG_IIO_RING_BUFFER */
+> +#else /* CONFIG_MAX1363_RING_BUFFER */
+>  
+>  static inline void max1363_uninitialize_ring(struct iio_ring_buffer *ring)
+>  {
+> @@ -265,5 +265,5 @@ max1363_register_ring_funcs_and_init(str
+>  };
+>  
+>  static inline void max1363_ring_cleanup(struct iio_dev *indio_dev) {};
+> -#endif /* CONFIG_IIO_RING_BUFFER */
+> +#endif /* CONFIG_MAX1363_RING_BUFFER */
+>  #endif /* _MAX1363_H_ */
+> 
