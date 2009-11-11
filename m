@@ -1,51 +1,49 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the percpu tree with the tip tree
-Date: Wed, 11 Nov 2009 18:59:19 +1100
-Message-ID: <20091111185919.a442804d.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the omap tree
+Date: Wed, 11 Nov 2009 19:30:13 +1100
+Message-ID: <20091111193013.9a4bca3e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__11_Nov_2009_18_59_19_+1100_d9+yh=mstGzlpuga"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41860 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755700AbZKKH7Z (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 11 Nov 2009 02:59:25 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anton Blanchard <anton@samba.org>, Paul Mackerras <paulus@samba.org>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+ boundary="Signature=_Wed__11_Nov_2009_19_30_13_+1100_IYRf/tMhfUe8qTga"
+Return-path: <linux-omap-owner@vger.kernel.org>
+Sender: linux-omap-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felipe Balbi <felipe.balbi@nokia.com>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__11_Nov_2009_18_59_19_+1100_d9+yh=mstGzlpuga
+--Signature=_Wed__11_Nov_2009_19_30_13_+1100_IYRf/tMhfUe8qTga
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Greg,
 
-Today's linux-next merge of the percpu tree got a conflict in
-arch/powerpc/platforms/pseries/hvCall.S between commit
-c8cd093a6e9f96ea6b871576fd4e46d7c818bb89 ("powerpc: tracing: Add
-hypervisor call tracepoints") from the tip tree and commit
-dd17c8f72993f9461e9c19250e3f155d6d99df22 ("percpu: remove per_cpu__
-prefix") from the percpu tree.
+Today's linux-next merge of the usb tree got a conflict in
+drivers/usb/host/ehci-omap.c between commit
+7cb07f72711d3e10763ca7d7a9fcd7ac788aabf4 ("omap: ehci: Add platform init
+code") from the omap tree and commit
+9e92239693d7010d2e710a445f46d6a738b09171 ("USB: host: ehci: introduce
+omap ehci-hcd driver") from the usb tree.
 
-The former removed the code changed by the latter, so I just used the tip
-tree version.
+Both commits create this file but I used the omap tree version because
+commit ce491cf85466c3377228c5a852ea627ec5136956 ("omap: headers: Move
+remaining headers from include/mach to include/plat") from the omap tree
+moved one included header file (mach/usb.h -> plat/usb.h).
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__11_Nov_2009_18_59_19_+1100_d9+yh=mstGzlpuga
+--Signature=_Wed__11_Nov_2009_19_30_13_+1100_IYRf/tMhfUe8qTga
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkr6btcACgkQjjKRsyhoI8yC5gCgg5gEn80a4+SUExELdsG2utyF
-fZAAoLfWbsb+1ih49RSHAMh2RgOUEZNJ
-=wjge
+iEYEARECAAYFAkr6dhUACgkQjjKRsyhoI8y2HACePvALDSAaw98WcGAOvILL7Yy7
+lzYAoIz9mHBive5w48qeS8O9Twt1/cMK
+=jVaI
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__11_Nov_2009_18_59_19_+1100_d9+yh=mstGzlpuga--
+--Signature=_Wed__11_Nov_2009_19_30_13_+1100_IYRf/tMhfUe8qTga--
