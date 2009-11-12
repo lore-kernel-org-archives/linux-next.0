@@ -1,49 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: net tree build warning
-Date: Thu, 12 Nov 2009 13:24:24 +1100
-Message-ID: <20091112132424.e010e3c5.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the cpufreq tree with the acpi tree
+Date: Thu, 12 Nov 2009 13:45:24 +1100
+Message-ID: <20091112134524.d9854379.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__12_Nov_2009_13_24_24_+1100_WYWE=aQftocoSL.Z"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48047 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:50266 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759588AbZKLCYY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 11 Nov 2009 21:24:24 -0500
+	id S1759961AbZKLCpV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 Nov 2009 21:45:21 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "David S. Miller" <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>
-
---Signature=_Thu__12_Nov_2009_13_24_24_+1100_WYWE=aQftocoSL.Z
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+To: Dave Jones <davej@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Renninger <trenn@suse.de>, Zhao Yakui <yakui.zhao@intel.com>, Len Brown <lenb@kernel.org>
 
 Hi Dave,
 
-Today's linux-next build (x86_64 allmodconfig) produced this warning:
+Today's linux-next merge of the cpufreq tree got a conflict in
+include/acpi/processor.h between commit
+d81c45e1c9369855901420f79114852eba2ea16a ("ACPI: Notify the _PPC
+evaluation status to the platform") from the acpi tree and commit
+b02d803d0fa3a395ba32bc5e5e3e7a3385ca7237 ("[CPUFREQ] Introduce bios_limit
+per cpu cpufreq sysfs interface") from the cpufreq tree.
 
-net/ipv6/addrconf.c: In function 'inet6_dump_ifinfo':
-net/ipv6/addrconf.c:3833: warning: unused variable 'err'
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 
-Introduced by commit 84d2697d9649339215675551eae28ba04068dea1 ("ipv6:
-speedup inet6_dump_ifinfo()").
---=20
+By the way, Dave, Thomas, shouldn't the second version of
+acpi_processor_get_bios_limit() in include/acpi/processor.h introduced by
+the above cpufreq tree patch be "static inline"?
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__12_Nov_2009_13_24_24_+1100_WYWE=aQftocoSL.Z
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkr7cdgACgkQjjKRsyhoI8wwNACgsRc782JJ82TAiBcJZmKLaEZV
-/qoAn3IT+QhRV6AHlHLqNP6sCKIo3iTi
-=CSew
------END PGP SIGNATURE-----
-
---Signature=_Thu__12_Nov_2009_13_24_24_+1100_WYWE=aQftocoSL.Z--
+diff --cc include/acpi/processor.h
+index a920237,e7454b3..0000000
+--- a/include/acpi/processor.h
++++ b/include/acpi/processor.h
+@@@ -294,7 -294,8 +294,8 @@@ static inline void acpi_processor_ffh_c
+  #ifdef CONFIG_CPU_FREQ
+  void acpi_processor_ppc_init(void);
+  void acpi_processor_ppc_exit(void);
+ -int acpi_processor_ppc_has_changed(struct acpi_processor *pr);
+ +int acpi_processor_ppc_has_changed(struct acpi_processor *pr, int event_flag);
++ extern int acpi_processor_get_bios_limit(int cpu, unsigned int *limit);
+  #else
+  static inline void acpi_processor_ppc_init(void)
+  {
