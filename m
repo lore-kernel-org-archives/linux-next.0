@@ -1,59 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: i7core_edac tree build failure
-Date: Thu, 12 Nov 2009 16:58:52 +1100
-Message-ID: <20091112165852.855d1e5d.sfr@canb.auug.org.au>
+Subject: linux-next: percpu tree build warning
+Date: Thu, 12 Nov 2009 17:45:58 +1100
+Message-ID: <20091112174558.128cea97.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__12_Nov_2009_17_45_58_+1100_E_s=WeGidihPSJTw"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:39217 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:45742 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751357AbZKLF6t (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 12 Nov 2009 00:58:49 -0500
+	id S1750894AbZKLGp7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 12 Nov 2009 01:45:59 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Aristeu Rozanski <aris@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>
+To: Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Mauro,
+--Signature=_Thu__12_Nov_2009_17_45_58_+1100_E_s=WeGidihPSJTw
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+Hi all,
 
-tmp_exports-asm.o: In function `__ksymtab_pci_legacy_init':
-(__ksymtab_gpl_sorted+0x3120): undefined reference to `pci_legacy_init'
+Today's linux-next build (powerpc ppc64_defconfig) produced this warning:
 
-Caused by commit a120a84ebbc4cbc9c1addddd2b491e3683b842a6 ("pci: Add a
-probing code that seeks for an specific bus") (which applies
-EXPORT_SYMBOL_GPL() to a static function) interacting with the rr tree's
-changes.
+drivers/net/loopback.c: In function 'loopback_get_stats':
+drivers/net/loopback.c:109: warning: initialization discards qualifiers fro=
+m pointer target type
 
-I have applied the following patch for today:
+The line in question is:
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 12 Nov 2009 16:55:38 +1100
-Subject: [PATCH] i7core_edac: do not export static functions
+	lb_stats =3D per_cpu_ptr(pcpu_lstats, i);
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/x86/pci/legacy.c |    1 -
- 1 files changed, 0 insertions(+), 1 deletions(-)
+Where "lb_stats" and "pcpu_lstats" are both "const struct pcpu_lstats
+*".  I guess this is because of __verify_pcpu_ptr().
 
-diff --git a/arch/x86/pci/legacy.c b/arch/x86/pci/legacy.c
-index 5e22d83..a8194c8 100644
---- a/arch/x86/pci/legacy.c
-+++ b/arch/x86/pci/legacy.c
-@@ -38,7 +38,6 @@ static int __init pci_legacy_init(void)
- 
- 	return 0;
- }
--EXPORT_SYMBOL_GPL(pci_legacy_init);
- 
- void pcibios_scan_specific_bus(int busn)
- {
--- 
-1.6.5.2
-
--- 
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__12_Nov_2009_17_45_58_+1100_E_s=WeGidihPSJTw
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkr7ryYACgkQjjKRsyhoI8yaeACfQWv7Gd0vjM+1nOKdt8ljbros
+py4An0OvPDgXgfRwlPGv2xNwFyroRMk1
+=cHkk
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__12_Nov_2009_17_45_58_+1100_E_s=WeGidihPSJTw--
