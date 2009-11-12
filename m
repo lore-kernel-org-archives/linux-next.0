@@ -1,51 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: net tree build warning
-Date: Thu, 12 Nov 2009 14:10:18 +1100
-Message-ID: <20091112141018.8d997f9a.sfr@canb.auug.org.au>
-References: <20091112132424.e010e3c5.sfr@canb.auug.org.au>
-	<20091111.185338.253345558.davem@davemloft.net>
+Subject: linux-next: leds tree build warning
+Date: Thu, 12 Nov 2009 15:54:22 +1100
+Message-ID: <20091112155422.499f5f16.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__12_Nov_2009_14_10_18_+1100_xKq2DIY+.VrexOIt"
+ boundary="Signature=_Thu__12_Nov_2009_15_54_22_+1100_oadda7ccxMApElxU"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53487 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:52112 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1760040AbZKLDKT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 11 Nov 2009 22:10:19 -0500
-In-Reply-To: <20091111.185338.253345558.davem@davemloft.net>
+	id S1759481AbZKLEyY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 Nov 2009 23:54:24 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, eric.dumazet@gmail.com
+To: Richard Purdie <rpurdie@rpsys.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Hansen <dave@sr71.net>, Javier Martinez Canillas <martinez.javier@gmail.com>
 
---Signature=_Thu__12_Nov_2009_14_10_18_+1100_xKq2DIY+.VrexOIt
+--Signature=_Thu__12_Nov_2009_15_54_22_+1100_oadda7ccxMApElxU
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi Richard,
 
-On Wed, 11 Nov 2009 18:53:38 -0800 (PST) David Miller <davem@davemloft.net>=
- wrote:
->
-> I just pushed a fix for this into net-next-2.6, thanks!
+Today's linux-next build (x86_64 allmodconfig) produced this warning:
 
-Thanks.
+drivers/leds/leds-ss4200.c: In function 'ich7_lpc_probe':
+drivers/leds/leds-ss4200.c:353: warning: 'return' with no value, in functio=
+n returning non-void
+
+Introduced by commit c2b9eda77348ff17b25471ff27f680b2c205d2bf
+("leds-ss4200: Check pci_enable_device return").
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__12_Nov_2009_14_10_18_+1100_xKq2DIY+.VrexOIt
+--Signature=_Thu__12_Nov_2009_15_54_22_+1100_oadda7ccxMApElxU
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkr7fJoACgkQjjKRsyhoI8xP/gCdENa8wZKkMc+70BrY9QG1KsWQ
-h74AmwdV8P3zU6/kmKyoUU/4qkSxD9o5
-=w5XP
+iEYEARECAAYFAkr7lP4ACgkQjjKRsyhoI8wrcgCgqa2UUDSE2x+3rZ4rhg1XR3QN
+CqsAnA5PNZR6HKIwQbL7t+nZTNNDgGcn
+=fCY1
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__12_Nov_2009_14_10_18_+1100_xKq2DIY+.VrexOIt--
+--Signature=_Thu__12_Nov_2009_15_54_22_+1100_oadda7ccxMApElxU--
