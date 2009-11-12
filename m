@@ -1,58 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: sysctl tree build failure
-Date: Thu, 12 Nov 2009 19:14:51 +1100
-Message-ID: <20091112191451.d21250f2.sfr@canb.auug.org.au>
-References: <20091112184805.1c0720cb.sfr@canb.auug.org.au>
-	<m1ljicp3l0.fsf@fess.ebiederm.org>
+Subject: linux-next: rr tree build warning
+Date: Thu, 12 Nov 2009 19:21:14 +1100
+Message-ID: <20091112192114.dcf32d16.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__12_Nov_2009_19_14_51_+1100_PcV3.W.WdM3c97PA"
+ boundary="Signature=_Thu__12_Nov_2009_19_21_14_+1100_cJWyQ+6=qBawfFOx"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47073 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:36794 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751878AbZKLIOu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 12 Nov 2009 03:14:50 -0500
-In-Reply-To: <m1ljicp3l0.fsf@fess.ebiederm.org>
+	id S1751595AbZKLIVN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 12 Nov 2009 03:21:13 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Jenkins <alan-jenkins@tuffmail.co.uk>
 
---Signature=_Thu__12_Nov_2009_19_14_51_+1100_PcV3.W.WdM3c97PA
+--Signature=_Thu__12_Nov_2009_19_21_14_+1100_cJWyQ+6=qBawfFOx
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Eric,
+Hi Rusty,
 
-On Thu, 12 Nov 2009 00:08:59 -0800 ebiederm@xmission.com (Eric W. Biederman=
-) wrote:
->
-> Thank you, and my apologies.  I thought I had tried it with every
-> applicable compile option but apparently not.
->=20
-> Ugh.  It looks like I have a small refcount leak in that case as
-> well.  Blind I was.
->=20
-> Thank you very I will have this fixed shortly.
+Today's linux-next build (i386 defconfig) produced this warning:
 
-Thanks.
+kernel/module.c:1953: warning: 'crc_section_names' defined but not used
+
+Introduced by commit 67260d90118a2394df528fe4e37e814d950ca5b5 ("module:
+refactor symbol tables and try to reduce code size of each_symbol()").
+This build has CONFIG_MODVERSIONS disabled.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__12_Nov_2009_19_14_51_+1100_PcV3.W.WdM3c97PA
+--Signature=_Thu__12_Nov_2009_19_21_14_+1100_cJWyQ+6=qBawfFOx
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkr7w/sACgkQjjKRsyhoI8z9JgCfQ+l25S9stVvfUJxGCPgZadnW
-uOwAniLl9+cYUIkoqo17d8xjtK0TON8m
-=Lv8w
+iEYEARECAAYFAkr7xXoACgkQjjKRsyhoI8ymqQCgp+5annnFeJ9gCEtcu5O5jBLI
+lk0AnRW9Gr295P3OtXqEsWsWmXEloAov
+=oFjH
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__12_Nov_2009_19_14_51_+1100_PcV3.W.WdM3c97PA--
+--Signature=_Thu__12_Nov_2009_19_21_14_+1100_cJWyQ+6=qBawfFOx--
