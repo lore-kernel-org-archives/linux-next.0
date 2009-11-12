@@ -1,52 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: rr tree build failure
-Date: Thu, 12 Nov 2009 18:48:16 +1100
-Message-ID: <20091112184816.367affc8.sfr@canb.auug.org.au>
+Date: Thu, 12 Nov 2009 19:03:08 +1100
+Message-ID: <20091112190308.443d97a3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1752019AbZKLHsS@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
+Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
 To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Jenkins <alan-jenkins@tuffmail.co.uk>, Sam Ravnborg <sam@ravnborg.org>
+Cc: linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linux-kernel@vger.kernel.org, linuxppc-dev@ozlabs.org
 List-Id: linux-next.vger.kernel.org
 
 Hi Rusty,
 
-Today's linux-next build (powerpc allnoconfig) failed like this:
+Today's linux-next build (powerpc ppc44x_defconfig) failed like this:
 
-scripts/mod/modpost.c:18:42: error: ../../include/linux/autoconf.h: No such file or directory
+.tmp_exports-asm.o: In function `__ksymtab_pci_alloc_consistent':
+(__ksymtab_sorted+0x2a30): undefined reference to `pci_alloc_consistent'
+.tmp_exports-asm.o: In function `__ksymtab_pci_free_consistent':
+(__ksymtab_sorted+0x2b70): undefined reference to `pci_free_consistent'
 
-Caused by commit acd9e0c7d0b4a1cc02c27088a2b2322acc6d0793 ("module: make
-MODULE_SYMBOL_PREFIX into a CONFIG option") interacting with commit
-cf1320106e706875e6e14db8d5299f1d552f565e ("kbuild: move autoconf.h to
-include/generated") from the kbuild tree.
+Caused by the powerpc architecture EXPORTing static inlines (for 32 bit
+builds) interacting with changes in the rr tree.
 
-I have applied the following patch for today (and will continue to use
-it):
+I have applied this patch for today:
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 12 Nov 2009 18:33:17 +1100
-Subject: [PATCH] modpost: autoconf.h has moved to include/generated
+Date: Thu, 12 Nov 2009 18:54:13 +1100
+Subject: [PATCH] powerpc: do not export pci_alloc/free_consistent
+
+Since they are static inline functions.
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- scripts/mod/modpost.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ arch/powerpc/kernel/ppc_ksyms.c |    2 --
+ 1 files changed, 0 insertions(+), 2 deletions(-)
 
-diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index f6be2e9..769ea95 100644
---- a/scripts/mod/modpost.c
-+++ b/scripts/mod/modpost.c
-@@ -15,7 +15,7 @@
- #include <stdio.h>
- #include <ctype.h>
- #include "modpost.h"
--#include "../../include/linux/autoconf.h"
-+#include "../../include/generated/autoconf.h"
- #include "../../include/linux/license.h"
+diff --git a/arch/powerpc/kernel/ppc_ksyms.c b/arch/powerpc/kernel/ppc_ksyms.c
+index 07115d6..4254514 100644
+--- a/arch/powerpc/kernel/ppc_ksyms.c
++++ b/arch/powerpc/kernel/ppc_ksyms.c
+@@ -96,8 +96,6 @@ EXPORT_SYMBOL(copy_4K_page);
+ EXPORT_SYMBOL(isa_io_base);
+ EXPORT_SYMBOL(isa_mem_base);
+ EXPORT_SYMBOL(pci_dram_offset);
+-EXPORT_SYMBOL(pci_alloc_consistent);
+-EXPORT_SYMBOL(pci_free_consistent);
+ #endif /* CONFIG_PCI */
  
- /* Some toolchains use a `_' prefix for all user symbols. */
+ EXPORT_SYMBOL(start_thread);
 -- 
 1.6.5.2
 
