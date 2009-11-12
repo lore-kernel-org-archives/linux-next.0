@@ -1,90 +1,62 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: -next: Nov 12 - kernel BUG at kernel/sched.c:7359!
-Date: Thu, 12 Nov 2009 13:10:20 +0100
-Message-ID: <1258027820.4039.129.camel@laptop>
-References: <20091112195101.63263490.sfr@canb.auug.org.au>
-	 <4AFBF73B.5040500@in.ibm.com>
+From: Thomas Renninger <trenn@suse.de>
+Subject: Re: linux-next: manual merge of the cpufreq tree with the acpi tree
+Date: Thu, 12 Nov 2009 06:15:37 -0600
+Message-ID: <200911120615.38067.trenn@suse.de>
+References: <20091112134524.d9854379.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1752994AbZKLMK2@vger.kernel.org>
-In-Reply-To: <4AFBF73B.5040500@in.ibm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sachin Sant <sachinp@in.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from cantor2.suse.de ([195.135.220.15]:49866 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752608AbZKLMPn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 12 Nov 2009 07:15:43 -0500
+In-Reply-To: <20091112134524.d9854379.sfr@canb.auug.org.au>
+Content-Disposition: inline
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Dave Jones <davej@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zhao Yakui <yakui.zhao@intel.com>, Len Brown <lenb@kernel.org>
 
-On Thu, 2009-11-12 at 17:23 +0530, Sachin Sant wrote:
-> Stephen Rothwell wrote:
-> > Hi all,
-> >
-> > Changes since 20091111:
-> >   
-> I came across the following bug while executing cpu hotplug tests
-> on a x86_64 box. This is with next version 2.6.32-rc6-20091112.
-> (20280eab85704dcd05a20903f0de80be1c761c6e)
-> 
-> This is a 4 way box. The problem is not always reproducible and
-> can be recreated only after some amount of activity.
-> 
-> ------------[ cut here ]------------
-> kernel BUG at kernel/sched.c:7359!
-> invalid opcode: 0000 [#1] SMP
-> last sysfs file: /sys/devices/system/cpu/cpu1/online
-> CPU 0
-> Modules linked in: ipv6 fuse loop dm_mod sg mptctl bnx2 rtc_cmos rtc_core
-> rtc_lib i2c_piix4 tpm_tis serio_raw button shpchp pcspkr tpm i2c_core
-> pci_hotplug k8temp tpm_bios ohci_hcd ehci_hcd sd_mod crc_t10dif usbcore edd fan
-> thermal processor thermal_sys hwmon mptsas mptscsih mptbase scsi_transport_sas
-> scsi_mod
-> Pid: 11504, comm: hotplug04.sh Not tainted 2.6.32-rc6-autotest-next-20091112 #1
-> BladeCenter LS21 -[79716AA]-
-> RIP: 0010:[<ffffffff8134a744>]  [<ffffffff8134a744>] migration_call+0x381/0x51a
-> RSP: 0018:ffff8801159fdd48  EFLAGS: 00010046
-> RAX: 0000000000000001 RBX: ffff88011e2de180 RCX: ffffffffff8d8f20
-> RDX: ffff880028280000 RSI: ffff880028293f88 RDI: ffff880127a3e708
-> RBP: ffff8801159fdd98 R08: 0000000000000000 R09: 000000046c250cb4
-> R10: dead000000100100 R11: 7fffffffffffffff R12: ffffffff816d7020
-> R13: ffff880028293f00 R14: ffff880127a3e6c0 R15: ffff880028293f00
-> FS:  00007f782aef66f0(0000) GS:ffff880028200000(0000) knlGS:0000000055731b00
-> CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003b
-> CR2: 000000000061f4f0 CR3: 00000001271a0000 CR4: 00000000000006f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
-> Process hotplug04.sh (pid: 11504, threadinfo ffff8801159fc000, task
-> ffff8801293e2600)
-> Stack:
->  0000000000000001 0000000000013f00 0000000100000000 0000000000000001
-> <0> ffff8801159fddb8 0000000000000000 00000000fffffffe ffffffff8176c800
-> <0> 0000000000000001 0000000000000007 ffff8801159fddd8 ffffffff81351b16
-> Call Trace:
->  [<ffffffff81351b16>] notifier_call_chain+0x33/0x5b
->  [<ffffffff8105db28>] raw_notifier_call_chain+0xf/0x11
->  [<ffffffff8133db32>] _cpu_down+0x1f7/0x2f1
->  [<ffffffff8134cb6a>] ? wait_for_completion+0x18/0x1a
->  [<ffffffff8133dc74>] cpu_down+0x48/0x80
->  [<ffffffff8133f89a>] store_online+0x2c/0x6f
->  [<ffffffff8128c44b>] sysdev_store+0x1b/0x1d
->  [<ffffffff811382f8>] sysfs_write_file+0xdf/0x114
->  [<ffffffff810e4401>] vfs_write+0xb4/0x186
->  [<ffffffff810e4597>] sys_write+0x47/0x6e
->  [<ffffffff81002a6b>] system_call_fastpath+0x16/0x1b
-> Code: c6 75 05 48 8b 1b eb ed 49 8b 46 30 4c 89 f6 4c 89 ff ff 50 30 41 83 be
-> 78 04 00 00 00 48 8b 45 b0 48 8b 14 c5 70 4d 77 81 75 04 <0f> 0b eb fe 49 8b 06
-> 48 83 f8 40 75 04 0f 0b eb fe 48 8b 5d b8
-> RIP  [<ffffffff8134a744>] migration_call+0x381/0x51a
-> 
-> kernel/sched.c:7359 corresponds to
-> 
-> /* called under rq->lock with disabled interrupts */
-> static void migrate_dead(unsigned int dead_cpu, struct task_struct *p)
-> {
->         struct rq *rq = cpu_rq(dead_cpu);
-> 
->         /* Must be exiting, otherwise would be on tasklist. */
->         BUG_ON(!p->exit_state); <<====
+On Wednesday 11 November 2009 08:45:24 pm Stephen Rothwell wrote:
+> Hi Dave,
+>
+> Today's linux-next merge of the cpufreq tree got a conflict in
+> include/acpi/processor.h between commit
+> d81c45e1c9369855901420f79114852eba2ea16a ("ACPI: Notify the _PPC
+> evaluation status to the platform") from the acpi tree and commit
+> b02d803d0fa3a395ba32bc5e5e3e7a3385ca7237 ("[CPUFREQ] Introduce bios_limit
+> per cpu cpufreq sysfs interface") from the cpufreq tree.
+First, thanks everybody for picking this up.
 
-I'm pretty sure we stumbled on a TASK_WAKING task there, trying to sort
-out the locking there, its a bit of a maze :/
+> Just context changes.  I fixed it up (see below) and can carry the fix as
+> necessary.
+>
+> By the way, Dave, Thomas, shouldn't the second version of
+> acpi_processor_get_bios_limit() in include/acpi/processor.h introduced by
+> the above cpufreq tree patch be "static inline"?
+Yes, good catch.
+Shall I send an on top fix somewhere?
 
-How reproducable is this?
+   Thomas
+
+@@ -295,6 +295,7 @@ static inline void acpi_processor_ffh_cstate_enter(struct acpi_processor_cx
+ void acpi_processor_ppc_init(void);
+ void acpi_processor_ppc_exit(void);
+ int acpi_processor_ppc_has_changed(struct acpi_processor *pr);
++extern int acpi_processor_get_bios_limit(int cpu, unsigned int *limit);
+ #else
+ static inline void acpi_processor_ppc_init(void)
+ {
+@@ -316,6 +317,11 @@ static inline int acpi_processor_ppc_has_changed(struct acpi_processor *pr)
+ 	}
+ 	return 0;
+ }
++int acpi_processor_get_bios_limit(int cpu, unsigned int *limit)
++{
++	return -ENODEV;
++}
++
+ #endif				/* CONFIG_CPU_FREQ */
+ 
