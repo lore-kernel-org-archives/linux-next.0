@@ -1,44 +1,58 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: sysctl tree build failure
-Date: Thu, 12 Nov 2009 00:08:59 -0800
-Message-ID: <m1ljicp3l0.fsf@fess.ebiederm.org>
+Date: Thu, 12 Nov 2009 19:14:51 +1100
+Message-ID: <20091112191451.d21250f2.sfr@canb.auug.org.au>
 References: <20091112184805.1c0720cb.sfr@canb.auug.org.au>
+	<m1ljicp3l0.fsf@fess.ebiederm.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1752308AbZKLIJB@vger.kernel.org>
-In-Reply-To: <20091112184805.1c0720cb.sfr@canb.auug.org.au> (Stephen Rothwell's message of "Thu\, 12 Nov 2009 18\:48\:05 +1100")
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__12_Nov_2009_19_14_51_+1100_PcV3.W.WdM3c97PA"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:47073 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751878AbZKLIOu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 12 Nov 2009 03:14:50 -0500
+In-Reply-To: <m1ljicp3l0.fsf@fess.ebiederm.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+--Signature=_Thu__12_Nov_2009_19_14_51_+1100_PcV3.W.WdM3c97PA
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Eric,
->
-> Today's linux-next build (powerpc allnoconfig) failed like this:
->
-> kernel/built-in.o: In function `get_sysctl':
-> sysctl_binary.c:(.text+0x100d4): undefined reference to `dev_get_by_index'
->
-> Caused by commit 26a7034b40ba80f82f64fa251a2cbf49f9971c6a ("sysctl:
-> Reduce sys_sysctl to a compatibility wrapper around /proc/sys").
->
-> CONFIG_NET is not set for this build.
->
-> I have used this patch for today:
-> (It does produce this warning, though:
->
-> kernel/sysctl_binary.c:1253: warning: unused variable 'net'
->
-> so needs more work.)
+Hi Eric,
 
-Thank you, and my apologies.  I thought I had tried it with every
-applicable compile option but apparently not.
+On Thu, 12 Nov 2009 00:08:59 -0800 ebiederm@xmission.com (Eric W. Biederman=
+) wrote:
+>
+> Thank you, and my apologies.  I thought I had tried it with every
+> applicable compile option but apparently not.
+>=20
+> Ugh.  It looks like I have a small refcount leak in that case as
+> well.  Blind I was.
+>=20
+> Thank you very I will have this fixed shortly.
 
-Ugh.  It looks like I have a small refcount leak in that case as
-well.  Blind I was.
+Thanks.
 
-Thank you very I will have this fixed shortly.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Eric
+--Signature=_Thu__12_Nov_2009_19_14_51_+1100_PcV3.W.WdM3c97PA
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkr7w/sACgkQjjKRsyhoI8z9JgCfQ+l25S9stVvfUJxGCPgZadnW
+uOwAniLl9+cYUIkoqo17d8xjtK0TON8m
+=Lv8w
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__12_Nov_2009_19_14_51_+1100_PcV3.W.WdM3c97PA--
