@@ -1,108 +1,93 @@
 From: Sachin Sant <sachinp@in.ibm.com>
-Subject: Re: [powerpc] Next tree Nov 2 : kernel BUG at mm/mmap.c:2135!
-Date: Thu, 12 Nov 2009 16:46:40 +0530
-Message-ID: <4AFBEE98.2070208@in.ibm.com>
-References: <20091102173845.210d1c57.sfr@canb.auug.org.au> <4AEEA279.4040106@in.ibm.com> <4AF175D4.7030507@in.ibm.com> <20091105001650.GD3613@yookeroo.seuss>
+Subject: -next: Nov 12 - kernel BUG at kernel/sched.c:7359!
+Date: Thu, 12 Nov 2009 17:23:31 +0530
+Message-ID: <4AFBF73B.5040500@in.ibm.com>
+References: <20091112195101.63263490.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e23smtp02.au.ibm.com ([202.81.31.144]:41065 "EHLO
-	e23smtp02.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752163AbZKLLQn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Nov 2009 06:16:43 -0500
-Received: from d23relay04.au.ibm.com (d23relay04.au.ibm.com [202.81.31.246])
-	by e23smtp02.au.ibm.com (8.14.3/8.13.1) with ESMTP id nACBEEI4012375
-	for <linux-next@vger.kernel.org>; Thu, 12 Nov 2009 22:14:14 +1100
-Received: from d23av03.au.ibm.com (d23av03.au.ibm.com [9.190.234.97])
-	by d23relay04.au.ibm.com (8.13.8/8.13.8/NCO v10.0) with ESMTP id nACBDbP61781786
-	for <linux-next@vger.kernel.org>; Thu, 12 Nov 2009 22:13:37 +1100
-Received: from d23av03.au.ibm.com (loopback [127.0.0.1])
-	by d23av03.au.ibm.com (8.14.3/8.13.1/NCO v10.0 AVout) with ESMTP id nACBGkLF010441
-	for <linux-next@vger.kernel.org>; Thu, 12 Nov 2009 22:16:47 +1100
-In-Reply-To: <20091105001650.GD3613@yookeroo.seuss>
+Received: from e23smtp04.au.ibm.com ([202.81.31.146]:59936 "EHLO
+	e23smtp04.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751750AbZKLLxc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Nov 2009 06:53:32 -0500
+In-Reply-To: <20091112195101.63263490.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: dwg@au1.ibm.com
-Cc: Linux/PPC Development <linuxppc-dev@ozlabs.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, peterz@infradead.org
 
-David Gibson wrote:
-> On Wed, Nov 04, 2009 at 06:08:44PM +0530, Sachin Sant wrote:
->   
->> Sachin Sant wrote:
->>     
->>> Today's next tree failed to boot on a POWER 6 box with :
->>>
->>> ------------[ cut here ]------------
->>> kernel BUG at mm/mmap.c:2135!
->>> Oops: Exception in kernel mode, sig: 5 [#2]
->>> SMP NR_CPUS=1024 NUMA pSeries
->>>       
->> Problem exists with today's next as well.
->>
->> Likely cause for this problem seems to the following commit.
->> If i revert this patch the machine boots fine.
->>
->> commit a0668cdc154e54bf0c85182e0535eea237d53146
->> powerpc/mm: Cleanup management of kmem_caches for pagetables
->>     
+Stephen Rothwell wrote:
+> Hi all,
 >
-> Ugh.  Ok, it's not at all obvious how my patch could cause this bug.
-> Can you send your .config?
->
+> Changes since 20091111:
 >   
-Still present in today's next. 
+I came across the following bug while executing cpu hotplug tests
+on a x86_64 box. This is with next version 2.6.32-rc6-20091112.
+(20280eab85704dcd05a20903f0de80be1c761c6e)
+
+This is a 4 way box. The problem is not always reproducible and
+can be recreated only after some amount of activity.
+
+------------[ cut here ]------------
+kernel BUG at kernel/sched.c:7359!
+invalid opcode: 0000 [#1] SMP
+last sysfs file: /sys/devices/system/cpu/cpu1/online
+CPU 0
+Modules linked in: ipv6 fuse loop dm_mod sg mptctl bnx2 rtc_cmos rtc_core
+rtc_lib i2c_piix4 tpm_tis serio_raw button shpchp pcspkr tpm i2c_core
+pci_hotplug k8temp tpm_bios ohci_hcd ehci_hcd sd_mod crc_t10dif usbcore edd fan
+thermal processor thermal_sys hwmon mptsas mptscsih mptbase scsi_transport_sas
+scsi_mod
+Pid: 11504, comm: hotplug04.sh Not tainted 2.6.32-rc6-autotest-next-20091112 #1
+BladeCenter LS21 -[79716AA]-
+RIP: 0010:[<ffffffff8134a744>]  [<ffffffff8134a744>] migration_call+0x381/0x51a
+RSP: 0018:ffff8801159fdd48  EFLAGS: 00010046
+RAX: 0000000000000001 RBX: ffff88011e2de180 RCX: ffffffffff8d8f20
+RDX: ffff880028280000 RSI: ffff880028293f88 RDI: ffff880127a3e708
+RBP: ffff8801159fdd98 R08: 0000000000000000 R09: 000000046c250cb4
+R10: dead000000100100 R11: 7fffffffffffffff R12: ffffffff816d7020
+R13: ffff880028293f00 R14: ffff880127a3e6c0 R15: ffff880028293f00
+FS:  00007f782aef66f0(0000) GS:ffff880028200000(0000) knlGS:0000000055731b00
+CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003b
+CR2: 000000000061f4f0 CR3: 00000001271a0000 CR4: 00000000000006f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
+Process hotplug04.sh (pid: 11504, threadinfo ffff8801159fc000, task
+ffff8801293e2600)
+Stack:
+ 0000000000000001 0000000000013f00 0000000100000000 0000000000000001
+<0> ffff8801159fddb8 0000000000000000 00000000fffffffe ffffffff8176c800
+<0> 0000000000000001 0000000000000007 ffff8801159fddd8 ffffffff81351b16
+Call Trace:
+ [<ffffffff81351b16>] notifier_call_chain+0x33/0x5b
+ [<ffffffff8105db28>] raw_notifier_call_chain+0xf/0x11
+ [<ffffffff8133db32>] _cpu_down+0x1f7/0x2f1
+ [<ffffffff8134cb6a>] ? wait_for_completion+0x18/0x1a
+ [<ffffffff8133dc74>] cpu_down+0x48/0x80
+ [<ffffffff8133f89a>] store_online+0x2c/0x6f
+ [<ffffffff8128c44b>] sysdev_store+0x1b/0x1d
+ [<ffffffff811382f8>] sysfs_write_file+0xdf/0x114
+ [<ffffffff810e4401>] vfs_write+0xb4/0x186
+ [<ffffffff810e4597>] sys_write+0x47/0x6e
+ [<ffffffff81002a6b>] system_call_fastpath+0x16/0x1b
+Code: c6 75 05 48 8b 1b eb ed 49 8b 46 30 4c 89 f6 4c 89 ff ff 50 30 41 83 be
+78 04 00 00 00 48 8b 45 b0 48 8b 14 c5 70 4d 77 81 75 04 <0f> 0b eb fe 49 8b 06
+48 83 f8 40 75 04 0f 0b eb fe 48 8b 5d b8
+RIP  [<ffffffff8134a744>] migration_call+0x381/0x51a
+
+kernel/sched.c:7359 corresponds to
+
+/* called under rq->lock with disabled interrupts */
+static void migrate_dead(unsigned int dead_cpu, struct task_struct *p)
+{
+        struct rq *rq = cpu_rq(dead_cpu);
+
+        /* Must be exiting, otherwise would be on tasklist. */
+        BUG_ON(!p->exit_state); <<====
 
 Thanks
 -Sachin
-
->>> Modules linked in: ibmvscsic scsi_transport_srp scsi_tgt scsi_mod
->>> NIP: c00000000014e30c LR: c00000000014e2f8 CTR: c00000000014db88
->>> REGS: c0000000db703620 TRAP: 0700   Tainted: G      D
->>> (2.6.32-rc5-autotest-next-20091102)
->>> MSR: 8000000000029032 <EE,ME,CE,IR,DR>  CR: 24022442  XER: 2000000c
->>> TASK = c0000000db7f6fe0[76] 'init' THREAD: c0000000db700000 CPU: 1
->>> GPR00: 0000000000000001 c0000000db7038a0 c000000000b19900
->>> 0000000000000000
->>> GPR04: c0000000db406a40 000000000000000c c0000000fe10c370
->>> c000000000bb2800
->>> GPR08: 000000000000db40 0000000000000000 c0000000dfdc0e00
->>> 000000000000000c
->>> GPR12: 0000000044022442 c000000000bb2800 00000000ffffffff
->>> ffffffffffffffff
->>> GPR16: 0000000008430000 00000000003c0000 c0000000db703ea0
->>> c0000000db569108
->>> GPR20: c0000000db568908 0000000000000000 c0000000db703d60
->>> 0000000000000000
->>> GPR24: 0000000000000001 0000000000040100 c0000000fe503580
->>> c0000000db1ac180
->>> GPR28: 0000000000000000 c000000000f812d0 c000000000a84f00
->>> 0000000000000000
->>> NIP [c00000000014e30c] .exit_mmap+0x190/0x1b8
->>> LR [c00000000014e2f8] .exit_mmap+0x17c/0x1b8
->>> Call Trace:
->>> [c0000000db7038a0] [c00000000014e2f8] .exit_mmap+0x17c/0x1b8 (unreliable)
->>> [c0000000db703950] [c0000000000916cc] .mmput+0x54/0x164
->>> [c0000000db7039e0] [c0000000000968d8] .exit_mm+0x17c/0x1a0
->>> [c0000000db703a90] [c000000000098cb8] .do_exit+0x248/0x784
->>> [c0000000db703b70] [c0000000000992a8] .do_group_exit+0xb4/0xe8
->>> [c0000000db703c00] [c0000000000aca2c] .get_signal_to_deliver+0x3ec/0x478
->>> [c0000000db703cf0] [c0000000000134ac] .do_signal+0x6c/0x31c
->>> [c0000000db703e30] [c000000000008b7c] do_work+0x24/0x28
->>> Instruction dump:
->>> 7c8407b4 387d0018 4800ab11 60000000 939d0008 7fe3fb78 4bfffdbd 7c7f1b79
->>> 4082fff4 e81b00e8 3120ffff 7c090110 <0b000000> 382100b0 e8010010 eb61ffd8
->>> ---[ end trace ec052ac77a8e7cb4 ]---
->>> Fixing recursive fault but reboot is needed!
->>>
->>> mm/mmap.c:2135 corresponds to :
->>>
->>> BUG_ON(mm->nr_ptes > (FIRST_USER_ADDRESS+PMD_SIZE-1)>>PMD_SHIFT);
->>>
->>>       
->
->   
-
 
 -- 
 
