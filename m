@@ -1,65 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the usb tree with the omap tree
-Date: Thu, 12 Nov 2009 08:52:54 +1100
-Message-ID: <20091112085254.d856c4d0.sfr@canb.auug.org.au>
-References: <20091111193013.9a4bca3e.sfr@canb.auug.org.au>
-	<20091111191213.GH24837@atomide.com>
-	<20091111192058.GI24837@atomide.com>
+Subject: linux-next: origin tree build failure
+Date: Thu, 12 Nov 2009 11:23:48 +1100
+Message-ID: <20091112112348.e351451f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__12_Nov_2009_08_52_54_+1100_tex7x9YRlTIlJRd4"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44798 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37283 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759379AbZKKVww (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 11 Nov 2009 16:52:52 -0500
-In-Reply-To: <20091111192058.GI24837@atomide.com>
+	id S1759794AbZKLAXm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 Nov 2009 19:23:42 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tony Lindgren <tony@atomide.com>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felipe Balbi <felipe.balbi@nokia.com>, linux-omap@vger.kernel.org
+To: Linus <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
 
---Signature=_Thu__12_Nov_2009_08_52_54_+1100_tex7x9YRlTIlJRd4
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Linus,
 
-Hi Tony,
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-On Wed, 11 Nov 2009 11:20:59 -0800 Tony Lindgren <tony@atomide.com> wrote:
->
-> * Tony Lindgren <tony@atomide.com> [091111 11:12]:
-> >=20
-> > Oops, sorry. Looks like I accidentally included also drivers/usb/host/e=
-hci-omap.c
-> > as we were testing it in the linux-omap tree.
-> >=20
-> > I'll drop the drivers/usb/host/ehci-omap.c part from my queue, it shoul=
-d get
-> > integrated via Greg's queue. I'll just merge the platform init code.
->=20
-> Dropped anything touching drivers/usb from my patch. So no need for Greg
-> to do anything, the updated version of the patch below for reference.
+ERROR: "log_start_commit" [fs/ext3/ext3.ko] undefined!
 
-OK, thanks.  Just as long as we don't forget the necessary updates when
-these are all integrated into Linus' tree.  Some conflicts in linux-next
-are not a bad thing for that reason.
+I applied the following patch for today:
 
---=20
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 12 Nov 2009 11:19:26 +1100
+Subject: [PATCH] jbd: export log_start_commit for ext3
+
+Today's linux-next build (x86_64 allmodconfig) failed like this:
+
+ERROR: "log_start_commit" [fs/ext3/ext3.ko] undefined!
+
+Caused by commit fe8bc91c4c30122b357d197117705cfd4fabaf28 ("ext3: Wait
+for proper transaction commit on fsync").
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/jbd/journal.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/fs/jbd/journal.c b/fs/jbd/journal.c
+index 49d5cd6..34973f6 100644
+--- a/fs/jbd/journal.c
++++ b/fs/jbd/journal.c
+@@ -461,6 +461,7 @@ int log_start_commit(journal_t *journal, tid_t tid)
+ 	spin_unlock(&journal->j_state_lock);
+ 	return ret;
+ }
++EXPORT_SYMBOL(log_start_commit);
+ 
+ /*
+  * Force and wait upon a commit if the calling process is not within
+-- 
+1.6.5.2
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__12_Nov_2009_08_52_54_+1100_tex7x9YRlTIlJRd4
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkr7MjYACgkQjjKRsyhoI8x1SQCghVS2QTcViQuyaeFR490RmRZg
-osgAnA4rNanl/A7MKUvma2XkKdZ37MJ9
-=nGgL
------END PGP SIGNATURE-----
-
---Signature=_Thu__12_Nov_2009_08_52_54_+1100_tex7x9YRlTIlJRd4--
