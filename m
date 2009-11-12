@@ -1,51 +1,48 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for November 12
- (acpi_processor_get_bios_limit)
-Date: Thu, 12 Nov 2009 10:09:56 -0800
-Message-ID: <20091112100956.fc72080e.randy.dunlap@oracle.com>
+Subject: [PATCH -next] staging/line6: fix printk formats
+Date: Thu, 12 Nov 2009 15:46:01 -0800
+Message-ID: <20091112154601.97a4e2ab.randy.dunlap@oracle.com>
 References: <20091112195101.63263490.sfr@canb.auug.org.au>
-	<20091112094012.2ef401ad.randy.dunlap@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20091112094012.2ef401ad.randy.dunlap@oracle.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: linux-next@vger.kernel.org
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, lenb@kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-acpi@vger.kernel.org
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755865AbZKLXq2@vger.kernel.org>
+In-Reply-To: <20091112195101.63263490.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, devel@driverdev.osuosl.org
 List-Id: linux-next.vger.kernel.org
 
-On Thu, 12 Nov 2009 09:40:12 -0800 Randy Dunlap wrote:
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-> On Thu, 12 Nov 2009 19:51:01 +1100 Stephen Rothwell wrote:
-> 
-> > Hi all,
-> > 
-> > Changes since 20091111:
-> > 
-> > The cpufreq tree gained a conflict against the acpi tree.
-> 
-> when CONFIG_CPU_FREQ=n:
-> 
-> arch/x86/kernel/acpi/processor.o: In function `acpi_processor_get_bios_limit':
-> (.text+0x0): multiple definition of `acpi_processor_get_bios_limit'
-> arch/x86/kernel/acpi/cstate.o:(.text+0x0): first defined here
-> 
-> 
-> The function definition in include/apci/procssor.h needs to be "static inline"
-> at line 323.
+Fix printk format warnings in line6/pod.c; sizeof() is of type
+size_t, so use %zu.
 
+drivers/staging/line6/pod.c:581: warning: format '%d' expects type 'int', but argument 4 has type 'long unsigned int'
+drivers/staging/line6/pod.c:693: warning: format '%d' expects type 'int', but argument 4 has type 'long unsigned int'
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 ---
-however, even with that fixed, when
+ drivers/staging/line6/pod.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-CONFIG_CPU_FREQ=y
-CONFIG_ACPI=n
-CONFIG_SFI=y
-CONFIG_APM=y
-
-there is this build error:
-
-arch/x86/kernel/cpu/cpufreq/powernow-k7.c:720: error: 'acpi_processor_get_bios_limit' undeclared here (not in a function)
-
----
-~Randy
+--- linux-next-20091112.orig/drivers/staging/line6/pod.c
++++ linux-next-20091112/drivers/staging/line6/pod.c
+@@ -579,7 +579,7 @@ static ssize_t pod_set_dump(struct devic
+ 
+ 	if (count != sizeof(pod->prog_data)) {
+ 		dev_err(pod->line6.ifcdev,
+-			"data block must be exactly %d bytes\n",
++			"data block must be exactly %zu bytes\n",
+ 			sizeof(pod->prog_data));
+ 		return -EINVAL;
+ 	}
+@@ -691,7 +691,7 @@ static ssize_t pod_set_dump_buf(struct d
+ 
+ 	if (count != sizeof(pod->prog_data)) {
+ 		dev_err(pod->line6.ifcdev,
+-						"data block must be exactly %d bytes\n",
++						"data block must be exactly %zu bytes\n",
+ 						sizeof(pod->prog_data));
+ 		return -EINVAL;
+ 	}
