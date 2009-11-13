@@ -1,41 +1,61 @@
-From: Mike Galbraith <efault@gmx.de>
-Subject: Re: -next: Nov 12 - kernel BUG at kernel/sched.c:7359!
-Date: Fri, 13 Nov 2009 17:12:11 +0100
-Message-ID: <1258128731.6284.2.camel@marge.simson.net>
-References: <20091112195101.63263490.sfr@canb.auug.org.au>
-	 <4AFBF73B.5040500@in.ibm.com> <1258027820.4039.129.camel@laptop>
-	 <4AFBFE3D.80507@in.ibm.com> <1258028831.4039.152.camel@laptop>
-	 <1258045831.4039.736.camel@laptop>  <20091113095801.GA29977@in.ibm.com>
-	 <1258107368.4039.1149.camel@laptop>  <1258108281.22655.5.camel@laptop>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: linux-next: manual merge of the sound tree with the omap tree
+Date: Fri, 13 Nov 2009 12:44:29 -0800
+Message-ID: <20091113204429.GE3684@atomide.com>
+References: <20091113131947.03d1b259.sfr@canb.auug.org.au>
+ <20091113123901.GB30966@sirena.org.uk>
+ <s5h1vk2po9n.wl%tiwai@suse.de>
+ <20091113131148.GC21516@rakim.wolfsonmicro.main>
+ <s5hzl6qo9c9.wl%tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.gmx.net ([213.165.64.20]:32801 "HELO mail.gmx.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
-	id S1754667AbZKMQMO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 13 Nov 2009 11:12:14 -0500
-In-Reply-To: <1258108281.22655.5.camel@laptop>
+Received: from mho-02-ewr.mailhop.org ([204.13.248.72]:50696 "EHLO
+	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932353AbZKMUoa (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Nov 2009 15:44:30 -0500
+Content-Disposition: inline
+In-Reply-To: <s5hzl6qo9c9.wl%tiwai@suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: ego@in.ibm.com, Sachin Sant <sachinp@in.ibm.com>, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@nokia.com>, vikram pandita <vikram.pandita@ti.com>
 
-On Fri, 2009-11-13 at 11:31 +0100, Peter Zijlstra wrote:
+* Takashi Iwai <tiwai@suse.de> [091113 05:13]:
+> At Fri, 13 Nov 2009 13:11:48 +0000,
+> Mark Brown wrote:
+> > 
+> > On Fri, Nov 13, 2009 at 02:06:44PM +0100, Takashi Iwai wrote:
+> > > Mark Brown wrote:
+> > 
+> > > > into the OMAP tree to resolve this.  There's some older ASoC changes in
+> > > > there to ensure the patches applied but I'm happy for you to carry those
+> > > > providing Takashi is.
+> > 
+> > > I can merge the tree above to for-next branch of sound git tree, too.
+> > > In that way, we can keep asoc branches clean.
+> > 
+> > I believe that creates the same problem both ways :/ .  If we merge
+> > OMAP->sound we may as well put it on the ASoC topic branch, it'll
+> > probably be helpful for people doing OMAP work anyway.
+> 
+> OK, in both ways I don't care...
 
-> /me goes try a PREEMPT=n kernel, since that is what Mike reports boot
-> funnies with..
+I think this should get resolved if I git cherry-pick the following
+commits to linux-omap for-next:
 
-My highly intermittent funny is still there unfortunately.
+MFD: twl4030: add twl4030_codec MFD as a new child to the core
+0b83ddebc6e884dc0221358cf68c461520fbdd8e
 
-dmesg|grep span
-[    0.504026]  domain 0: span 0,3 level MC
-[    0.504032]   domain 1: span 0-3 level CPU
-[    0.504042]  domain 0: span 1-2 level MC
-[    0.504047]   domain 1: span 0-3 level CPU
-[    0.504055]  domain 0: span 1-2 level MC
-[    0.504060]   domain 1: span 0-3 level CPU
-[    0.504069]  domain 0: span 0,3 level MC
-[    0.504073]   domain 1: span 0-3 level CPU
+OMAP: Platform support for twl4030_codec MFD
+f8d9aad96d0d7b57d0bf2e4de21fdda3a42f4449
 
-	-Mike
+OMAP: Configure audio_mclk for twl4030-codec MFD
+953e2f3d272db9db6671ad4f4244820557a71cf7
+
+Then I can tweak the sdp and zoom patches accordingly. So let's try
+that first, I'll try it out today.
+
+Regards,
+
+Tony
