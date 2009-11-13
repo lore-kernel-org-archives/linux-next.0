@@ -1,291 +1,113 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for November 13
-Date: Fri, 13 Nov 2009 18:30:49 +1100
-Message-ID: <20091113183049.b3291c3d.sfr@canb.auug.org.au>
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: Re: -next: Nov 12 - kernel BUG at kernel/sched.c:7359!
+Date: Fri, 13 Nov 2009 14:30:23 +0530
+Message-ID: <4AFD2027.5060303@in.ibm.com>
+References: <20091112195101.63263490.sfr@canb.auug.org.au> <4AFBF73B.5040500@in.ibm.com> <1258027820.4039.129.camel@laptop> <4AFBFE3D.80507@in.ibm.com>  <1258028831.4039.152.camel@laptop> <1258045831.4039.736.camel@laptop>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__13_Nov_2009_18_30_49_+1100_adimWpVXaTt3oeXi"
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43260 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753498AbZKMHau (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 13 Nov 2009 02:30:50 -0500
+Received: from e23smtp09.au.ibm.com ([202.81.31.142]:51310 "EHLO
+	e23smtp09.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754882AbZKMJA0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Nov 2009 04:00:26 -0500
+In-Reply-To: <1258045831.4039.736.camel@laptop>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, Mike Galbraith <efault@gmx.de>, Gautham R Shenoy <ego@in.ibm.com>
 
---Signature=_Fri__13_Nov_2009_18_30_49_+1100_adimWpVXaTt3oeXi
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Peter Zijlstra wrote:
+> So what we need to do is make the whole of select_task_rq_fair()
+> cpu_online/active_mask aware, or give up and simply punt:
+>
+> diff --git a/kernel/sched.c b/kernel/sched.c
+> index 1f2e99d..62df61c 100644
+> --- a/kernel/sched.c
+> +++ b/kernel/sched.c
+> @@ -2377,6 +2377,9 @@ static int try_to_wake_up(struct task_struct *p, unsigned int state,
+>  	task_rq_unlock(rq, &flags);
+>
+>  	cpu = p->sched_class->select_task_rq(p, SD_BALANCE_WAKE, wake_flags);
+> +	if (!cpu_active(cpu))
+> +		cpu = cpumask_any_and(&p->cpus_allowed, cpu_active_mask);
+> +
+>  	if (cpu != orig_cpu) {
+>  		local_irq_save(flags);
+>  		rq = cpu_rq(cpu);
+>
+>
+> Something I think Mike also tried and didn't deadlock for him..
+>
+> Sachin, Mike, could you try the above snippet and verify if it does
+> indeed solve your respective issues?
+>   
+Unfortunately the above patch made things worse. With this patch
+the machine failed to boot with following oops
 
-Hi all,
+CPU0: Dual-Core AMD Opteron(tm) Processor 2218 stepping 02
+BUG: unable to handle kernel NULL pointer dereference at 0000000000000020
+IP: [<ffffffff81061f17>] set_task_cpu+0x189/0x1ed
+PGD 0
+Oops: 0000 [#1] SMP
+last sysfs file:
+CPU 0
+Modules linked in:
+Pid: 3, comm: kthreadd Not tainted 2.6.32-rc7-next-20091113 #1 BladeCenter LS21 -[79716AA]-
+RIP: 0010:[<ffffffff81061f17>]  [<ffffffff81061f17>] set_task_cpu+0x189/0x1ed
+RSP: 0018:ffff88012b357dd0  EFLAGS: 00010046
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000004
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffff88012b340000
+RBP: ffff88012b357e10 R08: 0000000000000004 R09: ffff88012b3401f8
+R10: 00000000000cffa7 R11: 0000000000000000 R12: ffff88012b340000
+R13: 000000000c28ccf6 R14: 0000000000000004 R15: ffff880028214cc0
+FS:  0000000000000000(0000) GS:ffff880028200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0018 ES: 0018 CR0: 000000008005003b
+CR2: 0000000000000020 CR3: 000000000174e000 CR4: 00000000000006f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
+Process kthreadd (pid: 3, threadinfo ffff88012b356000, task ffff88012b3431c0)
+Stack:
+ ffff880028214d20 0000000000000000 0000000028215640 0000000000000000
+<0> ffff88012b340000 0000000000000001 ffff880028214cc0 0000000000000000
+<0> ffff88012b357e60 ffffffff81063a75 0000000000000000 0000000000000000
+Call Trace:
+ [<ffffffff81063a75>] try_to_wake_up+0x103/0x31f
+ [<ffffffff81063c9e>] default_wake_function+0xd/0xf
+ [<ffffffff810519a7>] __wake_up_common+0x46/0x76
+ [<ffffffff810648ae>] ? migration_thread+0x0/0x285
+ [<ffffffff810577c8>] complete+0x38/0x4b
+ [<ffffffff8108040a>] kthread+0x67/0x85
+ [<ffffffff810298fa>] child_rip+0xa/0x20
+ [<ffffffff810803a3>] ? kthread+0x0/0x85
+ [<ffffffff810298f0>] ? child_rip+0x0/0x20
+Code: 00 8b 05 dd d7 df 04 85 c0 74 19 45 31 c0 31 c9 ba 01 00 00 00 be 01 00 00 00 bf 04 00 00 00 e8 79 02 07 00 48 8b 55 c8 44 89 f1 <48> 8b 42 20 48 8b 55 c0 49 03 84 24 88 00 00 00 48 2b 42 20 49
+RIP  [<ffffffff81061f17>] set_task_cpu+0x189/0x1ed
+ RSP <ffff88012b357dd0>
+CR2: 0000000000000020
+---[ end trace 4eaa2a86a8e2da22 ]---
 
-Changes since 20091112:
+I tried this with today's next (2.6.32-rc7-20091113) + the above patch.
+Here is how the code looks after applying the patch...
 
-I remerged Linus' tree at the end just to get the -rc7 tag.
+        task_rq_unlock(rq, &flags);
 
-Linus' tree lost its build failure.
+        cpu = p->sched_class->select_task_rq(p, SD_BALANCE_WAKE, wake_flags);
+        if (!cpu_active(cpu))
+                cpu = cpumask_any_and(&p->cpus_allowed, cpu_active_mask);
 
-The sound tree gained a conflict against the omap tree.
+        if (cpu != orig_cpu)
+                set_task_cpu(p, cpu);
 
-The rr tree lost its build failures.
+Thanks
+-Sachin
 
-The sysctl tree lost its build failure.
 
-----------------------------------------------------------------------------
+-- 
 
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
-and sparc64 defconfig. These builds also have
-CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
-CONFIG_DEBUG_INFO disabled when necessary.
-
-Below is a summary of the state of the merge.
-
-We are up to 148 trees (counting Linus' and 22 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging fixes/fixes
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/tty.current
-Merging quilt/usb.current
-Merging quilt/staging.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging ide-curent/master
-Merging dwmw2/master
-Merging arm/devel
-Merging davinci/davinci-next
-Merging msm/for-next
-Merging omap/for-next
-Merging pxa/for-next
-Merging avr32/avr32-arch
-CONFLICT (content): Merge conflict in arch/avr32/mach-at32ap/include/mach/c=
-pu.h
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-CONFLICT (content): Merge conflict in drivers/rtc/Kconfig
-Merging m68knommu/for-next
-Merging microblaze/next
-Merging mips/mips-for-linux-next
-Merging parisc/next
-Merging powerpc/next
-Merging 4xx/next
-Merging 52xx-and-virtex/next
-Merging galak/next
-Merging s390/features
-Merging sh/master
-Merging sparc/master
-Merging xtensa/master
-Merging ceph/for-next
-Merging cifs/master
-Merging configfs/linux-next
-Merging ecryptfs/next
-Merging ext3/for_next
-Merging ext4/next
-Merging fatfs/master
-Merging fuse/for-next
-Merging gfs2/master
-Merging jfs/next
-Merging nfs/linux-next
-Merging nfsd/nfsd-next
-Merging nilfs2/for-next
-Merging ocfs2/linux-next
-Merging squashfs/master
-Merging udf/for_next
-Merging v9fs/for-next
-Merging ubifs/linux-next
-Merging xfs/master
-Merging reiserfs-bkl/reiserfs/kill-bkl
-Merging vfs/for-next
-Merging pci/linux-next
-Merging hid/for-next
-Merging quilt/i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-CONFLICT (content): Merge conflict in drivers/media/common/tuners/tda18271-=
-fe.c
-Merging kbuild/master
-Merging kconfig/for-next
-Merging ide/master
-Merging libata/NEXT
-Merging infiniband/for-next
-Merging acpi/test
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/linux-next
-CONFLICT (content): Merge conflict in arch/powerpc/kvm/timing.h
-Merging dlm/next
-Merging scsi/master
-Merging async_tx/next
-Merging net/master
-CONFLICT (delete/modify): drivers/net/sfc/sfe4001.c deleted in net/master a=
-nd modified in HEAD. Version HEAD of drivers/net/sfc/sfe4001.c left in tree.
-CONFLICT (content): Merge conflict in drivers/net/wireless/libertas/cmd.c
-CONFLICT (content): Merge conflict in drivers/staging/Kconfig
-CONFLICT (content): Merge conflict in drivers/staging/Makefile
-CONFLICT (content): Merge conflict in drivers/staging/rtl8187se/Kconfig
-CONFLICT (content): Merge conflict in drivers/staging/rtl8192e/Kconfig
-$ git rm -f drivers/net/sfc/sfe4001.c
-Applying: net: merge fixup for drivers/net/sfc/falcon_boards.c
-Merging wireless/master
-Merging mtd/master
-Merging crypto/master
-Merging sound/for-next
-CONFLICT (content): Merge conflict in arch/arm/mach-omap2/board-omap3evm.c
-CONFLICT (content): Merge conflict in arch/arm/mach-omap2/board-zoom2.c
-Applying: sound: merger fixup for omap board-zoom2 updates
-Merging cpufreq/next
-CONFLICT (content): Merge conflict in include/acpi/processor.h
-Merging quilt/rr
-Applying: modpost: autoconf.h has moved to include/generated
-Merging mmc/next
-Merging tmio-mmc/linux-next
-Merging input/next
-Merging lsm/for-next
-Merging block/for-next
-Merging quilt/device-mapper
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-CONFLICT (content): Merge conflict in drivers/mtd/maps/pcmciamtd.c
-CONFLICT (content): Merge conflict in drivers/net/wireless/ray_cs.c
-CONFLICT (content): Merge conflict in drivers/pcmcia/Makefile
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging voltage/for-next
-CONFLICT (content): Merge conflict in drivers/mfd/Kconfig
-CONFLICT (content): Merge conflict in drivers/mfd/Makefile
-Merging security-testing/next
-CONFLICT (content): Merge conflict in Documentation/dontdiff
-Merging lblnet/master
-Merging agp/agp-next
-Merging uwb/for-upstream
-Merging watchdog/master
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-Merging audit/for-next
-Merging quilt/aoe
-Merging suspend/linux-next
-Merging bluetooth/master
-Merging fsnotify/for-next
-Merging irda/for-next
-Merging hwlat/for-linus
-CONFLICT (content): Merge conflict in drivers/misc/Makefile
-Merging drbd/for-jens
-Merging catalin/for-next
-Merging alacrity/linux-next
-CONFLICT (content): Merge conflict in drivers/net/Kconfig
-CONFLICT (content): Merge conflict in include/linux/Kbuild
-CONFLICT (content): Merge conflict in lib/Kconfig
-Merging i7core_edac/linux_next
-Applying: i7core_edac: do not export static functions
-Merging devicetree/next-devicetree
-Merging limits/writable_limits
-Merging tip/auto-latest
-CONFLICT (content): Merge conflict in arch/x86/kernel/kgdb.c
-CONFLICT (content): Merge conflict in kernel/irq/chip.c
-Merging oprofile/for-next
-Merging percpu/for-next
-CONFLICT (content): Merge conflict in arch/powerpc/platforms/pseries/hvCall=
-.S
-CONFLICT (content): Merge conflict in arch/x86/kvm/svm.c
-CONFLICT (content): Merge conflict in kernel/softlockup.c
-CONFLICT (content): Merge conflict in mm/percpu.c
-Applying: percpu: merge fixup for variable renaming
-Merging sfi/sfi-test
-Merging asm-generic/next
-Merging hwpoison/hwpoison
-Merging sysctl/master
-Merging quilt/driver-core
-Merging quilt/tty
-Merging quilt/usb
-Merging quilt/staging
-CONFLICT (content): Merge conflict in drivers/staging/Kconfig
-CONFLICT (content): Merge conflict in drivers/staging/Makefile
-CONFLICT (content): Merge conflict in drivers/staging/comedi/drivers/cb_das=
-16_cs.c
-CONFLICT (content): Merge conflict in drivers/staging/comedi/drivers/ni_lab=
-pc_cs.c
-CONFLICT (content): Merge conflict in drivers/staging/comedi/drivers/ni_mio=
-_cs.c
-Merging scsi-post-merge/master
-Merging origin/master
-
---Signature=_Fri__13_Nov_2009_18_30_49_+1100_adimWpVXaTt3oeXi
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkr9CykACgkQjjKRsyhoI8xyIACgpS3rH9On5SlauUiBM2EezBB6
-4ZoAnRT1qQG1K87BxaKqthR037u3Hjk0
-=ueN7
------END PGP SIGNATURE-----
-
---Signature=_Fri__13_Nov_2009_18_30_49_+1100_adimWpVXaTt3oeXi--
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
