@@ -1,61 +1,27 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: linux-next: manual merge of the sound tree with the omap tree
-Date: Fri, 13 Nov 2009 12:44:29 -0800
-Message-ID: <20091113204429.GE3684@atomide.com>
-References: <20091113131947.03d1b259.sfr@canb.auug.org.au>
- <20091113123901.GB30966@sirena.org.uk>
- <s5h1vk2po9n.wl%tiwai@suse.de>
- <20091113131148.GC21516@rakim.wolfsonmicro.main>
- <s5hzl6qo9c9.wl%tiwai@suse.de>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH] Use of_find_node_by_path to find root node.
+Date: Fri, 13 Nov 2009 13:25:15 -0800 (PST)
+Message-ID: <20091113.132515.173441524.davem@davemloft.net>
+References: <20091113.065751.162221666.davem@davemloft.net>
+	<1258125351-25965-1-git-send-email-kristoffer@gaisler.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mho-02-ewr.mailhop.org ([204.13.248.72]:50696 "EHLO
-	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932353AbZKMUoa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Nov 2009 15:44:30 -0500
-Content-Disposition: inline
-In-Reply-To: <s5hzl6qo9c9.wl%tiwai@suse.de>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:57967
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754987AbZKMVY7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 13 Nov 2009 16:24:59 -0500
+In-Reply-To: <1258125351-25965-1-git-send-email-kristoffer@gaisler.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@nokia.com>, vikram pandita <vikram.pandita@ti.com>
+To: kristoffer@gaisler.com
+Cc: linux-next@vger.kernel.org
 
-* Takashi Iwai <tiwai@suse.de> [091113 05:13]:
-> At Fri, 13 Nov 2009 13:11:48 +0000,
-> Mark Brown wrote:
-> > 
-> > On Fri, Nov 13, 2009 at 02:06:44PM +0100, Takashi Iwai wrote:
-> > > Mark Brown wrote:
-> > 
-> > > > into the OMAP tree to resolve this.  There's some older ASoC changes in
-> > > > there to ensure the patches applied but I'm happy for you to carry those
-> > > > providing Takashi is.
-> > 
-> > > I can merge the tree above to for-next branch of sound git tree, too.
-> > > In that way, we can keep asoc branches clean.
-> > 
-> > I believe that creates the same problem both ways :/ .  If we merge
-> > OMAP->sound we may as well put it on the ASoC topic branch, it'll
-> > probably be helpful for people doing OMAP work anyway.
-> 
-> OK, in both ways I don't care...
+From: Kristoffer Glembo <kristoffer@gaisler.com>
+Date: Fri, 13 Nov 2009 16:15:51 +0100
 
-I think this should get resolved if I git cherry-pick the following
-commits to linux-omap for-next:
+> Signed-off-by: Kristoffer Glembo <kristoffer@gaisler.com>
 
-MFD: twl4030: add twl4030_codec MFD as a new child to the core
-0b83ddebc6e884dc0221358cf68c461520fbdd8e
-
-OMAP: Platform support for twl4030_codec MFD
-f8d9aad96d0d7b57d0bf2e4de21fdda3a42f4449
-
-OMAP: Configure audio_mclk for twl4030-codec MFD
-953e2f3d272db9db6671ad4f4244820557a71cf7
-
-Then I can tweak the sdp and zoom patches accordingly. So let's try
-that first, I'll try it out today.
-
-Regards,
-
-Tony
+Applied, thanks.
