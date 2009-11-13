@@ -1,91 +1,39 @@
-From: Sachin Sant <sachinp@in.ibm.com>
-Subject: Re: -next: Nov 12 - kernel BUG at kernel/sched.c:7359!
-Date: Fri, 13 Nov 2009 17:14:11 +0530
-Message-ID: <4AFD468B.5030602@in.ibm.com>
-References: <20091112195101.63263490.sfr@canb.auug.org.au> <4AFBF73B.5040500@in.ibm.com> <1258027820.4039.129.camel@laptop> <4AFBFE3D.80507@in.ibm.com> <1258028831.4039.152.camel@laptop> <1258045831.4039.736.camel@laptop>  <20091113095801.GA29977@in.ibm.com> <1258107368.4039.1149.camel@laptop> <1258108281.22655.5.camel@laptop>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: linux-next: manual merge of the sound tree with the omap tree
+Date: Fri, 13 Nov 2009 12:39:01 +0000
+Message-ID: <20091113123901.GB30966@sirena.org.uk>
+References: <20091113131947.03d1b259.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------050103040503050009000101"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e28smtp07.in.ibm.com ([122.248.162.7]:44702 "EHLO
-	e28smtp07.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752164AbZKMLoP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Nov 2009 06:44:15 -0500
-In-Reply-To: <1258108281.22655.5.camel@laptop>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:39998 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751267AbZKMMi7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 13 Nov 2009 07:38:59 -0500
+Content-Disposition: inline
+In-Reply-To: <20091113131947.03d1b259.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: ego@in.ibm.com, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, Mike Galbraith <efault@gmx.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Takashi Iwai <tiwai@suse.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@nokia.com>, vikram pandita <vikram.pandita@ti.com>, Tony Lindgren <tony@atomide.com>
 
-This is a multi-part message in MIME format.
---------------050103040503050009000101
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+On Fri, Nov 13, 2009 at 01:19:47PM +1100, Stephen Rothwell wrote:
 
-Peter Zijlstra wrote:
-> Well, it boots for me, but then, I've not been able to reproduce any
-> issues anyway :/
->
-> /me goes try a PREEMPT=n kernel, since that is what Mike reports boot
-> funnies with..
->   
-With the suggested changes against -next the machine boots fine.
-After multiple runs of hackbenck,kernbench,cpu_hotplug tests the
-machine is still up and running. So at this point all is well.
-I will continue to monitor the box for a while..
+> Today's linux-next merge of the sound tree got a conflict in
+> arch/arm/mach-omap2/board-zoom2.c between commit
+> 3541a57ebeb4c817e6e25bb0c2a2c174d6edb7c4 ("omap: zoom2: split board file
+> for software reuse") from the omap tree and commits
+> f8d9aad96d0d7b57d0bf2e4de21fdda3a42f4449 ("OMAP: Platform support for
+> twl4030_codec MFD") and 953e2f3d272db9db6671ad4f4244820557a71cf7 ("OMAP:
+> Configure audio_mclk for twl4030-codec MFD") from the sound tree.
 
-I just picked up the changes made to kernel/sched.c. Have attached
-the changes here.
+> The former moved the code that the latter modifies into another file.  I
+> have added the following merge fixup patch and can carry it as necessary.
 
-Thanks for all your help.
+Adding Tony for the OMAP tree - as discussed previously you could merge
 
-Thanks
--Sachin
+git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound-2.6.git twl4030-mfd
 
--- 
-
----------------------------------
-Sachin Sant
-IBM Linux Technology Center
-India Systems and Technology Labs
-Bangalore, India
----------------------------------
-
-
---------------050103040503050009000101
-Content-Type: text/x-patch;
- name="sched-next.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="sched-next.patch"
-
-diff -Naurp a/kernel/sched.c b/kernel/sched.c
---- a/kernel/sched.c	2009-11-13 16:53:19.000000000 +0530
-+++ b/kernel/sched.c	2009-11-13 16:50:47.000000000 +0530
-@@ -2372,13 +2372,22 @@ static int try_to_wake_up(struct task_st
- 	if (task_contributes_to_load(p))
- 		rq->nr_uninterruptible--;
- 	p->state = TASK_WAKING;
--	task_rq_unlock(rq, &flags);
-+	__task_rq_unlock(rq);
- 
-+again:
- 	cpu = p->sched_class->select_task_rq(p, SD_BALANCE_WAKE, wake_flags);
-+	if (!cpu_online(cpu))
-+		cpu = cpumask_any_and(&p->cpus_allowed, cpu_active_mask);
-+	if (cpu >= nr_cpu_ids) {
-+		printk(KERN_ERR "Breaking affinity on %d/%s\n", p->pid, p->comm);
-+		cpuset_cpus_allowed_locked(p, &p->cpus_allowed);
-+		goto again;
-+	}
-+	
- 	if (cpu != orig_cpu)
- 		set_task_cpu(p, cpu);
- 
--	rq = task_rq_lock(p, &flags);
-+	rq = __task_rq_lock(p);
- 
- 	if (rq != orig_rq)
- 		update_rq_clock(rq);
-
---------------050103040503050009000101--
+into the OMAP tree to resolve this.  There's some older ASoC changes in
+there to ensure the patches applied but I'm happy for you to carry those
+providing Takashi is.
