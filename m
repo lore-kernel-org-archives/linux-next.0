@@ -1,59 +1,68 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: i7core_edac tree build failure
-Date: Fri, 13 Nov 2009 10:54:35 +1100
-Message-ID: <20091113105435.1b9b0060.sfr@canb.auug.org.au>
-References: <20091112165852.855d1e5d.sfr@canb.auug.org.au>
-	<200911122340.26317.rusty@rustcorp.com.au>
+From: David Gibson <dwg@au1.ibm.com>
+Subject: Re: [powerpc] Next tree Nov 2 : kernel BUG at mm/mmap.c:2135!
+Date: Fri, 13 Nov 2009 12:37:29 +1100
+Message-ID: <20091113013729.GB18848@yookeroo.seuss>
+References: <20091102173845.210d1c57.sfr@canb.auug.org.au>
+ <4AEEA279.4040106@in.ibm.com>
+ <4AF175D4.7030507@in.ibm.com>
+ <20091105001650.GD3613@yookeroo.seuss>
+ <4AFBEE98.2070208@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__13_Nov_2009_10_54_35_+1100_v.4AMIyzpkgDa6oU"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51640 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755401AbZKLXyk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 12 Nov 2009 18:54:40 -0500
-In-Reply-To: <200911122340.26317.rusty@rustcorp.com.au>
+Received: from e23smtp06.au.ibm.com ([202.81.31.148]:53308 "EHLO
+	e23smtp06.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754462AbZKMBh3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 12 Nov 2009 20:37:29 -0500
+Received: from d23relay05.au.ibm.com (d23relay05.au.ibm.com [202.81.31.247])
+	by e23smtp06.au.ibm.com (8.14.3/8.13.1) with ESMTP id nAD1bJpg030042
+	for <linux-next@vger.kernel.org>; Fri, 13 Nov 2009 12:37:19 +1100
+Received: from d23av02.au.ibm.com (d23av02.au.ibm.com [9.190.235.138])
+	by d23relay05.au.ibm.com (8.13.8/8.13.8/NCO v10.0) with ESMTP id nAD1YIrG1531978
+	for <linux-next@vger.kernel.org>; Fri, 13 Nov 2009 12:34:18 +1100
+Received: from d23av02.au.ibm.com (loopback [127.0.0.1])
+	by d23av02.au.ibm.com (8.14.3/8.13.1/NCO v10.0 AVout) with ESMTP id nAD1bXVu018536
+	for <linux-next@vger.kernel.org>; Fri, 13 Nov 2009 12:37:33 +1100
+Content-Disposition: inline
+In-Reply-To: <4AFBEE98.2070208@in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: Mauro Carvalho Chehab <mchehab@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Aristeu Rozanski <aris@redhat.com>
+To: Sachin Sant <sachinp@in.ibm.com>
+Cc: Linux/PPC Development <linuxppc-dev@ozlabs.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
---Signature=_Fri__13_Nov_2009_10_54_35_+1100_v.4AMIyzpkgDa6oU
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Nov 12, 2009 at 04:46:40PM +0530, Sachin Sant wrote:
+> David Gibson wrote:
+> >On Wed, Nov 04, 2009 at 06:08:44PM +0530, Sachin Sant wrote:
+> >>Sachin Sant wrote:
+> >>>Today's next tree failed to boot on a POWER 6 box with :
+> >>>
+> >>>------------[ cut here ]------------
+> >>>kernel BUG at mm/mmap.c:2135!
+> >>>Oops: Exception in kernel mode, sig: 5 [#2]
+> >>>SMP NR_CPUS=1024 NUMA pSeries
+> >>Problem exists with today's next as well.
+> >>
+> >>Likely cause for this problem seems to the following commit.
+> >>If i revert this patch the machine boots fine.
+> >>
+> >>commit a0668cdc154e54bf0c85182e0535eea237d53146
+> >>powerpc/mm: Cleanup management of kmem_caches for pagetables
+> >
+> >Ugh.  Ok, it's not at all obvious how my patch could cause this bug.
+> >Can you send your .config?
+> >
+> Still present in today's next.
 
-Hi Rusty, Mauro,
+Sorry, I've been sidetracked by other issues and have only managed to
+look into this today.  My initial attempts to reproduce the bug with
+your config on both POWER6 and POWER5+ have failed though.
 
-On Thu, 12 Nov 2009 23:40:25 +1030 Rusty Russell <rusty@rustcorp.com.au> wr=
-ote:
->
-> Yep, thanks Stephen.  I can't apply this fix to my tree since that functi=
-on
-> isn't exported in Linus' tree.  I've pulled in the ppc and sparc fixes to=
- my
-> tree though, but assume they'll go into their proper homes soon.
+Is it possible to get the complete boot log from this system - not
+just the [cut here] section around the BUG()?  This should help to
+determine exactly when during boot the bug is being triggered.
 
-Yeah, the i7core_edac fix needs to stay in my tree as it is an
-interaction between two trees in linux-next.  The others should be
-applied to the powerpc and sparc trees, as you say, since they fix the
-current code in those trees.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__13_Nov_2009_10_54_35_+1100_v.4AMIyzpkgDa6oU
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkr8oDsACgkQjjKRsyhoI8zlOACfU/+JSC3PTtIeBN5f1zqqm5Nd
-4DYAn3EjSbObWgCLZ0AnhBvbxEKru6wb
-=B3tR
------END PGP SIGNATURE-----
-
---Signature=_Fri__13_Nov_2009_10_54_35_+1100_v.4AMIyzpkgDa6oU--
+-- 
+David Gibson			| I'll have my music baroque, and my code
+david AT gibson.dropbear.id.au	| minimalist, thank you.  NOT _the_ _other_
+				| _way_ _around_!
+http://www.ozlabs.org/~dgibson
