@@ -1,44 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the omap_dss2 tree with the omap tree
-Date: Mon, 16 Nov 2009 16:04:02 +1100
-Message-ID: <20091116160402.deb0cc82.sfr@canb.auug.org.au>
+Subject: linux-next: tip tree build warning
+Date: Mon, 16 Nov 2009 16:25:03 +1100
+Message-ID: <20091116162503.7f083c3a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__16_Nov_2009_16_04_02_+1100_pglOm8c+LX.3hCOg"
-Return-path: <linux-omap-owner@vger.kernel.org>
-Sender: linux-omap-owner@vger.kernel.org
-To: Tomi Valkeinen <tomi.valkeinen@nokia.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__16_Nov_2009_16_25_03_+1100_Q2.FzuN.jkzgZmdj"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:60330 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751091AbZKPFZG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 Nov 2009 00:25:06 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__16_Nov_2009_16_04_02_+1100_pglOm8c+LX.3hCOg
+--Signature=_Mon__16_Nov_2009_16_25_03_+1100_Q2.FzuN.jkzgZmdj
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Tomi,
+Hi all,
 
-Today's linux-next merge of the omap_dss2 tree got a conflict in
-arch/arm/configs/omap_3430sdp_defconfig between the omap tree and the
-omap_dss2 tree.
+Today's linux-next build (x86_64 allmodconfig) produced this warning:
 
-I just used the version from the omap tree as I can't figure out anything
-better, sorry.
+arch/x86/kernel/apic/apic.c: In function 'calibrate_APIC_clock':
+arch/x86/kernel/apic/apic.c:650: warning: format '%ld' expects type 'long i=
+nt', but argument 2 has type 'u32'
+
+Introduced by commit 23af368e9a904f59256c27d371ce223d6cee0430
+("clockevents: Use u32 for mult and shift factors").
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__16_Nov_2009_16_04_02_+1100_pglOm8c+LX.3hCOg
+--Signature=_Mon__16_Nov_2009_16_25_03_+1100_Q2.FzuN.jkzgZmdj
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAksA3UMACgkQjjKRsyhoI8wjxwCguXcAhpSagB+XI4xxRgdDt5wQ
-0+sAoJ9Xz8fAGL/tMHOcXYAwUeJctC0j
-=kUsX
+iEYEARECAAYFAksA4i8ACgkQjjKRsyhoI8ym6wCdGGBNkbAvfMtqnT3VPWHuB9nM
+PI0AmwXsgs1t5ZaTkUmfTR3ONnyZ4yIK
+=C5fB
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__16_Nov_2009_16_04_02_+1100_pglOm8c+LX.3hCOg--
+--Signature=_Mon__16_Nov_2009_16_25_03_+1100_Q2.FzuN.jkzgZmdj--
