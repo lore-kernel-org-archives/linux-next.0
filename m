@@ -1,43 +1,51 @@
-From: Tomi Valkeinen <tomi.valkeinen@nokia.com>
-Subject: Re: linux-next: manual merge of the omap_dss2 tree with the omap
- tree
-Date: Mon, 16 Nov 2009 12:06:41 +0200
-Message-ID: <1258366001.2384.25.camel@tubuntu.research.nokia.com>
-References: <20091116160402.deb0cc82.sfr@canb.auug.org.au>
+From: Borislav Petkov <borislav.petkov@amd.com>
+Subject: Re: linux-next: Tree for November 16
+Date: Mon, 16 Nov 2009 15:32:13 +0100
+Message-ID: <20091116143213.GD30377@aftab>
+References: <20091116181453.b42247cf.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.nokia.com ([192.100.122.230]:54977 "EHLO
-	mgw-mx03.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751514AbZKPKHT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Nov 2009 05:07:19 -0500
-In-Reply-To: <20091116160402.deb0cc82.sfr@canb.auug.org.au>
+Received: from va3ehsobe005.messaging.microsoft.com ([216.32.180.15]:43597
+	"EHLO VA3EHSOBE005.bigfish.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1753679AbZKPObs convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 Nov 2009 09:31:48 -0500
+Content-Disposition: inline
+In-Reply-To: <20091116181453.b42247cf.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tony Lindgren <tony@atomide.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, ext Stephen Rothwell <sfr@canb.auug.org.au>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Mon, 2009-11-16 at 06:04 +0100, ext Stephen Rothwell wrote:
-> Hi Tomi,
-> 
-> Today's linux-next merge of the omap_dss2 tree got a conflict in
-> arch/arm/configs/omap_3430sdp_defconfig between the omap tree and the
-> omap_dss2 tree.
-> 
-> I just used the version from the omap tree as I can't figure out anything
-> better, sorry.
+Hi Stephen,
 
-Tony, 
 
-These patches in omap tree seem to cause the conflicts. Are they stable,
-ie. can I cherry pick them to my for-next tree, and put my patches on
-top of them?
+On Mon, Nov 16, 2009 at 06:14:53PM +1100, Stephen Rothwell wrote:
+> I have created today's linux-next tree at
+> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+> (patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).
 
-b30dcf5f37023d591caee80c233bf33706bc5a21
-omap3: 3430sdp: Enable Linux Regulator framework
+=2E..
 
-fc89f86e06c11b8828ce1d6c669f724877546c03
-ARM: OMAP3: Fix 3430SDP defconfig
+> Merging tip/auto-latest
 
- Tomi
+can you please add the edac-amd tree back to the linux-next mix, right
+after the -tip tree wrt merge order? URL is
+
+git://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git for-next
+
+Thanks.
+
+--=20
+Regards/Gruss,
+Boris.
+
+Operating | Advanced Micro Devices GmbH
+  System  | Karl-Hammerschmidt-Str. 34, 85609 Dornach b. M=FCnchen, Ger=
+many
+ Research | Gesch=E4ftsf=FChrer: Andrew Bowd, Thomas M. McCoy, Giuliano=
+ Meroni
+  Center  | Sitz: Dornach, Gemeinde Aschheim, Landkreis M=FCnchen
+  (OSRC)  | Registergericht M=FCnchen, HRB Nr. 43632
