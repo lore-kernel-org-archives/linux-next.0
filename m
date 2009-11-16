@@ -1,51 +1,40 @@
-From: Borislav Petkov <borislav.petkov@amd.com>
-Subject: Re: linux-next: Tree for November 16
-Date: Mon, 16 Nov 2009 15:32:13 +0100
-Message-ID: <20091116143213.GD30377@aftab>
-References: <20091116181453.b42247cf.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: tip tree build warning
+Date: Mon, 16 Nov 2009 09:05:07 -0800
+Message-ID: <20091116090507.18abfa0f.randy.dunlap@oracle.com>
+References: <20091116162503.7f083c3a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from va3ehsobe005.messaging.microsoft.com ([216.32.180.15]:43597
-	"EHLO VA3EHSOBE005.bigfish.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1753679AbZKPObs convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 16 Nov 2009 09:31:48 -0500
-Content-Disposition: inline
-In-Reply-To: <20091116181453.b42247cf.sfr@canb.auug.org.au>
+Received: from acsinet12.oracle.com ([141.146.126.234]:36083 "EHLO
+	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751882AbZKPRFo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Nov 2009 12:05:44 -0500
+In-Reply-To: <20091116162503.7f083c3a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Stephen,
+On Mon, 16 Nov 2009 16:25:03 +1100 Stephen Rothwell wrote:
+
+> Hi all,
+> 
+> Today's linux-next build (x86_64 allmodconfig) produced this warning:
+> 
+> arch/x86/kernel/apic/apic.c: In function 'calibrate_APIC_clock':
+> arch/x86/kernel/apic/apic.c:650: warning: format '%ld' expects type 'long int', but argument 2 has type 'u32'
+> 
+> Introduced by commit 23af368e9a904f59256c27d371ce223d6cee0430
+> ("clockevents: Use u32 for mult and shift factors").
 
 
-On Mon, Nov 16, 2009 at 06:14:53PM +1100, Stephen Rothwell wrote:
-> I have created today's linux-next tree at
-> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> (patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).
+also this warning:
 
-=2E..
+arch/x86/kernel/vmiclock_32.c:230: warning: format '%lu' expects type 'long unsigned int', but argument 3 has type 'u32'
 
-> Merging tip/auto-latest
+(i386 build)
 
-can you please add the edac-amd tree back to the linux-next mix, right
-after the -tip tree wrt merge order? URL is
-
-git://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git for-next
-
-Thanks.
-
---=20
-Regards/Gruss,
-Boris.
-
-Operating | Advanced Micro Devices GmbH
-  System  | Karl-Hammerschmidt-Str. 34, 85609 Dornach b. M=FCnchen, Ger=
-many
- Research | Gesch=E4ftsf=FChrer: Andrew Bowd, Thomas M. McCoy, Giuliano=
- Meroni
-  Center  | Sitz: Dornach, Gemeinde Aschheim, Landkreis M=FCnchen
-  (OSRC)  | Registergericht M=FCnchen, HRB Nr. 43632
+---
+~Randy
