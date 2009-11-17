@@ -1,54 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the net tree with the net-current
- tree
-Date: Tue, 17 Nov 2009 19:16:52 +1100
-Message-ID: <20091117191652.615575fe.sfr@canb.auug.org.au>
-References: <20091117131637.3a35f898.sfr@canb.auug.org.au>
-	<4B025812.6060807@hartkopp.net>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Subject: Re: linux-next: manual merge of the sysctl tree with Linus' tree
+Date: Tue, 17 Nov 2009 00:21:43 -0800
+Message-ID: <m1ws1ph888.fsf@fess.ebiederm.org>
+References: <20091117190406.108f967d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__17_Nov_2009_19_16_52_+1100_Xtb=DuGdTuPc1sfB"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753996AbZKQIQz@vger.kernel.org>
-In-Reply-To: <4B025812.6060807@hartkopp.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Oliver Hartkopp <oliver@hartkopp.net>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>, Christian Pellegrin <chripell@fsfe.org>, Wolfgang Grandegger <wg@grandegger.com>, Anant Gole <anantgole@ti.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out02.mta.xmission.com ([166.70.13.232]:47487 "EHLO
+	out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753824AbZKQIVm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Nov 2009 03:21:42 -0500
+In-Reply-To: <20091117190406.108f967d.sfr@canb.auug.org.au> (Stephen Rothwell's message of "Tue\, 17 Nov 2009 19\:04\:06 +1100")
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>, "David S. Miller" <davem@davemloft.net>
 
---Signature=_Tue__17_Nov_2009_19_16_52_+1100_Xtb=DuGdTuPc1sfB
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-Hi Oliver,
-
-On Tue, 17 Nov 2009 09:00:18 +0100 Oliver Hartkopp <oliver@hartkopp.net> wr=
-ote:
+> Hi Eric,
 >
-> Yes. You only added the new Kconfig entries (for CAN_TI_HECC, CAN_MCP251X,
-> CAN_MSCAN, ...) to the patch "can: Fix driver Kconfig structure", right?
+> Today's linux-next merge of the sysctl tree got a conflict in
+> net/decnet/sysctl_net_decnet.c between commit
+> 887e671f324d9898aaedb29a6ece6c853c394067 ("decnet: netdevice refcount
+> leak") from Linus' tree and commit
+> f8572d8f2a2ba75408b97dc24ef47c83671795d7 ("sysctl net: Remove unused
+> binary sysctl code") from the sysctl tree.
+>
+> The latter removed the code (function dn_def_dev_strategy()) modified by
+> the former, so I just used the latter.  I can carry this fix for a while,
+> but it can be fixed by merging v2.6.32-rc7 (or just the
+> above commit from Linus' tree - which would merge a much smaller number of
+> commits) into the sysctl tree. 
 
-Yes.
+Nice.  I had not realized that bug fix had made it into v2.6.32-rc7.
+I will look at merging that to remove the conflict.
 
-> These are the only added items in drivers/net/can/Kconfig from net-2.6 to
-> net-next-2.6.
+I looked at cherry-picking the commit earlier when I saw it in the netdev
+tree and my experiment failed.  So I think the only resolution that works
+in this case is merging it so the whole history is there.
 
-And it looks like Dave will fix this up for me tomorrow.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__17_Nov_2009_19_16_52_+1100_Xtb=DuGdTuPc1sfB
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAksCW/QACgkQjjKRsyhoI8yKeQCfWWsM+3cyFBAn/zjaIn7Odq3Q
-oqgAn1o/AcXJbnmKLtl+mZCSGxo751jU
-=U0bA
------END PGP SIGNATURE-----
-
---Signature=_Tue__17_Nov_2009_19_16_52_+1100_Xtb=DuGdTuPc1sfB--
+Eric
