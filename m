@@ -1,90 +1,52 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for November 17 (exofs)
-Date: Tue, 17 Nov 2009 09:48:12 -0800
-Message-ID: <20091117094812.97775988.rdunlap@xenotime.net>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] sep: fix 2 warnings
+Date: Tue, 17 Nov 2009 10:17:42 -0800
+Message-ID: <20091117101742.d512100e.randy.dunlap@oracle.com>
 References: <20091117195309.6cc3ead0.sfr@canb.auug.org.au>
-	<20091117090248.bb66c230.rdunlap@xenotime.net>
-	<4B02D879.4010403@panasas.com>
-	<4B02D8F9.2090208@panasas.com>
-	<4B02DC46.5060202@panasas.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from xenotime.net ([72.52.64.118]:33125 "HELO xenotime.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
-	id S1753974AbZKQRsL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 17 Nov 2009 12:48:11 -0500
-Received: from chimera.site ([96.253.169.185]) by xenotime.net for <linux-next@vger.kernel.org>; Tue, 17 Nov 2009 09:48:13 -0800
-In-Reply-To: <4B02DC46.5060202@panasas.com>
+Received: from acsinet11.oracle.com ([141.146.126.233]:23567 "EHLO
+	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752723AbZKQSRy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Nov 2009 13:17:54 -0500
+In-Reply-To: <20091117195309.6cc3ead0.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Boaz Harrosh <bharrosh@panasas.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, devel@driverdev.osuosl.org
 
-On Tue, 17 Nov 2009 19:24:22 +0200 Boaz Harrosh wrote:
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-> On 11/17/2009 07:10 PM, Boaz Harrosh wrote:
-> > On 11/17/2009 07:08 PM, Boaz Harrosh wrote:
-> >> On 11/17/2009 07:02 PM, Randy Dunlap wrote:
-> >>> On Tue, 17 Nov 2009 19:53:09 +1100 Stephen Rothwell wrote:
-> >>>
-> >>>> Hi all,
-> >>>>
-> >>>> Changes since 20091116:
-> >>>
-> >>>
-> >>> on i386 (X86_32):
-> >>>
-> >>> fs/built-in.o: In function `exofs_sbi_read':
-> >>> (.text+0x592964): undefined reference to `__umoddi3'
-> >>>
-> >>> ---
-> >>> ~Randy
-> >>
-> >> exofs_sbi_read is a totally simple loop thing. What does the
-> >> __umoddi3 means? Please help?
-> >>
-> >> Boaz
-> > 
-> > OK I think I get it. It's that u64 mod (%) operation. I'll try to
-> > find a ready made macro for that. Sorry
-> > 
-> > Boaz
-> > 
-> 
-> I'll push this fix for tomorrow. Thanks for helping me find it.
+Fix printk format warning:
+drivers/staging/sep/sep_driver.c:276: warning: format '%08llx' expects type 'long long unsigned int', but argument 2 has type 'dma_addr_t'
 
-Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
+and variable may be used uninitialized (correct):
+drivers/staging/sep/sep_driver.c:1774: warning: 'error' may be used uninitialized in this function
 
-Thanks!
-
-
-> 4G devices is more than enough thank you ;-)
-> 
-> Boaz
-> ---
-> git diff --stat -p -M fs/exofs/ios.c
->  fs/exofs/ios.c |    3 ++-
->  1 files changed, 2 insertions(+), 1 deletions(-)
-> 
-> diff --git a/fs/exofs/ios.c b/fs/exofs/ios.c
-> index 14b2600..5bad01f 100644
-> --- a/fs/exofs/ios.c
-> +++ b/fs/exofs/ios.c
-> @@ -320,8 +320,9 @@ int exofs_sbi_read(struct exofs_io_state *ios)
->  
->  	for (i = 0; i < 1; i++) {
->  		struct osd_request *or;
-> -		unsigned first_dev = ios->obj.id % ios->sbi->s_numdevs;
-> +		unsigned first_dev = (unsigned)ios->obj.id;
->  
-> +		first_dev %= ios->sbi->s_numdevs;
->  		or = osd_start_request(ios->sbi->s_ods[first_dev], GFP_KERNEL);
->  		if (unlikely(!or)) {
->  			EXOFS_ERR("%s: osd_start_request failed\n", __func__);
-> 
-
-
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 ---
-~Randy
+ drivers/staging/sep/sep_driver.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+--- linux-next-20091117.orig/drivers/staging/sep/sep_driver.c
++++ linux-next-20091117/drivers/staging/sep/sep_driver.c
+@@ -273,7 +273,8 @@ static dma_addr_t sep_shared_virt_to_bus
+ 						void *virt_address)
+ {
+ 	dma_addr_t pa = sep->shared_bus + (virt_address - sep->shared_addr);
+-	edbg("sep: virt to bus b %08llx v %p\n", pa, virt_address);
++	edbg("sep: virt to bus b %08llx v %p\n",
++		(unsigned long long)pa, virt_address);
+ 	return pa;
+ }
+ 
+@@ -1788,6 +1789,7 @@ static int sep_create_flow_dma_tables_ha
+ 	first_table_data.physical_address = 0xffffffff;
+ 
+ 	/* find the free structure for flow data */
++	error = -EINVAL;
+ 	flow_context_ptr = sep_find_flow_context(sep, SEP_FREE_FLOW_ID);
+ 	if (flow_context_ptr == NULL)
+ 		goto end_function;
