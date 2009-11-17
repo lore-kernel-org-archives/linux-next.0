@@ -1,73 +1,46 @@
-From: Borislav Petkov <borislav.petkov@amd.com>
-Subject: Re: edac-amd tree (Was: Re: linux-next: Tree for November 16)
-Date: Tue, 17 Nov 2009 13:00:13 +0100
-Message-ID: <20091117120013.GC14954@aftab>
-References: <20091116181453.b42247cf.sfr@canb.auug.org.au>
- <20091116143213.GD30377@aftab>
- <20091117141935.18a8ed94.sfr@canb.auug.org.au>
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: [-next Nov 17] s390 build break(arch/s390/kernel/compat_wrapper.S)
+Date: Tue, 17 Nov 2009 17:36:19 +0530
+Message-ID: <4B0291BB.3090005@in.ibm.com>
+References: <20091117195309.6cc3ead0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from va3ehsobe002.messaging.microsoft.com ([216.32.180.12]:55583
-	"EHLO VA3EHSOBE002.bigfish.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1754836AbZKQL7k convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 17 Nov 2009 06:59:40 -0500
-Content-Disposition: inline
-In-Reply-To: <20091117141935.18a8ed94.sfr@canb.auug.org.au>
+Received: from e23smtp04.au.ibm.com ([202.81.31.146]:33885 "EHLO
+	e23smtp04.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754116AbZKQMGV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Nov 2009 07:06:21 -0500
+In-Reply-To: <20091117195309.6cc3ead0.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: linux-s390@vger.kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>, Eric Paris <eparis@redhat.com>
 
-Hi Stephen,
+Today's next 20091117 build failed on s390 with
 
-On Tue, Nov 17, 2009 at 02:19:35PM +1100, Stephen Rothwell wrote:
-> Added back from today.
+arch/s390/kernel/compat_wrapper.S: Assembler messages:
+arch/s390/kernel/compat_wrapper.S:1871: Error: operand out of range (164 is not between 0 and 15)
+arch/s390/kernel/compat_wrapper.S:1871: Error: junk at end of line: `(%r15)'
+make[1]: *** [arch/s390/kernel/compat_wrapper.o] Error 1
 
-thanks.
+The code in question was added by commit 9db3031ac785b068eb4636465eebb7b346c48dbb
 
-> Just in case I missed you last time:
+fanotify: sys_fanotify_mark declartion
 
-you didn't but no worries, see below:
+I had applied the following patch to get past another build break reported
+against yesterday's next (20091116)
 
-> You will need to ensure that the patches/commits in your tree/series =
-have
-> been:
->      * submitted under GPL v2 (or later) and include the Contributor'=
-s
-> 	Signed-off-by,
+http://marc.info/?l=linux-next&m=125844478708886&w=2 <http://marc.info/?l=linux-next&m=125844478708886&w=2>
 
-yes
+Thanks
+-Sachin
 
->      * posted to the relevant mailing list,
+-- 
 
-yes
-
->      * reviewed by you (or another maintainer of your subsystem tree)=
-,
-
-in progress
-
->      * successfully unit tested, and=20
-
-yes
-
->      * destined for the current or next Linux merge window.
-
-and yes.
-
-Thanks.
-
---=20
-Regards/Gruss,
-Boris.
-
-Operating | Advanced Micro Devices GmbH
-  System  | Karl-Hammerschmidt-Str. 34, 85609 Dornach b. M=FCnchen, Ger=
-many
- Research | Gesch=E4ftsf=FChrer: Andrew Bowd, Thomas M. McCoy, Giuliano=
- Meroni
-  Center  | Sitz: Dornach, Gemeinde Aschheim, Landkreis M=FCnchen
-  (OSRC)  | Registergericht M=FCnchen, HRB Nr. 43632
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
