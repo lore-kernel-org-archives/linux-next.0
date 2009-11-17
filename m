@@ -1,60 +1,83 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for November 2 (usb/whci)
-Date: Tue, 17 Nov 2009 07:51:01 -0800
-Message-ID: <20091117075101.0bf72415.randy.dunlap@oracle.com>
-References: <20091102173845.210d1c57.sfr@canb.auug.org.au>
-	<20091102091339.479a3ddb.randy.dunlap@oracle.com>
-	<20091111090403.5fb0229e.randy.dunlap@oracle.com>
-	<20091111173015.GA9641@kroah.com>
-	<4B028BBB.1080803@csr.com>
+From: Eric Paris <eparis@redhat.com>
+Subject: Re: [-next Nov 17] s390 build
+ break(arch/s390/kernel/compat_wrapper.S)
+Date: Tue, 17 Nov 2009 10:57:45 -0500
+Message-ID: <1258473465.2876.37.camel@dhcp231-106.rdu.redhat.com>
+References: <20091117195309.6cc3ead0.sfr@canb.auug.org.au>
+	 <4B0291BB.3090005@in.ibm.com>
+	 <20091117125201.GB5124@osiris.boeblingen.de.ibm.com>
+	 <1258465241.2876.29.camel@dhcp231-106.rdu.redhat.com>
+	 <20091117135525.GF5124@osiris.boeblingen.de.ibm.com>
+	 <1258471436.2876.34.camel@dhcp231-106.rdu.redhat.com>
+	 <20091117155029.GG5124@osiris.boeblingen.de.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet11.oracle.com ([148.87.113.123]:32147 "EHLO
-	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750905AbZKQPvj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Nov 2009 10:51:39 -0500
-In-Reply-To: <4B028BBB.1080803@csr.com>
+Received: from mx1.redhat.com ([209.132.183.28]:1484 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754645AbZKQP5z (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 Nov 2009 10:57:55 -0500
+In-Reply-To: <20091117155029.GG5124@osiris.boeblingen.de.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Vrabel <david.vrabel@csr.com>
-Cc: Greg KH <greg@kroah.com>, lud <linux-usb@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Sachin Sant <sachinp@in.ibm.com>, linux-s390@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-On Tue, 17 Nov 2009 11:40:43 +0000 David Vrabel wrote:
-
-> Greg KH wrote:
-> > On Wed, Nov 11, 2009 at 09:04:03AM -0800, Randy Dunlap wrote:
-> >> On Mon, 2 Nov 2009 09:13:39 -0800 Randy Dunlap wrote:
-> >>
-> >>> On Mon, 2 Nov 2009 17:38:45 +1100 Stephen Rothwell wrote:
-> >>>
-> >>>> Hi all,
-> >>>>
-> >>>> Changes since 20091030: <<<<<<<<<<<<<<<<<<<<<<<<<<
-> >>>
-> >>> whci build fails on i386 due to 64-bit multiply & divide:
-> >>>
-> >>> ERROR: "__udivdi3" [drivers/usb/host/whci/whci-hcd.ko] undefined!
-> >>> ERROR: "__umoddi3" [drivers/usb/host/whci/whci-hcd.ko] undefined!
-> >>
-> >> Still present in linux-next-20091111.
+On Tue, 2009-11-17 at 16:50 +0100, Heiko Carstens wrote:
+> On Tue, Nov 17, 2009 at 10:23:56AM -0500, Eric Paris wrote:
+> > On Tue, 2009-11-17 at 14:55 +0100, Heiko Carstens wrote:
 > > 
-> > David, can you please look into this and resolve it?
+> > > Yes, also some places should have used lgfr instead of llgfr for proper sign
+> > > extension. But please, just drop the s390 bits from your patch.
+> > > Its easier and less painful for us to do it ourselves instead of reviewing
+> > > and fixing these things. (No offence intended!).
+> > 
+> > dropped and won't show up in -next tomorrow.
+> > 
+> > This what I thought it should be and would love to read if you say it's
+> > right....
 > 
-> Yes,  I've been on holiday and haven't had a change to look into it yet.
+> Yes, it is except for one thing:
 > 
-> I can't immediately think of any 64 bit maths and I don't understand why
->  I haven't seen it.  I always build for i386.
+> > diff --git a/arch/s390/include/asm/unistd.h b/arch/s390/include/asm/unistd.h
+> > index cb5232d..8962161 100644
+> > --- a/arch/s390/include/asm/unistd.h
+> > +++ b/arch/s390/include/asm/unistd.h
+> > @@ -269,7 +269,9 @@
+> >  #define	__NR_pwritev		329
+> >  #define __NR_rt_tgsigqueueinfo	330
+> >  #define __NR_perf_event_open	331
+> > -#define NR_syscalls 332
+> > +#define __NR_fanotify_init	332
+> > +#define __NR_fanotify_mark	333
+> > +#define NR_syscalls 334
+> > 
+> >  /* 
+> >   * There are some system calls that are not present on 64 bit, some
+> > diff --git a/arch/s390/kernel/compat_wrapper.S b/arch/s390/kernel/compat_wrapper.S
+> > index cbd9901..c81723d 100644
+> > --- a/arch/s390/kernel/compat_wrapper.S
+> > +++ b/arch/s390/kernel/compat_wrapper.S
+> > @@ -1855,3 +1855,20 @@ sys32_execve_wrapper:
+> >  	llgtr	%r3,%r3			# compat_uptr_t *
+> >  	llgtr	%r4,%r4			# compat_uptr_t *
+> >  	jg	sys32_execve		# branch to system call
+> > +
+> > +	.globl	sys_fanotify_init_wrapper
+> > +sys_fanotify_init_wrapper:
+> > +	llgfr	%r2,%r2			# unsigned int
+> > +	llgfr	%r3,%r3			# unsigned int
+> > +	llgfr	%r4,%r4			# unsigned int
+> > +	jg	sys_fanotify_init	# branch to system call
+> 
+> The third argument an int and hence it should have been lgfr ;)
 
-When the driver is built-in (not a loadable module), the messages are:
+It should have been an unsigned int, just noticed it today (because of
+this discussion) and fixed it.  You'll see in a patch which does so in
+-next tomorrow.
 
-drivers/built-in.o: In function `qset_add_urb':
-(.text+0x4595f8): undefined reference to `__umoddi3'
-drivers/built-in.o: In function `qset_add_urb':
-(.text+0x45969a): undefined reference to `__udivdi3'
+I'll let this settle a bit and come back to linux-s390 in a week or two
+to ask you guys to write/review some hooks!
 
-Those could still refer to other (inline) functions...
-
----
-~Randy
+-Eric
