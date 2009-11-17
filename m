@@ -1,65 +1,47 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Subject: Re: linux-next: manual merge of the sysctl tree with the net tree
-Date: Tue, 17 Nov 2009 01:17:47 -0800
-Message-ID: <m17htph5ms.fsf@fess.ebiederm.org>
-References: <20091117190401.94f6b5cb.sfr@canb.auug.org.au>
+From: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
+Subject: Re: Shared i2c adapter locking
+Date: Tue, 17 Nov 2009 10:35:54 +0100
+Message-ID: <20091117103554.03971b2f@hyperion.delvare>
+References: <20091026133757.7cf87e49.sfr@canb.auug.org.au>
+	<20091029154317.651904b9@hyperion.delvare>
+	<1256828976.2827.27.camel@achroite>
+	<20091105141122.56b6b4f8@hyperion.delvare>
+	<1257429444.2793.2.camel@achroite.uk.solarflarecom.com>
+	<20091105150715.692b5200@hyperion.delvare>
+	<20091117193313.b750804e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out02.mta.xmission.com ([166.70.13.232]:54930 "EHLO
-	out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752591AbZKQJRq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Nov 2009 04:17:46 -0500
-In-Reply-To: <20091117190401.94f6b5cb.sfr@canb.auug.org.au> (Stephen Rothwell's message of "Tue\, 17 Nov 2009 19\:04\:01 +1100")
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Octavian Purdila <opurdila@ixiacom.com>, Cosmin Ratiu <cratiu@ixiacom.com>, "David S. Miller" <davem@davemloft.net>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20091117193313.b750804e.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Cc: Ben Hutchings <bhutchings-s/n/eUQHGBpZroRs9YW3xA@public.gmane.org>, David Miller <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mika Kuoppala <mika.kuoppala-xNZwKgViW5gAvxtiuMwx3w@public.gmane.org>, Linux I2C <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+Hi Stephen,
 
-> Hi Eric,
->
-> Today's linux-next merge of the sysctl tree got a conflict in
-> net/ipv6/addrconf.c between commit
-> f7734fdf61ec6bb848e0bafc1fb8bad2c124bb50 ("make TLLAO option for NA
-> packets configurable") from the net tree and commit
-> f8572d8f2a2ba75408b97dc24ef47c83671795d7 ("sysctl net: Remove unused
-> binary sysctl code") from the sysctl tree.
->
-> I fixed it up (see below) including removing the new ctl_name (thanks for
-> the heads up, Eric).   I can carry this fixup as necessary.
+On Tue, 17 Nov 2009 19:33:13 +1100, Stephen Rothwell wrote:
+> Hi Jean,
+> 
+> On Thu, 5 Nov 2009 15:07:15 +0100 Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org> wrote:
+> >
+> > > Presumably this is meant for net-next-2.6, and you'll implement
+> > 
+> > Actually I meant to push this to Linus immediately, through my i2c
+> > tree. This is essentially a no-op: the binary code will be the same as
+> > before the patch, so guaranteed to be safe, and this will solve
+> > conflicts in linux-next.
+> 
+> Any word on this?
 
-Would it be of any value for me to send David a change killing ctl_name
-for the new entry?  That is equivalent to .ctl_name = CTL_UNNUMBERED and
-would make this a trivial conflict.
+Haven't you read this:
+http://www.spinics.net/lists/linux-next/msg07839.html
 
-Fundamentally the conflict detection will always kick in here because
-as I am modifying previous and succeeding entries in the table so the
-context will always be different.
+and the 3 following posts?
 
-I'm still getting a hang of running a public git tree.
+If you did and something is still not clear, please let me know. My
+understanding is that the action token is in David's hands now.
 
-Eric
-
-> diff --cc net/ipv6/addrconf.c
-> index 522bdc7,f918399..0000000
-> --- a/net/ipv6/addrconf.c
-> +++ b/net/ipv6/addrconf.c
-> @@@ -4388,15 -4285,7 +4320,14 @@@ static struct addrconf_sysctl_tabl
->   			.proc_handler	=	proc_dointvec,
->   		},
->   		{
-> - 			.ctl_name       = CTL_UNNUMBERED,
->  +			.procname       = "force_tllao",
->  +			.data           = &ipv6_devconf.force_tllao,
->  +			.maxlen         = sizeof(int),
->  +			.mode           = 0644,
->  +			.proc_handler   = proc_dointvec
->  +		},
->  +		{
-> - 			.ctl_name	=	0,	/* sentinel */
-> + 			/* sentinel */
->   		}
->   	},
->   };
+-- 
+Jean Delvare
