@@ -1,61 +1,62 @@
-From: Ben Hutchings <bhutchings@solarflare.com>
-Subject: Re: Shared i2c adapter locking
-Date: Tue, 17 Nov 2009 13:32:54 +0000
-Message-ID: <1258464774.2732.6.camel@achroite.uk.solarflarecom.com>
-References: <20091105150715.692b5200@hyperion.delvare>
-	 <20091117193313.b750804e.sfr@canb.auug.org.au>
-	 <20091117103554.03971b2f@hyperion.delvare>
-	 <20091117.035147.80164577.davem@davemloft.net>
+From: Eric Paris <eparis@redhat.com>
+Subject: Re: [-next Nov 17] s390 build
+ break(arch/s390/kernel/compat_wrapper.S)
+Date: Tue, 17 Nov 2009 08:40:41 -0500
+Message-ID: <1258465241.2876.29.camel@dhcp231-106.rdu.redhat.com>
+References: <20091117195309.6cc3ead0.sfr@canb.auug.org.au>
+	 <4B0291BB.3090005@in.ibm.com>
+	 <20091117125201.GB5124@osiris.boeblingen.de.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1752693AbZKQNc6@vger.kernel.org>
-In-Reply-To: <20091117.035147.80164577.davem@davemloft.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>
-Cc: khali@linux-fr.org, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, mika.kuoppala@nokia.com, linux-i2c@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:22981 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751041AbZKQNkz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 Nov 2009 08:40:55 -0500
+In-Reply-To: <20091117125201.GB5124@osiris.boeblingen.de.ibm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Sachin Sant <sachinp@in.ibm.com>, linux-s390@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-On Tue, 2009-11-17 at 03:51 -0800, David Miller wrote:
-> From: Jean Delvare <khali@linux-fr.org>
-> Date: Tue, 17 Nov 2009 10:35:54 +0100
->=20
-> > If you did and something is still not clear, please let me know. My
-> > understanding is that the action token is in David's hands now.
->=20
-> So what exactly do I need to do?
->=20
-> All I see that needs to happen is to pull from Linus's tree into
-> net-2.6
->=20
-> But frankly I don't see how that helps resolve anything in linux-next
-> since Stephen starts with Linus's tree then pulls in everyone's work.
->=20
-> Or is that pull necessary so that some other patch can be applied
-> to net-2.6 or similar?
+On Tue, 2009-11-17 at 13:52 +0100, Heiko Carstens wrote:
+> On Tue, Nov 17, 2009 at 05:36:19PM +0530, Sachin Sant wrote:
+> > Today's next 20091117 build failed on s390 with
+> > 
+> > arch/s390/kernel/compat_wrapper.S: Assembler messages:
+> > arch/s390/kernel/compat_wrapper.S:1871: Error: operand out of range (164 is not between 0 and 15)
+> > arch/s390/kernel/compat_wrapper.S:1871: Error: junk at end of line: `(%r15)'
+> > make[1]: *** [arch/s390/kernel/compat_wrapper.o] Error 1
+> > 
+> > The code in question was added by commit 9db3031ac785b068eb4636465eebb7b346c48dbb
+> > 
+> > fanotify: sys_fanotify_mark declartion
+> 
+> Hmm, the compat wrapper for sys_fanotify_mark is more broken (besides the
+> fact that it doesn't compile).
+> The same is true for sys_fanotify_init.
+> 
+> I thought it was general consensus that new syscalls should be wired up only
+> on x86 and let arch maintainers wire them up on their architectures.
+> Besides that a simple C source needs to be delivered so it can be easily
+> tested on each architecture.
+> 
+> Especially we want to avoid subtle sign extension bugs like we have them here.
+> Probably gone unnoticed if there wouldn't be a compile bug.
 
-There is now a conflict between this in Linus's tree:
+I'll un-wire tonight or fix it if you tell me how.  I guess my code was
+supposed to use l instead of or as in sys_fallocate_wrapper() instead of
+copying sys32_lookup_dcookie_wrapper().
 
-commit afa08974fe80c198b8650f73ed8ab59135ca10d0
-Author: Jean Delvare <khali@linux-fr.org>
-Date:   Sat Nov 7 13:10:46 2009 +0100
+Simple C source is available, but without s390 syscall definitions at
+people.redhat.com/~eparis/fanotify
 
-    i2c: Add an interface to lock/unlock an I2C bus segment
+touch /tmp/tmp
+./fanotify /tmp/tmp &
+^Z
+echo hello > /tmp/tmp
+fg
+^C
 
-and =EF=BB=BFthis in net-next-2.6:
-
-commit c9597d4f89565b6562bd3026adbe6eac6c317f47
-Author: Ben Hutchings <bhutchings@solarflare.com>
-Date:   Fri Oct 23 08:29:33 2009 +0000
-
-    sfc: Merge sfe4001.c into falcon_boards.c
-
-You will need to merge Linus's tree into net-next-2.6 and resolve the
-conflict by applying Jean's changes to drivers/net/sfc/falcon_boards.c.
-
-Ben.
-
---=20
-Ben Hutchings, Senior Software Engineer, Solarflare Communications
-Not speaking for my employer; that's the marketing department's job.
-They asked us to note that Solarflare product names are trademarked.
+-Eric
