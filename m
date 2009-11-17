@@ -1,79 +1,86 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree with the net-current tree
-Date: Tue, 17 Nov 2009 13:16:37 +1100
-Message-ID: <20091117131637.3a35f898.sfr@canb.auug.org.au>
+Subject: edac-amd tree (Was: Re: linux-next: Tree for November 16)
+Date: Tue, 17 Nov 2009 14:19:35 +1100
+Message-ID: <20091117141935.18a8ed94.sfr@canb.auug.org.au>
+References: <20091116181453.b42247cf.sfr@canb.auug.org.au>
+	<20091116143213.GD30377@aftab>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__17_Nov_2009_14_19_35_+1100_uNZTm4uJmPuuZQ.l"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:57058 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754356AbZKQDTh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 Nov 2009 22:19:37 -0500
+In-Reply-To: <20091116143213.GD30377@aftab>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Borislav Petkov <borislav.petkov@amd.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+
+--Signature=_Tue__17_Nov_2009_14_19_35_+1100_uNZTm4uJmPuuZQ.l
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>, Christian Pellegrin <chripell@fsfe.org>, Wolfgang Grandegger <wg@grandegger.com>, Anant Gole <anantgole@ti.com>, Oliver Hartkopp <oliver@hartkopp.net>
-List-Id: linux-next.vger.kernel.org
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Boris,
 
-Today's linux-next merge of the net tree got a conflict in
-drivers/net/can/Kconfig between commit
-b93cf3f0bb45560d2ce62bdcc2181c40660cfdbf ("can: Fix driver Kconfig
-structure") from the net-current tree and commits
-3758bf25db8caeec667e4e56e030da0ec3060529 ("can: add TI CAN (HECC)
-driver"), e0000163e30eeb112b41486ea113fd54f64e1f17 ("can: Driver for the
-Microchip MCP251x SPI CAN controllers") and
-afa17a500a3667f66df450100538d06769529bba ("net/can: add driver for mscan
-family & mpc52xx_mscan") from the net tree.
+On Mon, 16 Nov 2009 15:32:13 +0100 Borislav Petkov <borislav.petkov@amd.com=
+> wrote:
+>
+> can you please add the edac-amd tree back to the linux-next mix, right
+> after the -tip tree wrt merge order? URL is
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git for-next
 
-I fixed it up (see below) and can carry the fix for a while. (I am not
-sure the fix is entirely correct.)
+Added back from today.
 
--- 
+Just in case I missed you last time:
+
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+	Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Stephen Rothwell=20
+sfr@canb.auug.org.au
 
-diff --cc drivers/net/can/Kconfig
-index 772f6d2,c16e6ff..0000000
---- a/drivers/net/can/Kconfig
-+++ b/drivers/net/can/Kconfig
-@@@ -41,10 -95,38 +41,42 @@@ config CAN_AT9
-  	---help---
-  	  This is a driver for the SoC CAN controller in Atmel's AT91SAM9263.
-  
-+ config CAN_TI_HECC
-+ 	depends on CAN_DEV && ARCH_OMAP3
-+ 	tristate "TI High End CAN Controller"
-+ 	---help---
-+ 	  Driver for TI HECC (High End CAN Controller) module found on many
-+ 	  TI devices. The device specifications are available from www.ti.com
-+ 
-+ config CAN_MCP251X
-+ 	tristate "Microchip MCP251x SPI CAN controllers"
-+ 	depends on CAN_DEV && SPI
-+ 	---help---
-+ 	  Driver for the Microchip MCP251x SPI CAN controllers.
-+ 
-+ config CAN_MSCAN
-+ 	depends on CAN_DEV && (PPC || M68K || M68KNOMMU)
-+ 	tristate "Support for Freescale MSCAN based chips"
-+ 	---help---
-+ 	  The Motorola Scalable Controller Area Network (MSCAN) definition
-+ 	  is based on the MSCAN12 definition which is the specific
-+ 	  implementation of the Motorola Scalable CAN concept targeted for
-+ 	  the Motorola MC68HC12 Microcontroller Family.
-+ 
-+ config CAN_MPC52XX
-+ 	tristate "Freescale MPC5xxx onboard CAN controller"
-+ 	depends on CAN_MSCAN && PPC_MPC52xx
-+ 	---help---
-+ 	  If you say yes here you get support for Freescale's MPC52xx
-+ 	  onboard dualCAN controller.
-+ 
-+ 	  This driver can also be built as a module.  If so, the module
-+ 	  will be called mpc5xxx_can.
-+ 
- +source "drivers/net/can/sja1000/Kconfig"
- +
- +source "drivers/net/can/usb/Kconfig"
- +
-  config CAN_DEBUG_DEVICES
-  	bool "CAN devices debugging messages"
-  	depends on CAN
+Legal Stuff:
+By participating in linux-next, your subsystem tree contributions are
+public and will be included in the linux-next trees.  You may be sent
+e-mail messages indicating errors or other issues when the
+patches/commits from your subsystem tree are merged and tested in
+linux-next.  These messages may also be cross-posted to the linux-next
+mailing list, the linux-kernel mailing list, etc.  The linux-next tree
+project and IBM (my employer) make no warranties regarding the linux-next
+project, the testing procedures, the results, the e-mails, etc.  If you
+don't agree to these ground rules, let me know and I'll remove your tree
+from participation in linux-next.
+
+--Signature=_Tue__17_Nov_2009_14_19_35_+1100_uNZTm4uJmPuuZQ.l
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAksCFkcACgkQjjKRsyhoI8yfJACfaywiPezyWJRVrSiT33FpkwJ4
+fQwAniSsvRntmrj4E6Pm7XXwGFzdA+1E
+=eX3e
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__17_Nov_2009_14_19_35_+1100_uNZTm4uJmPuuZQ.l--
