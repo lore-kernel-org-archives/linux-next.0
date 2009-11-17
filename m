@@ -1,50 +1,30 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the sysctl tree with Linus' tree
-Date: Tue, 17 Nov 2009 19:04:06 +1100
-Message-ID: <20091117190406.108f967d.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: manual merge of the net tree with the net-current
+ tree
+Date: Tue, 17 Nov 2009 00:07:20 -0800 (PST)
+Message-ID: <20091117.000720.01506428.davem@davemloft.net>
+References: <20091117131637.3a35f898.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__17_Nov_2009_19_04_06_+1100_zSX6WCkQ71oVpwsm"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754437AbZKQIEM@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>, "David S. Miller" <davem@davemloft.net>
-List-Id: linux-next.vger.kernel.org
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:53261
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752488AbZKQIHE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 Nov 2009 03:07:04 -0500
+In-Reply-To: <20091117131637.3a35f898.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, w.sang@pengutronix.de, chripell@fsfe.org, wg@grandegger.com, anantgole@ti.com, oliver@hartkopp.net
 
---Signature=_Tue__17_Nov_2009_19_04_06_+1100_zSX6WCkQ71oVpwsm
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 17 Nov 2009 13:16:37 +1100
 
-Hi Eric,
+> I fixed it up (see below) and can carry the fix for a while. (I am not
+> sure the fix is entirely correct.)
 
-Today's linux-next merge of the sysctl tree got a conflict in
-net/decnet/sysctl_net_decnet.c between commit
-887e671f324d9898aaedb29a6ece6c853c394067 ("decnet: netdevice refcount
-leak") from Linus' tree and commit
-f8572d8f2a2ba75408b97dc24ef47c83671795d7 ("sysctl net: Remove unused
-binary sysctl code") from the sysctl tree.
+I'll merge net-2.6 into net-next-2.6 so you won't see this tomorrow.
 
-The latter removed the code (function dn_def_dev_strategy()) modified by
-the former, so I just used the latter.  I can carry this fix for a while,
-but it can be fixed by merging v2.6.32-rc7 (or just the
-above commit from Linus' tree - which would merge a much smaller number of
-commits) into the sysctl tree.=20
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__17_Nov_2009_19_04_06_+1100_zSX6WCkQ71oVpwsm
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAksCWPcACgkQjjKRsyhoI8zL6gCdE8OZxbrGqE5mhGY1/yPh1LsN
-yMkAnRTe4gygNpBtS/1Qevf1xGIeoKbs
-=m1B3
------END PGP SIGNATURE-----
-
---Signature=_Tue__17_Nov_2009_19_04_06_+1100_zSX6WCkQ71oVpwsm--
+Thanks!
