@@ -1,66 +1,127 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [-next Nov 16] s390 build failure (arch/s390/kernel/time)
-Date: Tue, 17 Nov 2009 16:25:46 +1100
-Message-ID: <20091117162546.16bb00b0.sfr@canb.auug.org.au>
-References: <20091116181453.b42247cf.sfr@canb.auug.org.au>
-	<4B02283D.8040103@in.ibm.com>
+From: David Gibson <dwg@au1.ibm.com>
+Subject: Re: [powerpc] Next tree Nov 2 : kernel BUG at mm/mmap.c:2135!
+Date: Tue, 17 Nov 2009 16:25:42 +1100
+Message-ID: <20091117052542.GB2576@yookeroo>
+References: <20091102173845.210d1c57.sfr@canb.auug.org.au>
+	<4AEEA279.4040106@in.ibm.com> <4AF175D4.7030507@in.ibm.com>
+	<20091105001650.GD3613@yookeroo.seuss>
+	<4AFBEE98.2070208@in.ibm.com>
+	<20091113013729.GB18848@yookeroo.seuss>
+	<20091113021048.GA4865@yookeroo.seuss>
+	<4AFD2865.5090503@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__17_Nov_2009_16_25_46_+1100_i4uEOmwtO9lxykrM"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46539 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752830AbZKQFZw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 17 Nov 2009 00:25:52 -0500
-In-Reply-To: <4B02283D.8040103@in.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: linux-s390@vger.kernel.org, linux-next@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>, Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, Sachin Sant <sachinp@in.ibm.com>
-
---Signature=_Tue__17_Nov_2009_16_25_46_+1100_i4uEOmwtO9lxykrM
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <4AFD2865.5090503@in.ibm.com>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
+Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
+To: Sachin Sant <sachinp@in.ibm.com>
+Cc: Linux/PPC Development <linuxppc-dev@ozlabs.org>, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, 17 Nov 2009 10:06:13 +0530 Sachin Sant <sachinp@in.ibm.com> wrote:
->
-> Next 20091116 build failed on a s390 box with
->=20
-> arch/s390/kernel/time.c: In function 'get_sync_clock':
-> arch/s390/kernel/time.c:337: error: 'clock_sync_sync' undeclared (first u=
-se in this function)
-> arch/s390/kernel/time.c:337: error: (Each undeclared identifier is report=
-ed only once
-> arch/s390/kernel/time.c:337: error: for each function it appears in.)
-> arch/s390/kernel/time.c: In function 'check_sync_clock':
-> arch/s390/kernel/time.c:387: error: 'clock_sync_sync' undeclared (first u=
-se in this function)
+On Fri, Nov 13, 2009 at 03:05:33PM +0530, Sachin Sant wrote:
+> David Gibson wrote:
+> >so, could you try booting the kernel with the patch below, which
+> >should give a bit more information about the problem.
+> >
+> >Index: working-2.6/mm/mmap.c
+> >===================================================================
+> >--- working-2.6.orig/mm/mmap.c	2009-11-13 13:08:29.000000000 +1100
+> >+++ working-2.6/mm/mmap.c	2009-11-13 13:09:26.000000000 +1100
+> >@@ -2136,6 +2136,8 @@ void exit_mmap(struct mm_struct *mm)
+> > 	while (vma)
+> > 		vma = remove_vma(vma);
+> >
+> >+	if (nr_ptes != 0)
+> >+		printk("exit_mmap(): mm %p nr_ptes %d\n", mm, mm->nr_ptes);
+> > 	BUG_ON(mm->nr_ptes > (FIRST_USER_ADDRESS+PMD_SIZE-1)>>PMD_SHIFT);
+> > }
+> Here is the information collected with today's next.
+> (2.6.32-rc7-20091113)
+> 
+> ------------[ cut here ]------------
+> kernel BUG at mm/mmap.c:2139!
+> cpu 0x3: Vector: 700 (Program Check) at [c0000000fae1b7e0]
+>    pc: c000000000150e88: .exit_mmap+0x1ac/0x1d4
+>    lr: c000000000150e78: .exit_mmap+0x19c/0x1d4
+>    sp: c0000000fae1ba60
+>   msr: 8000000000029032
+>  current = 0xc0000000fada8be0
+>  paca    = 0xc000000000bb2c00
+>    pid   = 84, comm = cat
+> kernel BUG at mm/mmap.c:2139!
+> enter ? for help
+> [c0000000fae1bb10] c000000000093d24 .mmput+0x54/0x164
+> [c0000000fae1bba0] c000000000098f30 .exit_mm+0x17c/0x1a0
+> [c0000000fae1bc50] c00000000009b310 .do_exit+0x248/0x784
+> [c0000000fae1bd30] c00000000009b900 .do_group_exit+0xb4/0xe8
+> [c0000000fae1bdc0] c00000000009b948 .SyS_exit_group+0x14/0x28
+> [c0000000fae1be30] c0000000000085b4 syscall_exit+0x0/0x40
+> --- Exception: c01 (System Call) at 00000fff89a8ff40
+> SP (fffdf8a2460) is in userspace
+> 
+> Have attached the complete boot log.
+> 
+> At the time of crash values of mm and mm->nr_ptes were
+> 
+> <7>exit_mmap(): mm c0000000fa9f9580 nr_ptes 1
 
-Caused by commits 8283cb43ab3e92a039d3486a0f6253df95a5fa55 ("[S390] clock
-sync mode flags") (which entered Linus' tree during 2.6.30-rc1) and
-commit d2fec595511b5718bdb65645b3d5d99800d97943 ("[S390] stp support")
-(which entered Linus' tree during 2.6.27-rc1) but only exposed by commit
-e0fdb0e050eae331046385643618f12452aa7e73 ("percpu: add __percpu for
-sparse") from the percpu tree.
+Hrm.  Ok.  I am truly baffled.  Well, below is a revised debug patch
+which I hope will shed some sort of light on things.  I do also notice
+from your full log that it looks like the bug is happening shortly
+after we start userspace.  So it may be differences in my userspace
+set up that meant I haven't been able to reproduce it.  I'll have
+another look at that when I get a chance.
 
-Needs to be fixed in the s390 tree.  (put_per_cpu() now references its
-argument, so that had better be a real variable :-))
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Index: working-2.6/mm/mmap.c
+===================================================================
+--- working-2.6.orig/mm/mmap.c	2009-11-17 11:55:23.000000000 +1100
++++ working-2.6/mm/mmap.c	2009-11-17 16:04:48.182600029 +1100
+@@ -2136,6 +2136,9 @@ void exit_mmap(struct mm_struct *mm)
+ 	while (vma)
+ 		vma = remove_vma(vma);
+ 
++	if (mm->nr_ptes != 0)
++		printk("exit_mmap(): mm %p nr_ptes %d current %p pid %d comm \"%s\"\n",
++		       mm, mm->nr_ptes, current, current->pid, current->comm);
+ 	BUG_ON(mm->nr_ptes > (FIRST_USER_ADDRESS+PMD_SIZE-1)>>PMD_SHIFT);
+ }
+ 
+Index: working-2.6/mm/memory.c
+===================================================================
+--- working-2.6.orig/mm/memory.c	2009-11-17 11:55:23.000000000 +1100
++++ working-2.6/mm/memory.c	2009-11-17 14:57:49.881603609 +1100
+@@ -156,6 +156,8 @@ static void free_pte_range(struct mmu_ga
+ 	pmd_clear(pmd);
+ 	pte_free_tlb(tlb, token, addr);
+ 	tlb->mm->nr_ptes--;
++	printk("free_pte_range() -> mm %p addr 0x%lx nr_ptes %d\n", tlb->mm,
++	       addr, tlb->mm->nr_ptes);
+ }
+ 
+ static inline void free_pmd_range(struct mmu_gather *tlb, pud_t *pud,
+@@ -348,6 +350,8 @@ int __pte_alloc(struct mm_struct *mm, pm
+ 	spin_lock(&mm->page_table_lock);
+ 	if (!pmd_present(*pmd)) {	/* Has another populated it ? */
+ 		mm->nr_ptes++;
++		printk("__pte_alloc() -> mm %p addr 0x%lx nr_ptes %d\n", mm,
++		       address, mm->nr_ptes);
+ 		pmd_populate(mm, pmd, new);
+ 		new = NULL;
+ 	}
 
---Signature=_Tue__17_Nov_2009_16_25_46_+1100_i4uEOmwtO9lxykrM
-Content-Type: application/pgp-signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAksCM9oACgkQjjKRsyhoI8yoUgCgiRHFXFCVLJyeXMyLffNI42W6
-ClYAn2LGaR+JicIpkmhEqRaLehWJOEHe
-=nvtt
------END PGP SIGNATURE-----
-
---Signature=_Tue__17_Nov_2009_16_25_46_+1100_i4uEOmwtO9lxykrM--
+-- 
+David Gibson			| I'll have my music baroque, and my code
+david AT gibson.dropbear.id.au	| minimalist, thank you.  NOT _the_ _other_
+				| _way_ _around_!
+http://www.ozlabs.org/~dgibson
