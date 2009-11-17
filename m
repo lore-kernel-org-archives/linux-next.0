@@ -1,44 +1,60 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: Re: [-next Nov 17] s390 build
- break(arch/s390/kernel/compat_wrapper.S)
-Date: Tue, 17 Nov 2009 13:52:01 +0100
-Message-ID: <20091117125201.GB5124@osiris.boeblingen.de.ibm.com>
-References: <20091117195309.6cc3ead0.sfr@canb.auug.org.au>
- <4B0291BB.3090005@in.ibm.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: [-next PATCH] Add param ops struct for hvc_iucv driver.
+Date: Tue, 17 Nov 2009 18:51:03 +0530
+Message-ID: <20091117132103.18413.53658.sendpatchset@localhost.localdomain>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mtagate3.de.ibm.com ([195.212.17.163]:38209 "EHLO
-	mtagate3.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752647AbZKQMv7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Nov 2009 07:51:59 -0500
-Content-Disposition: inline
-In-Reply-To: <4B0291BB.3090005@in.ibm.com>
+Received: from e9.ny.us.ibm.com ([32.97.182.139]:35970 "EHLO e9.ny.us.ibm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751647AbZKQNVE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 Nov 2009 08:21:04 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sachin Sant <sachinp@in.ibm.com>
-Cc: linux-s390@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Eric Paris <eparis@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>
+To: linux-s390@vger.kernel.org
+Cc: Sachin Sant <sachinp@in.ibm.com>, schwidefsky@de.ibm.com, rusty@rustcorp.com.au, linux-next@vger.kernel.org, heiko.carstens@de.ibm.com
 
-On Tue, Nov 17, 2009 at 05:36:19PM +0530, Sachin Sant wrote:
-> Today's next 20091117 build failed on s390 with
-> 
-> arch/s390/kernel/compat_wrapper.S: Assembler messages:
-> arch/s390/kernel/compat_wrapper.S:1871: Error: operand out of range (164 is not between 0 and 15)
-> arch/s390/kernel/compat_wrapper.S:1871: Error: junk at end of line: `(%r15)'
-> make[1]: *** [arch/s390/kernel/compat_wrapper.o] Error 1
-> 
-> The code in question was added by commit 9db3031ac785b068eb4636465eebb7b346c48dbb
-> 
-> fanotify: sys_fanotify_mark declartion
+Today's next 20091117 build failed on s390 with
 
-Hmm, the compat wrapper for sys_fanotify_mark is more broken (besides the
-fact that it doesn't compile).
-The same is true for sys_fanotify_init.
+drivers/char/hvc_iucv.c:1331: error: 'param_ops_vmidfilter' undeclared here (not in a function)
+make[2]: *** [drivers/char/hvc_iucv.o] Error 1
 
-I thought it was general consensus that new syscalls should be wired up only
-on x86 and let arch maintainers wire them up on their architectures.
-Besides that a simple C source needs to be delivered so it can be easily
-tested on each architecture.
+Most probably caused by commit 684a6d340b8a5767db4670031b0f39455346018a
+(param:param_ops) which introduced a param_ops structure.
 
-Especially we want to avoid subtle sign extension bugs like we have them here.
-Probably gone unnoticed if there wouldn't be a compile bug.
+The following compile tested patch adds a param_ops structure for hvc_iucv.
+
+Signed-off-by : Sachin Sant <sachinp@in.ibm.com>
+---
+
+diff -Naurp a/drivers/char/hvc_iucv.c b/drivers/char/hvc_iucv.c
+--- a/drivers/char/hvc_iucv.c	2009-11-13 06:16:07.000000000 +0530
++++ b/drivers/char/hvc_iucv.c	2009-11-17 18:34:30.000000000 +0530
+@@ -1146,7 +1146,7 @@ out_err:
+  * Note: If it is called early in the boot process, @val is stored and
+  *	 parsed later in hvc_iucv_init().
+  */
+-static int param_set_vmidfilter(const char *val, struct kernel_param *kp)
++static int param_set_vmidfilter(const char *val, const struct kernel_param *kp)
+ {
+ 	int rc;
+ 
+@@ -1173,7 +1173,7 @@ static int param_set_vmidfilter(const ch
+  * The function stores the filter as a comma-separated list of z/VM user IDs
+  * in @buffer. Typically, sysfs routines call this function for attr show.
+  */
+-static int param_get_vmidfilter(char *buffer, struct kernel_param *kp)
++static int param_get_vmidfilter(char *buffer, const struct kernel_param *kp)
+ {
+ 	int rc;
+ 	size_t index, len;
+@@ -1200,6 +1200,11 @@ static int param_get_vmidfilter(char *bu
+ 
+ #define param_check_vmidfilter(name, p) __param_check(name, p, void)
+ 
++static struct kernel_param_ops param_ops_vmidfilter = {
++        .set = param_set_vmidfilter,
++        .get = param_get_vmidfilter,
++};
++
+ /**
+  * hvc_iucv_init() - z/VM IUCV HVC device driver initialization
+  */
