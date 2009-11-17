@@ -1,97 +1,73 @@
-From: Sachin Sant <sachinp@in.ibm.com>
-Subject: Re: [-next Nov 16] s390 build failure (arch/s390/kernel/time)
-Date: Tue, 17 Nov 2009 17:25:19 +0530
-Message-ID: <4B028F27.1020408@in.ibm.com>
-References: <20091116181453.b42247cf.sfr@canb.auug.org.au> <4B02283D.8040103@in.ibm.com> <20091117162546.16bb00b0.sfr@canb.auug.org.au> <20091117075917.GA5124@osiris.boeblingen.de.ibm.com>
+From: Borislav Petkov <borislav.petkov@amd.com>
+Subject: Re: edac-amd tree (Was: Re: linux-next: Tree for November 16)
+Date: Tue, 17 Nov 2009 13:00:13 +0100
+Message-ID: <20091117120013.GC14954@aftab>
+References: <20091116181453.b42247cf.sfr@canb.auug.org.au>
+ <20091116143213.GD30377@aftab>
+ <20091117141935.18a8ed94.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e23smtp07.au.ibm.com ([202.81.31.140]:51174 "EHLO
-	e23smtp07.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755042AbZKQLzX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Nov 2009 06:55:23 -0500
-In-Reply-To: <20091117075917.GA5124@osiris.boeblingen.de.ibm.com>
+Received: from va3ehsobe002.messaging.microsoft.com ([216.32.180.12]:55583
+	"EHLO VA3EHSOBE002.bigfish.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1754836AbZKQL7k convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 Nov 2009 06:59:40 -0500
+Content-Disposition: inline
+In-Reply-To: <20091117141935.18a8ed94.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Martin Schwidefsky <schwidefsky@de.ibm.com>, linux-s390@vger.kernel.org, linux-next@vger.kernel.org, Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Heiko Carstens wrote:
-> On Tue, Nov 17, 2009 at 04:25:46PM +1100, Stephen Rothwell wrote:
->   
->> On Tue, 17 Nov 2009 10:06:13 +0530 Sachin Sant <sachinp@in.ibm.com> wrote:
->>     
->>> Next 20091116 build failed on a s390 box with
->>>
->>> arch/s390/kernel/time.c: In function 'get_sync_clock':
->>> arch/s390/kernel/time.c:337: error: 'clock_sync_sync' undeclared (first use in this function)
->>> arch/s390/kernel/time.c:337: error: (Each undeclared identifier is reported only once
->>> arch/s390/kernel/time.c:337: error: for each function it appears in.)
->>> arch/s390/kernel/time.c: In function 'check_sync_clock':
->>> arch/s390/kernel/time.c:387: error: 'clock_sync_sync' undeclared (first use in this function)
->>>       
->> Caused by commits 8283cb43ab3e92a039d3486a0f6253df95a5fa55 ("[S390] clock
->> sync mode flags") (which entered Linus' tree during 2.6.30-rc1) and
->> commit d2fec595511b5718bdb65645b3d5d99800d97943 ("[S390] stp support")
->> (which entered Linus' tree during 2.6.27-rc1) but only exposed by commit
->> e0fdb0e050eae331046385643618f12452aa7e73 ("percpu: add __percpu for
->> sparse") from the percpu tree.
->>
->> Needs to be fixed in the s390 tree.  (put_per_cpu() now references its
->> argument, so that had better be a real variable :-))
->>     
->
-> Weird... at least it wasn't a bug. Patch below will fix compile breakage.
->   
-The patch fixed the issue for me. Thanks
+Hi Stephen,
 
-I also ran into couple of other build issue. Will start new threads
-for those issues.
+On Tue, Nov 17, 2009 at 02:19:35PM +1100, Stephen Rothwell wrote:
+> Added back from today.
 
-Thanks
--Sachin
+thanks.
 
+> Just in case I missed you last time:
 
-> ---
->  arch/s390/kernel/time.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> Index: linux-next/arch/s390/kernel/time.c
-> ===================================================================
-> --- linux-next.orig/arch/s390/kernel/time.c
-> +++ linux-next/arch/s390/kernel/time.c
-> @@ -334,7 +334,7 @@ int get_sync_clock(unsigned long long *c
->  	sw0 = atomic_read(sw_ptr);
->  	*clock = get_clock();
->  	sw1 = atomic_read(sw_ptr);
-> -	put_cpu_var(clock_sync_sync);
-> +	put_cpu_var(clock_sync_word);
->  	if (sw0 == sw1 && (sw0 & 0x80000000U))
->  		/* Success: time is in sync. */
->  		return 0;
-> @@ -384,7 +384,7 @@ static inline int check_sync_clock(void)
->
->  	sw_ptr = &get_cpu_var(clock_sync_word);
->  	rc = (atomic_read(sw_ptr) & 0x80000000U) != 0;
-> -	put_cpu_var(clock_sync_sync);
-> +	put_cpu_var(clock_sync_word);
->  	return rc;
->  }
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->   
+you didn't but no worries, see below:
 
+> You will need to ensure that the patches/commits in your tree/series =
+have
+> been:
+>      * submitted under GPL v2 (or later) and include the Contributor'=
+s
+> 	Signed-off-by,
 
--- 
+yes
 
----------------------------------
-Sachin Sant
-IBM Linux Technology Center
-India Systems and Technology Labs
-Bangalore, India
----------------------------------
+>      * posted to the relevant mailing list,
+
+yes
+
+>      * reviewed by you (or another maintainer of your subsystem tree)=
+,
+
+in progress
+
+>      * successfully unit tested, and=20
+
+yes
+
+>      * destined for the current or next Linux merge window.
+
+and yes.
+
+Thanks.
+
+--=20
+Regards/Gruss,
+Boris.
+
+Operating | Advanced Micro Devices GmbH
+  System  | Karl-Hammerschmidt-Str. 34, 85609 Dornach b. M=FCnchen, Ger=
+many
+ Research | Gesch=E4ftsf=FChrer: Andrew Bowd, Thomas M. McCoy, Giuliano=
+ Meroni
+  Center  | Sitz: Dornach, Gemeinde Aschheim, Landkreis M=FCnchen
+  (OSRC)  | Registergericht M=FCnchen, HRB Nr. 43632
