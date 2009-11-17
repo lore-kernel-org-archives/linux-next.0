@@ -1,47 +1,33 @@
-From: David Vrabel <david.vrabel@csr.com>
-Subject: Re: linux-next: Tree for November 2 (usb/whci)
-Date: Tue, 17 Nov 2009 11:40:43 +0000
-Message-ID: <4B028BBB.1080803@csr.com>
-References: <20091102173845.210d1c57.sfr@canb.auug.org.au> <20091102091339.479a3ddb.randy.dunlap@oracle.com> <20091111090403.5fb0229e.randy.dunlap@oracle.com> <20091111173015.GA9641@kroah.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: Shared i2c adapter locking
+Date: Tue, 17 Nov 2009 03:51:47 -0800 (PST)
+Message-ID: <20091117.035147.80164577.davem@davemloft.net>
+References: <20091105150715.692b5200@hyperion.delvare>
+	<20091117193313.b750804e.sfr@canb.auug.org.au>
+	<20091117103554.03971b2f@hyperion.delvare>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cluster-g.mailcontrol.com ([208.87.233.190]:36644 "EHLO
-	cluster-g.mailcontrol.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753270AbZKQLlk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Nov 2009 06:41:40 -0500
-In-Reply-To: <20091111173015.GA9641@kroah.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, lud <linux-usb@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755923AbZKQLvc@vger.kernel.org>
+In-Reply-To: <20091117103554.03971b2f@hyperion.delvare>
+Sender: linux-kernel-owner@vger.kernel.org
+To: khali@linux-fr.org
+Cc: sfr@canb.auug.org.au, bhutchings@solarflare.com, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, mika.kuoppala@nokia.com, linux-i2c@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Greg KH wrote:
-> On Wed, Nov 11, 2009 at 09:04:03AM -0800, Randy Dunlap wrote:
->> On Mon, 2 Nov 2009 09:13:39 -0800 Randy Dunlap wrote:
->>
->>> On Mon, 2 Nov 2009 17:38:45 +1100 Stephen Rothwell wrote:
->>>
->>>> Hi all,
->>>>
->>>> Changes since 20091030: <<<<<<<<<<<<<<<<<<<<<<<<<<
->>>
->>> whci build fails on i386 due to 64-bit multiply & divide:
->>>
->>> ERROR: "__udivdi3" [drivers/usb/host/whci/whci-hcd.ko] undefined!
->>> ERROR: "__umoddi3" [drivers/usb/host/whci/whci-hcd.ko] undefined!
->>
->> Still present in linux-next-20091111.
-> 
-> David, can you please look into this and resolve it?
+From: Jean Delvare <khali@linux-fr.org>
+Date: Tue, 17 Nov 2009 10:35:54 +0100
 
-Yes,  I've been on holiday and haven't had a change to look into it yet.
+> If you did and something is still not clear, please let me know. My
+> understanding is that the action token is in David's hands now.
 
-I can't immediately think of any 64 bit maths and I don't understand why
- I haven't seen it.  I always build for i386.
+So what exactly do I need to do?
 
-David
+All I see that needs to happen is to pull from Linus's tree into
+net-2.6
 
+But frankly I don't see how that helps resolve anything in linux-next
+since Stephen starts with Linus's tree then pulls in everyone's work.
 
-Member of the CSR plc group of companies. CSR plc registered in England and Wales, registered number 4187346, registered office Churchill House, Cambridge Business Park, Cowley Road, Cambridge, CB4 0WZ, United Kingdom
+Or is that pull necessary so that some other patch can be applied
+to net-2.6 or similar?
