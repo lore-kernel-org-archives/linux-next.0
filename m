@@ -1,43 +1,56 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Subject: Re: linux-next: manual merge of the sysctl tree with Linus' tree
-Date: Tue, 17 Nov 2009 00:21:43 -0800
-Message-ID: <m1ws1ph888.fsf@fess.ebiederm.org>
-References: <20091117190406.108f967d.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Shared i2c adapter locking
+Date: Tue, 17 Nov 2009 19:33:13 +1100
+Message-ID: <20091117193313.b750804e.sfr@canb.auug.org.au>
+References: <20091026133757.7cf87e49.sfr@canb.auug.org.au>
+	<20091029154317.651904b9@hyperion.delvare>
+	<1256828976.2827.27.camel@achroite>
+	<20091105141122.56b6b4f8@hyperion.delvare>
+	<1257429444.2793.2.camel@achroite.uk.solarflarecom.com>
+	<20091105150715.692b5200@hyperion.delvare>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out02.mta.xmission.com ([166.70.13.232]:47487 "EHLO
-	out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753824AbZKQIVm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Nov 2009 03:21:42 -0500
-In-Reply-To: <20091117190406.108f967d.sfr@canb.auug.org.au> (Stephen Rothwell's message of "Tue\, 17 Nov 2009 19\:04\:06 +1100")
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>, "David S. Miller" <davem@davemloft.net>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__17_Nov_2009_19_33_13_+1100_.m=8U0Qtf1ssOISm"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754822AbZKQIdT@vger.kernel.org>
+In-Reply-To: <20091105150715.692b5200@hyperion.delvare>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jean Delvare <khali@linux-fr.org>
+Cc: Ben Hutchings <bhutchings@solarflare.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mika Kuoppala <mika.kuoppala@nokia.com>, Linux I2C <linux-i2c@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+--Signature=_Tue__17_Nov_2009_19_33_13_+1100_.m=8U0Qtf1ssOISm
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Eric,
+Hi Jean,
+
+On Thu, 5 Nov 2009 15:07:15 +0100 Jean Delvare <khali@linux-fr.org> wrote:
 >
-> Today's linux-next merge of the sysctl tree got a conflict in
-> net/decnet/sysctl_net_decnet.c between commit
-> 887e671f324d9898aaedb29a6ece6c853c394067 ("decnet: netdevice refcount
-> leak") from Linus' tree and commit
-> f8572d8f2a2ba75408b97dc24ef47c83671795d7 ("sysctl net: Remove unused
-> binary sysctl code") from the sysctl tree.
->
-> The latter removed the code (function dn_def_dev_strategy()) modified by
-> the former, so I just used the latter.  I can carry this fix for a while,
-> but it can be fixed by merging v2.6.32-rc7 (or just the
-> above commit from Linus' tree - which would merge a much smaller number of
-> commits) into the sysctl tree. 
+> > Presumably this is meant for net-next-2.6, and you'll implement
+>=20
+> Actually I meant to push this to Linus immediately, through my i2c
+> tree. This is essentially a no-op: the binary code will be the same as
+> before the patch, so guaranteed to be safe, and this will solve
+> conflicts in linux-next.
 
-Nice.  I had not realized that bug fix had made it into v2.6.32-rc7.
-I will look at merging that to remove the conflict.
+Any word on this?
 
-I looked at cherry-picking the commit earlier when I saw it in the netdev
-tree and my experiment failed.  So I think the only resolution that works
-in this case is merging it so the whole history is there.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Eric
+--Signature=_Tue__17_Nov_2009_19_33_13_+1100_.m=8U0Qtf1ssOISm
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAksCX8kACgkQjjKRsyhoI8wh4wCgjjbOxLXKpfD46dgZudQt8F0G
+GTUAoJJtBZcV1xUtVw8tP9A34tgBn5dw
+=/oxd
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__17_Nov_2009_19_33_13_+1100_.m=8U0Qtf1ssOISm--
