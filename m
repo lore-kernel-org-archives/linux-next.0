@@ -1,65 +1,54 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: linux-next: manual merge of the trivial tree with the pci tree
-Date: Tue, 17 Nov 2009 23:19:53 +0100 (CET)
-Message-ID: <alpine.LSU.2.00.0911172318340.15039@wotan.suse.de>
-References: <20091117155417.e0514040.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the trivial tree with the wireless
+ tree
+Date: Wed, 18 Nov 2009 10:38:40 +1100
+Message-ID: <20091118103840.ae9d66ad.sfr@canb.auug.org.au>
+References: <20091117154957.a23c959b.sfr@canb.auug.org.au>
+	<alpine.LSU.2.00.0911172317560.15039@wotan.suse.de>
 Mime-Version: 1.0
-Content-Type: MULTIPART/MIXED; BOUNDARY="168427776-1210159433-1258496393=:15039"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__18_Nov_2009_10_38_40_+1100_2E.aJvEyhHayUmPW"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor.suse.de ([195.135.220.2]:56614 "EHLO mx1.suse.de"
+Received: from chilli.pcug.org.au ([203.10.76.44]:36412 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756292AbZKQWTs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 17 Nov 2009 17:19:48 -0500
-In-Reply-To: <20091117155417.e0514040.sfr@canb.auug.org.au>
+	id S1753650AbZKQXik (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 Nov 2009 18:38:40 -0500
+In-Reply-To: <alpine.LSU.2.00.0911172317560.15039@wotan.suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?ISO-8859-15?Q?=22Andr=E9_Goddard_Rosa=22?= <andre.goddard@gmail.com>, Yinghai Lu <yinghai@kernel.org>, Jesse Barnes <jbarnes@virtuousgeek.org>
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IkFuZHLDqSBHb2RkYXJkIFJvc2Ei?= <andre.goddard@gmail.com>, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, "John W. Linville" <linville@tuxdriver.com>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+--Signature=_Wed__18_Nov_2009_10_38_40_+1100_2E.aJvEyhHayUmPW
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
---168427776-1210159433-1258496393=:15039
-Content-Type: TEXT/PLAIN; charset=ISO-8859-15
-Content-Transfer-Encoding: 8BIT
+Hi Jiri,
 
-On Tue, 17 Nov 2009, Stephen Rothwell wrote:
+On Tue, 17 Nov 2009 23:18:25 +0100 (CET) Jiri Kosina <jkosina@suse.cz> wrot=
+e:
+>
+> Thanks for letting me know, I have dropped the rt2800usb bits from my=20
+> queue, so this conflict should now be gone.
 
-> Today's linux-next merge of the trivial tree got a conflict in
-> arch/x86/pci/amd_bus.c between commit
-> 99935a7a59eaca0292c1a5880e10bae03f4a5e3d ("x86/PCI: read root resources
-> from IOH on Intel") from the pci tree and commit
-> 17530b1c635dfd1f258afc6b07b986b425d66ebd ("tree-wide: fix assorted typos
-> all over the place") from the trivial tree.
-> 
-> The comment fixed up by the trivial tree patch has moved to
-> arch/x86/pci/bus_numa.h and I haven't bothered to fix it there.
+Great, thanks.
 
-Thanks for letting me know.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-I have dropped the hunk from my queue. Jesse, could you please merge this 
-patch to your tree instead?
+--Signature=_Wed__18_Nov_2009_10_38_40_+1100_2E.aJvEyhHayUmPW
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
+iEYEARECAAYFAksDNAEACgkQjjKRsyhoI8w0AQCbB7WSIYJYJotQ67GDobK4RJFc
+65UAoKEYwPhSD4jtHfQ/XA5Fhzm0Pj7b
+=Kbp+
+-----END PGP SIGNATURE-----
 
-
-From: André Goddard Rosa <andre.goddard@gmail.com>
-Subject: pci: fix comment typo
-
-Signed-off-by: André Goddard Rosa <andre.goddard@gmail.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-
-diff --git a/arch/x86/pci/amd_bus.c b/arch/x86/pci/amd_bus.c
-index 572ee97..575f6fe 100644
---- a/arch/x86/pci/amd_bus.c
-+++ b/arch/x86/pci/amd_bus.c
-@@ -19,7 +19,7 @@
- 
- /*
-  * sub bus (transparent) will use entres from 3 to store extra from root,
-- * so need to make sure have enought slot there, increase PCI_BUS_NUM_RESOURCES?
-+ * so need to make sure have enough slot there, increase PCI_BUS_NUM_RESOURCES?
-  */
- #define RES_NUM 16
- struct pci_root_info {
---168427776-1210159433-1258496393=:15039--
+--Signature=_Wed__18_Nov_2009_10_38_40_+1100_2E.aJvEyhHayUmPW--
