@@ -1,53 +1,53 @@
-From: Oliver Hartkopp <oliver@hartkopp.net>
-Subject: Re: linux-next: manual merge of the net tree with the net-current
- tree
-Date: Tue, 17 Nov 2009 09:00:18 +0100
-Message-ID: <4B025812.6060807@hartkopp.net>
-References: <20091117131637.3a35f898.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the sysctl tree with the net tree
+Date: Tue, 17 Nov 2009 19:04:01 +1100
+Message-ID: <20091117190401.94f6b5cb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754147AbZKQIAo@vger.kernel.org>
-In-Reply-To: <20091117131637.3a35f898.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>, Christian Pellegrin <chripell@fsfe.org>, Wolfgang Grandegger <wg@grandegger.com>, Anant Gole <anantgole@ti.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:45914 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753311AbZKQID5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 Nov 2009 03:03:57 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Octavian Purdila <opurdila@ixiacom.com>, Cosmin Ratiu <cratiu@ixiacom.com>, "David S. Miller" <davem@davemloft.net>
 
-Hello Stephen,
+Hi Eric,
 
-Stephen Rothwell wrote:
+Today's linux-next merge of the sysctl tree got a conflict in
+net/ipv6/addrconf.c between commit
+f7734fdf61ec6bb848e0bafc1fb8bad2c124bb50 ("make TLLAO option for NA
+packets configurable") from the net tree and commit
+f8572d8f2a2ba75408b97dc24ef47c83671795d7 ("sysctl net: Remove unused
+binary sysctl code") from the sysctl tree.
 
-> Today's linux-next merge of the net tree got a conflict in
-> drivers/net/can/Kconfig between commit
-> b93cf3f0bb45560d2ce62bdcc2181c40660cfdbf ("can: Fix driver Kconfig
-> structure") from the net-current tree 
+I fixed it up (see below) including removing the new ctl_name (thanks for
+the heads up, Eric).   I can carry this fixup as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Indeed this cleanup was made in net-2.6 to fix the Kconfig structure before
-2.6.32 is finalized.
-
-The commits
-
-> 3758bf25db8caeec667e4e56e030da0ec3060529 ("can: add TI CAN (HECC)
-> driver"), e0000163e30eeb112b41486ea113fd54f64e1f17 ("can: Driver for the
-> Microchip MCP251x SPI CAN controllers") and
-> afa17a500a3667f66df450100538d06769529bba ("net/can: add driver for mscan
-> family & mpc52xx_mscan") from the net tree.
-
-added Kconfig entries right behind the CAN_AT91 driver - and that's because
-the net-2.6 patch "can: Fix driver Kconfig structure" refuses to apply cleanly
-on net-next-2.6 ...
-
-> 
-> I fixed it up (see below) and can carry the fix for a while. (I am not
-> sure the fix is entirely correct.)
-> 
-
-Yes. You only added the new Kconfig entries (for CAN_TI_HECC, CAN_MCP251X,
-CAN_MSCAN, ...) to the patch "can: Fix driver Kconfig structure", right?
-
-These are the only added items in drivers/net/can/Kconfig from net-2.6 to
-net-next-2.6.
-
-Thanks,
-Oliver
+diff --cc net/ipv6/addrconf.c
+index 522bdc7,f918399..0000000
+--- a/net/ipv6/addrconf.c
++++ b/net/ipv6/addrconf.c
+@@@ -4388,15 -4285,7 +4320,14 @@@ static struct addrconf_sysctl_tabl
+  			.proc_handler	=	proc_dointvec,
+  		},
+  		{
+- 			.ctl_name       = CTL_UNNUMBERED,
+ +			.procname       = "force_tllao",
+ +			.data           = &ipv6_devconf.force_tllao,
+ +			.maxlen         = sizeof(int),
+ +			.mode           = 0644,
+ +			.proc_handler   = proc_dointvec
+ +		},
+ +		{
+- 			.ctl_name	=	0,	/* sentinel */
++ 			/* sentinel */
+  		}
+  	},
+  };
