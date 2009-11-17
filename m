@@ -1,71 +1,53 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: Re: [-next Nov 16] s390 build failure (arch/s390/kernel/time)
-Date: Tue, 17 Nov 2009 08:59:17 +0100
-Message-ID: <20091117075917.GA5124@osiris.boeblingen.de.ibm.com>
-References: <20091116181453.b42247cf.sfr@canb.auug.org.au>
- <4B02283D.8040103@in.ibm.com>
- <20091117162546.16bb00b0.sfr@canb.auug.org.au>
+From: Oliver Hartkopp <oliver@hartkopp.net>
+Subject: Re: linux-next: manual merge of the net tree with the net-current
+ tree
+Date: Tue, 17 Nov 2009 09:00:18 +0100
+Message-ID: <4B025812.6060807@hartkopp.net>
+References: <20091117131637.3a35f898.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mtagate7.uk.ibm.com ([195.212.29.140]:45233 "EHLO
-	mtagate7.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752488AbZKQH7j (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Nov 2009 02:59:39 -0500
-Content-Disposition: inline
-In-Reply-To: <20091117162546.16bb00b0.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754147AbZKQIAo@vger.kernel.org>
+In-Reply-To: <20091117131637.3a35f898.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>, linux-s390@vger.kernel.org, linux-next@vger.kernel.org, Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, Sachin Sant <sachinp@in.ibm.com>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>, Christian Pellegrin <chripell@fsfe.org>, Wolfgang Grandegger <wg@grandegger.com>, Anant Gole <anantgole@ti.com>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Nov 17, 2009 at 04:25:46PM +1100, Stephen Rothwell wrote:
-> On Tue, 17 Nov 2009 10:06:13 +0530 Sachin Sant <sachinp@in.ibm.com> wrote:
-> >
-> > Next 20091116 build failed on a s390 box with
-> > 
-> > arch/s390/kernel/time.c: In function 'get_sync_clock':
-> > arch/s390/kernel/time.c:337: error: 'clock_sync_sync' undeclared (first use in this function)
-> > arch/s390/kernel/time.c:337: error: (Each undeclared identifier is reported only once
-> > arch/s390/kernel/time.c:337: error: for each function it appears in.)
-> > arch/s390/kernel/time.c: In function 'check_sync_clock':
-> > arch/s390/kernel/time.c:387: error: 'clock_sync_sync' undeclared (first use in this function)
+Hello Stephen,
+
+Stephen Rothwell wrote:
+
+> Today's linux-next merge of the net tree got a conflict in
+> drivers/net/can/Kconfig between commit
+> b93cf3f0bb45560d2ce62bdcc2181c40660cfdbf ("can: Fix driver Kconfig
+> structure") from the net-current tree 
+
+Indeed this cleanup was made in net-2.6 to fix the Kconfig structure before
+2.6.32 is finalized.
+
+The commits
+
+> 3758bf25db8caeec667e4e56e030da0ec3060529 ("can: add TI CAN (HECC)
+> driver"), e0000163e30eeb112b41486ea113fd54f64e1f17 ("can: Driver for the
+> Microchip MCP251x SPI CAN controllers") and
+> afa17a500a3667f66df450100538d06769529bba ("net/can: add driver for mscan
+> family & mpc52xx_mscan") from the net tree.
+
+added Kconfig entries right behind the CAN_AT91 driver - and that's because
+the net-2.6 patch "can: Fix driver Kconfig structure" refuses to apply cleanly
+on net-next-2.6 ...
+
 > 
-> Caused by commits 8283cb43ab3e92a039d3486a0f6253df95a5fa55 ("[S390] clock
-> sync mode flags") (which entered Linus' tree during 2.6.30-rc1) and
-> commit d2fec595511b5718bdb65645b3d5d99800d97943 ("[S390] stp support")
-> (which entered Linus' tree during 2.6.27-rc1) but only exposed by commit
-> e0fdb0e050eae331046385643618f12452aa7e73 ("percpu: add __percpu for
-> sparse") from the percpu tree.
+> I fixed it up (see below) and can carry the fix for a while. (I am not
+> sure the fix is entirely correct.)
 > 
-> Needs to be fixed in the s390 tree.  (put_per_cpu() now references its
-> argument, so that had better be a real variable :-))
 
-Weird... at least it wasn't a bug. Patch below will fix compile breakage.
+Yes. You only added the new Kconfig entries (for CAN_TI_HECC, CAN_MCP251X,
+CAN_MSCAN, ...) to the patch "can: Fix driver Kconfig structure", right?
 
----
- arch/s390/kernel/time.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+These are the only added items in drivers/net/can/Kconfig from net-2.6 to
+net-next-2.6.
 
-Index: linux-next/arch/s390/kernel/time.c
-===================================================================
---- linux-next.orig/arch/s390/kernel/time.c
-+++ linux-next/arch/s390/kernel/time.c
-@@ -334,7 +334,7 @@ int get_sync_clock(unsigned long long *c
- 	sw0 = atomic_read(sw_ptr);
- 	*clock = get_clock();
- 	sw1 = atomic_read(sw_ptr);
--	put_cpu_var(clock_sync_sync);
-+	put_cpu_var(clock_sync_word);
- 	if (sw0 == sw1 && (sw0 & 0x80000000U))
- 		/* Success: time is in sync. */
- 		return 0;
-@@ -384,7 +384,7 @@ static inline int check_sync_clock(void)
- 
- 	sw_ptr = &get_cpu_var(clock_sync_word);
- 	rc = (atomic_read(sw_ptr) & 0x80000000U) != 0;
--	put_cpu_var(clock_sync_sync);
-+	put_cpu_var(clock_sync_word);
- 	return rc;
- }
- 
+Thanks,
+Oliver
