@@ -1,43 +1,34 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: Re: [-next Nov 17] s390 build
- break(arch/s390/kernel/compat_wrapper.S)
-Date: Tue, 17 Nov 2009 17:14:24 +0100
-Message-ID: <20091117161424.GH5124@osiris.boeblingen.de.ibm.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for November 17 (exofs)
+Date: Tue, 17 Nov 2009 09:02:48 -0800
+Message-ID: <20091117090248.bb66c230.rdunlap@xenotime.net>
 References: <20091117195309.6cc3ead0.sfr@canb.auug.org.au>
- <4B0291BB.3090005@in.ibm.com>
- <20091117125201.GB5124@osiris.boeblingen.de.ibm.com>
- <1258465241.2876.29.camel@dhcp231-106.rdu.redhat.com>
- <20091117135525.GF5124@osiris.boeblingen.de.ibm.com>
- <1258471436.2876.34.camel@dhcp231-106.rdu.redhat.com>
- <20091117155029.GG5124@osiris.boeblingen.de.ibm.com>
- <1258473465.2876.37.camel@dhcp231-106.rdu.redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mtagate4.de.ibm.com ([195.212.17.164]:45192 "EHLO
-	mtagate4.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752278AbZKQQOV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Nov 2009 11:14:21 -0500
-Content-Disposition: inline
-In-Reply-To: <1258473465.2876.37.camel@dhcp231-106.rdu.redhat.com>
+Received: from xenotime.net ([72.52.64.118]:58359 "HELO xenotime.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
+	id S1752308AbZKQRCo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 Nov 2009 12:02:44 -0500
+Received: from chimera.site ([96.253.169.185]) by xenotime.net for <linux-next@vger.kernel.org>; Tue, 17 Nov 2009 09:02:49 -0800
+In-Reply-To: <20091117195309.6cc3ead0.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Eric Paris <eparis@redhat.com>
-Cc: Sachin Sant <sachinp@in.ibm.com>, linux-s390@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Boaz Harrosh <bharrosh@panasas.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, Nov 17, 2009 at 10:57:45AM -0500, Eric Paris wrote:
-> On Tue, 2009-11-17 at 16:50 +0100, Heiko Carstens wrote:
-> > On Tue, Nov 17, 2009 at 10:23:56AM -0500, Eric Paris wrote:
-> > > On Tue, 2009-11-17 at 14:55 +0100, Heiko Carstens wrote:
-> > The third argument an int and hence it should have been lgfr ;)
-> 
-> It should have been an unsigned int, just noticed it today (because of
-> this discussion) and fixed it.  You'll see in a patch which does so in
-> -next tomorrow.
-> 
-> I'll let this settle a bit and come back to linux-s390 in a week or two
-> to ask you guys to write/review some hooks!
+On Tue, 17 Nov 2009 19:53:09 +1100 Stephen Rothwell wrote:
 
-We will be triggered automatically as soon as your patch gets merged.
-The build system emits a warning for each new syscall which isn't wired up
-and present for x86.
+> Hi all,
+> 
+> Changes since 20091116:
+
+
+on i386 (X86_32):
+
+fs/built-in.o: In function `exofs_sbi_read':
+(.text+0x592964): undefined reference to `__umoddi3'
+
+---
+~Randy
