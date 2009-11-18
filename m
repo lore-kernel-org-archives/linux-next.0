@@ -1,55 +1,59 @@
-From: "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH -next 0/3] x86 insn decoder test updates (Re: linux-next:  Tree for October 29 (x86 posttest))
-Date: Tue, 17 Nov 2009 20:42:34 -0800
-Message-ID: <4B037B3A.7010700@zytor.com>
-References: <20091116230611.5250.86656.stgit@harusame> <20091117061352.GE30852@elte.hu>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: net tree build failure
+Date: Wed, 18 Nov 2009 16:51:45 +1100
+Message-ID: <20091118165145.d0c3114b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <systemtap-return-14329-gls-systemtap=m.gmane.org@sourceware.org>
-In-Reply-To: <20091117061352.GE30852@elte.hu>
-List-Unsubscribe: <mailto:systemtap-unsubscribe-gls-systemtap=m.gmane.org@sourceware.org>
-List-Subscribe: <mailto:systemtap-subscribe@sourceware.org>
-List-Post: <mailto:systemtap@sourceware.org>
-List-Help: <mailto:systemtap-help@sourceware.org>, <http://sourceware.org/lists.html#faqs>
-Sender: systemtap-owner@sourceware.org
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Masami Hiramatsu <mhiramat@redhat.com>, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <rdunlap@xenotime.net>, Jim Keniston <jkenisto@us.ibm.com>, lkml <linux-kernel@vger.kernel.org>, systemtap <systemtap@sources.redhat.com>, DLE <dle-develop@lists.sourceforge.net>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:45915 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751122AbZKRFvo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 18 Nov 2009 00:51:44 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shreyas Bhatewara <sbhatewara@vmware.com>
 
-On 11/16/2009 10:13 PM, Ingo Molnar wrote:
-> 
-> * Masami Hiramatsu <mhiramat@redhat.com> wrote:
-> 
->> Here are the patches which update x86 instruction decoder build-time 
->> test. As Stephen reported on linux-next, sometimes objdump decodes bad 
->> instructions as normal. This will cause a false positive result on x86 
->> insn decoder test. This patches update the test as below;
->>
->>  - Show more information with V=1
->>  - Show in which symbol the difference places.
->>  - Just warning instead of build failure.
-> 
-> yes, -tip testing was showing such build bugs too:
-> 
->  Error: ffffffff8104aae3:	c5 83 3d 49 80 ee    	lds    0xffffffffee80493d(%rbx),%eax
->  Error: objdump says 6 bytes, but insn_get_length() says 3 (attr:0)
-> 
-> it happens with older tools, such as binutils-2.17. Modern binutils 
-> (2.19) is fine.
-> 
-> We dont want to remove the build error: it helped us fix a number of 
-> real bugs in the decoder - instead please try to create a make based 
-> workaround based on binutils, to not run the test with binutils older 
-> than 2.19 or so.
-> 
+Hi Dave,
 
-One idea might be to instead of binutils to use NASM.  The entire NASM
-disassembler is small enough (about 10,000 lines including build tools
-and instruction database) that we could fit it in the tree in a pinch.
+Today's linux-next build (powerpc allyesconfig) failed like this:
 
-	-hpa
+drivers/net/vmxnet3/vmxnet3_drv.c: In function 'vmxnet3_prepare_tso':
+drivers/net/vmxnet3/vmxnet3_drv.c:826: error: implicit declaration of function 'csum_ipv6_magic'
+
+Revealed by commit 115924b6bdc7cc6bf7da5b933b09281e1f4e17a9 ("net:
+Getting rid of the x86 dependency to built vmxnet3") which allowed this
+driver to be built on PowerPC at all.
+
+I applied this patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 18 Nov 2009 16:46:43 +1100
+Subject: [PATCH] net: using csum_ipv6_magic requires including net/ip6_checksum.h
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/net/vmxnet3/vmxnet3_drv.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/net/vmxnet3/vmxnet3_drv.c b/drivers/net/vmxnet3/vmxnet3_drv.c
+index 8f24fe5..a4c97e7 100644
+--- a/drivers/net/vmxnet3/vmxnet3_drv.c
++++ b/drivers/net/vmxnet3/vmxnet3_drv.c
+@@ -24,6 +24,8 @@
+  *
+  */
+ 
++#include <net/ip6_checksum.h>
++
+ #include "vmxnet3_int.h"
+ 
+ char vmxnet3_driver_name[] = "vmxnet3";
+-- 
+1.6.5.2
 
 -- 
-H. Peter Anvin, Intel Open Source Technology Center
-I work for Intel.  I don't speak on their behalf.
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
