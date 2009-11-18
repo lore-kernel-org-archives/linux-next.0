@@ -1,37 +1,54 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: net tree build failure
-Date: Tue, 17 Nov 2009 23:05:30 -0800 (PST)
-Message-ID: <20091117.230530.108140449.davem@davemloft.net>
-References: <20091118165145.d0c3114b.sfr@canb.auug.org.au>
+From: Tejun Heo <tj@kernel.org>
+Subject: [PATCH percpu#for-next] percpu: remove compile warnings caused by
+ __verify_pcpu_ptr()
+Date: Wed, 18 Nov 2009 18:05:41 +0900
+Message-ID: <4B03B8E5.7000706@kernel.org>
+References: <20091112174558.128cea97.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:57242
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752251AbZKRHFN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 18 Nov 2009 02:05:13 -0500
-In-Reply-To: <20091118165145.d0c3114b.sfr@canb.auug.org.au>
+Received: from hera.kernel.org ([140.211.167.34]:60463 "EHLO hera.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754895AbZKRJGT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 18 Nov 2009 04:06:19 -0500
+In-Reply-To: <20091112174558.128cea97.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, sbhatewara@vmware.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 18 Nov 2009 16:51:45 +1100
+If percpu pointer is const, __verify_pcpu_ptr() triggers warnings like
+the following.
 
-> drivers/net/vmxnet3/vmxnet3_drv.c: In function 'vmxnet3_prepare_tso':
-> drivers/net/vmxnet3/vmxnet3_drv.c:826: error: implicit declaration of function 'csum_ipv6_magic'
-> 
-> Revealed by commit 115924b6bdc7cc6bf7da5b933b09281e1f4e17a9 ("net:
-> Getting rid of the x86 dependency to built vmxnet3") which allowed this
-> driver to be built on PowerPC at all.
+ drivers/net/loopback.c: In function 'loopback_get_stats':
+ drivers/net/loopback.c:109: warning: initialization discards qualifiers from pointer target type
 
-Enabling on more platforms helps find problems like this :-)
+Fix it by adding const to the verification target pointer used in
+__verify_pcpu_ptr().
 
-> Subject: [PATCH] net: using csum_ipv6_magic requires including net/ip6_checksum.h
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+Sorry about the delay.  Patch committed to percpu#for-next.
 
-Applied, thanks!
+Thanks.
+
+ include/linux/percpu-defs.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/include/linux/percpu-defs.h b/include/linux/percpu-defs.h
+index 1fa36eb..68567c0 100644
+--- a/include/linux/percpu-defs.h
++++ b/include/linux/percpu-defs.h
+@@ -24,7 +24,7 @@
+  * input parameter is a percpu pointer.
+  */
+ #define __verify_pcpu_ptr(ptr)	do {					\
+-	void __percpu *__vpp_verify = (typeof(ptr))NULL;		\
++	const void __percpu *__vpp_verify = (typeof(ptr))NULL;		\
+ 	(void)__vpp_verify;						\
+ } while (0)
+
+-- 
+1.6.4.2
