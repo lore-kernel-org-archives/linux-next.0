@@ -1,54 +1,34 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: [PATCH percpu#for-next] percpu: remove compile warnings caused by
- __verify_pcpu_ptr()
-Date: Wed, 18 Nov 2009 18:05:41 +0900
-Message-ID: <4B03B8E5.7000706@kernel.org>
-References: <20091112174558.128cea97.sfr@canb.auug.org.au>
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: Re: [-next PATCH] Add param ops struct for hvc_iucv driver.
+Date: Wed, 18 Nov 2009 14:51:58 +0530
+Message-ID: <4B03BCB6.80308@in.ibm.com>
+References: <20091117132103.18413.53658.sendpatchset@localhost.localdomain> <20091117132448.GC5124@osiris.boeblingen.de.ibm.com> <200911181130.43385.rusty@rustcorp.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hera.kernel.org ([140.211.167.34]:60463 "EHLO hera.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754895AbZKRJGT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 18 Nov 2009 04:06:19 -0500
-In-Reply-To: <20091112174558.128cea97.sfr@canb.auug.org.au>
+Received: from e23smtp02.au.ibm.com ([202.81.31.144]:56960 "EHLO
+	e23smtp02.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754421AbZKRJV5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Nov 2009 04:21:57 -0500
+In-Reply-To: <200911181130.43385.rusty@rustcorp.com.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-s390@vger.kernel.org, linux-next@vger.kernel.org
 
-If percpu pointer is const, __verify_pcpu_ptr() triggers warnings like
-the following.
+Rusty Russell wrote:
+> Thanks, applied, fixed spaces which should have been tabs.
+Sorry about that. Would be more careful.
 
- drivers/net/loopback.c: In function 'loopback_get_stats':
- drivers/net/loopback.c:109: warning: initialization discards qualifiers from pointer target type
-
-Fix it by adding const to the verification target pointer used in
-__verify_pcpu_ptr().
-
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
-Sorry about the delay.  Patch committed to percpu#for-next.
-
-Thanks.
-
- include/linux/percpu-defs.h |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/include/linux/percpu-defs.h b/include/linux/percpu-defs.h
-index 1fa36eb..68567c0 100644
---- a/include/linux/percpu-defs.h
-+++ b/include/linux/percpu-defs.h
-@@ -24,7 +24,7 @@
-  * input parameter is a percpu pointer.
-  */
- #define __verify_pcpu_ptr(ptr)	do {					\
--	void __percpu *__vpp_verify = (typeof(ptr))NULL;		\
-+	const void __percpu *__vpp_verify = (typeof(ptr))NULL;		\
- 	(void)__vpp_verify;						\
- } while (0)
+Thanks
+-Sachin
 
 -- 
-1.6.4.2
+
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
