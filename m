@@ -1,299 +1,84 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for November 18
-Date: Wed, 18 Nov 2009 17:23:30 +1100
-Message-ID: <20091118172330.0385f711.sfr@canb.auug.org.au>
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: Re: [-next Nov 17] s390 build
+ break(arch/s390/kernel/compat_wrapper.S)
+Date: Wed, 18 Nov 2009 08:04:18 +0100
+Message-ID: <20091118070418.GA4392@osiris.boeblingen.de.ibm.com>
+References: <20091117195309.6cc3ead0.sfr@canb.auug.org.au>
+ <4B0291BB.3090005@in.ibm.com>
+ <20091117125201.GB5124@osiris.boeblingen.de.ibm.com>
+ <1258465241.2876.29.camel@dhcp231-106.rdu.redhat.com>
+ <20091117135525.GF5124@osiris.boeblingen.de.ibm.com>
+ <1258471436.2876.34.camel@dhcp231-106.rdu.redhat.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__18_Nov_2009_17_23_30_+1100_zCuSW8PKtv7PIlNW"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56938 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752557AbZKRGXb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 18 Nov 2009 01:23:31 -0500
+Received: from mtagate4.de.ibm.com ([195.212.17.164]:41586 "EHLO
+	mtagate4.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752206AbZKRHEP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Nov 2009 02:04:15 -0500
+Content-Disposition: inline
+In-Reply-To: <1258471436.2876.34.camel@dhcp231-106.rdu.redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Eric Paris <eparis@redhat.com>
+Cc: Sachin Sant <sachinp@in.ibm.com>, linux-s390@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>, linux-arch@vger.kernel.org
 
---Signature=_Wed__18_Nov_2009_17_23_30_+1100_zCuSW8PKtv7PIlNW
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Nov 17, 2009 at 10:23:56AM -0500, Eric Paris wrote:
+> On Tue, 2009-11-17 at 14:55 +0100, Heiko Carstens wrote:
+> 
+> > Yes, also some places should have used lgfr instead of llgfr for proper sign
+> > extension. But please, just drop the s390 bits from your patch.
+> > Its easier and less painful for us to do it ourselves instead of reviewing
+> > and fixing these things. (No offence intended!).
+> 
+> dropped and won't show up in -next tomorrow.
+> 
+> This what I thought it should be and would love to read if you say it's
+> right....
+> 
 
-Hi all,
+[...]
 
-Changes since 20091117:
+> +sys32_fanotify_mark_wrapper:
+> +	lgfr	%r2,%r2			# int
+> +	llgfr	%r3,%r3			# unsigned int
+> +	lgfr	%r4,%r4			# int
+> +	llgtr	%r5,%r5			# char *
+> +	sllg	%r6,%r6,32		# get high word of 64bit mask
+> +	l	%r6,164(%r15)		# get low word of 64bit mask
+> +	jg	sys_fanotify_mark
 
-The net tree lost a conflict but gained a build failure for which I
-applied a patch.
+Oh wait, I have to correct myself:
 
-The trivial tree lost its conflicts.
+With
 
-The omap_dss2 tree lost its conflict.
+long sys_fanotify_mark(int fanotify_fd, unsigned int flags,
+     	 	       int fd, const char  __user *pathname,
+                       u64 mask);
 
-The sysctl tree lost a conflict.
+we have a 64 bit type as 5th argument. That doesn't work for syscalls
+on 32 bit s390.
+I just simplify the reason for this: on 32 bit long longs will be passed via
+two consecutive registers _unless_ the first register would be r6 (which is
+the case here). In that case the whole 64 bits would be passed on the stack.
+Our glibc syscall code will always put the contents of the first parameter
+stack slot into register r7, so we have six registers for parameter passing
+(r2-r7). So with the 64 bit value put into two stack slots we would miss
+the second part of the 5th argument.
 
-----------------------------------------------------------------------------
+Please note that other architectures (I think at least arm and powerpc) put
+64 bit values into even/odd register pairs and add padding if the first free
+available register is an odd one. So any of the following interfaces should
+work for all architectures:
 
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
+long sys_fanotify_mark(int fanotify_fd, unsigned int flags,
+     	 	       int fd, const char  __user *pathname,
+                       u32 mask_high, u32 mask_low);
 
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
-and sparc64 defconfig. These builds also have
-CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
-CONFIG_DEBUG_INFO disabled when necessary.
+long sys_fanotify_mark(int fanotify_fd, unsigned int flags,
+                       u64 mask,
+     	 	       int fd, const char  __user *pathname);
 
-Below is a summary of the state of the merge.
-
-We are up to 151 trees (counting Linus' and 22 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging fixes/fixes
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/tty.current
-Merging quilt/usb.current
-Merging quilt/staging.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging ide-curent/master
-Merging dwmw2/master
-Merging arm/devel
-Merging davinci/davinci-next
-Merging msm/for-next
-Merging omap/for-next
-Merging pxa/for-next
-Merging avr32/avr32-arch
-CONFLICT (content): Merge conflict in arch/avr32/mach-at32ap/include/mach/c=
-pu.h
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-CONFLICT (content): Merge conflict in drivers/rtc/Kconfig
-Merging m68knommu/for-next
-Merging microblaze/next
-Merging mips/mips-for-linux-next
-Merging parisc/next
-Merging powerpc/next
-Merging 4xx/next
-Merging 52xx-and-virtex/next
-Merging galak/next
-Merging s390/features
-Merging sh/master
-Merging sparc/master
-Merging xtensa/master
-Merging ceph/for-next
-Merging cifs/master
-Merging configfs/linux-next
-Merging ecryptfs/next
-Merging ext3/for_next
-Merging ext4/next
-Merging fatfs/master
-Merging fuse/for-next
-Merging gfs2/master
-Merging jfs/next
-Merging nfs/linux-next
-Merging nfsd/nfsd-next
-Merging nilfs2/for-next
-Merging ocfs2/linux-next
-Merging squashfs/master
-Merging udf/for_next
-Merging v9fs/for-next
-Merging ubifs/linux-next
-Merging xfs/master
-Merging reiserfs-bkl/reiserfs/kill-bkl
-Merging vfs/for-next
-Merging pci/linux-next
-Merging hid/for-next
-Merging quilt/i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-CONFLICT (content): Merge conflict in drivers/media/common/tuners/tda18271-=
-fe.c
-Merging kbuild/master
-Merging kconfig/for-next
-Merging ide/master
-Merging libata/NEXT
-Merging infiniband/for-next
-Merging acpi/test
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/linux-next
-Merging dlm/next
-Merging scsi/master
-Merging async_tx/next
-Merging net/master
-CONFLICT (delete/modify): drivers/net/sfc/sfe4001.c deleted in net/master a=
-nd modified in HEAD. Version HEAD of drivers/net/sfc/sfe4001.c left in tree.
-CONFLICT (content): Merge conflict in drivers/net/wireless/libertas/cmd.c
-CONFLICT (content): Merge conflict in drivers/staging/Kconfig
-CONFLICT (content): Merge conflict in drivers/staging/Makefile
-CONFLICT (content): Merge conflict in drivers/staging/rtl8187se/Kconfig
-CONFLICT (content): Merge conflict in drivers/staging/rtl8192e/Kconfig
-$ git rm -f drivers/net/sfc/sfe4001.c
-Applying: net: merge fixup for drivers/net/sfc/falcon_boards.c
-Merging wireless/master
-Merging mtd/master
-Merging crypto/master
-Merging sound/for-next
-CONFLICT (content): Merge conflict in arch/arm/mach-omap2/board-omap3evm.c
-CONFLICT (content): Merge conflict in arch/arm/mach-omap2/board-zoom2.c
-Merging cpufreq/next
-CONFLICT (content): Merge conflict in include/acpi/processor.h
-Merging quilt/rr
-Applying: modpost: autoconf.h has moved to include/generated
-Merging mmc/next
-Merging tmio-mmc/linux-next
-Merging input/next
-Merging lsm/for-next
-Merging block/for-next
-Merging quilt/device-mapper
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-CONFLICT (content): Merge conflict in drivers/mtd/maps/pcmciamtd.c
-CONFLICT (content): Merge conflict in drivers/net/wireless/ray_cs.c
-CONFLICT (content): Merge conflict in drivers/pcmcia/Makefile
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging voltage/for-next
-CONFLICT (content): Merge conflict in drivers/mfd/Kconfig
-CONFLICT (content): Merge conflict in drivers/mfd/Makefile
-Merging security-testing/next
-CONFLICT (content): Merge conflict in Documentation/dontdiff
-Merging lblnet/master
-Merging agp/agp-next
-Merging uwb/for-upstream
-Merging watchdog/master
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-Merging audit/for-next
-Merging quilt/aoe
-Merging suspend/linux-next
-Merging bluetooth/master
-Merging fsnotify/for-next
-CONFLICT (content): Merge conflict in arch/x86/ia32/ia32entry.S
-CONFLICT (content): Merge conflict in arch/x86/include/asm/unistd_32.h
-CONFLICT (content): Merge conflict in arch/x86/include/asm/unistd_64.h
-CONFLICT (content): Merge conflict in arch/x86/kernel/syscall_table_32.S
-CONFLICT (content): Merge conflict in fs/afs/write.c
-CONFLICT (content): Merge conflict in fs/ubifs/file.c
-CONFLICT (content): Merge conflict in include/asm-generic/fcntl.h
-CONFLICT (content): Merge conflict in net/socket.c
-Merging irda/for-next
-Merging hwlat/for-linus
-CONFLICT (content): Merge conflict in drivers/misc/Makefile
-Merging drbd/for-jens
-Merging catalin/for-next
-Merging alacrity/linux-next
-CONFLICT (content): Merge conflict in drivers/net/Kconfig
-CONFLICT (content): Merge conflict in include/linux/Kbuild
-CONFLICT (content): Merge conflict in lib/Kconfig
-Merging i7core_edac/linux_next
-Applying: i7core_edac: do not export static functions
-Merging devicetree/next-devicetree
-Merging limits/writable_limits
-Merging omap_dss2/for-next
-Merging tip/auto-latest
-CONFLICT (content): Merge conflict in arch/x86/kernel/kgdb.c
-CONFLICT (content): Merge conflict in kernel/irq/chip.c
-Merging edac-amd/for-next
-Merging oprofile/for-next
-Merging percpu/for-next
-CONFLICT (content): Merge conflict in arch/powerpc/platforms/pseries/hvCall=
-.S
-CONFLICT (content): Merge conflict in arch/x86/kvm/svm.c
-CONFLICT (content): Merge conflict in kernel/softlockup.c
-Applying: percpu: merge fixup for variable renaming
-Merging workqueues/for-next
-Merging sfi/sfi-test
-Merging asm-generic/next
-Merging hwpoison/hwpoison
-Merging sysctl/master
-CONFLICT (content): Merge conflict in net/ipv6/addrconf.c
-Merging quilt/driver-core
-Merging quilt/tty
-Merging quilt/usb
-Merging quilt/staging
-CONFLICT (content): Merge conflict in drivers/staging/Kconfig
-CONFLICT (content): Merge conflict in drivers/staging/Makefile
-CONFLICT (content): Merge conflict in drivers/staging/comedi/drivers/cb_das=
-16_cs.c
-CONFLICT (content): Merge conflict in drivers/staging/comedi/drivers/ni_lab=
-pc_cs.c
-CONFLICT (content): Merge conflict in drivers/staging/comedi/drivers/ni_mio=
-_cs.c
-Merging scsi-post-merge/master
-Applying: net: using csum_ipv6_magic requires including net/ip6_checksum.h
-
---Signature=_Wed__18_Nov_2009_17_23_30_+1100_zCuSW8PKtv7PIlNW
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAksDkuIACgkQjjKRsyhoI8zeGgCggFKOrG3KBwnP8FleWku/iegf
-FJcAniaVHfMnbZ7sdFODKmoVjVWKM2In
-=DvTw
------END PGP SIGNATURE-----
-
---Signature=_Wed__18_Nov_2009_17_23_30_+1100_zCuSW8PKtv7PIlNW--
+long sys_fanotify_mark(u64 mask,
+     		       int fanotify_fd, unsigned int flags,
+     	 	       int fd, const char  __user *pathname);
