@@ -1,60 +1,55 @@
-From: David Gibson <dwg@au1.ibm.com>
-Subject: Re: [powerpc] Next tree Nov 2 : kernel BUG at mm/mmap.c:2135!
-Date: Wed, 18 Nov 2009 13:36:27 +1100
-Message-ID: <20091118023627.GC11991@yookeroo>
-References: <20091102173845.210d1c57.sfr@canb.auug.org.au>
- <4AEEA279.4040106@in.ibm.com>
- <4AF175D4.7030507@in.ibm.com>
- <20091105001650.GD3613@yookeroo.seuss>
- <4AFBEE98.2070208@in.ibm.com>
- <20091113013729.GB18848@yookeroo.seuss>
- <20091113021048.GA4865@yookeroo.seuss>
- <4AFD2865.5090503@in.ibm.com>
- <20091117052542.GB2576@yookeroo>
- <4B02529F.1060801@in.ibm.com>
+From: "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH -next 0/3] x86 insn decoder test updates (Re: linux-next:  Tree for October 29 (x86 posttest))
+Date: Tue, 17 Nov 2009 20:42:34 -0800
+Message-ID: <4B037B3A.7010700@zytor.com>
+References: <20091116230611.5250.86656.stgit@harusame> <20091117061352.GE30852@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e23smtp06.au.ibm.com ([202.81.31.148]:48950 "EHLO
-	e23smtp06.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751543AbZKRDc2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Nov 2009 22:32:28 -0500
-Received: from d23relay04.au.ibm.com (d23relay04.au.ibm.com [202.81.31.246])
-	by e23smtp06.au.ibm.com (8.14.3/8.13.1) with ESMTP id nAI3WVY1024179
-	for <linux-next@vger.kernel.org>; Wed, 18 Nov 2009 14:32:31 +1100
-Received: from d23av04.au.ibm.com (d23av04.au.ibm.com [9.190.235.139])
-	by d23relay04.au.ibm.com (8.13.8/8.13.8/NCO v10.0) with ESMTP id nAI3TEaF999488
-	for <linux-next@vger.kernel.org>; Wed, 18 Nov 2009 14:29:15 +1100
-Received: from d23av04.au.ibm.com (loopback [127.0.0.1])
-	by d23av04.au.ibm.com (8.14.3/8.13.1/NCO v10.0 AVout) with ESMTP id nAI3WWmU025889
-	for <linux-next@vger.kernel.org>; Wed, 18 Nov 2009 14:32:32 +1100
-Content-Disposition: inline
-In-Reply-To: <4B02529F.1060801@in.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Sachin Sant <sachinp@in.ibm.com>
-Cc: Linux/PPC Development <linuxppc-dev@ozlabs.org>, linux-next@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <systemtap-return-14329-gls-systemtap=m.gmane.org@sourceware.org>
+In-Reply-To: <20091117061352.GE30852@elte.hu>
+List-Unsubscribe: <mailto:systemtap-unsubscribe-gls-systemtap=m.gmane.org@sourceware.org>
+List-Subscribe: <mailto:systemtap-subscribe@sourceware.org>
+List-Post: <mailto:systemtap@sourceware.org>
+List-Help: <mailto:systemtap-help@sourceware.org>, <http://sourceware.org/lists.html#faqs>
+Sender: systemtap-owner@sourceware.org
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Masami Hiramatsu <mhiramat@redhat.com>, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <rdunlap@xenotime.net>, Jim Keniston <jkenisto@us.ibm.com>, lkml <linux-kernel@vger.kernel.org>, systemtap <systemtap@sources.redhat.com>, DLE <dle-develop@lists.sourceforge.net>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Nov 17, 2009 at 01:07:03PM +0530, Sachin Sant wrote:
-> David Gibson wrote:
-> >Hrm.  Ok.  I am truly baffled.  Well, below is a revised debug patch
-> >which I hope will shed some sort of light on things.  I do also notice
-> Thanks for the debug patch. I have attached the collected information.
+On 11/16/2009 10:13 PM, Ingo Molnar wrote:
 > 
-> >from your full log that it looks like the bug is happening shortly
-> >after we start userspace.  So it may be differences in my userspace
-> >set up that meant I haven't been able to reproduce it.  I'll have
-> >another look at that when I get a chance.
-> Let me know if you need access to the system on which i can recreate the
-> bug. I can make that system available for you to debug this issue.
+> * Masami Hiramatsu <mhiramat@redhat.com> wrote:
+> 
+>> Here are the patches which update x86 instruction decoder build-time 
+>> test. As Stephen reported on linux-next, sometimes objdump decodes bad 
+>> instructions as normal. This will cause a false positive result on x86 
+>> insn decoder test. This patches update the test as below;
+>>
+>>  - Show more information with V=1
+>>  - Show in which symbol the difference places.
+>>  - Just warning instead of build failure.
+> 
+> yes, -tip testing was showing such build bugs too:
+> 
+>  Error: ffffffff8104aae3:	c5 83 3d 49 80 ee    	lds    0xffffffffee80493d(%rbx),%eax
+>  Error: objdump says 6 bytes, but insn_get_length() says 3 (attr:0)
+> 
+> it happens with older tools, such as binutils-2.17. Modern binutils 
+> (2.19) is fine.
+> 
+> We dont want to remove the build error: it helped us fix a number of 
+> real bugs in the decoder - instead please try to create a make based 
+> workaround based on binutils, to not run the test with binutils older 
+> than 2.19 or so.
+> 
 
-That's probably a good idea.  I'm still pretty baffled by this, so it
-will probably take several more rounds of debug patches to start
-getting a handle on it.
+One idea might be to instead of binutils to use NASM.  The entire NASM
+disassembler is small enough (about 10,000 lines including build tools
+and instruction database) that we could fit it in the tree in a pinch.
 
+	-hpa
 
 -- 
-David Gibson			| I'll have my music baroque, and my code
-david AT gibson.dropbear.id.au	| minimalist, thank you.  NOT _the_ _other_
-				| _way_ _around_!
-http://www.ozlabs.org/~dgibson
+H. Peter Anvin, Intel Open Source Technology Center
+I work for Intel.  I don't speak on their behalf.
