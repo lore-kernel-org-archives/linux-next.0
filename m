@@ -1,39 +1,58 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: linux-next: manual merge of the edac-amd tree with the rr tree
-Date: Thu, 19 Nov 2009 17:26:44 +1030
-Message-ID: <200911191726.44667.rusty@rustcorp.com.au>
-References: <20091119162354.8800a885.sfr@canb.auug.org.au> <20091119060648.GA15404@liondog.tnic>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Shared i2c adapter locking
+Date: Thu, 19 Nov 2009 18:05:08 +1100
+Message-ID: <20091119180508.0d5bffdc.sfr@canb.auug.org.au>
+References: <20091117193313.b750804e.sfr@canb.auug.org.au>
+	<20091117103554.03971b2f@hyperion.delvare>
+	<20091118075917.9ac0248c.sfr@canb.auug.org.au>
+	<20091118.225332.18917545.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:37415 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752385AbZKSG4m (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 19 Nov 2009 01:56:42 -0500
-In-Reply-To: <20091119060648.GA15404@liondog.tnic>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Borislav Petkov <petkovbb@googlemail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Borislav Petkov <borislav.petkov@amd.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__19_Nov_2009_18_05_08_+1100_yST2g=Iw.zrcc3HG"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1752843AbZKSHFR@vger.kernel.org>
+In-Reply-To: <20091118.225332.18917545.davem@davemloft.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: khali@linux-fr.org, bhutchings@solarflare.com, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, mika.kuoppala@nokia.com, linux-i2c@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Thu, 19 Nov 2009 04:36:48 pm Borislav Petkov wrote:
-> Hi Stephen,
-> 
-> On Thu, Nov 19, 2009 at 04:23:54PM +1100, Stephen Rothwell wrote:
-> > Today's linux-next merge of the edac-amd tree got a conflict in
-> > drivers/edac/amd64_edac.c because commit
-> > 4de1ce0c99ff838090d3b57cab8bc6eeb303dda5
-> > ("cpumask:amd64_edac-cpumask_t-remove") from the rr tree and commit
-> > 2fd9af91b92c10e58993f9eb70300fdff32698fb ("cpumask: use modern cpumask
-> > style in drivers/edac/amd64_edac.c") from the edac-amd tree are the same
-> > patch but there are further changes in the edac-amd tree.  So, Rusty, I
-> > guess you can drop that patch (unless something later in the rr tree
-> > depends on it).
-> 
-> yes, we agreed I should pick up this patch. Rusty?
+--Signature=_Thu__19_Nov_2009_18_05_08_+1100_yST2g=Iw.zrcc3HG
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks!
+Hi Dave,
 
-Rusty.
+On Wed, 18 Nov 2009 22:53:32 -0800 (PST) David Miller <davem@davemloft.net>=
+ wrote:
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 18 Nov 2009 07:59:17 +1100
+>=20
+> >> If you did and something is still not clear, please let me know. My
+> >> understanding is that the action token is in David's hands now.
+> >=20
+> > OK, I will await developments :-)
+>=20
+> I just took care of all of this.
+
+Excellent, thanks.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__19_Nov_2009_18_05_08_+1100_yST2g=Iw.zrcc3HG
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEUEARECAAYFAksE7iQACgkQjjKRsyhoI8zdtACguHmvYrF55M2wuUU9uxdJpUnx
+WR4AmKrXey/JFiDU+4WMsbKvqG928Wo=
+=BjGH
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__19_Nov_2009_18_05_08_+1100_yST2g=Iw.zrcc3HG--
