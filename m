@@ -1,37 +1,28 @@
-From: Borislav Petkov <petkovbb@googlemail.com>
-Subject: Re: linux-next: manual merge of the edac-amd tree with the rr tree
-Date: Thu, 19 Nov 2009 07:06:48 +0100
-Message-ID: <20091119060648.GA15404@liondog.tnic>
-References: <20091119162354.8800a885.sfr@canb.auug.org.au>
+From: David Miller <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>
+Subject: Re: Shared i2c adapter locking
+Date: Wed, 18 Nov 2009 22:53:32 -0800 (PST)
+Message-ID: <20091118.225332.18917545.davem@davemloft.net>
+References: <20091117193313.b750804e.sfr@canb.auug.org.au>
+	<20091117103554.03971b2f@hyperion.delvare>
+	<20091118075917.9ac0248c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-fx0-f221.google.com ([209.85.220.221]:51478 "EHLO
-	mail-fx0-f221.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751359AbZKSGGt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Nov 2009 01:06:49 -0500
-Content-Disposition: inline
-In-Reply-To: <20091119162354.8800a885.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Borislav Petkov <borislav.petkov@amd.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20091118075917.9ac0248c.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
+Cc: khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org, bhutchings-s/n/eUQHGBpZroRs9YW3xA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mika.kuoppala-xNZwKgViW5gAvxtiuMwx3w@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Date: Wed, 18 Nov 2009 07:59:17 +1100
 
-On Thu, Nov 19, 2009 at 04:23:54PM +1100, Stephen Rothwell wrote:
-> Today's linux-next merge of the edac-amd tree got a conflict in
-> drivers/edac/amd64_edac.c because commit
-> 4de1ce0c99ff838090d3b57cab8bc6eeb303dda5
-> ("cpumask:amd64_edac-cpumask_t-remove") from the rr tree and commit
-> 2fd9af91b92c10e58993f9eb70300fdff32698fb ("cpumask: use modern cpumask
-> style in drivers/edac/amd64_edac.c") from the edac-amd tree are the same
-> patch but there are further changes in the edac-amd tree.  So, Rusty, I
-> guess you can drop that patch (unless something later in the rr tree
-> depends on it).
+>> If you did and something is still not clear, please let me know. My
+>> understanding is that the action token is in David's hands now.
+> 
+> OK, I will await developments :-)
 
-yes, we agreed I should pick up this patch. Rusty?
+I just took care of all of this.
 
--- 
-Regards/Gruss,
-    Boris.
+Thanks.
