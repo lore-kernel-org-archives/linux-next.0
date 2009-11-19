@@ -1,49 +1,50 @@
-From: Shreyas Bhatewara <sbhatewara@vmware.com>
-Subject: RE: linux-next: net tree build failure
-Date: Thu, 19 Nov 2009 02:51:55 -0800
-Message-ID: <89E2752CFA8EC044846EB8499819134101737DBD7C@EXCH-MBX-4.vmware.com>
-References: <20091118165145.d0c3114b.sfr@canb.auug.org.au>,<20091117.230530.108140449.davem@davemloft.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: microblaze tree build failure
+Date: Fri, 20 Nov 2009 09:56:22 +1100
+Message-ID: <20091120095622.5fefb9fa.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754424AbZKSKx2@vger.kernel.org>
-In-Reply-To: <20091117.230530.108140449.davem@davemloft.net>
-Content-Language: en-US
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__20_Nov_2009_09_56_22_+1100_9JX._Pq4P8Ydxyrl"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1757903AbZKSW40@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Michal Simek <michal.simek@petalogix.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nathan Fontenot <nfont@austin.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
-________________________________________
-From: David Miller [davem@davemloft.net]
-Sent: Tuesday, November 17, 2009 11:05 PM
-To: sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Shreyas Bhatewara
-Subject: Re: linux-next: net tree build failure
+--Signature=_Fri__20_Nov_2009_09_56_22_+1100_9JX._Pq4P8Ydxyrl
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 18 Nov 2009 16:51:45 +1100
+Hi Michal,
 
-> drivers/net/vmxnet3/vmxnet3_drv.c: In function 'vmxnet3_prepare_tso':
-> drivers/net/vmxnet3/vmxnet3_drv.c:826: error: implicit declaration of function 'csum_ipv6_magic'
->
-> Revealed by commit 115924b6bdc7cc6bf7da5b933b09281e1f4e17a9 ("net:
-> Getting rid of the x86 dependency to built vmxnet3") which allowed this
-> driver to be built on PowerPC at all.
+Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 
-Enabling on more platforms helps find problems like this :-)
+arch/powerpc/platforms/built-in.o: In function `.ofdt_write':
+reconfig.c:(.text+0xca08): undefined reference to `.of_attach_node'
+arch/powerpc/platforms/built-in.o: In function `.do_device_node':
+vio.c:(.text+0x1be2c): undefined reference to `.of_attach_node'
 
-> Subject: [PATCH] net: using csum_ipv6_magic requires including net/ip6_checksum.h
->
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Caused by commit 5d0c1c076548e1f8d590a2f70f281b4eb7b3aeb2 ("Merge
+of_attach_node") which I have reverted for today.  That patch is missing
+an update to drivers/of/Makefile at least ... and probably some other
+stuff as well.
 
-Applied, thanks!
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
+--Signature=_Fri__20_Nov_2009_09_56_22_+1100_9JX._Pq4P8Ydxyrl
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
+iEYEARECAAYFAksFzRYACgkQjjKRsyhoI8xy5ACgoFibWLxu7BC5zAuIZm2A38z4
+l34AmwUnRamiHUvxbt7j1Z1o2+LvAK8a
+=UHlP
+-----END PGP SIGNATURE-----
 
-Thanks Stephen,
-
-I cross-compiled the patched kernel for sparc. Didn't do it for PowerPC :(
-
-->Shreyas
+--Signature=_Fri__20_Nov_2009_09_56_22_+1100_9JX._Pq4P8Ydxyrl--
