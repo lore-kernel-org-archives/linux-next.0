@@ -1,299 +1,78 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for November 19
-Date: Thu, 19 Nov 2009 18:44:10 +1100
-Message-ID: <20091119184410.617f1c0f.sfr@canb.auug.org.au>
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: Re: [-next Nov 17] s390 build
+ break(arch/s390/kernel/compat_wrapper.S)
+Date: Thu, 19 Nov 2009 09:54:22 +0100
+Message-ID: <20091119095422.44e16a16@mschwide.boeblingen.de.ibm.com>
+References: <20091117195309.6cc3ead0.sfr@canb.auug.org.au>
+	<4B0291BB.3090005@in.ibm.com>
+	<20091117125201.GB5124@osiris.boeblingen.de.ibm.com>
+	<1258465241.2876.29.camel@dhcp231-106.rdu.redhat.com>
+	<20091117135525.GF5124@osiris.boeblingen.de.ibm.com>
+	<1258471436.2876.34.camel@dhcp231-106.rdu.redhat.com>
+	<20091118070418.GA4392@osiris.boeblingen.de.ibm.com>
+	<1258560177.6446.19.camel@dhcp231-106.rdu.redhat.com>
+	<20091118183400.0cd6b177@mschwide.boeblingen.de.ibm.com>
+	<20091118184156.GB3973@osiris.boeblingen.de.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__19_Nov_2009_18_44_10_+1100_EaH+4F7M5=Pl=Mhl"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58422 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752864AbZKSHoL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 19 Nov 2009 02:44:11 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
-
---Signature=_Thu__19_Nov_2009_18_44_10_+1100_EaH+4F7M5=Pl=Mhl
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arch-owner@vger.kernel.org>
+In-Reply-To: <20091118184156.GB3973@osiris.boeblingen.de.ibm.com>
+Sender: linux-arch-owner@vger.kernel.org
+To: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Eric Paris <eparis@redhat.com>, Sachin Sant <sachinp@in.ibm.com>, linux-s390@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, linux-arch@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+On Wed, 18 Nov 2009 19:41:56 +0100
+Heiko Carstens <heiko.carstens@de.ibm.com> wrote:
 
-Changes since 20091118:
+> On Wed, Nov 18, 2009 at 06:34:00PM +0100, Martin Schwidefsky wrote:
+> > used for parameter passing. 64 bit values are passed as registers pairs
+> > with the first register an even numbered register. The effect of that
+> > rule is that parameter registers may be skipped or that the whole 64 bit
+> > value is passed on the stack. Examples:
+> 
+> Erm, did I miss something? The 32 bit ABI doesn't say anything about
+> even/odd register pairs for 64 bit values. Also gcc doesn't generate
+> such code:
 
-The net tree lost its build failure.
+Odd, I can remember that there has been a rule like that. It is indeed
+not in the ABI, seems like we dropped it/never added it. There are quite
+a few 32 bit instruction that operate on 64 bit values in even/odd
+registers which makes it beneficial to pass 64 bit values in a way that
+they already are located in even/odd and not in odd/even registers. 
 
-The sound tree lost its conflicts.
+> > fn(int a, long long b, int c)
+> > a is passed in %r2, b is passed in %r4/%r5, c is passed in %r6, %r3 is
+> > skipped.
+> 
+> extern void fn(int a, long long b, int c);
+> 
+> void bla(void)
+> {
+> 	fn(0, 1, 2);
+> }
+> 
+> 00000000 <bla>:
+>    0:   90 ef f0 38             stm     %r14,%r15,56(%r15)
+>    4:   a7 fa ff a0             ahi     %r15,-96
+>    8:   a7 28 00 00             lhi     %r2,0
+>    c:   a7 38 00 00             lhi     %r3,0
+>   10:   a7 48 00 01             lhi     %r4,1
+>   14:   a7 58 00 02             lhi     %r5,2
+>   18:   c0 e5 00 00 00 00       brasl   %r14,18 <bla+0x18>
+>   1e:   98 ef f0 98             lm      %r14,%r15,152(%r15)
+>   22:   07 fe                   br      %r14
+> 
+> Not that it really matters, since other archs enforce the rule anyway.
 
-The cpufreq tree lost its conflicts.
+Perhaps that is what confused me. Anyway, the thing to remember here is
+that passing a long long as the last parameter which would end up in
+%r6/%r7 requires a system call wrapper for the standard 32 bit system
+call for a 32 bit kernel. So please don't do that.
 
-The input tree gained a conflict against the omap tree.
+-- 
+blue skies,
+   Martin.
 
-The edac-amd tree gained a conflict against the rr tree.
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
-and sparc64 defconfig. These builds also have
-CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
-CONFIG_DEBUG_INFO disabled when necessary.
-
-Below is a summary of the state of the merge.
-
-We are up to 151 trees (counting Linus' and 22 trees of patches pending for
-Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging fixes/fixes
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/master
-Merging quilt/driver-core.current
-Merging quilt/tty.current
-Merging quilt/usb.current
-Merging quilt/staging.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging ide-curent/master
-Merging dwmw2/master
-Merging arm/devel
-Merging davinci/davinci-next
-Merging msm/for-next
-Merging omap/for-next
-Merging pxa/for-next
-Merging avr32/avr32-arch
-CONFLICT (content): Merge conflict in arch/avr32/mach-at32ap/include/mach/c=
-pu.h
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-CONFLICT (content): Merge conflict in drivers/rtc/Kconfig
-Merging m68knommu/for-next
-Merging microblaze/next
-Merging mips/mips-for-linux-next
-Merging parisc/next
-Merging powerpc/next
-Merging 4xx/next
-Merging 52xx-and-virtex/next
-Merging galak/next
-Merging s390/features
-Merging sh/master
-Merging sparc/master
-Merging xtensa/master
-Merging ceph/for-next
-Merging cifs/master
-Merging configfs/linux-next
-Merging ecryptfs/next
-Merging ext3/for_next
-Merging ext4/next
-Merging fatfs/master
-Merging fuse/for-next
-Merging gfs2/master
-Merging jfs/next
-Merging nfs/linux-next
-Merging nfsd/nfsd-next
-Merging nilfs2/for-next
-Merging ocfs2/linux-next
-Merging squashfs/master
-Merging udf/for_next
-Merging v9fs/for-next
-Merging ubifs/linux-next
-Merging xfs/master
-Merging reiserfs-bkl/reiserfs/kill-bkl
-Merging vfs/for-next
-Merging pci/linux-next
-Merging hid/for-next
-Merging quilt/i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-CONFLICT (content): Merge conflict in drivers/media/common/tuners/tda18271-=
-fe.c
-Merging kbuild/master
-Merging kconfig/for-next
-Merging ide/master
-Merging libata/NEXT
-Merging infiniband/for-next
-Merging acpi/test
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/linux-next
-Merging dlm/next
-Merging scsi/master
-Merging async_tx/next
-Merging net/master
-CONFLICT (delete/modify): drivers/net/sfc/sfe4001.c deleted in net/master a=
-nd modified in HEAD. Version HEAD of drivers/net/sfc/sfe4001.c left in tree.
-CONFLICT (content): Merge conflict in drivers/net/wireless/libertas/cmd.c
-CONFLICT (content): Merge conflict in drivers/staging/Kconfig
-CONFLICT (content): Merge conflict in drivers/staging/Makefile
-CONFLICT (content): Merge conflict in drivers/staging/rtl8187se/Kconfig
-CONFLICT (content): Merge conflict in drivers/staging/rtl8192e/Kconfig
-$ git rm -f drivers/net/sfc/sfe4001.c
-Applying: net: merge fixup for drivers/net/sfc/falcon_boards.c
-Merging wireless/master
-Merging mtd/master
-Merging crypto/master
-Merging sound/for-next
-Merging cpufreq/next
-Merging quilt/rr
-Applying: modpost: autoconf.h has moved to include/generated
-Merging mmc/next
-Merging tmio-mmc/linux-next
-Merging input/next
-CONFLICT (content): Merge conflict in arch/arm/mach-omap2/board-rx51-periph=
-erals.c
-Merging lsm/for-next
-Merging block/for-next
-Merging quilt/device-mapper
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-CONFLICT (content): Merge conflict in drivers/mtd/maps/pcmciamtd.c
-CONFLICT (content): Merge conflict in drivers/net/wireless/ray_cs.c
-CONFLICT (content): Merge conflict in drivers/pcmcia/Makefile
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging voltage/for-next
-CONFLICT (content): Merge conflict in drivers/mfd/Kconfig
-CONFLICT (content): Merge conflict in drivers/mfd/Makefile
-Merging security-testing/next
-CONFLICT (content): Merge conflict in Documentation/dontdiff
-Merging lblnet/master
-Merging agp/agp-next
-Merging uwb/for-upstream
-Merging watchdog/master
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-Merging audit/for-next
-Merging quilt/aoe
-Merging suspend/linux-next
-Merging bluetooth/master
-Merging fsnotify/for-next
-CONFLICT (content): Merge conflict in arch/x86/ia32/ia32entry.S
-CONFLICT (content): Merge conflict in arch/x86/include/asm/unistd_32.h
-CONFLICT (content): Merge conflict in arch/x86/include/asm/unistd_64.h
-CONFLICT (content): Merge conflict in arch/x86/kernel/syscall_table_32.S
-CONFLICT (content): Merge conflict in fs/afs/write.c
-CONFLICT (content): Merge conflict in fs/ubifs/file.c
-CONFLICT (content): Merge conflict in include/asm-generic/fcntl.h
-CONFLICT (content): Merge conflict in net/socket.c
-Merging irda/for-next
-Merging hwlat/for-linus
-CONFLICT (content): Merge conflict in drivers/misc/Makefile
-Merging drbd/for-jens
-Merging catalin/for-next
-Merging alacrity/linux-next
-CONFLICT (content): Merge conflict in drivers/net/Kconfig
-CONFLICT (content): Merge conflict in include/linux/Kbuild
-CONFLICT (content): Merge conflict in lib/Kconfig
-Merging i7core_edac/linux_next
-Applying: i7core_edac: do not export static functions
-Merging devicetree/next-devicetree
-Merging limits/writable_limits
-Merging omap_dss2/for-next
-Merging tip/auto-latest
-CONFLICT (content): Merge conflict in arch/x86/kernel/kgdb.c
-CONFLICT (content): Merge conflict in kernel/irq/chip.c
-Merging edac-amd/for-next
-CONFLICT (content): Merge conflict in drivers/edac/amd64_edac.c
-Merging oprofile/for-next
-Merging percpu/for-next
-CONFLICT (content): Merge conflict in arch/powerpc/platforms/pseries/hvCall=
-.S
-CONFLICT (content): Merge conflict in arch/x86/kvm/svm.c
-CONFLICT (content): Merge conflict in kernel/softlockup.c
-Applying: percpu: merge fixup for variable renaming
-Merging workqueues/for-next
-Merging sfi/sfi-test
-Merging asm-generic/next
-Merging hwpoison/hwpoison
-Merging sysctl/master
-CONFLICT (content): Merge conflict in net/ipv6/addrconf.c
-Merging quilt/driver-core
-Merging quilt/tty
-Merging quilt/usb
-Merging quilt/staging
-CONFLICT (content): Merge conflict in drivers/staging/Kconfig
-CONFLICT (content): Merge conflict in drivers/staging/Makefile
-CONFLICT (content): Merge conflict in drivers/staging/comedi/drivers/cb_das=
-16_cs.c
-CONFLICT (content): Merge conflict in drivers/staging/comedi/drivers/ni_lab=
-pc_cs.c
-CONFLICT (content): Merge conflict in drivers/staging/comedi/drivers/ni_mio=
-_cs.c
-Merging scsi-post-merge/master
-
---Signature=_Thu__19_Nov_2009_18_44_10_+1100_EaH+4F7M5=Pl=Mhl
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAksE90oACgkQjjKRsyhoI8xgygCeOw1a6GxoYd6kslgL1wAt1yOG
-6ywAn1W3ygnAefGmeFIVTtAntKwJFbAu
-=1bLC
------END PGP SIGNATURE-----
-
---Signature=_Thu__19_Nov_2009_18_44_10_+1100_EaH+4F7M5=Pl=Mhl--
+"Reality continues to ruin my life." - Calvin.
