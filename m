@@ -1,61 +1,179 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: Re: [-next Nov 17] s390 build
- break(arch/s390/kernel/compat_wrapper.S)
-Date: Wed, 18 Nov 2009 19:41:56 +0100
-Message-ID: <20091118184156.GB3973@osiris.boeblingen.de.ibm.com>
-References: <20091117195309.6cc3ead0.sfr@canb.auug.org.au>
- <4B0291BB.3090005@in.ibm.com>
- <20091117125201.GB5124@osiris.boeblingen.de.ibm.com>
- <1258465241.2876.29.camel@dhcp231-106.rdu.redhat.com>
- <20091117135525.GF5124@osiris.boeblingen.de.ibm.com>
- <1258471436.2876.34.camel@dhcp231-106.rdu.redhat.com>
- <20091118070418.GA4392@osiris.boeblingen.de.ibm.com>
- <1258560177.6446.19.camel@dhcp231-106.rdu.redhat.com>
- <20091118183400.0cd6b177@mschwide.boeblingen.de.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the input tree with the omap tree
+Date: Thu, 19 Nov 2009 13:12:16 +1100
+Message-ID: <20091119131216.da16845c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mtagate7.uk.ibm.com ([195.212.29.140]:51083 "EHLO
-	mtagate7.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754776AbZKRSmR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 18 Nov 2009 13:42:17 -0500
-Content-Disposition: inline
-In-Reply-To: <20091118183400.0cd6b177@mschwide.boeblingen.de.ibm.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:39854 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756132AbZKSCMN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 18 Nov 2009 21:12:13 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: Eric Paris <eparis@redhat.com>, Sachin Sant <sachinp@in.ibm.com>, linux-s390@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, linux-arch@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kalle Valo <kalle.valo@nokia.com>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org, Jani Nikula <ext-jani.1.nikula@nokia.com>
 
-On Wed, Nov 18, 2009 at 06:34:00PM +0100, Martin Schwidefsky wrote:
-> used for parameter passing. 64 bit values are passed as registers pairs
-> with the first register an even numbered register. The effect of that
-> rule is that parameter registers may be skipped or that the whole 64 bit
-> value is passed on the stack. Examples:
+Hi Dmitry,
 
-Erm, did I miss something? The 32 bit ABI doesn't say anything about
-even/odd register pairs for 64 bit values. Also gcc doesn't generate
-such code:
+Today's linux-next merge of the input tree got a conflict in
+arch/arm/mach-omap2/board-rx51-peripherals.c between commit
+ebff0472f451a07fae9f4e72bdc2af4c52ebb682 ("omap3: rx51: Add wl1251 wlan
+driver support") from the omap tree and commit
+5018461a887d58f4601207deeebb7c352c2da20a ("ARM OMAP3: RX-51 board - add
+initialization of gpio keys") from the input tree.
 
-> fn(int a, long long b, int c)
-> a is passed in %r2, b is passed in %r4/%r5, c is passed in %r6, %r3 is
-> skipped.
+Just overlapping additions.  I fixed it up (see below) and can carry the
+fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-extern void fn(int a, long long b, int c);
-
-void bla(void)
-{
-	fn(0, 1, 2);
-}
-
-00000000 <bla>:
-   0:   90 ef f0 38             stm     %r14,%r15,56(%r15)
-   4:   a7 fa ff a0             ahi     %r15,-96
-   8:   a7 28 00 00             lhi     %r2,0
-   c:   a7 38 00 00             lhi     %r3,0
-  10:   a7 48 00 01             lhi     %r4,1
-  14:   a7 58 00 02             lhi     %r5,2
-  18:   c0 e5 00 00 00 00       brasl   %r14,18 <bla+0x18>
-  1e:   98 ef f0 98             lm      %r14,%r15,152(%r15)
-  22:   07 fe                   br      %r14
-
-Not that it really matters, since other archs enforce the rule anyway.
+diff --cc arch/arm/mach-omap2/board-rx51-peripherals.c
+index caaeadc,a5c02a4..0000000
+--- a/arch/arm/mach-omap2/board-rx51-peripherals.c
++++ b/arch/arm/mach-omap2/board-rx51-peripherals.c
+@@@ -21,53 -20,103 +21,134 @@@
+  #include <linux/delay.h>
+  #include <linux/regulator/machine.h>
+  #include <linux/gpio.h>
++ #include <linux/gpio_keys.h>
+  #include <linux/mmc/host.h>
+  
+ -#include <mach/mcspi.h>
+ -#include <mach/mux.h>
+ -#include <mach/board.h>
+ -#include <mach/common.h>
+ -#include <mach/dma.h>
+ -#include <mach/gpmc.h>
+ -#include <mach/onenand.h>
+ -#include <mach/gpmc-smc91x.h>
+ +#include <plat/mcspi.h>
+ +#include <plat/mux.h>
+ +#include <plat/board.h>
+ +#include <plat/common.h>
+ +#include <plat/dma.h>
+ +#include <plat/gpmc.h>
+ +#include <plat/onenand.h>
+ +#include <plat/gpmc-smc91x.h>
+  
+  #include "mmc-twl4030.h"
+  
+  #define SYSTEM_REV_B_USES_VAUX3	0x1699
+  #define SYSTEM_REV_S_USES_VAUX3 0x8
+  
+ +#define RX51_WL1251_POWER_GPIO		87
+ +#define RX51_WL1251_IRQ_GPIO		42
+ +
+ +static void rx51_wl1251_set_power(bool enable);
+ +
+ +static struct wl12xx_platform_data wl1251_pdata = {
+ +	.set_power = rx51_wl1251_set_power,
+ +};
+ +
+ +static struct omap2_mcspi_device_config wl1251_mcspi_config = {
+ +	.turbo_mode	= 0,
+ +	.single_channel	= 1,
+ +};
+ +
+ +/* list all spi devices here */
+ +enum {
+ +	RX51_SPI_WL1251,
+ +};
+ +
+ +static struct spi_board_info rx51_peripherals_spi_board_info[] __initdata = {
+ +	[RX51_SPI_WL1251] = {
+ +		.modalias		= "wl1251",
+ +		.bus_num		= 4,
+ +		.chip_select		= 0,
+ +		.max_speed_hz   	= 48000000,
+ +		.mode                   = SPI_MODE_2,
+ +		.controller_data	= &wl1251_mcspi_config,
+ +		.platform_data		= &wl1251_pdata,
+ +	},
+ +};
+ +
++ #if defined(CONFIG_KEYBOARD_GPIO) || defined(CONFIG_KEYBOARD_GPIO_MODULE)
++ 
++ #define RX51_GPIO_CAMERA_LENS_COVER	110
++ #define RX51_GPIO_CAMERA_FOCUS		68
++ #define RX51_GPIO_CAMERA_CAPTURE	69
++ #define RX51_GPIO_KEYPAD_SLIDE		71
++ #define RX51_GPIO_LOCK_BUTTON		113
++ #define RX51_GPIO_PROXIMITY		89
++ 
++ #define RX51_GPIO_DEBOUNCE_TIMEOUT	10
++ 
++ static struct gpio_keys_button rx51_gpio_keys[] = {
++ 	{
++ 		.desc			= "Camera Lens Cover",
++ 		.type			= EV_SW,
++ 		.code			= SW_CAMERA_LENS_COVER,
++ 		.gpio			= RX51_GPIO_CAMERA_LENS_COVER,
++ 		.active_low		= 1,
++ 		.debounce_interval	= RX51_GPIO_DEBOUNCE_TIMEOUT,
++ 	}, {
++ 		.desc			= "Camera Focus",
++ 		.type			= EV_KEY,
++ 		.code			= KEY_CAMERA_FOCUS,
++ 		.gpio			= RX51_GPIO_CAMERA_FOCUS,
++ 		.active_low		= 1,
++ 		.debounce_interval	= RX51_GPIO_DEBOUNCE_TIMEOUT,
++ 	}, {
++ 		.desc			= "Camera Capture",
++ 		.type			= EV_KEY,
++ 		.code			= KEY_CAMERA,
++ 		.gpio			= RX51_GPIO_CAMERA_CAPTURE,
++ 		.active_low		= 1,
++ 		.debounce_interval	= RX51_GPIO_DEBOUNCE_TIMEOUT,
++ 	}, {
++ 		.desc			= "Lock Button",
++ 		.type			= EV_KEY,
++ 		.code			= KEY_SCREENLOCK,
++ 		.gpio			= RX51_GPIO_LOCK_BUTTON,
++ 		.active_low		= 1,
++ 		.debounce_interval	= RX51_GPIO_DEBOUNCE_TIMEOUT,
++ 	}, {
++ 		.desc			= "Keypad Slide",
++ 		.type			= EV_SW,
++ 		.code			= SW_KEYPAD_SLIDE,
++ 		.gpio			= RX51_GPIO_KEYPAD_SLIDE,
++ 		.active_low		= 1,
++ 		.debounce_interval	= RX51_GPIO_DEBOUNCE_TIMEOUT,
++ 	}, {
++ 		.desc			= "Proximity Sensor",
++ 		.type			= EV_SW,
++ 		.code			= SW_FRONT_PROXIMITY,
++ 		.gpio			= RX51_GPIO_PROXIMITY,
++ 		.active_low		= 0,
++ 		.debounce_interval	= RX51_GPIO_DEBOUNCE_TIMEOUT,
++ 	}
++ };
++ 
++ static struct gpio_keys_platform_data rx51_gpio_keys_data = {
++ 	.buttons	= rx51_gpio_keys,
++ 	.nbuttons	= ARRAY_SIZE(rx51_gpio_keys),
++ };
++ 
++ static struct platform_device rx51_gpio_keys_device = {
++ 	.name	= "gpio-keys",
++ 	.id	= -1,
++ 	.dev	= {
++ 		.platform_data	= &rx51_gpio_keys_data,
++ 	},
++ };
++ 
++ static void __init rx51_add_gpio_keys(void)
++ {
++ 	platform_device_register(&rx51_gpio_keys_device);
++ }
++ #else
++ static void __init rx51_add_gpio_keys(void)
++ {
++ }
++ #endif /* CONFIG_KEYBOARD_GPIO || CONFIG_KEYBOARD_GPIO_MODULE */
++ 
+  static int board_keymap[] = {
+  	KEY(0, 0, KEY_Q),
+  	KEY(0, 1, KEY_O),
