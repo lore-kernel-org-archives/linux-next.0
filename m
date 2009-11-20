@@ -1,48 +1,29 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: infiniband tree build failure
-Date: Fri, 20 Nov 2009 11:03:42 +1100
-Message-ID: <20091120110342.5128b8f8.sfr@canb.auug.org.au>
+From: Roland Dreier <rdreier@cisco.com>
+Subject: Re: linux-next: infiniband tree build failure
+Date: Thu, 19 Nov 2009 16:19:29 -0800
+Message-ID: <ada1vju6oa6.fsf@roland-alpha.cisco.com>
+References: <20091120110342.5128b8f8.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__20_Nov_2009_11_03_42_+1100_78ZqVIz7ja4xNeJK"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44618 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757642AbZKTADn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 19 Nov 2009 19:03:43 -0500
+Received: from sj-iport-3.cisco.com ([171.71.176.72]:14072 "EHLO
+	sj-iport-3.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757772AbZKTATY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Nov 2009 19:19:24 -0500
+In-Reply-To: <20091120110342.5128b8f8.sfr@canb.auug.org.au> (Stephen
+	Rothwell's message of "Fri, 20 Nov 2009 11:03:42 +1100")
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Roland Dreier <rdreier@cisco.com>, general@lists.openfabrics.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, sean.hefty@intel.com
+Cc: general@lists.openfabrics.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__20_Nov_2009_11_03_42_+1100_78ZqVIz7ja4xNeJK
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+ > Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+ > 
+ > ERROR: ".__ipv6_addr_type" [drivers/infiniband/core/rdma_cm.ko] undefined!
+ > 
+ > I have used the version of the infiniband tree from next-20091119 for
+ > today.
 
-Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-
-ERROR: ".__ipv6_addr_type" [drivers/infiniband/core/rdma_cm.ko] undefined!
-
-I have used the version of the infiniband tree from next-20091119 for
-today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__20_Nov_2009_11_03_42_+1100_78ZqVIz7ja4xNeJK
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAksF3N4ACgkQjjKRsyhoI8wkDwCgt095Dt0ikHbRwEoRPGzGz+uV
-QCAAn3xzbJf9q8Jc42d6fcqAlGF2Y/QK
-=Jclc
------END PGP SIGNATURE-----
-
---Signature=_Fri__20_Nov_2009_11_03_42_+1100_78ZqVIz7ja4xNeJK--
+Sorry, will track it down.  Sean this probably came from your patches,
+any idea off the top of your head?
