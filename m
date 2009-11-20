@@ -1,43 +1,52 @@
-From: Nathan Fontenot <nfont@austin.ibm.com>
-Subject: Re: linux-next: microblaze tree build failure
-Date: Fri, 20 Nov 2009 10:31:54 -0600
-Message-ID: <4B06C47A.6030403@austin.ibm.com>
-References: <20091120095622.5fefb9fa.sfr@canb.auug.org.au>
+From: Masami Hiramatsu <mhiramat@redhat.com>
+Subject: [PATCH -tip 0/2] x86 insn decoder test checking objdump version
+Date: Fri, 20 Nov 2009 12:13:01 -0500
+Message-ID: <20091120171301.6715.24229.stgit@dhcp-100-2-132.bos.redhat.com>
+References: <20091117061352.GE30852@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e39.co.us.ibm.com ([32.97.110.160]:51034 "EHLO
-	e39.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751880AbZKTQcN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Nov 2009 11:32:13 -0500
-In-Reply-To: <20091120095622.5fefb9fa.sfr@canb.auug.org.au>
+Received: from mx1.redhat.com ([209.132.183.28]:62642 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751527AbZKTRKw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 20 Nov 2009 12:10:52 -0500
+In-Reply-To: <20091117061352.GE30852@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Michal Simek <michal.simek@petalogix.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <rdunlap@xenotime.net>, Jim Keniston <jkenisto@us.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, systemtap <systemtap@sources.redhat.com>, DLE <dle-develop@lists.sourceforge.net>
 
-Yes, this should be rejected.  I have submitted an updated patch to
-linuxppc-dev and devicetree-discuss.
 
-I'm not sure how this patch git picked up, I didn't think it did.
-Looking at the coimmit it appears that only patch 1/4 of the patchset
-was picked up.
+Hi Ingo,
 
--Nathan Fontenot
+Ingo Molnar wrote:
+> We dont want to remove the build error: it helped us fix a number of
+> real bugs in the decoder - instead please try to create a make based
+> workaround based on binutils, to not run the test with binutils older
+> than 2.19 or so.
 
-Stephen Rothwell wrote:
-> Hi Michal,
-> 
-> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-> 
-> arch/powerpc/platforms/built-in.o: In function `.ofdt_write':
-> reconfig.c:(.text+0xca08): undefined reference to `.of_attach_node'
-> arch/powerpc/platforms/built-in.o: In function `.do_device_node':
-> vio.c:(.text+0x1be2c): undefined reference to `.of_attach_node'
-> 
-> Caused by commit 5d0c1c076548e1f8d590a2f70f281b4eb7b3aeb2 ("Merge
-> of_attach_node") which I have reverted for today.  That patch is missing
-> an update to drivers/of/Makefile at least ... and probably some other
-> stuff as well.
-> 
+Agreed, this patch checks objdump version and skip the test if it is older
+than 2.19.
+
+Thank you,
+
+---
+
+Masami Hiramatsu (2):
+      x86: insn decoder test checks objdump version
+      [BUGFIX] x86: Fix insn decoder test typos
+
+
+ arch/x86/tools/Makefile       |   15 ++++++++++++---
+ arch/x86/tools/chkobjdump.awk |   23 +++++++++++++++++++++++
+ 2 files changed, 35 insertions(+), 3 deletions(-)
+ create mode 100644 arch/x86/tools/chkobjdump.awk
+
+-- 
+Masami Hiramatsu
+
+Software Engineer
+Hitachi Computer Products (America), Inc.
+Software Solutions Division
+e-mail: mhiramat@redhat.com
