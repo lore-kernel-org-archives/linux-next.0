@@ -1,41 +1,33 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: linux-next: microblaze tree build failure
-Date: Fri, 20 Nov 2009 13:23:39 -0700
-Message-ID: <fa686aa40911201223t1d82f43an3f52fa2599088d3b@mail.gmail.com>
-References: <20091120095622.5fefb9fa.sfr@canb.auug.org.au>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: linux-next: manual merge of the input tree with the omap tree
+Date: Fri, 20 Nov 2009 12:53:49 -0800
+Message-ID: <20091120205345.GA5764@atomide.com>
+References: <20091119131216.da16845c.sfr@canb.auug.org.au>
+ <20091119025329.GV29266@atomide.com>
+ <20091120085858.GE3009@core.coreip.homeip.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755869AbZKTUX4@vger.kernel.org>
-In-Reply-To: <20091120095622.5fefb9fa.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Michal Simek <michal.simek@petalogix.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nathan Fontenot <nfont@austin.ibm.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mho-02-ewr.mailhop.org ([204.13.248.72]:51300 "EHLO
+	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755721AbZKTUyh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Nov 2009 15:54:37 -0500
+Content-Disposition: inline
+In-Reply-To: <20091120085858.GE3009@core.coreip.homeip.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kalle Valo <kalle.valo@nokia.com>, linux-omap@vger.kernel.org, Jani Nikula <ext-jani.1.nikula@nokia.com>
 
-On Thu, Nov 19, 2009 at 3:56 PM, Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> Hi Michal,
->
-> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
->
-> arch/powerpc/platforms/built-in.o: In function `.ofdt_write':
-> reconfig.c:(.text+0xca08): undefined reference to `.of_attach_node'
-> arch/powerpc/platforms/built-in.o: In function `.do_device_node':
-> vio.c:(.text+0x1be2c): undefined reference to `.of_attach_node'
->
-> Caused by commit 5d0c1c076548e1f8d590a2f70f281b4eb7b3aeb2 ("Merge
-> of_attach_node") which I have reverted for today. =A0That patch is mi=
-ssing
-> an update to drivers/of/Makefile at least ... and probably some other
-> stuff as well.
+* Dmitry Torokhov <dmitry.torokhov@gmail.com> [091120 00:59]:
+> On Wed, Nov 18, 2009 at 06:53:30PM -0800, Tony Lindgren wrote:
+> > 
+> > Dmitry, could you please drop 5018461a887d58f4601207deeebb7c352c2da20a from
+> > your tree now?
+> > 
+> 
+> Done.
 
-=2E.. and the OF changes shouldn't be going through the microblaze tree=
-=2E
- This looks like it was an accident.  Michal?
+Thanks!
 
-g.
-
---=20
-Grant Likely, B.Sc., P.Eng.
-Secret Lab Technologies Ltd.
+Tony
