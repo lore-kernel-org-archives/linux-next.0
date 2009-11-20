@@ -1,89 +1,41 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for November 20 (snd_jack)
-Date: Fri, 20 Nov 2009 11:34:41 -0800
-Message-ID: <20091120113441.3ed5d339.randy.dunlap@oracle.com>
-References: <20091120230513.0d2e5cb5.sfr@canb.auug.org.au>
-	<20091120104030.01972d33.randy.dunlap@oracle.com>
-	<s5hpr7d80to.wl%tiwai@suse.de>
-	<s5hlji180kg.wl%tiwai@suse.de>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: linux-next: microblaze tree build failure
+Date: Fri, 20 Nov 2009 13:23:39 -0700
+Message-ID: <fa686aa40911201223t1d82f43an3f52fa2599088d3b@mail.gmail.com>
+References: <20091120095622.5fefb9fa.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet11.oracle.com ([148.87.113.123]:51183 "EHLO
-	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751652AbZKTTgQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 20 Nov 2009 14:36:16 -0500
-In-Reply-To: <s5hlji180kg.wl%tiwai@suse.de>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jaroslav Kysela <perex@perex.cz>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755869AbZKTUX4@vger.kernel.org>
+In-Reply-To: <20091120095622.5fefb9fa.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Michal Simek <michal.simek@petalogix.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nathan Fontenot <nfont@austin.ibm.com>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, 20 Nov 2009 20:21:03 +0100 Takashi Iwai wrote:
+On Thu, Nov 19, 2009 at 3:56 PM, Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> Hi Michal,
+>
+> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+>
+> arch/powerpc/platforms/built-in.o: In function `.ofdt_write':
+> reconfig.c:(.text+0xca08): undefined reference to `.of_attach_node'
+> arch/powerpc/platforms/built-in.o: In function `.do_device_node':
+> vio.c:(.text+0x1be2c): undefined reference to `.of_attach_node'
+>
+> Caused by commit 5d0c1c076548e1f8d590a2f70f281b4eb7b3aeb2 ("Merge
+> of_attach_node") which I have reverted for today. =A0That patch is mi=
+ssing
+> an update to drivers/of/Makefile at least ... and probably some other
+> stuff as well.
 
-> At Fri, 20 Nov 2009 20:15:31 +0100,
-> I wrote:
-> > 
-> > At Fri, 20 Nov 2009 10:40:30 -0800,
-> > Randy Dunlap wrote:
-> > > 
-> > > On Fri, 20 Nov 2009 23:05:13 +1100 Stephen Rothwell wrote:
-> > > 
-> > > > Hi all,
-> > > > 
-> > > > Changes since 20091119:
-> > > 
-> > > 
-> > > This commit in linux-next-20091120:
-> > > 
-> > > author	Mark Brown <broonie@opensource.wolfsonmicro.com>	
-> > > 	Mon, 28 Jul 2008 18:05:36 +0000 (19:05 +0100)
-> > > committer	Jaroslav Kysela <perex@perex.cz>	
-> > > 	Tue, 29 Jul 2008 19:32:06 +0000 (21:32 +0200)
-> > > commit	0d94e41abe271c86df06bcf72d24f9ca7ce771f0
-> > > 
-> > > causes build errors when:
-> > > 
-> > > CONFIG_INPUT=m
-> > > CONFIG_SND=y
-> > > CONFIG_SND_JACK=y
-> > > CONFIG_SND_SOC=m
-> > > CONFIG_SND_HDA_INTEL=m
-> > > CONFIG_SND_HDA_INPUT_JACK=y
-> > 
-> > The problem isn't the commit above (it's over a year ago!), but the
-> > recent change of hda input layer.
+=2E.. and the OF changes shouldn't be going through the microblaze tree=
+=2E
+ This looks like it was an accident.  Michal?
 
-Ack, sorry about that.
+g.
 
-> > Will take a look at later.  Thanks.
-> 
-> Does the patch below work?
-> 
-
-Yes, it does, thanks.
-
-> 
-> thanks,
-> 
-> Takashi
-> 
-> ---
-> diff --git a/sound/pci/hda/Kconfig b/sound/pci/hda/Kconfig
-> index 25ae10e..556cff9 100644
-> --- a/sound/pci/hda/Kconfig
-> +++ b/sound/pci/hda/Kconfig
-> @@ -51,7 +51,7 @@ config SND_HDA_INPUT_BEEP_MODE
->  
->  config SND_HDA_INPUT_JACK
->  	bool "Support jack plugging notification via input layer"
-> -	depends on INPUT=y || INPUT=SND_HDA_INTEL
-> +	depends on INPUT=y || INPUT=SND
->  	select SND_JACK
->  	help
->  	  Say Y here to enable the jack plugging notification via
-
-
----
-~Randy
+--=20
+Grant Likely, B.Sc., P.Eng.
+Secret Lab Technologies Ltd.
