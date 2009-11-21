@@ -1,33 +1,61 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: linux-next: omap tree misaplied patch
-Date: Fri, 20 Nov 2009 12:57:33 -0800
-Message-ID: <20091120205731.GB5764@atomide.com>
-References: <20091120130228.f3b82588.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the staging tree with the pcmcia
+ tree
+Date: Sat, 21 Nov 2009 12:34:25 +1100
+Message-ID: <20091121123425.4c34be52.sfr@canb.auug.org.au>
+References: <20091109181544.454695c0.sfr@canb.auug.org.au>
+	<20091120182903.GB4804@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-omap-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sat__21_Nov_2009_12_34_25_+1100_NkIWr.JMq7Z8PPZw"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:48654 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753554AbZKUBe2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 20 Nov 2009 20:34:28 -0500
+In-Reply-To: <20091120182903.GB4804@kroah.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dominik Brodowski <linux@dominikbrodowski.net>, Vadim Mutilin <mutilin@ispras.ru>
+
+--Signature=_Sat__21_Nov_2009_12_34_25_+1100_NkIWr.JMq7Z8PPZw
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20091120130228.f3b82588.sfr@canb.auug.org.au>
-Sender: linux-omap-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-omap@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-* Stephen Rothwell <sfr@canb.auug.org.au> [091119 18:01]:
-> Hi Tony,
-> 
-> I think commit 8552f084d80cfc191ea5affacbeffe44e8629496 ("ARM OMAP3:
-> RX-51 board - add initialization of gpio keys") has been misapplied.  It
-> has this line:
-> 
-> 	+#endif /* CONFIG_KEYBOARD_GPIO || CONFIG_KEYBOARD_GPIO_MODULE */
-> 
-> with the leading '+'.   I noticed this when merging with the input tree
-> as this made for a strange looking conflict.
+Hi Greg,
 
-Oops, my fault. Will fix ASAP.
+On Fri, 20 Nov 2009 10:29:03 -0800 Greg KH <greg@kroah.com> wrote:
+>
+> On Mon, Nov 09, 2009 at 06:15:44PM +1100, Stephen Rothwell wrote:
+> >=20
+> > I fixed it up (using the pcmcia tree version when there is a clash) and
+> > can carry the fix as necessary.
+> >=20
+> > [Greg, that staging tree commit has no SOB from its author ...]
+>=20
+> Good catch, I missed that :(
+>=20
+> I've now dropped this patch from my tree, so it should be fine now.
 
-Regards,
+OK, thanks.
 
-Tony
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
+--Signature=_Sat__21_Nov_2009_12_34_25_+1100_NkIWr.JMq7Z8PPZw
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAksHQ6EACgkQjjKRsyhoI8yphACggnOcvvGgkR683zJdgEryYUXL
+vLcAoJtMfjC1zCqd13IabC3bFByboNFd
+=N+4e
+-----END PGP SIGNATURE-----
+
+--Signature=_Sat__21_Nov_2009_12_34_25_+1100_NkIWr.JMq7Z8PPZw--
