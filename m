@@ -1,30 +1,45 @@
-From: Ralf Baechle <ralf@linux-mips.org>
+From: Michal Simek <michal.simek@petalogix.com>
 Subject: Re: linux-next: Tree for November 23
-Date: Mon, 23 Nov 2009 13:19:32 +0000
-Message-ID: <20091123131932.GA28687@linux-mips.org>
-References: <20091123185232.1423c56b.sfr@canb.auug.org.au> <4B0A8841.8090905@petalogix.com>
+Date: Mon, 23 Nov 2009 14:43:27 +0100
+Message-ID: <4B0A917F.8060000@petalogix.com>
+References: <20091123185232.1423c56b.sfr@canb.auug.org.au> <4B0A8841.8090905@petalogix.com> <20091123131932.GA28687@linux-mips.org>
+Reply-To: michal.simek@petalogix.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1757445AbZKWNTe@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <4B0A8841.8090905@petalogix.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Michal Simek <michal.simek@petalogix.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-bw0-f227.google.com ([209.85.218.227]:55285 "EHLO
+	mail-bw0-f227.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751128AbZKWNn1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Nov 2009 08:43:27 -0500
+In-Reply-To: <20091123131932.GA28687@linux-mips.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ralf Baechle <ralf@linux-mips.org>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Wu Zhangjin <wuzhangjin@gmail.com>, linux-mips@linux-mips.org
-List-Id: linux-next.vger.kernel.org
 
-On Mon, Nov 23, 2009 at 02:04:01PM +0100, Michal Simek wrote:
+Ralf Baechle wrote:
+> On Mon, Nov 23, 2009 at 02:04:01PM +0100, Michal Simek wrote:
+> 
+>>> The microblaze tree still has a build failure for which I reverted a
+>>> commit.
+>>>
+>>> The mips tree gained a conflict against the microblaze tree.
+>> It is problem which is caused one my ftrace patch. MIPS ftrace  
+>> implementation was first that's why I should solve it. It is easy to fix.
+>> I just need to know where mips/mips-for-linux-next branch is.
+> 
+> Gitweb:  http://www.linux-mips.org/git?p=upstream-sfr.git;a=summary
+> Git:     git://www.linux-mips.org/pub/scm/upstream-sfr.git
 
->> The microblaze tree still has a build failure for which I reverted a
->> commit.
->>
->> The mips tree gained a conflict against the microblaze tree.
->
-> It is problem which is caused one my ftrace patch. MIPS ftrace  
-> implementation was first that's why I should solve it. It is easy to fix.
-> I just need to know where mips/mips-for-linux-next branch is.
+Thanks,
+Michal
 
-Gitweb:  http://www.linux-mips.org/git?p=upstream-sfr.git;a=summary
-Git:     git://www.linux-mips.org/pub/scm/upstream-sfr.git
+> 
+>   Ralf 
 
-  Ralf 
+
+-- 
+Michal Simek, Ing. (M.Eng)
+PetaLogix - Linux Solutions for a Reconfigurable World
+w: www.petalogix.com p: +61-7-30090663,+42-0-721842854 f: +61-7-30090663
