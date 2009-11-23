@@ -1,55 +1,39 @@
-From: Greg KH <greg@kroah.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
 Subject: Re: linux-next: Tree for November 23
-Date: Mon, 23 Nov 2009 15:43:00 -0800
-Message-ID: <20091123234300.GA13647@kroah.com>
-References: <20091123185232.1423c56b.sfr@canb.auug.org.au>
- <20091123111510.9b0c0714.randy.dunlap@oracle.com>
- <200911240924.54675.rusty@rustcorp.com.au>
- <4B0B1507.4060202@oracle.com>
- <20091124103641.abd7bd6b.sfr@canb.auug.org.au>
- <4B0B1CCA.7070500@oracle.com>
+Date: Mon, 23 Nov 2009 15:42:10 -0800
+Message-ID: <4B0B1DD2.9000404@oracle.com>
+References: <20091123185232.1423c56b.sfr@canb.auug.org.au> <20091123111510.9b0c0714.randy.dunlap@oracle.com> <200911240924.54675.rusty@rustcorp.com.au> <20091124103318.bfcb504c.sfr@canb.auug.org.au> <20091123233843.GA13464@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:49602 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756787AbZKWXnE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 23 Nov 2009 18:43:04 -0500
-Content-Disposition: inline
-In-Reply-To: <4B0B1CCA.7070500@oracle.com>
+Received: from rcsinet11.oracle.com ([148.87.113.123]:21084 "EHLO
+	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757541AbZKWXnT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Nov 2009 18:43:19 -0500
+In-Reply-To: <20091123233843.GA13464@suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Rusty Russell <rusty@rustcorp.com.au>, gregkh@suse.de, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Greg KH <gregkh@suse.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Rusty Russell <rusty@rustcorp.com.au>, Randy Dunlap <randy.dunlap@oracle.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Mon, Nov 23, 2009 at 03:37:46PM -0800, Randy Dunlap wrote:
-> Stephen Rothwell wrote:
-> > Hi Randy,
-> > 
-> > On Mon, 23 Nov 2009 15:04:39 -0800 Randy Dunlap <randy.dunlap@oracle.com> wrote:
-> >> I decided to check on linux-next (only checked x86_64 allmodconfig),
-> >> and viola:
-> >>
-> >> CONFIG_STAGING=y
-> >> CONFIG_STAGING_EXCLUDE_BUILD=y
-> >>
-> >> That is just too helpful.  :(
-> > 
-> > The Kconfig was deliberately done so that the all{no,yes,mod}config
-> > builds don't build the staging stuff.  You need to explictly ask for it.
-> > Otherwise I would spend all my time reporting/fixing errors and warnings
-> > in linux-next.
-> > 
+Greg KH wrote:
+> On Tue, Nov 24, 2009 at 10:33:18AM +1100, Stephen Rothwell wrote:
+>> Hi Rusty,
+>>
+>> On Tue, 24 Nov 2009 09:24:54 +1030 Rusty Russell <rusty@rustcorp.com.au> wrote:
+>>>     And I guess linux-next doesn't build staging?
+>> Correct - it breaks to much and too often :-)
 > 
-> no, you should just drop it after one build error.
+> Yes, remember, it's crap, you don't want to build it :)
 
-No.  We've been through this before a while ago.  We want the staging
-tree in linux-next to deal with merge issues and to help the developers
-who are contributing to it.
+that's certainly one way to look at it, but I do spend time/effort
+trying to get it to build, then send patches that either get dropped
+or sit in a queue or ignored for a long time by their driver writer,
+so you are just reinforcing the negativism associated with staging.
 
-If you want to take it out of your automated randconfig builds because
-it causes you lots of problems, that's fine with me.
+I don't think that's what you should be doing.
 
-thanks,
 
-greg k-h
+-- 
+~Randy
