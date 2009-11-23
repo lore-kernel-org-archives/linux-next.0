@@ -1,87 +1,56 @@
 From: Samuel Ortiz <sameo@linux.intel.com>
 Subject: Re: linux-next: mfd tree build failure
-Date: Mon, 23 Nov 2009 13:26:07 +0100
-Message-ID: <20091123122606.GA3616@sortiz.org>
-References: <20091123143503.3cdf8dee.sfr@canb.auug.org.au>
+Date: Mon, 23 Nov 2009 13:29:04 +0100
+Message-ID: <20091123122903.GB3616@sortiz.org>
+References: <20091123144103.73b4d64c.sfr@canb.auug.org.au>
+ <20091123150346.e3948feb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga10.intel.com ([192.55.52.92]:44474 "EHLO
-	fmsmga102.fm.intel.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1756945AbZKWMYV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Nov 2009 07:24:21 -0500
+Received: from mga09.intel.com ([134.134.136.24]:56252 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757238AbZKWM1R (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 23 Nov 2009 07:27:17 -0500
 Content-Disposition: inline
-In-Reply-To: <20091123143503.3cdf8dee.sfr@canb.auug.org.au>
+In-Reply-To: <20091123150346.e3948feb.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Fertser <fercerpav@gmail.com>, Anton Vorontsov <avorontsov@ru.mvista.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Dmitry,
+Hi Stephen,
 
-On Mon, Nov 23, 2009 at 02:35:03PM +1100, Stephen Rothwell wrote:
+On Mon, Nov 23, 2009 at 03:03:46PM +1100, Stephen Rothwell wrote:
 > Hi Samuel,
 > 
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
+> On Mon, 23 Nov 2009 14:41:03 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Today's linux-next build (x86_64 allmodconfig) failed like this:
+> > 
+> > ERROR: "irq_to_desc" [drivers/mfd/wm831x.ko] undefined!
+> > ERROR: "handle_edge_irq" [drivers/mfd/wm831x.ko] undefined!
+> > ERROR: "set_irq_chip_and_handler" [drivers/mfd/wm831x.ko] undefined!
+> > ERROR: "set_irq_noprobe" [drivers/mfd/wm831x.ko] undefined!
+> > 
+> > Probably caused by commit 8fc686c7369173519817f0cfbb2df9a3671d5b8d ("mfd:
+> > Move WM831x to generic IRQ").  Maybe a Kconfig dependency is missing?
 > 
-> drivers/power/pcf50633-charger.c: In function 'pcf50633_mbc_get_usb_online_status':
-> drivers/power/pcf50633-charger.c:147: error: 'struct pcf50633' has no member named 'mbc_pdev'
-> 
-> Caused by commit 4c2e3bacc050f0ebf884954bb007616c162564cd ("mfd: pcf50633
-> - fix error handling during probe") from the mfd tree interacting with
-> commit c329795052aa339850a45fab649ab97a36905136 ("pcf50633: Query charger
-> status directly") from the battery tree.
-Could we split the above fix so that we get back to the:
-
-	struct platform_device *rtc_pdev;
-	struct platform_device *mbc_pdev;
-	struct platform_device *adc_pdev;
-	struct platform_device *input_pdev;
-	struct platform_device *regulator_pdev[PCF50633_NUM_REGULATORS];
-
-structure ? We can move to the index based structure after the next merge
-window. That would make my life easier in terms of tree dependencies.
-If you dont have time to do this change, I'll do it some time this week.
-
-Thanks in advance.
+> It actually looks as though set_irq_chip_and_handler (at least) is not
+> exported to modules.
+True. Mark, I think we should get those symbols exported, unless you have a
+better idea ? Having wm831x as a boolean choice from Kconfig doesnt sound too
+god to me.
 
 Cheers,
 Samuel.
 
 
-> I have applied the following merge fixup patch and can carry it as
-> necessary.
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 23 Nov 2009 14:31:43 +1100
-> Subject: [PATCH] mfd: fix pcf50633-charger.c for fallout from merge
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/power/pcf50633-charger.c |    3 ++-
->  1 files changed, 2 insertions(+), 1 deletions(-)
-> 
-> diff --git a/drivers/power/pcf50633-charger.c b/drivers/power/pcf50633-charger.c
-> index d4a3e77..4e535bb 100644
-> --- a/drivers/power/pcf50633-charger.c
-> +++ b/drivers/power/pcf50633-charger.c
-> @@ -144,7 +144,8 @@ EXPORT_SYMBOL_GPL(pcf50633_mbc_get_status);
->  
->  int pcf50633_mbc_get_usb_online_status(struct pcf50633 *pcf)
->  {
-> -	struct pcf50633_mbc *mbc  = platform_get_drvdata(pcf->mbc_pdev);
-> +	struct pcf50633_mbc *mbc =
-> +		platform_get_drvdata(pcf->pdevs[PCF50633_PDEV_ADC_IDX]);
->  
->  	if (!mbc)
->  		return 0;
-> -- 
-> 1.6.5.3
-> 
 > -- 
 > Cheers,
 > Stephen Rothwell                    sfr@canb.auug.org.au
 > http://www.canb.auug.org.au/~sfr/
+
+
 
 -- 
 Intel Open Source Technology Centre
