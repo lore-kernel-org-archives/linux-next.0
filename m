@@ -1,36 +1,30 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: mfd tree build failure
-Date: Mon, 23 Nov 2009 13:11:13 +0000
-Message-ID: <20091123131113.GE24326@rakim.wolfsonmicro.main>
-References: <20091123144103.73b4d64c.sfr@canb.auug.org.au>
- <20091123150346.e3948feb.sfr@canb.auug.org.au>
- <20091123122903.GB3616@sortiz.org>
+From: Ralf Baechle <ralf@linux-mips.org>
+Subject: Re: linux-next: Tree for November 23
+Date: Mon, 23 Nov 2009 13:19:32 +0000
+Message-ID: <20091123131932.GA28687@linux-mips.org>
+References: <20091123185232.1423c56b.sfr@canb.auug.org.au> <4B0A8841.8090905@petalogix.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:46293 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1757040AbZKWNLJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 23 Nov 2009 08:11:09 -0500
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1757445AbZKWNTe@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20091123122903.GB3616@sortiz.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <4B0A8841.8090905@petalogix.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Michal Simek <michal.simek@petalogix.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Wu Zhangjin <wuzhangjin@gmail.com>, linux-mips@linux-mips.org
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Nov 23, 2009 at 01:29:04PM +0100, Samuel Ortiz wrote:
+On Mon, Nov 23, 2009 at 02:04:01PM +0100, Michal Simek wrote:
 
-> True. Mark, I think we should get those symbols exported, unless you have a
-> better idea ? Having wm831x as a boolean choice from Kconfig doesnt sound too
-> god to me.
+>> The microblaze tree still has a build failure for which I reverted a
+>> commit.
+>>
+>> The mips tree gained a conflict against the microblaze tree.
+>
+> It is problem which is caused one my ftrace patch. MIPS ftrace  
+> implementation was first that's why I should solve it. It is easy to fix.
+> I just need to know where mips/mips-for-linux-next branch is.
 
-I don't see getting them exported flying, especially not in the
-timeframe we've got for the merge window.  Keeping them non-exported has
-been a deliberate decision on the part of the genirq maintainers.  I'll
-send a patch making it built in.
+Gitweb:  http://www.linux-mips.org/git?p=upstream-sfr.git;a=summary
+Git:     git://www.linux-mips.org/pub/scm/upstream-sfr.git
 
-Given the typical applications for these parts building the driver in
-isn't the end of the world - there's a reasonable chance it'll be forced
-built in for other reasons due to device-specific configuration.
+  Ralf 
