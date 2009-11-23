@@ -1,100 +1,48 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mips tree with the microblaze tree
-Date: Mon, 23 Nov 2009 10:08:25 +1100
-Message-ID: <20091123100825.ecd759ff.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree with the net-current tree
+Date: Mon, 23 Nov 2009 12:00:43 +1100
+Message-ID: <20091123120043.24cf5c12.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:50517 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:60255 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752745AbZKVXIW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 22 Nov 2009 18:08:22 -0500
+	id S1753460AbZKWBAk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 22 Nov 2009 20:00:40 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Simek <monstr@monstr.eu>, Wu Zhangjin <wuzhangjin@gmail.com>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Amit Kumar Salecha <amit@netxen.com>
 
-Hi Ralf,
+Hi all,
 
-Today's linux-next merge of the mips tree got a conflict in
-scripts/recordmcount.pl between commit
-3e3bc9dd3155ae0fdccdbdfb26d97e15c7acc499 ("microblaze: ftrace: Add
-dynamic trace support") from the microblaze tree and commit
-421e89b8ce7594cf5df27d801c433dbb69184486 ("MIPS: Tracing: Add dynamic
-function tracer support") from the mips tree.
+Today's linux-next merge of the net tree got a conflict in
+drivers/net/netxen/netxen_nic_init.c between commit
+5d521fd36de4e61ab16a358df54c5babe153396c ("netxen: fix memory
+initialization") from the net-current tree and commit
+0be367bd5d10634c0836f57a684432fee935d929 ("netxen: reset sequence
+changes") from the net tree.
 
-Just overlapping additions.  I fixed it up (see below) and can carry the
-fix as necessary.  Thanks for the heads up, Ralf.
+Just context changes. I fixed it up (see below) and can carry the fix as
+necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc scripts/recordmcount.pl
-index b30dabd,d016c71..0000000
---- a/scripts/recordmcount.pl
-+++ b/scripts/recordmcount.pl
-@@@ -245,9 -245,60 +245,63 @@@ if ($arch eq "x86_64") 
-      $ld .= " -m elf64_sparc";
-      $cc .= " -m64";
-      $objcopy .= " -O elf64-sparc";
- +} elsif ($arch eq "microblaze") {
- +    # Microblaze calls '_mcount' instead of plain 'mcount'.
- +    $mcount_regex = "^\\s*([0-9a-fA-F]+):.*\\s_mcount\$";
-+ 
-+ } elsif ($arch eq "mips") {
-+     # To enable module support, we need to enable the -mlong-calls option
-+     # of gcc for module, after using this option, we can not get the real
-+     # offset of the calling to _mcount, but the offset of the lui
-+     # instruction or the addiu one. herein, we record the address of the
-+     # first one, and then we can replace this instruction by a branch
-+     # instruction to jump over the profiling function to filter the
-+     # indicated functions, or swith back to the lui instruction to trace
-+     # them, which means dynamic tracing.
-+     #
-+     #       c:	3c030000 	lui	v1,0x0
-+     #			c: R_MIPS_HI16	_mcount
-+     #			c: R_MIPS_NONE	*ABS*
-+     #			c: R_MIPS_NONE	*ABS*
-+     #      10:	64630000 	daddiu	v1,v1,0
-+     #			10: R_MIPS_LO16	_mcount
-+     #			10: R_MIPS_NONE	*ABS*
-+     #			10: R_MIPS_NONE	*ABS*
-+     #      14:	03e0082d 	move	at,ra
-+     #      18:	0060f809 	jalr	v1
-+     #
-+     # for the kernel:
-+     #
-+     #     10:   03e0082d        move    at,ra
-+     #	  14:   0c000000        jal     0 <loongson_halt>
-+     #                    14: R_MIPS_26   _mcount
-+     #                    14: R_MIPS_NONE *ABS*
-+     #                    14: R_MIPS_NONE *ABS*
-+     #	 18:   00020021        nop
-+     if ($is_module eq "0") {
-+ 	    $mcount_regex = "^\\s*([0-9a-fA-F]+):.*\\s_mcount\$";
-+     } else {
-+ 	    $mcount_regex = "^\\s*([0-9a-fA-F]+): R_MIPS_HI16\\s+_mcount\$";
-+     }
-+     $objdump .= " -Melf-trad".$endian."mips ";
-+ 
-+     if ($endian eq "big") {
-+ 	    $endian = " -EB ";
-+ 	    $ld .= " -melf".$bits."btsmip";
-+     } else {
-+ 	    $endian = " -EL ";
-+ 	    $ld .= " -melf".$bits."ltsmip";
-+     }
-+ 
-+     $cc .= " -mno-abicalls -fno-pic -mabi=" . $bits . $endian;
-+     $ld .= $endian;
-+ 
-+     if ($bits == 64) {
-+ 	    $function_regex =
-+ 		"^([0-9a-fA-F]+)\\s+<(.|[^\$]L.*?|\$[^L].*?|[^\$][^L].*?)>:";
-+ 	    $type = ".dword";
-+     }
-+ 
-  } else {
-      die "Arch $arch is not supported with CONFIG_FTRACE_MCOUNT_RECORD";
-  }
+diff --cc drivers/net/netxen/netxen_nic_init.c
+index 8a09043,6ee27a6..0000000
+--- a/drivers/net/netxen/netxen_nic_init.c
++++ b/drivers/net/netxen/netxen_nic_init.c
+@@@ -544,9 -528,8 +528,10 @@@ int netxen_pinit_from_rom(struct netxen
+  				continue;
+  			if (off == (ROMUSB_GLB + 0x1c)) /* MS clock */
+  				continue;
+ +			if ((off & 0x0ff00000) == NETXEN_CRB_DDR_NET)
+ +				continue;
+- 			if (off == (NETXEN_CRB_PEG_NET_1 + 0x18))
++ 			if (off == (NETXEN_CRB_PEG_NET_1 + 0x18) &&
++ 				!NX_IS_REVISION_P3P(adapter->ahw.revision_id))
+  				buf[i].data = 0x1020;
+  			/* skip the function enable register */
+  			if (off == NETXEN_PCIE_REG(PCIE_SETUP_FUNCTION))
