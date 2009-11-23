@@ -1,41 +1,31 @@
-From: Gregory Haskins <ghaskins@novell.com>
-Subject: [-next PATCH 0/4] Minor fixes for alacrityvm/linux-next branch
-Date: Mon, 23 Nov 2009 14:54:28 -0500
-Message-ID: <20091123195136.8184.68042.stgit@dev.haskins.net>
+From: Ben Dooks <ben-linux@fluff.org>
+Subject: tree addition request
+Date: Mon, 23 Nov 2009 22:30:44 +0000
+Message-ID: <20091123223044.GM23772@trinity.fluff.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from trinity.fluff.org ([89.16.178.74]:52358 "EHLO trinity.fluff.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757267AbZKWWai (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 23 Nov 2009 17:30:38 -0500
+Received: from ben by trinity.fluff.org with local (Exim 4.69)
+	(envelope-from <ben@trinity.fluff.org>)
+	id 1NChQi-0004jH-B7
+	for linux-next@vger.kernel.org; Mon, 23 Nov 2009 22:30:44 +0000
+Content-Disposition: inline
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: linux-next@vger.kernel.org
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, alacrityvm-devel@lists.sourceforge.net
-List-Id: linux-next.vger.kernel.org
 
-The following are trivial fixes for the drivers in alacrityvm/linux-next
+Is this the right place to request adding one/two trees to linux-next?
 
-Patches 1-3 were necessary to enable the building of these drivers
-as a KMP package for older distribution kernels. Patch 4/4 is just
-a cleanup discovered during testing.
+git://git.fluff.org/bjdooks/linux.git next-i2c
+git://git.fluff.org/bjdooks/linux.git next-samsung
 
-Kind Regards,
--Greg
-
----
-
-Gregory Haskins (4):
-      vbus: fix pcibridge busmaster support
-      vbus: add autoprobe capability to guest
-      venet: add missing ethtool include
-      vbus: make library code properly declared as GPL
-
-
- drivers/net/vbus-enet.c     |    3 +++
- drivers/vbus/bus-proxy.c    |   33 ++++++++++++++++++++++++++++++++-
- drivers/vbus/pci-bridge.c   |    2 ++
- include/linux/vbus_driver.h |    2 ++
- lib/ioq.c                   |    4 ++++
- lib/shm_signal.c            |    4 ++++
- 6 files changed, 47 insertions(+), 1 deletions(-)
-
+thanks,
 -- 
-Signature
+Ben
+
+Q:      What's a light-year?
+A:      One-third less calories than a regular year.
