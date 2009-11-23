@@ -1,32 +1,62 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the net tree with the net-current
- tree
-Date: Sun, 22 Nov 2009 18:11:17 -0800 (PST)
-Message-ID: <20091122.181117.255128252.davem@davemloft.net>
-References: <20091123120052.dd388203.sfr@canb.auug.org.au>
-	<20091122.171932.74107512.davem@davemloft.net>
-	<20091123130441.b450278d.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: mfd tree build failure
+Date: Mon, 23 Nov 2009 14:35:03 +1100
+Message-ID: <20091123143503.3cdf8dee.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:53824
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754180AbZKWCLA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Sun, 22 Nov 2009 21:11:00 -0500
-In-Reply-To: <20091123130441.b450278d.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:60958 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754229AbZKWDfA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 22 Nov 2009 22:35:00 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, eric.dumazet@gmail.com
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Paul Fertser <fercerpav@gmail.com>, Anton Vorontsov <avorontsov@ru.mvista.com>
+
+Hi Samuel,
+
+Today's linux-next build (x86_64 allmodconfig) failed like this:
+
+drivers/power/pcf50633-charger.c: In function 'pcf50633_mbc_get_usb_online_status':
+drivers/power/pcf50633-charger.c:147: error: 'struct pcf50633' has no member named 'mbc_pdev'
+
+Caused by commit 4c2e3bacc050f0ebf884954bb007616c162564cd ("mfd: pcf50633
+- fix error handling during probe") from the mfd tree interacting with
+commit c329795052aa339850a45fab649ab97a36905136 ("pcf50633: Query charger
+status directly") from the battery tree.
+
+I have applied the following merge fixup patch and can carry it as
+necessary.
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 23 Nov 2009 13:04:41 +1100
+Date: Mon, 23 Nov 2009 14:31:43 +1100
+Subject: [PATCH] mfd: fix pcf50633-charger.c for fallout from merge
 
-> Did you push them out?  master was down for a while yesterday ...
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/power/pcf50633-charger.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
 
-That's what happened, I couldn't push out yesterday because
-master wasn't responding.  Let me push it out right now :-)
+diff --git a/drivers/power/pcf50633-charger.c b/drivers/power/pcf50633-charger.c
+index d4a3e77..4e535bb 100644
+--- a/drivers/power/pcf50633-charger.c
++++ b/drivers/power/pcf50633-charger.c
+@@ -144,7 +144,8 @@ EXPORT_SYMBOL_GPL(pcf50633_mbc_get_status);
+ 
+ int pcf50633_mbc_get_usb_online_status(struct pcf50633 *pcf)
+ {
+-	struct pcf50633_mbc *mbc  = platform_get_drvdata(pcf->mbc_pdev);
++	struct pcf50633_mbc *mbc =
++		platform_get_drvdata(pcf->pdevs[PCF50633_PDEV_ADC_IDX]);
+ 
+ 	if (!mbc)
+ 		return 0;
+-- 
+1.6.5.3
 
-Thanks!
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
