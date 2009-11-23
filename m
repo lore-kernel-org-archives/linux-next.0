@@ -1,200 +1,88 @@
-From: Sachin Sant <sachinp@in.ibm.com>
-Subject: Re: -next: Nov 12 - kernel BUG at kernel/sched.c:7359!
-Date: Mon, 23 Nov 2009 15:23:43 +0530
-Message-ID: <4B0A5BA7.8020604@in.ibm.com>
-References: <20091112195101.63263490.sfr@canb.auug.org.au> <4AFBF73B.5040500@in.ibm.com> <1258027820.4039.129.camel@laptop> <4AFBFE3D.80507@in.ibm.com> <1258028831.4039.152.camel@laptop> <1258045831.4039.736.camel@laptop>  <20091113095801.GA29977@in.ibm.com> <1258107368.4039.1149.camel@laptop> <1258108281.22655.5.camel@laptop>
+From: Samuel Ortiz <sameo@linux.intel.com>
+Subject: Re: linux-next: mfd tree build failure
+Date: Mon, 23 Nov 2009 13:26:07 +0100
+Message-ID: <20091123122606.GA3616@sortiz.org>
+References: <20091123143503.3cdf8dee.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e28smtp05.in.ibm.com ([122.248.162.5]:46558 "EHLO
-	e28smtp05.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752548AbZKWJxu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Nov 2009 04:53:50 -0500
-In-Reply-To: <1258108281.22655.5.camel@laptop>
+Received: from mga10.intel.com ([192.55.52.92]:44474 "EHLO
+	fmsmga102.fm.intel.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1756945AbZKWMYV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Nov 2009 07:24:21 -0500
+Content-Disposition: inline
+In-Reply-To: <20091123143503.3cdf8dee.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: ego@in.ibm.com, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, Mike Galbraith <efault@gmx.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Fertser <fercerpav@gmail.com>, Anton Vorontsov <avorontsov@ru.mvista.com>
 
-Peter Zijlstra wrote:
-> Well, it boots for me, but then, I've not been able to reproduce any
-> issues anyway :/
->
-> /me goes try a PREEMPT=n kernel, since that is what Mike reports boot
-> funnies with..
->
-> Full running diff against -tip:
->   
-Peter i still can recreate this issue with today's next(20091123).
-Looks like the following patch haven't been merged yet.
+Hi Dmitry,
 
-Thanks
--Sachin
+On Mon, Nov 23, 2009 at 02:35:03PM +1100, Stephen Rothwell wrote:
+> Hi Samuel,
+> 
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
+> 
+> drivers/power/pcf50633-charger.c: In function 'pcf50633_mbc_get_usb_online_status':
+> drivers/power/pcf50633-charger.c:147: error: 'struct pcf50633' has no member named 'mbc_pdev'
+> 
+> Caused by commit 4c2e3bacc050f0ebf884954bb007616c162564cd ("mfd: pcf50633
+> - fix error handling during probe") from the mfd tree interacting with
+> commit c329795052aa339850a45fab649ab97a36905136 ("pcf50633: Query charger
+> status directly") from the battery tree.
+Could we split the above fix so that we get back to the:
 
+	struct platform_device *rtc_pdev;
+	struct platform_device *mbc_pdev;
+	struct platform_device *adc_pdev;
+	struct platform_device *input_pdev;
+	struct platform_device *regulator_pdev[PCF50633_NUM_REGULATORS];
+
+structure ? We can move to the index based structure after the next merge
+window. That would make my life easier in terms of tree dependencies.
+If you dont have time to do this change, I'll do it some time this week.
+
+Thanks in advance.
+
+Cheers,
+Samuel.
+
+
+> I have applied the following merge fixup patch and can carry it as
+> necessary.
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 23 Nov 2009 14:31:43 +1100
+> Subject: [PATCH] mfd: fix pcf50633-charger.c for fallout from merge
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 > ---
-> diff --git a/kernel/sched.c b/kernel/sched.c
-> index 1f2e99d..7089063 100644
-> --- a/kernel/sched.c
-> +++ b/kernel/sched.c
-> @@ -2374,17 +2374,24 @@ static int try_to_wake_up(struct task_struct *p, unsigned int state,
->  	if (task_contributes_to_load(p))
->  		rq->nr_uninterruptible--;
->  	p->state = TASK_WAKING;
-> -	task_rq_unlock(rq, &flags);
-> +	__task_rq_unlock(rq);
->
-> +again:
->  	cpu = p->sched_class->select_task_rq(p, SD_BALANCE_WAKE, wake_flags);
-> +	if (!cpu_online(cpu))
-> +		cpu = cpumask_any_and(&p->cpus_allowed, cpu_online_mask);
-> +	if (cpu >= nr_cpu_ids) {
-> +		printk(KERN_ERR "Breaking affinity on %d/%s\n", p->pid, p->comm);
-> +		cpuset_cpus_allowed_locked(p, &p->cpus_allowed);
-> +		goto again;
-> +	}
-> +
->  	if (cpu != orig_cpu) {
-> -		local_irq_save(flags);
->  		rq = cpu_rq(cpu);
->  		update_rq_clock(rq);
->  		set_task_cpu(p, cpu);
-> -		local_irq_restore(flags);
->  	}
-> -	rq = task_rq_lock(p, &flags);
-> +	rq = __task_rq_lock(p);
->
->  	WARN_ON(p->state != TASK_WAKING);
->  	cpu = task_cpu(p);
-> @@ -7620,6 +7627,8 @@ migration_call(struct notifier_block *nfb, unsigned long action, void *hcpu)
->  	unsigned long flags;
->  	struct rq *rq;
->
-> +	printk(KERN_ERR "migration call\n");
-> +
->  	switch (action) {
->
->  	case CPU_UP_PREPARE:
-> @@ -9186,6 +9195,8 @@ int __init sched_create_sysfs_power_savings_entries(struct sysdev_class *cls)
->  static int update_sched_domains(struct notifier_block *nfb,
->  				unsigned long action, void *hcpu)
+>  drivers/power/pcf50633-charger.c |    3 ++-
+>  1 files changed, 2 insertions(+), 1 deletions(-)
+> 
+> diff --git a/drivers/power/pcf50633-charger.c b/drivers/power/pcf50633-charger.c
+> index d4a3e77..4e535bb 100644
+> --- a/drivers/power/pcf50633-charger.c
+> +++ b/drivers/power/pcf50633-charger.c
+> @@ -144,7 +144,8 @@ EXPORT_SYMBOL_GPL(pcf50633_mbc_get_status);
+>  
+>  int pcf50633_mbc_get_usb_online_status(struct pcf50633 *pcf)
 >  {
-> +	printk(KERN_ERR "update_sched_domains\n");
-> +
->  	switch (action) {
->  	case CPU_ONLINE:
->  	case CPU_ONLINE_FROZEN:
-> diff --git a/kernel/sched_fair.c b/kernel/sched_fair.c
-> index 5488a5d..0ff21af 100644
-> --- a/kernel/sched_fair.c
-> +++ b/kernel/sched_fair.c
-> @@ -1345,6 +1345,37 @@ find_idlest_cpu(struct sched_group *group, struct task_struct *p, int this_cpu)
->  }
->
->  /*
-> + * Try and locate an idle CPU in the sched_domain.
-> + */
-> +static int
-> +select_idle_sibling(struct task_struct *p, struct sched_domain *sd, int target)
-> +{
-> +	int cpu = smp_processor_id();
-> +	int prev_cpu = task_cpu(p);
-> +	int i;
-> +
-> +	/*
-> +	 * If this domain spans both cpu and prev_cpu (see the SD_WAKE_AFFINE
-> +	 * test in select_task_rq_fair) and the prev_cpu is idle then that's
-> +	 * always a better target than the current cpu.
-> +	 */
-> +	if (target == cpu && !cpu_rq(prev_cpu)->cfs.nr_running)
-> +		return prev_cpu;
-> +
-> +	/*
-> +	 * Otherwise, iterate the domain and find an elegible idle cpu.
-> +	 */
-> +	for_each_cpu_and(i, sched_domain_span(sd), &p->cpus_allowed) {
-> +		if (!cpu_rq(i)->cfs.nr_running) {
-> +			target = i;
-> +			break;
-> +		}
-> +	}
-> +
-> +	return target;
-> +}
-> +
-> +/*
->   * sched_balance_self: balance the current task (running on cpu) in domains
->   * that have the 'flag' flag set. In practice, this is SD_BALANCE_FORK and
->   * SD_BALANCE_EXEC.
-> @@ -1398,37 +1429,34 @@ static int select_task_rq_fair(struct task_struct *p, int sd_flag, int wake_flag
->  				want_sd = 0;
->  		}
->
-> -		if (want_affine && (tmp->flags & SD_WAKE_AFFINE)) {
-> -			int candidate = -1, i;
-> +		/*
-> +		 * While iterating the domains looking for a spanning
-> +		 * WAKE_AFFINE domain, adjust the affine target to any idle cpu
-> +		 * in cache sharing domains along the way.
-> +		 */
-> +		if (want_affine) {
-> +			int target = -1;
->
-> +			/*
-> +			 * If both cpu and prev_cpu are part of this domain,
-> +			 * cpu is a valid SD_WAKE_AFFINE target.
-> +			 */
->  			if (cpumask_test_cpu(prev_cpu, sched_domain_span(tmp)))
-> -				candidate = cpu;
-> +				target = cpu;
->
->  			/*
-> -			 * Check for an idle shared cache.
-> +			 * If there's an idle sibling in this domain, make that
-> +			 * the wake_affine target instead of the current cpu.
->  			 */
-> -			if (tmp->flags & SD_PREFER_SIBLING) {
-> -				if (candidate == cpu) {
-> -					if (!cpu_rq(prev_cpu)->cfs.nr_running)
-> -						candidate = prev_cpu;
-> -				}
-> +			if (tmp->flags & SD_PREFER_SIBLING)
-> +				target = select_idle_sibling(p, tmp, target);
->
-> -				if (candidate == -1 || candidate == cpu) {
-> -					for_each_cpu(i, sched_domain_span(tmp)) {
-> -						if (!cpumask_test_cpu(i, &p->cpus_allowed))
-> -							continue;
-> -						if (!cpu_rq(i)->cfs.nr_running) {
-> -							candidate = i;
-> -							break;
-> -						}
-> -					}
-> +			if (target >= 0) {
-> +				if (tmp->flags & SD_WAKE_AFFINE) {
-> +					affine_sd = tmp;
-> +					want_affine = 0;
->  				}
-> -			}
-> -
-> -			if (candidate >= 0) {
-> -				affine_sd = tmp;
-> -				want_affine = 0;
-> -				cpu = candidate;
-> +				cpu = target;
->  			}
->  		}
->
->
->
->   
-
+> -	struct pcf50633_mbc *mbc  = platform_get_drvdata(pcf->mbc_pdev);
+> +	struct pcf50633_mbc *mbc =
+> +		platform_get_drvdata(pcf->pdevs[PCF50633_PDEV_ADC_IDX]);
+>  
+>  	if (!mbc)
+>  		return 0;
+> -- 
+> 1.6.5.3
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
 
 -- 
-
----------------------------------
-Sachin Sant
-IBM Linux Technology Center
-India Systems and Technology Labs
-Bangalore, India
----------------------------------
+Intel Open Source Technology Centre
+http://oss.intel.com/
