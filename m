@@ -1,56 +1,48 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: linux-next: mfd tree build failure
-Date: Mon, 23 Nov 2009 08:32:11 -0800
-Message-ID: <20091123163211.GB3491@core.coreip.homeip.net>
-References: <20091123143503.3cdf8dee.sfr@canb.auug.org.au> <20091123122606.GA3616@sortiz.org>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: tip tree build warning
+Date: Mon, 23 Nov 2009 10:05:39 -0800
+Message-ID: <20091123100539.bcdbd211.randy.dunlap@oracle.com>
+References: <20091116162503.7f083c3a.sfr@canb.auug.org.au>
+	<20091116090507.18abfa0f.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pw0-f42.google.com ([209.85.160.42]:58288 "EHLO
-	mail-pw0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755858AbZKWQcL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Nov 2009 11:32:11 -0500
-Content-Disposition: inline
-In-Reply-To: <20091123122606.GA3616@sortiz.org>
+Received: from rcsinet11.oracle.com ([148.87.113.123]:28245 "EHLO
+	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751128AbZKWSGU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Nov 2009 13:06:20 -0500
+In-Reply-To: <20091116090507.18abfa0f.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Fertser <fercerpav@gmail.com>, Anton Vorontsov <avorontsov@ru.mvista.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Samuel,
+On Mon, 16 Nov 2009 09:05:07 -0800 Randy Dunlap wrote:
 
-On Mon, Nov 23, 2009 at 01:26:07PM +0100, Samuel Ortiz wrote:
-> Hi Dmitry,
+> On Mon, 16 Nov 2009 16:25:03 +1100 Stephen Rothwell wrote:
 > 
-> On Mon, Nov 23, 2009 at 02:35:03PM +1100, Stephen Rothwell wrote:
-> > Hi Samuel,
+> > Hi all,
 > > 
-> > Today's linux-next build (x86_64 allmodconfig) failed like this:
+> > Today's linux-next build (x86_64 allmodconfig) produced this warning:
 > > 
-> > drivers/power/pcf50633-charger.c: In function 'pcf50633_mbc_get_usb_online_status':
-> > drivers/power/pcf50633-charger.c:147: error: 'struct pcf50633' has no member named 'mbc_pdev'
+> > arch/x86/kernel/apic/apic.c: In function 'calibrate_APIC_clock':
+> > arch/x86/kernel/apic/apic.c:650: warning: format '%ld' expects type 'long int', but argument 2 has type 'u32'
 > > 
-> > Caused by commit 4c2e3bacc050f0ebf884954bb007616c162564cd ("mfd: pcf50633
-> > - fix error handling during probe") from the mfd tree interacting with
-> > commit c329795052aa339850a45fab649ab97a36905136 ("pcf50633: Query charger
-> > status directly") from the battery tree.
-> Could we split the above fix so that we get back to the:
+> > Introduced by commit 23af368e9a904f59256c27d371ce223d6cee0430
+> > ("clockevents: Use u32 for mult and shift factors").
 > 
-> 	struct platform_device *rtc_pdev;
-> 	struct platform_device *mbc_pdev;
-> 	struct platform_device *adc_pdev;
-> 	struct platform_device *input_pdev;
-> 	struct platform_device *regulator_pdev[PCF50633_NUM_REGULATORS];
 > 
-> structure ? We can move to the index based structure after the next merge
-> window. That would make my life easier in terms of tree dependencies.
-> If you dont have time to do this change, I'll do it some time this week.
+> also this warning:
 > 
+> arch/x86/kernel/vmiclock_32.c:230: warning: format '%lu' expects type 'long unsigned int', but argument 3 has type 'u32'
+> 
+> (i386 build)
 
-Please feel free to drop or reschedule the patch as you see fit. I don't
-have any problem if it will go in later.
 
-Thanks.
+Thomas posted a patch for this, but I'm still seeing this warning (20091123),
+so I guess his patch hasn't been merged/pushed yet?
 
--- 
-Dmitry
+thanks,
+---
+~Randy
