@@ -1,57 +1,102 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Subject: Re: linux-next: mfd tree build failure
-Date: Mon, 23 Nov 2009 13:29:04 +0100
-Message-ID: <20091123122903.GB3616@sortiz.org>
-References: <20091123144103.73b4d64c.sfr@canb.auug.org.au>
- <20091123150346.e3948feb.sfr@canb.auug.org.au>
+From: Michal Simek <michal.simek@petalogix.com>
+Subject: Re: linux-next: Tree for November 23
+Date: Mon, 23 Nov 2009 14:04:01 +0100
+Message-ID: <4B0A8841.8090905@petalogix.com>
+References: <20091123185232.1423c56b.sfr@canb.auug.org.au>
+Reply-To: michal.simek@petalogix.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:56252 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757238AbZKWM1R (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 23 Nov 2009 07:27:17 -0500
-Content-Disposition: inline
-In-Reply-To: <20091123150346.e3948feb.sfr@canb.auug.org.au>
+Received: from fg-out-1718.google.com ([72.14.220.153]:42238 "EHLO
+	fg-out-1718.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757007AbZKWNEE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Nov 2009 08:04:04 -0500
+In-Reply-To: <20091123185232.1423c56b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ralf Baechle <ralf@linux-mips.org>, Wu Zhangjin <wuzhangjin@gmail.com>
 
 Hi Stephen,
 
-On Mon, Nov 23, 2009 at 03:03:46PM +1100, Stephen Rothwell wrote:
-> Hi Samuel,
+Stephen Rothwell wrote:
+> Hi all,
 > 
-> On Mon, 23 Nov 2009 14:41:03 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Today's linux-next build (x86_64 allmodconfig) failed like this:
-> > 
-> > ERROR: "irq_to_desc" [drivers/mfd/wm831x.ko] undefined!
-> > ERROR: "handle_edge_irq" [drivers/mfd/wm831x.ko] undefined!
-> > ERROR: "set_irq_chip_and_handler" [drivers/mfd/wm831x.ko] undefined!
-> > ERROR: "set_irq_noprobe" [drivers/mfd/wm831x.ko] undefined!
-> > 
-> > Probably caused by commit 8fc686c7369173519817f0cfbb2df9a3671d5b8d ("mfd:
-> > Move WM831x to generic IRQ").  Maybe a Kconfig dependency is missing?
+> Changes since 20091120:
 > 
-> It actually looks as though set_irq_chip_and_handler (at least) is not
-> exported to modules.
-True. Mark, I think we should get those symbols exported, unless you have a
-better idea ? Having wm831x as a boolean choice from Kconfig doesnt sound too
-god to me.
+> The omap tree lost its conflict.
+> 
+> The microblaze tree still has a build failure for which I reverted a
+> commit.
+> 
+> The mips tree gained a conflict against the microblaze tree.
 
-Cheers,
-Samuel.
+It is problem which is caused one my ftrace patch. MIPS ftrace 
+implementation was first that's why I should solve it. It is easy to fix.
+I just need to know where mips/mips-for-linux-next branch is.
 
+Thanks,
+Michal
 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
-
+> 
+> The infiniband tree lost its build failure.
+> 
+> The net tree gained 2 conflicts against the net-current tree.
+> 
+> The input tree lost its conflict.
+> 
+> The mfd tree gained 2 build failures - I applied a patch for the first,
+> but the second caused me to use the version from next-20091120.
+> 
+> The alacrity tree lost a conflict.
+> 
+> The tip tree gained a conflict against the mips tree.
+> 
+> The staging tree lost a conflict.
+> 
+> ----------------------------------------------------------------------------
+> 
+> I have created today's linux-next tree at
+> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+> (patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
+> are tracking the linux-next tree using git, you should not use "git pull"
+> to do so as that will try to merge the new linux-next release with the
+> old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+> (see below).
+> 
+> You can see which trees have been included by looking in the Next/Trees
+> file in the source.  There are also quilt-import.log and merge.log files
+> in the Next directory.  Between each merge, the tree was built with
+> a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+> final fixups (if any), it is also built with powerpc allnoconfig (32 and
+> 64 bit), ppc44x_defconfig and allyesconfig (minus
+> CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
+> and sparc64 defconfig. These builds also have
+> CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
+> CONFIG_DEBUG_INFO disabled when necessary.
+> 
+> Below is a summary of the state of the merge.
+> 
+> We are up to 151 trees (counting Linus' and 22 trees of patches pending for
+> Linus' tree), more are welcome (even if they are currently empty).
+> Thanks to those who have contributed, and to those who haven't, please do.
+> 
+> Status of my local build tests will be at
+> http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+> advice about cross compilers/configs that work, we are always open to add
+> more builds.
+> 
+> Thanks to Jan Dittmer for adding the linux-next tree to his build tests
+> at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
+> Dunlap for doing many randconfig builds.
+> 
+> There is a wiki covering stuff to do with linux-next at
+> http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+> 
 
 
 -- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+Michal Simek, Ing. (M.Eng)
+PetaLogix - Linux Solutions for a Reconfigurable World
+w: www.petalogix.com p: +61-7-30090663,+42-0-721842854 f: +61-7-30090663
