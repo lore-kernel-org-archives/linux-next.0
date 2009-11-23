@@ -1,49 +1,36 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for November 23
-Date: Mon, 23 Nov 2009 11:15:10 -0800
-Message-ID: <20091123111510.9b0c0714.randy.dunlap@oracle.com>
-References: <20091123185232.1423c56b.sfr@canb.auug.org.au>
+From: Gregory Haskins <ghaskins@novell.com>
+Subject: [-next PATCH 2/4] venet: add missing ethtool include
+Date: Mon, 23 Nov 2009 14:54:39 -0500
+Message-ID: <20091123195439.8184.70167.stgit@dev.haskins.net>
+References: <20091123195136.8184.68042.stgit@dev.haskins.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet12.oracle.com ([141.146.126.234]:56277 "EHLO
-	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752758AbZKWTQf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Nov 2009 14:16:35 -0500
-In-Reply-To: <20091123185232.1423c56b.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, rusty@rustcorp.com.au
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756565AbZKWTyl@vger.kernel.org>
+In-Reply-To: <20091123195136.8184.68042.stgit@dev.haskins.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-next@vger.kernel.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, alacrityvm-devel@lists.sourceforge.net
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 23 Nov 2009 18:52:32 +1100 Stephen Rothwell wrote:
+It's sloppy to use the facility without officially including its header
+file.
 
-> Hi all,
-> 
-> Changes since 20091120:
-
-
-Hey rr,
-
-This patch "param\:remove-useless-writable-charp.patch" has several typos
-that cause build errors in drivers/staging/.  I sent patches for these errors
-to gregkh but he couldn't apply them.  Please build STAGING (drivers/staging/)
-crap along with other build testing when you make changes.
-
-
-drivers/staging/rtl8187se/r8180_core.c:
-+module_param_string(ifname, ifname, sizef(ifname), S_IRUGO|S_IWUSR);
-                                     ^^^^^
-
-drivers/staging/rtl8192e/r8192E_core.c:
-+module_param_string(ifname, ifname, sizef(ifname), S_IRUGO|S_IWUSR);
-                                     ^^^^^
-and
-+		strcpt(ifname, "wlan%d");
-                ^^^^^^
-
-
-Thanks.
+Signed-off-by: Gregory Haskins <ghaskins@novell.com>
 ---
-~Randy
+
+ drivers/net/vbus-enet.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/net/vbus-enet.c b/drivers/net/vbus-enet.c
+index 29b388f..25c6bea 100644
+--- a/drivers/net/vbus-enet.c
++++ b/drivers/net/vbus-enet.c
+@@ -22,6 +22,7 @@
+ #include <linux/in.h>
+ #include <linux/netdevice.h>
+ #include <linux/etherdevice.h>
++#include <linux/ethtool.h>
+ #include <linux/ip.h>
+ #include <linux/tcp.h>
+ #include <linux/skbuff.h>
