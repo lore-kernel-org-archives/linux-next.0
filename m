@@ -1,35 +1,56 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Subject: Re: linux-next: mfd tree build failure
-Date: Mon, 23 Nov 2009 15:20:57 +0000
-Message-ID: <20091123152057.GH24326@rakim.wolfsonmicro.main>
-References: <20091123144103.73b4d64c.sfr@canb.auug.org.au>
- <20091123150346.e3948feb.sfr@canb.auug.org.au>
- <20091123122903.GB3616@sortiz.org>
- <20091123131113.GE24326@rakim.wolfsonmicro.main>
- <20091123144413.GD3616@sortiz.org>
+Date: Mon, 23 Nov 2009 08:32:11 -0800
+Message-ID: <20091123163211.GB3491@core.coreip.homeip.net>
+References: <20091123143503.3cdf8dee.sfr@canb.auug.org.au> <20091123122606.GA3616@sortiz.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755438AbZKWPU7@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pw0-f42.google.com ([209.85.160.42]:58288 "EHLO
+	mail-pw0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755858AbZKWQcL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 Nov 2009 11:32:11 -0500
 Content-Disposition: inline
-In-Reply-To: <20091123144413.GD3616@sortiz.org>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20091123122606.GA3616@sortiz.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Fertser <fercerpav@gmail.com>, Anton Vorontsov <avorontsov@ru.mvista.com>
 
-On Mon, Nov 23, 2009 at 03:44:14PM +0100, Samuel Ortiz wrote:
-> On Mon, Nov 23, 2009 at 01:11:13PM +0000, Mark Brown wrote:
+Hi Samuel,
 
-> > I don't see getting them exported flying, especially not in the
-> > timeframe we've got for the merge window.  Keeping them non-exported has
-> > been a deliberate decision on the part of the genirq maintainers. 
+On Mon, Nov 23, 2009 at 01:26:07PM +0100, Samuel Ortiz wrote:
+> Hi Dmitry,
+> 
+> On Mon, Nov 23, 2009 at 02:35:03PM +1100, Stephen Rothwell wrote:
+> > Hi Samuel,
+> > 
+> > Today's linux-next build (x86_64 allmodconfig) failed like this:
+> > 
+> > drivers/power/pcf50633-charger.c: In function 'pcf50633_mbc_get_usb_online_status':
+> > drivers/power/pcf50633-charger.c:147: error: 'struct pcf50633' has no member named 'mbc_pdev'
+> > 
+> > Caused by commit 4c2e3bacc050f0ebf884954bb007616c162564cd ("mfd: pcf50633
+> > - fix error handling during probe") from the mfd tree interacting with
+> > commit c329795052aa339850a45fab649ab97a36905136 ("pcf50633: Query charger
+> > status directly") from the battery tree.
+> Could we split the above fix so that we get back to the:
+> 
+> 	struct platform_device *rtc_pdev;
+> 	struct platform_device *mbc_pdev;
+> 	struct platform_device *adc_pdev;
+> 	struct platform_device *input_pdev;
+> 	struct platform_device *regulator_pdev[PCF50633_NUM_REGULATORS];
+> 
+> structure ? We can move to the index based structure after the next merge
+> window. That would make my life easier in terms of tree dependencies.
+> If you dont have time to do this change, I'll do it some time this week.
+> 
 
-> Out of curiosity, what's the reasoning behind thatdecision ?
+Please feel free to drop or reschedule the patch as you see fit. I don't
+have any problem if it will go in later.
 
-Unless you're actually implementing an interrupt controller those APIs
-should never be called and people should be using flags on request_irq()
-or similar.  Driver authors have been awfully fond of bypassing those
-APIs, but this prevents them doing so.
+Thanks.
 
-None of this is really a practical issue unless you implement an IRQ
-controller in a driver and that's very rare (or has been up until now).
+-- 
+Dmitry
