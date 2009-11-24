@@ -1,68 +1,48 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Subject: Re: linux-next: manual merge of the trivial tree with the pci tree
-Date: Tue, 24 Nov 2009 13:51:50 -0800
-Message-ID: <20091124135150.0ccfd366@jbarnes-piketon>
-References: <20091117155417.e0514040.sfr@canb.auug.org.au>
-	<alpine.LSU.2.00.0911172318340.15039@wotan.suse.de>
+From: Samuel Ortiz <sameo@linux.intel.com>
+Subject: Re: linux-next: mfd tree build failure
+Date: Wed, 25 Nov 2009 00:35:19 +0100
+Message-ID: <20091124233518.GJ8290@sortiz.org>
+References: <20091123143503.3cdf8dee.sfr@canb.auug.org.au>
+ <20091123122606.GA3616@sortiz.org>
+ <20091123163211.GB3491@core.coreip.homeip.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from outbound-mail-137.bluehost.com ([67.222.39.27]:59899 "HELO
-	outbound-mail-137.bluehost.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with SMTP id S933966AbZKXVvt convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 24 Nov 2009 16:51:49 -0500
-In-Reply-To: <alpine.LSU.2.00.0911172318340.15039@wotan.suse.de>
+Received: from mga05.intel.com ([192.55.52.89]:51199 "EHLO
+	fmsmga101.fm.intel.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S934319AbZKXXds (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 24 Nov 2009 18:33:48 -0500
+Content-Disposition: inline
+In-Reply-To: <20091123163211.GB3491@core.coreip.homeip.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?QW5kcsOp?= Goddard Rosa <andre.goddard@gmail.com>, Yinghai Lu <yinghai@kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Fertser <fercerpav@gmail.com>, Anton Vorontsov <avorontsov@ru.mvista.com>
 
-On Tue, 17 Nov 2009 23:19:53 +0100 (CET)
-Jiri Kosina <jkosina@suse.cz> wrote:
+Hi Dmitry
 
-> On Tue, 17 Nov 2009, Stephen Rothwell wrote:
->=20
-> > Today's linux-next merge of the trivial tree got a conflict in
-> > arch/x86/pci/amd_bus.c between commit
-> > 99935a7a59eaca0292c1a5880e10bae03f4a5e3d ("x86/PCI: read root
-> > resources from IOH on Intel") from the pci tree and commit
-> > 17530b1c635dfd1f258afc6b07b986b425d66ebd ("tree-wide: fix assorted
-> > typos all over the place") from the trivial tree.
-> >=20
-> > The comment fixed up by the trivial tree patch has moved to
-> > arch/x86/pci/bus_numa.h and I haven't bothered to fix it there.
->=20
-> Thanks for letting me know.
->=20
-> I have dropped the hunk from my queue. Jesse, could you please merge
-> this patch to your tree instead?
->=20
->=20
->=20
->=20
-> From: Andr=C3=A9 Goddard Rosa <andre.goddard@gmail.com>
-> Subject: pci: fix comment typo
->=20
-> Signed-off-by: Andr=C3=A9 Goddard Rosa <andre.goddard@gmail.com>
-> Signed-off-by: Jiri Kosina <jkosina@suse.cz>
->=20
-> diff --git a/arch/x86/pci/amd_bus.c b/arch/x86/pci/amd_bus.c
-> index 572ee97..575f6fe 100644
-> --- a/arch/x86/pci/amd_bus.c
-> +++ b/arch/x86/pci/amd_bus.c
-> @@ -19,7 +19,7 @@
->  /*
->   * sub bus (transparent) will use entres from 3 to store extra from
-> root,
-> - * so need to make sure have enought slot there, increase
-> PCI_BUS_NUM_RESOURCES?
-> + * so need to make sure have enough slot there, increase
-> PCI_BUS_NUM_RESOURCES? */
->  #define RES_NUM 16
+On Mon, Nov 23, 2009 at 08:32:11AM -0800, Dmitry Torokhov wrote:
+> > Could we split the above fix so that we get back to the:
+> > 
+> > 	struct platform_device *rtc_pdev;
+> > 	struct platform_device *mbc_pdev;
+> > 	struct platform_device *adc_pdev;
+> > 	struct platform_device *input_pdev;
+> > 	struct platform_device *regulator_pdev[PCF50633_NUM_REGULATORS];
+> > 
+> > structure ? We can move to the index based structure after the next merge
+> > window. That would make my life easier in terms of tree dependencies.
+> > If you dont have time to do this change, I'll do it some time this week.
+> > 
+> 
+> Please feel free to drop or reschedule the patch as you see fit. I don't
+> have any problem if it will go in later.
+Yes, I'll requeue your patchset after the next merge window is closed.
+Thanks for your understanding.
 
-=46ixed this up.  The comment is in bus_numa.h now.
+Cheers,
+Samuel.
 
---=20
-Jesse Barnes, Intel Open Source Technology Center
+-- 
+Intel Open Source Technology Centre
+http://oss.intel.com/
