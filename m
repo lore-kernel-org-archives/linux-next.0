@@ -1,56 +1,37 @@
-From: Gregory Haskins <gregory.haskins@gmail.com>
-Subject: Re: linux-next: Tree for November 24
-Date: Tue, 24 Nov 2009 09:09:36 -0500
-Message-ID: <4B0BE920.40106@gmail.com>
-References: <20091124212255.87e083ce.sfr@canb.auug.org.au>
+From: "John W. Linville" <linville@tuxdriver.com>
+Subject: Re: linux-next: manual merge of the wireless tree with the
+	wireless-current tree
+Date: Tue, 24 Nov 2009 10:05:25 -0500
+Message-ID: <20091124150525.GA2782@tuxdriver.com>
+References: <20091124141141.5b6d3a8d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="------------enig00BCFF50AE90F4181639BE68"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-yx0-f187.google.com ([209.85.210.187]:37368 "EHLO
-	mail-yx0-f187.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932940AbZKXOJe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 24 Nov 2009 09:09:34 -0500
-In-Reply-To: <20091124212255.87e083ce.sfr@canb.auug.org.au>
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:59142 "EHLO
+	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933222AbZKXPPe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 24 Nov 2009 10:15:34 -0500
+Content-Disposition: inline
+In-Reply-To: <20091124141141.5b6d3a8d.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
---------------enig00BCFF50AE90F4181639BE68
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+On Tue, Nov 24, 2009 at 02:11:41PM +1100, Stephen Rothwell wrote:
+> Hi John,
+> 
+> Today's linux-next merge of the wireless tree got a conflict in
+> drivers/net/wireless/ath/ath9k/main.c between commit
+> 54ab040d24904d1fa2c0a6a27936b7c56a4efb24 ("ath9k: set ps_default as
+> false") from the wireless-current tree and commit
+> 18b6c9a2213d3b6e0212e8b225abf95f7564206a ("ath9k: set ps_default as
+> false") from the wireless tree.
+> 
+> The commit message of the latter made me use just its version.
 
-Stephen Rothwell wrote:
+Yes, that's the correct fix. :-)
 
-[...]
-
->=20
-> The alacrity tree gained a build failure so I used the version from
-> next-20091123.
->=20
-
-Should be fixed in tomorrows tree.  Sorry for the trouble!
-
-Kind Regards,
--Greg
-
-
-
---------------enig00BCFF50AE90F4181639BE68
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG/MacGPG2 v2.0.11 (Darwin)
-Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
-
-iEYEARECAAYFAksL6SAACgkQP5K2CMvXmqGvKQCeKIsoGRtYtAjP4YAIdtJGcD3H
-8KkAnRkkoHHDxKKY6Df3XDnF/e1KMnyt
-=J5j4
------END PGP SIGNATURE-----
-
---------------enig00BCFF50AE90F4181639BE68--
+-- 
+John W. Linville		Someday the world will need a hero, and you
+linville@tuxdriver.com			might be all we have.  Be ready.
