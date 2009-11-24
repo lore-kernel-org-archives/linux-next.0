@@ -1,60 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: tree addition request
-Date: Tue, 24 Nov 2009 18:41:28 +1100
-Message-ID: <20091124184128.fe04cb08.sfr@canb.auug.org.au>
-References: <20091123223044.GM23772@trinity.fluff.org>
-	<20091124105114.2149e4a0.sfr@canb.auug.org.au>
-	<20091124083947.0743c7d5@hyperion.delvare>
+Subject: linux-next: alacrity tree build failure
+Date: Tue, 24 Nov 2009 18:58:43 +1100
+Message-ID: <20091124185843.d2cab90c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__24_Nov_2009_18_41_28_+1100_+JmycNT2zXNlRjj_"
+ boundary="Signature=_Tue__24_Nov_2009_18_58_43_+1100_/qYMZDtrdJOxZk=M"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54459 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:57495 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757669AbZKXHl1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 24 Nov 2009 02:41:27 -0500
-In-Reply-To: <20091124083947.0743c7d5@hyperion.delvare>
+	id S932151AbZKXH6n (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 24 Nov 2009 02:58:43 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jean Delvare <khali@linux-fr.org>
-Cc: Ben Dooks <ben-linux@fluff.org>, linux-next@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
+To: Gregory Haskins <gregory.haskins@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeremy Fitzhardinge <jeremy@xensource.com>, xen-devel@lists.xensource.com, Mark McLoughlin <markmc@redhat.com>
 
---Signature=_Tue__24_Nov_2009_18_41_28_+1100_+JmycNT2zXNlRjj_
+--Signature=_Tue__24_Nov_2009_18_58_43_+1100_/qYMZDtrdJOxZk=M
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jean,
+Hi Gregory,
 
-On Tue, 24 Nov 2009 08:39:47 +0100 Jean Delvare <khali@linux-fr.org> wrote:
->
-> Ben and me co-maintain the i2c subsystem. I take care of i2c-core and
-> PC driver, while Ben maintains the embedded platform drivers. There
-> should be no overlapping in our trees.
+Today's linux-next build (x86_6 _allmodconfig) failed like this:
 
-OK, thanks.  That is the case today.
+drivers/vbus/built-in.o:(.data+0x0): multiple definition of `dev_attr_modal=
+ias'
+drivers/xen/built-in.o:(.data+0x46d0): first defined here
 
-> Ideally my tree would be included first, in case Ben has changes which
-> depend on i2c-core changes (which would belong to my tree). But I can't
-> remember such a case in the past, so I don't expect it to be frequent.
+Caused by commit 59aa8f441d27c8470764a513dafa46a77f33e953 ("vbus: add
+autoprobe capability to guest").  The DEVICE_ATTR(modalias ...) should
+probably be static.  I should probably be static in
+drivers/xen/xenbus/xenbus_probe.c as well.
 
-I have done that as well.
+I have used the version of the alacrity tree from next-20091123 for today.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__24_Nov_2009_18_41_28_+1100_+JmycNT2zXNlRjj_
+--Signature=_Tue__24_Nov_2009_18_58_43_+1100_/qYMZDtrdJOxZk=M
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAksLjigACgkQjjKRsyhoI8ydkgCfWFFUH0vo2VxhFycG0B6caDgS
-LB8AnRfSRKmZWP1HT2EygjqnRheWve6i
-=5joW
+iEYEARECAAYFAksLkjMACgkQjjKRsyhoI8xdggCghmFC4DHrTZW/9QyDMftzfJ9M
+d6AAoIKUXSdMo61pFLMqBVytODhlIUGU
+=Q9Ck
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__24_Nov_2009_18_41_28_+1100_+JmycNT2zXNlRjj_--
+--Signature=_Tue__24_Nov_2009_18_58_43_+1100_/qYMZDtrdJOxZk=M--
