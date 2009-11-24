@@ -1,52 +1,116 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the mips tree with the net-current
- tree
-Date: Tue, 24 Nov 2009 10:02:36 -0800 (PST)
-Message-ID: <20091124.100236.135630809.davem@davemloft.net>
-References: <20091124011958.GA8105@linux-mips.org>
-	<20091123.194343.232255103.davem@davemloft.net>
-	<200911241230.22370.florian@openwrt.org>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] staging/rtl8192x: fix printk formats
+Date: Tue, 24 Nov 2009 12:13:55 -0800
+Message-ID: <4B0C3E83.3060401@oracle.com>
+References: <20091124212255.87e083ce.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mips-bounce@linux-mips.org>
-In-Reply-To: <200911241230.22370.florian@openwrt.org>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-To: florian@openwrt.org
-Cc: ralf@linux-mips.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, a.beregalov@gmail.com, linux-mips@linux-mips.org, manuel.lauss@googlemail.com
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S934202AbZKXVOH@vger.kernel.org>
+In-Reply-To: <20091124212255.87e083ce.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Greg KH <gregkh@suse.de>, devel@driverdev.osuosl.org
 List-Id: linux-next.vger.kernel.org
 
-From: Florian Fainelli <florian@openwrt.org>
-Date: Tue, 24 Nov 2009 12:30:22 +0100
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-> On Tuesday 24 November 2009 04:43:43 David Miller wrote:
->> From: Ralf Baechle <ralf@linux-mips.org>
->> Date: Tue, 24 Nov 2009 01:19:58 +0000
->> 
->> > On Tue, Nov 24, 2009 at 11:37:17AM +1100, Stephen Rothwell wrote:
->> >> Hi Ralf,
->> >>
->> >> Today's linux-next merge of the mips tree got a conflict in
->> >> drivers/net/au1000_eth.c between commit
->> >> 63edaf647607795a065e6956a79c47f500dc8447 ("Au1x00: fix crash when trying
->> >> register_netdev()") from the net-current tree and commit
->> >> 6cdbc95856e7f4ab4e7b2f2bdab5c3844537ad83 ("NET: au1000-eth: convert to
->> >> platform_driver model") from the mips tree.
->> >>
->> >> It looks to me that the mips tree change supercedes the net-current one
->> >> (since it moves the register_netdev() call much later), so I just used
->> >> this file from the mips tree.
->> >
->> > I agree.  David, can you just drop the net-current patch then?  This fix
->> > is still needed for -stable however.
->> 
->> Why would I do that?  The bug fix is necessary for 2.6.32 too.
-> 
-> Ok, it is, but the platform_driver conversion patch is heavier, so the bugfix 
-> is way easier to apply on thom of the conversion.
+Fix printk format warnings in rtl8192[eu]:
 
-But the conversion is not appropriate for 2.6.32, and since I have to push
-the bug fix into 2.6.32 anyways you have to live with resolving the conflict
-somehow since the bug fix by itself is going to go to Linus for 2.6.32 but
-your conversion is not.
+drivers/staging/rtl8192e/ieee80211/ieee80211_wx.c:979: warning: format '%d' expects type 'int', but argument 2 has type 'size_t'
+drivers/staging/rtl8192e/ieee80211/rtl819x_BAProc.c:385: warning: format '%d' expects type 'int', but argument 3 has type 'long unsigned int'
+drivers/staging/rtl8192e/ieee80211/rtl819x_BAProc.c:484: warning: format '%d' expects type 'int', but argument 3 has type 'long unsigned int'
+drivers/staging/rtl8192e/ieee80211/rtl819x_BAProc.c:614: warning: format '%d' expects type 'int', but argument 3 has type 'long unsigned int'
+drivers/staging/rtl8192u/ieee80211/ieee80211_wx.c:848: warning: format '%d' expects type 'int', but argument 2 has type 'size_t'
+drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c:343: warning: format '%d' expects type 'int', but argument 3 has type 'long unsigned int'
+drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c:442: warning: format '%d' expects type 'int', but argument 3 has type 'long unsigned int'
+drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c:572: warning: format '%d' expects type 'int', but argument 3 has type 'long unsigned int'
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/staging/rtl8192e/ieee80211/ieee80211_wx.c   |    2 +-
+ drivers/staging/rtl8192e/ieee80211/rtl819x_BAProc.c |    6 +++---
+ drivers/staging/rtl8192u/ieee80211/ieee80211_wx.c   |    2 +-
+ drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c |    6 +++---
+ 4 files changed, 8 insertions(+), 8 deletions(-)
+
+--- linux-next-20091124.orig/drivers/staging/rtl8192e/ieee80211/ieee80211_wx.c
++++ linux-next-20091124/drivers/staging/rtl8192e/ieee80211/ieee80211_wx.c
+@@ -976,7 +976,7 @@ int ieee80211_wx_set_gen_ie(struct ieee8
+ 	{
+ 		if (len != ie[1]+2)
+ 		{
+-			printk("len:%d, ie:%d\n", len, ie[1]);
++			printk("len:%zu, ie:%d\n", len, ie[1]);
+ 			return -EINVAL;
+ 		}
+ 		buf = kmalloc(len, GFP_KERNEL);
+--- linux-next-20091124.orig/drivers/staging/rtl8192e/ieee80211/rtl819x_BAProc.c
++++ linux-next-20091124/drivers/staging/rtl8192e/ieee80211/rtl819x_BAProc.c
+@@ -382,7 +382,7 @@ int ieee80211_rx_ADDBAReq( struct ieee80
+ 
+ 	if (skb->len < sizeof( struct ieee80211_hdr_3addr) + 9)
+ 	{
+-		IEEE80211_DEBUG(IEEE80211_DL_ERR, " Invalid skb len in BAREQ(%d / %d)\n", skb->len, 	(sizeof( struct ieee80211_hdr_3addr) + 9));
++		IEEE80211_DEBUG(IEEE80211_DL_ERR, " Invalid skb len in BAREQ(%d / %zu)\n", skb->len, 	(sizeof( struct ieee80211_hdr_3addr) + 9));
+ 		return -1;
+ 	}
+ 
+@@ -481,7 +481,7 @@ int ieee80211_rx_ADDBARsp( struct ieee80
+ 
+ 	if (skb->len < sizeof( struct ieee80211_hdr_3addr) + 9)
+ 	{
+-		IEEE80211_DEBUG(IEEE80211_DL_ERR, " Invalid skb len in BARSP(%d / %d)\n", skb->len, 	(sizeof( struct ieee80211_hdr_3addr) + 9));
++		IEEE80211_DEBUG(IEEE80211_DL_ERR, " Invalid skb len in BARSP(%d / %zu)\n", skb->len, 	(sizeof( struct ieee80211_hdr_3addr) + 9));
+ 		return -1;
+ 	}
+ 	rsp = ( struct ieee80211_hdr_3addr*)skb->data;
+@@ -611,7 +611,7 @@ int ieee80211_rx_DELBA(struct ieee80211_
+ 
+ 	if (skb->len < sizeof( struct ieee80211_hdr_3addr) + 6)
+ 	{
+-		IEEE80211_DEBUG(IEEE80211_DL_ERR, " Invalid skb len in DELBA(%d / %d)\n", skb->len, 	(sizeof( struct ieee80211_hdr_3addr) + 6));
++		IEEE80211_DEBUG(IEEE80211_DL_ERR, " Invalid skb len in DELBA(%d / %zu)\n", skb->len, 	(sizeof( struct ieee80211_hdr_3addr) + 6));
+ 		return -1;
+ 	}
+ 
+--- linux-next-20091124.orig/drivers/staging/rtl8192u/ieee80211/ieee80211_wx.c
++++ linux-next-20091124/drivers/staging/rtl8192u/ieee80211/ieee80211_wx.c
+@@ -845,7 +845,7 @@ int ieee80211_wx_set_gen_ie(struct ieee8
+ 	{
+ 		if (len != ie[1]+2)
+ 		{
+-			printk("len:%d, ie:%d\n", len, ie[1]);
++			printk("len:%zu, ie:%d\n", len, ie[1]);
+ 			return -EINVAL;
+ 		}
+ 		buf = kmalloc(len, GFP_KERNEL);
+--- linux-next-20091124.orig/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c
++++ linux-next-20091124/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c
+@@ -340,7 +340,7 @@ int ieee80211_rx_ADDBAReq( struct ieee80
+ 
+ 	if (skb->len < sizeof( struct ieee80211_hdr_3addr) + 9)
+ 	{
+-		IEEE80211_DEBUG(IEEE80211_DL_ERR, " Invalid skb len in BAREQ(%d / %d)\n", skb->len, 	(sizeof( struct ieee80211_hdr_3addr) + 9));
++		IEEE80211_DEBUG(IEEE80211_DL_ERR, " Invalid skb len in BAREQ(%d / %zu)\n", skb->len, 	(sizeof( struct ieee80211_hdr_3addr) + 9));
+ 		return -1;
+ 	}
+ 
+@@ -439,7 +439,7 @@ int ieee80211_rx_ADDBARsp( struct ieee80
+ 
+ 	if (skb->len < sizeof( struct ieee80211_hdr_3addr) + 9)
+ 	{
+-		IEEE80211_DEBUG(IEEE80211_DL_ERR, " Invalid skb len in BARSP(%d / %d)\n", skb->len, 	(sizeof( struct ieee80211_hdr_3addr) + 9));
++		IEEE80211_DEBUG(IEEE80211_DL_ERR, " Invalid skb len in BARSP(%d / %zu)\n", skb->len, 	(sizeof( struct ieee80211_hdr_3addr) + 9));
+ 		return -1;
+ 	}
+ 	rsp = ( struct ieee80211_hdr_3addr*)skb->data;
+@@ -569,7 +569,7 @@ int ieee80211_rx_DELBA(struct ieee80211_
+ 
+ 	if (skb->len < sizeof( struct ieee80211_hdr_3addr) + 6)
+ 	{
+-		IEEE80211_DEBUG(IEEE80211_DL_ERR, " Invalid skb len in DELBA(%d / %d)\n", skb->len, 	(sizeof( struct ieee80211_hdr_3addr) + 6));
++		IEEE80211_DEBUG(IEEE80211_DL_ERR, " Invalid skb len in DELBA(%d / %zu)\n", skb->len, 	(sizeof( struct ieee80211_hdr_3addr) + 6));
+ 		return -1;
+ 	}
+ 
