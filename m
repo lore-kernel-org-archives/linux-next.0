@@ -1,39 +1,49 @@
-From: Ralf Baechle <ralf@linux-mips.org>
-Subject: Re: linux-next: manual merge of the mips tree with the net-current
-	tree
-Date: Tue, 24 Nov 2009 01:19:58 +0000
-Message-ID: <20091124011958.GA8105@linux-mips.org>
-References: <20091124113717.c5d86d41.sfr@canb.auug.org.au>
+From: Greg KH <gregkh@suse.de>
+Subject: Re: linux-next: Tree for November 23
+Date: Mon, 23 Nov 2009 18:34:35 -0800
+Message-ID: <20091124023435.GA22643@suse.de>
+References: <20091123185232.1423c56b.sfr@canb.auug.org.au> <20091123111510.9b0c0714.randy.dunlap@oracle.com> <200911240924.54675.rusty@rustcorp.com.au> <20091124103318.bfcb504c.sfr@canb.auug.org.au> <20091123233843.GA13464@suse.de> <4B0B1DD2.9000404@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from h5.dl5rb.org.uk ([81.2.74.5]:47282 "EHLO h5.dl5rb.org.uk"
+Received: from cantor2.suse.de ([195.135.220.15]:40197 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752241AbZKXBTy (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 23 Nov 2009 20:19:54 -0500
+	id S1757584AbZKXCl1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 23 Nov 2009 21:41:27 -0500
 Content-Disposition: inline
-In-Reply-To: <20091124113717.c5d86d41.sfr@canb.auug.org.au>
+In-Reply-To: <4B0B1DD2.9000404@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Beregalov <a.beregalov@gmail.com>, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <florian@openwrt.org>, linux-mips@linux-mips.org, Manuel Lauss <manuel.lauss@googlemail.com>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, Nov 24, 2009 at 11:37:17AM +1100, Stephen Rothwell wrote:
-
-> Hi Ralf,
+On Mon, Nov 23, 2009 at 03:42:10PM -0800, Randy Dunlap wrote:
+> Greg KH wrote:
+> > On Tue, Nov 24, 2009 at 10:33:18AM +1100, Stephen Rothwell wrote:
+> >> Hi Rusty,
+> >>
+> >> On Tue, 24 Nov 2009 09:24:54 +1030 Rusty Russell <rusty@rustcorp.com.au> wrote:
+> >>>     And I guess linux-next doesn't build staging?
+> >> Correct - it breaks to much and too often :-)
+> > 
+> > Yes, remember, it's crap, you don't want to build it :)
 > 
-> Today's linux-next merge of the mips tree got a conflict in
-> drivers/net/au1000_eth.c between commit
-> 63edaf647607795a065e6956a79c47f500dc8447 ("Au1x00: fix crash when trying
-> register_netdev()") from the net-current tree and commit
-> 6cdbc95856e7f4ab4e7b2f2bdab5c3844537ad83 ("NET: au1000-eth: convert to
-> platform_driver model") from the mips tree.
+> that's certainly one way to look at it, but I do spend time/effort
+> trying to get it to build, then send patches that either get dropped
+> or sit in a queue or ignored for a long time by their driver writer,
+> so you are just reinforcing the negativism associated with staging.
 > 
-> It looks to me that the mips tree change supercedes the net-current one
-> (since it moves the register_netdev() call much later), so I just used
-> this file from the mips tree.
+> I don't think that's what you should be doing.
 
-I agree.  David, can you just drop the net-current patch then?  This fix
-is still needed for -stable however.
+Yes, sometimes I do have a week or two lag in applying staging patches,
+that is true.
 
-  Ralf
+But blame me for that, don't poke Stephen or others about the issue,
+it's just me off stuck doing "real work".
+
+If it wasn't for this pesky job I have, I'd be able to get lots of work
+done :)
+
+Anyway, I'll try to be more responsive, my appologies.
+
+greg k-h
