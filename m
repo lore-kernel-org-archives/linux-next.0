@@ -1,106 +1,70 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: linux-next: manual merge of the trivial tree with the net tree
-Date: Tue, 24 Nov 2009 10:13:47 +0100 (CET)
-Message-ID: <alpine.LSU.2.00.0911241011520.6953@wotan.suse.de>
-References: <20091124171459.88cb0c0d.sfr@canb.auug.org.au>
+From: Ben Dooks <ben-linux@fluff.org>
+Subject: Re: tree addition request
+Date: Tue, 24 Nov 2009 09:28:03 +0000
+Message-ID: <20091124092803.GN23772@trinity.fluff.org>
+References: <20091123223044.GM23772@trinity.fluff.org> <20091124105114.2149e4a0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:47292 "EHLO mx2.suse.de"
+Received: from trinity.fluff.org ([89.16.178.74]:43048 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932367AbZKXJNl (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 24 Nov 2009 04:13:41 -0500
-In-Reply-To: <20091124171459.88cb0c0d.sfr@canb.auug.org.au>
+	id S932456AbZKXJ2F (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 24 Nov 2009 04:28:05 -0500
+Content-Disposition: inline
+In-Reply-To: <20091124105114.2149e4a0.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?ISO-8859-15?Q?=22Andr=E9_Goddard_Rosa=22?= <andre.goddard@gmail.com>, Bruce Allan <bruce.w.allan@intel.com>, "David S. Miller" <davem@davemloft.net>
+Cc: Ben Dooks <ben-linux@fluff.org>, linux-next@vger.kernel.org, Jean Delvare <khali@linux-fr.org>, Russell King <rmk@arm.linux.org.uk>
 
-On Tue, 24 Nov 2009, Stephen Rothwell wrote:
+On Tue, Nov 24, 2009 at 10:51:14AM +1100, Stephen Rothwell wrote:
+> Hi Ben,
+> 
+> On Mon, 23 Nov 2009 22:30:44 +0000 Ben Dooks <ben-linux@fluff.org> wrote:
+> >
+> > Is this the right place to request adding one/two trees to linux-next?
+> 
+> Yep.
+> 
+> > git://git.fluff.org/bjdooks/linux.git next-i2c
+> 
+> I already have an i2c quilt series from Jean Delvare
+> <khali@linux-fr.org>, how does this relate to that?
 
-> Hi Jiri,
->=20
-> Today's linux-next merge of the trivial tree got a conflict in
-> drivers/net/e1000e/lib.c between commit
-> 3bb99fe226ead584a4db674dab546689f705201f ("e1000e: consolidate two db=
-ug
-> macros into one simpler one") from the net tree and commit
-> 52692d35d013e221137b2fbe800e3e6776111821 ("tree-wide: fix assorted ty=
-pos
-> all over the place") from the trivial tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary.
-> --=20
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
->=20
-> diff --cc drivers/net/e1000e/lib.c
-> index f690a10,b065ba4..0000000
-> --- a/drivers/net/e1000e/lib.c
-> +++ b/drivers/net/e1000e/lib.c
-> @@@ -563,11 -570,11 +563,11 @@@ s32 e1000e_check_for_serdes_link(stru=
-c
->   			if (rxcw & E1000_RXCW_SYNCH) {
->   				if (!(rxcw & E1000_RXCW_IV)) {
->   					mac->serdes_has_link =3D true;
->  -					hw_dbg(hw, "SERDES: Link up - autoneg "
->  +					e_dbg("SERDES: Link up - autoneg "
-> - 					   "completed sucessfully.\n");
-> + 					   "completed successfully.\n");
->   				} else {
->   					mac->serdes_has_link =3D false;
->  -					hw_dbg(hw, "SERDES: Link down - invalid"
->  +					e_dbg("SERDES: Link down - invalid"
->   					   "codewords detected in autoneg.\n");
->   				}
->   			} else {
+I've been doing the more 'embedded' side of things, which means generally
+the non-X86 side of things such as ARM, MIPS, etc. for the last couple of
+releases.
+ 
+> > git://git.fluff.org/bjdooks/linux.git next-samsung
+> 
+> This is a set of arm platforms, right?
 
-Maybe the best resolution would be for Davem to merge the respective hu=
-nk=20
-through his tree, so that I can drop it on my side. Please let me know=20
-if/when this, I will drop the hunk then.
+This is the ARM support for a number of Samsung SoC/processors that
+i've been maintaining for a long time now. A number of people have
+requested these trees be included in -next now that the non-core ARM
+code is being submitted directly to linus.
+ 
+> I have added both these trees from today, assuming there are no
+> objections.  I have called them bjdooks-i2c and sumsung respectively.
+> 
+> Thanks for adding your subsystem tree as a participant of linux-next.  As
+> you may know, this is not a judgment of your code.  The purpose of
+> linux-next is for integration testing and to lower the impact of
+> conflicts between subsystems in the next merge window. 
+> 
+> You will need to ensure that the patches/commits in your tree/series have
+> been:
+>      * submitted under GPL v2 (or later) and include the Contributor's
+> 	Signed-off-by,
+>      * posted to the relevant mailing list,
+>      * reviewed by you (or another maintainer of your subsystem tree),
+>      * successfully unit tested, and 
+>      * destined for the current or next Linux merge window.
 
+Yes.
 
-=46rom: Andr=E9 Goddard Rosa <andre.goddard@gmail.com>
-Subject: e1000e: fix assorted typos
+-- 
+Ben
 
-Signed-off-by: Andr=E9 Goddard Rosa <andre.goddard@gmail.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-
---- a/drivers/net/e1000e/82571.c
-+++ b/drivers/net/e1000e/82571.c
-@@ -282,7 +282,7 @@ static s32 e1000_init_mac_params_82571(struct e1000=
-_adapter *adapter)
-=20
- 	/*
- 	 * Ensure that the inter-port SWSM.SMBI lock bit is clear before
--	 * first NVM or PHY acess. This should be done for single-port
-+	 * first NVM or PHY access. This should be done for single-port
- 	 * devices, and for one port only on dual-port devices so that
- 	 * for those devices we can still use the SMBI lock to synchronize
- 	 * inter-port accesses to the PHY & NVM.
-@@ -1412,7 +1412,7 @@ static s32 e1000_check_for_serdes_link_82571(stru=
-ct e1000_hw *hw)
- 		case e1000_serdes_link_autoneg_progress:
- 			/*
- 			 * If the LU bit is set in the STATUS register,
--			 * autoneg has completed sucessfully. If not,
-+			 * autoneg has completed successfully. If not,
- 			 * try foring the link because the far end may be
- 			 * available but not capable of autonegotiation.
- 			 */
-diff --git a/drivers/net/e1000e/lib.c b/drivers/net/e1000e/lib.c
-index 99ba2b8..b065ba4 100644
---- a/drivers/net/e1000e/lib.c
-+++ b/drivers/net/e1000e/lib.c
-@@ -571,7 +571,7 @@ s32 e1000e_check_for_serdes_link(struct e1000_hw *h=
-w)
- 				if (!(rxcw & E1000_RXCW_IV)) {
- 					mac->serdes_has_link =3D true;
- 					hw_dbg(hw, "SERDES: Link up - autoneg "
--					   "completed sucessfully.\n");
-+					   "completed successfully.\n");
- 				} else {
- 					mac->serdes_has_link =3D false;
- 					hw_dbg(hw, "SERDES: Link down - invalid"
+Q:      What's a light-year?
+A:      One-third less calories than a regular year.
