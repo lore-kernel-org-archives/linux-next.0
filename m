@@ -1,52 +1,47 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree with the net-current tree
-Date: Tue, 24 Nov 2009 14:11:22 +1100
-Message-ID: <20091124141122.63e81c55.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the wireless tree with the
+ wireless-current tree
+Date: Tue, 24 Nov 2009 14:11:41 +1100
+Message-ID: <20091124141141.5b6d3a8d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__24_Nov_2009_14_11_41_+1100_fWDQk=cAr=Nvns1W"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1757927AbZKXDLn@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Tue__24_Nov_2009_14_11_41_+1100_fWDQk=cAr=Nvns1W
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58098 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757740AbZKXDLS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 23 Nov 2009 22:11:18 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bruce Allan <bruce.w.allan@intel.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi John,
 
-Today's linux-next merge of the net tree got a conflict in
-drivers/net/e1000e/ich8lan.c between commit
-818f33313caab9be2a10458500dbed4a88c1b334 ("e1000e: do not initiate
-autonegotiation during OEM configuration") from the net-current tree and
-commit 94d8186a693284344ee5cb9734086c7a2370241a ("e1000e: cleanup ops
-function pointers") from the net tree.
+Today's linux-next merge of the wireless tree got a conflict in
+drivers/net/wireless/ath/ath9k/main.c between commit
+54ab040d24904d1fa2c0a6a27936b7c56a4efb24 ("ath9k: set ps_default as
+false") from the wireless-current tree and commit
+18b6c9a2213d3b6e0212e8b225abf95f7564206a ("ath9k: set ps_default as
+false") from the wireless tree.
 
-Just context changes. I fixed it up (see below) and can carry the fix for
-a while.
--- 
+The commit message of the latter made me use just its version.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/net/e1000e/ich8lan.c
-index eff3f47,568bb25..0000000
---- a/drivers/net/e1000e/ich8lan.c
-+++ b/drivers/net/e1000e/ich8lan.c
-@@@ -1118,12 -1110,11 +1110,12 @@@ static s32 e1000_oem_bits_config_ich8la
-  			oem_reg |= HV_OEM_BITS_LPLU;
-  	}
-  	/* Restart auto-neg to activate the bits */
- -	oem_reg |= HV_OEM_BITS_RESTART_AN;
- +	if (!e1000_check_reset_block(hw))
- +		oem_reg |= HV_OEM_BITS_RESTART_AN;
-- 	ret_val = hw->phy.ops.write_phy_reg_locked(hw, HV_OEM_BITS, oem_reg);
-+ 	ret_val = hw->phy.ops.write_reg_locked(hw, HV_OEM_BITS, oem_reg);
-  
-  out:
-- 	hw->phy.ops.release_phy(hw);
-+ 	hw->phy.ops.release(hw);
-  
-  	return ret_val;
-  }
+--Signature=_Tue__24_Nov_2009_14_11_41_+1100_fWDQk=cAr=Nvns1W
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAksLTu0ACgkQjjKRsyhoI8x8AACfWTR3pTuqK1Q4wEEjFjZtxKuo
+MTUAn0nuH9aQSc2r+myZ6Ss8bA6trxnI
+=GVQ+
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__24_Nov_2009_14_11_41_+1100_fWDQk=cAr=Nvns1W--
