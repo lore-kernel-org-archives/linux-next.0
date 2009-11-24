@@ -1,53 +1,42 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: ubifs tree build failure
-Date: Tue, 24 Nov 2009 18:28:01 +1100
-Message-ID: <20091124182801.5b631e52.sfr@canb.auug.org.au>
-References: <20091124121415.dc1e98a0.sfr@canb.auug.org.au>
-	<1259044314.18407.51.camel@localhost>
+From: Jean Delvare <khali@linux-fr.org>
+Subject: Re: tree addition request
+Date: Tue, 24 Nov 2009 08:39:47 +0100
+Message-ID: <20091124083947.0743c7d5@hyperion.delvare>
+References: <20091123223044.GM23772@trinity.fluff.org>
+	<20091124105114.2149e4a0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__24_Nov_2009_18_28_01_+1100_d9Erzpge0NESkOZ7"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46620 "EHLO smtps.tip.net.au"
+Received: from poutre.nerim.net ([62.4.16.124]:56295 "EHLO poutre.nerim.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753590AbZKXH2A (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 24 Nov 2009 02:28:00 -0500
-In-Reply-To: <1259044314.18407.51.camel@localhost>
+	id S1757628AbZKXHjt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 24 Nov 2009 02:39:49 -0500
+In-Reply-To: <20091124105114.2149e4a0.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Artem.Bityutskiy@nokia.com
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Corentin Chary <corentincj@iksaif.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Ben Dooks <ben-linux@fluff.org>, linux-next@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
 
---Signature=_Tue__24_Nov_2009_18_28_01_+1100_d9Erzpge0NESkOZ7
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen, Ben,
 
-Hi Artem,
+On Tue, 24 Nov 2009 10:51:14 +1100, Stephen Rothwell wrote:
+> On Mon, 23 Nov 2009 22:30:44 +0000 Ben Dooks <ben-linux@fluff.org> wrote:
+> > git://git.fluff.org/bjdooks/linux.git next-i2c
 
-On Tue, 24 Nov 2009 08:31:54 +0200 Artem Bityutskiy <Artem.Bityutskiy@nokia=
-.com> wrote:
->
-> thanks for quick reaction and sorry for the hassle. I've just fixed this
-> up.
+Ben, if this tree is somewhat official, please consider listing it in
+MAINTAINERS.
 
-No worries and thanks.
+> I already have an i2c quilt series from Jean Delvare
+> <khali@linux-fr.org>, how does this relate to that?
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Ben and me co-maintain the i2c subsystem. I take care of i2c-core and
+PC driver, while Ben maintains the embedded platform drivers. There
+should be no overlapping in our trees.
 
---Signature=_Tue__24_Nov_2009_18_28_01_+1100_d9Erzpge0NESkOZ7
-Content-Type: application/pgp-signature
+Ideally my tree would be included first, in case Ben has changes which
+depend on i2c-core changes (which would belong to my tree). But I can't
+remember such a case in the past, so I don't expect it to be frequent.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAksLiwEACgkQjjKRsyhoI8x0cQCgwCPFGaDrFHJFomdR9mzEbw/A
-9NoAniaxTV53Ch4z5Y+EsGlJBdkDhtzz
-=Da+S
------END PGP SIGNATURE-----
-
---Signature=_Tue__24_Nov_2009_18_28_01_+1100_d9Erzpge0NESkOZ7--
+-- 
+Jean Delvare
