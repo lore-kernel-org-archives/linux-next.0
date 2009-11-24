@@ -1,42 +1,61 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: mfd tree build failure
-Date: Tue, 24 Nov 2009 09:57:16 +0000
-Message-ID: <20091124095715.GA20505@rakim.wolfsonmicro.main>
+Date: Tue, 24 Nov 2009 21:14:33 +1100
+Message-ID: <20091124211433.cd1b7e96.sfr@canb.auug.org.au>
 References: <20091124163753.381d9a83.sfr@canb.auug.org.au>
+	<20091124095715.GA20505@rakim.wolfsonmicro.main>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:35285 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S932481AbZKXJ5L (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 24 Nov 2009 04:57:11 -0500
-Content-Disposition: inline
-In-Reply-To: <20091124163753.381d9a83.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__24_Nov_2009_21_14_33_+1100_eAq8oZ7q6CSvbx_X"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932643AbZKXKOf@vger.kernel.org>
+In-Reply-To: <20091124095715.GA20505@rakim.wolfsonmicro.main>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
 Cc: Samuel Ortiz <sameo@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Nov 24, 2009 at 04:37:53PM +1100, Stephen Rothwell wrote:
+--Signature=_Tue__24_Nov_2009_21_14_33_+1100_eAq8oZ7q6CSvbx_X
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> drivers/built-in.o: In function `wm831x_i2c_remove':
-> wm831x-core.c:(.text+0xd108b): undefined reference to `mfd_remove_devices'
-> drivers/built-in.o: In function `wm831x_i2c_write_device':
-> wm831x-core.c:(.text+0xd119c): undefined reference to `i2c_master_send'
-> drivers/built-in.o: In function `wm831x_i2c_read_device':
-> wm831x-core.c:(.text+0xd1208): undefined reference to `i2c_master_send'
-> wm831x-core.c:(.text+0xd1237): undefined reference to `i2c_master_recv'
+Hi Mark,
 
-> Caused by commit 4f7231a3ff624ad8a0fdace424b10a8b262071cf ("mfd: Don't
-> allow wm831x to be built as a module").  CONFIG_MFD_CORE is "m" and
-> CONFIG_I2C is "m" while CONFIG_MFD_WM831X is "y".  "select" is a real
-> problem :-(
+On Tue, 24 Nov 2009 09:57:16 +0000 Mark Brown <broonie@opensource.wolfsonmi=
+cro.com> wrote:
+>
+> There's something more seriously wrong than the select with your config
+> here - the driver depends on (rather than selecting) I2C and you're also
+> seeing undefined references to the I2C API.  The select on MFD_CORE
+> should also be forcing that to be built in (it does normally).
+>=20
+> Could you please post the actual configuration you're using?  I suspect
+> some Kbuild bug has been triggered here...
 
-There's something more seriously wrong than the select with your config
-here - the driver depends on (rather than selecting) I2C and you're also
-seeing undefined references to the I2C API.  The select on MFD_CORE
-should also be forcing that to be built in (it does normally).
+Sorry, I don't have the actual config (as I overwrite my build directory
+between each merge).  However, if I checkout the mfd tree (alone -
+nothing else in linux-next) and do "make ARCH=3Dx86_64 allmodconfig", I get
+the following in my .config:
 
-Could you please post the actual configuration you're using?  I suspect
-some Kbuild bug has been triggered here...
+CONFIG_I2C=3Dm
+CONFIG_MFD_CORE=3Dm
+CONFIG_MFD_WM831X=3Dy
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__24_Nov_2009_21_14_33_+1100_eAq8oZ7q6CSvbx_X
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAksLsgkACgkQjjKRsyhoI8zcMwCfQDe0vsAT9kS6udpkZBqoiHFF
+omIAoJLvB3vtFnYNtJ4OkRYjPumZKjbw
+=O6Nh
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__24_Nov_2009_21_14_33_+1100_eAq8oZ7q6CSvbx_X--
