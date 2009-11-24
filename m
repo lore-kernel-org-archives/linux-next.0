@@ -1,46 +1,53 @@
-From: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: ubifs tree build failure
-Date: Tue, 24 Nov 2009 08:31:54 +0200
-Message-ID: <1259044314.18407.51.camel@localhost>
+Date: Tue, 24 Nov 2009 18:28:01 +1100
+Message-ID: <20091124182801.5b631e52.sfr@canb.auug.org.au>
 References: <20091124121415.dc1e98a0.sfr@canb.auug.org.au>
-Reply-To: Artem.Bityutskiy@nokia.com
+	<1259044314.18407.51.camel@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__24_Nov_2009_18_28_01_+1100_d9Erzpge0NESkOZ7"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.nokia.com ([192.100.122.230]:36005 "EHLO
-	mgw-mx03.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757484AbZKXGcQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 24 Nov 2009 01:32:16 -0500
-In-Reply-To: <20091124121415.dc1e98a0.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:46620 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753590AbZKXH2A (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 24 Nov 2009 02:28:00 -0500
+In-Reply-To: <1259044314.18407.51.camel@localhost>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Artem.Bityutskiy@nokia.com
 Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Corentin Chary <corentincj@iksaif.net>
 
-On Tue, 2009-11-24 at 02:14 +0100, Stephen Rothwell wrote:
-> Hi Artem,
->=20
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
->=20
-> fs/ubifs/super.c: In function 'open_ubi':
-> fs/ubifs/super.c:1866: error: implicit declaration of function 'ubi_o=
-pen_volume_path'
-> fs/ubifs/super.c:1866: warning: assignment makes pointer from integer=
- without a cast
->=20
-> Caused by commit 82ccbf8c4ec2113d4e73dbac3ca914019ca883ca ("UBIFS:
-> support mounting of UBI volume character devices") which I have rever=
-ted
-> for today.
+--Signature=_Tue__24_Nov_2009_18_28_01_+1100_d9Erzpge0NESkOZ7
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Stephen,
+Hi Artem,
 
-thanks for quick reaction and sorry for the hassle. I've just fixed thi=
-s
-up.
+On Tue, 24 Nov 2009 08:31:54 +0200 Artem Bityutskiy <Artem.Bityutskiy@nokia=
+.com> wrote:
+>
+> thanks for quick reaction and sorry for the hassle. I've just fixed this
+> up.
+
+No worries and thanks.
 
 --=20
-Best Regards,
-Artem Bityutskiy (=D0=90=D1=80=D1=82=D1=91=D0=BC =D0=91=D0=B8=D1=82=D1=8E=
-=D1=86=D0=BA=D0=B8=D0=B9)
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__24_Nov_2009_18_28_01_+1100_d9Erzpge0NESkOZ7
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAksLiwEACgkQjjKRsyhoI8x0cQCgwCPFGaDrFHJFomdR9mzEbw/A
+9NoAniaxTV53Ch4z5Y+EsGlJBdkDhtzz
+=Da+S
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__24_Nov_2009_18_28_01_+1100_d9Erzpge0NESkOZ7--
