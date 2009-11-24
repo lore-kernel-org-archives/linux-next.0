@@ -1,116 +1,68 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] staging/rtl8192x: fix printk formats
-Date: Tue, 24 Nov 2009 12:13:55 -0800
-Message-ID: <4B0C3E83.3060401@oracle.com>
-References: <20091124212255.87e083ce.sfr@canb.auug.org.au>
+From: Jesse Barnes <jbarnes@virtuousgeek.org>
+Subject: Re: linux-next: manual merge of the trivial tree with the pci tree
+Date: Tue, 24 Nov 2009 13:51:50 -0800
+Message-ID: <20091124135150.0ccfd366@jbarnes-piketon>
+References: <20091117155417.e0514040.sfr@canb.auug.org.au>
+	<alpine.LSU.2.00.0911172318340.15039@wotan.suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S934202AbZKXVOH@vger.kernel.org>
-In-Reply-To: <20091124212255.87e083ce.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Greg KH <gregkh@suse.de>, devel@driverdev.osuosl.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from outbound-mail-137.bluehost.com ([67.222.39.27]:59899 "HELO
+	outbound-mail-137.bluehost.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with SMTP id S933966AbZKXVvt convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 24 Nov 2009 16:51:49 -0500
+In-Reply-To: <alpine.LSU.2.00.0911172318340.15039@wotan.suse.de>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?QW5kcsOp?= Goddard Rosa <andre.goddard@gmail.com>, Yinghai Lu <yinghai@kernel.org>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+On Tue, 17 Nov 2009 23:19:53 +0100 (CET)
+Jiri Kosina <jkosina@suse.cz> wrote:
 
-Fix printk format warnings in rtl8192[eu]:
+> On Tue, 17 Nov 2009, Stephen Rothwell wrote:
+>=20
+> > Today's linux-next merge of the trivial tree got a conflict in
+> > arch/x86/pci/amd_bus.c between commit
+> > 99935a7a59eaca0292c1a5880e10bae03f4a5e3d ("x86/PCI: read root
+> > resources from IOH on Intel") from the pci tree and commit
+> > 17530b1c635dfd1f258afc6b07b986b425d66ebd ("tree-wide: fix assorted
+> > typos all over the place") from the trivial tree.
+> >=20
+> > The comment fixed up by the trivial tree patch has moved to
+> > arch/x86/pci/bus_numa.h and I haven't bothered to fix it there.
+>=20
+> Thanks for letting me know.
+>=20
+> I have dropped the hunk from my queue. Jesse, could you please merge
+> this patch to your tree instead?
+>=20
+>=20
+>=20
+>=20
+> From: Andr=C3=A9 Goddard Rosa <andre.goddard@gmail.com>
+> Subject: pci: fix comment typo
+>=20
+> Signed-off-by: Andr=C3=A9 Goddard Rosa <andre.goddard@gmail.com>
+> Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+>=20
+> diff --git a/arch/x86/pci/amd_bus.c b/arch/x86/pci/amd_bus.c
+> index 572ee97..575f6fe 100644
+> --- a/arch/x86/pci/amd_bus.c
+> +++ b/arch/x86/pci/amd_bus.c
+> @@ -19,7 +19,7 @@
+>  /*
+>   * sub bus (transparent) will use entres from 3 to store extra from
+> root,
+> - * so need to make sure have enought slot there, increase
+> PCI_BUS_NUM_RESOURCES?
+> + * so need to make sure have enough slot there, increase
+> PCI_BUS_NUM_RESOURCES? */
+>  #define RES_NUM 16
 
-drivers/staging/rtl8192e/ieee80211/ieee80211_wx.c:979: warning: format '%d' expects type 'int', but argument 2 has type 'size_t'
-drivers/staging/rtl8192e/ieee80211/rtl819x_BAProc.c:385: warning: format '%d' expects type 'int', but argument 3 has type 'long unsigned int'
-drivers/staging/rtl8192e/ieee80211/rtl819x_BAProc.c:484: warning: format '%d' expects type 'int', but argument 3 has type 'long unsigned int'
-drivers/staging/rtl8192e/ieee80211/rtl819x_BAProc.c:614: warning: format '%d' expects type 'int', but argument 3 has type 'long unsigned int'
-drivers/staging/rtl8192u/ieee80211/ieee80211_wx.c:848: warning: format '%d' expects type 'int', but argument 2 has type 'size_t'
-drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c:343: warning: format '%d' expects type 'int', but argument 3 has type 'long unsigned int'
-drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c:442: warning: format '%d' expects type 'int', but argument 3 has type 'long unsigned int'
-drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c:572: warning: format '%d' expects type 'int', but argument 3 has type 'long unsigned int'
+=46ixed this up.  The comment is in bus_numa.h now.
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- drivers/staging/rtl8192e/ieee80211/ieee80211_wx.c   |    2 +-
- drivers/staging/rtl8192e/ieee80211/rtl819x_BAProc.c |    6 +++---
- drivers/staging/rtl8192u/ieee80211/ieee80211_wx.c   |    2 +-
- drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c |    6 +++---
- 4 files changed, 8 insertions(+), 8 deletions(-)
-
---- linux-next-20091124.orig/drivers/staging/rtl8192e/ieee80211/ieee80211_wx.c
-+++ linux-next-20091124/drivers/staging/rtl8192e/ieee80211/ieee80211_wx.c
-@@ -976,7 +976,7 @@ int ieee80211_wx_set_gen_ie(struct ieee8
- 	{
- 		if (len != ie[1]+2)
- 		{
--			printk("len:%d, ie:%d\n", len, ie[1]);
-+			printk("len:%zu, ie:%d\n", len, ie[1]);
- 			return -EINVAL;
- 		}
- 		buf = kmalloc(len, GFP_KERNEL);
---- linux-next-20091124.orig/drivers/staging/rtl8192e/ieee80211/rtl819x_BAProc.c
-+++ linux-next-20091124/drivers/staging/rtl8192e/ieee80211/rtl819x_BAProc.c
-@@ -382,7 +382,7 @@ int ieee80211_rx_ADDBAReq( struct ieee80
- 
- 	if (skb->len < sizeof( struct ieee80211_hdr_3addr) + 9)
- 	{
--		IEEE80211_DEBUG(IEEE80211_DL_ERR, " Invalid skb len in BAREQ(%d / %d)\n", skb->len, 	(sizeof( struct ieee80211_hdr_3addr) + 9));
-+		IEEE80211_DEBUG(IEEE80211_DL_ERR, " Invalid skb len in BAREQ(%d / %zu)\n", skb->len, 	(sizeof( struct ieee80211_hdr_3addr) + 9));
- 		return -1;
- 	}
- 
-@@ -481,7 +481,7 @@ int ieee80211_rx_ADDBARsp( struct ieee80
- 
- 	if (skb->len < sizeof( struct ieee80211_hdr_3addr) + 9)
- 	{
--		IEEE80211_DEBUG(IEEE80211_DL_ERR, " Invalid skb len in BARSP(%d / %d)\n", skb->len, 	(sizeof( struct ieee80211_hdr_3addr) + 9));
-+		IEEE80211_DEBUG(IEEE80211_DL_ERR, " Invalid skb len in BARSP(%d / %zu)\n", skb->len, 	(sizeof( struct ieee80211_hdr_3addr) + 9));
- 		return -1;
- 	}
- 	rsp = ( struct ieee80211_hdr_3addr*)skb->data;
-@@ -611,7 +611,7 @@ int ieee80211_rx_DELBA(struct ieee80211_
- 
- 	if (skb->len < sizeof( struct ieee80211_hdr_3addr) + 6)
- 	{
--		IEEE80211_DEBUG(IEEE80211_DL_ERR, " Invalid skb len in DELBA(%d / %d)\n", skb->len, 	(sizeof( struct ieee80211_hdr_3addr) + 6));
-+		IEEE80211_DEBUG(IEEE80211_DL_ERR, " Invalid skb len in DELBA(%d / %zu)\n", skb->len, 	(sizeof( struct ieee80211_hdr_3addr) + 6));
- 		return -1;
- 	}
- 
---- linux-next-20091124.orig/drivers/staging/rtl8192u/ieee80211/ieee80211_wx.c
-+++ linux-next-20091124/drivers/staging/rtl8192u/ieee80211/ieee80211_wx.c
-@@ -845,7 +845,7 @@ int ieee80211_wx_set_gen_ie(struct ieee8
- 	{
- 		if (len != ie[1]+2)
- 		{
--			printk("len:%d, ie:%d\n", len, ie[1]);
-+			printk("len:%zu, ie:%d\n", len, ie[1]);
- 			return -EINVAL;
- 		}
- 		buf = kmalloc(len, GFP_KERNEL);
---- linux-next-20091124.orig/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c
-+++ linux-next-20091124/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c
-@@ -340,7 +340,7 @@ int ieee80211_rx_ADDBAReq( struct ieee80
- 
- 	if (skb->len < sizeof( struct ieee80211_hdr_3addr) + 9)
- 	{
--		IEEE80211_DEBUG(IEEE80211_DL_ERR, " Invalid skb len in BAREQ(%d / %d)\n", skb->len, 	(sizeof( struct ieee80211_hdr_3addr) + 9));
-+		IEEE80211_DEBUG(IEEE80211_DL_ERR, " Invalid skb len in BAREQ(%d / %zu)\n", skb->len, 	(sizeof( struct ieee80211_hdr_3addr) + 9));
- 		return -1;
- 	}
- 
-@@ -439,7 +439,7 @@ int ieee80211_rx_ADDBARsp( struct ieee80
- 
- 	if (skb->len < sizeof( struct ieee80211_hdr_3addr) + 9)
- 	{
--		IEEE80211_DEBUG(IEEE80211_DL_ERR, " Invalid skb len in BARSP(%d / %d)\n", skb->len, 	(sizeof( struct ieee80211_hdr_3addr) + 9));
-+		IEEE80211_DEBUG(IEEE80211_DL_ERR, " Invalid skb len in BARSP(%d / %zu)\n", skb->len, 	(sizeof( struct ieee80211_hdr_3addr) + 9));
- 		return -1;
- 	}
- 	rsp = ( struct ieee80211_hdr_3addr*)skb->data;
-@@ -569,7 +569,7 @@ int ieee80211_rx_DELBA(struct ieee80211_
- 
- 	if (skb->len < sizeof( struct ieee80211_hdr_3addr) + 6)
- 	{
--		IEEE80211_DEBUG(IEEE80211_DL_ERR, " Invalid skb len in DELBA(%d / %d)\n", skb->len, 	(sizeof( struct ieee80211_hdr_3addr) + 6));
-+		IEEE80211_DEBUG(IEEE80211_DL_ERR, " Invalid skb len in DELBA(%d / %zu)\n", skb->len, 	(sizeof( struct ieee80211_hdr_3addr) + 6));
- 		return -1;
- 	}
- 
+--=20
+Jesse Barnes, Intel Open Source Technology Center
