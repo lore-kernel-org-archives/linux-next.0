@@ -1,40 +1,47 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: mfd tree build warning
-Date: Tue, 24 Nov 2009 11:06:01 +0000
-Message-ID: <20091124110601.GA26097@sirena.org.uk>
-References: <20091124164219.c5d54461.sfr@canb.auug.org.au>
+From: Florian Fainelli <florian@openwrt.org>
+Subject: Re: linux-next: manual merge of the mips tree with the net-current tree
+Date: Tue, 24 Nov 2009 12:30:22 +0100
+Message-ID: <200911241230.22370.florian@openwrt.org>
+References: <20091124113717.c5d86d41.sfr@canb.auug.org.au> <20091124011958.GA8105@linux-mips.org> <20091123.194343.232255103.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:49866 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932202AbZKXLF7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 24 Nov 2009 06:05:59 -0500
-Content-Disposition: inline
-In-Reply-To: <20091124164219.c5d54461.sfr@canb.auug.org.au>
+Received: from ey-out-2122.google.com ([74.125.78.27]:25097 "EHLO
+	ey-out-2122.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757628AbZKXLbU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 24 Nov 2009 06:31:20 -0500
+In-Reply-To: <20091123.194343.232255103.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: ralf@linux-mips.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, a.beregalov@gmail.com, linux-mips@linux-mips.org, manuel.lauss@googlemail.com
 
-On Tue, Nov 24, 2009 at 04:42:19PM +1100, Stephen Rothwell wrote:
+On Tuesday 24 November 2009 04:43:43 David Miller wrote:
+> From: Ralf Baechle <ralf@linux-mips.org>
+> Date: Tue, 24 Nov 2009 01:19:58 +0000
+> 
+> > On Tue, Nov 24, 2009 at 11:37:17AM +1100, Stephen Rothwell wrote:
+> >> Hi Ralf,
+> >>
+> >> Today's linux-next merge of the mips tree got a conflict in
+> >> drivers/net/au1000_eth.c between commit
+> >> 63edaf647607795a065e6956a79c47f500dc8447 ("Au1x00: fix crash when trying
+> >> register_netdev()") from the net-current tree and commit
+> >> 6cdbc95856e7f4ab4e7b2f2bdab5c3844537ad83 ("NET: au1000-eth: convert to
+> >> platform_driver model") from the mips tree.
+> >>
+> >> It looks to me that the mips tree change supercedes the net-current one
+> >> (since it moves the register_netdev() call much later), so I just used
+> >> this file from the mips tree.
+> >
+> > I agree.  David, can you just drop the net-current patch then?  This fix
+> > is still needed for -stable however.
+> 
+> Why would I do that?  The bug fix is necessary for 2.6.32 too.
 
-> I have been getting these warnings from the x86_64 allmodconfig build for
-> a long time:
-
-> drivers/mfd/wm8350-regmap.c:3177:2: warning: #warning No WM8350 config modes supported - select at least one of the
-> drivers/mfd/wm8350-regmap.c:3178:2: warning: #warning MFD_WM8350_CONFIG_MODE_n options from the board driver.
-
-> This may not be a problem, I just thought I should let you know.
-
-It's not a real problem.  Any actual system using the driver will need
-to have explicit code which registers the I2C device for the WM8350,
-that code will need to set up the particular build for the board.  The
-build time warning is there to try to make it a bit more obvious what's
-needed.
-
-Allowing the driver to be built without one of these defined provides
-build coverage which is helpful for subsystem maintainers.
-
-I might send a patch taking away the compile time warning, I'm not sure
-how likely it is that people will notice it.
+Ok, it is, but the platform_driver conversion patch is heavier, so the bugfix 
+is way easier to apply on thom of the conversion.
+--
+WBR, Florian
