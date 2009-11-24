@@ -1,52 +1,56 @@
-From: Eric Paris <eparis@redhat.com>
-Subject: Re: [PATCH -next] fanotify: select ANON_INODES.
-Date: Tue, 24 Nov 2009 08:25:31 -0500
-Message-ID: <1259069132.10772.332.camel@dhcp231-106.rdu.redhat.com>
-References: <20091124060256.GA30779@linux-sh.org>
+From: Gregory Haskins <gregory.haskins@gmail.com>
+Subject: Re: linux-next: Tree for November 24
+Date: Tue, 24 Nov 2009 09:09:36 -0500
+Message-ID: <4B0BE920.40106@gmail.com>
+References: <20091124212255.87e083ce.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="------------enig00BCFF50AE90F4181639BE68"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:60184 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758064AbZKXNZ2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 24 Nov 2009 08:25:28 -0500
-In-Reply-To: <20091124060256.GA30779@linux-sh.org>
+Received: from mail-yx0-f187.google.com ([209.85.210.187]:37368 "EHLO
+	mail-yx0-f187.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932940AbZKXOJe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 24 Nov 2009 09:09:34 -0500
+In-Reply-To: <20091124212255.87e083ce.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Mundt <lethal@linux-sh.org>
-Cc: linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, 2009-11-24 at 15:02 +0900, Paul Mundt wrote:
-> fanotify references anon_inode_getfd(), which is only available with
-> ANON_INODES enabled. Presently this bails out with the following:
-> 
->   LD      vmlinux
-> fs/built-in.o: In function `sys_fanotify_init':
-> (.text+0x26d1c): undefined reference to `anon_inode_getfd'
-> make: *** [vmlinux] Error 1
-> 
-> which is trivially corrected by adding an ANON_INODES select.
-> 
-> Signed-off-by: Paul Mundt <lethal@linux-sh.org>
+This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
+--------------enig00BCFF50AE90F4181639BE68
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, applied!
+Stephen Rothwell wrote:
+
+[...]
+
+>=20
+> The alacrity tree gained a build failure so I used the version from
+> next-20091123.
+>=20
+
+Should be fixed in tomorrows tree.  Sorry for the trouble!
+
+Kind Regards,
+-Greg
 
 
-> ---
-> 
->  fs/notify/fanotify/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/notify/fanotify/Kconfig b/fs/notify/fanotify/Kconfig
-> index f9d7ae0..668e5df 100644
-> --- a/fs/notify/fanotify/Kconfig
-> +++ b/fs/notify/fanotify/Kconfig
-> @@ -1,6 +1,7 @@
->  config FANOTIFY
->  	bool "Filesystem wide access notification"
->  	select FSNOTIFY
-> +	select ANON_INODES
->  	default y
->  	---help---
->  	   Say Y here to enable fanotify suport.  fanotify is a file access
+
+--------------enig00BCFF50AE90F4181639BE68
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG/MacGPG2 v2.0.11 (Darwin)
+Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
+
+iEYEARECAAYFAksL6SAACgkQP5K2CMvXmqGvKQCeKIsoGRtYtAjP4YAIdtJGcD3H
+8KkAnRkkoHHDxKKY6Df3XDnF/e1KMnyt
+=J5j4
+-----END PGP SIGNATURE-----
+
+--------------enig00BCFF50AE90F4181639BE68--
