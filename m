@@ -1,49 +1,52 @@
-From: Greg KH <gregkh@suse.de>
-Subject: Re: linux-next: Tree for November 23
-Date: Mon, 23 Nov 2009 18:34:35 -0800
-Message-ID: <20091124023435.GA22643@suse.de>
-References: <20091123185232.1423c56b.sfr@canb.auug.org.au> <20091123111510.9b0c0714.randy.dunlap@oracle.com> <200911240924.54675.rusty@rustcorp.com.au> <20091124103318.bfcb504c.sfr@canb.auug.org.au> <20091123233843.GA13464@suse.de> <4B0B1DD2.9000404@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree with the net-current tree
+Date: Tue, 24 Nov 2009 14:11:22 +1100
+Message-ID: <20091124141122.63e81c55.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:40197 "EHLO mx2.suse.de"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58098 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757584AbZKXCl1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 23 Nov 2009 21:41:27 -0500
-Content-Disposition: inline
-In-Reply-To: <4B0B1DD2.9000404@oracle.com>
+	id S1757740AbZKXDLS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 23 Nov 2009 22:11:18 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bruce Allan <bruce.w.allan@intel.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 
-On Mon, Nov 23, 2009 at 03:42:10PM -0800, Randy Dunlap wrote:
-> Greg KH wrote:
-> > On Tue, Nov 24, 2009 at 10:33:18AM +1100, Stephen Rothwell wrote:
-> >> Hi Rusty,
-> >>
-> >> On Tue, 24 Nov 2009 09:24:54 +1030 Rusty Russell <rusty@rustcorp.com.au> wrote:
-> >>>     And I guess linux-next doesn't build staging?
-> >> Correct - it breaks to much and too often :-)
-> > 
-> > Yes, remember, it's crap, you don't want to build it :)
-> 
-> that's certainly one way to look at it, but I do spend time/effort
-> trying to get it to build, then send patches that either get dropped
-> or sit in a queue or ignored for a long time by their driver writer,
-> so you are just reinforcing the negativism associated with staging.
-> 
-> I don't think that's what you should be doing.
+Hi all,
 
-Yes, sometimes I do have a week or two lag in applying staging patches,
-that is true.
+Today's linux-next merge of the net tree got a conflict in
+drivers/net/e1000e/ich8lan.c between commit
+818f33313caab9be2a10458500dbed4a88c1b334 ("e1000e: do not initiate
+autonegotiation during OEM configuration") from the net-current tree and
+commit 94d8186a693284344ee5cb9734086c7a2370241a ("e1000e: cleanup ops
+function pointers") from the net tree.
 
-But blame me for that, don't poke Stephen or others about the issue,
-it's just me off stuck doing "real work".
+Just context changes. I fixed it up (see below) and can carry the fix for
+a while.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-If it wasn't for this pesky job I have, I'd be able to get lots of work
-done :)
-
-Anyway, I'll try to be more responsive, my appologies.
-
-greg k-h
+diff --cc drivers/net/e1000e/ich8lan.c
+index eff3f47,568bb25..0000000
+--- a/drivers/net/e1000e/ich8lan.c
++++ b/drivers/net/e1000e/ich8lan.c
+@@@ -1118,12 -1110,11 +1110,12 @@@ static s32 e1000_oem_bits_config_ich8la
+  			oem_reg |= HV_OEM_BITS_LPLU;
+  	}
+  	/* Restart auto-neg to activate the bits */
+ -	oem_reg |= HV_OEM_BITS_RESTART_AN;
+ +	if (!e1000_check_reset_block(hw))
+ +		oem_reg |= HV_OEM_BITS_RESTART_AN;
+- 	ret_val = hw->phy.ops.write_phy_reg_locked(hw, HV_OEM_BITS, oem_reg);
++ 	ret_val = hw->phy.ops.write_reg_locked(hw, HV_OEM_BITS, oem_reg);
+  
+  out:
+- 	hw->phy.ops.release_phy(hw);
++ 	hw->phy.ops.release(hw);
+  
+  	return ret_val;
+  }
