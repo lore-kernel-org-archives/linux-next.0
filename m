@@ -1,70 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: mfd tree build failure
-Date: Tue, 24 Nov 2009 16:37:53 +1100
-Message-ID: <20091124163753.381d9a83.sfr@canb.auug.org.au>
+Subject: linux-next: mfd tree build warning
+Date: Tue, 24 Nov 2009 16:42:19 +1100
+Message-ID: <20091124164219.c5d54461.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__24_Nov_2009_16_37_53_+1100_Zt2GNVQFs.ijk/XB"
+ boundary="Signature=_Tue__24_Nov_2009_16_42_19_+1100_hESVTDJL8X.Mjlkr"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41314 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35269 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752941AbZKXFhx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 24 Nov 2009 00:37:53 -0500
+	id S1752619AbZKXFmR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 24 Nov 2009 00:42:17 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__24_Nov_2009_16_37_53_+1100_Zt2GNVQFs.ijk/XB
+--Signature=_Tue__24_Nov_2009_16_42_19_+1100_hESVTDJL8X.Mjlkr
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Samuel,
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+I have been getting these warnings from the x86_64 allmodconfig build for
+a long time:
 
-drivers/built-in.o: In function `wm831x_i2c_remove':
-wm831x-core.c:(.text+0xd108b): undefined reference to `mfd_remove_devices'
-drivers/built-in.o: In function `wm831x_i2c_write_device':
-wm831x-core.c:(.text+0xd119c): undefined reference to `i2c_master_send'
-drivers/built-in.o: In function `wm831x_i2c_read_device':
-wm831x-core.c:(.text+0xd1208): undefined reference to `i2c_master_send'
-wm831x-core.c:(.text+0xd1237): undefined reference to `i2c_master_recv'
-drivers/built-in.o: In function `wm831x_i2c_probe':
-wm831x-core.c:(.text+0xd2099): undefined reference to `mfd_add_devices'
-wm831x-core.c:(.text+0xd20cd): undefined reference to `mfd_add_devices'
-wm831x-core.c:(.text+0xd2105): undefined reference to `mfd_add_devices'
-wm831x-core.c:(.text+0xd2139): undefined reference to `mfd_add_devices'
-wm831x-core.c:(.text+0xd21dd): undefined reference to `mfd_add_devices'
-wm831x-core.c:(.text+0xd22c3): undefined reference to `mfd_remove_devices'
-drivers/built-in.o: In function `wm831x_i2c_init':
-wm831x-core.c:(.init.text+0xae6b): undefined reference to `i2c_register_dri=
-ver'
-drivers/built-in.o: In function `wm831x_i2c_exit':
-wm831x-core.c:(.exit.text+0x522): undefined reference to `i2c_del_driver'
+drivers/mfd/wm8350-regmap.c:3177:2: warning: #warning No WM8350 config mode=
+s supported - select at least one of the
+drivers/mfd/wm8350-regmap.c:3178:2: warning: #warning MFD_WM8350_CONFIG_MOD=
+E_n options from the board driver.
 
-Caused by commit 4f7231a3ff624ad8a0fdace424b10a8b262071cf ("mfd: Don't
-allow wm831x to be built as a module").  CONFIG_MFD_CORE is "m" and
-CONFIG_I2C is "m" while CONFIG_MFD_WM831X is "y".  "select" is a real
-problem :-(
-
-I have used the version of the mfd tree from next-20091120 for today.
+This may not be a problem, I just thought I should let you know.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__24_Nov_2009_16_37_53_+1100_Zt2GNVQFs.ijk/XB
+--Signature=_Tue__24_Nov_2009_16_42_19_+1100_hESVTDJL8X.Mjlkr
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAksLcTEACgkQjjKRsyhoI8x/EwCgvD7+e0yd4ifJcJgvV0//wDWg
-6GIAnjBXM4YvOEbOID3hoVtx3Si4KbjM
-=FI8l
+iEYEARECAAYFAksLcjsACgkQjjKRsyhoI8xMywCeL0QpNTk0gSQktpfeoNKkljFr
+ZPsAn1Co8EgtdkFBYee7WgxbtrFy9MDv
+=7/1S
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__24_Nov_2009_16_37_53_+1100_Zt2GNVQFs.ijk/XB--
+--Signature=_Tue__24_Nov_2009_16_42_19_+1100_hESVTDJL8X.Mjlkr--
