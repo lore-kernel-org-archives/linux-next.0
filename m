@@ -1,57 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: failed to fetch the mips tree
-Date: Tue, 24 Nov 2009 11:27:39 +1100
-Message-ID: <20091124112739.dd1ba1f7.sfr@canb.auug.org.au>
-References: <20091124105303.512479aa.sfr@canb.auug.org.au>
-	<20091124000929.GA7223@linux-mips.org>
+Subject: linux-next: manual merge of the mips tree with the net-current tree
+Date: Tue, 24 Nov 2009 11:37:17 +1100
+Message-ID: <20091124113717.c5d86d41.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__24_Nov_2009_11_27_39_+1100_nlMtMNEaWOnI5tua"
+ boundary="Signature=_Tue__24_Nov_2009_11_37_17_+1100_h9jrgQotXG6hntqd"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41145 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:54094 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751593AbZKXA1o (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 23 Nov 2009 19:27:44 -0500
-In-Reply-To: <20091124000929.GA7223@linux-mips.org>
+	id S1752671AbZKXAhQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 23 Nov 2009 19:37:16 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mips@linux-mips.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Beregalov <a.beregalov@gmail.com>, "David S. Miller" <davem@davemloft.net>, Florian Fainelli <florian@openwrt.org>
 
---Signature=_Tue__24_Nov_2009_11_27_39_+1100_nlMtMNEaWOnI5tua
+--Signature=_Tue__24_Nov_2009_11_37_17_+1100_h9jrgQotXG6hntqd
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Ralf,
 
-On Tue, 24 Nov 2009 00:09:29 +0000 Ralf Baechle <ralf@linux-mips.org> wrote:
->
-> On Tue, Nov 24, 2009 at 10:53:03AM +1100, Stephen Rothwell wrote:
->=20
-> > git.linux-mips.org[0: 78.24.191.183]: errno=3DConnection refused
-> > fatal: unable to connect a socket (Connection refused)
->=20
-> Thanks.  I upgraded the machine from Fedora 10 to Fedora 12 and the
-> removal of the git "dash-commands" resulted in this failure.  Fixed.
+Today's linux-next merge of the mips tree got a conflict in
+drivers/net/au1000_eth.c between commit
+63edaf647607795a065e6956a79c47f500dc8447 ("Au1x00: fix crash when trying
+register_netdev()") from the net-current tree and commit
+6cdbc95856e7f4ab4e7b2f2bdab5c3844537ad83 ("NET: au1000-eth: convert to
+platform_driver model") from the mips tree.
 
-All good now, thanks.
-
+It looks to me that the mips tree change supercedes the net-current one
+(since it moves the register_netdev() call much later), so I just used
+this file from the mips tree.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__24_Nov_2009_11_27_39_+1100_nlMtMNEaWOnI5tua
+--Signature=_Tue__24_Nov_2009_11_37_17_+1100_h9jrgQotXG6hntqd
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAksLKHsACgkQjjKRsyhoI8wmuACdH0/k57CcVyFkTBtU34iHniu5
-eQQAoLe2iX1HG8JeJH6337HCwRF6mo+8
-=HjN+
+iEYEARECAAYFAksLKr0ACgkQjjKRsyhoI8zvfACglKpQKL7O6BRZohnR5GTw0D3l
+ojIAn2svORhXI5LzwTY1LFL1ao9niQre
+=3T2G
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__24_Nov_2009_11_27_39_+1100_nlMtMNEaWOnI5tua--
+--Signature=_Tue__24_Nov_2009_11_37_17_+1100_h9jrgQotXG6hntqd--
