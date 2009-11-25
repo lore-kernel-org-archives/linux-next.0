@@ -1,89 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rr tree with the arm tree
-Date: Wed, 25 Nov 2009 16:21:43 +1100
-Message-ID: <20091125162143.f3ecd684.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the voltage tree with the mfd tree
+Date: Wed, 25 Nov 2009 17:56:02 +1100
+Message-ID: <20091125175602.0e765187.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__25_Nov_2009_17_56_02_+1100_8Z_5UCGBwtgffRaX"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:50948 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:51772 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750711AbZKYFVk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 25 Nov 2009 00:21:40 -0500
+	id S1751742AbZKYG4D (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 25 Nov 2009 01:56:03 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Jenkins <alan-jenkins@tuffmail.co.uk>, Nelson Elhage <nelhage@ksplice.com>, Tim Abbott <tabbott@ksplice.com>, Russell King <rmk@arm.linux.org.uk>
+To: Liam Girdwood <lrg@slimlogic.co.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Haojian Zhuang <haojian.zhuang@marvell.com>, Samuel Ortiz <sameo@linux.intel.com>
 
-Hi Rusty,
+--Signature=_Wed__25_Nov_2009_17_56_02_+1100_8Z_5UCGBwtgffRaX
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the rr tree got a conflict in
-arch/arm/kernel/vmlinux.lds.S between commit
-78d7530ac338e458fa513527ee7bb4278d0d8017 ("ARM: Clean up linker script
-using new linker script macros") from the arm tree and commit
-0a5e2c8918d0945f6384e104050c5234057455df ("ARM: use unified discard
-definition in linker script") from the rr tree.
+Hi Liam,
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
--- 
+Today's linux-next merge of the voltage tree got a conflict in
+drivers/mfd/Kconfig between commit
+b60463644b8baea3c649faeb9d7c44c104f14588 ("mfd: Fix 88PM8607 I2C
+dependency") from the mfd tree and commit
+258e3427f83a573d738344c2f5499da5e026e1df ("regulator: add 88PM8607 PMIC
+driver") from the voltage tree.
+
+I fixed it up using the mfd tree version. ("depends on I2C=3Dy" v "depends
+on I2C").
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/arm/kernel/vmlinux.lds.S
-index 71151bd,ec511d4..0000000
---- a/arch/arm/kernel/vmlinux.lds.S
-+++ b/arch/arm/kernel/vmlinux.lds.S
-@@@ -58,18 -77,13 +58,18 @@@ SECTION
-  #endif
-  	}
-  
- +	PERCPU(PAGE_SIZE)
- +
- +#ifndef CONFIG_XIP_KERNEL
- +	. = ALIGN(PAGE_SIZE);
- +	__init_end = .;
- +#endif
- +
-- 	/DISCARD/ : {			/* Exit code and data		*/
-- 		EXIT_TEXT
-- 		EXIT_DATA
-- 		*(.exitcall.exit)
-- 		*(.discard)
-+ 	/*
-+ 	 * unwind exit sections must be discarded before the rest of the
-+ 	 * unwind sections get included.
-+ 	 */
-+ 	/DISCARD/ : {
-  		*(.ARM.exidx.exit.text)
-  		*(.ARM.extab.exit.text)
-  #ifndef CONFIG_HOTPLUG_CPU
-@@@ -233,11 -256,24 +233,14 @@@
-  	}
-  #endif
-  
- -	.bss : {
- -		__bss_start = .;	/* BSS				*/
- -		*(.bss)
- -		*(COMMON)
- -		__bss_stop = .;
- -		_end = .;
- -	}
- -					/* Stabs debugging sections.	*/
- -	.stab 0 : { *(.stab) }
- -	.stabstr 0 : { *(.stabstr) }
- -	.stab.excl 0 : { *(.stab.excl) }
- -	.stab.exclstr 0 : { *(.stab.exclstr) }
- -	.stab.index 0 : { *(.stab.index) }
- -	.stab.indexstr 0 : { *(.stab.indexstr) }
- +	BSS_SECTION(0, 0, 0)
- +	_end = .;
- +
- +	STABS_DEBUG
-  	.comment 0 : { *(.comment) }
-+ 
-+ 	/* Default discards */
-+ 	DISCARDS
-  }
-  
-  /*
+--Signature=_Wed__25_Nov_2009_17_56_02_+1100_8Z_5UCGBwtgffRaX
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAksM1QIACgkQjjKRsyhoI8wXdwCfdsFWNDucEqMAoksH7dQy+RXs
+51oAoIEbsLKGNOYlzggsgMH3Tmmb+SDr
+=W7j2
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__25_Nov_2009_17_56_02_+1100_8Z_5UCGBwtgffRaX--
