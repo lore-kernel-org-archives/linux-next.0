@@ -1,60 +1,39 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: linux-next: percpu tree build warning
-Date: Thu, 26 Nov 2009 00:12:01 +0900
-Message-ID: <4B0D4941.5010904@kernel.org>
-References: <20091125214219.f37935e8.sfr@canb.auug.org.au> <20091125105004.GA18163@elte.hu> <4B0D23A6.8040902@kernel.org> <20091125134058.GA9097@elte.hu>
+From: Eric Paris <eparis@redhat.com>
+Subject: Re: linux-next: manual merge of the ext3 tree with the cifs tree
+Date: Wed, 25 Nov 2009 10:23:03 -0500
+Message-ID: <1259162583.4683.46.camel@dhcp231-106.rdu.redhat.com>
+References: <20091125140626.2b71fb0a.sfr@canb.auug.org.au>
+	 <20091125085006.GB549@quack.suse.cz>
+	 <20091125200444.cab8f918.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hera.kernel.org ([140.211.167.34]:33593 "EHLO hera.kernel.org"
+Received: from mx1.redhat.com ([209.132.183.28]:14006 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753093AbZKYPNM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 25 Nov 2009 10:13:12 -0500
-In-Reply-To: <20091125134058.GA9097@elte.hu>
+	id S1752553AbZKYPX2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 25 Nov 2009 10:23:28 -0500
+In-Reply-To: <20091125200444.cab8f918.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jan Kara <jack@suse.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Andrew Morton <akpm@linux-foundation.org>, Steve French <sfrench@us.ibm.com>, Jeff Layton <jlayton@redhat.com>
 
-Hello,
+On Wed, 2009-11-25 at 20:04 +1100, Stephen Rothwell wrote:
 
-11/25/2009 10:40 PM, Ingo Molnar wrote:
-> And look at your own 'cleanup' patch - it changes the percpu name to 
-> 'cpu_dr7'. That results in nonsensical repetition:
-> 
->         dr7 = &__get_cpu_var(cpu_dr7);
+> I have just noticed that I get the same conflict between the cifs tree
+> and the fsnotify tree (hi Eric!) which has also included that patch from
+> Christoph.  Again, not a big problem.
 
-My whole argument can be compressed into "don't name a global symbol
-dr7, no matter what it is".
+I was doing my development against linux-next.  After I posted them and
+decided to commit them to my -next tree I realized they didn't commit
+due to hch's patch.  So I cherry picked hch's patch and decided I
+wouldn't ask linus to pull until after the hch patch went in (I did it
+for some things in the net-next tree as well as I recall)
 
-The key problem is the artificial difference between static and
-dynamic percpu variable accessors.  The old way of prefixing from
-accessors only works for symbol literals, so either we need another
-identical set for dynamic ones without auto-prefixing or we end up
-doing the repetition you mentioned above in much uglier way.
+What's the best way?  To handle this?  do you prefer to just carry the
+conflict fix?  should we cherry pick things and fix it ourselves?  I
+guess my method breaks down if the tree in question doesn't eventually
+go to linus like it should.....
 
-Option 1:
-
-	this_cpu_static_OP(dr7, ARG);
-	this_cpu_dynamic_OP(*allocated_ptr, ARG);
-	this_cpu_dynamic_OP(per_cpu_var(dr7), ARG);
-
-Options 2:
-
-	this_cpu_OP(per_cpu_var(dr7), ARG);
-
-BTW, option 2 is what we've been doing before the change.  It's just
-ugly and the prefix no longer provides much protection because users
-outside of percpu code have to use per_cpu_var() which never was
-supposed to go outside of percpu internal code.  All it ends up doing
-is providing false sense of address space isolation when there is
-none.
-
-DEFINE_*(NAME) defines a global symbol NAME in all other definition
-macros.  DEFINE_PER_CPU() does so too.
-
-Thanks.
-
--- 
-tejun
+-Eric
