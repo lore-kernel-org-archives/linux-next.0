@@ -1,48 +1,38 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Subject: Re: linux-next: mfd tree build failure
-Date: Wed, 25 Nov 2009 00:35:19 +0100
-Message-ID: <20091124233518.GJ8290@sortiz.org>
-References: <20091123143503.3cdf8dee.sfr@canb.auug.org.au>
- <20091123122606.GA3616@sortiz.org>
- <20091123163211.GB3491@core.coreip.homeip.net>
+From: Jeremy Fitzhardinge <jeremy@goop.org>
+Subject: Re: linux-next: alacrity tree build failure
+Date: Tue, 24 Nov 2009 16:41:05 -0800
+Message-ID: <4B0C7D21.7010008@goop.org>
+References: <20091124185843.d2cab90c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga05.intel.com ([192.55.52.89]:51199 "EHLO
-	fmsmga101.fm.intel.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S934319AbZKXXds (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 24 Nov 2009 18:33:48 -0500
-Content-Disposition: inline
-In-Reply-To: <20091123163211.GB3491@core.coreip.homeip.net>
+Received: from claw.goop.org ([74.207.240.146]:59616 "EHLO claw.goop.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933068AbZKYAlB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 24 Nov 2009 19:41:01 -0500
+In-Reply-To: <20091124185843.d2cab90c.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Fertser <fercerpav@gmail.com>, Anton Vorontsov <avorontsov@ru.mvista.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Gregory Haskins <gregory.haskins@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "xen-devel@lists.xensource.com" <xen-devel@lists.xensource.com>, Mark McLoughlin <markmc@redhat.com>, Greg KH <gregkh@suse.de>, Kay Sievers <kay.sievers@vrfy.org>
 
-Hi Dmitry
+On 11/23/09 23:58, Stephen Rothwell wrote:
+> Today's linux-next build (x86_6 _allmodconfig) failed like this:
+>
+> drivers/vbus/built-in.o:(.data+0x0): multiple definition of `dev_attr_modalias'
+> drivers/xen/built-in.o:(.data+0x46d0): first defined here
+>
+> Caused by commit 59aa8f441d27c8470764a513dafa46a77f33e953 ("vbus: add
+> autoprobe capability to guest").  The DEVICE_ATTR(modalias ...) should
+> probably be static.  I should probably be static in
+> drivers/xen/xenbus/xenbus_probe.c as well.
+>   
 
-On Mon, Nov 23, 2009 at 08:32:11AM -0800, Dmitry Torokhov wrote:
-> > Could we split the above fix so that we get back to the:
-> > 
-> > 	struct platform_device *rtc_pdev;
-> > 	struct platform_device *mbc_pdev;
-> > 	struct platform_device *adc_pdev;
-> > 	struct platform_device *input_pdev;
-> > 	struct platform_device *regulator_pdev[PCF50633_NUM_REGULATORS];
-> > 
-> > structure ? We can move to the index based structure after the next merge
-> > window. That would make my life easier in terms of tree dependencies.
-> > If you dont have time to do this change, I'll do it some time this week.
-> > 
-> 
-> Please feel free to drop or reschedule the patch as you see fit. I don't
-> have any problem if it will go in later.
-Yes, I'll requeue your patchset after the next merge window is closed.
-Thanks for your understanding.
+All those DEVICE_ATTR()s should be static in that case.  Indeed, I guess
+they should be almost universally?  Should DEVICE_ATTR() include the
+static?  (Hm, almost every instance in the kernel already has static; it
+should probably have been part of the definition from the start, but
+changing it now would cause a lot of churn.)
 
-Cheers,
-Samuel.
-
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+    J
