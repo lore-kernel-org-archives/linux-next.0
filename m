@@ -1,27 +1,28 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the ext3 tree with the cifs tree
-Date: Wed, 25 Nov 2009 14:06:26 +1100
-Message-ID: <20091125140626.2b71fb0a.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the rr tree with the arm tree
+Date: Wed, 25 Nov 2009 16:21:43 +1100
+Message-ID: <20091125162143.f3ecd684.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51632 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:50948 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758257AbZKYDGY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 24 Nov 2009 22:06:24 -0500
+	id S1750711AbZKYFVk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 25 Nov 2009 00:21:40 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Andrew Morton <akpm@linux-foundation.org>, Steve French <sfrench@us.ibm.com>, Jeff Layton <jlayton@redhat.com>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Jenkins <alan-jenkins@tuffmail.co.uk>, Nelson Elhage <nelhage@ksplice.com>, Tim Abbott <tabbott@ksplice.com>, Russell King <rmk@arm.linux.org.uk>
 
-Hi Jan,
+Hi Rusty,
 
-Today's linux-next merge of the ext3 tree got a conflict in fs/cifs/dir.c
-between commit cea62343956c24452700c06cf028b72414c58a74 ("[CIFS]
-Duplicate data on appending to some Samba servers") from the cifs tree
-and commit 618903228b94b67a1d04634a83ea9cdb99c09e37 ("vfs: Implement
-proper O_SYNC semantics") from the ext3 tree.
+Today's linux-next merge of the rr tree got a conflict in
+arch/arm/kernel/vmlinux.lds.S between commit
+78d7530ac338e458fa513527ee7bb4278d0d8017 ("ARM: Clean up linker script
+using new linker script macros") from the arm tree and commit
+0a5e2c8918d0945f6384e104050c5234057455df ("ARM: use unified discard
+definition in linker script") from the rr tree.
 
 Just context changes.  I fixed it up (see below) and can carry the fix as
 necessary.
@@ -29,19 +30,60 @@ necessary.
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc fs/cifs/dir.c
-index 1f42f77,f1fe5cb..0000000
---- a/fs/cifs/dir.c
-+++ b/fs/cifs/dir.c
-@@@ -214,7 -214,10 +214,8 @@@ int cifs_posix_open(char *full_path, st
-  		posix_flags |= SMB_O_EXCL;
-  	if (oflags & O_TRUNC)
-  		posix_flags |= SMB_O_TRUNC;
-- 	if (oflags & O_SYNC)
- -	if (oflags & O_APPEND)
- -		posix_flags |= SMB_O_APPEND;
-+ 	/* be safe and imply O_SYNC for O_DSYNC */
-+ 	if (oflags & O_DSYNC)
-  		posix_flags |= SMB_O_SYNC;
-  	if (oflags & O_DIRECTORY)
-  		posix_flags |= SMB_O_DIRECTORY;
+diff --cc arch/arm/kernel/vmlinux.lds.S
+index 71151bd,ec511d4..0000000
+--- a/arch/arm/kernel/vmlinux.lds.S
++++ b/arch/arm/kernel/vmlinux.lds.S
+@@@ -58,18 -77,13 +58,18 @@@ SECTION
+  #endif
+  	}
+  
+ +	PERCPU(PAGE_SIZE)
+ +
+ +#ifndef CONFIG_XIP_KERNEL
+ +	. = ALIGN(PAGE_SIZE);
+ +	__init_end = .;
+ +#endif
+ +
+- 	/DISCARD/ : {			/* Exit code and data		*/
+- 		EXIT_TEXT
+- 		EXIT_DATA
+- 		*(.exitcall.exit)
+- 		*(.discard)
++ 	/*
++ 	 * unwind exit sections must be discarded before the rest of the
++ 	 * unwind sections get included.
++ 	 */
++ 	/DISCARD/ : {
+  		*(.ARM.exidx.exit.text)
+  		*(.ARM.extab.exit.text)
+  #ifndef CONFIG_HOTPLUG_CPU
+@@@ -233,11 -256,24 +233,14 @@@
+  	}
+  #endif
+  
+ -	.bss : {
+ -		__bss_start = .;	/* BSS				*/
+ -		*(.bss)
+ -		*(COMMON)
+ -		__bss_stop = .;
+ -		_end = .;
+ -	}
+ -					/* Stabs debugging sections.	*/
+ -	.stab 0 : { *(.stab) }
+ -	.stabstr 0 : { *(.stabstr) }
+ -	.stab.excl 0 : { *(.stab.excl) }
+ -	.stab.exclstr 0 : { *(.stab.exclstr) }
+ -	.stab.index 0 : { *(.stab.index) }
+ -	.stab.indexstr 0 : { *(.stab.indexstr) }
+ +	BSS_SECTION(0, 0, 0)
+ +	_end = .;
+ +
+ +	STABS_DEBUG
+  	.comment 0 : { *(.comment) }
++ 
++ 	/* Default discards */
++ 	DISCARDS
+  }
+  
+  /*
