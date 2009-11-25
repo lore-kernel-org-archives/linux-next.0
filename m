@@ -1,60 +1,48 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: linux-next: manual merge of the trivial tree with the arm tree
-Date: Wed, 25 Nov 2009 12:26:42 +0100 (CET)
-Message-ID: <alpine.LSU.2.00.0911251220110.6953@wotan.suse.de>
-References: <20091125182938.330219af.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: usb tree build warning
+Date: Wed, 25 Nov 2009 22:35:08 +1100
+Message-ID: <20091125223508.c0924e2d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor.suse.de ([195.135.220.2]:35623 "EHLO mx1.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758584AbZKYL0g (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 25 Nov 2009 06:26:36 -0500
-In-Reply-To: <20091125182938.330219af.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Russell King <rmk@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__25_Nov_2009_22_35_08_+1100_PQCrLoFNtk0SG.cn"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1758721AbZKYLfJ@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Nazarewicz <m.nazarewicz@samsung.com>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 25 Nov 2009, Stephen Rothwell wrote:
+--Signature=_Wed__25_Nov_2009_22_35_08_+1100_PQCrLoFNtk0SG.cn
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Today's linux-next merge of the trivial tree got a conflict in
-> arch/arm/plat-mxc/include/mach/mx2x.h between commit
-> b9fc90a48a3d1794443e095d8585dcaeafb2195f ("imx: add namespace prefixe=
-s
-> for symbols in mx2x.h") from the arm tree and commit
-> 324bea84dda5e6ddea9464cdd957cb8cf94552d9 ("tree-wide: fix typos "offe=
-st"
-> -> "offset"") from the trivial tree.
->=20
-> Just context changes.  I fixed it up (see below) and can carry the fi=
-x as
-> necessary.
+Hi Greg,
 
-Thanks. Probably the easiest way here is to hand it over to Russel.
+Today's linux-next build (x86_64 allmodconfig) produced this warning:
 
-I have dropped it from my tree -- Russel, please consider applying the=20
-patch below. Thanks.
+drivers/usb/gadget/multi.c:30:1: warning: "CONFIG_USB_ETH_RNDIS" redefined
+In file included from <command-line>:0:
+./include/generated/autoconf.h:185:1: warning: this is the location of the =
+previous definition
 
+Introduced by commit a8e2db2fc35a9c4599181730ef5772376232e881 ("USB: g_mult=
+i: Multifunction Composite Gadget added").
 
-=46rom: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
-Subject: [PATCH] arm: fix "offest" -> "offset" typo
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+--Signature=_Wed__25_Nov_2009_22_35_08_+1100_PQCrLoFNtk0SG.cn
+Content-Type: application/pgp-signature
 
-diff --git a/arch/arm/plat-mxc/include/mach/mx2x.h b/arch/arm/plat-mxc/=
-include/mach/mx2x.h
-index db5d921..728f31c 100644
---- a/arch/arm/plat-mxc/include/mach/mx2x.h
-+++ b/arch/arm/plat-mxc/include/mach/mx2x.h
-@@ -25,7 +25,7 @@
-=20
- /* The following addresses are common between i.MX21 and i.MX27 */
-=20
--/* Register offests */
-+/* Register offsets */
- #define AIPI_BASE_ADDR          0x10000000
- #define AIPI_BASE_ADDR_VIRT     0xF4000000
- #define AIPI_SIZE               SZ_1M
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAksNFmwACgkQjjKRsyhoI8wQjgCbBFVD+MynrRghLqCfMK1TFq38
+HzsAn0A+tKe1AaCzCNehK0xmam1PY7hS
+=Np71
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__25_Nov_2009_22_35_08_+1100_PQCrLoFNtk0SG.cn--
