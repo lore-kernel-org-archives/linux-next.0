@@ -1,97 +1,94 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: [PATCH] x86: rename global percpu symbol dr7 to cpu_dr7
-Date: Wed, 25 Nov 2009 22:24:44 +0900
-Message-ID: <4B0D301C.30709@kernel.org>
-References: <20091125214219.f37935e8.sfr@canb.auug.org.au> <20091125105004.GA18163@elte.hu>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: percpu tree build warning
+Date: Wed, 25 Nov 2009 14:40:58 +0100
+Message-ID: <20091125134058.GA9097@elte.hu>
+References: <20091125214219.f37935e8.sfr@canb.auug.org.au>
+ <20091125105004.GA18163@elte.hu>
+ <4B0D23A6.8040902@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hera.kernel.org ([140.211.167.34]:48894 "EHLO hera.kernel.org"
+Received: from mx3.mail.elte.hu ([157.181.1.138]:41153 "EHLO mx3.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751922AbZKYN1d (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 25 Nov 2009 08:27:33 -0500
-In-Reply-To: <20091125105004.GA18163@elte.hu>
+	id S934772AbZKYNlj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 25 Nov 2009 08:41:39 -0500
+Content-Disposition: inline
+In-Reply-To: <4B0D23A6.8040902@kernel.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
+To: Tejun Heo <tj@kernel.org>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Percpu symbols now occupy the same namespace as other global symbols
-and as such short global symbols without subsystem prefix tend to
-collide with local variables.  dr7 percpu variable used by x86 was hit
-by this.  Rename it to cpu_dr7.  The rename also makes it more
-consistent with its fellow cpu_debugreg percpu variable.
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Cc: Ingo Molnar <mingo@elte.hu>
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/x86/include/asm/debugreg.h |    4 ++--
- arch/x86/kernel/hw_breakpoint.c |   10 +++++-----
- 2 files changed, 7 insertions(+), 7 deletions(-)
+* Tejun Heo <tj@kernel.org> wrote:
 
-diff --git a/arch/x86/include/asm/debugreg.h b/arch/x86/include/asm/debugreg.h
-index fdabd84..8240f76 100644
---- a/arch/x86/include/asm/debugreg.h
-+++ b/arch/x86/include/asm/debugreg.h
-@@ -75,7 +75,7 @@
-  */
- #ifdef __KERNEL__
- 
--DECLARE_PER_CPU(unsigned long, dr7);
-+DECLARE_PER_CPU(unsigned long, cpu_dr7);
- 
- static inline void hw_breakpoint_disable(void)
- {
-@@ -91,7 +91,7 @@ static inline void hw_breakpoint_disable(void)
- 
- static inline int hw_breakpoint_active(void)
- {
--	return __get_cpu_var(dr7) & DR_GLOBAL_ENABLE_MASK;
-+	return __get_cpu_var(cpu_dr7) & DR_GLOBAL_ENABLE_MASK;
- }
- 
- extern void aout_dump_debugregs(struct user *dump);
-diff --git a/arch/x86/kernel/hw_breakpoint.c b/arch/x86/kernel/hw_breakpoint.c
-index 4d267fb..92ea5aa 100644
---- a/arch/x86/kernel/hw_breakpoint.c
-+++ b/arch/x86/kernel/hw_breakpoint.c
-@@ -46,8 +46,8 @@
- #include <asm/debugreg.h>
- 
- /* Per cpu debug control register value */
--DEFINE_PER_CPU(unsigned long, dr7);
--EXPORT_PER_CPU_SYMBOL(dr7);
-+DEFINE_PER_CPU(unsigned long, cpu_dr7);
-+EXPORT_PER_CPU_SYMBOL(cpu_dr7);
- 
- /* Per cpu debug address registers values */
- static DEFINE_PER_CPU(unsigned long, cpu_debugreg[HBP_NUM]);
-@@ -118,7 +118,7 @@ int arch_install_hw_breakpoint(struct perf_event *bp)
- 	set_debugreg(info->address, i);
- 	__get_cpu_var(cpu_debugreg[i]) = info->address;
- 
--	dr7 = &__get_cpu_var(dr7);
-+	dr7 = &__get_cpu_var(cpu_dr7);
- 	*dr7 |= encode_dr7(i, info->len, info->type);
- 
- 	set_debugreg(*dr7, 7);
-@@ -153,7 +153,7 @@ void arch_uninstall_hw_breakpoint(struct perf_event *bp)
- 	if (WARN_ONCE(i == HBP_NUM, "Can't find any breakpoint slot"))
- 		return;
- 
--	dr7 = &__get_cpu_var(dr7);
-+	dr7 = &__get_cpu_var(cpu_dr7);
- 	*dr7 &= ~encode_dr7(i, info->len, info->type);
- 
- 	set_debugreg(*dr7, 7);
-@@ -437,7 +437,7 @@ void hw_breakpoint_restore(void)
- 	set_debugreg(__get_cpu_var(cpu_debugreg[2]), 2);
- 	set_debugreg(__get_cpu_var(cpu_debugreg[3]), 3);
- 	set_debugreg(current->thread.debugreg6, 6);
--	set_debugreg(__get_cpu_var(dr7), 7);
-+	set_debugreg(__get_cpu_var(cpu_dr7), 7);
- }
- EXPORT_SYMBOL_GPL(hw_breakpoint_restore);
- 
+> > If yes then that needs to be fixed in the percpu tree. per-cpu 
+> > variables used to have a __per_cpu prefix and that should be 
+> > maintained - the two namespaces are obviously separate on the 
+> > logical space, so they should never overlap in the implementational 
+> > space either.
+> 
+> If all we ever have are static variables, the prefix may be fine but 
+> with dynamic percpu variables now basically being the same first class 
+> citizen but prefix just doesn't cut it.  It just ends up adding more 
+> confusion.  The transition will be a bit painful (but not too much, 
+> how many of these reports have we had?  Only several) but after that 
+> it's just plain local/global symbol collision the compiler would have 
+> no problem warning about.  It behaves exactly like other global 
+> symbols.
+> 
+> Percpu symbols and variables belong to a different address space than 
+> normal symbols.  Unfortunately, C doesn't have support for such thing. 
+
+That argument does not parse for me. Obviously no sane programming 
+language should allow shadowed variables which are used in the same way 
+- it's way too easy to use the wrong one.
+
+But we have _no_ real shadowing here - it's a pure artifact of how the 
+percpu symbol space is mapped back into C - and the collision (which 
+does not exist in the program space) is created where none existed 
+before.
+
+In other words: you are solving a problem that does not exist - you 
+cannot mix up a local C variable and a percpu variable. The two spaces 
+are clearly separated via definition and APIs. A C variable is defined 
+via:
+
+  unsigned long *dr7;
+
+and is used via:
+
+  dr7
+
+While a percpu variable is defined and used in completely different 
+ways:
+
+  DEFINE_PER_CPU(unsigned long, dr7);
+
+and is used via:
+
+  __get_cpu_var(cpu_dr7);
+
+It's analogous as if we had a 'struct percpu' C structure, and 
+dereferenced it via:
+
+ cpu->dr7.
+
+Note that we dont require it to be renamed to cpu->cpu_dr7.
+
+And look at your own 'cleanup' patch - it changes the percpu name to 
+'cpu_dr7'. That results in nonsensical repetition:
+
+        dr7 = &__get_cpu_var(cpu_dr7);
+
+I already said it's a percpu variable, via the __get_cpu_var() 
+primitive. Why do i have to type cpu_ again to express this, hm?
+
+These kinds of messy interactions between clearly disjunct name spaces 
+are bad IMO. And i dont see how dynamic percpu variables change this in 
+any way - none of the above is a dynamic percpu variable.
+
+I've applied your patch to not hold things up in linux-next (shadowing 
+is dangerous) but i dont see how your arguments add up.
+
+	Ingo
