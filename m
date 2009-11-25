@@ -1,52 +1,97 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the voltage tree with the mfd tree
-Date: Thu, 26 Nov 2009 00:23:23 +1100
-Message-ID: <20091126002323.92d4b575.sfr@canb.auug.org.au>
-References: <20091125175602.0e765187.sfr@canb.auug.org.au>
-	<1259150192.3697.63.camel@odin>
+From: Tejun Heo <tj@kernel.org>
+Subject: [PATCH] x86: rename global percpu symbol dr7 to cpu_dr7
+Date: Wed, 25 Nov 2009 22:24:44 +0900
+Message-ID: <4B0D301C.30709@kernel.org>
+References: <20091125214219.f37935e8.sfr@canb.auug.org.au> <20091125105004.GA18163@elte.hu>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__26_Nov_2009_00_23_23_+1100_sAd/MK/wW.NeN+Hv"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60379 "EHLO smtps.tip.net.au"
+Received: from hera.kernel.org ([140.211.167.34]:48894 "EHLO hera.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933784AbZKYNXa (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 25 Nov 2009 08:23:30 -0500
-In-Reply-To: <1259150192.3697.63.camel@odin>
+	id S1751922AbZKYN1d (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 25 Nov 2009 08:27:33 -0500
+In-Reply-To: <20091125105004.GA18163@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Liam Girdwood <lrg@slimlogic.co.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Haojian Zhuang <haojian.zhuang@marvell.com>, Samuel Ortiz <sameo@linux.intel.com>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Thu__26_Nov_2009_00_23_23_+1100_sAd/MK/wW.NeN+Hv
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Percpu symbols now occupy the same namespace as other global symbols
+and as such short global symbols without subsystem prefix tend to
+collide with local variables.  dr7 percpu variable used by x86 was hit
+by this.  Rename it to cpu_dr7.  The rename also makes it more
+consistent with its fellow cpu_debugreg percpu variable.
 
-Hi Liam,
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Cc: Ingo Molnar <mingo@elte.hu>
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/x86/include/asm/debugreg.h |    4 ++--
+ arch/x86/kernel/hw_breakpoint.c |   10 +++++-----
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
-On Wed, 25 Nov 2009 11:56:32 +0000 Liam Girdwood <lrg@slimlogic.co.uk> wrot=
-e:
->
-> Thanks for letting me know and the fixup. Will you be carrying the fix ?
-
-Yes, sorry I forgot to say.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__26_Nov_2009_00_23_23_+1100_sAd/MK/wW.NeN+Hv
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAksNL8sACgkQjjKRsyhoI8yEuACeL8uoK6HjoL17ojOMlahPo5fe
-5ggAnR+AbwaYOHJPHZ6olPkBaaOLkPN6
-=+exd
------END PGP SIGNATURE-----
-
---Signature=_Thu__26_Nov_2009_00_23_23_+1100_sAd/MK/wW.NeN+Hv--
+diff --git a/arch/x86/include/asm/debugreg.h b/arch/x86/include/asm/debugreg.h
+index fdabd84..8240f76 100644
+--- a/arch/x86/include/asm/debugreg.h
++++ b/arch/x86/include/asm/debugreg.h
+@@ -75,7 +75,7 @@
+  */
+ #ifdef __KERNEL__
+ 
+-DECLARE_PER_CPU(unsigned long, dr7);
++DECLARE_PER_CPU(unsigned long, cpu_dr7);
+ 
+ static inline void hw_breakpoint_disable(void)
+ {
+@@ -91,7 +91,7 @@ static inline void hw_breakpoint_disable(void)
+ 
+ static inline int hw_breakpoint_active(void)
+ {
+-	return __get_cpu_var(dr7) & DR_GLOBAL_ENABLE_MASK;
++	return __get_cpu_var(cpu_dr7) & DR_GLOBAL_ENABLE_MASK;
+ }
+ 
+ extern void aout_dump_debugregs(struct user *dump);
+diff --git a/arch/x86/kernel/hw_breakpoint.c b/arch/x86/kernel/hw_breakpoint.c
+index 4d267fb..92ea5aa 100644
+--- a/arch/x86/kernel/hw_breakpoint.c
++++ b/arch/x86/kernel/hw_breakpoint.c
+@@ -46,8 +46,8 @@
+ #include <asm/debugreg.h>
+ 
+ /* Per cpu debug control register value */
+-DEFINE_PER_CPU(unsigned long, dr7);
+-EXPORT_PER_CPU_SYMBOL(dr7);
++DEFINE_PER_CPU(unsigned long, cpu_dr7);
++EXPORT_PER_CPU_SYMBOL(cpu_dr7);
+ 
+ /* Per cpu debug address registers values */
+ static DEFINE_PER_CPU(unsigned long, cpu_debugreg[HBP_NUM]);
+@@ -118,7 +118,7 @@ int arch_install_hw_breakpoint(struct perf_event *bp)
+ 	set_debugreg(info->address, i);
+ 	__get_cpu_var(cpu_debugreg[i]) = info->address;
+ 
+-	dr7 = &__get_cpu_var(dr7);
++	dr7 = &__get_cpu_var(cpu_dr7);
+ 	*dr7 |= encode_dr7(i, info->len, info->type);
+ 
+ 	set_debugreg(*dr7, 7);
+@@ -153,7 +153,7 @@ void arch_uninstall_hw_breakpoint(struct perf_event *bp)
+ 	if (WARN_ONCE(i == HBP_NUM, "Can't find any breakpoint slot"))
+ 		return;
+ 
+-	dr7 = &__get_cpu_var(dr7);
++	dr7 = &__get_cpu_var(cpu_dr7);
+ 	*dr7 &= ~encode_dr7(i, info->len, info->type);
+ 
+ 	set_debugreg(*dr7, 7);
+@@ -437,7 +437,7 @@ void hw_breakpoint_restore(void)
+ 	set_debugreg(__get_cpu_var(cpu_debugreg[2]), 2);
+ 	set_debugreg(__get_cpu_var(cpu_debugreg[3]), 3);
+ 	set_debugreg(current->thread.debugreg6, 6);
+-	set_debugreg(__get_cpu_var(dr7), 7);
++	set_debugreg(__get_cpu_var(cpu_dr7), 7);
+ }
+ EXPORT_SYMBOL_GPL(hw_breakpoint_restore);
+ 
