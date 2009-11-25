@@ -1,46 +1,47 @@
-From: Greg KH <gregkh@suse.de>
-Subject: Re: linux-next: alacrity tree build failure
-Date: Tue, 24 Nov 2009 16:51:16 -0800
-Message-ID: <20091125005116.GA21858@suse.de>
-References: <20091124185843.d2cab90c.sfr@canb.auug.org.au>
- <4B0C7D21.7010008@goop.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ext3 tree with the cifs tree
+Date: Wed, 25 Nov 2009 14:06:26 +1100
+Message-ID: <20091125140626.2b71fb0a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:38897 "EHLO mx2.suse.de"
+Received: from chilli.pcug.org.au ([203.10.76.44]:51632 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933571AbZKYA4K (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 24 Nov 2009 19:56:10 -0500
-Content-Disposition: inline
-In-Reply-To: <4B0C7D21.7010008@goop.org>
+	id S1758257AbZKYDGY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 24 Nov 2009 22:06:24 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jeremy Fitzhardinge <jeremy@goop.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Gregory Haskins <gregory.haskins@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "xen-devel@lists.xensource.com" <xen-devel@lists.xensource.com>, Mark McLoughlin <markmc@redhat.com>, Kay Sievers <kay.sievers@vrfy.org>
+To: Jan Kara <jack@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Andrew Morton <akpm@linux-foundation.org>, Steve French <sfrench@us.ibm.com>, Jeff Layton <jlayton@redhat.com>
 
-On Tue, Nov 24, 2009 at 04:41:05PM -0800, Jeremy Fitzhardinge wrote:
-> On 11/23/09 23:58, Stephen Rothwell wrote:
-> > Today's linux-next build (x86_6 _allmodconfig) failed like this:
-> >
-> > drivers/vbus/built-in.o:(.data+0x0): multiple definition of `dev_attr_modalias'
-> > drivers/xen/built-in.o:(.data+0x46d0): first defined here
-> >
-> > Caused by commit 59aa8f441d27c8470764a513dafa46a77f33e953 ("vbus: add
-> > autoprobe capability to guest").  The DEVICE_ATTR(modalias ...) should
-> > probably be static.  I should probably be static in
-> > drivers/xen/xenbus/xenbus_probe.c as well.
-> >   
-> 
-> All those DEVICE_ATTR()s should be static in that case.  Indeed, I guess
-> they should be almost universally?  Should DEVICE_ATTR() include the
-> static?  (Hm, almost every instance in the kernel already has static; it
-> should probably have been part of the definition from the start, but
-> changing it now would cause a lot of churn.)
+Hi Jan,
 
-There are some "non static" usages, mostly to deal with stuff within a
-module that takes more than one file.  They could probably all be fixed
-up if someone really is bored :)
+Today's linux-next merge of the ext3 tree got a conflict in fs/cifs/dir.c
+between commit cea62343956c24452700c06cf028b72414c58a74 ("[CIFS]
+Duplicate data on appending to some Samba servers") from the cifs tree
+and commit 618903228b94b67a1d04634a83ea9cdb99c09e37 ("vfs: Implement
+proper O_SYNC semantics") from the ext3 tree.
 
-thanks,
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-greg k-h
+diff --cc fs/cifs/dir.c
+index 1f42f77,f1fe5cb..0000000
+--- a/fs/cifs/dir.c
++++ b/fs/cifs/dir.c
+@@@ -214,7 -214,10 +214,8 @@@ int cifs_posix_open(char *full_path, st
+  		posix_flags |= SMB_O_EXCL;
+  	if (oflags & O_TRUNC)
+  		posix_flags |= SMB_O_TRUNC;
+- 	if (oflags & O_SYNC)
+ -	if (oflags & O_APPEND)
+ -		posix_flags |= SMB_O_APPEND;
++ 	/* be safe and imply O_SYNC for O_DSYNC */
++ 	if (oflags & O_DSYNC)
+  		posix_flags |= SMB_O_SYNC;
+  	if (oflags & O_DIRECTORY)
+  		posix_flags |= SMB_O_DIRECTORY;
