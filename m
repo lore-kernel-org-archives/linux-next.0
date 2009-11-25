@@ -1,47 +1,55 @@
-From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Subject: Re: linux-next: manual merge of the net tree with the net-current
-	tree
-Date: Tue, 24 Nov 2009 23:52:24 -0800
-Message-ID: <9929d2390911242352l4ff1359dt9a9ecba381df3432@mail.gmail.com>
-References: <20091124141122.63e81c55.sfr@canb.auug.org.au>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: linux-next: manual merge of the ext3 tree with the cifs tree
+Date: Wed, 25 Nov 2009 09:50:06 +0100
+Message-ID: <20091125085006.GB549@quack.suse.cz>
+References: <20091125140626.2b71fb0a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pw0-f42.google.com ([209.85.160.42]:59103 "EHLO
-	mail-pw0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752448AbZKYHwS convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 25 Nov 2009 02:52:18 -0500
-In-Reply-To: <20091124141122.63e81c55.sfr@canb.auug.org.au>
+Received: from cantor2.suse.de ([195.135.220.15]:51092 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933936AbZKYIuJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 25 Nov 2009 03:50:09 -0500
+Content-Disposition: inline
+In-Reply-To: <20091125140626.2b71fb0a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bruce Allan <bruce.w.allan@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Andrew Morton <akpm@linux-foundation.org>, Steve French <sfrench@us.ibm.com>, Jeff Layton <jlayton@redhat.com>
 
-On Mon, Nov 23, 2009 at 19:11, Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
-> Hi all,
->
-> Today's linux-next merge of the net tree got a conflict in
-> drivers/net/e1000e/ich8lan.c between commit
-> 818f33313caab9be2a10458500dbed4a88c1b334 ("e1000e: do not initiate
-> autonegotiation during OEM configuration") from the net-current tree =
-and
-> commit 94d8186a693284344ee5cb9734086c7a2370241a ("e1000e: cleanup ops
-> function pointers") from the net tree.
->
-> Just context changes. I fixed it up (see below) and can carry the fix=
- for
-> a while.
-> --
-> Cheers,
-> Stephen Rothwell =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0sfr@canb.auug.org.au
->
+  Hi,
 
-I am checking your merge changes to e1000e now, sorry for the delayed r=
-esponse.
+On Wed 25-11-09 14:06:26, Stephen Rothwell wrote:
+> Today's linux-next merge of the ext3 tree got a conflict in fs/cifs/dir.c
+> between commit cea62343956c24452700c06cf028b72414c58a74 ("[CIFS]
+> Duplicate data on appending to some Samba servers") from the cifs tree
+> and commit 618903228b94b67a1d04634a83ea9cdb99c09e37 ("vfs: Implement
+> proper O_SYNC semantics") from the ext3 tree.
+  Thanks for notification and fixup.
 
---=20
-Cheers,
-Jeff
+> Just context changes.  I fixed it up (see below) and can carry the fix as
+> necessary.
+  Looking at the code, I don't see an easy way of resolving this by changing
+either mine or CIFS tree - I have other patches depending on this and this
+patch depending on others and I assume it's similar with CIFS... So I guess
+we'll have to live with this conflict.
+
+								Honza
+
+
+> diff --cc fs/cifs/dir.c
+> index 1f42f77,f1fe5cb..0000000
+> --- a/fs/cifs/dir.c
+> +++ b/fs/cifs/dir.c
+> @@@ -214,7 -214,10 +214,8 @@@ int cifs_posix_open(char *full_path, st
+>   		posix_flags |= SMB_O_EXCL;
+>   	if (oflags & O_TRUNC)
+>   		posix_flags |= SMB_O_TRUNC;
+> - 	if (oflags & O_SYNC)
+>  -	if (oflags & O_APPEND)
+>  -		posix_flags |= SMB_O_APPEND;
+> + 	/* be safe and imply O_SYNC for O_DSYNC */
+> + 	if (oflags & O_DSYNC)
+>   		posix_flags |= SMB_O_SYNC;
+>   	if (oflags & O_DIRECTORY)
+>   		posix_flags |= SMB_O_DIRECTORY;
