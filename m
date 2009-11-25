@@ -1,51 +1,35 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: tip tree build warning
-Date: Wed, 25 Nov 2009 21:53:38 +1100
-Message-ID: <20091125215338.d07a95b9.sfr@canb.auug.org.au>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: linux-next: percpu tree build warning
+Date: Wed, 25 Nov 2009 21:44:08 +1030
+Message-ID: <200911252144.08686.rusty@rustcorp.com.au>
+References: <20091125214219.f37935e8.sfr@canb.auug.org.au> <20091125105004.GA18163@elte.hu>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__25_Nov_2009_21_53_38_+1100_YbXsy6+CWxd0pb1u"
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60225 "EHLO smtps.tip.net.au"
+Received: from ozlabs.org ([203.10.76.45]:43873 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750703AbZKYKxt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 25 Nov 2009 05:53:49 -0500
+	id S1752148AbZKYLOF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 25 Nov 2009 06:14:05 -0500
+In-Reply-To: <20091125105004.GA18163@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Wed__25_Nov_2009_21_53_38_+1100_YbXsy6+CWxd0pb1u
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 25 Nov 2009 09:20:04 pm Ingo Molnar wrote:
+> If yes then that needs to be fixed in the percpu tree. per-cpu variables 
+> used to have a __per_cpu prefix and that should be maintained - the two 
+> namespaces are obviously separate on the logical space, so they should 
+> never overlap in the implementational space either.
 
-Hi all,
+No, we've been through this.
 
-Today's linux-next build (powerpc ppc64_defconfig) produced this warning:
+sparse annotations replace the per_cpu prefix now per-cpu vars can be used
+withn other than per-cpu ops (ie. their address can be usefully taken).
 
-kernel/perf_event.c:4306: warning: 'bp_perf_event_destroy' defined but not =
-used
+The prefix crutch predated sparse.  And it was certainly never supposed to
+let people write confusing and crap code like this.
 
-Introduced by commit 24f1e32c60c45c89a997c73395b69c8af6f0a84e
-("hw-breakpoints: Rewrite the hw-breakpoints layer on top of perf
-events").
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__25_Nov_2009_21_53_38_+1100_YbXsy6+CWxd0pb1u
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAksNDLIACgkQjjKRsyhoI8xS1wCgtumM6LTUSfICs5BTNBCAHSlo
-hIMAn3/Uom3IRlyjjnx816M63bm3/XA6
-=+I5Y
------END PGP SIGNATURE-----
-
---Signature=_Wed__25_Nov_2009_21_53_38_+1100_YbXsy6+CWxd0pb1u--
+Rusty.
