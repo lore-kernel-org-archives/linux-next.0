@@ -1,48 +1,34 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: usb tree build warning
-Date: Wed, 25 Nov 2009 22:35:08 +1100
-Message-ID: <20091125223508.c0924e2d.sfr@canb.auug.org.au>
+From: tytso@mit.edu
+Subject: Re: linux-next: manual merge of the trivial tree with the ext4 tree
+Date: Wed, 25 Nov 2009 06:45:22 -0500
+Message-ID: <20091125114522.GD14289@thunk.org>
+References: <20091125183414.eb45acca.sfr@canb.auug.org.au>
+ <alpine.LSU.2.00.0911251216270.6953@wotan.suse.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__25_Nov_2009_22_35_08_+1100_PQCrLoFNtk0SG.cn"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1758721AbZKYLfJ@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1758756AbZKYLp2@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <alpine.LSU.2.00.0911251216270.6953@wotan.suse.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Nazarewicz <m.nazarewicz@samsung.com>
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__25_Nov_2009_22_35_08_+1100_PQCrLoFNtk0SG.cn
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Nov 25, 2009 at 12:16:43PM +0100, Jiri Kosina wrote:
+> On Wed, 25 Nov 2009, Stephen Rothwell wrote:
+> 
+> > Today's linux-next merge of the trivial tree got a conflict in
+> > fs/ext4/balloc.c between commit 4433871130f36585fde38e7dd817433296648945
+> > ("ext4: fold ext4_free_blocks() and ext4_mb_free_blocks()") from the ext4
+> > tree and commit 15dcf8433b514d1dc1b80d87a0798c2db2c37e95 ("tree-wide: fix
+> > some typos and punctuation in comments") from the trivial tree.
+> > 
+> > The former moved the comment fixed by the latter and fixed the typo along
+> > the way.
+> 
+> Dropped the mballoc hunk from my queue, thanks.
 
-Hi Greg,
+You mean balloc hunk, I hope.  (In the commit in question, I moved the
+comment from fs/ext4/balloc.c to fs/ext4/mballoc.c.)
 
-Today's linux-next build (x86_64 allmodconfig) produced this warning:
-
-drivers/usb/gadget/multi.c:30:1: warning: "CONFIG_USB_ETH_RNDIS" redefined
-In file included from <command-line>:0:
-./include/generated/autoconf.h:185:1: warning: this is the location of the =
-previous definition
-
-Introduced by commit a8e2db2fc35a9c4599181730ef5772376232e881 ("USB: g_mult=
-i: Multifunction Composite Gadget added").
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__25_Nov_2009_22_35_08_+1100_PQCrLoFNtk0SG.cn
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAksNFmwACgkQjjKRsyhoI8wQjgCbBFVD+MynrRghLqCfMK1TFq38
-HzsAn0A+tKe1AaCzCNehK0xmam1PY7hS
-=Np71
------END PGP SIGNATURE-----
-
---Signature=_Wed__25_Nov_2009_22_35_08_+1100_PQCrLoFNtk0SG.cn--
+						- Ted
