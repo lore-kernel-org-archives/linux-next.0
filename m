@@ -1,53 +1,54 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: linux-next: percpu tree build warning
-Date: Wed, 25 Nov 2009 21:31:34 +0900
-Message-ID: <4B0D23A6.8040902@kernel.org>
-References: <20091125214219.f37935e8.sfr@canb.auug.org.au> <20091125105004.GA18163@elte.hu>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: percpu tree build failure
+Date: Wed, 25 Nov 2009 23:41:33 +1100
+Message-ID: <20091125234133.4d603f48.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__25_Nov_2009_23_41_33_+1100_Vc+EMHFwSLWu1hH+"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hera.kernel.org ([140.211.167.34]:59370 "EHLO hera.kernel.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:50485 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758725AbZKYMcZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 25 Nov 2009 07:32:25 -0500
-In-Reply-To: <20091125105004.GA18163@elte.hu>
+	id S934553AbZKYMlf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 25 Nov 2009 07:41:35 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Vivek Goyal <vgoyal@redhat.com>
 
-Hello,
+--Signature=_Wed__25_Nov_2009_23_41_33_+1100_Vc+EMHFwSLWu1hH+
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-11/25/2009 07:50 PM, Ingo Molnar wrote:
-> Tejun, is it perhaps a problem of the percpu code getting confused 
-> between the local and file scope 'dr7' variable shadowing each other?
+Hi all,
 
-Yes.
+Today's linux-next build (sparc64 defconfig) failed like this:
 
-> If yes then that needs to be fixed in the percpu tree. per-cpu variables 
-> used to have a __per_cpu prefix and that should be maintained - the two 
-> namespaces are obviously separate on the logical space, so they should 
-> never overlap in the implementational space either.
+mm/percpu.c: In function 'per_cpu_ptr_to_phys':
+mm/percpu.c:1321: error: implicit declaration of function 'page_to_phys'
 
-If all we ever have are static variables, the prefix may be fine but
-with dynamic percpu variables now basically being the same first class
-citizen but prefix just doesn't cut it.  It just ends up adding more
-confusion.  The transition will be a bit painful (but not too much,
-how many of these reports have we had?  Only several) but after that
-it's just plain local/global symbol collision the compiler would have
-no problem warning about.  It behaves exactly like other global
-symbols.
+Caused by commit 9a453506c3503929654112851e27b8c64c693912 ("percpu: Fix
+kdump failure if booted with percpu_alloc=3Dpage").  I reverted the merge
+commit (due to dependencies) that merged the above
+(25b1a9ccfdd0e3dc306a1e3a354ba5480c4b0dd9 "Merge branch 'for-linus' into
+for-next to receive per_cpu_ptr_to_phys ().") for today.  The branch
+being merged had only that one commit in it.
 
-Percpu symbols and variables belong to a different address space than
-normal symbols.  Unfortunately, C doesn't have support for such thing.
-Prefixing kind of works but simply breaks when the addresses are
-allowed to be handled as values.  We have had the exactly same problem
-and solution for years now - iomem.  Percpu memory isn't different
-from iomem at all.  Once the conversion is complete and annotations
-and code are upstream, it won't be painful at all.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Thanks.
+--Signature=_Wed__25_Nov_2009_23_41_33_+1100_Vc+EMHFwSLWu1hH+
+Content-Type: application/pgp-signature
 
--- 
-tejun
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAksNJf0ACgkQjjKRsyhoI8xa3gCgucV2PLYl2MLOdDfhdsin4VCA
+RjIAmgK7oE2yh2MSOorW1X+5pfs2E/bI
+=U8Ip
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__25_Nov_2009_23_41_33_+1100_Vc+EMHFwSLWu1hH+--
