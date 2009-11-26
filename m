@@ -1,60 +1,48 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the m68knommu tree with the m68k tree
-Date: Thu, 26 Nov 2009 11:58:06 +1100
-Message-ID: <20091126115806.c53684f5.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the acpi tree with the pci tree
+Date: Thu, 26 Nov 2009 13:22:28 +1100
+Message-ID: <20091126132228.85a63dee.sfr@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__26_Nov_2009_13_22_28_+1100_Cs5qTllUSoBF7ZAK"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754414AbZKZCWf@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Len Brown <lenb@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lin Ming <ming.m.lin@intel.com>, Bob Moore <robert.moore@intel.com>, Bjorn Helgaas <bjorn.helgaas@hp.com>, Jesse Barnes <jbarnes@virtuousgeek.org>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Thu__26_Nov_2009_13_22_28_+1100_Cs5qTllUSoBF7ZAK
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49967 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753404AbZKZA6D (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 25 Nov 2009 19:58:03 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg Ungerer <gerg@snapgear.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andreas Schwab <schwab@linux-m68k.org>, Geert Uytterhoeven <geert@linux-m68k.org>
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Len,
 
-Today's linux-next merge of the m68knommu tree got a conflict in
-arch/m68k/include/asm/ptrace.h between commit
-63c361b65f6540043c4baabf1a044a45c7465858 ("m68k: use generic code for
-ptrace requests") from the m68k tree and commit
-03a03164e8084b810e9f92906a51232d63bac72c ("m68knommu: define
-arch_has_single_step() and friends") from the m68knommu tree.
+Today's linux-next merge of the acpi tree got a conflict in
+drivers/pci/hotplug/acpiphp_glue.c between commit
+204d49a5613a06eb2fa5c3b842a29b1336cc7995 ("PCI hotplug: move IOAPIC
+support from acpiphp to ioapic driver") from the pci tree and commit
+2263576cfc6e8f6ab038126c3254404b9fcb1c33 ("ACPICA: Add post-order
+callback to acpi_walk_namespace") from the acpi tree.
 
-These mostly add the same stuff but not quite :-(
-
-I have done a fixup (see below) and can carry it as necessary.  Please
-check the result.
--- 
+The former moved part of the code modified by the latter into another
+file.  All the calls to acpi_walk_namespace() seem to have been removed
+in this process.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/m68k/include/asm/ptrace.h
-index eef9309,beb2091..0000000
---- a/arch/m68k/include/asm/ptrace.h
-+++ b/arch/m68k/include/asm/ptrace.h
-@@@ -86,14 -84,15 +86,18 @@@ struct switch_stack 
-  extern void show_regs(struct pt_regs *);
-  
-  /*
- - * These are defined as per linux/ptrace.h.
- + * These are defined as per linux/ptrace.h, which see.
-   */
-+ struct task_struct;
-+ 
- -#ifndef CONFIG_MMU
- -#define	arch_has_single_step()	(1)
- +#define arch_has_single_step()	(1)
-  extern void user_enable_single_step(struct task_struct *);
-  extern void user_disable_single_step(struct task_struct *);
- +
-++#ifdef CONFIG_MMU
- +#define arch_has_block_step()	(1)
- +extern void user_enable_block_step(struct task_struct *);
-+ #endif
-  
-  #endif /* __KERNEL__ */
-  #endif /* __ASSEMBLY__ */
+--Signature=_Thu__26_Nov_2009_13_22_28_+1100_Cs5qTllUSoBF7ZAK
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEUEARECAAYFAksN5mQACgkQjjKRsyhoI8xoggCeL/udiBiXy3SyGBowWqQ3IZbI
+ijYAljn0WNVzNIAUmy2a0Y90xwvysu8=
+=bjSp
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__26_Nov_2009_13_22_28_+1100_Cs5qTllUSoBF7ZAK--
