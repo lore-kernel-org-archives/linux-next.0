@@ -1,53 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: sparc tree build failure
-Date: Thu, 26 Nov 2009 20:16:07 +1100
-Message-ID: <20091126201607.023e1269.sfr@canb.auug.org.au>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: linux-next: manual merge of the workqueues tree with the tip
+ tree
+Date: Thu, 26 Nov 2009 18:15:45 +0900
+Message-ID: <4B0E4741.10509@kernel.org>
+References: <20091126190018.88a6dd77.sfr@canb.auug.org.au> <20091126081237.GA31034@elte.hu>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__26_Nov_2009_20_16_07_+1100_qat5QJAOuINjMpIY"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47143 "EHLO smtps.tip.net.au"
+Received: from hera.kernel.org ([140.211.167.34]:43885 "EHLO hera.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1760140AbZKZJQG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 26 Nov 2009 04:16:06 -0500
+	id S1760066AbZKZJQE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 26 Nov 2009 04:16:04 -0500
+In-Reply-To: <20091126081237.GA31034@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "David S. Miller" <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Galbraith <efault@gmx.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
---Signature=_Thu__26_Nov_2009_20_16_07_+1100_qat5QJAOuINjMpIY
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+11/26/2009 05:12 PM, Ingo Molnar wrote:
+> Please submit scheduler patches to the scheduler tree. Such level of 
+> refactoring of a critical scheduler component needs to go through the 
+> regular scheduler channels. This is a frequently modified piece of code 
+> and conflicts are likely in the future.
 
-Hi Dave,
+Sure, which sched/* branch should I base these patches on?
+Alternatively, pulling the following branch into one of sched/* should
+do the trick too.
 
-Today's linux-next build (sparc32 defconfig) failed like this:
+ git://git.kernel.org/pub/scm/linux/kernel/git/tj/wq.git for-sched
 
-arch/sparc/lib/atomic32.c: In function '__atomic_add_return':
-arch/sparc/lib/atomic32.c:34: error: implicit declaration of function '__ra=
-w_spin_lock_irqsave'
-arch/sparc/lib/atomic32.c:38: error: implicit declaration of function '__ra=
-w_spin_unlock_irqrestore'
+Thanks.
 
-Caused by commit 4df286e52917c95c415400367cfd523dfbb0f93a ("sparc: Make
-atomic locks raw") which I have reverted for today.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__26_Nov_2009_20_16_07_+1100_qat5QJAOuINjMpIY
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAksOR1cACgkQjjKRsyhoI8wX1gCfTmC0BR9HKkzjTrLFL2V9Qf94
-zfAAn0JK1hHQiR7KRVMZyPq37XQ9Kidj
-=wTGG
------END PGP SIGNATURE-----
-
---Signature=_Thu__26_Nov_2009_20_16_07_+1100_qat5QJAOuINjMpIY--
+-- 
+tejun
