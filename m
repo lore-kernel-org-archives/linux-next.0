@@ -1,54 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: nfs/nfsd trees fetch failed
-Date: Fri, 27 Nov 2009 09:59:18 +1100
-Message-ID: <20091127095918.e066e2ef.sfr@canb.auug.org.au>
-References: <20091127083936.b9c125c6.sfr@canb.auug.org.au>
-	<E8E998D0-13B9-4D54-AA55-FAF8EC72168B@fys.uio.no>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: sparc tree build failure
+Date: Thu, 26 Nov 2009 15:28:16 -0800 (PST)
+Message-ID: <20091126.152816.233622295.davem@davemloft.net>
+References: <20091126201607.023e1269.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__27_Nov_2009_09_59_18_+1100_Mi8YhCYjigjUiKut"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40351 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753215AbZKZW7Q (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 26 Nov 2009 17:59:16 -0500
-In-Reply-To: <E8E998D0-13B9-4D54-AA55-FAF8EC72168B@fys.uio.no>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:47828
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750919AbZKZX17 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 26 Nov 2009 18:27:59 -0500
+In-Reply-To: <20091126201607.023e1269.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Trond Myklebust <trond.myklebust@fys.uio.no>
-Cc: "J. Bruce Fields" <bfields@fieldses.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: sfr@canb.auug.org.au
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de
 
---Signature=_Fri__27_Nov_2009_09_59_18_+1100_Mi8YhCYjigjUiKut
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 26 Nov 2009 20:16:07 +1100
 
-Hi Trond,
+> Today's linux-next build (sparc32 defconfig) failed like this:
+> 
+> arch/sparc/lib/atomic32.c: In function '__atomic_add_return':
+> arch/sparc/lib/atomic32.c:34: error: implicit declaration of function '__raw_spin_lock_irqsave'
+> arch/sparc/lib/atomic32.c:38: error: implicit declaration of function '__raw_spin_unlock_irqrestore'
+> 
+> Caused by commit 4df286e52917c95c415400367cfd523dfbb0f93a ("sparc: Make
+> atomic locks raw") which I have reverted for today.
 
-On Thu, 26 Nov 2009 17:30:22 -0500 Trond Myklebust <trond.myklebust@fys.uio=
-.no> wrote:
->
-> Yes, I'm aware of the problem, and I'm sorry. I'm hoping that I can =20
-> get Linux-nfs.org up and running again tomorrow (=3D=3D Saturday your =20
-> time) after the Thanksgiving celebrations.
+Ho hum, that's the second iteration and it broke the build first time
+too.
 
-OK, thanks, no hurry.
+__raw_spin_lock_irqsave() definitions don't exist anywhere in the
+tree, I wonder what this was even build tested against?
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__27_Nov_2009_09_59_18_+1100_Mi8YhCYjigjUiKut
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAksPCEYACgkQjjKRsyhoI8yxiACdGVHVQDechVmM3uOcuo7GhklP
-O5wAmwSP0vrRgKRsRbWKd2BRH4N4Z7dq
-=YV5w
------END PGP SIGNATURE-----
-
---Signature=_Fri__27_Nov_2009_09_59_18_+1100_Mi8YhCYjigjUiKut--
+I'm reverting, and I'll be hard pressed to add new versions without
+solid proof that it doesn't break the build a third time :-)
