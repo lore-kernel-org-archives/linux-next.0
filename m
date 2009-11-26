@@ -1,65 +1,111 @@
-From: Sachin Sant <sachinp@in.ibm.com>
-Subject: Re: -next: Nov 12 - kernel BUG at kernel/sched.c:7359!
-Date: Thu, 26 Nov 2009 10:09:12 +0530
-Message-ID: <4B0E0670.2000309@in.ibm.com>
-References: <20091112195101.63263490.sfr@canb.auug.org.au> <4AFBF73B.5040500@in.ibm.com> <1258027820.4039.129.camel@laptop> <4AFBFE3D.80507@in.ibm.com> <1258028831.4039.152.camel@laptop> <1258045831.4039.736.camel@laptop>  <20091113095801.GA29977@in.ibm.com> <1258107368.4039.1149.camel@laptop> <1258108281.22655.5.camel@laptop> <4B0A5BA7.8020604@in.ibm.com> <1259156575.4027.514.camel@laptop>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the workqueues tree with the tip tree
+Date: Thu, 26 Nov 2009 19:00:18 +1100
+Message-ID: <20091126190018.88a6dd77.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e28smtp04.in.ibm.com ([122.248.162.4]:46984 "EHLO
-	e28smtp04.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932306AbZKZEjK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 25 Nov 2009 23:39:10 -0500
-In-Reply-To: <1259156575.4027.514.camel@laptop>
+Received: from chilli.pcug.org.au ([203.10.76.44]:55929 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759227AbZKZIAP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 26 Nov 2009 03:00:15 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: ego@in.ibm.com, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, Mike Galbraith <efault@gmx.de>, Gregory Haskins <ghaskins@novell.com>, maxk <maxk@qualcomm.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Galbraith <efault@gmx.de>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
-Peter Zijlstra wrote:
-> Correct, Ingo objected to the fastpath overhead.
->
-> Could you please try the below patch which tries to address the issue
-> differently.
->   
-Works great. Thanks
+Hi Tejun,
 
-Tested-by: Sachin Sant <sachinp@in.ibm.com>
+Today's linux-next merge of the workqueues tree got a conflict in
+kernel/sched.c between commit eae0c9dfb534cb3449888b9601228efa6480fdb5
+("sched: Fix and clean up rate-limit newidle code") from the tip tree and
+commit 710c15b748f5ce9c573cc047f419cf007a677a9a ("sched: refactor
+try_to_wake_up() and implement try_to_wake_up_local()") from the
+workqueues tree.
 
-Regards
--Sachin
+I did the following fixup which should be checked ... I can carry this
+fix (if it is suitable).
 
-> ---
-> Subject: sched: Fix balance vs hotplug race
-> From: Peter Zijlstra <a.p.zijlstra@chello.nl>
-> Date: Wed Nov 25 13:31:39 CET 2009
->
-> Since (e761b77: cpu hotplug, sched: Introduce cpu_active_map and redo
-> sched domain managment) we have cpu_active_mask which is suppose to
-> rule scheduler migration and load-balancing, except it never did.
->
-> The particular problem being solved here is a crash in
-> try_to_wake_up() where select_task_rq() ends up selecting an offline
-> cpu because select_task_rq_fair() trusts the sched_domain tree to reflect
-> the current state of affairs, similarly select_task_rq_rt() trusts the
-> root_domain.
->
-> However, the sched_domains are updated from CPU_DEAD, which is after
-> the cpu is taken offline and after stop_machine is done. Therefore it
-> can race perfectly well with code assuming the domains are right.
->
-> Cure this by building the domains from cpu_active_mask on
-> CPU_DOWN_PREPARE.
->
->   
-
-
+However, I have gone back to a previous version of the workqueues tree
+for another issue (build problem for an interaction with the sound tree),
+so this is not in linux-next today.
 -- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
----------------------------------
-Sachin Sant
-IBM Linux Technology Center
-India Systems and Technology Labs
-Bangalore, India
----------------------------------
+diff --cc kernel/sched.c
+index 686be36,e488e07..0000000
+--- a/kernel/sched.c
++++ b/kernel/sched.c
+@@@ -2323,7 -2336,58 +2335,69 @@@ void task_oncpu_function_call(struct ta
+  	preempt_enable();
+  }
+  
+- /***
++ static inline void ttwu_activate(struct task_struct *p, struct rq *rq,
++ 				 bool is_sync, bool is_migrate, bool is_local)
++ {
++ 	schedstat_inc(p, se.nr_wakeups);
++ 	if (is_sync)
++ 		schedstat_inc(p, se.nr_wakeups_sync);
++ 	if (is_migrate)
++ 		schedstat_inc(p, se.nr_wakeups_migrate);
++ 	if (is_local)
++ 		schedstat_inc(p, se.nr_wakeups_local);
++ 	else
++ 		schedstat_inc(p, se.nr_wakeups_remote);
++ 
++ 	activate_task(rq, p, 1);
++ 
++ 	/*
++ 	 * Only attribute actual wakeups done by this task.
++ 	 */
++ 	if (!in_interrupt()) {
++ 		struct sched_entity *se = &current->se;
++ 		u64 sample = se->sum_exec_runtime;
++ 
++ 		if (se->last_wakeup)
++ 			sample -= se->last_wakeup;
++ 		else
++ 			sample -= se->start_runtime;
++ 		update_avg(&se->avg_wakeup, sample);
++ 
++ 		se->last_wakeup = se->sum_exec_runtime;
++ 	}
++ }
++ 
++ static inline void ttwu_woken_up(struct task_struct *p, struct rq *rq,
++ 				 int wake_flags, bool success)
++ {
++ 	trace_sched_wakeup(rq, p, success);
++ 	check_preempt_curr(rq, p, wake_flags);
++ 
++ 	p->state = TASK_RUNNING;
++ #ifdef CONFIG_SMP
++ 	if (p->sched_class->task_wake_up)
++ 		p->sched_class->task_wake_up(rq, p);
+++
+++	if (unlikely(rq->idle_stamp)) {
+++		u64 delta = rq->clock - rq->idle_stamp;
+++		u64 max = 2*sysctl_sched_migration_cost;
+++
+++		if (delta > max)
+++			rq->avg_idle = max;
+++		else
+++			update_avg(&rq->avg_idle, delta);
+++		rq->idle_stamp = 0;
+++	}
++ #endif
++ 	/*
++ 	 * Wake up is complete, fire wake up notifier.  This allows
++ 	 * try_to_wake_up_local() to be called from wake up notifiers.
++ 	 */
++ 	if (success)
++ 		fire_sched_notifier(p, wakeup);
++ }
++ 
++ /**
+   * try_to_wake_up - wake up a thread
+   * @p: the to-be-woken-up thread
+   * @state: the mask of task states that can be woken
