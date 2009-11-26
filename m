@@ -1,68 +1,60 @@
-From: Peter Ujfalusi <peter.ujfalusi@nokia.com>
-Subject: Re: linux-next: workqueues tree build failure
-Date: Thu, 26 Nov 2009 11:31:15 +0200
-Message-ID: <200911261131.15155.peter.ujfalusi@nokia.com>
-References: <20091126190050.3f9d7fef.sfr@canb.auug.org.au> <200911261016.58810.peter.ujfalusi@nokia.com> <4B0E467A.8080201@kernel.org>
+From: Johannes Berg <johannes@sipsolutions.net>
+Subject: Re: linux-next: manual merge of the net tree with the
+ wireless-current tree
+Date: Thu, 26 Nov 2009 10:33:09 +0100
+Message-ID: <1259227989.32372.32.camel@johannes.local>
+References: <20091126141055.d8c67798.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.nokia.com ([192.100.122.233]:46693 "EHLO
-	mgw-mx06.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752808AbZKZJcZ convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 26 Nov 2009 04:32:25 -0500
-In-Reply-To: <4B0E467A.8080201@kernel.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: ext Tejun Heo <tj@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature"; boundary="=-VjD91kvNcXdG13szySEv"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1758752AbZKZJdt@vger.kernel.org>
+In-Reply-To: <20091126141055.d8c67798.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jean Tourrilhes <jt@hpl.hp.com>, "John W. Linville" <linville@tuxdriver.com>
+List-Id: linux-next.vger.kernel.org
 
-On Thursday 26 November 2009 11:12:26 ext Tejun Heo wrote:
-> Hello,
->=20
-> 11/26/2009 05:16 PM, Peter Ujfalusi wrote:
-> >> Takashi, RT workqueue is going away.  Do you really need it?
-> >
-> > What can be used instead of RT workqueue?
-> > The tlv320dac33 needs RT workqueue because I need to send the I2C
-> > command with minimum delay to the codec. If this can not be done
-> > (the workqueue is delayed), and the codec does not receive the
-> > command in time, it will literally die.  What are the options to
-> > replace the RT workqueue?
->=20
-> The problem with RT workqueue is that RT and queue don't really mix
-> well.  To act in real time, it requires all the resource pre-allocate=
-d
-> and dedicated to it making queueing or pooling meaningless.  The
-> original workqueue code created dedicated pool of threads for each
-> workqueue so it could be used for RT but new implementation uses
-> shared worker pool, so it can't be used as an interface to dedicated
-> threads.
->=20
-> I haven't read the code but,
->=20
-> * If you need to respond fast, wouldn't you be doing that from IRQ
->   handler or softirq?  Do you need task context?
 
-I2C communication can not be done in interrupt context.
-I'll take a look at the threaded IRQ, but AFAIK it is just a wrapper to=
- use the=20
-global workqueue (I'm not sure, I have not actually checked it).
-=46or a quick fix, I can convert the tlv320dac33 driver to use this, an=
-d revisit=20
-later, if it does not fulfill the timing requirements for the HW.
+--=-VjD91kvNcXdG13szySEv
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, 2009-11-26 at 14:10 +1100, Stephen Rothwell wrote:
+> Hi all,
 >=20
-> * Or is it that it's not triggered by IRQ but once the transfer
->   started it can't be interrupted?  But in this case preempt_disable(=
-)
->   or local_irq_disable() should suffice.
-
-As Takashi already commented, it is used as a BH.
-
+> Today's linux-next merge of the net tree got a conflict in
+> net/wireless/wext.c between commit
+> 9fed059667d35fca9288460106e92dbb8ba35ea1 ("WE: Fix set events not
+> propagated") from the  tree and commit
+> 3d23e349d807177eaf519d444677cee86b1a04cf ("wext: refactor") from the net
+> tree.
 >=20
-> Thanks.
->=20
+> The latter deleted the file that the former modified.  I just ignored the
+> wireless-current change and removed the file (which seems to have been
+> done in the latter change anyway).
 
---=20
-P=E9ter
+The fix should probably have gone to wext-core.c instead?
+
+johannes
+
+--=-VjD91kvNcXdG13szySEv
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABAgAGBQJLDktSAAoJEODzc/N7+QmaqaAP/1io+IIIl1t6jXWPEldK8GbH
+T/AVLIHGqyDfX3HAGzC3hYcr+Ge12jTVB9B54OGq43Drvu0wE9JhIgcXhgVEEb+H
+KRN8LF/ECBy5k7xET6lDQXVQKViFbCQ4Y1Tbifc3H8oDm9pptAC5bOrIhDrNyyec
+rC2XJR3OSAz4fY6FkRWlNGLaciJs+o68/gAfGwlk6m70B+mXSPM4oKnmOYG5pHfL
+nYgbPEesJ4MfCowPEVPKTOAaoOYmAXrjQXdZNIFLXttpsusMt3R9tMJ2t+TZoMMz
+GN3cJUFSVV74WczhmSOX+Bfilqa446h+fzkoCMHrduFo2y3TBKsFp0Y+RxJDfwKF
+PXnhJnj2VFluBnOvewQyj5twSyrELX+RuBu14md15eObiGVejSsm7oT1E18aZJUc
+KX23r7wl/SyD1B5ZiZ8ABoU4ro5CTpsHATrc3K1OR11s349zEgcGWyoRh1eXy76u
+6LMs4Fm1c379tnLzI098i4rgS8vZJMRL+FE/c4zgt4iZgdmP4ngQq/r/zXXjUPR8
+FmJGFZH/ShdITys7SoszwIfq6PrJaJGp7/Ks63XZdTAucdlo9T1kGHJXqcdA2jJ4
+JfHrNzm+9RbKBe/ul9xBI+nEdH0M5a5pLdWVKGSTOLmYMImlfnl2bVY9U5C6Jknj
+O84Z733cwki11ozCty+1
+=aiyu
+-----END PGP SIGNATURE-----
+
+--=-VjD91kvNcXdG13szySEv--
