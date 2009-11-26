@@ -1,54 +1,70 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 1/4 tip/sched/core] sched: rename preempt_notifier to
- sched_notifier and always enable it
-Date: Thu, 26 Nov 2009 13:40:59 +0100
-Message-ID: <1259239259.4273.82.camel@twins>
-References: <20091126190018.88a6dd77.sfr@canb.auug.org.au>
-	 <20091126081237.GA31034@elte.hu> <4B0E4741.10509@kernel.org>
-	 <20091126092631.GA17253@elte.hu> <4B0E4EFB.2070705@kernel.org>
-	 <20091126095154.GE32275@elte.hu> <4B0E5458.30303@kernel.org>
-	 <20091126102936.GA1196@elte.hu> <1259231565.4273.31.camel@twins>
-	 <1259234619.4273.32.camel@twins>  <20091126115605.GA15189@elte.hu>
+From: Andy Walls <awalls@radix.net>
+Subject: Re: linux-next: workqueues tree build failure
+Date: Thu, 26 Nov 2009 07:40:25 -0500
+Message-ID: <1259239225.3062.16.camel@palomino.walls.org>
+References: <20091126190050.3f9d7fef.sfr@canb.auug.org.au>
+	 <4B0E3677.6000603@kernel.org> <200911261016.58810.peter.ujfalusi@nokia.com>
+	 <4B0E467A.8080201@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:36364 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751025AbZKZMlF convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 26 Nov 2009 07:41:05 -0500
-In-Reply-To: <20091126115605.GA15189@elte.hu>
+Received: from mail1.radix.net ([207.192.128.31]:43637 "EHLO mail1.radix.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751320AbZKZMnC (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 26 Nov 2009 07:43:02 -0500
+In-Reply-To: <4B0E467A.8080201@kernel.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Steven Rostedt <rostedt@goodmis.org>, =?ISO-8859-1?Q?Fr=E9d=E9ric?= Weisbecker <fweisbec@gmail.com>, Tejun Heo <tj@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Galbraith <efault@gmx.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: Peter Ujfalusi <peter.ujfalusi@nokia.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-On Thu, 2009-11-26 at 12:56 +0100, Ingo Molnar wrote:
+On Thu, 2009-11-26 at 18:12 +0900, Tejun Heo wrote:
+> Hello,
 > 
-> I wouldnt mind some form of TRACE_EVENT_CALLBACK() thing whose callback 
-> facility is always available, even if CONFIG_PERF_EVENTS and 
-> CONFIG_TRACING is disabled.
-
-CALLBACK_EVENT() would be my preferred name, and shouldn't live anywhere
-near the regular tracing bits, the tracing bits could simply add another
-callback in it when enabled.
-
-> It might grow out of notifier.h - albeit i suspect the shorter path 
-> would be to grow it from TRACE_EVENT().
+> 11/26/2009 05:16 PM, Peter Ujfalusi wrote:
+> >> Takashi, RT workqueue is going away.  Do you really need it?
+> > 
+> > What can be used instead of RT workqueue?
+> > The tlv320dac33 needs RT workqueue because I need to send the I2C
+> > command with minimum delay to the codec. If this can not be done
+> > (the workqueue is delayed), and the codec does not receive the
+> > command in time, it will literally die.  What are the options to
+> > replace the RT workqueue?
 > 
-> ( The various pagefault notifiers in arch/x86/mm/fault.c could use this 
->   facility too. )
+> The problem with RT workqueue is that RT and queue don't really mix
+> well.  To act in real time, it requires all the resource pre-allocated
+> and dedicated to it making queueing or pooling meaningless.  The
+> original workqueue code created dedicated pool of threads for each
+> workqueue so it could be used for RT but new implementation uses
+> shared worker pool, so it can't be used as an interface to dedicated
+> threads.
 > 
-> What we definitely dont want is the proliferation of callbacks.
+> I haven't read the code but,
+> 
+> * If you need to respond fast, wouldn't you be doing that from IRQ
+>   handler or softirq?  Do you need task context?
 
-Sure, a first approach would be to find something that can cover both
-these extended preempt notifiers and the mmu notifier stuff, clearly
-notifier.h isn't cutting it anymore, and rolling these things yourself
-has obvious disadvantages like not being to add generic bits without
-having to touch all of them.
+Hi Tejun,
 
-The big downside from TRACE_EVENT() like things is the implementation,
-its a horrid macro mess. They're nice enough when you don't have to
-touch the implementation, but rather painful when you do have to.
+I'm not sure doing things like I2C transactions in the in the top half
+of the IRQ handler is generally viable.  On shared IRQ lines, wouldn't
+this hold off the interrupt for another device for too long?
 
-But I guess there's just no real alternative..
+For example, I already ran across the case of an error path in the ahci
+disk controller driver interrupt handler holding off interrupts from the
+cx18 driver longer than the CX23418 firmware would tolerate on a shared
+interrupt line.
+
+Workhandlers for deferring work are a nice way to avoid such bad system
+level interactions.
+
+Regards,
+Andy
+
+
+> * Or is it that it's not triggered by IRQ but once the transfer
+>   started it can't be interrupted?  But in this case preempt_disable()
+>   or local_irq_disable() should suffice.
+> 
+> Thanks.
