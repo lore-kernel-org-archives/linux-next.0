@@ -1,45 +1,58 @@
-From: Trond Myklebust <trond.myklebust@fys.uio.no>
-Subject: Re: linux-next: nfs/nfsd trees fetch failed
-Date: Thu, 26 Nov 2009 17:30:22 -0500
-Message-ID: <E8E998D0-13B9-4D54-AA55-FAF8EC72168B@fys.uio.no>
-References: <20091127083936.b9c125c6.sfr@canb.auug.org.au>
-Mime-Version: 1.0 (iPhone Mail 7D11)
-Content-Type: text/plain;
-	charset=us-ascii;
-	format=flowed;
-	delsp=yes
-Content-Transfer-Encoding: 7bit
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH] ASoC: tlv320dac33: Change RT wq to singlethread wq
+Date: Fri, 27 Nov 2009 09:34:07 +1100
+Message-ID: <20091127093407.4c58ee0b.sfr@canb.auug.org.au>
+References: <1259236511-25805-1-git-send-email-peter.ujfalusi@nokia.com>
+	<20091126154746.GA10674@rakim.wolfsonmicro.main>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__27_Nov_2009_09_34_07_+1100_90F3il4Pqwr6EKSy"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-out1.uio.no ([129.240.10.57]:33817 "EHLO mail-out1.uio.no"
+Received: from chilli.pcug.org.au ([203.10.76.44]:41134 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752035AbZKZWa3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 26 Nov 2009 17:30:29 -0500
-In-Reply-To: <20091127083936.b9c125c6.sfr@canb.auug.org.au>
+	id S1750919AbZKZWeH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 26 Nov 2009 17:34:07 -0500
+In-Reply-To: <20091126154746.GA10674@rakim.wolfsonmicro.main>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "J. Bruce Fields" <bfields@fieldses.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Peter Ujfalusi <peter.ujfalusi@nokia.com>, alsa-devel@alsa-project.org, tj@kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, tiwai@suse.de
 
-On Nov 26, 2009, at 16:39, Stephen Rothwell <sfr@canb.auug.org.au>  
-wrote:
+--Signature=_Fri__27_Nov_2009_09_34_07_+1100_90F3il4Pqwr6EKSy
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi all,
+Hi Mark, Peter,
+
+On Thu, 26 Nov 2009 15:47:46 +0000 Mark Brown <broonie@opensource.wolfsonmi=
+cro.com> wrote:
 >
-> Today's linux-next fetch of the nfs and nfsd trees produced this  
-> error:
->
-> git.linux-nfs.org[0: 141.212.112.37]: errno=Connection timed out
-> fatal: unable to connect a socket (Connection timed out)
->
-> This also happened yesterday.
->
-> I will use the version of these trees from next-20091125 for today.
+> On Thu, Nov 26, 2009 at 01:55:11PM +0200, Peter Ujfalusi wrote:
+> > RT workqueue is going away in the near future, replace it with
+> > singlethread wq for now, which is still supported.
+> >=20
+> > Signed-off-by: Peter Ujfalusi <peter.ujfalusi@nokia.com>
+>=20
+> Applied, thanks.
 
-Hi Stephen,
+Thanks guys.
 
-Yes, I'm aware of the problem, and I'm sorry. I'm hoping that I can  
-get Linux-nfs.org up and running again tomorrow (== Saturday your  
-time) after the Thanksgiving celebrations.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Cheers
-    Trond
+--Signature=_Fri__27_Nov_2009_09_34_07_+1100_90F3il4Pqwr6EKSy
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAksPAl8ACgkQjjKRsyhoI8yC6gCfU1/r5DS/rfuiTu4X0k13y6N9
+JVYAmQEBXhBwmbHnd4y5JX4QkWHHmnsC
+=xr7m
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__27_Nov_2009_09_34_07_+1100_90F3il4Pqwr6EKSy--
