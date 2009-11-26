@@ -1,41 +1,52 @@
 From: Peter Ujfalusi <peter.ujfalusi@nokia.com>
-Subject: Re: linux-next: workqueues tree build failure
-Date: Thu, 26 Nov 2009 13:44:31 +0200
-Message-ID: <200911261344.32051.peter.ujfalusi@nokia.com>
-References: <20091126190050.3f9d7fef.sfr@canb.auug.org.au> <200911261131.15155.peter.ujfalusi@nokia.com> <20091126101859.GA27562@rakim.wolfsonmicro.main>
+Subject: [PATCH] ASoC: tlv320dac33: Change RT wq to
+	singlethread wq
+Date: Thu, 26 Nov 2009 13:55:11 +0200
+Message-ID: <1259236511-25805-1-git-send-email-peter.ujfalusi@nokia.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.nokia.com ([192.100.122.230]:45546 "EHLO
-	mgw-mx03.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751665AbZKZLpd convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 26 Nov 2009 06:45:33 -0500
-In-Reply-To: <20091126101859.GA27562@rakim.wolfsonmicro.main>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: ext Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: ext Tejun Heo <tj@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.de>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Sender: alsa-devel-bounces@alsa-project.org
+Errors-To: alsa-devel-bounces@alsa-project.org
+To: alsa-devel@alsa-project.org, sfr@canb.auug.org.au
+Cc: tj@kernel.org, tiwai@suse.de, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, broonie@opensource.wolfsonmicro.com
+List-Id: linux-next.vger.kernel.org
 
-On Thursday 26 November 2009 12:18:59 ext Mark Brown wrote:
-> On Thu, Nov 26, 2009 at 11:31:15AM +0200, Peter Ujfalusi wrote:
-> > For a quick fix, I can convert the tlv320dac33 driver to use this, =
-and
-> > revisit later, if it does not fulfill the timing requirements for t=
-he HW.
->=20
-> If there are problems then creating a dedicated thread you can wake
-> would probably do the job.
+RT workqueue is going away in the near future, replace it with
+singlethread wq for now, which is still supported.
 
-=46or now I'm going to change the create_rt_workqueue to=20
-create_singlethread_workqueue, that is available at the wq.git of kerne=
-l.org.
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@nokia.com>
+---
 
-If it is not sufficient, than I might use dedicated thread, which I wok=
-e up, but=20
-I would like to keep that as a backup plan, since it needs more work ;)
+Hello,
 
-I'll send the patch in a few minutes.
+I believe this patch fixes the linux-next breakage (in the tlv320dac33 codec
+driver) caused by the removal of the RT workqueue in the wq tree.
 
---=20
-P=E9ter
+ sound/soc/codecs/tlv320dac33.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/sound/soc/codecs/tlv320dac33.c b/sound/soc/codecs/tlv320dac33.c
+index 2a013e4..9c8903d 100644
+--- a/sound/soc/codecs/tlv320dac33.c
++++ b/sound/soc/codecs/tlv320dac33.c
+@@ -1118,7 +1118,8 @@ static int dac33_i2c_probe(struct i2c_client *client,
+ 		}
+ 		if (dac33->irq != -1) {
+ 			/* Setup work queue */
+-			dac33->dac33_wq = create_rt_workqueue("tlv320dac33");
++			dac33->dac33_wq =
++				create_singlethread_workqueue("tlv320dac33");
+ 			if (dac33->dac33_wq == NULL) {
+ 				free_irq(dac33->irq, &dac33->codec);
+ 				ret = -ENOMEM;
+--
+1.6.5.3
