@@ -1,49 +1,41 @@
-From: Andy Walls <awalls@radix.net>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
 Subject: Re: linux-next: workqueues tree build failure
-Date: Thu, 26 Nov 2009 07:49:56 -0500
-Message-ID: <1259239796.3062.20.camel@palomino.walls.org>
+Date: Thu, 26 Nov 2009 12:56:59 +0000
+Message-ID: <20091126125659.GD1037@rakim.wolfsonmicro.main>
 References: <20091126190050.3f9d7fef.sfr@canb.auug.org.au>
-	 <200911261131.15155.peter.ujfalusi@nokia.com>
-	 <20091126101859.GA27562@rakim.wolfsonmicro.main>
-	 <200911261344.32051.peter.ujfalusi@nokia.com>
+ <4B0E3677.6000603@kernel.org>
+ <200911261016.58810.peter.ujfalusi@nokia.com>
+ <4B0E467A.8080201@kernel.org>
+ <1259239225.3062.16.camel@palomino.walls.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail1.radix.net ([207.192.128.31]:43794 "EHLO mail1.radix.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751407AbZKZMvc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 26 Nov 2009 07:51:32 -0500
-In-Reply-To: <200911261344.32051.peter.ujfalusi@nokia.com>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:56759 "EHLO
+	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1757287AbZKZM4z (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 26 Nov 2009 07:56:55 -0500
+Content-Disposition: inline
+In-Reply-To: <1259239225.3062.16.camel@palomino.walls.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Peter Ujfalusi <peter.ujfalusi@nokia.com>
-Cc: ext Mark Brown <broonie@opensource.wolfsonmicro.com>, ext Tejun Heo <tj@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.de>
+To: Andy Walls <awalls@radix.net>
+Cc: Tejun Heo <tj@kernel.org>, Peter Ujfalusi <peter.ujfalusi@nokia.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.de>
 
-On Thu, 2009-11-26 at 13:44 +0200, Peter Ujfalusi wrote:
-> On Thursday 26 November 2009 12:18:59 ext Mark Brown wrote:
-> > On Thu, Nov 26, 2009 at 11:31:15AM +0200, Peter Ujfalusi wrote:
-> > > For a quick fix, I can convert the tlv320dac33 driver to use this, and
-> > > revisit later, if it does not fulfill the timing requirements for the HW.
-> > 
-> > If there are problems then creating a dedicated thread you can wake
-> > would probably do the job.
-> 
-> For now I'm going to change the create_rt_workqueue to 
-> create_singlethread_workqueue, that is available at the wq.git of kernel.org.
-> 
-> If it is not sufficient, than I might use dedicated thread, which I woke up, but 
-> I would like to keep that as a backup plan, since it needs more work ;)
+On Thu, Nov 26, 2009 at 07:40:25AM -0500, Andy Walls wrote:
 
-Peter,
+> I'm not sure doing things like I2C transactions in the in the top half
+> of the IRQ handler is generally viable.  On shared IRQ lines, wouldn't
+> this hold off the interrupt for another device for too long?
 
-I would suspect using a single-threaded workqueue is better than a
-wake_up() of another thread.  IIRC, after queuing work, the workqueue's
-single thread may run almost immediately on the same processor.  With
-waking up sleeping threads, I've run into scheduler delays around 10 ms
-on a dual core x86_64 desktop system.
+You're going to need to do I2C I/O to acknowledge and deassert the
+interrupt on most of these devices so if someone's shared the IRQ line
+with something that's too latency sensitive the hardware is broken
+anyway.
 
-Regards,
-Andy
+> Workhandlers for deferring work are a nice way to avoid such bad system
+> level interactions.
 
-> I'll send the patch in a few minutes.
+In order to cope with the fact that the IRQ can't be deasserted without
+talking to the device it will almost always be masked while waiting for
+the deferred work.
