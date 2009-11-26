@@ -1,53 +1,60 @@
-From: Jean Delvare <khali@linux-fr.org>
-Subject: Re: linux-next: i2c tree build warning
-Date: Thu, 26 Nov 2009 09:18:29 +0100
-Message-ID: <20091126091829.74d3b7ce@hyperion.delvare>
-References: <20091126140600.2f55ab0e.sfr@canb.auug.org.au>
+From: Peter Ujfalusi <peter.ujfalusi@nokia.com>
+Subject: Re: linux-next: workqueues tree build failure
+Date: Thu, 26 Nov 2009 10:16:58 +0200
+Message-ID: <200911261016.58810.peter.ujfalusi@nokia.com>
+References: <20091126190050.3f9d7fef.sfr@canb.auug.org.au> <4B0E3677.6000603@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from poutre.nerim.net ([62.4.16.124]:58729 "EHLO poutre.nerim.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759453AbZKZIS0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 26 Nov 2009 03:18:26 -0500
-In-Reply-To: <20091126140600.2f55ab0e.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>
+Content-Type: Text/Plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1759623AbZKZISb@vger.kernel.org>
+In-Reply-To: <4B0E3677.6000603@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: ext Tejun Heo <tj@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+Hello,
 
-On Thu, 26 Nov 2009 14:06:00 +1100, Stephen Rothwell wrote:
-> Today's linux-next build (x86_64 allmodconfig) produced this warning:
-> 
-> drivers/misc/eeprom/at24.c: In function 'at24_eeprom_read':
-> drivers/misc/eeprom/at24.c:230: warning: format '%zd' expects type 'signed size_t', but argument 6 has type 'int'
-> 
-> Introduced by commit 39bfab2519e6f148f2508d719f9fc5f4581aeefd ("at24: Use
-> timeout also for read").
+On Thursday 26 November 2009 10:04:07 ext Tejun Heo wrote:
+> 11/26/2009 05:00 PM, Stephen Rothwell wrote:
+> > Hi Tejun,
+> >
+> > Today's linux-next build (x86_64 allmodconfig) failed like this:
+> >
+> > sound/soc/codecs/tlv320dac33.c: In function 'dac33_i2c_probe':
+> > sound/soc/codecs/tlv320dac33.c:1121: error: implicit declaration of
+> > function 'create_rt_workqueue' sound/soc/codecs/tlv320dac33.c:1121:
+> > warning: assignment makes pointer from integer without a cast
+> >
+> > Caused by commit 1b2d88bf4c63ed3a8c9033c358905d3463aa8bc2 ("stop_ma=
+chine:
+> > reimplement without using workqueue") (which removed create_rt_work=
+queue
+> > ()) interacting with commit c8bf93f0fe8c5a509a29e30f3bac823fa0f6d96=
+e
+> > ("ASoC: Codec driver for Texas Instruments tlv320dac33 codec") from=
+ the
+> > sound tree.
+> >
+> > I have no idea how to fix this, so I have used the workqueues tree =
+from
+> > next-20091125 until someone can suggest a solution.
+>=20
+> Takashi, RT workqueue is going away.  Do you really need it?
 
-Thanks for reporting. The warning did not show on my 32-bit x86 system,
-and I guess it did not show on Wolfram's system either, otherwise we'd
-have fixed it.
+What can be used instead of RT workqueue?
+The tlv320dac33 needs RT workqueue because I need to send the I2C comma=
+nd with=20
+minimum delay to the codec. If this can not be done (the workqueue is d=
+elayed),=20
+and the codec does not receive the command in time, it will literally d=
+ie.
 
-Does the following patch fix the warning for you?
+What are the options to replace the RT workqueue?
 
---- linux-2.6.32-rc8.orig/drivers/misc/eeprom/at24.c	2009-11-26 09:14:45.000000000 +0100
-+++ linux-2.6.32-rc8/drivers/misc/eeprom/at24.c	2009-11-26 09:14:15.000000000 +0100
-@@ -227,7 +227,7 @@ static ssize_t at24_eeprom_read(struct a
- 			if (status == 2)
- 				status = count;
- 		}
--		dev_dbg(&client->dev, "read %zu@%d --> %zd (%ld)\n",
-+		dev_dbg(&client->dev, "read %zu@%d --> %d (%ld)\n",
- 				count, offset, status, jiffies);
- 
- 		if (status == count)
+>=20
+> Thanks.
+>=20
 
-If it does then I'll merge this into Wolfram's patch.
-
-Thanks,
--- 
-Jean Delvare
+--=20
+P=E9ter
