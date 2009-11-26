@@ -1,44 +1,54 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH 1/4 tip/sched/core] sched: rename preempt_notifier to
- sched_notifier and always enable it
-Date: Thu, 26 Nov 2009 19:44:22 +0900
-Message-ID: <4B0E5C06.8080500@kernel.org>
-References: <20091126190018.88a6dd77.sfr@canb.auug.org.au> <20091126081237.GA31034@elte.hu> <4B0E4741.10509@kernel.org> <20091126092631.GA17253@elte.hu> <4B0E4EFB.2070705@kernel.org> <20091126095154.GE32275@elte.hu> <4B0E5458.30303@kernel.org> <20091126102936.GA1196@elte.hu>
+From: Wolfram Sang <w.sang@pengutronix.de>
+Subject: Re: linux-next: i2c tree build warning
+Date: Thu, 26 Nov 2009 11:50:32 +0100
+Message-ID: <20091126105032.GA4846@pengutronix.de>
+References: <20091126140600.2f55ab0e.sfr@canb.auug.org.au> <20091126091829.74d3b7ce@hyperion.delvare>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="7AUc2qLy4jB3hD7Z"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hera.kernel.org ([140.211.167.34]:46789 "EHLO hera.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750767AbZKZKon (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 26 Nov 2009 05:44:43 -0500
-In-Reply-To: <20091126102936.GA1196@elte.hu>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:60597 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751237AbZKZKvG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 26 Nov 2009 05:51:06 -0500
+Content-Disposition: inline
+In-Reply-To: <20091126091829.74d3b7ce@hyperion.delvare>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Galbraith <efault@gmx.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+To: Jean Delvare <khali@linux-fr.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello, Ingo.
 
-11/26/2009 07:29 PM, Ingo Molnar wrote:
-> That could be done with just two callbacks - one for sched-out, one for 
-> sched-in.
-> 
-> The best way to do that would be to use two TRACE_EVENT() callbacks, 
-> make them unconditional and register to them. (with wrappers to make it 
-> all convenient to use)
-> 
-> This requires some work but needs to be done.
+--7AUc2qLy4jB3hD7Z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thought about that but trace events and scheduler callbacks have very
-different trigger enable/disable conditions.  I couldn't think of a
-way to do both in reasonably efficient manner.  Although they both are
-notification mechanisms, they do have pretty different requirements
-and I'm not quite sure whether unifying them is a good idea.  Of
-course if you have an idea to do both efficiently, no reason not to do
-it.
+> Thanks for reporting. The warning did not show on my 32-bit x86 system,
+> and I guess it did not show on Wolfram's system either, otherwise we'd
+> have fixed it.
 
-Thanks.
+Yes, I tested it on a few embedded boards which are all 32-bit. Will try to=
+ get
+a 64-bit machine into my test-process. Sorry for this!
 
--- 
-tejun
+Thank you Stephen for reporting and Jean for helping out!
+
+--=20
+Pengutronix e.K.                           | Wolfram Sang                |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+
+--7AUc2qLy4jB3hD7Z
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAksOXXgACgkQD27XaX1/VRtn8ACeNQ/MkCNAMGZrPh10IitgwX7K
+WxMAoIQXNUIBh9RMbJ8iZZ5yOnRO3Zs7
+=W+6Y
+-----END PGP SIGNATURE-----
+
+--7AUc2qLy4jB3hD7Z--
