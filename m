@@ -1,70 +1,49 @@
 From: Andy Walls <awalls@radix.net>
 Subject: Re: linux-next: workqueues tree build failure
-Date: Thu, 26 Nov 2009 07:40:25 -0500
-Message-ID: <1259239225.3062.16.camel@palomino.walls.org>
+Date: Thu, 26 Nov 2009 07:49:56 -0500
+Message-ID: <1259239796.3062.20.camel@palomino.walls.org>
 References: <20091126190050.3f9d7fef.sfr@canb.auug.org.au>
-	 <4B0E3677.6000603@kernel.org> <200911261016.58810.peter.ujfalusi@nokia.com>
-	 <4B0E467A.8080201@kernel.org>
+	 <200911261131.15155.peter.ujfalusi@nokia.com>
+	 <20091126101859.GA27562@rakim.wolfsonmicro.main>
+	 <200911261344.32051.peter.ujfalusi@nokia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail1.radix.net ([207.192.128.31]:43637 "EHLO mail1.radix.net"
+Received: from mail1.radix.net ([207.192.128.31]:43794 "EHLO mail1.radix.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751320AbZKZMnC (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 26 Nov 2009 07:43:02 -0500
-In-Reply-To: <4B0E467A.8080201@kernel.org>
+	id S1751407AbZKZMvc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 26 Nov 2009 07:51:32 -0500
+In-Reply-To: <200911261344.32051.peter.ujfalusi@nokia.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Peter Ujfalusi <peter.ujfalusi@nokia.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>
+To: Peter Ujfalusi <peter.ujfalusi@nokia.com>
+Cc: ext Mark Brown <broonie@opensource.wolfsonmicro.com>, ext Tejun Heo <tj@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.de>
 
-On Thu, 2009-11-26 at 18:12 +0900, Tejun Heo wrote:
-> Hello,
-> 
-> 11/26/2009 05:16 PM, Peter Ujfalusi wrote:
-> >> Takashi, RT workqueue is going away.  Do you really need it?
+On Thu, 2009-11-26 at 13:44 +0200, Peter Ujfalusi wrote:
+> On Thursday 26 November 2009 12:18:59 ext Mark Brown wrote:
+> > On Thu, Nov 26, 2009 at 11:31:15AM +0200, Peter Ujfalusi wrote:
+> > > For a quick fix, I can convert the tlv320dac33 driver to use this, and
+> > > revisit later, if it does not fulfill the timing requirements for the HW.
 > > 
-> > What can be used instead of RT workqueue?
-> > The tlv320dac33 needs RT workqueue because I need to send the I2C
-> > command with minimum delay to the codec. If this can not be done
-> > (the workqueue is delayed), and the codec does not receive the
-> > command in time, it will literally die.  What are the options to
-> > replace the RT workqueue?
+> > If there are problems then creating a dedicated thread you can wake
+> > would probably do the job.
 > 
-> The problem with RT workqueue is that RT and queue don't really mix
-> well.  To act in real time, it requires all the resource pre-allocated
-> and dedicated to it making queueing or pooling meaningless.  The
-> original workqueue code created dedicated pool of threads for each
-> workqueue so it could be used for RT but new implementation uses
-> shared worker pool, so it can't be used as an interface to dedicated
-> threads.
+> For now I'm going to change the create_rt_workqueue to 
+> create_singlethread_workqueue, that is available at the wq.git of kernel.org.
 > 
-> I haven't read the code but,
-> 
-> * If you need to respond fast, wouldn't you be doing that from IRQ
->   handler or softirq?  Do you need task context?
+> If it is not sufficient, than I might use dedicated thread, which I woke up, but 
+> I would like to keep that as a backup plan, since it needs more work ;)
 
-Hi Tejun,
+Peter,
 
-I'm not sure doing things like I2C transactions in the in the top half
-of the IRQ handler is generally viable.  On shared IRQ lines, wouldn't
-this hold off the interrupt for another device for too long?
-
-For example, I already ran across the case of an error path in the ahci
-disk controller driver interrupt handler holding off interrupts from the
-cx18 driver longer than the CX23418 firmware would tolerate on a shared
-interrupt line.
-
-Workhandlers for deferring work are a nice way to avoid such bad system
-level interactions.
+I would suspect using a single-threaded workqueue is better than a
+wake_up() of another thread.  IIRC, after queuing work, the workqueue's
+single thread may run almost immediately on the same processor.  With
+waking up sleeping threads, I've run into scheduler delays around 10 ms
+on a dual core x86_64 desktop system.
 
 Regards,
 Andy
 
-
-> * Or is it that it's not triggered by IRQ but once the transfer
->   started it can't be interrupted?  But in this case preempt_disable()
->   or local_irq_disable() should suffice.
-> 
-> Thanks.
+> I'll send the patch in a few minutes.
