@@ -1,67 +1,41 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 1/4 tip/sched/core] sched: rename preempt_notifier to
- sched_notifier and always enable it
-Date: Thu, 26 Nov 2009 12:23:39 +0100
-Message-ID: <1259234619.4273.32.camel@twins>
-References: <20091126190018.88a6dd77.sfr@canb.auug.org.au>
-	 <20091126081237.GA31034@elte.hu> <4B0E4741.10509@kernel.org>
-	 <20091126092631.GA17253@elte.hu> <4B0E4EFB.2070705@kernel.org>
-	 <20091126095154.GE32275@elte.hu> <4B0E5458.30303@kernel.org>
-	 <20091126102936.GA1196@elte.hu>  <1259231565.4273.31.camel@twins>
+From: Peter Ujfalusi <peter.ujfalusi@nokia.com>
+Subject: Re: linux-next: workqueues tree build failure
+Date: Thu, 26 Nov 2009 13:44:31 +0200
+Message-ID: <200911261344.32051.peter.ujfalusi@nokia.com>
+References: <20091126190050.3f9d7fef.sfr@canb.auug.org.au> <200911261131.15155.peter.ujfalusi@nokia.com> <20091126101859.GA27562@rakim.wolfsonmicro.main>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: Text/Plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:42700 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758946AbZKZLXm convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 26 Nov 2009 06:23:42 -0500
-In-Reply-To: <1259231565.4273.31.camel@twins>
+Received: from smtp.nokia.com ([192.100.122.230]:45546 "EHLO
+	mgw-mx03.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751665AbZKZLpd convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 26 Nov 2009 06:45:33 -0500
+In-Reply-To: <20091126101859.GA27562@rakim.wolfsonmicro.main>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Tejun Heo <tj@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Galbraith <efault@gmx.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
+To: ext Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: ext Tejun Heo <tj@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.de>
 
-On Thu, 2009-11-26 at 11:32 +0100, Peter Zijlstra wrote:
-> On Thu, 2009-11-26 at 11:29 +0100, Ingo Molnar wrote:
-> > * Tejun Heo <tj@kernel.org> wrote:
-> > 
-> > > Rename preempt_notifier to sched_notifier, move it from preempt.h to 
-> > > sched.h, drop sched_ prefixes from ops names and make sched_notifier 
-> > > always enabled.
-> > > 
-> > > This is to prepare for adding more notification hooks.  This patch 
-> > > doesn't make any functional changes.
-> > 
-> > The sched notifiers and the various event notifiers we have in the same 
-> > codepaths should really be unified into a single callback framework.
-> > 
-> > We have these _5_ callbacks:
-> > 
-> > ....
-> >         perf_event_task_sched_out(prev, next, cpu);
-> > ....
-> >         fire_sched_out_notifiers(prev, next);
-> > ....
-> >         trace_sched_switch(rq, prev, next);
-> > ....
-> >         perf_event_task_sched_in(current, cpu_of(rq));
-> > 	fire_sched_in_notifiers(current);
-> > ....
-> > 
-> > That could be done with just two callbacks - one for sched-out, one for 
-> > sched-in.
-> > 
-> > The best way to do that would be to use two TRACE_EVENT() callbacks, 
-> > make them unconditional and register to them. (with wrappers to make it 
-> > all convenient to use)
-> > 
-> > This requires some work but needs to be done.
-> 
-> Ugh,.. it also makes TRACE_EVENT unconditional.
-> 
-> That really wants a separate option.. What we could do is take regular
-> notifier lists and extend them to auto-generate a tracepoint when the
-> trace stuff is enabled or something.
+On Thursday 26 November 2009 12:18:59 ext Mark Brown wrote:
+> On Thu, Nov 26, 2009 at 11:31:15AM +0200, Peter Ujfalusi wrote:
+> > For a quick fix, I can convert the tlv320dac33 driver to use this, =
+and
+> > revisit later, if it does not fulfill the timing requirements for t=
+he HW.
+>=20
+> If there are problems then creating a dedicated thread you can wake
+> would probably do the job.
 
-Also, there is this thing about direct and indirect function calls.
+=46or now I'm going to change the create_rt_workqueue to=20
+create_singlethread_workqueue, that is available at the wq.git of kerne=
+l.org.
+
+If it is not sufficient, than I might use dedicated thread, which I wok=
+e up, but=20
+I would like to keep that as a backup plan, since it needs more work ;)
+
+I'll send the patch in a few minutes.
+
+--=20
+P=E9ter
