@@ -1,58 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] ASoC: tlv320dac33: Change RT wq to singlethread wq
-Date: Fri, 27 Nov 2009 09:34:07 +1100
-Message-ID: <20091127093407.4c58ee0b.sfr@canb.auug.org.au>
-References: <1259236511-25805-1-git-send-email-peter.ujfalusi@nokia.com>
-	<20091126154746.GA10674@rakim.wolfsonmicro.main>
+Subject: Re: linux-next: nfs/nfsd trees fetch failed
+Date: Fri, 27 Nov 2009 09:59:18 +1100
+Message-ID: <20091127095918.e066e2ef.sfr@canb.auug.org.au>
+References: <20091127083936.b9c125c6.sfr@canb.auug.org.au>
+	<E8E998D0-13B9-4D54-AA55-FAF8EC72168B@fys.uio.no>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__27_Nov_2009_09_34_07_+1100_90F3il4Pqwr6EKSy"
+ boundary="Signature=_Fri__27_Nov_2009_09_59_18_+1100_Mi8YhCYjigjUiKut"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41134 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:40351 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750919AbZKZWeH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 26 Nov 2009 17:34:07 -0500
-In-Reply-To: <20091126154746.GA10674@rakim.wolfsonmicro.main>
+	id S1753215AbZKZW7Q (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 26 Nov 2009 17:59:16 -0500
+In-Reply-To: <E8E998D0-13B9-4D54-AA55-FAF8EC72168B@fys.uio.no>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Peter Ujfalusi <peter.ujfalusi@nokia.com>, alsa-devel@alsa-project.org, tj@kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, tiwai@suse.de
+To: Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: "J. Bruce Fields" <bfields@fieldses.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
---Signature=_Fri__27_Nov_2009_09_34_07_+1100_90F3il4Pqwr6EKSy
+--Signature=_Fri__27_Nov_2009_09_59_18_+1100_Mi8YhCYjigjUiKut
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mark, Peter,
+Hi Trond,
 
-On Thu, 26 Nov 2009 15:47:46 +0000 Mark Brown <broonie@opensource.wolfsonmi=
-cro.com> wrote:
+On Thu, 26 Nov 2009 17:30:22 -0500 Trond Myklebust <trond.myklebust@fys.uio=
+.no> wrote:
 >
-> On Thu, Nov 26, 2009 at 01:55:11PM +0200, Peter Ujfalusi wrote:
-> > RT workqueue is going away in the near future, replace it with
-> > singlethread wq for now, which is still supported.
-> >=20
-> > Signed-off-by: Peter Ujfalusi <peter.ujfalusi@nokia.com>
->=20
-> Applied, thanks.
+> Yes, I'm aware of the problem, and I'm sorry. I'm hoping that I can =20
+> get Linux-nfs.org up and running again tomorrow (=3D=3D Saturday your =20
+> time) after the Thanksgiving celebrations.
 
-Thanks guys.
+OK, thanks, no hurry.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__27_Nov_2009_09_34_07_+1100_90F3il4Pqwr6EKSy
+--Signature=_Fri__27_Nov_2009_09_59_18_+1100_Mi8YhCYjigjUiKut
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAksPAl8ACgkQjjKRsyhoI8yC6gCfU1/r5DS/rfuiTu4X0k13y6N9
-JVYAmQEBXhBwmbHnd4y5JX4QkWHHmnsC
-=xr7m
+iEYEARECAAYFAksPCEYACgkQjjKRsyhoI8yxiACdGVHVQDechVmM3uOcuo7GhklP
+O5wAmwSP0vrRgKRsRbWKd2BRH4N4Z7dq
+=YV5w
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__27_Nov_2009_09_34_07_+1100_90F3il4Pqwr6EKSy--
+--Signature=_Fri__27_Nov_2009_09_59_18_+1100_Mi8YhCYjigjUiKut--
