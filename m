@@ -1,51 +1,57 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH 1/4 tip/sched/core] sched: rename preempt_notifier to
- sched_notifier and always enable it
-Date: Fri, 27 Nov 2009 15:38:02 +0900
-Message-ID: <4B0F73CA.7090804@kernel.org>
-References: <1259234619.4273.32.camel@twins> <20091126115605.GA15189@elte.hu> <1259239259.4273.82.camel@twins> <4B0F356B.3040206@kernel.org> <20091127045209.GA13914@elte.hu> <4B0F65DD.1090707@kernel.org> <20091127054621.GA25672@elte.hu> <4B0F6B32.4090401@kernel.org> <20091127061319.GA8620@elte.hu> <4B0F6EA9.6070105@kernel.org> <20091127062147.GB22149@elte.hu>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH -next] misc/eeprom: fix at24 printk format
+Date: Fri, 27 Nov 2009 17:46:45 +1100
+Message-ID: <20091127174645.6d937080.sfr@canb.auug.org.au>
+References: <20091126203837.b64fb4d3.sfr@canb.auug.org.au>
+	<4B0F7008.8000204@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__27_Nov_2009_17_46_45_+1100_Z_0m3NZ6w4NK1SPP"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hera.kernel.org ([140.211.167.34]:60257 "EHLO hera.kernel.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:41986 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750729AbZK0Gi1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 27 Nov 2009 01:38:27 -0500
-In-Reply-To: <20091127062147.GB22149@elte.hu>
+	id S1750964AbZK0Gqo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 27 Nov 2009 01:46:44 -0500
+In-Reply-To: <4B0F7008.8000204@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Galbraith <efault@gmx.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Wolfram Sang <w.sang@pengutronix.de>, David Brownell <dbrownell@users.sourceforge.net>
 
-Hello,
+--Signature=_Fri__27_Nov_2009_17_46_45_+1100_Z_0m3NZ6w4NK1SPP
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-11/27/2009 03:21 PM, Ingo Molnar wrote:
->> No, I'm not gonna do that.  Just patches to reorganize code so that 
->> unnecessary conflicts won't occur.  There will be NO functional 
->> changes.
-> 
-> Not without the other changes - which you want to do too, right?
+Hi Randy,
 
-The extra things I want can stay in a devel branch until notifiers get
-cleaned up and it will only be a few patches which aren't very likely
-to cause conflicts when it gets exported for linux-next or other
-testing branches.
+On Thu, 26 Nov 2009 22:22:00 -0800 Randy Dunlap <randy.dunlap@oracle.com> w=
+rote:
+>
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+>=20
+> Fix printk format warning:
+>=20
+> drivers/misc/eeprom/at24.c:230: warning: format '%zd' expects type 'signe=
+d size_t', but argument 6 has type 'int'
 
-> Please send all sched.c modifications via the scheduler tree. Going
-> via other trees is fine when there's agreement by the maintainers -
-> but this is one of the rare cases where that's not the case.
+Already fixed in today's linux-next.
 
-Yeah, sure.  So, two patchsets.  One for sched/core doing pure
-reorganization without any functional changes.  The other for
-sched/notifier (or whatever name you would prefer) which is purely for
-development and testing and will not be pushed to Linus unless it
-receives notifier framework cleanup.  wq#for-next will pull from
-sched/notifier and be exported to linux-next but it will never be
-submitted to Linus until sched/notifier is cleaned up.  Am I
-understanding it correctly?
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Thanks.
+--Signature=_Fri__27_Nov_2009_17_46_45_+1100_Z_0m3NZ6w4NK1SPP
+Content-Type: application/pgp-signature
 
--- 
-tejun
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAksPddUACgkQjjKRsyhoI8x5pgCeMpnTovESljRODn6NHaC7LWVs
+oxYAni/fDVbGa8nnCSnwT5zK/UfzGlTm
+=1Cjc
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__27_Nov_2009_17_46_45_+1100_Z_0m3NZ6w4NK1SPP--
