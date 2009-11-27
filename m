@@ -1,53 +1,64 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH 1/4 tip/sched/core] sched: rename preempt_notifier to
- sched_notifier and always enable it
-Date: Fri, 27 Nov 2009 06:46:21 +0100
-Message-ID: <20091127054621.GA25672@elte.hu>
-References: <20091126095154.GE32275@elte.hu>
- <4B0E5458.30303@kernel.org>
- <20091126102936.GA1196@elte.hu>
- <1259231565.4273.31.camel@twins>
- <1259234619.4273.32.camel@twins>
- <20091126115605.GA15189@elte.hu>
- <1259239259.4273.82.camel@twins>
- <4B0F356B.3040206@kernel.org>
- <20091127045209.GA13914@elte.hu>
- <4B0F65DD.1090707@kernel.org>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: linux-next: percpu tree build warning
+Date: Fri, 27 Nov 2009 14:57:59 +0900
+Message-ID: <4B0F6A67.9010706@kernel.org>
+References: <20091125214219.f37935e8.sfr@canb.auug.org.au> <4B0D23A6.8040902@kernel.org> <20091125134058.GA9097@elte.hu> <200911270846.02717.rusty@rustcorp.com.au> <20091127054128.GC13914@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:43902 "EHLO mx3.mail.elte.hu"
+Received: from hera.kernel.org ([140.211.167.34]:56349 "EHLO hera.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751149AbZK0Fqo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 27 Nov 2009 00:46:44 -0500
-Content-Disposition: inline
-In-Reply-To: <4B0F65DD.1090707@kernel.org>
+	id S1751779AbZK0F6P (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 27 Nov 2009 00:58:15 -0500
+In-Reply-To: <20091127054128.GC13914@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Galbraith <efault@gmx.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Christoph Lameter <cl@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
 
+Hello,
 
-* Tejun Heo <tj@kernel.org> wrote:
-
-> Hello,
+11/27/2009 02:41 PM, Ingo Molnar wrote:
+> But allowing &dr7 is outright dangerous - and not particularly clean 
+> either.
 > 
-> 11/27/2009 01:52 PM, Ingo Molnar wrote:
-> > Btw., longer term it will be faster than a mask check and a
-> > default-untaken conditional: there's ongoign work to offer runtime
-> > instruction patching features for tracing callbacks.  There's the
-> > jump patching optimization and also the immediate values patching
-> > optimization.
+> Nothing tells us that it's a percpu variable and it blends into the 
+> regular namespace while most of the operators on it are special 
+> (__get_cpu_var(), per_cpu(), __this_cpu(), etc.).
 > 
-> Scheduler callbacks won't benefit much from it.  There will always be 
-> workqueues and thus conditional branch will always be necessary.
+> What if someone writes &dr7 in preemptible code? It's dangerous to do it 
+> and a quick review wont catch the mistake. Seeing &per_cpu_dr7 in 
+> clearly preemptible code does raise alarms on the other hand.
+>
+> So i think it should be valid to take the address of it and unify the 
+> static and dynamic percpu space ... if it's prefixed properly: what's 
+> wrong with &per_cpu_dr7?
 
-Other code will benefit from it though, such as the page fault callbacks 
-i already mentioned.
+DEFINE_PER_CPU(unsigned long, reg0);
+DEFINE_PER_CPU(unsigned long, reg1);
 
-My position on this is rather clear: i want no new callbacks and no 
-changes to callbacks in the scheduler until this situation is cleaned 
-up. Five callback sites are _way_ too much - so if you want to add 
-callbacks or change them, please clean it up and improve it first.
+static void my_fn(void)
+{
+	unsigned long reg0 = per_cpu_var(reg0);
+	unsigned long reg1 = per_cpu_var(reg1);
+	unsigned long *p = &per_cpu_var(reg0);
 
-	Ingo
+	// blah blah
+
+	if (some cond)
+		p = &reg1;	// oops meant &per_cpu_var(reg1)
+
+	// blah blah
+
+	this_cpu_inc(p);
+}
+
+It's more dangerous to depend on the pseudo namespace created by
+prefixing.  Let's add __percpu sparse annotations.  It will be more
+flexible and safer.
+
+Thanks.
+
+-- 
+tejun
