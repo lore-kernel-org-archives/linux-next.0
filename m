@@ -1,64 +1,53 @@
-From: Ingo Molnar <mingo@elte.hu>
+From: Tejun Heo <tj@kernel.org>
 Subject: Re: [PATCH 1/4 tip/sched/core] sched: rename preempt_notifier to
  sched_notifier and always enable it
-Date: Fri, 27 Nov 2009 05:54:59 +0100
-Message-ID: <20091127045459.GB13914@elte.hu>
-References: <20091126190018.88a6dd77.sfr@canb.auug.org.au>
- <20091126081237.GA31034@elte.hu>
- <4B0E4741.10509@kernel.org>
- <20091126092631.GA17253@elte.hu>
- <4B0E4EFB.2070705@kernel.org>
- <20091126095154.GE32275@elte.hu>
- <4B0E5458.30303@kernel.org>
- <20091126102936.GA1196@elte.hu>
- <19215.18562.408682.656799@drongo.ozlabs.ibm.com>
+Date: Fri, 27 Nov 2009 14:38:37 +0900
+Message-ID: <4B0F65DD.1090707@kernel.org>
+References: <20091126092631.GA17253@elte.hu> <4B0E4EFB.2070705@kernel.org> <20091126095154.GE32275@elte.hu> <4B0E5458.30303@kernel.org> <20091126102936.GA1196@elte.hu> <1259231565.4273.31.camel@twins> <1259234619.4273.32.camel@twins> <20091126115605.GA15189@elte.hu> <1259239259.4273.82.camel@twins> <4B0F356B.3040206@kernel.org> <20091127045209.GA13914@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:34294 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753411AbZK0EzT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 26 Nov 2009 23:55:19 -0500
-Content-Disposition: inline
-In-Reply-To: <19215.18562.408682.656799@drongo.ozlabs.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Paul Mackerras <paulus@samba.org>
-Cc: Tejun Heo <tj@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Galbraith <efault@gmx.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1751472AbZK0FjK@vger.kernel.org>
+In-Reply-To: <20091127045209.GA13914@elte.hu>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Galbraith <efault@gmx.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
+List-Id: linux-next.vger.kernel.org
 
+Hello,
 
-* Paul Mackerras <paulus@samba.org> wrote:
+11/27/2009 01:52 PM, Ingo Molnar wrote:
+> Btw., longer term it will be faster than a mask check and a
+> default-untaken conditional: there's ongoign work to offer runtime
+> instruction patching features for tracing callbacks.  There's the
+> jump patching optimization and also the immediate values patching
+> optimization.
 
-> Ingo Molnar writes:
-> 
-> > The sched notifiers and the various event notifiers we have in the same 
-> > codepaths should really be unified into a single callback framework.
-> > 
-> > We have these _5_ callbacks:
-> > 
-> > ...
-> >         perf_event_task_sched_out(prev, next, cpu);
-> > ...
-> >         fire_sched_out_notifiers(prev, next);
-> > ...
-> >         trace_sched_switch(rq, prev, next);
-> > ...
-> >         perf_event_task_sched_in(current, cpu_of(rq));
-> > 	fire_sched_in_notifiers(current);
-> > ...
-> > 
-> > That could be done with just two callbacks - one for sched-out, one for 
-> > sched-in.
-> > 
-> > The best way to do that would be to use two TRACE_EVENT() callbacks, 
-> > make them unconditional and register to them. (with wrappers to make 
-> > it all convenient to use)
-> 
-> I'd rather 5 explicit direct function calls than two direct calls and 
-> five indirect function calls, actually...
+Scheduler callbacks won't benefit much from it.  There will always be
+workqueues and thus conditional branch will always be necessary.
 
-Those five callbacks are typically disabled on a regular Linux system. 
-So i'd rather have two sites with some NOPs in them. (no branches, no 
-calls)
+> We've got old-style notifiers for regular callbacks, we've got new-style 
+> tracepoints which are callbacks and event source descriptors - and what 
+> i'm asking for is to have _one_ callback mechanism, and to use that in 
+> the scheduler. 5 callbacks using 3 different facilities is excessive - 
+> i'd like to see just two callbacks using one facility.
 
-	Ingo
+The patches in question don't really change anything in in/out paths.
+It only adds wake up and sleep callbacks to the existing notifier
+mechanism.  Sure, let's unify all of them and make them prettier and
+more efficient but I don't think we need to hold up workqueue changes
+for that, right?  We can do those in separate steps and have workqueue
+changes tested in at least linux-next.
+
+I'll re-post four scheduler patches which reorganize preempt notifier
+but make no functional changes and another one to add wakeup and
+sleep.  The first four can go into sched/core and the last one in a
+separate branch.  That way, conflicts will be minimal yet upstream
+won't see any functional difference from the current code.  Later when
+notifier frameworks is reworked, we can merge them all up and send
+them upstream.  How does it sound?
+
+Thanks.
+
+-- 
+tejun
