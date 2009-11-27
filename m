@@ -1,57 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] ASoC: tlv320dac33: Change RT wq to singlethread wq
-Date: Fri, 27 Nov 2009 17:50:46 +1100
-Message-ID: <20091127175046.ee37c8f6.sfr@canb.auug.org.au>
-References: <1259236511-25805-1-git-send-email-peter.ujfalusi@nokia.com>
-	<20091126154746.GA10674@rakim.wolfsonmicro.main>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: [PATCH 1/4 tip/sched/core] sched: rename preempt_notifier to
+ sched_notifier and always enable it
+Date: Fri, 27 Nov 2009 08:02:54 +0100
+Message-ID: <20091127070254.GA1547@elte.hu>
+References: <1259239259.4273.82.camel@twins>
+ <4B0F356B.3040206@kernel.org>
+ <20091127045209.GA13914@elte.hu>
+ <4B0F65DD.1090707@kernel.org>
+ <20091127054621.GA25672@elte.hu>
+ <4B0F6B32.4090401@kernel.org>
+ <20091127061319.GA8620@elte.hu>
+ <4B0F6EA9.6070105@kernel.org>
+ <20091127062147.GB22149@elte.hu>
+ <4B0F73CA.7090804@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__27_Nov_2009_17_50_46_+1100_JOagmm34_4TSLs4I"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49253 "EHLO smtps.tip.net.au"
+Received: from mx3.mail.elte.hu ([157.181.1.138]:51055 "EHLO mx3.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750964AbZK0Guq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 27 Nov 2009 01:50:46 -0500
-In-Reply-To: <20091126154746.GA10674@rakim.wolfsonmicro.main>
+	id S1751650AbZK0HDM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 27 Nov 2009 02:03:12 -0500
+Content-Disposition: inline
+In-Reply-To: <4B0F73CA.7090804@kernel.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Peter Ujfalusi <peter.ujfalusi@nokia.com>, alsa-devel@alsa-project.org, tj@kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, tiwai@suse.de
+To: Tejun Heo <tj@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Galbraith <efault@gmx.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
 
---Signature=_Fri__27_Nov_2009_17_50_46_+1100_JOagmm34_4TSLs4I
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, 26 Nov 2009 15:47:46 +0000 Mark Brown <broonie@opensource.wolfsonmi=
-cro.com> wrote:
->
-> On Thu, Nov 26, 2009 at 01:55:11PM +0200, Peter Ujfalusi wrote:
-> > RT workqueue is going away in the near future, replace it with
-> > singlethread wq for now, which is still supported.
-> >=20
-> > Signed-off-by: Peter Ujfalusi <peter.ujfalusi@nokia.com>
->=20
-> Applied, thanks.
+* Tejun Heo <tj@kernel.org> wrote:
 
-I also put this patch in linux-next (after the sound tree merge) for
-today.
+> > Please send all sched.c modifications via the scheduler tree. Going 
+> > via other trees is fine when there's agreement by the maintainers - 
+> > but this is one of the rare cases where that's not the case.
+> 
+> Yeah, sure.  So, two patchsets.  One for sched/core doing pure 
+> reorganization without any functional changes.  The other for 
+> sched/notifier (or whatever name you would prefer) which is purely for 
+> development and testing and will not be pushed to Linus unless it 
+> receives notifier framework cleanup.  wq#for-next will pull from 
+> sched/notifier and be exported to linux-next but it will never be 
+> submitted to Linus until sched/notifier is cleaned up.  Am I 
+> understanding it correctly?
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Yeah, that would be fine.
 
---Signature=_Fri__27_Nov_2009_17_50_46_+1100_JOagmm34_4TSLs4I
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAksPdsYACgkQjjKRsyhoI8xSMwCeP0VrFTOt1+nhBg1atgarZD/S
-AuEAn0yWIoDegzPTRqjczwcp5EqHnV0a
-=u6ZS
------END PGP SIGNATURE-----
-
---Signature=_Fri__27_Nov_2009_17_50_46_+1100_JOagmm34_4TSLs4I--
+	Ingo
