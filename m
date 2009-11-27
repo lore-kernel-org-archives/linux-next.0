@@ -1,35 +1,63 @@
-From: Michal Marek <mmarek@suse.cz>
-Subject: Re: linux-next: manual merge of the rr tree with the kbuild tree
-Date: Fri, 27 Nov 2009 10:37:08 +0100
-Message-ID: <4B0F9DC4.1070509@suse.cz>
-References: <20091127132254.f9b1fc34.sfr@canb.auug.org.au>
+From: Peter Ujfalusi <peter.ujfalusi@nokia.com>
+Subject: Re: linux-next: workqueues tree build failure
+Date: Fri, 27 Nov 2009 12:09:18 +0200
+Message-ID: <200911271209.18979.peter.ujfalusi@nokia.com>
+References: <20091126190050.3f9d7fef.sfr@canb.auug.org.au> <s5h3a40pdm7.wl%tiwai@suse.de> <4B0F90F3.2010204@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: Text/Plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:36705 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751862AbZK0JhF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 27 Nov 2009 04:37:05 -0500
-In-Reply-To: <20091127132254.f9b1fc34.sfr@canb.auug.org.au>
+Received: from smtp.nokia.com ([192.100.105.134]:42267 "EHLO
+	mgw-mx09.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753105AbZK0KKV convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 27 Nov 2009 05:10:21 -0500
+In-Reply-To: <4B0F90F3.2010204@kernel.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Jenkins <alan-jenkins@tuffmail.co.uk>, Wenji Huang <wenji.huang@oracle.com>
+To: ext Tejun Heo <tj@kernel.org>
+Cc: Takashi Iwai <tiwai@suse.de>, Andy Walls <awalls@radix.net>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-On 27.11.2009 03:22, Stephen Rothwell wrote:
-> Hi Rusty,
-> 
-> Today's linux-next merge of the rr tree got a conflict in
-> scripts/mod/modpost.c between commit
-> 36021384778b40ffdd59ab34c275786507ef30a6 ("Kbuild: clear marker out of
-> modpost") from the kbuild tree and commit
-> 215143067b9bfacdfd475c5b2fa5536ee30f50ec ("kbuild: sort the list of
-> symbols exported by the kernel (__ksymtab)") from the rr tree.
+Hello,
 
-The "clear marker out of modpost" patch is a no-brainer and when it gets
-merged doesn't matter that much. Rusty, would you mind moving it to your
-tree? Alternatively, I can disable it in the kbuild tree for a while so
-that the two trees don't clash.
+On Friday 27 November 2009 10:42:27 ext Tejun Heo wrote:
+> Hello,
+>=20
+> 11/27/2009 05:37 PM, Takashi Iwai wrote:
+> >> Sounds like it should be using bottom half tasklet not workqueue.
+> >> Tasklet is exactly designed to handle situations like this.  Is th=
+ere
+> >> any reason tasklet can't be used?
+> >
+> > Right now the h/w accessing code is using mutex.  I'm not sure whet=
+her
+> > the deeper part might sleep, though...
+>=20
+> Ah... I see.  Using mutex from a handler where response time is
+> critical is strange tho.  Anyways, I don't really think singlethread
+> will satisfy the timing requirement under loaded conditions.  IMHO,
+> update locking and using tasklets would be the best.
 
-Michal
+Hmmm, yes, I'm aware that it might be not sufficient to use the singlet=
+hread wq,=20
+but that was the fastest fix that I could think of, and it was needed f=
+or the=20
+linux-next.
+In case of the tlv320dac33 driver, I can also play with the codec as we=
+ll to=20
+adjust the required latency, but if I hit the wall, than for sure I wil=
+l look=20
+for another solution for the problem.
+So far this is working for my development needs, but time will tell if =
+I need to=20
+make bigger modifications.
+
+=46or the record: on OMAP platforms the I2C implementation is sleeping =
+during the=20
+transfer (internally using interrupt based transfer), which might be no=
+t that=20
+wise in the tasklet. Since the I2C bus is kind of a slow bus, this coul=
+d take=20
+several ms in some cases.
+
+Thank you,
+P=E9ter
