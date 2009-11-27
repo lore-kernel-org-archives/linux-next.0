@@ -1,43 +1,51 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] misc/eeprom: fix at24 printk format
-Date: Thu, 26 Nov 2009 22:22:00 -0800
-Message-ID: <4B0F7008.8000204@oracle.com>
-References: <20091126203837.b64fb4d3.sfr@canb.auug.org.au>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: linux-next: percpu tree build warning
+Date: Fri, 27 Nov 2009 15:31:00 +0900
+Message-ID: <4B0F7224.9020509@kernel.org>
+References: <20091125214219.f37935e8.sfr@canb.auug.org.au> <4B0D23A6.8040902@kernel.org> <20091125134058.GA9097@elte.hu> <200911270846.02717.rusty@rustcorp.com.au> <20091127054128.GC13914@elte.hu> <4B0F6A67.9010706@kernel.org> <20091127062001.GA22149@elte.hu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet12.oracle.com ([141.146.126.234]:19937 "EHLO
-	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751650AbZK0GXP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 27 Nov 2009 01:23:15 -0500
-In-Reply-To: <20091126203837.b64fb4d3.sfr@canb.auug.org.au>
+Received: from hera.kernel.org ([140.211.167.34]:40358 "EHLO hera.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751364AbZK0Gbd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 27 Nov 2009 01:31:33 -0500
+In-Reply-To: <20091127062001.GA22149@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Wolfram Sang <w.sang@pengutronix.de>, David Brownell <dbrownell@users.sourceforge.net>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Christoph Lameter <cl@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+Hello, Ingo.
+> At least to me a typo like this would stick out like a sore thumb during 
+> review.
 
-Fix printk format warning:
+Yeah, maybe, but it still shows why reusing the same name for global
+and local variables behind compiler's back is a bad idea.
 
-drivers/misc/eeprom/at24.c:230: warning: format '%zd' expects type 'signed size_t', but argument 6 has type 'int'
+> I'd recognize &reg1 as a stack local variable immediately, and when i 
+> see it being used in this_cpu_inc() i'd go 'huh' immediately.
+> 
+> OTOH, the two examples of confusion i gave you in my previous mail would 
+> be far less obvious. The 'visual distance' to a percpu variable 
+> definition is greater (it's at least file scope in 95% of the cases), so 
+> i wouldnt be able to 'see' which the percpu variables are, from a code 
+> context.
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc:	Wolfram Sang <w.sang@pengutronix.de>
-Cc:	David Brownell <dbrownell@users.sourceforge.net>
----
- drivers/misc/eeprom/at24.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+With proper __percpu annotations (which we desparately need for
+dynamic percpu pointers anyway) the 'visual distance' should remain
+fine in most cases, I think.
 
---- linux-next-20091126.orig/drivers/misc/eeprom/at24.c
-+++ linux-next-20091126/drivers/misc/eeprom/at24.c
-@@ -227,7 +227,7 @@ static ssize_t at24_eeprom_read(struct a
- 			if (status == 2)
- 				status = count;
- 		}
--		dev_dbg(&client->dev, "read %zu@%d --> %zd (%ld)\n",
-+		dev_dbg(&client->dev, "read %zu@%d --> %d (%ld)\n",
- 				count, offset, status, jiffies);
- 
- 		if (status == count)
+If we can manage the separate namespace thing without adding confusion
+regarding different types of accessors and the actually non-existing
+but yet visible differences between static and dynamic percpu
+variables, I think it would be good.  But it costs us quite a bit and
+__percpu sparse annotation has almost complete coverage over the issue
+including the visible queue telling that something is percpu.  So,
+given that, to me __percpu seems like a much better way to do it.
+
+Thanks.
+
+-- 
+tejun
