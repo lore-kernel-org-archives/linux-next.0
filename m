@@ -1,43 +1,36 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH 1/4 tip/sched/core] sched: rename preempt_notifier to
- sched_notifier and always enable it
-Date: Fri, 27 Nov 2009 15:01:22 +0900
-Message-ID: <4B0F6B32.4090401@kernel.org>
-References: <20091126095154.GE32275@elte.hu> <4B0E5458.30303@kernel.org> <20091126102936.GA1196@elte.hu> <1259231565.4273.31.camel@twins> <1259234619.4273.32.camel@twins> <20091126115605.GA15189@elte.hu> <1259239259.4273.82.camel@twins> <4B0F356B.3040206@kernel.org> <20091127045209.GA13914@elte.hu> <4B0F65DD.1090707@kernel.org> <20091127054621.GA25672@elte.hu>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for November 26 (kexec/percpu/non-SMP)
+Date: Thu, 26 Nov 2009 22:02:38 -0800
+Message-ID: <4B0F6B7E.8000904@oracle.com>
+References: <20091126203837.b64fb4d3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hera.kernel.org ([140.211.167.34]:44846 "EHLO hera.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751580AbZK0GB5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 27 Nov 2009 01:01:57 -0500
-In-Reply-To: <20091127054621.GA25672@elte.hu>
+Received: from acsinet12.oracle.com ([141.146.126.234]:55341 "EHLO
+	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751798AbZK0GEI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 27 Nov 2009 01:04:08 -0500
+In-Reply-To: <20091126203837.b64fb4d3.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Galbraith <efault@gmx.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Hello,
-
-11/27/2009 02:46 PM, Ingo Molnar wrote:
-> Other code will benefit from it though, such as the page fault callbacks 
-> i already mentioned.
+Stephen Rothwell wrote:
+> Hi all,
 > 
-> My position on this is rather clear: i want no new callbacks and no 
-> changes to callbacks in the scheduler until this situation is cleaned 
-> up. Five callback sites are _way_ too much - so if you want to add 
-> callbacks or change them, please clean it up and improve it first.
+> Changes since 20091125:
 
-Even changes which cause no functional differences?  It's just
-logistics at that point and I'll only be pushing the actual changes
-(addition of wakeup/sleep callbacks) to linux-next so that different
-stages of workqueue changes can receive some amount of testing.  If
-you don't want that in sched development tree, I can maintain a
-temporary branch for linux-next testing but I really can't see what
-will be the benefit of doing things that way.
+in drivers/base/cpu.c, when CONFIG_SMP=n, per_cpu_ptr_to_phys() is not available
+(inside #ifdef CONFIG_KEXEC):
 
-Thanks.
+in function show_crash_notes():
 
+	addr = per_cpu_ptr_to_phys(per_cpu_ptr(crash_notes, cpunum));
+
+
+
+drivers/base/cpu.c:100: error: implicit declaration of function 'per_cpu_ptr_to_phys'
 -- 
-tejun
+~Randy
