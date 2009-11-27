@@ -1,40 +1,42 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: sparc tree build failure
-Date: Thu, 26 Nov 2009 15:28:16 -0800 (PST)
-Message-ID: <20091126.152816.233622295.davem@davemloft.net>
-References: <20091126201607.023e1269.sfr@canb.auug.org.au>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: linux-next: workqueues tree build failure
+Date: Fri, 27 Nov 2009 11:02:25 +0900
+Message-ID: <4B0F3331.3070107@kernel.org>
+References: <20091126190050.3f9d7fef.sfr@canb.auug.org.au>	 <4B0E3677.6000603@kernel.org> <200911261016.58810.peter.ujfalusi@nokia.com>	 <4B0E467A.8080201@kernel.org> <1259239225.3062.16.camel@palomino.walls.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:47828
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750919AbZKZX17 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 26 Nov 2009 18:27:59 -0500
-In-Reply-To: <20091126201607.023e1269.sfr@canb.auug.org.au>
+Received: from hera.kernel.org ([140.211.167.34]:60323 "EHLO hera.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751491AbZK0CDG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 26 Nov 2009 21:03:06 -0500
+In-Reply-To: <1259239225.3062.16.camel@palomino.walls.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de
+To: Andy Walls <awalls@radix.net>
+Cc: Peter Ujfalusi <peter.ujfalusi@nokia.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 26 Nov 2009 20:16:07 +1100
+Hello,
 
-> Today's linux-next build (sparc32 defconfig) failed like this:
+11/26/2009 09:40 PM, Andy Walls wrote:
+>> * If you need to respond fast, wouldn't you be doing that from IRQ
+>>   handler or softirq?  Do you need task context?
 > 
-> arch/sparc/lib/atomic32.c: In function '__atomic_add_return':
-> arch/sparc/lib/atomic32.c:34: error: implicit declaration of function '__raw_spin_lock_irqsave'
-> arch/sparc/lib/atomic32.c:38: error: implicit declaration of function '__raw_spin_unlock_irqrestore'
+> I'm not sure doing things like I2C transactions in the in the top half
+> of the IRQ handler is generally viable.  On shared IRQ lines, wouldn't
+> this hold off the interrupt for another device for too long?
 > 
-> Caused by commit 4df286e52917c95c415400367cfd523dfbb0f93a ("sparc: Make
-> atomic locks raw") which I have reverted for today.
+> For example, I already ran across the case of an error path in the ahci
+> disk controller driver interrupt handler holding off interrupts from the
+> cx18 driver longer than the CX23418 firmware would tolerate on a shared
+> interrupt line.
 
-Ho hum, that's the second iteration and it broke the build first time
-too.
+Sounds like it should be using bottom half tasklet not workqueue.
+Tasklet is exactly designed to handle situations like this.  Is there
+any reason tasklet can't be used?
 
-__raw_spin_lock_irqsave() definitions don't exist anywhere in the
-tree, I wonder what this was even build tested against?
+Thanks.
 
-I'm reverting, and I'll be hard pressed to add new versions without
-solid proof that it doesn't break the build a third time :-)
+-- 
+tejun
