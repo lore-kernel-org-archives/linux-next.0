@@ -1,60 +1,41 @@
 From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: linux-next: percpu tree build warning
-Date: Sat, 28 Nov 2009 20:21:50 +1030
-Message-ID: <200911282021.50315.rusty@rustcorp.com.au>
-References: <20091125214219.f37935e8.sfr@canb.auug.org.au> <200911270846.02717.rusty@rustcorp.com.au> <20091127054128.GC13914@elte.hu>
+Subject: Re: linux-next: manual merge of the rr tree with the kbuild tree
+Date: Sat, 28 Nov 2009 20:52:33 +1030
+Message-ID: <200911282052.33651.rusty@rustcorp.com.au>
+References: <20091127132254.f9b1fc34.sfr@canb.auug.org.au> <4B0F9DC4.1070509@suse.cz>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
   charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:52899 "EHLO ozlabs.org"
+Received: from ozlabs.org ([203.10.76.45]:59593 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752777AbZK1Jvu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 28 Nov 2009 04:51:50 -0500
-In-Reply-To: <20091127054128.GC13914@elte.hu>
+	id S1751403AbZK1KW3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 28 Nov 2009 05:22:29 -0500
+In-Reply-To: <4B0F9DC4.1070509@suse.cz>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Tejun Heo <tj@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Christoph Lameter <cl@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Michal Marek <mmarek@suse.cz>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Jenkins <alan-jenkins@tuffmail.co.uk>, Wenji Huang <wenji.huang@oracle.com>
 
-On Fri, 27 Nov 2009 04:11:28 pm Ingo Molnar wrote:
-> 
-> * Rusty Russell <rusty@rustcorp.com.au> wrote:
-> 
-> > On Thu, 26 Nov 2009 12:10:58 am Ingo Molnar wrote:
-> > > While a percpu variable is defined and used in completely different 
-> > > ways:
-> > > 
-> > >   DEFINE_PER_CPU(unsigned long, dr7);
-> > > 
-> > > and is used via:
-> > > 
-> > >   __get_cpu_var(dr7);  [[Fixed -- RR]]
+On Fri, 27 Nov 2009 08:07:08 pm Michal Marek wrote:
+> On 27.11.2009 03:22, Stephen Rothwell wrote:
+> > Hi Rusty,
 > > 
-> > The entire point of Tejun's per-cpu work is that &dr7 is now valid. A 
-> > per-cpu pointer as if it were allocated by the dynamic per-cpu 
-> > allocator.
-> >
-> > Your arguments are fine, but out-of-date.
+> > Today's linux-next merge of the rr tree got a conflict in
+> > scripts/mod/modpost.c between commit
+> > 36021384778b40ffdd59ab34c275786507ef30a6 ("Kbuild: clear marker out of
+> > modpost") from the kbuild tree and commit
+> > 215143067b9bfacdfd475c5b2fa5536ee30f50ec ("kbuild: sort the list of
+> > symbols exported by the kernel (__ksymtab)") from the rr tree.
 > 
-> But allowing &dr7 is outright dangerous - and not particularly clean 
-> either.
+> The "clear marker out of modpost" patch is a no-brainer and when it gets
+> merged doesn't matter that much. Rusty, would you mind moving it to your
+> tree? Alternatively, I can disable it in the kbuild tree for a while so
+> that the two trees don't clash.
 
-That's foolish.  We can now have generic per-cpu function for counters
-and the like.
+OK, I've taken this into my tree and adjusted accordingly.  As you say,
+it's trivial.
 
-> Nothing tells us that it's a percpu variable
-
-__percpu.  Again, I'm explaining what you should already know before sending
-email about this stuff.
-
-> and it blends into the 
-> regular namespace while most of the operators on it are special 
-> (__get_cpu_var(), per_cpu(), __this_cpu(), etc.).
-
-OK, you convince Linus to change __user vars to use a prefix.  Then I'll
-agree that per_cpu_## is more kernely.
-
-Stupidest debate ever.
+Thanks!
 Rusty.
