@@ -1,37 +1,57 @@
-From: =?utf-8?B?SsO2cm4=?= Engel <joern@logfs.org>
-Subject: Re: linux-next: Tree for November 27 (logfs: hash_index)
-Date: Sat, 28 Nov 2009 13:43:36 +0100
-Message-ID: <20091128124336.GA19205@logfs.org>
-References: <20091127181915.a6af7ba3.sfr@canb.auug.org.au> <4B10A04A.7090703@oracle.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [PATCH] USB: g_multi: Fixed '"CONFIG_USB_ETH_RNDIS" redefined'
+ warning
+Date: Sat, 28 Nov 2009 10:34:29 -0800
+Message-ID: <20091128103429.705670b2.randy.dunlap@oracle.com>
+References: <20091125223508.c0924e2d.sfr@canb.auug.org.au>
+	<1259150386-7291-1-git-send-email-m.nazarewicz@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754062AbZK1Mnr@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <4B10A04A.7090703@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet11.oracle.com ([148.87.113.123]:20475 "EHLO
+	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752120AbZK1SgX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 28 Nov 2009 13:36:23 -0500
+In-Reply-To: <1259150386-7291-1-git-send-email-m.nazarewicz@samsung.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Michal Nazarewicz <m.nazarewicz@samsung.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 27 November 2009 20:00:10 -0800, Randy Dunlap wrote:
-> Stephen Rothwell wrote:
-> > Hi all,
-> >=20
-> > Changes since 20091126:
->=20
->=20
-> on i386 (X86_32):
->=20
-> fs/built-in.o: In function `hash_index':
-> dir.c:(.text+0x6c1f2): undefined reference to `__umoddi3'
+On Wed, 25 Nov 2009 12:59:46 +0100 Michal Nazarewicz wrote:
 
-Oops!  Fixed now.
+> From: Michal Nazarewicz <m.nazarewicz@samsung.com>
+> 
+> CONFIG_USB_ETH_RNDIS may be defined when g_ether is built causing
+> warning when multi.c tries to redefine its value.  Changed to first
+> undefine CONFIG_USB_ETH_RNDIS in multi.c.
 
-J=C3=B6rn
+Is there no kconfig way to solve this?
+You shouldn't be messing with kconfig symbols in source files...
 
---=20
-Linux is more the core point of a concept that surrounds "open source"
-which, in turn, is based on a false concept. This concept is that
-people actually want to look at source code.
--- Rob Enderle
+
+> Signed-off-by: Michal Nazarewicz <m.nazarewicz@samsung.com>
+> ---
+>  drivers/usb/gadget/multi.c |    3 +++
+>  1 files changed, 3 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/usb/gadget/multi.c b/drivers/usb/gadget/multi.c
+> index 64711fe..227dc81 100644
+> --- a/drivers/usb/gadget/multi.c
+> +++ b/drivers/usb/gadget/multi.c
+> @@ -26,6 +26,9 @@
+>  #include <linux/utsname.h>
+>  
+>  
+> +#if defined CONFIG_USB_ETH_RNDIS
+> +#  undef CONFIG_USB_ETH_RNDIS
+> +#endif
+>  #if defined CONFIG_USB_G_MULTI_RNDIS
+>  #  define CONFIG_USB_ETH_RNDIS y
+>  #endif
+> -- 
+
+
+---
+~Randy
