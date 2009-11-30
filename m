@@ -1,37 +1,36 @@
 From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the net tree with the net-current
- tree
-Date: Sun, 29 Nov 2009 17:12:02 -0800 (PST)
-Message-ID: <20091129.171202.169130093.davem@davemloft.net>
-References: <20091124141131.49b37eec.sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the trivial tree with the net tree
+Date: Sun, 29 Nov 2009 17:13:15 -0800 (PST)
+Message-ID: <20091129.171315.78513393.davem@davemloft.net>
+References: <20091124171459.88cb0c0d.sfr@canb.auug.org.au>
+	<alpine.LSU.2.00.0911241011520.6953@wotan.suse.de>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: Text/Plain; charset=iso-2022-jp-2
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:46258
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:46264
 	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752863AbZK3BL4 (ORCPT
+	by vger.kernel.org with ESMTP id S1752688AbZK3BNJ (ORCPT
 	<rfc822;linux-next@vger.kernel.org>);
-	Sun, 29 Nov 2009 20:11:56 -0500
-In-Reply-To: <20091124141131.49b37eec.sfr@canb.auug.org.au>
+	Sun, 29 Nov 2009 20:13:09 -0500
+In-Reply-To: <alpine.LSU.2.00.0911241011520.6953@wotan.suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, bruce.w.allan@intel.com, jeffrey.t.kirsher@intel.com
+To: jkosina@suse.cz
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, andre.goddard@gmail.com, bruce.w.allan@intel.com
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 24 Nov 2009 14:11:31 +1100
+From: Jiri Kosina <jkosina@suse.cz>
+Date: Tue, 24 Nov 2009 10:13:47 +0100 (CET)
 
-> Hi all,
+> Subject: e1000e: fix assorted typos
 > 
-> Today's linux-next merge of the net tree got a conflict in
-> drivers/net/e1000e/phy.c between commit
-> 189983d469c6d98e64ddfb9f9ce76725cb082ee5 ("e1000e: remove unnecessary
-> 82577 workaround causing link issues") from the net-current tree and
-> commit 94d8186a693284344ee5cb9734086c7a2370241a ("e1000e: cleanup ops
-> function pointers") from the net tree.
-> 
-> I fixed it up (see below) and can carry the fix for a while.
+> Signed-off-by: André Goddard Rosa <andre.goddard@gmail.com>
+> Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 
-This conflict also got dealt with last night when I pulled
-net-2.6 into net-next-2.6
+I'm happy to add this, but:
+
+1) it doesn't apply to net-next-2.6
+
+2) all networking patches should be CC:'d to netdev@vger.kernel.org
+   particularly so that they get tracked in patchwork and therefore
+   are much less likely to get lost
