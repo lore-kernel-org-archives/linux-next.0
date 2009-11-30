@@ -1,75 +1,73 @@
-From: =?UTF-8?Q?Am=C3=A9rico_Wang?= <xiyou.wangcong@gmail.com>
-Subject: Re: linux-next: manual merge of the sysctl tree with the net tree
-Date: Mon, 30 Nov 2009 17:21:43 +0800
-Message-ID: <2375c9f90911300121j437ffa9bleec585ebc8e62ea3@mail.gmail.com>
-References: <20091130164415.f418834b.sfr@canb.auug.org.au>
-	 <2375c9f90911292151t2deb8530idd96ce50ced74d80@mail.gmail.com>
-	 <20091130174103.b5c05570.sfr@canb.auug.org.au>
+From: Haojian Zhuang <hzhuang1@marvell.com>
+Subject: RE: linux-next: pxa tree build failure
+Date: Mon, 30 Nov 2009 01:24:53 -0800
+Message-ID: <25B60CDC2F704E4E9D88FFD52780CB4C04BB8070E1@SC-VEXCH1.marvell.com>
+References: <20091130172148.1b2c527f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/mixed;
+	boundary="_002_25B60CDC2F704E4E9D88FFD52780CB4C04BB8070E1SCVEXCH1marve_"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qy0-f194.google.com ([209.85.221.194]:33472 "EHLO
-	mail-qy0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752696AbZK3JVh convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 30 Nov 2009 04:21:37 -0500
-In-Reply-To: <20091130174103.b5c05570.sfr@canb.auug.org.au>
+Received: from dakia2.marvell.com ([65.219.4.35]:54894 "EHLO
+	dakia2.marvell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752460AbZK3JYx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 30 Nov 2009 04:24:53 -0500
+In-Reply-To: <20091130172148.1b2c527f.sfr@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vlad Yasevich <vladislav.yasevich@hp.com>, "David S. Miller" <davem@davemloft.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Eric Miao <eric.y.miao@gmail.com>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, Nov 30, 2009 at 2:41 PM, Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> Hi Am=C3=A9rico,
->
-> On Mon, 30 Nov 2009 13:51:03 +0800 Am=C3=A9rico Wang <xiyou.wangcong@=
-gmail.com> wrote:
->>
->> > diff --cc net/sctp/sysctl.c
->> > index ae03ded,d50a042..0000000
->> > --- a/net/sctp/sysctl.c
->> > +++ b/net/sctp/sysctl.c
->> > @@@ -285,19 -241,7 +242,17 @@@ static ctl_table sctp_table[] =3D
->> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.extra1 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =3D &zero,
->> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.extra2 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =3D &addr_scope_max,
->> > =C2=A0 =C2=A0 =C2=A0 =C2=A0},
->> > =C2=A0+ =C2=A0 =C2=A0 =C2=A0{
->> > - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .ctl_name =C2=A0=
- =C2=A0 =C2=A0 =3D CTL_UNNUMBERED,
->> > =C2=A0+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.procname =
-=C2=A0 =C2=A0 =C2=A0 =3D "rwnd_update_shift",
->> > =C2=A0+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.data =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =3D &sctp_rwnd_upd_shift,
->> > =C2=A0+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.maxlen =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =3D sizeof(int),
->> > =C2=A0+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.mode =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =3D 0644,
->> > - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .proc_handler =C2=
-=A0 =3D &proc_dointvec_minmax,
->> > - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .strategy =C2=A0=
- =C2=A0 =C2=A0 =3D &sysctl_intvec,
->> > ++ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.proc_handler =C2=
-=A0 =3D proc_dointvec_minmax,
->>
->> Hey, what's this??
->
-> If you mean "what is this strange looking patch", then it is the outp=
-ut
-> from "git diff --cc" after a merge conflict has been fixed up, but be=
-fore
-> it is committed. =C2=A0The '-' lines were added by one side of the me=
-rge or
-> the other, but removed from the final result. =C2=A0The line with '++=
-' did not
-> appear in either branch, but is in the final result. =C2=A0The lines =
-with a
-> single '+' appear in one of the branches or the other and in the fina=
-l
-> result as well.
->
+--_002_25B60CDC2F704E4E9D88FFD52780CB4C04BB8070E1SCVEXCH1marve_
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 
-Thanks for teaching this! I thought it was a mistake, it is not. :)
-No problem then.
+SGkgU3RlcGhlbiwNCg0KR3JlYXQgdGhhbmtzIG9uIHlvdXIgdGVzdC4gTm93IEkgZm9ybWF0IHRo
+ZSBwYXRjaC4NCg0KRXJpYywNClBsZWFzZSBoZWxwIHRvIHJldmlldyBhbmQgbWVyZ2UgaXQuDQoN
+ClRoYW5rcw0KSGFvamlhbg0KDQotLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTogU3Rl
+cGhlbiBSb3Rod2VsbCBbbWFpbHRvOnNmckBjYW5iLmF1dWcub3JnLmF1XSANClNlbnQ6IDIwMDnE
+6jEx1MIzMMjVIDI6MjIgUE0NClRvOiBFcmljIE1pYW8NCkNjOiBsaW51eC1uZXh0QHZnZXIua2Vy
+bmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgSGFvamlhbiBaaHVhbmcNClN1
+YmplY3Q6IGxpbnV4LW5leHQ6IHB4YSB0cmVlIGJ1aWxkIGZhaWx1cmUNCg0KSGkgRXJpYywNCg0K
+VG9kYXkncyBsaW51eC1uZXh0IGJ1aWxkIChwb3dlcnBjIGFsbHllc2NvbmZpZykgZmFpbGVkIGxp
+a2UgdGhpczoNCg0KZHJpdmVycy92aWRlby9iYWNrbGlnaHQvZGE5MDN4X2JsLmM6IEluIGZ1bmN0
+aW9uICdkYTkwM3hfYmFja2xpZ2h0X3Byb2JlJzoNCmRyaXZlcnMvdmlkZW8vYmFja2xpZ2h0L2Rh
+OTAzeF9ibC5jOjEzNDogZXJyb3I6ICdkZXYnIHVuZGVjbGFyZWQgKGZpcnN0IHVzZSBpbiB0aGlz
+IGZ1bmN0aW9uKQ0KDQpDYXVzZWQgYnkgY29tbWl0IGVkMDg0YzBmNmI3ZTAwMzE5NDI3NmQ3NGVm
+OTA4N2I3OGMxODA0MDkgKCJkYTkwM3hfYmw6DQpjb250cm9sIFdMRUQgb3V0cHV0IGN1cnJlbnQg
+aW4gZGE5MDM0Iikgd2hpY2ggSSBoYXZlIHJldmVydGVkIGZvciB0b2RheS4NCi0tIA0KQ2hlZXJz
+LA0KU3RlcGhlbiBSb3Rod2VsbCAgICAgICAgICAgICAgICAgICAgc2ZyQGNhbmIuYXV1Zy5vcmcu
+YXUNCmh0dHA6Ly93d3cuY2FuYi5hdXVnLm9yZy5hdS9+c2ZyLw0K
+
+--_002_25B60CDC2F704E4E9D88FFD52780CB4C04BB8070E1SCVEXCH1marve_
+Content-Type: application/octet-stream;
+	name="0001-backlight-fix-device-structure-in-da9034.patch"
+Content-Description: 0001-backlight-fix-device-structure-in-da9034.patch
+Content-Disposition: attachment;
+	filename="0001-backlight-fix-device-structure-in-da9034.patch"; size=1109;
+	creation-date="Mon, 30 Nov 2009 01:24:04 GMT";
+	modification-date="Mon, 30 Nov 2009 01:16:46 GMT"
+Content-Transfer-Encoding: base64
+
+RnJvbSBiZjc0NGRjYzc2YTk4Y2I3OTU0YjFiY2UyM2I0NDEwNjE1ZmY5MjcyIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBIYW9qaWFuIFpodWFuZyA8aGFvamlhbi56aHVhbmdAbWFydmVs
+bC5jb20+CkRhdGU6IE1vbiwgMzAgTm92IDIwMDkgMTI6MDM6MjIgLTA1MDAKU3ViamVjdDogW1BB
+VENIXSBiYWNrbGlnaHQ6IGZpeCBkZXZpY2Ugc3RydWN0dXJlIGluIGRhOTAzNAoKT3JpZ2luYWwg
+QVBJIGlzIHVzZWQgaW4gdXBkYXRlX3N0YXR1cywgZGV2IHN0cnVjdHVyZSBpcyB1c2VkIGFzIHBh
+cmFtZXRlci4KQWZ0ZXIgdGhlIEFQSSBpcyBpbnZva2VkIGluIHByb2JlIGZ1bmN0aW9uLCB3ZSBz
+aG91bGQgdXNlIGNvcnJlY3Qgc3RydWN0dXJlCmFzIHBhcmFtZXRlci4KClNpZ25lZC1vZmYtYnk6
+IEhhb2ppYW4gWmh1YW5nIDxoYW9qaWFuLnpodWFuZ0BtYXJ2ZWxsLmNvbT4KLS0tCiBkcml2ZXJz
+L3ZpZGVvL2JhY2tsaWdodC9kYTkwM3hfYmwuYyB8ICAgIDIgKy0KIDEgZmlsZXMgY2hhbmdlZCwg
+MSBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvdmlk
+ZW8vYmFja2xpZ2h0L2RhOTAzeF9ibC5jIGIvZHJpdmVycy92aWRlby9iYWNrbGlnaHQvZGE5MDN4
+X2JsLmMKaW5kZXggOWNiZDAxZC4uN2ZjYjBlYiAxMDA2NDQKLS0tIGEvZHJpdmVycy92aWRlby9i
+YWNrbGlnaHQvZGE5MDN4X2JsLmMKKysrIGIvZHJpdmVycy92aWRlby9iYWNrbGlnaHQvZGE5MDN4
+X2JsLmMKQEAgLTEzMSw3ICsxMzEsNyBAQCBzdGF0aWMgaW50IGRhOTAzeF9iYWNrbGlnaHRfcHJv
+YmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIAogCS8qIGFkanVzdCB0aGUgV0xFRCBv
+dXRwdXQgY3VycmVudCAqLwogCWlmIChwZGF0YSkKLQkJZGE5MDN4X3dyaXRlKGRldiwgREE5MDM0
+X1dMRURfQ09OVFJPTDIsCisJCWRhOTAzeF93cml0ZShkYXRhLT5kYTkwM3hfZGV2LCBEQTkwMzRf
+V0xFRF9DT05UUk9MMiwKIAkJCQlEQTkwMzRfV0xFRF9JU0VUKHBkYXRhLT5vdXRwdXRfY3VycmVu
+dCkpOwogCiAJYmwgPSBiYWNrbGlnaHRfZGV2aWNlX3JlZ2lzdGVyKHBkZXYtPm5hbWUsIGRhdGEt
+PmRhOTAzeF9kZXYsCi0tIAoxLjUuNi41Cgo=
+
+--_002_25B60CDC2F704E4E9D88FFD52780CB4C04BB8070E1SCVEXCH1marve_--
