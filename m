@@ -1,26 +1,31 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH] sctp: fix sctp_setsockopt_autoclose compile warning
-Date: Mon, 30 Nov 2009 02:06:30 -0800 (PST)
-Message-ID: <20091130.020630.12972074.davem@davemloft.net>
-References: <20091130164015.9bb8f6a3.sfr@canb.auug.org.au>
-	<20091130094929.GY10897@shell.iptel.org>
-	<20091130095250.GZ10897@shell.iptel.org>
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: Re: linux-next: manual merge of the trivial tree with the net tree
+Date: Mon, 30 Nov 2009 13:36:18 +0100 (CET)
+Message-ID: <alpine.LSU.2.00.0911301335570.6953@wotan.suse.de>
+References: <20091130135320.215722a2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:40204
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752460AbZK3KGZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 30 Nov 2009 05:06:25 -0500
-In-Reply-To: <20091130095250.GZ10897@shell.iptel.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: andrei@iptel.org
-Cc: sfr@canb.auug.org.au, vladislav.yasevich@hp.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sctp@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753129AbZK3MgO@vger.kernel.org>
+In-Reply-To: <20091130135320.215722a2.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Hutchings <bhutchings@solarflare.com>, "David S. Miller" <davem@davemloft.net>, =?ISO-8859-15?Q?=22Andr=E9_Goddard_Rosa=22?= <andre.goddard@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
+On Mon, 30 Nov 2009, Stephen Rothwell wrote:
 
-Please CC: all networking patches to netdev@vger.kernel.org
+> Today's linux-next merge of the trivial tree got a conflict in
+> drivers/net/sfc/falcon.c between commit
+> 127e6e10ad17585c48cba8e1dcf30d98b90ee583 ("sfc: Fix bugs in RX queue
+> flushing") from the net tree and commit
+> 4e5cf22a6f45b6489f84de03d3a1dfa60cc4b4e4 ("tree-wide: fix assorted typos
+> all over the place") from the trivial tree.
+> 
+> The former removed the comment that the latter was fixing.
 
-Thank you.
+Dropped the falcon.c hunk from the pile, so the conflict should be gone. 
+Thanks,
+
+-- 
+Jiri Kosina
+SUSE Labs, Novell Inc.
