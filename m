@@ -1,52 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the trivial tree with the net tree
-Date: Tue, 1 Dec 2009 06:55:11 +1100
-Message-ID: <20091201065511.37da12f1.sfr@canb.auug.org.au>
-References: <20091130135320.215722a2.sfr@canb.auug.org.au>
-	<alpine.LSU.2.00.0911301335570.6953@wotan.suse.de>
+From: Bjorn Helgaas <bjorn.helgaas@hp.com>
+Subject: Re: linux-next: manual merge of the acpi tree with the pci tree
+Date: Mon, 30 Nov 2009 15:26:05 -0700
+Message-ID: <200911301526.07220.bjorn.helgaas@hp.com>
+References: <20091126132228.85a63dee.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__1_Dec_2009_06_55_11_+1100_t2pJaNJXJIVWkxP5"
+Content-Type: text/plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48139 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752501AbZK3TzJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 30 Nov 2009 14:55:09 -0500
-In-Reply-To: <alpine.LSU.2.00.0911301335570.6953@wotan.suse.de>
+Received: from g5t0007.atlanta.hp.com ([15.192.0.44]:9469 "EHLO
+	g5t0007.atlanta.hp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751649AbZK3W0C (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 30 Nov 2009 17:26:02 -0500
+In-Reply-To: <20091126132228.85a63dee.sfr@canb.auug.org.au>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Hutchings <bhutchings@solarflare.com>, "David S. Miller" <davem@davemloft.net>, =?UTF-8?B?IkFuZHLDqSBHb2RkYXJkIFJvc2Ei?= <andre.goddard@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Len Brown <lenb@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lin Ming <ming.m.lin@intel.com>, Bob Moore <robert.moore@intel.com>, Jesse Barnes <jbarnes@virtuousgeek.org>
 
---Signature=_Tue__1_Dec_2009_06_55_11_+1100_t2pJaNJXJIVWkxP5
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wednesday 25 November 2009 07:22:28 pm Stephen Rothwell wrote:
+> Today's linux-next merge of the acpi tree got a conflict in
+> drivers/pci/hotplug/acpiphp_glue.c between commit
+> 204d49a5613a06eb2fa5c3b842a29b1336cc7995 ("PCI hotplug: move IOAPIC
+> support from acpiphp to ioapic driver") from the pci tree and commit
+> 2263576cfc6e8f6ab038126c3254404b9fcb1c33 ("ACPICA: Add post-order
+> callback to acpi_walk_namespace") from the acpi tree.
+> 
+> The former moved part of the code modified by the latter into another
+> file.  All the calls to acpi_walk_namespace() seem to have been removed
+> in this process.
 
-Hi Jiri,
+I was on vacation last week, so couldn't respond earlier, sorry.
 
-On Mon, 30 Nov 2009 13:36:18 +0100 (CET) Jiri Kosina <jkosina@suse.cz> wrot=
-e:
->
-> Dropped the falcon.c hunk from the pile, so the conflict should be gone.
+As you noticed, 204d49a56 removed some acpi_walk_namespace() calls.
+It removed calls to the old "pre-order only" version, while 263576cfc
+converted acpi_walk_namespace() to a new "pre-order and post-order"
+version.
 
-Thanks for that.
+This is conceptually simple because 204d49a56 is just removing uses
+of acpi_walk_namespace(), so we don't care at all whether it removes
+calls to the old or new version.  But I don't have enough git-fu to
+know how to fix this.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__1_Dec_2009_06_55_11_+1100_t2pJaNJXJIVWkxP5
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAksUIx8ACgkQjjKRsyhoI8zMmgCfe42XHs3fh7jj1jOUKUJ7tcur
-VLYAoLIFE308zFecDg9ZpVxL/gTE6Xg8
-=v+7V
------END PGP SIGNATURE-----
-
---Signature=_Tue__1_Dec_2009_06_55_11_+1100_t2pJaNJXJIVWkxP5--
+Bjorn
