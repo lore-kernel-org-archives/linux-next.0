@@ -1,69 +1,50 @@
-From: =?UTF-8?Q?Am=C3=A9rico_Wang?= <xiyou.wangcong@gmail.com>
-Subject: Re: linux-next: manual merge of the sysctl tree with the net tree
-Date: Mon, 30 Nov 2009 13:51:03 +0800
-Message-ID: <2375c9f90911292151t2deb8530idd96ce50ced74d80@mail.gmail.com>
-References: <20091130164415.f418834b.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: usb tree build warning
+Date: Mon, 30 Nov 2009 17:01:28 +1100
+Message-ID: <20091130170128.db346120.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__30_Nov_2009_17_01_28_+1100_AdvViXo9aU/k_MV6"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qy0-f194.google.com ([209.85.221.194]:63629 "EHLO
-	mail-qy0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750920AbZK3Fu5 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 30 Nov 2009 00:50:57 -0500
-In-Reply-To: <20091130164415.f418834b.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:51600 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750869AbZK3GBZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 30 Nov 2009 01:01:25 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vlad Yasevich <vladislav.yasevich@hp.com>, "David S. Miller" <davem@davemloft.net>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>
 
-On Mon, Nov 30, 2009 at 1:44 PM, Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> Hi Eric,
->
-> Today's linux-next merge of the sysctl tree got a conflict in
-> net/sctp/sysctl.c between commit 90f2f5318b3a5b0898fef0fec9b91376c7de=
-7a2c
-> ("sctp: Update SWS avaoidance receiver side algorithm") from the net =
-tree
-> and commit f8572d8f2a2ba75408b97dc24ef47c83671795d7 ("sysctl net: Rem=
-ove
-> unused binary sysctl code") from the sysctl tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. =C2=A0I=
- also
-> removed the strategy member from the new added ctl_table entry.
-> --
-> Cheers,
-> Stephen Rothwell =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0sfr@canb.auug.org.au
->
-> diff --cc net/sctp/sysctl.c
-> index ae03ded,d50a042..0000000
-> --- a/net/sctp/sysctl.c
-> +++ b/net/sctp/sysctl.c
-> @@@ -285,19 -241,7 +242,17 @@@ static ctl_table sctp_table[] =3D
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.extra1 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =3D &zero,
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.extra2 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =3D &addr_scope_max,
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0},
-> =C2=A0+ =C2=A0 =C2=A0 =C2=A0{
-> - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .ctl_name =C2=A0 =C2=
-=A0 =C2=A0 =3D CTL_UNNUMBERED,
-> =C2=A0+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.procname =C2=
-=A0 =C2=A0 =C2=A0 =3D "rwnd_update_shift",
-> =C2=A0+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.data =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =3D &sctp_rwnd_upd_shift,
-> =C2=A0+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.maxlen =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =3D sizeof(int),
-> =C2=A0+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.mode =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =3D 0644,
-> - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .proc_handler =C2=A0=
- =3D &proc_dointvec_minmax,
-> - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .strategy =C2=A0 =C2=
-=A0 =C2=A0 =3D &sysctl_intvec,
-> ++ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.proc_handler =C2=A0=
- =3D proc_dointvec_minmax,
+--Signature=_Mon__30_Nov_2009_17_01_28_+1100_AdvViXo9aU/k_MV6
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hey, what's this??
+Hi Greg,
+
+Today's linux-next build (x86_64 allmodconfig) produced this warning:
+
+drivers/net/wimax/i2400m/usb.c: In function 'i2400mu_suspend':
+drivers/net/wimax/i2400m/usb.c:595: warning: unused variable 'usb_dev'
+
+Introduced by commit a85c653a3945350875611d3cb071a0143cfeb2d2 ("USB:
+remove the auto_pm flag") which removed the last usage in this function.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__30_Nov_2009_17_01_28_+1100_AdvViXo9aU/k_MV6
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAksTX7gACgkQjjKRsyhoI8xWuACfUSmf6xGfSqRbrlyXWNtiKhux
+eYUAoKershDTtUadLidv7GdpScwOrndo
+=djQj
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__30_Nov_2009_17_01_28_+1100_AdvViXo9aU/k_MV6--
