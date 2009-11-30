@@ -1,158 +1,40 @@
-From: Michal Nazarewicz <m.nazarewicz@samsung.com>
-Subject: [PATCH] USB: Added USB_ETH_RNDIS to use instead of CONFIG_USB_ETH_RNDIS
-Date: Mon, 30 Nov 2009 10:55:40 +0100
-Message-ID: <1259574940-25345-1-git-send-email-m.nazarewicz@samsung.com>
-References: <20091128103429.705670b2.randy.dunlap@oracle.com>
+From: Andrei Pelinescu-Onciul <andrei@iptel.org>
+Subject: [PATCH] sctp: fix sctp_setsockopt_autoclose compile warning
+Date: Mon, 30 Nov 2009 10:52:50 +0100
+Message-ID: <20091130095250.GZ10897@shell.iptel.org>
+References: <20091130164015.9bb8f6a3.sfr@canb.auug.org.au> <20091130094929.GY10897@shell.iptel.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753785AbZK3Jyk@vger.kernel.org>
-In-reply-to: <20091128103429.705670b2.randy.dunlap@oracle.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753986AbZK3KDs@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20091130094929.GY10897@shell.iptel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "David S. Miller" <davem@davemloft.net>, Vlad Yasevich <vladislav.yasevich@hp.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sctp@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-From: Michal Nazarewicz <m.nazarewicz@samsung.com>
+Fix the following warning, when building on 64 bits:
 
-If g_ether and g_multi are both built CONFIG_USB_ETH_RNDIS symbol
-may be redefined in the later and, whats even worse, g_ether's settings
-may affect g_multi's.  This adds a USB_ETH_RNDIS symbol defined at the
-beginning of ether.c and multi.c according toproper KConfig settings.
+net/sctp/socket.c:2091: warning: large integer implicitly
+                        truncated to unsigned type
 
-Signed-off-by: Michal Nazarewicz <m.nazarewicz@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Andrei Pelinescu-Onciul <andrei@iptel.org>
 ---
- drivers/usb/gadget/ether.c   |   16 ++++++++++++----
- drivers/usb/gadget/multi.c   |   13 ++++++++-----
- drivers/usb/gadget/u_ether.h |    2 +-
- 3 files changed, 21 insertions(+), 10 deletions(-)
+ net/sctp/socket.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-> On Wed, 25 Nov 2009 12:59:46 +0100 Michal Nazarewicz wrote:
->> CONFIG_USB_ETH_RNDIS may be defined when g_ether is built causing
->> warning when multi.c tries to redefine its value.  Changed to first
->> undefine CONFIG_USB_ETH_RNDIS in multi.c.
-
-On Sat, 28 Nov 2009 19:34:29 +0100, Randy Dunlap wrote:
-> Is there no kconfig way to solve this?
-> You shouldn't be messing with kconfig symbols in source files...
-
-Messing with KConfig symbols was less intrusive method of fixing the
-warning but if anyone feels like it's not the proper method here's
-another patch.
-
-diff --git a/drivers/usb/gadget/ether.c b/drivers/usb/gadget/ether.c
-index 167cb2a..141372b 100644
---- a/drivers/usb/gadget/ether.c
-+++ b/drivers/usb/gadget/ether.c
-@@ -25,6 +25,14 @@
- #include <linux/kernel.h>
- #include <linux/utsname.h>
-
-+
-+#if defined USB_ETH_RNDIS
-+#  undef USB_ETH_RNDIS
-+#endif
-+#ifdef CONFIG_USB_ETH_RNDIS
-+#  define USB_ETH_RNDIS y
-+#endif
-+
- #include "u_ether.h"
-
-
-@@ -66,7 +74,7 @@
- #define DRIVER_DESC		"Ethernet Gadget"
- #define DRIVER_VERSION		"Memorial Day 2008"
-
--#ifdef CONFIG_USB_ETH_RNDIS
-+#ifdef USB_ETH_RNDIS
- #define PREFIX			"RNDIS/"
- #else
- #define PREFIX			""
-@@ -87,7 +95,7 @@
-
- static inline bool has_rndis(void)
- {
--#ifdef	CONFIG_USB_ETH_RNDIS
-+#ifdef	USB_ETH_RNDIS
- 	return true;
- #else
- 	return false;
-@@ -110,7 +118,7 @@ static inline bool has_rndis(void)
-
- #include "f_ecm.c"
- #include "f_subset.c"
--#ifdef	CONFIG_USB_ETH_RNDIS
-+#ifdef	USB_ETH_RNDIS
- #include "f_rndis.c"
- #include "rndis.c"
- #endif
-@@ -251,7 +259,7 @@ static struct usb_configuration rndis_config_driver = {
-
- /*-------------------------------------------------------------------------*/
-
--#ifdef CONFIG_USB_ETH_EEM
-+#ifdef USB_ETH_EEM
- static int use_eem = 1;
- #else
- static int use_eem;
-diff --git a/drivers/usb/gadget/multi.c b/drivers/usb/gadget/multi.c
-index 64711fe..4295601 100644
---- a/drivers/usb/gadget/multi.c
-+++ b/drivers/usb/gadget/multi.c
-@@ -26,8 +26,11 @@
- #include <linux/utsname.h>
-
-
--#if defined CONFIG_USB_G_MULTI_RNDIS
--#  define CONFIG_USB_ETH_RNDIS y
-+#if defined USB_ETH_RNDIS
-+#  undef USB_ETH_RNDIS
-+#endif
-+#ifdef CONFIG_USB_ETH_RNDIS
-+#  define USB_ETH_RNDIS y
- #endif
-
-
-@@ -59,7 +62,7 @@
-
- #include "f_ecm.c"
- #include "f_subset.c"
--#ifdef CONFIG_USB_ETH_RNDIS
-+#ifdef USB_ETH_RNDIS
- #  include "f_rndis.c"
- #  include "rndis.c"
- #endif
-@@ -150,7 +153,7 @@ FSG_MODULE_PARAMETERS(/* no prefix */, mod_data);
- static struct fsg_common *fsg_common;
-
-
--#ifdef CONFIG_USB_ETH_RNDIS
-+#ifdef USB_ETH_RNDIS
-
- static int __init rndis_do_config(struct usb_configuration *c)
- {
-@@ -292,7 +295,7 @@ static int __init multi_bind(struct usb_composite_dev *cdev)
- 	strings_dev[STRING_PRODUCT_IDX].id = status;
- 	device_desc.iProduct = status;
-
--#ifdef CONFIG_USB_ETH_RNDIS
-+#ifdef USB_ETH_RNDIS
- 	/* register our first configuration */
- 	status = usb_add_config(cdev, &rndis_config_driver);
- 	if (status < 0)
-diff --git a/drivers/usb/gadget/u_ether.h b/drivers/usb/gadget/u_ether.h
-index 91b39ff..fd55f45 100644
---- a/drivers/usb/gadget/u_ether.h
-+++ b/drivers/usb/gadget/u_ether.h
-@@ -112,7 +112,7 @@ int geth_bind_config(struct usb_configuration *c, u8 ethaddr[ETH_ALEN]);
- int ecm_bind_config(struct usb_configuration *c, u8 ethaddr[ETH_ALEN]);
- int eem_bind_config(struct usb_configuration *c);
-
--#ifdef CONFIG_USB_ETH_RNDIS
-+#ifdef USB_ETH_RNDIS
-
- int rndis_bind_config(struct usb_configuration *c, u8 ethaddr[ETH_ALEN]);
-
+diff --git a/net/sctp/socket.c b/net/sctp/socket.c
+index 71513b3..8961863 100644
+--- a/net/sctp/socket.c
++++ b/net/sctp/socket.c
+@@ -2088,7 +2088,7 @@ static int sctp_setsockopt_autoclose(struct sock *sk, char __user *optval,
+ 		return -EFAULT;
+ 	/* make sure it won't exceed MAX_SCHEDULE_TIMEOUT */
+ 	if (sp->autoclose > (MAX_SCHEDULE_TIMEOUT / HZ) )
+-		sp->autoclose = MAX_SCHEDULE_TIMEOUT / HZ ;
++		sp->autoclose = (__u32)(MAX_SCHEDULE_TIMEOUT / HZ) ;
+ 
+ 	return 0;
+ }
 -- 
-1.6.5
+1.6.5.3
