@@ -1,86 +1,89 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the sysctl tree with the net tree
-Date: Mon, 30 Nov 2009 17:41:03 +1100
-Message-ID: <20091130174103.b5c05570.sfr@canb.auug.org.au>
-References: <20091130164415.f418834b.sfr@canb.auug.org.au>
-	<2375c9f90911292151t2deb8530idd96ce50ced74d80@mail.gmail.com>
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: Re: [-next Nov 25] eHEA driver failure during boot(bisected)
+Date: Mon, 30 Nov 2009 12:11:21 +0530
+Message-ID: <4B136911.9010905@in.ibm.com>
+References: <20091125235333.37c425ec.sfr@canb.auug.org.au> <4B0E3E18.7020308@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__30_Nov_2009_17_41_03_+1100_qFiFGV4_U7LVuceV"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54732 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751062AbZK3GlA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 30 Nov 2009 01:41:00 -0500
-In-Reply-To: <2375c9f90911292151t2deb8530idd96ce50ced74d80@mail.gmail.com>
+Received: from e23smtp05.au.ibm.com ([202.81.31.147]:34146 "EHLO
+	e23smtp05.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751062AbZK3GlU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 30 Nov 2009 01:41:20 -0500
+In-Reply-To: <4B0E3E18.7020308@in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: =?UTF-8?B?QW3DqXJpY28=?= Wang <xiyou.wangcong@gmail.com>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vlad Yasevich <vladislav.yasevich@hp.com>, "David S. Miller" <davem@davemloft.net>
+To: netdev <netdev@vger.kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Jan-Bernd Themann <THEMANN@de.ibm.com>, HERING2@de.ibm.com, David Miller <davem@davemloft.net>, Eric Dumazet <eric.dumazet@gmail.com>
 
---Signature=_Mon__30_Nov_2009_17_41_03_+1100_qFiFGV4_U7LVuceV
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+eHEA driver fails to initialize on a power6 box while booting
+latest next. Following are the messages which gets
+logged during failure (this is with 20091125 next(f3645ca..))
 
-Hi Am=C3=A9rico,
+Unable to handle kernel paging request for data at address 0x409d0148e8e40018
+Faulting instruction address: 0xc00000000003c0cc
+Oops: Kernel access of bad area, sig: 11 [#1]
+SMP NR_CPUS=1024 NUMA pSeries
+Modules linked in: fuse loop dm_mod sr_mod cdrom ehea sg sd_mod crc_t10dif ibmvscsic scsi_transport_srp scsi_tgt scsi_mod
+NIP: c00000000003c0cc LR: c00000000003ce50 CTR: 0000000000091b94
+REGS: c00000000cade820 TRAP: 0300   Not tainted  (2.6.32-rc8-autotest-next-20091125)
+MSR: 8000000000001032 <ME,IR,DR>  CR: 28020424  XER: 00000020
+DAR: 409d0148e8e40018, DSISR: 0000000040000000
+TASK = c00000000c818d60[1683] 'ip' THREAD: c00000000cadc000 CPU: 1
+GPR00: 0000000000000010 c00000000cadeaa0 c000000000b28340 409d0148e8e40008
+GPR04: d00008008000f040 c00000000cadeb20 0000000000001000 0000000000000000
+GPR08: 000000000000001c c0000000018c0398 0000000000000000 c000000000bc0000
+GPR12: 8000000000009032 c000000000bc2880 00000000ffffffff ffffffffffffffff
+GPR16: 00000000203c8fc0 c00000000cadf4a8 c00000000cadf450 c00000000e4c0000
+GPR20: 0000000000000300 0000000000000201 c000000000c68590 c000000000bc0000
+GPR24: 0000000000000000 0000000000e5f87e 0000000000000001 c000000009920000
+GPR28: 0000000000000000 d00008008000f040 0000000000000000 c000000000a63328
+NIP [c00000000003c0cc] .subpage_protection+0x48/0x8c
+LR [c00000000003ce50] .hash_page+0x3e0/0x45c
+Call Trace:
+[c00000000cadeaa0] [00000000ffffffff] 0xffffffff (unreliable)
+[c00000000cadeb90] [c0000000000055d0] .do_hash_page+0x50/0x6c
+--- Exception: 301 at .ehea_create_cq+0x234/0x2bc [ehea]
+   LR = .ehea_create_cq+0x1c0/0x2bc [ehea]
+[c00000000cadef40] [d0000000015e46fc] .ehea_init_port_res+0xb4/0x47c [ehea]
+[c00000000cadf000] [d0000000015e4bd8] .ehea_up+0x114/0x6bc [ehea]
+[c00000000cadf110] [d0000000015e51e0] .ehea_open+0x60/0x114 [ehea]
+[c00000000cadf1b0] [c000000000542e7c] .dev_open+0x11c/0x19c
+[c00000000cadf240] [c000000000541e7c] .dev_change_flags+0x10c/0x214
+[c00000000cadf2e0] [c00000000054e0f8] .do_setlink+0x304/0x41c
+[c00000000cadf3c0] [c00000000054f324] .rtnl_newlink+0x388/0x600
+[c00000000cadf5d0] [c00000000054ef50] .rtnetlink_rcv_msg+0x260/0x2ac
+[c00000000cadf680] [c000000000568104] .netlink_rcv_skb+0x74/0x108
+[c00000000cadf710] [c00000000054eccc] .rtnetlink_rcv+0x34/0x58
+[c00000000cadf7a0] [c000000000567bfc] .netlink_unicast+0x32c/0x408
+[c00000000cadf870] [c0000000005688d8] .netlink_sendmsg+0x2d0/0x310
+[c00000000cadf950] [c000000000529c9c] .sock_sendmsg+0xe0/0x11c
+[c00000000cadfb50] [c000000000529fc8] .SyS_sendmsg+0x1f4/0x288
+[c00000000cadfd70] [c000000000527f88] .SyS_socketcall+0x214/0x280
+[c00000000cadfe30] [c0000000000085b4] syscall_exit+0x0/0x40
+Instruction dump:
+78000020 7fa40040 409d0020 7889aae0 39290072 79291f24 7d2b4a14 e8690010
+2fa30000 419e0048 788014e2 78001f24 <7c63002a> 2fa30000 419e0034 788084a2
+---[ end trace cacb4bbddb53f7bd ]---
 
-On Mon, 30 Nov 2009 13:51:03 +0800 Am=C3=A9rico Wang <xiyou.wangcong@gmail.=
-com> wrote:
->
-> > diff --cc net/sctp/sysctl.c
-> > index ae03ded,d50a042..0000000
-> > --- a/net/sctp/sysctl.c
-> > +++ b/net/sctp/sysctl.c
-> > @@@ -285,19 -241,7 +242,17 @@@ static ctl_table sctp_table[] =3D
-> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.extra1 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =3D &zero,
-> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.extra2 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =3D &addr_scope_max,
-> > =C2=A0 =C2=A0 =C2=A0 =C2=A0},
-> > =C2=A0+ =C2=A0 =C2=A0 =C2=A0{
-> > - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .ctl_name =C2=A0 =C2=
-=A0 =C2=A0 =3D CTL_UNNUMBERED,
-> > =C2=A0+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.procname =C2=
-=A0 =C2=A0 =C2=A0 =3D "rwnd_update_shift",
-> > =C2=A0+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.data =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =3D &sctp_rwnd_upd_shift,
-> > =C2=A0+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.maxlen =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =3D sizeof(int),
-> > =C2=A0+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.mode =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =3D 0644,
-> > - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .proc_handler =C2=A0=
- =3D &proc_dointvec_minmax,
-> > - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .strategy =C2=A0 =C2=
-=A0 =C2=A0 =3D &sysctl_intvec,
-> > ++ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.proc_handler =C2=A0=
- =3D proc_dointvec_minmax,
->=20
-> Hey, what's this??
+This problem was introduced between next-20091119 and next-20091120.
+Bisection leads to the following patch :
 
-If you mean "what is this strange looking patch", then it is the output
-from "git diff --cc" after a merge conflict has been fixed up, but before
-it is committed.  The '-' lines were added by one side of the merge or
-the other, but removed from the final result.  The line with '++' did not
-appear in either branch, but is in the final result.  The lines with a
-single '+' appear in one of the branches or the other and in the final
-result as well.
+commit 2939e275994977b6c9eb7fd082b7b0caa35b96b0
+netsched: Allow var_sk_bound_if meta to work on all namespaces
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+If i revert this patch the eHEA interface is initialized properly.
 
---Signature=_Mon__30_Nov_2009_17_41_03_+1100_qFiFGV4_U7LVuceV
-Content-Type: application/pgp-signature
+Thanks
+-Sachin
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAksTaP8ACgkQjjKRsyhoI8wjbgCeLjuuxQ/ooHyYmnMiOUwea2Ut
-hesAnjP222rbFhxB/mO0UkxOGnZCvQf0
-=GOPL
------END PGP SIGNATURE-----
+-- 
 
---Signature=_Mon__30_Nov_2009_17_41_03_+1100_qFiFGV4_U7LVuceV--
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
