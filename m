@@ -1,46 +1,53 @@
-From: Bjorn Helgaas <bjorn.helgaas@hp.com>
-Subject: Re: linux-next: manual merge of the acpi tree with the pci tree
-Date: Mon, 30 Nov 2009 15:26:05 -0700
-Message-ID: <200911301526.07220.bjorn.helgaas@hp.com>
-References: <20091126132228.85a63dee.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: origin tree build failure
+Date: Tue, 1 Dec 2009 10:10:24 +1100
+Message-ID: <20091201101024.e5a92d95.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__1_Dec_2009_10_10_24_+1100_wo2mqTbgzSV8.iZn"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from g5t0007.atlanta.hp.com ([15.192.0.44]:9469 "EHLO
-	g5t0007.atlanta.hp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751649AbZK3W0C (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 30 Nov 2009 17:26:02 -0500
-In-Reply-To: <20091126132228.85a63dee.sfr@canb.auug.org.au>
-Content-Disposition: inline
+Received: from chilli.pcug.org.au ([203.10.76.44]:57319 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752749AbZK3XKW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 30 Nov 2009 18:10:22 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Len Brown <lenb@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lin Ming <ming.m.lin@intel.com>, Bob Moore <robert.moore@intel.com>, Jesse Barnes <jbarnes@virtuousgeek.org>
+To: Linus <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>
 
-On Wednesday 25 November 2009 07:22:28 pm Stephen Rothwell wrote:
-> Today's linux-next merge of the acpi tree got a conflict in
-> drivers/pci/hotplug/acpiphp_glue.c between commit
-> 204d49a5613a06eb2fa5c3b842a29b1336cc7995 ("PCI hotplug: move IOAPIC
-> support from acpiphp to ioapic driver") from the pci tree and commit
-> 2263576cfc6e8f6ab038126c3254404b9fcb1c33 ("ACPICA: Add post-order
-> callback to acpi_walk_namespace") from the acpi tree.
-> 
-> The former moved part of the code modified by the latter into another
-> file.  All the calls to acpi_walk_namespace() seem to have been removed
-> in this process.
+--Signature=_Tue__1_Dec_2009_10_10_24_+1100_wo2mqTbgzSV8.iZn
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I was on vacation last week, so couldn't respond earlier, sorry.
+Hi Linus, David,
 
-As you noticed, 204d49a56 removed some acpi_walk_namespace() calls.
-It removed calls to the old "pre-order only" version, while 263576cfc
-converted acpi_walk_namespace() to a new "pre-order and post-order"
-version.
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-This is conceptually simple because 204d49a56 is just removing uses
-of acpi_walk_namespace(), so we don't care at all whether it removes
-calls to the old or new version.  But I don't have enough git-fu to
-know how to fix this.
+fs/9p/cache.c: In function '__v9fs_fscache_release_page':
+fs/9p/cache.c:346: error: 'vnode' undeclared (first use in this function)
 
-Bjorn
+Caused by commit 201a15428bd54f83eccec8b7c64a04b8f9431204 ("FS-Cache:
+Handle pages pending storage that get evicted under OOM conditions").
+
+Please, at least build files that have been modified ...
+
+I have reverted that commit for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__1_Dec_2009_10_10_24_+1100_wo2mqTbgzSV8.iZn
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAksUUOAACgkQjjKRsyhoI8yV3QCfZ18X44OhJ87ckQ46eRsIE2cU
+MO8AnAzU+U/z55BXvegAew1Vr2kdwECK
+=Iie9
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__1_Dec_2009_10_10_24_+1100_wo2mqTbgzSV8.iZn--
