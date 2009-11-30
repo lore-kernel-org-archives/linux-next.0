@@ -1,36 +1,46 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the trivial tree with the net tree
-Date: Sun, 29 Nov 2009 17:13:15 -0800 (PST)
-Message-ID: <20091129.171315.78513393.davem@davemloft.net>
-References: <20091124171459.88cb0c0d.sfr@canb.auug.org.au>
-	<alpine.LSU.2.00.0911241011520.6953@wotan.suse.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the pcmcia tree with the pxa tree
+Date: Mon, 30 Nov 2009 13:16:21 +1100
+Message-ID: <20091130131621.f4d20c96.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-2022-jp-2
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:46264
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752688AbZK3BNJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Sun, 29 Nov 2009 20:13:09 -0500
-In-Reply-To: <alpine.LSU.2.00.0911241011520.6953@wotan.suse.de>
+Received: from chilli.pcug.org.au ([203.10.76.44]:60024 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752771AbZK3CQR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 29 Nov 2009 21:16:17 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: jkosina@suse.cz
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, andre.goddard@gmail.com, bruce.w.allan@intel.com
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marc Zyngier <maz@misterjones.org>, Eric Miao <eric.y.miao@gmail.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>
 
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Tue, 24 Nov 2009 10:13:47 +0100 (CET)
+Hi Dominik,
 
-> Subject: e1000e: fix assorted typos
-> 
-> Signed-off-by: André Goddard Rosa <andre.goddard@gmail.com>
-> Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Today's linux-next merge of the pcmcia tree got a conflict in
+drivers/pcmcia/Kconfig between commit
+c9b74a4489db7e6fe03fbee11f406b9641baae55 ("[ARM] pxa/zeus: make Viper
+pcmcia support more generic to support Zeus") from the pxa tree and
+commit 0f767de6a26a07f7d58394512b6f6c96322f047f ("PCMCIA: soc_common:
+convert to a stand alone module") from the pcmcia tree.
 
-I'm happy to add this, but:
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-1) it doesn't apply to net-next-2.6
-
-2) all networking patches should be CC:'d to netdev@vger.kernel.org
-   particularly so that they get tracked in patchwork and therefore
-   are much less likely to get lost
+diff --cc drivers/pcmcia/Kconfig
+index d3faec3,f3ccbcc..0000000
+--- a/drivers/pcmcia/Kconfig
++++ b/drivers/pcmcia/Kconfig
+@@@ -242,7 -208,8 +229,8 @@@ config PCMCIA_PXA2X
+  	depends on ARM && ARCH_PXA && PCMCIA
+  	depends on (ARCH_LUBBOCK || MACH_MAINSTONE || PXA_SHARPSL \
+  		    || MACH_ARMCORE || ARCH_PXA_PALM || TRIZEPS_PCMCIA \
+ -		    || ARCH_VIPER || ARCH_PXA_ESERIES || MACH_STARGATE2)
+ +		    || ARCOM_PCMCIA || ARCH_PXA_ESERIES || MACH_STARGATE2)
++ 	select PCMCIA_SOC_COMMON
+  	help
+  	  Say Y here to include support for the PXA2xx PCMCIA controller
+  
