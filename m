@@ -1,91 +1,137 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Subject: Re: linux-next: net/wireless/wireless-current tree build warning
-Date: Tue, 01 Dec 2009 10:14:33 +0100
-Message-ID: <1259658873.32171.39.camel@johannes.local>
-References: <20091201133524.32756cef.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: problems in linux-next (Was: Re: linux-next: Tree for December 1)
+Date: Tue, 1 Dec 2009 21:03:43 +1100
+Message-ID: <20091201210343.f0a1d353.sfr@canb.auug.org.au>
+References: <20091201190301.0fb7abad.sfr@canb.auug.org.au>
+	<4B14D6E2.2040704@petalogix.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature"; boundary="=-tEG7/D3K2eJZ0eLBtnAH"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753920AbZLAJOq@vger.kernel.org>
-In-Reply-To: <20091201133524.32756cef.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:59198 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752947AbZLAKD5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 1 Dec 2009 05:03:57 -0500
+In-Reply-To: <4B14D6E2.2040704@petalogix.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: michal.simek@petalogix.com
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>
+
+cc'ing the percpu and workqueue folks ...
+
+On Tue, 01 Dec 2009 09:42:10 +0100 Michal Simek <michal.simek@petalogix.com> wrote:
+> 
+> It seems to me that percpu has more other troubles too.
+> Look at boolog below for Microblaze with MMU.
+
+Or may the workqueue additions?
+
+> I haven't look at that problem deeper but I will.
+> Any suggestion what could be wrong?
+> 
+> Problems started in linux-next from November 27.
+> You can look at logs.
+> http://www.monstr.eu/wiki/doku.php?id=log:log
+> 
+> Thanks,
+> Michal
+> 
+> early_printk_console is enabled at 0x84000000
+> Ramdisk addr 0x00000003, FDT at 0x9099c414
+> Linux version 2.6.32-rc8-next-20091201 (monstr@monstr.eu) (gcc version 
+> 4.1.2) #1 Tue Dec 1 09:34:15 CET 2009
+> setup_cpuinfo: initialising
+> setup_cpuinfo: Using full CPU PVR support
+> setup_memory: max_mapnr: 0x10000
+> setup_memory: min_low_pfn: 0x90000
+> setup_memory: max_low_pfn: 0xa0000
+> On node 0 totalpages: 65536
+> free_area_init_node: node 0, pgdat c02cc768, node_mem_map c09a1000
+>    Normal zone: 512 pages used for memmap
+>    Normal zone: 0 pages reserved
+>    Normal zone: 65024 pages, LIFO batch:15
+> Built 1 zonelists in Zone order, mobility grouping on.  Total pages: 65024
+> Kernel command line: console=ttyUL0,115200
+> PID hash table entries: 1024 (order: 0, 4096 bytes)
+> Dentry cache hash table entries: 32768 (order: 5, 131072 bytes)
+> Inode-cache hash table entries: 16384 (order: 4, 65536 bytes)
+> Memory: 249600k/262144k available
+> Hierarchical RCU implementation.
+> NR_IRQS:32
+> xlnx,xps-intc-1.00.a #0 at 0xd0000000, num_irq=9, edge=0x100
+> xlnx,xps-timer-1.00.a #0 at 0xd0004000, irq=3
+> microblaze_timer_set_mode: shutdown
+> microblaze_timer_set_mode: periodic
+> Calibrating delay loop... 119.19 BogoMIPS (lpj=595968)
+> Mount-cache hash table entries: 512
+> ------------[ cut here ]------------
+> WARNING: at include/linux/percpu.h:157 __create_workqueue_key+0x1c0/0x1d0()
+> Modules linked in:
+> 
+> Stack:
+>    cf831f1c c0033694 00000000 00000000 c022dac0 c0013f40 c022836c c022dac0
+>    0000009d c0029814 0001ffff c0973e20 cf8032e4 00000000 00000000 c022dad8
+>    c002980c 00000000 c02d68f8 c02e6218 00000000 00000000 c022dad8 c02d5860
+> Call Trace:
+> 
+> [<c0033694>] atomic_notifier_chain_register+0x40/0x64
+> [<c0013f40>] warn_slowpath_null+0xc/0x20
+> [<c0029814>] __create_workqueue_key+0x1c0/0x1d0
+> [<c002980c>] __create_workqueue_key+0x1b8/0x1d0
+> [<c02d68f8>] spawn_softlockup_task+0x0/0xc0
+> [<c02d5860>] init_workqueues+0x48/0xa0
+> [<c02ce104>] kernel_init+0x0/0x184
+> [<c02ce148>] kernel_init+0x44/0x184
+> [<c02ce170>] kernel_init+0x6c/0x184
+> [<c00023a0>] kernel_thread_helper+0xc/0x20
+> [<c0002394>] kernel_thread_helper+0x0/0x20
+> 
+> ---[ end trace 139ce121c98e96c9 ]---
+> NET: Registered protocol family 16
+> bio: create slab <bio-0> at 0
+> Switching to clocksource microblaze_clocksource
+> NET: Registered protocol family 2
+> IP route cache hash table entries: 2048 (order: 1, 8192 bytes)
+> TCP established hash table entries: 8192 (order: 4, 65536 bytes)
+> TCP bind hash table entries: 8192 (order: 5, 163840 bytes)
+> TCP: Hash tables configured (established 8192 bind 8192)
+> TCP reno registered
+> NET: Registered protocol family 1
+> RPC: Registered udp transport module.
+> RPC: Registered tcp transport module.
+> RPC: Registered tcp NFSv4.1 backchannel transport module.
+> Slow work thread pool: Starting up
+> Slow work thread pool: Ready
+> msgmni has been set to 487
+> io scheduler noop registered
+> io scheduler deadline registered
+> io scheduler cfq registered (default)
+> 84000000.serial: ttyUL0 at MMIO 0x84000003 (irq = 8) is a uartlite
+> console [ttyUL0] enabled
+> brd: module loaded
+> TCP cubic registered
+> NET: Registered protocol family 17
+> Freeing unused kernel memory: 6801k freed
+> Mounting proc:
+> Mounting var:
+> Populating /var:
+> Running local start scripts.
+> Mounting sysfs:
+> Setting hostname:
+> Setting up interface lo:
+> Setting up interface eth0:
+> BUG: failure at kernel/workqueue.c:431/process_one_work()!
+> Kernel panic - not syncing: BUG!
+> Rebooting in 120 seconds..timeout
+> 
+> -- 
+> Michal Simek, Ing. (M.Eng)
+> PetaLogix - Linux Solutions for a Reconfigurable World
+> w: www.petalogix.com p: +61-7-30090663,+42-0-721842854 f: +61-7-30090663
 
 
---=-tEG7/D3K2eJZ0eLBtnAH
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Stephen,
-
-On Tue, 2009-12-01 at 13:35 +1100, Stephen Rothwell wrote:
-> Hi John,
->=20
-> Today's linux-next build (x86_64 allmodconfig) produced this warning:
->=20
-> drivers/net/wireless/iwlwifi/iwl-tx.c: In function 'iwl_tx_agg_stop':
-> drivers/net/wireless/iwlwifi/iwl-tx.c:1356: warning: passing argument 1 o=
-f 'ieee80211_stop_tx_ba_cb_irqsafe' from incompatible pointer type
-> include/net/mac80211.h:2128: note: expected 'struct ieee80211_vif *' but =
-argument is of type 'struct ieee80211_hw *'
->=20
-> Introduced by a bad merge (mine) between commit
-> 827d42c9ac91ddd728e4f4a31fefb906ef2ceff7 ("mac80211: fix spurious delBA
-> handling") form the wireless-current tree and commit
-> c951ad3550ab40071bb0f222ba6125845769c08a ("mac80211: convert aggregation
-> to operate on vifs/stas") from the net/wireless trees.  I didn't notice
-> that the former had added a call to the function modified in the latter.
->=20
-> I applied the following patch for today:
->=20
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 1 Dec 2009 13:19:44 +1100
-> Subject: [PATCH] wireless: fix for mismerge
->=20
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/net/wireless/iwlwifi/iwl-tx.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
->=20
-> diff --git a/drivers/net/wireless/iwlwifi/iwl-tx.c b/drivers/net/wireless=
-/iwlwifi/iwl-tx.c
-> index 58b132f..00da5e1 100644
-> --- a/drivers/net/wireless/iwlwifi/iwl-tx.c
-> +++ b/drivers/net/wireless/iwlwifi/iwl-tx.c
-> @@ -1353,7 +1353,7 @@ int iwl_tx_agg_stop(struct iwl_priv *priv , const u=
-8 *ra, u16 tid)
->  	if (priv->stations[sta_id].tid[tid].agg.state =3D=3D
->  				IWL_EMPTYING_HW_QUEUE_ADDBA) {
->  		IWL_DEBUG_HT(priv, "AGG stop before setup done\n");
-> -		ieee80211_stop_tx_ba_cb_irqsafe(priv->hw, ra, tid);
-> +		ieee80211_stop_tx_ba_cb_irqsafe(priv->vif, ra, tid);
-
-Perfect fixup, I had originally sent different versions of the patch for
-different trees, but you couldn't know that, especially not since the
-delba handling fix didn't (and won't) make it into wireless-next at all.
-
-johannes
-
---=-tEG7/D3K2eJZ0eLBtnAH
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABAgAGBQJLFN50AAoJEODzc/N7+QmaFd0P/0dtyZrGjClLGZwymLqGLyGF
-cPGv5lig6kdsFqByVp6Su10rIPviUs14XoYBV64Tb9v3lyOapJD0nMIBDlanqeM1
-FWijtk2yq4SIcdfuXSuhvA/VREI2d5bbQcvdKdeOGljCUq7hZAUFZl+H/xjQrKeS
-kUrbFMm4YOXgXrhTFp6xlaVh8vEMj77L1YWnvHGbt+bQOWo+o7i5AgOMYz3UYLa4
-PgOkA9l4YBH6wd77s7GVzJgquenv8PVFdSIOm1yr6T7mP3iPJfHw3O/Vn3W1ynMH
-xgEizGtGBCfQU8ttXWUFLVXtixz/9IpAoEXm4YwsbutgcbIZEbYjeKyXH6DfoEM1
-JeAQhy+Y6DhaJZ3NVGE3Y3QdO+8RRg6S1vbjcqGJ2B4IfNBMYm0uNuEGCliLnnFc
-ViQn9c7xE6iEbIwzN8OTih9IqxhNcG0A7+cgjnILnqh4qXKY7GC+mJJBKcfwdkEN
-CIOAdz8meRAN4Ax2lTgLV8NCev7+3js6S+Pp3Tg20eL9NeCJXwybEYgEccoLRgnL
-Fyo8WWb8pV5PHEMPg3svikcCzXAaPN9G66wrSusjOzNTUJqWRf2QwwZYOvvWHOtA
-2rPu6U+8RGi9AGzn4Yk96Jjh/+1Q1G91chdQX/uMuZgOrjAOxmbk48IV/IakEFj0
-2W0ZTmgRn586rcnxVbeS
-=tVGd
------END PGP SIGNATURE-----
-
---=-tEG7/D3K2eJZ0eLBtnAH--
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
