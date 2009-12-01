@@ -1,53 +1,70 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: powerpc tree build failure
-Date: Tue, 1 Dec 2009 10:23:52 +1100
-Message-ID: <20091201102352.8a2d0a52.sfr@canb.auug.org.au>
+From: Masami Hiramatsu <mhiramat@redhat.com>
+Subject: [PATCH -next] [Cleanup] x86: Fix comments of register/stack access 	functions
+Date: Mon, 30 Nov 2009 19:02:22 -0500
+Message-ID: <20091201000222.7669.7477.stgit@harusame>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__1_Dec_2009_10_23_52_+1100_9kD/jf7JG0Z1.H3l"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43152 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750937AbZK3XXv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 30 Nov 2009 18:23:51 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@ozlabs.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Gibson <david@gibson.dropbear.id.au>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <systemtap-return-14503-gls-systemtap=m.gmane.org@sourceware.org>
+List-Unsubscribe: <mailto:systemtap-unsubscribe-gls-systemtap=m.gmane.org@sourceware.org>
+List-Subscribe: <mailto:systemtap-subscribe@sourceware.org>
+List-Post: <mailto:systemtap@sourceware.org>
+List-Help: <mailto:systemtap-help@sourceware.org>, <http://sourceware.org/lists.html#faqs>
+Sender: systemtap-owner@sourceware.org
+To: linux-next@vger.kernel.org
+Cc: lkml <linux-kernel@vger.kernel.org>, systemtap <systemtap@sources.redhat.com>, DLE <dle-develop@lists.sourceforge.net>, Wenji Huang <wenji.huang@oracle.com>, Mahesh J Salgaonkar <mahesh@linux.vnet.ibm.com>, Masami Hiramatsu <mhiramat@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__1_Dec_2009_10_23_52_+1100_9kD/jf7JG0Z1.H3l
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fix typos and some redundant comments of register/stack access functions
+in asm/ptrace.h.
 
-Hi Ben,
+Signed-off-by: Masami Hiramatsu <mhiramat@redhat.com>
+Suggested-by: Wenji Huang <wenji.huang@oracle.com>
+---
 
-Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+ arch/x86/include/asm/ptrace.h |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
 
-arch/powerpc/mm/mmu_context_hash64.c: In function 'destroy_context':
-arch/powerpc/mm/mmu_context_hash64.c:96: error: passing argument 1 of 'subp=
-age_prot_free' from incompatible pointer type
-arch/powerpc/include/asm/mmu-hash64.h:404: note: expected 'pgd_t *' but arg=
-ument is of type 'struct mm_struct *'
+diff --git a/arch/x86/include/asm/ptrace.h b/arch/x86/include/asm/ptrace.h
+index a3d49dd..3d11fd0 100644
+--- a/arch/x86/include/asm/ptrace.h
++++ b/arch/x86/include/asm/ptrace.h
+@@ -227,8 +227,8 @@ extern const char *regs_query_register_name(unsigned int offset);
+  * @regs:	pt_regs from which register value is gotten.
+  * @offset:	offset number of the register.
+  *
+- * regs_get_register returns the value of a register whose offset from @regs
+- * is @offset. The @offset is the offset of the register in struct pt_regs.
++ * regs_get_register returns the value of a register. The @offset is the
++ * offset of the register in struct pt_regs address which specified by @regs.
+  * If @offset is bigger than MAX_REG_OFFSET, this returns 0.
+  */
+ static inline unsigned long regs_get_register(struct pt_regs *regs,
+@@ -244,7 +244,7 @@ static inline unsigned long regs_get_register(struct pt_regs *regs,
+  * @regs:	pt_regs which contains kernel stack pointer.
+  * @addr:	address which is checked.
+  *
+- * regs_within_kenel_stack() checks @addr is within the kernel stack page(s).
++ * regs_within_kernel_stack() checks @addr is within the kernel stack page(s).
+  * If @addr is within the kernel stack, it returns true. If not, returns false.
+  */
+ static inline int regs_within_kernel_stack(struct pt_regs *regs,
+@@ -260,7 +260,7 @@ static inline int regs_within_kernel_stack(struct pt_regs *regs,
+  * @n:		stack entry number.
+  *
+  * regs_get_kernel_stack_nth() returns @n th entry of the kernel stack which
+- * is specifined by @regs. If the @n th entry is NOT in the kernel stack,
++ * is specified by @regs. If the @n th entry is NOT in the kernel stack,
+  * this returns 0.
+  */
+ static inline unsigned long regs_get_kernel_stack_nth(struct pt_regs *regs,
 
-Casued by commit c045256d146800ea1d741a8e9e377dada6b7e195 ("powerpc/mm:
-Fix bug in pagetable cache cleanup with CONFIG_PPC_SUBPAGE_PROT") which I
-have reverted for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__1_Dec_2009_10_23_52_+1100_9kD/jf7JG0Z1.H3l
-Content-Type: application/pgp-signature
+-- 
+Masami Hiramatsu
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+Software Engineer
+Hitachi Computer Products (America), Inc.
+Software Solutions Division
 
-iEYEARECAAYFAksUVAgACgkQjjKRsyhoI8zmmgCfTeShjC/JngEwzVslw/LgHG56
-29QAn0CMZ2f+t28ylqHQtbzxphS7whDb
-=GLt3
------END PGP SIGNATURE-----
-
---Signature=_Tue__1_Dec_2009_10_23_52_+1100_9kD/jf7JG0Z1.H3l--
+e-mail: mhiramat@redhat.com
