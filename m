@@ -1,50 +1,76 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] media/radio/miro: depends on SND
-Date: Tue, 01 Dec 2009 10:51:57 -0800
-Message-ID: <4B1565CD.5080908@oracle.com>
+Subject: [PATCH -next] kmsg_dump: fix build for CONFIG_PRINTK=n
+Date: Tue, 01 Dec 2009 10:52:02 -0800
+Message-ID: <4B1565D2.2030505@oracle.com>
 References: <20091201190301.0fb7abad.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet12.oracle.com ([141.146.126.234]:17726 "EHLO
-	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753111AbZLASwl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Dec 2009 13:52:41 -0500
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753994AbZLASxH@vger.kernel.org>
 In-Reply-To: <20091201190301.0fb7abad.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Simon Kagstrom <simon.kagstrom@netinsight.net>
+List-Id: linux-next.vger.kernel.org
 
 From: Randy Dunlap <randy.dunlap@oracle.com>
 
-miropcm20 uses ALSA (snd_) interfaces from the SND_MIRO
-driver, so it should depend on SND.
-(selecting SND_MIRO when CONFIG_SND is not enabled is a
-problem.)
+kmsg_dump() fails to build when CONFIG_PRINTK=n; provide stubs
+for the kmsg_dump*() functions when CONFIG_PRINTK=n.
 
-drivers/built-in.o: In function `vidioc_s_ctrl':
-radio-miropcm20.c:(.text+0x227499): undefined reference to `snd_aci_cmd'
-drivers/built-in.o: In function `vidioc_s_frequency':
-radio-miropcm20.c:(.text+0x227574): undefined reference to `snd_aci_cmd'
-radio-miropcm20.c:(.text+0x227588): undefined reference to `snd_aci_cmd'
-drivers/built-in.o: In function `pcm20_init':
-radio-miropcm20.c:(.init.text+0x2a784): undefined reference to `snd_aci_get_aci'
+kernel/printk.c: In function 'kmsg_dump':
+kernel/printk.c:1501: error: 'log_buf_len' undeclared (first use in this function)
+kernel/printk.c:1502: error: 'logged_chars' undeclared (first use in this function)
+kernel/printk.c:1506: error: 'log_buf' undeclared (first use in this function)
 
 Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Simon Kagstrom <simon.kagstrom@netinsight.net>
 ---
- drivers/media/radio/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/kmsg_dump.h |   16 ++++++++++++++++
+ kernel/printk.c           |    2 +-
+ 2 files changed, 17 insertions(+), 1 deletion(-)
 
---- linux-next-20091201.orig/drivers/media/radio/Kconfig
-+++ linux-next-20091201/drivers/media/radio/Kconfig
-@@ -197,7 +197,7 @@ config RADIO_MAESTRO
+--- linux-next-20091201.orig/kernel/printk.c
++++ linux-next-20091201/kernel/printk.c
+@@ -1406,7 +1406,6 @@ bool printk_timed_ratelimit(unsigned lon
+ 	return false;
+ }
+ EXPORT_SYMBOL(printk_timed_ratelimit);
+-#endif
  
- config RADIO_MIROPCM20
- 	tristate "miroSOUND PCM20 radio"
--	depends on ISA && VIDEO_V4L2
-+	depends on ISA && VIDEO_V4L2 && SND
- 	select SND_MIRO
- 	---help---
- 	  Choose Y here if you have this FM radio card. You also need to enable
+ static DEFINE_SPINLOCK(dump_list_lock);
+ static LIST_HEAD(dump_list);
+@@ -1525,3 +1524,4 @@ void kmsg_dump(enum kmsg_dump_reason rea
+ 		dumper->dump(dumper, reason, s1, l1, s2, l2);
+ 	spin_unlock_irqrestore(&dump_list_lock, flags);
+ }
++#endif
+--- linux-next-20091201.orig/include/linux/kmsg_dump.h
++++ linux-next-20091201/include/linux/kmsg_dump.h
+@@ -35,10 +35,26 @@ struct kmsg_dumper {
+ 	int registered;
+ };
+ 
++#ifdef CONFIG_PRINTK
+ void kmsg_dump(enum kmsg_dump_reason reason);
+ 
+ int kmsg_dump_register(struct kmsg_dumper *dumper);
+ 
+ int kmsg_dump_unregister(struct kmsg_dumper *dumper);
++#else
++static inline void kmsg_dump(enum kmsg_dump_reason reason)
++{
++}
++
++static inline int kmsg_dump_register(struct kmsg_dumper *dumper)
++{
++	return -EINVAL;
++}
++
++static inline int kmsg_dump_unregister(struct kmsg_dumper *dumper)
++{
++	return -EINVAL;
++}
++#endif
+ 
+ #endif /* _LINUX_KMSG_DUMP_H */
