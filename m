@@ -1,70 +1,51 @@
-From: Masami Hiramatsu <mhiramat@redhat.com>
-Subject: [PATCH -next] [Cleanup] x86: Fix comments of register/stack access 	functions
-Date: Mon, 30 Nov 2009 19:02:22 -0500
-Message-ID: <20091201000222.7669.7477.stgit@harusame>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree with the wireless-current
+ tree
+Date: Tue, 1 Dec 2009 12:31:42 +1100
+Message-ID: <20091201123142.fe6bc824.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <systemtap-return-14503-gls-systemtap=m.gmane.org@sourceware.org>
-List-Unsubscribe: <mailto:systemtap-unsubscribe-gls-systemtap=m.gmane.org@sourceware.org>
-List-Subscribe: <mailto:systemtap-subscribe@sourceware.org>
-List-Post: <mailto:systemtap@sourceware.org>
-List-Help: <mailto:systemtap-help@sourceware.org>, <http://sourceware.org/lists.html#faqs>
-Sender: systemtap-owner@sourceware.org
-To: linux-next@vger.kernel.org
-Cc: lkml <linux-kernel@vger.kernel.org>, systemtap <systemtap@sources.redhat.com>, DLE <dle-develop@lists.sourceforge.net>, Wenji Huang <wenji.huang@oracle.com>, Mahesh J Salgaonkar <mahesh@linux.vnet.ibm.com>, Masami Hiramatsu <mhiramat@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__1_Dec_2009_12_31_42_+1100_N1++7VOr=RMixzvR"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:43432 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751017AbZLABbo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 30 Nov 2009 20:31:44 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Berg <johannes@sipsolutions.net>, "John W. Linville" <linville@tuxdriver.com>
 
-Fix typos and some redundant comments of register/stack access functions
-in asm/ptrace.h.
+--Signature=_Tue__1_Dec_2009_12_31_42_+1100_N1++7VOr=RMixzvR
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Masami Hiramatsu <mhiramat@redhat.com>
-Suggested-by: Wenji Huang <wenji.huang@oracle.com>
----
+Hi all,
 
- arch/x86/include/asm/ptrace.h |    8 ++++----
- 1 files changed, 4 insertions(+), 4 deletions(-)
+Today's linux-next merge of the net tree got a conflict in net/mac80211/ht.=
+c between commit 827d42c9ac91ddd728e4f4a31fefb906ef2ceff7 ("mac80211: fix s=
+purious delBA handling") from the wireless-current tree and commit c951ad35=
+50ab40071bb0f222ba6125845769c08a ("mac80211: convert aggregation to operate=
+ on vifs/stas") from the net tree.
 
-diff --git a/arch/x86/include/asm/ptrace.h b/arch/x86/include/asm/ptrace.h
-index a3d49dd..3d11fd0 100644
---- a/arch/x86/include/asm/ptrace.h
-+++ b/arch/x86/include/asm/ptrace.h
-@@ -227,8 +227,8 @@ extern const char *regs_query_register_name(unsigned int offset);
-  * @regs:	pt_regs from which register value is gotten.
-  * @offset:	offset number of the register.
-  *
-- * regs_get_register returns the value of a register whose offset from @regs
-- * is @offset. The @offset is the offset of the register in struct pt_regs.
-+ * regs_get_register returns the value of a register. The @offset is the
-+ * offset of the register in struct pt_regs address which specified by @regs.
-  * If @offset is bigger than MAX_REG_OFFSET, this returns 0.
-  */
- static inline unsigned long regs_get_register(struct pt_regs *regs,
-@@ -244,7 +244,7 @@ static inline unsigned long regs_get_register(struct pt_regs *regs,
-  * @regs:	pt_regs which contains kernel stack pointer.
-  * @addr:	address which is checked.
-  *
-- * regs_within_kenel_stack() checks @addr is within the kernel stack page(s).
-+ * regs_within_kernel_stack() checks @addr is within the kernel stack page(s).
-  * If @addr is within the kernel stack, it returns true. If not, returns false.
-  */
- static inline int regs_within_kernel_stack(struct pt_regs *regs,
-@@ -260,7 +260,7 @@ static inline int regs_within_kernel_stack(struct pt_regs *regs,
-  * @n:		stack entry number.
-  *
-  * regs_get_kernel_stack_nth() returns @n th entry of the kernel stack which
-- * is specifined by @regs. If the @n th entry is NOT in the kernel stack,
-+ * is specified by @regs. If the @n th entry is NOT in the kernel stack,
-  * this returns 0.
-  */
- static inline unsigned long regs_get_kernel_stack_nth(struct pt_regs *regs,
+I fixed it up (by using the version from the wireless-current tree) and
+can carry the fix as necessary.  This may well not be correct.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
+--Signature=_Tue__1_Dec_2009_12_31_42_+1100_N1++7VOr=RMixzvR
+Content-Type: application/pgp-signature
 
--- 
-Masami Hiramatsu
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-Software Engineer
-Hitachi Computer Products (America), Inc.
-Software Solutions Division
+iEYEARECAAYFAksUcf4ACgkQjjKRsyhoI8yb4wCgugZsKIOHAw2ii8QNPk4SXx+J
+r9IAoLyKEiz62T4iAxRd73VPSTVYdU1b
+=XAFd
+-----END PGP SIGNATURE-----
 
-e-mail: mhiramat@redhat.com
+--Signature=_Tue__1_Dec_2009_12_31_42_+1100_N1++7VOr=RMixzvR--
