@@ -1,51 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree with the wireless-current
- tree
-Date: Tue, 1 Dec 2009 12:31:42 +1100
-Message-ID: <20091201123142.fe6bc824.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the mtd tree with the pxa tree
+Date: Tue, 1 Dec 2009 12:37:38 +1100
+Message-ID: <20091201123738.73bd4e4f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__1_Dec_2009_12_31_42_+1100_N1++7VOr=RMixzvR"
+ boundary="Signature=_Tue__1_Dec_2009_12_37_38_+1100_23sReKEjDeeyQ0Nf"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43432 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:39138 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751017AbZLABbo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 30 Nov 2009 20:31:44 -0500
+	id S1751017AbZLABhg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 30 Nov 2009 20:37:36 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Berg <johannes@sipsolutions.net>, "John W. Linville" <linville@tuxdriver.com>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Hunter <hunterd42@gmail.com>, Haojian Zhuang <haojian.zhuang@marvell.com>, Eric Miao <eric.y.miao@gmail.com>
 
---Signature=_Tue__1_Dec_2009_12_31_42_+1100_N1++7VOr=RMixzvR
+--Signature=_Tue__1_Dec_2009_12_37_38_+1100_23sReKEjDeeyQ0Nf
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi David,
 
-Today's linux-next merge of the net tree got a conflict in net/mac80211/ht.=
-c between commit 827d42c9ac91ddd728e4f4a31fefb906ef2ceff7 ("mac80211: fix s=
-purious delBA handling") from the wireless-current tree and commit c951ad35=
-50ab40071bb0f222ba6125845769c08a ("mac80211: convert aggregation to operate=
- on vifs/stas") from the net tree.
+Today's linux-next merge of the mtd tree got a conflict in drivers/mtd/nand=
+/pxa3xx_nand.c between commit f923cfbd298a3c5d05fe20712765ed73387b4b3c ("px=
+a3xx_nand: fix memory out of bound") from the pxa tree and commit 98ecc914d=
+0a48dbbcbb5fc866ab5b59a52afbd41 ("mtd: pxa3xx_nand: Fix PIO data transfer")=
+ from the mtd tree.
 
-I fixed it up (by using the version from the wireless-current tree) and
-can carry the fix as necessary.  This may well not be correct.
+They seem to be doing the same thing but differently.  I just kept the
+version from the pxa tree.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__1_Dec_2009_12_31_42_+1100_N1++7VOr=RMixzvR
+--Signature=_Tue__1_Dec_2009_12_37_38_+1100_23sReKEjDeeyQ0Nf
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAksUcf4ACgkQjjKRsyhoI8yb4wCgugZsKIOHAw2ii8QNPk4SXx+J
-r9IAoLyKEiz62T4iAxRd73VPSTVYdU1b
-=XAFd
+iEYEARECAAYFAksUc2IACgkQjjKRsyhoI8zj1wCguULvM4mpuSanQMTWW/wjP5oI
+LhkAn3EqEQIfI77E0ZyhM5IDwPwrbdc6
+=kC+4
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__1_Dec_2009_12_31_42_+1100_N1++7VOr=RMixzvR--
+--Signature=_Tue__1_Dec_2009_12_37_38_+1100_23sReKEjDeeyQ0Nf--
