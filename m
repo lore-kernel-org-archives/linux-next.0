@@ -1,44 +1,36 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: problems in linux-next (Was: Re: linux-next: Tree for December 1)
-Date: Tue, 1 Dec 2009 17:01:19 +0100
-Message-ID: <20091201160119.GA10826@elte.hu>
-References: <20091201190301.0fb7abad.sfr@canb.auug.org.au>
- <4B14D6E2.2040704@petalogix.com>
- <20091201210343.f0a1d353.sfr@canb.auug.org.au>
- <4B152D22.9070001@kernel.org>
- <alpine.DEB.2.00.0912010946340.8841@router.home>
+From: Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: linux-next: usb tree build warning
+Date: Tue, 1 Dec 2009 11:23:02 -0500 (EST)
+Message-ID: <Pine.LNX.4.44L0.0912011122060.2983-100000@iolanthe.rowland.org>
+References: <20091130170128.db346120.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:59181 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753821AbZLAQBl (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 1 Dec 2009 11:01:41 -0500
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.00.0912010946340.8841@router.home>
+Received: from iolanthe.rowland.org ([192.131.102.54]:46661 "HELO
+	iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1754155AbZLAQW4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Dec 2009 11:22:56 -0500
+In-Reply-To: <20091130170128.db346120.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoph Lameter <cl@linux-foundation.org>
-Cc: Tejun Heo <tj@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, michal.simek@petalogix.com, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Rusty Russell <rusty@rustcorp.com.au>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, Kernel development list <linux-kernel@vger.kernel.org>
 
+On Mon, 30 Nov 2009, Stephen Rothwell wrote:
 
-* Christoph Lameter <cl@linux-foundation.org> wrote:
-
-> On Tue, 1 Dec 2009, Tejun Heo wrote:
+> Hi Greg,
 > 
-> > The problem is that on UP configurations.  Percpu memory allocator 
-> > becomes a simple wrapper around kmalloc and there's no way to 
-> > specify larger alignment when requesting memory from kmalloc.
+> Today's linux-next build (x86_64 allmodconfig) produced this warning:
 > 
-> There is usually no point in aligning in UP. Alignment is typically 
-> done for smp configurations to limit cache line bouncing and control 
-> cache line use/
+> drivers/net/wimax/i2400m/usb.c: In function 'i2400mu_suspend':
+> drivers/net/wimax/i2400m/usb.c:595: warning: unused variable 'usb_dev'
+> 
+> Introduced by commit a85c653a3945350875611d3cb071a0143cfeb2d2 ("USB:
+> remove the auto_pm flag") which removed the last usage in this function.
 
-There is a natural minimum alignment for UP and it's smaller than the 
-cache-line size: machine word size. All our allocators (except bootmem) 
-align to machine word so there's no need to specify this explicitly.
+Greg, can you fix this?  Simply modify the patch to eliminate the 
+unused local variable and the enclosing #ifdef.
 
-Larger alignment than that just wastes memory - which waste UP systems 
-can afford the least.
+Thanks,
 
-	Ingo
+Alan Stern
