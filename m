@@ -1,42 +1,32 @@
-From: Dmitry Artamonow <mad_soft@inbox.ru>
-Subject: Re: linux-next: manual merge of the pcmcia tree with the arm tree
-Date: Wed, 2 Dec 2009 14:56:49 +0300
-Message-ID: <20091202115649.GA2150@rainbow>
-References: <20091201140310.46dbdc59.sfr@canb.auug.org.au>
+From: Christoph Lameter <cl@linux-foundation.org>
+Subject: Re: problems in linux-next (Was: Re: linux-next: Tree for December
+ 1)
+Date: Wed, 2 Dec 2009 08:55:17 -0600 (CST)
+Message-ID: <alpine.DEB.2.00.0912020853320.31731@router.home>
+References: <20091201190301.0fb7abad.sfr@canb.auug.org.au> <4B14D6E2.2040704@petalogix.com> <20091201210343.f0a1d353.sfr@canb.auug.org.au> <4B152D22.9070001@kernel.org> <alpine.DEB.2.00.0912010946340.8841@router.home> <20091201160119.GA10826@elte.hu>
+ <4B15A5A6.2090200@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fallback3.mail.ru ([94.100.176.58]:46302 "EHLO
-	fallback3.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752001AbZLBM4l (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Dec 2009 07:56:41 -0500
-Content-Disposition: inline
-In-Reply-To: <20091201140310.46dbdc59.sfr@canb.auug.org.au>
+Received: from nlpi129.sbcis.sbc.com ([207.115.36.143]:35167 "EHLO
+	nlpi129.prodigy.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753380AbZLBO4G (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Dec 2009 09:56:06 -0500
+In-Reply-To: <4B15A5A6.2090200@kernel.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
+To: Tejun Heo <tj@kernel.org>
+Cc: Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, michal.simek@petalogix.com, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Rusty Russell <rusty@rustcorp.com.au>
 
-On 14:03 Tue 01 Dec     , Stephen Rothwell wrote:
-> Hi Dominik,
-> 
-> Today's linux-next merge of the pcmcia tree got a conflict in
-> drivers/pcmcia/sa1100_h3600.c between commit
-> 6ce8f65e71f0d80ee23b543be09789dd865a99be ("ARM: 5811/1: pcmcia: convert
-> sa1100_h3600 driver to gpiolib") from the arm tree and commit
-> 66024db57d5b9011e274b314affad68f370c0d6f ("PCMCIA: stop duplicating
-> pci_irq in soc_pcmcia_socket") from the pcmcia tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary.  Please
-> check the fix below.
+On Wed, 2 Dec 2009, Tejun Heo wrote:
 
-Fix looks good to me, and testing next-20091201 on real device (h3600)
-shows no problems with pcmcia.
+> This isn't usual alignment.  struct work_struct has one data fields
+> which is overloaded for two purposes.  Lower few bits are used to
+> carry flags while upper bits are used to point to sruct
+> cpu_workqueue_struct.  So, the number of available bits for flags are
+> determined by the alignment of cpu_workqueue_struct.  Memory usage for
 
-Perhaps this merge conflict can be avoided by merging Russell's PCMCIA
-patches through arm tree. But, anyway, it's Russell and Dominik
-to decide.
-
--- 
-Best regards,
-Dmitry "MAD" Artamonow
+The default mininum slab alignment in UP is 8 bytes which means you can
+use 3 bits. And as far as I can see only the lower two bits are used. You
+still have one bit leftover. (current upstream that is did not check if
+you modified it).
