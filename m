@@ -1,30 +1,42 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: problems in linux-next (Was: Re: linux-next: Tree for December
- 1)
-Date: Wed, 02 Dec 2009 21:13:20 +0900
-Message-ID: <4B1659E0.9020304@kernel.org>
-References: <20091201190301.0fb7abad.sfr@canb.auug.org.au> <4B14D6E2.2040704@petalogix.com> <20091201210343.f0a1d353.sfr@canb.auug.org.au> <4B152D22.9070001@kernel.org> <alpine.DEB.2.00.0912010946340.8841@router.home> <20091201160119.GA10826@elte.hu> <4B15A5A6.2090200@kernel.org> <4B161D7A.6040208@kernel.org> <4B164D48.1040508@petalogix.com>
+From: Dmitry Artamonow <mad_soft@inbox.ru>
+Subject: Re: linux-next: manual merge of the pcmcia tree with the arm tree
+Date: Wed, 2 Dec 2009 14:56:49 +0300
+Message-ID: <20091202115649.GA2150@rainbow>
+References: <20091201140310.46dbdc59.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hera.kernel.org ([140.211.167.34]:55122 "EHLO hera.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752001AbZLBMNZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 2 Dec 2009 07:13:25 -0500
-In-Reply-To: <4B164D48.1040508@petalogix.com>
+Received: from fallback3.mail.ru ([94.100.176.58]:46302 "EHLO
+	fallback3.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752001AbZLBM4l (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Dec 2009 07:56:41 -0500
+Content-Disposition: inline
+In-Reply-To: <20091201140310.46dbdc59.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: michal.simek@petalogix.com
-Cc: Ingo Molnar <mingo@elte.hu>, Christoph Lameter <cl@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Rusty Russell <rusty@rustcorp.com.au>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
 
-On 12/02/2009 08:19 PM, Michal Simek wrote:
-> I have problem to apply your patch against Stephens next tree. Which tree do you use?
+On 14:03 Tue 01 Dec     , Stephen Rothwell wrote:
+> Hi Dominik,
+> 
+> Today's linux-next merge of the pcmcia tree got a conflict in
+> drivers/pcmcia/sa1100_h3600.c between commit
+> 6ce8f65e71f0d80ee23b543be09789dd865a99be ("ARM: 5811/1: pcmcia: convert
+> sa1100_h3600 driver to gpiolib") from the arm tree and commit
+> 66024db57d5b9011e274b314affad68f370c0d6f ("PCMCIA: stop duplicating
+> pci_irq in soc_pcmcia_socket") from the pcmcia tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary.  Please
+> check the fix below.
 
-Oh.. this is still WIP and on top of whole lot of other patches.  I'll
-let you know once the series is done.
+Fix looks good to me, and testing next-20091201 on real device (h3600)
+shows no problems with pcmcia.
 
-Thanks.
+Perhaps this merge conflict can be avoided by merging Russell's PCMCIA
+patches through arm tree. But, anyway, it's Russell and Dominik
+to decide.
 
 -- 
-tejun
+Best regards,
+Dmitry "MAD" Artamonow
