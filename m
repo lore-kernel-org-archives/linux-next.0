@@ -1,32 +1,70 @@
-From: Christoph Lameter <cl@linux-foundation.org>
-Subject: Re: problems in linux-next (Was: Re: linux-next: Tree for December
- 1)
-Date: Wed, 2 Dec 2009 08:55:17 -0600 (CST)
-Message-ID: <alpine.DEB.2.00.0912020853320.31731@router.home>
-References: <20091201190301.0fb7abad.sfr@canb.auug.org.au> <4B14D6E2.2040704@petalogix.com> <20091201210343.f0a1d353.sfr@canb.auug.org.au> <4B152D22.9070001@kernel.org> <alpine.DEB.2.00.0912010946340.8841@router.home> <20091201160119.GA10826@elte.hu>
- <4B15A5A6.2090200@kernel.org>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [PATCH] percpu: add missing per_cpu_ptr_to_phys() definition
+ for UP
+Date: Wed, 02 Dec 2009 08:38:05 -0800
+Message-ID: <4B1697ED.1050602@oracle.com>
+References: <4B1560C2.8040603@oracle.com> <4B15A9EA.3090108@kernel.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from nlpi129.sbcis.sbc.com ([207.115.36.143]:35167 "EHLO
-	nlpi129.prodigy.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753380AbZLBO4G (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Dec 2009 09:56:06 -0500
-In-Reply-To: <4B15A5A6.2090200@kernel.org>
+Received: from rcsinet11.oracle.com ([148.87.113.123]:22890 "EHLO
+	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754568AbZLBQjM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Dec 2009 11:39:12 -0500
+In-Reply-To: <4B15A9EA.3090108@kernel.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Tejun Heo <tj@kernel.org>
-Cc: Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, michal.simek@petalogix.com, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Rusty Russell <rusty@rustcorp.com.au>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Vivek Goyal <vgoyal@redhat.com>
 
-On Wed, 2 Dec 2009, Tejun Heo wrote:
+Tejun Heo wrote:
+> Commit 3b034b0d084221596bf35c8d893e1d4d5477b9cc implemented
+> per_cpu_ptr_to_phys() but forgot to add UP definition.  Add UP
+> definition which is simple wrapper around __pa().
+> 
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Cc: Vivek Goyal <vgoyal@redhat.com>
+> Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
 
-> This isn't usual alignment.  struct work_struct has one data fields
-> which is overloaded for two purposes.  Lower few bits are used to
-> carry flags while upper bits are used to point to sruct
-> cpu_workqueue_struct.  So, the number of available bits for flags are
-> determined by the alignment of cpu_workqueue_struct.  Memory usage for
+Yes, that builds now.  Thanks.
 
-The default mininum slab alignment in UP is 8 bytes which means you can
-use 3 bits. And as far as I can see only the lower two bits are used. You
-still have one bit leftover. (current upstream that is did not check if
-you modified it).
+Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
+
+
+> ---
+> Hello,
+> 
+>> drivers/base/cpu.c: line 100: fails to build when CONFIG_SMP=n:
+>>
+>> 	addr = per_cpu_ptr_to_phys(per_cpu_ptr(crash_notes, cpunum));
+>>
+>> Can you suggest a fix for that, please?
+> 
+> Oops, right, UP definition was missing.  This patch should do it.
+> 
+> Thanks.
+> 
+>  include/linux/percpu.h |    5 +++++
+>  1 files changed, 5 insertions(+), 0 deletions(-)
+> 
+> diff --git a/include/linux/percpu.h b/include/linux/percpu.h
+> index 6ac984f..8e4ead6 100644
+> --- a/include/linux/percpu.h
+> +++ b/include/linux/percpu.h
+> @@ -180,6 +180,11 @@ static inline void free_percpu(void *p)
+>  	kfree(p);
+>  }
+>  
+> +static inline phys_addr_t per_cpu_ptr_to_phys(void *addr)
+> +{
+> +	return __pa(addr);
+> +}
+> +
+>  static inline void __init setup_per_cpu_areas(void) { }
+>  
+>  static inline void *pcpu_lpage_remapped(void *kaddr)
+
+
+-- 
+~Randy
