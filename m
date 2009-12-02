@@ -1,49 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the pcmcia tree with the arm tree
-Date: Thu, 3 Dec 2009 09:25:25 +1100
-Message-ID: <20091203092525.17d939b3.sfr@canb.auug.org.au>
-References: <20091201140310.46dbdc59.sfr@canb.auug.org.au>
-	<20091202115649.GA2150@rainbow>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: problems in linux-next (Was: Re: linux-next: Tree for December
+ 1)
+Date: Thu, 03 Dec 2009 08:00:40 +0900
+Message-ID: <4B16F198.20100@kernel.org>
+References: <20091201190301.0fb7abad.sfr@canb.auug.org.au> <4B14D6E2.2040704@petalogix.com> <20091201210343.f0a1d353.sfr@canb.auug.org.au> <4B152D22.9070001@kernel.org> <alpine.DEB.2.00.0912010946340.8841@router.home> <20091201160119.GA10826@elte.hu> <4B15A5A6.2090200@kernel.org> <alpine.DEB.2.00.0912020853320.31731@router.home> <4B16E727.9070104@kernel.org> <alpine.DEB.2.00.0912021623560.6282@router.home>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__3_Dec_2009_09_25_25_+1100_M7a8u2=uBOULkMss"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755881AbZLBWZa@vger.kernel.org>
-In-Reply-To: <20091202115649.GA2150@rainbow>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Artamonow <mad_soft@inbox.ru>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from hera.kernel.org ([140.211.167.34]:51124 "EHLO hera.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754950AbZLBW7k (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 2 Dec 2009 17:59:40 -0500
+In-Reply-To: <alpine.DEB.2.00.0912021623560.6282@router.home>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Christoph Lameter <cl@linux-foundation.org>
+Cc: Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, michal.simek@petalogix.com, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Rusty Russell <rusty@rustcorp.com.au>
 
---Signature=_Thu__3_Dec_2009_09_25_25_+1100_M7a8u2=uBOULkMss
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-Hi Dmitry,
+On 12/03/2009 07:24 AM, Christoph Lameter wrote:
+> On Thu, 3 Dec 2009, Tejun Heo wrote:
+> 
+>> For colored workqueue flushing, it ends up using more than three bits.
+>> I haven't decided it fully yet but total of six or seven depending on
+>> how many colors are used.  So, we need forced alignment anyway.
+> 
+> If it is that much then why not stick it into the structure?
 
-On Wed, 2 Dec 2009 14:56:49 +0300 Dmitry Artamonow <mad_soft@inbox.ru> wrot=
-e:
->
-> Fix looks good to me, and testing next-20091201 on real device (h3600)
-> shows no problems with pcmcia.
+There'll only be a handful of cwqs but a lot of works.  Adding a flags
+field to work_struct might not hurt too much but all the code to
+handle it is already there except for alignment on UP, so I'm a bit
+reluctant to enlarge work_struct just for it.
 
-Thanks for the confirmation.
+> It only makes sense to use the flags in the address if you otherwise
+> do not touch the structure.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+work_struct isn't being changed at all.  What gets aligned is
+cpu_workqueue_struct which allows more bits for flags in work_struct.
 
---Signature=_Thu__3_Dec_2009_09_25_25_+1100_M7a8u2=uBOULkMss
-Content-Type: application/pgp-signature
+Thanks.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAksW6VUACgkQjjKRsyhoI8xj+ACfdkbwiC6FLkpfcOPQRG8JvpRo
-cKAAoKEvjBiqKtvs0bca59ljrv1jz9M0
-=iV7l
------END PGP SIGNATURE-----
-
---Signature=_Thu__3_Dec_2009_09_25_25_+1100_M7a8u2=uBOULkMss--
+-- 
+tejun
