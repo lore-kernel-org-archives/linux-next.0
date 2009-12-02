@@ -1,183 +1,88 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: problems in linux-next (Was: Re: linux-next: Tree for December
- 1)
-Date: Wed, 02 Dec 2009 16:55:38 +0900
-Message-ID: <4B161D7A.6040208@kernel.org>
-References: <20091201190301.0fb7abad.sfr@canb.auug.org.au> <4B14D6E2.2040704@petalogix.com> <20091201210343.f0a1d353.sfr@canb.auug.org.au> <4B152D22.9070001@kernel.org> <alpine.DEB.2.00.0912010946340.8841@router.home> <20091201160119.GA10826@elte.hu> <4B15A5A6.2090200@kernel.org>
+From: Simon Kagstrom <simon.kagstrom@netinsight.net>
+Subject: Re: [PATCH -next] kmsg_dump: fix build for CONFIG_PRINTK=n
+Date: Wed, 2 Dec 2009 09:35:08 +0100
+Message-ID: <20091202093508.1f174b6b@marrow.netinsight.se>
+References: <20091201190301.0fb7abad.sfr@canb.auug.org.au>
+	<4B1565D2.2030505@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hera.kernel.org ([140.211.167.34]:40956 "EHLO hera.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752755AbZLBHzz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 2 Dec 2009 02:55:55 -0500
-In-Reply-To: <4B15A5A6.2090200@kernel.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Christoph Lameter <cl@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, michal.simek@petalogix.com, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Rusty Russell <rusty@rustcorp.com.au>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754843AbZLBIfK@vger.kernel.org>
+In-Reply-To: <4B1565D2.2030505@oracle.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, David Woodhouse <dwm2@infradead.org>, Artem Bityutskiy <dedekind1@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-Hello,
+On Tue, 01 Dec 2009 10:52:02 -0800
+Randy Dunlap <randy.dunlap@oracle.com> wrote:
 
-It will look like the following.
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> kmsg_dump() fails to build when CONFIG_PRINTK=n; provide stubs
+> for the kmsg_dump*() functions when CONFIG_PRINTK=n.
+> 
+> kernel/printk.c: In function 'kmsg_dump':
+> kernel/printk.c:1501: error: 'log_buf_len' undeclared (first use in this function)
+> kernel/printk.c:1502: error: 'logged_chars' undeclared (first use in this function)
+> kernel/printk.c:1506: error: 'log_buf' undeclared (first use in this function)
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 
-Thanks.
+Acked-by: Simon Kagstrom <simon.kagstrom@netinsight.net>
 
-=========================================================================
-Subject: workqueue: update cwq alignement
+David/Artem: Will you take Randys patch
+(http://lkml.org/lkml/2009/12/1/313) into your tree as well?
 
-work->data field is used for two purposes.  It points to cwq it's
-queued on and the lower bits are used for flags.  Currently, two bits
-are reserved which is always safe as 4 byte alignment is guaranteed on
-every architecture.  However, future changes will need more flag bits.
+// Simon
 
-On SMP, the percpu allocator is capable of honoring larger alignment
-(there are other users which depend on it) and larger alignment works
-just fine.  On UP, percpu allocator is a thin wrapper around
-kzalloc/kfree() and don't honor alignment request.
-
-This patch introduces WORK_STRUCT_FLAG_BITS, aligns cwqs accordingly
-and implements alloc/free_cwqs() which guarantees the alignment both
-on SMP and UP.  On SMP, simply wrapping percpu allocator is enouhg.
-On UP, extra space is allocated so that cwq can be aligned and the
-original pointer can be stored after it which is used in the free
-path.
-
-While at it, as cwqs are now forced aligned, make sure the resulting
-alignment is at least equal to or larger than that of long long.
-
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Cc: Christoph Lameter <cl@linux-foundation.org>
-Cc: Ingo Molnar <mingo@elte.hu>
----
- include/linux/workqueue.h |    4 ++-
- kernel/workqueue.c        |   58 ++++++++++++++++++++++++++++++++++++++++++----
- 2 files changed, 56 insertions(+), 6 deletions(-)
-
-Index: work/include/linux/workqueue.h
-===================================================================
---- work.orig/include/linux/workqueue.h
-+++ work/include/linux/workqueue.h
-@@ -29,7 +29,9 @@ enum {
- 	WORK_STRUCT_PENDING	= 1 << WORK_STRUCT_PENDING_BIT,
- 	WORK_STRUCT_STATIC	= 1 << WORK_STRUCT_STATIC_BIT,
- 
--	WORK_STRUCT_FLAG_MASK	= 3UL,
-+	WORK_STRUCT_FLAG_BITS	= 2,
-+
-+	WORK_STRUCT_FLAG_MASK	= (1UL << WORK_STRUCT_FLAG_BITS) - 1,
- 	WORK_STRUCT_WQ_DATA_MASK = ~WORK_STRUCT_FLAG_MASK,
- };
- 
-Index: work/kernel/workqueue.c
-===================================================================
---- work.orig/kernel/workqueue.c
-+++ work/kernel/workqueue.c
-@@ -46,7 +46,9 @@
- 
- /*
-  * The per-CPU workqueue (if single thread, we always use the first
-- * possible cpu).
-+ * possible cpu).  The lower WORK_STRUCT_FLAG_BITS of
-+ * work_struct->data are used for flags and thus cwqs need to be
-+ * aligned at two's power of the number of flag bits.
-  */
- struct cpu_workqueue_struct {
- 
-@@ -58,7 +60,7 @@ struct cpu_workqueue_struct {
- 
- 	struct workqueue_struct *wq;		/* I: the owning workqueue */
- 	struct task_struct	*thread;
--} ____cacheline_aligned;
-+} __attribute__((aligned(1 << WORK_STRUCT_FLAG_BITS)));
- 
- /*
-  * The externally visible workqueue abstraction is an array of
-@@ -932,6 +934,44 @@ int current_is_keventd(void)
- 
- }
- 
-+static struct cpu_workqueue_struct *alloc_cwqs(void)
-+{
-+	const size_t size = sizeof(struct cpu_workqueue_struct);
-+	const size_t align = __alignof__(struct cpu_workqueue_struct);
-+	struct cpu_workqueue_struct *cwqs;
-+#ifndef CONFIG_SMP
-+	void *ptr;
-+
-+	/*
-+	 * On UP, percpu allocator doesn't honor alignment parameter
-+	 * and simply uses arch-dependent default.  Allocate enough
-+	 * room to align cwq and put an extra pointer at the end
-+	 * pointing back to the originally allocated pointer which
-+	 * will be used for free.
-+	 */
-+	ptr = __alloc_percpu(size + align + sizeof(void *), 1);
-+	cwqs = PTR_ALIGN(ptr, align);
-+	*(void **)per_cpu_ptr(cwqs + 1, 0) = ptr;
-+#else
-+	/* On SMP, percpu allocator can do it itself */
-+	cwqs = __alloc_percpu(size, align);
-+#endif
-+	/* just in case, make sure it's actually aligned */
-+	BUG_ON(!IS_ALIGNED((unsigned long)cwqs, align));
-+	return cwqs;
-+}
-+
-+static void free_cwqs(struct cpu_workqueue_struct *cwqs)
-+{
-+#ifndef CONFIG_SMP
-+	/* on UP, the pointer to free is stored right after the cwq */
-+	if (cwqs)
-+		free_percpu(*(void **)per_cpu_ptr(cwqs + 1, 0));
-+#else
-+	free_percpu(cwqs);
-+#endif
-+}
-+
- static int create_workqueue_thread(struct cpu_workqueue_struct *cwq, int cpu)
- {
- 	struct workqueue_struct *wq = cwq->wq;
-@@ -977,7 +1017,7 @@ struct workqueue_struct *__create_workqu
- 	if (!wq)
- 		goto err;
- 
--	wq->cpu_wq = alloc_percpu(struct cpu_workqueue_struct);
-+	wq->cpu_wq = alloc_cwqs();
- 	if (!wq->cpu_wq)
- 		goto err;
- 
-@@ -1023,7 +1063,7 @@ struct workqueue_struct *__create_workqu
- 	return wq;
- err:
- 	if (wq) {
--		free_percpu(wq->cpu_wq);
-+		free_cwqs(wq->cpu_wq);
- 		kfree(wq);
- 	}
- 	return NULL;
-@@ -1074,7 +1114,7 @@ void destroy_workqueue(struct workqueue_
- 	for_each_possible_cpu(cpu)
- 		cleanup_workqueue_thread(get_cwq(cpu, wq));
- 
--	free_percpu(wq->cpu_wq);
-+	free_cwqs(wq->cpu_wq);
- 	kfree(wq);
- }
- EXPORT_SYMBOL_GPL(destroy_workqueue);
-@@ -1163,6 +1203,14 @@ EXPORT_SYMBOL_GPL(work_on_cpu);
- 
- void __init init_workqueues(void)
- {
-+	/*
-+	 * cwqs are forced aligned according to WORK_STRUCT_FLAG_BITS.
-+	 * Make sure that the alignment isn't lower than that of
-+	 * unsigned long long.
-+	 */
-+	BUILD_BUG_ON(__alignof__(struct cpu_workqueue_struct) <
-+		     __alignof__(unsigned long long));
-+
- 	singlethread_cpu = cpumask_first(cpu_possible_mask);
- 	hotcpu_notifier(workqueue_cpu_callback, 0);
- 	keventd_wq = create_workqueue("events");
+> Cc: Simon Kagstrom <simon.kagstrom@netinsight.net>
+> ---
+>  include/linux/kmsg_dump.h |   16 ++++++++++++++++
+>  kernel/printk.c           |    2 +-
+>  2 files changed, 17 insertions(+), 1 deletion(-)
+> 
+> --- linux-next-20091201.orig/kernel/printk.c
+> +++ linux-next-20091201/kernel/printk.c
+> @@ -1406,7 +1406,6 @@ bool printk_timed_ratelimit(unsigned lon
+>  	return false;
+>  }
+>  EXPORT_SYMBOL(printk_timed_ratelimit);
+> -#endif
+>  
+>  static DEFINE_SPINLOCK(dump_list_lock);
+>  static LIST_HEAD(dump_list);
+> @@ -1525,3 +1524,4 @@ void kmsg_dump(enum kmsg_dump_reason rea
+>  		dumper->dump(dumper, reason, s1, l1, s2, l2);
+>  	spin_unlock_irqrestore(&dump_list_lock, flags);
+>  }
+> +#endif
+> --- linux-next-20091201.orig/include/linux/kmsg_dump.h
+> +++ linux-next-20091201/include/linux/kmsg_dump.h
+> @@ -35,10 +35,26 @@ struct kmsg_dumper {
+>  	int registered;
+>  };
+>  
+> +#ifdef CONFIG_PRINTK
+>  void kmsg_dump(enum kmsg_dump_reason reason);
+>  
+>  int kmsg_dump_register(struct kmsg_dumper *dumper);
+>  
+>  int kmsg_dump_unregister(struct kmsg_dumper *dumper);
+> +#else
+> +static inline void kmsg_dump(enum kmsg_dump_reason reason)
+> +{
+> +}
+> +
+> +static inline int kmsg_dump_register(struct kmsg_dumper *dumper)
+> +{
+> +	return -EINVAL;
+> +}
+> +
+> +static inline int kmsg_dump_unregister(struct kmsg_dumper *dumper)
+> +{
+> +	return -EINVAL;
+> +}
+> +#endif
+>  
+>  #endif /* _LINUX_KMSG_DUMP_H */
