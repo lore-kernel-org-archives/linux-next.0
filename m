@@ -1,61 +1,68 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: [PATCH] percpu: add missing per_cpu_ptr_to_phys() definition for
- UP
-Date: Wed, 02 Dec 2009 08:42:34 +0900
-Message-ID: <4B15A9EA.3090108@kernel.org>
-References: <4B1560C2.8040603@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: i7core_edac tree build failure
+Date: Wed, 2 Dec 2009 13:11:22 +1100
+Message-ID: <20091202131122.10f61abf.sfr@canb.auug.org.au>
+References: <20091112165852.855d1e5d.sfr@canb.auug.org.au>
+	<200911122340.26317.rusty@rustcorp.com.au>
+	<20091113105435.1b9b0060.sfr@canb.auug.org.au>
+	<20091116103002.82e8a2bb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hera.kernel.org ([140.211.167.34]:53498 "EHLO hera.kernel.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:42791 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751352AbZLAXlM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 1 Dec 2009 18:41:12 -0500
-In-Reply-To: <4B1560C2.8040603@oracle.com>
+	id S1755111AbZLBCLS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 1 Dec 2009 21:11:18 -0500
+In-Reply-To: <20091116103002.82e8a2bb.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Vivek Goyal <vgoyal@redhat.com>
+To: Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Aristeu Rozanski <aris@redhat.com>
 
-Commit 3b034b0d084221596bf35c8d893e1d4d5477b9cc implemented
-per_cpu_ptr_to_phys() but forgot to add UP definition.  Add UP
-definition which is simple wrapper around __pa().
+Hi Mauro,
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Cc: Vivek Goyal <vgoyal@redhat.com>
-Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
----
-Hello,
-
-> drivers/base/cpu.c: line 100: fails to build when CONFIG_SMP=n:
+On Mon, 16 Nov 2009 10:30:02 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> On Fri, 13 Nov 2009 10:54:35 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Yeah, the i7core_edac fix needs to stay in my tree as it is an
+> > interaction between two trees in linux-next.  The others should be
+> > applied to the powerpc and sparc trees, as you say, since they fix the
+> > current code in those trees.
 > 
-> 	addr = per_cpu_ptr_to_phys(per_cpu_ptr(crash_notes, cpunum));
-> 
-> Can you suggest a fix for that, please?
+> Actually, Mauro, this patch should be applied to the i7core_edac as that
+> symbol never needed to be exported and the patch to export it is in that
+> tree.
 
-Oops, right, UP definition was missing.  This patch should do it.
+Is there any reason that this patch (copied below) cannot be applied to
+the i7core_edac tree?
 
-Thanks.
-
- include/linux/percpu.h |    5 +++++
- 1 files changed, 5 insertions(+), 0 deletions(-)
-
-diff --git a/include/linux/percpu.h b/include/linux/percpu.h
-index 6ac984f..8e4ead6 100644
---- a/include/linux/percpu.h
-+++ b/include/linux/percpu.h
-@@ -180,6 +180,11 @@ static inline void free_percpu(void *p)
- 	kfree(p);
- }
- 
-+static inline phys_addr_t per_cpu_ptr_to_phys(void *addr)
-+{
-+	return __pa(addr);
-+}
-+
- static inline void __init setup_per_cpu_areas(void) { }
- 
- static inline void *pcpu_lpage_remapped(void *kaddr)
 -- 
-1.6.4.2
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 12 Nov 2009 16:55:38 +1100
+Subject: [PATCH] i7core_edac: do not export static functions
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/x86/pci/legacy.c |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
+
+diff --git a/arch/x86/pci/legacy.c b/arch/x86/pci/legacy.c
+index 5e22d83..a8194c8 100644
+--- a/arch/x86/pci/legacy.c
++++ b/arch/x86/pci/legacy.c
+@@ -38,7 +38,6 @@ static int __init pci_legacy_init(void)
+ 
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(pci_legacy_init);
+ 
+ void pcibios_scan_specific_bus(int busn)
+ {
+-- 
+1.6.5.2
