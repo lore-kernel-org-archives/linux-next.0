@@ -1,29 +1,49 @@
-From: Christoph Lameter <cl@linux-foundation.org>
-Subject: Re: problems in linux-next (Was: Re: linux-next: Tree for December
- 1)
-Date: Wed, 2 Dec 2009 16:24:38 -0600 (CST)
-Message-ID: <alpine.DEB.2.00.0912021623560.6282@router.home>
-References: <20091201190301.0fb7abad.sfr@canb.auug.org.au> <4B14D6E2.2040704@petalogix.com> <20091201210343.f0a1d353.sfr@canb.auug.org.au> <4B152D22.9070001@kernel.org> <alpine.DEB.2.00.0912010946340.8841@router.home> <20091201160119.GA10826@elte.hu>
- <4B15A5A6.2090200@kernel.org> <alpine.DEB.2.00.0912020853320.31731@router.home> <4B16E727.9070104@kernel.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the pcmcia tree with the arm tree
+Date: Thu, 3 Dec 2009 09:25:25 +1100
+Message-ID: <20091203092525.17d939b3.sfr@canb.auug.org.au>
+References: <20091201140310.46dbdc59.sfr@canb.auug.org.au>
+	<20091202115649.GA2150@rainbow>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from nlpi129.sbcis.sbc.com ([207.115.36.143]:45309 "EHLO
-	nlpi129.prodigy.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755836AbZLBWZ0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Dec 2009 17:25:26 -0500
-In-Reply-To: <4B16E727.9070104@kernel.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, michal.simek@petalogix.com, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Rusty Russell <rusty@rustcorp.com.au>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__3_Dec_2009_09_25_25_+1100_M7a8u2=uBOULkMss"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755881AbZLBWZa@vger.kernel.org>
+In-Reply-To: <20091202115649.GA2150@rainbow>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Artamonow <mad_soft@inbox.ru>
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, 3 Dec 2009, Tejun Heo wrote:
+--Signature=_Thu__3_Dec_2009_09_25_25_+1100_M7a8u2=uBOULkMss
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> For colored workqueue flushing, it ends up using more than three bits.
-> I haven't decided it fully yet but total of six or seven depending on
-> how many colors are used.  So, we need forced alignment anyway.
+Hi Dmitry,
 
-If it is that much then why not stick it into the structure? It only makes
-sense to use the flags in the address if you otherwise do not touch the
-structure.
+On Wed, 2 Dec 2009 14:56:49 +0300 Dmitry Artamonow <mad_soft@inbox.ru> wrot=
+e:
+>
+> Fix looks good to me, and testing next-20091201 on real device (h3600)
+> shows no problems with pcmcia.
+
+Thanks for the confirmation.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__3_Dec_2009_09_25_25_+1100_M7a8u2=uBOULkMss
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAksW6VUACgkQjjKRsyhoI8xj+ACfdkbwiC6FLkpfcOPQRG8JvpRo
+cKAAoKEvjBiqKtvs0bca59ljrv1jz9M0
+=iV7l
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__3_Dec_2009_09_25_25_+1100_M7a8u2=uBOULkMss--
