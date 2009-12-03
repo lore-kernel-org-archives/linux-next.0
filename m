@@ -1,52 +1,46 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH] V4L/DVB: pms: KERNEL_VERSION requires version.h
-Date: Thu, 3 Dec 2009 08:20:23 -0800
-Message-ID: <20091203082023.282569b8.randy.dunlap@oracle.com>
-References: <1259833707-23776-1-git-send-email-a.beregalov@gmail.com>
+From: Russell King <rmk+lkml@arm.linux.org.uk>
+Subject: Re: linux-next: manual merge of the pcmcia tree with the arm tree
+Date: Thu, 3 Dec 2009 17:04:52 +0000
+Message-ID: <20091203170452.GD14241@flint.arm.linux.org.uk>
+References: <20091201140310.46dbdc59.sfr@canb.auug.org.au> <20091202115649.GA2150@rainbow>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet11.oracle.com ([148.87.113.123]:36344 "EHLO
-	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754018AbZLCQVq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Dec 2009 11:21:46 -0500
-In-Reply-To: <1259833707-23776-1-git-send-email-a.beregalov@gmail.com>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:56934 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750790AbZLCRFI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Dec 2009 12:05:08 -0500
+Content-Disposition: inline
+In-Reply-To: <20091202115649.GA2150@rainbow>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexander Beregalov <a.beregalov@gmail.com>
-Cc: hverkuil@xs4all.nl, mchehab@redhat.com, linux-media@vger.kernel.org, linux-next@vger.kernel.org
+To: Dmitry Artamonow <mad_soft@inbox.ru>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Dominik Brodowski <linux@dominikbrodowski.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu,  3 Dec 2009 12:48:27 +0300 Alexander Beregalov wrote:
-
-> Fix this build error:
-> drivers/media/video/pms.c:682: error: implicit declaration of function 'KERNEL_VERSION'
+On Wed, Dec 02, 2009 at 02:56:49PM +0300, Dmitry Artamonow wrote:
+> On 14:03 Tue 01 Dec     , Stephen Rothwell wrote:
+> > Hi Dominik,
+> > 
+> > Today's linux-next merge of the pcmcia tree got a conflict in
+> > drivers/pcmcia/sa1100_h3600.c between commit
+> > 6ce8f65e71f0d80ee23b543be09789dd865a99be ("ARM: 5811/1: pcmcia: convert
+> > sa1100_h3600 driver to gpiolib") from the arm tree and commit
+> > 66024db57d5b9011e274b314affad68f370c0d6f ("PCMCIA: stop duplicating
+> > pci_irq in soc_pcmcia_socket") from the pcmcia tree.
+> > 
+> > I fixed it up (see below) and can carry the fix as necessary.  Please
+> > check the fix below.
 > 
-> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
-
-I've already sent this patch, so I can also ack it...
-
-Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
-
-
-> ---
->  drivers/media/video/pms.c |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
+> Fix looks good to me, and testing next-20091201 on real device (h3600)
+> shows no problems with pcmcia.
 > 
-> diff --git a/drivers/media/video/pms.c b/drivers/media/video/pms.c
-> index 00228d5..a118bb1 100644
-> --- a/drivers/media/video/pms.c
-> +++ b/drivers/media/video/pms.c
-> @@ -35,6 +35,7 @@
->  #include <media/v4l2-ioctl.h>
->  #include <media/v4l2-device.h>
->  #include <linux/mutex.h>
-> +#include <linux/version.h>
->  
->  #include <asm/uaccess.h>
->  
-> -- 
+> Perhaps this merge conflict can be avoided by merging Russell's PCMCIA
+> patches through arm tree. But, anyway, it's Russell and Dominik
+> to decide.
 
+If that's what Dominik would like me to do.
 
----
-~Randy
+-- 
+Russell King
+ Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
+ maintainer of:
