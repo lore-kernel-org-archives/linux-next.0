@@ -1,47 +1,100 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: linux-next: Tree for December 3
-Date: Thu, 3 Dec 2009 14:37:06 +0100 (CET)
-Message-ID: <alpine.LRH.2.00.0912031435380.9567@twin.jikos.cz>
-References: <20091203180214.16e452ed.sfr@canb.auug.org.au>
+From: "David T. L. Wong" <davidtlwong@gmail.com>
+Subject: [PATCH] max2165 32bit build patch
+Date: Thu, 03 Dec 2009 21:54:25 +0800
+Message-ID: <4B17C311.6050500@gmail.com>
+References: <20091130175346.3f3345ed.sfr@canb.auug.org.au>	<4B1409D9.1050901@oracle.com> <20091202100406.e25b2322.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755494AbZLCNhD@vger.kernel.org>
-In-Reply-To: <20091203180214.16e452ed.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/mixed;
+ boundary="------------060404090507030301090501"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pw0-f42.google.com ([209.85.160.42]:45317 "EHLO
+	mail-pw0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756088AbZLCNyY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Dec 2009 08:54:24 -0500
+In-Reply-To: <20091202100406.e25b2322.randy.dunlap@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>
 
-On Thu, 3 Dec 2009, Stephen Rothwell wrote:
+This is a multi-part message in MIME format.
+--------------060404090507030301090501
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> Changes since 20091202:
+Randy Dunlap wrote:
+> On Mon, 30 Nov 2009 10:07:21 -0800 Randy Dunlap wrote:
 > 
-> New tree: kbuild-current
+>> Stephen Rothwell wrote:
+>>> Hi all,
+>>>
+>>> Changes since 20091127:
+>>>
+>>> The v4l-dvb tree lost its conflict.
+>>
+>> on i386 (X86_32):
+>>
+>> a 'double' variable is used, causing:
+>>
+>> ERROR: "__floatunsidf" [drivers/media/common/tuners/max2165.ko] undefined!
+>> ERROR: "__adddf3" [drivers/media/common/tuners/max2165.ko] undefined!
+>> ERROR: "__fixunsdfsi" [drivers/media/common/tuners/max2165.ko] undefined!
 > 
-> The powerpc tree lost its build failure.
 > 
-> The ext3 tree gained a build failure for which I reverted a commit.
+> linux-next-20091202:
 > 
-> The net tree lost a conflict.
+> still have this one (above) and similar with
+> drivers/media/dvb/frontends/atbm8830.c:
 > 
-> The mtd tree gained a conflict against the mips tree.
+> drivers/built-in.o: In function `atbm8830_init':
+> atbm8830.c:(.text+0x9012f9): undefined reference to `__udivdi3'
+> atbm8830.c:(.text+0x901384): undefined reference to `__floatunsidf'
+> atbm8830.c:(.text+0x901395): undefined reference to `__muldf3'
+> atbm8830.c:(.text+0x9013a5): undefined reference to `__floatunsidf'
+> atbm8830.c:(.text+0x9013b2): undefined reference to `__divdf3'
+> atbm8830.c:(.text+0x9013c3): undefined reference to `__muldf3'
+> atbm8830.c:(.text+0x9013cd): undefined reference to `__fixunsdfsi'
 > 
-> The tip tree lost a conflict.
-> 
-> The workqueues tree lost its conflicts.
-[ ... ]
-> Below is a summary of the state of the merge.
-[ ... ]
-> Merging trivial/for-next
-> CONFLICT (content): Merge conflict in Documentation/video4linux/gspca.txt
+> ---
+> ~Randy
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-media" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-Hi Stephen,
+This patch drops usage of floating point variable for 32bit build
 
-have you been sending out e-mail about this conflict? I don't seem to have 
-received any.
+Signed-off-by: David T. L. Wong <davidtlwong@gmail.com>
 
-Thanks,
+--------------060404090507030301090501
+Content-Type: text/x-patch;
+ name="max2165_no_float.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+ filename="max2165_no_float.patch"
 
--- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+diff --git a/linux/drivers/media/common/tuners/max2165.c b/linux/drivers/media/common/tuners/max2165.c
+--- a/linux/drivers/media/common/tuners/max2165.c
++++ b/linux/drivers/media/common/tuners/max2165.c
+@@ -193,7 +193,7 @@
+ {
+ 	u8 tf;
+ 	u8 tf_ntch;
+-	double t;
++	u32 t;
+ 	u32 quotient, fraction;
+ 
+ 	/* Set PLL divider according to RF frequency */
+@@ -217,9 +217,6 @@
+ 	t += (priv->tf_balun_hi_ref - priv->tf_balun_low_ref)
+ 		* (freq / 1000 - 470000) / (780000 - 470000);
+ 
+-#if 0
+-	tf = t + 0.5; /* round up */
+-#endif
+ 	tf = t;
+ 	dprintk("tf = %X\n", tf);
+ 	tf |= tf_ntch << 4;
+
+
+--------------060404090507030301090501--
