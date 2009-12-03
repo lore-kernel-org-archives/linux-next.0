@@ -1,26 +1,27 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH] max2165 32bit build patch
-Date: Thu, 3 Dec 2009 09:24:33 -0800
-Message-ID: <20091203092433.0f9b60b8.randy.dunlap@oracle.com>
+Subject: Re: [PATCH] atbm8830: replace 64-bit division and floating point
+ usage
+Date: Thu, 3 Dec 2009 09:25:01 -0800
+Message-ID: <20091203092501.118ecf81.randy.dunlap@oracle.com>
 References: <20091130175346.3f3345ed.sfr@canb.auug.org.au>
 	<4B1409D9.1050901@oracle.com>
 	<20091202100406.e25b2322.randy.dunlap@oracle.com>
-	<4B17C311.6050500@gmail.com>
+	<4B17C3AE.6070207@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet12.oracle.com ([141.146.126.234]:32167 "EHLO
+Received: from acsinet12.oracle.com ([141.146.126.234]:33469 "EHLO
 	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751053AbZLCRZB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Dec 2009 12:25:01 -0500
-In-Reply-To: <4B17C311.6050500@gmail.com>
+	with ESMTP id S1755484AbZLCRZc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Dec 2009 12:25:32 -0500
+In-Reply-To: <4B17C3AE.6070207@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: "David T. L. Wong" <davidtlwong@gmail.com>
 Cc: linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>
 
-On Thu, 03 Dec 2009 21:54:25 +0800 David T. L. Wong wrote:
+On Thu, 03 Dec 2009 21:57:02 +0800 David T. L. Wong wrote:
 
 > Randy Dunlap wrote:
 > > On Mon, 30 Nov 2009 10:07:21 -0800 Randy Dunlap wrote:
@@ -56,17 +57,12 @@ On Thu, 03 Dec 2009 21:54:25 +0800 David T. L. Wong wrote:
 > > atbm8830.c:(.text+0x9013cd): undefined reference to `__fixunsdfsi'
 > > 
 > > ---
-> 
-> This patch drops usage of floating point variable for 32bit build
+> This patch replace 64-bit division by do_div() macro and remove usage of 
+> floating point variable
 > 
 > Signed-off-by: David T. L. Wong <davidtlwong@gmail.com>
 
 Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
 
-Please generate patches so that they can be applied by using
-$ patch -p1
-at the top of the kernel source tree.
-
-Thanks.
 ---
 ~Randy
