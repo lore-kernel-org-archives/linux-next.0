@@ -1,31 +1,52 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: linux-next: Tree for December 3
-Date: Thu, 3 Dec 2009 15:18:05 +0100 (CET)
-Message-ID: <alpine.LNX.2.00.0912031517480.3755@pobox.suse.cz>
-References: <20091203180214.16e452ed.sfr@canb.auug.org.au> <alpine.LRH.2.00.0912031435380.9567@twin.jikos.cz> <20091204011324.eb195558.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [PATCH] V4L/DVB: pms: KERNEL_VERSION requires version.h
+Date: Thu, 3 Dec 2009 08:20:23 -0800
+Message-ID: <20091203082023.282569b8.randy.dunlap@oracle.com>
+References: <1259833707-23776-1-git-send-email-a.beregalov@gmail.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756164AbZLCOSB@vger.kernel.org>
-In-Reply-To: <20091204011324.eb195558.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet11.oracle.com ([148.87.113.123]:36344 "EHLO
+	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754018AbZLCQVq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Dec 2009 11:21:46 -0500
+In-Reply-To: <1259833707-23776-1-git-send-email-a.beregalov@gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Alexander Beregalov <a.beregalov@gmail.com>
+Cc: hverkuil@xs4all.nl, mchehab@redhat.com, linux-media@vger.kernel.org, linux-next@vger.kernel.org
 
-On Fri, 4 Dec 2009, Stephen Rothwell wrote:
+On Thu,  3 Dec 2009 12:48:27 +0300 Alexander Beregalov wrote:
 
-> > > Merging trivial/for-next
-> > > CONFLICT (content): Merge conflict in Documentation/video4linux/gspca.txt
-> > 
-> > have you been sending out e-mail about this conflict? I don't seem to have 
-> > received any.
+> Fix this build error:
+> drivers/media/video/pms.c:682: error: implicit declaration of function 'KERNEL_VERSION'
 > 
-> No, I didn't because it is very simple and was only in a documentation
-> file.  I figured it would be cleared up easily if/when it comes up in
-> being merged into Linus' tree (or maybe before if it is noticed).
+> Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
 
-Excellent, thanks.
+I've already sent this patch, so I can also ack it...
 
--- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
+
+
+> ---
+>  drivers/media/video/pms.c |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/media/video/pms.c b/drivers/media/video/pms.c
+> index 00228d5..a118bb1 100644
+> --- a/drivers/media/video/pms.c
+> +++ b/drivers/media/video/pms.c
+> @@ -35,6 +35,7 @@
+>  #include <media/v4l2-ioctl.h>
+>  #include <media/v4l2-device.h>
+>  #include <linux/mutex.h>
+> +#include <linux/version.h>
+>  
+>  #include <asm/uaccess.h>
+>  
+> -- 
+
+
+---
+~Randy
