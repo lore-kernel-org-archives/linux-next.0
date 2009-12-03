@@ -1,134 +1,40 @@
-From: Michal Simek <michal.simek@petalogix.com>
+From: Tejun Heo <tj@kernel.org>
 Subject: Re: linux-next: Tree for December 3
-Date: Thu, 03 Dec 2009 08:40:00 +0100
-Message-ID: <4B176B50.4050901@petalogix.com>
-References: <20091203180214.16e452ed.sfr@canb.auug.org.au>
-Reply-To: michal.simek@petalogix.com
+Date: Thu, 03 Dec 2009 17:30:19 +0900
+Message-ID: <4B17771B.7050902@kernel.org>
+References: <20091203180214.16e452ed.sfr@canb.auug.org.au> <4B176B50.4050901@petalogix.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bw0-f227.google.com ([209.85.218.227]:63950 "EHLO
-	mail-bw0-f227.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751156AbZLCHkO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Dec 2009 02:40:14 -0500
-In-Reply-To: <20091203180214.16e452ed.sfr@canb.auug.org.au>
+Received: from hera.kernel.org ([140.211.167.34]:43822 "EHLO hera.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752742AbZLCI3t (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 3 Dec 2009 03:29:49 -0500
+In-Reply-To: <4B176B50.4050901@petalogix.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>
+To: michal.simek@petalogix.com
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Hi,
+Hello,
 
-Stephen Rothwell wrote:
-> Hi all,
-> 
-> My usual call for calm: please do not put stuff destined for 2.6.34 into
-> linux-next trees until after 2.6.33-rc1.
-> 
-> Michael Neuling has written an interesting blog entry
-> (http://neuling.org/mikey/index.cgi/tech/linux-next-size.html) about some
-> stats he has gathered.
-> 
-> Changes since 20091202:
-> 
-> New tree: kbuild-current
-> 
-> The powerpc tree lost its build failure.
-> 
-> The ext3 tree gained a build failure for which I reverted a commit.
-> 
-> The net tree lost a conflict.
-> 
-> The mtd tree gained a conflict against the mips tree.
-> 
-> The tip tree lost a conflict.
-> 
-> The workqueues tree lost its conflicts.
+On 12/03/2009 04:40 PM, Michal Simek wrote:
+> todays tree is working on MMU microblaze correctly without any visible
+> problem but noMMU microblaze kernel still have that bug as I reported
+> some days ago.
 
-todays tree is working on MMU microblaze correctly without any visible 
-problem but noMMU microblaze kernel still have that bug as I reported 
-some days ago.
+Other than triggering WARN_ON(), it doesn't cause any other problems,
+right?  It's probably because SMP_CACHE_BYTES on that configuration is
+lower than 8.  What is the value of SMP_CACHE_BYTES on the
+configuration?  Also, doesn't the Linus's tree have the same problem?
 
-Thanks,
-Michal
+The somewhat spurious WARN_ON() in percpu allocator should probably be
+just removed or bumped to check against PAGE_SIZE as SMP code does.
+The problem is that on UP even though the function takes @align
+parameter, it just ignores it.  :-(
 
-
-Calibrating delay loop... 116.32 BogoMIPS (lpj=581632)
-Mount-cache hash table entries: 512
-------------[ cut here ]------------
-WARNING: at include/linux/percpu.h:157 __create_workqueue_key+0x6c/0x194()
-Modules linked in:
-
-Stack:
-   9f823f1c 902642ec 00000000 00000000 901d1ac4 90011a1c 901cc458 901d1ac4
-   0000009d 90024308 000005b6 000005b7 9f801920 00000000 00000000 901d1adc
-   90024300 00000000 902755a4 902755a4 00000000 00000000 901d1adc 90263174
-Call Trace:
-
-[<902642ec>] spawn_softlockup_task+0x0/0xb0
-[<90011a1c>] warn_slowpath_null+0xc/0x20
-[<90024308>] __create_workqueue_key+0x6c/0x194
-[<90024300>] __create_workqueue_key+0x64/0x194
-[<90263174>] init_workqueues+0x48/0xa0
-[<9025c104>] kernel_init+0x0/0x164
-[<9025c140>] kernel_init+0x3c/0x164
-[<9025c168>] kernel_init+0x64/0x164
-[<900019d8>] kernel_thread_helper+0xc/0x20
-[<900019cc>] kernel_thread_helper+0x0/0x20
-
----[ end trace 139ce121c98e96c9 ]---
-NET: Registered protocol family 16
-bio: create slab <bio-0> at 0
-Switching to clocksource microblaze_clocksource
-NET: Registered protocol family 2
-microblaze_timer_set_mode: oneshot
-
-
-
-> 
-> ----------------------------------------------------------------------------
-> 
-> I have created today's linux-next tree at
-> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> (patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
-> are tracking the linux-next tree using git, you should not use "git pull"
-> to do so as that will try to merge the new linux-next release with the
-> old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-> (see below).
-> 
-> You can see which trees have been included by looking in the Next/Trees
-> file in the source.  There are also quilt-import.log and merge.log files
-> in the Next directory.  Between each merge, the tree was built with
-> a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-> final fixups (if any), it is also built with powerpc allnoconfig (32 and
-> 64 bit), ppc44x_defconfig and allyesconfig (minus
-> CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
-> and sparc64 defconfig. These builds also have
-> CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
-> CONFIG_DEBUG_INFO disabled when necessary.
-> 
-> Below is a summary of the state of the merge.
-> 
-> We are up to 154 trees (counting Linus' and 21 trees of patches pending
-> for Linus' tree), more are welcome (even if they are currently empty).
-> Thanks to those who have contributed, and to those who haven't, please do.
-> 
-> Status of my local build tests will be at
-> http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-> advice about cross compilers/configs that work, we are always open to add
-> more builds.
-> 
-> Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-> at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-> Dunlap for doing many randconfig builds.
-> 
-> There is a wiki covering stuff to do with linux-next at
-> http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-> 
-
+Thanks.
 
 -- 
-Michal Simek, Ing. (M.Eng)
-PetaLogix - Linux Solutions for a Reconfigurable World
-w: www.petalogix.com p: +61-7-30090663,+42-0-721842854 f: +61-7-30090663
+tejun
