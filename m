@@ -1,16 +1,16 @@
 From: "David T. L. Wong" <davidtlwong@gmail.com>
-Subject: [PATCH] max2165 32bit build patch
-Date: Thu, 03 Dec 2009 21:54:25 +0800
-Message-ID: <4B17C311.6050500@gmail.com>
+Subject: [PATCH] atbm8830: replace 64-bit division and floating point usage
+Date: Thu, 03 Dec 2009 21:57:02 +0800
+Message-ID: <4B17C3AE.6070207@gmail.com>
 References: <20091130175346.3f3345ed.sfr@canb.auug.org.au>	<4B1409D9.1050901@oracle.com> <20091202100406.e25b2322.randy.dunlap@oracle.com>
 Mime-Version: 1.0
 Content-Type: multipart/mixed;
- boundary="------------060404090507030301090501"
+ boundary="------------000707020409050203010201"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pw0-f42.google.com ([209.85.160.42]:45317 "EHLO
+Received: from mail-pw0-f42.google.com ([209.85.160.42]:48921 "EHLO
 	mail-pw0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756088AbZLCNyY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Dec 2009 08:54:24 -0500
+	with ESMTP id S1756089AbZLCN5D (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Dec 2009 08:57:03 -0500
 In-Reply-To: <20091202100406.e25b2322.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
@@ -18,7 +18,7 @@ To: Randy Dunlap <randy.dunlap@oracle.com>
 Cc: linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>
 
 This is a multi-part message in MIME format.
---------------060404090507030301090501
+--------------000707020409050203010201
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
@@ -62,39 +62,65 @@ Randy Dunlap wrote:
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-This patch drops usage of floating point variable for 32bit build
+This patch replace 64-bit division by do_div() macro and remove usage of 
+floating point variable
 
 Signed-off-by: David T. L. Wong <davidtlwong@gmail.com>
 
---------------060404090507030301090501
+--------------000707020409050203010201
 Content-Type: text/x-patch;
- name="max2165_no_float.patch"
+ name="atbm8830_32bit.patch"
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline;
- filename="max2165_no_float.patch"
+ filename="atbm8830_32bit.patch"
 
-diff --git a/linux/drivers/media/common/tuners/max2165.c b/linux/drivers/media/common/tuners/max2165.c
---- a/linux/drivers/media/common/tuners/max2165.c
-+++ b/linux/drivers/media/common/tuners/max2165.c
-@@ -193,7 +193,7 @@
+diff --git a/linux/drivers/media/dvb/frontends/atbm8830.c b/linux/drivers/media/dvb/frontends/atbm8830.c
+--- a/linux/drivers/media/dvb/frontends/atbm8830.c
++++ b/linux/drivers/media/dvb/frontends/atbm8830.c
+@@ -19,6 +19,7 @@
+  *    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+  */
+ 
++#include <asm/div64.h>
+ #include "dvb_frontend.h"
+ 
+ #include "atbm8830.h"
+@@ -102,8 +103,12 @@
+ static int set_osc_freq(struct atbm_state *priv, u32 freq /*in kHz*/)
  {
- 	u8 tf;
- 	u8 tf_ntch;
+ 	u32 val;
++	u64 t;
+ 
+-	val = (u64)0x100000 * freq / 30400;
++	/* 0x100000 * freq / 30.4MHz */
++	t = (u64)0x100000 * freq;
++	do_div(t, 30400);
++	val = t;
+ 
+ 	atbm8830_write_reg(priv, REG_OSC_CLK, val);
+ 	atbm8830_write_reg(priv, REG_OSC_CLK + 1, val >> 8);
+@@ -116,14 +121,18 @@
+ {
+ 	
+ 	u32 fs = priv->config->osc_clk_freq;
 -	double t;
-+	u32 t;
- 	u32 quotient, fraction;
++	u64 t;
+ 	u32 val;
+ 	u8 dat;
  
- 	/* Set PLL divider according to RF frequency */
-@@ -217,9 +217,6 @@
- 	t += (priv->tf_balun_hi_ref - priv->tf_balun_low_ref)
- 		* (freq / 1000 - 470000) / (780000 - 470000);
+-	t = 2 * 3.141593 * (freq - fs) / fs * (1 << 22);
+-	val = t;
++	if (freq != 0) {
++		/* 2 * PI * (freq - fs) / fs * (2 ^ 22) */
++		t = (u64) 2 * 31416 * (freq - fs);
++		t <<= 22;
++		do_div(t, fs);
++		do_div(t, 1000);
++		val = t;
  
--#if 0
--	tf = t + 0.5; /* round up */
--#endif
- 	tf = t;
- 	dprintk("tf = %X\n", tf);
- 	tf |= tf_ntch << 4;
+-	if (freq != 0) {
+ 		atbm8830_write_reg(priv, REG_TUNER_BASEBAND, 1);
+ 		atbm8830_write_reg(priv, REG_IF_FREQ, val);
+ 		atbm8830_write_reg(priv, REG_IF_FREQ+1, val >> 8);
 
-
---------------060404090507030301090501--
+--------------000707020409050203010201--
