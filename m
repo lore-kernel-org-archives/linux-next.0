@@ -1,59 +1,51 @@
-From: Jiri Slaby <jirislaby@gmail.com>
-Subject: Re: linux-next: manual merge of the limits tree with the net and
- fsnotify trees
-Date: Fri, 04 Dec 2009 08:59:22 +0100
-Message-ID: <4B18C15A.8060901@gmail.com>
-References: <20091204183011.e92d36cd.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the sysctl tree with the net tree
+Date: Fri, 4 Dec 2009 19:36:13 +1100
+Message-ID: <20091204193613.8986a3c6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__4_Dec_2009_19_36_13_+1100_zJQ4Qik+y3yrDuzS"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fg-out-1718.google.com ([72.14.220.152]:64822 "EHLO
-	fg-out-1718.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754036AbZLDH7W (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Dec 2009 02:59:22 -0500
-In-Reply-To: <20091204183011.e92d36cd.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:40150 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754774AbZLDIgN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 4 Dec 2009 03:36:13 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Paris <eparis@redhat.com>, Arnaldo Carvalho de Melo <acme@redhat.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Neil Horman <nhorman@tuxdriver.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Patrick McHardy <kaber@trash.net>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
 
-On 12/04/2009 08:30 AM, Stephen Rothwell wrote:
-> diff --cc arch/x86/ia32/ia32entry.S
-> index da89ae1,c61ced2..0000000
-> --- a/arch/x86/ia32/ia32entry.S
-> +++ b/arch/x86/ia32/ia32entry.S
-> @@@ -841,7 -841,6 +841,9 @@@ ia32_sys_call_table
->   	.quad compat_sys_pwritev
->   	.quad compat_sys_rt_tgsigqueueinfo	/* 335 */
->   	.quad sys_perf_event_open
->  +	.quad compat_sys_recvmmsg
->  +	.quad sys_fanotify_init
->  +	.quad sys32_fanotify_mark
-> + 	.quad compat_sys_getprlimit
+--Signature=_Fri__4_Dec_2009_19_36_13_+1100_zJQ4Qik+y3yrDuzS
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, but please go on with the by-five numbering in comments.
+Hi Eric,
 
-> + 	.quad compat_sys_setprlimit
->   ia32_syscall_end:
-...
-> diff --cc arch/x86/kernel/syscall_table_32.S
-> index ca486c7,2dd45cd..0000000
-> --- a/arch/x86/kernel/syscall_table_32.S
-> +++ b/arch/x86/kernel/syscall_table_32.S
-> @@@ -336,6 -336,5 +336,8 @@@ ENTRY(sys_call_table
->   	.long sys_pwritev
->   	.long sys_rt_tgsigqueueinfo	/* 335 */
->   	.long sys_perf_event_open
->  +	.long sys_recvmmsg
->  +	.long sys_fanotify_init
->  +	.long sys_fanotify_mark
-> + 	.long sys_getprlimit
+Today's linux-next merge of the sysctl tree got a conflict in
+kernel/sysctl_check.c between commit
+8153a10c08f1312af563bb92532002e46d3f504a ("ipv4: add sysctl to accept
+packets with local source addresses") from the net tree and commit
+83ac201b4f06eb8aeb7ac93cf162651ba30e0b28 ("sysctl: Remove dead code from
+sysctl_check") from the sysctl tree.
 
-And here too.
+The latter removes the need for the former to change this file.  I just
+used the latter.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-> + 	.long sys_setprlimit
+--Signature=_Fri__4_Dec_2009_19_36_13_+1100_zJQ4Qik+y3yrDuzS
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
--- 
-js
+iEYEARECAAYFAksYyf0ACgkQjjKRsyhoI8yv6QCgu+22/azgw9SVjpdnlo7sJFqf
+kb8AoKDfyPVRZ3415pHZ8T+Q9hZ/lx/I
+=hkXo
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__4_Dec_2009_19_36_13_+1100_zJQ4Qik+y3yrDuzS--
