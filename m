@@ -1,50 +1,50 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the sysctl tree with the net tree
-Date: Fri, 4 Dec 2009 23:21:19 +1100
-Message-ID: <20091204232119.52d1c09c.sfr@canb.auug.org.au>
-References: <20091204194301.ca77fe40.sfr@canb.auug.org.au>
-	<4B18FDA3.5060601@gmail.com>
+From: Jens Axboe <jens.axboe@oracle.com>
+Subject: Re: linux-next: block tree build failure
+Date: Fri, 4 Dec 2009 14:54:22 +0100
+Message-ID: <20091204135422.GZ8742@kernel.dk>
+References: <20091204143612.f30db275.sfr@canb.auug.org.au> <20091204074341.GH8742@kernel.dk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__4_Dec_2009_23_21_19_+1100_xs_dyM1r02ABYy6/"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756256AbZLDMVU@vger.kernel.org>
-In-Reply-To: <4B18FDA3.5060601@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: William Allen Simpson <william.allen.simpson@gmail.com>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Fri__4_Dec_2009_23_21_19_+1100_xs_dyM1r02ABYy6/
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from 0122700014.0.fullrate.dk ([95.166.99.235]:36120 "EHLO kernel.dk"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751823AbZLDNyQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 4 Dec 2009 08:54:16 -0500
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20091204074341.GH8742@kernel.dk>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vivek Goyal <vgoyal@redhat.com>
 
-Hi William,
+On Fri, Dec 04 2009, Jens Axboe wrote:
+> On Fri, Dec 04 2009, Stephen Rothwell wrote:
+> > Hi Jens,
+> > 
+> > Today's linux-next build (x86_64 allmodconfig) failed like this:
+> > 
+> > block/built-in.o: In function `blkiocg_destroy':
+> > blk-cgroup.c:(.text+0x1bd48): undefined reference to `cfq_unlink_blkio_group'
+> > block/built-in.o: In function `blkiocg_weight_write':
+> > blk-cgroup.c:(.text+0x1c0d2): undefined reference to `cfq_update_blkio_group_weight'
+> > 
+> > Caused by commits b1c3576961847da26c91b1e97f226bb66be5fa3f ("blkio: Take
+> > care of cgroup deletion and cfq group reference counting") and
+> > f8d461d692c341add957fb973fb5ee1f62039dc7 ("blkio: Propagate cgroup weight
+> > updation to cfq groups").
+> > 
+> > When adding code that is CONFIG dependent, please build test it with and
+> > without the relevant CONFIG setting (in this case
+> > CONFIG_CFQ_GROUP_IOSCHED).  Also put the extern declarations of global
+> > functions into a header file.
+> 
+> The problem looks like a circular dependency betwen BLK_CGROUP and CFQ.
+> The Kconfig dependencies doesn't express that blk-cgroup also calls into
+> cfq, so you can't have cfq=m (cfq doesn't even export those functions).
+> It looks pretty messy, to be honest. I'll see if I can fix it up.
 
-On Fri, 04 Dec 2009 07:16:35 -0500 William Allen Simpson <william.allen.sim=
-pson@gmail.com> wrote:
->
-> Hi, I'm not Eric, but it's my TCPCT patch -- is there something more
-> that I need to do?
+I pushed out the quick fix, just disallowing cfq=m and blk cgroup in
+Kconfig. So it should work now.
 
-No, at some point the maintainer of whichever tree gets merged last by
-Linus will fix this up (or maybe Linus himself will).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__4_Dec_2009_23_21_19_+1100_xs_dyM1r02ABYy6/
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAksY/r8ACgkQjjKRsyhoI8z1AwCguVX0DVKPZvLQjo3Gj1Fnvqie
-eO8AnjKsKn3LB6Nz9n8GBOOQG5XKlY9/
-=b2NP
------END PGP SIGNATURE-----
-
---Signature=_Fri__4_Dec_2009_23_21_19_+1100_xs_dyM1r02ABYy6/--
+-- 
+Jens Axboe
