@@ -1,31 +1,50 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: -next: Nov 12 - kernel BUG at kernel/sched.c:7359!
-Date: Fri, 04 Dec 2009 13:16:50 +0100
-Message-ID: <1259929010.17907.178.camel@laptop>
-References: <20091112195101.63263490.sfr@canb.auug.org.au>
-	 <4AFBF73B.5040500@in.ibm.com> <1258027820.4039.129.camel@laptop>
-	 <4AFBFE3D.80507@in.ibm.com> <1258028831.4039.152.camel@laptop>
-	 <1258045831.4039.736.camel@laptop>  <20091113095801.GA29977@in.ibm.com>
-	 <1258107368.4039.1149.camel@laptop> <1258108281.22655.5.camel@laptop>
-	 <4B0A5BA7.8020604@in.ibm.com> <1259156575.4027.514.camel@laptop>
-	 <4B18FB2E.1070200@in.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the sysctl tree with the net tree
+Date: Fri, 4 Dec 2009 23:21:19 +1100
+Message-ID: <20091204232119.52d1c09c.sfr@canb.auug.org.au>
+References: <20091204194301.ca77fe40.sfr@canb.auug.org.au>
+	<4B18FDA3.5060601@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:34186 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754974AbZLDMRP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Dec 2009 07:17:15 -0500
-In-Reply-To: <4B18FB2E.1070200@in.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Sachin Sant <sachinp@in.ibm.com>
-Cc: ego@in.ibm.com, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, Mike Galbraith <efault@gmx.de>, Gregory Haskins <ghaskins@novell.com>, maxk <maxk@qualcomm.com>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__4_Dec_2009_23_21_19_+1100_xs_dyM1r02ABYy6/"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756256AbZLDMVU@vger.kernel.org>
+In-Reply-To: <4B18FDA3.5060601@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: William Allen Simpson <william.allen.simpson@gmail.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Fri, 2009-12-04 at 17:36 +0530, Sachin Sant wrote:
-> 
-> Ping on this patch. Still missing from linux-next.
+--Signature=_Fri__4_Dec_2009_23_21_19_+1100_xs_dyM1r02ABYy6/
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I know, it got stuck in my queue too long, but I handed it to Ingo
-yesterday, should appear in tip soonish.
+Hi William,
+
+On Fri, 04 Dec 2009 07:16:35 -0500 William Allen Simpson <william.allen.sim=
+pson@gmail.com> wrote:
+>
+> Hi, I'm not Eric, but it's my TCPCT patch -- is there something more
+> that I need to do?
+
+No, at some point the maintainer of whichever tree gets merged last by
+Linus will fix this up (or maybe Linus himself will).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__4_Dec_2009_23_21_19_+1100_xs_dyM1r02ABYy6/
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAksY/r8ACgkQjjKRsyhoI8z1AwCguVX0DVKPZvLQjo3Gj1Fnvqie
+eO8AnjKsKn3LB6Nz9n8GBOOQG5XKlY9/
+=b2NP
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__4_Dec_2009_23_21_19_+1100_xs_dyM1r02ABYy6/--
