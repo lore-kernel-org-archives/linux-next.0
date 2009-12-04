@@ -1,50 +1,61 @@
-From: Jens Axboe <jens.axboe@oracle.com>
-Subject: Re: linux-next: block tree build failure
-Date: Fri, 4 Dec 2009 14:54:22 +0100
-Message-ID: <20091204135422.GZ8742@kernel.dk>
-References: <20091204143612.f30db275.sfr@canb.auug.org.au> <20091204074341.GH8742@kernel.dk>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Subject: Re: linux-next: manual merge of the sysctl tree with the net tree
+Date: Fri, 04 Dec 2009 13:42:49 -0800
+Message-ID: <m1vdgmbeli.fsf@fess.ebiederm.org>
+References: <20091204194301.ca77fe40.sfr@canb.auug.org.au>
+	<4B18FDA3.5060601@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 0122700014.0.fullrate.dk ([95.166.99.235]:36120 "EHLO kernel.dk"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751823AbZLDNyQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 4 Dec 2009 08:54:16 -0500
-Content-Disposition: inline
-In-Reply-To: <20091204074341.GH8742@kernel.dk>
+Received: from out01.mta.xmission.com ([166.70.13.231]:60335 "EHLO
+	out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757298AbZLDVmv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Dec 2009 16:42:51 -0500
+In-Reply-To: <4B18FDA3.5060601@gmail.com> (William Allen Simpson's message of "Fri\, 04 Dec 2009 07\:16\:35 -0500")
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vivek Goyal <vgoyal@redhat.com>
+To: William Allen Simpson <william.allen.simpson@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
 
-On Fri, Dec 04 2009, Jens Axboe wrote:
-> On Fri, Dec 04 2009, Stephen Rothwell wrote:
-> > Hi Jens,
-> > 
-> > Today's linux-next build (x86_64 allmodconfig) failed like this:
-> > 
-> > block/built-in.o: In function `blkiocg_destroy':
-> > blk-cgroup.c:(.text+0x1bd48): undefined reference to `cfq_unlink_blkio_group'
-> > block/built-in.o: In function `blkiocg_weight_write':
-> > blk-cgroup.c:(.text+0x1c0d2): undefined reference to `cfq_update_blkio_group_weight'
-> > 
-> > Caused by commits b1c3576961847da26c91b1e97f226bb66be5fa3f ("blkio: Take
-> > care of cgroup deletion and cfq group reference counting") and
-> > f8d461d692c341add957fb973fb5ee1f62039dc7 ("blkio: Propagate cgroup weight
-> > updation to cfq groups").
-> > 
-> > When adding code that is CONFIG dependent, please build test it with and
-> > without the relevant CONFIG setting (in this case
-> > CONFIG_CFQ_GROUP_IOSCHED).  Also put the extern declarations of global
-> > functions into a header file.
-> 
-> The problem looks like a circular dependency betwen BLK_CGROUP and CFQ.
-> The Kconfig dependencies doesn't express that blk-cgroup also calls into
-> cfq, so you can't have cfq=m (cfq doesn't even export those functions).
-> It looks pretty messy, to be honest. I'll see if I can fix it up.
+William Allen Simpson <william.allen.simpson@gmail.com> writes:
 
-I pushed out the quick fix, just disallowing cfq=m and blk cgroup in
-Kconfig. So it should work now.
+> Stephen Rothwell wrote:
+>> Hi Eric,
+>>
+>> Today's linux-next merge of the sysctl tree got a conflict in
+>> net/ipv4/sysctl_net_ipv4.c between commit
+>> 519855c508b9a17878c0977a3cdefc09b59b30df ("TCPCT part 1c:
+>> sysctl_tcp_cookie_size, socket option TCP_COOKIE_TRANSACTIONS") from the
+>> net tree and commit f8572d8f2a2ba75408b97dc24ef47c83671795d7 ("sysctl
+>> net: Remove unused binary sysctl code") from the sysctl tree.
+>>
+>> I fixed it up (see below) and can carry the fix as necessary.
+>
+> Hi, I'm not Eric, but it's my TCPCT patch -- is there something more
+> that I need to do?
+>
+> Adding a sysctl was my very first query to Linux lists.  I thought
+> everything was covered in that and subsequent threads.
 
--- 
-Jens Axboe
+My apologies for not giving you a heads up earlier.
+
+You initially ran into the problem in sysctl_check where you added a
+new binary sysctl and you had errors.  That works to keep people from
+adding new binary sysctl but as you experienced it is not the most
+obvious way of communicating.
+
+In my sysctl tree I have written a compatibility layer for all of the
+existing binary sysctl handlers, and have removed the .ctl_name and
+.strategy fields, that used to be used for implementing binary
+sysctls.
+
+In the best case scenario you could have seen that coming and not
+included the .ctl_name line in your patch.  Then there would have been
+a trivial conflict that would have required no changes to fixup.
+However since I removed .ctl_name from before and after your new entry
+a minor merge conflict was inevitable.
+
+The price it seems for multiple independent development trees are the
+occasionally conflicts in trees hosting kernel wide cleanups and fixes.
+
+Eric
