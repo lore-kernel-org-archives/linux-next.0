@@ -1,68 +1,54 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH] atbm8830: replace 64-bit division and floating point
- usage
-Date: Thu, 3 Dec 2009 09:25:01 -0800
-Message-ID: <20091203092501.118ecf81.randy.dunlap@oracle.com>
-References: <20091130175346.3f3345ed.sfr@canb.auug.org.au>
-	<4B1409D9.1050901@oracle.com>
-	<20091202100406.e25b2322.randy.dunlap@oracle.com>
-	<4B17C3AE.6070207@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: nfs tree build failure
+Date: Fri, 4 Dec 2009 11:36:50 +1100
+Message-ID: <20091204113650.0776ce8f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__4_Dec_2009_11_36_50_+1100_mDbY7=S0ofAfb4FI"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet12.oracle.com ([141.146.126.234]:33469 "EHLO
-	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755484AbZLCRZc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Dec 2009 12:25:32 -0500
-In-Reply-To: <4B17C3AE.6070207@gmail.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:39753 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754889AbZLDAgv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 3 Dec 2009 19:36:51 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "David T. L. Wong" <davidtlwong@gmail.com>
-Cc: linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>
+To: Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, NeilBrown <neilb@suse.de>
 
-On Thu, 03 Dec 2009 21:57:02 +0800 David T. L. Wong wrote:
+--Signature=_Fri__4_Dec_2009_11_36_50_+1100_mDbY7=S0ofAfb4FI
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Randy Dunlap wrote:
-> > On Mon, 30 Nov 2009 10:07:21 -0800 Randy Dunlap wrote:
-> > 
-> >> Stephen Rothwell wrote:
-> >>> Hi all,
-> >>>
-> >>> Changes since 20091127:
-> >>>
-> >>> The v4l-dvb tree lost its conflict.
-> >>
-> >> on i386 (X86_32):
-> >>
-> >> a 'double' variable is used, causing:
-> >>
-> >> ERROR: "__floatunsidf" [drivers/media/common/tuners/max2165.ko] undefined!
-> >> ERROR: "__adddf3" [drivers/media/common/tuners/max2165.ko] undefined!
-> >> ERROR: "__fixunsdfsi" [drivers/media/common/tuners/max2165.ko] undefined!
-> > 
-> > 
-> > linux-next-20091202:
-> > 
-> > still have this one (above) and similar with
-> > drivers/media/dvb/frontends/atbm8830.c:
-> > 
-> > drivers/built-in.o: In function `atbm8830_init':
-> > atbm8830.c:(.text+0x9012f9): undefined reference to `__udivdi3'
-> > atbm8830.c:(.text+0x901384): undefined reference to `__floatunsidf'
-> > atbm8830.c:(.text+0x901395): undefined reference to `__muldf3'
-> > atbm8830.c:(.text+0x9013a5): undefined reference to `__floatunsidf'
-> > atbm8830.c:(.text+0x9013b2): undefined reference to `__divdf3'
-> > atbm8830.c:(.text+0x9013c3): undefined reference to `__muldf3'
-> > atbm8830.c:(.text+0x9013cd): undefined reference to `__fixunsdfsi'
-> > 
-> > ---
-> This patch replace 64-bit division by do_div() macro and remove usage of 
-> floating point variable
-> 
-> Signed-off-by: David T. L. Wong <davidtlwong@gmail.com>
+Hi Trond,
 
-Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
+Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 
----
-~Randy
+fs/nfs/nfs4proc.c: In function 'nfs4_handle_exception':
+fs/nfs/nfs4proc.c:282: error: 'err' undeclared (first use in this function)
+
+Caused by commit b3508de20f0fc48f5e597b189eed930343ed1441
+("NFS4ERR_FILE_OPEN handling in Linux/NFS").
+
+Please, please build test, at least, *before* you publish a tree that is
+included in linux-next.  I have used the nfs tree from next-20091203 for
+today.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__4_Dec_2009_11_36_50_+1100_mDbY7=S0ofAfb4FI
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAksYWaIACgkQjjKRsyhoI8wLfACfbMR4Cerl3HHvs2jpbLflsHhv
+NSYAnR7IMMwpQCSgu3Q3BkZYA6mKweAS
+=fezt
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__4_Dec_2009_11_36_50_+1100_mDbY7=S0ofAfb4FI--
