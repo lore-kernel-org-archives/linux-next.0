@@ -1,61 +1,53 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Subject: Re: linux-next: manual merge of the sysctl tree with the net tree
-Date: Fri, 04 Dec 2009 13:42:49 -0800
-Message-ID: <m1vdgmbeli.fsf@fess.ebiederm.org>
-References: <20091204194301.ca77fe40.sfr@canb.auug.org.au>
-	<4B18FDA3.5060601@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: block tree build failure
+Date: Sat, 5 Dec 2009 09:49:34 +1100
+Message-ID: <20091205094934.eefdddf4.sfr@canb.auug.org.au>
+References: <20091204143612.f30db275.sfr@canb.auug.org.au>
+	<20091204074341.GH8742@kernel.dk>
+	<20091204135422.GZ8742@kernel.dk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sat__5_Dec_2009_09_49_34_+1100_0qiK8Z_vqwZ+og0X"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out01.mta.xmission.com ([166.70.13.231]:60335 "EHLO
-	out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757298AbZLDVmv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Dec 2009 16:42:51 -0500
-In-Reply-To: <4B18FDA3.5060601@gmail.com> (William Allen Simpson's message of "Fri\, 04 Dec 2009 07\:16\:35 -0500")
+Received: from chilli.pcug.org.au ([203.10.76.44]:50853 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751444AbZLDWte (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 4 Dec 2009 17:49:34 -0500
+In-Reply-To: <20091204135422.GZ8742@kernel.dk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: William Allen Simpson <william.allen.simpson@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+To: Jens Axboe <jens.axboe@oracle.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vivek Goyal <vgoyal@redhat.com>
 
-William Allen Simpson <william.allen.simpson@gmail.com> writes:
+--Signature=_Sat__5_Dec_2009_09_49_34_+1100_0qiK8Z_vqwZ+og0X
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Stephen Rothwell wrote:
->> Hi Eric,
->>
->> Today's linux-next merge of the sysctl tree got a conflict in
->> net/ipv4/sysctl_net_ipv4.c between commit
->> 519855c508b9a17878c0977a3cdefc09b59b30df ("TCPCT part 1c:
->> sysctl_tcp_cookie_size, socket option TCP_COOKIE_TRANSACTIONS") from the
->> net tree and commit f8572d8f2a2ba75408b97dc24ef47c83671795d7 ("sysctl
->> net: Remove unused binary sysctl code") from the sysctl tree.
->>
->> I fixed it up (see below) and can carry the fix as necessary.
+Hi Jens,
+
+On Fri, 4 Dec 2009 14:54:22 +0100 Jens Axboe <jens.axboe@oracle.com> wrote:
 >
-> Hi, I'm not Eric, but it's my TCPCT patch -- is there something more
-> that I need to do?
->
-> Adding a sysctl was my very first query to Linux lists.  I thought
-> everything was covered in that and subsequent threads.
+> I pushed out the quick fix, just disallowing cfq=3Dm and blk cgroup in
+> Kconfig. So it should work now.
 
-My apologies for not giving you a heads up earlier.
+Great, thanks.
 
-You initially ran into the problem in sysctl_check where you added a
-new binary sysctl and you had errors.  That works to keep people from
-adding new binary sysctl but as you experienced it is not the most
-obvious way of communicating.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-In my sysctl tree I have written a compatibility layer for all of the
-existing binary sysctl handlers, and have removed the .ctl_name and
-.strategy fields, that used to be used for implementing binary
-sysctls.
+--Signature=_Sat__5_Dec_2009_09_49_34_+1100_0qiK8Z_vqwZ+og0X
+Content-Type: application/pgp-signature
 
-In the best case scenario you could have seen that coming and not
-included the .ctl_name line in your patch.  Then there would have been
-a trivial conflict that would have required no changes to fixup.
-However since I removed .ctl_name from before and after your new entry
-a minor merge conflict was inevitable.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-The price it seems for multiple independent development trees are the
-occasionally conflicts in trees hosting kernel wide cleanups and fixes.
+iEYEARECAAYFAksZkf4ACgkQjjKRsyhoI8xlcQCgkdn51TtvHLKUv019VIlGrUIH
+RbEAnjV/zNdaKfxcFEN8zp3cTnt+oj/O
+=3V3F
+-----END PGP SIGNATURE-----
 
-Eric
+--Signature=_Sat__5_Dec_2009_09_49_34_+1100_0qiK8Z_vqwZ+og0X--
