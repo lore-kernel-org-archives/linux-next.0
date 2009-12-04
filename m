@@ -1,39 +1,31 @@
-From: William Allen Simpson <william.allen.simpson@gmail.com>
-Subject: Re: linux-next: manual merge of the sysctl tree with the net tree
-Date: Fri, 04 Dec 2009 07:16:35 -0500
-Message-ID: <4B18FDA3.5060601@gmail.com>
-References: <20091204194301.ca77fe40.sfr@canb.auug.org.au>
+From: Peter Zijlstra <peterz@infradead.org>
+Subject: Re: -next: Nov 12 - kernel BUG at kernel/sched.c:7359!
+Date: Fri, 04 Dec 2009 13:16:50 +0100
+Message-ID: <1259929010.17907.178.camel@laptop>
+References: <20091112195101.63263490.sfr@canb.auug.org.au>
+	 <4AFBF73B.5040500@in.ibm.com> <1258027820.4039.129.camel@laptop>
+	 <4AFBFE3D.80507@in.ibm.com> <1258028831.4039.152.camel@laptop>
+	 <1258045831.4039.736.camel@laptop>  <20091113095801.GA29977@in.ibm.com>
+	 <1258107368.4039.1149.camel@laptop> <1258108281.22655.5.camel@laptop>
+	 <4B0A5BA7.8020604@in.ibm.com> <1259156575.4027.514.camel@laptop>
+	 <4B18FB2E.1070200@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-yx0-f187.google.com ([209.85.210.187]:47568 "EHLO
-	mail-yx0-f187.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753301AbZLDMQf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Dec 2009 07:16:35 -0500
-In-Reply-To: <20091204194301.ca77fe40.sfr@canb.auug.org.au>
+Received: from casper.infradead.org ([85.118.1.10]:34186 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754974AbZLDMRP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Dec 2009 07:17:15 -0500
+In-Reply-To: <4B18FB2E.1070200@in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+To: Sachin Sant <sachinp@in.ibm.com>
+Cc: ego@in.ibm.com, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, Mike Galbraith <efault@gmx.de>, Gregory Haskins <ghaskins@novell.com>, maxk <maxk@qualcomm.com>
 
-Stephen Rothwell wrote:
-> Hi Eric,
+On Fri, 2009-12-04 at 17:36 +0530, Sachin Sant wrote:
 > 
-> Today's linux-next merge of the sysctl tree got a conflict in
-> net/ipv4/sysctl_net_ipv4.c between commit
-> 519855c508b9a17878c0977a3cdefc09b59b30df ("TCPCT part 1c:
-> sysctl_tcp_cookie_size, socket option TCP_COOKIE_TRANSACTIONS") from the
-> net tree and commit f8572d8f2a2ba75408b97dc24ef47c83671795d7 ("sysctl
-> net: Remove unused binary sysctl code") from the sysctl tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary.
+> Ping on this patch. Still missing from linux-next.
 
-Hi, I'm not Eric, but it's my TCPCT patch -- is there something more
-that I need to do?
-
-Adding a sysctl was my very first query to Linux lists.  I thought
-everything was covered in that and subsequent threads.
-
-    Subject: query: adding a sysctl
-    Date: Fri, 02 Oct 2009 00:00:05 -0400
+I know, it got stuck in my queue too long, but I handed it to Ingo
+yesterday, should appear in tip soonish.
