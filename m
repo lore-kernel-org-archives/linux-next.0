@@ -1,38 +1,63 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Subject: Re: PCI failure with virtual machine (new as of the past few days
- -next)
-Date: Fri, 4 Dec 2009 16:35:19 -0800
-Message-ID: <20091204163519.39212bf6@jbarnes-piketon>
-References: <20091203171421.59f85d8b@lxorguk.ukuu.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the limits tree with the net and
+ fsnotify trees
+Date: Sat, 5 Dec 2009 15:00:53 +1100
+Message-ID: <20091205150053.48384393.sfr@canb.auug.org.au>
+References: <20091204183011.e92d36cd.sfr@canb.auug.org.au>
+	<4B18C15A.8060901@gmail.com>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sat__5_Dec_2009_15_00_53_+1100_rI1moyQ8.mT_Eiyt"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1757689AbZLEEAy@vger.kernel.org>
+In-Reply-To: <4B18C15A.8060901@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jiri Slaby <jirislaby@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Paris <eparis@redhat.com>, Arnaldo Carvalho de Melo <acme@redhat.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Neil Horman <nhorman@tuxdriver.com>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Sat__5_Dec_2009_15_00_53_+1100_rI1moyQ8.mT_Eiyt
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from outbound-mail-139.bluehost.com ([67.222.39.29]:54876 "HELO
-	outbound-mail-139.bluehost.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with SMTP id S1757546AbZLEAgB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Dec 2009 19:36:01 -0500
-In-Reply-To: <20091203171421.59f85d8b@lxorguk.ukuu.org.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: linux-pci@vger.kernel.org, linux-next@vger.kernel.org
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 3 Dec 2009 17:14:21 +0000
-Alan Cox <alan@lxorguk.ukuu.org.uk> wrote:
+Hi Jiri,
 
-> 
-> 8139cp: 10/100 PCI Ethernet driver v1.3 (Mar 22, 2004)
-> 8139cp 0000:00:03.0: PCI INT A -> Link[LNKC] -> GSI 11 (level, high)
-> -> IRQ 11 8139cp 0000:00:03.0: PCI INT A disabled
-> 8139cp: probe of 0000:00:03.0 failed with error -22
-> 
-> The PCI configuration looks like this (with an older working kernel)
+On Fri, 04 Dec 2009 08:59:22 +0100 Jiri Slaby <jirislaby@gmail.com> wrote:
+>
+> On 12/04/2009 08:30 AM, Stephen Rothwell wrote:
+> > diff --cc arch/x86/ia32/ia32entry.S
+> > index da89ae1,c61ced2..0000000
+> > --- a/arch/x86/ia32/ia32entry.S
+> > +++ b/arch/x86/ia32/ia32entry.S
+> > @@@ -841,7 -841,6 +841,9 @@@ ia32_sys_call_table
+> >   	.quad compat_sys_pwritev
+> >   	.quad compat_sys_rt_tgsigqueueinfo	/* 335 */
+> >   	.quad sys_perf_event_open
+> >  +	.quad compat_sys_recvmmsg
+> >  +	.quad sys_fanotify_init
+> >  +	.quad sys32_fanotify_mark
+> > + 	.quad compat_sys_getprlimit
+>=20
+> Thanks, but please go on with the by-five numbering in comments.
 
-I haven't applied anything to the PCI tree in the past few days (last
-batch of commits was before my Thanksgiving break).  Maybe something
-else in -next broke?  Have you tried my pci linux-next tree by itself?
-It should be bisectable...
+I am sure that will be done by whoever does the final conflict
+resolution.  Thanks for noticing.
 
--- 
-Jesse Barnes, Intel Open Source Technology Center
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Sat__5_Dec_2009_15_00_53_+1100_rI1moyQ8.mT_Eiyt
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAksZ2vUACgkQjjKRsyhoI8yi7QCeMKBHQDL69sdz8UaFNqoxf0ti
+L0QAoK5cI+beDUwybAIAfr3VwHuzybjj
+=Ir60
+-----END PGP SIGNATURE-----
+
+--Signature=_Sat__5_Dec_2009_15_00_53_+1100_rI1moyQ8.mT_Eiyt--
