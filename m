@@ -1,75 +1,57 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next resend] g_multi kconfig: fix depends and help text
-Date: Sun, 6 Dec 2009 10:03:02 -0800
-Message-ID: <20091206100302.f710f626.randy.dunlap@oracle.com>
+Subject: [PATCH -next resend/fixed] media/miro: fix kconfig depends/select
+Date: Sun, 6 Dec 2009 10:04:58 -0800
+Message-ID: <20091206100458.9f24a9c8.randy.dunlap@oracle.com>
 References: <20091204203014.e8ee54ca.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet12.oracle.com ([141.146.126.234]:44697 "EHLO
-	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757010AbZLFTGU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 6 Dec 2009 14:06:20 -0500
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S934209AbZLFTIc@vger.kernel.org>
 In-Reply-To: <20091204203014.e8ee54ca.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, lud <linux-usb@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-media@vger.kernel.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>
+List-Id: linux-next.vger.kernel.org
 
 From: Randy Dunlap <randy.dunlap@oracle.com>
 
-USB_G_MULTI uses block and net interface functions, so make it
-depend on both of those.  Otherwise there are lots of build errors.
+miropcm20 uses ALSA (snd_) interfaces from the SND_MIRO
+driver, so it should depend on SND.
+(selecting SND_MIRO when CONFIG_SND is not enabled is a
+problem.)
 
-Fix USB_G_MULTI config help text typos and copy/paste error.
+drivers/built-in.o: In function `vidioc_s_ctrl':
+radio-miropcm20.c:(.text+0x227499): undefined reference to `snd_aci_cmd'
+drivers/built-in.o: In function `vidioc_s_frequency':
+radio-miropcm20.c:(.text+0x227574): undefined reference to `snd_aci_cmd'
+radio-miropcm20.c:(.text+0x227588): undefined reference to `snd_aci_cmd'
+drivers/built-in.o: In function `pcm20_init':
+radio-miropcm20.c:(.init.text+0x2a784): undefined reference to `snd_aci_get_aci'
+
+miropcm20 selects SND_MIRO but SND_ISA may be not enabled, so
+also select SND_ISA so that the snd-miro driver will be built.
+Otherwise there are missing symbols:
+
+ERROR: "snd_opl4_create" [sound/isa/opti9xx/snd-miro.ko] undefined!
+ERROR: "snd_wss_pcm" [sound/isa/opti9xx/snd-miro.ko] undefined!
+ERROR: "snd_wss_timer" [sound/isa/opti9xx/snd-miro.ko] undefined!
+ERROR: "snd_wss_create" [sound/isa/opti9xx/snd-miro.ko] undefined!
+ERROR: "snd_wss_mixer" [sound/isa/opti9xx/snd-miro.ko] undefined!
 
 Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 ---
- drivers/usb/gadget/Kconfig |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/media/radio/Kconfig |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- linux-next-20091204.orig/drivers/usb/gadget/Kconfig
-+++ linux-next-20091204/drivers/usb/gadget/Kconfig
-@@ -814,16 +814,17 @@ config USB_CDC_COMPOSITE
+--- linux-next-20091204.orig/drivers/media/radio/Kconfig
++++ linux-next-20091204/drivers/media/radio/Kconfig
+@@ -197,7 +197,8 @@ config RADIO_MAESTRO
  
- config USB_G_MULTI
- 	tristate "Multifunction Composite Gadget (EXPERIMENTAL)"
-+	depends on BLOCK && NET
- 	help
- 	  The Multifunction Composite Gadget provides Ethernet (RNDIS
- 	  and/or CDC Ethernet), mass storage and ACM serial link
- 	  interfaces.
- 
--	  You will be asked too choose which of the two configurations are
-+	  You will be asked to choose which of the two configurations is
- 	  to be available in the gadget.  At least one configuration must
--	  be choosen to make gadget usable.  Selecting more then one
-+	  be chosen to make the gadget usable.  Selecting more than one
- 	  configuration will prevent Windows from automatically detecting
--	  the gadget as a composite gadget an INF file will be needed to
-+	  the gadget as a composite gadget, so an INF file will be needed to
- 	  use the gadget.
- 
- 	  Say "y" to link the driver statically, or "m" to build a
-@@ -836,8 +837,8 @@ config USB_G_MULTI_RNDIS
- 	help
- 	  This option enables a configuration with RNDIS, CDC Serial and
- 	  Mass Storage functions available in the Multifunction Composite
--	  Gadget.  This is configuration dedicated for Windows since RNDIS
--	  is Microsfot's protocol.
-+	  Gadget.  This is the configuration dedicated for Windows since RNDIS
-+	  is Microsoft's protocol.
- 
- 	  If unsure, say "y".
- 
-@@ -848,8 +849,7 @@ config USB_G_MULTI_CDC
- 	help
- 	  This option enables a configuration with CDC Ethernet (ECM), CDC
- 	  Serial and Mass Storage functions available in the Multifunction
--	  Composite Gadget.  This is configuration dedicated for Windows
--	  since RNDIS is Microsfot's protocol.
-+	  Composite Gadget.
- 
- 	  If unsure, say "y".
- 
+ config RADIO_MIROPCM20
+ 	tristate "miroSOUND PCM20 radio"
+-	depends on ISA && VIDEO_V4L2
++	depends on ISA && VIDEO_V4L2 && SND
++	select SND_ISA
+ 	select SND_MIRO
+ 	---help---
+ 	  Choose Y here if you have this FM radio card. You also need to enable
