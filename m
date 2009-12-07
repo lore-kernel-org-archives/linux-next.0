@@ -1,64 +1,35 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: net/wireless/wireless-current tree build warning
-Date: Tue, 8 Dec 2009 09:20:57 +1100
-Message-ID: <20091208092057.dd2eeaeb.sfr@canb.auug.org.au>
-References: <20091201133524.32756cef.sfr@canb.auug.org.au>
-	<1260191754.3737.1.camel@johannes.local>
+From: "John W. Linville" <linville@tuxdriver.com>
+Subject: Re: linux-next: net/kbuild trees build failure
+Date: Mon, 7 Dec 2009 17:28:53 -0500
+Message-ID: <20091207222853.GE18939@tuxdriver.com>
+References: <20091207200317.57820f0a.sfr@canb.auug.org.au> <20091207114158.GA2428@merkur.ravnborg.org> <4B1CF39A.5050806@suse.cz> <20091207160903.GB18939@tuxdriver.com> <1260209537.4653.778.camel@rc-desk> <4B1D76B1.6070601@suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43650 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932821AbZLGWUw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 7 Dec 2009 17:20:52 -0500
-In-Reply-To: <1260191754.3737.1.camel@johannes.local>
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:49697 "EHLO
+	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933422AbZLGWaN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Dec 2009 17:30:13 -0500
+Content-Disposition: inline
+In-Reply-To: <4B1D76B1.6070601@suse.cz>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "David S. Miller" <davem@davemloft.net>, "John W. Linville" <linville@tuxdriver.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Michal Marek <mmarek@suse.cz>
+Cc: reinette chatre <reinette.chatre@intel.com>, Sam Ravnborg <sam@ravnborg.org>, Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Dave, John,
+On Mon, Dec 07, 2009 at 10:42:09PM +0100, Michal Marek wrote:
+> reinette chatre napsal(a):
 
-On Mon, 07 Dec 2009 14:15:54 +0100 Johannes Berg <johannes@sipsolutions.net> wrote:
->
-> > drivers/net/wireless/iwlwifi/iwl-tx.c: In function 'iwl_tx_agg_stop':
-> > drivers/net/wireless/iwlwifi/iwl-tx.c:1356: warning: passing argument 1 of 'ieee80211_stop_tx_ba_cb_irqsafe' from incompatible pointer type
-> > include/net/mac80211.h:2128: note: expected 'struct ieee80211_vif *' but argument is of type 'struct ieee80211_hw *'
+> > Right - could we please use the solution that works at compile time? I
+> > used UTS_RELEASE after learning about its use in init/version.c, would
+> > that not make it an approved solution?
 > 
-> This has now snuck into wireless-testing as well.
+> It seems there is some misunderstanding.
 
-Johannes is right, the patch I posted need to be part of the wireless
-tree once the wireless-current tree was merged into it.  Now this patch
-(reposted below) is needed in the wireless and net trees ...
+Alright, if Stephen's fix is acceptable then your suggestion is fine.
+Sam seemed to suggest that Stephen's fix was a stop-gap.
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 1 Dec 2009 13:19:44 +1100
-Subject: [PATCH] wireless: fix for mismerge
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/net/wireless/iwlwifi/iwl-tx.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/net/wireless/iwlwifi/iwl-tx.c b/drivers/net/wireless/iwlwifi/iwl-tx.c
-index 58b132f..00da5e1 100644
---- a/drivers/net/wireless/iwlwifi/iwl-tx.c
-+++ b/drivers/net/wireless/iwlwifi/iwl-tx.c
-@@ -1353,7 +1353,7 @@ int iwl_tx_agg_stop(struct iwl_priv *priv , const u8 *ra, u16 tid)
- 	if (priv->stations[sta_id].tid[tid].agg.state ==
- 				IWL_EMPTYING_HW_QUEUE_ADDBA) {
- 		IWL_DEBUG_HT(priv, "AGG stop before setup done\n");
--		ieee80211_stop_tx_ba_cb_irqsafe(priv->hw, ra, tid);
-+		ieee80211_stop_tx_ba_cb_irqsafe(priv->vif, ra, tid);
- 		priv->stations[sta_id].tid[tid].agg.state = IWL_AGG_OFF;
- 		return 0;
- 	}
+John
 -- 
-1.6.5.3
-
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+John W. Linville		Someday the world will need a hero, and you
+linville@tuxdriver.com			might be all we have.  Be ready.
