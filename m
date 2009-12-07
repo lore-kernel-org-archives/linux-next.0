@@ -1,44 +1,39 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: linux-next: input tree build failure
-Date: Mon, 7 Dec 2009 09:36:41 -0800
-Message-ID: <20091207173640.GA998@core.coreip.homeip.net>
-References: <20091207200344.01323cb5.sfr@canb.auug.org.au> <4B1D2C80.4060202@oracle.com>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: PCI failure with virtual machine (new as of the past few days
+ -next)
+Date: Mon, 7 Dec 2009 18:07:10 +0000
+Message-ID: <20091207180710.526f975c@lxorguk.ukuu.org.uk>
+References: <20091203171421.59f85d8b@lxorguk.ukuu.org.uk>
+	<20091204163519.39212bf6@jbarnes-piketon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bw0-f227.google.com ([209.85.218.227]:53632 "EHLO
-	mail-bw0-f227.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935467AbZLGRgn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Dec 2009 12:36:43 -0500
-Content-Disposition: inline
-In-Reply-To: <4B1D2C80.4060202@oracle.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <20091204163519.39212bf6@jbarnes-piketon>
+Sender: linux-pci-owner@vger.kernel.org
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: linux-pci@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Dec 07, 2009 at 08:25:36AM -0800, Randy Dunlap wrote:
-> Stephen Rothwell wrote:
-> > Hi Dmitry,
-> > 
-> > Today's linux-next build (powerpc allyesconfig) failed like this:
-> > 
-> > drivers/input/sparse-keymap.c:101: error: __ksymtab_sparse_keymap_setkeycode causes a section type conflict
-> > 
-> > Caused by commit a2dd9f7ceeb28f495587834aa5778c721611d61b ("Input: add
-> > generic support for sparse keymaps").
-> > 
-> > static functions should not given to EXPORT_SYMBOL().
-> > 
-> > I have reverted that commit for today.
+On Fri, 4 Dec 2009 16:35:19 -0800
+Jesse Barnes <jbarnes@virtuousgeek.org> wrote:
+
+> On Thu, 3 Dec 2009 17:14:21 +0000
+> Alan Cox <alan@lxorguk.ukuu.org.uk> wrote:
 > 
-> (DT:) Is that what causes wistron_btns builds to fail also?
+> > 
+> > 8139cp: 10/100 PCI Ethernet driver v1.3 (Mar 22, 2004)
+> > 8139cp 0000:00:03.0: PCI INT A -> Link[LNKC] -> GSI 11 (level, high)
+> > -> IRQ 11 8139cp 0000:00:03.0: PCI INT A disabled
+> > 8139cp: probe of 0000:00:03.0 failed with error -22
+> > 
+> > The PCI configuration looks like this (with an older working kernel)
 > 
+> I haven't applied anything to the PCI tree in the past few days (last
+> batch of commits was before my Thanksgiving break).  Maybe something
+> else in -next broke?  Have you tried my pci linux-next tree by itself?
+> It should be bisectable...
 
-Umm... Wistron and dm355evm_keys now using sparse keymap library so if
-it is missing they would fail to compile.
-
-I removed the stray EXPORT_SYMBOL(), shold be good now.
-
--- 
-Dmitry
+Still poking at this - PCI linux-next tree alone isn't responsible
+however. It seems to be a combination of -next, Fedora Core 12 and
+certain configuration choices for the virtual hardware.
