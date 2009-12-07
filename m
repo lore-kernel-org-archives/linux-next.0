@@ -1,71 +1,49 @@
-From: Michal Marek <mmarek@suse.cz>
+From: reinette chatre <reinette.chatre@intel.com>
 Subject: Re: linux-next: net/kbuild trees build failure
-Date: Mon, 07 Dec 2009 22:42:09 +0100
-Message-ID: <4B1D76B1.6070601@suse.cz>
-References: <20091207200317.57820f0a.sfr@canb.auug.org.au>	 <20091207114158.GA2428@merkur.ravnborg.org> <4B1CF39A.5050806@suse.cz>	 <20091207160903.GB18939@tuxdriver.com> <1260209537.4653.778.camel@rc-desk>
+Date: Mon, 07 Dec 2009 14:04:03 -0800
+Message-ID: <1260223443.4653.794.camel@rc-desk>
+References: <20091207200317.57820f0a.sfr@canb.auug.org.au>
+	 <20091207114158.GA2428@merkur.ravnborg.org> <4B1CF39A.5050806@suse.cz>
+	 <20091207160903.GB18939@tuxdriver.com> <1260209537.4653.778.camel@rc-desk>
+	 <4B1D76B1.6070601@suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-2
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor.suse.de ([195.135.220.2]:57620 "EHLO mx1.suse.de"
+Received: from mga09.intel.com ([134.134.136.24]:13132 "EHLO mga09.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S965010AbZLGVl5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 7 Dec 2009 16:41:57 -0500
-In-Reply-To: <1260209537.4653.778.camel@rc-desk>
+	id S965103AbZLGWD5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 7 Dec 2009 17:03:57 -0500
+In-Reply-To: <4B1D76B1.6070601@suse.cz>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: reinette chatre <reinette.chatre@intel.com>
+To: Michal Marek <mmarek@suse.cz>
 Cc: "John W. Linville" <linville@tuxdriver.com>, Sam Ravnborg <sam@ravnborg.org>, Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-reinette chatre napsal(a):
-> Hi John,
-> 
-> On Mon, 2009-12-07 at 08:09 -0800, John W. Linville wrote:
->> On Mon, Dec 07, 2009 at 01:22:50PM +0100, Michal Marek wrote:
->>> On 7.12.2009 12:41, Sam Ravnborg wrote:
->>>> On Mon, Dec 07, 2009 at 08:03:17PM +1100, Stephen Rothwell wrote:
->>>>> Hi Dave,
->>>>>
->>>>> Today's linux-next build (powerpc allyesconfig) failed like this:
->>>>>
->>>>> In file included from drivers/net/wireless/iwlwifi/iwl3945-base.c:57:
->>>>> drivers/net/wireless/iwlwifi/iwl-core.h:66:30: error: linux/utsrelease.h: No such file or directory
->>>>>
->>>>> Caused by commit 250cce26d5d03337aec4ff8405121f026adb4a89 ("iwlwifi:
->>>>> driver version track kernel version") from the net tree interacting with
->>>>> commit 8e5c76aace9705b6983cfbf5eb2f2e869dab6738 ("kbuild: move
->>>>> utsrelease.h to include/generated") from the kbuild tree.
->>>>>
->>>>> I applied this patch for today (and will carry it as necessary):
->>>> The right fix would be to use 'utsname()->sysname' (I think sysname
->>>> is the right member).
->>> ->release would be the right one. One could also question why iwlwifi
->>> needs to repeat the kernel version it was built / is running against,
->>> but I that's not the point here :). Dave, John, can we agree that
->>> whichever tree gets merged first, the other tree applies the one-liner?
->> Hmmm...well, the suggested fixes are fine for the printk (i.e. runtime)
->> usage.  But (other than Stephen's) they don't seem to help with the
->> MODULE_VERSION (i.e. compile time) usage.  Is there an approved
->> solution for that?
-> 
-> Right - could we please use the solution that works at compile time? I
-> used UTS_RELEASE after learning about its use in init/version.c, would
-> that not make it an approved solution?
+On Mon, 2009-12-07 at 13:42 -0800, Michal Marek wrote:
+> It seems there is some misunderstanding.
+> The original problem reported by Stephen was that linux/utsrelease.h was
+> moved to generated/utsrelease.h in the kbuild tree (that commit also
+> patched init/version.c and all other users known at that time). This
+> change in kbuild broke the new iwlwifi in the net tree. Stephen attached
+> the most obvious fix, i.e. change linux/utsrelease.h to
+> generated/utsrelease.h in the iwlwifi source
+> (http://lkml.org/lkml/2009/12/7/121). My suggestion was to let Stephen
+> carry the fix in linux-next for now, and once one of the trees (kbuild
+> or net) hits mainline, the other tree would apply Stephen's patch. Would
+> that work for everyone?
 
-It seems there is some misunderstanding.
-The original problem reported by Stephen was that linux/utsrelease.h was
-moved to generated/utsrelease.h in the kbuild tree (that commit also
-patched init/version.c and all other users known at that time). This
-change in kbuild broke the new iwlwifi in the net tree. Stephen attached
-the most obvious fix, i.e. change linux/utsrelease.h to
-generated/utsrelease.h in the iwlwifi source
-(http://lkml.org/lkml/2009/12/7/121). My suggestion was to let Stephen
-carry the fix in linux-next for now, and once one of the trees (kbuild
-or net) hits mainline, the other tree would apply Stephen's patch. Would
-that work for everyone?
+I am not involved in the merging part and would thus not be the one
+applying Stephen's patch. I would like the iwlwifi patch that uses
+UTS_RELEASE as well as Stephen's fix to find it in the right place to go
+in though (end up in linux-2.6).
 
-Now if someone wants to remove the DRV_VERSION macro from iwlwifi or rip
-the UTS_RELEASE part out of it, that would make this problem go away,
-but I don't think it's necessary _just_ because of the kbuild change.
+> Now if someone wants to remove the DRV_VERSION macro from iwlwifi or rip
+> the UTS_RELEASE part out of it, that would make this problem go away,
+> but I don't think it's necessary _just_ because of the kbuild change.
 
-Michal
+This is perhaps something John and I should discuss separately.
+
+Thank you
+
+Reinette
