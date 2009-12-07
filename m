@@ -1,60 +1,60 @@
-From: Jens Axboe <jens.axboe@oracle.com>
-Subject: Re: linux-next: block tree build failure
-Date: Mon, 7 Dec 2009 09:49:03 +0100
-Message-ID: <20091207084903.GU8742@kernel.dk>
-References: <20091207194429.d33903ed.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: net/kbuild trees build failure
+Date: Mon, 7 Dec 2009 20:03:17 +1100
+Message-ID: <20091207200317.57820f0a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 0122700014.0.fullrate.dk ([95.166.99.235]:50945 "EHLO kernel.dk"
+Received: from chilli.pcug.org.au ([203.10.76.44]:55522 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933590AbZLGIs5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 7 Dec 2009 03:48:57 -0500
-Content-Disposition: inline
-In-Reply-To: <20091207194429.d33903ed.sfr@canb.auug.org.au>
+	id S1757902AbZLGJDN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 7 Dec 2009 04:03:13 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vivek Goyal <vgoyal@redhat.com>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Michal Marek <mmarek@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Reinette Chatre <reinette.chatre@intel.com>, "John W. Linville" <linville@tuxdriver.com>, Sam Ravnborg <sam@ravnborg.org>
 
-On Mon, Dec 07 2009, Stephen Rothwell wrote:
-> Hi Jens,
-> 
-> Today's linux-next build (powerpc allyesconfig) failed like this:
-> 
-> block/blk-cgroup.c: In function 'blkiocg_create':
-> block/blk-cgroup.c:285: error: implicit declaration of function 'ERR_PTR'
-> block/blk-cgroup.c:285: warning: return makes pointer from integer without a cast
-> block/blk-cgroup.c:289: warning: return makes pointer from integer without a cast
-> 
-> Caused by commit 31e4c28d95e64f2d5d3c497a3ecf37c62de635b4 ("blkio:
-> Introduce blkio controller cgroup interface").
-> 
-> I applied this patch for today:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 7 Dec 2009 19:29:39 +1100
-> Subject: [PATCH] block: include linux/err.h to use ERR_PTR
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  block/blk-cgroup.c |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
-> 
-> diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
-> index 3ad497f..1fa2654 100644
-> --- a/block/blk-cgroup.c
-> +++ b/block/blk-cgroup.c
-> @@ -14,6 +14,7 @@
->  #include <linux/seq_file.h>
->  #include <linux/kdev_t.h>
->  #include <linux/module.h>
-> +#include <linux/err.h>
->  #include "blk-cgroup.h"
->  
->  static DEFINE_SPINLOCK(blkio_list_lock);
+Hi Dave,
 
-Thanks Stephen, I merged your patch and updated the branches.
+Today's linux-next build (powerpc allyesconfig) failed like this:
+
+In file included from drivers/net/wireless/iwlwifi/iwl3945-base.c:57:
+drivers/net/wireless/iwlwifi/iwl-core.h:66:30: error: linux/utsrelease.h: No such file or directory
+
+Caused by commit 250cce26d5d03337aec4ff8405121f026adb4a89 ("iwlwifi:
+driver version track kernel version") from the net tree interacting with
+commit 8e5c76aace9705b6983cfbf5eb2f2e869dab6738 ("kbuild: move
+utsrelease.h to include/generated") from the kbuild tree.
+
+I applied this patch for today (and will carry it as necessary):
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 7 Dec 2009 19:56:42 +1100
+Subject: [PATCH] net: fix for utsrelease.h moving to generated
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/net/wireless/iwlwifi/iwl-core.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/net/wireless/iwlwifi/iwl-core.h b/drivers/net/wireless/iwlwifi/iwl-core.h
+index 675b7df..27ca859 100644
+--- a/drivers/net/wireless/iwlwifi/iwl-core.h
++++ b/drivers/net/wireless/iwlwifi/iwl-core.h
+@@ -63,7 +63,7 @@
+ #ifndef __iwl_core_h__
+ #define __iwl_core_h__
+ 
+-#include <linux/utsrelease.h>
++#include <generated/utsrelease.h>
+ 
+ /************************
+  * forward declarations *
+-- 
+1.6.5.3
 
 -- 
-Jens Axboe
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
