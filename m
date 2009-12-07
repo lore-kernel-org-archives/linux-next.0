@@ -1,57 +1,55 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Subject: Re: linux-next: net/wireless/wireless-current tree build warning
-Date: Mon, 07 Dec 2009 14:15:54 +0100
-Message-ID: <1260191754.3737.1.camel@johannes.local>
-References: <20091201133524.32756cef.sfr@canb.auug.org.au>
+From: Jonathan Cameron <jic23@cam.ac.uk>
+Subject: [PATCH] Staging: IIO: add selection of IIO_SW_RING to LIS3L02DQ as
+ needed
+Date: Mon, 07 Dec 2009 15:19:17 +0000
+Message-ID: <4B1D1CF5.6030502@cam.ac.uk>
+References: <20091204203014.e8ee54ca.sfr@canb.auug.org.au> <20091206101225.7d8ce4a4.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature"; boundary="=-5IpdUsu3hd9G4ZhW3C0e"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from xc.sipsolutions.net ([83.246.72.84]:60032 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934067AbZLGNQo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Dec 2009 08:16:44 -0500
-In-Reply-To: <20091201133524.32756cef.sfr@canb.auug.org.au>
+Received: from ppsw-6.csi.cam.ac.uk ([131.111.8.136]:35397 "EHLO
+	ppsw-6.csi.cam.ac.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932683AbZLGPS0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Dec 2009 10:18:26 -0500
+In-Reply-To: <20091206101225.7d8ce4a4.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 
---=-5IpdUsu3hd9G4ZhW3C0e
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Jonathan Cameron <jic23@cam.ac.uk>
+Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
 
-John,
+ Thanks to Randy for the report. Sorry for the slow response.
+ I've been meaning to carefully check for any remaining cases like
+ this.
+ Here I've kept the selection of IIO_SW_RING separate from
+ IIO_TRIGGER as it will go away fairly shortly when the ring buffer
+ type becomes configurable on a per device basis, whereas the
+ IIO_TRIGGER select will remain. Whether to retain the option to
+ remove the support for ring buffers entirely is one for after that
+ support is in place.
 
-> drivers/net/wireless/iwlwifi/iwl-tx.c: In function 'iwl_tx_agg_stop':
-> drivers/net/wireless/iwlwifi/iwl-tx.c:1356: warning: passing argument 1 o=
-f 'ieee80211_stop_tx_ba_cb_irqsafe' from incompatible pointer type
-> include/net/mac80211.h:2128: note: expected 'struct ieee80211_vif *' but =
-argument is of type 'struct ieee80211_hw *'
+ Touch wood I think this is the last one, but I'll try a selection of
+ unusual combinations now and post others as replies to this email.
 
-This has now snuck into wireless-testing as well.
+ drivers/staging/iio/accel/Kconfig |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-johannes
-
---=-5IpdUsu3hd9G4ZhW3C0e
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABAgAGBQJLHQAGAAoJEODzc/N7+QmammYQAKwmmhjwZQAQf5945EmoZGGv
-43WpTXgnIoeRrPFjyxuRBuaNEc6l6SrtUxmDWbB0TQINP6yHo9P7+kzyFKUjNgHT
-1n5tJbnWRZP2FQmLCmfz6u+HXWptJzKmwd/NU4nisPsK1RV5f+1F53Qs47ka+h5f
-TSrx7WoM2hTIkCpRGH3KctlM9/LCnQNzX0oUvAXWRCoOC08SzsfzjXouypvqoSW9
-4T1t1LOxYX9VN3TefG8mmR5ZySinVd7S/pwmHk8l7swHNIn2+UIWB1PN73Gd2Xso
-AuXoj12Z7z2PyUh3V/WqIsW58B3DWLUyKkrWKeIhV19J4U2mqQ18UAd/dVhKLZ2y
-m10E1aPjLp/zRRlzBJuVwKPdQLamYDiqbyb3m+1phU7HAaFN7eyhLo8ky6dYgzJ+
-e8PMjgQkTRw6ZgBbPRrE5NC3d7ZUNBhaNlg1nGWM9QNcCaLXZxZ9w7FHKSbQE+MW
-qOvDqHtWZjpKrzNKtco88GguvS7D/2/qGF9rvYdvF6BDOHai/aiRfJck5YkYIW/Q
-fU7KrakeQIbs1rV3z1XdGKY4ik9ZOawB2tVDJfbezg9NYX8XThlS8MwcBs594mm1
-xJjhP5cNF9Q4qJHYR1nX2QkZO3K0hn+JYH+Mqk3jr0rxLlzjyL9SINlBrRWc6z7C
-d8FHl6POr7/q9lYclc/Y
-=LvwX
------END PGP SIGNATURE-----
-
---=-5IpdUsu3hd9G4ZhW3C0e--
+diff --git a/drivers/staging/iio/accel/Kconfig b/drivers/staging/iio/accel/Kconfig
+index 4044663..3d3c333 100644
+--- a/drivers/staging/iio/accel/Kconfig
++++ b/drivers/staging/iio/accel/Kconfig
+@@ -14,6 +14,7 @@ config LIS3L02DQ
+ 	tristate "ST Microelectronics LIS3L02DQ Accelerometer Driver"
+ 	depends on SPI
+ 	select IIO_TRIGGER if IIO_RING_BUFFER
++	select IIO_SW_RING if IIO_RING_BUFFER
+ 	help
+ 	  Say yes here to build SPI support for the ST microelectronics
+ 	  accelerometer. The driver supplies direct access via sysfs files
+-- 
+1.6.4.4
