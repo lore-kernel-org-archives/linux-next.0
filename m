@@ -1,63 +1,44 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH] Staging: IIO: add selection of IIO_SW_RING to LIS3L02DQ
- as needed
-Date: Mon, 07 Dec 2009 09:07:53 -0800
-Message-ID: <4B1D3669.4020204@oracle.com>
-References: <20091204203014.e8ee54ca.sfr@canb.auug.org.au> <20091206101225.7d8ce4a4.randy.dunlap@oracle.com> <4B1D1CF5.6030502@cam.ac.uk>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: linux-next: input tree build failure
+Date: Mon, 7 Dec 2009 09:36:41 -0800
+Message-ID: <20091207173640.GA998@core.coreip.homeip.net>
+References: <20091207200344.01323cb5.sfr@canb.auug.org.au> <4B1D2C80.4060202@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet12.oracle.com ([141.146.126.234]:45637 "EHLO
-	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757954AbZLGRJH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Dec 2009 12:09:07 -0500
-In-Reply-To: <4B1D1CF5.6030502@cam.ac.uk>
+Received: from mail-bw0-f227.google.com ([209.85.218.227]:53632 "EHLO
+	mail-bw0-f227.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935467AbZLGRgn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Dec 2009 12:36:43 -0500
+Content-Disposition: inline
+In-Reply-To: <4B1D2C80.4060202@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jonathan Cameron <jic23@cam.ac.uk>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Jonathan Cameron wrote:
-> Signed-off-by: Jonathan Cameron <jic23@cam.ac.uk>
-> Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
-
-Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
-
-Thanks.
-
-
-> ---
+On Mon, Dec 07, 2009 at 08:25:36AM -0800, Randy Dunlap wrote:
+> Stephen Rothwell wrote:
+> > Hi Dmitry,
+> > 
+> > Today's linux-next build (powerpc allyesconfig) failed like this:
+> > 
+> > drivers/input/sparse-keymap.c:101: error: __ksymtab_sparse_keymap_setkeycode causes a section type conflict
+> > 
+> > Caused by commit a2dd9f7ceeb28f495587834aa5778c721611d61b ("Input: add
+> > generic support for sparse keymaps").
+> > 
+> > static functions should not given to EXPORT_SYMBOL().
+> > 
+> > I have reverted that commit for today.
 > 
->  Thanks to Randy for the report. Sorry for the slow response.
->  I've been meaning to carefully check for any remaining cases like
->  this.
->  Here I've kept the selection of IIO_SW_RING separate from
->  IIO_TRIGGER as it will go away fairly shortly when the ring buffer
->  type becomes configurable on a per device basis, whereas the
->  IIO_TRIGGER select will remain. Whether to retain the option to
->  remove the support for ring buffers entirely is one for after that
->  support is in place.
+> (DT:) Is that what causes wistron_btns builds to fail also?
 > 
->  Touch wood I think this is the last one, but I'll try a selection of
->  unusual combinations now and post others as replies to this email.
-> 
->  drivers/staging/iio/accel/Kconfig |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/staging/iio/accel/Kconfig b/drivers/staging/iio/accel/Kconfig
-> index 4044663..3d3c333 100644
-> --- a/drivers/staging/iio/accel/Kconfig
-> +++ b/drivers/staging/iio/accel/Kconfig
-> @@ -14,6 +14,7 @@ config LIS3L02DQ
->  	tristate "ST Microelectronics LIS3L02DQ Accelerometer Driver"
->  	depends on SPI
->  	select IIO_TRIGGER if IIO_RING_BUFFER
-> +	select IIO_SW_RING if IIO_RING_BUFFER
->  	help
->  	  Say yes here to build SPI support for the ST microelectronics
->  	  accelerometer. The driver supplies direct access via sysfs files
 
+Umm... Wistron and dm355evm_keys now using sparse keymap library so if
+it is missing they would fail to compile.
+
+I removed the stray EXPORT_SYMBOL(), shold be good now.
 
 -- 
-~Randy
+Dmitry
