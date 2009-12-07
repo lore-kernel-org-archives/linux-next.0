@@ -1,45 +1,57 @@
-From: Michal Marek <mmarek@suse.cz>
-Subject: Re: linux-next: net/kbuild trees build failure
-Date: Mon, 07 Dec 2009 13:22:50 +0100
-Message-ID: <4B1CF39A.5050806@suse.cz>
-References: <20091207200317.57820f0a.sfr@canb.auug.org.au> <20091207114158.GA2428@merkur.ravnborg.org>
+From: Johannes Berg <johannes@sipsolutions.net>
+Subject: Re: linux-next: net/wireless/wireless-current tree build warning
+Date: Mon, 07 Dec 2009 14:15:54 +0100
+Message-ID: <1260191754.3737.1.camel@johannes.local>
+References: <20091201133524.32756cef.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature"; boundary="=-5IpdUsu3hd9G4ZhW3C0e"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor.suse.de ([195.135.220.2]:59872 "EHLO mx1.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752584AbZLGMX2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 7 Dec 2009 07:23:28 -0500
-In-Reply-To: <20091207114158.GA2428@merkur.ravnborg.org>
+Received: from xc.sipsolutions.net ([83.246.72.84]:60032 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934067AbZLGNQo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Dec 2009 08:16:44 -0500
+In-Reply-To: <20091201133524.32756cef.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Reinette Chatre <reinette.chatre@intel.com>, "John W. Linville" <linville@tuxdriver.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 
-On 7.12.2009 12:41, Sam Ravnborg wrote:
-> On Mon, Dec 07, 2009 at 08:03:17PM +1100, Stephen Rothwell wrote:
->> Hi Dave,
->>
->> Today's linux-next build (powerpc allyesconfig) failed like this:
->>
->> In file included from drivers/net/wireless/iwlwifi/iwl3945-base.c:57:
->> drivers/net/wireless/iwlwifi/iwl-core.h:66:30: error: linux/utsrelease.h: No such file or directory
->>
->> Caused by commit 250cce26d5d03337aec4ff8405121f026adb4a89 ("iwlwifi:
->> driver version track kernel version") from the net tree interacting with
->> commit 8e5c76aace9705b6983cfbf5eb2f2e869dab6738 ("kbuild: move
->> utsrelease.h to include/generated") from the kbuild tree.
->>
->> I applied this patch for today (and will carry it as necessary):
-> 
-> The right fix would be to use 'utsname()->sysname' (I think sysname
-> is the right member).
 
-->release would be the right one. One could also question why iwlwifi
-needs to repeat the kernel version it was built / is running against,
-but I that's not the point here :). Dave, John, can we agree that
-whichever tree gets merged first, the other tree applies the one-liner?
+--=-5IpdUsu3hd9G4ZhW3C0e
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks!
-Michal
+John,
+
+> drivers/net/wireless/iwlwifi/iwl-tx.c: In function 'iwl_tx_agg_stop':
+> drivers/net/wireless/iwlwifi/iwl-tx.c:1356: warning: passing argument 1 o=
+f 'ieee80211_stop_tx_ba_cb_irqsafe' from incompatible pointer type
+> include/net/mac80211.h:2128: note: expected 'struct ieee80211_vif *' but =
+argument is of type 'struct ieee80211_hw *'
+
+This has now snuck into wireless-testing as well.
+
+johannes
+
+--=-5IpdUsu3hd9G4ZhW3C0e
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABAgAGBQJLHQAGAAoJEODzc/N7+QmammYQAKwmmhjwZQAQf5945EmoZGGv
+43WpTXgnIoeRrPFjyxuRBuaNEc6l6SrtUxmDWbB0TQINP6yHo9P7+kzyFKUjNgHT
+1n5tJbnWRZP2FQmLCmfz6u+HXWptJzKmwd/NU4nisPsK1RV5f+1F53Qs47ka+h5f
+TSrx7WoM2hTIkCpRGH3KctlM9/LCnQNzX0oUvAXWRCoOC08SzsfzjXouypvqoSW9
+4T1t1LOxYX9VN3TefG8mmR5ZySinVd7S/pwmHk8l7swHNIn2+UIWB1PN73Gd2Xso
+AuXoj12Z7z2PyUh3V/WqIsW58B3DWLUyKkrWKeIhV19J4U2mqQ18UAd/dVhKLZ2y
+m10E1aPjLp/zRRlzBJuVwKPdQLamYDiqbyb3m+1phU7HAaFN7eyhLo8ky6dYgzJ+
+e8PMjgQkTRw6ZgBbPRrE5NC3d7ZUNBhaNlg1nGWM9QNcCaLXZxZ9w7FHKSbQE+MW
+qOvDqHtWZjpKrzNKtco88GguvS7D/2/qGF9rvYdvF6BDOHai/aiRfJck5YkYIW/Q
+fU7KrakeQIbs1rV3z1XdGKY4ik9ZOawB2tVDJfbezg9NYX8XThlS8MwcBs594mm1
+xJjhP5cNF9Q4qJHYR1nX2QkZO3K0hn+JYH+Mqk3jr0rxLlzjyL9SINlBrRWc6z7C
+d8FHl6POr7/q9lYclc/Y
+=LvwX
+-----END PGP SIGNATURE-----
+
+--=-5IpdUsu3hd9G4ZhW3C0e--
