@@ -1,34 +1,40 @@
-From: Jens Axboe <jens.axboe@oracle.com>
-Subject: Re: linux-next: block tree build failure
-Date: Mon, 7 Dec 2009 10:28:22 +0100
-Message-ID: <20091207092822.GV8742@kernel.dk>
-References: <20091207194429.d33903ed.sfr@canb.auug.org.au> <20091207084903.GU8742@kernel.dk> <20091207202335.77ea4068.sfr@canb.auug.org.au>
+From: Sam Ravnborg <sam@ravnborg.org>
+Subject: Re: linux-next: net/kbuild trees build failure
+Date: Mon, 7 Dec 2009 12:41:58 +0100
+Message-ID: <20091207114158.GA2428@merkur.ravnborg.org>
+References: <20091207200317.57820f0a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 0122700014.0.fullrate.dk ([95.166.99.235]:47362 "EHLO kernel.dk"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759280AbZLGJ2R (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 7 Dec 2009 04:28:17 -0500
+Received: from pfepb.post.tele.dk ([195.41.46.236]:53878 "EHLO
+	pfepb.post.tele.dk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933756AbZLGLly (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Dec 2009 06:41:54 -0500
 Content-Disposition: inline
-In-Reply-To: <20091207202335.77ea4068.sfr@canb.auug.org.au>
+In-Reply-To: <20091207200317.57820f0a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vivek Goyal <vgoyal@redhat.com>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Michal Marek <mmarek@suse.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Reinette Chatre <reinette.chatre@intel.com>, "John W. Linville" <linville@tuxdriver.com>
 
-On Mon, Dec 07 2009, Stephen Rothwell wrote:
-> Hi Jens,
+On Mon, Dec 07, 2009 at 08:03:17PM +1100, Stephen Rothwell wrote:
+> Hi Dave,
 > 
-> On Mon, 7 Dec 2009 09:49:03 +0100 Jens Axboe <jens.axboe@oracle.com> wrote:
-> >
-> > Thanks Stephen, I merged your patch and updated the branches.
+> Today's linux-next build (powerpc allyesconfig) failed like this:
 > 
-> I presume that you build tested as well - or do you trust me ;-)
+> In file included from drivers/net/wireless/iwlwifi/iwl3945-base.c:57:
+> drivers/net/wireless/iwlwifi/iwl-core.h:66:30: error: linux/utsrelease.h: No such file or directory
+> 
+> Caused by commit 250cce26d5d03337aec4ff8405121f026adb4a89 ("iwlwifi:
+> driver version track kernel version") from the net tree interacting with
+> commit 8e5c76aace9705b6983cfbf5eb2f2e869dab6738 ("kbuild: move
+> utsrelease.h to include/generated") from the kbuild tree.
+> 
+> I applied this patch for today (and will carry it as necessary):
 
-In this case I trust you, since you say you tested it and I do consider
-you a credible source :-). I did compile locally, as a santity check.
-Adding a header I consider pretty low risk.
+The right fix would be to use 'utsname()->sysname' (I think sysname
+is the right member).
 
--- 
-Jens Axboe
+Then we should also be uts namespace aware.
+
+	Sam
