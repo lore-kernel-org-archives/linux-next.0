@@ -1,50 +1,52 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for December 4 (comedi)
-Date: Sun, 6 Dec 2009 14:27:21 -0800
-Message-ID: <20091206142721.de3d8b06.randy.dunlap@oracle.com>
-References: <20091204203014.e8ee54ca.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the pci tree with Linus' tree
+Date: Mon, 7 Dec 2009 11:25:57 +1100
+Message-ID: <20091207112557.dfbe6b6e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet12.oracle.com ([141.146.126.234]:24102 "EHLO
-	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757790AbZLFXap (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 6 Dec 2009 18:30:45 -0500
-In-Reply-To: <20091204203014.e8ee54ca.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, devel@driverdev.osuosl.org
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, gregkh@suse.de
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1758431AbZLGA0B@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>, Ingo Molnar <mingo@elte.hu>, Chris Wright <chrisw@sous-sol.org>, Linus <torvalds@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, 4 Dec 2009 20:30:14 +1100 Stephen Rothwell wrote:
+Hi Jesse,
 
-> Hi all,
-> 
-> My usual call for calm: please do not put stuff destined for 2.6.34 into
-> linux-next trees until after 2.6.33-rc1.
-> 
-> Changes since 20091203:
+Today's linux-next merge of the pci tree got a conflict in
+drivers/pci/dmar.c between commit
+75f1cdf1dda92cae037ec848ae63690d91913eac ("x86: Handle HW IOMMU
+initialization failure gracefully") from Linus' tree and commit
+5d990b627537e59a3a2f039ff588a4750e9c1a6a ("PCI: add pci_request_acs")
+from the pci tree.
 
+Just context changes.  I fxied it up (see below) and can carry the fix
+for a while.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-When PCCARD=m, PCMCIA=m, PCI=n, CARDBUS=n:
-
-ERROR: "ni_tio_init_counter" [drivers/staging/comedi/drivers/ni_mio_cs.ko] undefined!
-ERROR: "ni_gpct_device_construct" [drivers/staging/comedi/drivers/ni_mio_cs.ko] undefined!
-ERROR: "ni_tio_rinsn" [drivers/staging/comedi/drivers/ni_mio_cs.ko] undefined!
-ERROR: "ni_tio_winsn" [drivers/staging/comedi/drivers/ni_mio_cs.ko] undefined!
-ERROR: "ni_tio_insn_config" [drivers/staging/comedi/drivers/ni_mio_cs.ko] undefined!
-ERROR: "ni_gpct_device_destroy" [drivers/staging/comedi/drivers/ni_mio_cs.ko] undefined!
-ERROR: "labpc_1200_is_unipolar" [drivers/staging/comedi/drivers/ni_labpc_cs.ko] undefined!
-ERROR: "labpc_1200_ai_gain_bits" [drivers/staging/comedi/drivers/ni_labpc_cs.ko] undefined!
-ERROR: "range_labpc_1200_ai" [drivers/staging/comedi/drivers/ni_labpc_cs.ko] undefined!
-ERROR: "labpc_common_detach" [drivers/staging/comedi/drivers/ni_labpc_cs.ko] undefined!
-ERROR: "labpc_common_attach" [drivers/staging/comedi/drivers/ni_labpc_cs.ko] undefined!
-ERROR: "das08_cs_boards" [drivers/staging/comedi/drivers/das08_cs.ko] undefined!
-ERROR: "das08_common_detach" [drivers/staging/comedi/drivers/das08_cs.ko] undefined!
-ERROR: "das08_common_attach" [drivers/staging/comedi/drivers/das08_cs.ko] undefined!
-
-
-
----
-~Randy
+diff --cc drivers/pci/dmar.c
+index 416f6ac,0e98f6b..0000000
+--- a/drivers/pci/dmar.c
++++ b/drivers/pci/dmar.c
+@@@ -645,13 -613,13 +645,16 @@@ void __init detect_intel_iommu(void
+  			       "x2apic and Intr-remapping.\n");
+  #endif
+  #ifdef CONFIG_DMAR
+- 		if (ret && !no_iommu && !iommu_detected && !dmar_disabled)
+ -		if (ret && !no_iommu && !iommu_detected && !swiotlb &&
+ -		    !dmar_disabled) {
+++		if (ret && !no_iommu && !iommu_detected && !dmar_disabled) {
+  			iommu_detected = 1;
++ 			/* Make sure ACS will be enabled */
++ 			pci_request_acs();
++ 		}
+  #endif
+ +#ifdef CONFIG_X86
+ +		if (ret)
+ +			x86_init.iommu.iommu_init = intel_iommu_init;
+ +#endif
+  	}
+  	early_acpi_os_unmap_memory(dmar_tbl, dmar_tbl_size);
+  	dmar_tbl = NULL;
