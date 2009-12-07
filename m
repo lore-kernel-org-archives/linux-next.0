@@ -1,60 +1,49 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: net/kbuild trees build failure
-Date: Mon, 7 Dec 2009 20:03:17 +1100
-Message-ID: <20091207200317.57820f0a.sfr@canb.auug.org.au>
+Subject: linux-next: input tree build failure
+Date: Mon, 7 Dec 2009 20:03:44 +1100
+Message-ID: <20091207200344.01323cb5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55522 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757902AbZLGJDN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 7 Dec 2009 04:03:13 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Michal Marek <mmarek@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Reinette Chatre <reinette.chatre@intel.com>, "John W. Linville" <linville@tuxdriver.com>, Sam Ravnborg <sam@ravnborg.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__7_Dec_2009_20_03_44_+1100_TT0ptRm63hu/WCLA"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1759257AbZLGJDr@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Dave,
+--Signature=_Mon__7_Dec_2009_20_03_44_+1100_TT0ptRm63hu/WCLA
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Dmitry,
 
 Today's linux-next build (powerpc allyesconfig) failed like this:
 
-In file included from drivers/net/wireless/iwlwifi/iwl3945-base.c:57:
-drivers/net/wireless/iwlwifi/iwl-core.h:66:30: error: linux/utsrelease.h: No such file or directory
+drivers/input/sparse-keymap.c:101: error: __ksymtab_sparse_keymap_setkeycod=
+e causes a section type conflict
 
-Caused by commit 250cce26d5d03337aec4ff8405121f026adb4a89 ("iwlwifi:
-driver version track kernel version") from the net tree interacting with
-commit 8e5c76aace9705b6983cfbf5eb2f2e869dab6738 ("kbuild: move
-utsrelease.h to include/generated") from the kbuild tree.
+Caused by commit a2dd9f7ceeb28f495587834aa5778c721611d61b ("Input: add
+generic support for sparse keymaps").
 
-I applied this patch for today (and will carry it as necessary):
+static functions should not given to EXPORT_SYMBOL().
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 7 Dec 2009 19:56:42 +1100
-Subject: [PATCH] net: fix for utsrelease.h moving to generated
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/net/wireless/iwlwifi/iwl-core.h |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/net/wireless/iwlwifi/iwl-core.h b/drivers/net/wireless/iwlwifi/iwl-core.h
-index 675b7df..27ca859 100644
---- a/drivers/net/wireless/iwlwifi/iwl-core.h
-+++ b/drivers/net/wireless/iwlwifi/iwl-core.h
-@@ -63,7 +63,7 @@
- #ifndef __iwl_core_h__
- #define __iwl_core_h__
- 
--#include <linux/utsrelease.h>
-+#include <generated/utsrelease.h>
- 
- /************************
-  * forward declarations *
--- 
-1.6.5.3
-
--- 
+I have reverted that commit for today.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__7_Dec_2009_20_03_44_+1100_TT0ptRm63hu/WCLA
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkscxPAACgkQjjKRsyhoI8x38gCdHnlLDc9/m2N2NYopnNBBDT6Y
+M0kAn2j8UehX5/K8aW9kCtW8cZwviL88
+=1AB5
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__7_Dec_2009_20_03_44_+1100_TT0ptRm63hu/WCLA--
