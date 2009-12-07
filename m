@@ -1,52 +1,49 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the pci tree with Linus' tree
-Date: Mon, 7 Dec 2009 11:25:57 +1100
-Message-ID: <20091207112557.dfbe6b6e.sfr@canb.auug.org.au>
+Date: Mon, 7 Dec 2009 11:25:51 +1100
+Message-ID: <20091207112551.368605d5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1758431AbZLGA0B@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:38708 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758524AbZLGAZs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 6 Dec 2009 19:25:48 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Jesse Barnes <jbarnes@virtuousgeek.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>, Ingo Molnar <mingo@elte.hu>, Chris Wright <chrisw@sous-sol.org>, Linus <torvalds@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
 
 Hi Jesse,
 
 Today's linux-next merge of the pci tree got a conflict in
-drivers/pci/dmar.c between commit
-75f1cdf1dda92cae037ec848ae63690d91913eac ("x86: Handle HW IOMMU
-initialization failure gracefully") from Linus' tree and commit
+arch/x86/kernel/amd_iommu_init.c between commit
+ea1b0d3945c7374849235b6ecaea1191ee1d9d50 ("x86: amd_iommu: Convert
+amd_iommu_detect() to use iommu_init hook") from Linus' tree and commit
 5d990b627537e59a3a2f039ff588a4750e9c1a6a ("PCI: add pci_request_acs")
 from the pci tree.
 
-Just context changes.  I fxied it up (see below) and can carry the fix
-for a while.
+I did a fixup (see below) but I have no confidence in it.  Please check.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/pci/dmar.c
-index 416f6ac,0e98f6b..0000000
---- a/drivers/pci/dmar.c
-+++ b/drivers/pci/dmar.c
-@@@ -645,13 -613,13 +645,16 @@@ void __init detect_intel_iommu(void
-  			       "x2apic and Intr-remapping.\n");
-  #endif
-  #ifdef CONFIG_DMAR
-- 		if (ret && !no_iommu && !iommu_detected && !dmar_disabled)
- -		if (ret && !no_iommu && !iommu_detected && !swiotlb &&
- -		    !dmar_disabled) {
-++		if (ret && !no_iommu && !iommu_detected && !dmar_disabled) {
-  			iommu_detected = 1;
-+ 			/* Make sure ACS will be enabled */
-+ 			pci_request_acs();
-+ 		}
-  #endif
- +#ifdef CONFIG_X86
- +		if (ret)
- +			x86_init.iommu.iommu_init = intel_iommu_init;
- +#endif
+diff --cc arch/x86/kernel/amd_iommu_init.c
+index 7ffc399,e60530a..0000000
+--- a/arch/x86/kernel/amd_iommu_init.c
++++ b/arch/x86/kernel/amd_iommu_init.c
+@@@ -1335,7 -1326,12 +1335,9 @@@ void __init amd_iommu_detect(void
+  	if (acpi_table_parse("IVRS", early_amd_iommu_detect) == 0) {
+  		iommu_detected = 1;
+  		amd_iommu_detected = 1;
+ -#ifdef CONFIG_GART_IOMMU
+ -		gart_iommu_aperture_disabled = 1;
+ -		gart_iommu_aperture = 0;
+ -#endif
+ +		x86_init.iommu.iommu_init = amd_iommu_init;
++ 		/* Make sure ACS will be enabled */
++ 		pci_request_acs();
   	}
-  	early_acpi_os_unmap_memory(dmar_tbl, dmar_tbl_size);
-  	dmar_tbl = NULL;
+  }
+  
