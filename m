@@ -1,49 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pci tree with Linus' tree
-Date: Mon, 7 Dec 2009 11:25:51 +1100
-Message-ID: <20091207112551.368605d5.sfr@canb.auug.org.au>
+Subject: linux-next: slab tree build failure
+Date: Mon, 7 Dec 2009 15:11:36 +1100
+Message-ID: <20091207151136.46c85ee4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__7_Dec_2009_15_11_36_+1100_E0N0+pGxdfoZV6fn"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38708 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:53246 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758524AbZLGAZs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 6 Dec 2009 19:25:48 -0500
+	id S933296AbZLGELk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 6 Dec 2009 23:11:40 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jesse Barnes <jbarnes@virtuousgeek.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>, Ingo Molnar <mingo@elte.hu>, Chris Wright <chrisw@sous-sol.org>, Linus <torvalds@linux-foundation.org>
+To: Pekka Enberg <penberg@cs.helsinki.fi>, Christoph Lameter <cl@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Jesse,
+--Signature=_Mon__7_Dec_2009_15_11_36_+1100_E0N0+pGxdfoZV6fn
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the pci tree got a conflict in
-arch/x86/kernel/amd_iommu_init.c between commit
-ea1b0d3945c7374849235b6ecaea1191ee1d9d50 ("x86: amd_iommu: Convert
-amd_iommu_detect() to use iommu_init hook") from Linus' tree and commit
-5d990b627537e59a3a2f039ff588a4750e9c1a6a ("PCI: add pci_request_acs")
-from the pci tree.
+Hi all,
 
-I did a fixup (see below) but I have no confidence in it.  Please check.
--- 
+Today's linux-next build (x86_64 allmodconfig) failed like this:
+
+tests/slab_test.c: In function 'test_func':
+tests/slab_test.c:176: error: implicit declaration of function 'set_cpus_al=
+lowed'
+
+Caused by commit 1c999557258d251e2e5790de4b723d5996c06d5d ("Add slab
+performance tests").
+
+set_cpus_allowed it now only defined if CONFIG_CPUMASK_OFFSTACK is not
+set.  This was changed by commit e0ad955680878998ff7dc51ce06ddad12260423a
+("cpumask: don't define set_cpus_allowed() if CONFIG_CPUMASK_OFFSTACK=3Dy")
+which entered Linus' tree before 2.6.32-rc1.
+
+I have used the version of the slab tree from next-20091204 for today.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/x86/kernel/amd_iommu_init.c
-index 7ffc399,e60530a..0000000
---- a/arch/x86/kernel/amd_iommu_init.c
-+++ b/arch/x86/kernel/amd_iommu_init.c
-@@@ -1335,7 -1326,12 +1335,9 @@@ void __init amd_iommu_detect(void
-  	if (acpi_table_parse("IVRS", early_amd_iommu_detect) == 0) {
-  		iommu_detected = 1;
-  		amd_iommu_detected = 1;
- -#ifdef CONFIG_GART_IOMMU
- -		gart_iommu_aperture_disabled = 1;
- -		gart_iommu_aperture = 0;
- -#endif
- +		x86_init.iommu.iommu_init = amd_iommu_init;
-+ 		/* Make sure ACS will be enabled */
-+ 		pci_request_acs();
-  	}
-  }
-  
+--Signature=_Mon__7_Dec_2009_15_11_36_+1100_E0N0+pGxdfoZV6fn
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkscgHgACgkQjjKRsyhoI8wUdwCcDmFSXlfgz7T/9PCFyTYYNAeM
+4GUAni5nUxJQwbvTOOmhspJk/5Ab83XM
+=KaxT
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__7_Dec_2009_15_11_36_+1100_E0N0+pGxdfoZV6fn--
