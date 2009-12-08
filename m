@@ -1,58 +1,71 @@
-From: "John W. Linville" <linville@tuxdriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: net/kbuild trees build failure
-Date: Tue, 8 Dec 2009 09:54:35 -0500
-Message-ID: <20091208145435.GE15172@tuxdriver.com>
-References: <20091207200317.57820f0a.sfr@canb.auug.org.au> <20091207114158.GA2428@merkur.ravnborg.org> <4B1CF39A.5050806@suse.cz> <20091207160903.GB18939@tuxdriver.com> <1260209537.4653.778.camel@rc-desk> <4B1D76B1.6070601@suse.cz> <20091207222853.GE18939@tuxdriver.com> <20091208053819.GA4604@merkur.ravnborg.org>
+Date: Wed, 9 Dec 2009 10:11:26 +1100
+Message-ID: <20091209101126.35bf0fd3.sfr@canb.auug.org.au>
+References: <20091207200317.57820f0a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:47257 "EHLO
-	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754829AbZLHPAK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 8 Dec 2009 10:00:10 -0500
-Content-Disposition: inline
-In-Reply-To: <20091208053819.GA4604@merkur.ravnborg.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:47070 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S935888AbZLHXLW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 8 Dec 2009 18:11:22 -0500
+In-Reply-To: <20091207200317.57820f0a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: Michal Marek <mmarek@suse.cz>, reinette chatre <reinette.chatre@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Michal Marek <mmarek@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Reinette Chatre <reinette.chatre@intel.com>, "John W. Linville" <linville@tuxdriver.com>, Sam Ravnborg <sam@ravnborg.org>
 
-On Tue, Dec 08, 2009 at 06:38:19AM +0100, Sam Ravnborg wrote:
-> On Mon, Dec 07, 2009 at 05:28:53PM -0500, John W. Linville wrote:
-> > On Mon, Dec 07, 2009 at 10:42:09PM +0100, Michal Marek wrote:
-> > > reinette chatre napsal(a):
-> > 
-> > > > Right - could we please use the solution that works at compile time? I
-> > > > used UTS_RELEASE after learning about its use in init/version.c, would
-> > > > that not make it an approved solution?
-> > > 
-> > > It seems there is some misunderstanding.
-> > 
-> > Alright, if Stephen's fix is acceptable then your suggestion is fine.
-> > Sam seemed to suggest that Stephen's fix was a stop-gap.
+Hi Michal,
+
+On Mon, 7 Dec 2009 20:03:17 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Today's linux-next build (powerpc allyesconfig) failed like this:
 > 
-> The need to use utsrelease seems very prominent in external drivers.
-> But a quick grep turned up only a single staging driver in-tree that
-> include utsrelease.
-> So whatever problem this driver solves using utsrelease it is not shared
-> with the rest of the in-tree drivers.
+> In file included from drivers/net/wireless/iwlwifi/iwl3945-base.c:57:
+> drivers/net/wireless/iwlwifi/iwl-core.h:66:30: error: linux/utsrelease.h: No such file or directory
 > 
-> So no - it is not a stop-gap. It is more a "is it really needed?".
+> Caused by commit 250cce26d5d03337aec4ff8405121f026adb4a89 ("iwlwifi:
+> driver version track kernel version") from the net tree interacting with
+> commit 8e5c76aace9705b6983cfbf5eb2f2e869dab6738 ("kbuild: move
+> utsrelease.h to include/generated") from the kbuild tree.
+> 
+> I applied this patch for today (and will carry it as necessary):
 
-What problem are you trying to solve by eliminating it?
+With the merge of the net tree into Linus' tree today, this patch (or
+something else) is needed in the kbuild tree to avoid the above build
+failure.  I have reproduced the patch below in case you want to use it.
+I will be applying it as a merge fix to the merge of the kbuild tree
+today.
 
-The iwlwifi team was trying to eliminate the nearly-useless version
-number currently used in MODULE_VERSION.  As I said, I would prefer
-to simply eliminate the MODULE_VERSION clause.  But the iwlwifi
-team likes having something there, and UTS_RELEASE seems at least as
-informative as what they had before.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 7 Dec 2009 19:56:42 +1100
+Subject: [PATCH] net: fix for utsrelease.h moving to generated
 
-So, the options are a) leave the useless version string as-is; b)
-require the version string to get bumped on every update; c) use
-UTS_RELEASE as a version string; or d) forcibly remove MODULE_VERSION
-from the iwlwifi drivers.  Which would you advocate?
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/net/wireless/iwlwifi/iwl-core.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-John
+diff --git a/drivers/net/wireless/iwlwifi/iwl-core.h b/drivers/net/wireless/iwlwifi/iwl-core.h
+index 675b7df..27ca859 100644
+--- a/drivers/net/wireless/iwlwifi/iwl-core.h
++++ b/drivers/net/wireless/iwlwifi/iwl-core.h
+@@ -63,7 +63,7 @@
+ #ifndef __iwl_core_h__
+ #define __iwl_core_h__
+ 
+-#include <linux/utsrelease.h>
++#include <generated/utsrelease.h>
+ 
+ /************************
+  * forward declarations *
 -- 
-John W. Linville		Someday the world will need a hero, and you
-linville@tuxdriver.com			might be all we have.  Be ready.
+1.6.5.3
+
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
