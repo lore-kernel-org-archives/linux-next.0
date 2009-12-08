@@ -1,38 +1,52 @@
-From: Ben Dooks <ben@trinity.fluff.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: manual merge of the samsung tree
-Date: Tue, 8 Dec 2009 01:34:30 +0000
-Message-ID: <20091208013430.GH23152@trinity.fluff.org>
+Date: Tue, 8 Dec 2009 13:46:25 +1100
+Message-ID: <20091208134625.baef9cd7.sfr@canb.auug.org.au>
 References: <20091208111722.2e8d9527.sfr@canb.auug.org.au>
+	<20091208013430.GH23152@trinity.fluff.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__8_Dec_2009_13_46_25_+1100_HU3t09I61K+gRLKs"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:49404 "EHLO trinity.fluff.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:44541 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S935163AbZLHBeZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 7 Dec 2009 20:34:25 -0500
-Content-Disposition: inline
-In-Reply-To: <20091208111722.2e8d9527.sfr@canb.auug.org.au>
+	id S965404AbZLHCq0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 7 Dec 2009 21:46:26 -0500
+In-Reply-To: <20091208013430.GH23152@trinity.fluff.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Ben Dooks <ben@trinity.fluff.org>
 Cc: Ben Dooks <ben-linux@fluff.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Dec 08, 2009 at 11:17:22AM +1100, Stephen Rothwell wrote:
-> Hi Ben,
-> 
-> In today's linux-next merge of the samsung tree I noticed that the file
-> arch/arm/plat-s3c/dev-hsmmc2.c actually has some merge conflict artifacts
-> in it.
-> 
-> I fixed them up (just by using the version from the arm tree) but it
-> would be good if this could be fixed in your tree as well (I notice that
-> Russell has already merged a (presumable) correct version of these files).
+--Signature=_Tue__8_Dec_2009_13_46_25_+1100_HU3t09I61K+gRLKs
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I belive so, I've updated next-samsung from my for-rmk tree and added the
-rebased new trees to it which should fix it.
+Hi Ben,
 
--- 
-Ben
+On Tue, 8 Dec 2009 01:34:30 +0000 Ben Dooks <ben@trinity.fluff.org> wrote:
+>
+> I belive so, I've updated next-samsung from my for-rmk tree and added the
+> rebased new trees to it which should fix it.
 
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
+Thanks.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__8_Dec_2009_13_46_25_+1100_HU3t09I61K+gRLKs
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAksdvgEACgkQjjKRsyhoI8zyCACeONsaTLk70V1X9nyC1KJHae2G
+v7MAnR4GT8RFn7SrqpRDYhOkMpgXbLqN
+=hxDq
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__8_Dec_2009_13_46_25_+1100_HU3t09I61K+gRLKs--
