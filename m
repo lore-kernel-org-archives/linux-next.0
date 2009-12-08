@@ -1,49 +1,48 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: linux-next: percpu/tip tree build failure
-Date: Tue, 8 Dec 2009 09:05:11 +0100
-Message-ID: <20091208080509.GD4989@nowhere>
-References: <20091208182515.bb6dda4a.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: hwpoison tree build failure
+Date: Tue, 8 Dec 2009 19:14:18 +1100
+Message-ID: <20091208191418.79270012.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756338AbZLHIFQ@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__8_Dec_2009_19_14_18_+1100_vLQBTig6._DhNGnh"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:48015 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752364AbZLHIOR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 8 Dec 2009 03:14:17 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andi Kleen <andi@firstfloor.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+
+--Signature=_Tue__8_Dec_2009_19_14_18_+1100_vLQBTig6._DhNGnh
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20091208182515.bb6dda4a.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 08, 2009 at 06:25:15PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
-> 
-> kernel/hw_breakpoint.c:86: error: 'task_bp_pinned' redeclared as different kind of symbol
-> kernel/hw_breakpoint.c:55: note: previous declaration of 'task_bp_pinned' was here
-> kernel/hw_breakpoint.c: In function 'toggle_bp_task_slot':
-> kernel/hw_breakpoint.c:165: warning: assignment from incompatible pointer type
-> 
-> Caused by commit dd17c8f72993f9461e9c19250e3f155d6d99df22 ("percpu:
-> remove per_cpu__ prefix") from the percpu tree interacting with commit
-> 56053170ea2a2c0dc17420e9b94aa3ca51d80408 ("hw-breakpoints: Fix task-bound
-> breakpoint slot allocation") from the tip tree.
-> 
-> I have applied the following patch for today (and can carry it as
-> necessary:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 8 Dec 2009 18:19:48 +1100
-> Subject: [PATCH] percpu: make per_cpu variable name unique in hw_breakpoint.c
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Hi Andi,
 
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-Doh!
+ERROR: "set_migratetype_isolate" [mm/hwpoison-inject.ko] undefined!
+ERROR: "unset_migratetype_isolate" [mm/hwpoison-inject.ko] undefined!
 
-Thanks Stephen.
+I have used the version from next-20091207 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Ingo, can you queue up this patch?
+--Signature=_Tue__8_Dec_2009_19_14_18_+1100_vLQBTig6._DhNGnh
+Content-Type: application/pgp-signature
 
-Thanks.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-Acked-by: Frederic Weisbecker <fweisbec@gmail.com>
+iEYEARECAAYFAkseCtoACgkQjjKRsyhoI8yEzACeM7Myq3ewL1pf0bEzrkef0EQE
+wM4AnREZC4TlDkd30hMwU5NizBntZfSl
+=Luf0
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__8_Dec_2009_19_14_18_+1100_vLQBTig6._DhNGnh--
