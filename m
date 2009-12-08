@@ -1,51 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: slab tree build failure
-Date: Tue, 8 Dec 2009 14:44:11 +1100
-Message-ID: <20091208144411.15a472d5.sfr@canb.auug.org.au>
+From: Sam Ravnborg <sam@ravnborg.org>
+Subject: Re: linux-next: net/kbuild trees build failure
+Date: Tue, 8 Dec 2009 06:38:19 +0100
+Message-ID: <20091208053819.GA4604@merkur.ravnborg.org>
+References: <20091207200317.57820f0a.sfr@canb.auug.org.au> <20091207114158.GA2428@merkur.ravnborg.org> <4B1CF39A.5050806@suse.cz> <20091207160903.GB18939@tuxdriver.com> <1260209537.4653.778.camel@rc-desk> <4B1D76B1.6070601@suse.cz> <20091207222853.GE18939@tuxdriver.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__8_Dec_2009_14_44_11_+1100_lAn_wZpsxlT4P2iK"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48386 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932282AbZLHDoL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 7 Dec 2009 22:44:11 -0500
+Received: from pfepa.post.tele.dk ([195.41.46.235]:53314 "EHLO
+	pfepa.post.tele.dk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752328AbZLHFiP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 8 Dec 2009 00:38:15 -0500
+Content-Disposition: inline
+In-Reply-To: <20091207222853.GE18939@tuxdriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Pekka Enberg <penberg@cs.helsinki.fi>, Christoph Lameter <cl@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: Michal Marek <mmarek@suse.cz>, reinette chatre <reinette.chatre@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
---Signature=_Tue__8_Dec_2009_14_44_11_+1100_lAn_wZpsxlT4P2iK
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Dec 07, 2009 at 05:28:53PM -0500, John W. Linville wrote:
+> On Mon, Dec 07, 2009 at 10:42:09PM +0100, Michal Marek wrote:
+> > reinette chatre napsal(a):
+> 
+> > > Right - could we please use the solution that works at compile time? I
+> > > used UTS_RELEASE after learning about its use in init/version.c, would
+> > > that not make it an approved solution?
+> > 
+> > It seems there is some misunderstanding.
+> 
+> Alright, if Stephen's fix is acceptable then your suggestion is fine.
+> Sam seemed to suggest that Stephen's fix was a stop-gap.
 
-Hi all,
+The need to use utsrelease seems very prominent in external drivers.
+But a quick grep turned up only a single staging driver in-tree that
+include utsrelease.
+So whatever problem this driver solves using utsrelease it is not shared
+with the rest of the in-tree drivers.
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+So no - it is not a stop-gap. It is more a "is it really needed?".
 
-scripts/Makefile.headersinst:15: include/tests/Kbuild: No such file or dire=
-ctory
-
-Caused by commit 1c999557258d251e2e5790de4b723d5996c06d5d ("Add slab
-performance tests").
-
-I have used the slab tree from next-20091204 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__8_Dec_2009_14_44_11_+1100_lAn_wZpsxlT4P2iK
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAksdy4sACgkQjjKRsyhoI8ylOwCfX/y9jXoJ9dLx1fRfyCnwdkXg
-wK8AoIxmI9+ta2PGVaXVNCOb0CXrRjHc
-=CuF0
------END PGP SIGNATURE-----
-
---Signature=_Tue__8_Dec_2009_14_44_11_+1100_lAn_wZpsxlT4P2iK--
+	Sam
