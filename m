@@ -1,48 +1,49 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with Linus' tree
-Date: Wed, 9 Dec 2009 15:06:27 +1100
-Message-ID: <20091209150627.e501174a.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tty tree with the trivial tree
+Date: Wed, 9 Dec 2009 16:28:26 +1100
+Message-ID: <20091209162826.a28c6c68.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__9_Dec_2009_15_06_27_+1100_1_eh5FQB_TlX281m"
+ boundary="Signature=_Wed__9_Dec_2009_16_28_26_+1100__k/li5H_iCbfE4Aw"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48936 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:59275 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755771AbZLIEGa (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 8 Dec 2009 23:06:30 -0500
+	id S1751311AbZLIF20 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 9 Dec 2009 00:28:26 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>, Jiri Kosina <jkosina@suse.cz>
 
---Signature=_Wed__9_Dec_2009_15_06_27_+1100_1_eh5FQB_TlX281m
+--Signature=_Wed__9_Dec_2009_16_28_26_+1100__k/li5H_iCbfE4Aw
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Greg,
 
-Today's linux-next merge of the tip tree got conflicts in
-arch/x86/include/asm/x86_init.h and arch/x86/kernel/x86_init.c between a
-merge in Linus' tree and a merge in the tip tree.
+Today's linux-next merge of the tty tree got a conflict in drivers/mmc/card=
+/sdio_uart.c between commit 1e04b7ae709d19d5c9f69c64e1e30253018ce102 ("sdio=
+_uart: coding style fixes") from the trivial tree and various commits from =
+the tty tree.
 
-Two fields of a structure just ended up in a different order after the
-two merges.  I used the version from Linus' tree.
+I just used the tty tree version where they clashed.  Jiri, you might
+consider sending that patch to Greg for the tty tree.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__9_Dec_2009_15_06_27_+1100_1_eh5FQB_TlX281m
+--Signature=_Wed__9_Dec_2009_16_28_26_+1100__k/li5H_iCbfE4Aw
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAksfIkMACgkQjjKRsyhoI8yPOACeOr6Jv2WDdi1ZZ7rgGTW2o9a3
-ppUAniMab64+KqoT8Grdijd42GBX8PsB
-=qup8
+iEYEARECAAYFAksfNXoACgkQjjKRsyhoI8zVKgCgtKksQ5+onFt2aguUnhjpdqpq
+qrEAnimgpwSS5AUAEGyyDyyePaG6tODq
+=XjsJ
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__9_Dec_2009_15_06_27_+1100_1_eh5FQB_TlX281m--
+--Signature=_Wed__9_Dec_2009_16_28_26_+1100__k/li5H_iCbfE4Aw--
