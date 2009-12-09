@@ -1,40 +1,42 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: linux-next: staging tree build failure
-Date: Wed, 9 Dec 2009 10:29:22 -0500 (EST)
-Message-ID: <Pine.LNX.4.44L0.0912091026210.4120-100000@iolanthe.rowland.org>
-References: <20091209165646.41b9ce8a.sfr@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for December 9 (hwpoison)
+Date: Wed, 9 Dec 2009 09:09:21 -0800
+Message-ID: <20091209090921.a3293706.rdunlap@xenotime.net>
+References: <20091209174738.3b8c28a6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from iolanthe.rowland.org ([192.131.102.54]:41460 "HELO
-	iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1753571AbZLIP3P (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 9 Dec 2009 10:29:15 -0500
-In-Reply-To: <20091209165646.41b9ce8a.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, "David S. Miller" <davem@davemloft.net>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, Kernel development list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20091209174738.3b8c28a6.sfr@canb.auug.org.au>
+Sender: owner-linux-mm@kvack.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Andi Kleen <andi@firstfloor.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 9 Dec 2009, Stephen Rothwell wrote:
+On Wed, 9 Dec 2009 17:47:38 +1100 Stephen Rothwell wrote:
 
-> Hi Greg,
+> Hi all,
 > 
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
+> My usual call for calm: please do not put stuff destined for 2.6.34 into
+> linux-next trees until after 2.6.33-rc1.
 > 
-> drivers/net/usb/kaweth.c: In function 'kaweth_open':
-> drivers/net/usb/kaweth.c:719: error: implicit declaration of function 'usb_autopm_enable'
+> Changes since 20091208:
 > 
-> Caused by commit b3f937e6ddf3e60ed9b4c26349b7b171dffdd010 ("USB: prepare
-> for changover to Runtime PM framework").
 > 
-> I have reverted that commit for today.
+> The hwpoison tree lost its build failure.
 
-This should have been okay because of Oliver's patch:
 
-	http://marc.info/?l=linux-netdev&m=125071045301270&w=2
+CONFIG_PROC_PAGE_MONITOR is not enabled:
 
-which removed the offending reference.  Hasn't it been merged yet?  
-It was submitted back in August.
 
-Alan Stern
+mm/built-in.o: In function `hwpoison_filter':
+(.text+0x43cce): undefined reference to `stable_page_flags'
+
+---
+~Randy
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
