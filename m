@@ -1,43 +1,62 @@
-From: Jiri Kosina <jkosina@suse.cz>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: manual merge of the tty tree with the trivial tree
-Date: Wed, 9 Dec 2009 15:38:19 +0100 (CET)
-Message-ID: <alpine.LNX.2.00.0912091536230.3755@pobox.suse.cz>
+Date: Thu, 10 Dec 2009 02:11:00 +1100
+Message-ID: <20091210021100.b606b224.sfr@canb.auug.org.au>
 References: <20091209162826.a28c6c68.sfr@canb.auug.org.au>
+	<alpine.LNX.2.00.0912091536230.3755@pobox.suse.cz>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__10_Dec_2009_02_11_00_+1100_5QTr2fKH/oaeGSYe"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:59140 "EHLO mx2.suse.de"
+Received: from chilli.pcug.org.au ([203.10.76.44]:40976 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750924AbZLIOiO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 9 Dec 2009 09:38:14 -0500
-In-Reply-To: <20091209162826.a28c6c68.sfr@canb.auug.org.au>
+	id S1752869AbZLIPLA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 9 Dec 2009 10:11:00 -0500
+In-Reply-To: <alpine.LNX.2.00.0912091536230.3755@pobox.suse.cz>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jiri Kosina <jkosina@suse.cz>
 Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>
 
-On Wed, 9 Dec 2009, Stephen Rothwell wrote:
+--Signature=_Thu__10_Dec_2009_02_11_00_+1100_5QTr2fKH/oaeGSYe
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Greg,
-> 
-> Today's linux-next merge of the tty tree got a conflict in 
-> drivers/mmc/card/sdio_uart.c between commit 
-> 1e04b7ae709d19d5c9f69c64e1e30253018ce102 ("sdio_uart: coding style 
-> fixes") from the trivial tree and various commits from the tty tree.
-> 
-> I just used the tty tree version where they clashed.  Jiri, you might
-> consider sending that patch to Greg for the tty tree.
+Hi Jiri,
 
-Hi,
+On Wed, 9 Dec 2009 15:38:19 +0100 (CET) Jiri Kosina <jkosina@suse.cz> wrote:
+>
+> On Wed, 9 Dec 2009, Stephen Rothwell wrote:
+>=20
+> > I just used the tty tree version where they clashed.  Jiri, you might
+> > consider sending that patch to Greg for the tty tree.
+>=20
+> the trivial tree pull request has already been sent to Linus a day ago. I=
+=20
+> am now waiting whether it will be merged or missed.
+>=20
+> In the latter case, I will split the tty hunk out and send to Greg. In th=
+e=20
+> former case the conflict would have to be solved either by Greg or Linus.
 
-the trivial tree pull request has already been sent to Linus a day ago. I 
-am now waiting whether it will be merged or missed.
+OK, that's fine, thanks.
 
-In the latter case, I will split the tty hunk out and send to Greg. In the 
-former case the conflict would have to be solved either by Greg or Linus.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Thanks,
+--Signature=_Thu__10_Dec_2009_02_11_00_+1100_5QTr2fKH/oaeGSYe
+Content-Type: application/pgp-signature
 
--- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAksfvgQACgkQjjKRsyhoI8z5iwCeLSa7JO+y9xvws7q2gcjRTj4m
+XoAAn2k2of/8E+Y9ol5ALVlRBJ0jJ/R5
+=qkMl
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__10_Dec_2009_02_11_00_+1100_5QTr2fKH/oaeGSYe--
