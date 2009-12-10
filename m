@@ -1,41 +1,56 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: linux-next: manual merge of the trivial tree with the net-current
- tree
-Date: Thu, 10 Dec 2009 09:45:27 +0100 (CET)
-Message-ID: <alpine.LNX.2.00.0912100944250.3755@pobox.suse.cz>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the trivial tree with the
+ net-current tree
+Date: Thu, 10 Dec 2009 22:14:06 +1100
+Message-ID: <20091210221406.94b1aaaf.sfr@canb.auug.org.au>
 References: <20091210143756.5a236829.sfr@canb.auug.org.au>
+	<alpine.LNX.2.00.0912100944250.3755@pobox.suse.cz>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20091210143756.5a236829.sfr@canb.auug.org.au>
-Sender: netdev-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Damian Lukowski <damian@tvk.rwth-aachen.de>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, =?ISO-8859-15?Q?=22Andr=E9_Goddard_Rosa=22?= <andre.goddard@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__10_Dec_2009_22_14_06_+1100_aa/OD=8Gh/EFXwcZ"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:60960 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1760597AbZLJLON (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 10 Dec 2009 06:14:13 -0500
+In-Reply-To: <alpine.LNX.2.00.0912100944250.3755@pobox.suse.cz>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Damian Lukowski <damian@tvk.rwth-aachen.de>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, =?UTF-8?B?IkFuZHLDqSBHb2RkYXJkIFJvc2Ei?= <andre.goddard@gmail.com>
 
-On Thu, 10 Dec 2009, Stephen Rothwell wrote:
+--Signature=_Thu__10_Dec_2009_22_14_06_+1100_aa/OD=8Gh/EFXwcZ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Jiri,
-> 
-> Today's linux-next merge of the trivial tree got a conflict in
-> include/net/tcp.h between commit 2f7de5710a4d394920405febc2a9937c69e16dda
-> ("tcp: Stalling connections: Move timeout calculation routine") from the
-> net-current tree and commit af901ca181d92aac3a7dc265144a9081a86d8f39
-> ("tree-wide: fix assorted typos all over the place") from the trivial
-> tree.
-> 
-> The former moves the comment that the latter corrects to
-> net/ipv4/tcp_timer.c.  I just used the net-current version and didn't
-> bother fixing it up in its new location.
+Hi Jiri,
 
-Hi,
+On Thu, 10 Dec 2009 09:45:27 +0100 (CET) Jiri Kosina <jkosina@suse.cz> wrot=
+e:
+>
+> Linus has merged trivial tree into his tree tonight, so I am afraid that=
+=20
+> davem will have to fix the conflict when pulling Linus tree into=20
+> net-current.
 
-Linus has merged trivial tree into his tree tonight, so I am afraid that 
-davem will have to fix the conflict when pulling Linus tree into 
-net-current.
+Yep, or Linus can fix it if he feels inclined.
 
-Thanks,
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
--- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+--Signature=_Thu__10_Dec_2009_22_14_06_+1100_aa/OD=8Gh/EFXwcZ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAksg1/4ACgkQjjKRsyhoI8wfFwCggHUB4DJz1fs4IfT2PBSjFHu7
+2soAoIqdZ4I2NAMpJ6R1S+KHx4ZgoEki
+=S8hO
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__10_Dec_2009_22_14_06_+1100_aa/OD=8Gh/EFXwcZ--
