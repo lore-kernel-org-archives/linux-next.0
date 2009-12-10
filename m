@@ -1,76 +1,48 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: origin tree build failure
-Date: Thu, 10 Dec 2009 10:57:03 +1100
-Message-ID: <20091210105703.3e62245d.sfr@canb.auug.org.au>
+Subject: linux-next: ext4 tree build failure
+Date: Thu, 10 Dec 2009 11:38:12 +1100
+Message-ID: <20091210113812.9d1e4bb4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__10_Dec_2009_11_38_12_+1100_UDIMOzHHzEZZQjsG"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35668 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:53281 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758706AbZLIX46 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 9 Dec 2009 18:56:58 -0500
+	id S1756418AbZLJAiN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 9 Dec 2009 19:38:13 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Frederic Weisbecker <fweisbec@gmail.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>
 
-Hi all,
+--Signature=_Thu__10_Dec_2009_11_38_12_+1100_UDIMOzHHzEZZQjsG
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Ted,
 
 Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-drivers/char/nvram.c: In function 'nvram_open':
-drivers/char/nvram.c:332: error: implicit declaration of function 'lock_kernel'
-drivers/char/nvram.c:339: error: implicit declaration of function 'unlock_kernel'
+ERROR: "jbd2_log_start_commit" [fs/ext4/ext4.ko] undefined!
 
-Caused by commit 9e8ab74ddaa591575f599248080a1f0d917a56ee ("nvram: Drop
-the bkl from non-generic nvram_llseek()").
-
-I do wonder why I never saw this commit in linux-next ...
-
-I have added this the patch you posted to lkml:
-
-From: Frederic Weisbecker <fweisbec@gmail.com>
-Date: Wed, 9 Dec 2009 18:31:53 +0100
-Subject: [PATCH] nvram: Fix missing smp_lock.h in nvram
-
-The bkl has been removed from nvram_llseek() and smp_lock.h was
-removed because another patch in the same tree zapped the remaining
-usage of bkl in the same file. But this patch must have been excluded
-later, then we still need the smp_lock.h headers for the bkl use
-in nvram_open().
-
-This fixes the following build error:
-
-drivers/char/nvram.c: In function _nvram_open_:
-drivers/char/nvram.c:332: erreur: implicit declaration of function _lock_kernel_
-drivers/char/nvram.c:339: erreur: implicit declaration of function
-_unlock_kernel_
-make[2]: *** [drivers/char/nvram.o] Erreur 1
-make[1]: *** [drivers/char] Erreur 2
-make: *** [drivers] Erreur 2
-
-Signed-off-by: Frederic Weisbecker <fweisbec@gmail.com>
----
- drivers/char/nvram.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/char/nvram.c b/drivers/char/nvram.c
-index 2100a8f..4008e2c 100644
---- a/drivers/char/nvram.c
-+++ b/drivers/char/nvram.c
-@@ -110,6 +110,7 @@
- #include <linux/spinlock.h>
- #include <linux/io.h>
- #include <linux/uaccess.h>
-+#include <linux/smp_lock.h>
-
- #include <asm/system.h>
-
--- 
-1.6.2.3
-
--- 
+Caused by commit b436b9bef84de6893e86346d8fbf7104bc520645 ("ext4: Wait
+for proper transaction commit on fsync") which I have reverted for today.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__10_Dec_2009_11_38_12_+1100_UDIMOzHHzEZZQjsG
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAksgQvQACgkQjjKRsyhoI8wDCgCgnEnwYs8D/RIBMiFc9mIQI0zu
+TegAoJUfEF8xqtGgPIQ4X9G7pjE/S/2z
+=lqlF
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__10_Dec_2009_11_38_12_+1100_UDIMOzHHzEZZQjsG--
