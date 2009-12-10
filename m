@@ -1,51 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: ext4 tree build failure
-Date: Thu, 10 Dec 2009 13:33:54 +1100
-Message-ID: <20091210133354.65cc931c.sfr@canb.auug.org.au>
-References: <20091210113812.9d1e4bb4.sfr@canb.auug.org.au>
-	<20091210021040.GB4735@thunk.org>
+Subject: linux-next: manual merge of the trivial tree with the net-current
+ tree
+Date: Thu, 10 Dec 2009 14:37:56 +1100
+Message-ID: <20091210143756.5a236829.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__10_Dec_2009_13_33_54_+1100_TCjg=kJh.PH8_3xk"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35082 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757077AbZLJCdy (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 9 Dec 2009 21:33:54 -0500
-In-Reply-To: <20091210021040.GB4735@thunk.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: tytso@mit.edu
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>
+ boundary="Signature=_Thu__10_Dec_2009_14_37_56_+1100_CMTkHqMk8yQZ9WnF"
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Damian Lukowski <damian@tvk.rwth-aachen.de>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, =?UTF-8?B?IkFuZHLDqSBHb2RkYXJkIFJvc2Ei?= <andre.goddard@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__10_Dec_2009_13_33_54_+1100_TCjg=kJh.PH8_3xk
+--Signature=_Thu__10_Dec_2009_14_37_56_+1100_CMTkHqMk8yQZ9WnF
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ted,
+Hi Jiri,
 
-On Wed, 9 Dec 2009 21:10:40 -0500 tytso@mit.edu wrote:
->
-> Thanks for pointing this out.  I've fixed this for tomorrow's build.
+Today's linux-next merge of the trivial tree got a conflict in
+include/net/tcp.h between commit 2f7de5710a4d394920405febc2a9937c69e16dda
+("tcp: Stalling connections: Move timeout calculation routine") from the
+net-current tree and commit af901ca181d92aac3a7dc265144a9081a86d8f39
+("tree-wide: fix assorted typos all over the place") from the trivial
+tree.
 
-Thanks.
+The former moves the comment that the latter corrects to
+net/ipv4/tcp_timer.c.  I just used the net-current version and didn't
+bother fixing it up in its new location.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__10_Dec_2009_13_33_54_+1100_TCjg=kJh.PH8_3xk
+--Signature=_Thu__10_Dec_2009_14_37_56_+1100_CMTkHqMk8yQZ9WnF
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAksgXhIACgkQjjKRsyhoI8zfcACfdCcmi9xnDtO4gkAiqv55YlcQ
-PW8AnR9LYgWpODS1jju5vwy15YnL/F01
-=uBhD
+iEYEARECAAYFAksgbRQACgkQjjKRsyhoI8yG7ACfceolhrv9JxlGbpgdrIBMiKqv
+ZhkAn3nlKsXyEQrIHIt7IkhpQ3E0cFph
+=fvjq
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__10_Dec_2009_13_33_54_+1100_TCjg=kJh.PH8_3xk--
+--Signature=_Thu__10_Dec_2009_14_37_56_+1100_CMTkHqMk8yQZ9WnF--
