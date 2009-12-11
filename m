@@ -1,17 +1,21 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for December 11 (media/dvb/frontends)
-Date: Fri, 11 Dec 2009 09:36:37 -0800
-Message-ID: <20091211093637.be0b6584.randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for December 11 (x86/mm/mmio-mod)
+Date: Fri, 11 Dec 2009 09:37:55 -0800
+Message-ID: <20091211093755.5d7a273c.randy.dunlap@oracle.com>
 References: <20091211160151.6b71078e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1758206AbZLKRhB@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet12.oracle.com ([148.87.113.124]:41496 "EHLO
+	rcsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755919AbZLKRiU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 11 Dec 2009 12:38:20 -0500
 In-Reply-To: <20091211160151.6b71078e.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-media@vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
 
 On Fri, 11 Dec 2009 16:01:51 +1100 Stephen Rothwell wrote:
 
@@ -23,25 +27,22 @@ On Fri, 11 Dec 2009 16:01:51 +1100 Stephen Rothwell wrote:
 > Changes since 20091210:
 
 
-drivers/media/dvb/frontends/dib0090.h:103: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'frontend_tune_state'
-
-static inline num frontend_tune_state dib0090_get_tune_state(struct dvb_frontend *fe)
-
-s/num/enum/
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-drivers/media/dvb/frontends/dib8000.h:104: error: expected expression before '}' token
-drivers/media/dvb/frontends/dib8000.h:104: warning: left-hand operand of comma expression has no effect
-
-    return CT_SHUTDOWN,
-
-s/,/;/
-and use tab to indent.
+arch/x86/mm/mmio-mod.c:100: warning: too many arguments for format
+arch/x86/mm/mmio-mod.c:106: warning: too many arguments for format
+arch/x86/mm/mmio-mod.c:110: warning: too many arguments for format
+arch/x86/mm/mmio-mod.c:123: warning: too many arguments for format
+arch/x86/mm/mmio-mod.c:129: warning: too many arguments for format
+arch/x86/mm/mmio-mod.c:131: warning: too many arguments for format
+arch/x86/mm/mmio-mod.c:286: warning: too many arguments for format
+arch/x86/mm/mmio-mod.c:305: warning: too many arguments for format
+arch/x86/mm/mmio-mod.c:367: warning: too many arguments for format
+arch/x86/mm/mmio-mod.c:404: warning: too many arguments for format
+arch/x86/mm/mmio-mod.c:406: warning: too many arguments for format
+arch/x86/mm/mmio-mod.c:426: warning: too many arguments for format
+arch/x86/mm/mmio-mod.c:428: warning: too many arguments for format
 
 
-
-someone built/tested these??
+on both i386 and x86_64
 
 ---
 ~Randy
