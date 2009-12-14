@@ -1,55 +1,38 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH] staging/vt66*: kconfig, depends on WLAN
-Date: Mon, 14 Dec 2009 08:44:46 -0800
-Message-ID: <20091214084446.8346f39c.randy.dunlap@oracle.com>
+Subject: [PATCH -next] radio/si470x: #include <sched.h>
+Date: Mon, 14 Dec 2009 09:08:13 -0800
+Message-ID: <20091214090813.a9e3d77f.randy.dunlap@oracle.com>
 References: <20091214165927.c08c4784.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet12.oracle.com ([141.146.126.234]:29620 "EHLO
-	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756613AbZLNQow (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 14 Dec 2009 11:44:52 -0500
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1758025AbZLNRJI@vger.kernel.org>
 In-Reply-To: <20091214165927.c08c4784.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-media@vger.kernel.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>
+List-Id: linux-next.vger.kernel.org
 
 From: Randy Dunlap <randy.dunlap@oracle.com>
 
-The vt665[56] drivers can be built when CONFIG_NET=n &
-CONFIG_NETDEVICES=n or just when CONFIG_WLAN=n.
-This leads to build failures.
-Prevent this by making them depend on WLAN.
+Driver needs to #include <sched.h>:
 
-[This patch was lost in a dualing trees merge;
-still needs to be re-applied.]
+drivers/media/radio/si470x/radio-si470x-common.c:452: error: 'TASK_INTERRUPTIBLE' undeclared (first use in this function)
+drivers/media/radio/si470x/radio-si470x-common.c:452: error: implicit declaration of function 'signal_pending'
+drivers/media/radio/si470x/radio-si470x-common.c:452: error: implicit declaration of function 'schedule'
 
 Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 ---
- drivers/staging/vt6655/Kconfig |    2 +-
- drivers/staging/vt6656/Kconfig |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/radio/si470x/radio-si470x.h |    1 +
+ 1 file changed, 1 insertion(+)
 
---- linux-next-20091204.orig/drivers/staging/vt6655/Kconfig
-+++ linux-next-20091204/drivers/staging/vt6655/Kconfig
-@@ -1,6 +1,6 @@
- config VT6655
-    tristate "VIA Technologies VT6655 support"
--   depends on PCI
-+   depends on PCI && WLAN
-    select WIRELESS_EXT
-    select WEXT_PRIV
-    ---help---
---- linux-next-20091204.orig/drivers/staging/vt6656/Kconfig
-+++ linux-next-20091204/drivers/staging/vt6656/Kconfig
-@@ -1,6 +1,6 @@
- config VT6656
- 	tristate "VIA Technologies VT6656 support"
--	depends on USB
-+	depends on USB && WLAN
- 	select WIRELESS_EXT
- 	select WEXT_PRIV
- 	---help---
+--- linux-next-20091214.orig/drivers/media/radio/si470x/radio-si470x.h
++++ linux-next-20091214/drivers/media/radio/si470x/radio-si470x.h
+@@ -29,6 +29,7 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/init.h>
++#include <linux/sched.h>
+ #include <linux/slab.h>
+ #include <linux/smp_lock.h>
+ #include <linux/input.h>
