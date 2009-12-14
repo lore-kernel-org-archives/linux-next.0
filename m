@@ -1,78 +1,111 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: manual merge of the md-current tree with Linus' tree
-Date: Mon, 14 Dec 2009 11:27:26 +0100
-Message-ID: <200912141127.27019.arnd@arndb.de>
-References: <20091214102428.f50557a0.sfr@canb.auug.org.au>
+From: Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [Next] CPU Hotplug test failures on powerpc
+Date: Mon, 14 Dec 2009 13:19:42 +0100
+Message-ID: <1260793182.4165.223.camel@twins>
+References: <4B2224C7.1020908@in.ibm.com> <1260786122.4165.142.camel@twins>
+	 <4B261D7A.9040802@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1757114AbZLNMJc@vger.kernel.org>
-In-Reply-To: <20091214102428.f50557a0.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Neil Brown <neilb@suse.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from casper.infradead.org ([85.118.1.10]:50794 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757222AbZLNMVe convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 14 Dec 2009 07:21:34 -0500
+In-Reply-To: <4B261D7A.9040802@in.ibm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Sachin Sant <sachinp@in.ibm.com>
+Cc: Linux/PPC Development <linuxppc-dev@ozlabs.org>, linux-kernel <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-On Monday 14 December 2009, Stephen Rothwell wrote:
-> index 278020d,ad485ba..0000000
-> --- a/fs/compat_ioctl.c
-> +++ b/fs/compat_ioctl.c
-> @@@ -979,29 -1912,22 +979,11 @@@ COMPATIBLE_IOCTL(FIGETBSZ
->   /* 'X' - originally XFS but some now in the VFS */
->   COMPATIBLE_IOCTL(FIFREEZE)
->   COMPATIBLE_IOCTL(FITHAW)
-> - /* RAID */
-> - COMPATIBLE_IOCTL(RAID_VERSION)
-> - COMPATIBLE_IOCTL(GET_ARRAY_INFO)
-> - COMPATIBLE_IOCTL(GET_DISK_INFO)
-> - COMPATIBLE_IOCTL(PRINT_RAID_DEBUG)
-> - COMPATIBLE_IOCTL(RAID_AUTORUN)
-> - COMPATIBLE_IOCTL(CLEAR_ARRAY)
-> - COMPATIBLE_IOCTL(ADD_NEW_DISK)
-> - COMPATIBLE_IOCTL(SET_ARRAY_INFO)
-> - COMPATIBLE_IOCTL(SET_DISK_INFO)
-> - COMPATIBLE_IOCTL(WRITE_RAID_INFO)
-> - COMPATIBLE_IOCTL(UNPROTECT_ARRAY)
-> - COMPATIBLE_IOCTL(PROTECT_ARRAY)
-> - COMPATIBLE_IOCTL(RUN_ARRAY)
-> - COMPATIBLE_IOCTL(STOP_ARRAY)
-> - COMPATIBLE_IOCTL(STOP_ARRAY_RO)
-> - COMPATIBLE_IOCTL(RESTART_ARRAY_RW)
-> - COMPATIBLE_IOCTL(GET_BITMAP_FILE)
->  -/* Big K */
->  -COMPATIBLE_IOCTL(PIO_FONT)
->  -COMPATIBLE_IOCTL(GIO_FONT)
->  -COMPATIBLE_IOCTL(PIO_CMAP)
->  -COMPATIBLE_IOCTL(GIO_CMAP)
->  -ULONG_IOCTL(KDSIGACCEPT)
->   COMPATIBLE_IOCTL(KDGETKEYCODE)
->   COMPATIBLE_IOCTL(KDSETKEYCODE)
->  -ULONG_IOCTL(KIOCSOUND)
->  -ULONG_IOCTL(KDMKTONE)
->   COMPATIBLE_IOCTL(KDGKBTYPE)
->  -ULONG_IOCTL(KDSETMODE)
->   COMPATIBLE_IOCTL(KDGETMODE)
->  -ULONG_IOCTL(KDSKBMODE)
->   COMPATIBLE_IOCTL(KDGKBMODE)
->  -ULONG_IOCTL(KDSKBMETA)
->   COMPATIBLE_IOCTL(KDGKBMETA)
->   COMPATIBLE_IOCTL(KDGKBENT)
->   COMPATIBLE_IOCTL(KDSKBENT)
+On Mon, 2009-12-14 at 16:41 +0530, Sachin Sant wrote:
+> Peter Zijlstra wrote:
+> > On Fri, 2009-12-11 at 16:23 +0530, Sachin Sant wrote:
+> >   
+> >> While executing cpu_hotplug(from autotest) tests against latest
+> >> next on a power6 box, the machine locks up. A soft reset shows
+> >> the following trace
+> >>
+> >> cpu 0x0: Vector: 100 (System Reset) at [c00000000c9333d0]
+> >>     pc: c0000000003433d8: .find_next_bit+0x54/0xc4
+> >>     lr: c000000000342f10: .cpumask_next_and+0x4c/0x94
+> >>     sp: c00000000c933650
+> >>    msr: 8000000000089032
+> >>   current = 0xc00000000c173840
+> >>   paca    = 0xc000000000bc2600
+> >>     pid   = 2602, comm = hotplug06.top.s
+> >> enter ? for help
+> >> [link register   ] c000000000342f10 .cpumask_next_and+0x4c/0x94
+> >> [c00000000c933650] c0000000000e9f34 .cpuset_cpus_allowed_locked+0x38/0x74 (unreliable)
+> >> [c00000000c9336e0] c000000000090074 .move_task_off_dead_cpu+0xc4/0x1ac
+> >> [c00000000c9337a0] c0000000005e4e5c .migration_call+0x304/0x830
+> >> [c00000000c933880] c0000000005e0880 .notifier_call_chain+0x68/0xe0
+> >> [c00000000c933920] c00000000012a92c ._cpu_down+0x210/0x34c
+> >> [c00000000c933a90] c00000000012aad8 .cpu_down+0x70/0xa8
+> >> [c00000000c933b20] c000000000525940 .store_online+0x54/0x894
+> >> [c00000000c933bb0] c000000000463430 .sysdev_store+0x3c/0x50
+> >> [c00000000c933c20] c0000000001f8320 .sysfs_write_file+0x124/0x18c
+> >> [c00000000c933ce0] c00000000017edac .vfs_write+0xd4/0x1fc
+> >> [c00000000c933d80] c00000000017efdc .SyS_write+0x58/0xa0
+> >> [c00000000c933e30] c0000000000085b4 syscall_exit+0x0/0x40
+> >> --- Exception: c01 (System Call) at 00000fff9fa8a8f8
+> >> SP (fffe7aef200) is in userspace
+> >> 0:mon> e
+> >> cpu 0x0: Vector: 100 (System Reset) at [c00000000c9333d0]
+> >>     pc: c0000000003433d8: .find_next_bit+0x54/0xc4
+> >>     lr: c000000000342f10: .cpumask_next_and+0x4c/0x94
+> >>     sp: c00000000c933650
+> >>    msr: 8000000000089032
+> >>   current = 0xc00000000c173840
+> >>   paca    = 0xc000000000bc2600
+> >>     pid   = 2602, comm = hotplug06.top.s
+> >>
 
-This merge is incomplete, because the patch that I made for Neil
-removes the handling for HOT_REMOVE_DISK, HOT_ADD_DISK,
-SET_DISK_FAULTY and SET_BITMAP_FILE from fs/compat_ioctl.c
-along with the others above, while my other patch that Linus
-merged moves them into the switch statement in do_ioctl_trans.
+OK so how do I read that above thing? What's a System Reset? Is that
+like the x86 triple fault thing?
 
-Neil, still have  a tree where I track patches to fs/compat_ioctl.c
-that have not yet been merged. If you just keep the half in your
-own files and drop the ones in fs/compat_ioctl.c, I'll submit that
-next time. You can also adapt the patch again to the new contents
-and remove the four above to save me that work.
+>From what I can make of it, its in move_task_off_dead_cpu(), right after
+having called cpuset_cpus_allowed_locked(), doing that cpumask_any_and()
+call.
 
-I didn't want to remove them from fs/compat_ioctl.c before they
-got added to md.c, in order to keep bisection correct.
+static void move_task_off_dead_cpu(int dead_cpu, struct task_struct *p)
+{
+        int dest_cpu;
+        const struct cpumask *nodemask = cpumask_of_node(cpu_to_node(dead_cpu));
 
-	Arnd
+again:
+        /* Look for allowed, online CPU in same node. */
+        for_each_cpu_and(dest_cpu, nodemask, cpu_active_mask)
+                if (cpumask_test_cpu(dest_cpu, &p->cpus_allowed))
+                        goto move;
+
+        /* Any allowed, online CPU? */
+        dest_cpu = cpumask_any_and(&p->cpus_allowed, cpu_active_mask);
+        if (dest_cpu < nr_cpu_ids)
+                goto move;
+
+        /* No more Mr. Nice Guy. */
+        if (dest_cpu >= nr_cpu_ids) {
+                cpuset_cpus_allowed_locked(p, &p->cpus_allowed);
+====>           dest_cpu = cpumask_any_and(cpu_active_mask, &p->cpus_allowed);
+
+                /*
+                 * Don't tell them about moving exiting tasks or
+                 * kernel threads (both mm NULL), since they never
+                 * leave kernel.
+                 */
+                if (p->mm && printk_ratelimit()) {
+                        pr_info("process %d (%s) no longer affine to cpu%d\n",
+                                task_pid_nr(p), p->comm, dead_cpu);
+                }
+        }
+
+move:
+        /* It can have affinity changed while we were choosing. */
+        if (unlikely(!__migrate_task_irq(p, dead_cpu, dest_cpu)))
+                goto again;
+}
+
+Both masks, p->cpus_allowed and cpu_active_mask are stable in that p
+won't go away since we hold the tasklist_lock (in migrate_list_tasks),
+and cpu_active_mask is static storage, so WTH is it going funny on?
