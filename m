@@ -1,121 +1,51 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: [Next] CPU Hotplug test failures on powerpc
-Date: Mon, 14 Dec 2009 13:48:53 +1100
-Message-ID: <1260758933.2217.7.camel@pasglop>
-References: <4B2224C7.1020908@in.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the limits tree with Linus' tree
+Date: Mon, 14 Dec 2009 14:39:09 +1100
+Message-ID: <20091214143909.a7b6dcf1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__14_Dec_2009_14_39_09_+1100_hdH.BnlHivSbah_O"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:38548 "EHLO gate.crashing.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:49836 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756507AbZLNCw3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 13 Dec 2009 21:52:29 -0500
-In-Reply-To: <4B2224C7.1020908@in.ibm.com>
+	id S1753913AbZLNDjQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 13 Dec 2009 22:39:16 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sachin Sant <sachinp@in.ibm.com>
-Cc: Linux/PPC Development <linuxppc-dev@ozlabs.org>, linux-kernel <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org
+To: Jiri Slaby <jirislaby@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
 
-On Fri, 2009-12-11 at 16:23 +0530, Sachin Sant wrote:
-> While executing cpu_hotplug(from autotest) tests against latest
-> next on a power6 box, the machine locks up. A soft reset shows
-> the following trace
+--Signature=_Mon__14_Dec_2009_14_39_09_+1100_hdH.BnlHivSbah_O
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Have you heard anything about that one yet or it's still to be
-debugged ? It probably hit upstream by now.
+Hi Jiri,
 
+Today's linux-next merge of the limits tree got a conflict in
+arch/ia64/kernel/sys_ia64.c between commit
+bb52d6694002b9d632bb355f64daa045c6293a4e ("Get rid of open-coding in
+ia64_brk()") from Linus' tree and commit
+d9ef7d0ce61f214180f505b78cdf8f9b3d862dfa ("IA64: use helpers for
+rlimits") from the limits tree.
+
+The former removed the code that the latter was updating.  A merge with
+Linus' tree will fix this up, but it is pretty trivial anyway.
+--=20
 Cheers,
-Ben.
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-> cpu 0x0: Vector: 100 (System Reset) at [c00000000c9333d0]
->     pc: c0000000003433d8: .find_next_bit+0x54/0xc4
->     lr: c000000000342f10: .cpumask_next_and+0x4c/0x94
->     sp: c00000000c933650
->    msr: 8000000000089032
->   current = 0xc00000000c173840
->   paca    = 0xc000000000bc2600
->     pid   = 2602, comm = hotplug06.top.s
-> enter ? for help
-> [link register   ] c000000000342f10 .cpumask_next_and+0x4c/0x94
-> [c00000000c933650] c0000000000e9f34 .cpuset_cpus_allowed_locked+0x38/0x74 (unreliable)
-> [c00000000c9336e0] c000000000090074 .move_task_off_dead_cpu+0xc4/0x1ac
-> [c00000000c9337a0] c0000000005e4e5c .migration_call+0x304/0x830
-> [c00000000c933880] c0000000005e0880 .notifier_call_chain+0x68/0xe0
-> [c00000000c933920] c00000000012a92c ._cpu_down+0x210/0x34c
-> [c00000000c933a90] c00000000012aad8 .cpu_down+0x70/0xa8
-> [c00000000c933b20] c000000000525940 .store_online+0x54/0x894
-> [c00000000c933bb0] c000000000463430 .sysdev_store+0x3c/0x50
-> [c00000000c933c20] c0000000001f8320 .sysfs_write_file+0x124/0x18c
-> [c00000000c933ce0] c00000000017edac .vfs_write+0xd4/0x1fc
-> [c00000000c933d80] c00000000017efdc .SyS_write+0x58/0xa0
-> [c00000000c933e30] c0000000000085b4 syscall_exit+0x0/0x40
-> --- Exception: c01 (System Call) at 00000fff9fa8a8f8
-> SP (fffe7aef200) is in userspace
-> 0:mon> e
-> cpu 0x0: Vector: 100 (System Reset) at [c00000000c9333d0]
->     pc: c0000000003433d8: .find_next_bit+0x54/0xc4
->     lr: c000000000342f10: .cpumask_next_and+0x4c/0x94
->     sp: c00000000c933650
->    msr: 8000000000089032
->   current = 0xc00000000c173840
->   paca    = 0xc000000000bc2600
->     pid   = 2602, comm = hotplug06.top.s
-> 
-> Last few messages from the dmesg log shows
-> 
-> 0:mon> 
-> <4>IRQ 17 affinity broken off cpu 0
-> <4>IRQ 18 affinity broken off cpu 0
-> <4>IRQ 19 affinity broken off cpu 0
-> <4>IRQ 264 affinity broken off cpu 0
-> <4>cpu 0 (hwid 0) Ready to die...
-> <7>clockevent: decrementer mult[83126e97] shift[32] cpu[0]
-> <4>Processor 0 found.
-> <4>IRQ 17 affinity broken off cpu 1
-> <4>IRQ 18 affinity broken off cpu 1
-> <4>IRQ 19 affinity broken off cpu 1
-> <4>IRQ 264 affinity broken off cpu 1
-> <4>cpu 1 (hwid 1) Ready to die...
-> <7>clockevent: decrementer mult[83126e97] shift[32] cpu[1]
-> <4>Processor 1 found.
-> <4>cpu 1 (hwid 1) Ready to die...
-> <7>clockevent: decrementer mult[83126e97] shift[32] cpu[1]
-> <4>Processor 1 found.
-> <4>cpu 1 (hwid 1) Ready to die...
-> <6>process 2423 (bash) no longer affine to cpu1
-> <7>clockevent: decrementer mult[83126e97] shift[32] cpu[1]
-> <4>Processor 1 found.
-> <4>cpu 1 (hwid 1) Ready to die...
-> <7>clockevent: decrementer mult[83126e97] shift[32] cpu[1]
-> <4>Processor 1 found.
-> <4>cpu 1 (hwid 1) Ready to die...
-> <7>clockevent: decrementer mult[83126e97] shift[32] cpu[1]
-> <4>Processor 1 found.
-> <4>cpu 1 (hwid 1) Ready to die...
-> <3>INFO: RCU detected CPU 0 stall (t=1000 jiffies)
-> <3>INFO: RCU detected CPU 0 stall (t=4000 jiffies)
-> 0:mon>
-> 
-> After some debugging a possible suspect seems to be commit
-> 6ad4c18.. : sched: Fix balance vs hotplug race
-> 
-> If i revert this patch i am able to execute the tests on this
-> power6 without any issues. 
-> 
-> But at the same time the above patch is required to solve the
-> cpu hotplug related race on x86_64(as a side note this same
-> x86_64 issue can be recreated against latest Linus git as well)
-> that i reported here :
-> 
-> http://marc.info/?l=linux-kernel&m=125802682922299&w=2
-> 
-> I will try few more iterations with and without the above
-> patch just to make sure i have the correct results.
-> 
-> If someone has a suggestion let me know.
-> 
-> Thanks
-> -Sachin
-> 
-> 
+--Signature=_Mon__14_Dec_2009_14_39_09_+1100_hdH.BnlHivSbah_O
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAksls10ACgkQjjKRsyhoI8z8+wCgmi0vr+SqTqMurpocUzgHTKX2
+EWMAnRJl3XExAFGnJ4Mp3ozJTjmtPhTJ
+=yD6L
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__14_Dec_2009_14_39_09_+1100_hdH.BnlHivSbah_O--
