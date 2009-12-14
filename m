@@ -1,94 +1,151 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: rr tree build failure
-Date: Mon, 14 Dec 2009 15:35:28 +1100
-Message-ID: <20091214153528.e29f33a6.sfr@canb.auug.org.au>
-References: <20091211122648.8b305b52.sfr@canb.auug.org.au>
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: Re: [Next] CPU Hotplug test failures on powerpc
+Date: Mon, 14 Dec 2009 10:07:31 +0530
+Message-ID: <4B25C10B.9040001@in.ibm.com>
+References: <4B2224C7.1020908@in.ibm.com> <1260758933.2217.7.camel@pasglop>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__14_Dec_2009_15_35_28_+1100_qPpvEdBBXPUcQt8."
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53529 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750960AbZLNEff (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 13 Dec 2009 23:35:35 -0500
-In-Reply-To: <20091211122648.8b305b52.sfr@canb.auug.org.au>
+Received: from e23smtp06.au.ibm.com ([202.81.31.148]:45663 "EHLO
+	e23smtp06.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756037AbZLNEhh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 13 Dec 2009 23:37:37 -0500
+In-Reply-To: <1260758933.2217.7.camel@pasglop>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Jones <davej@redhat.com>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Linux/PPC Development <linuxppc-dev@ozlabs.org>, linux-kernel <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org
 
---Signature=_Mon__14_Dec_2009_15_35_28_+1100_qPpvEdBBXPUcQt8.
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Rusty,
-
-On Fri, 11 Dec 2009 12:26:48 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
+Benjamin Herrenschmidt wrote:
+> On Fri, 2009-12-11 at 16:23 +0530, Sachin Sant wrote:
+>   
+>> While executing cpu_hotplug(from autotest) tests against latest
+>> next on a power6 box, the machine locks up. A soft reset shows
+>> the following trace
+>>     
 >
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
->=20
-> arch/x86/kernel/cpu/cpufreq/powernow-k8.c: In function 'powernowk8_target=
-':
-> arch/x86/kernel/cpu/cpufreq/powernow-k8.c:1139: error: implicit declarati=
-on of function 'tsk_cpumask'
-> arch/x86/kernel/cpu/cpufreq/powernow-k8.c:1139: warning: passing argument=
- 2 of 'cpumask_copy' makes pointer from integer without a cast
-> include/linux/cpumask.h:466: note: expected 'const struct cpumask *' but =
-argument is of type 'int'
->=20
-> Caused by commit 9dd4c5ab546fcac98cfb9ca24ed5cc1bf7f08334
-> ("cpumask:tsk_cpus_allowed-not-tsk_cpumask") from the rr tree interacting
-> with commit b8cbe7e82ec8b55d7bbdde66fc69e788fde00dc6 ("[CPUFREQ] cpumask:
-> don't put a cpumask on the stack in x86...cpufreq/powernow-k8.c") from
-> the cpufreq tree.
+> Have you heard anything about that one yet or it's still to be
+> debugged ? It probably hit upstream by now.
+>   
+Haven't received any response yet.
 
-The cpufreq patch above is now in Linus' tree, so You should add the
-patch below to your tree (or squash it into the affected patch).
+As you mentioned that patch went upstream and so did the problem.
 
-> I have applied this merge fix up patch and can carry it as necessary:
->=20
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 11 Dec 2009 12:21:00 +1100
-> Subject: [PATCH] rr: cpufreq: fix up for api name change
->=20
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  arch/x86/kernel/cpu/cpufreq/powernow-k8.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
->=20
-> diff --git a/arch/x86/kernel/cpu/cpufreq/powernow-k8.c b/arch/x86/kernel/=
-cpu/cpufreq/powernow-k8.c
-> index a9df944..f125e5c 100644
-> --- a/arch/x86/kernel/cpu/cpufreq/powernow-k8.c
-> +++ b/arch/x86/kernel/cpu/cpufreq/powernow-k8.c
-> @@ -1136,7 +1136,7 @@ static int powernowk8_target(struct cpufreq_policy =
-*pol,
->  	if (!alloc_cpumask_var(&oldmask, GFP_KERNEL))
->  		return -ENOMEM;
-> =20
-> -	cpumask_copy(oldmask, tsk_cpumask(current));
-> +	cpumask_copy(oldmask, tsk_cpus_allowed(current));
->  	set_cpus_allowed_ptr(current, cpumask_of(pol->cpu));
-> =20
->  	if (smp_processor_id() !=3D pol->cpu) {
+thanks
+-Sachin
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+> Cheers,
+> Ben.
+>
+>   
+>> cpu 0x0: Vector: 100 (System Reset) at [c00000000c9333d0]
+>>     pc: c0000000003433d8: .find_next_bit+0x54/0xc4
+>>     lr: c000000000342f10: .cpumask_next_and+0x4c/0x94
+>>     sp: c00000000c933650
+>>    msr: 8000000000089032
+>>   current = 0xc00000000c173840
+>>   paca    = 0xc000000000bc2600
+>>     pid   = 2602, comm = hotplug06.top.s
+>> enter ? for help
+>> [link register   ] c000000000342f10 .cpumask_next_and+0x4c/0x94
+>> [c00000000c933650] c0000000000e9f34 .cpuset_cpus_allowed_locked+0x38/0x74 (unreliable)
+>> [c00000000c9336e0] c000000000090074 .move_task_off_dead_cpu+0xc4/0x1ac
+>> [c00000000c9337a0] c0000000005e4e5c .migration_call+0x304/0x830
+>> [c00000000c933880] c0000000005e0880 .notifier_call_chain+0x68/0xe0
+>> [c00000000c933920] c00000000012a92c ._cpu_down+0x210/0x34c
+>> [c00000000c933a90] c00000000012aad8 .cpu_down+0x70/0xa8
+>> [c00000000c933b20] c000000000525940 .store_online+0x54/0x894
+>> [c00000000c933bb0] c000000000463430 .sysdev_store+0x3c/0x50
+>> [c00000000c933c20] c0000000001f8320 .sysfs_write_file+0x124/0x18c
+>> [c00000000c933ce0] c00000000017edac .vfs_write+0xd4/0x1fc
+>> [c00000000c933d80] c00000000017efdc .SyS_write+0x58/0xa0
+>> [c00000000c933e30] c0000000000085b4 syscall_exit+0x0/0x40
+>> --- Exception: c01 (System Call) at 00000fff9fa8a8f8
+>> SP (fffe7aef200) is in userspace
+>> 0:mon> e
+>> cpu 0x0: Vector: 100 (System Reset) at [c00000000c9333d0]
+>>     pc: c0000000003433d8: .find_next_bit+0x54/0xc4
+>>     lr: c000000000342f10: .cpumask_next_and+0x4c/0x94
+>>     sp: c00000000c933650
+>>    msr: 8000000000089032
+>>   current = 0xc00000000c173840
+>>   paca    = 0xc000000000bc2600
+>>     pid   = 2602, comm = hotplug06.top.s
+>>
+>> Last few messages from the dmesg log shows
+>>
+>> 0:mon> 
+>> <4>IRQ 17 affinity broken off cpu 0
+>> <4>IRQ 18 affinity broken off cpu 0
+>> <4>IRQ 19 affinity broken off cpu 0
+>> <4>IRQ 264 affinity broken off cpu 0
+>> <4>cpu 0 (hwid 0) Ready to die...
+>> <7>clockevent: decrementer mult[83126e97] shift[32] cpu[0]
+>> <4>Processor 0 found.
+>> <4>IRQ 17 affinity broken off cpu 1
+>> <4>IRQ 18 affinity broken off cpu 1
+>> <4>IRQ 19 affinity broken off cpu 1
+>> <4>IRQ 264 affinity broken off cpu 1
+>> <4>cpu 1 (hwid 1) Ready to die...
+>> <7>clockevent: decrementer mult[83126e97] shift[32] cpu[1]
+>> <4>Processor 1 found.
+>> <4>cpu 1 (hwid 1) Ready to die...
+>> <7>clockevent: decrementer mult[83126e97] shift[32] cpu[1]
+>> <4>Processor 1 found.
+>> <4>cpu 1 (hwid 1) Ready to die...
+>> <6>process 2423 (bash) no longer affine to cpu1
+>> <7>clockevent: decrementer mult[83126e97] shift[32] cpu[1]
+>> <4>Processor 1 found.
+>> <4>cpu 1 (hwid 1) Ready to die...
+>> <7>clockevent: decrementer mult[83126e97] shift[32] cpu[1]
+>> <4>Processor 1 found.
+>> <4>cpu 1 (hwid 1) Ready to die...
+>> <7>clockevent: decrementer mult[83126e97] shift[32] cpu[1]
+>> <4>Processor 1 found.
+>> <4>cpu 1 (hwid 1) Ready to die...
+>> <3>INFO: RCU detected CPU 0 stall (t=1000 jiffies)
+>> <3>INFO: RCU detected CPU 0 stall (t=4000 jiffies)
+>> 0:mon>
+>>
+>> After some debugging a possible suspect seems to be commit
+>> 6ad4c18.. : sched: Fix balance vs hotplug race
+>>
+>> If i revert this patch i am able to execute the tests on this
+>> power6 without any issues. 
+>>
+>> But at the same time the above patch is required to solve the
+>> cpu hotplug related race on x86_64(as a side note this same
+>> x86_64 issue can be recreated against latest Linus git as well)
+>> that i reported here :
+>>
+>> http://marc.info/?l=linux-kernel&m=125802682922299&w=2
+>>
+>> I will try few more iterations with and without the above
+>> patch just to make sure i have the correct results.
+>>
+>> If someone has a suggestion let me know.
+>>
+>> Thanks
+>> -Sachin
+>>
+>>
+>>     
+>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-next" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>   
 
---Signature=_Mon__14_Dec_2009_15_35_28_+1100_qPpvEdBBXPUcQt8.
-Content-Type: application/pgp-signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+-- 
 
-iEYEARECAAYFAkslwJAACgkQjjKRsyhoI8yZFACeKTNKEoafVk86qcNd+x+5PG8R
-raYAniICmxImp55V7SGrFh8v4JMBMnF1
-=64lP
------END PGP SIGNATURE-----
-
---Signature=_Mon__14_Dec_2009_15_35_28_+1100_qPpvEdBBXPUcQt8.--
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
