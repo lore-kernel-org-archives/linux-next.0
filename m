@@ -1,99 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the 52xx-and-virtex tree with the  tree
-Date: Tue, 15 Dec 2009 10:31:17 +1100
-Message-ID: <20091215103117.dab34f72.sfr@canb.auug.org.au>
+Subject: linux-next: ext3 tree build warning
+Date: Tue, 15 Dec 2009 10:59:25 +1100
+Message-ID: <20091215105925.59a66556.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__15_Dec_2009_10_59_25_+1100_kV7lY+95MOE5a/r_"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55337 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:41342 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757582AbZLNXbT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 14 Dec 2009 18:31:19 -0500
+	id S1758828AbZLNX7a (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 14 Dec 2009 18:59:30 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kumar Gala <galak@kernel.crashing.org>, Linus <torvalds@linux-foundation.org>
+To: Jan Kara <jack@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Monakhov <dmonakhov@openvz.org>
 
-Hi Grant,
+--Signature=_Tue__15_Dec_2009_10_59_25_+1100_kV7lY+95MOE5a/r_
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the 52xx-and-virtex tree got a conflict in
-arch/powerpc/mm/fsl_booke_mmu.c between commit
-8b27f0b61db57f5555fc2d3fc95c3ea9fd1a9d6c ("powerpc/fsl-booke: Rework TLB
-CAM code") from Linus' tree and commit
-ae4cec4736969ec2196a6bbce4ab263ff7cb7eef ("powerpc: fix up for
-mmu_mapin_ram api change") from the 52xx-and-virtex tree.
+Hi Jan,
 
-I fixed it up (see below) and can carry the fix for a while.  Grant, you
-can (of course) fix this by merging with Linus' tree.  (Or Linus, if you
-merge Grant's tree, I think this fixup is correct).
+Today's linux-next build (x86_64 allmodconfig) produced this warning:
 
--- 
+fs/quota/dquot.c: In function 'dquot_alloc_inode':
+fs/quota/dquot.c:1521: warning: passing argument 1 of 'mark_all_dquot_dirty=
+' discards qualifiers from pointer target type
+fs/quota/dquot.c:327: note: expected 'struct dquot **' but argument is of t=
+ype 'struct dquot * const*'
+fs/quota/dquot.c: In function 'dquot_free_inode':
+fs/quota/dquot.c:1649: warning: passing argument 1 of 'mark_all_dquot_dirty=
+' discards qualifiers from pointer target type
+fs/quota/dquot.c:327: note: expected 'struct dquot **' but argument is of t=
+ype 'struct dquot * const*'
+
+Introduced by commit e91077e3d523c2ac2090b3447bf6244567cf7128 ("quota:
+Move duplicated code to separate functions").
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/powerpc/mm/fsl_booke_mmu.c
-index fcfcb6e,6da4b90..0000000
---- a/arch/powerpc/mm/fsl_booke_mmu.c
-+++ b/arch/powerpc/mm/fsl_booke_mmu.c
-@@@ -172,44 -148,27 +172,44 @@@ static void settlbcam(int index, unsign
-  	loadcam_entry(index);
-  }
-  
- -void invalidate_tlbcam_entry(int index)
- -{
- -	TLBCAM[index].MAS0 = MAS0_TLBSEL(1) | MAS0_ESEL(index);
- -	TLBCAM[index].MAS1 = ~MAS1_VALID;
- -
- -	loadcam_entry(index);
- -}
- -
- -unsigned long __init mmu_mapin_ram(unsigned long top)
- +unsigned long map_mem_in_cams(unsigned long ram, int max_cam_idx)
-  {
- +	int i;
-  	unsigned long virt = PAGE_OFFSET;
-  	phys_addr_t phys = memstart_addr;
- +	unsigned long amount_mapped = 0;
- +	unsigned long max_cam = (mfspr(SPRN_TLB1CFG) >> 16) & 0xf;
- +
- +	/* Convert (4^max) kB to (2^max) bytes */
- +	max_cam = max_cam * 2 + 10;
-  
- -	while (tlbcam_index < ARRAY_SIZE(cam) && cam[tlbcam_index]) {
- -		settlbcam(tlbcam_index, virt, phys, cam[tlbcam_index], PAGE_KERNEL_X, 0);
- -		virt += cam[tlbcam_index];
- -		phys += cam[tlbcam_index];
- -		tlbcam_index++;
- +	/* Calculate CAM values */
- +	for (i = 0; ram && i < max_cam_idx; i++) {
- +		unsigned int camsize = __ilog2(ram) & ~1U;
- +		unsigned int align = __ffs(virt | phys) & ~1U;
- +		unsigned long cam_sz;
- +
- +		if (camsize > align)
- +			camsize = align;
- +		if (camsize > max_cam)
- +			camsize = max_cam;
- +
- +		cam_sz = 1UL << camsize;
- +		settlbcam(i, virt, phys, cam_sz, PAGE_KERNEL_X, 0);
- +
- +		ram -= cam_sz;
- +		amount_mapped += cam_sz;
- +		virt += cam_sz;
- +		phys += cam_sz;
-  	}
- +	tlbcam_index = i;
- +
- +	return amount_mapped;
- +}
-  
-- unsigned long __init mmu_mapin_ram(void)
- -	return virt - PAGE_OFFSET;
-++unsigned long __init mmu_mapin_ram(unsigned long top)
- +{
- +	return tlbcam_addrs[tlbcam_index - 1].limit - PAGE_OFFSET + 1;
-  }
-  
-  /*
+--Signature=_Tue__15_Dec_2009_10_59_25_+1100_kV7lY+95MOE5a/r_
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAksm0V0ACgkQjjKRsyhoI8wRBwCggYISMYSAHtyQT29jGj2CQGns
+zcUAoIfak5XbEx/OtDLb/Lgb+dfWtvhP
+=ZuCw
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__15_Dec_2009_10_59_25_+1100_kV7lY+95MOE5a/r_--
