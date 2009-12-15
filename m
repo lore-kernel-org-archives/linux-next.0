@@ -1,27 +1,101 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: origin tree build failure
-Date: Tue, 15 Dec 2009 09:07:19 +0100
-Message-ID: <20091215080719.GA23630@elte.hu>
-References: <20091215164108.45c9d766.sfr@canb.auug.org.au>
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: Re: [Next] CPU Hotplug test failures on powerpc
+Date: Tue, 15 Dec 2009 15:14:11 +0530
+Message-ID: <4B275A6B.9030200@in.ibm.com>
+References: <4B2224C7.1020908@in.ibm.com> <1260786122.4165.142.camel@twins> <4B261D7A.9040802@in.ibm.com>  <1260793182.4165.223.camel@twins> <1260825420.2217.40.camel@pasglop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-omap-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20091215164108.45c9d766.sfr@canb.auug.org.au>
-Sender: linux-omap-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@nokia.com>, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from e23smtp09.au.ibm.com ([202.81.31.142]:35345 "EHLO
+	e23smtp09.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757519AbZLOJoR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Dec 2009 04:44:17 -0500
+In-Reply-To: <1260825420.2217.40.camel@pasglop>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux/PPC Development <linuxppc-dev@ozlabs.org>, linux-kernel <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org
 
+Benjamin Herrenschmidt wrote:
+>> static void move_task_off_dead_cpu(int dead_cpu, struct task_struct *p)
+>> {
+>>         int dest_cpu;
+>>         const struct cpumask *nodemask = cpumask_of_node(cpu_to_node(dead_cpu));
+>>
+>> again:
+>>         /* Look for allowed, online CPU in same node. */
+>>         for_each_cpu_and(dest_cpu, nodemask, cpu_active_mask)
+>>                 if (cpumask_test_cpu(dest_cpu, &p->cpus_allowed))
+>>                         goto move;
+>>
+>>         /* Any allowed, online CPU? */
+>>         dest_cpu = cpumask_any_and(&p->cpus_allowed, cpu_active_mask);
+>>         if (dest_cpu < nr_cpu_ids)
+>>                 goto move;
+>>
+>>         /* No more Mr. Nice Guy. */
+>>         if (dest_cpu >= nr_cpu_ids) {
+>>                 cpuset_cpus_allowed_locked(p, &p->cpus_allowed);
+>> ====>           dest_cpu = cpumask_any_and(cpu_active_mask, &p->cpus_allowed);
+>>
+>>                 /*
+>>                  * Don't tell them about moving exiting tasks or
+>>                  * kernel threads (both mm NULL), since they never
+>>                  * leave kernel.
+>>                  */
+>>                 if (p->mm && printk_ratelimit()) {
+>>                         pr_info("process %d (%s) no longer affine to cpu%d\n",
+>>                                 task_pid_nr(p), p->comm, dead_cpu);
+>>                 }
+>>         }
+>>
+>> move:
+>>         /* It can have affinity changed while we were choosing. */
+>>         if (unlikely(!__migrate_task_irq(p, dead_cpu, dest_cpu)))
+>>                 goto again;
+>> }
+>>
+>> Both masks, p->cpus_allowed and cpu_active_mask are stable in that p
+>> won't go away since we hold the tasklist_lock (in migrate_list_tasks),
+>> and cpu_active_mask is static storage, so WTH is it going funny on?
+>>     
+I added some debug statements within the above code. 
+This is a 2 cpu machine.
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+XMON dest_cpu = 1024 . dead_cpu = 1 . nr_cpu_ids = 2
+XMON dest_cpu = 1024 
+XMON dest_cpu = 1024 . dead_cpu = 1
+XMON dest_cpu = 1024 . dead_cpu = 1 . nr_cpu_ids = 2
+XMON dest_cpu = 1024 
+XMON dest_cpu = 1024 . dead_cpu = 1
+XMON dest_cpu = 1024 . dead_cpu = 1 . nr_cpu_ids = 2
+XMON dest_cpu = 1024 
+XMON dest_cpu = 1024 . dead_cpu = 1
 
-> Hi all,
-> 
-> Today's linux-next build (powerpc allyesconfig) failed like this:
-> 
-> drivers/mfd/twl4030-codec.c:29:31: error: linux/i2c/twl4030.h: No such file or directory
+Seems to me that the control is stuck in an infinite loop and hence the
+machine appears to be in hung state. The dest_cpu value is always 1024
+and never changes, which result in an infinite loop.
 
-FYI, x86 allyesconfig fails to build too so this doesnt only affect PowerPC.
+In working scenario the o/p is something on the following lines
 
-	Ingo
+XMON dest_cpu = 1024 . dead_cpu = 1 . nr_cpu_ids = 2
+XMON dest_cpu = 0 
+XMON dest_cpu = 1024 . dead_cpu = 1 . nr_cpu_ids = 2
+XMON dest_cpu = 0 
+XMON dest_cpu = 1024 . dead_cpu = 1 . nr_cpu_ids = 2
+XMON dest_cpu = 0 
+
+Let me know if i should try to record any specific value ?
+
+Thanks
+-Sachin
+
+-- 
+
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
