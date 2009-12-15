@@ -1,58 +1,46 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: ext3 tree build warning
-Date: Tue, 15 Dec 2009 10:59:25 +1100
-Message-ID: <20091215105925.59a66556.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the voltage tree with Linus' tree
+Date: Tue, 15 Dec 2009 12:59:29 +1100
+Message-ID: <20091215125929.51e236a2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__15_Dec_2009_10_59_25_+1100_kV7lY+95MOE5a/r_"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41342 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:46254 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758828AbZLNX7a (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 14 Dec 2009 18:59:30 -0500
+	id S1758180AbZLOB7b (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 14 Dec 2009 20:59:31 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Monakhov <dmonakhov@openvz.org>
+To: Liam Girdwood <lrg@slimlogic.co.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Santosh Shilimkar <santosh.shilimkar@ti.com>, Samuel Ortiz <sameo@linux.intel.com>, Wolfram Sang <w.sang@pengutronix.de>
 
---Signature=_Tue__15_Dec_2009_10_59_25_+1100_kV7lY+95MOE5a/r_
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Liam,
 
-Hi Jan,
+Today's linux-next merge of the voltage tree got a conflict in
+drivers/regulator/Makefile between commit
+b07682b6056eb6701f8cb86aa5800e6f2ea7919b ("mfd: Rename twl4030* driver
+files to enable re-use") from Linus' tree and commit
+9c4d460f13b7d81abb26449a3920638889a3e5ed ("regulator: add driver for
+MAX8660/8661") from the voltage tree.
 
-Today's linux-next build (x86_64 allmodconfig) produced this warning:
-
-fs/quota/dquot.c: In function 'dquot_alloc_inode':
-fs/quota/dquot.c:1521: warning: passing argument 1 of 'mark_all_dquot_dirty=
-' discards qualifiers from pointer target type
-fs/quota/dquot.c:327: note: expected 'struct dquot **' but argument is of t=
-ype 'struct dquot * const*'
-fs/quota/dquot.c: In function 'dquot_free_inode':
-fs/quota/dquot.c:1649: warning: passing argument 1 of 'mark_all_dquot_dirty=
-' discards qualifiers from pointer target type
-fs/quota/dquot.c:327: note: expected 'struct dquot **' but argument is of t=
-ype 'struct dquot * const*'
-
-Introduced by commit e91077e3d523c2ac2090b3447bf6244567cf7128 ("quota:
-Move duplicated code to separate functions").
-
---=20
+Just context changes.  I fixed it up (see below) and can carry the fix
+for a while.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__15_Dec_2009_10_59_25_+1100_kV7lY+95MOE5a/r_
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAksm0V0ACgkQjjKRsyhoI8wRBwCggYISMYSAHtyQT29jGj2CQGns
-zcUAoIfak5XbEx/OtDLb/Lgb+dfWtvhP
-=ZuCw
------END PGP SIGNATURE-----
-
---Signature=_Tue__15_Dec_2009_10_59_25_+1100_kV7lY+95MOE5a/r_--
+diff --cc drivers/regulator/Makefile
+index 9ae3cc4,2cf98a7..0000000
+--- a/drivers/regulator/Makefile
++++ b/drivers/regulator/Makefile
+@@@ -11,7 -11,8 +11,8 @@@ obj-$(CONFIG_REGULATOR_USERSPACE_CONSUM
+  obj-$(CONFIG_REGULATOR_BQ24022) += bq24022.o
+  obj-$(CONFIG_REGULATOR_LP3971) += lp3971.o
+  obj-$(CONFIG_REGULATOR_MAX1586) += max1586.o
++ obj-$(CONFIG_REGULATOR_MAX8660) += max8660.o
+ -obj-$(CONFIG_REGULATOR_TWL4030) += twl4030-regulator.o
+ +obj-$(CONFIG_REGULATOR_TWL4030) += twl-regulator.o
+  obj-$(CONFIG_REGULATOR_WM831X) += wm831x-dcdc.o
+  obj-$(CONFIG_REGULATOR_WM831X) += wm831x-isink.o
+  obj-$(CONFIG_REGULATOR_WM831X) += wm831x-ldo.o
