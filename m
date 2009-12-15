@@ -1,45 +1,45 @@
-From: Neil Brown <neilb@suse.de>
-Subject: Re: linux-next: manual merge of the md-current tree with Linus'
- tree
-Date: Tue, 15 Dec 2009 14:05:02 +1100
-Message-ID: <20091215140502.5edd6678@notabene.brown>
-References: <20091214102428.f50557a0.sfr@canb.auug.org.au>
-	<200912141127.27019.arnd@arndb.de>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: linux-next: rr tree build failure
+Date: Tue, 15 Dec 2009 14:22:29 +1030
+Message-ID: <200912151422.29906.rusty@rustcorp.com.au>
+References: <20091211122648.8b305b52.sfr@canb.auug.org.au> <20091214153528.e29f33a6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:41298 "EHLO mx2.suse.de"
+Received: from ozlabs.org ([203.10.76.45]:41705 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759092AbZLODFM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 14 Dec 2009 22:05:12 -0500
-In-Reply-To: <200912141127.27019.arnd@arndb.de>
+	id S1758022AbZLODwd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 14 Dec 2009 22:52:33 -0500
+In-Reply-To: <20091214153528.e29f33a6.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Jones <davej@redhat.com>
 
-On Mon, 14 Dec 2009 11:27:26 +0100
-Arnd Bergmann <arnd@arndb.de> wrote:
-
-> Neil, still have  a tree where I track patches to fs/compat_ioctl.c
-> that have not yet been merged. If you just keep the half in your
-> own files and drop the ones in fs/compat_ioctl.c, I'll submit that
-> next time. You can also adapt the patch again to the new contents
-> and remove the four above to save me that work.
+On Mon, 14 Dec 2009 03:05:28 pm Stephen Rothwell wrote:
+> Hi Rusty,
 > 
-> I didn't want to remove them from fs/compat_ioctl.c before they
-> got added to md.c, in order to keep bisection correct.
+> On Fri, 11 Dec 2009 12:26:48 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Today's linux-next build (x86_64 allmodconfig) failed like this:
+> > 
+> > arch/x86/kernel/cpu/cpufreq/powernow-k8.c: In function 'powernowk8_target':
+> > arch/x86/kernel/cpu/cpufreq/powernow-k8.c:1139: error: implicit declaration of function 'tsk_cpumask'
+> > arch/x86/kernel/cpu/cpufreq/powernow-k8.c:1139: warning: passing argument 2 of 'cpumask_copy' makes pointer from integer without a cast
+> > include/linux/cpumask.h:466: note: expected 'const struct cpumask *' but argument is of type 'int'
+> > 
+> > Caused by commit 9dd4c5ab546fcac98cfb9ca24ed5cc1bf7f08334
+> > ("cpumask:tsk_cpus_allowed-not-tsk_cpumask") from the rr tree interacting
+> > with commit b8cbe7e82ec8b55d7bbdde66fc69e788fde00dc6 ("[CPUFREQ] cpumask:
+> > don't put a cpumask on the stack in x86...cpufreq/powernow-k8.c") from
+> > the cpufreq tree.
 > 
-> 	Arnd
+> The cpufreq patch above is now in Linus' tree, so You should add the
+> patch below to your tree (or squash it into the affected patch).
 
+Thanks, done and rebased.
 
-I had already rebased that patch on the lasted from Linus and asked him to
-pull again.
-He how seems to have done that, so md should be up-to-date in -linus,
-including the compat_ioctl stuff.
-If you would like to double check that it matches what you expect, that would
-be great.
-
-Thanks,
-NeilBrown
+Cheers,
+Rusty.
