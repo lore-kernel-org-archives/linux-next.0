@@ -1,48 +1,94 @@
-From: Bjorn Helgaas <bjorn.helgaas@hp.com>
-Subject: Re: linux-next: acpi tree build failure
-Date: Mon, 14 Dec 2009 21:57:34 -0700
-Message-ID: <1260853054.21292.10.camel@dc7800.home>
-References: <20091214122013.a869739e.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: origin tree build failure
+Date: Tue, 15 Dec 2009 16:41:08 +1100
+Message-ID: <20091215164108.45c9d766.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1750998AbZLOFDR@vger.kernel.org>
-In-Reply-To: <20091214122013.a869739e.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Len Brown <lenb@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-omap-owner@vger.kernel.org>
+Sender: linux-omap-owner@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Samuel Ortiz <sameo@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@nokia.com>, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Mon, 2009-12-14 at 12:20 +1100, Stephen Rothwell wrote:
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
-> 
-> ERROR: "pnpacpi_protocol" [drivers/char/ipmi/ipmi_si.ko] undefined!
-> 
-> Caused by commit e80b594fd69039387339e75b4f75c58da74676ae ("PNP: add
-> interface to retrieve ACPI device from a PNPACPI device").
+Hi all,
 
-Here's the fix:
+Today's linux-next build (powerpc allyesconfig) failed like this:
 
-commit 28b07e816ecc25567c8ff25e5a0c52f57e55b91f
-Author: Bjorn Helgaas <bjorn.helgaas@hp.com>
-Date:   Mon Dec 14 21:41:17 2009 -0700
+drivers/mfd/twl4030-codec.c:29:31: error: linux/i2c/twl4030.h: No such file or directory
 
-    PNP: export pnpacpi_protocol (for pnp_acpi_device() test)
-    
-    In e80b594f, I added an exported interface, pnp_acpi_device(), but
-    I neglected to export the underlying pnpacpi_protocol symbol.
-    
-    Signed-off-by: Bjorn Helgaas <bjorn.helgaas@hp.com>
+(there were more, but I assume that they all stem form this one).
 
-diff --git a/drivers/pnp/pnpacpi/core.c b/drivers/pnp/pnpacpi/core.c
-index 8dd0f37..5314bf6 100644
---- a/drivers/pnp/pnpacpi/core.c
-+++ b/drivers/pnp/pnpacpi/core.c
-@@ -154,6 +154,7 @@ struct pnp_protocol pnpacpi_protocol = {
- 	.resume = pnpacpi_resume,
- #endif
- };
-+EXPORT_SYMBOL(pnpacpi_protocol);
+Caused by commit 0b83ddebc6e884dc0221358cf68c461520fbdd8e ("MFD: twl4030:
+add twl4030_codec MFD as a new child to the core") from Linus' tree
+interacting with commit b07682b6056eb6701f8cb86aa5800e6f2ea7919b ("mfd:
+Rename twl4030* driver files to enable re-use") also from Linus' tree.
+This file seems to have been missed in the renaming.
+
+I have applied this patch for today (please check):
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 15 Dec 2009 16:33:10 +1100
+Subject: [PATCH] mfd: fix for twl4030 renaming
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/mfd/twl4030-codec.c |   10 +++++-----
+ 1 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/mfd/twl4030-codec.c b/drivers/mfd/twl4030-codec.c
+index 77b9149..700b149 100644
+--- a/drivers/mfd/twl4030-codec.c
++++ b/drivers/mfd/twl4030-codec.c
+@@ -26,7 +26,7 @@
+ #include <linux/kernel.h>
+ #include <linux/fs.h>
+ #include <linux/platform_device.h>
+-#include <linux/i2c/twl4030.h>
++#include <linux/i2c/twl.h>
+ #include <linux/mfd/core.h>
+ #include <linux/mfd/twl4030-codec.h>
  
- static int __init pnpacpi_add_device(struct acpi_device *device)
- {
+@@ -56,7 +56,7 @@ static int twl4030_codec_set_resource(enum twl4030_codec_res id, int enable)
+ 	struct twl4030_codec *codec = platform_get_drvdata(twl4030_codec_dev);
+ 	u8 val;
+ 
+-	twl4030_i2c_read_u8(TWL4030_MODULE_AUDIO_VOICE, &val,
++	twl_i2c_read_u8(TWL4030_MODULE_AUDIO_VOICE, &val,
+ 			codec->resource[id].reg);
+ 
+ 	if (enable)
+@@ -64,7 +64,7 @@ static int twl4030_codec_set_resource(enum twl4030_codec_res id, int enable)
+ 	else
+ 		val &= ~codec->resource[id].mask;
+ 
+-	twl4030_i2c_write_u8(TWL4030_MODULE_AUDIO_VOICE,
++	twl_i2c_write_u8(TWL4030_MODULE_AUDIO_VOICE,
+ 					val, codec->resource[id].reg);
+ 
+ 	return val;
+@@ -75,7 +75,7 @@ static inline int twl4030_codec_get_resource(enum twl4030_codec_res id)
+ 	struct twl4030_codec *codec = platform_get_drvdata(twl4030_codec_dev);
+ 	u8 val;
+ 
+-	twl4030_i2c_read_u8(TWL4030_MODULE_AUDIO_VOICE, &val,
++	twl_i2c_read_u8(TWL4030_MODULE_AUDIO_VOICE, &val,
+ 			codec->resource[id].reg);
+ 
+ 	return val;
+@@ -183,7 +183,7 @@ static int __devinit twl4030_codec_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev, "Invalid audio_mclk\n");
+ 		return -EINVAL;
+ 	}
+-	twl4030_i2c_write_u8(TWL4030_MODULE_AUDIO_VOICE,
++	twl_i2c_write_u8(TWL4030_MODULE_AUDIO_VOICE,
+ 					val, TWL4030_REG_APLL_CTL);
+ 
+ 	codec = kzalloc(sizeof(struct twl4030_codec), GFP_KERNEL);
+-- 
+1.6.5.4
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
