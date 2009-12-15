@@ -1,46 +1,40 @@
-From: Ralf Baechle <ralf@linux-mips.org>
-Subject: Re: linux-next: manual merge of the mips tree with Linus' tree
-Date: Tue, 15 Dec 2009 19:27:14 +0000
-Message-ID: <20091215192714.GB18592@linux-mips.org>
-References: <20091215102046.6fc8faa8.sfr@canb.auug.org.au>
- <4B273A32.5020407@monstr.eu>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [PATCH -next] fs: fix compat_ioctl build for CONFIG_BLOCK=n
+Date: Tue, 15 Dec 2009 11:29:34 -0800
+Message-ID: <20091215112934.020e5648.randy.dunlap@oracle.com>
+References: <20091214165927.c08c4784.sfr@canb.auug.org.au>
+	<20091214091005.b4df65d9.randy.dunlap@oracle.com>
+	<200912142016.13631.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from h5.dl5rb.org.uk ([81.2.74.5]:60733 "EHLO h5.dl5rb.org.uk"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933487AbZLOT1c (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 15 Dec 2009 14:27:32 -0500
-Content-Disposition: inline
-In-Reply-To: <4B273A32.5020407@monstr.eu>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Michal Simek <monstr@monstr.eu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Li Hong <lihong.hi@gmail.com>, Wu Zhangjin <wuzhangjin@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S933559AbZLOTam@vger.kernel.org>
+In-Reply-To: <200912142016.13631.arnd@arndb.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Dec 15, 2009 at 08:26:42AM +0100, Michal Simek wrote:
+On Mon, 14 Dec 2009 20:16:13 +0000 Arnd Bergmann wrote:
 
-> >Today's linux-next merge of the mips tree got a conflict in
-> >scripts/recordmcount.pl between commits
-> >e2d753fac5b3954a3b6001f98479f0435fe7c868 ("tracing: Correct the check for
-> >number of arguments in recordmcount.pl") and
-> >7d241ff0567b9503d79ee775c40927d09b509f83 ("microblaze: ftrace: Add
-> >dynamic trace support") from Linus' tree and commits
-> >84bc2d35f211a83e806711c94f78a227c4810848 ("MIPS: Tracing: Add an endian
-> >argument to scripts/recordmcount.pl") and
-> >b2b11a5cb24b8f234bc4746dc40722b01fa45a43 ("MIPS: Tracing: Add dynamic
-> >function tracer support") from the mips tree.
-> >
-> >These conflicts are now between Linus' tree and the mips tree so, Ralf,
-> >you should be able to fix them up by merging with Linus' tree.
-> >
-> >I have fixed them up (see below) (for the first pair of commits above, I
-> >used the mips tree version) and can carry the fix for a while.
+> On Monday 14 December 2009 17:10:05 Randy Dunlap wrote:
+> > 
+> > From: Randy Dunlap <randy.dunlap@oracle.com>
+> > 
+> > Fix build failure when CONFIG_BLOCK=n:
+> > 
+> > fs/compat_ioctl.c:1604: error: 'SG_SET_TRANSFORM' undeclared
+> > 
+> > Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 > 
-> Yes, because I sent pull request to Linus and he added Microblaze
-> patches to his tree. Sorry for this additional work but you had
-> chance to pull your tree first.
+> Your patch is obviously correct, but I wonder if we could just drop
+> the line completely, given that no driver in the kernel actually
+> implements this ioctl command. It was part of the ide-scsi driver
+> until 2.6.28, but that driver was removed in 2.6.29.
 
-No problem.   That's sorted and new pull rq is out.
+I checked with Jens, he says yes, drop that case.
+Do you want to do that or should I send another patch?
 
-  Ralf
+thanks,
+---
+~Randy
