@@ -1,58 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: rr tree build failure
-Date: Tue, 15 Dec 2009 15:36:19 +1100
-Message-ID: <20091215153619.1c2e813a.sfr@canb.auug.org.au>
-References: <20091211122648.8b305b52.sfr@canb.auug.org.au>
-	<20091214153528.e29f33a6.sfr@canb.auug.org.au>
-	<200912151422.29906.rusty@rustcorp.com.au>
+From: Bjorn Helgaas <bjorn.helgaas@hp.com>
+Subject: Re: linux-next: acpi tree build failure
+Date: Mon, 14 Dec 2009 21:57:34 -0700
+Message-ID: <1260853054.21292.10.camel@dc7800.home>
+References: <20091214122013.a869739e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__15_Dec_2009_15_36_19_+1100_4V23i/3NgCQtJdmB"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47141 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751099AbZLOEga (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 14 Dec 2009 23:36:30 -0500
-In-Reply-To: <200912151422.29906.rusty@rustcorp.com.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Jones <davej@redhat.com>
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1750998AbZLOFDR@vger.kernel.org>
+In-Reply-To: <20091214122013.a869739e.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Len Brown <lenb@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__15_Dec_2009_15_36_19_+1100_4V23i/3NgCQtJdmB
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 2009-12-14 at 12:20 +1100, Stephen Rothwell wrote:
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
+> 
+> ERROR: "pnpacpi_protocol" [drivers/char/ipmi/ipmi_si.ko] undefined!
+> 
+> Caused by commit e80b594fd69039387339e75b4f75c58da74676ae ("PNP: add
+> interface to retrieve ACPI device from a PNPACPI device").
 
-Hi Rusty,
+Here's the fix:
 
-On Tue, 15 Dec 2009 14:22:29 +1030 Rusty Russell <rusty@rustcorp.com.au> wr=
-ote:
->
-> On Mon, 14 Dec 2009 03:05:28 pm Stephen Rothwell wrote:
-> >=20
-> > The cpufreq patch above is now in Linus' tree, so You should add the
-> > patch below to your tree (or squash it into the affected patch).
->=20
-> Thanks, done and rebased.
+commit 28b07e816ecc25567c8ff25e5a0c52f57e55b91f
+Author: Bjorn Helgaas <bjorn.helgaas@hp.com>
+Date:   Mon Dec 14 21:41:17 2009 -0700
 
-Great, thanks.
+    PNP: export pnpacpi_protocol (for pnp_acpi_device() test)
+    
+    In e80b594f, I added an exported interface, pnp_acpi_device(), but
+    I neglected to export the underlying pnpacpi_protocol symbol.
+    
+    Signed-off-by: Bjorn Helgaas <bjorn.helgaas@hp.com>
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__15_Dec_2009_15_36_19_+1100_4V23i/3NgCQtJdmB
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAksnEkMACgkQjjKRsyhoI8yJbACgtSTriPhAdOF/XYNp+4M/jOh+
-WVQAoL5sON0TfSrPzPWfYXZAbsU3KcVV
-=NrmD
------END PGP SIGNATURE-----
-
---Signature=_Tue__15_Dec_2009_15_36_19_+1100_4V23i/3NgCQtJdmB--
+diff --git a/drivers/pnp/pnpacpi/core.c b/drivers/pnp/pnpacpi/core.c
+index 8dd0f37..5314bf6 100644
+--- a/drivers/pnp/pnpacpi/core.c
++++ b/drivers/pnp/pnpacpi/core.c
+@@ -154,6 +154,7 @@ struct pnp_protocol pnpacpi_protocol = {
+ 	.resume = pnpacpi_resume,
+ #endif
+ };
++EXPORT_SYMBOL(pnpacpi_protocol);
+ 
+ static int __init pnpacpi_add_device(struct acpi_device *device)
+ {
