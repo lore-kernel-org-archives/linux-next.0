@@ -1,111 +1,68 @@
-From: Sachin Sant <sachinp@in.ibm.com>
-Subject: Re: [Next] CPU Hotplug test failures on powerpc
-Date: Tue, 15 Dec 2009 19:17:28 +0530
-Message-ID: <4B279370.5050800@in.ibm.com>
-References: <4B2224C7.1020908@in.ibm.com> <1260786122.4165.142.camel@twins>
-	<4B261D7A.9040802@in.ibm.com> <1260793182.4165.223.camel@twins>
-	<1260825420.2217.40.camel@pasglop>
-	<4B275A6B.9030200@in.ibm.com> <1260873827.4165.362.camel@twins>
+From: Juha Keski-Saari <ext-juha.1.keski-saari@nokia.com>
+Subject: Re: linux-next: manual merge of the voltage tree with Linus' tree
+Date: Tue, 15 Dec 2009 16:04:44 +0200
+Message-ID: <1260885884.31691.72.camel@keskisaa-workstation>
+References: <20091215133808.cd3d4b8b.sfr@canb.auug.org.au>
+	 <1260870485.3591.25.camel@odin>  <1260879242.3591.335.camel@odin>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <1260873827.4165.362.camel@twins>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Linux/PPC Development <linuxppc-dev@ozlabs.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp.nokia.com ([192.100.122.230]:32267 "EHLO
+	mgw-mx03.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760276AbZLOOFF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Dec 2009 09:05:05 -0500
+In-Reply-To: <1260879242.3591.335.camel@odin>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: ext Liam Girdwood <lrg@slimlogic.co.uk>
+Cc: "Ujfalusi Peter (Nokia-D/Tampere)" <peter.ujfalusi@nokia.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Valentin Eduardo (Nokia-D/Helsinki)" <eduardo.valentin@nokia.com>, Rajendra Nayak <rnayak@ti.com>, Samuel Ortiz <sameo@linux.intel.com>, Balaji T K <balajitk@ti.com>, Stephen Rothwell <sfr@canb.auug.org.au>
 
-Peter Zijlstra wrote:
->> I added some debug statements within the above code. 
->> This is a 2 cpu machine.
->>
->> XMON dest_cpu = 1024 . dead_cpu = 1 . nr_cpu_ids = 2
->> XMON dest_cpu = 1024 
->> XMON dest_cpu = 1024 . dead_cpu = 1
->> XMON dest_cpu = 1024 . dead_cpu = 1 . nr_cpu_ids = 2
->> XMON dest_cpu = 1024 
->> XMON dest_cpu = 1024 . dead_cpu = 1
->> XMON dest_cpu = 1024 . dead_cpu = 1 . nr_cpu_ids = 2
->> XMON dest_cpu = 1024 
->> XMON dest_cpu = 1024 . dead_cpu = 1
->>
->> Seems to me that the control is stuck in an infinite loop and hence the
->> machine appears to be in hung state. The dest_cpu value is always 1024
->> and never changes, which result in an infinite loop.
->>
->> In working scenario the o/p is something on the following lines
->>
->> XMON dest_cpu = 1024 . dead_cpu = 1 . nr_cpu_ids = 2
->> XMON dest_cpu = 0 
->> XMON dest_cpu = 1024 . dead_cpu = 1 . nr_cpu_ids = 2
->> XMON dest_cpu = 0 
->> XMON dest_cpu = 1024 . dead_cpu = 1 . nr_cpu_ids = 2
->> XMON dest_cpu = 0 
->>
->> Let me know if i should try to record any specific value ?
->>     
->
-> Could you possibly print the two masks themselves? cpumask_scnprintf()
-> and friend come in handy for this.
->
-> The dest_cpu=1024 thing seem to suggest the intersection between
-> p->cpus_allowed and cpu_active_mask is empty for some reason, even
-> though we forcefully reset p->cpus_allowed to the full set using
-> cpuset_cpus_allowed_locked().
->   
-So here is the data related to the two masks.
+On Tue, 2009-12-15 at 13:14 +0100, ext Liam Girdwood wrote:
+> On Tue, 2009-12-15 at 09:48 +0000, Liam Girdwood wrote:
+> > Hi Stephen,
+> > 
+> > On Tue, 2009-12-15 at 13:38 +1100, Stephen Rothwell wrote:
+> > > Hi Liam,
+> > > 
+> > > Today's linux-next merge of the voltage tree got a conflict in
+> > > drivers/regulator/twl-regulator.c between commit
+> > > 441a450554dada1c59fc06fdf068cb0eeba53c6d ("regulator: Add support for
+> > > twl6030 regulators") from Linus' tree and commits
+> > > 6360cf42ae51be5f6e6e72d6e81f202d9db0f7e9 ("twl4030-regulator: Remove
+> > > regulator from all groups when disabling") and
+> > > 3277b9fce0fcaa68d5947429e062163852ebc6fb ("twl4030-regulator: Add all TWL
+> > > regulators to twreg_info") from the voltage tree.
+> > > 
+> > > I cannot begin to fix this mess up.  I do wonder why the regulator patch
+> > > above was never in linux-next before being sent upstream yesterday
+> > > (Samuel?).  All I can do is use the version of the voltage tree from
+> > > next-20091120 (commit id b0a7a2ad0aebb35934de6d2509c73fe93a362c0e) for
+> > > today and hope that Liam can do the merge with Linus' tree.
+> > > 
+> > 
+> > Sorry about this. There were some large patch sets that did span both
+> > mfd and regulator recently.
+> > 
+> > I'll fix and do my pull request today.
+> 
+> Peter, Juha,
+> 
+> I've fixed up regulator for-next against upstream and now get a build
+> failure on twl-regulator.c (possibly related to mfd/twl-codec.c build
+> failure today ?)
+> Can you check this and send me patch before I issue a pull request.
+> Fwiw, the regulator pull request is now blocking on this issue.
+> 
+> Thanks.
+> 
+> Liam
 
-cpu_active_mask = 00000000,00000000,00000000,00000000,00000000,00000000,
-00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,
-00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,
-00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,
-00000000,00000000
-XMON dest_cpu = 1024
+Hi Liam
 
-while p->cpus_allowed =  00000000,00000000,00000000,00000000,00000000,
-00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,
-00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,
-00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,
-00000000,00000000,00000001
-XMON dest_cpu = 1024
+I should be able to fix at the very least most of those during tomorrow,
+it appears that some changes with the 6030 additions confused the
+patches I sent to you earlier. I'll send you a patch tomorrows
 
-In working scenario the above data looks like
-
-cpu_active_mask = 00000000,00000000,00000000,00000000,00000000,00000000,
-00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,
-00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,
-00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,
-00000000,00000002
-XMON dest_cpu = 1
-
-while p->cpus_allowed =  00000000,00000000,00000000,00000000,00000000,
-00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,
-00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,
-00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,
-00000000,00000000,00000002
-XMON dest_cpu = 1
-
-
-hope i got the data correct.
-
-Thanks
--Sachin
-
-
--- 
-
----------------------------------
-Sachin Sant
-IBM Linux Technology Center
-India Systems and Technology Labs
-Bangalore, India
----------------------------------
+Best regards,
+Juha K-S
