@@ -1,58 +1,111 @@
-From: Peter Ujfalusi <peter.ujfalusi@nokia.com>
-Subject: Re: linux-next: origin tree build failure
-Date: Tue, 15 Dec 2009 15:01:27 +0200
-Message-ID: <200912151501.27582.peter.ujfalusi@nokia.com>
-References: <20091215164108.45c9d766.sfr@canb.auug.org.au>
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: Re: [Next] CPU Hotplug test failures on powerpc
+Date: Tue, 15 Dec 2009 19:17:28 +0530
+Message-ID: <4B279370.5050800@in.ibm.com>
+References: <4B2224C7.1020908@in.ibm.com> <1260786122.4165.142.camel@twins>
+	<4B261D7A.9040802@in.ibm.com> <1260793182.4165.223.camel@twins>
+	<1260825420.2217.40.camel@pasglop>
+	<4B275A6B.9030200@in.ibm.com> <1260873827.4165.362.camel@twins>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <20091215164108.45c9d766.sfr@canb.auug.org.au>
-Sender: linux-omap-owner@vger.kernel.org
-To: ext Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, Samuel Ortiz <sameo@linux.intel.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Tony Lindgren <tony@atomide.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <1260873827.4165.362.camel@twins>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
+Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Linux/PPC Development <linuxppc-dev@ozlabs.org>
 List-Id: linux-next.vger.kernel.org
 
-Hello,
+Peter Zijlstra wrote:
+>> I added some debug statements within the above code. 
+>> This is a 2 cpu machine.
+>>
+>> XMON dest_cpu = 1024 . dead_cpu = 1 . nr_cpu_ids = 2
+>> XMON dest_cpu = 1024 
+>> XMON dest_cpu = 1024 . dead_cpu = 1
+>> XMON dest_cpu = 1024 . dead_cpu = 1 . nr_cpu_ids = 2
+>> XMON dest_cpu = 1024 
+>> XMON dest_cpu = 1024 . dead_cpu = 1
+>> XMON dest_cpu = 1024 . dead_cpu = 1 . nr_cpu_ids = 2
+>> XMON dest_cpu = 1024 
+>> XMON dest_cpu = 1024 . dead_cpu = 1
+>>
+>> Seems to me that the control is stuck in an infinite loop and hence the
+>> machine appears to be in hung state. The dest_cpu value is always 1024
+>> and never changes, which result in an infinite loop.
+>>
+>> In working scenario the o/p is something on the following lines
+>>
+>> XMON dest_cpu = 1024 . dead_cpu = 1 . nr_cpu_ids = 2
+>> XMON dest_cpu = 0 
+>> XMON dest_cpu = 1024 . dead_cpu = 1 . nr_cpu_ids = 2
+>> XMON dest_cpu = 0 
+>> XMON dest_cpu = 1024 . dead_cpu = 1 . nr_cpu_ids = 2
+>> XMON dest_cpu = 0 
+>>
+>> Let me know if i should try to record any specific value ?
+>>     
+>
+> Could you possibly print the two masks themselves? cpumask_scnprintf()
+> and friend come in handy for this.
+>
+> The dest_cpu=1024 thing seem to suggest the intersection between
+> p->cpus_allowed and cpu_active_mask is empty for some reason, even
+> though we forcefully reset p->cpus_allowed to the full set using
+> cpuset_cpus_allowed_locked().
+>   
+So here is the data related to the two masks.
 
-On Tuesday 15 December 2009 07:41:08 ext Stephen Rothwell wrote:
-> Hi all,
->=20
-> Today's linux-next build (powerpc allyesconfig) failed like this:
->=20
-> drivers/mfd/twl4030-codec.c:29:31: error: linux/i2c/twl4030.h: No suc=
-h file
->  or directory
->=20
-> (there were more, but I assume that they all stem form this one).
->=20
-> Caused by commit 0b83ddebc6e884dc0221358cf68c461520fbdd8e ("MFD: twl4=
-030:
-> add twl4030_codec MFD as a new child to the core") from Linus' tree
-> interacting with commit b07682b6056eb6701f8cb86aa5800e6f2ea7919b ("mf=
-d:
-> Rename twl4030* driver files to enable re-use") also from Linus' tree=
-=2E
-> This file seems to have been missed in the renaming.
+cpu_active_mask = 00000000,00000000,00000000,00000000,00000000,00000000,
+00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,
+00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,
+00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,
+00000000,00000000
+XMON dest_cpu = 1024
 
-Yes, the twl4030-codec MFD driver went in earlier than the twl4030 rena=
-me patch,=20
-which does not taken care of the twl4030-codec MFD driver for some reas=
-ons.
+while p->cpus_allowed =  00000000,00000000,00000000,00000000,00000000,
+00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,
+00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,
+00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,
+00000000,00000000,00000001
+XMON dest_cpu = 1024
 
-The patch looks good, I might also align the twl4030-codec MFD driver w=
-ith the=20
-renamed twl core soon.
-I have to check the feasibility of this first, since the renaming was d=
-one to=20
-facilitate the addition of twl6030 (OMAP4 companion chip), and I don't =
-have yet=20
-access to the documentation.
+In working scenario the above data looks like
 
-Thank you,
-P=E9ter
---
-To unsubscribe from this list: send the line "unsubscribe linux-omap" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+cpu_active_mask = 00000000,00000000,00000000,00000000,00000000,00000000,
+00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,
+00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,
+00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,
+00000000,00000002
+XMON dest_cpu = 1
+
+while p->cpus_allowed =  00000000,00000000,00000000,00000000,00000000,
+00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,
+00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,
+00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,
+00000000,00000000,00000002
+XMON dest_cpu = 1
+
+
+hope i got the data correct.
+
+Thanks
+-Sachin
+
+
+-- 
+
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
