@@ -1,52 +1,58 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: ext3 tree build warning
-Date: Tue, 15 Dec 2009 23:58:45 +1100
-Message-ID: <20091215235845.da645ea0.sfr@canb.auug.org.au>
-References: <20091215105925.59a66556.sfr@canb.auug.org.au>
-	<20091215122415.GA5405@quack.suse.cz>
+From: Peter Ujfalusi <peter.ujfalusi@nokia.com>
+Subject: Re: linux-next: origin tree build failure
+Date: Tue, 15 Dec 2009 15:01:27 +0200
+Message-ID: <200912151501.27582.peter.ujfalusi@nokia.com>
+References: <20091215164108.45c9d766.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__15_Dec_2009_23_58_45_+1100_JbOVRV0QuCvwcdWP"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54363 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754999AbZLOM6w (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 15 Dec 2009 07:58:52 -0500
-In-Reply-To: <20091215122415.GA5405@quack.suse.cz>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Monakhov <dmonakhov@openvz.org>
+Content-Type: Text/Plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <20091215164108.45c9d766.sfr@canb.auug.org.au>
+Sender: linux-omap-owner@vger.kernel.org
+To: ext Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, Samuel Ortiz <sameo@linux.intel.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Tony Lindgren <tony@atomide.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__15_Dec_2009_23_58_45_+1100_JbOVRV0QuCvwcdWP
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-Hi Jan,
+On Tuesday 15 December 2009 07:41:08 ext Stephen Rothwell wrote:
+> Hi all,
+>=20
+> Today's linux-next build (powerpc allyesconfig) failed like this:
+>=20
+> drivers/mfd/twl4030-codec.c:29:31: error: linux/i2c/twl4030.h: No suc=
+h file
+>  or directory
+>=20
+> (there were more, but I assume that they all stem form this one).
+>=20
+> Caused by commit 0b83ddebc6e884dc0221358cf68c461520fbdd8e ("MFD: twl4=
+030:
+> add twl4030_codec MFD as a new child to the core") from Linus' tree
+> interacting with commit b07682b6056eb6701f8cb86aa5800e6f2ea7919b ("mf=
+d:
+> Rename twl4030* driver files to enable re-use") also from Linus' tree=
+=2E
+> This file seems to have been missed in the renaming.
 
-On Tue, 15 Dec 2009 13:24:16 +0100 Jan Kara <jack@suse.cz> wrote:
->
->   Sorry, I forgot to commit this compilation fix before pushing. It should
-> be fixed now.
+Yes, the twl4030-codec MFD driver went in earlier than the twl4030 rena=
+me patch,=20
+which does not taken care of the twl4030-codec MFD driver for some reas=
+ons.
 
-Thanks.
+The patch looks good, I might also align the twl4030-codec MFD driver w=
+ith the=20
+renamed twl core soon.
+I have to check the feasibility of this first, since the renaming was d=
+one to=20
+facilitate the addition of twl6030 (OMAP4 companion chip), and I don't =
+have yet=20
+access to the documentation.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__15_Dec_2009_23_58_45_+1100_JbOVRV0QuCvwcdWP
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAksniAUACgkQjjKRsyhoI8w+vACgmZt7RHwhElMbpF/6EaxFoh9c
-4g0AoIK26J/rtZZKnh3t2H36SqMGKaIM
-=E9+P
------END PGP SIGNATURE-----
-
---Signature=_Tue__15_Dec_2009_23_58_45_+1100_JbOVRV0QuCvwcdWP--
+Thank you,
+P=E9ter
+--
+To unsubscribe from this list: send the line "unsubscribe linux-omap" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
