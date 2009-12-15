@@ -1,44 +1,52 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: linux-next: origin tree build failure
-Date: Tue, 15 Dec 2009 15:02:17 -0800 (PST)
-Message-ID: <alpine.LFD.2.00.0912151501520.14385@localhost.localdomain>
-References: <20091215164108.45c9d766.sfr@canb.auug.org.au> <20091215145344.GA30710@sirena.org.uk> <20091215172717.GF4575@atomide.com> <20091216094541.e59d36fa.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: acpi tree build failure
+Date: Wed, 16 Dec 2009 10:28:03 +1100
+Message-ID: <20091216102803.65202607.sfr@canb.auug.org.au>
+References: <20091214122013.a869739e.sfr@canb.auug.org.au>
+	<1260853054.21292.10.camel@dc7800.home>
+	<alpine.LFD.2.00.0912151736290.6885@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__16_Dec_2009_10_28_03_+1100_jeDcS/qGl+8x1IyX"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:40813 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1762131AbZLOXDD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 15 Dec 2009 18:03:03 -0500
-In-Reply-To: <20091216094541.e59d36fa.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:36015 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752442AbZLOX2J (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 15 Dec 2009 18:28:09 -0500
+In-Reply-To: <alpine.LFD.2.00.0912151736290.6885@localhost.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Tony Lindgren <tony@atomide.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@nokia.com>, Andrew Morton <akpm@linux-foundation.org>, linux-omap@vger.kernel.org
+To: Len Brown <lenb@kernel.org>
+Cc: Bjorn Helgaas <bjorn.helgaas@hp.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
+--Signature=_Wed__16_Dec_2009_10_28_03_+1100_jeDcS/qGl+8x1IyX
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi Len, Bjorn,
 
-On Wed, 16 Dec 2009, Stephen Rothwell wrote:
+On Tue, 15 Dec 2009 17:37:21 -0500 (EST) Len Brown <lenb@kernel.org> wrote:
+>
+> i merged bjorn's fix into the original offending patch in acpi-test
 
-> Hi Tony,
-> 
-> On Tue, 15 Dec 2009 09:27:17 -0800 Tony Lindgren <tony@atomide.com> wrote:
-> >
-> > * Mark Brown <broonie@opensource.wolfsonmicro.com> [091215 06:52]:
-> > > On Tue, Dec 15, 2009 at 04:41:08PM +1100, Stephen Rothwell wrote:
-> > > 
-> > > > I have applied this patch for today (please check):
-> > > 
-> > > Looks good to me too, fwiw:
-> > > 
-> > > Acked-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
-> > 
-> > Good thing we have for-next to catch things like this.
-> 
-> Except if the renaming patch had gone through linux-next (even for one
-> day) we would have found the problem *before* it was in Linus' tree ...
+Thanks.
 
-I think maybe Tony was being ironic, exactly because of this.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-		Linus
+--Signature=_Wed__16_Dec_2009_10_28_03_+1100_jeDcS/qGl+8x1IyX
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAksoG4MACgkQjjKRsyhoI8xRzQCbBYqxD4kGfBVJ1fJDCdQKbwGa
+058An2zS7WYN6Ud/EkDnLl0fgPFmw9vS
+=6yJY
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__16_Dec_2009_10_28_03_+1100_jeDcS/qGl+8x1IyX--
