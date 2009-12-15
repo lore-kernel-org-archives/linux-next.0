@@ -1,43 +1,52 @@
-From: Jan Kara <jack@suse.cz>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: ext3 tree build warning
-Date: Tue, 15 Dec 2009 13:35:31 +0100
-Message-ID: <20091215123530.GB5405@quack.suse.cz>
+Date: Tue, 15 Dec 2009 23:58:45 +1100
+Message-ID: <20091215235845.da645ea0.sfr@canb.auug.org.au>
 References: <20091215105925.59a66556.sfr@canb.auug.org.au>
- <c18d6aa20912150158m1b77c17ey2dcfacb3aa86d67a@mail.gmail.com>
+	<20091215122415.GA5405@quack.suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__15_Dec_2009_23_58_45_+1100_JbOVRV0QuCvwcdWP"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:59237 "EHLO mx2.suse.de"
+Received: from chilli.pcug.org.au ([203.10.76.44]:54363 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752353AbZLOMfg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 15 Dec 2009 07:35:36 -0500
-Content-Disposition: inline
-In-Reply-To: <c18d6aa20912150158m1b77c17ey2dcfacb3aa86d67a@mail.gmail.com>
+	id S1754999AbZLOM6w (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 15 Dec 2009 07:58:52 -0500
+In-Reply-To: <20091215122415.GA5405@quack.suse.cz>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dmitry Monakhov <rjevskiy@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jan Kara <jack@suse.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jan Kara <jack@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Monakhov <dmonakhov@openvz.org>
 
-On Tue 15-12-09 12:58:36, Dmitry Monakhov wrote:
-> 2009/12/15 Stephen Rothwell <sfr@canb.auug.org.au>:
-> > Hi Jan,
-> >
-> > Today's linux-next build (x86_64 allmodconfig) produced this warning:
-> >
-> > fs/quota/dquot.c: In function 'dquot_alloc_inode':
-> > fs/quota/dquot.c:1521: warning: passing argument 1 of 'mark_all_dquot_dirty' discards qualifiers from pointer target type
-> > fs/quota/dquot.c:327: note: expected 'struct dquot **' but argument is of type 'struct dquot * const*'
-> > fs/quota/dquot.c: In function 'dquot_free_inode':
-> > fs/quota/dquot.c:1649: warning: passing argument 1 of 'mark_all_dquot_dirty' discards qualifiers from pointer target type
-> > fs/quota/dquot.c:327: note: expected 'struct dquot **' but argument is of type 'struct dquot * const*'
-> What's why my original patch contained type casts.
-> In fact i dont understand why {alloc,free}_inode accept pointer to
-> const struct inode, it's contradicts to normal logic
-  Does it? The 'const' keyword just promises we won't change struct inode.
-And that is true. We only change structures that are pointed to from the
-inode.  So the code is correct as is. 
+--Signature=_Tue__15_Dec_2009_23_58_45_+1100_JbOVRV0QuCvwcdWP
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-								Honza
--- 
-Jan Kara <jack@suse.cz>
-SUSE Labs, CR
+Hi Jan,
+
+On Tue, 15 Dec 2009 13:24:16 +0100 Jan Kara <jack@suse.cz> wrote:
+>
+>   Sorry, I forgot to commit this compilation fix before pushing. It should
+> be fixed now.
+
+Thanks.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__15_Dec_2009_23_58_45_+1100_JbOVRV0QuCvwcdWP
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAksniAUACgkQjjKRsyhoI8w+vACgmZt7RHwhElMbpF/6EaxFoh9c
+4g0AoIK26J/rtZZKnh3t2H36SqMGKaIM
+=E9+P
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__15_Dec_2009_23_58_45_+1100_JbOVRV0QuCvwcdWP--
