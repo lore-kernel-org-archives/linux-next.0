@@ -1,57 +1,45 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the voltage tree with Linus' tree
-Date: Tue, 15 Dec 2009 13:38:08 +1100
-Message-ID: <20091215133808.cd3d4b8b.sfr@canb.auug.org.au>
+From: Neil Brown <neilb@suse.de>
+Subject: Re: linux-next: manual merge of the md-current tree with Linus'
+ tree
+Date: Tue, 15 Dec 2009 14:05:02 +1100
+Message-ID: <20091215140502.5edd6678@notabene.brown>
+References: <20091214102428.f50557a0.sfr@canb.auug.org.au>
+	<200912141127.27019.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__15_Dec_2009_13_38_08_+1100_youqA_=FLVqnEm/_"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36190 "EHLO smtps.tip.net.au"
+Received: from cantor2.suse.de ([195.135.220.15]:41298 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752030AbZLOCiO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 14 Dec 2009 21:38:14 -0500
+	id S1759092AbZLODFM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 14 Dec 2009 22:05:12 -0500
+In-Reply-To: <200912141127.27019.arnd@arndb.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Liam Girdwood <lrg@slimlogic.co.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eduardo Valentin <eduardo.valentin@nokia.com>, Rajendra Nayak <rnayak@ti.com>, Samuel Ortiz <sameo@linux.intel.com>, Balaji T K <balajitk@ti.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__15_Dec_2009_13_38_08_+1100_youqA_=FLVqnEm/_
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 14 Dec 2009 11:27:26 +0100
+Arnd Bergmann <arnd@arndb.de> wrote:
 
-Hi Liam,
+> Neil, still have  a tree where I track patches to fs/compat_ioctl.c
+> that have not yet been merged. If you just keep the half in your
+> own files and drop the ones in fs/compat_ioctl.c, I'll submit that
+> next time. You can also adapt the patch again to the new contents
+> and remove the four above to save me that work.
+> 
+> I didn't want to remove them from fs/compat_ioctl.c before they
+> got added to md.c, in order to keep bisection correct.
+> 
+> 	Arnd
 
-Today's linux-next merge of the voltage tree got a conflict in
-drivers/regulator/twl-regulator.c between commit
-441a450554dada1c59fc06fdf068cb0eeba53c6d ("regulator: Add support for
-twl6030 regulators") from Linus' tree and commits
-6360cf42ae51be5f6e6e72d6e81f202d9db0f7e9 ("twl4030-regulator: Remove
-regulator from all groups when disabling") and
-3277b9fce0fcaa68d5947429e062163852ebc6fb ("twl4030-regulator: Add all TWL
-regulators to twreg_info") from the voltage tree.
 
-I cannot begin to fix this mess up.  I do wonder why the regulator patch
-above was never in linux-next before being sent upstream yesterday
-(Samuel?).  All I can do is use the version of the voltage tree from
-next-20091120 (commit id b0a7a2ad0aebb35934de6d2509c73fe93a362c0e) for
-today and hope that Liam can do the merge with Linus' tree.
+I had already rebased that patch on the lasted from Linus and asked him to
+pull again.
+He how seems to have done that, so md should be up-to-date in -linus,
+including the compat_ioctl stuff.
+If you would like to double check that it matches what you expect, that would
+be great.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__15_Dec_2009_13_38_08_+1100_youqA_=FLVqnEm/_
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAksm9pAACgkQjjKRsyhoI8weFACgo6+5JpDlIJlNCapawCxm/rtT
-AfUAn3TdFqQ74c8cKutPTFTSy2CIVwSy
-=AEq2
------END PGP SIGNATURE-----
-
---Signature=_Tue__15_Dec_2009_13_38_08_+1100_youqA_=FLVqnEm/_--
+Thanks,
+NeilBrown
