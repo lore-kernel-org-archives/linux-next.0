@@ -1,64 +1,42 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH -next] x86 msrs: alloc/free for CONFIG_SMP=n
-Date: Wed, 16 Dec 2009 14:02:01 -0800
-Message-ID: <20091216140201.5ef21b90.randy.dunlap@oracle.com>
-References: <20091216183212.118c5e14.sfr@canb.auug.org.au>
-	<20091216092424.5f87214c.randy.dunlap@oracle.com>
-	<4B2919BD.40001@zytor.com>
-	<20091216174524.GH11618@aftab>
-	<4B2928AC.3020807@zytor.com>
-	<20091216135119.e283e525.randy.dunlap@oracle.com>
-	<20091216215808.GB27228@liondog.tnic>
+From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH -next] nfs: fix ISO C90 warning
+Date: Wed, 16 Dec 2009 14:23:34 -0800
+Message-ID: <20091216142334.6a0ba115.randy.dunlap@oracle.com>
+References: <20091215165309.58e98eea.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet12.oracle.com ([148.87.113.124]:59134 "EHLO
-	rcsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935813AbZLPWCG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Dec 2009 17:02:06 -0500
-In-Reply-To: <20091216215808.GB27228@liondog.tnic>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Borislav Petkov <petkovbb@googlemail.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <borislav.petkov@amd.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Return-path: <linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20091215165309.58e98eea.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Sender: linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Trond Myklebust <Trond.Myklebust-HgOvQuBEEgTQT0dZR+AlfA@public.gmane.org>
+Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 16 Dec 2009 22:58:08 +0100 Borislav Petkov wrote:
+From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
 
-> On Wed, Dec 16, 2009 at 01:51:19PM -0800, Randy Dunlap wrote:
-> > From: Randy Dunlap <randy.dunlap@oracle.com>
-> > 
-> > Rearrange arch/x86/lib/msr.c so that alloc/free are built and
-> > usable when CONFIG_SMP=n.  Fixes build of amd64_edac.
-> > 
-> > ERROR: "msrs_free" [drivers/edac/amd64_edac_mod.ko] undefined!
-> > ERROR: "msrs_alloc" [drivers/edac/amd64_edac_mod.ko] undefined!
-> >
-> > ---
-> >  arch/x86/lib/Makefile |    2 -
-> >  arch/x86/lib/msr.c    |   42 ++++++++++++++++++++--------------------
-> >  2 files changed, 23 insertions(+), 21 deletions(-)
-> 
-> Haha, I just sent a very similar one :)
+Fix gcc ISO C90 warning:
 
-Yes, I noticed.
+fs/nfs/callback.c:356: warning: ISO C90 forbids mixed declarations and code
 
-> > 
-> > --- linux-next-20091216.orig/arch/x86/lib/Makefile
-> > +++ linux-next-20091216/arch/x86/lib/Makefile
-> > @@ -14,7 +14,7 @@ $(obj)/inat.o: $(obj)/inat-tables.c
-> >  
-> >  clean-files := inat-tables.c
-> >  
-> > -obj-$(CONFIG_SMP) := msr.o
-> > +obj-$(CONFIG_X86_MSR) := msr.o
-> 
-> however, CONFIG_X86_MSR is the x86 MSR access module and the <lib/msr.c>
-> is the library of MSR accessing functions which is always in. So this
-> should be unconditional as in my version or Peter might have a better
-> idea...?
-
-Sure, whichever is OK with me.
-
+Signed-off-by: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
 ---
-~Randy
+ fs/nfs/callback.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20091215.orig/fs/nfs/callback.c
++++ linux-next-20091215/fs/nfs/callback.c
+@@ -352,8 +352,8 @@ static int check_gss_callback_principal(
+ static int nfs_callback_authenticate(struct svc_rqst *rqstp)
+ {
+ 	struct nfs_client *clp;
+-	RPC_IFDEBUG(char buf[RPC_MAX_ADDRBUFLEN]);
+ 	int ret = SVC_OK;
++	RPC_IFDEBUG(char buf[RPC_MAX_ADDRBUFLEN]);
+ 
+ 	/* Don't talk to strangers */
+ 	clp = nfs_find_client(svc_addr(rqstp), 4);
+--
+To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
