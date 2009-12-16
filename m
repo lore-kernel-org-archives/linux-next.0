@@ -1,69 +1,137 @@
-From: Sachin Sant <sachinp@in.ibm.com>
+From: Xiaotian Feng <xtfeng@gmail.com>
 Subject: Re: [Next] CPU Hotplug test failures on powerpc
-Date: Wed, 16 Dec 2009 11:08:10 +0530
-Message-ID: <4B287242.5070002@in.ibm.com>
-References: <4B2224C7.1020908@in.ibm.com> <1260786122.4165.142.camel@twins> <4B261D7A.9040802@in.ibm.com>  <1260793182.4165.223.camel@twins> <1260825420.2217.40.camel@pasglop>  <4B275A6B.9030200@in.ibm.com> <1260873827.4165.362.camel@twins>  <4B279370.5050800@in.ibm.com> <1260889402.4165.434.camel@twins>
+Date: Wed, 16 Dec 2009 14:25:14 +0800
+Message-ID: <7b6bb4a50912152225p4f5dde13re83c439407c16eaf@mail.gmail.com>
+References: <4B2224C7.1020908@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e23smtp08.au.ibm.com ([202.81.31.141]:42891 "EHLO
-	e23smtp08.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752606AbZLPFiT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Dec 2009 00:38:19 -0500
-In-Reply-To: <1260889402.4165.434.camel@twins>
+Received: from mail-pz0-f171.google.com ([209.85.222.171]:55836 "EHLO
+	mail-pz0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756662AbZLPGZS convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Dec 2009 01:25:18 -0500
+In-Reply-To: <4B2224C7.1020908@in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Linux/PPC Development <linuxppc-dev@ozlabs.org>, linux-kernel <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org
+To: Sachin Sant <sachinp@in.ibm.com>
+Cc: Linux/PPC Development <linuxppc-dev@ozlabs.org>, linux-kernel <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-Peter Zijlstra wrote:
-> Could you try the below?
->   
-No luck. Still the same issue. The mask values don't change.
-
-Thanks
--Sachin
-
-> ---
->  init/main.c |    7 +------
->  1 files changed, 1 insertions(+), 6 deletions(-)
+On Fri, Dec 11, 2009 at 6:53 PM, Sachin Sant <sachinp@in.ibm.com> wrote=
+:
+> While executing cpu_hotplug(from autotest) tests against latest
+> next on a power6 box, the machine locks up. A soft reset shows
+> the following trace
 >
-> diff --git a/init/main.c b/init/main.c
-> index 4051d75..4be7de2 100644
-> --- a/init/main.c
-> +++ b/init/main.c
-> @@ -369,12 +369,6 @@ static void __init smp_init(void)
->  {
->  	unsigned int cpu;
->  
-> -	/*
-> -	 * Set up the current CPU as possible to migrate to.
-> -	 * The other ones will be done by cpu_up/cpu_down()
-> -	 */
-> -	set_cpu_active(smp_processor_id(), true);
-> -
->  	/* FIXME: This should be done in userspace --RR */
->  	for_each_present_cpu(cpu) {
->  		if (num_online_cpus() >= setup_max_cpus)
-> @@ -486,6 +480,7 @@ static void __init boot_cpu_init(void)
->  	int cpu = smp_processor_id();
->  	/* Mark the boot cpu "present", "online" etc for SMP and UP case */
->  	set_cpu_online(cpu, true);
-> +	set_cpu_active(cpu, true);
->  	set_cpu_present(cpu, true);
->  	set_cpu_possible(cpu, true);
->  }
+> cpu 0x0: Vector: 100 (System Reset) at [c00000000c9333d0]
+> =C2=A0 pc: c0000000003433d8: .find_next_bit+0x54/0xc4
+> =C2=A0 lr: c000000000342f10: .cpumask_next_and+0x4c/0x94
+> =C2=A0 sp: c00000000c933650
+> =C2=A0msr: 8000000000089032
+> =C2=A0current =3D 0xc00000000c173840
+> =C2=A0paca =C2=A0 =C2=A0=3D 0xc000000000bc2600
+> =C2=A0 pid =C2=A0 =3D 2602, comm =3D hotplug06.top.s
+> enter ? for help
+> [link register =C2=A0 ] c000000000342f10 .cpumask_next_and+0x4c/0x94
+> [c00000000c933650] c0000000000e9f34 .cpuset_cpus_allowed_locked+0x38/=
+0x74
+> (unreliable)
+> [c00000000c9336e0] c000000000090074 .move_task_off_dead_cpu+0xc4/0x1a=
+c
+> [c00000000c9337a0] c0000000005e4e5c .migration_call+0x304/0x830
+> [c00000000c933880] c0000000005e0880 .notifier_call_chain+0x68/0xe0
+> [c00000000c933920] c00000000012a92c ._cpu_down+0x210/0x34c
+> [c00000000c933a90] c00000000012aad8 .cpu_down+0x70/0xa8
+> [c00000000c933b20] c000000000525940 .store_online+0x54/0x894
+> [c00000000c933bb0] c000000000463430 .sysdev_store+0x3c/0x50
+> [c00000000c933c20] c0000000001f8320 .sysfs_write_file+0x124/0x18c
+> [c00000000c933ce0] c00000000017edac .vfs_write+0xd4/0x1fc
+> [c00000000c933d80] c00000000017efdc .SyS_write+0x58/0xa0
+> [c00000000c933e30] c0000000000085b4 syscall_exit+0x0/0x40
+> --- Exception: c01 (System Call) at 00000fff9fa8a8f8
+> SP (fffe7aef200) is in userspace
+> 0:mon> e
+> cpu 0x0: Vector: 100 (System Reset) at [c00000000c9333d0]
+> =C2=A0 pc: c0000000003433d8: .find_next_bit+0x54/0xc4
+> =C2=A0 lr: c000000000342f10: .cpumask_next_and+0x4c/0x94
+> =C2=A0 sp: c00000000c933650
+> =C2=A0msr: 8000000000089032
+> =C2=A0current =3D 0xc00000000c173840
+> =C2=A0paca =C2=A0 =C2=A0=3D 0xc000000000bc2600
+> =C2=A0 pid =C2=A0 =3D 2602, comm =3D hotplug06.top.s
+>
+
+Does this testcase hotplug cpu 0 off?
+
+> Last few messages from the dmesg log shows
+>
+> 0:mon> <4>IRQ 17 affinity broken off cpu 0
+> <4>IRQ 18 affinity broken off cpu 0
+> <4>IRQ 19 affinity broken off cpu 0
+> <4>IRQ 264 affinity broken off cpu 0
+> <4>cpu 0 (hwid 0) Ready to die...
+> <7>clockevent: decrementer mult[83126e97] shift[32] cpu[0]
+> <4>Processor 0 found.
+> <4>IRQ 17 affinity broken off cpu 1
+> <4>IRQ 18 affinity broken off cpu 1
+> <4>IRQ 19 affinity broken off cpu 1
+> <4>IRQ 264 affinity broken off cpu 1
+> <4>cpu 1 (hwid 1) Ready to die...
+> <7>clockevent: decrementer mult[83126e97] shift[32] cpu[1]
+> <4>Processor 1 found.
+> <4>cpu 1 (hwid 1) Ready to die...
+> <7>clockevent: decrementer mult[83126e97] shift[32] cpu[1]
+> <4>Processor 1 found.
+> <4>cpu 1 (hwid 1) Ready to die...
+> <6>process 2423 (bash) no longer affine to cpu1
+> <7>clockevent: decrementer mult[83126e97] shift[32] cpu[1]
+> <4>Processor 1 found.
+> <4>cpu 1 (hwid 1) Ready to die...
+> <7>clockevent: decrementer mult[83126e97] shift[32] cpu[1]
+> <4>Processor 1 found.
+> <4>cpu 1 (hwid 1) Ready to die...
+> <7>clockevent: decrementer mult[83126e97] shift[32] cpu[1]
+> <4>Processor 1 found.
+> <4>cpu 1 (hwid 1) Ready to die...
+> <3>INFO: RCU detected CPU 0 stall (t=3D1000 jiffies)
+> <3>INFO: RCU detected CPU 0 stall (t=3D4000 jiffies)
+> 0:mon>
+>
+> After some debugging a possible suspect seems to be commit
+> 6ad4c18.. : sched: Fix balance vs hotplug race
+>
+> If i revert this patch i am able to execute the tests on this
+> power6 without any issues.
+> But at the same time the above patch is required to solve the
+> cpu hotplug related race on x86_64(as a side note this same
+> x86_64 issue can be recreated against latest Linus git as well)
+> that i reported here :
+>
+> http://marc.info/?l=3Dlinux-kernel&m=3D125802682922299&w=3D2
+>
+> I will try few more iterations with and without the above
+> patch just to make sure i have the correct results.
+>
+> If someone has a suggestion let me know.
+>
+> Thanks
+> -Sachin
 >
 >
->   
-
-
--- 
-
----------------------------------
-Sachin Sant
-IBM Linux Technology Center
-India Systems and Technology Labs
-Bangalore, India
----------------------------------
+> --
+>
+> ---------------------------------
+> Sachin Sant
+> IBM Linux Technology Center
+> India Systems and Technology Labs
+> Bangalore, India
+> ---------------------------------
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kerne=
+l" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =C2=A0http://vger.kernel.org/majordomo-info.ht=
+ml
+> Please read the FAQ at =C2=A0http://www.tux.org/lkml/
+>
