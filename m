@@ -1,63 +1,50 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Subject: Re: linux-next: origin tree build failure
-Date: Wed, 16 Dec 2009 10:30:54 +0100
-Message-ID: <20091216093054.GB3788@sortiz.org>
-References: <20091215164108.45c9d766.sfr@canb.auug.org.au>
- <20091215145344.GA30710@sirena.org.uk>
- <20091215172717.GF4575@atomide.com>
- <20091216094541.e59d36fa.sfr@canb.auug.org.au>
+From: Liam Girdwood <lrg@slimlogic.co.uk>
+Subject: Re: linux-next:  tree build failure
+Date: Wed, 16 Dec 2009 10:10:54 +0000
+Message-ID: <1260958254.3525.66.camel@odin>
+References: <20091216182132.357359a6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga10.intel.com ([192.55.52.92]:40511 "EHLO
-	fmsmga102.fm.intel.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1753728AbZLPJ3Y (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Dec 2009 04:29:24 -0500
-Content-Disposition: inline
-In-Reply-To: <20091216094541.e59d36fa.sfr@canb.auug.org.au>
+Received: from mail-ew0-f219.google.com ([209.85.219.219]:53502 "EHLO
+	mail-ew0-f219.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1761921AbZLPKK7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Dec 2009 05:10:59 -0500
+In-Reply-To: <20091216182132.357359a6.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Tony Lindgren <tony@atomide.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@nokia.com>, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, linux-omap@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, "Keski-Saari Juha.1 (EXT-Teleca/Helsinki)" <ext-juha.1.keski-saari@nokia.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Balaji T K <balajitk@ti.com>, Samuel Ortiz <sameo@linux.intel.com>, Peter Ujfalusi <peter.ujfalusi@nokia.com>
 
 Hi Stephen,
 
-On Wed, Dec 16, 2009 at 09:45:41AM +1100, Stephen Rothwell wrote:
-> Hi Tony,
+On Wed, 2009-12-16 at 18:21 +1100, Stephen Rothwell wrote:
+
+> I guess we knew this was coming :-(
+
+:(
+
 > 
-> On Tue, 15 Dec 2009 09:27:17 -0800 Tony Lindgren <tony@atomide.com> wrote:
-> >
-> > * Mark Brown <broonie@opensource.wolfsonmicro.com> [091215 06:52]:
-> > > On Tue, Dec 15, 2009 at 04:41:08PM +1100, Stephen Rothwell wrote:
-> > > 
-> > > > I have applied this patch for today (please check):
-> > > 
-> > > Looks good to me too, fwiw:
-> > > 
-> > > Acked-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
-> > 
-> > Good thing we have for-next to catch things like this.
+> Caused by a bad rebase of the voltage tree onto Linus' tree (in order to
+> do fixups for commit fc7b92fca4e546184557f1c53f84ad57c66b7695 "mfd:
+> Rename all twl4030_i2c*" and others).
 > 
-> Except if the renaming patch had gone through linux-next (even for one
-> day) we would have found the problem *before* it was in Linus' tree ...
-Mea maxima culpa. I could come up with several reason why I rushed this patch
-in, but none of them would be good. I apologize here.
+> I have reverted all the commits in the voltage tree that touched
+> drivers/regulator/twl-regulator.c for today:
+> 
+> 6051d7a2786c57d0c5c4227dd9ddfc348a86ce91 "twl4030-regulator: Fixes VAUX1-3 exclusion introduced"
+> 2677c78184a52edcc228c20a1c05c14925118293 "Reset REMAP configuration in regulator probe"
+> de449258306274739ed3a747f49b9ac8f91f9e4a "Define critical regulators as always_on"
+> 66d65d352f6fd61dd5695925906b140f1e0ac9c3 "twl4030-regulator: Add all TWL regulators to twreg_info"
+> f33a0d47bd44dbf44a45c33b32e1e3bbbf8d06e6 "twl4030-regulator: Remove regulator from all groups when disabling"
+> 
+> Please fix up this tree properly.  You may have been better off merging
+> Linus' tree into yours and fixing up the merge commit than trying to do
+> the rebase.
 
+Apologies for this. There is a fix coming from Juha today.
 
-> (/me is a little grumpy :-))
-I understand, sorry again.
+Thanks
 
-Cheers,
-Samuel.
-
-
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
-
-
-
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+Liam
