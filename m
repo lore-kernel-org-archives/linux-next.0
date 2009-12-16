@@ -1,53 +1,69 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the hwpoison tree with Linus' tree
-Date: Wed, 16 Dec 2009 16:21:03 +1100
-Message-ID: <20091216162103.c423880d.sfr@canb.auug.org.au>
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: Re: [Next] CPU Hotplug test failures on powerpc
+Date: Wed, 16 Dec 2009 11:08:10 +0530
+Message-ID: <4B287242.5070002@in.ibm.com>
+References: <4B2224C7.1020908@in.ibm.com> <1260786122.4165.142.camel@twins> <4B261D7A.9040802@in.ibm.com>  <1260793182.4165.223.camel@twins> <1260825420.2217.40.camel@pasglop>  <4B275A6B.9030200@in.ibm.com> <1260873827.4165.362.camel@twins>  <4B279370.5050800@in.ibm.com> <1260889402.4165.434.camel@twins>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60065 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752821AbZLPFVI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Dec 2009 00:21:08 -0500
+Received: from e23smtp08.au.ibm.com ([202.81.31.141]:42891 "EHLO
+	e23smtp08.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752606AbZLPFiT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Dec 2009 00:38:19 -0500
+In-Reply-To: <1260889402.4165.434.camel@twins>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andi Kleen <andi@firstfloor.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wu Fengguang <fengguang.wu@intel.com>, Hugh Dickins <hugh.dickins@tiscali.co.uk>, Andrew Morton <akpm@linux-foundation.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Linux/PPC Development <linuxppc-dev@ozlabs.org>, linux-kernel <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org
 
-Hi Andi,
+Peter Zijlstra wrote:
+> Could you try the below?
+>   
+No luck. Still the same issue. The mask values don't change.
 
-Today's linux-next merge of the hwpoison tree got a conflict in
-mm/memcontrol.c between commit 407f9c8b0889ced1dbe2f9157e4e60c61329d5c9
-("ksm: mem cgroup charge swapin copy") from Linus' tree and commit
-eacbcea706766709f5c3bbbca208c04558a8d72f ("memcg: rename and export
-try_get_mem_cgroup_from_page()") from the hwpoison tree.
+Thanks
+-Sachin
 
-Just context changes.  I fixed it up (see below) and can carry the fix
-for a while.
+> ---
+>  init/main.c |    7 +------
+>  1 files changed, 1 insertions(+), 6 deletions(-)
+>
+> diff --git a/init/main.c b/init/main.c
+> index 4051d75..4be7de2 100644
+> --- a/init/main.c
+> +++ b/init/main.c
+> @@ -369,12 +369,6 @@ static void __init smp_init(void)
+>  {
+>  	unsigned int cpu;
+>  
+> -	/*
+> -	 * Set up the current CPU as possible to migrate to.
+> -	 * The other ones will be done by cpu_up/cpu_down()
+> -	 */
+> -	set_cpu_active(smp_processor_id(), true);
+> -
+>  	/* FIXME: This should be done in userspace --RR */
+>  	for_each_present_cpu(cpu) {
+>  		if (num_online_cpus() >= setup_max_cpus)
+> @@ -486,6 +480,7 @@ static void __init boot_cpu_init(void)
+>  	int cpu = smp_processor_id();
+>  	/* Mark the boot cpu "present", "online" etc for SMP and UP case */
+>  	set_cpu_online(cpu, true);
+> +	set_cpu_active(cpu, true);
+>  	set_cpu_present(cpu, true);
+>  	set_cpu_possible(cpu, true);
+>  }
+>
+>
+>   
+
+
 -- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc mm/memcontrol.c
-index e0c2066,4e51af7..0000000
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@@ -1737,13 -1739,12 +1739,13 @@@ int mem_cgroup_try_charge_swapin(struc
-  		goto charge_cur_mm;
-  	/*
-  	 * A racing thread's fault, or swapoff, may have already updated
- -	 * the pte, and even removed page from swap cache: return success
- -	 * to go on to do_swap_page()'s pte_same() test, which should fail.
- +	 * the pte, and even removed page from swap cache: in those cases
- +	 * do_swap_page()'s pte_same() test will fail; but there's also a
- +	 * KSM case which does need to charge the page.
-  	 */
-  	if (!PageSwapCache(page))
- -		return 0;
- +		goto charge_cur_mm;
-- 	mem = try_get_mem_cgroup_from_swapcache(page);
-+ 	mem = try_get_mem_cgroup_from_page(page);
-  	if (!mem)
-  		goto charge_cur_mm;
-  	*ptr = mem;
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
