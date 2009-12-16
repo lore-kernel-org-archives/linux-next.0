@@ -1,66 +1,132 @@
-From: Hugh Dickins <hugh.dickins@tiscali.co.uk>
-Subject: Re: linux-next: hwpoison tree build failure
-Date: Wed, 16 Dec 2009 08:49:36 +0000 (GMT)
-Message-ID: <Pine.LNX.4.64.0912160847270.14564@sister.anvils>
-References: <20091216172633.93c361ee.sfr@canb.auug.org.au>
+From: Felipe Balbi <felipe.balbi@nokia.com>
+Subject: Re: linux-next:  tree build failure
+Date: Wed, 16 Dec 2009 11:02:24 +0200
+Message-ID: <20091216090224.GB19749@nokia.com>
+References: <20091216182132.357359a6.sfr@canb.auug.org.au>
+Reply-To: felipe.balbi@nokia.com
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753824AbZLPIuA@vger.kernel.org>
-In-Reply-To: <20091216172633.93c361ee.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andi Kleen <andi@firstfloor.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp.nokia.com ([192.100.122.230]:21865 "EHLO
+	mgw-mx03.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752396AbZLPJDN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Dec 2009 04:03:13 -0500
+Content-Disposition: inline
+In-Reply-To: <20091216182132.357359a6.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: ext Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Liam Girdwood <lrg@slimlogic.co.uk>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Balaji T K <balajitk@ti.com>, Samuel Ortiz <sameo@linux.intel.com>
 
-On Wed, 16 Dec 2009, Stephen Rothwell wrote:
+Hi,
 
-> Hi Andi,
-> 
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
-> 
-> mm/memory-failure.c: In function 'soft_offline_page':
-> mm/memory-failure.c:1266: error: too few arguments to function 'migrate_pages'
-> 
-> Caused by commit c71d409184af558ddac0fd0167061d6282428872 ("HWPOISON: Add
-> soft page offline support") from the hwpoison tree interacting with
-> commit 62b61f611eb5e20f7e9f8619bfd03bdfe8af6348 ("ksm: memory hotremove
-> migration only") from Linus' tree.
-> 
-> I added the following merge fix for today (I don't know if it is correct)
-> and can carry it for a while:
+On Wed, Dec 16, 2009 at 08:21:32AM +0100, ext Stephen Rothwell wrote:
+>Hi Liam,
+>
+>Today's linux-next build (powerpc allyesconfig) failed like this:
+>
+>drivers/regulator/twl-regulator.c: In function 'twlreg_disable':
+>drivers/regulator/twl-regulator.c:158: error: 'P1_GRP' undeclared (first use in this function)
+>drivers/regulator/twl-regulator.c:158: error: 'P2_GRP' undeclared (first use in this function)
+>drivers/regulator/twl-regulator.c:158: error: 'P3_GRP' undeclared (first use in this function)
+>drivers/regulator/twl-regulator.c: At top level:
+>drivers/regulator/twl-regulator.c:358: error: 'twlldo_list_voltage' undeclared here (not in a function)
+>drivers/regulator/twl-regulator.c:450:35: error: macro "TWL_ADJUSTABLE_LDO" requires 4 arguments, but only 3 given
+>drivers/regulator/twl-regulator.c:450: error: 'TWL_ADJUSTABLE_LDO' undeclared here (not in a function)
+>drivers/regulator/twl-regulator.c:451:40: error: macro "TWL_ADJUSTABLE_LDO" requires 4 arguments, but only 3 given
+>drivers/regulator/twl-regulator.c:452:35: error: macro "TWL_ADJUSTABLE_LDO" requires 4 arguments, but only 3 given
+>drivers/regulator/twl-regulator.c:453:35: error: macro "TWL_ADJUSTABLE_LDO" requires 4 arguments, but only 3 given
+>drivers/regulator/twl-regulator.c:454:35: error: macro "TWL_ADJUSTABLE_LDO" requires 4 arguments, but only 3 given
+>drivers/regulator/twl-regulator.c:455:35: error: macro "TWL_ADJUSTABLE_LDO" requires 4 arguments, but only 3 given
+>drivers/regulator/twl-regulator.c:456:35: error: macro "TWL_ADJUSTABLE_LDO" requires 4 arguments, but only 3 given
+>drivers/regulator/twl-regulator.c:457:35: error: macro "TWL_ADJUSTABLE_LDO" requires 4 arguments, but only 3 given
+>drivers/regulator/twl-regulator.c:458:35: error: macro "TWL_ADJUSTABLE_LDO" requires 4 arguments, but only 3 given
+>drivers/regulator/twl-regulator.c:459:34: error: macro "TWL_ADJUSTABLE_LDO" requires 4 arguments, but only 3 given
+>drivers/regulator/twl-regulator.c:460:35: error: macro "TWL_ADJUSTABLE_LDO" requires 4 arguments, but only 3 given
+>drivers/regulator/twl-regulator.c:461:40: error: macro "TWL_FIXED_LDO" requires 5 arguments, but only 4 given
+>drivers/regulator/twl-regulator.c:461: error: 'TWL_FIXED_LDO' undeclared here (not in a function)
+>drivers/regulator/twl-regulator.c:462:39: error: macro "TWL_ADJUSTABLE_LDO" requires 4 arguments, but only 3 given
+>drivers/regulator/twl-regulator.c:463:39: error: macro "TWL_FIXED_LDO" requires 5 arguments, but only 4 given
+>drivers/regulator/twl-regulator.c:464:34: error: macro "TWL_ADJUSTABLE_LDO" requires 4 arguments, but only 3 given
+>drivers/regulator/twl-regulator.c:465:35: error: macro "TWL_ADJUSTABLE_LDO" requires 4 arguments, but only 3 given
+>drivers/regulator/twl-regulator.c:466:35: error: macro "TWL_ADJUSTABLE_LDO" requires 4 arguments, but only 3 given
+>drivers/regulator/twl-regulator.c:467:39: error: macro "TWL_FIXED_LDO" requires 5 arguments, but only 4 given
+>drivers/regulator/twl-regulator.c:468:39: error: macro "TWL_FIXED_LDO" requires 5 arguments, but only 4 given
+>drivers/regulator/twl-regulator.c:469:39: error: macro "TWL_FIXED_LDO" requires 5 arguments, but only 4 given
+>drivers/regulator/twl-regulator.c:474: error: 'VAUX1_6030_VSEL_table' undeclared here (not in a function)
+>drivers/regulator/twl-regulator.c:474: warning: type defaults to 'int' in declaration of 'type name'
+>drivers/regulator/twl-regulator.c:474: warning: type defaults to 'int' in declaration of 'type name'
+>drivers/regulator/twl-regulator.c:474: error: negative width in bit-field '<anonymous>'
+>drivers/regulator/twl-regulator.c:474: warning: type defaults to 'int' in declaration of 'type name'
+>drivers/regulator/twl-regulator.c:474: warning: type defaults to 'int' in declaration of 'type name'
+>drivers/regulator/twl-regulator.c:474: error: negative width in bit-field '<anonymous>'
+>drivers/regulator/twl-regulator.c:475: error: 'VAUX2_6030_VSEL_table' undeclared here (not in a function)
+>drivers/regulator/twl-regulator.c:475: warning: type defaults to 'int' in declaration of 'type name'
+>drivers/regulator/twl-regulator.c:475: warning: type defaults to 'int' in declaration of 'type name'
+>drivers/regulator/twl-regulator.c:475: error: negative width in bit-field '<anonymous>'
+>drivers/regulator/twl-regulator.c:475: warning: type defaults to 'int' in declaration of 'type name'
+>drivers/regulator/twl-regulator.c:475: warning: type defaults to 'int' in declaration of 'type name'
+>drivers/regulator/twl-regulator.c:475: error: negative width in bit-field '<anonymous>'
+>drivers/regulator/twl-regulator.c:476: error: 'VAUX3_6030_VSEL_table' undeclared here (not in a function)
+>drivers/regulator/twl-regulator.c:476: warning: type defaults to 'int' in declaration of 'type name'
+>drivers/regulator/twl-regulator.c:476: warning: type defaults to 'int' in declaration of 'type name'
+>drivers/regulator/twl-regulator.c:476: error: negative width in bit-field '<anonymous>'
+>drivers/regulator/twl-regulator.c:476: warning: type defaults to 'int' in declaration of 'type name'
+>drivers/regulator/twl-regulator.c:476: warning: type defaults to 'int' in declaration of 'type name'
+>drivers/regulator/twl-regulator.c:476: error: negative width in bit-field '<anonymous>'
+>drivers/regulator/twl-regulator.c:477: error: 'VMMC_VSEL_table' undeclared here (not in a function)
+>drivers/regulator/twl-regulator.c:477: warning: type defaults to 'int' in declaration of 'type name'
+>drivers/regulator/twl-regulator.c:477: warning: type defaults to 'int' in declaration of 'type name'
+>drivers/regulator/twl-regulator.c:477: error: negative width in bit-field '<anonymous>'
+>drivers/regulator/twl-regulator.c:477: warning: type defaults to 'int' in declaration of 'type name'
+>drivers/regulator/twl-regulator.c:477: warning: type defaults to 'int' in declaration of 'type name'
+>drivers/regulator/twl-regulator.c:477: error: negative width in bit-field '<anonymous>'
+>drivers/regulator/twl-regulator.c:478: error: 'VPP_VSEL_table' undeclared here (not in a function)
+>drivers/regulator/twl-regulator.c:478: warning: type defaults to 'int' in declaration of 'type name'
+>drivers/regulator/twl-regulator.c:478: warning: type defaults to 'int' in declaration of 'type name'
+>drivers/regulator/twl-regulator.c:478: error: negative width in bit-field '<anonymous>'
+>drivers/regulator/twl-regulator.c:478: warning: type defaults to 'int' in declaration of 'type name'
+>drivers/regulator/twl-regulator.c:478: warning: type defaults to 'int' in declaration of 'type name'
+>drivers/regulator/twl-regulator.c:478: error: negative width in bit-field '<anonymous>'
+>drivers/regulator/twl-regulator.c:479: error: 'VUSIM_VSEL_table' undeclared here (not in a function)
+>drivers/regulator/twl-regulator.c:479: warning: type defaults to 'int' in declaration of 'type name'
+>drivers/regulator/twl-regulator.c:479: warning: type defaults to 'int' in declaration of 'type name'
+>drivers/regulator/twl-regulator.c:479: error: negative width in bit-field '<anonymous>'
+>drivers/regulator/twl-regulator.c:479: warning: type defaults to 'int' in declaration of 'type name'
+>drivers/regulator/twl-regulator.c:479: warning: type defaults to 'int' in declaration of 'type name'
+>drivers/regulator/twl-regulator.c:479: error: negative width in bit-field '<anonymous>'
+>drivers/regulator/twl-regulator.c: In function 'twlreg_probe':
+>drivers/regulator/twl-regulator.c:544: error: implicit declaration of function 'twl4030reg_write'
+>
+>I guess we knew this was coming :-(
+>
+>Caused by a bad rebase of the voltage tree onto Linus' tree (in order to
+>do fixups for commit fc7b92fca4e546184557f1c53f84ad57c66b7695 "mfd:
+>Rename all twl4030_i2c*" and others).
+>
+>I have reverted all the commits in the voltage tree that touched
+>drivers/regulator/twl-regulator.c for today:
+>
+>6051d7a2786c57d0c5c4227dd9ddfc348a86ce91 "twl4030-regulator: Fixes VAUX1-3 exclusion introduced"
+>2677c78184a52edcc228c20a1c05c14925118293 "Reset REMAP configuration in regulator probe"
+>de449258306274739ed3a747f49b9ac8f91f9e4a "Define critical regulators as always_on"
+>66d65d352f6fd61dd5695925906b140f1e0ac9c3 "twl4030-regulator: Add all TWL regulators to twreg_info"
+>f33a0d47bd44dbf44a45c33b32e1e3bbbf8d06e6 "twl4030-regulator: Remove regulator from all groups when disabling"
+>
+>Please fix up this tree properly.  You may have been better off merging
+>Linus' tree into yours and fixing up the merge commit than trying to do
+>the rebase.
 
-Yes, a 0 there is indeed the right fix: thanks, Stephen.
+All this crap would not have come if we weren't to rename twl4030 into 
+twl. The argument that we need to rename files to make the code reusable 
+is plain STUPID.
 
-Hugh
+I made my point several times that we don't need to rename the files to 
+make the code reusable, twl4030-*.c were already supporting twl4030, 
+twl5030, twl5031 and some of the tps versions. Now several trees are 
+broken because of the stupid mess created by one person who can't even 
+run make when creating a patch. Now we have to pay the price and have a 
+broken bisect point, great.
 
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 16 Dec 2009 17:19:40 +1100
-> Subject: [PATCH] hwpoison: fix for migrate_pages API change
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  mm/memory-failure.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index 7f3f627..bcce287 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -1263,7 +1263,7 @@ int soft_offline_page(struct page *page, int flags)
->  		LIST_HEAD(pagelist);
->  
->  		list_add(&page->lru, &pagelist);
-> -		ret = migrate_pages(&pagelist, new_page, MPOL_MF_MOVE_ALL);
-> +		ret = migrate_pages(&pagelist, new_page, MPOL_MF_MOVE_ALL, 0);
->  		if (ret) {
->  			pr_debug("soft offline: %#lx: migration failed %d, type %lx\n",
->  				pfn, ret, page->flags);
-> -- 
-> 1.6.5.4
-> 
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
+-- 
+balbi
