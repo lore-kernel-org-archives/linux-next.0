@@ -1,54 +1,61 @@
-From: "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH -next] x86 msrs: alloc/free for CONFIG_SMP=n
-Date: Wed, 16 Dec 2009 14:41:13 -0800
-Message-ID: <4B296209.2010902@zytor.com>
-References: <20091216183212.118c5e14.sfr@canb.auug.org.au> <20091216092424.5f87214c.randy.dunlap@oracle.com> <4B2919BD.40001@zytor.com> <20091216174524.GH11618@aftab> <4B2928AC.3020807@zytor.com> <20091216135119.e283e525.randy.dunlap@oracle.com> <20091216215808.GB27228@liondog.tnic>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [PATCH -next] nfs: fix ISO C90 warning
+Date: Wed, 16 Dec 2009 14:47:00 -0800
+Message-ID: <20091216144700.34b80b4b.randy.dunlap@oracle.com>
+References: <20091215165309.58e98eea.sfr@canb.auug.org.au>
+	<20091216142334.6a0ba115.randy.dunlap@oracle.com>
+	<1261003219.13878.6.camel@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from terminus.zytor.com ([198.137.202.10]:38464 "EHLO
-	terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934361AbZLPWlZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Dec 2009 17:41:25 -0500
-In-Reply-To: <20091216215808.GB27228@liondog.tnic>
+Received: from rcsinet11.oracle.com ([148.87.113.123]:18448 "EHLO
+	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759355AbZLPWsw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Dec 2009 17:48:52 -0500
+In-Reply-To: <1261003219.13878.6.camel@localhost>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Borislav Petkov <petkovbb@googlemail.com>, Randy Dunlap <randy.dunlap@oracle.com>, Borislav Petkov <borislav.petkov@amd.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger
+To: Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-nfs@vger.kernel.org
 
-On 12/16/2009 01:58 PM, Borislav Petkov wrote:
+On Wed, 16 Dec 2009 17:40:19 -0500 Trond Myklebust wrote:
+
+> On Wed, 2009-12-16 at 14:23 -0800, Randy Dunlap wrote: 
+> > From: Randy Dunlap <randy.dunlap@oracle.com>
+> > 
+> > Fix gcc ISO C90 warning:
+> > 
+> > fs/nfs/callback.c:356: warning: ISO C90 forbids mixed declarations and code
+> > 
+> > Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> > ---
+> >  fs/nfs/callback.c |    2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > --- linux-next-20091215.orig/fs/nfs/callback.c
+> > +++ linux-next-20091215/fs/nfs/callback.c
+> > @@ -352,8 +352,8 @@ static int check_gss_callback_principal(
+> >  static int nfs_callback_authenticate(struct svc_rqst *rqstp)
+> >  {
+> >  	struct nfs_client *clp;
+> > -	RPC_IFDEBUG(char buf[RPC_MAX_ADDRBUFLEN]);
+> >  	int ret = SVC_OK;
+> > +	RPC_IFDEBUG(char buf[RPC_MAX_ADDRBUFLEN]);
+> >  
 > 
->>
->> --- linux-next-20091216.orig/arch/x86/lib/Makefile
->> +++ linux-next-20091216/arch/x86/lib/Makefile
->> @@ -14,7 +14,7 @@ $(obj)/inat.o: $(obj)/inat-tables.c
->>  
->>  clean-files := inat-tables.c
->>  
->> -obj-$(CONFIG_SMP) := msr.o
->> +obj-$(CONFIG_X86_MSR) := msr.o
-> 
-> however, CONFIG_X86_MSR is the x86 MSR access module and the <lib/msr.c>
-> is the library of MSR accessing functions which is always in. So this
-> should be unconditional as in my version or Peter might have a better
-> idea...?
-> 
+> What version of gcc is giving rise to this warning?
 
-Both are wrong.
+> gcc --version
+gcc (GCC) 4.2.1 (SUSE Linux)
 
-CONFIG_X86_MSR has nothing at all to do with this and is a complete red
-herring.  Involving CONFIG_X86_MSR is just totally bogus.
+> RPC_IFDEBUG is a macro that either evaluates to its argument, or to
+> nothing, depending on whether or not RPC_DEBUG is defined or not. In
+> neither case should it evaluate to anything illegal under C90 rules
+> afaics.
 
-Including msr.o unconditionally is also wrong, but for a more subtle
-reason: msr.c is written to contain functions that apply to SMP only;
-with UP replacement stubs written as inlines in
-arch/x86/include/asm/msr.h.
+Yep.  Odd warning.
 
-Putting most of the file inside a big #ifdef of course works, but is a
-pretty bad case of beating it with the ugly stick.  My preference would
-be to move the SMP-specific functions to a new file, call it msr-smp.c,
-and then leave only the functions that should be included
-unconditionally in msr.c (I believe it is cleaner to do it that way than
-the opposite.)
 
-	-hpa
+---
+~Randy
