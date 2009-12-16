@@ -1,132 +1,80 @@
-From: Felipe Balbi <felipe.balbi@nokia.com>
-Subject: Re: linux-next:  tree build failure
-Date: Wed, 16 Dec 2009 11:02:24 +0200
-Message-ID: <20091216090224.GB19749@nokia.com>
-References: <20091216182132.357359a6.sfr@canb.auug.org.au>
-Reply-To: felipe.balbi@nokia.com
+From: Xiaotian Feng <xtfeng@gmail.com>
+Subject: Re: [Next] CPU Hotplug test failures on powerpc
+Date: Wed, 16 Dec 2009 17:07:11 +0800
+Message-ID: <7b6bb4a50912160107j1c8348b6p235844193e3ee977@mail.gmail.com>
+References: <4B2224C7.1020908@in.ibm.com>
+	<7b6bb4a50912152225p4f5dde13re83c439407c16eaf@mail.gmail.com>
+	<4B288131.2050306@in.ibm.com>
+	<7b6bb4a50912152245v61a7f1ebgb41f4857134f3476@mail.gmail.com>
+	<4B288413.2070704@in.ibm.com> <1260947890.8023.1281.camel@laptop>
+	<7b6bb4a50912152357m75aea5dfl6fe063d716517baf@mail.gmail.com>
+	<4B289955.2010705@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.nokia.com ([192.100.122.230]:21865 "EHLO
-	mgw-mx03.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752396AbZLPJDN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Dec 2009 04:03:13 -0500
-Content-Disposition: inline
-In-Reply-To: <20091216182132.357359a6.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: ext Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Liam Girdwood <lrg@slimlogic.co.uk>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Balaji T K <balajitk@ti.com>, Samuel Ortiz <sameo@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <4B289955.2010705@in.ibm.com>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
+Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
+To: Sachin Sant <sachinp@in.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, Linux/PPC Development <linuxppc-dev@ozlabs.org>, linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>
+List-Id: linux-next.vger.kernel.org
 
-Hi,
-
-On Wed, Dec 16, 2009 at 08:21:32AM +0100, ext Stephen Rothwell wrote:
->Hi Liam,
->
->Today's linux-next build (powerpc allyesconfig) failed like this:
->
->drivers/regulator/twl-regulator.c: In function 'twlreg_disable':
->drivers/regulator/twl-regulator.c:158: error: 'P1_GRP' undeclared (first use in this function)
->drivers/regulator/twl-regulator.c:158: error: 'P2_GRP' undeclared (first use in this function)
->drivers/regulator/twl-regulator.c:158: error: 'P3_GRP' undeclared (first use in this function)
->drivers/regulator/twl-regulator.c: At top level:
->drivers/regulator/twl-regulator.c:358: error: 'twlldo_list_voltage' undeclared here (not in a function)
->drivers/regulator/twl-regulator.c:450:35: error: macro "TWL_ADJUSTABLE_LDO" requires 4 arguments, but only 3 given
->drivers/regulator/twl-regulator.c:450: error: 'TWL_ADJUSTABLE_LDO' undeclared here (not in a function)
->drivers/regulator/twl-regulator.c:451:40: error: macro "TWL_ADJUSTABLE_LDO" requires 4 arguments, but only 3 given
->drivers/regulator/twl-regulator.c:452:35: error: macro "TWL_ADJUSTABLE_LDO" requires 4 arguments, but only 3 given
->drivers/regulator/twl-regulator.c:453:35: error: macro "TWL_ADJUSTABLE_LDO" requires 4 arguments, but only 3 given
->drivers/regulator/twl-regulator.c:454:35: error: macro "TWL_ADJUSTABLE_LDO" requires 4 arguments, but only 3 given
->drivers/regulator/twl-regulator.c:455:35: error: macro "TWL_ADJUSTABLE_LDO" requires 4 arguments, but only 3 given
->drivers/regulator/twl-regulator.c:456:35: error: macro "TWL_ADJUSTABLE_LDO" requires 4 arguments, but only 3 given
->drivers/regulator/twl-regulator.c:457:35: error: macro "TWL_ADJUSTABLE_LDO" requires 4 arguments, but only 3 given
->drivers/regulator/twl-regulator.c:458:35: error: macro "TWL_ADJUSTABLE_LDO" requires 4 arguments, but only 3 given
->drivers/regulator/twl-regulator.c:459:34: error: macro "TWL_ADJUSTABLE_LDO" requires 4 arguments, but only 3 given
->drivers/regulator/twl-regulator.c:460:35: error: macro "TWL_ADJUSTABLE_LDO" requires 4 arguments, but only 3 given
->drivers/regulator/twl-regulator.c:461:40: error: macro "TWL_FIXED_LDO" requires 5 arguments, but only 4 given
->drivers/regulator/twl-regulator.c:461: error: 'TWL_FIXED_LDO' undeclared here (not in a function)
->drivers/regulator/twl-regulator.c:462:39: error: macro "TWL_ADJUSTABLE_LDO" requires 4 arguments, but only 3 given
->drivers/regulator/twl-regulator.c:463:39: error: macro "TWL_FIXED_LDO" requires 5 arguments, but only 4 given
->drivers/regulator/twl-regulator.c:464:34: error: macro "TWL_ADJUSTABLE_LDO" requires 4 arguments, but only 3 given
->drivers/regulator/twl-regulator.c:465:35: error: macro "TWL_ADJUSTABLE_LDO" requires 4 arguments, but only 3 given
->drivers/regulator/twl-regulator.c:466:35: error: macro "TWL_ADJUSTABLE_LDO" requires 4 arguments, but only 3 given
->drivers/regulator/twl-regulator.c:467:39: error: macro "TWL_FIXED_LDO" requires 5 arguments, but only 4 given
->drivers/regulator/twl-regulator.c:468:39: error: macro "TWL_FIXED_LDO" requires 5 arguments, but only 4 given
->drivers/regulator/twl-regulator.c:469:39: error: macro "TWL_FIXED_LDO" requires 5 arguments, but only 4 given
->drivers/regulator/twl-regulator.c:474: error: 'VAUX1_6030_VSEL_table' undeclared here (not in a function)
->drivers/regulator/twl-regulator.c:474: warning: type defaults to 'int' in declaration of 'type name'
->drivers/regulator/twl-regulator.c:474: warning: type defaults to 'int' in declaration of 'type name'
->drivers/regulator/twl-regulator.c:474: error: negative width in bit-field '<anonymous>'
->drivers/regulator/twl-regulator.c:474: warning: type defaults to 'int' in declaration of 'type name'
->drivers/regulator/twl-regulator.c:474: warning: type defaults to 'int' in declaration of 'type name'
->drivers/regulator/twl-regulator.c:474: error: negative width in bit-field '<anonymous>'
->drivers/regulator/twl-regulator.c:475: error: 'VAUX2_6030_VSEL_table' undeclared here (not in a function)
->drivers/regulator/twl-regulator.c:475: warning: type defaults to 'int' in declaration of 'type name'
->drivers/regulator/twl-regulator.c:475: warning: type defaults to 'int' in declaration of 'type name'
->drivers/regulator/twl-regulator.c:475: error: negative width in bit-field '<anonymous>'
->drivers/regulator/twl-regulator.c:475: warning: type defaults to 'int' in declaration of 'type name'
->drivers/regulator/twl-regulator.c:475: warning: type defaults to 'int' in declaration of 'type name'
->drivers/regulator/twl-regulator.c:475: error: negative width in bit-field '<anonymous>'
->drivers/regulator/twl-regulator.c:476: error: 'VAUX3_6030_VSEL_table' undeclared here (not in a function)
->drivers/regulator/twl-regulator.c:476: warning: type defaults to 'int' in declaration of 'type name'
->drivers/regulator/twl-regulator.c:476: warning: type defaults to 'int' in declaration of 'type name'
->drivers/regulator/twl-regulator.c:476: error: negative width in bit-field '<anonymous>'
->drivers/regulator/twl-regulator.c:476: warning: type defaults to 'int' in declaration of 'type name'
->drivers/regulator/twl-regulator.c:476: warning: type defaults to 'int' in declaration of 'type name'
->drivers/regulator/twl-regulator.c:476: error: negative width in bit-field '<anonymous>'
->drivers/regulator/twl-regulator.c:477: error: 'VMMC_VSEL_table' undeclared here (not in a function)
->drivers/regulator/twl-regulator.c:477: warning: type defaults to 'int' in declaration of 'type name'
->drivers/regulator/twl-regulator.c:477: warning: type defaults to 'int' in declaration of 'type name'
->drivers/regulator/twl-regulator.c:477: error: negative width in bit-field '<anonymous>'
->drivers/regulator/twl-regulator.c:477: warning: type defaults to 'int' in declaration of 'type name'
->drivers/regulator/twl-regulator.c:477: warning: type defaults to 'int' in declaration of 'type name'
->drivers/regulator/twl-regulator.c:477: error: negative width in bit-field '<anonymous>'
->drivers/regulator/twl-regulator.c:478: error: 'VPP_VSEL_table' undeclared here (not in a function)
->drivers/regulator/twl-regulator.c:478: warning: type defaults to 'int' in declaration of 'type name'
->drivers/regulator/twl-regulator.c:478: warning: type defaults to 'int' in declaration of 'type name'
->drivers/regulator/twl-regulator.c:478: error: negative width in bit-field '<anonymous>'
->drivers/regulator/twl-regulator.c:478: warning: type defaults to 'int' in declaration of 'type name'
->drivers/regulator/twl-regulator.c:478: warning: type defaults to 'int' in declaration of 'type name'
->drivers/regulator/twl-regulator.c:478: error: negative width in bit-field '<anonymous>'
->drivers/regulator/twl-regulator.c:479: error: 'VUSIM_VSEL_table' undeclared here (not in a function)
->drivers/regulator/twl-regulator.c:479: warning: type defaults to 'int' in declaration of 'type name'
->drivers/regulator/twl-regulator.c:479: warning: type defaults to 'int' in declaration of 'type name'
->drivers/regulator/twl-regulator.c:479: error: negative width in bit-field '<anonymous>'
->drivers/regulator/twl-regulator.c:479: warning: type defaults to 'int' in declaration of 'type name'
->drivers/regulator/twl-regulator.c:479: warning: type defaults to 'int' in declaration of 'type name'
->drivers/regulator/twl-regulator.c:479: error: negative width in bit-field '<anonymous>'
->drivers/regulator/twl-regulator.c: In function 'twlreg_probe':
->drivers/regulator/twl-regulator.c:544: error: implicit declaration of function 'twl4030reg_write'
->
->I guess we knew this was coming :-(
->
->Caused by a bad rebase of the voltage tree onto Linus' tree (in order to
->do fixups for commit fc7b92fca4e546184557f1c53f84ad57c66b7695 "mfd:
->Rename all twl4030_i2c*" and others).
->
->I have reverted all the commits in the voltage tree that touched
->drivers/regulator/twl-regulator.c for today:
->
->6051d7a2786c57d0c5c4227dd9ddfc348a86ce91 "twl4030-regulator: Fixes VAUX1-3 exclusion introduced"
->2677c78184a52edcc228c20a1c05c14925118293 "Reset REMAP configuration in regulator probe"
->de449258306274739ed3a747f49b9ac8f91f9e4a "Define critical regulators as always_on"
->66d65d352f6fd61dd5695925906b140f1e0ac9c3 "twl4030-regulator: Add all TWL regulators to twreg_info"
->f33a0d47bd44dbf44a45c33b32e1e3bbbf8d06e6 "twl4030-regulator: Remove regulator from all groups when disabling"
->
->Please fix up this tree properly.  You may have been better off merging
->Linus' tree into yours and fixing up the merge commit than trying to do
->the rebase.
-
-All this crap would not have come if we weren't to rename twl4030 into 
-twl. The argument that we need to rename files to make the code reusable 
-is plain STUPID.
-
-I made my point several times that we don't need to rename the files to 
-make the code reusable, twl4030-*.c were already supporting twl4030, 
-twl5030, twl5031 and some of the tps versions. Now several trees are 
-broken because of the stupid mess created by one person who can't even 
-run make when creating a patch. Now we have to pay the price and have a 
-broken bisect point, great.
-
--- 
-balbi
+T24gV2VkLCBEZWMgMTYsIDIwMDkgYXQgNDoyNCBQTSwgU2FjaGluIFNhbnQgPHNhY2hpbnBAaW4u
+aWJtLmNvbT4gd3JvdGU6Cj4gWGlhb3RpYW4gRmVuZyB3cm90ZToKPj4KPj4gQ291bGQgZm9sbG93
+IGJlIHBvc3NpYmxlPyDCoFdlIGtub3cgdGhlcmUncyBjcHUgMCBhbmQgY3B1IDEsCj4+Cj4+IG9m
+ZmxpbmUgY3B1MSA+IGRvbmUKPj4gb2ZmbGluZSBjcHUwID4gZmFsc2UKPj4KPj4gY29uc2lkZXIg
+dGhpcyBpbiBjcHVfZG93biBjb2RlLAo+Pgo+Pgo+PiBpbnQgX19yZWYgY3B1X2Rvd24odW5zaWdu
+ZWQgaW50IGNwdSkKPj4gewo+PiA8c25pcD4KPj4gwqAgwqAgwqAgwqBzZXRfY3B1X2FjdGl2ZShj
+cHUsIGZhbHNlKTsgLy8gaGVyZSwgd2Ugc2V0IGNwdSAwIHRvIGluYWN0aXZlCj4+Cj4+IMKgIMKg
+IMKgIMKgc3luY2hyb25pemVfc2NoZWQoKTsKPj4KPj4gwqAgwqAgwqAgwqBlcnIgPSBfY3B1X2Rv
+d24oY3B1LCAwKTsKPj4gb3V0Ogo+PiA8c25pcD4KPj4gfQo+Pgo+PiBUaGVuIGluIF9jcHVfZG93
+biBjb2RlOgo+Pgo+PiBzdGF0aWMgaW50IF9fcmVmIF9jcHVfZG93bih1bnNpZ25lZCBpbnQgY3B1
+LCBpbnQgdGFza3NfZnJvemVuKQo+PiB7Cj4+IDxzbmlwPgo+PiDCoCDCoCDCoCDCoGlmIChudW1f
+b25saW5lX2NwdXMoKSA9PSAxKSDCoCDCoCDCoCDCoC8vIGlmIHdlJ3JlIHRyeWluZyB0bwo+PiBv
+ZmZsaW5lIGNwdTAsIG51bV9vbmxpbmVfY3B1cyB3aWxsIGJlIDEKPj4gwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqByZXR1cm4gLUVCVVNZOyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoC8vIGFm
+dGVyIHJldHVybiBiYWNrCj4+IHRvIGNwdV9kb3duLCB3ZSBkaWRuJ3QgY2hhbmdlIGNwdSAwIGJh
+Y2sgdG8gYWN0aXZlCj4+Cj4+IMKgIMKgIMKgIMKgaWYgKCFjcHVfb25saW5lKGNwdSkpCj4+IMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgcmV0dXJuIC1FSU5WQUw7Cj4+Cj4+IMKgIMKgIMKgIMKgaWYg
+KCFhbGxvY19jcHVtYXNrX3Zhcigmb2xkX2FsbG93ZWQsIEdGUF9LRVJORUwpKQo+PiDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoHJldHVybiAtRU5PTUVNOwo+PiA8c25pcD4KPj4gfQo+Pgo+PiBUaGVu
+IGNwdSAwIGlzIG5vdCBhY3RpdmUsIGJ1dCBvbmxpbmUsIHRoZW4gd2UgdHJ5IHRvIG9mZmxpbmUg
+Y3B1MSwgLi4uLi4uLgo+PiBUaGlzIGNhbiBub3QgYmUgZXhwb3NlZCBiZWNhdXNlIHg4NiBkb2Vz
+IG5vdCBoYXZlCj4+IC9zeXMvZGV2aWNlcy9zeXN0ZW0vY3B1MC9vbmxpbmUuCj4+IEkgZ3Vlc3Mg
+Zm9sbG93aW5nIHBhdGNoIGZpeGVzIHRoaXMgYnVnLgo+Pgo+Cj4gSnVzdCB0ZXN0ZWQgdGhpcyBv
+bmUgb24gdGhlIFBPV0VSIGJveCBhbmQgdGhlIHRlc3QgcGFzc2VkLgo+IEkgZGlkIG5vdCBvYnNl
+cnZlIHRoZSBoYW5nLgoKVGhhbmtzIGZvciBjb25maXJtLCBJIHdpbGwgc2VuZCBmb3JtYXR0ZWQg
+cGF0Y2ggdG8gdXBzdHJlYW0gdGhlbjotKQoKPgo+IFRoYW5rcwo+IC1TYWNoaW4KPgo+PiAtLS0K
+Pj4gZGlmZiAtLWdpdCBhL2tlcm5lbC9jcHUuYyBiL2tlcm5lbC9jcHUuYwo+PiBpbmRleCAyOTFh
+YzU4Li4yMWRkYWNlIDEwMDY0NAo+PiAtLS0gYS9rZXJuZWwvY3B1LmMKPj4gKysrIGIva2VybmVs
+L2NwdS5jCj4+IEBAIC0xOTksMTQgKzE5OSwxOCBAQCBzdGF0aWMgaW50IF9fcmVmIF9jcHVfZG93
+bih1bnNpZ25lZCBpbnQgY3B1LCBpbnQKPj4gdGFza3NfZnJvemVuKQo+PiDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoC5oY3B1ID0gaGNwdSwKPj4gwqAgwqAgwqAgwqB9Owo+Pgo+PiAtIMKgIMKgIMKg
+IGlmIChudW1fb25saW5lX2NwdXMoKSA9PSAxKQo+PiArIMKgIMKgIMKgIGlmIChudW1fb25saW5l
+X2NwdXMoKSA9PSAxKSB7Cj4+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgc2V0X2NwdV9hY3RpdmUo
+Y3B1LCB0cnVlKTsKPj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqByZXR1cm4gLUVCVVNZOwo+PiAr
+IMKgIMKgIMKgIH0KPj4KPj4gwqAgwqAgwqAgwqBpZiAoIWNwdV9vbmxpbmUoY3B1KSkKPj4gwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqByZXR1cm4gLUVJTlZBTDsKPj4KPj4gLSDCoCDCoCDCoCBpZiAo
+IWFsbG9jX2NwdW1hc2tfdmFyKCZvbGRfYWxsb3dlZCwgR0ZQX0tFUk5FTCkpCj4+ICsgwqAgwqAg
+wqAgaWYgKCFhbGxvY19jcHVtYXNrX3Zhcigmb2xkX2FsbG93ZWQsIEdGUF9LRVJORUwpKSB7Cj4+
+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgc2V0X2NwdV9hY3RpdmUoY3B1LCB0cnVlKTsKPj4gwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqByZXR1cm4gLUVOT01FTTsKPj4gKyDCoCDCoCDCoCB9Cj4+Cj4+
+IMKgIMKgIMKgIMKgY3B1X2hvdHBsdWdfYmVnaW4oKTsKPj4gwqAgwqAgwqAgwqBlcnIgPSBfX3Jh
+d19ub3RpZmllcl9jYWxsX2NoYWluKCZjcHVfY2hhaW4sIENQVV9ET1dOX1BSRVBBUkUgfCBtb2Qs
+Cj4+Cj4+Cj4+Cj4+Pgo+Pj4gVW5sZXNzIG9mIGNvdXJzZSwgSSBtZXNzZWQgdXAsIHdoaWNoIGFw
+cGVhcnMgdG8gYmUgcmF0aGVyIGxpa2VseSBnaXZlbgo+Pj4gdGhlc2UgcHJvYmxlbXMgOy0pCj4+
+Pgo+Pj4KPj4+Cj4+Cj4+Cj4KPgo+IC0tCj4KPiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0KPiBTYWNoaW4gU2FudAo+IElCTSBMaW51eCBUZWNobm9sb2d5IENlbnRlcgo+IEluZGlh
+IFN5c3RlbXMgYW5kIFRlY2hub2xvZ3kgTGFicwo+IEJhbmdhbG9yZSwgSW5kaWEKPiAtLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPgo+Cl9fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fCkxpbnV4cHBjLWRldiBtYWlsaW5nIGxpc3QKTGludXhwcGMt
+ZGV2QGxpc3RzLm96bGFicy5vcmcKaHR0cHM6Ly9saXN0cy5vemxhYnMub3JnL2xpc3RpbmZvL2xp
+bnV4cHBjLWRldg==
