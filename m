@@ -1,125 +1,66 @@
-From: Sachin Sant <sachinp@in.ibm.com>
-Subject: Re: [Next] CPU Hotplug test failures on powerpc
-Date: Wed, 16 Dec 2009 13:54:53 +0530
-Message-ID: <4B289955.2010705@in.ibm.com>
-References: <4B2224C7.1020908@in.ibm.com>
-	<7b6bb4a50912152225p4f5dde13re83c439407c16eaf@mail.gmail.com>
-	<4B288131.2050306@in.ibm.com>
-	<7b6bb4a50912152245v61a7f1ebgb41f4857134f3476@mail.gmail.com>
-	<4B288413.2070704@in.ibm.com> <1260947890.8023.1281.camel@laptop>
-	<7b6bb4a50912152357m75aea5dfl6fe063d716517baf@mail.gmail.com>
+From: Hugh Dickins <hugh.dickins@tiscali.co.uk>
+Subject: Re: linux-next: hwpoison tree build failure
+Date: Wed, 16 Dec 2009 08:49:36 +0000 (GMT)
+Message-ID: <Pine.LNX.4.64.0912160847270.14564@sister.anvils>
+References: <20091216172633.93c361ee.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <7b6bb4a50912152357m75aea5dfl6fe063d716517baf@mail.gmail.com>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
-To: Xiaotian Feng <xtfeng@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, Linux/PPC Development <linuxppc-dev@ozlabs.org>, linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753824AbZLPIuA@vger.kernel.org>
+In-Reply-To: <20091216172633.93c361ee.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andi Kleen <andi@firstfloor.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
-Xiaotian Feng wrote:
-> Could follow be possible?  We know there's cpu 0 and cpu 1,
->
-> offline cpu1 > done
-> offline cpu0 > false
->
-> consider this in cpu_down code,
->
->
-> int __ref cpu_down(unsigned int cpu)
-> {
-> <snip>
->         set_cpu_active(cpu, false); // here, we set cpu 0 to inactive
->
->         synchronize_sched();
->
->         err = _cpu_down(cpu, 0);
-> out:
-> <snip>
-> }
->
-> Then in _cpu_down code:
->
-> static int __ref _cpu_down(unsigned int cpu, int tasks_frozen)
-> {
-> <snip>
->         if (num_online_cpus() == 1)        // if we're trying to
-> offline cpu0, num_online_cpus will be 1
->                 return -EBUSY;                    // after return back
-> to cpu_down, we didn't change cpu 0 back to active
->
->         if (!cpu_online(cpu))
->                 return -EINVAL;
->
->         if (!alloc_cpumask_var(&old_allowed, GFP_KERNEL))
->                 return -ENOMEM;
-> <snip>
-> }
->
-> Then cpu 0 is not active, but online, then we try to offline cpu1, .......
-> This can not be exposed because x86 does not have
-> /sys/devices/system/cpu0/online.
-> I guess following patch fixes this bug.
->   
-Just tested this one on the POWER box and the test passed.
-I did not observe the hang.
+On Wed, 16 Dec 2009, Stephen Rothwell wrote:
 
-Thanks
--Sachin
+> Hi Andi,
+> 
+> Today's linux-next build (x86_64 allmodconfig) failed like this:
+> 
+> mm/memory-failure.c: In function 'soft_offline_page':
+> mm/memory-failure.c:1266: error: too few arguments to function 'migrate_pages'
+> 
+> Caused by commit c71d409184af558ddac0fd0167061d6282428872 ("HWPOISON: Add
+> soft page offline support") from the hwpoison tree interacting with
+> commit 62b61f611eb5e20f7e9f8619bfd03bdfe8af6348 ("ksm: memory hotremove
+> migration only") from Linus' tree.
+> 
+> I added the following merge fix for today (I don't know if it is correct)
+> and can carry it for a while:
 
+Yes, a 0 there is indeed the right fix: thanks, Stephen.
+
+Hugh
+
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 16 Dec 2009 17:19:40 +1100
+> Subject: [PATCH] hwpoison: fix for migrate_pages API change
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 > ---
-> diff --git a/kernel/cpu.c b/kernel/cpu.c
-> index 291ac58..21ddace 100644
-> --- a/kernel/cpu.c
-> +++ b/kernel/cpu.c
-> @@ -199,14 +199,18 @@ static int __ref _cpu_down(unsigned int cpu, int
-> tasks_frozen)
->                 .hcpu = hcpu,
->         };
->
-> -       if (num_online_cpus() == 1)
-> +       if (num_online_cpus() == 1) {
-> +               set_cpu_active(cpu, true);
->                 return -EBUSY;
-> +       }
->
->         if (!cpu_online(cpu))
->                 return -EINVAL;
->
-> -       if (!alloc_cpumask_var(&old_allowed, GFP_KERNEL))
-> +       if (!alloc_cpumask_var(&old_allowed, GFP_KERNEL)) {
-> +               set_cpu_active(cpu, true);
->                 return -ENOMEM;
-> +       }
->
->         cpu_hotplug_begin();
->         err = __raw_notifier_call_chain(&cpu_chain, CPU_DOWN_PREPARE | mod,
->
->
->   
->> Unless of course, I messed up, which appears to be rather likely given
->> these problems ;-)
->>
->>
->>     
->
->   
-
-
--- 
-
----------------------------------
-Sachin Sant
-IBM Linux Technology Center
-India Systems and Technology Labs
-Bangalore, India
----------------------------------
+>  mm/memory-failure.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> index 7f3f627..bcce287 100644
+> --- a/mm/memory-failure.c
+> +++ b/mm/memory-failure.c
+> @@ -1263,7 +1263,7 @@ int soft_offline_page(struct page *page, int flags)
+>  		LIST_HEAD(pagelist);
+>  
+>  		list_add(&page->lru, &pagelist);
+> -		ret = migrate_pages(&pagelist, new_page, MPOL_MF_MOVE_ALL);
+> +		ret = migrate_pages(&pagelist, new_page, MPOL_MF_MOVE_ALL, 0);
+>  		if (ret) {
+>  			pr_debug("soft offline: %#lx: migration failed %d, type %lx\n",
+>  				pfn, ret, page->flags);
+> -- 
+> 1.6.5.4
+> 
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
