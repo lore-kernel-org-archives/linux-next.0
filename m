@@ -1,80 +1,63 @@
-From: Xiaotian Feng <xtfeng@gmail.com>
-Subject: Re: [Next] CPU Hotplug test failures on powerpc
-Date: Wed, 16 Dec 2009 17:07:11 +0800
-Message-ID: <7b6bb4a50912160107j1c8348b6p235844193e3ee977@mail.gmail.com>
-References: <4B2224C7.1020908@in.ibm.com>
-	<7b6bb4a50912152225p4f5dde13re83c439407c16eaf@mail.gmail.com>
-	<4B288131.2050306@in.ibm.com>
-	<7b6bb4a50912152245v61a7f1ebgb41f4857134f3476@mail.gmail.com>
-	<4B288413.2070704@in.ibm.com> <1260947890.8023.1281.camel@laptop>
-	<7b6bb4a50912152357m75aea5dfl6fe063d716517baf@mail.gmail.com>
-	<4B289955.2010705@in.ibm.com>
+From: Samuel Ortiz <sameo@linux.intel.com>
+Subject: Re: linux-next: origin tree build failure
+Date: Wed, 16 Dec 2009 10:30:54 +0100
+Message-ID: <20091216093054.GB3788@sortiz.org>
+References: <20091215164108.45c9d766.sfr@canb.auug.org.au>
+ <20091215145344.GA30710@sirena.org.uk>
+ <20091215172717.GF4575@atomide.com>
+ <20091216094541.e59d36fa.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <4B289955.2010705@in.ibm.com>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Sender: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppd-linuxppc64-dev=m.gmane.org@lists.ozlabs.org
-To: Sachin Sant <sachinp@in.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, Linux/PPC Development <linuxppc-dev@ozlabs.org>, linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga10.intel.com ([192.55.52.92]:40511 "EHLO
+	fmsmga102.fm.intel.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1753728AbZLPJ3Y (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Dec 2009 04:29:24 -0500
+Content-Disposition: inline
+In-Reply-To: <20091216094541.e59d36fa.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Tony Lindgren <tony@atomide.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@nokia.com>, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, linux-omap@vger.kernel.org
 
-T24gV2VkLCBEZWMgMTYsIDIwMDkgYXQgNDoyNCBQTSwgU2FjaGluIFNhbnQgPHNhY2hpbnBAaW4u
-aWJtLmNvbT4gd3JvdGU6Cj4gWGlhb3RpYW4gRmVuZyB3cm90ZToKPj4KPj4gQ291bGQgZm9sbG93
-IGJlIHBvc3NpYmxlPyDCoFdlIGtub3cgdGhlcmUncyBjcHUgMCBhbmQgY3B1IDEsCj4+Cj4+IG9m
-ZmxpbmUgY3B1MSA+IGRvbmUKPj4gb2ZmbGluZSBjcHUwID4gZmFsc2UKPj4KPj4gY29uc2lkZXIg
-dGhpcyBpbiBjcHVfZG93biBjb2RlLAo+Pgo+Pgo+PiBpbnQgX19yZWYgY3B1X2Rvd24odW5zaWdu
-ZWQgaW50IGNwdSkKPj4gewo+PiA8c25pcD4KPj4gwqAgwqAgwqAgwqBzZXRfY3B1X2FjdGl2ZShj
-cHUsIGZhbHNlKTsgLy8gaGVyZSwgd2Ugc2V0IGNwdSAwIHRvIGluYWN0aXZlCj4+Cj4+IMKgIMKg
-IMKgIMKgc3luY2hyb25pemVfc2NoZWQoKTsKPj4KPj4gwqAgwqAgwqAgwqBlcnIgPSBfY3B1X2Rv
-d24oY3B1LCAwKTsKPj4gb3V0Ogo+PiA8c25pcD4KPj4gfQo+Pgo+PiBUaGVuIGluIF9jcHVfZG93
-biBjb2RlOgo+Pgo+PiBzdGF0aWMgaW50IF9fcmVmIF9jcHVfZG93bih1bnNpZ25lZCBpbnQgY3B1
-LCBpbnQgdGFza3NfZnJvemVuKQo+PiB7Cj4+IDxzbmlwPgo+PiDCoCDCoCDCoCDCoGlmIChudW1f
-b25saW5lX2NwdXMoKSA9PSAxKSDCoCDCoCDCoCDCoC8vIGlmIHdlJ3JlIHRyeWluZyB0bwo+PiBv
-ZmZsaW5lIGNwdTAsIG51bV9vbmxpbmVfY3B1cyB3aWxsIGJlIDEKPj4gwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqByZXR1cm4gLUVCVVNZOyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoC8vIGFm
-dGVyIHJldHVybiBiYWNrCj4+IHRvIGNwdV9kb3duLCB3ZSBkaWRuJ3QgY2hhbmdlIGNwdSAwIGJh
-Y2sgdG8gYWN0aXZlCj4+Cj4+IMKgIMKgIMKgIMKgaWYgKCFjcHVfb25saW5lKGNwdSkpCj4+IMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgcmV0dXJuIC1FSU5WQUw7Cj4+Cj4+IMKgIMKgIMKgIMKgaWYg
-KCFhbGxvY19jcHVtYXNrX3Zhcigmb2xkX2FsbG93ZWQsIEdGUF9LRVJORUwpKQo+PiDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoHJldHVybiAtRU5PTUVNOwo+PiA8c25pcD4KPj4gfQo+Pgo+PiBUaGVu
-IGNwdSAwIGlzIG5vdCBhY3RpdmUsIGJ1dCBvbmxpbmUsIHRoZW4gd2UgdHJ5IHRvIG9mZmxpbmUg
-Y3B1MSwgLi4uLi4uLgo+PiBUaGlzIGNhbiBub3QgYmUgZXhwb3NlZCBiZWNhdXNlIHg4NiBkb2Vz
-IG5vdCBoYXZlCj4+IC9zeXMvZGV2aWNlcy9zeXN0ZW0vY3B1MC9vbmxpbmUuCj4+IEkgZ3Vlc3Mg
-Zm9sbG93aW5nIHBhdGNoIGZpeGVzIHRoaXMgYnVnLgo+Pgo+Cj4gSnVzdCB0ZXN0ZWQgdGhpcyBv
-bmUgb24gdGhlIFBPV0VSIGJveCBhbmQgdGhlIHRlc3QgcGFzc2VkLgo+IEkgZGlkIG5vdCBvYnNl
-cnZlIHRoZSBoYW5nLgoKVGhhbmtzIGZvciBjb25maXJtLCBJIHdpbGwgc2VuZCBmb3JtYXR0ZWQg
-cGF0Y2ggdG8gdXBzdHJlYW0gdGhlbjotKQoKPgo+IFRoYW5rcwo+IC1TYWNoaW4KPgo+PiAtLS0K
-Pj4gZGlmZiAtLWdpdCBhL2tlcm5lbC9jcHUuYyBiL2tlcm5lbC9jcHUuYwo+PiBpbmRleCAyOTFh
-YzU4Li4yMWRkYWNlIDEwMDY0NAo+PiAtLS0gYS9rZXJuZWwvY3B1LmMKPj4gKysrIGIva2VybmVs
-L2NwdS5jCj4+IEBAIC0xOTksMTQgKzE5OSwxOCBAQCBzdGF0aWMgaW50IF9fcmVmIF9jcHVfZG93
-bih1bnNpZ25lZCBpbnQgY3B1LCBpbnQKPj4gdGFza3NfZnJvemVuKQo+PiDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoC5oY3B1ID0gaGNwdSwKPj4gwqAgwqAgwqAgwqB9Owo+Pgo+PiAtIMKgIMKgIMKg
-IGlmIChudW1fb25saW5lX2NwdXMoKSA9PSAxKQo+PiArIMKgIMKgIMKgIGlmIChudW1fb25saW5l
-X2NwdXMoKSA9PSAxKSB7Cj4+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgc2V0X2NwdV9hY3RpdmUo
-Y3B1LCB0cnVlKTsKPj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqByZXR1cm4gLUVCVVNZOwo+PiAr
-IMKgIMKgIMKgIH0KPj4KPj4gwqAgwqAgwqAgwqBpZiAoIWNwdV9vbmxpbmUoY3B1KSkKPj4gwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqByZXR1cm4gLUVJTlZBTDsKPj4KPj4gLSDCoCDCoCDCoCBpZiAo
-IWFsbG9jX2NwdW1hc2tfdmFyKCZvbGRfYWxsb3dlZCwgR0ZQX0tFUk5FTCkpCj4+ICsgwqAgwqAg
-wqAgaWYgKCFhbGxvY19jcHVtYXNrX3Zhcigmb2xkX2FsbG93ZWQsIEdGUF9LRVJORUwpKSB7Cj4+
-ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgc2V0X2NwdV9hY3RpdmUoY3B1LCB0cnVlKTsKPj4gwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqByZXR1cm4gLUVOT01FTTsKPj4gKyDCoCDCoCDCoCB9Cj4+Cj4+
-IMKgIMKgIMKgIMKgY3B1X2hvdHBsdWdfYmVnaW4oKTsKPj4gwqAgwqAgwqAgwqBlcnIgPSBfX3Jh
-d19ub3RpZmllcl9jYWxsX2NoYWluKCZjcHVfY2hhaW4sIENQVV9ET1dOX1BSRVBBUkUgfCBtb2Qs
-Cj4+Cj4+Cj4+Cj4+Pgo+Pj4gVW5sZXNzIG9mIGNvdXJzZSwgSSBtZXNzZWQgdXAsIHdoaWNoIGFw
-cGVhcnMgdG8gYmUgcmF0aGVyIGxpa2VseSBnaXZlbgo+Pj4gdGhlc2UgcHJvYmxlbXMgOy0pCj4+
-Pgo+Pj4KPj4+Cj4+Cj4+Cj4KPgo+IC0tCj4KPiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0KPiBTYWNoaW4gU2FudAo+IElCTSBMaW51eCBUZWNobm9sb2d5IENlbnRlcgo+IEluZGlh
-IFN5c3RlbXMgYW5kIFRlY2hub2xvZ3kgTGFicwo+IEJhbmdhbG9yZSwgSW5kaWEKPiAtLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPgo+Cl9fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fCkxpbnV4cHBjLWRldiBtYWlsaW5nIGxpc3QKTGludXhwcGMt
-ZGV2QGxpc3RzLm96bGFicy5vcmcKaHR0cHM6Ly9saXN0cy5vemxhYnMub3JnL2xpc3RpbmZvL2xp
-bnV4cHBjLWRldg==
+Hi Stephen,
+
+On Wed, Dec 16, 2009 at 09:45:41AM +1100, Stephen Rothwell wrote:
+> Hi Tony,
+> 
+> On Tue, 15 Dec 2009 09:27:17 -0800 Tony Lindgren <tony@atomide.com> wrote:
+> >
+> > * Mark Brown <broonie@opensource.wolfsonmicro.com> [091215 06:52]:
+> > > On Tue, Dec 15, 2009 at 04:41:08PM +1100, Stephen Rothwell wrote:
+> > > 
+> > > > I have applied this patch for today (please check):
+> > > 
+> > > Looks good to me too, fwiw:
+> > > 
+> > > Acked-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+> > 
+> > Good thing we have for-next to catch things like this.
+> 
+> Except if the renaming patch had gone through linux-next (even for one
+> day) we would have found the problem *before* it was in Linus' tree ...
+Mea maxima culpa. I could come up with several reason why I rushed this patch
+in, but none of them would be good. I apologize here.
+
+
+> (/me is a little grumpy :-))
+I understand, sorry again.
+
+Cheers,
+Samuel.
+
+
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
+
+
+
+-- 
+Intel Open Source Technology Centre
+http://oss.intel.com/
