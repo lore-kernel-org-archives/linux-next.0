@@ -1,326 +1,133 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for December 16
-Date: Wed, 16 Dec 2009 18:32:12 +1100
-Message-ID: <20091216183212.118c5e14.sfr@canb.auug.org.au>
+From: Xiaotian Feng <xtfeng@gmail.com>
+Subject: Re: [Next] CPU Hotplug test failures on powerpc
+Date: Wed, 16 Dec 2009 15:57:56 +0800
+Message-ID: <7b6bb4a50912152357m75aea5dfl6fe063d716517baf@mail.gmail.com>
+References: <4B2224C7.1020908@in.ibm.com>
+	 <7b6bb4a50912152225p4f5dde13re83c439407c16eaf@mail.gmail.com>
+	 <4B288131.2050306@in.ibm.com>
+	 <7b6bb4a50912152245v61a7f1ebgb41f4857134f3476@mail.gmail.com>
+	 <4B288413.2070704@in.ibm.com> <1260947890.8023.1281.camel@laptop>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__16_Dec_2009_18_32_12_+1100_uZSY3K2GB2yZ3kV3"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48607 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S934635AbZLPHcS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Dec 2009 02:32:18 -0500
+Received: from mail-pw0-f42.google.com ([209.85.160.42]:52748 "EHLO
+	mail-pw0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750773AbZLPH54 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Dec 2009 02:57:56 -0500
+In-Reply-To: <1260947890.8023.1281.camel@laptop>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Sachin Sant <sachinp@in.ibm.com>, Linux/PPC Development <linuxppc-dev@ozlabs.org>, linux-kernel <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
---Signature=_Wed__16_Dec_2009_18_32_12_+1100_uZSY3K2GB2yZ3kV3
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Dec 16, 2009 at 3:18 PM, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Wed, 2009-12-16 at 12:24 +0530, Sachin Sant wrote:
+>> Xiaotian Feng wrote:
+>> > On Wed, Dec 16, 2009 at 2:41 PM, Sachin Sant <sachinp@in.ibm.com> wrote:
+>> >
+>> >> Xiaotian Feng wrote:
+>> >>
+>> >>> Does this testcase hotplug cpu 0 off?
+>> >>>
+>> >>>
+>> >> No, i don't think so. It skips cpu0 during online/offline
+>> >> process.
+>> >>
+>> >
+>> > Then how could this happen ? Looks like cpu 0 is offline ....
+>> > 0:mon> <4>IRQ 17 affinity broken off cpu 0
+>> > <4>IRQ 18 affinity broken off cpu 0
+>> > <4>IRQ 19 affinity broken off cpu 0
+>> > <4>IRQ 264 affinity broken off cpu 0
+>> > <4>cpu 0 (hwid 0) Ready to die...
+>> > <7>clockevent: decrementer mult[83126e97] shift[32] cpu[0]
+>> >
+>> Sorry i was looking at only one script. Looking more closely
+>> at the test there are 6 different sub tests. The rest of the
+>> tests do seem to hotplug CPU 0.
+>
+> Ooh, cute, so you can actually hotplug cpu 0.. no wonder that didn't get
+> exposed on x86.
+>
+> Still, the only time cpu_active_mask should not be equal to
+> cpu_online_mask is when we're in the middle of a hotplug, we clear
+> active early and set it late, but its all done under the hotplug mutex,
+> so we can at most have 1 cpu differences with online mask.
+>
 
-Hi all,
+Could follow be possible?  We know there's cpu 0 and cpu 1,
 
-My usual call for calm: please do not put stuff destined for 2.6.34 into
-linux-next trees until after 2.6.33-rc1.
+offline cpu1 > done
+offline cpu0 > false
 
-Changes since 20091215:
+consider this in cpu_down code,
 
-The origin tree lost its build failure.
 
-The avr32 tree lost its conflict.
+int __ref cpu_down(unsigned int cpu)
+{
+<snip>
+        set_cpu_active(cpu, false); // here, we set cpu 0 to inactive
 
-The microblaze tree lost its conflict.
+        synchronize_sched();
 
-The mips tree lost 4 of its conflicts.
+        err = _cpu_down(cpu, 0);
+out:
+<snip>
+}
 
-The acpi tree still has its build failure so I used the version from
-next-20091211.  It also gained a conflict against Linus' tree.
+Then in _cpu_down code:
 
-The voltage tree lost its conflicts but gained a build failure that
-required the revert of 5 commits.
+static int __ref _cpu_down(unsigned int cpu, int tasks_frozen)
+{
+<snip>
+        if (num_online_cpus() == 1)        // if we're trying to
+offline cpu0, num_online_cpus will be 1
+                return -EBUSY;                    // after return back
+to cpu_down, we didn't change cpu 0 back to active
 
-The hwpoison tree gained a conflict against Linus' tree.
+        if (!cpu_online(cpu))
+                return -EINVAL;
 
-The hwpoison tree gained a build failure for which I applied a merge
-fixup patch.
+        if (!alloc_cpumask_var(&old_allowed, GFP_KERNEL))
+                return -ENOMEM;
+<snip>
+}
 
-----------------------------------------------------------------------------
+Then cpu 0 is not active, but online, then we try to offline cpu1, .......
+This can not be exposed because x86 does not have
+/sys/devices/system/cpu0/online.
+I guess following patch fixes this bug.
 
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
+---
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index 291ac58..21ddace 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -199,14 +199,18 @@ static int __ref _cpu_down(unsigned int cpu, int
+tasks_frozen)
+                .hcpu = hcpu,
+        };
 
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
-and sparc64 defconfig. These builds also have
-CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
-CONFIG_DEBUG_INFO disabled when necessary.
+-       if (num_online_cpus() == 1)
++       if (num_online_cpus() == 1) {
++               set_cpu_active(cpu, true);
+                return -EBUSY;
++       }
 
-Below is a summary of the state of the merge.
+        if (!cpu_online(cpu))
+                return -EINVAL;
 
-We are up to 155 trees (counting Linus' and 22 trees of patches pending
-for Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
+-       if (!alloc_cpumask_var(&old_allowed, GFP_KERNEL))
++       if (!alloc_cpumask_var(&old_allowed, GFP_KERNEL)) {
++               set_cpu_active(cpu, true);
+                return -ENOMEM;
++       }
 
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
+        cpu_hotplug_begin();
+        err = __raw_notifier_call_chain(&cpu_chain, CPU_DOWN_PREPARE | mod,
 
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
 
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging fixes/fixes
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/for-linus
-Merging quilt/driver-core.current
-Merging quilt/tty.current
-Merging quilt/usb.current
-Merging quilt/staging.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging ide-curent/master
-Merging dwmw2/master
-Merging arm/devel
-Merging davinci/davinci-next
-Merging msm/for-next
-Merging omap/for-next
-Merging pxa/for-next
-Merging samsung/next-samsung
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-Merging m68knommu/for-next
-CONFLICT (content): Merge conflict in arch/m68k/include/asm/ptrace.h
-Merging microblaze/next
-Merging mips/mips-for-linux-next
-CONFLICT (content): Merge conflict in drivers/pcmcia/Makefile
-CONFLICT (content): Merge conflict in scripts/recordmcount.pl
-Merging parisc/next
-Merging powerpc/next
-Merging 4xx/next
-Merging 52xx-and-virtex/next
-CONFLICT (content): Merge conflict in arch/powerpc/mm/fsl_booke_mmu.c
-Merging galak/next
-Merging s390/features
-Merging sh/master
-Merging sparc/master
-Merging xtensa/master
-Merging ceph/for-next
-Merging cifs/master
-Merging configfs/linux-next
-Merging ecryptfs/next
-Merging ext3/for_next
-Merging ext4/next
-Merging fatfs/master
-Merging fuse/for-next
-Merging gfs2/master
-Merging jfs/next
-Merging logfs/master
-Merging nfs/linux-next
-Merging nfsd/nfsd-next
-Merging nilfs2/for-next
-Merging ocfs2/linux-next
-Merging squashfs/master
-Merging udf/for_next
-Merging v9fs/for-next
-CONFLICT (add/add): Merge conflict in fs/9p/cache.c
-Merging ubifs/linux-next
-Merging xfs/master
-Merging reiserfs-bkl/reiserfs/kill-bkl
-Merging vfs/for-next
-Merging pci/linux-next
-Merging hid/for-next
-Merging quilt/i2c
-Merging bjdooks-i2c/next-i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-Merging kbuild/for-next
-Merging kconfig/for-next
-Merging ide/master
-Merging libata/NEXT
-Merging infiniband/for-next
-Merging acpi/test
-CONFLICT (content): Merge conflict in Documentation/feature-removal-schedul=
-e.txt
-CONFLICT (content): Merge conflict in drivers/platform/x86/eeepc-laptop.c
-CONFLICT (content): Merge conflict in include/acpi/processor.h
-$ git reset --hard HEAD^
-Merging refs/next/20091211/acpi
-CONFLICT (content): Merge conflict in Documentation/feature-removal-schedul=
-e.txt
-CONFLICT (content): Merge conflict in drivers/platform/x86/eeepc-laptop.c
-CONFLICT (content): Merge conflict in include/acpi/processor.h
-Merging ieee1394/for-next
-CONFLICT (content): Merge conflict in drivers/media/dvb/firewire/firedtv-13=
-94.c
-CONFLICT (content): Merge conflict in drivers/media/dvb/firewire/firedtv-av=
-c.c
-CONFLICT (add/add): Merge conflict in drivers/media/dvb/firewire/firedtv-fw=
-.c
-CONFLICT (content): Merge conflict in drivers/media/dvb/firewire/firedtv.h
-Merging ubi/linux-next
-Merging kvm/linux-next
-Merging dlm/next
-Merging scsi/master
-Merging async_tx/next
-Merging net/master
-Merging wireless/master
-Merging mtd/master
-CONFLICT (content): Merge conflict in drivers/mtd/devices/m25p80.c
-CONFLICT (content): Merge conflict in drivers/mtd/maps/pcmciamtd.c
-CONFLICT (delete/modify): drivers/mtd/nand/excite_nandflash.c deleted in HE=
-AD and modified in mtd/master. Version mtd/master of drivers/mtd/nand/excit=
-e_nandflash.c left in tree.
-CONFLICT (content): Merge conflict in drivers/mtd/nand/pxa3xx_nand.c
-CONFLICT (content): Merge conflict in kernel/printk.c
-$ git rm -f drivers/mtd/nand/excite_nandflash.c
-Merging crypto/master
-Merging sound/for-next
-Merging cpufreq/next
-Merging quilt/rr
-Applying: modpost: autoconf.h has moved to include/generated
-Applying: rr: cpufreq: fix up for api name change
-Merging mmc/next
-Merging tmio-mmc/linux-next
-Merging input/next
-Merging lsm/for-next
-Merging block/for-next
-Merging quilt/device-mapper
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-CONFLICT (content): Merge conflict in drivers/platform/x86/thinkpad_acpi.c
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-CONFLICT (content): Merge conflict in drivers/gpu/drm/drm_fb_helper.c
-Merging voltage/for-next
-Merging security-testing/next
-Merging lblnet/master
-Merging agp/agp-next
-Merging uwb/for-upstream
-Merging watchdog/master
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-Merging audit/for-next
-Merging quilt/aoe
-Merging suspend/linux-next
-Merging bluetooth/master
-Merging fsnotify/for-next
-CONFLICT (content): Merge conflict in arch/x86/ia32/ia32entry.S
-CONFLICT (content): Merge conflict in arch/x86/include/asm/unistd_32.h
-CONFLICT (content): Merge conflict in arch/x86/include/asm/unistd_64.h
-CONFLICT (content): Merge conflict in arch/x86/kernel/syscall_table_32.S
-CONFLICT (content): Merge conflict in fs/afs/write.c
-CONFLICT (content): Merge conflict in fs/cifs/dir.c
-CONFLICT (content): Merge conflict in fs/ubifs/file.c
-CONFLICT (content): Merge conflict in include/asm-generic/fcntl.h
-CONFLICT (content): Merge conflict in include/net/compat.h
-CONFLICT (content): Merge conflict in net/compat.c
-CONFLICT (content): Merge conflict in net/socket.c
-Merging irda/for-next
-CONFLICT (content): Merge conflict in drivers/net/irda/irda-usb.c
-Merging hwlat/for-linus
-CONFLICT (content): Merge conflict in drivers/misc/Makefile
-Merging drbd/for-jens
-Merging catalin/for-next
-Merging alacrity/linux-next
-CONFLICT (content): Merge conflict in include/linux/Kbuild
-CONFLICT (content): Merge conflict in lib/Kconfig
-Merging i7core_edac/linux_next
-Merging devicetree/next-devicetree
-Merging spi/next-spi
-Merging limits/writable_limits
-CONFLICT (content): Merge conflict in arch/x86/ia32/ia32entry.S
-CONFLICT (content): Merge conflict in arch/x86/include/asm/unistd_32.h
-CONFLICT (content): Merge conflict in arch/x86/include/asm/unistd_64.h
-CONFLICT (content): Merge conflict in arch/x86/kernel/syscall_table_32.S
-Merging omap_dss2/for-next
-Merging tip/auto-latest
-Merging edac-amd/for-next
-Merging oprofile/for-next
-Merging percpu/for-next
-Merging workqueues/for-next
-Merging sfi/sfi-test
-Merging asm-generic/next
-Merging hwpoison/hwpoison
-CONFLICT (content): Merge conflict in MAINTAINERS
-CONFLICT (content): Merge conflict in mm/memcontrol.c
-Applying: hwpoison: fix for migrate_pages API change
-Merging sysctl/master
-Merging quilt/driver-core
-Merging quilt/tty
-Merging quilt/usb
-Merging quilt/staging
-Merging scsi-post-merge/master
-[master 2bbac8a] Revert "twl4030-regulator: Fixes VAUX1-3 exclusion introdu=
-ced"
-[master 7b9fa19] Revert "Reset REMAP configuration in regulator probe"
-[master e9fcc36] Revert "Define critical regulators as always_on"
-[master 572df07] Revert "twl4030-regulator: Add all TWL regulators to twreg=
-_info"
-[master e890b10] Revert "twl4030-regulator: Remove regulator from all group=
-s when disabling"
-
---Signature=_Wed__16_Dec_2009_18_32_12_+1100_uZSY3K2GB2yZ3kV3
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAksojPwACgkQjjKRsyhoI8xJUwCdEpuueJt5afG5STEcxAUY8sfh
-CS4AoKQOAYaDcJU0/PYjAQRVb8IJs59k
-=qwdU
------END PGP SIGNATURE-----
-
---Signature=_Wed__16_Dec_2009_18_32_12_+1100_uZSY3K2GB2yZ3kV3--
+> Unless of course, I messed up, which appears to be rather likely given
+> these problems ;-)
+>
+>
