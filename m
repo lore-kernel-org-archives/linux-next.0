@@ -1,98 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the acpi tree with Linus' tree
-Date: Wed, 16 Dec 2009 13:00:49 +1100
-Message-ID: <20091216130049.60a1774c.sfr@canb.auug.org.au>
+Subject: Re: linux-next: acpi tree build failure
+Date: Wed, 16 Dec 2009 13:28:47 +1100
+Message-ID: <20091216132847.c32ab30e.sfr@canb.auug.org.au>
+References: <20091214122013.a869739e.sfr@canb.auug.org.au>
+	<1260853054.21292.10.camel@dc7800.home>
+	<alpine.LFD.2.00.0912151736290.6885@localhost.localdomain>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__16_Dec_2009_13_00_49_+1100_r/5FJq1p/lpEl+aZ"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S934482AbZLPCBM@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+ boundary="Signature=_Wed__16_Dec_2009_13_28_47_+1100_q0+2Oa0/UuW07Y6P"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:40572 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S934558AbZLPC26 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 15 Dec 2009 21:28:58 -0500
+In-Reply-To: <alpine.LFD.2.00.0912151736290.6885@localhost.localdomain>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Len Brown <lenb@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Jenkins <alan-jenkins@tuffmail.co.uk>, Alexey Dobriyan <adobriyan@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Cc: Bjorn Helgaas <bjorn.helgaas@hp.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Wed__16_Dec_2009_13_00_49_+1100_r/5FJq1p/lpEl+aZ
+--Signature=_Wed__16_Dec_2009_13_28_47_+1100_q0+2Oa0/UuW07Y6P
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Len,
 
-Today's linux-next merge of the acpi tree got a conflict in
-drivers/platform/x86/eeepc-laptop.c between commit
-471452104b8520337ae2fb48c4e61cd4896e025d ("const: constify remaining
-dev_pm_ops") from Linus' tree and commit
-52bbe3c7b413d656833686f9f08e5dcab3786eeb ("eeepc-laptop: code movement")
-from the acpi tree.
+On Tue, 15 Dec 2009 17:37:21 -0500 (EST) Len Brown <lenb@kernel.org> wrote:
+>
+> i merged bjorn's fix into the original offending patch in acpi-test
 
-The latter just moved the code that the former was updating.  I fixed it
-up (see below) and can carry the fix for a while.
+That didn't seem to be in what I fetched for linux-next today.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/platform/x86/eeepc-laptop.c
-index e647a85,d07a4c0..0000000
---- a/drivers/platform/x86/eeepc-laptop.c
-+++ b/drivers/platform/x86/eeepc-laptop.c
-@@@ -866,16 -862,37 +862,37 @@@ static int eeepc_hotk_restore(struct de
-  	return 0;
-  }
- =20
- -static struct dev_pm_ops eeepc_pm_ops =3D {
-++static const struct dev_pm_ops eeepc_pm_ops =3D {
-+ 	.thaw =3D eeepc_hotk_thaw,
-+ 	.restore =3D eeepc_hotk_restore,
-+ };
-+=20
-+ static struct platform_driver platform_driver =3D {
-+ 	.driver =3D {
-+ 		.name =3D EEEPC_LAPTOP_FILE,
-+ 		.owner =3D THIS_MODULE,
-+ 		.pm =3D &eeepc_pm_ops,
-+ 	}
-+ };
-+=20
-  /*
--  * Hwmon
-+  * Hwmon device
-   */
-+=20
-+ #define EEEPC_EC_SC00      0x61
-+ #define EEEPC_EC_FAN_PWM   (EEEPC_EC_SC00 + 2) /* Fan PWM duty cycle (%) =
-*/
-+ #define EEEPC_EC_FAN_HRPM  (EEEPC_EC_SC00 + 5) /* High byte, fan speed (R=
-PM) */
-+ #define EEEPC_EC_FAN_LRPM  (EEEPC_EC_SC00 + 6) /* Low byte, fan speed (RP=
-M) */
-+=20
-+ #define EEEPC_EC_SFB0      0xD0
-+ #define EEEPC_EC_FAN_CTRL  (EEEPC_EC_SFB0 + 3) /* Byte containing SF25  */
-+=20
-  static int eeepc_get_fan_pwm(void)
-  {
-- 	int value =3D 0;
-+ 	u8 value =3D 0;
- =20
-- 	read_acpi_int(NULL, EEEPC_EC_FAN_PWM, &value);
-- 	value =3D value * 255 / 100;
-- 	return (value);
-+ 	ec_read(EEEPC_EC_FAN_PWM, &value);
-+ 	return value * 255 / 100;
-  }
- =20
-  static void eeepc_set_fan_pwm(int value)
-
---Signature=_Wed__16_Dec_2009_13_00_49_+1100_r/5FJq1p/lpEl+aZ
+--Signature=_Wed__16_Dec_2009_13_28_47_+1100_q0+2Oa0/UuW07Y6P
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAksoP1EACgkQjjKRsyhoI8ztRwCeMjon+GI2gS7GAUQdQRAR6/sV
-whsAoKCbuI5ObFGi79OHXEcVzygqdFdH
-=9W29
+iEYEARECAAYFAksoRd8ACgkQjjKRsyhoI8xEcACZAV+Kv119iFV1zbOlJNSXOdF2
+MsMAn1urkpPQ9kWZ0/D96bNGgucX2zEY
+=NvgX
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__16_Dec_2009_13_00_49_+1100_r/5FJq1p/lpEl+aZ--
+--Signature=_Wed__16_Dec_2009_13_28_47_+1100_q0+2Oa0/UuW07Y6P--
