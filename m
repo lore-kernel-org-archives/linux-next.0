@@ -1,86 +1,553 @@
-From: Trond Myklebust <trond.myklebust@fys.uio.no>
-Subject: Re: [PATCH -next] nfs: fix ISO C90 warning
-Date: Wed, 16 Dec 2009 18:01:37 -0500
-Message-ID: <1261004497.13878.9.camel@localhost>
-References: <20091215165309.58e98eea.sfr@canb.auug.org.au>
-	 <20091216142334.6a0ba115.randy.dunlap@oracle.com>
-	 <1261003219.13878.6.camel@localhost>
-	 <20091216144700.34b80b4b.randy.dunlap@oracle.com>
-	 <alpine.LFD.2.00.0912162355350.2755@localhost.localdomain>
+From: Borislav Petkov <petkovbb@googlemail.com>
+Subject: Re: [PATCH -next] x86 msrs: alloc/free for CONFIG_SMP=n
+Date: Thu, 17 Dec 2009 00:16:25 +0100
+Message-ID: <20091216231625.GD27228@liondog.tnic>
+References: <20091216183212.118c5e14.sfr@canb.auug.org.au>
+ <20091216092424.5f87214c.randy.dunlap@oracle.com>
+ <4B2919BD.40001@zytor.com>
+ <20091216174524.GH11618@aftab>
+ <4B2928AC.3020807@zytor.com>
+ <20091216135119.e283e525.randy.dunlap@oracle.com>
+ <20091216215808.GB27228@liondog.tnic>
+ <4B296209.2010902@zytor.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-out2.uio.no ([129.240.10.58]:35213 "EHLO mail-out2.uio.no"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S964884AbZLPXBs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Dec 2009 18:01:48 -0500
-In-Reply-To: <alpine.LFD.2.00.0912162355350.2755@localhost.localdomain>
+Received: from ey-out-2122.google.com ([74.125.78.26]:29578 "EHLO
+	ey-out-2122.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965221AbZLPXQb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Dec 2009 18:16:31 -0500
+Content-Disposition: inline
+In-Reply-To: <4B296209.2010902@zytor.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-nfs@vger.kernel.org
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Borislav Petkov <borislav.petkov@amd.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Wed, 2009-12-16 at 23:58 +0100, Thomas Gleixner wrote: 
-> On Wed, 16 Dec 2009, Randy Dunlap wrote:
-> > On Wed, 16 Dec 2009 17:40:19 -0500 Trond Myklebust wrote:
-> > 
-> > > On Wed, 2009-12-16 at 14:23 -0800, Randy Dunlap wrote: 
-> > > > From: Randy Dunlap <randy.dunlap@oracle.com>
-> > > > 
-> > > > Fix gcc ISO C90 warning:
-> > > > 
-> > > > fs/nfs/callback.c:356: warning: ISO C90 forbids mixed declarations and code
-> > > > 
-> > > > Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> > > > ---
-> > > >  fs/nfs/callback.c |    2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > 
-> > > > --- linux-next-20091215.orig/fs/nfs/callback.c
-> > > > +++ linux-next-20091215/fs/nfs/callback.c
-> > > > @@ -352,8 +352,8 @@ static int check_gss_callback_principal(
-> > > >  static int nfs_callback_authenticate(struct svc_rqst *rqstp)
-> > > >  {
-> > > >  	struct nfs_client *clp;
-> > > > -	RPC_IFDEBUG(char buf[RPC_MAX_ADDRBUFLEN]);
-> > > >  	int ret = SVC_OK;
-> > > > +	RPC_IFDEBUG(char buf[RPC_MAX_ADDRBUFLEN]);
-> > > >  
-> > > 
-> > > What version of gcc is giving rise to this warning?
-> > 
-> > > gcc --version
-> > gcc (GCC) 4.2.1 (SUSE Linux)
-> > 
-> > > RPC_IFDEBUG is a macro that either evaluates to its argument, or to
-> > > nothing, depending on whether or not RPC_DEBUG is defined or not. In
-> > > neither case should it evaluate to anything illegal under C90 rules
-> > > afaics.
-> > 
-> > Yep.  Odd warning.
-> 
-> Not really. If the debug macro evaluates to nothing then you have:
-> 
->     struct nfs_client *clp;
->     ;
->     int ret = SVC_OK;
-> 
-> So you have a stray semicolon, which is interpreted as an empty code
-> line. That qualifies for the mixed declaration and code case :)
-> 
-> I know it's nitpicking, but ...
+On Wed, Dec 16, 2009 at 02:41:13PM -0800, H. Peter Anvin wrote:
+> My preference would be to move the SMP-specific functions to a new
+> file, call it msr-smp.c, and then leave only the functions that should
+> be included unconditionally in msr.c (I believe it is cleaner to do it
+> that way than the opposite.)
 
-Ah... I see what you mean.
+v2:
 
-So really what we should do is just move that semicolon inside the
-macro. That would change the !RPC_DEBUG case to
+---
+From: Borislav Petkov <petkovbb@gmail.com>
+Date: Wed, 16 Dec 2009 22:49:18 +0100
+Subject: [PATCH] x86, msr: fix CONFIG_SMP=n build
 
-    struct nfs_client *clp;
+Randy Dunlap reported the following build error:
 
-    int ret = SVC_OK;
+"When CONFIG_SMP=n, CONFIG_X86_MSR=m:
 
-which is 100% legal...
+ERROR: "msrs_free" [drivers/edac/amd64_edac_mod.ko] undefined!
+ERROR: "msrs_alloc" [drivers/edac/amd64_edac_mod.ko] undefined!"
 
-Cheers
-  Trond
+This is due to the fact that <arch/x86/lib/msr.c> is conditioned on
+CONFIG_SMP and in the UP case we have only the stubs in the header.
+Fork off SMP functionality into a new file (msr-smp.c) and build
+msrs_{alloc,free} unconditionally.
+
+Cc: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Signed-off-by: Borislav Petkov <petkovbb@gmail.com>
+---
+ arch/x86/include/asm/msr.h |   12 +++
+ arch/x86/lib/Makefile      |    4 +-
+ arch/x86/lib/msr-smp.c     |  204 ++++++++++++++++++++++++++++++++++++++++++
+ arch/x86/lib/msr.c         |  213 --------------------------------------------
+ 4 files changed, 218 insertions(+), 215 deletions(-)
+ create mode 100644 arch/x86/lib/msr-smp.c
+
+diff --git a/arch/x86/include/asm/msr.h b/arch/x86/include/asm/msr.h
+index 2d228fc..a0157f2 100644
+--- a/arch/x86/include/asm/msr.h
++++ b/arch/x86/include/asm/msr.h
+@@ -27,6 +27,18 @@ struct msr {
+ 	};
+ };
+ 
++struct msr_info {
++	u32 msr_no;
++	struct msr reg;
++	struct msr *msrs;
++	int err;
++};
++
++struct msr_regs_info {
++	u32 *regs;
++	int err;
++};
++
+ static inline unsigned long long native_read_tscp(unsigned int *aux)
+ {
+ 	unsigned long low, high;
+diff --git a/arch/x86/lib/Makefile b/arch/x86/lib/Makefile
+index 45b20e4..cffd754 100644
+--- a/arch/x86/lib/Makefile
++++ b/arch/x86/lib/Makefile
+@@ -14,7 +14,7 @@ $(obj)/inat.o: $(obj)/inat-tables.c
+ 
+ clean-files := inat-tables.c
+ 
+-obj-$(CONFIG_SMP) := msr.o
++obj-$(CONFIG_SMP) += msr-smp.o
+ 
+ lib-y := delay.o
+ lib-y += thunk_$(BITS).o
+@@ -22,7 +22,7 @@ lib-y += usercopy_$(BITS).o getuser.o putuser.o
+ lib-y += memcpy_$(BITS).o
+ lib-$(CONFIG_KPROBES) += insn.o inat.o
+ 
+-obj-y += msr-reg.o msr-reg-export.o
++obj-y += msr.o msr-reg.o msr-reg-export.o
+ 
+ ifeq ($(CONFIG_X86_32),y)
+         obj-y += atomic64_32.o
+diff --git a/arch/x86/lib/msr-smp.c b/arch/x86/lib/msr-smp.c
+new file mode 100644
+index 0000000..a6b1b86
+--- /dev/null
++++ b/arch/x86/lib/msr-smp.c
+@@ -0,0 +1,204 @@
++#include <linux/module.h>
++#include <linux/preempt.h>
++#include <linux/smp.h>
++#include <asm/msr.h>
++
++static void __rdmsr_on_cpu(void *info)
++{
++	struct msr_info *rv = info;
++	struct msr *reg;
++	int this_cpu = raw_smp_processor_id();
++
++	if (rv->msrs)
++		reg = per_cpu_ptr(rv->msrs, this_cpu);
++	else
++		reg = &rv->reg;
++
++	rdmsr(rv->msr_no, reg->l, reg->h);
++}
++
++static void __wrmsr_on_cpu(void *info)
++{
++	struct msr_info *rv = info;
++	struct msr *reg;
++	int this_cpu = raw_smp_processor_id();
++
++	if (rv->msrs)
++		reg = per_cpu_ptr(rv->msrs, this_cpu);
++	else
++		reg = &rv->reg;
++
++	wrmsr(rv->msr_no, reg->l, reg->h);
++}
++
++int rdmsr_on_cpu(unsigned int cpu, u32 msr_no, u32 *l, u32 *h)
++{
++	int err;
++	struct msr_info rv;
++
++	memset(&rv, 0, sizeof(rv));
++
++	rv.msr_no = msr_no;
++	err = smp_call_function_single(cpu, __rdmsr_on_cpu, &rv, 1);
++	*l = rv.reg.l;
++	*h = rv.reg.h;
++
++	return err;
++}
++EXPORT_SYMBOL(rdmsr_on_cpu);
++
++int wrmsr_on_cpu(unsigned int cpu, u32 msr_no, u32 l, u32 h)
++{
++	int err;
++	struct msr_info rv;
++
++	memset(&rv, 0, sizeof(rv));
++
++	rv.msr_no = msr_no;
++	rv.reg.l = l;
++	rv.reg.h = h;
++	err = smp_call_function_single(cpu, __wrmsr_on_cpu, &rv, 1);
++
++	return err;
++}
++EXPORT_SYMBOL(wrmsr_on_cpu);
++
++static void __rwmsr_on_cpus(const struct cpumask *mask, u32 msr_no,
++			    struct msr *msrs,
++			    void (*msr_func) (void *info))
++{
++	struct msr_info rv;
++	int this_cpu;
++
++	memset(&rv, 0, sizeof(rv));
++
++	rv.msrs	  = msrs;
++	rv.msr_no = msr_no;
++
++	this_cpu = get_cpu();
++
++	if (cpumask_test_cpu(this_cpu, mask))
++		msr_func(&rv);
++
++	smp_call_function_many(mask, msr_func, &rv, 1);
++	put_cpu();
++}
++
++/* rdmsr on a bunch of CPUs
++ *
++ * @mask:       which CPUs
++ * @msr_no:     which MSR
++ * @msrs:       array of MSR values
++ *
++ */
++void rdmsr_on_cpus(const struct cpumask *mask, u32 msr_no, struct msr *msrs)
++{
++	__rwmsr_on_cpus(mask, msr_no, msrs, __rdmsr_on_cpu);
++}
++EXPORT_SYMBOL(rdmsr_on_cpus);
++
++/*
++ * wrmsr on a bunch of CPUs
++ *
++ * @mask:       which CPUs
++ * @msr_no:     which MSR
++ * @msrs:       array of MSR values
++ *
++ */
++void wrmsr_on_cpus(const struct cpumask *mask, u32 msr_no, struct msr *msrs)
++{
++	__rwmsr_on_cpus(mask, msr_no, msrs, __wrmsr_on_cpu);
++}
++EXPORT_SYMBOL(wrmsr_on_cpus);
++
++/* These "safe" variants are slower and should be used when the target MSR
++   may not actually exist. */
++static void __rdmsr_safe_on_cpu(void *info)
++{
++	struct msr_info *rv = info;
++
++	rv->err = rdmsr_safe(rv->msr_no, &rv->reg.l, &rv->reg.h);
++}
++
++static void __wrmsr_safe_on_cpu(void *info)
++{
++	struct msr_info *rv = info;
++
++	rv->err = wrmsr_safe(rv->msr_no, rv->reg.l, rv->reg.h);
++}
++
++int rdmsr_safe_on_cpu(unsigned int cpu, u32 msr_no, u32 *l, u32 *h)
++{
++	int err;
++	struct msr_info rv;
++
++	memset(&rv, 0, sizeof(rv));
++
++	rv.msr_no = msr_no;
++	err = smp_call_function_single(cpu, __rdmsr_safe_on_cpu, &rv, 1);
++	*l = rv.reg.l;
++	*h = rv.reg.h;
++
++	return err ? err : rv.err;
++}
++EXPORT_SYMBOL(rdmsr_safe_on_cpu);
++
++int wrmsr_safe_on_cpu(unsigned int cpu, u32 msr_no, u32 l, u32 h)
++{
++	int err;
++	struct msr_info rv;
++
++	memset(&rv, 0, sizeof(rv));
++
++	rv.msr_no = msr_no;
++	rv.reg.l = l;
++	rv.reg.h = h;
++	err = smp_call_function_single(cpu, __wrmsr_safe_on_cpu, &rv, 1);
++
++	return err ? err : rv.err;
++}
++EXPORT_SYMBOL(wrmsr_safe_on_cpu);
++
++/*
++ * These variants are significantly slower, but allows control over
++ * the entire 32-bit GPR set.
++ */
++static void __rdmsr_safe_regs_on_cpu(void *info)
++{
++	struct msr_regs_info *rv = info;
++
++	rv->err = rdmsr_safe_regs(rv->regs);
++}
++
++static void __wrmsr_safe_regs_on_cpu(void *info)
++{
++	struct msr_regs_info *rv = info;
++
++	rv->err = wrmsr_safe_regs(rv->regs);
++}
++
++int rdmsr_safe_regs_on_cpu(unsigned int cpu, u32 *regs)
++{
++	int err;
++	struct msr_regs_info rv;
++
++	rv.regs   = regs;
++	rv.err    = -EIO;
++	err = smp_call_function_single(cpu, __rdmsr_safe_regs_on_cpu, &rv, 1);
++
++	return err ? err : rv.err;
++}
++EXPORT_SYMBOL(rdmsr_safe_regs_on_cpu);
++
++int wrmsr_safe_regs_on_cpu(unsigned int cpu, u32 *regs)
++{
++	int err;
++	struct msr_regs_info rv;
++
++	rv.regs = regs;
++	rv.err  = -EIO;
++	err = smp_call_function_single(cpu, __wrmsr_safe_regs_on_cpu, &rv, 1);
++
++	return err ? err : rv.err;
++}
++EXPORT_SYMBOL(wrmsr_safe_regs_on_cpu);
+diff --git a/arch/x86/lib/msr.c b/arch/x86/lib/msr.c
+index 8728341..8f8eebd 100644
+--- a/arch/x86/lib/msr.c
++++ b/arch/x86/lib/msr.c
+@@ -1,123 +1,7 @@
+ #include <linux/module.h>
+ #include <linux/preempt.h>
+-#include <linux/smp.h>
+ #include <asm/msr.h>
+ 
+-struct msr_info {
+-	u32 msr_no;
+-	struct msr reg;
+-	struct msr *msrs;
+-	int err;
+-};
+-
+-static void __rdmsr_on_cpu(void *info)
+-{
+-	struct msr_info *rv = info;
+-	struct msr *reg;
+-	int this_cpu = raw_smp_processor_id();
+-
+-	if (rv->msrs)
+-		reg = per_cpu_ptr(rv->msrs, this_cpu);
+-	else
+-		reg = &rv->reg;
+-
+-	rdmsr(rv->msr_no, reg->l, reg->h);
+-}
+-
+-static void __wrmsr_on_cpu(void *info)
+-{
+-	struct msr_info *rv = info;
+-	struct msr *reg;
+-	int this_cpu = raw_smp_processor_id();
+-
+-	if (rv->msrs)
+-		reg = per_cpu_ptr(rv->msrs, this_cpu);
+-	else
+-		reg = &rv->reg;
+-
+-	wrmsr(rv->msr_no, reg->l, reg->h);
+-}
+-
+-int rdmsr_on_cpu(unsigned int cpu, u32 msr_no, u32 *l, u32 *h)
+-{
+-	int err;
+-	struct msr_info rv;
+-
+-	memset(&rv, 0, sizeof(rv));
+-
+-	rv.msr_no = msr_no;
+-	err = smp_call_function_single(cpu, __rdmsr_on_cpu, &rv, 1);
+-	*l = rv.reg.l;
+-	*h = rv.reg.h;
+-
+-	return err;
+-}
+-EXPORT_SYMBOL(rdmsr_on_cpu);
+-
+-int wrmsr_on_cpu(unsigned int cpu, u32 msr_no, u32 l, u32 h)
+-{
+-	int err;
+-	struct msr_info rv;
+-
+-	memset(&rv, 0, sizeof(rv));
+-
+-	rv.msr_no = msr_no;
+-	rv.reg.l = l;
+-	rv.reg.h = h;
+-	err = smp_call_function_single(cpu, __wrmsr_on_cpu, &rv, 1);
+-
+-	return err;
+-}
+-EXPORT_SYMBOL(wrmsr_on_cpu);
+-
+-static void __rwmsr_on_cpus(const struct cpumask *mask, u32 msr_no,
+-			    struct msr *msrs,
+-			    void (*msr_func) (void *info))
+-{
+-	struct msr_info rv;
+-	int this_cpu;
+-
+-	memset(&rv, 0, sizeof(rv));
+-
+-	rv.msrs	  = msrs;
+-	rv.msr_no = msr_no;
+-
+-	this_cpu = get_cpu();
+-
+-	if (cpumask_test_cpu(this_cpu, mask))
+-		msr_func(&rv);
+-
+-	smp_call_function_many(mask, msr_func, &rv, 1);
+-	put_cpu();
+-}
+-
+-/* rdmsr on a bunch of CPUs
+- *
+- * @mask:       which CPUs
+- * @msr_no:     which MSR
+- * @msrs:       array of MSR values
+- *
+- */
+-void rdmsr_on_cpus(const struct cpumask *mask, u32 msr_no, struct msr *msrs)
+-{
+-	__rwmsr_on_cpus(mask, msr_no, msrs, __rdmsr_on_cpu);
+-}
+-EXPORT_SYMBOL(rdmsr_on_cpus);
+-
+-/*
+- * wrmsr on a bunch of CPUs
+- *
+- * @mask:       which CPUs
+- * @msr_no:     which MSR
+- * @msrs:       array of MSR values
+- *
+- */
+-void wrmsr_on_cpus(const struct cpumask *mask, u32 msr_no, struct msr *msrs)
+-{
+-	__rwmsr_on_cpus(mask, msr_no, msrs, __wrmsr_on_cpu);
+-}
+-EXPORT_SYMBOL(wrmsr_on_cpus);
+-
+ struct msr *msrs_alloc(void)
+ {
+ 	struct msr *msrs = NULL;
+@@ -137,100 +21,3 @@ void msrs_free(struct msr *msrs)
+ 	free_percpu(msrs);
+ }
+ EXPORT_SYMBOL(msrs_free);
+-
+-/* These "safe" variants are slower and should be used when the target MSR
+-   may not actually exist. */
+-static void __rdmsr_safe_on_cpu(void *info)
+-{
+-	struct msr_info *rv = info;
+-
+-	rv->err = rdmsr_safe(rv->msr_no, &rv->reg.l, &rv->reg.h);
+-}
+-
+-static void __wrmsr_safe_on_cpu(void *info)
+-{
+-	struct msr_info *rv = info;
+-
+-	rv->err = wrmsr_safe(rv->msr_no, rv->reg.l, rv->reg.h);
+-}
+-
+-int rdmsr_safe_on_cpu(unsigned int cpu, u32 msr_no, u32 *l, u32 *h)
+-{
+-	int err;
+-	struct msr_info rv;
+-
+-	memset(&rv, 0, sizeof(rv));
+-
+-	rv.msr_no = msr_no;
+-	err = smp_call_function_single(cpu, __rdmsr_safe_on_cpu, &rv, 1);
+-	*l = rv.reg.l;
+-	*h = rv.reg.h;
+-
+-	return err ? err : rv.err;
+-}
+-EXPORT_SYMBOL(rdmsr_safe_on_cpu);
+-
+-int wrmsr_safe_on_cpu(unsigned int cpu, u32 msr_no, u32 l, u32 h)
+-{
+-	int err;
+-	struct msr_info rv;
+-
+-	memset(&rv, 0, sizeof(rv));
+-
+-	rv.msr_no = msr_no;
+-	rv.reg.l = l;
+-	rv.reg.h = h;
+-	err = smp_call_function_single(cpu, __wrmsr_safe_on_cpu, &rv, 1);
+-
+-	return err ? err : rv.err;
+-}
+-EXPORT_SYMBOL(wrmsr_safe_on_cpu);
+-
+-/*
+- * These variants are significantly slower, but allows control over
+- * the entire 32-bit GPR set.
+- */
+-struct msr_regs_info {
+-	u32 *regs;
+-	int err;
+-};
+-
+-static void __rdmsr_safe_regs_on_cpu(void *info)
+-{
+-	struct msr_regs_info *rv = info;
+-
+-	rv->err = rdmsr_safe_regs(rv->regs);
+-}
+-
+-static void __wrmsr_safe_regs_on_cpu(void *info)
+-{
+-	struct msr_regs_info *rv = info;
+-
+-	rv->err = wrmsr_safe_regs(rv->regs);
+-}
+-
+-int rdmsr_safe_regs_on_cpu(unsigned int cpu, u32 *regs)
+-{
+-	int err;
+-	struct msr_regs_info rv;
+-
+-	rv.regs   = regs;
+-	rv.err    = -EIO;
+-	err = smp_call_function_single(cpu, __rdmsr_safe_regs_on_cpu, &rv, 1);
+-
+-	return err ? err : rv.err;
+-}
+-EXPORT_SYMBOL(rdmsr_safe_regs_on_cpu);
+-
+-int wrmsr_safe_regs_on_cpu(unsigned int cpu, u32 *regs)
+-{
+-	int err;
+-	struct msr_regs_info rv;
+-
+-	rv.regs = regs;
+-	rv.err  = -EIO;
+-	err = smp_call_function_single(cpu, __wrmsr_safe_regs_on_cpu, &rv, 1);
+-
+-	return err ? err : rv.err;
+-}
+-EXPORT_SYMBOL(wrmsr_safe_regs_on_cpu);
+-- 
+1.6.5
+
+
+-- 
+Regards/Gruss,
+    Boris.
