@@ -1,52 +1,95 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] x86 msrs: alloc/free for CONFIG_SMP=n
-Date: Wed, 16 Dec 2009 13:51:19 -0800
-Message-ID: <20091216135119.e283e525.randy.dunlap@oracle.com>
+From: Borislav Petkov <petkovbb@googlemail.com>
+Subject: Re: linux-next: Tree for December 16 (amd64_edac)
+Date: Wed, 16 Dec 2009 22:54:11 +0100
+Message-ID: <20091216215411.GA27228@liondog.tnic>
 References: <20091216183212.118c5e14.sfr@canb.auug.org.au>
-	<20091216092424.5f87214c.randy.dunlap@oracle.com>
-	<4B2919BD.40001@zytor.com>
-	<20091216174524.GH11618@aftab>
-	<4B2928AC.3020807@zytor.com>
+ <20091216092424.5f87214c.randy.dunlap@oracle.com>
+ <4B2919BD.40001@zytor.com>
+ <20091216174524.GH11618@aftab>
+ <4B2928AC.3020807@zytor.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet11.oracle.com ([141.146.126.233]:36783 "EHLO
-	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751762AbZLPVvX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Dec 2009 16:51:23 -0500
+Received: from mail-ew0-f219.google.com ([209.85.219.219]:55495 "EHLO
+	mail-ew0-f219.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757359AbZLPVyT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Dec 2009 16:54:19 -0500
+Content-Disposition: inline
 In-Reply-To: <4B2928AC.3020807@zytor.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Borislav Petkov <borislav.petkov@amd.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc: Borislav Petkov <borislav.petkov@amd.com>, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+On Wed, Dec 16, 2009 at 10:36:28AM -0800, H. Peter Anvin wrote:
+> On 12/16/2009 09:45 AM, Borislav Petkov wrote:
+> >>>
+> >>> Should EDAC_AMD64 also depend on SMP?
+> >>
+> >> That seems absurd... more likely msrs_free/msrs_alloc should not be
+> >> SMP-specific, or stubs need to be provided.
+> > 
+> > see <arch/x86/lib/Makefile>:
+> > 
+> > obj-$(CONFIG_SMP) := msr.o
+> > 
+> 
+> Yes, because the stubs live as inlines in arch/x86/include/asm/msr.h.
+> 
+> This needs to be fixed ASAP.
 
-Rearrange arch/x86/lib/msr.c so that alloc/free are built and
-usable when CONFIG_SMP=n.  Fixes build of amd64_edac.
-
-ERROR: "msrs_free" [drivers/edac/amd64_edac_mod.ko] undefined!
-ERROR: "msrs_alloc" [drivers/edac/amd64_edac_mod.ko] undefined!
+Well, how about something in the likes of below:
 
 ---
- arch/x86/lib/Makefile |    2 -
- arch/x86/lib/msr.c    |   42 ++++++++++++++++++++--------------------
- 2 files changed, 23 insertions(+), 21 deletions(-)
+From: Borislav Petkov <petkovbb@gmail.com>
+Date: Wed, 16 Dec 2009 22:49:18 +0100
+Subject: [PATCH] x86, msr: fix CONFIG_SMP=n build
 
---- linux-next-20091216.orig/arch/x86/lib/Makefile
-+++ linux-next-20091216/arch/x86/lib/Makefile
-@@ -14,7 +14,7 @@ $(obj)/inat.o: $(obj)/inat-tables.c
+Randy Dunlap reported the following build error:
+
+"When CONFIG_SMP=n, CONFIG_X86_MSR=m:
+
+ERROR: "msrs_free" [drivers/edac/amd64_edac_mod.ko] undefined!
+ERROR: "msrs_alloc" [drivers/edac/amd64_edac_mod.ko] undefined!"
+
+This is due to the fact that <arch/x86/lib/msr.c> is conditioned on
+CONFIG_SMP and in the UP case we have only the stubs in the header. Pull
+CONFIG_SMP into the aforementioned file and make msrs_{alloc,free} build
+unconditionally.
+
+Cc: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Signed-off-by: Borislav Petkov <petkovbb@gmail.com>
+---
+ arch/x86/lib/Makefile |    4 +---
+ arch/x86/lib/msr.c    |   44 ++++++++++++++++++++++++--------------------
+ 2 files changed, 25 insertions(+), 23 deletions(-)
+
+diff --git a/arch/x86/lib/Makefile b/arch/x86/lib/Makefile
+index 45b20e4..1a0e470 100644
+--- a/arch/x86/lib/Makefile
++++ b/arch/x86/lib/Makefile
+@@ -14,15 +14,13 @@ $(obj)/inat.o: $(obj)/inat-tables.c
  
  clean-files := inat-tables.c
  
 -obj-$(CONFIG_SMP) := msr.o
-+obj-$(CONFIG_X86_MSR) := msr.o
- 
+-
  lib-y := delay.o
  lib-y += thunk_$(BITS).o
---- linux-next-20091216.orig/arch/x86/lib/msr.c
-+++ linux-next-20091216/arch/x86/lib/msr.c
+ lib-y += usercopy_$(BITS).o getuser.o putuser.o
+ lib-y += memcpy_$(BITS).o
+ lib-$(CONFIG_KPROBES) += insn.o inat.o
+ 
+-obj-y += msr-reg.o msr-reg-export.o
++obj-y += msr.o msr-reg.o msr-reg-export.o
+ 
+ ifeq ($(CONFIG_X86_32),y)
+         obj-y += atomic64_32.o
+diff --git a/arch/x86/lib/msr.c b/arch/x86/lib/msr.c
+index 8728341..542fbb4 100644
+--- a/arch/x86/lib/msr.c
++++ b/arch/x86/lib/msr.c
 @@ -10,6 +10,7 @@ struct msr_info {
  	int err;
  };
@@ -55,7 +98,7 @@ ERROR: "msrs_alloc" [drivers/edac/amd64_edac_mod.ko] undefined!
  static void __rdmsr_on_cpu(void *info)
  {
  	struct msr_info *rv = info;
-@@ -118,26 +119,6 @@ void wrmsr_on_cpus(const struct cpumask 
+@@ -118,26 +119,6 @@ void wrmsr_on_cpus(const struct cpumask *mask, u32 msr_no, struct msr *msrs)
  }
  EXPORT_SYMBOL(wrmsr_on_cpus);
  
@@ -82,11 +125,11 @@ ERROR: "msrs_alloc" [drivers/edac/amd64_edac_mod.ko] undefined!
  /* These "safe" variants are slower and should be used when the target MSR
     may not actually exist. */
  static void __rdmsr_safe_on_cpu(void *info)
-@@ -234,3 +215,24 @@ int wrmsr_safe_regs_on_cpu(unsigned int 
+@@ -234,3 +215,26 @@ int wrmsr_safe_regs_on_cpu(unsigned int cpu, u32 *regs)
  	return err ? err : rv.err;
  }
  EXPORT_SYMBOL(wrmsr_safe_regs_on_cpu);
-+#endif
++#endif /* CONFIG_SMP */
 +
 +struct msr *msrs_alloc(void)
 +{
@@ -107,3 +150,12 @@ ERROR: "msrs_alloc" [drivers/edac/amd64_edac_mod.ko] undefined!
 +	free_percpu(msrs);
 +}
 +EXPORT_SYMBOL(msrs_free);
++
++
+-- 
+1.6.5
+
+
+-- 
+Regards/Gruss,
+    Boris.
