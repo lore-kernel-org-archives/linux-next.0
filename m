@@ -1,50 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: origin tree build warning
-Date: Thu, 17 Dec 2009 11:10:09 +1100
-Message-ID: <20091217111009.35d480da.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the rr tree with Linus' tree
+Date: Thu, 17 Dec 2009 13:07:58 +1100
+Message-ID: <20091217130758.edfe0da6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__17_Dec_2009_11_10_09_+1100_kHjEigWU=WJ82TY0"
+ boundary="Signature=_Thu__17_Dec_2009_13_07_58_+1100_0XlTj=OCYtCPry9W"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33237 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58987 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1762567AbZLQAKQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Dec 2009 19:10:16 -0500
+	id S1762945AbZLQCIL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 16 Dec 2009 21:08:11 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus <torvalds@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>
 
---Signature=_Thu__17_Dec_2009_11_10_09_+1100_kHjEigWU=WJ82TY0
+--Signature=_Thu__17_Dec_2009_13_07_58_+1100_0XlTj=OCYtCPry9W
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+Hi Rusty,
 
-Today's linux-next build (powerpc ppc64_defconfig) produced this warning:
+Today's linux-next merge of the rr tree got a conflict in
+kernel/perf_event.c between commit
+0f624e7e5625f4c30c836b7a5decfe2553582391 ("perf_event: Fix incorrect
+range check on cpu number") from Linus' tree and commit
+40b7c6b7eefc950d625945f773b4c57dcc95b8a4
+("cpumask:kernel_perf_event-deprecated-function") from the rr tree.
 
-fs/nfs/super.c: In function 'nfs_follow_remote_path':
-fs/nfs/super.c:2672: warning: label 'out_mntput' defined but not used
-
-Introduced by commit e9496ff46a20a8592fdc7bdaaf41b45eb808d310 ("fix
-mismerge with Trond's stuff (create_mnt_ns() export is gone now)").
-
+Overlapping changes.  I used the version from Linus' tree (since it was a
+bug fix).
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__17_Dec_2009_11_10_09_+1100_kHjEigWU=WJ82TY0
+--Signature=_Thu__17_Dec_2009_13_07_58_+1100_0XlTj=OCYtCPry9W
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkspduEACgkQjjKRsyhoI8y4SQCfblKWw+81+Avx3NnTvgzHNcJV
-lxEAoINg8shSBEgDuUsnp7gDUPVBT4uC
-=55Pk
+iEYEARECAAYFAkspkn4ACgkQjjKRsyhoI8xmkgCgsAqhHDnmwZQa6ZmPZ3rRjV9P
+4foAniaU8zbnOIkaj93FDXyhXPqui9Pw
+=zqqz
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__17_Dec_2009_11_10_09_+1100_kHjEigWU=WJ82TY0--
+--Signature=_Thu__17_Dec_2009_13_07_58_+1100_0XlTj=OCYtCPry9W--
