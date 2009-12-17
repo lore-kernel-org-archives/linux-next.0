@@ -1,308 +1,162 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for December 17
-Date: Thu, 17 Dec 2009 16:58:40 +1100
-Message-ID: <20091217165840.e11fc719.sfr@canb.auug.org.au>
+From: =?UTF-8?Q?Am=C3=A9rico_Wang?= <xiyou.wangcong@gmail.com>
+Subject: Re: [PATCH -next] nfs: fix ISO C90 warning
+Date: Thu, 17 Dec 2009 18:00:29 +0800
+Message-ID: <2375c9f90912170200m12a5310cg90343c5c1081fbb8@mail.gmail.com>
+References: <20091215165309.58e98eea.sfr@canb.auug.org.au>
+	 <20091216142334.6a0ba115.randy.dunlap@oracle.com>
+	 <1261003219.13878.6.camel@localhost>
+	 <20091216144700.34b80b4b.randy.dunlap@oracle.com>
+	 <alpine.LFD.2.00.0912162355350.2755@localhost.localdomain>
+	 <1261004497.13878.9.camel@localhost>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__17_Dec_2009_16_58_40_+1100_gIFVM/7E3g1loGp+"
+Content-Type: multipart/mixed; boundary=0016e64f69ec6e924d047ae9b17a
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59873 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752297AbZLQF6r (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 17 Dec 2009 00:58:47 -0500
+Received: from mail-qy0-f194.google.com ([209.85.221.194]:60622 "EHLO
+	mail-qy0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751146AbZLQKAa (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Dec 2009 05:00:30 -0500
+In-Reply-To: <1261004497.13878.9.camel@localhost>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-nfs@vger.kernel.org
 
---Signature=_Thu__17_Dec_2009_16_58_40_+1100_gIFVM/7E3g1loGp+
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
+--0016e64f69ec6e924d047ae9b17a
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Thu, Dec 17, 2009 at 7:01 AM, Trond Myklebust
+<trond.myklebust@fys.uio.no> wrote:
+> On Wed, 2009-12-16 at 23:58 +0100, Thomas Gleixner wrote:
+>> On Wed, 16 Dec 2009, Randy Dunlap wrote:
+>> > On Wed, 16 Dec 2009 17:40:19 -0500 Trond Myklebust wrote:
+>> >
+>> > > On Wed, 2009-12-16 at 14:23 -0800, Randy Dunlap wrote:
+>> > > > From: Randy Dunlap <randy.dunlap@oracle.com>
+>> > > >
+>> > > > Fix gcc ISO C90 warning:
+>> > > >
+>> > > > fs/nfs/callback.c:356: warning: ISO C90 forbids mixed declarations=
+ and code
+>> > > >
+>> > > > Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+>> > > > ---
+>> > > > =C2=A0fs/nfs/callback.c | =C2=A0 =C2=A02 +-
+>> > > > =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>> > > >
+>> > > > --- linux-next-20091215.orig/fs/nfs/callback.c
+>> > > > +++ linux-next-20091215/fs/nfs/callback.c
+>> > > > @@ -352,8 +352,8 @@ static int check_gss_callback_principal(
+>> > > > =C2=A0static int nfs_callback_authenticate(struct svc_rqst *rqstp)
+>> > > > =C2=A0{
+>> > > > =C2=A0 =C2=A0 =C2=A0 =C2=A0 struct nfs_client *clp;
+>> > > > - =C2=A0 =C2=A0 =C2=A0 RPC_IFDEBUG(char buf[RPC_MAX_ADDRBUFLEN]);
+>> > > > =C2=A0 =C2=A0 =C2=A0 =C2=A0 int ret =3D SVC_OK;
+>> > > > + =C2=A0 =C2=A0 =C2=A0 RPC_IFDEBUG(char buf[RPC_MAX_ADDRBUFLEN]);
+>> > > >
+>> > >
+>> > > What version of gcc is giving rise to this warning?
+>> >
+>> > > gcc --version
+>> > gcc (GCC) 4.2.1 (SUSE Linux)
+>> >
+>> > > RPC_IFDEBUG is a macro that either evaluates to its argument, or to
+>> > > nothing, depending on whether or not RPC_DEBUG is defined or not. In
+>> > > neither case should it evaluate to anything illegal under C90 rules
+>> > > afaics.
+>> >
+>> > Yep. =C2=A0Odd warning.
+>>
+>> Not really. If the debug macro evaluates to nothing then you have:
+>>
+>> =C2=A0 =C2=A0 struct nfs_client *clp;
+>> =C2=A0 =C2=A0 ;
+>> =C2=A0 =C2=A0 int ret =3D SVC_OK;
+>>
+>> So you have a stray semicolon, which is interpreted as an empty code
+>> line. That qualifies for the mixed declaration and code case :)
+>>
+>> I know it's nitpicking, but ...
+>
+> Ah... I see what you mean.
+>
+> So really what we should do is just move that semicolon inside the
+> macro. That would change the !RPC_DEBUG case to
+>
+> =C2=A0 =C2=A0struct nfs_client *clp;
+>
+> =C2=A0 =C2=A0int ret =3D SVC_OK;
+>
+> which is 100% legal...
+>
 
-My usual call for calm: please do not put stuff destined for 2.6.34 into
-linux-next trees until after 2.6.33-rc1.
+Hi,
+Check that currently all usages of RPC_DEBUG are the same,
+we can replace them all.
 
-Changes since 20091216:
+What do you think about the attached patch?
 
-The mips tree inherited a conflicts from the mtd tree.
+Sorry for attaching it, I have a bad mail environment here.
 
-The 52xx-and-virtex tree lost its conflict.
+Signed-off-by: WANG Cong <xiyou.wangcong@gmail.com>
 
-The kbuild tree inherited a merge fixup from the rr tree.
+--0016e64f69ec6e924d047ae9b17a
+Content-Type: text/plain; charset=US-ASCII; name="rpc-replace-rpc-ifdebug.diff"
+Content-Disposition: attachment; filename="rpc-replace-rpc-ifdebug.diff"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_g3bd52yd0
 
-The acpi tree lost its conflicts and build failure.
-
-The mtd tree lost its conflicts.
-
-The rr tree gained a conflict against Linus' tree.
-
-The voltage tree lost its build failure.
-
-The fsnotify tree gained a build failure for which I applied a merge
-fixup patch.
-
-The hwpoison tree lost its conflicts.
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
-and sparc64 defconfig. These builds also have
-CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
-CONFIG_DEBUG_INFO disabled when necessary.
-
-Below is a summary of the state of the merge.
-
-We are up to 155 trees (counting Linus' and 22 trees of patches pending
-for Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging fixes/fixes
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/for-linus
-Merging quilt/driver-core.current
-Merging quilt/tty.current
-Merging quilt/usb.current
-Merging quilt/staging.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging ide-curent/master
-Merging dwmw2/master
-Merging arm/devel
-Merging davinci/davinci-next
-Merging msm/for-next
-Merging omap/for-next
-Merging pxa/for-next
-Merging samsung/next-samsung
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-Merging m68knommu/for-next
-CONFLICT (content): Merge conflict in arch/m68k/include/asm/ptrace.h
-Merging microblaze/next
-Merging mips/mips-for-linux-next
-CONFLICT (delete/modify): drivers/mtd/nand/excite_nandflash.c deleted in mi=
-ps/mips-for-linux-next and modified in HEAD. Version HEAD of drivers/mtd/na=
-nd/excite_nandflash.c left in tree.
-CONFLICT (content): Merge conflict in drivers/pcmcia/Makefile
-CONFLICT (content): Merge conflict in scripts/recordmcount.pl
-$ git rm -f drivers/mtd/nand/excite_nandflash.c
-Merging parisc/next
-Merging powerpc/next
-Merging 4xx/next
-Merging 52xx-and-virtex/next
-Merging galak/next
-Merging s390/features
-Merging sh/master
-Merging sparc/master
-Merging xtensa/master
-Merging ceph/for-next
-Merging cifs/master
-Merging configfs/linux-next
-Merging ecryptfs/next
-Merging ext3/for_next
-Merging ext4/next
-Merging fatfs/master
-Merging fuse/for-next
-Merging gfs2/master
-Merging jfs/next
-Merging logfs/master
-Merging nfs/linux-next
-Merging nfsd/nfsd-next
-Merging nilfs2/for-next
-Merging ocfs2/linux-next
-Merging squashfs/master
-Merging udf/for_next
-Merging v9fs/for-next
-CONFLICT (add/add): Merge conflict in fs/9p/cache.c
-Merging ubifs/linux-next
-Merging xfs/master
-CONFLICT (content): Merge conflict in include/linux/fs.h
-Merging reiserfs-bkl/reiserfs/kill-bkl
-Merging vfs/for-next
-Merging pci/linux-next
-Merging hid/for-next
-Merging quilt/i2c
-Merging bjdooks-i2c/next-i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-Merging kbuild/for-next
-Applying: modpost: autoconf.h has moved to include/generated
-Merging kconfig/for-next
-Merging ide/master
-Merging libata/NEXT
-Merging infiniband/for-next
-Merging acpi/test
-Merging ieee1394/for-next
-CONFLICT (content): Merge conflict in drivers/media/dvb/firewire/firedtv-13=
-94.c
-CONFLICT (content): Merge conflict in drivers/media/dvb/firewire/firedtv-av=
-c.c
-CONFLICT (add/add): Merge conflict in drivers/media/dvb/firewire/firedtv-fw=
-.c
-CONFLICT (content): Merge conflict in drivers/media/dvb/firewire/firedtv.h
-Merging ubi/linux-next
-Merging kvm/linux-next
-Merging dlm/next
-Merging scsi/master
-Merging async_tx/next
-Merging net/master
-Merging wireless/master
-Merging mtd/master
-Merging crypto/master
-Merging sound/for-next
-Merging cpufreq/next
-Merging quilt/rr
-CONFLICT (content): Merge conflict in kernel/perf_event.c
-CONFLICT (content): Merge conflict in scripts/mod/modpost.c
-Applying: rr: cpufreq: fix up for api name change
-Merging mmc/next
-Merging tmio-mmc/linux-next
-Merging input/next
-Merging lsm/for-next
-Merging block/for-next
-Merging quilt/device-mapper
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-CONFLICT (content): Merge conflict in Documentation/laptops/thinkpad-acpi.t=
-xt
-CONFLICT (content): Merge conflict in drivers/platform/x86/thinkpad_acpi.c
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-CONFLICT (content): Merge conflict in drivers/gpu/drm/drm_fb_helper.c
-Merging voltage/for-next
-Merging security-testing/next
-Merging lblnet/master
-Merging agp/agp-next
-Merging uwb/for-upstream
-Merging watchdog/master
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-Merging audit/for-next
-Merging quilt/aoe
-Merging suspend/linux-next
-Merging bluetooth/master
-Merging fsnotify/for-next
-CONFLICT (content): Merge conflict in arch/x86/ia32/ia32entry.S
-CONFLICT (content): Merge conflict in arch/x86/include/asm/unistd_32.h
-CONFLICT (content): Merge conflict in arch/x86/include/asm/unistd_64.h
-CONFLICT (content): Merge conflict in arch/x86/kernel/syscall_table_32.S
-CONFLICT (content): Merge conflict in fs/afs/write.c
-CONFLICT (content): Merge conflict in fs/cifs/dir.c
-CONFLICT (content): Merge conflict in fs/ubifs/file.c
-CONFLICT (content): Merge conflict in include/asm-generic/fcntl.h
-CONFLICT (content): Merge conflict in include/net/compat.h
-CONFLICT (content): Merge conflict in net/compat.c
-CONFLICT (content): Merge conflict in net/socket.c
-Applying: fsnotify: fixup for ima_path_check API change
-Merging irda/for-next
-CONFLICT (content): Merge conflict in drivers/net/irda/irda-usb.c
-Merging hwlat/for-linus
-CONFLICT (content): Merge conflict in MAINTAINERS
-CONFLICT (content): Merge conflict in drivers/misc/Makefile
-Merging drbd/for-jens
-Merging catalin/for-next
-Merging alacrity/linux-next
-CONFLICT (content): Merge conflict in include/linux/Kbuild
-CONFLICT (content): Merge conflict in lib/Kconfig
-Merging i7core_edac/linux_next
-Merging devicetree/next-devicetree
-Merging spi/next-spi
-Merging limits/writable_limits
-CONFLICT (content): Merge conflict in arch/x86/ia32/ia32entry.S
-CONFLICT (content): Merge conflict in arch/x86/include/asm/unistd_32.h
-CONFLICT (content): Merge conflict in arch/x86/include/asm/unistd_64.h
-CONFLICT (content): Merge conflict in arch/x86/kernel/syscall_table_32.S
-Merging omap_dss2/for-next
-Merging tip/auto-latest
-CONFLICT (content): Merge conflict in tools/perf/Documentation/perf-diff.txt
-Merging edac-amd/for-next
-Merging oprofile/for-next
-Merging percpu/for-next
-Merging workqueues/for-next
-Merging sfi/sfi-test
-Merging asm-generic/next
-Merging hwpoison/hwpoison
-Merging sysctl/master
-Merging quilt/driver-core
-Merging quilt/tty
-Merging quilt/usb
-Merging quilt/staging
-Merging scsi-post-merge/master
-
---Signature=_Thu__17_Dec_2009_16_58_40_+1100_gIFVM/7E3g1loGp+
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEUEARECAAYFAkspyJAACgkQjjKRsyhoI8wvugCYhQuCmtbitY6j5ElSuHINxX9L
-QgCfbKEfbhVo9rkhwnIiLeaeqpXpKmM=
-=iViY
------END PGP SIGNATURE-----
-
---Signature=_Thu__17_Dec_2009_16_58_40_+1100_gIFVM/7E3g1loGp+--
+ZGlmZiAtLWdpdCBhL2ZzL2xvY2tkL3N2Yy5jIGIvZnMvbG9ja2Qvc3ZjLmMKaW5kZXggZTUwY2Zh
+My4uNGZjZTBmMiAxMDA2NDQKLS0tIGEvZnMvbG9ja2Qvc3ZjLmMKKysrIGIvZnMvbG9ja2Qvc3Zj
+LmMKQEAgLTE1Miw3ICsxNTIsNyBAQCBsb2NrZCh2b2lkICp2cnFzdHApCiAJICovCiAJd2hpbGUg
+KCFrdGhyZWFkX3Nob3VsZF9zdG9wKCkpIHsKIAkJbG9uZyB0aW1lb3V0ID0gTUFYX1NDSEVEVUxF
+X1RJTUVPVVQ7Ci0JCVJQQ19JRkRFQlVHKGNoYXIgYnVmW1JQQ19NQVhfQUREUkJVRkxFTl0pOwor
+CQlSUENCVUZfSUZERUJVRyhidWYpOwogCiAJCS8qIHVwZGF0ZSBzdl9tYXhjb25uIGlmIGl0IGhh
+cyBjaGFuZ2VkICovCiAJCXJxc3RwLT5ycV9zZXJ2ZXItPnN2X21heGNvbm4gPSBubG1fbWF4X2Nv
+bm5lY3Rpb25zOwpkaWZmIC0tZ2l0IGEvZnMvbmZzL2NhbGxiYWNrLmMgYi9mcy9uZnMvY2FsbGJh
+Y2suYwppbmRleCA3M2FiMjIwLi5lMDViNmZjIDEwMDY0NAotLS0gYS9mcy9uZnMvY2FsbGJhY2su
+YworKysgYi9mcy9uZnMvY2FsbGJhY2suYwpAQCAtMzUyLDcgKzM1Miw3IEBAIHN0YXRpYyBpbnQg
+Y2hlY2tfZ3NzX2NhbGxiYWNrX3ByaW5jaXBhbChzdHJ1Y3QgbmZzX2NsaWVudCAqY2xwLAogc3Rh
+dGljIGludCBuZnNfY2FsbGJhY2tfYXV0aGVudGljYXRlKHN0cnVjdCBzdmNfcnFzdCAqcnFzdHAp
+CiB7CiAJc3RydWN0IG5mc19jbGllbnQgKmNscDsKLQlSUENfSUZERUJVRyhjaGFyIGJ1ZltSUENf
+TUFYX0FERFJCVUZMRU5dKTsKKwlSUENCVUZfSUZERUJVRyhidWYpOwogCWludCByZXQgPSBTVkNf
+T0s7CiAKIAkvKiBEb24ndCB0YWxrIHRvIHN0cmFuZ2VycyAqLwpkaWZmIC0tZ2l0IGEvZnMvbmZz
+ZC9uZnNmaC5jIGIvZnMvbmZzZC9uZnNmaC5jCmluZGV4IDFjMTIxNzcuLjdhODQ0MzMgMTAwNjQ0
+Ci0tLSBhL2ZzL25mc2QvbmZzZmguYworKysgYi9mcy9uZnNkL25mc2ZoLmMKQEAgLTkwLDcgKzkw
+LDcgQEAgc3RhdGljIF9fYmUzMiBuZnNkX3NldHVzZXJfYW5kX2NoZWNrX3BvcnQoc3RydWN0IHN2
+Y19ycXN0ICpycXN0cCwKIAogCS8qIENoZWNrIGlmIHRoZSByZXF1ZXN0IG9yaWdpbmF0ZWQgZnJv
+bSBhIHNlY3VyZSBwb3J0LiAqLwogCWlmICghcnFzdHAtPnJxX3NlY3VyZSAmJiAoZmxhZ3MgJiBO
+RlNFWFBfSU5TRUNVUkVfUE9SVCkpIHsKLQkJUlBDX0lGREVCVUcoY2hhciBidWZbUlBDX01BWF9B
+RERSQlVGTEVOXSk7CisJCVJQQ0JVRl9JRkRFQlVHKGJ1Zik7CiAJCWRwcmludGsoS0VSTl9XQVJO
+SU5HCiAJCSAgICAgICAibmZzZDogcmVxdWVzdCBmcm9tIGluc2VjdXJlIHBvcnQgJXMhXG4iLAog
+CQkgICAgICAgc3ZjX3ByaW50X2FkZHIocnFzdHAsIGJ1Ziwgc2l6ZW9mKGJ1ZikpKTsKZGlmZiAt
+LWdpdCBhL2luY2x1ZGUvbGludXgvc3VucnBjL2RlYnVnLmggYi9pbmNsdWRlL2xpbnV4L3N1bnJw
+Yy9kZWJ1Zy5oCmluZGV4IGMyNzg2ZjIuLjEzMTg1YmIgMTAwNjQ0Ci0tLSBhL2luY2x1ZGUvbGlu
+dXgvc3VucnBjL2RlYnVnLmgKKysrIGIvaW5jbHVkZS9saW51eC9zdW5ycGMvZGVidWcuaApAQCAt
+NTIsMTEgKzUyLDExIEBAIGV4dGVybiB1bnNpZ25lZCBpbnQJCW5sbV9kZWJ1ZzsKICNpZmRlZiBS
+UENfREVCVUcJCQkKICMgZGVmaW5lIGlmZGVidWcoZmFjKQkJaWYgKHVubGlrZWx5KHJwY19kZWJ1
+ZyAmIFJQQ0RCR18jI2ZhYykpCiAjIGRlZmluZSBkZnByaW50ayhmYWMsIGFyZ3MuLi4pCWRvIHsg
+aWZkZWJ1ZyhmYWMpIHByaW50ayhhcmdzKTsgfSB3aGlsZSgwKQotIyBkZWZpbmUgUlBDX0lGREVC
+VUcoeCkJCXgKKyMgZGVmaW5lIFJQQ0JVRl9JRkRFQlVHKHgpCWNoYXIgeFtSUENfTUFYX0FERFJC
+VUZMRU5dCiAjZWxzZQogIyBkZWZpbmUgaWZkZWJ1ZyhmYWMpCQlpZiAoMCkKICMgZGVmaW5lIGRm
+cHJpbnRrKGZhYywgYXJncy4uLikJZG8gOyB3aGlsZSAoMCkKLSMgZGVmaW5lIFJQQ19JRkRFQlVH
+KHgpCisjIGRlZmluZSBSUENCVUZfSUZERUJVRyh4KQljaGFyIHhbMF0KICNlbmRpZgogCiAvKgpk
+aWZmIC0tZ2l0IGEvbmV0L3N1bnJwYy9zdmNzb2NrLmMgYi9uZXQvc3VucnBjL3N2Y3NvY2suYwpp
+bmRleCA4NzA5MjllLi40MjVjNGMxIDEwMDY0NAotLS0gYS9uZXQvc3VucnBjL3N2Y3NvY2suYwor
+KysgYi9uZXQvc3VucnBjL3N2Y3NvY2suYwpAQCAtMjI4LDcgKzIyOCw3IEBAIHN0YXRpYyBpbnQg
+c3ZjX3NlbmR0byhzdHJ1Y3Qgc3ZjX3Jxc3QgKnJxc3RwLCBzdHJ1Y3QgeGRyX2J1ZiAqeGRyKQog
+CWludAkJbGVuID0gMDsKIAl1bnNpZ25lZCBsb25nIHRhaWxvZmY7CiAJdW5zaWduZWQgbG9uZyBo
+ZWFkb2ZmOwotCVJQQ19JRkRFQlVHKGNoYXIgYnVmW1JQQ19NQVhfQUREUkJVRkxFTl0pOworCVJQ
+Q0JVRl9JRkRFQlVHKGJ1Zik7CiAKIAlpZiAocnFzdHAtPnJxX3Byb3QgPT0gSVBQUk9UT19VRFAp
+IHsKIAkJc3RydWN0IG1zZ2hkciBtc2cgPSB7CkBAIC04MDgsNyArODA4LDcgQEAgc3RhdGljIHN0
+cnVjdCBzdmNfeHBydCAqc3ZjX3RjcF9hY2NlcHQoc3RydWN0IHN2Y194cHJ0ICp4cHJ0KQogCXN0
+cnVjdCBzb2NrZXQJKm5ld3NvY2s7CiAJc3RydWN0IHN2Y19zb2NrCSpuZXdzdnNrOwogCWludAkJ
+ZXJyLCBzbGVuOwotCVJQQ19JRkRFQlVHKGNoYXIgYnVmW1JQQ19NQVhfQUREUkJVRkxFTl0pOwor
+CVJQQ0JVRl9JRkRFQlVHKGJ1Zik7CiAKIAlkcHJpbnRrKCJzdmM6IHRjcF9hY2NlcHQgJXAgc29j
+ayAlcFxuIiwgc3Zzaywgc29jayk7CiAJaWYgKCFzb2NrKQpAQCAtMTQxMCw3ICsxNDEwLDcgQEAg
+c3RhdGljIHN0cnVjdCBzdmNfeHBydCAqc3ZjX2NyZWF0ZV9zb2NrZXQoc3RydWN0IHN2Y19zZXJ2
+ICpzZXJ2LAogCWludAkJbmV3bGVuOwogCWludAkJZmFtaWx5OwogCWludAkJdmFsOwotCVJQQ19J
+RkRFQlVHKGNoYXIgYnVmW1JQQ19NQVhfQUREUkJVRkxFTl0pOworCVJQQ0JVRl9JRkRFQlVHKGJ1
+Zik7CiAKIAlkcHJpbnRrKCJzdmM6IHN2Y19jcmVhdGVfc29ja2V0KCVzLCAlZCwgJXMpXG4iLAog
+CQkJc2Vydi0+c3ZfcHJvZ3JhbS0+cGdfbmFtZSwgcHJvdG9jb2wsCg==
+--0016e64f69ec6e924d047ae9b17a--
