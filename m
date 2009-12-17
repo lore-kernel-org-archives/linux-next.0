@@ -1,51 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rr tree with Linus' tree
-Date: Thu, 17 Dec 2009 13:07:58 +1100
-Message-ID: <20091217130758.edfe0da6.sfr@canb.auug.org.au>
+Subject: linux-next: fsnotify tree build failure
+Date: Thu, 17 Dec 2009 14:45:06 +1100
+Message-ID: <20091217144506.d73902de.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__17_Dec_2009_13_07_58_+1100_0XlTj=OCYtCPry9W"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58987 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:38072 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1762945AbZLQCIL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Dec 2009 21:08:11 -0500
+	id S1756990AbZLQDpL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 16 Dec 2009 22:45:11 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>
+To: Eric Paris <eparis@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
 
---Signature=_Thu__17_Dec_2009_13_07_58_+1100_0XlTj=OCYtCPry9W
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Eric,
 
-Hi Rusty,
+Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 
-Today's linux-next merge of the rr tree got a conflict in
-kernel/perf_event.c between commit
-0f624e7e5625f4c30c836b7a5decfe2553582391 ("perf_event: Fix incorrect
-range check on cpu number") from Linus' tree and commit
-40b7c6b7eefc950d625945f773b4c57dcc95b8a4
-("cpumask:kernel_perf_event-deprecated-function") from the rr tree.
+fs/notify/fanotify/fanotify_user.c: In function 'create_fd':
+fs/notify/fanotify/fanotify_user.c:76: error: 'IMA_COUNT_UPDATE' undeclared (first use in this function)
+fs/notify/fanotify/fanotify_user.c:76: error: too many arguments to function 'ima_path_check'
 
-Overlapping changes.  I used the version from Linus' tree (since it was a
-bug fix).
---=20
+Caused by commit df8f58f5e75be6fa3fb7e5bd55f3ab5b8970b16b ("fanotify:
+send events using read") from the fsnotify tree interacting with commit
+1429b3eca23818f87f9fa569a15d9816de81f698 ("Untangling ima mess, part 3:
+kill dead code in ima") from Linus' tree.
+
+I applied the following merge fix (I *think* it is correct but may easily
+require something more - Al?) for today (and can carry it for a while):
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 17 Dec 2009 14:40:11 +1100
+Subject: [PATCH] fsnotify: fixup for ima_path_check API change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/notify/fanotify/fanotify_user.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index 98c5c44..da79856 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -73,7 +73,7 @@ static int create_fd(struct fsnotify_group *group, struct fsnotify_event *event)
+ 	/* it's possible this event was an overflow event.  in that case dentry and mnt
+ 	 * are NULL;  That's fine, just don't call dentry open */
+ 	if (dentry && mnt) {
+-		err = ima_path_check(&event->path, MAY_READ, IMA_COUNT_UPDATE);
++		err = ima_path_check(&event->path, MAY_READ);
+ 		if (err)
+ 			new_file = ERR_PTR(err);
+ 		else
+-- 
+1.6.5.4
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__17_Dec_2009_13_07_58_+1100_0XlTj=OCYtCPry9W
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkspkn4ACgkQjjKRsyhoI8xmkgCgsAqhHDnmwZQa6ZmPZ3rRjV9P
-4foAniaU8zbnOIkaj93FDXyhXPqui9Pw
-=zqqz
------END PGP SIGNATURE-----
-
---Signature=_Thu__17_Dec_2009_13_07_58_+1100_0XlTj=OCYtCPry9W--
