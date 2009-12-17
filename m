@@ -1,42 +1,79 @@
-From: Trond Myklebust <trond.myklebust-41N18TsMXrtuMpJDpNschA@public.gmane.org>
-Subject: Re: [PATCH -next] nfs: fix ISO C90 warning
-Date: Thu, 17 Dec 2009 16:58:13 -0500
-Message-ID: <1261087093.4080.36.camel@localhost>
-References: <20091215165309.58e98eea.sfr@canb.auug.org.au>
-	 <20091216142334.6a0ba115.randy.dunlap@oracle.com>
-	 <1261003219.13878.6.camel@localhost>
-	 <20091216144700.34b80b4b.randy.dunlap@oracle.com>
-	 <alpine.LFD.2.00.0912162355350.2755@localhost.localdomain>
-	 <1261004497.13878.9.camel@localhost>
-	 <2375c9f90912170200m12a5310cg90343c5c1081fbb8@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: rr tree build failure
+Date: Fri, 18 Dec 2009 09:05:38 +1100
+Message-ID: <20091218090538.19ab3b4e.sfr@canb.auug.org.au>
+References: <20091211122648.8b305b52.sfr@canb.auug.org.au>
+	<20091214153528.e29f33a6.sfr@canb.auug.org.au>
+	<200912151422.29906.rusty@rustcorp.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <2375c9f90912170200m12a5310cg90343c5c1081fbb8-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?ISO-8859-1?Q?Am=E9rico?= Wang <xiyou.wangcong-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__18_Dec_2009_09_05_38_+1100_XwLg=UfNTQ2jybBN"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:57816 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1763300AbZLQWFo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 17 Dec 2009 17:05:44 -0500
+In-Reply-To: <200912151422.29906.rusty@rustcorp.com.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Jones <davej@redhat.com>
 
-On Thu, 2009-12-17 at 18:00 +0800, Am=C3=A9rico Wang wrote:=20
-> Hi,
-> Check that currently all usages of RPC_DEBUG are the same,
-> we can replace them all.
+--Signature=_Fri__18_Dec_2009_09_05_38_+1100_XwLg=UfNTQ2jybBN
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Rusty,
+
+On Tue, 15 Dec 2009 14:22:29 +1030 Rusty Russell <rusty@rustcorp.com.au> wr=
+ote:
+>
+> On Mon, 14 Dec 2009 03:05:28 pm Stephen Rothwell wrote:
+> >=20
+> > On Fri, 11 Dec 2009 12:26:48 +1100 Stephen Rothwell <sfr@canb.auug.org.=
+au> wrote:
+> > >
+> > > Today's linux-next build (x86_64 allmodconfig) failed like this:
+> > >=20
+> > > arch/x86/kernel/cpu/cpufreq/powernow-k8.c: In function 'powernowk8_ta=
+rget':
+> > > arch/x86/kernel/cpu/cpufreq/powernow-k8.c:1139: error: implicit decla=
+ration of function 'tsk_cpumask'
+> > > arch/x86/kernel/cpu/cpufreq/powernow-k8.c:1139: warning: passing argu=
+ment 2 of 'cpumask_copy' makes pointer from integer without a cast
+> > > include/linux/cpumask.h:466: note: expected 'const struct cpumask *' =
+but argument is of type 'int'
+> > >=20
+> > > Caused by commit 9dd4c5ab546fcac98cfb9ca24ed5cc1bf7f08334
+> > > ("cpumask:tsk_cpus_allowed-not-tsk_cpumask") from the rr tree interac=
+ting
+> > > with commit b8cbe7e82ec8b55d7bbdde66fc69e788fde00dc6 ("[CPUFREQ] cpum=
+ask:
+> > > don't put a cpumask on the stack in x86...cpufreq/powernow-k8.c") from
+> > > the cpufreq tree.
+> >=20
+> > The cpufreq patch above is now in Linus' tree, so You should add the
+> > patch below to your tree (or squash it into the affected patch).
 >=20
-> What do you think about the attached patch?
->=20
-> Sorry for attaching it, I have a bad mail environment here.
->=20
-> Signed-off-by: WANG Cong <xiyou.wangcong-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Thanks, done and rebased.
 
-Doesn't that approach instead lead to a lot of 'unreferenced variable'
-warnings in the '#undef RPC_DEBUG' case?
+But not exported/uploaded ... :-(
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Cheers
-  Trond
+--Signature=_Fri__18_Dec_2009_09_05_38_+1100_XwLg=UfNTQ2jybBN
+Content-Type: application/pgp-signature
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAksqqzIACgkQjjKRsyhoI8ytdACePfcu+xydbxJnYHxwwVFUHcuu
+YdcAn28O6uVKND8qBrVuSXxNofswaJop
+=b8ca
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__18_Dec_2009_09_05_38_+1100_XwLg=UfNTQ2jybBN--
