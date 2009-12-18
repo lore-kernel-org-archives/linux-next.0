@@ -1,48 +1,55 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the ocfs2 tree with Linus' tree
-Date: Fri, 18 Dec 2009 10:51:14 +1100
-Message-ID: <20091218105114.947efae9.sfr@canb.auug.org.au>
+From: "Cui, Dexuan" <dexuan.cui@intel.com>
+Subject: RE: linux-next: Tree for December 17 (pci/quirks)
+Date: Fri, 18 Dec 2009 16:57:55 +0800
+Message-ID: <ED3036A092A28F4C91B0B4360DD128EA3032134C@shzsmsx502.ccr.corp.intel.com>
+References: <20091217165840.e11fc719.sfr@canb.auug.org.au>
+	<20091217095506.64f0a43f.randy.dunlap@oracle.com>
+ <20091217105900.1d8b4f42@jbarnes-piketon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:50091 "EHLO smtps.tip.net.au"
+Received: from mga11.intel.com ([192.55.52.93]:43261 "EHLO mga11.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752198AbZLQXvQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 17 Dec 2009 18:51:16 -0500
+	id S1751197AbZLRI7V convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 18 Dec 2009 03:59:21 -0500
+In-Reply-To: <20091217105900.1d8b4f42@jbarnes-piketon>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Joel Becker <Joel.Becker@oracle.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tao Ma <tao.ma@oracle.com>, Christoph Hellwig <hch@lst.de>
+To: Jesse Barnes <jbarnes@virtuousgeek.org>, Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-Hi Joel,
+Jesse Barnes wrote:
+> On Thu, 17 Dec 2009 09:55:06 -0800
+> Randy Dunlap <randy.dunlap@oracle.com> wrote:
+> 
+>> On Thu, 17 Dec 2009 16:58:40 +1100 Stephen Rothwell wrote:
+>> 
+>>> Hi all,
+>>> 
+>>> My usual call for calm: please do not put stuff destined for 2.6.34
+>>> into linux-next trees until after 2.6.33-rc1.
+>>> 
+>>> Changes since 20091216:
+>> 
+>> 
+>> When CONFIG_PCI_QUIRKS=n:
+>> 
+>> drivers/built-in.o: In function `pci_dev_reset':
+>> pci.c:(.text+0xdb0b): undefined reference to `pci_dev_reset_methods'
+>> pci.c:(.text+0xdb2b): undefined reference to `pci_dev_reset_methods'
+>> pci.c:(.text+0xdb85): undefined reference to `pci_dev_reset_methods'
+>> 
+>> 
+>> pci_dev_reset() calls (inlined) pci_dev_specific_reset(),
+>> which references pci_dev_reset_methods, which does not exist.
+> 
+> Dexuan, can you fix this up?
+Hi Jesse, 
+I have posted a small patch in linux-pci ML just now. 
+I can reproduce the build failure and with the patch I posted I can verify the build can pass successfully.
+Please have a look.
 
-Today's linux-next merge of the ocfs2 tree got a conflict in
-fs/ocfs2/file.c between commit 6b2f3d1f769be5779b479c37800229d9a4809fc3
-("vfs: Implement proper O_SYNC semantics") from Linus' tree and commit
-a8227ccc585025735bcf350f71fa9c1ffd005d8d ("ocfs2: Handle O_DIRECT when
-writing to a refcounted cluster") from the ocfs2 tree.
-
-I fixed it up (see below) and can carry the fix for a while.  Since this
-is a conflict against Linus' tree, it is fixable in the ocfs2 tree by
-doing a merge with Linus' tree.
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc fs/ocfs2/file.c
-index 3d30a1c,04e178e..0000000
---- a/fs/ocfs2/file.c
-+++ b/fs/ocfs2/file.c
-@@@ -2006,7 -2013,8 +2013,8 @@@ out_dio
-  	/* buffered aio wouldn't have proper lock coverage today */
-  	BUG_ON(ret == -EIOCBQUEUED && !(file->f_flags & O_DIRECT));
-  
-- 	if ((file->f_flags & O_DSYNC && !direct_io) || IS_SYNC(inode)) {
- -	if ((file->f_flags & O_SYNC && !direct_io) || IS_SYNC(inode) ||
-++	if ((file->f_flags & O_DSYNC && !direct_io) || IS_SYNC(inode) ||
-+ 	    (file->f_flags & O_DIRECT && has_refcount)) {
-  		ret = filemap_fdatawrite_range(file->f_mapping, pos,
-  					       pos + count - 1);
-  		if (ret < 0)
+Thanks,
+-- Dexuan
