@@ -1,50 +1,86 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: Tree for December 19
-Date: Sat, 19 Dec 2009 09:42:19 +0100
-Message-ID: <10f740e80912190042o474b6188ga32fcc4ff0846531@mail.gmail.com>
+From: Manu Abraham <abraham.manu@gmail.com>
+Subject: Re: linux-next: Tree for December 19 (media/mantis)
+Date: Sat, 19 Dec 2009 21:11:50 +0400
+Message-ID: <1a297b360912190911v77b8519dtd5a93556a8693dd9@mail.gmail.com>
 References: <20091219110457.d6c5de1f.sfr@canb.auug.org.au>
+	 <20091218191859.ca78c2f1.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/mixed; boundary=0016e6d97735bef1f3047b17f338
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ey-out-2122.google.com ([74.125.78.25]:50690 "EHLO
-	ey-out-2122.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752764AbZLSImV convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 19 Dec 2009 03:42:21 -0500
-In-Reply-To: <20091219110457.d6c5de1f.sfr@canb.auug.org.au>
+Received: from mail-ew0-f219.google.com ([209.85.219.219]:33511 "EHLO
+	mail-ew0-f219.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752651AbZLSRLw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 19 Dec 2009 12:11:52 -0500
+In-Reply-To: <20091218191859.ca78c2f1.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-media@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mauro Chehab <mchehab@infradead.org>
 
-On Sat, Dec 19, 2009 at 01:04, Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
-> I said:
->> News: =C2=A0there will be no linux-next releases until at least Dec =
-24 and,
->> more likely, Dec 29. =C2=A0Have a Merry Christmas and take a break. =
-=C2=A0:-)
+--0016e6d97735bef1f3047b17f338
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+On Sat, Dec 19, 2009 at 7:18 AM, Randy Dunlap <randy.dunlap@oracle.com> wro=
+te:
+> On Sat, 19 Dec 2009 11:04:57 +1100 Stephen Rothwell wrote:
 >
-> Well, I decided I had time for one more so it will be based in -rc1).
+>> Hi all,
+>>
+>> I said:
+>> > News: =A0there will be no linux-next releases until at least Dec 24 an=
+d,
+>> > more likely, Dec 29. =A0Have a Merry Christmas and take a break. =A0:-=
+)
+>>
+>> Well, I decided I had time for one more so it will be based in -rc1).
+>>
+>> This one has not had the build testing *between* merges, but has had all
+>> the normal build testing at the end. =A0Since the latter testing showed =
+no
+>> problems, this just means that there may be more unbisectable points in
+>> the tree (but that is unlikely).
+>
+>
+>
+> ERROR: "ir_input_register" [drivers/media/dvb/mantis/mantis_core.ko] unde=
+fined!
+> ERROR: "ir_input_unregister" [drivers/media/dvb/mantis/mantis_core.ko] un=
+defined!
+> ERROR: "ir_input_init" [drivers/media/dvb/mantis/mantis_core.ko] undefine=
+d!
+> ERROR: "input_free_device" [drivers/media/dvb/mantis/mantis_core.ko] unde=
+fined!
+> ERROR: "input_allocate_device" [drivers/media/dvb/mantis/mantis_core.ko] =
+undefined!
+>
+>
+>
+> CONFIG_INPUT=3Dn
 
-Hurray!
+Attached patch to fix the issue.
 
-But http://kisskb.ellerman.id.au/kisskb/buildresult/1852835/ shows
-linux-next/m68k-allmodconfig fails
-in security/keys/keyctl.c, while this got fixed in 2.6.33-rc1?? It
-compiled fine in linus/m68k-allmodconfig,
-as expected
+Fix Input dependency for Mantis
 
-Gr{oetje,eeting}s,
+From: Manu Abraham <abraham.manu@gmail.com>
+Signed-off-by: Manu Abraham <manu@linuxtv.org>
 
-						Geert
+Regards,
+Manu
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
+--0016e6d97735bef1f3047b17f338
+Content-Type: text/x-patch; charset=US-ASCII; name="fix-mantis-input-dependency.patch"
+Content-Disposition: attachment;
+	filename="fix-mantis-input-dependency.patch"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_g3encs4j0
 
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-							    -- Linus Torvalds
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWVkaWEvZHZiL21hbnRpcy9LY29uZmlnIGIvZHJpdmVycy9t
+ZWRpYS9kdmIvbWFudGlzL0tjb25maWcKaW5kZXggZjkyMTljZC4uZjdiNzJhMyAxMDA2NDQKLS0t
+IGEvZHJpdmVycy9tZWRpYS9kdmIvbWFudGlzL0tjb25maWcKKysrIGIvZHJpdmVycy9tZWRpYS9k
+dmIvbWFudGlzL0tjb25maWcKQEAgLTEsNiArMSw2IEBACiBjb25maWcgTUFOVElTX0NPUkUKIAl0
+cmlzdGF0ZSAiTWFudGlzL0hvcHBlciBQQ0kgYnJpZGdlIGJhc2VkIGRldmljZXMiCi0JZGVwZW5k
+cyBvbiBQQ0kgJiYgSTJDCisJZGVwZW5kcyBvbiBQQ0kgJiYgSTJDICYmIElOUFVUCiAKIAloZWxw
+CiAJICBTdXBwb3J0IGZvciBQQ0kgY2FyZHMgYmFzZWQgb24gdGhlIE1hbnRpcyBhbmQgSG9wcGVy
+IFBDaSBicmlkZ2UuCg==
+--0016e6d97735bef1f3047b17f338--
