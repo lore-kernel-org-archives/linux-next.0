@@ -1,89 +1,50 @@
-From: Greg KH <gregkh@suse.de>
-Subject: Re: linux-next: Tree for December 19 (staging/dt3155)
-Date: Fri, 18 Dec 2009 20:47:47 -0800
-Message-ID: <20091219044747.GB14503@suse.de>
-References: <20091219110457.d6c5de1f.sfr@canb.auug.org.au> <20091218191037.d6b4727b.randy.dunlap@oracle.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next: Tree for December 19
+Date: Sat, 19 Dec 2009 09:42:19 +0100
+Message-ID: <10f740e80912190042o474b6188ga32fcc4ff0846531@mail.gmail.com>
+References: <20091219110457.d6c5de1f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:53687 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754446AbZLSErr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 18 Dec 2009 23:47:47 -0500
-Content-Disposition: inline
-In-Reply-To: <20091218191037.d6b4727b.randy.dunlap@oracle.com>
+Received: from ey-out-2122.google.com ([74.125.78.25]:50690 "EHLO
+	ey-out-2122.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752764AbZLSImV convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 19 Dec 2009 03:42:21 -0500
+In-Reply-To: <20091219110457.d6c5de1f.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Scott Smedley <ss@aao.gov.au>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Fri, Dec 18, 2009 at 07:10:37PM -0800, Randy Dunlap wrote:
-> On Sat, 19 Dec 2009 11:04:57 +1100 Stephen Rothwell wrote:
-> 
-> > Hi all,
-> > 
-> > I said:
-> > > News:  there will be no linux-next releases until at least Dec 24 and,
-> > > more likely, Dec 29.  Have a Merry Christmas and take a break.  :-)
-> > 
-> > Well, I decided I had time for one more so it will be based in -rc1).
-> > 
-> > This one has not had the build testing *between* merges, but has had all
-> > the normal build testing at the end.  Since the latter testing showed no
-> > problems, this just means that there may be more unbisectable points in
-> > the tree (but that is unlikely).
-> 
-> 
-> When CONFIG_DT3155=y (i.e., not a loadable module):
-
-Ick, I'll change that to 'M' now, it shouldn't be built in just yet for
-the reasons you found.
-
-I don't think the code has ever been built as 'y' as you just found out.
-
-> 
-> (a)
-> drivers/staging/dt3155/dt3155_drv.c:967: error: implicit declaration of function 'pci_find_device'
-> drivers/staging/dt3155/dt3155_drv.c:1151: error: implicit declaration of function 'request_irq'
-> drivers/staging/dt3155/dt3155_drv.c:1152: error: 'IRQF_SHARED' undeclared (first use in this function)
-> drivers/staging/dt3155/dt3155_drv.c:1152: error: 'IRQF_DISABLED' undeclared (first use in this function)
-> drivers/staging/dt3155/dt3155_drv.c:1195: error: implicit declaration of function 'free_irq'
-> 
-> 
-> #ifdef MODULE
-> #include <linux/interrupt.h>
-> 
-> linux/interrupt.h is needed for DT3155=y, not just when DT3155=m.
-> 
-> Oh, and this config has:  # CONFIG_PCI_LEGACY is not set
-> which accounts for pci_find_device() being unknown.
-> If that is required (as it is currently, even though this function is
-> deprecated), it can be expressed in the driver's Kconfig file:
-> 	depends on PCI_LEGACY
+On Sat, Dec 19, 2009 at 01:04, Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+> I said:
+>> News: =C2=A0there will be no linux-next releases until at least Dec =
+24 and,
+>> more likely, Dec 29. =C2=A0Have a Merry Christmas and take a break. =
+=C2=A0:-)
 >
+> Well, I decided I had time for one more so it will be based in -rc1).
 
-I'll fix this up to just not need this anymore, as it should be fixed.
+Hurray!
 
-> (b) when compiling goes further:
-> 
-> drivers/staging/dt3155/dt3155_drv.c:571: warning: format '%x' expects type 'unsigned int', but argument 2 has type 'long unsigned int'
-> drivers/staging/dt3155/dt3155_drv.c:571: warning: format '%x' expects type 'unsigned int', but argument 3 has type 'long unsigned int'
-> drivers/staging/dt3155/dt3155_drv.c:657: warning: format '%x' expects type 'unsigned int', but argument 2 has type 'long unsigned int'
-> drivers/staging/dt3155/dt3155_drv.c:657: warning: format '%x' expects type 'unsigned int', but argument 3 has type 'long unsigned int'
-> 
-> 
-> 
-> General:
-> 
-> #ifndef CONFIG_PCI
-> #error  "DT3155 :  Kernel PCI support not enabled (DT3155 drive requires PCI)"
-> #endif
-> 
-> That should be handled via Kconfig, not in a .c file.
-> Ah, it is done in Kconfig, so those lines above (in .c file) can be deleted.
+But http://kisskb.ellerman.id.au/kisskb/buildresult/1852835/ shows
+linux-next/m68k-allmodconfig fails
+in security/keys/keyctl.c, while this got fixed in 2.6.33-rc1?? It
+compiled fine in linus/m68k-allmodconfig,
+as expected
 
-Yes, lots of stuff in the .c file can be deleted :)
+Gr{oetje,eeting}s,
 
-thanks,
+						Geert
 
-greg k-h
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
+
+In personal conversations with technical people, I call myself a hacker=
+=2E But
+when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+							    -- Linus Torvalds
