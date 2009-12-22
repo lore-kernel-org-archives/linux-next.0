@@ -1,76 +1,33 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for December 19 (media/mantis)
-Date: Sat, 19 Dec 2009 10:30:45 -0800
-Message-ID: <20091219103045.32e1b971.randy.dunlap@oracle.com>
-References: <20091219110457.d6c5de1f.sfr@canb.auug.org.au>
-	<20091218191859.ca78c2f1.randy.dunlap@oracle.com>
-	<1a297b360912190911v77b8519dtd5a93556a8693dd9@mail.gmail.com>
+From: Jiri Slaby <jirislaby@gmail.com>
+Subject: Re: linux-next: manual merge of the limits tree with the  tree
+Date: Tue, 22 Dec 2009 16:07:10 +0100
+Message-ID: <4B30E09E.7080200@gmail.com>
+References: <20091219094616.744fc1c1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-2
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet11.oracle.com ([148.87.113.123]:64426 "EHLO
-	rgminet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751258AbZLSSaj convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 19 Dec 2009 13:30:39 -0500
-In-Reply-To: <1a297b360912190911v77b8519dtd5a93556a8693dd9@mail.gmail.com>
+Received: from fg-out-1718.google.com ([72.14.220.155]:27908 "EHLO
+	fg-out-1718.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752899AbZLVPHY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Dec 2009 10:07:24 -0500
+In-Reply-To: <20091219094616.744fc1c1.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Manu Abraham <abraham.manu@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-media@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mauro Chehab <mchehab@infradead.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Masami Hiramatsu <mhiramat@redhat.com>
 
-On Sat, 19 Dec 2009 21:11:50 +0400 Manu Abraham wrote:
+On 12/18/2009 11:46 PM, Stephen Rothwell wrote:
+> Today's linux-next merge of the limits tree got a conflict in fs/exec.c
+> between commit f6151dfea21496d43dbaba32cfcd9c9f404769bc ("mm: introduce
+> coredump parameter structure") from the  tree and commit
+> 1157605c47673fc63b052df4688697695a9873d5 ("FS: use helpers for rlimits")
+> from the limits tree.
+> 
+> I fixed it up (see below - thanks Andrew) and can carry the fix for a
+> while.
 
-> On Sat, Dec 19, 2009 at 7:18 AM, Randy Dunlap <randy.dunlap@oracle.co=
-m> wrote:
-> > On Sat, 19 Dec 2009 11:04:57 +1100 Stephen Rothwell wrote:
-> >
-> >> Hi all,
-> >>
-> >> I said:
-> >> > News: =A0there will be no linux-next releases until at least Dec=
- 24 and,
-> >> > more likely, Dec 29. =A0Have a Merry Christmas and take a break.=
- =A0:-)
-> >>
-> >> Well, I decided I had time for one more so it will be based in -rc=
-1).
-> >>
-> >> This one has not had the build testing *between* merges, but has h=
-ad all
-> >> the normal build testing at the end. =A0Since the latter testing s=
-howed no
-> >> problems, this just means that there may be more unbisectable poin=
-ts in
-> >> the tree (but that is unlikely).
-> >
-> >
-> >
-> > ERROR: "ir_input_register" [drivers/media/dvb/mantis/mantis_core.ko=
-] undefined!
-> > ERROR: "ir_input_unregister" [drivers/media/dvb/mantis/mantis_core.=
-ko] undefined!
-> > ERROR: "ir_input_init" [drivers/media/dvb/mantis/mantis_core.ko] un=
-defined!
-> > ERROR: "input_free_device" [drivers/media/dvb/mantis/mantis_core.ko=
-] undefined!
-> > ERROR: "input_allocate_device" [drivers/media/dvb/mantis/mantis_cor=
-e.ko] undefined!
-> >
-> >
-> >
-> > CONFIG_INPUT=3Dn
->=20
-> Attached patch to fix the issue.
->=20
-> Fix Input dependency for Mantis
->=20
-> From: Manu Abraham <abraham.manu@gmail.com>
-> Signed-off-by: Manu Abraham <manu@linuxtv.org>
+Thanks, I fixed that in my tree and pushed now.
 
-Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
-
-Thanks.
-
----
-~Randy
+-- 
+js
