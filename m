@@ -1,32 +1,51 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the usb tree with Linus' tree
-Date: Wed, 23 Dec 2009 15:38:56 -0800
-Message-ID: <20091223233856.GA19893@kroah.com>
-References: <20091224093036.2ba1ecf5.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: kgdb tree build warning
+Date: Thu, 24 Dec 2009 10:48:12 +1100
+Message-ID: <20091224104812.7f2495f3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756000AbZLWXkG@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__24_Dec_2009_10_48_12_+1100_WNKvT3nhsEBukA40"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:50706 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757490AbZLWXsS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 23 Dec 2009 18:48:18 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jason Wessel <jason.wessel@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+
+--Signature=_Thu__24_Dec_2009_10_48_12_+1100_WNKvT3nhsEBukA40
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20091224093036.2ba1ecf5.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stefani Seibold <stefani@seibold.net>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 24, 2009 at 09:30:36AM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the usb tree got a conflict in
-> drivers/usb/serial/generic.c between commit
-> 119eecc831a42bd090543568932e440c6831f1bb ("Fix usb_serial_probe() problem
-> introduced by the recent kfifo changes") from Linus' tree and commit
-> 40b2ba0dfb62bed0f7cc6f699053d18ca4553e91 ("USB: serial: mct_usb232: add
-> drain on close") from the usb tree.
-> 
-> I fixed it up (see below) and can carry the fix for a while.  The result
-> needs checking.
+Hi Jason,
 
-Thanks, I fixed this up already in my tree and will resync in a few
-hours.
+Today's linux-next build (x86_64_allmodconfig) produced this warning:
 
-greg k-h
+kernel/debug/kdb/kdb_bp.c: In function 'kdb_bp':
+kernel/debug/kdb/kdb_bp.c:434: warning: the frame size of 32880 bytes is la=
+rger than 2048 bytes
+
+Introduced by commit 16f40ed7bd0ad29dcde7a05b8a07f5ba10937277 ("kdb: core
+for kgdb back end").
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__24_Dec_2009_10_48_12_+1100_WNKvT3nhsEBukA40
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAksyrDwACgkQjjKRsyhoI8wVdgCguhsk96NUTyUyMoandfZMC7vY
+esoAoIqGr+rKDpmPuuwW8rZSvA1JhIdz
+=kw1o
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__24_Dec_2009_10_48_12_+1100_WNKvT3nhsEBukA40--
