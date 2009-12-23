@@ -1,51 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the watchdog tree with the  tree
-Date: Thu, 24 Dec 2009 09:19:04 +1100
-Message-ID: <20091224091904.72ef2708.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with Linus' tree
+Date: Thu, 24 Dec 2009 09:30:36 +1100
+Message-ID: <20091224093036.2ba1ecf5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__24_Dec_2009_09_19_04_+1100_Ch9YSD0ZnnQ5EOWs"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48424 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35114 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756853AbZLWWTN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 23 Dec 2009 17:19:13 -0500
+	id S1752654AbZLWWai (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 23 Dec 2009 17:30:38 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Wim Van Sebroeck <wim@iguana.be>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>, H Hartley Sweeten <hartleys@visionengravers.com>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stefani Seibold <stefani@seibold.net>
 
---Signature=_Thu__24_Dec_2009_09_19_04_+1100_Ch9YSD0ZnnQ5EOWs
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Greg,
 
-Hi Wim,
+Today's linux-next merge of the usb tree got a conflict in
+drivers/usb/serial/generic.c between commit
+119eecc831a42bd090543568932e440c6831f1bb ("Fix usb_serial_probe() problem
+introduced by the recent kfifo changes") from Linus' tree and commit
+40b2ba0dfb62bed0f7cc6f699053d18ca4553e91 ("USB: serial: mct_usb232: add
+drain on close") from the usb tree.
 
-Today's linux-next merge of the watchdog tree got a conflict in
-drivers/watchdog/rm9k_wdt.c between commit
-de4148f3ef54b644a181ad75a6fb4b373f2b01f0 ("MIPS: eXcite: Remove
-platform") from Linus' tree and commit
-f277223000a651df741e2e3367b498049139298d ("[WATCHDOG] use resource_size
-()") from the watchdog tree.
-
-The former commit removes the file changed by the latter.  I just removed
-the file.
---=20
+I fixed it up (see below) and can carry the fix for a while.  The result
+needs checking.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__24_Dec_2009_09_19_04_+1100_Ch9YSD0ZnnQ5EOWs
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAksyl1gACgkQjjKRsyhoI8yAzACcDJiGwvIJZYleudZnUbVi8ib+
-gUYAoJOO+S63SYwkw7O402VK4yViOFWY
-=H7uV
------END PGP SIGNATURE-----
-
---Signature=_Thu__24_Dec_2009_09_19_04_+1100_Ch9YSD0ZnnQ5EOWs--
+diff --cc drivers/usb/serial/generic.c
+index f1ea3a3,3eea1d8..0000000
+--- a/drivers/usb/serial/generic.c
++++ b/drivers/usb/serial/generic.c
+@@@ -386,12 -386,15 +386,15 @@@ int usb_serial_generic_chars_in_buffer(
+  
+  	dbg("%s - port %d", __func__, port->number);
+  
++ 	spin_lock_irqsave(&port->lock, flags);
+  	if (serial->type->max_in_flight_urbs) {
+- 		spin_lock_irqsave(&port->lock, flags);
+  		chars = port->tx_bytes_flight;
+- 		spin_unlock_irqrestore(&port->lock, flags);
+- 	} else if (serial->num_bulk_out)
++ 	} else if (serial->num_bulk_out) {
++ 		/* This overcounts badly, but is good enough for drain wait. */
+ -		chars = __kfifo_len(port->write_fifo);
+ +		chars = kfifo_len(&port->write_fifo);
++ 		chars += port->write_urb_busy * port->bulk_out_size;
++ 	}
++ 	spin_unlock_irqrestore(&port->lock, flags);
+  
+  	dbg("%s - returns %d", __func__, chars);
+  	return chars;
