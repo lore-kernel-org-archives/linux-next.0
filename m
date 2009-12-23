@@ -1,63 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the acpi tree with Linus' tree
-Date: Thu, 24 Dec 2009 09:39:13 +1100
-Message-ID: <20091224093913.4f29f37b.sfr@canb.auug.org.au>
-References: <20091224091141.fa1cea64.sfr@canb.auug.org.au>
+Subject: linux-next: slab/percpu tree build failure
+Date: Thu, 24 Dec 2009 09:58:48 +1100
+Message-ID: <20091224095848.f1586d1e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40363 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:42793 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752882AbZLWWjP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 23 Dec 2009 17:39:15 -0500
-In-Reply-To: <20091224091141.fa1cea64.sfr@canb.auug.org.au>
+	id S1751470AbZLWW6v (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 23 Dec 2009 17:58:51 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Len Brown <lenb@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stefani Seibold <stefani@seibold.net>, Andrew Morton <akpm@linux-foundation.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Pekka Enberg <penberg@cs.helsinki.fi>, Christoph Lameter <cl@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Ingo Molnar <mingo@elte.hu>
 
-Hi Len,
+Hi all,
 
-On Thu, 24 Dec 2009 09:11:41 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Today's linux-next merge of the acpi tree got a conflict in
-> drivers/platform/x86/sony-laptop.c between commits
-> 45465487897a1c6d508b14b904dc5777f7ec7e04 ("kfifo: move struct kfifo in
-> place"), c1e13f25674ed564948ecb7dfe5f83e578892896 ("kfifo: move out
-> spinlock") and 7acd72eb85f1c7a15e8b5eb554994949241737f1 ("kfifo: rename
-> kfifo_put... into kfifo_in... and kfifo_get... into kfifo_out...") from
-> Linus' tree and commit a287e9f941cf4bb8c167802c0f1cf04a93bc4e4c
-> ("sony-laptop: remove private workqueue, use keventd instead") from the
-> acpi tree.
-> 
-> I fixed it up (see below) and can cay the fix for a while.  This fix
-> needs checking.
+Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 
-I applied the following further patch (and there may be more fixes
+mm/slub.c: In function 'alloc_kmem_cache_cpus':
+mm/slub.c:2074: error: implicit declaration of function 'per_cpu_var'
+mm/slub.c:2074: warning: assignment makes pointer from integer without a cast
+
+Caused by commit 9dfc6e68bfe6ee452efb1a4e9ca26a9007f2b864 ("SLUB: Use
+this_cpu operations in slub") from the slab interacting with commit
+dd17c8f72993f9461e9c19250e3f155d6d99df22 ("percpu: remove per_cpu__
+prefix") from the percpu tree.
+
+I have added the following patch for today and (can carry it as
 necessary).
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 24 Dec 2009 09:36:07 +1100
-Subject: [PATCH] acpi: further update for __kfifo_len API change
+Date: Thu, 24 Dec 2009 09:56:29 +1100
+Subject: [PATCH] slab: update for percpu API change
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- drivers/platform/x86/sony-laptop.c |    2 +-
+ mm/slub.c |    2 +-
  1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/platform/x86/sony-laptop.c b/drivers/platform/x86/sony-laptop.c
-index 9d05a1e..84a1736 100644
---- a/drivers/platform/x86/sony-laptop.c
-+++ b/drivers/platform/x86/sony-laptop.c
-@@ -317,7 +317,7 @@ static void do_sony_laptop_release_key(struct work_struct *work)
- 	 * extra "empty" wakeup. This may be improved with the new
- 	 * kfifo API.
- 	 */
--	if (__kfifo_len(sony_laptop_input.fifo) != 0)
-+	if (kfifo_len(&sony_laptop_input.fifo) != 0)
- 		schedule_delayed_work(dwork, msecs_to_jiffies(10));
- }
+diff --git a/mm/slub.c b/mm/slub.c
+index 6e34309..9e86e6b 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -2071,7 +2071,7 @@ static inline int alloc_kmem_cache_cpus(struct kmem_cache *s, gfp_t flags)
+ 		 * Boot time creation of the kmalloc array. Use static per cpu data
+ 		 * since the per cpu allocator is not available yet.
+ 		 */
+-		s->cpu_slab = per_cpu_var(kmalloc_percpu) + (s - kmalloc_caches);
++		s->cpu_slab = kmalloc_percpu + (s - kmalloc_caches);
+ 	else
+ 		s->cpu_slab =  alloc_percpu(struct kmem_cache_cpu);
  
 -- 
 1.6.5.4
