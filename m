@@ -1,63 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: origin tree build failure
-Date: Thu, 24 Dec 2009 11:54:57 +1100
-Message-ID: <20091224115457.1db3541d.sfr@canb.auug.org.au>
+Subject: linux-next: kgdb tree build failure
+Date: Thu, 24 Dec 2009 11:56:24 +1100
+Message-ID: <20091224115624.77c910d6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__24_Dec_2009_11_56_24_+1100_RfoTcT./rPGw=tj9"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36893 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:36924 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750973AbZLXAy7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 23 Dec 2009 19:54:59 -0500
+	id S1750973AbZLXA4c (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 23 Dec 2009 19:56:32 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stefani Seibold <stefani@seibold.net>
+To: Jason Wessel <jason.wessel@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi all,
+--Signature=_Thu__24_Dec_2009_11_56_24_+1100_RfoTcT./rPGw=tj9
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next build (powerpc allyesconfig) failed like this:
+Hi Jason,
 
-In file included from drivers/scsi/ibmvscsi/ibmvstgt.c:30:
-include/scsi/libsrp.h:24: error: field 'queue' has incomplete type
+Today's linux-next build (i386 defconfig) failed like this:
 
-Caused by commit 45465487897a1c6d508b14b904dc5777f7ec7e04 ("kfifo: move
-struct kfifo in place").
+drivers/built-in.o: In function `drm_fb_kdb_enter':
+drm_fb_helper.c:(.text+0x6567a): undefined reference to `kgdb_active'
+drivers/built-in.o: In function `drm_fb_helper_free':
+(.text+0x65ec7): undefined reference to `dbg_kms_console_ops_unregister'
+drivers/built-in.o: In function `drm_fb_helper_single_fb_probe':
+(.text+0x6645d): undefined reference to `dbg_kms_console_ops_register'
 
-I added this patch for today:
+Clearly, the kgdb patches need some more testing.  Please remove them
+from linux-next until that is done.
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 24 Dec 2009 11:44:28 +1100
-Subject: [PATCH] kfifo: include linux/fifo.h in libsrp.h for definition of stuct kfifo
-
-This fixes this compiler error:
-
-In file included from drivers/scsi/ibmvscsi/ibmvstgt.c:30:
-include/scsi/libsrp.h:24: error: field 'queue' has incomplete type
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- include/scsi/libsrp.h |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/include/scsi/libsrp.h b/include/scsi/libsrp.h
-index 07e3add..f4105c9 100644
---- a/include/scsi/libsrp.h
-+++ b/include/scsi/libsrp.h
-@@ -2,6 +2,7 @@
- #define __LIBSRP_H__
- 
- #include <linux/list.h>
-+#include <linux/kfifo.h>
- #include <scsi/scsi_cmnd.h>
- #include <scsi/scsi_host.h>
- #include <scsi/srp.h>
--- 
-1.6.5.4
-
-
--- 
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__24_Dec_2009_11_56_24_+1100_RfoTcT./rPGw=tj9
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAksyvDgACgkQjjKRsyhoI8ydcQCfZAn1/aL7QDQJsSzCRKKcqyQt
+bnYAoKHdywX4CAVUn3aKVmLGLftRVK4P
+=ZmXq
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__24_Dec_2009_11_56_24_+1100_RfoTcT./rPGw=tj9--
