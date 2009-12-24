@@ -1,79 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: kgdb tree build warning
-Date: Thu, 24 Dec 2009 16:21:17 +1100
-Message-ID: <20091224162117.ac18e50f.sfr@canb.auug.org.au>
-References: <20091224104812.7f2495f3.sfr@canb.auug.org.au>
-	<4B32E95C.3030201@windriver.com>
+Subject: Re: linux-next: kgdb tree build failure
+Date: Thu, 24 Dec 2009 23:18:37 +1100
+Message-ID: <20091224231837.1d19254c.sfr@canb.auug.org.au>
+References: <20091224115624.77c910d6.sfr@canb.auug.org.au>
+	<4B32E6FC.40103@windriver.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__24_Dec_2009_16_21_17_+1100_hIOinr=4Arubhgg1"
+ boundary="Signature=_Thu__24_Dec_2009_23_18_37_+1100_kyWoBP8H6uW6eneR"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45924 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:52412 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751813AbZLXFVY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 24 Dec 2009 00:21:24 -0500
-In-Reply-To: <4B32E95C.3030201@windriver.com>
+	id S1751478AbZLXMSn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 24 Dec 2009 07:18:43 -0500
+In-Reply-To: <4B32E6FC.40103@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Jason Wessel <jason.wessel@windriver.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Thu__24_Dec_2009_16_21_17_+1100_hIOinr=4Arubhgg1
+--Signature=_Thu__24_Dec_2009_23_18_37_+1100_kyWoBP8H6uW6eneR
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Jason,
 
-On Wed, 23 Dec 2009 22:09:00 -0600 Jason Wessel <jason.wessel@windriver.com=
+On Wed, 23 Dec 2009 21:58:52 -0600 Jason Wessel <jason.wessel@windriver.com=
 > wrote:
 >
-> Stephen Rothwell wrote:
-> >
-> > Today's linux-next build (x86_64_allmodconfig) produced this warning:
-> >
-> > kernel/debug/kdb/kdb_bp.c: In function 'kdb_bp':
-> > kernel/debug/kdb/kdb_bp.c:434: warning: the frame size of 32880 bytes i=
-s larger than 2048 bytes
-> >
-> > Introduced by commit 16f40ed7bd0ad29dcde7a05b8a07f5ba10937277 ("kdb: co=
-re
-> > for kgdb back end").
+> All the kdb patches were dropped from kgdb-next / linux-next.  All the
+> embedded type configs build and boot just fine.   The root of the
+> problem was that there was a gap in testing all the various combinations
+> where you can builds some things as a module or somethings as a built in.
 >=20
-> Using gcc 4.3, I did not see this error.   What compiler or compiler
-> options did you use to get this?
+> The error you reported is already fixed, but the code base will not be
+> resubmitted until a new round of build and boot tests are completed.
 
-I use a gcc 4.4.0 cross sompiler for all the x86_64 builds.  No special
-compiler options apart from those provided by the allmodconfig build.
-It looks like the compiler gets -Wframe-larger-than=3D${CONFIG_FRAME_WARN}
-passed to it (and presumably CONFIG_FRAME_WARN is 2048).
-
-> I assume it means the stack space was exhausted and a casual glance at
-> the code did not yield anything obvious like a large array on the stack
-> or anything.  It is conceivable that there is an inline function that is
-> the source of the problem, but I would like to be able to duplicate it.
-
-OK.
-
-That function has a kdb_bp_t on its stack which contains an NR_CPUS array
-of pointers.  NR_CPUS is 4096 (in this build) and pointers are 8 bytes,
-so there is 32K right there :-(
+Thanks for that.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__24_Dec_2009_16_21_17_+1100_hIOinr=4Arubhgg1
+--Signature=_Thu__24_Dec_2009_23_18_37_+1100_kyWoBP8H6uW6eneR
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAksy+k0ACgkQjjKRsyhoI8zKAwCeKiFfJ8yjf/8knM1YWHo9FjtR
-Lh8AoKL0qLIVet/yJH3CGKeKd1WrXmXo
-=7ZaQ
+iEYEARECAAYFAkszXB0ACgkQjjKRsyhoI8xnGACeJdmsl/z0ui4AIGvl67rEes/3
+dNMAn2ohGPO/HsCJC/Qyg6iLLmAWN6kz
+=HLuQ
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__24_Dec_2009_16_21_17_+1100_hIOinr=4Arubhgg1--
+--Signature=_Thu__24_Dec_2009_23_18_37_+1100_kyWoBP8H6uW6eneR--
