@@ -1,43 +1,30 @@
 From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: tty tree build failure
-Date: Wed, 23 Dec 2009 16:19:22 -0800
-Message-ID: <20091224001922.GA26275@kroah.com>
-References: <20091224104830.fe78906e.sfr@canb.auug.org.au>
+Subject: Re: linux-next: usb tree build warning
+Date: Wed, 23 Dec 2009 16:51:27 -0800
+Message-ID: <20091224005127.GA14997@kroah.com>
+References: <20091224110109.37ac11c9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753813AbZLXAv4@vger.kernel.org>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754933AbZLXAv6@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20091224104830.fe78906e.sfr@canb.auug.org.au>
+In-Reply-To: <20091224110109.37ac11c9.sfr@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Oliver Neukum <oliver@neukum.org>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Dec 24, 2009 at 10:48:30AM +1100, Stephen Rothwell wrote:
+On Thu, Dec 24, 2009 at 11:01:09AM +1100, Stephen Rothwell wrote:
 > Hi Greg,
 > 
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
+> Today's linux-next build (x86_64 allmodconfig) produced this warning:
 > 
-> drivers/mmc/card/sdio_uart.c: In function 'sdio_uart_add_port':
-> drivers/mmc/card/sdio_uart.c:99: warning: passing argument 1 of 'kfifo_alloc' makes pointer from integer without a cast
-> include/linux/kfifo.h:110: note: expected 'struct kfifo *' but argument is of type 'long unsigned int'
-> drivers/mmc/card/sdio_uart.c:99: warning: passing argument 3 of 'kfifo_alloc' makes integer from pointer without a cast
-> include/linux/kfifo.h:110: note: expected 'gfp_t' but argument is of type 'struct spinlock_t *'
-> drivers/mmc/card/sdio_uart.c:99: warning: assignment makes pointer from integer without a cast
-> drivers/mmc/card/sdio_uart.c: In function 'sdio_uart_transmit_chars':
-> drivers/mmc/card/sdio_uart.c:476: error: implicit declaration of function 'kfifo_get'
-> drivers/mmc/card/sdio_uart.c: In function 'sdio_uart_write':
-> drivers/mmc/card/sdio_uart.c:810: error: implicit declaration of function 'kfifo_put'
+> drivers/usb/core/sysfs.c: In function 'set_reset_quirk':
+> drivers/usb/core/sysfs.c:201: warning: unused variable 'value'
 > 
-> Caused by commit ed30500af457c06b533549f5554671e58c4db18a ("tty:
-> sdio_uart: Use kfifo instead of the messy circ stuff") interacting with
-> the kfifo API change in Linus' tree.
-> 
-> I have reverted that commit for today.
+> Introduced by commit 9bc2b949ea002c26fafa8c8aa82595ff56075d4f ("USB:
+> Export USB_QUIRK_RESET_MORPHS through sysfs").
 
-Thanks, I'll delete that commit and let Alan resubmit it as the API has
-now changed.
-
-thanks,
+Thanks, I have a follow-up patch in my queue that fixes this.  I'll
+merge it together.
 
 greg k-h
