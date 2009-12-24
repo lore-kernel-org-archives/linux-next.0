@@ -1,74 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: kgdb tree build failure
-Date: Thu, 24 Dec 2009 11:16:05 +1100
-Message-ID: <20091224111605.6abf0b20.sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the usb tree with Linus' tree
+Date: Thu, 24 Dec 2009 11:22:56 +1100
+Message-ID: <20091224112256.83c03fde.sfr@canb.auug.org.au>
+References: <20091224093036.2ba1ecf5.sfr@canb.auug.org.au>
+	<20091223233856.GA19893@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__24_Dec_2009_11_22_56_+1100_Xr5i+wQ9x5=ezQYd"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:50955 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58336 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752347AbZLXAQJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 23 Dec 2009 19:16:09 -0500
+	id S1751246AbZLXAXD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 23 Dec 2009 19:23:03 -0500
+In-Reply-To: <20091223233856.GA19893@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jason Wessel <jason.wessel@windriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jesse Barnes <jbarnes@virtuousgeek.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stefani Seibold <stefani@seibold.net>
 
-Hi Jason,
+--Signature=_Thu__24_Dec_2009_11_22_56_+1100_Xr5i+wQ9x5=ezQYd
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
+Hi Greg,
 
-ERROR: "kgdb_active" [drivers/video/console/fbcon.ko] undefined!
-ERROR: "want_console" [drivers/serial/kgdboc.ko] undefined!
-ERROR: "last_console" [drivers/serial/kgdboc.ko] undefined!
-ERROR: "kgdb_active" [drivers/gpu/drm/drm_kms_helper.ko] undefined!
+On Wed, 23 Dec 2009 15:38:56 -0800 Greg KH <greg@kroah.com> wrote:
+>
+> Thanks, I fixed this up already in my tree and will resync in a few
+> hours.
 
-Caused by various commits from the kgdb tree.
+Thanks.  No hurry ("Christmas is coming" :-))
 
-I added this patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 24 Dec 2009 11:10:41 +1100
-Subject: [PATCH] kgdb: export symbols used by modules
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/char/vt.c         |    2 ++
- kernel/debug/debug_core.c |    1 +
- 2 files changed, 3 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/char/vt.c b/drivers/char/vt.c
-index 50faa1f..ef106d8 100644
---- a/drivers/char/vt.c
-+++ b/drivers/char/vt.c
-@@ -190,7 +190,9 @@ static DECLARE_WORK(console_work, console_callback);
-  */
- int fg_console;
- int last_console;
-+EXPORT_SYMBOL_GPL(last_console);
- int want_console = -1;
-+EXPORT_SYMBOL_GPL(want_console);
- 
- /*
-  * For each existing display, we have a pointer to console currently visible
-diff --git a/kernel/debug/debug_core.c b/kernel/debug/debug_core.c
-index 14d7c4e..c58924f 100644
---- a/kernel/debug/debug_core.c
-+++ b/kernel/debug/debug_core.c
-@@ -106,6 +106,7 @@ static struct kgdb_bkpt		kgdb_break[KGDB_MAX_BREAKPOINTS] = {
-  * The CPU# of the active CPU, or -1 if none:
-  */
- atomic_t			kgdb_active = ATOMIC_INIT(-1);
-+EXPORT_SYMBOL_GPL(kgdb_active);
- 
- /*
-  * We use NR_CPUs not PERCPU, in case kgdb is used to debug early
--- 
-1.6.5.4
-
-
--- 
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__24_Dec_2009_11_22_56_+1100_Xr5i+wQ9x5=ezQYd
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAksytGAACgkQjjKRsyhoI8xeDQCfeILUNwXh0pihLov98LWBxt33
+MlwAoIQ20vmAaIdiTNUugIFmlqDeEun0
+=3VzL
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__24_Dec_2009_11_22_56_+1100_Xr5i+wQ9x5=ezQYd--
