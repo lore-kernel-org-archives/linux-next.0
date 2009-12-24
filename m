@@ -1,42 +1,30 @@
-From: Jason Wessel <jason.wessel@windriver.com>
-Subject: Re: linux-next: kgdb tree build warning
-Date: Wed, 23 Dec 2009 22:09:00 -0600
-Message-ID: <4B32E95C.3030201@windriver.com>
-References: <20091224104812.7f2495f3.sfr@canb.auug.org.au>
+From: Len Brown <lenb@kernel.org>
+Subject: Re: linux-next: manual merge of the acpi tree with Linus' tree
+Date: Thu, 24 Dec 2009 00:02:21 -0500 (EST)
+Message-ID: <alpine.LFD.2.00.0912240000530.6541@localhost.localdomain>
+References: <20091224091141.fa1cea64.sfr@canb.auug.org.au>
+ <20091224093913.4f29f37b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:56801 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751478AbZLXEJE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Dec 2009 23:09:04 -0500
-In-Reply-To: <20091224104812.7f2495f3.sfr@canb.auug.org.au>
+Received: from vms173013pub.verizon.net ([206.46.173.13]:64293 "EHLO
+	vms173013pub.verizon.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750777AbZLXFCi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Dec 2009 00:02:38 -0500
+In-reply-to: <20091224093913.4f29f37b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stefani Seibold <stefani@seibold.net>, Andrew Morton <akpm@linux-foundation.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Mattia Dongili <malattia@linux.it>
 
-Stephen Rothwell wrote:
-> Hi Jason,
->
-> Today's linux-next build (x86_64_allmodconfig) produced this warning:
->
-> kernel/debug/kdb/kdb_bp.c: In function 'kdb_bp':
-> kernel/debug/kdb/kdb_bp.c:434: warning: the frame size of 32880 bytes is larger than 2048 bytes
->
-> Introduced by commit 16f40ed7bd0ad29dcde7a05b8a07f5ba10937277 ("kdb: core
-> for kgdb back end").
->
->   
+Stephen,
 
-Using gcc 4.3, I did not see this error.   What compiler or compiler
-options did you use to get this?
+Simpler to just drop the offending patch:
 
-I assume it means the stack space was exhausted and a casual glance at
-the code did not yield anything obvious like a large array on the stack
-or anything.  It is conceivable that there is an inline function that is
-the source of the problem, but I would like to be able to duplicate it.
+a287e9f941cf4bb8c167802c0f1cf04a93bc4e4c
+sony-laptop: remove private workqueue, use keventd instead
 
-Thanks,
-Jason.
+and get a properly refreshed version of that from Dmitry/Mattia later.
+
+thanks,
+Len Brown, Intel Open Source Technology Center
