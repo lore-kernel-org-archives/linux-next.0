@@ -1,42 +1,51 @@
-From: Wim Van Sebroeck <wim@iguana.be>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: manual merge of the watchdog tree with the  tree
-Date: Fri, 25 Dec 2009 10:52:28 +0100
-Message-ID: <20091225095228.GH5402@infomag.iguana.be>
+Date: Sat, 26 Dec 2009 23:10:29 +1100
+Message-ID: <20091226231029.5f4ffa71.sfr@canb.auug.org.au>
 References: <20091224091904.72ef2708.sfr@canb.auug.org.au>
+	<20091225095228.GH5402@infomag.iguana.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sat__26_Dec_2009_23_10_29_+1100_dy3GHQ_GHLdkfdMY"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailrelay009.isp.belgacom.be ([195.238.6.176]:38978 "EHLO
-	mailrelay009.isp.belgacom.be" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753259AbZLYJwb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Fri, 25 Dec 2009 04:52:31 -0500
-Content-Disposition: inline
-In-Reply-To: <20091224091904.72ef2708.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:41466 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752115AbZLZMKj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 26 Dec 2009 07:10:39 -0500
+In-Reply-To: <20091225095228.GH5402@infomag.iguana.be>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Wim Van Sebroeck <wim@iguana.be>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>, H Hartley Sweeten <hartleys@visionengravers.com>
 
-Thanks Stephen,
+--Signature=_Sat__26_Dec_2009_23_10_29_+1100_dy3GHQ_GHLdkfdMY
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-That was indeed correct. I fixed the patch.
+Hi Wim,
 
-Kind regards,
-Wim.
+On Fri, 25 Dec 2009 10:52:28 +0100 Wim Van Sebroeck <wim@iguana.be> wrote:
+>
+> That was indeed correct. I fixed the patch.
 
-> Hi Wim,
-> 
-> Today's linux-next merge of the watchdog tree got a conflict in
-> drivers/watchdog/rm9k_wdt.c between commit
-> de4148f3ef54b644a181ad75a6fb4b373f2b01f0 ("MIPS: eXcite: Remove
-> platform") from Linus' tree and commit
-> f277223000a651df741e2e3367b498049139298d ("[WATCHDOG] use resource_size
-> ()") from the watchdog tree.
-> 
-> The former commit removes the file changed by the latter.  I just removed
-> the file.
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
+Thanks for that.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Sat__26_Dec_2009_23_10_29_+1100_dy3GHQ_GHLdkfdMY
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAks1/TUACgkQjjKRsyhoI8xLswCeMtPIW37TRjqcis78v/6AYGmJ
+1XIAn2Cct1mldR1qqysINvdwzIMujvI1
+=Oj/A
+-----END PGP SIGNATURE-----
+
+--Signature=_Sat__26_Dec_2009_23_10_29_+1100_dy3GHQ_GHLdkfdMY--
