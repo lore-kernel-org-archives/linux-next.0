@@ -1,55 +1,55 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Subject: Re: linux-next: wireless tree build warnings
-Date: Thu, 31 Dec 2009 14:19:25 +0100
-Message-ID: <1262265565.3592.0.camel@johannes.local>
-References: <20091231105709.c50f22c0.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for December 31 (kgdb)
+Date: Thu, 31 Dec 2009 11:07:47 -0800
+Message-ID: <20091231110747.5efc1efa.randy.dunlap@oracle.com>
+References: <20091231112314.a51e160b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature"; boundary="=-ks4JRklZRwiwCSbyzAiQ"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from xc.sipsolutions.net ([83.246.72.84]:37548 "EHLO
-	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750827AbZLaNTl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 31 Dec 2009 08:19:41 -0500
-In-Reply-To: <20091231105709.c50f22c0.sfr@canb.auug.org.au>
+Received: from acsinet11.oracle.com ([141.146.126.233]:20517 "EHLO
+	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753038AbZLaTIu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 31 Dec 2009 14:08:50 -0500
+In-Reply-To: <20091231112314.a51e160b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Jason Wessel <jason.wessel@windriver.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kgdb-bugreport@lists.sourceforge.net
+
+On Thu, 31 Dec 2009 11:23:14 +1100 Stephen Rothwell wrote:
+
+> Hi all,
+> 
+> This one has also not had the build testing *between* merges, but has had
+> all the normal build testing at the end.There may be more unbisectable
+> points in the tree then usual.
+> 
+> Changes since 20091230:
+> 
+> My fixes tree is again empty with the equivalent of its patch being added
+> to Linus' tree.
 
 
---=-ks4JRklZRwiwCSbyzAiQ
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+when CONFIG_PROC_FS is not enabled:
 
-On Thu, 2009-12-31 at 10:57 +1100, Stephen Rothwell wrote:
-> Hi John,
->=20
-> Today's linux-next build (i386 defconfig) produced thes warnings:
+kernel/built-in.o: In function `kdb_summary':
+kdb_main.c:(.text+0x6a413): undefined reference to `_meminfo_proc_show'
 
-Yeah I didn't notice because it was 64-bit here, Kalle already send a
-fix.
 
-johannes
+when CONFIG_KGDB_KDB is not enabled:
 
---=-ks4JRklZRwiwCSbyzAiQ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+kernel/built-in.o: In function `kdb_dmesg':
+kdb_main.c:(.text+0x6b5c4): undefined reference to `kdb_syslog_data'
 
------BEGIN PGP SIGNATURE-----
+when CONFIG_KDB_KEYBOARD is not enabled:
 
-iQIcBAABAgAGBQJLPKTaAAoJEODzc/N7+QmapHUP/RfKfBbiH/LVVh+3ccOMXNvq
-nLllpGF41j4hmn4Se1F+8miiMsiRR+ulDlbvyhPcnoB14+aEu7ZzggXLs7v8UiF8
-WKHN3x65U9ZWhWpjLpy/I91eVD27QcQZDBP8U9DeqSnHmAdwV/puhMDlz9vwmMSd
-1K6O3j69U8zAIInN2Aa5MmU7tVvqgPZoBLCj1Q8Ztdw2kPZR77WgtmqkDooDOqr6
-xoubFWltZ9wbTj5JdjIHfBtu0zd3bJid3WAQJ4KzLG2vmrflxJXA65HR4PwmPcu0
-7gsKuC+quK4shgEUrUei01J/8r7l94SHBPQUkTI7j7QqJ/CBI3kkZiYjY7eFoXwW
-34cO2HWuggiVXXhgB4Lb370tJfXJ4KHtBqaR7SlsD4bA7cmEwlFSvRLQnjzYX7gn
-R5tE5J6nqiuAUKdng6KeYFP2PFcorEfMqKV0aPmoOiJYK6plapD+Ud501vUU6IPg
-2cy1NSq8X+AbcZnK0pTw9+FEdZEpSbvsZGNqML3KomaMyEcn9MRRxAQzA5tvKf5Y
-Im5LWVPhZH0Yn/ONQxV6hiPuBR9dgJq0C2yJKpqs4HAlD5Vq85lmft1ptkKO4UmG
-GQIjkfdaqG4twAIftIz3UJ+Gz/jQuuHyPwPVIE2Lefg3GV+iWB3Od8ObmKZGBjnw
-AM0FEI2D6I/bv2RofYDd
-=C6jp
------END PGP SIGNATURE-----
+drivers/built-in.o: In function `cleanup_kgdboc':
+kgdboc.c:(.text+0x1ee2df): undefined reference to `kdb_get_kbd_char'
+drivers/built-in.o: In function `configure_kgdboc':
+kgdboc.c:(.text+0x1ee463): undefined reference to `kdb_get_kbd_char'
 
---=-ks4JRklZRwiwCSbyzAiQ--
+
+
+---
+~Randy
