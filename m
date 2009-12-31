@@ -1,86 +1,55 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Johannes Berg <johannes@sipsolutions.net>
 Subject: Re: linux-next: wireless tree build warnings
-Date: Thu, 31 Dec 2009 13:00:05 +1100
-Message-ID: <20091231130005.6fa2b865.sfr@canb.auug.org.au>
+Date: Thu, 31 Dec 2009 14:19:25 +0100
+Message-ID: <1262265565.3592.0.camel@johannes.local>
 References: <20091231105709.c50f22c0.sfr@canb.auug.org.au>
-	<4B3BF6D1.6010209@googlemail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__31_Dec_2009_13_00_05_+1100_kDYm/IAAsx3ZK4k3"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1752979AbZLaCAN@vger.kernel.org>
-In-Reply-To: <4B3BF6D1.6010209@googlemail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?B?IlJlbsOpIEJvbGxkb3JmIg==?= <xsecute@googlemail.com>
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature"; boundary="=-ks4JRklZRwiwCSbyzAiQ"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from xc.sipsolutions.net ([83.246.72.84]:37548 "EHLO
+	sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750827AbZLaNTl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 31 Dec 2009 08:19:41 -0500
+In-Reply-To: <20091231105709.c50f22c0.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__31_Dec_2009_13_00_05_+1100_kDYm/IAAsx3ZK4k3
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+
+--=-ks4JRklZRwiwCSbyzAiQ
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ren=C3=A9, On Thu, 31 Dec 2009 01:56:49 +0100 Ren=C3=A9 Bolldorf <xsecut=
-e@googlemail.com> wrote:
->
-> On 12/31/09 00:57, Stephen Rothwell wrote:
-> > Hi John,
-> >
-> > Today's linux-next build (i386 defconfig) produced thes warnings:
-> >
-> > net/mac80211/work.c: In function 'ieee80211_remain_on_channel_timeout':
-> > net/mac80211/work.c:534: warning: cast from pointer to integer of diffe=
-rent size
-> > net/mac80211/work.c: In function 'ieee80211_remain_done':
-> > net/mac80211/work.c:1030: warning: cast from pointer to integer of diff=
-erent size
-> > net/mac80211/work.c: In function 'ieee80211_wk_remain_on_channel':
-> > net/mac80211/work.c:1056: warning: cast from pointer to integer of diff=
-erent size
-> > net/mac80211/work.c: In function 'ieee80211_wk_cancel_remain_on_channel=
-':
-> > net/mac80211/work.c:1072: warning: cast from pointer to integer of diff=
-erent size
-> >
-> > Introduced by commits e4da8c37af626001ff704fb29ea14eb58f5f7208
-> > ("mac80211: make off-channel work generic") and
-> > b8bc4b0aa9bfba755c64b11b8f60e6cfab25dc9d ("mac80211: support
-> > remain-on-channel command").
-> >
+On Thu, 2009-12-31 at 10:57 +1100, Stephen Rothwell wrote:
+> Hi John,
 >=20
-> shouldn't it be u32 instead of u64? Please correct me if I'am wrong.
->=20
-> Example:
-> cfg80211_ready_on_channel(wk->sdata->dev, (u32)wk, wk->chan,
-> 		wk->chan_type, wk->remain.duration, GFP_KERNEL);
-> instead of:
-> cfg80211_ready_on_channel(wk->sdata->dev, (u64)wk, wk->chan,
-> 		wk->chan_type, wk->remain.duration, GFP_KERNEL);
+> Today's linux-next build (i386 defconfig) produced thes warnings:
 
-the prototype is:
+Yeah I didn't notice because it was 64-bit here, Kalle already send a
+fix.
 
-void cfg80211_ready_on_channel(struct net_device *dev, u64 cookie,
-                               struct ieee80211_channel *chan,
-                               enum nl80211_channel_type channel_type,
-                               unsigned int duration, gfp_t gfp);
+johannes
 
-And in the case in point, "wk" is a pointer, so casting that to a u32
-would be even worse on a 64bit architecture.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__31_Dec_2009_13_00_05_+1100_kDYm/IAAsx3ZK4k3
-Content-Type: application/pgp-signature
+--=-ks4JRklZRwiwCSbyzAiQ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAks8BaUACgkQjjKRsyhoI8y4yQCfUBXeCfKufE8Pf9Ioe0hsz/QX
-0ZAAn2HozEa/XRfT52mjB15VYiuTAKiL
-=FrV8
+iQIcBAABAgAGBQJLPKTaAAoJEODzc/N7+QmapHUP/RfKfBbiH/LVVh+3ccOMXNvq
+nLllpGF41j4hmn4Se1F+8miiMsiRR+ulDlbvyhPcnoB14+aEu7ZzggXLs7v8UiF8
+WKHN3x65U9ZWhWpjLpy/I91eVD27QcQZDBP8U9DeqSnHmAdwV/puhMDlz9vwmMSd
+1K6O3j69U8zAIInN2Aa5MmU7tVvqgPZoBLCj1Q8Ztdw2kPZR77WgtmqkDooDOqr6
+xoubFWltZ9wbTj5JdjIHfBtu0zd3bJid3WAQJ4KzLG2vmrflxJXA65HR4PwmPcu0
+7gsKuC+quK4shgEUrUei01J/8r7l94SHBPQUkTI7j7QqJ/CBI3kkZiYjY7eFoXwW
+34cO2HWuggiVXXhgB4Lb370tJfXJ4KHtBqaR7SlsD4bA7cmEwlFSvRLQnjzYX7gn
+R5tE5J6nqiuAUKdng6KeYFP2PFcorEfMqKV0aPmoOiJYK6plapD+Ud501vUU6IPg
+2cy1NSq8X+AbcZnK0pTw9+FEdZEpSbvsZGNqML3KomaMyEcn9MRRxAQzA5tvKf5Y
+Im5LWVPhZH0Yn/ONQxV6hiPuBR9dgJq0C2yJKpqs4HAlD5Vq85lmft1ptkKO4UmG
+GQIjkfdaqG4twAIftIz3UJ+Gz/jQuuHyPwPVIE2Lefg3GV+iWB3Od8ObmKZGBjnw
+AM0FEI2D6I/bv2RofYDd
+=C6jp
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__31_Dec_2009_13_00_05_+1100_kDYm/IAAsx3ZK4k3--
+--=-ks4JRklZRwiwCSbyzAiQ--
