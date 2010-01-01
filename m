@@ -1,66 +1,30 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: origin tree build warnings
-Date: Fri, 1 Jan 2010 12:50:46 +1100
-Message-ID: <20100101125046.23103597.sfr@canb.auug.org.au>
-References: <20100101114238.83108321.sfr@canb.auug.org.au>
-	<alpine.LFD.2.00.0912311649070.3630@localhost.localdomain>
-	<20100101122259.394d5b19.sfr@canb.auug.org.au>
-	<alpine.LFD.2.00.0912311731130.3630@localhost.localdomain>
+From: Tony Luck <tony.luck@intel.com>
+Subject: Re: linux-next: Tree for December 31 (kgdb)
+Date: Fri, 1 Jan 2010 13:18:21 -0800
+Message-ID: <12c511ca1001011318y5340b43l3da26629c22498c4@mail.gmail.com>
+References: <20091231112314.a51e160b.sfr@canb.auug.org.au>
+	 <20091231110747.5efc1efa.randy.dunlap@oracle.com>
+	 <12c511ca0912311120i3f60fccas3487c1f47b5cf3c3@mail.gmail.com>
+	 <20100101120428.68a99a16.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__1_Jan_2010_12_50_46_+1100_+f/ApfY4Em8sMx3f"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55587 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751374Ab0AABuy (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 31 Dec 2009 20:50:54 -0500
-In-Reply-To: <alpine.LFD.2.00.0912311731130.3630@localhost.localdomain>
+Received: from mail-pw0-f42.google.com ([209.85.160.42]:41978 "EHLO
+	mail-pw0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751162Ab0AAVSW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Jan 2010 16:18:22 -0500
+In-Reply-To: <20100101120428.68a99a16.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Samuel Ortiz <sameo@linux.intel.com>, Tony Lindgren <tony@atomide.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Balaji T K <balajitk@ti.com>, Rajendra Nayak <rnayak@ti.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jason Wessel <jason.wessel@windriver.com>, Randy Dunlap <randy.dunlap@oracle.com>, jbarnes@virtuousgeek.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kgdb-bugreport@lists.sourceforge.net
 
---Signature=_Fri__1_Jan_2010_12_50_46_+1100_+f/ApfY4Em8sMx3f
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Dec 31, 2009 at 5:04 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> I have used the version of the kgdb tree from next-20091230 for today
+> (effectively dropping it), sorry.
 
-Hi Linus,
+I checked in my year-old partially working kgdb patch for ia64 to my
+test tree.  So ia64 should be covered now.  Don't know whether other
+non-kgdb architectures use these drm bits.
 
-On Thu, 31 Dec 2009 17:32:11 -0800 (PST) Linus Torvalds <torvalds@linux-fou=
-ndation.org> wrote:
->
-> On Fri, 1 Jan 2010, Stephen Rothwell wrote:
-> >=20
-> > I have built drivers/mfd/twl4030-irq.o the same way as before but after
-> > applying your patch and the warnings are fixed.  I do not have the
-> > hardware and so cannot do a runtime test.
->=20
-> Ok, committed as "Reported-and-compile-tested-by:" you.
-
-Thanks.
-
-> Somebody should probably test it on real hardware, but I doubt the patch=
-=20
-> makes anything worse, and it _probably_ makes things better.
-
-With any luck :-)
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__1_Jan_2010_12_50_46_+1100_+f/ApfY4Em8sMx3f
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAks9VPYACgkQjjKRsyhoI8xblQCffX4PTXKP3WsxxOoUua6CRBIL
-Y2UAnRfbYU6Fr+uIPyN/Wzh+bxgHaSuj
-=Hfmj
------END PGP SIGNATURE-----
-
---Signature=_Fri__1_Jan_2010_12_50_46_+1100_+f/ApfY4Em8sMx3f--
+-Tony
