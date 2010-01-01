@@ -1,33 +1,66 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: origin tree build warnings
-Date: Thu, 31 Dec 2009 17:32:11 -0800 (PST)
-Message-ID: <alpine.LFD.2.00.0912311731130.3630@localhost.localdomain>
-References: <20100101114238.83108321.sfr@canb.auug.org.au> <alpine.LFD.2.00.0912311649070.3630@localhost.localdomain> <20100101122259.394d5b19.sfr@canb.auug.org.au>
+Date: Fri, 1 Jan 2010 12:50:46 +1100
+Message-ID: <20100101125046.23103597.sfr@canb.auug.org.au>
+References: <20100101114238.83108321.sfr@canb.auug.org.au>
+	<alpine.LFD.2.00.0912311649070.3630@localhost.localdomain>
+	<20100101122259.394d5b19.sfr@canb.auug.org.au>
+	<alpine.LFD.2.00.0912311731130.3630@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__1_Jan_2010_12_50_46_+1100_+f/ApfY4Em8sMx3f"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:48848 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751648Ab0AABc4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 31 Dec 2009 20:32:56 -0500
-In-Reply-To: <20100101122259.394d5b19.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:55587 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751374Ab0AABuy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 31 Dec 2009 20:50:54 -0500
+In-Reply-To: <alpine.LFD.2.00.0912311731130.3630@localhost.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Samuel Ortiz <sameo@linux.intel.com>, Tony Lindgren <tony@atomide.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Balaji T K <balajitk@ti.com>, Rajendra Nayak <rnayak@ti.com>
 
+--Signature=_Fri__1_Jan_2010_12_50_46_+1100_+f/ApfY4Em8sMx3f
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi Linus,
 
-On Fri, 1 Jan 2010, Stephen Rothwell wrote:
-> 
-> I have built drivers/mfd/twl4030-irq.o the same way as before but after
-> applying your patch and the warnings are fixed.  I do not have the
-> hardware and so cannot do a runtime test.
+On Thu, 31 Dec 2009 17:32:11 -0800 (PST) Linus Torvalds <torvalds@linux-fou=
+ndation.org> wrote:
+>
+> On Fri, 1 Jan 2010, Stephen Rothwell wrote:
+> >=20
+> > I have built drivers/mfd/twl4030-irq.o the same way as before but after
+> > applying your patch and the warnings are fixed.  I do not have the
+> > hardware and so cannot do a runtime test.
+>=20
+> Ok, committed as "Reported-and-compile-tested-by:" you.
 
-Ok, committed as "Reported-and-compile-tested-by:" you.
+Thanks.
 
-Somebody should probably test it on real hardware, but I doubt the patch 
-makes anything worse, and it _probably_ makes things better.
+> Somebody should probably test it on real hardware, but I doubt the patch=
+=20
+> makes anything worse, and it _probably_ makes things better.
 
-			Linus
+With any luck :-)
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__1_Jan_2010_12_50_46_+1100_+f/ApfY4Em8sMx3f
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAks9VPYACgkQjjKRsyhoI8xblQCffX4PTXKP3WsxxOoUua6CRBIL
+Y2UAnRfbYU6Fr+uIPyN/Wzh+bxgHaSuj
+=Hfmj
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__1_Jan_2010_12_50_46_+1100_+f/ApfY4Em8sMx3f--
