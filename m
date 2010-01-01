@@ -1,57 +1,63 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: origin tree build warnings
-Date: Fri, 1 Jan 2010 11:42:38 +1100
-Message-ID: <20100101114238.83108321.sfr@canb.auug.org.au>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: linux-next: origin tree build warnings
+Date: Thu, 31 Dec 2009 16:50:39 -0800 (PST)
+Message-ID: <alpine.LFD.2.00.0912311649070.3630@localhost.localdomain>
+References: <20100101114238.83108321.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__1_Jan_2010_11_42_38_+1100_RZeojJ_Q3aH=a7dR"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54527 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751355Ab0AAAmq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 31 Dec 2009 19:42:46 -0500
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:47138 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751199Ab0AAAu6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 31 Dec 2009 19:50:58 -0500
+In-Reply-To: <20100101114238.83108321.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus <torvalds@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Samuel Ortiz <sameo@linux.intel.com>, Tony Lindgren <tony@atomide.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Balaji T K <balajitk@ti.com>, Rajendra Nayak <rnayak@ti.com>
 
---Signature=_Fri__1_Jan_2010_11_42_38_+1100_RZeojJ_Q3aH=a7dR
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-Today's linux-next build (powerpc allyesconfig) produced these warnings:
+On Fri, 1 Jan 2010, Stephen Rothwell wrote:
+>
+> Today's linux-next build (powerpc allyesconfig) produced these warnings:
+> 
+> drivers/mfd/twl4030-irq.c: In function 'twl4030_sih_do_edge':
+> drivers/mfd/twl4030-irq.c:571: warning: passing argument 1 of 'spin_lock_irq' from incompatible pointer type
+> include/linux/spinlock.h:304: note: expected 'struct spinlock_t *' but argument is of type 'struct raw_spinlock_t *'
+> drivers/mfd/twl4030-irq.c:576: warning: passing argument 1 of 'spin_unlock_irq' from incompatible pointer type
+> include/linux/spinlock.h:329: note: expected 'struct spinlock_t *' but argument is of type 'struct raw_spinlock_t *'
+> 
+> Introduced by commit 239007b8440abff689632f50cdf0f2b9e895b534 ("genirq:
+> Convert irq_desc.lock to raw_spinlock").  I guess that this file was
+> missed in the conversion.
 
-drivers/mfd/twl4030-irq.c: In function 'twl4030_sih_do_edge':
-drivers/mfd/twl4030-irq.c:571: warning: passing argument 1 of 'spin_lock_ir=
-q' from incompatible pointer type
-include/linux/spinlock.h:304: note: expected 'struct spinlock_t *' but argu=
-ment is of type 'struct raw_spinlock_t *'
-drivers/mfd/twl4030-irq.c:576: warning: passing argument 1 of 'spin_unlock_=
-irq' from incompatible pointer type
-include/linux/spinlock.h:329: note: expected 'struct spinlock_t *' but argu=
-ment is of type 'struct raw_spinlock_t *'
+Ok, I tested and committed the other warning you pointed out, but this one 
+I can't test since I no longer do powerpc builds. I assume the trivial fix 
+below fixes it, but without testing I won't be committing it.
 
-Introduced by commit 239007b8440abff689632f50cdf0f2b9e895b534 ("genirq:
-Convert irq_desc.lock to raw_spinlock").  I guess that this file was
-missed in the conversion.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+		Linus
+---
+ drivers/mfd/twl4030-irq.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
---Signature=_Fri__1_Jan_2010_11_42_38_+1100_RZeojJ_Q3aH=a7dR
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAks9RP4ACgkQjjKRsyhoI8xriQCgkx8oJd4OG1ASDji9KiuWxnfL
-BTIAnA+z7zic+sT06KVO1dQgyQ44de3y
-=oFTc
------END PGP SIGNATURE-----
-
---Signature=_Fri__1_Jan_2010_11_42_38_+1100_RZeojJ_Q3aH=a7dR--
+diff --git a/drivers/mfd/twl4030-irq.c b/drivers/mfd/twl4030-irq.c
+index 20d29ba..9df9a5a 100644
+--- a/drivers/mfd/twl4030-irq.c
++++ b/drivers/mfd/twl4030-irq.c
+@@ -568,12 +568,12 @@ static void twl4030_sih_do_edge(struct work_struct *work)
+ 
+ 		bytes[byte] &= ~(0x03 << off);
+ 
+-		spin_lock_irq(&d->lock);
++		raw_spin_lock_irq(&d->lock);
+ 		if (d->status & IRQ_TYPE_EDGE_RISING)
+ 			bytes[byte] |= BIT(off + 1);
+ 		if (d->status & IRQ_TYPE_EDGE_FALLING)
+ 			bytes[byte] |= BIT(off + 0);
+-		spin_unlock_irq(&d->lock);
++		raw_spin_unlock_irq(&d->lock);
+ 
+ 		edge_change &= ~BIT(i);
+ 	}
