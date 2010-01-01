@@ -1,38 +1,55 @@
-From: Tony Luck <tony.luck@gmail.com>
-Subject: Re: linux-next: Tree for December 31 (kgdb)
-Date: Thu, 31 Dec 2009 11:20:02 -0800
-Message-ID: <12c511ca0912311120i3f60fccas3487c1f47b5cf3c3@mail.gmail.com>
-References: <20091231112314.a51e160b.sfr@canb.auug.org.au>
-	 <20091231110747.5efc1efa.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: agp tree build failure
+Date: Fri, 1 Jan 2010 11:03:27 +1100
+Message-ID: <20100101110327.425e0a0d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__1_Jan_2010_11_03_27_+1100_/yerdMF3Gfe5Qg_4"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pw0-f42.google.com ([209.85.160.42]:34930 "EHLO
-	mail-pw0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753039AbZLaTYO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 31 Dec 2009 14:24:14 -0500
-In-Reply-To: <20091231110747.5efc1efa.randy.dunlap@oracle.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:44526 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751184Ab0AAADu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 31 Dec 2009 19:03:50 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>, jbarnes@virtuousgeek.org
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jason Wessel <jason.wessel@windriver.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kgdb-bugreport@lists.sourceforge.net
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>, Andrew Morton <akpm@linux-foundation.org>
 
-The kgdb bits break ia64 (and any other architecture without an
-<asm/kgdb.h> too):
+--Signature=_Fri__1_Jan_2010_11_03_27_+1100_/yerdMF3Gfe5Qg_4
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-In file included from include/drm/drm_fb_helper.h:33,
-                 from include/drm/drm_crtc_helper.h:42,
-                 from drivers/gpu/drm/radeon/radeon_device.c:30:
-include/linux/kgdb.h:21:22: error: asm/kgdb.h: No such file or directory
-In file included from include/drm/drm_fb_helper.h:33,
-                 from include/drm/drm_crtc_helper.h:42,
-                 from drivers/gpu/drm/radeon/radeon_device.c:30:
-include/linux/kgdb.h:86: error: 'BREAK_INSTR_SIZE' undeclared here
-(not in a function)
+Hi all,
 
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-Perhaps it is time for me to dust off the partially working kgdb
-patches that I had a
-year ago.
+drivers/char/agp/amd64-agp.c: In function '__exittest':
+drivers/char/agp/amd64-agp.c:782: error: 'agp_amd64_cleanup' undeclared (fi=
+rst use in this function)
 
--Tony
+Caused by commit f405d2c02395a74d3883bd03ded36457aa3697ad ("x86/agp: Fix
+agp_amd64_init() initialization with CONFIG_GART_IOMMU enabled") from the
+origin tree interacting with commit
+e85c5c6542528aba88a5d811652cf0e2d44f7f07 ("drivers/char/agp/amd64-agp.c:
+squish warning") from the agp tree.
+
+I reverted the agp tree commit.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__1_Jan_2010_11_03_27_+1100_/yerdMF3Gfe5Qg_4
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAks9O88ACgkQjjKRsyhoI8wWXQCgqfwKMCF2GnMqcYKQzcqxJY5N
+NlkAnj9dfNWi0RA0iwWnmx6zWWZR42iO
+=458C
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__1_Jan_2010_11_03_27_+1100_/yerdMF3Gfe5Qg_4--
