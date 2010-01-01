@@ -1,51 +1,57 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: linux-next: origin tree build warning
-Date: Thu, 31 Dec 2009 16:34:37 -0800 (PST)
-Message-ID: <alpine.LFD.2.00.0912311634110.3630@localhost.localdomain>
-References: <20100101112914.41bc5f77.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: origin tree build warnings
+Date: Fri, 1 Jan 2010 11:42:38 +1100
+Message-ID: <20100101114238.83108321.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__1_Jan_2010_11_42_38_+1100_RZeojJ_Q3aH=a7dR"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:43509 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751355Ab0AAAfC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 31 Dec 2009 19:35:02 -0500
-In-Reply-To: <20100101112914.41bc5f77.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:54527 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751355Ab0AAAmq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 31 Dec 2009 19:42:46 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>
+To: Linus <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Samuel Ortiz <sameo@linux.intel.com>, Tony Lindgren <tony@atomide.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Balaji T K <balajitk@ti.com>, Rajendra Nayak <rnayak@ti.com>
 
+--Signature=_Fri__1_Jan_2010_11_42_38_+1100_RZeojJ_Q3aH=a7dR
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On Fri, 1 Jan 2010, Stephen Rothwell wrote:
-> 
-> Today's linux-next build (powerpc allnoconfig) produced this warning:
-> 
-> drivers/pci/quirks.c: In function 'pci_dev_specific_reset':
-> drivers/pci/quirks.c:2699: warning: assignment discards qualifiers from pointer target type
-> 
-> Introduced by commit 5b889bf237fca383b5807ad69fde3ad1e2287e42 ("PCI: Fix
-> build if quirks are not enabled").
+Today's linux-next build (powerpc allyesconfig) produced these warnings:
 
-Does this trivial patch get rid of it?
+drivers/mfd/twl4030-irq.c: In function 'twl4030_sih_do_edge':
+drivers/mfd/twl4030-irq.c:571: warning: passing argument 1 of 'spin_lock_ir=
+q' from incompatible pointer type
+include/linux/spinlock.h:304: note: expected 'struct spinlock_t *' but argu=
+ment is of type 'struct raw_spinlock_t *'
+drivers/mfd/twl4030-irq.c:576: warning: passing argument 1 of 'spin_unlock_=
+irq' from incompatible pointer type
+include/linux/spinlock.h:329: note: expected 'struct spinlock_t *' but argu=
+ment is of type 'struct raw_spinlock_t *'
 
-		Linus
----
- drivers/pci/quirks.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+Introduced by commit 239007b8440abff689632f50cdf0f2b9e895b534 ("genirq:
+Convert irq_desc.lock to raw_spinlock").  I guess that this file was
+missed in the conversion.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index 5c449fc..c746943 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -2694,7 +2694,7 @@ static const struct pci_dev_reset_methods pci_dev_reset_methods[] = {
- 
- int pci_dev_specific_reset(struct pci_dev *dev, int probe)
- {
--	struct pci_dev_reset_methods *i;
-+	const struct pci_dev_reset_methods *i;
- 
- 	for (i = pci_dev_reset_methods; i->reset; i++) {
- 		if ((i->vendor == dev->vendor ||
+--Signature=_Fri__1_Jan_2010_11_42_38_+1100_RZeojJ_Q3aH=a7dR
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAks9RP4ACgkQjjKRsyhoI8xriQCgkx8oJd4OG1ASDji9KiuWxnfL
+BTIAnA+z7zic+sT06KVO1dQgyQ44de3y
+=oFTc
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__1_Jan_2010_11_42_38_+1100_RZeojJ_Q3aH=a7dR--
