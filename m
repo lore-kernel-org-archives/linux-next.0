@@ -1,80 +1,56 @@
-From: Jason Wessel <jason.wessel@windriver.com>
-Subject: Re: linux-next: Tree for December 31 (kgdb)
-Date: Fri, 01 Jan 2010 23:35:04 -0600
-Message-ID: <4B3EDB08.6080707@windriver.com>
-References: <20091231112314.a51e160b.sfr@canb.auug.org.au> <20091231110747.5efc1efa.randy.dunlap@oracle.com>
+From: "Shilimkar, Santosh" <santosh.shilimkar@ti.com>
+Subject: RE: linux-next: origin tree build warnings
+Date: Sat, 2 Jan 2010 15:02:55 +0530
+Message-ID: <EAF47CD23C76F840A9E7FCE10091EFAB02C02E9494@dbde02.ent.ti.com>
+References: <20100101114238.83108321.sfr@canb.auug.org.au>
+	<alpine.LFD.2.00.0912311649070.3630@localhost.localdomain>
+	<20100101122259.394d5b19.sfr@canb.auug.org.au>
+	<alpine.LFD.2.00.0912311731130.3630@localhost.localdomain>
+ <20100101125046.23103597.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:50910 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750807Ab0ABFfR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 2 Jan 2010 00:35:17 -0500
-In-Reply-To: <20091231110747.5efc1efa.randy.dunlap@oracle.com>
+Received: from bear.ext.ti.com ([192.94.94.41]:55063 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751022Ab0ABJda convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 2 Jan 2010 04:33:30 -0500
+In-Reply-To: <20100101125046.23103597.sfr@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kgdb-bugreport@lists.sourceforge.net
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Samuel Ortiz <sameo@linux.intel.com>, Tony Lindgren <tony@atomide.com>, "Krishnamoorthy, Balaji T" <balajitk@ti.com>, "Nayak, Rajendra" <rnayak@ti.com>
 
-Randy Dunlap wrote:
-> On Thu, 31 Dec 2009 11:23:14 +1100 Stephen Rothwell wrote:
->
->   
->> Hi all,
->>
->> This one has also not had the build testing *between* merges, but has had
->> all the normal build testing at the end.There may be more unbisectable
->> points in the tree then usual.
->>
->> Changes since 20091230:
->>
->> My fixes tree is again empty with the equivalent of its patch being added
->> to Linus' tree.
->>     
->
->
-> when CONFIG_PROC_FS is not enabled:
->
-> kernel/built-in.o: In function `kdb_summary':
-> kdb_main.c:(.text+0x6a413): undefined reference to `_meminfo_proc_show'
->
->
->   
+Stephen,Linus,
 
-Fixed.
+> -----Original Message-----
+> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
+> Sent: Friday, January 01, 2010 7:21 AM
+> To: Linus Torvalds
+> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Thomas Gleixner; Samuel Ortiz; Tony
+> Lindgren; Shilimkar, Santosh; Krishnamoorthy, Balaji T; Nayak, Rajendra
+> Subject: Re: linux-next: origin tree build warnings
+> 
+> Hi Linus,
+> 
+> On Thu, 31 Dec 2009 17:32:11 -0800 (PST) Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> >
+> > On Fri, 1 Jan 2010, Stephen Rothwell wrote:
+> > >
+> > > I have built drivers/mfd/twl4030-irq.o the same way as before but after
+> > > applying your patch and the warnings are fixed.  I do not have the
+> > > hardware and so cannot do a runtime test.
+> >
+> > Ok, committed as "Reported-and-compile-tested-by:" you.
+> 
+> Thanks.
+> 
+> > Somebody should probably test it on real hardware, but I doubt the patch
+> > makes anything worse, and it _probably_ makes things better.
+> 
+> With any luck :-)
+Have tested this patch on OMAP3430 and works as expected. 
 
-> when CONFIG_KGDB_KDB is not enabled:
->
-> kernel/built-in.o: In function `kdb_dmesg':
-> kdb_main.c:(.text+0x6b5c4): undefined reference to `kdb_syslog_data'
->
->   
-
-When CONFIG_KGDB_KDB is not set, it is not possible to compile
-kdb_main.c.  This one was actually due to compiling a kernel with
-CONFIG_PRINTK=n and CONFIG_KGDB_KDB=y.
-
-It is fixed.
-
-> when CONFIG_KDB_KEYBOARD is not enabled:
->
-> drivers/built-in.o: In function `cleanup_kgdboc':
-> kgdboc.c:(.text+0x1ee2df): undefined reference to `kdb_get_kbd_char'
-> drivers/built-in.o: In function `configure_kgdboc':
-> kgdboc.c:(.text+0x1ee463): undefined reference to `kdb_get_kbd_char'
->
->
->   
-If CONFIG_KDB_KEYBOARD is not enabled there is no way to get these
-functions.  This one was actually due to compiling CONFIG_KDB_KEYBOARD=y
-and CONFIG_VT_CONSOLE=n.
-
-It is fixed as well.
-
-The changes are folded into the 2 offending patches in the kdb patches
-in the kgdb-next branch for proper bisecting patches.
-
-Thanks for the report.
-
-Jason.
+Regards,
+Santosh
