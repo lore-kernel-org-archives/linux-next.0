@@ -1,46 +1,43 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] libs: force lzma_wrapper to be retained
-Date: Fri, 1 Jan 2010 18:33:44 -0800
-Message-ID: <20100101183344.398f2538.randy.dunlap@oracle.com>
-References: <20100101120737.94d4acc4.sfr@canb.auug.org.au>
+From: Jason Wessel <jason.wessel@windriver.com>
+Subject: Re: linux-next: Tree for December 31 (kgdb)
+Date: Fri, 01 Jan 2010 23:33:08 -0600
+Message-ID: <4B3EDA94.3040005@windriver.com>
+References: <20091231112314.a51e160b.sfr@canb.auug.org.au>
+	<20091231110747.5efc1efa.randy.dunlap@oracle.com>
+	<12c511ca0912311120i3f60fccas3487c1f47b5cf3c3@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet11.oracle.com ([141.146.126.233]:54843 "EHLO
-	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752261Ab0ABCfE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Jan 2010 21:35:04 -0500
-In-Reply-To: <20100101120737.94d4acc4.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Phillip Lougher <phillip@lougher.demon.co.uk>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Michal Marek <mmarek@suse.cz>, akpm <akpm@linux-foundation.org>
+Return-path: <kgdb-bugreport-bounces@lists.sourceforge.net>
+In-Reply-To: <12c511ca0912311120i3f60fccas3487c1f47b5cf3c3@mail.gmail.com>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/kgdb-bugreport>,
+	<mailto:kgdb-bugreport-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=kgdb-bugreport>
+List-Post: <mailto:kgdb-bugreport@lists.sourceforge.net>
+List-Help: <mailto:kgdb-bugreport-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/kgdb-bugreport>,
+	<mailto:kgdb-bugreport-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: kgdb-bugreport-bounces@lists.sourceforge.net
+To: Tony Luck <tony.luck@gmail.com>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, kgdb-bugreport@lists.sourceforge.net, LKML <linux-kernel@vger.kernel.org>, jbarnes@virtuousgeek.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+Tony Luck wrote:
+> The kgdb bits break ia64 (and any other architecture without an
+> <asm/kgdb.h> too):
+>
+>   
 
-When CONFIG_SQUASHFS=m and CONFIG_DECOMPRESS_LZMA=m, decompress_lzma
-is built but then discarded from the library because no built-in code
-uses it, so change it from a lib- to an obj- to force it to be kept
-in the library.
+Certainly this was not intended.   It is properly fixed now in and
+folded into a number of the kgdb patches so everything will properly
+bisect.  It is updated in kgdb-next.
 
-ERROR: "unlzma" [fs/squashfs/squashfs.ko] undefined!
+Thanks,
+Jason.
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Phillip Lougher <phillip@lougher.demon.co.uk>
-Cc: Michal Marek <mmarek@suse.cz>
----
- lib/Makefile |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- linux-next-20100101.orig/lib/Makefile
-+++ linux-next-20100101/lib/Makefile
-@@ -69,7 +69,7 @@ obj-$(CONFIG_LZO_DECOMPRESS) += lzo/
- 
- lib-$(CONFIG_DECOMPRESS_GZIP) += decompress_inflate.o
- lib-$(CONFIG_DECOMPRESS_BZIP2) += decompress_bunzip2.o
--lib-$(CONFIG_DECOMPRESS_LZMA) += decompress_unlzma.o
-+obj-$(CONFIG_DECOMPRESS_LZMA) += decompress_unlzma.o
- 
- obj-$(CONFIG_TEXTSEARCH) += textsearch.o
- obj-$(CONFIG_TEXTSEARCH_KMP) += ts_kmp.o
+------------------------------------------------------------------------------
+This SF.Net email is sponsored by the Verizon Developer Community
+Take advantage of Verizon's best-in-class app development support
+A streamlined, 14 day to market process makes app distribution fast and easy
+Join now and get one step closer to millions of Verizon customers
+http://p.sf.net/sfu/verizon-dev2dev 
