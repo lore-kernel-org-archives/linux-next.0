@@ -1,59 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for December 31 (kgdb)
-Date: Sat, 2 Jan 2010 22:32:19 +1100
-Message-ID: <20100102223219.a0373285.sfr@canb.auug.org.au>
-References: <20091231112314.a51e160b.sfr@canb.auug.org.au>
-	<20091231110747.5efc1efa.randy.dunlap@oracle.com>
-	<12c511ca0912311120i3f60fccas3487c1f47b5cf3c3@mail.gmail.com>
-	<4B3EDA94.3040005@windriver.com>
+From: Phillip Lougher <phillip@lougher.demon.co.uk>
+Subject: Re: [PATCH -next] libs: force lzma_wrapper to be retained
+Date: Sun, 03 Jan 2010 00:55:55 +0000
+Message-ID: <4B3FEB1B.7040106@lougher.demon.co.uk>
+References: <20100101120737.94d4acc4.sfr@canb.auug.org.au> <20100101183344.398f2538.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sat__2_Jan_2010_22_32_19_+1100_=fahe1qgq2Wm1EEE"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36739 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752609Ab0ABLcn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 2 Jan 2010 06:32:43 -0500
-In-Reply-To: <4B3EDA94.3040005@windriver.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jason Wessel <jason.wessel@windriver.com>
-Cc: Tony Luck <tony.luck@gmail.com>, Randy Dunlap <randy.dunlap@oracle.com>, jbarnes@virtuousgeek.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kgdb-bugreport@lists.sourceforge.net
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1752264Ab0ACA6A@vger.kernel.org>
+In-Reply-To: <20100101183344.398f2538.randy.dunlap@oracle.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Michal Marek <mmarek@suse.cz>, akpm <akpm@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Sat__2_Jan_2010_22_32_19_+1100_=fahe1qgq2Wm1EEE
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> When CONFIG_SQUASHFS=m and CONFIG_DECOMPRESS_LZMA=m, decompress_lzma
+> is built but then discarded from the library because no built-in code
+> uses it, so change it from a lib- to an obj- to force it to be kept
+> in the library.
+> 
+> ERROR: "unlzma" [fs/squashfs/squashfs.ko] undefined!
+> 
 
-Hi Jason,
+Thanks for fixing this, I should have spotted it in my various
+config tests but didn't.  I could add this to my squashfs-next patches
+to stop the linux-next tree breakage, however, should it go into
+Michal's kbuild -next tree instead?
 
-On Fri, 01 Jan 2010 23:33:08 -0600 Jason Wessel <jason.wessel@windriver.com=
-> wrote:
->
-> Tony Luck wrote:
-> > The kgdb bits break ia64 (and any other architecture without an
-> > <asm/kgdb.h> too):
->=20
-> Certainly this was not intended.   It is properly fixed now in and
-> folded into a number of the kgdb patches so everything will properly
-> bisect.  It is updated in kgdb-next.
+This patch raises a small additional issue, why is DECOMPRESS_LZMA
+(and DECOMPRESS_GZIP/DECOMPRESS_BZIP2) and defined as tristate?
+None of the above compressors can be built as modules.
 
-Thanks, I will pick it up on Monday.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Regards
 
---Signature=_Sat__2_Jan_2010_22_32_19_+1100_=fahe1qgq2Wm1EEE
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAks/LsMACgkQjjKRsyhoI8x0owCfWFdSdmWC4/CZR1zNhDIMBM/o
-D/gAoK/X1PZcjhJ0S6ggPPJtGFi+Zi3B
-=hio6
------END PGP SIGNATURE-----
-
---Signature=_Sat__2_Jan_2010_22_32_19_+1100_=fahe1qgq2Wm1EEE--
+Phillip
