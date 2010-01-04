@@ -1,56 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: pci tree build failure
-Date: Tue, 5 Jan 2010 09:55:43 +1100
-Message-ID: <20100105095543.8c446cb7.sfr@canb.auug.org.au>
+From: Matthew Wilcox <matthew@wil.cx>
+Subject: Re: linux-next: pci tree build failure
+Date: Mon, 4 Jan 2010 16:10:01 -0700
+Message-ID: <20100104231001.GF9882@parisc-linux.org>
+References: <20100105095543.8c446cb7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__5_Jan_2010_09_55_43_+1100_34m2qvl/CmETgw+8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59871 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752218Ab0ADWzu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 4 Jan 2010 17:55:50 -0500
+Received: from palinux.external.hp.com ([192.25.206.14]:56597 "EHLO
+	mail.parisc-linux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753976Ab0ADXKF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Jan 2010 18:10:05 -0500
+Content-Disposition: inline
+In-Reply-To: <20100105095543.8c446cb7.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jesse Barnes <jbarnes@virtuousgeek.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Wilcox <matthew@wil.cx>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__5_Jan_2010_09_55_43_+1100_34m2qvl/CmETgw+8
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jan 05, 2010 at 09:55:43AM +1100, Stephen Rothwell wrote:
+> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+> 
+> drivers/pci/hotplug/rpaphp_core.c:433: error: unknown field 'get_max_bus_speed' specified in initializer
+> drivers/pci/hotplug/rpaphp_core.c:433: warning: excess elements in struct initializer
+> drivers/pci/hotplug/rpaphp_core.c:433: warning: (near initialization for 'rpaphp_hotplug_slot_ops')
+> 
+> Caused by commit 7227d60c98ad0e1af49c717a62515d74002dd754 ("PCI: Make
+> current and maximum bus speeds part of the PCI core").
+> 
+> I have used the version of the pci tree from next-20100104 for today.
 
-Hi Jesse,
+Doh, sorry.  I don't have a handy powerpc environment around to test with.
+Can you try just deleting line 433?  (this should actually be the correct fix).
 
-Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-
-drivers/pci/hotplug/rpaphp_core.c:433: error: unknown field 'get_max_bus_sp=
-eed' specified in initializer
-drivers/pci/hotplug/rpaphp_core.c:433: warning: excess elements in struct i=
-nitializer
-drivers/pci/hotplug/rpaphp_core.c:433: warning: (near initialization for 'r=
-paphp_hotplug_slot_ops')
-
-Caused by commit 7227d60c98ad0e1af49c717a62515d74002dd754 ("PCI: Make
-current and maximum bus speeds part of the PCI core").
-
-I have used the version of the pci tree from next-20100104 for today.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__5_Jan_2010_09_55_43_+1100_34m2qvl/CmETgw+8
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAktCce8ACgkQjjKRsyhoI8z5kwCgoO+jIfqabm2O3FmQkJZETQXB
-JLkAn00UEkLFdTrtPYV7/kcJfw+7Igc4
-=caOk
------END PGP SIGNATURE-----
-
---Signature=_Tue__5_Jan_2010_09_55_43_+1100_34m2qvl/CmETgw+8--
+-- 
+Matthew Wilcox				Intel Open Source Technology Centre
+"Bill, look, we understand that you're interested in selling us this
+operating system, but compare it to ours.  We can't possibly take such
+a retrograde step."
