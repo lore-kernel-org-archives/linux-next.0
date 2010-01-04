@@ -1,58 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: kgdb tree build failure
-Date: Tue, 5 Jan 2010 00:04:27 +1100
-Message-ID: <20100105000427.b10232d3.sfr@canb.auug.org.au>
-References: <20100104164209.a5ac8d6a.sfr@canb.auug.org.au>
-	<20100104164452.2803d62e.sfr@canb.auug.org.au>
-	<4B41E542.40703@windriver.com>
+From: Samuel Ortiz <sameo@linux.intel.com>
+Subject: Re: linux-next: origin tree build warnings
+Date: Mon, 4 Jan 2010 14:51:30 +0100
+Message-ID: <20100104135128.GB5394@sortiz.org>
+References: <20100101114238.83108321.sfr@canb.auug.org.au>
+ <alpine.LFD.2.00.0912311649070.3630@localhost.localdomain>
+ <20100101122259.394d5b19.sfr@canb.auug.org.au>
+ <alpine.LFD.2.00.0912311731130.3630@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__5_Jan_2010_00_04_27_+1100_4TJ_B_jz+t74Sd7o"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47756 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753124Ab0ADNEd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 4 Jan 2010 08:04:33 -0500
-In-Reply-To: <4B41E542.40703@windriver.com>
+Received: from mga10.intel.com ([192.55.52.92]:30590 "EHLO
+	fmsmga102.fm.intel.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1753266Ab0ADNtu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Jan 2010 08:49:50 -0500
+Content-Disposition: inline
+In-Reply-To: <alpine.LFD.2.00.0912311731130.3630@localhost.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jason Wessel <jason.wessel@windriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Tony Lindgren <tony@atomide.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Balaji T K <balajitk@ti.com>, Rajendra Nayak <rnayak@ti.com>
 
---Signature=_Tue__5_Jan_2010_00_04_27_+1100_4TJ_B_jz+t74Sd7o
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Linus,
 
-Hi Jason,
+On Thu, Dec 31, 2009 at 05:32:11PM -0800, Linus Torvalds wrote:
+> 
+> 
+> On Fri, 1 Jan 2010, Stephen Rothwell wrote:
+> > 
+> > I have built drivers/mfd/twl4030-irq.o the same way as before but after
+> > applying your patch and the warnings are fixed.  I do not have the
+> > hardware and so cannot do a runtime test.
+> 
+> Ok, committed as "Reported-and-compile-tested-by:" you.
+> 
+> Somebody should probably test it on real hardware, but I doubt the patch 
+> makes anything worse, and it _probably_ makes things better.
+Thanks for the fix.
+I got the same fix from Felipe and Tony during the holidays, so I assume they
+tested it on real hardware.
 
-On Mon, 04 Jan 2010 06:55:30 -0600 Jason Wessel <jason.wessel@windriver.com=
-> wrote:
->
-> That patch could have been dropped from the series, but I did repair the
-> problem.  I also added a 3 more config tests (sparc, arm and ppc) to my
-> pre-submission test list.
->=20
-> kgdb-next is updated and I can only hope the light is at the end of the
-> tunnel for the config testing. :-)
-
-OK, thanks.
-
---=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Samuel.
 
---Signature=_Tue__5_Jan_2010_00_04_27_+1100_4TJ_B_jz+t74Sd7o
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAktB51sACgkQjjKRsyhoI8w1eACeMG+bmTgNYur9VqMXXbp27YUi
-J8AAoJM4JyMIlI+FcB/UJ+4Kij1kA4oh
-=6Kvo
------END PGP SIGNATURE-----
-
---Signature=_Tue__5_Jan_2010_00_04_27_+1100_4TJ_B_jz+t74Sd7o--
+-- 
+Intel Open Source Technology Centre
+http://oss.intel.com/
