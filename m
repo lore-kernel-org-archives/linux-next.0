@@ -1,45 +1,40 @@
-From: FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>
-Subject: Re: linux-next: agp tree build failure
-Date: Mon, 4 Jan 2010 16:24:23 +0900
-Message-ID: <20100104162405A.fujita.tomonori@lab.ntt.co.jp>
-References: <20100101110327.425e0a0d.sfr@canb.auug.org.au>
+From: Jason Wessel <jason.wessel@windriver.com>
+Subject: Re: linux-next: kgdb tree build failure
+Date: Mon, 04 Jan 2010 06:55:30 -0600
+Message-ID: <4B41E542.40703@windriver.com>
+References: <20100104164209.a5ac8d6a.sfr@canb.auug.org.au> <20100104164452.2803d62e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from sh.osrg.net ([192.16.179.4]:37135 "EHLO sh.osrg.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752173Ab0ADHYn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 4 Jan 2010 02:24:43 -0500
-In-Reply-To: <20100101110327.425e0a0d.sfr@canb.auug.org.au>
+Received: from mail.windriver.com ([147.11.1.11]:58550 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752457Ab0ADMzg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Jan 2010 07:55:36 -0500
+In-Reply-To: <20100104164452.2803d62e.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: airlied@linux.ie, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, fujita.tomonori@lab.ntt.co.jp, akpm@linux-foundation.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 1 Jan 2010 11:03:27 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Stephen Rothwell wrote:
+> Hi Jason,
+>
+> On Mon, 4 Jan 2010 16:42:09 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>   
+>> Today's linux-next build (arm realview_defconfig) failed like this:
+>>     
+>                                 ^^^^^^^^^
+> Most of the other arm builds failed the same way ...
+>
+>   
 
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
-> 
-> drivers/char/agp/amd64-agp.c: In function '__exittest':
-> drivers/char/agp/amd64-agp.c:782: error: 'agp_amd64_cleanup' undeclared (first use in this function)
-> 
-> Caused by commit f405d2c02395a74d3883bd03ded36457aa3697ad ("x86/agp: Fix
-> agp_amd64_init() initialization with CONFIG_GART_IOMMU enabled") from the
-> origin tree interacting with commit
-> e85c5c6542528aba88a5d811652cf0e2d44f7f07 ("drivers/char/agp/amd64-agp.c:
-> squish warning") from the agp tree.
+That patch could have been dropped from the series, but I did repair the
+problem.  I also added a 3 more config tests (sparc, arm and ppc) to my
+pre-submission test list.
 
-The former patch was already merged to fix:
+kgdb-next is updated and I can only hope the light is at the end of the
+tunnel for the config testing. :-)
 
-http://marc.info/?l=linux-kernel&m=126192729110083&w=2
-
-I think that the latter commit in agp tree isn't necessary since with
-the former patch, agp_amd64_cleanup is necessary even with
-CONFIG_GART_IOMMU enabled.
-
-But the former patch added another bug. I've just posted a fix for
-it. Sorry about that.
-
-http://marc.info/?l=linux-kernel&m=126258945607963&w=2
+Thanks,
+Jason.
