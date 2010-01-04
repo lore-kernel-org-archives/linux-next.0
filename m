@@ -1,63 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-current tree with the
- scsi-rc-fixes tree
-Date: Tue, 5 Jan 2010 08:56:13 +1100
-Message-ID: <20100105085613.0a04d952.sfr@canb.auug.org.au>
+From: Webmaster <noreply@ebuppies.com>
+Subject: Request for confirmation
+Date: Mon, 4 Jan 2010 17:21:35 -0500
+Message-ID: <b2f8ac8efacc5aeadc254ecb17728fb9@mail.ebuppies.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__5_Jan_2010_08_56_13_+1100_AIzazKV4QIJg_Q7."
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35752 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753593Ab0ADV41 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 4 Jan 2010 16:56:27 -0500
+Received: from alona.agustinaradleylinux.net ([216.246.1.26]:38332 "EHLO
+	server.ebuppies.com" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
+	with ESMTP id S1753984Ab0ADWVj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Jan 2010 17:21:39 -0500
+Received: from localhost ([127.0.0.1]:44769 helo=mail.ebuppies.com)
+	by server.ebuppies.com with esmtpa (Exim 4.69)
+	(envelope-from <bounces@ebuppies.com>)
+	id 1NRvIt-0007IV-9S
+	for linux-next@vger.kernel.org; Mon, 04 Jan 2010 17:21:35 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rakesh Ranjan <rakesh@chelsio.com>, James Bottomley <James.Bottomley@HansenPartnership.com>
+To: linux-next@vger.kernel.org
 
---Signature=_Tue__5_Jan_2010_08_56_13_+1100_AIzazKV4QIJg_Q7.
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sorry to bother you: we are cleaning up our database and it appears that
+you have previously signed up to eBuppies.com mailinglists and not
+confirmed your subscription.We would like to give you the opportunity to
+re-confirm your subscription. The instructions on how to confirm are below.
+ 
 
-Hi all,
+  Almost welcome to our newsletter(s) ...
 
-Today's linux-next merge of the net-current tree got a conflict in
-drivers/scsi/cxgb3i/cxgb3i_offload.c between commit
-44214ab474671e1ab5a860954db413bce52f7e04 ("[SCSI] cxgb3i: Fix a login
-over vlan issue") from the scsi-rc-fixes tree and commit
-52ee264bca378835decb827d18b1d90b709ca4c9 ("cxgb3i: Fix a login over vlan
-issue") from the net-current tree.
+  Someone, hopefully you, has subscribed your email address to the
+following newsletters:
+  
+  
 
-These seem to be different version of the same change.  The version in
-the net-current tree looks wrong - it contains
+  If this is correct, please click the following link to confirm your
+subscription.
+  Without this confirmation, you will not receive any newsletters.
+  
+ 
+http://ebuppies.com/emailserv/?p=confirm&uid=6a9d09547dc445487de19790c371996b
+  
+  If this is not correct, you do not need to do anything, simply delete
+this message.
 
-if (dev->priv_flags && IFF_802_1Q_VLAN)
-
-but it presumably should be
-
-if (dev->priv_flags & IFF_802_1Q_VLAN)
-
-as in the scsi-rc-fixes version.
-
-I used the version from the scsi-rc-fixes tree (even though it is dated
-12 days earlier). (There was also a comment format difference.)
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__5_Jan_2010_08_56_13_+1100_AIzazKV4QIJg_Q7.
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAktCY/0ACgkQjjKRsyhoI8zHKwCffmgbQwdLadrWTPJx+WOdjc14
-ldIAnRqbngu7VC1fU6BNlVMsFiYjEY1L
-=EgUd
------END PGP SIGNATURE-----
-
---Signature=_Tue__5_Jan_2010_08_56_13_+1100_AIzazKV4QIJg_Q7.--
+  Thank you
+  
+    
