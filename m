@@ -1,66 +1,56 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the net-current tree with the
- scsi-rc-fixes tree
-Date: Mon, 04 Jan 2010 14:37:05 -0800 (PST)
-Message-ID: <20100104.143705.179916049.davem@davemloft.net>
-References: <20100105085613.0a04d952.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: pci tree build failure
+Date: Tue, 5 Jan 2010 09:55:43 +1100
+Message-ID: <20100105095543.8c446cb7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__5_Jan_2010_09_55_43_+1100_34m2qvl/CmETgw+8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:39007
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753619Ab0ADWhE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Jan 2010 17:37:04 -0500
-In-Reply-To: <20100105085613.0a04d952.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:59871 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752218Ab0ADWzu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 4 Jan 2010 17:55:50 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, rakesh@chelsio.com, James.Bottomley@HansenPartnership.com
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Wilcox <matthew@wil.cx>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 5 Jan 2010 08:56:13 +1100
+--Signature=_Tue__5_Jan_2010_09_55_43_+1100_34m2qvl/CmETgw+8
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Today's linux-next merge of the net-current tree got a conflict in
-> drivers/scsi/cxgb3i/cxgb3i_offload.c between commit
-> 44214ab474671e1ab5a860954db413bce52f7e04 ("[SCSI] cxgb3i: Fix a login
-> over vlan issue") from the scsi-rc-fixes tree and commit
-> 52ee264bca378835decb827d18b1d90b709ca4c9 ("cxgb3i: Fix a login over vlan
-> issue") from the net-current tree.
-> 
-> These seem to be different version of the same change.  The version in
-> the net-current tree looks wrong - it contains
-> 
-> if (dev->priv_flags && IFF_802_1Q_VLAN)
-> 
-> but it presumably should be
-> 
-> if (dev->priv_flags & IFF_802_1Q_VLAN)
-> 
-> as in the scsi-rc-fixes version.
+Hi Jesse,
 
-I checked the following into my tree so it should all work out.
+Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 
-commit d3af9dd04f8795dc2761ecfa56632e4d0df0dae2
-Author: David S. Miller <davem@davemloft.net>
-Date:   Mon Jan 4 14:36:40 2010 -0800
+drivers/pci/hotplug/rpaphp_core.c:433: error: unknown field 'get_max_bus_sp=
+eed' specified in initializer
+drivers/pci/hotplug/rpaphp_core.c:433: warning: excess elements in struct i=
+nitializer
+drivers/pci/hotplug/rpaphp_core.c:433: warning: (near initialization for 'r=
+paphp_hotplug_slot_ops')
 
-    cxgb3i: Fix flags test.
-    
-    As noticed by Stephen Rothwell.
-    
-    Signed-off-by: David S. Miller <davem@davemloft.net>
+Caused by commit 7227d60c98ad0e1af49c717a62515d74002dd754 ("PCI: Make
+current and maximum bus speeds part of the PCI core").
 
-diff --git a/drivers/scsi/cxgb3i/cxgb3i_offload.c b/drivers/scsi/cxgb3i/cxgb3i_offload.c
-index 4b8a513..7449d46 100644
---- a/drivers/scsi/cxgb3i/cxgb3i_offload.c
-+++ b/drivers/scsi/cxgb3i/cxgb3i_offload.c
-@@ -1442,7 +1442,7 @@ static int is_cxgb3_dev(struct net_device *dev)
- 	struct cxgb3i_sdev_data *cdata;
- 	struct net_device *ndev = dev;
- 
--	if (dev->priv_flags && IFF_802_1Q_VLAN)
-+	if (dev->priv_flags & IFF_802_1Q_VLAN)
- 		ndev = vlan_dev_real_dev(dev);
- 
- 	write_lock(&cdata_rwlock);
+I have used the version of the pci tree from next-20100104 for today.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__5_Jan_2010_09_55_43_+1100_34m2qvl/CmETgw+8
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAktCce8ACgkQjjKRsyhoI8z5kwCgoO+jIfqabm2O3FmQkJZETQXB
+JLkAn00UEkLFdTrtPYV7/kcJfw+7Igc4
+=caOk
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__5_Jan_2010_09_55_43_+1100_34m2qvl/CmETgw+8--
