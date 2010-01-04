@@ -1,47 +1,66 @@
-From: Webmaster <noreply@ebuppies.com>
-Subject: Request for confirmation
-Date: Mon, 4 Jan 2010 17:21:35 -0500
-Message-ID: <b2f8ac8efacc5aeadc254ecb17728fb9@mail.ebuppies.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: manual merge of the net-current tree with the
+ scsi-rc-fixes tree
+Date: Mon, 04 Jan 2010 14:37:05 -0800 (PST)
+Message-ID: <20100104.143705.179916049.davem@davemloft.net>
+References: <20100105085613.0a04d952.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from alona.agustinaradleylinux.net ([216.246.1.26]:38332 "EHLO
-	server.ebuppies.com" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
-	with ESMTP id S1753984Ab0ADWVj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Jan 2010 17:21:39 -0500
-Received: from localhost ([127.0.0.1]:44769 helo=mail.ebuppies.com)
-	by server.ebuppies.com with esmtpa (Exim 4.69)
-	(envelope-from <bounces@ebuppies.com>)
-	id 1NRvIt-0007IV-9S
-	for linux-next@vger.kernel.org; Mon, 04 Jan 2010 17:21:35 -0500
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:39007
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753619Ab0ADWhE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Jan 2010 17:37:04 -0500
+In-Reply-To: <20100105085613.0a04d952.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, rakesh@chelsio.com, James.Bottomley@HansenPartnership.com
 
-Sorry to bother you: we are cleaning up our database and it appears that
-you have previously signed up to eBuppies.com mailinglists and not
-confirmed your subscription.We would like to give you the opportunity to
-re-confirm your subscription. The instructions on how to confirm are below.
- 
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 5 Jan 2010 08:56:13 +1100
 
-  Almost welcome to our newsletter(s) ...
+> Today's linux-next merge of the net-current tree got a conflict in
+> drivers/scsi/cxgb3i/cxgb3i_offload.c between commit
+> 44214ab474671e1ab5a860954db413bce52f7e04 ("[SCSI] cxgb3i: Fix a login
+> over vlan issue") from the scsi-rc-fixes tree and commit
+> 52ee264bca378835decb827d18b1d90b709ca4c9 ("cxgb3i: Fix a login over vlan
+> issue") from the net-current tree.
+> 
+> These seem to be different version of the same change.  The version in
+> the net-current tree looks wrong - it contains
+> 
+> if (dev->priv_flags && IFF_802_1Q_VLAN)
+> 
+> but it presumably should be
+> 
+> if (dev->priv_flags & IFF_802_1Q_VLAN)
+> 
+> as in the scsi-rc-fixes version.
 
-  Someone, hopefully you, has subscribed your email address to the
-following newsletters:
-  
-  
+I checked the following into my tree so it should all work out.
 
-  If this is correct, please click the following link to confirm your
-subscription.
-  Without this confirmation, you will not receive any newsletters.
-  
- 
-http://ebuppies.com/emailserv/?p=confirm&uid=6a9d09547dc445487de19790c371996b
-  
-  If this is not correct, you do not need to do anything, simply delete
-this message.
+commit d3af9dd04f8795dc2761ecfa56632e4d0df0dae2
+Author: David S. Miller <davem@davemloft.net>
+Date:   Mon Jan 4 14:36:40 2010 -0800
 
-  Thank you
-  
+    cxgb3i: Fix flags test.
     
+    As noticed by Stephen Rothwell.
+    
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+
+diff --git a/drivers/scsi/cxgb3i/cxgb3i_offload.c b/drivers/scsi/cxgb3i/cxgb3i_offload.c
+index 4b8a513..7449d46 100644
+--- a/drivers/scsi/cxgb3i/cxgb3i_offload.c
++++ b/drivers/scsi/cxgb3i/cxgb3i_offload.c
+@@ -1442,7 +1442,7 @@ static int is_cxgb3_dev(struct net_device *dev)
+ 	struct cxgb3i_sdev_data *cdata;
+ 	struct net_device *ndev = dev;
+ 
+-	if (dev->priv_flags && IFF_802_1Q_VLAN)
++	if (dev->priv_flags & IFF_802_1Q_VLAN)
+ 		ndev = vlan_dev_real_dev(dev);
+ 
+ 	write_lock(&cdata_rwlock);
