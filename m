@@ -1,74 +1,37 @@
-From: Rakesh Ranjan <rakesh@chelsio.com>
-Subject: Re: linux-next: manual merge of the net-current tree with the scsi-rc-fixes
- tree
-Date: Tue, 05 Jan 2010 10:39:31 +0530
-Message-ID: <4B42C98B.8070300@chelsio.com>
-References: <20100105085613.0a04d952.sfr@canb.auug.org.au> <20100104.143705.179916049.davem@davemloft.net>
+From: Pekka Enberg <penberg@cs.helsinki.fi>
+Subject: Re: linux-next: tip tree build failure
+Date: Tue, 5 Jan 2010 09:39:40 +0200
+Message-ID: <84144f021001042339r29f151feja00d7af12a82c9a2@mail.gmail.com>
+References: <20100104235931.abcf2bc5.sfr@canb.auug.org.au>
+	 <20100104163159.GD23652@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from stargate.chelsio.com ([67.207.112.58]:9248 "EHLO
-	stargate.chelsio.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750696Ab0AEFS0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Jan 2010 00:18:26 -0500
-In-Reply-To: <20100104.143705.179916049.davem@davemloft.net>
+Received: from mail-fx0-f225.google.com ([209.85.220.225]:47954 "EHLO
+	mail-fx0-f225.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750910Ab0AEHjm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Jan 2010 02:39:42 -0500
+In-Reply-To: <20100104163159.GD23652@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James.Bottomley@HansenPartnership.com, Rakesh Ranjan <rakesh@chelsio.com>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thiago Farina <tfransosi@gmail.com>
 
-On 01/05/2010 04:07 AM, David Miller wrote:
-> From: Stephen Rothwell<sfr@canb.auug.org.au>
-> Date: Tue, 5 Jan 2010 08:56:13 +1100
+On Mon, Jan 4, 2010 at 6:32 PM, Ingo Molnar <mingo@elte.hu> wrote:
 >
->> Today's linux-next merge of the net-current tree got a conflict in
->> drivers/scsi/cxgb3i/cxgb3i_offload.c between commit
->> 44214ab474671e1ab5a860954db413bce52f7e04 ("[SCSI] cxgb3i: Fix a login
->> over vlan issue") from the scsi-rc-fixes tree and commit
->> 52ee264bca378835decb827d18b1d90b709ca4c9 ("cxgb3i: Fix a login over vlan
->> issue") from the net-current tree.
+> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+>> Hi all,
 >>
->> These seem to be different version of the same change.  The version in
->> the net-current tree looks wrong - it contains
+>> Today's linux-next build (s390x defconfig) failed like this:
 >>
->> if (dev->priv_flags&&  IFF_802_1Q_VLAN)
+>> kernel/panic.c:134: error: 'CALLER_ADDR0' undeclared (first use in this function)
 >>
->> but it presumably should be
->>
->> if (dev->priv_flags&  IFF_802_1Q_VLAN)
->>
->> as in the scsi-rc-fixes version.
+>> Caused by commit eba3fe4416f3cc2ce043fb304b6c35a69dca3bdb ("kernel: Use
+>> CALLER_ADDR0 macro").
 >
-> I checked the following into my tree so it should all work out.
->
-> commit d3af9dd04f8795dc2761ecfa56632e4d0df0dae2
-> Author: David S. Miller<davem@davemloft.net>
-> Date:   Mon Jan 4 14:36:40 2010 -0800
->
->      cxgb3i: Fix flags test.
->
->      As noticed by Stephen Rothwell.
->
->      Signed-off-by: David S. Miller<davem@davemloft.net>
->
-> diff --git a/drivers/scsi/cxgb3i/cxgb3i_offload.c b/drivers/scsi/cxgb3i/cxgb3i_offload.c
-> index 4b8a513..7449d46 100644
-> --- a/drivers/scsi/cxgb3i/cxgb3i_offload.c
-> +++ b/drivers/scsi/cxgb3i/cxgb3i_offload.c
-> @@ -1442,7 +1442,7 @@ static int is_cxgb3_dev(struct net_device *dev)
->   	struct cxgb3i_sdev_data *cdata;
->   	struct net_device *ndev = dev;
->
-> -	if (dev->priv_flags&&  IFF_802_1Q_VLAN)
-> +	if (dev->priv_flags&  IFF_802_1Q_VLAN)
->   		ndev = vlan_dev_real_dev(dev);
->
->   	write_lock(&cdata_rwlock);
+> Thanks - apparently CALLER_ADDR0 isnt generally available. I've reverted this
+> patch for now.
 
-Hi David,
-
-Sorry for the typo and thanks for fixing it.
-
-Regards
-Rakesh Ranjan
+Btw, we have _RET_IP_ which is pretty much the same thing and it is
+available everywhere (SLUB uses it).
