@@ -1,43 +1,65 @@
-From: Sachin Sant <sachinp@in.ibm.com>
-Subject: next Jan 6: drivers/s390/char/defkeymap build break
-Date: Wed, 06 Jan 2010 14:44:24 +0530
-Message-ID: <4B445470.8010402@in.ibm.com>
-References: <20100106180342.43844983.sfr@canb.auug.org.au>
+From: Ben Hutchings <bhutchings@solarflare.com>
+Subject: [PATCH] sfc: Fix DMA mapping cleanup in case of an error in TSO
+Date: Wed, 06 Jan 2010 15:59:02 +0000
+Message-ID: <1262793542.2777.6.camel@achroite.uk.solarflarecom.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e23smtp02.au.ibm.com ([202.81.31.144]:52457 "EHLO
-	e23smtp02.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754172Ab0AFJOa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Jan 2010 04:14:30 -0500
-In-Reply-To: <20100106180342.43844983.sfr@canb.auug.org.au>
+Received: from mail.solarflare.com ([216.237.3.220]:15198 "EHLO
+	exchange.solarflare.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932226Ab0AFP7G (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Jan 2010 10:59:06 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-s390@vger.kernel.org
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>, jason.wessel@windriver.com
+To: stable@kernel.org
+Cc: linux-next <linux-next@vger.kernel.org>
 
-Today's next fails to build on s390 with
+From: Neil Turton <nturton@solarflare.com>
 
- CC      drivers/s390/char/defkeymap.o
-drivers/s390/char/defkeymap.c:30: error: static declaration of 'shift_map' follows non-static declaration
-include/linux/keyboard.h:31: error: previous declaration of 'shift_map' was here
-drivers/s390/char/defkeymap.c:49: error: static declaration of 'ctrl_map' follows non-static declaration
-include/linux/keyboard.h:32: error: previous declaration of 'ctrl_map' was here
-make[2]: *** [drivers/s390/char/defkeymap.o] Error 1
-make[1]: *** [drivers/s390/char] Error 2
+commit a7ebd27a13757248863cd61e541af7fa9e7727ee upstream
 
-Probable cause could be commit 91570de..
-kgdboc,keyboard: Keyboard driver for kdb with kgdb
+We need buffer->len to remain valid to work out the correct address to
+be unmapped.  We therefore need to clear buffer->len after the unmap
+operation.
 
-Thanks
--Sachin
+Signed-off-by: Ben Hutchings <bhutchings@solarflare.com>
+---
+This applies to 2.6.31 and .32 with harmless fuzz.
+For 2.6.27, change 'true' to '1' before applying.
+
+Ben.
+
+ drivers/net/sfc/tx.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/sfc/tx.c b/drivers/net/sfc/tx.c
+index e669f94..a8b70ef 100644
+--- a/drivers/net/sfc/tx.c
++++ b/drivers/net/sfc/tx.c
+@@ -821,8 +821,6 @@ static void efx_enqueue_unwind(struct efx_tx_queue *tx_queue)
+ 					   EFX_TXQ_MASK];
+ 		efx_tsoh_free(tx_queue, buffer);
+ 		EFX_BUG_ON_PARANOID(buffer->skb);
+-		buffer->len = 0;
+-		buffer->continuation = true;
+ 		if (buffer->unmap_len) {
+ 			unmap_addr = (buffer->dma_addr + buffer->len -
+ 				      buffer->unmap_len);
+@@ -836,6 +834,8 @@ static void efx_enqueue_unwind(struct efx_tx_queue *tx_queue)
+ 					       PCI_DMA_TODEVICE);
+ 			buffer->unmap_len = 0;
+ 		}
++		buffer->len = 0;
++		buffer->continuation = true;
+ 	}
+ }
+ 
+-- 
+1.5.5
+
 
 -- 
-
----------------------------------
-Sachin Sant
-IBM Linux Technology Center
-India Systems and Technology Labs
-Bangalore, India
----------------------------------
+Ben Hutchings, Senior Software Engineer, Solarflare Communications
+Not speaking for my employer; that's the marketing department's job.
+They asked us to note that Solarflare product names are trademarked.
