@@ -1,70 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree with the wireless-current
- tree
-Date: Wed, 6 Jan 2010 13:25:20 +1100
-Message-ID: <20100106132520.89e75a15.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the wireless tree with Linus' tree
+Date: Wed, 6 Jan 2010 13:29:09 +1100
+Message-ID: <20100106132909.1faca672.sfr@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__6_Jan_2010_13_29_09_+1100_v2m8jnFjHMxhLUzu"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:48642 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753436Ab0AFC3R (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 5 Jan 2010 21:29:17 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zhu Yi <yi.zhu@intel.com>, David Miller <davem@davemloft.net>
+
+--Signature=_Wed__6_Jan_2010_13_29_09_+1100_v2m8jnFjHMxhLUzu
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Berg <johannes@sipsolutions.net>, "John W. Linville" <linville@tuxdriver.com>
-List-Id: linux-next.vger.kernel.org
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi John,
 
-Today's linux-next merge of the net tree got a conflict in
-net/mac80211/iface.c between commit
-cf0277e714a0db302a8f80e1b85fd61c32cf00b3 ("mac80211: fix skb buffering
-issue") from the wireless-current tree and commit
-47846c9b0c10808d9337d2e7d09361f3e0a0a71a ("mac80211: reduce reliance on
-netdev") from the net tree.
+Today's linux-next merge of the wireless tree got a conflict in
+drivers/net/wireless/iwlwifi/iwl-core.h between commit
+46e75f66677f5094bb51e91f9473128c4e907c7d ("net: fix for utsrelease.h
+moving to generated") from Linus' tree and commit
+61b91c1ea31d0d3ae5f848f7f7eab53dd691f8d0 ("iwlwifi: remove
+linux/utsrelease.h dependency") from the wireless tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
--- 
+The latter clearly removes the need for the former, so I used that.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc net/mac80211/iface.c
-index c261cdb,00a1f4c..0000000
---- a/net/mac80211/iface.c
-+++ b/net/mac80211/iface.c
-@@@ -659,35 -664,9 +672,35 @@@ static const struct net_device_ops ieee
-  	.ndo_start_xmit		= ieee80211_subif_start_xmit,
-  	.ndo_set_multicast_list = ieee80211_set_multicast_list,
-  	.ndo_change_mtu 	= ieee80211_change_mtu,
-- 	.ndo_set_mac_address 	= eth_mac_addr,
-+ 	.ndo_set_mac_address 	= ieee80211_change_mac,
- +	.ndo_select_queue	= ieee80211_netdev_select_queue,
-  };
-  
- +static u16 ieee80211_monitor_select_queue(struct net_device *dev,
- +					  struct sk_buff *skb)
- +{
- +	struct ieee80211_sub_if_data *sdata = IEEE80211_DEV_TO_SUB_IF(dev);
- +	struct ieee80211_local *local = sdata->local;
- +	struct ieee80211_hdr *hdr;
- +	struct ieee80211_radiotap_header *rtap = (void *)skb->data;
- +
- +	if (local->hw.queues < 4)
- +		return 0;
- +
- +	if (skb->len < 4 ||
- +	    skb->len < rtap->it_len + 2 /* frame control */)
- +		return 0; /* doesn't matter, frame will be dropped */
- +
- +	hdr = (void *)((u8 *)skb->data + rtap->it_len);
- +
- +	if (!ieee80211_is_data(hdr->frame_control)) {
- +		skb->priority = 7;
- +		return ieee802_1d_to_ac[skb->priority];
- +	}
- +
- +	return ieee80211_downgrade_queue(local, skb);
- +}
- +
-  static const struct net_device_ops ieee80211_monitorif_ops = {
-  	.ndo_open		= ieee80211_open,
-  	.ndo_stop		= ieee80211_stop,
+--Signature=_Wed__6_Jan_2010_13_29_09_+1100_v2m8jnFjHMxhLUzu
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAktD9XUACgkQjjKRsyhoI8xD8QCgv++MTZQzgyGjKkPdyj8+/lDC
+eOIAoIyd2wiQcLDzgxmbl25tt25eTBrU
+=O1gh
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__6_Jan_2010_13_29_09_+1100_v2m8jnFjHMxhLUzu--
