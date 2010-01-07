@@ -1,39 +1,62 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: linux-next: manual merge of the suspend tree with the input tree
-Date: Wed, 6 Jan 2010 20:30:40 -0800
-Message-ID: <20100107043040.GB2314@core.coreip.homeip.net>
-References: <20100107150723.b07d521b.sfr@canb.auug.org.au>
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: Re: next Jan 6: drivers/s390/char/defkeymap build break
+Date: Thu, 07 Jan 2010 11:33:51 +0530
+Message-ID: <4B457947.2040004@in.ibm.com>
+References: <20100106180342.43844983.sfr@canb.auug.org.au> <4B445470.8010402@in.ibm.com> <4B44B6F8.9070209@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pz0-f171.google.com ([209.85.222.171]:49609 "EHLO
-	mail-pz0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752389Ab0AGEaq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Jan 2010 23:30:46 -0500
-Content-Disposition: inline
-In-Reply-To: <20100107150723.b07d521b.sfr@canb.auug.org.au>
+Received: from e28smtp04.in.ibm.com ([122.248.162.4]:39655 "EHLO
+	e28smtp04.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932336Ab0AGGD4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Jan 2010 01:03:56 -0500
+In-Reply-To: <4B44B6F8.9070209@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jason Wessel <jason.wessel@windriver.com>
+Cc: linux-s390@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>
 
-On Thu, Jan 07, 2010 at 03:07:23PM +1100, Stephen Rothwell wrote:
-> Hi Rafael,
-> 
-> Today's linux-next merge of the suspend tree got a conflict in
-> drivers/input/serio/serio.c between commits
-> 386d8772980be01b94bd463ea1e745732d7eb502 ("Input: serio - use device core
-> to create 'id' attribute group") and
-> ddf1ffbd40c92ff1e58c45fa96d309788f7beb60 ("Input: serio - let device core
-> tell us if device was registered") from the input tree and commit
-> f543d6795ccfbd443a042e012a6aea15e4f4c87a ("PM: Allow serio input devices
-> to suspend/resume asynchronously") from the suspend tree.
-> 
-> I fixed it up (see below) but am not sure it this is the correct fix.  I
-> can carry this fix as necessary.
+Jason Wessel wrote:
+> Sachin Sant wrote:
+>   
+>> Today's next fails to build on s390 with
+>>
+>>  CC      drivers/s390/char/defkeymap.o
+>> drivers/s390/char/defkeymap.c:30: error: static declaration of 'shift_map' follows non-static declaration
+>> include/linux/keyboard.h:31: error: previous declaration of 'shift_map' was here
+>> drivers/s390/char/defkeymap.c:49: error: static declaration of 'ctrl_map' follows non-static declaration
+>> include/linux/keyboard.h:32: error: previous declaration of 'ctrl_map' was here
+>> make[2]: *** [drivers/s390/char/defkeymap.o] Error 1
+>> make[1]: *** [drivers/s390/char] Error 2
+>>
+>> Probable cause could be commit 91570de..
+>> kgdboc,keyboard: Keyboard driver for kdb with kgdb
+>>
+>> Thanks
+>> -Sachin
+>>
+>>   
+>>     
+> I had patched the include/linux/keyboard.h originally to expose the
+> definition which was already a global symbol.  It turns out the
+> kdb_keyboard.c implementation should not be accessing shift_map[]
+> directly.  It is accessed through a pointer to the data found in key_maps[].
+>
+> I folded in a change to this patch to not modify
+> include/linux/keyboard.h and to fix the kdb keyboard code to use key_maps[].
+>
+> Hopefully that fixes the problem.  Attached is the folded patch, which
+> reverts include/linux/keyboard.h to be unmodified by the kdb series.
+>   
+Yup that works. Thanks
 
-I think the fix is fine, however, do we still need to do async serio
-suspend, now that we sped up resetting psmouse and atkbd? Rafael?
 
 -- 
-Dmitry
+
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
