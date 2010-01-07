@@ -1,66 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the suspend tree with the input tree
-Date: Thu, 7 Jan 2010 15:07:23 +1100
-Message-ID: <20100107150723.b07d521b.sfr@canb.auug.org.au>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: linux-next: manual merge of the suspend tree with the input tree
+Date: Wed, 6 Jan 2010 20:30:40 -0800
+Message-ID: <20100107043040.GB2314@core.coreip.homeip.net>
+References: <20100107150723.b07d521b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52608 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756638Ab0AGEH0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 6 Jan 2010 23:07:26 -0500
+Received: from mail-pz0-f171.google.com ([209.85.222.171]:49609 "EHLO
+	mail-pz0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752389Ab0AGEaq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Jan 2010 23:30:46 -0500
+Content-Disposition: inline
+In-Reply-To: <20100107150723.b07d521b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Rafael,
+On Thu, Jan 07, 2010 at 03:07:23PM +1100, Stephen Rothwell wrote:
+> Hi Rafael,
+> 
+> Today's linux-next merge of the suspend tree got a conflict in
+> drivers/input/serio/serio.c between commits
+> 386d8772980be01b94bd463ea1e745732d7eb502 ("Input: serio - use device core
+> to create 'id' attribute group") and
+> ddf1ffbd40c92ff1e58c45fa96d309788f7beb60 ("Input: serio - let device core
+> tell us if device was registered") from the input tree and commit
+> f543d6795ccfbd443a042e012a6aea15e4f4c87a ("PM: Allow serio input devices
+> to suspend/resume asynchronously") from the suspend tree.
+> 
+> I fixed it up (see below) but am not sure it this is the correct fix.  I
+> can carry this fix as necessary.
 
-Today's linux-next merge of the suspend tree got a conflict in
-drivers/input/serio/serio.c between commits
-386d8772980be01b94bd463ea1e745732d7eb502 ("Input: serio - use device core
-to create 'id' attribute group") and
-ddf1ffbd40c92ff1e58c45fa96d309788f7beb60 ("Input: serio - let device core
-tell us if device was registered") from the input tree and commit
-f543d6795ccfbd443a042e012a6aea15e4f4c87a ("PM: Allow serio input devices
-to suspend/resume asynchronously") from the suspend tree.
+I think the fix is fine, however, do we still need to do async serio
+suspend, now that we sped up resetting psmouse and atkbd? Rafael?
 
-I fixed it up (see below) but am not sure it this is the correct fix.  I
-can carry this fix as necessary.
 -- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/input/serio/serio.c
-index c3b626e,42970e4..0000000
---- a/drivers/input/serio/serio.c
-+++ b/drivers/input/serio/serio.c
-@@@ -547,15 -555,22 +547,17 @@@ static void serio_add_port(struct seri
-  	}
-  
-  	list_add_tail(&serio->node, &serio_list);
- +
-  	if (serio->start)
-  		serio->start(serio);
- +
-  	error = device_add(&serio->dev);
-  	if (error)
- -		printk(KERN_ERR
- -			"serio: device_add() failed for %s (%s), error: %d\n",
- +		dev_err(&serio->dev,
- +			"device_add() failed for %s (%s), error: %d\n",
-  			serio->phys, serio->name, error);
- -	else {
- -		serio->registered = true;
- -		error = sysfs_create_group(&serio->dev.kobj, &serio_id_attr_group);
- -		if (error)
- -			printk(KERN_ERR
- -				"serio: sysfs_create_group() failed for %s (%s), error: %d\n",
- -				serio->phys, serio->name, error);
-++	else
-+ 		device_enable_async_suspend(&serio->dev, true);
- -	}
-  }
-  
-  /*
+Dmitry
