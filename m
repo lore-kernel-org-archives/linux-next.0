@@ -1,41 +1,43 @@
-From: Alexander Beregalov <a.beregalov@gmail.com>
-Subject: [PATCH] i7core_edac: fix memory leak of i7core_dev
-Date: Fri,  8 Jan 2010 05:27:30 +0300
-Message-ID: <1262917650-1901-1-git-send-email-a.beregalov@gmail.com>
+From: Sage Weil <sage@newdream.net>
+Subject: Re: linux-next: nfs/ceph tree build failure
+Date: Thu, 7 Jan 2010 20:51:45 -0800 (PST)
+Message-ID: <Pine.LNX.4.64.1001072048420.7474@cobra.newdream.net>
+References: <20100108111136.3feae8c6.sfr@canb.auug.org.au>
+ <1262909913.2659.47.camel@localhost> <20100108121903.6a096bc1.sfr@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-fx0-f225.google.com ([209.85.220.225]:32779 "EHLO
-	mail-fx0-f225.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751728Ab0AHC1g (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Jan 2010 21:27:36 -0500
-Received: by fxm25 with SMTP id 25so12287974fxm.21
-        for <linux-next@vger.kernel.org>; Thu, 07 Jan 2010 18:27:35 -0800 (PST)
+Received: from cobra.newdream.net ([66.33.216.30]:38729 "EHLO
+	cobra.newdream.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751259Ab0AHEvk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Jan 2010 23:51:40 -0500
+In-Reply-To: <20100108121903.6a096bc1.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org, mchehab@redhat.com
-Cc: Alexander Beregalov <a.beregalov@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Trond Myklebust <trond.myklebust@fys.uio.no>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Wu Fengguang <fengguang.wu@intel.com>
 
-Free already allocated i7core_dev.
+On Fri, 8 Jan 2010, Stephen Rothwell wrote:
 
-Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
----
- drivers/edac/i7core_edac.c |    4 +++-
- 1 files changed, 3 insertions(+), 1 deletions(-)
+> Hi Trond,
+> 
+> On Thu, 07 Jan 2010 19:18:33 -0500 Trond Myklebust <trond.myklebust@fys.uio.no> wrote:
+> >
+> > The patch itself looks correct to me.
+> 
+> Thanks for the confirmation.
 
-diff --git a/drivers/edac/i7core_edac.c b/drivers/edac/i7core_edac.c
-index e944b63..4de5a18 100644
---- a/drivers/edac/i7core_edac.c
-+++ b/drivers/edac/i7core_edac.c
-@@ -1215,8 +1215,10 @@ int i7core_get_onedevice(struct pci_dev **prev, int devno,
- 			return -ENOMEM;
- 		i7core_dev->pdev = kzalloc(sizeof(*i7core_dev->pdev) * n_devs,
- 					   GFP_KERNEL);
--		if (!i7core_dev->pdev)
-+		if (!i7core_dev->pdev) {
-+			kfree(i7core_dev);
- 			return -ENOMEM;
-+		}
- 		i7core_dev->socket = socket;
- 		i7core_dev->n_devs = n_devs;
- 		list_add_tail(&i7core_dev->list, &i7core_edac_list);
--- 
-1.6.6
+Yep, looks good.
+
+> > How would you like me to proceed? Should I revert the VM changes from
+> > the NFS linux-next tree, or would you be OK with keeping the above patch
+> > for now?
+> 
+> I am OK with keeping the patch - we just need to remember it during the
+> next merge window.
+
+Okay.  I can move it to my tree as well, where I assume it'll need to be 
+when it comes time to merge.
+
+Thanks-
+sage
