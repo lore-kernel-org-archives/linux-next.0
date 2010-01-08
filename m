@@ -1,103 +1,61 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for January 7 (pcmcia)
-Date: Thu, 7 Jan 2010 13:55:57 -0800
-Message-ID: <20100107135557.989c9585.rdunlap@xenotime.net>
-References: <20100107172134.af71c742.sfr@canb.auug.org.au>
-	<20100107101006.e59989a8.rdunlap@xenotime.net>
-	<20100107205728.GA19115@isilmar.linta.de>
-	<20100107210744.GA10320@sepie.suse.cz>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: nfs/ceph tree build failure
+Date: Fri, 8 Jan 2010 11:11:36 +1100
+Message-ID: <20100108111136.3feae8c6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kbuild-owner@vger.kernel.org>
-In-Reply-To: <20100107210744.GA10320@sepie.suse.cz>
-Sender: linux-kbuild-owner@vger.kernel.org
-To: Michal Marek <mmarek@suse.cz>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>, Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kbuild@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Valdis.Kletnieks@vt.edu
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:55301 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753260Ab0AHALk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 7 Jan 2010 19:11:40 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Sage Weil <sage@newdream.net>, Wu Fengguang <fengguang.wu@intel.com>
 
-On Thu, 7 Jan 2010 22:07:44 +0100 Michal Marek wrote:
+Hi all,
 
-> On Thu, Jan 07, 2010 at 09:57:28PM +0100, Dominik Brodowski wrote:
-> > Hey,
-> > 
-> > On Thu, Jan 07, 2010 at 10:10:06AM -0800, Randy Dunlap wrote:
-> > > > Hi all,
-> > > > 
-> > > > Changes since 20100106:
-> > > 
-> > > 
-> > > drivers/built-in.o: In function `yenta_probe':
-> > > yenta_socket.c:(.devinit.text+0x1e582): undefined reference to `pccard_nonstatic_ops'
-> > > 
-> > > CONFIG_PCCARD=y
-> > > CONFIG_PCMCIA=m
-> > > CONFIG_PCCARD_NONSTATIC=m
-> > > CONFIG_YENTA=y
-> > > 
-> > > so yenta code (built-in) tries to reference data that lives in a
-> > > loadable module.
-> > 
-> > Uh, that was I. If kconfig can't be fixed easily, I'll revert the change
-> 
-> Hi Randy, Dominik,
-> 
-> Please try this one-liner. The problem is that 'if X' and 'if X!=n' are not
-> the same in ternary logic.
-> 
-> Michal
-> 
-> From e7b12e70272484da2161c0b6c459f2eff2a989a8 Mon Sep 17 00:00:00 2001
-> From: Michal Marek <mmarek@suse.cz>
-> Date: Thu, 7 Jan 2010 21:03:11 +0100
-> Subject: [PATCH] pcmcia: fix yenta dependency on PCCARD_NONSTATIC
-> 
-> With CONFIG_PCMCIA=m and CONFIG_YENTA=y, we get
-> 
-> drivers/built-in.o: In function `yenta_probe':
-> yenta_socket.c:(.devinit.text+0x1e582): undefined reference to
-> `pccard_nonstatic_ops'
-> 
-> This is because
-> 
-> select PCCARD_NONSTATIC if PCMCIA
-> 
-> sets PCCARD_NONSTATIC = min(YENTA, PCMCIA). Change it to 'if PCMCIA!=n'
-> to remove the upper limit.
-> 
-> Reported-by: Randy Dunlap <rdunlap@xenotime.net>
-> Signed-off-by: Michal Marek <mmarek@suse.cz>
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+fs/ceph/addr.c: In function 'ceph_set_page_dirty':
+fs/ceph/addr.c:105: error: 'BDI_RECLAIMABLE' undeclared (first use in this function)
 
-Thanks.
+Commit 69f0302c4bd28846c3251e25976a2336cd6a6e6f ("VM: Split out the
+accounting of unstable writes from BDI_RECLAIMABLE") from the nfs tree
+interacts with commit 1d3576fd10f0d7a104204267b81cf84a07028dad ("ceph:
+address space operations") from the ceph tree.
 
-> ---
->  drivers/pcmcia/Kconfig |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/drivers/pcmcia/Kconfig b/drivers/pcmcia/Kconfig
-> index 5cea8ba..e196a19 100644
-> --- a/drivers/pcmcia/Kconfig
-> +++ b/drivers/pcmcia/Kconfig
-> @@ -84,7 +84,7 @@ config YENTA
->  	tristate "CardBus yenta-compatible bridge support"
->  	depends on PCI
->  	select CARDBUS if !EMBEDDED
-> -	select PCCARD_NONSTATIC if PCMCIA
-> +	select PCCARD_NONSTATIC if PCMCIA != n
->  	---help---
->  	  This option enables support for CardBus host bridges.  Virtually
->  	  all modern PCMCIA bridges are CardBus compatible.  A "bridge" is
-> -- 
-> 1.6.5.3
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+I applied the following patch for today (I am not sure it is correct) and
+will keep it as a merge fixup as necessary.
 
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 8 Jan 2010 11:04:27 +1100
+Subject: [PATCH] ceph: update for BDI_RECLAIMABLE change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
-~Randy
+ fs/ceph/addr.c |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
+
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index bf53581..eab46b0 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -101,8 +101,7 @@ static int ceph_set_page_dirty(struct page *page)
+ 
+ 		if (mapping_cap_account_dirty(mapping)) {
+ 			__inc_zone_page_state(page, NR_FILE_DIRTY);
+-			__inc_bdi_stat(mapping->backing_dev_info,
+-					BDI_RECLAIMABLE);
++			__inc_bdi_stat(mapping->backing_dev_info, BDI_DIRTY);
+ 			task_io_account_write(PAGE_CACHE_SIZE);
+ 		}
+ 		radix_tree_tag_set(&mapping->page_tree,
+-- 
+1.6.5.7
