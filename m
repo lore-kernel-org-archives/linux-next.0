@@ -1,59 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: nfs/ceph tree build failure
-Date: Fri, 8 Jan 2010 12:19:03 +1100
-Message-ID: <20100108121903.6a096bc1.sfr@canb.auug.org.au>
-References: <20100108111136.3feae8c6.sfr@canb.auug.org.au>
-	<1262909913.2659.47.camel@localhost>
-Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__8_Jan_2010_12_19_03_+1100_5UAFgA1/S_7U34Zn"
+From: Alexander Beregalov <a.beregalov@gmail.com>
+Subject: [PATCH] i7core_edac: fix memory leak of i7core_dev
+Date: Fri,  8 Jan 2010 05:27:30 +0300
+Message-ID: <1262917650-1901-1-git-send-email-a.beregalov@gmail.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40613 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754152Ab0AHBTK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 7 Jan 2010 20:19:10 -0500
-In-Reply-To: <1262909913.2659.47.camel@localhost>
+Received: from mail-fx0-f225.google.com ([209.85.220.225]:32779 "EHLO
+	mail-fx0-f225.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751728Ab0AHC1g (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Jan 2010 21:27:36 -0500
+Received: by fxm25 with SMTP id 25so12287974fxm.21
+        for <linux-next@vger.kernel.org>; Thu, 07 Jan 2010 18:27:35 -0800 (PST)
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Trond Myklebust <trond.myklebust@fys.uio.no>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Sage Weil <sage@newdream.net>, Wu Fengguang <fengguang.wu@intel.com>
+To: linux-next@vger.kernel.org, mchehab@redhat.com
+Cc: Alexander Beregalov <a.beregalov@gmail.com>
 
---Signature=_Fri__8_Jan_2010_12_19_03_+1100_5UAFgA1/S_7U34Zn
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Free already allocated i7core_dev.
 
-Hi Trond,
+Signed-off-by: Alexander Beregalov <a.beregalov@gmail.com>
+---
+ drivers/edac/i7core_edac.c |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
 
-On Thu, 07 Jan 2010 19:18:33 -0500 Trond Myklebust <trond.myklebust@fys.uio=
-.no> wrote:
->
-> The patch itself looks correct to me.
-
-Thanks for the confirmation.
-
-> How would you like me to proceed? Should I revert the VM changes from
-> the NFS linux-next tree, or would you be OK with keeping the above patch
-> for now?
-
-I am OK with keeping the patch - we just need to remember it during the
-next merge window.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__8_Jan_2010_12_19_03_+1100_5UAFgA1/S_7U34Zn
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAktGiAcACgkQjjKRsyhoI8yNAgCgqm5Ad/AF8O3eU8ndU8ZJc98I
-TTwAn1fIMvabHKzzxgX8dqYpQWTOEed0
-=80A/
------END PGP SIGNATURE-----
-
---Signature=_Fri__8_Jan_2010_12_19_03_+1100_5UAFgA1/S_7U34Zn--
+diff --git a/drivers/edac/i7core_edac.c b/drivers/edac/i7core_edac.c
+index e944b63..4de5a18 100644
+--- a/drivers/edac/i7core_edac.c
++++ b/drivers/edac/i7core_edac.c
+@@ -1215,8 +1215,10 @@ int i7core_get_onedevice(struct pci_dev **prev, int devno,
+ 			return -ENOMEM;
+ 		i7core_dev->pdev = kzalloc(sizeof(*i7core_dev->pdev) * n_devs,
+ 					   GFP_KERNEL);
+-		if (!i7core_dev->pdev)
++		if (!i7core_dev->pdev) {
++			kfree(i7core_dev);
+ 			return -ENOMEM;
++		}
+ 		i7core_dev->socket = socket;
+ 		i7core_dev->n_devs = n_devs;
+ 		list_add_tail(&i7core_dev->list, &i7core_edac_list);
+-- 
+1.6.6
