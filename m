@@ -1,66 +1,56 @@
-From: Michal Marek <mmarek@suse.cz>
-Subject: Re: linux-next: Tree for January 7 (pcmcia)
-Date: Fri, 08 Jan 2010 20:24:43 +0100
-Message-ID: <4B47867B.4080700@suse.cz>
-References: <20100107172134.af71c742.sfr@canb.auug.org.au> <20100107101006.e59989a8.rdunlap@xenotime.net> <20100107205728.GA19115@isilmar.linta.de> <20100107210744.GA10320@sepie.suse.cz> <20100107135557.989c9585.rdunlap@xenotime.net> <20100108175423.GA29713@comet.dominikbrodowski.net>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH/next] mac8390: Fix build breakage
+Date: Sat, 9 Jan 2010 14:21:28 +0100 (CET)
+Message-ID: <alpine.DEB.2.00.1001091420080.21892@ayla.of.borg>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kbuild-owner@vger.kernel.org>
-In-Reply-To: <20100108175423.GA29713@comet.dominikbrodowski.net>
-Sender: linux-kbuild-owner@vger.kernel.org
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Randy Dunlap <rdunlap@xenotime.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kbuild@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Valdis.Kletnieks@vt.edu
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from gerard.telenet-ops.be ([195.130.132.48]:55781 "EHLO
+	gerard.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752561Ab0AINVa (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 9 Jan 2010 08:21:30 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Joe Perches <joe@perches.com>, "David S. Miller" <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, netdev@vger.kernel.org
 
-Dominik Brodowski wrote:
-> From 77f9eb4599f1d0f5a43cadece9809018b534e308 Mon Sep 17 00:00:00 2001
-> From: Michal Marek <mmarek@suse.cz>
-> Date: Thu, 7 Jan 2010 21:03:11 +0100
-> Subject: [PATCH] pcmcia: fix yenta dependency on PCCARD_NONSTATIC
-> 
-> With CONFIG_PCMCIA=m and CONFIG_YENTA=y, we get
-> 
-> drivers/built-in.o: In function `yenta_probe':
-> yenta_socket.c:(.devinit.text+0x1e582): undefined reference to
-> `pccard_nonstatic_ops'
-> 
-> This is because
-> 
-> select PCCARD_NONSTATIC if PCMCIA
-> 
-> sets PCCARD_NONSTATIC = min(YENTA, PCMCIA). Change it to 'if PCMCIA!=n'
-> to remove the upper limit.
-> 
-> [linux@dominikbrodowski.net: propagate change to PCMICA_M8XX]
-> Reported-by: Randy Dunlap <rdunlap@xenotime.net>
-> Signed-off-by: Michal Marek <mmarek@suse.cz>
-> Acked-by: Randy Dunlap <rdunlap@xenotime.net>
-> Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
-> 
-> diff --git a/drivers/pcmcia/Kconfig b/drivers/pcmcia/Kconfig
-> index efc51b9..e8f35da 100644
-> --- a/drivers/pcmcia/Kconfig
-> +++ b/drivers/pcmcia/Kconfig
-> @@ -84,7 +84,7 @@ config YENTA
->  	tristate "CardBus yenta-compatible bridge support"
->  	depends on PCI
->  	select CARDBUS if !EMBEDDED
-> -	select PCCARD_NONSTATIC if PCMCIA
-> +	select PCCARD_NONSTATIC if PCMCIA != n
->  	---help---
->  	  This option enables support for CardBus host bridges.  Virtually
->  	  all modern PCMCIA bridges are CardBus compatible.  A "bridge" is
-> @@ -161,8 +161,8 @@ config TCIC
->  
->  config PCMCIA_M8XX
->  	tristate "MPC8xx PCMCIA support"
-> -	depends on PCMCIA && PPC && 8xx
-> -	select PCCARD_IODYN if PCMCIA
-> +	depends on PCCARD && PPC && 8xx
-> +	select PCCARD_IODYN if PCMCIA != n
+commit 18c0019102228875cb0f6f252dad5148491e96b2 ("drivers/net/mac8390.c:
+Convert printk(KERN_<level> to pr_<level>(") broke the build:
 
-PCCARD_IODYN is bool, so this change is not necessary (but doesn't do
-any harm either).
+| drivers/net/mac8390.c:306: error: expected ')' before 'version'
 
-Michal
+as "version" is not a string literal, but a variable.
+
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+http://kisskb.ellerman.id.au/kisskb/buildresult/1985016/
+
+ drivers/net/mac8390.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/net/mac8390.c b/drivers/net/mac8390.c
+index c70bd68..a876867 100644
+--- a/drivers/net/mac8390.c
++++ b/drivers/net/mac8390.c
+@@ -303,7 +303,7 @@ static bool __init mac8390_init(struct net_device *dev, struct nubus_dev *ndev,
+ 	int offset;
+ 	volatile unsigned short *i;
+ 
+-	printk_once(KERN_INFO pr_fmt(version));
++	printk_once(KERN_INFO pr_fmt("%s"), version);
+ 
+ 	dev->irq = SLOT2IRQ(ndev->board->slot);
+ 	/* This is getting to be a habit */
+-- 
+1.6.0.4
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
