@@ -1,28 +1,44 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH/next] mac8390: Fix build breakage
-Date: Sat, 09 Jan 2010 23:00:39 -0800 (PST)
-Message-ID: <20100109.230039.01036685.davem@davemloft.net>
-References: <alpine.DEB.2.00.1001091420080.21892@ayla.of.borg>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree with the Linus' tree
+Date: Mon, 11 Jan 2010 13:24:18 +1100
+Message-ID: <20100111132418.8605a86c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <alpine.DEB.2.00.1001091420080.21892@ayla.of.borg>
-Sender: netdev-owner@vger.kernel.org
-To: geert@linux-m68k.org
-Cc: joe@perches.com, linux-next@vger.kernel.org, netdev@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:43653 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751500Ab0AKCYV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 10 Jan 2010 21:24:21 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sarveshwar Bandi <sarveshwarb@serverengines.com>
 
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Sat, 9 Jan 2010 14:21:28 +0100 (CET)
+Hi all,
 
-> commit 18c0019102228875cb0f6f252dad5148491e96b2 ("drivers/net/mac8390.c:
-> Convert printk(KERN_<level> to pr_<level>(") broke the build:
-> 
-> | drivers/net/mac8390.c:306: error: expected ')' before 'version'
-> 
-> as "version" is not a string literal, but a variable.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Today's linux-next merge of the net tree got a conflict in
+drivers/net/benet/be_cmds.h between commit
+fced9999ed7f6975fbb2350a73048918ba60a773 ("be2net: Bug fix to config NIC
+appropriately before loopback test") from the Linus' tree and commit
+368c0ca2f0a69b0818fbc1796d8e21ff02a61b4c ("be2net: implements ethtool
+function to read eeprom data") from the net tree.
 
-Applied, thanks.
+Just overlapping additions.  I have fixed ti up (see below) and can carry
+the fix for a while.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/net/benet/be_cmds.h
+index c002b83,6eed512..0000000
+--- a/drivers/net/benet/be_cmds.h
++++ b/drivers/net/benet/be_cmds.h
+@@@ -926,5 -926,5 +940,7 @@@ extern int be_cmd_loopback_test(struct 
+  				u32 num_pkts, u64 pattern);
+  extern int be_cmd_ddr_dma_test(struct be_adapter *adapter, u64 pattern,
+  			u32 byte_cnt, struct be_dma_mem *cmd);
+ +extern int be_cmd_set_loopback(struct be_adapter *adapter, u8 port_num,
+ +				u8 loopback_type, u8 enable);
++ extern int be_cmd_get_seeprom_data(struct be_adapter *adapter,
++ 				struct be_dma_mem *nonemb_cmd);
