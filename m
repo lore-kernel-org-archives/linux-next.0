@@ -1,49 +1,107 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: net tree build failure
-Date: Mon, 11 Jan 2010 00:02:05 -0800 (PST)
-Message-ID: <20100111.000205.164473435.davem@davemloft.net>
-References: <20100111184205.8d53fe5b.Stephen@Rothwell.id.au>
+From: Stephen Rothwell <Stephen@Rothwell.id.au>
+Subject: linux-next: kvm tree build failure
+Date: Mon, 11 Jan 2010 19:07:49 +1100
+Message-ID: <20100111190749.0a74d445.Stephen@Rothwell.id.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:56820
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752152Ab0AKIB4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 11 Jan 2010 03:01:56 -0500
-In-Reply-To: <20100111184205.8d53fe5b.Stephen@Rothwell.id.au>
+Received: from ozlabs.org ([203.10.76.45]:39871 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752409Ab0AKIHu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 11 Jan 2010 03:07:50 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen@Rothwell.id.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, joe@perches.com
+To: Avi Kivity <avi@qumranet.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Graf <agraf@suse.de>
 
-From: Stephen Rothwell <Stephen@Rothwell.id.au>
-Date: Mon, 11 Jan 2010 18:42:05 +1100
+Hi Avi,
 
-> Hi all,
-> 
-> Today's linux-next build (powerpc_allnoconfig) failed like this:
-> 
-> lib/lib.a(vsprintf.o): In function `pointer':
-> vsprintf.c:(.text+0x21ba): undefined reference to `byte_rev_table'
-> vsprintf.c:(.text+0x21c2): undefined reference to `byte_rev_table'
-> 
-> Caused by commit bc7259a2ce764ea16200eb9e53f6e136e918d065
-> ("lib/vsprintf.c: Add %pMF to format FDDI bit reversed MAC addresses")
-> from the net tree.
-> 
-> I applied the following fixup patch (and can carry it for a while):
-> (BTW after this patch, CONFIG_BITREVERSE appears to not be used anywhere
-> except where is is selected in Kconfig files.)
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 11 Jan 2010 18:37:16 +1100
-> Subject: [PATCH] net: vsprintf now depends on the byte_rev_table
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Today's linux-next build (powerpc ppc44x_defconfig) failed like this:
 
-Thanks I'll apply this and then add a commit which kills
-off CONFIG_BITREVERSE.
+arch/powerpc/kvm/booke_emulate.c: In function 'kvmppc_booke_emulate_mfspr':
+arch/powerpc/kvm/booke_emulate.c:201: error: expected ')' before ';' token
+arch/powerpc/kvm/booke_emulate.c:203: error: expected ')' before ';' token
+arch/powerpc/kvm/booke_emulate.c:205: error: expected ')' before ';' token
+arch/powerpc/kvm/booke_emulate.c:207: error: expected ')' before ';' token
+arch/powerpc/kvm/booke_emulate.c:209: error: expected ')' before ';' token
+arch/powerpc/kvm/booke_emulate.c:211: error: expected ')' before ';' token
+arch/powerpc/kvm/44x_emulate.c: In function 'kvmppc_core_emulate_mfspr':
+arch/powerpc/kvm/44x_emulate.c:171: error: lvalue required as left operand of assignment
+arch/powerpc/kvm/44x_emulate.c:173: error: lvalue required as left operand of assignment
+arch/powerpc/kvm/44x_emulate.c:175: error: lvalue required as left operand of assignment
+arch/powerpc/kvm/44x_emulate.c:177: error: lvalue required as left operand of assignment
 
-Thanks!
+Caused by commit 7f31fad9aad3bb9df95793d72e037bb4d587ee83 ("KVM: PPC: Use
+accessor functions for GPR access").  I couldn't easily revert that
+commit, so I applied the following fixup patch instead.
+
+More care is required ... please at least build test.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 11 Jan 2010 18:50:23 +1100
+Subject: [PATCH] kvm: fixup for botched PPC update
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/powerpc/kvm/44x_emulate.c   |    8 ++++----
+ arch/powerpc/kvm/booke_emulate.c |   12 ++++++------
+ 2 files changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/arch/powerpc/kvm/44x_emulate.c b/arch/powerpc/kvm/44x_emulate.c
+index 0ff0d40..65ea083 100644
+--- a/arch/powerpc/kvm/44x_emulate.c
++++ b/arch/powerpc/kvm/44x_emulate.c
+@@ -168,13 +168,13 @@ int kvmppc_core_emulate_mfspr(struct kvm_vcpu *vcpu, int sprn, int rt)
+ 
+ 	switch (sprn) {
+ 	case SPRN_PID:
+-		kvmppc_get_gpr(vcpu, rt) = vcpu->arch.pid; break;
++		kvmppc_set_gpr(vcpu, rt, vcpu->arch.pid); break;
+ 	case SPRN_MMUCR:
+-		kvmppc_get_gpr(vcpu, rt) = vcpu->arch.mmucr; break;
++		kvmppc_set_gpr(vcpu, rt, vcpu->arch.mmucr); break;
+ 	case SPRN_CCR0:
+-		kvmppc_get_gpr(vcpu, rt) = vcpu->arch.ccr0; break;
++		kvmppc_set_gpr(vcpu, rt, vcpu->arch.ccr0); break;
+ 	case SPRN_CCR1:
+-		kvmppc_get_gpr(vcpu, rt) = vcpu->arch.ccr1; break;
++		kvmppc_set_gpr(vcpu, rt, vcpu->arch.ccr1); break;
+ 	default:
+ 		emulated = kvmppc_booke_emulate_mfspr(vcpu, sprn, rt);
+ 	}
+diff --git a/arch/powerpc/kvm/booke_emulate.c b/arch/powerpc/kvm/booke_emulate.c
+index ab1786c..cbc790e 100644
+--- a/arch/powerpc/kvm/booke_emulate.c
++++ b/arch/powerpc/kvm/booke_emulate.c
+@@ -198,17 +198,17 @@ int kvmppc_booke_emulate_mfspr(struct kvm_vcpu *vcpu, int sprn, int rt)
+ 
+ 	switch (sprn) {
+ 	case SPRN_IVPR:
+-		kvmppc_set_gpr(vcpu, rt, vcpu->arch.ivpr; break);
++		kvmppc_set_gpr(vcpu, rt, vcpu->arch.ivpr); break;
+ 	case SPRN_DEAR:
+-		kvmppc_set_gpr(vcpu, rt, vcpu->arch.dear; break);
++		kvmppc_set_gpr(vcpu, rt, vcpu->arch.dear); break;
+ 	case SPRN_ESR:
+-		kvmppc_set_gpr(vcpu, rt, vcpu->arch.esr; break);
++		kvmppc_set_gpr(vcpu, rt, vcpu->arch.esr); break;
+ 	case SPRN_DBCR0:
+-		kvmppc_set_gpr(vcpu, rt, vcpu->arch.dbcr0; break);
++		kvmppc_set_gpr(vcpu, rt, vcpu->arch.dbcr0); break;
+ 	case SPRN_DBCR1:
+-		kvmppc_set_gpr(vcpu, rt, vcpu->arch.dbcr1; break);
++		kvmppc_set_gpr(vcpu, rt, vcpu->arch.dbcr1); break;
+ 	case SPRN_DBSR:
+-		kvmppc_set_gpr(vcpu, rt, vcpu->arch.dbsr; break);
++		kvmppc_set_gpr(vcpu, rt, vcpu->arch.dbsr); break;
+ 
+ 	case SPRN_IVOR0:
+ 		kvmppc_set_gpr(vcpu, rt, vcpu->arch.ivor[BOOKE_IRQPRIO_CRITICAL]);
+-- 
+1.6.5.7
+
+
+-- 
+Cheers,
+Stephen Rothwell                    Stephen@Rothwell.id.au
