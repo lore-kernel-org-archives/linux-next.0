@@ -1,87 +1,119 @@
-From: Haojian Zhuang <haojian.zhuang@gmail.com>
+From: Samuel Ortiz <sameo@linux.intel.com>
 Subject: Re: linux-next: mfd tree build failure
-Date: Mon, 11 Jan 2010 07:02:14 -0500
-Message-ID: <771cded01001110402p1d2c475bgdde077f066e7f22d@mail.gmail.com>
+Date: Mon, 11 Jan 2010 13:33:39 +0100
+Message-ID: <20100111123338.GA15938@sortiz.org>
 References: <20100111160232.e37e5393.sfr@canb.auug.org.au>
-	 <20100111105126.GD3440@sirena.org.uk>
+ <20100111105126.GD3440@sirena.org.uk>
+ <771cded01001110402p1d2c475bgdde077f066e7f22d@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=005045029625e36550047ce24e69
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-px0-f174.google.com ([209.85.216.174]:34644 "EHLO
-	mail-px0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753217Ab0AKMCP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Jan 2010 07:02:15 -0500
-In-Reply-To: <20100111105126.GD3440@sirena.org.uk>
+Received: from mga06.intel.com ([134.134.136.21]:6674 "EHLO
+	orsmga101.jf.intel.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752178Ab0AKMcE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Jan 2010 07:32:04 -0500
+Content-Disposition: inline
+In-Reply-To: <771cded01001110402p1d2c475bgdde077f066e7f22d@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Samuel Ortiz <sameo@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Haojian Zhuang <haojian.zhuang@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---005045029625e36550047ce24e69
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+Hi Haojian,
 
-On Mon, Jan 11, 2010 at 5:51 AM, Mark Brown
-<broonie@opensource.wolfsonmicro.com> wrote:
-> On Mon, Jan 11, 2010 at 04:02:32PM +1100, Stephen Rothwell wrote:
->> Hi Sam,
->
->> Today's linux-next build (x86_64_allmodconfig, gcc 4.4.0, binutils
->> 2.19.1) failed like this:
->
->> ERROR: "max8925_set_bits" [drivers/video/backlight/max8925_bl.ko] undefi=
-ned!
->> ERROR: "max8925_reg_write" [drivers/video/backlight/max8925_bl.ko] undef=
-ined!
->> ERROR: "max8925_reg_read" [drivers/video/backlight/max8925_bl.ko] undefi=
-ned!
->> ERROR: "max8925_set_bits" [drivers/regulator/max8925.ko] undefined!
->> ERROR: "max8925_reg_read" [drivers/regulator/max8925.ko] undefined!
->
->> I am not sure what caused this, so I have used the version of the mfd
->> tree from next-20100108 for today.
->
-> CCing in Haojian who did the driver. =A0I've not looked but I'd guess tha=
-t
-> the issue is missing EXPORT_SYMBOL{,_GPL}s on the symbols above.
->
+On Mon, Jan 11, 2010 at 07:02:14AM -0500, Haojian Zhuang wrote:
+> On Mon, Jan 11, 2010 at 5:51 AM, Mark Brown
+> <broonie@opensource.wolfsonmicro.com> wrote:
+> > On Mon, Jan 11, 2010 at 04:02:32PM +1100, Stephen Rothwell wrote:
+> >> Hi Sam,
+> >
+> >> Today's linux-next build (x86_64_allmodconfig, gcc 4.4.0, binutils
+> >> 2.19.1) failed like this:
+> >
+> >> ERROR: "max8925_set_bits" [drivers/video/backlight/max8925_bl.ko] =
+undefined!
+> >> ERROR: "max8925_reg_write" [drivers/video/backlight/max8925_bl.ko]=
+ undefined!
+> >> ERROR: "max8925_reg_read" [drivers/video/backlight/max8925_bl.ko] =
+undefined!
+> >> ERROR: "max8925_set_bits" [drivers/regulator/max8925.ko] undefined=
+!
+> >> ERROR: "max8925_reg_read" [drivers/regulator/max8925.ko] undefined=
+!
+> >
+> >> I am not sure what caused this, so I have used the version of the =
+mfd
+> >> tree from next-20100108 for today.
+> >
+> > CCing in Haojian who did the driver. =A0I've not looked but I'd gue=
+ss that
+> > the issue is missing EXPORT_SYMBOL{,_GPL}s on the symbols above.
+> >
+>=20
+> I'm sorry on inconvience. Now I attache the fix.
+>=20
+> Samuel,
+> Could you help to review and merge this patch?
+Actually, I fixed it. The problem was caused by the mfd and regulator d=
+rivers
+having the same name, i.e. max8925.ko. I renamed the regulator driver t=
+o
+max8925-regulator.ko, which also makes it more consistent with the rest=
+ of the
+regulator drivers.
 
-I'm sorry on inconvience. Now I attache the fix.
+Stephen, the fix is already pushed, you can resume pulling the latest m=
+fd
+bits. Thanks for letting us know about the failure.
 
-Samuel,
-Could you help to review and merge this patch?
+Cheers,
+Samuel.
 
-It's not caused by EXPORT_SYMBOL{,_GPL}. If I build in max8925 mfd
-driver, issue is resolved.
-Regulator subsystem could only be built in. And 8925 regulator driver
-calls i2c operations that is defined in mfd driver. If 8925 regulator
-is built it and mfd 8925 is built as module, it will cause linking
-error.
 
-Thanks
-Haojian
+> It's not caused by EXPORT_SYMBOL{,_GPL}. If I build in max8925 mfd
+> driver, issue is resolved.
+> Regulator subsystem could only be built in. And 8925 regulator driver
+> calls i2c operations that is defined in mfd driver. If 8925 regulator
+> is built it and mfd 8925 is built as module, it will cause linking
+> error.
+>=20
+> Thanks
+> Haojian
 
---005045029625e36550047ce24e69
-Content-Type: text/x-patch; charset=US-ASCII; name="0001-mfd-set-max8925-as-built-in.patch"
-Content-Disposition: attachment;
-	filename="0001-mfd-set-max8925-as-built-in.patch"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_g4bntwn00
+> From cc08aae952302cbc4445f4db49fdfab5f9d779ed Mon Sep 17 00:00:00 200=
+1
+> From: Haojian Zhuang <haojian.zhuang@marvell.com>
+> Date: Mon, 11 Jan 2010 14:38:39 -0500
+> Subject: [PATCH] mfd: set max8925 as built in
+>=20
+> Since regulator module is always built-in, MFD driver have to be buil=
+t in.
+> If MFD driver is built as module, linking error will occur.
+>=20
+> Signed-off-by: Haojian Zhuang <haojian.zhuang@marvell.com>
+> ---
+>  drivers/mfd/Kconfig |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+>=20
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index 94e4d5e..b892c38 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -186,7 +186,7 @@ config PMIC_ADP5520
+> =20
+>  config MFD_MAX8925
+>  	tristate "Maxim Semiconductor MAX8925 PMIC Support"
+> -	depends on I2C
+> +	depends on I2C=3Dy
+>  	select MFD_CORE
+>  	help
+>  	  Say yes here to support for Maxim Semiconductor MAX8925. This is
+> --=20
+> 1.5.6.5
+>=20
 
-RnJvbSBjYzA4YWFlOTUyMzAyY2JjNDQ0NWY0ZGI0OWZkZmFiNWY5ZDc3OWVkIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBIYW9qaWFuIFpodWFuZyA8aGFvamlhbi56aHVhbmdAbWFydmVs
-bC5jb20+CkRhdGU6IE1vbiwgMTEgSmFuIDIwMTAgMTQ6Mzg6MzkgLTA1MDAKU3ViamVjdDogW1BB
-VENIXSBtZmQ6IHNldCBtYXg4OTI1IGFzIGJ1aWx0IGluCgpTaW5jZSByZWd1bGF0b3IgbW9kdWxl
-IGlzIGFsd2F5cyBidWlsdC1pbiwgTUZEIGRyaXZlciBoYXZlIHRvIGJlIGJ1aWx0IGluLgpJZiBN
-RkQgZHJpdmVyIGlzIGJ1aWx0IGFzIG1vZHVsZSwgbGlua2luZyBlcnJvciB3aWxsIG9jY3VyLgoK
-U2lnbmVkLW9mZi1ieTogSGFvamlhbiBaaHVhbmcgPGhhb2ppYW4uemh1YW5nQG1hcnZlbGwuY29t
-PgotLS0KIGRyaXZlcnMvbWZkL0tjb25maWcgfCAgICAyICstCiAxIGZpbGVzIGNoYW5nZWQsIDEg
-aW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL21mZC9L
-Y29uZmlnIGIvZHJpdmVycy9tZmQvS2NvbmZpZwppbmRleCA5NGU0ZDVlLi5iODkyYzM4IDEwMDY0
-NAotLS0gYS9kcml2ZXJzL21mZC9LY29uZmlnCisrKyBiL2RyaXZlcnMvbWZkL0tjb25maWcKQEAg
-LTE4Niw3ICsxODYsNyBAQCBjb25maWcgUE1JQ19BRFA1NTIwCiAKIGNvbmZpZyBNRkRfTUFYODky
-NQogCXRyaXN0YXRlICJNYXhpbSBTZW1pY29uZHVjdG9yIE1BWDg5MjUgUE1JQyBTdXBwb3J0Igot
-CWRlcGVuZHMgb24gSTJDCisJZGVwZW5kcyBvbiBJMkM9eQogCXNlbGVjdCBNRkRfQ09SRQogCWhl
-bHAKIAkgIFNheSB5ZXMgaGVyZSB0byBzdXBwb3J0IGZvciBNYXhpbSBTZW1pY29uZHVjdG9yIE1B
-WDg5MjUuIFRoaXMgaXMKLS0gCjEuNS42LjUKCg==
---005045029625e36550047ce24e69--
+
+--=20
+Intel Open Source Technology Centre
+http://oss.intel.com/
