@@ -1,75 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: kvm tree build failure
-Date: Mon, 11 Jan 2010 19:21:05 +1100
-Message-ID: <20100111192105.304382e4.sfr@canb.auug.org.au>
-References: <20100111190749.0a74d445.Stephen@Rothwell.id.au>
+Subject: linux-next: kvm tree build warning
+Date: Mon, 11 Jan 2010 19:25:08 +1100
+Message-ID: <20100111192508.d98b1c2b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1752535Ab0AKIVL@vger.kernel.org>
-In-Reply-To: <20100111190749.0a74d445.Stephen@Rothwell.id.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__11_Jan_2010_19_25_08_+1100_u7fLP1zzrbtuzL2b"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:37776 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752580Ab0AKIZN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 11 Jan 2010 03:25:13 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Avi Kivity <avi@qumranet.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Graf <agraf@suse.de>
-List-Id: linux-next.vger.kernel.org
+
+--Signature=_Mon__11_Jan_2010_19_25_08_+1100_u7fLP1zzrbtuzL2b
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi Avi,
 
-On Mon, 11 Jan 2010 19:07:49 +1100 Stephen Rothwell <Stephen@Rothwell.id.au> wrote:
->
-> Caused by commit 7f31fad9aad3bb9df95793d72e037bb4d587ee83 ("KVM: PPC: Use
-> accessor functions for GPR access").  I couldn't easily revert that
-> commit, so I applied the following fixup patch instead.
+Today's linux-next build (powerpc allyesconfig) produced this warning:
 
-After which I got this:
+arch/powerpc/kvm/powerpc.c: In function 'kvm_arch_vcpu_ioctl_run':
+arch/powerpc/kvm/powerpc.c:278: warning: 'gpr' may be used uninitialized in=
+ this function
 
-arch/powerpc/kvm/built-in.o: In function `kvmppc_handler_0':
-(.text+0x69ba): undefined reference to `VCPU_GPRS'
-arch/powerpc/kvm/built-in.o: In function `kvmppc_handler_0':
-(.text+0x69be): undefined reference to `VCPU_GPRS'
-arch/powerpc/kvm/built-in.o: In function `kvmppc_handler_1':
-(.text+0x69e6): undefined reference to `VCPU_GPRS'
-arch/powerpc/kvm/built-in.o: In function `kvmppc_handler_1':
-(.text+0x69ea): undefined reference to `VCPU_GPRS'
-arch/powerpc/kvm/built-in.o: In function `kvmppc_handler_2':
-(.text+0x6a12): undefined reference to `VCPU_GPRS'
-arch/powerpc/kvm/built-in.o:(.text+0x6a16): more undefined references to `VCPU_GPRS' follow
+Yes, I know it is probably a false positive.
 
-Caused by commit f38ae173fffd673d4bc5cb4062d9dc27146cfb4a ("KVM: PPC: Use
-PACA backed shadow vcpu").  I have applied the following fixup patch for
-today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 11 Jan 2010 19:15:02 +1100
-Subject: [PATCH] kvm: another PPC fixup (asm-offsets)
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/powerpc/kernel/asm-offsets.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/arch/powerpc/kernel/asm-offsets.c b/arch/powerpc/kernel/asm-offsets.c
-index be90ced..16dab65 100644
---- a/arch/powerpc/kernel/asm-offsets.c
-+++ b/arch/powerpc/kernel/asm-offsets.c
-@@ -437,11 +437,11 @@ int main(void)
- 	DEFINE(VCPU_HIGHMEM_HANDLER, offsetof(struct kvm_vcpu, arch.highmem_handler));
- 	DEFINE(VCPU_RMCALL, offsetof(struct kvm_vcpu, arch.rmcall));
- 	DEFINE(VCPU_HFLAGS, offsetof(struct kvm_vcpu, arch.hflags));
--	DEFINE(VCPU_GPRS, offsetof(struct kvm_vcpu, arch.gpr));
- #else
- 	DEFINE(VCPU_CR, offsetof(struct kvm_vcpu, arch.cr));
- 	DEFINE(VCPU_XER, offsetof(struct kvm_vcpu, arch.xer));
- #endif /* CONFIG_PPC64 */
-+	DEFINE(VCPU_GPRS, offsetof(struct kvm_vcpu, arch.gpr));
- #endif
- #ifdef CONFIG_44x
- 	DEFINE(PGD_T_LOG2, PGD_T_LOG2);
--- 
-1.6.5.7
-
-
--- 
+Introduced by commit 7f31fad9aad3bb9df95793d72e037bb4d587ee83 ("KVM: PPC:
+Use accessor functions for GPR access").
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__11_Jan_2010_19_25_08_+1100_u7fLP1zzrbtuzL2b
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAktK4GQACgkQjjKRsyhoI8yJJQCgrH8CfDAN+kQjSMpC/8XPsXwU
+Fv0AoJujyY5vFiKCoHROSkIOPyCjuDoE
+=mwN/
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__11_Jan_2010_19_25_08_+1100_u7fLP1zzrbtuzL2b--
