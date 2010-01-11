@@ -1,53 +1,69 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the net tree with Linus' tree
-Date: Mon, 11 Jan 2010 19:49:41 +1100
-Message-ID: <20100111194941.1e20b4a8.sfr@canb.auug.org.au>
-References: <20100111133109.a191ee64.sfr@canb.auug.org.au>
-	<20100110.225055.167520274.davem@davemloft.net>
-	<20100111185645.a66c6c8a.sfr@canb.auug.org.au>
-	<20100110.235927.83024662.davem@davemloft.net>
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: -next Jan 11 : s390/kvm build failure
+Date: Mon, 11 Jan 2010 15:45:33 +0530
+Message-ID: <4B4AFA45.8000004@in.ibm.com>
+References: <20100111194431.c103db9b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__11_Jan_2010_19_49_41_+1100_KVEspoWUy/3q/dl2"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47530 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752555Ab0AKItq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 11 Jan 2010 03:49:46 -0500
-In-Reply-To: <20100110.235927.83024662.davem@davemloft.net>
+Received: from e23smtp05.au.ibm.com ([202.81.31.147]:43123 "EHLO
+	e23smtp05.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750959Ab0AKKPg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Jan 2010 05:15:36 -0500
+In-Reply-To: <20100111194431.c103db9b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, hawk@comx.dk, hadi@cyberus.ca
+To: linux-s390@vger.kernel.org
+Cc: linux-next@vger.kernel.org, kvm@vger.kernel.org, mtosatti@redhat.com
 
---Signature=_Mon__11_Jan_2010_19_49_41_+1100_KVEspoWUy/3q/dl2
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Today's next build on s390 failed with:
 
-Hi Dave,
+In file included from arch/s390/kvm/kvm-s390.c:30:
+arch/s390/kvm/kvm-s390.h: In function 'kvm_s390_vcpu_set_mem':
+arch/s390/kvm/kvm-s390.h:75: warning: assignment from incompatible pointer type
+arch/s390/kvm/kvm-s390.h:77: error: dereferencing pointer to incomplete type
+arch/s390/kvm/kvm-s390.c: At top level:
+arch/s390/kvm/kvm-s390.c:692: error: conflicting types for 'kvm_arch_prepare_memory_region'
+include/linux/kvm_host.h:258: error: previous declaration of 'kvm_arch_prepare_memory_region' was here
+arch/s390/kvm/kvm-s390.c: In function 'kvm_arch_prepare_memory_region':
+arch/s390/kvm/kvm-s390.c:698: warning: unused variable 'vcpu'
+arch/s390/kvm/kvm-s390.c:697: warning: unused variable 'i'
+arch/s390/kvm/kvm-s390.c: At top level:
+arch/s390/kvm/kvm-s390.c:725: error: conflicting types for 'kvm_arch_commit_memory_region'
+include/linux/kvm_host.h:262: error: previous declaration of 'kvm_arch_commit_memory_region' was here
+arch/s390/kvm/kvm-s390.c: In function 'kvm_arch_commit_memory_region':
+arch/s390/kvm/kvm-s390.c:731: error: 'i' undeclared (first use in this function)
+arch/s390/kvm/kvm-s390.c:731: error: (Each undeclared identifier is reported only once
+arch/s390/kvm/kvm-s390.c:731: error: for each function it appears in.)
+arch/s390/kvm/kvm-s390.c:731: error: 'vcpu' undeclared (first use in this function)
+arch/s390/kvm/kvm-s390.c:731: warning: left-hand operand of comma expression has no effect
 
-On Sun, 10 Jan 2010 23:59:27 -0800 (PST) David Miller <davem@davemloft.net>=
- wrote:
->
-> I have no personal preference, you can leave it how it is :)
+and few more 
 
-OK, that is easy for me!
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+In file included from arch/s390/kvm/intercept.c:20:
+arch/s390/kvm/kvm-s390.h: In function 'kvm_s390_vcpu_set_mem':
+arch/s390/kvm/kvm-s390.h:75: warning: assignment from incompatible pointer type
+arch/s390/kvm/kvm-s390.h:77: error: dereferencing pointer to incomplete type
+make[1]: *** [arch/s390/kvm/intercept.o] Error 1
 
---Signature=_Mon__11_Jan_2010_19_49_41_+1100_KVEspoWUy/3q/dl2
-Content-Type: application/pgp-signature
+Probable cause could be the following commits :
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+commit a94db899e8e5b7c4d47e42982800243dcdc69a38
+KVM: split kvm_arch_set_memory_region into prepare and commit
 
-iEYEARECAAYFAktK5iUACgkQjjKRsyhoI8yLrgCfS5nxwpULfMEyGHbqva3VW4wt
-a7QAmweMrOvKwsSM7lgUZ2QTfFDT2X3x
-=vZi5
------END PGP SIGNATURE-----
+commit fe7701e1daa1ad09d5d271897b6cc65697d33db2
+KVM: switch vcpu context to use SRCU
 
---Signature=_Mon__11_Jan_2010_19_49_41_+1100_KVEspoWUy/3q/dl2--
+Thanks
+-Sachin
+
+
+-- 
+
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
