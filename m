@@ -1,55 +1,34 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: mfd tree build failure
-Date: Mon, 11 Jan 2010 16:02:32 +1100
-Message-ID: <20100111160232.e37e5393.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: manual merge of the net tree with Linus' tree
+Date: Sun, 10 Jan 2010 22:50:55 -0800 (PST)
+Message-ID: <20100110.225055.167520274.davem@davemloft.net>
+References: <20100111133109.a191ee64.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__11_Jan_2010_16_02_32_+1100_0/2=oCIWkuoy=N_="
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33033 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750928Ab0AKFCk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 11 Jan 2010 00:02:40 -0500
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:52199
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751372Ab0AKGur (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 11 Jan 2010 01:50:47 -0500
+In-Reply-To: <20100111133109.a191ee64.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, hawk@comx.dk, hadi@cyberus.ca
 
---Signature=_Mon__11_Jan_2010_16_02_32_+1100_0/2=oCIWkuoy=N_=
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 11 Jan 2010 13:31:09 +1100
 
-Hi Sam,
+> Hi all,
+> 
+> Today's linux-next merge of the net tree got a conflict in include/linux/sysctl.h between commit 28f6aeea3f12d37bd258b2c0d5ba891bff4ec479 ("net: restore ip source validation") from Linus' tree and commit 65324144b50bc7022cc9b6ca8f4a536a957019e3 ("net: RFC3069, private VLAN proxy arp support") from the net tree.
 
-Today's linux-next build (x86_64_allmodconfig, gcc 4.4.0, binutils
-2.19.1) failed like this:
+That latter commit is specially in the net-next-2.6 tree not the
+net-2.6 tree.
 
-ERROR: "max8925_set_bits" [drivers/video/backlight/max8925_bl.ko] undefined!
-ERROR: "max8925_reg_write" [drivers/video/backlight/max8925_bl.ko] undefine=
-d!
-ERROR: "max8925_reg_read" [drivers/video/backlight/max8925_bl.ko] undefined!
-ERROR: "max8925_set_bits" [drivers/regulator/max8925.ko] undefined!
-ERROR: "max8925_reg_read" [drivers/regulator/max8925.ko] undefined!
+> They both use the same number in an enum...  I fixed it up (see below) and
+> can carry the fix (or some other) for a while.
 
-I am not sure what caused this, so I have used the version of the mfd
-tree from next-20100108 for today.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__11_Jan_2010_16_02_32_+1100_0/2=oCIWkuoy=N_=
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAktKsOgACgkQjjKRsyhoI8xlmwCdGNlW99sqfRQUqXp9rMioIPqT
-zCEAoLP59fsQuMtivo7hAYxFlygeSz3M
-=FlAT
------END PGP SIGNATURE-----
-
---Signature=_Mon__11_Jan_2010_16_02_32_+1100_0/2=oCIWkuoy=N_=--
+I'll merge net-2.6 into net-next-2.6 to resolve this, thanks!
