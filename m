@@ -1,32 +1,58 @@
-From: Ken Lewis <kennylewis@gmail.com>
-Subject: Re: [next-20091231] linux-next builds fine, but panics at runtime
-Date: Tue, 12 Jan 2010 23:18:03 +0000
-Message-ID: <5a44caba1001121518r6685510bs9902e2a74a179981@mail.gmail.com>
-References: <5a44caba1001111228m126d9524g1384d3518915b306@mail.gmail.com>
-	 <20100112125833.60597593.sfr@canb.auug.org.au>
-	 <5a44caba1001121135kfdc5226y4e8b0ddf111c9d09@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for January 12 (unlzo)
+Date: Wed, 13 Jan 2010 10:22:54 +1100
+Message-ID: <20100113102254.332dbf33.sfr@canb.auug.org.au>
+References: <20100112171739.2011a0eb.sfr@canb.auug.org.au>
+	<20100112083013.1dad8a8d.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__13_Jan_2010_10_22_54_+1100_+lz2xdQNFM4moxc/"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fg-out-1718.google.com ([72.14.220.158]:35943 "EHLO
-	fg-out-1718.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753940Ab0ALXSH convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Jan 2010 18:18:07 -0500
-Received: by fg-out-1718.google.com with SMTP id 22so473594fge.1
-        for <linux-next@vger.kernel.org>; Tue, 12 Jan 2010 15:18:04 -0800 (PST)
-In-Reply-To: <5a44caba1001121135kfdc5226y4e8b0ddf111c9d09@mail.gmail.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:46748 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753606Ab0ALXXD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 12 Jan 2010 18:23:03 -0500
+In-Reply-To: <20100112083013.1dad8a8d.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: albin.tonnerre@free-electrons.com, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Phillip Lougher <phillip@lougher.demon.co.uk>
 
-2010/1/12 Ken Lewis <kennylewis@gmail.com>:
-> 2010/1/12 Stephen Rothwell <sfr@canb.auug.org.au>:
-> Linus' tree has built fine and works all the way through. =A0I'll try
-> copying the config across and using it. =A0BTW next-20100111 built bu=
-t
-> panics on boot.
-Linus' 05a625... kernel built and boots fine -- in use as I type this.
+--Signature=_Wed__13_Jan_2010_10_22_54_+1100_+lz2xdQNFM4moxc/
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ken.
+Hi Randy,
+
+On Tue, 12 Jan 2010 08:30:13 -0800 Randy Dunlap <randy.dunlap@oracle.com> w=
+rote:
+>
+> arch/x86/boot/compressed/../../../../lib/decompress_unlzo.c:53: error: ex=
+pected '=3D', ',', ';', 'asm' or '__attribute__' before 'parse_header'
+> arch/x86/boot/compressed/../../../../lib/decompress_unlzo.c:90: error: ex=
+pected '=3D', ',', ';', 'asm' or '__attribute__' before 'unlzo'
+>=20
+> Problem is the "INIT" there, seems to be undefined.
+
+Caused by an interaction between Linus' tree and the squashfs tree that
+is being worked on.  It should not occur with today's linux-next as the
+squashfs changes have been removed pending a fix.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__13_Jan_2010_10_22_54_+1100_+lz2xdQNFM4moxc/
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAktNBE4ACgkQjjKRsyhoI8x7qACdFhrnmNsTN/oWK493LSZkDuo4
+2iMAnjgAzjdfebNF5FDuiyI38d4T9NOh
+=sx/V
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__13_Jan_2010_10_22_54_+1100_+lz2xdQNFM4moxc/--
