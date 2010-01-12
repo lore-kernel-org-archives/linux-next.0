@@ -1,63 +1,62 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: linux-next: origin tree build failure
-Date: Mon, 11 Jan 2010 17:26:33 -0800 (PST)
-Message-ID: <alpine.LFD.2.00.1001111720290.17145@localhost.localdomain>
-References: <20100112121434.49930eea.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [next-20091231] linux-next builds fine, but panics at runtime
+Date: Tue, 12 Jan 2010 12:58:33 +1100
+Message-ID: <20100112125833.60597593.sfr@canb.auug.org.au>
+References: <5a44caba1001111228m126d9524g1384d3518915b306@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__12_Jan_2010_12_58_33_+1100_dSsxRDRncpg3kHAY"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:48701 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751112Ab0ALB0m (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 11 Jan 2010 20:26:42 -0500
-In-Reply-To: <20100112121434.49930eea.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:53710 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751243Ab0ALB6i (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 11 Jan 2010 20:58:38 -0500
+In-Reply-To: <5a44caba1001111228m126d9524g1384d3518915b306@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Albin Tonnerre <albin.tonnerre@free-electrons.com>
+To: Ken Lewis <kennylewis@gmail.com>
+Cc: linux-next@vger.kernel.org
 
+--Signature=_Tue__12_Jan_2010_12_58_33_+1100_dSsxRDRncpg3kHAY
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi Ken,
 
-On Tue, 12 Jan 2010, Stephen Rothwell wrote:
-> 
-> I then got these:
-> 
-> lib/decompress_unlzo.c: In function 'unlzo':
-> lib/decompress_unlzo.c:106: error: 'error' undeclared (first use in this function)
-> lib/decompress_unlzo.c:111: error: implicit declaration of function 'error'
-> 
-> So I just reverted commit
-> cacb246f8db2b9eba89d44a0f0dd4f6ed93bc113 ("Add LZO compression support
-> for initramfs and old-style initrd") after removing my fix above.
+On Mon, 11 Jan 2010 20:28:41 +0000 Ken Lewis <kennylewis@gmail.com> wrote:
+>
+> I'm havng some problems testing linux-next at the moment.  I'm able to
+> build each release but the kernel panics at boot.  The problem's been
+> about since the start of December and I haven't managed to find what
+> portion of my .config and the loophole in the build system that allow
+> this to happen.  Can anyone else help me?
+>=20
+> Arch: x86_64
+> trees built: next-20091201, next-20091215, next20091231 (among others
+> which I didn't keep r ecord of).  Am building next-20100111 atm to
+> test.
 
-Hmm. I think the real problem is that it allowed LZO to be enabled at all, 
-despite HAVE_KERNEL_LZO not being enabled.
+Have you tried building and booting (with the same config) just the
+version of Linus' kernel that those next- kernel's were built on?  (Just
+as a sanity check)  For next-20091231, Linus' kernel was commit
+05a625486efc3209ae4d98e253dafa6ce0124385 (for example).
 
-In other words, I think the config dependencies for RD_LZO are just 
-totally broken.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Does this work for you?
+--Signature=_Tue__12_Jan_2010_12_58_33_+1100_dSsxRDRncpg3kHAY
+Content-Type: application/pgp-signature
 
-(Totally untested and not very much thought about, this is just a "that 
-looks really _wrong_" kind of patch)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-		Linus
+iEYEARECAAYFAktL10kACgkQjjKRsyhoI8zNFwCgoOz/tM3mGkROpWq7LWR3WVBu
+9YUAoKrnaPpabaGYNLDXbNkXMgw6WBMI
+=rXqo
+-----END PGP SIGNATURE-----
 
----
- usr/Kconfig |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/usr/Kconfig b/usr/Kconfig
-index e2721f5..0254cce 100644
---- a/usr/Kconfig
-+++ b/usr/Kconfig
-@@ -75,7 +75,7 @@ config RD_LZMA
- config RD_LZO
- 	bool "Support initial ramdisks compressed using LZO" if EMBEDDED
- 	default !EMBEDDED
--	depends on BLK_DEV_INITRD
-+	depends on BLK_DEV_INITRD && HAVE_KERNEL_LZO
- 	select DECOMPRESS_LZO
- 	help
- 	  Support loading of a LZO encoded initial ramdisk or cpio buffer
+--Signature=_Tue__12_Jan_2010_12_58_33_+1100_dSsxRDRncpg3kHAY--
