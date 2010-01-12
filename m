@@ -1,43 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the ceph tree with Linus' tree
-Date: Tue, 12 Jan 2010 11:09:39 +1100
-Message-ID: <20100112110939.234a6e65.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the squashfs tree with Linus' tree
+Date: Tue, 12 Jan 2010 11:25:16 +1100
+Message-ID: <20100112112516.18e7b1aa.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754230Ab0ALAJp@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sage Weil <sage@newdream.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Randy Dunlap <randy.dunlap@oracle.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:47986 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753321Ab0ALAZT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 11 Jan 2010 19:25:19 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Phillip Lougher <phillip@lougher.demon.co.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Randy Dunlap <randy.dunlap@oracle.com>, Albin Tonnerre <albin.tonnerre@free-electrons.com>
 
-Hi Sage,
+Hi Phillip,
 
-Today's linux-next merge of the ceph tree got a conflict in
-Documentation/ioctl/ioctl-number.txt between commit
-cb5a8b2c92febbed57126e1b8416dfd7607ff03d ("docs: large update to
-ioctl-number.txt") from Linus' tree and commit
-8f4e91dee2a245e4be6942f4a8d83a769e13a47d ("ceph: ioctls") from the ceph
-tree.
+Today's linux-next merge of the squashfs tree got conflicts in
+lib/Kconfig and lib/Makefile between commit
+cacb246f8db2b9eba89d44a0f0dd4f6ed93bc113 ("Add LZO compression support
+for initramfs and old-style initrd") from Linus' tree and commits
+2b817d5acc7a39c503d1393eb9e8268b39b5aa44 ("lzma: Make lzma available to
+non initramfs/initrd code") and 58f168eba2ff08f04323544eb7aaa2de10d39c2f
+("ibs: force lzma_wrapper to be retained") from the squashfs tree.
 
-Just overlapping additions - not a big deal.  I fixed it up (see below)
-and can carry the fix as necessary.
+I fixed it up (see below) and can carry the fix for a while.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc Documentation/ioctl/ioctl-number.txt
-index 35cf64d,91cfdd7..0000000
---- a/Documentation/ioctl/ioctl-number.txt
-+++ b/Documentation/ioctl/ioctl-number.txt
-@@@ -289,9 -181,8 +289,10 @@@ Code  Seq#(hex)	Include File		Comment
-  0x8C	00-3F				WiNRADiO driver
-  					<http://www.proximity.com.au/~brian/winradio/>
-  0x90	00	drivers/cdrom/sbpcd.h
- +0x92	00-0F	drivers/usb/mon/mon_bin.c
-  0x93	60-7F	linux/auto_fs.h
- +0x94	all	fs/btrfs/ioctl.h
-+ 0x97    00-7F   fs/ceph/ioctl.h         Ceph file system
-  0x99	00-0F				537-Addinboard driver
-  					<mailto:buk@buks.ipn.de>
-  0xA0	all	linux/sdp/sdp.h		Industrial Device Project
+diff --cc lib/Kconfig
+index 170d8ca,551d75d..0000000
+--- a/lib/Kconfig
++++ b/lib/Kconfig
+@@@ -117,10 -117,9 +117,13 @@@ config DECOMPRESS_BZIP
+  config DECOMPRESS_LZMA
+  	tristate
+  
++ config DECOMPRESS_LZMA_NEEDED
++ 	 boolean
++ 
+ +config DECOMPRESS_LZO
+ +	select LZO_DECOMPRESS
+ +	tristate
+ +
+  #
+  # Generic allocator support is selected if needed
+  #
+diff --cc lib/Makefile
+index e02765d,4309e69..0000000
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@@ -69,8 -68,7 +69,8 @@@ obj-$(CONFIG_LZO_DECOMPRESS) += lzo
+  
+  lib-$(CONFIG_DECOMPRESS_GZIP) += decompress_inflate.o
+  lib-$(CONFIG_DECOMPRESS_BZIP2) += decompress_bunzip2.o
+- lib-$(CONFIG_DECOMPRESS_LZMA) += decompress_unlzma.o
++ obj-$(CONFIG_DECOMPRESS_LZMA) += decompress_unlzma.o
+ +lib-$(CONFIG_DECOMPRESS_LZO) += decompress_unlzo.o
+  
+  obj-$(CONFIG_TEXTSEARCH) += textsearch.o
+  obj-$(CONFIG_TEXTSEARCH_KMP) += ts_kmp.o
