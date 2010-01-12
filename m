@@ -1,27 +1,88 @@
-From: Avi Kivity <avi@redhat.com>
-Subject: Re: KVM: fix S390/IA-64 build failures introduced by memslot changes
-Date: Tue, 12 Jan 2010 14:08:18 +0200
-Message-ID: <4B4C6632.9090109@redhat.com>
-References: <20100111194431.c103db9b.sfr@canb.auug.org.au> <4B4AFA45.8000004@in.ibm.com> <4B4AFE26.5080503@redhat.com> <20100111172309.GA13797@amt.cnet>
+From: Joakim Tjernlund <joakim.tjernlund@transmode.se>
+Subject: Re: linux-next: origin tree build failure
+Date: Tue, 12 Jan 2010 13:38:29 +0100
+Message-ID: <OFC91015BA.3FA77D43-ONC12576A9.00453F87-C12576A9.00457102@transmode.se>
+References: <20100112105805.50e39a77.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:32245 "EHLO mx1.redhat.com"
+Received: from gw1.transmode.se ([213.115.205.20]:55204 "EHLO gw1.transmode.se"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751841Ab0ALMIX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 12 Jan 2010 07:08:23 -0500
-In-Reply-To: <20100111172309.GA13797@amt.cnet>
+	id S1751310Ab0ALMnN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 12 Jan 2010 07:43:13 -0500
+In-Reply-To: <20100112105805.50e39a77.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Marcelo Tosatti <mtosatti@redhat.com>
-Cc: Sachin Sant <sachinp@in.ibm.com>, linux-s390@vger.kernel.org, linux-next@vger.kernel.org, kvm@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Paul Mackerras <paulus@samba.org>, Linus <torvalds@linux-foundation.org>
 
-On 01/11/2010 07:23 PM, Marcelo Tosatti wrote:
-> Fix build failures introduced by memslot changes.
->    
+Stephen Rothwell <sfr@canb.auug.org.au> wrote on 12/01/2010 00:58:05:
+>
+> Hi all,
+>
+> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+>
+> cc1: error: include/linux/autoconf.h: No such file or directory
+>
+> (while building the boot wrappers - lots more of the same)
+>
+> Caused by commit ac4c2a3bbe5db5fc570b1d0ee1e474db7cb22585 ("zlib:
+> optimize inffast when copying direct from output").  autoconf.h moved
+> from include/linux to include/generated in commit
+> 264a26838056fc2d759f58bec2e720e01fcb1bdb ("kbuild: move autoconf.h to
+> include/generated") which was in linux-next since 14 Dec 2009 and in
+> Linus' tree since 18 Dec 2009.
+>
+[SNIP]
+>
+> This latter build problem is probably only noticed if you build with a
+> separate object directory (i.e. with O=.. on the make command).  The
+> previous PowerPC maintainer tells me that defining __KERNEL__ in the
+> BOOTFLAGS is wrong and should have been noticed.
 
-Thanks, applied, and folded back into relevant kvm-updates/2.6.34 commits.
+Is this any better w.r.t __KERNEL__?
 
--- 
-error compiling committee.c: too many arguments to function
+>From 1a79993a42e17be665d3488663d81c0513b8bbfe Mon Sep 17 00:00:00 2001
+From: Joakim Tjernlund <Joakim.Tjernlund@transmode.se>
+Date: Tue, 12 Jan 2010 13:31:58 +0100
+Subject: [PATCH] powerpc: move __KERNEL__ define in bootwrapper.
+
+Apparently using -D__KERNEL__ in BOOTCFLAGS is a bad thing.
+Move __KERNEL__ into inffast.c where it is needed.
+
+Signed-off-by: Joakim Tjernlund <Joakim.Tjernlund@transmode.se>
+---
+ arch/powerpc/boot/Makefile |    2 +-
+ lib/zlib_inflate/inffast.c |    4 +++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/arch/powerpc/boot/Makefile b/arch/powerpc/boot/Makefile
+index 79ebd6f..766fb88 100644
+--- a/arch/powerpc/boot/Makefile
++++ b/arch/powerpc/boot/Makefile
+@@ -20,7 +20,7 @@
+ all: $(obj)/zImage
+
+ BOOTCFLAGS    := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
+-		 -fno-strict-aliasing -Os -msoft-float -pipe -D__KERNEL__\
++		 -fno-strict-aliasing -Os -msoft-float -pipe \
+ 		 -fomit-frame-pointer -fno-builtin -fPIC -nostdinc \
+ 		 -isystem $(shell $(CROSS32CC) -print-file-name=include)
+ BOOTAFLAGS	:= -D__ASSEMBLY__ $(BOOTCFLAGS) -traditional -nostdinc
+diff --git a/lib/zlib_inflate/inffast.c b/lib/zlib_inflate/inffast.c
+index 05e1559..919c162 100644
+--- a/lib/zlib_inflate/inffast.c
++++ b/lib/zlib_inflate/inffast.c
+@@ -2,7 +2,9 @@
+  * Copyright (C) 1995-2004 Mark Adler
+  * For conditions of distribution and use, see copyright notice in zlib.h
+  */
+-
++#ifndef __KERNEL__
++#define __KERNEL__
++#endif
+ #include <linux/zutil.h>
+ #include <asm/unaligned.h>
+ #include <asm/byteorder.h>
+--
+1.6.4.4
