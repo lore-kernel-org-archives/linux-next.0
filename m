@@ -1,40 +1,55 @@
-From: Phillip Lougher <phillip@lougher.demon.co.uk>
-Subject: Re: linux-next: origin tree build failure
-Date: Wed, 13 Jan 2010 00:14:13 +0000
-Message-ID: <4B4D1055.7070605@lougher.demon.co.uk>
-References: <20100112121434.49930eea.sfr@canb.auug.org.au>	<alpine.LFD.2.00.1001111720290.17145@localhost.localdomain>	<20100112133252.8b4591bd.sfr@canb.auug.org.au> <20100112133900.f22b3b72.sfr@canb.auug.org.au>
+From: Phillip Lougher <phillip.lougher@gmail.com>
+Subject: Re: linux-next: Tree for January 12 (unlzo)
+Date: Wed, 13 Jan 2010 00:26:56 +0000
+Message-ID: <bffbecbb1001121626j61fab30aj87048a17a2b091ff@mail.gmail.com>
+References: <20100112171739.2011a0eb.sfr@canb.auug.org.au>
+	 <20100112083013.1dad8a8d.randy.dunlap@oracle.com>
+	 <20100113102254.332dbf33.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from anchor-post-3.mail.demon.net ([195.173.77.134]:50281 "EHLO
-	anchor-post-3.mail.demon.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751444Ab0AMAR3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 12 Jan 2010 19:17:29 -0500
-In-Reply-To: <20100112133900.f22b3b72.sfr@canb.auug.org.au>
+Received: from mail-fx0-f225.google.com ([209.85.220.225]:54534 "EHLO
+	mail-fx0-f225.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751029Ab0AMA05 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Jan 2010 19:26:57 -0500
+In-Reply-To: <20100113102254.332dbf33.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Albin Tonnerre <albin.tonnerre@free-electrons.com>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, albin.tonnerre@free-electrons.com, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Phillip Lougher <phillip@lougher.demon.co.uk>
 
-Stephen Rothwell wrote:
-> On Tue, 12 Jan 2010 13:32:52 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> I guess there is something else in the partially
->> created linux-next today that has triggered this build failure.   I will
->> investigate further.
-> 
-> Yes, there are two commits in the squashfs tree that rearrange some of
-> the decompression code.  They are:
-> 
-> "lzma: Make lzma available to non initramfs/initrd code"
-> "lzma: make lzma reentrant"
-> 
-> Phillip, you need to merge Linus' tree (or rebase on it) and fix those up
-> for the introduction of the LZO decompression stuff.
-> 
+On Tue, Jan 12, 2010 at 11:22 PM, Stephen Rothwell <sfr@canb.auug.org.a=
+u> wrote:
+> Hi Randy,
+>
+> On Tue, 12 Jan 2010 08:30:13 -0800 Randy Dunlap <randy.dunlap@oracle.=
+com> wrote:
+>>
+>> arch/x86/boot/compressed/../../../../lib/decompress_unlzo.c:53: erro=
+r: expected '=3D', ',', ';', 'asm' or '__attribute__' before 'parse_hea=
+der'
+>> arch/x86/boot/compressed/../../../../lib/decompress_unlzo.c:90: erro=
+r: expected '=3D', ',', ';', 'asm' or '__attribute__' before 'unlzo'
+>>
+>> Problem is the "INIT" there, seems to be undefined.
+>
+> Caused by an interaction between Linus' tree and the squashfs tree th=
+at
+> is being worked on. =A0It should not occur with today's linux-next as=
+ the
+> squashfs changes have been removed pending a fix.
 
-Done.
+This problem is caused by the introduction of the unlzo code in Linus'
+tree, and some patches in
+the squashfs-next tree that move things out of
+include/linux/decompress/mm.h into separate
+xxx_mm.h files for each decompressor.  These parches were, obviously,
+done before the unlzo
+code was present.
+
+I've fixed the patches in the squashfs-next tree for unlzo, and the
+breakage should be fixed :-)
 
 Thanks
 
