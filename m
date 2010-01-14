@@ -1,112 +1,79 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: linux-next: manual merge of the tip tree with the kgdb tree
-Date: Thu, 14 Jan 2010 10:20:52 -0500
-Message-ID: <1263482452.28171.3853.camel@gandalf.stny.rr.com>
-References: <20100114161302.285ebe27.sfr@canb.auug.org.au>
-	 <20100114092600.GA13503@elte.hu>  <4B4F31D4.1000707@windriver.com>
-Reply-To: rostedt@goodmis.org
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for January 8 (net/ip.h, BUG=n)
+Date: Thu, 14 Jan 2010 07:32:53 -0800
+Message-ID: <20100114073253.a87403e8.randy.dunlap@oracle.com>
+References: <20100113085418.GB6053@ff.dom.local>
+	<201001132121.44763.opurdila@ixiacom.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-15"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hrndva-omtalb.mail.rr.com ([71.74.56.123]:50285 "EHLO
-	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754557Ab0ANPU4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 14 Jan 2010 10:20:56 -0500
-In-Reply-To: <4B4F31D4.1000707@windriver.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jason Wessel <jason.wessel@windriver.com>
-Cc: Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lai Jiangshan <laijs@cn.fujitsu.com>, Fr??d??ric Weisbecker <fweisbec@gmail.com>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1757250Ab0ANPdY@vger.kernel.org>
+In-Reply-To: <201001132121.44763.opurdila@ixiacom.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Octavian Purdila <opurdila@ixiacom.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Jarek Poplawski <jarkao2@gmail.com>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, netdev@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, 2010-01-14 at 09:01 -0600, Jason Wessel wrote:
-> Ingo Molnar wrote:
-> > * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> >   
-> >> Hi all,
-> >>
-> >> Today's linux-next merge of the tip tree got a conflict in
-> >> kernel/trace/trace.c between commit
-> >> d304af88a0105ff5b64cffc9108636ecad1fdd78 ("ftrace,kdb: Extend kdb to be
-> >> able to dump the ftrace buffer") from the kgdb tree and commit
-> >> 7e53bd42d14c75192b99674c40fcc359392da59d ("tracing: Consolidate
-> >> protection of reader access to the ring buffer") from the tip tree.
-> >>     
-> >
-> > Hm, Jason, what is that large commit to kernel/trace/ doing in the KGDB tree, 
-> > without any apparent acks from the affected people?
-> >   
-> 
-> I had been corresponding with Steven Rostedt directly.  This is actually
-> the 3rd iteration of the patch (the first two never got checked in
-> anywhere) and there is still an outstanding question, which I will
-> inline at the bottom of this email.  The ftdump patch is at the very end
-> of the kdb series, because this patch will get nuked if Steven or anyone
-> else has a problem with it.
+On Wed, 13 Jan 2010 21:21:44 +0200 Octavian Purdila wrote:
 
-Yep, we've been talking, I just didn't know it went into a public git
-tree yet :-)
+> On Wednesday 13 January 2010 10:54:18 you wrote:
+> > Octavian added to cc.
+> > 
+> > Jarek P.
+> > 
+> > On 13-01-2010 08:35, Ingo Molnar wrote:
+> > > * Randy Dunlap <randy.dunlap@oracle.com> wrote:
+> > >> On Fri, 8 Jan 2010 16:42:32 +1100 Stephen Rothwell wrote:
+> > >>> Hi all,
+> > >>>
+> > >>> Changes since 20100107:
+> > >>
+> > >> When CONFIG_BUG=n, CONFIG_GENERIC_BUG=n:
+> > >>
+> > >> include/net/ip.h:341: error: implicit declaration of function '__WARN'
+> > >>
+> > >> This affects:
+> > >> make[3]: *** [security/selinux/hooks.o] Error 1
+> > >> make[3]: *** [fs/ceph/messenger.o] Error 1
+> > >> make[3]: *** [net/core/sock.o] Error 1
+> > >> make[4]: *** [drivers/net/benet/be_main.o] Error 1
+> > >
+> > > FYI, this new build bug is now upstream and triggers in -tip testing as
+> > > well.
+> > >
+> > > 	Ingo
+> > 
+> 
+> Sorry about this bug and the delay. David, here is a patch against net-2.6 to fix this build error.
+> 
+> [PATCH] net: fix build erros with CONFIG_BUG=n, CONFIG_GENERIC_BUG=n
+> 
+> Fixed build errors introduced by commit 7ad6848c (ip: fix mc_loop checks for
+> tunnels with multicast outer addresses)
+> 
+> Signed-off-by: Octavian Purdila <opurdila@ixiacom.com>
+> ---
+>  include/net/ip.h |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> diff --git a/include/net/ip.h b/include/net/ip.h
+> index d9a0e74..fb63371 100644
+> --- a/include/net/ip.h
+> +++ b/include/net/ip.h
+> @@ -338,7 +338,7 @@ static inline int sk_mc_loop(struct sock *sk)
+>  		return inet6_sk(sk)->mc_loop;
+>  #endif
+>  	}
+> -	__WARN();
+> +	WARN_ON(1);
+>  	return 1;
+>  }
+>  
+> -- 
 
-> 
-> As for what the patch does, it is routine for dumping the ftrace buffer
-> while in the kernel debugger context.
-> 
-> > I dont see it anywhere on lkml nor in my mbox. Please submit it to the 
-> > affected maintainers - for the Cc: line see the output of:
-> >   
-> 
-> The v2 version of the kdb  series was supposed to go out yesterday
-> morning (also known as kdb_prototype11).   The new patch is included in
-> the post, look for: "[PATCH 40/40] ftrace,kdb: Extend kdb to be able to
-> dump the ftrace buffer"
-> 
-> -- prior inlined correspondence --
-> 
-> Steven Rostedt wrote:
-> 
-> > > On Tue, 2010-01-05 at 23:57 -0600, Jason Wessel wrote:
-> >   
-> >> >> Here is another try at adding a dump function for kdb.  I had to
-> >> >> changes some of the static -> global scope in kernel/trace/trace.c in
-> >> >> order to be able to reference other semi-private via "trace.h".
-> >>     
-> > > 
-> > > Actually, could you write access functions instead. If we make these
-> > > items global in scope, then others will just start accessing them
-> > > directly. I've had this issue before because others have tried to make
-> > > the global_trace visible by all. But that variable may disappear and
-> > > break all that use it.
-> > > 
-> >   
-> 
-> Thanks for the insight.
-> 
-> Here is v3.
-> 
-> I added a function called trace_init_global_iter().  I'll rename it if
-> you like.  I also changed the ftrace_dump() to make use of it as well
-> so we are more likely to see an issue when it changes if there are
-> more consumers of the function.
-> 
-> The other question it brings up is if you want a helper function for
-> the atomic_inc / atomic_dec of the tracing cpus.  That would move that
-> for_each_tracing_cpu macro back into trace.c.
+Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
 
+Thanks.
 
-I think the point Ingo is making, is that the changes to the
-kernel/trace directory would best go through the tip tree. This will
-ensure that this change does not have any undesirable effects to other
-parts of tracing that is being worked on.
-
-There's always an issue with having one subsystem depend on changes in
-another subsystem. What I did in the past when PPC needed changes to the
-trace directory, was that I made the changes in the trace code directly
-against Linus's tree in a separate branch. Then the two git repo's (PPC
-and tip) could pull that change in. Which ever one went first to Linus
-would get the required change without causing duplicates.
-
-But since this is the last patch in the series, perhaps it can just go
-directly into tip?
-
--- Steve
+---
+~Randy
