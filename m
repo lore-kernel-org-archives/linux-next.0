@@ -1,52 +1,40 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for January 14 (vmwgfx)
-Date: Thu, 14 Jan 2010 10:58:40 -0800
-Message-ID: <20100114105840.98972cbc.randy.dunlap@oracle.com>
-References: <20100114172047.406ebda8.sfr@canb.auug.org.au>
+From: Ken Lewis <kennylewis@gmail.com>
+Subject: Re: [next-20091231] linux-next builds fine, but panics at runtime
+Date: Thu, 14 Jan 2010 23:12:49 +0000
+Message-ID: <5a44caba1001141512k7877d954w9fa43999b92dc573@mail.gmail.com>
+References: <5a44caba1001111228m126d9524g1384d3518915b306@mail.gmail.com>
+	 <20100112125833.60597593.sfr@canb.auug.org.au>
+	 <5a44caba1001121135kfdc5226y4e8b0ddf111c9d09@mail.gmail.com>
+	 <5a44caba1001121518r6685510bs9902e2a74a179981@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet12.oracle.com ([141.146.126.234]:18026 "EHLO
-	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757229Ab0ANS66 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 14 Jan 2010 13:58:58 -0500
-In-Reply-To: <20100114172047.406ebda8.sfr@canb.auug.org.au>
+Received: from fg-out-1718.google.com ([72.14.220.156]:10152 "EHLO
+	fg-out-1718.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752312Ab0ANXMv convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 14 Jan 2010 18:12:51 -0500
+Received: by fg-out-1718.google.com with SMTP id e21so484376fga.1
+        for <linux-next@vger.kernel.org>; Thu, 14 Jan 2010 15:12:50 -0800 (PST)
+In-Reply-To: <5a44caba1001121518r6685510bs9902e2a74a179981@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc: linux-next@vger.kernel.org
 
-On Thu, 14 Jan 2010 17:20:47 +1100 Stephen Rothwell wrote:
+2010/1/12 Ken Lewis <kennylewis@gmail.com>:
+> 2010/1/12 Ken Lewis <kennylewis@gmail.com>:
+>> 2010/1/12 Stephen Rothwell <sfr@canb.auug.org.au>:
+>> Linus' tree has built fine and works all the way through. =A0I'll tr=
+y
+>> copying the config across and using it. =A0BTW next-20100111 built b=
+ut
+>> panics on boot.
+> Linus' 05a625... kernel built and boots fine -- in use as I type this=
+=2E
 
-> Hi all,
-> 
-> Changes since 20100113:
+Taking the config I use with mainline and applying it to the
+linux-next source tree has resolved the issue.  Thanks.
 
-
-When CONFIG_FB=m:
-
-drivers/built-in.o: In function `vmw_fb_close':
-(.text+0x9614a): undefined reference to `unregister_framebuffer'
-drivers/built-in.o: In function `vmw_fb_close':
-(.text+0x9616f): undefined reference to `framebuffer_release'
-drivers/built-in.o: In function `vmw_fb_init':
-(.text+0x965b6): undefined reference to `framebuffer_alloc'
-drivers/built-in.o: In function `vmw_fb_init':
-(.text+0x9692a): undefined reference to `register_framebuffer'
-drivers/built-in.o: In function `vmw_fb_init':
-(.text+0x9696a): undefined reference to `framebuffer_release'
-
-
-so this driver needs to depend on FB (or select FB -- ugh, although
-that's what nouveau does).
-
-And these selects don't do anything when FB is not enabled:
-	select FB_DEFERRED_IO
-	select FB_CFB_FILLRECT
-	select FB_CFB_COPYAREA
-	select FB_CFB_IMAGEBLIT
-
-
----
-~Randy
+Take care.
+Ken.
