@@ -1,40 +1,58 @@
-From: Ken Lewis <kennylewis@gmail.com>
-Subject: Re: [next-20091231] linux-next builds fine, but panics at runtime
-Date: Thu, 14 Jan 2010 23:12:49 +0000
-Message-ID: <5a44caba1001141512k7877d954w9fa43999b92dc573@mail.gmail.com>
-References: <5a44caba1001111228m126d9524g1384d3518915b306@mail.gmail.com>
-	 <20100112125833.60597593.sfr@canb.auug.org.au>
-	 <5a44caba1001121135kfdc5226y4e8b0ddf111c9d09@mail.gmail.com>
-	 <5a44caba1001121518r6685510bs9902e2a74a179981@mail.gmail.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] staging/winbond: fix wbusb struct warnings/error
+Date: Sun, 17 Jan 2010 15:13:50 -0800
+Message-ID: <20100117151350.073381bc.randy.dunlap@oracle.com>
+References: <20100114172047.406ebda8.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fg-out-1718.google.com ([72.14.220.156]:10152 "EHLO
-	fg-out-1718.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752312Ab0ANXMv convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 14 Jan 2010 18:12:51 -0500
-Received: by fg-out-1718.google.com with SMTP id e21so484376fga.1
-        for <linux-next@vger.kernel.org>; Thu, 14 Jan 2010 15:12:50 -0800 (PST)
-In-Reply-To: <5a44caba1001121518r6685510bs9902e2a74a179981@mail.gmail.com>
+Received: from acsinet12.oracle.com ([141.146.126.234]:25533 "EHLO
+	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753515Ab0AQXOH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 17 Jan 2010 18:14:07 -0500
+In-Reply-To: <20100114172047.406ebda8.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Greg Kroah-Hartman <gregkh@suse.de>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, devel@driverdev.osuosl.org
 
-2010/1/12 Ken Lewis <kennylewis@gmail.com>:
-> 2010/1/12 Ken Lewis <kennylewis@gmail.com>:
->> 2010/1/12 Stephen Rothwell <sfr@canb.auug.org.au>:
->> Linus' tree has built fine and works all the way through. =A0I'll tr=
-y
->> copying the config across and using it. =A0BTW next-20100111 built b=
-ut
->> panics on boot.
-> Linus' 05a625... kernel built and boots fine -- in use as I type this=
-=2E
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Taking the config I use with mainline and applying it to the
-linux-next source tree has resolved the issue.  Thanks.
+Fix winbond wbusb warnings:
 
-Take care.
-Ken.
+drivers/staging/winbond/wbusb.c:68: warning: 'struct ieee80211_if_init_conf' declared inside parameter list
+drivers/staging/winbond/wbusb.c:68: warning: its scope is only this definition or declaration, which is probably not what you want
+drivers/staging/winbond/wbusb.c:72: error: dereferencing pointer to incomplete type
+drivers/staging/winbond/wbusb.c:78: warning: 'struct ieee80211_if_init_conf' declared inside parameter list
+drivers/staging/winbond/wbusb.c:284: warning: initialization from incompatible pointer type
+drivers/staging/winbond/wbusb.c:285: warning: initialization from incompatible pointer type
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/staging/winbond/wbusb.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+--- linux-next-20100111.orig/drivers/staging/winbond/wbusb.c
++++ linux-next-20100111/drivers/staging/winbond/wbusb.c
+@@ -65,17 +65,17 @@ static void hal_set_beacon_period(struct
+ }
+ 
+ static int wbsoft_add_interface(struct ieee80211_hw *dev,
+-				struct ieee80211_if_init_conf *conf)
++				struct ieee80211_vif *conf)
+ {
+ 	struct wbsoft_priv *priv = dev->priv;
+ 
+-	hal_set_beacon_period(&priv->sHwData, conf->vif->bss_conf.beacon_int);
++	hal_set_beacon_period(&priv->sHwData, conf->>bss_conf.beacon_int);
+ 
+ 	return 0;
+ }
+ 
+ static void wbsoft_remove_interface(struct ieee80211_hw *dev,
+-				    struct ieee80211_if_init_conf *conf)
++				    struct ieee80211_vif *conf)
+ {
+ 	printk("wbsoft_remove interface called\n");
+ }
