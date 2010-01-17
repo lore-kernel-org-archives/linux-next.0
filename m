@@ -1,40 +1,46 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for January 14 (drm header files)
-Date: Sun, 17 Jan 2010 15:17:18 -0800
-Message-ID: <20100117151718.f88c5f21.randy.dunlap@oracle.com>
-References: <20100114172047.406ebda8.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm tree with the arm-current tree
+Date: Mon, 18 Jan 2010 10:35:34 +1100
+Message-ID: <20100118103534.a5dc3c66.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet11.oracle.com ([141.146.126.233]:37550 "EHLO
-	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754121Ab0AQXR7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 17 Jan 2010 18:17:59 -0500
-In-Reply-To: <20100114172047.406ebda8.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:46495 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754261Ab0AQXfn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 17 Jan 2010 18:35:43 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>
 
-On Thu, 14 Jan 2010 17:20:47 +1100 Stephen Rothwell wrote:
+Hi Russell,
 
-> Hi all,
-> 
-> Changes since 20100113:
+Today's linux-next merge of the arm tree got a conflict in
+arch/arm/Makefile between commit 95b8f20fd6a2694a16b8addb190b942bfb670c88
+(ARM: fix badly placed mach/plat entries in Kconfig & Makefile"") from
+the arm-current tree and commit c4ffccddd54b669cc9683f2c69e31035e916a1a0
+("ARM: S5P6440: Add new Kconfig and Makefiles") from the arm tree.
 
+I fixed it up (see below) and can carry the fix for a while.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Is anything being done about these?
-or does anything need to be done?
-
-
-usr/include/drm/drm_mode.h:84: found __[us]{8,16,32,64} type without #include <linux/types.h>
-usr/include/drm/i915_drm.h:119: found __[us]{8,16,32,64} type without #include <linux/types.h>
-usr/include/drm/mga_drm.h:260: found __[us]{8,16,32,64} type without #include <linux/types.h>
-usr/include/drm/radeon_drm.h:758: found __[us]{8,16,32,64} type without #include <linux/types.h>
-usr/include/drm/via_drm.h:117: found __[us]{8,16,32,64} type without #include <linux/types.h>
-
-
-Thanks,
----
-~Randy
+(Sorry, cut and paste diff)
+diff --cc arch/arm/Makefile
+index 9e75825,bbcd512..0000000
+--- a/arch/arm/Makefile
++++ b/arch/arm/Makefile
+@@@ -184,7 -184,9 +185,8 @@@ plat-$(CONFIG_PLAT_ORION)  := orio
+  plat-$(CONFIG_PLAT_PXA)               := pxa
+  plat-$(CONFIG_PLAT_S3C24XX)   := s3c24xx s3c samsung
+  plat-$(CONFIG_PLAT_S3C64XX)   := s3c64xx s3c samsung
+ -plat-$(CONFIG_PLAT_S5PC1XX)   := s5pc1xx s3c samsung
++ plat-$(CONFIG_PLAT_S5P)               := s5p samsung s3c
+ -plat-$(CONFIG_ARCH_STMP3XXX)  := stmp3xxx
+ +plat-$(CONFIG_PLAT_S5PC1XX)   := s5pc1xx s3c samsung
+  
+  ifeq ($(CONFIG_ARCH_EBSA110),y)
+  # This is what happens if you forget the IOCS16 line.
