@@ -1,50 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the mips tree
-Date: Mon, 18 Jan 2010 18:53:51 +1100
-Message-ID: <20100118185351.3c6b719f.sfr@canb.auug.org.au>
+Subject: linux-next: pci tree build failure
+Date: Mon, 18 Jan 2010 19:40:50 +1100
+Message-ID: <20100118194050.7ea0c406.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__18_Jan_2010_18_53_51_+1100_RZIkvNnVavPhF_BX"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:42921 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:38976 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932091Ab0ARHx5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 18 Jan 2010 02:53:57 -0500
+	id S1755072Ab0ARIkx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 18 Jan 2010 03:40:53 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wu Zhangjin <wuzhangjin@gmail.com>, Ralf Baechle <ralf@linux-mips.org>
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, Shaohua Li <shaohua.li@intel.com>
 
---Signature=_Mon__18_Jan_2010_18_53_51_+1100_RZIkvNnVavPhF_BX
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Jesse,
 
-Hi Greg,
+Today's linux-next build (ppc64 allyesconfig) failed like this:
 
-Today's linux-next merge of the staging tree got a conflict in
-drivers/staging/sm7xx/smtc2d.c drivers/staging/sm7xx/smtc2d.h between
-commit 8cdfa0e5f204ee97d27f742ebd207f4de8ca2984 ("Loongson: Change the
-Email address of Wu Zhangjin") from the mips tree and commit
-1467bbc532da8c044e57706db232efe616ae5b00 ("staging: sm7xx: remove the
-buggy 2D acceleration support") from the staging tree.
+In file included from drivers/pci/pcie/pme/pcie_pme.c:22:
+include/linux/pci-acpi.h:42: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'acpi_find_root_bridge_handle'
 
-I just removed the 2 files (as was done in the staging tree).
---=20
+This file was added in commit f3adb5a4f2e1dfdf9482af05481d0928a39477e8
+("PCI PM: PCIe PME root port service driver") from the pci tree and seems
+to depend on ACPI.  Maybe its building should depend on CONFIG_ACPI?
+
+I added the following patch for today (I presume there is a better fix):
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 18 Jan 2010 19:36:11 +1100
+Subject: [PATCH] pci: PCIE_PME seems to depend on ACPI
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/pci/pcie/Kconfig |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/pci/pcie/Kconfig b/drivers/pci/pcie/Kconfig
+index cf3c35f..b8b494b 100644
+--- a/drivers/pci/pcie/Kconfig
++++ b/drivers/pci/pcie/Kconfig
+@@ -49,4 +49,4 @@ config PCIEASPM_DEBUG
+ 
+ config PCIE_PME
+ 	def_bool y
+-	depends on PCIEPORTBUS && PM_RUNTIME && EXPERIMENTAL
++	depends on PCIEPORTBUS && PM_RUNTIME && EXPERIMENTAL && ACPI
+-- 
+1.6.6
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__18_Jan_2010_18_53_51_+1100_RZIkvNnVavPhF_BX
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAktUE48ACgkQjjKRsyhoI8zTpwCfee+B7xviNLUnSIpON67Ofl8Y
-nPIAoJLx0RFLaOQFIOa2o93qOp388bEe
-=+fmK
------END PGP SIGNATURE-----
-
---Signature=_Mon__18_Jan_2010_18_53_51_+1100_RZIkvNnVavPhF_BX--
