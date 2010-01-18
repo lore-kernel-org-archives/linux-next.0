@@ -1,91 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: vfs tree build warning
-Date: Mon, 18 Jan 2010 13:11:39 +1100
-Message-ID: <20100118131139.1ef42c6f.sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for January 14 (drm header files)
+Date: Mon, 18 Jan 2010 13:42:21 +1100
+Message-ID: <20100118134221.0c36feb3.sfr@canb.auug.org.au>
+References: <20100114172047.406ebda8.sfr@canb.auug.org.au>
+	<20100117151718.f88c5f21.randy.dunlap@oracle.com>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__18_Jan_2010_13_42_21_+1100_kIT1TFen_YF2N9Vv"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:46048 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752373Ab0ARCme (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 17 Jan 2010 21:42:34 -0500
+In-Reply-To: <20100117151718.f88c5f21.randy.dunlap@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Dave Airlie <airlied@linux.ie>
+
+--Signature=_Mon__18_Jan_2010_13_42_21_+1100_kIT1TFen_YF2N9Vv
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753428Ab0ARCLr@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Sage Weil <sage@newdream.net>
-List-Id: linux-next.vger.kernel.org
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Al,
+[Just cc'd Dave]
 
-Today's linux-next build (x86_64_allmodconfig) produced this warning:
+On Sun, 17 Jan 2010 15:17:18 -0800 Randy Dunlap <randy.dunlap@oracle.com> w=
+rote:
+>=20
+> Is anything being done about these?
+> or does anything need to be done?
+>=20
+>=20
+> usr/include/drm/drm_mode.h:84: found __[us]{8,16,32,64} type without #inc=
+lude <linux/types.h>
+> usr/include/drm/i915_drm.h:119: found __[us]{8,16,32,64} type without #in=
+clude <linux/types.h>
+> usr/include/drm/mga_drm.h:260: found __[us]{8,16,32,64} type without #inc=
+lude <linux/types.h>
+> usr/include/drm/radeon_drm.h:758: found __[us]{8,16,32,64} type without #=
+include <linux/types.h>
+> usr/include/drm/via_drm.h:117: found __[us]{8,16,32,64} type without #inc=
+lude <linux/types.h>
+>=20
+>=20
+> Thanks,
+> ---
+> ~Randy
 
-fs/ceph/super.c:216: warning: initialization from incompatible pointer type
-
-Introduced by commit bc39e28236344af617473df80abb7de43176511e ("pass
-writeback_control to ->write_inode") from the vfs tree interacting with
-commit 16725b9d2a2e3d0fd2b0034482e2eb0a2d78050f ("ceph: super.c") from
-the ceph tree.
-
-This will need a fixup patch (see below) which I can carry in the
-linux-next tree.  There may, of course, be a better fix (which I can
-carry if someone sends it to me).
--- 
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 18 Jan 2010 11:53:08 +1100
-Subject: [PATCH] ceph: update for write_inode API change
+--Signature=_Mon__18_Jan_2010_13_42_21_+1100_kIT1TFen_YF2N9Vv
+Content-Type: application/pgp-signature
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/ceph/caps.c  |    4 +++-
- fs/ceph/super.h |    3 ++-
- 2 files changed, 5 insertions(+), 2 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index 9b9ce14..b2a6b9a 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -5,6 +5,7 @@
- #include <linux/sched.h>
- #include <linux/vmalloc.h>
- #include <linux/wait.h>
-+#include <linux/writeback.h>
- 
- #include "super.h"
- #include "decode.h"
-@@ -1745,12 +1746,13 @@ int ceph_fsync(struct file *file, struct dentry *dentry, int datasync)
-  * get by with fewer MDS messages if we wait for data writeback to
-  * complete first.
-  */
--int ceph_write_inode(struct inode *inode, int wait)
-+int ceph_write_inode(struct inode *inode, struct writeback_control *wbc)
- {
- 	struct ceph_inode_info *ci = ceph_inode(inode);
- 	unsigned flush_tid;
- 	int err = 0;
- 	int dirty;
-+	int wait = wbc->sync_mode == WB_SYNC_ALL;
- 
- 	dout("write_inode %p wait=%d\n", inode, wait);
- 	if (wait) {
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index de5e324..25b0988 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -11,6 +11,7 @@
- #include <linux/mempool.h>
- #include <linux/pagemap.h>
- #include <linux/wait.h>
-+#include <linux/writeback.h>
- 
- #include "types.h"
- #include "messenger.h"
-@@ -806,7 +807,7 @@ static inline void ceph_remove_cap(struct ceph_cap *cap)
- }
- 
- extern void ceph_queue_caps_release(struct inode *inode);
--extern int ceph_write_inode(struct inode *inode, int unused);
-+extern int ceph_write_inode(struct inode *inode, struct writeback_control *wbc);
- extern int ceph_fsync(struct file *file, struct dentry *dentry, int datasync);
- extern void ceph_kick_flushing_caps(struct ceph_mds_client *mdsc,
- 				    struct ceph_mds_session *session);
--- 
-1.6.6
+iEYEARECAAYFAktTyo0ACgkQjjKRsyhoI8y99QCgtucuf3EKHUPcWaEpGrOv3zIT
+lg8AoKffatVEyzqokOpRuN+zVqYozcdY
+=7zje
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__18_Jan_2010_13_42_21_+1100_kIT1TFen_YF2N9Vv--
