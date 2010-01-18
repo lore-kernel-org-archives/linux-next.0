@@ -1,68 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for January 14 (drm header files)
-Date: Mon, 18 Jan 2010 13:42:21 +1100
-Message-ID: <20100118134221.0c36feb3.sfr@canb.auug.org.au>
-References: <20100114172047.406ebda8.sfr@canb.auug.org.au>
-	<20100117151718.f88c5f21.randy.dunlap@oracle.com>
+Subject: linux-next: manual merge of the acpi tree with Linus' tree
+Date: Mon, 18 Jan 2010 13:56:24 +1100
+Message-ID: <20100118135624.011ee13b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__18_Jan_2010_13_42_21_+1100_kIT1TFen_YF2N9Vv"
+ boundary="Signature=_Mon__18_Jan_2010_13_56_24_+1100_DxNlahbUbqSqoyMo"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46048 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:49622 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752373Ab0ARCme (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 17 Jan 2010 21:42:34 -0500
-In-Reply-To: <20100117151718.f88c5f21.randy.dunlap@oracle.com>
+	id S1751463Ab0ARC43 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 17 Jan 2010 21:56:29 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Dave Airlie <airlied@linux.ie>
+To: Len Brown <lenb@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zhao Yakui <yakui.zhao@intel.com>, Eric Anholt <eric@anholt.net>
 
---Signature=_Mon__18_Jan_2010_13_42_21_+1100_kIT1TFen_YF2N9Vv
+--Signature=_Mon__18_Jan_2010_13_56_24_+1100_DxNlahbUbqSqoyMo
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-[Just cc'd Dave]
+Hi Len,
 
-On Sun, 17 Jan 2010 15:17:18 -0800 Randy Dunlap <randy.dunlap@oracle.com> w=
-rote:
->=20
-> Is anything being done about these?
-> or does anything need to be done?
->=20
->=20
-> usr/include/drm/drm_mode.h:84: found __[us]{8,16,32,64} type without #inc=
-lude <linux/types.h>
-> usr/include/drm/i915_drm.h:119: found __[us]{8,16,32,64} type without #in=
-clude <linux/types.h>
-> usr/include/drm/mga_drm.h:260: found __[us]{8,16,32,64} type without #inc=
-lude <linux/types.h>
-> usr/include/drm/radeon_drm.h:758: found __[us]{8,16,32,64} type without #=
-include <linux/types.h>
-> usr/include/drm/via_drm.h:117: found __[us]{8,16,32,64} type without #inc=
-lude <linux/types.h>
->=20
->=20
-> Thanks,
-> ---
-> ~Randy
+Today's linux-next merge of the acpi tree got a conflict in
+drivers/gpu/drm/i915/intel_lvds.c between commit
+40f33a92100f4d9b6e85ad642100cfe42d7ff57d ("drm/i915: Add HP
+nx9020/SamsungSX20S to ACPI LID quirk list") from Linus' tree and commit
+25fbdd0b66c193607ed058662e06d29345766c17 ("drm/i915: Add HP
+nx9020/Samsung SX20S to ACPI LID quirk list") from the acpi tree.
 
+Clearly two (slightly different) versions of the same change.  I used the
+version from the drm tree.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__18_Jan_2010_13_42_21_+1100_kIT1TFen_YF2N9Vv
+--Signature=_Mon__18_Jan_2010_13_56_24_+1100_DxNlahbUbqSqoyMo
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAktTyo0ACgkQjjKRsyhoI8y99QCgtucuf3EKHUPcWaEpGrOv3zIT
-lg8AoKffatVEyzqokOpRuN+zVqYozcdY
-=7zje
+iEYEARECAAYFAktTzdgACgkQjjKRsyhoI8yC+gCgk0pHRXt2btlFq2Ad49mW0+f4
+12EAoIrKGla77HTKlnj9hQaG0Ve3HRgp
+=0U57
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__18_Jan_2010_13_42_21_+1100_kIT1TFen_YF2N9Vv--
+--Signature=_Mon__18_Jan_2010_13_56_24_+1100_DxNlahbUbqSqoyMo--
