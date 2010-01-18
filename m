@@ -1,60 +1,55 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: pci tree build failure
-Date: Mon, 18 Jan 2010 22:24:44 +0100
-Message-ID: <201001182224.44223.rjw@sisk.pl>
-References: <20100118194050.7ea0c406.sfr@canb.auug.org.au>
+From: Sage Weil <sage@newdream.net>
+Subject: Re: linux-next: merge fixups relative to the vfs tree
+Date: Mon, 18 Jan 2010 15:16:39 -0800 (PST)
+Message-ID: <Pine.LNX.4.64.1001181512340.1759@cobra.newdream.net>
+References: <20100118182852.9820b770.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: MULTIPART/MIXED; BOUNDARY="557981400-1581715584-1263856415=:1759"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:50303 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754896Ab0ARVYZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 18 Jan 2010 16:24:25 -0500
-In-Reply-To: <20100118194050.7ea0c406.sfr@canb.auug.org.au>
+Received: from cobra.newdream.net ([66.33.216.30]:46477 "EHLO
+	cobra.newdream.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754368Ab0ARXQJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Jan 2010 18:16:09 -0500
+In-Reply-To: <20100118182852.9820b770.sfr@canb.auug.org.au>
+Content-ID: <Pine.LNX.4.64.1001181513480.1873@cobra.newdream.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Jesse Barnes <jbarnes@virtuousgeek.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shaohua Li <shaohua.li@intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: =?UTF-8?B?IkrDtnJuIEVuZ2VsIg==?= <joern@logfs.org>, Al Viro <viro@ZenIV.linux.org.uk>, Christoph Hellwig <hch@lst.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Monday 18 January 2010, Stephen Rothwell wrote:
-> Hi Jesse,
-> 
-> Today's linux-next build (ppc64 allyesconfig) failed like this:
-> 
-> In file included from drivers/pci/pcie/pme/pcie_pme.c:22:
-> include/linux/pci-acpi.h:42: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'acpi_find_root_bridge_handle'
-> 
-> This file was added in commit f3adb5a4f2e1dfdf9482af05481d0928a39477e8
-> ("PCI PM: PCIe PME root port service driver") from the pci tree and seems
-> to depend on ACPI.  Maybe its building should depend on CONFIG_ACPI?
-> 
-> I added the following patch for today (I presume there is a better fix):
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 18 Jan 2010 19:36:11 +1100
-> Subject: [PATCH] pci: PCIE_PME seems to depend on ACPI
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/pci/pcie/Kconfig |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/drivers/pci/pcie/Kconfig b/drivers/pci/pcie/Kconfig
-> index cf3c35f..b8b494b 100644
-> --- a/drivers/pci/pcie/Kconfig
-> +++ b/drivers/pci/pcie/Kconfig
-> @@ -49,4 +49,4 @@ config PCIEASPM_DEBUG
->  
->  config PCIE_PME
->  	def_bool y
-> -	depends on PCIEPORTBUS && PM_RUNTIME && EXPERIMENTAL
-> +	depends on PCIEPORTBUS && PM_RUNTIME && EXPERIMENTAL && ACPI
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Thanks a lot, this is the right fix IMO.
+--557981400-1581715584-1263856415=:1759
+Content-Type: TEXT/PLAIN; CHARSET=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-ID: <Pine.LNX.4.64.1001181513481.1873@cobra.newdream.net>
 
-Jesse, do you want me to resend the patch with this fix included or are you
-going to take the Stephens patch to your tree?
+On Mon, 18 Jan 2010, Stephen Rothwell wrote:
+> Hi J=F6rn, Sage,
+>=20
+> Al has now created a "write_inode" branch in the vfs tree that just
+> contains the changes that your trees need to be fixed up for.  Al
+> promises that this branch will never be rebased.  So the best solution is
+> for you both to merge that branch into your respective trees ("git pull
+> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs-2.6.git
+> write_inode") and then apply the patches I sent (assuming that they are
+> correct).  If you rebase your trees, you will need to repull the above
+> branch, of course.
 
-Rafael
+That works, thanks.  I was planning on just making sure my tree got pulled=
+=20
+after the vfs tree, but this will work either way.
+
+More generally, I'm not sure I understand how your fixups are supposed to=
+=20
+be used down the line.  Is whichever tree that caused the conflict to get=
+=20
+merged second supposed to pick it up in their branch to pull, or are those=
+=20
+patches being fed to Linus somehow, or does he usually fix up those=20
+conflicts himself?
+
+Thanks-
+sage
+--557981400-1581715584-1263856415=:1759--
