@@ -1,56 +1,34 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: pci tree build failure
-Date: Mon, 18 Jan 2010 19:40:50 +1100
-Message-ID: <20100118194050.7ea0c406.sfr@canb.auug.org.au>
+From: Linus Walleij <linus.ml.walleij@gmail.com>
+Subject: Re: linux-next: trivial tree build failure
+Date: Mon, 18 Jan 2010 09:36:29 +0100
+Message-ID: <63386a3d1001180036h2bad24cas8c407edde729678e@mail.gmail.com>
+References: <20100118162412.9944c571.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38976 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755072Ab0ARIkx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 18 Jan 2010 03:40:53 -0500
+Received: from mail-bw0-f219.google.com ([209.85.218.219]:49386 "EHLO
+	mail-bw0-f219.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753560Ab0ARIoT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Jan 2010 03:44:19 -0500
+In-Reply-To: <20100118162412.9944c571.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jesse Barnes <jbarnes@virtuousgeek.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, Shaohua Li <shaohua.li@intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jiri Kosina <jkosina@suse.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Egger <siccegge@stud.informatik.uni-erlangen.de>, Linus Walleij <linus.walleij@stericsson.com>, Samuel Ortiz <sameo@linux.intel.com>
 
-Hi Jesse,
+2010/1/18 Stephen Rothwell <sfr@canb.auug.org.au>:
 
-Today's linux-next build (ppc64 allyesconfig) failed like this:
+> Exposed by commit 8dcafdf0475eb4633401d1f0bf0e0d35e4ebb9d5
+> "CONFIG_DEBUG_FS wrongly written as CONFIG_DEBUGFS".
+> I have reverted that commit for today.
 
-In file included from drivers/pci/pcie/pme/pcie_pme.c:22:
-include/linux/pci-acpi.h:42: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'acpi_find_root_bridge_handle'
+I have sent a proper patch to Sam last night, that fix the #ifdef and
+makes the code work.
 
-This file was added in commit f3adb5a4f2e1dfdf9482af05481d0928a39477e8
-("PCI PM: PCIe PME root port service driver") from the pci tree and seems
-to depend on ACPI.  Maybe its building should depend on CONFIG_ACPI?
+> That file probably just needs to include <linux/seq_file.h> ...
 
-I added the following patch for today (I presume there is a better fix):
+Not quite, there was some code rot in the #ifdef:ed code as well.
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 18 Jan 2010 19:36:11 +1100
-Subject: [PATCH] pci: PCIE_PME seems to depend on ACPI
+But it should all be fixed now!
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/pci/pcie/Kconfig |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/pci/pcie/Kconfig b/drivers/pci/pcie/Kconfig
-index cf3c35f..b8b494b 100644
---- a/drivers/pci/pcie/Kconfig
-+++ b/drivers/pci/pcie/Kconfig
-@@ -49,4 +49,4 @@ config PCIEASPM_DEBUG
- 
- config PCIE_PME
- 	def_bool y
--	depends on PCIEPORTBUS && PM_RUNTIME && EXPERIMENTAL
-+	depends on PCIEPORTBUS && PM_RUNTIME && EXPERIMENTAL && ACPI
--- 
-1.6.6
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Linus Walleij
