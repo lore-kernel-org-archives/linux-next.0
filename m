@@ -1,47 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the fsnotify tree with the vfs tree
-Date: Mon, 18 Jan 2010 17:29:44 +1100
-Message-ID: <20100118172944.c80b15d5.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with Linus' tree
+Date: Mon, 18 Jan 2010 18:08:41 +1100
+Message-ID: <20100118180841.96628ee6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45962 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:48783 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752428Ab0ARG3t (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 18 Jan 2010 01:29:49 -0500
+	id S1752297Ab0ARHIo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 18 Jan 2010 02:08:44 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Eric Paris <eparis@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kiszka <jan.kiszka@siemens.com>, Steven Rostedt <rostedt@goodmis.org>, Wolfram Sang <w.sang@pengutronix.de>
 
-Hi Eric,
+Hi all,
 
-Today's linux-next merge of the fsnotify tree got a conflict in
-include/linux/fs.h between commit
-6d125529c6cbfe570ce3bf9a0728548f087499da ("Fix ACC_MODE() for real") from
-the vfs tree and commit 8b006ddbcdc223f1053ab98dfa5460cd4ecd27b9 ("vfs:
-introduce FMODE_NONOTIFY") from the fsnotify tree.
+Today's linux-next merge of the tip tree got a conflict in
+scripts/recordmcount.pl between commit
+b82a4045f7962483a78a874343dc6e31b79c96c1 ("tracing/x86: Derive arch from
+bits argument in recordmcount.pl") from Linus' tree and commit
+dfaa9e2c5707b2c217c0121aac796e0fa3051482 ("tracing: Use appropriate perl
+constructs in recordmcount.pl") from the tip tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+I fixed it up (see below) and can carry the fix for a while.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc include/linux/fs.h
-index 416b8bd,d6190a8..0000000
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@@ -2461,8 -2460,9 +2459,9 @@@ int proc_nr_files(struct ctl_table *tab
+diff --cc scripts/recordmcount.pl
+index ea6f6e3,545fe71..0000000
+--- a/scripts/recordmcount.pl
++++ b/scripts/recordmcount.pl
+@@@ -194,12 -195,8 +195,8 @@@ sub check_objcop
+      }
+  }
   
-  int __init get_filesystem_list(char *buf);
+ -if ($arch eq 'x86') {
+ +if ($arch =~ /(x86(_64)?)|(i386)/) {
+-     if ($bits == 64) {
+- 	$arch = "x86_64";
+-     } else {
+- 	$arch = "i386";
+-     }
++     $arch = ($bits == 64) ? 'x86_64' : 'i386';
+  }
   
- -#define ACC_MODE(x) ("\000\004\002\006"[(x)&O_ACCMODE])
- +#define ACC_MODE(x) ("\004\002\006\006"[(x)&O_ACCMODE])
-- #define OPEN_FMODE(flag) ((__force fmode_t)((flag + 1) & O_ACCMODE))
-+ #define OPEN_FMODE(flag) ((__force fmode_t)(((flag + 1) & O_ACCMODE) | \
-+ 					    (flag & FMODE_NONOTIFY)))
-  
-  #endif /* __KERNEL__ */
-  #endif /* _LINUX_FS_H */
+  #
