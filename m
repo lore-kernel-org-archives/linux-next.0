@@ -1,64 +1,46 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: linux-next: trivial tree build failure
-Date: Mon, 18 Jan 2010 11:17:19 +0100 (CET)
-Message-ID: <alpine.LNX.2.00.1001181115540.30977@pobox.suse.cz>
-References: <20100118162412.9944c571.sfr@canb.auug.org.au> <63386a3d1001180036h2bad24cas8c407edde729678e@mail.gmail.com> <20100118200126.0176773d.sfr@canb.auug.org.au>
+From: Steven Whitehouse <swhiteho@redhat.com>
+Subject: Re: linux-next: manual merge of the vfs tree with the gfs2 tree
+Date: Mon, 18 Jan 2010 10:56:41 +0000
+Message-ID: <1263812201.2715.11.camel@localhost>
+References: <20100118105556.230beb08.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor.suse.de ([195.135.220.2]:49663 "EHLO mx1.suse.de"
+Received: from mx1.redhat.com ([209.132.183.28]:49353 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752397Ab0ARKRW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 18 Jan 2010 05:17:22 -0500
-In-Reply-To: <20100118200126.0176773d.sfr@canb.auug.org.au>
+	id S1751640Ab0ARKxr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 18 Jan 2010 05:53:47 -0500
+In-Reply-To: <20100118105556.230beb08.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Linus Walleij <linus.ml.walleij@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Egger <siccegge@stud.informatik.uni-erlangen.de>, Linus Walleij <linus.walleij@stericsson.com>, Samuel Ortiz <sameo@linux.intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
-On Mon, 18 Jan 2010, Stephen Rothwell wrote:
+Hi,
 
-> Hi Jiri,
+On Mon, 2010-01-18 at 10:55 +1100, Stephen Rothwell wrote:
+> Hi Al,
 > 
-> Today's linux-next build (x86_64_allmodconfig) failed like this:
+> Today's linux-next merge of the vfs tree got a conflict in
+> fs/gfs2/ops_inode.c between commit
+> 83c77e8b3457f2ee5dad028dc54cf3ce540104b2 ("GFS2: Fix refcnt leak on
+> gfs2_follow_link() error path") from the gfs2 tree and commit
+> 261a144ac2b3867c7be70f08925e446430df6937 ("Switch gfs2 to nd_set_link()")
+> from the vfs tree.
 > 
-> drivers/mfd/ab3100-otp.c: In function 'show_otp':
-> drivers/mfd/ab3100-otp.c:101: error: dereferencing pointer to incomplete type
-> drivers/mfd/ab3100-otp.c:104: error: implicit declaration of function 'seq_printf'
-> drivers/mfd/ab3100-otp.c:102: warning: unused variable 'err'
-> drivers/mfd/ab3100-otp.c: In function 'ab3100_otp_open':
-> drivers/mfd/ab3100-otp.c:116: error: implicit declaration of function 'single_open'
-> drivers/mfd/ab3100-otp.c:116: error: 'ab3100_otp_show' undeclared (first use in this function)
-> drivers/mfd/ab3100-otp.c: At top level:
-> drivers/mfd/ab3100-otp.c:121: error: 'seq_read' undeclared here (not in a function)
-> drivers/mfd/ab3100-otp.c:122: error: 'seq_lseek' undeclared here (not in a function)
-> drivers/mfd/ab3100-otp.c:123: error: 'single_release' undeclared here (not in a function)
-> drivers/mfd/ab3100-otp.c: In function 'ab3100_otp_init_debugfs':
-> drivers/mfd/ab3100-otp.c:134: error: 'err' undeclared (first use in this function)
-> drivers/mfd/ab3100-otp.c: In function 'ab3100_otp_exit_debugfs':
-> drivers/mfd/ab3100-otp.c:140: error: implicit declaration of function 'debugfs_remove_file'
+> I can't figure out if the gfs2 tree fix is required any more, so I just
+> used the vfs tree version.
 > 
-> Exposed by commit 8dcafdf0475eb4633401d1f0bf0e0d35e4ebb9d5
-> "CONFIG_DEBUG_FS wrongly written as CONFIG_DEBUGFS".
-
-Hmm, mea culpa. I have noticed the build failure myself and notified patch 
-author about that, but forgot to drop the patch from my tree afterwards. 
-Sorry.
-
-On Mon, 18 Jan 2010, Linus Walleij wrote:
-
-> 2010/1/18 Stephen Rothwell <sfr@canb.auug.org.au>:
+> Al, if that gfs2 patch is standalone, you should probably send it to the
+> gfs2 guys.
 > 
-> > Exposed by commit 8dcafdf0475eb4633401d1f0bf0e0d35e4ebb9d5
-> > "CONFIG_DEBUG_FS wrongly written as CONFIG_DEBUGFS".
-> > I have reverted that commit for today.
-> 
-> I have sent a proper patch to Sam last night, that fix the #ifdef and
-> makes the code work.
 
-I have dropped the patch from my tree now, and I am not carrying any 
-replacement as of now.
+It looks as if the two patches would be alternatives. The only question
+is whether Al's patch should be left for the merge window or whether its
+ok to send it ahead of time to fix the issue (which is what I had been
+intending to do with the bug fix prior to Al's patch).
 
--- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+Thoughts?
+
+Steve.
