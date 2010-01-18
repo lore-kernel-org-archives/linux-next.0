@@ -1,65 +1,67 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: linux-next: manual merge of the arm tree with the arm-current
-	tree
-Date: Mon, 18 Jan 2010 01:33:07 +0000
-Message-ID: <20100118013307.GD10014@trinity.fluff.org>
-References: <20100118103534.a5dc3c66.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: vfs tree build warning
+Date: Mon, 18 Jan 2010 13:11:28 +1100
+Message-ID: <20100118131128.a09d1021.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:39161 "EHLO trinity.fluff.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:38166 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751638Ab0ARBdQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 17 Jan 2010 20:33:16 -0500
-Content-Disposition: inline
-In-Reply-To: <20100118103534.a5dc3c66.sfr@canb.auug.org.au>
+	id S1751586Ab0ARCLd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 17 Jan 2010 21:11:33 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Russell King <rmk@arm.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, =?UTF-8?B?IkrDtnJuIEVuZ2VsIg==?= <joern@logfs.org>
 
-On Mon, Jan 18, 2010 at 10:35:34AM +1100, Stephen Rothwell wrote:
-> Hi Russell,
-> 
-> Today's linux-next merge of the arm tree got a conflict in
-> arch/arm/Makefile between commit 95b8f20fd6a2694a16b8addb190b942bfb670c88
-> (ARM: fix badly placed mach/plat entries in Kconfig & Makefile"") from
-> the arm-current tree and commit c4ffccddd54b669cc9683f2c69e31035e916a1a0
-> ("ARM: S5P6440: Add new Kconfig and Makefiles") from the arm tree.
-> 
-> I fixed it up (see below) and can carry the fix for a while.
+Hi Al,
 
-Is that from the merge of next-samsung or from two parts of the ARM
-trees?
+Today's linux-next build (x86_64_allmodconfig) produced this warning:
 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> (Sorry, cut and paste diff)
-> diff --cc arch/arm/Makefile
-> index 9e75825,bbcd512..0000000
-> --- a/arch/arm/Makefile
-> +++ b/arch/arm/Makefile
-> @@@ -184,7 -184,9 +185,8 @@@ plat-$(CONFIG_PLAT_ORION)  := orio
->   plat-$(CONFIG_PLAT_PXA)               := pxa
->   plat-$(CONFIG_PLAT_S3C24XX)   := s3c24xx s3c samsung
->   plat-$(CONFIG_PLAT_S3C64XX)   := s3c64xx s3c samsung
->  -plat-$(CONFIG_PLAT_S5PC1XX)   := s5pc1xx s3c samsung
-> + plat-$(CONFIG_PLAT_S5P)               := s5p samsung s3c
->  -plat-$(CONFIG_ARCH_STMP3XXX)  := stmp3xxx
->  +plat-$(CONFIG_PLAT_S5PC1XX)   := s5pc1xx s3c samsung
->   
->   ifeq ($(CONFIG_ARCH_EBSA110),y)
->   # This is what happens if you forget the IOCS16 line.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+fs/logfs/inode.c:399: warning: initialization from incompatible pointer type
 
+Introduced by commit bc39e28236344af617473df80abb7de43176511e ("pass
+writeback_control to ->write_inode") from the vfs tree interacting with
+commit 5db53f3e80dee2d9dff5e534f9e9fe1db17c9936 ("[LogFS] add new flash
+file system") from the logfs tree.
+
+This will need a fixup patch (see below) which I can carry in the
+linux-next tree.  There may, of course, be a better fix (which I can
+carry if someone sends it to me).
 -- 
--- 
-Ben
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 18 Jan 2010 12:14:59 +1100
+Subject: [PATCH] logfs: fixup for write_inode API change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/logfs/inode.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/fs/logfs/inode.c b/fs/logfs/inode.c
+index 6d08b37..36308af 100644
+--- a/fs/logfs/inode.c
++++ b/fs/logfs/inode.c
+@@ -8,6 +8,7 @@
+ #include "logfs.h"
+ #include <linux/writeback.h>
+ #include <linux/backing-dev.h>
++#include <linux/writeback.h>
+ 
+ /*
+  * How soon to reuse old inode numbers?  LogFS doesn't store deleted inodes
+@@ -282,7 +283,7 @@ struct inode *logfs_read_meta_inode(struct super_block *sb, u64 ino)
+ 	return inode;
+ }
+ 
+-static int logfs_write_inode(struct inode *inode, int do_sync)
++static int logfs_write_inode(struct inode *inode, struct writeback_control *wbc)
+ {
+ 	int ret;
+ 	long flags = WF_LOCK;
+-- 
+1.6.6
