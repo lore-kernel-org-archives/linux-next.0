@@ -1,80 +1,69 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Subject: Re: linux-next: trivial tree build failure
-Date: Mon, 18 Jan 2010 13:56:30 +0100
-Message-ID: <20100118125630.GE8036@sortiz.org>
-References: <20100118162412.9944c571.sfr@canb.auug.org.au>
- <63386a3d1001180036h2bad24cas8c407edde729678e@mail.gmail.com>
- <20100118200126.0176773d.sfr@canb.auug.org.au>
- <alpine.LNX.2.00.1001181115540.30977@pobox.suse.cz>
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: [-next Jan 18] Boot failure on s390 with DEVTMPFS=y
+Date: Mon, 18 Jan 2010 19:51:47 +0530
+Message-ID: <4B546E7B.2080900@in.ibm.com>
+References: <20100118195743.b45f119e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga10.intel.com ([192.55.52.92]:61142 "EHLO
-	fmsmga102.fm.intel.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1754509Ab0ARMy5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Jan 2010 07:54:57 -0500
-Content-Disposition: inline
-In-Reply-To: <alpine.LNX.2.00.1001181115540.30977@pobox.suse.cz>
+Received: from e23smtp08.au.ibm.com ([202.81.31.141]:33372 "EHLO
+	e23smtp08.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752058Ab0AROWA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Jan 2010 09:22:00 -0500
+In-Reply-To: <20100118195743.b45f119e.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linus Walleij <linus.ml.walleij@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Egger <siccegge@stud.informatik.uni-erlangen.de>, Linus Walleij <linus.walleij@stericsson.com>
+To: Greg KH <greg@kroah.com>, Kay Sievers <kay.sievers@vrfy.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Heiko Carstens <heiko.carstens@de.ibm.com>, linux-s390@vger.kernel.org
 
-Hi Jiri,
+Today next (next-20100118) failed to boot on a s390 box
+with the following Oops :
 
-On Mon, Jan 18, 2010 at 11:17:19AM +0100, Jiri Kosina wrote:
-> On Mon, 18 Jan 2010, Stephen Rothwell wrote:
-> 
-> > Hi Jiri,
-> > 
-> > Today's linux-next build (x86_64_allmodconfig) failed like this:
-> > 
-> > drivers/mfd/ab3100-otp.c: In function 'show_otp':
-> > drivers/mfd/ab3100-otp.c:101: error: dereferencing pointer to incomplete type
-> > drivers/mfd/ab3100-otp.c:104: error: implicit declaration of function 'seq_printf'
-> > drivers/mfd/ab3100-otp.c:102: warning: unused variable 'err'
-> > drivers/mfd/ab3100-otp.c: In function 'ab3100_otp_open':
-> > drivers/mfd/ab3100-otp.c:116: error: implicit declaration of function 'single_open'
-> > drivers/mfd/ab3100-otp.c:116: error: 'ab3100_otp_show' undeclared (first use in this function)
-> > drivers/mfd/ab3100-otp.c: At top level:
-> > drivers/mfd/ab3100-otp.c:121: error: 'seq_read' undeclared here (not in a function)
-> > drivers/mfd/ab3100-otp.c:122: error: 'seq_lseek' undeclared here (not in a function)
-> > drivers/mfd/ab3100-otp.c:123: error: 'single_release' undeclared here (not in a function)
-> > drivers/mfd/ab3100-otp.c: In function 'ab3100_otp_init_debugfs':
-> > drivers/mfd/ab3100-otp.c:134: error: 'err' undeclared (first use in this function)
-> > drivers/mfd/ab3100-otp.c: In function 'ab3100_otp_exit_debugfs':
-> > drivers/mfd/ab3100-otp.c:140: error: implicit declaration of function 'debugfs_remove_file'
-> > 
-> > Exposed by commit 8dcafdf0475eb4633401d1f0bf0e0d35e4ebb9d5
-> > "CONFIG_DEBUG_FS wrongly written as CONFIG_DEBUGFS".
-> 
-> Hmm, mea culpa. I have noticed the build failure myself and notified patch 
-> author about that, but forgot to drop the patch from my tree afterwards. 
-> Sorry.
-> 
-> On Mon, 18 Jan 2010, Linus Walleij wrote:
-> 
-> > 2010/1/18 Stephen Rothwell <sfr@canb.auug.org.au>:
-> > 
-> > > Exposed by commit 8dcafdf0475eb4633401d1f0bf0e0d35e4ebb9d5
-> > > "CONFIG_DEBUG_FS wrongly written as CONFIG_DEBUGFS".
-> > > I have reverted that commit for today.
-> > 
-> > I have sent a proper patch to Sam last night, that fix the #ifdef and
-> > makes the code work.
-> 
-> I have dropped the patch from my tree now, and I am not carrying any 
-> replacement as of now.
-I'm carrying Linus patch for it, thanks.
+Brought up 4 CPUs
+Unable to handle kernel pointer dereference at virtual kernel address 0000000000543000
+Oops: 0004 #1 SMP
+Modules linked in:
+CPU: 0 Not tainted 2.6.33-rc4-autotest-next-20100118-5-default #1
+Process swapper (pid: 1, task: 00000000fd792038, ksp: 00000000fd797a30)
+Krnl PSW : 0704200180000000 00000000001eb0b8 (shmem_parse_options+0xc0/0x328)
+          R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:0 CC:2 PM:0 EA:3
+Krnl GPRS: 000000000054388a 000000000000003d 0000000000543836 000000000000003d
+          0000000000000000 0000000000483f28 0000000000536112 00000000fd797d00
+          00000000fd4ba100 0000000000000100 0000000000483978 0000000000543832
+          0000000000000000 0000000000465958 00000000001eb0b0 00000000fd797c58
+Krnl Code: 00000000001eb0aa: c0e5000994f1       brasl   %r14,31da8c
+          00000000001eb0b0: b9020022           ltgr    %r2,%r2
+          00000000001eb0b4: a784010b           brc     8,1eb2ca
+         >00000000001eb0b8: 92002000           mvi     0(%r2),0
+          00000000001eb0bc: a7080000           lhi     %r0,0
+          00000000001eb0c0: 41902001           la      %r9,1(%r2)
+          00000000001eb0c4: b9040016           lgr     %r1,%r6
+          00000000001eb0c8: b904002b           lgr     %r2,%r11
+Call Trace:
+(<00000000fd797c50> 0xfd797c50)
+<00000000001eb5da> shmem_fill_super+0x13a/0x25c
+<0000000000228cfa> get_sb_single+0xbe/0xdc
+<000000000034ffc0> dev_get_sb+0x2c/0x38
+<000000000066c602> devtmpfs_init+0x46/0xc0
+<000000000066c53e> driver_init+0x22/0x60
+<000000000064d40a> kernel_init+0x24e/0x3d0
+<000000000010a7ea> kernel_thread_starter+0x6/0xc
+<000000000010a7e4> kernel_thread_starter+0x0/0xc
 
-Cheers,
-Samuel.
+Previous next builds worked fine on the same box. The only difference
+between configs of the two builds was CONFIG_DEVTMPFS. This option was
+enabled while compiling 20100118. 
 
+Thanks
+-Sachin
 
-> -- 
-> Jiri Kosina
-> SUSE Labs, Novell Inc.
 
 -- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
