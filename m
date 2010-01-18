@@ -1,59 +1,64 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Jiri Kosina <jkosina@suse.cz>
 Subject: Re: linux-next: trivial tree build failure
-Date: Mon, 18 Jan 2010 20:01:26 +1100
-Message-ID: <20100118200126.0176773d.sfr@canb.auug.org.au>
-References: <20100118162412.9944c571.sfr@canb.auug.org.au>
-	<63386a3d1001180036h2bad24cas8c407edde729678e@mail.gmail.com>
+Date: Mon, 18 Jan 2010 11:17:19 +0100 (CET)
+Message-ID: <alpine.LNX.2.00.1001181115540.30977@pobox.suse.cz>
+References: <20100118162412.9944c571.sfr@canb.auug.org.au> <63386a3d1001180036h2bad24cas8c407edde729678e@mail.gmail.com> <20100118200126.0176773d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__18_Jan_2010_20_01_26_+1100_HJP+253InYon_0g0"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49480 "EHLO smtps.tip.net.au"
+Received: from cantor.suse.de ([195.135.220.2]:49663 "EHLO mx1.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751052Ab0ARJBc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 18 Jan 2010 04:01:32 -0500
-In-Reply-To: <63386a3d1001180036h2bad24cas8c407edde729678e@mail.gmail.com>
+	id S1752397Ab0ARKRW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 18 Jan 2010 05:17:22 -0500
+In-Reply-To: <20100118200126.0176773d.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.ml.walleij@gmail.com>
-Cc: Jiri Kosina <jkosina@suse.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Egger <siccegge@stud.informatik.uni-erlangen.de>, Linus Walleij <linus.walleij@stericsson.com>, Samuel Ortiz <sameo@linux.intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Linus Walleij <linus.ml.walleij@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Egger <siccegge@stud.informatik.uni-erlangen.de>, Linus Walleij <linus.walleij@stericsson.com>, Samuel Ortiz <sameo@linux.intel.com>
 
---Signature=_Mon__18_Jan_2010_20_01_26_+1100_HJP+253InYon_0g0
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 18 Jan 2010, Stephen Rothwell wrote:
 
-Hi Linus,
+> Hi Jiri,
+> 
+> Today's linux-next build (x86_64_allmodconfig) failed like this:
+> 
+> drivers/mfd/ab3100-otp.c: In function 'show_otp':
+> drivers/mfd/ab3100-otp.c:101: error: dereferencing pointer to incomplete type
+> drivers/mfd/ab3100-otp.c:104: error: implicit declaration of function 'seq_printf'
+> drivers/mfd/ab3100-otp.c:102: warning: unused variable 'err'
+> drivers/mfd/ab3100-otp.c: In function 'ab3100_otp_open':
+> drivers/mfd/ab3100-otp.c:116: error: implicit declaration of function 'single_open'
+> drivers/mfd/ab3100-otp.c:116: error: 'ab3100_otp_show' undeclared (first use in this function)
+> drivers/mfd/ab3100-otp.c: At top level:
+> drivers/mfd/ab3100-otp.c:121: error: 'seq_read' undeclared here (not in a function)
+> drivers/mfd/ab3100-otp.c:122: error: 'seq_lseek' undeclared here (not in a function)
+> drivers/mfd/ab3100-otp.c:123: error: 'single_release' undeclared here (not in a function)
+> drivers/mfd/ab3100-otp.c: In function 'ab3100_otp_init_debugfs':
+> drivers/mfd/ab3100-otp.c:134: error: 'err' undeclared (first use in this function)
+> drivers/mfd/ab3100-otp.c: In function 'ab3100_otp_exit_debugfs':
+> drivers/mfd/ab3100-otp.c:140: error: implicit declaration of function 'debugfs_remove_file'
+> 
+> Exposed by commit 8dcafdf0475eb4633401d1f0bf0e0d35e4ebb9d5
+> "CONFIG_DEBUG_FS wrongly written as CONFIG_DEBUGFS".
 
-On Mon, 18 Jan 2010 09:36:29 +0100 Linus Walleij <linus.ml.walleij@gmail.co=
-m> wrote:
->
+Hmm, mea culpa. I have noticed the build failure myself and notified patch 
+author about that, but forgot to drop the patch from my tree afterwards. 
+Sorry.
+
+On Mon, 18 Jan 2010, Linus Walleij wrote:
+
+> 2010/1/18 Stephen Rothwell <sfr@canb.auug.org.au>:
+> 
+> > Exposed by commit 8dcafdf0475eb4633401d1f0bf0e0d35e4ebb9d5
+> > "CONFIG_DEBUG_FS wrongly written as CONFIG_DEBUGFS".
+> > I have reverted that commit for today.
+> 
 > I have sent a proper patch to Sam last night, that fix the #ifdef and
 > makes the code work.
->=20
-> > That file probably just needs to include <linux/seq_file.h> ...
->=20
-> Not quite, there was some code rot in the #ifdef:ed code as well.
->=20
-> But it should all be fixed now!
 
-Excellent, thanks.
+I have dropped the patch from my tree now, and I am not carrying any 
+replacement as of now.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__18_Jan_2010_20_01_26_+1100_HJP+253InYon_0g0
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAktUI2YACgkQjjKRsyhoI8zi2gCdEMIq/2ziFAX6CGLjl6dF64Rb
-4kwAoLj1R3GuhIOZdU5lCG9mADHLJXqZ
-=nz4B
------END PGP SIGNATURE-----
-
---Signature=_Mon__18_Jan_2010_20_01_26_+1100_HJP+253InYon_0g0--
+-- 
+Jiri Kosina
+SUSE Labs, Novell Inc.
