@@ -1,55 +1,57 @@
-From: Sage Weil <sage@newdream.net>
-Subject: Re: linux-next: merge fixups relative to the vfs tree
-Date: Mon, 18 Jan 2010 15:16:39 -0800 (PST)
-Message-ID: <Pine.LNX.4.64.1001181512340.1759@cobra.newdream.net>
-References: <20100118182852.9820b770.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: trivial tree build failure
+Date: Tue, 19 Jan 2010 10:40:54 +1100
+Message-ID: <20100119104054.b0b700aa.sfr@canb.auug.org.au>
+References: <20100118162412.9944c571.sfr@canb.auug.org.au>
+	<63386a3d1001180036h2bad24cas8c407edde729678e@mail.gmail.com>
+	<20100118200126.0176773d.sfr@canb.auug.org.au>
+	<alpine.LNX.2.00.1001181115540.30977@pobox.suse.cz>
+	<20100118125630.GE8036@sortiz.org>
 Mime-Version: 1.0
-Content-Type: MULTIPART/MIXED; BOUNDARY="557981400-1581715584-1263856415=:1759"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__19_Jan_2010_10_40_54_+1100_u6HQqa8SwncMTS1Z"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cobra.newdream.net ([66.33.216.30]:46477 "EHLO
-	cobra.newdream.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754368Ab0ARXQJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Jan 2010 18:16:09 -0500
-In-Reply-To: <20100118182852.9820b770.sfr@canb.auug.org.au>
-Content-ID: <Pine.LNX.4.64.1001181513480.1873@cobra.newdream.net>
+Received: from chilli.pcug.org.au ([203.10.76.44]:34222 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751565Ab0ARXlI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 18 Jan 2010 18:41:08 -0500
+In-Reply-To: <20100118125630.GE8036@sortiz.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: =?UTF-8?B?IkrDtnJuIEVuZ2VsIg==?= <joern@logfs.org>, Al Viro <viro@ZenIV.linux.org.uk>, Christoph Hellwig <hch@lst.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: Jiri Kosina <jkosina@suse.cz>, Linus Walleij <linus.ml.walleij@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Egger <siccegge@stud.informatik.uni-erlangen.de>, Linus Walleij <linus.walleij@stericsson.com>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+--Signature=_Tue__19_Jan_2010_10_40_54_+1100_u6HQqa8SwncMTS1Z
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
---557981400-1581715584-1263856415=:1759
-Content-Type: TEXT/PLAIN; CHARSET=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <Pine.LNX.4.64.1001181513481.1873@cobra.newdream.net>
+Hi Sam, Jiri,
 
-On Mon, 18 Jan 2010, Stephen Rothwell wrote:
-> Hi J=F6rn, Sage,
->=20
-> Al has now created a "write_inode" branch in the vfs tree that just
-> contains the changes that your trees need to be fixed up for.  Al
-> promises that this branch will never be rebased.  So the best solution is
-> for you both to merge that branch into your respective trees ("git pull
-> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs-2.6.git
-> write_inode") and then apply the patches I sent (assuming that they are
-> correct).  If you rebase your trees, you will need to repull the above
-> branch, of course.
+On Mon, 18 Jan 2010 13:56:30 +0100 Samuel Ortiz <sameo@linux.intel.com> wro=
+te:
+>
+> > I have dropped the patch from my tree now, and I am not carrying any=20
+> > replacement as of now.
+> I'm carrying Linus patch for it, thanks.
 
-That works, thanks.  I was planning on just making sure my tree got pulled=
-=20
-after the vfs tree, but this will work either way.
+OK, thanks guys.
 
-More generally, I'm not sure I understand how your fixups are supposed to=
-=20
-be used down the line.  Is whichever tree that caused the conflict to get=
-=20
-merged second supposed to pick it up in their branch to pull, or are those=
-=20
-patches being fed to Linus somehow, or does he usually fix up those=20
-conflicts himself?
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Thanks-
-sage
---557981400-1581715584-1263856415=:1759--
+--Signature=_Tue__19_Jan_2010_10_40_54_+1100_u6HQqa8SwncMTS1Z
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAktU8YYACgkQjjKRsyhoI8wIbQCfWkaHXxlahzM5uKWDv7o28GWS
+HlYAoJlDqqnPast16xOtffsI10sp0HFe
+=aui4
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__19_Jan_2010_10_40_54_+1100_u6HQqa8SwncMTS1Z--
