@@ -1,47 +1,30 @@
 From: Greg KH <greg@kroah.com>
-Subject: Re: [-next Jan 18] Boot failure on s390 with DEVTMPFS=y
-Date: Tue, 19 Jan 2010 13:14:22 -0800
-Message-ID: <20100119211422.GA10319@kroah.com>
-References: <20100118195743.b45f119e.sfr@canb.auug.org.au>
- <4B546E7B.2080900@in.ibm.com>
- <ac3eb2511001180631r5209dff6s83ecdaee708e0b0b@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the staging tree with the mips tree
+Date: Tue, 19 Jan 2010 12:59:35 -0800
+Message-ID: <20100119205935.GB10928@kroah.com>
+References: <20100118185351.3c6b719f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:53508 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755794Ab0ASVS0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 19 Jan 2010 16:18:26 -0500
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755855Ab0ASVSt@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <ac3eb2511001180631r5209dff6s83ecdaee708e0b0b@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Kay Sievers <kay.sievers@vrfy.org>
-Cc: Sachin Sant <sachinp@in.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Heiko Carstens <heiko.carstens@de.ibm.com>, linux-s390@vger.kernel.org
+In-Reply-To: <20100118185351.3c6b719f.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wu Zhangjin <wuzhangjin@gmail.com>, Ralf Baechle <ralf@linux-mips.org>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Jan 18, 2010 at 03:31:09PM +0100, Kay Sievers wrote:
-> On Mon, Jan 18, 2010 at 15:21, Sachin Sant <sachinp@in.ibm.com> wrote:
-> > Today next (next-20100118) failed to boot on a s390 box
-> > with the following Oops :
+On Mon, Jan 18, 2010 at 06:53:51PM +1100, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> > Unable to handle kernel pointer dereference at virtual kernel address
-> > 0000000000543000
+> Today's linux-next merge of the staging tree got a conflict in
+> drivers/staging/sm7xx/smtc2d.c drivers/staging/sm7xx/smtc2d.h between
+> commit 8cdfa0e5f204ee97d27f742ebd207f4de8ca2984 ("Loongson: Change the
+> Email address of Wu Zhangjin") from the mips tree and commit
+> 1467bbc532da8c044e57706db232efe616ae5b00 ("staging: sm7xx: remove the
+> buggy 2D acceleration support") from the staging tree.
 > 
-> > <00000000001eb5da> shmem_fill_super+0x13a/0x25c
-> > <0000000000228cfa> get_sb_single+0xbe/0xdc
-> > <000000000034ffc0> dev_get_sb+0x2c/0x38
-> > <000000000066c602> devtmpfs_init+0x46/0xc0
-> 
-> > Previous next builds worked fine on the same box. The only difference
-> > between configs of the two builds was CONFIG_DEVTMPFS. This option was
-> > enabled while compiling 20100118.
-> 
-> Heiko Carstens posted a simple patch to work around the issue that
-> s390 write-protects the string, the option parser tries to modify.
-> When Greg has pick it up, this should be fixed.
+> I just removed the 2 files (as was done in the staging tree).
 
-Yes, I've now queued it up in my trees.
-
-thanks,
+Thanks, that's the correct patch.
 
 greg k-h
