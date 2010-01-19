@@ -1,69 +1,52 @@
-From: Sage Weil <sage@newdream.net>
-Subject: Re: linux-next: merge fixups relative to the vfs tree
-Date: Mon, 18 Jan 2010 20:47:35 -0800 (PST)
-Message-ID: <Pine.LNX.4.64.1001182037400.17238@cobra.newdream.net>
-References: <20100118182852.9820b770.sfr@canb.auug.org.au>
- <Pine.LNX.4.64.1001181512340.1759@cobra.newdream.net>
- <20100119151955.1d07aa71.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: driver-core tree build warning
+Date: Tue, 19 Jan 2010 17:27:41 +1100
+Message-ID: <20100119172741.2dd81553.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: MULTIPART/MIXED; BOUNDARY="557981400-688986664-1263876139=:17238"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__19_Jan_2010_17_27_41_+1100_fOEGlXJJyDT2fkLe"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cobra.newdream.net ([66.33.216.30]:42163 "EHLO
-	cobra.newdream.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754299Ab0ASErK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Jan 2010 23:47:10 -0500
-In-Reply-To: <20100119151955.1d07aa71.sfr@canb.auug.org.au>
-Content-ID: <Pine.LNX.4.64.1001182045420.17238@cobra.newdream.net>
+Received: from chilli.pcug.org.au ([203.10.76.44]:35697 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751353Ab0ASG1t (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 19 Jan 2010 01:27:49 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: =?UTF-8?B?IkrDtnJuIEVuZ2VsIg==?= <joern@logfs.org>, Al Viro <viro@ZenIV.linux.org.uk>, Christoph Hellwig <hch@lst.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <andi@firstfloor.org>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+--Signature=_Tue__19_Jan_2010_17_27_41_+1100_fOEGlXJJyDT2fkLe
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
---557981400-688986664-1263876139=:17238
-Content-Type: TEXT/PLAIN; CHARSET=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <Pine.LNX.4.64.1001182045421.17238@cobra.newdream.net>
+Hi Greg,
 
-Hi Stephen,
+Today's linux-next build (powerpc ppc64_defconfig) produced this warning:
 
-On Tue, 19 Jan 2010, Stephen Rothwell wrote:
-> It looks like you added my patch to your tree, but did not merge Al's
-> write_inode branch.  So, I assume that your tree is currently broken if
-> built on its own.
+drivers/base/cpu.c:264: warning: initialization from incompatible pointer t=
+ype
+drivers/base/cpu.c:265: warning: initialization from incompatible pointer t=
+ype
 
-Not to worry, only the for-next branch.=20
+Introduced by commit 380567d3dc35a62f5cc0ec640a45dfc238238417 ("sysdev:
+Convert node driver")?
 
-> > More generally, I'm not sure I understand how your fixups are supposed =
-to=20
-> > be used down the line.  Is whichever tree that caused the conflict to g=
-et=20
-> > merged second supposed to pick it up in their branch to pull, or are th=
-ose=20
-> > patches being fed to Linus somehow, or does he usually fix up those=20
-> > conflicts himself?
->=20
-> Yeah, either the second tree's owner will do the fixup after the first is
-> merged into Linus' tree or (more commonly for simple fixups), Linus will
-> do the fix when he merges the second tree.  In this particular case, the
-> conflicts are not noticed by git during the merge, so they need to be
-> done manually by the second tree's owner, or by Linus (if we tell him).
->=20
-> I will attempt to remember to warn Linus if these conflicts remain during
-> the next merge window but if you and J=F6rn merge Al's branch and apply t=
-he
-> fix, then it will all be OK.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Okay, that makes sense.  I've merged Al's branch, so feel free to forget. :=
-)
+--Signature=_Tue__19_Jan_2010_17_27_41_+1100_fOEGlXJJyDT2fkLe
+Content-Type: application/pgp-signature
 
-Also, I resolved the ioctl-number.txt fixup you're carrying in that merge,=
-=20
-so you should be able to drop that.  I'll make sure both conflicts are=20
-dealt with in my tree one way or another before it gets pulled.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-Thanks!
-sage
---557981400-688986664-1263876139=:17238--
+iEYEARECAAYFAktVUN0ACgkQjjKRsyhoI8xx9ACePjclVs4vlZ4kDxN0BphEJ56V
+b3IAoI+3QtOQSKZUOWq+szNlBM0Nqdiy
+=ovbY
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__19_Jan_2010_17_27_41_+1100_fOEGlXJJyDT2fkLe--
