@@ -1,54 +1,97 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [-next Jan 18] Boot failure on s390 with DEVTMPFS=y
-Date: Wed, 20 Jan 2010 10:49:16 +1100
-Message-ID: <20100120104916.e1a2653e.sfr@canb.auug.org.au>
-References: <20100118195743.b45f119e.sfr@canb.auug.org.au>
-	<4B546E7B.2080900@in.ibm.com>
-	<ac3eb2511001180631r5209dff6s83ecdaee708e0b0b@mail.gmail.com>
-	<20100119211422.GA10319@kroah.com>
+Subject: Re: linux-next: add utrace tree
+Date: Wed, 20 Jan 2010 11:12:20 +1100
+Message-ID: <20100120111220.e7fb4e2c.sfr@canb.auug.org.au>
+References: <20100119211646.GF16096@redhat.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__20_Jan_2010_10_49_16_+1100_YdH.d1HFjOPkHKsi"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1756049Ab0ASXt1@vger.kernel.org>
-In-Reply-To: <20100119211422.GA10319@kroah.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: Kay Sievers <kay.sievers@vrfy.org>, Sachin Sant <sachinp@in.ibm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Heiko Carstens <heiko.carstens@de.ibm.com>, linux-s390@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Wed__20_Jan_2010_11_12_20_+1100_fWrEWOHJrIvqzoa."
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:58633 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751819Ab0ATAM3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 19 Jan 2010 19:12:29 -0500
+In-Reply-To: <20100119211646.GF16096@redhat.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Frank Ch. Eigler" <fche@redhat.com>
+Cc: utrace-devel@redhat.com, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Wed__20_Jan_2010_10_49_16_+1100_YdH.d1HFjOPkHKsi
+--Signature=_Wed__20_Jan_2010_11_12_20_+1100_fWrEWOHJrIvqzoa.
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Frank,
 
-On Tue, 19 Jan 2010 13:14:22 -0800 Greg KH <greg@kroah.com> wrote:
+On Tue, 19 Jan 2010 16:16:46 -0500 "Frank Ch. Eigler" <fche@redhat.com> wro=
+te:
 >
-> On Mon, Jan 18, 2010 at 03:31:09PM +0100, Kay Sievers wrote:
-> >=20
-> > Heiko Carstens posted a simple patch to work around the issue that
-> > s390 write-protects the string, the option parser tries to modify.
-> > When Greg has pick it up, this should be fixed.
+> Having been reviewed a couple of times, and we hope being a good
+> candidate for merging next time, please start pulling
 >=20
-> Yes, I've now queued it up in my trees.
+> git://git.kernel.org/pub/scm/linux/kernel/git/frob/linux-2.6-utrace.git b=
+ranch master
 
-Great.  Another one bites the dust :-)
+I have added this from today with you and utrace-devel as the contacts.
+I have cc'd the wider community on this email so that people are aware
+that this has been included.
+
+> This repo contains frequent merges from Linus' tree.  If you'd prefer
+> a cleaner rebase-based branch to pull from, we can make one of those too.
+
+For now it is OK, but you might like to ask Linus if he would like it
+cleaned up before submission since it seems to have history right back to
+2.6.29 and (as you say) lots of merges with his tree.
+
+You should also add a commit with an entry in MAINTAINERS.
+
+[Standard boilerplate]
+
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+	Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
 --=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Stephen Rothwell=20
+sfr@canb.auug.org.au
 
---Signature=_Wed__20_Jan_2010_10_49_16_+1100_YdH.d1HFjOPkHKsi
+Legal Stuff:
+By participating in linux-next, your subsystem tree contributions are
+public and will be included in the linux-next trees.  You may be sent
+e-mail messages indicating errors or other issues when the
+patches/commits from your subsystem tree are merged and tested in
+linux-next.  These messages may also be cross-posted to the linux-next
+mailing list, the linux-kernel mailing list, etc.  The linux-next tree
+project and IBM (my employer) make no warranties regarding the linux-next
+project, the testing procedures, the results, the e-mails, etc.  If you
+don't agree to these ground rules, let me know and I'll remove your tree
+from participation in linux-next.
+
+--Signature=_Wed__20_Jan_2010_11_12_20_+1100_fWrEWOHJrIvqzoa.
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAktWRPwACgkQjjKRsyhoI8xMggCfUm1LRYqNAvL0GjpzcEG4NPVY
-U8QAn3RuB7bpY1ApMJikSi7F4Fw5WuUl
-=B4Ub
+iEYEARECAAYFAktWSmQACgkQjjKRsyhoI8z0dACghiamq93y+aBfgGObxvAZgMCY
+JAUAn2Ed9LZ2hofeAQ+pIJhXOsK7w2NC
+=IfOP
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__20_Jan_2010_10_49_16_+1100_YdH.d1HFjOPkHKsi--
+--Signature=_Wed__20_Jan_2010_11_12_20_+1100_fWrEWOHJrIvqzoa.--
