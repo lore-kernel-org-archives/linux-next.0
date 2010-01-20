@@ -1,184 +1,32 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for January 18 (pci + pm)
-Date: Wed, 20 Jan 2010 08:53:57 -0800
-Message-ID: <20100120085357.efff0d62.randy.dunlap@oracle.com>
-References: <20100118195743.b45f119e.sfr@canb.auug.org.au>
-	<20100118154424.d54c0e3e.randy.dunlap@oracle.com>
-	<201001200004.07654.rjw@sisk.pl>
+Subject: Re: linux-next: Tree for January 20 (kvm warnings)
+Date: Wed, 20 Jan 2010 09:12:41 -0800
+Message-ID: <20100120091241.3f10428d.randy.dunlap@oracle.com>
+References: <20100120181016.6ba3e504.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet12.oracle.com ([148.87.113.124]:18778 "EHLO
-	rcsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751661Ab0ATQyn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Jan 2010 11:54:43 -0500
-In-Reply-To: <201001200004.07654.rjw@sisk.pl>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-pci@vger.kernel.org
+Return-path: <kvm-owner@vger.kernel.org>
+In-Reply-To: <20100120181016.6ba3e504.sfr@canb.auug.org.au>
+Sender: kvm-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Avi Kivity <avi@redhat.com>, Marcelo Tosatti <mtosatti@redhat.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 20 Jan 2010 00:04:07 +0100 Rafael J. Wysocki wrote:
+On Wed, 20 Jan 2010 18:10:16 +1100 Stephen Rothwell wrote:
 
-> On Tuesday 19 January 2010, Randy Dunlap wrote:
-> > On Mon, 18 Jan 2010 19:57:43 +1100 Stephen Rothwell wrote:
-> > 
-> > > Hi all,
-> > > 
-> > > Changes since 20100114:
-> > 
-> > 
-> > drivers/pci/pci-driver.c: In function 'pci_pm_runtime_resume':
-> > drivers/pci/pci-driver.c:991: error: implicit declaration of function 'pci_pm_default_resume_early'
-> > drivers/pci/pci-driver.c: At top level:
-> > drivers/pci/pci-driver.c:1027: error: 'pci_pm_prepare' undeclared here (not in a function)
-> > drivers/pci/pci-driver.c:1028: error: 'pci_pm_complete' undeclared here (not in a function)
-> > drivers/pci/pci-driver.c:1029: error: 'pci_pm_suspend' undeclared here (not in a function)
-> > drivers/pci/pci-driver.c:1030: error: 'pci_pm_resume' undeclared here (not in a function)
-> > drivers/pci/pci-driver.c:1031: error: 'pci_pm_freeze' undeclared here (not in a function)
-> > drivers/pci/pci-driver.c:1032: error: 'pci_pm_thaw' undeclared here (not in a function)
-> > drivers/pci/pci-driver.c:1033: error: 'pci_pm_poweroff' undeclared here (not in a function)
-> > drivers/pci/pci-driver.c:1034: error: 'pci_pm_restore' undeclared here (not in a function)
-> > drivers/pci/pci-driver.c:1035: error: 'pci_pm_suspend_noirq' undeclared here (not in a function)
-> > drivers/pci/pci-driver.c:1036: error: 'pci_pm_resume_noirq' undeclared here (not in a function)
-> > drivers/pci/pci-driver.c:1037: error: 'pci_pm_freeze_noirq' undeclared here (not in a function)
-> > drivers/pci/pci-driver.c:1038: error: 'pci_pm_thaw_noirq' undeclared here (not in a function)
-> > drivers/pci/pci-driver.c:1039: error: 'pci_pm_poweroff_noirq' undeclared here (not in a function)
-> > drivers/pci/pci-driver.c:1040: error: 'pci_pm_restore_noirq' undeclared here (not in a function)
-> > 
-> > 
-> > partial config:
-> > 
-> > CONFIG_PM=y
-> > # CONFIG_PM_DEBUG is not set
-> > # CONFIG_SUSPEND is not set
-> > # CONFIG_HIBERNATION is not set
-> > CONFIG_PM_RUNTIME=y
-> > CONFIG_PM_OPS=y
-> > 
-> > 
-> > Full config is attached.
+> Hi all,
 > 
-> Ah, too many ifdefs.
+> Changes since 20100119:
 > 
-> Thanks, the patch below fixes that for me.
-
-Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
-
-Thanks.
+> The kvm tree lost its build failure.
 
 
-> Rafael
-> 
-> ---
-> From: Rafael J. Wysocki <rjw@sisk.pl>
-> Subject: PCI / PM: Fix compilation for set CONFIG_PM_RUNTIME and CONFIG_PM_SLEEP unset
-> 
-> Fix failure to compile drivers/pci/pci-driver.c for CONFIG_PM_RUNTIME
-> set and CONFIG_PM_SLEEP is unset, introduced by the PCI run-time
-> power management patches.
-> 
-> Signed-off-by: Rafael J. Wysocki <rjw@sisk.pl>
-> Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
-> ---
->  drivers/pci/pci-driver.c |   61 +++++++++++++++++++++++++++--------------------
->  1 file changed, 36 insertions(+), 25 deletions(-)
-> 
-> Index: linux-2.6/drivers/pci/pci-driver.c
-> ===================================================================
-> --- linux-2.6.orig/drivers/pci/pci-driver.c
-> +++ linux-2.6/drivers/pci/pci-driver.c
-> @@ -405,6 +405,35 @@ static void pci_device_shutdown(struct d
->  	pci_msix_shutdown(pci_dev);
->  }
->  
-> +#ifdef CONFIG_PM_OPS
-> +
-> +/* Auxiliary functions used for system resume and run-time resume. */
-> +
-> +/**
-> + * pci_restore_standard_config - restore standard config registers of PCI device
-> + * @pci_dev: PCI device to handle
-> + */
-> +static int pci_restore_standard_config(struct pci_dev *pci_dev)
-> +{
-> +	pci_update_current_state(pci_dev, PCI_UNKNOWN);
-> +
-> +	if (pci_dev->current_state != PCI_D0) {
-> +		int error = pci_set_power_state(pci_dev, PCI_D0);
-> +		if (error)
-> +			return error;
-> +	}
-> +
-> +	return pci_restore_state(pci_dev);
-> +}
-> +
-> +static void pci_pm_default_resume_early(struct pci_dev *pci_dev)
-> +{
-> +	pci_restore_standard_config(pci_dev);
-> +	pci_fixup_device(pci_fixup_resume_early, pci_dev);
-> +}
-> +
-> +#endif
-> +
->  #ifdef CONFIG_PM_SLEEP
->  
->  /*
-> @@ -521,29 +550,6 @@ static int pci_legacy_resume(struct devi
->  
->  /* Auxiliary functions used by the new power management framework */
->  
-> -/**
-> - * pci_restore_standard_config - restore standard config registers of PCI device
-> - * @pci_dev: PCI device to handle
-> - */
-> -static int pci_restore_standard_config(struct pci_dev *pci_dev)
-> -{
-> -	pci_update_current_state(pci_dev, PCI_UNKNOWN);
-> -
-> -	if (pci_dev->current_state != PCI_D0) {
-> -		int error = pci_set_power_state(pci_dev, PCI_D0);
-> -		if (error)
-> -			return error;
-> -	}
-> -
-> -	return pci_restore_state(pci_dev);
-> -}
-> -
-> -static void pci_pm_default_resume_early(struct pci_dev *pci_dev)
-> -{
-> -	pci_restore_standard_config(pci_dev);
-> -	pci_fixup_device(pci_fixup_resume_early, pci_dev);
-> -}
-> -
->  static void pci_pm_default_resume(struct pci_dev *pci_dev)
->  {
->  	pci_fixup_device(pci_fixup_resume, pci_dev);
-> @@ -607,6 +613,13 @@ static void pci_pm_complete(struct devic
->  		drv->pm->complete(dev);
->  }
->  
-> +#else /* !CONFIG_PM_SLEEP */
-> +
-> +#define pci_pm_prepare	NULL
-> +#define pci_pm_complete	NULL
-> +
-> +#endif /* !CONFIG_PM_SLEEP */
-> +
->  #ifdef CONFIG_SUSPEND
->  
->  static int pci_pm_suspend(struct device *dev)
-> @@ -943,8 +956,6 @@ static int pci_pm_restore(struct device 
->  
->  #endif /* !CONFIG_HIBERNATION */
->  
-> -#endif /* !CONFIG_PM_SLEEP */
-> -
->  #ifdef CONFIG_PM_RUNTIME
->  
->  static int pci_pm_runtime_suspend(struct device *dev)
+on i386/X86_32:
 
+arch/x86/kvm/x86.c:3810: warning: left shift count >= width of type
+arch/x86/kvm/x86.c:3812: warning: left shift count >= width of type
+arch/x86/kvm/x86.c:3814: warning: left shift count >= width of type
 
 ---
 ~Randy
