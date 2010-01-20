@@ -1,49 +1,50 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: linux-next: add utrace tree
-Date: Wed, 20 Jan 2010 11:43:24 +0100
-Message-ID: <20100120104322.GA5149@nowhere>
-References: <20100119211646.GF16096@redhat.com> <20100120111220.e7fb4e2c.sfr@canb.auug.org.au> <20100120054950.GB27108@elte.hu> <20100120061551.GB6588@in.ibm.com> <20100120062834.GB12165@elte.hu> <20100120064026.GC6588@in.ibm.com>
+From: "Michael S. Tsirkin" <mst@redhat.com>
+Subject: Re: linux-next: Tree for January 19 (vhost_net)
+Date: Wed, 20 Jan 2010 13:33:41 +0200
+Message-ID: <20100120113341.GA9610@redhat.com>
+References: <20100119181041.ab55f645.sfr@canb.auug.org.au> <20100119104139.2ec9164b.randy.dunlap@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fg-out-1718.google.com ([72.14.220.157]:40084 "EHLO
-	fg-out-1718.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752723Ab0ATKna (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Jan 2010 05:43:30 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:64246 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751967Ab0ATLgv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 20 Jan 2010 06:36:51 -0500
 Content-Disposition: inline
-In-Reply-To: <20100120064026.GC6588@in.ibm.com>
+In-Reply-To: <20100119104139.2ec9164b.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
-Cc: Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, LKML <linux-kernel@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, "Frank Ch. Eigler" <fche@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>, Linus <torvalds@linux-foundation.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, netdev <netdev@vger.kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Wed, Jan 20, 2010 at 12:10:26PM +0530, Ananth N Mavinakayanahalli wrote:
-> > It will cause conflicts with various other trees and increases the overhead 
-> > all around. It also causes us to trust linux-next bugreports less - as it's 
-> > not the 'next Linux' anymore. Also, there's virtually no high-level technical 
-> > review done in linux-next: the trees are implicitly trusted (because they are 
-> > pushed by maintainers), bugs and conflicts are reported but otherwise it's a 
-> > neutral tree that includes pretty much any commit indiscriminately.
+On Tue, Jan 19, 2010 at 10:41:39AM -0800, Randy Dunlap wrote:
+> On Tue, 19 Jan 2010 18:10:41 +1100 Stephen Rothwell wrote:
+> 
+> > Hi all,
 > > 
-> > If you need review and testing there's a number of trees you can get inclusion 
-> > into.
+> > Changes since 20100118:
 > 
-> So would -tip be one of them? If so could you pull the utrace-ptrace
-> branch in?
 > 
-> Or did you intend some other tree (random-tracing)? (Though I think a
-> ptrace reimplementation isn't 'random'-tracing :-))
+> When CONFIG_TUN is not enabled:
+> 
+> drivers/built-in.o: In function `get_socket':
+> net.c:(.text+0x2899a3): undefined reference to `tun_get_socket'
+> 
+> 
+> so VHOST_NET can either depend on TUN or select TUN, but if it
+> selects TUN, it will also need to select CRC32.
+> 
+> ---
+> ~Randy
 
+Just to clarify sure, the broken configuration is VHOST=y TUN=m, I sent
+a fixup patch to forbid that configuration.  But both VHOST=y TUN=n and
+VHOST=m TUN=n build fine for me on linux-next (commit
+af2b07e7e0a9c6bf82ce4d6a77f0412ae54f575b).  Randy, could you please
+confirm that VHOST=y TUN=m is what you tested, or alternatively make
+your .config available to me so I can reproduce the problem?
 
-Heh. No this is a tree I use for, well, random tracing patches indeed,
-which has extended to random tracing/perf/* patches by the time.
-I sometimes relay other's patches to Ingo toward this tree but this is
-usually about small volumes and for small term storage: patches that
-have been reviewed/acked already.
+Thanks!
 
-utrace/uprobe is about high volume and longer time debate/review/maintainance
-and I won't have the time to carry this.
-
-
- 
-> Ananth
+-- 
+MST
