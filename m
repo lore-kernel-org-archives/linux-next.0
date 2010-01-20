@@ -1,53 +1,60 @@
-From: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
-Subject: Re: linux-next: add utrace tree
-Date: Wed, 20 Jan 2010 12:10:26 +0530
-Message-ID: <20100120064026.GC6588@in.ibm.com>
-References: <20100119211646.GF16096@redhat.com> <20100120111220.e7fb4e2c.sfr@canb.auug.org.au> <20100120054950.GB27108@elte.hu> <20100120061551.GB6588@in.ibm.com> <20100120062834.GB12165@elte.hu>
-Reply-To: ananth@in.ibm.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: driver-core tree build warning
+Date: Wed, 20 Jan 2010 17:44:41 +1100
+Message-ID: <20100120174441.e1b12fd7.sfr@canb.auug.org.au>
+References: <20100119172741.2dd81553.sfr@canb.auug.org.au>
+	<20100119210417.GC10928@kroah.com>
+	<20100120104525.752a790f.sfr@canb.auug.org.au>
+	<20100120172543.e884a8af.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__20_Jan_2010_17_44_41_+1100_Wi8/boimbbWybOhd"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e36.co.us.ibm.com ([32.97.110.154]:50105 "EHLO
-	e36.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751181Ab0ATGkf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Jan 2010 01:40:35 -0500
-Content-Disposition: inline
-In-Reply-To: <20100120062834.GB12165@elte.hu>
+Received: from chilli.pcug.org.au ([203.10.76.44]:40874 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754136Ab0ATGor (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 20 Jan 2010 01:44:47 -0500
+In-Reply-To: <20100120172543.e884a8af.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, "Frank Ch. Eigler" <fche@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>, Linus <torvalds@linux-foundation.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <andi@firstfloor.org>
 
-On Wed, Jan 20, 2010 at 07:28:34AM +0100, Ingo Molnar wrote:
-> 
-> * Ananth N Mavinakayanahalli <ananth@in.ibm.com> wrote:
-> 
-> > On Wed, Jan 20, 2010 at 06:49:50AM +0100, Ingo Molnar wrote:
+--Signature=_Wed__20_Jan_2010_17_44_41_+1100_Wi8/boimbbWybOhd
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-...
- 
-> > On the other hand, having ptrace/utrace in the -next tree will give it a
-> > lot more testing, while any outstanding technical issues are being addressed.
-> 
-> Including experimental code that is RFC and which is not certain to go 
-> upstream is certainly not the purpose of linux-next though.
+Hi Greg,
 
-OK.
+On Wed, 20 Jan 2010 17:25:43 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> (lines 262-266)
+> static struct sysdev_class_attribute *cpu_sysdev_class_attrs[] =3D {
+> #ifdef CONFIG_ARCH_CPU_PROBE_RELEASE
+>         &class_attr_probe.attr,
+>         &class_attr_release.attr,
+> #endif
 
-> It will cause conflicts with various other trees and increases the overhead 
-> all around. It also causes us to trust linux-next bugreports less - as it's 
-> not the 'next Linux' anymore. Also, there's virtually no high-level technical 
-> review done in linux-next: the trees are implicitly trusted (because they are 
-> pushed by maintainers), bugs and conflicts are reported but otherwise it's a 
-> neutral tree that includes pretty much any commit indiscriminately.
-> 
-> If you need review and testing there's a number of trees you can get inclusion 
-> into.
+The reason you may not see this is because CONFIG_ARCH_CPU_PROBE_RELEASE
+is not set for x86_64 allmodconfig builds (and probably many others).
 
-So would -tip be one of them? If so could you pull the utrace-ptrace
-branch in?
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Or did you intend some other tree (random-tracing)? (Though I think a
-ptrace reimplementation isn't 'random'-tracing :-))
+--Signature=_Wed__20_Jan_2010_17_44_41_+1100_Wi8/boimbbWybOhd
+Content-Type: application/pgp-signature
 
-Ananth
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEUEARECAAYFAktWplkACgkQjjKRsyhoI8xuzACY5bl2SIfGeqkJP0RGj+CnC8nO
+YgCfcjOIogLyClKdBgDXkW1/EE4AEM0=
+=Ixw0
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__20_Jan_2010_17_44_41_+1100_Wi8/boimbbWybOhd--
