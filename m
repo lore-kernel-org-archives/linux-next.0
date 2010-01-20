@@ -1,42 +1,28 @@
-From: Avi Kivity <avi@redhat.com>
-Subject: Re: linux-next: Tree for January 20 (kvm warnings)
-Date: Wed, 20 Jan 2010 19:15:34 +0200
-Message-ID: <4B573A36.9090308@redhat.com>
-References: <20100120181016.6ba3e504.sfr@canb.auug.org.au> <20100120091241.3f10428d.randy.dunlap@oracle.com>
+From: Jeremy Allison <jra@samba.org>
+Subject: Re: About ACL for IPC Object
+Date: Wed, 20 Jan 2010 13:50:48 -0800
+Message-ID: <20100120215048.GB4141@jeremy-laptop>
+References: <6fb445941001200112o2934f805l4eb4f78000e9527e@mail.gmail.com>
+ <6fb445941001200120m3aa5e944j54a6f645ce82d76f@mail.gmail.com>
+Reply-To: Jeremy Allison <jra@samba.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:40929 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752413Ab0ATRPm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 20 Jan 2010 12:15:42 -0500
-In-Reply-To: <20100120091241.3f10428d.randy.dunlap@oracle.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Marcelo Tosatti <mtosatti@redhat.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kvm@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-security-module-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <6fb445941001200120m3aa5e944j54a6f645ce82d76f@mail.gmail.com>
+Sender: linux-security-module-owner@vger.kernel.org
+To: zhou peng <ailvpeng25@gmail.com>
+Cc: linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On 01/20/2010 07:12 PM, Randy Dunlap wrote:
-> On Wed, 20 Jan 2010 18:10:16 +1100 Stephen Rothwell wrote:
->
->    
->> Hi all,
->>
->> Changes since 20100119:
->>
->> The kvm tree lost its build failure.
->>      
->
-> on i386/X86_32:
->
-> arch/x86/kvm/x86.c:3810: warning: left shift count>= width of type
-> arch/x86/kvm/x86.c:3812: warning: left shift count>= width of type
-> arch/x86/kvm/x86.c:3814: warning: left shift count>= width of type
->
->    
+On Wed, Jan 20, 2010 at 05:20:00PM +0800, zhou peng wrote:
+> Hi all,
+> 
+> There are ACL in file system, but why there are no ACL implementation
+> in IPC object, eg. shm, message queue, FIFO?
+> Is there any fine grained granting in ipc object just like in file object?
 
-Gleb already posted a patch to fix this.
+Not implemented yet, we can add this if you need it
+(but probably will be a 3.6.0 feature).
 
--- 
-error compiling committee.c: too many arguments to function
+Jeremy.
