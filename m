@@ -1,55 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: kvm tree build warning
-Date: Wed, 20 Jan 2010 17:48:14 +1100
-Message-ID: <20100120174814.43195995.sfr@canb.auug.org.au>
+Subject: Re: linux-next: add utrace tree
+Date: Wed, 20 Jan 2010 17:59:59 +1100
+Message-ID: <20100120175959.59daa481.sfr@canb.auug.org.au>
+References: <20100119211646.GF16096@redhat.com>
+	<20100120111220.e7fb4e2c.sfr@canb.auug.org.au>
+	<20100120054950.GB27108@elte.hu>
+	<20100120061551.GB6588@in.ibm.com>
+	<20100120062834.GB12165@elte.hu>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__20_Jan_2010_17_48_14_+1100_/UdAP83nse0eUvCL"
+ boundary="Signature=_Wed__20_Jan_2010_17_59_59_+1100_D3wSZ4FjdL/zm5He"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44878 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:59756 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753954Ab0ATGsV (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 20 Jan 2010 01:48:21 -0500
+	id S932124Ab0ATHAJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 20 Jan 2010 02:00:09 -0500
+In-Reply-To: <20100120062834.GB12165@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Avi Kivity <avi@qumranet.com>, Marcelo Tosatti <mtosatti@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Graf <agraf@suse.de>, ppc-dev <linuxppc-dev@lists.ozlabs.org>
+To: "Frank Ch. Eigler" <fche@redhat.com>
+Cc: Ingo Molnar <mingo@elte.hu>, Ananth N Mavinakayanahalli <ananth@in.ibm.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>, Linus <torvalds@linux-foundation.org>
 
---Signature=_Wed__20_Jan_2010_17_48_14_+1100_/UdAP83nse0eUvCL
+--Signature=_Wed__20_Jan_2010_17_59_59_+1100_D3wSZ4FjdL/zm5He
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-[Not sure what happened to the previous versions To/CC lists, sorry]
+Hi Frank,
 
-Hi all,
+On Wed, 20 Jan 2010 07:28:34 +0100 Ingo Molnar <mingo@elte.hu> wrote:
+>
+> Including experimental code that is RFC and which is not certain to go=20
+> upstream is certainly not the purpose of linux-next though.
 
-Today's linux-next build (powerpc allyesconfig) produced this warning:
+Ingo is correct in what he says here.  See the boilerplate:
 
-arch/powerpc/kvm/book3s.c: In function '__kvmppc_vcpu_run':
-arch/powerpc/kvm/book3s.c:1102: warning: 'ext_bkp.vrsave' may be used unini=
-tialized in this function
+"     * destined for the current or next Linux merge window.
 
-Introduced by commit 2609c1d06b6a7952273fb33b33ad32aff0628146 ("KVM: PPC:
-Add support for FPU/Altivec/VSX").  This *may* be a false positive but
-will be a problem for normal builds where warnings are treated as errors
-in arch/powerpc.
+Basically, this should be just what you would send to Linus (or ask him
+to fetch)."
+
+I will remove this tree from linux-next tomorrow and wait until it is
+more ready for mainline inclusion.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__20_Jan_2010_17_48_14_+1100_/UdAP83nse0eUvCL
+--Signature=_Wed__20_Jan_2010_17_59_59_+1100_D3wSZ4FjdL/zm5He
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAktWpy4ACgkQjjKRsyhoI8zjWgCdGZ+91dcQ9xNwHclINlXj1yGJ
-XZ8An0667fIZEh1KcWj4k/YlsLpLeoAa
-=42oX
+iEYEARECAAYFAktWqe8ACgkQjjKRsyhoI8waqwCeKAuM57L412X0UK/aNa0vPR3G
+P6UAoLDTK3LHo3U3OKwer2D1r/Icnevb
+=Htge
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__20_Jan_2010_17_48_14_+1100_/UdAP83nse0eUvCL--
+--Signature=_Wed__20_Jan_2010_17_59_59_+1100_D3wSZ4FjdL/zm5He--
