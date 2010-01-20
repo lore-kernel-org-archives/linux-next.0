@@ -1,31 +1,44 @@
-From: Jeremy Allison <jra@samba.org>
-Subject: Re: About ACL for IPC Object
-Date: Wed, 20 Jan 2010 14:00:23 -0800
-Message-ID: <20100120220023.GC4141@jeremy-laptop>
-References: <6fb445941001200112o2934f805l4eb4f78000e9527e@mail.gmail.com>
- <6fb445941001200120m3aa5e944j54a6f645ce82d76f@mail.gmail.com>
- <20100120215048.GB4141@jeremy-laptop>
-Reply-To: Jeremy Allison <jra@samba.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: limits tree fetch error
+Date: Thu, 21 Jan 2010 10:19:28 +1100
+Message-ID: <20100121101928.014ae274.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-security-module-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20100120215048.GB4141@jeremy-laptop>
-Sender: linux-security-module-owner@vger.kernel.org
-To: Jeremy Allison <jra@samba.org>
-Cc: zhou peng <ailvpeng25@gmail.com>, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__21_Jan_2010_10_19_28_+1100_DzJqq+zptXBlTPYL"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753769Ab0ATXTi@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jiri Slaby <jirislaby@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Jan 20, 2010 at 01:50:48PM -0800, Jeremy Allison wrote:
-> On Wed, Jan 20, 2010 at 05:20:00PM +0800, zhou peng wrote:
-> > Hi all,
-> > 
-> > There are ACL in file system, but why there are no ACL implementation
-> > in IPC object, eg. shm, message queue, FIFO?
-> > Is there any fine grained granting in ipc object just like in file object?
-> 
-> Not implemented yet, we can add this if you need it
-> (but probably will be a 3.6.0 feature).
+--Signature=_Thu__21_Jan_2010_10_19_28_+1100_DzJqq+zptXBlTPYL
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Never mind, got my lists mixed up and thought this
-was a Samba request (sorry :-).
+Hi Jiri,
+
+Today's linux-next fetch of the limits tree produced this error:
+
+decibel.fi.muni.cz[0: 147.251.50.163]: errno=3DConnection timed out
+fatal: unable to connect a socket (Connection timed out)
+
+Just letting you know.  I will use the tree from yesterday.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__21_Jan_2010_10_19_28_+1100_DzJqq+zptXBlTPYL
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAktXj4AACgkQjjKRsyhoI8wlAgCgiwGZp2TO87yl6oV7tFYtNFmC
+BNoAoI81StsfYLvhlC8NjWtCP9I5OmaR
+=PRjV
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__21_Jan_2010_10_19_28_+1100_DzJqq+zptXBlTPYL--
