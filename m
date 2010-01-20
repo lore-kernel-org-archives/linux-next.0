@@ -1,68 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: kvm tree build warning
-Date: Thu, 21 Jan 2010 00:01:28 +1100
-Message-ID: <20100121000128.cf11525c.sfr@canb.auug.org.au>
-References: <20100120174814.43195995.sfr@canb.auug.org.au>
-	<3727B46C-0197-47A4-AF41-023517C15752@suse.de>
+From: "Frank Ch. Eigler" <fche@redhat.com>
+Subject: Re: linux-next: add utrace tree
+Date: Wed, 20 Jan 2010 08:01:29 -0500
+Message-ID: <20100120130129.GH16096@redhat.com>
+References: <20100119211646.GF16096@redhat.com> <20100120111220.e7fb4e2c.sfr@canb.auug.org.au> <20100120054950.GB27108@elte.hu> <20100120061551.GB6588@in.ibm.com> <20100120062834.GB12165@elte.hu>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__21_Jan_2010_00_01_28_+1100_O2UAF5JILjFZKDIf"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45360 "EHLO smtps.tip.net.au"
+Received: from mx1.redhat.com ([209.132.183.28]:57640 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751166Ab0ATNBg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 20 Jan 2010 08:01:36 -0500
-In-Reply-To: <3727B46C-0197-47A4-AF41-023517C15752@suse.de>
+	id S1753025Ab0ATNCy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 20 Jan 2010 08:02:54 -0500
+Content-Disposition: inline
+In-Reply-To: <20100120062834.GB12165@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexander Graf <agraf@suse.de>
-Cc: Avi Kivity <avi@qumranet.com>, Marcelo Tosatti <mtosatti@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Ananth N Mavinakayanahalli <ananth@in.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>, Linus <torvalds@linux-foundation.org>
 
---Signature=_Thu__21_Jan_2010_00_01_28_+1100_O2UAF5JILjFZKDIf
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi -
 
-Hi Alex,
+On Wed, Jan 20, 2010 at 07:28:34AM +0100, Ingo Molnar wrote:
+> [...]
+> > On the other hand, having ptrace/utrace in the -next tree will give it a
+> > lot more testing, while any outstanding technical issues are being addressed.
+> 
+> Including experimental code that is RFC and which is not certain to go 
+> upstream is certainly not the purpose of linux-next though.
+> [...]
 
-On Wed, 20 Jan 2010 11:42:28 +0100 Alexander Graf <agraf@suse.de> wrote:
->
-> This is odd. The same function saves and restores ext_bkp.vrsave under a =
-common condition:
->=20
-> So there can't be a case where ext_bkp.vrsave is read, but not written to=
- before, which is what this warning implies, right?
+Ingo, you are mistaken.  The utrace core and utrace/ptrace code were
+submitted and reviewed together on lkml, and are not considered
+experimental.
 
-Right.
+I know the names may be confusing, but it is unnecessary to bring up
+uprobes and other RFC/experimental items.  None of these are included
+in the branch I pointed sfr to.
 
-> Also, why doesn't gcc complain about vscr too then? They're both used in =
-the very same if statement.
-
-I have no idea how gcc makes these decisions. :-(
-
-> Additionally, while compiling locally I looked for warnings and didn't sp=
-ot any. So apparently our compiler versions / options don't match. Which ve=
-rsion of gcc are you using? I assume a gcc bug.
->=20
-> $ gcc --version
-> gcc (SUSE Linux) 4.3.2 [gcc-4_3-branch revision 141291]
-
-I use a 4.4.0 cross compiler (I should update it).
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__21_Jan_2010_00_01_28_+1100_O2UAF5JILjFZKDIf
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAktW/qgACgkQjjKRsyhoI8w/pgCgsnczHyy8m0KWKbupJJpsEzfx
-0oUAmgPFI3YB9bE2x+gWRGWFFJEb7NIA
-=/1aL
------END PGP SIGNATURE-----
-
---Signature=_Thu__21_Jan_2010_00_01_28_+1100_O2UAF5JILjFZKDIf--
+- FChE
