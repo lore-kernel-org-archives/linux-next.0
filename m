@@ -1,30 +1,24 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: linux-next: add utrace tree
-Date: Wed, 20 Jan 2010 09:52:52 +0100
-Message-ID: <1263977572.4283.820.camel@laptop>
-References: <20100119211646.GF16096@redhat.com>
-	 <20100120111220.e7fb4e2c.sfr@canb.auug.org.au>
-	 <20100120054950.GB27108@elte.hu> <20100120061551.GB6588@in.ibm.com>
-	 <20100120062834.GB12165@elte.hu>
+From: zhou peng <ailvpeng25@gmail.com>
+Subject: About ACL for IPC Object
+Date: Wed, 20 Jan 2010 17:20:00 +0800
+Message-ID: <6fb445941001200120m3aa5e944j54a6f645ce82d76f@mail.gmail.com>
+References: <6fb445941001200112o2934f805l4eb4f78000e9527e@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:48885 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751200Ab0ATIxP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Jan 2010 03:53:15 -0500
-In-Reply-To: <20100120062834.GB12165@elte.hu>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Ananth N Mavinakayanahalli <ananth@in.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, "Frank Ch. Eigler" <fche@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>, Linus <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-security-module-owner@vger.kernel.org>
+In-Reply-To: <6fb445941001200112o2934f805l4eb4f78000e9527e@mail.gmail.com>
+Sender: linux-security-module-owner@vger.kernel.org
+To: linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 2010-01-20 at 07:28 +0100, Ingo Molnar wrote:
-> > I think Oleg addressed most of Peter's concerns on utrace when the 
-> > ptrace/utrace patchset was reposted.
-> 
-> Peter is Cc:-ed and he might want to chime in.
+Hi all,
 
-Yeah, I'll make some time to go through the latest code again.. if only
-there was a clone() for humans ;-)
+There are ACL in file system, but why there are no ACL implementation
+in IPC object, eg. shm, message queue, FIFO?
+Is there any fine grained granting in ipc object just like in file object?
+
+Thanks,
+Best
+
+--
+zhoupeng
