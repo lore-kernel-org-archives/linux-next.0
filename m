@@ -1,54 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for January 18 (pci + pm)
-Date: Wed, 20 Jan 2010 16:20:21 +1100
-Message-ID: <20100120162021.0f7803b6.sfr@canb.auug.org.au>
-References: <20100118195743.b45f119e.sfr@canb.auug.org.au>
-	<20100118154424.d54c0e3e.randy.dunlap@oracle.com>
-	<201001200004.07654.rjw@sisk.pl>
-	<20100120063945.03d75e46@jbarnes-x200.intel.com>
+Subject: linux-next: manual merge of the utrace tree with the fsnotify tree
+Date: Wed, 20 Jan 2010 16:49:45 +1100
+Message-ID: <20100120164945.4c6f018e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__20_Jan_2010_16_20_21_+1100_P7saq0zu_ftasLJz"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49271 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:56106 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750807Ab0ATFUb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 20 Jan 2010 00:20:31 -0500
-In-Reply-To: <20100120063945.03d75e46@jbarnes-x200.intel.com>
+	id S1751147Ab0ATFtr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 20 Jan 2010 00:49:47 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jesse Barnes <jbarnes@virtuousgeek.org>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Randy Dunlap <randy.dunlap@oracle.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-pci@vger.kernel.org
+To: "Frank Ch. Eigler" <fche@redhat.com>, utrace-devel@redhat.com
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Roland McGrath <roland@redhat.com>, Eric Paris <eparis@redhat.com>
 
---Signature=_Wed__20_Jan_2010_16_20_21_+1100_P7saq0zu_ftasLJz
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-Hi Jesse,
+Today's linux-next merge of the utrace tree got a conflict in
+kernel/Makefile between commit 9878914352df8ccfbad1307d51ca05706d50cae4
+("Audit: split audit watch Kconfig") from the fsnotify tree and commit
+f357a74067bc548772166a4817d5f2c32005a449 ("utrace core") from the utrace
+tree.
 
-On Wed, 20 Jan 2010 06:39:45 +0200 Jesse Barnes <jbarnes@virtuousgeek.org> =
-wrote:
->
-> Pushed this one into linux-next, thanks.
-
-Great, thanks.
-
---=20
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__20_Jan_2010_16_20_21_+1100_P7saq0zu_ftasLJz
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAktWkpUACgkQjjKRsyhoI8yLIACfS+nErrskpkuJXLMRA3Y0dmM1
-1VAAnAmgcMWyF5IT6cQ7iWM6fpPET7PD
-=Rz1z
------END PGP SIGNATURE-----
-
---Signature=_Wed__20_Jan_2010_16_20_21_+1100_P7saq0zu_ftasLJz--
+diff --cc kernel/Makefile
+index 702260a,8a0185e..0000000
+--- a/kernel/Makefile
++++ b/kernel/Makefile
+@@@ -69,13 -69,13 +69,14 @@@ obj-$(CONFIG_IKCONFIG) += configs.
+  obj-$(CONFIG_RESOURCE_COUNTERS) += res_counter.o
+  obj-$(CONFIG_STOP_MACHINE) += stop_machine.o
+  obj-$(CONFIG_KPROBES_SANITY_TEST) += test_kprobes.o
++ obj-$(CONFIG_UTRACE) += utrace.o
+ -obj-$(CONFIG_AUDIT) += audit.o auditfilter.o audit_watch.o
+ +obj-$(CONFIG_AUDIT) += audit.o auditfilter.o
+  obj-$(CONFIG_AUDITSYSCALL) += auditsc.o
+ -obj-$(CONFIG_GCOV_KERNEL) += gcov/
+ +obj-$(CONFIG_AUDIT_WATCH) += audit_watch.o
+  obj-$(CONFIG_AUDIT_TREE) += audit_tree.o
+ +obj-$(CONFIG_GCOV_KERNEL) += gcov/
+  obj-$(CONFIG_KPROBES) += kprobes.o
+ -obj-$(CONFIG_KGDB) += kgdb.o
+ +obj-$(CONFIG_KGDB) += debug/
+  obj-$(CONFIG_DETECT_SOFTLOCKUP) += softlockup.o
+  obj-$(CONFIG_DETECT_HUNG_TASK) += hung_task.o
+  obj-$(CONFIG_GENERIC_HARDIRQS) += irq/
