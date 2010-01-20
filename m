@@ -1,67 +1,49 @@
-From: Alexander Graf <agraf@suse.de>
-Subject: Re: linux-next: kvm tree build warning
-Date: Wed, 20 Jan 2010 11:42:28 +0100
-Message-ID: <3727B46C-0197-47A4-AF41-023517C15752@suse.de>
-References: <20100120174814.43195995.sfr@canb.auug.org.au>
-Mime-Version: 1.0 (Apple Message framework v1077)
+From: Frederic Weisbecker <fweisbec@gmail.com>
+Subject: Re: linux-next: add utrace tree
+Date: Wed, 20 Jan 2010 11:43:24 +0100
+Message-ID: <20100120104322.GA5149@nowhere>
+References: <20100119211646.GF16096@redhat.com> <20100120111220.e7fb4e2c.sfr@canb.auug.org.au> <20100120054950.GB27108@elte.hu> <20100120061551.GB6588@in.ibm.com> <20100120062834.GB12165@elte.hu> <20100120064026.GC6588@in.ibm.com>
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:46600 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751340Ab0ATKmc convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Jan 2010 05:42:32 -0500
-In-Reply-To: <20100120174814.43195995.sfr@canb.auug.org.au>
+Received: from fg-out-1718.google.com ([72.14.220.157]:40084 "EHLO
+	fg-out-1718.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752723Ab0ATKna (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Jan 2010 05:43:30 -0500
+Content-Disposition: inline
+In-Reply-To: <20100120064026.GC6588@in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Avi Kivity <avi@qumranet.com>, Marcelo Tosatti <mtosatti@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>
+To: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
+Cc: Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, LKML <linux-kernel@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, "Frank Ch. Eigler" <fche@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>, Linus <torvalds@linux-foundation.org>
 
-
-On 20.01.2010, at 07:48, Stephen Rothwell wrote:
-
-> [Not sure what happened to the previous versions To/CC lists, sorry]
+On Wed, Jan 20, 2010 at 12:10:26PM +0530, Ananth N Mavinakayanahalli wrote:
+> > It will cause conflicts with various other trees and increases the overhead 
+> > all around. It also causes us to trust linux-next bugreports less - as it's 
+> > not the 'next Linux' anymore. Also, there's virtually no high-level technical 
+> > review done in linux-next: the trees are implicitly trusted (because they are 
+> > pushed by maintainers), bugs and conflicts are reported but otherwise it's a 
+> > neutral tree that includes pretty much any commit indiscriminately.
+> > 
+> > If you need review and testing there's a number of trees you can get inclusion 
+> > into.
 > 
-> Hi all,
+> So would -tip be one of them? If so could you pull the utrace-ptrace
+> branch in?
 > 
-> Today's linux-next build (powerpc allyesconfig) produced this warning:
-> 
-> arch/powerpc/kvm/book3s.c: In function '__kvmppc_vcpu_run':
-> arch/powerpc/kvm/book3s.c:1102: warning: 'ext_bkp.vrsave' may be used uninitialized in this function
-> 
-> Introduced by commit 2609c1d06b6a7952273fb33b33ad32aff0628146 ("KVM: PPC:
-> Add support for FPU/Altivec/VSX").  This *may* be a false positive but
-> will be a problem for normal builds where warnings are treated as errors
-> in arch/powerpc.
+> Or did you intend some other tree (random-tracing)? (Though I think a
+> ptrace reimplementation isn't 'random'-tracing :-))
 
 
-This is odd. The same function saves and restores ext_bkp.vrsave under a common condition:
+Heh. No this is a tree I use for, well, random tracing patches indeed,
+which has extended to random tracing/perf/* patches by the time.
+I sometimes relay other's patches to Ingo toward this tree but this is
+usually about small volumes and for small term storage: patches that
+have been reviewed/acked already.
 
-        if (save_vec) {
-                if (current->thread.regs->msr & MSR_VEC)
-                        giveup_altivec(current);
-                memcpy(ext_bkp.vr, current->thread.vr, sizeof(ext_bkp.vr));
-                ext_bkp.vscr = current->thread.vscr;
-                ext_bkp.vrsave = current->thread.vrsave;
-        }
-
-
-[...]
-
-        if (save_vec && current->thread.used_vr) {
-                memcpy(current->thread.vr, ext_bkp.vr, sizeof(ext_bkp.vr));
-                current->thread.vscr = ext_bkp.vscr;
-                current->thread.vrsave = ext_bkp.vrsave;
-        }
+utrace/uprobe is about high volume and longer time debate/review/maintainance
+and I won't have the time to carry this.
 
 
-So there can't be a case where ext_bkp.vrsave is read, but not written to before, which is what this warning implies, right?
-Also, why doesn't gcc complain about vscr too then? They're both used in the very same if statement.
-
-Additionally, while compiling locally I looked for warnings and didn't spot any. So apparently our compiler versions / options don't match. Which version of gcc are you using? I assume a gcc bug.
-
-$ gcc --version
-gcc (SUSE Linux) 4.3.2 [gcc-4_3-branch revision 141291]
-
-
-Alex
+ 
+> Ananth
