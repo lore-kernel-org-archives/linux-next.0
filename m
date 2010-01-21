@@ -1,50 +1,54 @@
-From: Casey Schaufler <casey@schaufler-ca.com>
-Subject: Re: About ACL for IPC Object
-Date: Wed, 20 Jan 2010 19:02:27 -0800
-Message-ID: <4B57C3C3.9010606@schaufler-ca.com>
-References: <6fb445941001200112o2934f805l4eb4f78000e9527e@mail.gmail.com> <6fb445941001200120m3aa5e944j54a6f645ce82d76f@mail.gmail.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] mfd: htc-i2cpld depends on GPIOLIB
+Date: Wed, 20 Jan 2010 19:55:34 -0800
+Message-ID: <4B57D036.2000001@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-security-module-owner@vger.kernel.org>
-In-Reply-To: <6fb445941001200120m3aa5e944j54a6f645ce82d76f@mail.gmail.com>
-Sender: linux-security-module-owner@vger.kernel.org
-To: zhou peng <ailvpeng25@gmail.com>
-Cc: linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from acsinet12.oracle.com ([141.146.126.234]:33081 "EHLO
+	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751551Ab0AUDz7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Jan 2010 22:55:59 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: lkml <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Cc: Samuel Ortiz <sameo@linux.intel.com>
 
-zhou peng wrote:
-> Hi all,
->
-> There are ACL in file system, but why there are no ACL implementation
-> in IPC object, eg. shm, message queue, FIFO?
->   
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Most people haven't noticed that IPC objects are even there, much less
-that they have mode bits and not ACLs. Even when we were doing security
-evaluations on Unix boxes in the 1990's they were considered insufficiently
-interesting to justify the additional work to do ACLs.
+htc-i2cpld should depend on GPIOLIB, otherwise there are many
+build errors:
 
-If you really want ACLs on IPC objects it would make a dandy little
-project for a summer. I would be happy to review patches.
+drivers/mfd/htc-i2cpld.c:50: error: field 'chip_out' has incomplete type
+drivers/mfd/htc-i2cpld.c:54: error: field 'chip_in' has incomplete type
+drivers/mfd/htc-i2cpld.c:243: warning: type defaults to 'int' in declaration of '__mptr'
+drivers/mfd/htc-i2cpld.c:243: warning: initialization from incompatible pointer type
+drivers/mfd/htc-i2cpld.c:278: warning: type defaults to 'int' in declaration of '__mptr'
+drivers/mfd/htc-i2cpld.c:278: warning: initialization from incompatible pointer type
+drivers/mfd/htc-i2cpld.c:282: warning: type defaults to 'int' in declaration of '__mptr'
+drivers/mfd/htc-i2cpld.c:282: warning: initialization from incompatible pointer type
+drivers/mfd/htc-i2cpld.c:315: error: dereferencing pointer to incomplete type
+drivers/mfd/htc-i2cpld.c:322: warning: type defaults to 'int' in declaration of '__mptr'
+drivers/mfd/htc-i2cpld.c:322: warning: initialization from incompatible pointer type
+drivers/mfd/htc-i2cpld.c:467+: error: dereferencing pointer to incomplete type [19X]
+drivers/mfd/htc-i2cpld.c:490: error: implicit declaration of function 'gpiochip_add'
+drivers/mfd/htc-i2cpld.c:504: error: implicit declaration of function 'gpiochip_remove'
 
-> Is there any fine grained granting in ipc object just like in file object?
->   
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Samuel Ortiz <sameo@linux.intel.com>
+---
+ drivers/mfd/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-As Stephen Smalley points out, you can do it with SELinux, although
-that it rather like driving a thumbtack with a bulldozer.
-
-> Thanks,
-> Best
->
-> --
-> zhoupeng
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
->
->
->   
-
+--- linux-next-20100120.orig/drivers/mfd/Kconfig
++++ linux-next-20100120/drivers/mfd/Kconfig
+@@ -80,7 +80,7 @@ config HTC_PASIC3
+ 
+ config HTC_I2CPLD
+ 	bool "HTC I2C PLD chip support"
+-	depends on I2C=y
++	depends on I2C=y && GPIOLIB
+ 	help
+ 	  If you say yes here you get support for the supposed CPLD
+ 	  found on omap850 HTC devices like the HTC Wizard and HTC Herald.
