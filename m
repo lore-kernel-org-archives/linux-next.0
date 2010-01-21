@@ -1,54 +1,50 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] mfd: htc-i2cpld depends on GPIOLIB
-Date: Wed, 20 Jan 2010 19:55:34 -0800
-Message-ID: <4B57D036.2000001@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: spi tree build failure
+Date: Thu, 21 Jan 2010 14:57:57 +1100
+Message-ID: <20100121145757.f9d76da7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__21_Jan_2010_14_57_57_+1100_6RHufuf9dxMnQ=/A"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet12.oracle.com ([141.146.126.234]:33081 "EHLO
-	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751551Ab0AUDz7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Jan 2010 22:55:59 -0500
+Received: from chilli.pcug.org.au ([203.10.76.44]:42261 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751418Ab0AUD6G (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 20 Jan 2010 22:58:06 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: lkml <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
-Cc: Samuel Ortiz <sameo@linux.intel.com>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Feng Tang <feng.tang@intel.com>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+--Signature=_Thu__21_Jan_2010_14_57_57_+1100_6RHufuf9dxMnQ=/A
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-htc-i2cpld should depend on GPIOLIB, otherwise there are many
-build errors:
+Hi Grant,
 
-drivers/mfd/htc-i2cpld.c:50: error: field 'chip_out' has incomplete type
-drivers/mfd/htc-i2cpld.c:54: error: field 'chip_in' has incomplete type
-drivers/mfd/htc-i2cpld.c:243: warning: type defaults to 'int' in declaration of '__mptr'
-drivers/mfd/htc-i2cpld.c:243: warning: initialization from incompatible pointer type
-drivers/mfd/htc-i2cpld.c:278: warning: type defaults to 'int' in declaration of '__mptr'
-drivers/mfd/htc-i2cpld.c:278: warning: initialization from incompatible pointer type
-drivers/mfd/htc-i2cpld.c:282: warning: type defaults to 'int' in declaration of '__mptr'
-drivers/mfd/htc-i2cpld.c:282: warning: initialization from incompatible pointer type
-drivers/mfd/htc-i2cpld.c:315: error: dereferencing pointer to incomplete type
-drivers/mfd/htc-i2cpld.c:322: warning: type defaults to 'int' in declaration of '__mptr'
-drivers/mfd/htc-i2cpld.c:322: warning: initialization from incompatible pointer type
-drivers/mfd/htc-i2cpld.c:467+: error: dereferencing pointer to incomplete type [19X]
-drivers/mfd/htc-i2cpld.c:490: error: implicit declaration of function 'gpiochip_add'
-drivers/mfd/htc-i2cpld.c:504: error: implicit declaration of function 'gpiochip_remove'
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Samuel Ortiz <sameo@linux.intel.com>
----
- drivers/mfd/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ERROR: "dw_spi_remove_host" [drivers/spi/dw_spi_pci.ko] undefined!
 
---- linux-next-20100120.orig/drivers/mfd/Kconfig
-+++ linux-next-20100120/drivers/mfd/Kconfig
-@@ -80,7 +80,7 @@ config HTC_PASIC3
- 
- config HTC_I2CPLD
- 	bool "HTC I2C PLD chip support"
--	depends on I2C=y
-+	depends on I2C=y && GPIOLIB
- 	help
- 	  If you say yes here you get support for the supposed CPLD
- 	  found on omap850 HTC devices like the HTC Wizard and HTC Herald.
+Caused by commit 51f921c1eb1124fb99ab0728c19e8e14c82c81be ("spi/dw_spi:
+add a missed dw_spi_remove_host() in exit sequence").
+
+I have used the spi tree from next-20100120 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__21_Jan_2010_14_57_57_+1100_6RHufuf9dxMnQ=/A
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAktX0MUACgkQjjKRsyhoI8z/ZACdGnmnTORybG6JzE71mma0LACv
+ijUAn16U3jLC80P8024VofQNlze6pSWN
+=JF3c
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__21_Jan_2010_14_57_57_+1100_6RHufuf9dxMnQ=/A--
