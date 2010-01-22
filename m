@@ -1,59 +1,45 @@
-From: Andrew Morton <akpm@linux-foundation.org>
+From: "Frank Ch. Eigler" <fche@redhat.com>
 Subject: Re: linux-next: add utrace tree
-Date: Thu, 21 Jan 2010 16:31:45 -0800
-Message-ID: <20100121163145.7e958c3f.akpm@linux-foundation.org>
+Date: Thu, 21 Jan 2010 19:51:47 -0500
+Message-ID: <20100122005147.GD22003@redhat.com>
 References: <20100119211646.GF16096@redhat.com>
 	<20100120111220.e7fb4e2c.sfr@canb.auug.org.au>
-	<20100120054950.GB27108@elte.hu>
-	<20100120061551.GB6588@in.ibm.com>
-	<20100120062834.GB12165@elte.hu>
-	<20100120072925.GA11395@elte.hu>
+	<20100120054950.GB27108@elte.hu> <20100120061551.GB6588@in.ibm.com>
+	<20100120062834.GB12165@elte.hu> <20100120072925.GA11395@elte.hu>
 	<20100121013822.28781960.sfr@canb.auug.org.au>
 	<20100122111747.3c224dfd.sfr@canb.auug.org.au>
 	<20100121163004.8779bd69.akpm@linux-foundation.org>
+	<20100121163145.7e958c3f.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:38561 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752922Ab0AVAdA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 21 Jan 2010 19:33:00 -0500
-In-Reply-To: <20100121163004.8779bd69.akpm@linux-foundation.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@elte.hu>, Ananth N Mavinakayanahalli <ananth@in.ibm.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <utrace-devel-bounces@redhat.com>
+Content-Disposition: inline
+In-Reply-To: <20100121163145.7e958c3f.akpm@linux-foundation.org>
+List-Unsubscribe: <https://www.redhat.com/mailman/options/utrace-devel>,
+	<mailto:utrace-devel-request@redhat.com?subject=unsubscribe>
+List-Archive: <https://www.redhat.com/archives/utrace-devel>
+List-Post: <mailto:utrace-devel@redhat.com>
+List-Help: <mailto:utrace-devel-request@redhat.com?subject=help>
+List-Subscribe: <https://www.redhat.com/mailman/listinfo/utrace-devel>,
+	<mailto:utrace-devel-request@redhat.com?subject=subscribe>
+Sender: utrace-devel-bounces@redhat.com
+Errors-To: utrace-devel-bounces@redhat.com
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Linus <torvalds@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <a.p.zijlstra@chello.nl>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, 21 Jan 2010 16:30:04 -0800
-Andrew Morton <akpm@linux-foundation.org> wrote:
+Hi -
 
-> Someone please sell this to us.
+On Thu, Jan 21, 2010 at 04:31:45PM -0800, Andrew Morton wrote:
+> [...]
+> > Someone please sell this to us.
+> Here's what Oleg said last time I asked this: [...]
 
-Here's what Oleg said last time I asked this:
+I wonder if Roland/Oleg are being too modest in their current role as
+ptrace maintainers.  Considering that *they* think of utrace as a
+means toward proper refactoring of ptrace, how much further burden of
+proof should they shoulder?  To what extent are other subsystem
+maintainers required to "sell" reworkings of their areas, when there
+appear to be no drawbacks and at least arguable benefits?
 
-  First of all, utrace makes other things possible.  gdbstub,
-  nondestructive core dump, uprobes, kmview, hopefully more.  I didn't
-  look at these projects closely, perhaps other people can tell more.  As
-  for their merge status, until utrace itself is merged it is very hard to
-  develop them out of tree.
-
-  To me, even seccomp is the good example why utrace is useful.  seccomp
-  is simple, but it needs hooks in arch/ hot pathes.  Contrary,
-  utrace-based implementation is more flexible, simple, and it is
-  completely "hidden" behind utrace.
-
-  In my opinion, ptrace-utrace is another example.  Once CONFIG_UTRACE
-  goes away, we can remove almost all ptrace-related code from core kernel
-  (and kill task_struct->ptrace/etc members).
-
-  ftrace/etc is excellent in many ways, but even if we need the simple
-  "passive" tracing it is not enough sometimes.  And we have nothing else
-  except ptrace currently.  But ptrace is so horrible and unfixeable, and
-  it has so many limitations.  In fact, even the simple things like stop/
-  continue this thread/process are not trivial using ptrace, gdb/strace
-  have to do a lot of hacks to overcome ptrace's limitations, and some of
-  these hacks falls into "mostly works, but that is all" category.
-
-  Of course, I can't promise we will have the new gdb which explores
-  utrace facilities soon, but I think at least utrace gives a chance.
+- FChE
