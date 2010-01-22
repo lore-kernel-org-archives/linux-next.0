@@ -1,57 +1,60 @@
 From: Oleg Nesterov <oleg@redhat.com>
 Subject: Re: linux-next: add utrace tree
-Date: Fri, 22 Jan 2010 18:45:41 +0100
-Message-ID: <20100122174541.GA8945@redhat.com>
-References: <20100120054950.GB27108@elte.hu> <20100120061551.GB6588@in.ibm.com> <20100120062834.GB12165@elte.hu> <20100120072925.GA11395@elte.hu> <20100121013822.28781960.sfr@canb.auug.org.au> <20100122111747.3c224dfd.sfr@canb.auug.org.au> <20100121163004.8779bd69.akpm@linux-foundation.org> <20100121163145.7e958c3f.akpm@linux-foundation.org> <20100122005147.GD22003@redhat.com> <20100121170541.7425ff10.akpm@linux-foundation.org>
+Date: Fri, 22 Jan 2010 19:28:27 +0100
+Message-ID: <20100122182827.GA13185@redhat.com>
+References: <20100120061551.GB6588@in.ibm.com> <20100120062834.GB12165@elte.hu>
+	<20100120072925.GA11395@elte.hu>
+	<20100121013822.28781960.sfr@canb.auug.org.au>
+	<20100122111747.3c224dfd.sfr@canb.auug.org.au>
+	<20100121163004.8779bd69.akpm@linux-foundation.org>
+	<20100121163145.7e958c3f.akpm@linux-foundation.org>
+	<20100122005147.GD22003@redhat.com>
+	<20100121170541.7425ff10.akpm@linux-foundation.org>
+	<alpine.LFD.2.00.1001211724500.13231@localhost.localdomain>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:30055 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754370Ab0AVRqf (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 22 Jan 2010 12:46:35 -0500
+Return-path: <utrace-devel-bounces@redhat.com>
 Content-Disposition: inline
-In-Reply-To: <20100121170541.7425ff10.akpm@linux-foundation.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Frank Ch. Eigler" <fche@redhat.com>, Fr??d??ric@redhat.com, Stephen Rothwell <sfr@canb.auug.org.au>, Peter Zijlstra <peterz@infradead.org>, Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Linus <torvalds@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <a.p.zijlstra@chello.nl>
+In-Reply-To: <alpine.LFD.2.00.1001211724500.13231@localhost.localdomain>
+List-Unsubscribe: <https://www.redhat.com/mailman/options/utrace-devel>,
+	<mailto:utrace-devel-request@redhat.com?subject=unsubscribe>
+List-Archive: <https://www.redhat.com/archives/utrace-devel>
+List-Post: <mailto:utrace-devel@redhat.com>
+List-Help: <mailto:utrace-devel-request@redhat.com?subject=help>
+List-Subscribe: <https://www.redhat.com/mailman/listinfo/utrace-devel>,
+	<mailto:utrace-devel-request@redhat.com?subject=subscribe>
+Sender: utrace-devel-bounces@redhat.com
+Errors-To: utrace-devel-bounces@redhat.com
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, "Frank Ch. Eigler" <fche@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>
+List-Id: linux-next.vger.kernel.org
 
-On 01/21, Andrew Morton wrote:
+On 01/21, Linus Torvalds wrote:
 >
-> ptrace is a nasty, complex part of the kernel which has a long history
-> of problems, but it's all been pretty quiet in there for the the past few
-> years.
+> On Thu, 21 Jan 2010, Andrew Morton wrote:
+> >
+> > ptrace is a nasty, complex part of the kernel which has a long history
+> > of problems, but it's all been pretty quiet in there for the the past few
+> > years.
+>
+> More importantly, we're not ever going to get rid of it.
 
-Well, yes, I'd say ptrace is "frozen". Nobody add new features/improvements,
-only bugfixes.
+Unfortunately, you are right. The current ptrace (as it is visible from
+user-space) should stay forever.
 
-> This leads one to expect that a rip-out-n-rewrite is a
-> high-risk prospect.  So, quite reasonably, one looks for a good reason
-> for taking such risk.
+> Quite frankly, judging my all past history we have ever seen in kernel
+> interfaces, new an non-portable interfaces simply are never used. The
+> whole question whether they are nicer or not is entirely immaterial.
 
-As it was already said, utrace was not created to just replace the current
-ptrace.
+I have to admit this point looks very reasonable to me. Except, can't
+resist, ptrace itself is hardly portable.
 
-However, speaking of ptrace, imho even ptrace-utrace is more flexible and
-allows to improve this api easily.
+> I'm personally very dubious that there are any merits to utrace that
+> outweigh the very clear disadvantages: just another layer that adds a new
+> level of abstraction to the only interface that people actually _use_,
+> namely ptrace.
 
-Just for example, even attach and detach are not trivial to use from
-user-space when it comes to multithread tracees. A one-liner patch for
-ptrace-utrace can implement PTRACE_DETACH which doesn't need TASK_TRACED,
-it is easy to avoid the initial SIGSTOP from attach (which doesn't always
-work but strace/gdb relies on it).
-
-Of course, I do not profess this is not posible with the current
-implementation. But this will need more changes, and these changes will
-touch the code outside of ptrace.c. And in fact I think that any
-enhancements in this area will lead to rewrite of the current ptrace
-code.
-
-I must admit that personally I think the current ptrace api is unfixable,
-we need the new one in the long term. It would be nice to just kill ptrace,
-but this is not possible and that is why ptrace-utrace exists. And, if
-nothing more, utrace allows to have both old and new ones without any
-changes outside of ptrace/utrace code.
+Of course they can't use other interfaces, we don't have them. And
+without the new abstraction layer we will never have, I think.
 
 Oleg.
