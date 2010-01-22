@@ -1,13 +1,13 @@
 From: Michal Nazarewicz <m.nazarewicz@samsung.com>
-Subject: [PATCH] USB: g_config: fix CONFIG_USB_G_MULTI_RNDIS usage
-Date: Fri, 22 Jan 2010 14:48:56 +0100
-Message-ID: <1264168136-8457-1-git-send-email-m.nazarewicz@samsung.com>
+Subject: [PATCH] USB: g_multi: fix CONFIG_USB_G_MULTI_RNDIS usage
+Date: Fri, 22 Jan 2010 15:18:21 +0100
+Message-ID: <1264169901-12475-1-git-send-email-m.nazarewicz@samsung.com>
 References: <1259574940-25345-1-git-send-email-m.nazarewicz@samsung.com>
  <20091128103429.705670b2.randy.dunlap@oracle.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753777Ab0AVNur@vger.kernel.org>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754533Ab0AVOTP@vger.kernel.org>
 In-reply-to: <1259574940-25345-1-git-send-email-m.nazarewicz@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>Randy Dunlap <randy.dunlap@oracle.com>Stephen Rothwell <sfr@canb.auug.org>
@@ -25,6 +25,9 @@ Cc: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
  drivers/usb/gadget/multi.c |    2 +-
  1 files changed, 1 insertions(+), 1 deletions(-)
+
+ Sorry about previous mail, it has a typo in title.
+ It seems I must sleep more...
 
 diff --git a/drivers/usb/gadget/multi.c b/drivers/usb/gadget/multi.c
 index 4295601..76496f5 100644
