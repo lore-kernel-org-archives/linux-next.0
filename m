@@ -1,49 +1,36 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: linux-next: spi tree build failure
-Date: Fri, 22 Jan 2010 04:27:08 +0000
-Message-ID: <20100122042708.GK10014@trinity.fluff.org>
-References: <20100122152152.5666ccab.sfr@canb.auug.org.au>
+From: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
+Subject: Re: linux-next: add utrace tree
+Date: Fri, 22 Jan 2010 10:51:39 +0530
+Message-ID: <20100122052139.GA20532@in.ibm.com>
+References: <20100120061551.GB6588@in.ibm.com> <20100120062834.GB12165@elte.hu> <20100120072925.GA11395@elte.hu> <20100121013822.28781960.sfr@canb.auug.org.au> <20100122111747.3c224dfd.sfr@canb.auug.org.au> <20100121163004.8779bd69.akpm@linux-foundation.org> <20100121163145.7e958c3f.akpm@linux-foundation.org> <20100122005147.GD22003@redhat.com> <20100121170541.7425ff10.akpm@linux-foundation.org> <alpine.LFD.2.00.1001211724500.13231@localhost.localdomain>
+Reply-To: ananth@in.ibm.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:46263 "EHLO trinity.fluff.org"
+Received: from e5.ny.us.ibm.com ([32.97.182.145]:42841 "EHLO e5.ny.us.ibm.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751518Ab0AVE1R (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 21 Jan 2010 23:27:17 -0500
+	id S1750703Ab0AVFVq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 22 Jan 2010 00:21:46 -0500
 Content-Disposition: inline
-In-Reply-To: <20100122152152.5666ccab.sfr@canb.auug.org.au>
+In-Reply-To: <alpine.LFD.2.00.1001211724500.13231@localhost.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Grant Likely <grant.likely@secretlab.ca>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jean-Hugues Deschenes <jean-hugues.deschenes@octasic.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "Frank Ch. Eigler" <fche@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@elte.hu>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>
 
-On Fri, Jan 22, 2010 at 03:21:52PM +1100, Stephen Rothwell wrote:
-> Hi Grant,
+On Thu, Jan 21, 2010 at 05:28:42PM -0800, Linus Torvalds wrote:
 > 
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
 > 
-> ERROR: "clk_get_rate" [drivers/spi/dw_spi_mmio.ko] undefined!
-> ERROR: "clk_enable" [drivers/spi/dw_spi_mmio.ko] undefined!
-> ERROR: "clk_get" [drivers/spi/dw_spi_mmio.ko] undefined!
-> ERROR: "clk_put" [drivers/spi/dw_spi_mmio.ko] undefined!
-> ERROR: "clk_disable" [drivers/spi/dw_spi_mmio.ko] undefined!
+> On Thu, 21 Jan 2010, Andrew Morton wrote:
+> > 
+> > ptrace is a nasty, complex part of the kernel which has a long history
+> > of problems, but it's all been pretty quiet in there for the the past few
+> > years.
 > 
-> Caused by commit f7b6fd6d1d3833529f1626c761ba7e338586d35e ("Memory-mapped
-> dw_spi driver").
+> More importantly, we're not ever going to get rid of it. 
 
-sounds like someone forgot to tmake the driver dependant on HAVE_CLK
- 
-> I have used the spi tree from next-20100120 again for today.
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
+FWIW, Oleg's implementation of ptrace over utrace is 100% compatible
+with legacy ptrace; gdb testsuite indicates that
+(http://lkml.org/lkml/2009/12/21/98).
 
-
-
--- 
--- 
-Ben
-
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
+Ananth
