@@ -1,7 +1,7 @@
 From: Andrew Morton <akpm@linux-foundation.org>
 Subject: Re: linux-next: add utrace tree
-Date: Thu, 21 Jan 2010 16:30:04 -0800
-Message-ID: <20100121163004.8779bd69.akpm@linux-foundation.org>
+Date: Thu, 21 Jan 2010 16:31:45 -0800
+Message-ID: <20100121163145.7e958c3f.akpm@linux-foundation.org>
 References: <20100119211646.GF16096@redhat.com>
 	<20100120111220.e7fb4e2c.sfr@canb.auug.org.au>
 	<20100120054950.GB27108@elte.hu>
@@ -10,33 +10,50 @@ References: <20100119211646.GF16096@redhat.com>
 	<20100120072925.GA11395@elte.hu>
 	<20100121013822.28781960.sfr@canb.auug.org.au>
 	<20100122111747.3c224dfd.sfr@canb.auug.org.au>
+	<20100121163004.8779bd69.akpm@linux-foundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:49649 "EHLO
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:38561 "EHLO
 	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752262Ab0AVAbD (ORCPT
+	by vger.kernel.org with ESMTP id S1752922Ab0AVAdA (ORCPT
 	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 21 Jan 2010 19:31:03 -0500
-In-Reply-To: <20100122111747.3c224dfd.sfr@canb.auug.org.au>
+	Thu, 21 Jan 2010 19:33:00 -0500
+In-Reply-To: <20100121163004.8779bd69.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Ingo Molnar <mingo@elte.hu>, Ananth N Mavinakayanahalli <ananth@in.ibm.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, "Frank Ch. Eigler" <fche@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>, Linus <torvalds@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@elte.hu>, Ananth N Mavinakayanahalli <ananth@in.ibm.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@>
 
-On Fri, 22 Jan 2010 11:17:47 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Thu, 21 Jan 2010 16:30:04 -0800
+Andrew Morton <akpm@linux-foundation.org> wrote:
 
-> Any thoughts?
+> Someone please sell this to us.
 
-I'm nearly a week behind again and am trying to avoid thinking.
+Here's what Oleg said last time I asked this:
 
-I've had a (n old) version of utrace in -mm for ages and it didn't
-break anything.
+  First of all, utrace makes other things possible.  gdbstub,
+  nondestructive core dump, uprobes, kmview, hopefully more.  I didn't
+  look at these projects closely, perhaps other people can tell more.  As
+  for their merge status, until utrace itself is merged it is very hard to
+  develop them out of tree.
 
-I still don't think I've seen a really compelling reason for merging
-it.  At least, I wouldn't be able to explain why we did it.  But
-presumably there _are_ such reasons, because it was a lot of development work.
+  To me, even seccomp is the good example why utrace is useful.  seccomp
+  is simple, but it needs hooks in arch/ hot pathes.  Contrary,
+  utrace-based implementation is more flexible, simple, and it is
+  completely "hidden" behind utrace.
 
-Someone please sell this to us.
+  In my opinion, ptrace-utrace is another example.  Once CONFIG_UTRACE
+  goes away, we can remove almost all ptrace-related code from core kernel
+  (and kill task_struct->ptrace/etc members).
+
+  ftrace/etc is excellent in many ways, but even if we need the simple
+  "passive" tracing it is not enough sometimes.  And we have nothing else
+  except ptrace currently.  But ptrace is so horrible and unfixeable, and
+  it has so many limitations.  In fact, even the simple things like stop/
+  continue this thread/process are not trivial using ptrace, gdb/strace
+  have to do a lot of hacks to overcome ptrace's limitations, and some of
+  these hacks falls into "mostly works, but that is all" category.
+
+  Of course, I can't promise we will have the new gdb which explores
+  utrace facilities soon, but I think at least utrace gives a chance.
