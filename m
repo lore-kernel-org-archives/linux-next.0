@@ -1,47 +1,57 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: linux-next: spi tree build failure
-Date: Fri, 22 Jan 2010 10:31:43 -0700
-Message-ID: <fa686aa41001220931g225ed20dg3909bb254585bb80@mail.gmail.com>
-References: <20100122152152.5666ccab.sfr@canb.auug.org.au>
-	<20100122042708.GK10014@trinity.fluff.org>
+From: Oleg Nesterov <oleg@redhat.com>
+Subject: Re: linux-next: add utrace tree
+Date: Fri, 22 Jan 2010 18:45:41 +0100
+Message-ID: <20100122174541.GA8945@redhat.com>
+References: <20100120054950.GB27108@elte.hu> <20100120061551.GB6588@in.ibm.com> <20100120062834.GB12165@elte.hu> <20100120072925.GA11395@elte.hu> <20100121013822.28781960.sfr@canb.auug.org.au> <20100122111747.3c224dfd.sfr@canb.auug.org.au> <20100121163004.8779bd69.akpm@linux-foundation.org> <20100121163145.7e958c3f.akpm@linux-foundation.org> <20100122005147.GD22003@redhat.com> <20100121170541.7425ff10.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-yw0-f176.google.com ([209.85.211.176]:63576 "EHLO
-	mail-yw0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752861Ab0AVRhb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 22 Jan 2010 12:37:31 -0500
-In-Reply-To: <20100122042708.GK10014@trinity.fluff.org>
+Received: from mx1.redhat.com ([209.132.183.28]:30055 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754370Ab0AVRqf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 22 Jan 2010 12:46:35 -0500
+Content-Disposition: inline
+In-Reply-To: <20100121170541.7425ff10.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ben Dooks <ben-linux@fluff.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jean-Hugues Deschenes <jean-hugues.deschenes@octasic.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Frank Ch. Eigler" <fche@redhat.com>, Fr??d??ric@redhat.com, Stephen Rothwell <sfr@canb.auug.org.au>, Peter Zijlstra <peterz@infradead.org>, Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Linus <torvalds@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <a.p.zijlstra@chello.nl>
 
-On Thu, Jan 21, 2010 at 9:27 PM, Ben Dooks <ben-linux@fluff.org> wrote:
-> On Fri, Jan 22, 2010 at 03:21:52PM +1100, Stephen Rothwell wrote:
->> Hi Grant,
->>
->> Today's linux-next build (x86_64 allmodconfig) failed like this:
->>
->> ERROR: "clk_get_rate" [drivers/spi/dw_spi_mmio.ko] undefined!
->> ERROR: "clk_enable" [drivers/spi/dw_spi_mmio.ko] undefined!
->> ERROR: "clk_get" [drivers/spi/dw_spi_mmio.ko] undefined!
->> ERROR: "clk_put" [drivers/spi/dw_spi_mmio.ko] undefined!
->> ERROR: "clk_disable" [drivers/spi/dw_spi_mmio.ko] undefined!
->>
->> Caused by commit f7b6fd6d1d3833529f1626c761ba7e338586d35e ("Memory-mapped
->> dw_spi driver").
+On 01/21, Andrew Morton wrote:
 >
-> sounds like someone forgot to tmake the driver dependant on HAVE_CLK
+> ptrace is a nasty, complex part of the kernel which has a long history
+> of problems, but it's all been pretty quiet in there for the the past few
+> years.
 
-Gah!  I did a test build of the module with allmodconfig, but I didn't
-let it get to the modpost stage ('cause I'm building on my dinky
-laptop which takes forever).  Sorry.  I've picked up the fix and
-pushed out.  Today's tree should be better.  I'm not picking up
-anything new today.
+Well, yes, I'd say ptrace is "frozen". Nobody add new features/improvements,
+only bugfixes.
 
-g.
+> This leads one to expect that a rip-out-n-rewrite is a
+> high-risk prospect.  So, quite reasonably, one looks for a good reason
+> for taking such risk.
 
--- 
-Grant Likely, B.Sc., P.Eng.
-Secret Lab Technologies Ltd.
+As it was already said, utrace was not created to just replace the current
+ptrace.
+
+However, speaking of ptrace, imho even ptrace-utrace is more flexible and
+allows to improve this api easily.
+
+Just for example, even attach and detach are not trivial to use from
+user-space when it comes to multithread tracees. A one-liner patch for
+ptrace-utrace can implement PTRACE_DETACH which doesn't need TASK_TRACED,
+it is easy to avoid the initial SIGSTOP from attach (which doesn't always
+work but strace/gdb relies on it).
+
+Of course, I do not profess this is not posible with the current
+implementation. But this will need more changes, and these changes will
+touch the code outside of ptrace.c. And in fact I think that any
+enhancements in this area will lead to rewrite of the current ptrace
+code.
+
+I must admit that personally I think the current ptrace api is unfixable,
+we need the new one in the long term. It would be nice to just kill ptrace,
+but this is not possible and that is why ptrace-utrace exists. And, if
+nothing more, utrace allows to have both old and new ones without any
+changes outside of ptrace/utrace code.
+
+Oleg.
