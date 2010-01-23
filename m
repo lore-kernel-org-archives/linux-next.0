@@ -1,53 +1,98 @@
-From: "Frank Ch. Eigler" <fche@redhat.com>
-Subject: Re: linux-next: add utrace tree
-Date: Sat, 23 Jan 2010 07:03:01 -0500
-Message-ID: <20100123120301.GD7828@redhat.com>
-References: <20100122111747.3c224dfd.sfr@canb.auug.org.au> <20100121163004.8779bd69.akpm@linux-foundation.org> <20100121163145.7e958c3f.akpm@linux-foundation.org> <20100122005147.GD22003@redhat.com> <20100121170541.7425ff10.akpm@linux-foundation.org> <20100122012516.GE22003@redhat.com> <alpine.LFD.2.00.1001211729080.13231@localhost.localdomain> <20100122022255.GF22003@redhat.com> <alpine.LFD.2.00.1001211826060.13231@localhost.localdomain> <20100123060401.GB19399@elte.hu>
+From: Rakib Mullick <rakib.mullick@gmail.com>
+Subject: Re: linux-next: tty tree build warning
+Date: Sat, 23 Jan 2010 18:53:51 +0600
+Message-ID: <b9df5fa11001230453k4a874ebamff02b64f7d6fcd84@mail.gmail.com>
+References: <20100120171901.b2e06465.sfr@canb.auug.org.au>
+	 <b9df5fa11001202022q22c2d81cs5b90f694be37c1f4@mail.gmail.com>
+	 <20100121230331.GA29796@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <systemtap-return-15035-gls-systemtap=m.gmane.org@sourceware.org>
-Content-Disposition: inline
-In-Reply-To: <20100123060401.GB19399@elte.hu>
-List-Unsubscribe: <mailto:systemtap-unsubscribe-gls-systemtap=m.gmane.org@sourceware.org>
-List-Subscribe: <mailto:systemtap-subscribe@sourceware.org>
-List-Post: <mailto:systemtap@sourceware.org>
-List-Help: <mailto:systemtap-help@sourceware.org>, <http://sourceware.org/lists.html#faqs>
-Sender: systemtap-owner@sourceware.org
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Steven Rostedt <rostedt@goodmis.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Arnaldo Carvalho de Melo <acme@redhat.com>, Li Zefan <lizf@cn.fujitsu.com>, Tom Zanussi <tzanussi@gmail.com>, systemtap@sources.redhat.com, dle-develop@lists.sourceforge.net, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Ananth N Mavinakayanahalli <ananth@in.ibm.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pw0-f42.google.com ([209.85.160.42]:50528 "EHLO
+	mail-pw0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755026Ab0AWMxw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 23 Jan 2010 07:53:52 -0500
+In-Reply-To: <20100121230331.GA29796@kroah.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Michael H. Warfield" <mhw@wittsend.com>
 
-Hi -
-
-On Sat, Jan 23, 2010 at 07:04:01AM +0100, Ingo Molnar wrote:
-
-> [...]  Also, if any systemtap person is interested in helping us
-> create a more generic filter engine out of the current ftrace filter
-> engine (which is really a precursor of a safe, sandboxed in-kernel
-> script engine), that would be excellent as well. [...]
-
-Thank you for the invitation.
-
-> More could be done - a simple C-like set of function perhaps - some minimal 
-> per probe local variable state, etc. (perhaps even looping as well, with a 
-> limit on number of predicament executions per filter invocation.)
-
-Yes, at some point when such bytecode intepreter gets rich enough, one
-may not need the translated-to-C means of running scripts.
-
-
-> ( _Such_ a facility, could then perhaps be used to allow applications access 
->   to safe syscall sandboxing techniques: i.e. a programmable seccomp concept 
->   in essence, controlled via ASCII space filter expressions [...]
->   IMHO that would be a superior concept for security modules too [...]
+On 1/22/10, Greg KH <greg@kroah.com> wrote:
+> On Thu, Jan 21, 2010 at 10:22:19AM +0600, Rakib Mullick wrote:
+>  > On 1/20/10, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> [...]  specific functionality with an immediately visible upside,
-> with no need for opaque hooks.
+> That sounds right.  Care to send a patch?
+>
+Please - checkout the following one - is it okay or not. Notice if it
+requires any adjustment.
 
-This OTOH seem like rather a stretch.  If one claims that "opaque
-hooks" are bad, so instead have hooks that jump not to auditable C
-code but an bytecode interpreter?  And have the bytecodes be uploaded
-from userspace?  How is this supposed to produce "transparency" from
-the kernel/hook point of view?
+ Patch is created using 2.6.33-rc5. Needs to apply the patch
+named 'ip2-remove-ifdef-module-from-ip2main.c.patch'
+(http://lkml.org/lkml/2009/12/1/90)
+currently in gregkh-2.6 tree to compile cleanly.
 
-- FChE
+---
+
+ char,ip2: Add module parameter.
+
+Stephen Rothwell found the following warning (x86_64 allmodconfig):
+
+drivers/char/ip2/ip2main.c:511: warning: 'ip2_setup' defined but not used
+
+This patch adds module parameter to fix the above warning.
+
+
+Signed-off-by: Rakib Mullick <rakib.mullick@gmail.com>
+---
+
+--- linus/drivers/char/ip2/ip2main.c	2010-01-16 13:36:44.000000000 +0600
++++ rakib/drivers/char/ip2/ip2main.c	2010-01-23 11:23:55.000000000 +0600
+@@ -208,6 +208,7 @@ static int DumpFifoBuffer( char __user *
+
+ static void ip2_init_board(int, const struct firmware *);
+ static unsigned short find_eisa_board(int);
++static int ip2_setup(char *str);
+
+ /***************/
+ /* Static Data */
+@@ -285,7 +286,10 @@ MODULE_AUTHOR("Doug McNash");
+ MODULE_DESCRIPTION("Computone IntelliPort Plus Driver");
+ MODULE_LICENSE("GPL");
+
++#define	MAX_CMD_STR	50
++
+ static int poll_only;
++static char cmd[MAX_CMD_STR];
+
+ static int Eisa_irq;
+ static int Eisa_slot;
+@@ -309,6 +313,8 @@ module_param_array(io, int, NULL, 0);
+ MODULE_PARM_DESC(io, "I/O ports for IntelliPort Cards");
+ module_param(poll_only, bool, 0);
+ MODULE_PARM_DESC(poll_only, "Do not use card interrupts");
++module_param_string(ip2, cmd, MAX_CMD_STR, 0);
++MODULE_PARM_DESC(ip2, "Contains module parameter passed with 'ip2='");
+
+ /* for sysfs class support */
+ static struct class *ip2_class;
+@@ -541,12 +547,19 @@ static int __init ip2_loadmain(void)
+ 	int rc = -1;
+ 	struct pci_dev *pdev = NULL;
+ 	const struct firmware *fw = NULL;
++	char *str;
++
++	str = cmd;
+
+ 	if (poll_only) {
+ 		/* Hard lock the interrupts to zero */
+ 		irq[0] = irq[1] = irq[2] = irq[3] = poll_only = 0;
+ 	}
+
++	/* Check module parameter with 'ip2=' has been passed or not */
++	if (!poll_only && (!strncmp(str, "ip2=", 4)))
++		ip2_setup(str);
++
+ 	ip2trace(ITRC_NO_PORT, ITRC_INIT, ITRC_ENTER, 0);
+
+ 	/* process command line arguments to modprobe or
