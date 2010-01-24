@@ -1,83 +1,95 @@
-From: "Frank Ch. Eigler" <fche@redhat.com>
-Subject: Re: linux-next: add utrace tree
-Date: Sun, 24 Jan 2010 13:01:21 -0500
-Message-ID: <20100124180121.GA12744@redhat.com>
-References: <20100122182827.GA13185@redhat.com> <20100122200129.GG22003@redhat.com> <alpine.LFD.2.00.1001221355250.13231@localhost.localdomain> <20100122221348.GA4263@redhat.com> <alpine.LFD.2.00.1001221604190.13231@localhost.localdomain> <alpine.LFD.2.00.1001221614520.13231@localhost.localdomain> <f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com> <20100123112333.GA15455@elte.hu> <20100123114729.GA7828@redhat.com> <20100123194820.GM21263@thunk.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: The Ambient Light Sensors for-next tree
+Date: Mon, 25 Jan 2010 10:33:57 +1100
+Message-ID: <20100125103357.076abef7.sfr@canb.auug.org.au>
+References: <4B59C372.9090204@cam.ac.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__25_Jan_2010_10_33_57_+1100_o_G7KtsaLEi_=CNT"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:6952 "EHLO mx1.redhat.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:54631 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1749667Ab0AXSCU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 24 Jan 2010 13:02:20 -0500
-Content-Disposition: inline
-In-Reply-To: <20100123194820.GM21263@thunk.org>
+	id S1751086Ab0AXXeL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 24 Jan 2010 18:34:11 -0500
+In-Reply-To: <4B59C372.9090204@cam.ac.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: tytso@mit.edu, Ingo Molnar <mingo@elte.hu>, Kyle Moffett <kyle@moffetthome.net>, Linus Torvalds <torvalds@linux-foundation.org>, Oleg Nesterov <oleg@redhat.com>, Andrew Morton <akpm@>
+To: Jonathan Cameron <jic23@cam.ac.uk>
+Cc: Zhang Rui <rui.zhang@intel.com>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Greg KH <greg@kroah.com>, Andrew Morton <akpm@linux-foundation.org>
 
-Hi -
+--Signature=_Mon__25_Jan_2010_10_33_57_+1100_o_G7KtsaLEi_=CNT
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-tytso wrote:
-> [...]
+Hi Jonathan,
 
-Let me see if I can paraphrase those of your concerns that were substantive:
+On Fri, 22 Jan 2010 15:25:38 +0000 Jonathan Cameron <jic23@cam.ac.uk> wrote:
+>
+> The ambient light sensors (ALS) patches have been on lkml for a while and
+> the core has now been thoroughly reviewed.  The actual drivers
+> will follow shortly as most are moves from elsewhere in the kernel tree.
+>=20
+> Zhang Rui <rui.zhang@intel.com> is acting as the principle maintainer,
+> whilst I'm handling the git tree and assisting with the more
+> embedded devices.
+>=20
+> To that end there is a git tree at:
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/jic23/als.git for-next
+>=20
+> and we were wondering if you could add this tree to linux-next?
+> I've verified it applies cleanly on top of the current linux-next tree
+> so it should merge fine *crosses fingers*
 
-1) That if utrace is merged, and systemtap keeps on using it, there may be
-   some sort of chilling effect on kernel developers that would impede
-   utrace's future development.
+I have added the als tree to linux-next from today with you and Zhang Rui
+listed as contacts for any problems.  I have cc'd this email to the more
+general community so that people are aware of its inclusion.
 
-This might sound plausible to an outsider, but luckily we're not stuck
-with having to speculate: one can examine history.  Systemtap has been
-around, working roughly the same way, for about *five years*.
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
 
-Systemtap modules use more than a handful of mainstream
-module-accessible kernel services.  During all this time, how many
-examples have there been when when systemtap developers have pleaded
-with lkml to avoid changing some prior interface?  How many of those
-successfully?  (That last one is a trick question, since both numbers
-are really close to *zero*.)  How much real impediment to change has
-our mere existence caused?
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+	Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
 
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
 
-2) That systemtap is not portable to all kernel versions.
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
 
-Problems do periodically occur.  However, one can again refer to
-historical facts to assess whether in fact they warrant long term
-grudges.  In every release note, we list the range of kernel versions
-we test against.  We may have one of the broadest ranges of support,
-2.6.9 through to many current -rc*s and non-linus trees.  We have
-several mechanisms which let us easily adapt to most changes.  It may
-interest readers to find out that the number of systemtap changes we
-have had to add on account of kernel changes is on the order of a *few
-per year*.  The usual turnaround, once reported, is on the order of a
-*few days*.
+Legal Stuff:
+By participating in linux-next, your subsystem tree contributions are
+public and will be included in the linux-next trees.  You may be sent
+e-mail messages indicating errors or other issues when the
+patches/commits from your subsystem tree are merged and tested in
+linux-next.  These messages may also be cross-posted to the linux-next
+mailing list, the linux-kernel mailing list, etc.  The linux-next tree
+project and IBM (my employer) make no warranties regarding the linux-next
+project, the testing procedures, the results, the e-mails, etc.  If you
+don't agree to these ground rules, let me know and I'll remove your tree
+from participation in linux-next.
 
+--Signature=_Mon__25_Jan_2010_10_33_57_+1100_o_G7KtsaLEi_=CNT
+Content-Type: application/pgp-signature
 
-3) That systemtap users will complain to kernel developers if
-   systemtap becomes incompatible.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-Let's go to the historical record again.  How many such complaints
-have actually been seen in inappropriate fora such as lkml?  How
-difficult were they to diagnose / redirect to the proper venue?  Have
-they constituted a "loss of face" for kernel developers?
+iEYEARECAAYFAktc2OUACgkQjjKRsyhoI8z2KQCdFutZFy8T75QjmYizy1Rm7EJ5
+MokAnjaJtJbPyjApGDyln2ZtrN/sVglA
+=aL6e
+-----END PGP SIGNATURE-----
 
-
-4) That systemtap is almost but not quite as evil as nvidia.
-
-It seems factors like ...
-
-- always being completely open source project
-- keeping in regular contact with lkml and other constituencies
-- not being related to essential hardware enablement, so users
-  not wanting it don't have to touch it
-- the compile-to-C approach being technologically necessary since
-  there was no alternative plausible way at the time (and still now)
-- repeatedly offering infrastructure code with non-stap uses
-
-... all add up to a mere nudge away from entirely "evil".  If so, I
-wonder if your sort of grossly bimodal view of ethical virtue is going
-to foster the right sorts of change in the linux kernel community.
-
-
-- FChE
+--Signature=_Mon__25_Jan_2010_10_33_57_+1100_o_G7KtsaLEi_=CNT--
