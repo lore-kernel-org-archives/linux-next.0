@@ -1,75 +1,47 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: tytso@mit.edu
 Subject: Re: linux-next: add utrace tree
-Date: Sat, 23 Jan 2010 21:04:56 -0800 (PST)
-Message-ID: <alpine.LFD.2.00.1001232051510.3574@localhost.localdomain>
-References: <20100121013822.28781960.sfr@canb.auug.org.au>  <20100122005147.GD22003@redhat.com> <20100121170541.7425ff10.akpm@linux-foundation.org>  <alpine.LFD.2.00.1001211724500.13231@localhost.localdomain>  <20100122182827.GA13185@redhat.com>
- <20100122200129.GG22003@redhat.com>  <alpine.LFD.2.00.1001221355250.13231@localhost.localdomain>  <20100122221348.GA4263@redhat.com> <alpine.LFD.2.00.1001221604190.13231@localhost.localdomain>  <alpine.LFD.2.00.1001221614520.13231@localhost.localdomain>
+Date: Sun, 24 Jan 2010 05:25:13 -0500
+Message-ID: <20100124102513.GB4382@thunk.org>
+References: <20100121170541.7425ff10.akpm@linux-foundation.org>
+ <alpine.LFD.2.00.1001211724500.13231@localhost.localdomain>
+ <20100122182827.GA13185@redhat.com>
+ <20100122200129.GG22003@redhat.com>
+ <alpine.LFD.2.00.1001221355250.13231@localhost.localdomain>
+ <20100122221348.GA4263@redhat.com>
+ <alpine.LFD.2.00.1001221604190.13231@localhost.localdomain>
+ <alpine.LFD.2.00.1001221614520.13231@localhost.localdomain>
  <f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com>
+ <alpine.LFD.2.00.1001232051510.3574@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:55285 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751749Ab0AXFFt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Sun, 24 Jan 2010 00:05:49 -0500
-In-Reply-To: <f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com>
+Received: from THUNK.ORG ([69.25.196.29]:51083 "EHLO thunker.thunk.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752555Ab0AXKZj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 24 Jan 2010 05:25:39 -0500
+Content-Disposition: inline
+In-Reply-To: <alpine.LFD.2.00.1001232051510.3574@localhost.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kyle Moffett <kyle@moffetthome.net>
-Cc: "Frank Ch. Eigler" <fche@redhat.com>, Oleg Nesterov <oleg@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kyle Moffett <kyle@moffetthome.net>, "Frank Ch. Eigler" <fche@redhat.com>, Oleg Nesterov <oleg@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>
 
-
-
-On Sat, 23 Jan 2010, Kyle Moffett wrote:
+On Sat, Jan 23, 2010 at 09:04:56PM -0800, Linus Torvalds wrote:
+> > The killer app for this will be the ability to delete thousands of
+> > lines of code from GDB, strace, and all the various other tools that
+> > have to painfully work around the major interface gotchas of ptrace(),
+> > while at the same time making their handling of complex processes much
+> > more robust.
 > 
-> Now how do we get from here to a moderately portable API for
-> interrogating, controlling, and intercepting process state?
+> No. There is absolutely _no_ reason to believe that gdb et al would ever 
+> delete the ptrace interfaces anyway. 
 
-Umm? ptrace?
+More to the point, gdb *couldn't* use utrace, because utrace only
+exports a kernel API; not a syscall interface.  And if the Red Hat
+Toolchain folks are thinking about encouraging gdb to start creating
+out-of-tree kernel modules, so that (a) gdb requires root privs, and
+(b) gdb is as (un)stable as SystemTap with respect to development
+kernels by making it dependent on internal kernel API's, the Red Hat
+Toolchain group needs to be smacked upside the head...
 
-It's not _pretty_, but it's a hell of a lot more portable than utrace is 
-ever going to be. Yes, the details differ between OS's (and between 
-architectures), but let's face it, things like register state probing is 
-_never_ going to be portable across different architectures simply because 
-the register state isn't the same.
-
-> The killer app for this will be the ability to delete thousands of
-> lines of code from GDB, strace, and all the various other tools that
-> have to painfully work around the major interface gotchas of ptrace(),
-> while at the same time making their handling of complex processes much
-> more robust.
-
-No. There is absolutely _no_ reason to believe that gdb et al would ever 
-delete the ptrace interfaces anyway. 
-
-That really is my point. Adding a new interface, when an old and crufty 
-(but working) interface is inevitably going to be around anyway - and is 
-inevitably always going to have portability issues - is STUPID.
-
-Let's take strace, for example.
-
-Yes, ptrace() is crufty, but have you actually looked at strace source 
-code? The problem isn't really a crufty interface to read registers etc, 
-the bigger problem for strace is that different architectures and OS's 
-have different system call argument rules, different ways to read/write 
-system call numbers yadda yadda yadda.
-
-Take a look at strace sources some day. Moving away from ptrace on Linux 
-(even if you decided that you don't care about old versions of the kernel 
-that don't know anything else) would simplify ABSOLUTELY NOTHING.
-
-Really. Quiet the reverse, I suspect. The Solaris and FreeBSD support uses 
-ptrace too, afaik, so you' just be confusing the issue.
-
-And the fact is, strace would still end up supporting ptrace anyway, just 
-so that you could run it on old kernels.
-
-So the whole "making a new utrace interface would simpligy things" is 
-simply a total lie. The fact that ptrace is a bit of an odd interface IN 
-NO WAY means that any other interface would end up being appreciably 
-simpler.
-
-It would just result in _more_ code in strace, and more confusion.
-
-		Linus
+	  	      	    	    	   - Ted
