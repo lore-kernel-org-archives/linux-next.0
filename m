@@ -1,50 +1,59 @@
-From: "Frank Ch. Eigler" <fche@redhat.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 Subject: Re: linux-next: add utrace tree
-Date: Sun, 24 Jan 2010 08:20:09 -0500
-Message-ID: <20100124132009.GB4263__29225.9339396425$1264339270$gmane$org@redhat.com>
-References: <alpine.LFD.2.00.1001211724500.13231@localhost.localdomain> <20100122182827.GA13185@redhat.com> <20100122200129.GG22003@redhat.com> <alpine.LFD.2.00.1001221355250.13231@localhost.localdomain> <20100122221348.GA4263@redhat.com> <alpine.LFD.2.00.1001221604190.13231@localhost.localdomain> <alpine.LFD.2.00.1001221614520.13231@localhost.localdomain> <f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com> <alpine.LFD.2.00.1001232051510.3574@localhost.localdomain> <20100124102513.GB4382@thunk.org>
+Date: Sun, 24 Jan 2010 17:36:21 +0100 (CET)
+Message-ID: <alpine.LFD.2.00.1001241731270.2906@localhost.localdomain>
+References: <20100122111747.3c224dfd.sfr@canb.auug.org.au> <20100121163004.8779bd69.akpm@linux-foundation.org> <20100121163145.7e958c3f.akpm@linux-foundation.org> <20100122005147.GD22003@redhat.com> <20100121170541.7425ff10.akpm@linux-foundation.org>
+ <20100122012516.GE22003@redhat.com> <alpine.LFD.2.00.1001211729080.13231@localhost.localdomain> <20100122022255.GF22003@redhat.com> <alpine.LFD.2.00.1001211826060.13231@localhost.localdomain> <20100123060401.GB19399@elte.hu>
+ <20100123120301.GD7828@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:23431 "EHLO mx1.redhat.com"
+Received: from www.tglx.de ([62.245.132.106]:59675 "EHLO www.tglx.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751323Ab0AXNU6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 24 Jan 2010 08:20:58 -0500
-Content-Disposition: inline
-In-Reply-To: <20100124102513.GB4382@thunk.org>
+	id S1754111Ab0AXQh4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 24 Jan 2010 11:37:56 -0500
+In-Reply-To: <20100123120301.GD7828@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: tytso@mit.edu, Linus Torvalds <torvalds@linux-foundation.org>, Kyle Moffett <kyle@moffetthome.net>, Oleg Nesterov <oleg@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Stephe
+To: "Frank Ch. Eigler" <fche@redhat.com>
+Cc: Ingo Molnar <mingo@elte.hu>, Linus Torvalds <torvalds@linux-foundation.org>, Steven Rostedt <rostedt@goodmis.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Arnaldo Carvalho de Melo <acme@redhat.com>, Li Zefan <lizf@cn.fujitsu.com>, Tom Zanussi <tzanussi@gmail.com>, systemtap@sources.redhat.com, dle-develop@lists.sourceforge.net, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Ananth N Mavinakayanahalli <ananth@in.ibm.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com
 
-Hi -
-
-On Sun, Jan 24, 2010 at 05:25:13AM -0500, tytso@mit.edu wrote:
-> [...]
-> > > The killer app for this will be the ability to delete thousands of
-> > > lines of code from GDB, strace, and all the various other tools that
-> > > have to painfully work around the major interface gotchas of ptrace(),
-> > > while at the same time making their handling of complex processes much
-> > > more robust.
-> > 
-> > No. There is absolutely _no_ reason to believe that gdb et al would ever 
-> > delete the ptrace interfaces anyway. 
+On Sat, 23 Jan 2010, Frank Ch. Eigler wrote:
+> On Sat, Jan 23, 2010 at 07:04:01AM +0100, Ingo Molnar wrote:
 > 
-> More to the point, gdb *couldn't* use utrace, because utrace only
-> exports a kernel API; not a syscall interface.
+> > [...]  Also, if any systemtap person is interested in helping us
+> > create a more generic filter engine out of the current ftrace filter
+> > engine (which is really a precursor of a safe, sandboxed in-kernel
+> > script engine), that would be excellent as well. [...]
+> 
+> Thank you for the invitation.
+> 
+> > More could be done - a simple C-like set of function perhaps - some minimal 
+> > per probe local variable state, etc. (perhaps even looping as well, with a 
+> > limit on number of predicament executions per filter invocation.)
+> 
+> Yes, at some point when such bytecode intepreter gets rich enough, one
+> may not need the translated-to-C means of running scripts.
+> 
+> 
+> > ( _Such_ a facility, could then perhaps be used to allow applications access 
+> >   to safe syscall sandboxing techniques: i.e. a programmable seccomp concept 
+> >   in essence, controlled via ASCII space filter expressions [...]
+> >   IMHO that would be a superior concept for security modules too [...]
+> >
+> > [...]  specific functionality with an immediately visible upside,
+> > with no need for opaque hooks.
+> 
+> This OTOH seem like rather a stretch.  If one claims that "opaque
+> hooks" are bad, so instead have hooks that jump not to auditable C
+> code but an bytecode interpreter?  And have the bytecodes be uploaded
+> from userspace?  How is this supposed to produce "transparency" from
+> the kernel/hook point of view?
 
-Yes, this might explain why Kyle wrote:
+Simply because the kernel controls which byte code is executed and has
+control over the functionality behind it. That makes the hooks well
+defined and transparent.
 
-> > > [...] I believe that "utrace" is the kernel side of that
-> > > API. [...]
+Thanks,
 
-> And if the Red Hat Toolchain folks are thinking about encouraging
-> gdb to start creating out-of-tree kernel modules [...]  the Red Hat
-> Toolchain group needs to be smacked upside the head...
-
-Those keeping up will note that an ordinary in-tree, non-modular,
-non-root-only, already-works-with-standard-gdb,
-potentially-better-than-ptrace debugger interface has already been
-prototyped & posted on lkml as an RFC.
-
-
-- FChE
+	tglx
