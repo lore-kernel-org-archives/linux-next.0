@@ -1,61 +1,62 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Tom Tromey <tromey@redhat.com>
 Subject: Re: linux-next: add utrace tree
-Date: Mon, 25 Jan 2010 12:42:22 -0800 (PST)
-Message-ID: <alpine.LFD.2.00.1001251236160.3574@localhost.localdomain>
-References: <alpine.LFD.2.00.1001221355250.13231@localhost.localdomain>  <20100122221348.GA4263@redhat.com>  <alpine.LFD.2.00.1001221604190.13231@localhost.localdomain>  <alpine.LFD.2.00.1001221614520.13231@localhost.localdomain>
- <f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com>  <20100123112333.GA15455@elte.hu> <20100123114729.GA7828@redhat.com>  <20100123194820.GM21263@thunk.org>  <f73f7ab81001241742t1f827ddetd958e1949787020f@mail.gmail.com>
- <alpine.LFD.2.00.1001250845180.3574@localhost.localdomain>  <20100125170254.GB22862@redhat.com>  <alpine.LFD.2.00.1001250930320.3574@localhost.localdomain> <1264451453.3028.59.camel@springer.wildebeest.org>
+Date: Mon, 25 Jan 2010 14:05:54 -0700
+Message-ID: <m33a1tnbd9.fsf@fleche.redhat.com>
+References: <20100121013822.28781960.sfr@canb.auug.org.au>
+	<20100122005147.GD22003@redhat.com>
+	<20100121170541.7425ff10.akpm@linux-foundation.org>
+	<alpine.LFD.2.00.1001211724500.13231@localhost.localdomain>
+	<20100122182827.GA13185@redhat.com>
+	<20100122200129.GG22003@redhat.com>
+	<alpine.LFD.2.00.1001221355250.13231@localhost.localdomain>
+	<20100122221348.GA4263@redhat.com>
+	<alpine.LFD.2.00.1001221604190.13231@localhost.localdomain>
+	<alpine.LFD.2.00.1001221614520.13231@localhost.localdomain>
+	<f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com>
+	<alpine.LFD.2.00.1001232051510.3574@localhost.localdomain>
+Reply-To: tromey@redhat.com
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:50558 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753029Ab0AYUnO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 25 Jan 2010 15:43:14 -0500
-In-Reply-To: <1264451453.3028.59.camel@springer.wildebeest.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Wielaard <mjw@redhat.com>
-Cc: "Frank Ch. Eigler" <fche@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Kyle Moffett <kyle@moffetthome.net>, tytso@mit.edu, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Oleg Nesterov <oleg@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com
+Content-Type: text/plain; charset=us-ascii
+Return-path: <utrace-devel-bounces@redhat.com>
+In-Reply-To: <alpine.LFD.2.00.1001232051510.3574@localhost.localdomain> (Linus
+	Torvalds's message of "Sat, 23 Jan 2010 21:04:56 -0800 (PST)")
+List-Unsubscribe: <https://www.redhat.com/mailman/options/utrace-devel>,
+	<mailto:utrace-devel-request@redhat.com?subject=unsubscribe>
+List-Archive: <https://www.redhat.com/archives/utrace-devel>
+List-Post: <mailto:utrace-devel@redhat.com>
+List-Help: <mailto:utrace-devel-request@redhat.com?subject=help>
+List-Subscribe: <https://www.redhat.com/mailman/listinfo/utrace-devel>,
+	<mailto:utrace-devel-request@redhat.com?subject=subscribe>
+Sender: utrace-devel-bounces@redhat.com
+Errors-To: utrace-devel-bounces@redhat.com
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Kyle Moffett <kyle@moffetthome.net>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Oleg Nesterov <oleg@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, "Frank Ch. Eigler" <fche@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>
+List-Id: linux-next.vger.kernel.org
 
+>>>>> "Linus" == Linus Torvalds <torvalds@linux-foundation.org> writes:
 
+Linus> No. There is absolutely _no_ reason to believe that gdb et al would ever 
+Linus> delete the ptrace interfaces anyway. 
 
-On Mon, 25 Jan 2010, Mark Wielaard wrote:
-> 
-> And all these users have wishes to extend the current ptrace interface
-> mess. But nobody dares to extend ptrace in any direction because
-> fixing/cleaning up one of these use cases might break the others in
-> subtle and not so subtle ways. Which is why the utrace series of patches
-> is cleaning up all this stuff first.
+Yes, in GDB we approximately never delete anything.
 
-I call bullshit.
+Nevertheless, if the Linux kernel were to present a new user-space API,
+and if it had an advantage over ptrace, then we would port GDB to use
+it.  There are other platforms where, IIRC, we now use some /proc thing
+instead of ptrace.
 
-You can clean up ptrace without introducing odd new interfaces and trying 
-to sell it as some revolutionary new kernel interface that can do 
-anything.
+There are definitely things we would like from such an API.  Here's a
+few I can think of immediately, there are probably others.
 
-I also call bullshit on the "ptrace() is so horribly nasty" argument. Yes, 
-I've seen the code that uses ptrace in user space, and yes, it's nasty, 
-but it's invariably _not_ nasty so much because ptrace itself is nasty, 
-but because it's full of #ifdef so-and-so-os/so-and-so-arch, and the code 
-is never cleaned up.
+* Use an fd, not SIGCHLD+wait, to report inferior state changes to gdb.
+  Internally we're already using a self-pipe to integrate this into
+  gdb's main loop.  Relatedly, don't mess with the inferior's parentage.
 
-There are a couple of obvious cases of ptrace being uglier-than-it-needs- 
-to-be. Like the traditional ptrace read/write interface being purely "word 
-at a time", and that clearly is not pretty. Several architectures already 
-do "copy range" kind of versions on it, though, so that's just a detail, 
-and if anybody wanted to clean it up, they could have.
+* Support "displaced stepping" in the kernel; I think this would improve
+  performance when debugging in non-stop mode.
 
-The more fundamental problem is the use of signals (while at the same time 
-wanting to _trap_ non-ptrace signals), without any model for a "connection 
-state", which is why you can have only one tracer. But again, that's 
-largely a user interface issue, and apparently utrace does _nothing_ for 
-that problem at all.
+* Support some kind of breakpoint expression in the kernel; this would
+  improve performance of conditional breakpoints.  Perhaps the existing
+  gdb agent expressions could be used.
 
-So I do agree that ptrace is not a great interface. However: repeating 
-that statement over and over in _no_ way excuses some totally unrelated 
-code that doesn't have anything what-so-ever to do with the actual 
-problems of ptrace.
-
-		Linus
+Tom
