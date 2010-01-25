@@ -1,84 +1,62 @@
-From: Dave Chinner <david@fromorbit.com>
-Subject: Re: linux-next: vfs/fsnotify trees build warning
-Date: Mon, 25 Jan 2010 15:29:25 +1100
-Message-ID: <20100125042925.GM25842@discord.disaster>
-References: <20100125150456.c796f0b0.sfr@canb.auug.org.au>
+From: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
+Subject: Re: linux-next: add utrace tree
+Date: Mon, 25 Jan 2010 10:29:08 +0530
+Message-ID: <20100125045908.GB4895@in.ibm.com>
+References: <20100121170541.7425ff10.akpm@linux-foundation.org> <alpine.LFD.2.00.1001211724500.13231@localhost.localdomain> <20100122182827.GA13185@redhat.com> <20100122200129.GG22003@redhat.com> <alpine.LFD.2.00.1001221355250.13231@localhost.localdomain> <20100122221348.GA4263@redhat.com> <alpine.LFD.2.00.1001221604190.13231@localhost.localdomain> <alpine.LFD.2.00.1001221614520.13231@localhost.localdomain> <f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com> <20100123112333.GA15455@elte.hu>
+Reply-To: ananth@in.ibm.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1752475Ab0AYE3f@vger.kernel.org>
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753260Ab0AYE7Z@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20100125150456.c796f0b0.sfr@canb.auug.org.au>
+In-Reply-To: <20100123112333.GA15455@elte.hu>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Eric Paris <eparis@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, xfs@oss.sgi.com
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Kyle Moffett <kyle@moffetthome.net>, Stephen Rothwell <sfr@canb.auug.org.au>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Oleg Nesterov <oleg@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, "Frank Ch. Eigler" <fche@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Linus Torvalds <torvalds@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Jan 25, 2010 at 03:04:56PM +1100, Stephen Rothwell wrote:
-> Hi Eric, Al,
+On Sat, Jan 23, 2010 at 12:23:33PM +0100, Ingo Molnar wrote:
 > 
-> Today's linux-next build (x86_64 allmodconfig) produced these warnings:
+> * Kyle Moffett <kyle@moffetthome.net> wrote:
 > 
-> In file included from include/linux/security.h:26,
->                  from fs/xfs/linux-2.6/xfs_iops.c:56:
-> include/linux/fsnotify.h: In function 'fsnotify_move':
-> include/linux/fsnotify.h:87: warning: pointer targets in initialization differ in signedness
-> include/linux/fsnotify.h: In function 'fsnotify_create':
-> include/linux/fsnotify.h:154: warning: pointer targets in passing argument 5 of 'fsnotify' differ in signedness
-> include/linux/fsnotify_backend.h:300: note: expected 'const char *' but argument is of type 'const unsigned char *'
-> include/linux/fsnotify.h: In function 'fsnotify_link':
-> include/linux/fsnotify.h:167: warning: pointer targets in passing argument 5 of 'fsnotify' differ in signedness
-> include/linux/fsnotify_backend.h:300: note: expected 'const char *' but argument is of type 'const unsigned char *'
-> include/linux/fsnotify.h: In function 'fsnotify_mkdir':
-> include/linux/fsnotify.h:180: warning: pointer targets in passing argument 5 of 'fsnotify' differ in signedness
-> include/linux/fsnotify_backend.h:300: note: expected 'const char *' but argument is of type 'const unsigned char *'
+> > On Fri, Jan 22, 2010 at 19:22, Linus Torvalds
+> > <torvalds@linux-foundation.org> wrote:
+ 
+...
+
+> In that sense it might be better to fix/enhance ptrace, if there's interest. 
+> I've written a handful of ptrace extensions in the past (none of them went 
+> upstream tho), it can be done in a useful manner and the code is pretty 
+> hackable. There are basic problems left to be solved: for example why is there 
+> still no 'memory block copy' call, why are we _still_ limited to one word per 
+> system call PTRACE_PEEK* memory copies? It's ridiculous. SparcLinux has 
+> PTRACE_WRITE*/READ* support that implements this, but none of the other 
+> architectures have it so it's essentially unused.
 > 
-> I am not sure why these started turning up (they were there on Friday as
-> well and I may have missed them earlier).
+> Or another possible direction would be to extend the perf events syscall with 
+> interception capabilities. It's far more performant at extracting application 
+> state without scheduling than any ptrace method - and interception/injection 
+> would be a natural next step - if there's interest.
 
-I cleaned up the all the sign warnings in the XFS code because
-we mirror the kernel code into userspace for tool building (libxfs)
-and that results in lots of sign warnings. I left the kernel
-warnings switched on in the XFS makefile so we wouldn't re-introduce
-the same problems.
+This certainly is now a chicken and egg problem. Everybody agrees that
+Linux needs something better than ptrace; legacy ptrace will continue to
+live, so will utilities written to it (strace, etc).
 
-Don't know why this isn't showing up in my build though, because:
+But should that limit what Linux can offer? What's the way out?
 
-CONFIG_FSNOTIFY=y
+- Enhance ptrace: At least one ptrace maintainer (Roland) had publically
+  stated he doesn't prefer enhancing legacy ptrace -- that its already a
+  beast to maintain, and adding more complexity to it does it no good.
 
-is set and it is obvious the fsnotify wrappers are passing an
-unsigned char * (dentry name) to fsnotify() which takes a const char
-* for the file name. There's mismatches like this all over the VFS,
-so I'm not going to try to fix them....
+- Extend perf; would perf then use utrace underneath? Or would one have
+  to redo some of what utrace already does for thread level control?
 
-The patch below should silence the warnings, though.
+- Give utrace a syscall and make it the primary way for users to
+  interact with the layer. There are benefits to this if there is
+  agreement on the utrace layer itself, maybe with less fexibility than
+  what it currently offers? If yes, what should it look like?
 
-Cheers,
+Any new debug facility will have to incorporate some or most learnings
+from what utrace tried to address. It would be sad to just dump utrace
+and redo everything from scratch or band-aid existing interfaces.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
-
-xfs: turn off sign warnings
-
-Because they cause warnings in static inline functions conditionally
-compiled into XFS from the VFS (e.g. fsnotify).
-
-Signed-off-by: Dave Chinner <david@fromorbit.com>
----
- fs/xfs/Makefile |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/fs/xfs/Makefile b/fs/xfs/Makefile
-index 1926701..5c5a366 100644
---- a/fs/xfs/Makefile
-+++ b/fs/xfs/Makefile
-@@ -16,7 +16,7 @@
- # Inc.,  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- #
- 
--EXTRA_CFLAGS +=	 -I$(src) -I$(src)/linux-2.6 -Wpointer-sign
-+EXTRA_CFLAGS +=	 -I$(src) -I$(src)/linux-2.6
- 
- XFS_LINUX := linux-2.6
- 
+Ananth
