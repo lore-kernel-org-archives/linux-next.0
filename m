@@ -1,62 +1,62 @@
-From: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
-Subject: Re: linux-next: add utrace tree
-Date: Mon, 25 Jan 2010 10:29:08 +0530
-Message-ID: <20100125045908.GB4895@in.ibm.com>
-References: <20100121170541.7425ff10.akpm@linux-foundation.org> <alpine.LFD.2.00.1001211724500.13231@localhost.localdomain> <20100122182827.GA13185@redhat.com> <20100122200129.GG22003@redhat.com> <alpine.LFD.2.00.1001221355250.13231@localhost.localdomain> <20100122221348.GA4263@redhat.com> <alpine.LFD.2.00.1001221604190.13231@localhost.localdomain> <alpine.LFD.2.00.1001221614520.13231@localhost.localdomain> <f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com> <20100123112333.GA15455@elte.hu>
-Reply-To: ananth@in.ibm.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: input tree build failure
+Date: Mon, 25 Jan 2010 16:52:19 +1100
+Message-ID: <20100125165219.cd0b869d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1753260Ab0AYE7Z@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__25_Jan_2010_16_52_19_+1100_q6.2x4s0_YdtIP/1"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:51678 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751104Ab0AYFwh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 25 Jan 2010 00:52:37 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tobias Klauser <tklauser@distanz.ch>, John Linn <john.linn@xilinx.com>
+
+--Signature=_Mon__25_Jan_2010_16_52_19_+1100_q6.2x4s0_YdtIP/1
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20100123112333.GA15455@elte.hu>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Kyle Moffett <kyle@moffetthome.net>, Stephen Rothwell <sfr@canb.auug.org.au>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Oleg Nesterov <oleg@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, "Frank Ch. Eigler" <fche@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Linus Torvalds <torvalds@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jan 23, 2010 at 12:23:33PM +0100, Ingo Molnar wrote:
-> 
-> * Kyle Moffett <kyle@moffetthome.net> wrote:
-> 
-> > On Fri, Jan 22, 2010 at 19:22, Linus Torvalds
-> > <torvalds@linux-foundation.org> wrote:
- 
-...
+Hi Dmitry,
 
-> In that sense it might be better to fix/enhance ptrace, if there's interest. 
-> I've written a handful of ptrace extensions in the past (none of them went 
-> upstream tho), it can be done in a useful manner and the code is pretty 
-> hackable. There are basic problems left to be solved: for example why is there 
-> still no 'memory block copy' call, why are we _still_ limited to one word per 
-> system call PTRACE_PEEK* memory copies? It's ridiculous. SparcLinux has 
-> PTRACE_WRITE*/READ* support that implements this, but none of the other 
-> architectures have it so it's essentially unused.
-> 
-> Or another possible direction would be to extend the perf events syscall with 
-> interception capabilities. It's far more performant at extracting application 
-> state without scheduling than any ptrace method - and interception/injection 
-> would be a natural next step - if there's interest.
+Today's linux-next build (powerpc ppc44x_defconfig) failed like this:
 
-This certainly is now a chicken and egg problem. Everybody agrees that
-Linux needs something better than ptrace; legacy ptrace will continue to
-live, so will utilities written to it (strace, etc).
+drivers/input/serio/xilinx_ps2.c: In function 'xps2_of_probe':
+drivers/input/serio/xilinx_ps2.c:273: error: incompatible type for argument=
+ 1 of 'resource_size'
+include/linux/ioport.h:132: note: expected 'const struct resource *' but ar=
+gument is of type 'struct resource'
+drivers/input/serio/xilinx_ps2.c: In function 'xps2_of_remove':
+drivers/input/serio/xilinx_ps2.c:347: error: incompatible type for argument=
+ 1 of 'resource_size'
+include/linux/ioport.h:132: note: expected 'const struct resource *' but ar=
+gument is of type 'struct resource'
 
-But should that limit what Linux can offer? What's the way out?
+Please at least build test this stuff ...
 
-- Enhance ptrace: At least one ptrace maintainer (Roland) had publically
-  stated he doesn't prefer enhancing legacy ptrace -- that its already a
-  beast to maintain, and adding more complexity to it does it no good.
+Caused by commit cc7bbfa322b48be82b1c86a104433d4ac349da79 ("Input:
+xilinx_ps2 - use resource_size").
 
-- Extend perf; would perf then use utrace underneath? Or would one have
-  to redo some of what utrace already does for thread level control?
+I have reverted that commit for today.
 
-- Give utrace a syscall and make it the primary way for users to
-  interact with the layer. There are benefits to this if there is
-  agreement on the utrace layer itself, maybe with less fexibility than
-  what it currently offers? If yes, what should it look like?
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Any new debug facility will have to incorporate some or most learnings
-from what utrace tried to address. It would be sad to just dump utrace
-and redo everything from scratch or band-aid existing interfaces.
+--Signature=_Mon__25_Jan_2010_16_52_19_+1100_q6.2x4s0_YdtIP/1
+Content-Type: application/pgp-signature
 
-Ananth
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAktdMZMACgkQjjKRsyhoI8w7OgCguZPDU0meR46hLlrIsdgGExfy
+qRMAniEtAb2AK3xfvPhydY3R3RiOAiRQ
+=ywmw
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__25_Jan_2010_16_52_19_+1100_q6.2x4s0_YdtIP/1--
