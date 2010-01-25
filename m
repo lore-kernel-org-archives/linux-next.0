@@ -1,95 +1,111 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: The Ambient Light Sensors for-next tree
-Date: Mon, 25 Jan 2010 10:33:57 +1100
-Message-ID: <20100125103357.076abef7.sfr@canb.auug.org.au>
-References: <4B59C372.9090204@cam.ac.uk>
+From: Kyle Moffett <kyle@moffetthome.net>
+Subject: Re: linux-next: add utrace tree
+Date: Sun, 24 Jan 2010 20:42:13 -0500
+Message-ID: <f73f7ab81001241742t1f827ddetd958e1949787020f@mail.gmail.com>
+References: <alpine.LFD.2.00.1001211724500.13231@localhost.localdomain>
+	<20100122200129.GG22003@redhat.com> <alpine.LFD.2.00.1001221355250.13231@localhost.localdomain>
+	<20100122221348.GA4263@redhat.com> <alpine.LFD.2.00.1001221604190.13231@localhost.localdomain>
+	<alpine.LFD.2.00.1001221614520.13231@localhost.localdomain>
+	<f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com>
+	<20100123112333.GA15455@elte.hu> <20100123114729.GA7828@redhat.com>
+	<20100123194820.GM21263@thunk.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__25_Jan_2010_10_33_57_+1100_o_G7KtsaLEi_=CNT"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54631 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751086Ab0AXXeL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 24 Jan 2010 18:34:11 -0500
-In-Reply-To: <4B59C372.9090204@cam.ac.uk>
+Received: from mail-pz0-f172.google.com ([209.85.222.172]:37360 "EHLO
+	mail-pz0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750883Ab0AYBmd convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 24 Jan 2010 20:42:33 -0500
+In-Reply-To: <20100123194820.GM21263@thunk.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jonathan Cameron <jic23@cam.ac.uk>
-Cc: Zhang Rui <rui.zhang@intel.com>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Greg KH <greg@kroah.com>, Andrew Morton <akpm@linux-foundation.org>
+To: tytso@mit.edu, "Frank Ch. Eigler" <fche@redhat.com>, Ingo Molnar <mingo@elte.hu>, Kyle Moffett <kyle@moffetthome.net>, Linus Torvalds <torvalds@linux-foundation.org>
 
---Signature=_Mon__25_Jan_2010_10_33_57_+1100_o_G7KtsaLEi_=CNT
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sat, Jan 23, 2010 at 14:48,  <tytso@mit.edu> wrote:
+> The fundamental issue which Ingo is trying to say (and which you
+> apparently don't seem to be understanding) is that utrace doesn't
+> export a syscall (which is an ABI that we are willing to promise will
+> be stable), but rather a set of kernel API's (which we never promise
+> to be stable),
 
-Hi Jonathan,
+The point that's being missed is that there is a chicken-and-egg
+problem here.  The "chicken" is a replacement or extension to the
+debugger interface that would make it possible for me to do things
+like GDB a process while it's being strace'd or vice versa.  The "egg"
+is the "utrace" bits, an unstable but somewhat arch-generic ABI that
+abstracts out ptrace() to make it possible to stack both in-kernel and
+userspace debuggers/tracers/etc and have multiple simultaneous users.
 
-On Fri, 22 Jan 2010 15:25:38 +0000 Jonathan Cameron <jic23@cam.ac.uk> wrote:
->
-> The ambient light sensors (ALS) patches have been on lkml for a while and
-> the core has now been thoroughly reviewed.  The actual drivers
-> will follow shortly as most are moves from elsewhere in the kernel tree.
->=20
-> Zhang Rui <rui.zhang@intel.com> is acting as the principle maintainer,
-> whilst I'm handling the git tree and assisting with the more
-> embedded devices.
->=20
-> To that end there is a git tree at:
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/jic23/als.git for-next
->=20
-> and we were wondering if you could add this tree to linux-next?
-> I've verified it applies cleanly on top of the current linux-next tree
-> so it should merge fine *crosses fingers*
+> and the fact that there will be out-of-tree programs
+> that are going to be trying to depend on that interface (much like
+> Systemtap does today when it creates kernel modules) is something tha=
+t
+> is considered on par with Nvidia trying to ship proprietary video
+> drivers.
 
-I have added the als tree to linux-next from today with you and Zhang Rui
-listed as contacts for any problems.  I have cc'd this email to the more
-general community so that people are aware of its inclusion.
+Ugh... perhaps we should derive a variation of Godwin's law for this:
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
+"As an LKML discussion grows longer, the probability of an unfavorable
+comparison involving nVidia or Microsoft approaches 1."
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-	Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
 
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+> If you want to try to slide utrace in, such that we're able to ignore
+> the fact that there will be this external house that will be built on
+> quicksand, pointing at how nice the external house will be isn't goin=
+g
+> to be helpful. =C2=A0Nor is pointing at the ability that other people=
+ will
+> be able to build other really nice houses on the aforementioned
+> quicksand (i.e., out-of-tree kernel modules that depend on kernel
+> API's).
 
---=20
+Personally I don't give a flying **** about SystemTap; I'm interested
+in things like the ability to stack gdb with strace, the RFC gdb-stub
+posted a week ago, etc.  None of those abilities would be out-of-tree
+modules at all, and therefore the "quicksand" analogy is specious.
+
+
+> A simple "code cleanup" argument is not carrying the day (Look! =C2=A0=
+We
+> can cleanup the ptree code!). =C2=A0It's going to have to be a **real=
+ly**
+> cool in-tree kernel funtionality that provides a killer feature (in
+> Linus's words), enough so that people are willing to overlook the fac=
+t
+> that there's this monster external out-of-tree project that wants to
+> be depend on API's that may not be stable, and which, even if the
+> developers don't grump at us, users will grump at us when we change
+> API's that we had never guaranteed will be stable, and then Systemtap
+> breaks.
+
+I would be willing to guess that something like 95% of the people
+using SystemTap or other tools are doing so on Red Hat Enterprise
+Linux or other enterprise supported platforms, and so when something
+breaks they go whinge at Red Hat, etc.  If I recall correctly Red Hat
+and many of the other vendors already heavily fiddle with kernel
+patches they apply to provide some amount of binary module
+compatibility.
+
+
+> This is probably why Ingo invited you to think about ways of doing
+> some kind of safe in-kernel bytecode approach. =C2=A0That has the adv=
+antage
+> of doing away with external kernel modules, with all of their many
+> downsides: its dependency on unstable kernel API's, the fact that man=
+y
+> financial customers have security policies that prohibit C compilers
+> on production machines, the inherent security risk of allowing
+> external random kernel modules to be delivered and loaded into a
+> system, etc.
+
+There are substantial non-SystemTap uses for utrace that would *not*
+be satisfied by an "in-kernel bytecode approach", starting with
+stacking debuggers and tracers.  Furthermore, let's say they did go
+off and build the in-kernel bytecode interpreter.  I can pretty much
+guarantee that people would say the hooks into the rest of the kernel
+are too invasive and they should be abstracted out into an API.  *This
+is that API!*
+
 Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
-
-Legal Stuff:
-By participating in linux-next, your subsystem tree contributions are
-public and will be included in the linux-next trees.  You may be sent
-e-mail messages indicating errors or other issues when the
-patches/commits from your subsystem tree are merged and tested in
-linux-next.  These messages may also be cross-posted to the linux-next
-mailing list, the linux-kernel mailing list, etc.  The linux-next tree
-project and IBM (my employer) make no warranties regarding the linux-next
-project, the testing procedures, the results, the e-mails, etc.  If you
-don't agree to these ground rules, let me know and I'll remove your tree
-from participation in linux-next.
-
---Signature=_Mon__25_Jan_2010_10_33_57_+1100_o_G7KtsaLEi_=CNT
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAktc2OUACgkQjjKRsyhoI8z2KQCdFutZFy8T75QjmYizy1Rm7EJ5
-MokAnjaJtJbPyjApGDyln2ZtrN/sVglA
-=aL6e
------END PGP SIGNATURE-----
-
---Signature=_Mon__25_Jan_2010_10_33_57_+1100_o_G7KtsaLEi_=CNT--
+Kyle Moffett
