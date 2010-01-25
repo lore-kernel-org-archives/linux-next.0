@@ -1,91 +1,61 @@
-From: Ingo Molnar <mingo@elte.hu>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 Subject: Re: linux-next: add utrace tree
-Date: Mon, 25 Jan 2010 21:34:30 +0100
-Message-ID: <20100125203430.GA31937@elte.hu>
-References: <20100123114729.GA7828@redhat.com>
- <20100123194820.GM21263@thunk.org>
- <f73f7ab81001241742t1f827ddetd958e1949787020f@mail.gmail.com>
- <alpine.LFD.2.00.1001250845180.3574@localhost.localdomain>
- <20100125170254.GB22862@redhat.com>
- <alpine.LFD.2.00.1001250930320.3574@localhost.localdomain>
- <1264442070.31321.422.camel@gandalf.stny.rr.com>
- <alpine.LFD.2.00.1001251002430.3574@localhost.localdomain>
- <1264444237.31321.431.camel@gandalf.stny.rr.com>
- <alpine.LFD.2.00.1001251939000.5926@localhost.localdomain>
+Date: Mon, 25 Jan 2010 12:42:22 -0800 (PST)
+Message-ID: <alpine.LFD.2.00.1001251236160.3574@localhost.localdomain>
+References: <alpine.LFD.2.00.1001221355250.13231@localhost.localdomain>  <20100122221348.GA4263@redhat.com>  <alpine.LFD.2.00.1001221604190.13231@localhost.localdomain>  <alpine.LFD.2.00.1001221614520.13231@localhost.localdomain>
+ <f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com>  <20100123112333.GA15455@elte.hu> <20100123114729.GA7828@redhat.com>  <20100123194820.GM21263@thunk.org>  <f73f7ab81001241742t1f827ddetd958e1949787020f@mail.gmail.com>
+ <alpine.LFD.2.00.1001250845180.3574@localhost.localdomain>  <20100125170254.GB22862@redhat.com>  <alpine.LFD.2.00.1001250930320.3574@localhost.localdomain> <1264451453.3028.59.camel@springer.wildebeest.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:44444 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750941Ab0AYUfL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 25 Jan 2010 15:35:11 -0500
-Content-Disposition: inline
-In-Reply-To: <alpine.LFD.2.00.1001251939000.5926@localhost.localdomain>
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:50558 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753029Ab0AYUnO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 25 Jan 2010 15:43:14 -0500
+In-Reply-To: <1264451453.3028.59.camel@springer.wildebeest.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Linus Torvalds <torvalds@linux-foundation.org>, "Frank Ch. Eigler" <fche@redhat.com>, Kyle Moffett <kyle@moffetthome.net>, tytso@mit.edu, Oleg Nesterov <oleg@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com
+To: Mark Wielaard <mjw@redhat.com>
+Cc: "Frank Ch. Eigler" <fche@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Kyle Moffett <kyle@moffetthome.net>, tytso@mit.edu, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Oleg Nesterov <oleg@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com
 
 
-* Thomas Gleixner <tglx@linutronix.de> wrote:
 
-> On Mon, 25 Jan 2010, Steven Rostedt wrote:
+On Mon, 25 Jan 2010, Mark Wielaard wrote:
 > 
-> > On Mon, 2010-01-25 at 10:12 -0800, Linus Torvalds wrote:
-> > 
-> > > But on the whole, I think it's actually worked out pretty well for them. 
-> > > I think the mainline kernel has improved in the process, but I also 
-> > > suspect that _their_ RT patches have also improved thanks to having to 
-> > > make the work more palatable to people like me who don't care all that 
-> > > deeply about their particular flavor of crazy.
-> > 
-> > Actually this is an understatement. Every feature (and I do mean _every_) 
-> > that went from -rt into mainline, undertook 3 or more rewrites before it 
-> > was acceptable for mainline. And every time, the end result made the -rt 
-> > patch set better as a whole.
-> > 
-> > Not to mention, that a lot of the early stuff also cleaned up mainline. 
-> > You can't have Real-Time without having a clean kernel. And as you stated, 
-> > a lot of those patches to clean up the kernel, no one even knew that the 
-> > real reason was to help the -rt patch set. They were well disguised Trojan 
-> > horses.
-> 
-> Tsss. Never admit such things.
+> And all these users have wishes to extend the current ptrace interface
+> mess. But nobody dares to extend ptrace in any direction because
+> fixing/cleaning up one of these use cases might break the others in
+> subtle and not so subtle ways. Which is why the utrace series of patches
+> is cleaning up all this stuff first.
 
-Here's four examples of recent kernel features:
+I call bullshit.
 
- - lockdep                                      [1]
- - ftrace                                       [2]
- - new-style generic mutexes and spin-mutexes   [3]
- - the new arch/x86 tree                        [4]
+You can clean up ptrace without introducing odd new interfaces and trying 
+to sell it as some revolutionary new kernel interface that can do 
+anything.
 
-I suspect few would guess that all of these features were motivated by the -rt 
-kernel originally:
+I also call bullshit on the "ptrace() is so horribly nasty" argument. Yes, 
+I've seen the code that uses ptrace in user space, and yes, it's nasty, 
+but it's invariably _not_ nasty so much because ptrace itself is nasty, 
+but because it's full of #ifdef so-and-so-os/so-and-so-arch, and the code 
+is never cleaned up.
 
-    [1] lockdep started out as the 'track irqs-off sections' patches in -rt
-    [2] ftrace started out as -rt's latency tracer and logdev
-    [3] mutex.c was motivated by rtmutex.c
-    [4] arch-x86 was motivated by annoyance with needless porting of -rt 
-        features from 32-bit to 64-bit x86 and back.
+There are a couple of obvious cases of ptrace being uglier-than-it-needs- 
+to-be. Like the traditional ptrace read/write interface being purely "word 
+at a time", and that clearly is not pretty. Several architectures already 
+do "copy range" kind of versions on it, though, so that's just a detail, 
+and if anybody wanted to clean it up, they could have.
 
-[ Nor would you normally guess that Linux itself was motivated by a guy 
-  wanting to toy around with 32-bit x86 assembly ;-) ]
+The more fundamental problem is the use of signals (while at the same time 
+wanting to _trap_ non-ptrace signals), without any model for a "connection 
+state", which is why you can have only one tracer. But again, that's 
+largely a user interface issue, and apparently utrace does _nothing_ for 
+that problem at all.
 
-Various forms of craziness that motivate us dont really hurt, as long as the 
-process is rooted in reality. We can 'wish' for the crazier future stuff and 
-can help it indirectly, and sometimes it might even happen down the road - but 
-reality and common-sense utility is what controls.
+So I do agree that ptrace is not a great interface. However: repeating 
+that statement over and over in _no_ way excuses some totally unrelated 
+code that doesn't have anything what-so-ever to do with the actual 
+problems of ptrace.
 
-And note that there's nothing dishonest about doing multi-purpose patches, as 
-long as the mainstream purpose isnt really just a decoy. When we decouple a 
-feature from -rt we usually forget its -rt purpose and the intermediate 
-for-mainstream forms arent even useful for -rt - back-integration into -rt 
-comes at a later stage. This makes it doubly sure that it's all formed by 
-mainstream's need, not -rt's needs.
-
-In the few cases where the -rt role is prominent for some weird reason we 
-declare it as such. It's the exception to the rule really - few useful kernel 
-features are single purpose. ( When they are then we are likely doing 
-something wrong. -rt _is_ a special case. )
-
-	Ingo
+		Linus
