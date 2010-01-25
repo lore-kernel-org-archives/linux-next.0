@@ -1,50 +1,74 @@
-From: =?utf-8?Q?Am=C3=A9rico?= Wang <xiyou.wangcong@gmail.com>
-Subject: Re: About ACL for IPC Object
-Date: Tue, 26 Jan 2010 00:26:47 +0800
-Message-ID: <20100125162647.GC3749@hack>
-References: <6fb445941001200112o2934f805l4eb4f78000e9527e@mail.gmail.com> <6fb445941001200120m3aa5e944j54a6f645ce82d76f@mail.gmail.com> <4B57C3C3.9010606@schaufler-ca.com> <20100121090510.GA908@infradead.org> <6fb445941001220115y6b99f7b4g306ea23d3202969@mail.gmail.com> <2375c9f91001220202m724e2ee2p2213b81a043ebd33@mail.gmail.com> <6fb445941001250721p73795fe2i9196bd3c77dd0fce@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: linux-next: add utrace tree
+Date: Mon, 25 Jan 2010 08:52:41 -0800 (PST)
+Message-ID: <alpine.LFD.2.00.1001250845180.3574@localhost.localdomain>
+References: <alpine.LFD.2.00.1001211724500.13231@localhost.localdomain>
+	<20100122200129.GG22003@redhat.com>
+	<alpine.LFD.2.00.1001221355250.13231@localhost.localdomain>
+	<20100122221348.GA4263@redhat.com>
+	<alpine.LFD.2.00.1001221604190.13231@localhost.localdomain>
+	<alpine.LFD.2.00.1001221614520.13231@localhost.localdomain>
+	<f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com>
+	<20100123112333.GA15455@elte.hu> <20100123114729.GA7828@redhat.com>
+	<20100123194820.GM21263@thunk.org>
+	<f73f7ab81001241742t1f827ddetd958e1949787020f@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-security-module-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <6fb445941001250721p73795fe2i9196bd3c77dd0fce@mail.gmail.com>
-Sender: linux-security-module-owner@vger.kernel.org
-To: zhou peng <ailvpeng25@gmail.com>
-Cc: =?utf-8?Q?Am=C3=A9rico?= Wang <xiyou.wangcong@gmail.com>, Christoph Hellwig <hch@infradead.org>, Casey Schaufler <casey@schaufler-ca.com>, sds@tycho.nsa.gov, jra@samba.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <utrace-devel-bounces@redhat.com>
+In-Reply-To: <f73f7ab81001241742t1f827ddetd958e1949787020f@mail.gmail.com>
+List-Unsubscribe: <https://www.redhat.com/mailman/options/utrace-devel>,
+	<mailto:utrace-devel-request@redhat.com?subject=unsubscribe>
+List-Archive: <https://www.redhat.com/archives/utrace-devel>
+List-Post: <mailto:utrace-devel@redhat.com>
+List-Help: <mailto:utrace-devel-request@redhat.com?subject=help>
+List-Subscribe: <https://www.redhat.com/mailman/listinfo/utrace-devel>,
+	<mailto:utrace-devel-request@redhat.com?subject=subscribe>
+Sender: utrace-devel-bounces@redhat.com
+Errors-To: utrace-devel-bounces@redhat.com
+To: Kyle Moffett <kyle@moffetthome.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, tytso@mit.edu, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Oleg Nesterov <oleg@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, "Frank Ch. Eigler" <fche@redhat.com>, linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Jan 25, 2010 at 11:21:44PM +0800, zhou peng wrote:
->I have tested posix sem,posix shm and posix msg queue for ACL on
->fedora 12 with kernel 2.6.32.
->
->Posix sem and posix shm using tmpfs monted by default support ACL well .
->Posix msg queue use mqueue fs mounted by manual but it seem not
->surpoort ACL well. It failed for setting named ACL item:
->{
-> $ mkdir /dev/mqueue
-> $ mount -o rw, acl -t mqueue none /dev/mqueue
-> $cd /dev/mqueue
-> "/mq" msg queue object created and used by processes properly
->
-> $getfacl mq
->   #file: mq
->   #owner:root
->   #group:root
->   user:rw-
->   group::---
->   other::---
->
-> $setfacl -m u:testuser:rw mq                                   /* failed here*/
-> $setfacl: mq :Operation not supported
-> but mqueue fs works well for setting owner user and owner group items.
->}
->
->I am not sure whether mqueue don't support acl or I make mistake.
->
-
-A quick look at the source code shows mqueue doesn't support ACL.
 
 
--- 
-Live like a child, think like the god.
- 
+On Sun, 24 Jan 2010, Kyle Moffett wrote:
+> 
+> The point that's being missed is that there is a chicken-and-egg
+> problem here.  The "chicken" is a replacement or extension to the
+> debugger interface that would make it possible for me to do things
+> like GDB a process while it's being strace'd or vice versa.  The "egg"
+> is the "utrace" bits, an unstable but somewhat arch-generic ABI that
+> abstracts out ptrace() to make it possible to stack both in-kernel and
+> userspace debuggers/tracers/etc and have multiple simultaneous users.
+
+Quite frankly, as far as I'm concerned, I'd be a whole lot more interested 
+in utrace if it's _only_ stated (and implied) goal was to do exactly this.
+
+The thing I object to is the whole "dessert topping _and_ floor wax" 
+thing, with kernel interfaces for random other users.
+
+If somebody extended ptrace in good ways, that's a totally different 
+thing. But I think utrace has been over-designed, possibly as a result of 
+others coming in and saying "hey, I'd like to use that too for xyz".
+
+"Do one thing, and do it well". I'd not mind somebody improving ptrace 
+(including extending its semantics - I do agree that the whole SIGSTOP 
+thing makes it hard to have multiple debuggers).
+
+That said, I also suspect that people should still look seriously at 
+simply just improving ptrace. For example, I suspect that the biggest 
+problem with ptrace is really just the signalling, and that creating a new 
+extension for JUST THAT, and then having a model where you can choose - at 
+PTRACE_ATTACH time - how to wait for events would be a good thing.
+
+But as long as it is "I want to solve all problems", I'm not very 
+impressed. 
+
+Maybe somebody would be interested in trying to take the utrace 
+improvements, and scaling down what they promise, and ignoring all input 
+except for "I want to strace and gdb at the same time".
+
+So stop the crazy "new kernel interfaces" crap. Stop the crazy "maybe we 
+can use it for ftrace and generic user event tracing too". Stop the crazy.
+
+			Linus
