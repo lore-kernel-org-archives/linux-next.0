@@ -1,74 +1,58 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Subject: Re: linux-next: Tree for January 21
-Date: Mon, 25 Jan 2010 10:47:17 -0800
-Message-ID: <20100125104717.244e5140@jbarnes-piketon>
-References: <20100121165713.7b8a746d.sfr@canb.auug.org.au>
-	<20100121131339.5e86dfef.akpm@linux-foundation.org>
-	<4B58DC99.9040302@imap.cc>
+From: Mark Wielaard <mjw@redhat.com>
+Subject: Re: linux-next: add utrace tree
+Date: Mon, 25 Jan 2010 21:30:53 +0100
+Message-ID: <1264451453.3028.59.camel@springer.wildebeest.org>
+References: <alpine.LFD.2.00.1001221355250.13231@localhost.localdomain>
+	<20100122221348.GA4263@redhat.com>
+	<alpine.LFD.2.00.1001221604190.13231@localhost.localdomain>
+	<alpine.LFD.2.00.1001221614520.13231@localhost.localdomain>
+	<f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com>
+	<20100123112333.GA15455@elte.hu> <20100123114729.GA7828@redhat.com>
+	<20100123194820.GM21263@thunk.org>
+	<f73f7ab81001241742t1f827ddetd958e1949787020f@mail.gmail.com>
+	<alpine.LFD.2.00.1001250845180.3574@localhost.localdomain>
+	<20100125170254.GB22862@redhat.com>
+	<alpine.LFD.2.00.1001250930320.3574@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from outbound-mail-313.bluehost.com ([67.222.54.6]:49723 "HELO
-	outbound-mail-313.bluehost.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with SMTP id S1754382Ab0AYSr0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 25 Jan 2010 13:47:26 -0500
-In-Reply-To: <4B58DC99.9040302@imap.cc>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Tilman Schmidt <tilman@imap.cc>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Return-path: <utrace-devel-bounces@redhat.com>
+In-Reply-To: <alpine.LFD.2.00.1001250930320.3574@localhost.localdomain>
+List-Unsubscribe: <https://www.redhat.com/mailman/options/utrace-devel>,
+	<mailto:utrace-devel-request@redhat.com?subject=unsubscribe>
+List-Archive: <https://www.redhat.com/archives/utrace-devel>
+List-Post: <mailto:utrace-devel@redhat.com>
+List-Help: <mailto:utrace-devel-request@redhat.com?subject=help>
+List-Subscribe: <https://www.redhat.com/mailman/listinfo/utrace-devel>,
+	<mailto:utrace-devel-request@redhat.com?subject=subscribe>
+Sender: utrace-devel-bounces@redhat.com
+Errors-To: utrace-devel-bounces@redhat.com
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Kyle Moffett <kyle@moffetthome.net>, tytso@mit.edu, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Oleg Nesterov <oleg@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, "Frank Ch. Eigler" <fche@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, 22 Jan 2010 00:00:41 +0100
-Tilman Schmidt <tilman@imap.cc> wrote:
+On Mon, 2010-01-25 at 09:36 -0800, Linus Torvalds wrote:
+> Upon the information that people are talking about magic new kernel 
+> interfaces to do fancy things. And talking about doing things with it that 
+> are simply not relevant for ptrace/strace.
 
-> Am 21.01.2010 22:13 schrieb Andrew Morton:
-> > On Thu, 21 Jan 2010 16:57:13 +1100
-> > Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > 
-> >> I have created today's linux-next tree at
-> >> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> > 
-> > It includes this screwed up commit:
-> > 
-> > :commit e303d9eadc64907535a0a104afa5871d2b83275e
-> > :Author:     Tilman Schmidt <tilman@imap.cc>
-> > :AuthorDate: Thu Jan 14 23:18:41 2010 +0100
-> > :Commit:     Jesse Barnes <jbarnes@virtuousgeek.org>
-> > :CommitDate: Fri Jan 15 10:08:07 2010 -0800
-> > :
-> > :    PCI/ISDN: push deprecated pci_find_device() function to last
-> > user (isdn) :    
-> > :    The ISDN4Linux HiSax driver family contains the last remaining
-> > users of :    the deprecated pci_find_device() function. This patch
-> > creates a private :    copy of that function in HiSax, and removes
-> > the now unused global :    function together with its controlling
-> > configuration option, :    CONFIG_PCI_LEGACY.
-> > :    
-> > :    Signed-off-by: Tilman Schmidt <tilman@imap.cc>
-> > :    Signed-off-by: Jesse Barnes <jbarnes@virtuousgeek.org>
-> > 
-> > It adds a bunch of files which are compile-time generated:
-> > 
-> > include/linux/autoconf.h
-> > include/linux/bounds.h
-> > include/linux/compile.h
-> > include/linux/utsrelease.h
-> 
-> That's not the patch I submitted. Mine did not add any new files.
-> 
-> What's more, I've since submitted a new version, fixing the reported
-> build failure with CONFIG_PCI=n:
-> 
-> Subject: [PATCH/v2] pci: push deprecated pci_find_device() function
-> to last user Message-Id:
-> <20100118162410.4562840108@xenon.ts.pxnet.com> Date: 	Mon, 18
-> Jan 2010 17:24:10 +0100 (CET)
-> 
-> So please drop the patch above, and include the latter one instead.
+Unfortunately ptrace does all that magic already (badly). People don't
+just use it for (s)tracing syscalls, but also for tracing signals, for
+single step debugging and poking at memory, register state, for process
+jailing and virtualization (uml) through syscall emulation.
 
-Ok pushed what should be the fixed up one (your v2 with fuzz fixed up).
+So when they are talking about these fancy things that is because that
+is what ptrace gives them currently. And they hate it, because the
+ptrace interface is such a pain to work with. And all these things don't
+really work together. You cannot trace, emulate, debug, jail at the same
+time.
 
--- 
-Jesse Barnes, Intel Open Source Technology Center
+And all these users have wishes to extend the current ptrace interface
+mess. But nobody dares to extend ptrace in any direction because
+fixing/cleaning up one of these use cases might break the others in
+subtle and not so subtle ways. Which is why the utrace series of patches
+is cleaning up all this stuff first.
+
+Cheers,
+
+Mark
