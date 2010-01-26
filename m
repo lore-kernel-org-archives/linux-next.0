@@ -1,42 +1,66 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: drivers/net/ariadne.c:165: error: 'set_multicast_list' undeclared
-	here (not in a function)
-Date: Tue, 26 Jan 2010 09:57:05 +0100
-Message-ID: <10f740e81001260057h37f3494dvefa3a37b2e1453a5@mail.gmail.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: drivers/net/ariadne.c:165: error: 'set_multicast_list'
+ undeclared here (not in a function)
+Date: Tue, 26 Jan 2010 05:18:17 -0800 (PST)
+Message-ID: <20100126.051817.215651254.davem@davemloft.net>
+References: <10f740e81001260057h37f3494dvefa3a37b2e1453a5@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1752740Ab0AZI5Q@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexey Dobriyan <adobriyan@gmail.com>, "David S. Miller" <davem@davemloft.net>
-Cc: Linux-Next <linux-next@vger.kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:57582
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751398Ab0AZNSF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 26 Jan 2010 08:18:05 -0500
+In-Reply-To: <10f740e81001260057h37f3494dvefa3a37b2e1453a5@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: geert@linux-m68k.org
+Cc: adobriyan@gmail.com, linux-next@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/2076964/
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 26 Jan 2010 09:57:05 +0100
 
-drivers/net/ariadne.c:165: error: 'set_multicast_list' undeclared here
-(not in a function)
+> http://kisskb.ellerman.id.au/kisskb/buildresult/2076964/
+> 
+> drivers/net/ariadne.c:165: error: 'set_multicast_list' undeclared here
+> (not in a function)
+> 
+> Seems to be broken by:
 
-Seems to be broken by:
+I'll fix this with the patch below.
 
-commit a271623f871dda970319ca15dfad3a8c8c36249f
-Author: Alexey Dobriyan <adobriyan@gmail.com>
-Date:   Fri Jan 22 10:13:10 2010 +0000
+Alexey, please go through at least drivers/net and look at the
+other stale references to these HAVE_* macros.
 
-    netdev: remove certain HAVE_ macros
+For example I still see a bunch of HAVE_POLL_CONTROLLER stuff.
 
-    After netdev_ops compat code HAVE_* macros aren't needed, in fact
-    they _will_ result in compile breakage for out of tree drivers.
+Thanks.
 
-    Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-    Signed-off-by: David S. Miller <davem@davemloft.net>
+ariadne: Fix build.
 
-Gr{oetje,eeting}s,
+References removed HAVE_MULTICAST.
 
-						Geert
+Reporeted-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/ariadne.c |    2 --
+ 1 files changed, 0 insertions(+), 2 deletions(-)
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+diff --git a/drivers/net/ariadne.c b/drivers/net/ariadne.c
+index c35af3e..e2c2024 100644
+--- a/drivers/net/ariadne.c
++++ b/drivers/net/ariadne.c
+@@ -123,9 +123,7 @@ static void ariadne_reset(struct net_device *dev);
+ static irqreturn_t ariadne_interrupt(int irq, void *data);
+ static int ariadne_close(struct net_device *dev);
+ static struct net_device_stats *ariadne_get_stats(struct net_device *dev);
+-#ifdef HAVE_MULTICAST
+ static void set_multicast_list(struct net_device *dev);
+-#endif
+ 
+ 
+ static void memcpyw(volatile u_short *dest, u_short *src, int len)
+-- 
+1.6.6.1
