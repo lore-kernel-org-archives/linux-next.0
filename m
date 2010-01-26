@@ -1,66 +1,40 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: drivers/net/ariadne.c:165: error: 'set_multicast_list'
- undeclared here (not in a function)
-Date: Tue, 26 Jan 2010 05:18:17 -0800 (PST)
-Message-ID: <20100126.051817.215651254.davem@davemloft.net>
-References: <10f740e81001260057h37f3494dvefa3a37b2e1453a5@mail.gmail.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: linux-next: add utrace tree
+Date: Tue, 26 Jan 2010 14:58:50 +0100
+Message-ID: <20100126135849.GC1764@ucw.cz>
+References: <20100120072925.GA11395@elte.hu> <20100121013822.28781960.sfr@canb.auug.org.au> <20100122111747.3c224dfd.sfr@canb.auug.org.au> <20100121163004.8779bd69.akpm@linux-foundation.org> <20100121163145.7e958c3f.akpm@linux-foundation.org> <20100122005147.GD22003@redhat.com> <20100121170541.7425ff10.akpm@linux-foundation.org> <alpine.LFD.2.00.1001211724500.13231@localhost.localdomain> <20100122052139.GA20532@in.ibm.com> <18867.1264167798@localhost>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:57582
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751398Ab0AZNSF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 26 Jan 2010 08:18:05 -0500
-In-Reply-To: <10f740e81001260057h37f3494dvefa3a37b2e1453a5@mail.gmail.com>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:34623 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751027Ab0AZN7T (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 26 Jan 2010 08:59:19 -0500
+Content-Disposition: inline
+In-Reply-To: <18867.1264167798@localhost>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: geert@linux-m68k.org
-Cc: adobriyan@gmail.com, linux-next@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Valdis.Kletnieks@vt.edu
+Cc: ananth@in.ibm.com, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, "Frank Ch. Eigler" <fche@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@elte.hu>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>
 
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 26 Jan 2010 09:57:05 +0100
-
-> http://kisskb.ellerman.id.au/kisskb/buildresult/2076964/
+On Fri 2010-01-22 08:43:18, Valdis.Kletnieks@vt.edu wrote:
+> On Fri, 22 Jan 2010 10:51:39 +0530, Ananth N Mavinakayanahalli said:
 > 
-> drivers/net/ariadne.c:165: error: 'set_multicast_list' undeclared here
-> (not in a function)
+> > FWIW, Oleg's implementation of ptrace over utrace is 100% compatible
+> > with legacy ptrace; gdb testsuite indicates that
+> > (http://lkml.org/lkml/2009/12/21/98).
 > 
-> Seems to be broken by:
+> No, that only proves it's compatible enough for gdb to not care. The problem
+> is all those *other* packages that abuse ptrace in totally crackhead ways.
+> 
+> (No, I can't name them - but ptrace is the sort of interface that almost
+> encourages its use for things somewhere between crackhead and mad-scientist,
+> so they're almost certainly out there.. WAY out there.. :)
 
-I'll fix this with the patch below.
+strace, subterfugue, ltrace, ...? Plus various homegrown sandboxing tools...
+									Pavel
 
-Alexey, please go through at least drivers/net and look at the
-other stale references to these HAVE_* macros.
 
-For example I still see a bunch of HAVE_POLL_CONTROLLER stuff.
-
-Thanks.
-
-ariadne: Fix build.
-
-References removed HAVE_MULTICAST.
-
-Reporeted-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
----
- drivers/net/ariadne.c |    2 --
- 1 files changed, 0 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ariadne.c b/drivers/net/ariadne.c
-index c35af3e..e2c2024 100644
---- a/drivers/net/ariadne.c
-+++ b/drivers/net/ariadne.c
-@@ -123,9 +123,7 @@ static void ariadne_reset(struct net_device *dev);
- static irqreturn_t ariadne_interrupt(int irq, void *data);
- static int ariadne_close(struct net_device *dev);
- static struct net_device_stats *ariadne_get_stats(struct net_device *dev);
--#ifdef HAVE_MULTICAST
- static void set_multicast_list(struct net_device *dev);
--#endif
- 
- 
- static void memcpyw(volatile u_short *dest, u_short *src, int len)
 -- 
-1.6.6.1
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
