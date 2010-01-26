@@ -1,44 +1,70 @@
-From: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
+From: "Frank Ch. Eigler" <fche@redhat.com>
 Subject: Re: linux-next: add utrace tree
-Date: Tue, 26 Jan 2010 19:51:54 +0530
-Message-ID: <20100126142154.GA30571@in.ibm.com>
-References: <20100122182827.GA13185@redhat.com> <20100122200129.GG22003@redhat.com> <alpine.LFD.2.00.1001221355250.13231@localhost.localdomain> <20100122221348.GA4263@redhat.com> <alpine.LFD.2.00.1001221604190.13231@localhost.localdomain> <alpine.LFD.2.00.1001221614520.13231@localhost.localdomain> <f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com> <alpine.LFD.2.00.1001232051510.3574@localhost.localdomain> <m33a1tnbd9.fsf@fleche.redhat.com> <alpine.LFD.2.00.1001251332370.3574@localhost.localdomain>
-Reply-To: ananth@in.ibm.com
+Date: Tue, 26 Jan 2010 10:00:15 -0500
+Message-ID: <20100126150015.GA24292@redhat.com>
+References: <alpine.LFD.2.00.1001211724500.13231@localhost.localdomain> <20100122182827.GA13185@redhat.com> <20100122200129.GG22003@redhat.com> <alpine.LFD.2.00.1001221355250.13231@localhost.localdomain> <20100122221348.GA4263@redhat.com> <alpine.LFD.2.00.1001221604190.13231@localhost.localdomain> <alpine.LFD.2.00.1001221614520.13231@localhost.localdomain> <f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com> <alpine.LFD.2.00.1001232051510.3574@localhost.localdomain> <m33a1tnbd9.fsf@fleche.redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1754223Ab0AZOWl@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:60661 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751717Ab0AZPBQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 26 Jan 2010 10:01:16 -0500
 Content-Disposition: inline
-In-Reply-To: <alpine.LFD.2.00.1001251332370.3574@localhost.localdomain>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Tom Tromey <tromey@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Kyle Moffett <kyle@moffetthome.net>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Oleg Nesterov <oleg@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, "Frank Ch. Eigler" <fche@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <m33a1tnbd9.fsf@fleche.redhat.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Tom Tromey <tromey@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Kyle Moffett <kyle@moffetthome.net>, Oleg Nesterov <oleg@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>
 
-On Mon, Jan 25, 2010 at 01:41:57PM -0800, Linus Torvalds wrote:
+Hi -
+
+On Mon, Jan 25, 2010 at 02:05:54PM -0700, Tom Tromey wrote:
+> [...]
+> Nevertheless, if the Linux kernel were to present a new user-space API,
+> and if it had an advantage over ptrace, then we would port GDB to use
+> it.  There are other platforms where, IIRC, we now use some /proc thing
+> instead of ptrace.
 > 
+> There are definitely things we would like from such an API.  Here's a
+> few I can think of immediately, there are probably others.
 > 
-> On Mon, 25 Jan 2010, Tom Tromey wrote:
+> * Use an fd, not SIGCHLD+wait, to report inferior state changes to gdb.
+>   [...] Relatedly, don't mess with the inferior's parentage.
 
-...
+This is satisfied by the gdbstub prototype.
 
-> > * Support "displaced stepping" in the kernel; I think this would improve
-> >   performance when debugging in non-stop mode.
-> 
-> Don't we already do that at least on x86? Just doing a single-step should 
-> work on an instruction even if it has a breakpoint on it, because we set 
-> the TF bit.
-> 
-> Or maybe I'm not understanding what displaced stepping means to you.
+> * Support "displaced stepping" in the kernel [...]
 
-If Tom is referring to supporting single-stepping out of line, ie., not
-putting back the original instruction at the bp location, yes, we
-already support it on various architectures for kernel breakpoints,
-through the kprobes infrastructure.
+I believe this is tantamount to hardware breakpoint support, which is
+already present (via optional uprobes).
 
-For userspace, there are more complications to take care of. We are
-reworking a prototype based on community comments (see the long UBP/XOL
-thread on lkml from a few days ago). Hopefully the userspace breakpoint
-assistance layer will be generic enough for gdb to also take advantage
-of, though the interface details need to be hashed out.
+> * Support some kind of breakpoint expression in the kernel; this would
+>   improve performance of conditional breakpoints.  Perhaps the existing
+>   gdb agent expressions could be used.
 
-Ananth
+This is in the todo list.
+
+
+And that "KILLER FEATURE" of running strace plus gdb on the same
+process?  It *already works* with the gdbstub, and unmodified strace +
+gdb, thanks to utrace multiplexing process control.  It is still
+artificially restricted in many ways, but this sort of thing is ready
+for testing:
+
+% process &
+[1] 9999
+% strace -o FILE -p 9999 &
+% gdb process
+(gdb) target remote /proc/9999/gdb
+(gdb) backtrace 
+(gdb) cont
+(gdb) ^D
+%
+[process continues]
+% cat FILE
+[...]
+% kill 9999
+
+
+- FChE
