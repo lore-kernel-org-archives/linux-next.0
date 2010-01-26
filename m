@@ -1,70 +1,69 @@
-From: "Frank Ch. Eigler" <fche@redhat.com>
+From: Johannes Stezenbach <js@sig21.net>
 Subject: Re: linux-next: add utrace tree
-Date: Tue, 26 Jan 2010 10:00:15 -0500
-Message-ID: <20100126150015.GA24292@redhat.com>
-References: <alpine.LFD.2.00.1001211724500.13231@localhost.localdomain> <20100122182827.GA13185@redhat.com> <20100122200129.GG22003@redhat.com> <alpine.LFD.2.00.1001221355250.13231@localhost.localdomain> <20100122221348.GA4263@redhat.com> <alpine.LFD.2.00.1001221604190.13231@localhost.localdomain> <alpine.LFD.2.00.1001221614520.13231@localhost.localdomain> <f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com> <alpine.LFD.2.00.1001232051510.3574@localhost.localdomain> <m33a1tnbd9.fsf@fleche.redhat.com>
+Date: Tue, 26 Jan 2010 17:08:11 +0100
+Message-ID: <20100126160811.GA3242@sig21.net>
+References: <20100123114729.GA7828@redhat.com>
+ <20100123194820.GM21263@thunk.org>
+ <f73f7ab81001241742t1f827ddetd958e1949787020f@mail.gmail.com>
+ <alpine.LFD.2.00.1001250845180.3574@localhost.localdomain>
+ <20100125170254.GB22862@redhat.com>
+ <alpine.LFD.2.00.1001250930320.3574@localhost.localdomain>
+ <1264451453.3028.59.camel@springer.wildebeest.org>
+ <alpine.LFD.2.00.1001251236160.3574@localhost.localdomain>
+ <20100126000237.GA15936@cs.unibo.it>
+ <alpine.LFD.2.00.1001251605320.3574@localhost.localdomain>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:60661 "EHLO mx1.redhat.com"
+Received: from bar.sig21.net ([80.81.252.164]:56391 "EHLO bar.sig21.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751717Ab0AZPBQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 26 Jan 2010 10:01:16 -0500
+	id S1752141Ab0AZQJE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 26 Jan 2010 11:09:04 -0500
 Content-Disposition: inline
-In-Reply-To: <m33a1tnbd9.fsf@fleche.redhat.com>
+In-Reply-To: <alpine.LFD.2.00.1001251605320.3574@localhost.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tom Tromey <tromey@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Kyle Moffett <kyle@moffetthome.net>, Oleg Nesterov <oleg@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Renzo Davoli <renzo@cs.unibo.it>, Mark Wielaard <mjw@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Kyle Moffett <kyle@moffetthome.net>, tytso@mit.edu, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Oleg Nesterov <oleg@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, "Frank Ch. Eigler" <fche@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>
 
-Hi -
-
-On Mon, Jan 25, 2010 at 02:05:54PM -0700, Tom Tromey wrote:
-> [...]
-> Nevertheless, if the Linux kernel were to present a new user-space API,
-> and if it had an advantage over ptrace, then we would port GDB to use
-> it.  There are other platforms where, IIRC, we now use some /proc thing
-> instead of ptrace.
+On Mon, Jan 25, 2010 at 04:07:21PM -0800, Linus Torvalds wrote:
+> On Tue, 26 Jan 2010, Renzo Davoli wrote:
+> > 
+> > The solution is that everybody can code his/her optimized kernel/user 
+> > interface for tracing in his/her kernel module, i.e. utrace.
 > 
-> There are definitely things we would like from such an API.  Here's a
-> few I can think of immediately, there are probably others.
+> I don't think people understand. That is simply not a "solution". That is 
+> a PROBLEM. The thing you describe is an absolute disaster. Which is 
+> exactly why I rant against it.
 > 
-> * Use an fd, not SIGCHLD+wait, to report inferior state changes to gdb.
->   [...] Relatedly, don't mess with the inferior's parentage.
+> The last thing we want to have is "here, take this, and make your own 
+> kernel module mess around it optimized for your particular crazy 
+> scenario".
+> 
+> But every SINGLE post in this thread that has argued for utrace has argued 
+> exactly this way. 
 
-This is satisfied by the gdbstub prototype.
+I haven't followed much of the utrace discussions, but my impression was
+that utrace primarily is a cleanup effort, replacing "don't change it,
+you might break it" code with a clean, well defined (and even documented)
+implementation.  To make it easier for people not familiar
+with the low-level architecture details to experiment with
+debugging stuff.
 
-> * Support "displaced stepping" in the kernel [...]
+Two points to consider:
 
-I believe this is tantamount to hardware breakpoint support, which is
-already present (via optional uprobes).
+1. If you'd merge utrace + ptrace-on-utrace, but never anything else
+   which uses the utrace API, wouldn't it still be an improvement?
 
-> * Support some kind of breakpoint expression in the kernel; this would
->   improve performance of conditional breakpoints.  Perhaps the existing
->   gdb agent expressions could be used.
+2. A well defined utrace API makes debugging code more hackable, thus more
+   likely that someone might come up with a brilliant killer debug
+   feature in the future. (This might sound lame, but there are already
+   a few people doing crazy things with utrace while I'm not aware
+   that people have done such experiments based on the current ptrace impl.)
 
-This is in the todo list.
-
-
-And that "KILLER FEATURE" of running strace plus gdb on the same
-process?  It *already works* with the gdbstub, and unmodified strace +
-gdb, thanks to utrace multiplexing process control.  It is still
-artificially restricted in many ways, but this sort of thing is ready
-for testing:
-
-% process &
-[1] 9999
-% strace -o FILE -p 9999 &
-% gdb process
-(gdb) target remote /proc/9999/gdb
-(gdb) backtrace 
-(gdb) cont
-(gdb) ^D
-%
-[process continues]
-% cat FILE
-[...]
-% kill 9999
+BTW, the ptrace improvements discussed elsewhere in this thread
+(like using an fd intead of signals/wait) are orthogonal
+to utrace, no?  IMHO it's a seperate discussion.
 
 
-- FChE
+Johannes
