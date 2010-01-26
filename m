@@ -1,44 +1,53 @@
-From: Christoph Hellwig <hch@infradead.org>
+From: Andi Kleen <andi@firstfloor.org>
 Subject: Re: linux-next: add utrace tree
-Date: Tue, 26 Jan 2010 11:34:31 -0500
-Message-ID: <20100126163431.GA1658@infradead.org>
-References: <f73f7ab81001241742t1f827ddetd958e1949787020f@mail.gmail.com> <alpine.LFD.2.00.1001250845180.3574@localhost.localdomain> <20100125170254.GB22862@redhat.com> <alpine.LFD.2.00.1001250930320.3574@localhost.localdomain> <1264451453.3028.59.camel@springer.wildebeest.org> <alpine.LFD.2.00.1001251236160.3574@localhost.localdomain> <20100126000237.GA15936@cs.unibo.it> <alpine.LFD.2.00.1001251605320.3574@localhost.localdomain> <20100126160811.GA3242@sig21.net> <alpine.LFD.2.00.1001260816000.3574@localhost.localdomain>
+Date: Tue, 26 Jan 2010 18:33:26 +0100
+Message-ID: <877hr4g49l.fsf@basil.nowhere.org>
+References: <20100121013822.28781960.sfr@canb.auug.org.au>
+	<20100122005147.GD22003@redhat.com>
+	<20100121170541.7425ff10.akpm@linux-foundation.org>
+	<alpine.LFD.2.00.1001211724500.13231@localhost.localdomain>
+	<20100122182827.GA13185@redhat.com>
+	<20100122200129.GG22003@redhat.com>
+	<alpine.LFD.2.00.1001221355250.13231@localhost.localdomain>
+	<20100122221348.GA4263@redhat.com>
+	<alpine.LFD.2.00.1001221604190.13231@localhost.localdomain>
+	<alpine.LFD.2.00.1001221614520.13231@localhost.localdomain>
+	<f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com>
+	<alpine.LFD.2.00.1001232051510.3574@localhost.localdomain>
+	<m33a1tnbd9.fsf@fleche.redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:34409 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753949Ab0AZQfQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 26 Jan 2010 11:35:16 -0500
-Content-Disposition: inline
-In-Reply-To: <alpine.LFD.2.00.1001260816000.3574@localhost.localdomain>
+Received: from one.firstfloor.org ([213.235.205.2]:53296 "EHLO
+	one.firstfloor.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753858Ab0AZRd2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 26 Jan 2010 12:33:28 -0500
+In-Reply-To: <m33a1tnbd9.fsf@fleche.redhat.com> (Tom Tromey's message of "Mon, 25 Jan 2010 14:05:54 -0700")
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Johannes Stezenbach <js@sig21.net>, Renzo Davoli <renzo@cs.unibo.it>, Mark Wielaard <mjw@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Kyle Moffett <kyle@moffetthome.net>, tytso@mit.edu, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Oleg Nesterov <oleg@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, "Frank Ch. Eigler" <fche@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>
+To: tromey@redhat.com
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Kyle Moffett <kyle@moffetthome.net>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Oleg Nesterov <oleg@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, "Frank Ch. Eigler" <fche@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>
 
-On Tue, Jan 26, 2010 at 08:28:15AM -0800, Linus Torvalds wrote:
-> I already said earlier that I'd be perfectly happy to merge utrace code, 
-> as long as it was clear that I'm not merging a platform for crazy work. 
-> IOW, the end result might be merging 99% of the code, but I want to set 
-> peoples _expectations_ right. I'm not at all interested in merging stuff 
-> that has various exported helper functions for people doing random things, 
-> but I could happily merge stuff that cleans up internal implementation.
+Tom Tromey <tromey@redhat.com> writes:
 
-> Clean code makes things easier to improve, and maybe utrace cleans thigns 
-> up. But defining new API's makes me very worried, and quite frankly, the 
-> last thing I ever want to see is a new interface that out-of-tree modules 
-> starr using for random hacking.
+> * Use an fd, not SIGCHLD+wait, to report inferior state changes to gdb.
+>   Internally we're already using a self-pipe to integrate this into
+>   gdb's main loop.  Relatedly, don't mess with the inferior's parentage.
 
-To be fair Roland and Oleg did a lot of work on improving ptrace support
-that was an offsprint of utrace.  It would be great if the reamaining
-architectures would catch up on beeing converted to it and getting rid
-of the existing hairy arch ptrace code as much as possible.
+How would having a kernel based solution be better over your
+user space simulation?
 
-I'm still not really set on utrace either, but the in-kernel gdbstub
-Frank has started could be a real killer if it ever gets done up to
-a fully usable state.  If it really requires all the utrace abstractions
-that seem a bit overdone I'm not sure.  Might be a better idea to try to
-get uprobes and the gdbstub in without it and see how much of the
-abstraction will be needed anyway as a fallout, just without exporting
-them to modules and thus actually making them published APIs.
+BTW there's the new signalfd() system call that might do it
+(haven't checked if it works for SIGCHLD)
+
+> * Support "displaced stepping" in the kernel; I think this would improve
+>   performance when debugging in non-stop mode.
+
+Not sure what "displaced stepping" is exactly, but it 
+sounds like the branch tracing extensions that got added a 
+few releases ago? On modern Intel chips they give you a branch
+buffer in memory.
+
+-Andi
+-- 
+ak@linux.intel.com -- Speaking for myself only.
