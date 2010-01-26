@@ -1,53 +1,66 @@
-From: Andi Kleen <andi@firstfloor.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 Subject: Re: linux-next: add utrace tree
-Date: Tue, 26 Jan 2010 18:33:26 +0100
-Message-ID: <877hr4g49l.fsf@basil.nowhere.org>
-References: <20100121013822.28781960.sfr@canb.auug.org.au>
-	<20100122005147.GD22003@redhat.com>
-	<20100121170541.7425ff10.akpm@linux-foundation.org>
-	<alpine.LFD.2.00.1001211724500.13231@localhost.localdomain>
-	<20100122182827.GA13185@redhat.com>
-	<20100122200129.GG22003@redhat.com>
-	<alpine.LFD.2.00.1001221355250.13231@localhost.localdomain>
-	<20100122221348.GA4263@redhat.com>
-	<alpine.LFD.2.00.1001221604190.13231@localhost.localdomain>
-	<alpine.LFD.2.00.1001221614520.13231@localhost.localdomain>
-	<f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com>
-	<alpine.LFD.2.00.1001232051510.3574@localhost.localdomain>
-	<m33a1tnbd9.fsf@fleche.redhat.com>
+Date: Tue, 26 Jan 2010 10:46:00 -0800 (PST)
+Message-ID: <alpine.LFD.2.00.1001261038150.3574@localhost.localdomain>
+References: <20100121013822.28781960.sfr@canb.auug.org.au> <20100122005147.GD22003@redhat.com> <20100121170541.7425ff10.akpm@linux-foundation.org> <alpine.LFD.2.00.1001211724500.13231@localhost.localdomain> <20100122182827.GA13185@redhat.com>
+ <20100122200129.GG22003@redhat.com> <alpine.LFD.2.00.1001221355250.13231@localhost.localdomain> <20100122221348.GA4263@redhat.com> <alpine.LFD.2.00.1001221604190.13231@localhost.localdomain> <alpine.LFD.2.00.1001221614520.13231@localhost.localdomain>
+ <f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com> <alpine.LFD.2.00.1001232051510.3574@localhost.localdomain> <m33a1tnbd9.fsf@fleche.redhat.com> <877hr4g49l.fsf@basil.nowhere.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from one.firstfloor.org ([213.235.205.2]:53296 "EHLO
-	one.firstfloor.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753858Ab0AZRd2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 26 Jan 2010 12:33:28 -0500
-In-Reply-To: <m33a1tnbd9.fsf@fleche.redhat.com> (Tom Tromey's message of "Mon, 25 Jan 2010 14:05:54 -0700")
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:36729 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752513Ab0AZSrI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 26 Jan 2010 13:47:08 -0500
+In-Reply-To: <877hr4g49l.fsf@basil.nowhere.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: tromey@redhat.com
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Kyle Moffett <kyle@moffetthome.net>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Oleg Nesterov <oleg@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, "Frank Ch. Eigler" <fche@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>
+To: Andi Kleen <andi@firstfloor.org>
+Cc: tromey@redhat.com, Stephen Rothwell <sfr@canb.auug.org.au>, Kyle Moffett <kyle@moffetthome.net>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Oleg Nesterov <oleg@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, "Frank Ch. Eigler" <fche@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>
 
-Tom Tromey <tromey@redhat.com> writes:
 
-> * Use an fd, not SIGCHLD+wait, to report inferior state changes to gdb.
->   Internally we're already using a self-pipe to integrate this into
->   gdb's main loop.  Relatedly, don't mess with the inferior's parentage.
 
-How would having a kernel based solution be better over your
-user space simulation?
+On Tue, 26 Jan 2010, Andi Kleen wrote:
 
-BTW there's the new signalfd() system call that might do it
-(haven't checked if it works for SIGCHLD)
+> Tom Tromey <tromey@redhat.com> writes:
+> 
+> > * Use an fd, not SIGCHLD+wait, to report inferior state changes to gdb.
+> >   Internally we're already using a self-pipe to integrate this into
+> >   gdb's main loop.  Relatedly, don't mess with the inferior's parentage.
+> 
+> How would having a kernel based solution be better over your
+> user space simulation?
 
-> * Support "displaced stepping" in the kernel; I think this would improve
->   performance when debugging in non-stop mode.
+Oh, the reason we should do something in the kernel is that you really 
+can't do certain things with the ptrace() interface. 
 
-Not sure what "displaced stepping" is exactly, but it 
-sounds like the branch tracing extensions that got added a 
-few releases ago? On modern Intel chips they give you a branch
-buffer in memory.
+For example, think about how Wine and UML use ptrace - and then realize 
+that that makes it impossible to attach a debugger from the outside. 
+That's a real deficiency in ptrace - much more so than the fact that there 
+are some odd details (ie the whole "read/write a word at a time" is just a 
+quirky detail in comparison - not a fundamental problem).
 
--Andi
--- 
-ak@linux.intel.com -- Speaking for myself only.
+> BTW there's the new signalfd() system call that might do it
+> (haven't checked if it works for SIGCHLD)
+
+No, you miss the point.
+
+The problem isn't that you want to turn signals into a file descriptor 
+just because you like file descriptors.
+
+The problem is that anything that is based on reparenting and signals is 
+fundamentally a "one parent only" kind of interface. See?
+
+So the reason I think using an fd is a good idea is _not_ because gdb 
+already uses an fd internally, but because it gives you a "connection" 
+between the debugger and debuggee that is not fundamentally limited to a 
+single controller.
+
+(It doesn't have to be a file descriptor, of course, but could be any kind 
+of other model that allows multiple connections. It's just that in unix 
+terms, using a file descriptor as the "cookie" for the connection is a 
+very natural model. So the important part isn't the file descriptor 
+itself, it's the model you could build).
+
+			Linus
