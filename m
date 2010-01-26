@@ -1,97 +1,41 @@
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Subject: [PATCH] netdev: remove HAVE_ leftovers
-Date: Tue, 26 Jan 2010 21:17:27 +0200
-Message-ID: <20100126191727.GA5454@x200>
-References: <10f740e81001260057h37f3494dvefa3a37b2e1453a5@mail.gmail.com>
- <20100126.051817.215651254.davem@davemloft.net>
+From: Andi Kleen <andi@firstfloor.org>
+Subject: Re: linux-next: add utrace tree
+Date: Tue, 26 Jan 2010 22:02:32 +0100
+Message-ID: <20100126210232.GF6567@basil.fritz.box>
+References: <20100122200129.GG22003@redhat.com> <alpine.LFD.2.00.1001221355250.13231@localhost.localdomain> <20100122221348.GA4263@redhat.com> <alpine.LFD.2.00.1001221604190.13231@localhost.localdomain> <alpine.LFD.2.00.1001221614520.13231@localhost.localdomain> <f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com> <alpine.LFD.2.00.1001232051510.3574@localhost.localdomain> <m33a1tnbd9.fsf@fleche.redhat.com> <877hr4g49l.fsf@basil.nowhere.org> <alpine.LFD.2.00.1001261038150.3574@localhost.localdomain>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ew0-f219.google.com ([209.85.219.219]:50404 "EHLO
-	mail-ew0-f219.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754992Ab0AZTRk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 26 Jan 2010 14:17:40 -0500
+Received: from one.firstfloor.org ([213.235.205.2]:39826 "EHLO
+	one.firstfloor.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751710Ab0AZVCe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 26 Jan 2010 16:02:34 -0500
 Content-Disposition: inline
-In-Reply-To: <20100126.051817.215651254.davem@davemloft.net>
+In-Reply-To: <alpine.LFD.2.00.1001261038150.3574@localhost.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: geert@linux-m68k.org, linux-next@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andi Kleen <andi@firstfloor.org>, tromey@redhat.com, Stephen Rothwell <sfr@canb.auug.org.au>, Kyle Moffett <kyle@moffetthome.net>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Oleg Nesterov <oleg@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, "Frank Ch. Eigler" <fche@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>
 
-On Tue, Jan 26, 2010 at 05:18:17AM -0800, David Miller wrote:
-> Alexey, please go through at least drivers/net and look at the
-> other stale references to these HAVE_* macros.
+> The problem is that anything that is based on reparenting and signals is 
+> fundamentally a "one parent only" kind of interface. See?
 
-My apologies.
+I was actually thinking about that before I wrote the email.
 
+But when I did that i couldn't come up with a good scenario
+where multiple debuggers actually make sense. In a sense
+being a debugger is really a very "intimate" thing for process. Do you
+really want to have multiple of them messing with each other?
 
-[PATCH] netdev: remove HAVE_ leftovers
+If yes how would they know what to touch and what not?
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
+The only thing I could think of was "user space virtualization"
+(like old UML) together with a real debugger, but frankly
+these solutions all seemed like big race conditions to me
+anyways and should be better done in the kernel or below it, 
+so I have a hard time taking them seriously.
 
- drivers/net/cassini.c                  |    2 +-
- drivers/net/meth.c                     |    3 ---
- drivers/staging/wlags49_h2/wl_netdev.c |    6 ------
- 3 files changed, 1 insertion(+), 10 deletions(-)
+Can you think of any scenario where multiple debuggers
+on a process make sense?
 
---- a/drivers/net/cassini.c
-+++ b/drivers/net/cassini.c
-@@ -106,7 +106,7 @@
- #define cas_page_unmap(x)    kunmap_atomic((x), KM_SKB_DATA_SOFTIRQ)
- #define CAS_NCPUS            num_online_cpus()
- 
--#if defined(CONFIG_CASSINI_NAPI) && defined(HAVE_NETDEV_POLL)
-+#ifdef CONFIG_CASSINI_NAPI
- #define USE_NAPI
- #define cas_skb_release(x)  netif_receive_skb(x)
- #else
---- a/drivers/net/meth.c
-+++ b/drivers/net/meth.c
-@@ -51,14 +51,11 @@
- 
- static const char *meth_str="SGI O2 Fast Ethernet";
- 
--#define HAVE_TX_TIMEOUT
- /* The maximum time waited (in jiffies) before assuming a Tx failed. (400ms) */
- #define TX_TIMEOUT (400*HZ/1000)
- 
--#ifdef HAVE_TX_TIMEOUT
- static int timeout = TX_TIMEOUT;
- module_param(timeout, int, 0);
--#endif
- 
- /*
-  * This structure is private to each device. It is used to pass
---- a/drivers/staging/wlags49_h2/wl_netdev.c
-+++ b/drivers/staging/wlags49_h2/wl_netdev.c
-@@ -1194,9 +1194,7 @@ static const struct net_device_ops wl_netdev_ops =
-     .ndo_stop               = &wl_adapter_close,
-     .ndo_do_ioctl           = &wl_ioctl,
- 
--#ifdef HAVE_TX_TIMEOUT
-     .ndo_tx_timeout         = &wl_tx_timeout,
--#endif
- 
- #ifdef CONFIG_NET_POLL_CONTROLLER
-     .ndo_poll_controller    = wl_poll,
-@@ -1270,9 +1268,7 @@ struct net_device * wl_device_alloc( void )
-     dev->stop               = &wl_adapter_close;
-     dev->do_ioctl           = &wl_ioctl;
- 
--#ifdef HAVE_TX_TIMEOUT
-     dev->tx_timeout         = &wl_tx_timeout;
--#endif
- 
- #ifdef CONFIG_NET_POLL_CONTROLLER
-     dev->poll_controller = wl_poll;
-@@ -1280,9 +1276,7 @@ struct net_device * wl_device_alloc( void )
- 
- #endif // (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,30))
- 
--#ifdef HAVE_TX_TIMEOUT
-     dev->watchdog_timeo     = TX_TIMEOUT;
--#endif
- 
-     dev->ethtool_ops	    = &wl_ethtool_ops;
- 
+-Andi
