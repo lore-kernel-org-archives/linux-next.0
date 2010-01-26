@@ -1,56 +1,41 @@
-From: Oleg Nesterov <oleg@redhat.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 Subject: Re: linux-next: add utrace tree
-Date: Wed, 27 Jan 2010 00:32:42 +0100
-Message-ID: <20100126233242.GA25575@redhat.com>
-References: <alpine.LFD.2.00.1001221604190.13231@localhost.localdomain>
-	<alpine.LFD.2.00.1001221614520.13231@localhost.localdomain>
-	<f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com>
-	<alpine.LFD.2.00.1001232051510.3574@localhost.localdomain>
-	<m33a1tnbd9.fsf@fleche.redhat.com>
-	<877hr4g49l.fsf@basil.nowhere.org>
-	<alpine.LFD.2.00.1001261038150.3574@localhost.localdomain>
-	<20100126210232.GF6567@basil.fritz.box>
-	<20100126215349.GB19146@redhat.com>
-	<20100126220301.GG6567@basil.fritz.box>
+Date: Tue, 26 Jan 2010 15:37:49 -0800 (PST)
+Message-ID: <alpine.LFD.2.00.1001261535510.17519@localhost.localdomain>
+References: <20100121013822.28781960.sfr@canb.auug.org.au> <20100122005147.GD22003@redhat.com> <20100121170541.7425ff10.akpm@linux-foundation.org> <alpine.LFD.2.00.1001211724500.13231@localhost.localdomain> <20100122182827.GA13185@redhat.com>
+ <20100122200129.GG22003@redhat.com> <alpine.LFD.2.00.1001221355250.13231@localhost.localdomain> <20100122221348.GA4263@redhat.com> <alpine.LFD.2.00.1001221604190.13231@localhost.localdomain> <alpine.LFD.2.00.1001221614520.13231@localhost.localdomain>
+ <f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com> <alpine.LFD.2.00.1001232051510.3574@localhost.localdomain> <m33a1tnbd9.fsf@fleche.redhat.com> <alpine.LFD.2.00.1001251332370.3574@localhost.localdomain> <m3636oh2rt.fsf@fleche.redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <utrace-devel-bounces@redhat.com>
-Content-Disposition: inline
-In-Reply-To: <20100126220301.GG6567@basil.fritz.box>
-List-Unsubscribe: <https://www.redhat.com/mailman/options/utrace-devel>,
-	<mailto:utrace-devel-request@redhat.com?subject=unsubscribe>
-List-Archive: <https://www.redhat.com/archives/utrace-devel>
-List-Post: <mailto:utrace-devel@redhat.com>
-List-Help: <mailto:utrace-devel-request@redhat.com?subject=help>
-List-Subscribe: <https://www.redhat.com/mailman/listinfo/utrace-devel>,
-	<mailto:utrace-devel-request@redhat.com?subject=subscribe>
-Sender: utrace-devel-bounces@redhat.com
-Errors-To: utrace-devel-bounces@redhat.com
-To: Andi Kleen <andi@firstfloor.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Kyle Moffett <kyle@moffetthome.net>, Arnaldo Carvalho de Melo <acme@redhat.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>, tromey@redhat.com, "Frank Ch. Eigler" <fche@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>, Linus Torvalds <torvalds@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:38863 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753624Ab0AZXi4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 26 Jan 2010 18:38:56 -0500
+In-Reply-To: <m3636oh2rt.fsf@fleche.redhat.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Tom Tromey <tromey@redhat.com>
+Cc: Kyle Moffett <kyle@moffetthome.net>, "Frank Ch. Eigler" <fche@redhat.com>, Oleg Nesterov <oleg@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>
 
-On 01/26, Andi Kleen wrote:
->
-> > Simple example. Try to debug/strace strace ot gdb itself. Not trivial,
-> > you can't attach to strace's tracees. Recently I spent 2 days trying to
-> > understand why strace -f hangs. I was able to attach to strace, but
-> > I wasn't able to see what its tracees do.
->
-> But what would the semantics be inside the tracees even if you could?
 
-In this particular case, all I need was something like "gdb -p" to
-attach to the tracee, see the backtrace and detach.
 
-> > And, it was not possible to even trace strace until it hangs, with
-> > ptrace the tracee (strace) must stop to report the event and this
-> > shadowed the race.
->
-> "Shadowing the race" was the second surname of strace I thought anyways @)
-> Basically if you care about races never use strace in the first place.
+On Tue, 26 Jan 2010, Tom Tromey wrote:
+> 
+> In non-stop mode (where you can stop one thread but leave the others
+> running), gdb wants to have the breakpoints always inserted.  So,
+> something must emulate the displaced instruction.
 
-Yes. And utrace doesn't require the tracee to be stopped to report the
-event ;) Yes, yes, utrace can't "fix" strace in this sense automatically,
-but still.
+I'm almost totally uninterested in breakpoints that actually re-write 
+instructions. It's impossible to do that efficiently and well, especially 
+in threaded environments.
 
-Oleg.
+So if you do instruction rewriting, I can only say "that's your problem".
+
+But using the hardware breakpoints should automatically DTRT, both wrt 
+threads _and_ wrt restarting. Sure, there's onyl a limited number of them, 
+so if somebody wants more than that they are kind of screwed, but that's 
+just how life is.
+
+		Linus
