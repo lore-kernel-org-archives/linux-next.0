@@ -1,24 +1,21 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Renzo Davoli <renzo@cs.unibo.it>
 Subject: Re: linux-next: add utrace tree
-Date: Mon, 25 Jan 2010 13:41:57 -0800 (PST)
-Message-ID: <alpine.LFD.2.00.1001251332370.3574@localhost.localdomain>
-References: <20100121013822.28781960.sfr@canb.auug.org.au>
-	<20100122005147.GD22003@redhat.com>
-	<20100121170541.7425ff10.akpm@linux-foundation.org>
-	<alpine.LFD.2.00.1001211724500.13231@localhost.localdomain>
-	<20100122182827.GA13185@redhat.com>
-	<20100122200129.GG22003@redhat.com>
-	<alpine.LFD.2.00.1001221355250.13231@localhost.localdomain>
-	<20100122221348.GA4263@redhat.com>
-	<alpine.LFD.2.00.1001221604190.13231@localhost.localdomain>
-	<alpine.LFD.2.00.1001221614520.13231@localhost.localdomain>
-	<f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com>
-	<alpine.LFD.2.00.1001232051510.3574@localhost.localdomain>
-	<m33a1tnbd9.fsf@fleche.redhat.com>
+Date: Tue, 26 Jan 2010 01:02:37 +0100
+Message-ID: <20100126000237.GA15936@cs.unibo.it>
+References: <f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com>
+	<20100123112333.GA15455@elte.hu> <20100123114729.GA7828@redhat.com>
+	<20100123194820.GM21263@thunk.org>
+	<f73f7ab81001241742t1f827ddetd958e1949787020f@mail.gmail.com>
+	<alpine.LFD.2.00.1001250845180.3574@localhost.localdomain>
+	<20100125170254.GB22862@redhat.com>
+	<alpine.LFD.2.00.1001250930320.3574@localhost.localdomain>
+	<1264451453.3028.59.camel@springer.wildebeest.org>
+	<alpine.LFD.2.00.1001251236160.3574@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <utrace-devel-bounces@redhat.com>
-In-Reply-To: <m33a1tnbd9.fsf@fleche.redhat.com>
+Content-Disposition: inline
+In-Reply-To: <alpine.LFD.2.00.1001251236160.3574@localhost.localdomain>
 List-Unsubscribe: <https://www.redhat.com/mailman/options/utrace-devel>,
 	<mailto:utrace-devel-request@redhat.com?subject=unsubscribe>
 List-Archive: <https://www.redhat.com/archives/utrace-devel>
@@ -28,52 +25,95 @@ List-Subscribe: <https://www.redhat.com/mailman/listinfo/utrace-devel>,
 	<mailto:utrace-devel-request@redhat.com?subject=subscribe>
 Sender: utrace-devel-bounces@redhat.com
 Errors-To: utrace-devel-bounces@redhat.com
-To: Tom Tromey <tromey@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Kyle Moffett <kyle@moffetthome.net>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Oleg Nesterov <oleg@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, "Frank Ch. Eigler" <fche@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Kyle Moffett <kyle@moffetthome.net>, tytso@mit.edu, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Oleg Nesterov <oleg@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, Mark Wielaard <mjw@redhat.com>, Arnaldo Carvalho de Melo <acme@redhat.com>, "Frank Ch. Eigler" <fche@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
+Let me add my two euro-cents to this discussion.
 
+Mark Wielaard <mjw@redhat.com>:
+> Unfortunately ptrace does all that magic already (badly). People don't
+> just use it for (s)tracing syscalls, but also for tracing signals, for
+>  single step debugging and poking at memory, register state, for process
+> jailing and virtualization (uml) through syscall emulation.
+> So when they are talking about these fancy things that is because that
+> is what ptrace gives them currently. And they hate it, because the
+> ptrace interface is such a pain to work with. And all these things don't
+> really work together. You cannot trace, emulate, debug, jail at the same
+> time.
+I support Mark's words. I don't use ptrace for debugging/tracing and I
+have experienced severe limitations of ptrace interface.
+(I have tried to post some extensions for ptrace to overcome some 
+constraints.... see my posts on ptrace_vm or ptrace_multi on LKML).
 
-On Mon, 25 Jan 2010, Tom Tromey wrote:
-> 
-> There are definitely things we would like from such an API.  Here's a
-> few I can think of immediately, there are probably others.
-> 
-> * Use an fd, not SIGCHLD+wait, to report inferior state changes to gdb.
->   Internally we're already using a self-pipe to integrate this into
->   gdb's main loop.  Relatedly, don't mess with the inferior's parentage.
+Oleg Nesterov, writing to Andrew Morton said:
+> First of all, utrace makes other things possible.  gdbstub,
+> nondestructive core dump, uprobes, kmview, hopefully more.  I didn't
+> look at these projects closely, perhaps other people can tell more.  As
+> for their merge status, until utrace itself is merged it is very hard to
+> develop them out of tree.
 
-As I kind of alluded to elsewhere, I heartily agree with this. The really 
-major design mistake of ptrace (as opposed to just various ugly corners) 
-is how it has no connection information, and that ends up being one of the 
-main reasons why you can't have two ptracers working on the same thing.
+In the list above there is also kmview, which is a creature of mines.
+umview and kmview are partial virtual machines, processes running
+in a [uk]mview machine can have their own view for the file system, 
+networking support, user-id, system-name, etc.
+A [uk]mview machine virtualizes just what the user need: the filesystem
+or just a subtree/some subtrees or networking or define one/some
+virtual devices, etc. The "view" provided by a [uk]mview machine can be
+a composition of real resources (provided by the Linux kernel) and
+virtual resources.
 
-(There are other things that complicate that too, of course, like simply 
-just trying to manage various per-thread state like debug registers etc, 
-but that's a separate class of complications).
+Each system call request gets hijacked to a module of [uk]mview when
+it refers to a virtual resource. The request is forwarded to the kernel
+otherwise.
 
-> * Support "displaced stepping" in the kernel; I think this would improve
->   performance when debugging in non-stop mode.
+umview is based on ptrace, kmview uses a kernel module based on utrace.
+(umview is included in debian lenny (to sid), tutorial and manuals in 
+wiki.virtualsquare.org)
 
-Don't we already do that at least on x86? Just doing a single-step should 
-work on an instruction even if it has a breakpoint on it, because we set 
-the TF bit.
+IMHO utrace is better than ptrace (or an optimized version of it):
+1 - "Frank Ch. Eigler" wrote: 
+> At least one reason is that ptrace is single-usage-only, so for
+> example you cannot concurrently debug & strace the same program.
+  - exactly. utrace allows multiple tracing engines, this means that kmview 
+  machines can be nested (in a natural way, no extra code is needed for
+  this feature). In the same way strace/gdb can run on virtualized processes, too.
+2 - kmview kernel module implements several optimizations
+  to minimize the number of requests forwarded to the kmview process
+  (the virtual machine monitor). kmview is just a module using the
+  utrace interface, prior attempts of optimized umview required kernel patches.
+  Like kmview any other service requiring process tracing can include 
+  specific optimizations in its own kernel module.
+  On the other hand, all these services could use the standardized utrace
+  interface for their optimizations, instead asking for messy patches 
+  to change code all around the kernel source.
+3 - ptrace takes SIGSTOP/SIGCONT for its own management. Strace/gdb and
+  umview cannot be transparent for programs using these signals.
 
-Or maybe I'm not understanding what displaced stepping means to you.
+Oleg Nesterov talking about Ptrace said:
+> Of course they can't use other interfaces, we don't have them. And
+> without the new abstraction layer we will never have, I think.
+I agree.
 
-> * Support some kind of breakpoint expression in the kernel; this would
->   improve performance of conditional breakpoints.  Perhaps the existing
->   gdb agent expressions could be used.
+THe following list includes the execution times I got in a recent test 
+(make vde-2, see http://www.cs.unibo.it/~renzo/view-os-lk2009.pdf)
+plain kernel 22.7s, 
+kmview (no modules) 23.9s (+5.5%), 
+full kmview (modules loaded, all syscall virtualized) 38.5s (+70%)
+optimized umview 51.0 (+124%), 
+umview on vanilla kernel 75.7s (+233%).
 
-I suspect it might be reasonable to do simple expressions on breakpoints, 
-but not the kind of things gdb exports to users. IOW, maybe you could have 
-a single conditional on a single value (register or memory) associated 
-with an expression.
+utrace can be used to speedup virtualization (at least in my case
+it worked in this way). 
+Performance can be useful for debugging but it is a main issue for
+virtualization.
+Kmview module provides optimizations to select the system call requests 
+depending on the syscall number, the pathnames or the file descriptors. 
+http://wiki.virtualsquare.org/index.php/KMview_module_interface_specifications
+Trying to add all the optimizations needed by different projects to ptrace is a
+never-ending nightmare: the LKML will continue to receive patch proposals
+for ptrace... 
+The solution is that everybody can code his/her optimized kernel/user 
+interface for tracing in his/her kernel module, i.e. utrace.
 
-Regardless, internally to the kernel your two later issues are "details". 
-The "how to connect to the debuggee" is a much more fundamental issue, and 
-has the biggest design/interface impact. The other would likely just be 
-new ptrace command extensions that somebody would have to just implement 
-the grotty details on.
-
-		Linus
+renzo
