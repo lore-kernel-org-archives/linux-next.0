@@ -1,63 +1,57 @@
-From: Marcelo Tosatti <mtosatti@redhat.com>
-Subject: Re: linux-next: manual merge of the kvm tree with Linus' tree
-Date: Wed, 27 Jan 2010 14:38:50 -0200
-Message-ID: <20100127163850.GB3921@amt.cnet>
-References: <20100127125730.6fb414ec.sfr@canb.auug.org.au>
+From: Jesse Barnes <jbarnes@virtuousgeek.org>
+Subject: Re: linux-next: pci tree build failure
+Date: Wed, 27 Jan 2010 09:31:13 -0800
+Message-ID: <20100127093113.70203e4d@jbarnes-piketon>
+References: <20100127174900.e2f8fcf9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:37001 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755279Ab0A0QjR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 27 Jan 2010 11:39:17 -0500
-Content-Disposition: inline
-In-Reply-To: <20100127125730.6fb414ec.sfr@canb.auug.org.au>
+Received: from outbound-mail-158.bluehost.com ([67.222.39.38]:42992 "HELO
+	outbound-mail-158.bluehost.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with SMTP id S1755285Ab0A0Rbc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 27 Jan 2010 12:31:32 -0500
+In-Reply-To: <20100127174900.e2f8fcf9.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Avi Kivity <avi@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wei Yongjun <yjwei@cn.fujitsu.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Jan 27, 2010 at 12:57:30PM +1100, Stephen Rothwell wrote:
-> Hi all,
+On Wed, 27 Jan 2010 17:49:00 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+> Hi Jesse,
 > 
-> Today's linux-next merge of the kvm tree got a conflict in
-> arch/x86/kvm/x86.c between commit
-> 36cb93fd6b6bf7e9163a69a8bf20207aed5fea44 ("KVM: x86: Fix probable memory
-> leak of vcpu->arch.mce_banks") from Linus' tree and commit
-> kvm_arch_vcpu_uninit ("KVM: switch vcpu context to use SRCU") from the
-> kvm tree.
+> Today's linux-next build (powerpc allyesconfig) failed like this:
 > 
-> I fixed it up (I think ... see below) and can carry the fix for a while.
-
-Stephen,
-
-The merge below is correct. Its also present in commit
-
-d3b54d01b94f6825717ef1d02afc7c295bcce89e
-
-of kvm.git.
-
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+> In file included from drivers/pci/pcie/pme/pcie_pme.c:22:
+> include/linux/pci-acpi.h:42: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'acpi_find_root_bridge_handle'
 > 
-> diff --cc arch/x86/kvm/x86.c
-> index 1ddcad4,a311751..0000000
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@@ -5089,11 -5468,12 +5469,13 @@@ fail
->   
->   void kvm_arch_vcpu_uninit(struct kvm_vcpu *vcpu)
->   {
-> + 	int idx;
-> + 
->  +	kfree(vcpu->arch.mce_banks);
->   	kvm_free_lapic(vcpu);
-> - 	down_read(&vcpu->kvm->slots_lock);
-> + 	idx = srcu_read_lock(&vcpu->kvm->srcu);
->   	kvm_mmu_destroy(vcpu);
-> - 	up_read(&vcpu->kvm->slots_lock);
-> + 	srcu_read_unlock(&vcpu->kvm->srcu, idx);
->   	free_page((unsigned long)vcpu->arch.pio_data);
->   }
->   
+> You seem to have lost the patch below which I have reapplied for today.
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 18 Jan 2010 19:36:11 +1100
+> Subject: [PATCH] pci: PCIE_PME seems to depend on ACPI
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/pci/pcie/Kconfig |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> diff --git a/drivers/pci/pcie/Kconfig b/drivers/pci/pcie/Kconfig
+> index cf3c35f..b8b494b 100644
+> --- a/drivers/pci/pcie/Kconfig
+> +++ b/drivers/pci/pcie/Kconfig
+> @@ -49,4 +49,4 @@ config PCIEASPM_DEBUG
+>  
+>  config PCIE_PME
+>  	def_bool y
+> -	depends on PCIEPORTBUS && PM_RUNTIME && EXPERIMENTAL
+> +	depends on PCIEPORTBUS && PM_RUNTIME && EXPERIMENTAL && ACPI
+
+Sorry about that.  Sometimes I point git in the wrong direction and it
+takes of a limb or two.  Should be fixed now.
+
+-- 
+Jesse Barnes, Intel Open Source Technology Center
