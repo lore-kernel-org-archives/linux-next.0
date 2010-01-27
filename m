@@ -1,46 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: v4l-dvb tree build warning
-Date: Wed, 27 Jan 2010 12:12:23 +1100
-Message-ID: <20100127121223.9af2253f.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm tree with Linus' tree
+Date: Wed, 27 Jan 2010 12:57:30 +1100
+Message-ID: <20100127125730.6fb414ec.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__27_Jan_2010_12_12_23_+1100_TkUMWjiQFE.xN7G2"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755407Ab0A0BMg@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Theodore Kilgore <kilgota@banach.math.auburn.edu>, Hans de Goede <hdegoede@redhat.com>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Wed__27_Jan_2010_12_12_23_+1100_TkUMWjiQFE.xN7G2
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:59620 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753477Ab0A0B5f (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 26 Jan 2010 20:57:35 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Avi Kivity <avi@qumranet.com>, Marcelo Tosatti <mtosatti@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wei Yongjun <yjwei@cn.fujitsu.com>
 
-Hi Mauro,
+Hi all,
 
-Today's linux-next build (x86_64 allmodconfig) produced this warning:
+Today's linux-next merge of the kvm tree got a conflict in
+arch/x86/kvm/x86.c between commit
+36cb93fd6b6bf7e9163a69a8bf20207aed5fea44 ("KVM: x86: Fix probable memory
+leak of vcpu->arch.mce_banks") from Linus' tree and commit
+kvm_arch_vcpu_uninit ("KVM: switch vcpu context to use SRCU") from the
+kvm tree.
 
-drivers/media/video/gspca/sq905c.c: In function 'sd_config':
-drivers/media/video/gspca/sq905c.c:207: warning: unused variable 'i'
-
-Introduced by commit 6436e86d8920520f6650bedaa816ed596c7c30b7 ("V4L/DVB
-(14006): gscpa_sq905c: Better detection of CIF resolution cameras").
-
---=20
+I fixed it up (I think ... see below) and can carry the fix for a while.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__27_Jan_2010_12_12_23_+1100_TkUMWjiQFE.xN7G2
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAktfkvcACgkQjjKRsyhoI8y8XgCgt8onB0Z1IzSfAGD2VYO/Oy8c
-kJkAn0ydsAE4/nHSA9EwiDC34iYrkFMD
-=vIRu
------END PGP SIGNATURE-----
-
---Signature=_Wed__27_Jan_2010_12_12_23_+1100_TkUMWjiQFE.xN7G2--
+diff --cc arch/x86/kvm/x86.c
+index 1ddcad4,a311751..0000000
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@@ -5089,11 -5468,12 +5469,13 @@@ fail
+  
+  void kvm_arch_vcpu_uninit(struct kvm_vcpu *vcpu)
+  {
++ 	int idx;
++ 
+ +	kfree(vcpu->arch.mce_banks);
+  	kvm_free_lapic(vcpu);
+- 	down_read(&vcpu->kvm->slots_lock);
++ 	idx = srcu_read_lock(&vcpu->kvm->srcu);
+  	kvm_mmu_destroy(vcpu);
+- 	up_read(&vcpu->kvm->slots_lock);
++ 	srcu_read_unlock(&vcpu->kvm->srcu, idx);
+  	free_page((unsigned long)vcpu->arch.pio_data);
+  }
+  
