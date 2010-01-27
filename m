@@ -1,44 +1,35 @@
-From: Alberto Panizzo <maramaopercheseimorto@gmail.com>
-Subject: Re: [PATCH] backlight: l4f00242t03: Fix module licence absence.
-Date: Wed, 27 Jan 2010 12:10:02 +0100
-Message-ID: <1264590602.2463.47.camel@realization>
-References: <20100119150836.bb975e4b.sfr@canb.auug.org.au>
-	 <1263889757.3121.10.camel@realization>
-	 <1263889850.3121.12.camel@realization>
+From: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
+Subject: Re: linux-next: add utrace tree
+Date: Wed, 27 Jan 2010 16:50:55 +0530
+Message-ID: <20100127112055.GA14289@in.ibm.com>
+References: <alpine.LFD.2.00.1001232051510.3574@localhost.localdomain> <m33a1tnbd9.fsf@fleche.redhat.com> <alpine.LFD.2.00.1001251332370.3574@localhost.localdomain> <m3636oh2rt.fsf@fleche.redhat.com> <alpine.LFD.2.00.1001261535510.17519@localhost.localdomain> <1264575134.4283.1983.camel@laptop> <alpine.LFD.2.00.1001270231520.24253@localhost.localdomain> <1264589716.4283.2006.camel@laptop> <20100127110555.GB1842@in.ibm.com> <1264590511.4283.2009.camel@laptop>
+Reply-To: ananth@in.ibm.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ey-out-2122.google.com ([74.125.78.27]:58158 "EHLO
-	ey-out-2122.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754272Ab0A0LKJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 27 Jan 2010 06:10:09 -0500
-In-Reply-To: <1263889850.3121.12.camel@realization>
+Received: from e38.co.us.ibm.com ([32.97.110.159]:60821 "EHLO
+	e38.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754357Ab0A0LVI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 27 Jan 2010 06:21:08 -0500
+Content-Disposition: inline
+In-Reply-To: <1264590511.4283.2009.camel@laptop>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Richard Purdie <rpurdie@rpsys.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Kyle Moffett <kyle@moffetthome.net>, Arnaldo Carvalho de Melo <acme@redhat.com>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Oleg Nesterov <oleg@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>, Tom Tromey <tromey@redhat.com>, "Frank Ch. Eigler" <fche@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>, avi@redhat.com
 
+On Wed, Jan 27, 2010 at 12:08:31PM +0100, Peter Zijlstra wrote:
+> On Wed, 2010-01-27 at 16:35 +0530, Ananth N Mavinakayanahalli wrote:
+> > Probing RIP-relative instructions work just fine; there are fixups that
+> > take care of it. 
+> 
+> Ah my bad then, it was my understanding you simply bailed on those.
+> 
+> Just for my information, how large are the replacement sequences?
 
-Signed-off-by: Alberto Panizzo <maramaopercheseimorto@gmail.com>
----
+The RIP relative instruction is transformed into indirect addressing
+mode using a scratch register.
 
-Richard, can you pick this for "for-mm" branch of backlight tree?
-in previous mail I explain my mistake..
-Thanks.
+For details http://marc.info/?l=linux-kernel&m=126401936114639&w=2. 
 
-
- drivers/video/backlight/l4f00242t03.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/video/backlight/l4f00242t03.c b/drivers/video/backlight/l4f00242t03.c
-index 42d061e..74abd69 100644
---- a/drivers/video/backlight/l4f00242t03.c
-+++ b/drivers/video/backlight/l4f00242t03.c
-@@ -254,3 +254,4 @@ module_exit(l4f00242t03_exit);
- 
- MODULE_AUTHOR("Alberto Panizzo <maramaopercheseimorto@gmail.com>");
- MODULE_DESCRIPTION("EPSON L4F00242T03 LCD");
-+MODULE_LICENSE("GPL v2");
--- 
-1.6.3.3
+Ananth
