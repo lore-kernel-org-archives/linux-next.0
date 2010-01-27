@@ -1,38 +1,50 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH] netdev: remove HAVE_ leftovers
-Date: Tue, 26 Jan 2010 16:32:56 -0800 (PST)
-Message-ID: <20100126.163256.196562963.davem@davemloft.net>
-References: <10f740e81001260057h37f3494dvefa3a37b2e1453a5@mail.gmail.com>
-	<20100126.051817.215651254.davem@davemloft.net>
-	<20100126191727.GA5454@x200>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: vfs tree build failure
+Date: Wed, 27 Jan 2010 11:37:18 +1100
+Message-ID: <20100127113718.5177ceb1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20100126191727.GA5454@x200>
-Sender: netdev-owner@vger.kernel.org
-To: adobriyan@gmail.com
-Cc: geert@linux-m68k.org, linux-next@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__27_Jan_2010_11_37_18_+1100_gXBG=lKdb/T964xd"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:46206 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753899Ab0A0AhY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 26 Jan 2010 19:37:24 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>
 
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Tue, 26 Jan 2010 21:17:27 +0200
+--Signature=_Wed__27_Jan_2010_11_37_18_+1100_gXBG=lKdb/T964xd
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Tue, Jan 26, 2010 at 05:18:17AM -0800, David Miller wrote:
->> Alexey, please go through at least drivers/net and look at the
->> other stale references to these HAVE_* macros.
-> 
-> My apologies.
-> 
-> 
-> [PATCH] netdev: remove HAVE_ leftovers
-> 
-> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+Hi Al,
 
-What about HAVE_POLL_CONTROLLER and some other remaining stuff?
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-drivers/net/bnx2.c:#if defined(HAVE_POLL_CONTROLLER) || defined(CONFIG_NET_POLL_CONTROLLER)
-drivers/net/bnx2x_main.c:#if defined(HAVE_POLL_CONTROLLER) || defined(CONFIG_NET_POLL_CONTROLLER)
-drivers/net/ixgbevf/ixgbevf_main.c:#ifdef HAVE_TX_MQ
-drivers/net/ixgbevf/ixgbevf_main.c:#ifndef HAVE_NETDEV_NAPI_LIST
-drivers/net/ixgbevf/ixgbevf_main.c:#ifdef HAVE_NET_DEVICE_OPS
+ERROR: "ima_path_check" [fs/nfsd/nfsd.ko] undefined!
+
+Caused by commit b35d5b4f7f47215f322bc6d9a1fd8499c11455d2 ("Fix
+untangling ima mess, part 2 with counters").
+
+I have used the vfs tree from next-20100125 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__27_Jan_2010_11_37_18_+1100_gXBG=lKdb/T964xd
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAktfir4ACgkQjjKRsyhoI8wHjgCgpv+KFgJbkKapRzl5460remmX
+11AAn3om+4g69Pj9lPSJwUrDixLmcAo7
+=4uB/
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__27_Jan_2010_11_37_18_+1100_gXBG=lKdb/T964xd--
