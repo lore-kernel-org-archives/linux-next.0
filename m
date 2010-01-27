@@ -1,41 +1,51 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: linux-next: add utrace tree
-Date: Tue, 26 Jan 2010 15:37:49 -0800 (PST)
-Message-ID: <alpine.LFD.2.00.1001261535510.17519@localhost.localdomain>
-References: <20100121013822.28781960.sfr@canb.auug.org.au> <20100122005147.GD22003@redhat.com> <20100121170541.7425ff10.akpm@linux-foundation.org> <alpine.LFD.2.00.1001211724500.13231@localhost.localdomain> <20100122182827.GA13185@redhat.com>
- <20100122200129.GG22003@redhat.com> <alpine.LFD.2.00.1001221355250.13231@localhost.localdomain> <20100122221348.GA4263@redhat.com> <alpine.LFD.2.00.1001221604190.13231@localhost.localdomain> <alpine.LFD.2.00.1001221614520.13231@localhost.localdomain>
- <f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com> <alpine.LFD.2.00.1001232051510.3574@localhost.localdomain> <m33a1tnbd9.fsf@fleche.redhat.com> <alpine.LFD.2.00.1001251332370.3574@localhost.localdomain> <m3636oh2rt.fsf@fleche.redhat.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: origin tree build warning
+Date: Wed, 27 Jan 2010 11:09:37 +1100
+Message-ID: <20100127110937.e606616d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__27_Jan_2010_11_09_37_+1100_GmD8HSpnBG8Zn0Gp"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:38863 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753624Ab0AZXi4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 26 Jan 2010 18:38:56 -0500
-In-Reply-To: <m3636oh2rt.fsf@fleche.redhat.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:41155 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754329Ab0A0AJo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 26 Jan 2010 19:09:44 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tom Tromey <tromey@redhat.com>
-Cc: Kyle Moffett <kyle@moffetthome.net>, "Frank Ch. Eigler" <fche@redhat.com>, Oleg Nesterov <oleg@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jerome Glisse <jglisse@redhat.com>
 
+--Signature=_Wed__27_Jan_2010_11_09_37_+1100_GmD8HSpnBG8Zn0Gp
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On Tue, 26 Jan 2010, Tom Tromey wrote:
-> 
-> In non-stop mode (where you can stop one thread but leave the others
-> running), gdb wants to have the breakpoints always inserted.  So,
-> something must emulate the displaced instruction.
+Today's linux-next build (x86_64 allmodconfig) produced this warning:
 
-I'm almost totally uninterested in breakpoints that actually re-write 
-instructions. It's impossible to do that efficiently and well, especially 
-in threaded environments.
+drivers/gpu/drm/radeon/radeon_agp.c: In function 'radeon_agp_init':
+drivers/gpu/drm/radeon/radeon_agp.c:137: warning: format '%d' expects type =
+'int', but argument 4 has type 'size_t'
 
-So if you do instruction rewriting, I can only say "that's your problem".
+Introduced by commit 0a3f316370da07fcdb11fde4f5a683d60713b7fd
+("drm/radeon/kms: Disable AGP is aperture size < 32M").
 
-But using the hardware breakpoints should automatically DTRT, both wrt 
-threads _and_ wrt restarting. Sure, there's onyl a limited number of them, 
-so if somebody wants more than that they are kind of screwed, but that's 
-just how life is.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-		Linus
+--Signature=_Wed__27_Jan_2010_11_09_37_+1100_GmD8HSpnBG8Zn0Gp
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAktfhEEACgkQjjKRsyhoI8yHdACfUzkzugOGYCXaEt2unlJ9gFop
+gaIAn2xBchw2TMBurm/9lw9620nCGmU+
+=DAHN
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__27_Jan_2010_11_09_37_+1100_GmD8HSpnBG8Zn0Gp--
