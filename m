@@ -1,63 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the gfs2 tree with the vfs tree
-Date: Wed, 27 Jan 2010 11:17:08 +1100
-Message-ID: <20100127111708.ed39215c.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH] netdev: remove HAVE_ leftovers
+Date: Tue, 26 Jan 2010 16:32:56 -0800 (PST)
+Message-ID: <20100126.163256.196562963.davem@davemloft.net>
+References: <10f740e81001260057h37f3494dvefa3a37b2e1453a5@mail.gmail.com>
+	<20100126.051817.215651254.davem@davemloft.net>
+	<20100126191727.GA5454@x200>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__27_Jan_2010_11_17_08_+1100_7lWEqtcz2vC1a57G"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57439 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752033Ab0A0ARP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 26 Jan 2010 19:17:15 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Steven Whitehouse <swhiteho@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20100126191727.GA5454@x200>
+Sender: netdev-owner@vger.kernel.org
+To: adobriyan@gmail.com
+Cc: geert@linux-m68k.org, linux-next@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__27_Jan_2010_11_17_08_+1100_7lWEqtcz2vC1a57G
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Alexey Dobriyan <adobriyan@gmail.com>
+Date: Tue, 26 Jan 2010 21:17:27 +0200
 
-Hi Steven,
+> On Tue, Jan 26, 2010 at 05:18:17AM -0800, David Miller wrote:
+>> Alexey, please go through at least drivers/net and look at the
+>> other stale references to these HAVE_* macros.
+> 
+> My apologies.
+> 
+> 
+> [PATCH] netdev: remove HAVE_ leftovers
+> 
+> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 
-Today's linux-next merge of the gfs2 tree got a conflict in
-fs/gfs2/super.c between commit 716c28c0bc8bcbdd26e819f38dfc8fdfaafc0289
-("pass writeback_control to ->write_inode") from the vfs tree and commit
-56c79d55103b5d0943e063d036e7ebf8a7a1c21b ("GFS2: Wait for unlock
-completion on umount") from the gfs2 tree.
+What about HAVE_POLL_CONTROLLER and some other remaining stuff?
 
-Just simple overlapping additions.  I fixed up (see below) and can carry
-the fix as necessary.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc fs/gfs2/super.c
-index effa35a,e2bf19f..0000000
---- a/fs/gfs2/super.c
-+++ b/fs/gfs2/super.c
-@@@ -21,7 -21,7 +21,8 @@@
-  #include <linux/gfs2_ondisk.h>
-  #include <linux/crc32.h>
-  #include <linux/time.h>
- +#include <linux/writeback.h>
-+ #include <linux/wait.h>
- =20
-  #include "gfs2.h"
-  #include "incore.h"
-
---Signature=_Wed__27_Jan_2010_11_17_08_+1100_7lWEqtcz2vC1a57G
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAktfhgQACgkQjjKRsyhoI8x74wCfV+SRxdmXTFMdLnNa2SxPmpLE
-lpkAn3XTC4Vi6XXX/NhQap5F+2aOHD67
-=KBMt
------END PGP SIGNATURE-----
-
---Signature=_Wed__27_Jan_2010_11_17_08_+1100_7lWEqtcz2vC1a57G--
+drivers/net/bnx2.c:#if defined(HAVE_POLL_CONTROLLER) || defined(CONFIG_NET_POLL_CONTROLLER)
+drivers/net/bnx2x_main.c:#if defined(HAVE_POLL_CONTROLLER) || defined(CONFIG_NET_POLL_CONTROLLER)
+drivers/net/ixgbevf/ixgbevf_main.c:#ifdef HAVE_TX_MQ
+drivers/net/ixgbevf/ixgbevf_main.c:#ifndef HAVE_NETDEV_NAPI_LIST
+drivers/net/ixgbevf/ixgbevf_main.c:#ifdef HAVE_NET_DEVICE_OPS
