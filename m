@@ -1,75 +1,63 @@
-From: Theodore Kilgore <kilgota@banach.math.auburn.edu>
-Subject: Re: linux-next: v4l-dvb tree build warning
-Date: Wed, 27 Jan 2010 10:25:07 -0600 (CST)
-Message-ID: <alpine.LNX.2.00.1001271010580.16311@banach.math.auburn.edu>
-References: <20100127121223.9af2253f.sfr@canb.auug.org.au>
+From: Marcelo Tosatti <mtosatti@redhat.com>
+Subject: Re: linux-next: manual merge of the kvm tree with Linus' tree
+Date: Wed, 27 Jan 2010 14:38:50 -0200
+Message-ID: <20100127163850.GB3921@amt.cnet>
+References: <20100127125730.6fb414ec.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from banach.math.auburn.edu ([131.204.45.3]:59960 "EHLO
-	banach.math.auburn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752593Ab0A0QJf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 27 Jan 2010 11:09:35 -0500
-In-Reply-To: <20100127121223.9af2253f.sfr@canb.auug.org.au>
+Received: from mx1.redhat.com ([209.132.183.28]:37001 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755279Ab0A0QjR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 27 Jan 2010 11:39:17 -0500
+Content-Disposition: inline
+In-Reply-To: <20100127125730.6fb414ec.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>
+Cc: Avi Kivity <avi@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wei Yongjun <yjwei@cn.fujitsu.com>
 
+On Wed, Jan 27, 2010 at 12:57:30PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the kvm tree got a conflict in
+> arch/x86/kvm/x86.c between commit
+> 36cb93fd6b6bf7e9163a69a8bf20207aed5fea44 ("KVM: x86: Fix probable memory
+> leak of vcpu->arch.mce_banks") from Linus' tree and commit
+> kvm_arch_vcpu_uninit ("KVM: switch vcpu context to use SRCU") from the
+> kvm tree.
+> 
+> I fixed it up (I think ... see below) and can carry the fix for a while.
 
+Stephen,
 
-On Wed, 27 Jan 2010, Stephen Rothwell wrote:
+The merge below is correct. Its also present in commit
 
-> Hi Mauro,
->
-> Today's linux-next build (x86_64 allmodconfig) produced this warning:
->
-> drivers/media/video/gspca/sq905c.c: In function 'sd_config':
-> drivers/media/video/gspca/sq905c.c:207: warning: unused variable 'i'
->
-> Introduced by commit 6436e86d8920520f6650bedaa816ed596c7c30b7 ("V4L/DVB
-> (14006): gscpa_sq905c: Better detection of CIF resolution cameras").
->
+d3b54d01b94f6825717ef1d02afc7c295bcce89e
+
+of kvm.git.
+
 > -- 
 > Cheers,
 > Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
->
-
-Hmmm. Indeed this is there. The reason I have been saying that it can't be 
-there is, my local copy of sq905c.c had at lines
-
-
-/* This function is called at probe time just before sd_init */
-static int sd_config(struct gspca_dev *gspca_dev,
- 		const struct usb_device_id *id)
-{
- 	struct cam *cam = &gspca_dev->cam;
- 	struct sd *dev = (struct sd *) gspca_dev; (here is line 207)
- 	int ret;
-
-But, having just done a pull, I have now a file which agrees with the tree 
-of Hans de Goede, and it says in it
-
-/* This function is called at probe time just before sd_init */
-static int sd_config(struct gspca_dev *gspca_dev,
- 		const struct usb_device_id *id)
-{
- 	struct cam *cam = &gspca_dev->cam;
- 	struct sd *dev = (struct sd *) gspca_dev;
- 	int i, ret;				  (here is line 207)
-
-Amazing, and I have at this point no idea how it got in there. Again, it 
-is not present in the copy I have been staring at for the last several 
-days, every time that this issue has come up.
-
-(me scratches head)
-
-Definitely, the declaration of "i" has to come out because it is true it 
-is not used.
-
-Hans, what is the quickest and most efficient way to get this fixed? I 
-suspect people are in a hurry.
-
-
-Theodore Kilgore
+> 
+> diff --cc arch/x86/kvm/x86.c
+> index 1ddcad4,a311751..0000000
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@@ -5089,11 -5468,12 +5469,13 @@@ fail
+>   
+>   void kvm_arch_vcpu_uninit(struct kvm_vcpu *vcpu)
+>   {
+> + 	int idx;
+> + 
+>  +	kfree(vcpu->arch.mce_banks);
+>   	kvm_free_lapic(vcpu);
+> - 	down_read(&vcpu->kvm->slots_lock);
+> + 	idx = srcu_read_lock(&vcpu->kvm->srcu);
+>   	kvm_mmu_destroy(vcpu);
+> - 	up_read(&vcpu->kvm->slots_lock);
+> + 	srcu_read_unlock(&vcpu->kvm->srcu, idx);
+>   	free_page((unsigned long)vcpu->arch.pio_data);
+>   }
+>   
