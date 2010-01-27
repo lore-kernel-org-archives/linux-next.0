@@ -1,51 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm tree with Linus' tree
-Date: Wed, 27 Jan 2010 12:57:30 +1100
-Message-ID: <20100127125730.6fb414ec.sfr@canb.auug.org.au>
+Subject: linux-next: net tree build failure
+Date: Wed, 27 Jan 2010 13:18:27 +1100
+Message-ID: <20100127131827.6aea9bf5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59620 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:59663 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753477Ab0A0B5f (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 26 Jan 2010 20:57:35 -0500
+	id S932150Ab0A0CSc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 26 Jan 2010 21:18:32 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Avi Kivity <avi@qumranet.com>, Marcelo Tosatti <mtosatti@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wei Yongjun <yjwei@cn.fujitsu.com>
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ron Mercer <ron.mercer@qlogic.com>, Breno Leitao <leitao@linux.vnet.ibm.com>
 
-Hi all,
+Hi Dave,
 
-Today's linux-next merge of the kvm tree got a conflict in
-arch/x86/kvm/x86.c between commit
-36cb93fd6b6bf7e9163a69a8bf20207aed5fea44 ("KVM: x86: Fix probable memory
-leak of vcpu->arch.mce_banks") from Linus' tree and commit
-kvm_arch_vcpu_uninit ("KVM: switch vcpu context to use SRCU") from the
-kvm tree.
+Today's linux-next build (x86_64 allmodconfig) failed like this:
 
-I fixed it up (I think ... see below) and can carry the fix for a while.
+drivers/net/qlge/qlge_main.c: In function 'ql_init_device':
+drivers/net/qlge/qlge_main.c:4502: error: label 'err_out' used but not defined
+
+Caused by commit 8aae2600030f54494f9061d2cde141802d774be9 ("qlge: Add
+basic firmware dump") interacting with commit
+4f9a91c81273b66afe0b6a9be460b47581b28246 ("qlge: Only free resources if
+they were allocated") from Linus' tree.
+
+I applied the following merge fixup.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/x86/kvm/x86.c
-index 1ddcad4,a311751..0000000
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@@ -5089,11 -5468,12 +5469,13 @@@ fail
-  
-  void kvm_arch_vcpu_uninit(struct kvm_vcpu *vcpu)
-  {
-+ 	int idx;
-+ 
- +	kfree(vcpu->arch.mce_banks);
-  	kvm_free_lapic(vcpu);
-- 	down_read(&vcpu->kvm->slots_lock);
-+ 	idx = srcu_read_lock(&vcpu->kvm->srcu);
-  	kvm_mmu_destroy(vcpu);
-- 	up_read(&vcpu->kvm->slots_lock);
-+ 	srcu_read_unlock(&vcpu->kvm->srcu, idx);
-  	free_page((unsigned long)vcpu->arch.pio_data);
-  }
-  
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 27 Jan 2010 13:10:17 +1100
+Subject: [PATCH] net: merge fixup for qlge_main
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/net/qlge/qlge_main.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/net/qlge/qlge_main.c b/drivers/net/qlge/qlge_main.c
+index 4adca94..5be3ae2 100644
+--- a/drivers/net/qlge/qlge_main.c
++++ b/drivers/net/qlge/qlge_main.c
+@@ -4499,7 +4499,7 @@ static int __devinit ql_init_device(struct pci_dev *pdev,
+ 		if (qdev->mpi_coredump == NULL) {
+ 			dev_err(&pdev->dev, "Coredump alloc failed.\n");
+ 			err = -ENOMEM;
+-			goto err_out;
++			goto err_out2;
+ 		}
+ 		if (qlge_force_coredump)
+ 			set_bit(QL_FRC_COREDUMP, &qdev->flags);
+-- 
+1.6.6
