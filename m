@@ -1,53 +1,148 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: vfs tree build failure
-Date: Thu, 28 Jan 2010 12:00:00 +1100
-Message-ID: <20100128120000.cd804756.sfr@canb.auug.org.au>
+From: Jim Keniston <jkenisto@us.ibm.com>
+Subject: Re: linux-next: add utrace tree
+Date: Wed, 27 Jan 2010 17:52:19 -0800
+Message-ID: <1264643539.5068.62.camel@localhost.localdomain>
+References: <20100122221348.GA4263@redhat.com>
+	 <alpine.LFD.2.00.1001221604190.13231@localhost.localdomain>
+	 <alpine.LFD.2.00.1001221614520.13231@localhost.localdomain>
+	 <f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com>
+	 <alpine.LFD.2.00.1001232051510.3574@localhost.localdomain>
+	 <m33a1tnbd9.fsf@fleche.redhat.com>
+	 <alpine.LFD.2.00.1001251332370.3574@localhost.localdomain>
+	 <m3636oh2rt.fsf@fleche.redhat.com>
+	 <alpine.LFD.2.00.1001261535510.17519@localhost.localdomain>
+	 <1264575134.4283.1983.camel@laptop>  <20100127085442.GA28422@elte.hu>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__28_Jan_2010_12_00_00_+1100_vNptf1sNl3cGhxO/"
-Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755486Ab0A1BAW@vger.kernel.org>
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S932178Ab0A1Bwc@vger.kernel.org>
+In-Reply-To: <20100127085442.GA28422@elte.hu>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>, Eric Paris <eparis@redhat.com>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Peter Zijlstra <peterz@infradead.org>, Linus Torvalds <torvalds@linux-foundation.org>, Tom Tromey <tromey@redhat.com>, Kyle Moffett <kyle@moffetthome.net>, "Frank Ch. Eigler" <fche@redhat.com>, Oleg Nesterov <oleg@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__28_Jan_2010_12_00_00_+1100_vNptf1sNl3cGhxO/
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 2010-01-27 at 09:54 +0100, Ingo Molnar wrote:
+...
+> I think the best solution for user probes (by far) is to use a simplified 
+> in-kernel instruction emulator for the few common probes instruction. (Kprobes 
+> already partially decodes x86 instructions to make it safe to apply 
+> accelerated probes and there's other decoding logic in the kernel too.)
+> 
+> The design and practical advantages are numerous:
+> 
+>  - People want to probe their function prologues most of the time ...
+>    a single INT3 there will in most cases just hit the initial stack 
+>    allocation and that's it.
 
-Hi Al,
+Yes, emulating "push %ebp" would buy us a lot of coverage for a lot of
+apps on x86 (but see below**).  Even there, though, we'd have to address
+the page fault we'd occasionally get when extending the stack vma.
 
-Today's linux-next build (powerpc ppc64_defconfig) failed like this:
+> We could get quite good coverage (and very fast 
+>    emulation) for the common case in not too much code - and much of that code 
+>    we already have available. No re-trapping,
 
-fs/namei.c: In function 'do_filp_open':
-fs/namei.c:1740: error: too many arguments to function 'ima_file_check'
-fs/namei.c:1800: error: too many arguments to function 'ima_file_check'
+As previously discussed, boosting would also get rid of the single-step
+trap for most instructions.
 
-Caused by commit dbcbe631a87d21e429f156edee4ffdeb7dbd84ce ("ima: rename
-ima_path_check to ima_file_check").
+> no extra instruction patching 
 
-I have used the vfs tree from next-20100125 again today.
+x86_64 rip-relative instructions are the only ones we alter.
 
-P.S. that commit has author Mimi Zohar <zohar@linux.vnet.ibm.com>, but is
-signed off by only Eric Paris <eparis@redhat.com> and Al Viro
-<viro@zeniv.linux.org.uk> (and merely acked by Zohar
-<zohar@linux.vnet.ibm.com>).
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+>    and complex maintenance of trampolines.
+> 
+>  - It's as transparent as it gets - no user-space trampoline or other visible
+>    state that modifies behavior or can be stomped upon by user-space bugs.
 
---Signature=_Thu__28_Jan_2010_12_00_00_+1100_vNptf1sNl3cGhxO/
-Content-Type: application/pgp-signature
+The XOL vma isn't writable from user space, so I can't think of how it
+could be clobbered merely by a stray memory reference.  Yes, it's a vma
+that the unprobed app would never have; and yes, a malicious app or
+kernel module could remove it or alter the protection and scribble on
+it.  We don't try to defend the app against such malicious attacks, but
+we do our best to ensure that the kernel side handles such attacks
+gracefully.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+> 
+>  - Lightweight and simple probe insertion: no weird setup sequence needing the 
+>    stopping of all tasks to install the trampoline. We just add the INT3 and 
+>    off you go.
 
-iEYEARECAAYFAktg4ZAACgkQjjKRsyhoI8xW2wCgt0QxJnepnZIaZdZ9I2jv6EWP
-XNsAn3c81ChQNqo7y//HtHX40x+clUMT
-=SApo
------END PGP SIGNATURE-----
+FWIW, we don't stop all threads to set up or extend the XOL vma, which
+is typically a one-time event.  We just grab a mutex, in case multiple
+threads hit previously-unhit probepoints simultaneously, and
+simultaneously decide that the XOL area needs to be created or extended.
 
---Signature=_Thu__28_Jan_2010_12_00_00_+1100_vNptf1sNl3cGhxO/--
+> 
+>  - Emulation is evidently thread-safe, SMP-safe, etc. as it only acts on 
+>    task local state.
+
+The posted uprobes implementation is, so far as we can tell through code
+inspection and testing, also thread-safe and SMP-safe.
+
+> 
+>  - The points we can probe are never truly limited as it's all freely
+>    upscalable: if you cannot probe an instruction you want to probe today,
+>    extend the emulator.
+
+I don't see how ripping out existing support for almost* the entire
+instruction set, and then putting it back instruction by instruction,
+patch by patch, is a win.
+
+Even if we add emulation, it seems sensible to keep the XOL approach as
+a backup to handle instructions that aren't yet emulated (and
+architectures that don't yet have emulators).  That way, if you don't
+probe any unemulated instructions, the XOL vma is never created.
+
+> Deny the rest. _All_ versions of uprobes code i've
+>    seen so far already restricts the probe-compatible instruction set:
+
+*Yes, we currently decline to probe some instructions that look
+troublesome and we haven't taken the time to test.  These include things
+like privileged instructions, int*, in*/out*, and instructions that fuss
+with the segment registers.  We've never actually seen such instructions
+in user apps.
+
+>    RIP-relative instructions are excluded on 64-bit for example.
+
+No.  As discussed in previous posts, we handle rip-relative
+instructions.
+
+> 
+>  - Emulation has the _least_ semantical side effects as we really execute
+>    'that' instruction -
+
+It seems to me that emulation is the only approach that DOESN'T execute
+the probed instruction.
+
+> not some other instruction put elsewhere into a
+>    special vma or into the process/thread stack, or some special in-kernel
+>    trampoline, etc.
+> 
+>  - Emulation can be very fast for the common case as well. Nobody will probe
+>    weird, complex instructions. They will use 'perf probe' to insert probes
+>    into their functions 90% of the time ...
+> 
+>  - FPU and complex ops and pagefault emulation is not really what i'd expect
+>    to be necessary for simple probing - but it _can_ be added by people who
+>    care about it, if they so wish.
+
+**In practice, we've had to probe all sorts of instructions, including
+FP instructions -- especially where you want to exploit the debug info
+to get the names, types, and locations of variables and args.  For some
+compilers and architectures, the debug info isn't reliable until the end
+of the function prologue, at which point you could find any old
+instruction.  Ditto if you want to probe statements within a function.
+
+> 
+> Such a scheme would be _far_ more preferable form a maintenance POV as well, 
+> as the initial code will be small, and we can extend it gradually. All the 
+> other proposals are complex 'all or nothing' schemes with no flexibility for 
+> complexity at all.
+> 
+> Thanks,
+> 
+> 	Ingo
+
+Thanks.
+Jim
