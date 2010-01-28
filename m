@@ -1,45 +1,36 @@
-From: Jean Delvare <khali@linux-fr.org>
-Subject: Re: linux-next:als tree build failure
-Date: Thu, 28 Jan 2010 13:45:18 +0100
-Message-ID: <20100128134518.26b762ed@hyperion.delvare>
-References: <20100128182334.7226bdf6.sfr@canb.auug.org.au>
-	<20100128084107.682db589@hyperion.delvare>
-	<4B617C29.6010300@cam.ac.uk>
-	<20100128231750.1dd29044.sfr@canb.auug.org.au>
-	<4B618412.30704@cam.ac.uk>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: sparc tree build warning
+Date: Thu, 28 Jan 2010 05:24:32 -0800 (PST)
+Message-ID: <20100128.052432.251700168.davem@davemloft.net>
+References: <20091214163338.f811722f.sfr@canb.auug.org.au>
+	<20100128184423.40ce38fb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from poutre.nerim.net ([62.4.16.124]:63678 "EHLO poutre.nerim.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752421Ab0A1MpV (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 28 Jan 2010 07:45:21 -0500
-In-Reply-To: <4B618412.30704@cam.ac.uk>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:36695
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752695Ab0A1NYU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 28 Jan 2010 08:24:20 -0500
+In-Reply-To: <20100128184423.40ce38fb.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jonathan Cameron <jic23@cam.ac.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Zhang Rui <rui.zhang@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: sfr@canb.auug.org.au
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 28 Jan 2010 12:33:22 +0000, Jonathan Cameron wrote:
-> On 01/28/10 12:17, Stephen Rothwell wrote:
-> > Hi Jonathan, Jean,
-> > 
-> > On Thu, 28 Jan 2010 11:59:37 +0000 Jonathan Cameron <jic23@cam.ac.uk> wrote:
-> >>
-> >> It does make sense to keep these two steps separate.  Ah well, I guess any
-> >> work around would be a pretty terrible cludge.  I'll roll these two patches
-> >> back together and otherwise we will end up with something even less coherent.
-> > 
-> > OK, thanks guys.
-> > 
-> Everything should now be fixed in the als tree.  New version of the move commit
-> cleans out the i2c/chips directory and changes the i2c/Makefile and i2c/Kconfig
-> appropriately.  Only remaining related elements are the debug Kconfig option for
-> i2c/chips but that can definitely go through the i2c tree rather than als (if there
-> are no other users) and shouldn't break any builds.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 28 Jan 2010 18:44:23 +1100
 
-I'll take care of the debug option later, no problem.
+> I am still seeing these.  Is it my compiler version (gcc4.4.0)?
 
--- 
-Jean Delvare
+You can't turn on DEBUG_STRICT_USER_COPY_CHECKS and
+expect a successful build.  It's for developers to
+look at the errors that are generated and audit those
+cases in detail.
+
+You'll get the same exact errors as on i386.
+
+Please just elide the option from your test builds.
+
+Thanks.
