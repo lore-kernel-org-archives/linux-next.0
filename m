@@ -1,94 +1,70 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Subject: Re: linux-next: Tree for January 18 (pci + pm)
-Date: Thu, 28 Jan 2010 11:04:14 -0800
-Message-ID: <20100128110414.10b73b9e@jbarnes-piketon>
-References: <20100118195743.b45f119e.sfr@canb.auug.org.au>
-	<20100118154424.d54c0e3e.randy.dunlap@oracle.com>
-	<201001200004.07654.rjw@sisk.pl>
-	<20100128083322.34679625.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: sparc tree build warning
+Date: Fri, 29 Jan 2010 10:25:43 +1100
+Message-ID: <20100129102543.7af32673.sfr@canb.auug.org.au>
+References: <20091214163338.f811722f.sfr@canb.auug.org.au>
+	<20100128184423.40ce38fb.sfr@canb.auug.org.au>
+	<20100128.052432.251700168.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__29_Jan_2010_10_25_43_+1100_tYJ9dg8obKDZEjX4"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from outbound-mail-313.bluehost.com ([67.222.54.6]:35843 "HELO
-	outbound-mail-313.bluehost.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with SMTP id S1756477Ab0A1TET (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 28 Jan 2010 14:04:19 -0500
-In-Reply-To: <20100128083322.34679625.randy.dunlap@oracle.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:39220 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756347Ab0A1XZt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 28 Jan 2010 18:25:49 -0500
+In-Reply-To: <20100128.052432.251700168.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-pci@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 28 Jan 2010 08:33:22 -0800
-Randy Dunlap <randy.dunlap@oracle.com> wrote:
+--Signature=_Fri__29_Jan_2010_10_25_43_+1100_tYJ9dg8obKDZEjX4
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Wed, 20 Jan 2010 00:04:07 +0100 Rafael J. Wysocki wrote:
-> 
-> > On Tuesday 19 January 2010, Randy Dunlap wrote:
-> > > On Mon, 18 Jan 2010 19:57:43 +1100 Stephen Rothwell wrote:
-> > > 
-> > > > Hi all,
-> > > > 
-> > > > Changes since 20100114:
-> > > 
-> > > 
-> > > drivers/pci/pci-driver.c: In function 'pci_pm_runtime_resume':
-> > > drivers/pci/pci-driver.c:991: error: implicit declaration of
-> > > function 'pci_pm_default_resume_early' drivers/pci/pci-driver.c:
-> > > At top level: drivers/pci/pci-driver.c:1027: error:
-> > > 'pci_pm_prepare' undeclared here (not in a function)
-> > > drivers/pci/pci-driver.c:1028: error: 'pci_pm_complete'
-> > > undeclared here (not in a function)
-> > > drivers/pci/pci-driver.c:1029: error: 'pci_pm_suspend' undeclared
-> > > here (not in a function) drivers/pci/pci-driver.c:1030: error:
-> > > 'pci_pm_resume' undeclared here (not in a function)
-> > > drivers/pci/pci-driver.c:1031: error: 'pci_pm_freeze' undeclared
-> > > here (not in a function) drivers/pci/pci-driver.c:1032: error:
-> > > 'pci_pm_thaw' undeclared here (not in a function)
-> > > drivers/pci/pci-driver.c:1033: error: 'pci_pm_poweroff'
-> > > undeclared here (not in a function)
-> > > drivers/pci/pci-driver.c:1034: error: 'pci_pm_restore' undeclared
-> > > here (not in a function) drivers/pci/pci-driver.c:1035: error:
-> > > 'pci_pm_suspend_noirq' undeclared here (not in a function)
-> > > drivers/pci/pci-driver.c:1036: error: 'pci_pm_resume_noirq'
-> > > undeclared here (not in a function)
-> > > drivers/pci/pci-driver.c:1037: error: 'pci_pm_freeze_noirq'
-> > > undeclared here (not in a function)
-> > > drivers/pci/pci-driver.c:1038: error: 'pci_pm_thaw_noirq'
-> > > undeclared here (not in a function)
-> > > drivers/pci/pci-driver.c:1039: error: 'pci_pm_poweroff_noirq'
-> > > undeclared here (not in a function)
-> > > drivers/pci/pci-driver.c:1040: error: 'pci_pm_restore_noirq'
-> > > undeclared here (not in a function)
-> > > 
-> > > 
-> > > partial config:
-> > > 
-> > > CONFIG_PM=y
-> > > # CONFIG_PM_DEBUG is not set
-> > > # CONFIG_SUSPEND is not set
-> > > # CONFIG_HIBERNATION is not set
-> > > CONFIG_PM_RUNTIME=y
-> > > CONFIG_PM_OPS=y
-> > > 
-> > > 
-> > > Full config is attached.
-> > 
-> > Ah, too many ifdefs.
-> > 
-> > Thanks, the patch below fixes that for me.
-> > 
-> > Rafael
-> 
-> Rafael, Jesse:
-> 
-> We still need this patch in linux-next (20100128).
-> Thanks.
-> 
+Hi Dave,
 
-Arg, I must have dropped this one too... will apply again and push.
+On Thu, 28 Jan 2010 05:24:32 -0800 (PST) David Miller <davem@davemloft.net>=
+ wrote:
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 28 Jan 2010 18:44:23 +1100
+>=20
+> > I am still seeing these.  Is it my compiler version (gcc4.4.0)?
+>=20
+> You can't turn on DEBUG_STRICT_USER_COPY_CHECKS and
+> expect a successful build.  It's for developers to
+> look at the errors that are generated and audit those
+> cases in detail.
 
--- 
-Jesse Barnes, Intel Open Source Technology Center
+These are defconfig builds and CONFIG_DEBUG_STRICT_USER_COPY_CHECKS is
+not set in either case.
+
+> You'll get the same exact errors as on i386.
+
+I only do an i386 defconfig build and I don't get these warnings.
+
+> Please just elide the option from your test builds.
+
+I would if I could :-)
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__29_Jan_2010_10_25_43_+1100_tYJ9dg8obKDZEjX4
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAktiHPcACgkQjjKRsyhoI8x6PwCgqx7eiYxGk/2fLdT88Hp2UzDj
+txcAoJuTF6nFMgi8yu6ONL5B5RFqT2bY
+=HsMS
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__29_Jan_2010_10_25_43_+1100_tYJ9dg8obKDZEjX4--
