@@ -1,44 +1,76 @@
-From: Jean Delvare <khali@linux-fr.org>
-Subject: Re: linux-next:als tree build failure
-Date: Thu, 28 Jan 2010 08:41:07 +0100
-Message-ID: <20100128084107.682db589@hyperion.delvare>
-References: <20100128182334.7226bdf6.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: sparc tree build warning
+Date: Thu, 28 Jan 2010 18:44:23 +1100
+Message-ID: <20100128184423.40ce38fb.sfr@canb.auug.org.au>
+References: <20091214163338.f811722f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__28_Jan_2010_18_44_23_+1100_ltIe824W9k3/l5yp"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bamako.nerim.net ([62.4.17.28]:54830 "EHLO bamako.nerim.net"
+Received: from chilli.pcug.org.au ([203.10.76.44]:43859 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755043Ab0A1HlK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 28 Jan 2010 02:41:10 -0500
-In-Reply-To: <20100128182334.7226bdf6.sfr@canb.auug.org.au>
+	id S1755205Ab0A1Ho3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 28 Jan 2010 02:44:29 -0500
+In-Reply-To: <20091214163338.f811722f.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jonathan Cameron <jic23@cam.ac.uk>, Zhang Rui <rui.zhang@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "David S. Miller" <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 28 Jan 2010 18:23:34 +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next build (powerpc allnoconfig) failed like this:
-> 
-> ld: drivers/i2c/chips/built-in.o: No such file: No such file or directory
-> 
-> Caused by commit b75349f118718a435f2bb7b6e675572ecd591627 ("tsl2550: Move
-> form i2c/chips to als and update interfaces").  This removes the last
-> driver from drivers/i2c/chips/ .  Maybe it needs to remove the directory
-> completely and the references to it from drivers/i2c as well.
-> 
-> I have reverted that commit for today.
+--Signature=_Thu__28_Jan_2010_18_44_23_+1100_ltIe824W9k3/l5yp
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-My bad. I asked Jonathan to split the directory removal from the driver
-move for clarity. I didn't expect this to cause a build failure.
+Hi Dave,
 
-Jonathan, I guess that at least the drivers/i2c/Makefile part must be
-moved back to the tsl2550 driver move patch. I leave it to you whether
-you want to move all the rest back as well, or just that part.
+On Mon, 14 Dec 2009 16:33:38 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next build (sparc defconfig) produced this warning:
+>=20
+> In file included from arch/sparc/include/asm/uaccess.h:7,
+>                  from include/net/checksum.h:26,
+>                  from include/linux/skbuff.h:29,
+>                  from net/core/pktgen.c:141:
+> In function 'copy_from_user',
+>     inlined from 'pktgen_if_write' at net/core/pktgen.c:867:
+> arch/sparc/include/asm/uaccess_32.h:276: warning: call to 'copy_from_user=
+_overflow' declared with attribute warning: copy_from_user() buffer size is=
+ not provably correct
+>=20
+> and many more.
+>=20
+> The sparc64 defconfig build produced many similar warnings:
+>=20
+> In file included from arch/sparc/include/asm/uaccess.h:5,
+>                  from include/linux/uaccess.h:6,
+>                  from include/linux/highmem.h:7,
+>                  from include/linux/pagemap.h:11,
+>                  from include/linux/mempolicy.h:63,
+>                  from mm/mempolicy.c:69:
+> arch/sparc/include/asm/uaccess_64.h: In function 'compat_sys_get_mempolic=
+y':
+> arch/sparc/include/asm/uaccess_64.h:232: warning: call to 'copy_from_user=
+_overflow' declared with attribute warning: copy_from_user() buffer size is=
+ not provably correct
 
-Thanks Stephen for the heads up and sorry again for the breakage.
+I am still seeing these.  Is it my compiler version (gcc4.4.0)?
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
--- 
-Jean Delvare
+--Signature=_Thu__28_Jan_2010_18_44_23_+1100_ltIe824W9k3/l5yp
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkthQFcACgkQjjKRsyhoI8ze2wCgmGhxSREblfcz2f68tiC0Abnr
+kbAAoIJkdJlOFOfT4mA/EC6S1FdyuUzw
+=/Xeh
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__28_Jan_2010_18_44_23_+1100_ltIe824W9k3/l5yp--
