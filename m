@@ -1,66 +1,53 @@
-From: Andy Walls <awalls@radix.net>
-Subject: Re: linux-next: v4l-dvb tree build failure
-Date: Wed, 27 Jan 2010 18:24:48 -0500
-Message-ID: <1264634688.3088.1.camel@palomino.walls.org>
-References: <20100127175917.5d690f52.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: vfs tree build failure
+Date: Thu, 28 Jan 2010 12:00:00 +1100
+Message-ID: <20100128120000.cd804756.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail1.radix.net ([207.192.128.31]:48120 "EHLO mail1.radix.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755437Ab0A0X0U (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 27 Jan 2010 18:26:20 -0500
-In-Reply-To: <20100127175917.5d690f52.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Devin Heitmueller <dheitmueller@kernellabs.com>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__28_Jan_2010_12_00_00_+1100_vNptf1sNl3cGhxO/"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755486Ab0A1BAW@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>, Eric Paris <eparis@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 2010-01-27 at 17:59 +1100, Stephen Rothwell wrote:
-> Hi Mauro,
-> 
-> Today's linux-next build (powerpc allyesconfig) failed like this:
-> 
-> drivers/media/video/cx18/cx18-alsa-pcm.c: In function 'snd_pcm_alloc_vmalloc_buffer':
-> drivers/media/video/cx18/cx18-alsa-pcm.c:234: error: implicit declaration of function 'vfree'
-> drivers/media/video/cx18/cx18-alsa-pcm.c:236: error: implicit declaration of function 'vmalloc'
-> 
-> Caused by commit 5e9a302853301e0a2bb6671036daac3366fd85f4 ("V4L/DVB: cx18: overhaul ALSA PCM device handling so it works").
-> 
-> I applied the following patch for today.
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 27 Jan 2010 17:53:39 +1100
-> Subject: [PATCH] V4L/DVB: using vmalloc requires include of linux/vmalloc.h
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+--Signature=_Thu__28_Jan_2010_12_00_00_+1100_vNptf1sNl3cGhxO/
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Stephen,
+Hi Al,
 
-Looks good to me.
+Today's linux-next build (powerpc ppc64_defconfig) failed like this:
 
-Acked-by: Andy Walls <awalls@radix.net>
+fs/namei.c: In function 'do_filp_open':
+fs/namei.c:1740: error: too many arguments to function 'ima_file_check'
+fs/namei.c:1800: error: too many arguments to function 'ima_file_check'
 
-Regards,
-Andy
+Caused by commit dbcbe631a87d21e429f156edee4ffdeb7dbd84ce ("ima: rename
+ima_path_check to ima_file_check").
 
-> ---
->  drivers/media/video/cx18/cx18-alsa-pcm.c |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/media/video/cx18/cx18-alsa-pcm.c b/drivers/media/video/cx18/cx18-alsa-pcm.c
-> index 6e56df9..b9f42b1 100644
-> --- a/drivers/media/video/cx18/cx18-alsa-pcm.c
-> +++ b/drivers/media/video/cx18/cx18-alsa-pcm.c
-> @@ -25,6 +25,7 @@
->  
->  #include <linux/init.h>
->  #include <linux/kernel.h>
-> +#include <linux/vmalloc.h>
->  
->  #include <media/v4l2-device.h>
->  
-> -- 
-> 1.6.6
-> 
+I have used the vfs tree from next-20100125 again today.
+
+P.S. that commit has author Mimi Zohar <zohar@linux.vnet.ibm.com>, but is
+signed off by only Eric Paris <eparis@redhat.com> and Al Viro
+<viro@zeniv.linux.org.uk> (and merely acked by Zohar
+<zohar@linux.vnet.ibm.com>).
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__28_Jan_2010_12_00_00_+1100_vNptf1sNl3cGhxO/
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAktg4ZAACgkQjjKRsyhoI8xW2wCgt0QxJnepnZIaZdZ9I2jv6EWP
+XNsAn3c81ChQNqo7y//HtHX40x+clUMT
+=SApo
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__28_Jan_2010_12_00_00_+1100_vNptf1sNl3cGhxO/--
