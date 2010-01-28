@@ -1,37 +1,53 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: linux-next: vfs tree build failure
-Date: Thu, 28 Jan 2010 01:54:30 +0000
-Message-ID: <20100128015430.GN19799@ZenIV.linux.org.uk>
-References: <20100128120000.cd804756.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: v4l-dvb tree build failure
+Date: Thu, 28 Jan 2010 16:24:56 +1100
+Message-ID: <20100128162456.41fff1d9.sfr@canb.auug.org.au>
+References: <20100127175917.5d690f52.sfr@canb.auug.org.au>
+	<1264634688.3088.1.camel@palomino.walls.org>
+	<4B60EE44.7080508@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:44331 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755918Ab0A1Byc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 27 Jan 2010 20:54:32 -0500
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__28_Jan_2010_16_24_56_+1100_Bbg0aUsaadDy=KQY"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1752325Ab0A1FZF@vger.kernel.org>
+In-Reply-To: <4B60EE44.7080508@infradead.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Andy Walls <awalls@radix.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Devin Heitmueller <dheitmueller@kernellabs.com>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Thu__28_Jan_2010_16_24_56_+1100_Bbg0aUsaadDy=KQY
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20100128120000.cd804756.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mimi Zohar <zohar@linux.vnet.ibm.com>, Eric Paris <eparis@redhat.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 28, 2010 at 12:00:00PM +1100, Stephen Rothwell wrote:
-> Hi Al,
-> 
-> Today's linux-next build (powerpc ppc64_defconfig) failed like this:
-> 
-> fs/namei.c: In function 'do_filp_open':
-> fs/namei.c:1740: error: too many arguments to function 'ima_file_check'
-> fs/namei.c:1800: error: too many arguments to function 'ima_file_check'
+Hi Mauro, Andy,
 
-Huh?  Oh...
+On Wed, 27 Jan 2010 23:54:12 -0200 Mauro Carvalho Chehab <mchehab@infradead=
+.org> wrote:
+>
+> Andy Walls wrote:
+> > Looks good to me.
+> >=20
+> > Acked-by: Andy Walls <awalls@radix.net>
+>=20
+> Added at the tree.
 
-ed include/linux/ima.h <<EOF
-/static.*ima_file_check/s/)/, int mask&/
-w
-q
-EOF
+Thanks guys.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-would fix it.
+--Signature=_Thu__28_Jan_2010_16_24_56_+1100_Bbg0aUsaadDy=KQY
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkthH6gACgkQjjKRsyhoI8wD0gCgux0CnuAYs53O9VKUc99+6CME
+BroAnjIDZCQ//6wKNHWwp17OeCm6OSZx
+=XAEh
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__28_Jan_2010_16_24_56_+1100_Bbg0aUsaadDy=KQY--
