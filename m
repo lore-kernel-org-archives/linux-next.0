@@ -1,118 +1,56 @@
-From: Michal Nazarewicz <m.nazarewicz@samsung.com>
-Subject: [PATCH] USB: mass_storage: eject LUNs on thread exit
-Date: Thu, 28 Jan 2010 13:05:26 +0100
-Message-ID: <1264680326-20671-1-git-send-email-m.nazarewicz@samsung.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next:als tree build failure
+Date: Thu, 28 Jan 2010 23:17:50 +1100
+Message-ID: <20100128231750.1dd29044.sfr@canb.auug.org.au>
+References: <20100128182334.7226bdf6.sfr@canb.auug.org.au>
+	<20100128084107.682db589@hyperion.delvare>
+	<4B617C29.6010300@cam.ac.uk>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__28_Jan_2010_23_17_50_+1100_9WOQkp9BruB7n=aa"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:11489 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753438Ab0A1MGj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 28 Jan 2010 07:06:39 -0500
+Received: from chilli.pcug.org.au ([203.10.76.44]:33944 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752004Ab0A1M1w (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 28 Jan 2010 07:27:52 -0500
+In-Reply-To: <4B617C29.6010300@cam.ac.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-usb@vger.kernel.org, linux-next@vger.kernel.org
-Cc: Greg KH <greg@kroah.com>, Alan Stern <stern@rowland.harvard.edu>, David Brownell <dbrownell@users.sourceforge.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Michal Nazarewicz <m.nazarewicz@samsung.com>
+To: Jonathan Cameron <jic23@cam.ac.uk>
+Cc: Jean Delvare <khali@linux-fr.org>, Zhang Rui <rui.zhang@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Adds a fallback which forces all LUNs ejection (including
-non-removable and with prevent_medium_removal flag) when mass storage
-function (MSF) worker thread exits and gadget fails to handle the
-situation.
+--Signature=_Thu__28_Jan_2010_23_17_50_+1100_9WOQkp9BruB7n=aa
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Previously, if thread_exits was not specified mass storage function
-(MSF) did nothing when exiting thread as it's unclear for *function*
-what to do when it's thread terminates so responsibility of handling
-this situation was left to the *gadget* using the function.
+Hi Jonathan, Jean,
 
-The g_mass_storage handled the situation by unregistering itself (the
-same thing that file storage gadget does).  However, g_multi did
-nothing and so MSF did not eject LUNs which prevented file system
-unmounting.
+On Thu, 28 Jan 2010 11:59:37 +0000 Jonathan Cameron <jic23@cam.ac.uk> wrote:
+>
+> It does make sense to keep these two steps separate.  Ah well, I guess any
+> work around would be a pretty terrible cludge.  I'll roll these two patch=
+es
+> back together and otherwise we will end up with something even less coher=
+ent.
 
-Signed-off-by: Michal Nazarewicz <m.nazarewicz@samsung.com>
-Reviewed-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- drivers/usb/gadget/f_mass_storage.c |   26 +++++++++++++++++++++-----
- drivers/usb/gadget/mass_storage.c   |    8 +++++++-
- 2 files changed, 28 insertions(+), 6 deletions(-)
+OK, thanks guys.
 
-diff --git a/drivers/usb/gadget/f_mass_storage.c b/drivers/usb/gadget/f_mass_storage.c
-index 84f6491..1a845f1 100644
---- a/drivers/usb/gadget/f_mass_storage.c
-+++ b/drivers/usb/gadget/f_mass_storage.c
-@@ -368,7 +368,7 @@ struct fsg_common {
- 	struct task_struct	*thread_task;
- 
- 	/* Callback function to call when thread exits. */
--	void			(*thread_exits)(struct fsg_common *common);
-+	int			(*thread_exits)(struct fsg_common *common);
- 	/* Gadget's private data. */
- 	void			*private_data;
- 
-@@ -392,8 +392,12 @@ struct fsg_config {
- 	const char		*lun_name_format;
- 	const char		*thread_name;
- 
--	/* Callback function to call when thread exits. */
--	void			(*thread_exits)(struct fsg_common *common);
-+	/* Callback function to call when thread exits.  If no
-+	 * callback is set or it returns value lower then zero MSF
-+	 * will force eject all LUNs it operates on (including those
-+	 * marked as non-removable or with prevent_medium_removal flag
-+	 * set). */
-+	int			(*thread_exits)(struct fsg_common *common);
- 	/* Gadget's private data. */
- 	void			*private_data;
- 
-@@ -2613,8 +2617,20 @@ static int fsg_main_thread(void *common_)
- 	common->thread_task = NULL;
- 	spin_unlock_irq(&common->lock);
- 
--	if (common->thread_exits)
--		common->thread_exits(common);
-+	if (!common->thread_exits || common->thread_exits(common) < 0) {
-+		struct fsg_lun *curlun = common->luns;
-+		unsigned i = common->nluns;
-+
-+		down_write(&common->filesem);
-+		for (; i--; ++curlun) {
-+			if (!fsg_lun_is_open(curlun))
-+				continue;
-+
-+			fsg_lun_close(curlun);
-+			curlun->unit_attention_data = SS_MEDIUM_NOT_PRESENT;
-+		}
-+		up_write(&common->filesem);
-+	}
- 
- 	/* Let the unbind and cleanup routines know the thread has exited */
- 	complete_and_exit(&common->thread_notifier, 0);
-diff --git a/drivers/usb/gadget/mass_storage.c b/drivers/usb/gadget/mass_storage.c
-index 19619fb..705cc1f 100644
---- a/drivers/usb/gadget/mass_storage.c
-+++ b/drivers/usb/gadget/mass_storage.c
-@@ -135,6 +135,12 @@ FSG_MODULE_PARAMETERS(/* no prefix */, mod_data);
- static unsigned long msg_registered = 0;
- static void msg_cleanup(void);
- 
-+static int msg_thread_exits(struct fsg_common *common)
-+{
-+	msg_cleanup();
-+	return 0;
-+}
-+
- static int __init msg_do_config(struct usb_configuration *c)
- {
- 	struct fsg_common *common;
-@@ -147,7 +153,7 @@ static int __init msg_do_config(struct usb_configuration *c)
- 	}
- 
- 	fsg_config_from_params(&config, &mod_data);
--	config.thread_exits = (void(*)(struct fsg_common*))&msg_cleanup;
-+	config.thread_exits = msg_thread_exits;
- 	common = fsg_common_init(0, c->cdev, &config);
- 	if (IS_ERR(common))
- 		return PTR_ERR(common);
--- 
-1.6.5
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__28_Jan_2010_23_17_50_+1100_9WOQkp9BruB7n=aa
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkthgG4ACgkQjjKRsyhoI8xndwCgj0KUSychnGvW8i5NJ/Pdr0pv
+nbkAnAnsVAPZrnvdGjwTWY/BrgRr0GNU
+=7dJI
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__28_Jan_2010_23_17_50_+1100_9WOQkp9BruB7n=aa--
