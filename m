@@ -1,298 +1,255 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for January 28
-Date: Thu, 28 Jan 2010 18:52:17 +1100
-Message-ID: <20100128185217.80308d7f.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: add utrace tree
+Date: Thu, 28 Jan 2010 09:55:02 +0100
+Message-ID: <20100128085502.GA7713@elte.hu>
+References: <alpine.LFD.2.00.1001221614520.13231@localhost.localdomain>
+ <f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com>
+ <alpine.LFD.2.00.1001232051510.3574@localhost.localdomain>
+ <m33a1tnbd9.fsf@fleche.redhat.com>
+ <alpine.LFD.2.00.1001251332370.3574@localhost.localdomain>
+ <m3636oh2rt.fsf@fleche.redhat.com>
+ <alpine.LFD.2.00.1001261535510.17519@localhost.localdomain>
+ <1264575134.4283.1983.camel@laptop>
+ <20100127085442.GA28422@elte.hu>
+ <1264643539.5068.62.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__28_Jan_2010_18_52_17_+1100_J.7nCMAqxTTdcdv0"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51031 "EHLO smtps.tip.net.au"
+Received: from mx2.mail.elte.hu ([157.181.151.9]:40935 "EHLO mx2.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932225Ab0A1HwW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 28 Jan 2010 02:52:22 -0500
+	id S1753538Ab0A1Izd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 28 Jan 2010 03:55:33 -0500
+Content-Disposition: inline
+In-Reply-To: <1264643539.5068.62.camel@localhost.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Jim Keniston <jkenisto@us.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Linus Torvalds <torvalds@linux-foundation.org>, Tom Tromey <tromey@redhat.com>, Kyle Moffett <kyle@moffetthome.net>, "Frank Ch. Eigler" <fche@redhat.com>, Oleg Nesterov <oleg@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>
 
---Signature=_Thu__28_Jan_2010_18_52_17_+1100_J.7nCMAqxTTdcdv0
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+* Jim Keniston <jkenisto@us.ibm.com> wrote:
 
-Changes since 20100127:
+> On Wed, 2010-01-27 at 09:54 +0100, Ingo Molnar wrote:
+> ...
+> > I think the best solution for user probes (by far) is to use a simplified 
+> > in-kernel instruction emulator for the few common probes instruction. (Kprobes 
+> > already partially decodes x86 instructions to make it safe to apply 
+> > accelerated probes and there's other decoding logic in the kernel too.)
+> > 
+> > The design and practical advantages are numerous:
+> > 
+> >  - People want to probe their function prologues most of the time ...
+> >    a single INT3 there will in most cases just hit the initial stack 
+> >    allocation and that's it.
+> 
+> Yes, emulating "push %ebp" would buy us a lot of coverage for a lot of apps 
+> on x86 (but see below**). [...]
 
-The arm tree lost its conflict.
+Coverage in practice is all that matters.
 
-The vfs tree lost its build failure, but gained another so I used the
-version from next-20100125.
+Consider the fact that i get 1000 times more bugreports aided by strace, which 
+has 1000 times more overhead than even the slowest of uprobes approaches.
 
-The pci tree lost its build failure.
+This simple fact tell us that while performance matters, it is of little use 
+if good utility and a clean design is not there. (in fact sane and clean 
+design will almost automatically result in good performance too down the line, 
+but i digress.) Faster crap is still crap.
 
-The vl4-dvb tree still has its build failure for which I have applied a
-patch.
+> [...]  Even there, though, we'd have to address the page fault we'd 
+> occasionally get when extending the stack vma.
 
-The net tree still has its build failure for which I applied a merge fixup.
+Nope, in the simplest model not even page fault emulation is needed, 
+get_user()/put_user() would resolve it automatically. If you either get the 
+value with the pagefault resolved, or you get a -EFAULT.
 
-The als tree gained a build failure for which I reverted a commit.
+If you concentrate only on the common case then emulation can be _really_ 
+simple.
 
-----------------------------------------------------------------------------
+Lets compare the two cases via a drawing. Your current uprobes submission 
+does:
 
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
+ [kernel]      do probe thing     single-step trap
+               ^            |     ^              |
+               |            v     |              v
+ [user]     INT3            XOL-ins              next ins-stream
 
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
-and sparc64 defconfig. These builds also have
-CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
-CONFIG_DEBUG_INFO disabled when necessary.
+ ( add the need for serialization to make sure the whole single-step thing 
+   does not get out of sync with reality. )
 
-Below is a summary of the state of the merge.
+And emulator approach would do:
 
-We are up to 156 trees (counting Linus' and 22 trees of patches pending
-for Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
+ [kernel]      emul-demux-fastpath, do probe thing
+               ^                                 |
+               |                                 v
+ [user]     INT3                                 next ins-stream
 
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
+far simpler conceptually, and faster as well, because it's one kernel entry.
 
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
+Generally i get nervous if a piece of instrumentation cannot be expressed in 
+simple ways. _Especially_ if i consider it to concentrate on all the wrong 
+things and doesnt even break even with a far less complex scheme.
 
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+What would be the 'right things' to concentrate on? Make sure it's all all 
+around end-to-end package that is _useful to people_. As of today i have yet 
+to get a _single_ bugreport or kernel improvement requested by an application 
+writer who found out about the inefficiencies in his app using uprobes. There 
+is a gaping hole of utility here, a whole cathedral of tools written that just 
+a handful of ordinary Linux person uses. There's big disconnect and i can say 
+one thing for sure: needless complexity in the wrong places can outright 
+stiffle tools from becoming good.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+> > We could get quite good coverage (and very fast 
+> >    emulation) for the common case in not too much code - and much of that code 
+> >    we already have available. No re-trapping,
+> 
+> As previously discussed, boosting would also get rid of the single-step trap 
+> for most instructions.
 
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging fixes/fixes
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/for-linus
-Merging quilt/driver-core.current
-Merging quilt/tty.current
-Merging quilt/usb.current
-Merging quilt/staging.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging ide-curent/master
-Merging dwmw2/master
-Merging arm/devel
-Merging davinci/davinci-next
-Merging msm/for-next
-Merging omap/for-next
-Merging pxa/for-next
-Merging samsung/next-samsung
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-Merging m68knommu/for-next
-Merging microblaze/next
-Merging mips/mips-for-linux-next
-Merging parisc/next
-Merging powerpc/next
-Merging 4xx/next
-Merging 52xx-and-virtex/next
-Merging galak/next
-Merging s390/features
-Merging sh/master
-Merging sparc/master
-Merging xtensa/master
-Merging ceph/for-next
-Merging cifs/master
-Merging configfs/linux-next
-Merging ecryptfs/next
-Merging ext3/for_next
-Merging ext4/next
-Merging fatfs/master
-Merging fuse/for-next
-Merging gfs2/master
-CONFLICT (content): Merge conflict in fs/gfs2/super.c
-Merging jfs/next
-Merging logfs/master
-Merging nfs/linux-next
-Merging nfsd/nfsd-next
-Merging nilfs2/for-next
-Merging ocfs2/linux-next
-Merging squashfs/master
-Merging udf/for_next
-Merging v9fs/for-next
-CONFLICT (add/add): Merge conflict in fs/9p/cache.c
-Merging ubifs/linux-next
-Merging xfs/master
-Merging reiserfs-bkl/reiserfs/kill-bkl
-Merging vfs/for-next
-CONFLICT (content): Merge conflict in fs/gfs2/ops_inode.c
-Applying: logfs: fixup for write_inode API change
-$ git reset --hard HEAD^
-Merging refs/next/20100125/vfs
-CONFLICT (content): Merge conflict in fs/gfs2/ops_inode.c
-Applying: logfs: fixup for write_inode API change
-Merging pci/linux-next
-Merging hid/for-next
-Merging quilt/i2c
-Merging bjdooks-i2c/next-i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-Applying: V4L/DVB: using vmalloc requires include of linux/vmalloc.h
-Merging kbuild/for-next
-Merging kconfig/for-next
-Merging ide/master
-Merging libata/NEXT
-Merging infiniband/for-next
-Merging acpi/test
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/linux-next
-CONFLICT (content): Merge conflict in arch/x86/kvm/mmu.c
-CONFLICT (content): Merge conflict in arch/x86/kvm/x86.c
-Merging dlm/next
-Merging scsi/master
-Merging async_tx/next
-Merging net/master
-Applying: net: merge fixup for qlge_main
-Merging wireless/master
-Merging mtd/master
-Merging crypto/master
-Merging sound/for-next
-Merging cpufreq/next
-Merging quilt/rr
-Merging mmc/next
-Merging tmio-mmc/linux-next
-CONFLICT (content): Merge conflict in drivers/mfd/asic3.c
-CONFLICT (content): Merge conflict in drivers/mfd/t7l66xb.c
-CONFLICT (content): Merge conflict in drivers/mfd/tc6387xb.c
-CONFLICT (content): Merge conflict in drivers/mfd/tc6393xb.c
-CONFLICT (add/add): Merge conflict in drivers/mfd/tmio_core.c
-CONFLICT (content): Merge conflict in drivers/mmc/host/tmio_mmc.c
-CONFLICT (content): Merge conflict in drivers/mmc/host/tmio_mmc.h
-CONFLICT (content): Merge conflict in include/linux/mfd/tmio.h
-Merging input/next
-Merging lsm/for-next
-Merging block/for-next
-Merging quilt/device-mapper
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging voltage/for-next
-Merging security-testing/next
-Merging lblnet/master
-Merging agp/agp-next
-Merging uwb/for-upstream
-Merging watchdog/master
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-Merging audit/for-next
-Merging quilt/aoe
-Merging suspend/linux-next
-Merging bluetooth/master
-Merging fsnotify/for-next
-CONFLICT (content): Merge conflict in fs/notify/inotify/inotify_fsnotify.c
-CONFLICT (content): Merge conflict in fs/notify/inotify/inotify_user.c
-CONFLICT (content): Merge conflict in include/linux/fs.h
-CONFLICT (content): Merge conflict in include/linux/fsnotify.h
-Merging irda/for-next
-CONFLICT (content): Merge conflict in drivers/net/irda/irda-usb.c
-Merging hwlat/for-linus
-CONFLICT (content): Merge conflict in MAINTAINERS
-CONFLICT (content): Merge conflict in drivers/misc/Makefile
-Merging drbd/for-jens
-Merging catalin/for-next
-Merging alacrity/linux-next
-CONFLICT (content): Merge conflict in include/linux/Kbuild
-CONFLICT (content): Merge conflict in lib/Kconfig
-Merging i7core_edac/linux_next
-Merging devicetree/next-devicetree
-Merging spi/next-spi
-Merging limits/writable_limits
-CONFLICT (content): Merge conflict in arch/x86/ia32/ia32entry.S
-CONFLICT (content): Merge conflict in arch/x86/include/asm/unistd_32.h
-CONFLICT (content): Merge conflict in arch/x86/include/asm/unistd_64.h
-CONFLICT (content): Merge conflict in arch/x86/kernel/syscall_table_32.S
-Merging omap_dss2/for-next
-Merging als/for-next
-Merging tip/auto-latest
-Merging edac-amd/for-next
-Merging oprofile/for-next
-Merging percpu/for-next
-Applying: slab: update for percpu API change
-Merging workqueues/for-next
-Merging sfi/sfi-test
-Merging asm-generic/next
-Merging hwpoison/hwpoison
-Merging sysctl/master
-Merging quilt/driver-core
-Merging quilt/tty
-Merging quilt/usb
-Merging quilt/staging
-CONFLICT (delete/modify): drivers/staging/sm7xx/smtc2d.c deleted in quilt/s=
-taging and modified in HEAD. Version HEAD of drivers/staging/sm7xx/smtc2d.c=
- left in tree.
-CONFLICT (delete/modify): drivers/staging/sm7xx/smtc2d.h deleted in quilt/s=
-taging and modified in HEAD. Version HEAD of drivers/staging/sm7xx/smtc2d.h=
- left in tree.
-$ git rm -f drivers/staging/sm7xx/smtc2d.c drivers/staging/sm7xx/smtc2d.h
-Merging scsi-post-merge/master
-[master c136720] Revert "tsl2550: Move form i2c/chips to als and update int=
-erfaces"
+Boosting is not in the uprobes patch-set you submitted. Even with it present 
+it wont get rid of the initial INT3. So basically _best-case_ (with boosting) 
+XOL-uprobes could roughly break even with a pure emulator approach ...
 
---Signature=_Thu__28_Jan_2010_18_52_17_+1100_J.7nCMAqxTTdcdv0
-Content-Type: application/pgp-signature
+That's a big and fundamental difference.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+> > no extra instruction patching 
+> 
+> x86_64 rip-relative instructions are the only ones we alter.
+> 
+> >    and complex maintenance of trampolines.
+> > 
+> >  - It's as transparent as it gets - no user-space trampoline or other visible
+> >    state that modifies behavior or can be stomped upon by user-space bugs.
+> 
+> The XOL vma isn't writable from user space, so I can't think of how it could 
+> be clobbered merely by a stray memory reference. [...]
 
-iEYEARECAAYFAkthQjEACgkQjjKRsyhoI8ww3ACfU2z/TfilYcOu5375bKNdlER7
-GpkAoKN3k8mBe9wo1OFuBYK2qC5n8wzL
-=1C+b
------END PGP SIGNATURE-----
+Well there must be some purpose to the instrumentation, there must be some way 
+to save data, right? If yes and it's in user-space, that data is clobberable. 
+If it's in kernel-space then we have to enter the kernel anyway (with similar 
+cost patterns to an INT3 entry) - so we just delayed the kernel entry.
 
---Signature=_Thu__28_Jan_2010_18_52_17_+1100_J.7nCMAqxTTdcdv0--
+So IMHO you have designed in considerable complexity for little immediate 
+benefit.
+
+> [...]  Yes, it's a vma that the unprobed app would never have; and yes, a 
+> malicious app or kernel module could remove it or alter the protection and 
+> scribble on it.  We don't try to defend the app against such malicious 
+> attacks, but we do our best to ensure that the kernel side handles such 
+> attacks gracefully.
+> 
+> >  - Lightweight and simple probe insertion: no weird setup sequence needing the 
+> >    stopping of all tasks to install the trampoline. We just add the INT3 and 
+> >    off you go.
+> 
+> FWIW, we don't stop all threads to set up or extend the XOL vma, which is 
+> typically a one-time event.  We just grab a mutex, in case multiple threads 
+> hit previously-unhit probepoints simultaneously, and simultaneously decide 
+> that the XOL area needs to be created or extended.
+
+Still it's more complex than purely local state. Plus slower than even a naive 
+emulator approach would be able to achieve, due to single-stepping.
+
+> >  - Emulation is evidently thread-safe, SMP-safe, etc. as it only acts on
+> >    task local state.
+> 
+> The posted uprobes implementation is, so far as we can tell through code
+> inspection and testing, also thread-safe and SMP-safe.
+> 
+> > 
+> >  - The points we can probe are never truly limited as it's all freely
+> >    upscalable: if you cannot probe an instruction you want to probe today,
+> >    extend the emulator.
+> 
+> I don't see how ripping out existing support for almost* the entire 
+> instruction set, and then putting it back instruction by instruction, patch 
+> by patch, is a win.
+
+IMO it's a win because it's more controlled in what we can and cannot do 
+safely, and because it's more transparent to the probed context.
+
+But by far the most important aspect is that it should be far less code with 
+far less complexity, and hence much more graceful from an upstream POV.
+
+Gradual concepts with easy ways forwards/backwards are good. All-or-nothing 
+frameworks are bad.
+
+> Even if we add emulation, it seems sensible to keep the XOL approach as a 
+> backup to handle instructions that aren't yet emulated (and architectures 
+> that don't yet have emulators).  That way, if you don't probe any unemulated 
+> instructions, the XOL vma is never created.
+
+To turn the argument around: an in-kernel emulator is an all-around facility 
+to make sure we probe safely and securely, _and_ it is also more portable 
+because it's simpler (because more gradual) to implement on a new architecture 
+as you dont actually have to copy around instructions (and make sure they work 
+in that new place), but have to emulate a limited subset of the instruction 
+space, on purely local state.
+
+There are far less things that can go wrong in such a model.
+
+> > Deny the rest. _All_ versions of uprobes code i've
+> >    seen so far already restricts the probe-compatible instruction set:
+> 
+> *Yes, we currently decline to probe some instructions that look troublesome 
+> and we haven't taken the time to test.  These include things like privileged 
+> instructions, int*, in*/out*, and instructions that fuss with the segment 
+> registers.  We've never actually seen such instructions in user apps.
+>
+> 
+> >    RIP-relative instructions are excluded on 64-bit for example.
+> 
+> No.  As discussed in previous posts, we handle rip-relative
+> instructions.
+> 
+> > 
+> >  - Emulation has the _least_ semantical side effects as we really execute
+> >    'that' instruction -
+> 
+> It seems to me that emulation is the only approach that DOESN'T execute the 
+> probed instruction.
+
+None of the approaches executes _that_ instruction in _that_ place - the 
+instruction is either replaced by an INT3 or by a jump-to-trampoline 
+instruction.
+
+They may execute the same instruction but in another place.
+
+With an emulator (assuming the emulator is correct) we can execute the precise 
+semantics of that instruction in that place - without any side-effects from 
+trampolining/replacement.
+
+> > not some other instruction put elsewhere into a
+> >    special vma or into the process/thread stack, or some special in-kernel
+> >    trampoline, etc.
+> > 
+> >  - Emulation can be very fast for the common case as well. Nobody will probe
+> >    weird, complex instructions. They will use 'perf probe' to insert probes
+> >    into their functions 90% of the time ...
+> > 
+> >  - FPU and complex ops and pagefault emulation is not really what i'd expect
+> >    to be necessary for simple probing - but it _can_ be added by people who
+> >    care about it, if they so wish.
+> 
+> **In practice, we've had to probe all sorts of instructions, including FP 
+> instructions -- especially where you want to exploit the debug info to get 
+> the names, types, and locations of variables and args.  For some compilers 
+> and architectures, the debug info isn't reliable until the end of the 
+> function prologue, at which point you could find any old instruction.  Ditto 
+> if you want to probe statements within a function.
+
+For those cases, frankly, the right approach is to fix the debug info (or 
+introduce a new one) and forget the old crap.
+
+You treat debuginfo as some god-given property, while it's one of the suckiest 
+aspects of all of Linux. But we've had that discussion months (and years) ago. 
+It has improved in gcc 4.5 so there's some hope.
+
+> > Such a scheme would be _far_ more preferable form a maintenance POV as 
+> > well, as the initial code will be small, and we can extend it gradually. 
+> > All the other proposals are complex 'all or nothing' schemes with no 
+> > flexibility for complexity at all.
+
+I repeat this point. To be able to scale in and out of a design is rather 
+important, and i dont see that with the current XOL proposal.
+
+	Ingo
