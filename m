@@ -1,59 +1,71 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: sparc tree build warning
-Date: Thu, 28 Jan 2010 20:12:06 -0800 (PST)
-Message-ID: <20100128.201206.257650090.davem@davemloft.net>
-References: <20100128184423.40ce38fb.sfr@canb.auug.org.au>
-	<20100128.052432.251700168.davem@davemloft.net>
-	<20100129102543.7af32673.sfr@canb.auug.org.au>
+From: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
+Subject: Re: linux-next: add utrace tree
+Date: Fri, 29 Jan 2010 10:25:46 +0530
+Message-ID: <20100129045546.GA16920@in.ibm.com>
+References: <f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com> <alpine.LFD.2.00.1001232051510.3574@localhost.localdomain> <m33a1tnbd9.fsf@fleche.redhat.com> <alpine.LFD.2.00.1001251332370.3574@localhost.localdomain> <m3636oh2rt.fsf@fleche.redhat.com> <alpine.LFD.2.00.1001261535510.17519@localhost.localdomain> <1264575134.4283.1983.camel@laptop> <20100127085442.GA28422@elte.hu> <1264643539.5068.62.camel@localhost.localdomain> <20100128085502.GA7713@elte.hu>
+Reply-To: ananth@in.ibm.com
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:52691
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756659Ab0A2ELy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 28 Jan 2010 23:11:54 -0500
-In-Reply-To: <20100129102543.7af32673.sfr@canb.auug.org.au>
+Received: from e34.co.us.ibm.com ([32.97.110.152]:53978 "EHLO
+	e34.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756674Ab0A2Ezw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 28 Jan 2010 23:55:52 -0500
+Content-Disposition: inline
+In-Reply-To: <20100128085502.GA7713@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Jim Keniston <jkenisto@us.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Kyle Moffett <kyle@moffetthome.net>, Arnaldo Carvalho de Melo <acme@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Oleg Nesterov <oleg@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>, Tom Tromey <tromey@redhat.com>, "Frank Ch. Eigler" <fche@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Linus Torvalds <torvalds@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 29 Jan 2010 10:25:43 +1100
+On Thu, Jan 28, 2010 at 09:55:02AM +0100, Ingo Molnar wrote:
 
-> Hi Dave,
+...
+
+> Lets compare the two cases via a drawing. Your current uprobes submission 
+> does:
 > 
-> On Thu, 28 Jan 2010 05:24:32 -0800 (PST) David Miller <davem@davemloft.net> wrote:
->>
->> From: Stephen Rothwell <sfr@canb.auug.org.au>
->> Date: Thu, 28 Jan 2010 18:44:23 +1100
->> 
->> > I am still seeing these.  Is it my compiler version (gcc4.4.0)?
->> 
->> You can't turn on DEBUG_STRICT_USER_COPY_CHECKS and
->> expect a successful build.  It's for developers to
->> look at the errors that are generated and audit those
->> cases in detail.
+>  [kernel]      do probe thing     single-step trap
+>                ^            |     ^              |
+>                |            v     |              v
+>  [user]     INT3            XOL-ins              next ins-stream
 > 
-> These are defconfig builds and CONFIG_DEBUG_STRICT_USER_COPY_CHECKS is
-> not set in either case.
+>  ( add the need for serialization to make sure the whole single-step thing 
+>    does not get out of sync with reality. )
+> 
+> And emulator approach would do:
+> 
+>  [kernel]      emul-demux-fastpath, do probe thing
+>                ^                                 |
+>                |                                 v
+>  [user]     INT3                                 next ins-stream
+> 
+> far simpler conceptually, and faster as well, because it's one kernel entry.
 
-Simply ignore the warning then, I thought you were reporting
-a build failure.
+Ingo,
 
-> I only do an i386 defconfig build and I don't get these warnings.
+Yes, conceptually, emulation is simpler. In fact, it may even be the
+right thing to do from a housekeeping POV if gdb were enabled to use
+breakpoint assistance in the kernel. However... emulation is not
+easy. Just quoting Peter Anvin:
 
-Looking at the specific case of net/core/pktgen.c:867
+> On the more general rule of interpretation: I'm really concerned about
+> having a bunch of partially-capable x86 interpreters all over the
+> kernel.  x86 is *hard* to emulate, and it will only get harder as the
+> architecture evolves.
+>
+>       -hpa
 
-"len" is variable in the net/core/pktgen.c line that emits the
-warning
+Yes, I know you suggested we start with a small subset.
 
-Even though it is limited to "sizeof(name) - 1" via strn_len()'s
-third argument, that's a lot to expect the compiler to dig into
-and be able to conclude invariants from.
+We already have an implementation of instruction emulation in kernel for
+x86 and powerpc, but its too KVM centric. If there is a generic
+emulation layer, we would use it.
 
-Please just ignore the warnings.
+There are conflicting opinions for either case; complicated as it is,
+the XOL scheme works and, to a large extent, it is easily extendable to
+other architectures compared to the emulation approach. Uprobes can be
+made to use emulation when possible/available, but I don't think this
+should be gating decision for the initial implementation of the feature.
 
-Thanks.
+Ananth
