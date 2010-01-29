@@ -1,43 +1,47 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: linux-next: add utrace tree
-Date: Fri, 29 Jan 2010 10:53:06 +1100
-Message-ID: <1264722786.20211.15.camel@pasglop>
-References: <alpine.LFD.2.00.1001211724500.13231@localhost.localdomain>
-	 <20100122200129.GG22003@redhat.com>
-	 <alpine.LFD.2.00.1001221355250.13231@localhost.localdomain>
-	 <20100122221348.GA4263@redhat.com>
-	 <alpine.LFD.2.00.1001221604190.13231@localhost.localdomain>
-	 <alpine.LFD.2.00.1001221614520.13231@localhost.localdomain>
-	 <f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com>
-	 <20100123112333.GA15455@elte.hu> <20100123114729.GA7828@redhat.com>
-	 <20100123194820.GM21263@thunk.org>
-	 <f73f7ab81001241742t1f827ddetd958e1949787020f@mail.gmail.com>
-	 <alpine.LFD.2.00.1001250845180.3574@localhost.localdomain>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the davinci tree with the arm tree
+Date: Fri, 29 Jan 2010 11:13:42 +1100
+Message-ID: <20100129111342.203358d9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:44747 "EHLO gate.crashing.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753169Ab0A1X4k (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 28 Jan 2010 18:56:40 -0500
-In-Reply-To: <alpine.LFD.2.00.1001250845180.3574@localhost.localdomain>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kyle Moffett <kyle@moffetthome.net>, tytso@mit.edu, "Frank Ch. Eigler" <fche@redhat.com>, Ingo Molnar <mingo@elte.hu>, Oleg Nesterov <oleg@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__29_Jan_2010_11_13_42_+1100_.=Lo5Tqwm.Kh3Q6o"
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755546Ab0A2AN4@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kevin Hilman <khilman@deeprootsystems.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 2010-01-25 at 08:52 -0800, Linus Torvalds wrote:
-> 
-> That said, I also suspect that people should still look seriously at 
-> simply just improving ptrace. For example, I suspect that the biggest 
-> problem with ptrace is really just the signalling, and that creating a
-> new 
-> extension for JUST THAT, and then having a model where you can choose
-> - at 
-> PTRACE_ATTACH time - how to wait for events would be a good thing.
+--Signature=_Fri__29_Jan_2010_11_13_42_+1100_.=Lo5Tqwm.Kh3Q6o
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-like returning a fd to poll() on ? :-)
+Hi Kevin,
 
+Today's linux-next merge of the davinci tree got a conflict in
+arch/arm/mach-bcmring/core.c between commit
+dd84ce18c8f522d26aef6e9e9c05c32485b667a7 ("ARM: Consolidate
+clks_register() and similar") from the arm tree and commit
+25c692215f5dfc4992b11c4fb57538d1139d6636 ("Consolidate clks_register()
+and similar") from the davinci tree.
+
+The davinci tree version has a typo (ARRAY_SIEZ v. ARRAY_SIZE) so I used
+the arm tree version.
+--=20
 Cheers,
-Ben.
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__29_Jan_2010_11_13_42_+1100_.=Lo5Tqwm.Kh3Q6o
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAktiKDYACgkQjjKRsyhoI8wVUgCgwIk7mnhk9fqJLSo+B0YSGebG
+9S0An1gIiclShYebdgyxK7/pD3jZPWlz
+=rQqn
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__29_Jan_2010_11_13_42_+1100_.=Lo5Tqwm.Kh3Q6o--
