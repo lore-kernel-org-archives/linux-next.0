@@ -1,71 +1,67 @@
-From: Ananth N Mavinakayanahalli <ananth@in.ibm.com>
-Subject: Re: linux-next: add utrace tree
-Date: Fri, 29 Jan 2010 10:25:46 +0530
-Message-ID: <20100129045546.GA16920@in.ibm.com>
-References: <f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com> <alpine.LFD.2.00.1001232051510.3574@localhost.localdomain> <m33a1tnbd9.fsf@fleche.redhat.com> <alpine.LFD.2.00.1001251332370.3574@localhost.localdomain> <m3636oh2rt.fsf@fleche.redhat.com> <alpine.LFD.2.00.1001261535510.17519@localhost.localdomain> <1264575134.4283.1983.camel@laptop> <20100127085442.GA28422@elte.hu> <1264643539.5068.62.camel@localhost.localdomain> <20100128085502.GA7713@elte.hu>
-Reply-To: ananth@in.ibm.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: sparc tree build warning
+Date: Fri, 29 Jan 2010 17:32:20 +1100
+Message-ID: <20100129173220.abdd823d.sfr@canb.auug.org.au>
+References: <20100128184423.40ce38fb.sfr@canb.auug.org.au>
+	<20100128.052432.251700168.davem@davemloft.net>
+	<20100129102543.7af32673.sfr@canb.auug.org.au>
+	<20100128.201206.257650090.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__29_Jan_2010_17_32_20_+1100_e_oqV=GMz4WaUxDR"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e34.co.us.ibm.com ([32.97.110.152]:53978 "EHLO
-	e34.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756674Ab0A2Ezw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 28 Jan 2010 23:55:52 -0500
-Content-Disposition: inline
-In-Reply-To: <20100128085502.GA7713@elte.hu>
+Received: from chilli.pcug.org.au ([203.10.76.44]:48990 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752042Ab0A2Gc0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 29 Jan 2010 01:32:26 -0500
+In-Reply-To: <20100128.201206.257650090.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Jim Keniston <jkenisto@us.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Kyle Moffett <kyle@moffetthome.net>, Arnaldo Carvalho de Melo <acme@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Oleg Nesterov <oleg@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>, Tom Tromey <tromey@redhat.com>, "Frank Ch. Eigler" <fche@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Linus Torvalds <torvalds@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Jan 28, 2010 at 09:55:02AM +0100, Ingo Molnar wrote:
+--Signature=_Fri__29_Jan_2010_17_32_20_+1100_e_oqV=GMz4WaUxDR
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-...
+Hi Dave,
 
-> Lets compare the two cases via a drawing. Your current uprobes submission 
-> does:
-> 
->  [kernel]      do probe thing     single-step trap
->                ^            |     ^              |
->                |            v     |              v
->  [user]     INT3            XOL-ins              next ins-stream
-> 
->  ( add the need for serialization to make sure the whole single-step thing 
->    does not get out of sync with reality. )
-> 
-> And emulator approach would do:
-> 
->  [kernel]      emul-demux-fastpath, do probe thing
->                ^                                 |
->                |                                 v
->  [user]     INT3                                 next ins-stream
-> 
-> far simpler conceptually, and faster as well, because it's one kernel entry.
-
-Ingo,
-
-Yes, conceptually, emulation is simpler. In fact, it may even be the
-right thing to do from a housekeeping POV if gdb were enabled to use
-breakpoint assistance in the kernel. However... emulation is not
-easy. Just quoting Peter Anvin:
-
-> On the more general rule of interpretation: I'm really concerned about
-> having a bunch of partially-capable x86 interpreters all over the
-> kernel.  x86 is *hard* to emulate, and it will only get harder as the
-> architecture evolves.
+On Thu, 28 Jan 2010 20:12:06 -0800 (PST) David Miller <davem@davemloft.net>=
+ wrote:
 >
->       -hpa
+> Simply ignore the warning then, I thought you were reporting
+> a build failure.
 
-Yes, I know you suggested we start with a small subset.
+No worries, I just report warnings in case noone else notices them.  And
+in case they are important.
 
-We already have an implementation of instruction emulation in kernel for
-x86 and powerpc, but its too KVM centric. If there is a generic
-emulation layer, we would use it.
+> Looking at the specific case of net/core/pktgen.c:867
+>=20
+> "len" is variable in the net/core/pktgen.c line that emits the
+> warning
+>=20
+> Even though it is limited to "sizeof(name) - 1" via strn_len()'s
+> third argument, that's a lot to expect the compiler to dig into
+> and be able to conclude invariants from.
 
-There are conflicting opinions for either case; complicated as it is,
-the XOL scheme works and, to a large extent, it is easily extendable to
-other architectures compared to the emulation approach. Uprobes can be
-made to use emulation when possible/available, but I don't think this
-should be gating decision for the initial implementation of the feature.
+Yeah, indeed.  We need an intuitive compiler :-)
 
-Ananth
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__29_Jan_2010_17_32_20_+1100_e_oqV=GMz4WaUxDR
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAktigPQACgkQjjKRsyhoI8xHuQCfSnN6BPWqEAOg99839p/lypEU
+ux4An3vebG6u7geiGrQhyg92QI+Pt5xl
+=514x
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__29_Jan_2010_17_32_20_+1100_e_oqV=GMz4WaUxDR--
