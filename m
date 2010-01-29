@@ -1,80 +1,88 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: driver-core tree build warning
-Date: Fri, 29 Jan 2010 18:21:15 +1100
-Message-ID: <20100129182115.99918a0e.sfr@canb.auug.org.au>
-References: <20100119172741.2dd81553.sfr@canb.auug.org.au>
-	<20100119210417.GC10928@kroah.com>
-	<20100120104525.752a790f.sfr@canb.auug.org.au>
-	<20100120172543.e884a8af.sfr@canb.auug.org.au>
-	<20100120174441.e1b12fd7.sfr@canb.auug.org.au>
-	<20100121231010.GB29796@kroah.com>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: add utrace tree
+Date: Fri, 29 Jan 2010 08:39:07 +0100
+Message-ID: <20100129073907.GF14636@elte.hu>
+References: <alpine.LFD.2.00.1001232051510.3574@localhost.localdomain>
+ <m33a1tnbd9.fsf@fleche.redhat.com>
+ <alpine.LFD.2.00.1001251332370.3574@localhost.localdomain>
+ <m3636oh2rt.fsf@fleche.redhat.com>
+ <alpine.LFD.2.00.1001261535510.17519@localhost.localdomain>
+ <1264575134.4283.1983.camel@laptop>
+ <20100127085442.GA28422@elte.hu>
+ <1264643539.5068.62.camel@localhost.localdomain>
+ <20100128085502.GA7713@elte.hu>
+ <1264726768.4933.50.camel@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__29_Jan_2010_18_21_15_+1100_2T.xKadDqOxJl1.o"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47853 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752977Ab0A2HVU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 29 Jan 2010 02:21:20 -0500
-In-Reply-To: <20100121231010.GB29796@kroah.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <andi@firstfloor.org>
-
---Signature=_Fri__29_Jan_2010_18_21_15_+1100_2T.xKadDqOxJl1.o
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner+glk-linux-kernel-3=40m.gmane.org-S1755349Ab0A2Hjq@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1264726768.4933.50.camel@localhost.localdomain>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jim Keniston <jkenisto@us.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Linus Torvalds <torvalds@linux-foundation.org>, Tom Tromey <tromey@redhat.com>, Kyle Moffett <kyle@moffetthome.net>, "Frank Ch. Eigler" <fche@redhat.com>, Oleg Nesterov <oleg@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>
+List-Id: linux-next.vger.kernel.org
 
-Hi Greg,
 
-On Thu, 21 Jan 2010 15:10:10 -0800 Greg KH <greg@kroah.com> wrote:
->
-> Here's a patch that I just applied to my tree to hopefully resolve this
-> issue.
+* Jim Keniston <jkenisto@us.ibm.com> wrote:
 
-I still get the warnings.
+> > > As previously discussed, boosting would also get rid of the single-step 
+> > > trap for most instructions.
+> > 
+> > Boosting is not in the uprobes patch-set you submitted. Even with it 
+> > present it wont get rid of the initial INT3. So basically _best-case_ 
+> > (with boosting) XOL-uprobes could roughly break even with a pure emulator 
+> > approach ...
+> > 
+> > That's a big and fundamental difference.
+> 
+> To be fair, wrt uprobes, emulation and boosting are both in the same state: 
+> pretty well understood, but not yet implemented.
 
-> -static CLASS_ATTR(probe, S_IWUSR, NULL, cpu_probe_store);
-> -static CLASS_ATTR(release, S_IWUSR, NULL, cpu_release_store);
-> +static SYSDEV_ATTR(probe, S_IWUSR, NULL, cpu_probe_store);
+So, to sum it up: utrace XOL, which is rather complex already, needs even more 
+complexity (which is not yet implemented) than the much simpler common-case 
+emulator approach i outlined, just to break even with the performance of the 
+much simpler approach.
 
-This defines attr_probe as a "struct sysdev_attribute" whose attr element
-is a "struct attribute".
+And you've been justifying the complexity of XOL with its performance 
+advantages.
 
-> +static SYSDEV_ATTR(release, S_IWUSR, NULL, cpu_release_store);
->  #endif /* CONFIG_ARCH_CPU_PROBE_RELEASE */
-> =20
->  #else /* ... !CONFIG_HOTPLUG_CPU */
-> @@ -261,8 +261,8 @@ int __init cpu_dev_init(void)
-> =20
->  static struct sysdev_class_attribute *cpu_sysdev_class_attrs[] =3D {
->  #ifdef CONFIG_ARCH_CPU_PROBE_RELEASE
-> -	&class_attr_probe.attr,
-> -	&class_attr_release.attr,
-> +	&attr_probe.attr,
+See why i'm unimpressed by that argument?
 
-so here we are initialising a "struct sysdev_class_attribute *" with a
-"struct attribute *".  Thus the warning.
+[ Note, i'm not dismissing it entirely, the complexity of XOL _might_ be fine
+  in the future if it brings us real advantages: for example if it avoids
+  _ALL_ kernel entries.
 
-> +	&attr_release.attr,
+  That can be done too, by using the jump-probe technique in user-space. (the
+  closest anyone came to proposing this was Avi with the user-space INT3 hack
+  - but we can do better than that via the jprobes technique.) At that point
+  the advantage of having a pure user-space callback technique combined with
+  the advantages of having near full instruction coverage might tip the
+  balance. There are other complexities to handle in that case though, like 
+  buffering and more. ]
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+But right now we are nowhere near that stage, and i dont see the path towards 
+that either. So i'd much rather see something simpler and get on with these 
+IMHO unimportant performance details to the IMO much more important high level 
+interface and high level tooling details.
 
---Signature=_Fri__29_Jan_2010_18_21_15_+1100_2T.xKadDqOxJl1.o
-Content-Type: application/pgp-signature
+When we merged kprobes ~10 years ago we made the (rather bad) mistake of 
+merging a raw, opaque facility and leaving 'the rest' up to some other entity. 
+IBM kprobes hackers vanished the day the original kprobes code went upstream 
+and the high level entity never truly materialized in-kernel, for nearly a 
+decade!
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+With uprobes we should learn from that painful lesson and bring in the high 
+level users of uprobes via 'perf probe' (or any other real user) straight 
+away.
 
-iEYEARECAAYFAktijGsACgkQjjKRsyhoI8zH1wCfeqfUM2wHjY0JIo8S6YDAtt5Q
-ccQAn3BhYTckMb1H5JZD6TrVTeGbYOGz
-=9ZOD
------END PGP SIGNATURE-----
+Complexity is easy to increase when usage is increasing, it's near impossible 
+to reduce when usage is not there. (and it's rather hard to reduce even with 
+increasing usage - especially of aspects of the complexity leak out to 
+user-space ABIs - which danger XOL has written all over it.)
 
---Signature=_Fri__29_Jan_2010_18_21_15_+1100_2T.xKadDqOxJl1.o--
+So the request is simple to sum up: please reduce complexity of the initial 
+submission and increase all around utility.
+
+Thanks,
+
+	Ingo
