@@ -1,152 +1,59 @@
-From: Jim Keniston <jkenisto@us.ibm.com>
-Subject: Re: linux-next: add utrace tree
-Date: Thu, 28 Jan 2010 16:59:28 -0800
-Message-ID: <1264726768.4933.50.camel@localhost.localdomain>
-References: <alpine.LFD.2.00.1001221614520.13231@localhost.localdomain>
-	 <f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com>
-	 <alpine.LFD.2.00.1001232051510.3574@localhost.localdomain>
-	 <m33a1tnbd9.fsf@fleche.redhat.com>
-	 <alpine.LFD.2.00.1001251332370.3574@localhost.localdomain>
-	 <m3636oh2rt.fsf@fleche.redhat.com>
-	 <alpine.LFD.2.00.1001261535510.17519@localhost.localdomain>
-	 <1264575134.4283.1983.camel@laptop> <20100127085442.GA28422@elte.hu>
-	 <1264643539.5068.62.camel@localhost.localdomain>
-	 <20100128085502.GA7713@elte.hu>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: sparc tree build warning
+Date: Thu, 28 Jan 2010 20:12:06 -0800 (PST)
+Message-ID: <20100128.201206.257650090.davem@davemloft.net>
+References: <20100128184423.40ce38fb.sfr@canb.auug.org.au>
+	<20100128.052432.251700168.davem@davemloft.net>
+	<20100129102543.7af32673.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e33.co.us.ibm.com ([32.97.110.151]:46964 "EHLO
-	e33.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751393Ab0A2A7f (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 28 Jan 2010 19:59:35 -0500
-In-Reply-To: <20100128085502.GA7713@elte.hu>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:52691
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756659Ab0A2ELy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 28 Jan 2010 23:11:54 -0500
+In-Reply-To: <20100129102543.7af32673.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Peter Zijlstra <peterz@infradead.org>, Linus Torvalds <torvalds@linux-foundation.org>, Tom Tromey <tromey@redhat.com>, Kyle Moffett <kyle@moffetthome.net>, "Frank Ch. Eigler" <fche@redhat.com>, Oleg Nesterov <oleg@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>
+To: sfr@canb.auug.org.au
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 2010-01-28 at 09:55 +0100, Ingo Molnar wrote:
-> * Jim Keniston <jkenisto@us.ibm.com> wrote:
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 29 Jan 2010 10:25:43 +1100
+
+> Hi Dave,
 > 
-> > On Wed, 2010-01-27 at 09:54 +0100, Ingo Molnar wrote:
-> > ...
-> > 
-> > Yes, emulating "push %ebp" would buy us a lot of coverage for a lot of apps 
-> > on x86 (but see below**). [...]
+> On Thu, 28 Jan 2010 05:24:32 -0800 (PST) David Miller <davem@davemloft.net> wrote:
+>>
+>> From: Stephen Rothwell <sfr@canb.auug.org.au>
+>> Date: Thu, 28 Jan 2010 18:44:23 +1100
+>> 
+>> > I am still seeing these.  Is it my compiler version (gcc4.4.0)?
+>> 
+>> You can't turn on DEBUG_STRICT_USER_COPY_CHECKS and
+>> expect a successful build.  It's for developers to
+>> look at the errors that are generated and audit those
+>> cases in detail.
 > 
-...
-> 
-> > [...]  Even there, though, we'd have to address the page fault we'd 
-> > occasionally get when extending the stack vma.
-> 
-> Nope, in the simplest model not even page fault emulation is needed, 
-> get_user()/put_user() would resolve it automatically. If you either get the 
-> value with the pagefault resolved, or you get a -EFAULT.
+> These are defconfig builds and CONFIG_DEBUG_STRICT_USER_COPY_CHECKS is
+> not set in either case.
 
-get_user()/put_user() have to be done in a context where you can sleep,
-right?  Uprobes currently operates in such contexts, but there's some
-talk of moving it all to a DIE_INT3 notifier context, where it can't
-sleep.
+Simply ignore the warning then, I thought you were reporting
+a build failure.
 
-...
+> I only do an i386 defconfig build and I don't get these warnings.
 
-> 
-> > > We could get quite good coverage (and very fast 
-> > >    emulation) for the common case in not too much code - and much of that code 
-> > >    we already have available. No re-trapping,
-> > 
-> > As previously discussed, boosting would also get rid of the single-step trap 
-> > for most instructions.
-> 
-> Boosting is not in the uprobes patch-set you submitted. Even with it present 
-> it wont get rid of the initial INT3. So basically _best-case_ (with boosting) 
-> XOL-uprobes could roughly break even with a pure emulator approach ...
-> 
-> That's a big and fundamental difference.
+Looking at the specific case of net/core/pktgen.c:867
 
-To be fair, wrt uprobes, emulation and boosting are both in the same
-state: pretty well understood, but not yet implemented.
+"len" is variable in the net/core/pktgen.c line that emits the
+warning
 
-...
-> > > 
-> > >  - It's as transparent as it gets - no user-space trampoline or other visible
-> > >    state that modifies behavior or can be stomped upon by user-space bugs.
-> > 
-> > The XOL vma isn't writable from user space, so I can't think of how it could 
-> > be clobbered merely by a stray memory reference. [...]
-> 
-> Well there must be some purpose to the instrumentation, there must be some way 
-> to save data, right? If yes and it's in user-space, that data is clobberable.
+Even though it is limited to "sizeof(name) - 1" via strn_len()'s
+third argument, that's a lot to expect the compiler to dig into
+and be able to conclude invariants from.
 
-One or two others have advocated an approach (which eliminates the
-breakpoint trap) where trace data is stored in the uprobe vma, but I
-haven't.  (In such a case, "XOL vma" would be a misnomer.)  I agree that
-in such a scenario, the uprobe vma would of necessity be writable by the
-app.
-
->  
-> If it's in kernel-space then we have to enter the kernel anyway (with similar 
-> cost patterns to an INT3 entry) - so we just delayed the kernel entry.
-
-This seems to presume that you have to extract trace data from the
-kernel every time a probe is hit.  In actual practice, you're often just
-checking for unusual arg values, incrementing a counter, or some such.
-
-> 
-...
-> > Even if we add emulation, it seems sensible to keep the XOL approach as a 
-> > backup to handle instructions that aren't yet emulated (and architectures 
-> > that don't yet have emulators).  That way, if you don't probe any unemulated 
-> > instructions, the XOL vma is never created.
-> 
-> To turn the argument around: an in-kernel emulator is an all-around facility 
-> to make sure we probe safely and securely, _and_ it is also more portable 
-> because it's simpler (because more gradual) to implement on a new architecture 
-> as you dont actually have to copy around instructions (and make sure they work 
-> in that new place), but have to emulate a limited subset of the instruction 
-> space, on purely local state.
-
-I understand the desire to start small and simple and grow gradually
-from there.  We thought we were doing that.  Single-stepping out of line
-has been in use for close to a decade, maybe more; and boosting (in
-kprobes) has been around for a few years as well.  To the *probes folks,
-it feels pretty solid.
-
-> 
-...
-> 
-> With an emulator (assuming the emulator is correct) we can execute the precise 
-> semantics of that instruction in that place - without any side-effects from 
-> trampolining/replacement.
-
-And of course, our view has been that the best way to achieve the effect
-of the instruction, including all desired side-effects, is to execute
-the instruction on the CPU.
-
-...
-> > 
-> > **In practice, we've had to probe all sorts of instructions, including FP 
-> > instructions -- especially where you want to exploit the debug info to get 
-> > the names, types, and locations of variables and args.  For some compilers 
-> > and architectures, the debug info isn't reliable until the end of the 
-> > function prologue, at which point you could find any old instruction.  Ditto 
-> > if you want to probe statements within a function.
-> 
-> For those cases, frankly, the right approach is to fix the debug info (or 
-> introduce a new one) and forget the old crap.
-> 
-> You treat debuginfo as some god-given property, while it's one of the suckiest 
-> aspects of all of Linux. But we've had that discussion months (and years) ago. 
-> It has improved in gcc 4.5 so there's some hope.
-
-Yes, there seems to be considerable movement toward better debug info --
-which could make statement probing (and not just function-boundary
-probing) more and more feasible.
-
-> 
-...
-> 	Ingo
+Please just ignore the warnings.
 
 Thanks.
-Jim
