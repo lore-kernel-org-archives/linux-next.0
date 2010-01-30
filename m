@@ -1,37 +1,52 @@
-From: Russell King <rmk+lkml@arm.linux.org.uk>
-Subject: Re: linux-next: arm tree build failure
-Date: Fri, 29 Jan 2010 23:45:01 +0000
-Message-ID: <20100129234501.GA31198@flint.arm.linux.org.uk>
-References: <20100129103837.02cc865f.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the davinci tree with the arm tree
+Date: Sat, 30 Jan 2010 12:26:27 +1100
+Message-ID: <20100130122627.b1402712.sfr@canb.auug.org.au>
+References: <20100129111342.203358d9.sfr@canb.auug.org.au>
+	<87iqakpjue.fsf@deeprootsystems.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sat__30_Jan_2010_12_26_27_+1100_0ThBf5w0RDNxEq5t"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:55118 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751658Ab0A2XpZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 29 Jan 2010 18:45:25 -0500
-Content-Disposition: inline
-In-Reply-To: <20100129103837.02cc865f.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:55200 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755905Ab0A3B0d (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 29 Jan 2010 20:26:33 -0500
+In-Reply-To: <87iqakpjue.fsf@deeprootsystems.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kevin Hilman <khilman@deeprootsystems.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
 
-On Fri, Jan 29, 2010 at 10:38:37AM +1100, Stephen Rothwell wrote:
-> Hi Russell,
-> 
-> Yesterday's linux-next (next-20100128) build (arm versatile_defconfig)
-> failed like this:
-> 
-> arch/arm/mach-versatile/core.c: In function 'versatile_init':
-> arch/arm/mach-versatile/core.c:838: error: 'i' undeclared (first use in this function)
-> 
-> Looks like a bad merge (commit b7cdd38da36d61d0f42367057c9d04678644317a
-> "Merge branch 'versatile' into devel").
+--Signature=_Sat__30_Jan_2010_12_26_27_+1100_0ThBf5w0RDNxEq5t
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for catching that, now fixed.
+Hi Kevin,
 
--- 
-Russell King
- Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
- maintainer of:
+On Fri, 29 Jan 2010 15:33:29 -0800 Kevin Hilman <khilman@deeprootsystems.co=
+m> wrote:
+>
+> OK, I'll drop the one from the davinci tree.
+
+OK, thanks.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Sat__30_Jan_2010_12_26_27_+1100_0ThBf5w0RDNxEq5t
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAktjisMACgkQjjKRsyhoI8xcUwCfQO+3xuSCUHSbdE0p00wdGfzP
+B6sAoLG7se/425CnoEXCWmPR2rwzxXd0
+=cuGW
+-----END PGP SIGNATURE-----
+
+--Signature=_Sat__30_Jan_2010_12_26_27_+1100_0ThBf5w0RDNxEq5t--
