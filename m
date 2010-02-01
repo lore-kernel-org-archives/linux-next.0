@@ -1,40 +1,47 @@
-From: Trond Myklebust <trond.myklebust@fys.uio.no>
-Subject: Re: linux-next: nfs tree build failure
-Date: Mon, 01 Feb 2010 09:15:13 -0500
-Message-ID: <1265033714.2658.1.camel@localhost>
-References: <20100201183838.63439783.sfr@canb.auug.org.au>
+From: Jason Wessel <jason.wessel@windriver.com>
+Subject: Re: linux-next: manual merge of the tip tree with the kgdb tree
+Date: Mon, 01 Feb 2010 09:46:26 -0600
+Message-ID: <4B66F752.1070001@windriver.com>
+References: <20100201172952.95fe2150.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-out2.uio.no ([129.240.10.58]:50073 "EHLO mail-out2.uio.no"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753531Ab0BAOPT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 1 Feb 2010 09:15:19 -0500
-In-Reply-To: <20100201183838.63439783.sfr@canb.auug.org.au>
+Received: from mail.windriver.com ([147.11.1.11]:59682 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752371Ab0BAPrA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Feb 2010 10:47:00 -0500
+In-Reply-To: <20100201172952.95fe2150.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 2010-02-01 at 18:38 +1100, Stephen Rothwell wrote: 
-> Hi Trond,
-> 
-> Today's linux-next build (sparc defconfig) failed like this:
-> 
-> fs/nfs/write.c: In function 'nfs_wb_page':
-> fs/nfs/write.c:1478: error: implicit declaration of function 'nfs_commit_inode'
-> 
-> Caused by commit d01b3158b56e292dbb3eea711a51a1d3dbec5094 ("NFS: Simplify
-> nfs_wb_page()").  Neither CONFIG_NFS_V3 nor CONFIG_NFS_V4 is set in this
-> build.
-> 
-> I have reverted that commit for today.
+Stephen Rothwell wrote:
+> Hi all,
+>
+> Today's linux-next merge of the tip tree got a conflict in
+> arch/x86/kernel/kgdb.c between commit
+> 53a2aa296b5108e9bfdcda7f41221e721d9c7474 ("x86,hw_breakpoint,kgdb: kgdb
+> to use hw_breakpoint API") from the kgdb tree and commit
+> cc0967490c1c3824bc5b75718b6ca8a51d9f2617 ("x86, hw_breakpoints, kgdb: Fix
+> kgdb to use hw_breakpoint API") from the tip tree.
+>
+> These two commits are similar but sufficiently different to make a mess.
+> I effectively reverted the kgdb tree version and used the tip tree
+> version.  This also involved reverting the kgdb tree changes to
+> arch/x86/kernel/hw_breakpoint.c.  I hope I got it right (since I had to
+> reapply a few other kgdb changes by hand) (an x86_64 allmodconfig build
+> produces no new warnings or errors, so I have some hope).
+>
+> Someone should give me some guidance as to a way forward here, please.
+>
+>   
 
-Hi Stephen,
+What is in tip is the correct version. 
 
-Sorry. There was a 1 line change that somehow slipped out of the final
-revision of the patch. It should be fixed now.
+It is the age old time dependency of who updates whose tree first, vs
+when the linux-next merge runs.  At any rate this is already resolved.
 
-Cheers
-  Trond
+Thanks,
+Jason.
