@@ -1,35 +1,40 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: linux-next: crypto-current tree build warning
-Date: Mon, 1 Feb 2010 21:48:46 +1100
-Message-ID: <20100201104846.GA1170@gondor.apana.org.au>
-References: <20100201110709.9de06b42.sfr@canb.auug.org.au>
+From: Trond Myklebust <trond.myklebust@fys.uio.no>
+Subject: Re: linux-next: nfs tree build failure
+Date: Mon, 01 Feb 2010 09:15:13 -0500
+Message-ID: <1265033714.2658.1.camel@localhost>
+References: <20100201183838.63439783.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20100201110709.9de06b42.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-out2.uio.no ([129.240.10.58]:50073 "EHLO mail-out2.uio.no"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753531Ab0BAOPT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Feb 2010 09:15:19 -0500
+In-Reply-To: <20100201183838.63439783.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matt Mackall <mpm@selenic.com>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Feb 01, 2010 at 11:07:09AM +1100, Stephen Rothwell wrote:
-> Hi Herbert,
+On Mon, 2010-02-01 at 18:38 +1100, Stephen Rothwell wrote: 
+> Hi Trond,
 > 
-> Today's linux-next build (x86_64 allmodconfig) produced this warning:
+> Today's linux-next build (sparc defconfig) failed like this:
 > 
-> drivers/char/random.c: In function 'random_write':
-> drivers/char/random.c:1104: warning: unused variable 'inode'
+> fs/nfs/write.c: In function 'nfs_wb_page':
+> fs/nfs/write.c:1478: error: implicit declaration of function 'nfs_commit_inode'
 > 
-> Introduced by commit b9b06a1fda275559492f8b083927fde4cec641dc ("random:
-> drop weird m_time/a_time manipulation") which removed the last usage of
-> "inode".
+> Caused by commit d01b3158b56e292dbb3eea711a51a1d3dbec5094 ("NFS: Simplify
+> nfs_wb_page()").  Neither CONFIG_NFS_V3 nor CONFIG_NFS_V4 is set in this
+> build.
+> 
+> I have reverted that commit for today.
 
-I've fixed it in my tree.
+Hi Stephen,
 
-Thanks!
--- 
-Visit Openswan at http://www.openswan.org/
-Email: Herbert Xu ~{PmV>HI~} <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Sorry. There was a 1 line change that somehow slipped out of the final
+revision of the patch. It should be fixed now.
+
+Cheers
+  Trond
