@@ -1,49 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: tip tree build warning
-Date: Mon, 1 Feb 2010 18:22:04 +1100
-Message-ID: <20100201182204.cc53b339.sfr@canb.auug.org.au>
+Subject: linux-next: nfs tree build failure
+Date: Mon, 1 Feb 2010 18:38:38 +1100
+Message-ID: <20100201183838.63439783.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__1_Feb_2010_18_22_04_+1100_PqrIsUr+ZI9cf.tw"
+ boundary="Signature=_Mon__1_Feb_2010_18_38_38_+1100_zdM0q13d=PAPZGns"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52051 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58711 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754475Ab0BAHWJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 1 Feb 2010 02:22:09 -0500
+	id S1750990Ab0BAHiu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Feb 2010 02:38:50 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+To: Trond Myklebust <trond.myklebust@fys.uio.no>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__1_Feb_2010_18_22_04_+1100_PqrIsUr+ZI9cf.tw
+--Signature=_Mon__1_Feb_2010_18_38_38_+1100_zdM0q13d=PAPZGns
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Trond,
 
-Today's linux-next build (powerpc allyesconfig) produced this warning:
+Today's linux-next build (sparc defconfig) failed like this:
 
-kernel/sched.c:1636: warning: 'update_shares_locked' defined but not used
+fs/nfs/write.c: In function 'nfs_wb_page':
+fs/nfs/write.c:1478: error: implicit declaration of function 'nfs_commit_in=
+ode'
 
-Introduced by commit f492e12ef050e02bf0185b6b57874992591b9be1 ("sched:
-Remove load_balance_newidle()").
+Caused by commit d01b3158b56e292dbb3eea711a51a1d3dbec5094 ("NFS: Simplify
+nfs_wb_page()").  Neither CONFIG_NFS_V3 nor CONFIG_NFS_V4 is set in this
+build.
 
+I have reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__1_Feb_2010_18_22_04_+1100_PqrIsUr+ZI9cf.tw
+--Signature=_Mon__1_Feb_2010_18_38_38_+1100_zdM0q13d=PAPZGns
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAktmgRwACgkQjjKRsyhoI8zuBQCdEkuuo0wcoVPCxLFN8Gl/Lhp1
-bIoAn3/b/2WyiTZ95PsF5fJlfHV5EX+V
-=lcxs
+iEYEARECAAYFAktmhP4ACgkQjjKRsyhoI8w/JwCfRqvGQYNde+r+T0FYFM0zKuju
+Hj8AnjFDXgNLUAl+MrMcn/q7DacyGP58
+=eygu
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__1_Feb_2010_18_22_04_+1100_PqrIsUr+ZI9cf.tw--
+--Signature=_Mon__1_Feb_2010_18_38_38_+1100_zdM0q13d=PAPZGns--
