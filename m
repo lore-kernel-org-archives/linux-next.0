@@ -1,47 +1,53 @@
-From: Jason Wessel <jason.wessel@windriver.com>
-Subject: Re: linux-next: manual merge of the tip tree with the kgdb tree
-Date: Mon, 01 Feb 2010 09:46:26 -0600
-Message-ID: <4B66F752.1070001@windriver.com>
-References: <20100201172952.95fe2150.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next resend] ati_pcigart: fix printk format warning
+Date: Mon, 1 Feb 2010 07:54:53 -0800
+Message-ID: <20100201075453.ee715fad.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:59682 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752371Ab0BAPrA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Feb 2010 10:47:00 -0500
-In-Reply-To: <20100201172952.95fe2150.sfr@canb.auug.org.au>
+Received: from rcsinet11.oracle.com ([148.87.113.123]:48060 "EHLO
+	rcsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753157Ab0BAPze (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Feb 2010 10:55:34 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, David Airlie <airlied@linux.ie>
+Cc: lkml <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, akpm <akpm@linux-foundation.org>
 
-Stephen Rothwell wrote:
-> Hi all,
->
-> Today's linux-next merge of the tip tree got a conflict in
-> arch/x86/kernel/kgdb.c between commit
-> 53a2aa296b5108e9bfdcda7f41221e721d9c7474 ("x86,hw_breakpoint,kgdb: kgdb
-> to use hw_breakpoint API") from the kgdb tree and commit
-> cc0967490c1c3824bc5b75718b6ca8a51d9f2617 ("x86, hw_breakpoints, kgdb: Fix
-> kgdb to use hw_breakpoint API") from the tip tree.
->
-> These two commits are similar but sufficiently different to make a mess.
-> I effectively reverted the kgdb tree version and used the tip tree
-> version.  This also involved reverting the kgdb tree changes to
-> arch/x86/kernel/hw_breakpoint.c.  I hope I got it right (since I had to
-> reapply a few other kgdb changes by hand) (an x86_64 allmodconfig build
-> produces no new warnings or errors, so I have some hope).
->
-> Someone should give me some guidance as to a way forward here, please.
->
->   
+This patch is still needed in linux-next 20100201.
 
-What is in tip is the correct version. 
+Begin forwarded message:
+Date: Sun, 17 Jan 2010 15:15:40 -0800
+From: Randy Dunlap <randy.dunlap@oracle.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, David Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] ati_pcigart: fix printk format warning
 
-It is the age old time dependency of who updates whose tree first, vs
-when the linux-next merge runs.  At any rate this is already resolved.
 
-Thanks,
-Jason.
+From: Randy Dunlap <randy.dunlap@oracle.com>
+
+Fix ati_pcigart printk format warning:
+
+drivers/gpu/drm/ati_pcigart.c:115: warning: format '%Lx' expects type 'long long unsigned int', but argument 3 has type 'dma_addr_t'
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/gpu/drm/ati_pcigart.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20100111.orig/drivers/gpu/drm/ati_pcigart.c
++++ linux-next-20100111/drivers/gpu/drm/ati_pcigart.c
+@@ -113,7 +113,7 @@ int drm_ati_pcigart_init(struct drm_devi
+ 
+ 		if (pci_set_dma_mask(dev->pdev, gart_info->table_mask)) {
+ 			DRM_ERROR("fail to set dma mask to 0x%Lx\n",
+-				  gart_info->table_mask);
++				  (unsigned long long)gart_info->table_mask);
+ 			ret = 1;
+ 			goto done;
+ 		}
+
+
+---
+~Randy
