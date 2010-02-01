@@ -1,75 +1,48 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
+From: Siarhei Liakh <sliakh.lkml@gmail.com>
 Subject: Re: [PATCH V9] RO/NX protection for loadable kernel modules
-Date: Tue, 2 Feb 2010 08:19:55 +1030
-Message-ID: <201002020819.55499.rusty@rustcorp.com.au>
+Date: Mon, 1 Feb 2010 17:48:16 -0500
+Message-ID: <817ecb6f1002011448l7a9d5de4m47bd37f5e8503877@mail.gmail.com>
 References: <817ecb6f1002010829m712ffff4hfb64ff3ea236e1f1@mail.gmail.com>
+	 <201002020819.55499.rusty@rustcorp.com.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-security-module-owner@vger.kernel.org>
-In-Reply-To: <817ecb6f1002010829m712ffff4hfb64ff3ea236e1f1@mail.gmail.com>
+In-Reply-To: <201002020819.55499.rusty@rustcorp.com.au>
 Sender: linux-security-module-owner@vger.kernel.org
-To: Siarhei Liakh <sliakh.lkml@gmail.com>
+To: Rusty Russell <rusty@rustcorp.com.au>
 Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, 2 Feb 2010 02:59:41 am Siarhei Liakh wrote:
-> V9: coding style fixes
+> But not compile tested:
+[...]
+> The casts here should cause a warning.
 
-But not compile tested:
+I did compile it prior to submission and the resulting kernel boots.
+However, you are right about the warnings as they scrolled off the
+screen when I did not pay attention.
+Will fix.
 
-> +void set_page_attributes(void *start, void *end,
-> +		void (*set)(unsigned long start, int num_pages))
-> +{
-> +	unsigned long begin_pfn = PFN_DOWN((unsigned long)start);
-> +	unsigned long end_pfn = PFN_DOWN((unsigned long)end);
-> +	if (end_pfn > begin_pfn)
-> +		set(begin_pfn << PAGE_SHIFT, end_pfn - begin_pfn);
-> +}
-...
-> +	if (ro_size > 0) {
-> +		set_page_attributes((unsigned long)base,
-> +					(unsigned long)base + ro_size,
-> +					set_memory_ro);
+>> + =A0 =A0 if (total_size > text_size) {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 begin_pfn =3D PFN_UP((unsigned long)base +=
+ text_size);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 end_pfn =3D PFN_UP((unsigned long)base + t=
+otal_size);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 if (end_pfn > begin_pfn)
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 set_memory_nx(begin_pfn <<=
+ PAGE_SHIFT,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 end_pfn - begin_pfn);
+>
+> Use the helper here too?
 
-The casts here should cause a warning. 
+No, not really. The helper uses PFN_DUWN, and we need PFN_UP here.
+This is the only place where I use PFN_UP, so another helper would not
+make much sense.
 
-> +	if (total_size > text_size) {
-> +		begin_pfn = PFN_UP((unsigned long)base + text_size);
-> +		end_pfn = PFN_UP((unsigned long)base + total_size);
-> +		if (end_pfn > begin_pfn)
-> +			set_memory_nx(begin_pfn << PAGE_SHIFT,
-> +						end_pfn - begin_pfn);
-
-Use the helper here too?
-
-> +		if ((mod->module_core) && (mod->core_text_size)) {
-> +			set_page_attributes((unsigned long)mod->module_core,
-> +						(unsigned long)mod->module_core
-> +							+ mod->core_text_size,
-> +						set_memory_rw);
-> +		}
-> +		if ((mod->module_init) && (mod->init_text_size)) {
-> +			set_page_attributes((unsigned long)mod->module_init,
-> +						(unsigned long)mod->module_init
-> +							+ mod->init_text_size,
-> +						set_memory_rw);
-
-More unwanted casts...
-
-> +			set_page_attributes((unsigned long)mod->module_core,
-> +						(unsigned long)mod->module_core
-> +							+ mod->core_text_size,
-> +						set_memory_ro);
-> +		}
-> +		if ((mod->module_init) && (mod->init_text_size)) {
-> +			set_page_attributes((unsigned long)mod->module_init,
-> +						(unsigned long)mod->module_init
-> +							+ mod->init_text_size,
-> +						set_memory_ro);
-
-Here, too.
-
-Thanks,
-Rusty.
+Thanks.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-securit=
+y-module" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
