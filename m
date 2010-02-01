@@ -1,57 +1,51 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: [PATCH v8] RO/NX protection for loadable kernel modules
-Date: Mon, 1 Feb 2010 12:09:13 +1030
-Message-ID: <201002011209.13540.rusty@rustcorp.com.au>
-References: <817ecb6f1001311522q52bf4eebmb748c486dcd5ad35@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: wireless tree build warning
+Date: Mon, 1 Feb 2010 14:59:23 +1100
+Message-ID: <20100201145923.0ab9787b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-security-module-owner@vger.kernel.org>
-In-Reply-To: <817ecb6f1001311522q52bf4eebmb748c486dcd5ad35@mail.gmail.com>
-Sender: linux-security-module-owner@vger.kernel.org
-To: Siarhei Liakh <sliakh.lkml@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__1_Feb_2010_14_59_23_+1100_JYaLbXiJ7oGX8giO"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:54651 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754329Ab0BAD7g (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 31 Jan 2010 22:59:36 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hamish Guthrie <hamish.guthrie@sonycom.com>, Geoff Levand <geoffrey.levand@am.sony.com>
 
-On Mon, 1 Feb 2010 09:52:35 am Siarhei Liakh wrote:
-> +/*
-> + * Given BASE and SIZE this macro calculates the number of pages the
-> + * memory regions occupies
-> + */
-> +#define NUMBER_OF_PAGES(BASE, SIZE) ((SIZE > 0) ?		\
-> +		(PFN_DOWN((unsigned long)BASE + SIZE - 1) -	\
-> +			 PFN_DOWN((unsigned long)BASE) + 1)	\
-> +		: (0UL))
+--Signature=_Mon__1_Feb_2010_14_59_23_+1100_JYaLbXiJ7oGX8giO
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Needs more brackets around arguments, otherwise someone calling it with
-a complex expression will get very upset.
+Hi John,
 
-Or just replace with a static inline function?
+Today's linux-next build (powerpc ppc64_defconfig) produced this warning:
 
-> +		if ((mod->module_core) && (mod->core_text_size > 0)) {
+drivers/net/ps3_gelic_wireless.c: In function 'gelic_wl_start_scan':
+drivers/net/ps3_gelic_wireless.c:1452: warning: format '%d' expects type 'i=
+nt', but argument 4 has type 'size_t'
 
-The core_text_size test should be enough here.
+Introduced by commit f276586a8af410d2b79733daf52471605b6559e9
+("ps3_gelic_wireless: fix directed ssid scan").
 
-> +			begin_pfn = PFN_DOWN((unsigned long)mod->module_core);
-> +			end_pfn = PFN_DOWN((unsigned long)mod->module_core +
-> +						mod->core_text_size);
-> +			if (end_pfn > begin_pfn)
-> +				set_memory_rw(begin_pfn << PAGE_SHIFT,
-> +							end_pfn - begin_pfn);
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Much of this code might be neater if you created a helper:
+--Signature=_Mon__1_Feb_2010_14_59_23_+1100_JYaLbXiJ7oGX8giO
+Content-Type: application/pgp-signature
 
-	void set_page_attributes(void *start, void *end,
-				 void (*set)(unsigned long start, unsigned long num_pages))
-	{
-		unsigned long begin_pfn = PFN_DOWN((unsigned long)start);
-		unsigned long end_pfn = PFN_DOWN((unsigned long)end);
-		if (end_pfn > begin_pfn)
-			set(begin_pfn << PAGE_SHIFT, end_pfn - begin_pfn);
-	}
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-But these are minor: patch looks good!
+iEYEARECAAYFAktmUZsACgkQjjKRsyhoI8yRJgCfZZEWntRTcZKSX8BWefvzvtCc
+rggAn2v4kZfM0Fyi45iPz0TfQ767z14Q
+=+m4j
+-----END PGP SIGNATURE-----
 
-Thanks,
-Rusty.
+--Signature=_Mon__1_Feb_2010_14_59_23_+1100_JYaLbXiJ7oGX8giO--
