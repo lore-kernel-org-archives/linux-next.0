@@ -1,77 +1,35 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH] sched: Remove unused update_shares_locked()
-Date: Mon, 01 Feb 2010 11:13:39 +0100
-Message-ID: <1265019219.24455.128.camel@laptop>
-References: <20100201182204.cc53b339.sfr@canb.auug.org.au>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: linux-next: crypto-current tree build warning
+Date: Mon, 1 Feb 2010 21:48:46 +1100
+Message-ID: <20100201104846.GA1170@gondor.apana.org.au>
+References: <20100201110709.9de06b42.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:55306 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751011Ab0BAKNp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Feb 2010 05:13:45 -0500
-In-Reply-To: <20100201182204.cc53b339.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20100201110709.9de06b42.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matt Mackall <mpm@selenic.com>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 2010-02-01 at 18:22 +1100, Stephen Rothwell wrote:
-> Hi all,
+On Mon, Feb 01, 2010 at 11:07:09AM +1100, Stephen Rothwell wrote:
+> Hi Herbert,
 > 
-> Today's linux-next build (powerpc allyesconfig) produced this warning:
+> Today's linux-next build (x86_64 allmodconfig) produced this warning:
 > 
-> kernel/sched.c:1636: warning: 'update_shares_locked' defined but not used
+> drivers/char/random.c: In function 'random_write':
+> drivers/char/random.c:1104: warning: unused variable 'inode'
 > 
-> Introduced by commit f492e12ef050e02bf0185b6b57874992591b9be1 ("sched:
-> Remove load_balance_newidle()").
+> Introduced by commit b9b06a1fda275559492f8b083927fde4cec641dc ("random:
+> drop weird m_time/a_time manipulation") which removed the last usage of
+> "inode".
 
-Hmm, you're quite right indeed, that removed the only user of that
-function.
+I've fixed it in my tree.
 
----
-Subject: sched: Remove unused update_shares_locked()
-
-Commit f492e12ef050e02bf0185b6b57874992591b9be1 ("sched: Remove
-load_balance_newidle()") removed the only user of this function, so
-remove it too.
-
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Peter Zijlstra <a.p.zijlstra@chello.nl>
----
- kernel/sched.c |   14 --------------
- 1 files changed, 0 insertions(+), 14 deletions(-)
-
-diff --git a/kernel/sched.c b/kernel/sched.c
-index 876e7c1..b5c8b44 100644
---- a/kernel/sched.c
-+++ b/kernel/sched.c
-@@ -1633,16 +1633,6 @@ static void update_shares(struct sched_domain *sd)
- 	}
- }
- 
--static void update_shares_locked(struct rq *rq, struct sched_domain *sd)
--{
--	if (root_task_group_empty())
--		return;
--
--	raw_spin_unlock(&rq->lock);
--	update_shares(sd);
--	raw_spin_lock(&rq->lock);
--}
--
- static void update_h_load(long cpu)
- {
- 	if (root_task_group_empty())
-@@ -1657,10 +1647,6 @@ static inline void update_shares(struct sched_domain *sd)
- {
- }
- 
--static inline void update_shares_locked(struct rq *rq, struct sched_domain *sd)
--{
--}
--
- #endif
- 
- #ifdef CONFIG_PREEMPT
+Thanks!
+-- 
+Visit Openswan at http://www.openswan.org/
+Email: Herbert Xu ~{PmV>HI~} <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
