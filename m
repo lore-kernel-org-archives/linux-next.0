@@ -1,50 +1,57 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: crypto-current tree build warning
-Date: Mon, 1 Feb 2010 11:07:09 +1100
-Message-ID: <20100201110709.9de06b42.sfr@canb.auug.org.au>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: [PATCH v8] RO/NX protection for loadable kernel modules
+Date: Mon, 1 Feb 2010 12:09:13 +1030
+Message-ID: <201002011209.13540.rusty@rustcorp.com.au>
+References: <817ecb6f1001311522q52bf4eebmb748c486dcd5ad35@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__1_Feb_2010_11_07_09_+1100_Q4.BPQ=nUB.g.ZSU"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53242 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754095Ab0BAAHS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 31 Jan 2010 19:07:18 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matt Mackall <mpm@selenic.com>
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-security-module-owner@vger.kernel.org>
+In-Reply-To: <817ecb6f1001311522q52bf4eebmb748c486dcd5ad35@mail.gmail.com>
+Sender: linux-security-module-owner@vger.kernel.org
+To: Siarhei Liakh <sliakh.lkml@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__1_Feb_2010_11_07_09_+1100_Q4.BPQ=nUB.g.ZSU
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 1 Feb 2010 09:52:35 am Siarhei Liakh wrote:
+> +/*
+> + * Given BASE and SIZE this macro calculates the number of pages the
+> + * memory regions occupies
+> + */
+> +#define NUMBER_OF_PAGES(BASE, SIZE) ((SIZE > 0) ?		\
+> +		(PFN_DOWN((unsigned long)BASE + SIZE - 1) -	\
+> +			 PFN_DOWN((unsigned long)BASE) + 1)	\
+> +		: (0UL))
 
-Hi Herbert,
+Needs more brackets around arguments, otherwise someone calling it with
+a complex expression will get very upset.
 
-Today's linux-next build (x86_64 allmodconfig) produced this warning:
+Or just replace with a static inline function?
 
-drivers/char/random.c: In function 'random_write':
-drivers/char/random.c:1104: warning: unused variable 'inode'
+> +		if ((mod->module_core) && (mod->core_text_size > 0)) {
 
-Introduced by commit b9b06a1fda275559492f8b083927fde4cec641dc ("random:
-drop weird m_time/a_time manipulation") which removed the last usage of
-"inode".
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+The core_text_size test should be enough here.
 
---Signature=_Mon__1_Feb_2010_11_07_09_+1100_Q4.BPQ=nUB.g.ZSU
-Content-Type: application/pgp-signature
+> +			begin_pfn = PFN_DOWN((unsigned long)mod->module_core);
+> +			end_pfn = PFN_DOWN((unsigned long)mod->module_core +
+> +						mod->core_text_size);
+> +			if (end_pfn > begin_pfn)
+> +				set_memory_rw(begin_pfn << PAGE_SHIFT,
+> +							end_pfn - begin_pfn);
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+Much of this code might be neater if you created a helper:
 
-iEYEARECAAYFAktmGy0ACgkQjjKRsyhoI8wm/gCgohOcjPKAcx0E6tWEKbnwHoDv
-Z7UAn2cJAzV7q6VLsknyZvJx/0rznJSS
-=suIe
------END PGP SIGNATURE-----
+	void set_page_attributes(void *start, void *end,
+				 void (*set)(unsigned long start, unsigned long num_pages))
+	{
+		unsigned long begin_pfn = PFN_DOWN((unsigned long)start);
+		unsigned long end_pfn = PFN_DOWN((unsigned long)end);
+		if (end_pfn > begin_pfn)
+			set(begin_pfn << PAGE_SHIFT, end_pfn - begin_pfn);
+	}
 
---Signature=_Mon__1_Feb_2010_11_07_09_+1100_Q4.BPQ=nUB.g.ZSU--
+But these are minor: patch looks good!
+
+Thanks,
+Rusty.
