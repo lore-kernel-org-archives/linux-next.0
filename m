@@ -1,61 +1,88 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the fsnotify tree with the vfs tree
-Date: Tue, 2 Feb 2010 15:26:05 +1100
-Message-ID: <20100202152605.656c26b2.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the driver-core tree with the suspend
+ tree
+Date: Tue, 2 Feb 2010 17:01:55 +1100
+Message-ID: <20100202170155.0fa4ce45.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34426 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:60293 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754189Ab0BBE0J (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 1 Feb 2010 23:26:09 -0500
+	id S1752012Ab0BBGB6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 2 Feb 2010 01:01:58 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Eric Paris <eparis@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, "Rafael J. Wysocki" <rjw@sisk.pl>
 
-Hi Eric,
+Hi Greg,
 
-Today's linux-next merge of the fsnotify tree got a conflict in
-kernel/audit_tree.c between commit
-1a527a2c261ad15dd15d5ee7763d3afcd8c084e9 ("new helper: iterate_mounts()")
-from the vfs tree and commits 0bb4b47eebb9d06546c9beae77dc283fbb43ea35
-("audit: reimplement audit_trees using fsnotify rather than inotify")
-and 98d4301cc7c8828ea41432a62a3216212ffda250 ("fsnotify: put inode
-specific fields in an fsnotify_mark in a union") from the fsnotify tree.
+Today's linux-next merge of the driver-core tree got a conflict in
+drivers/base/power/main.c between commit
+de20f9bde404252647645f9f948c8c5de16cc51d ("PM: Asynchronous suspend and
+resume of devices") from the suspend tree and commit
+df5a0aec4591ae8a5deb67bc8cb6be3d0812abb2 ("drivers/base: Convert dev->sem
+to mutex") from the driver-core tree.
 
-I think I fixed it up (see below) and can carry the fix as necessary.
+I fixed it up (see below) and can carry the fix as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc kernel/audit_tree.c
-index 028e856,a9167f9..0000000
---- a/kernel/audit_tree.c
-+++ b/kernel/audit_tree.c
-@@@ -581,12 -594,20 +598,13 @@@ void audit_trim_trees(void
-  		if (!root_mnt)
-  			goto skip_it;
+diff --cc drivers/base/power/main.c
+index 0e26a6f,05848a9..0000000
+--- a/drivers/base/power/main.c
++++ b/drivers/base/power/main.c
+@@@ -507,11 -476,8 +507,11 @@@ static int device_resume(struct device 
+  	TRACE_DEVICE(dev);
+  	TRACE_RESUME(0);
   
- -		list_add_tail(&list, &root_mnt->mnt_list);
-  		spin_lock(&hash_lock);
-  		list_for_each_entry(node, &tree->chunks, list) {
-- 			struct inode *inode = find_chunk(node)->watch.inode;
- -			struct audit_chunk *chunk = find_chunk(node);
-+ 			/* this could be NULL if the watch is dieing else where... */
- -			struct inode *inode = chunk->mark.i.inode;
- -			struct vfsmount *mnt;
-++			struct inode *inode = find_chunk(node)->mark.i.inode;
-  			node->index |= 1U<<31;
- -			list_for_each_entry(mnt, &list, mnt_list) {
- -				if (mnt->mnt_root->d_inode == inode) {
- -					node->index &= ~(1U<<31);
- -					break;
- -				}
- -			}
- +			if (iterate_mounts(compare_root, inode, root_mnt))
- +				node->index &= ~(1U<<31);
+ +	dpm_wait(dev->parent, async);
+- 	down(&dev->sem);
++ 	mutex_lock(&dev->mutex);
+  
+ +	dev->power.status = DPM_RESUMING;
+ +
+  	if (dev->bus) {
+  		if (dev->bus->pm) {
+  			pm_dev_dbg(dev, state, "");
+@@@ -543,8 -509,7 +543,8 @@@
   		}
-  		spin_unlock(&hash_lock);
-  		trim_marked(tree);
+  	}
+   End:
+- 	up(&dev->sem);
++ 	mutex_unlock(&dev->mutex);
+ +	complete_all(&dev->power.completion);
+  
+  	TRACE_RESUME(error);
+  	return error;
+@@@ -808,12 -740,8 +808,12 @@@ static int __device_suspend(struct devi
+  {
+  	int error = 0;
+  
+ +	dpm_wait_for_children(dev, async);
+- 	down(&dev->sem);
++ 	mutex_lock(&dev->mutex);
+  
+ +	if (async_error)
+ +		goto End;
+ +
+  	if (dev->class) {
+  		if (dev->class->pm) {
+  			pm_dev_dbg(dev, state, "class ");
+@@@ -844,13 -772,8 +844,13 @@@
+  			error = legacy_suspend(dev, state, dev->bus->suspend);
+  		}
+  	}
+ +
+ +	if (!error)
+ +		dev->power.status = DPM_OFF;
+ +
+   End:
+- 	up(&dev->sem);
++ 	mutex_unlock(&dev->mutex);
+ +	complete_all(&dev->power.completion);
+  
+  	return error;
+  }
