@@ -1,35 +1,54 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the driver-core tree with the
-	suspend tree
-Date: Tue, 2 Feb 2010 07:22:53 -0800
-Message-ID: <20100202152253.GB15932@kroah.com>
-References: <20100202170155.0fa4ce45.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: usb tree build failure
+Date: Wed, 3 Feb 2010 09:33:10 +1100
+Message-ID: <20100203093310.80bc412b.sfr@canb.auug.org.au>
+References: <20100202171054.aaf86072.sfr@canb.auug.org.au>
+	<20100202135339.GA13117@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__3_Feb_2010_09_33_10_+1100_BJqfOLCS9L75GdI+"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:58111 "EHLO coco.kroah.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:60480 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756225Ab0BBPXB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 2 Feb 2010 10:23:01 -0500
-Content-Disposition: inline
-In-Reply-To: <20100202170155.0fa4ce45.sfr@canb.auug.org.au>
+	id S1756754Ab0BBWdQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 2 Feb 2010 17:33:16 -0500
+In-Reply-To: <20100202135339.GA13117@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, "Rafael J. Wysocki" <rjw@sisk.pl>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>
 
-On Tue, Feb 02, 2010 at 05:01:55PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the driver-core tree got a conflict in
-> drivers/base/power/main.c between commit
-> de20f9bde404252647645f9f948c8c5de16cc51d ("PM: Asynchronous suspend and
-> resume of devices") from the suspend tree and commit
-> df5a0aec4591ae8a5deb67bc8cb6be3d0812abb2 ("drivers/base: Convert dev->sem
-> to mutex") from the driver-core tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary.
+--Signature=_Wed__3_Feb_2010_09_33_10_+1100_BJqfOLCS9L75GdI+
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix looks fine, thanks for doing this.
+Hi Greg,
 
-greg k-h
+On Tue, 2 Feb 2010 05:53:39 -0800 Greg KH <greg@kroah.com> wrote:
+>
+> I have already removed this patch, you are correct, it looks like this
+> was only tested on ARM :(
+>=20
+> sorry for the problem, my tree is now updated.
+
+OK, thanks.  I see there has been some discussion of this on LKML as well.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__3_Feb_2010_09_33_10_+1100_BJqfOLCS9L75GdI+
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAktoqCYACgkQjjKRsyhoI8zUIwCeNlXI4k/Bmy+tWBo2oof1fVGX
+BjEAniICu6ONeFrnU3rh0A4EYdDzr3Ue
+=lqaK
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__3_Feb_2010_09_33_10_+1100_BJqfOLCS9L75GdI+--
