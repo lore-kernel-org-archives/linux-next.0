@@ -1,39 +1,36 @@
 From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: usb tree build failure
-Date: Tue, 2 Feb 2010 05:53:39 -0800
-Message-ID: <20100202135339.GA13117@kroah.com>
-References: <20100202171054.aaf86072.sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the driver-core tree with the
+	pcmcia tree
+Date: Tue, 2 Feb 2010 07:22:37 -0800
+Message-ID: <20100202152237.GA15932@kroah.com>
+References: <20100202170159.168a28e2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:45848 "EHLO coco.kroah.org"
+Received: from kroah.org ([198.145.64.141]:58107 "EHLO coco.kroah.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755943Ab0BBNxP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 2 Feb 2010 08:53:15 -0500
+	id S1756216Ab0BBPXA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 2 Feb 2010 10:23:00 -0500
 Content-Disposition: inline
-In-Reply-To: <20100202171054.aaf86072.sfr@canb.auug.org.au>
+In-Reply-To: <20100202170159.168a28e2.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dominik Brodowski <linux@dominikbrodowski.net>, Thomas Gleixner <tglx@linutronix.de>
 
-On Tue, Feb 02, 2010 at 05:10:54PM +1100, Stephen Rothwell wrote:
+On Tue, Feb 02, 2010 at 05:01:59PM +1100, Stephen Rothwell wrote:
 > Hi Greg,
 > 
-> Today's linux-next build (x86_64 allmodconfig) failed like this:
+> Today's linux-next merge of the driver-core tree got a conflict in
+> drivers/pcmcia/ds.c between commit
+> 933a838aa1aae8388438bb002fbdaf6fca519a5c ("pcmcia: make use of
+> pcmcia_dev_resume() return value") from the pcmcia tree and commit
+> df5a0aec4591ae8a5deb67bc8cb6be3d0812abb2 ("drivers/base: Convert dev->sem
+> to mutex") from the driver-core tree.
 > 
-> drivers/usb/host/isp1760-hcd.c:22:24: error: asm/memory.h: No such file or directory
-> 
-> Caused by commit 571da0df39107568bb137d928862121ddae6aad1 ("isp1760:
-> Flush the D-cache for the pipe-in transfer buffers").
-> 
-> Only arm has an asm/memory.h ... so I guess it was only tested there?
-> 
-> I reverted that patch for today ...
+> Just context changes.  I fixed it up (see below) and can carry the fix as
+> necessary.
 
-I have already removed this patch, you are correct, it looks like this
-was only tested on ARM :(
-
-sorry for the problem, my tree is now updated.
+Fix looks fine, thanks for carrying it.
 
 greg k-h
