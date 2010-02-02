@@ -1,59 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm tree with the arm-current tree
-Date: Tue, 2 Feb 2010 11:07:28 +1100
-Message-ID: <20100202110728.2ae85cfb.sfr@canb.auug.org.au>
+Subject: linux-next: sound tree build failure
+Date: Tue, 2 Feb 2010 12:47:11 +1100
+Message-ID: <20100202124711.d8cdc220.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__2_Feb_2010_12_47_11_+1100_TH9SjjbJo5rsKn2K"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40340 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:46878 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752711Ab0BBAHd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 1 Feb 2010 19:07:33 -0500
+	id S1752336Ab0BBBrV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Feb 2010 20:47:21 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Baruch Siach <baruch@tkos.co.il>, Sascha Hauer <s.hauer@pengutronix.de>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Samuel Ortiz <sameo@linux.intel.com>
 
-Hi Russell,
+--Signature=_Tue__2_Feb_2010_12_47_11_+1100_TH9SjjbJo5rsKn2K
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the arm tree got a conflict in
-arch/arm/mach-mx25/clock.c between commit
-828df43f139c7fbf0d505c7b9a666d321a0f2c25 ("mx25: properly initialize
-clocks") from the arm-current tree and commit
-dd84ce18c8f522d26aef6e9e9c05c32485b667a7 ("ARM: Consolidate clks_register
-() and similar") from the arm tree.
+Hi Takashi,
 
-I fixed it up (see below) and can carry the fix for a while.
--- 
+Today's linux-next build (x86_64 allmodconfig) failed like this:
+
+sound/soc/codecs/wm8994.c:30:35: error: linux/mfd/wm8994/core.h: No such fi=
+le or directory
+sound/soc/codecs/wm8994.c:31:40: error: linux/mfd/wm8994/registers.h: No su=
+ch file or directory
+sound/soc/codecs/wm8994.c:32:36: error: linux/mfd/wm8994/pdata.h: No such f=
+ile or directory
+sound/soc/codecs/wm8994.c:33:35: error: linux/mfd/wm8994/gpio.h: No such fi=
+le or directory
+
+And went down hill form there :-(
+
+Caused by commit 9e6e96a197a03752d39a63e4f83e0b707ccedad7 ("ASoC: Add
+WM8994 CODEC driver").  I presume that this commit depends on commits
+currently only in the mfd tree ...
+
+I have used the sound tree from next-20100201 for today.
+
+To fix this, the relevant commits from the mfd tree could be put into a
+"never to be rebased" branch (or separate git tree) and then this branch
+merged into both the sound and mfd trees.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/arm/mach-mx25/clock.c
-index 6acc88b,66916f1..0000000
---- a/arch/arm/mach-mx25/clock.c
-+++ b/arch/arm/mach-mx25/clock.c
-@@@ -216,21 -208,9 +216,18 @@@ static struct clk_lookup lookups[] = 
-  	_REGISTER_CLOCK("fec.0", NULL, fec_clk)
-  };
-  
- -int __init mx25_clocks_init(unsigned long fref)
- +int __init mx25_clocks_init(void)
-  {
-- 	int i;
-- 
-- 	for (i = 0; i < ARRAY_SIZE(lookups); i++)
-- 		clkdev_add(&lookups[i]);
-+ 	clkdev_add_table(lookups, ARRAY_SIZE(lookups));
- +
- +	/* Turn off all clocks except the ones we need to survive, namely:
- +	 * EMI, GPIO1-3 (CCM_CGCR1[18:16]), GPT1, IOMUXC (CCM_CGCR1[27]), IIM,
- +	 * SCC
- +	 */
- +	__raw_writel((1 << 19), CRM_BASE + CCM_CGCR0);
- +	__raw_writel((0xf << 16) | (3 << 26), CRM_BASE + CCM_CGCR1);
- +	__raw_writel((1 << 5), CRM_BASE + CCM_CGCR2);
- +
-  	mxc_timer_init(&gpt_clk, MX25_IO_ADDRESS(MX25_GPT1_BASE_ADDR), 54);
-  
-  	return 0;
+--Signature=_Tue__2_Feb_2010_12_47_11_+1100_TH9SjjbJo5rsKn2K
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAktnhB8ACgkQjjKRsyhoI8yIxQCeIwVzUKsnx5yXq727JqxsJlrE
+ziIAnj8kGGc2NHtI7yKlUx5QgKzlRCFC
+=R+d4
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__2_Feb_2010_12_47_11_+1100_TH9SjjbJo5rsKn2K--
