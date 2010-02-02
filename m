@@ -1,54 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: usb tree build failure
-Date: Wed, 3 Feb 2010 09:33:10 +1100
-Message-ID: <20100203093310.80bc412b.sfr@canb.auug.org.au>
-References: <20100202171054.aaf86072.sfr@canb.auug.org.au>
-	<20100202135339.GA13117@kroah.com>
+From: Andi Kleen <andi@firstfloor.org>
+Subject: Re: [PATCH v8] RO/NX protection for loadable kernel modules
+Date: Wed, 03 Feb 2010 00:05:39 +0100
+Message-ID: <873a1jdyrg.fsf@basil.nowhere.org>
+References: <817ecb6f1001311522q52bf4eebmb748c486dcd5ad35@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__3_Feb_2010_09_33_10_+1100_BJqfOLCS9L75GdI+"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60480 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756754Ab0BBWdQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 2 Feb 2010 17:33:16 -0500
-In-Reply-To: <20100202135339.GA13117@kroah.com>
+Received: from one.firstfloor.org ([213.235.205.2]:55627 "EHLO
+	one.firstfloor.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756904Ab0BBXFl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Feb 2010 18:05:41 -0500
+In-Reply-To: <817ecb6f1001311522q52bf4eebmb748c486dcd5ad35@mail.gmail.com> (Siarhei Liakh's message of "Sun, 31 Jan 2010 18:22:35 -0500")
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>
+To: Siarhei Liakh <sliakh.lkml@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, Rusty Russell <rusty@rustcorp.com.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>
 
---Signature=_Wed__3_Feb_2010_09_33_10_+1100_BJqfOLCS9L75GdI+
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Siarhei Liakh <sliakh.lkml@gmail.com> writes:
 
-Hi Greg,
+> This patch is a logical extension of the protection provided by
+> CONFIG_DEBUG_RODATA to LKMs. The protection is provided by splitting
+> module_core and module_init into three logical parts each and setting
+> appropriate page access permissions for each individual section:
 
-On Tue, 2 Feb 2010 05:53:39 -0800 Greg KH <greg@kroah.com> wrote:
->
-> I have already removed this patch, you are correct, it looks like this
-> was only tested on ARM :(
->=20
-> sorry for the problem, my tree is now updated.
+My current kernel has 52 modules loaded, most of them very small. 
+Assuming the additional alignment of the data section cost two more
+pages on average (I think that's a good assumption), that's roughly
+424KB of additional memory, plus associated runtime costs in increased
+TLB usage. 
 
-OK, thanks.  I see there has been some discussion of this on LKML as well.
+What would I get for that if I applied the patch and enabled the option? 
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+That information seems to be missing in this patch submission.
 
---Signature=_Wed__3_Feb_2010_09_33_10_+1100_BJqfOLCS9L75GdI+
-Content-Type: application/pgp-signature
+Did you find any bugs with this option?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+-Andi
 
-iEYEARECAAYFAktoqCYACgkQjjKRsyhoI8zUIwCeNlXI4k/Bmy+tWBo2oof1fVGX
-BjEAniICu6ONeFrnU3rh0A4EYdDzr3Ue
-=lqaK
------END PGP SIGNATURE-----
-
---Signature=_Wed__3_Feb_2010_09_33_10_+1100_BJqfOLCS9L75GdI+--
+-- 
+ak@linux.intel.com -- Speaking for myself only.
