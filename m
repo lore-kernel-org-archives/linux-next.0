@@ -1,64 +1,34 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: sound tree build failure
-Date: Tue, 2 Feb 2010 12:47:11 +1100
-Message-ID: <20100202124711.d8cdc220.sfr@canb.auug.org.au>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: [PATCH V10] RO/NX protection for loadable kernel modules
+Date: Tue, 2 Feb 2010 14:29:38 +1030
+Message-ID: <201002021429.38331.rusty@rustcorp.com.au>
+References: <817ecb6f1002011539g3f30416fi60c7c5222cab8f3@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__2_Feb_2010_12_47_11_+1100_TH9SjjbJo5rsKn2K"
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46878 "EHLO smtps.tip.net.au"
+Received: from ozlabs.org ([203.10.76.45]:53616 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752336Ab0BBBrV (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 1 Feb 2010 20:47:21 -0500
+	id S1753947Ab0BBD7p (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Feb 2010 22:59:45 -0500
+In-Reply-To: <817ecb6f1002011539g3f30416fi60c7c5222cab8f3@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Samuel Ortiz <sameo@linux.intel.com>
+To: Siarhei Liakh <sliakh.lkml@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>
 
---Signature=_Tue__2_Feb_2010_12_47_11_+1100_TH9SjjbJo5rsKn2K
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, 2 Feb 2010 10:09:53 am Siarhei Liakh wrote:
+> This patch is a logical extension of the protection provided by
+> CONFIG_DEBUG_RODATA to LKMs. The protection is provided by splitting
+> module_core and module_init into three logical parts each and setting
+> appropriate page access permissions for each individual section:
+> 
+>  1. Code: RO+X
+>  2. RO data: RO+NX
+>  3. RW data: RW+NX
 
-Hi Takashi,
+Thanks, applied!
 
-Today's linux-next build (x86_64 allmodconfig) failed like this:
-
-sound/soc/codecs/wm8994.c:30:35: error: linux/mfd/wm8994/core.h: No such fi=
-le or directory
-sound/soc/codecs/wm8994.c:31:40: error: linux/mfd/wm8994/registers.h: No su=
-ch file or directory
-sound/soc/codecs/wm8994.c:32:36: error: linux/mfd/wm8994/pdata.h: No such f=
-ile or directory
-sound/soc/codecs/wm8994.c:33:35: error: linux/mfd/wm8994/gpio.h: No such fi=
-le or directory
-
-And went down hill form there :-(
-
-Caused by commit 9e6e96a197a03752d39a63e4f83e0b707ccedad7 ("ASoC: Add
-WM8994 CODEC driver").  I presume that this commit depends on commits
-currently only in the mfd tree ...
-
-I have used the sound tree from next-20100201 for today.
-
-To fix this, the relevant commits from the mfd tree could be put into a
-"never to be rebased" branch (or separate git tree) and then this branch
-merged into both the sound and mfd trees.
---=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__2_Feb_2010_12_47_11_+1100_TH9SjjbJo5rsKn2K
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAktnhB8ACgkQjjKRsyhoI8yIxQCeIwVzUKsnx5yXq727JqxsJlrE
-ziIAnj8kGGc2NHtI7yKlUx5QgKzlRCFC
-=R+d4
------END PGP SIGNATURE-----
-
---Signature=_Tue__2_Feb_2010_12_47_11_+1100_TH9SjjbJo5rsKn2K--
+Rusty.
