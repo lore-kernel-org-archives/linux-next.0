@@ -1,34 +1,61 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: [PATCH V10] RO/NX protection for loadable kernel modules
-Date: Tue, 2 Feb 2010 14:29:38 +1030
-Message-ID: <201002021429.38331.rusty@rustcorp.com.au>
-References: <817ecb6f1002011539g3f30416fi60c7c5222cab8f3@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the fsnotify tree with the vfs tree
+Date: Tue, 2 Feb 2010 15:26:05 +1100
+Message-ID: <20100202152605.656c26b2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:53616 "EHLO ozlabs.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34426 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753947Ab0BBD7p (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 1 Feb 2010 22:59:45 -0500
-In-Reply-To: <817ecb6f1002011539g3f30416fi60c7c5222cab8f3@mail.gmail.com>
+	id S1754189Ab0BBE0J (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Feb 2010 23:26:09 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Siarhei Liakh <sliakh.lkml@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>
+To: Eric Paris <eparis@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
 
-On Tue, 2 Feb 2010 10:09:53 am Siarhei Liakh wrote:
-> This patch is a logical extension of the protection provided by
-> CONFIG_DEBUG_RODATA to LKMs. The protection is provided by splitting
-> module_core and module_init into three logical parts each and setting
-> appropriate page access permissions for each individual section:
-> 
->  1. Code: RO+X
->  2. RO data: RO+NX
->  3. RW data: RW+NX
+Hi Eric,
 
-Thanks, applied!
+Today's linux-next merge of the fsnotify tree got a conflict in
+kernel/audit_tree.c between commit
+1a527a2c261ad15dd15d5ee7763d3afcd8c084e9 ("new helper: iterate_mounts()")
+from the vfs tree and commits 0bb4b47eebb9d06546c9beae77dc283fbb43ea35
+("audit: reimplement audit_trees using fsnotify rather than inotify")
+and 98d4301cc7c8828ea41432a62a3216212ffda250 ("fsnotify: put inode
+specific fields in an fsnotify_mark in a union") from the fsnotify tree.
 
+I think I fixed it up (see below) and can carry the fix as necessary.
+-- 
 Cheers,
-Rusty.
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc kernel/audit_tree.c
+index 028e856,a9167f9..0000000
+--- a/kernel/audit_tree.c
++++ b/kernel/audit_tree.c
+@@@ -581,12 -594,20 +598,13 @@@ void audit_trim_trees(void
+  		if (!root_mnt)
+  			goto skip_it;
+  
+ -		list_add_tail(&list, &root_mnt->mnt_list);
+  		spin_lock(&hash_lock);
+  		list_for_each_entry(node, &tree->chunks, list) {
+- 			struct inode *inode = find_chunk(node)->watch.inode;
+ -			struct audit_chunk *chunk = find_chunk(node);
++ 			/* this could be NULL if the watch is dieing else where... */
+ -			struct inode *inode = chunk->mark.i.inode;
+ -			struct vfsmount *mnt;
+++			struct inode *inode = find_chunk(node)->mark.i.inode;
+  			node->index |= 1U<<31;
+ -			list_for_each_entry(mnt, &list, mnt_list) {
+ -				if (mnt->mnt_root->d_inode == inode) {
+ -					node->index &= ~(1U<<31);
+ -					break;
+ -				}
+ -			}
+ +			if (iterate_mounts(compare_root, inode, root_mnt))
+ +				node->index &= ~(1U<<31);
+  		}
+  		spin_unlock(&hash_lock);
+  		trim_marked(tree);
