@@ -1,301 +1,141 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for February 2
-Date: Tue, 2 Feb 2010 17:45:50 +1100
-Message-ID: <20100202174550.1d6b3f18.sfr@canb.auug.org.au>
+From: Masami Hiramatsu <mhiramat@redhat.com>
+Subject: Re: linux-next: add utrace tree
+Date: Tue, 02 Feb 2010 01:47:48 -0500
+Message-ID: <4B67CA94.7000501@redhat.com>
+References: <alpine.LFD.2.00.1001232051510.3574@localhost.localdomain>
+	<m33a1tnbd9.fsf@fleche.redhat.com>
+	<alpine.LFD.2.00.1001251332370.3574@localhost.localdomain>
+	<m3636oh2rt.fsf@fleche.redhat.com>
+	<alpine.LFD.2.00.1001261535510.17519@localhost.localdomain>
+	<1264575134.4283.1983.camel@laptop>
+	<20100127085442.GA28422@elte.hu>
+	<1264643539.5068.62.camel@localhost.localdomain>
+	<20100128085502.GA7713@elte.hu> <20100129045546.GA16920@in.ibm.com>
+	<20100129074241.GG14636@elte.hu>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__2_Feb_2010_17_45_50_+1100_MnL2pJ2cXo43WqMx"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44313 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753837Ab0BBGp4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 2 Feb 2010 01:45:56 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <utrace-devel-bounces@redhat.com>
+In-Reply-To: <20100129074241.GG14636@elte.hu>
+List-Unsubscribe: <https://www.redhat.com/mailman/options/utrace-devel>,
+	<mailto:utrace-devel-request@redhat.com?subject=unsubscribe>
+List-Archive: <https://www.redhat.com/archives/utrace-devel>
+List-Post: <mailto:utrace-devel@redhat.com>
+List-Help: <mailto:utrace-devel-request@redhat.com?subject=help>
+List-Subscribe: <https://www.redhat.com/mailman/listinfo/utrace-devel>,
+	<mailto:utrace-devel-request@redhat.com?subject=subscribe>
+Sender: utrace-devel-bounces@redhat.com
+Errors-To: utrace-devel-bounces@redhat.com
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Kyle Moffett <kyle@moffetthome.net>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Tom Tromey <tromey@redhat.com>, Oleg Nesterov <oleg@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, "Frank Ch. Eigler" <fche@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>, Linus Torvalds <torvalds@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__2_Feb_2010_17_45_50_+1100_MnL2pJ2cXo43WqMx
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ingo Molnar wrote:
+> 
+> * Ananth N Mavinakayanahalli <ananth@in.ibm.com> wrote:
+> 
+>> On Thu, Jan 28, 2010 at 09:55:02AM +0100, Ingo Molnar wrote:
+>>
+>> ...
+>>
+>>> Lets compare the two cases via a drawing. Your current uprobes submission 
+>>> does:
+>>>
+>>>  [kernel]      do probe thing     single-step trap
+>>>                ^            |     ^              |
+>>>                |            v     |              v
+>>>  [user]     INT3            XOL-ins              next ins-stream
+>>>
+>>>  ( add the need for serialization to make sure the whole single-step thing 
+>>>    does not get out of sync with reality. )
+>>>
+>>> And emulator approach would do:
+>>>
+>>>  [kernel]      emul-demux-fastpath, do probe thing
+>>>                ^                                 |
+>>>                |                                 v
+>>>  [user]     INT3                                 next ins-stream
+>>>
+>>> far simpler conceptually, and faster as well, because it's one kernel entry.
+>>
+>> Ingo,
+>>
+>> Yes, conceptually, emulation is simpler. In fact, it may even be the
+>> right thing to do from a housekeeping POV if gdb were enabled to use
+>> breakpoint assistance in the kernel. However... emulation is not
+>> easy. Just quoting Peter Anvin:
+>>
+>>> On the more general rule of interpretation: I'm really concerned about
+>>> having a bunch of partially-capable x86 interpreters all over the
+>>> kernel.  x86 is *hard* to emulate, and it will only get harder as the
+>>> architecture evolves.
+>>>
+>>>       -hpa
+> 
+> This is obviously true for a full emulator. Except for the fact that:
+> 
+>> Yes, I know you suggested we start with a small subset.
+> 
+> and for the fact that we already have emulators in the kernel.
+> 
+> Plus we _already_ need to decode instructions for safe kprobing and have the 
+> code for that upstream. So it's not like we can avoid decoding the 
+> instructions. (and emulating certain instruction patterns is really just a 
+> natural next step of a good decoder.)
+> 
+>> We already have an implementation of instruction emulation in kernel for x86 
+>> and powerpc, but its too KVM centric. If there is a generic emulation layer, 
+>> we would use it.
+> 
+> So this approach, beyond being simpler, more robust and faster than the 
+> current XOL code, would also trigger (much needed) cleanups in other parts of 
+> the kernel and would share code with other kernel subsystems.
 
-Hi all,
+Hm, ok. Indeed, we have some x86 emulator-like codes in kernel(see,
+arch/x86/mm/pf_in.*). I think it is basically good thing to re-implement
+much-better emulator for all. But I think it'll be a long step, because
+when I had tried to reuse kvm emulator for decoder, I felt that was too
+specialized for kvm, vcpu, guest virtual memory access, and so on.
 
-Changes since 20100201:
+If we could make an emulator/evaluater/decoder which can provide
+functions for those consumers, I'm not so sure it is fast enough,
+because I don't think XOL code is so slower than emulating... based on my
+experience of kprobe benchmarks, it will need ~500 cycles.
+If the emulator can be faster than that, I agreed.
 
-The arm tree gained a conflict against the arm-current tree.
+(BTW, apart from uprobes need, I think those codes should be refined
+with some well-maintainable instruction maps, like x86-opcode-map.txt :))
 
-The nfs tree lost its build failure.
 
-The sound tree gained a build failure so I used the version from
-next-20100201.
+> Dont you see the obvious advantages of that?
 
-The fsnotify tree gained a conflict against the vfs tree.
+Hmm, my another concern is if we have to make emulators for each arch,
+an XOL implementation could be much simpler than total code of that.
 
-The tip tree lost its conflict.
 
-The driver-core tree gained conflicts against the suspend and pcmcia
-trees.
+So, summarize my thought, in short term (and only for uprobe), XOL
+is better way to go. It can be reused on other archs, generic, and
+not-so-slow (and we can boost some opcodes). However, it'll not
+transparent from user space(users can see which instruction is probed),
+will reduce user space, and might have security issue(?).
 
-The usb tree gained a build failure for which I reverted a patch.
+In long term, generic x86 emulator is also another way. If we
+can make it enough generic, we don't need XOL code. However, it is
+hard and takes a time to make it so generic, and can be slower than
+XOL on some complex instructions (and also, how many instructions
+should be supported is enough for that?). Indeed, I must admit that
+implementing an emulator should be exciting for kernel hackers :)
 
-----------------------------------------------------------------------------
+Anyway, if you think we can't avoid generalizing x86 emulators
+(even without uprobes), maybe, it a good way to go.
 
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
+Thank you,
 
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
-and sparc64 defconfig. These builds also have
-CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
-CONFIG_DEBUG_INFO disabled when necessary.
+-- 
+Masami Hiramatsu
 
-Below is a summary of the state of the merge.
+Software Engineer
+Hitachi Computer Products (America), Inc.
+Software Solutions Division
 
-We are up to 156 trees (counting Linus' and 22 trees of patches pending
-for Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging fixes/fixes
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/for-linus
-Merging quilt/driver-core.current
-Merging quilt/tty.current
-Merging quilt/usb.current
-Merging quilt/staging.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging ide-curent/master
-Merging dwmw2/master
-Merging arm/devel
-CONFLICT (content): Merge conflict in arch/arm/mach-mx25/clock.c
-Merging davinci/davinci-next
-Merging msm/for-next
-Merging omap/for-next
-Merging pxa/for-next
-Merging samsung/next-samsung
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-Merging m68knommu/for-next
-Merging microblaze/next
-Merging mips/mips-for-linux-next
-Merging parisc/next
-Merging powerpc/next
-Merging 4xx/next
-Merging 52xx-and-virtex/next
-Merging galak/next
-Merging s390/features
-Merging sh/master
-Merging sparc/master
-Merging xtensa/master
-Merging ceph/for-next
-Merging cifs/master
-Merging configfs/linux-next
-Merging ecryptfs/next
-Merging ext3/for_next
-Merging ext4/next
-Merging fatfs/master
-Merging fuse/for-next
-Merging gfs2/master
-CONFLICT (content): Merge conflict in fs/gfs2/super.c
-Merging jfs/next
-Merging logfs/master
-Merging nfs/linux-next
-Applying: ceph: update for BDI_RECLAIMABLE change
-Merging nfsd/nfsd-next
-Merging nilfs2/for-next
-Merging ocfs2/linux-next
-Merging squashfs/master
-Merging udf/for_next
-Merging v9fs/for-next
-CONFLICT (add/add): Merge conflict in fs/9p/cache.c
-Merging ubifs/linux-next
-Merging xfs/master
-Merging reiserfs-bkl/reiserfs/kill-bkl
-Merging vfs/for-next
-CONFLICT (content): Merge conflict in fs/gfs2/ops_inode.c
-Applying: logfs: fixup for write_inode API change
-Merging pci/linux-next
-Merging hid/for-next
-Merging quilt/i2c
-Merging bjdooks-i2c/next-i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-Merging kbuild/for-next
-Merging kconfig/for-next
-Merging ide/master
-Merging libata/NEXT
-Merging infiniband/for-next
-Merging acpi/test
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/linux-next
-CONFLICT (content): Merge conflict in arch/x86/kvm/mmu.c
-CONFLICT (content): Merge conflict in arch/x86/kvm/x86.c
-Merging dlm/next
-Merging scsi/master
-Merging async_tx/next
-Merging net/master
-Merging wireless/master
-Merging mtd/master
-Merging crypto/master
-Merging sound/for-next
-$ git reset --hard HEAD^
-Merging refs/next/20100201/sound
-Merging cpufreq/next
-Merging quilt/rr
-Merging mmc/next
-Merging tmio-mmc/linux-next
-CONFLICT (content): Merge conflict in drivers/mfd/asic3.c
-CONFLICT (content): Merge conflict in drivers/mfd/t7l66xb.c
-CONFLICT (content): Merge conflict in drivers/mfd/tc6387xb.c
-CONFLICT (content): Merge conflict in drivers/mfd/tc6393xb.c
-CONFLICT (add/add): Merge conflict in drivers/mfd/tmio_core.c
-CONFLICT (content): Merge conflict in drivers/mmc/host/tmio_mmc.c
-CONFLICT (content): Merge conflict in drivers/mmc/host/tmio_mmc.h
-CONFLICT (content): Merge conflict in include/linux/mfd/tmio.h
-Merging input/next
-Merging lsm/for-next
-Merging block/for-next
-Merging quilt/device-mapper
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging voltage/for-next
-Merging security-testing/next
-Merging lblnet/master
-Merging agp/agp-next
-Merging uwb/for-upstream
-Merging watchdog/master
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-Merging audit/for-next
-Merging quilt/aoe
-Merging suspend/linux-next
-Merging bluetooth/master
-Merging fsnotify/for-next
-CONFLICT (content): Merge conflict in fs/notify/inotify/inotify_fsnotify.c
-CONFLICT (content): Merge conflict in fs/notify/inotify/inotify_user.c
-CONFLICT (content): Merge conflict in include/linux/fs.h
-CONFLICT (content): Merge conflict in include/linux/fsnotify.h
-CONFLICT (content): Merge conflict in kernel/audit_tree.c
-Merging irda/for-next
-CONFLICT (content): Merge conflict in drivers/net/irda/irda-usb.c
-Merging hwlat/for-linus
-CONFLICT (content): Merge conflict in MAINTAINERS
-CONFLICT (content): Merge conflict in drivers/misc/Makefile
-Merging drbd/for-jens
-Merging catalin/for-next
-Merging alacrity/linux-next
-CONFLICT (content): Merge conflict in include/linux/Kbuild
-CONFLICT (content): Merge conflict in lib/Kconfig
-Merging i7core_edac/linux_next
-Merging devicetree/next-devicetree
-Merging spi/next-spi
-Merging limits/writable_limits
-CONFLICT (content): Merge conflict in arch/x86/ia32/ia32entry.S
-CONFLICT (content): Merge conflict in arch/x86/include/asm/unistd_32.h
-CONFLICT (content): Merge conflict in arch/x86/include/asm/unistd_64.h
-CONFLICT (content): Merge conflict in arch/x86/kernel/syscall_table_32.S
-Merging omap_dss2/for-next
-Merging als/for-next
-Merging tip/auto-latest
-Merging edac-amd/for-next
-Merging oprofile/for-next
-Merging percpu/for-next
-Applying: slab: update for percpu API change
-Merging workqueues/for-next
-Merging sfi/sfi-test
-Merging asm-generic/next
-Merging hwpoison/hwpoison
-Merging sysctl/master
-Merging quilt/driver-core
-CONFLICT (content): Merge conflict in drivers/base/power/main.c
-CONFLICT (content): Merge conflict in drivers/pcmcia/ds.c
-Merging quilt/tty
-Merging quilt/usb
-Merging quilt/staging
-CONFLICT (delete/modify): drivers/staging/sm7xx/smtc2d.c deleted in quilt/s=
-taging and modified in HEAD. Version HEAD of drivers/staging/sm7xx/smtc2d.c=
- left in tree.
-CONFLICT (delete/modify): drivers/staging/sm7xx/smtc2d.h deleted in quilt/s=
-taging and modified in HEAD. Version HEAD of drivers/staging/sm7xx/smtc2d.h=
- left in tree.
-$ git rm -f drivers/staging/sm7xx/smtc2d.c drivers/staging/sm7xx/smtc2d.h
-[master b33ad85] Revert "isp1760: Flush the D-cache for the pipe-in transfe=
-r buffers"
-Merging scsi-post-merge/master
-
---Signature=_Tue__2_Feb_2010_17_45_50_+1100_MnL2pJ2cXo43WqMx
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAktnyh4ACgkQjjKRsyhoI8xCxwCfYrLWOzQvV7i9jo/eNMioLzew
-NRwAni33DYz3A6sK5+ZjH21o4NxjG0+u
-=31LV
------END PGP SIGNATURE-----
-
---Signature=_Tue__2_Feb_2010_17_45_50_+1100_MnL2pJ2cXo43WqMx--
+e-mail: mhiramat@redhat.com
