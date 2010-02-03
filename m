@@ -1,46 +1,42 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: linux-next: manual merge of the omap_dss2 tree with the omap
- tree
-Date: Wed, 3 Feb 2010 09:12:28 -0800
-Message-ID: <20100203171227.GD22747@atomide.com>
-References: <20100203152947.f4955d91.sfr@canb.auug.org.au>
- <6ed0b2681002030429t1f6b33e9r3b6ea667fffb0f6a@mail.gmail.com>
+From: Frederic Weisbecker <fweisbec@gmail.com>
+Subject: Re: linux-next: manual merge of the percpu tree with the tip tree
+Date: Wed, 3 Feb 2010 23:26:21 +0100
+Message-ID: <20100203222616.GF5068@nowhere>
+References: <20100203163822.2742bcc5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <6ed0b2681002030429t1f6b33e9r3b6ea667fffb0f6a@mail.gmail.com>
+In-Reply-To: <20100203163822.2742bcc5.sfr@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Grazvydas Ignotas <notasas@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Tomi Valkeinen <tomi.valkeinen@nokia.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Adrian Hunter <adrian.hunter@nokia.com>, linux-omap@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Xiao Guangrong <xiaoguangrong@cn.fujitsu.com>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 List-Id: linux-next.vger.kernel.org
 
-* Grazvydas Ignotas <notasas@gmail.com> [100203 04:27]:
-> hi,
+On Wed, Feb 03, 2010 at 04:38:22PM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> On Wed, Feb 3, 2010 at 6:29 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > Hi Tomi,
-> >
-> > Today's linux-next merge of the omap_dss2 tree got a conflict in
-> > arch/arm/mach-omap2/board-omap3pandora.c between commit
-> > f8b6f704105164eac7c043a48f79c4234e03e4b2 ("omap: Rename hsmmc symbols to
-> > reflect independence from twl4030") from the omap tree and commit
-> > aacb4387a1e6f3b57977375532c6d8e47fcd5652 ("OMAP: pandora: add DSS2
-> > support and related regulators") from the omap_dss2 tree.
+> Today's linux-next merge of the percpu tree got a conflict in
+> include/linux/ftrace_event.h, include/trace/ftrace.h,
+> kernel/trace/trace_kprobe.c, kernel/trace/trace_syscalls.c and
+> kernel/trace/trace_event_profile.c between commit
+> 430ad5a600a83956749307b13257c464c3826b55 ("perf: Factorize trace events
+> raw sample buffer operations") from the tip tree and commit
+> eeb721be6bc03fe37755e69ab5c3ba2fe9897fd9 ("percpu: add __percpu sparse
+> annotations to trace") from the percpu tree.
 > 
-> I've rebased my patch against linux-omap/for-next (attached). To fix
-> the conflict, Tomi can rebase his queue on linux-omap/for-next, or
-> Tony can simply take this to his queue - this has no "hard"
-> dependencies on other queued DSS2 changes, has only board file changes
-> and builds fine in linux-omap/for-next. I would prefer the second
-> option, as I plan sending more boardfile changes to linux-omap.
+> I attempted to fix them up (see below) but someone should check the
+> result carefully.  (The apparently unchanged files below used the tip
+> tree versions.)
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
 
-Thanks Stephen and Grazvydas.
 
-This sounds good to me, I've added this patch into omap for-next.
 
-Tomi can you please drop the earlier version from your branch?
+I'm not very used to review patches on patches :)
 
-Regards,
+But yeah that looks good to me.
 
-Tony
+Thanks!
