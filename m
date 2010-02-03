@@ -1,52 +1,56 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the trivial tree with the net tree
-Date: Wed, 3 Feb 2010 13:30:11 +1100
-Message-ID: <20100203133011.75aef1d3.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: driver-core tree build warning
+Date: Tue, 2 Feb 2010 18:22:47 -0800
+Message-ID: <20100203022247.GA11904@kroah.com>
+References: <20100119172741.2dd81553.sfr@canb.auug.org.au> <20100119210417.GC10928@kroah.com> <20100120104525.752a790f.sfr@canb.auug.org.au> <20100120172543.e884a8af.sfr@canb.auug.org.au> <20100120174441.e1b12fd7.sfr@canb.auug.org.au> <20100121231010.GB29796@kroah.com> <20100129182115.99918a0e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__3_Feb_2010_13_30_11_+1100_lIVWeu2jSe7VAYf5"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56350 "EHLO smtps.tip.net.au"
+Received: from kroah.org ([198.145.64.141]:55801 "EHLO coco.kroah.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753134Ab0BCCaX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 2 Feb 2010 21:30:23 -0500
+	id S1751840Ab0BCDQD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 2 Feb 2010 22:16:03 -0500
+Content-Disposition: inline
+In-Reply-To: <20100129182115.99918a0e.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lennart Sorensen <lsorense@csclub.uwaterloo.ca>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Daniel Mack <daniel@caiaq.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <andi@firstfloor.org>
 
---Signature=_Wed__3_Feb_2010_13_30_11_+1100_lIVWeu2jSe7VAYf5
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Jan 29, 2010 at 06:21:15PM +1100, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> On Thu, 21 Jan 2010 15:10:10 -0800 Greg KH <greg@kroah.com> wrote:
+> >
+> > Here's a patch that I just applied to my tree to hopefully resolve this
+> > issue.
+> 
+> I still get the warnings.
+> 
+> > -static CLASS_ATTR(probe, S_IWUSR, NULL, cpu_probe_store);
+> > -static CLASS_ATTR(release, S_IWUSR, NULL, cpu_release_store);
+> > +static SYSDEV_ATTR(probe, S_IWUSR, NULL, cpu_probe_store);
+> 
+> This defines attr_probe as a "struct sysdev_attribute" whose attr element
+> is a "struct attribute".
+> 
+> > +static SYSDEV_ATTR(release, S_IWUSR, NULL, cpu_release_store);
+> >  #endif /* CONFIG_ARCH_CPU_PROBE_RELEASE */
+> >  
+> >  #else /* ... !CONFIG_HOTPLUG_CPU */
+> > @@ -261,8 +261,8 @@ int __init cpu_dev_init(void)
+> >  
+> >  static struct sysdev_class_attribute *cpu_sysdev_class_attrs[] = {
+> >  #ifdef CONFIG_ARCH_CPU_PROBE_RELEASE
+> > -	&class_attr_probe.attr,
+> > -	&class_attr_release.attr,
+> > +	&attr_probe.attr,
+> 
+> so here we are initialising a "struct sysdev_class_attribute *" with a
+> "struct attribute *".  Thus the warning.
 
-Hi Jiri,
+Doh, sorry about that.  I've fixed it up now and pushed it out.
 
-Today's linux-next merge of the trivial tree got a conflict in
-drivers/net/ppp_generic.c between commit
-fa44a73cc766c7f3bac71a66d564e0049b800325 ("ppp_generic.c severly
-whitespace damanged by 9c705260feea6ae329bc6b6d5f6d2ef0227eda0a") from
-the net tree and commit 09e1aa00f106a476f5b90d94fc0139544bbded75
-("tree-wide: fix 'lenght' typo in comments and code") from the trivial
-tree.
+thanks,
 
-I fixed it up (by using the trivial tree version) and can carry the fix
-as necessary.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__3_Feb_2010_13_30_11_+1100_lIVWeu2jSe7VAYf5
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEUEARECAAYFAkto37MACgkQjjKRsyhoI8yWZwCWJMtR11j7PMNbRc1ldjzdmq/Z
-dQCfcjCwywcKvRPISQARfJCB+YrIetU=
-=HoeT
------END PGP SIGNATURE-----
-
---Signature=_Wed__3_Feb_2010_13_30_11_+1100_lIVWeu2jSe7VAYf5--
+greg k-h
