@@ -1,56 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of usb tree
-Date: Wed, 3 Feb 2010 16:57:26 +1100
-Message-ID: <20100203165726.e258ad58.sfr@canb.auug.org.au>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: linux-next: manual merge of the percpu tree with the net tree
+Date: Wed, 03 Feb 2010 15:20:39 +0900
+Message-ID: <4B6915B7.4080806@kernel.org>
+References: <20100203163803.820597d1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__3_Feb_2010_16_57_26_+1100_6cQjYGcH8d4riTE_"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60379 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752627Ab0BCF5b (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 3 Feb 2010 00:57:31 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Nazarewicz <m.nazarewicz@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20100203163803.820597d1.sfr@canb.auug.org.au>
+Sender: netdev-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__3_Feb_2010_16_57_26_+1100_6cQjYGcH8d4riTE_
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-Hi Greg,
+On 02/03/2010 02:38 PM, Stephen Rothwell wrote:
+> Today's linux-next merge of the percpu tree got a conflict in
+> net/ipv6/proc.c between commit 5833929cc2ad2b3064b4fac8c44e293972d240d8
+> ("net: constify MIB name tables") from the net tree and commit
+> d3f5fa4075414c7754126fbdc7c8fbd3906db7c8 ("percpu: add __percpu sparse
+> annotations to net") from the percpu tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary.
+> 
+> Maybe you guys could send Linus a simple one line patch for v2.6.33 that
+> adds
+> 
+> #define __percpu
+> 
+> to include/linux/compiler.h (unconditionally) and then farm out the
+> patches that add the __percpu annotations to other maintainers.
 
-After merging the usb tree, today's linux-next build (x86_64
-allmodconfig) produced these warnings:
+How about just adding dummy #define __percpu in each tree?  I don't
+think git will have much problem merging them.
 
-In file included from drivers/usb/gadget/mass_storage.c:64:
-drivers/usb/gadget/f_mass_storage.c: In function 'fsg_setup':
-drivers/usb/gadget/f_mass_storage.c:623: warning: comparison of distinct po=
-inter types lacks a cast
-In file included from drivers/usb/gadget/multi.c:75:
-drivers/usb/gadget/f_mass_storage.c: In function 'fsg_setup':
-drivers/usb/gadget/f_mass_storage.c:623: warning: comparison of distinct po=
-inter types lacks a cast
-
-Introduced by commit a736e2758c6390b854219e6f6bb4f9a0e3be66df ("USB:
-g_mass_storage: superfluous and missing packets fixed").
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__3_Feb_2010_16_57_26_+1100_6cQjYGcH8d4riTE_
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAktpEEYACgkQjjKRsyhoI8wzXQCfckGrlLDLEE3kDEyspMQAZ62v
-5qQAn1w0EiEEZ2YaFoNImqWJrA1xTplK
-=TQeO
------END PGP SIGNATURE-----
-
---Signature=_Wed__3_Feb_2010_16_57_26_+1100_6cQjYGcH8d4riTE_--
+-- 
+tejun
