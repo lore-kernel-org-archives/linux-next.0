@@ -1,56 +1,57 @@
-From: Greg KH <greg@kroah.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: driver-core tree build warning
-Date: Tue, 2 Feb 2010 18:22:47 -0800
-Message-ID: <20100203022247.GA11904@kroah.com>
-References: <20100119172741.2dd81553.sfr@canb.auug.org.au> <20100119210417.GC10928@kroah.com> <20100120104525.752a790f.sfr@canb.auug.org.au> <20100120172543.e884a8af.sfr@canb.auug.org.au> <20100120174441.e1b12fd7.sfr@canb.auug.org.au> <20100121231010.GB29796@kroah.com> <20100129182115.99918a0e.sfr@canb.auug.org.au>
+Date: Wed, 3 Feb 2010 14:29:05 +1100
+Message-ID: <20100203142905.9ff0083e.sfr@canb.auug.org.au>
+References: <20100119172741.2dd81553.sfr@canb.auug.org.au>
+	<20100119210417.GC10928@kroah.com>
+	<20100120104525.752a790f.sfr@canb.auug.org.au>
+	<20100120172543.e884a8af.sfr@canb.auug.org.au>
+	<20100120174441.e1b12fd7.sfr@canb.auug.org.au>
+	<20100121231010.GB29796@kroah.com>
+	<20100129182115.99918a0e.sfr@canb.auug.org.au>
+	<20100203022247.GA11904@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__3_Feb_2010_14_29_05_+1100_jO6p.qUVB99_hjw."
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:55801 "EHLO coco.kroah.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:44576 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751840Ab0BCDQD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 2 Feb 2010 22:16:03 -0500
-Content-Disposition: inline
-In-Reply-To: <20100129182115.99918a0e.sfr@canb.auug.org.au>
+	id S1750956Ab0BCD3K (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 2 Feb 2010 22:29:10 -0500
+In-Reply-To: <20100203022247.GA11904@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Greg KH <greg@kroah.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <andi@firstfloor.org>
 
-On Fri, Jan 29, 2010 at 06:21:15PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> On Thu, 21 Jan 2010 15:10:10 -0800 Greg KH <greg@kroah.com> wrote:
-> >
-> > Here's a patch that I just applied to my tree to hopefully resolve this
-> > issue.
-> 
-> I still get the warnings.
-> 
-> > -static CLASS_ATTR(probe, S_IWUSR, NULL, cpu_probe_store);
-> > -static CLASS_ATTR(release, S_IWUSR, NULL, cpu_release_store);
-> > +static SYSDEV_ATTR(probe, S_IWUSR, NULL, cpu_probe_store);
-> 
-> This defines attr_probe as a "struct sysdev_attribute" whose attr element
-> is a "struct attribute".
-> 
-> > +static SYSDEV_ATTR(release, S_IWUSR, NULL, cpu_release_store);
-> >  #endif /* CONFIG_ARCH_CPU_PROBE_RELEASE */
-> >  
-> >  #else /* ... !CONFIG_HOTPLUG_CPU */
-> > @@ -261,8 +261,8 @@ int __init cpu_dev_init(void)
-> >  
-> >  static struct sysdev_class_attribute *cpu_sysdev_class_attrs[] = {
-> >  #ifdef CONFIG_ARCH_CPU_PROBE_RELEASE
-> > -	&class_attr_probe.attr,
-> > -	&class_attr_release.attr,
-> > +	&attr_probe.attr,
-> 
-> so here we are initialising a "struct sysdev_class_attribute *" with a
-> "struct attribute *".  Thus the warning.
+--Signature=_Wed__3_Feb_2010_14_29_05_+1100_jO6p.qUVB99_hjw.
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Doh, sorry about that.  I've fixed it up now and pushed it out.
+Hi Greg,
 
-thanks,
+On Tue, 2 Feb 2010 18:22:47 -0800 Greg KH <greg@kroah.com> wrote:
+>
+> Doh, sorry about that.  I've fixed it up now and pushed it out.
 
-greg k-h
+Great, thanks.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__3_Feb_2010_14_29_05_+1100_jO6p.qUVB99_hjw.
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkto7YEACgkQjjKRsyhoI8wtKgCfSus3KabfPINnYwZZvmyDE3C+
+zvQAn1FSgrfmOo2bdo+rZssgjz+Puf1X
+=EvHs
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__3_Feb_2010_14_29_05_+1100_jO6p.qUVB99_hjw.--
