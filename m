@@ -1,95 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the omap_dss2 tree with the omap tree
-Date: Wed, 3 Feb 2010 15:29:47 +1100
-Message-ID: <20100203152947.f4955d91.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the percpu tree with the net tree
+Date: Wed, 3 Feb 2010 16:38:03 +1100
+Message-ID: <20100203163803.820597d1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-omap-owner@vger.kernel.org>
-Sender: linux-omap-owner@vger.kernel.org
-To: Tomi Valkeinen <tomi.valkeinen@nokia.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Grazvydas Ignotas <notasas@gmail.com>, Adrian Hunter <adrian.hunter@nokia.com>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Tomi,
+Hi all,
 
-Today's linux-next merge of the omap_dss2 tree got a conflict in
-arch/arm/mach-omap2/board-omap3pandora.c between commit
-f8b6f704105164eac7c043a48f79c4234e03e4b2 ("omap: Rename hsmmc symbols to
-reflect independence from twl4030") from the omap tree and commit
-aacb4387a1e6f3b57977375532c6d8e47fcd5652 ("OMAP: pandora: add DSS2
-support and related regulators") from the omap_dss2 tree.
+Today's linux-next merge of the percpu tree got a conflict in
+net/ipv6/proc.c between commit 5833929cc2ad2b3064b4fac8c44e293972d240d8
+("net: constify MIB name tables") from the net tree and commit
+d3f5fa4075414c7754126fbdc7c8fbd3906db7c8 ("percpu: add __percpu sparse
+annotations to net") from the percpu tree.
 
 I fixed it up (see below) and can carry the fix as necessary.
+
+Maybe you guys could send Linus a simple one line patch for v2.6.33 that
+adds
+
+#define __percpu
+
+to include/linux/compiler.h (unconditionally) and then farm out the
+patches that add the __percpu annotations to other maintainers.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-omap2/board-omap3pandora.c
-index 9967b5d,bd3e577..0000000
---- a/arch/arm/mach-omap2/board-omap3pandora.c
-+++ b/arch/arm/mach-omap2/board-omap3pandora.c
-@@@ -192,7 -193,62 +193,62 @@@ static struct twl4030_keypad_data pando
-  	.rep		= 1,
-  };
+diff --cc net/ipv6/proc.c
+index bfe2598,e3744d1..0000000
+--- a/net/ipv6/proc.c
++++ b/net/ipv6/proc.c
+@@@ -170,8 -170,9 +170,8 @@@ static void snmp6_seq_show_icmpv6msg(st
+  	return;
+  }
   
-+ static struct omap_dss_device pandora_lcd_device = {
-+ 	.name			= "lcd",
-+ 	.driver_name		= "tpo_td043mtea1_panel",
-+ 	.type			= OMAP_DISPLAY_TYPE_DPI,
-+ 	.phy.dpi.data_lines	= 24,
-+ 	.reset_gpio		= 157,
-+ };
-+ 
-+ static struct omap_dss_device pandora_tv_device = {
-+ 	.name			= "tv",
-+ 	.driver_name		= "venc",
-+ 	.type			= OMAP_DISPLAY_TYPE_VENC,
-+ 	.phy.venc.type		= OMAP_DSS_VENC_TYPE_SVIDEO,
-+ };
-+ 
-+ static struct omap_dss_device *pandora_dss_devices[] = {
-+ 	&pandora_lcd_device,
-+ 	&pandora_tv_device,
-+ };
-+ 
-+ static struct omap_dss_board_info pandora_dss_data = {
-+ 	.num_devices	= ARRAY_SIZE(pandora_dss_devices),
-+ 	.devices	= pandora_dss_devices,
-+ 	.default_device	= &pandora_lcd_device,
-+ };
-+ 
-+ static struct platform_device pandora_dss_device = {
-+ 	.name		= "omapdss",
-+ 	.id		= -1,
-+ 	.dev		= {
-+ 		.platform_data = &pandora_dss_data,
-+ 	},
-+ };
-+ 
-+ static struct regulator_consumer_supply pandora_vcc_lcd_supply = {
-+ 	.supply		= "vcc",
-+ 	.dev		= &pandora_lcd_device.dev,
-+ };
-+ 
-+ static struct regulator_consumer_supply pandora_vdda_dac_supply = {
-+ 	.supply		= "vdda_dac",
-+ 	.dev		= &pandora_dss_device.dev,
-+ };
-+ 
-+ static struct regulator_consumer_supply pandora_vdds_supplies[] = {
-+ 	{
-+ 		.supply		= "vdds_sdi",
-+ 		.dev		= &pandora_dss_device.dev,
-+ 	},
-+ 	{
-+ 		.supply		= "vdds_dsi",
-+ 		.dev		= &pandora_dss_device.dev,
-+ 	},
-+ };
-+ 
- -static struct twl4030_hsmmc_info omap3pandora_mmc[] = {
- +static struct omap2_hsmmc_info omap3pandora_mmc[] = {
-  	{
-  		.mmc		= 1,
-  		.wires		= 4,
+- static void snmp6_seq_show_item(struct seq_file *seq, void **mib,
+ -static inline void
+ -snmp6_seq_show_item(struct seq_file *seq, void __percpu **mib,
+ -		    struct snmp_mib *itemlist)
+++static void snmp6_seq_show_item(struct seq_file *seq, void __percpu **mib,
+ +				const struct snmp_mib *itemlist)
+  {
+  	int i;
+  	for (i=0; itemlist[i].name; i++)
