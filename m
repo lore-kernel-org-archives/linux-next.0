@@ -1,42 +1,41 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: linux-next: manual merge of the percpu tree with the tip tree
-Date: Wed, 3 Feb 2010 23:26:21 +0100
-Message-ID: <20100203222616.GF5068@nowhere>
-References: <20100203163822.2742bcc5.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] libertas/if_spi: needs linux/semaphore.h
+Date: Wed, 3 Feb 2010 15:31:07 -0800
+Message-ID: <20100203153107.28184ef0.randy.dunlap@oracle.com>
+References: <20100203172625.c9340392.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20100203163822.2742bcc5.sfr@canb.auug.org.au>
+In-Reply-To: <20100203172625.c9340392.sfr@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Xiao Guangrong <xiaoguangrong@cn.fujitsu.com>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, akpm <akpm@linux-foundation.org>, Dan Williams <dcbw@redhat.com>, Andrey Yurovsky <andrey@cozybit.com>, Colin McCabe <colin@cozybit.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-wireless@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Feb 03, 2010 at 04:38:22PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the percpu tree got a conflict in
-> include/linux/ftrace_event.h, include/trace/ftrace.h,
-> kernel/trace/trace_kprobe.c, kernel/trace/trace_syscalls.c and
-> kernel/trace/trace_event_profile.c between commit
-> 430ad5a600a83956749307b13257c464c3826b55 ("perf: Factorize trace events
-> raw sample buffer operations") from the tip tree and commit
-> eeb721be6bc03fe37755e69ab5c3ba2fe9897fd9 ("percpu: add __percpu sparse
-> annotations to trace") from the percpu tree.
-> 
-> I attempted to fix them up (see below) but someone should check the
-> result carefully.  (The apparently unchanged files below used the tip
-> tree versions.)
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
+libertas/if_spi.c needs to #include linux/semaphore.h to fix build errors:
 
+drivers/net/wireless/libertas/if_spi.c:59: error: field 'spi_ready' has incomplete type
+drivers/net/wireless/libertas/if_spi.c:60: error: field 'spi_thread_terminated' has incomplete type
+drivers/net/wireless/libertas/if_spi.c:785: error: implicit declaration of function 'down_interruptible'
+drivers/net/wireless/libertas/if_spi.c:787: error: implicit declaration of function 'up'
+drivers/net/wireless/libertas/if_spi.c:834: error: implicit declaration of function 'down'
+drivers/net/wireless/libertas/if_spi.c:943: error: implicit declaration of function 'sema_init'
 
-I'm not very used to review patches on patches :)
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/net/wireless/libertas/if_spi.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-But yeah that looks good to me.
-
-Thanks!
+--- linux-next-20100203.orig/drivers/net/wireless/libertas/if_spi.c
++++ linux-next-20100203/drivers/net/wireless/libertas/if_spi.c
+@@ -23,6 +23,7 @@
+ #include <linux/kthread.h>
+ #include <linux/list.h>
+ #include <linux/netdevice.h>
++#include <linux/semaphore.h>
+ #include <linux/spi/libertas_spi.h>
+ #include <linux/spi/spi.h>
+ 
