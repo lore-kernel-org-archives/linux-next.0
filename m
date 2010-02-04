@@ -1,40 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the trivial tree with the net tree
-Date: Thu, 04 Feb 2010 09:33:29 -0800 (PST)
-Message-ID: <20100204.093329.164097227.davem@davemloft.net>
-References: <alpine.LNX.2.00.1002041052020.15395@pobox.suse.cz>
-	<4B6AC28D.6090204@st.com>
-	<4B6AD11D.6050402@st.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] i2c: fix xiic build error
+Date: Thu, 04 Feb 2010 12:11:09 -0800
+Message-ID: <4B6B29DD.7060502@oracle.com>
+References: <20100204185736.6628ab9a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:37552
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S933594Ab0BDRdQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 4 Feb 2010 12:33:16 -0500
-In-Reply-To: <4B6AD11D.6050402@st.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: peppe.cavallaro@st.com
-Cc: jkosina@suse.cz, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, lsorense@csclub.uwaterloo.ca, netdev@vger.kernel.org, daniel@caiaq.de
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20100204185736.6628ab9a.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, khali@linux-fr.org
+List-Id: linux-next.vger.kernel.org
 
-From: Giuseppe CAVALLARO <peppe.cavallaro@st.com>
-Date: Thu, 04 Feb 2010 14:52:29 +0100
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-> -----BEGIN PGP SIGNED MESSAGE-----
-> Hash: SHA1
-> 
-> Giuseppe CAVALLARO wrote:
->> Hi Jiri,
->> 
->> The stmmac driver included in net-next has been restructured: for this
->> reason both gmac.c and mac100.c files do not exist any more.
->> 
->> Let me know if I can help on this; I mean I'm happy to apply this latest
->> changes to the stmmac in net-next and send a new patch.
-> 
-> patch attached
-> I hope it could be useful.
+Add header file to fix build error:
 
-Applied, thank you.
+drivers/i2c/busses/i2c-xiic.c:493: error: implicit declaration of function 'mdelay'
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+  drivers/i2c/busses/i2c-xiic.c |    1 +
+  1 file changed, 1 insertion(+)
+
+--- linux-next-20100204.orig/drivers/i2c/busses/i2c-xiic.c
++++ linux-next-20100204/drivers/i2c/busses/i2c-xiic.c
+@@ -31,6 +31,7 @@
+  #include <linux/module.h>
+  #include <linux/init.h>
+  #include <linux/errno.h>
++#include <linux/delay.h>
+  #include <linux/platform_device.h>
+  #include <linux/i2c.h>
+  #include <linux/interrupt.h>
