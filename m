@@ -1,46 +1,84 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the trivial tree with the net tree
-Date: Wed, 03 Feb 2010 20:04:02 -0800 (PST)
-Message-ID: <20100203.200402.17600564.davem@davemloft.net>
-References: <20100203133011.75aef1d3.sfr@canb.auug.org.au>
-	<alpine.LNX.2.00.1002031136560.15395@pobox.suse.cz>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: driver-core tree build warning
+Date: Thu, 4 Feb 2010 18:10:32 +1100
+Message-ID: <20100204181032.1b5cbfb2.sfr@canb.auug.org.au>
+References: <20100119172741.2dd81553.sfr@canb.auug.org.au>
+	<20100119210417.GC10928@kroah.com>
+	<20100120104525.752a790f.sfr@canb.auug.org.au>
+	<20100120172543.e884a8af.sfr@canb.auug.org.au>
+	<20100120174441.e1b12fd7.sfr@canb.auug.org.au>
+	<20100121231010.GB29796@kroah.com>
+	<20100129182115.99918a0e.sfr@canb.auug.org.au>
+	<20100203022247.GA11904@kroah.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__4_Feb_2010_18_10_32_+1100__/b=AmP+JDX/Lk_4"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:45718
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756772Ab0BDEDt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Feb 2010 23:03:49 -0500
-In-Reply-To: <alpine.LNX.2.00.1002031136560.15395@pobox.suse.cz>
+Received: from chilli.pcug.org.au ([203.10.76.44]:41403 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752024Ab0BDHKj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 4 Feb 2010 02:10:39 -0500
+In-Reply-To: <20100203022247.GA11904@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: jkosina@suse.cz
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, lsorense@csclub.uwaterloo.ca, netdev@vger.kernel.org, daniel@caiaq.de
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andi Kleen <andi@firstfloor.org>
 
-From: Jiri Kosina <jkosina@suse.cz>
-Date: Wed, 3 Feb 2010 11:39:47 +0100 (CET)
+--Signature=_Thu__4_Feb_2010_18_10_32_+1100__/b=AmP+JDX/Lk_4
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> I think the best thing is me dropping the net/ and drivers/net hunks of 
-> this patch and taking it through Davem's tree ... I have already dropped 
-> those hunks from my tree. Dave, the patch is below, please consider 
-> applying.
- ...
-> From: Daniel Mack <daniel@caiaq.de>
-> Subject: [PATCH] net: fix 'lenght' typo in comments and code
-> 
-> Some misspelled occurences of 'octet' and some comments were also fixed
-> as I was on it.
-> 
-> Signed-off-by: Daniel Mack <daniel@caiaq.de>
-> Cc: Jiri Kosina <trivial@kernel.org>
-> Cc: Joe Perches <joe@perches.com>
-> Cc: Junio C Hamano <gitster@pobox.com>
-> Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Hi Greg,
 
-This doesn't apply to net-next-2.6 at all:
+On Tue, 2 Feb 2010 18:22:47 -0800 Greg KH <greg@kroah.com> wrote:
+>
+> On Fri, Jan 29, 2010 at 06:21:15PM +1100, Stephen Rothwell wrote:
+> >=20
+> > > -static CLASS_ATTR(probe, S_IWUSR, NULL, cpu_probe_store);
+> > > -static CLASS_ATTR(release, S_IWUSR, NULL, cpu_release_store);
+> > > +static SYSDEV_ATTR(probe, S_IWUSR, NULL, cpu_probe_store);
+> >=20
+> > This defines attr_probe as a "struct sysdev_attribute" whose attr eleme=
+nt
+> > is a "struct attribute".
+> >=20
+> > > +static SYSDEV_ATTR(release, S_IWUSR, NULL, cpu_release_store);
+> > >  #endif /* CONFIG_ARCH_CPU_PROBE_RELEASE */
+> > > =20
+> > >  #else /* ... !CONFIG_HOTPLUG_CPU */
+> > > @@ -261,8 +261,8 @@ int __init cpu_dev_init(void)
+> > > =20
+> > >  static struct sysdev_class_attribute *cpu_sysdev_class_attrs[] =3D {
+> > >  #ifdef CONFIG_ARCH_CPU_PROBE_RELEASE
+> > > -	&class_attr_probe.attr,
+> > > -	&class_attr_release.attr,
+> > > +	&attr_probe.attr,
+> >=20
+> > so here we are initialising a "struct sysdev_class_attribute *" with a
+> > "struct attribute *".  Thus the warning.
+>=20
+> Doh, sorry about that.  I've fixed it up now and pushed it out.
 
-error: patch failed: drivers/net/ppp_generic.c:1436
-error: drivers/net/ppp_generic.c: patch does not apply
-error: drivers/net/stmmac/gmac.c: does not exist in index
-error: drivers/net/stmmac/mac100.c: does not exist in index
+Still not right :-( &attr_probe and &attr_release are "struct
+sysdev_attribute *" after this patch, but are being assigned to "struct
+sysdev_class_attribute *" ...
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__4_Feb_2010_18_10_32_+1100__/b=AmP+JDX/Lk_4
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAktqcugACgkQjjKRsyhoI8yR/QCgqDvuA6z5ZgPWLOZBODKo45li
+4EYAnR3JV+qaTJijerd/UJrfcEHWPlNw
+=UGfJ
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__4_Feb_2010_18_10_32_+1100__/b=AmP+JDX/Lk_4--
