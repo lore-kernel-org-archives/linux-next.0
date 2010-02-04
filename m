@@ -1,39 +1,50 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] pci hotplug: fix ibmphp build error
-Date: Thu, 04 Feb 2010 12:12:23 -0800
-Message-ID: <4B6B2A27.9070600@oracle.com>
-References: <20100204185736.6628ab9a.sfr@canb.auug.org.au>
+From: Dan Williams <dcbw@redhat.com>
+Subject: Re: [PATCH -next] libertas/if_spi: needs linux/semaphore.h
+Date: Thu, 04 Feb 2010 13:52:57 -0800
+Message-ID: <1265320377.4290.7.camel@localhost.localdomain>
+References: <20100203172625.c9340392.sfr@canb.auug.org.au>
+	 <20100203153107.28184ef0.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <20100204185736.6628ab9a.sfr@canb.auug.org.au>
-Sender: linux-pci-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jesse Barnes <jbarnes@virtuousgeek.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:29769 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753413Ab0BDVx2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 4 Feb 2010 16:53:28 -0500
+In-Reply-To: <20100203153107.28184ef0.randy.dunlap@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, akpm <akpm@linux-foundation.org>, Andrey Yurovsky <andrey@cozybit.com>, Colin McCabe <colin@cozybit.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-wireless@vger.kernel.org
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+On Wed, 2010-02-03 at 15:31 -0800, Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> libertas/if_spi.c needs to #include linux/semaphore.h to fix build errors:
+> 
+> drivers/net/wireless/libertas/if_spi.c:59: error: field 'spi_ready' has incomplete type
+> drivers/net/wireless/libertas/if_spi.c:60: error: field 'spi_thread_terminated' has incomplete type
+> drivers/net/wireless/libertas/if_spi.c:785: error: implicit declaration of function 'down_interruptible'
+> drivers/net/wireless/libertas/if_spi.c:787: error: implicit declaration of function 'up'
+> drivers/net/wireless/libertas/if_spi.c:834: error: implicit declaration of function 'down'
+> drivers/net/wireless/libertas/if_spi.c:943: error: implicit declaration of function 'sema_init'
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 
-Add header file to fix build error:
+Acked-by: Dan Williams <dcbw@redhat.com>
 
-drivers/pci/hotplug/ibmphp_hpc.c:135: error: implicit declaration of function 'init_MUTEX'
-drivers/pci/hotplug/ibmphp_hpc.c:136: error: implicit declaration of function 'init_MUTEX_LOCKED'
-drivers/pci/hotplug/ibmphp_hpc.c:797: error: implicit declaration of function 'down'
-drivers/pci/hotplug/ibmphp_hpc.c:807: error: implicit declaration of function 'up'
-
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
-  drivers/pci/hotplug/ibmphp_hpc.c |    1 +
-  1 file changed, 1 insertion(+)
-
---- linux-next-20100204.orig/drivers/pci/hotplug/ibmphp_hpc.c
-+++ linux-next-20100204/drivers/pci/hotplug/ibmphp_hpc.c
-@@ -35,6 +35,7 @@
-  #include <linux/init.h>
-  #include <linux/mutex.h>
-  #include <linux/sched.h>
-+#include <linux/semaphore.h>
-  #include <linux/kthread.h>
-  #include "ibmphp.h"
-  
+> ---
+>  drivers/net/wireless/libertas/if_spi.c |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> --- linux-next-20100203.orig/drivers/net/wireless/libertas/if_spi.c
+> +++ linux-next-20100203/drivers/net/wireless/libertas/if_spi.c
+> @@ -23,6 +23,7 @@
+>  #include <linux/kthread.h>
+>  #include <linux/list.h>
+>  #include <linux/netdevice.h>
+> +#include <linux/semaphore.h>
+>  #include <linux/spi/libertas_spi.h>
+>  #include <linux/spi/spi.h>
+>  
