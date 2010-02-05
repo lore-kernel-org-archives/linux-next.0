@@ -1,92 +1,49 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: upcoming percpu changes
-Date: Fri, 5 Feb 2010 16:16:48 +1100
-Message-ID: <20100205161648.086375b9.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net tree
+Date: Fri, 5 Feb 2010 16:50:59 +1100
+Message-ID: <20100205165059.0b5d5363.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__5_Feb_2010_16_16_48_+1100_8K0PUPa9no.xJJ6a"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>
+ boundary="Signature=_Fri__5_Feb_2010_16_50_59_+1100_b8V.lbLiILDVfOYJ"
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nick Nunley <nicholasx.d.nunley@intel.com>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__5_Feb_2010_16_16_48_+1100_8K0PUPa9no.xJJ6a
+--Signature=_Fri__5_Feb_2010_16_50_59_+1100_b8V.lbLiILDVfOYJ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+Hi Dave,
 
-The percpu tree currently in linux-next
-(git://git.kernel.org/pub/scm/linux/kernel/git/tj/percpu.git#for-next)
-contains a patch to remove the "per_cpu_" prefix from percpu variables
-followed by  a set of patches to annotate all the percpu variables (and
-accessing variables) with a __percpu tag to put them into a separate
-sparse name space.  These latter patches are causing some merge conflicts
-with a couple of trees (and will most likely cause more before the merge
-window).  A solution to this is for you to accept the patch below into
-your tree now and then the annotating patches can be sent to the
-respective maintainers directly.
+After merging the scsi-post-merge tree, today's linux-next build (powerpc
+allyesconfig and i386 defconfig) failed like this:
 
-Of course, this assumes that you will accept the percpu changes during
-the next merge window (and they are not completely without controversy)
-and the proponents actually submit them :-).
+drivers/net/e1000e/built-in.o: In function `e1000_has_link':
+(.opd+0x1d58): multiple definition of `e1000_has_link'
+drivers/net/e1000/built-in.o:(.opd+0x588): first defined here
 
-What do you think?
+Caused by commit b548192acaebcb05d6a87d1e94f19835b1a18a8b ("e1000: Report
+link status in ethtool when interface is down").
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 5 Feb 2010 16:09:11 +1100
-Subject: [PATCH] percpu: add __percpu for sparse
-
-This is to make the annotation of percpu variables during the next merge
-window less painfull.
-
-Extracted from a patch by Rusty Russell.
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- include/linux/compiler.h |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
-
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index 5be3dab..188fcae 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -15,6 +15,7 @@
- # define __acquire(x)	__context__(x,1)
- # define __release(x)	__context__(x,-1)
- # define __cond_lock(x,c)	((c) ? ({ __acquire(x); 1; }) : 0)
-+# define __percpu	__attribute__((noderef, address_space(3)))
- extern void __chk_user_ptr(const volatile void __user *);
- extern void __chk_io_ptr(const volatile void __iomem *);
- #else
-@@ -32,6 +33,7 @@ extern void __chk_io_ptr(const volatile void __iomem *);
- # define __acquire(x) (void)0
- # define __release(x) (void)0
- # define __cond_lock(x,c) (c)
-+# define __percpu
- #endif
-=20
- #ifdef __KERNEL__
---=20
-1.6.6.1
-
+I have reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__5_Feb_2010_16_16_48_+1100_8K0PUPa9no.xJJ6a
+--Signature=_Fri__5_Feb_2010_16_50_59_+1100_b8V.lbLiILDVfOYJ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAktrqcAACgkQjjKRsyhoI8xP1ACeKorj+6KLAt7vuLZZNxJcGPHq
-M80AoKU/iJbHMujGAeoG2G9wLRIbbcBM
-=FE9I
+iEYEARECAAYFAktrscMACgkQjjKRsyhoI8x6hACbBLrjSzG6pb8CdOzoEyvDgLwE
+IO0An1FaPxClHjS/3D0zWdarMYLtL/N+
+=tScb
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__5_Feb_2010_16_16_48_+1100_8K0PUPa9no.xJJ6a--
+--Signature=_Fri__5_Feb_2010_16_50_59_+1100_b8V.lbLiILDVfOYJ--
