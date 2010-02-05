@@ -1,65 +1,64 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the v4l-dvb tree
-Date: Fri, 5 Feb 2010 16:52:47 +1100
-Message-ID: <20100205165247.bee325be.sfr@canb.auug.org.au>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: upcoming percpu changes
+Date: Fri, 05 Feb 2010 14:48:44 +0900
+Message-ID: <4B6BB13C.2090108@kernel.org>
+References: <20100205161648.086375b9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49736 "EHLO smtps.tip.net.au"
+Received: from hera.kernel.org ([140.211.167.34]:35572 "EHLO hera.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751444Ab0BEFwv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 5 Feb 2010 00:52:51 -0500
+	id S1751620Ab0BEFmh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 5 Feb 2010 00:42:37 -0500
+In-Reply-To: <20100205161648.086375b9.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthias Benesch <twoof7@freenet.de>, Ralph Metzler <rjkm@metzlerbros.de>, Oliver Endriss <o.endriss@gmx.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>
 
-Hi Mauro,
+Hello,
 
-After merging the scsi-post-merge tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+On 02/05/2010 02:16 PM, Stephen Rothwell wrote:
+> The percpu tree currently in linux-next
+> (git://git.kernel.org/pub/scm/linux/kernel/git/tj/percpu.git#for-next)
+> contains a patch to remove the "per_cpu_" prefix from percpu variables
+> followed by  a set of patches to annotate all the percpu variables (and
+> accessing variables) with a __percpu tag to put them into a separate
+> sparse name space.  These latter patches are causing some merge conflicts
+> with a couple of trees (and will most likely cause more before the merge
+> window).  A solution to this is for you to accept the patch below into
+> your tree now and then the annotating patches can be sent to the
+> respective maintainers directly.
+> 
+> Of course, this assumes that you will accept the percpu changes during
+> the next merge window (and they are not completely without controversy)
+> and the proponents actually submit them :-).
+> 
+> What do you think?
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 5 Feb 2010 16:09:11 +1100
+> Subject: [PATCH] percpu: add __percpu for sparse
+> 
+> This is to make the annotation of percpu variables during the next merge
+> window less painfull.
+> 
+> Extracted from a patch by Rusty Russell.
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-drivers/media/dvb/ngene/ngene-core.c: In function 'ngene_release_buffers':
-drivers/media/dvb/ngene/ngene-core.c:1443: error: implicit declaration of function 'vfree'
-drivers/media/dvb/ngene/ngene-core.c: In function 'ngene_get_buffers':
-drivers/media/dvb/ngene/ngene-core.c:1454: error: implicit declaration of function 'vmalloc'
-drivers/media/dvb/ngene/ngene-core.c:1454: warning: assignment makes pointer from integer without a cast
-drivers/media/dvb/ngene/ngene-core.c:1461: warning: assignment makes pointer from integer without a cast
-drivers/media/dvb/ngene/ngene-core.c:1467: warning: assignment makes pointer from integer without a cast
-drivers/media/dvb/ngene/ngene-core.c: In function 'ngene_probe':
-drivers/media/dvb/ngene/ngene-core.c:1836: warning: assignment makes pointer from integer without a cast
+I agree that this would be the cleanest way to integrate things.
+Thanks for doing this.  If this gets in, I'll send individual patches
+to respective maintainers.
 
-Caused by commit b54c755d6263efe376f3dfc8c72c8e7b4fb4f4c1 ("V4L/DVB:
-ngene: Initial check-in").
+Acked-by: Tejun Heo <tj@kernel.org>
 
-I added the following patch for today.
+For reference, the thread which contains the annoation patches is
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 5 Feb 2010 16:46:47 +1100
-Subject: [PATCH] V4L/DVB: using vmalloc requires include linux/vmalloc.h
+  http://lkml.org/lkml/2010/1/25/107
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/media/dvb/ngene/ngene-core.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+Thanks.
 
-diff --git a/drivers/media/dvb/ngene/ngene-core.c b/drivers/media/dvb/ngene/ngene-core.c
-index ea610e4..cb5982e 100644
---- a/drivers/media/dvb/ngene/ngene-core.c
-+++ b/drivers/media/dvb/ngene/ngene-core.c
-@@ -41,6 +41,7 @@
- #include <linux/version.h>
- #include <linux/byteorder/generic.h>
- #include <linux/firmware.h>
-+#include <linux/vmalloc.h>
- 
- #include "ngene.h"
- 
 -- 
-1.6.6.1
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+tejun
