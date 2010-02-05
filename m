@@ -1,47 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the omap tree with the arm tree
-Date: Fri, 5 Feb 2010 11:16:17 +1100
-Message-ID: <20100205111617.c602983f.sfr@canb.auug.org.au>
-References: <20100205102030.c8b139a1.sfr@canb.auug.org.au>
-	<20100204233019.GY22747@atomide.com>
+Subject: linux-next: manual merge of the trivial tree with the net tree
+Date: Fri, 5 Feb 2010 13:37:47 +1100
+Message-ID: <20100205133747.14ca83f2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__5_Feb_2010_11_16_17_+1100_vuToXvntX+XmYF5n"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100204233019.GY22747@atomide.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: linux-omap@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Adam Buchbinder <adam.buchbinder@gmail.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Ben Hutchings <bhutchings@solarflare.com>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__5_Feb_2010_11_16_17_+1100_vuToXvntX+XmYF5n
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Jiri,
 
-Hi Tony,
+Today's linux-next merge of the trivial tree got a conflict in
+drivers/net/sfc/mcdi_pcol.h between commit
+5297a98d5dd6de86fe1e2ffc9ea60cdf59b71443 ("sfc: Update MCDI protocol
+definitions") from the net tree and commit
+4887b438e6880c73c4b44d868211e70c1f3deaec ("Fix misspelling of
+"successful" and variants in comments") from the trivial tree.
 
-On Thu, 4 Feb 2010 15:30:19 -0800 Tony Lindgren <tony@atomide.com> wrote:
->
-> Thanks, I'll sort it out in omap for-next tree so they merge
-> cleanly.
-
-Thanks
---=20
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__5_Feb_2010_11_16_17_+1100_vuToXvntX+XmYF5n
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAktrY1EACgkQjjKRsyhoI8zc7wCfSkDBBce45/ZYgUqEuY+6kG0M
-C1AAn39yKkTQmxPv5uPckvIedJZ3L2j6
-=SQnr
------END PGP SIGNATURE-----
-
---Signature=_Fri__5_Feb_2010_11_16_17_+1100_vuToXvntX+XmYF5n--
+diff --cc drivers/net/sfc/mcdi_pcol.h
+index bd59302,f61e1de..0000000
+--- a/drivers/net/sfc/mcdi_pcol.h
++++ b/drivers/net/sfc/mcdi_pcol.h
+@@@ -859,14 -852,11 +859,14 @@@
+  /* MC_CMD_POLL_PHY_BIST: (variadic output)
+   * Poll for BIST completion
+   *
+ - * Returns a single status code, and a binary blob of phy-specific
+ - * bist output. If the driver can't successfully parse the BIST output,
+ - * it should still respect the Pass/Fail in OUT.RESULT.
+ + * Returns a single status code, and optionally some PHY specific
+ + * bist output. The driver should only consume the BIST output
+ + * after validating OUTLEN and PHY_CFG.PHY_TYPE.
+   *
+-  * If a driver can't succesfully parse the BIST output, it should
+ - * Locks required: PHY_LOCK  if doing a  PHY BIST
+++ * If a driver can't successfully parse the BIST output, it should
+ + * still respect the pass/Fail in OUT.RESULT
+ + *
+ + * Locks required: PHY_LOCK if doing a  PHY BIST
+   * Return code: 0, EACCES (if PHY_LOCK is not held)
+   */
+  #define MC_CMD_POLL_BIST 0x26
