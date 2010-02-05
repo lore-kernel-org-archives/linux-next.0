@@ -1,36 +1,92 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: upcoming percpu changes
-Date: Fri, 05 Feb 2010 16:31:20 +0900
-Message-ID: <4B6BC948.5030401@kernel.org>
-References: <20100205161648.086375b9.sfr@canb.auug.org.au> <4B6BB13C.2090108@kernel.org> <20100205070903.GA9320@elte.hu>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: upcoming percpu changes
+Date: Fri, 5 Feb 2010 16:16:48 +1100
+Message-ID: <20100205161648.086375b9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hera.kernel.org ([140.211.167.34]:35707 "EHLO hera.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933310Ab0BEHY5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 5 Feb 2010 02:24:57 -0500
-In-Reply-To: <20100205070903.GA9320@elte.hu>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, "H. Peter Anvin" <hpa@zytor.com>, Fr??d??ric Weisbecker <fweisbec@gmail.com>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__5_Feb_2010_16_16_48_+1100_8K0PUPa9no.xJJ6a"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>
+List-Id: linux-next.vger.kernel.org
 
-Hello, Ingo.
+--Signature=_Fri__5_Feb_2010_16_16_48_+1100_8K0PUPa9no.xJJ6a
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 02/05/2010 04:09 PM, Ingo Molnar wrote:
-> Has the review feedback from Frederic and hpa been addressed? (and have they 
-> acked the solution?) That was the only controversial bit i remember.
+Hi Linus,
 
-Al Viro said that, until sparse is improved, the only solution would
-be to work around in the rather ugly way as posted in the original
-patches.  As Frederic and hpa preferred not having the workaround and
-there were only three instances in the kernel tree, I just left them
-alone so sparse warning will trigger spuriously on those three
-locations.
+The percpu tree currently in linux-next
+(git://git.kernel.org/pub/scm/linux/kernel/git/tj/percpu.git#for-next)
+contains a patch to remove the "per_cpu_" prefix from percpu variables
+followed by  a set of patches to annotate all the percpu variables (and
+accessing variables) with a __percpu tag to put them into a separate
+sparse name space.  These latter patches are causing some merge conflicts
+with a couple of trees (and will most likely cause more before the merge
+window).  A solution to this is for you to accept the patch below into
+your tree now and then the annotating patches can be sent to the
+respective maintainers directly.
 
-Thanks.
+Of course, this assumes that you will accept the percpu changes during
+the next merge window (and they are not completely without controversy)
+and the proponents actually submit them :-).
 
--- 
-tejun
+What do you think?
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 5 Feb 2010 16:09:11 +1100
+Subject: [PATCH] percpu: add __percpu for sparse
+
+This is to make the annotation of percpu variables during the next merge
+window less painfull.
+
+Extracted from a patch by Rusty Russell.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/compiler.h |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index 5be3dab..188fcae 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -15,6 +15,7 @@
+ # define __acquire(x)	__context__(x,1)
+ # define __release(x)	__context__(x,-1)
+ # define __cond_lock(x,c)	((c) ? ({ __acquire(x); 1; }) : 0)
++# define __percpu	__attribute__((noderef, address_space(3)))
+ extern void __chk_user_ptr(const volatile void __user *);
+ extern void __chk_io_ptr(const volatile void __iomem *);
+ #else
+@@ -32,6 +33,7 @@ extern void __chk_io_ptr(const volatile void __iomem *);
+ # define __acquire(x) (void)0
+ # define __release(x) (void)0
+ # define __cond_lock(x,c) (c)
++# define __percpu
+ #endif
+=20
+ #ifdef __KERNEL__
+--=20
+1.6.6.1
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__5_Feb_2010_16_16_48_+1100_8K0PUPa9no.xJJ6a
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAktrqcAACgkQjjKRsyhoI8xP1ACeKorj+6KLAt7vuLZZNxJcGPHq
+M80AoKU/iJbHMujGAeoG2G9wLRIbbcBM
+=FE9I
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__5_Feb_2010_16_16_48_+1100_8K0PUPa9no.xJJ6a--
