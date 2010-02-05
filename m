@@ -1,70 +1,34 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
-Date: Fri, 05 Feb 2010 13:02:38 -0200
-Message-ID: <4B6C330E.2020301@infradead.org>
-References: <20100205165247.bee325be.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: manual merge of the trivial tree with the net tree
+Date: Fri, 05 Feb 2010 08:55:16 -0800 (PST)
+Message-ID: <20100205.085516.66180257.davem@davemloft.net>
+References: <20100204.202645.18974249.davem@davemloft.net>
+	<alpine.LNX.2.00.1002050935470.15395@pobox.suse.cz>
+	<alpine.LNX.2.00.1002051216460.15395@pobox.suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:51294 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933178Ab0BEPCp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Feb 2010 10:02:45 -0500
-In-Reply-To: <20100205165247.bee325be.sfr@canb.auug.org.au>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:34833
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754909Ab0BEQzD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Feb 2010 11:55:03 -0500
+In-Reply-To: <alpine.LNX.2.00.1002051216460.15395@pobox.suse.cz>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthias Benesch <twoof7@freenet.de>, Ralph Metzler <rjkm@metzlerbros.de>, Oliver Endriss <o.endriss@gmx.de>
+To: jkosina@suse.cz
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, adam.buchbinder@gmail.com, netdev@vger.kernel.org, bhutchings@solarflare.com
 
-Stephen Rothwell wrote:
-> Hi Mauro,
-> 
-> After merging the scsi-post-merge tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
-> 
-> drivers/media/dvb/ngene/ngene-core.c: In function 'ngene_release_buffers':
-> drivers/media/dvb/ngene/ngene-core.c:1443: error: implicit declaration of function 'vfree'
-> drivers/media/dvb/ngene/ngene-core.c: In function 'ngene_get_buffers':
-> drivers/media/dvb/ngene/ngene-core.c:1454: error: implicit declaration of function 'vmalloc'
-> drivers/media/dvb/ngene/ngene-core.c:1454: warning: assignment makes pointer from integer without a cast
-> drivers/media/dvb/ngene/ngene-core.c:1461: warning: assignment makes pointer from integer without a cast
-> drivers/media/dvb/ngene/ngene-core.c:1467: warning: assignment makes pointer from integer without a cast
-> drivers/media/dvb/ngene/ngene-core.c: In function 'ngene_probe':
-> drivers/media/dvb/ngene/ngene-core.c:1836: warning: assignment makes pointer from integer without a cast
-> 
-> Caused by commit b54c755d6263efe376f3dfc8c72c8e7b4fb4f4c1 ("V4L/DVB:
-> ngene: Initial check-in").
-> 
-> I added the following patch for today.
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 5 Feb 2010 16:46:47 +1100
-> Subject: [PATCH] V4L/DVB: using vmalloc requires include linux/vmalloc.h
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/media/dvb/ngene/ngene-core.c |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/media/dvb/ngene/ngene-core.c b/drivers/media/dvb/ngene/ngene-core.c
-> index ea610e4..cb5982e 100644
-> --- a/drivers/media/dvb/ngene/ngene-core.c
-> +++ b/drivers/media/dvb/ngene/ngene-core.c
-> @@ -41,6 +41,7 @@
->  #include <linux/version.h>
->  #include <linux/byteorder/generic.h>
->  #include <linux/firmware.h>
-> +#include <linux/vmalloc.h>
->  
->  #include "ngene.h"
->  
-Thanks for the patch. It looks sane to me. I'm adding it on my linux-next tree.
+From: Jiri Kosina <jkosina@suse.cz>
+Date: Fri, 5 Feb 2010 12:23:06 +0100 (CET)
 
-Cheers,
-Mauro.
+> Ayway, below is the hunk that I have already dropped from my tree (so that 
+> conflict in linux-next is gone), please feel free to apply it to your 
+> tree, and let me known whether you want me to reject all furutre patches 
 
--- 
+I can't apply it to my tree, that's why we had the conflict
+in the first place.
 
-Cheers,
-Mauro
+Please submit this to me so that it applies cleanly to net-next-2.6
+
+Thanks.
