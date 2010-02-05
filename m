@@ -1,64 +1,68 @@
-From: Tejun Heo <tj@kernel.org>
+From: Ingo Molnar <mingo@elte.hu>
 Subject: Re: upcoming percpu changes
-Date: Fri, 05 Feb 2010 14:48:44 +0900
-Message-ID: <4B6BB13C.2090108@kernel.org>
+Date: Fri, 5 Feb 2010 08:09:03 +0100
+Message-ID: <20100205070903.GA9320@elte.hu>
 References: <20100205161648.086375b9.sfr@canb.auug.org.au>
+ <4B6BB13C.2090108@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hera.kernel.org ([140.211.167.34]:35572 "EHLO hera.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751620Ab0BEFmh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 5 Feb 2010 00:42:37 -0500
-In-Reply-To: <20100205161648.086375b9.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <4B6BB13C.2090108@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, "H. Peter Anvin" <hpa@zytor.com>, Fr??d??ric Weisbecker <fweisbec@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-Hello,
 
-On 02/05/2010 02:16 PM, Stephen Rothwell wrote:
-> The percpu tree currently in linux-next
-> (git://git.kernel.org/pub/scm/linux/kernel/git/tj/percpu.git#for-next)
-> contains a patch to remove the "per_cpu_" prefix from percpu variables
-> followed by  a set of patches to annotate all the percpu variables (and
-> accessing variables) with a __percpu tag to put them into a separate
-> sparse name space.  These latter patches are causing some merge conflicts
-> with a couple of trees (and will most likely cause more before the merge
-> window).  A solution to this is for you to accept the patch below into
-> your tree now and then the annotating patches can be sent to the
-> respective maintainers directly.
+* Tejun Heo <tj@kernel.org> wrote:
+
+> Hello,
 > 
-> Of course, this assumes that you will accept the percpu changes during
-> the next merge window (and they are not completely without controversy)
-> and the proponents actually submit them :-).
+> On 02/05/2010 02:16 PM, Stephen Rothwell wrote:
+> > The percpu tree currently in linux-next
+> > (git://git.kernel.org/pub/scm/linux/kernel/git/tj/percpu.git#for-next)
+> > contains a patch to remove the "per_cpu_" prefix from percpu variables
+> > followed by  a set of patches to annotate all the percpu variables (and
+> > accessing variables) with a __percpu tag to put them into a separate
+> > sparse name space.  These latter patches are causing some merge conflicts
+> > with a couple of trees (and will most likely cause more before the merge
+> > window).  A solution to this is for you to accept the patch below into
+> > your tree now and then the annotating patches can be sent to the
+> > respective maintainers directly.
+> > 
+> > Of course, this assumes that you will accept the percpu changes during
+> > the next merge window (and they are not completely without controversy)
+> > and the proponents actually submit them :-).
+> > 
+> > What do you think?
+> > 
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Date: Fri, 5 Feb 2010 16:09:11 +1100
+> > Subject: [PATCH] percpu: add __percpu for sparse
+> > 
+> > This is to make the annotation of percpu variables during the next merge
+> > window less painfull.
+> > 
+> > Extracted from a patch by Rusty Russell.
+> > 
+> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 > 
-> What do you think?
+> I agree that this would be the cleanest way to integrate things.
+> Thanks for doing this.  If this gets in, I'll send individual patches
+> to respective maintainers.
 > 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 5 Feb 2010 16:09:11 +1100
-> Subject: [PATCH] percpu: add __percpu for sparse
+> Acked-by: Tejun Heo <tj@kernel.org>
 > 
-> This is to make the annotation of percpu variables during the next merge
-> window less painfull.
+> For reference, the thread which contains the annoation patches is
 > 
-> Extracted from a patch by Rusty Russell.
+>   http://lkml.org/lkml/2010/1/25/107
 > 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Thanks.
 
-I agree that this would be the cleanest way to integrate things.
-Thanks for doing this.  If this gets in, I'll send individual patches
-to respective maintainers.
+Has the review feedback from Frederic and hpa been addressed? (and have they 
+acked the solution?) That was the only controversial bit i remember.
 
-Acked-by: Tejun Heo <tj@kernel.org>
+Thanks,
 
-For reference, the thread which contains the annoation patches is
-
-  http://lkml.org/lkml/2010/1/25/107
-
-Thanks.
-
--- 
-tejun
+	Ingo
