@@ -1,58 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the percpu tree with the net tree
-Date: Fri, 5 Feb 2010 15:44:52 +1100
-Message-ID: <20100205154452.91230c09.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: upcoming percpu changes
+Date: Fri, 5 Feb 2010 08:29:31 +0100
+Message-ID: <20100205072931.GD9320@elte.hu>
+References: <20100205161648.086375b9.sfr@canb.auug.org.au>
+ <4B6BB13C.2090108@kernel.org>
+ <20100205070903.GA9320@elte.hu>
+ <4B6BC948.5030401@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47207 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756044Ab0BEEoz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 4 Feb 2010 23:44:55 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <4B6BC948.5030401@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, "H. Peter Anvin" <hpa@zytor.com>, Fr??d??ric Weisbecker <fweisbec@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
 
-Today's linux-next merge of the percpu tree got a conflict in
-drivers/net/macvlan.c between commit
-fc0663d6b5e6d8e9b57f872a644c0aafd82361b7 ("macvlan: allow multiple driver
-backends") from the net tree and commit
-e20b68160144bcacbde008b9cf7df4e1544b2507 ("percpu: add __percpu sparse
-annotations to net drivers") from the percpu tree.
+* Tejun Heo <tj@kernel.org> wrote:
 
-The struct that is being modified by the latter commit has been moved by
-the former into include/linux/if_macvlan.h.
+> Hello, Ingo.
+> 
+> On 02/05/2010 04:09 PM, Ingo Molnar wrote:
+> > Has the review feedback from Frederic and hpa been addressed? (and have they 
+> > acked the solution?) That was the only controversial bit i remember.
+> 
+> Al Viro said that, until sparse is improved, the only solution would be to 
+> work around in the rather ugly way as posted in the original patches.  As 
+> Frederic and hpa preferred not having the workaround and there were only 
+> three instances in the kernel tree, I just left them alone so sparse 
+> warning will trigger spuriously on those three locations.
+> 
+> Thanks.
 
-I fixed it up (see below) and can carry the fix as necessary.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Ok, good!
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 5 Feb 2010 15:29:35 +1100
-Subject: [PATCH] percpu: macvlan merge fix
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- include/linux/if_macvlan.h |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/include/linux/if_macvlan.h b/include/linux/if_macvlan.h
-index 51f1512..f9cb9ba 100644
---- a/include/linux/if_macvlan.h
-+++ b/include/linux/if_macvlan.h
-@@ -30,7 +30,7 @@ struct macvlan_dev {
- 	struct hlist_node	hlist;
- 	struct macvlan_port	*port;
- 	struct net_device	*lowerdev;
--	struct macvlan_rx_stats *rx_stats;
-+	struct macvlan_rx_stats __percpu *rx_stats;
- 	enum macvlan_mode	mode;
- 	int (*receive)(struct sk_buff *skb);
- 	int (*forward)(struct net_device *dev, struct sk_buff *skb);
--- 
-1.6.6.1
+	Ingo
