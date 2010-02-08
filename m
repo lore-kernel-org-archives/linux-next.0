@@ -1,35 +1,55 @@
-From: "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH v8] RO/NX protection for loadable kernel modules
-Date: Sun, 07 Feb 2010 17:54:03 -0800
-Message-ID: <4B6F6EBB.5070106@zytor.com>
-References: <817ecb6f1001311522q52bf4eebmb748c486dcd5ad35@mail.gmail.com> <873a1jdyrg.fsf@basil.nowhere.org> <201002081215.31527.rusty@rustcorp.com.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net tree
+Date: Mon, 8 Feb 2010 13:22:43 +1100
+Message-ID: <20100208132243.ab967d9c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__8_Feb_2010_13_22_43_+1100_KM_2hHKPG.=88CWW"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from terminus.zytor.com ([198.137.202.10]:49237 "EHLO mail.zytor.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:45017 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753211Ab0BHB6V (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 7 Feb 2010 20:58:21 -0500
-In-Reply-To: <201002081215.31527.rusty@rustcorp.com.au>
+	id S1753942Ab0BHCWw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 7 Feb 2010 21:22:52 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: Andi Kleen <andi@firstfloor.org>, Siarhei Liakh <sliakh.lkml@gmail.com>, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sridhar Samudrala <sri@us.ibm.com>
 
-On 02/07/2010 05:45 PM, Rusty Russell wrote:
-> 
-> Strict RO/NX protection.  But without the option enabled, the patch gives
-> best-effort protection, which is nice (for no additional space).
-> 
+--Signature=_Mon__8_Feb_2010_13_22_43_+1100_KM_2hHKPG.=88CWW
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Since Linux kernel modules are actually .o's, not .so's, in theory we
-could bundle the sections together by type.  There could still be
-external fragmentation, of course, but on most systems module unload is
-relatively rare.
+Hi Dave,
 
-	-hpa
+After merging the net tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
--- 
-H. Peter Anvin, Intel Open Source Technology Center
-I work for Intel.  I don't speak on their behalf.
+net/packet/af_packet.c: In function 'packet_setsockopt':
+net/packet/af_packet.c:1977: error: 'struct packet_sock' has no member name=
+d 'rx_ring'
+net/packet/af_packet.c:1977: error: 'struct packet_sock' has no member name=
+d 'tx_ring'
+
+Caused by commit bfd5f4a3d605e0f6054df0b59fe0907ff7e696d3 ("packet: Add
+GSO/csum offload support").  This build has CONFIG_PACKET_MMAP unset.
+
+I used the version of the net tree from next-20100205 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__8_Feb_2010_13_22_43_+1100_KM_2hHKPG.=88CWW
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAktvdXMACgkQjjKRsyhoI8wCjwCgklGTJHtFmHc0iZn41WGnsrpe
+NXgAoLGRv9enkPNIdahJLf2mzz+RsxQz
+=PhzF
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__8_Feb_2010_13_22_43_+1100_KM_2hHKPG.=88CWW--
