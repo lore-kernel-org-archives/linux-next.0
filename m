@@ -1,55 +1,28 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the net tree
-Date: Mon, 8 Feb 2010 13:22:43 +1100
-Message-ID: <20100208132243.ab967d9c.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build failure after merge of the net tree
+Date: Sun, 07 Feb 2010 19:40:22 -0800 (PST)
+Message-ID: <20100207.194022.53074897.davem@davemloft.net>
+References: <20100208132243.ab967d9c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__8_Feb_2010_13_22_43_+1100_KM_2hHKPG.=88CWW"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45017 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753942Ab0BHCWw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 7 Feb 2010 21:22:52 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sridhar Samudrala <sri@us.ibm.com>
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20100208132243.ab967d9c.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, sri@us.ibm.com
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__8_Feb_2010_13_22_43_+1100_KM_2hHKPG.=88CWW
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 8 Feb 2010 13:22:43 +1100
 
-Hi Dave,
+> After merging the net tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+ ...
+> Caused by commit bfd5f4a3d605e0f6054df0b59fe0907ff7e696d3 ("packet: Add
+> GSO/csum offload support").  This build has CONFIG_PACKET_MMAP unset.
+> 
+> I used the version of the net tree from next-20100205 for today.
 
-After merging the net tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
-
-net/packet/af_packet.c: In function 'packet_setsockopt':
-net/packet/af_packet.c:1977: error: 'struct packet_sock' has no member name=
-d 'rx_ring'
-net/packet/af_packet.c:1977: error: 'struct packet_sock' has no member name=
-d 'tx_ring'
-
-Caused by commit bfd5f4a3d605e0f6054df0b59fe0907ff7e696d3 ("packet: Add
-GSO/csum offload support").  This build has CONFIG_PACKET_MMAP unset.
-
-I used the version of the net tree from next-20100205 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__8_Feb_2010_13_22_43_+1100_KM_2hHKPG.=88CWW
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAktvdXMACgkQjjKRsyhoI8wCjwCgklGTJHtFmHc0iZn41WGnsrpe
-NXgAoLGRv9enkPNIdahJLf2mzz+RsxQz
-=PhzF
------END PGP SIGNATURE-----
-
---Signature=_Mon__8_Feb_2010_13_22_43_+1100_KM_2hHKPG.=88CWW--
+Known problem, I'm fixing it by killing the config option,
+everyone should have that thing enabled by now.
