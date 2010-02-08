@@ -1,39 +1,50 @@
-From: Paul Mundt <lethal@linux-sh.org>
-Subject: genesis-2.6 tree addition request
-Date: Mon, 8 Feb 2010 13:32:09 +0900
-Message-ID: <20100208043209.GA7674@linux-sh.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the trivial tree with the  tree
+Date: Mon, 8 Feb 2010 15:48:08 +1100
+Message-ID: <20100208154808.b5670cd5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__8_Feb_2010_15_48_08_+1100_sdRN=S6Zp29rUAk/"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 124x34x33x190.ap124.ftth.ucom.ne.jp ([124.34.33.190]:58989 "EHLO
-	master.linux-sh.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754248Ab0BHEcZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 7 Feb 2010 23:32:25 -0500
-Content-Disposition: inline
+Received: from chilli.pcug.org.au ([203.10.76.44]:42540 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754200Ab0BHEsR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 7 Feb 2010 23:48:17 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Russell King <rmk@arm.linux.org.uk>, linux-next@vger.kernel.org
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Mack <daniel@caiaq.de>, Manuel Lauss <manuel.lauss@googlemail.com>, Yoichi Yuasa <yuasa@linux-mips.org>, Ralf Baechle <ralf@linux-mips.org>
 
-I'd like to get the genesis-2.6 tree rolled in to -next. This is
-primarily for supporting ARM-based SH-Mobile G-series CPUs, which were
-previously discussed on the ARM lists.
+--Signature=_Mon__8_Feb_2010_15_48_08_+1100_sdRN=S6Zp29rUAk/
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-There shouldn't be any ordering issues, but it would be ideal to place
-this after both the sh and arm trees in the merge order to avoid any
-future issues.
+Hi Jiri,
 
-The tree is at:
+Today's linux-next merge of the trivial tree got a conflict in
+arch/mips/alchemy/common/reset.c between commit
+139047ceae71916626ee36bea9ef35f1030aabfe ("MIPS: Alchemy: get rid of
+common/reset.c") from the  tree and commit
+ba5584a307a1166597fbbe970ffdf49c8b7ee42a ("tree-wide: Assorted spelling
+fixes") from the trivial tree.
 
-	git://git.kernel.org/pub/scm/linux/kernel/git/lethal/genesis-2.6.git
+The former removes the file updated by the latter.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-and also contains the following defconfigs:
+--Signature=_Mon__8_Feb_2010_15_48_08_+1100_sdRN=S6Zp29rUAk/
+Content-Type: application/pgp-signature
 
-	ap4evb_defconfig
-	g3evm_defconfig
-	g4evm_defconfig
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-which would be nice to have added to the ARM defconfig builds. Any issues
-that pop up with these configs are likely to be SH-related and ideally
-should come to me directly, rather than having to bother Russell with
-them.
+iEYEARECAAYFAktvl4gACgkQjjKRsyhoI8wu3QCgvY9T91/0lPDMYbPkIPRHH//V
+/5kAn0bbEVyIpuxWehzLwEOWw/ZQeHqA
+=5fUs
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__8_Feb_2010_15_48_08_+1100_sdRN=S6Zp29rUAk/--
