@@ -1,35 +1,40 @@
 From: "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: linux-next: add utrace tree
-Date: Mon, 08 Feb 2010 01:30:10 -0800
-Message-ID: <4B6FD9A2.8070008@zytor.com>
-References: <f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com> <alpine.LFD.2.00.1001232051510.3574@localhost.localdomain> <m33a1tnbd9.fsf@fleche.redhat.com> <alpine.LFD.2.00.1001251332370.3574@localhost.localdomain> <m3636oh2rt.fsf@fleche.redhat.com> <alpine.LFD.2.00.1001261535510.17519@localhost.localdomain> <1264575134.4283.1983.camel@laptop> <alpine.LFD.2.00.1001270231520.24253@localhost.localdomain> <1264600792.31321.464.camel@gandalf.stny.rr.com> <4B607B1A.3080007@zytor.com> <20100208065425.GB1290@ucw.cz>
+Subject: Re: [PATCH] sched: Fix unused variable warning on UP (was: Re: 	linux-next:
+ tip tree build warning)
+Date: Mon, 08 Feb 2010 01:47:21 -0800
+Message-ID: <4B6FDDA9.4000200@zytor.com>
+References: <10f740e81002071157p11b78784i8091d4790c29f30d@mail.gmail.com>	 <1265572738.12224.278.camel@laptop>	 <10f740e81002071226g3290d276q4c9df0e79a1e7ac0@mail.gmail.com> <10f740e81002071231j6977c6c7ie3f9e82bd0170f21@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from terminus.zytor.com ([198.137.202.10]:54785 "EHLO mail.zytor.com"
+Received: from terminus.zytor.com ([198.137.202.10]:60125 "EHLO mail.zytor.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753355Ab0BHJfn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 8 Feb 2010 04:35:43 -0500
-In-Reply-To: <20100208065425.GB1290@ucw.cz>
+	id S1751052Ab0BHJvc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 8 Feb 2010 04:51:32 -0500
+In-Reply-To: <10f740e81002071231j6977c6c7ie3f9e82bd0170f21@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: rostedt@goodmis.org, Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, Tom Tromey <tromey@redhat.com>, Kyle Moffett <kyle@moffetthome.net>, "Frank Ch. Eigler" <fche@redhat.com>, Oleg Nesterov <oleg@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, linux-next@vger.kernel.org, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>, JimKeniston <jkenisto@us.ibm.com>, Arjan van de Ven <arjan@infradead.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Linus Torvalds <torvalds@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
 
-On 02/07/2010 10:54 PM, Pavel Machek wrote:
->>
->> No, it has nothing to do with ring.  It has to do with modifying code
->> that another CPU could be executing at the same time, and with modifying
->> code on the same processor through another virtual alias (they are
->> different issues.)  The same issues apply regardless of the CPL of the
->> processor.
+On 02/07/2010 12:31 PM, Geert Uytterhoeven wrote:
 >
-> ...but these are always 'there could be cpu bugs around' issues,
-> right? Like amd k6. AFAICT x86 always supported self-modifying code
-> without any extra barriers needed...
+> <trying to completely destroy my credibility>
+> Shouldn't put_cpu() take a (possibly dummy) `cpu' parameter, as
+> returned by get_cpu()?
+> </trying>
 >
 
-*Self*-modifying code, yes.  *Cross*-modifying code, no.
+Please tell me that you're joking.
+
+There is absolutely no reason for it, since there is only one CPU that 
+you can put (the one you're already on.)  The only thing that will 
+happen if you insist on carrying the CPU number forward (unless it is 
+used anyway) is that the compiler will generate worse code.
+
+get_cpu() returning the CPU you're on is a convenience; it's so you 
+don't need to do a third operation just to get your current CPU number, 
+but it could just as easily be done that way.
 
 	-hpa
