@@ -1,40 +1,53 @@
-From: "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH] sched: Fix unused variable warning on UP (was: Re: 	linux-next:
- tip tree build warning)
-Date: Mon, 08 Feb 2010 01:47:21 -0800
-Message-ID: <4B6FDDA9.4000200@zytor.com>
-References: <10f740e81002071157p11b78784i8091d4790c29f30d@mail.gmail.com>	 <1265572738.12224.278.camel@laptop>	 <10f740e81002071226g3290d276q4c9df0e79a1e7ac0@mail.gmail.com> <10f740e81002071231j6977c6c7ie3f9e82bd0170f21@mail.gmail.com>
+From: Arjan van de Ven <arjan@infradead.org>
+Subject: Re: linux-next: add utrace tree
+Date: Mon, 8 Feb 2010 01:53:49 -0800
+Message-ID: <20100208015349.36a12efe@infradead.org>
+References: <f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com>
+	<alpine.LFD.2.00.1001232051510.3574@localhost.localdomain>
+	<m33a1tnbd9.fsf@fleche.redhat.com>
+	<alpine.LFD.2.00.1001251332370.3574@localhost.localdomain>
+	<m3636oh2rt.fsf@fleche.redhat.com>
+	<alpine.LFD.2.00.1001261535510.17519@localhost.localdomain>
+	<1264575134.4283.1983.camel@laptop>
+	<alpine.LFD.2.00.1001270231520.24253@localhost.localdomain>
+	<1264600792.31321.464.camel@gandalf.stny.rr.com>
+	<4B607B1A.3080007@zytor.com> <20100208065425.GB1290@ucw.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from terminus.zytor.com ([198.137.202.10]:60125 "EHLO mail.zytor.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751052Ab0BHJvc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 8 Feb 2010 04:51:32 -0500
-In-Reply-To: <10f740e81002071231j6977c6c7ie3f9e82bd0170f21@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Linus Torvalds <torvalds@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+Return-path: <utrace-devel-bounces@redhat.com>
+In-Reply-To: <20100208065425.GB1290@ucw.cz>
+List-Unsubscribe: <https://www.redhat.com/mailman/options/utrace-devel>,
+	<mailto:utrace-devel-request@redhat.com?subject=unsubscribe>
+List-Archive: <https://www.redhat.com/archives/utrace-devel>
+List-Post: <mailto:utrace-devel@redhat.com>
+List-Help: <mailto:utrace-devel-request@redhat.com?subject=help>
+List-Subscribe: <https://www.redhat.com/mailman/listinfo/utrace-devel>,
+	<mailto:utrace-devel-request@redhat.com?subject=subscribe>
+Sender: utrace-devel-bounces@redhat.com
+Errors-To: utrace-devel-bounces@redhat.com
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Kyle Moffett <kyle@moffetthome.net>, Arnaldo Carvalho de Melo <acme@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>, Oleg Nesterov <oleg@redhat.com>, rostedt@goodmis.org, LKML <linux-kernel@vger.kernel.org>, Tromey <tromey@redhat.com>, "Frank Ch.
+	Eigler" <fche@redhat.com>, linux-next@vger.kernel.org, Tom@redhat.com, utrace-devel@redhat.com, Linus Torvalds <torvalds@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>
+List-Id: linux-next.vger.kernel.org
 
-On 02/07/2010 12:31 PM, Geert Uytterhoeven wrote:
->
-> <trying to completely destroy my credibility>
-> Shouldn't put_cpu() take a (possibly dummy) `cpu' parameter, as
-> returned by get_cpu()?
-> </trying>
->
+On Mon, 8 Feb 2010 07:54:25 +0100
+Pavel Machek <pavel@ucw.cz> wrote:
 
-Please tell me that you're joking.
+> > No, it has nothing to do with ring.  It has to do with modifying
+> > code that another CPU could be executing at the same time, and with
+> > modifying code on the same processor through another virtual alias
+> > (they are different issues.)  The same issues apply regardless of
+> > the CPL of the processor.
+> 
+> ...but these are always 'there could be cpu bugs around' issues,
+> right? Like amd k6. AFAICT x86 always supported self-modifying code
+> without any extra barriers needed...
 
-There is absolutely no reason for it, since there is only one CPU that 
-you can put (the one you're already on.)  The only thing that will 
-happen if you insist on carrying the CPU number forward (unless it is 
-used anyway) is that the compiler will generate worse code.
+self modifying code yes, cross modifying code no.
 
-get_cpu() returning the CPU you're on is a convenience; it's so you 
-don't need to do a third operation just to get your current CPU number, 
-but it could just as easily be done that way.
 
-	-hpa
+-- 
+Arjan van de Ven 	Intel Open Source Technology Centre
+For development, discussion and tips for power savings, 
+visit http://www.lesswatts.org
