@@ -1,8 +1,9 @@
-From: Arjan van de Ven <arjan@infradead.org>
+From: Avi Kivity <avi@redhat.com>
 Subject: Re: linux-next: add utrace tree
-Date: Mon, 8 Feb 2010 01:53:49 -0800
-Message-ID: <20100208015349.36a12efe@infradead.org>
-References: <f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com>
+Date: Mon, 08 Feb 2010 12:09:36 +0200
+Message-ID: <4B6FE2E0.6080803@redhat.com>
+References: <alpine.LFD.2.00.1001221614520.13231@localhost.localdomain>
+	<f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com>
 	<alpine.LFD.2.00.1001232051510.3574@localhost.localdomain>
 	<m33a1tnbd9.fsf@fleche.redhat.com>
 	<alpine.LFD.2.00.1001251332370.3574@localhost.localdomain>
@@ -10,13 +11,13 @@ References: <f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com>
 	<alpine.LFD.2.00.1001261535510.17519@localhost.localdomain>
 	<1264575134.4283.1983.camel@laptop>
 	<alpine.LFD.2.00.1001270231520.24253@localhost.localdomain>
-	<1264600792.31321.464.camel@gandalf.stny.rr.com>
-	<4B607B1A.3080007@zytor.com> <20100208065425.GB1290@ucw.cz>
+	<1264589716.4283.2006.camel@laptop>
+	<20100127110555.GB1842@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <utrace-devel-bounces@redhat.com>
-In-Reply-To: <20100208065425.GB1290@ucw.cz>
+In-Reply-To: <20100127110555.GB1842@in.ibm.com>
 List-Unsubscribe: <https://www.redhat.com/mailman/options/utrace-devel>,
 	<mailto:utrace-devel-request@redhat.com?subject=unsubscribe>
 List-Archive: <https://www.redhat.com/archives/utrace-devel>
@@ -26,28 +27,17 @@ List-Subscribe: <https://www.redhat.com/mailman/listinfo/utrace-devel>,
 	<mailto:utrace-devel-request@redhat.com?subject=subscribe>
 Sender: utrace-devel-bounces@redhat.com
 Errors-To: utrace-devel-bounces@redhat.com
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Kyle Moffett <kyle@moffetthome.net>, Arnaldo Carvalho de Melo <acme@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>, Oleg Nesterov <oleg@redhat.com>, rostedt@goodmis.org, LKML <linux-kernel@vger.kernel.org>, Tromey <tromey@redhat.com>, "Frank Ch.
-	Eigler" <fche@redhat.com>, linux-next@vger.kernel.org, Tom@redhat.com, utrace-devel@redhat.com, Linus Torvalds <torvalds@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>
+To: ananth@in.ibm.com
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Kyle Moffett <kyle@moffetthome.net>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Tom Tromey <tromey@redhat.com>, Oleg Nesterov <oleg@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, "Frank Ch. Eigler" <fche@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>, Linus Torvalds <torvalds@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, 8 Feb 2010 07:54:25 +0100
-Pavel Machek <pavel@ucw.cz> wrote:
+On 01/27/2010 01:05 PM, Ananth N Mavinakayanahalli wrote:
+> We don't need to write one. I don't know how easy it is to make the kvm
+> emulator less kvm-centric (vcpus, kvm_context, etc). Avi?
+>    
 
-> > No, it has nothing to do with ring.  It has to do with modifying
-> > code that another CPU could be executing at the same time, and with
-> > modifying code on the same processor through another virtual alias
-> > (they are different issues.)  The same issues apply regardless of
-> > the CPL of the processor.
-> 
-> ...but these are always 'there could be cpu bugs around' issues,
-> right? Like amd k6. AFAICT x86 always supported self-modifying code
-> without any extra barriers needed...
-
-self modifying code yes, cross modifying code no.
-
+It's a lot of mindless work but not too difficult; replacing hardcoded 
+accessors with function pointers.
 
 -- 
-Arjan van de Ven 	Intel Open Source Technology Centre
-For development, discussion and tips for power savings, 
-visit http://www.lesswatts.org
+error compiling committee.c: too many arguments to function
