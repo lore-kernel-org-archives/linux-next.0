@@ -1,47 +1,35 @@
-From: Tomi Valkeinen <tomi.valkeinen@nokia.com>
-Subject: Re: linux-next: manual merge of the omap_dss2 tree with the omap
- tree
-Date: Mon, 08 Feb 2010 11:29:06 +0200
-Message-ID: <1265621346.2433.27.camel@tubuntu.research.nokia.com>
-References: <20100208172521.abb500b4.sfr@canb.auug.org.au>
+From: "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: linux-next: add utrace tree
+Date: Mon, 08 Feb 2010 01:30:10 -0800
+Message-ID: <4B6FD9A2.8070008@zytor.com>
+References: <f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com> <alpine.LFD.2.00.1001232051510.3574@localhost.localdomain> <m33a1tnbd9.fsf@fleche.redhat.com> <alpine.LFD.2.00.1001251332370.3574@localhost.localdomain> <m3636oh2rt.fsf@fleche.redhat.com> <alpine.LFD.2.00.1001261535510.17519@localhost.localdomain> <1264575134.4283.1983.camel@laptop> <alpine.LFD.2.00.1001270231520.24253@localhost.localdomain> <1264600792.31321.464.camel@gandalf.stny.rr.com> <4B607B1A.3080007@zytor.com> <20100208065425.GB1290@ucw.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.nokia.com ([192.100.122.230]:52343 "EHLO
-	mgw-mx03.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752199Ab0BHJ0k (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Feb 2010 04:26:40 -0500
-In-Reply-To: <20100208172521.abb500b4.sfr@canb.auug.org.au>
+Received: from terminus.zytor.com ([198.137.202.10]:54785 "EHLO mail.zytor.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753355Ab0BHJfn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 8 Feb 2010 04:35:43 -0500
+In-Reply-To: <20100208065425.GB1290@ucw.cz>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: ext Stephen Rothwell <sfr@canb.auug.org.au>, Tony Lindgren <tony@atomide.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Vaibhav Hiremath <hvaibhav@ti.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: rostedt@goodmis.org, Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, Tom Tromey <tromey@redhat.com>, Kyle Moffett <kyle@moffetthome.net>, "Frank Ch. Eigler" <fche@redhat.com>, Oleg Nesterov <oleg@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, linux-next@vger.kernel.org, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>, JimKeniston <jkenisto@us.ibm.com>, Arjan van de Ven <arjan@infradead.org>
 
-On Mon, 2010-02-08 at 07:25 +0100, ext Stephen Rothwell wrote:
-> Hi Tomi,
-> 
-> Today's linux-next merge of the omap_dss2 tree got a conflict in
-> arch/arm/mach-omap2/board-am3517evm.c between commit
-> 13560d875d67c06239c82a6148c1b87075701fe9 ("AM3517: Enable basic I2C
-> Support") from the omap tree and commit
-> 56a3d0235cd50d14d7bd4d45e55d192aa0e78cac ("OMAP: AM3517: Enable DSS2 for
-> AM3517EVM board") from the omap_dss2 tree.
-> 
-> Juts overlapping additions.   I fixed it up (see below) and can carry the
-> fix as necessary.
+On 02/07/2010 10:54 PM, Pavel Machek wrote:
+>>
+>> No, it has nothing to do with ring.  It has to do with modifying code
+>> that another CPU could be executing at the same time, and with modifying
+>> code on the same processor through another virtual alias (they are
+>> different issues.)  The same issues apply regardless of the CPL of the
+>> processor.
+>
+> ...but these are always 'there could be cpu bugs around' issues,
+> right? Like amd k6. AFAICT x86 always supported self-modifying code
+> without any extra barriers needed...
+>
 
-Thanks. I guess we can't properly fix this until the patch from omap
-tree goes into mainline.
+*Self*-modifying code, yes.  *Cross*-modifying code, no.
 
-Tony, do you think this current way, in which we have board file changes
-in both linux-omap and the dss tree, is best we can do? Or should all
-the board file changes go through linux-omap? I fear that we will have
-conflicts with every new board.
-
-> P.S. Tomi, this omap_dss2 commit only has your Acked-by not Signed-off-by.
-
-Hmm, do you mean there's something wrong with that, or "jfyi"? Aren't I,
-as a subsys maintainer, supposed to ack the patches?
-
- Tomi
+	-hpa
