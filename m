@@ -1,29 +1,51 @@
-From: Eric Paris <eparis@parisplace.org>
-Subject: Re: linux-next: vfs/fsnotify trees build warning
-Date: Mon, 8 Feb 2010 13:01:46 -0500
-Message-ID: <7e0fb38c1002081001y111bd0a2p40a8a896b0668d13@mail.gmail.com>
-References: <20100125150456.c796f0b0.sfr@canb.auug.org.au>
-	 <20100125042925.GM25842@discord.disaster>
+From: Jesse Barnes <jbarnes@virtuousgeek.org>
+Subject: Re: [PATCH -next] pci hotplug: fix ibmphp build error
+Date: Mon, 8 Feb 2010 10:50:12 -0800
+Message-ID: <20100208105012.17053238@jbarnes-piketon>
+References: <20100204185736.6628ab9a.sfr@canb.auug.org.au>
+	<4B6B2A27.9070600@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vw0-f46.google.com ([209.85.212.46]:53357 "EHLO
-	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750992Ab0BHSBs (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Feb 2010 13:01:48 -0500
-In-Reply-To: <20100125042925.GM25842@discord.disaster>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Eric Paris <eparis@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, xfs@oss.sgi.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <4B6B2A27.9070600@oracle.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Sun, Jan 24, 2010 at 11:29 PM, Dave Chinner <david@fromorbit.com> wrote:
-> On Mon, Jan 25, 2010 at 03:04:56PM +1100, Stephen Rothwell wrote:
->> Hi Eric, Al,
->>
->> Today's linux-next build (x86_64 allmodconfig) produced these warnings:
+On Thu, 04 Feb 2010 12:12:23 -0800
+Randy Dunlap <randy.dunlap@oracle.com> wrote:
 
-I just switched fsnotify to use const unsigned char * so hopefully
-they will shut up tomorrow....
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> Add header file to fix build error:
+> 
+> drivers/pci/hotplug/ibmphp_hpc.c:135: error: implicit declaration of
+> function 'init_MUTEX' drivers/pci/hotplug/ibmphp_hpc.c:136: error:
+> implicit declaration of function 'init_MUTEX_LOCKED'
+> drivers/pci/hotplug/ibmphp_hpc.c:797: error: implicit declaration of
+> function 'down' drivers/pci/hotplug/ibmphp_hpc.c:807: error: implicit
+> declaration of function 'up'
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> ---
+>   drivers/pci/hotplug/ibmphp_hpc.c |    1 +
+>   1 file changed, 1 insertion(+)
+> 
+> --- linux-next-20100204.orig/drivers/pci/hotplug/ibmphp_hpc.c
+> +++ linux-next-20100204/drivers/pci/hotplug/ibmphp_hpc.c
+> @@ -35,6 +35,7 @@
+>   #include <linux/init.h>
+>   #include <linux/mutex.h>
+>   #include <linux/sched.h>
+> +#include <linux/semaphore.h>
+>   #include <linux/kthread.h>
+>   #include "ibmphp.h"
+>   
+> 
 
--Eric
+Applied to linux-next, thanks.
+
+-- 
+Jesse Barnes, Intel Open Source Technology Center
