@@ -1,195 +1,49 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the omap_dss2 tree with the omap tree
-Date: Mon, 8 Feb 2010 17:25:21 +1100
-Message-ID: <20100208172521.abb500b4.sfr@canb.auug.org.au>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: linux-next: add utrace tree
+Date: Mon, 8 Feb 2010 07:54:25 +0100
+Message-ID: <20100208065425.GB1290@ucw.cz>
+References: <f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com> <alpine.LFD.2.00.1001232051510.3574@localhost.localdomain> <m33a1tnbd9.fsf@fleche.redhat.com> <alpine.LFD.2.00.1001251332370.3574@localhost.localdomain> <m3636oh2rt.fsf@fleche.redhat.com> <alpine.LFD.2.00.1001261535510.17519@localhost.localdomain> <1264575134.4283.1983.camel@laptop> <alpine.LFD.2.00.1001270231520.24253@localhost.localdomain> <1264600792.31321.464.camel@gandalf.stny.rr.com> <4B607B1A.3080007@zytor.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55631 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751199Ab0BHGZZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 8 Feb 2010 01:25:25 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:49518 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750812Ab0BHGyd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Feb 2010 01:54:33 -0500
+Content-Disposition: inline
+In-Reply-To: <4B607B1A.3080007@zytor.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tomi Valkeinen <tomi.valkeinen@nokia.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vaibhav Hiremath <hvaibhav@ti.com>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: rostedt@goodmis.org, Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, Tom Tromey <tromey@redhat.com>, Kyle Moffett <kyle@moffetthome.net>, "Frank Ch. Eigler" <fche@redhat.com>, Oleg Nesterov <oleg@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, linux-next@vger.kernel.org, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>, JimKeniston <jkenisto@us.ibm.com>, Arjan van de Ven <arjan@infradead.org>
 
-Hi Tomi,
+Hi!
 
-Today's linux-next merge of the omap_dss2 tree got a conflict in
-arch/arm/mach-omap2/board-am3517evm.c between commit
-13560d875d67c06239c82a6148c1b87075701fe9 ("AM3517: Enable basic I2C
-Support") from the omap tree and commit
-56a3d0235cd50d14d7bd4d45e55d192aa0e78cac ("OMAP: AM3517: Enable DSS2 for
-AM3517EVM board") from the omap_dss2 tree.
+> >>> Right, so you're going to love uprobes, which does exactly that. The
+> >>> current proposal is overwriting the target instruction with an INT3 and
+> >>> injecting an extra vma into the target process's address space
+> >>> containing the original instruction(s) and possible jumps back to the
+> >>> old code stream.
+> >>
+> >> Just out of interest, how does it handle the threading issue?
+> >>
+> >> Last I saw, at least some CPU people were _very_ nervous about overwriting 
+> >> instructions if another CPU might be just about to execute them.
+> > 
+> > I think the issue was that ring 0 was never meant to do that, where as,
+> > ring 3 does it all the time. Doesn't the dynamic library modify its
+> > text?
+> 
+> No, it has nothing to do with ring.  It has to do with modifying code
+> that another CPU could be executing at the same time, and with modifying
+> code on the same processor through another virtual alias (they are
+> different issues.)  The same issues apply regardless of the CPL of the
+> processor.
 
-Juts overlapping additions.   I fixed it up (see below) and can carry the
-fix as necessary.
+...but these are always 'there could be cpu bugs around' issues,
+right? Like amd k6. AFAICT x86 always supported self-modifying code
+without any extra barriers needed...
 
-P.S. Tomi, this omap_dss2 commit only has your Acked-by not Signed-off-by.
 -- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc arch/arm/mach-omap2/board-am3517evm.c
-index a166bcc,54af5f8..0000000
---- a/arch/arm/mach-omap2/board-am3517evm.c
-+++ b/arch/arm/mach-omap2/board-am3517evm.c
-@@@ -33,15 -33,147 +34,156 @@@
-  
-  #include "mux.h"
-  
-+ #define LCD_PANEL_PWR		176
-+ #define LCD_PANEL_BKLIGHT_PWR	182
-+ #define LCD_PANEL_PWM		181
-+ 
-+ static int lcd_enabled;
-+ static int dvi_enabled;
-+ 
-+ static void __init am3517_evm_display_init(void)
-+ {
-+ 	int r;
-+ 
-+ 	omap_mux_init_gpio(LCD_PANEL_PWR, OMAP_PIN_INPUT_PULLUP);
-+ 	omap_mux_init_gpio(LCD_PANEL_BKLIGHT_PWR, OMAP_PIN_INPUT_PULLDOWN);
-+ 	omap_mux_init_gpio(LCD_PANEL_PWM, OMAP_PIN_INPUT_PULLDOWN);
-+ 	/*
-+ 	 * Enable GPIO 182 = LCD Backlight Power
-+ 	 */
-+ 	r = gpio_request(LCD_PANEL_BKLIGHT_PWR, "lcd_backlight_pwr");
-+ 	if (r) {
-+ 		printk(KERN_ERR "failed to get lcd_backlight_pwr\n");
-+ 		return;
-+ 	}
-+ 	gpio_direction_output(LCD_PANEL_BKLIGHT_PWR, 1);
-+ 	/*
-+ 	 * Enable GPIO 181 = LCD Panel PWM
-+ 	 */
-+ 	r = gpio_request(LCD_PANEL_PWM, "lcd_pwm");
-+ 	if (r) {
-+ 		printk(KERN_ERR "failed to get lcd_pwm\n");
-+ 		goto err_1;
-+ 	}
-+ 	gpio_direction_output(LCD_PANEL_PWM, 1);
-+ 	/*
-+ 	 * Enable GPIO 176 = LCD Panel Power enable pin
-+ 	 */
-+ 	r = gpio_request(LCD_PANEL_PWR, "lcd_panel_pwr");
-+ 	if (r) {
-+ 		printk(KERN_ERR "failed to get lcd_panel_pwr\n");
-+ 		goto err_2;
-+ 	}
-+ 	gpio_direction_output(LCD_PANEL_PWR, 1);
-+ 
-+ 	printk(KERN_INFO "Display initialized successfully\n");
-+ 	return;
-+ 
-+ err_2:
-+ 	gpio_free(LCD_PANEL_PWM);
-+ err_1:
-+ 	gpio_free(LCD_PANEL_BKLIGHT_PWR);
-+ }
-+ 
-+ static int am3517_evm_panel_enable_lcd(struct omap_dss_device *dssdev)
-+ {
-+ 	if (dvi_enabled) {
-+ 		printk(KERN_ERR "cannot enable LCD, DVI is enabled\n");
-+ 		return -EINVAL;
-+ 	}
-+ 	gpio_set_value(LCD_PANEL_PWR, 1);
-+ 	lcd_enabled = 1;
-+ 
-+ 	return 0;
-+ }
-+ 
-+ static void am3517_evm_panel_disable_lcd(struct omap_dss_device *dssdev)
-+ {
-+ 	gpio_set_value(LCD_PANEL_PWR, 0);
-+ 	lcd_enabled = 0;
-+ }
-+ 
-+ static struct omap_dss_device am3517_evm_lcd_device = {
-+ 	.type			= OMAP_DISPLAY_TYPE_DPI,
-+ 	.name			= "lcd",
-+ 	.driver_name		= "sharp_lq_panel",
-+ 	.phy.dpi.data_lines 	= 16,
-+ 	.platform_enable	= am3517_evm_panel_enable_lcd,
-+ 	.platform_disable	= am3517_evm_panel_disable_lcd,
-+ };
-+ 
-+ static int am3517_evm_panel_enable_tv(struct omap_dss_device *dssdev)
-+ {
-+ 	return 0;
-+ }
-+ 
-+ static void am3517_evm_panel_disable_tv(struct omap_dss_device *dssdev)
-+ {
-+ }
-+ 
-+ static struct omap_dss_device am3517_evm_tv_device = {
-+ 	.type 			= OMAP_DISPLAY_TYPE_VENC,
-+ 	.name 			= "tv",
-+ 	.driver_name		= "venc",
-+ 	.phy.venc.type		= OMAP_DSS_VENC_TYPE_SVIDEO,
-+ 	.platform_enable	= am3517_evm_panel_enable_tv,
-+ 	.platform_disable	= am3517_evm_panel_disable_tv,
-+ };
-+ 
-+ static int am3517_evm_panel_enable_dvi(struct omap_dss_device *dssdev)
-+ {
-+ 	if (lcd_enabled) {
-+ 		printk(KERN_ERR "cannot enable DVI, LCD is enabled\n");
-+ 		return -EINVAL;
-+ 	}
-+ 	dvi_enabled = 1;
-+ 
-+ 	return 0;
-+ }
-+ 
-+ static void am3517_evm_panel_disable_dvi(struct omap_dss_device *dssdev)
-+ {
-+ 	dvi_enabled = 0;
-+ }
-+ 
-+ static struct omap_dss_device am3517_evm_dvi_device = {
-+ 	.type			= OMAP_DISPLAY_TYPE_DPI,
-+ 	.name			= "dvi",
-+ 	.driver_name		= "generic_panel",
-+ 	.phy.dpi.data_lines	= 24,
-+ 	.platform_enable	= am3517_evm_panel_enable_dvi,
-+ 	.platform_disable	= am3517_evm_panel_disable_dvi,
-+ };
-+ 
-+ static struct omap_dss_device *am3517_evm_dss_devices[] = {
-+ 	&am3517_evm_lcd_device,
-+ 	&am3517_evm_tv_device,
-+ 	&am3517_evm_dvi_device,
-+ };
-+ 
-+ static struct omap_dss_board_info am3517_evm_dss_data = {
-+ 	.num_devices	= ARRAY_SIZE(am3517_evm_dss_devices),
-+ 	.devices	= am3517_evm_dss_devices,
-+ 	.default_device	= &am3517_evm_lcd_device,
-+ };
-+ 
-+ struct platform_device am3517_evm_dss_device = {
-+ 	.name		= "omapdss",
-+ 	.id		= -1,
-+ 	.dev		= {
-+ 		.platform_data	= &am3517_evm_dss_data,
-+ 	},
-+ };
-+ 
- +static int __init am3517_evm_i2c_init(void)
- +{
- +	omap_register_i2c_bus(1, 400, NULL, 0);
- +	omap_register_i2c_bus(2, 400, NULL, 0);
- +	omap_register_i2c_bus(3, 400, NULL, 0);
- +
- +	return 0;
- +}
- +
-  /*
-   * Board initialization
-   */
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
