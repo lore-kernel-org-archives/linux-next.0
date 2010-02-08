@@ -1,43 +1,55 @@
-From: Avi Kivity <avi@redhat.com>
-Subject: Re: linux-next: add utrace tree
-Date: Mon, 08 Feb 2010 12:09:36 +0200
-Message-ID: <4B6FE2E0.6080803@redhat.com>
-References: <alpine.LFD.2.00.1001221614520.13231@localhost.localdomain>
-	<f73f7ab81001222220jfaf2edfwca3fa4c22b0b4d72@mail.gmail.com>
-	<alpine.LFD.2.00.1001232051510.3574@localhost.localdomain>
-	<m33a1tnbd9.fsf@fleche.redhat.com>
-	<alpine.LFD.2.00.1001251332370.3574@localhost.localdomain>
-	<m3636oh2rt.fsf@fleche.redhat.com>
-	<alpine.LFD.2.00.1001261535510.17519@localhost.localdomain>
-	<1264575134.4283.1983.camel@laptop>
-	<alpine.LFD.2.00.1001270231520.24253@localhost.localdomain>
-	<1264589716.4283.2006.camel@laptop>
-	<20100127110555.GB1842@in.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the omap_dss2 tree with the omap
+ tree
+Date: Mon, 8 Feb 2010 21:57:15 +1100
+Message-ID: <20100208215715.c78b2a9c.sfr@canb.auug.org.au>
+References: <20100208172521.abb500b4.sfr@canb.auug.org.au>
+	<1265621346.2433.27.camel@tubuntu.research.nokia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <utrace-devel-bounces@redhat.com>
-In-Reply-To: <20100127110555.GB1842@in.ibm.com>
-List-Unsubscribe: <https://www.redhat.com/mailman/options/utrace-devel>,
-	<mailto:utrace-devel-request@redhat.com?subject=unsubscribe>
-List-Archive: <https://www.redhat.com/archives/utrace-devel>
-List-Post: <mailto:utrace-devel@redhat.com>
-List-Help: <mailto:utrace-devel-request@redhat.com?subject=help>
-List-Subscribe: <https://www.redhat.com/mailman/listinfo/utrace-devel>,
-	<mailto:utrace-devel-request@redhat.com?subject=subscribe>
-Sender: utrace-devel-bounces@redhat.com
-Errors-To: utrace-devel-bounces@redhat.com
-To: ananth@in.ibm.com
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Kyle Moffett <kyle@moffetthome.net>, Peter Zijlstra <peterz@infradead.org>, Fr??d??ric Weisbecker <fweisbec@gmail.com>, Tom Tromey <tromey@redhat.com>, Oleg Nesterov <oleg@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, "Frank Ch. Eigler" <fche@redhat.com>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, utrace-devel@redhat.com, Thomas Gleixner <tglx@linutronix.de>, Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__8_Feb_2010_21_57_15_+1100_bL=DquwXhwRRBvGS"
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <1265621346.2433.27.camel@tubuntu.research.nokia.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: Tomi Valkeinen <tomi.valkeinen@nokia.com>
+Cc: Tony Lindgren <tony@atomide.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Vaibhav Hiremath <hvaibhav@ti.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On 01/27/2010 01:05 PM, Ananth N Mavinakayanahalli wrote:
-> We don't need to write one. I don't know how easy it is to make the kvm
-> emulator less kvm-centric (vcpus, kvm_context, etc). Avi?
->    
+--Signature=_Mon__8_Feb_2010_21_57_15_+1100_bL=DquwXhwRRBvGS
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It's a lot of mindless work but not too difficult; replacing hardcoded 
-accessors with function pointers.
+Hi Tomi,
 
--- 
-error compiling committee.c: too many arguments to function
+On Mon, 08 Feb 2010 11:29:06 +0200 Tomi Valkeinen <tomi.valkeinen@nokia.com=
+> wrote:
+>
+> > P.S. Tomi, this omap_dss2 commit only has your Acked-by not Signed-off-=
+by.
+>=20
+> Hmm, do you mean there's something wrong with that, or "jfyi"? Aren't I,
+> as a subsys maintainer, supposed to ack the patches?
+
+If a patch goes through your tree, you are supposed to add a Signed-off-by
+line.  See Documentation/SubmittingPatches section called "Sign your
+work".
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__8_Feb_2010_21_57_15_+1100_bL=DquwXhwRRBvGS
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAktv7gsACgkQjjKRsyhoI8x1NQCfRYoTrsBeCJ5ys0+sjstkNKz6
+CK8AnRXsHPHm3509JVoh1/hhRNVTZsha
+=Oiqi
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__8_Feb_2010_21_57_15_+1100_bL=DquwXhwRRBvGS--
