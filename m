@@ -1,44 +1,45 @@
-From: "John W. Linville" <linville@tuxdriver.com>
-Subject: Re: linux-next: manual merge of the net tree with the
- wireless-current tree
-Date: Mon, 8 Feb 2010 22:20:44 -0500
-Message-ID: <20100209032044.GA3397@tuxdriver.com>
-References: <20100209132444.d90b48a6.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the fsnotify tree with the vfs tree
+Date: Tue, 9 Feb 2010 16:37:08 +1100
+Message-ID: <20100209163708.b7ae6d05.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:47819 "EHLO
-	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753150Ab0BIDZZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Feb 2010 22:25:25 -0500
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__9_Feb_2010_16_37_08_+1100_HCiHHartNOiDc_dj"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Eric Paris <eparis@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Tue__9_Feb_2010_16_37_08_+1100_HCiHHartNOiDc_dj
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20100209132444.d90b48a6.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Berg <johannes@sipsolutions.net>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 09, 2010 at 01:24:44PM +1100, Stephen Rothwell wrote:
-> Hi all,
->=20
-> Today's linux-next merge of the net tree got a conflict in
-> net/mac80211/scan.c between commit
-> c0ce77b8323c1a0d4eeef97caf16c0ea971222a9 ("mac80211: fix deferred
-> hardware scan requests") from the wireless-current tree and commit
-> af6b63741cc4e4dfd575d06beb333b11a8a6e0c0 ("mac80211: generalise work
-> handling") from the net tree.
->=20
-> I resolved this the same way it is resolved in the merge of the
-> wireless-current tree into the wireless tree.
+Hi Eric,
 
-Maybe it would make sense to pull the wireless trees _before_ the
-greater net trees?  That way you can get the benefit of my merge
-conflict resolutions automatically.
+Today's linux-next merge of the fsnotify tree got a conflict in
+fs/namei.c between commit 123df2944c436c80640c4281c5bc9c7950b18687 ("Lose
+the new_name argument of fsnotify_move()") from the vfs tree and commit
+2df5764e29a813f6ba63be094ab8aadc704a78fd ("fsnotify: use unsigned char *
+for dentry->d_name.name") from the fsnotify tree.
 
-John
+The former removed the code changed by the latter, so I used the former.
 --=20
-John W. Linville =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0Someday the world will =
-need a hero, and you
-linville@tuxdriver.com =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0might be all =
-we have. =A0Be ready.
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__9_Feb_2010_16_37_08_+1100_HCiHHartNOiDc_dj
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAktw9IQACgkQjjKRsyhoI8yHWACcDMPQAzJyY5Tex3nN4Lb58veW
+vJQAoK361LhJIR2ZqYrubrp0sOMN1fOA
+=CLbM
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__9_Feb_2010_16_37_08_+1100_HCiHHartNOiDc_dj--
