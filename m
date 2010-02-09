@@ -1,33 +1,53 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: manual merge of the fsnotify tree with the vfs tree
-Date: Tue, 9 Feb 2010 05:45:22 +0000
-Message-ID: <20100209054521.GK30031@ZenIV.linux.org.uk>
+Date: Tue, 9 Feb 2010 17:08:21 +1100
+Message-ID: <20100209170821.9c664ccf.sfr@canb.auug.org.au>
 References: <20100209163708.b7ae6d05.sfr@canb.auug.org.au>
+	<20100209054521.GK30031@ZenIV.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__9_Feb_2010_17_08_21_+1100_17g.RsIsde7rywfP"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:41312 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750881Ab0BIFp1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Feb 2010 00:45:27 -0500
-Content-Disposition: inline
-In-Reply-To: <20100209163708.b7ae6d05.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:38262 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751853Ab0BIGI2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 9 Feb 2010 01:08:28 -0500
+In-Reply-To: <20100209054521.GK30031@ZenIV.linux.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Al Viro <viro@ZenIV.linux.org.uk>
 Cc: Eric Paris <eparis@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Feb 09, 2010 at 04:37:08PM +1100, Stephen Rothwell wrote:
-> Hi Eric,
-> 
-> Today's linux-next merge of the fsnotify tree got a conflict in
-> fs/namei.c between commit 123df2944c436c80640c4281c5bc9c7950b18687 ("Lose
-> the new_name argument of fsnotify_move()") from the vfs tree and commit
-> 2df5764e29a813f6ba63be094ab8aadc704a78fd ("fsnotify: use unsigned char *
-> for dentry->d_name.name") from the fsnotify tree.
-> 
-> The former removed the code changed by the latter, so I used the former.
+--Signature=_Tue__9_Feb_2010_17_08_21_+1100_17g.RsIsde7rywfP
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-FWIW, I've put two commits (audit_inode_child and fsnotify_move ones) into
-a new not-for-rebase branch (for-fsnotify) and told Eric, so hopefully
-he'll just pull it into fsnotify tree.
+Hi Al,
+
+On Tue, 9 Feb 2010 05:45:22 +0000 Al Viro <viro@ZenIV.linux.org.uk> wrote:
+>
+> FWIW, I've put two commits (audit_inode_child and fsnotify_move ones) into
+> a new not-for-rebase branch (for-fsnotify) and told Eric, so hopefully
+> he'll just pull it into fsnotify tree.
+
+Excellent, thanks.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__9_Feb_2010_17_08_21_+1100_17g.RsIsde7rywfP
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAktw+9UACgkQjjKRsyhoI8zXbACePfcpc+oLKAWn6CIRMc+BHCxP
+7ywAoJ2dLhso0Xzht/0jxYwmZ+UAgXPw
+=SNmh
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__9_Feb_2010_17_08_21_+1100_17g.RsIsde7rywfP--
