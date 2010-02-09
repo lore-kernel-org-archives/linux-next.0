@@ -1,68 +1,53 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: linux-next: manual merge of the trivial tree with the arm tree
-Date: Tue, 9 Feb 2010 11:09:08 +0100 (CET)
-Message-ID: <alpine.LNX.2.00.1002091108080.30967@pobox.suse.cz>
-References: <20100208154840.a58f46ad.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the microblaze tree with Linus'
+ tree
+Date: Tue, 9 Feb 2010 21:46:30 +1100
+Message-ID: <20100209214630.27159afb.sfr@canb.auug.org.au>
+References: <20100209110710.c7b6992b.sfr@canb.auug.org.au>
+	<4B711A5F.7020304@petalogix.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__9_Feb_2010_21_46_30_+1100_+EWziOS8y+gu+7Vi"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:59818 "EHLO mx2.suse.de"
+Received: from chilli.pcug.org.au ([203.10.76.44]:36791 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752822Ab0BIKJK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 9 Feb 2010 05:09:10 -0500
-In-Reply-To: <20100208154840.a58f46ad.sfr@canb.auug.org.au>
+	id S1752067Ab0BIKqh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 9 Feb 2010 05:46:37 -0500
+In-Reply-To: <4B711A5F.7020304@petalogix.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Russell King <rmk@arm.linux.org.uk>, Daniel Mack <daniel@caiaq.de>, Ben Dooks <ben-linux@fluff.org>
+To: michal.simek@petalogix.com
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 8 Feb 2010, Stephen Rothwell wrote:
+--Signature=_Tue__9_Feb_2010_21_46_30_+1100_+EWziOS8y+gu+7Vi
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Jiri,
-> 
-> Today's linux-next merge of the trivial tree got a conflict in
-> arch/arm/mach-u300/include/mach/debug-macro.S between commit
-> 7f62dc4756eaf761570b96250630d48f80397d64 ("ARM: 5910/1: ARM: Add tmp
-> register for addruart and loadsp") from the arm tree and commit
-> ba5584a307a1166597fbbe970ffdf49c8b7ee42a ("tree-wide: Assorted spelling
-> fixes") from the trivial tree.
-> 
-> Just context changes.  I fixed it up (see below) and can carry the fix as
-> necessary.
+Hi Michal,
 
-Thanks for the fix, I will leave this up to merge with Linus when either I 
-or Linus will fix that up.
+On Tue, 09 Feb 2010 09:18:39 +0100 Michal Simek <michal.simek@petalogix.com=
+> wrote:
+>
+> Yes, I know about. I am fixing it.
 
-On Mon, 8 Feb 2010, Stephen Rothwell wrote:
+Great, thanks.
 
-> Today's linux-next merge of the trivial tree got a conflict in
-> arch/arm/plat-s3c64xx/irq.c between commit
-> 51022cf6591ae2945960d034788bdeffa28cde13 ("ARM: SAMSUNG: Move IRQ UART
-> handling for newer devices to plat-samsung") from the arm tree and commit
-> ba5584a307a1166597fbbe970ffdf49c8b7ee42a ("tree-wide: Assorted spelling
-> fixes") from the trivial tree.
-> 
-> The former removes the comment updated by the latter.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Removed the hunk, thanks.
+--Signature=_Tue__9_Feb_2010_21_46_30_+1100_+EWziOS8y+gu+7Vi
+Content-Type: application/pgp-signature
 
-On Mon, 8 Feb 2010, Stephen Rothwell wrote:
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-> Hi Jiri,
-> 
-> Today's linux-next merge of the trivial tree got a conflict in
-> arch/arm/plat-s5pc1xx/irq.c between commit
-> be97162d47b2e067f9d21097650f2f0405dacc9f ("ARM: S5PC1XX: Use common UART
-> IRQ handling code") from the arm tree and commit
-> ba5584a307a1166597fbbe970ffdf49c8b7ee42a ("tree-wide: Assorted spelling
-> fixes") from the trivial tree.
-> 
-> The former removes the comment updated by the latter.
+iEYEARECAAYFAktxPQYACgkQjjKRsyhoI8x1XQCgjA+Y7tqlwpZwEn58c0806PRc
+BZ4AnRCa9ah/tCbKr2milTzTZRJh3VJl
+=h7DZ
+-----END PGP SIGNATURE-----
 
-Removed this one as well.
-
-Thanks!
-
--- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+--Signature=_Tue__9_Feb_2010_21_46_30_+1100_+EWziOS8y+gu+7Vi--
