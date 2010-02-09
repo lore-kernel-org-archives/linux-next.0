@@ -1,45 +1,36 @@
-From: Michal Simek <michal.simek@petalogix.com>
-Subject: Re: linux-next: manual merge of the microblaze tree with Linus' tree
-Date: Tue, 09 Feb 2010 09:18:39 +0100
-Message-ID: <4B711A5F.7020304@petalogix.com>
-References: <20100209110710.c7b6992b.sfr@canb.auug.org.au>
-Reply-To: michal.simek@petalogix.com
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: Re: linux-next: manual merge of the trivial tree with the  tree
+Date: Tue, 9 Feb 2010 11:01:04 +0100 (CET)
+Message-ID: <alpine.LNX.2.00.1002091100480.30967@pobox.suse.cz>
+References: <20100208154808.b5670cd5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-fx0-f220.google.com ([209.85.220.220]:55898 "EHLO
-	mail-fx0-f220.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751241Ab0BIIVJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Feb 2010 03:21:09 -0500
-In-Reply-To: <20100209110710.c7b6992b.sfr@canb.auug.org.au>
+Received: from cantor2.suse.de ([195.135.220.15]:59636 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751499Ab0BIKBI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 9 Feb 2010 05:01:08 -0500
+In-Reply-To: <20100208154808.b5670cd5.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Mack <daniel@caiaq.de>, Manuel Lauss <manuel.lauss@googlemail.com>, Yoichi Yuasa <yuasa@linux-mips.org>, Ralf Baechle <ralf@linux-mips.org>
 
-Stephen Rothwell wrote:
-> Hi Michal,
+On Mon, 8 Feb 2010, Stephen Rothwell wrote:
+
+> Hi Jiri,
 > 
-> Today's linux-next merge of the microblaze tree got a conflict in
-> arch/microblaze/kernel/setup.c between commit
-> a6013411118a6c8c34f1bd8b047b36fdf9711590 ("microblaze: Invalidate dcache
-> before enabling it") from Linus' tree and commit
-> 578059c56c816db2b696a196d3656afc187c7edd ("microblaze: Move cache
-> function to cache.c") from the microblaze tree.
+> Today's linux-next merge of the trivial tree got a conflict in
+> arch/mips/alchemy/common/reset.c between commit
+> 139047ceae71916626ee36bea9ef35f1030aabfe ("MIPS: Alchemy: get rid of
+> common/reset.c") from the  tree and commit
+> ba5584a307a1166597fbbe970ffdf49c8b7ee42a ("tree-wide: Assorted spelling
+> fixes") from the trivial tree.
 > 
-> The microblaze tree version supercedes the version from Linus' tree, so I
-> used that.
+> The former removes the file updated by the latter.
 
-Yes, I know about. I am fixing it.
-
-Thanks,
-Michal
-
-
-
+Thanks, I have dropped the respective hunk from the patch in my queue.
 
 -- 
-Michal Simek, Ing. (M.Eng)
-PetaLogix - Linux Solutions for a Reconfigurable World
-w: www.petalogix.com p: +61-7-30090663,+42-0-721842854 f: +61-7-30090663
+Jiri Kosina
+SUSE Labs, Novell Inc.
