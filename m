@@ -1,47 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the microblaze tree with Linus' tree
-Date: Tue, 9 Feb 2010 11:07:10 +1100
-Message-ID: <20100209110710.c7b6992b.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the pci tree
+Date: Tue, 9 Feb 2010 11:54:27 +1100
+Message-ID: <20100209115427.fe1b7f0c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__9_Feb_2010_11_07_10_+1100_HO9Hfgp2pQybeTHz"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Michal Simek <michal.simek@petalogix.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Tue__9_Feb_2010_11_54_27_+1100_B4CZ6OgQBm3HUt5J"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:33298 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753012Ab0BIAyd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 8 Feb 2010 19:54:33 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bjorn Helgaas <bjorn.helgaas@hp.com>
 
---Signature=_Tue__9_Feb_2010_11_07_10_+1100_HO9Hfgp2pQybeTHz
+--Signature=_Tue__9_Feb_2010_11_54_27_+1100_B4CZ6OgQBm3HUt5J
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Michal,
+Hi Jesse,
 
-Today's linux-next merge of the microblaze tree got a conflict in
-arch/microblaze/kernel/setup.c between commit
-a6013411118a6c8c34f1bd8b047b36fdf9711590 ("microblaze: Invalidate dcache
-before enabling it") from Linus' tree and commit
-578059c56c816db2b696a196d3656afc187c7edd ("microblaze: Move cache
-function to cache.c") from the microblaze tree.
+After merging the pci tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-The microblaze tree version supercedes the version from Linus' tree, so I
-used that.
+arch/powerpc/kernel/pci_64.c: In function 'pcibios_unmap_io_space':
+arch/powerpc/kernel/pci_64.c:101: error: 'struct pci_bus' has no member nam=
+ed 'resource'
+arch/powerpc/kernel/pci_64.c: In function 'pcibios_map_io_space':
+arch/powerpc/kernel/pci_64.c:149: error: 'struct pci_bus' has no member nam=
+ed 'resource'
+arch/powerpc/kernel/pci_64.c:149: error: 'struct pci_bus' has no member nam=
+ed 'resource'
+
+Caused by commit 17561b77695fa7e3027ea455ba6ecddb1a1c72f2 ("PCI: replace
+bus resource table with a list").  More care required - grep is your
+friend!
+
+I have used the pci tree form next-20100208 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__9_Feb_2010_11_07_10_+1100_HO9Hfgp2pQybeTHz
+--Signature=_Tue__9_Feb_2010_11_54_27_+1100_B4CZ6OgQBm3HUt5J
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAktwpy4ACgkQjjKRsyhoI8zuQwCeLXnZ5FALpbdwUr1fGd11V+yS
-oWkAnjqGuNZG2jSbHaYmWHb2N5CzyPrI
-=yawD
+iEYEARECAAYFAktwskMACgkQjjKRsyhoI8yVRQCdFREwVqXbMKHZxOXsbRRj7Owz
+cdsAni0SD4+p3ep8v4cAnlKggCk9MJcJ
+=fV24
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__9_Feb_2010_11_07_10_+1100_HO9Hfgp2pQybeTHz--
+--Signature=_Tue__9_Feb_2010_11_54_27_+1100_B4CZ6OgQBm3HUt5J--
