@@ -1,33 +1,47 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: linux-next: vfs/fsnotify trees build warning
-Date: Mon, 8 Feb 2010 14:36:58 -0500
-Message-ID: <20100208193658.GA9527@infradead.org>
-References: <20100125150456.c796f0b0.sfr@canb.auug.org.au> <20100125042925.GM25842@discord.disaster> <7e0fb38c1002081001y111bd0a2p40a8a896b0668d13@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the microblaze tree with Linus' tree
+Date: Tue, 9 Feb 2010 11:07:10 +1100
+Message-ID: <20100209110710.c7b6992b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:44895 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754582Ab0BHThF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Feb 2010 14:37:05 -0500
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__9_Feb_2010_11_07_10_+1100_HO9Hfgp2pQybeTHz"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Michal Simek <michal.simek@petalogix.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Tue__9_Feb_2010_11_07_10_+1100_HO9Hfgp2pQybeTHz
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <7e0fb38c1002081001y111bd0a2p40a8a896b0668d13@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Eric Paris <eparis@parisplace.org>
-Cc: Dave Chinner <david@fromorbit.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org, Eric Paris <eparis@redhat.com>, xfs@oss.sgi.com, linux-next@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 08, 2010 at 01:01:46PM -0500, Eric Paris wrote:
-> On Sun, Jan 24, 2010 at 11:29 PM, Dave Chinner <david@fromorbit.com> wrote:
-> > On Mon, Jan 25, 2010 at 03:04:56PM +1100, Stephen Rothwell wrote:
-> >> Hi Eric, Al,
-> >>
-> >> Today's linux-next build (x86_64 allmodconfig) produced these warnings:
-> 
-> I just switched fsnotify to use const unsigned char * so hopefully
-> they will shut up tomorrow....
+Hi Michal,
 
-The xfs tree is also about to get a patch to turn off -Wpointer-sign
-again.  If it was up to me we should turn it on for the whole build,
-we'll just need good way to deal with static initializers and strlen,
-but some simple wrappers might do it for those.
+Today's linux-next merge of the microblaze tree got a conflict in
+arch/microblaze/kernel/setup.c between commit
+a6013411118a6c8c34f1bd8b047b36fdf9711590 ("microblaze: Invalidate dcache
+before enabling it") from Linus' tree and commit
+578059c56c816db2b696a196d3656afc187c7edd ("microblaze: Move cache
+function to cache.c") from the microblaze tree.
+
+The microblaze tree version supercedes the version from Linus' tree, so I
+used that.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__9_Feb_2010_11_07_10_+1100_HO9Hfgp2pQybeTHz
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAktwpy4ACgkQjjKRsyhoI8zuQwCeLXnZ5FALpbdwUr1fGd11V+yS
+oWkAnjqGuNZG2jSbHaYmWHb2N5CzyPrI
+=yawD
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__9_Feb_2010_11_07_10_+1100_HO9Hfgp2pQybeTHz--
