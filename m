@@ -1,45 +1,33 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the fsnotify tree with the vfs tree
-Date: Tue, 9 Feb 2010 16:37:18 +1100
-Message-ID: <20100209163718.4924e2ca.sfr@canb.auug.org.au>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: linux-next: manual merge of the fsnotify tree with the vfs tree
+Date: Tue, 9 Feb 2010 05:45:22 +0000
+Message-ID: <20100209054521.GK30031@ZenIV.linux.org.uk>
+References: <20100209163708.b7ae6d05.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__9_Feb_2010_16_37_18_+1100_p39cEe+LUR.skfcn"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Eric Paris <eparis@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Tue__9_Feb_2010_16_37_18_+1100_p39cEe+LUR.skfcn
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from zeniv.linux.org.uk ([195.92.253.2]:41312 "EHLO
+	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750881Ab0BIFp1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Feb 2010 00:45:27 -0500
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20100209163708.b7ae6d05.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Eric Paris <eparis@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Eric,
+On Tue, Feb 09, 2010 at 04:37:08PM +1100, Stephen Rothwell wrote:
+> Hi Eric,
+> 
+> Today's linux-next merge of the fsnotify tree got a conflict in
+> fs/namei.c between commit 123df2944c436c80640c4281c5bc9c7950b18687 ("Lose
+> the new_name argument of fsnotify_move()") from the vfs tree and commit
+> 2df5764e29a813f6ba63be094ab8aadc704a78fd ("fsnotify: use unsigned char *
+> for dentry->d_name.name") from the fsnotify tree.
+> 
+> The former removed the code changed by the latter, so I used the former.
 
-Today's linux-next merge of the fsnotify tree got a conflict in
-kernel/auditsc.c between commit cccc6bba3f771ef29b33e4f79e70ebc3dba245b0
-("Lose the first argument of audit_inode_child()") from the vfs tree and
-commit 2df5764e29a813f6ba63be094ab8aadc704a78fd ("fsnotify: use unsigned
-char * for dentry->d_name.name") from the fsnotify tree.
-
-The former removed the code changed by the latter, so I used the former.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__9_Feb_2010_16_37_18_+1100_p39cEe+LUR.skfcn
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAktw9I4ACgkQjjKRsyhoI8xvEQCdGGwBcyAaBXS8ukqnQwofiE79
-ooAAn3IosbBR7AHS84m8iyZurEkTbnbN
-=BBLZ
------END PGP SIGNATURE-----
-
---Signature=_Tue__9_Feb_2010_16_37_18_+1100_p39cEe+LUR.skfcn--
+FWIW, I've put two commits (audit_inode_child and fsnotify_move ones) into
+a new not-for-rebase branch (for-fsnotify) and told Eric, so hopefully
+he'll just pull it into fsnotify tree.
