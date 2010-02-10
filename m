@@ -1,57 +1,51 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: linux-next: manual merge of the omap_dss2 tree with the omap
- tree
-Date: Tue, 9 Feb 2010 08:52:00 -0800
-Message-ID: <20100209165200.GH21755@atomide.com>
-References: <20100208172521.abb500b4.sfr@canb.auug.org.au>
- <1265621346.2433.27.camel@tubuntu.research.nokia.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the scsi tree
+Date: Wed, 10 Feb 2010 12:33:37 +1100
+Message-ID: <20100210123337.7a715aa0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mho-02-ewr.mailhop.org ([204.13.248.72]:65211 "EHLO
-	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754801Ab0BIQv3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Feb 2010 11:51:29 -0500
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__10_Feb_2010_12_33_37_+1100_puv4N.cnF43vaFSl"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Smart <james.smart@emulex.com>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Wed__10_Feb_2010_12_33_37_+1100_puv4N.cnF43vaFSl
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <1265621346.2433.27.camel@tubuntu.research.nokia.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Tomi Valkeinen <tomi.valkeinen@nokia.com>
-Cc: ext Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Vaibhav Hiremath <hvaibhav@ti.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
 
-* Tomi Valkeinen <tomi.valkeinen@nokia.com> [100208 01:23]:
-> On Mon, 2010-02-08 at 07:25 +0100, ext Stephen Rothwell wrote:
-> > Hi Tomi,
-> > 
-> > Today's linux-next merge of the omap_dss2 tree got a conflict in
-> > arch/arm/mach-omap2/board-am3517evm.c between commit
-> > 13560d875d67c06239c82a6148c1b87075701fe9 ("AM3517: Enable basic I2C
-> > Support") from the omap tree and commit
-> > 56a3d0235cd50d14d7bd4d45e55d192aa0e78cac ("OMAP: AM3517: Enable DSS2 for
-> > AM3517EVM board") from the omap_dss2 tree.
-> > 
-> > Juts overlapping additions.   I fixed it up (see below) and can carry the
-> > fix as necessary.
-> 
-> Thanks. I guess we can't properly fix this until the patch from omap
-> tree goes into mainline.
+Hi James,
 
-Let's move the AM3517 DSS2 board patch from Tomi's tree to omap for-next
-tree.
- 
-> Tony, do you think this current way, in which we have board file changes
-> in both linux-omap and the dss tree, is best we can do? Or should all
-> the board file changes go through linux-omap? I fear that we will have
-> conflicts with every new board.
+After merging the scsi tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Yeah we should just move the conflicting files into omap for-next. The board
-file changes conflict easily when new platform device init code is being
-added.
+drivers/scsi/lpfc/lpfc_bsg.c: In function 'lpfc_bsg_diag_mode':
+drivers/scsi/lpfc/lpfc_bsg.c:1496: error: implicit declaration of function =
+'msleep'
 
-Tomi, how about you ack and let me know about the patches (or git branch)
-you want me to add into omap for-next? Otherwise I'll assume anything
-DSS2 related is yours.
+Caused by commit 3b5dd52aaffd291edea9f939ed46a960b240bb45 ("[SCSI] lpfc
+8.3.8: (BSG4) Add new vendor specific BSG Commands").
 
-Regards,
+Missing include of linux/delay.h?
 
-Tony
+I have used the version of the scsi tree from next-20100209 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__10_Feb_2010_12_33_37_+1100_puv4N.cnF43vaFSl
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAktyDPEACgkQjjKRsyhoI8wi+ACeJvZyqnMAJ2sFwAcc92bFkmj0
+4yoAnj6d8UF/FWA40bcg97i71N9IkP8A
+=/1E1
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__10_Feb_2010_12_33_37_+1100_puv4N.cnF43vaFSl--
