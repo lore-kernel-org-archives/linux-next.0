@@ -1,51 +1,43 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the scsi tree
-Date: Wed, 10 Feb 2010 12:33:37 +1100
-Message-ID: <20100210123337.7a715aa0.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the sound tree with the i.MX tree
+Date: Wed, 10 Feb 2010 13:03:51 +1100
+Message-ID: <20100210130351.4b56f192.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__10_Feb_2010_12_33_37_+1100_puv4N.cnF43vaFSl"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Smart <james.smart@emulex.com>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__10_Feb_2010_12_33_37_+1100_puv4N.cnF43vaFSl
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Takashi,
 
-Hi James,
+Today's linux-next merge of the sound tree got a conflict in
+arch/arm/plat-mxc/Makefile between commit
+aae7019382896cf1075a93acc564e42601bc44a2 ("imx: only define deprecated
+symbols conditionally") from the i.MX tree and commit
+8380222ec9458d38a4e0cc3cb688ad7fff311df4 ("ASoC: Add a new imx-ssi sound
+driver") from the sound tree.
 
-After merging the scsi tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
-
-drivers/scsi/lpfc/lpfc_bsg.c: In function 'lpfc_bsg_diag_mode':
-drivers/scsi/lpfc/lpfc_bsg.c:1496: error: implicit declaration of function =
-'msleep'
-
-Caused by commit 3b5dd52aaffd291edea9f939ed46a960b240bb45 ("[SCSI] lpfc
-8.3.8: (BSG4) Add new vendor specific BSG Commands").
-
-Missing include of linux/delay.h?
-
-I have used the version of the scsi tree from next-20100209 for today.
---=20
+Just overlapping additions.  I fixed it up (see below) and can carry the
+fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__10_Feb_2010_12_33_37_+1100_puv4N.cnF43vaFSl
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAktyDPEACgkQjjKRsyhoI8wi+ACeJvZyqnMAJ2sFwAcc92bFkmj0
-4yoAnj6d8UF/FWA40bcg97i71N9IkP8A
-=/1E1
------END PGP SIGNATURE-----
-
---Signature=_Wed__10_Feb_2010_12_33_37_+1100_puv4N.cnF43vaFSl--
+diff --cc arch/arm/plat-mxc/Makefile
+index 7322bca,6cee38d..0000000
+--- a/arch/arm/plat-mxc/Makefile
++++ b/arch/arm/plat-mxc/Makefile
+@@@ -14,6 -12,8 +14,10 @@@ obj-$(CONFIG_MXC_PWM)  += pwm.
+  obj-$(CONFIG_USB_EHCI_MXC) += ehci.o
+  obj-$(CONFIG_MXC_ULPI) += ulpi.o
+  obj-$(CONFIG_ARCH_MXC_AUDMUX_V1) += audmux-v1.o
+ +CFLAGS_audmux-v1.o = -DIMX_NEEDS_DEPRECATED_SYMBOLS
+  obj-$(CONFIG_ARCH_MXC_AUDMUX_V2) += audmux-v2.o
+ +CFLAGS_audmux-v2.o = -DIMX_NEEDS_DEPRECATED_SYMBOLS
++ ifdef CONFIG_SND_IMX_SOC
++ obj-y += ssi-fiq.o
++ obj-y += ssi-fiq-ksym.o
++ endif
