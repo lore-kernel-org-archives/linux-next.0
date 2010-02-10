@@ -1,65 +1,50 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: linux-next: manual merge of the devicetree tree with the m68k
-	tree
-Date: Wed, 10 Feb 2010 13:17:49 -0700
-Message-ID: <fa686aa41002101217x135452cfud3ff750899be852d@mail.gmail.com>
-References: <20100210160234.673f32d1.sfr@canb.auug.org.au>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: linux-next: build warning after merge of the scsi tree
+Date: Wed, 10 Feb 2010 17:13:51 -0500
+Message-ID: <1265840031.2769.571.camel@mulgrave.site>
+References: <20100210165133.0dd46452.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-yw0-f173.google.com ([209.85.211.173]:41867 "EHLO
-	mail-yw0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753911Ab0BJUSK convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Feb 2010 15:18:10 -0500
-In-Reply-To: <20100210160234.673f32d1.sfr@canb.auug.org.au>
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:34737 "EHLO
+	bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751639Ab0BJWN4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Feb 2010 17:13:56 -0500
+In-Reply-To: <20100210165133.0dd46452.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Finn Thain <fthain@telegraphics.com.au>, Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Giridhar Malavali <giridhar.malavali@qlogic.com>, Sarang Radke <sarang.radke@qlogic.com>
 
-On Tue, Feb 9, 2010 at 10:02 PM, Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> Hi Grant,
->
-> Today's linux-next merge of the devicetree tree got a conflict in
-> drivers/serial/pmac_zilog.c between commit
-> f0ccf0f0269dfe53ec3f1c58fe130a47b908b907 ("pmac-zilog: cleanup") from
-> the m68k tree and commit71a157e8edca55198e808f8561dd49017a54ee34 =A0(=
-"of: add
-> 'of_' prefix to machine_is_compatible()") from the devicetree tree.
->
-> The first removes a space ... I fixed it up (see below) and can carry=
- the
-> fix as necessary. =A0(Grant, you could get rid of this by removing th=
-e
-> space between the tabs on the line "baud =3D 57600;". =A0Not a big is=
-sue,
-> though.)
+On Wed, 2010-02-10 at 16:51 +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the percpu tree, today's linux-next build (powerpc
+> ppc64_defconfig) produced these warnings:
+> 
+> drivers/scsi/qla2xxx/qla_attr.c: In function 'qla2x00_process_vendor_specific':
+> drivers/scsi/qla2xxx/qla_attr.c:2150: warning: 'req_data' may be used uninitialized in this function
+> drivers/scsi/qla2xxx/qla_attr.c:2152: warning: 'req_data_len' may be used uninitialized in this function
+> 
+> If the first "goto done_unmap_sg;" in this function is followed, the
+> req_data will be tested even though it has not been assigned to yet and
+> if it is non zero, it and req_data_len will be passed to
+> dma_free_coherent() while still uninitialised.
+> 
+> Introduced by commit 9a069e196767d7b87184fd8d8211d22bb5b9c0b8 ("[SCSI]
+> qla2xxx: Add BSG support for FC ELS/CT passthrough and vendor commands").
+> 
+> The compiler also produces these:
+> 
+> drivers/scsi/qla2xxx/qla_attr.c:2144: warning: 'command_sent' may be used uninitialized in this function
+> drivers/scsi/qla2xxx/qla_attr.c:2146: warning: 'type' may be used uninitialized in this function
+> 
+> but I can't easily tell if they are false positives.
 
-Removing the space didn't help.  git still complains about a conflict
-on merge if I remove the space.  Probably because both branches show a
-diff on the same area against the common base.
+They seem to be false positives.  The unconditional initialisation is on
+line 2191, and there's no use before then that I can find ... I also
+don't see this error on my builds, so it looks like a toolchain issue.
 
-What should be done here?  Should I merge Geert's 68k tree into my
-next-devicetree branch?  Or is there a better way to prepare for the
-merge window?
-
-> Also, there is a further patch in the m68k tree
-> (89d58f83cfce675a2054975cc2598ba1979816c7 "pmac-zilog: add platform
-> driver") that adds a define for machine_is_compatible. =A0I fixed tha=
-t as
-> below as well. =A0Hmmm, this file should really include linux/of_fdt.=
-h for
-> the definition of of_machine_is_compatible(), shouldn't it? =A0And th=
-en
-> maybe we could have a non OF version of the prototype/define in
-> of_fdt.h? =A0Just an idea.
-
-That sounds reasonable.
-
-g.
-
---=20
-Grant Likely, B.Sc., P.Eng.
-Secret Lab Technologies Ltd.
+James
