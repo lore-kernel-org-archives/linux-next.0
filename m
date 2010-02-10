@@ -1,231 +1,88 @@
-From: "Hiremath, Vaibhav" <hvaibhav@ti.com>
-Subject: RE: linux-next: manual merge of the omap_dss2 tree with the omap
- tree
-Date: Wed, 10 Feb 2010 15:22:08 +0530
-Message-ID: <19F8576C6E063C45BE387C64729E7394044A96D552@dbde02.ent.ti.com>
-References: <20100208172521.abb500b4.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] tm6000: fix build errors
+Date: Wed, 10 Feb 2010 09:53:57 -0800
+Message-ID: <20100210095357.34b86082.randy.dunlap@oracle.com>
+References: <20100210175521.0fd0866e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:35909 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752603Ab0BJJwY convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Feb 2010 04:52:24 -0500
-In-Reply-To: <20100208172521.abb500b4.sfr@canb.auug.org.au>
-Content-Language: en-US
+Received: from rcsinet11.oracle.com ([148.87.113.123]:52944 "EHLO
+	rcsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754494Ab0BJRyf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Feb 2010 12:54:35 -0500
+In-Reply-To: <20100210175521.0fd0866e.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Tomi Valkeinen <tomi.valkeinen@nokia.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tony Lindgren <tony@atomide.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Michel Ludwig <michel.ludwig@gmail.com>, Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org
+
+From: Randy Dunlap <randy.dunlap@oracle.com>
+
+(1) tm6000 uses usb_*() interfaces, so it should depend on USB.
+
+drivers/built-in.o: In function `tm6000_usb_disconnect':
+tm6000-cards.c:(.text+0x4abb44): undefined reference to `usb_put_dev'
+drivers/built-in.o: In function `tm6000_usb_probe':
+tm6000-cards.c:(.text+0x4ac923): undefined reference to `usb_get_dev'
+tm6000-cards.c:(.text+0x4ac93c): undefined reference to `usb_set_interface'
+drivers/built-in.o: In function `tm6000_read_write_usb':
+(.text+0x4ad274): undefined reference to `usb_control_msg'
+drivers/built-in.o: In function `tm6000_uninit_isoc':
+tm6000-video.c:(.text+0x4b00d5): undefined reference to `usb_kill_urb'
+tm6000-video.c:(.text+0x4b00e4): undefined reference to `usb_unlink_urb'
+tm6000-video.c:(.text+0x4b013c): undefined reference to `usb_buffer_free'
+tm6000-video.c:(.text+0x4b014b): undefined reference to `usb_free_urb'
+drivers/built-in.o: In function `tm6000_prepare_isoc':
+tm6000-video.c:(.text+0x4b0773): undefined reference to `usb_alloc_urb'
+tm6000-video.c:(.text+0x4b0835): undefined reference to `usb_buffer_alloc'
+drivers/built-in.o: In function `tm6000_irq_callback':
+tm6000-video.c:(.text+0x4b1ad3): undefined reference to `usb_submit_urb'
+drivers/built-in.o: In function `tm6000_module_init':
+tm6000-cards.c:(.init.text+0x24499): undefined reference to `usb_register_driver'
+drivers/built-in.o: In function `tm6000_module_exit':
+tm6000-cards.c:(.exit.text+0x5cb0): undefined reference to `usb_deregister'
+
+(2) tm6000-alsa uses interfaces from tm6000-core, so when they are
+both built as modules, the core interfaces need to be exported.
+
+ERROR: "tm6000_set_reg" [drivers/staging/tm6000/tm6000-alsa.ko] undefined!
+ERROR: "tm6000_get_reg" [drivers/staging/tm6000/tm6000-alsa.ko] undefined!
 
 
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Michel Ludwig <michel.ludwig@gmail.com>
+---
+ drivers/staging/tm6000/Kconfig       |    2 +-
+ drivers/staging/tm6000/tm6000-core.c |    2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-Thanks,
-Vaibhav Hiremath
-Platform Support Products
-Texas Instruments Inc
-Ph: +91-80-25099927
-
-> -----Original Message-----
-> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
-> Sent: Monday, February 08, 2010 11:55 AM
-> To: Tomi Valkeinen
-> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org;
-> Hiremath, Vaibhav; Tony Lindgren; linux-omap@vger.kernel.org
-> Subject: linux-next: manual merge of the omap_dss2 tree with the
-> omap tree
-> 
-> Hi Tomi,
-> 
-> Today's linux-next merge of the omap_dss2 tree got a conflict in
-> arch/arm/mach-omap2/board-am3517evm.c between commit
-> 13560d875d67c06239c82a6148c1b87075701fe9 ("AM3517: Enable basic I2C
-> Support") from the omap tree and commit
-> 56a3d0235cd50d14d7bd4d45e55d192aa0e78cac ("OMAP: AM3517: Enable DSS2
-> for
-> AM3517EVM board") from the omap_dss2 tree.
-> 
-> Juts overlapping additions.   I fixed it up (see below) and can
-> carry the
-> fix as necessary.
-> 
-> P.S. Tomi, this omap_dss2 commit only has your Acked-by not Signed-
-> off-by.
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc arch/arm/mach-omap2/board-am3517evm.c
-> index a166bcc,54af5f8..0000000
-> --- a/arch/arm/mach-omap2/board-am3517evm.c
-> +++ b/arch/arm/mach-omap2/board-am3517evm.c
-> @@@ -33,15 -33,147 +34,156 @@@
-> 
->   #include "mux.h"
-> 
-[Hiremath, Vaibhav] I don't see display.h being added here, but when I looked into linux-next repo, I could see that. I think the following commit only shows for the conflicted part, so should be ok.
-
-Thanks,
-Vaibhav
-
-> + #define LCD_PANEL_PWR		176
-> + #define LCD_PANEL_BKLIGHT_PWR	182
-> + #define LCD_PANEL_PWM		181
-> +
-> + static int lcd_enabled;
-> + static int dvi_enabled;
-> +
-> + static void __init am3517_evm_display_init(void)
-> + {
-> + 	int r;
-> +
-> + 	omap_mux_init_gpio(LCD_PANEL_PWR, OMAP_PIN_INPUT_PULLUP);
-> + 	omap_mux_init_gpio(LCD_PANEL_BKLIGHT_PWR,
-> OMAP_PIN_INPUT_PULLDOWN);
-> + 	omap_mux_init_gpio(LCD_PANEL_PWM, OMAP_PIN_INPUT_PULLDOWN);
-> + 	/*
-> + 	 * Enable GPIO 182 = LCD Backlight Power
-> + 	 */
-> + 	r = gpio_request(LCD_PANEL_BKLIGHT_PWR, "lcd_backlight_pwr");
-> + 	if (r) {
-> + 		printk(KERN_ERR "failed to get lcd_backlight_pwr\n");
-> + 		return;
-> + 	}
-> + 	gpio_direction_output(LCD_PANEL_BKLIGHT_PWR, 1);
-> + 	/*
-> + 	 * Enable GPIO 181 = LCD Panel PWM
-> + 	 */
-> + 	r = gpio_request(LCD_PANEL_PWM, "lcd_pwm");
-> + 	if (r) {
-> + 		printk(KERN_ERR "failed to get lcd_pwm\n");
-> + 		goto err_1;
-> + 	}
-> + 	gpio_direction_output(LCD_PANEL_PWM, 1);
-> + 	/*
-> + 	 * Enable GPIO 176 = LCD Panel Power enable pin
-> + 	 */
-> + 	r = gpio_request(LCD_PANEL_PWR, "lcd_panel_pwr");
-> + 	if (r) {
-> + 		printk(KERN_ERR "failed to get lcd_panel_pwr\n");
-> + 		goto err_2;
-> + 	}
-> + 	gpio_direction_output(LCD_PANEL_PWR, 1);
-> +
-> + 	printk(KERN_INFO "Display initialized successfully\n");
-> + 	return;
-> +
-> + err_2:
-> + 	gpio_free(LCD_PANEL_PWM);
-> + err_1:
-> + 	gpio_free(LCD_PANEL_BKLIGHT_PWR);
-> + }
-> +
-> + static int am3517_evm_panel_enable_lcd(struct omap_dss_device
-> *dssdev)
-> + {
-> + 	if (dvi_enabled) {
-> + 		printk(KERN_ERR "cannot enable LCD, DVI is enabled\n");
-> + 		return -EINVAL;
-> + 	}
-> + 	gpio_set_value(LCD_PANEL_PWR, 1);
-> + 	lcd_enabled = 1;
-> +
-> + 	return 0;
-> + }
-> +
-> + static void am3517_evm_panel_disable_lcd(struct omap_dss_device
-> *dssdev)
-> + {
-> + 	gpio_set_value(LCD_PANEL_PWR, 0);
-> + 	lcd_enabled = 0;
-> + }
-> +
-> + static struct omap_dss_device am3517_evm_lcd_device = {
-> + 	.type			= OMAP_DISPLAY_TYPE_DPI,
-> + 	.name			= "lcd",
-> + 	.driver_name		= "sharp_lq_panel",
-> + 	.phy.dpi.data_lines 	= 16,
-> + 	.platform_enable	= am3517_evm_panel_enable_lcd,
-> + 	.platform_disable	= am3517_evm_panel_disable_lcd,
-> + };
-> +
-> + static int am3517_evm_panel_enable_tv(struct omap_dss_device
-> *dssdev)
-> + {
-> + 	return 0;
-> + }
-> +
-> + static void am3517_evm_panel_disable_tv(struct omap_dss_device
-> *dssdev)
-> + {
-> + }
-> +
-> + static struct omap_dss_device am3517_evm_tv_device = {
-> + 	.type 			= OMAP_DISPLAY_TYPE_VENC,
-> + 	.name 			= "tv",
-> + 	.driver_name		= "venc",
-> + 	.phy.venc.type		= OMAP_DSS_VENC_TYPE_SVIDEO,
-> + 	.platform_enable	= am3517_evm_panel_enable_tv,
-> + 	.platform_disable	= am3517_evm_panel_disable_tv,
-> + };
-> +
-> + static int am3517_evm_panel_enable_dvi(struct omap_dss_device
-> *dssdev)
-> + {
-> + 	if (lcd_enabled) {
-> + 		printk(KERN_ERR "cannot enable DVI, LCD is enabled\n");
-> + 		return -EINVAL;
-> + 	}
-> + 	dvi_enabled = 1;
-> +
-> + 	return 0;
-> + }
-> +
-> + static void am3517_evm_panel_disable_dvi(struct omap_dss_device
-> *dssdev)
-> + {
-> + 	dvi_enabled = 0;
-> + }
-> +
-> + static struct omap_dss_device am3517_evm_dvi_device = {
-> + 	.type			= OMAP_DISPLAY_TYPE_DPI,
-> + 	.name			= "dvi",
-> + 	.driver_name		= "generic_panel",
-> + 	.phy.dpi.data_lines	= 24,
-> + 	.platform_enable	= am3517_evm_panel_enable_dvi,
-> + 	.platform_disable	= am3517_evm_panel_disable_dvi,
-> + };
-> +
-> + static struct omap_dss_device *am3517_evm_dss_devices[] = {
-> + 	&am3517_evm_lcd_device,
-> + 	&am3517_evm_tv_device,
-> + 	&am3517_evm_dvi_device,
-> + };
-> +
-> + static struct omap_dss_board_info am3517_evm_dss_data = {
-> + 	.num_devices	= ARRAY_SIZE(am3517_evm_dss_devices),
-> + 	.devices	= am3517_evm_dss_devices,
-> + 	.default_device	= &am3517_evm_lcd_device,
-> + };
-> +
-> + struct platform_device am3517_evm_dss_device = {
-> + 	.name		= "omapdss",
-> + 	.id		= -1,
-> + 	.dev		= {
-> + 		.platform_data	= &am3517_evm_dss_data,
-> + 	},
-> + };
-> +
->  +static int __init am3517_evm_i2c_init(void)
->  +{
->  +	omap_register_i2c_bus(1, 400, NULL, 0);
->  +	omap_register_i2c_bus(2, 400, NULL, 0);
->  +	omap_register_i2c_bus(3, 400, NULL, 0);
->  +
->  +	return 0;
->  +}
->  +
->   /*
->    * Board initialization
->    */
+--- linux-next-20100210.orig/drivers/staging/tm6000/Kconfig
++++ linux-next-20100210/drivers/staging/tm6000/Kconfig
+@@ -1,6 +1,6 @@
+ config VIDEO_TM6000
+ 	tristate "TV Master TM5600/6000/6010 driver"
+-	depends on VIDEO_DEV && I2C && INPUT && EXPERIMENTAL
++	depends on VIDEO_DEV && I2C && INPUT && USB && EXPERIMENTAL
+ 	select VIDEO_TUNER
+ 	select TUNER_XC2028
+ 	select VIDEOBUF_VMALLOC
+--- linux-next-20100210.orig/drivers/staging/tm6000/tm6000-core.c
++++ linux-next-20100210/drivers/staging/tm6000/tm6000-core.c
+@@ -108,6 +108,7 @@ int tm6000_set_reg (struct tm6000_core *
+ 		tm6000_read_write_usb (dev, USB_DIR_OUT | USB_TYPE_VENDOR,
+ 				       req, value, index, NULL, 0);
+ }
++EXPORT_SYMBOL_GPL(tm6000_set_reg);
+ 
+ int tm6000_get_reg (struct tm6000_core *dev, u8 req, u16 value, u16 index)
+ {
+@@ -122,6 +123,7 @@ int tm6000_get_reg (struct tm6000_core *
+ 
+ 	return *buf;
+ }
++EXPORT_SYMBOL_GPL(tm6000_get_reg);
+ 
+ int tm6000_get_reg16 (struct tm6000_core *dev, u8 req, u16 value, u16 index)
+ {
