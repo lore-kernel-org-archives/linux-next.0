@@ -1,73 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the devicetree tree with the m68k tree
-Date: Wed, 10 Feb 2010 16:02:34 +1100
-Message-ID: <20100210160234.673f32d1.sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the scsi tree
+Date: Wed, 10 Feb 2010 16:51:33 +1100
+Message-ID: <20100210165133.0dd46452.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__10_Feb_2010_16_51_33_+1100__hxcAmda4k3apKnt"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56832 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:39494 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750696Ab0BJFCk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 10 Feb 2010 00:02:40 -0500
+	id S1752096Ab0BJFvj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Feb 2010 00:51:39 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Finn Thain <fthain@telegraphics.com.au>, Geert Uytterhoeven <geert@linux-m68k.org>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Giridhar Malavali <giridhar.malavali@qlogic.com>, Sarang Radke <sarang.radke@qlogic.com>
 
-Hi Grant,
+--Signature=_Wed__10_Feb_2010_16_51_33_+1100__hxcAmda4k3apKnt
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the devicetree tree got a conflict in
-drivers/serial/pmac_zilog.c between commit
-f0ccf0f0269dfe53ec3f1c58fe130a47b908b907 ("pmac-zilog: cleanup") from
-the m68k tree and commit71a157e8edca55198e808f8561dd49017a54ee34  ("of: add
-'of_' prefix to machine_is_compatible()") from the devicetree tree.
+Hi all,
 
-The first removes a space ... I fixed it up (see below) and can carry the
-fix as necessary.  (Grant, you could get rid of this by removing the
-space between the tabs on the line "baud = 57600;".  Not a big issue,
-though.)
+After merging the percpu tree, today's linux-next build (powerpc
+ppc64_defconfig) produced these warnings:
 
-Also, there is a further patch in the m68k tree
-(89d58f83cfce675a2054975cc2598ba1979816c7 "pmac-zilog: add platform
-driver") that adds a define for machine_is_compatible.  I fixed that as
-below as well.  Hmmm, this file should really include linux/of_fdt.h for
-the definition of of_machine_is_compatible(), shouldn't it?  And then
-maybe we could have a non OF version of the prototype/define in
-of_fdt.h?  Just an idea.
+drivers/scsi/qla2xxx/qla_attr.c: In function 'qla2x00_process_vendor_specif=
+ic':
+drivers/scsi/qla2xxx/qla_attr.c:2150: warning: 'req_data' may be used unini=
+tialized in this function
+drivers/scsi/qla2xxx/qla_attr.c:2152: warning: 'req_data_len' may be used u=
+ninitialized in this function
 
--- 
+If the first "goto done_unmap_sg;" in this function is followed, the
+req_data will be tested even though it has not been assigned to yet and
+if it is non zero, it and req_data_len will be passed to
+dma_free_coherent() while still uninitialised.
+
+Introduced by commit 9a069e196767d7b87184fd8d8211d22bb5b9c0b8 ("[SCSI]
+qla2xxx: Add BSG support for FC ELS/CT passthrough and vendor commands").
+
+The compiler also produces these:
+
+drivers/scsi/qla2xxx/qla_attr.c:2144: warning: 'command_sent' may be used u=
+ninitialized in this function
+drivers/scsi/qla2xxx/qla_attr.c:2146: warning: 'type' may be used uninitial=
+ized in this function
+
+but I can't easily tell if they are false positives.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/serial/pmac_zilog.c
-index 870b6a3,3e2ae48..0000000
---- a/drivers/serial/pmac_zilog.c
-+++ b/drivers/serial/pmac_zilog.c
-@@@ -70,10 -68,6 +70,10 @@@
-  #include <asm/pmac_feature.h>
-  #include <asm/dbdma.h>
-  #include <asm/macio.h>
- +#else
- +#include <linux/platform_device.h>
-- #define machine_is_compatible(x) (0)
-++#define of_machine_is_compatible(x) (0)
- +#endif
-  
-  #if defined (CONFIG_SERIAL_PMACZILOG_CONSOLE) && defined(CONFIG_MAGIC_SYSRQ)
-  #define SUPPORT_SYSRQ
-@@@ -2145,10 -2031,10 +2145,10 @@@ static int __init pmz_console_setup(str
-  	/*
-  	 * XServe's default to 57600 bps
-  	 */
-- 	if (machine_is_compatible("RackMac1,1")
-- 	    || machine_is_compatible("RackMac1,2")
-- 	    || machine_is_compatible("MacRISC4"))
-+ 	if (of_machine_is_compatible("RackMac1,1")
-+ 	    || of_machine_is_compatible("RackMac1,2")
-+ 	    || of_machine_is_compatible("MacRISC4"))
- -	 	baud = 57600;
- +		baud = 57600;
-  
-  	/*
-  	 * Check whether an invalid uart number has been specified, and
+--Signature=_Wed__10_Feb_2010_16_51_33_+1100__hxcAmda4k3apKnt
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAktySWUACgkQjjKRsyhoI8wh0QCfc7WmWBarxjxEwSxzSdW96ufq
+LhoAnAqzOwF0xlb+SHaPtL0nFSSePK3Q
+=4qzZ
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__10_Feb_2010_16_51_33_+1100__hxcAmda4k3apKnt--
