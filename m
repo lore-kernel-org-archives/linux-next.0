@@ -1,58 +1,43 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the scsi tree
-Date: Thu, 11 Feb 2010 10:11:03 +1100
-Message-ID: <20100211101103.04dc0735.sfr@canb.auug.org.au>
-References: <20100210123337.7a715aa0.sfr@canb.auug.org.au>
-	<1265840176.2769.576.camel@mulgrave.site>
+Subject: linux-next: manual merge of the i.MX tree with Linus' tree
+Date: Thu, 11 Feb 2010 10:23:59 +1100
+Message-ID: <20100211102359.dad2539d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__11_Feb_2010_10_11_03_+1100_+09O3D=+1KNj63Qw"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40975 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:44999 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755900Ab0BJXLL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 10 Feb 2010 18:11:11 -0500
-In-Reply-To: <1265840176.2769.576.camel@mulgrave.site>
+	id S1755511Ab0BJXYB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Feb 2010 18:24:01 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Smart <james.smart@emulex.com>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Amit Kucheria <amit.kucheria@canonical.com>
 
---Signature=_Thu__11_Feb_2010_10_11_03_+1100_+09O3D=+1KNj63Qw
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Sascha,
 
-Hi James,
+Today's linux-next merge of the i.MX tree got a conflict in
+arch/arm/Makefile between commit 95b8f20fd6a2694a16b8addb190b942bfb670c88
+("ARM: fix badly placed mach/plat entries in Kconfig & Makefile") from
+Linus' tree and commit b996b5830364c1b1d2469be574f4ebe831987ba9 ("mxc:
+Add support for the Babbage board (i.MX5)") from the i.MX tree.
 
-On Wed, 10 Feb 2010 17:16:16 -0500 James Bottomley <James.Bottomley@HansenP=
-artnership.com> wrote:
->
-> Sorry, my powerstation isn't working (orange warning light) and I can't
-> seem to get anyone to repair it, so I can't build for ppc anymore (which
-> is why this didn't get spotted on commit).
-
-There are some (kernel building only) cross compilers at
-http://bakeyournoodle.com/cross/ .  (yes, I know they are not PARISC
-hosted :-))
-
-That being said, I don't expect every maintainer to cross build very
-much, just to react when they get problem reports. ;-)
---=20
+I fixed it up (see below) and can carry the fix for a while.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__11_Feb_2010_10_11_03_+1100_+09O3D=+1KNj63Qw
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAktzPQcACgkQjjKRsyhoI8xSBwCeJBVM6l143XgaUGsOkmrLb7kH
-uz8An1wDC51v0caLKKBJ27R4mP4rMK2b
-=Qi8M
------END PGP SIGNATURE-----
-
---Signature=_Thu__11_Feb_2010_10_11_03_+1100_+09O3D=+1KNj63Qw--
+diff --cc arch/arm/Makefile
+index c7f6f41,056daf8..0000000
+--- a/arch/arm/Makefile
++++ b/arch/arm/Makefile
+@@@ -146,7 -146,7 +146,8 @@@ machine-$(CONFIG_ARCH_MX1)		:= mx
+  machine-$(CONFIG_ARCH_MX2)		:= mx2
+  machine-$(CONFIG_ARCH_MX25)		:= mx25
+  machine-$(CONFIG_ARCH_MX3)		:= mx3
++ machine-$(CONFIG_ARCH_MX5)		:= mx5
+ +machine-$(CONFIG_ARCH_MXC91231)		:= mxc91231
+  machine-$(CONFIG_ARCH_NETX)		:= netx
+  machine-$(CONFIG_ARCH_NOMADIK)		:= nomadik
+  machine-$(CONFIG_ARCH_NS9XXX)		:= ns9xxx
