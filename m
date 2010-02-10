@@ -1,42 +1,58 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the scsi tree
-Date: Wed, 10 Feb 2010 17:16:16 -0500
-Message-ID: <1265840176.2769.576.camel@mulgrave.site>
+Date: Thu, 11 Feb 2010 10:11:03 +1100
+Message-ID: <20100211101103.04dc0735.sfr@canb.auug.org.au>
 References: <20100210123337.7a715aa0.sfr@canb.auug.org.au>
+	<1265840176.2769.576.camel@mulgrave.site>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__11_Feb_2010_10_11_03_+1100_+09O3D=+1KNj63Qw"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:34747 "EHLO
-	bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756176Ab0BJWQT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 10 Feb 2010 17:16:19 -0500
-In-Reply-To: <20100210123337.7a715aa0.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:40975 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755900Ab0BJXLL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Feb 2010 18:11:11 -0500
+In-Reply-To: <1265840176.2769.576.camel@mulgrave.site>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Smart <james.smart@emulex.com>
 
-On Wed, 2010-02-10 at 12:33 +1100, Stephen Rothwell wrote:
-> Hi James,
-> 
-> After merging the scsi tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> drivers/scsi/lpfc/lpfc_bsg.c: In function 'lpfc_bsg_diag_mode':
-> drivers/scsi/lpfc/lpfc_bsg.c:1496: error: implicit declaration of function 'msleep'
-> 
-> Caused by commit 3b5dd52aaffd291edea9f939ed46a960b240bb45 ("[SCSI] lpfc
-> 8.3.8: (BSG4) Add new vendor specific BSG Commands").
-> 
-> Missing include of linux/delay.h?
+--Signature=_Thu__11_Feb_2010_10_11_03_+1100_+09O3D=+1KNj63Qw
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Looks to be exactly the problem.  delay.h gets pulled into some of the
-generic headers on x86, but not on ppc.
+Hi James,
 
-Sorry, my powerstation isn't working (orange warning light) and I can't
-seem to get anyone to repair it, so I can't build for ppc anymore (which
-is why this didn't get spotted on commit).
+On Wed, 10 Feb 2010 17:16:16 -0500 James Bottomley <James.Bottomley@HansenP=
+artnership.com> wrote:
+>
+> Sorry, my powerstation isn't working (orange warning light) and I can't
+> seem to get anyone to repair it, so I can't build for ppc anymore (which
+> is why this didn't get spotted on commit).
 
-James
+There are some (kernel building only) cross compilers at
+http://bakeyournoodle.com/cross/ .  (yes, I know they are not PARISC
+hosted :-))
+
+That being said, I don't expect every maintainer to cross build very
+much, just to react when they get problem reports. ;-)
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__11_Feb_2010_10_11_03_+1100_+09O3D=+1KNj63Qw
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAktzPQcACgkQjjKRsyhoI8xSBwCeJBVM6l143XgaUGsOkmrLb7kH
+uz8An1wDC51v0caLKKBJ27R4mP4rMK2b
+=Qi8M
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__11_Feb_2010_10_11_03_+1100_+09O3D=+1KNj63Qw--
