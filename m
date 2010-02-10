@@ -1,88 +1,65 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] tm6000: fix build errors
-Date: Wed, 10 Feb 2010 09:53:57 -0800
-Message-ID: <20100210095357.34b86082.randy.dunlap@oracle.com>
-References: <20100210175521.0fd0866e.sfr@canb.auug.org.au>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: linux-next: manual merge of the devicetree tree with the m68k
+	tree
+Date: Wed, 10 Feb 2010 13:17:49 -0700
+Message-ID: <fa686aa41002101217x135452cfud3ff750899be852d@mail.gmail.com>
+References: <20100210160234.673f32d1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet11.oracle.com ([148.87.113.123]:52944 "EHLO
-	rcsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754494Ab0BJRyf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Feb 2010 12:54:35 -0500
-In-Reply-To: <20100210175521.0fd0866e.sfr@canb.auug.org.au>
+Received: from mail-yw0-f173.google.com ([209.85.211.173]:41867 "EHLO
+	mail-yw0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753911Ab0BJUSK convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Feb 2010 15:18:10 -0500
+In-Reply-To: <20100210160234.673f32d1.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Michel Ludwig <michel.ludwig@gmail.com>, Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Finn Thain <fthain@telegraphics.com.au>, Geert Uytterhoeven <geert@linux-m68k.org>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+On Tue, Feb 9, 2010 at 10:02 PM, Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> Hi Grant,
+>
+> Today's linux-next merge of the devicetree tree got a conflict in
+> drivers/serial/pmac_zilog.c between commit
+> f0ccf0f0269dfe53ec3f1c58fe130a47b908b907 ("pmac-zilog: cleanup") from
+> the m68k tree and commit71a157e8edca55198e808f8561dd49017a54ee34 =A0(=
+"of: add
+> 'of_' prefix to machine_is_compatible()") from the devicetree tree.
+>
+> The first removes a space ... I fixed it up (see below) and can carry=
+ the
+> fix as necessary. =A0(Grant, you could get rid of this by removing th=
+e
+> space between the tabs on the line "baud =3D 57600;". =A0Not a big is=
+sue,
+> though.)
 
-(1) tm6000 uses usb_*() interfaces, so it should depend on USB.
+Removing the space didn't help.  git still complains about a conflict
+on merge if I remove the space.  Probably because both branches show a
+diff on the same area against the common base.
 
-drivers/built-in.o: In function `tm6000_usb_disconnect':
-tm6000-cards.c:(.text+0x4abb44): undefined reference to `usb_put_dev'
-drivers/built-in.o: In function `tm6000_usb_probe':
-tm6000-cards.c:(.text+0x4ac923): undefined reference to `usb_get_dev'
-tm6000-cards.c:(.text+0x4ac93c): undefined reference to `usb_set_interface'
-drivers/built-in.o: In function `tm6000_read_write_usb':
-(.text+0x4ad274): undefined reference to `usb_control_msg'
-drivers/built-in.o: In function `tm6000_uninit_isoc':
-tm6000-video.c:(.text+0x4b00d5): undefined reference to `usb_kill_urb'
-tm6000-video.c:(.text+0x4b00e4): undefined reference to `usb_unlink_urb'
-tm6000-video.c:(.text+0x4b013c): undefined reference to `usb_buffer_free'
-tm6000-video.c:(.text+0x4b014b): undefined reference to `usb_free_urb'
-drivers/built-in.o: In function `tm6000_prepare_isoc':
-tm6000-video.c:(.text+0x4b0773): undefined reference to `usb_alloc_urb'
-tm6000-video.c:(.text+0x4b0835): undefined reference to `usb_buffer_alloc'
-drivers/built-in.o: In function `tm6000_irq_callback':
-tm6000-video.c:(.text+0x4b1ad3): undefined reference to `usb_submit_urb'
-drivers/built-in.o: In function `tm6000_module_init':
-tm6000-cards.c:(.init.text+0x24499): undefined reference to `usb_register_driver'
-drivers/built-in.o: In function `tm6000_module_exit':
-tm6000-cards.c:(.exit.text+0x5cb0): undefined reference to `usb_deregister'
+What should be done here?  Should I merge Geert's 68k tree into my
+next-devicetree branch?  Or is there a better way to prepare for the
+merge window?
 
-(2) tm6000-alsa uses interfaces from tm6000-core, so when they are
-both built as modules, the core interfaces need to be exported.
+> Also, there is a further patch in the m68k tree
+> (89d58f83cfce675a2054975cc2598ba1979816c7 "pmac-zilog: add platform
+> driver") that adds a define for machine_is_compatible. =A0I fixed tha=
+t as
+> below as well. =A0Hmmm, this file should really include linux/of_fdt.=
+h for
+> the definition of of_machine_is_compatible(), shouldn't it? =A0And th=
+en
+> maybe we could have a non OF version of the prototype/define in
+> of_fdt.h? =A0Just an idea.
 
-ERROR: "tm6000_set_reg" [drivers/staging/tm6000/tm6000-alsa.ko] undefined!
-ERROR: "tm6000_get_reg" [drivers/staging/tm6000/tm6000-alsa.ko] undefined!
+That sounds reasonable.
 
+g.
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Michel Ludwig <michel.ludwig@gmail.com>
----
- drivers/staging/tm6000/Kconfig       |    2 +-
- drivers/staging/tm6000/tm6000-core.c |    2 ++
- 2 files changed, 3 insertions(+), 1 deletion(-)
-
---- linux-next-20100210.orig/drivers/staging/tm6000/Kconfig
-+++ linux-next-20100210/drivers/staging/tm6000/Kconfig
-@@ -1,6 +1,6 @@
- config VIDEO_TM6000
- 	tristate "TV Master TM5600/6000/6010 driver"
--	depends on VIDEO_DEV && I2C && INPUT && EXPERIMENTAL
-+	depends on VIDEO_DEV && I2C && INPUT && USB && EXPERIMENTAL
- 	select VIDEO_TUNER
- 	select TUNER_XC2028
- 	select VIDEOBUF_VMALLOC
---- linux-next-20100210.orig/drivers/staging/tm6000/tm6000-core.c
-+++ linux-next-20100210/drivers/staging/tm6000/tm6000-core.c
-@@ -108,6 +108,7 @@ int tm6000_set_reg (struct tm6000_core *
- 		tm6000_read_write_usb (dev, USB_DIR_OUT | USB_TYPE_VENDOR,
- 				       req, value, index, NULL, 0);
- }
-+EXPORT_SYMBOL_GPL(tm6000_set_reg);
- 
- int tm6000_get_reg (struct tm6000_core *dev, u8 req, u16 value, u16 index)
- {
-@@ -122,6 +123,7 @@ int tm6000_get_reg (struct tm6000_core *
- 
- 	return *buf;
- }
-+EXPORT_SYMBOL_GPL(tm6000_get_reg);
- 
- int tm6000_get_reg16 (struct tm6000_core *dev, u8 req, u16 value, u16 index)
- {
+--=20
+Grant Likely, B.Sc., P.Eng.
+Secret Lab Technologies Ltd.
