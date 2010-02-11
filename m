@@ -1,57 +1,44 @@
-From: Greg KH <gregkh@suse.de>
-Subject: Re: linux-next: Tree for December 19 (staging/dt3155)
-Date: Thu, 11 Feb 2010 08:54:55 -0800
-Message-ID: <20100211165455.GB28084@suse.de>
-References: <20091219110457.d6c5de1f.sfr@canb.auug.org.au>
- <20091218191037.d6b4727b.randy.dunlap@oracle.com>
- <20091219044747.GB14503@suse.de>
- <20100211084430.5fd5afbb.randy.dunlap@oracle.com>
+From: Alberto Panizzo <maramaopercheseimorto@gmail.com>
+Subject: Re: [PATCH] backlight: l4f00242t03: Fix module licence absence.
+Date: Thu, 11 Feb 2010 18:25:28 +0100
+Message-ID: <1265909128.2512.9.camel@realization>
+References: <20100119150836.bb975e4b.sfr@canb.auug.org.au>
+	 <1263889757.3121.10.camel@realization>
+	 <1263889850.3121.12.camel@realization>
+	 <1264590602.2463.47.camel@realization>
+	 <1265904438.2512.6.camel@realization>
+	 <1265906177.14199.0.camel@dax.rpnet.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:41035 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752680Ab0BKQz3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 11 Feb 2010 11:55:29 -0500
-Content-Disposition: inline
-In-Reply-To: <20100211084430.5fd5afbb.randy.dunlap@oracle.com>
+Received: from mail-fx0-f215.google.com ([209.85.220.215]:63518 "EHLO
+	mail-fx0-f215.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752094Ab0BKRZj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 11 Feb 2010 12:25:39 -0500
+In-Reply-To: <1265906177.14199.0.camel@dax.rpnet.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Scott Smedley <ss@aao.gov.au>
+To: Richard Purdie <rpurdie@rpsys.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Feb 11, 2010 at 08:44:30AM -0800, Randy Dunlap wrote:
-> On Fri, 18 Dec 2009 20:47:47 -0800 Greg KH wrote:
-> 
-> > On Fri, Dec 18, 2009 at 07:10:37PM -0800, Randy Dunlap wrote:
-> > > On Sat, 19 Dec 2009 11:04:57 +1100 Stephen Rothwell wrote:
-> > > 
-> > > > Hi all,
-> > > > 
-> > > > I said:
-> > > > > News:  there will be no linux-next releases until at least Dec 24 and,
-> > > > > more likely, Dec 29.  Have a Merry Christmas and take a break.  :-)
-> > > > 
-> > > > Well, I decided I had time for one more so it will be based in -rc1).
-> > > > 
-> > > > This one has not had the build testing *between* merges, but has had all
-> > > > the normal build testing at the end.  Since the latter testing showed no
-> > > > problems, this just means that there may be more unbisectable points in
-> > > > the tree (but that is unlikely).
-> > > 
-> > > 
-> > > When CONFIG_DT3155=y (i.e., not a loadable module):
+On gio, 2010-02-11 at 16:36 +0000, Richard Purdie wrote:
+> On Thu, 2010-02-11 at 17:07 +0100, Alberto Panizzo wrote:
+> > Signed-off-by: Alberto Panizzo <maramaopercheseimorto@gmail.com>
+> > ---
 > > 
-> > Ick, I'll change that to 'M' now, it shouldn't be built in just yet for
-> > the reasons you found.
-> > 
-> > I don't think the code has ever been built as 'y' as you just found out.
+> > Richard, can you pick this for "for-mm" branch of backlight tree?
+> > in previous mail I explain my mistake..
+> > Thanks.
 > 
-> Greg,
-> Did you get around to making any of these changes?
+> Applied, sorry about the delay.
+> 
+> Richard
+> 
+Thank you. Greg Kroah-Hartman at the FOSDEM says:
+"Be Persistent!"
 
-I have started working on them, but have not gotten to all of them yet.
+Best regards!
 
-thanks for your patience,
-
-greg k-h
+-- 
+Alberto!
