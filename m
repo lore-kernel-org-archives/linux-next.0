@@ -1,39 +1,44 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: linux-next: build warning after merge of the suspend tree
-Date: Thu, 11 Feb 2010 10:32:08 -0500 (EST)
-Message-ID: <Pine.LNX.4.44L0.1002111029440.1571-100000@iolanthe.rowland.org>
-References: <201002111411.35634.rjw@sisk.pl>
+From: Alberto Panizzo <maramaopercheseimorto@gmail.com>
+Subject: Re: [PATCH] backlight: l4f00242t03: Fix module licence absence.
+Date: Thu, 11 Feb 2010 17:07:18 +0100
+Message-ID: <1265904438.2512.6.camel@realization>
+References: <20100119150836.bb975e4b.sfr@canb.auug.org.au>
+	 <1263889757.3121.10.camel@realization>
+	 <1263889850.3121.12.camel@realization>
+	 <1264590602.2463.47.camel@realization>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from iolanthe.rowland.org ([192.131.102.54]:47222 "HELO
-	iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1755272Ab0BKPcK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 11 Feb 2010 10:32:10 -0500
-In-Reply-To: <201002111411.35634.rjw@sisk.pl>
+Received: from mail-fx0-f215.google.com ([209.85.220.215]:37983 "EHLO
+	mail-fx0-f215.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755272Ab0BKQH2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 11 Feb 2010 11:07:28 -0500
+In-Reply-To: <1264590602.2463.47.camel@realization>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
+To: Richard Purdie <rpurdie@rpsys.net>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 11 Feb 2010, Rafael J. Wysocki wrote:
+Signed-off-by: Alberto Panizzo <maramaopercheseimorto@gmail.com>
+---
 
-> On Thursday 11 February 2010, Stephen Rothwell wrote:
-> > Hi Rafael,
-> > 
-> > After merging the suspend tree, today's linux-next build (powerpc
-> > ppc64_defconfig) produced this warning:
-> > 
-> > drivers/usb/core/hcd-pci.c:138: warning: 'wait_for_companions' defined but not used
-> > 
-> > Introduced by commit ce74abf51a15ab82a9fae6dcd8a9c0038945f10e ("USB:
-> > implement non-tree resume ordering constraints for PCI host controllers").
-> 
-> Thanks for the info, I'll fix this up later today in my tree.
+Richard, can you pick this for "for-mm" branch of backlight tree?
+in previous mail I explain my mistake..
+Thanks.
 
-Clearly wait_for_companions() needs to be inside "#ifdef
-CONFIG_PM_SLEEP ... #endif".  In fact, all the new functions added by
-the patch should be protected this way, with suitable do-nothing inline
-versions provided when CONFIG_PM_SLEEP isn't defined.
 
-Alan Stern
+ drivers/video/backlight/l4f00242t03.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/video/backlight/l4f00242t03.c b/drivers/video/backlight/l4f00242t03.c
+index 42d061e..74abd69 100644
+--- a/drivers/video/backlight/l4f00242t03.c
++++ b/drivers/video/backlight/l4f00242t03.c
+@@ -254,3 +254,4 @@ module_exit(l4f00242t03_exit);
+ 
+ MODULE_AUTHOR("Alberto Panizzo <maramaopercheseimorto@gmail.com>");
+ MODULE_DESCRIPTION("EPSON L4F00242T03 LCD");
++MODULE_LICENSE("GPL v2");
+-- 
+1.6.3.3
