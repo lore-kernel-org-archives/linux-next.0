@@ -1,66 +1,77 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: mmotm 2010-02-10 - BUG at fs/dcache.c:677!
-Date: Thu, 11 Feb 2010 19:14:27 -0800
-Message-ID: <20100211191427.6ff9aec6.akpm@linux-foundation.org>
-References: <201002110043.o1B0hKxW008835@imap1.linux-foundation.org>
-	<8576.1265942657@localhost>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the trivial tree with the drm tree
+Date: Fri, 12 Feb 2010 15:12:23 +1100
+Message-ID: <20100212151223.21746bc7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <8576.1265942657@localhost>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Valdis.Kletnieks@vt.edu
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, linux-s390@vger.kernel.org, linux-next@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:35108 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757630Ab0BLEM1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 11 Feb 2010 23:12:27 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Adam Buchbinder <adam.buchbinder@gmail.com>, Alex Deucher <alexdeucher@gmail.com>, Dave Airlie <airlied@linux.ie>
 
-On Thu, 11 Feb 2010 21:44:17 -0500 Valdis.Kletnieks@vt.edu wrote:
+Hi Jiri,
 
-> On Wed, 10 Feb 2010 16:17:41 PST, akpm@linux-foundation.org said:
-> > The mm-of-the-moment snapshot 2010-02-10-16-17 has been uploaded to
-> > 
-> >    http://userweb.kernel.org/~akpm/mmotm/
-> 
-> Hit this at shutdown. ext4 filesystems.  Brought it up to single-user
-> mode, then 'shutdown -h now'.
-> 
-> [   58.311786] ------------[ cut here ]------------
-> [   58.312261] kernel BUG at fs/dcache.c:677!
-> [   58.312261] invalid opcode: 0000 [#1] PREEMPT SMP 
-> [   58.312261] last sysfs file: /sys/devices/virtual/block/dm-10/dm/name
-> [   58.312261] CPU 1 
-> [   58.312261] Pid: 3007, comm: umount Not tainted 2.6.33-rc7-mmotm0210 #1 0X564R/Latitude E6500                  
-> [   58.312261] RIP: 0010:[<ffffffff810e7ce8>]  [<ffffffff810e7ce8>] shrink_dcache_for_umount_subtree+0x19b/0x27e
-> [   58.312261] RSP: 0018:ffff88011bafde08  EFLAGS: 00010292
-> [   58.312261] RAX: 000000000000006b RBX: ffff88011be58160 RCX: ffffffff81a2b070
-> [   58.312261] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffffff81aa3fe8
-> [   58.312261] RBP: ffff88011bafde38 R08: 0000000000000002 R09: 0000000000000000
-> [   58.312261] R10: 0000000000000005 R11: 0000000000000000 R12: ffff88011be58160
-> [   58.312261] R13: 0000000000000088 R14: ffff88011be824c0 R15: ffff88011bafdf18
-> [   58.312261] FS:  00007f1348f7e740(0000) GS:ffff880100300000(0000) knlGS:0000000000000000
-> [   58.312261] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   58.312261] CR2: 00007f1348642c40 CR3: 000000011ce86000 CR4: 00000000000406e0
-> [   58.312261] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> [   58.312261] DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
-> [   58.312261] Process umount (pid: 3007, threadinfo ffff88011bafc000, task ffff88011d88c640)
-> [   58.312261] Stack:
-> [   58.312261]  ffff88010f7e9418 ffff88010f7e9248 ffff88010f7e9000 ffffffff816270b0
-> [   58.312261] <0> ffff88010f7e9000 ffffffff81b08d28 ffff88011bafde58 ffffffff810e7e02
-> [   58.312261] <0> ffffffff81a37ed0 ffff88010f7e9000 ffff88011bafde78 ffffffff810d8785
-> [   58.312261] Call Trace:
-> [   58.312261]  [<ffffffff810e7e02>] shrink_dcache_for_umount+0x37/0x47
-> [   58.312261]  [<ffffffff810d8785>] generic_shutdown_super+0x1a/0xc9
-> [   58.312261]  [<ffffffff810d8856>] kill_block_super+0x22/0x3a
-> [   58.312261]  [<ffffffff810d8ff5>] deactivate_super+0x68/0x7f
-> [   58.312261]  [<ffffffff810eda94>] mntput_no_expire+0x10d/0x150
-> [   58.312261]  [<ffffffff810ee04c>] sys_umount+0x2be/0x2ed
-> [   58.312261]  [<ffffffff81062361>] ? trace_hardirqs_on_caller+0x16/0x13c
-> [   58.312261]  [<ffffffff8100252b>] system_call_fastpath+0x16/0x1b
-> [   58.312261] Code: 0a 48 8b 4b 68 31 d2 48 85 f6 74 04 48 8b 56 40 48 05 18 04 00 00 48 89 de 48 89 04 24 48 c7 c7 48 b0 80 81 31 c0 e8 3e fa 47 00 <0f> 0b eb fe 4c 8b 63 58 4c 39 e3 75 05 45 31 e4 eb 05 f0 41 ff 
-> [   58.312261] RIP  [<ffffffff810e7ce8>] shrink_dcache_for_umount_subtree+0x19b/0x27e
+Today's linux-next merge of the trivial tree got a conflict in
+drivers/gpu/drm/radeon/atombios.h between commit
+e97bd974448ce90f8e4720499d84580bcd6a2f7a ("drm/radeon/kms: update
+atombios.h to latest upstream") from the drm tree and commit
+c9404c9c392d557a4687c4cbda022b03cb787ce9 ("Fix misspelling of "should"
+and "shouldn't" in comments") from the trivial tree.
 
-Yeah, Sachin reported that against linux-next too (I think - need to
-check the exact line numbers):
-http://permalink.gmane.org/gmane.linux.file-systems/38148
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-It seems to have been met with shrugs thus far.
+diff --cc drivers/gpu/drm/radeon/atombios.h
+index 6732b5d,2a88029..0000000
+--- a/drivers/gpu/drm/radeon/atombios.h
++++ b/drivers/gpu/drm/radeon/atombios.h
+@@@ -2781,26 -2264,22 +2781,26 @@@ typedef struct _ATOM_LVDS_INFO_V1
+  
+  #define ATOM_LVDS_INFO_LAST  ATOM_LVDS_INFO_V12
+  
+ -typedef struct _ATOM_PATCH_RECORD_MODE {
+ -	UCHAR ucRecordType;
+ -	USHORT usHDisp;
+ -	USHORT usVDisp;
+ -} ATOM_PATCH_RECORD_MODE;
+ +typedef struct  _ATOM_PATCH_RECORD_MODE
+ +{
+ +  UCHAR     ucRecordType;
+ +  USHORT    usHDisp;
+ +  USHORT    usVDisp;
+ +}ATOM_PATCH_RECORD_MODE;
+  
+ -typedef struct _ATOM_LCD_RTS_RECORD {
+ -	UCHAR ucRecordType;
+ -	UCHAR ucRTSValue;
+ -} ATOM_LCD_RTS_RECORD;
+ +typedef struct  _ATOM_LCD_RTS_RECORD
+ +{
+ +  UCHAR     ucRecordType;
+ +  UCHAR     ucRTSValue;
+ +}ATOM_LCD_RTS_RECORD;
+  
+- //!! If the record below exits, it shoud always be the first record for easy use in command table!!! 
+ -/* !! If the record below exits, it should always be the first record for easy use in command table!!! */
+ -typedef struct _ATOM_LCD_MODE_CONTROL_CAP {
+ -	UCHAR ucRecordType;
+ -	USHORT usLCDCap;
+ -} ATOM_LCD_MODE_CONTROL_CAP;
+++//!! If the record below exits, it should always be the first record for easy use in command table!!! 
+ +// The record below is only used when LVDS_Info is present. From ATOM_LVDS_INFO_V12, use ucLCDPanel_SpecialHandlingCap instead.
+ +typedef struct  _ATOM_LCD_MODE_CONTROL_CAP
+ +{
+ +  UCHAR     ucRecordType;
+ +  USHORT    usLCDCap;
+ +}ATOM_LCD_MODE_CONTROL_CAP;
+  
+  #define LCD_MODE_CAP_BL_OFF                   1
+  #define LCD_MODE_CAP_CRTC_OFF                 2
