@@ -1,122 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the xfs tree with the vfs tree
-Date: Mon, 15 Feb 2010 12:27:40 +1100
-Message-ID: <20100215122740.87c6cb5f.sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the net tree
+Date: Mon, 15 Feb 2010 14:32:57 +1100
+Message-ID: <20100215143257.7af33452.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__15_Feb_2010_14_32_57_+1100_4MUE_yWPF6LzytOv"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52526 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:49340 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752262Ab0BOB1n (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 14 Feb 2010 20:27:43 -0500
+	id S1754762Ab0BODdF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 14 Feb 2010 22:33:05 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, Al Viro <viro@ZenIV.linux.org.uk>
+To: David Miller <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Pirko <jpirko@redhat.com>
 
-Hi all,
+--Signature=_Mon__15_Feb_2010_14_32_57_+1100_4MUE_yWPF6LzytOv
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the xfs tree got a conflict in
-fs/xfs/linux-2.6/xfs_super.c between commits
-4a295406e025bb7c8241ea956ec1b84830499e96 ("make sure data is on disk
-before calling ->write_inode") and
-716c28c0bc8bcbdd26e819f38dfc8fdfaafc0289 ("pass writeback_control to
-->write_inode") from the vfs tree and commit
-07fec73625dc0db6f9aed68019918208a2ca53f5 ("xfs: log changed inodes
-instead of writing them synchronously") from the xfs tree.
+Hi Dave,
 
-I fixed it up (I think - see below) and can carry the fix as necessary.
-What other file systems are doing for these conflicts is to merge in the
-"write_inode" branch of Al Viro's vfs tree
-(git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs-2.6.git) which Al
-has said will not be rebased.  (Both those commits are in that branch.)
--- 
+After merging the net tree, today's linux-next build (x86_64 allmodconfig)
+produced this warning:
+
+net/mac80211/iface.c: In function 'ieee80211_stop':
+net/mac80211/iface.c:416: warning: passing argument 4 of '__dev_addr_unsync=
+' makes pointer from integer without a cast
+include/linux/netdevice.h:1967: note: expected 'int *' but argument is of t=
+ype 'int'
+
+Introduced by commit 4cd24eaf0c6ee7f0242e34ee77ec899f255e66b5 ("net: use
+netdev_mc_count and netdev_mc_empty when appropriate").
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc fs/xfs/linux-2.6/xfs_super.c
-index 1e90797,25ea240..0000000
---- a/fs/xfs/linux-2.6/xfs_super.c
-+++ b/fs/xfs/linux-2.6/xfs_super.c
-@@@ -1042,33 -1074,59 +1074,55 @@@ xfs_fs_write_inode
-  	if (XFS_FORCED_SHUTDOWN(mp))
-  		return XFS_ERROR(EIO);
-  
-- 	/*
-- 	 * Bypass inodes which have already been cleaned by
-- 	 * the inode flush clustering code inside xfs_iflush
-- 	 */
-- 	if (xfs_inode_clean(ip))
-- 		goto out;
-- 
-- 	/*
-- 	 * We make this non-blocking if the inode is contended, return
-- 	 * EAGAIN to indicate to the caller that they did not succeed.
-- 	 * This prevents the flush path from blocking on inodes inside
-- 	 * another operation right now, they get caught later by xfs_sync.
-- 	 */
- -	if (sync) {
- -		error = xfs_wait_on_pages(ip, 0, -1);
- -		if (error)
- -			goto out;
- -
- +	if (wbc->sync_mode == WB_SYNC_ALL) {
-+ 		/*
-+ 		 * Make sure the inode has hit stable storage.  By using the
-+ 		 * log and the fsync transactions we reduce the IOs we have
-+ 		 * to do here from two (log and inode) to just the log.
-+ 		 *
-+ 		 * Note: We still need to do a delwri write of the inode after
-+ 		 * this to flush it to the backing buffer so that bulkstat
-+ 		 * works properly if this is the first time the inode has been
-+ 		 * written.  Because we hold the ilock atomically over the
-+ 		 * transaction commit and the inode flush we are guaranteed
-+ 		 * that the inode is not pinned when it returns. If the flush
-+ 		 * lock is already held, then the inode has already been
-+ 		 * flushed once and we don't need to flush it again.  Hence
-+ 		 * the code will only flush the inode if it isn't already
-+ 		 * being flushed.
-+ 		 */
-  		xfs_ilock(ip, XFS_ILOCK_SHARED);
-- 		xfs_iflock(ip);
-- 
-- 		error = xfs_iflush(ip, XFS_IFLUSH_SYNC);
-+ 		if (ip->i_update_core) {
-+ 			error = xfs_log_inode(ip);
-+ 			if (error)
-+ 				goto out_unlock;
-+ 		}
-  	} else {
-- 		error = EAGAIN;
-+ 		/*
-+ 		 * We make this non-blocking if the inode is contended, return
-+ 		 * EAGAIN to indicate to the caller that they did not succeed.
-+ 		 * This prevents the flush path from blocking on inodes inside
-+ 		 * another operation right now, they get caught later by xfs_sync.
-+ 		 */
-  		if (!xfs_ilock_nowait(ip, XFS_ILOCK_SHARED))
-  			goto out;
-- 		if (xfs_ipincount(ip) || !xfs_iflock_nowait(ip))
-- 			goto out_unlock;
-+ 	}
-  
-- 		error = xfs_iflush(ip, XFS_IFLUSH_ASYNC_NOBLOCK);
-+ 	if (xfs_ipincount(ip) || !xfs_iflock_nowait(ip))
-+ 		goto out_unlock;
-+ 
-+ 	/*
-+ 	 * Now we have the flush lock and the inode is not pinned, we can check
-+ 	 * if the inode is really clean as we know that there are no pending
-+ 	 * transaction completions, it is not waiting on the delayed write
-+ 	 * queue and there is no IO in progress.
-+ 	 */
-+ 	if (xfs_inode_clean(ip)) {
-+ 		xfs_ifunlock(ip);
-+ 		error = 0;
-+ 		goto out_unlock;
-  	}
-+ 	error = xfs_iflush(ip, 0);
-  
-   out_unlock:
-  	xfs_iunlock(ip, XFS_ILOCK_SHARED);
+--Signature=_Mon__15_Feb_2010_14_32_57_+1100_4MUE_yWPF6LzytOv
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkt4wGkACgkQjjKRsyhoI8yiRACdGKonY+B59p389LkbjfLcANc4
+35IAnj3hrac7LlMivP5of9U3e4cYnS0g
+=Fu3v
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__15_Feb_2010_14_32_57_+1100_4MUE_yWPF6LzytOv--
