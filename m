@@ -1,74 +1,56 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build warning after merge of the net tree
-Date: Sun, 14 Feb 2010 22:51:17 -0800 (PST)
-Message-ID: <20100214.225117.242995108.davem@davemloft.net>
-References: <20100215143257.7af33452.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the fsnotify tree with the vfs tree
+Date: Mon, 15 Feb 2010 17:56:01 +1100
+Message-ID: <20100215175601.f6041d9d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:44961
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754035Ab0BOGvI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 15 Feb 2010 01:51:08 -0500
-In-Reply-To: <20100215143257.7af33452.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:60469 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753850Ab0BOG4F (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 15 Feb 2010 01:56:05 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, jpirko@redhat.com
+To: Eric Paris <eparis@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 15 Feb 2010 14:32:57 +1100
+Hi Eric,
 
-> After merging the net tree, today's linux-next build (x86_64 allmodconfig)
-> produced this warning:
-> 
-> net/mac80211/iface.c: In function 'ieee80211_stop':
-> net/mac80211/iface.c:416: warning: passing argument 4 of '__dev_addr_unsync' makes pointer from integer without a cast
-> include/linux/netdevice.h:1967: note: expected 'int *' but argument is of type 'int'
-> 
-> Introduced by commit 4cd24eaf0c6ee7f0242e34ee77ec899f255e66b5 ("net: use
-> netdev_mc_count and netdev_mc_empty when appropriate").
+Today's linux-next merge of the fsnotify tree got a conflict in
+fs/notify/inotify/inotify_user.c between commit
+9f009a78fb3b54976cfe8173d05ef483dbda4571 ("switch inotify_user to
+anon_inode") from the vfs tree and commit
+9036fe89f12afba49cd3e5b44b2f94fbd3269269 ("inotify: rename mark_entry to
+just mark") from the fsnotify tree.
 
-I'll fix this like so:
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 
-mac80211: Fix error introduced in netdev_mc_count() changes.
-
-Commit 4cd24eaf0c6ee7f0242e34ee77ec899f255e66b5
-("net: use netdev_mc_count and netdev_mc_empty when appropriate")
-added this hunk to net/mac80211/iface.c:
-
- 	__dev_addr_unsync(&local->mc_list, &local->mc_count,
--			  &dev->mc_list, &dev->mc_count);
-+			  &dev->mc_list, dev->mc_count);
-
-which is definitely not correct, introduced a warning (reported
-by Stephen Rothwell):
-
-net/mac80211/iface.c: In function 'ieee80211_stop':
-net/mac80211/iface.c:416: warning: passing argument 4 of '__dev_addr_unsync' makes pointer from integer without a cast
-include/linux/netdevice.h:1967: note: expected 'int *' but argument is of type 'int'
-
-and is thus reverted here.
-
-Signed-off-by: David S. Miller <davem@davemloft.net>
----
- net/mac80211/iface.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/net/mac80211/iface.c b/net/mac80211/iface.c
-index f943f5f..09fff46 100644
---- a/net/mac80211/iface.c
-+++ b/net/mac80211/iface.c
-@@ -413,7 +413,7 @@ static int ieee80211_stop(struct net_device *dev)
- 	netif_addr_lock_bh(dev);
- 	spin_lock_bh(&local->filter_lock);
- 	__dev_addr_unsync(&local->mc_list, &local->mc_count,
--			  &dev->mc_list, dev->mc_count);
-+			  &dev->mc_list, &dev->mc_count);
- 	spin_unlock_bh(&local->filter_lock);
- 	netif_addr_unlock_bh(dev);
- 
 -- 
-1.6.6.1
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc fs/notify/inotify/inotify_user.c
+index 472cdf2,bc1f395..0000000
+--- a/fs/notify/inotify/inotify_user.c
++++ b/fs/notify/inotify/inotify_user.c
+@@@ -767,7 -873,17 +836,7 @@@ out
+   */
+  static int __init inotify_user_setup(void)
+  {
+- 	inotify_inode_mark_cachep = KMEM_CACHE(inotify_inode_mark_entry, SLAB_PANIC);
+ -	int ret;
+ -
+ -	ret = register_filesystem(&inotify_fs_type);
+ -	if (unlikely(ret))
+ -		panic("inotify: register_filesystem returned %d!\n", ret);
+ -
+ -	inotify_mnt = kern_mount(&inotify_fs_type);
+ -	if (IS_ERR(inotify_mnt))
+ -		panic("inotify: kern_mount ret %ld!\n", PTR_ERR(inotify_mnt));
+ -
++ 	inotify_inode_mark_cachep = KMEM_CACHE(inotify_inode_mark, SLAB_PANIC);
+  	event_priv_cachep = KMEM_CACHE(inotify_event_private_data, SLAB_PANIC);
+  
+  	inotify_max_queued_events = 16384;
