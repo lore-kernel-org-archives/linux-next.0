@@ -1,57 +1,65 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for February 15 (staging/dt3155)
-Date: Mon, 15 Feb 2010 08:46:20 -0800
-Message-ID: <4B797A5C.8020306@oracle.com>
-References: <20100215194926.667a3de8.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Rebase v. merge (Was: Re: linux-next: manual merge of the xfs tree
+ with the vfs tree)
+Date: Tue, 16 Feb 2010 10:16:26 +1100
+Message-ID: <20100216101626.0549dee8.sfr@canb.auug.org.au>
+References: <20100215122740.87c6cb5f.sfr@canb.auug.org.au>
+	<20100215034417.GV30031@ZenIV.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__16_Feb_2010_10_16_26_+1100_6.q.GiQAJr4Pm=CF"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet11.oracle.com ([148.87.113.123]:63420 "EHLO
-	rcsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755119Ab0BOQrS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Feb 2010 11:47:18 -0500
-In-Reply-To: <20100215194926.667a3de8.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:55951 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756462Ab0BOXQg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 15 Feb 2010 18:16:36 -0500
+In-Reply-To: <20100215034417.GV30031@ZenIV.linux.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, devel@driverdev.osuosl.org, Greg KH <gregkh@suse.de>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
 
-On 02/15/10 00:49, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20100212:
+--Signature=_Tue__16_Feb_2010_10_16_26_+1100_6.q.GiQAJr4Pm=CF
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi Al,
 
-1/  dt3155 tries to use arbitrary divide & modulus.  This fails on i386:
+On Mon, 15 Feb 2010 03:44:17 +0000 Al Viro <viro@ZenIV.linux.org.uk> wrote:
+>
+> Actually, I'd cheerfully rebased that sucker (to e.g. write_inode2); it h=
+as
+> grown a trivial conflict with mainline after one of gfs2 merges and it's
+> annoying to fix it up after each for-next rebase.
+>=20
+> So I'd rather put a rebased variant and switched the for-next to using th=
+at,
+> if people who'd pulled it already are OK with that.
 
-ERROR: "__udivdi3" [drivers/staging/dt3155/dt3155.ko] undefined!
-ERROR: "__umoddi3" [drivers/staging/dt3155/dt3155.ko] undefined!
+Just out of interest, is there some reason you didn't just merge Linus'
+tree (or the subset that caused the conflict) into the write-inode
+branch.  That would have meant that you still had a nonrebasing branch
+that others could use.  Now anyone who has merged your write_inode branch
+needs to rebuild their trees using you new write-rebase2 branch or risk
+causing conflicts in linux-next or Linus' tree when their tree's are
+merged.
 
-2/  since DT3155 depends on PCI, these lines can be dropped from dt3155_drv.c:
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
--#ifndef CONFIG_PCI
--#error  "DT3155 :  Kernel PCI support not enabled (DT3155 drive requires PCI)"
--#endif
+--Signature=_Tue__16_Feb_2010_10_16_26_+1100_6.q.GiQAJr4Pm=CF
+Content-Type: application/pgp-signature
 
-3/  header files need to be included even when built-in instead of defined(MODULE)
-to eliminate build errors:
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-drivers/staging/dt3155/dt3155_drv.c:1047: error: implicit declaration of function 'request_irq'
-drivers/staging/dt3155/dt3155_drv.c:1048: error: 'IRQF_SHARED' undeclared (first use in this function)
-drivers/staging/dt3155/dt3155_drv.c:1048: error: 'IRQF_DISABLED' undeclared (first use in this function)
-drivers/staging/dt3155/dt3155_drv.c:1091: error: implicit declaration of function 'free_irq'
+iEYEARECAAYFAkt51coACgkQjjKRsyhoI8ybzwCfQdtiDw7y0O8V7Hp0WU2L+bi3
+mokAoIiHmI7amzylt9C83mApv6Omgwrd
+=qnRR
+-----END PGP SIGNATURE-----
 
-
--#ifdef MODULE
- #include <linux/module.h>
- #include <linux/interrupt.h>
- 
- 
- MODULE_LICENSE("GPL");
- 
--#endif
-
-
--- 
-~Randy
+--Signature=_Tue__16_Feb_2010_10_16_26_+1100_6.q.GiQAJr4Pm=CF--
