@@ -1,53 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the net tree
-Date: Mon, 15 Feb 2010 14:32:57 +1100
-Message-ID: <20100215143257.7af33452.sfr@canb.auug.org.au>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: linux-next: manual merge of the xfs tree with the vfs tree
+Date: Mon, 15 Feb 2010 03:44:17 +0000
+Message-ID: <20100215034417.GV30031@ZenIV.linux.org.uk>
+References: <20100215122740.87c6cb5f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__15_Feb_2010_14_32_57_+1100_4MUE_yWPF6LzytOv"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49340 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754762Ab0BODdF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 14 Feb 2010 22:33:05 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:48461 "EHLO
+	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754762Ab0BODo0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 14 Feb 2010 22:44:26 -0500
+Content-Disposition: inline
+In-Reply-To: <20100215122740.87c6cb5f.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Pirko <jpirko@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
 
---Signature=_Mon__15_Feb_2010_14_32_57_+1100_4MUE_yWPF6LzytOv
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Feb 15, 2010 at 12:27:40PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the xfs tree got a conflict in
+> fs/xfs/linux-2.6/xfs_super.c between commits
+> 4a295406e025bb7c8241ea956ec1b84830499e96 ("make sure data is on disk
+> before calling ->write_inode") and
+> 716c28c0bc8bcbdd26e819f38dfc8fdfaafc0289 ("pass writeback_control to
+> ->write_inode") from the vfs tree and commit
+> 07fec73625dc0db6f9aed68019918208a2ca53f5 ("xfs: log changed inodes
+> instead of writing them synchronously") from the xfs tree.
+> 
+> I fixed it up (I think - see below) and can carry the fix as necessary.
+> What other file systems are doing for these conflicts is to merge in the
+> "write_inode" branch of Al Viro's vfs tree
+> (git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs-2.6.git) which Al
+> has said will not be rebased.  (Both those commits are in that branch.)
 
-Hi Dave,
+Actually, I'd cheerfully rebased that sucker (to e.g. write_inode2); it has
+grown a trivial conflict with mainline after one of gfs2 merges and it's
+annoying to fix it up after each for-next rebase.
 
-After merging the net tree, today's linux-next build (x86_64 allmodconfig)
-produced this warning:
-
-net/mac80211/iface.c: In function 'ieee80211_stop':
-net/mac80211/iface.c:416: warning: passing argument 4 of '__dev_addr_unsync=
-' makes pointer from integer without a cast
-include/linux/netdevice.h:1967: note: expected 'int *' but argument is of t=
-ype 'int'
-
-Introduced by commit 4cd24eaf0c6ee7f0242e34ee77ec899f255e66b5 ("net: use
-netdev_mc_count and netdev_mc_empty when appropriate").
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__15_Feb_2010_14_32_57_+1100_4MUE_yWPF6LzytOv
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkt4wGkACgkQjjKRsyhoI8yiRACdGKonY+B59p389LkbjfLcANc4
-35IAnj3hrac7LlMivP5of9U3e4cYnS0g
-=Fu3v
------END PGP SIGNATURE-----
-
---Signature=_Mon__15_Feb_2010_14_32_57_+1100_4MUE_yWPF6LzytOv--
+So I'd rather put a rebased variant and switched the for-next to using that,
+if people who'd pulled it already are OK with that.
