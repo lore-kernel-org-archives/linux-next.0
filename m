@@ -1,82 +1,30 @@
-From: Jiri Pirko <jpirko@redhat.com>
-Subject: Re: linux-next: build warning after merge of the net tree
-Date: Mon, 15 Feb 2010 10:36:20 +0100
-Message-ID: <20100215093619.GA2644@psychotron.lab.eng.brq.redhat.com>
-References: <20100215143257.7af33452.sfr@canb.auug.org.au>
- <20100214.225117.242995108.davem@davemloft.net>
+From: Russell King <rmk+lkml@arm.linux.org.uk>
+Subject: Re: linux-next: manual merge of the omap tree with the arm tree
+Date: Mon, 15 Feb 2010 15:03:12 +0000
+Message-ID: <20100215150312.GA11540@flint.arm.linux.org.uk>
+References: <20100205102030.c8b139a1.sfr@canb.auug.org.au> <20100204233019.GY22747@atomide.com> <20100205111617.c602983f.sfr@canb.auug.org.au> <20100205040444.GH22747@atomide.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:15686 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754221Ab0BOJga (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 15 Feb 2010 04:36:30 -0500
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:55512 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751946Ab0BOPDf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Feb 2010 10:03:35 -0500
 Content-Disposition: inline
-In-Reply-To: <20100214.225117.242995108.davem@davemloft.net>
+In-Reply-To: <20100205040444.GH22747@atomide.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-omap@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Mon, Feb 15, 2010 at 07:51:17AM CET, davem@davemloft.net wrote:
->From: Stephen Rothwell <sfr@canb.auug.org.au>
->Date: Mon, 15 Feb 2010 14:32:57 +1100
->
->> After merging the net tree, today's linux-next build (x86_64 allmodconfig)
->> produced this warning:
->> 
->> net/mac80211/iface.c: In function 'ieee80211_stop':
->> net/mac80211/iface.c:416: warning: passing argument 4 of '__dev_addr_unsync' makes pointer from integer without a cast
->> include/linux/netdevice.h:1967: note: expected 'int *' but argument is of type 'int'
->> 
->> Introduced by commit 4cd24eaf0c6ee7f0242e34ee77ec899f255e66b5 ("net: use
->> netdev_mc_count and netdev_mc_empty when appropriate").
->
->I'll fix this like so:
->
->mac80211: Fix error introduced in netdev_mc_count() changes.
->
->Commit 4cd24eaf0c6ee7f0242e34ee77ec899f255e66b5
->("net: use netdev_mc_count and netdev_mc_empty when appropriate")
->added this hunk to net/mac80211/iface.c:
->
-> 	__dev_addr_unsync(&local->mc_list, &local->mc_count,
->-			  &dev->mc_list, &dev->mc_count);
->+			  &dev->mc_list, dev->mc_count);
->
->which is definitely not correct, introduced a warning (reported
->by Stephen Rothwell):
->
->net/mac80211/iface.c: In function 'ieee80211_stop':
->net/mac80211/iface.c:416: warning: passing argument 4 of '__dev_addr_unsync' makes pointer from integer without a cast
->include/linux/netdevice.h:1967: note: expected 'int *' but argument is of type 'int'
->
->and is thus reverted here.
+On Thu, Feb 04, 2010 at 08:04:44PM -0800, Tony Lindgren wrote:
+> Russell, can you please let me know if you have some static
+> commit ID containing the patch above that I could use that as
+> base for my patches?
 
-Oups :( sorry about this. Must have missed that when reviewing spatch output..
+Right, when it eventually gets through linux-next, 4e6d488
 
-Thanks David.
-
-Jirka
->
->Signed-off-by: David S. Miller <davem@davemloft.net>
->---
-> net/mac80211/iface.c |    2 +-
-> 1 files changed, 1 insertions(+), 1 deletions(-)
->
->diff --git a/net/mac80211/iface.c b/net/mac80211/iface.c
->index f943f5f..09fff46 100644
->--- a/net/mac80211/iface.c
->+++ b/net/mac80211/iface.c
->@@ -413,7 +413,7 @@ static int ieee80211_stop(struct net_device *dev)
-> 	netif_addr_lock_bh(dev);
-> 	spin_lock_bh(&local->filter_lock);
-> 	__dev_addr_unsync(&local->mc_list, &local->mc_count,
->-			  &dev->mc_list, dev->mc_count);
->+			  &dev->mc_list, &dev->mc_count);
-> 	spin_unlock_bh(&local->filter_lock);
-> 	netif_addr_unlock_bh(dev);
-> 
->-- 
->1.6.6.1
->
+-- 
+Russell King
+ Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
+ maintainer of:
