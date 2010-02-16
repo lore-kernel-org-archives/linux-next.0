@@ -1,55 +1,70 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: Rebase v. merge (Was: Re: linux-next: manual merge of the xfs
- tree with the vfs tree)
-Date: Mon, 15 Feb 2010 23:57:16 +0000
-Message-ID: <20100215235716.GY30031@ZenIV.linux.org.uk>
-References: <20100215122740.87c6cb5f.sfr@canb.auug.org.au>
- <20100215034417.GV30031@ZenIV.linux.org.uk>
- <20100216101626.0549dee8.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the scsi tree
+Date: Tue, 16 Feb 2010 11:38:14 +1100
+Message-ID: <20100216113814.1b07698d.sfr@canb.auug.org.au>
+References: <20100210123337.7a715aa0.sfr@canb.auug.org.au>
+	<1265840176.2769.576.camel@mulgrave.site>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__16_Feb_2010_11_38_14_+1100_kGyWayk1Uzuxw=FR"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:59978 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756158Ab0BOX5Y (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Feb 2010 18:57:24 -0500
-Content-Disposition: inline
-In-Reply-To: <20100216101626.0549dee8.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:35174 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932299Ab0BPAiU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 15 Feb 2010 19:38:20 -0500
+In-Reply-To: <1265840176.2769.576.camel@mulgrave.site>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Smart <james.smart@emulex.com>
 
-On Tue, Feb 16, 2010 at 10:16:26AM +1100, Stephen Rothwell wrote:
-> Hi Al,
-> 
-> On Mon, 15 Feb 2010 03:44:17 +0000 Al Viro <viro@ZenIV.linux.org.uk> wrote:
-> >
-> > Actually, I'd cheerfully rebased that sucker (to e.g. write_inode2); it has
-> > grown a trivial conflict with mainline after one of gfs2 merges and it's
-> > annoying to fix it up after each for-next rebase.
-> > 
-> > So I'd rather put a rebased variant and switched the for-next to using that,
-> > if people who'd pulled it already are OK with that.
-> 
-> Just out of interest, is there some reason you didn't just merge Linus'
-> tree (or the subset that caused the conflict) into the write-inode
-> branch.  That would have meant that you still had a nonrebasing branch
-> that others could use.  Now anyone who has merged your write_inode branch
-> needs to rebuild their trees using you new write-rebase2 branch or risk
-> causing conflicts in linux-next or Linus' tree when their tree's are
-> merged.
+--Signature=_Tue__16_Feb_2010_11_38_14_+1100_kGyWayk1Uzuxw=FR
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Branch in question still doesn't exist; that was a question, not a description
-of what I've already done.  I guess I can do what you describe, but...  Yuck.
-Multiple merges from mainline can create one hell of a mess down the road.
-I had to deal with results of exactly that when dwmw2 had dumped the audit
-tree into my lap and it had been a huge mess that took quite a while to
-untangle ;-/
+Hi James,
 
-The same goes for modifications hidden in merge commit, BTW.  I know that
-Linus seems to be OK with that kind of thing, but... every time I run into
-that is when some change is not to be found in git log -p ;-/
+On Wed, 10 Feb 2010 17:16:16 -0500 James Bottomley <James.Bottomley@HansenP=
+artnership.com> wrote:
+>
+> On Wed, 2010-02-10 at 12:33 +1100, Stephen Rothwell wrote:
+> >=20
+> > After merging the scsi tree, today's linux-next build (powerpc
+> > ppc64_defconfig) failed like this:
+> >=20
+> > drivers/scsi/lpfc/lpfc_bsg.c: In function 'lpfc_bsg_diag_mode':
+> > drivers/scsi/lpfc/lpfc_bsg.c:1496: error: implicit declaration of funct=
+ion 'msleep'
+> >=20
+> > Caused by commit 3b5dd52aaffd291edea9f939ed46a960b240bb45 ("[SCSI] lpfc
+> > 8.3.8: (BSG4) Add new vendor specific BSG Commands").
+> >=20
+> > Missing include of linux/delay.h?
+>=20
+> Looks to be exactly the problem.  delay.h gets pulled into some of the
+> generic headers on x86, but not on ppc.
+>=20
+> Sorry, my powerstation isn't working (orange warning light) and I can't
+> seem to get anyone to repair it, so I can't build for ppc anymore (which
+> is why this didn't get spotted on commit).
 
-Oh, well...  I'll probably do that merge of mainline back into write_inode
-and try hard to avoid anything similar in the next cycles.
+This is still broken ...
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__16_Feb_2010_11_38_14_+1100_kGyWayk1Uzuxw=FR
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkt56PYACgkQjjKRsyhoI8zjRACeKM5h+a3bIK48wKFjoPuXUR7v
+dnMAoLwxJ7kMwRJrY/xtnutBThcCi1yk
+=Ozac
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__16_Feb_2010_11_38_14_+1100_kGyWayk1Uzuxw=FR--
