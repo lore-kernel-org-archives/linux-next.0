@@ -1,85 +1,64 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Subject: Re: linux-next: build failure after merge final merge
-Date: Tue, 16 Feb 2010 08:36:51 -0800
-Message-ID: <20100216083651.40ed48eb@jbarnes-piketon>
-References: <20100216183650.e82c0f8e.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [PATCH -next] i2c: fix xiic build error
+Date: Tue, 16 Feb 2010 08:36:41 -0800
+Message-ID: <4B7AC999.3060103@oracle.com>
+References: <20100204185736.6628ab9a.sfr@canb.auug.org.au>	<4B6B29DD.7060502@oracle.com>	<4B7AC2A9.4070203@oracle.com> <20100216173326.091c1c77@hyperion.delvare>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from outbound-mail-313.bluehost.com ([67.222.54.6]:44503 "HELO
-	outboundproxy6.bluehost.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with SMTP id S932885Ab0BPQin (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 16 Feb 2010 11:38:43 -0500
-In-Reply-To: <20100216183650.e82c0f8e.sfr@canb.auug.org.au>
+Received: from acsinet11.oracle.com ([141.146.126.233]:31847 "EHLO
+	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933042Ab0BPQkW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 16 Feb 2010 11:40:22 -0500
+In-Reply-To: <20100216173326.091c1c77@hyperion.delvare>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bjorn Helgaas <bjorn.helgaas@hp.com>, David Miller <davem@davemloft.net>
+To: Jean Delvare <khali@linux-fr.org>, ben-linux@fluff.org
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, 16 Feb 2010 18:36:50 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On 02/16/10 08:33, Jean Delvare wrote:
+> Hi Randy,
+> 
+> On Tue, 16 Feb 2010 08:07:05 -0800, Randy Dunlap wrote:
+>> On 02/04/10 12:11, Randy Dunlap wrote:
+>>> From: Randy Dunlap <randy.dunlap@oracle.com>
+>>>
+>>> Add header file to fix build error:
+>>>
+>>> drivers/i2c/busses/i2c-xiic.c:493: error: implicit declaration of
+>>> function 'mdelay'
+>>>
+>>> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+>>> ---
+>>>  drivers/i2c/busses/i2c-xiic.c |    1 +
+>>>  1 file changed, 1 insertion(+)
+>>>
+>>> --- linux-next-20100204.orig/drivers/i2c/busses/i2c-xiic.c
+>>> +++ linux-next-20100204/drivers/i2c/busses/i2c-xiic.c
+>>> @@ -31,6 +31,7 @@
+>>>  #include <linux/module.h>
+>>>  #include <linux/init.h>
+>>>  #include <linux/errno.h>
+>>> +#include <linux/delay.h>
+>>>  #include <linux/platform_device.h>
+>>>  #include <linux/i2c.h>
+>>>  #include <linux/interrupt.h>
+>>>
+>>
+>>
+>> This patch is still needed in linux-next-20100216.
+> 
+> Nothing I can do about it, as the i2c-xiic driver is neither upstream
+> nor in my tree.
+> 
 
-> Hi Jesse,
-> 
-> After merging, today's linux-next build (sparc64 defconfig) failed
-> like this:
-> 
-> arch/sparc/kernel/pci.c: In function 'pci_cfg_fake_ranges':
-> arch/sparc/kernel/pci.c:404: error: 'struct pci_bus' has no member
-> named 'resource' arch/sparc/kernel/pci.c:419: error: 'struct pci_bus'
-> has no member named 'resource' arch/sparc/kernel/pci.c:450: error:
-> 'struct pci_bus' has no member named 'resource'
-> arch/sparc/kernel/pci.c: In function 'apb_fake_ranges':
-> arch/sparc/kernel/pci.c:473: error: 'struct pci_bus' has no member
-> named 'resource' arch/sparc/kernel/pci.c:481: error: 'struct pci_bus'
-> has no member named 'resource' arch/sparc/kernel/pci.c: In function
-> 'of_scan_pci_bridge': arch/sparc/kernel/pci.c:539: error: 'struct
-> pci_bus' has no member named 'resource' arch/sparc/kernel/pci.c:558:
-> error: 'struct pci_bus' has no member named 'resource'
-> arch/sparc/kernel/pci.c:571: error: 'struct pci_bus' has no member
-> named 'resource' arch/sparc/kernel/pci.c: In function
-> 'pci_scan_one_pbm': arch/sparc/kernel/pci.c:693: error: 'struct
-> pci_bus' has no member named 'resource' arch/sparc/kernel/pci.c:694:
-> error: 'struct pci_bus' has no member named 'resource'
-> arch/sparc/kernel/pci.c: In function 'pcibios_fixup_bus':
-> arch/sparc/kernel/pci.c:710: error: 'struct pci_bus' has no member
-> named 'resource' arch/sparc/kernel/pci.c:711: error: 'struct pci_bus'
-> has no member named 'resource'
-> 
-> Cause by commit 94a8887c501b22a2818ee58197864e9eab983510 ("PCI:
-> replace bus resource table with a list") from the pci tree.  I don't
-> know why I didn't notice this failure yesterday.
-> 
-> I have reverted that commit and the following 4 commits from the pci
-> tree for today:
-> 
-> 6b673390ae99fbaeeafc40a6e42ba97e1beada0b "x86/PCI: use host bridge
-> _CRS info by default on 2008 and newer machines"
-> 6776104e550aa6600549e204865cb3d4ed29e04e "PCI: make disabled window
-> 	printk style match the enabled ones"
-> a0266ed60a7ac8ce5c97d860cd927ba542325cb4 "PCI: break out
-> 	primary/secondary/subordinate for readability"
-> 0c2a8aaaba0d1a16a468cf48ba2fec6139d20a66 "PCI: reference bridge window
-> 	resources explicitly"
-> 
-> Jesse, can you please remove these commits from the pci tree until the
-> above problem is fixed.
-> 
-> OK, I just checked the build results for last night
-> (http://kisskb.ellerman.id.au/kisskb/head/2579/) and there are quite
-> a few more (alpha, some arm, parisc and more ...) ... please fix them
-> up as well.  Try something like:
-> 
-> git grep -l -w resource $(git grep -l -w 'struct pci_bus')
-> 
-> for a starting list of files to check.
+Thanks, Jean.
 
+Next/merge.log tells me:
+Merge remote branch 'bjdooks-i2c/next-i2c'
 
-Arg I thought we had fixed this one; maybe I applied an old patchset...
-Bjorn?
+Ben??
 
-Thanks,
 -- 
-Jesse Barnes, Intel Open Source Technology Center
+~Randy
