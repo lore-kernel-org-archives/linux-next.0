@@ -1,42 +1,45 @@
-From: Jean Delvare <khali@linux-fr.org>
-Subject: Re: linux-next: build failure after merge of the driver-core tree
-Date: Tue, 16 Feb 2010 10:01:00 +0100
-Message-ID: <20100216100100.55f5922f@hyperion.delvare>
-References: <20100216173926.b7a4d25c.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [PATCH -next] i2c: fix xiic build error
+Date: Tue, 16 Feb 2010 08:07:05 -0800
+Message-ID: <4B7AC2A9.4070203@oracle.com>
+References: <20100204185736.6628ab9a.sfr@canb.auug.org.au> <4B6B29DD.7060502@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from poutre.nerim.net ([62.4.16.124]:49217 "EHLO poutre.nerim.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755492Ab0BPJBE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 16 Feb 2010 04:01:04 -0500
-In-Reply-To: <20100216173926.b7a4d25c.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4B6B29DD.7060502@oracle.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: khali@linux-fr.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+On 02/04/10 12:11, Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> Add header file to fix build error:
+> 
+> drivers/i2c/busses/i2c-xiic.c:493: error: implicit declaration of
+> function 'mdelay'
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> ---
+>  drivers/i2c/busses/i2c-xiic.c |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> --- linux-next-20100204.orig/drivers/i2c/busses/i2c-xiic.c
+> +++ linux-next-20100204/drivers/i2c/busses/i2c-xiic.c
+> @@ -31,6 +31,7 @@
+>  #include <linux/module.h>
+>  #include <linux/init.h>
+>  #include <linux/errno.h>
+> +#include <linux/delay.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/i2c.h>
+>  #include <linux/interrupt.h>
+> 
 
-On Tue, 16 Feb 2010 17:39:26 +1100, Stephen Rothwell wrote:
-> After merging the driver-core tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> drivers/i2c/i2c-smbus.c:58: error: 'struct device' has no member named 'sem'
-> drivers/i2c/i2c-smbus.c:66: error: 'struct device' has no member named 'sem'
-> 
-> Caused by commit 0819a881db29059d113fc5f019f7c489dea5937d from the
-> driver-core tree interacting with commit
-> 38f1e8aedf0a238d56fbcd3660fc140b50dbc89a ("i2c: Add SMBus alert support")
-> from the i2c tree.
-> 
-> I have applied the following patch for today and will use it as a merge
-> fixup for the driver-core tree while necessary.
 
-Thanks for the heads up and the fix. Greg, is there an API I am
-supposed to use instead of accessing the device's semaphore/mutex
-directly?
+This patch is still needed in linux-next-20100216.
 
 -- 
-Jean Delvare
+~Randy
