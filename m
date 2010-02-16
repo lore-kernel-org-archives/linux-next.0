@@ -1,70 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the scsi tree
-Date: Tue, 16 Feb 2010 11:38:14 +1100
-Message-ID: <20100216113814.1b07698d.sfr@canb.auug.org.au>
-References: <20100210123337.7a715aa0.sfr@canb.auug.org.au>
-	<1265840176.2769.576.camel@mulgrave.site>
+Subject: linux-next: manual merge of the wireless tree with the net tree
+Date: Tue, 16 Feb 2010 12:01:03 +1100
+Message-ID: <20100216120103.7128b0f4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__16_Feb_2010_11_38_14_+1100_kGyWayk1Uzuxw=FR"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35174 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:33298 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932299Ab0BPAiU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 15 Feb 2010 19:38:20 -0500
-In-Reply-To: <1265840176.2769.576.camel@mulgrave.site>
+	id S932375Ab0BPBBH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 15 Feb 2010 20:01:07 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Smart <james.smart@emulex.com>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Gertjan van Wingerde <gwingerde@gmail.com>
 
---Signature=_Tue__16_Feb_2010_11_38_14_+1100_kGyWayk1Uzuxw=FR
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi John,
 
-Hi James,
+Today's linux-next merge of the wireless tree got a conflict in
+drivers/net/wireless/rt2x00/rt2800pci.c between commit
+a3aa18842a5303fc28fcc4d57dbd16618bd830a0 ("drivers/net/: use
+DEFINE_PCI_DEVICE_TABLE()") from the net tree and commit
+de1ebdceb6a4fe1b7073b81d273285b7c8bed312 ("rt2x00: rt2800 - Make rt30xx
+and rt35xx chipsets configurable") from the wireless tree.
 
-On Wed, 10 Feb 2010 17:16:16 -0500 James Bottomley <James.Bottomley@HansenP=
-artnership.com> wrote:
->
-> On Wed, 2010-02-10 at 12:33 +1100, Stephen Rothwell wrote:
-> >=20
-> > After merging the scsi tree, today's linux-next build (powerpc
-> > ppc64_defconfig) failed like this:
-> >=20
-> > drivers/scsi/lpfc/lpfc_bsg.c: In function 'lpfc_bsg_diag_mode':
-> > drivers/scsi/lpfc/lpfc_bsg.c:1496: error: implicit declaration of funct=
-ion 'msleep'
-> >=20
-> > Caused by commit 3b5dd52aaffd291edea9f939ed46a960b240bb45 ("[SCSI] lpfc
-> > 8.3.8: (BSG4) Add new vendor specific BSG Commands").
-> >=20
-> > Missing include of linux/delay.h?
->=20
-> Looks to be exactly the problem.  delay.h gets pulled into some of the
-> generic headers on x86, but not on ppc.
->=20
-> Sorry, my powerstation isn't working (orange warning light) and I can't
-> seem to get anyone to repair it, so I can't build for ppc anymore (which
-> is why this didn't get spotted on commit).
-
-This is still broken ...
---=20
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__16_Feb_2010_11_38_14_+1100_kGyWayk1Uzuxw=FR
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkt56PYACgkQjjKRsyhoI8zjRACeKM5h+a3bIK48wKFjoPuXUR7v
-dnMAoLwxJ7kMwRJrY/xtnutBThcCi1yk
-=Ozac
------END PGP SIGNATURE-----
-
---Signature=_Tue__16_Feb_2010_11_38_14_+1100_kGyWayk1Uzuxw=FR--
+diff --cc drivers/net/wireless/rt2x00/rt2800pci.c
+index d64181c,0e4c417..0000000
+--- a/drivers/net/wireless/rt2x00/rt2800pci.c
++++ b/drivers/net/wireless/rt2x00/rt2800pci.c
+@@@ -1190,8 -1184,11 +1184,11 @@@ static const struct rt2x00_ops rt2800pc
+  /*
+   * RT2800pci module information.
+   */
+ -static struct pci_device_id rt2800pci_device_table[] = {
+ +static DEFINE_PCI_DEVICE_TABLE(rt2800pci_device_table) = {
+- 	{ PCI_DEVICE(0x1462, 0x891a), PCI_DEVICE_DATA(&rt2800pci_ops) },
++ 	{ PCI_DEVICE(0x1814, 0x0601), PCI_DEVICE_DATA(&rt2800pci_ops) },
++ 	{ PCI_DEVICE(0x1814, 0x0681), PCI_DEVICE_DATA(&rt2800pci_ops) },
++ 	{ PCI_DEVICE(0x1814, 0x0701), PCI_DEVICE_DATA(&rt2800pci_ops) },
++ 	{ PCI_DEVICE(0x1814, 0x0781), PCI_DEVICE_DATA(&rt2800pci_ops) },
+  	{ PCI_DEVICE(0x1432, 0x7708), PCI_DEVICE_DATA(&rt2800pci_ops) },
+  	{ PCI_DEVICE(0x1432, 0x7727), PCI_DEVICE_DATA(&rt2800pci_ops) },
+  	{ PCI_DEVICE(0x1432, 0x7728), PCI_DEVICE_DATA(&rt2800pci_ops) },
