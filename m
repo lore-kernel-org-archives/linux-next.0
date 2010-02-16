@@ -1,50 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the wireless tree with the net tree
-Date: Tue, 16 Feb 2010 12:01:03 +1100
-Message-ID: <20100216120103.7128b0f4.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the trivial tree with the net tree
+Date: Tue, 16 Feb 2010 14:50:54 +1100
+Message-ID: <20100216145054.d1443653.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33298 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932375Ab0BPBBH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 15 Feb 2010 20:01:07 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Gertjan van Wingerde <gwingerde@gmail.com>
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Daniel Mack <daniel@caiaq.de>
+List-Id: linux-next.vger.kernel.org
 
-Hi John,
+Hi Jiri,
 
-Today's linux-next merge of the wireless tree got a conflict in
-drivers/net/wireless/rt2x00/rt2800pci.c between commit
-a3aa18842a5303fc28fcc4d57dbd16618bd830a0 ("drivers/net/: use
-DEFINE_PCI_DEVICE_TABLE()") from the net tree and commit
-de1ebdceb6a4fe1b7073b81d273285b7c8bed312 ("rt2x00: rt2800 - Make rt30xx
-and rt35xx chipsets configurable") from the wireless tree.
+Today's linux-next merge of the trivial tree got a conflicts in
+drivers/net/qlge/qlge_ethtool.c and drivers/net/qlge/qlge_main.c between
+commit ae9540f75d5a69e7604cc5391cc0726b3aa82ff6 ("drivers/net/qlge: Use
+netif_printk helpers") from the net tree and commit
+3ad2f3fbb961429d2aa627465ae4829758bc7e07 ("tree-wide: Assorted spelling
+fixes") from the trivial tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+I fixed them up (see below) and can carry the fixes as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/net/wireless/rt2x00/rt2800pci.c
-index d64181c,0e4c417..0000000
---- a/drivers/net/wireless/rt2x00/rt2800pci.c
-+++ b/drivers/net/wireless/rt2x00/rt2800pci.c
-@@@ -1190,8 -1184,11 +1184,11 @@@ static const struct rt2x00_ops rt2800pc
-  /*
-   * RT2800pci module information.
-   */
- -static struct pci_device_id rt2800pci_device_table[] = {
- +static DEFINE_PCI_DEVICE_TABLE(rt2800pci_device_table) = {
-- 	{ PCI_DEVICE(0x1462, 0x891a), PCI_DEVICE_DATA(&rt2800pci_ops) },
-+ 	{ PCI_DEVICE(0x1814, 0x0601), PCI_DEVICE_DATA(&rt2800pci_ops) },
-+ 	{ PCI_DEVICE(0x1814, 0x0681), PCI_DEVICE_DATA(&rt2800pci_ops) },
-+ 	{ PCI_DEVICE(0x1814, 0x0701), PCI_DEVICE_DATA(&rt2800pci_ops) },
-+ 	{ PCI_DEVICE(0x1814, 0x0781), PCI_DEVICE_DATA(&rt2800pci_ops) },
-  	{ PCI_DEVICE(0x1432, 0x7708), PCI_DEVICE_DATA(&rt2800pci_ops) },
-  	{ PCI_DEVICE(0x1432, 0x7727), PCI_DEVICE_DATA(&rt2800pci_ops) },
-  	{ PCI_DEVICE(0x1432, 0x7728), PCI_DEVICE_DATA(&rt2800pci_ops) },
+diff --cc drivers/net/qlge/qlge_ethtool.c
+index 4f26afe,b8d21ab..0000000
+--- a/drivers/net/qlge/qlge_ethtool.c
++++ b/drivers/net/qlge/qlge_ethtool.c
+@@@ -404,9 -401,9 +404,9 @@@ static int ql_set_wol(struct net_devic
+  	if (!qdev->wol) {
+  		u32 wol = 0;
+  		status = ql_mb_wol_mode(qdev, wol);
+ -		QPRINTK(qdev, DRV, ERR, "WOL %s (wol code 0x%x) on %s\n",
+ -			(status == 0) ? "cleared successfully" : "clear failed",
+ -			wol, qdev->ndev->name);
+ +		netif_err(qdev, drv, qdev->ndev, "WOL %s (wol code 0x%x)\n",
+- 			  status == 0 ? "cleared sucessfully" : "clear failed",
+++			  status == 0 ? "cleared successfully" : "clear failed",
+ +			  wol);
+  	}
+  
+  	return 0;
+diff --cc drivers/net/qlge/qlge_main.c
+index 2c052ca,a35845b..0000000
+--- a/drivers/net/qlge/qlge_main.c
++++ b/drivers/net/qlge/qlge_main.c
+@@@ -3863,10 -3516,9 +3863,10 @@@ int ql_wol(struct ql_adapter *qdev
+  	if (qdev->wol) {
+  		wol |= MB_WOL_MODE_ON;
+  		status = ql_mb_wol_mode(qdev, wol);
+ -		QPRINTK(qdev, DRV, ERR, "WOL %s (wol code 0x%x) on %s\n",
+ -			(status == 0) ? "Successfully set" : "Failed", wol,
+ -			qdev->ndev->name);
+ +		netif_err(qdev, drv, qdev->ndev,
+ +			  "WOL %s (wol code 0x%x) on %s\n",
+- 			  (status == 0) ? "Sucessfully set" : "Failed",
+++			  (status == 0) ? "Successfully set" : "Failed",
+ +			  wol, qdev->ndev->name);
+  	}
+  
+  	return status;
