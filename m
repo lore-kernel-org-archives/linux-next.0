@@ -1,64 +1,46 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH -next] i2c: fix xiic build error
-Date: Tue, 16 Feb 2010 08:36:41 -0800
-Message-ID: <4B7AC999.3060103@oracle.com>
-References: <20100204185736.6628ab9a.sfr@canb.auug.org.au>	<4B6B29DD.7060502@oracle.com>	<4B7AC2A9.4070203@oracle.com> <20100216173326.091c1c77@hyperion.delvare>
+From: Bjorn Helgaas <bjorn.helgaas@hp.com>
+Subject: Re: linux-next: build failure after merge final merge
+Date: Tue, 16 Feb 2010 10:03:29 -0700
+Message-ID: <201002161003.29713.bjorn.helgaas@hp.com>
+References: <20100216183650.e82c0f8e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain;
+  charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet11.oracle.com ([141.146.126.233]:31847 "EHLO
-	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933042Ab0BPQkW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 16 Feb 2010 11:40:22 -0500
-In-Reply-To: <20100216173326.091c1c77@hyperion.delvare>
+Received: from g1t0027.austin.hp.com ([15.216.28.34]:33303 "EHLO
+	g1t0027.austin.hp.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932918Ab0BPRDd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 16 Feb 2010 12:03:33 -0500
+In-Reply-To: <20100216183650.e82c0f8e.sfr@canb.auug.org.au>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jean Delvare <khali@linux-fr.org>, ben-linux@fluff.org
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jesse Barnes <jbarnes@virtuousgeek.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>
 
-On 02/16/10 08:33, Jean Delvare wrote:
-> Hi Randy,
+On Tuesday 16 February 2010 12:36:50 am Stephen Rothwell wrote:
+> After merging, today's linux-next build (sparc64 defconfig) failed like
+> this:
 > 
-> On Tue, 16 Feb 2010 08:07:05 -0800, Randy Dunlap wrote:
->> On 02/04/10 12:11, Randy Dunlap wrote:
->>> From: Randy Dunlap <randy.dunlap@oracle.com>
->>>
->>> Add header file to fix build error:
->>>
->>> drivers/i2c/busses/i2c-xiic.c:493: error: implicit declaration of
->>> function 'mdelay'
->>>
->>> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
->>> ---
->>>  drivers/i2c/busses/i2c-xiic.c |    1 +
->>>  1 file changed, 1 insertion(+)
->>>
->>> --- linux-next-20100204.orig/drivers/i2c/busses/i2c-xiic.c
->>> +++ linux-next-20100204/drivers/i2c/busses/i2c-xiic.c
->>> @@ -31,6 +31,7 @@
->>>  #include <linux/module.h>
->>>  #include <linux/init.h>
->>>  #include <linux/errno.h>
->>> +#include <linux/delay.h>
->>>  #include <linux/platform_device.h>
->>>  #include <linux/i2c.h>
->>>  #include <linux/interrupt.h>
->>>
->>
->>
->> This patch is still needed in linux-next-20100216.
+> arch/sparc/kernel/pci.c: In function 'pci_cfg_fake_ranges':
+> arch/sparc/kernel/pci.c:404: error: 'struct pci_bus' has no member named 'resource'
+
+Huh.  I built sparc64 defconfig (and alpha, arm, i686, ia64, mips,
+powerpc, sh, and sparc) in Jesse's linux-next branch, but obviously
+that's not doing the right thing for some reason.
+
+> OK, I just checked the build results for last night
+> (http://kisskb.ellerman.id.au/kisskb/head/2579/) and there are quite a few
+> more (alpha, some arm, parisc and more ...) ... please fix them up as
+> well.  Try something like:
 > 
-> Nothing I can do about it, as the i2c-xiic driver is neither upstream
-> nor in my tree.
+> git grep -l -w resource $(git grep -l -w 'struct pci_bus')
 > 
+> for a starting list of files to check.
 
-Thanks, Jean.
+Thanks for the specifics about all the failures.  That will help
+me a lot.  And thanks for the git grep magic.  I've clearly been
+missing out on a very useful tool.
 
-Next/merge.log tells me:
-Merge remote branch 'bjdooks-i2c/next-i2c'
-
-Ben??
-
--- 
-~Randy
+Bjorn
