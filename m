@@ -1,66 +1,53 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the i2c tree
-Date: Wed, 17 Feb 2010 11:38:55 +1100
-Message-ID: <20100217113855.7ebf3d39.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+Date: Tue, 16 Feb 2010 20:56:16 -0800
+Message-ID: <20100217045616.GA2923@kroah.com>
+References: <20100216173926.b7a4d25c.sfr@canb.auug.org.au> <20100216100100.55f5922f@hyperion.delvare>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__17_Feb_2010_11_38_55_+1100_xByEQyEja66rkF2l"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47362 "EHLO smtps.tip.net.au"
+Received: from kroah.org ([198.145.64.141]:51947 "EHLO coco.kroah.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933749Ab0BQAjB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 16 Feb 2010 19:39:01 -0500
+	id S934060Ab0BQEz6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 16 Feb 2010 23:55:58 -0500
+Content-Disposition: inline
+In-Reply-To: <20100216100100.55f5922f@hyperion.delvare>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Jean Delvare <khali@linux-fr.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
 
---Signature=_Wed__17_Feb_2010_11_38_55_+1100_xByEQyEja66rkF2l
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Feb 16, 2010 at 10:01:00AM +0100, Jean Delvare wrote:
+> Hi Stephen,
+> 
+> On Tue, 16 Feb 2010 17:39:26 +1100, Stephen Rothwell wrote:
+> > After merging the driver-core tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> > 
+> > drivers/i2c/i2c-smbus.c:58: error: 'struct device' has no member named 'sem'
+> > drivers/i2c/i2c-smbus.c:66: error: 'struct device' has no member named 'sem'
+> > 
+> > Caused by commit 0819a881db29059d113fc5f019f7c489dea5937d from the
+> > driver-core tree interacting with commit
+> > 38f1e8aedf0a238d56fbcd3660fc140b50dbc89a ("i2c: Add SMBus alert support")
+> > from the i2c tree.
+> > 
+> > I have applied the following patch for today and will use it as a merge
+> > fixup for the driver-core tree while necessary.
+> 
+> Thanks for the heads up and the fix. Greg, is there an API I am
+> supposed to use instead of accessing the device's semaphore/mutex
+> directly?
 
-Hi Jean,
+I will create a device_lock() and device_unlock() api to solve this
+problem.  That will fix the issue for when we try to change this from a
+semaphore to a mutex (like the patch in linux-next does), but we need to
+revert it due to lockdep issues that are being reported incorrectly.
 
-After merging the i2c tree, today's linux-next build (powerpc
-ppc64_defconfig) produced warnings like this:
+For now, your code is fine, I'll change over your code in the .34 tree
+when the new api goes in.  I'll also drop this mutex patch in a day as
+well, because of the problems it has caused.
 
-In file included from include/linux/bitops.h:17,
-                 from include/linux/kernel.h:15,
-                 from drivers/i2c/i2c-boardinfo.c:19:
-arch/powerpc/include/asm/bitops.h:226: warning: declaration of 'ffs' shadow=
-s a built-in function
+thanks,
 
-The x86_64 allmodconfig produces similar:
-
-In file included from include/linux/bitops.h:17,
-                 from include/linux/kernel.h:15,
-                 from next/drivers/i2c/i2c-boardinfo.c:19:
-arch/x86/include/asm/bitops.h:395: warning: declaration of 'ffs' shadows a =
-built-in function
-
-Exposed by commit fa4f62e9f3a85490aebe8857e2208c37da851ce3 ("i2c: Build
-core and algo drivers with -Wshadow").
-
-Jean, I realise that these warnings are not something your tree has
-added, just that you have exposed them.  They are a bit annoying,
-though.  I am using gcc v4.4.3.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__17_Feb_2010_11_38_55_+1100_xByEQyEja66rkF2l
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkt7Op8ACgkQjjKRsyhoI8zRnQCggW97XNVXP8N2Fga8oYCemurB
-XVwAoLL7Tg5FV+3npgi9mQc2dYWpOKet
-=18RF
------END PGP SIGNATURE-----
-
---Signature=_Wed__17_Feb_2010_11_38_55_+1100_xByEQyEja66rkF2l--
+greg k-h
