@@ -1,30 +1,36 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: build warning after final merge (sound tree)
-Date: Wed, 17 Feb 2010 10:01:33 +0000
-Message-ID: <20100217100132.GA19077@opensource.wolfsonmicro.com>
-References: <20100217171923.ea505d0f.sfr@canb.auug.org.au>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: linux-next: manual merge of the omap tree with the arm tree
+Date: Wed, 17 Feb 2010 11:33:26 -0800
+Message-ID: <20100217193326.GB21755@atomide.com>
+References: <20100205102030.c8b139a1.sfr@canb.auug.org.au>
+ <20100204233019.GY22747@atomide.com>
+ <20100205111617.c602983f.sfr@canb.auug.org.au>
+ <20100205040444.GH22747@atomide.com>
+ <20100215150312.GA11540@flint.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:49576 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S933004Ab0BQKBc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 17 Feb 2010 05:01:32 -0500
+Received: from mho-01-ewr.mailhop.org ([204.13.248.71]:60625 "EHLO
+	mho-01-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754135Ab0BQTct (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Feb 2010 14:32:49 -0500
 Content-Disposition: inline
-In-Reply-To: <20100217171923.ea505d0f.sfr@canb.auug.org.au>
+In-Reply-To: <20100215150312.GA11540@flint.arm.linux.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Takashi Iwai <tiwai@suse.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Russell King <rmk+lkml@arm.linux.org.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-omap@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Feb 17, 2010 at 05:19:23PM +1100, Stephen Rothwell wrote:
+* Russell King <rmk+lkml@arm.linux.org.uk> [100215 07:00]:
+> On Thu, Feb 04, 2010 at 08:04:44PM -0800, Tony Lindgren wrote:
+> > Russell, can you please let me know if you have some static
+> > commit ID containing the patch above that I could use that as
+> > base for my patches?
+> 
+> Right, when it eventually gets through linux-next, 4e6d488
 
-> After merging, today's linux-next build (powerpc allyesconfig) produced
-> this warning:
+Thanks, I have updated omap for-next based on that.
 
-Oh, feh.  My working copy has this warning fixed but apparently that
-didn't make it over.  I'll push a refresh out later today.
+Regards,
 
-One of these days mainline will actually build and do something useful
-with audio on a system I can use for normal development.  :/
+Tony
