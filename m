@@ -1,52 +1,52 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after final merge (net tree)
-Date: Wed, 17 Feb 2010 18:57:48 +1100
-Message-ID: <20100217185748.051ff632.sfr@canb.auug.org.au>
-References: <20100217174015.d1a8a478.sfr@canb.auug.org.au>
-	<20100216.231109.183048308.davem@davemloft.net>
+From: Jean Delvare <khali@linux-fr.org>
+Subject: Re: linux-next: build warning after merge of the i2c tree
+Date: Wed, 17 Feb 2010 09:34:46 +0100
+Message-ID: <20100217093446.2e610f45@hyperion.delvare>
+References: <20100217113855.7ebf3d39.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__17_Feb_2010_18_57_48_+1100_4UmnoEUqHb7xmWa8"
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20100216.231109.183048308.davem@davemloft.net>
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, jengelh@medozas.de
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Wed__17_Feb_2010_18_57_48_+1100_4UmnoEUqHb7xmWa8
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from poutre.nerim.net ([62.4.16.124]:61334 "EHLO poutre.nerim.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752497Ab0BQIet (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 17 Feb 2010 03:34:49 -0500
+In-Reply-To: <20100217113855.7ebf3d39.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 16 Feb 2010 23:11:09 -0800 (PST) David Miller <davem@davemloft.net>=
- wrote:
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 17 Feb 2010 17:40:15 +1100
->=20
-> > After merging, today's linux-next build (sparc64 defconfig) failed like
-> > this:
->=20
-> Fixed for at least 6 hours:
+On Wed, 17 Feb 2010 11:38:55 +1100, Stephen Rothwell wrote:
+> Hi Jean,
+> 
+> After merging the i2c tree, today's linux-next build (powerpc
+> ppc64_defconfig) produced warnings like this:
+> 
+> In file included from include/linux/bitops.h:17,
+>                  from include/linux/kernel.h:15,
+>                  from drivers/i2c/i2c-boardinfo.c:19:
+> arch/powerpc/include/asm/bitops.h:226: warning: declaration of 'ffs' shadows a built-in function
+> 
+> The x86_64 allmodconfig produces similar:
+> 
+> In file included from include/linux/bitops.h:17,
+>                  from include/linux/kernel.h:15,
+>                  from next/drivers/i2c/i2c-boardinfo.c:19:
+> arch/x86/include/asm/bitops.h:395: warning: declaration of 'ffs' shadows a built-in function
+> 
+> Exposed by commit fa4f62e9f3a85490aebe8857e2208c37da851ce3 ("i2c: Build
+> core and algo drivers with -Wshadow").
+> 
+> Jean, I realise that these warnings are not something your tree has
+> added, just that you have exposed them.  They are a bit annoying,
+> though.  I am using gcc v4.4.3.
 
-Excellent, thanks.
+Oh well. I had the hope that at least the header files were
+Wshadow-compliant so it could be enabled for selected source files. Not
+getting any warning on my own system when I tried, I thought it was
+fine... If it is not, then I'll just remove this patch from my tree.
+Sorry for the noise and thanks for reporting.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__17_Feb_2010_18_57_48_+1100_4UmnoEUqHb7xmWa8
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkt7oXwACgkQjjKRsyhoI8xg4ACcD5LxUuBolowblUPfdzf7J5Dr
-PxAAoIJUmm7FKFlqhSrszyOl2VA80BJB
-=T0go
------END PGP SIGNATURE-----
-
---Signature=_Wed__17_Feb_2010_18_57_48_+1100_4UmnoEUqHb7xmWa8--
+-- 
+Jean Delvare
