@@ -1,36 +1,49 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: linux-next: manual merge of the omap tree with the arm tree
-Date: Wed, 17 Feb 2010 11:33:26 -0800
-Message-ID: <20100217193326.GB21755@atomide.com>
-References: <20100205102030.c8b139a1.sfr@canb.auug.org.au>
- <20100204233019.GY22747@atomide.com>
- <20100205111617.c602983f.sfr@canb.auug.org.au>
- <20100205040444.GH22747@atomide.com>
- <20100215150312.GA11540@flint.arm.linux.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: import of usb series failed
+Date: Thu, 18 Feb 2010 10:55:00 +1100
+Message-ID: <20100218105500.898ece5e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__18_Feb_2010_10_55_00_+1100_ytwfx_Ec9byV_jy_"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mho-01-ewr.mailhop.org ([204.13.248.71]:60625 "EHLO
-	mho-01-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754135Ab0BQTct (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Feb 2010 14:32:49 -0500
-Content-Disposition: inline
-In-Reply-To: <20100215150312.GA11540@flint.arm.linux.org.uk>
+Received: from chilli.pcug.org.au ([203.10.76.44]:60502 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756690Ab0BQXzF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 17 Feb 2010 18:55:05 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk+lkml@arm.linux.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-omap@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-* Russell King <rmk+lkml@arm.linux.org.uk> [100215 07:00]:
-> On Thu, Feb 04, 2010 at 08:04:44PM -0800, Tony Lindgren wrote:
-> > Russell, can you please let me know if you have some static
-> > commit ID containing the patch above that I could use that as
-> > base for my patches?
-> 
-> Right, when it eventually gets through linux-next, 4e6d488
+--Signature=_Thu__18_Feb_2010_10_55_00_+1100_ytwfx_Ec9byV_jy_
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, I have updated omap for-next based on that.
+Hi Greg,
 
-Regards,
+Importing the usb quilt series failed like this:
 
-Tony
+usb-ftdi_sio-correct-spelling-in-header-files.patch
+error: patch failed: drivers/usb/serial/ftdi_sio_ids.h:185
+error: drivers/usb/serial/ftdi_sio_ids.h: patch does not apply
+
+I removed that patch for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__18_Feb_2010_10_55_00_+1100_ytwfx_Ec9byV_jy_
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkt8gdQACgkQjjKRsyhoI8zvzwCeJ/yd5JfBE+kmF1Irv+p4nHzk
+rKcAn3S7e841at4r31gi6E5BNlEEdDFa
+=PP9K
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__18_Feb_2010_10_55_00_+1100_ytwfx_Ec9byV_jy_--
