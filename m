@@ -1,44 +1,52 @@
-From: Eric Dumazet <eric.dumazet@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after final merge (net tree)
-Date: Wed, 17 Feb 2010 08:13:28 +0100
-Message-ID: <1266390808.2830.1.camel@edumazet-laptop>
+Date: Wed, 17 Feb 2010 18:57:48 +1100
+Message-ID: <20100217185748.051ff632.sfr@canb.auug.org.au>
 References: <20100217174015.d1a8a478.sfr@canb.auug.org.au>
+	<20100216.231109.183048308.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bw0-f219.google.com ([209.85.218.219]:46398 "EHLO
-	mail-bw0-f219.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751104Ab0BQHNf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Feb 2010 02:13:35 -0500
-In-Reply-To: <20100217174015.d1a8a478.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Engelhardt <jengelh@medozas.de>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__17_Feb_2010_18_57_48_+1100_4UmnoEUqHb7xmWa8"
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20100216.231109.183048308.davem@davemloft.net>
+Sender: netdev-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, jengelh@medozas.de
+List-Id: linux-next.vger.kernel.org
 
-Le mercredi 17 f=C3=A9vrier 2010 =C3=A0 17:40 +1100, Stephen Rothwell a=
- =C3=A9crit :
-> Hi Dave,
->=20
-> After merging, today's linux-next build (sparc64 defconfig) failed li=
-ke
-> this:
->=20
-> In file included from include/linux/netfilter_ipv4/ip_tables.h:29,
->                  from arch/sparc/kernel/sys_sparc32.c:47:
-> include/linux/netfilter/x_tables.h:525: error: expected declaration s=
-pecifiers or '...' before 'nf_hookfn'
->=20
-> Caused by commit 2b95efe7f6bb750256a702cc32d33b0cb2cd8223 ("netfilter=
-:
-> xtables: use xt_table for hook instantiation").  Missing direct inclu=
-de
-> of linux/netfilter.h?
->=20
+--Signature=_Wed__17_Feb_2010_18_57_48_+1100_4UmnoEUqHb7xmWa8
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Stephen
+On Tue, 16 Feb 2010 23:11:09 -0800 (PST) David Miller <davem@davemloft.net>=
+ wrote:
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 17 Feb 2010 17:40:15 +1100
+>=20
+> > After merging, today's linux-next build (sparc64 defconfig) failed like
+> > this:
+>=20
+> Fixed for at least 6 hours:
 
-David took care of this already.
+Excellent, thanks.
 
-http://marc.info/?l=3Dlinux-netdev&m=3D126636301220734&w=3D2
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__17_Feb_2010_18_57_48_+1100_4UmnoEUqHb7xmWa8
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkt7oXwACgkQjjKRsyhoI8xg4ACcD5LxUuBolowblUPfdzf7J5Dr
+PxAAoIJUmm7FKFlqhSrszyOl2VA80BJB
+=T0go
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__17_Feb_2010_18_57_48_+1100_4UmnoEUqHb7xmWa8--
