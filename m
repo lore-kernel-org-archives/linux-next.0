@@ -1,51 +1,53 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: import of usb series failed
-Date: Thu, 18 Feb 2010 13:22:21 +1100
-Message-ID: <20100218132221.b15d151f.sfr@canb.auug.org.au>
-References: <20100218105500.898ece5e.sfr@canb.auug.org.au>
-	<20100218002144.GA17850@kroah.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+Date: Wed, 17 Feb 2010 20:27:11 -0800
+Message-ID: <20100218042711.GC11649@kroah.com>
+References: <20100216173926.b7a4d25c.sfr@canb.auug.org.au> <20100216100100.55f5922f@hyperion.delvare> <20100217045616.GA2923@kroah.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__18_Feb_2010_13_22_21_+1100_FbL6vdwY3XEnd9xS"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100218002144.GA17850@kroah.com>
+Content-Disposition: inline
+In-Reply-To: <20100217045616.GA2923@kroah.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Jean Delvare <khali@linux-fr.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__18_Feb_2010_13_22_21_+1100_FbL6vdwY3XEnd9xS
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Feb 16, 2010 at 08:56:16PM -0800, Greg KH wrote:
+> On Tue, Feb 16, 2010 at 10:01:00AM +0100, Jean Delvare wrote:
+> > Hi Stephen,
+> > 
+> > On Tue, 16 Feb 2010 17:39:26 +1100, Stephen Rothwell wrote:
+> > > After merging the driver-core tree, today's linux-next build (x86_64
+> > > allmodconfig) failed like this:
+> > > 
+> > > drivers/i2c/i2c-smbus.c:58: error: 'struct device' has no member named 'sem'
+> > > drivers/i2c/i2c-smbus.c:66: error: 'struct device' has no member named 'sem'
+> > > 
+> > > Caused by commit 0819a881db29059d113fc5f019f7c489dea5937d from the
+> > > driver-core tree interacting with commit
+> > > 38f1e8aedf0a238d56fbcd3660fc140b50dbc89a ("i2c: Add SMBus alert support")
+> > > from the i2c tree.
+> > > 
+> > > I have applied the following patch for today and will use it as a merge
+> > > fixup for the driver-core tree while necessary.
+> > 
+> > Thanks for the heads up and the fix. Greg, is there an API I am
+> > supposed to use instead of accessing the device's semaphore/mutex
+> > directly?
+> 
+> I will create a device_lock() and device_unlock() api to solve this
+> problem.  That will fix the issue for when we try to change this from a
+> semaphore to a mutex (like the patch in linux-next does), but we need to
+> revert it due to lockdep issues that are being reported incorrectly.
+> 
+> For now, your code is fine, I'll change over your code in the .34 tree
+> when the new api goes in.  I'll also drop this mutex patch in a day as
+> well, because of the problems it has caused.
 
-Hi Greg,
+The functions are now in my tree, I'll fix up your code in the .34 merge
+period.
 
-On Wed, 17 Feb 2010 16:21:44 -0800 Greg KH <greg@kroah.com> wrote:
->
-> Very wierd, you must have gotten this just as I updated my tree.  It
+thanks,
 
-Yeah, that is possible.
-
-> should all be fine tomorrow, if not, please let me know.
-
-Great, thanks.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__18_Feb_2010_13_22_21_+1100_FbL6vdwY3XEnd9xS
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkt8pF0ACgkQjjKRsyhoI8yDSACgpS84yVH70vB+2lUzyIzECQOr
-X7EAn1/BQqtpI/Wzd0ohbF0kiwnqsQrZ
-=QKn9
------END PGP SIGNATURE-----
-
---Signature=_Thu__18_Feb_2010_13_22_21_+1100_FbL6vdwY3XEnd9xS--
+greg k-h
