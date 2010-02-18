@@ -1,77 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree with the kvm tree
-Date: Thu, 18 Feb 2010 13:15:39 +1100
-Message-ID: <20100218131539.0f10c2e7.sfr@canb.auug.org.au>
+Subject: Re: linux-next: import of usb series failed
+Date: Thu, 18 Feb 2010 13:22:21 +1100
+Message-ID: <20100218132221.b15d151f.sfr@canb.auug.org.au>
+References: <20100218105500.898ece5e.sfr@canb.auug.org.au>
+	<20100218002144.GA17850@kroah.com>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__18_Feb_2010_13_22_21_+1100_FbL6vdwY3XEnd9xS"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20100218002144.GA17850@kroah.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Thu__18_Feb_2010_13_22_21_+1100_FbL6vdwY3XEnd9xS
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:50422 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756299Ab0BRCPq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 17 Feb 2010 21:15:46 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kiszka <jan.kiszka@web.de>, Avi Kivity <avi@redhat.com>
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Greg,
 
-Today's linux-next merge of the net tree got a conflict in
-Documentation/feature-removal-schedule.txt between commit
-f5c9db332c54af513e5bee5cd84f5aadb8d21f55 ("KVM: Plan obsolescence of
-kernel allocated slots, paravirt mmu") from the kvm tree and commit
-79e95f4717767e9ddc4dbec5d778f0c9970eed34 ("CAPI: Schedule capifs for
-removal") from the net tree.
+On Wed, 17 Feb 2010 16:21:44 -0800 Greg KH <greg@kroah.com> wrote:
+>
+> Very wierd, you must have gotten this just as I updated my tree.  It
 
-Just overlapping additions. I fixed it up (see below) and can carry the
-fix as necessary.
--- 
+Yeah, that is possible.
+
+> should all be fine tomorrow, if not, please let me know.
+
+Great, thanks.
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc Documentation/feature-removal-schedule.txt
-index 47a6554,721a2aa..0000000
---- a/Documentation/feature-removal-schedule.txt
-+++ b/Documentation/feature-removal-schedule.txt
-@@@ -545,30 -524,10 +524,40 @@@ Who:	Hans de Goede <hdegoede@redhat.com
-  
-  ----------------------------
-  
- +What:	KVM memory aliases support
- +When:	July 2010
- +Why:	Memory aliasing support is used for speeding up guest vga access
- +	through the vga windows.
- +
- +	Modern userspace no longer uses this feature, so it's just bitrotted
- +	code and can be removed with no impact.
- +Who:	Avi Kivity <avi@redhat.com>
- +
- +----------------------------
- +
- +What:	KVM kernel-allocated memory slots
- +When:	July 2010
- +Why:	Since 2.6.25, kvm supports user-allocated memory slots, which are
- +	much more flexible than kernel-allocated slots.  All current userspace
- +	supports the newer interface and this code can be removed with no
- +	impact.
- +Who:	Avi Kivity <avi@redhat.com>
- +
- +----------------------------
- +
- +What:	KVM paravirt mmu host support
- +When:	January 2011
- +Why:	The paravirt mmu host support is slower than non-paravirt mmu, both
- +	on newer and older hardware.  It is already not exposed to the guest,
- +	and kept only for live migration purposes.
- +Who:	Avi Kivity <avi@redhat.com>
-++
-++----------------------------
-++
-+ What:	capifs
-+ When:	February 2011
-+ Files:	drivers/isdn/capi/capifs.*
-+ Why:	udev fully replaces this special file system that only contains CAPI
-+ 	NCCI TTY device nodes. User space (pppdcapiplugin) works without
-+ 	noticing the difference.
-+ Who:	Jan Kiszka <jan.kiszka@web.de>
+--Signature=_Thu__18_Feb_2010_13_22_21_+1100_FbL6vdwY3XEnd9xS
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkt8pF0ACgkQjjKRsyhoI8yDSACgpS84yVH70vB+2lUzyIzECQOr
+X7EAn1/BQqtpI/Wzd0ohbF0kiwnqsQrZ
+=QKn9
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__18_Feb_2010_13_22_21_+1100_FbL6vdwY3XEnd9xS--
