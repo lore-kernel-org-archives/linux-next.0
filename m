@@ -1,53 +1,61 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the driver-core tree
-Date: Wed, 17 Feb 2010 20:27:11 -0800
-Message-ID: <20100218042711.GC11649@kroah.com>
-References: <20100216173926.b7a4d25c.sfr@canb.auug.org.au> <20100216100100.55f5922f@hyperion.delvare> <20100217045616.GA2923@kroah.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the als tree with Linus' tree
+Date: Thu, 18 Feb 2010 17:11:47 +1100
+Message-ID: <20100218171147.973d1016.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20100217045616.GA2923@kroah.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jean Delvare <khali@linux-fr.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:57563 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750728Ab0BRGLv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 18 Feb 2010 01:11:51 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jonathan Cameron <jic23@cam.ac.uk>, Zhang Rui <rui.zhang@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Jenkins <alan-jenkins@tuffmail.co.uk>
 
-On Tue, Feb 16, 2010 at 08:56:16PM -0800, Greg KH wrote:
-> On Tue, Feb 16, 2010 at 10:01:00AM +0100, Jean Delvare wrote:
-> > Hi Stephen,
-> > 
-> > On Tue, 16 Feb 2010 17:39:26 +1100, Stephen Rothwell wrote:
-> > > After merging the driver-core tree, today's linux-next build (x86_64
-> > > allmodconfig) failed like this:
-> > > 
-> > > drivers/i2c/i2c-smbus.c:58: error: 'struct device' has no member named 'sem'
-> > > drivers/i2c/i2c-smbus.c:66: error: 'struct device' has no member named 'sem'
-> > > 
-> > > Caused by commit 0819a881db29059d113fc5f019f7c489dea5937d from the
-> > > driver-core tree interacting with commit
-> > > 38f1e8aedf0a238d56fbcd3660fc140b50dbc89a ("i2c: Add SMBus alert support")
-> > > from the i2c tree.
-> > > 
-> > > I have applied the following patch for today and will use it as a merge
-> > > fixup for the driver-core tree while necessary.
-> > 
-> > Thanks for the heads up and the fix. Greg, is there an API I am
-> > supposed to use instead of accessing the device's semaphore/mutex
-> > directly?
-> 
-> I will create a device_lock() and device_unlock() api to solve this
-> problem.  That will fix the issue for when we try to change this from a
-> semaphore to a mutex (like the patch in linux-next does), but we need to
-> revert it due to lockdep issues that are being reported incorrectly.
-> 
-> For now, your code is fine, I'll change over your code in the .34 tree
-> when the new api goes in.  I'll also drop this mutex patch in a day as
-> well, because of the problems it has caused.
+Hi all,
 
-The functions are now in my tree, I'll fix up your code in the .34 merge
-period.
+Today's linux-next merge of the als tree got a conflict in drivers/misc/Kconfig between commit 8c5d30e590593495c5bb8bd4a2519ce1ac909a22 ("dell-laptop: remove duplicate Kconfig entry under drivers/misc") from Linus' tree and commit 6600f58cfc348ef5862876ab4965d95aad793429 ("isl29003: Move from misc to als now it available with minimal changes") from the als tree.
 
-thanks,
+Just context changes.  I fixed it up (see below) and can carry the change
+for a while.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-greg k-h
+diff --cc drivers/misc/Kconfig
+index 9eaa647,e5ffa20..0000000
+--- a/drivers/misc/Kconfig
++++ b/drivers/misc/Kconfig
+@@@ -278,16 -210,19 +278,6 @@@ config SGI_GRU_DEBU
+  	This option enables addition debugging code for the SGI GRU driver. If
+  	you are unsure, say N.
+  
+- config ISL29003
+- 	tristate "Intersil ISL29003 ambient light sensor"
+- 	depends on I2C && SYSFS
+- 	help
+- 	  If you say yes here you get support for the Intersil ISL29003
+- 	  ambient light sensor.
+- 
+- 	  This driver can also be built as a module.  If so, the module
+- 	  will be called isl29003.
+- 
+ -config DELL_LAPTOP
+ -	tristate "Dell Laptop Extras (EXPERIMENTAL)"
+ -	depends on X86
+ -	depends on DCDBAS
+ -	depends on EXPERIMENTAL
+ -	depends on BACKLIGHT_CLASS_DEVICE
+ -	depends on RFKILL
+ -	depends on POWER_SUPPLY
+ -	default n
+ -	---help---
+ -	This driver adds support for rfkill and backlight control to Dell
+ -	laptops.
+ -
+  config EP93XX_PWM
+  	tristate "EP93xx PWM support"
+  	depends on ARCH_EP93XX
