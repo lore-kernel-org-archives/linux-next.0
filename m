@@ -1,39 +1,33 @@
-From: James Smart <james.smart@emulex.com>
-Subject: [PATCH] lpfc: correct linux-next: PPC build failure
-Date: Thu, 18 Feb 2010 11:07:15 -0500
-Message-ID: <1266509235.29149.9.camel@wookie>
-Reply-To: james.smart@emulex.com
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for February 18 (media/video/gspca)
+Date: Thu, 18 Feb 2010 08:35:40 -0800
+Message-ID: <4B7D6C5C.4010908@oracle.com>
+References: <20100218204937.54a613d2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-scsi-owner@vger.kernel.org>
-Sender: linux-scsi-owner@vger.kernel.org
-To: linux-next@vger.kernel.org, linux-scsi@vger.kernel.org
-Cc: james.bottomley@hansenpartnership.com, sfr@canb.auug.org.au
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet12.oracle.com ([148.87.113.124]:23904 "EHLO
+	rcsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757462Ab0BRQg5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 18 Feb 2010 11:36:57 -0500
+In-Reply-To: <20100218204937.54a613d2.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linux Media Mailing List <linux-media@vger.kernel.org>
 
-This corrects a linux-next build issue on PPC64
-
--- james s
-
- Signed-off-by: James Smart <james.smart@emulex.com>
-
- ---
-
- lpfc_bsg.c |    1 +
- 1 file changed, 1 insertion(+)
-
-
-diff -upNr a/drivers/scsi/lpfc/lpfc_bsg.c b/drivers/scsi/lpfc/lpfc_bsg.c
---- a/drivers/scsi/lpfc/lpfc_bsg.c	2010-02-11 17:26:54.000000000 -0500
-+++ b/drivers/scsi/lpfc/lpfc_bsg.c	2010-02-17 09:26:47.000000000 -0500
-@@ -21,6 +21,7 @@
- #include <linux/interrupt.h>
- #include <linux/mempool.h>
- #include <linux/pci.h>
-+#include <linux/delay.h>
- 
- #include <scsi/scsi.h>
- #include <scsi/scsi_host.h>
+On 02/18/10 01:49, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20100217:
 
 
+when CONFIG_INPUT is not enabled:
+
+drivers/media/video/gspca/gspca.c:2345: error: 'struct gspca_dev' has no member named 'input_dev'
+drivers/media/video/gspca/gspca.c:2347: error: 'struct gspca_dev' has no member named 'input_dev'
+
+
+-- 
+~Randy
