@@ -1,35 +1,39 @@
-From: Jonathan Cameron <jic23@cam.ac.uk>
-Subject: Re: linux-next: manual merge of the als tree with Linus' tree
-Date: Thu, 18 Feb 2010 15:16:19 +0000
-Message-ID: <4B7D59C3.90301@cam.ac.uk>
-References: <20100218171147.973d1016.sfr@canb.auug.org.au>
+From: James Smart <james.smart@emulex.com>
+Subject: [PATCH] lpfc: correct linux-next: PPC build failure
+Date: Thu, 18 Feb 2010 11:07:15 -0500
+Message-ID: <1266509235.29149.9.camel@wookie>
+Reply-To: james.smart@emulex.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ppsw-6.csi.cam.ac.uk ([131.111.8.136]:54441 "EHLO
-	ppsw-6.csi.cam.ac.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754459Ab0BRPOf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 18 Feb 2010 10:14:35 -0500
-In-Reply-To: <20100218171147.973d1016.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Zhang Rui <rui.zhang@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Jenkins <alan-jenkins@tuffmail.co.uk>
+Return-path: <linux-scsi-owner@vger.kernel.org>
+Sender: linux-scsi-owner@vger.kernel.org
+To: linux-next@vger.kernel.org, linux-scsi@vger.kernel.org
+Cc: james.bottomley@hansenpartnership.com, sfr@canb.auug.org.au
+List-Id: linux-next.vger.kernel.org
 
-On 02/18/10 06:11, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the als tree got a conflict in drivers/misc/Kconfig between commit 8c5d30e590593495c5bb8bd4a2519ce1ac909a22 ("dell-laptop: remove duplicate Kconfig entry under drivers/misc") from Linus' tree and commit 6600f58cfc348ef5862876ab4965d95aad793429 ("isl29003: Move from misc to als now it available with minimal changes") from the als tree.
-> 
-> Just context changes.  I fixed it up (see below) and can carry the change
-> for a while.
-Thanks Stephen and sorry for wasting your time!
+This corrects a linux-next build issue on PPC64
 
-I've reset that last patch, merged Linus' current tree and reapplied it on top with the
-merge problems fixed up.  While I was there I edited the commit message so it was actually
-English (oops).
+-- james s
 
-Anyhow, (fingers crossed), it should now work fine.
+ Signed-off-by: James Smart <james.smart@emulex.com>
 
-Jonathan
+ ---
+
+ lpfc_bsg.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+
+diff -upNr a/drivers/scsi/lpfc/lpfc_bsg.c b/drivers/scsi/lpfc/lpfc_bsg.c
+--- a/drivers/scsi/lpfc/lpfc_bsg.c	2010-02-11 17:26:54.000000000 -0500
++++ b/drivers/scsi/lpfc/lpfc_bsg.c	2010-02-17 09:26:47.000000000 -0500
+@@ -21,6 +21,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/mempool.h>
+ #include <linux/pci.h>
++#include <linux/delay.h>
+ 
+ #include <scsi/scsi.h>
+ #include <scsi/scsi_host.h>
+
+
