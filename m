@@ -1,49 +1,64 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: import of usb series failed
-Date: Fri, 19 Feb 2010 07:53:43 -0800
-Message-ID: <20100219155343.GA3946@kroah.com>
-References: <20100218105500.898ece5e.sfr@canb.auug.org.au>
- <20100218002144.GA17850@kroah.com>
- <20100218132221.b15d151f.sfr@canb.auug.org.au>
- <20100219175218.10025a7a.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for February 19 (scsi/mpt2sas/raid_class)
+Date: Fri, 19 Feb 2010 09:21:50 -0800
+Message-ID: <4B7EC8AE.60200@oracle.com>
+References: <20100219174711.5e7cc7be.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:48586 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752881Ab0BSPxs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 19 Feb 2010 10:53:48 -0500
-Content-Disposition: inline
-In-Reply-To: <20100219175218.10025a7a.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-scsi-owner@vger.kernel.org>
+In-Reply-To: <20100219174711.5e7cc7be.sfr@canb.auug.org.au>
+Sender: linux-scsi-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, scsi <linux-scsi@vger.kernel.org>, "James E.J. Bottomley" <James.Bottomley@suse.de>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Feb 19, 2010 at 05:52:18PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
+On 02/18/10 22:47, Stephen Rothwell wrote:
+> Hi all,
 > 
-> On Thu, 18 Feb 2010 13:22:21 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > On Wed, 17 Feb 2010 16:21:44 -0800 Greg KH <greg@kroah.com> wrote:
-> > >
-> > > Very wierd, you must have gotten this just as I updated my tree.  It
-> > 
-> > Yeah, that is possible.
-> > 
-> > > should all be fine tomorrow, if not, please let me know.
-> > 
-> > Great, thanks.
+> Changes since 20100218:
 > 
-> I got the same today.  Is this a case of Git being a bit more picky about
-> applying patches that quilt?
+> 
+> The scsi tree lost its build failure.
 
-Very wierd.  I just ran 'git quiltimport' on my whole tree onto Linus's
-latest git tree and it worked just fine.
 
-What is the command you are using here to do this?  Perhaps there is
-some other tree modifying this file causing a problem?
+(caused by a one-line patch to scsi/mpt2sas/Kconfig:
+	select RAID_ATTRS
+)
 
-odd,
 
-greg k-h
+When CONFIG_SCSI=m, CONFIG_RAID_ATTRS can still be =y, causing build errors
+like:
+
+ERROR: "raid_class_release" [drivers/scsi/mpt2sas/mpt2sas.ko] undefined!
+ERROR: "raid_class_attach" [drivers/scsi/mpt2sas/mpt2sas.ko] undefined!
+
+drivers/scsi/built-in.o does contain raid_class_* code (according to 'nm'),
+but drivers/built-in.o does not, so I guess that drivers/Makefile:
+
+obj-$(CONFIG_SCSI)		+= scsi/
+
+is preventing drivers/scsi/built-in.o from being added to drivers/built-in.o.
+
+We can:
+
+a/  change drivers/Makefile to say:
+
+obj-y				+= scsi/
+
+(test: that still had a build error:
+drivers/built-in.o: In function `raid_match':
+raid_class.c:(.text+0x9de7c): undefined reference to `scsi_is_sdev_device'
+)
+
+b/  change drivers/scsi/Kconfig to make RAID_ATTRS depend on SCSI, so that raid_class
+would be built as a module
+
+That one does work.
+
+
+Do something else?
+Preferences?
+
+-- 
+~Randy
