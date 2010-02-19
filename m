@@ -1,51 +1,60 @@
-From: David Miller <davem@davemloft.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after final merge (net tree)
-Date: Thu, 18 Feb 2010 23:33:21 -0800 (PST)
-Message-ID: <20100218.233321.226788593.davem@davemloft.net>
+Date: Fri, 19 Feb 2010 18:45:22 +1100
+Message-ID: <20100219184522.b89facc7.sfr@canb.auug.org.au>
 References: <20100219173713.e3f9f386.sfr@canb.auug.org.au>
+	<20100218.233321.226788593.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__19_Feb_2010_18_45_22_+1100_QV.B4eE8K7zWsXnv"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100219173713.e3f9f386.sfr@canb.auug.org.au>
+In-Reply-To: <20100218.233321.226788593.davem@davemloft.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: sfr@canb.auug.org.au
+To: David Miller <davem@davemloft.net>
 Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, kristoffer@gaisler.com
 List-Id: linux-next.vger.kernel.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 19 Feb 2010 17:37:13 +1100
+--Signature=_Fri__19_Feb_2010_18_45_22_+1100_QV.B4eE8K7zWsXnv
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> I assume that this driver was written and tested only on Sparc
-> ... maybe it should depend on SPARC?
+Hi Dave,
 
-Indeed, it should.  I thought for some reason that all OF
-platforms have of_remap() and of_device->resource[], oh
-well :-)
+On Thu, 18 Feb 2010 23:33:21 -0800 (PST) David Miller <davem@davemloft.net>=
+ wrote:
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 19 Feb 2010 17:37:13 +1100
+>=20
+> > I assume that this driver was written and tested only on Sparc
+> > ... maybe it should depend on SPARC?
+>=20
+> Indeed, it should.  I thought for some reason that all OF
+> platforms have of_remap() and of_device->resource[], oh
+> well :-)
+>=20
+> Will commit the following, thanks!
+>=20
+> net: Make GRETH driver depend on SPARC.
 
-Will commit the following, thanks!
+Thanks.
 
-net: Make GRETH driver depend on SPARC.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Reported by Stephen Rothwell.
+--Signature=_Fri__19_Feb_2010_18_45_22_+1100_QV.B4eE8K7zWsXnv
+Content-Type: application/pgp-signature
 
-Signed-off-by: David S. Miller <davem@davemloft.net>
----
- drivers/net/Kconfig |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-diff --git a/drivers/net/Kconfig b/drivers/net/Kconfig
-index 17ff15f..46af867 100644
---- a/drivers/net/Kconfig
-+++ b/drivers/net/Kconfig
-@@ -997,7 +997,7 @@ config ETHOC
- 
- config GRETH
- 	tristate "Aeroflex Gaisler GRETH Ethernet MAC support"
--	depends on OF
-+	depends on SPARC
- 	select PHYLIB
- 	select CRC32
- 	help
--- 
-1.6.6.1
+iEYEARECAAYFAkt+QZIACgkQjjKRsyhoI8wYpACeJUqvzMiseGEskzw6gNJkgkWf
+W7oAoLbgidgt2HbDhvUF8sKAvWNLPhQ1
+=zEew
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__19_Feb_2010_18_45_22_+1100_QV.B4eE8K7zWsXnv--
