@@ -1,60 +1,45 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after final merge (net tree)
-Date: Fri, 19 Feb 2010 18:45:22 +1100
-Message-ID: <20100219184522.b89facc7.sfr@canb.auug.org.au>
-References: <20100219173713.e3f9f386.sfr@canb.auug.org.au>
-	<20100218.233321.226788593.davem@davemloft.net>
+From: Russell King <rmk+lkml@arm.linux.org.uk>
+Subject: Re: linux-next: build failure after final merge (arm tree)
+Date: Fri, 19 Feb 2010 08:22:17 +0000
+Message-ID: <20100219082217.GA7392@flint.arm.linux.org.uk>
+References: <20100219173929.01b9e85f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__19_Feb_2010_18_45_22_+1100_QV.B4eE8K7zWsXnv"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100218.233321.226788593.davem@davemloft.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, kristoffer@gaisler.com
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Fri__19_Feb_2010_18_45_22_+1100_QV.B4eE8K7zWsXnv
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:33951 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752296Ab0BSIWc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Feb 2010 03:22:32 -0500
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20100219173929.01b9e85f.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>
 
-Hi Dave,
+On Fri, Feb 19, 2010 at 05:39:29PM +1100, Stephen Rothwell wrote:
+> Hi Russell,
+> 
+> After merging the scsi-post-merge tree, today's linux-next build (sparc32
+> defconfig) failed like this:
+> 
+> arch/sparc/mm/sun4c.c: In function 'sun4c_update_mmu_cache':
+> arch/sparc/mm/sun4c.c:1943: error: 'pte' undeclared (first use
+>  in this function)
 
-On Thu, 18 Feb 2010 23:33:21 -0800 (PST) David Miller <davem@davemloft.net>=
- wrote:
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 19 Feb 2010 17:37:13 +1100
->=20
-> > I assume that this driver was written and tested only on Sparc
-> > ... maybe it should depend on SPARC?
->=20
-> Indeed, it should.  I thought for some reason that all OF
-> platforms have of_remap() and of_device->resource[], oh
-> well :-)
->=20
-> Will commit the following, thanks!
->=20
-> net: Make GRETH driver depend on SPARC.
+Damn.
+
+> Caused by commit 2dca0ca96ac340fbf4f9e0741dcf58ff3677e994 ("MM: Pass a
+> PTE pointer to update_mmu_cache() rather than the PTE itself").
+> 
+> I applied the following patch for today. It may not be correct.
+
+It looks correct to me - I'll merge it into the original commit tonight
+unless David provides me with an alternative patch.
 
 Thanks.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__19_Feb_2010_18_45_22_+1100_QV.B4eE8K7zWsXnv
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkt+QZIACgkQjjKRsyhoI8wYpACeJUqvzMiseGEskzw6gNJkgkWf
-W7oAoLbgidgt2HbDhvUF8sKAvWNLPhQ1
-=zEew
------END PGP SIGNATURE-----
-
---Signature=_Fri__19_Feb_2010_18_45_22_+1100_QV.B4eE8K7zWsXnv--
+-- 
+Russell King
+ Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
+ maintainer of:
