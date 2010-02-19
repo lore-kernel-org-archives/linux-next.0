@@ -1,52 +1,49 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after final merge (arm tree)
-Date: Fri, 19 Feb 2010 19:46:11 +1100
-Message-ID: <20100219194611.61977ed9.sfr@canb.auug.org.au>
-References: <20100219173929.01b9e85f.sfr@canb.auug.org.au>
-	<20100219082217.GA7392@flint.arm.linux.org.uk>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: import of usb series failed
+Date: Fri, 19 Feb 2010 07:53:43 -0800
+Message-ID: <20100219155343.GA3946@kroah.com>
+References: <20100218105500.898ece5e.sfr@canb.auug.org.au>
+ <20100218002144.GA17850@kroah.com>
+ <20100218132221.b15d151f.sfr@canb.auug.org.au>
+ <20100219175218.10025a7a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__19_Feb_2010_19_46_11_+1100_6hh=qLOj7q=At.1p"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53227 "EHLO smtps.tip.net.au"
+Received: from kroah.org ([198.145.64.141]:48586 "EHLO coco.kroah.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752056Ab0BSIqR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 19 Feb 2010 03:46:17 -0500
-In-Reply-To: <20100219082217.GA7392@flint.arm.linux.org.uk>
+	id S1752881Ab0BSPxs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 19 Feb 2010 10:53:48 -0500
+Content-Disposition: inline
+In-Reply-To: <20100219175218.10025a7a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk+lkml@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Fri__19_Feb_2010_19_46_11_+1100_6hh=qLOj7q=At.1p
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Feb 19, 2010 at 05:52:18PM +1100, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> On Thu, 18 Feb 2010 13:22:21 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > On Wed, 17 Feb 2010 16:21:44 -0800 Greg KH <greg@kroah.com> wrote:
+> > >
+> > > Very wierd, you must have gotten this just as I updated my tree.  It
+> > 
+> > Yeah, that is possible.
+> > 
+> > > should all be fine tomorrow, if not, please let me know.
+> > 
+> > Great, thanks.
+> 
+> I got the same today.  Is this a case of Git being a bit more picky about
+> applying patches that quilt?
 
-Hi Russell,
+Very wierd.  I just ran 'git quiltimport' on my whole tree onto Linus's
+latest git tree and it worked just fine.
 
-On Fri, 19 Feb 2010 08:22:17 +0000 Russell King <rmk+lkml@arm.linux.org.uk>=
- wrote:
->
-> It looks correct to me - I'll merge it into the original commit tonight
-> unless David provides me with an alternative patch.
+What is the command you are using here to do this?  Perhaps there is
+some other tree modifying this file causing a problem?
 
-Thanks
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+odd,
 
---Signature=_Fri__19_Feb_2010_19_46_11_+1100_6hh=qLOj7q=At.1p
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkt+T9MACgkQjjKRsyhoI8z7yQCgkxCUHEu/ch1WFUbCH72htY6g
-CycAn3lWEzRd/ftsL8By9vGCJ6fSj+os
-=stib
------END PGP SIGNATURE-----
-
---Signature=_Fri__19_Feb_2010_19_46_11_+1100_6hh=qLOj7q=At.1p--
+greg k-h
