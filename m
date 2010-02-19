@@ -1,31 +1,51 @@
 From: David Miller <davem@davemloft.net>
 Subject: Re: linux-next: build failure after final merge (net tree)
-Date: Thu, 18 Feb 2010 22:53:49 -0800 (PST)
-Message-ID: <20100218.225349.258488745.davem@davemloft.net>
+Date: Thu, 18 Feb 2010 23:33:21 -0800 (PST)
+Message-ID: <20100218.233321.226788593.davem@davemloft.net>
 References: <20100219173713.e3f9f386.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:38853
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752397Ab0BSGxe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Fri, 19 Feb 2010 01:53:34 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20100219173713.e3f9f386.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: sfr@canb.auug.org.au
 Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, kristoffer@gaisler.com
+List-Id: linux-next.vger.kernel.org
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Date: Fri, 19 Feb 2010 17:37:13 +1100
 
-> I assume that this driver was written and tested only on Sparc ... maybe
-> it should depend on SPARC?
-> 
-> I have reverted that commit for today.
+> I assume that this driver was written and tested only on Sparc
+> ... maybe it should depend on SPARC?
 
-I'll take a look at what it really depends upon.
+Indeed, it should.  I thought for some reason that all OF
+platforms have of_remap() and of_device->resource[], oh
+well :-)
 
-Thanks.
+Will commit the following, thanks!
+
+net: Make GRETH driver depend on SPARC.
+
+Reported by Stephen Rothwell.
+
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/Kconfig |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/net/Kconfig b/drivers/net/Kconfig
+index 17ff15f..46af867 100644
+--- a/drivers/net/Kconfig
++++ b/drivers/net/Kconfig
+@@ -997,7 +997,7 @@ config ETHOC
+ 
+ config GRETH
+ 	tristate "Aeroflex Gaisler GRETH Ethernet MAC support"
+-	depends on OF
++	depends on SPARC
+ 	select PHYLIB
+ 	select CRC32
+ 	help
+-- 
+1.6.6.1
