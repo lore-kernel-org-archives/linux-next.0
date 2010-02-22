@@ -1,69 +1,99 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] i2c: fix xiic build error
-Date: Mon, 22 Feb 2010 08:36:31 -0800
-Message-ID: <4B82B28F.10104@oracle.com>
-References: <20100204185736.6628ab9a.sfr@canb.auug.org.au>	<4B6B29DD.7060502@oracle.com>	<4B7AC2A9.4070203@oracle.com> <20100216173326.091c1c77@hyperion.delvare> <4B7AC999.3060103@oracle.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH -next] i2c: fix xiic build error
+Date: Mon, 22 Feb 2010 20:03:05 +0100
+Message-ID: <10f740e81002221103h7408d52ajf5a67da39d6ae8dd@mail.gmail.com>
+References: <20100204185736.6628ab9a.sfr@canb.auug.org.au>
+	 <4B6B29DD.7060502@oracle.com> <4B7AC2A9.4070203@oracle.com>
+	 <20100216173326.091c1c77@hyperion.delvare>
+	 <4B7AC999.3060103@oracle.com> <4B82B28F.10104@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet12.oracle.com ([141.146.126.234]:36968 "EHLO
-	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751126Ab0BVQh2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Feb 2010 11:37:28 -0500
-In-Reply-To: <4B7AC999.3060103@oracle.com>
+Received: from mail-ew0-f228.google.com ([209.85.219.228]:38607 "EHLO
+	mail-ew0-f228.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751863Ab0BVTDH convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Feb 2010 14:03:07 -0500
+In-Reply-To: <4B82B28F.10104@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: ben-linux@fluff.org
-Cc: Jean Delvare <khali@linux-fr.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: ben-linux@fluff.org, Jean Delvare <khali@linux-fr.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On 02/16/10 08:36, Randy Dunlap wrote:
-> On 02/16/10 08:33, Jean Delvare wrote:
->> Hi Randy,
->>
->> On Tue, 16 Feb 2010 08:07:05 -0800, Randy Dunlap wrote:
->>> On 02/04/10 12:11, Randy Dunlap wrote:
+On Mon, Feb 22, 2010 at 17:36, Randy Dunlap <randy.dunlap@oracle.com> w=
+rote:
+> On 02/16/10 08:36, Randy Dunlap wrote:
+>> On 02/16/10 08:33, Jean Delvare wrote:
+>>> On Tue, 16 Feb 2010 08:07:05 -0800, Randy Dunlap wrote:
+>>>> On 02/04/10 12:11, Randy Dunlap wrote:
+>>>>
+>>>> This patch is still needed in linux-next-20100216.
 >>>
->>>
->>> This patch is still needed in linux-next-20100216.
+>>> Nothing I can do about it, as the i2c-xiic driver is neither upstre=
+am
+>>> nor in my tree.
 >>
->> Nothing I can do about it, as the i2c-xiic driver is neither upstream
->> nor in my tree.
+>> Thanks, Jean.
 >>
-> 
-> Thanks, Jean.
-> 
-> Next/merge.log tells me:
-> Merge remote branch 'bjdooks-i2c/next-i2c'
-> 
-> Ben??
-> 
+>> Next/merge.log tells me:
+>> Merge remote branch 'bjdooks-i2c/next-i2c'
+>>
+>> Ben??
+>>
+>
+> ping Ben.
 
-ping Ben.
+Yes, please. Thx!
 
-Here's the patch again.
+> Here's the patch again.
+>
+> ---
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+>
+> Add header file to fix build error:
+>
+> drivers/i2c/busses/i2c-xiic.c:493: error: implicit declaration of fun=
+ction 'mdelay'
+>
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> Cc: "Ben Dooks (embedded platforms)" <ben-linux@fluff.org>
+> Cc: linux-i2c@vger.kernel.org
+> ---
+> =C2=A0drivers/i2c/busses/i2c-xiic.c | =C2=A0 =C2=A01 +
+> =C2=A01 file changed, 1 insertion(+)
+>
+> --- linux-next-20100204.orig/drivers/i2c/busses/i2c-xiic.c
+> +++ linux-next-20100204/drivers/i2c/busses/i2c-xiic.c
+> @@ -31,6 +31,7 @@
+> =C2=A0#include <linux/module.h>
+> =C2=A0#include <linux/init.h>
+> =C2=A0#include <linux/errno.h>
+> +#include <linux/delay.h>
+> =C2=A0#include <linux/platform_device.h>
+> =C2=A0#include <linux/i2c.h>
+> =C2=A0#include <linux/interrupt.h>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kerne=
+l" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =C2=A0http://vger.kernel.org/majordomo-info.ht=
+ml
+> Please read the FAQ at =C2=A0http://www.tux.org/lkml/
+>
 
----
-From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Add header file to fix build error:
 
-drivers/i2c/busses/i2c-xiic.c:493: error: implicit declaration of function 'mdelay'
+--=20
+Gr{oetje,eeting}s,
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: "Ben Dooks (embedded platforms)" <ben-linux@fluff.org>
-Cc: linux-i2c@vger.kernel.org
----
- drivers/i2c/busses/i2c-xiic.c |    1 +
- 1 file changed, 1 insertion(+)
+						Geert
 
---- linux-next-20100204.orig/drivers/i2c/busses/i2c-xiic.c
-+++ linux-next-20100204/drivers/i2c/busses/i2c-xiic.c
-@@ -31,6 +31,7 @@
- #include <linux/module.h>
- #include <linux/init.h>
- #include <linux/errno.h>
-+#include <linux/delay.h>
- #include <linux/platform_device.h>
- #include <linux/i2c.h>
- #include <linux/interrupt.h>
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
+
+In personal conversations with technical people, I call myself a hacker=
+=2E But
+when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+							    -- Linus Torvalds
