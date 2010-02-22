@@ -1,33 +1,70 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: linux-next: manual merge of the trivial tree with the sparc
- tree
-Date: Mon, 22 Feb 2010 11:24:20 +0100 (CET)
-Message-ID: <alpine.LNX.2.00.1002221123580.30967@pobox.suse.cz>
-References: <20100222141341.f5c92be4.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure in i386 since next-20100104
+Date: Mon, 22 Feb 2010 22:03:40 +1100
+Message-ID: <20100222220340.4b0a19fb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__22_Feb_2010_22_03_40_+1100_=K9TpKMVkdSVh5GD"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100222141341.f5c92be4.sfr@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frans Pop <elendil@planet.nl>, David Miller <davem@davemloft.net>, Daniel Mack <daniel@caiaq.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, x86@kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Mon, 22 Feb 2010, Stephen Rothwell wrote:
+--Signature=_Mon__22_Feb_2010_22_03_40_+1100_=K9TpKMVkdSVh5GD
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Jiri,
-> 
-> Today's linux-next merge of the trivial tree got a conflict in
-> arch/sparc/kernel/leon_kernel.c between commit
-> 0da2b300b91ddeb9944c3fb4faaf78c1c482c0af ("sparc: remove trailing space
-> in messages") from the sparc tree and commit
-> 3ad2f3fbb961429d2aa627465ae4829758bc7e07 ("tree-wide: Assorted spelling
-> fixes") from the trivial tree.
-> 
-> The former also fixed the spelling mistake fixed by the latter.
+Hi,
 
-Thanks, I have reverted the chunk in question in my tree.
+The i386 allmodconfig builds of linux-next have been failing since
+next-20100204 like this:
 
--- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+In file included from arch/x86/include/asm/uaccess.h:571,
+                 from include/linux/uaccess.h:5,
+                 from include/linux/highmem.h:6,
+                 from include/linux/pagemap.h:10,
+                 from include/linux/mempolicy.h:62,
+                 from include/linux/migrate.h:5,
+                 from mm/migrate.c:15:
+In function 'copy_from_user',
+    inlined from 'do_pages_stat' at mm/migrate.c:1009:
+arch/x86/include/asm/uaccess_32.h:212: error: call to 'copy_from_user_overf=
+low' declared with attribute error: copy_from_user() buffer size is not pro=
+vably correct
+
+[Today's linux-next is the same except for the one line starting
+"inlined" which is now:
+    inlined from 'do_pages_stat' at mm/migrate.c:1012:
+]
+
+ I use gcc 4.4.3 for those compiles.  (See
+http://kisskb.ellerman.id.au/kisskb/buildresult/2118967/ for full logs.)
+
+There doesn't seem to be any relevant change in the config from Feb 3 to
+4:
+
++CONFIG_I2C_XILINX=3Dm
++CONFIG_RADIO_SAA7706H=3Dm
+
+and nothing else jumps out. The i386 defconfig and allnoconfig builds do
+not fail.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__22_Feb_2010_22_03_40_+1100_=K9TpKMVkdSVh5GD
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkuCZIwACgkQjjKRsyhoI8x/MgCdHr222WUhicry76VV2pa6bYri
+vUkAn04rdzvxJIRO+GDmP0XeuMzVW3yQ
+=zZKV
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__22_Feb_2010_22_03_40_+1100_=K9TpKMVkdSVh5GD--
