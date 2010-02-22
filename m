@@ -1,50 +1,58 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the trivial tree with the sparc tree
-Date: Mon, 22 Feb 2010 14:13:41 +1100
-Message-ID: <20100222141341.f5c92be4.sfr@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] scsi: RAID_ATTRS depends on SCSI
+Date: Sun, 21 Feb 2010 19:46:36 -0800
+Message-ID: <20100221194636.ef885e5a.rdunlap@xenotime.net>
+References: <20100219174711.5e7cc7be.sfr@canb.auug.org.au>
+	<4B7EC8AE.60200@oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__22_Feb_2010_14_13_41_+1100_67DVQuCCUj8x=ubP"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44757 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754509Ab0BVDNy (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 21 Feb 2010 22:13:54 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frans Pop <elendil@planet.nl>, David Miller <davem@davemloft.net>, Daniel Mack <daniel@caiaq.de>
-
---Signature=_Mon__22_Feb_2010_14_13_41_+1100_67DVQuCCUj8x=ubP
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-scsi-owner@vger.kernel.org>
+In-Reply-To: <4B7EC8AE.60200@oracle.com>
+Sender: linux-scsi-owner@vger.kernel.org
+To: linux-next@vger.kernel.org, akpm <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, LKML <linux-kernel@vger.kernel.org>, scsi <linux-scsi@vger.kernel.org>, "James E.J. Bottomley" <James.Bottomley@suse.de>
+List-Id: linux-next.vger.kernel.org
 
-Hi Jiri,
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Today's linux-next merge of the trivial tree got a conflict in
-arch/sparc/kernel/leon_kernel.c between commit
-0da2b300b91ddeb9944c3fb4faaf78c1c482c0af ("sparc: remove trailing space
-in messages") from the sparc tree and commit
-3ad2f3fbb961429d2aa627465ae4829758bc7e07 ("tree-wide: Assorted spelling
-fixes") from the trivial tree.
+raid_class uses scsi interfaces, so it should depend on SCSI.
+Otherwise build errors occur when RAID_ATTRS=y and SCSI=m:
 
-The former also fixed the spelling mistake fixed by the latter.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+ERROR: "raid_class_release" [drivers/scsi/mpt2sas/mpt2sas.ko] undefined!
+ERROR: "raid_class_attach" [drivers/scsi/mpt2sas/mpt2sas.ko] undefined!
 
---Signature=_Mon__22_Feb_2010_14_13_41_+1100_67DVQuCCUj8x=ubP
-Content-Type: application/pgp-signature
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/scsi/Kconfig |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkuB9mUACgkQjjKRsyhoI8yx6ACgqQdqdK5iN6962aBur8gklv+P
-G6sAoIh8hY4eodFSCUiBl+73C1Ntqc/e
-=sKur
------END PGP SIGNATURE-----
-
---Signature=_Mon__22_Feb_2010_14_13_41_+1100_67DVQuCCUj8x=ubP--
+--- linux-next-20100219.orig/drivers/scsi/Kconfig
++++ linux-next-20100219/drivers/scsi/Kconfig
+@@ -1,12 +1,5 @@
+ menu "SCSI device support"
+ 
+-config RAID_ATTRS
+-	tristate "RAID Transport Class"
+-	default n
+-	depends on BLOCK
+-	---help---
+-	  Provides RAID
+-
+ config SCSI
+ 	tristate "SCSI device support"
+ 	depends on BLOCK
+@@ -34,6 +27,13 @@ config SCSI_DMA
+ 	bool
+ 	default n
+ 
++config RAID_ATTRS
++	tristate "RAID Transport Class"
++	default n
++	depends on BLOCK && SCSI
++	---help---
++	  Provides RAID
++
+ config SCSI_TGT
+ 	tristate "SCSI target support"
+ 	depends on SCSI && EXPERIMENTAL
