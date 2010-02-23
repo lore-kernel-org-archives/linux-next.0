@@ -1,48 +1,56 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the wireless tree with the
- wireless-current tree
-Date: Tue, 23 Feb 2010 12:26:49 +1100
-Message-ID: <20100223122649.34f7d0bb.sfr@canb.auug.org.au>
+From: "H. Peter Anvin" <hpa@kernel.org>
+Subject: Re: linux-next: build failure in i386 since next-20100104
+Date: Mon, 22 Feb 2010 18:18:59 -0800
+Message-ID: <4B833B13.7060109@kernel.org>
+References: <20100222220340.4b0a19fb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58760 "EHLO smtps.tip.net.au"
+Received: from terminus.zytor.com ([198.137.202.10]:44475 "EHLO mail.zytor.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750766Ab0BWB0w (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 22 Feb 2010 20:26:52 -0500
+	id S1752470Ab0BWCTM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 22 Feb 2010 21:19:12 -0500
+In-Reply-To: <20100222220340.4b0a19fb.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Abhijeet Kolekar <abhijeet.kolekar@intel.com>, Reinette Chatre <reinette.chatre@intel.com>, Wey-Yi Guy <wey-yi.w.guy@intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, x86@kernel.org
 
-Hi "John,
+On 02/22/2010 03:03 AM, Stephen Rothwell wrote:
+> Hi,
+> 
+> The i386 allmodconfig builds of linux-next have been failing since
+> next-20100204 like this:
+> 
+> In file included from arch/x86/include/asm/uaccess.h:571,
+>                  from include/linux/uaccess.h:5,
+>                  from include/linux/highmem.h:6,
+>                  from include/linux/pagemap.h:10,
+>                  from include/linux/mempolicy.h:62,
+>                  from include/linux/migrate.h:5,
+>                  from mm/migrate.c:15:
+> In function 'copy_from_user',
+>     inlined from 'do_pages_stat' at mm/migrate.c:1009:
+> arch/x86/include/asm/uaccess_32.h:212: error: call to 'copy_from_user_overflow' declared with attribute error: copy_from_user() buffer size is not provably correct
+> 
+> [Today's linux-next is the same except for the one line starting
+> "inlined" which is now:
+>     inlined from 'do_pages_stat' at mm/migrate.c:1012:
+> ]
+> 
+>  I use gcc 4.4.3 for those compiles.  (See
+> http://kisskb.ellerman.id.au/kisskb/buildresult/2118967/ for full logs.)
+> 
+> There doesn't seem to be any relevant change in the config from Feb 3 to
+> 4:
+> 
+> +CONFIG_I2C_XILINX=m
+> +CONFIG_RADIO_SAA7706H=m
+> 
+> and nothing else jumps out. The i386 defconfig and allnoconfig builds do
+> not fail.
 
-Today's linux-next merge of the wireless tree got a conflict in
-drivers/net/wireless/iwlwifi/iwl-core.h between commit
-a239a8b47cc0e5e6d7416a89f340beac06d5edaa ("iwlwifi: error checking for
-number of tfds in queue") from the wireless-current tree and commit
-7bfedc59ee350727b115bbc79780c69b114f162d ("iwlwifi: cleanup return
-values") from the wireless tree.
+Already fixed in upstream, checkin 87b8d1adefa1548b591cbf0d63965987e2cf893d.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/net/wireless/iwlwifi/iwl-core.h
-index 1b0701b,3df7933..0000000
---- a/drivers/net/wireless/iwlwifi/iwl-core.h
-+++ b/drivers/net/wireless/iwlwifi/iwl-core.h
-@@@ -450,9 -451,7 +451,9 @@@ int iwl_tx_skb(struct iwl_priv *priv, s
-  void iwl_hw_txq_ctx_free(struct iwl_priv *priv);
-  int iwl_hw_tx_queue_init(struct iwl_priv *priv,
-  			 struct iwl_tx_queue *txq);
-- int iwl_txq_update_write_ptr(struct iwl_priv *priv, struct iwl_tx_queue *txq);
-+ void iwl_txq_update_write_ptr(struct iwl_priv *priv, struct iwl_tx_queue *txq);
- +void iwl_free_tfds_in_queue(struct iwl_priv *priv,
- +			    int sta_id, int tid, int freed);
-  int iwl_tx_queue_init(struct iwl_priv *priv, struct iwl_tx_queue *txq,
-  		      int slots_num, u32 txq_id);
-  void iwl_tx_queue_free(struct iwl_priv *priv, int txq_id);
+	-hpa
