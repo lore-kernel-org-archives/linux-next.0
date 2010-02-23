@@ -1,35 +1,58 @@
-From: Luke Yelavich <luke.yelavich@canonical.com>
-Subject: Re: linux-next: build warning after merge of the sound tree
-Date: Tue, 23 Feb 2010 16:20:00 +1100
-Message-ID: <20100223052000.GA15640@strigy.yelavich.home>
-References: <20100223160746.e283a14f.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merging all the trees (tip tree
+ related)
+Date: Tue, 23 Feb 2010 17:25:43 +1100
+Message-ID: <20100223172543.61fc1d2b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__23_Feb_2010_17_25_43_+1100_Dw6KJWx7PNN2fi6t"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ipmail04.adl6.internode.on.net ([150.101.137.141]:9644 "EHLO
-	ipmail04.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750863Ab0BWFZO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 23 Feb 2010 00:25:14 -0500
-Content-Disposition: inline
-In-Reply-To: <20100223160746.e283a14f.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:60343 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751254Ab0BWGZv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 23 Feb 2010 01:25:51 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Takashi Iwai <tiwai@suse.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Mike Travis <travis@sgi.com>
 
-On Tue, Feb 23, 2010 at 04:07:46PM EST, Stephen Rothwell wrote:
-> Hi Takashi,
-> 
-> After merging the sound tree, today's linux-next build (x86_64
-> allmodconfig) produced these warnings:
-> 
-> sound/pci/hda/patch_realtek.c:7016: warning: 'alc885_macmini3_ch2_init' defined but not used
-> sound/pci/hda/patch_realtek.c:7028: warning: 'alc885_macmini3_ch6_init' defined but not used
-> 
-> Introduced by commit e458b1fadf9239d1fdb165ff4c4ea0d807041bec ("ALSA: hda
-> - Add Macmini 3,1 support").
+--Signature=_Tue__23_Feb_2010_17_25_43_+1100_Dw6KJWx7PNN2fi6t
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Whoops, thats my fault. I'll send a patch to the ALSA dev list to fix that right away.
+Hi all,
 
-Luke
+After merging all the trees, today's linux-next build (powerpc
+ppc44x_defconfig) produced this warning:
+
+WARNING: drivers/pci/built-in.o(__ksymtab+0x1a0): Section mismatch in refer=
+ence from the variable __ksymtab_pci_register_set_vga_state to the function=
+ .init.text:pci_register_set_vga_state()
+The symbol pci_register_set_vga_state is exported and annotated __init=20
+Fix this by removing the __init annotation of pci_register_set_vga_state or=
+ drop the export.
+
+Introduced by commit 95a8b6efc5d07103583f706c8a5889437d537939 ("pci:
+Update pci_set_vga_state() to call arch functions").  It really doesn't
+make much sense to apply EXPORT_SYMBOL() to a function marked __init (or
+vice versa, as the case may be :-)).
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__23_Feb_2010_17_25_43_+1100_Dw6KJWx7PNN2fi6t
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkuDdOcACgkQjjKRsyhoI8w4LQCffDeRRdEnsBWqBSrF00i21sC6
+4C8Anj9+VjbIwv5i9DX2z/o7GdEf0cpZ
+=XB6e
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__23_Feb_2010_17_25_43_+1100_Dw6KJWx7PNN2fi6t--
