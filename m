@@ -1,56 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the tip tree
-Date: Tue, 23 Feb 2010 16:01:29 +1100
-Message-ID: <20100223160129.f3819f35.sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the sound tree
+Date: Tue, 23 Feb 2010 16:07:46 +1100
+Message-ID: <20100223160746.e283a14f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__23_Feb_2010_16_01_29_+1100_p4U7V8g2EtUaLupc"
+ boundary="Signature=_Tue__23_Feb_2010_16_07_46_+1100_H43FxMAjtwTePNut"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36777 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:48445 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750720Ab0BWFBl (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 23 Feb 2010 00:01:41 -0500
+	id S1750699Ab0BWFHx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 23 Feb 2010 00:07:53 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Luke Yelavich <luke.yelavich@canonical.com>
 
---Signature=_Tue__23_Feb_2010_16_01_29_+1100_p4U7V8g2EtUaLupc
+--Signature=_Tue__23_Feb_2010_16_07_46_+1100_H43FxMAjtwTePNut
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Takashi,
 
-After merging the tip tree, today's linux-next build (powerpc
-ppc64_defconfig) produced these warnings:
+After merging the sound tree, today's linux-next build (x86_64
+allmodconfig) produced these warnings:
 
-mm/sparse.c: In function 'sparse_init':
-mm/sparse.c:488: warning: unused variable 'map_count'
-mm/sparse.c:484: warning: unused variable 'size2'
-mm/sparse.c:481: warning: unused variable 'map_map'
-mm/sparse.c: At top level:
-mm/sparse.c:442: warning: 'sparse_early_mem_maps_alloc_node' defined but no=
-t used
+sound/pci/hda/patch_realtek.c:7016: warning: 'alc885_macmini3_ch2_init' def=
+ined but not used
+sound/pci/hda/patch_realtek.c:7028: warning: 'alc885_macmini3_ch6_init' def=
+ined but not used
 
-Introduced by commit 9bdac914240759457175ac0d6529a37d2820bc4d
-("sparsemem: Put mem map for one node together").
-
+Introduced by commit e458b1fadf9239d1fdb165ff4c4ea0d807041bec ("ALSA: hda
+- Add Macmini 3,1 support").
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__23_Feb_2010_16_01_29_+1100_p4U7V8g2EtUaLupc
+--Signature=_Tue__23_Feb_2010_16_07_46_+1100_H43FxMAjtwTePNut
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkuDYSkACgkQjjKRsyhoI8wBvgCcCwLgqlvDkL8vRYbWbCjFHbRt
-Rb4AnierK4xewQIcv8qINXk0j76By3jo
-=eW7w
+iEYEARECAAYFAkuDYqIACgkQjjKRsyhoI8wjrACfUPwwlQwdEXCiTF+UyNsfQuzb
++8AAn1R8mz3PAnx7b1qFrDP2iPhapBYN
+=hZ1H
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__23_Feb_2010_16_01_29_+1100_p4U7V8g2EtUaLupc--
+--Signature=_Tue__23_Feb_2010_16_07_46_+1100_H43FxMAjtwTePNut--
