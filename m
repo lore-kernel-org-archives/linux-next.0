@@ -1,52 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure in i386 since next-20100104
-Date: Tue, 23 Feb 2010 13:21:44 +1100
-Message-ID: <20100223132144.63020207.sfr@canb.auug.org.au>
-References: <20100222220340.4b0a19fb.sfr@canb.auug.org.au>
-	<4B833B13.7060109@kernel.org>
+Subject: linux-next: build failure after merge of the block tree
+Date: Tue, 23 Feb 2010 13:26:19 +1100
+Message-ID: <20100223132619.e6f5ff0e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__23_Feb_2010_13_21_44_+1100_crHDZ7OtBYQOnfsg"
+ boundary="Signature=_Tue__23_Feb_2010_13_26_19_+1100_OEfkwZWuAxQ9Lf8X"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:42552 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:57644 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753031Ab0BWCVu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 22 Feb 2010 21:21:50 -0500
-In-Reply-To: <4B833B13.7060109@kernel.org>
+	id S1752515Ab0BWC0c (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 22 Feb 2010 21:26:32 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "H. Peter Anvin" <hpa@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, x86@kernel.org
+To: Jens Axboe <jens.axboe@oracle.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, dann frazier <dannf@hp.com>
 
---Signature=_Tue__23_Feb_2010_13_21_44_+1100_crHDZ7OtBYQOnfsg
+--Signature=_Tue__23_Feb_2010_13_26_19_+1100_OEfkwZWuAxQ9Lf8X
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Peter,
+Hi Jens,
 
-On Mon, 22 Feb 2010 18:18:59 -0800 "H. Peter Anvin" <hpa@kernel.org> wrote:
->
-> Already fixed in upstream, checkin 87b8d1adefa1548b591cbf0d63965987e2cf89=
-3d.
+After merging the block tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Yep, saw that today, thanks.
+usr/include/linux/cciss_ioctl.h:6: included file 'linux/cciss_defs.h' is no=
+t exported
 
+Caused by commit 429c42c9d246f5bda868495c09974312a0177328 ("cciss:
+Consolidate duplicate bits in cciss_cmd.h & cciss_ioctl.h").
+
+I have used the block tree from next-20100222 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__23_Feb_2010_13_21_44_+1100_crHDZ7OtBYQOnfsg
+--Signature=_Tue__23_Feb_2010_13_26_19_+1100_OEfkwZWuAxQ9Lf8X
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkuDO7gACgkQjjKRsyhoI8wnXACfYGVbPoR+9sA7K5PMVOubipi8
-ihoAnRYBiQvHCpVK4GWxJ3wkbV2iUoe8
-=2YQh
+iEYEARECAAYFAkuDPMsACgkQjjKRsyhoI8xKmACgkFrUIZJapGOXEbmEnShHgEhc
+pm0Aniz60CD4/sgePHpEC3u2XcIbgKIP
+=zGDJ
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__23_Feb_2010_13_21_44_+1100_crHDZ7OtBYQOnfsg--
+--Signature=_Tue__23_Feb_2010_13_26_19_+1100_OEfkwZWuAxQ9Lf8X--
