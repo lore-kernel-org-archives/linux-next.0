@@ -1,102 +1,71 @@
-From: Yinghai Lu <yinghai@kernel.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build warning after merge of the tip tree
-Date: Tue, 23 Feb 2010 00:52:25 -0800
-Message-ID: <4B839749.2060608@kernel.org>
+Date: Tue, 23 Feb 2010 21:43:56 +1100
+Message-ID: <20100223214356.a9cf4db5.sfr@canb.auug.org.au>
 References: <20100223160129.f3819f35.sfr@canb.auug.org.au>
+	<4B839749.2060608@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hera.kernel.org ([140.211.167.34]:49883 "EHLO hera.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750801Ab0BWIxs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 23 Feb 2010 03:53:48 -0500
-In-Reply-To: <20100223160129.f3819f35.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__23_Feb_2010_21_43_56_+1100_dQTc.XCi26P2sb4l"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4B839749.2060608@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Yinghai Lu <yinghai@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On 02/22/2010 09:01 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the tip tree, today's linux-next build (powerpc
+--Signature=_Tue__23_Feb_2010_21_43_56_+1100_dQTc.XCi26P2sb4l
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Tue, 23 Feb 2010 00:52:25 -0800 Yinghai Lu <yinghai@kernel.org> wrote:
+>
+> please check
+
+This patch fixes the warnings for me, thanks.
+
+> [PATCH] sparsemem: fix compiling with ppc
+>=20
+> Stephen reported:
+> build (powerpc
 > ppc64_defconfig) produced these warnings:
-> 
+>=20
 > mm/sparse.c: In function 'sparse_init':
 > mm/sparse.c:488: warning: unused variable 'map_count'
 > mm/sparse.c:484: warning: unused variable 'size2'
 > mm/sparse.c:481: warning: unused variable 'map_map'
 > mm/sparse.c: At top level:
-> mm/sparse.c:442: warning: 'sparse_early_mem_maps_alloc_node' defined but not used
-> 
+> mm/sparse.c:442: warning: 'sparse_early_mem_maps_alloc_node' defined but =
+not used
+>=20
 > Introduced by commit 9bdac914240759457175ac0d6529a37d2820bc4d
 > ("sparsemem: Put mem map for one node together").
-> 
+>=20
+> use macro to fix them
+>=20
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Yinghai Lu <yinghai@kernel.org>
 
-please check
+Acked-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-[PATCH] sparsemem: fix compiling with ppc
+--Signature=_Tue__23_Feb_2010_21_43_56_+1100_dQTc.XCi26P2sb4l
+Content-Type: application/pgp-signature
 
-Stephen reported:
-build (powerpc
-ppc64_defconfig) produced these warnings:
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-mm/sparse.c: In function 'sparse_init':
-mm/sparse.c:488: warning: unused variable 'map_count'
-mm/sparse.c:484: warning: unused variable 'size2'
-mm/sparse.c:481: warning: unused variable 'map_map'
-mm/sparse.c: At top level:
-mm/sparse.c:442: warning: 'sparse_early_mem_maps_alloc_node' defined but not used
+iEYEARECAAYFAkuDsWwACgkQjjKRsyhoI8xdrwCfVl3JrdKPUxfMauSpZmR8ZO1Y
+BbsAn3dxjXQqtOF8ToxeWSZnvgNiiran
+=5RpT
+-----END PGP SIGNATURE-----
 
-Introduced by commit 9bdac914240759457175ac0d6529a37d2820bc4d
-("sparsemem: Put mem map for one node together").
-
-use macro to fix them
-
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Yinghai Lu <yinghai@kernel.org>
-
-diff --git a/mm/sparse.c b/mm/sparse.c
-index 9b6b93a..22896d5 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -439,6 +439,7 @@ void __init sparse_mem_maps_populate_node(struct page **map_map,
- }
- #endif /* !CONFIG_SPARSEMEM_VMEMMAP */
- 
-+#ifdef CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER
- static void __init sparse_early_mem_maps_alloc_node(struct page **map_map,
- 				 unsigned long pnum_begin,
- 				 unsigned long pnum_end,
-@@ -447,8 +448,7 @@ static void __init sparse_early_mem_maps_alloc_node(struct page **map_map,
- 	sparse_mem_maps_populate_node(map_map, pnum_begin, pnum_end,
- 					 map_count, nodeid);
- }
--
--#ifndef CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER
-+#else
- static struct page __init *sparse_early_mem_map_alloc(unsigned long pnum)
- {
- 	struct page *map;
-@@ -478,14 +478,17 @@ void __init sparse_init(void)
- {
- 	unsigned long pnum;
- 	struct page *map;
--	struct page **map_map;
- 	unsigned long *usemap;
- 	unsigned long **usemap_map;
--	int size, size2;
-+	int size;
- 	int nodeid_begin = 0;
- 	unsigned long pnum_begin = 0;
- 	unsigned long usemap_count;
-+#ifdef CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER
- 	unsigned long map_count;
-+	int size2;
-+	struct page **map_map;
-+#endif
- 
- 	/*
- 	 * map is using big page (aka 2M in x86 64 bit)
+--Signature=_Tue__23_Feb_2010_21_43_56_+1100_dQTc.XCi26P2sb4l--
