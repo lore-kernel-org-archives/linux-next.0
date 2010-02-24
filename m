@@ -1,59 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the nfsd and xfs trees
-Date: Wed, 24 Feb 2010 13:43:39 +1100
-Message-ID: <20100224134339.da65a976.sfr@canb.auug.org.au>
-References: <20100224123646.bb62faea.sfr@canb.auug.org.au>
-	<20100224015848.GE16175@discord.disaster>
+Subject: linux-next: manual merge of the cpufreq tree with the acpi tree
+Date: Wed, 24 Feb 2010 14:34:08 +1100
+Message-ID: <20100224143408.69e0c889.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__24_Feb_2010_13_43_39_+1100_dXiEvDZDf2fitGOq"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100224015848.GE16175@discord.disaster>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dave Chinner <david@fromorbit.com>
-Cc: "J. Bruce Fields" <bfields@fieldses.org>, xfs-masters@oss.sgi.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Myers <bpm@sgi.com>, Christoph Hellwig <hch@infradead.org>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Wed__24_Feb_2010_13_43_39_+1100_dXiEvDZDf2fitGOq
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:44756 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755083Ab0BXDeL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 23 Feb 2010 22:34:11 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Dave Jones <davej@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Naga Chumbalkar <nagananda.chumbalkar@hp.com>, Alex Chiang <achiang@hp.com>, Len Brown <len.brown@intel.com>
 
 Hi Dave,
 
-On Wed, 24 Feb 2010 12:58:48 +1100 Dave Chinner <david@fromorbit.com> wrote:
->
-> I was waiting for this email to come in. ;)
+Today's linux-next merge of the cpufreq tree got a conflict in
+drivers/acpi/processor_core.c between commit
+5f45c35d7ede1c00cbaa3b09b8a84c425af81c4b ("ACPI: processor: mv
+processor_core.c processor_driver.c") from the acpi tree and commit
+0f1d683fb35d6c6f49ef696c95757f3970682a0e ("[CPUFREQ] Processor Clocking
+Control interface driver") from the cpufreq tree.
 
-:-)
+I applied the equivalent patch to processor_driver.c (see below) and can
+carry this as necessary.
 
-> Yes, that is the correct fix. Thanks for that, Stephen. Consider it:
->=20
-> Reviewed-by: Dave Chinner <david@fromorbit.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 24 Feb 2010 14:29:12 +1100
+Subject: [PATCH] cpufreq: merge fixup for processor_core.c rename
 
-Thanks for the confirmation.
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/acpi/processor_driver.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-> =D0=86t would be good if you could keep it as a merge fixup - we don't
-> really want to have to pull the -next NFS tree into the XFS tree or vice
-> versa until one or the other is upstream....
+diff --git a/drivers/acpi/processor_driver.c b/drivers/acpi/processor_driver.c
+index 7e8e1ba..b5658cd 100644
+--- a/drivers/acpi/processor_driver.c
++++ b/drivers/acpi/processor_driver.c
+@@ -123,6 +123,8 @@ static const struct file_operations acpi_processor_info_fops = {
+ #endif
+ 
+ DEFINE_PER_CPU(struct acpi_processor *, processors);
++EXPORT_PER_CPU_SYMBOL(processors);
++
+ struct acpi_processor_errata errata __read_mostly;
+ 
+ /* --------------------------------------------------------------------------
+-- 
+1.7.0
 
-Yep, no problem (I have a system that does that for me).
-
---=20
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__24_Feb_2010_13_43_39_+1100_dXiEvDZDf2fitGOq
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkuEklsACgkQjjKRsyhoI8y16wCbBKObzmWg9DvFocZcJQmGgL49
-VKQAmgLvym+88Sbvub34GQ1Xpi1/e5lE
-=dYzf
------END PGP SIGNATURE-----
-
---Signature=_Wed__24_Feb_2010_13_43_39_+1100_dXiEvDZDf2fitGOq--
