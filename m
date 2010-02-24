@@ -1,41 +1,47 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: linux-next: build warning after merge of the ext3 tree
-Date: Wed, 24 Feb 2010 12:15:24 +0100
-Message-ID: <20100224111524.GC3687@quack.suse.cz>
-References: <20100224190520.8cd15930.sfr@canb.auug.org.au>
- <20100224105808.GB3687@quack.suse.cz>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Re: IBFT and SWIOTLB tree.
+Date: Wed, 24 Feb 2010 10:00:34 -0500
+Message-ID: <20100224150034.GB20890@phenom.dumpdata.com>
+References: <20100223160034.GC28966@phenom.dumpdata.com> <20100224193931.89bb7e87.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet11.oracle.com ([148.87.113.123]:47812 "EHLO
+	rcsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756532Ab0BXP3Q (ORCPT
+	<rfc822;<linux-next@vger.kernel.org>>);
+	Wed, 24 Feb 2010 10:29:16 -0500
 Content-Disposition: inline
-In-Reply-To: <20100224105808.GB3687@quack.suse.cz>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Steven Whitehouse <swhiteho@redhat.com>
-Cc: Jan Kara <jack@suse.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20100224193931.89bb7e87.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org
 
-On Wed 24-02-10 11:58:11, Jan Kara wrote:
->   Hi Stephen,
+On Wed, Feb 24, 2010 at 07:39:31PM +1100, Stephen Rothwell wrote:
+> Hi Konrad,
 > 
-> On Wed 24-02-10 19:05:20, Stephen Rothwell wrote:
-> > After merging the ext3 tree, today's linux-next build (x86_64
-> > allmodconfig) produced this warning:
-> > 
-> > fs/gfs2/quota.c:1581: warning: initialization from incompatible pointer type
-> > 
-> > Introduced by commit ec304a27d7750ba666ad2d446434ddd47fa93c40 ("quota:
-> > move code from sync_quota_sb into vfs_quota_sync").  From the commit
-> > message, I expect that this has been thought about.
->   Thanks for the notification. It seems Christoph missed to convert
-> gfs2_quota_sync(). I've now fixed it in a minimalistic way (just added
-> the wait parameter to the function).
->   Steven (Whitehouse), if GFS2 wants to do something more clever, please
-> let me know (or fix up in your tree).
-  And I had to fixup a few internal callers in GFS2 as well. So Steven, you
-might want to have a look at the patch (commit
-ef9eb614d974943af3c8eab8ea78a30d5132428c in my linux-fs-2.6 tree).
+> On Tue, 23 Feb 2010 11:00:34 -0500 Konrad Rzeszutek Wilk <konrad.wilk@oracle.com> wrote:
+> >
+> > I was wondering if it would be possible to include these two trees in
+> > the automatic merge/build process:
+> 
+> I would need a bit a background for these trees since you are not listed
+> as a maintainer in the MAINTAINERS file.
 
-								Honza
--- 
-Jan Kara <jack@suse.cz>
-SUSE Labs, CR
+Hmm, weird. IBFT is the patch set for the drivers/firmware/iscsi_ibft.c
+which was developed by me.
+
+> 
+> > git://git.kernel.org/pub/scm/linux/kernel/git/konrad/ibft-2.6.git
+> > 
+> > and
+> > git://git.kernel.org/pub/scm/linux/kernel/git/konrad/swiotlb-2.6.git
+
+That one is the re-work of the SWIOTLB IOMMU code. Not a maintainer, but
+I want to make sure that the patches don't stomp/break other code.
+> 
+> The master branch of both these trees is empty relative to Linus' tree ...
+
+Let me fix that. I had the HEAD point to the right branch, but didn't
+think of updating the refs/heads/master file.
