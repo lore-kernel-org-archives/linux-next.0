@@ -1,87 +1,59 @@
-From: Dave Chinner <david@fromorbit.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the nfsd and xfs trees
-Date: Wed, 24 Feb 2010 12:58:48 +1100
-Message-ID: <20100224015848.GE16175@discord.disaster>
+Date: Wed, 24 Feb 2010 13:43:39 +1100
+Message-ID: <20100224134339.da65a976.sfr@canb.auug.org.au>
 References: <20100224123646.bb62faea.sfr@canb.auug.org.au>
+	<20100224015848.GE16175@discord.disaster>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bld-mail19.adl2.internode.on.net ([150.101.137.104]:50452 "EHLO
-	mail.internode.on.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752165Ab0BXB7K (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Feb 2010 20:59:10 -0500
-Content-Disposition: inline
-In-Reply-To: <20100224123646.bb62faea.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__24_Feb_2010_13_43_39_+1100_dXiEvDZDf2fitGOq"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20100224015848.GE16175@discord.disaster>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dave Chinner <david@fromorbit.com>
 Cc: "J. Bruce Fields" <bfields@fieldses.org>, xfs-masters@oss.sgi.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Myers <bpm@sgi.com>, Christoph Hellwig <hch@infradead.org>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Feb 24, 2010 at 12:36:46PM +1100, Stephen Rothwell wrote:
-> Hi Bruce, David,
+--Signature=_Wed__24_Feb_2010_13_43_39_+1100_dXiEvDZDf2fitGOq
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Dave,
+
+On Wed, 24 Feb 2010 12:58:48 +1100 Dave Chinner <david@fromorbit.com> wrote:
+>
+> I was waiting for this email to come in. ;)
+
+:-)
+
+> Yes, that is the correct fix. Thanks for that, Stephen. Consider it:
 >=20
-> After merging the nfsd and xfs trees, today's linux-next build (power=
-pc
-> ppc64_defconfig) failed like this:
->=20
-> fs/xfs/linux-2.6/xfs_export.c: In function 'xfs_fs_nfs_commit_metadat=
-a':
-> fs/xfs/linux-2.6/xfs_export.c:230: error: 'XFS_LOG_FORCE' undeclared =
-(first use in this function)
-> fs/xfs/linux-2.6/xfs_export.c:230: error: too many arguments to funct=
-ion '_xfs_log_force'
->=20
-> Caused by commit 978ebd97d1426d5708d3f353179ab81f191a7eeb
-> ("xfs_export_operations.commit_metadata") from the nfsd tree interact=
-ing
-> with commit a14a348bff2f99471a28e5928eb6801224c053d8 ("xfs: cleanup u=
-p
-> xfs_log_force calling conventions") from the xfs tree.
+> Reviewed-by: Dave Chinner <david@fromorbit.com>
 
-I was waiting for this email to come in. ;)
+Thanks for the confirmation.
 
-> I applied the following patch (which may not be correct) for today (a=
-nd
-> can keep it as a merge fixup as necessary):
->=20
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 24 Feb 2010 12:20:01 +1100
-> Subject: [PATCH] nfsd: fixup for _xfs_log_force API change
->=20
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  fs/xfs/linux-2.6/xfs_export.c |    4 ++--
->  1 files changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/fs/xfs/linux-2.6/xfs_export.c b/fs/xfs/linux-2.6/xfs_exp=
-ort.c
-> index 8f4d707..846b75a 100644
-> --- a/fs/xfs/linux-2.6/xfs_export.c
-> +++ b/fs/xfs/linux-2.6/xfs_export.c
-> @@ -226,8 +226,8 @@ xfs_fs_nfs_commit_metadata(
-> =20
->  	xfs_ilock(ip, XFS_ILOCK_SHARED);
->  	if (xfs_ipincount(ip)) {
-> -		error =3D _xfs_log_force(mp, ip->i_itemp->ili_last_lsn,
-> -				XFS_LOG_FORCE | XFS_LOG_SYNC, NULL);
-> +		error =3D _xfs_log_force_lsn(mp, ip->i_itemp->ili_last_lsn,
-> +				XFS_LOG_SYNC, NULL);
->  	}
->  	xfs_iunlock(ip, XFS_ILOCK_SHARED);
+> =D0=86t would be good if you could keep it as a merge fixup - we don't
+> really want to have to pull the -next NFS tree into the XFS tree or vice
+> versa until one or the other is upstream....
 
-Yes, that is the correct fix. Thanks for that, Stephen. Consider it:
+Yep, no problem (I have a system that does that for me).
 
-Reviewed-by: Dave Chinner <david@fromorbit.com>
-
-=D0=86t would be good if you could keep it as a merge fixup - we don't
-really want to have to pull the -next NFS tree into the XFS tree or vic=
-e
-versa until one or the other is upstream....
-
-Cheers,
-
-Dave.
 --=20
-Dave Chinner
-david@fromorbit.com
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__24_Feb_2010_13_43_39_+1100_dXiEvDZDf2fitGOq
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkuEklsACgkQjjKRsyhoI8y16wCbBKObzmWg9DvFocZcJQmGgL49
+VKQAmgLvym+88Sbvub34GQ1Xpi1/e5lE
+=dYzf
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__24_Feb_2010_13_43_39_+1100_dXiEvDZDf2fitGOq--
