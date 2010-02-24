@@ -1,47 +1,48 @@
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: Re: IBFT and SWIOTLB tree.
-Date: Wed, 24 Feb 2010 10:00:34 -0500
-Message-ID: <20100224150034.GB20890@phenom.dumpdata.com>
-References: <20100223160034.GC28966@phenom.dumpdata.com> <20100224193931.89bb7e87.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the samsung tree with the arm tree
+Date: Thu, 25 Feb 2010 10:48:19 +1100
+Message-ID: <20100225104819.6d117587.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet11.oracle.com ([148.87.113.123]:47812 "EHLO
-	rcsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756532Ab0BXP3Q (ORCPT
-	<rfc822;<linux-next@vger.kernel.org>>);
-	Wed, 24 Feb 2010 10:29:16 -0500
-Content-Disposition: inline
-In-Reply-To: <20100224193931.89bb7e87.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:36868 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758553Ab0BXXsX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 24 Feb 2010 18:48:23 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Russell King <rmk@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Adityapratap Sharma <aditya.ps@samsung.com>, Atul Dahiya <atul.dahiya@samsung.com>
 
-On Wed, Feb 24, 2010 at 07:39:31PM +1100, Stephen Rothwell wrote:
-> Hi Konrad,
-> 
-> On Tue, 23 Feb 2010 11:00:34 -0500 Konrad Rzeszutek Wilk <konrad.wilk@oracle.com> wrote:
-> >
-> > I was wondering if it would be possible to include these two trees in
-> > the automatic merge/build process:
-> 
-> I would need a bit a background for these trees since you are not listed
-> as a maintainer in the MAINTAINERS file.
+Hi Ben,
 
-Hmm, weird. IBFT is the patch set for the drivers/firmware/iscsi_ibft.c
-which was developed by me.
+Today's linux-next merge of the samsung tree got a conflict in
+arch/arm/mach-s5p6442/include/mach/debug-macro.S between commit
+4e6d488af37980d224cbf298224db6173673f362 ("ARM: 5910/1: ARM: Add tmp
+register for addruart and loadsp") from the arm tree and commit
+5f7f6a4a0df9b43051d57fdb8ea96c083247a08f ("ARM: S5P6442: Add Samsung
+S5P6442 CPU support") from the samsung tree.
 
-> 
-> > git://git.kernel.org/pub/scm/linux/kernel/git/konrad/ibft-2.6.git
-> > 
-> > and
-> > git://git.kernel.org/pub/scm/linux/kernel/git/konrad/swiotlb-2.6.git
+This conflict is a bit strange since this is a new file, but git is a bit
+too clever :-)
 
-That one is the re-work of the SWIOTLB IOMMU code. Not a maintainer, but
-I want to make sure that the patches don't stomp/break other code.
-> 
-> The master branch of both these trees is empty relative to Linus' tree ...
+I fixed it up (see the change from the samsung tree below) and can carry
+the fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Let me fix that. I had the HEAD point to the right branch, but didn't
-think of updating the refs/heads/master file.
+diff --git a/arch/arm/mach-s5p6442/include/mach/debug-macro.S b/arch/arm/mach-s5p6442/include/mach/debug-macro.S
+index 1aae691..441962c 100644
+--- a/arch/arm/mach-s5p6442/include/mach/debug-macro.S
++++ b/arch/arm/mach-s5p6442/include/mach/debug-macro.S
+@@ -15,7 +15,7 @@
+ #include <mach/map.h>
+ #include <plat/regs-serial.h>
+ 
+-	.macro addruart, rx
++	.macro addruart, rx, tmp
+ 		mrc	p15, 0, \rx, c1, c0
+ 		tst	\rx, #1
+ 		ldreq	\rx, = S3C_PA_UART
