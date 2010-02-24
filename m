@@ -1,57 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the cpufreq tree with the acpi tree
-Date: Wed, 24 Feb 2010 14:34:08 +1100
-Message-ID: <20100224143408.69e0c889.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging tree with the wireless
+	tree
+Date: Tue, 23 Feb 2010 18:14:58 -0800
+Message-ID: <20100224021458.GA14159@kroah.com>
+References: <20100222163134.367353e7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44756 "EHLO smtps.tip.net.au"
+Received: from kroah.org ([198.145.64.141]:47104 "EHLO coco.kroah.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755083Ab0BXDeL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 23 Feb 2010 22:34:11 -0500
+	id S1751660Ab0BXDg6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 23 Feb 2010 22:36:58 -0500
+Content-Disposition: inline
+In-Reply-To: <20100222163134.367353e7.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Jones <davej@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Naga Chumbalkar <nagananda.chumbalkar@hp.com>, Alex Chiang <achiang@hp.com>, Len Brown <len.brown@intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frederic Leroy <fredo@starox.org>, "John W. Linville" <linville@tuxdriver.com>, Joe Perches <joe@perches.com>
 
-Hi Dave,
+On Mon, Feb 22, 2010 at 04:31:34PM +1100, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the staging tree got a conflict in
+> drivers/staging/rtl8192su/ieee80211/ieee80211_rx.c between commit
+> e2117cea27c6b27e1a379acac5eb0433eeb7033a ("staging: rtl8192su: fix
+> compile error from wireless-testing commit") from the wireless tree and
+> commit 7332868b1aea2a5900a70acadf767f7632b1c2c2 ("Staging: rtl8187x: Use %
+> pM for mac address output") from the staging tree.
+> 
+> Just context changes.  I fixed it up (see below) and can carry the fix
+> as necessary.
 
-Today's linux-next merge of the cpufreq tree got a conflict in
-drivers/acpi/processor_core.c between commit
-5f45c35d7ede1c00cbaa3b09b8a84c425af81c4b ("ACPI: processor: mv
-processor_core.c processor_driver.c") from the acpi tree and commit
-0f1d683fb35d6c6f49ef696c95757f3970682a0e ("[CPUFREQ] Processor Clocking
-Control interface driver") from the cpufreq tree.
+Looks good to me, thanks for doing this.
 
-I applied the equivalent patch to processor_driver.c (see below) and can
-carry this as necessary.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 24 Feb 2010 14:29:12 +1100
-Subject: [PATCH] cpufreq: merge fixup for processor_core.c rename
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/acpi/processor_driver.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/acpi/processor_driver.c b/drivers/acpi/processor_driver.c
-index 7e8e1ba..b5658cd 100644
---- a/drivers/acpi/processor_driver.c
-+++ b/drivers/acpi/processor_driver.c
-@@ -123,6 +123,8 @@ static const struct file_operations acpi_processor_info_fops = {
- #endif
- 
- DEFINE_PER_CPU(struct acpi_processor *, processors);
-+EXPORT_PER_CPU_SYMBOL(processors);
-+
- struct acpi_processor_errata errata __read_mostly;
- 
- /* --------------------------------------------------------------------------
--- 
-1.7.0
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+greg k-h
