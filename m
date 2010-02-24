@@ -1,65 +1,87 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the nfsd and xfs trees
-Date: Wed, 24 Feb 2010 12:36:46 +1100
-Message-ID: <20100224123646.bb62faea.sfr@canb.auug.org.au>
+From: Dave Chinner <david@fromorbit.com>
+Subject: Re: linux-next: build failure after merge of the nfsd and xfs trees
+Date: Wed, 24 Feb 2010 12:58:48 +1100
+Message-ID: <20100224015848.GE16175@discord.disaster>
+References: <20100224123646.bb62faea.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33486 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753128Ab0BXBgu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 23 Feb 2010 20:36:50 -0500
+Received: from bld-mail19.adl2.internode.on.net ([150.101.137.104]:50452 "EHLO
+	mail.internode.on.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752165Ab0BXB7K (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Feb 2010 20:59:10 -0500
+Content-Disposition: inline
+In-Reply-To: <20100224123646.bb62faea.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "J. Bruce Fields" <bfields@fieldses.org>, David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Myers <bpm@sgi.com>, Christoph Hellwig <hch@infradead.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "J. Bruce Fields" <bfields@fieldses.org>, xfs-masters@oss.sgi.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Myers <bpm@sgi.com>, Christoph Hellwig <hch@infradead.org>
 
-Hi Bruce, David,
+On Wed, Feb 24, 2010 at 12:36:46PM +1100, Stephen Rothwell wrote:
+> Hi Bruce, David,
+>=20
+> After merging the nfsd and xfs trees, today's linux-next build (power=
+pc
+> ppc64_defconfig) failed like this:
+>=20
+> fs/xfs/linux-2.6/xfs_export.c: In function 'xfs_fs_nfs_commit_metadat=
+a':
+> fs/xfs/linux-2.6/xfs_export.c:230: error: 'XFS_LOG_FORCE' undeclared =
+(first use in this function)
+> fs/xfs/linux-2.6/xfs_export.c:230: error: too many arguments to funct=
+ion '_xfs_log_force'
+>=20
+> Caused by commit 978ebd97d1426d5708d3f353179ab81f191a7eeb
+> ("xfs_export_operations.commit_metadata") from the nfsd tree interact=
+ing
+> with commit a14a348bff2f99471a28e5928eb6801224c053d8 ("xfs: cleanup u=
+p
+> xfs_log_force calling conventions") from the xfs tree.
 
-After merging the nfsd and xfs trees, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+I was waiting for this email to come in. ;)
 
-fs/xfs/linux-2.6/xfs_export.c: In function 'xfs_fs_nfs_commit_metadata':
-fs/xfs/linux-2.6/xfs_export.c:230: error: 'XFS_LOG_FORCE' undeclared (first use in this function)
-fs/xfs/linux-2.6/xfs_export.c:230: error: too many arguments to function '_xfs_log_force'
+> I applied the following patch (which may not be correct) for today (a=
+nd
+> can keep it as a merge fixup as necessary):
+>=20
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 24 Feb 2010 12:20:01 +1100
+> Subject: [PATCH] nfsd: fixup for _xfs_log_force API change
+>=20
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  fs/xfs/linux-2.6/xfs_export.c |    4 ++--
+>  1 files changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/fs/xfs/linux-2.6/xfs_export.c b/fs/xfs/linux-2.6/xfs_exp=
+ort.c
+> index 8f4d707..846b75a 100644
+> --- a/fs/xfs/linux-2.6/xfs_export.c
+> +++ b/fs/xfs/linux-2.6/xfs_export.c
+> @@ -226,8 +226,8 @@ xfs_fs_nfs_commit_metadata(
+> =20
+>  	xfs_ilock(ip, XFS_ILOCK_SHARED);
+>  	if (xfs_ipincount(ip)) {
+> -		error =3D _xfs_log_force(mp, ip->i_itemp->ili_last_lsn,
+> -				XFS_LOG_FORCE | XFS_LOG_SYNC, NULL);
+> +		error =3D _xfs_log_force_lsn(mp, ip->i_itemp->ili_last_lsn,
+> +				XFS_LOG_SYNC, NULL);
+>  	}
+>  	xfs_iunlock(ip, XFS_ILOCK_SHARED);
 
-Caused by commit 978ebd97d1426d5708d3f353179ab81f191a7eeb
-("xfs_export_operations.commit_metadata") from the nfsd tree interacting
-with commit a14a348bff2f99471a28e5928eb6801224c053d8 ("xfs: cleanup up
-xfs_log_force calling conventions") from the xfs tree.
+Yes, that is the correct fix. Thanks for that, Stephen. Consider it:
 
-I applied the following patch (which may not be correct) for today (and
-can keep it as a merge fixup as necessary):
+Reviewed-by: Dave Chinner <david@fromorbit.com>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 24 Feb 2010 12:20:01 +1100
-Subject: [PATCH] nfsd: fixup for _xfs_log_force API change
+=D0=86t would be good if you could keep it as a merge fixup - we don't
+really want to have to pull the -next NFS tree into the XFS tree or vic=
+e
+versa until one or the other is upstream....
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/xfs/linux-2.6/xfs_export.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/xfs/linux-2.6/xfs_export.c b/fs/xfs/linux-2.6/xfs_export.c
-index 8f4d707..846b75a 100644
---- a/fs/xfs/linux-2.6/xfs_export.c
-+++ b/fs/xfs/linux-2.6/xfs_export.c
-@@ -226,8 +226,8 @@ xfs_fs_nfs_commit_metadata(
- 
- 	xfs_ilock(ip, XFS_ILOCK_SHARED);
- 	if (xfs_ipincount(ip)) {
--		error = _xfs_log_force(mp, ip->i_itemp->ili_last_lsn,
--				XFS_LOG_FORCE | XFS_LOG_SYNC, NULL);
-+		error = _xfs_log_force_lsn(mp, ip->i_itemp->ili_last_lsn,
-+				XFS_LOG_SYNC, NULL);
- 	}
- 	xfs_iunlock(ip, XFS_ILOCK_SHARED);
- 
--- 
-1.7.0
-
--- 
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+
+Dave.
+--=20
+Dave Chinner
+david@fromorbit.com
