@@ -1,66 +1,52 @@
-From: Ben Dooks <ben-linux@fluff.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: manual merge of the samsung tree with the arm tree
-Date: Wed, 24 Feb 2010 00:58:22 +0000
-Message-ID: <20100224005822.GP10014@trinity.fluff.org>
+Date: Wed, 24 Feb 2010 12:03:26 +1100
+Message-ID: <20100224120326.9e7d8334.sfr@canb.auug.org.au>
 References: <20100224113306.465efa4d.sfr@canb.auug.org.au>
+	<20100224005822.GP10014@trinity.fluff.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__24_Feb_2010_12_03_26_+1100_IwwPbDOLZFOFDLfS"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:44444 "EHLO trinity.fluff.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:45452 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754268Ab0BXA6Y (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 23 Feb 2010 19:58:24 -0500
-Content-Disposition: inline
-In-Reply-To: <20100224113306.465efa4d.sfr@canb.auug.org.au>
+	id S1754583Ab0BXBDc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 23 Feb 2010 20:03:32 -0500
+In-Reply-To: <20100224005822.GP10014@trinity.fluff.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Ben Dooks <ben-linux@fluff.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
 
-On Wed, Feb 24, 2010 at 11:33:06AM +1100, Stephen Rothwell wrote:
-> Hi Ben,
-> 
-> Today's linux-next merge of the samsung tree got a conflict in
-> arch/arm/Makefile between various commits from the arm tree and various
-> commits from the samsung tree.
+--Signature=_Wed__24_Feb_2010_12_03_26_+1100_IwwPbDOLZFOFDLfS
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-yeah, I intend on getting this merged to RMK asap, i've unfortunately
-been unwell and this is becoming overdue :(
- 
-> I fixed it up (see below) and can carry the fix as necessary.
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc arch/arm/Makefile
-> index 00ea105,13c5c2b..0000000
-> --- a/arch/arm/Makefile
-> +++ b/arch/arm/Makefile
-> @@@ -186,11 -182,11 +186,11 @@@ plat-$(CONFIG_PLAT_IOP)		:= io
->   plat-$(CONFIG_PLAT_NOMADIK)	:= nomadik
->   plat-$(CONFIG_PLAT_ORION)	:= orion
->   plat-$(CONFIG_PLAT_PXA)		:= pxa
-> - plat-$(CONFIG_PLAT_S3C24XX)	:= s3c24xx s3c samsung
-> - plat-$(CONFIG_PLAT_S3C64XX)	:= s3c64xx s3c samsung
-> - plat-$(CONFIG_PLAT_S5PC1XX)	:= s5pc1xx s3c samsung
-> - plat-$(CONFIG_PLAT_S5P)		:= s5p samsung s3c
-> + plat-$(CONFIG_PLAT_S3C24XX)	:= s3c24xx samsung
-> + plat-$(CONFIG_ARCH_S3C64XX)	:= samsung
-> + plat-$(CONFIG_PLAT_S5PC1XX)	:= s5pc1xx samsung
-> + plat-$(CONFIG_PLAT_S5P)		:= s5p samsung
->  -plat-$(CONFIG_ARCH_STMP3XXX)	:= stmp3xxx
->  +plat-$(CONFIG_PLAT_VERSATILE)	:= versatile
->   
->   ifeq ($(CONFIG_ARCH_EBSA110),y)
->   # This is what happens if you forget the IOCS16 line.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Hi Ben,
 
--- 
--- 
-Ben
+On Wed, 24 Feb 2010 00:58:22 +0000 Ben Dooks <ben-linux@fluff.org> wrote:
+>
+> yeah, I intend on getting this merged to RMK asap, i've unfortunately
+> been unwell and this is becoming overdue :(
 
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
+OK, thanks.  Get well.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__24_Feb_2010_12_03_26_+1100_IwwPbDOLZFOFDLfS
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkuEet4ACgkQjjKRsyhoI8yVOwCgk15su9g8h7NRDMzsAFZg2GvR
+JSIAoIascDC7pRRpk0Qu96HkMw6AIb03
+=ba6q
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__24_Feb_2010_12_03_26_+1100_IwwPbDOLZFOFDLfS--
