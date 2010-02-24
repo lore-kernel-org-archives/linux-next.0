@@ -1,52 +1,65 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the samsung tree with the arm tree
-Date: Wed, 24 Feb 2010 12:03:26 +1100
-Message-ID: <20100224120326.9e7d8334.sfr@canb.auug.org.au>
-References: <20100224113306.465efa4d.sfr@canb.auug.org.au>
-	<20100224005822.GP10014@trinity.fluff.org>
+Subject: linux-next: build failure after merge of the nfsd and xfs trees
+Date: Wed, 24 Feb 2010 12:36:46 +1100
+Message-ID: <20100224123646.bb62faea.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__24_Feb_2010_12_03_26_+1100_IwwPbDOLZFOFDLfS"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45452 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:33486 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754583Ab0BXBDc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 23 Feb 2010 20:03:32 -0500
-In-Reply-To: <20100224005822.GP10014@trinity.fluff.org>
+	id S1753128Ab0BXBgu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 23 Feb 2010 20:36:50 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ben Dooks <ben-linux@fluff.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
+To: "J. Bruce Fields" <bfields@fieldses.org>, David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Myers <bpm@sgi.com>, Christoph Hellwig <hch@infradead.org>
 
---Signature=_Wed__24_Feb_2010_12_03_26_+1100_IwwPbDOLZFOFDLfS
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Bruce, David,
 
-Hi Ben,
+After merging the nfsd and xfs trees, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-On Wed, 24 Feb 2010 00:58:22 +0000 Ben Dooks <ben-linux@fluff.org> wrote:
->
-> yeah, I intend on getting this merged to RMK asap, i've unfortunately
-> been unwell and this is becoming overdue :(
+fs/xfs/linux-2.6/xfs_export.c: In function 'xfs_fs_nfs_commit_metadata':
+fs/xfs/linux-2.6/xfs_export.c:230: error: 'XFS_LOG_FORCE' undeclared (first use in this function)
+fs/xfs/linux-2.6/xfs_export.c:230: error: too many arguments to function '_xfs_log_force'
 
-OK, thanks.  Get well.
+Caused by commit 978ebd97d1426d5708d3f353179ab81f191a7eeb
+("xfs_export_operations.commit_metadata") from the nfsd tree interacting
+with commit a14a348bff2f99471a28e5928eb6801224c053d8 ("xfs: cleanup up
+xfs_log_force calling conventions") from the xfs tree.
 
---=20
+I applied the following patch (which may not be correct) for today (and
+can keep it as a merge fixup as necessary):
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 24 Feb 2010 12:20:01 +1100
+Subject: [PATCH] nfsd: fixup for _xfs_log_force API change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/xfs/linux-2.6/xfs_export.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/xfs/linux-2.6/xfs_export.c b/fs/xfs/linux-2.6/xfs_export.c
+index 8f4d707..846b75a 100644
+--- a/fs/xfs/linux-2.6/xfs_export.c
++++ b/fs/xfs/linux-2.6/xfs_export.c
+@@ -226,8 +226,8 @@ xfs_fs_nfs_commit_metadata(
+ 
+ 	xfs_ilock(ip, XFS_ILOCK_SHARED);
+ 	if (xfs_ipincount(ip)) {
+-		error = _xfs_log_force(mp, ip->i_itemp->ili_last_lsn,
+-				XFS_LOG_FORCE | XFS_LOG_SYNC, NULL);
++		error = _xfs_log_force_lsn(mp, ip->i_itemp->ili_last_lsn,
++				XFS_LOG_SYNC, NULL);
+ 	}
+ 	xfs_iunlock(ip, XFS_ILOCK_SHARED);
+ 
+-- 
+1.7.0
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__24_Feb_2010_12_03_26_+1100_IwwPbDOLZFOFDLfS
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkuEet4ACgkQjjKRsyhoI8yVOwCgk15su9g8h7NRDMzsAFZg2GvR
-JSIAoIascDC7pRRpk0Qu96HkMw6AIb03
-=ba6q
------END PGP SIGNATURE-----
-
---Signature=_Wed__24_Feb_2010_12_03_26_+1100_IwwPbDOLZFOFDLfS--
