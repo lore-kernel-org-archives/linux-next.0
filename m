@@ -1,60 +1,46 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the trivial tree with the net tree
-Date: Wed, 24 Feb 2010 16:21:42 +1100
-Message-ID: <20100224162142.b0c572ed.sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the ext3 tree
+Date: Wed, 24 Feb 2010 19:05:20 +1100
+Message-ID: <20100224190520.8cd15930.sfr@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__24_Feb_2010_19_05_20_+1100_lpnvOsvUXievMj6o"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jan Kara <jack@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Wed__24_Feb_2010_19_05_20_+1100_lpnvOsvUXievMj6o
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41260 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751402Ab0BXFVq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 24 Feb 2010 00:21:46 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Adam Buchbinder <adam.buchbinder@gmail.com>, Joe Perches <joe@perches.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jiri,
+Hi Jan,
 
-Today's linux-next merge of the trivial tree got a conflict in
-drivers/net/typhoon.c between commit
-0bc88e4af07621bc4b84477374745d01a470e85d ("drivers/net/typhoon.c: Use (pr|
-netdev)_<level> macro helpers") from the net tree and commit
-a089377f29d3af0f62f3bdc6db0c5042513fc3f3 ("Fix misspelling of "truly" in
-a label") from the trivial tree.
+After merging the ext3 tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
--- 
+fs/gfs2/quota.c:1581: warning: initialization from incompatible pointer type
+
+Introduced by commit ec304a27d7750ba666ad2d446434ddd47fa93c40 ("quota:
+move code from sync_quota_sb into vfs_quota_sync").  From the commit
+message, I expect that this has been thought about.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/net/typhoon.c
-index 38c2161,d1a8068..0000000
---- a/drivers/net/typhoon.c
-+++ b/drivers/net/typhoon.c
-@@@ -2098,8 -2111,9 +2098,8 @@@ typhoon_tx_timeout(struct net_device *d
-  	struct typhoon *tp = netdev_priv(dev);
-  
-  	if(typhoon_reset(tp->ioaddr, WaitNoSleep) < 0) {
- -		printk(KERN_WARNING "%s: could not reset in tx timeout\n",
- -					dev->name);
- +		netdev_warn(dev, "could not reset in tx timeout\n");
-- 		goto truely_dead;
-+ 		goto truly_dead;
-  	}
-  
-  	/* If we ever start using the Hi ring, it will need cleaning too */
-@@@ -2107,8 -2121,9 +2107,8 @@@
-  	typhoon_free_rx_rings(tp);
-  
-  	if(typhoon_start_runtime(tp) < 0) {
- -		printk(KERN_ERR "%s: could not start runtime in tx timeout\n",
- -					dev->name);
- +		netdev_err(dev, "could not start runtime in tx timeout\n");
-- 		goto truely_dead;
-+ 		goto truly_dead;
-          }
-  
-  	netif_wake_queue(dev);
+--Signature=_Wed__24_Feb_2010_19_05_20_+1100_lpnvOsvUXievMj6o
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkuE3cAACgkQjjKRsyhoI8yKegCfWux2UzaWBDgoMycPF/iusA+T
+QsAAn2QFs9dJzkMm6bnfgJH3K5X0yGKu
+=o08c
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__24_Feb_2010_19_05_20_+1100_lpnvOsvUXievMj6o--
