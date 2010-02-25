@@ -1,41 +1,42 @@
-From: Jens Axboe <jens.axboe@oracle.com>
-Subject: Re: linux-next: manual merge of the block tree with Linus' tree
-Date: Thu, 25 Feb 2010 08:47:57 +0100
-Message-ID: <20100225074757.GN1025@kernel.dk>
-References: <20100225141022.c5b3b7ce.sfr@canb.auug.org.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] udf: use ext2_find_next_bit
+Date: Thu, 25 Feb 2010 09:50:28 +0100
+Message-ID: <10f740e81002250050g287f7753g96063376ecee9487@mail.gmail.com>
+References: <1266934273-9371-1-git-send-email-akinobu.mita@gmail.com>
+	 <20100224162152.GK3687@quack.suse.cz>
+	 <961aa3351002241738r7bbdc811p1fe80aabc336ae85@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 0122700014.0.fullrate.dk ([95.166.99.235]:58999 "EHLO kernel.dk"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753114Ab0BYHr7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 25 Feb 2010 02:47:59 -0500
-Content-Disposition: inline
-In-Reply-To: <20100225141022.c5b3b7ce.sfr@canb.auug.org.au>
+Received: from mail-wy0-f174.google.com ([74.125.82.174]:53833 "EHLO
+	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752594Ab0BYIua (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Feb 2010 03:50:30 -0500
+In-Reply-To: <961aa3351002241738r7bbdc811p1fe80aabc336ae85@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Alan D. Brunelle" <Alan.Brunelle@hp.com>
+To: Akinobu Mita <akinobu.mita@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, Linux-Next <linux-next@vger.kernel.org>
 
-On Thu, Feb 25 2010, Stephen Rothwell wrote:
-> Hi Jens,
-> 
-> Today's linux-next merge of the block tree got a conflict in
-> include/linux/blkdev.h between commit
-> 79da0644a8e0838522828f106e4049639eea6baf ("Revert "block: improve
-> queue_should_plug() by looking at IO depths"") from Linus' tree and
-> commit 488991e28e55b4fbca8067edf0259f69d1a6f92c ("block: Added in
-> stricter no merge semantics for block I/O") from the block tree.
-> 
-> Context changes - I have fixed it up (see below) and can carry the fix
-> for a while.  I suspect that you were expecting this. :-)
+On Thu, Feb 25, 2010 at 02:38, Akinobu Mita <akinobu.mita@gmail.com> wrote:
+> 2010/2/25 Jan Kara <jack@suse.cz>:
+>> On Tue 23-02-10 23:11:13, Akinobu Mita wrote:
+>>> Use ext2_find_next_bit (generic_find_next_le_bit) to find the set bit
+>>> in little endian bitmap region.
 
-I was, unfortunately I forgot to resolve the conflict yesterday. Your
-fix confuses me a bit - I was expecting the first hunk, but what is the
-second hunk doing? Conceptually good though, perhaps there are more
-conflicts than I was expecting :-)
+Is any of this in linux-next now?
 
-I'll update here as well so it disappears next time you pull.
+http://kisskb.ellerman.id.au/kisskb/buildresult/2208481/
+| fs/udf/balloc.c:274: error: implicit declaration of function
+'generic_find_next_le_bit'
 
--- 
-Jens Axboe
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
