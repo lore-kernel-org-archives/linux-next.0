@@ -1,78 +1,126 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the genesis tree with the arm and
- samsung trees
-Date: Thu, 25 Feb 2010 10:55:25 +1100
-Message-ID: <20100225105525.5ccb84a4.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the infiniband tree with the vfs tree
+Date: Thu, 25 Feb 2010 12:52:24 +1100
+Message-ID: <20100225125224.af78cc78.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40069 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:60953 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758625Ab0BXXz3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 24 Feb 2010 18:55:29 -0500
+	id S1753386Ab0BYBw0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 24 Feb 2010 20:52:26 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Mundt <lethal@linux-sh.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Russell King <rmk@arm.linux.org.uk>
+To: Roland Dreier <rdreier@cisco.com>, linux-rmda@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
 
-Hi Paul,
+Hi all,
 
-Today's linux-next merge of the genesis tree got a conflict in
-arch/arm/Kconfig between commits c4ffccddd54b669cc9683f2c69e31035e916a1a0
-("ARM: S5P6440: Add new Kconfig and Makefiles") from the arm tree and
-550db7f155c9e51288fbe114fbb33d7a044d8a75 ("ARM: S5P6442: Update Kconfig
-and Makefiles") from the samsung and commit
-c793c1b0c8ea11b46caf5a532752214b27a2df42 ("ARM: mach-shmobile: SH-Mobile
-G3 support") from the genesis tree.
+Today's linux-next merge of the infiniband tree got a conflict in
+drivers/infiniband/core/uverbs_main.c between commit
+ce916e2b935f8b3402da1457ff23b9f9f786c09b ("switch infiniband uverbs to
+anon_inodes") from the vfs tree and commit
+055422ddbb0a7610c5f57a056743d7336a39e90f ("IB/uverbs: Convert *cdev to
+cdev in struct ib_uverbs_device") from the infiniband tree.
 
-Just overlapping additions.  I fixed it up (see below) and can carry the
-fix as necessary.
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/Kconfig
-index 8aff2a0,55764a1..0000000
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@@ -616,12 -579,16 +616,17 @@@ config ARCH_MS
-  	select GENERIC_TIME
-  	select GENERIC_CLOCKEVENTS
-  	help
- -	  Support for Qualcomm MSM7K based systems.  This runs on the ARM11
- -	  apps processor of the MSM7K and depends on a shared memory
- -	  interface to the ARM9 modem processor which runs the baseband stack
- -	  and controls some vital subsystems (clock and power control, etc).
- +	  Support for Qualcomm MSM/QSD based systems.  This runs on the
- +	  apps processor of the MSM/QSD and depends on a shared memory
- +	  interface to the modem processor which runs the baseband
- +	  stack and controls some vital subsystems
- +	  (clock and power control, etc).
+diff --cc drivers/infiniband/core/uverbs_main.c
+index 810f277,dbf0451..0000000
+--- a/drivers/infiniband/core/uverbs_main.c
++++ b/drivers/infiniband/core/uverbs_main.c
+@@@ -41,9 -41,8 +41,8 @@@
+  #include <linux/fs.h>
+  #include <linux/poll.h>
+  #include <linux/sched.h>
+ +#include <linux/anon_inodes.h>
+  #include <linux/file.h>
+- #include <linux/cdev.h>
+ -#include <linux/mount.h>
   
-+ config ARCH_SHMOBILE
-+ 	bool "Renesas SH-Mobile"
-+ 	help
-+ 	  Support for Renesas's SH-Mobile ARM platforms
-+ 
-  config ARCH_RPC
-  	bool "RiscPC"
-  	select ARCH_ACORN
-@@@ -887,13 -823,12 +892,15 @@@ source "arch/arm/mach-s3c2443/Kconfig
-  endif
+  #include <asm/uaccess.h>
   
-  if ARCH_S3C64XX
- -source "arch/arm/mach-s3c6400/Kconfig"
- -source "arch/arm/mach-s3c6410/Kconfig"
- +source "arch/arm/mach-s3c64xx/Kconfig"
-  endif
+@@@ -79,36 -79,38 +77,36 @@@ static DECLARE_BITMAP(dev_map, IB_UVERB
+  static ssize_t (*uverbs_cmd_table[])(struct ib_uverbs_file *file,
+  				     const char __user *buf, int in_len,
+  				     int out_len) = {
+- 	[IB_USER_VERBS_CMD_GET_CONTEXT]   	= ib_uverbs_get_context,
+- 	[IB_USER_VERBS_CMD_QUERY_DEVICE]  	= ib_uverbs_query_device,
+- 	[IB_USER_VERBS_CMD_QUERY_PORT]    	= ib_uverbs_query_port,
+- 	[IB_USER_VERBS_CMD_ALLOC_PD]      	= ib_uverbs_alloc_pd,
+- 	[IB_USER_VERBS_CMD_DEALLOC_PD]    	= ib_uverbs_dealloc_pd,
+- 	[IB_USER_VERBS_CMD_REG_MR]        	= ib_uverbs_reg_mr,
+- 	[IB_USER_VERBS_CMD_DEREG_MR]      	= ib_uverbs_dereg_mr,
++ 	[IB_USER_VERBS_CMD_GET_CONTEXT]		= ib_uverbs_get_context,
++ 	[IB_USER_VERBS_CMD_QUERY_DEVICE]	= ib_uverbs_query_device,
++ 	[IB_USER_VERBS_CMD_QUERY_PORT]		= ib_uverbs_query_port,
++ 	[IB_USER_VERBS_CMD_ALLOC_PD]		= ib_uverbs_alloc_pd,
++ 	[IB_USER_VERBS_CMD_DEALLOC_PD]		= ib_uverbs_dealloc_pd,
++ 	[IB_USER_VERBS_CMD_REG_MR]		= ib_uverbs_reg_mr,
++ 	[IB_USER_VERBS_CMD_DEREG_MR]		= ib_uverbs_dereg_mr,
+  	[IB_USER_VERBS_CMD_CREATE_COMP_CHANNEL] = ib_uverbs_create_comp_channel,
+- 	[IB_USER_VERBS_CMD_CREATE_CQ]     	= ib_uverbs_create_cq,
+- 	[IB_USER_VERBS_CMD_RESIZE_CQ]     	= ib_uverbs_resize_cq,
+- 	[IB_USER_VERBS_CMD_POLL_CQ]     	= ib_uverbs_poll_cq,
+- 	[IB_USER_VERBS_CMD_REQ_NOTIFY_CQ]     	= ib_uverbs_req_notify_cq,
+- 	[IB_USER_VERBS_CMD_DESTROY_CQ]    	= ib_uverbs_destroy_cq,
+- 	[IB_USER_VERBS_CMD_CREATE_QP]     	= ib_uverbs_create_qp,
+- 	[IB_USER_VERBS_CMD_QUERY_QP]     	= ib_uverbs_query_qp,
+- 	[IB_USER_VERBS_CMD_MODIFY_QP]     	= ib_uverbs_modify_qp,
+- 	[IB_USER_VERBS_CMD_DESTROY_QP]    	= ib_uverbs_destroy_qp,
+- 	[IB_USER_VERBS_CMD_POST_SEND]    	= ib_uverbs_post_send,
+- 	[IB_USER_VERBS_CMD_POST_RECV]    	= ib_uverbs_post_recv,
+- 	[IB_USER_VERBS_CMD_POST_SRQ_RECV]    	= ib_uverbs_post_srq_recv,
+- 	[IB_USER_VERBS_CMD_CREATE_AH]    	= ib_uverbs_create_ah,
+- 	[IB_USER_VERBS_CMD_DESTROY_AH]    	= ib_uverbs_destroy_ah,
+- 	[IB_USER_VERBS_CMD_ATTACH_MCAST]  	= ib_uverbs_attach_mcast,
+- 	[IB_USER_VERBS_CMD_DETACH_MCAST]  	= ib_uverbs_detach_mcast,
+- 	[IB_USER_VERBS_CMD_CREATE_SRQ]    	= ib_uverbs_create_srq,
+- 	[IB_USER_VERBS_CMD_MODIFY_SRQ]    	= ib_uverbs_modify_srq,
+- 	[IB_USER_VERBS_CMD_QUERY_SRQ]     	= ib_uverbs_query_srq,
+- 	[IB_USER_VERBS_CMD_DESTROY_SRQ]   	= ib_uverbs_destroy_srq,
++ 	[IB_USER_VERBS_CMD_CREATE_CQ]		= ib_uverbs_create_cq,
++ 	[IB_USER_VERBS_CMD_RESIZE_CQ]		= ib_uverbs_resize_cq,
++ 	[IB_USER_VERBS_CMD_POLL_CQ]		= ib_uverbs_poll_cq,
++ 	[IB_USER_VERBS_CMD_REQ_NOTIFY_CQ]	= ib_uverbs_req_notify_cq,
++ 	[IB_USER_VERBS_CMD_DESTROY_CQ]		= ib_uverbs_destroy_cq,
++ 	[IB_USER_VERBS_CMD_CREATE_QP]		= ib_uverbs_create_qp,
++ 	[IB_USER_VERBS_CMD_QUERY_QP]		= ib_uverbs_query_qp,
++ 	[IB_USER_VERBS_CMD_MODIFY_QP]		= ib_uverbs_modify_qp,
++ 	[IB_USER_VERBS_CMD_DESTROY_QP]		= ib_uverbs_destroy_qp,
++ 	[IB_USER_VERBS_CMD_POST_SEND]		= ib_uverbs_post_send,
++ 	[IB_USER_VERBS_CMD_POST_RECV]		= ib_uverbs_post_recv,
++ 	[IB_USER_VERBS_CMD_POST_SRQ_RECV]	= ib_uverbs_post_srq_recv,
++ 	[IB_USER_VERBS_CMD_CREATE_AH]		= ib_uverbs_create_ah,
++ 	[IB_USER_VERBS_CMD_DESTROY_AH]		= ib_uverbs_destroy_ah,
++ 	[IB_USER_VERBS_CMD_ATTACH_MCAST]	= ib_uverbs_attach_mcast,
++ 	[IB_USER_VERBS_CMD_DETACH_MCAST]	= ib_uverbs_detach_mcast,
++ 	[IB_USER_VERBS_CMD_CREATE_SRQ]		= ib_uverbs_create_srq,
++ 	[IB_USER_VERBS_CMD_MODIFY_SRQ]		= ib_uverbs_modify_srq,
++ 	[IB_USER_VERBS_CMD_QUERY_SRQ]		= ib_uverbs_query_srq,
++ 	[IB_USER_VERBS_CMD_DESTROY_SRQ]		= ib_uverbs_destroy_srq,
+  };
   
- +source "arch/arm/mach-s5p6440/Kconfig"
- +
- +source "arch/arm/mach-s5p6442/Kconfig"
- +
-+ source "arch/arm/mach-shmobile/Kconfig"
-+ 
-  source "arch/arm/plat-stmp3xxx/Kconfig"
+ -static struct vfsmount *uverbs_event_mnt;
+ -
+  static void ib_uverbs_add_one(struct ib_device *device);
+  static void ib_uverbs_remove_one(struct ib_device *device);
   
-  if ARCH_S5PC1XX
+@@@ -838,8 -933,12 +867,10 @@@ out
+  static void __exit ib_uverbs_cleanup(void)
+  {
+  	ib_unregister_client(&uverbs_client);
+ -	mntput(uverbs_event_mnt);
+ -	unregister_filesystem(&uverbs_event_fs);
+  	class_destroy(uverbs_class);
+  	unregister_chrdev_region(IB_UVERBS_BASE_DEV, IB_UVERBS_MAX_DEVICES);
++ 	if (overflow_maj)
++ 		unregister_chrdev_region(overflow_maj, IB_UVERBS_MAX_DEVICES);
+  	idr_destroy(&ib_uverbs_pd_idr);
+  	idr_destroy(&ib_uverbs_mr_idr);
+  	idr_destroy(&ib_uverbs_mw_idr);
