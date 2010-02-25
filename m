@@ -1,59 +1,47 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the block tree with Linus' tree
-Date: Fri, 26 Feb 2010 10:11:01 +1100
-Message-ID: <20100226101101.136af742.sfr@canb.auug.org.au>
-References: <20100225141022.c5b3b7ce.sfr@canb.auug.org.au>
-	<20100225074757.GN1025@kernel.dk>
+Subject: linux-next: fetch of tmio-mmc tree failed
+Date: Fri, 26 Feb 2010 10:55:12 +1100
+Message-ID: <20100226105512.d6c3b818.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__26_Feb_2010_10_11_01_+1100_=rTTqY6SNipC+2T="
+ boundary="Signature=_Fri__26_Feb_2010_10_55_12_+1100_LA/nMbsCpHLAJ5d4"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48295 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58593 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S934453Ab0BYXLJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 25 Feb 2010 18:11:09 -0500
-In-Reply-To: <20100225074757.GN1025@kernel.dk>
+	id S1754171Ab0BYXzU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 25 Feb 2010 18:55:20 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <jens.axboe@oracle.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Alan D. Brunelle" <Alan.Brunelle@hp.com>
+To: Ian Molton <ian@mnementh.co.uk>
+Cc: linux-next@vger.kernel.org
 
---Signature=_Fri__26_Feb_2010_10_11_01_+1100_=rTTqY6SNipC+2T=
+--Signature=_Fri__26_Feb_2010_10_55_12_+1100_LA/nMbsCpHLAJ5d4
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jens,
+Hi Ian,
 
-On Thu, 25 Feb 2010 08:47:57 +0100 Jens Axboe <jens.axboe@oracle.com> wrote:
->
-> I was, unfortunately I forgot to resolve the conflict yesterday. Your
-> fix confuses me a bit - I was expecting the first hunk, but what is the
-> second hunk doing? Conceptually good though, perhaps there are more
-> conflicts than I was expecting :-)
+Today's linux-next fetch of the tmio-mmc tree failed like this:
 
-The second hunk was not part of the conflict, but "git diff" gives us more
-than just the conflicted bit of the file.
+git.mnementh.co.uk[0: 173.45.232.4]: errno=3DConnection refused
 
-> I'll update here as well so it disappears next time you pull.
-
-Thanks.
-
+I will use the version of the tree from next-20100225 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__26_Feb_2010_10_11_01_+1100_=rTTqY6SNipC+2T=
+--Signature=_Fri__26_Feb_2010_10_55_12_+1100_LA/nMbsCpHLAJ5d4
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkuHA4UACgkQjjKRsyhoI8wqMQCfWDdZKat8w83QhL2lKMSUAaH+
-fCQAoI538OmFRIFPtIaulSWtkXHPvR63
-=4tSU
+iEYEARECAAYFAkuHDeAACgkQjjKRsyhoI8z7RwCglGCdCUY5Ny8b9D+Q9DDEAX3/
+HwIAn1SeikBwrOujuUoYibpoQbqX7zPi
+=OpeM
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__26_Feb_2010_10_11_01_+1100_=rTTqY6SNipC+2T=--
+--Signature=_Fri__26_Feb_2010_10_55_12_+1100_LA/nMbsCpHLAJ5d4--
