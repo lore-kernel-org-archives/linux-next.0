@@ -1,126 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the infiniband tree with the vfs tree
-Date: Thu, 25 Feb 2010 12:52:24 +1100
-Message-ID: <20100225125224.af78cc78.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the block tree with Linus' tree
+Date: Thu, 25 Feb 2010 14:10:22 +1100
+Message-ID: <20100225141022.c5b3b7ce.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60953 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37312 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753386Ab0BYBw0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 24 Feb 2010 20:52:26 -0500
+	id S932093Ab0BYDK0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 24 Feb 2010 22:10:26 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Roland Dreier <rdreier@cisco.com>, linux-rmda@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+To: Jens Axboe <jens.axboe@oracle.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Alan D. Brunelle" <Alan.Brunelle@hp.com>
 
-Hi all,
+Hi Jens,
 
-Today's linux-next merge of the infiniband tree got a conflict in
-drivers/infiniband/core/uverbs_main.c between commit
-ce916e2b935f8b3402da1457ff23b9f9f786c09b ("switch infiniband uverbs to
-anon_inodes") from the vfs tree and commit
-055422ddbb0a7610c5f57a056743d7336a39e90f ("IB/uverbs: Convert *cdev to
-cdev in struct ib_uverbs_device") from the infiniband tree.
+Today's linux-next merge of the block tree got a conflict in
+include/linux/blkdev.h between commit
+79da0644a8e0838522828f106e4049639eea6baf ("Revert "block: improve
+queue_should_plug() by looking at IO depths"") from Linus' tree and
+commit 488991e28e55b4fbca8067edf0259f69d1a6f92c ("block: Added in
+stricter no merge semantics for block I/O") from the block tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+Context changes - I have fixed it up (see below) and can carry the fix
+for a while.  I suspect that you were expecting this. :-)
+
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/infiniband/core/uverbs_main.c
-index 810f277,dbf0451..0000000
---- a/drivers/infiniband/core/uverbs_main.c
-+++ b/drivers/infiniband/core/uverbs_main.c
-@@@ -41,9 -41,8 +41,8 @@@
-  #include <linux/fs.h>
-  #include <linux/poll.h>
-  #include <linux/sched.h>
- +#include <linux/anon_inodes.h>
-  #include <linux/file.h>
-- #include <linux/cdev.h>
- -#include <linux/mount.h>
+diff --cc include/linux/blkdev.h
+index 1896e86,f71f5c5..0000000
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@@ -461,7 -461,9 +461,8 @@@ struct request_queu
+  #define QUEUE_FLAG_NONROT      14	/* non-rotational device (SSD) */
+  #define QUEUE_FLAG_VIRT        QUEUE_FLAG_NONROT /* paravirt device */
+  #define QUEUE_FLAG_IO_STAT     15	/* do IO stats */
+ -#define QUEUE_FLAG_CQ	       16	/* hardware does queuing */
+ -#define QUEUE_FLAG_DISCARD     17	/* supports DISCARD */
+ -#define QUEUE_FLAG_NOXMERGES   18	/* No extended merges */
+ +#define QUEUE_FLAG_DISCARD     16	/* supports DISCARD */
+++#define QUEUE_FLAG_NOXMERGES   17	/* No extended merges */
   
-  #include <asm/uaccess.h>
+  #define QUEUE_FLAG_DEFAULT	((1 << QUEUE_FLAG_IO_STAT) |		\
+  				 (1 << QUEUE_FLAG_CLUSTER) |		\
+@@@ -585,8 -587,11 +586,10 @@@ enum 
   
-@@@ -79,36 -79,38 +77,36 @@@ static DECLARE_BITMAP(dev_map, IB_UVERB
-  static ssize_t (*uverbs_cmd_table[])(struct ib_uverbs_file *file,
-  				     const char __user *buf, int in_len,
-  				     int out_len) = {
-- 	[IB_USER_VERBS_CMD_GET_CONTEXT]   	= ib_uverbs_get_context,
-- 	[IB_USER_VERBS_CMD_QUERY_DEVICE]  	= ib_uverbs_query_device,
-- 	[IB_USER_VERBS_CMD_QUERY_PORT]    	= ib_uverbs_query_port,
-- 	[IB_USER_VERBS_CMD_ALLOC_PD]      	= ib_uverbs_alloc_pd,
-- 	[IB_USER_VERBS_CMD_DEALLOC_PD]    	= ib_uverbs_dealloc_pd,
-- 	[IB_USER_VERBS_CMD_REG_MR]        	= ib_uverbs_reg_mr,
-- 	[IB_USER_VERBS_CMD_DEREG_MR]      	= ib_uverbs_dereg_mr,
-+ 	[IB_USER_VERBS_CMD_GET_CONTEXT]		= ib_uverbs_get_context,
-+ 	[IB_USER_VERBS_CMD_QUERY_DEVICE]	= ib_uverbs_query_device,
-+ 	[IB_USER_VERBS_CMD_QUERY_PORT]		= ib_uverbs_query_port,
-+ 	[IB_USER_VERBS_CMD_ALLOC_PD]		= ib_uverbs_alloc_pd,
-+ 	[IB_USER_VERBS_CMD_DEALLOC_PD]		= ib_uverbs_dealloc_pd,
-+ 	[IB_USER_VERBS_CMD_REG_MR]		= ib_uverbs_reg_mr,
-+ 	[IB_USER_VERBS_CMD_DEREG_MR]		= ib_uverbs_dereg_mr,
-  	[IB_USER_VERBS_CMD_CREATE_COMP_CHANNEL] = ib_uverbs_create_comp_channel,
-- 	[IB_USER_VERBS_CMD_CREATE_CQ]     	= ib_uverbs_create_cq,
-- 	[IB_USER_VERBS_CMD_RESIZE_CQ]     	= ib_uverbs_resize_cq,
-- 	[IB_USER_VERBS_CMD_POLL_CQ]     	= ib_uverbs_poll_cq,
-- 	[IB_USER_VERBS_CMD_REQ_NOTIFY_CQ]     	= ib_uverbs_req_notify_cq,
-- 	[IB_USER_VERBS_CMD_DESTROY_CQ]    	= ib_uverbs_destroy_cq,
-- 	[IB_USER_VERBS_CMD_CREATE_QP]     	= ib_uverbs_create_qp,
-- 	[IB_USER_VERBS_CMD_QUERY_QP]     	= ib_uverbs_query_qp,
-- 	[IB_USER_VERBS_CMD_MODIFY_QP]     	= ib_uverbs_modify_qp,
-- 	[IB_USER_VERBS_CMD_DESTROY_QP]    	= ib_uverbs_destroy_qp,
-- 	[IB_USER_VERBS_CMD_POST_SEND]    	= ib_uverbs_post_send,
-- 	[IB_USER_VERBS_CMD_POST_RECV]    	= ib_uverbs_post_recv,
-- 	[IB_USER_VERBS_CMD_POST_SRQ_RECV]    	= ib_uverbs_post_srq_recv,
-- 	[IB_USER_VERBS_CMD_CREATE_AH]    	= ib_uverbs_create_ah,
-- 	[IB_USER_VERBS_CMD_DESTROY_AH]    	= ib_uverbs_destroy_ah,
-- 	[IB_USER_VERBS_CMD_ATTACH_MCAST]  	= ib_uverbs_attach_mcast,
-- 	[IB_USER_VERBS_CMD_DETACH_MCAST]  	= ib_uverbs_detach_mcast,
-- 	[IB_USER_VERBS_CMD_CREATE_SRQ]    	= ib_uverbs_create_srq,
-- 	[IB_USER_VERBS_CMD_MODIFY_SRQ]    	= ib_uverbs_modify_srq,
-- 	[IB_USER_VERBS_CMD_QUERY_SRQ]     	= ib_uverbs_query_srq,
-- 	[IB_USER_VERBS_CMD_DESTROY_SRQ]   	= ib_uverbs_destroy_srq,
-+ 	[IB_USER_VERBS_CMD_CREATE_CQ]		= ib_uverbs_create_cq,
-+ 	[IB_USER_VERBS_CMD_RESIZE_CQ]		= ib_uverbs_resize_cq,
-+ 	[IB_USER_VERBS_CMD_POLL_CQ]		= ib_uverbs_poll_cq,
-+ 	[IB_USER_VERBS_CMD_REQ_NOTIFY_CQ]	= ib_uverbs_req_notify_cq,
-+ 	[IB_USER_VERBS_CMD_DESTROY_CQ]		= ib_uverbs_destroy_cq,
-+ 	[IB_USER_VERBS_CMD_CREATE_QP]		= ib_uverbs_create_qp,
-+ 	[IB_USER_VERBS_CMD_QUERY_QP]		= ib_uverbs_query_qp,
-+ 	[IB_USER_VERBS_CMD_MODIFY_QP]		= ib_uverbs_modify_qp,
-+ 	[IB_USER_VERBS_CMD_DESTROY_QP]		= ib_uverbs_destroy_qp,
-+ 	[IB_USER_VERBS_CMD_POST_SEND]		= ib_uverbs_post_send,
-+ 	[IB_USER_VERBS_CMD_POST_RECV]		= ib_uverbs_post_recv,
-+ 	[IB_USER_VERBS_CMD_POST_SRQ_RECV]	= ib_uverbs_post_srq_recv,
-+ 	[IB_USER_VERBS_CMD_CREATE_AH]		= ib_uverbs_create_ah,
-+ 	[IB_USER_VERBS_CMD_DESTROY_AH]		= ib_uverbs_destroy_ah,
-+ 	[IB_USER_VERBS_CMD_ATTACH_MCAST]	= ib_uverbs_attach_mcast,
-+ 	[IB_USER_VERBS_CMD_DETACH_MCAST]	= ib_uverbs_detach_mcast,
-+ 	[IB_USER_VERBS_CMD_CREATE_SRQ]		= ib_uverbs_create_srq,
-+ 	[IB_USER_VERBS_CMD_MODIFY_SRQ]		= ib_uverbs_modify_srq,
-+ 	[IB_USER_VERBS_CMD_QUERY_SRQ]		= ib_uverbs_query_srq,
-+ 	[IB_USER_VERBS_CMD_DESTROY_SRQ]		= ib_uverbs_destroy_srq,
-  };
-  
- -static struct vfsmount *uverbs_event_mnt;
- -
-  static void ib_uverbs_add_one(struct ib_device *device);
-  static void ib_uverbs_remove_one(struct ib_device *device);
-  
-@@@ -838,8 -933,12 +867,10 @@@ out
-  static void __exit ib_uverbs_cleanup(void)
-  {
-  	ib_unregister_client(&uverbs_client);
- -	mntput(uverbs_event_mnt);
- -	unregister_filesystem(&uverbs_event_fs);
-  	class_destroy(uverbs_class);
-  	unregister_chrdev_region(IB_UVERBS_BASE_DEV, IB_UVERBS_MAX_DEVICES);
-+ 	if (overflow_maj)
-+ 		unregister_chrdev_region(overflow_maj, IB_UVERBS_MAX_DEVICES);
-  	idr_destroy(&ib_uverbs_pd_idr);
-  	idr_destroy(&ib_uverbs_mr_idr);
-  	idr_destroy(&ib_uverbs_mw_idr);
+  #define blk_queue_plugged(q)	test_bit(QUEUE_FLAG_PLUGGED, &(q)->queue_flags)
+  #define blk_queue_tagged(q)	test_bit(QUEUE_FLAG_QUEUED, &(q)->queue_flags)
+ -#define blk_queue_queuing(q)	test_bit(QUEUE_FLAG_CQ, &(q)->queue_flags)
+  #define blk_queue_stopped(q)	test_bit(QUEUE_FLAG_STOPPED, &(q)->queue_flags)
+  #define blk_queue_nomerges(q)	test_bit(QUEUE_FLAG_NOMERGES, &(q)->queue_flags)
++ #define blk_queue_noxmerges(q)	\
++ 	test_bit(QUEUE_FLAG_NOXMERGES, &(q)->queue_flags)
+  #define blk_queue_nonrot(q)	test_bit(QUEUE_FLAG_NONROT, &(q)->queue_flags)
+  #define blk_queue_io_stat(q)	test_bit(QUEUE_FLAG_IO_STAT, &(q)->queue_flags)
+  #define blk_queue_flushing(q)	((q)->ordseq)
