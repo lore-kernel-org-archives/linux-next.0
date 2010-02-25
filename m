@@ -1,106 +1,108 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for February 22 (media/video/tvp7002)
-Date: Thu, 25 Feb 2010 12:57:07 -0800
-Message-ID: <4B86E423.3010507@oracle.com>
-References: <20100222172218.4fd82a45.sfr@canb.auug.org.au> <4B82AF18.3030107@oracle.com> <20100225085205.9cf68ce9.randy.dunlap@oracle.com> <201002252134.10071.hverkuil@xs4all.nl>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH -next] pktcdvd: improve BKL and compat_ioctl.c usage
+Date: Thu, 25 Feb 2010 22:27:11 +0100
+Message-ID: <201002252227.11472.arnd@arndb.de>
+References: <20100225183523.80361261.sfr@canb.auug.org.au> <4B86B97D.6030208@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet11.oracle.com ([141.146.126.233]:61756 "EHLO
-	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933525Ab0BYU5h (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Feb 2010 15:57:37 -0500
-In-Reply-To: <201002252134.10071.hverkuil@xs4all.nl>
+Received: from moutng.kundenserver.de ([212.227.126.171]:53394 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933904Ab0BYV1Y (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Feb 2010 16:27:24 -0500
+In-Reply-To: <4B86B97D.6030208@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, LKML <linux-kernel@vger.kernel.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, Santiago Nunez-Corrales <santiago.nunez@ridgerun.com>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Peter Osterlund <petero2@telia.com>, Jens Axboe <jens.axboe@oracle.com>, Akinobu Mita <akinobu.mita@gmail.com>
 
-On 02/25/10 12:34, Hans Verkuil wrote:
-> On Thursday 25 February 2010 17:52:05 Randy Dunlap wrote:
->> On Mon, 22 Feb 2010 08:21:44 -0800 Randy Dunlap wrote:
->>
->>> On 02/21/10 22:22, Stephen Rothwell wrote:
->>>> Hi all,
->>>>
->>>> Changes since 20100219:
->>>
->>>
->>> drivers/media/video/tvp7002.c:896: error: 'struct tvp7002' has no member named 'registers'
->>
->> same problem in linux-next-20100225.
->>
->> so where are these registers??
-> 
-> Hmm, that code is a remnant from older revisions of this driver. Unfortunately,
-> when I compiled this driver before creating my pull request I forgot to turn on
-> the CONFIG_VIDEO_ADV_DEBUG option and so I never saw it.
-> 
-> Anyway, below is a patch that fixes this. Please apply.
-> 
-> Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
+The pktcdvd driver uses proper locking and does not need the
+BKL in the ioctl and llseek functions of the character device,
+so kill both. Moving the compat_ioctl handling from common code
+into the driver itself fixes build problems when CONFIG_BLOCK is
+disabled.
 
-Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Thanks.
+---
+On Thursday 25 February 2010, Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> fs/compat_ioctl.c should omit pktcdvd.h and its ioctl when CONFIG_BLOCK
+> is not enabled.  This fixes these build errors:
+> 
+> In file included from fs/compat_ioctl.c:105:
+> include/linux/pktcdvd.h:166: error: field 'read_queue' has incomplete type
+> include/linux/pktcdvd.h:167: error: field 'write_queue' has incomplete type
+> include/linux/pktcdvd.h:207: error: field 'orig_bios' has incomplete type
+> make[2]: *** [fs/compat_ioctl.o] Error 1
 
-> Santiago, I've also fixed the g_register function: it never returned a register
-> value in the original code.
-> 
-> Regards,
-> 
-> 	Hans
-> 
-> diff --git a/drivers/media/video/tvp7002.c b/drivers/media/video/tvp7002.c
-> index 0f0270b..5a878bc 100644
-> --- a/drivers/media/video/tvp7002.c
-> +++ b/drivers/media/video/tvp7002.c
-> @@ -859,13 +859,17 @@ static int tvp7002_g_register(struct v4l2_subdev *sd,
->  						struct v4l2_dbg_register *reg)
->  {
->  	struct i2c_client *client = v4l2_get_subdevdata(sd);
-> +	u8 val;
-> +	int ret;
->  
->  	if (!v4l2_chip_match_i2c_client(client, &reg->match))
->  		return -EINVAL;
->  	if (!capable(CAP_SYS_ADMIN))
->  		return -EPERM;
->  
-> -	return reg->val < 0 ? -EINVAL : 0;
-> +	ret = tvp7002_read(sd, reg->reg & 0xff, &val);
-> +	reg->val = val;
-> +	return ret;
->  }
->  
->  /*
-> @@ -881,21 +885,13 @@ static int tvp7002_s_register(struct v4l2_subdev *sd,
->  						struct v4l2_dbg_register *reg)
->  {
->  	struct i2c_client *client = v4l2_get_subdevdata(sd);
-> -	struct tvp7002 *device = to_tvp7002(sd);
-> -	int wres;
->  
->  	if (!v4l2_chip_match_i2c_client(client, &reg->match))
->  		return -EINVAL;
->  	if (!capable(CAP_SYS_ADMIN))
->  		return -EPERM;
->  
-> -	wres = tvp7002_write(sd, reg->reg & 0xff, reg->val & 0xff);
-> -
-> -	/* Update the register value in device's table */
-> -	if (!wres)
-> -		device->registers[reg->reg].value = reg->val;
-> -
-> -	return wres < 0 ? -EINVAL : 0;
-> +	return tvp7002_write(sd, reg->reg & 0xff, reg->val & 0xff);
->  }
->  #endif
->  
-> 
-> 
+How about this one instead, cleaning pktcdvd ioctl handling up for good?
 
-
--- 
-~Randy
+diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
+index 68b5957..f508015 100644
+--- a/drivers/block/pktcdvd.c
++++ b/drivers/block/pktcdvd.c
+@@ -48,6 +48,7 @@
+ #include <linux/module.h>
+ #include <linux/types.h>
+ #include <linux/kernel.h>
++#include <linux/compat.h>
+ #include <linux/kthread.h>
+ #include <linux/errno.h>
+ #include <linux/spinlock.h>
+@@ -3024,7 +3025,7 @@ static void pkt_get_status(struct pkt_ctrl_command *ctrl_cmd)
+ 	mutex_unlock(&ctl_mutex);
+ }
+ 
+-static int pkt_ctl_ioctl(struct inode *inode, struct file *file, unsigned int cmd, unsigned long arg)
++static long pkt_ctl_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ {
+ 	void __user *argp = (void __user *)arg;
+ 	struct pkt_ctrl_command ctrl_cmd;
+@@ -3061,10 +3062,20 @@ static int pkt_ctl_ioctl(struct inode *inode, struct file *file, unsigned int cm
+ 	return ret;
+ }
+ 
++#ifdef CONFIG_COMPAT
++static long pkt_ctl_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
++{
++	return pkt_ctl_ioctl(file, cmd, (unsigned long)compat_ptr(arg));
++}
++#endif
+ 
+ static const struct file_operations pkt_ctl_fops = {
+-	.ioctl	 = pkt_ctl_ioctl,
+-	.owner	 = THIS_MODULE,
++	.open		= nonseekable_open,
++	.unlocked_ioctl	= pkt_ctl_ioctl,
++#ifdef CONFIG_COMPAT
++	.compat_ioctl	= pkt_ctl_compat_ioctl,
++#endif
++	.owner		= THIS_MODULE,
+ };
+ 
+ static struct miscdevice pkt_misc = {
+diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
+index 0ca9ec4..fa61262 100644
+--- a/fs/compat_ioctl.c
++++ b/fs/compat_ioctl.c
+@@ -102,7 +102,6 @@
+ #include <linux/nbd.h>
+ #include <linux/random.h>
+ #include <linux/filter.h>
+-#include <linux/pktcdvd.h>
+ 
+ #include <linux/hiddev.h>
+ 
+@@ -1126,8 +1125,6 @@ COMPATIBLE_IOCTL(PPGETMODE)
+ COMPATIBLE_IOCTL(PPGETPHASE)
+ COMPATIBLE_IOCTL(PPGETFLAGS)
+ COMPATIBLE_IOCTL(PPSETFLAGS)
+-/* pktcdvd */
+-COMPATIBLE_IOCTL(PACKET_CTRL_CMD)
+ /* Big A */
+ /* sparc only */
+ /* Big Q for sound/OSS */
