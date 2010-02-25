@@ -1,33 +1,32 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for February 22 (media/video/tvp7002)
-Date: Thu, 25 Feb 2010 08:52:05 -0800
-Message-ID: <20100225085205.9cf68ce9.randy.dunlap@oracle.com>
-References: <20100222172218.4fd82a45.sfr@canb.auug.org.au>
-	<4B82AF18.3030107@oracle.com>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for February 25 (quota)
+Date: Thu, 25 Feb 2010 09:21:39 -0800
+Message-ID: <4B86B1A3.2090606@xenotime.net>
+References: <20100225183523.80361261.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <4B82AF18.3030107@oracle.com>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-next@vger.kernel.org
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, LKML <linux-kernel@vger.kernel.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, Santiago Nunez-Corrales <santiago.nunez@ridgerun.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from xenotime.net ([72.52.64.118]:39799 "HELO xenotime.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
+	id S932947Ab0BYRVk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 25 Feb 2010 12:21:40 -0500
+Received: from chimera.site ([71.245.98.113]) by xenotime.net for <linux-next@vger.kernel.org>; Thu, 25 Feb 2010 09:21:39 -0800
+In-Reply-To: <20100225183523.80361261.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jan Kara <jack@suse.cz>
 
-On Mon, 22 Feb 2010 08:21:44 -0800 Randy Dunlap wrote:
-
-> On 02/21/10 22:22, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Changes since 20100219:
+On 02/24/10 23:35, Stephen Rothwell wrote:
+> Hi all,
 > 
-> 
-> drivers/media/video/tvp7002.c:896: error: 'struct tvp7002' has no member named 'registers'
+> Changes since 20100224:
 
-same problem in linux-next-20100225.
 
-so where are these registers??
+When CONFIG_BLOCK=n:
 
-thanks,
----
+fs/quota/dquot.c:2042: error: implicit declaration of function 'fsync_bdev'
+
+-- 
 ~Randy
