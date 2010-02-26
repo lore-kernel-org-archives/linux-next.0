@@ -1,78 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH -next] staging/pohmelfs: fix write_inode parameter
- warning
-Date: Fri, 26 Feb 2010 11:41:18 +1100
-Message-ID: <20100226114118.097a2470.sfr@canb.auug.org.au>
-References: <20100225183523.80361261.sfr@canb.auug.org.au>
-	<20100225144122.d9ba8810.randy.dunlap@oracle.com>
+Subject: linux-next: manual merge of the infiniband tree with the vfs tree
+Date: Fri, 26 Feb 2010 13:05:18 +1100
+Message-ID: <20100226130518.94c5a5f8.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__26_Feb_2010_11_41_18_+1100_U/_k1ovFM5Z=G9xz"
+ boundary="Signature=_Fri__26_Feb_2010_13_05_18_+1100_tBKt0T4jD4Jchka8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36676 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:40419 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S934756Ab0BZAl0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 25 Feb 2010 19:41:26 -0500
-In-Reply-To: <20100225144122.d9ba8810.randy.dunlap@oracle.com>
+	id S934980Ab0BZCFZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 25 Feb 2010 21:05:25 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: devel@driverdev.osuosl.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, gregkh@suse.de, Evgeniy Polyakov <zbr@ioremap.net>
+To: Roland Dreier <rdreier@cisco.com>, linux-rdma@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
 
---Signature=_Fri__26_Feb_2010_11_41_18_+1100_U/_k1ovFM5Z=G9xz
+--Signature=_Fri__26_Feb_2010_13_05_18_+1100_tBKt0T4jD4Jchka8
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Randy,
+Hi all,
 
-On Thu, 25 Feb 2010 14:41:22 -0800 Randy Dunlap <randy.dunlap@oracle.com> w=
-rote:
->
-> From: Randy Dunlap <randy.dunlap@oracle.com>
->=20
-> sparse warns that:
-> drivers/staging/pohmelfs/inode.c:1797: warning: initialization from incom=
-patible pointer type
->=20
-> so fix pohmelfs_write_inode() to have the expected parameters.
->=20
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> ---
->  drivers/staging/pohmelfs/inode.c |    3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->=20
-> --- linux-next-20100225.orig/drivers/staging/pohmelfs/inode.c
-> +++ linux-next-20100225/drivers/staging/pohmelfs/inode.c
-> @@ -396,7 +396,8 @@ int pohmelfs_remove_child(struct pohmelf
->  /*
->   * Writeback for given inode.
->   */
-> -static int pohmelfs_write_inode(struct inode *inode, int sync)
-> +static int pohmelfs_write_inode(struct inode *inode,
-> +				struct writeback_control *wbc)
->  {
->  	struct pohmelfs_inode *pi =3D POHMELFS_I(inode);
-> =20
+Today's linux-next merge of the infiniband tree got a conflict in
+drivers/infiniband/core/uverbs_main.c between commit
+ce916e2b935f8b3402da1457ff23b9f9f786c09b ("switch infiniband uverbs to
+anon_inodes") from the vfs tree and commit
+4169c4a9735d6434c9e39fa81ae5517e3afd4cd8 ("IB/uverbs: Use anon_inodes
+instead of private infinibandeventfs") from the infiniband tree.
 
-This patch is OK, but depends on changes that are in the vfs tree that
-are not in Linus' tree yet.
-
+These two commits purport to do something similar.  Someone should look
+at them both and decide which one is right.  For now I have used the
+version from the vfs tree - with the addition of the part from the
+infiniband tree version that selects ANON_INODES in the Kconfig file.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__26_Feb_2010_11_41_18_+1100_U/_k1ovFM5Z=G9xz
+--Signature=_Fri__26_Feb_2010_13_05_18_+1100_tBKt0T4jD4Jchka8
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkuHGK4ACgkQjjKRsyhoI8wHEACcDXPc7aDTTvfZcniKpdGAzNYy
-ohMAn2cNGWd1MH5sG0VVt+FZuAo42Hh/
-=zpjA
+iEYEARECAAYFAkuHLF4ACgkQjjKRsyhoI8zA6QCgrKAd1mAG6FMO3j7BD04JU5aC
+fnEAniW23J7Z7Lc2/V2AiBDiv9hfDLTl
+=C5Cg
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__26_Feb_2010_11_41_18_+1100_U/_k1ovFM5Z=G9xz--
+--Signature=_Fri__26_Feb_2010_13_05_18_+1100_tBKt0T4jD4Jchka8--
