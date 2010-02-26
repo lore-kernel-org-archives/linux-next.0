@@ -1,53 +1,46 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the infiniband tree with the vfs tree
-Date: Fri, 26 Feb 2010 13:05:18 +1100
-Message-ID: <20100226130518.94c5a5f8.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the i.MX tree
+Date: Fri, 26 Feb 2010 18:10:03 +1100
+Message-ID: <20100226181003.a08c83cf.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__26_Feb_2010_13_05_18_+1100_tBKt0T4jD4Jchka8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40419 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37931 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S934980Ab0BZCFZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 25 Feb 2010 21:05:25 -0500
+	id S935359Ab0BZHKI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 26 Feb 2010 02:10:08 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Roland Dreier <rdreier@cisco.com>, linux-rdma@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Martin Fuzzey <mfuzzey@gmail.com>, =?UTF-8?B?IlV3ZSBLbGVpbmUtS8O2bmlnIg==?= <u.kleine-koenig@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>
 
---Signature=_Fri__26_Feb_2010_13_05_18_+1100_tBKt0T4jD4Jchka8
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Greg,
 
-Hi all,
+Today's linux-next merge of the usb tree got a conflict in
+arch/arm/mach-mx2/devices.h between commit
+68c94b40b31926f627573a7f656b903f6644744e ("arm/mx2: use cpp magic to
+create spi_imx devices") from the i.MX tree and commit
+3f1c5d0f4c64f5e9e4ac329a935b3da67593691f ("USB: MXC: add platform
+resources for i.MX21 USB host controller") from the usb tree.
 
-Today's linux-next merge of the infiniband tree got a conflict in
-drivers/infiniband/core/uverbs_main.c between commit
-ce916e2b935f8b3402da1457ff23b9f9f786c09b ("switch infiniband uverbs to
-anon_inodes") from the vfs tree and commit
-4169c4a9735d6434c9e39fa81ae5517e3afd4cd8 ("IB/uverbs: Use anon_inodes
-instead of private infinibandeventfs") from the infiniband tree.
-
-These two commits purport to do something similar.  Someone should look
-at them both and decide which one is right.  For now I have used the
-version from the vfs tree - with the addition of the part from the
-infiniband tree version that selects ANON_INODES in the Kconfig file.
---=20
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__26_Feb_2010_13_05_18_+1100_tBKt0T4jD4Jchka8
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkuHLF4ACgkQjjKRsyhoI8zA6QCgrKAd1mAG6FMO3j7BD04JU5aC
-fnEAniW23J7Z7Lc2/V2AiBDiv9hfDLTl
-=C5Cg
------END PGP SIGNATURE-----
-
---Signature=_Fri__26_Feb_2010_13_05_18_+1100_tBKt0T4jD4Jchka8--
+diff --cc arch/arm/mach-mx2/devices.h
+index f15df2a,f12694b..0000000
+--- a/arch/arm/mach-mx2/devices.h
++++ b/arch/arm/mach-mx2/devices.h
+@@@ -34,8 -25,7 +34,9 @@@ extern struct platform_device mxc_usbh1
+  extern struct platform_device mxc_usbh2;
+  extern struct platform_device mxc_spi_device0;
+  extern struct platform_device mxc_spi_device1;
+ +#ifdef CONFIG_MACH_MX27
+  extern struct platform_device mxc_spi_device2;
+ +#endif
++ extern struct platform_device mx21_usbhc_device;
+  extern struct platform_device imx_ssi_device0;
+  extern struct platform_device imx_ssi_device1;
