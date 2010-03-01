@@ -1,68 +1,52 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for February 25 (quota)
-Date: Mon, 01 Mar 2010 08:56:20 -0800
-Message-ID: <4B8BF1B4.7040502@xenotime.net>
-References: <20100225183523.80361261.sfr@canb.auug.org.au> <4B86B1A3.2090606@xenotime.net> <20100301132752.GG3271@quack.suse.cz>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Re: IBFT and SWIOTLB tree.
+Date: Mon, 1 Mar 2010 13:26:42 -0500
+Message-ID: <20100301182642.GA31926@phenom.dumpdata.com>
+References: <20100223160034.GC28966@phenom.dumpdata.com> <20100224193931.89bb7e87.sfr@canb.auug.org.au> <20100224150034.GB20890@phenom.dumpdata.com> <20100301172554.92574f5d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from xenotime.net ([72.52.64.118]:43966 "HELO xenotime.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
-	id S1751015Ab0CAQ4Y (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 1 Mar 2010 11:56:24 -0500
-Received: from chimera.site ([71.245.98.113]) by xenotime.net for <linux-next@vger.kernel.org>; Mon, 1 Mar 2010 08:56:20 -0800
-In-Reply-To: <20100301132752.GG3271@quack.suse.cz>
+Received: from rcsinet11.oracle.com ([148.87.113.123]:23717 "EHLO
+	rcsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751235Ab0CASvB (ORCPT
+	<rfc822;<linux-next@vger.kernel.org>>);
+	Mon, 1 Mar 2010 13:51:01 -0500
+Content-Disposition: inline
+In-Reply-To: <20100301172554.92574f5d.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org
 
-On 03/01/10 05:27, Jan Kara wrote:
-> On Thu 25-02-10 09:21:39, Randy Dunlap wrote:
->> On 02/24/10 23:35, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> Changes since 20100224:
->>
->>
->> When CONFIG_BLOCK=n:
->>
->> fs/quota/dquot.c:2042: error: implicit declaration of function 'fsync_bdev'
->   Thanks for notification. I've fixed this by the following patch:
+On Mon, Mar 01, 2010 at 05:25:54PM +1100, Stephen Rothwell wrote:
+> Hi Konrad,
 > 
-> From 9007983e9bf994200194727bcb87d45bb924b4a8 Mon Sep 17 00:00:00 2001
-> From: Jan Kara <jack@suse.cz>
-> Date: Mon, 1 Mar 2010 14:24:36 +0100
-> Subject: [PATCH] vfs: Provide empty fsync_bdev if !CONFIG_BLOCK
+> On Wed, 24 Feb 2010 10:00:34 -0500 Konrad Rzeszutek Wilk <konrad.wilk@ORACLE.COM> wrote:
+> >
+> > On Wed, Feb 24, 2010 at 07:39:31PM +1100, Stephen Rothwell wrote:
+> > > 
+> > > I would need a bit a background for these trees since you are not listed
+> > > as a maintainer in the MAINTAINERS file.
+> > 
+> > Hmm, weird. IBFT is the patch set for the drivers/firmware/iscsi_ibft.c
+> > which was developed by me.
 > 
-> Provide empty declaration of fsync_bdev when CONFIG_BLOCK is not defined so
-> that quota code can use it.
-> 
-> Signed-off-by: Jan Kara <jack@suse.cz>
-> ---
->  include/linux/fs.h |    5 +++++
->  1 files changed, 5 insertions(+), 0 deletions(-)
-> 
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index ebb1cd5..b9e4f1c 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1961,6 +1961,11 @@ static inline int thaw_bdev(struct block_device *bdev, struct super_block *sb)
->  {
->  	return 0;
->  }
-> +
-> +static inline int fsync_bdev(struct block_device *bdev)
-> +{
-> +	return 0;
-> +}
->  #endif
->  extern int sync_filesystem(struct super_block *);
->  extern const struct file_operations def_blk_fops;
+> And I see you have added a MAINTAINERS entry and Linus has merged the two
+> patches.  I will add this tree tomorrow.  Please don't add any 2.6.35
+> material until after 2.6.34-rc1 is released.  2.6.34 material and fixes
+> are OK.
 
-Acked-by: Randy Dunlap <rdunlap@xenotime.net>
+Excellent.
+> 
+> > > > git://git.kernel.org/pub/scm/linux/kernel/git/konrad/swiotlb-2.6.git
+> > 
+> > That one is the re-work of the SWIOTLB IOMMU code. Not a maintainer, but
+> > I want to make sure that the patches don't stomp/break other code.
+> 
+> Is this intended for 3.6.34?  I can't add that tree yet, as it has a
+> series of patches in it that have no Signed-off-by lines.  This material
+> should also get fairly wide review and I would expect to see some
+> Acked-by lines before the patches were ready for inclusion.
 
-Thanks.
--- 
-~Randy
+Ok. I am still a bit new at this so I wasn't sure about the inclusion
+criteria. Please defer that git tree (swiotlb-2.6) until I get it moving upstream.
