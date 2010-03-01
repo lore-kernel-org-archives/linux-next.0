@@ -1,67 +1,46 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: linux-next: Tree for February 25 (quota)
-Date: Mon, 1 Mar 2010 14:27:52 +0100
-Message-ID: <20100301132752.GG3271@quack.suse.cz>
-References: <20100225183523.80361261.sfr@canb.auug.org.au>
- <4B86B1A3.2090606@xenotime.net>
+From: David Woodhouse <dwmw2@infradead.org>
+Subject: Re: linux-next: build failure after merge of the final tree (mtd
+ related)
+Date: Mon, 01 Mar 2010 15:59:06 +0100
+Message-ID: <1267455546.11061.0.camel@macbook.infradead.org>
+References: <20100301204844.68915148.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor.suse.de ([195.135.220.2]:57695 "EHLO mx1.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751473Ab0CAN1n (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 1 Mar 2010 08:27:43 -0500
-Content-Disposition: inline
-In-Reply-To: <4B86B1A3.2090606@xenotime.net>
+Received: from bombadil.infradead.org ([18.85.46.34]:36379 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751056Ab0CAO7N (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Mar 2010 09:59:13 -0500
+In-Reply-To: <20100301204844.68915148.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jan Kara <jack@suse.cz>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Maxim Levitsky <maximlevitsky@gmail.com>
 
-On Thu 25-02-10 09:21:39, Randy Dunlap wrote:
-> On 02/24/10 23:35, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Changes since 20100224:
+On Mon, 2010-03-01 at 20:48 +1100, Stephen Rothwell wrote:
+> Hi David,
 > 
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
 > 
-> When CONFIG_BLOCK=n:
+> drivers/mtd/nand/r852.o: In function `.sm_sector_valid':
+> (.text+0x5c70): multiple definition of `.sm_sector_valid'
+> drivers/mtd/nand/sm_common.o:(.text+0x3c8): first defined here
+> drivers/mtd/nand/r852.o: In function `.sm_block_erased':
+> (.text+0x50dc): multiple definition of `.sm_block_erased'
+> drivers/mtd/nand/sm_common.o:(.text+0x2bc): first defined here
+> drivers/mtd/nand/r852.o: In function `.sm_block_valid':
+> (.text+0x5be8): multiple definition of `.sm_block_valid'
+> drivers/mtd/nand/sm_common.o:(.text+0x340): first defined here
 > 
-> fs/quota/dquot.c:2042: error: implicit declaration of function 'fsync_bdev'
-  Thanks for notification. I've fixed this by the following patch:
+> Caused by commit 9fc51a37a8da84618df7584cad67c078317f6720 ("mtd: common
+> module for smartmedia/xD support") from the mtd tree.
+> 
+> I applied the following patch for today.
 
->From 9007983e9bf994200194727bcb87d45bb924b4a8 Mon Sep 17 00:00:00 2001
-From: Jan Kara <jack@suse.cz>
-Date: Mon, 1 Mar 2010 14:24:36 +0100
-Subject: [PATCH] vfs: Provide empty fsync_bdev if !CONFIG_BLOCK
-
-Provide empty declaration of fsync_bdev when CONFIG_BLOCK is not defined so
-that quota code can use it.
-
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- include/linux/fs.h |    5 +++++
- 1 files changed, 5 insertions(+), 0 deletions(-)
-
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index ebb1cd5..b9e4f1c 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1961,6 +1961,11 @@ static inline int thaw_bdev(struct block_device *bdev, struct super_block *sb)
- {
- 	return 0;
- }
-+
-+static inline int fsync_bdev(struct block_device *bdev)
-+{
-+	return 0;
-+}
- #endif
- extern int sync_filesystem(struct super_block *);
- extern const struct file_operations def_blk_fops;
--- 
-1.6.4.2
+Thanks. Are you happy carrying those until I get back to civilisation on
+Monday?
 
 -- 
-Jan Kara <jack@suse.cz>
-SUSE Labs, CR
+dwmw2
