@@ -1,72 +1,53 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: linux-next: build failure after merge of the blackfin tree
-Date: Mon, 1 Mar 2010 02:08:52 +0100
-Message-ID: <20100301010849.GA7210@nowhere>
-References: <20100301120321.8851ba86.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the i2c tree
+Date: Mon, 1 Mar 2010 13:12:31 +1100
+Message-ID: <20100301131231.4c541979.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__1_Mar_2010_13_12_31_+1100_mrF_45LvJn.ooEgk"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:43393 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753779Ab0CACMh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 28 Feb 2010 21:12:37 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jean Delvare <khali@linux-fr.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>
+
+--Signature=_Mon__1_Mar_2010_13_12_31_+1100_mrF_45LvJn.ooEgk
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20100301120321.8851ba86.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mike Frysinger <vapier.adi@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Frysinger <vapier@gentoo.org>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 01, 2010 at 12:03:21PM +1100, Stephen Rothwell wrote:
-> Hi Mike,
-> 
-> After merging the blackfin tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
-> 
-> kernel/trace/trace_syscalls.c:402: error: redefinition of 'arch_syscall_addr'
-> kernel/trace/trace_syscalls.c:397: note: previous definition of 'arch_syscall_addr' was here
-> 
-> Caused by commit d156d1881ea54ec609d92388601661c2679439bb ("ftrace: unify
-> arch_syscall_addr() implementations") from the blackfin tree interacting
+Hi Jean,
 
+After merging the i2c tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
+drivers/i2c/busses/i2c-powermac.c: In function 'i2c_powermac_smbus_xfer':
+drivers/i2c/busses/i2c-powermac.c:125: error: 'err' undeclared (first use i=
+n this function)
 
-Oh, why is this patch in the blackfin tree?
+Caused by commit 2fe61c97a4b1be56d93a84992ffcf00d55f60f63 ("i2c-powermac:
+Be less verbose in the absence of real errors").
 
+I have used the i2c tree from next-20100226 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
+--Signature=_Mon__1_Mar_2010_13_12_31_+1100_mrF_45LvJn.ooEgk
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-> with commit e7b8e675d9c71b868b66f62f725a948047514719 ("tracing: Unify
-> arch_syscall_addr() implementations") from Linus' tree.
-> 
-> These are slightly different versions of the same patch. but merging with the blackfin tree managed to add a second copy of the above function.  I have applied the following patch for today.
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 1 Mar 2010 11:56:09 +1100
-> Subject: [PATCH] blackfin: fix mismerge of kernel/trace/trace_syscalls.c
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  kernel/trace/trace_syscalls.c |    5 -----
->  1 files changed, 0 insertions(+), 5 deletions(-)
-> 
-> diff --git a/kernel/trace/trace_syscalls.c b/kernel/trace/trace_syscalls.c
-> index 37ca709..cba47d7 100644
-> --- a/kernel/trace/trace_syscalls.c
-> +++ b/kernel/trace/trace_syscalls.c
-> @@ -399,11 +399,6 @@ unsigned long __init arch_syscall_addr(int nr)
->  	return (unsigned long)sys_call_table[nr];
->  }
->  
-> -unsigned long __init arch_syscall_addr(int nr)
-> -{
-> -	return (unsigned long)sys_call_table[nr];
-> -}
-> -
->  int __init init_ftrace_syscalls(void)
->  {
->  	struct syscall_metadata *meta;
+iEYEARECAAYFAkuLIo8ACgkQjjKRsyhoI8ym5gCfbtPKaibCM2LOj40PaQsid3AD
+K1IAnRBDILFpTrKfr6n0mq7zwU9mMuXu
+=S01i
+-----END PGP SIGNATURE-----
 
-
-Looks like the right patch yeah.
-
-Thanks.
+--Signature=_Mon__1_Mar_2010_13_12_31_+1100_mrF_45LvJn.ooEgk--
