@@ -1,39 +1,68 @@
-From: Pekka Enberg <penberg@cs.helsinki.fi>
-Subject: Re: linux-next: current pending merge fix patches
-Date: Mon, 01 Mar 2010 17:17:02 +0200
-Message-ID: <4B8BDA6E.6000902@cs.helsinki.fi>
-References: <20100301160445.5e281f11.sfr@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for February 25 (quota)
+Date: Mon, 01 Mar 2010 08:56:20 -0800
+Message-ID: <4B8BF1B4.7040502@xenotime.net>
+References: <20100225183523.80361261.sfr@canb.auug.org.au> <4B86B1A3.2090606@xenotime.net> <20100301132752.GG3271@quack.suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100301160445.5e281f11.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Len Brown <lenb@kernel.org>, Dave Jones <davej@redhat.com>, Jean Delvare <khali@linux-fr.org>, Greg KH <greg@kroah.com>, "J. Bruce Fields" <bfields@fieldses.org>, Trond Myklebust <trond.myklebust@fys.uio.no>, Sage Weil <sage@newdream.net>, Christoph Lameter <cl@linux-foundation.org>, Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Ingo Molnar <mingo@elte.hu>, Al Viro <viro@ZenIV.linux.org.uk>, joern@logfs.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from xenotime.net ([72.52.64.118]:43966 "HELO xenotime.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
+	id S1751015Ab0CAQ4Y (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Mar 2010 11:56:24 -0500
+Received: from chimera.site ([71.245.98.113]) by xenotime.net for <linux-next@vger.kernel.org>; Mon, 1 Mar 2010 08:56:20 -0800
+In-Reply-To: <20100301132752.GG3271@quack.suse.cz>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Stephen Rothwell wrote:
-> 4) The slab[7] tree adds a percpu variable usage case (commit
-> 9dfc6e68bfe6ee452efb1a4e9ca26a9007f2b864 "SLUB: Use this_cpu operations in
-> slub"), but the percpu[8] tree removes the prefixing of percpu variables
-> (commit dd17c8f72993f9461e9c19250e3f155d6d99df22 "percpu: remove per_cpu__
-> prefix"), thus the fooling patch after mergeing these trees:
+On 03/01/10 05:27, Jan Kara wrote:
+> On Thu 25-02-10 09:21:39, Randy Dunlap wrote:
+>> On 02/24/10 23:35, Stephen Rothwell wrote:
+>>> Hi all,
+>>>
+>>> Changes since 20100224:
+>>
+>>
+>> When CONFIG_BLOCK=n:
+>>
+>> fs/quota/dquot.c:2042: error: implicit declaration of function 'fsync_bdev'
+>   Thanks for notification. I've fixed this by the following patch:
 > 
-> diff --git a/mm/slub.c b/mm/slub.c
-> index 6e34309..9e86e6b 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -2071,7 +2071,7 @@ static inline int alloc_kmem_cache_cpus(struct kmem_cache *s, gfp_t flags)
->  		 * Boot time creation of the kmalloc array. Use static per cpu data
->  		 * since the per cpu allocator is not available yet.
->  		 */
-> -		s->cpu_slab = per_cpu_var(kmalloc_percpu) + (s - kmalloc_caches);
-> +		s->cpu_slab = kmalloc_percpu + (s - kmalloc_caches);
->  	else
->  		s->cpu_slab =  alloc_percpu(struct kmem_cache_cpu);
+> From 9007983e9bf994200194727bcb87d45bb924b4a8 Mon Sep 17 00:00:00 2001
+> From: Jan Kara <jack@suse.cz>
+> Date: Mon, 1 Mar 2010 14:24:36 +0100
+> Subject: [PATCH] vfs: Provide empty fsync_bdev if !CONFIG_BLOCK
+> 
+> Provide empty declaration of fsync_bdev when CONFIG_BLOCK is not defined so
+> that quota code can use it.
+> 
+> Signed-off-by: Jan Kara <jack@suse.cz>
+> ---
+>  include/linux/fs.h |    5 +++++
+>  1 files changed, 5 insertions(+), 0 deletions(-)
+> 
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index ebb1cd5..b9e4f1c 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -1961,6 +1961,11 @@ static inline int thaw_bdev(struct block_device *bdev, struct super_block *sb)
+>  {
+>  	return 0;
+>  }
+> +
+> +static inline int fsync_bdev(struct block_device *bdev)
+> +{
+> +	return 0;
+> +}
+>  #endif
+>  extern int sync_filesystem(struct super_block *);
+>  extern const struct file_operations def_blk_fops;
 
-Thanks for the reminder Stephen! I'll add this to slab.git as soon as 
-the per-cpu changes land into Linus' tree.
+Acked-by: Randy Dunlap <rdunlap@xenotime.net>
 
-			Pekka
+Thanks.
+-- 
+~Randy
