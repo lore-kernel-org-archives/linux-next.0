@@ -1,33 +1,53 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build warning after merge of the net tree
-Date: Sun, 28 Feb 2010 23:02:42 -0800 (PST)
-Message-ID: <20100228.230242.172227997.davem@davemloft.net>
-References: <20100301164721.f8ce9fac.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the drm tree
+Date: Mon, 1 Mar 2010 18:14:52 +1100
+Message-ID: <20100301181452.9efa3661.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__1_Mar_2010_18_14_52_+1100_+6eyE0/gS3dy4+hu"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:43466
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751037Ab0CAHCY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Mar 2010 02:02:24 -0500
-In-Reply-To: <20100301164721.f8ce9fac.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:39792 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750733Ab0CAHO7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Mar 2010 02:14:59 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, marcel@holtmann.org
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pauli Nieminen <suokkos@gmail.com>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 1 Mar 2010 16:47:21 +1100
+--Signature=_Mon__1_Mar_2010_18_14_52_+1100_+6eyE0/gS3dy4+hu
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> After merging the net tree, today's linux-next build (x86_64 allmodconfig)
-> produced this warning:
-> 
-> net/bluetooth/hci_sysfs.c: In function 'inquiry_cache_read':
-> net/bluetooth/hci_sysfs.c:441: warning: the frame size of 4208 bytes is larger than 2048 bytes
-> 
-> Introduced by commit ca325f698996c1a0770a67f41e7dc97a007d8bc2
-> ("Bluetooth: Convert inquiry cache to use debugfs instead of sysfs")
-> which introduces a function with a 4096 char array on the stack.
+Hi Dave,
 
-Thanks Stephen, I'll look into this.
+After merging the drm tree, today's linux-next build (x86_64 allmodconfig)
+produced this warning:
+
+drivers/gpu/drm/radeon/r300_cmdbuf.c: In function 'r300_do_cp_cmdbuf':
+drivers/gpu/drm/radeon/r300_cmdbuf.c:1154: warning: format '%d' expects typ=
+e 'int', but argument 4 has type 'long unsigned int'
+
+Introduced by commit b4fe945405e477cded91772b4fec854705443dd5
+("drm/radeon: Fix memory allocation failures in the preKMS command stream
+checking").
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__1_Mar_2010_18_14_52_+1100_+6eyE0/gS3dy4+hu
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkuLaWwACgkQjjKRsyhoI8x/WgCeItglYu7tTlRdvCa3vkrlPS0m
+A78AoKUhW2ipf+gQYL+phVCEDzNj6Gq5
+=Zmnm
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__1_Mar_2010_18_14_52_+1100_+6eyE0/gS3dy4+hu--
