@@ -1,67 +1,67 @@
 From: Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH] udf: use ext2_find_next_bit
-Date: Mon, 1 Mar 2010 11:54:51 +0100
-Message-ID: <20100301105450.GC3271@quack.suse.cz>
-References: <1266934273-9371-1-git-send-email-akinobu.mita@gmail.com>
- <20100224162152.GK3687@quack.suse.cz>
- <961aa3351002241738r7bbdc811p1fe80aabc336ae85@mail.gmail.com>
- <10f740e81002250050g287f7753g96063376ecee9487@mail.gmail.com>
- <961aa3351002250629p11fc4a49m60aadbf79fc10696@mail.gmail.com>
- <10f740e81002280204q2849317bj3e7d22c5c0c93333@mail.gmail.com>
- <10f740e81002280607p2ec5ec7eya6d6c2cc694b4733@mail.gmail.com>
+Subject: Re: linux-next: Tree for February 25 (quota)
+Date: Mon, 1 Mar 2010 14:27:52 +0100
+Message-ID: <20100301132752.GG3271@quack.suse.cz>
+References: <20100225183523.80361261.sfr@canb.auug.org.au>
+ <4B86B1A3.2090606@xenotime.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-m68k-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from cantor.suse.de ([195.135.220.2]:57695 "EHLO mx1.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751473Ab0CAN1n (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Mar 2010 08:27:43 -0500
 Content-Disposition: inline
-In-Reply-To: <10f740e81002280607p2ec5ec7eya6d6c2cc694b4733@mail.gmail.com>
-Sender: linux-m68k-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Akinobu Mita <akinobu.mita@gmail.com>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, Linux-Next <linux-next@vger.kernel.org>, linux-m68k <linux-m68k@lists.linux-m68k.org>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <4B86B1A3.2090606@xenotime.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jan Kara <jack@suse.cz>
 
-On Sun 28-02-10 15:07:17, Geert Uytterhoeven wrote:
-> On Sun, Feb 28, 2010 at 11:04, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > On Thu, Feb 25, 2010 at 15:29, Akinobu Mita <akinobu.mita@gmail.com> wrote:
-> >> 2010/2/25 Geert Uytterhoeven <geert@linux-m68k.org>:
-> >>> On Thu, Feb 25, 2010 at 02:38, Akinobu Mita <akinobu.mita@gmail.com> wrote:
-> >>>> 2010/2/25 Jan Kara <jack@suse.cz>:
-> >>>>> On Tue 23-02-10 23:11:13, Akinobu Mita wrote:
-> >>>>>> Use ext2_find_next_bit (generic_find_next_le_bit) to find the set bit
-> >>>>>> in little endian bitmap region.
-> >>>
-> >>> Is any of this in linux-next now?
-> >>>
-> >>> http://kisskb.ellerman.id.au/kisskb/buildresult/2208481/
-> >>> | fs/udf/balloc.c:274: error: implicit declaration of function
-> >>> 'generic_find_next_le_bit'
-> >>
-> >> Yep, Jan's patch caused the build breakage.
-> >>
-> >> Because generic_find_next_le_bit() is not available for all
-> >> archtectures. So we should use ext2_find_next_bit() here.
-> >
-> > Most architectures use the definitions in asm-generic, so they're OK.
-> > M68k doesn't. S390 is also affected, and I think arm as well (but there's no
-> > arm all-modconfig build in linux-next, so I'm not 100% sure).
-> >
-> > I'm cooking a patch...
+On Thu 25-02-10 09:21:39, Randy Dunlap wrote:
+> On 02/24/10 23:35, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Changes since 20100224:
 > 
-> From c9b5c7e6ef2092be822778a0b6b3d3032c058f5b Mon Sep 17 00:00:00 2001
-> From: Geert Uytterhoeven <geert@linux-m68k.org>
-> Date: Sun, 28 Feb 2010 13:06:27 +0100
-> Subject: [PATCH] m68k: Implement generic_find_next_{zero_,}le_bit()
 > 
-> linux-next:
-> fs/udf/balloc.c: In function 'udf_bitmap_new_block':
-> fs/udf/balloc.c:274: error: implicit declaration of function
-> 'generic_find_next_le_bit'
+> When CONFIG_BLOCK=n:
 > 
-> Convert ext2_find_next_{zero_,}bit() into generic_find_next_{zero_,}le_bit(),
-> and wrap the ext2_find_next_{zero_,}bit() around the latter.
-  I've now used Akinobu's patch so yours isn't really needed but it's a
-good cleanup anyway in my opinion.
+> fs/quota/dquot.c:2042: error: implicit declaration of function 'fsync_bdev'
+  Thanks for notification. I've fixed this by the following patch:
 
-									Honza
+>From 9007983e9bf994200194727bcb87d45bb924b4a8 Mon Sep 17 00:00:00 2001
+From: Jan Kara <jack@suse.cz>
+Date: Mon, 1 Mar 2010 14:24:36 +0100
+Subject: [PATCH] vfs: Provide empty fsync_bdev if !CONFIG_BLOCK
+
+Provide empty declaration of fsync_bdev when CONFIG_BLOCK is not defined so
+that quota code can use it.
+
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ include/linux/fs.h |    5 +++++
+ 1 files changed, 5 insertions(+), 0 deletions(-)
+
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index ebb1cd5..b9e4f1c 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1961,6 +1961,11 @@ static inline int thaw_bdev(struct block_device *bdev, struct super_block *sb)
+ {
+ 	return 0;
+ }
++
++static inline int fsync_bdev(struct block_device *bdev)
++{
++	return 0;
++}
+ #endif
+ extern int sync_filesystem(struct super_block *);
+ extern const struct file_operations def_blk_fops;
+-- 
+1.6.4.2
+
 -- 
 Jan Kara <jack@suse.cz>
 SUSE Labs, CR
