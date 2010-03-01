@@ -1,50 +1,34 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree with Linus' tree
-Date: Mon, 1 Mar 2010 14:20:02 +1100
-Message-ID: <20100301142002.ee497fd8.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: manual merge of the net tree with Linus' tree
+Date: Sun, 28 Feb 2010 19:21:21 -0800 (PST)
+Message-ID: <20100228.192121.244104789.davem@davemloft.net>
+References: <20100301142002.ee497fd8.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__1_Mar_2010_14_20_02_+1100_t3pxvQsq53O9YEJC"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:50983 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751990Ab0CADUJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 28 Feb 2010 22:20:09 -0500
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:50679
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753966Ab0CADVE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Sun, 28 Feb 2010 22:21:04 -0500
+In-Reply-To: <20100301142002.ee497fd8.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, hartleys <hartleys@visionengravers.com>
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, joe@perches.com, hartleys@visionengravers.com
 
---Signature=_Mon__1_Mar_2010_14_20_02_+1100_t3pxvQsq53O9YEJC
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 1 Mar 2010 14:20:02 +1100
 
-Hi all,
+> Today's linux-next merge of the net tree got a conflict in
+> drivers/firmware/iscsi_ibft.c between commit
+> 00e7825b943f486e80ff1305cd0594d8791870f8 ("drivers/firmware/iscsi_ibft.c:
+> remove NIPQUAD_FMT, use %pI4") from Linus' tree and commit
+> 2c35294853b2e977bdfc9e401b7b6d881fcaa69b ("drivers/firmware/iscsi_ibft.c:
+> use %pM to show MAC address") from the net tree.
+> 
+> Just a trivial context change.  I fixed it up and can carry the change as
+> necessary.
 
-Today's linux-next merge of the net tree got a conflict in
-drivers/firmware/iscsi_ibft.c between commit
-00e7825b943f486e80ff1305cd0594d8791870f8 ("drivers/firmware/iscsi_ibft.c:
-remove NIPQUAD_FMT, use %pI4") from Linus' tree and commit
-2c35294853b2e977bdfc9e401b7b6d881fcaa69b ("drivers/firmware/iscsi_ibft.c:
-use %pM to show MAC address") from the net tree.
-
-Just a trivial context change.  I fixed it up and can carry the change as
-necessary.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
---Signature=_Mon__1_Mar_2010_14_20_02_+1100_t3pxvQsq53O9YEJC
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkuLMmIACgkQjjKRsyhoI8xYNgCfWmPjw+Vr3aqcIKujWuxmhz+2
-ZVsAoLDvoKmvCvsz8bgKwEmhvjpqzl/3
-=dIjt
------END PGP SIGNATURE-----
-
---Signature=_Mon__1_Mar_2010_14_20_02_+1100_t3pxvQsq53O9YEJC--
+Thanks Stephen, I'll fix this up.
