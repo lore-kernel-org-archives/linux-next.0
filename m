@@ -1,52 +1,56 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: current pending merge fix patches
-Date: Mon, 1 Mar 2010 09:10:21 +0100
-Message-ID: <20100301081021.GB8049@elte.hu>
-References: <20100301160445.5e281f11.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the final tree
+Date: Mon, 1 Mar 2010 19:14:57 +1100
+Message-ID: <20100301191457.315de136.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__1_Mar_2010_19_14_57_+1100_y71Vo4o7sicn9bdM"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:37739 "EHLO mx2.mail.elte.hu"
+Received: from chilli.pcug.org.au ([203.10.76.44]:49823 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750696Ab0CAILM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 1 Mar 2010 03:11:12 -0500
-Content-Disposition: inline
-In-Reply-To: <20100301160445.5e281f11.sfr@canb.auug.org.au>
+	id S1750770Ab0CAIPC (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Mar 2010 03:15:02 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Len Brown <lenb@kernel.org>, Dave Jones <davej@redhat.com>, Jean Delvare <khali@linux-fr.org>, Greg KH <greg@kroah.com>, "J. Bruce Fields" <bfields@fieldses.org>, Trond Myklebust <trond.myklebust@fys.uio.no>, Sage Weil <sage@newdream.net>, Pekka Enberg <penberg@cs.helsinki.fi>, Christoph Lameter <cl@linux-foundation.org>, Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Al Viro <viro@ZenIV.linux.org.uk>, "\"J??rn Engel\"" <joern@logfs.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>
 
+--Signature=_Mon__1_Mar_2010_19_14_57_+1100_y71Vo4o7sicn9bdM
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi Greg,
 
-> This could also be taken as a reminder to the respective maintiners that 
-> they may want to do a merge of your tree before asking you to pull theirs.
+After merging the final tree, today's linux-next build (powerpc allnoconfig)
+produced these warnings:
 
-I dont think that's generally correct for trivial conflicts: it's better if 
-Linus does the merge of a tree that is based in some stable tree.
+drivers/char/tty_buffer.c: In function 'tty_insert_flip_string_fixed_flag':
+drivers/char/tty_buffer.c:251: warning: comparison of distinct pointer type=
+s lacks a cast
+drivers/char/tty_buffer.c: In function 'tty_insert_flip_string_flags':
+drivers/char/tty_buffer.c:288: warning: comparison of distinct pointer type=
+s lacks a cast
 
-It causes slightly messier criss-cross history: there will be the back-merge 
-commit plus the inevitable merge commit from Linus. It also makes bisection a 
-bit messier:
+Introduced by commit 96a421002f897237bcc44efd909dd58aa759319c ("tty: Keep
+the default buffering to sub-page units") from the tty tree.  Its just
+the min macro parameters.
 
-For example when bisecting i generally consider the 'boundary' of where Linus 
-pulls as a 'known point of stability': i.e. the 'subsystem side' is expected 
-to be well-tested and if there's a problem on that side, it's that subsystem's 
-domain.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-"Linus's side", during the merge window, is a rolling tree of many freshly 
-merged trees, which inevitably piles up a few problems.
+--Signature=_Mon__1_Mar_2010_19_14_57_+1100_y71Vo4o7sicn9bdM
+Content-Type: application/pgp-signature
 
-So it's IMO somewhat better to keep that boundary and not push out Linus's 
-side into subsystem trees: which then may merge a few new patches after having 
-merged Linus's tree, intermixing it all into a non-bisectable combination.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-Plus there's also an indirect effect: it keeps people from merging back 
-Linus's tree all the time.
+iEYEARECAAYFAkuLd4EACgkQjjKRsyhoI8xZvQCaA7TSLSO0p496xXUR3PX8A53C
+Sl8An14+GvT22xEB6qKd/QMcwUsvawJ+
+=ViqA
+-----END PGP SIGNATURE-----
 
-So i'd argue to not backmerge during the merge window (and i have stopped 
-doing that myself a few cycles ago, and it clearly helped things) - but in any 
-case it's certainly no big deal and up to Linus i guess.
-
-	Ingo
+--Signature=_Mon__1_Mar_2010_19_14_57_+1100_y71Vo4o7sicn9bdM--
