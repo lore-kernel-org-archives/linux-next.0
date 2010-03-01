@@ -1,46 +1,39 @@
-From: David Woodhouse <dwmw2@infradead.org>
-Subject: Re: linux-next: build failure after merge of the final tree (mtd
- related)
-Date: Mon, 01 Mar 2010 15:59:06 +0100
-Message-ID: <1267455546.11061.0.camel@macbook.infradead.org>
-References: <20100301204844.68915148.sfr@canb.auug.org.au>
+From: Pekka Enberg <penberg@cs.helsinki.fi>
+Subject: Re: linux-next: current pending merge fix patches
+Date: Mon, 01 Mar 2010 17:17:02 +0200
+Message-ID: <4B8BDA6E.6000902@cs.helsinki.fi>
+References: <20100301160445.5e281f11.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:36379 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751056Ab0CAO7N (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Mar 2010 09:59:13 -0500
-In-Reply-To: <20100301204844.68915148.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20100301160445.5e281f11.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Maxim Levitsky <maximlevitsky@gmail.com>
+Cc: Linus <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Len Brown <lenb@kernel.org>, Dave Jones <davej@redhat.com>, Jean Delvare <khali@linux-fr.org>, Greg KH <greg@kroah.com>, "J. Bruce Fields" <bfields@fieldses.org>, Trond Myklebust <trond.myklebust@fys.uio.no>, Sage Weil <sage@newdream.net>, Christoph Lameter <cl@linux-foundation.org>, Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Ingo Molnar <mingo@elte.hu>, Al Viro <viro@ZenIV.linux.org.uk>, joern@logfs.org
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 2010-03-01 at 20:48 +1100, Stephen Rothwell wrote:
-> Hi David,
+Stephen Rothwell wrote:
+> 4) The slab[7] tree adds a percpu variable usage case (commit
+> 9dfc6e68bfe6ee452efb1a4e9ca26a9007f2b864 "SLUB: Use this_cpu operations in
+> slub"), but the percpu[8] tree removes the prefixing of percpu variables
+> (commit dd17c8f72993f9461e9c19250e3f155d6d99df22 "percpu: remove per_cpu__
+> prefix"), thus the fooling patch after mergeing these trees:
 > 
-> After merging the final tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
-> 
-> drivers/mtd/nand/r852.o: In function `.sm_sector_valid':
-> (.text+0x5c70): multiple definition of `.sm_sector_valid'
-> drivers/mtd/nand/sm_common.o:(.text+0x3c8): first defined here
-> drivers/mtd/nand/r852.o: In function `.sm_block_erased':
-> (.text+0x50dc): multiple definition of `.sm_block_erased'
-> drivers/mtd/nand/sm_common.o:(.text+0x2bc): first defined here
-> drivers/mtd/nand/r852.o: In function `.sm_block_valid':
-> (.text+0x5be8): multiple definition of `.sm_block_valid'
-> drivers/mtd/nand/sm_common.o:(.text+0x340): first defined here
-> 
-> Caused by commit 9fc51a37a8da84618df7584cad67c078317f6720 ("mtd: common
-> module for smartmedia/xD support") from the mtd tree.
-> 
-> I applied the following patch for today.
+> diff --git a/mm/slub.c b/mm/slub.c
+> index 6e34309..9e86e6b 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -2071,7 +2071,7 @@ static inline int alloc_kmem_cache_cpus(struct kmem_cache *s, gfp_t flags)
+>  		 * Boot time creation of the kmalloc array. Use static per cpu data
+>  		 * since the per cpu allocator is not available yet.
+>  		 */
+> -		s->cpu_slab = per_cpu_var(kmalloc_percpu) + (s - kmalloc_caches);
+> +		s->cpu_slab = kmalloc_percpu + (s - kmalloc_caches);
+>  	else
+>  		s->cpu_slab =  alloc_percpu(struct kmem_cache_cpu);
 
-Thanks. Are you happy carrying those until I get back to civilisation on
-Monday?
+Thanks for the reminder Stephen! I'll add this to slab.git as soon as 
+the per-cpu changes land into Linus' tree.
 
--- 
-dwmw2
+			Pekka
