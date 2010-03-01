@@ -1,56 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the final tree
-Date: Mon, 1 Mar 2010 19:14:57 +1100
-Message-ID: <20100301191457.315de136.sfr@canb.auug.org.au>
+Subject: Re: linux-next: current pending merge fix patches
+Date: Mon, 1 Mar 2010 19:55:32 +1100
+Message-ID: <20100301195532.d9e5ae64.sfr@canb.auug.org.au>
+References: <20100301160445.5e281f11.sfr@canb.auug.org.au>
+	<20100301081021.GB8049@elte.hu>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__1_Mar_2010_19_14_57_+1100_y71Vo4o7sicn9bdM"
+ boundary="Signature=_Mon__1_Mar_2010_19_55_32_+1100_p7_lJAmauz8xutPN"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49823 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:40900 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750770Ab0CAIPC (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 1 Mar 2010 03:15:02 -0500
+	id S1750716Ab0CAIzk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Mar 2010 03:55:40 -0500
+In-Reply-To: <20100301081021.GB8049@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Linus <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Len Brown <lenb@kernel.org>, Dave Jones <davej@redhat.com>, Jean Delvare <khali@linux-fr.org>, Greg KH <greg@kroah.com>, "J. Bruce Fields" <bfields@fieldses.org>, Trond Myklebust <trond.myklebust@fys.uio.no>, Sage Weil <sage@newdream.net>, Pekka Enberg <penberg@cs.helsinki.fi>, Christoph Lameter <cl@linux-foundation.org>, Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Al Viro <viro@ZenIV.linux.org.uk>, "\"J??rn Engel\"" <joern@logfs.org>
 
---Signature=_Mon__1_Mar_2010_19_14_57_+1100_y71Vo4o7sicn9bdM
+--Signature=_Mon__1_Mar_2010_19_55_32_+1100_p7_lJAmauz8xutPN
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Ingo,
 
-After merging the final tree, today's linux-next build (powerpc allnoconfig)
-produced these warnings:
+On Mon, 1 Mar 2010 09:10:21 +0100 Ingo Molnar <mingo@elte.hu> wrote:
+>
+> > This could also be taken as a reminder to the respective maintiners tha=
+t=20
+> > they may want to do a merge of your tree before asking you to pull thei=
+rs.
+>=20
+> I dont think that's generally correct for trivial conflicts: it's better =
+if=20
+> Linus does the merge of a tree that is based in some stable tree.
 
-drivers/char/tty_buffer.c: In function 'tty_insert_flip_string_fixed_flag':
-drivers/char/tty_buffer.c:251: warning: comparison of distinct pointer type=
-s lacks a cast
-drivers/char/tty_buffer.c: In function 'tty_insert_flip_string_flags':
-drivers/char/tty_buffer.c:288: warning: comparison of distinct pointer type=
-s lacks a cast
+In general I agree.  I have singled out these conflict resolutions
+because they involve either files not obvious from the conflicts (newly
+introduced or chunks of code moved between files), or chunks of code that
+are introduced in one tree but need to be modified after the otheris
+merged.  So in that sense they are a heads up to Linus because they are
+only found after you do the merge and then get a build failure (if you do
+the right builds).
 
-Introduced by commit 96a421002f897237bcc44efd909dd58aa759319c ("tty: Keep
-the default buffering to sub-page units") from the tty tree.  Its just
-the min macro parameters.
-
+So they can be resolved by Linus after he merges the second tree or by
+the original maintainer of one of the trees merging/cherrypicking (part
+of) the other tree or waiting for Linus to merge the other tree and then
+do a merge with Linus' tree.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__1_Mar_2010_19_14_57_+1100_y71Vo4o7sicn9bdM
+--Signature=_Mon__1_Mar_2010_19_55_32_+1100_p7_lJAmauz8xutPN
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkuLd4EACgkQjjKRsyhoI8xZvQCaA7TSLSO0p496xXUR3PX8A53C
-Sl8An14+GvT22xEB6qKd/QMcwUsvawJ+
-=ViqA
+iEYEARECAAYFAkuLgQQACgkQjjKRsyhoI8z+xACfVinbPfM+8eG3pr2biLHv4TVU
+RNEAn1HZLKS7bCitBa6tALXJIGhtRtKU
+=zkW7
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__1_Mar_2010_19_14_57_+1100_y71Vo4o7sicn9bdM--
+--Signature=_Mon__1_Mar_2010_19_55_32_+1100_p7_lJAmauz8xutPN--
