@@ -1,86 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree
-Date: Mon, 1 Mar 2010 20:38:36 +1100
-Message-ID: <20100301203836.5148090b.sfr@canb.auug.org.au>
+From: Russell King <rmk+lkml@arm.linux.org.uk>
+Subject: Re: linux-next: manual merge of the samsung tree with the arm tree
+Date: Mon, 1 Mar 2010 09:39:22 +0000
+Message-ID: <20100301093922.GA16639@flint.arm.linux.org.uk>
+References: <20100225104819.6d117587.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41948 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751293Ab0CAJii (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 1 Mar 2010 04:38:38 -0500
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:46979 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750831Ab0CAJjv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Mar 2010 04:39:51 -0500
+Content-Disposition: inline
+In-Reply-To: <20100225104819.6d117587.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Ben Dooks <ben-linux@fluff.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Kukjin Kim <kgene.kim@samsung.com>, Adityapratap Sharma <aditya.ps@samsung.com>, Atul Dahiya <atul.dahiya@samsung.com>
 
-Hi Greg,
+On Thu, Feb 25, 2010 at 10:48:19AM +1100, Stephen Rothwell wrote:
+> Hi Ben,
+> 
+> Today's linux-next merge of the samsung tree got a conflict in
+> arch/arm/mach-s5p6442/include/mach/debug-macro.S between commit
+> 4e6d488af37980d224cbf298224db6173673f362 ("ARM: 5910/1: ARM: Add tmp
+> register for addruart and loadsp") from the arm tree and commit
+> 5f7f6a4a0df9b43051d57fdb8ea96c083247a08f ("ARM: S5P6442: Add Samsung
+> S5P6442 CPU support") from the samsung tree.
 
-After merging the final tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+You're getting this because I've dropped the branch containing all the
+trees I'd merged over the last 3 months from the branch(es) you pull.
 
-drivers/pci/pci-sysfs.c: In function 'pci_create_legacy_files':
-drivers/pci/pci-sysfs.c:645: error: lvalue required as unary '&' operand
-drivers/pci/pci-sysfs.c:658: error: lvalue required as unary '&' operand
-
-Caused by commit 8e36e9ee3c5a9228b68717b35101c58fe9a001c5 ("sysfs: Use
-sysfs_attr_init and sysfs_bin_attr_init on dynamic attributes")
-interacting with commit 71f496c9ec9821d2e09b00298915b99b6cbc9d92 ("sysfs:
-Use one lockdep class per sysfs attribute") both from the driver-core
-tree.
-
-I applied the following patch for today.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 1 Mar 2010 19:41:15 +1100
-Subject: [PATCH] sysfs: fix for thinko with sysfs_bin_attr_init()
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/pci/pci-sysfs.c |    4 ++--
- include/linux/sysfs.h   |    2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-index 9fa183c..de29645 100644
---- a/drivers/pci/pci-sysfs.c
-+++ b/drivers/pci/pci-sysfs.c
-@@ -642,7 +642,7 @@ void pci_create_legacy_files(struct pci_bus *b)
- 	if (!b->legacy_io)
- 		goto kzalloc_err;
- 
--	sysfs_bin_attr_init(&b->legacy_io);
-+	sysfs_bin_attr_init(b->legacy_io);
- 	b->legacy_io->attr.name = "legacy_io";
- 	b->legacy_io->size = 0xffff;
- 	b->legacy_io->attr.mode = S_IRUSR | S_IWUSR;
-@@ -655,7 +655,7 @@ void pci_create_legacy_files(struct pci_bus *b)
- 		goto legacy_io_err;
- 
- 	/* Allocated above after the legacy_io struct */
--	sysfs_bin_attr_init(&b->legacy_mem);
-+	sysfs_bin_attr_init(b->legacy_mem);
- 	b->legacy_mem = b->legacy_io + 1;
- 	b->legacy_mem->attr.name = "legacy_mem";
- 	b->legacy_mem->size = 1024*1024;
-diff --git a/include/linux/sysfs.h b/include/linux/sysfs.h
-index d77cde6..f0496b3 100644
---- a/include/linux/sysfs.h
-+++ b/include/linux/sysfs.h
-@@ -110,7 +110,7 @@ struct bin_attribute {
-  *	enabled.  Lockdep gives a nice error when your attribute is
-  *	added to sysfs if you don't have this.
-  */
--#define sysfs_bin_attr_init(bin_attr) sysfs_attr_init(&bin_attr->attr)
-+#define sysfs_bin_attr_init(bin_attr) sysfs_attr_init(&(bin_attr)->attr)
- 
- struct sysfs_ops {
- 	ssize_t	(*show)(struct kobject *, struct attribute *,char *);
--- 
-1.7.0
+The PXA folk decided to rebase their tree and send Linus some of their
+original commits independently of their previous pull - and their tree
+was the first to be merged.
 
 -- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Russell King
+ Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
+ maintainer of:
