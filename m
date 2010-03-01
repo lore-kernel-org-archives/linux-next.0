@@ -1,56 +1,86 @@
-From: Pauli Nieminen <suokkos@gmail.com>
-Subject: [PATCH] drm/radeon: Fix printf type warning in 64bit system.
-Date: Mon,  1 Mar 2010 11:37:11 +0200
-Message-ID: <1267436231-5524-1-git-send-email-suokkos@gmail.com>
-References: <20100301181452.9efa3661.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree
+Date: Mon, 1 Mar 2010 20:38:36 +1100
+Message-ID: <20100301203836.5148090b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.sourceforge.net>
-In-Reply-To: <20100301181452.9efa3661.sfr@canb.auug.org.au>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=dri-devel>
-List-Post: <mailto:dri-devel@lists.sourceforge.net>
-List-Help: <mailto:dri-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.sourceforge.net
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dave Airlie <airlied@linux.ie>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.sourceforge.net
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:41948 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751293Ab0CAJii (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Mar 2010 04:38:38 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>
 
-Type of iterator was promoted to unsigned long in 64bit systems.
+Hi Greg,
 
-*header is small structure so it is alwas safe to cast return value
-of sizeof operator to int.
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-Signed-off-by: Pauli Nieminen <suokkos@gmail.com>
+drivers/pci/pci-sysfs.c: In function 'pci_create_legacy_files':
+drivers/pci/pci-sysfs.c:645: error: lvalue required as unary '&' operand
+drivers/pci/pci-sysfs.c:658: error: lvalue required as unary '&' operand
+
+Caused by commit 8e36e9ee3c5a9228b68717b35101c58fe9a001c5 ("sysfs: Use
+sysfs_attr_init and sysfs_bin_attr_init on dynamic attributes")
+interacting with commit 71f496c9ec9821d2e09b00298915b99b6cbc9d92 ("sysfs:
+Use one lockdep class per sysfs attribute") both from the driver-core
+tree.
+
+I applied the following patch for today.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 1 Mar 2010 19:41:15 +1100
+Subject: [PATCH] sysfs: fix for thinko with sysfs_bin_attr_init()
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- drivers/gpu/drm/radeon/r300_cmdbuf.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/pci/pci-sysfs.c |    4 ++--
+ include/linux/sysfs.h   |    2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/radeon/r300_cmdbuf.c b/drivers/gpu/drm/radeon/r300_cmdbuf.c
-index 18d3ff8..27930fc 100644
---- a/drivers/gpu/drm/radeon/r300_cmdbuf.c
-+++ b/drivers/gpu/drm/radeon/r300_cmdbuf.c
-@@ -1148,7 +1148,7 @@ int r300_do_cp_cmdbuf(struct drm_device *dev,
- 		default:
- 			DRM_ERROR("bad cmd_type %i at byte %d\n",
- 				  header->header.cmd_type,
--				  cmdbuf->buffer->iterator - sizeof(*header));
-+				  cmdbuf->buffer->iterator - (int)sizeof(*header));
- 			ret = -EINVAL;
- 			goto cleanup;
- 		}
+diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+index 9fa183c..de29645 100644
+--- a/drivers/pci/pci-sysfs.c
++++ b/drivers/pci/pci-sysfs.c
+@@ -642,7 +642,7 @@ void pci_create_legacy_files(struct pci_bus *b)
+ 	if (!b->legacy_io)
+ 		goto kzalloc_err;
+ 
+-	sysfs_bin_attr_init(&b->legacy_io);
++	sysfs_bin_attr_init(b->legacy_io);
+ 	b->legacy_io->attr.name = "legacy_io";
+ 	b->legacy_io->size = 0xffff;
+ 	b->legacy_io->attr.mode = S_IRUSR | S_IWUSR;
+@@ -655,7 +655,7 @@ void pci_create_legacy_files(struct pci_bus *b)
+ 		goto legacy_io_err;
+ 
+ 	/* Allocated above after the legacy_io struct */
+-	sysfs_bin_attr_init(&b->legacy_mem);
++	sysfs_bin_attr_init(b->legacy_mem);
+ 	b->legacy_mem = b->legacy_io + 1;
+ 	b->legacy_mem->attr.name = "legacy_mem";
+ 	b->legacy_mem->size = 1024*1024;
+diff --git a/include/linux/sysfs.h b/include/linux/sysfs.h
+index d77cde6..f0496b3 100644
+--- a/include/linux/sysfs.h
++++ b/include/linux/sysfs.h
+@@ -110,7 +110,7 @@ struct bin_attribute {
+  *	enabled.  Lockdep gives a nice error when your attribute is
+  *	added to sysfs if you don't have this.
+  */
+-#define sysfs_bin_attr_init(bin_attr) sysfs_attr_init(&bin_attr->attr)
++#define sysfs_bin_attr_init(bin_attr) sysfs_attr_init(&(bin_attr)->attr)
+ 
+ struct sysfs_ops {
+ 	ssize_t	(*show)(struct kobject *, struct attribute *,char *);
 -- 
-1.6.3.3
+1.7.0
 
-
-------------------------------------------------------------------------------
-Download Intel&#174; Parallel Studio Eval
-Try the new software tools for yourself. Speed compiling, find bugs
-proactively, and fine-tune applications for parallel performance.
-See why Intel Parallel Studio got high marks during beta.
-http://p.sf.net/sfu/intel-sw-dev
---
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
