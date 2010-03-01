@@ -1,38 +1,60 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the oprofile tree with Linus' tree
-Date: Mon, 1 Mar 2010 08:37:36 +0100
-Message-ID: <20100301073736.GA1453@elte.hu>
-References: <20100301182001.f67b21ac.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the block tree
+Date: Mon, 1 Mar 2010 18:54:41 +1100
+Message-ID: <20100301185441.06014ba8.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:36772 "EHLO mx3.mail.elte.hu"
+Received: from chilli.pcug.org.au ([203.10.76.44]:41823 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751451Ab0CAHho (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 1 Mar 2010 02:37:44 -0500
-Content-Disposition: inline
-In-Reply-To: <20100301182001.f67b21ac.sfr@canb.auug.org.au>
+	id S1750965Ab0CAHyn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Mar 2010 02:54:43 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Robert Richter <robert.richter@amd.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Zijlstra <a.p.zijlstra@chello.nl>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Martin K. Petersen" <martin.petersen@oracle.com>, Jens Axboe <jens.axboe@oracle.com>, Alan Stern <stern@rowland.harvard.edu>
 
+Hi Greg,
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Today's linux-next merge of the usb tree got a conflict in
+drivers/usb/storage/scsiglue.c between commit
+086fa5ff0854c676ec333760f4c0154b3b242616 ("block: Rename
+blk_queue_max_sectors to blk_queue_max_hw_sectors") from the block tree
+and commit 628726dbb5ebbec77336019ac4e1f60cf3ba08c1 ("usb-storage: use
+max_hw_sectors instead of max_sectors") from the usb tree.
 
-> Hi Robert,
-> 
-> Today's linux-next merge of the oprofile tree got a conflict in
-> arch/x86/kernel/cpu/perf_event.c between commit
-> 8c48e444191de0ff84e85d41180d7bc3e74f14ef ("perf_events, x86: Implement
-> intel core solo/duo support") from Linus' tree and commit
-> 27d4a358bf5ef730aacf50696b9b5dfc5e2a87a5 ("perf, x86: rename macro in
-> ARCH_PERFMON_EVENTSEL_ENABLE") from the oprofile tree.
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Robert: the oprofile tree shouldnt be changing perf_event code in any case, 
-please dont push out such patches to linux-next but feed them through the 
-usual channels.
-
-Thanks,
-
-	Ingo
+diff --cc drivers/usb/storage/scsiglue.c
+index aadc16b,354c38e..0000000
+--- a/drivers/usb/storage/scsiglue.c
++++ b/drivers/usb/storage/scsiglue.c
+@@@ -133,8 -133,8 +133,8 @@@ static int slave_configure(struct scsi_
+  
+  		if (us->fflags & US_FL_MAX_SECTORS_MIN)
+  			max_sectors = PAGE_CACHE_SIZE >> 9;
+- 		if (queue_max_sectors(sdev->request_queue) > max_sectors)
++ 		if (queue_max_hw_sectors(sdev->request_queue) > max_sectors)
+ -			blk_queue_max_sectors(sdev->request_queue,
+ +			blk_queue_max_hw_sectors(sdev->request_queue,
+  					      max_sectors);
+  	} else if (sdev->type == TYPE_TAPE) {
+  		/* Tapes need much higher max_sector limits, so just
+@@@ -494,9 -494,9 +494,9 @@@ static ssize_t store_max_sectors(struc
+  	struct scsi_device *sdev = to_scsi_device(dev);
+  	unsigned short ms;
+  
+- 	if (sscanf(buf, "%hu", &ms) > 0 && ms <= SCSI_DEFAULT_MAX_SECTORS) {
++ 	if (sscanf(buf, "%hu", &ms) > 0) {
+ -		blk_queue_max_sectors(sdev->request_queue, ms);
+ +		blk_queue_max_hw_sectors(sdev->request_queue, ms);
+- 		return strlen(buf);
++ 		return count;
+  	}
+  	return -EINVAL;	
+  }
