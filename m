@@ -1,178 +1,41 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: linux-next: manual merge of the omap tree with the  tree
-Date: Mon, 1 Mar 2010 22:25:19 -0800
-Message-ID: <20100302062519.GJ3389@atomide.com>
-References: <20100301112041.0c92179b.sfr@canb.auug.org.au>
+From: Marcel Holtmann <marcel-kz+m5ild9QBg9hUCZPvPmw@public.gmane.org>
+Subject: Re: linux-next: Tree for March 1 (bluetooth/hci_sysfs)
+Date: Mon, 01 Mar 2010 23:06:18 -0800
+Message-ID: <1267513578.2710.1.camel@localhost.localdomain>
+References: <20100301210210.c6f465e6.sfr@canb.auug.org.au>
+	 <4B8C2CC5.8000603@oracle.com>
+	 <20100302121526.36a1ea88.sfr@canb.auug.org.au>
+	 <20100301.181415.266447389.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="ftEhullJWpWg/VHq"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mho-01-ewr.mailhop.org ([204.13.248.71]:59042 "EHLO
-	mho-01-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751690Ab0CBGYU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Mar 2010 01:24:20 -0500
-Content-Disposition: inline
-In-Reply-To: <20100301112041.0c92179b.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-omap@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <rmk@arm.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-bluetooth-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20100301.181415.266447389.davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>
+Sender: linux-bluetooth-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: David Miller <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>
+Cc: sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org, randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-bluetooth-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
+Hi Dave,
 
---ftEhullJWpWg/VHq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-* Stephen Rothwell <sfr@canb.auug.org.au> [100228 16:17]:
-> Hi all,
+> >> static ssize_t inquiry_cache_read(struct file *file, char __user *userbuf,
+> >> 						size_t count, loff_t *ppos)
+> >> {
+> >> 	struct hci_dev *hdev = file->private_data;
+> >> 	struct inquiry_cache *cache = &hdev->inq_cache;
+> >> 	struct inquiry_entry *e;
+> >> 	char buf[4096]; // <<<<<<<<<<<<<<<<<<<<<<<<<<< huh? don't do that on stack.
+> >> 	int n = 0;
+> > 
+> > Dave Miller is following up on that.
 > 
-> Today's linux-next merge of the omap tree got a conflict in
-> arch/arm/plat-omap/Kconfig between commit
-> d6d502fa4be1acd01971476fc732c95a4da16d90 ("ARM: 5952/1: ARM: MM: Add
-> ARM_L1_CACHE_SHIFT_6 for handle inside each ARCH Kconfig") from the arm
-> tree and commits 56213ca4e440c0b6e56a48f5901c55c4ce3cf1ba ("omap2/3:
-> Multiboot compile fixes to compile in omap2 and omap3") and
-> a8eb7ca0cbb41c9cd379b8d2a2a5efb503aa65e9 ("omap3: Replace ARCH_OMAP34XX
-> with ARCH_OMAP3") from the omap tree.
+> This looks like a job for.... SEQ FILE! :-)
 > 
-> I fixed it up (see below) and can carry the fix as necessary.
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc arch/arm/plat-omap/Kconfig
-> index 2e3eec6,be9484a..0000000
-> --- a/arch/arm/plat-omap/Kconfig
-> +++ b/arch/arm/plat-omap/Kconfig
-> @@@ -19,10 -28,9 +28,10 @@@ config ARCH_OMAP
->   
->   config ARCH_OMAP3
->   	bool "TI OMAP3"
-> + 	depends on ARCH_OMAP2PLUS
->   	select CPU_V7
-> - 	select COMMON_CLKDEV
->  +	select ARM_L1_CACHE_SHIFT_6
-> + 	select USB_ARCH_HAS_EHCI
->   
->   config ARCH_OMAP4
->   	bool "TI OMAP4"
+> I'm testing the following fix.
 
-Thanks, I've merged omap for-next with the mainline to resolve this.
+the patch looks good, but it doesn't do the job. I have to look into why
+that is. Will try to come up with a proper patch soon.
 
-FYI, also need the following not-yet-ready patch to compile omaps.
+Regards
 
-The weird thing is that unless I set ehci_pdata from __initconst
-to __initdata in board-omap3touchbook.c, I get the following early_param
-error:
- 
-error: __setup_str_early_touchbook_revision causes a section type conflict
-
-The error does not seem to be related to ehci_pdata, and only happens
-for board-omap3touchbook.c.
-
-Anybody got ideas?
-
-Regards,
-
-Tony 
-
---ftEhullJWpWg/VHq
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: inline; filename="build-fixes.patch"
-
->From f8b8a130c8cfef6cc885a61dcee339ba71b497a4 Mon Sep 17 00:00:00 2001
-From: Tony Lindgren <tony@atomide.com>
-Date: Mon, 1 Mar 2010 21:54:09 -0800
-Subject: [PATCH] omap: Fix compile for early_param and omap_smc1
-
-Commit 2b0d8c251b8876d530a6bf671eb5425838fa698a changed ARM to use
-the common early_param code. Fix compile for omaps accordingly.
-
-Commit d309427e792ea750cdd312e7a92cf6047ae44962 added support for
-CACHE_L2X0, this however breaks multi-omap builds for V6 because of
-dsb and smc. The proper fix is to separate omap_smc1 into a separate
-.S file and compile it with -Wa,-march=armv7-a flags.
-
-Also for some reason touchbook produces a compile error
-
-error: __setup_str_early_touchbook_revision causes a section type conflict
-
-Unless ehci_pdata is set to __initdata instead of __initconst.
-No idea yet why this happens only on touchbook.
-
-Not-Yet-Signed-off-by: Tony Lindgren <tony@atomide.com>
-
-diff --git a/arch/arm/mach-omap2/board-4430sdp.c b/arch/arm/mach-omap2/board-4430sdp.c
-index 180ac11..a462d50 100644
---- a/arch/arm/mach-omap2/board-4430sdp.c
-+++ b/arch/arm/mach-omap2/board-4430sdp.c
-@@ -49,7 +49,7 @@ static struct omap_board_config_kernel sdp4430_config[] __initdata = {
- 	{ OMAP_TAG_LCD,		&sdp4430_lcd_config },
- };
- 
--#ifdef CONFIG_CACHE_L2X0
-+#if defined(CONFIG_SMP) && defined(CONFIG_CACHE_L2X0)
- noinline void omap_smc1(u32 fn, u32 arg)
- {
- 	register u32 r12 asm("r12") = fn;
-diff --git a/arch/arm/mach-omap2/board-omap3touchbook.c b/arch/arm/mach-omap2/board-omap3touchbook.c
-index 3943d0f..07b7a32 100644
---- a/arch/arm/mach-omap2/board-omap3touchbook.c
-+++ b/arch/arm/mach-omap2/board-omap3touchbook.c
-@@ -493,7 +493,7 @@ static void __init omap3touchbook_flash_init(void)
- 	}
- }
- 
--static struct ehci_hcd_omap_platform_data ehci_pdata __initconst = {
-+static struct ehci_hcd_omap_platform_data ehci_pdata __initdata = {
- 
- 	.port_mode[0] = EHCI_HCD_OMAP_MODE_PHY,
- 	.port_mode[1] = EHCI_HCD_OMAP_MODE_PHY,
-@@ -518,14 +518,14 @@ static void omap3_touchbook_poweroff(void)
- 	gpio_direction_output(TB_KILL_POWER_GPIO, 0);
- }
- 
--static void __init early_touchbook_revision(char **p)
-+static int __init early_touchbook_revision(char *p)
- {
--	if (!*p)
--		return;
-+	if (!p)
-+		return 0;
- 
--	strict_strtoul(*p, 10, &touchbook_revision);
-+	return strict_strtoul(p, 10, &touchbook_revision);
- }
--__early_param("tbr=", early_touchbook_revision);
-+early_param("tbr", early_touchbook_revision);
- 
- static struct omap_musb_board_data musb_board_data = {
- 	.interface_type		= MUSB_INTERFACE_ULPI,
-diff --git a/drivers/video/omap2/vram.c b/drivers/video/omap2/vram.c
-index 55a4de5..1d88425 100644
---- a/drivers/video/omap2/vram.c
-+++ b/drivers/video/omap2/vram.c
-@@ -511,13 +511,17 @@ static u32 omap_vram_sdram_size __initdata;
- static u32 omap_vram_def_sdram_size __initdata;
- static u32 omap_vram_def_sdram_start __initdata;
- 
--static void __init omap_vram_early_vram(char **p)
-+static int __init omap_vram_early_vram(char *p)
- {
--	omap_vram_def_sdram_size = memparse(*p, p);
--	if (**p == ',')
--		omap_vram_def_sdram_start = simple_strtoul((*p) + 1, p, 16);
-+	char *endp;
-+
-+	omap_vram_def_sdram_size = memparse(p, &endp);
-+	if (*endp == ',')
-+		omap_vram_def_sdram_start = simple_strtoul(endp + 1, &p, 16);
-+
-+	return 0;
- }
--__early_param("vram=", omap_vram_early_vram);
-+early_param("vram", omap_vram_early_vram);
- 
- /*
-  * Called from map_io. We need to call to this early enough so that we
-
---ftEhullJWpWg/VHq--
+Marcel
