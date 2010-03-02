@@ -1,65 +1,56 @@
-From: Maxim Levitsky <maximlevitsky@gmail.com>
-Subject: Re: [PATCH -next] mtd/nand/r852: fix build for CONFIG_PM=n
-Date: Tue, 02 Mar 2010 14:02:09 +0200
-Message-ID: <1267531329.10734.1.camel@maxim-laptop>
-References: <20100301210210.c6f465e6.sfr@canb.auug.org.au>
-	 <4B8C378B.2090400@oracle.com>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: [PATCH -next] pktcdvd: improve BKL and compat_ioctl.c usage
+Date: Tue, 2 Mar 2010 13:06:21 +0100
+Message-ID: <20100302120621.GA28192@elte.hu>
+References: <20100225183523.80361261.sfr@canb.auug.org.au>
+ <4B86B97D.6030208@oracle.com>
+ <201002252227.11472.arnd@arndb.de>
+ <4B86F564.9000105@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-fx0-f219.google.com ([209.85.220.219]:61114 "EHLO
-	mail-fx0-f219.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752123Ab0CBMCP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Mar 2010 07:02:15 -0500
-In-Reply-To: <4B8C378B.2090400@oracle.com>
+Received: from mx3.mail.elte.hu ([157.181.1.138]:59639 "EHLO mx3.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752181Ab0CBMGi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 2 Mar 2010 07:06:38 -0500
+Content-Disposition: inline
+In-Reply-To: <4B86F564.9000105@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Peter Osterlund <petero2@telia.com>, Jens Axboe <jens.axboe@oracle.com>, Akinobu Mita <akinobu.mita@gmail.com>
 
-On Mon, 2010-03-01 at 13:54 -0800, Randy Dunlap wrote: 
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> Fix r852 build for the case of CONFIG_PM=n.
-> 
-> drivers/mtd/nand/r852.c:1039: error: implicit declaration of function 'pci_prepare_to_sleep'
-> drivers/mtd/nand/r852.c:1048: error: implicit declaration of function 'pci_back_from_sleep'
-> 
-> This patch leaves r852_pm_ops untouched.
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> Cc: Maxim Levitsky <maximlevitsky@gmail.com>
-> Cc: "Rafael J. Wysocki" <rjw@sisk.pl>
-> Cc: David Woodhouse <dwmw2@infradead.org>
-> ---
->  drivers/mtd/nand/r852.c |    5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> --- linux-next-20100301.orig/drivers/mtd/nand/r852.c
-> +++ linux-next-20100301/drivers/mtd/nand/r852.c
-> @@ -1007,6 +1007,7 @@ void r852_shutdown(struct pci_dev *pci_d
->  	pci_disable_device(pci_dev);
->  }
->  
-> +#ifdef CONFIG_PM
->  int r852_suspend(struct device *device)
->  {
->  	struct r852_device *dev = pci_get_drvdata(to_pci_dev(device));
-> @@ -1081,6 +1082,10 @@ int r852_resume(struct device *device)
->  	r852_update_card_detect(dev);
->  	return 0;
->  }
-> +#else
-> +#define r852_suspend	NULL
-> +#define r852_resume	NULL
-> +#endif
->  
->  static const struct pci_device_id r852_pci_id_tbl[] = {
->  
-> 
-oops, I forgot about that case again..
-Acked-by: Maxim Levitsky <maximlevitsky@gmail.com>
 
-Best regards,
-Maxim Levitsky
+* Randy Dunlap <randy.dunlap@oracle.com> wrote:
+
+> On 02/25/10 13:27, Arnd Bergmann wrote:
+> > The pktcdvd driver uses proper locking and does not need the
+> > BKL in the ioctl and llseek functions of the character device,
+> > so kill both. Moving the compat_ioctl handling from common code
+> > into the driver itself fixes build problems when CONFIG_BLOCK is
+> > disabled.
+> > 
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > 
+> > ---
+> > On Thursday 25 February 2010, Randy Dunlap wrote:
+> >> From: Randy Dunlap <randy.dunlap@oracle.com>
+> >>
+> >> fs/compat_ioctl.c should omit pktcdvd.h and its ioctl when CONFIG_BLOCK
+> >> is not enabled.  This fixes these build errors:
+> >>
+> >> In file included from fs/compat_ioctl.c:105:
+> >> include/linux/pktcdvd.h:166: error: field 'read_queue' has incomplete type
+> >> include/linux/pktcdvd.h:167: error: field 'write_queue' has incomplete type
+> >> include/linux/pktcdvd.h:207: error: field 'orig_bios' has incomplete type
+> >> make[2]: *** [fs/compat_ioctl.o] Error 1
+> > 
+> > How about this one instead, cleaning pktcdvd ioctl handling up for good?
+> 
+> OK, that works too.
+> 
+> Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
+
+FYI, this build bug now triggers upstream too - none of the fixes was applied.
+
+	Ingo
