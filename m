@@ -1,35 +1,45 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for March 2 (watchdog)
-Date: Tue, 02 Mar 2010 09:12:33 -0800
-Message-ID: <4B8D4701.6060903@oracle.com>
-References: <20100302180915.1388d3f3.sfr@canb.auug.org.au>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: linux-next: build failure after merge of the ext3 tree
+Date: Tue, 2 Mar 2010 18:27:57 +0100
+Message-ID: <20100302172757.GE3829@quack.suse.cz>
+References: <20100302113634.2c7f5e03.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet11.oracle.com ([148.87.113.123]:20192 "EHLO
-	rcsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751577Ab0CBRM5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Mar 2010 12:12:57 -0500
-In-Reply-To: <20100302180915.1388d3f3.sfr@canb.auug.org.au>
+Received: from cantor.suse.de ([195.135.220.2]:56324 "EHLO mx1.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751363Ab0CBR1s (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 2 Mar 2010 12:27:48 -0500
+Content-Disposition: inline
+In-Reply-To: <20100302113634.2c7f5e03.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Wim Van Sebroeck <wim@iguana.be>
+Cc: Jan Kara <jack@suse.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
 
-On 03/01/10 23:09, Stephen Rothwell wrote:
-> Hi all,
+  Hi,
+
+On Tue 02-03-10 11:36:34, Stephen Rothwell wrote:
+> After merging the ext3 tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
 > 
-> Changes since 20100301:
+> fs/jfs/jfs_xtree.c: In function 'xtSplitRoot':
+> fs/jfs/jfs_xtree.c:1256: error: 'rec' undeclared (first use in this function)
+> 
+> Caused by commit bff3333e868578990f6fe794a7cba0c74bd433ac ("dquot:
+> cleanup space allocation / freeing routines").
+> 
+> This is annoying ... this file system could be build tested on any
+> architecture, so why wasn't it?
+  I'm sorry. It's my fault. I've modified Christoph's patch but I forgot to
+enable JFS in the test build. Since this isn't the first time something
+like this happened to me, I've changed the way I commit patches. They'll
+first go to for_testing branch and after a build machine runs them through
+allyesconfig and allmodconfig compiles they'll get moved to for_next
+branch. So hopefully stupid mistakes like this one should be avoided for
+future.
 
-
-linux-next-20100302/drivers/watchdog/wdt.c: In function 'wdt_ioctl':
-linux-next-20100302/drivers/watchdog/wdt.c:370: error: assignment of read-only variable 'ident'
-linux-next-20100302/drivers/watchdog/wdt.c:373: error: assignment of read-only variable 'ident'
-linux-next-20100302/drivers/watchdog/wdt.c:375: error: assignment of read-only variable 'ident'
-make[3]: *** [drivers/watchdog/wdt.o] Error 1
-
-
-
+								Honza
 -- 
-~Randy
+Jan Kara <jack@suse.cz>
+SUSE Labs, CR
