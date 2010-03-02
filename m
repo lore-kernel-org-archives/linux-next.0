@@ -1,41 +1,68 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the usb tree with the block tree
-Date: Tue, 2 Mar 2010 15:10:59 -0800
-Message-ID: <20100302231059.GA32440@kroah.com>
-References: <20100301185441.06014ba8.sfr@canb.auug.org.au>
- <20100301080402.GP5768@kernel.dk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [origin tree build failure] Re: [PATCH -next] scsi: RAID_ATTRS
+ depends on SCSI
+Date: Wed, 3 Mar 2010 10:30:53 +1100
+Message-ID: <20100303103053.7be411ba.sfr@canb.auug.org.au>
+References: <20100219174711.5e7cc7be.sfr@canb.auug.org.au>
+	<4B7EC8AE.60200@oracle.com>
+	<20100221194636.ef885e5a.rdunlap@xenotime.net>
+	<20100302112603.GA27686@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:34478 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753054Ab0CBXLF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 2 Mar 2010 18:11:05 -0500
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__3_Mar_2010_10_30_53_+1100_OdGpE+XMTWUzZ4kS"
+Return-path: <linux-scsi-owner@vger.kernel.org>
+In-Reply-To: <20100302112603.GA27686@elte.hu>
+Sender: linux-scsi-owner@vger.kernel.org
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Randy Dunlap <rdunlap@xenotime.net>, Linus Torvalds <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, akpm <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, scsi <linux-scsi@vger.kernel.org>, "James E.J. Bottomley" <James.Bottomley@suse.de>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Wed__3_Mar_2010_10_30_53_+1100_OdGpE+XMTWUzZ4kS
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20100301080402.GP5768@kernel.dk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <jens.axboe@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Martin K. Petersen" <martin.petersen@oracle.com>, Alan Stern <stern@rowland.harvard.edu>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 01, 2010 at 09:04:03AM +0100, Jens Axboe wrote:
-> On Mon, Mar 01 2010, Stephen Rothwell wrote:
-> > Hi Greg,
-> > 
-> > Today's linux-next merge of the usb tree got a conflict in
-> > drivers/usb/storage/scsiglue.c between commit
-> > 086fa5ff0854c676ec333760f4c0154b3b242616 ("block: Rename
-> > blk_queue_max_sectors to blk_queue_max_hw_sectors") from the block tree
-> > and commit 628726dbb5ebbec77336019ac4e1f60cf3ba08c1 ("usb-storage: use
-> > max_hw_sectors instead of max_sectors") from the usb tree.
-> > 
-> > Just context changes.  I fixed it up (see below) and can carry the fix as
-> > necessary.
-> 
-> Thanks Stephen, looks good.
+Hi Ingo,
 
-I've made these changes in the patch set I sent to Linus.
+On Tue, 2 Mar 2010 12:26:03 +0100 Ingo Molnar <mingo@elte.hu> wrote:
+>
+> * Randy Dunlap <rdunlap@xenotime.net> wrote:
+>=20
+> > From: Randy Dunlap <randy.dunlap@oracle.com>
+> >=20
+> > raid_class uses scsi interfaces, so it should depend on SCSI.
+> > Otherwise build errors occur when RAID_ATTRS=3Dy and SCSI=3Dm:
+> >=20
+> > ERROR: "raid_class_release" [drivers/scsi/mpt2sas/mpt2sas.ko] undefined!
+> > ERROR: "raid_class_attach" [drivers/scsi/mpt2sas/mpt2sas.ko] undefined!
+>=20
+> FYI, this build bug has been pushed upstream via the SCSI tree, without=20
+> Randy's fix.
+>=20
+> I have applied Randy's drivers/scsi/Kconfig fix to tip:out-of-tree and th=
+at=20
+> solves the build bug here.
+>=20
+>  Tested-by: Ingo Molnar <mingo@elte.hu>
 
-thanks,
+Thanks for the heads up Ingo, I have added that to my fixes tree as well
+so it will be in linux-next today.
 
-greg k-h
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__3_Mar_2010_10_30_53_+1100_OdGpE+XMTWUzZ4kS
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkuNn60ACgkQjjKRsyhoI8wlBwCfXSD3mJQSd9hYEgJ3wSq82zdG
+W6AAnR5ShF5g0nBKHmaS0/MwetrInYkW
+=39pg
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__3_Mar_2010_10_30_53_+1100_OdGpE+XMTWUzZ4kS--
