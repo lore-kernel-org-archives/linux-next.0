@@ -1,57 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the ext3 tree
-Date: Tue, 2 Mar 2010 11:36:34 +1100
-Message-ID: <20100302113634.2c7f5e03.sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for March 1 (bluetooth/hci_sysfs)
+Date: Tue, 2 Mar 2010 12:15:26 +1100
+Message-ID: <20100302121526.36a1ea88.sfr@canb.auug.org.au>
+References: <20100301210210.c6f465e6.sfr@canb.auug.org.au>
+	<4B8C2CC5.8000603@oracle.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__2_Mar_2010_11_36_34_+1100_7e.1yNpQWT63jmxs"
+ boundary="Signature=_Tue__2_Mar_2010_12_15_26_+1100_x6.bYRwK6xFgMQ=b"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37583 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37214 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751694Ab0CBAgk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 1 Mar 2010 19:36:40 -0500
+	id S1752806Ab0CBBPg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Mar 2010 20:15:36 -0500
+In-Reply-To: <4B8C2CC5.8000603@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Marcel Holtmann <marcel@holtmann.org>, linux-bluetooth@vger.kernel.org, Netdev <netdev@vger.kernel.org>
 
---Signature=_Tue__2_Mar_2010_11_36_34_+1100_7e.1yNpQWT63jmxs
+--Signature=_Tue__2_Mar_2010_12_15_26_+1100_x6.bYRwK6xFgMQ=b
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jan,
+Hi Randy,
 
-After merging the ext3 tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+On Mon, 01 Mar 2010 13:08:21 -0800 Randy Dunlap <randy.dunlap@oracle.com> w=
+rote:
+>
+> static ssize_t inquiry_cache_read(struct file *file, char __user *userbuf,
+> 						size_t count, loff_t *ppos)
+> {
+> 	struct hci_dev *hdev =3D file->private_data;
+> 	struct inquiry_cache *cache =3D &hdev->inq_cache;
+> 	struct inquiry_entry *e;
+> 	char buf[4096]; // <<<<<<<<<<<<<<<<<<<<<<<<<<< huh? don't do that on sta=
+ck.
+> 	int n =3D 0;
 
-fs/jfs/jfs_xtree.c: In function 'xtSplitRoot':
-fs/jfs/jfs_xtree.c:1256: error: 'rec' undeclared (first use in this functio=
-n)
-
-Caused by commit bff3333e868578990f6fe794a7cba0c74bd433ac ("dquot:
-cleanup space allocation / freeing routines").
-
-This is annoying ... this file system could be build tested on any
-architecture, so why wasn't it?
-
-I have used the version of the ext3 tree from next-20100301 for today.
-
+Dave Miller is following up on that.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__2_Mar_2010_11_36_34_+1100_7e.1yNpQWT63jmxs
+--Signature=_Tue__2_Mar_2010_12_15_26_+1100_x6.bYRwK6xFgMQ=b
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkuMXZIACgkQjjKRsyhoI8zB6gCfQiUurYdliX+mQor1kI0inL4p
-HTwAoI/zvGpzfkiUJKTBSoG1kZx8ZGmh
-=nOQU
+iEYEARECAAYFAkuMZq4ACgkQjjKRsyhoI8wekQCeM8K375Jt7YKI2HRifcC9lXHS
+Z7UAnir+PiJ7hIHWbXeWGtTWQcH9yjXu
+=QUPf
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__2_Mar_2010_11_36_34_+1100_7e.1yNpQWT63jmxs--
+--Signature=_Tue__2_Mar_2010_12_15_26_+1100_x6.bYRwK6xFgMQ=b--
