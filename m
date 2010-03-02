@@ -1,44 +1,65 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: [origin tree build failure] Re: [PATCH -next] scsi: RAID_ATTRS
- depends on SCSI
-Date: Tue, 2 Mar 2010 12:26:03 +0100
-Message-ID: <20100302112603.GA27686@elte.hu>
-References: <20100219174711.5e7cc7be.sfr@canb.auug.org.au>
- <4B7EC8AE.60200@oracle.com>
- <20100221194636.ef885e5a.rdunlap@xenotime.net>
+From: Maxim Levitsky <maximlevitsky@gmail.com>
+Subject: Re: [PATCH -next] mtd/nand/r852: fix build for CONFIG_PM=n
+Date: Tue, 02 Mar 2010 14:02:09 +0200
+Message-ID: <1267531329.10734.1.camel@maxim-laptop>
+References: <20100301210210.c6f465e6.sfr@canb.auug.org.au>
+	 <4B8C378B.2090400@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:56432 "EHLO mx2.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750885Ab0CBL0R (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 2 Mar 2010 06:26:17 -0500
-Content-Disposition: inline
-In-Reply-To: <20100221194636.ef885e5a.rdunlap@xenotime.net>
+Received: from mail-fx0-f219.google.com ([209.85.220.219]:61114 "EHLO
+	mail-fx0-f219.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752123Ab0CBMCP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Mar 2010 07:02:15 -0500
+In-Reply-To: <4B8C378B.2090400@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>, Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, akpm <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, LKML <linux-kernel@vger.kernel.org>, scsi <linux-scsi@vger.kernel.org>, "James E.J. Bottomley" <James.Bottomley@suse.de>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org
 
-
-* Randy Dunlap <rdunlap@xenotime.net> wrote:
-
+On Mon, 2010-03-01 at 13:54 -0800, Randy Dunlap wrote: 
 > From: Randy Dunlap <randy.dunlap@oracle.com>
 > 
-> raid_class uses scsi interfaces, so it should depend on SCSI.
-> Otherwise build errors occur when RAID_ATTRS=y and SCSI=m:
+> Fix r852 build for the case of CONFIG_PM=n.
 > 
-> ERROR: "raid_class_release" [drivers/scsi/mpt2sas/mpt2sas.ko] undefined!
-> ERROR: "raid_class_attach" [drivers/scsi/mpt2sas/mpt2sas.ko] undefined!
+> drivers/mtd/nand/r852.c:1039: error: implicit declaration of function 'pci_prepare_to_sleep'
+> drivers/mtd/nand/r852.c:1048: error: implicit declaration of function 'pci_back_from_sleep'
+> 
+> This patch leaves r852_pm_ops untouched.
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> Cc: Maxim Levitsky <maximlevitsky@gmail.com>
+> Cc: "Rafael J. Wysocki" <rjw@sisk.pl>
+> Cc: David Woodhouse <dwmw2@infradead.org>
+> ---
+>  drivers/mtd/nand/r852.c |    5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> --- linux-next-20100301.orig/drivers/mtd/nand/r852.c
+> +++ linux-next-20100301/drivers/mtd/nand/r852.c
+> @@ -1007,6 +1007,7 @@ void r852_shutdown(struct pci_dev *pci_d
+>  	pci_disable_device(pci_dev);
+>  }
+>  
+> +#ifdef CONFIG_PM
+>  int r852_suspend(struct device *device)
+>  {
+>  	struct r852_device *dev = pci_get_drvdata(to_pci_dev(device));
+> @@ -1081,6 +1082,10 @@ int r852_resume(struct device *device)
+>  	r852_update_card_detect(dev);
+>  	return 0;
+>  }
+> +#else
+> +#define r852_suspend	NULL
+> +#define r852_resume	NULL
+> +#endif
+>  
+>  static const struct pci_device_id r852_pci_id_tbl[] = {
+>  
+> 
+oops, I forgot about that case again..
+Acked-by: Maxim Levitsky <maximlevitsky@gmail.com>
 
-FYI, this build bug has been pushed upstream via the SCSI tree, without 
-Randy's fix.
-
-I have applied Randy's drivers/scsi/Kconfig fix to tip:out-of-tree and that 
-solves the build bug here.
-
- Tested-by: Ingo Molnar <mingo@elte.hu>
-
-Thanks,
-
-	Ingo
+Best regards,
+Maxim Levitsky
