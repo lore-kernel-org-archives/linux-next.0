@@ -1,113 +1,77 @@
-From: James Bottomley <James.Bottomley@suse.de>
-Subject: Re: [PATCH -next] scsi: RAID_ATTRS depends on SCSI
-Date: Wed, 03 Mar 2010 11:06:56 +0530
-Message-ID: <1267594617.4383.24.camel@mulgrave.site>
-References: <20100219174711.5e7cc7be.sfr@canb.auug.org.au>
-	 <4B7EC8AE.60200@oracle.com>  <20100221194636.ef885e5a.rdunlap@xenotime.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the driver-core tree
+Date: Wed, 3 Mar 2010 17:14:32 +1100
+Message-ID: <20100303171432.bee7ae0c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100221194636.ef885e5a.rdunlap@xenotime.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@xenotime.net>
-Cc: linux-next@vger.kernel.org, akpm <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, LKML <linux-kernel@vger.kernel.org>, scsi <linux-scsi@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:52581 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751043Ab0CCGOe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 3 Mar 2010 01:14:34 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Berg <johannes@sipsolutions.net>, "John W. Linville" <linville@tuxdriver.com>, Thomas Gleixner <tglx@linutronix.de>
 
-On Sun, 2010-02-21 at 19:46 -0800, Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> raid_class uses scsi interfaces, so it should depend on SCSI.
-> Otherwise build errors occur when RAID_ATTRS=y and SCSI=m:
-> 
-> ERROR: "raid_class_release" [drivers/scsi/mpt2sas/mpt2sas.ko] undefined!
-> ERROR: "raid_class_attach" [drivers/scsi/mpt2sas/mpt2sas.ko] undefined!
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> ---
->  drivers/scsi/Kconfig |   14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
-> 
-> --- linux-next-20100219.orig/drivers/scsi/Kconfig
-> +++ linux-next-20100219/drivers/scsi/Kconfig
-> @@ -1,12 +1,5 @@
->  menu "SCSI device support"
->  
-> -config RAID_ATTRS
-> -	tristate "RAID Transport Class"
-> -	default n
-> -	depends on BLOCK
-> -	---help---
-> -	  Provides RAID
-> -
->  config SCSI
->  	tristate "SCSI device support"
->  	depends on BLOCK
-> @@ -34,6 +27,13 @@ config SCSI_DMA
->  	bool
->  	default n
->  
-> +config RAID_ATTRS
-> +	tristate "RAID Transport Class"
-> +	default n
-> +	depends on BLOCK && SCSI
-> +	---help---
-> +	  Provides RAID
-> +
+Hi Greg,
 
-This will fix the error, but it's not quite the right thing to do.  the
-RAID class should be independent of SCSI, but it wants to do a SCSI
-check if SCSI is compiled in the matching routines.  This gives us a
-nasty dependency, the condition being that the raid class must be m if
-SCSI is m.
+After merging the driver-core tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-I think this patch does the right thing.  Can someone test it on the
-config checker?  Or I can just put it in linux-next and have Stephen's
-builds do it.
+drivers/net/wireless/ath/ar9170/usb.c: In function 'ar9170_usb_firmware_failed':
+drivers/net/wireless/ath/ar9170/usb.c:729: error: 'struct device' has no member named 'sem'
+drivers/net/wireless/ath/ar9170/usb.c:732: error: 'struct device' has no member named 'sem'
 
-Thanks,
+Caused by commit 535765179fd4e8af26b69d2240d7ec33702a370a ("ar9170: load
+firmware asynchronously") from the wireless tree interacting with
+commitf989226577d096eb9ebbf95da1d0e8303ecc660c ("drivers/base: Convert
+dev->sem to mutex") from the driver-core tree.
 
-James
+I applied the following patch for today.
 
+John, Johannes, device_lock/unlock() already exist in Linus' tree, so you
+should be able to apply this to the wireless tree already.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 3 Mar 2010 17:08:11 +1100
+Subject: [PATCH] ar9170: fix for driver-core ABI change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
+ drivers/net/wireless/ath/ar9170/usb.c |    5 +++--
+ 1 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
-index 9191d1e..75f2336 100644
---- a/drivers/scsi/Kconfig
-+++ b/drivers/scsi/Kconfig
-@@ -1,9 +1,15 @@
- menu "SCSI device support"
+diff --git a/drivers/net/wireless/ath/ar9170/usb.c b/drivers/net/wireless/ath/ar9170/usb.c
+index 4e30197..7fc1034 100644
+--- a/drivers/net/wireless/ath/ar9170/usb.c
++++ b/drivers/net/wireless/ath/ar9170/usb.c
+@@ -41,6 +41,7 @@
+ #include <linux/usb.h>
+ #include <linux/firmware.h>
+ #include <linux/etherdevice.h>
++#include <linux/mutex.h>
+ #include <net/mac80211.h>
+ #include "ar9170.h"
+ #include "cmd.h"
+@@ -726,10 +727,10 @@ static void ar9170_usb_firmware_failed(struct ar9170_usb *aru)
  
-+config SCSI_MOD
-+       tristate
-+       default y if SCSI=n || SCSI=y
-+       default m if SCSI=m
-+
- config RAID_ATTRS
- 	tristate "RAID Transport Class"
- 	default n
- 	depends on BLOCK
-+	depends on SCSI_MOD
- 	---help---
- 	  Provides RAID
- 
-diff --git a/drivers/scsi/raid_class.c b/drivers/scsi/raid_class.c
-index bd88349..2c146b4 100644
---- a/drivers/scsi/raid_class.c
-+++ b/drivers/scsi/raid_class.c
-@@ -63,6 +63,7 @@ static int raid_match(struct attribute_container *cont, struct device *dev)
- 	 * emulated RAID devices, so start with SCSI */
- 	struct raid_internal *i = ac_to_raid_internal(cont);
- 
-+#if defined(CONFIG_SCSI) || defined(CONFIG_SCSI_MODULE)
- 	if (scsi_is_sdev_device(dev)) {
- 		struct scsi_device *sdev = to_scsi_device(dev);
- 
-@@ -71,6 +72,7 @@ static int raid_match(struct attribute_container *cont, struct device *dev)
- 
- 		return i->f->is_raid(dev);
- 	}
-+#endif
- 	/* FIXME: look at other subsystems too */
- 	return 0;
+ 	/* unbind anything failed */
+ 	if (parent)
+-		down(&parent->sem);
++		device_lock(parent);
+ 	device_release_driver(&aru->udev->dev);
+ 	if (parent)
+-		up(&parent->sem);
++		device_unlock(parent);
  }
+ 
+ static void ar9170_usb_firmware_finish(const struct firmware *fw, void *context)
+-- 
+1.7.0
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
