@@ -1,51 +1,113 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the pcmcia tree
-Date: Wed, 3 Mar 2010 16:34:43 +1100
-Message-ID: <20100303163443.97767036.sfr@canb.auug.org.au>
+From: James Bottomley <James.Bottomley@suse.de>
+Subject: Re: [PATCH -next] scsi: RAID_ATTRS depends on SCSI
+Date: Wed, 03 Mar 2010 11:06:56 +0530
+Message-ID: <1267594617.4383.24.camel@mulgrave.site>
+References: <20100219174711.5e7cc7be.sfr@canb.auug.org.au>
+	 <4B7EC8AE.60200@oracle.com>  <20100221194636.ef885e5a.rdunlap@xenotime.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__3_Mar_2010_16_34_43_+1100_H0Zoikr1XXZAu13."
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47216 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752006Ab0CCFes (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 3 Mar 2010 00:34:48 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20100221194636.ef885e5a.rdunlap@xenotime.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@xenotime.net>
+Cc: linux-next@vger.kernel.org, akpm <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, LKML <linux-kernel@vger.kernel.org>, scsi <linux-scsi@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__3_Mar_2010_16_34_43_+1100_H0Zoikr1XXZAu13.
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sun, 2010-02-21 at 19:46 -0800, Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> raid_class uses scsi interfaces, so it should depend on SCSI.
+> Otherwise build errors occur when RAID_ATTRS=y and SCSI=m:
+> 
+> ERROR: "raid_class_release" [drivers/scsi/mpt2sas/mpt2sas.ko] undefined!
+> ERROR: "raid_class_attach" [drivers/scsi/mpt2sas/mpt2sas.ko] undefined!
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> ---
+>  drivers/scsi/Kconfig |   14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+> 
+> --- linux-next-20100219.orig/drivers/scsi/Kconfig
+> +++ linux-next-20100219/drivers/scsi/Kconfig
+> @@ -1,12 +1,5 @@
+>  menu "SCSI device support"
+>  
+> -config RAID_ATTRS
+> -	tristate "RAID Transport Class"
+> -	default n
+> -	depends on BLOCK
+> -	---help---
+> -	  Provides RAID
+> -
+>  config SCSI
+>  	tristate "SCSI device support"
+>  	depends on BLOCK
+> @@ -34,6 +27,13 @@ config SCSI_DMA
+>  	bool
+>  	default n
+>  
+> +config RAID_ATTRS
+> +	tristate "RAID Transport Class"
+> +	default n
+> +	depends on BLOCK && SCSI
+> +	---help---
+> +	  Provides RAID
+> +
 
-Hi Dominik,
+This will fix the error, but it's not quite the right thing to do.  the
+RAID class should be independent of SCSI, but it wants to do a SCSI
+check if SCSI is compiled in the matching routines.  This gives us a
+nasty dependency, the condition being that the raid class must be m if
+SCSI is m.
 
-After merging the pcmcia tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+I think this patch does the right thing.  Can someone test it on the
+config checker?  Or I can just put it in linux-next and have Stephen's
+builds do it.
 
-drivers/pcmcia/cistpl.c: In function 'pccard_get_tuple_data':
-drivers/pcmcia/cistpl.c:650: warning: comparison of distinct pointer types =
-lacks a cast
+Thanks,
 
-Introduced by commit d40701ddae35b6594a7366ab5617abe3c24c17e1 ("pcmcia:
-CodingStyle fixes").
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+James
 
---Signature=_Wed__3_Mar_2010_16_34_43_+1100_H0Zoikr1XXZAu13.
-Content-Type: application/pgp-signature
+---
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkuN9PMACgkQjjKRsyhoI8zkFgCcDSmGzcbRpe2rQCI1uag1Qn5f
-FwIAn1CfCEbuiTwT4VP1MpzvEtOlCY9v
-=ciAI
------END PGP SIGNATURE-----
-
---Signature=_Wed__3_Mar_2010_16_34_43_+1100_H0Zoikr1XXZAu13.--
+diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
+index 9191d1e..75f2336 100644
+--- a/drivers/scsi/Kconfig
++++ b/drivers/scsi/Kconfig
+@@ -1,9 +1,15 @@
+ menu "SCSI device support"
+ 
++config SCSI_MOD
++       tristate
++       default y if SCSI=n || SCSI=y
++       default m if SCSI=m
++
+ config RAID_ATTRS
+ 	tristate "RAID Transport Class"
+ 	default n
+ 	depends on BLOCK
++	depends on SCSI_MOD
+ 	---help---
+ 	  Provides RAID
+ 
+diff --git a/drivers/scsi/raid_class.c b/drivers/scsi/raid_class.c
+index bd88349..2c146b4 100644
+--- a/drivers/scsi/raid_class.c
++++ b/drivers/scsi/raid_class.c
+@@ -63,6 +63,7 @@ static int raid_match(struct attribute_container *cont, struct device *dev)
+ 	 * emulated RAID devices, so start with SCSI */
+ 	struct raid_internal *i = ac_to_raid_internal(cont);
+ 
++#if defined(CONFIG_SCSI) || defined(CONFIG_SCSI_MODULE)
+ 	if (scsi_is_sdev_device(dev)) {
+ 		struct scsi_device *sdev = to_scsi_device(dev);
+ 
+@@ -71,6 +72,7 @@ static int raid_match(struct attribute_container *cont, struct device *dev)
+ 
+ 		return i->f->is_raid(dev);
+ 	}
++#endif
+ 	/* FIXME: look at other subsystems too */
+ 	return 0;
+ }
