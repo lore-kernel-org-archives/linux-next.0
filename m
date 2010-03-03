@@ -1,45 +1,50 @@
-From: Marcel Holtmann <marcel@holtmann.org>
-Subject: Re: linux-next: Tree for March 1 (bluetooth/hci_sysfs)
-Date: Tue, 02 Mar 2010 17:23:37 -0800
-Message-ID: <1267579417.29510.6.camel@localhost.localdomain>
-References: <20100301210210.c6f465e6.sfr@canb.auug.org.au>
-	 <4B8C2CC5.8000603@oracle.com>
-	 <20100302121526.36a1ea88.sfr@canb.auug.org.au>
-	 <20100301.181415.266447389.davem@davemloft.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the mfd tree with the i2c tree
+Date: Wed, 3 Mar 2010 14:47:15 +1100
+Message-ID: <20100303144715.2b607ac1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__3_Mar_2010_14_47_15_+1100_sJP=Xg3jDV4pqNyw"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from senator.holtmann.net ([87.106.208.187]:49901 "EHLO
-	mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754907Ab0CCBZS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Mar 2010 20:25:18 -0500
-In-Reply-To: <20100301.181415.266447389.davem@davemloft.net>
+Received: from chilli.pcug.org.au ([203.10.76.44]:55560 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751266Ab0CCDrW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 2 Mar 2010 22:47:22 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, randy.dunlap@oracle.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?Ik3DoXJ0b24gTsOpbWV0aCI=?= <nm127@freemail.hu>, Jean Delvare <khali@linux-fr.org>
 
-Hi Dave,
+--Signature=_Wed__3_Mar_2010_14_47_15_+1100_sJP=Xg3jDV4pqNyw
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> >> static ssize_t inquiry_cache_read(struct file *file, char __user *userbuf,
-> >> 						size_t count, loff_t *ppos)
-> >> {
-> >> 	struct hci_dev *hdev = file->private_data;
-> >> 	struct inquiry_cache *cache = &hdev->inq_cache;
-> >> 	struct inquiry_entry *e;
-> >> 	char buf[4096]; // <<<<<<<<<<<<<<<<<<<<<<<<<<< huh? don't do that on stack.
-> >> 	int n = 0;
-> > 
-> > Dave Miller is following up on that.
-> 
-> This looks like a job for.... SEQ FILE! :-)
-> 
-> I'm testing the following fix.
+Hi Samuel,
 
-I have a working and tested patch that uses single_open(). Will send a
-patch with commit message and everything in a bit so you can apply it.
+Today's linux-next merge of the mfd tree got a conflict in
+drivers/i2c/busses/i2c-isch.c between commit
+482b522a6ced62506aba1c139cb9d4b73e7312f5 ("i2c: Make PCI device ids
+constant") from the i2c tree and commit
+1fc8fe094a8ebcc09817246277250898a8d2fc5a ("i2c: convert i2c-isch to
+platform_device") from the mfd tree.
 
-Regards
+The latter removes the code modified by the former, so I used the latter.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Marcel
+--Signature=_Wed__3_Mar_2010_14_47_15_+1100_sJP=Xg3jDV4pqNyw
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkuN28MACgkQjjKRsyhoI8xL4QCfUyoHHCGCz4jahtp/RqAYKlU6
+B3YAnixikyNeiau+yg0jaxdw2i09iVY+
+=w4to
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__3_Mar_2010_14_47_15_+1100_sJP=Xg3jDV4pqNyw--
