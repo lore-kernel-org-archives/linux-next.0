@@ -1,55 +1,77 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the xfs tree
-Date: Thu, 4 Mar 2010 11:19:30 +1100
-Message-ID: <20100304111930.86f7cc62.sfr@canb.auug.org.au>
+From: Dave Chinner <david@fromorbit.com>
+Subject: [PATCH] Re: linux-next: build warning after merge of the xfs tree
+Date: Thu, 4 Mar 2010 11:57:09 +1100
+Message-ID: <20100304005709.GE14317@discord.disaster>
+References: <20100304111930.86f7cc62.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__4_Mar_2010_11_19_30_+1100_6ihG1sh=QK944ARd"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43740 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753326Ab0CDATh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 3 Mar 2010 19:19:37 -0500
+Received: from bld-mail12.adl6.internode.on.net ([150.101.137.97]:42935 "EHLO
+	mail.internode.on.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751101Ab0CDA5X (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Mar 2010 19:57:23 -0500
+Content-Disposition: inline
+In-Reply-To: <20100304111930.86f7cc62.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: xfs-masters@oss.sgi.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, xfs@oss.sgi.com, aelder@sgi.com
 
---Signature=_Thu__4_Mar_2010_11_19_30_+1100_6ihG1sh=QK944ARd
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Mar 04, 2010 at 11:19:30AM +1100, Stephen Rothwell wrote:
+> Hi Dave,
+> 
+> After merging the xfs tree, today's linux-next build (x86_64 allmodconfig)
+> produced this warning:
+> 
+> fs/xfs/linux-2.6/xfs_aops.c: In function 'xfs_end_io':
+> fs/xfs/linux-2.6/xfs_aops.c:232: warning: 'error' may be used uninitialized in this function
+> 
+> Introduced by commit 77d7a0c2eeb285c9069e15396703d0cb9690ac50 ("xfs:
+> Non-blocking inode locking in IO completion").
+> 
+> I can't tell if this is a false positive.  If the first two "if"
+> statement bodies are skipped, then error is tested uninitialised.  It is
+> possible that at least one of them has to be executed.
 
-Hi Dave,
+Right, there is a warning being generated there - I thought I fixed
+that immediately after posting the first version of the patch. The
+second version:
 
-After merging the xfs tree, today's linux-next build (x86_64 allmodconfig)
-produced this warning:
+http://oss.sgi.com/archives/xfs/2010-02/msg00340.html
 
-fs/xfs/linux-2.6/xfs_aops.c: In function 'xfs_end_io':
-fs/xfs/linux-2.6/xfs_aops.c:232: warning: 'error' may be used uninitialized=
- in this function
+definitely had it fixed.
 
-Introduced by commit 77d7a0c2eeb285c9069e15396703d0cb9690ac50 ("xfs:
-Non-blocking inode locking in IO completion").
+Alex, can you make sure you take the entire patch rather than
+cutting and pasting bits from one patch version to another?  That
+way you don't miss small changes to the patch that might have been
+forgotten about....
 
-I can't tell if this is a false positive.  If the first two "if"
-statement bodies are skipped, then error is tested uninitialised.  It is
-possible that at least one of them has to be executed.
---=20
+Stephen, the patch below should fix the warning.
+
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__4_Mar_2010_11_19_30_+1100_6ihG1sh=QK944ARd
-Content-Type: application/pgp-signature
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+xfs: fix uninitialised variable warning in xfs_end_io
 
-iEYEARECAAYFAkuO/JMACgkQjjKRsyhoI8wpoACgoa9CTghmVHeH2QnVMO+CS3ig
-N4UAoLxVvvQpltR5R19OrPubd/yz3eiB
-=tzWo
------END PGP SIGNATURE-----
+Signed-off-by: Dave Chinner <david@fromorbit.com>
+---
+ fs/xfs/linux-2.6/xfs_aops.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
---Signature=_Thu__4_Mar_2010_11_19_30_+1100_6ihG1sh=QK944ARd--
+diff --git a/fs/xfs/linux-2.6/xfs_aops.c b/fs/xfs/linux-2.6/xfs_aops.c
+index f41a2d8..8989c16 100644
+--- a/fs/xfs/linux-2.6/xfs_aops.c
++++ b/fs/xfs/linux-2.6/xfs_aops.c
+@@ -230,7 +230,7 @@ xfs_end_io(
+ {
+ 	xfs_ioend_t	*ioend = container_of(work, xfs_ioend_t, io_work);
+ 	struct xfs_inode *ip = XFS_I(ioend->io_inode);
+-	int		error;
++	int		error = 0;
+ 
+ 	/*
+ 	 * For unwritten extents we need to issue transactions to convert a
