@@ -1,77 +1,93 @@
-From: Dave Chinner <david@fromorbit.com>
-Subject: [PATCH] Re: linux-next: build warning after merge of the xfs tree
-Date: Thu, 4 Mar 2010 11:57:09 +1100
-Message-ID: <20100304005709.GE14317@discord.disaster>
-References: <20100304111930.86f7cc62.sfr@canb.auug.org.au>
+From: Eric Miao <eric.y.miao@gmail.com>
+Subject: Re: linux-next: manual merge of the arm tree with Linus' tree
+Date: Thu, 4 Mar 2010 09:16:12 +0800
+Message-ID: <f17812d71003031716x45b12301j519d3464e1b8012d@mail.gmail.com>
+References: <20100304104958.8f9b1513.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bld-mail12.adl6.internode.on.net ([150.101.137.97]:42935 "EHLO
-	mail.internode.on.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751101Ab0CDA5X (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Mar 2010 19:57:23 -0500
-Content-Disposition: inline
-In-Reply-To: <20100304111930.86f7cc62.sfr@canb.auug.org.au>
+Received: from mail-qy0-f198.google.com ([209.85.221.198]:65214 "EHLO
+	mail-qy0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754604Ab0CDBQd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Mar 2010 20:16:33 -0500
+In-Reply-To: <20100304104958.8f9b1513.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: xfs-masters@oss.sgi.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, xfs@oss.sgi.com, aelder@sgi.com
+Cc: Russell King <rmk@arm.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Mack <daniel@caiaq.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-On Thu, Mar 04, 2010 at 11:19:30AM +1100, Stephen Rothwell wrote:
-> Hi Dave,
-> 
-> After merging the xfs tree, today's linux-next build (x86_64 allmodconfig)
-> produced this warning:
-> 
-> fs/xfs/linux-2.6/xfs_aops.c: In function 'xfs_end_io':
-> fs/xfs/linux-2.6/xfs_aops.c:232: warning: 'error' may be used uninitialized in this function
-> 
-> Introduced by commit 77d7a0c2eeb285c9069e15396703d0cb9690ac50 ("xfs:
-> Non-blocking inode locking in IO completion").
-> 
-> I can't tell if this is a false positive.  If the first two "if"
-> statement bodies are skipped, then error is tested uninitialised.  It is
-> possible that at least one of them has to be executed.
+On Thu, Mar 4, 2010 at 7:49 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Russell,
+>
+> Today's linux-next merge of the arm tree got a conflict in
+> sound/soc/pxa/pxa-ssp.c between commit
+> 026384d614b827f368834860c9b623ce08439b7e ("ASoC: fix PXA SSP port
+> resume") from Linus' tree and commit
+> f9efc9df94fd126f7d585339e64edec0c03e904b ("ASoC: Remove legacy SSP API
+> usage from pxa-ssp.c") from the arm tree.
+>
+> I fixed it up (see below - it should be checked) and can carry the fix as
+> necessary.
 
-Right, there is a warning being generated there - I thought I fixed
-that immediately after posting the first version of the patch. The
-second version:
+Hi Stephen,
 
-http://oss.sgi.com/archives/xfs/2010-02/msg00340.html
+I've yet made another fix and have a test build, please use this
+one if possible:
 
-definitely had it fixed.
+diff --cc sound/soc/pxa/pxa-ssp.c
+index e69397f,cf00df9..9e95e51
+--- a/sound/soc/pxa/pxa-ssp.c
++++ b/sound/soc/pxa/pxa-ssp.c
+@@@ -133,28 -152,39 +152,40 @@@ static void pxa_ssp_shutdown(struct snd
+  static int pxa_ssp_suspend(struct snd_soc_dai *cpu_dai)
+  {
+  	struct ssp_priv *priv = cpu_dai->private_data;
++ 	struct ssp_device *ssp = priv->ssp;
 
-Alex, can you make sure you take the entire patch rather than
-cutting and pasting bits from one patch version to another?  That
-way you don't miss small changes to the patch that might have been
-forgotten about....
+  	if (!cpu_dai->active)
+- 		clk_enable(priv->dev.ssp->clk);
+ -		return 0;
+++		clk_enable(ssp->clk);
 
-Stephen, the patch below should fix the warning.
+- 	ssp_save_state(&priv->dev, &priv->state);
+- 	clk_disable(priv->dev.ssp->clk);
++ 	priv->cr0 = __raw_readl(ssp->mmio_base + SSCR0);
++ 	priv->cr1 = __raw_readl(ssp->mmio_base + SSCR1);
++ 	priv->to  = __raw_readl(ssp->mmio_base + SSTO);
++ 	priv->psp = __raw_readl(ssp->mmio_base + SSPSP);
 
-Cheers,
++ 	ssp_disable(ssp);
++ 	clk_disable(ssp->clk);
+  	return 0;
+  }
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+  static int pxa_ssp_resume(struct snd_soc_dai *cpu_dai)
+  {
+  	struct ssp_priv *priv = cpu_dai->private_data;
++ 	struct ssp_device *ssp = priv->ssp;
++ 	uint32_t sssr = SSSR_ROR | SSSR_TUR | SSSR_BCE;
++
+ -	if (!cpu_dai->active)
+ -		return 0;
+ -
++ 	clk_enable(ssp->clk);
 
-xfs: fix uninitialised variable warning in xfs_end_io
-
-Signed-off-by: Dave Chinner <david@fromorbit.com>
----
- fs/xfs/linux-2.6/xfs_aops.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/fs/xfs/linux-2.6/xfs_aops.c b/fs/xfs/linux-2.6/xfs_aops.c
-index f41a2d8..8989c16 100644
---- a/fs/xfs/linux-2.6/xfs_aops.c
-+++ b/fs/xfs/linux-2.6/xfs_aops.c
-@@ -230,7 +230,7 @@ xfs_end_io(
- {
- 	xfs_ioend_t	*ioend = container_of(work, xfs_ioend_t, io_work);
- 	struct xfs_inode *ip = XFS_I(ioend->io_inode);
--	int		error;
-+	int		error = 0;
- 
- 	/*
- 	 * For unwritten extents we need to issue transactions to convert a
+- 	clk_enable(priv->dev.ssp->clk);
+- 	ssp_restore_state(&priv->dev, &priv->state);
++ 	__raw_writel(sssr, ssp->mmio_base + SSSR);
+ -
++ 	__raw_writel(priv->cr0 & ~SSCR0_SSE, ssp->mmio_base + SSCR0);
++ 	__raw_writel(priv->cr1, ssp->mmio_base + SSCR1);
++ 	__raw_writel(priv->to,  ssp->mmio_base + SSTO);
++ 	__raw_writel(priv->psp, ssp->mmio_base + SSPSP);
+ -	__raw_writel(priv->cr0 | SSCR0_SSE, ssp->mmio_base + SSCR0);
+ +
+ +	if (cpu_dai->active)
+- 		ssp_enable(&priv->dev);
+++		ssp_enable(ssp);
+ +	else
+- 		clk_disable(priv->dev.ssp->clk);
+++		clk_disable(ssp->clk);
+ +
+  	return 0;
+  }
