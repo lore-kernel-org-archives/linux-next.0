@@ -1,96 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm tree with Linus' tree
-Date: Thu, 4 Mar 2010 10:49:58 +1100
-Message-ID: <20100304104958.8f9b1513.sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the xfs tree
+Date: Thu, 4 Mar 2010 11:19:30 +1100
+Message-ID: <20100304111930.86f7cc62.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__4_Mar_2010_11_19_30_+1100_6ihG1sh=QK944ARd"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33274 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:43740 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753508Ab0CCXuB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 3 Mar 2010 18:50:01 -0500
+	id S1753326Ab0CDATh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 3 Mar 2010 19:19:37 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Mack <daniel@caiaq.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Eric Miao <eric.y.miao@gmail.com>
+To: Dave Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Russell,
+--Signature=_Thu__4_Mar_2010_11_19_30_+1100_6ihG1sh=QK944ARd
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the arm tree got a conflict in
-sound/soc/pxa/pxa-ssp.c between commit
-026384d614b827f368834860c9b623ce08439b7e ("ASoC: fix PXA SSP port
-resume") from Linus' tree and commit
-f9efc9df94fd126f7d585339e64edec0c03e904b ("ASoC: Remove legacy SSP API
-usage from pxa-ssp.c") from the arm tree.
+Hi Dave,
 
-I fixed it up (see below - it should be checked) and can carry the fix as
-necessary.
--- 
+After merging the xfs tree, today's linux-next build (x86_64 allmodconfig)
+produced this warning:
+
+fs/xfs/linux-2.6/xfs_aops.c: In function 'xfs_end_io':
+fs/xfs/linux-2.6/xfs_aops.c:232: warning: 'error' may be used uninitialized=
+ in this function
+
+Introduced by commit 77d7a0c2eeb285c9069e15396703d0cb9690ac50 ("xfs:
+Non-blocking inode locking in IO completion").
+
+I can't tell if this is a false positive.  If the first two "if"
+statement bodies are skipped, then error is tested uninitialised.  It is
+possible that at least one of them has to be executed.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc sound/soc/pxa/pxa-ssp.c
-index e69397f,cf00df9..0000000
---- a/sound/soc/pxa/pxa-ssp.c
-+++ b/sound/soc/pxa/pxa-ssp.c
-@@@ -133,28 -152,39 +152,41 @@@ static void pxa_ssp_shutdown(struct snd
-  static int pxa_ssp_suspend(struct snd_soc_dai *cpu_dai)
-  {
-  	struct ssp_priv *priv = cpu_dai->private_data;
-+ 	struct ssp_device *ssp = priv->ssp;
-  
-  	if (!cpu_dai->active)
- -		return 0;
- +		clk_enable(priv->dev.ssp->clk);
-  
-- 	ssp_save_state(&priv->dev, &priv->state);
-- 	clk_disable(priv->dev.ssp->clk);
-+ 	priv->cr0 = __raw_readl(ssp->mmio_base + SSCR0);
-+ 	priv->cr1 = __raw_readl(ssp->mmio_base + SSCR1);
-+ 	priv->to  = __raw_readl(ssp->mmio_base + SSTO);
-+ 	priv->psp = __raw_readl(ssp->mmio_base + SSPSP);
-+ 
-+ 	ssp_disable(ssp);
-+ 	clk_disable(ssp->clk);
- +
-  	return 0;
-  }
-  
-  static int pxa_ssp_resume(struct snd_soc_dai *cpu_dai)
-  {
-  	struct ssp_priv *priv = cpu_dai->private_data;
-+ 	struct ssp_device *ssp = priv->ssp;
-+ 	uint32_t sssr = SSSR_ROR | SSSR_TUR | SSSR_BCE;
-  
-- 	clk_enable(priv->dev.ssp->clk);
-- 	ssp_restore_state(&priv->dev, &priv->state);
- -	if (!cpu_dai->active)
- -		return 0;
- -
-+ 	clk_enable(ssp->clk);
-  
-- 	if (cpu_dai->active)
-- 		ssp_enable(&priv->dev);
-- 	else
-- 		clk_disable(priv->dev.ssp->clk);
- -	__raw_writel(sssr, ssp->mmio_base + SSSR);
-++	if (cpu_dai->active) {
-++		__raw_writel(sssr, ssp->mmio_base + SSSR);
-++
-++		__raw_writel(priv->cr0 & ~SSCR0_SSE, ssp->mmio_base + SSCR0);
-++		__raw_writel(priv->cr1, ssp->mmio_base + SSCR1);
-++		__raw_writel(priv->to,  ssp->mmio_base + SSTO);
-++		__raw_writel(priv->psp, ssp->mmio_base + SSPSP);
-++		__raw_writel(priv->cr0 | SSCR0_SSE, ssp->mmio_base + SSCR0);
-++	} else
-++		clk_disable(ssp->clk);
-  
- -	__raw_writel(priv->cr0 & ~SSCR0_SSE, ssp->mmio_base + SSCR0);
- -	__raw_writel(priv->cr1, ssp->mmio_base + SSCR1);
- -	__raw_writel(priv->to,  ssp->mmio_base + SSTO);
- -	__raw_writel(priv->psp, ssp->mmio_base + SSPSP);
- -	__raw_writel(priv->cr0 | SSCR0_SSE, ssp->mmio_base + SSCR0);
-  	return 0;
-  }
-  
+--Signature=_Thu__4_Mar_2010_11_19_30_+1100_6ihG1sh=QK944ARd
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkuO/JMACgkQjjKRsyhoI8wpoACgoa9CTghmVHeH2QnVMO+CS3ig
+N4UAoLxVvvQpltR5R19OrPubd/yz3eiB
+=tzWo
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__4_Mar_2010_11_19_30_+1100_6ihG1sh=QK944ARd--
