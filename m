@@ -1,61 +1,58 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH -next] bridge: depends on INET
-Date: Wed, 03 Mar 2010 20:00:22 -0800
-Message-ID: <4B8F3056.1010109@oracle.com>
-References: <20100302180915.1388d3f3.sfr@canb.auug.org.au> <4B8D4607.8070603@xenotime.net> <20100303.012359.66790294.davem@davemloft.net> <20100304031847.GA22683@elte.hu>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the fsnotify tree with the vfs tree
+Date: Thu, 4 Mar 2010 15:46:25 +1100
+Message-ID: <20100304154625.f152123e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__4_Mar_2010_15_46_25_+1100_sPX3l7Lbk8vOvRxE"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet11.oracle.com ([141.146.126.233]:47734 "EHLO
-	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755016Ab0CDECi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Mar 2010 23:02:38 -0500
-In-Reply-To: <20100304031847.GA22683@elte.hu>
+Received: from chilli.pcug.org.au ([203.10.76.44]:35137 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752231Ab0CDEqd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 3 Mar 2010 23:46:33 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: David Miller <davem@davemloft.net>, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, shemminger@linux-foundation.org, bridge@lists.linux-foundation.org, netdev@vger.kernel.org
+To: Eric Paris <eparis@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>
 
-On 03/03/10 19:18, Ingo Molnar wrote:
-> 
-> * David Miller <davem@davemloft.net> wrote:
-> 
->> From: Randy Dunlap <rdunlap@xenotime.net>
->> Date: Tue, 02 Mar 2010 09:08:23 -0800
->>
->>> From: Randy Dunlap <randy.dunlap@oracle.com>
->>>
->>> br_multicast calls ip_send_check(), so it should depend on INET.
->>>
->>> built-in:
->>> br_multicast.c:(.text+0x88cf4): undefined reference to `ip_send_check'
->>>
->>> or modular:
->>> ERROR: "ip_send_check" [net/bridge/bridge.ko] undefined!
->>>
->>> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
->>
->> Applied, but I almost lost this patch.
->>
->> You need to CC: netdev on all networking patches so that it
->> gets properly tracked in patchwork and therefore does not get
->> lost.
-> 
-> I suspect Randy went by the MAINTAINERS entry - you might want to add netdev 
-> as a second 'L:' line:
-> 
->  ETHERNET BRIDGE
->  M:      Stephen Hemminger <shemminger@linux-foundation.org>
->  L:      bridge@lists.linux-foundation.org
->  W:      http://www.linux-foundation.org/en/Net:Bridge
->  S:      Maintained
->  F:      include/linux/netfilter_bridge/
->  F:      net/bridge/
-> 
-> To make it really clear that netdev must be Cc:-ed for those patches.
+--Signature=_Thu__4_Mar_2010_15_46_25_+1100_sPX3l7Lbk8vOvRxE
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ack that.  I also expected Stephen to merge it...
+Hi Eric,
 
--- 
-~Randy
+Today's linux-next merge of the fsnotify tree got a conflict in
+include/linux/fsnotify.h between commit
+cccc6bba3f771ef29b33e4f79e70ebc3dba245b0 ("Lose the first argument of
+audit_inode_child()") from the vfs tree and commits
+a65c9effb4c7b86d032b5188ddbd0e2e583cb81b ("inotify: remove inotify in
+kernel interface"), 76864b426a99a3d08aa53e554ddc748ac49ca633 ("Lose the
+first argument of audit_inode_child()") and
+7278f4df3bfbc7934fc590d8a5707d3a8ee3d866 ("fsnotify: use unsigned char *
+for dentry->d_name.name") from the fsnotify tree.
+
+This has come about partly because, when you rebased and linearized your
+tree, you included inline the two patches from Al that he had put in a
+separate branch for you to merge.  You should have just remerged Al's
+for-fsnotify branch at the appropriate place in your tree.
+
+I fixed it up (again) and can carry this for a while.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__4_Mar_2010_15_46_25_+1100_sPX3l7Lbk8vOvRxE
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkuPOyEACgkQjjKRsyhoI8zuiACfUm4IbiN8PjeXKGwlTWKLc0t5
+GK8An1g9u9G2JzKMAQptXP8Lu/iQl9U7
+=lPVt
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__4_Mar_2010_15_46_25_+1100_sPX3l7Lbk8vOvRxE--
