@@ -1,71 +1,57 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: -next March 3: Boot failure on x86 (Oops)
-Date: Thu, 04 Mar 2010 10:28:48 +0900
-Message-ID: <4B8F0CD0.1040507@kernel.org>
-References: <20100303174603.5be197ba.sfr@canb.auug.org.au> <4B8E83D4.6090507@in.ibm.com>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: [PATCH -next] bridge: depends on INET
+Date: Thu, 4 Mar 2010 04:18:47 +0100
+Message-ID: <20100304031847.GA22683@elte.hu>
+References: <20100302180915.1388d3f3.sfr@canb.auug.org.au>
+ <4B8D4607.8070603@xenotime.net>
+ <20100303.012359.66790294.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hera.kernel.org ([140.211.167.34]:59847 "EHLO hera.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754770Ab0CDB24 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 3 Mar 2010 20:28:56 -0500
-In-Reply-To: <4B8E83D4.6090507@in.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Sachin Sant <sachinp@in.ibm.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <netdev-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20100303.012359.66790294.davem@davemloft.net>
+Sender: netdev-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: rdunlap@xenotime.net, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, shemminger@linux-foundation.org, bridge@lists.linux-foundation.org, netdev@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On 03/04/2010 12:44 AM, Sachin Sant wrote:
-> Today's next failed to boot on x86 box with following trace
+
+* David Miller <davem@davemloft.net> wrote:
+
+> From: Randy Dunlap <rdunlap@xenotime.net>
+> Date: Tue, 02 Mar 2010 09:08:23 -0800
 > 
-> Unpacking initramfs...
-> Freeing initrd memory: 10584k freed
-> BUG: unable to handle kernel NULL pointer dereference at (null)
-> IP: [<c01a6b12>] pcpu_alloc+0x1cb/0x75e
-> *pdpt = 00000000005dd001 *pde = 0000000000000000
-> Oops: 0000 [#1] SMP
-> last sysfs file:
-> Modules linked in:
+> > From: Randy Dunlap <randy.dunlap@oracle.com>
+> > 
+> > br_multicast calls ip_send_check(), so it should depend on INET.
+> > 
+> > built-in:
+> > br_multicast.c:(.text+0x88cf4): undefined reference to `ip_send_check'
+> > 
+> > or modular:
+> > ERROR: "ip_send_check" [net/bridge/bridge.ko] undefined!
+> > 
+> > Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 > 
-> Pid: 1, comm: swapper Not tainted 2.6.33-autotest-next-20100303 #1
-> /eserver xSeries 235 -[86717AX]-
-> EIP: 0060:[<c01a6b12>] EFLAGS: 00010002 CPU: 1
-> EIP is at pcpu_alloc+0x1cb/0x75e
-> EAX: 00000000 EBX: c05c4100 ECX: cccccccc EDX: 00000000
-> ESI: 000000b0 EDI: 00000005 EBP: f5c69fa8 ESP: f5c69f2c
-> DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068
-> Process swapper (pid: 1, ti=f5c68000 task=f5c66ce0 task.ti=f5c68000)
-> Stack:
-> 00000000 00000005 61746164 0a383d29 5f656400 61746164 00000004 000000b0
-> <0> 000a3036 00000286 61637061 29656863 0a36313d c0579100 c058da30 f5c69f94
-> <0> c01310be c05c41cc 00000028 c058da30 f5c69fa4 c0116a73 c0492091 c0492089
-> Call Trace:
-> [<c058da30>] ? crash_save_vmcoreinfo_init+0x0/0x31a
-> [<c01310be>] ? log_buf_kexec_setup+0x3f/0x67
-> [<c058da30>] ? crash_save_vmcoreinfo_init+0x0/0x31a
-> [<c0116a73>] ? arch_crash_save_vmcoreinfo+0x37/0x3c
-> [<c058d9ff>] ? crash_notes_memory_init+0x0/0x31
-> [<c01a70be>] ? __alloc_percpu+0xa/0xc
-> [<c058da11>] ? crash_notes_memory_init+0x12/0x31
-> [<c0101139>] ? do_one_initcall+0x4c/0x131
-> [<c057b352>] ? kernel_init+0x127/0x178
-> [<c057b22b>] ? kernel_init+0x0/0x178
-> [<c0102df6>] ? kernel_thread_helper+0x6/0x10
-> Code: 45 a8 e9 65 ff ff ff 8b 4d 9c 8b 55 a0 8b 45 84 e8 31 fa ff ff 85
-> c0 89 45 a4 0f 89 fd 00 00 00 8b 45 84 8b 00 89 45 84 8b 55 84 <8b> 02
-> 0f 18 00 90 8b 45 cc 03 05 a0 9b 57 c0 39 c2 0f 85 67 ff
-> EIP: [<c01a6b12>] pcpu_alloc+0x1cb/0x75e SS:ESP 0068:f5c69f2c
-> CR2: 0000000000000000
-> ---[ end trace a7919e7f17c0a725 ]---
+> Applied, but I almost lost this patch.
 > 
-> x86_64 boots fine. Have attached dmesg log.
+> You need to CC: netdev on all networking patches so that it
+> gets properly tracked in patchwork and therefore does not get
+> lost.
 
-Can you please feed the address to gdb and get the line number?  Also,
-is it reproducible on mainline?
+I suspect Randy went by the MAINTAINERS entry - you might want to add netdev 
+as a second 'L:' line:
 
-Thanks.
+ ETHERNET BRIDGE
+ M:      Stephen Hemminger <shemminger@linux-foundation.org>
+ L:      bridge@lists.linux-foundation.org
+ W:      http://www.linux-foundation.org/en/Net:Bridge
+ S:      Maintained
+ F:      include/linux/netfilter_bridge/
+ F:      net/bridge/
 
--- 
-tejun
+To make it really clear that netdev must be Cc:-ed for those patches.
+
+Thanks,
+
+	Ingo
