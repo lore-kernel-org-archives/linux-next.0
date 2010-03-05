@@ -1,64 +1,115 @@
-From: Alex Elder <aelder@sgi.com>
-Subject: Re: [PATCH] Re: linux-next: build warning after merge of the xfs
- tree
-Date: Thu, 04 Mar 2010 10:24:24 -0600
-Message-ID: <1267719864.3998.22.camel@doink>
-References: <20100304111930.86f7cc62.sfr@canb.auug.org.au>
-	 <20100304005709.GE14317@discord.disaster>
-Reply-To: aelder@sgi.com
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: Re: -next March 3: Boot failure on x86 (Oops)
+Date: Fri, 05 Mar 2010 13:17:47 +0530
+Message-ID: <4B90B723.3000100@in.ibm.com>
+References: <20100303174603.5be197ba.sfr@canb.auug.org.au> <4B8E83D4.6090507@in.ibm.com> <4B8F0CD0.1040507@kernel.org> <4B8F43DD.10002@in.ibm.com> <4B909FC5.8020800@kernel.org> <4B90A031.8090306@kernel.org> <4B90A214.70301@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay2.sgi.com ([192.48.179.30]:58709 "EHLO relay.sgi.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1754295Ab0CDQZE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 4 Mar 2010 11:25:04 -0500
-In-Reply-To: <20100304005709.GE14317@discord.disaster>
+Received: from e23smtp04.au.ibm.com ([202.81.31.146]:40248 "EHLO
+	e23smtp04.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752725Ab0CEHrw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Mar 2010 02:47:52 -0500
+In-Reply-To: <4B90A214.70301@kernel.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, xfs-masters@oss.sgi.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, xfs@oss.sgi.com
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Thu, 2010-03-04 at 11:57 +1100, Dave Chinner wrote:
-> On Thu, Mar 04, 2010 at 11:19:30AM +1100, Stephen Rothwell wrote:
-> > Hi Dave,
-> > 
-> > After merging the xfs tree, today's linux-next build (x86_64 allmodconfig)
-> > produced this warning:
-> > 
-> > fs/xfs/linux-2.6/xfs_aops.c: In function 'xfs_end_io':
-> > fs/xfs/linux-2.6/xfs_aops.c:232: warning: 'error' may be used uninitialized in this function
-> > 
-> > Introduced by commit 77d7a0c2eeb285c9069e15396703d0cb9690ac50 ("xfs:
-> > Non-blocking inode locking in IO completion").
-> > 
-> > I can't tell if this is a false positive.  If the first two "if"
-> > statement bodies are skipped, then error is tested uninitialised.  It is
-> > possible that at least one of them has to be executed.
-> 
-> Right, there is a warning being generated there - I thought I fixed
-> that immediately after posting the first version of the patch. The
-> second version:
-> 
-> http://oss.sgi.com/archives/xfs/2010-02/msg00340.html
-> 
-> definitely had it fixed.
-> 
-> Alex, can you make sure you take the entire patch rather than
-> cutting and pasting bits from one patch version to another?  That
-> way you don't miss small changes to the patch that might have been
-> forgotten about....
+Tejun Heo wrote:
+> Hello,
+>
+> On 03/05/2010 03:09 PM, Tejun Heo wrote:
+>   
+>> On 03/05/2010 03:08 PM, Tejun Heo wrote:
+>>     
+>>> Hmmm... this means that on one of the chunks, chunk->list.next was
+>>> NULL (BTW, the disassembly is from unlinked object, right?).  The main
+>>> allocation code hasn't seen much change lately.  The only changes are,
+>>>
+>>> 22b737f4c75197372d64afc6ed1bccd58c00e549 : just refactoring
+>>> 833af8427be4b217b5bc522f61afdbd3f1d282c2 : possible but isn't very new
+>>>       
+>> Can you also please try reverting the above two commits?
+>>     
+>
+> Sorry about all the fuss but I think this could be it.  It looks like
+> I forgot to update need_to_extend logic while adding simultaneous
+> head/tail split for alignment, so the array might be overrun by one
+> entry.  Can you please try this one first?
+>
+> Thanks.
+>
+> diff --git a/mm/percpu.c b/mm/percpu.c
+> index 768419d..f1ed9ea 100644
+> --- a/mm/percpu.c
+> +++ b/mm/percpu.c
+> @@ -373,11 +373,11 @@ static int pcpu_need_to_extend(struct pcpu_chunk *chunk)
+>  {
+>  	int new_alloc;
+>
+> -	if (chunk->map_alloc >= chunk->map_used + 2)
+> +	if (chunk->map_alloc >= chunk->map_used + 3)
+>  		return 0;
+>
+>  	new_alloc = PCPU_DFL_MAP_ALLOC;
+> -	while (new_alloc < chunk->map_used + 2)
+> +	while (new_alloc < chunk->map_used + 3)
+>  		new_alloc *= 2;
+>
+>  	return new_alloc;
+>
+>   
+This did not help. With this patch applied i ran into the
+following 
 
-(Sorry if this gets duplicated--I was using a web-based mail
-interface yesterday and my first attempt got bounced back
-as potential spam.)
+Unpacking initramfs...
+Freeing initrd memory: 11780k freed
+BUG: unable to handle kernel NULL pointer dereference at (null)
+IP: [<c01df0e2>] pcpu_alloc+0x1cb/0x75e
+*pdpt = 0000000000661001 *pde = 0000000000000000
+Oops: 0000 [#1] SMP
+last sysfs file:
+Modules linked in:
 
-I didn't expect you would change the patch content, only
-the description.  I had already tested the previous code
-so just grabbed the new description when you re-posted.
-Sorry about the warning slipping through.  I'll incorporate
-your fix soon.
-        
-                                       -Alex
-        
+Pid: 1, comm: swapper Not tainted 2.6.33-git10-autotest #2 /eserver xSeries 235 -[86717AX]-
+EIP: 0060:[<c01df0e2>] EFLAGS: 00010002 CPU: 1
+EIP is at pcpu_alloc+0x1cb/0x75e
+EAX: 00000000 EBX: c0647a00 ECX: cccccccc EDX: 00000000
+ESI: 00000040 EDI: 00000004 EBP: f5c3ff74 ESP: f5c3fef8
+ DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068
+Process swapper (pid: 1, ti=f5c3e000 task=f5c48000 task.ti=f5c3e000)
+Stack:
+ 00000000 00000004 00000002 00000002 00000002 f6227fa0 00000040 00000040
+<0> 00000002 00000286 f62294a0 00000000 f5c3ff54 00000202 00000000 f6200400
+<0> 00000202 00000000 00000020 f6200000 00000000 f62294a0 00000000 f5c3ff64
+Call Trace:
+ [<c01b364b>] ? free_hot_page+0x31/0x35
+ [<c01df68e>] ? __alloc_percpu+0xa/0xc
+ [<c0163c29>] ? __create_workqueue_key+0x74/0x1c8
+ [<c05fe3d3>] ? irqfd_module_init+0x0/0x2c
+ [<c05fe3ed>] ? irqfd_module_init+0x1a/0x2c
+ [<c0101139>] ? do_one_initcall+0x4c/0x131
+ [<c05fc352>] ? kernel_init+0x127/0x1a8
+ [<c05fc22b>] ? kernel_init+0x0/0x1a8
+ [<c01220b6>] ? kernel_thread_helper+0x6/0x10
+Code: 45 a8 e9 65 ff ff ff 8b 4d 9c 8b 55 a0 8b 45 84 e8 31 fa ff ff 85 c0 89 45 a4 0f 89 fd 00 00 00 8b 45 84 8b 00 89 45 84 8b 55 84 <8b> 02 0f 18 00 90 8b 45 cc 03 05 a0 9f 5f c0 39 c2 0f 85 67 ff
+EIP: [<c01df0e2>] pcpu_alloc+0x1cb/0x75e SS:ESP 0068:f5c3fef8
+CR2: 0000000000000000
+---[ end trace a7919e7f17c0a725 ]---
+
+I will try reverting the two commits you mentioned and see if that
+helps.
+
+Thanks
+-Sachin
+
+-- 
+
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
