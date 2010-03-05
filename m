@@ -1,62 +1,82 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] mfd/lpc_sch: fix related depends/selects, fix build
- error
-Date: Fri, 05 Mar 2010 09:43:06 -0800
-Message-ID: <4B9142AA.9040801@oracle.com>
-References: <20100305181358.9adfe089.sfr@canb.auug.org.au>
+From: Samuel Ortiz <sameo@linux.intel.com>
+Subject: Re: sch_gpio: fix compilation warning "ignoring return value of
+ gpiochip_remove"
+Date: Fri, 5 Mar 2010 19:11:17 +0100
+Message-ID: <20100305181117.GA5615@sortiz.org>
+References: <20100303162252.e7cf0e43.sfr@canb.auug.org.au>
+ <4B8E2CE9.3050001@compulab.co.il>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-2
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet11.oracle.com ([141.146.126.233]:50493 "EHLO
-	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755034Ab0CERpG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Mar 2010 12:45:06 -0500
-In-Reply-To: <20100305181358.9adfe089.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Denis Turischev <denis@compulab.co.il>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <4B8E2CE9.3050001@compulab.co.il>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Denis Turischev <denis@compulab.co.il>
+Cc: linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Mike Rapoport <mike@compulab.co.il>
+List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+Hi Denis,
 
-LPC_SCH is selected by GPI_SCH and I2C_ISCH, even when PCI is not
-enabled, but LPC_SCH depends on PCI, so make GPI_SCH and I2C_ISCH
-also depend on PCI.
+On Wed, Mar 03, 2010 at 11:33:29AM +0200, Denis Turischev wrote:
+> Signed-off-by: Denis Turischev <denis@compulab.co.il>
+I modified this patch as you were leaking some resources releasing.
 
-Those 2 selects also need to select what LPC_SCH selects,
-since kconfig does not follow selects.
+Cheers,
+Samuel.
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Denis Turischev <denis@compulab.co.il>
----
- drivers/gpio/Kconfig       |    3 ++-
- drivers/i2c/busses/Kconfig |    2 ++
- 2 files changed, 4 insertions(+), 1 deletion(-)
-
---- linux-next-20100305.orig/drivers/gpio/Kconfig
-+++ linux-next-20100305/drivers/gpio/Kconfig
-@@ -87,7 +87,8 @@ config GPIO_VR41XX
- 
- config GPIO_SCH
- 	tristate "Intel SCH GPIO"
--	depends on GPIOLIB
-+	depends on GPIOLIB && PCI
-+	select MFD_CORE
- 	select LPC_SCH
- 	help
- 	  Say yes here to support GPIO interface on Intel Poulsbo SCH.
---- linux-next-20100305.orig/drivers/i2c/busses/Kconfig
-+++ linux-next-20100305/drivers/i2c/busses/Kconfig
-@@ -105,6 +105,8 @@ config I2C_I801
- 
- config I2C_ISCH
- 	tristate "Intel SCH SMBus 1.0"
-+	depends on PCI
-+	select MFD_CORE
- 	select LPC_SCH
- 	help
- 	  Say Y here if you want to use SMBus controller on the Intel SCH
+> ---
+>  drivers/gpio/sch_gpio.c |   25 +++++++++++++++++++++----
+>  1 files changed, 21 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpio/sch_gpio.c b/drivers/gpio/sch_gpio.c
+> index 761071a..a89c02d 100644
+> --- a/drivers/gpio/sch_gpio.c
+> +++ b/drivers/gpio/sch_gpio.c
+> @@ -229,7 +229,12 @@ static int __devinit sch_gpio_probe(struct platform_device *pdev)
+>  	return 0;
+> 
+>  err_sch_gpio_resume:
+> -	gpiochip_remove(&sch_gpio_core);
+> +	err = gpiochip_remove(&sch_gpio_core);
+> +	if (err) {
+> +		dev_err(&pdev->dev, "%s failed, %d\n",
+> +				"gpiochip_remove()", err);
+> +		return err;
+> +	}
+> 
+>  err_sch_gpio_core:
+>  	release_region(res->start, resource_size(res));
+> @@ -240,11 +245,23 @@ err_sch_gpio_core:
+> 
+>  static int __devexit sch_gpio_remove(struct platform_device *pdev)
+>  {
+> +	int err_c, err_r;
+>  	struct resource *res;
+>  	if (gpio_ba) {
+> -		gpiochip_remove(&sch_gpio_core);
+> -		gpiochip_remove(&sch_gpio_resume);
+> -
+> +		err_c = gpiochip_remove(&sch_gpio_core);
+> +		
+> +		err_r = gpiochip_remove(&sch_gpio_resume);
+> +
+> +		if (err_c) {
+> +			dev_err(&pdev->dev, "%s failed, %d\n",
+> +					"gpiochip_remove()", err_c);
+> +			return err_c;
+> +		}
+> +		if (err_r) {
+> +			dev_err(&pdev->dev, "%s failed, %d\n",
+> +					"gpiochip_remove()", err_r);
+> +			return err_r;
+> +		}
+>  		res = platform_get_resource(pdev, IORESOURCE_IO, 0);
+> 
+>  		release_region(res->start, resource_size(res));
+> -- 
+> 1.6.3.3
+> 
 
 -- 
-~Randy
+Intel Open Source Technology Centre
+http://oss.intel.com/
