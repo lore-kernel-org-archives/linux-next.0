@@ -1,46 +1,62 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: -next March 3: Boot failure on x86 (Oops)
-Date: Fri, 05 Mar 2010 22:25:29 +0900
-Message-ID: <4B910649.1000506@kernel.org>
-References: <20100303174603.5be197ba.sfr@canb.auug.org.au> <4B8E83D4.6090507@in.ibm.com> <4B8F0CD0.1040507@kernel.org> <4B8F43DD.10002@in.ibm.com> <4B909FC5.8020800@kernel.org> <4B90A031.8090306@kernel.org> <4B90A214.70301@kernel.org> <4B90B723.3000100@in.ibm.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] mfd/lpc_sch: fix related depends/selects, fix build
+ error
+Date: Fri, 05 Mar 2010 09:43:06 -0800
+Message-ID: <4B9142AA.9040801@oracle.com>
+References: <20100305181358.9adfe089.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-2
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hera.kernel.org ([140.211.167.34]:35021 "EHLO hera.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750719Ab0CENZg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 5 Mar 2010 08:25:36 -0500
-In-Reply-To: <4B90B723.3000100@in.ibm.com>
+Received: from acsinet11.oracle.com ([141.146.126.233]:50493 "EHLO
+	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755034Ab0CERpG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Mar 2010 12:45:06 -0500
+In-Reply-To: <20100305181358.9adfe089.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sachin Sant <sachinp@in.ibm.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Denis Turischev <denis@compulab.co.il>
 
-On 03/05/2010 04:47 PM, Sachin Sant wrote:
->> diff --git a/mm/percpu.c b/mm/percpu.c
->> index 768419d..f1ed9ea 100644
->> --- a/mm/percpu.c
->> +++ b/mm/percpu.c
->> @@ -373,11 +373,11 @@ static int pcpu_need_to_extend(struct pcpu_chunk
->> *chunk)
->>  {
->>      int new_alloc;
->>
->> -    if (chunk->map_alloc >= chunk->map_used + 2)
->> +    if (chunk->map_alloc >= chunk->map_used + 3)
->>          return 0;
->>
->>      new_alloc = PCPU_DFL_MAP_ALLOC;
->> -    while (new_alloc < chunk->map_used + 2)
->> +    while (new_alloc < chunk->map_used + 3)
->>          new_alloc *= 2;
->>
->>      return new_alloc;
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-This was a red herring.  +2 is correct.
+LPC_SCH is selected by GPI_SCH and I2C_ISCH, even when PCI is not
+enabled, but LPC_SCH depends on PCI, so make GPI_SCH and I2C_ISCH
+also depend on PCI.
 
-Thanks.
+Those 2 selects also need to select what LPC_SCH selects,
+since kconfig does not follow selects.
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Denis Turischev <denis@compulab.co.il>
+---
+ drivers/gpio/Kconfig       |    3 ++-
+ drivers/i2c/busses/Kconfig |    2 ++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+--- linux-next-20100305.orig/drivers/gpio/Kconfig
++++ linux-next-20100305/drivers/gpio/Kconfig
+@@ -87,7 +87,8 @@ config GPIO_VR41XX
+ 
+ config GPIO_SCH
+ 	tristate "Intel SCH GPIO"
+-	depends on GPIOLIB
++	depends on GPIOLIB && PCI
++	select MFD_CORE
+ 	select LPC_SCH
+ 	help
+ 	  Say yes here to support GPIO interface on Intel Poulsbo SCH.
+--- linux-next-20100305.orig/drivers/i2c/busses/Kconfig
++++ linux-next-20100305/drivers/i2c/busses/Kconfig
+@@ -105,6 +105,8 @@ config I2C_I801
+ 
+ config I2C_ISCH
+ 	tristate "Intel SCH SMBus 1.0"
++	depends on PCI
++	select MFD_CORE
+ 	select LPC_SCH
+ 	help
+ 	  Say Y here if you want to use SMBus controller on the Intel SCH
 
 -- 
-tejun
+~Randy
