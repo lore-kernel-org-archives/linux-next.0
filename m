@@ -1,62 +1,365 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the scsi-post-merge final
- tree
-Date: Mon, 8 Mar 2010 14:43:43 +1100
-Message-ID: <20100308144343.d2129e35.sfr@canb.auug.org.au>
+Subject: linux-next: Tree for March 8
+Date: Mon, 8 Mar 2010 15:27:40 +1100
+Message-ID: <20100308152740.a007e8cb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__8_Mar_2010_14_43_43_+1100_FeY75_NsKR7QXpPx"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34687 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753313Ab0CHDnv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 7 Mar 2010 22:43:51 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Richard =?UTF-8?B?UsO2amZvcnM=?= <richard.rojfors@pelagicore.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>
+ boundary="Signature=_Mon__8_Mar_2010_15_27_40_+1100_qwla3ThkAZK1VvRA"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__8_Mar_2010_14_43_43_+1100_FeY75_NsKR7QXpPx
-Content-Type: text/plain; charset=UTF-8
+--Signature=_Mon__8_Mar_2010_15_27_40_+1100_qwla3ThkAZK1VvRA
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the final tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Changes since 20100305:
 
-drivers/i2c/busses/i2c-xiic.c:39:28: error: linux/i2c-xiic.h: No such file =
-or directory
-drivers/i2c/busses/i2c-xiic.c: In function =E2=80=98xiic_i2c_probe=E2=80=99:
-drivers/i2c/busses/i2c-xiic.c:750: error: dereferencing pointer to incomple=
-te type
-drivers/i2c/busses/i2c-xiic.c:751: error: dereferencing pointer to incomple=
-te type
+Dropped tree: tmio-mmc (long unresolved conflicts and unable to fetch)
 
-I assume people already now about this.
+My fixes tree contains:
+	a patch for a pktcdvd build error from Arnd Bergmann
+=09
+We are seeing conflicts migrate from being between 2 trees in linux-next
+to be between a tree and Linus' tree as things start to get merged.
 
-Caused by commit e1d5b6598cdc33257fe68302ae9db81d2f7bb883 ("i2c: Add
-support for Xilinx XPS IIC Bus Interface") from Linus' tree.  I have
-reverted that commit for today.
+Linus' tree gained a build failure for which I reverted a commit.
 
-[The version of that patch in next-20100305 had the extra file in it ...]
+The xfs tree lost its merge fixup.
+
+The vfs tree lost its merge fixup.
+
+The bjdooks-i2c tree lost its conflicts.
+
+The v4l-dvb tree lost a conflict.
+
+The kvm tree lost its conflict.
+
+The mtd tree still has its 2 build failures for which I applied patches.
+
+The slab tree lost is merge fixup.
+
+The mfd tree lost its conflict.
+
+The trivial tree gained a conflict against Linus' tree.
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups (if any), it is also built with powerpc allnoconfig (32 and
+64 bit), ppc44x_defconfig and allyesconfig (minus
+CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
+and sparc64 defconfig. These builds also have
+CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
+CONFIG_DEBUG_INFO disabled when necessary.
+
+Below is a summary of the state of the merge.
+
+We are up to 159 trees (counting Linus' and 22 trees of patches pending
+for Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Jan Dittmer for adding the linux-next tree to his build tests
+at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
+Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__8_Mar_2010_14_43_43_+1100_FeY75_NsKR7QXpPx
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master
+Merging fixes/fixes
+Merging arm-current/master
+Merging m68k-current/for-linus
+Merging powerpc-merge/merge
+Merging sparc-current/master
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sound-current/for-linus
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging kbuild-current/for-linus
+Merging quilt/driver-core.current
+Merging quilt/tty.current
+Merging quilt/usb.current
+Merging quilt/staging.current
+Merging cpufreq-current/fixes
+Merging input-current/for-linus
+Merging md-current/for-linus
+Merging audit-current/for-linus
+Merging crypto-current/master
+Merging ide-curent/master
+Merging dwmw2/master
+Merging arm/devel
+Merging davinci/davinci-next
+Merging i.MX/for-next
+Merging msm/for-next
+Merging omap/for-next
+Merging pxa/for-next
+Merging samsung/next-samsung
+Merging avr32/avr32-arch
+Merging cris/for-next
+Merging ia64/test
+Merging m68k/for-next
+Merging m68knommu/for-next
+Merging microblaze/next
+CONFLICT (content): Merge conflict in arch/microblaze/include/asm/prom.h
+Merging mips/mips-for-linux-next
+CONFLICT (content): Merge conflict in arch/mips/alchemy/common/platform.c
+CONFLICT (content): Merge conflict in arch/mips/alchemy/common/setup.c
+CONFLICT (add/add): Merge conflict in arch/mips/alchemy/devboards/db1200/pl=
+atform.c
+CONFLICT (content): Merge conflict in arch/mips/alchemy/devboards/db1x00/bo=
+ard_setup.c
+CONFLICT (add/add): Merge conflict in arch/mips/alchemy/devboards/db1x00/pl=
+atform.c
+CONFLICT (add/add): Merge conflict in arch/mips/alchemy/devboards/pb1100/pl=
+atform.c
+CONFLICT (content): Merge conflict in arch/mips/alchemy/devboards/pb1200/pl=
+atform.c
+CONFLICT (add/add): Merge conflict in arch/mips/alchemy/devboards/pb1500/pl=
+atform.c
+CONFLICT (add/add): Merge conflict in arch/mips/alchemy/devboards/pb1550/pl=
+atform.c
+CONFLICT (add/add): Merge conflict in arch/mips/alchemy/devboards/platform.c
+CONFLICT (add/add): Merge conflict in arch/mips/alchemy/devboards/platform.h
+CONFLICT (add/add): Merge conflict in arch/mips/alchemy/xxs1500/platform.c
+CONFLICT (content): Merge conflict in arch/mips/cavium-octeon/octeon-irq.c
+CONFLICT (content): Merge conflict in arch/mips/configs/db1200_defconfig
+CONFLICT (content): Merge conflict in arch/mips/include/asm/mach-au1x00/au1=
+000.h
+CONFLICT (content): Merge conflict in drivers/i2c/busses/Kconfig
+CONFLICT (content): Merge conflict in drivers/i2c/busses/Makefile
+CONFLICT (content): Merge conflict in drivers/pcmcia/au1000_generic.h
+CONFLICT (add/add): Merge conflict in drivers/pcmcia/db1xxx_ss.c
+CONFLICT (add/add): Merge conflict in drivers/pcmcia/xxs1500_ss.c
+CONFLICT (delete/modify): drivers/staging/sm7xx/smtc2d.c deleted in HEAD an=
+d modified in mips/mips-for-linux-next. Version mips/mips-for-linux-next of=
+ drivers/staging/sm7xx/smtc2d.c left in tree.
+CONFLICT (delete/modify): drivers/staging/sm7xx/smtc2d.h deleted in HEAD an=
+d modified in mips/mips-for-linux-next. Version mips/mips-for-linux-next of=
+ drivers/staging/sm7xx/smtc2d.h left in tree.
+$ git rm -f drivers/staging/sm7xx/smtc2d.c drivers/staging/sm7xx/smtc2d.h
+Merging parisc/next
+Merging powerpc/next
+Merging 4xx/next
+Merging 52xx-and-virtex/next
+Merging galak/next
+Merging s390/features
+Merging sh/master
+Merging genesis/master
+Merging sparc/master
+Merging xtensa/master
+Merging ceph/for-next
+CONFLICT (content): Merge conflict in fs/gfs2/super.c
+CONFLICT (content): Merge conflict in fs/nfs/inode.c
+CONFLICT (content): Merge conflict in fs/ufs/inode.c
+CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_super.c
+Merging cifs/master
+Merging configfs/linux-next
+Merging ecryptfs/next
+Merging ext3/for_next
+Merging ext4/next
+Merging fatfs/master
+Merging fuse/for-next
+Merging gfs2/master
+Merging jfs/next
+Merging logfs/master
+Merging nfs/linux-next
+Merging nfsd/nfsd-next
+Merging nilfs2/for-next
+Merging ocfs2/linux-next
+Merging squashfs/master
+Merging udf/for_next
+Merging v9fs/for-next
+Merging ubifs/linux-next
+Merging xfs/master
+Merging reiserfs-bkl/reiserfs/kill-bkl
+Merging vfs/for-next
+CONFLICT (content): Merge conflict in fs/namei.c
+CONFLICT (content): Merge conflict in fs/nfsd/nfs4xdr.c
+CONFLICT (content): Merge conflict in security/tomoyo/realpath.c
+Merging pci/linux-next
+Merging hid/for-next
+Merging quilt/i2c
+Merging bjdooks-i2c/next-i2c
+Merging quilt/jdelvare-hwmon
+Merging quilt/kernel-doc
+Merging v4l-dvb/master
+CONFLICT (add/add): Merge conflict in drivers/media/dvb/dvb-usb/az6027.c
+CONFLICT (add/add): Merge conflict in drivers/media/dvb/ngene/ngene-core.c
+CONFLICT (content): Merge conflict in drivers/media/video/cx88/cx88-dvb.c
+CONFLICT (add/add): Merge conflict in drivers/media/video/tlg2300/pd-dvb.c
+CONFLICT (add/add): Merge conflict in drivers/media/video/tlg2300/pd-main.c
+CONFLICT (add/add): Merge conflict in drivers/media/video/tlg2300/pd-radio.c
+CONFLICT (add/add): Merge conflict in drivers/media/video/tlg2300/pd-video.c
+CONFLICT (content): Merge conflict in drivers/mfd/Kconfig
+CONFLICT (content): Merge conflict in drivers/mfd/Makefile
+Merging kbuild/for-next
+Merging kconfig/for-next
+Merging ide/master
+Merging libata/NEXT
+Merging infiniband/for-next
+Merging acpi/test
+CONFLICT (content): Merge conflict in drivers/acpi/processor_core.c
+Applying: cpufreq: merge fixup for processor_core.c rename
+Merging ieee1394/for-next
+Merging ubi/linux-next
+Merging kvm/linux-next
+Merging dlm/next
+Merging ibft/master
+Merging scsi/master
+Merging async_tx/next
+Merging net/master
+Merging wireless/master
+Merging mtd/master
+CONFLICT (content): Merge conflict in drivers/mtd/nand/sh_flctl.c
+Applying: mtd: nand: fix name space clash
+Applying: mtd: declare inline functions static
+Merging crypto/master
+Merging sound/for-next
+Merging cpufreq/next
+Merging quilt/rr
+CONFLICT (content): Merge conflict in MAINTAINERS
+CONFLICT (content): Merge conflict in drivers/char/hvc_console.c
+CONFLICT (content): Merge conflict in drivers/char/hvc_console.h
+CONFLICT (content): Merge conflict in drivers/char/virtio_console.c
+Merging mmc/next
+Merging input/next
+Merging lsm/for-next
+Merging block/for-next
+Merging quilt/device-mapper
+Merging embedded/master
+Merging firmware/master
+Merging pcmcia/master
+Merging battery/master
+Merging leds/for-mm
+Merging backlight/for-mm
+Merging kgdb/kgdb-next
+Merging slab/for-next
+Merging uclinux/for-next
+Merging md/for-next
+Merging mfd/for-next
+Merging hdlc/hdlc-next
+Merging drm/drm-next
+Merging voltage/for-next
+Merging security-testing/next
+Merging lblnet/master
+Merging agp/agp-next
+Merging uwb/for-upstream
+Merging watchdog/master
+Merging bdev/master
+Merging dwmw2-iommu/master
+Merging cputime/cputime
+Merging osd/linux-next
+Merging jc_docs/docs-next
+Merging nommu/master
+Merging trivial/for-next
+CONFLICT (content): Merge conflict in Documentation/filesystems/proc.txt
+CONFLICT (content): Merge conflict in arch/arm/mach-u300/include/mach/debug=
+-macro.S
+CONFLICT (content): Merge conflict in drivers/net/qlge/qlge_ethtool.c
+CONFLICT (content): Merge conflict in drivers/net/qlge/qlge_main.c
+CONFLICT (content): Merge conflict in drivers/net/typhoon.c
+Merging audit/for-next
+Merging quilt/aoe
+Merging suspend/linux-next
+Merging bluetooth/master
+Merging fsnotify/for-next
+CONFLICT (content): Merge conflict in fs/notify/inotify/inotify_user.c
+CONFLICT (content): Merge conflict in include/linux/fsnotify.h
+CONFLICT (content): Merge conflict in kernel/audit_tree.c
+Merging irda/for-next
+CONFLICT (content): Merge conflict in drivers/net/irda/irda-usb.c
+Merging hwlat/for-linus
+CONFLICT (content): Merge conflict in MAINTAINERS
+CONFLICT (content): Merge conflict in drivers/misc/Makefile
+Merging drbd/for-jens
+Merging catalin/for-next
+Merging alacrity/linux-next
+CONFLICT (content): Merge conflict in include/linux/Kbuild
+CONFLICT (content): Merge conflict in lib/Kconfig
+Merging i7core_edac/linux_next
+Merging devicetree/next-devicetree
+Merging spi/next-spi
+Merging limits/writable_limits
+CONFLICT (content): Merge conflict in arch/x86/ia32/ia32entry.S
+CONFLICT (content): Merge conflict in arch/x86/include/asm/unistd_32.h
+CONFLICT (content): Merge conflict in arch/x86/include/asm/unistd_64.h
+CONFLICT (content): Merge conflict in arch/x86/kernel/syscall_table_32.S
+Merging omap_dss2/for-next
+Merging als/for-next
+Merging tip/auto-latest
+Merging edac-amd/for-next
+Merging oprofile/for-next
+Merging percpu/for-next
+Merging workqueues/for-next
+Merging sfi/sfi-test
+Merging asm-generic/next
+Merging hwpoison/hwpoison
+Merging sysctl/master
+Merging quilt/driver-core
+Applying: i2c: update for semaphore to mutex conversion of devices
+Applying: ar9170: fix for driver-core ABI change
+Merging quilt/tty
+Merging quilt/usb
+Merging quilt/staging
+CONFLICT (content): Merge conflict in drivers/staging/comedi/drivers/ni_660=
+x.c
+CONFLICT (content): Merge conflict in drivers/staging/comedi/drivers/ni_lab=
+pc.c
+CONFLICT (content): Merge conflict in drivers/staging/comedi/drivers/pcmad.c
+CONFLICT (content): Merge conflict in drivers/staging/comedi/drivers/poc.c
+CONFLICT (content): Merge conflict in drivers/staging/dream/camera/msm_came=
+ra.c
+CONFLICT (content): Merge conflict in drivers/staging/dream/camera/s5k3e2fx=
+.c
+CONFLICT (content): Merge conflict in drivers/staging/wlan-ng/hfa384x_usb.c
+CONFLICT (content): Merge conflict in drivers/staging/wlan-ng/p80211conv.c
+CONFLICT (content): Merge conflict in drivers/staging/wlan-ng/p80211metadef=
+.h
+CONFLICT (content): Merge conflict in drivers/staging/wlan-ng/p80211wext.c
+CONFLICT (content): Merge conflict in drivers/staging/wlan-ng/prism2fw.c
+CONFLICT (content): Merge conflict in drivers/staging/wlan-ng/prism2mib.c
+Merging scsi-post-merge/master
+[master 492fe5d] Revert "i2c: Add support for Xilinx XPS IIC Bus Interface"
+
+--Signature=_Mon__8_Mar_2010_15_27_40_+1100_qwla3ThkAZK1VvRA
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkuUcm8ACgkQjjKRsyhoI8ytBgCgkttl4V+pbhnNCwPIN1jgJGAx
-byoAn1xYxbw0b0XWcf2kYx0eL2NzByIj
-=BvM7
+iEYEARECAAYFAkuUfLwACgkQjjKRsyhoI8xtcgCfQQhdlQtATZ7kL9i9u2OejC9J
+pAUAniQ426St1vFybvIdY1tmKMqPxI78
+=BXkk
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__8_Mar_2010_14_43_43_+1100_FeY75_NsKR7QXpPx--
+--Signature=_Mon__8_Mar_2010_15_27_40_+1100_qwla3ThkAZK1VvRA--
