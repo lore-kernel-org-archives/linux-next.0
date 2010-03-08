@@ -1,39 +1,62 @@
-From: Mulyadi Santosa <mulyadi.santosa@gmail.com>
-Subject: Re: linux-next: manual merge of the trivial tree with Linus' tree
-Date: Mon, 8 Mar 2010 09:41:53 +0700
-Message-ID: <f284c33d1003071841n617191e6vade447b3413ee9f9@mail.gmail.com>
-References: <20100308132043.f6dcc0cd.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the scsi-post-merge final
+ tree
+Date: Mon, 8 Mar 2010 14:43:43 +1100
+Message-ID: <20100308144343.d2129e35.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__8_Mar_2010_14_43_43_+1100_FeY75_NsKR7QXpPx"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pv0-f174.google.com ([74.125.83.174]:35870 "EHLO
-	mail-pv0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753337Ab0CHCmO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 7 Mar 2010 21:42:14 -0500
-In-Reply-To: <20100308132043.f6dcc0cd.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:34687 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753313Ab0CHDnv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 7 Mar 2010 22:43:51 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jiri Kosina <jkosina@suse.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, Andrew Morton <akpm@linux-foundation.org>
+To: Richard =?UTF-8?B?UsO2amZvcnM=?= <richard.rojfors@pelagicore.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>
 
-On Mon, Mar 8, 2010 at 9:20 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Jiri,
->
-> Today's linux-next merge of the trivial tree got a conflict in
-> Documentation/filesystems/proc.txt between commit
-> 34e55232e59f7b19050267a05ff1226e5cd122a5 ("mm: avoid false sharing of
-> mm_counter") from Linus' tree and commit
-> cb2992a60b7e73fbabe9ffe54056eed0022f2ed2 ("doc: typo - Table 1-2 should
-> refer to "status", not "statm"") from the trivial tree.
+--Signature=_Mon__8_Mar_2010_14_43_43_+1100_FeY75_NsKR7QXpPx
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the notification and the fix. I am glad my trivial patch is
-considered into the  next level of code merge....
+Hi all,
 
--- 
-regards,
+After merging the final tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Mulyadi Santosa
-Freelance Linux trainer and consultant
+drivers/i2c/busses/i2c-xiic.c:39:28: error: linux/i2c-xiic.h: No such file =
+or directory
+drivers/i2c/busses/i2c-xiic.c: In function =E2=80=98xiic_i2c_probe=E2=80=99:
+drivers/i2c/busses/i2c-xiic.c:750: error: dereferencing pointer to incomple=
+te type
+drivers/i2c/busses/i2c-xiic.c:751: error: dereferencing pointer to incomple=
+te type
 
-blog: the-hydra.blogspot.com
-training: mulyaditraining.blogspot.com
+I assume people already now about this.
+
+Caused by commit e1d5b6598cdc33257fe68302ae9db81d2f7bb883 ("i2c: Add
+support for Xilinx XPS IIC Bus Interface") from Linus' tree.  I have
+reverted that commit for today.
+
+[The version of that patch in next-20100305 had the extra file in it ...]
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__8_Mar_2010_14_43_43_+1100_FeY75_NsKR7QXpPx
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkuUcm8ACgkQjjKRsyhoI8ytBgCgkttl4V+pbhnNCwPIN1jgJGAx
+byoAn1xYxbw0b0XWcf2kYx0eL2NzByIj
+=BvM7
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__8_Mar_2010_14_43_43_+1100_FeY75_NsKR7QXpPx--
