@@ -1,51 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the trivial tree with Linus' tree
-Date: Mon, 8 Mar 2010 13:20:43 +1100
-Message-ID: <20100308132043.f6dcc0cd.sfr@canb.auug.org.au>
+From: Mulyadi Santosa <mulyadi.santosa@gmail.com>
+Subject: Re: linux-next: manual merge of the trivial tree with Linus' tree
+Date: Mon, 8 Mar 2010 09:41:53 +0700
+Message-ID: <f284c33d1003071841n617191e6vade447b3413ee9f9@mail.gmail.com>
+References: <20100308132043.f6dcc0cd.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34076 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753138Ab0CHCUu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 7 Mar 2010 21:20:50 -0500
+Received: from mail-pv0-f174.google.com ([74.125.83.174]:35870 "EHLO
+	mail-pv0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753337Ab0CHCmO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 7 Mar 2010 21:42:14 -0500
+In-Reply-To: <20100308132043.f6dcc0cd.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mulyadi Santosa <mulyadi.santosa@gmail.com>, KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, Andrew Morton <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jiri Kosina <jkosina@suse.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, Andrew Morton <akpm@linux-foundation.org>
 
-Hi Jiri,
+On Mon, Mar 8, 2010 at 9:20 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Jiri,
+>
+> Today's linux-next merge of the trivial tree got a conflict in
+> Documentation/filesystems/proc.txt between commit
+> 34e55232e59f7b19050267a05ff1226e5cd122a5 ("mm: avoid false sharing of
+> mm_counter") from Linus' tree and commit
+> cb2992a60b7e73fbabe9ffe54056eed0022f2ed2 ("doc: typo - Table 1-2 should
+> refer to "status", not "statm"") from the trivial tree.
 
-Today's linux-next merge of the trivial tree got a conflict in
-Documentation/filesystems/proc.txt between commit
-34e55232e59f7b19050267a05ff1226e5cd122a5 ("mm: avoid false sharing of
-mm_counter") from Linus' tree and commit
-cb2992a60b7e73fbabe9ffe54056eed0022f2ed2 ("doc: typo - Table 1-2 should
-refer to "status", not "statm"") from the trivial tree.
+Thanks for the notification and the fix. I am glad my trivial patch is
+considered into the  next level of code merge....
 
-Just context changes.  I fixed it up (see below) and can carry the fix
-for a while.
 -- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+regards,
 
-diff --cc Documentation/filesystems/proc.txt
-index 96a44dd,bb314f6..0000000
---- a/Documentation/filesystems/proc.txt
-+++ b/Documentation/filesystems/proc.txt
-@@@ -189,13 -188,7 +189,13 @@@ memory usage. Its seven fields are expl
-  contains details information about the process itself.  Its fields are
-  explained in Table 1-4.
-  
- +(for SMP CONFIG users)
- +For making accounting scalable, RSS related information are handled in
- +asynchronous manner and the vaule may not be very precise. To see a precise
- +snapshot of a moment, you can see /proc/<pid>/smaps file and scan page table.
- +It's slow but very precise.
- +
-- Table 1-2: Contents of the statm files (as of 2.6.30-rc7)
-+ Table 1-2: Contents of the status files (as of 2.6.30-rc7)
-  ..............................................................................
-   Field                       Content
-   Name                        filename of the executable
+Mulyadi Santosa
+Freelance Linux trainer and consultant
+
+blog: the-hydra.blogspot.com
+training: mulyaditraining.blogspot.com
