@@ -1,93 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for March 9
-Date: Tue, 9 Mar 2010 17:20:50 +1100
-Message-ID: <20100309172050.28af0584.sfr@canb.auug.org.au>
+Subject: [PATCH] i2c: update for semaphore to mutex conversion of devices
+Date: Tue, 9 Mar 2010 10:28:28 +1100
+Message-ID: <20100309102828.18351564.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__9_Mar_2010_17_20_50_+1100_W_witNavk7Vb3f5s"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48138 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751446Ab0CIGU4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 9 Mar 2010 01:20:56 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
-
---Signature=_Tue__9_Mar_2010_17_20_50_+1100_W_witNavk7Vb3f5s
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Greg KH <greg@kroah.com>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Jean Delvare <khali@linux-fr.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+I have been carrying this patch in linux-next for some time and now
+mainline needs it.
 
-Changes since 20100308:
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/i2c/i2c-smbus.c |    5 +++--
+ 1 files changed, 3 insertions(+), 2 deletions(-)
 
-Dropped tree: tmio-mmc (long unresolved conflicts and unable to fetch)
+diff --git a/drivers/i2c/i2c-smbus.c b/drivers/i2c/i2c-smbus.c
+index 333527c..52aa775 100644
+--- a/drivers/i2c/i2c-smbus.c
++++ b/drivers/i2c/i2c-smbus.c
+@@ -27,6 +27,7 @@
+ #include <linux/workqueue.h>
+ #include <linux/i2c.h>
+ #include <linux/i2c-smbus.h>
++#include <linux/mutex.h>
+ 
+ struct i2c_smbus_alert {
+ 	unsigned int		alert_edge_triggered:1;
+@@ -55,7 +56,7 @@ static int smbus_do_alert(struct device *dev, void *addrp)
+ 	 * Drivers should either disable alerts, or provide at least
+ 	 * a minimal handler.  Lock so client->driver won't change.
+ 	 */
+-	down(&dev->sem);
++	device_lock(dev);
+ 	if (client->driver) {
+ 		if (client->driver->alert)
+ 			client->driver->alert(client, data->flag);
+@@ -63,7 +64,7 @@ static int smbus_do_alert(struct device *dev, void *addrp)
+ 			dev_warn(&client->dev, "no driver alert()!\n");
+ 	} else
+ 		dev_dbg(&client->dev, "alert with no driver\n");
+-	up(&dev->sem);
++	device_unlock(dev);
+ 
+ 	/* Stop iterating after we find the device */
+ 	return -EBUSY;
+-- 
+1.6.6.2
 
-My fixes tree contains:
-	a patch for a pktcdvd build error from Arnd Bergmann
-	two fixes for i2c-xii.c
-	an update to cope with the semaphore to mutex conversion in
-		driver-core (this turns out not to be necessary).
-=20
-The mtd tree still has its 2 build failures for which I applied patches.
 
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
-and sparc64 defconfig. These builds also have
-CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
-CONFIG_DEBUG_INFO disabled when necessary.
-
-Below is a summary of the state of the merge.
-
-We are up to 159 trees (counting Linus' and 22 trees of patches pending
-for Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__9_Mar_2010_17_20_50_+1100_W_witNavk7Vb3f5s
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkuV6MIACgkQjjKRsyhoI8wCpgCfW12bi6QUw2pB6NWWplChaCSe
-EQ8AnR/vR5vtDlBZI2I+xzXlc6Amu+tR
-=I6wH
------END PGP SIGNATURE-----
-
---Signature=_Tue__9_Mar_2010_17_20_50_+1100_W_witNavk7Vb3f5s--
