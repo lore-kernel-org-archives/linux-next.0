@@ -1,58 +1,93 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] ar9170: fix for driver-core ABI change
-Date: Tue, 9 Mar 2010 12:52:45 +1100
-Message-ID: <20100309125245.c25e5ca4.sfr@canb.auug.org.au>
-References: <20100309104221.aedc5e7e.sfr@canb.auug.org.au>
+Subject: linux-next: Tree for March 9
+Date: Tue, 9 Mar 2010 17:20:50 +1100
+Message-ID: <20100309172050.28af0584.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__9_Mar_2010_12_52_45_+1100_Ay92DLu+zl5zo5f."
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100309104221.aedc5e7e.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: "John W. Linville" <linville@tuxdriver.com>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Tue__9_Mar_2010_17_20_50_+1100_W_witNavk7Vb3f5s"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:48138 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751446Ab0CIGU4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 9 Mar 2010 01:20:56 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Tue__9_Mar_2010_12_52_45_+1100_Ay92DLu+zl5zo5f.
+--Signature=_Tue__9_Mar_2010_17_20_50_+1100_W_witNavk7Vb3f5s
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi all,
 
-On Tue, 9 Mar 2010 10:42:21 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/net/wireless/ath/ar9170/usb.c |    5 +++--
->  1 files changed, 3 insertions(+), 2 deletions(-)
->=20
-> I have been carrying this patch in linux-next for some time as a fixup
-> for the driver-core tree.  It is now needed in net-2.6 (i.e. my
-> net-current) (since you merged the wireless tree) *after* you merge with
-> Linus' tree i.e. the down()/up() are present in the net-2.6 tree and the
-> changes to the driver core to use mutexes are in Linus' tree.
+Changes since 20100308:
 
-Greg tells me that the semaphore to mutex change didn't go into Linus'
-tree.  However, this patch can still be applied as the device_lock/unlock
-primitives did go in.  I guess that the include of mutex.h is not needed.
+Dropped tree: tmio-mmc (long unresolved conflicts and unable to fetch)
+
+My fixes tree contains:
+	a patch for a pktcdvd build error from Arnd Bergmann
+	two fixes for i2c-xii.c
+	an update to cope with the semaphore to mutex conversion in
+		driver-core (this turns out not to be necessary).
+=20
+The mtd tree still has its 2 build failures for which I applied patches.
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups (if any), it is also built with powerpc allnoconfig (32 and
+64 bit), ppc44x_defconfig and allyesconfig (minus
+CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
+and sparc64 defconfig. These builds also have
+CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
+CONFIG_DEBUG_INFO disabled when necessary.
+
+Below is a summary of the state of the merge.
+
+We are up to 159 trees (counting Linus' and 22 trees of patches pending
+for Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Jan Dittmer for adding the linux-next tree to his build tests
+at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
+Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__9_Mar_2010_12_52_45_+1100_Ay92DLu+zl5zo5f.
+--Signature=_Tue__9_Mar_2010_17_20_50_+1100_W_witNavk7Vb3f5s
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkuVqe0ACgkQjjKRsyhoI8y6ogCggC5fH9B98EKDHvLEM5it76al
-ZrMAn2xyC2pw9bepvBAoWMLxD2tBgHei
-=tAvG
+iEYEARECAAYFAkuV6MIACgkQjjKRsyhoI8wCpgCfW12bi6QUw2pB6NWWplChaCSe
+EQ8AnR/vR5vtDlBZI2I+xzXlc6Amu+tR
+=I6wH
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__9_Mar_2010_12_52_45_+1100_Ay92DLu+zl5zo5f.--
+--Signature=_Tue__9_Mar_2010_17_20_50_+1100_W_witNavk7Vb3f5s--
