@@ -1,24 +1,27 @@
-From: Carlos@in.mx.trendmicro-fail-over.akadns.net
-Subject: ts
-Date: Tue, 9 Mar 2010 11:34:36 -0300
-Message-ID: <01cabf7c$7ef02e00$01e348bb@spbu>
+From: Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH] i2c: update for semaphore to mutex conversion of
+ devices
+Date: Tue, 09 Mar 2010 17:04:37 +0100
+Message-ID: <1268150677.5037.8.camel@laptop>
+References: <20100309102828.18351564.sfr@canb.auug.org.au>
+	 <20100308235953.GA7808@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 187-072-227-001.static.ctbctelecom.com.br ([187.72.227.1]:28823
-	"EHLO 187-072-227-001.static.ctbctelecom.com.br" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754246Ab0CIOeh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Mar 2010 09:34:37 -0500
-Received: from [187.72.227.1] by in.mx.trendmicro-fail-over.akadns.net
-        by mx69.mail.ru with esmtp
-        id 1NU4t5-000OU4-00
-        for linux-next@vger.kernel.org; Tue, 9 Mar 2010 11:34:36 -0300
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20100308235953.GA7808@kroah.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Jean Delvare <khali@linux-fr.org>, tglx <tglx@linutronix.de>
+List-Id: linux-next.vger.kernel.org
 
-
-
-
-
-http://apoqagyvy.fcpages.com/lybimu.html
+On Mon, 2010-03-08 at 15:59 -0800, Greg KH wrote:
+> 
+> Hopefully the lockdep core will be tweaked to handle the locking tree
+> that the device core requires and then when that happens, I will merge
+> the patch that will require this fix in order to keep the build from
+> breaking.
+> 
+?! Thomas send you patch shutting lockdep up for device mutex, look for
+<alpine.LFD.2.00.1002181116410.2811@localhost.localdomain> in your
+inbox.
