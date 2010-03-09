@@ -1,59 +1,66 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH] ar9170: fix for driver-core ABI change
-Date: Tue, 9 Mar 2010 10:42:21 +1100
-Message-ID: <20100309104221.aedc5e7e.sfr@canb.auug.org.au>
+From: Jean Delvare <khali@linux-fr.org>
+Subject: Re: [PATCH] i2c: update for semaphore to mutex conversion of
+ devices
+Date: Tue, 9 Mar 2010 09:25:08 +0100
+Message-ID: <20100309092508.02b7b2e8@hyperion.delvare>
+References: <20100309102828.18351564.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: "John W. Linville" <linville@tuxdriver.com>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from poutre.nerim.net ([62.4.16.124]:60538 "EHLO poutre.nerim.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752490Ab0CIIZL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 9 Mar 2010 03:25:11 -0500
+In-Reply-To: <20100309102828.18351564.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Greg KH <greg@kroah.com>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
+On Tue, 9 Mar 2010 10:28:28 +1100, Stephen Rothwell wrote:
+> I have been carrying this patch in linux-next for some time and now
+> mainline needs it.
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/i2c/i2c-smbus.c |    5 +++--
+>  1 files changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/i2c/i2c-smbus.c b/drivers/i2c/i2c-smbus.c
+> index 333527c..52aa775 100644
+> --- a/drivers/i2c/i2c-smbus.c
+> +++ b/drivers/i2c/i2c-smbus.c
+> @@ -27,6 +27,7 @@
+>  #include <linux/workqueue.h>
+>  #include <linux/i2c.h>
+>  #include <linux/i2c-smbus.h>
+> +#include <linux/mutex.h>
+>  
+>  struct i2c_smbus_alert {
+>  	unsigned int		alert_edge_triggered:1;
+> @@ -55,7 +56,7 @@ static int smbus_do_alert(struct device *dev, void *addrp)
+>  	 * Drivers should either disable alerts, or provide at least
+>  	 * a minimal handler.  Lock so client->driver won't change.
+>  	 */
+> -	down(&dev->sem);
+> +	device_lock(dev);
+>  	if (client->driver) {
+>  		if (client->driver->alert)
+>  			client->driver->alert(client, data->flag);
+> @@ -63,7 +64,7 @@ static int smbus_do_alert(struct device *dev, void *addrp)
+>  			dev_warn(&client->dev, "no driver alert()!\n");
+>  	} else
+>  		dev_dbg(&client->dev, "alert with no driver\n");
+> -	up(&dev->sem);
+> +	device_unlock(dev);
+>  
+>  	/* Stop iterating after we find the device */
+>  	return -EBUSY;
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/net/wireless/ath/ar9170/usb.c |    5 +++--
- 1 files changed, 3 insertions(+), 2 deletions(-)
+Thanks for the reminder Stephen. I was only waiting for device_lock()
+to become usable in mainline. Now that it happened, I will take the
+patch above in my i2c tree, and send it to Linus in my next batch.
 
-Hi Dave,
-
-I have been carrying this patch in linux-next for some time as a fixup
-for the driver-core tree.  It is now needed in net-2.6 (i.e. my
-net-current) (since you merged the wireless tree) *after* you merge with
-Linus' tree i.e. the down()/up() are present in the net-2.6 tree and the
-changes to the driver core to use mutexes are in Linus' tree.
-
-diff --git a/drivers/net/wireless/ath/ar9170/usb.c b/drivers/net/wireless/ath/ar9170/usb.c
-index 4e30197..7fc1034 100644
---- a/drivers/net/wireless/ath/ar9170/usb.c
-+++ b/drivers/net/wireless/ath/ar9170/usb.c
-@@ -41,6 +41,7 @@
- #include <linux/usb.h>
- #include <linux/firmware.h>
- #include <linux/etherdevice.h>
-+#include <linux/mutex.h>
- #include <net/mac80211.h>
- #include "ar9170.h"
- #include "cmd.h"
-@@ -726,10 +727,10 @@ static void ar9170_usb_firmware_failed(struct ar9170_usb *aru)
- 
- 	/* unbind anything failed */
- 	if (parent)
--		down(&parent->sem);
-+		device_lock(parent);
- 	device_release_driver(&aru->udev->dev);
- 	if (parent)
--		up(&parent->sem);
-+		device_unlock(parent);
- }
- 
- static void ar9170_usb_firmware_finish(const struct firmware *fw, void *context)
 -- 
-1.7.0
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Jean Delvare
