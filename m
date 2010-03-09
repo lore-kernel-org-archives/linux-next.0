@@ -1,46 +1,58 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: [PATCH] i2c: update for semaphore to mutex conversion of
- devices
-Date: Mon, 8 Mar 2010 18:27:09 -0800
-Message-ID: <20100309022709.GA25756@kroah.com>
-References: <20100309102828.18351564.sfr@canb.auug.org.au>
- <20100308235953.GA7808@kroah.com>
- <20100309125037.5a218f22.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH] ar9170: fix for driver-core ABI change
+Date: Tue, 9 Mar 2010 12:52:45 +1100
+Message-ID: <20100309125245.c25e5ca4.sfr@canb.auug.org.au>
+References: <20100309104221.aedc5e7e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__9_Mar_2010_12_52_45_+1100_Ay92DLu+zl5zo5f."
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20100309125037.5a218f22.sfr@canb.auug.org.au>
+In-Reply-To: <20100309104221.aedc5e7e.sfr@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Jean Delvare <khali@linux-fr.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: "John W. Linville" <linville@tuxdriver.com>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Mar 09, 2010 at 12:50:37PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> On Mon, 8 Mar 2010 15:59:53 -0800 Greg KH <greg@kroah.com> wrote:
-> >
-> > On Tue, Mar 09, 2010 at 10:28:28AM +1100, Stephen Rothwell wrote:
-> > > I have been carrying this patch in linux-next for some time and now
-> > > mainline needs it.
-> > 
-> > Well, it's not required, but it is nice to have.  I didn't merge the
-> > "convert the driver core semaphore to a mutex" patch as it was causing
-> > too many false-positive lockdep warnings.
-> 
-> Ah, I missed that, sorry.
-> 
-> Strangely, I was assuming that what was in linux-next would get merged :-)
+--Signature=_Tue__9_Mar_2010_12_52_45_+1100_Ay92DLu+zl5zo5f.
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-That is normally the case, but when patches are found to have problems,
-due to the testing that happens with linux-next, they can then be not
-sent to Linus, right?
+Hi Dave,
 
-That's what happened here, we need more infrastructure to be able to
-accept them.  I see it as a validation that our development model is
-working properly that this happened :)
+On Tue, 9 Mar 2010 10:42:21 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/net/wireless/ath/ar9170/usb.c |    5 +++--
+>  1 files changed, 3 insertions(+), 2 deletions(-)
+>=20
+> I have been carrying this patch in linux-next for some time as a fixup
+> for the driver-core tree.  It is now needed in net-2.6 (i.e. my
+> net-current) (since you merged the wireless tree) *after* you merge with
+> Linus' tree i.e. the down()/up() are present in the net-2.6 tree and the
+> changes to the driver core to use mutexes are in Linus' tree.
 
-thanks,
+Greg tells me that the semaphore to mutex change didn't go into Linus'
+tree.  However, this patch can still be applied as the device_lock/unlock
+primitives did go in.  I guess that the include of mutex.h is not needed.
 
-greg k-h
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__9_Mar_2010_12_52_45_+1100_Ay92DLu+zl5zo5f.
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkuVqe0ACgkQjjKRsyhoI8y6ogCggC5fH9B98EKDHvLEM5it76al
+ZrMAn2xyC2pw9bepvBAoWMLxD2tBgHei
+=tAvG
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__9_Mar_2010_12_52_45_+1100_Ay92DLu+zl5zo5f.--
