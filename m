@@ -1,31 +1,53 @@
-From: Stefan Richter <stefanr@s5r6.in-berlin.de>
-Subject: Re: [PATCH] ar9170: fix for driver-core ABI change
-Date: Tue, 09 Mar 2010 19:00:02 +0100
-Message-ID: <4B968CA2.4040000@s5r6.in-berlin.de>
-References: <20100309104221.aedc5e7e.sfr@canb.auug.org.au> <20100309125245.c25e5ca4.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the blackfin tree
+Date: Wed, 10 Mar 2010 09:02:30 +1100
+Message-ID: <20100310090230.81f5345f.sfr@canb.auug.org.au>
+References: <20100301120321.8851ba86.sfr@canb.auug.org.au>
+	<8bd0f97a1003020115m4016c5f6v643e90a6c6415e74@mail.gmail.com>
+	<8bd0f97a1003090626r207042e2lb7d4954e8d38ee3f@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__10_Mar_2010_09_02_30_+1100_Fjn/=Ksb_BF2a+J9"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from einhorn.in-berlin.de ([192.109.42.8]:50539 "EHLO
-	einhorn.in-berlin.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754271Ab0CISA1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Mar 2010 13:00:27 -0500
-In-Reply-To: <20100309125245.c25e5ca4.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:34619 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751719Ab0CIWCf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 9 Mar 2010 17:02:35 -0500
+In-Reply-To: <8bd0f97a1003090626r207042e2lb7d4954e8d38ee3f@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+To: Mike Frysinger <vapier.adi@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>
 
-Stephen Rothwell wrote:
-> Greg tells me that the semaphore to mutex change didn't go into Linus'
-> tree.  However, this patch can still be applied as the device_lock/unlock
-> primitives did go in.  I guess that the include of mutex.h is not needed.
+--Signature=_Wed__10_Mar_2010_09_02_30_+1100_Fjn/=Ksb_BF2a+J9
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-An #include <linux/device.h> seems to be in order though.  It is pulled
-in via linux/usb.h and this is surely not bound to change anytime soon,
-but still.
--- 
-Stefan Richter
--=====-==-=- --== -=--=
-http://arcgraph.de/sr/
+Hi Mike,
+
+On Tue, 9 Mar 2010 09:26:29 -0500 Mike Frysinger <vapier.adi@gmail.com> wro=
+te:
+>
+> my tree is sane again, so if you could pick it up again, that'd be
+> great.  thanks!
+
+OK, will do from today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__10_Mar_2010_09_02_30_+1100_Fjn/=Ksb_BF2a+J9
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkuWxXYACgkQjjKRsyhoI8za/ACfQPjUY1OH4fyL7/vIkcZBdNDb
+0iIAoL9UrKPUmM5Us39I87OOTRnWL6DQ
+=kGS8
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__10_Mar_2010_09_02_30_+1100_Fjn/=Ksb_BF2a+J9--
