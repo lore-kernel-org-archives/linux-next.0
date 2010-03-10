@@ -1,53 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: fetch of nfsd tree failed
-Date: Wed, 10 Mar 2010 11:00:14 +1100
-Message-ID: <20100310110014.f7db7e79.sfr@canb.auug.org.au>
-References: <20100310100911.930ab78f.sfr@canb.auug.org.au>
-	<20100309233041.GC29261@fieldses.org>
+Subject: linux-next: build warning after merge of the final tree (in Linus'
+ tree)
+Date: Wed, 10 Mar 2010 17:36:50 +1100
+Message-ID: <20100310173650.f0259c95.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__10_Mar_2010_11_00_14_+1100_A69hbIu7Jw+A5kFp"
+ boundary="Signature=_Wed__10_Mar_2010_17_36_50_+1100_P6cj2W3vu9U_Olyn"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:42455 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:57094 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751326Ab0CJAAW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 9 Mar 2010 19:00:22 -0500
-In-Reply-To: <20100309233041.GC29261@fieldses.org>
+	id S1753189Ab0CJGg6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Mar 2010 01:36:58 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "J. Bruce Fields" <bfields@fieldses.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Trond Myklebust <trond@netapp.com>
+To: Joel Becker <joel.becker@oracle.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
 
---Signature=_Wed__10_Mar_2010_11_00_14_+1100_A69hbIu7Jw+A5kFp
+--Signature=_Wed__10_Mar_2010_17_36_50_+1100_P6cj2W3vu9U_Olyn
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Bruce,
+Hi Joel,
 
-On Tue, 9 Mar 2010 18:30:41 -0500 "J. Bruce Fields" <bfields@fieldses.org> =
-wrote:
->
-> linux-nfs.org is having trouble; investigating....
+After merging the scsi-post-merge tree, today's linux-next build (powerpc
+allyesconfig) produced this warning:
 
-Thanks, looks good now.  I have fetched and will use the updated tree
-today.
+fs/ocfs2/xattr.c: In function 'ocfs2_create_empty_xattr_block':
+fs/ocfs2/xattr.c:6535: warning: 'meta_ac' is used uninitialized in this fun=
+ction
 
+Introduced by commit d3981544d7a4ed276966cdd58fe2f5d6e8a585d9 ("ocfs2:
+Set xattr block entries with ocfs2_xa_set()") which is now in Linus'
+tree.  (Entered linux-next on March 1, 2010 and Linus' tree on March 4).
+
+I am pretty certain that this warning indicates a bug.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__10_Mar_2010_11_00_14_+1100_A69hbIu7Jw+A5kFp
+--Signature=_Wed__10_Mar_2010_17_36_50_+1100_P6cj2W3vu9U_Olyn
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkuW4Q4ACgkQjjKRsyhoI8yONQCgigcFnS/BI7/pztHXoZl+npno
-G/0AoJAZY6HgkApKvAZA0b+6oVCYZ1i7
-=DY2i
+iEYEARECAAYFAkuXPgIACgkQjjKRsyhoI8xLhwCcDzNrz0DlJALCpmqrrbCz3rzJ
+RsYAn3rap4FqFAlCilJU1Yk2mvZD/79k
+=Bh7i
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__10_Mar_2010_11_00_14_+1100_A69hbIu7Jw+A5kFp--
+--Signature=_Wed__10_Mar_2010_17_36_50_+1100_P6cj2W3vu9U_Olyn--
