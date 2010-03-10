@@ -1,92 +1,88 @@
-From: "Desai, Kashyap" <Kashyap.Desai@lsi.com>
-Subject: RE: [-next Feb 9] Boot failure on x86_64: mptbase fails to
- initialize
-Date: Wed, 10 Mar 2010 15:15:12 +0530
-Message-ID: <1C9608B8A4CD534FB19C7C7543CBB249020E1A7BF0@inbmail02.lsi.com>
-References: <20100209190736.fe252102.sfr@canb.auug.org.au>
- <4B715809.6000202@in.ibm.com>
+From: Juuso Oikarinen <juuso.oikarinen@nokia.com>
+Subject: Re: linux-next: build failure after merge of the wireless tree
+Date: Wed, 10 Mar 2010 07:53:17 +0200
+Message-ID: <1268200397.10120.459.camel@wimaxnb.nmp.nokia.com>
+References: <20100310143605.8a20d310.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from na3sys009aog102.obsmtp.com ([74.125.149.69]:40831 "EHLO
-	na3sys009aog102.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932074Ab0CJJ6r convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 10 Mar 2010 04:58:47 -0500
-In-Reply-To: <4B715809.6000202@in.ibm.com>
-Content-Language: en-US
+Received: from smtp.nokia.com ([192.100.122.233]:64731 "EHLO
+	mgw-mx06.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754034Ab0CJF4l (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Mar 2010 00:56:41 -0500
+In-Reply-To: <20100310143605.8a20d310.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sachin Sant <sachinp@in.ibm.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "Moore, Eric" <Eric.Moore@lsi.com>
+To: ext Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "John W. Linville" <linville@tuxdriver.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Paasikivi Teemu.3 (EXT-Ixonos/Tampere)" <ext-teemu.3.paasikivi@nokia.com>, Coelho Luciano Roth <luciano.coelho@nokia.com>
 
-Sachin,
+Hi,
 
-This may be related to something specific to your system's APIC/or bad HW rather than pure driver issue.
-Below line from log is important to note.
-"mptsas 0000:03:04.0: can't find IRQ for PCI INT A; probably buggy MP table"
+Thinking about it, the assumption is correct. The implementation can
+currently work only on ARM, as the wl1271 requires and out-of-band IRQ
+line which is currently implemented with GPIO's.
 
-It means LSI controller is not able to reserve IRQ line and that is where all problem starts.
-Need to broaden the scope of the issue.
+-Juuso
 
-Another confusing thing to me.
-I have seen "probably buggy MP table" print only in arch/x86, but you have mentioned that in your case arch is x86_64.
-
-Thanks,
-Kashyap
-
-
-
-
-> -----Original Message-----
-> From: linux-scsi-owner@vger.kernel.org [mailto:linux-scsi-
-> owner@vger.kernel.org] On Behalf Of Sachin Sant
-> Sent: Tuesday, February 09, 2010 6:12 PM
-> To: linux-scsi
-> Cc: linux-next@vger.kernel.org; LKML; Moore, Eric
-> Subject: [-next Feb 9] Boot failure on x86_64: mptbase fails to
-> initialize
+On Wed, 2010-03-10 at 04:36 +0100, ext Stephen Rothwell wrote:
+> Hi John,
 > 
-> Today's next failed to boot on my 4 way x86_64 box because of mptbase
-> driver initialization failure.
+> After merging the wireless tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 > 
-> Snippet of messages during boot :
+> drivers/net/wireless/wl12xx/wl1271_sdio.c:31:23: error: plat/gpio.h: No such file or directory
+> drivers/net/wireless/wl12xx/wl1271_sdio.c: In function 'wl1271_sdio_raw_read':
+> drivers/net/wireless/wl12xx/wl1271_sdio.c:121: warning: format '%d' expects type 'int', but argument 3 has type 'size_t'
+> drivers/net/wireless/wl12xx/wl1271_sdio.c: In function 'wl1271_sdio_raw_write':
+> drivers/net/wireless/wl12xx/wl1271_sdio.c:144: warning: format '%d' expects type 'int', but argument 3 has type 'size_t'
+> drivers/net/wireless/wl12xx/wl1271_sdio.c: In function 'wl1271_probe':
+> drivers/net/wireless/wl12xx/wl1271_sdio.c:198: error: implicit declaration of function 'gpio_to_irq'
 > 
-> Fusion MPT SAS Host driver 3.04.14
-> mptsas 0000:03:04.0: can't find IRQ for PCI INT A; probably buggy MP
-> table
-> mptbase: ioc0: Initiating bringup
-> ioc0: LSISAS1064 A3: Capabilities={Initiator}
-> mptbase: ioc0: WARNING - Issuing Reset from mpt_config!!
-> mptbase: ioc0: Initiating recovery
-> mptbase: ioc0: Attempting Retry Config request type 0x1, page 0x2,
-> action 0
-> mptbase: ioc0: WARNING - Issuing Reset from mpt_config!!
-> mptbase: ioc0: Initiating recovery
-> mptbase: ioc0: WARNING - Issuing Reset from mpt_config!!
-> mptbase: ioc0: Initiating recovery
-> mptbase: ioc0: Attempting Retry Config request type 0x1, page 0x1,
-> action 0
-> mptbase: ioc0: WARNING - Issuing Reset from mpt_config!!
+> Caused by commit 5129dffebd4eab1749e63bb4a1b7abdc92903227 ("wl1271:
+> Initial SDIO implementation").  I assume this is only meant to be built
+> for arm?
 > 
-> Eventually machine fails to boot. I have similar problem on a x86 box
-> but with IPS driver. So might not be a driver specific issue.
+> I have used the version of the wireless tree from next-20100309 for today.
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
 > 
-> I had similar problem with yesterday's next.IIRC the last successful
-> boot was with next-20100203.
+> P.S. I also got the following warnings:
 > 
-> Have attached the boot log from x86_64 box.
-> 
-> Thanks
-> -Sachin
-> 
-> 
-> --
-> 
-> ---------------------------------
-> Sachin Sant
-> IBM Linux Technology Center
-> India Systems and Technology Labs
-> Bangalore, India
-> ---------------------------------
+> drivers/net/wireless/mwl8k.c: In function 'mwl8k_rxd_8366_ap_process':
+> drivers/net/wireless/mwl8k.c:752: warning: 'noise' is deprecated (declared at include/net/mac80211.h:557)
+> drivers/net/wireless/mwl8k.c: In function 'mwl8k_rxd_sta_process':
+> drivers/net/wireless/mwl8k.c:854: warning: 'noise' is deprecated (declared at include/net/mac80211.h:557)
+> drivers/net/wireless/libertas_tf/main.c: In function 'lbtf_rx':
+> drivers/net/wireless/libertas_tf/main.c:497: warning: 'noise' is deprecated (declared at include/net/mac80211.h:557)
+> drivers/net/wireless/rt2x00/rt2x00dev.c: In function 'rt2x00lib_rxdone':
+> drivers/net/wireless/rt2x00/rt2x00dev.c:437: warning: 'noise' is deprecated (declared at include/net/mac80211.h:557)
+> drivers/net/wireless/iwlwifi/iwl-3945.c: In function 'iwl3945_rx_reply_rx':
+> drivers/net/wireless/iwlwifi/iwl-3945.c:682: warning: 'noise' is deprecated (declared at include/net/mac80211.h:557)
+> drivers/net/wireless/iwlwifi/iwl-3945.c:685: warning: 'noise' is deprecated (declared at include/net/mac80211.h:557)
+> drivers/net/wireless/iwlwifi/iwl-3945.c:689: warning: 'noise' is deprecated (declared at include/net/mac80211.h:557)
+> drivers/net/wireless/iwlwifi/iwl-3945.c:697: warning: 'noise' is deprecated (declared at include/net/mac80211.h:557)
+> drivers/net/wireless/iwlwifi/iwl-3945.c:711: warning: 'noise' is deprecated (declared at include/net/mac80211.h:557)
+> drivers/net/wireless/p54/txrx.c: In function 'p54_rx_data':
+> drivers/net/wireless/p54/txrx.c:353: warning: 'noise' is deprecated (declared at include/net/mac80211.h:557)
+> drivers/net/wireless/ath/ar9170/main.c: In function 'ar9170_rx_phy_status':
+> drivers/net/wireless/ath/ar9170/main.c:928: warning: 'noise' is deprecated (declared at include/net/mac80211.h:557)
+> drivers/net/wireless/b43/xmit.c: In function 'b43_rx':
+> drivers/net/wireless/b43/xmit.c:613: warning: 'noise' is deprecated (declared at include/net/mac80211.h:557)
+> drivers/net/wireless/b43legacy/xmit.c: In function 'b43legacy_rx':
+> drivers/net/wireless/b43legacy/xmit.c:551: warning: 'noise' is deprecated (declared at include/net/mac80211.h:557)
+> drivers/net/wireless/wl12xx/wl1251_rx.c: In function 'wl1251_rx_status':
+> drivers/net/wireless/wl12xx/wl1251_rx.c:80: warning: 'noise' is deprecated (declared at include/net/mac80211.h:557)
+> drivers/net/wireless/ath/ath5k/base.c: In function 'ath5k_tasklet_rx':
+> drivers/net/wireless/ath/ath5k/base.c:1941: warning: 'noise' is deprecated (declared at include/net/mac80211.h:557)
+> drivers/net/wireless/ath/ath5k/base.c:1942: warning: 'noise' is deprecated (declared at include/net/mac80211.h:557)
+> drivers/net/wireless/ath/ath9k/common.c: In function 'ath9k_cmn_rx_skb_preprocess':
+> drivers/net/wireless/ath/ath9k/common.c:215: warning: 'noise' is deprecated (declared at include/net/mac80211.h:557)
+> drivers/net/wireless/wl12xx/wl1271_rx.c: In function 'wl1271_rx_status':
+> drivers/net/wireless/wl12xx/wl1271_rx.c:139: warning: 'noise' is deprecated (declared at include/net/mac80211.h:557)
+> drivers/net/wireless/iwlwifi/iwl-rx.c: In function 'iwl_rx_reply_rx':
+> drivers/net/wireless/iwlwifi/iwl-rx.c:1145: warning: 'noise' is deprecated (declared at include/net/mac80211.h:557)
+> drivers/net/wireless/iwlwifi/iwl-rx.c:1147: warning: 'noise' is deprecated (declared at include/net/mac80211.h:557)
+> drivers/net/wireless/iwlwifi/iwl-rx.c:1160: warning: 'noise' is deprecated (declared at include/net/mac80211.h:557)
