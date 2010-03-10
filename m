@@ -1,48 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the security-testing tree
-Date: Wed, 10 Mar 2010 15:31:16 +1100
-Message-ID: <20100310153116.291d4e6f.sfr@canb.auug.org.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: DMA_ERROR_CODE (was: Re: linux-next: build failure after merge of the
+	final tree)
+Date: Wed, 10 Mar 2010 12:03:37 +0100
+Message-ID: <10f740e81003100303m5a4ffb45t26c380b4ef3dec37@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__10_Mar_2010_15_31_16_+1100_xSwzEdYFWW8k7rEH"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: James Morris <jmorris@namei.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Hemminger <shemminger@vyatta.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Woodhouse <dwmw2@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Maxim Levitsky <maximlevitsky@gmail.com>, linux-arch@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__10_Mar_2010_15_31_16_+1100_xSwzEdYFWW8k7rEH
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Mar 1, 2010 at 10:40, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+>
+> drivers/mtd/nand/r852.c:22: error: 'enable_dma' redeclared as different kind of symbol
+> arch/powerpc/include/asm/dma.h:189: note: previous definition of 'enable_dma' was here
+> drivers/mtd/nand/r852.c: In function 'r852_engine_enable':
+> drivers/mtd/nand/r852.c:545: error: implicit declaration of function 'msleep'
+>
+> Caused by commit 67e054e919248fa1db93de727fb9ad49eb700642 ("mtd: nand:
+> Add driver for Ricoh xD/SmartMedia reader") from the mtd.
+>
+> I applied the following patch for today.
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 1 Mar 2010 20:21:06 +1100
+> Subject: [PATCH] mtd: nand: fix name space clash
+>
+> and include delay.h for msleep().
 
-Hi James,
+Another issue is that this driver uses DMA_ERROR_CODE, which is currently
+defined on powerpc/sparc/x86 only.
 
-After merging the security-testing tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+Gr{oetje,eeting}s,
 
-scripts/selinux/genheaders/genheaders.c: In function 'main':
-scripts/selinux/genheaders/genheaders.c:84: warning: initialization discard=
-s qualifiers from pointer target type
+						Geert
 
-Introduced by commit 634a539e16bd7a1ba31c3f832baa725565cc9f96 ("selinux:
-const strings in tables").
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__10_Mar_2010_15_31_16_+1100_xSwzEdYFWW8k7rEH
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkuXIJUACgkQjjKRsyhoI8wBUQCfZkFjy201a4IKkwcoH+nKgQad
-8NwAn20MbTjIn7fv96hobdm1pyL1u6UG
-=9h+a
------END PGP SIGNATURE-----
-
---Signature=_Wed__10_Mar_2010_15_31_16_+1100_xSwzEdYFWW8k7rEH--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
