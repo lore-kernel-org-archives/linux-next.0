@@ -1,44 +1,43 @@
-From: Borislav Petkov <borislav.petkov@amd.com>
-Subject: Re: linux-next: fetch of edac-amd tree failed
-Date: Wed, 10 Mar 2010 14:10:30 +0100
-Message-ID: <20100310131030.GB10679@aftab>
-References: <20100310095013.2766db19.sfr@canb.auug.org.au>
+From: FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>
+Subject: Re: DMA_ERROR_CODE (was: Re: linux-next: build failure after merge
+ of the 	final tree)
+Date: Thu, 11 Mar 2010 09:15:19 +0900
+Message-ID: <20100311091506J.fujita.tomonori@lab.ntt.co.jp>
+References: <10f740e81003100303m5a4ffb45t26c380b4ef3dec37@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from va3ehsobe003.messaging.microsoft.com ([216.32.180.13]:24979
-	"EHLO VA3EHSOBE003.bigfish.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1754837Ab0CJNKb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 10 Mar 2010 08:10:31 -0500
-Content-Disposition: inline
-In-Reply-To: <20100310095013.2766db19.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arch-owner@vger.kernel.org>
+In-Reply-To: <10f740e81003100303m5a4ffb45t26c380b4ef3dec37@mail.gmail.com>
+Sender: linux-arch-owner@vger.kernel.org
+To: geert@linux-m68k.org
+Cc: sfr@canb.auug.org.au, dwmw2@infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, maximlevitsky@gmail.com, linux-arch@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, Mar 10, 2010 at 09:50:13AM +1100
+On Wed, 10 Mar 2010 12:03:37 +0100
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
-> Hi Borislav,
+> On Mon, Mar 1, 2010 at 10:40, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > After merging the final tree, today's linux-next build (powerpc
+> > allyesconfig) failed like this:
+> >
+> > drivers/mtd/nand/r852.c:22: error: 'enable_dma' redeclared as different kind of symbol
+> > arch/powerpc/include/asm/dma.h:189: note: previous definition of 'enable_dma' was here
+> > drivers/mtd/nand/r852.c: In function 'r852_engine_enable':
+> > drivers/mtd/nand/r852.c:545: error: implicit declaration of function 'msleep'
+> >
+> > Caused by commit 67e054e919248fa1db93de727fb9ad49eb700642 ("mtd: nand:
+> > Add driver for Ricoh xD/SmartMedia reader") from the mtd.
+> >
+> > I applied the following patch for today.
+> >
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Date: Mon, 1 Mar 2010 20:21:06 +1100
+> > Subject: [PATCH] mtd: nand: fix name space clash
+> >
+> > and include delay.h for msleep().
 > 
-> The linux-next fetch of the edac-amd tree has been failing like this for
-> a few days:
-> 
-> fatal: Couldn't find remote ref refs/heads/for-next
-> 
-> I am still using the version from next-20100212 (which has been merged
-> into Linus' tree).
+> Another issue is that this driver uses DMA_ERROR_CODE, which is currently
+> defined on powerpc/sparc/x86 only.
 
-Hi Stephen,
-
-sorry about that. It should be fixed now, thanks.
-
--- 
-Regards/Gruss,
-Boris.
-
---
-Advanced Micro Devices, Inc.
-Operating Systems Research Center
+Why can't use dma_mapping_error()?
