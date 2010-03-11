@@ -1,36 +1,61 @@
-From: Bruno Randolf <br1@einfach.org>
-Subject: Re: linux-next: manual merge of the wireless tree with the wireless-current tree
-Date: Thu, 11 Mar 2010 11:38:11 +0900
-Message-ID: <201003111138.12070.br1@einfach.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the wireless tree with the
+ wireless-current tree
+Date: Thu, 11 Mar 2010 14:04:09 +1100
+Message-ID: <20100311140409.a9ae210c.sfr@canb.auug.org.au>
 References: <20100311131500.1057b6c5.sfr@canb.auug.org.au>
+	<201003111138.12070.br1@einfach.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100311131500.1057b6c5.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__11_Mar_2010_14_04_09_+1100_lE0Zq70Wx563Q4N_"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:55202 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754557Ab0CKDEP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Mar 2010 22:04:15 -0500
+In-Reply-To: <201003111138.12070.br1@einfach.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Bruno Randolf <br1@einfach.org>
 Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
 
-On Thursday 11 March 2010 11:15:00 Stephen Rothwell wrote:
-> Hi John,
-> 
-> Today's linux-next merge of the wireless tree got a conflict in
-> drivers/net/wireless/ath/ath5k/phy.c between commit
-> 86415d43efd4f7093979cfa8a80232114266f1a4 ("ath5k: fix I/Q calibration
-> (for real)") from the wireless-current tree and commit
-> 49a85d211a63ad1d565842ebc535c5168d85d86a ("ath5k: IQ calibration for
-> AR5211 is slightly different") from the wireless tree.
-> 
-> I fixed it up (I think - see below) and can carry the fix for a while.
+--Signature=_Thu__11_Mar_2010_14_04_09_+1100_lE0Zq70Wx563Q4N_
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-not sure what happened...
+Hi Bruno,
 
-but wireless-next-2.6.git 86415d43efd4f7093979cfa8a80232114266f1a4 is an older 
-version of my patch. i have sent one which applies cleanly later on.
+On Thu, 11 Mar 2010 11:38:11 +0900 Bruno Randolf <br1@einfach.org> wrote:
+>
+> not sure what happened...
+>=20
+> but wireless-next-2.6.git 86415d43efd4f7093979cfa8a80232114266f1a4 is an =
+older=20
+> version of my patch. i have sent one which applies cleanly later on.
 
-your fix is correct, though.
+The tree I call wireless-current usually only contains bug fixes, the
+tree I call wireless is stuff for the next release ...
 
-bruno
+> your fix is correct, though.
+
+Thanks for the confirmation.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__11_Mar_2010_14_04_09_+1100_lE0Zq70Wx563Q4N_
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkuYXakACgkQjjKRsyhoI8wRzACfe1iRvtix0X/a8GIjSCUr/zUO
+XfMAnizpvPZp7D3kF3zp2X8WZmNxjrBG
+=b6mR
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__11_Mar_2010_14_04_09_+1100_lE0Zq70Wx563Q4N_--
