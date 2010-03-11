@@ -1,43 +1,89 @@
-From: FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>
-Subject: Re: DMA_ERROR_CODE (was: Re: linux-next: build failure after merge
- of the 	final tree)
-Date: Thu, 11 Mar 2010 09:15:19 +0900
-Message-ID: <20100311091506J.fujita.tomonori@lab.ntt.co.jp>
-References: <10f740e81003100303m5a4ffb45t26c380b4ef3dec37@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the wireless tree with the
+ wireless-current tree
+Date: Thu, 11 Mar 2010 13:15:00 +1100
+Message-ID: <20100311131500.1057b6c5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arch-owner@vger.kernel.org>
-In-Reply-To: <10f740e81003100303m5a4ffb45t26c380b4ef3dec37@mail.gmail.com>
-Sender: linux-arch-owner@vger.kernel.org
-To: geert@linux-m68k.org
-Cc: sfr@canb.auug.org.au, dwmw2@infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, maximlevitsky@gmail.com, linux-arch@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:51656 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752589Ab0CKCPG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Mar 2010 21:15:06 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bruno Randolf <br1@einfach.org>
 
-On Wed, 10 Mar 2010 12:03:37 +0100
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+Hi John,
 
-> On Mon, Mar 1, 2010 at 10:40, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > After merging the final tree, today's linux-next build (powerpc
-> > allyesconfig) failed like this:
-> >
-> > drivers/mtd/nand/r852.c:22: error: 'enable_dma' redeclared as different kind of symbol
-> > arch/powerpc/include/asm/dma.h:189: note: previous definition of 'enable_dma' was here
-> > drivers/mtd/nand/r852.c: In function 'r852_engine_enable':
-> > drivers/mtd/nand/r852.c:545: error: implicit declaration of function 'msleep'
-> >
-> > Caused by commit 67e054e919248fa1db93de727fb9ad49eb700642 ("mtd: nand:
-> > Add driver for Ricoh xD/SmartMedia reader") from the mtd.
-> >
-> > I applied the following patch for today.
-> >
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Date: Mon, 1 Mar 2010 20:21:06 +1100
-> > Subject: [PATCH] mtd: nand: fix name space clash
-> >
-> > and include delay.h for msleep().
-> 
-> Another issue is that this driver uses DMA_ERROR_CODE, which is currently
-> defined on powerpc/sparc/x86 only.
+Today's linux-next merge of the wireless tree got a conflict in
+drivers/net/wireless/ath/ath5k/phy.c between commit
+86415d43efd4f7093979cfa8a80232114266f1a4 ("ath5k: fix I/Q calibration
+(for real)") from the wireless-current tree and commit
+49a85d211a63ad1d565842ebc535c5168d85d86a ("ath5k: IQ calibration for
+AR5211 is slightly different") from the wireless tree.
 
-Why can't use dma_mapping_error()?
+I fixed it up (I think - see below) and can carry the fix for a while.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/net/wireless/ath/ath5k/phy.c
+index eff3323,20d562b..0000000
+--- a/drivers/net/wireless/ath/ath5k/phy.c
++++ b/drivers/net/wireless/ath/ath5k/phy.c
+@@@ -1399,26 -1391,38 +1397,33 @@@ static int ath5k_hw_rf511x_calibrate(st
+  	}
+  
+  	i_coffd = ((i_pwr >> 1) + (q_pwr >> 1)) >> 7;
+- 	q_coffd = q_pwr >> 7;
++ 
++ 	if (ah->ah_version == AR5K_AR5211)
++ 		q_coffd = q_pwr >> 6;
++ 	else
++ 		q_coffd = q_pwr >> 7;
+  
+ -	/* No correction */
+ -	if (i_coffd == 0 || q_coffd == 0)
+ +	/* protect against divide by 0 and loss of sign bits */
+ +	if (i_coffd == 0 || q_coffd < 2)
+  		goto done;
+  
+ -	i_coff = ((-iq_corr) / i_coffd);
+ -
+ -	/* Boundary check */
+ -	if (i_coff > 31)
+ -		i_coff = 31;
+ -	if (i_coff < -32)
+ -		i_coff = -32;
+ +	i_coff = (-iq_corr) / i_coffd;
+ +	i_coff = clamp(i_coff, -32, 31); /* signed 6 bit */
+  
+- 	q_coff = (i_pwr / q_coffd) - 128;
++ 	if (ah->ah_version == AR5K_AR5211)
++ 		q_coff = (i_pwr / q_coffd) - 64;
++ 	else
++ 		q_coff = (i_pwr / q_coffd) - 128;
+ +	q_coff = clamp(q_coff, -16, 15); /* signed 5 bit */
+  
+ -	/* Boundary check */
+ -	if (q_coff > 15)
+ -		q_coff = 15;
+ -	if (q_coff < -16)
+ -		q_coff = -16;
+ +	ATH5K_DBG_UNLIMIT(ah->ah_sc, ATH5K_DEBUG_CALIBRATE,
+ +			"new I:%d Q:%d (i_coffd:%x q_coffd:%x)",
+ +			i_coff, q_coff, i_coffd, q_coffd);
+  
+ -	/* Commit new I/Q value */
+ -	AR5K_REG_ENABLE_BITS(ah, AR5K_PHY_IQ, AR5K_PHY_IQ_CORR_ENABLE |
+ -		((u32)q_coff) | ((u32)i_coff << AR5K_PHY_IQ_CORR_Q_I_COFF_S));
+ +	/* Commit new I/Q values (set enable bit last to match HAL sources) */
+ +	AR5K_REG_WRITE_BITS(ah, AR5K_PHY_IQ, AR5K_PHY_IQ_CORR_Q_I_COFF, i_coff);
+ +	AR5K_REG_WRITE_BITS(ah, AR5K_PHY_IQ, AR5K_PHY_IQ_CORR_Q_Q_COFF, q_coff);
+ +	AR5K_REG_ENABLE_BITS(ah, AR5K_PHY_IQ, AR5K_PHY_IQ_CORR_ENABLE);
+  
+  	/* Re-enable calibration -if we don't we'll commit
+  	 * the same values again and again */
