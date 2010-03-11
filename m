@@ -1,63 +1,55 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] mtd/nand/r852: fix build for CONFIG_PCI disabled
-Date: Thu, 11 Mar 2010 09:10:32 -0800
-Message-ID: <4B992408.7040608@oracle.com>
-References: <20100301210210.c6f465e6.sfr@canb.auug.org.au>	 <4B8C378B.2090400@oracle.com> <1267531329.10734.1.camel@maxim-laptop> <4B991A6F.1080006@oracle.com> <4B991B9B.8070809@oracle.com>
+From: David Woodhouse <dwmw2@infradead.org>
+Subject: Re: DMA_ERROR_CODE (was: Re: linux-next: build failure after merge
+ of the 	final tree)
+Date: Thu, 11 Mar 2010 09:30:09 -0800
+Message-ID: <1268328609.23872.9.camel@macbook.infradead.org>
+References: <10f740e81003100303m5a4ffb45t26c380b4ef3dec37@mail.gmail.com>
+	 <20100311091506J.fujita.tomonori@lab.ntt.co.jp>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet11.oracle.com ([141.146.126.233]:49883 "EHLO
-	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933340Ab0CKRNq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 11 Mar 2010 12:13:46 -0500
-In-Reply-To: <4B991B9B.8070809@oracle.com>
+Received: from bombadil.infradead.org ([18.85.46.34]:59100 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752593Ab0CKRai (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 11 Mar 2010 12:30:38 -0500
+In-Reply-To: <20100311091506J.fujita.tomonori@lab.ntt.co.jp>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Maxim Levitsky <maximlevitsky@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org
+To: FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>
+Cc: geert@linux-m68k.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, maximlevitsky@gmail.com, linux-arch@vger.kernel.org
 
+On Thu, 2010-03-11 at 09:15 +0900, FUJITA Tomonori wrote:
+> On Wed, 10 Mar 2010 12:03:37 +0100
+> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 > 
-> Sorry, it's there, but there are still build errors.
-> I will look at those...
+> > On Mon, Mar 1, 2010 at 10:40, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > > After merging the final tree, today's linux-next build (powerpc
+> > > allyesconfig) failed like this:
+> > >
+> > > drivers/mtd/nand/r852.c:22: error: 'enable_dma' redeclared as different kind of symbol
+> > > arch/powerpc/include/asm/dma.h:189: note: previous definition of 'enable_dma' was here
+> > > drivers/mtd/nand/r852.c: In function 'r852_engine_enable':
+> > > drivers/mtd/nand/r852.c:545: error: implicit declaration of function 'msleep'
+> > >
+> > > Caused by commit 67e054e919248fa1db93de727fb9ad49eb700642 ("mtd: nand:
+> > > Add driver for Ricoh xD/SmartMedia reader") from the mtd.
+> > >
+> > > I applied the following patch for today.
+> > >
+> > > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > > Date: Mon, 1 Mar 2010 20:21:06 +1100
+> > > Subject: [PATCH] mtd: nand: fix name space clash
+> > >
+> > > and include delay.h for msleep().
+> > 
+> > Another issue is that this driver uses DMA_ERROR_CODE, which is currently
+> > defined on powerpc/sparc/x86 only.
 > 
+> Why can't use dma_mapping_error()?
 
+http://git.infradead.org/mtd-2.6.git/commitdiff/0c82d3ce
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
-
-r852 fails to build when CONFIG_PCI is not enabled since it uses
-pci_*() calls and is a PCI driver, so it should depend on PCI
-to prevent build errors.
-It should also #include <linux/pci.h>.
-
-drivers/mtd/nand/r852.c:1053: error: implicit declaration of function 'pci_prepare_to_sleep'
-drivers/mtd/nand/r852.c:1062: error: implicit declaration of function 'pci_back_from_sleep'
-
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc:	David Woodhouse <dwmw2@infradead.org>
-Cc:	Maxim Levitsky <maximlevitsky@gmail.com>
----
- drivers/mtd/nand/Kconfig |    1 +
- drivers/mtd/nand/r852.c  |    1 +
- 2 files changed, 2 insertions(+)
-
---- linux-next-20100311.orig/drivers/mtd/nand/Kconfig
-+++ linux-next-20100311/drivers/mtd/nand/Kconfig
-@@ -105,6 +105,7 @@ config MTD_NAND_IDS
- config MTD_NAND_RICOH
- 	tristate "Ricoh xD card reader"
- 	default n
-+	depends on PCI
- 	select MTD_SM_COMMON
- 	help
- 	  Enable support for Ricoh R5C852 xD card reader
---- linux-next-20100311.orig/drivers/mtd/nand/r852.c
-+++ linux-next-20100311/drivers/mtd/nand/r852.c
-@@ -12,6 +12,7 @@
- #include <linux/jiffies.h>
- #include <linux/workqueue.h>
- #include <linux/interrupt.h>
-+#include <linux/pci.h>
- #include <linux/pci_ids.h>
- #include <linux/delay.h>
- #include <asm/byteorder.h>
+-- 
+David Woodhouse                            Open Source Technology Centre
+David.Woodhouse@intel.com                              Intel Corporation
