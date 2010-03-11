@@ -1,56 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] perf: Also export the weak version of
- perf_arch_fetch_caller_regs
-Date: Fri, 12 Mar 2010 17:26:41 +1100
-Message-ID: <20100312172641.f683dfd9.sfr@canb.auug.org.au>
-References: <20100312150003.afd9b59a.sfr@canb.auug.org.au>
-	<20100312055043.GB5014@nowhere>
-	<20100312172043.aa034ede.sfr@canb.auug.org.au>
+From: Richard Purdie <rpurdie@rpsys.net>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (backlight related)
+Date: Thu, 11 Mar 2010 09:36:10 -0800
+Message-ID: <1268328970.1625.2.camel@rex>
+References: <20100310180343.c6305829.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__12_Mar_2010_17_26_41_+1100_clI+DkXczeCeZVfQ"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100312172043.aa034ede.sfr@canb.auug.org.au>
+In-Reply-To: <20100310180343.c6305829.sfr@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Garrett <mjg@redhat.com>, Haojian Zhuang <haojian.zhuang@marvell.com>, Samuel Ortiz <sameo@linux.intel.com>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__12_Mar_2010_17_26_41_+1100_clI+DkXczeCeZVfQ
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Hi Frederic,
+On Wed, 2010-03-10 at 18:03 +1100, Stephen Rothwell wrote:
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> drivers/video/backlight/88pm860x_bl.c: In function 'pm860x_backlight_probe':
+> drivers/video/backlight/88pm860x_bl.c:227: error: too few arguments to function 'backlight_device_register'
+> drivers/video/backlight/max8925_bl.c: In function 'max8925_backlight_probe':
+> drivers/video/backlight/max8925_bl.c:137: error: too few arguments to function 'backlight_device_register'
+> 
+> Caused by commit 85d0968607ab8c61de45a68c643b198020a1369d ("backlight:
+> Allow properties to be passed at registration") interacting with commits
+> d07e8bf83fd71567aaf9c27c3b133ab3cf8f3c4c ("backlight: Enable backlight in
+> 88pm860x") and 4f811ef0d40048ae80b6ea77080b814725bffc58 ("backlight:
+> Enable max8925 backlight") which are now in Linus' tree (via the mfd tree)
 
-On Fri, 12 Mar 2010 17:20:43 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> On Fri, 12 Mar 2010 06:50:44 +0100 Frederic Weisbecker <fweisbec@gmail.co=
-m> wrote:
-> >
-> > Does that fixes the issue? Sorry I can not test for now...
->=20
-> I can't test it right now, sorry, but I have heard that EXPORT_SYMBOL's
-> for weak symbols must be in a different file from the actual symbol
-> definition.
+Sorry about that, I knew there were going to be issues with that patch
+and had meant to commit and test but not push until I fixed that issue.
+I've fixed up the tree now.
 
-See http://lkml.org/lkml/2010/2/17/467
---=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__12_Mar_2010_17_26_41_+1100_clI+DkXczeCeZVfQ
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkuZ3qEACgkQjjKRsyhoI8yvwACgiy7RL0e7Sqa/la1JrlrnX/A6
-GO8An1YsXOuMikjUoc/oYbMPcqsi3s8M
-=I07O
------END PGP SIGNATURE-----
-
---Signature=_Fri__12_Mar_2010_17_26_41_+1100_clI+DkXczeCeZVfQ--
+Richard
