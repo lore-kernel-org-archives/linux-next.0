@@ -1,40 +1,54 @@
-From: Richard Purdie <rpurdie@rpsys.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the final tree
  (backlight related)
-Date: Thu, 11 Mar 2010 09:36:10 -0800
-Message-ID: <1268328970.1625.2.camel@rex>
+Date: Fri, 12 Mar 2010 20:54:28 +1100
+Message-ID: <20100312205428.42a3e405.sfr@canb.auug.org.au>
 References: <20100310180343.c6305829.sfr@canb.auug.org.au>
+	<1268328970.1625.2.camel@rex>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100310180343.c6305829.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__12_Mar_2010_20_54_28_+1100_fw3ye4YbruDCmBAO"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:36853 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752364Ab0CLJyi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 12 Mar 2010 04:54:38 -0500
+In-Reply-To: <1268328970.1625.2.camel@rex>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Richard Purdie <rpurdie@rpsys.net>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Garrett <mjg@redhat.com>, Haojian Zhuang <haojian.zhuang@marvell.com>, Samuel Ortiz <sameo@linux.intel.com>
-List-Id: linux-next.vger.kernel.org
 
-Hi,
+--Signature=_Fri__12_Mar_2010_20_54_28_+1100_fw3ye4YbruDCmBAO
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2010-03-10 at 18:03 +1100, Stephen Rothwell wrote:
-> After merging the final tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
-> 
-> drivers/video/backlight/88pm860x_bl.c: In function 'pm860x_backlight_probe':
-> drivers/video/backlight/88pm860x_bl.c:227: error: too few arguments to function 'backlight_device_register'
-> drivers/video/backlight/max8925_bl.c: In function 'max8925_backlight_probe':
-> drivers/video/backlight/max8925_bl.c:137: error: too few arguments to function 'backlight_device_register'
-> 
-> Caused by commit 85d0968607ab8c61de45a68c643b198020a1369d ("backlight:
-> Allow properties to be passed at registration") interacting with commits
-> d07e8bf83fd71567aaf9c27c3b133ab3cf8f3c4c ("backlight: Enable backlight in
-> 88pm860x") and 4f811ef0d40048ae80b6ea77080b814725bffc58 ("backlight:
-> Enable max8925 backlight") which are now in Linus' tree (via the mfd tree)
+Hi Richard,
 
-Sorry about that, I knew there were going to be issues with that patch
-and had meant to commit and test but not push until I fixed that issue.
-I've fixed up the tree now.
+On Thu, 11 Mar 2010 09:36:10 -0800 Richard Purdie <rpurdie@rpsys.net> wrote:
+>
+> Sorry about that, I knew there were going to be issues with that patch
+> and had meant to commit and test but not push until I fixed that issue.
+> I've fixed up the tree now.
 
+Yep, looks good today, thanks.
+
+--=20
 Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Richard
+--Signature=_Fri__12_Mar_2010_20_54_28_+1100_fw3ye4YbruDCmBAO
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkuaD1QACgkQjjKRsyhoI8zdeACgq6690uXEzFNt0rPC5848bMQa
+3gsAoLH0DispdIAW51L0C9CuXR1+1y2z
+=sx+G
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__12_Mar_2010_20_54_28_+1100_fw3ye4YbruDCmBAO--
