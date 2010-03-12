@@ -1,52 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the omap_dss2 tree with the omap
- tree
-Date: Fri, 12 Mar 2010 09:18:27 +1100
-Message-ID: <20100312091827.b1a1a65b.sfr@canb.auug.org.au>
-References: <20100311151819.7c370c92.sfr@canb.auug.org.au>
-	<20100311165359.GF2900@atomide.com>
+Subject: linux-next: build failure after merge of the tip tree
+Date: Fri, 12 Mar 2010 15:00:03 +1100
+Message-ID: <20100312150003.afd9b59a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__12_Mar_2010_09_18_27_+1100_Gr.+v9ZRzUKW0+Rh"
+ boundary="Signature=_Fri__12_Mar_2010_15_00_03_+1100_ZNNe+6aC6uWK/Ap7"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34429 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:50103 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756934Ab0CKWSc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 11 Mar 2010 17:18:32 -0500
-In-Reply-To: <20100311165359.GF2900@atomide.com>
+	id S1751639Ab0CLEAO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 11 Mar 2010 23:00:14 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tony Lindgren <tony@atomide.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@nokia.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Weber <weber@corscience.de>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>
 
---Signature=_Fri__12_Mar_2010_09_18_27_+1100_Gr.+v9ZRzUKW0+Rh
+--Signature=_Fri__12_Mar_2010_15_00_03_+1100_ZNNe+6aC6uWK/Ap7
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Tony,
+Hi all,
 
-On Thu, 11 Mar 2010 08:53:59 -0800 Tony Lindgren <tony@atomide.com> wrote:
->
-> I'll split my patch in two parts, and let Tomi queue this fix.
+After merging the tip tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-OK, thanks.
+ERROR: ".perf_arch_fetch_caller_regs" [fs/xfs/xfs.ko] undefined!
+ERROR: ".perf_arch_fetch_caller_regs" [arch/powerpc/platforms/cell/spufs/sp=
+ufs.ko] undefined!
+
+Caused by commit 5331d7b84613b8325362dde53dc2bff2fb87d351 ("perf:
+Introduce new perf_fetch_caller_regs() for hot regs snapshot") from the
+tip tree.  Presumably commit 639fe4b12f92b54c9c3b38c82cdafaa38cfd3e63
+("perf: export perf_trace_regs and perf_arch_fetch_caller_regs") should
+have exported the weak version as well as the x86 one.
+
+I have used the version of the tip tree from next-20100311 for today.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__12_Mar_2010_09_18_27_+1100_Gr.+v9ZRzUKW0+Rh
+--Signature=_Fri__12_Mar_2010_15_00_03_+1100_ZNNe+6aC6uWK/Ap7
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkuZbDMACgkQjjKRsyhoI8ypEQCfZM6cEkcYW3IK6pi42Vh/sz0W
-+SkAnjIkzK6aAV1HHx+SBspT7So8CJTx
-=A3Rr
+iEYEARECAAYFAkuZvEMACgkQjjKRsyhoI8zhDgCgqM6xL8PUHR4OELbwFKQWOkBu
+aG0AnjhHCSK419g0jAeBwmMsMFnSg5d2
+=HUdy
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__12_Mar_2010_09_18_27_+1100_Gr.+v9ZRzUKW0+Rh--
+--Signature=_Fri__12_Mar_2010_15_00_03_+1100_ZNNe+6aC6uWK/Ap7--
