@@ -1,53 +1,47 @@
-From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Subject: [PATCH, fix 2/2] Add include to i2c-xii.c to fix build error
-Date: Sun, 14 Mar 2010 23:07:47 +1100
-Message-ID: <20100314230747.1a118846.sfr@canb.auug.org.au>
-References: <4B94C951.6050703@pelagicore.com>
-	<20100308150121.GW10014@trinity.fluff.org>
-	<4B956F9E.8020304@oracle.com>
-	<4B960420.8040804@pelagicore.com>
-	<20100314230525.352410e5.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: fetch of nfs and nfsd trees failed
+Date: Mon, 15 Mar 2010 10:52:55 +1100
+Message-ID: <20100315105255.4cd7359e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20100314230525.352410e5.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus <torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
-Cc: =?UTF-8?B?IlJpY2hhcmQgUsO2amZvcnMi?= <richard.rojfors-gfIc91nka+FZroRs9YW3xA@public.gmane.org>, Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Ben Dooks <ben-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, xtfeng-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__15_Mar_2010_10_52_55_+1100_99qPKqGGBAQFbcPo"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:36655 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753520Ab0CNXxN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 14 Mar 2010 19:53:13 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Trond Myklebust <trond.myklebust@fys.uio.no>, "J. Bruce Fields" <bfields@fieldses.org>
+Cc: linux-next@vger.kernel.org
 
-=46rom: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Date: Thu, 04 Feb 2010 12:11:09 -0800
+--Signature=_Mon__15_Mar_2010_10_52_55_+1100_99qPKqGGBAQFbcPo
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-drivers/i2c/busses/i2c-xiic.c:493: error: implicit declaration of funct=
-ion 'mdelay'
+Hi all,
 
-Signed-off-by: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: "Richard R=C3=B6jfors" <richard.rojfors-gfIc91nka+FZroRs9YW3xA@public.gmane.org>
-Cc: "Ben Dooks (embedded platforms)" <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Signed-off-by: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
----
- drivers/i2c/busses/i2c-xiic.c |    1 +
- 1 file changed, 1 insertion(+)
+Today's fetch of these trees failed with this error:
 
-Hi Linus,
+fatal: The remote end hung up unexpectedly
 
-This patch has been in linux-next for a while as well.  Please apply.
-
---- linux-next-20100204.orig/drivers/i2c/busses/i2c-xiic.c
-+++ linux-next-20100204/drivers/i2c/busses/i2c-xiic.c
-@@ -31,6 +31,7 @@
- #include <linux/module.h>
- #include <linux/init.h>
- #include <linux/errno.h>
-+#include <linux/delay.h>
- #include <linux/platform_device.h>
- #include <linux/i2c.h>
- #include <linux/interrupt.h>
-
+I will use the versions from next-20100312 for today.
 --=20
 Cheers,
-Stephen Rothwell                    sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
+Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__15_Mar_2010_10_52_55_+1100_99qPKqGGBAQFbcPo
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkuddtcACgkQjjKRsyhoI8zBhQCfZQRcM+cyJP93MU0JKPOeFjT9
+dskAnREt8AsuSFAhzX7tTqbiGumTrv3q
+=iGWG
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__15_Mar_2010_10_52_55_+1100_99qPKqGGBAQFbcPo--
