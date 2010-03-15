@@ -1,61 +1,91 @@
-From: James Morris <jmorris@namei.org>
-Subject: Re: linux-next: build warning after merge of the security-testing
- tree
-Date: Tue, 16 Mar 2010 08:50:32 +1100 (EST)
-Message-ID: <alpine.LRH.2.00.1003160850080.13724@tundra.namei.org>
-References: <20100310153116.291d4e6f.sfr@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+From: Frederic Weisbecker <fweisbec@gmail.com>
+Subject: [PATCH v2] perf: Fix unexported generic perf_arch_fetch_caller_regs
+Date: Mon, 15 Mar 2010 23:17:22 +0100
+Message-ID: <1268691442-8300-1-git-send-regression-fweisbec@gmail.com>
+References: <1268686806-7286-1-git-send-regression-fweisbec@gmail.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from tundra.namei.org ([65.99.196.166]:45853 "EHLO tundra.namei.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S936912Ab0COVuk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 15 Mar 2010 17:50:40 -0400
-In-Reply-To: <20100310153116.291d4e6f.sfr@canb.auug.org.au>
+Received: from mail-bw0-f209.google.com ([209.85.218.209]:50534 "EHLO
+	mail-bw0-f209.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S936926Ab0COWRX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Mar 2010 18:17:23 -0400
+In-Reply-To: <1268686806-7286-1-git-send-regression-fweisbec@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Hemminger <shemminger@vyatta.com>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: LKML <linux-kernel@vger.kernel.org>, Frederic Weisbecker <fweisbec@gmail.com>, "\\ \" H . Peter Anvin \\ \"" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Linux Next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Peter Zijlstra <peterz@infradead.org>, Xiao Guangrong <xiaoguangrong@cn.fujitsu.com>, Paul Mackerras <paulus@samba.org>
 
-On Wed, 10 Mar 2010, Stephen Rothwell wrote:
+perf_arch_fetch_caller_regs() is exported for the overriden x86
+version, but not for the generic weak version.
+As a general rule, weak functions should have their symbol exported
+in the same file they are defined.
 
-> Hi James,
-> 
-> After merging the security-testing tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
-> 
-> scripts/selinux/genheaders/genheaders.c: In function 'main':
-> scripts/selinux/genheaders/genheaders.c:84: warning: initialization discards qualifiers from pointer target type
-> 
-> Introduced by commit 634a539e16bd7a1ba31c3f832baa725565cc9f96 ("selinux:
-> const strings in tables").
+So let's export it on trace_event_perf.c as it is used by trace
+events only.
 
-Thanks, fix applied per below.
+This fixes:
+	ERROR: ".perf_arch_fetch_caller_regs" [fs/xfs/xfs.ko] undefined!
+	ERROR: ".perf_arch_fetch_caller_regs" [arch/powerpc/platforms/cell/spufs/spufs.ko] undefined!
 
-commit 310de047eef6685274045db1e6b39c9f313df428
-Author: James Morris <jmorris@namei.org>
-Date:   Tue Mar 16 08:47:36 2010 +1100
+v2: And also only build it if trace events are enabled.
 
-    selinux: fix warning in genheaders
-    
-    Fix const warning in the genheaders script as a result of
-    changes to the headers, as noted here:
-    
-    http://linux.derkeiler.com/Mailing-Lists/Kernel/2010-03/msg03977.html
-    
-    Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-    Signed-off-by: James Morris <jmorris@namei.org>
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Xiao Guangrong <xiaoguangrong@cn.fujitsu.com>
+Cc: Paul Mackerras <paulus@samba.org>
+---
+ arch/x86/kernel/cpu/perf_event.c |    3 ++-
+ kernel/perf_event.c              |    2 ++
+ kernel/trace/trace_event_perf.c  |    2 ++
+ 3 files changed, 6 insertions(+), 1 deletions(-)
 
-diff --git a/scripts/selinux/genheaders/genheaders.c b/scripts/selinux/genheaders/genheaders.c
-index 2462696..58a12c2 100644
---- a/scripts/selinux/genheaders/genheaders.c
-+++ b/scripts/selinux/genheaders/genheaders.c
-@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
- 	fprintf(fout, "\n");
+diff --git a/arch/x86/kernel/cpu/perf_event.c b/arch/x86/kernel/cpu/perf_event.c
+index 7645fae..60398a0 100644
+--- a/arch/x86/kernel/cpu/perf_event.c
++++ b/arch/x86/kernel/cpu/perf_event.c
+@@ -1702,6 +1702,7 @@ struct perf_callchain_entry *perf_callchain(struct pt_regs *regs)
+ 	return entry;
+ }
  
- 	for (i = 1; i < isids_len; i++) {
--		char *s = initial_sid_to_string[i];
-+		const char *s = initial_sid_to_string[i];
- 		fprintf(fout, "#define SECINITSID_%s", s);
- 		for (j = 0; j < max(1, 40 - strlen(s)); j++)
- 			fprintf(fout, " ");
++#ifdef CONFIG_EVENT_TRACING
+ void perf_arch_fetch_caller_regs(struct pt_regs *regs, unsigned long ip, int skip)
+ {
+ 	regs->ip = ip;
+@@ -1713,4 +1714,4 @@ void perf_arch_fetch_caller_regs(struct pt_regs *regs, unsigned long ip, int ski
+ 	regs->cs = __KERNEL_CS;
+ 	local_save_flags(regs->flags);
+ }
+-EXPORT_SYMBOL_GPL(perf_arch_fetch_caller_regs);
++#endif
+diff --git a/kernel/perf_event.c b/kernel/perf_event.c
+index fb3031c..574ee58 100644
+--- a/kernel/perf_event.c
++++ b/kernel/perf_event.c
+@@ -2786,10 +2786,12 @@ __weak struct perf_callchain_entry *perf_callchain(struct pt_regs *regs)
+ 	return NULL;
+ }
+ 
++#ifdef CONFIG_EVENT_TRACING
+ __weak
+ void perf_arch_fetch_caller_regs(struct pt_regs *regs, unsigned long ip, int skip)
+ {
+ }
++#endif
+ 
+ /*
+  * Output
+diff --git a/kernel/trace/trace_event_perf.c b/kernel/trace/trace_event_perf.c
+index 0709e4f..7d79a10 100644
+--- a/kernel/trace/trace_event_perf.c
++++ b/kernel/trace/trace_event_perf.c
+@@ -12,6 +12,8 @@
+ DEFINE_PER_CPU(struct pt_regs, perf_trace_regs);
+ EXPORT_PER_CPU_SYMBOL_GPL(perf_trace_regs);
+ 
++EXPORT_SYMBOL_GPL(perf_arch_fetch_caller_regs);
++
+ static char *perf_trace_buf;
+ static char *perf_trace_buf_nmi;
+ 
+-- 
+1.6.2.3
