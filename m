@@ -1,91 +1,59 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: [PATCH v2] perf: Fix unexported generic perf_arch_fetch_caller_regs
-Date: Mon, 15 Mar 2010 23:17:22 +0100
-Message-ID: <1268691442-8300-1-git-send-regression-fweisbec@gmail.com>
-References: <1268686806-7286-1-git-send-regression-fweisbec@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build warning after merge of the security-testing
+ tree
+Date: Tue, 16 Mar 2010 09:27:34 +1100
+Message-ID: <20100316092734.7bf780d2.sfr@canb.auug.org.au>
+References: <20100310153116.291d4e6f.sfr@canb.auug.org.au>
+	<alpine.LRH.2.00.1003160850080.13724@tundra.namei.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__16_Mar_2010_09_27_34_+1100_cClD17E/5iUj/FwB"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bw0-f209.google.com ([209.85.218.209]:50534 "EHLO
-	mail-bw0-f209.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S936926Ab0COWRX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Mar 2010 18:17:23 -0400
-In-Reply-To: <1268686806-7286-1-git-send-regression-fweisbec@gmail.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:51463 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S936949Ab0COW1j (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 15 Mar 2010 18:27:39 -0400
+In-Reply-To: <alpine.LRH.2.00.1003160850080.13724@tundra.namei.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: LKML <linux-kernel@vger.kernel.org>, Frederic Weisbecker <fweisbec@gmail.com>, "\\ \" H . Peter Anvin \\ \"" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Linux Next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Peter Zijlstra <peterz@infradead.org>, Xiao Guangrong <xiaoguangrong@cn.fujitsu.com>, Paul Mackerras <paulus@samba.org>
+To: James Morris <jmorris@namei.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Hemminger <shemminger@vyatta.com>
 
-perf_arch_fetch_caller_regs() is exported for the overriden x86
-version, but not for the generic weak version.
-As a general rule, weak functions should have their symbol exported
-in the same file they are defined.
+--Signature=_Tue__16_Mar_2010_09_27_34_+1100_cClD17E/5iUj/FwB
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-So let's export it on trace_event_perf.c as it is used by trace
-events only.
+Hi James,
 
-This fixes:
-	ERROR: ".perf_arch_fetch_caller_regs" [fs/xfs/xfs.ko] undefined!
-	ERROR: ".perf_arch_fetch_caller_regs" [arch/powerpc/platforms/cell/spufs/spufs.ko] undefined!
+On Tue, 16 Mar 2010 08:50:32 +1100 (EST) James Morris <jmorris@namei.org> w=
+rote:
+>
+> Thanks, fix applied per below.
+>=20
+> commit 310de047eef6685274045db1e6b39c9f313df428
+> Author: James Morris <jmorris@namei.org>
+> Date:   Tue Mar 16 08:47:36 2010 +1100
+>=20
+>     selinux: fix warning in genheaders
 
-v2: And also only build it if trace events are enabled.
+Thanks.
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Xiao Guangrong <xiaoguangrong@cn.fujitsu.com>
-Cc: Paul Mackerras <paulus@samba.org>
----
- arch/x86/kernel/cpu/perf_event.c |    3 ++-
- kernel/perf_event.c              |    2 ++
- kernel/trace/trace_event_perf.c  |    2 ++
- 3 files changed, 6 insertions(+), 1 deletions(-)
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --git a/arch/x86/kernel/cpu/perf_event.c b/arch/x86/kernel/cpu/perf_event.c
-index 7645fae..60398a0 100644
---- a/arch/x86/kernel/cpu/perf_event.c
-+++ b/arch/x86/kernel/cpu/perf_event.c
-@@ -1702,6 +1702,7 @@ struct perf_callchain_entry *perf_callchain(struct pt_regs *regs)
- 	return entry;
- }
- 
-+#ifdef CONFIG_EVENT_TRACING
- void perf_arch_fetch_caller_regs(struct pt_regs *regs, unsigned long ip, int skip)
- {
- 	regs->ip = ip;
-@@ -1713,4 +1714,4 @@ void perf_arch_fetch_caller_regs(struct pt_regs *regs, unsigned long ip, int ski
- 	regs->cs = __KERNEL_CS;
- 	local_save_flags(regs->flags);
- }
--EXPORT_SYMBOL_GPL(perf_arch_fetch_caller_regs);
-+#endif
-diff --git a/kernel/perf_event.c b/kernel/perf_event.c
-index fb3031c..574ee58 100644
---- a/kernel/perf_event.c
-+++ b/kernel/perf_event.c
-@@ -2786,10 +2786,12 @@ __weak struct perf_callchain_entry *perf_callchain(struct pt_regs *regs)
- 	return NULL;
- }
- 
-+#ifdef CONFIG_EVENT_TRACING
- __weak
- void perf_arch_fetch_caller_regs(struct pt_regs *regs, unsigned long ip, int skip)
- {
- }
-+#endif
- 
- /*
-  * Output
-diff --git a/kernel/trace/trace_event_perf.c b/kernel/trace/trace_event_perf.c
-index 0709e4f..7d79a10 100644
---- a/kernel/trace/trace_event_perf.c
-+++ b/kernel/trace/trace_event_perf.c
-@@ -12,6 +12,8 @@
- DEFINE_PER_CPU(struct pt_regs, perf_trace_regs);
- EXPORT_PER_CPU_SYMBOL_GPL(perf_trace_regs);
- 
-+EXPORT_SYMBOL_GPL(perf_arch_fetch_caller_regs);
-+
- static char *perf_trace_buf;
- static char *perf_trace_buf_nmi;
- 
--- 
-1.6.2.3
+--Signature=_Tue__16_Mar_2010_09_27_34_+1100_cClD17E/5iUj/FwB
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkuetFYACgkQjjKRsyhoI8yNpgCfZLg5vgAoIN5UH0jX8Ue9ChVb
+G9MAoKsxK0QBXtJFb461mgwYtQh0YbAv
+=IGQm
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__16_Mar_2010_09_27_34_+1100_cClD17E/5iUj/FwB--
