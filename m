@@ -1,58 +1,71 @@
-From: Sage Weil <sage@newdream.net>
-Subject: Re: linux-next: build failure after merge of the driver-core tree
-Date: Wed, 17 Mar 2010 08:51:49 -0700 (PDT)
-Message-ID: <Pine.LNX.4.64.1003170847110.25675@cobra.newdream.net>
-References: <20100317154145.bd9fca16.sfr@canb.auug.org.au>
- <20100317182136.0f2ab805@notabene.brown>
+From: Tilman Schmidt <tilman@imap.cc>
+Subject: Re: linux-next: Tree for March 17 (gigaset isdn)
+Date: Wed, 17 Mar 2010 18:30:27 +0100
+Message-ID: <4BA111B3.3040108@imap.cc>
+References: <20100317160803.78c63f94.sfr@canb.auug.org.au> <4BA0F78F.9090804@oracle.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cobra.newdream.net ([66.33.216.30]:50208 "EHLO
-	cobra.newdream.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753107Ab0CQPvE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Mar 2010 11:51:04 -0400
-In-Reply-To: <20100317182136.0f2ab805@notabene.brown>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Neil Brown <neilb@suse.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="------------enigD2453755781AE0EC2A96753F"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4BA0F78F.9090804@oracle.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Hansjoerg Lipp <hjlipp@web.de>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 17 Mar 2010, Neil Brown wrote:
+This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
+--------------enigD2453755781AE0EC2A96753F
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-> On Wed, 17 Mar 2010 15:41:45 +1100
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
-> > Hi Greg,
-> > 
-> > After merging the driver-core tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
-> > 
-> > fs/ceph/msgpool.c: In function 'ceph_msgpool_put':
-> > fs/ceph/msgpool.c:173: error: implicit declaration of function 'kref_set'
-> > 
-> > Caused by commit 10c5d9fdc9ba89606b34f01cbe6ea287abba7395 ("kref: remove
-> > kref_set") from the driver-core tree interacting with commit
-> > c2e552e76e2c6907ca50cd9a4b747a2e2e8c615e ("ceph: use kref for ceph_msg")
-> > from the ceph tree.
-> > 
-> > I applied the following patch for today (which may not be correct):
-> 
-> I would say this is correct.
+Am 17.03.2010 16:38 schrieb Randy Dunlap:
+> On 03/16/10 22:08, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> Changes since 20100316:
+>=20
+>=20
+> ERROR: "gigaset_isdn_regdev" [drivers/isdn/gigaset/gigaset.ko] undefine=
+d!
+> ERROR: "gigaset_isdn_regdrv" [drivers/isdn/gigaset/gigaset.ko] undefine=
+d!
+> ERROR: "gigaset_isdn_unregdrv" [drivers/isdn/gigaset/gigaset.ko] undefi=
+ned!
+> ERROR: "gigaset_isdn_unregdev" [drivers/isdn/gigaset/gigaset.ko] undefi=
+ned!
+>=20
+> when
+> # CONFIG_ISDN_I4L is not set
+> # CONFIG_ISDN_CAPI is not set
+> CONFIG_ISDN_DRV_GIGASET=3Dm # or =3Dy
+>=20
 
-Yeah, the fix is good, thanks Stephen!  I'll add it to my tree shortly.
+Rats, you're right. Sorry for the oversight. I will create a fix right aw=
+ay.
 
-> It is a pity that this code cannot use mempool_t....
-> What if mempool_t were changed to only re-alloc the vector of pointers when
-> it grew, or when it shrank to less than 1/2 it's current size.  Would that
-> reduce the frequency of allocations enough for you to be comfortable with it? 
-> i.e. always make the vector a power-of-2 size (which is what is probably
-> allocated anyway) while the pool size might be less.
-> ??
+Thanks,
+Tilman
 
-That would improve the situation, but still mean potentially large 
-allocations (the pools can grow pretty big) that aren't strictly 
-necessary.  I can imagine a more modular mempool_t with an ops vector for 
-adding/removing from the pool to cope with situations like this, but I'm 
-not sure it's worth the effort?
+--=20
+Tilman Schmidt                    E-Mail: tilman@imap.cc
+Bonn, Germany
+Diese Nachricht besteht zu 100% aus wiederverwerteten Bits.
+Unge=F6ffnet mindestens haltbar bis: (siehe R=FCckseite)
 
-sage
+
+--------------enigD2453755781AE0EC2A96753F
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.12 (GNU/Linux)
+Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org/
+
+iEYEARECAAYFAkuhEb0ACgkQQ3+did9BuFvGEACffyXNiVqTjJcNxwDvvRgDl025
+j5oAn0I9akJDhJEQ22Z89207kOQK5W9r
+=rDCq
+-----END PGP SIGNATURE-----
+
+--------------enigD2453755781AE0EC2A96753F--
