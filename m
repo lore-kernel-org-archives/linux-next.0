@@ -1,71 +1,51 @@
 From: Tilman Schmidt <tilman@imap.cc>
-Subject: Re: linux-next: Tree for March 17 (gigaset isdn)
-Date: Wed, 17 Mar 2010 18:30:27 +0100
-Message-ID: <4BA111B3.3040108@imap.cc>
-References: <20100317160803.78c63f94.sfr@canb.auug.org.au> <4BA0F78F.9090804@oracle.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="------------enigD2453755781AE0EC2A96753F"
+Subject: [PATCH] gigaset: fix build failure
+Date: Wed, 17 Mar 2010 18:37:05 +0100
+Message-ID: <20100317211231.569B140118@xenon.ts.pxnet.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4BA0F78F.9090804@oracle.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Hansjoerg Lipp <hjlipp@web.de>
+To: Karsten Keil <isdn@linux-pingi.de>, David Miller <davem@davemloft.net>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Hansjoerg Lipp <hjlipp@web.de>, isdn4linux <isdn4linux@listserv.isdn4linux.de>, i4ldeveloper <i4ldeveloper@listserv.isdn4linux.de>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, stable@kernel.org
 List-Id: linux-next.vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
---------------enigD2453755781AE0EC2A96753F
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+Update the dummy LL interface to the LL interface change
+introduced by commit daab433c03c15fd642c71c94eb51bdd3f32602c8.
+This fixes the build failure occurring after that commit when
+enabling ISDN_DRV_GIGASET but neither ISDN_I4L nor ISDN_CAPI.
 
-Am 17.03.2010 16:38 schrieb Randy Dunlap:
-> On 03/16/10 22:08, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20100316:
->=20
->=20
-> ERROR: "gigaset_isdn_regdev" [drivers/isdn/gigaset/gigaset.ko] undefine=
-d!
-> ERROR: "gigaset_isdn_regdrv" [drivers/isdn/gigaset/gigaset.ko] undefine=
-d!
-> ERROR: "gigaset_isdn_unregdrv" [drivers/isdn/gigaset/gigaset.ko] undefi=
-ned!
-> ERROR: "gigaset_isdn_unregdev" [drivers/isdn/gigaset/gigaset.ko] undefi=
-ned!
->=20
-> when
-> # CONFIG_ISDN_I4L is not set
-> # CONFIG_ISDN_CAPI is not set
-> CONFIG_ISDN_DRV_GIGASET=3Dm # or =3Dy
->=20
+Impact: bugfix
+Signed-off-by: Tilman Schmidt <tilman@imap.cc>
+---
+ drivers/isdn/gigaset/dummyll.c |   14 +++++++++++---
+ 1 files changed, 11 insertions(+), 3 deletions(-)
 
-Rats, you're right. Sorry for the oversight. I will create a fix right aw=
-ay.
-
-Thanks,
-Tilman
-
---=20
-Tilman Schmidt                    E-Mail: tilman@imap.cc
-Bonn, Germany
-Diese Nachricht besteht zu 100% aus wiederverwerteten Bits.
-Unge=F6ffnet mindestens haltbar bis: (siehe R=FCckseite)
-
-
---------------enigD2453755781AE0EC2A96753F
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.12 (GNU/Linux)
-Comment: Using GnuPG with SUSE - http://enigmail.mozdev.org/
-
-iEYEARECAAYFAkuhEb0ACgkQQ3+did9BuFvGEACffyXNiVqTjJcNxwDvvRgDl025
-j5oAn0I9akJDhJEQ22Z89207kOQK5W9r
-=rDCq
------END PGP SIGNATURE-----
-
---------------enigD2453755781AE0EC2A96753F--
+diff --git a/drivers/isdn/gigaset/dummyll.c b/drivers/isdn/gigaset/dummyll.c
+index 5b27c99..bd0b1ea 100644
+--- a/drivers/isdn/gigaset/dummyll.c
++++ b/drivers/isdn/gigaset/dummyll.c
+@@ -57,12 +57,20 @@ void gigaset_isdn_stop(struct cardstate *cs)
+ {
+ }
+ 
+-int gigaset_isdn_register(struct cardstate *cs, const char *isdnid)
++int gigaset_isdn_regdev(struct cardstate *cs, const char *isdnid)
+ {
+-	pr_info("no ISDN subsystem interface\n");
+ 	return 1;
+ }
+ 
+-void gigaset_isdn_unregister(struct cardstate *cs)
++void gigaset_isdn_unregdev(struct cardstate *cs)
++{
++}
++
++void gigaset_isdn_regdrv(void)
++{
++	pr_info("no ISDN subsystem interface\n");
++}
++
++void gigaset_isdn_unregdrv(void)
+ {
+ }
+-- 
+1.6.5.3.298.g39add
