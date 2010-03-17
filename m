@@ -1,34 +1,63 @@
-From: KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
-Subject: Re: linux-next: build warning after merge of the tip tree
-Date: Wed, 17 Mar 2010 13:00:00 +0900 (JST)
-Message-ID: <20100317125844.4CA9.A69D9226@jp.fujitsu.com>
-References: <20100317145702.e314f75b.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the driver-core tree
+Date: Wed, 17 Mar 2010 15:41:45 +1100
+Message-ID: <20100317154145.bd9fca16.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fgwmail7.fujitsu.co.jp ([192.51.44.37]:46512 "EHLO
-	fgwmail7.fujitsu.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750858Ab0CQEAF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Mar 2010 00:00:05 -0400
-In-Reply-To: <20100317145702.e314f75b.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:59512 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752892Ab0CQElt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 17 Mar 2010 00:41:49 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: kosaki.motohiro@jp.fujitsu.com, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sage Weil <sage@newdream.net>, NeilBrown <neilb@suse.de>
 
-> Hi all,
-> 
-> After merging the tip tree, today's linux-next build (powerpc
-> ppc64_defconfig) produced this warning:
-> 
-> kernel/sched.c: In function 'SYSC_sched_getaffinity':
-> kernel/sched.c:4915: warning: comparison of distinct pointer types lacks a cast
-> 
-> Introduced by commit cd3d8031eb4311e516329aee03c79a08333141f1 ("sched:
-> sched_getaffinity(): Allow less than NR_CPUS length").  Just a usage of
-> min() with different types.
+Hi Greg,
 
-yup. I've posted the fixing patch today.
+After merging the driver-core tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-thanks!
+fs/ceph/msgpool.c: In function 'ceph_msgpool_put':
+fs/ceph/msgpool.c:173: error: implicit declaration of function 'kref_set'
+
+Caused by commit 10c5d9fdc9ba89606b34f01cbe6ea287abba7395 ("kref: remove
+kref_set") from the driver-core tree interacting with commit
+c2e552e76e2c6907ca50cd9a4b747a2e2e8c615e ("ceph: use kref for ceph_msg")
+from the ceph tree.
+
+I applied the following patch for today (which may not be correct):
+
+[Sage, if this patch is correct, it should be applied to the ceph tree.]
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 17 Mar 2010 15:35:22 +1100
+Subject: [PATCH] ceph: update for removal of kref_set
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/ceph/msgpool.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/fs/ceph/msgpool.c b/fs/ceph/msgpool.c
+index ca3b44a..030297f 100644
+--- a/fs/ceph/msgpool.c
++++ b/fs/ceph/msgpool.c
+@@ -170,7 +170,7 @@ void ceph_msgpool_put(struct ceph_msgpool *pool, struct ceph_msg *msg)
+ 		msg->front.iov_len = pool->front_len;
+ 		msg->hdr.front_len = cpu_to_le32(pool->front_len);
+ 
+-		kref_set(&msg->kref, 1);  /* retake a single ref */
++		kref_init(&msg->kref);  /* retake a single ref */
+ 		list_add(&msg->list_head, &pool->msgs);
+ 		pool->num++;
+ 		dout("msgpool_put %p reclaim %p, now %d/%d\n", pool, msg,
+-- 
+1.7.0
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
