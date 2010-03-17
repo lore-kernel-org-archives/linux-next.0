@@ -1,68 +1,56 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH] gigaset: fix build failure
-Date: Wed, 17 Mar 2010 14:35:14 -0700
-Message-ID: <4BA14B12.4030900@oracle.com>
-References: <20100317211231.569B140118@xenon.ts.pxnet.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+Date: Thu, 18 Mar 2010 09:30:19 +1100
+Message-ID: <20100318093019.f271bdd5.sfr@canb.auug.org.au>
+References: <20100317154145.bd9fca16.sfr@canb.auug.org.au>
+	<20100317182136.0f2ab805@notabene.brown>
+	<Pine.LNX.4.64.1003170847110.25675@cobra.newdream.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-9
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__18_Mar_2010_09_30_19_+1100_JO+GN6tpEPTXun1q"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet11.oracle.com ([141.146.126.233]:52948 "EHLO
-	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751308Ab0CQVgj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Mar 2010 17:36:39 -0400
-In-Reply-To: <20100317211231.569B140118@xenon.ts.pxnet.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:54340 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756134Ab0CQWa0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 17 Mar 2010 18:30:26 -0400
+In-Reply-To: <Pine.LNX.4.64.1003170847110.25675@cobra.newdream.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tilman Schmidt <tilman@imap.cc>
-Cc: Karsten Keil <isdn@linux-pingi.de>, David Miller <davem@davemloft.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Hansjoerg Lipp <hjlipp@web.de>, isdn4linux <isdn4linux@listserv.isdn4linux.de>, i4ldeveloper <i4ldeveloper@listserv.isdn4linux.de>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, stable@kernel.org
+To: Sage Weil <sage@newdream.net>
+Cc: Neil Brown <neilb@suse.de>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 03/17/10 10:37, Tilman Schmidt wrote:
-> Update the dummy LL interface to the LL interface change
-> introduced by commit daab433c03c15fd642c71c94eb51bdd3f32602c8.
-> This fixes the build failure occurring after that commit when
-> enabling ISDN_DRV_GIGASET but neither ISDN_I4L nor ISDN_CAPI.
-> 
-> Impact: bugfix
-> Signed-off-by: Tilman Schmidt <tilman@imap.cc>
+--Signature=_Thu__18_Mar_2010_09_30_19_+1100_JO+GN6tpEPTXun1q
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
+Hi guys,
 
-Thanks.
+On Wed, 17 Mar 2010 08:51:49 -0700 (PDT) Sage Weil <sage@newdream.net> wrot=
+e:
+>
+> On Wed, 17 Mar 2010, Neil Brown wrote:
+>=20
+> > I would say this is correct.
+>=20
+> Yeah, the fix is good, thanks Stephen!  I'll add it to my tree shortly.
 
-> ---
->  drivers/isdn/gigaset/dummyll.c |   14 +++++++++++---
->  1 files changed, 11 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/isdn/gigaset/dummyll.c b/drivers/isdn/gigaset/dummyll.c
-> index 5b27c99..bd0b1ea 100644
-> --- a/drivers/isdn/gigaset/dummyll.c
-> +++ b/drivers/isdn/gigaset/dummyll.c
-> @@ -57,12 +57,20 @@ void gigaset_isdn_stop(struct cardstate *cs)
->  {
->  }
->  
-> -int gigaset_isdn_register(struct cardstate *cs, const char *isdnid)
-> +int gigaset_isdn_regdev(struct cardstate *cs, const char *isdnid)
->  {
-> -	pr_info("no ISDN subsystem interface\n");
->  	return 1;
->  }
->  
-> -void gigaset_isdn_unregister(struct cardstate *cs)
-> +void gigaset_isdn_unregdev(struct cardstate *cs)
-> +{
-> +}
-> +
-> +void gigaset_isdn_regdrv(void)
-> +{
-> +	pr_info("no ISDN subsystem interface\n");
-> +}
-> +
-> +void gigaset_isdn_unregdrv(void)
->  {
->  }
+Thanks for the confirmation.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
+--Signature=_Thu__18_Mar_2010_09_30_19_+1100_JO+GN6tpEPTXun1q
+Content-Type: application/pgp-signature
 
--- 
-~Randy
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkuhV/sACgkQjjKRsyhoI8zSogCfVkNr/7gEEkQBKyUWvaV1TxrT
+ZrcAnRUzfPb9MF4wEx/4Y/F39KVRMBvA
+=O9+4
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__18_Mar_2010_09_30_19_+1100_JO+GN6tpEPTXun1q--
