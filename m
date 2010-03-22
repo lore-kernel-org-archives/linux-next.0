@@ -1,61 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for March 19
-Date: Fri, 19 Mar 2010 21:36:46 +1100
-Message-ID: <20100319213646.819d26a9.sfr@canb.auug.org.au>
-References: <20100319160030.a71cd836.sfr@canb.auug.org.au>
-	<20100318.220712.212678037.davem@davemloft.net>
+Subject: linux-next: build failure after merge of the nfs tree
+Date: Mon, 22 Mar 2010 11:26:55 +1100
+Message-ID: <20100322112655.0f23c1fb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__19_Mar_2010_21_36_46_+1100__W9AaT3_/QzcB53i"
+ boundary="Signature=_Mon__22_Mar_2010_11_26_55_+1100_FroTA+.8R0ktTiyb"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46678 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:53660 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751309Ab0CSKg4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 19 Mar 2010 06:36:56 -0400
-In-Reply-To: <20100318.220712.212678037.davem@davemloft.net>
+	id S1753502Ab0CVA1H (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 21 Mar 2010 20:27:07 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
+To: Trond Myklebust <trond.myklebust@fys.uio.no>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__19_Mar_2010_21_36_46_+1100__W9AaT3_/QzcB53i
+--Signature=_Mon__22_Mar_2010_11_26_55_+1100_FroTA+.8R0ktTiyb
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi Trond,
 
-On Thu, 18 Mar 2010 22:07:12 -0700 (PDT) David Miller <davem@davemloft.net>=
- wrote:
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 19 Mar 2010 16:00:30 +1100
->=20
-> > The net tree still has its build failures for which I reverted 3 commit=
-s.
->=20
-> Sorry, I must have just missed your pull for today.
+After merging the nfs tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-No problem, it happens.
+net/sunrpc/xprt.c: In function 'xprt_release':
+net/sunrpc/xprt.c:1045: error: implicit declaration of function 'xprt_free_=
+bc_request'
 
-> net-next-2.6 should have everything sorted now.
+Caused by commit 0d28e05a53109bb52f254d5eac25dac6e3768b04 ("SUNRPC: Fix a
+use after free bug with the NFSv4.1 backchannel").  xprt_free_bc_request()
+is only declared for CONFIG_NFS_V4_1 ...
 
-Thanks.
+I have used the nfs tree from next-20100319 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__19_Mar_2010_21_36_46_+1100__W9AaT3_/QzcB53i
+--Signature=_Mon__22_Mar_2010_11_26_55_+1100_FroTA+.8R0ktTiyb
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkujU74ACgkQjjKRsyhoI8y+LwCgsnNzCxL1muqfF6VogFw1uzkc
-A1kAn3hpt7nnjWCB6eVyaWdaIMH409EJ
-=Wrbt
+iEYEARECAAYFAkumuU8ACgkQjjKRsyhoI8y2ZACdFBTZMdkM9yR9mpj+W3bZAMmE
+AGkAnjpdLG4fxmNizRAlvwwZX+rgQD2s
+=FgFQ
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__19_Mar_2010_21_36_46_+1100__W9AaT3_/QzcB53i--
+--Signature=_Mon__22_Mar_2010_11_26_55_+1100_FroTA+.8R0ktTiyb--
