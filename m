@@ -1,43 +1,52 @@
-From: Sachin Sant <sachinp@in.ibm.com>
-Subject: -next Mar 22: s390 build failure (drivers/s390/net/qeth_l3)
-Date: Mon, 22 Mar 2010 14:40:59 +0530
-Message-ID: <4BA73423.6080101@in.ibm.com>
-References: <20100322171937.d753bdba.sfr@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+From: Trond Myklebust <trond.myklebust@fys.uio.no>
+Subject: Re: linux-next: build failure after merge of the nfs tree
+Date: Mon, 22 Mar 2010 05:49:40 -0400
+Message-ID: <351E30A8-F8E2-4DD8-8AB1-52D1D397785D@fys.uio.no>
+References: <20100322112655.0f23c1fb.sfr@canb.auug.org.au>
+Mime-Version: 1.0 (iPhone Mail 7E18)
+Content-Type: text/plain;
+	charset=us-ascii;
+	format=flowed;
+	delsp=yes
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e23smtp07.au.ibm.com ([202.81.31.140]:40129 "EHLO
-	e23smtp07.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752784Ab0CVJLE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Mar 2010 05:11:04 -0400
-In-Reply-To: <20100322171937.d753bdba.sfr@canb.auug.org.au>
+Received: from mail-out2.uio.no ([129.240.10.58]:34888 "EHLO mail-out2.uio.no"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754461Ab0CVJt5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 22 Mar 2010 05:49:57 -0400
+In-Reply-To: <20100322112655.0f23c1fb.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-s390@vger.kernel.org
-Cc: linux-next@vger.kernel.org, netdev <netdev@vger.kernel.org>, ursula.braun@de.ibm.com, Stephen Hemminger <shemminger@vyatta.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Todays next fails to build on a s390 box with
+On Mar 21, 2010, at 20:26, Stephen Rothwell <sfr@canb.auug.org.au>  
+wrote:
 
-  CC [M]  drivers/s390/net/qeth_l3_main.o
-drivers/s390/net/qeth_l3_main.c: In function 'qeth_l3_free_vlan_addresses6':
-drivers/s390/net/qeth_l3_main.c:1931: error: incompatible types in assignment
-drivers/s390/net/qeth_l3_main.c:1931: error: 'struct inet6_ifaddr' has no member named 'lst_next'
-make[2]: *** [drivers/s390/net/qeth_l3_main.o] Error 1
+> Hi Trond,
+>
+> After merging the nfs tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+>
+> net/sunrpc/xprt.c: In function 'xprt_release':
+> net/sunrpc/xprt.c:1045: error: implicit declaration of function  
+> 'xprt_free_bc_request'
+>
+> Caused by commit 0d28e05a53109bb52f254d5eac25dac6e3768b04 ("SUNRPC:  
+> Fix a
+> use after free bug with the NFSv4.1 backchannel").   
+> xprt_free_bc_request()
+> is only declared for CONFIG_NFS_V4_1 ...
+>
+> I have used the nfs tree from next-20100319 for today.
 
-commit c2e21293c054817c42eb5fa9c613d2ad51954136
-(ipv6: convert addrconf list to hlist) 
-converted lst_next member of inet6_ifaddr struct to a hlist.
+Hi Stephen
 
-Thanks
--Sachin
+Sorry about that. I've got a fix for the above (just need to define  
+empty inline function for the !CONFIG_NFS_V4_1 case).
 
+I'll try to upload it later today. (I am unfortunately travelling so  
+wifi access is a bit spotty).
 
--- 
-
----------------------------------
-Sachin Sant
-IBM Linux Technology Center
-India Systems and Technology Labs
-Bangalore, India
----------------------------------
+Cheers
+     Trond
