@@ -1,294 +1,271 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for March 23
-Date: Tue, 23 Mar 2010 18:33:50 +1100
-Message-ID: <20100323183350.14982972.sfr@canb.auug.org.au>
+From: zhou peng <ailvpeng25@gmail.com>
+Subject: Re: About ACL for IPC Object
+Date: Tue, 23 Mar 2010 17:01:31 +0800
+Message-ID: <6fb445941003230201r656d0363k6ed6853c3edc826b@mail.gmail.com>
+References: <6fb445941001200112o2934f805l4eb4f78000e9527e@mail.gmail.com>
+	 <6fb445941001200120m3aa5e944j54a6f645ce82d76f@mail.gmail.com>
+	 <4B57C3C3.9010606@schaufler-ca.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__23_Mar_2010_18_33_50_+1100_KCUuN.+eJvE+1ywI"
+Content-Type: multipart/mixed; boundary=001636ed793f499e020482740ff2
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51199 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751361Ab0CWHd5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 23 Mar 2010 03:33:57 -0400
+Received: from mail-iw0-f176.google.com ([209.85.223.176]:65472 "EHLO
+	mail-iw0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750939Ab0CWJBd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Mar 2010 05:01:33 -0400
+In-Reply-To: <4B57C3C3.9010606@schaufler-ca.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org
 
---Signature=_Tue__23_Mar_2010_18_33_50_+1100_KCUuN.+eJvE+1ywI
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
+--001636ed793f499e020482740ff2
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi,
 
-Changes since 20100322:
+I have added ACL support to POSIX msg queue on linux kernel 2.6.32.
+Casey Schaufler, would you or anyone like review the patch for me please?
+The patch is attached.
 
-Dropped tree: tmio-mmc (long unresolved conflicts and unable to fetch)
+Best,
 
-My fixes tree contains:
-	a patch for a pktcdvd build error from Arnd Bergmann
+2010/1/21 Casey Schaufler <casey@schaufler-ca.com>:
+> zhou peng wrote:
+>> Hi all,
+>>
+>> There are ACL in file system, but why there are no ACL implementation
+>> in IPC object, eg. shm, message queue, FIFO?
+>>
+>
+> Most people haven't noticed that IPC objects are even there, much less
+> that they have mode bits and not ACLs. Even when we were doing security
+> evaluations on Unix boxes in the 1990's they were considered insufficient=
+ly
+> interesting to justify the additional work to do ACLs.
+>
+> If you really want ACLs on IPC objects it would make a dandy little
+> project for a summer. I would be happy to review patches.
+>
+>> Is there any fine grained granting in ipc object just like in file objec=
+t?
+>>
+>
+> As Stephen Smalley points out, you can do it with SELinux, although
+> that it rather like driving a thumbtack with a bulldozer.
+>
+>> Thanks,
+>> Best
+>>
+>> --
+>> zhoupeng
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-kernel" =
+in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>> Please read the FAQ at =A0http://www.tux.org/lkml/
+>>
+>>
+>>
+>
+>
 
-I added a patch to Linus' tree for the missed update to syscalls.h.
 
-The ceph tree lost its conflict.
-
-The nfs tree lost its build failure.
-
-The input tree gained a build failure for which I reverted a commit.
-
-The kgdb tree gained a conflict against the input tree.  Also a build
-failure due to in interaction with the input tree for which I have
-applied a merge fixup.
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
-and sparc64 defconfig. These builds also have
-CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
-CONFIG_DEBUG_INFO disabled when necessary.
-
-Below is a summary of the state of the merge.
-
-We are up to 158 trees (counting Linus' and 22 trees of patches pending
-for Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
 
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+zhoupeng
 
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging fixes/fixes
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Applying: ar9170: fix for driver-core ABI change
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/for-linus
-Merging quilt/driver-core.current
-Merging quilt/tty.current
-Merging quilt/usb.current
-Merging quilt/staging.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging ide-curent/master
-Merging dwmw2/master
-Merging gcl-current/merge
-Applying: ppc64 sys_ipc breakage in 2.6.34-rc2
-Merging arm/devel
-Merging davinci/davinci-next
-Merging i.MX/for-next
-Merging msm/for-next
-Merging omap/for-next
-Merging pxa/for-next
-Merging samsung/next-samsung
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-Merging m68knommu/for-next
-Merging microblaze/next
-Merging mips/mips-for-linux-next
-Merging parisc/next
-Merging powerpc/next
-Merging 4xx/next
-Merging 52xx-and-virtex/next
-Merging galak/next
-Merging s390/features
-Merging sh/master
-Merging genesis/master
-Merging sparc/master
-Merging xtensa/master
-Merging ceph/for-next
-Merging cifs/master
-Merging configfs/linux-next
-Merging ecryptfs/next
-Merging ext3/for_next
-Merging ext4/next
-Merging fatfs/master
-Merging fuse/for-next
-Merging gfs2/master
-Merging jfs/next
-Merging logfs/master
-Merging nfs/linux-next
-Merging nfsd/nfsd-next
-Merging nilfs2/for-next
-Merging ocfs2/linux-next
-Merging squashfs/master
-Merging udf/for_next
-Merging v9fs/for-next
-Merging ubifs/linux-next
-Merging xfs/master
-Merging reiserfs-bkl/reiserfs/kill-bkl
-Merging vfs/for-next
-CONFLICT (content): Merge conflict in fs/namei.c
-CONFLICT (content): Merge conflict in fs/nfs/inode.c
-CONFLICT (content): Merge conflict in fs/nfsd/nfs4xdr.c
-CONFLICT (content): Merge conflict in fs/ufs/inode.c
-CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_super.c
-CONFLICT (content): Merge conflict in security/tomoyo/realpath.c
-Merging pci/linux-next
-Merging hid/for-next
-Merging quilt/i2c
-Merging bjdooks-i2c/next-i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-Merging kbuild/for-next
-Merging kconfig/for-next
-Merging ide/master
-Merging libata/NEXT
-CONFLICT (content): Merge conflict in drivers/ata/ahci.c
-Merging infiniband/for-next
-Merging acpi/test
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/linux-next
-Merging dlm/next
-Merging ibft/master
-Merging scsi/master
-Merging async_tx/next
-Merging net/master
-Merging wireless/master
-CONFLICT (content): Merge conflict in Documentation/feature-removal-schedul=
-e.txt
-CONFLICT (content): Merge conflict in drivers/net/wireless/ath/ath5k/phy.c
-Merging mtd/master
-CONFLICT (content): Merge conflict in drivers/mtd/nand/sh_flctl.c
-Merging crypto/master
-Merging sound/for-next
-Merging cpufreq/next
-Merging quilt/rr
-CONFLICT (content): Merge conflict in MAINTAINERS
-CONFLICT (content): Merge conflict in drivers/char/hvc_console.c
-CONFLICT (content): Merge conflict in drivers/char/hvc_console.h
-CONFLICT (content): Merge conflict in drivers/char/virtio_console.c
-Merging mmc/next
-Merging input/next
-Merging lsm/for-next
-Merging block/for-next
-Merging quilt/device-mapper
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-CONFLICT (content): Merge conflict in drivers/char/keyboard.c
-Applying: kgdb: update for sysrq handling change
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging voltage/for-next
-Merging security-testing/next
-Merging lblnet/master
-Merging agp/agp-next
-Merging uwb/for-upstream
-Merging watchdog/master
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-Merging audit/for-next
-Merging quilt/aoe
-Merging suspend/linux-next
-Merging bluetooth/master
-Merging fsnotify/for-next
-CONFLICT (content): Merge conflict in fs/notify/inotify/inotify_user.c
-CONFLICT (content): Merge conflict in include/linux/fsnotify.h
-CONFLICT (content): Merge conflict in kernel/audit_tree.c
-CONFLICT (content): Merge conflict in kernel/sysctl.c
-Merging irda/for-next
-CONFLICT (content): Merge conflict in drivers/net/irda/irda-usb.c
-Merging hwlat/for-linus
-CONFLICT (content): Merge conflict in MAINTAINERS
-CONFLICT (content): Merge conflict in drivers/misc/Makefile
-Merging drbd/for-jens
-Merging catalin/for-next
-Merging alacrity/linux-next
-CONFLICT (content): Merge conflict in include/linux/Kbuild
-CONFLICT (content): Merge conflict in lib/Kconfig
-Merging i7core_edac/linux_next
-Merging devicetree/next-devicetree
-Merging spi/next-spi
-Merging limits/writable_limits
-CONFLICT (content): Merge conflict in arch/x86/ia32/ia32entry.S
-CONFLICT (content): Merge conflict in arch/x86/include/asm/unistd_32.h
-CONFLICT (content): Merge conflict in arch/x86/include/asm/unistd_64.h
-CONFLICT (content): Merge conflict in arch/x86/kernel/syscall_table_32.S
-Merging omap_dss2/for-next
-Merging tip/auto-latest
-Merging edac-amd/for-next
-Merging oprofile/for-next
-Merging percpu/for-next
-Merging workqueues/for-next
-Merging sfi/sfi-test
-Merging asm-generic/next
-Merging hwpoison/hwpoison
-Merging sysctl/master
-Merging quilt/driver-core
-Merging quilt/tty
-Merging quilt/usb
-Merging quilt/staging
-Merging scsi-post-merge/master
-[master 56b280d] Revert "Input: keyboard - fix formatting issues"
-[master 4c9e506] Revert "Input: implement SysRq as a separate input handler"
+--001636ed793f499e020482740ff2
+Content-Type: application/octet-stream;
+	name="mqueue_posix_acl_linux2.6.32.diff"
+Content-Disposition: attachment;
+	filename="mqueue_posix_acl_linux2.6.32.diff"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_g744oh8m0
 
---Signature=_Tue__23_Mar_2010_18_33_50_+1100_KCUuN.+eJvE+1ywI
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkuobt8ACgkQjjKRsyhoI8z2xQCcDlgRq+nXnY7h6ai/3Crq2cL3
-5PcAoL9JlZhEn6Lwj3IPPbMLNBs3ZzrN
-=SLRd
------END PGP SIGNATURE-----
-
---Signature=_Tue__23_Mar_2010_18_33_50_+1100_KCUuN.+eJvE+1ywI--
+ZGlmZiAtciBhYjVlYjNlN2Q1ODIgLXIgY2QyZTkyMDZhODFmIGZzL0tjb25maWcKLS0tIGEvZnMv
+S2NvbmZpZwlTYXQgTWFyIDIwIDEyOjQxOjEyIDIwMTAgKzA4MDAKKysrIGIvZnMvS2NvbmZpZwlN
+b24gTWFyIDIyIDE5OjU3OjU0IDIwMTAgKzA4MDAKQEAgLTEzMyw2ICsxMzMsMTMgQEAKIAogCSAg
+SWYgeW91IGRvbid0IGtub3cgd2hhdCBBY2Nlc3MgQ29udHJvbCBMaXN0cyBhcmUsIHNheSBOLgog
+Citjb25maWcgTVFVRVVFX1BPU0lYX0FDTAorICAgICAgIGJvb2wgIk1xdWV1ZSBQT1NJWCBBY2Nl
+c3MgQ29udHJvbCBMaXN0cyBzdXBwb3J0IgorICAgICAgIHNlbGVjdCBHRU5FUklDX0FDTAorICAg
+ICAgIGhlbHAKKyAgICAgICAgIE1xdWV1ZSBpcyBhIGZpbGUgc3lzdGVtIHdoaWNoIGlzIHVzZWQg
+dG8gc3Vwb3J0IFBPU0lYIG1zZyBxdWV1ZS4KKwkgU2F5IHkgdG8gZ2V0IEFjY2VzcyBDb250cm9s
+IExpc3RzIHN1cHBvcnQgZm9yIG1xdWV1ZSBmaWxlIHN5c3RlbS4KKwkgIAogY29uZmlnIEhVR0VU
+TEJGUwogCWJvb2wgIkh1Z2VUTEIgZmlsZSBzeXN0ZW0gc3VwcG9ydCIKIAlkZXBlbmRzIG9uIFg4
+NiB8fCBJQTY0IHx8IFNQQVJDNjQgfHwgKFMzOTAgJiYgNjRCSVQpIHx8IFwKZGlmZiAtciBhYjVl
+YjNlN2Q1ODIgLXIgY2QyZTkyMDZhODFmIGluY2x1ZGUvbGludXgvbXF1ZXVlLmgKLS0tIGEvaW5j
+bHVkZS9saW51eC9tcXVldWUuaAlTYXQgTWFyIDIwIDEyOjQxOjEyIDIwMTAgKzA4MDAKKysrIGIv
+aW5jbHVkZS9saW51eC9tcXVldWUuaAlNb24gTWFyIDIyIDE5OjU3OjU0IDIwMTAgKzA4MDAKQEAg
+LTEsNCArMSw1IEBACiAvKiBDb3B5cmlnaHQgKEMpIDIwMDMgS3J6eXN6dG9mIEJlbmVkeWN6YWsg
+JiBNaWNoYWwgV3JvbnNraQorICAgQWRkIEFDTCBzdXBwb3J0IGJ5ICBaaG91IFBlbmcgKGFpbHZw
+ZW5nMjVAZ21haWwuY29tKSwgMjAxMAogCiAgICBUaGlzIHByb2dyYW0gaXMgZnJlZSBzb2Z0d2Fy
+ZTsgeW91IGNhbiByZWRpc3RyaWJ1dGUgaXQgYW5kL29yCiAgICBtb2RpZnkgaXQgdW5kZXIgdGhl
+IHRlcm1zIG9mIHRoZSBHTlUgTGVzc2VyIEdlbmVyYWwgUHVibGljCkBAIC01MCw0ICs1MSwxMiBA
+QAogCiAjZGVmaW5lIE5PVElGWV9DT09LSUVfTEVOCTMyCiAKKyNpZmRlZiBDT05GSUdfTVFVRVVF
+X1BPU0lYX0FDTAoraW50IG1xdWV1ZV9jaGVja19hY2woc3RydWN0IGlub2RlICppbm9kZSwgaW50
+IG1hc2spOworaW50IG1xdWV1ZV9hY2xfaW5pdChzdHJ1Y3QgaW5vZGUgKmlub2RlLCBzdHJ1Y3Qg
+aW5vZGUgKmRpcik7CisKK2V4dGVybiBzdHJ1Y3QgeGF0dHJfaGFuZGxlciBtcXVldWVfeGF0dHJf
+YWNsX2FjY2Vzc19oYW5kbGVyOworZXh0ZXJuIHN0cnVjdCB4YXR0cl9oYW5kbGVyIG1xdWV1ZV94
+YXR0cl9hY2xfZGVmYXVsdF9oYW5kbGVyOwogI2VuZGlmCisKKyNlbmRpZgpkaWZmIC1yIGFiNWVi
+M2U3ZDU4MiAtciBjZDJlOTIwNmE4MWYgaXBjL01ha2VmaWxlCi0tLSBhL2lwYy9NYWtlZmlsZQlT
+YXQgTWFyIDIwIDEyOjQxOjEyIDIwMTAgKzA4MDAKKysrIGIvaXBjL01ha2VmaWxlCU1vbiBNYXIg
+MjIgMTk6NTc6NTQgMjAxMCArMDgwMApAQCAtMTAsMyArMTAsNCBAQAogb2JqLSQoQ09ORklHX0lQ
+Q19OUykgKz0gbmFtZXNwYWNlLm8KIG9iai0kKENPTkZJR19QT1NJWF9NUVVFVUVfU1lTQ1RMKSAr
+PSBtcV9zeXNjdGwubwogCitvYmotJChDT05GSUdfTVFVRVVFX1BPU0lYX0FDTCkgKz0gbXF1ZXVl
+X2FjbC5vCmRpZmYgLXIgYWI1ZWIzZTdkNTgyIC1yIGNkMmU5MjA2YTgxZiBpcGMvbXF1ZXVlLmMK
+LS0tIGEvaXBjL21xdWV1ZS5jCVNhdCBNYXIgMjAgMTI6NDE6MTIgMjAxMCArMDgwMAorKysgYi9p
+cGMvbXF1ZXVlLmMJTW9uIE1hciAyMiAxOTo1Nzo1NCAyMDEwICswODAwCkBAIC0xMCw2ICsxMCw4
+IEBACiAgKgogICogQXVkaXQ6ICAgICAgICAgICAgICAgICAgIEdlb3JnZSBXaWxzb24gICAgICAg
+ICAgIChsdGNnY3dAdXMuaWJtLmNvbSkKICAqCisgKiBBQ0wgYnkgIFpob3UgUGVuZyAoYWlsdnBl
+bmcyNUBnbWFpbC5jb20pLCAyMDEwCisgKgogICogVGhpcyBmaWxlIGlzIHJlbGVhc2VkIHVuZGVy
+IHRoZSBHUEwuCiAgKi8KIApAQCAtMzMsNiArMzUsOCBAQAogI2luY2x1ZGUgPGxpbnV4L3BpZC5o
+PgogI2luY2x1ZGUgPGxpbnV4L2lwY19uYW1lc3BhY2UuaD4KICNpbmNsdWRlIDxsaW51eC9pbWEu
+aD4KKyNpbmNsdWRlIDxsaW51eC9nZW5lcmljX2FjbC5oPgorI2luY2x1ZGUgPGxpbnV4L3hhdHRy
+Lmg+CiAKICNpbmNsdWRlIDxuZXQvc29jay5oPgogI2luY2x1ZGUgInV0aWwuaCIKQEAgLTc3LDYg
+KzgxLDkgQEAKIAogc3RhdGljIGNvbnN0IHN0cnVjdCBpbm9kZV9vcGVyYXRpb25zIG1xdWV1ZV9k
+aXJfaW5vZGVfb3BlcmF0aW9uczsKIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZmlsZV9vcGVyYXRpb25z
+IG1xdWV1ZV9maWxlX29wZXJhdGlvbnM7CisjaWZkZWYgQ09ORklHX01RVUVVRV9QT1NJWF9BQ0wK
+K3N0YXRpYyBjb25zdCBzdHJ1Y3QgaW5vZGVfb3BlcmF0aW9ucyBtcXVldWVfaW5vZGVfb3BlcmF0
+aW9uczsKKyNlbmRpZgogc3RhdGljIGNvbnN0IHN0cnVjdCBzdXBlcl9vcGVyYXRpb25zIG1xdWV1
+ZV9zdXBlcl9vcHM7CiBzdGF0aWMgdm9pZCByZW1vdmVfbm90aWZpY2F0aW9uKHN0cnVjdCBtcXVl
+dWVfaW5vZGVfaW5mbyAqaW5mbyk7CiAKQEAgLTg0LDYgKzkxLDUzIEBACiAKIHN0YXRpYyBzdHJ1
+Y3QgY3RsX3RhYmxlX2hlYWRlciAqIG1xX3N5c2N0bF90YWJsZTsKIAorI2lmZGVmIENPTkZJR19N
+UVVFVUVfUE9TSVhfQUNMCisvKgorICogU3VwZXJibG9ja3Mgd2l0aG91dCB4YXR0ciBpbm9kZSBv
+cGVyYXRpb25zIHdpbGwgZ2V0IHNlY3VyaXR5LiogeGF0dHIKKyAqIHN1cHBvcnQgZnJvbSB0aGUg
+VkZTICJmb3IgZnJlZSIuIEFzIHNvb24gYXMgd2UgaGF2ZSBhbnkgb3RoZXIgeGF0dHJzCisgKiBs
+aWtlIEFDTHMsIHdlIGFsc28gbmVlZCB0byBpbXBsZW1lbnQgdGhlIHNlY3VyaXR5LiogaGFuZGxl
+cnMgYXQKKyAqIGZpbGVzeXN0ZW0gbGV2ZWwsIHRob3VnaC4KKyAqLworCitzdGF0aWMgc2l6ZV90
+IG1xdWV1ZV94YXR0cl9zZWN1cml0eV9saXN0KHN0cnVjdCBpbm9kZSAqaW5vZGUsIGNoYXIgKmxp
+c3QsCisJCQkJCXNpemVfdCBsaXN0X2xlbiwgY29uc3QgY2hhciAqbmFtZSwKKwkJCQkJc2l6ZV90
+IG5hbWVfbGVuKQoreworCXJldHVybiBzZWN1cml0eV9pbm9kZV9saXN0c2VjdXJpdHkoaW5vZGUs
+IGxpc3QsIGxpc3RfbGVuKTsKK30KKworc3RhdGljIGludCBtcXVldWVfeGF0dHJfc2VjdXJpdHlf
+Z2V0KHN0cnVjdCBpbm9kZSAqaW5vZGUsIGNvbnN0IGNoYXIgKm5hbWUsCisJCQkJICAgIHZvaWQg
+KmJ1ZmZlciwgc2l6ZV90IHNpemUpCit7CisJaWYgKHN0cmNtcChuYW1lLCAiIikgPT0gMCkKKwkJ
+cmV0dXJuIC1FSU5WQUw7CisJcmV0dXJuIHhhdHRyX2dldHNlY3VyaXR5KGlub2RlLCBuYW1lLCBi
+dWZmZXIsIHNpemUpOworfQorCitzdGF0aWMgaW50IG1xdWV1ZV94YXR0cl9zZWN1cml0eV9zZXQo
+c3RydWN0IGlub2RlICppbm9kZSwgY29uc3QgY2hhciAqbmFtZSwKKwkJCQkgICAgY29uc3Qgdm9p
+ZCAqdmFsdWUsIHNpemVfdCBzaXplLCBpbnQgZmxhZ3MpCit7CisJaWYgKHN0cmNtcChuYW1lLCAi
+IikgPT0gMCkKKwkJcmV0dXJuIC1FSU5WQUw7CisJcmV0dXJuIHNlY3VyaXR5X2lub2RlX3NldHNl
+Y3VyaXR5KGlub2RlLCBuYW1lLCB2YWx1ZSwgc2l6ZSwgZmxhZ3MpOworfQorCitzdGF0aWMgc3Ry
+dWN0IHhhdHRyX2hhbmRsZXIgbXF1ZXVlX3hhdHRyX3NlY3VyaXR5X2hhbmRsZXIgPSB7CisJLnBy
+ZWZpeCA9IFhBVFRSX1NFQ1VSSVRZX1BSRUZJWCwKKwkubGlzdCAgID0gbXF1ZXVlX3hhdHRyX3Nl
+Y3VyaXR5X2xpc3QsCisJLmdldCAgICA9IG1xdWV1ZV94YXR0cl9zZWN1cml0eV9nZXQsCisJLnNl
+dCAgICA9IG1xdWV1ZV94YXR0cl9zZWN1cml0eV9zZXQsCit9OworCisKK3N0YXRpYyBzdHJ1Y3Qg
+eGF0dHJfaGFuZGxlciAqbXF1ZXVlX3hhdHRyX2hhbmRsZXJzW10gPSB7CisJJm1xdWV1ZV94YXR0
+cl9hY2xfYWNjZXNzX2hhbmRsZXIsCisJJm1xdWV1ZV94YXR0cl9hY2xfZGVmYXVsdF9oYW5kbGVy
+LAorCSZtcXVldWVfeGF0dHJfc2VjdXJpdHlfaGFuZGxlciwKKwlOVUxMCit9OworI2VuZGlmCisK
+IHN0YXRpYyBpbmxpbmUgc3RydWN0IG1xdWV1ZV9pbm9kZV9pbmZvICpNUVVFVUVfSShzdHJ1Y3Qg
+aW5vZGUgKmlub2RlKQogewogCXJldHVybiBjb250YWluZXJfb2YoaW5vZGUsIHN0cnVjdCBtcXVl
+dWVfaW5vZGVfaW5mbywgdmZzX2lub2RlKTsKQEAgLTEyMSwxMiArMTc1LDE4IEBACiAJCWlub2Rl
+LT5pX2dpZCA9IGN1cnJlbnRfZnNnaWQoKTsKIAkJaW5vZGUtPmlfbXRpbWUgPSBpbm9kZS0+aV9j
+dGltZSA9IGlub2RlLT5pX2F0aW1lID0KIAkJCQlDVVJSRU5UX1RJTUU7Ci0KKyNpZmRlZiBDT05G
+SUdfTVFVRVVFX1BPU0lYX0FDTAorCQljYWNoZV9ub19hY2woaW5vZGUpOworI2VuZGlmCisJCQog
+CQlpZiAoU19JU1JFRyhtb2RlKSkgewogCQkJc3RydWN0IG1xdWV1ZV9pbm9kZV9pbmZvICppbmZv
+OwogCQkJc3RydWN0IHRhc2tfc3RydWN0ICpwID0gY3VycmVudDsKIAkJCXVuc2lnbmVkIGxvbmcg
+bXFfYnl0ZXMsIG1xX21zZ190YmxzejsKIAorI2lmZGVmIENPTkZJR19NUVVFVUVfUE9TSVhfQUNM
+CQkJCisJCQlpbm9kZS0+aV9vcCA9ICZtcXVldWVfaW5vZGVfb3BlcmF0aW9uczsKKyNlbmRpZgog
+CQkJaW5vZGUtPmlfZm9wID0gJm1xdWV1ZV9maWxlX29wZXJhdGlvbnM7CiAJCQlpbm9kZS0+aV9z
+aXplID0gRklMRU5UX1NJWkU7CiAJCQkvKiBtcXVldWUgc3BlY2lmaWMgaW5mbyAqLwpAQCAtMTk1
+LDYgKzI1NSwxMSBAQAogCXNiLT5zX21hZ2ljID0gTVFVRVVFX01BR0lDOwogCXNiLT5zX29wID0g
+Jm1xdWV1ZV9zdXBlcl9vcHM7CiAKKyNpZmRlZiBDT05GSUdfTVFVRVVFX1BPU0lYX0FDTAorCXNi
+LT5zX3hhdHRyID0gbXF1ZXVlX3hhdHRyX2hhbmRsZXJzOworCXNiLT5zX2ZsYWdzIHw9IE1TX1BP
+U0lYQUNMOworI2VuZGlmCisKIAlpbm9kZSA9IG1xdWV1ZV9nZXRfaW5vZGUoc2IsIG5zLCBTX0lG
+RElSIHwgU19JU1ZUWCB8IFNfSVJXWFVHTywKIAkJCQlOVUxMKTsKIAlpZiAoIWlub2RlKSB7CkBA
+IC0zMTYsNiArMzgxLDEzIEBACiAJCWdvdG8gb3V0X3VubG9jazsKIAl9CiAKKyNpZmRlZiBDT05G
+SUdfTVFVRVVFX1BPU0lYX0FDTAorCWVycm9yID0gbXF1ZXVlX2FjbF9pbml0KGlub2RlLCBkaXIp
+OworCWlmIChlcnJvcikgeworCSAgICBpcHV0KGlub2RlKTsKKwkgICAgZ290byBvdXRfdW5sb2Nr
+OworCX0KKyNlbmRpZgkKIAlwdXRfaXBjX25zKGlwY19ucyk7CiAJZGlyLT5pX3NpemUgKz0gRElS
+RU5UX1NJWkU7CiAJZGlyLT5pX2N0aW1lID0gZGlyLT5pX210aW1lID0gZGlyLT5pX2F0aW1lID0g
+Q1VSUkVOVF9USU1FOwpAQCAtMTIxNiw2ICsxMjg4LDIzIEBACiAJLmxvb2t1cCA9IHNpbXBsZV9s
+b29rdXAsCiAJLmNyZWF0ZSA9IG1xdWV1ZV9jcmVhdGUsCiAJLnVubGluayA9IG1xdWV1ZV91bmxp
+bmssCisjaWZkZWYgQ09ORklHX01RVUVVRV9QT1NJWF9BQ0wKKwkuc2V0eGF0dHIgICAgPSBnZW5l
+cmljX3NldHhhdHRyLAorCS5nZXR4YXR0ciAgICA9IGdlbmVyaWNfZ2V0eGF0dHIsCisJLmxpc3R4
+YXR0ciAgID0gZ2VuZXJpY19saXN0eGF0dHIsCisJLnJlbW92ZXhhdHRyID0gZ2VuZXJpY19yZW1v
+dmV4YXR0ciwKKwkuY2hlY2tfYWNsICAgPSBtcXVldWVfY2hlY2tfYWNsLAorI2VuZGlmCit9Owor
+CitzdGF0aWMgY29uc3Qgc3RydWN0IGlub2RlX29wZXJhdGlvbnMgbXF1ZXVlX2lub2RlX29wZXJh
+dGlvbnMgPSB7CisjaWZkZWYgQ09ORklHX01RVUVVRV9QT1NJWF9BQ0wKKwkuc2V0eGF0dHIJPSBn
+ZW5lcmljX3NldHhhdHRyLAorCS5nZXR4YXR0cgk9IGdlbmVyaWNfZ2V0eGF0dHIsCisJLmxpc3R4
+YXR0cgk9IGdlbmVyaWNfbGlzdHhhdHRyLAorCS5yZW1vdmV4YXR0cgk9IGdlbmVyaWNfcmVtb3Zl
+eGF0dHIsCisJLmNoZWNrX2FjbAk9IG1xdWV1ZV9jaGVja19hY2wsCisjZW5kaWYKIH07CiAKIHN0
+YXRpYyBjb25zdCBzdHJ1Y3QgZmlsZV9vcGVyYXRpb25zIG1xdWV1ZV9maWxlX29wZXJhdGlvbnMg
+PSB7CmRpZmYgLXIgYWI1ZWIzZTdkNTgyIC1yIGNkMmU5MjA2YTgxZiBpcGMvbXF1ZXVlX2FjbC5j
+Ci0tLSAvZGV2L251bGwJVGh1IEphbiAwMSAwMDowMDowMCAxOTcwICswMDAwCisrKyBiL2lwYy9t
+cXVldWVfYWNsLmMJTW9uIE1hciAyMiAxOTo1Nzo1NCAyMDEwICswODAwCkBAIC0wLDAgKzEsMTcy
+IEBACisvKgorICogaXBjL21xdWV1ZV9hY2wuYworICoKKyAqIENvcHlyaWdodCAoQykgMjAxMCBa
+aG91UGVuZyA8YWlsdnBlbmcyNUBnbWFpbC5jb20+CisgKgorICogVGhpcyBmaWxlIGlzIHJlbGVh
+c2VkIHVuZGVyIHRoZSBHUEwuCisgKi8KKworI2luY2x1ZGUgPGxpbnV4L2ZzLmg+CisjaW5jbHVk
+ZSA8bGludXgvbXF1ZXVlLmg+CisjaW5jbHVkZSA8bGludXgveGF0dHIuaD4KKyNpbmNsdWRlIDxs
+aW51eC9nZW5lcmljX2FjbC5oPgorCisvKioKKyAqIG1xdWV1ZV9nZXRfYWNsICAtICAgZ2VuZXJp
+Y19hY2xfb3BlcmF0aW9ucy0+Z2V0YWNsKCkgb3BlcmF0aW9uCisgKi8KK3N0YXRpYyBzdHJ1Y3Qg
+cG9zaXhfYWNsICoKK21xdWV1ZV9nZXRfYWNsKHN0cnVjdCBpbm9kZSAqaW5vZGUsIGludCB0eXBl
+KQoreworCXN0cnVjdCBwb3NpeF9hY2wgKmFjbCA9IE5VTEw7CisKKwlzcGluX2xvY2soJmlub2Rl
+LT5pX2xvY2spOworCisJc3dpdGNoKHR5cGUpIHsKKwkJY2FzZSBBQ0xfVFlQRV9BQ0NFU1M6CisJ
+CQlhY2wgPSBwb3NpeF9hY2xfZHVwKGlub2RlLT5pX2FjbCk7CisJCQlicmVhazsKKworCQljYXNl
+IEFDTF9UWVBFX0RFRkFVTFQ6CisJCQlhY2wgPSBwb3NpeF9hY2xfZHVwKGlub2RlLT5pX2RlZmF1
+bHRfYWNsKTsKKwkJCWJyZWFrOworCX0KKwlzcGluX3VubG9jaygmaW5vZGUtPmlfbG9jayk7CisK
+KwlyZXR1cm4gYWNsOworfQorCisvKioKKyAqIG1xdWV1ZV9zZXRfYWNsICAtICAgZ2VuZXJpY19h
+Y2xfb3BlcmF0aW9ucy0+c2V0YWNsKCkgb3BlcmF0aW9uCisgKi8KK3N0YXRpYyB2b2lkCittcXVl
+dWVfc2V0X2FjbChzdHJ1Y3QgaW5vZGUgKmlub2RlLCBpbnQgdHlwZSwgc3RydWN0IHBvc2l4X2Fj
+bCAqYWNsKQoreworCXN0cnVjdCBwb3NpeF9hY2wgKmZyZWUgPSBOVUxMOworCisJc3Bpbl9sb2Nr
+KCZpbm9kZS0+aV9sb2NrKTsKKwlzd2l0Y2godHlwZSkgeworCQljYXNlIEFDTF9UWVBFX0FDQ0VT
+UzoKKwkJCWZyZWUgPSBpbm9kZS0+aV9hY2w7CisJCQlpbm9kZS0+aV9hY2wgPSBwb3NpeF9hY2xf
+ZHVwKGFjbCk7CisJCQlicmVhazsKKworCQljYXNlIEFDTF9UWVBFX0RFRkFVTFQ6CisJCQlmcmVl
+ID0gaW5vZGUtPmlfZGVmYXVsdF9hY2w7CisJCQlpbm9kZS0+aV9kZWZhdWx0X2FjbCA9IHBvc2l4
+X2FjbF9kdXAoYWNsKTsKKwkJCWJyZWFrOworCX0KKwlzcGluX3VubG9jaygmaW5vZGUtPmlfbG9j
+ayk7CisJcG9zaXhfYWNsX3JlbGVhc2UoZnJlZSk7Cit9CisKK3N0cnVjdCBnZW5lcmljX2FjbF9v
+cGVyYXRpb25zIG1xdWV1ZV9hY2xfb3BzID0geworCS5nZXRhY2wgPSBtcXVldWVfZ2V0X2FjbCwK
+Kwkuc2V0YWNsID0gbXF1ZXVlX3NldF9hY2wsCit9OworCisvKioKKyAqIG1xdWV1ZV9saXN0X2Fj
+bF9hY2Nlc3MsIG1xdWV1ZV9nZXRfYWNsX2FjY2VzcywgbXF1ZXVlX3NldF9hY2xfYWNjZXNzLAor
+ICogbXF1ZXVlX3hhdHRyX2FjbF9hY2Nlc3NfaGFuZGxlciAgLSAgcGx1bWJpbmcgY29kZSB0byBp
+bXBsZW1lbnQgdGhlCisgKiBzeXN0ZW0ucG9zaXhfYWNsX2FjY2VzcyB4YXR0ciB1c2luZyB0aGUg
+Z2VuZXJpYyBhY2wgZnVuY3Rpb25zLgorICovCisKK3N0YXRpYyBzaXplX3QKK21xdWV1ZV9saXN0
+X2FjbF9hY2Nlc3Moc3RydWN0IGlub2RlICppbm9kZSwgY2hhciAqbGlzdCwgc2l6ZV90IGxpc3Rf
+c2l6ZSwKKwkJICAgICAgY29uc3QgY2hhciAqbmFtZSwgc2l6ZV90IG5hbWVfbGVuKQoreworCXJl
+dHVybiBnZW5lcmljX2FjbF9saXN0KGlub2RlLCAmbXF1ZXVlX2FjbF9vcHMsIEFDTF9UWVBFX0FD
+Q0VTUywKKwkJCQlsaXN0LCBsaXN0X3NpemUpOworfQorCitzdGF0aWMgaW50CittcXVldWVfZ2V0
+X2FjbF9hY2Nlc3Moc3RydWN0IGlub2RlICppbm9kZSwgY29uc3QgY2hhciAqbmFtZSwgdm9pZCAq
+YnVmZmVyLAorCQkgICAgIHNpemVfdCBzaXplKQoreworCWlmIChzdHJjbXAobmFtZSwgIiIpICE9
+IDApCisJCXJldHVybiAtRUlOVkFMOworCXJldHVybiBnZW5lcmljX2FjbF9nZXQoaW5vZGUsICZt
+cXVldWVfYWNsX29wcywgQUNMX1RZUEVfQUNDRVNTLCBidWZmZXIsCisJCQkgICAgICAgc2l6ZSk7
+Cit9CisKK3N0YXRpYyBpbnQKK21xdWV1ZV9zZXRfYWNsX2FjY2VzcyhzdHJ1Y3QgaW5vZGUgKmlu
+b2RlLCBjb25zdCBjaGFyICpuYW1lLCBjb25zdCB2b2lkICp2YWx1ZSwKKwkJICAgICBzaXplX3Qg
+c2l6ZSwgaW50IGZsYWdzKQoreworCWlmIChzdHJjbXAobmFtZSwgIiIpICE9IDApCisJCXJldHVy
+biAtRUlOVkFMOworCXJldHVybiBnZW5lcmljX2FjbF9zZXQoaW5vZGUsICZtcXVldWVfYWNsX29w
+cywgQUNMX1RZUEVfQUNDRVNTLCB2YWx1ZSwKKwkJCSAgICAgICBzaXplKTsKK30KKworc3RydWN0
+IHhhdHRyX2hhbmRsZXIgbXF1ZXVlX3hhdHRyX2FjbF9hY2Nlc3NfaGFuZGxlciA9IHsKKwkucHJl
+Zml4ID0gUE9TSVhfQUNMX1hBVFRSX0FDQ0VTUywKKwkubGlzdAk9IG1xdWV1ZV9saXN0X2FjbF9h
+Y2Nlc3MsCisJLmdldAk9IG1xdWV1ZV9nZXRfYWNsX2FjY2VzcywKKwkuc2V0CT0gbXF1ZXVlX3Nl
+dF9hY2xfYWNjZXNzLAorfTsKKworLyoqCisgKiBtcXVldWVfbGlzdF9hY2xfZGVmYXVsdCwgbXF1
+ZXVlX2dldF9hY2xfZGVmYXVsdCwgbXF1ZXVlX3NldF9hY2xfZGVmYXVsdCwKKyAqIG1xdWV1ZV94
+YXR0cl9hY2xfZGVmYXVsdF9oYW5kbGVyICAtICBwbHVtYmluZyBjb2RlIHRvIGltcGxlbWVudCB0
+aGUKKyAqIHN5c3RlbS5wb3NpeF9hY2xfZGVmYXVsdCB4YXR0ciB1c2luZyB0aGUgZ2VuZXJpYyBh
+Y2wgZnVuY3Rpb25zLgorICovCisKK3N0YXRpYyBzaXplX3QKK21xdWV1ZV9saXN0X2FjbF9kZWZh
+dWx0KHN0cnVjdCBpbm9kZSAqaW5vZGUsIGNoYXIgKmxpc3QsIHNpemVfdCBsaXN0X3NpemUsCisJ
+CSAgICAgICBjb25zdCBjaGFyICpuYW1lLCBzaXplX3QgbmFtZV9sZW4pCit7CisJcmV0dXJuIGdl
+bmVyaWNfYWNsX2xpc3QoaW5vZGUsICZtcXVldWVfYWNsX29wcywgQUNMX1RZUEVfREVGQVVMVCwK
+KwkJCQlsaXN0LCBsaXN0X3NpemUpOworfQorCitzdGF0aWMgaW50CittcXVldWVfZ2V0X2FjbF9k
+ZWZhdWx0KHN0cnVjdCBpbm9kZSAqaW5vZGUsIGNvbnN0IGNoYXIgKm5hbWUsIHZvaWQgKmJ1ZmZl
+ciwKKwkJICAgICAgc2l6ZV90IHNpemUpCit7CisJaWYgKHN0cmNtcChuYW1lLCAiIikgIT0gMCkK
+KwkJcmV0dXJuIC1FSU5WQUw7CisJcmV0dXJuIGdlbmVyaWNfYWNsX2dldChpbm9kZSwgJm1xdWV1
+ZV9hY2xfb3BzLCBBQ0xfVFlQRV9ERUZBVUxULCBidWZmZXIsCisJCQkgICAgICAgc2l6ZSk7Cit9
+CisKK3N0YXRpYyBpbnQKK21xdWV1ZV9zZXRfYWNsX2RlZmF1bHQoc3RydWN0IGlub2RlICppbm9k
+ZSwgY29uc3QgY2hhciAqbmFtZSwgY29uc3Qgdm9pZCAqdmFsdWUsCisJCSAgICAgIHNpemVfdCBz
+aXplLCBpbnQgZmxhZ3MpCit7CisJaWYgKHN0cmNtcChuYW1lLCAiIikgIT0gMCkKKwkJcmV0dXJu
+IC1FSU5WQUw7CisJcmV0dXJuIGdlbmVyaWNfYWNsX3NldChpbm9kZSwgJm1xdWV1ZV9hY2xfb3Bz
+LCBBQ0xfVFlQRV9ERUZBVUxULCB2YWx1ZSwKKwkJCSAgICAgICBzaXplKTsKK30KKworc3RydWN0
+IHhhdHRyX2hhbmRsZXIgbXF1ZXVlX3hhdHRyX2FjbF9kZWZhdWx0X2hhbmRsZXIgPSB7CisJLnBy
+ZWZpeCA9IFBPU0lYX0FDTF9YQVRUUl9ERUZBVUxULAorCS5saXN0CT0gbXF1ZXVlX2xpc3RfYWNs
+X2RlZmF1bHQsCisJLmdldAk9IG1xdWV1ZV9nZXRfYWNsX2RlZmF1bHQsCisJLnNldAk9IG1xdWV1
+ZV9zZXRfYWNsX2RlZmF1bHQsCit9OworCisvKioKKyAqIG1xdWV1ZV9hY2xfaW5pdCAgLSAgSW5p
+emlhbGl6ZSB0aGUgYWNsKHMpIG9mIGEgbmV3IGlub2RlCisgKi8KK2ludAorbXF1ZXVlX2FjbF9p
+bml0KHN0cnVjdCBpbm9kZSAqaW5vZGUsIHN0cnVjdCBpbm9kZSAqZGlyKQoreworCXJldHVybiBn
+ZW5lcmljX2FjbF9pbml0KGlub2RlLCBkaXIsICZtcXVldWVfYWNsX29wcyk7Cit9CisKKy8qKgor
+ICogbXF1ZXVlX2NoZWNrX2FjbCAgLSAgY2hlY2tfYWNsKCkgY2FsbGJhY2sgZm9yIGdlbmVyaWNf
+cGVybWlzc2lvbigpCisgKi8KK2ludAorbXF1ZXVlX2NoZWNrX2FjbChzdHJ1Y3QgaW5vZGUgKmlu
+b2RlLCBpbnQgbWFzaykKK3sKKwlzdHJ1Y3QgcG9zaXhfYWNsICphY2wgPSBtcXVldWVfZ2V0X2Fj
+bChpbm9kZSwgQUNMX1RZUEVfQUNDRVNTKTsKKworCWlmIChhY2wpIHsKKwkJaW50IGVycm9yID0g
+cG9zaXhfYWNsX3Blcm1pc3Npb24oaW5vZGUsIGFjbCwgbWFzayk7CisJCXBvc2l4X2FjbF9yZWxl
+YXNlKGFjbCk7CisJCXJldHVybiBlcnJvcjsKKwl9CisJcmV0dXJuIC1FQUdBSU47Cit9Cg==
+--001636ed793f499e020482740ff2--
