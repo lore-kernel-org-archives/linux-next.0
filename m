@@ -1,64 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the kgdb tree
-Date: Tue, 23 Mar 2010 15:04:43 +1100
-Message-ID: <20100323150443.608ad7f0.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (input tree
+ related)
+Date: Tue, 23 Mar 2010 17:54:56 +1100
+Message-ID: <20100323175456.e01dd822.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__23_Mar_2010_17_54_56_+1100_yUQQqjiTveTHeSIf"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60129 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35849 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750811Ab0CWEEs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 23 Mar 2010 00:04:48 -0400
+	id S1752526Ab0CWGzG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 23 Mar 2010 02:55:06 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jason Wessel <jason.wessel@windriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Jason,
+--Signature=_Tue__23_Mar_2010_17_54_56_+1100_yUQQqjiTveTHeSIf
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-After merging the kgdb tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Hi Dmitry,
 
-kernel/debug/kdb/kdb_main.c: In function 'kdb_sr':
-kernel/debug/kdb/kdb_main.c:1822: error: '__sysrq_enabled' undeclared (first use in this function)
+After merging the final tree, today's linux-next build (powerpc
+ppc44x_defconfig) failed like this:
 
-Caused by commit ab28988df9667f8dd70c7434c8ca463beb00b300 ("kdb: core for
-kgdb back end (1 of 2)") from the kgdb tree interacting with commit
-edc6e384f9d96e54a6d03068d3b03fa5b56b6449 ("") fromInput: implement SysRq
-as a separate input handler the input tree.
+drivers/built-in.o: In function `sysrq_filter':
+sysrq.c:(.text+0x224da): undefined reference to `fg_console'
+sysrq.c:(.text+0x224e2): undefined reference to `fg_console'
+sysrq.c:(.text+0x224f2): undefined reference to `vc_cons'
+sysrq.c:(.text+0x224f6): undefined reference to `vc_cons'
+drivers/built-in.o: In function `sysrq_disconnect':
+sysrq.c:(.text+0x226e4): undefined reference to `input_close_device'
+sysrq.c:(.text+0x226ec): undefined reference to `input_unregister_handle'
+drivers/built-in.o: In function `sysrq_connect':
+sysrq.c:(.text+0x22780): undefined reference to `input_register_handle'
+sysrq.c:(.text+0x22790): undefined reference to `input_open_device'
+sysrq.c:(.text+0x227f0): undefined reference to `input_unregister_handle'
+drivers/built-in.o: In function `sysrq_toggle_support':
+(.text+0x22b6c): undefined reference to `input_unregister_handler'
+drivers/built-in.o: In function `sysrq_toggle_support':
+(.text+0x22bac): undefined reference to `input_register_handler'
+drivers/built-in.o: In function `sysrq_init':
+sysrq.c:(.init.text+0x18d4): undefined reference to `input_register_handler'
 
-I added the following patch for today:
+Caused by commit edc6e384f9d96e54a6d03068d3b03fa5b56b6449 ("Input:
+implement SysRq as a separate input handler").  This build does not have
+CONFIG_HW_CONSOLE or CONFIG_INPUT set, but does have CONFIG_MAGIC_SYSRQ
+set to 'y'.
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 23 Mar 2010 14:45:22 +1100
-Subject: [PATCH] kgdb: update for sysrq handling change
+For today, I have reverted that commit, commit
+75394b382f16feddac9c523abf0eca8346afcf23 ("Input: keyboard - fix
+formatting issues") which conflicted with the revert and the merge fixup
+patch for the kgdb tree..
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- kernel/debug/kdb/kdb_main.c |    6 ++----
- 1 files changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
-index f1f9309..bad8e63 100644
---- a/kernel/debug/kdb/kdb_main.c
-+++ b/kernel/debug/kdb/kdb_main.c
-@@ -1819,10 +1819,8 @@ static int kdb_sr(int argc, const char **argv)
- {
- 	if (argc != 1)
- 		return KDB_ARGCOUNT;
--	if (!__sysrq_enabled) {
--		kdb_printf("Auto activating sysrq\n");
--		__sysrq_enabled = 1;
--	}
-+
-+	sysrq_toggle_support(1);
- 
- 	kdb_trap_printk++;
- 	handle_sysrq(*argv[1], NULL);
--- 
-1.7.0.2
-
--- 
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__23_Mar_2010_17_54_56_+1100_yUQQqjiTveTHeSIf
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkuoZcAACgkQjjKRsyhoI8ycZACfXFIROf/H8MMEGl8grB89yf3/
+BjIAoLbQs9yHtCIm50dR/89WGENyIhvx
+=wG8S
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__23_Mar_2010_17_54_56_+1100_yUQQqjiTveTHeSIf--
