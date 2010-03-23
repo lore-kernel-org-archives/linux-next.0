@@ -1,25 +1,48 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: About ACL for IPC Object
-Date: Tue, 23 Mar 2010 07:55:13 -0400
-Message-ID: <20100323115513.GA7751@infradead.org>
-References: <6fb445941001200112o2934f805l4eb4f78000e9527e@mail.gmail.com> <6fb445941001200120m3aa5e944j54a6f645ce82d76f@mail.gmail.com> <4B57C3C3.9010606@schaufler-ca.com> <6fb445941003230201r656d0363k6ed6853c3edc826b@mail.gmail.com>
+From: Jason Wessel <jason.wessel@windriver.com>
+Subject: Re: linux-next: manual merge of the kgdb tree with the input tree
+Date: Tue, 23 Mar 2010 08:24:21 -0500
+Message-ID: <4BA8C105.9020308@windriver.com>
+References: <20100323140946.b56c1d8b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <6fb445941003230201r656d0363k6ed6853c3edc826b@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: zhou peng <ailvpeng25@gmail.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.windriver.com ([147.11.1.11]:58637 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751351Ab0CWNYc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Mar 2010 09:24:32 -0400
+In-Reply-To: <20100323140946.b56c1d8b.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-On Tue, Mar 23, 2010 at 05:01:31PM +0800, zhou peng wrote:
-> Hi,
-> 
-> I have added ACL support to POSIX msg queue on linux kernel 2.6.32.
-> Casey Schaufler, would you or anyone like review the patch for me please?
-> The patch is attached.
+On 03/22/2010 10:09 PM, Stephen Rothwell wrote:
+> Hi Jason,
+>
+> Today's linux-next merge of the kgdb tree got a conflict in
+> drivers/char/keyboard.c between commit
+> edc6e384f9d96e54a6d03068d3b03fa5b56b6449 ("Input: implement SysRq as a
+> separate input handler") from the input tree and commit
+> 4e4b600bf7160c11893bc3f4f8da8a70777b23ba ("When issuing an alt-sysrq-KEY
+> sequence with the keyboard driver in the")
+> from the kgdb tree.
+>
+> The latter changes code moved to another file by the former.  I don't
+> know how to fix this up, so I have just effectively reverted the kgdb
+> commit for now - suggestions welcome.
+>
+> BTW, the author of that kgdb commit is "Jason Wessel Subject: [PATCH]
+> <jason.wessel@windriver.com>".
+>
+>   
+I will drop mine for now.  Dmitry and I have differing implementations
+to solve the same sort of problem with trapping the sysrq.  I had wanted
+to test Dmitry's patch at some point soon.
 
-There is quite a lot of boilerplate code in the patch.  You might want
-to take a look at fs/generic_acl.c and how mm/shmem.c uses it to get
-away with a lot less code.
+I had updated kgdb-next to include the RFC patches for the keyboard and
+kms code, but it is all removed again until we sort out which
+implementation we will roll with.
+
+Thanks,
+Jason.
