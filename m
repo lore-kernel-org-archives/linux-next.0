@@ -1,48 +1,58 @@
-From: Jason Wessel <jason.wessel@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: manual merge of the kgdb tree with the input tree
-Date: Tue, 23 Mar 2010 08:24:21 -0500
-Message-ID: <4BA8C105.9020308@windriver.com>
+Date: Wed, 24 Mar 2010 10:08:29 +1100
+Message-ID: <20100324100829.5ff19581.sfr@canb.auug.org.au>
 References: <20100323140946.b56c1d8b.sfr@canb.auug.org.au>
+	<4BA8C105.9020308@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__24_Mar_2010_10_08_29_+1100_KTFd2KtNPtnYzRxC"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:58637 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751351Ab0CWNYc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Mar 2010 09:24:32 -0400
-In-Reply-To: <20100323140946.b56c1d8b.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:41800 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754331Ab0CWXIf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 23 Mar 2010 19:08:35 -0400
+In-Reply-To: <4BA8C105.9020308@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jason Wessel <jason.wessel@windriver.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-On 03/22/2010 10:09 PM, Stephen Rothwell wrote:
-> Hi Jason,
->
-> Today's linux-next merge of the kgdb tree got a conflict in
-> drivers/char/keyboard.c between commit
-> edc6e384f9d96e54a6d03068d3b03fa5b56b6449 ("Input: implement SysRq as a
-> separate input handler") from the input tree and commit
-> 4e4b600bf7160c11893bc3f4f8da8a70777b23ba ("When issuing an alt-sysrq-KEY
-> sequence with the keyboard driver in the")
-> from the kgdb tree.
->
-> The latter changes code moved to another file by the former.  I don't
-> know how to fix this up, so I have just effectively reverted the kgdb
-> commit for now - suggestions welcome.
->
-> BTW, the author of that kgdb commit is "Jason Wessel Subject: [PATCH]
-> <jason.wessel@windriver.com>".
->
->   
-I will drop mine for now.  Dmitry and I have differing implementations
-to solve the same sort of problem with trapping the sysrq.  I had wanted
-to test Dmitry's patch at some point soon.
+--Signature=_Wed__24_Mar_2010_10_08_29_+1100_KTFd2KtNPtnYzRxC
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I had updated kgdb-next to include the RFC patches for the keyboard and
-kms code, but it is all removed again until we sort out which
-implementation we will roll with.
+Hi Jason,
 
-Thanks,
-Jason.
+On Tue, 23 Mar 2010 08:24:21 -0500 Jason Wessel <jason.wessel@windriver.com=
+> wrote:
+>
+> I will drop mine for now.  Dmitry and I have differing implementations
+> to solve the same sort of problem with trapping the sysrq.  I had wanted
+> to test Dmitry's patch at some point soon.
+>=20
+> I had updated kgdb-next to include the RFC patches for the keyboard and
+> kms code, but it is all removed again until we sort out which
+> implementation we will roll with.
+
+OK, thanks.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__24_Mar_2010_10_08_29_+1100_KTFd2KtNPtnYzRxC
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkupSe0ACgkQjjKRsyhoI8xHewCgiO8o7+87ngzCqQiKnQIpbja5
+SSYAoKGw5jiikSM825yNIf2JoTQjm2tx
+=rnYL
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__24_Mar_2010_10_08_29_+1100_KTFd2KtNPtnYzRxC--
