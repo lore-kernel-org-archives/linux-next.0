@@ -1,40 +1,57 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: Tree for March 22 (net-sysfs.c)
-Date: Mon, 22 Mar 2010 18:05:18 -0700 (PDT)
-Message-ID: <20100322.180518.24600284.davem@davemloft.net>
-References: <4BA78D3D.9090007@oracle.com>
-	<20100322.102206.148561893.davem@davemloft.net>
-	<1269290922.3043.9.camel@edumazet-laptop>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kgdb tree with the input tree
+Date: Tue, 23 Mar 2010 14:09:46 +1100
+Message-ID: <20100323140946.b56c1d8b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__23_Mar_2010_14_09_46_+1100_Ak6j9.Is96R_8W.T"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:53037
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756228Ab0CWBEz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 22 Mar 2010 21:04:55 -0400
-In-Reply-To: <1269290922.3043.9.camel@edumazet-laptop>
+Received: from chilli.pcug.org.au ([203.10.76.44]:34995 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750858Ab0CWDJx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 22 Mar 2010 23:09:53 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: eric.dumazet@gmail.com
-Cc: randy.dunlap@oracle.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, therbert@google.com
+To: Jason Wessel <jason.wessel@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Date: Mon, 22 Mar 2010 21:48:42 +0100
+--Signature=_Tue__23_Mar_2010_14_09_46_+1100_Ak6j9.Is96R_8W.T
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> [PATCH net-next-2.6] net: RPS depends on CONFIG_SYSFS
-> 
-> Randy Dunlap found net/core/net-sysfs.c could not compile if
-> CONFIG_SYSFS=n
-> 
-> Defines CONFIG_RPS in net/Kconfig to let user disable RPS if wanted.
-> 
-> Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
-> Signed-off-by: Eric Dumazet <eric.dumazet@gmail.com>
+Hi Jason,
 
-This is interesting but I'd like to be able to use some
-of the RPS infrastructure unconditionally so I'm not ready
-to apply something like this yet.
+Today's linux-next merge of the kgdb tree got a conflict in
+drivers/char/keyboard.c between commit
+edc6e384f9d96e54a6d03068d3b03fa5b56b6449 ("Input: implement SysRq as a
+separate input handler") from the input tree and commit
+4e4b600bf7160c11893bc3f4f8da8a70777b23ba ("When issuing an alt-sysrq-KEY
+sequence with the keyboard driver in the")
+from the kgdb tree.
 
-So I'll add Tom's fix for now, thanks Eric!
+The latter changes code moved to another file by the former.  I don't
+know how to fix this up, so I have just effectively reverted the kgdb
+commit for now - suggestions welcome.
+
+BTW, the author of that kgdb commit is "Jason Wessel Subject: [PATCH]
+<jason.wessel@windriver.com>".
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+
+--Signature=_Tue__23_Mar_2010_14_09_46_+1100_Ak6j9.Is96R_8W.T
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkuoMPoACgkQjjKRsyhoI8wXAACfRS3evzQSCBmt4nasxDm7jhDG
+/x0AnRyoJH14ytaXwkMcEg0GUU7AgR++
+=ag0C
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__23_Mar_2010_14_09_46_+1100_Ak6j9.Is96R_8W.T--
