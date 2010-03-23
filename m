@@ -1,57 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kgdb tree with the input tree
-Date: Tue, 23 Mar 2010 14:09:46 +1100
-Message-ID: <20100323140946.b56c1d8b.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the kgdb tree
+Date: Tue, 23 Mar 2010 15:04:43 +1100
+Message-ID: <20100323150443.608ad7f0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__23_Mar_2010_14_09_46_+1100_Ak6j9.Is96R_8W.T"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34995 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:60129 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750858Ab0CWDJx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 22 Mar 2010 23:09:53 -0400
+	id S1750811Ab0CWEEs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 23 Mar 2010 00:04:48 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Jason Wessel <jason.wessel@windriver.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
---Signature=_Tue__23_Mar_2010_14_09_46_+1100_Ak6j9.Is96R_8W.T
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
 Hi Jason,
 
-Today's linux-next merge of the kgdb tree got a conflict in
-drivers/char/keyboard.c between commit
-edc6e384f9d96e54a6d03068d3b03fa5b56b6449 ("Input: implement SysRq as a
-separate input handler") from the input tree and commit
-4e4b600bf7160c11893bc3f4f8da8a70777b23ba ("When issuing an alt-sysrq-KEY
-sequence with the keyboard driver in the")
-from the kgdb tree.
+After merging the kgdb tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-The latter changes code moved to another file by the former.  I don't
-know how to fix this up, so I have just effectively reverted the kgdb
-commit for now - suggestions welcome.
+kernel/debug/kdb/kdb_main.c: In function 'kdb_sr':
+kernel/debug/kdb/kdb_main.c:1822: error: '__sysrq_enabled' undeclared (first use in this function)
 
-BTW, the author of that kgdb commit is "Jason Wessel Subject: [PATCH]
-<jason.wessel@windriver.com>".
+Caused by commit ab28988df9667f8dd70c7434c8ca463beb00b300 ("kdb: core for
+kgdb back end (1 of 2)") from the kgdb tree interacting with commit
+edc6e384f9d96e54a6d03068d3b03fa5b56b6449 ("") fromInput: implement SysRq
+as a separate input handler the input tree.
 
---=20
+I added the following patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 23 Mar 2010 14:45:22 +1100
+Subject: [PATCH] kgdb: update for sysrq handling change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ kernel/debug/kdb/kdb_main.c |    6 ++----
+ 1 files changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
+index f1f9309..bad8e63 100644
+--- a/kernel/debug/kdb/kdb_main.c
++++ b/kernel/debug/kdb/kdb_main.c
+@@ -1819,10 +1819,8 @@ static int kdb_sr(int argc, const char **argv)
+ {
+ 	if (argc != 1)
+ 		return KDB_ARGCOUNT;
+-	if (!__sysrq_enabled) {
+-		kdb_printf("Auto activating sysrq\n");
+-		__sysrq_enabled = 1;
+-	}
++
++	sysrq_toggle_support(1);
+ 
+ 	kdb_trap_printk++;
+ 	handle_sysrq(*argv[1], NULL);
+-- 
+1.7.0.2
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-
-
---Signature=_Tue__23_Mar_2010_14_09_46_+1100_Ak6j9.Is96R_8W.T
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkuoMPoACgkQjjKRsyhoI8wXAACfRS3evzQSCBmt4nasxDm7jhDG
-/x0AnRyoJH14ytaXwkMcEg0GUU7AgR++
-=ag0C
------END PGP SIGNATURE-----
-
---Signature=_Tue__23_Mar_2010_14_09_46_+1100_Ak6j9.Is96R_8W.T--
