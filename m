@@ -1,58 +1,79 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the kgdb tree with the input tree
-Date: Wed, 24 Mar 2010 10:08:29 +1100
-Message-ID: <20100324100829.5ff19581.sfr@canb.auug.org.au>
-References: <20100323140946.b56c1d8b.sfr@canb.auug.org.au>
-	<4BA8C105.9020308@windriver.com>
+From: Casey Schaufler <casey@schaufler-ca.com>
+Subject: Re: About ACL for IPC Object
+Date: Tue, 23 Mar 2010 17:17:30 -0700
+Message-ID: <4BA95A1A.6020003@schaufler-ca.com>
+References: <6fb445941001200112o2934f805l4eb4f78000e9527e@mail.gmail.com>	 <6fb445941001200120m3aa5e944j54a6f645ce82d76f@mail.gmail.com>	 <4B57C3C3.9010606@schaufler-ca.com> <6fb445941003230201r656d0363k6ed6853c3edc826b@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__24_Mar_2010_10_08_29_+1100_KTFd2KtNPtnYzRxC"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41800 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754331Ab0CWXIf (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 23 Mar 2010 19:08:35 -0400
-In-Reply-To: <4BA8C105.9020308@windriver.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jason Wessel <jason.wessel@windriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-security-module-owner@vger.kernel.org>
+In-Reply-To: <6fb445941003230201r656d0363k6ed6853c3edc826b@mail.gmail.com>
+Sender: linux-security-module-owner@vger.kernel.org
+To: zhou peng <ailvpeng25@gmail.com>
+Cc: linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__24_Mar_2010_10_08_29_+1100_KTFd2KtNPtnYzRxC
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Jason,
-
-On Tue, 23 Mar 2010 08:24:21 -0500 Jason Wessel <jason.wessel@windriver.com=
-> wrote:
+zhou peng wrote:
+> Hi,
 >
-> I will drop mine for now.  Dmitry and I have differing implementations
-> to solve the same sort of problem with trapping the sysrq.  I had wanted
-> to test Dmitry's patch at some point soon.
->=20
-> I had updated kgdb-next to include the RFC patches for the keyboard and
-> kms code, but it is all removed again until we sort out which
-> implementation we will roll with.
+> I have added ACL support to POSIX msg queue on linux kernel 2.6.32.
+> Casey Schaufler, would you or anyone like review the patch for me please?
+>   
 
-OK, thanks.
+I didn't see anything horribly wrong, but I have not tested it.
+Christoph's comments should be heeded.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+> The patch is attached.
+>   
 
---Signature=_Wed__24_Mar_2010_10_08_29_+1100_KTFd2KtNPtnYzRxC
-Content-Type: application/pgp-signature
+Please include patches inline. It is much easier to make specific
+comments that way and it is The Way We Do Things.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+> Best,
+>
+> 2010/1/21 Casey Schaufler <casey@schaufler-ca.com>:
+>   
+>> zhou peng wrote:
+>>     
+>>> Hi all,
+>>>
+>>> There are ACL in file system, but why there are no ACL implementation
+>>> in IPC object, eg. shm, message queue, FIFO?
+>>>
+>>>       
+>> Most people haven't noticed that IPC objects are even there, much less
+>> that they have mode bits and not ACLs. Even when we were doing security
+>> evaluations on Unix boxes in the 1990's they were considered insufficiently
+>> interesting to justify the additional work to do ACLs.
+>>
+>> If you really want ACLs on IPC objects it would make a dandy little
+>> project for a summer. I would be happy to review patches.
+>>
+>>     
+>>> Is there any fine grained granting in ipc object just like in file object?
+>>>
+>>>       
+>> As Stephen Smalley points out, you can do it with SELinux, although
+>> that it rather like driving a thumbtack with a bulldozer.
+>>
+>>     
+>>> Thanks,
+>>> Best
+>>>
+>>> --
+>>> zhoupeng
+>>> --
+>>> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>> Please read the FAQ at  http://www.tux.org/lkml/
+>>>
+>>>
+>>>
+>>>       
+>>     
+>
+>
+>
+>   
 
-iEYEARECAAYFAkupSe0ACgkQjjKRsyhoI8xHewCgiO8o7+87ngzCqQiKnQIpbja5
-SSYAoKGw5jiikSM825yNIf2JoTQjm2tx
-=rnYL
------END PGP SIGNATURE-----
-
---Signature=_Wed__24_Mar_2010_10_08_29_+1100_KTFd2KtNPtnYzRxC--
