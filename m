@@ -1,79 +1,60 @@
-From: Casey Schaufler <casey@schaufler-ca.com>
-Subject: Re: About ACL for IPC Object
-Date: Tue, 23 Mar 2010 17:17:30 -0700
-Message-ID: <4BA95A1A.6020003@schaufler-ca.com>
-References: <6fb445941001200112o2934f805l4eb4f78000e9527e@mail.gmail.com>	 <6fb445941001200120m3aa5e944j54a6f645ce82d76f@mail.gmail.com>	 <4B57C3C3.9010606@schaufler-ca.com> <6fb445941003230201r656d0363k6ed6853c3edc826b@mail.gmail.com>
+From: Neil Brown <neilb@suse.de>
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+Date: Wed, 24 Mar 2010 12:37:23 +1100
+Message-ID: <20100324123723.43d24a42@notabene.brown>
+References: <20100317154145.bd9fca16.sfr@canb.auug.org.au>
+	<20100317182136.0f2ab805@notabene.brown>
+	<Pine.LNX.4.64.1003170847110.25675@cobra.newdream.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-security-module-owner@vger.kernel.org>
-In-Reply-To: <6fb445941003230201r656d0363k6ed6853c3edc826b@mail.gmail.com>
-Sender: linux-security-module-owner@vger.kernel.org
-To: zhou peng <ailvpeng25@gmail.com>
-Cc: linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from cantor.suse.de ([195.135.220.2]:59758 "EHLO mx1.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753696Ab0CXBhd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 23 Mar 2010 21:37:33 -0400
+In-Reply-To: <Pine.LNX.4.64.1003170847110.25675@cobra.newdream.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Sage Weil <sage@newdream.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-zhou peng wrote:
-> Hi,
->
-> I have added ACL support to POSIX msg queue on linux kernel 2.6.32.
-> Casey Schaufler, would you or anyone like review the patch for me please?
->   
+On Wed, 17 Mar 2010 08:51:49 -0700 (PDT)
+Sage Weil <sage@newdream.net> wrote:
 
-I didn't see anything horribly wrong, but I have not tested it.
-Christoph's comments should be heeded.
 
-> The patch is attached.
->   
+> > It is a pity that this code cannot use mempool_t....
+> > What if mempool_t were changed to only re-alloc the vector of pointers when
+> > it grew, or when it shrank to less than 1/2 it's current size.  Would that
+> > reduce the frequency of allocations enough for you to be comfortable with it? 
+> > i.e. always make the vector a power-of-2 size (which is what is probably
+> > allocated anyway) while the pool size might be less.
+> > ??
+> 
+> That would improve the situation, but still mean potentially large 
+> allocations (the pools can grow pretty big) that aren't strictly 
+> necessary.  I can imagine a more modular mempool_t with an ops vector for 
+> adding/removing from the pool to cope with situations like this, but I'm 
+> not sure it's worth the effort?
 
-Please include patches inline. It is much easier to make specific
-comments that way and it is The Way We Do Things.
+How big?
+mempools (and equivalents) should just be large enough to get you through a
+tight spot.  The working assumption is that they will not normally be used.
+So 2 or 3 should normally be plenty.
 
-> Best,
->
-> 2010/1/21 Casey Schaufler <casey@schaufler-ca.com>:
->   
->> zhou peng wrote:
->>     
->>> Hi all,
->>>
->>> There are ACL in file system, but why there are no ACL implementation
->>> in IPC object, eg. shm, message queue, FIFO?
->>>
->>>       
->> Most people haven't noticed that IPC objects are even there, much less
->> that they have mode bits and not ACLs. Even when we were doing security
->> evaluations on Unix boxes in the 1990's they were considered insufficiently
->> interesting to justify the additional work to do ACLs.
->>
->> If you really want ACLs on IPC objects it would make a dandy little
->> project for a summer. I would be happy to review patches.
->>
->>     
->>> Is there any fine grained granting in ipc object just like in file object?
->>>
->>>       
->> As Stephen Smalley points out, you can do it with SELinux, although
->> that it rather like driving a thumbtack with a bulldozer.
->>
->>     
->>> Thanks,
->>> Best
->>>
->>> --
->>> zhoupeng
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>> Please read the FAQ at  http://www.tux.org/lkml/
->>>
->>>
->>>
->>>       
->>     
->
->
->
->   
+(looks at code)
 
+The only time you resize a ceph_mempool is in ceph_monc_do_statfs
+where you increment it, perform a synchronous statfs call on the 
+network, then decrement the size of the mempool.
+How many concurrent statfs calls does it even make sense to make.
+I'm probably missing something obvious, but wouldn't it make sense to
+put that all under a mutex so there was only ever one outstanding statfs (per
+filesystem) - or maybe under a counting semaphore to allow some small number,
+and make sure to prime the mempool to cover that number.
+Then you would never resize a mempool at all.
+
+I notice that all other mempools that ceph uses are sensibly quite small and
+stay that way.
+
+NeilBrown
