@@ -1,47 +1,57 @@
-From: Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>
+From: reinette chatre <reinette.chatre@intel.com>
 Subject: Re: [PATCH] iwlwifi: fix build error for CONFIG_IWLAGN=n
-Date: Wed, 24 Mar 2010 14:33:46 -0700
-Message-ID: <1269466426.6935.8.camel@jlt3.sipsolutions.net>
+Date: Wed, 24 Mar 2010 14:42:28 -0700
+Message-ID: <1269466948.2446.3216.camel@rchatre-DESK>
 References: <4BAA73D2.1000301@oracle.com>
 	 <1269465799-19060-1-git-send-email-linville@tuxdriver.com>
+	 <1269466426.6935.8.camel@jlt3.sipsolutions.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1269465799-19060-1-git-send-email-linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>
-Cc: linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Reinette Chatre <reinette.chatre-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga02.intel.com ([134.134.136.20]:39658 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750783Ab0CXVma (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 24 Mar 2010 17:42:30 -0400
+In-Reply-To: <1269466426.6935.8.camel@jlt3.sipsolutions.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "John W. Linville" <linville@tuxdriver.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-On Wed, 2010-03-24 at 17:23 -0400, John W. Linville wrote:
-> drivers/net/wireless/iwlwifi/iwl-rx.c: In function 'iwl_good_ack_health':
-> drivers/net/wireless/iwlwifi/iwl-rx.c:647: error: 'struct iwl_priv' has no member named '_agn'
+On Wed, 2010-03-24 at 14:33 -0700, Johannes Berg wrote:
+> On Wed, 2010-03-24 at 17:23 -0400, John W. Linville wrote:
+> > drivers/net/wireless/iwlwifi/iwl-rx.c: In function 'iwl_good_ack_health':
+> > drivers/net/wireless/iwlwifi/iwl-rx.c:647: error: 'struct iwl_priv' has no member named '_agn'
+> > 
+> > Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
+> > Signed-off-by: John W. Linville <linville@tuxdriver.com>
+> > ---
+> >  drivers/net/wireless/iwlwifi/iwl-rx.c |    2 ++
+> >  1 files changed, 2 insertions(+), 0 deletions(-)
+> > 
+> > diff --git a/drivers/net/wireless/iwlwifi/iwl-rx.c b/drivers/net/wireless/iwlwifi/iwl-rx.c
+> > index b6a64d8..2fa30df 100644
+> > --- a/drivers/net/wireless/iwlwifi/iwl-rx.c
+> > +++ b/drivers/net/wireless/iwlwifi/iwl-rx.c
+> > @@ -621,6 +621,7 @@ static void iwl_accumulative_statistics(struct iwl_priv *priv,
+> >  #define BA_TIMEOUT_CNT (5)
+> >  #define BA_TIMEOUT_MAX (16)
+> >  
+> > +#if defined(CONFIG_IWLAGN) || defined(CONFIG_IWLAGN_MODULE)
+> >  /**
+> >   * iwl_good_ack_health - checks for ACK count ratios, BA timeout
+> > retries.
 > 
-> Reported-by: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-> Signed-off-by: John W. Linville <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>
-> ---
->  drivers/net/wireless/iwlwifi/iwl-rx.c |    2 ++
->  1 files changed, 2 insertions(+), 0 deletions(-)
+> I thought we had a patch moving it?
 > 
-> diff --git a/drivers/net/wireless/iwlwifi/iwl-rx.c b/drivers/net/wireless/iwlwifi/iwl-rx.c
-> index b6a64d8..2fa30df 100644
-> --- a/drivers/net/wireless/iwlwifi/iwl-rx.c
-> +++ b/drivers/net/wireless/iwlwifi/iwl-rx.c
-> @@ -621,6 +621,7 @@ static void iwl_accumulative_statistics(struct iwl_priv *priv,
->  #define BA_TIMEOUT_CNT (5)
->  #define BA_TIMEOUT_MAX (16)
->  
-> +#if defined(CONFIG_IWLAGN) || defined(CONFIG_IWLAGN_MODULE)
->  /**
->   * iwl_good_ack_health - checks for ACK count ratios, BA timeout
-> retries.
 
-I thought we had a patch moving it?
+We do, but it has not been pushed upstream yet. 
 
-johannes
+John, I'd prefer
+http://viggo.jf.intel.com/~wifi/repos.git/?p=iwlwifi-2.6.git;a=commit;h=bc745eb7d28285f3b437c00253bf01ef501eb3f1 
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Should we push it upstream asap or can it wait until our next series
+goes out after all our validation cycles pass?
+
+Reinette
