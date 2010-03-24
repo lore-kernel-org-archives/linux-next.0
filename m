@@ -1,58 +1,45 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
+From: "John W. Linville" <linville@tuxdriver.com>
 Subject: Re: [PATCH] iwlwifi: fix build error for CONFIG_IWLAGN=n
-Date: Wed, 24 Mar 2010 15:59:44 -0700
-Message-ID: <4BAA9960.9070102@oracle.com>
-References: <4BAA73D2.1000301@oracle.com> <1269465799-19060-1-git-send-email-linville@tuxdriver.com>
+Date: Wed, 24 Mar 2010 19:38:32 -0400
+Message-ID: <20100324233832.GB32563@tuxdriver.com>
+References: <4BAA73D2.1000301@oracle.com>
+ <1269465799-19060-1-git-send-email-linville@tuxdriver.com>
+ <1269466426.6935.8.camel@jlt3.sipsolutions.net>
+ <1269466948.2446.3216.camel@rchatre-DESK>
+ <20100324223719.GA32563@tuxdriver.com>
+ <1269470489.2446.3217.camel@rchatre-DESK>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet11.oracle.com ([141.146.126.233]:30501 "EHLO
-	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751389Ab0CXXBI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 24 Mar 2010 19:01:08 -0400
-In-Reply-To: <1269465799-19060-1-git-send-email-linville@tuxdriver.com>
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:43460 "EHLO
+	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750772Ab0CXXkf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 24 Mar 2010 19:40:35 -0400
+Content-Disposition: inline
+In-Reply-To: <1269470489.2446.3217.camel@rchatre-DESK>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-wireless@vger.kernel.org, linux-next@vger.kernel.org
+To: reinette chatre <reinette.chatre@intel.com>
+Cc: Johannes Berg <johannes@sipsolutions.net>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-On 03/24/10 14:23, John W. Linville wrote:
-> drivers/net/wireless/iwlwifi/iwl-rx.c: In function 'iwl_good_ack_health':
-> drivers/net/wireless/iwlwifi/iwl-rx.c:647: error: 'struct iwl_priv' has no member named '_agn'
-> 
-> Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
-> Signed-off-by: John W. Linville <linville@tuxdriver.com>
+On Wed, Mar 24, 2010 at 03:41:29PM -0700, reinette chatre wrote:
 
-ACK if you end up using this one.
+> I am very sorry, here is the correct link:
+> http://git.kernel.org/?p=3Dlinux/kernel/git/iwlwifi/iwlwifi-2.6.git;a=
+=3Dcommit;h=3Dbc745eb7d28285f3b437c00253bf01ef501eb3f1
 
-Thanks.
+=46WIW, that one misses the definition of iwl_good_ack_health in iwl-co=
+re.h.
 
-> ---
->  drivers/net/wireless/iwlwifi/iwl-rx.c |    2 ++
->  1 files changed, 2 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/iwlwifi/iwl-rx.c b/drivers/net/wireless/iwlwifi/iwl-rx.c
-> index b6a64d8..2fa30df 100644
-> --- a/drivers/net/wireless/iwlwifi/iwl-rx.c
-> +++ b/drivers/net/wireless/iwlwifi/iwl-rx.c
-> @@ -621,6 +621,7 @@ static void iwl_accumulative_statistics(struct iwl_priv *priv,
->  #define BA_TIMEOUT_CNT (5)
->  #define BA_TIMEOUT_MAX (16)
->  
-> +#if defined(CONFIG_IWLAGN) || defined(CONFIG_IWLAGN_MODULE)
->  /**
->   * iwl_good_ack_health - checks for ACK count ratios, BA timeout retries.
->   *
-> @@ -670,6 +671,7 @@ bool iwl_good_ack_health(struct iwl_priv *priv,
->  	return rc;
->  }
->  EXPORT_SYMBOL(iwl_good_ack_health);
-> +#endif
->  
->  /**
->   * iwl_good_plcp_health - checks for plcp error.
+I already put the other one in wireless-next-2.6.  I'll just resolve
+the conflict when I pull your tree.
 
+Thanks,
 
--- 
-~Randy
+John
+--=20
+John W. Linville =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0Someday the world will =
+need a hero, and you
+linville@tuxdriver.com =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0might be all =
+we have. =A0Be ready.
