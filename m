@@ -1,37 +1,31 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: linux-next: Tree for March 24
-Date: Wed, 24 Mar 2010 00:29:17 -0700
-Message-ID: <20100324072916.GA4254@core.coreip.homeip.net>
-References: <20100324161746.85edc5a3.sfr@canb.auug.org.au>
+From: Sujith <Sujith.Manoharan@atheros.com>
+Subject: linux-next: build failure after merge of the final tree (wireless
+ tree related)
+Date: Wed, 24 Mar 2010 13:43:51 +0530
+Message-ID: <19369.51647.544760.353002@gargle.gargle.HOWL>
+References: <20100324155930.1fa3367b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gw0-f46.google.com ([74.125.83.46]:48560 "EHLO
-	mail-gw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754974Ab0CXH3W (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 24 Mar 2010 03:29:22 -0400
-Content-Disposition: inline
-In-Reply-To: <20100324161746.85edc5a3.sfr@canb.auug.org.au>
+Received: from mail.atheros.com ([12.36.123.2]:45664 "EHLO mail.atheros.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753224Ab0CXHxy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 24 Mar 2010 03:53:54 -0400
+In-Reply-To: <20100324155930.1fa3367b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc: "John W. Linville" <linville@tuxdriver.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Vasanth Thiagarajan <Vasanth.Thiagarajan@Atheros.com>, Senthilkumar Balasubramanian <Senthilkumar.Balasubramanian@Atheros.com>
 
-On Wed, Mar 24, 2010 at 04:17:46PM +1100, Stephen Rothwell wrote:
-> Hi all,
+Stephen Rothwell wrote:
+> Hi John,
 > 
-> Changes since 20100323:
-> 
-> Dropped tree: tmio-mmc (long unresolved conflicts and unable to fetch)
-> 
-> My fixes tree contains:
-> 	a patch for a pktcdvd build error from Arnd Bergmann
-> 	a revert of the commit that broke virtual consoles on PowerPC
-> 
-> The input tree still has its build failure for which I reverted a commit.
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
 > 
 
-Should be fixed now.
+Thanks for reporting this.
+A patch has been sent to fix this issue: https://patchwork.kernel.org/patch/87829/
 
--- 
-Dmitry
+Sujith
