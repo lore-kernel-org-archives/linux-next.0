@@ -1,45 +1,58 @@
-From: reinette chatre <reinette.chatre@intel.com>
-Subject: Re: [PATCH] iwlwifi: fix build error for CONFIG_IWLAGN=n
-Date: Thu, 25 Mar 2010 09:33:40 -0700
-Message-ID: <1269534820.2446.3230.camel@rchatre-DESK>
-References: <4BAA73D2.1000301@oracle.com>
-	 <1269465799-19060-1-git-send-email-linville@tuxdriver.com>
-	 <1269466426.6935.8.camel@jlt3.sipsolutions.net>
-	 <1269466948.2446.3216.camel@rchatre-DESK>
-	 <20100324223719.GA32563@tuxdriver.com>
-	 <1269470489.2446.3217.camel@rchatre-DESK>
-	 <20100324233832.GB32563@tuxdriver.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH 2/3 -next] usb: fix serial build when SYSRQ is disabled
+Date: Thu, 25 Mar 2010 11:29:16 -0700
+Message-ID: <4BABAB7C.5000006@oracle.com>
+References: <20100325173853.f06a7b33.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:44147 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752691Ab0CYQdl (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 25 Mar 2010 12:33:41 -0400
-In-Reply-To: <20100324233832.GB32563@tuxdriver.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20100325173853.f06a7b33.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Greg KH <gregkh@suse.de>, linux-usb <linux-usb@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi John,
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-On Wed, 2010-03-24 at 16:38 -0700, John W. Linville wrote:
-> On Wed, Mar 24, 2010 at 03:41:29PM -0700, reinette chatre wrote:
-> 
-> > I am very sorry, here is the correct link:
-> > http://git.kernel.org/?p=linux/kernel/git/iwlwifi/iwlwifi-2.6.git;a=commit;h=bc745eb7d28285f3b437c00253bf01ef501eb3f1
-> 
-> FWIW, that one misses the definition of iwl_good_ack_health in iwl-core.h.
+Fix build error when CONFIG_MAGIC_SYSRQ is not enabled:
 
-This definition was added in an recent patch "iwlwifi: code cleanup for
-connectivity recovery" which is already in wireless-next-2.6.
+drivers/usb/serial/generic.c:566: error: implicit declaration of function 'handle_sysrq'
 
-> I already put the other one in wireless-next-2.6.  I'll just resolve
-> the conflict when I pull your tree.
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/usb/serial/generic.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-I'll try to sort this out with our next submission so that there are no
-conflicts to resolve.
-
-Reinette
+--- linux-next-20100325.orig/drivers/usb/serial/generic.c
++++ linux-next-20100325/drivers/usb/serial/generic.c
+@@ -12,6 +12,7 @@
+ #include <linux/kernel.h>
+ #include <linux/errno.h>
+ #include <linux/slab.h>
++#include <linux/sysrq.h>
+ #include <linux/tty.h>
+ #include <linux/tty_flip.h>
+ #include <linux/module.h>
+@@ -558,6 +559,7 @@ void usb_serial_generic_unthrottle(struc
+ 	}
+ }
+ 
++#ifdef CONFIG_MAGIC_SYSRQ
+ int usb_serial_handle_sysrq_char(struct tty_struct *tty,
+ 			struct usb_serial_port *port, unsigned int ch)
+ {
+@@ -571,6 +573,13 @@ int usb_serial_handle_sysrq_char(struct 
+ 	}
+ 	return 0;
+ }
++#else
++int usb_serial_handle_sysrq_char(struct tty_struct *tty,
++			struct usb_serial_port *port, unsigned int ch)
++{
++	return 0;
++}
++#endif
+ EXPORT_SYMBOL_GPL(usb_serial_handle_sysrq_char);
+ 
+ int usb_serial_handle_break(struct usb_serial_port *port)
