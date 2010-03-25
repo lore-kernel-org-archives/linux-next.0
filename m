@@ -1,52 +1,45 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for March 24 (staging/vt66*)
-Date: Thu, 25 Mar 2010 08:38:10 -0700
-Message-ID: <4BAB8362.7030005@oracle.com>
-References: <20100324161746.85edc5a3.sfr@canb.auug.org.au> <4BAA6B88.2080803@oracle.com> <20100325130003.GB24056@alittletooquiet.net>
+From: reinette chatre <reinette.chatre@intel.com>
+Subject: Re: [PATCH] iwlwifi: fix build error for CONFIG_IWLAGN=n
+Date: Thu, 25 Mar 2010 09:33:40 -0700
+Message-ID: <1269534820.2446.3230.camel@rchatre-DESK>
+References: <4BAA73D2.1000301@oracle.com>
+	 <1269465799-19060-1-git-send-email-linville@tuxdriver.com>
+	 <1269466426.6935.8.camel@jlt3.sipsolutions.net>
+	 <1269466948.2446.3216.camel@rchatre-DESK>
+	 <20100324223719.GA32563@tuxdriver.com>
+	 <1269470489.2446.3217.camel@rchatre-DESK>
+	 <20100324233832.GB32563@tuxdriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet12.oracle.com ([141.146.126.234]:53283 "EHLO
-	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755052Ab0CYPic (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Mar 2010 11:38:32 -0400
-In-Reply-To: <20100325130003.GB24056@alittletooquiet.net>
+Received: from mga11.intel.com ([192.55.52.93]:44147 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752691Ab0CYQdl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 25 Mar 2010 12:33:41 -0400
+In-Reply-To: <20100324233832.GB32563@tuxdriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Forest Bond <forest@alittletooquiet.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, devel@driverdev.osuosl.org, Greg KH <gregkh@suse.de>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: Johannes Berg <johannes@sipsolutions.net>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-On 03/25/10 06:00, Forest Bond wrote:
-> Hi,
+Hi John,
+
+On Wed, 2010-03-24 at 16:38 -0700, John W. Linville wrote:
+> On Wed, Mar 24, 2010 at 03:41:29PM -0700, reinette chatre wrote:
 > 
-> On Wed, Mar 24, 2010 at 12:44:08PM -0700, Randy Dunlap wrote:
->> On 03/23/10 22:17, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> Changes since 20100323:
->>
->>
->>
->> (.text+0x5d140): multiple definition of `hostap_set_hostapd'
->> (.text+0x5ccab): multiple definition of `hostap_ioctl'
->>
->> when
->> CONFIG_HOSTAP=y
->> and
->> CONFIG_VT665[56]=y
->>
->> or just both of the latter are =y.
+> > I am very sorry, here is the correct link:
+> > http://git.kernel.org/?p=linux/kernel/git/iwlwifi/iwlwifi-2.6.git;a=commit;h=bc745eb7d28285f3b437c00253bf01ef501eb3f1
 > 
-> Is there any way to limit CONFIG_VT665[56] to ("n", "m")?  That would be
-> sufficient as a work-around, right?
+> FWIW, that one misses the definition of iwl_good_ack_health in iwl-core.h.
 
-A driver can be limited to [nm] by adding:
-	depends on m
+This definition was added in an recent patch "iwlwifi: code cleanup for
+connectivity recovery" which is already in wireless-next-2.6.
 
-> Or is it preferable to rename the offending functions?
+> I already put the other one in wireless-next-2.6.  I'll just resolve
+> the conflict when I pull your tree.
 
-Yes, it's preferable to rename them.
+I'll try to sort this out with our next submission so that there are no
+conflicts to resolve.
 
--- 
-~Randy
+Reinette
