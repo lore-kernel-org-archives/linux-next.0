@@ -1,7 +1,7 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH 2/3 -next] usb: fix serial build when SYSRQ is disabled
-Date: Thu, 25 Mar 2010 11:29:16 -0700
-Message-ID: <4BABAB7C.5000006@oracle.com>
+Subject: [PATCH 1/3 -next] drm: fix build error when SYSRQ is disabled
+Date: Thu, 25 Mar 2010 11:29:05 -0700
+Message-ID: <4BABAB71.3010402@oracle.com>
 References: <20100325173853.f06a7b33.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
@@ -10,49 +10,30 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20100325173853.f06a7b33.sfr@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Greg KH <gregkh@suse.de>, linux-usb <linux-usb@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@osdl.org>, David Airlie <airlied@linux.ie>, dri-devel@lists.sourceforge.net
 List-Id: linux-next.vger.kernel.org
 
 From: Randy Dunlap <randy.dunlap@oracle.com>
 
 Fix build error when CONFIG_MAGIC_SYSRQ is not enabled:
 
-drivers/usb/serial/generic.c:566: error: implicit declaration of function 'handle_sysrq'
+drivers/gpu/drm/drm_fb_helper.c:915: error: 'sysrq_drm_fb_helper_restore_op' undeclared (first use in this function)
+drivers/gpu/drm/drm_fb_helper.c:929: error: 'sysrq_drm_fb_helper_restore_op' undeclared (first use in this function)
 
 Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: David Airlie <airlied@linux.ie>
 ---
- drivers/usb/serial/generic.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/gpu/drm/drm_fb_helper.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- linux-next-20100325.orig/drivers/usb/serial/generic.c
-+++ linux-next-20100325/drivers/usb/serial/generic.c
-@@ -12,6 +12,7 @@
- #include <linux/kernel.h>
- #include <linux/errno.h>
- #include <linux/slab.h>
-+#include <linux/sysrq.h>
- #include <linux/tty.h>
- #include <linux/tty_flip.h>
- #include <linux/module.h>
-@@ -558,6 +559,7 @@ void usb_serial_generic_unthrottle(struc
- 	}
- }
- 
-+#ifdef CONFIG_MAGIC_SYSRQ
- int usb_serial_handle_sysrq_char(struct tty_struct *tty,
- 			struct usb_serial_port *port, unsigned int ch)
- {
-@@ -571,6 +573,13 @@ int usb_serial_handle_sysrq_char(struct 
- 	}
- 	return 0;
- }
+--- linux-next-20100325.orig/drivers/gpu/drm/drm_fb_helper.c
++++ linux-next-20100325/drivers/gpu/drm/drm_fb_helper.c
+@@ -283,6 +283,8 @@ static struct sysrq_key_op sysrq_drm_fb_
+ 	.help_msg = "force-fb(V)",
+ 	.action_msg = "Restore framebuffer console",
+ };
 +#else
-+int usb_serial_handle_sysrq_char(struct tty_struct *tty,
-+			struct usb_serial_port *port, unsigned int ch)
-+{
-+	return 0;
-+}
-+#endif
- EXPORT_SYMBOL_GPL(usb_serial_handle_sysrq_char);
++static struct sysrq_key_op sysrq_drm_fb_helper_restore_op = { };
+ #endif
  
- int usb_serial_handle_break(struct usb_serial_port *port)
+ static void drm_fb_helper_on(struct fb_info *info)
