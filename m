@@ -1,45 +1,90 @@
-From: "John W. Linville" <linville@tuxdriver.com>
-Subject: Re: [PATCH] iwlwifi: fix build error for CONFIG_IWLAGN=n
-Date: Wed, 24 Mar 2010 19:38:32 -0400
-Message-ID: <20100324233832.GB32563@tuxdriver.com>
-References: <4BAA73D2.1000301@oracle.com>
- <1269465799-19060-1-git-send-email-linville@tuxdriver.com>
- <1269466426.6935.8.camel@jlt3.sipsolutions.net>
- <1269466948.2446.3216.camel@rchatre-DESK>
- <20100324223719.GA32563@tuxdriver.com>
- <1269470489.2446.3217.camel@rchatre-DESK>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the kgdb tree
+Date: Thu, 25 Mar 2010 15:43:07 +1100
+Message-ID: <20100325154307.9cdeae10.sfr@canb.auug.org.au>
+References: <20100323150443.608ad7f0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__25_Mar_2010_15_43_07_+1100_klyDtB+uwJAmFzl1"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:43460 "EHLO
-	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750772Ab0CXXkf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 24 Mar 2010 19:40:35 -0400
-Content-Disposition: inline
-In-Reply-To: <1269470489.2446.3217.camel@rchatre-DESK>
+Received: from chilli.pcug.org.au ([203.10.76.44]:42657 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751737Ab0CYEnP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 25 Mar 2010 00:43:15 -0400
+In-Reply-To: <20100323150443.608ad7f0.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: reinette chatre <reinette.chatre@intel.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Jason Wessel <jason.wessel@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-On Wed, Mar 24, 2010 at 03:41:29PM -0700, reinette chatre wrote:
+--Signature=_Thu__25_Mar_2010_15_43_07_+1100_klyDtB+uwJAmFzl1
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> I am very sorry, here is the correct link:
-> http://git.kernel.org/?p=3Dlinux/kernel/git/iwlwifi/iwlwifi-2.6.git;a=
-=3Dcommit;h=3Dbc745eb7d28285f3b437c00253bf01ef501eb3f1
+Hi Jason, Dmitry,
 
-=46WIW, that one misses the definition of iwl_good_ack_health in iwl-co=
-re.h.
+On Tue, 23 Mar 2010 15:04:43 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the kgdb tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>=20
+> kernel/debug/kdb/kdb_main.c: In function 'kdb_sr':
+> kernel/debug/kdb/kdb_main.c:1822: error: '__sysrq_enabled' undeclared (fi=
+rst use in this function)
+>=20
+> Caused by commit ab28988df9667f8dd70c7434c8ca463beb00b300 ("kdb: core for
+> kgdb back end (1 of 2)") from the kgdb tree interacting with commit
+> edc6e384f9d96e54a6d03068d3b03fa5b56b6449 ("") fromInput: implement SysRq
+> as a separate input handler the input tree.
 
-I already put the other one in wireless-next-2.6.  I'll just resolve
-the conflict when I pull your tree.
+I got this again today (I stopped reverting the input tree commits that I
+was reverting for another build problem).  The patch below still seems to
+work OK.
 
-Thanks,
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 23 Mar 2010 14:45:22 +1100
+> Subject: [PATCH] kgdb: update for sysrq handling change
+>=20
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  kernel/debug/kdb/kdb_main.c |    6 ++----
+>  1 files changed, 2 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
+> index f1f9309..bad8e63 100644
+> --- a/kernel/debug/kdb/kdb_main.c
+> +++ b/kernel/debug/kdb/kdb_main.c
+> @@ -1819,10 +1819,8 @@ static int kdb_sr(int argc, const char **argv)
+>  {
+>  	if (argc !=3D 1)
+>  		return KDB_ARGCOUNT;
+> -	if (!__sysrq_enabled) {
+> -		kdb_printf("Auto activating sysrq\n");
+> -		__sysrq_enabled =3D 1;
+> -	}
+> +
+> +	sysrq_toggle_support(1);
+> =20
+>  	kdb_trap_printk++;
+>  	handle_sysrq(*argv[1], NULL);
 
-John
 --=20
-John W. Linville =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0Someday the world will =
-need a hero, and you
-linville@tuxdriver.com =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0might be all =
-we have. =A0Be ready.
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__25_Mar_2010_15_43_07_+1100_klyDtB+uwJAmFzl1
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkuq6dsACgkQjjKRsyhoI8yddQCeKjotJHOjMUAGnWfr+jshttjM
+djgAn2LR02RvVwP/BtWW6sbNxjSdgabN
+=vMT0
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__25_Mar_2010_15_43_07_+1100_klyDtB+uwJAmFzl1--
