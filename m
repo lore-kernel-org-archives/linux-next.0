@@ -1,41 +1,54 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: manual merge of the pci tree with the pci-current
  tree
-Date: Thu, 25 Mar 2010 19:10:49 -0700
-Message-ID: <20100325191049.18020272@jbarnes-piketon>
+Date: Fri, 26 Mar 2010 13:48:36 +1100
+Message-ID: <20100326134836.ebe45694.sfr@canb.auug.org.au>
 References: <20100326115712.2d800053.sfr@canb.auug.org.au>
+	<20100325191049.18020272@jbarnes-piketon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__26_Mar_2010_13_48_36_+1100_4ggyYe3QGkW8c9zW"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from outbound-mail-158.bluehost.com ([67.222.39.38]:37074 "HELO
-	outbound-mail-158.bluehost.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with SMTP id S1752697Ab0CZCLX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 25 Mar 2010 22:11:23 -0400
-In-Reply-To: <20100326115712.2d800053.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:34577 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753229Ab0CZCsn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 25 Mar 2010 22:48:43 -0400
+In-Reply-To: <20100325191049.18020272@jbarnes-piketon>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bjorn Helgaas <bjorn.helgaas@hp.com>
 
-On Fri, 26 Mar 2010 11:57:12 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+--Signature=_Fri__26_Mar_2010_13_48_36_+1100_4ggyYe3QGkW8c9zW
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Jesse,
-> 
-> Today's linux-next merge of the pci tree got a conflict in
-> arch/x86/pci/acpi.c between commit
-> eb9fc8ef7cb1362374e55d9503e3e7458f319991 ("x86/PCI: for host bridge
-> address space collisions, show conflicting resource") from the
-> pci-current tree and commit 7589c4d809ccfc88100ba224e3358706fd21f37e
-> ("x86/PCI: trim _CRS windows when they conflict with previous
-> reservations") from the pci tree.
-> 
-> I fixed it up (by using the pci tree version) and can carry the fix for a
-> while.
+Hi Jesse,
 
-Time to rebase my -next branch onto my for-linus branch again I guess.
+On Thu, 25 Mar 2010 19:10:49 -0700 Jesse Barnes <jbarnes@virtuousgeek.org> =
+wrote:
+>
+> Time to rebase my -next branch onto my for-linus branch again I guess.
 
--- 
-Jesse Barnes, Intel Open Source Technology Center
+Any reason you wouldn't just merge your for-linus branch into your -next br=
+anch?
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__26_Mar_2010_13_48_36_+1100_4ggyYe3QGkW8c9zW
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkusIIQACgkQjjKRsyhoI8wZpwCghUVt96bvenmq05KRZqtg4Dci
+BEwAniek8Bt/3rDLJkm5uA4c79lN4nmE
+=fVkA
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__26_Mar_2010_13_48_36_+1100_4ggyYe3QGkW8c9zW--
