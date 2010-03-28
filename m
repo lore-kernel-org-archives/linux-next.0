@@ -1,52 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the  tree
-Date: Mon, 29 Mar 2010 10:31:39 +1100
-Message-ID: <20100329103139.1a735227.sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the i2c tree
+Date: Mon, 29 Mar 2010 10:54:39 +1100
+Message-ID: <20100329105439.1e474095.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__29_Mar_2010_10_31_39_+1100_eU/Go2RH0Y3.wc/8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kyle McMartin <kyle@mcmartin.ca>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__29_Mar_2010_10_54_39_+1100_.kA/a6J1MLt3zJwM"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:52831 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755381Ab0C1Xyq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 28 Mar 2010 19:54:46 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jean Delvare <khali@linux-fr.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>
 
---Signature=_Mon__29_Mar_2010_10_31_39_+1100_eU/Go2RH0Y3.wc/8
+--Signature=_Mon__29_Mar_2010_10_54_39_+1100_.kA/a6J1MLt3zJwM
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi Jean,
 
-After merging the  tree, today's linux-next build (x86_64 allmodconfig)
-produced this warning:
+After merging the ii2c tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
 
-drivers/net/tulip/uli526x.c: In function 'uli526x_rx_packet':
-drivers/net/tulip/uli526x.c:861: warning: assignment makes pointer from int=
-eger without a cast
+drivers/i2c/i2c-core.c:159: warning: 'i2c_legacy_suspend' defined but not u=
+sed
+drivers/i2c/i2c-core.c:172: warning: 'i2c_legacy_resume' defined but not us=
+ed
 
-Introduced by commit ac90a149361a331f697d5aa500bedcff22054669 ("tulip:
-Fix null dereference in uli526x_rx_packet()") from the net-current tree.
-There is a missing set of parentheses around an assignment in an "if"
-condition ...
+Introduced by commit 592b0bd0324728fe0aca823951eba06a9494c2f9 ("i2c: Fix
+bus-level power management callbacks").  These routines are only called
+if CONFIG_PM_SLEEP is defined.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-P.S. this commit is missing a SOB from its purported author
-
---Signature=_Mon__29_Mar_2010_10_31_39_+1100_eU/Go2RH0Y3.wc/8
+--Signature=_Mon__29_Mar_2010_10_54_39_+1100_.kA/a6J1MLt3zJwM
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkuv5twACgkQjjKRsyhoI8x5KgCggaEJRvfY3KrgLu6TrFlxmxUn
-5tsAn0/9aCZzGwJs7XcgcU9RT8MkMi4C
-=0pfd
+iEYEARECAAYFAkuv7D8ACgkQjjKRsyhoI8xXnACbB9GnhV0G9Ef5yOXsmwAIvlII
+aJYAmwc4sa3UU2/KOyxvwYk8MUSvB6Gt
+=iRhl
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__29_Mar_2010_10_31_39_+1100_eU/Go2RH0Y3.wc/8--
+--Signature=_Mon__29_Mar_2010_10_54_39_+1100_.kA/a6J1MLt3zJwM--
