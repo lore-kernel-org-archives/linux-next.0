@@ -1,54 +1,33 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: ide-next-2.6
-Date: Sun, 28 Mar 2010 14:28:12 +1100
-Message-ID: <20100328142812.cb407e97.sfr@canb.auug.org.au>
-References: <20100327.083935.115940167.davem@davemloft.net>
+From: Jeff Garzik <jeff@garzik.org>
+Subject: Re: linux-next: manual merge of the libata tree with Linus' tree
+Date: Sun, 28 Mar 2010 00:45:57 -0400
+Message-ID: <4BAEDF05.9070006@garzik.org>
+References: <20100322124422.4a10bc4a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sun__28_Mar_2010_14_28_12_+1100_0r3wN26tUcqD5IGu"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51360 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751399Ab0C1D2S (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 27 Mar 2010 23:28:18 -0400
-In-Reply-To: <20100327.083935.115940167.davem@davemloft.net>
+Received: from mail-yx0-f191.google.com ([209.85.210.191]:65040 "EHLO
+	mail-yx0-f191.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751775Ab0C1EqE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 28 Mar 2010 00:46:04 -0400
+In-Reply-To: <20100322124422.4a10bc4a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-ide@vger.kernel.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shane Huang <shane.huang@amd.com>, Anton Vorontsov <avorontsov@ru.mvista.com>
 
---Signature=_Sun__28_Mar_2010_14_28_12_+1100_0r3wN26tUcqD5IGu
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Dave,
-
-On Sat, 27 Mar 2010 08:39:35 -0700 (PDT) David Miller <davem@davemloft.net>=
- wrote:
+On 03/21/2010 09:44 PM, Stephen Rothwell wrote:
+> Hi Jeff,
 >
-> Stephen, please ensure that my ide-next-2.6 tree:
->=20
-> 	master.kernel.org:/pub/scm/linux/kernel/git/davem/ide-next-2.6.git
->=20
-> appears in your -next tree.
+> Today's linux-next merge of the libata tree got a conflict in
+> drivers/ata/ahci.c between commit
+> 5db5b0215af94a36d4bf10900ff9707b6d5c1610 ("ahci: pp->active_link is not
+> reliable when FBS is enabled") from Linus' tree and commit
+> efd7cb719e07433588ee5c6a99b1208b0aff6295 ("ahci: Move generic code into
+> libahci") from the libata tree.
+>
+> I applied the changes to drivers/ata/ahci.c from the former commit to
+> drivers/ata/libahci.c (where the latter commit moves it).
 
-Always has (since you asked me to include it).
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Sun__28_Mar_2010_14_28_12_+1100_0r3wN26tUcqD5IGu
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkuuzMwACgkQjjKRsyhoI8wPjwCfdncVv56qI2Y+iWEinui+ZjYg
-tR8An3NPnG5P67zgxpwD0yCBrqL4/7IN
-=U9eK
------END PGP SIGNATURE-----
-
---Signature=_Sun__28_Mar_2010_14_28_12_+1100_0r3wN26tUcqD5IGu--
+Should be fixed now...
