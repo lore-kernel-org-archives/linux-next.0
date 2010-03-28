@@ -1,33 +1,51 @@
-From: Jeff Garzik <jeff@garzik.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: manual merge of the libata tree with Linus' tree
-Date: Sun, 28 Mar 2010 00:45:57 -0400
-Message-ID: <4BAEDF05.9070006@garzik.org>
+Date: Sun, 28 Mar 2010 20:26:04 +1100
+Message-ID: <20100328202604.5ec017a1.sfr@canb.auug.org.au>
 References: <20100322124422.4a10bc4a.sfr@canb.auug.org.au>
+	<4BAEDF05.9070006@garzik.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sun__28_Mar_2010_20_26_05_+1100_AgksCcvUGkOMr38u"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-yx0-f191.google.com ([209.85.210.191]:65040 "EHLO
-	mail-yx0-f191.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751775Ab0C1EqE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 28 Mar 2010 00:46:04 -0400
-In-Reply-To: <20100322124422.4a10bc4a.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:51693 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752394Ab0C1J0N (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 28 Mar 2010 05:26:13 -0400
+In-Reply-To: <4BAEDF05.9070006@garzik.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jeff Garzik <jeff@garzik.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shane Huang <shane.huang@amd.com>, Anton Vorontsov <avorontsov@ru.mvista.com>
 
-On 03/21/2010 09:44 PM, Stephen Rothwell wrote:
-> Hi Jeff,
->
-> Today's linux-next merge of the libata tree got a conflict in
-> drivers/ata/ahci.c between commit
-> 5db5b0215af94a36d4bf10900ff9707b6d5c1610 ("ahci: pp->active_link is not
-> reliable when FBS is enabled") from Linus' tree and commit
-> efd7cb719e07433588ee5c6a99b1208b0aff6295 ("ahci: Move generic code into
-> libahci") from the libata tree.
->
-> I applied the changes to drivers/ata/ahci.c from the former commit to
-> drivers/ata/libahci.c (where the latter commit moves it).
+--Signature=_Sun__28_Mar_2010_20_26_05_+1100_AgksCcvUGkOMr38u
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Should be fixed now...
+Hi Jeff.
+
+On Sun, 28 Mar 2010 00:45:57 -0400 Jeff Garzik <jeff@garzik.org> wrote:
+>
+> Should be fixed now...
+
+Thanks.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Sun__28_Mar_2010_20_26_05_+1100_AgksCcvUGkOMr38u
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkuvIK0ACgkQjjKRsyhoI8xCOQCgl7HySYqN3KPNjDTR+5mW+PSj
+clEAn0UowP5PiHDi6EV6DbcCj2+guzRY
+=/BTh
+-----END PGP SIGNATURE-----
+
+--Signature=_Sun__28_Mar_2010_20_26_05_+1100_AgksCcvUGkOMr38u--
