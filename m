@@ -1,51 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the libata tree with Linus' tree
-Date: Sun, 28 Mar 2010 20:26:04 +1100
-Message-ID: <20100328202604.5ec017a1.sfr@canb.auug.org.au>
-References: <20100322124422.4a10bc4a.sfr@canb.auug.org.au>
-	<4BAEDF05.9070006@garzik.org>
+Subject: linux-next: build warning after merge of the  tree
+Date: Mon, 29 Mar 2010 10:31:39 +1100
+Message-ID: <20100329103139.1a735227.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Sun__28_Mar_2010_20_26_05_+1100_AgksCcvUGkOMr38u"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51693 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752394Ab0C1J0N (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 28 Mar 2010 05:26:13 -0400
-In-Reply-To: <4BAEDF05.9070006@garzik.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jeff Garzik <jeff@garzik.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shane Huang <shane.huang@amd.com>, Anton Vorontsov <avorontsov@ru.mvista.com>
+ boundary="Signature=_Mon__29_Mar_2010_10_31_39_+1100_eU/Go2RH0Y3.wc/8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kyle McMartin <kyle@mcmartin.ca>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Sun__28_Mar_2010_20_26_05_+1100_AgksCcvUGkOMr38u
+--Signature=_Mon__29_Mar_2010_10_31_39_+1100_eU/Go2RH0Y3.wc/8
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jeff.
+Hi Dave,
 
-On Sun, 28 Mar 2010 00:45:57 -0400 Jeff Garzik <jeff@garzik.org> wrote:
->
-> Should be fixed now...
+After merging the  tree, today's linux-next build (x86_64 allmodconfig)
+produced this warning:
 
-Thanks.
+drivers/net/tulip/uli526x.c: In function 'uli526x_rx_packet':
+drivers/net/tulip/uli526x.c:861: warning: assignment makes pointer from int=
+eger without a cast
+
+Introduced by commit ac90a149361a331f697d5aa500bedcff22054669 ("tulip:
+Fix null dereference in uli526x_rx_packet()") from the net-current tree.
+There is a missing set of parentheses around an assignment in an "if"
+condition ...
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Sun__28_Mar_2010_20_26_05_+1100_AgksCcvUGkOMr38u
+P.S. this commit is missing a SOB from its purported author
+
+--Signature=_Mon__29_Mar_2010_10_31_39_+1100_eU/Go2RH0Y3.wc/8
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkuvIK0ACgkQjjKRsyhoI8xCOQCgl7HySYqN3KPNjDTR+5mW+PSj
-clEAn0UowP5PiHDi6EV6DbcCj2+guzRY
-=/BTh
+iEYEARECAAYFAkuv5twACgkQjjKRsyhoI8x5KgCggaEJRvfY3KrgLu6TrFlxmxUn
+5tsAn0/9aCZzGwJs7XcgcU9RT8MkMi4C
+=0pfd
 -----END PGP SIGNATURE-----
 
---Signature=_Sun__28_Mar_2010_20_26_05_+1100_AgksCcvUGkOMr38u--
+--Signature=_Mon__29_Mar_2010_10_31_39_+1100_eU/Go2RH0Y3.wc/8--
