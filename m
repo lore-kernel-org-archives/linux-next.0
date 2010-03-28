@@ -1,39 +1,54 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Subject: Re: linux-next: manual merge of the pci tree with the pci-current
- tree
-Date: Fri, 26 Mar 2010 09:03:20 -0700
-Message-ID: <20100326090320.0764979a@jbarnes-piketon>
-References: <20100326115712.2d800053.sfr@canb.auug.org.au>
-	<20100325191049.18020272@jbarnes-piketon>
-	<20100326134836.ebe45694.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: ide-next-2.6
+Date: Sun, 28 Mar 2010 14:28:12 +1100
+Message-ID: <20100328142812.cb407e97.sfr@canb.auug.org.au>
+References: <20100327.083935.115940167.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sun__28_Mar_2010_14_28_12_+1100_0r3wN26tUcqD5IGu"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from outbound-mail-313.bluehost.com ([67.222.54.6]:60711 "HELO
-	outbound-mail-313.bluehost.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with SMTP id S1753378Ab0CZQEC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Fri, 26 Mar 2010 12:04:02 -0400
-In-Reply-To: <20100326134836.ebe45694.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:51360 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751399Ab0C1D2S (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 27 Mar 2010 23:28:18 -0400
+In-Reply-To: <20100327.083935.115940167.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bjorn Helgaas <bjorn.helgaas@hp.com>
+To: David Miller <davem@davemloft.net>
+Cc: linux-ide@vger.kernel.org, linux-next@vger.kernel.org
 
-On Fri, 26 Mar 2010 13:48:36 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+--Signature=_Sun__28_Mar_2010_14_28_12_+1100_0r3wN26tUcqD5IGu
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Jesse,
-> 
-> On Thu, 25 Mar 2010 19:10:49 -0700 Jesse Barnes <jbarnes@virtuousgeek.org> wrote:
-> >
-> > Time to rebase my -next branch onto my for-linus branch again I guess.
-> 
-> Any reason you wouldn't just merge your for-linus branch into your -next branch?
+Hi Dave,
 
-I don't like to end up with a bunch of merges, so I generally just
-rebase my -next branch as necessary.
+On Sat, 27 Mar 2010 08:39:35 -0700 (PDT) David Miller <davem@davemloft.net>=
+ wrote:
+>
+> Stephen, please ensure that my ide-next-2.6 tree:
+>=20
+> 	master.kernel.org:/pub/scm/linux/kernel/git/davem/ide-next-2.6.git
+>=20
+> appears in your -next tree.
 
--- 
-Jesse Barnes, Intel Open Source Technology Center
+Always has (since you asked me to include it).
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Sun__28_Mar_2010_14_28_12_+1100_0r3wN26tUcqD5IGu
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkuuzMwACgkQjjKRsyhoI8wPjwCfdncVv56qI2Y+iWEinui+ZjYg
+tR8An3NPnG5P67zgxpwD0yCBrqL4/7IN
+=U9eK
+-----END PGP SIGNATURE-----
+
+--Signature=_Sun__28_Mar_2010_14_28_12_+1100_0r3wN26tUcqD5IGu--
