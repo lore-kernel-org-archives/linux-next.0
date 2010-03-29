@@ -1,53 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the i2c tree
-Date: Tue, 30 Mar 2010 01:12:03 +1100
-Message-ID: <20100330011203.b2246ead.sfr@canb.auug.org.au>
-References: <20100329105439.1e474095.sfr@canb.auug.org.au>
-	<20100329152155.056741d2@hyperion.delvare>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] kmemcheck: build failure after merge of the slabh
+ tree
+Date: Mon, 29 Mar 2010 09:25:13 -0700
+Message-ID: <20100329092513.6e6faf2a.randy.dunlap@oracle.com>
+References: <20100329154208.009a8ae2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__30_Mar_2010_01_12_03_+1100_Fv/DmUZzl8ZLJGNr"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41447 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751156Ab0C2OMK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Mar 2010 10:12:10 -0400
-In-Reply-To: <20100329152155.056741d2@hyperion.delvare>
+Received: from acsinet11.oracle.com ([141.146.126.233]:28438 "EHLO
+	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753704Ab0C2Q03 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Mar 2010 12:26:29 -0400
+In-Reply-To: <20100329154208.009a8ae2.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jean Delvare <khali@linux-fr.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Masters <jcm@jonmasters.org>
 
---Signature=_Tue__30_Mar_2010_01_12_03_+1100_Fv/DmUZzl8ZLJGNr
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 29 Mar 2010 15:42:08 +1100 Stephen Rothwell wrote:
 
-Hi Jean,
+> Hi Tejun,
+> 
+> After merging the slabh tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
 
-On Mon, 29 Mar 2010 15:21:55 +0200 Jean Delvare <khali@linux-fr.org> wrote:
->
-> Err, sorry. I noticed the problem and fixed it some days ago, but
-> forgot to refresh the patch before pushing it to you. This is fixed
-> now, thanks for the notice.
+This tree seems to be a bit messy.  :(
 
-Thanks. 2 less warnings ...
+Sorry if I missed this patch in the (email) storm.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+mm/kmemcheck.c also needs slab.h added to it:
 
---Signature=_Tue__30_Mar_2010_01_12_03_+1100_Fv/DmUZzl8ZLJGNr
-Content-Type: application/pgp-signature
+---
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+Fix build errors due to missing slab.h:
 
-iEYEARECAAYFAkuwtTMACgkQjjKRsyhoI8yRpQCfQiZcC1cxR/feB/U3ArbuGXM5
-h5AAnj1ZMzZxOAtzZrMQTeeLR7v2w+H7
-=03s5
------END PGP SIGNATURE-----
+mm/kmemcheck.c:69: error: dereferencing pointer to incomplete type
+mm/kmemcheck.c:69: error: 'SLAB_NOTRACK' undeclared (first use in this function)
+mm/kmemcheck.c:82: error: dereferencing pointer to incomplete type
+mm/kmemcheck.c:94: error: dereferencing pointer to incomplete type
+mm/kmemcheck.c:94: error: dereferencing pointer to incomplete type
+mm/kmemcheck.c:94: error: 'SLAB_DESTROY_BY_RCU' undeclared (first use in this function)
 
---Signature=_Tue__30_Mar_2010_01_12_03_+1100_Fv/DmUZzl8ZLJGNr--
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ mm/kmemcheck.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- linux-next-20100329.orig/mm/kmemcheck.c
++++ linux-next-20100329/mm/kmemcheck.c
+@@ -1,6 +1,7 @@
+ #include <linux/gfp.h>
+ #include <linux/mm_types.h>
+ #include <linux/mm.h>
++#include <linux/slab.h>
+ #include <linux/kmemcheck.h>
+ 
+ void kmemcheck_alloc_shadow(struct page *page, int order, gfp_t flags, int node)
