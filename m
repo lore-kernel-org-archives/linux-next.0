@@ -1,52 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the slabh tree with the sound tree
-Date: Mon, 29 Mar 2010 17:37:42 +1100
-Message-ID: <20100329173742.8c9ab6fa.sfr@canb.auug.org.au>
-References: <20100329153218.155d1b39.sfr@canb.auug.org.au>
-	<s5hwrwv4p1g.wl%tiwai@suse.de>
+Subject: Re: linux-next: build failure after merge of the slabh tree
+Date: Mon, 29 Mar 2010 17:38:52 +1100
+Message-ID: <20100329173852.3550bbea.sfr@canb.auug.org.au>
+References: <20100329160250.1515a2ca.sfr@canb.auug.org.au>
+	<s5hy6hb4p6u.wl%tiwai@suse.de>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__29_Mar_2010_17_37_42_+1100_4JH0Mb15FUgWcRKK"
+ boundary="Signature=_Mon__29_Mar_2010_17_38_52_+1100_GQUiXmKBnv9tGrq1"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59697 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:59611 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752184Ab0C2Ght (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Mar 2010 02:37:49 -0400
-In-Reply-To: <s5hwrwv4p1g.wl%tiwai@suse.de>
+	id S1752633Ab0C2Gi6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Mar 2010 02:38:58 -0400
+In-Reply-To: <s5hy6hb4p6u.wl%tiwai@suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Takashi Iwai <tiwai@suse.de>
-Cc: Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Barry Song <21cnbao@gmail.com>, Yi Li <yi.li@analog.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Mack <daniel@caiaq.de>
 
---Signature=_Mon__29_Mar_2010_17_37_42_+1100_4JH0Mb15FUgWcRKK
+--Signature=_Mon__29_Mar_2010_17_38_52_+1100_GQUiXmKBnv9tGrq1
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Takashi,
 
-On Mon, 29 Mar 2010 08:31:23 +0200 Takashi Iwai <tiwai@suse.de> wrote:
+On Mon, 29 Mar 2010 08:28:09 +0200 Takashi Iwai <tiwai@suse.de> wrote:
 >
-> I applied Stephen's patch now to topic/asoc branch on sound git tree.
-> Please let me know if anything else is needed.
+> Thanks, I applied all these oneliners to sound/usb/* as a single
+> patch now.
 
-Thanks for that.
+Again, thanks.  They were just one liner because I found them one at a
+time :-(
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__29_Mar_2010_17_37_42_+1100_4JH0Mb15FUgWcRKK
+--Signature=_Mon__29_Mar_2010_17_38_52_+1100_GQUiXmKBnv9tGrq1
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkuwSrYACgkQjjKRsyhoI8xDrACdFeLurcWYTPDgf8S8HcOfbosx
-jRsAoJeSXNi6RmbB/QDXCHcE54xykaOi
-=JHa0
+iEYEARECAAYFAkuwSv0ACgkQjjKRsyhoI8yADACgsT/3bokbaYqcDPyZ0d/gyCBt
+rJUAnjC/3uEAllmgvGCwUqOoMguY/My+
+=5iXv
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__29_Mar_2010_17_37_42_+1100_4JH0Mb15FUgWcRKK--
+--Signature=_Mon__29_Mar_2010_17_38_52_+1100_GQUiXmKBnv9tGrq1--
