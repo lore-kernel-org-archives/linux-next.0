@@ -1,49 +1,70 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the  tree
-Date: Mon, 29 Mar 2010 11:15:19 +1100
-Message-ID: <20100329111519.e8777aa0.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build warning after merge of the tree
+Date: Sun, 28 Mar 2010 18:57:07 -0700 (PDT)
+Message-ID: <20100328.185707.161194820.davem@davemloft.net>
 References: <20100329103139.1a735227.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__29_Mar_2010_11_15_19_+1100_Lf5.guWED6jNymTc"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58281 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755423Ab0C2AP0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 28 Mar 2010 20:15:26 -0400
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:40416
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755570Ab0C2B4n (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Sun, 28 Mar 2010 21:56:43 -0400
 In-Reply-To: <20100329103139.1a735227.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kyle McMartin <kyle@mcmartin.ca>
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, kyle@mcmartin.ca
 
---Signature=_Mon__29_Mar_2010_11_15_19_+1100_Lf5.guWED6jNymTc
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 29 Mar 2010 10:31:39 +1100
 
-On Mon, 29 Mar 2010 10:31:39 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
 > Hi Dave,
+> 
+> After merging the  tree, today's linux-next build (x86_64 allmodconfig)
+> produced this warning:
+> 
+> drivers/net/tulip/uli526x.c: In function 'uli526x_rx_packet':
+> drivers/net/tulip/uli526x.c:861: warning: assignment makes pointer from integer without a cast
+> 
+> Introduced by commit ac90a149361a331f697d5aa500bedcff22054669 ("tulip:
+> Fix null dereference in uli526x_rx_packet()") from the net-current tree.
+> There is a missing set of parentheses around an assignment in an "if"
+> condition ...
 
-Of course I meant the net-current tree ...
+Strange, it didn't warn here.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+I just committed the following, let me know if it fixes
+this.
 
---Signature=_Mon__29_Mar_2010_11_15_19_+1100_Lf5.guWED6jNymTc
-Content-Type: application/pgp-signature
+Thanks!
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+tulip: Add missing parens.
 
-iEYEARECAAYFAkuv8RcACgkQjjKRsyhoI8xiIwCdHwvc30IUSHovTTJM5HLIR/39
-dnQAnRwMjoxFTPp2cfdO44CZGO0RkTaX
-=UxDy
------END PGP SIGNATURE-----
+As reported by Stephen Rothwell.
 
---Signature=_Mon__29_Mar_2010_11_15_19_+1100_Lf5.guWED6jNymTc--
+drivers/net/tulip/uli526x.c: In function 'uli526x_rx_packet':
+drivers/net/tulip/uli526x.c:861: warning: assignment makes pointer from integer without a cast
+
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/tulip/uli526x.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/net/tulip/uli526x.c b/drivers/net/tulip/uli526x.c
+index 90be57b..a4f09d4 100644
+--- a/drivers/net/tulip/uli526x.c
++++ b/drivers/net/tulip/uli526x.c
+@@ -858,7 +858,7 @@ static void uli526x_rx_packet(struct net_device *dev, struct uli526x_board_info
+ 				/* Good packet, send to upper layer */
+ 				/* Shorst packet used new SKB */
+ 				if ((rxlen < RX_COPY_SIZE) &&
+-				    ((new_skb = dev_alloc_skb(rxlen + 2) != NULL))) {
++				    (((new_skb = dev_alloc_skb(rxlen + 2)) != NULL))) {
+ 					skb = new_skb;
+ 					/* size less than COPY_SIZE, allocate a rxlen SKB */
+ 					skb_reserve(skb, 2); /* 16byte align */
+-- 
+1.7.0.3
