@@ -1,46 +1,52 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: [PATCH 13/17] hid: update gfp/slab.h includes
-Date: Tue, 30 Mar 2010 00:34:15 +0200 (CEST)
-Message-ID: <alpine.LNX.2.00.1003300033370.24576@pobox.suse.cz>
-References: <1269885165-18617-1-git-send-email-tj@kernel.org> <1269885165-18617-14-git-send-email-tj@kernel.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the slabh tree
+Date: Tue, 30 Mar 2010 10:16:22 +1100
+Message-ID: <20100330101622.d9694159.sfr@canb.auug.org.au>
+References: <20100329160251.702d2c60.sfr@canb.auug.org.au>
+	<e9c3a7c21003291533w3c672371o87db6aad8bac7ef2@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1269885165-18617-14-git-send-email-tj@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tejun Heo <tj@kernel.org>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__30_Mar_2010_10_16_22_+1100__3eL_c6ZJl+WlIdk"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:37076 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753258Ab0C2XQ2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Mar 2010 19:16:28 -0400
+In-Reply-To: <e9c3a7c21003291533w3c672371o87db6aad8bac7ef2@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IlJpY2hhcmQgUsO2amZvcnMi?= <richard.rojfors@pelagicore.com>
 
-On Tue, 30 Mar 2010, Tejun Heo wrote:
+--Signature=_Tue__30_Mar_2010_10_16_22_+1100__3eL_c6ZJl+WlIdk
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Implicit slab.h inclusion via percpu.h is about to go away.  Make sure
-> gfp.h or slab.h is included as necessary.
-> 
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> Cc: Jiri Kosina <jkosina@suse.cz>
-> ---
->  drivers/hid/hid-roccat-kone.c |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/hid/hid-roccat-kone.c b/drivers/hid/hid-roccat-kone.c
-> index 2b1412e..7b11784 100644
-> --- a/drivers/hid/hid-roccat-kone.c
-> +++ b/drivers/hid/hid-roccat-kone.c
-> @@ -35,6 +35,7 @@
->  #include <linux/hid.h>
->  #include <linux/usb.h>
->  #include <linux/module.h>
-> +#include <linux/slab.h>
->  #include "hid-ids.h"
->  #include "hid-roccat-kone.h"
+Hi Dan,
 
-I have applied this to the branch of my tree in which development of 
-roccat-kone driver for 2.6.35 is happening.
+On Mon, 29 Mar 2010 15:33:25 -0700 Dan Williams <dan.j.williams@intel.com> =
+wrote:
+>
+> Thanks, noted and applied.
 
-Thanks,
+Thanks.
 
--- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__30_Mar_2010_10_16_22_+1100__3eL_c6ZJl+WlIdk
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkuxNMYACgkQjjKRsyhoI8y5oACgv5PbM3YjA98XzTn9T6wCeibG
+dnMAoIZpkyX7fD4528Tn5CRn4Eutfjj7
+=qWyq
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__30_Mar_2010_10_16_22_+1100__3eL_c6ZJl+WlIdk--
