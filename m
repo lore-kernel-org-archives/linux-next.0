@@ -1,58 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the slabh tree
-Date: Mon, 29 Mar 2010 23:25:42 +1100
-Message-ID: <20100329232542.8fd26997.sfr@canb.auug.org.au>
-References: <20100329160250.1515a2ca.sfr@canb.auug.org.au>
-	<s5hy6hb4p6u.wl%tiwai@suse.de>
-	<20100329173852.3550bbea.sfr@canb.auug.org.au>
-	<4BB08A8E.6050101@kernel.org>
+From: Jean Delvare <khali@linux-fr.org>
+Subject: Re: linux-next: build warning after merge of the i2c tree
+Date: Mon, 29 Mar 2010 15:21:55 +0200
+Message-ID: <20100329152155.056741d2@hyperion.delvare>
+References: <20100329105439.1e474095.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__29_Mar_2010_23_25_42_+1100_V9kr31hRc9OIG6Sm"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4BB08A8E.6050101@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tejun Heo <tj@kernel.org>
-Cc: Takashi Iwai <tiwai@suse.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Mack <daniel@caiaq.de>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Mon__29_Mar_2010_23_25_42_+1100_V9kr31hRc9OIG6Sm
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from poutre.nerim.net ([62.4.16.124]:50286 "EHLO poutre.nerim.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750902Ab0C2NWA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Mar 2010 09:22:00 -0400
+In-Reply-To: <20100329105439.1e474095.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>
 
-Hi Tejun,
+Hi Stephen,
 
-On Mon, 29 Mar 2010 20:10:06 +0900 Tejun Heo <tj@kernel.org> wrote:
->
-> Yikes, sorry about many failures.  Now that I think about it, it
-> probably would have been wiser to run the conversion script on top of
-> linux-next so that new ones in linux-next aren't missed by default.
-> I'll do that and send out respective patches to each subsystem tree.
+On Mon, 29 Mar 2010 10:54:39 +1100, Stephen Rothwell wrote:
+> Hi Jean,
+> 
+> After merging the ii2c tree, today's linux-next build (powerpc
+> ppc64_defconfig) produced this warning:
+> 
+> drivers/i2c/i2c-core.c:159: warning: 'i2c_legacy_suspend' defined but not used
+> drivers/i2c/i2c-core.c:172: warning: 'i2c_legacy_resume' defined but not used
+> 
+> Introduced by commit 592b0bd0324728fe0aca823951eba06a9494c2f9 ("i2c: Fix
+> bus-level power management callbacks").  These routines are only called
+> if CONFIG_PM_SLEEP is defined.
 
-Thanks, that would be good.
+Err, sorry. I noticed the problem and fixed it some days ago, but
+forgot to refresh the patch before pushing it to you. This is fixed
+now, thanks for the notice.
 
-> Thank you very much for taking the trouble to fix them up.  I'll soon
-> submit more comprehensive fix up patches for code in linux-next but
-> not in mainline.
-
-Again, thanks.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__29_Mar_2010_23_25_42_+1100_V9kr31hRc9OIG6Sm
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkuwnEYACgkQjjKRsyhoI8wK6gCgg7CITbfZI76DSK6WoWJwCfYr
-VE0An1qVZmpnrcmC7FMRQJeFGoebDo/T
-=PBuX
------END PGP SIGNATURE-----
-
---Signature=_Mon__29_Mar_2010_23_25_42_+1100_V9kr31hRc9OIG6Sm--
+-- 
+Jean Delvare
