@@ -1,32 +1,41 @@
-From: Jeff Garzik <jgarzik@pobox.com>
-Subject: Re: [PATCH 15/17] libata: update gfp/slab.h includes
-Date: Mon, 29 Mar 2010 16:14:25 -0400
-Message-ID: <4BB10A21.9080602@pobox.com>
-References: <1269885165-18617-1-git-send-email-tj@kernel.org> <1269885165-18617-16-git-send-email-tj@kernel.org>
+From: Dan Williams <dan.j.williams@intel.com>
+Subject: Re: linux-next: build failure after merge of the slabh tree
+Date: Mon, 29 Mar 2010 15:33:25 -0700
+Message-ID: <e9c3a7c21003291533w3c672371o87db6aad8bac7ef2@mail.gmail.com>
+References: <20100329160251.702d2c60.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pw0-f46.google.com ([209.85.160.46]:51030 "EHLO
+Received: from mail-pw0-f46.google.com ([209.85.160.46]:60919 "EHLO
 	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751512Ab0C2UO2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Mar 2010 16:14:28 -0400
-In-Reply-To: <1269885165-18617-16-git-send-email-tj@kernel.org>
+	with ESMTP id S1752422Ab0C2Wd0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Mar 2010 18:33:26 -0400
+In-Reply-To: <20100329160251.702d2c60.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?ISO-8859-1?Q?=22Richard_R=F6jfors=22?= <richard.rojfors@pelagicore.com>
 
-On 03/29/2010 01:52 PM, Tejun Heo wrote:
-> Implicit slab.h inclusion via percpu.h is about to go away.  Make sure
-> gfp.h or slab.h is included as necessary.
+On Sun, Mar 28, 2010 at 10:02 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Tejun,
 >
-> Signed-off-by: Tejun Heo<tj@kernel.org>
-> Cc: Stephen Rothwell<sfr@canb.auug.org.au>
-> Cc: Jeff Garzik<jgarzik@pobox.com>
-> ---
->   drivers/ata/ahci_platform.c |    1 +
->   drivers/ata/libahci.c       |    1 +
->   2 files changed, 2 insertions(+), 0 deletions(-)
+> After merging the slabh tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> drivers/dma/timb_dma.c: In function 'td_alloc_init_desc':
+> drivers/dma/timb_dma.c:381: error: implicit declaration of function 'kzalloc'
+> drivers/dma/timb_dma.c:381: warning: assignment makes pointer from integer without a cast
+> drivers/dma/timb_dma.c:389: warning: assignment makes pointer from integer without a cast
+> drivers/dma/timb_dma.c:410: error: implicit declaration of function 'kfree'
+> drivers/dma/timb_dma.c: In function 'td_probe':
+> drivers/dma/timb_dma.c:710: warning: assignment makes pointer from integer without a cast
+>
+> Caused by commit d103d3b3e8512312b5254950035366d4422a479a ("percpu: don't
+> implicitly include slab.h from percpu.h") from the slabh tree interacting
+> with commit de5d4453c5b224eefd02b6a141ed411a76d458af ("dma: Add
+> timb-dma") from the async_tx tree.
+>
+> I applied the following merge fixup patch which should be applied to the
+> async_tx tree (see Documentation/SubmitChecklist Rule #1 :-)).
 
-Unless you object, I'll go ahead and apply this to #upstream...
+Thanks, noted and applied.
