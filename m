@@ -1,40 +1,58 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: linux-next: build warning after merge of the tree
-Date: Sun, 28 Mar 2010 19:15:44 -0700
-Message-ID: <1269828944.1500.105.camel@Joe-Laptop.home>
-References: <20100329103139.1a735227.sfr@canb.auug.org.au>
-	 <20100328.185707.161194820.davem@davemloft.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the slabh tree with the sound tree
+Date: Mon, 29 Mar 2010 15:32:18 +1100
+Message-ID: <20100329153218.155d1b39.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.perches.com ([173.55.12.10]:1194 "EHLO mail.perches.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:33726 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753827Ab0C2CPq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 28 Mar 2010 22:15:46 -0400
-In-Reply-To: <20100328.185707.161194820.davem@davemloft.net>
+	id S1750898Ab0C2EcZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Mar 2010 00:32:25 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, kyle@mcmartin.ca
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Barry Song <21cnbao@gmail.com>, Yi Li <yi.li@analog.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Takashi Iwai <tiwai@suse.de>
 
-On Sun, 2010-03-28 at 18:57 -0700, David Miller wrote:
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > After merging the  tree, today's linux-next build (x86_64 allmodconfig)
-> > produced this warning:
-> > drivers/net/tulip/uli526x.c: In function 'uli526x_rx_packet':
-> > drivers/net/tulip/uli526x.c:861: warning: assignment makes pointer from integer without a cast
-> I just committed the following, let me know if it fixes
-> this.
-> -				    ((new_skb = dev_alloc_skb(rxlen + 2) != NULL))) {
-> +				    (((new_skb = dev_alloc_skb(rxlen + 2)) != NULL))) {
+Hi Tejun,
 
-You've an extra () there.
+Today's linux-next merge of the slabh tree got a conflict in  between
+commit a1533d94c6b930ef4263941adfd1e1132ca95627 ("ASoC: rename ad1938 to
+ad193x and add support for ad1936/7/8/9") from the sound tree and commit
+869d4cce05404996cc7969a9ffd1da27e65e6630 ("include cleanup: Update gfp.h
+and slab.h includes to prepare for breaking implicit slab.h inclusion
+from percpu.h") from the slabh tree.
 
-A close paren could have been moved from after
-the NULL to after the "+ 2"
+The former renamed a file modified by the latter.  I applied the
+following merge fixup patch.  This patch could, I assume, be applied to
+the sound tree now, right Tejun?
 
-I think it's more readable as:
-				      (new_skb = dev_alloc_skb(rxlen + 2))) {
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 29 Mar 2010 15:23:06 +1100
+Subject: [PATCH] sound: update for removeal of slab.h from percpu.h
 
-cheers, Joe
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ sound/soc/codecs/ad193x.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/sound/soc/codecs/ad193x.c b/sound/soc/codecs/ad193x.c
+index d034464..e108206 100644
+--- a/sound/soc/codecs/ad193x.c
++++ b/sound/soc/codecs/ad193x.c
+@@ -12,6 +12,7 @@
+ #include <linux/device.h>
+ #include <linux/i2c.h>
+ #include <linux/spi/spi.h>
++#include <linux/slab.h>
+ #include <sound/core.h>
+ #include <sound/pcm.h>
+ #include <sound/pcm_params.h>
+-- 
+1.7.0.3
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
