@@ -1,52 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the slabh tree
-Date: Wed, 31 Mar 2010 00:45:01 +1100
-Message-ID: <20100331004501.1ca881e0.sfr@canb.auug.org.au>
-References: <20100329154208.009a8ae2.sfr@canb.auug.org.au>
-	<1269951255.4605.61.camel@localhost>
+Subject: Re: linux-next: manual merge of the net tree with the
+ wireless-current tree
+Date: Wed, 31 Mar 2010 00:51:34 +1100
+Message-ID: <20100331005134.67f76605.sfr@canb.auug.org.au>
+References: <20100330133745.27295ee0.sfr@canb.auug.org.au>
+	<20100330131220.GA13120@tuxdriver.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__31_Mar_2010_00_45_01_+1100_8S98tu0Eb=/hCjCs"
+ boundary="Signature=_Wed__31_Mar_2010_00_51_34_+1100_i/gON9eVEyq2kS3F"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41054 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:57319 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751985Ab0C3NpI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 30 Mar 2010 09:45:08 -0400
-In-Reply-To: <1269951255.4605.61.camel@localhost>
+	id S1755817Ab0C3Nvm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 30 Mar 2010 09:51:42 -0400
+In-Reply-To: <20100330131220.GA13120@tuxdriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jon Masters <jonathan@jonmasters.org>
-Cc: Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Masters <jcm@jonmasters.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shanyu Zhao <shanyu.zhao@intel.com>, Zhu Yi <yi.zhu@intel.com>, Reinette Chatre <reinette.chatre@intel.com>, Johannes Berg <johannes.berg@intel.com>
 
---Signature=_Wed__31_Mar_2010_00_45_01_+1100_8S98tu0Eb=/hCjCs
+--Signature=_Wed__31_Mar_2010_00_51_34_+1100_i/gON9eVEyq2kS3F
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jon,
+Hi John,
 
-On Tue, 30 Mar 2010 08:14:15 -0400 Jon Masters <jonathan@jonmasters.org> wr=
-ote:
+On Tue, 30 Mar 2010 09:12:21 -0400 "John W. Linville" <linville@tuxdriver.c=
+om> wrote:
 >
-> Can you remove the hwlat tree for the moment? I'm reworking it to use a
-> newer mechanism and will then repost a more generic version.
+> Yes, that looks correct to me -- at least, that's what I did in
+> wireless-testing. :-)
 
-OK, will do.
+Thanks for the confirmation.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__31_Mar_2010_00_45_01_+1100_8S98tu0Eb=/hCjCs
+--Signature=_Wed__31_Mar_2010_00_51_34_+1100_i/gON9eVEyq2kS3F
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkuyAF0ACgkQjjKRsyhoI8wJuQCfZAdJnaQDWg9yqH5extpjMqvj
-270AoIXhqm/3EcdM4Iup8X+h2cZ9eP6J
-=YyBp
+iEYEARECAAYFAkuyAeYACgkQjjKRsyhoI8zeAQCcDMNEGPnD70EHi/IHyaSeCD/G
+lzUAnRX6rxemH7AyGIYHPmk2Fm8McCfq
+=W/as
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__31_Mar_2010_00_45_01_+1100_8S98tu0Eb=/hCjCs--
+--Signature=_Wed__31_Mar_2010_00_51_34_+1100_i/gON9eVEyq2kS3F--
