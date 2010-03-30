@@ -1,80 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the slabh tree with the percpu tree
-Date: Tue, 30 Mar 2010 17:22:53 +1100
-Message-ID: <20100330172253.de55195b.sfr@canb.auug.org.au>
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+Subject: Re: [PATCH 09/17] pcmcia: update gfp/slab.h includes
+Date: Tue, 30 Mar 2010 08:36:09 +0200
+Message-ID: <20100330063609.GA4498@comet.dominikbrodowski.net>
+References: <1269885165-18617-1-git-send-email-tj@kernel.org>
+ <1269885165-18617-10-git-send-email-tj@kernel.org>
+ <20100329193203.GA8450@comet.dominikbrodowski.net>
+ <20100330103129.b76a70e3.sfr@canb.auug.org.au>
+ <4BB14D7B.4010602@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59491 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755479Ab0C3GWz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 30 Mar 2010 02:22:55 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <netdev-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <4BB14D7B.4010602@kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>, Dmitry Torokhov <dtor@mail.ru>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Tejun,
+On Tue, Mar 30, 2010 at 10:01:47AM +0900, Tejun Heo wrote:
+> Hello,
+> 
+> On 03/30/2010 08:31 AM, Stephen Rothwell wrote:
+> > Hi Dominik,
+> > On Mon, 29 Mar 2010 21:32:03 +0200 Dominik Brodowski <linux@dominikbrodowski.net> wrote:
+> >>
+> >> On Tue, Mar 30, 2010 at 02:52:37AM +0900, Tejun Heo wrote:
+> >>> Implicit slab.h inclusion via percpu.h is about to go away.  Make sure
+> >>> gfp.h or slab.h is included as necessary.
+> >>>
+> >>> Signed-off-by: Tejun Heo <tj@kernel.org>
+> >>> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+> >>> Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+> >> Acked-by: Dominik Brodowski <linux@dominikbrodowski.net>
+> > 
+> > The plan here is for you to put this in your tree now.  It is safe to do
+> > so and Tejun can't carry it because this does not apply to mainline. 
 
-Today's linux-next merge of the slabh tree got a conflict in
-include/linux/percpu.h between commit
-10fad5e46f6c7bdfb01b1a012380a38e3c6ab346 ("percpu, module: implement and
-use is_kernel/module_percpu_address()") from the percpu tree and commit
-d103d3b3e8512312b5254950035366d4422a479a ("percpu: don't implicitly
-include slab.h from percpu.h") from the slabh tree.
+Okay, applied it.
 
-I fixed it up (see below) and can carry the fix as necessary.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+> Stephen's patches on drivers/input/misc/ad714x.c and pcf8574_keypad.c
+> into input tree.
 
-diff --cc include/linux/percpu.h
-index 11d5f83,c784513..0000000
---- a/include/linux/percpu.h
-+++ b/include/linux/percpu.h
-@@@ -135,10 -135,6 +135,7 @@@ extern int __init pcpu_page_first_chunk
-  #define per_cpu_ptr(ptr, cpu)	SHIFT_PERCPU_PTR((ptr), per_cpu_offset((cpu)))
-  
-  extern void __percpu *__alloc_reserved_percpu(size_t size, size_t align);
-- extern void __percpu *__alloc_percpu(size_t size, size_t align);
-- extern void free_percpu(void __percpu *__pdata);
- +extern bool is_kernel_percpu_address(unsigned long addr);
-- extern phys_addr_t per_cpu_ptr_to_phys(void *addr);
-  
-  #ifndef CONFIG_HAVE_SETUP_PER_CPU_AREA
-  extern void __init setup_per_cpu_areas(void);
-@@@ -148,33 -144,6 +145,12 @@@
-  
-  #define per_cpu_ptr(ptr, cpu) ({ (void)(cpu); (ptr); })
-  
-- static inline void __percpu *__alloc_percpu(size_t size, size_t align)
-- {
-- 	/*
-- 	 * Can't easily make larger alignment work with kmalloc.  WARN
-- 	 * on it.  Larger alignment should only be used for module
-- 	 * percpu sections on SMP for which this path isn't used.
-- 	 */
-- 	WARN_ON_ONCE(align > SMP_CACHE_BYTES);
-- 	return kzalloc(size, GFP_KERNEL);
-- }
-- 
-- static inline void free_percpu(void __percpu *p)
-- {
-- 	kfree(p);
-- }
-- 
- +/* can't distinguish from other static vars, always false */
- +static inline bool is_kernel_percpu_address(unsigned long addr)
- +{
- +	return false;
- +}
- +
-- static inline phys_addr_t per_cpu_ptr_to_phys(void *addr)
-- {
-- 	return __pa(addr);
-- }
-- 
-  static inline void __init setup_per_cpu_areas(void) { }
-  
-  static inline void *pcpu_lpage_remapped(void *kaddr)
+That's nothing I can do anything about -- Dmitry?
+
+Best,
+	Dominik
