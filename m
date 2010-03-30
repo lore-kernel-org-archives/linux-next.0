@@ -1,57 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree with the wireless-current
- tree
-Date: Tue, 30 Mar 2010 13:37:45 +1100
-Message-ID: <20100330133745.27295ee0.sfr@canb.auug.org.au>
+Subject: Re: [PATCH 14/17] input: update gfp/slab.h includes
+Date: Tue, 30 Mar 2010 14:21:48 +1100
+Message-ID: <20100330142148.2ac3fc0e.sfr@canb.auug.org.au>
+References: <1269885165-18617-1-git-send-email-tj@kernel.org>
+	<1269885165-18617-15-git-send-email-tj@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__30_Mar_2010_14_21_48_+1100_pngSdui=qEdkgfkF"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59908 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:56260 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754724Ab0C3Chw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Mar 2010 22:37:52 -0400
+	id S1755179Ab0C3DVy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Mar 2010 23:21:54 -0400
+In-Reply-To: <1269885165-18617-15-git-send-email-tj@kernel.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shanyu Zhao <shanyu.zhao@intel.com>, Zhu Yi <yi.zhu@intel.com>, Reinette Chatre <reinette.chatre@intel.com>, "John W. Linville" <linville@tuxdriver.com>, Johannes Berg <johannes.berg@intel.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-Hi all,
+--Signature=_Tue__30_Mar_2010_14_21_48_+1100_pngSdui=qEdkgfkF
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the net tree got a conflict in
-drivers/net/wireless/iwlwifi/iwl-agn.c between commit
-d4dca4e53fde2953d74198a2c445db1d36ed9fd2 ("iwlwifi: clear unattended
-interrupts in tasklet") from the wireless-current tree and commit
-a4c8b2a692601de0a7bcb032b69f806050944dff ("iwlwifi: move ICT data to agn
-part of union") from the net tree.
+Hi Tejun,
 
-I fixed it up (see below) and can carry the fix for a while.
--- 
+On Tue, 30 Mar 2010 02:52:42 +0900 Tejun Heo <tj@kernel.org> wrote:
+>
+> Implicit slab.h inclusion via percpu.h is about to go away.  Make sure
+> gfp.h or slab.h is included as necessary.
+>=20
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
+>  drivers/char/sysrq.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+>=20
+> diff --git a/drivers/char/sysrq.c b/drivers/char/sysrq.c
+> index 532c56c..593562d 100644
+> --- a/drivers/char/sysrq.c
+> +++ b/drivers/char/sysrq.c
+> @@ -41,7 +41,7 @@
+>  #include <linux/hrtimer.h>
+>  #include <linux/oom.h>
+>  #include <linux/input.h>
+> -#include <linux/gfp.h>
+> +#include <linux/slab.h>
+> =20
+>  #include <asm/ptrace.h>
+>  #include <asm/irq_regs.h>
+
+This patch does not apply to the input tree.  That tree does not have the=20
+#include <linux/gfp.h>
+line (your tree (slabh) adds that later in the linux-next cycle).
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/net/wireless/iwlwifi/iwl-agn.c
-index e4c2e1e,0a376f7..0000000
---- a/drivers/net/wireless/iwlwifi/iwl-agn.c
-+++ b/drivers/net/wireless/iwlwifi/iwl-agn.c
-@@@ -1258,17 -1236,9 +1236,17 @@@ static void iwl_irq_tasklet(struct iwl_
-  	/* Ack/clear/reset pending uCode interrupts.
-  	 * Note:  Some bits in CSR_INT are "OR" of bits in CSR_FH_INT_STATUS,
-  	 */
- -	iwl_write32(priv, CSR_INT, priv->_agn.inta);
- +	/* There is a hardware bug in the interrupt mask function that some
- +	 * interrupts (i.e. CSR_INT_BIT_SCD) can still be generated even if
- +	 * they are disabled in the CSR_INT_MASK register. Furthermore the
- +	 * ICT interrupt handling mechanism has another bug that might cause
- +	 * these unmasked interrupts fail to be detected. We workaround the
- +	 * hardware bugs here by ACKing all the possible interrupts so that
- +	 * interrupt coalescing can still be achieved.
- +	 */
-- 	iwl_write32(priv, CSR_INT, priv->inta | ~priv->inta_mask);
-++	iwl_write32(priv, CSR_INT, priv->_agn.inta | ~priv->inta_mask);
-  
-- 	inta = priv->inta;
-+ 	inta = priv->_agn.inta;
-  
-  #ifdef CONFIG_IWLWIFI_DEBUG
-  	if (iwl_get_debug_level(priv) & IWL_DL_ISR) {
+--Signature=_Tue__30_Mar_2010_14_21_48_+1100_pngSdui=qEdkgfkF
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkuxbkwACgkQjjKRsyhoI8w+mwCaA2GOymsvN4zJCxRzTGg74Qea
+NcAAn2A7WJ3kkLLHc42DDmKcC1Iu1RIr
+=H/d/
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__30_Mar_2010_14_21_48_+1100_pngSdui=qEdkgfkF--
