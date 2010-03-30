@@ -1,25 +1,39 @@
-From: Jon Masters <jonathan@jonmasters.org>
-Subject: Re: linux-next: build failure after merge of the slabh tree
-Date: Tue, 30 Mar 2010 08:14:15 -0400
-Message-ID: <1269951255.4605.61.camel@localhost>
-References: <20100329154208.009a8ae2.sfr@canb.auug.org.au>
+From: "John W. Linville" <linville@tuxdriver.com>
+Subject: Re: linux-next: manual merge of the net tree with the
+	wireless-current tree
+Date: Tue, 30 Mar 2010 09:12:21 -0400
+Message-ID: <20100330131220.GA13120@tuxdriver.com>
+References: <20100330133745.27295ee0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from dallas.jonmasters.org ([72.29.103.172]:45813 "EHLO
-	dallas.jonmasters.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932083Ab0C3MO0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 30 Mar 2010 08:14:26 -0400
-In-Reply-To: <20100329154208.009a8ae2.sfr@canb.auug.org.au>
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:35172 "EHLO
+	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754523Ab0C3NPM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 30 Mar 2010 09:15:12 -0400
+Content-Disposition: inline
+In-Reply-To: <20100330133745.27295ee0.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Masters <jcm@jonmasters.org>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shanyu Zhao <shanyu.zhao@intel.com>, Zhu Yi <yi.zhu@intel.com>, Reinette Chatre <reinette.chatre@intel.com>, Johannes Berg <johannes.berg@intel.com>
 
-Hi Stephen,
+On Tue, Mar 30, 2010 at 01:37:45PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the net tree got a conflict in
+> drivers/net/wireless/iwlwifi/iwl-agn.c between commit
+> d4dca4e53fde2953d74198a2c445db1d36ed9fd2 ("iwlwifi: clear unattended
+> interrupts in tasklet") from the wireless-current tree and commit
+> a4c8b2a692601de0a7bcb032b69f806050944dff ("iwlwifi: move ICT data to agn
+> part of union") from the net tree.
+> 
+> I fixed it up (see below) and can carry the fix for a while.
 
-Can you remove the hwlat tree for the moment? I'm reworking it to use a
-newer mechanism and will then repost a more generic version.
+Yes, that looks correct to me -- at least, that's what I did in
+wireless-testing. :-)
 
-Jon.
+John
+-- 
+John W. Linville		Someday the world will need a hero, and you
+linville@tuxdriver.com			might be all we have.  Be ready.
