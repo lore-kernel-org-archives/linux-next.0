@@ -1,47 +1,64 @@
-From: Jason Wessel <jason.wessel@windriver.com>
-Subject: Re: linux-next: build failure after merge of the slabh tree
-Date: Tue, 30 Mar 2010 14:32:59 -0500
-Message-ID: <4BB251EB.5010008@windriver.com>
-References: <20100329160248.e15e7836.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH 15/17] libata: update gfp/slab.h includes
+Date: Wed, 31 Mar 2010 09:39:15 +1100
+Message-ID: <20100331093915.98479e39.sfr@canb.auug.org.au>
+References: <1269885165-18617-1-git-send-email-tj@kernel.org>
+	<1269885165-18617-16-git-send-email-tj@kernel.org>
+	<4BB22EBB.1070507@pobox.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__31_Mar_2010_09_39_15_+1100_vbN5C8j2VEmjcFua"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:33498 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752139Ab0C3TeH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 30 Mar 2010 15:34:07 -0400
-In-Reply-To: <20100329160248.e15e7836.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:56423 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750962Ab0C3WjV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 30 Mar 2010 18:39:21 -0400
+In-Reply-To: <4BB22EBB.1070507@pobox.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Martin Hicks <mort@sgi.com>
+To: Jeff Garzik <jgarzik@pobox.com>
+Cc: Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 03/29/2010 12:02 AM, Stephen Rothwell wrote:
-> Hi Tejun,
->
-> After merging the slabh tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> kernel/debug/kdb/kdb_support.c: In function 'kdb_strdup':
-> kernel/debug/kdb/kdb_support.c:309: error: implicit declaration of function 'kmalloc'
-> kernel/debug/kdb/kdb_support.c:309: warning: initialization makes pointer from integer without a cast
-> kernel/debug/kdb/kdb_support.c: In function 'debug_kfree':
-> kernel/debug/kdb/kdb_support.c:810: error: implicit declaration of function 'kfree'
->
-> Caused by commit d103d3b3e8512312b5254950035366d4422a479a ("percpu: don't
-> implicitly include slab.h from percpu.h") from the slabh tree interacting
-> with commit 5572dd736e5577dfefafe2ad3b54760e8323e33d ("kdb: core for kgdb
-> back end (1 of 2)") from the kgdb tree.
->
-> I applied the following merge fixup patch which should be applied to the
-> kdbg tree (see Documentation/SubmitChecklist Rule #1 :-)).
->
->   
+--Signature=_Wed__31_Mar_2010_09_39_15_+1100_vbN5C8j2VEmjcFua
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-But of course.
+Hi Jeff,
 
-This is applied and will appear in kgdb-next in the next hour.
+On Tue, 30 Mar 2010 13:02:51 -0400 Jeff Garzik <jgarzik@pobox.com> wrote:
+>
+> On 03/29/2010 01:52 PM, Tejun Heo wrote:
+> > Implicit slab.h inclusion via percpu.h is about to go away.  Make sure
+> > gfp.h or slab.h is included as necessary.
+> >
+> > Signed-off-by: Tejun Heo<tj@kernel.org>
+> > Cc: Stephen Rothwell<sfr@canb.auug.org.au>
+> > Cc: Jeff Garzik<jgarzik@pobox.com>
+> > ---
+> >   drivers/ata/ahci_platform.c |    1 +
+> >   drivers/ata/libahci.c       |    1 +
+> >   2 files changed, 2 insertions(+), 0 deletions(-)
+>=20
+> applied
 
-Thanks,
-Jason.
+Thanks.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__31_Mar_2010_09_39_15_+1100_vbN5C8j2VEmjcFua
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkuyfZMACgkQjjKRsyhoI8xkIgCglML3eMc55R1/I+dWsPvjpZz2
+LDgAoKBKh7A1G8f397RBrC3G50qdoTxd
+=rOuR
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__31_Mar_2010_09_39_15_+1100_vbN5C8j2VEmjcFua--
