@@ -1,58 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH 09/17] pcmcia: update gfp/slab.h includes
-Date: Tue, 30 Mar 2010 19:23:39 +1100
-Message-ID: <20100330192339.46d5d079.sfr@canb.auug.org.au>
-References: <1269885165-18617-1-git-send-email-tj@kernel.org>
-	<1269885165-18617-10-git-send-email-tj@kernel.org>
-	<20100329193203.GA8450@comet.dominikbrodowski.net>
-	<20100330103129.b76a70e3.sfr@canb.auug.org.au>
-	<4BB14D7B.4010602@kernel.org>
-	<20100330063609.GA4498@comet.dominikbrodowski.net>
-	<20100330065605.GA12764@core.coreip.homeip.net>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH 14/17] input: update gfp/slab.h includes
+Date: Tue, 30 Mar 2010 21:17:24 +0900
+Message-ID: <4BB1EBD4.9030707@kernel.org>
+References: <1269885165-18617-1-git-send-email-tj@kernel.org>	<1269885165-18617-15-git-send-email-tj@kernel.org> <20100330142148.2ac3fc0e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__30_Mar_2010_19_23_39_+1100_WVIfq3RvvWzy_UZ_"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52158 "EHLO smtps.tip.net.au"
+Received: from hera.kernel.org ([140.211.167.34]:34633 "EHLO hera.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754727Ab0C3IXp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 30 Mar 2010 04:23:45 -0400
-In-Reply-To: <20100330065605.GA12764@core.coreip.homeip.net>
+	id S1756543Ab0C3MOR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 30 Mar 2010 08:14:17 -0400
+In-Reply-To: <20100330142148.2ac3fc0e.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>, Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
---Signature=_Tue__30_Mar_2010_19_23_39_+1100_WVIfq3RvvWzy_UZ_
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-Hi Dmitry,
+On 03/30/2010 12:21 PM, Stephen Rothwell wrote:
+>> diff --git a/drivers/char/sysrq.c b/drivers/char/sysrq.c
+>> index 532c56c..593562d 100644
+>> --- a/drivers/char/sysrq.c
+>> +++ b/drivers/char/sysrq.c
+>> @@ -41,7 +41,7 @@
+>>  #include <linux/hrtimer.h>
+>>  #include <linux/oom.h>
+>>  #include <linux/input.h>
+>> -#include <linux/gfp.h>
+>> +#include <linux/slab.h>
+>>  
+>>  #include <asm/ptrace.h>
+>>  #include <asm/irq_regs.h>
+> 
+> This patch does not apply to the input tree.  That tree does not have the 
+> #include <linux/gfp.h>
+> line (your tree (slabh) adds that later in the linux-next cycle).
 
-On Mon, 29 Mar 2010 23:56:05 -0700 Dmitry Torokhov <dmitry.torokhov@gmail.c=
-om> wrote:
->
-> Yes, I will roll teh relevant parts into respective patches if you don't
-> mind.
+Ah, I see.  sysrq.c's requirement changed between mainline and
+linux-next.  I'll update slabh tree such that it includes slab.h from
+there.
 
-Great, thanks.
+Thanks.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__30_Mar_2010_19_23_39_+1100_WVIfq3RvvWzy_UZ_
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkuxtQsACgkQjjKRsyhoI8zNkwCfQCBCL9XhvBMIMspWfgDe0H9g
-hBcAniV2p7gt32WdOxKuSfK7f0F5NMwP
-=FNfQ
------END PGP SIGNATURE-----
-
---Signature=_Tue__30_Mar_2010_19_23_39_+1100_WVIfq3RvvWzy_UZ_--
+-- 
+tejun
