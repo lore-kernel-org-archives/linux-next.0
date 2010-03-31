@@ -1,36 +1,54 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: linux-next: manual merge of the slabh tree with the percpu tree
-Date: Wed, 31 Mar 2010 11:44:04 +0900
-Message-ID: <4BB2B6F4.6010701@kernel.org>
-References: <20100330172253.de55195b.sfr@canb.auug.org.au>
+From: Changli Gao <xiaosuo@gmail.com>
+Subject: [PATCH] drm: build error when magic sysrq isn't enabled
+Date: Wed, 31 Mar 2010 12:18:00 +0800
+Message-ID: <4BB2CCF8.6020806@gmail.com>
+Reply-To: xiaosuo@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=GB2312
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hera.kernel.org ([140.211.167.34]:35100 "EHLO hera.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752653Ab0CaCoI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 30 Mar 2010 22:44:08 -0400
-In-Reply-To: <20100330172253.de55195b.sfr@canb.auug.org.au>
+Received: from mail-gw0-f46.google.com ([74.125.83.46]:47057 "EHLO
+	mail-gw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750699Ab0CaESZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 31 Mar 2010 00:18:25 -0400
+Received: by gwaa18 with SMTP id a18so5162011gwa.19
+        for <linux-next@vger.kernel.org>; Tue, 30 Mar 2010 21:18:24 -0700 (PDT)
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-next@vger.kernel.org
+Cc: xiaosuo <xiaosuo@gmail.com>
 
-On 03/30/2010 03:22 PM, Stephen Rothwell wrote:
-> Hi Tejun,
-> 
-> Today's linux-next merge of the slabh tree got a conflict in
-> include/linux/percpu.h between commit
-> 10fad5e46f6c7bdfb01b1a012380a38e3c6ab346 ("percpu, module: implement and
-> use is_kernel/module_percpu_address()") from the percpu tree and commit
-> d103d3b3e8512312b5254950035366d4422a479a ("percpu: don't implicitly
-> include slab.h from percpu.h") from the slabh tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary.
+drm build error when magic sysrq isn't enabled
 
-Thanks.  I'll soon push the stuff in percpu#for-next to mainline
-(they're fixes) and merge it into slabh.
+sysrq_drm_fb_helper_restore_op is only valid when magic sysrq is
+enabled, but it is used whenever magic sysrq is enabled or not.
 
--- 
-tejun
+Signed-off-by: Changli Gao <xiaosuo@gmail.com>
+----
+drivers/gpu/drm/drm_fb_helper.c | 4 ++++
+1 file changed, 4 insertions(+)
+
+diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+index 85cdf05..0e5b4f6 100644
+--- a/drivers/gpu/drm/drm_fb_helper.c
++++ b/drivers/gpu/drm/drm_fb_helper.c
+@@ -913,7 +913,9 @@ int drm_fb_helper_single_fb_probe(struct drm_device *dev,
+ 		printk(KERN_INFO "registered panic notifier\n");
+ 		atomic_notifier_chain_register(&panic_notifier_list,
+ 					       &paniced);
++#ifdef CONFIG_MAGIC_SYSRQ
+ 		register_sysrq_key('v', &sysrq_drm_fb_helper_restore_op);
++#endif
+ 	}
+ 	list_add(&fb_helper->kernel_fb_list, &kernel_fb_helper_list);
+ 	return 0;
+@@ -927,7 +929,9 @@ void drm_fb_helper_free(struct drm_fb_helper *helper)
+ 		printk(KERN_INFO "unregistered panic notifier\n");
+ 		atomic_notifier_chain_unregister(&panic_notifier_list,
+ 						 &paniced);
++#ifdef CONFIG_MAGIC_SYSRQ
+ 		unregister_sysrq_key('v', &sysrq_drm_fb_helper_restore_op);
++#endif
+ 	}
+ 	drm_fb_helper_crtc_free(helper);
+ 	fb_dealloc_cmap(&helper->fb->fbdev->cmap);
