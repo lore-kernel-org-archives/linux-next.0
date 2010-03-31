@@ -1,48 +1,34 @@
-From: "Gregory Haskins" <ghaskins@novell.com>
-Subject: Re: [PATCH 06/17] vbus: update gfp/slab.h includes
-Date: Wed, 31 Mar 2010 05:51:28 -0600
-Message-ID: <4BB2FF000200005A0006349E@soto.provo.novell.com>
-References: <1269885165-18617-1-git-send-email-tj@kernel.org>
- <1269885165-18617-7-git-send-email-tj@kernel.org>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: [PATCH -next] module.h: add stub for is_module_percpu_address
+Date: Wed, 31 Mar 2010 23:29:09 +1030
+Message-ID: <201003312329.09722.rusty@rustcorp.com.au>
+References: <20100330191834.f2009292.sfr@canb.auug.org.au> <4BB2358B.3090800@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1269885165-18617-7-git-send-email-tj@kernel.org>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: sfr@canb.auug.org.au, Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:40618 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757348Ab0CaM7M (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 31 Mar 2010 08:59:12 -0400
+In-Reply-To: <4BB2358B.3090800@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>
 
->>> On 3/29/2010 at 01:52 PM, in message
-<1269885165-18617-7-git-send-email-tj@kernel.org>, Tejun Heo <tj@kernel.org>
-wrote: 
-> Implicit slab.h inclusion via percpu.h is about to go away.  Make sure
-> gfp.h or slab.h is included as necessary.
+On Wed, 31 Mar 2010 04:01:55 am Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
 > 
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> Cc: Gregory Haskins <ghaskins@novell.com>
-
-Thanks Tejun,
-
-Acked-by: Gregory Haskins <ghaskins@novell.com>
-
-(will add to my tree)
-
-> ---
->  drivers/vbus/pci-bridge.c |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
+> Fix build for CONFIG_MODULES not enabled by providing a stub
+> for is_module_percpu_address().
 > 
-> diff --git a/drivers/vbus/pci-bridge.c b/drivers/vbus/pci-bridge.c
-> index 0d51324..36de7c4 100644
-> --- a/drivers/vbus/pci-bridge.c
-> +++ b/drivers/vbus/pci-bridge.c
-> @@ -22,6 +22,7 @@
->  #include <linux/pci.h>
->  #include <linux/mm.h>
->  #include <linux/workqueue.h>
-> +#include <linux/slab.h>
->  #include <linux/debugfs.h>
->  #include <linux/seq_file.h>
->  #include <linux/ioq.h
+> kernel/lockdep.c:605: error: implicit declaration of function 'is_module_percpu_address'
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+
+Acked-by: Rusty Russell <rusty@rustcorp.com.au>
+
+Thanks!
+Rusty.
