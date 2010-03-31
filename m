@@ -1,70 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Fw: [PATCH] drm: build error when magic sysrq isn't enabled
-Date: Wed, 31 Mar 2010 17:21:57 +1100
-Message-ID: <20100331172157.12be4cce.sfr@canb.auug.org.au>
+From: "Gregory Haskins" <ghaskins@novell.com>
+Subject: Re: [PATCH 06/17] vbus: update gfp/slab.h includes
+Date: Wed, 31 Mar 2010 05:51:28 -0600
+Message-ID: <4BB2FF000200005A0006349E@soto.provo.novell.com>
+References: <1269885165-18617-1-git-send-email-tj@kernel.org>
+ <1269885165-18617-7-git-send-email-tj@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48982 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752084Ab0CaGV7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 31 Mar 2010 02:21:59 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>
-Cc: Changli Gao <xiaosuo@gmail.com>, linux-next@vger.kernel.orgxiaosuo <xiaosuo@gmail.com>
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1269885165-18617-7-git-send-email-tj@kernel.org>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
+To: sfr@canb.auug.org.au, Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Dave,
+>>> On 3/29/2010 at 01:52 PM, in message
+<1269885165-18617-7-git-send-email-tj@kernel.org>, Tejun Heo <tj@kernel.org>
+wrote: 
+> Implicit slab.h inclusion via percpu.h is about to go away.  Make sure
+> gfp.h or slab.h is included as necessary.
+> 
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+> Cc: Gregory Haskins <ghaskins@novell.com>
 
-One for you?
+Thanks Tejun,
 
-Begin forwarded message:
+Acked-by: Gregory Haskins <ghaskins@novell.com>
 
-Date: Wed, 31 Mar 2010 12:18:00 +0800
-From: Changli Gao <xiaosuo@gmail.com>
-To: linux-next@vger.kernel.org
-Cc: xiaosuo <xiaosuo@gmail.com>
-Subject: [PATCH] drm: build error when magic sysrq isn't enabled
+(will add to my tree)
 
-
-drm build error when magic sysrq isn't enabled
-
-sysrq_drm_fb_helper_restore_op is only valid when magic sysrq is
-enabled, but it is used whenever magic sysrq is enabled or not.
-
-Signed-off-by: Changli Gao <xiaosuo@gmail.com>
-----
-drivers/gpu/drm/drm_fb_helper.c | 4 ++++
-1 file changed, 4 insertions(+)
-
-diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-index 85cdf05..0e5b4f6 100644
---- a/drivers/gpu/drm/drm_fb_helper.c
-+++ b/drivers/gpu/drm/drm_fb_helper.c
-@@ -913,7 +913,9 @@ int drm_fb_helper_single_fb_probe(struct drm_device *dev,
- 		printk(KERN_INFO "registered panic notifier\n");
- 		atomic_notifier_chain_register(&panic_notifier_list,
- 					       &paniced);
-+#ifdef CONFIG_MAGIC_SYSRQ
- 		register_sysrq_key('v', &sysrq_drm_fb_helper_restore_op);
-+#endif
- 	}
- 	list_add(&fb_helper->kernel_fb_list, &kernel_fb_helper_list);
- 	return 0;
-@@ -927,7 +929,9 @@ void drm_fb_helper_free(struct drm_fb_helper *helper)
- 		printk(KERN_INFO "unregistered panic notifier\n");
- 		atomic_notifier_chain_unregister(&panic_notifier_list,
- 						 &paniced);
-+#ifdef CONFIG_MAGIC_SYSRQ
- 		unregister_sysrq_key('v', &sysrq_drm_fb_helper_restore_op);
-+#endif
- 	}
- 	drm_fb_helper_crtc_free(helper);
- 	fb_dealloc_cmap(&helper->fb->fbdev->cmap);
-
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+> ---
+>  drivers/vbus/pci-bridge.c |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/vbus/pci-bridge.c b/drivers/vbus/pci-bridge.c
+> index 0d51324..36de7c4 100644
+> --- a/drivers/vbus/pci-bridge.c
+> +++ b/drivers/vbus/pci-bridge.c
+> @@ -22,6 +22,7 @@
+>  #include <linux/pci.h>
+>  #include <linux/mm.h>
+>  #include <linux/workqueue.h>
+> +#include <linux/slab.h>
+>  #include <linux/debugfs.h>
+>  #include <linux/seq_file.h>
+>  #include <linux/ioq.h
