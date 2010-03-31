@@ -1,52 +1,33 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the slabh tree
-Date: Wed, 31 Mar 2010 09:49:12 +1100
-Message-ID: <20100331094912.8b09b437.sfr@canb.auug.org.au>
-References: <20100329160248.e15e7836.sfr@canb.auug.org.au>
-	<4BB251EB.5010008@windriver.com>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH -next] module.h: add stub for is_module_percpu_address
+Date: Wed, 31 Mar 2010 11:34:41 +0900
+Message-ID: <4BB2B4C1.5040603@kernel.org>
+References: <20100330191834.f2009292.sfr@canb.auug.org.au> <4BB2358B.3090800@oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__31_Mar_2010_09_49_12_+1100_SVy1QVzBTHDkRx+7"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44472 "EHLO smtps.tip.net.au"
+Received: from hera.kernel.org ([140.211.167.34]:43924 "EHLO hera.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751629Ab0C3WtR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 30 Mar 2010 18:49:17 -0400
-In-Reply-To: <4BB251EB.5010008@windriver.com>
+	id S1755972Ab0CaCex (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 30 Mar 2010 22:34:53 -0400
+In-Reply-To: <4BB2358B.3090800@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jason Wessel <jason.wessel@windriver.com>
-Cc: Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Martin Hicks <mort@sgi.com>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Rusty Russell <rusty@rustcorp.com.au>
 
---Signature=_Wed__31_Mar_2010_09_49_12_+1100_SVy1QVzBTHDkRx+7
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 03/31/2010 02:31 AM, Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> Fix build for CONFIG_MODULES not enabled by providing a stub
+> for is_module_percpu_address().
+> 
+> kernel/lockdep.c:605: error: implicit declaration of function 'is_module_percpu_address'
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 
-Hi Jason,
+Thanks.  Applied to percpu tree.
 
-On Tue, 30 Mar 2010 14:32:59 -0500 Jason Wessel <jason.wessel@windriver.com=
-> wrote:
->
-> This is applied and will appear in kgdb-next in the next hour.
-
-Thanks.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__31_Mar_2010_09_49_12_+1100_SVy1QVzBTHDkRx+7
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkuyf+gACgkQjjKRsyhoI8zPkgCdFTdHaCAPBWm96iy2UxPr2Ldm
-CQwAn0F97zHCBnAC/BLiPSEJQUFRQvm0
-=Ts96
------END PGP SIGNATURE-----
-
---Signature=_Wed__31_Mar_2010_09_49_12_+1100_SVy1QVzBTHDkRx+7--
+-- 
+tejun
