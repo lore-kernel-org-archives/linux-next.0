@@ -1,33 +1,36 @@
 From: Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH -next] module.h: add stub for is_module_percpu_address
-Date: Wed, 31 Mar 2010 11:34:41 +0900
-Message-ID: <4BB2B4C1.5040603@kernel.org>
-References: <20100330191834.f2009292.sfr@canb.auug.org.au> <4BB2358B.3090800@oracle.com>
+Subject: Re: linux-next: manual merge of the slabh tree with the percpu tree
+Date: Wed, 31 Mar 2010 11:44:04 +0900
+Message-ID: <4BB2B6F4.6010701@kernel.org>
+References: <20100330172253.de55195b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hera.kernel.org ([140.211.167.34]:43924 "EHLO hera.kernel.org"
+Received: from hera.kernel.org ([140.211.167.34]:35100 "EHLO hera.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755972Ab0CaCex (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 30 Mar 2010 22:34:53 -0400
-In-Reply-To: <4BB2358B.3090800@oracle.com>
+	id S1752653Ab0CaCoI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 30 Mar 2010 22:44:08 -0400
+In-Reply-To: <20100330172253.de55195b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Rusty Russell <rusty@rustcorp.com.au>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 03/31/2010 02:31 AM, Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
+On 03/30/2010 03:22 PM, Stephen Rothwell wrote:
+> Hi Tejun,
 > 
-> Fix build for CONFIG_MODULES not enabled by providing a stub
-> for is_module_percpu_address().
+> Today's linux-next merge of the slabh tree got a conflict in
+> include/linux/percpu.h between commit
+> 10fad5e46f6c7bdfb01b1a012380a38e3c6ab346 ("percpu, module: implement and
+> use is_kernel/module_percpu_address()") from the percpu tree and commit
+> d103d3b3e8512312b5254950035366d4422a479a ("percpu: don't implicitly
+> include slab.h from percpu.h") from the slabh tree.
 > 
-> kernel/lockdep.c:605: error: implicit declaration of function 'is_module_percpu_address'
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> I fixed it up (see below) and can carry the fix as necessary.
 
-Thanks.  Applied to percpu tree.
+Thanks.  I'll soon push the stuff in percpu#for-next to mainline
+(they're fixes) and merge it into slabh.
 
 -- 
 tejun
