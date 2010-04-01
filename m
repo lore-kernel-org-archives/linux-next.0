@@ -1,155 +1,77 @@
-From: Siarhei Liakh <sliakh.lkml@gmail.com>
-Subject: [PATCH 3/4] [tip:x86/mm] NX protection for kernel data
-Date: Wed, 31 Mar 2010 21:59:15 -0400
-Message-ID: <t2r817ecb6f1003311859me67dd181qf85a1d4f667cc43c@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the wireless tree with the
+ wireless-current tree
+Date: Thu, 1 Apr 2010 12:59:44 +1100
+Message-ID: <20100401125944.54adc73c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org
-Cc: Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, Rusty Russell <rusty@rustcorp.com.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__1_Apr_2010_12_59_44_+1100_q7vlz+m6A.SGxWbA"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:46524 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755237Ab0DAB76 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 31 Mar 2010 21:59:58 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wey-Yi Guy <wey-yi.w.guy@intel.com>, Reinette Chatre <reinette.chatre@intel.com>
 
-Note: this patch depends on "Correct improper large page preservation" patch
+--Signature=_Thu__1_Apr_2010_12_59_44_+1100_q7vlz+m6A.SGxWbA
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This patch expands functionality of CONFIG_DEBUG_RODATA to set main
-(static) kernel data area as NX.
-The following steps are taken to achieve this:
-1. Linker script is adjusted so .text always starts and ends on a page boundary
-2. Linker script is adjusted so .rodata and .data always start and
-end on a page boundary
-3. void mark_nxdata_nx(void) added to arch/x86/mm/init.c with actual
-functionality: NX is set for all pages from _etext through _end.
-4. mark_nxdata_nx() called from free_initmem() (after init has been released)
-5. free_init_pages() sets released memory NX in arch/x86/mm/init.c
+Hi John,
 
-The results of patch application may be observed in the diff of kernel page
-table dumps:
---- data_nx_pt_before.txt       2009-10-13 07:48:59.000000000 -0400
-+++ data_nx_pt_after.txt        2009-10-13 07:26:46.000000000 -0400
-@@ -2,8 +2,9 @@
- 0x00000000-0xc0000000           3G                           pmd
- ---[ Kernel Mapping ]---
- 0xc0000000-0xc0100000           1M     RW             GLB x  pte
--0xc0100000-0xc048d000        3636K     ro             GLB x  pte
--0xc048d000-0xc0600000        1484K     RW             GLB x  pte
-+0xc0100000-0xc0381000        2564K     ro             GLB x  pte
-+0xc0381000-0xc048d000        1072K     ro             GLB NX pte
-+0xc048d000-0xc0600000        1484K     RW             GLB NX pte
- 0xc0600000-0xf7800000         882M     RW         PSE GLB NX pmd
- 0xf7800000-0xf79fe000        2040K     RW             GLB NX pte
- 0xf79fe000-0xf7a00000           8K                           pte
+Today's linux-next merge of the wireless tree got a conflict in
+drivers/net/wireless/iwlwifi/iwl-4965.c between commit
+be6b38bcb175613f239e0b302607db346472c6b6 ("iwlwifi: counting number of
+tfds can be free for 4965") from the wireless-current tree and commit
+74bcdb33e99f49ef5202dd2f8109945b4570edc2 ("iwlwifi: move agn only tx
+functions from iwlcore to iwlagn") from the wireless tree.
 
+I fixed it up (see below) and can carry the fix for a while.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-The patch have been developed for Linux 2.6.34-rc2 x86 by Siarhei Liakh
-<sliakh.lkml@gmail.com> and Xuxian Jiang <jiang@cs.ncsu.edu>.
+diff --cc drivers/net/wireless/iwlwifi/iwl-4965.c
+index 3297fc7,1808c97..0000000
+--- a/drivers/net/wireless/iwlwifi/iwl-4965.c
++++ b/drivers/net/wireless/iwlwifi/iwl-4965.c
+@@@ -2046,15 -2047,17 +2047,15 @@@ static void iwl4965_rx_reply_tx(struct=20
+  				   le32_to_cpu(tx_resp->rate_n_flags),
+  				   tx_resp->failure_frame);
+ =20
+- 		freed =3D iwl_tx_queue_reclaim(priv, txq_id, index);
++ 		freed =3D iwlagn_tx_queue_reclaim(priv, txq_id, index);
+ -		if (qc && likely(sta_id !=3D IWL_INVALID_STATION))
+ -			priv->stations[sta_id].tid[tid].tfds_in_queue -=3D freed;
+ +		iwl_free_tfds_in_queue(priv, sta_id, tid, freed);
+ =20
+  		if (priv->mac80211_registered &&
+  		    (iwl_queue_space(&txq->q) > txq->q.low_mark))
+  			iwl_wake_queue(priv, txq_id);
+  	}
+ =20
+- 	iwl_txq_check_empty(priv, sta_id, tid, txq_id);
+ -	if (qc && likely(sta_id !=3D IWL_INVALID_STATION))
+ -		iwlagn_txq_check_empty(priv, sta_id, tid, txq_id);
+++	iwlagn_txq_check_empty(priv, sta_id, tid, txq_id);
+ =20
+  	if (iwl_check_bits(status, TX_ABORT_REQUIRED_MSK))
+  		IWL_ERR(priv, "TODO:  Implement Tx ABORT REQUIRED!!!\n");
 
-V1:  initial patch for 2.6.30
-V2:  patch for 2.6.31-rc7
-V3:  moved all code into arch/x86, adjusted credits
-V4:  fixed ifdef, removed credits from CREDITS
-V5:  fixed an address calculation bug in mark_nxdata_nx()
-V6:  added acked-by and PT dump diff to commit log
-V7:  minor adjustments for -tip
+--Signature=_Thu__1_Apr_2010_12_59_44_+1100_q7vlz+m6A.SGxWbA
+Content-Type: application/pgp-signature
 
-Signed-off-by: Siarhei Liakh <sliakh.lkml@gmail.com>
-Signed-off-by: Xuxian Jiang <jiang@cs.ncsu.edu>
-Acked-by: Arjan van de Ven <arjan@linux.intel.com>
-Reviewed-by: James Morris <jmorris@namei.org>
----
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-index 2cc2497..7f82438 100644
---- a/arch/x86/kernel/vmlinux.lds.S
-+++ b/arch/x86/kernel/vmlinux.lds.S
-@@ -69,7 +69,7 @@ jiffies_64 = jiffies;
+iEYEARECAAYFAkuz/hAACgkQjjKRsyhoI8zkHgCfWFXTe2M3wqP7RXu0M7wj7jsY
+9H8An2FeqmaXXGccU9BLGExDjwfghmoa
+=NHeM
+-----END PGP SIGNATURE-----
 
- PHDRS {
- 	text PT_LOAD FLAGS(5);          /* R_E */
--	data PT_LOAD FLAGS(7);          /* RWE */
-+	data PT_LOAD FLAGS(6);          /* RW_ */
- #ifdef CONFIG_X86_64
- 	user PT_LOAD FLAGS(5);          /* R_E */
- #ifdef CONFIG_SMP
-@@ -108,6 +108,8 @@ SECTIONS
- 		IRQENTRY_TEXT
- 		*(.fixup)
- 		*(.gnu.warning)
-+		/* .text should occupy whole number of pages */
-+		. = ALIGN(PAGE_SIZE);
- 		/* End of text section */
- 		_etext = .;
- 	} :text = 0x9090
-@@ -121,6 +123,7 @@ SECTIONS
- 	X64_ALIGN_DEBUG_RODATA_END
-
- 	/* Data */
-+	. = ALIGN(PAGE_SIZE);
- 	.data : AT(ADDR(.data) - LOAD_OFFSET) {
- 		/* Start of data section */
- 		_sdata = .;
-@@ -143,6 +146,8 @@ SECTIONS
- 		/* rarely changed data like cpu maps */
- 		READ_MOSTLY_DATA(INTERNODE_CACHE_BYTES)
-
-+		/* .data should occupy whole number of pages */
-+		. = ALIGN(PAGE_SIZE);
- 		/* End of data section */
- 		_edata = .;
- 	} :data
-@@ -307,7 +312,7 @@ SECTIONS
- 		__bss_start = .;
- 		*(.bss.page_aligned)
- 		*(.bss)
--		. = ALIGN(4);
-+		. = ALIGN(PAGE_SIZE);
- 		__bss_stop = .;
- 	}
-
-diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
-index 452ee5b..240dcb0 100644
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -361,8 +361,9 @@ void free_init_pages(char *what, unsigned long
-begin, unsigned long end)
- 	/*
- 	 * We just marked the kernel text read only above, now that
- 	 * we are going to free part of that, we need to make that
--	 * writeable first.
-+	 * writeable and non-executable first.
- 	 */
-+	set_memory_nx(begin, (end - begin) >> PAGE_SHIFT);
- 	set_memory_rw(begin, (end - begin) >> PAGE_SHIFT);
-
- 	printk(KERN_INFO "Freeing %s: %luk freed\n", what, (end - begin) >> 10);
-@@ -377,11 +378,29 @@ void free_init_pages(char *what, unsigned long
-begin, unsigned long end)
- #endif
- }
-
-+void mark_nxdata_nx(void)
-+{
-+#ifdef CONFIG_DEBUG_RODATA
-+	/*
-+	 * When this called, init has already been executed and released,
-+	 * so everything past _etext sould be NX.
-+	 */
-+	unsigned long start = PAGE_ALIGN((unsigned long)(&_etext));
-+	unsigned long size = PAGE_ALIGN((unsigned long)(&_end)) - start;
-+
-+	printk(KERN_INFO "NX-protecting the kernel data: %lx, %lu pages\n",
-+		start, size >> PAGE_SHIFT);
-+	set_memory_nx(start, size >> PAGE_SHIFT);
-+#endif
-+}
-+
- void free_initmem(void)
- {
- 	free_init_pages("unused kernel memory",
- 			(unsigned long)(&__init_begin),
- 			(unsigned long)(&__init_end));
-+	/* Set kernel's data as NX */
-+	mark_nxdata_nx();
- }
-
- #ifdef CONFIG_BLK_DEV_INITRD
+--Signature=_Thu__1_Apr_2010_12_59_44_+1100_q7vlz+m6A.SGxWbA--
