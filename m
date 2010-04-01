@@ -1,28 +1,80 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: linux-next: build failure after merge of the slabh tree
-Date: Thu, 01 Apr 2010 16:31:57 +0900
-Message-ID: <4BB44BED.4060501@kernel.org>
-References: <20100401164110.80e3b18f.sfr@canb.auug.org.au> <20100401.002908.267643090.davem@davemloft.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the final tree (hid
+ tree related)
+Date: Thu, 1 Apr 2010 18:35:30 +1100
+Message-ID: <20100401183530.516bbca6.sfr@canb.auug.org.au>
+References: <20100401170639.9f2fe605.sfr@canb.auug.org.au>
+	<alpine.LNX.2.00.1004010817420.8345@pobox.suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20100401.002908.267643090.davem@davemloft.net>
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, sjur.brandeland@stericsson.com, netdev@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__1_Apr_2010_18_35_30_+1100_Juv1ed00kvd2lyd9"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:39688 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753656Ab0DAHfi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 1 Apr 2010 03:35:38 -0400
+In-Reply-To: <alpine.LNX.2.00.1004010817420.8345@pobox.suse.cz>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bruno =?UTF-8?B?UHLDqW1vbnQ=?= <bonbons@linux-vserver.org>
 
-On 04/01/2010 04:29 PM, David Miller wrote:
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Thu, 1 Apr 2010 16:41:10 +1100
-> 
->> I have applied the following patch for today.  Dave, could you apply this
->> to the net tree please?
-> 
-> Done.
+--Signature=_Thu__1_Apr_2010_18_35_30_+1100_Juv1ed00kvd2lyd9
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks!
+Hi Jiri,
 
--- 
-tejun
+On Thu, 1 Apr 2010 08:18:43 +0200 (CEST) Jiri Kosina <jkosina@suse.cz> wrot=
+e:
+>
+> On Thu, 1 Apr 2010, Stephen Rothwell wrote:
+>=20
+> > After merging the final tree, today's linux-next build (powerpc
+> > allyesconfig) failed like this:
+> >=20
+> > drivers/hid/hid-picolcd.c: In function 'picolcd_debug_reset_write':
+> > drivers/hid/hid-picolcd.c:1343: error: implicit declaration of function=
+ 'copy_from_user'
+> > drivers/hid/hid-picolcd.c: In function 'picolcd_debug_eeprom_read':
+> > drivers/hid/hid-picolcd.c:1407: error: implicit declaration of function=
+ 'copy_to_user'
+> >=20
+> > Caused by commit 9bbf2b98ba11d00bd73e3254e15cfe17ccaff6ba ("HID: add
+> > experimental access to PicoLCD device's EEPROM and FLASH").  Using copy_
+> > {to,from}_user requires the include of linux/uaccess.h.
+> >=20
+> > I have reverted that commit for today.
+>=20
+> Hmm, on which arch did this bomb out? I wonder why it is building fine fo=
+r=20
+> me.
+
+PowerPC (see above).  It could also be some interaction with another tree
+in linux-next.
+
+> Anyway, I have added the include, as it is obviously correct(tm), thanks=
+=20
+> for reporting it.
+
+Thanks.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__1_Apr_2010_18_35_30_+1100_Juv1ed00kvd2lyd9
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAku0TMIACgkQjjKRsyhoI8wd7QCfQiPUx+A79YZhZosGZyuLUAN4
+W7kAn2WuOr7CWIgwVdXCSeoNQHF66s17
+=+M7A
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__1_Apr_2010_18_35_30_+1100_Juv1ed00kvd2lyd9--
