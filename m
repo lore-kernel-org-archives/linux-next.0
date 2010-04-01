@@ -1,52 +1,135 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the cifs tree
-Date: Thu, 1 Apr 2010 11:50:59 +1100
-Message-ID: <20100401115059.d0bdb1bd.sfr@canb.auug.org.au>
+From: Siarhei Liakh <sliakh.lkml@gmail.com>
+Subject: [PATCH 1/4] [tip:x86/mm] Correcting improper large page preservation
+Date: Wed, 31 Mar 2010 21:59:00 -0400
+Message-ID: <v2o817ecb6f1003311859nb14bab83y80f743a0accc5028@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__1_Apr_2010_11_50_59_+1100_tLGndIcf21WS7aeD"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Steve French <smfrench@gmail.com>, linux-cifs-client@lists.samba.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Suresh Jayaraman <sjayaraman@suse.de>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-vw0-f46.google.com ([209.85.212.46]:51105 "EHLO
+	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755961Ab0DAB7D (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 31 Mar 2010 21:59:03 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org
+Cc: Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, Rusty Russell <rusty@rustcorp.com.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>
 
---Signature=_Thu__1_Apr_2010_11_50_59_+1100_tLGndIcf21WS7aeD
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch fixes a bug in try_preserve_large_page() which may result
+in improper large page preservation and improper application of page
+attributes to the memory area outside of the original change request.
+More specifically, the problem manifests itself when set_memory_*() is
+called for several pages at the beginning of the large page and
+try_preserve_large_page() erroneously concludes that the change can be
+applied to whole large page.
+The fix consists of 3 parts:
+1. addition of "required" protection attributes in
+static_protections(), so .data and .bss can be guaranteed to stay "RW"
+2. static_protections() is now called for every small page within
+large page to determine compatibility of new protection attributes
+(instead of just small pages within the requested range).
+3. large page can be preserved only if attribute change is
+large-page-aligned and covers whole large page.
 
-Hi Steve,
+V1:  try_preserve_large_page() patch for Linux 2.6.34-rc2
 
-After merging the cifs tree, today's linux-next build (x86_64 allmodconfig)
-produced this warning:
+Signed-off-by: Siarhei Liakh <sliakh.lkml@gmail.com>
+Signed-off-by: Xuxian Jiang <jiang@cs.ncsu.edu>
+---
 
-fs/cifs/cifssmb.c: In function 'CIFSSMBWrite':
-fs/cifs/cifssmb.c:1516: warning: suggest explicit braces to avoid ambiguous=
- 'else'
+diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
+index cf07c26..6844675 100644
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -255,6 +255,7 @@ static inline pgprot_t static_protections(pgprot_t
+prot, unsigned long address,
+ 				   unsigned long pfn)
+ {
+ 	pgprot_t forbidden = __pgprot(0);
++	pgprot_t required = __pgprot(0);
 
-Introduced by commit 5702f749ee6645f70412cfe6408503a735366ffe ("cifs:
-initialize nbytes at the beginning of CIFSSMBWrite()").
+ 	/*
+ 	 * The BIOS area between 640k and 1Mb needs to be executable for
+@@ -278,6 +279,15 @@ static inline pgprot_t
+static_protections(pgprot_t prot, unsigned long address,
+ 	if (within(pfn, __pa((unsigned long)__start_rodata) >> PAGE_SHIFT,
+ 		   __pa((unsigned long)__end_rodata) >> PAGE_SHIFT))
+ 		pgprot_val(forbidden) |= _PAGE_RW;
++	/*
++	 * .data and .bss should always be writable.
++	 */
++	if ((within(pfn, __pa((unsigned long)_sdata) >> PAGE_SHIFT,
++		   __pa((unsigned long)_edata) >> PAGE_SHIFT)) ||
++	    (within(pfn, __pa((unsigned long)__bss_start) >> PAGE_SHIFT,
++		   __pa((unsigned long)__bss_stop) >> PAGE_SHIFT))) {
++		pgprot_val(required) |= _PAGE_RW;
++	}
 
-The cFYI() macro that is invoked in the (unbraced) if clause contains an
-if statement ...  so this warning actually indicates a bug.  Those
-debugging macros look like a real mess ...
+ #if defined(CONFIG_X86_64) && defined(CONFIG_DEBUG_RODATA)
+ 	/*
+@@ -317,6 +327,7 @@ static inline pgprot_t static_protections(pgprot_t
+prot, unsigned long address,
+ #endif
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+ 	prot = __pgprot(pgprot_val(prot) & ~pgprot_val(forbidden));
++	prot = __pgprot(pgprot_val(prot) | pgprot_val(required));
 
---Signature=_Thu__1_Apr_2010_11_50_59_+1100_tLGndIcf21WS7aeD
-Content-Type: application/pgp-signature
+ 	return prot;
+ }
+@@ -393,7 +404,7 @@ try_preserve_large_page(pte_t *kpte, unsigned long address,
+ {
+ 	unsigned long nextpage_addr, numpages, pmask, psize, flags, addr, pfn;
+ 	pte_t new_pte, old_pte, *tmp;
+-	pgprot_t old_prot, new_prot;
++	pgprot_t old_prot, new_prot, req_prot;
+ 	int i, do_split = 1;
+ 	unsigned int level;
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+@@ -438,10 +449,10 @@ try_preserve_large_page(pte_t *kpte, unsigned
+long address,
+ 	 * We are safe now. Check whether the new pgprot is the same:
+ 	 */
+ 	old_pte = *kpte;
+-	old_prot = new_prot = pte_pgprot(old_pte);
++	old_prot = new_prot = req_prot = pte_pgprot(old_pte);
 
-iEYEARECAAYFAkuz7fMACgkQjjKRsyhoI8wK8gCfQ6hlYEaHt9CstI046s55rUCe
-jAgAoLETu8apz1owpgeaZJJAGrBLtBG3
-=UgKh
------END PGP SIGNATURE-----
+-	pgprot_val(new_prot) &= ~pgprot_val(cpa->mask_clr);
+-	pgprot_val(new_prot) |= pgprot_val(cpa->mask_set);
++	pgprot_val(req_prot) &= ~pgprot_val(cpa->mask_clr);
++	pgprot_val(req_prot) |= pgprot_val(cpa->mask_set);
 
---Signature=_Thu__1_Apr_2010_11_50_59_+1100_tLGndIcf21WS7aeD--
+ 	/*
+ 	 * old_pte points to the large page base address. So we need
+@@ -450,17 +461,17 @@ try_preserve_large_page(pte_t *kpte, unsigned
+long address,
+ 	pfn = pte_pfn(old_pte) + ((address & (psize - 1)) >> PAGE_SHIFT);
+ 	cpa->pfn = pfn;
+
+-	new_prot = static_protections(new_prot, address, pfn);
++	new_prot = static_protections(req_prot, address, pfn);
+
+ 	/*
+ 	 * We need to check the full range, whether
+ 	 * static_protection() requires a different pgprot for one of
+ 	 * the pages in the range we try to preserve:
+ 	 */
+-	addr = address + PAGE_SIZE;
+-	pfn++;
+-	for (i = 1; i < cpa->numpages; i++, addr += PAGE_SIZE, pfn++) {
+-		pgprot_t chk_prot = static_protections(new_prot, addr, pfn);
++	addr = address & pmask;
++	pfn = pte_pfn(old_pte);
++	for (i = 0; i < (psize >> PAGE_SHIFT); i++, addr += PAGE_SIZE, pfn++) {
++		pgprot_t chk_prot = static_protections(req_prot, addr, pfn);
+
+ 		if (pgprot_val(chk_prot) != pgprot_val(new_prot))
+ 			goto out_unlock;
+@@ -483,7 +494,8 @@ try_preserve_large_page(pte_t *kpte, unsigned long address,
+ 	 * that we limited the number of possible pages already to
+ 	 * the number of pages in the large page.
+ 	 */
+-	if (address == (nextpage_addr - psize) && cpa->numpages == numpages) {
++	if (address == (address & pmask) &&
++		cpa->numpages == (psize >> PAGE_SHIFT)) {
+ 		/*
+ 		 * The address is aligned and the number of pages
+ 		 * covers the full page.
