@@ -1,66 +1,40 @@
-From: Bruno =?UTF-8?B?UHLDqW1vbnQ=?= <bonbons@linux-vserver.org>
-Subject: Re: linux-next: build failure after merge of the final tree (hid
- tree related)
-Date: Thu, 1 Apr 2010 09:53:04 +0200
-Message-ID: <20100401095304.487fffb4@pluto.restena.lu>
-References: <20100401170639.9f2fe605.sfr@canb.auug.org.au>
-	<alpine.LNX.2.00.1004010817420.8345@pobox.suse.cz>
-	<20100401183530.516bbca6.sfr@canb.auug.org.au>
+From: "John W. Linville" <linville@tuxdriver.com>
+Subject: Re: linux-next: manual merge of the wireless tree with the
+	wireless-current tree
+Date: Thu, 1 Apr 2010 07:43:56 -0400
+Message-ID: <20100401114355.GA6897@tuxdriver.com>
+References: <20100401125944.54adc73c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100401183530.516bbca6.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:57221 "EHLO
+	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754713Ab0DALpH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 1 Apr 2010 07:45:07 -0400
+Content-Disposition: inline
+In-Reply-To: <20100401125944.54adc73c.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wey-Yi Guy <wey-yi.w.guy@intel.com>, Reinette Chatre <reinette.chatre@intel.com>
 
-Hi Jiri, Stephen,
-
-Wondering why x86 (32bit and 64bit) does not need to include the
-header but other arches (at least powerpc) need it.
-
-Any idea via which header linux/uaccess.h gets included on x86?
-If nobody has checked by the time I get home I will determine that.
-
-Thanks,
-Bruno
-
-
-On Thu, 1 Apr 2010 18:35:30 Stephen Rothwell wrote:
-> Hi Jiri,
+On Thu, Apr 01, 2010 at 12:59:44PM +1100, Stephen Rothwell wrote:
+> Hi John,
 > 
-> On Thu, 1 Apr 2010 08:18:43 +0200 (CEST) Jiri Kosina
-> <jkosina@suse.cz> wrote:
-> >
-> > On Thu, 1 Apr 2010, Stephen Rothwell wrote:
-> > 
-> > > After merging the final tree, today's linux-next build (powerpc
-> > > allyesconfig) failed like this:
-> > > 
-> > > drivers/hid/hid-picolcd.c: In function
-> > > 'picolcd_debug_reset_write': drivers/hid/hid-picolcd.c:1343:
-> > > error: implicit declaration of function 'copy_from_user'
-> > > drivers/hid/hid-picolcd.c: In function
-> > > 'picolcd_debug_eeprom_read': drivers/hid/hid-picolcd.c:1407:
-> > > error: implicit declaration of function 'copy_to_user'
-> > > 
-> > > Caused by commit 9bbf2b98ba11d00bd73e3254e15cfe17ccaff6ba ("HID:
-> > > add experimental access to PicoLCD device's EEPROM and FLASH").
-> > > Using copy_ {to,from}_user requires the include of
-> > > linux/uaccess.h.
-> > > 
-> > > I have reverted that commit for today.
-> > 
-> > Hmm, on which arch did this bomb out? I wonder why it is building
-> > fine for me.
+> Today's linux-next merge of the wireless tree got a conflict in
+> drivers/net/wireless/iwlwifi/iwl-4965.c between commit
+> be6b38bcb175613f239e0b302607db346472c6b6 ("iwlwifi: counting number of
+> tfds can be free for 4965") from the wireless-current tree and commit
+> 74bcdb33e99f49ef5202dd2f8109945b4570edc2 ("iwlwifi: move agn only tx
+> functions from iwlcore to iwlagn") from the wireless tree.
 > 
-> PowerPC (see above).  It could also be some interaction with another
-> tree in linux-next.
-> 
-> > Anyway, I have added the include, as it is obviously correct(tm),
-> > thanks for reporting it.
-> 
-> Thanks.
-> 
+> I fixed it up (see below) and can carry the fix for a while.
+
+Yes, that looks correct to me.
+
+Thanks!
+
+John
+-- 
+John W. Linville		Someday the world will need a hero, and you
+linville@tuxdriver.com			might be all we have.  Be ready.
