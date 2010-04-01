@@ -1,34 +1,88 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for April 1 (virtio_blk warning)
-Date: Thu, 1 Apr 2010 09:13:12 -0700
-Message-ID: <20100401091312.85775242.randy.dunlap@oracle.com>
-References: <20100401172317.80b6d961.sfr@canb.auug.org.au>
+From: Bruno =?UTF-8?B?UHLDqW1vbnQ=?= <bonbons@linux-vserver.org>
+Subject: Re: linux-next: build failure after merge of the final tree (hid
+ tree related)
+Date: Thu, 1 Apr 2010 21:05:19 +0200
+Message-ID: <20100401210519.2ac3f3a5@neptune.home>
+References: <20100401170639.9f2fe605.sfr@canb.auug.org.au>
+	<alpine.LNX.2.00.1004010817420.8345@pobox.suse.cz>
+	<20100401183530.516bbca6.sfr@canb.auug.org.au>
+	<20100401095304.487fffb4@pluto.restena.lu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet12.oracle.com ([141.146.126.234]:28871 "EHLO
-	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755565Ab0DAQPM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 1 Apr 2010 12:15:12 -0400
-In-Reply-To: <20100401172317.80b6d961.sfr@canb.auug.org.au>
+Received: from legolas.restena.lu ([158.64.1.34]:59848 "EHLO
+	legolas.restena.lu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758683Ab0DATF3 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 1 Apr 2010 15:05:29 -0400
+In-Reply-To: <20100401095304.487fffb4@pluto.restena.lu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 1 Apr 2010 17:23:17 +1100 Stephen Rothwell wrote:
+On Thu, 01 April 2010 Bruno Pr=C3=A9mont <bonbons@linux-vserver.org> wr=
+ote:
+> Hi Jiri, Stephen,
+>=20
+> Wondering why x86 (32bit and 64bit) does not need to include the
+> header but other arches (at least powerpc) need it.
+>=20
+> Any idea via which header linux/uaccess.h gets included on x86?
+> If nobody has checked by the time I get home I will determine that.
 
-> Hi all,
-> 
-> Changes since 20100331:
+Here is the include path for x86:
+included arch/x86/include/asm/uaccess.h
+    from arch/x86/include/asm/sections.h:5,
+    from arch/x86/include/asm/hw_irq.h:26,
+    from include/linux/irq.h:233,
+    from arch/x86/include/asm/hardirq.h:5,
+    from include/linux/hardirq.h:10,
+    from include/linux/interrupt.h:12,
+    from include/linux/usb.h:15,
+    from drivers/hid/hid-picolcd.c:26:
+
+Wondering why there is such a difference for powerpc!
+
+Thanks,
+Bruno
 
 
-drivers/block/virtio_blk.c:228:13: warning: multi-character character constant
-
-due to:
-
-	if (cmd == 'VBID') {
-
----
-~Randy
+> On Thu, 1 Apr 2010 18:35:30 Stephen Rothwell wrote:
+> > Hi Jiri,
+> >=20
+> > On Thu, 1 Apr 2010 08:18:43 +0200 (CEST) Jiri Kosina
+> > <jkosina@suse.cz> wrote:
+> > >
+> > > On Thu, 1 Apr 2010, Stephen Rothwell wrote:
+> > >=20
+> > > > After merging the final tree, today's linux-next build (powerpc
+> > > > allyesconfig) failed like this:
+> > > >=20
+> > > > drivers/hid/hid-picolcd.c: In function
+> > > > 'picolcd_debug_reset_write': drivers/hid/hid-picolcd.c:1343:
+> > > > error: implicit declaration of function 'copy_from_user'
+> > > > drivers/hid/hid-picolcd.c: In function
+> > > > 'picolcd_debug_eeprom_read': drivers/hid/hid-picolcd.c:1407:
+> > > > error: implicit declaration of function 'copy_to_user'
+> > > >=20
+> > > > Caused by commit 9bbf2b98ba11d00bd73e3254e15cfe17ccaff6ba ("HID=
+:
+> > > > add experimental access to PicoLCD device's EEPROM and FLASH").
+> > > > Using copy_ {to,from}_user requires the include of
+> > > > linux/uaccess.h.
+> > > >=20
+> > > > I have reverted that commit for today.
+> > >=20
+> > > Hmm, on which arch did this bomb out? I wonder why it is building
+> > > fine for me.
+> >=20
+> > PowerPC (see above).  It could also be some interaction with anothe=
+r
+> > tree in linux-next.
+> >=20
+> > > Anyway, I have added the include, as it is obviously correct(tm),
+> > > thanks for reporting it.
+> >=20
+> > Thanks.
+> >=20
