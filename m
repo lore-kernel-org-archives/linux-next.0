@@ -1,63 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the slabh tree
-Date: Thu, 1 Apr 2010 16:41:10 +1100
-Message-ID: <20100401164110.80e3b18f.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (hid tree
+ related)
+Date: Thu, 1 Apr 2010 17:06:39 +1100
+Message-ID: <20100401170639.9f2fe605.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__1_Apr_2010_17_06_39_+1100_NCsV.QWPQe6Bg5gy"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47487 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:60321 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753042Ab0DAFlO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 1 Apr 2010 01:41:14 -0400
+	id S1753343Ab0DAGGs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 1 Apr 2010 02:06:48 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sjur Braendeland <sjur.brandeland@stericsson.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+To: Jiri Kosina <jikos@jikos.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IkJydW5vIFByw6ltb250Ig==?= <bonbons@linux-vserver.org>
 
-Hi Tejun,
+--Signature=_Thu__1_Apr_2010_17_06_39_+1100_NCsV.QWPQe6Bg5gy
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-After merging the slabh tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Hi Jiri,
 
-net/caif/cfcnfg.c: In function 'cfcnfg_create':
-net/caif/cfcnfg.c:68: error: implicit declaration of function 'kmalloc'
-net/caif/cfcnfg.c:68: warning: assignment makes pointer from integer without a cast
-net/caif/cfcnfg.c:100: error: implicit declaration of function 'kfree'
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-Caused by commit 15c9ac0c80e390df09ce5730a7b08b13e07a8dd5 ("net-caif: add
-CAIF generic caif support functions") from the net interacting with
-commit de380b55f92986c1a84198149cb71b7228d15fbd ("percpu: don't
-implicitly include slab.h from percpu.h") from the slabh tree.
+drivers/hid/hid-picolcd.c: In function 'picolcd_debug_reset_write':
+drivers/hid/hid-picolcd.c:1343: error: implicit declaration of function 'co=
+py_from_user'
+drivers/hid/hid-picolcd.c: In function 'picolcd_debug_eeprom_read':
+drivers/hid/hid-picolcd.c:1407: error: implicit declaration of function 'co=
+py_to_user'
 
-I have applied the following patch for today.  Dave, could you apply this
-to the net tree please?
+Caused by commit 9bbf2b98ba11d00bd73e3254e15cfe17ccaff6ba ("HID: add
+experimental access to PicoLCD device's EEPROM and FLASH").  Using copy_
+{to,from}_user requires the include of linux/uaccess.h.
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 1 Apr 2010 16:31:50 +1100
-Subject: [PATCH] net-caif: using kmalloc/kfree requires the include of slab.h
+I have reverted that commit for today.
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- net/caif/cfcnfg.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/net/caif/cfcnfg.c b/net/caif/cfcnfg.c
-index 70a733d..c873e3d 100644
---- a/net/caif/cfcnfg.c
-+++ b/net/caif/cfcnfg.c
-@@ -5,6 +5,7 @@
-  */
- #include <linux/kernel.h>
- #include <linux/stddef.h>
-+#include <linux/slab.h>
- #include <net/caif/caif_layer.h>
- #include <net/caif/cfpkt.h>
- #include <net/caif/cfcnfg.h>
--- 
-1.7.0.3
-
--- 
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__1_Apr_2010_17_06_39_+1100_NCsV.QWPQe6Bg5gy
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAku0N+8ACgkQjjKRsyhoI8wvWACeOaOufsE4iYe1kUAzZ4wEpAjN
+45YAn3Oy3v52hLTgB/njOsVMNjSB+g1z
+=8Djm
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__1_Apr_2010_17_06_39_+1100_NCsV.QWPQe6Bg5gy--
