@@ -1,88 +1,75 @@
-From: Bruno =?UTF-8?B?UHLDqW1vbnQ=?= <bonbons@linux-vserver.org>
-Subject: Re: linux-next: build failure after merge of the final tree (hid
- tree related)
-Date: Thu, 1 Apr 2010 21:05:19 +0200
-Message-ID: <20100401210519.2ac3f3a5@neptune.home>
-References: <20100401170639.9f2fe605.sfr@canb.auug.org.au>
-	<alpine.LNX.2.00.1004010817420.8345@pobox.suse.cz>
-	<20100401183530.516bbca6.sfr@canb.auug.org.au>
-	<20100401095304.487fffb4@pluto.restena.lu>
+From: Samuel Ortiz <sameo@linux.intel.com>
+Subject: Re: [PATCH 12/17] mfd: update gfp/slab.h includes
+Date: Fri, 2 Apr 2010 12:12:00 +0200
+Message-ID: <20100402101159.GC8010@sortiz.org>
+References: <1269885165-18617-1-git-send-email-tj@kernel.org>
+ <1269885165-18617-13-git-send-email-tj@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from legolas.restena.lu ([158.64.1.34]:59848 "EHLO
-	legolas.restena.lu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758683Ab0DATF3 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 1 Apr 2010 15:05:29 -0400
-In-Reply-To: <20100401095304.487fffb4@pluto.restena.lu>
+Received: from mga09.intel.com ([134.134.136.24]:35371 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757973Ab0DBKLW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 2 Apr 2010 06:11:22 -0400
+Content-Disposition: inline
+In-Reply-To: <1269885165-18617-13-git-send-email-tj@kernel.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, 01 April 2010 Bruno Pr=C3=A9mont <bonbons@linux-vserver.org> wr=
-ote:
-> Hi Jiri, Stephen,
->=20
-> Wondering why x86 (32bit and 64bit) does not need to include the
-> header but other arches (at least powerpc) need it.
->=20
-> Any idea via which header linux/uaccess.h gets included on x86?
-> If nobody has checked by the time I get home I will determine that.
+Hi Tejun,
 
-Here is the include path for x86:
-included arch/x86/include/asm/uaccess.h
-    from arch/x86/include/asm/sections.h:5,
-    from arch/x86/include/asm/hw_irq.h:26,
-    from include/linux/irq.h:233,
-    from arch/x86/include/asm/hardirq.h:5,
-    from include/linux/hardirq.h:10,
-    from include/linux/interrupt.h:12,
-    from include/linux/usb.h:15,
-    from drivers/hid/hid-picolcd.c:26:
+On Tue, Mar 30, 2010 at 02:52:40AM +0900, Tejun Heo wrote:
+> Implicit slab.h inclusion via percpu.h is about to go away.  Make sure
+> gfp.h or slab.h is included as necessary.
+The davinci MFD driver is sitting in Mark's tree, so I guess he should take
+this patch.
+Mark, feel free to add my:
+Acked-by: Samuel Ortiz <sameo@linux.intel.com>
 
-Wondering why there is such a difference for powerpc!
+to this patch.
 
-Thanks,
-Bruno
+Cheers,
+Samuel.
 
 
-> On Thu, 1 Apr 2010 18:35:30 Stephen Rothwell wrote:
-> > Hi Jiri,
-> >=20
-> > On Thu, 1 Apr 2010 08:18:43 +0200 (CEST) Jiri Kosina
-> > <jkosina@suse.cz> wrote:
-> > >
-> > > On Thu, 1 Apr 2010, Stephen Rothwell wrote:
-> > >=20
-> > > > After merging the final tree, today's linux-next build (powerpc
-> > > > allyesconfig) failed like this:
-> > > >=20
-> > > > drivers/hid/hid-picolcd.c: In function
-> > > > 'picolcd_debug_reset_write': drivers/hid/hid-picolcd.c:1343:
-> > > > error: implicit declaration of function 'copy_from_user'
-> > > > drivers/hid/hid-picolcd.c: In function
-> > > > 'picolcd_debug_eeprom_read': drivers/hid/hid-picolcd.c:1407:
-> > > > error: implicit declaration of function 'copy_to_user'
-> > > >=20
-> > > > Caused by commit 9bbf2b98ba11d00bd73e3254e15cfe17ccaff6ba ("HID=
-:
-> > > > add experimental access to PicoLCD device's EEPROM and FLASH").
-> > > > Using copy_ {to,from}_user requires the include of
-> > > > linux/uaccess.h.
-> > > >=20
-> > > > I have reverted that commit for today.
-> > >=20
-> > > Hmm, on which arch did this bomb out? I wonder why it is building
-> > > fine for me.
-> >=20
-> > PowerPC (see above).  It could also be some interaction with anothe=
-r
-> > tree in linux-next.
-> >=20
-> > > Anyway, I have added the include, as it is obviously correct(tm),
-> > > thanks for reporting it.
-> >=20
-> > Thanks.
-> >=20
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+> Cc: Samuel Ortiz <sameo@linux.intel.com>
+> ---
+>  drivers/gpio/rdc321x-gpio.c      |    1 +
+>  drivers/mfd/davinci_voicecodec.c |    1 +
+>  2 files changed, 2 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/gpio/rdc321x-gpio.c b/drivers/gpio/rdc321x-gpio.c
+> index 46c5519..e344907 100644
+> --- a/drivers/gpio/rdc321x-gpio.c
+> +++ b/drivers/gpio/rdc321x-gpio.c
+> @@ -27,6 +27,7 @@
+>  #include <linux/pci.h>
+>  #include <linux/gpio.h>
+>  #include <linux/mfd/rdc321x.h>
+> +#include <linux/slab.h>
+>  
+>  struct rdc321x_gpio {
+>  	spinlock_t		lock;
+> diff --git a/drivers/mfd/davinci_voicecodec.c b/drivers/mfd/davinci_voicecodec.c
+> index 9886aa8..3e75f02 100644
+> --- a/drivers/mfd/davinci_voicecodec.c
+> +++ b/drivers/mfd/davinci_voicecodec.c
+> @@ -23,6 +23,7 @@
+>  #include <linux/init.h>
+>  #include <linux/module.h>
+>  #include <linux/device.h>
+> +#include <linux/slab.h>
+>  #include <linux/delay.h>
+>  #include <linux/io.h>
+>  #include <linux/clk.h>
+> -- 
+> 1.6.4.2
+> 
+
+-- 
+Intel Open Source Technology Centre
+http://oss.intel.com/
