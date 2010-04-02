@@ -1,75 +1,37 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
 Subject: Re: [PATCH 12/17] mfd: update gfp/slab.h includes
-Date: Fri, 2 Apr 2010 12:12:00 +0200
-Message-ID: <20100402101159.GC8010@sortiz.org>
+Date: Fri, 2 Apr 2010 17:08:55 +0100
+Message-ID: <20100402160855.GA15928@rakim.wolfsonmicro.main>
 References: <1269885165-18617-1-git-send-email-tj@kernel.org>
  <1269885165-18617-13-git-send-email-tj@kernel.org>
+ <20100402101159.GC8010@sortiz.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:35371 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757973Ab0DBKLW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 2 Apr 2010 06:11:22 -0400
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:60337 "EHLO
+	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751222Ab0DBQI5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 2 Apr 2010 12:08:57 -0400
 Content-Disposition: inline
-In-Reply-To: <1269885165-18617-13-git-send-email-tj@kernel.org>
+In-Reply-To: <20100402101159.GC8010@sortiz.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: Tejun Heo <tj@kernel.org>, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Tejun,
-
-On Tue, Mar 30, 2010 at 02:52:40AM +0900, Tejun Heo wrote:
-> Implicit slab.h inclusion via percpu.h is about to go away.  Make sure
-> gfp.h or slab.h is included as necessary.
-The davinci MFD driver is sitting in Mark's tree, so I guess he should take
-this patch.
-Mark, feel free to add my:
-Acked-by: Samuel Ortiz <sameo@linux.intel.com>
-
-to this patch.
-
-Cheers,
-Samuel.
-
-
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> Cc: Samuel Ortiz <sameo@linux.intel.com>
-> ---
->  drivers/gpio/rdc321x-gpio.c      |    1 +
->  drivers/mfd/davinci_voicecodec.c |    1 +
->  2 files changed, 2 insertions(+), 0 deletions(-)
+On Fri, Apr 02, 2010 at 12:12:00PM +0200, Samuel Ortiz wrote:
+> Hi Tejun,
 > 
-> diff --git a/drivers/gpio/rdc321x-gpio.c b/drivers/gpio/rdc321x-gpio.c
-> index 46c5519..e344907 100644
-> --- a/drivers/gpio/rdc321x-gpio.c
-> +++ b/drivers/gpio/rdc321x-gpio.c
-> @@ -27,6 +27,7 @@
->  #include <linux/pci.h>
->  #include <linux/gpio.h>
->  #include <linux/mfd/rdc321x.h>
-> +#include <linux/slab.h>
->  
->  struct rdc321x_gpio {
->  	spinlock_t		lock;
-> diff --git a/drivers/mfd/davinci_voicecodec.c b/drivers/mfd/davinci_voicecodec.c
-> index 9886aa8..3e75f02 100644
-> --- a/drivers/mfd/davinci_voicecodec.c
-> +++ b/drivers/mfd/davinci_voicecodec.c
-> @@ -23,6 +23,7 @@
->  #include <linux/init.h>
->  #include <linux/module.h>
->  #include <linux/device.h>
-> +#include <linux/slab.h>
->  #include <linux/delay.h>
->  #include <linux/io.h>
->  #include <linux/clk.h>
-> -- 
-> 1.6.4.2
-> 
+> On Tue, Mar 30, 2010 at 02:52:40AM +0900, Tejun Heo wrote:
+> > Implicit slab.h inclusion via percpu.h is about to go away.  Make sure
+> > gfp.h or slab.h is included as necessary.
+> The davinci MFD driver is sitting in Mark's tree, so I guess he should take
+> this patch.
+> Mark, feel free to add my:
+> Acked-by: Samuel Ortiz <sameo@linux.intel.com>
 
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+> to this patch.
+
+Unfortunately drivers/gpio/rdc321x-gpio.c isn't in mainline yet so the
+patch doesn't apply cleanly to ASoC either.  I've applied the DaVinci
+hunk, the other will need to go via your tree.
