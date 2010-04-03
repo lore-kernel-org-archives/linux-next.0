@@ -1,93 +1,49 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH 05a/17] v4l-dvb: update gfp/slab.h includes
-Date: Sat, 3 Apr 2010 12:43:31 +1100
-Message-ID: <20100403124331.f6d073cb.sfr@canb.auug.org.au>
-References: <1269885165-18617-1-git-send-email-tj@kernel.org>
-	<1269885165-18617-6-git-send-email-tj@kernel.org>
-	<20100403123629.d1148066.sfr@canb.auug.org.au>
+From: Suresh Siddha <suresh.b.siddha@intel.com>
+Subject: Re: [PATCH 1/4] [tip:x86/mm] Correcting improper large page
+ preservation
+Date: Fri, 02 Apr 2010 23:43:20 -0700
+Message-ID: <1270277000.2686.20.camel@sbs-t61>
+References: <v2o817ecb6f1003311859nb14bab83y80f743a0accc5028@mail.gmail.com>
+Reply-To: Suresh Siddha <suresh.b.siddha@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34783 "EHLO smtps.tip.net.au"
+Received: from mga02.intel.com ([134.134.136.20]:20507 "EHLO mga02.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754831Ab0DCBne (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 2 Apr 2010 21:43:34 -0400
-In-Reply-To: <20100403123629.d1148066.sfr@canb.auug.org.au>
+	id S1751675Ab0DCGoe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 3 Apr 2010 02:44:34 -0400
+In-Reply-To: <v2o817ecb6f1003311859nb14bab83y80f743a0accc5028@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>
+To: Siarhei Liakh <sliakh.lkml@gmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, Rusty Russell <rusty@rustcorp.com.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>
 
-From: Tejun Heo <tj@kernel.org>
+On Wed, 2010-03-31 at 18:59 -0700, Siarhei Liakh wrote:
+> +	/*
+> +	 * .data and .bss should always be writable.
+> +	 */
+> +	if ((within(pfn, __pa((unsigned long)_sdata) >> PAGE_SHIFT,
+> +		   __pa((unsigned long)_edata) >> PAGE_SHIFT)) ||
+> +	    (within(pfn, __pa((unsigned long)__bss_start) >> PAGE_SHIFT,
+> +		   __pa((unsigned long)__bss_stop) >> PAGE_SHIFT))) {
+> +		pgprot_val(required) |= _PAGE_RW;
+> +	}
 
-Implicit slab.h inclusion via percpu.h is about to go away.  Make sure
-gfp.h or slab.h is included as necessary.
+I have reviewed this patch and the only comment I have is:
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>
----
- drivers/staging/tm6000/tm6000-alsa.c             |    1 +
- drivers/staging/tm6000/tm6000-cards.c            |    1 +
- drivers/staging/tm6000/tm6000-core.c             |    1 +
- drivers/staging/tm6000/tm6000-dvb.c              |    1 +
- 4 files changed, 4 insertions(+), 0 deletions(-)
+On 64bit kernels, kernel text/data mapping and kernel identity mappings
+are different virtual addresses mapping to same pfn ranges. For the
+data/bss pages, does it help (in identifying certain data corruptions
+more easily) in making the kernel identity mapping to be set to
+read-only and enforce the need of RW only for the kernel data mappings.
 
-Just the v4l-dvb split our part of what was the staging tree patch.
+Or is there some obscure code that uses something like
+__va(__pa(data_symbol)) and writes to it?
 
-diff --git a/drivers/staging/tm6000/tm6000-alsa.c b/drivers/staging/tm6000/tm6000-alsa.c
-index bc89f9d..3404516 100644
---- a/drivers/staging/tm6000/tm6000-alsa.c
-+++ b/drivers/staging/tm6000/tm6000-alsa.c
-@@ -15,6 +15,7 @@
- #include <linux/device.h>
- #include <linux/interrupt.h>
- #include <linux/usb.h>
-+#include <linux/slab.h>
- 
- #include <asm/delay.h>
- #include <sound/core.h>
-diff --git a/drivers/staging/tm6000/tm6000-cards.c b/drivers/staging/tm6000/tm6000-cards.c
-index 2053008..2935533 100644
---- a/drivers/staging/tm6000/tm6000-cards.c
-+++ b/drivers/staging/tm6000/tm6000-cards.c
-@@ -24,6 +24,7 @@
- #include <linux/i2c.h>
- #include <linux/usb.h>
- #include <linux/version.h>
-+#include <linux/slab.h>
- #include <media/v4l2-common.h>
- #include <media/tuner.h>
- #include <media/tvaudio.h>
-diff --git a/drivers/staging/tm6000/tm6000-core.c b/drivers/staging/tm6000/tm6000-core.c
-index d9cade0..2ae7ae0 100644
---- a/drivers/staging/tm6000/tm6000-core.c
-+++ b/drivers/staging/tm6000/tm6000-core.c
-@@ -22,6 +22,7 @@
- 
- #include <linux/module.h>
- #include <linux/kernel.h>
-+#include <linux/slab.h>
- #include <linux/usb.h>
- #include <linux/i2c.h>
- #include "tm6000.h"
-diff --git a/drivers/staging/tm6000/tm6000-dvb.c b/drivers/staging/tm6000/tm6000-dvb.c
-index 1072206..dfba5e6 100644
---- a/drivers/staging/tm6000/tm6000-dvb.c
-+++ b/drivers/staging/tm6000/tm6000-dvb.c
-@@ -18,6 +18,7 @@
-  */
- 
- #include <linux/kernel.h>
-+#include <linux/slab.h>
- #include <linux/usb.h>
- 
- #include "tm6000.h"
--- 
-1.6.4.2
+If not, we can remove the __pa() constructs above and use the addr for
+comparisons.
 
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Otherwise this patch looks good to me.
+
+Reviewed-by: Suresh Siddha <suresh.b.siddha@intel.com>
