@@ -1,62 +1,49 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for April 1 (virtio_blk warning)
-Date: Tue, 6 Apr 2010 13:58:59 -0700
-Message-ID: <20100406135859.ed1fa4c4.randy.dunlap@oracle.com>
-References: <20100401172317.80b6d961.sfr@canb.auug.org.au>
-	<20100401091312.85775242.randy.dunlap@oracle.com>
-	<201004061210.48840.rusty@rustcorp.com.au>
-	<4BBB7A44.2020300@redhat.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the v4l-dvb tree with Linus' tree
+Date: Wed, 7 Apr 2010 11:00:35 +1000
+Message-ID: <20100407110035.217b024b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet11.oracle.com ([141.146.126.233]:37125 "EHLO
-	acsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756564Ab0DFVAE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Apr 2010 17:00:04 -0400
-In-Reply-To: <4BBB7A44.2020300@redhat.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:57436 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932307Ab0DGBAj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 6 Apr 2010 21:00:39 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: john cooper <john.cooper@redhat.com>
-Cc: Rusty Russell <rusty@rustcorp.com.au>, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Marc Haber <mh+qemu-devel@zugschlus.de>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>
 
-On Tue, 06 Apr 2010 14:15:32 -0400 john cooper wrote:
+Hi Mauro,
 
-> Rusty Russell wrote:
-> > On Fri, 2 Apr 2010 02:43:12 am Randy Dunlap wrote:
-> >> On Thu, 1 Apr 2010 17:23:17 +1100 Stephen Rothwell wrote:
-> >>
-> >>> Hi all,
-> >>>
-> >>> Changes since 20100331:
-> >>
-> >> drivers/block/virtio_blk.c:228:13: warning: multi-character character constant
-> >>
-> >> due to:
-> >>
-> >> 	if (cmd == 'VBID') {
-> > 
-> > John?  That looks suspiciously like untested code.
-> 
-> It does work as advertised although gcc is obliged to squawk
-> at multi-byte character constants due to portability concerns.
+Today's linux-next merge of the v4l-dvb tree got a conflict in
+drivers/media/video/meye.c between commit
+5a0e3ad6af8660be21ca98a971cd00f331318c05 ("include cleanup: Update gfp.h
+and slab.h includes to prepare for breaking implicit slab.h inclusion
+from percpu.h") from Linus' tree and commit
+b214778b09229f9135e715bf346c25f98c8ac1e4 ("V4L/DVB: meye: remove last
+V4L1 remnants from the code and add v4l2_device") from the v4l-dvb tree.
 
-Thanks.  I wasn't aware of that gcc extension.
+Just context changes.  I fixed it up (see below) and can carry the change
+for a while.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-> Note I'd intended that only as an example for the benefit of
-> completeness in the associated patch set, and to stick out
-> like a sore thumb of sorts.  Marc Haber had suggested exposing
-> the id string to the guest userland via /sys which is what I
-> had expected to displace the loose ioctl example above.  In
-> fact that discussion is what prodded revisiting this issue in
-> the first place.
-> 
-> Unsure whether Marc (cc'ed here) is still planning to pursue
-> that interface so unless I hear something to the contrary in
-> the next day or so I'll package up a suitable ioctl interface
-> and forward a patch.  It doesn't hurt to provide ioctl access
-> to the info in addition to exposing it via /sys, but I'd
-> hoped the latter would overshadow the need to do so.
-
----
-~Randy
+diff --cc drivers/media/video/meye.c
+index 4404e5e,9c7f282..0000000
+--- a/drivers/media/video/meye.c
++++ b/drivers/media/video/meye.c
+@@@ -30,9 -30,9 +30,10 @@@
+  #include <linux/pci.h>
+  #include <linux/sched.h>
+  #include <linux/init.h>
+- #include <linux/videodev.h>
++ #include <linux/videodev2.h>
+ +#include <linux/gfp.h>
+  #include <media/v4l2-common.h>
++ #include <media/v4l2-device.h>
+  #include <media/v4l2-ioctl.h>
+  #include <asm/uaccess.h>
+  #include <asm/io.h>
