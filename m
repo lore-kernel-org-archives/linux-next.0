@@ -1,135 +1,102 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rr tree with the net tree
-Date: Wed, 7 Apr 2010 13:51:17 +1000
-Message-ID: <20100407135117.1111c4a0.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the pcmcia tree with the net tree
+Date: Wed, 7 Apr 2010 14:17:07 +1000
+Message-ID: <20100407141707.e80c8768.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54856 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:47178 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753472Ab0DGDvX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 6 Apr 2010 23:51:23 -0400
+	id S1750696Ab0DGERL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 7 Apr 2010 00:17:11 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, Ben Hutchings <ben@decadent.org.uk>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Ondrej Zary <linux@rainbow-software.org>
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Kurz <linux@kbdbabel.org>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
 
-Hi Rusty,
+Hi Dominik,
 
-Today's linux-next merge of the rr tree got a conflict in
-include/linux/mod_devicetable.h scripts/mod/file2alias.c between commit
-8626d3b4328061f5b82b11ae1d6918a0c3602f42 ("phylib: Support phy module
-autoloading") from the net tree and commits
-df73f69d6a29eb5a22327009627f23c7ae4be007
-("modules:isapnp-mod_devicetable.h") and a8e67afa03daca8b570115ba9b33f508cc5a9133 ("MODULE_DEVICE_TABLE(isapnp, ...) does nothing") from the rr tree.
+Today's linux-next merge of the pcmcia tree got a conflict in
+drivers/net/pcmcia/3c589_cs.c between commit
+f64e96973a1fa885ce6e4f7e3fdbae83de98fcab ("net/pcmcia/3c589_cs: using
+netdev_info and friends where appropriate") from the net tree and commits
+cbd8ca0260b78f3b4157dc8ff23edbd211c4eef5 ("pcmcia: re-work
+pcmcia_request_irq()") and cc25a704447fad12205ca8c7c42d6bba1c1590b0
+("pcmcia: dev_node removal (drivers with unregister_netdev check)") from
+the pcmcia tree.
 
-Just overlapping additions.  I fixed it up (see below) and can carry the
-fix as necessary.
+Most of these conflicts are just due to unrelated white space changes in
+the net tree commit.  I fixed it up (see below) and can carry the fix as
+necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc include/linux/mod_devicetable.h
-index 55f1f9c,e69d69f..0000000
---- a/include/linux/mod_devicetable.h
-+++ b/include/linux/mod_devicetable.h
-@@@ -474,30 -474,11 +474,37 @@@ struct platform_device_id 
-  			__attribute__((aligned(sizeof(kernel_ulong_t))));
+diff --cc drivers/net/pcmcia/3c589_cs.c
+index 580977f,5ab589d..0000000
+--- a/drivers/net/pcmcia/3c589_cs.c
++++ b/drivers/net/pcmcia/3c589_cs.c
+@@@ -129,13 -106,12 +129,12 @@@ enum RxFilter 
+  
+  struct el3_private {
+  	struct pcmcia_device	*p_dev;
+- 	dev_node_t		node;
+ -    /* For transceiver monitoring */
+ -    struct timer_list	media;
+ -    u16			media_status;
+ -    u16			fast_poll;
+ -    unsigned long	last_irq;
+ -    spinlock_t		lock;
+ +	/* For transceiver monitoring */
+ +	struct timer_list	media;
+ +	u16			media_status;
+ +	u16			fast_poll;
+ +	unsigned long		last_irq;
+ +	spinlock_t		lock;
   };
   
- +#define MDIO_MODULE_PREFIX	"mdio:"
+  static const char *if_names[] = { "auto", "10baseT", "10base2", "AUI" };
+@@@ -301,8 -274,8 +297,8 @@@ static int tc589_config(struct pcmcia_d
+      ret = pcmcia_request_configuration(link, &link->conf);
+      if (ret)
+  	    goto failed;
+ -	
  +
- +#define MDIO_ID_FMT "%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d"
- +#define MDIO_ID_ARGS(_id) \
- +	(_id)>>31, ((_id)>>30) & 1, ((_id)>>29) & 1, ((_id)>>28) & 1,	\
- +	((_id)>>27) & 1, ((_id)>>26) & 1, ((_id)>>25) & 1, ((_id)>>24) & 1, \
- +	((_id)>>23) & 1, ((_id)>>22) & 1, ((_id)>>21) & 1, ((_id)>>20) & 1, \
- +	((_id)>>19) & 1, ((_id)>>18) & 1, ((_id)>>17) & 1, ((_id)>>16) & 1, \
- +	((_id)>>15) & 1, ((_id)>>14) & 1, ((_id)>>13) & 1, ((_id)>>12) & 1, \
- +	((_id)>>11) & 1, ((_id)>>10) & 1, ((_id)>>9) & 1, ((_id)>>8) & 1, \
- +	((_id)>>7) & 1, ((_id)>>6) & 1, ((_id)>>5) & 1, ((_id)>>4) & 1, \
- +	((_id)>>3) & 1, ((_id)>>2) & 1, ((_id)>>1) & 1, (_id) & 1
+-     dev->irq = link->irq.AssignedIRQ;
++     dev->irq = link->irq;
+      dev->base_addr = link->io.BasePort1;
+      ioaddr = dev->base_addr;
+      EL3WINDOW(0);
+@@@ -335,8 -308,7 +331,7 @@@
+  	dev->if_port = if_port;
+      else
+  	printk(KERN_ERR "3c589_cs: invalid if_port requested\n");
+ -    
  +
- +/**
- + * struct mdio_device_id - identifies PHY devices on an MDIO/MII bus
- + * @phy_id: The result of
- + *     (mdio_read(&MII_PHYSID1) << 16 | mdio_read(&PHYSID2)) & @phy_id_mask
- + *     for this PHY type
- + * @phy_id_mask: Defines the significant bits of @phy_id.  A value of 0
- + *     is used to terminate an array of struct mdio_device_id.
- + */
- +struct mdio_device_id {
- +	__u32 phy_id;
- +	__u32 phy_id_mask;
- +};
- +
-+ #define ISAPNP_ANY_ID		0xffff
-+ struct isapnp_device_id {
-+ 	unsigned short card_vendor, card_device;
-+ 	unsigned short vendor, function;
-+ 	kernel_ulong_t driver_data;	/* data private to the driver */
-+ };
-+ 
-  #endif /* LINUX_MOD_DEVICETABLE_H */
-diff --cc scripts/mod/file2alias.c
-index 36a60a8,6494f5b..0000000
---- a/scripts/mod/file2alias.c
-+++ b/scripts/mod/file2alias.c
-@@@ -796,28 -796,19 +796,41 @@@ static int do_platform_entry(const cha
-  	return 1;
-  }
+-     link->dev_node = &lp->node;
+      SET_NETDEV_DEV(dev, &link->dev);
   
- +static int do_mdio_entry(const char *filename,
- +			 struct mdio_device_id *id, char *alias)
- +{
- +	int i;
- +
- +	alias += sprintf(alias, MDIO_MODULE_PREFIX);
- +
- +	for (i = 0; i < 32; i++) {
- +		if (!((id->phy_id_mask >> (31-i)) & 1))
- +			*(alias++) = '?';
- +		else if ((id->phy_id >> (31-i)) & 1)
- +			*(alias++) = '1';
- +		else
- +			*(alias++) = '0';
- +	}
- +
- +	/* Terminate the string */
- +	*alias = 0;
- +
- +	return 1;
- +}
- +
-+ /* looks like: "pnp:dD" */
-+ static int do_isapnp_entry(const char *filename,
-+ 			   struct isapnp_device_id *id, char *alias)
-+ {
-+ 	sprintf(alias, "pnp:d%c%c%c%x%x%x%x*",
-+ 		'A' + ((id->vendor >> 2) & 0x3f) - 1,
-+ 		'A' + (((id->vendor & 3) << 3) | ((id->vendor >> 13) & 7)) - 1,
-+ 		'A' + ((id->vendor >> 8) & 0x1f) - 1,
-+ 		(id->function >> 4) & 0x0f, id->function & 0x0f,
-+ 		(id->function >> 12) & 0x0f, (id->function >> 8) & 0x0f);
-+ 	return 1;
-+ }
-+ 
-  /* Ignore any prefix, eg. some architectures prepend _ */
-  static inline int sym_is(const char *symbol, const char *name)
-  {
-@@@ -965,10 -956,10 +978,14 @@@ void handle_moddevtable(struct module *
-  		do_table(symval, sym->st_size,
-  			 sizeof(struct platform_device_id), "platform",
-  			 do_platform_entry, mod);
- +	else if (sym_is(symname, "__mod_mdio_device_table"))
- +		do_table(symval, sym->st_size,
- +			 sizeof(struct mdio_device_id), "mdio",
- +			 do_mdio_entry, mod);
-+ 	else if (sym_is(symname, "__mod_isapnp_device_table"))
-+ 		do_table(symval, sym->st_size,
-+ 			sizeof(struct isapnp_device_id), "isa",
-+ 			do_isapnp_entry, mod);
-  	free(zeros);
-  }
+      if (register_netdev(dev) != 0) {
+@@@ -344,15 -316,13 +339,12 @@@
+  	goto failed;
+      }
   
+-     strcpy(lp->node.dev_name, dev->name);
+- 
+ -    printk(KERN_INFO "%s: 3Com 3c%s, io %#3lx, irq %d, "
+ -	   "hw_addr %pM\n",
+ -	   dev->name, (multi ? "562" : "589"), dev->base_addr, dev->irq,
+ -	   dev->dev_addr);
+ -    printk(KERN_INFO "  %dK FIFO split %s Rx:Tx, %s xcvr\n",
+ -	   (fifo & 7) ? 32 : 8, ram_split[(fifo >> 16) & 3],
+ -	   if_names[dev->if_port]);
+ +    netdev_info(dev, "3Com 3c%s, io %#3lx, irq %d, hw_addr %pM\n",
+ +		(multi ? "562" : "589"), dev->base_addr, dev->irq,
+ +		dev->dev_addr);
+ +    netdev_info(dev, "  %dK FIFO split %s Rx:Tx, %s xcvr\n",
+ +		(fifo & 7) ? 32 : 8, ram_split[(fifo >> 16) & 3],
+ +		if_names[dev->if_port]);
+      return 0;
+  
+  failed:
