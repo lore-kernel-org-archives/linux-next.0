@@ -1,102 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pcmcia tree with the net tree
-Date: Wed, 7 Apr 2010 14:17:07 +1000
-Message-ID: <20100407141707.e80c8768.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the mfd tree
+Date: Wed, 7 Apr 2010 14:51:13 +1000
+Message-ID: <20100407145113.2f850106.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47178 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34330 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750696Ab0DGERL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 7 Apr 2010 00:17:11 -0400
+	id S1751422Ab0DGEvP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 7 Apr 2010 00:51:15 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Kurz <linux@kbdbabel.org>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, "Ira W. Snyder" <iws@ovro.caltech.edu>
 
-Hi Dominik,
+Hi Samuel,
 
-Today's linux-next merge of the pcmcia tree got a conflict in
-drivers/net/pcmcia/3c589_cs.c between commit
-f64e96973a1fa885ce6e4f7e3fdbae83de98fcab ("net/pcmcia/3c589_cs: using
-netdev_info and friends where appropriate") from the net tree and commits
-cbd8ca0260b78f3b4157dc8ff23edbd211c4eef5 ("pcmcia: re-work
-pcmcia_request_irq()") and cc25a704447fad12205ca8c7c42d6bba1c1590b0
-("pcmcia: dev_node removal (drivers with unregister_netdev check)") from
-the pcmcia tree.
+After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-Most of these conflicts are just due to unrelated white space changes in
-the net tree commit.  I fixed it up (see below) and can carry the fix as
-necessary.
+drivers/gpio/janz-ttl.c: In function 'ttl_probe':
+drivers/gpio/janz-ttl.c:158: error: implicit declaration of function 'kzalloc'
+drivers/gpio/janz-ttl.c:158: warning: assignment makes pointer from integer without a cast
+drivers/gpio/janz-ttl.c:210: error: implicit declaration of function 'kfree'
+
+Caused by commit 989b68d7d885a45099126e32b46304afd9b3789e ("gpio: Add
+support for Janz VMOD-TTL Digital IO module") interacting with commit
+de380b55f92986c1a84198149cb71b7228d15fbd ("percpu: don't implicitly
+include slab.h from percpu.h").
+
+I applied the following fix patch for today.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 7 Apr 2010 14:47:52 +1000
+Subject: [PATCH] gpio: janz-ttl: using kzalloc/kfree requires including slab.h
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/gpio/janz-ttl.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/gpio/janz-ttl.c b/drivers/gpio/janz-ttl.c
+index d97eeda..813ac07 100644
+--- a/drivers/gpio/janz-ttl.c
++++ b/drivers/gpio/janz-ttl.c
+@@ -17,6 +17,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/io.h>
+ #include <linux/gpio.h>
++#include <linux/slab.h>
+ 
+ #include <linux/mfd/janz.h>
+ 
+-- 
+1.7.0.3
+
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/net/pcmcia/3c589_cs.c
-index 580977f,5ab589d..0000000
---- a/drivers/net/pcmcia/3c589_cs.c
-+++ b/drivers/net/pcmcia/3c589_cs.c
-@@@ -129,13 -106,12 +129,12 @@@ enum RxFilter 
-  
-  struct el3_private {
-  	struct pcmcia_device	*p_dev;
-- 	dev_node_t		node;
- -    /* For transceiver monitoring */
- -    struct timer_list	media;
- -    u16			media_status;
- -    u16			fast_poll;
- -    unsigned long	last_irq;
- -    spinlock_t		lock;
- +	/* For transceiver monitoring */
- +	struct timer_list	media;
- +	u16			media_status;
- +	u16			fast_poll;
- +	unsigned long		last_irq;
- +	spinlock_t		lock;
-  };
-  
-  static const char *if_names[] = { "auto", "10baseT", "10base2", "AUI" };
-@@@ -301,8 -274,8 +297,8 @@@ static int tc589_config(struct pcmcia_d
-      ret = pcmcia_request_configuration(link, &link->conf);
-      if (ret)
-  	    goto failed;
- -	
- +
--     dev->irq = link->irq.AssignedIRQ;
-+     dev->irq = link->irq;
-      dev->base_addr = link->io.BasePort1;
-      ioaddr = dev->base_addr;
-      EL3WINDOW(0);
-@@@ -335,8 -308,7 +331,7 @@@
-  	dev->if_port = if_port;
-      else
-  	printk(KERN_ERR "3c589_cs: invalid if_port requested\n");
- -    
- +
--     link->dev_node = &lp->node;
-      SET_NETDEV_DEV(dev, &link->dev);
-  
-      if (register_netdev(dev) != 0) {
-@@@ -344,15 -316,13 +339,12 @@@
-  	goto failed;
-      }
-  
--     strcpy(lp->node.dev_name, dev->name);
-- 
- -    printk(KERN_INFO "%s: 3Com 3c%s, io %#3lx, irq %d, "
- -	   "hw_addr %pM\n",
- -	   dev->name, (multi ? "562" : "589"), dev->base_addr, dev->irq,
- -	   dev->dev_addr);
- -    printk(KERN_INFO "  %dK FIFO split %s Rx:Tx, %s xcvr\n",
- -	   (fifo & 7) ? 32 : 8, ram_split[(fifo >> 16) & 3],
- -	   if_names[dev->if_port]);
- +    netdev_info(dev, "3Com 3c%s, io %#3lx, irq %d, hw_addr %pM\n",
- +		(multi ? "562" : "589"), dev->base_addr, dev->irq,
- +		dev->dev_addr);
- +    netdev_info(dev, "  %dK FIFO split %s Rx:Tx, %s xcvr\n",
- +		(fifo & 7) ? 32 : 8, ram_split[(fifo >> 16) & 3],
- +		if_names[dev->if_port]);
-      return 0;
-  
-  failed:
+http://www.canb.auug.org.au/~sfr/
