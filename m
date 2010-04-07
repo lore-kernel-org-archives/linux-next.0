@@ -1,49 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the v4l-dvb tree with Linus' tree
-Date: Wed, 7 Apr 2010 11:00:35 +1000
-Message-ID: <20100407110035.217b024b.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net tree
+Date: Wed, 7 Apr 2010 12:58:17 +1000
+Message-ID: <20100407125817.e8e1d174.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__7_Apr_2010_12_58_17_+1000_4K7F55LMPdeEflYY"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57436 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:52303 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932307Ab0DGBAj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 6 Apr 2010 21:00:39 -0400
+	id S1751212Ab0DGC6Z (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 6 Apr 2010 22:58:25 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dimitris Michailidis <dm@chelsio.com>, Jiri Pirko <jpirko@redhat.com>
 
-Hi Mauro,
+--Signature=_Wed__7_Apr_2010_12_58_17_+1000_4K7F55LMPdeEflYY
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the v4l-dvb tree got a conflict in
-drivers/media/video/meye.c between commit
-5a0e3ad6af8660be21ca98a971cd00f331318c05 ("include cleanup: Update gfp.h
-and slab.h includes to prepare for breaking implicit slab.h inclusion
-from percpu.h") from Linus' tree and commit
-b214778b09229f9135e715bf346c25f98c8ac1e4 ("V4L/DVB: meye: remove last
-V4L1 remnants from the code and add v4l2_device") from the v4l-dvb tree.
+Hi Dave,
 
-Just context changes.  I fixed it up (see below) and can carry the change
-for a while.
--- 
+After merging the wireless tree, today's linux-next build (x86_64 allmodcon=
+fig)
+failed like this:
+
+drivers/net/cxgb4/cxgb4_main.c: In function 'set_addr_filters':
+drivers/net/cxgb4/cxgb4_main.c:264: error: dereferencing pointer to incompl=
+ete type
+drivers/net/cxgb4/cxgb4_main.c:265: error: dereferencing pointer to incompl=
+ete type
+
+Caused by commit b8ff05a9c3237f694a1c3bf8ceec3bf6c3c14b15 ("cxgb4: Add
+main driver file and driver Makefile") from Linus' tree interacting with
+commit 22bedad3ce112d5ca1eaf043d4990fa2ed698c87 ("net: convert multicast
+list to list_head").  The latter removed struct dev_addr_list.
+
+I have reverted commit b8ff05a9c3237f694a1c3bf8ceec3bf6c3c14b15 (and
+43e9da8d782b8a40d5127fcc59ac2e543cf16d7d ("net: Hook up cxgb4 to Kconfig
+and Makefile") that depended on it) for today.
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/media/video/meye.c
-index 4404e5e,9c7f282..0000000
---- a/drivers/media/video/meye.c
-+++ b/drivers/media/video/meye.c
-@@@ -30,9 -30,9 +30,10 @@@
-  #include <linux/pci.h>
-  #include <linux/sched.h>
-  #include <linux/init.h>
-- #include <linux/videodev.h>
-+ #include <linux/videodev2.h>
- +#include <linux/gfp.h>
-  #include <media/v4l2-common.h>
-+ #include <media/v4l2-device.h>
-  #include <media/v4l2-ioctl.h>
-  #include <asm/uaccess.h>
-  #include <asm/io.h>
+--Signature=_Wed__7_Apr_2010_12_58_17_+1000_4K7F55LMPdeEflYY
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAku79MkACgkQjjKRsyhoI8wsIACfQ3NMx87Igru+yKuNBsvrisEQ
+ROwAoKcBypm+GE6W6JVNfG4u6FL6kITF
+=jxnJ
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__7_Apr_2010_12_58_17_+1000_4K7F55LMPdeEflYY--
