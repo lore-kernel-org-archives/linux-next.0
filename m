@@ -1,74 +1,64 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Subject: Re: linux-next: build failure after merge of the mfd tree
-Date: Thu, 8 Apr 2010 11:33:46 +0200
-Message-ID: <20100408093345.GB3075@sortiz.org>
-References: <20100408125721.f93c1225.sfr@canb.auug.org.au>
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: [-next April 8] eHEA driver failure on powerpc
+Date: Thu, 08 Apr 2010 17:25:51 +0530
+Message-ID: <4BBDC447.3040901@in.ibm.com>
+References: <20100408155113.ef8df30c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.21]:54939 "EHLO
-	orsmga101.jf.intel.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1755681Ab0DHJdM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Apr 2010 05:33:12 -0400
-Content-Disposition: inline
-In-Reply-To: <20100408125721.f93c1225.sfr@canb.auug.org.au>
+Received: from e28smtp08.in.ibm.com ([122.248.162.8]:36104 "EHLO
+	e28smtp08.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750799Ab0DHLzz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Apr 2010 07:55:55 -0400
+In-Reply-To: <20100408155113.ef8df30c.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Todd Fischer <todd.fischer@ridgerun.com>
+To: linux-next@vger.kernel.org
+Cc: netdev <netdev@vger.kernel.org>, HERING2@de.ibm.com
 
-Hi Stephen,
+With today's next release, eHEA network interface on couple
+of power6 boxes fails to initialize.
 
-On Thu, Apr 08, 2010 at 12:57:21PM +1000, Stephen Rothwell wrote:
-> Hi Samuel,
-> 
-> After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
-> 
-> drivers/mfd/tps6507x.c: In function 'tps6507x_i2c_probe':
-> drivers/mfd/tps6507x.c:90: error: implicit declaration of function 'kzalloc'
-> drivers/mfd/tps6507x.c:90: warning: assignment makes pointer from integer without a cast
-> drivers/mfd/tps6507x.c:92: error: implicit declaration of function 'kfree'
-> 
-> Caused by commit 353dd1bf937f319eb6fdf35a461bf0bea1361d23 ("mfd: Add
-> TPS6507x support").
-Fixed in my for-next branch, thanks for the report.
+# modprobe ehea
+IBM eHEA ethernet device driver (Release EHEA_0102)
+  alloc irq_desc for 256 on node 0
+  alloc kstat_irqs on node 0
+irq: irq 590080 on host null mapped to virtual irq 256
+ehea: Error in ehea_plpar_hcall_norets: opcode=26c ret=fffffffffffffffc arg1=8000000003000000 arg2=0 arg3=7000000000050400 arg4=fc9b0000 arg5=200 arg6=0 arg7=0
+ehea: Error in ehea_reg_mr_section: register_rpage_mr failed
+ehea: Error in ehea_reg_kernel_mr: registering mr failed
+ehea: Error in ehea_setup_ports: creating MR failed
+ehea 23c00200.lhea: setup_ports failed
+ehea: probe of 23c00200.lhea failed with error -5
+# lsmod
+Module                  Size  Used by
+ehea                   82002  0 
+ipv6                  386130  24 
+fuse                   89953  1 
+loop                   20967  0 
+dm_mod                105104  0 
+sg                     40193  0 
+sd_mod                 46334  3 
+crc_t10dif              1619  1 sd_mod
+ibmvscsic              36002  2 
+scsi_transport_srp      8024  1 ibmvscsic
+scsi_tgt               17581  1 scsi_transport_srp
+scsi_mod              218761  5 sg,sd_mod,ibmvscsic,scsi_transport_srp,scsi_tgt
+# ifconfig eth0
+eth0: error fetching interface information: Device not found
 
-Cheers,
-Samuel.
+Yesterday's next worked fine.
 
- 
-> I applied the following patch for today.
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Thu, 8 Apr 2010 12:53:32 +1000
-> Subject: [PATCH] mfd: TPS6507x: using kzalloc/kfree requires including slab.h
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/mfd/tps6507x.c |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/mfd/tps6507x.c b/drivers/mfd/tps6507x.c
-> index dcddef0..d859dff 100644
-> --- a/drivers/mfd/tps6507x.c
-> +++ b/drivers/mfd/tps6507x.c
-> @@ -17,6 +17,7 @@
->  #include <linux/module.h>
->  #include <linux/moduleparam.h>
->  #include <linux/init.h>
-> +#include <linux/slab.h>
->  #include <linux/i2c.h>
->  #include <linux/mfd/core.h>
->  #include <linux/mfd/tps6507x.h>
-> -- 
-> 1.7.0.4
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
+Thanks
+-Sachin
+
 
 -- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
