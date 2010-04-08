@@ -1,36 +1,58 @@
-From: Pauli Nieminen <suokkos@gmail.com>
-Subject: Re: linux-next: build failure after merge of the drm tree
-Date: Thu, 8 Apr 2010 23:50:26 +0300
-Message-ID: <i2m548cdfc21004081350o2ba0ad71v23a10ab4c2156e0c@mail.gmail.com>
-References: <20100408131251.b69e2fa2.sfr@canb.auug.org.au>
-	 <alpine.DEB.2.00.1004080452150.11948@skynet.skynet.ie>
-	 <20100408141423.82e04416.sfr@canb.auug.org.au>
-	 <o2w12c511ca1004080919pa73e0552mec30ca706d9277a9@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the final tree
+Date: Fri, 9 Apr 2010 08:59:18 +1000
+Message-ID: <20100409085918.cc984fb1.sfr@canb.auug.org.au>
+References: <20100408153505.eb205158.sfr@canb.auug.org.au>
+	<20100407.232500.184442638.davem@davemloft.net>
+	<6125d80a-81d5-4699-ac6e-9408bd0c1145@SG2EHSMHS010.ehs.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-fx0-f223.google.com ([209.85.220.223]:48639 "EHLO
-	mail-fx0-f223.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933234Ab0DHUu3 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Apr 2010 16:50:29 -0400
-In-Reply-To: <o2w12c511ca1004080919pa73e0552mec30ca706d9277a9@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Tony Luck <tony.luck@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@linux.ie>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jerome Glisse <jglisse@redhat.com>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__9_Apr_2010_08_59_18_+1000_/czZ1g_0yUPRmo6+"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <6125d80a-81d5-4699-ac6e-9408bd0c1145@SG2EHSMHS010.ehs.local>
+Sender: linux-kernel-owner@vger.kernel.org
+To: John Linn <John.Linn@xilinx.com>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, jtyner@cs.ucr.edu, grant.likely@secretlab.ca
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Apr 8, 2010 at 7:19 PM, Tony Luck <tony.luck@gmail.com> wrote:
-> Does anyone else see:
->
-> drivers/gpu/drm/ttm/ttm_page_alloc.c: In function =91ttm_page_alloc_d=
-ebugfs=92:
-> drivers/gpu/drm/ttm/ttm_page_alloc.c:830: error: implicit declaration
-> of function =91seq_printf=92
->
-> when building the next-20100408 tag?
->
-> -Tony
->
+--Signature=_Fri__9_Apr_2010_08_59_18_+1000_/czZ1g_0yUPRmo6+
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-http://marc.info/?l=3Ddri-devel&m=3D127067975811418&w=3D2
+Hi John,
+
+On Thu, 8 Apr 2010 08:15:12 -0600 John Linn <John.Linn@xilinx.com> wrote:
+>
+> I'm not pushing back here, just trying to make sure I understand and do
+> it better next time :)
+>=20
+> I don't see that my patch has touched that part of the driver as that
+> call was already in the driver before my patch (but maybe I'm just
+> missing it).
+>=20
+> My patch did change the dependency in the Kconfig so that it only
+> depends on powerpc rather than powerpc DCR and maybe that exposed
+> something that wasn't previously exposed.
+
+Yeah, virt_to_bus() is only defined on 32bit PowerPC, not 64 bit.
+
+CONFIG_PPC is set for both 32 and 64 bit PowerPC builds.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__9_Apr_2010_08_59_18_+1000_/czZ1g_0yUPRmo6+
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAku+X8YACgkQjjKRsyhoI8y32ACeOsJXHXLdFZ2R4RVgAQ/OyKLO
+4OoAn2Sr376br6xqoZ7liapSeWtO1YPs
+=HxCw
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__9_Apr_2010_08_59_18_+1000_/czZ1g_0yUPRmo6+--
