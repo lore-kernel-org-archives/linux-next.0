@@ -1,37 +1,82 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: Tree for April 7 (net/core/dev_addr_lists)
-Date: Wed, 07 Apr 2010 16:46:44 -0700 (PDT)
-Message-ID: <20100407.164644.96927208.davem@davemloft.net>
-References: <20100407095845.f29ebf48.randy.dunlap@oracle.com>
-	<1270661889.8141.45.camel@edumazet-laptop>
-	<20100407105049.0f812b27.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the mtd tree
+Date: Thu, 8 Apr 2010 11:42:35 +1000
+Message-ID: <20100408114235.845264d0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:54996
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756144Ab0DGXql (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 7 Apr 2010 19:46:41 -0400
-In-Reply-To: <20100407105049.0f812b27.randy.dunlap@oracle.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:55095 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752731Ab0DHBmi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 7 Apr 2010 21:42:38 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: randy.dunlap@oracle.com
-Cc: eric.dumazet@gmail.com, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Maxim Levitsky <maximlevitsky@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Date: Wed, 7 Apr 2010 10:50:49 -0700
+Hi David,
 
-> On Wed, 07 Apr 2010 19:38:09 +0200 Eric Dumazet wrote:
-> 
->> [PATCH net-next-2.6] net: include linux/proc_fs.h in dev_addr_lists.c
->> 
->> As pointed by Randy Dunlap, we must include linux/proc_fs.h in
->> net/core/dev_addr_lists.c, regardless of CONFIG_PROC_FS
->> 
->> Reported-by: Randy Dunlap <randy.dunlap@oracle.com>, 
->> Signed-off-by: Eric Dumazet <eric.dumazet@gmail.com>
-> 
-> Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
+After merging the mtd tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-Applied, thanks everyone.
+drivers/mtd/sm_ftl.c: In function 'sm_cache_flush':
+drivers/mtd/sm_ftl.c:937: error: implicit declaration of function 'for_each_bit'
+drivers/mtd/sm_ftl.c:938: error: expected ';' before '{' token
+drivers/mtd/sm_ftl.c:964: error: label 'restart' used but not defined
+
+OK, not a suprise since Andrew submitted the "remove for_each_bit" patch
+and you haven't applied the patch below to the mtd tree.  Commit
+7d17c02a01a111f40986859f044c8c4cce8a4aa6 ("mtd: Add new SmartMedia/xD
+FTL") introduces a new use of "for_each_bit".  I have applied the below
+patch for today, please add it to the mtd tree ASAP.
+
+Subject: [patch 1/1] bitops: rename for_each_bit() to for_each_set_bit(): mtd
+To: dwmw2@infradead.org
+Cc: akpm@linux-foundation.org, akinobu.mita@gmail.com, adobriyan@gmail.com,
+        davem@davemloft.net, dedekind@infradead.org, rmk@arm.linux.org.uk,
+        sfr@canb.auug.org.au
+From: akpm@linux-foundation.org
+Date: Mon, 05 Apr 2010 13:53:35 -0700
+
+From: Akinobu Mita <akinobu.mita@gmail.com>
+
+Rename for_each_bit() to for_each_set_bit in the kernel source tree.  To
+permit for_each_clear_bit(), should that ever be added.
+
+I'll be sending a patch to Linus this week which removes the temporary
+for_each_bit() macro, so this patch will be needed to avoid build
+breakage.
+
+Suggested-by: Alexey Dobriyan <adobriyan@gmail.com>
+Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Russell King <rmk@arm.linux.org.uk>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Artem Bityutskiy <dedekind@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
+
+ drivers/mtd/sm_ftl.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff -puN drivers/mtd/sm_ftl.c~bitops-rename-for_each_bit-to-for_each_set_bit-mtd drivers/mtd/sm_ftl.c
+--- a/drivers/mtd/sm_ftl.c~bitops-rename-for_each_bit-to-for_each_set_bit-mtd
++++ a/drivers/mtd/sm_ftl.c
+@@ -934,7 +934,7 @@ int sm_cache_flush(struct sm_ftl *ftl)
+ 
+ 
+ 	/* Try to read all unread areas of the cache block*/
+-	for_each_bit(sector_num, &ftl->cache_data_invalid_bitmap,
++	for_each_set_bit(sector_num, &ftl->cache_data_invalid_bitmap,
+ 		ftl->block_size / SM_SECTOR_SIZE) {
+ 
+ 		if (!sm_read_sector(ftl,
+_
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
