@@ -1,70 +1,33 @@
-From: Tony Luck <tony.luck@intel.com>
+From: David Miller <davem@davemloft.net>
 Subject: Re: linux-next: powerpc boot failure
-Date: Thu, 8 Apr 2010 11:55:34 -0700
-Message-ID: <o2s12c511ca1004081155o9b28c9f5hdfadd075913f1fcf@mail.gmail.com>
-References: <20100408165848.38f75f40.sfr@canb.auug.org.au>
-	 <4BBD81B3.3030500@iki.fi>
-	 <20100408172316.e6ee451d.sfr@canb.auug.org.au>
-	 <4BBD85ED.4090209@iki.fi>
-	 <20100408174549.2f45ceea.sfr@canb.auug.org.au>
-	 <4BBD966D.8020404@iki.fi>
+Date: Thu, 08 Apr 2010 13:13:04 -0700 (PDT)
+Message-ID: <20100408.131304.166360041.davem@davemloft.net>
+References: <20100408174549.2f45ceea.sfr@canb.auug.org.au>
+	<4BBD966D.8020404@iki.fi>
+	<o2s12c511ca1004081155o9b28c9f5hdfadd075913f1fcf@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: Text/Plain; charset=iso-8859-7
+Content-Transfer-Encoding: base64
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pw0-f46.google.com ([209.85.160.46]:63590 "EHLO
-	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758972Ab0DHSze convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Apr 2010 14:55:34 -0400
-In-Reply-To: <4BBD966D.8020404@iki.fi>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:59568
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1758758Ab0DHUNC (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Apr 2010 16:13:02 -0400
+In-Reply-To: <o2s12c511ca1004081155o9b28c9f5hdfadd075913f1fcf@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: =?ISO-8859-1?Q?Timo_Ter=E4s?= <timo.teras@iki.fi>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: tony.luck@intel.com
+Cc: timo.teras@iki.fi, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-I'm seeing an oops in the same routine on ia64 built from next-20100408
-
-My setup is a SLES11 installation.  next-20100407 booted with no proble=
-ms.
-I'm also clueless about xfrm_policy.
-
-Here's an abbreviated copy of the first (of several) oops.  The code
-dereferences a bad pointer:
-
-Unable to handle kernel paging request at virtual address 480cb78f00000=
-024
-mount.nfs[7289]: Oops 8821862825984 [1]
-Modules linked in: nfs lockd auth_rpcgss sunrpc binfmt_misc loop
-dm_mod sr_mod usb_storage sg button container usbhid uhci_hcd ehci_hcd
-usbcore fan processor thermal thermal_sys
-
-Pid: 7289, CPU 16, comm:            mount.nfs
-psr : 0000101008526030 ifs : 8000000000000e22 ip  :
-[<a000000100888f10>]    Not tainted
-(2.6.34-rc3-generic-smp-next-20100408)
-ip is at __xfrm_lookup+0x650/0x760
-
-Call Trace:
- [<a000000100015950>] show_stack+0x50/0xa0
- [<a0000001000161c0>] show_regs+0x820/0x860
- [<a00000010003ac00>] die+0x1a0/0x300
- [<a000000100068b40>] ia64_do_page_fault+0x8c0/0x9e0
- [<a00000010000bb00>] ia64_native_leave_kernel+0x0/0x270
- [<a000000100888f10>] __xfrm_lookup+0x650/0x760
- [<a0000001007ec410>] ip_route_output_flow+0xf0/0x480
- [<a000000100846c30>] ip4_datagram_connect+0x330/0x5e0
- [<a00000010085f420>] inet_dgram_connect+0x140/0x180
- [<a0000001007854f0>] sys_connect+0xf0/0x1a0
- [<a00000010000b980>] ia64_ret_from_syscall+0x0/0x20
- [<a000000000010720>] __kernel_syscall_via_break+0x0/0x20
-
-I tried the patch you just posted.  Compiling with it gave this warning=
-:
-
-net/xfrm/xfrm_policy.c: In function =91__xfrm_lookup=92:
-net/xfrm/xfrm_policy.c:1735: warning: =91num_xfrms=92 may be used
-uninitialized in this function
-
-but the patched kernel booted ok.
-
--Tony
+RnJvbTogVG9ueSBMdWNrIDx0b255Lmx1Y2tAaW50ZWwuY29tPg0KRGF0ZTogVGh1LCA4IEFwciAy
+MDEwIDExOjU1OjM0IC0wNzAwDQoNCj4gSSB0cmllZCB0aGUgcGF0Y2ggeW91IGp1c3QgcG9zdGVk
+LiAgQ29tcGlsaW5nIHdpdGggaXQgZ2F2ZSB0aGlzIHdhcm5pbmc6DQo+IA0KPiBuZXQveGZybS94
+ZnJtX3BvbGljeS5jOiBJbiBmdW5jdGlvbiChX194ZnJtX2xvb2t1cKI6DQo+IG5ldC94ZnJtL3hm
+cm1fcG9saWN5LmM6MTczNTogd2FybmluZzogoW51bV94ZnJtc6IgbWF5IGJlIHVzZWQNCj4gdW5p
+bml0aWFsaXplZCBpbiB0aGlzIGZ1bmN0aW9uDQoNClRoaXMgaXMganVzdCBiZWNhdXNlIGdjYyBp
+cyBzdHVwaWQsIHlvdSBjYW4gaWdub3JlIHRoaXMuDQoNCkl0IGNhbid0IHNlZSB0aGF0IHdoZW4g
+YSByZWFsICdlcnInIGVycm9yIGlzIHJldHVybmVkIHdlIG5ldmVyIGVuZCB1cA0KcmVmZXJlbmNp
+bmcgdGhlIG51bV94ZnJtcyB2YWx1ZS4NCg0KPiBidXQgdGhlIHBhdGNoZWQga2VybmVsIGJvb3Rl
+ZCBvay4NCg0KVGhhbmtzIGZvciB0ZXN0aW5nLCBJIHB1c2hlZCBUaW1vJ3MgZml4IHRvIG5ldC1u
+ZXh0LTIuNiBlYXJsaWVyIHRvZGF5DQpzbyBpdCdsbCBob3BlZnVsbHkgc2hvdyB1cCBpbiB0aGUg
+bmV4dCBsaW51eC1uZXh0Lg0KDQo=
