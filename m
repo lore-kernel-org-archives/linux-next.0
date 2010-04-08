@@ -1,71 +1,74 @@
-From: =?ISO-8859-1?Q?Timo_Ter=E4s?= <timo.teras@iki.fi>
-Subject: Re: linux-next: powerpc boot failure
-Date: Thu, 08 Apr 2010 11:40:13 +0300
-Message-ID: <4BBD966D.8020404@iki.fi>
-References: <20100408165848.38f75f40.sfr@canb.auug.org.au>	<4BBD81B3.3030500@iki.fi>	<20100408172316.e6ee451d.sfr@canb.auug.org.au>	<4BBD85ED.4090209@iki.fi> <20100408174549.2f45ceea.sfr@canb.auug.org.au>
+From: Samuel Ortiz <sameo@linux.intel.com>
+Subject: Re: linux-next: build failure after merge of the mfd tree
+Date: Thu, 8 Apr 2010 11:33:46 +0200
+Message-ID: <20100408093345.GB3075@sortiz.org>
+References: <20100408125721.f93c1225.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ew0-f222.google.com ([209.85.219.222]:50159 "EHLO
-	mail-ew0-f222.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751410Ab0DHIkS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Apr 2010 04:40:18 -0400
-In-Reply-To: <20100408174549.2f45ceea.sfr@canb.auug.org.au>
+Received: from mga06.intel.com ([134.134.136.21]:54939 "EHLO
+	orsmga101.jf.intel.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1755681Ab0DHJdM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Apr 2010 05:33:12 -0400
+Content-Disposition: inline
+In-Reply-To: <20100408125721.f93c1225.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Todd Fischer <todd.fischer@ridgerun.com>
 
-Stephen Rothwell wrote:
-> On Thu, 08 Apr 2010 10:29:49 +0300 Timo Ter=E4s <timo.teras@iki.fi> w=
-rote:
->> You don't probably have any xfrm policies then. And that code should=
- not
->> really get executed.
->>
->> Some of the changes touch globally visible structs, and inline funct=
-ions.
->> Was this a clean rebuild? And did you update all kernel modules, als=
-o in
->> the initramfs?
->=20
-> Yes, the build is started from scratch and the kernel and modules are
-> updated (this is our automated build and test system).
->=20
-> I have attached the config in case that is of use.
+Hi Stephen,
 
-It looks like my new code uses xfrm_pols_put assuming it always does th=
-e
-proper thing. But seems like it's doing funny stuff if CONFIG_XFRM_SUB_=
-POLICY
-is not set, which is your case.
+On Thu, Apr 08, 2010 at 12:57:21PM +1000, Stephen Rothwell wrote:
+> Hi Samuel,
+> 
+> After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+> 
+> drivers/mfd/tps6507x.c: In function 'tps6507x_i2c_probe':
+> drivers/mfd/tps6507x.c:90: error: implicit declaration of function 'kzalloc'
+> drivers/mfd/tps6507x.c:90: warning: assignment makes pointer from integer without a cast
+> drivers/mfd/tps6507x.c:92: error: implicit declaration of function 'kfree'
+> 
+> Caused by commit 353dd1bf937f319eb6fdf35a461bf0bea1361d23 ("mfd: Add
+> TPS6507x support").
+Fixed in my for-next branch, thanks for the report.
 
-Can you try if this helps?
+Cheers,
+Samuel.
 
-diff --git a/include/net/xfrm.h b/include/net/xfrm.h
-index 625dd61..cccb049 100644
---- a/include/net/xfrm.h
-+++ b/include/net/xfrm.h
-@@ -735,19 +735,12 @@ static inline void xfrm_pol_put(struct xfrm_polic=
-y *policy
-                xfrm_policy_destroy(policy);
- }
-=20
--#ifdef CONFIG_XFRM_SUB_POLICY
- static inline void xfrm_pols_put(struct xfrm_policy **pols, int npols)
- {
-        int i;
-        for (i =3D npols - 1; i >=3D 0; --i)
-                xfrm_pol_put(pols[i]);
- }
--#else
--static inline void xfrm_pols_put(struct xfrm_policy **pols, int npols)
--{
--       xfrm_pol_put(pols[0]);
--}
--#endif
-=20
- extern void __xfrm_state_destroy(struct xfrm_state *);
-=20
+ 
+> I applied the following patch for today.
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 8 Apr 2010 12:53:32 +1000
+> Subject: [PATCH] mfd: TPS6507x: using kzalloc/kfree requires including slab.h
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/mfd/tps6507x.c |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/mfd/tps6507x.c b/drivers/mfd/tps6507x.c
+> index dcddef0..d859dff 100644
+> --- a/drivers/mfd/tps6507x.c
+> +++ b/drivers/mfd/tps6507x.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/module.h>
+>  #include <linux/moduleparam.h>
+>  #include <linux/init.h>
+> +#include <linux/slab.h>
+>  #include <linux/i2c.h>
+>  #include <linux/mfd/core.h>
+>  #include <linux/mfd/tps6507x.h>
+> -- 
+> 1.7.0.4
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
+
+-- 
+Intel Open Source Technology Centre
+http://oss.intel.com/
