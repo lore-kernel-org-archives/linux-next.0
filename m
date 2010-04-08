@@ -1,64 +1,73 @@
-From: Sachin Sant <sachinp@in.ibm.com>
-Subject: [-next April 8] eHEA driver failure on powerpc
-Date: Thu, 08 Apr 2010 17:25:51 +0530
-Message-ID: <4BBDC447.3040901@in.ibm.com>
-References: <20100408155113.ef8df30c.sfr@canb.auug.org.au>
+From: John Linn <John.Linn@xilinx.com>
+Subject: RE: linux-next: build failure after merge of the final tree
+Date: Thu, 8 Apr 2010 08:15:12 -0600
+Message-ID: <6125d80a-81d5-4699-ac6e-9408bd0c1145@SG2EHSMHS010.ehs.local>
+References: <20100408153505.eb205158.sfr@canb.auug.org.au> <20100407.232500.184442638.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e28smtp08.in.ibm.com ([122.248.162.8]:36104 "EHLO
-	e28smtp08.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750799Ab0DHLzz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Apr 2010 07:55:55 -0400
-In-Reply-To: <20100408155113.ef8df30c.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: netdev <netdev@vger.kernel.org>, HERING2@de.ibm.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <netdev-owner@vger.kernel.org>
+Content-Class: urn:content-classes:message
+In-Reply-To: <20100407.232500.184442638.davem@davemloft.net>
+Sender: netdev-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, jtyner@cs.ucr.edu, grant.likely@secretlab.ca
+List-Id: linux-next.vger.kernel.org
 
-With today's next release, eHEA network interface on couple
-of power6 boxes fails to initialize.
+> -----Original Message-----
+> From: David Miller [mailto:davem@davemloft.net]
+> Sent: Thursday, April 08, 2010 12:25 AM
+> To: sfr@canb.auug.org.au
+> Cc: netdev@vger.kernel.org; linux-next@vger.kernel.org;
+linux-kernel@vger.kernel.org; John Linn;
+> jtyner@cs.ucr.edu
+> Subject: Re: linux-next: build failure after merge of the final tree
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 8 Apr 2010 15:35:05 +1000
+> 
+> > After merging the final tree, today's linux-next build (powerpc
+> > allyesconfig) failed like this:
+> >
+> > drivers/net/ll_temac_main.c: In function 'll_temac_recv':
+> > drivers/net/ll_temac_main.c:695: error: implicit declaration of
+function 'virt_to_bus'
+> >
+> > Caused by commit 459569145516f7967b916c57445feb02c600668c ("Add
+> > non-Virtex5 support for LL TEMAC driver") from the net tree.
+> >
+> > I have reverted that commit for today.
+> 
+> And I'm reverting it too, it's illegal to use virt_to_bus()
+> in new code in this day and age.
 
-# modprobe ehea
-IBM eHEA ethernet device driver (Release EHEA_0102)
-  alloc irq_desc for 256 on node 0
-  alloc kstat_irqs on node 0
-irq: irq 590080 on host null mapped to virtual irq 256
-ehea: Error in ehea_plpar_hcall_norets: opcode=26c ret=fffffffffffffffc arg1=8000000003000000 arg2=0 arg3=7000000000050400 arg4=fc9b0000 arg5=200 arg6=0 arg7=0
-ehea: Error in ehea_reg_mr_section: register_rpage_mr failed
-ehea: Error in ehea_reg_kernel_mr: registering mr failed
-ehea: Error in ehea_setup_ports: creating MR failed
-ehea 23c00200.lhea: setup_ports failed
-ehea: probe of 23c00200.lhea failed with error -5
-# lsmod
-Module                  Size  Used by
-ehea                   82002  0 
-ipv6                  386130  24 
-fuse                   89953  1 
-loop                   20967  0 
-dm_mod                105104  0 
-sg                     40193  0 
-sd_mod                 46334  3 
-crc_t10dif              1619  1 sd_mod
-ibmvscsic              36002  2 
-scsi_transport_srp      8024  1 ibmvscsic
-scsi_tgt               17581  1 scsi_transport_srp
-scsi_mod              218761  5 sg,sd_mod,ibmvscsic,scsi_transport_srp,scsi_tgt
-# ifconfig eth0
-eth0: error fetching interface information: Device not found
+I'm not pushing back here, just trying to make sure I understand and do
+it better next time :)
 
-Yesterday's next worked fine.
+I don't see that my patch has touched that part of the driver as that
+call was already in the driver before my patch (but maybe I'm just
+missing it).
 
-Thanks
--Sachin
+My patch did change the dependency in the Kconfig so that it only
+depends on powerpc rather than powerpc DCR and maybe that exposed
+something that wasn't previously exposed.
+
+Maybe this is an issue in linux-next and I need to test against that,
+I'm pulling it now.  I was testing against Linus's tree.
+
+> 
+> John, you'll need to use the DMA mapping APIs in this change when you
+> resubmit it.
+
+Thanks, will spin it again and get that fixed.  My apologies for the
+hassles, appreciate the help.
+
+-- John
+
+> 
+> Thanks.
 
 
--- 
+This email and any attachments are intended for the sole use of the named recipient(s) and contain(s) confidential information that may be proprietary, privileged or copyrighted under applicable law. If you are not the intended recipient, do not read, copy, or forward this email message or any attachments. Delete this email message and any attachments immediately.
 
----------------------------------
-Sachin Sant
-IBM Linux Technology Center
-India Systems and Technology Labs
-Bangalore, India
----------------------------------
+
