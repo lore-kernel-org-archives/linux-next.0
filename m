@@ -1,80 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the mtd tree
-Date: Thu, 8 Apr 2010 11:42:35 +1000
-Message-ID: <20100408114235.845264d0.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the mfd tree
+Date: Thu, 8 Apr 2010 12:57:21 +1000
+Message-ID: <20100408125721.f93c1225.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55095 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752731Ab0DHBmi (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 7 Apr 2010 21:42:38 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Maxim Levitsky <maximlevitsky@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Todd Fischer <todd.fischer@ridgerun.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi David,
+Hi Samuel,
 
-After merging the mtd tree, today's linux-next build (x86_64 allmodconfig)
+After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
 failed like this:
 
-drivers/mtd/sm_ftl.c: In function 'sm_cache_flush':
-drivers/mtd/sm_ftl.c:937: error: implicit declaration of function 'for_each_bit'
-drivers/mtd/sm_ftl.c:938: error: expected ';' before '{' token
-drivers/mtd/sm_ftl.c:964: error: label 'restart' used but not defined
+drivers/mfd/tps6507x.c: In function 'tps6507x_i2c_probe':
+drivers/mfd/tps6507x.c:90: error: implicit declaration of function 'kzalloc'
+drivers/mfd/tps6507x.c:90: warning: assignment makes pointer from integer without a cast
+drivers/mfd/tps6507x.c:92: error: implicit declaration of function 'kfree'
 
-OK, not a suprise since Andrew submitted the "remove for_each_bit" patch
-and you haven't applied the patch below to the mtd tree.  Commit
-7d17c02a01a111f40986859f044c8c4cce8a4aa6 ("mtd: Add new SmartMedia/xD
-FTL") introduces a new use of "for_each_bit".  I have applied the below
-patch for today, please add it to the mtd tree ASAP.
+Caused by commit 353dd1bf937f319eb6fdf35a461bf0bea1361d23 ("mfd: Add
+TPS6507x support").
 
-Subject: [patch 1/1] bitops: rename for_each_bit() to for_each_set_bit(): mtd
-To: dwmw2@infradead.org
-Cc: akpm@linux-foundation.org, akinobu.mita@gmail.com, adobriyan@gmail.com,
-        davem@davemloft.net, dedekind@infradead.org, rmk@arm.linux.org.uk,
-        sfr@canb.auug.org.au
-From: akpm@linux-foundation.org
-Date: Mon, 05 Apr 2010 13:53:35 -0700
+I applied the following patch for today.
 
-From: Akinobu Mita <akinobu.mita@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 8 Apr 2010 12:53:32 +1000
+Subject: [PATCH] mfd: TPS6507x: using kzalloc/kfree requires including slab.h
 
-Rename for_each_bit() to for_each_set_bit in the kernel source tree.  To
-permit for_each_clear_bit(), should that ever be added.
-
-I'll be sending a patch to Linus this week which removes the temporary
-for_each_bit() macro, so this patch will be needed to avoid build
-breakage.
-
-Suggested-by: Alexey Dobriyan <adobriyan@gmail.com>
-Suggested-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Russell King <rmk@arm.linux.org.uk>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Artem Bityutskiy <dedekind@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
+ drivers/mfd/tps6507x.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
- drivers/mtd/sm_ftl.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff -puN drivers/mtd/sm_ftl.c~bitops-rename-for_each_bit-to-for_each_set_bit-mtd drivers/mtd/sm_ftl.c
---- a/drivers/mtd/sm_ftl.c~bitops-rename-for_each_bit-to-for_each_set_bit-mtd
-+++ a/drivers/mtd/sm_ftl.c
-@@ -934,7 +934,7 @@ int sm_cache_flush(struct sm_ftl *ftl)
- 
- 
- 	/* Try to read all unread areas of the cache block*/
--	for_each_bit(sector_num, &ftl->cache_data_invalid_bitmap,
-+	for_each_set_bit(sector_num, &ftl->cache_data_invalid_bitmap,
- 		ftl->block_size / SM_SECTOR_SIZE) {
- 
- 		if (!sm_read_sector(ftl,
-_
+diff --git a/drivers/mfd/tps6507x.c b/drivers/mfd/tps6507x.c
+index dcddef0..d859dff 100644
+--- a/drivers/mfd/tps6507x.c
++++ b/drivers/mfd/tps6507x.c
+@@ -17,6 +17,7 @@
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+ #include <linux/init.h>
++#include <linux/slab.h>
+ #include <linux/i2c.h>
+ #include <linux/mfd/core.h>
+ #include <linux/mfd/tps6507x.h>
+-- 
+1.7.0.4
 
 -- 
 Cheers,
