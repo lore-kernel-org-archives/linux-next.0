@@ -1,57 +1,55 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the v4l-dvb tree with Linus' tree
-Date: Fri, 9 Apr 2010 17:13:33 +1000
-Message-ID: <20100409171333.418c31f3.sfr@canb.auug.org.au>
-References: <20100407110035.217b024b.sfr@canb.auug.org.au>
-	<4BBEB995.4090307@infradead.org>
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: Re: [-next April 8] eHEA driver failure on powerpc
+Date: Fri, 09 Apr 2010 23:18:18 +0530
+Message-ID: <4BBF6862.3010600@in.ibm.com>
+References: <20100408155113.ef8df30c.sfr@canb.auug.org.au> <4BBDC447.3040901@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__9_Apr_2010_17_13_33_+1000_1dofDrD0oFxAw2k9"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51711 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753381Ab0DIHNq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 9 Apr 2010 03:13:46 -0400
-In-Reply-To: <4BBEB995.4090307@infradead.org>
+Received: from e23smtp03.au.ibm.com ([202.81.31.145]:51001 "EHLO
+	e23smtp03.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754856Ab0DIRsY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 9 Apr 2010 13:48:24 -0400
+In-Reply-To: <4BBDC447.3040901@in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>
+To: Linux/PPC Development <linuxppc-dev@ozlabs.org>
+Cc: linux-next@vger.kernel.org, netdev <netdev@vger.kernel.org>, HERING2@de.ibm.com, Anton Blanchard <anton@samba.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
---Signature=_Fri__9_Apr_2010_17_13_33_+1000_1dofDrD0oFxAw2k9
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Mauro,
-
-On Fri, 09 Apr 2010 02:22:29 -0300 Mauro Carvalho Chehab <mchehab@infradead=
-.org> wrote:
+Sachin Sant wrote:
+> With today's next release, eHEA network interface on couple
+> of power6 boxes fails to initialize.
 >
-> Thanks for pointing it to me. Fixed.
->=20
-> I also fixed today a conflict that it would appear on your next pull, bet=
-ween=20
-> input and v4l-dvb, due to the upstream changes of keytable ops from
-> int to unsigned.
+> # modprobe ehea
+> IBM eHEA ethernet device driver (Release EHEA_0102)
+>  alloc irq_desc for 256 on node 0
+>  alloc kstat_irqs on node 0
+> irq: irq 590080 on host null mapped to virtual irq 256
+> ehea: Error in ehea_plpar_hcall_norets: opcode=26c 
+> ret=fffffffffffffffc arg1=8000000003000000 arg2=0 
+> arg3=7000000000050400 arg4=fc9b0000 arg5=200 arg6=0 arg7=0
+> ehea: Error in ehea_reg_mr_section: register_rpage_mr failed
+> ehea: Error in ehea_reg_kernel_mr: registering mr failed
+> ehea: Error in ehea_setup_ports: creating MR failed
+> ehea 23c00200.lhea: setup_ports failed
+> ehea: probe of 23c00200.lhea failed with error -5
+I tracked this problem to the following commit.
 
-Excellent, thanks.
+commit 7545ba6f82924d4523f8f8a2baf2e517a750265d
+powerpc/mm: Bump SECTION_SIZE_BITS from 16MB to 256MB
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+If i revert this commit, the network interface is initialized
+properly. Verified this on two different power6 boxes.
 
---Signature=_Fri__9_Apr_2010_17_13_33_+1000_1dofDrD0oFxAw2k9
-Content-Type: application/pgp-signature
+Thanks
+-Sachin
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+-- 
 
-iEYEARECAAYFAku+050ACgkQjjKRsyhoI8wBzACeJmV2ZwkjxMA56TlX27hkc0PC
-IrAAnA0/QdFbO4ZS+HN9cVbzhY2VK6ZS
-=u0nB
------END PGP SIGNATURE-----
-
---Signature=_Fri__9_Apr_2010_17_13_33_+1000_1dofDrD0oFxAw2k9--
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
