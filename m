@@ -1,62 +1,58 @@
-From: John Linn <John.Linn@xilinx.com>
-Subject: RE: linux-next: build failure after merge of the final tree
-Date: Thu, 8 Apr 2010 17:01:03 -0600
-Message-ID: <afd3df96-2991-49f2-aa74-138ce67b8103@SG2EHSMHS003.ehs.local>
-References: <20100408153505.eb205158.sfr@canb.auug.org.au><20100407.232500.184442638.davem@davemloft.net><6125d80a-81d5-4699-ac6e-9408bd0c1145@SG2EHSMHS010.ehs.local> <20100409085918.cc984fb1.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: powerpc boot failure
+Date: Fri, 9 Apr 2010 10:08:58 +1000
+Message-ID: <20100409100858.149feccc.sfr@canb.auug.org.au>
+References: <20100408165848.38f75f40.sfr@canb.auug.org.au>
+	<4BBD81B3.3030500@iki.fi>
+	<20100408172316.e6ee451d.sfr@canb.auug.org.au>
+	<4BBD85ED.4090209@iki.fi>
+	<20100408174549.2f45ceea.sfr@canb.auug.org.au>
+	<4BBD966D.8020404@iki.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__9_Apr_2010_10_08_58_+1000_HEJRLD/N5y2v5aDn"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from sg2ehsobe001.messaging.microsoft.com ([207.46.51.75]:42311 "EHLO
-	SG2EHSOBE001.bigfish.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S933775Ab0DHXCL convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 8 Apr 2010 19:02:11 -0400
-Content-Class: urn:content-classes:message
-In-Reply-To: <20100409085918.cc984fb1.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:60744 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759225Ab0DIAJF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 8 Apr 2010 20:09:05 -0400
+In-Reply-To: <4BBD966D.8020404@iki.fi>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, jtyner@cs.ucr.edu, grant.likely@secretlab.ca
+To: Timo =?UTF-8?B?VGVyw6Rz?= <timo.teras@iki.fi>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-> -----Original Message-----
-> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
-> Sent: Thursday, April 08, 2010 4:59 PM
-> To: John Linn
-> Cc: David Miller; netdev@vger.kernel.org; linux-next@vger.kernel.org;
-linux-kernel@vger.kernel.org;
-> jtyner@cs.ucr.edu; grant.likely@secretlab.ca
-> Subject: Re: linux-next: build failure after merge of the final tree
-> 
-> Hi John,
-> 
-> On Thu, 8 Apr 2010 08:15:12 -0600 John Linn <John.Linn@xilinx.com>
-wrote:
-> >
-> > I'm not pushing back here, just trying to make sure I understand and
-> > do it better next time :)
-> >
-> > I don't see that my patch has touched that part of the driver as
-that
-> > call was already in the driver before my patch (but maybe I'm just
-> > missing it).
-> >
-> > My patch did change the dependency in the Kconfig so that it only
-> > depends on powerpc rather than powerpc DCR and maybe that exposed
-> > something that wasn't previously exposed.
-> 
-> Yeah, virt_to_bus() is only defined on 32bit PowerPC, not 64 bit.
-> 
-> CONFIG_PPC is set for both 32 and 64 bit PowerPC builds.
-> --
+--Signature=_Fri__9_Apr_2010_10_08_58_+1000_HEJRLD/N5y2v5aDn
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for confirming that.  Spun a new patch (set) to hopefully take
-care of that.
+Hi Timo,
 
--- John
+On Thu, 08 Apr 2010 11:40:13 +0300 Timo Ter=C3=A4s <timo.teras@iki.fi> wrot=
+e:
+>
+> Can you try if this helps?
 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
+That patch allows my machine to boot.
 
-This email and any attachments are intended for the sole use of the named recipient(s) and contain(s) confidential information that may be proprietary, privileged or copyrighted under applicable law. If you are not the intended recipient, do not read, copy, or forward this email message or any attachments. Delete this email message and any attachments immediately.
+Thanks.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__9_Apr_2010_10_08_58_+1000_HEJRLD/N5y2v5aDn
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAku+cBoACgkQjjKRsyhoI8wk4gCdGPjIZLArsbPae/gChDy/Wa+P
+bBUAoLYU4GfeOd81j2FtkCsYLuxVKBYc
+=fpg6
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__9_Apr_2010_10_08_58_+1000_HEJRLD/N5y2v5aDn--
