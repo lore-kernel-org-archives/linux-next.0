@@ -1,29 +1,29 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree with Linus' tree
-Date: Fri, 9 Apr 2010 10:41:35 +1000
-Message-ID: <20100409104135.d6008487.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the wireless tree with the
+ wireless-current tree
+Date: Fri, 9 Apr 2010 11:05:20 +1000
+Message-ID: <20100409110520.9d4be988.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54113 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:60937 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750751Ab0DIAlh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 8 Apr 2010 20:41:37 -0400
+	id S1750717Ab0DIBFW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 8 Apr 2010 21:05:22 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, chavey <chavey@google.com>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wey-Yi Guy <wey-yi.w.guy@intel.com>
 
-Hi all,
+Hi John,
 
-Today's linux-next merge of the net tree got a conflict in
-net/core/ethtool.c between commit
-5a0e3ad6af8660be21ca98a971cd00f331318c05 ("include cleanup: Update gfp.h
-and slab.h includes to prepare for breaking implicit slab.h inclusion
-from percpu.h") from Linus' tree and commit
-97f8aefbbfb5aa5c9944e5fa8149f1fdaf71c7b6 ("net: fix ethtool coding style
-errors and warnings") from the net tree.
+Today's linux-next merge of the wireless tree got a conflict in
+drivers/net/wireless/iwlwifi/iwl-4965.c between commit
+ece6444c2fe80dab679beb5f0d58b091f1933b00 ("iwlwifi: need check for valid
+qos packet before free") from the wireless-current tree and commit
+74bcdb33e99f49ef5202dd2f8109945b4570edc2 ("iwlwifi: move agn only tx
+functions from iwlcore to iwlagn") from the wireless tree.
 
 Just context changes.  I fixed it up (see below) and can carry the fix
 for a while.
@@ -31,17 +31,44 @@ for a while.
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc net/core/ethtool.c
-index 9d55c57,99e9f85..0000000
---- a/net/core/ethtool.c
-+++ b/net/core/ethtool.c
-@@@ -18,8 -18,7 +18,8 @@@
-  #include <linux/ethtool.h>
-  #include <linux/netdevice.h>
-  #include <linux/bitops.h>
-+ #include <linux/uaccess.h>
- +#include <linux/slab.h>
-- #include <asm/uaccess.h>
+diff --cc drivers/net/wireless/iwlwifi/iwl-4965.c
+index 89aba76,6edae9b..0000000
+--- a/drivers/net/wireless/iwlwifi/iwl-4965.c
++++ b/drivers/net/wireless/iwlwifi/iwl-4965.c
+@@@ -2020,10 -2013,8 +2013,10 @@@ static void iwl4965_rx_reply_tx(struct 
+  			index = iwl_queue_dec_wrap(scd_ssn & 0xff, txq->q.n_bd);
+  			IWL_DEBUG_TX_REPLY(priv, "Retry scheduler reclaim scd_ssn "
+  					   "%d index %d\n", scd_ssn , index);
+- 			freed = iwl_tx_queue_reclaim(priv, txq_id, index);
++ 			freed = iwlagn_tx_queue_reclaim(priv, txq_id, index);
+ -			iwl_free_tfds_in_queue(priv, sta_id, tid, freed);
+ +			if (qc)
+ +				iwl_free_tfds_in_queue(priv, sta_id,
+ +						       tid, freed);
   
-  /*
-   * Some useful ethtool_ops methods that're device independent.
+  			if (priv->mac80211_registered &&
+  			    (iwl_queue_space(&txq->q) > txq->q.low_mark) &&
+@@@ -2048,18 -2039,15 +2041,18 @@@
+  				   le32_to_cpu(tx_resp->rate_n_flags),
+  				   tx_resp->failure_frame);
+  
+- 		freed = iwl_tx_queue_reclaim(priv, txq_id, index);
++ 		freed = iwlagn_tx_queue_reclaim(priv, txq_id, index);
+ -		iwl_free_tfds_in_queue(priv, sta_id, tid, freed);
+ +		if (qc && likely(sta_id != IWL_INVALID_STATION))
+ +			iwl_free_tfds_in_queue(priv, sta_id, tid, freed);
+ +		else if (sta_id == IWL_INVALID_STATION)
+ +			IWL_DEBUG_TX_REPLY(priv, "Station not known\n");
+  
+  		if (priv->mac80211_registered &&
+  		    (iwl_queue_space(&txq->q) > txq->q.low_mark))
+  			iwl_wake_queue(priv, txq_id);
+  	}
+ -
+ -	iwlagn_txq_check_empty(priv, sta_id, tid, txq_id);
+ +	if (qc && likely(sta_id != IWL_INVALID_STATION))
+- 		iwl_txq_check_empty(priv, sta_id, tid, txq_id);
+++		iwlagn_txq_check_empty(priv, sta_id, tid, txq_id);
+  
+  	if (iwl_check_bits(status, TX_ABORT_REQUIRED_MSK))
+  		IWL_ERR(priv, "TODO:  Implement Tx ABORT REQUIRED!!!\n");
