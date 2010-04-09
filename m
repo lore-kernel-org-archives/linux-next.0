@@ -1,58 +1,47 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: powerpc boot failure
-Date: Fri, 9 Apr 2010 10:08:58 +1000
-Message-ID: <20100409100858.149feccc.sfr@canb.auug.org.au>
-References: <20100408165848.38f75f40.sfr@canb.auug.org.au>
-	<4BBD81B3.3030500@iki.fi>
-	<20100408172316.e6ee451d.sfr@canb.auug.org.au>
-	<4BBD85ED.4090209@iki.fi>
-	<20100408174549.2f45ceea.sfr@canb.auug.org.au>
-	<4BBD966D.8020404@iki.fi>
+Subject: linux-next: manual merge of the net tree with Linus' tree
+Date: Fri, 9 Apr 2010 10:41:35 +1000
+Message-ID: <20100409104135.d6008487.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__9_Apr_2010_10_08_58_+1000_HEJRLD/N5y2v5aDn"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60744 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:54113 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759225Ab0DIAJF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 8 Apr 2010 20:09:05 -0400
-In-Reply-To: <4BBD966D.8020404@iki.fi>
+	id S1750751Ab0DIAlh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 8 Apr 2010 20:41:37 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Timo =?UTF-8?B?VGVyw6Rz?= <timo.teras@iki.fi>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, chavey <chavey@google.com>
 
---Signature=_Fri__9_Apr_2010_10_08_58_+1000_HEJRLD/N5y2v5aDn
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-Hi Timo,
+Today's linux-next merge of the net tree got a conflict in
+net/core/ethtool.c between commit
+5a0e3ad6af8660be21ca98a971cd00f331318c05 ("include cleanup: Update gfp.h
+and slab.h includes to prepare for breaking implicit slab.h inclusion
+from percpu.h") from Linus' tree and commit
+97f8aefbbfb5aa5c9944e5fa8149f1fdaf71c7b6 ("net: fix ethtool coding style
+errors and warnings") from the net tree.
 
-On Thu, 08 Apr 2010 11:40:13 +0300 Timo Ter=C3=A4s <timo.teras@iki.fi> wrot=
-e:
->
-> Can you try if this helps?
-
-That patch allows my machine to boot.
-
-Thanks.
-
---=20
+Just context changes.  I fixed it up (see below) and can carry the fix
+for a while.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__9_Apr_2010_10_08_58_+1000_HEJRLD/N5y2v5aDn
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAku+cBoACgkQjjKRsyhoI8wk4gCdGPjIZLArsbPae/gChDy/Wa+P
-bBUAoLYU4GfeOd81j2FtkCsYLuxVKBYc
-=fpg6
------END PGP SIGNATURE-----
-
---Signature=_Fri__9_Apr_2010_10_08_58_+1000_HEJRLD/N5y2v5aDn--
+diff --cc net/core/ethtool.c
+index 9d55c57,99e9f85..0000000
+--- a/net/core/ethtool.c
++++ b/net/core/ethtool.c
+@@@ -18,8 -18,7 +18,8 @@@
+  #include <linux/ethtool.h>
+  #include <linux/netdevice.h>
+  #include <linux/bitops.h>
++ #include <linux/uaccess.h>
+ +#include <linux/slab.h>
+- #include <asm/uaccess.h>
+  
+  /*
+   * Some useful ethtool_ops methods that're device independent.
