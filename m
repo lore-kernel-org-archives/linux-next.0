@@ -1,55 +1,37 @@
-From: Sachin Sant <sachinp@in.ibm.com>
-Subject: Re: [-next April 8] eHEA driver failure on powerpc
-Date: Fri, 09 Apr 2010 23:18:18 +0530
-Message-ID: <4BBF6862.3010600@in.ibm.com>
-References: <20100408155113.ef8df30c.sfr@canb.auug.org.au> <4BBDC447.3040901@in.ibm.com>
+From: Frederic Weisbecker <fweisbec@gmail.com>
+Subject: A few tree inclusion update requests
+Date: Sat, 10 Apr 2010 15:42:23 +0200
+Message-ID: <20100410134221.GC5204@nowhere>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e23smtp03.au.ibm.com ([202.81.31.145]:51001 "EHLO
-	e23smtp03.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754856Ab0DIRsY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 9 Apr 2010 13:48:24 -0400
-In-Reply-To: <4BBDC447.3040901@in.ibm.com>
+Received: from mail-bw0-f209.google.com ([209.85.218.209]:40808 "EHLO
+	mail-bw0-f209.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751423Ab0DJNm2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 10 Apr 2010 09:42:28 -0400
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linux/PPC Development <linuxppc-dev@ozlabs.org>
-Cc: linux-next@vger.kernel.org, netdev <netdev@vger.kernel.org>, HERING2@de.ibm.com, Anton Blanchard <anton@samba.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Next <linux-next@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
 
-Sachin Sant wrote:
-> With today's next release, eHEA network interface on couple
-> of power6 boxes fails to initialize.
->
-> # modprobe ehea
-> IBM eHEA ethernet device driver (Release EHEA_0102)
->  alloc irq_desc for 256 on node 0
->  alloc kstat_irqs on node 0
-> irq: irq 590080 on host null mapped to virtual irq 256
-> ehea: Error in ehea_plpar_hcall_norets: opcode=26c 
-> ret=fffffffffffffffc arg1=8000000003000000 arg2=0 
-> arg3=7000000000050400 arg4=fc9b0000 arg5=200 arg6=0 arg7=0
-> ehea: Error in ehea_reg_mr_section: register_rpage_mr failed
-> ehea: Error in ehea_reg_kernel_mr: registering mr failed
-> ehea: Error in ehea_setup_ports: creating MR failed
-> ehea 23c00200.lhea: setup_ports failed
-> ehea: probe of 23c00200.lhea failed with error -5
-I tracked this problem to the following commit.
+Hi Stephen,
 
-commit 7545ba6f82924d4523f8f8a2baf2e517a750265d
-powerpc/mm: Bump SECTION_SIZE_BITS from 16MB to 256MB
+I have some requests for you about tree inclusions for linux-next.
 
-If i revert this commit, the network interface is initialized
-properly. Verified this on two different power6 boxes.
+My reiserfs/kill-bkl branch had no updates for a next release
+for some time now. You can safely remove it from -next. If
+I get updates for it later, I'll tell you. But for now it's
+only here to host fixes for the current release.
 
-Thanks
--Sachin
+Also I have two new branches aimed for .35
 
--- 
+Could you please integrate the two following?
 
----------------------------------
-Sachin Sant
-IBM Linux Technology Center
-India Systems and Technology Labs
-Bangalore, India
----------------------------------
+git://git.kernel.org/pub/scm/linux/kernel/git/frederic/random-tracing.git
+	bkl/core
+
+git://git.kernel.org/pub/scm/linux/kernel/git/frederic/random-tracing.git
+	bkl/procfs
+
+Thanks a lot!
