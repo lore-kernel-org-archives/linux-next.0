@@ -1,54 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the v4l-dvb tree
-Date: Mon, 12 Apr 2010 12:40:41 +1000
-Message-ID: <20100412124041.4876c3f9.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the wireless tree with the net tree
+Date: Mon, 12 Apr 2010 14:05:17 +1000
+Message-ID: <20100412140517.f433690b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__12_Apr_2010_12_40_41_+1000_W.FPXz06whO31.NA"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34880 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:45077 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752297Ab0DLCkt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 11 Apr 2010 22:40:49 -0400
+	id S1750740Ab0DLEFX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 12 Apr 2010 00:05:23 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Pirko <jpirko@redhat.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Saravanan Dhanabal <ext-saravanan.dhanabal@nokia.com>, Luciano Coelho <luciano.coelho@nokia.com>
 
---Signature=_Mon__12_Apr_2010_12_40_41_+1000_W.FPXz06whO31.NA
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi John,
 
-Hi Mauro,
+Today's linux-next merge of the wireless tree got a conflict in
+drivers/net/wireless/wl12xx/wl1271_main.c between commit
+22bedad3ce112d5ca1eaf043d4990fa2ed698c87 ("net: convert multicast list to
+list_head") from the net tree and commit
+2c10bb9cb3f9cecb71bd2cbb771778136433ebe2 ("wl1271: Fix mac80211
+configuration requests during WL1271_STATE_OFF") from the wireless tree.
 
-After merging the v4l-dvb tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
-
-drivers/input/input.c: In function 'input_default_setkeycode':
-drivers/input/input.c:691: error: 'keycode' undeclared (first use in this f=
-unction)
-
-Caused by commit df7ad46fc171965103f02649f6c2f02c6ca8b331 ("Merge branch
-'master' of /home/v4l/bare_trees/v4l-dvb").  The merge resolution is not
-quite right.
-
-I have used the v4l-dvb tree from next-20100409 for today.
---=20
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__12_Apr_2010_12_40_41_+1000_W.FPXz06whO31.NA
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkvCiCkACgkQjjKRsyhoI8wy8wCfV/y6TotPLZXMNF5+8AQ016l5
-dHIAn2DTDe4WVT604UNfE73PqOK9pmGO
-=ip0r
------END PGP SIGNATURE-----
-
---Signature=_Mon__12_Apr_2010_12_40_41_+1000_W.FPXz06whO31.NA--
+diff --cc drivers/net/wireless/wl12xx/wl1271_main.c
+index aa970b7,283d5da..0000000
+--- a/drivers/net/wireless/wl12xx/wl1271_main.c
++++ b/drivers/net/wireless/wl12xx/wl1271_main.c
+@@@ -1267,11 -1304,15 +1305,15 @@@ struct wl1271_filter_params 
+  	u8 mc_list[ACX_MC_ADDRESS_GROUP_MAX][ETH_ALEN];
+  };
+  
+ -static u64 wl1271_op_prepare_multicast(struct ieee80211_hw *hw, int mc_count,
+ -				       struct dev_addr_list *mc_list)
+ +static u64 wl1271_op_prepare_multicast(struct ieee80211_hw *hw,
+ +				       struct netdev_hw_addr_list *mc_list)
+  {
+  	struct wl1271_filter_params *fp;
+ +	struct netdev_hw_addr *ha;
++ 	struct wl1271 *wl = hw->priv;
+ -	int i;
++ 
++ 	if (unlikely(wl->state == WL1271_STATE_OFF))
++ 		return 0;
+  
+  	fp = kzalloc(sizeof(*fp), GFP_ATOMIC);
+  	if (!fp) {
