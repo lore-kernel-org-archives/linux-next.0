@@ -1,55 +1,46 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the wireless tree with the net tree
-Date: Mon, 12 Apr 2010 14:05:17 +1000
-Message-ID: <20100412140517.f433690b.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Date: Mon, 12 Apr 2010 15:06:51 +1000
+Message-ID: <20100412150651.4dd8d6d7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45077 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:53571 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750740Ab0DLEFX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 12 Apr 2010 00:05:23 -0400
+	id S1750983Ab0DLFG4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 12 Apr 2010 01:06:56 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Pirko <jpirko@redhat.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Saravanan Dhanabal <ext-saravanan.dhanabal@nokia.com>, Luciano Coelho <luciano.coelho@nokia.com>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>
 
-Hi John,
+Hi Dave,
 
-Today's linux-next merge of the wireless tree got a conflict in
-drivers/net/wireless/wl12xx/wl1271_main.c between commit
-22bedad3ce112d5ca1eaf043d4990fa2ed698c87 ("net: convert multicast list to
-list_head") from the net tree and commit
-2c10bb9cb3f9cecb71bd2cbb771778136433ebe2 ("wl1271: Fix mac80211
-configuration requests during WL1271_STATE_OFF") from the wireless tree.
+Today's linux-next merge of the drm tree got a conflict in
+drivers/gpu/drm/nouveau/nouveau_drv.h between commit
+952eb63543552deb1bf1113739d59d29172d7755 ("drm/nouveau: remove some
+unused members from drm_nouveau_private") from Linus' tree and commit
+386516744ba45d50f42c6999151cc210cb4f96e4 ("drm/fb: fix fbdev object model
++ cleanup properly") from the drm tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+Just context changes.  I fixed it up (see below) and can carry the fix
+for a while.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/net/wireless/wl12xx/wl1271_main.c
-index aa970b7,283d5da..0000000
---- a/drivers/net/wireless/wl12xx/wl1271_main.c
-+++ b/drivers/net/wireless/wl12xx/wl1271_main.c
-@@@ -1267,11 -1304,15 +1305,15 @@@ struct wl1271_filter_params 
-  	u8 mc_list[ACX_MC_ADDRESS_GROUP_MAX][ETH_ALEN];
-  };
+diff --cc drivers/gpu/drm/nouveau/nouveau_drv.h
+index ace630a,941339c..0000000
+--- a/drivers/gpu/drm/nouveau/nouveau_drv.h
++++ b/drivers/gpu/drm/nouveau/nouveau_drv.h
+@@@ -533,8 -531,7 +533,6 @@@ struct drm_nouveau_private 
+  		atomic_t validate_sequence;
+  	} ttm;
   
- -static u64 wl1271_op_prepare_multicast(struct ieee80211_hw *hw, int mc_count,
- -				       struct dev_addr_list *mc_list)
- +static u64 wl1271_op_prepare_multicast(struct ieee80211_hw *hw,
- +				       struct netdev_hw_addr_list *mc_list)
-  {
-  	struct wl1271_filter_params *fp;
- +	struct netdev_hw_addr *ha;
-+ 	struct wl1271 *wl = hw->priv;
- -	int i;
-+ 
-+ 	if (unlikely(wl->state == WL1271_STATE_OFF))
-+ 		return 0;
+- 	struct fb_info *fbdev_info;
+- 
+ -	int fifo_alloc_count;
+  	struct nouveau_channel *fifos[NOUVEAU_MAX_CHANNEL_NR];
   
-  	fp = kzalloc(sizeof(*fp), GFP_ATOMIC);
-  	if (!fp) {
+  	struct nouveau_engine engine;
