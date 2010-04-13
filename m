@@ -1,16 +1,19 @@
-From: <"huangj@blc-10-6:$"@brocade.com>
-Subject: [PATCH] bfa: fix compilation warning in powerpc
-Date: Tue, 13 Apr 2010 12:11:08 -0700
-Message-ID: <1271185868-28661-1-git-send-email-huangj@brocade.com>
+From: Jing Huang <huangj@Brocade.com>
+Subject: [PATCH] bfa: fix compilation warning in powerpc (resend)
+Date: Tue, 13 Apr 2010 12:22:29 -0700
+Message-ID: <1271186549-642-1-git-send-email-huangj@brocade.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-scsi-owner@vger.kernel.org>
-Sender: linux-scsi-owner@vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx0b-000f0801.pphosted.com ([67.231.152.113]:55768 "EHLO
+	mx0b-000f0801.pphosted.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750857Ab0DMTWk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 13 Apr 2010 15:22:40 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: sfr@canb.auug.org.au, James.Bottomley@suse.de
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org, Jing Huang <huangj@brocade.com>
-List-Id: linux-next.vger.kernel.org
-
-From: Jing Huang <huangj@brocade.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org, kgudipat@Brocade.com, rvadivel@Brocade.com, vravindr@Brocade.com, Jing Huang <huangj@Brocade.com>
 
 Fix the compilation warning in powerpc. The same change also fixes endian
 issue we found in powerpc test. This patch has been tested in x86 and
@@ -44,4 +47,3 @@ index 4eb1330..bd1cd3e 100644
  			({						\
 -- 
 1.6.5.2
-
