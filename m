@@ -1,53 +1,46 @@
-From: Jing Huang <huangj@Brocade.COM>
-Subject: RE: linux-next: build warnings after merge of the final tree (scsi
- tree related)
-Date: Tue, 13 Apr 2010 00:30:52 -0700
-Message-ID: <04391A4E90BB2149B010D22452FA1687B99CC5C1@HQ-EXCH-6.corp.brocade.com>
-References: <20100413162129.d913af53.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] eeepc-wmi: depends on INPUT_SPARSEKMAP
+Date: Tue, 13 Apr 2010 09:45:44 -0700
+Message-ID: <20100413094544.38369da9.randy.dunlap@oracle.com>
+References: <20100413163427.8acd04e5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100413162129.d913af53.sfr@canb.auug.org.au>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, James Bottomley <James.Bottomley@HansenPartnership.com>, Krishna Gudipati <kgudipat@Brocade.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet11.oracle.com ([148.87.113.123]:22524 "EHLO
+	rcsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751518Ab0DMQrJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Apr 2010 12:47:09 -0400
+In-Reply-To: <20100413163427.8acd04e5.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Matthew Garrett <mjg@redhat.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org
 
-This is indeed introduced by this commit. I have reproduced the issue in a powerpc machine, and I will provide a fix soon.
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Jing
------Original Message-----
-From: Stephen Rothwell [mailto:sfr@canb.auug.org.au] 
-Sent: Monday, April 12, 2010 11:21 PM
-To: James Bottomley
-Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Jing Huang
-Subject: linux-next: build warnings after merge of the final tree (scsi tree related)
+When EEEPC_WMI=y and INPUT_SPARSEKMAP=m, the build fails,
+so make EEEPC_WMI depend on INPUT_SPARSEKMAP.
 
-Hi James,
+eeepc-wmi.c:(.text+0x28d1a9): undefined reference to `sparse_keymap_setup'
+eeepc-wmi.c:(.text+0x28d1f9): undefined reference to `sparse_keymap_free'
+eeepc-wmi.c:(.text+0x28d2e0): undefined reference to `sparse_keymap_report_event'
+eeepc-wmi.c:(.init.text+0x17069): undefined reference to `sparse_keymap_free'
+eeepc-wmi.c:(.exit.text+0x2bae): undefined reference to `sparse_keymap_free'
 
-After merging the final tree, today's linux-next build (powerpc
-allyesconfig) produced these warnings:
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/platform/x86/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-drivers/scsi/bfa/bfa_ioc.c: In function 'bfa_ioc_msgget':
-drivers/scsi/bfa/bfa_ioc.c:1331: warning: value computed is not used
-drivers/scsi/bfa/bfa_ioc_ct.c: In function 'bfa_ioc_ct_notify_hbfail':
-drivers/scsi/bfa/bfa_ioc_ct.c:177: warning: value computed is not used
-drivers/scsi/bfa/bfa_ioc_ct.c:180: warning: value computed is not used
-drivers/scsi/bfa/bfa_ioc_ct.c: In function 'bfa_ioc_ct_pll_init':
-drivers/scsi/bfa/bfa_ioc_ct.c:381: warning: value computed is not used
-drivers/scsi/bfa/bfa_ioc_ct.c: In function 'bfa_ioc_ct_ownership_reset':
-drivers/scsi/bfa/bfa_ioc_ct.c:421: warning: value computed is not used
-drivers/scsi/bfa/bfa_ioc_cb.c: In function 'bfa_ioc_cb_notify_hbfail':
-drivers/scsi/bfa/bfa_ioc_cb.c:99: warning: value computed is not used
-drivers/scsi/bfa/bfa_ioc_cb.c: In function 'bfa_ioc_cb_ownership_reset':
-drivers/scsi/bfa/bfa_ioc_cb.c:272: warning: value computed is not used
-
-Presumably introduced by commit 077424e2e2c97c830d903891dfcd1532068b85b7
-("[SCSI] bfa: sg addr big endian fix") from the scsi tree.
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+--- linux-next-20100413.orig/drivers/platform/x86/Kconfig
++++ linux-next-20100413/drivers/platform/x86/Kconfig
+@@ -388,7 +388,7 @@ config EEEPC_LAPTOP
+ config EEEPC_WMI
+ 	tristate "Eee PC WMI Hotkey Driver (EXPERIMENTAL)"
+ 	depends on ACPI_WMI
+-	depends on INPUT
++	depends on INPUT && INPUT_SPARSEKMAP
+ 	depends on EXPERIMENTAL
+ 	---help---
+ 	  Say Y here if you want to support WMI-based hotkeys on Eee PC laptops.
