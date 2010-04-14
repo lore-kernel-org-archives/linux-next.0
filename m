@@ -1,44 +1,35 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the net tree with Linus' tree
-Date: Tue, 13 Apr 2010 19:00:53 -0700 (PDT)
-Message-ID: <20100413.190053.222629252.davem@davemloft.net>
-References: <20100414114556.97d7583d.sfr@canb.auug.org.au>
-	<20100413.184724.112842393.davem@davemloft.net>
-	<20100414115244.f97ca080.sfr@canb.auug.org.au>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: linux-next: manual merge of the crypto tree with Linus' tree
+Date: Wed, 14 Apr 2010 11:14:08 +0800
+Message-ID: <20100414031408.GA19203@gondor.apana.org.au>
+References: <20100414114856.54e1cb21.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:49041
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754523Ab0DNCAt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 13 Apr 2010 22:00:49 -0400
-In-Reply-To: <20100414115244.f97ca080.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ken_kawasaki@spring.nifty.jp, jpirko@redhat.com
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20100414114856.54e1cb21.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Uri Simchoni <uri@jdland.co.il>
+List-Id: linux-next.vger.kernel.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 14 Apr 2010 11:52:44 +1000
-
-> Hi Dave,
+On Wed, Apr 14, 2010 at 11:48:56AM +1000, Stephen Rothwell wrote:
+> Hi Herbert,
 > 
-> On Tue, 13 Apr 2010 18:47:24 -0700 (PDT) David Miller <davem@davemloft.net> wrote:
->>
->> Thanks a lot Stephen, I'll merge net-2.6 into net-next-2.6 to
->> fix this up for you.
+> Today's linux-next merge of the crypto tree got a conflict in
+> drivers/crypto/mv_cesa.c between commit
+> 5a0e3ad6af8660be21ca98a971cd00f331318c05 ("include cleanup: Update gfp.h
+> and slab.h includes to prepare for breaking implicit slab.h inclusion
+> from percpu.h") from Linus' tree and commit
+> 750052dd2400cd09e0864d75b63c2c0bf605056f ("crypto: mv_cesa - Add sha1 and
+> hmac(sha1) async hash drivers") from the crypto tree.
 > 
-> Thanks.
-> 
-> There was another conflict in drivers/net/virtio_net.c (because there is
-> a patch in both your tree and Linus' (via net-current)) that git did not
-> quite resolve correctly.  The sg_init_table() in add_recvbuf_small() was
-> reinserted by the automatic merge ... I removed it in my merge.
+> Just context changes.  I fixed it up (see below) and can carry the fix
+> for a while.
 
-Yes I expected that, the cherrypicked fix gets changed by a subsequent
-commit in net-next-2.6 that changes where the scatterlist entries are
-stored in that driver.
-
-Anyways, thanks for the heads up.
+Thanks for the heads up Stephen, I will do a merge soon.
+-- 
+Visit Openswan at http://www.openswan.org/
+Email: Herbert Xu ~{PmV>HI~} <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
