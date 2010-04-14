@@ -1,52 +1,53 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH -next] eeepc-wmi: depends on INPUT_SPARSEKMAP
-Date: Tue, 13 Apr 2010 15:39:34 -0700
-Message-ID: <201004131539.34998.dmitry.torokhov@gmail.com>
-References: <20100413163427.8acd04e5.sfr@canb.auug.org.au> <20100413094544.38369da9.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree with Linus' tree
+Date: Wed, 14 Apr 2010 11:45:56 +1000
+Message-ID: <20100414114556.97d7583d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gw0-f46.google.com ([74.125.83.46]:53762 "EHLO
-	mail-gw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752731Ab0DMXPv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Apr 2010 19:15:51 -0400
-In-Reply-To: <20100413094544.38369da9.randy.dunlap@oracle.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:49106 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754394Ab0DNBqA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 13 Apr 2010 21:46:00 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Matthew Garrett <mjg@redhat.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ken Kawasaki <ken_kawasaki@spring.nifty.jp>, Jiri Pirko <jpirko@redhat.com>
 
-On Tuesday 13 April 2010 09:45:44 am Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> When EEEPC_WMI=y and INPUT_SPARSEKMAP=m, the build fails,
-> so make EEEPC_WMI depend on INPUT_SPARSEKMAP.
-> 
-> eeepc-wmi.c:(.text+0x28d1a9): undefined reference to `sparse_keymap_setup'
-> eeepc-wmi.c:(.text+0x28d1f9): undefined reference to `sparse_keymap_free'
-> eeepc-wmi.c:(.text+0x28d2e0): undefined reference to
-> `sparse_keymap_report_event' eeepc-wmi.c:(.init.text+0x17069): undefined
-> reference to `sparse_keymap_free' eeepc-wmi.c:(.exit.text+0x2bae):
-> undefined reference to `sparse_keymap_free'
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> ---
->  drivers/platform/x86/Kconfig |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> --- linux-next-20100413.orig/drivers/platform/x86/Kconfig
-> +++ linux-next-20100413/drivers/platform/x86/Kconfig
-> @@ -388,7 +388,7 @@ config EEEPC_LAPTOP
->  config EEEPC_WMI
->  	tristate "Eee PC WMI Hotkey Driver (EXPERIMENTAL)"
->  	depends on ACPI_WMI
-> -	depends on INPUT
-> +	depends on INPUT && INPUT_SPARSEKMAP
+Hi all,
 
-"select INPUT_SPARSEKMAP" please - users should not be concerned about
-such implementation details.
+Today's linux-next merge of the net tree got a conflict in
+drivers/net/pcmcia/smc91c92_cs.c between commit
+a6d37024de02e7cb2b2333e438e71355a9c32a0a ("smc91c92_cs: define
+multicast_table as unsigned char") from Linus' tree and commit
+22bedad3ce112d5ca1eaf043d4990fa2ed698c87 ("net: convert multicast list to
+list_head") from the net tree.
 
+I fixed it up (see below) and can carry the fix for a while.
 -- 
-Dmitry
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/net/pcmcia/smc91c92_cs.c
+index fd9d6e3,ad22676..0000000
+--- a/drivers/net/pcmcia/smc91c92_cs.c
++++ b/drivers/net/pcmcia/smc91c92_cs.c
+@@@ -1621,10 -1618,14 +1621,10 @@@ static void set_rx_mode(struct net_devi
+  	rx_cfg_setting = RxStripCRC | RxEnable | RxAllMulti;
+      else {
+  	if (!netdev_mc_empty(dev)) {
+- 	    struct dev_mc_list *mc_addr;
++ 	    struct netdev_hw_addr *ha;
+  
+- 	    netdev_for_each_mc_addr(mc_addr, dev) {
+- 		u_int position = ether_crc(6, mc_addr->dmi_addr);
++ 	    netdev_for_each_mc_addr(ha, dev) {
++ 		u_int position = ether_crc(6, ha->addr);
+ -#ifndef final_version		/* Verify multicast address. */
+ -		if ((ha->addr[0] & 1) == 0)
+ -		    continue;
+ -#endif
+  		multicast_table[position >> 29] |= 1 << ((position >> 26) & 7);
+  	    }
+  	}
