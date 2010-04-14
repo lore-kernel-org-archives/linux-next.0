@@ -1,35 +1,68 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: linux-next: manual merge of the crypto tree with Linus' tree
-Date: Wed, 14 Apr 2010 11:14:08 +0800
-Message-ID: <20100414031408.GA19203@gondor.apana.org.au>
-References: <20100414114856.54e1cb21.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the limits tree
+Date: Wed, 14 Apr 2010 13:59:05 +1000
+Message-ID: <20100414135905.47494958.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20100414114856.54e1cb21.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Uri Simchoni <uri@jdland.co.il>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:54124 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753208Ab0DND7L (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 13 Apr 2010 23:59:11 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Slaby <jirislaby@gmail.com>
 
-On Wed, Apr 14, 2010 at 11:48:56AM +1000, Stephen Rothwell wrote:
-> Hi Herbert,
-> 
-> Today's linux-next merge of the crypto tree got a conflict in
-> drivers/crypto/mv_cesa.c between commit
-> 5a0e3ad6af8660be21ca98a971cd00f331318c05 ("include cleanup: Update gfp.h
-> and slab.h includes to prepare for breaking implicit slab.h inclusion
-> from percpu.h") from Linus' tree and commit
-> 750052dd2400cd09e0864d75b63c2c0bf605056f ("crypto: mv_cesa - Add sha1 and
-> hmac(sha1) async hash drivers") from the crypto tree.
-> 
-> Just context changes.  I fixed it up (see below) and can carry the fix
-> for a while.
+Hi all,
 
-Thanks for the heads up Stephen, I will do a merge soon.
+Today's linux-next merge of the tip tree got a conflict in
+kernel/posix-cpu-timers.c between commit
+0c1b5ce8de67c36bbf67db38240a91f358133bdd ("core: add task_struct to
+update_rlimit_cpu") from the limits tree and commit
+f55db609042faecd5e518ce372b87f846659b32e ("cpu-timers: Simplify
+RLIMIT_CPU handling") from the tip tree.
+
+I did the obvious fixup (see below) but it is probably not completely
+correct.   Jiri, did I see Linus ask for major revisions of the writable
+limits work?
 -- 
-Visit Openswan at http://www.openswan.org/
-Email: Herbert Xu ~{PmV>HI~} <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc kernel/posix-cpu-timers.c
+index 2807ef8,799f360..0000000
+--- a/kernel/posix-cpu-timers.c
++++ b/kernel/posix-cpu-timers.c
+@@@ -11,19 -11,18 +11,18 @@@
+  #include <trace/events/timer.h>
+  
+  /*
+-  * Called after updating RLIMIT_CPU to set timer expiration if necessary.
++  * Called after updating RLIMIT_CPU to run cpu timer and update
++  * tsk->signal->cputime_expires expiration cache if necessary. Needs
++  * siglock protection since other code may update expiration cache as
++  * well.
+   */
+ -void update_rlimit_cpu(unsigned long rlim_new)
+ +void update_rlimit_cpu(struct task_struct *task, unsigned long rlim_new)
+  {
+  	cputime_t cputime = secs_to_cputime(rlim_new);
+- 	struct signal_struct *const sig = task->signal;
+  
+- 	if (cputime_eq(sig->it[CPUCLOCK_PROF].expires, cputime_zero) ||
+- 	    cputime_gt(sig->it[CPUCLOCK_PROF].expires, cputime)) {
+- 		spin_lock_irq(&task->sighand->siglock);
+- 		set_process_cpu_timer(task, CPUCLOCK_PROF, &cputime, NULL);
+- 		spin_unlock_irq(&task->sighand->siglock);
+- 	}
+ -	spin_lock_irq(&current->sighand->siglock);
+ -	set_process_cpu_timer(current, CPUCLOCK_PROF, &cputime, NULL);
+ -	spin_unlock_irq(&current->sighand->siglock);
+++	spin_lock_irq(&task->sighand->siglock);
+++	set_process_cpu_timer(task, CPUCLOCK_PROF, &cputime, NULL);
+++	spin_unlock_irq(&task->sighand->siglock);
+  }
+  
+  static int check_clock(const clockid_t which_clock)
