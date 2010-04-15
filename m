@@ -1,45 +1,48 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: PowerPC WARN_ON_ONCE() after merge of the final tree
- (tip related)
-Date: Thu, 15 Apr 2010 09:32:56 +0200
-Message-ID: <20100415073256.GG9240@elte.hu>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: PowerPC WARN_ON_ONCE() after merge of the final
+ tree (tip related)
+Date: Thu, 15 Apr 2010 20:04:14 +1000
+Message-ID: <20100415200414.1ef705c8.sfr@canb.auug.org.au>
 References: <20100415161214.04637496.sfr@canb.auug.org.au>
- <20100415064940.GA9240@elte.hu>
- <20100414.235557.123118153.davem@davemloft.net>
+	<20100415064940.GA9240@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:44528 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757357Ab0DOHdJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 15 Apr 2010 03:33:09 -0400
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__15_Apr_2010_20_04_14_+1000_cwf2clJQ=Y1VEbHW"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20100415064940.GA9240@elte.hu>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>, ppc-dev <linuxppc-dev@lists.ozlabs.org>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Thu__15_Apr_2010_20_04_14_+1000_cwf2clJQ=Y1VEbHW
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20100414.235557.123118153.davem@davemloft.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, tglx@linutronix.de, hpa@zytor.com, peterz@infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, fweisbec@gmail.com, linuxppc-dev@lists.ozlabs.org
+Content-Transfer-Encoding: quoted-printable
 
+Hi Ingo,
 
-* David Miller <davem@davemloft.net> wrote:
+On Thu, 15 Apr 2010 08:49:40 +0200 Ingo Molnar <mingo@elte.hu> wrote:
+>
+> Ok, we'll fix the warning.
 
-> From: Ingo Molnar <mingo@elte.hu>
-> Date: Thu, 15 Apr 2010 08:49:40 +0200
-> 
-> > Btw., WARN_ON trapping on PowerPC is clearly a PowerPC bug - there's a good 
-> > reason we have WARN_ON versus BUG_ON - it should be fixed.
-> 
-> I disagree, an implementation should be allowed to use the most
-> efficient implementation possible for both interfaces.
+Thanks.
 
-It trades robustness for slightly better space/code efficiency.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Such a trap based mechanism exists on x86 as well and we use it for BUG_ON(). 
-We intentionally dont use it to generate warnings and dont override __WARN(), 
-because it would blow up way too often when a warning triggers in some 
-sensitive codepath that cannot take a trap.
+--Signature=_Thu__15_Apr_2010_20_04_14_+1000_cwf2clJQ=Y1VEbHW
+Content-Type: application/pgp-signature
 
-Anyway, the warning obviously has to be fixed - but the boot crash itself is 
-PowerPC's own doing.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-	Ingo
+iEYEARECAAYFAkvG5J4ACgkQjjKRsyhoI8xGNACeIcDOIfs3wO+YEBYuG+tMEy73
++M4AoIxjOFzg8ZG8jBZ9/bQl0mjdP9ZM
+=zHJj
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__15_Apr_2010_20_04_14_+1000_cwf2clJQ=Y1VEbHW--
