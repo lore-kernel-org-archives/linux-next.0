@@ -1,19 +1,55 @@
-From: Matthew Garrett <mjg59@srcf.ucam.org>
-Subject: Re: [PATCH -next] eeepc-wmi: depends on INPUT_SPARSEKMAP
-Date: Wed, 14 Apr 2010 13:34:30 +0100
-Message-ID: <20100414123430.GA9242@srcf.ucam.org>
-References: <20100413163427.8acd04e5.sfr@canb.auug.org.au> <20100413094544.38369da9.randy.dunlap@oracle.com> <201004131539.34998.dmitry.torokhov@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the block tree
+Date: Thu, 15 Apr 2010 12:42:22 +1000
+Message-ID: <20100415124222.8e0e7132.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__15_Apr_2010_12_42_22_+1000_15=DJSsZ0Rvv5DeR"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:40727 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756408Ab0DOCm2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 14 Apr 2010 22:42:28 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jens Axboe <jens.axboe@oracle.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gui Jianfeng <guijianfeng@cn.fujitsu.com>, Divyesh Shah <dpshah@google.com>
+
+--Signature=_Thu__15_Apr_2010_12_42_22_+1000_15=DJSsZ0Rvv5DeR
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <201004131539.34998.dmitry.torokhov@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-I've queued up a patch for this.
+Hi Jens,
 
--- 
-Matthew Garrett | mjg59@srcf.ucam.org
+After merging the block tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+ERROR: "get_gendisk" [block/blk-cgroup.ko] undefined!
+ERROR: "sched_clock" [block/blk-cgroup.ko] undefined!
+
+Probably caused by commits 34d0f179d6dd711d3fc13c0820a456c59aae8048
+("io-controller: Add a new interface "weight_device" for IO-Controller"),
+9195291e5f05e01d67f9a09c756b8aca8f009089 ("blkio: Increment the blkio
+cgroup stats for real now") and 812df48d127365ffd0869aa139738f572a86759c
+("blkio: Add more debug-only per-cgroup stats").
+
+I have used the version of the block tree from next-20100414 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__15_Apr_2010_12_42_22_+1000_15=DJSsZ0Rvv5DeR
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkvGfQ4ACgkQjjKRsyhoI8wgbgCfaXMdyMN12sOnnqQMsdqUhikL
+IokAnRYmz+TRmP4hx5dX4wBa9pe8aHlu
+=XGmK
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__15_Apr_2010_12_42_22_+1000_15=DJSsZ0Rvv5DeR--
