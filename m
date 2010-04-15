@@ -1,63 +1,41 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: PowerPC WARN_ON_ONCE() after merge of the final tree
- (tip related)
-Date: Thu, 15 Apr 2010 19:39:55 +0200
-Message-ID: <20100415173955.GA10881@elte.hu>
-References: <20100415161214.04637496.sfr@canb.auug.org.au>
- <20100415064940.GA9240@elte.hu>
- <20100415130032.GA6789@nowhere>
- <20100415140358.GA19981@elte.hu>
- <20100415172421.GB5069@nowhere>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] usb/serial/ti_usb: fix printk format warning
+Date: Thu, 15 Apr 2010 11:38:56 -0700
+Message-ID: <20100415113856.45564d4f.randy.dunlap@oracle.com>
+References: <20100415144856.659be29e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:59443 "EHLO mx2.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751792Ab0DORkK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 15 Apr 2010 13:40:10 -0400
-Content-Disposition: inline
-In-Reply-To: <20100415172421.GB5069@nowhere>
+Received: from acsinet12.oracle.com ([141.146.126.234]:38263 "EHLO
+	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755940Ab0DOSjX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Apr 2010 14:39:23 -0400
+In-Reply-To: <20100415144856.659be29e.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-usb@vger.kernel.org, gregkh@suse.de
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-* Frederic Weisbecker <fweisbec@gmail.com> wrote:
+Fix printk format warning in usbserial/ti_usb:
 
-> On Thu, Apr 15, 2010 at 04:03:58PM +0200, Ingo Molnar wrote:
-> > > 
-> > > 
-> > > diff --git a/kernel/lockdep.c b/kernel/lockdep.c
-> > > index 78325f8..65d4336 100644
-> > > --- a/kernel/lockdep.c
-> > > +++ b/kernel/lockdep.c
-> > > @@ -2298,7 +2298,11 @@ void trace_hardirqs_on_caller(unsigned long ip)
-> > >  		return;
-> > >  
-> > >  	if (unlikely(curr->hardirqs_enabled)) {
-> > > +		unsigned long flags;
-> > > +
-> > > +		raw_local_irq_save(flags);
-> > >  		debug_atomic_inc(redundant_hardirqs_on);
-> > > +		raw_local_irq_restore(flags);
-> > >  		return;
-> > >  	}
-> > >  	/* we'll do an OFF -> ON transition: */
-> > 
-> > that looks rather ugly. Why not do a raw:
-> > 
-> > 	this_cpu_inc(lockdep_stats.redundant_hardirqs_on);
-> > 
-> > which basically open-codes debug_atomic_inc(), but without the warning?
-> 
-> 
-> There is also no guarantee we are in a non-preemptable section. We can then
-> also race against another cpu.
-> 
-> I'm not sure what to do.
+drivers/usb/serial/ti_usb_3410_5052.c:1738: warning: format '%d' expects type 'int', but argument 5 has type 'size_t'
 
-it's a statistics counter so worst-case we lose a count. It's not a real issue 
-- but might be worth adding a comment.
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/usb/serial/ti_usb_3410_5052.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-	Ingo
+--- linux-next-20100415.orig/drivers/usb/serial/ti_usb_3410_5052.c
++++ linux-next-20100415/drivers/usb/serial/ti_usb_3410_5052.c
+@@ -1735,7 +1735,7 @@ static int ti_download_firmware(struct t
+ 		return -ENOENT;
+ 	}
+ 	if (fw_p->size > TI_FIRMWARE_BUF_SIZE) {
+-		dev_err(&dev->dev, "%s - firmware too large %d \n", __func__, fw_p->size);
++		dev_err(&dev->dev, "%s - firmware too large %zu\n", __func__, fw_p->size);
+ 		return -ENOENT;
+ 	}
+ 
