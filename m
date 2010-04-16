@@ -1,41 +1,48 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] usb/serial/ti_usb: fix printk format warning
-Date: Thu, 15 Apr 2010 11:38:56 -0700
-Message-ID: <20100415113856.45564d4f.randy.dunlap@oracle.com>
-References: <20100415144856.659be29e.sfr@canb.auug.org.au>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: linux-next: PowerPC WARN_ON_ONCE() after merge of the final
+ tree (tip related)
+Date: Fri, 16 Apr 2010 11:51:30 +1000
+Message-ID: <1271382690.13059.169.camel@pasglop>
+References: <20100415161214.04637496.sfr@canb.auug.org.au>
+	 <20100415064940.GA9240@elte.hu>
+	 <20100414.235557.123118153.davem@davemloft.net>
+	 <20100415073256.GG9240@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from acsinet12.oracle.com ([141.146.126.234]:38263 "EHLO
-	acsinet12.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755940Ab0DOSjX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Apr 2010 14:39:23 -0400
-In-Reply-To: <20100415144856.659be29e.sfr@canb.auug.org.au>
+Received: from gate.crashing.org ([63.228.1.57]:46673 "EHLO gate.crashing.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758207Ab0DPBxV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 15 Apr 2010 21:53:21 -0400
+In-Reply-To: <20100415073256.GG9240@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-usb@vger.kernel.org, gregkh@suse.de
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: David Miller <davem@davemloft.net>, sfr@canb.auug.org.au, peterz@infradead.org, fweisbec@gmail.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de, linuxppc-dev@lists.ozlabs.org
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+On Thu, 2010-04-15 at 09:32 +0200, Ingo Molnar wrote:
+> It trades robustness for slightly better space/code efficiency.
+> 
+> Such a trap based mechanism exists on x86 as well and we use it for BUG_ON(). 
+> We intentionally dont use it to generate warnings and dont override __WARN(), 
+> because it would blow up way too often when a warning triggers in some 
+> sensitive codepath that cannot take a trap.
+> 
+> Anyway, the warning obviously has to be fixed - but the boot crash itself is 
+> PowerPC's own doing. 
 
-Fix printk format warning in usbserial/ti_usb:
+Well, yes and no, as I explained in a separate branch of that thread. We
+indeed can't cope with a WARN in that spot because it goes recursive. 
 
-drivers/usb/serial/ti_usb_3410_5052.c:1738: warning: format '%d' expects type 'int', but argument 5 has type 'size_t'
+Now the reason we have this double-enable is due afaik to the way I
+implemented IRQ trace, because things like syscalls basically
+force-enable IRQs on powerpc and I don't necessarily have tracking
+informations in the exception return path of what the "old" value was.
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- drivers/usb/serial/ti_usb_3410_5052.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I need to double check what the exact scenario here is and whether I can
+fix it but it's one of those cases where what lockdep is warning about
+isn't actually an error I believe.
 
---- linux-next-20100415.orig/drivers/usb/serial/ti_usb_3410_5052.c
-+++ linux-next-20100415/drivers/usb/serial/ti_usb_3410_5052.c
-@@ -1735,7 +1735,7 @@ static int ti_download_firmware(struct t
- 		return -ENOENT;
- 	}
- 	if (fw_p->size > TI_FIRMWARE_BUF_SIZE) {
--		dev_err(&dev->dev, "%s - firmware too large %d \n", __func__, fw_p->size);
-+		dev_err(&dev->dev, "%s - firmware too large %zu\n", __func__, fw_p->size);
- 		return -ENOENT;
- 	}
- 
+Cheers,
+Ben. 
