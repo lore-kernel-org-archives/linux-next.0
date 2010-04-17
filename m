@@ -1,48 +1,151 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: linux-next: PowerPC WARN_ON_ONCE() after merge of the final
-	tree (tip related)
-Date: Fri, 16 Apr 2010 14:32:12 +0200
-Message-ID: <20100416123208.GA5162@nowhere>
-References: <20100415161214.04637496.sfr@canb.auug.org.au> <20100415064940.GA9240@elte.hu> <20100415130032.GA6789@nowhere> <20100415140358.GA19981@elte.hu> <20100415171551.GA5069@nowhere> <1271414323.4807.1931.camel@twins>
+From: Forest Bond <forest@alittletooquiet.net>
+Subject: [PATCH] vt6656: Rename hostap_set_hostapd, hostap_iotctl.
+Date: Sat, 17 Apr 2010 11:03:38 -0400
+Message-ID: <20100417150338.GA2259@alittletooquiet.net>
+References: <4BAB8362.7030005@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Dxnq1zWXvFF0Q93v"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ww0-f46.google.com ([74.125.82.46]:55016 "EHLO
-	mail-ww0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752746Ab0DPMcN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 16 Apr 2010 08:32:13 -0400
+Received: from storm.alittletooquiet.net ([67.23.28.199]:37030 "EHLO
+	storm.alittletooquiet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752297Ab0DQPDj (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 17 Apr 2010 11:03:39 -0400
 Content-Disposition: inline
-In-Reply-To: <1271414323.4807.1931.camel@twins>
+In-Reply-To: <4BAB8362.7030005@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>
-
-On Fri, Apr 16, 2010 at 12:38:43PM +0200, Peter Zijlstra wrote:
-> On Thu, 2010-04-15 at 19:15 +0200, Frederic Weisbecker wrote:
-> > > that looks rather ugly. Why not do a raw:
-> > > 
-> > >       this_cpu_inc(lockdep_stats.redundant_hardirqs_on);
-> > > 
-> > > which basically open-codes debug_atomic_inc(), but without the warning?
-> > 
-> > 
-> > Because that would open a race against interrupts that might
-> > touch lockdep_stats.redundant_hardirqs_on too.
-> 
-> 
-> How so, its a pure per-cpu variable right? so either the increment
-> happens before the interrupts hits, or after, in either case there
-> should not be a race with interrupts.
+To: Greg KH <gregkh@suse.de>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, devel@driverdev.osuosl.org
 
 
-In x86 yeah, I guess the compiler simply loads the address
-and does an inc directly, which is atomic wrt interrupts.
+--Dxnq1zWXvFF0Q93v
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-But what about another arch that would need an intermediate
-load of the value:
+The functions hostap_set_hostapd, hostap_iotctl clashed with functions of t=
+he
+same name with CONFIG_HOSTAP=3Dy and/or CONFIG_VT6655=3Dy.
 
-load val, reg
-add reg, 1
-		<---interrupt here
-store reg, val
+Signed-off-by: Forest Bond <forest@alittletooquiet.net>
+---
+ drivers/staging/vt6656/hostap.c   |    8 ++++----
+ drivers/staging/vt6656/hostap.h   |    4 ++--
+ drivers/staging/vt6656/ioctl.c    |    4 ++--
+ drivers/staging/vt6656/main_usb.c |    2 +-
+ 4 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/staging/vt6656/hostap.c b/drivers/staging/vt6656/hosta=
+p.c
+index 1078d61..ca007c3 100644
+--- a/drivers/staging/vt6656/hostap.c
++++ b/drivers/staging/vt6656/hostap.c
+@@ -178,7 +178,7 @@ static int hostap_disable_hostapd(PSDevice pDevice, int=
+ rtnl_locked)
+  *
+  */
+=20
+-int hostap_set_hostapd(PSDevice pDevice, int val, int rtnl_locked)
++int vt6656_hostap_set_hostapd(PSDevice pDevice, int val, int rtnl_locked)
+ {
+ 	if (val < 0 || val > 1)
+ 		return -EINVAL;
+@@ -744,7 +744,7 @@ static int hostap_get_encryption(PSDevice pDevice,
+=20
+ /*
+  * Description:
+- *      hostap_ioctl main function supported for hostap deamon.
++ *      vt6656_hostap_ioctl main function supported for hostap deamon.
+  *
+  * Parameters:
+  *  In:
+@@ -756,7 +756,7 @@ static int hostap_get_encryption(PSDevice pDevice,
+  *
+  */
+=20
+-int hostap_ioctl(PSDevice pDevice, struct iw_point *p)
++int vt6656_hostap_ioctl(PSDevice pDevice, struct iw_point *p)
+ {
+ 	struct viawget_hostapd_param *param;
+ 	int ret =3D 0;
+@@ -844,7 +844,7 @@ int hostap_ioctl(PSDevice pDevice, struct iw_point *p)
+ 	    return -EOPNOTSUPP;
+=20
+ 	default:
+-	    DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO "hostap_ioctl: unknown cmd=3D%d\n",
++	    DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO "vt6656_hostap_ioctl: unknown cmd=
+=3D%d\n",
+ 		       (int)param->cmd);
+ 		return -EOPNOTSUPP;
+ 		break;
+diff --git a/drivers/staging/vt6656/hostap.h b/drivers/staging/vt6656/hosta=
+p.h
+index 8fd667b..9e366dc 100644
+--- a/drivers/staging/vt6656/hostap.h
++++ b/drivers/staging/vt6656/hostap.h
+@@ -61,8 +61,8 @@
+ #define ARPHRD_IEEE80211 801
+ #endif
+=20
+-int hostap_set_hostapd(PSDevice pDevice, int val, int rtnl_locked);
+-int hostap_ioctl(PSDevice pDevice, struct iw_point *p);
++int vt6656_hostap_set_hostapd(PSDevice pDevice, int val, int rtnl_locked);
++int vt6656_hostap_ioctl(PSDevice pDevice, struct iw_point *p);
+=20
+ #endif // __HOSTAP_H__
+=20
+diff --git a/drivers/staging/vt6656/ioctl.c b/drivers/staging/vt6656/ioctl.c
+index 6f33005..1ed2501 100644
+--- a/drivers/staging/vt6656/ioctl.c
++++ b/drivers/staging/vt6656/ioctl.c
+@@ -412,7 +412,7 @@ int private_ioctl(PSDevice pDevice, struct ifreq *rq) {
+ 			break;
+ 		};
+ 		if (sValue.dwValue =3D=3D 1) {
+-            if (hostap_set_hostapd(pDevice, 1, 1) =3D=3D 0){
++            if (vt6656_hostap_set_hostapd(pDevice, 1, 1) =3D=3D 0){
+                 DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO "Enable HOSTAP\n");
+             }
+             else {
+@@ -421,7 +421,7 @@ int private_ioctl(PSDevice pDevice, struct ifreq *rq) {
+ 			}
+         }
+         else {
+-            hostap_set_hostapd(pDevice, 0, 1);
++            vt6656_hostap_set_hostapd(pDevice, 0, 1);
+             DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO "Disable HOSTAP\n");
+         }
+=20
+diff --git a/drivers/staging/vt6656/main_usb.c b/drivers/staging/vt6656/mai=
+n_usb.c
+index 49270db..c8afb66 100644
+--- a/drivers/staging/vt6656/main_usb.c
++++ b/drivers/staging/vt6656/main_usb.c
+@@ -2064,7 +2064,7 @@ static int  device_ioctl(struct net_device *dev, stru=
+ct ifreq *rq, int cmd) {
+ 		    rc =3D 0;
+ 		}
+=20
+-		rc =3D hostap_ioctl(pDevice, &wrq->u.data);
++		rc =3D vt6656_hostap_ioctl(pDevice, &wrq->u.data);
+         break;
+=20
+     case IOCTL_CMD_WPA:
+--=20
+1.6.0.4
+
+--Dxnq1zWXvFF0Q93v
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.6 (GNU/Linux)
+
+iD8DBQFLyc3KRO4fQQdv5AwRAogiAJ96T3bNbwKfyZwozErx+Q3k0/Dv4gCg0T1h
+kOtP5RWS2Wbusyo+GUogK+o=
+=nxbt
+-----END PGP SIGNATURE-----
+
+--Dxnq1zWXvFF0Q93v--
