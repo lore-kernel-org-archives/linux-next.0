@@ -1,155 +1,56 @@
-From: Forest Bond <forest@alittletooquiet.net>
-Subject: [PATCH] vt6655: Rename hostap_set_hostapd, hostap_iotctl.
-Date: Sat, 17 Apr 2010 11:03:47 -0400
-Message-ID: <20100417150347.GB2259@alittletooquiet.net>
-References: <4BAB8362.7030005@oracle.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] bfa: fix compilation warning in powerpc (resend)
+Date: Wed, 21 Apr 2010 16:12:17 -0700
+Message-ID: <20100421161217.60d5654b.akpm@linux-foundation.org>
+References: <1271186549-642-1-git-send-email-huangj@brocade.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Yylu36WmvOXNoKYn"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <4BAB8362.7030005@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <gregkh@suse.de>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, devel@driverdev.osuosl.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:38004 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752431Ab0DUXND (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 21 Apr 2010 19:13:03 -0400
+In-Reply-To: <1271186549-642-1-git-send-email-huangj@brocade.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jing Huang <huangj@Brocade.com>
+Cc: sfr@canb.auug.org.au, James.Bottomley@suse.de, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org, kgudipat@Brocade.com, rvadivel@Brocade.com, vravindr@Brocade.com
+
+On Tue, 13 Apr 2010 12:22:29 -0700
+Jing Huang <huangj@Brocade.com> wrote:
+
+> Fix the compilation warning in powerpc.
+
+When fixing a warning, please quote that warning in the patch description!
+
+<does a cross-build>
+
+It seems that you're referring to this:
+
+drivers/scsi/bfa/bfa_ioc.c: In function 'bfa_ioc_msgget':
+drivers/scsi/bfa/bfa_ioc.c:1331: warning: value computed is not used
+drivers/scsi/bfa/bfa_ioc_ct.c: In function 'bfa_ioc_ct_notify_hbfail':
+drivers/scsi/bfa/bfa_ioc_ct.c:177: warning: value computed is not used
+drivers/scsi/bfa/bfa_ioc_ct.c:180: warning: value computed is not used
+drivers/scsi/bfa/bfa_ioc_ct.c: In function 'bfa_ioc_ct_pll_init':
+drivers/scsi/bfa/bfa_ioc_ct.c:381: warning: value computed is not used
+drivers/scsi/bfa/bfa_ioc_ct.c: In function 'bfa_ioc_ct_ownership_reset':
+drivers/scsi/bfa/bfa_ioc_ct.c:421: warning: value computed is not used
+drivers/scsi/bfa/bfa_ioc_cb.c: In function 'bfa_ioc_cb_notify_hbfail':
+drivers/scsi/bfa/bfa_ioc_cb.c:99: warning: value computed is not used
+drivers/scsi/bfa/bfa_ioc_cb.c: In function 'bfa_ioc_cb_ownership_reset':
+drivers/scsi/bfa/bfa_ioc_cb.c:272: warning: value computed is not used
 
 
---Yylu36WmvOXNoKYn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> The same change also fixes endian
+> issue we found in powerpc test.
 
-The functions hostap_set_hostapd, hostap_iotctl clashed with functions of t=
-he
-same name with CONFIG_HOSTAP=3Dy and/or CONFIG_VT6656=3Dy.
+When fixing a bug, please fully describe the bug!
 
-Signed-off-by: Forest Bond <forest@alittletooquiet.net>
----
- drivers/staging/vt6655/device_main.c |    4 ++--
- drivers/staging/vt6655/hostap.c      |    8 ++++----
- drivers/staging/vt6655/hostap.h      |    4 ++--
- drivers/staging/vt6655/ioctl.c       |    4 ++--
- 4 files changed, 10 insertions(+), 10 deletions(-)
+If this driver has "endian issues" on powerpc then it's quite possible
+that this is a running-around-with-hair-on-fire,
+must-backport-to-2.6.33.x bugfix.
 
-diff --git a/drivers/staging/vt6655/device_main.c b/drivers/staging/vt6655/=
-device_main.c
-index 18f4dfe..ef3135c 100644
---- a/drivers/staging/vt6655/device_main.c
-+++ b/drivers/staging/vt6655/device_main.c
-@@ -1242,7 +1242,7 @@ device_release_WPADEV(pDevice);
-     }
- #ifdef HOSTAP
-     if (dev)
--        hostap_set_hostapd(pDevice, 0, 0);
-+        vt6655_hostap_set_hostapd(pDevice, 0, 0);
- #endif
-     if (dev)
-         unregister_netdev(dev);
-@@ -3523,7 +3523,7 @@ static int  device_ioctl(struct net_device *dev, stru=
-ct ifreq *rq, int cmd) {
-     case IOCTL_CMD_HOSTAPD:
-=20
-=20
--	rc =3D hostap_ioctl(pDevice, &wrq->u.data);
-+	rc =3D vt6655_hostap_ioctl(pDevice, &wrq->u.data);
-         break;
-=20
-     case IOCTL_CMD_WPA:
-diff --git a/drivers/staging/vt6655/hostap.c b/drivers/staging/vt6655/hosta=
-p.c
-index 58abf44..9e07a40 100644
---- a/drivers/staging/vt6655/hostap.c
-+++ b/drivers/staging/vt6655/hostap.c
-@@ -183,7 +183,7 @@ KeyvInitTable(&pDevice->sKey,pDevice->PortOffset);
-  *
-  */
-=20
--int hostap_set_hostapd(PSDevice pDevice, int val, int rtnl_locked)
-+int vt6655_hostap_set_hostapd(PSDevice pDevice, int val, int rtnl_locked)
- {
- 	if (val < 0 || val > 1)
- 		return -EINVAL;
-@@ -746,7 +746,7 @@ static int hostap_get_encryption(PSDevice pDevice,
-=20
- /*
-  * Description:
-- *      hostap_ioctl main function supported for hostap deamon.
-+ *      vt6655_hostap_ioctl main function supported for hostap deamon.
-  *
-  * Parameters:
-  *  In:
-@@ -758,7 +758,7 @@ static int hostap_get_encryption(PSDevice pDevice,
-  *
-  */
-=20
--int hostap_ioctl(PSDevice pDevice, struct iw_point *p)
-+int vt6655_hostap_ioctl(PSDevice pDevice, struct iw_point *p)
- {
- 	struct viawget_hostapd_param *param;
- 	int ret =3D 0;
-@@ -846,7 +846,7 @@ int hostap_ioctl(PSDevice pDevice, struct iw_point *p)
- 	    return -EOPNOTSUPP;
-=20
- 	default:
--	    DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO "hostap_ioctl: unknown cmd=3D%d\n",
-+	    DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO "vt6655_hostap_ioctl: unknown cmd=
-=3D%d\n",
- 		       (int)param->cmd);
- 		return -EOPNOTSUPP;
- 		break;
-diff --git a/drivers/staging/vt6655/hostap.h b/drivers/staging/vt6655/hosta=
-p.h
-index 8fd667b..55db555 100644
---- a/drivers/staging/vt6655/hostap.h
-+++ b/drivers/staging/vt6655/hostap.h
-@@ -61,8 +61,8 @@
- #define ARPHRD_IEEE80211 801
- #endif
-=20
--int hostap_set_hostapd(PSDevice pDevice, int val, int rtnl_locked);
--int hostap_ioctl(PSDevice pDevice, struct iw_point *p);
-+int vt6655_hostap_set_hostapd(PSDevice pDevice, int val, int rtnl_locked);
-+int vt6655_hostap_ioctl(PSDevice pDevice, struct iw_point *p);
-=20
- #endif // __HOSTAP_H__
-=20
-diff --git a/drivers/staging/vt6655/ioctl.c b/drivers/staging/vt6655/ioctl.c
-index d9a5fd2..f29ed9f 100644
---- a/drivers/staging/vt6655/ioctl.c
-+++ b/drivers/staging/vt6655/ioctl.c
-@@ -429,7 +429,7 @@ int private_ioctl(PSDevice pDevice, struct ifreq *rq) {
- 			break;
- 		};
- 		if (sValue.dwValue =3D=3D 1) {
--            if (hostap_set_hostapd(pDevice, 1, 1) =3D=3D 0){
-+            if (vt6655_hostap_set_hostapd(pDevice, 1, 1) =3D=3D 0){
-                 DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO "Enable HOSTAP\n");
-             }
-             else {
-@@ -438,7 +438,7 @@ int private_ioctl(PSDevice pDevice, struct ifreq *rq) {
- 			}
-         }
-         else {
--            hostap_set_hostapd(pDevice, 0, 1);
-+            vt6655_hostap_set_hostapd(pDevice, 0, 1);
-             DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO "Disable HOSTAP\n");
-         }
-=20
---=20
-1.6.0.4
-
---Yylu36WmvOXNoKYn
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.6 (GNU/Linux)
-
-iD8DBQFLyc3TRO4fQQdv5AwRAhaUAJ4zwYDXuIhetocw/MjZU0nADRKwfwCgjEfq
-XovEulOykVq6ocUccNfECi4=
-=eNhZ
------END PGP SIGNATURE-----
-
---Yylu36WmvOXNoKYn--
+But how would I know?  You didn't tell me!
