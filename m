@@ -1,71 +1,84 @@
-From: Jing Huang <huangj@Brocade.COM>
-Subject: RE: [PATCH] bfa: fix compilation warning in powerpc (resend)
-Date: Thu, 22 Apr 2010 12:50:31 -0700
-Message-ID: <04391A4E90BB2149B010D22452FA1687B99CCFDD@HQ-EXCH-6.corp.brocade.com>
-References: <1271186549-642-1-git-send-email-huangj@brocade.com>
- <20100421161217.60d5654b.akpm@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next tree addition request
+Date: Sat, 24 Apr 2010 22:05:07 +1000
+Message-ID: <20100424220507.b515d095.sfr@canb.auug.org.au>
+References: <20100420142716.32c27ed0@bike.lwn.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-scsi-owner@vger.kernel.org>
-In-Reply-To: <20100421161217.60d5654b.akpm@linux-foundation.org>
-Content-Language: en-US
-Sender: linux-scsi-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "James.Bottomley@suse.de" <James.Bottomley@suse.de>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, Krishna Gudipati <kgudipat@Brocade.com>, Ramkumar Vadivelu <rvadivel@Brocade.COM>, Vinodh Ravindran <vravindr@Brocade.COM>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sat__24_Apr_2010_22_05_07_+1000_xyhnSsjYLqYDs5YB"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:41081 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751967Ab0DXMFP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 24 Apr 2010 08:05:15 -0400
+In-Reply-To: <20100420142716.32c27ed0@bike.lwn.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
->> Fix the compilation warning in powerpc.
->
->When fixing a warning, please quote that warning in the patch description!
->
-><does a cross-build>
->
->It seems that you're referring to this:
->
->drivers/scsi/bfa/bfa_ioc.c: In function 'bfa_ioc_msgget':
->drivers/scsi/bfa/bfa_ioc.c:1331: warning: value computed is not used
->drivers/scsi/bfa/bfa_ioc_ct.c: In function 'bfa_ioc_ct_notify_hbfail':
->drivers/scsi/bfa/bfa_ioc_ct.c:177: warning: value computed is not used
->drivers/scsi/bfa/bfa_ioc_ct.c:180: warning: value computed is not used
->drivers/scsi/bfa/bfa_ioc_ct.c: In function 'bfa_ioc_ct_pll_init':
->drivers/scsi/bfa/bfa_ioc_ct.c:381: warning: value computed is not used
->drivers/scsi/bfa/bfa_ioc_ct.c: In function 'bfa_ioc_ct_ownership_reset':
->drivers/scsi/bfa/bfa_ioc_ct.c:421: warning: value computed is not used
->drivers/scsi/bfa/bfa_ioc_cb.c: In function 'bfa_ioc_cb_notify_hbfail':
->drivers/scsi/bfa/bfa_ioc_cb.c:99: warning: value computed is not used
->drivers/scsi/bfa/bfa_ioc_cb.c: In function 'bfa_ioc_cb_ownership_reset':
->drivers/scsi/bfa/bfa_ioc_cb.c:272: warning: value computed is not used
->
->
->> The same change also fixes endian
->> issue we found in powerpc test.
->
->When fixing a bug, please fully describe the bug!
->
->If this driver has "endian issues" on powerpc then it's quite possible
->that this is a running-around-with-hair-on-fire,
->must-backport-to-2.6.33.x bugfix.
->
->But how would I know?  You didn't tell me!
->
+--Signature=_Sat__24_Apr_2010_22_05_07_+1000_xyhnSsjYLqYDs5YB
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi Jon,
 
-Sorry about the obscure description of the patch, I will provide detailed
-description in the future patch submission.
+On Tue, 20 Apr 2010 14:27:16 -0600 Jonathan Corbet <corbet@lwn.net> wrote:
+>
+> I have a tree I'd like to see show up in linux-next:
+>=20
+> 	git://git.lwn.net/linux-2.6.git viafb-next
+>=20
+> it contains viafb work intended (currently) for the 2.6.35 merge
+> window.  Everything in there has been posted, reviewed, fixed, etc... =20
 
-Yes this patch is intended to fix the compilation warning you listed above.
+It will be added from the next release (probably Tuesday, my time).
 
-Regarding the big endian issue I mentioned, basically I remove an
-unnecessary word swap in bfa_os_reg_read() and bfa_os_reg_write()
-because the kernel provided readl and writel are already doing so. The
-compilation warning also goes away after this change. For
-bfa_os_mem_read() and bfa_os_mem_write() macros, I add a swap since
-these two macros are designed to read/write from/to a memory region
-that is in BE format per ASIC spec.
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
 
-Thanks
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+	Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
 
-Jing
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
 
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+Legal Stuff:
+By participating in linux-next, your subsystem tree contributions are
+public and will be included in the linux-next trees.  You may be sent
+e-mail messages indicating errors or other issues when the
+patches/commits from your subsystem tree are merged and tested in
+linux-next.  These messages may also be cross-posted to the linux-next
+mailing list, the linux-kernel mailing list, etc.  The linux-next tree
+project and IBM (my employer) make no warranties regarding the linux-next
+project, the testing procedures, the results, the e-mails, etc.  If you
+don't agree to these ground rules, let me know and I'll remove your tree
+from participation in linux-next.
+
+--Signature=_Sat__24_Apr_2010_22_05_07_+1000_xyhnSsjYLqYDs5YB
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkvS3nMACgkQjjKRsyhoI8yxUwCfQHuRsuEiYGxQU7OumXap3iqW
+RzoAoJDSqfCsOMvKU9gZ00OdZAeCYxgU
+=xOEs
+-----END PGP SIGNATURE-----
+
+--Signature=_Sat__24_Apr_2010_22_05_07_+1000_xyhnSsjYLqYDs5YB--
