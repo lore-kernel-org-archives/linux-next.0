@@ -1,84 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next tree addition request
-Date: Sat, 24 Apr 2010 22:05:07 +1000
-Message-ID: <20100424220507.b515d095.sfr@canb.auug.org.au>
-References: <20100420142716.32c27ed0@bike.lwn.net>
+From: Alberto Panizzo <maramaopercheseimorto@gmail.com>
+Subject: [PATCH] backlight: l4f00242t03: Fix regulators handling code in
+ remove function
+Date: Mon, 26 Apr 2010 22:51:08 +0200
+Message-ID: <1272315068.3037.99.camel@realization>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sat__24_Apr_2010_22_05_07_+1000_xyhnSsjYLqYDs5YB"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41081 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751967Ab0DXMFP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 24 Apr 2010 08:05:15 -0400
-In-Reply-To: <20100420142716.32c27ed0@bike.lwn.net>
+Received: from mail-ww0-f46.google.com ([74.125.82.46]:64717 "EHLO
+	mail-ww0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753606Ab0DZUvO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Apr 2010 16:51:14 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Richard Purdie <rpurdie@rpsys.net>
+Cc: linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 
---Signature=_Sat__24_Apr_2010_22_05_07_+1000_xyhnSsjYLqYDs5YB
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Simple swap of regulator free
 
-Hi Jon,
+Signed-off-by: Alberto Panizzo <maramaopercheseimorto@gmail.com>
+---
+ drivers/video/backlight/l4f00242t03.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-On Tue, 20 Apr 2010 14:27:16 -0600 Jonathan Corbet <corbet@lwn.net> wrote:
->
-> I have a tree I'd like to see show up in linux-next:
->=20
-> 	git://git.lwn.net/linux-2.6.git viafb-next
->=20
-> it contains viafb work intended (currently) for the 2.6.35 merge
-> window.  Everything in there has been posted, reviewed, fixed, etc... =20
-
-It will be added from the next release (probably Tuesday, my time).
-
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
-
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-	Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
---=20
-Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
-
-Legal Stuff:
-By participating in linux-next, your subsystem tree contributions are
-public and will be included in the linux-next trees.  You may be sent
-e-mail messages indicating errors or other issues when the
-patches/commits from your subsystem tree are merged and tested in
-linux-next.  These messages may also be cross-posted to the linux-next
-mailing list, the linux-kernel mailing list, etc.  The linux-next tree
-project and IBM (my employer) make no warranties regarding the linux-next
-project, the testing procedures, the results, the e-mails, etc.  If you
-don't agree to these ground rules, let me know and I'll remove your tree
-from participation in linux-next.
-
---Signature=_Sat__24_Apr_2010_22_05_07_+1000_xyhnSsjYLqYDs5YB
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkvS3nMACgkQjjKRsyhoI8yxUwCfQHuRsuEiYGxQU7OumXap3iqW
-RzoAoJDSqfCsOMvKU9gZ00OdZAeCYxgU
-=xOEs
------END PGP SIGNATURE-----
-
---Signature=_Sat__24_Apr_2010_22_05_07_+1000_xyhnSsjYLqYDs5YB--
+diff --git a/drivers/video/backlight/l4f00242t03.c b/drivers/video/backlight/l4f00242t03.c
+index 74abd69..9e64afa 100644
+--- a/drivers/video/backlight/l4f00242t03.c
++++ b/drivers/video/backlight/l4f00242t03.c
+@@ -221,9 +221,9 @@ static int __devexit l4f00242t03_remove(struct spi_device *spi)
+ 	gpio_free(pdata->reset_gpio);
+ 
+ 	if (priv->io_reg)
+-		regulator_put(priv->core_reg);
+-	if (priv->core_reg)
+ 		regulator_put(priv->io_reg);
++	if (priv->core_reg)
++		regulator_put(priv->core_reg);
+ 
+ 	kfree(priv);
+ 
+-- 
+1.6.3.3
