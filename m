@@ -1,24 +1,27 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: linux-next: April 27 (iscsi_ibft)
-Date: Tue, 27 Apr 2010 09:13:16 -0700 (PDT)
-Message-ID: <80edf231-ef31-4f21-ab1b-1a21fda35809@default>
+Subject: linux-next: April 27 (mm/page-writeback)
+Date: Tue, 27 Apr 2010 09:19:30 -0700 (PDT)
+Message-ID: <8ea19b02-d4d8-4000-9842-fec7f5bcf90d@default>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <owner-linux-mm@kvack.org>
 Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: owner-linux-mm@kvack.org
 To: Linux-Kernel <linux-kernel@vger.kernel.org>
-Cc: Peter Jones <pjones@redhat.com>, Konrad Rzeszutek Wilk <konrad@kernel.org>, linux-next@vger.kernel.org
+Cc: linux-mm@kvack.org, akpm@linux-foundation.org, Linux-Next <linux-next@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-when CONFIG_ACPI is not enabled:
+When CONFIG_BLOCK is not enabled:
 
-drivers/firmware/iscsi_ibft_find.c:112: error: dereferencing pointer to incomplete type
-drivers/firmware/iscsi_ibft_find.c:112: error: dereferencing pointer to incomplete type
-drivers/firmware/iscsi_ibft_find.c:112: warning: type defaults to 'int' in declaration of 'type name'
-drivers/firmware/iscsi_ibft_find.c:112: error: dereferencing pointer to incomplete type
-drivers/firmware/iscsi_ibft_find.c:112: warning: type defaults to 'int' in declaration of 'type name'
+mm/page-writeback.c:707: error: dereferencing pointer to incomplete type
+mm/page-writeback.c:708: error: dereferencing pointer to incomplete type
 
 ---
 ~Randy
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
