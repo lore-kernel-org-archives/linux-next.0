@@ -1,93 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rr tree with the net tree
-Date: Tue, 27 Apr 2010 11:58:52 +1000
-Message-ID: <20100427115852.9f4cbb0f.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Date: Tue, 27 Apr 2010 12:51:26 +1000
+Message-ID: <20100427125126.4ed062dc.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53042 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:56383 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751396Ab0D0B6y (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 26 Apr 2010 21:58:54 -0400
+	id S1753023Ab0D0Cv2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 26 Apr 2010 22:51:28 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jesse Barnes <jbarnes@virtuousgeek.org>, Eric Anholt <eric@anholt.net>
 
-Hi Rusty,
+Hi Dave,
 
-Today's linux-next merge of the rr tree got a conflict in
-drivers/net/virtio_net.c between commit
-5e01d2f91df62be4d6f282149bc2a8858992ceca ("virtio-net: move sg off
-stack") from the net tree and commit
-7f62a724a65f864d84f50857bbfd36c240155c8f ("virtio_net: use virtqueue_xxx
-wrappers") from the rr tree.
+Today's linux-next merge of the drm tree got a conflict in
+drivers/gpu/drm/i915/i915_drv.h between commit
+20bf377e679208ba9ae0edcb8c70a8f6d33d17f9 ("drm/i915: cleanup FBC buffers
+at unload time") from Linus' tree and commit
+8be48d924c307e72e3797ab5bde81b07a1ccc52d ("drm/kms/fb: move to using fb
+helper crtc grouping instead of core crtc list") from the drm tree.
 
-I fixed it up (see below) and can carry the fix as necessary.
+Just overlapping additions.  I fixed it up (see below) and can carry the
+fix for a while.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/net/virtio_net.c
-index b0a85d0,91738d8..0000000
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@@ -336,11 -335,11 +336,11 @@@ static int add_recvbuf_small(struct vir
-  	skb_put(skb, MAX_PACKET_LEN);
+diff --cc drivers/gpu/drm/i915/i915_drv.h
+index 6e47900,242993b..0000000
+--- a/drivers/gpu/drm/i915/i915_drv.h
++++ b/drivers/gpu/drm/i915/i915_drv.h
+@@@ -635,8 -641,8 +645,11 @@@ typedef struct drm_i915_private 
   
-  	hdr = skb_vnet_hdr(skb);
- -	sg_set_buf(sg, &hdr->hdr, sizeof hdr->hdr);
- +	sg_set_buf(vi->rx_sg, &hdr->hdr, sizeof hdr->hdr);
+  	enum no_fbc_reason no_fbc_reason;
   
- -	skb_to_sgvec(skb, sg + 1, 0, skb->len);
- +	skb_to_sgvec(skb, vi->rx_sg + 1, 0, skb->len);
+ +	struct drm_mm_node *compressed_fb;
+ +	struct drm_mm_node *compressed_llb;
+++
++ 	/* list of fbdev register on this device */
++ 	struct intel_fbdev *fbdev;
+  } drm_i915_private_t;
   
-- 	err = vi->rvq->vq_ops->add_buf(vi->rvq, vi->rx_sg, 0, 2, skb);
- -	err = virtqueue_add_buf(vi->rvq, sg, 0, 2, skb);
-++	err = virtqueue_add_buf(vi->rvq, vi->rx_sg, 0, 2, skb);
-  	if (err < 0)
-  		dev_kfree_skb(skb);
+  /** driver private structure attached to each drm_gem_object */
+@@@ -1142,8 -1154,10 +1161,11 @@@ extern int i915_wait_ring(struct drm_de
   
-@@@ -385,7 -386,7 +385,7 @@@ static int add_recvbuf_big(struct virtn
+  #define HAS_PCH_SPLIT(dev) (IS_IRONLAKE(dev) ||	\
+  			    IS_GEN6(dev))
+ +#define HAS_PIPE_CONTROL(dev) (IS_IRONLAKE(dev) || IS_GEN6(dev))
   
-  	/* chain first in list head */
-  	first->private = (unsigned long)list;
-- 	err = vi->rvq->vq_ops->add_buf(vi->rvq, vi->rx_sg, 0, MAX_SKB_FRAGS + 2,
- -	err = virtqueue_add_buf(vi->rvq, sg, 0, MAX_SKB_FRAGS + 2,
-++	err = virtqueue_add_buf(vi->rvq, vi->rx_sg, 0, MAX_SKB_FRAGS + 2,
-  				       first);
-  	if (err < 0)
-  		give_pages(vi, first);
-@@@ -402,9 -404,9 +402,9 @@@ static int add_recvbuf_mergeable(struc
-  	if (!page)
-  		return -ENOMEM;
++ #define INTEL_PCH_TYPE(dev) (((struct drm_i915_private *)(dev)->dev_private)->pch_type)
++ #define HAS_PCH_CPT(dev) (INTEL_PCH_TYPE(dev) == PCH_CPT)
++ 
+  #define PRIMARY_RINGBUFFER_SIZE         (128*1024)
   
- -	sg_init_one(&sg, page_address(page), PAGE_SIZE);
- +	sg_init_one(vi->rx_sg, page_address(page), PAGE_SIZE);
-  
-- 	err = vi->rvq->vq_ops->add_buf(vi->rvq, vi->rx_sg, 0, 1, page);
- -	err = virtqueue_add_buf(vi->rvq, &sg, 0, 1, page);
-++	err = virtqueue_add_buf(vi->rvq, vi->rx_sg, 0, 1, page);
-  	if (err < 0)
-  		give_pages(vi, page);
-  
-@@@ -549,13 -554,12 +549,12 @@@ static int xmit_skb(struct virtnet_inf
-  
-  	/* Encode metadata header at front. */
-  	if (vi->mergeable_rx_bufs)
- -		sg_set_buf(sg, &hdr->mhdr, sizeof hdr->mhdr);
- +		sg_set_buf(vi->tx_sg, &hdr->mhdr, sizeof hdr->mhdr);
-  	else
- -		sg_set_buf(sg, &hdr->hdr, sizeof hdr->hdr);
- +		sg_set_buf(vi->tx_sg, &hdr->hdr, sizeof hdr->hdr);
-  
- -	hdr->num_sg = skb_to_sgvec(skb, sg+1, 0, skb->len) + 1;
- -	return virtqueue_add_buf(vi->svq, sg, hdr->num_sg, 0, skb);
- +	hdr->num_sg = skb_to_sgvec(skb, vi->tx_sg + 1, 0, skb->len) + 1;
-- 	return vi->svq->vq_ops->add_buf(vi->svq, vi->tx_sg, hdr->num_sg,
-- 					0, skb);
-++	return virtqueue_add_buf(vi->svq, vi->tx_sg, hdr->num_sg, 0, skb);
-  }
-  
-  static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
+  #endif
