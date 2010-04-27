@@ -1,43 +1,38 @@
-From: Jens Axboe <jens.axboe@oracle.com>
-Subject: Re: linux-next: April 27 (mm/page-writeback)
-Date: Tue, 27 Apr 2010 20:13:32 +0200
-Message-ID: <20100427181332.GM27497@kernel.dk>
-References: <8ea19b02-d4d8-4000-9842-fec7f5bcf90d@default> <20100427110807.d8641ace.akpm@linux-foundation.org>
+From: Konrad Rzeszutek Wilk <konrad@kernel.org>
+Subject: Re: linux-next: April 27 (iscsi_ibft)
+Date: Tue, 27 Apr 2010 19:01:21 -0400
+Message-ID: <20100427230121.GA31743@andromeda.dapyr.net>
+References: <80edf231-ef31-4f21-ab1b-1a21fda35809@default>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20100427110807.d8641ace.akpm@linux-foundation.org>
-Sender: owner-linux-mm@kvack.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Linux-Kernel <linux-kernel@vger.kernel.org>, linux-mm@kvack.org, Linux-Next <linux-next@vger.kernel.org>, Matthew Garrett <mjg@redhat.com>
+In-Reply-To: <80edf231-ef31-4f21-ab1b-1a21fda35809@default>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Linux-Kernel <linux-kernel@vger.kernel.org>, Peter Jones <pjones@redhat.com>, Konrad Rzeszutek Wilk <konrad@kernel.org>, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Apr 27 2010, Andrew Morton wrote:
-> On Tue, 27 Apr 2010 09:19:30 -0700 (PDT)
-> Randy Dunlap <randy.dunlap@oracle.com> wrote:
+On Tue, Apr 27, 2010 at 09:13:16AM -0700, Randy Dunlap wrote:
+> when CONFIG_ACPI is not enabled:
 > 
-> > When CONFIG_BLOCK is not enabled:
-> > 
-> > mm/page-writeback.c:707: error: dereferencing pointer to incomplete type
-> > mm/page-writeback.c:708: error: dereferencing pointer to incomplete type
-> > 
-> 
-> Subject: "laptop-mode: Make flushes per-device" fix
-> From: Andrew Morton <akpm@linux-foundation.org>
-> 
-> When CONFIG_BLOCK is not enabled:
-> 
-> mm/page-writeback.c:707: error: dereferencing pointer to incomplete type
-> mm/page-writeback.c:708: error: dereferencing pointer to incomplete type
+> drivers/firmware/iscsi_ibft_find.c:112: error: dereferencing pointer to incomplete type
+> drivers/firmware/iscsi_ibft_find.c:112: error: dereferencing pointer to incomplete type
+> drivers/firmware/iscsi_ibft_find.c:112: warning: type defaults to 'int' in declaration of 'type name'
+> drivers/firmware/iscsi_ibft_find.c:112: error: dereferencing pointer to incomplete type
+> drivers/firmware/iscsi_ibft_find.c:112: warning: type defaults to 'int' in declaration of 'type name'
 
-Thanks Andrew, I've added this to the .35 branch.
+Yikes.
 
--- 
-Jens Axboe
+Randy, thank you for spotting this and sending an e-mail my way.
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+It is all b/c we now use the 'struct acpi_table_ibft *ibft_addr' which
+is gone when !CONFIG_ACPI.
+
+Peter, if we did in an #ifdef !CONFIG_ACPI in iscsi_ibft.h and included
+a copy of the old ibft_struct that should work.
+
+Or we make the code dependent on CONFIG_ACPI (in the Kconfig
+file).
+
+Peter, Randy: Which option do you think makes more sense?
