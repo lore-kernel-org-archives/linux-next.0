@@ -1,80 +1,111 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the final tree (net
- tree related)
-Date: Tue, 27 Apr 2010 10:18:04 -0700 (PDT)
-Message-ID: <20100427.101804.13765995.davem@davemloft.net>
-References: <20100427152516.580ee620.sfr@canb.auug.org.au>
-	<20100427.093430.258110898.davem@davemloft.net>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: April 27 (mm/page-writeback)
+Date: Tue, 27 Apr 2010 11:08:07 -0700
+Message-ID: <20100427110807.d8641ace.akpm@linux-foundation.org>
+References: <8ea19b02-d4d8-4000-9842-fec7f5bcf90d@default>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:50148
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754221Ab0D0RSA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 27 Apr 2010 13:18:00 -0400
-In-Reply-To: <20100427.093430.258110898.davem@davemloft.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, yoshfuji@linux-ipv6.org
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <8ea19b02-d4d8-4000-9842-fec7f5bcf90d@default>
+Sender: owner-linux-mm@kvack.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Linux-Kernel <linux-kernel@vger.kernel.org>, linux-mm@kvack.org, Linux-Next <linux-next@vger.kernel.org>, Matthew Garrett <mjg@redhat.com>, Jens Axboe <jens.axboe@oracle.com>
+List-Id: linux-next.vger.kernel.org
 
-From: David Miller <davem@davemloft.net>
-Date: Tue, 27 Apr 2010 09:34:30 -0700 (PDT)
+On Tue, 27 Apr 2010 09:19:30 -0700 (PDT)
+Randy Dunlap <randy.dunlap@oracle.com> wrote:
 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 27 Apr 2010 15:25:16 +1000
+> When CONFIG_BLOCK is not enabled:
 > 
->> After merging the bkl-ioctl tree, today's linux-next build (powerpc
->> ppc44x_defconfig) failed like this:
->> 
->> net/bridge/br_multicast.c: In function 'br_ip6_multicast_alloc_query':
->> net/bridge/br_multicast.c:469: error: implicit declaration of function 'csum_ipv6_magic'
->> 
->> Introduced by commit 08b202b6726459626c73ecfa08fcdc8c3efc76c2 ("bridge
->> br_multicast: IPv6 MLD support") from the net tree.
->> 
->> csum_ipv6_magic is declared in net/ip6_checksum.h ...
+> mm/page-writeback.c:707: error: dereferencing pointer to incomplete type
+> mm/page-writeback.c:708: error: dereferencing pointer to incomplete type
 > 
-> Bummer, powerpc is one of the few platforms that doesn't get the header
-> file implicitly so you always trip over this whereas we never see it in
-> x86 and sparc64 builds :-)
-> 
-> I'll fix this, thanks!
 
-I just committed the following for this:
+Subject: "laptop-mode: Make flushes per-device" fix
+From: Andrew Morton <akpm@linux-foundation.org>
 
-bridge: Fix build of ipv6 multicast code.
+When CONFIG_BLOCK is not enabled:
 
-Based upon a report from Stephen Rothwell:
+mm/page-writeback.c:707: error: dereferencing pointer to incomplete type
+mm/page-writeback.c:708: error: dereferencing pointer to incomplete type
 
---------------------
-net/bridge/br_multicast.c: In function 'br_ip6_multicast_alloc_query':
-net/bridge/br_multicast.c:469: error: implicit declaration of function 'csum_ipv6_magic'
-
-Introduced by commit 08b202b6726459626c73ecfa08fcdc8c3efc76c2 ("bridge
-br_multicast: IPv6 MLD support") from the net tree.
-
-csum_ipv6_magic is declared in net/ip6_checksum.h ...
---------------------
-
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Matthew Garrett <mjg@redhat.com>
+Cc: Jens Axboe <jens.axboe@oracle.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 ---
- net/bridge/br_multicast.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/net/bridge/br_multicast.c b/net/bridge/br_multicast.c
-index e481dbd..2048ef0 100644
---- a/net/bridge/br_multicast.c
-+++ b/net/bridge/br_multicast.c
-@@ -28,6 +28,7 @@
- #include <net/ipv6.h>
- #include <net/mld.h>
- #include <net/addrconf.h>
-+#include <net/ip6_checksum.h>
- #endif
+ block/blk-core.c          |   15 +++++++++++++++
+ include/linux/writeback.h |    1 -
+ mm/page-writeback.c       |   15 ---------------
+ 3 files changed, 15 insertions(+), 16 deletions(-)
+
+diff -puN block/blk-core.c~laptop-mode-make-flushes-per-device-fix block/blk-core.c
+--- a/block/blk-core.c~laptop-mode-make-flushes-per-device-fix
++++ a/block/blk-core.c
+@@ -488,6 +488,21 @@ struct request_queue *blk_alloc_queue(gf
+ }
+ EXPORT_SYMBOL(blk_alloc_queue);
  
- #include "br_private.h"
--- 
-1.7.0.4
++static void laptop_mode_timer_fn(unsigned long data)
++{
++	struct request_queue *q = (struct request_queue *)data;
++	int nr_pages = global_page_state(NR_FILE_DIRTY) +
++		global_page_state(NR_UNSTABLE_NFS);
++
++	/*
++	 * We want to write everything out, not just down to the dirty
++	 * threshold
++	 */
++
++	if (bdi_has_dirty_io(&q->backing_dev_info))
++		bdi_start_writeback(&q->backing_dev_info, NULL, nr_pages);
++}
++
+ struct request_queue *blk_alloc_queue_node(gfp_t gfp_mask, int node_id)
+ {
+ 	struct request_queue *q;
+diff -puN mm/page-writeback.c~laptop-mode-make-flushes-per-device-fix mm/page-writeback.c
+--- a/mm/page-writeback.c~laptop-mode-make-flushes-per-device-fix
++++ a/mm/page-writeback.c
+@@ -693,21 +693,6 @@ int dirty_writeback_centisecs_handler(ct
+ 	return 0;
+ }
+ 
+-void laptop_mode_timer_fn(unsigned long data)
+-{
+-	struct request_queue *q = (struct request_queue *)data;
+-	int nr_pages = global_page_state(NR_FILE_DIRTY) +
+-		global_page_state(NR_UNSTABLE_NFS);
+-
+-	/*
+-	 * We want to write everything out, not just down to the dirty
+-	 * threshold
+-	 */
+-
+-	if (bdi_has_dirty_io(&q->backing_dev_info))
+-		bdi_start_writeback(&q->backing_dev_info, NULL, nr_pages);
+-}
+-
+ /*
+  * We've spun up the disk and we're in laptop mode: schedule writeback
+  * of all dirty data a few seconds from now.  If the flush is already scheduled
+diff -puN include/linux/writeback.h~laptop-mode-make-flushes-per-device-fix include/linux/writeback.h
+--- a/include/linux/writeback.h~laptop-mode-make-flushes-per-device-fix
++++ a/include/linux/writeback.h
+@@ -99,7 +99,6 @@ static inline void inode_sync_wait(struc
+ void laptop_io_completion(struct backing_dev_info *info);
+ void laptop_sync_completion(void);
+ void laptop_mode_sync(struct work_struct *work);
+-void laptop_mode_timer_fn(unsigned long data);
+ void throttle_vm_writeout(gfp_t gfp_mask);
+ 
+ /* These are exported to sysctl. */
+_
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
