@@ -1,35 +1,54 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: A few tree inclusion update requests
-Date: Tue, 27 Apr 2010 07:21:10 +0200
-Message-ID: <20100427052109.GG5695@nowhere>
-References: <20100410134221.GC5204@nowhere> <20100413094618.76ac20a8.sfr@canb.auug.org.au> <20100427025530.GE5695@nowhere> <20100427151035.c727c9e5.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (net tree
+ related)
+Date: Tue, 27 Apr 2010 15:25:16 +1000
+Message-ID: <20100427152516.580ee620.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:60993 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751401Ab0D0FVM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Apr 2010 01:21:12 -0400
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__27_Apr_2010_15_25_16_+1000_zmE2q3ePh3gYHmLk"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, YOSHIFUJI Hideaki <yoshfuji@linux-ipv6.org>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Tue__27_Apr_2010_15_25_16_+1000_zmE2q3ePh3gYHmLk
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20100427151035.c727c9e5.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux Next <linux-next@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 27, 2010 at 03:10:35PM +1000, Stephen Rothwell wrote:
-> Hi Frederic,
-> 
-> On Tue, 27 Apr 2010 04:55:32 +0200 Frederic Weisbecker <fweisbec@gmail.com> wrote:
-> >
-> > Could you please integrate the following new tree in linux-next?
-> > 
-> > git://git.kernel.org/pub/scm/linux/kernel/git/frederic/random-tracing.git
-> > 	bkl/ioctl
-> 
-> Added from today.
+Hi Dave,
 
+After merging the bkl-ioctl tree, today's linux-next build (powerpc
+ppc44x_defconfig) failed like this:
 
-Thanks.
+net/bridge/br_multicast.c: In function 'br_ip6_multicast_alloc_query':
+net/bridge/br_multicast.c:469: error: implicit declaration of function 'csu=
+m_ipv6_magic'
 
-And your conflict fixes against its merge look all right.
+Introduced by commit 08b202b6726459626c73ecfa08fcdc8c3efc76c2 ("bridge
+br_multicast: IPv6 MLD support") from the net tree.
+
+csum_ipv6_magic is declared in net/ip6_checksum.h ...
+
+I have reverted this commit (and 1fafc7a9353ef68e1b8d4bb130cb6402cf7dfd5a
+"bridge br_multicast: Ensure to initialize BR_INPUT_SKB_CB
+(skb)->mrouters_only" which depended on it) for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__27_Apr_2010_15_25_16_+1000_zmE2q3ePh3gYHmLk
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkvWdTwACgkQjjKRsyhoI8xo+wCfe4NdgRI1vaoMbE8ANt90c6FM
+ivUAoLtCRRS74MM3l9r6cRXDLumxr8Qc
+=W3lN
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__27_Apr_2010_15_25_16_+1000_zmE2q3ePh3gYHmLk--
