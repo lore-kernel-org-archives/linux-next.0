@@ -1,41 +1,52 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: A few tree inclusion update requests
-Date: Tue, 27 Apr 2010 04:55:32 +0200
-Message-ID: <20100427025530.GE5695@nowhere>
-References: <20100410134221.GC5204@nowhere> <20100413094618.76ac20a8.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build warning after merge of the tty.current tree
+Date: Tue, 27 Apr 2010 13:08:12 +1000
+Message-ID: <20100427130812.bd5e0fd7.sfr@canb.auug.org.au>
+References: <20100427092346.12c4ecaa.sfr@canb.auug.org.au>
+	<20100427003722.2bc89d10@lxorguk.ukuu.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__27_Apr_2010_13_08_12_+1000_jDLt.P8r2gZTAGEX"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ww0-f46.google.com ([74.125.82.46]:57297 "EHLO
-	mail-ww0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752187Ab0D0Czf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Apr 2010 22:55:35 -0400
-Content-Disposition: inline
-In-Reply-To: <20100413094618.76ac20a8.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:55327 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752567Ab0D0DIS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 26 Apr 2010 23:08:18 -0400
+In-Reply-To: <20100427003722.2bc89d10@lxorguk.ukuu.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux Next <linux-next@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>
 
-On Tue, Apr 13, 2010 at 09:46:18AM +1000, Stephen Rothwell wrote:
-> You will need to ensure that the patches/commits in your tree/series have
-> been:
->      * submitted under GPL v2 (or later) and include the Contributor's
-> 	Signed-off-by,
->      * posted to the relevant mailing list,
->      * reviewed by you (or another maintainer of your subsystem tree),
->      * successfully unit tested, and 
->      * destined for the current or next Linux merge window.
-> 
-> Basically, this should be just what you would send to Linus (or ask him
-> to fetch).  It is allowed to be rebased if you deem it necessary.
+--Signature=_Tue__27_Apr_2010_13_08_12_+1000_jDLt.P8r2gZTAGEX
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi Alan,
 
-Hi Stephen,
+On Tue, 27 Apr 2010 00:37:22 +0100 Alan Cox <alan@lxorguk.ukuu.org.uk> wrot=
+e:
+>
+> I'll fix that tomorrow and send it to Greg
 
-Could you please integrate the following new tree in linux-next?
+OK, thanks.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/frederic/random-tracing.git
-	bkl/ioctl
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Thanks!
+--Signature=_Tue__27_Apr_2010_13_08_12_+1000_jDLt.P8r2gZTAGEX
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkvWVRwACgkQjjKRsyhoI8yYxQCgn9Cl8xjyrrgQeW+nc56CTgIH
+UR4AnibJXQ9v2adDt2nTHeIbFMEEY+v5
+=ojFH
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__27_Apr_2010_13_08_12_+1000_jDLt.P8r2gZTAGEX--
