@@ -1,38 +1,37 @@
-From: Konrad Rzeszutek Wilk <konrad@kernel.org>
-Subject: Re: linux-next: April 27 (iscsi_ibft)
-Date: Tue, 27 Apr 2010 19:01:21 -0400
-Message-ID: <20100427230121.GA31743@andromeda.dapyr.net>
-References: <80edf231-ef31-4f21-ab1b-1a21fda35809@default>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: manual merge of the net tree with Linus' tree
+Date: Tue, 27 Apr 2010 17:05:43 -0700 (PDT)
+Message-ID: <20100427.170543.233869422.davem@davemloft.net>
+References: <20100427112827.1f17be40.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <80edf231-ef31-4f21-ab1b-1a21fda35809@default>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Linux-Kernel <linux-kernel@vger.kernel.org>, Peter Jones <pjones@redhat.com>, Konrad Rzeszutek Wilk <konrad@kernel.org>, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:50468
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753456Ab0D1AFh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 27 Apr 2010 20:05:37 -0400
+In-Reply-To: <20100427112827.1f17be40.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, alan@linux.intel.com, joe@perches.com
 
-On Tue, Apr 27, 2010 at 09:13:16AM -0700, Randy Dunlap wrote:
-> when CONFIG_ACPI is not enabled:
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 27 Apr 2010 11:28:27 +1000
+
+> Hi all,
 > 
-> drivers/firmware/iscsi_ibft_find.c:112: error: dereferencing pointer to incomplete type
-> drivers/firmware/iscsi_ibft_find.c:112: error: dereferencing pointer to incomplete type
-> drivers/firmware/iscsi_ibft_find.c:112: warning: type defaults to 'int' in declaration of 'type name'
-> drivers/firmware/iscsi_ibft_find.c:112: error: dereferencing pointer to incomplete type
-> drivers/firmware/iscsi_ibft_find.c:112: warning: type defaults to 'int' in declaration of 'type name'
+> Today's linux-next merge of the net tree got a conflict in
+> drivers/net/e100.c between commit
+> 401da6aea31ef69c2fcd260382adabdcf7ce820a ("e100: Fix the TX workqueue
+> race") from Linus' tree and commit
+> fa05e1ad1b61b37fb64a66794c11ab478e975c56 ("drivers/net/e100.c: Use
+> pr_<level> and netif_<level>") from the net tree.
+> 
+> Just context changes.  I fixed it up (see below) and can carry the fix
+> for a while.
 
-Yikes.
-
-Randy, thank you for spotting this and sending an e-mail my way.
-
-It is all b/c we now use the 'struct acpi_table_ibft *ibft_addr' which
-is gone when !CONFIG_ACPI.
-
-Peter, if we did in an #ifdef !CONFIG_ACPI in iscsi_ibft.h and included
-a copy of the old ibft_struct that should work.
-
-Or we make the code dependent on CONFIG_ACPI (in the Kconfig
-file).
-
-Peter, Randy: Which option do you think makes more sense?
+This should be resolved now that I pulled net-2.6 into net-next-2.6
+earlier today.
