@@ -1,40 +1,32 @@
 From: Greg KH <greg@kroah.com>
 Subject: Re: linux-next: manual merge of the staging-next tree with the
- v4l-dvb tree
-Date: Wed, 28 Apr 2010 08:26:41 -0700
-Message-ID: <20100428152641.GD4483@kroah.com>
-References: <20100428160749.52da847a.sfr@canb.auug.org.au>
+ pcmcia tree
+Date: Wed, 28 Apr 2010 08:26:54 -0700
+Message-ID: <20100428152654.GE4483@kroah.com>
+References: <20100428160741.2695a14f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:51432 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753621Ab0D1PtD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 28 Apr 2010 11:49:03 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20100428160749.52da847a.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+In-Reply-To: <20100428160741.2695a14f.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wouter Van Rooy <wouter.vanrooy@gmail.com>, Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dominik Brodowski <linux@dominikbrodowski.net>, Jason Wong <tsanghan@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Apr 28, 2010 at 04:07:49PM +1000, Stephen Rothwell wrote:
+On Wed, Apr 28, 2010 at 04:07:41PM +1000, Stephen Rothwell wrote:
 > Hi Greg,
 > 
 > Today's linux-next merge of the staging-next tree got a conflict in
-> drivers/staging/cx25821/cx25821-alsa.c between commit
-> 4e0c923a0d23f86c7331b32bc2aeb280e10e029e ("V4L/DVB: Staging: cx25821: fix
-> coding style issues in cx25821-alsa.c") from the v4l-dvb tree and commit
-> 98a178beaaf4c9a0acc4815807be51425b91f0a7 ("Staging: cx25821 fixed C99
-> comments, white spaces and unnecessary braces") from the staging-next
-> tree.
+> drivers/staging/comedi/drivers/cb_das16_cs.c between commitc
+> 8bf6e66c254bba7d0ea3f5d02420776dceac657 ("") from the pcmcia tree and
+> commit 6ea17dd43c1153f99920e66f806d86f4e83583cc ("Staging: comedi:
+> cb_das16_cs: fixed multiple brace coding style issues") from the
+> staging-next tree.
 > 
-> I used the v4l-dvb versions of the conflicting bits (they looked neater
-> to me).
+> Just context changes.  I fixed it up (see below) and can carry the fix as
+> necessary.
 
-Odd, Mauro, why are you applying coding style fixes to the staging tree
-to your tree?  I'll be glad to take them instead.
-
-thanks,
+Looks great, thanks,
 
 greg k-h
