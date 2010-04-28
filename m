@@ -1,61 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
-Date: Wed, 28 Apr 2010 11:07:10 +1000
-Message-ID: <20100428110710.cec8acdb.sfr@canb.auug.org.au>
-References: <20100412124041.4876c3f9.sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the final tree (net
+ tree related)
+Date: Wed, 28 Apr 2010 11:11:32 +1000
+Message-ID: <20100428111132.ebac2723.sfr@canb.auug.org.au>
+References: <20100427152516.580ee620.sfr@canb.auug.org.au>
+	<20100427.093430.258110898.davem@davemloft.net>
+	<20100427.101804.13765995.davem@davemloft.net>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__28_Apr_2010_11_07_10_+1000_lWsK8B=J/FImEYD8"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53587 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754277Ab0D1BHQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 27 Apr 2010 21:07:16 -0400
-In-Reply-To: <20100412124041.4876c3f9.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+ boundary="Signature=_Wed__28_Apr_2010_11_11_32_+1000_jn7dfcqYdQx=Vq_H"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20100427.101804.13765995.davem@davemloft.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, yoshfuji@linux-ipv6.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__28_Apr_2010_11_07_10_+1000_lWsK8B=J/FImEYD8
+--Signature=_Wed__28_Apr_2010_11_11_32_+1000_jn7dfcqYdQx=Vq_H
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mauro,
+Hi Dave,
 
-On Mon, 12 Apr 2010 12:40:41 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
+On Tue, 27 Apr 2010 10:18:04 -0700 (PDT) David Miller <davem@davemloft.net>=
+ wrote:
 >
-> After merging the v4l-dvb tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
+> I just committed the following for this:
 >=20
-> drivers/input/input.c: In function 'input_default_setkeycode':
-> drivers/input/input.c:691: error: 'keycode' undeclared (first use in this=
- function)
->=20
-> Caused by commit df7ad46fc171965103f02649f6c2f02c6ca8b331 ("Merge branch
-> 'master' of /home/v4l/bare_trees/v4l-dvb").  The merge resolution is not
-> quite right.
->=20
-> I have used the v4l-dvb tree from next-20100409 for today.
+> bridge: Fix build of ipv6 multicast code.
 
-I am still getting this build failure ...
+Thanks.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__28_Apr_2010_11_07_10_+1000_lWsK8B=J/FImEYD8
+--Signature=_Wed__28_Apr_2010_11_11_32_+1000_jn7dfcqYdQx=Vq_H
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkvXij4ACgkQjjKRsyhoI8xVSwCaAsOXXQciqAJ0/GFDUj0XZAQu
-jW8AoLNATvR+a+5ZFFa1uBgL+NsWFAN8
-=Hf7O
+iEYEARECAAYFAkvXi0QACgkQjjKRsyhoI8wWggCgoj6VCrdcJWvRUrS9ixAleLwS
+axAAn3vPQTYzm63OaKlVEBXCJhkvqopn
+=OhYO
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__28_Apr_2010_11_07_10_+1000_lWsK8B=J/FImEYD8--
+--Signature=_Wed__28_Apr_2010_11_11_32_+1000_jn7dfcqYdQx=Vq_H--
