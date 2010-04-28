@@ -1,52 +1,48 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree (net
- tree related)
-Date: Wed, 28 Apr 2010 11:11:32 +1000
-Message-ID: <20100428111132.ebac2723.sfr@canb.auug.org.au>
-References: <20100427152516.580ee620.sfr@canb.auug.org.au>
-	<20100427.093430.258110898.davem@davemloft.net>
-	<20100427.101804.13765995.davem@davemloft.net>
+Subject: linux-next: manual merge of the block tree with the v9fs tree
+Date: Wed, 28 Apr 2010 13:24:13 +1000
+Message-ID: <20100428132413.28bc9ff2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__28_Apr_2010_11_11_32_+1000_jn7dfcqYdQx=Vq_H"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100427.101804.13765995.davem@davemloft.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, yoshfuji@linux-ipv6.org
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Wed__28_Apr_2010_11_11_32_+1000_jn7dfcqYdQx=Vq_H
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:43695 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751371Ab0D1DYQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 27 Apr 2010 23:24:16 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jens Axboe <jens.axboe@oracle.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sripathi Kodi <sripathik@in.ibm.com>, Eric Van Hensbergen <ericvh@gmail.com>
 
-Hi Dave,
+Hi Jens,
 
-On Tue, 27 Apr 2010 10:18:04 -0700 (PDT) David Miller <davem@davemloft.net>=
- wrote:
->
-> I just committed the following for this:
->=20
-> bridge: Fix build of ipv6 multicast code.
+Today's linux-next merge of the block tree got a conflict in
+fs/9p/vfs_super.c between commit 0b2d973241f9bdbc8ed62caec42543e00ae6bd1e
+("9p: VFS switches for 9p2000.L: VFS switches") from the v9fs tree and
+commit 0ed07ddb56d1348e5ce33f3b8de20d730351983a ("9p: add bdi backing to
+mount session") from the block tree.
 
-Thanks.
-
---=20
+Just context changes.  I fixed it up (see below) and can carry the
+fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__28_Apr_2010_11_11_32_+1000_jn7dfcqYdQx=Vq_H
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkvXi0QACgkQjjKRsyhoI8wWggCgoj6VCrdcJWvRUrS9ixAleLwS
-axAAn3vPQTYzm63OaKlVEBXCJhkvqopn
-=OhYO
------END PGP SIGNATURE-----
-
---Signature=_Wed__28_Apr_2010_11_11_32_+1000_jn7dfcqYdQx=Vq_H--
+diff --cc fs/9p/vfs_super.c
+index 7c94cb0,806da5d..0000000
+--- a/fs/9p/vfs_super.c
++++ b/fs/9p/vfs_super.c
+@@@ -77,10 -76,8 +77,11 @@@ v9fs_fill_super(struct super_block *sb
+  	sb->s_blocksize_bits = fls(v9ses->maxdata - 1);
+  	sb->s_blocksize = 1 << sb->s_blocksize_bits;
+  	sb->s_magic = V9FS_MAGIC;
+ -	sb->s_op = &v9fs_super_ops;
+ +	if (v9fs_proto_dotl(v9ses))
+ +		sb->s_op = &v9fs_super_ops_dotl;
+ +	else
+ +		sb->s_op = &v9fs_super_ops;
++ 	sb->s_bdi = &v9ses->bdi;
+  
+  	sb->s_flags = flags | MS_ACTIVE | MS_SYNCHRONOUS | MS_DIRSYNC |
+  	    MS_NOATIME;
