@@ -1,36 +1,61 @@
-From: Jens Axboe <jens.axboe@oracle.com>
-Subject: Re: linux-next: build failure after merge of the block tree
-Date: Wed, 28 Apr 2010 07:34:11 +0200
-Message-ID: <20100428053410.GO27497@kernel.dk>
-References: <20100428135258.35e3efdb.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging-next tree with the pcmcia
+ tree
+Date: Wed, 28 Apr 2010 16:07:41 +1000
+Message-ID: <20100428160741.2695a14f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 0122700014.0.fullrate.dk ([95.166.99.235]:34501 "EHLO kernel.dk"
+Received: from chilli.pcug.org.au ([203.10.76.44]:56479 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752495Ab0D1FeN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 28 Apr 2010 01:34:13 -0400
-Content-Disposition: inline
-In-Reply-To: <20100428135258.35e3efdb.sfr@canb.auug.org.au>
+	id S1752267Ab0D1GHr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 28 Apr 2010 02:07:47 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dominik Brodowski <linux@dominikbrodowski.net>, Jason Wong <tsanghan@gmail.com>
 
-On Wed, Apr 28 2010, Stephen Rothwell wrote:
-> Hi Jens,
-> 
-> After merging the block tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> include/linux/coda_psdev.h:4: included file 'linux/backing-dev.h' is not exported
-> 
-> Caused by commit 5163d90076729413cb882d3dd5c3d3cfb5b9f035 ("coda: add bdi
-> backing to mount session").
-> 
-> I have used the version of the block tree from next-20100427 for today.
+Hi Greg,
 
-Thanks Stephen, I'll fix it up.
+Today's linux-next merge of the staging-next tree got a conflict in
+drivers/staging/comedi/drivers/cb_das16_cs.c between commitc
+8bf6e66c254bba7d0ea3f5d02420776dceac657 ("") from the pcmcia tree and
+commit 6ea17dd43c1153f99920e66f806d86f4e83583cc ("Staging: comedi:
+cb_das16_cs: fixed multiple brace coding style issues") from the
+staging-next tree.
 
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 -- 
-Jens Axboe
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/staging/comedi/drivers/cb_das16_cs.c
+index e0352c6,68bd5ca..0000000
+--- a/drivers/staging/comedi/drivers/cb_das16_cs.c
++++ b/drivers/staging/comedi/drivers/cb_das16_cs.c
+@@@ -175,17 -175,17 +175,17 @@@ static int das16cs_attach(struct comedi
+  	printk("I/O base=0x%04lx ", dev->iobase);
+  
+  	printk("fingerprint:\n");
+- 	for (i = 0; i < 48; i += 2) {
++ 	for (i = 0; i < 48; i += 2)
+  		printk("%04x ", inw(dev->iobase + i));
+- 	}
++ 
+  	printk("\n");
+  
+ -	ret = request_irq(link->irq.AssignedIRQ, das16cs_interrupt,
+ +	ret = request_irq(link->irq, das16cs_interrupt,
+  			  IRQF_SHARED, "cb_das16_cs", dev);
+- 	if (ret < 0) {
++ 	if (ret < 0)
+  		return ret;
+- 	}
++ 
+ -	dev->irq = link->irq.AssignedIRQ;
+ +	dev->irq = link->irq;
+  	printk("irq=%u ", dev->irq);
+  
+  	dev->board_ptr = das16cs_probe(dev, link);
