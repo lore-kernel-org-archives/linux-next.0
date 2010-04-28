@@ -1,50 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging-next tree with the
- staging.current tree
-Date: Wed, 28 Apr 2010 16:08:03 +1000
-Message-ID: <20100428160803.29fc7fe8.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging-next tree with the pcmcia
+ tree
+Date: Wed, 28 Apr 2010 16:11:53 +1000
+Message-ID: <20100428161153.e683cb12.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56496 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:60629 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754338Ab0D1GIG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 28 Apr 2010 02:08:06 -0400
+	id S1750864Ab0D1GLz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 28 Apr 2010 02:11:55 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Baldus <jason.baldus@gmail.com>, H Hartley Sweeten <hartleys@visionengravers.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dominik Brodowski <linux@dominikbrodowski.net>
 
 Hi Greg,
 
 Today's linux-next merge of the staging-next tree got a conflict in
-drivers/staging/dt3155/dt3155_drv.c between commit
-19ba984dd7d8dcf67cebc2ba55abbe454e318fb3 ("Staging: dt3155: fix 50Hz
-configuration") from the staging.current tree and commit
-da7bcc953ecf52d33b76b983ad5491d4d29f5f6a ("Staging: dt3155: fix
-parentheses and bracket spacing style issues") from the staging-next tree.
+drivers/staging/netwave/netwave_cs.c between commit
+c8bf6e66c254bba7d0ea3f5d02420776dceac657 ("pcmcia: re-work
+pcmcia_request_irq()") from the pcmcia tree and commit
+3c7475d0aaad3614f6b1db291310c577eee3fb33 ("Staging: netwave: fixed
+trailing whitespace style issue in netwave_cs.c") from the staging-next
+tree.
 
 I fixed it up (see below) and can carry the fix as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/staging/dt3155/dt3155_drv.c
-index 7ac2c6d,993ed2f..0000000
---- a/drivers/staging/dt3155/dt3155_drv.c
-+++ b/drivers/staging/dt3155/dt3155_drv.c
-@@@ -464,9 -473,9 +465,9 @@@ static void dt3155_init_isr(int minor
-    /* 50/60 Hz should be set before this point but let's make sure it is */
-    /* right anyway */
-  
--   ReadI2C(dt3155_lbase[ minor ], CSR2, &i2c_csr2.reg);
- -  ReadI2C(dt3155_lbase[minor], CONFIG, &i2c_csr2.reg);
-++  ReadI2C(dt3155_lbase[minor], CSR2, &i2c_csr2.reg);
-    i2c_csr2.fld.HZ50 = FORMAT50HZ;
--   WriteI2C(dt3155_lbase[ minor ], CSR2, i2c_csr2.reg);
- -  WriteI2C(dt3155_lbase[minor], CONFIG, i2c_config.reg);
-++  WriteI2C(dt3155_lbase[minor], CSR2, i2c_csr2.reg);
-  
-    /* enable busmaster chip, clear flags */
-  
+diff --cc drivers/staging/netwave/netwave_cs.c
+index f1ee2cb,7b31621..0000000
+--- a/drivers/staging/netwave/netwave_cs.c
++++ b/drivers/staging/netwave/netwave_cs.c
+@@@ -377,10 -378,14 +377,10 @@@ static int netwave_probe(struct pcmcia_
+      /* The io structure describes IO port mapping */
+      link->io.NumPorts1 = 16;
+      link->io.Attributes1 = IO_DATA_PATH_WIDTH_16;
+-     /* link->io.NumPorts2 = 16; 
++     /* link->io.NumPorts2 = 16;
+         link->io.Attributes2 = IO_DATA_PATH_WIDTH_16; */
+      link->io.IOAddrLines = 5;
+-     
++ 
+ -    /* Interrupt setup */
+ -    link->irq.Attributes = IRQ_TYPE_DYNAMIC_SHARING;
+ -    link->irq.Handler = &netwave_interrupt;
+ -
+      /* General socket configuration */
+      link->conf.Attributes = CONF_ENABLE_IRQ;
+      link->conf.IntType = INT_MEMORY_AND_IO;
