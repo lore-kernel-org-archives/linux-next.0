@@ -1,107 +1,40 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] pktcdvd: improve BKL and compat_ioctl.c usage
-Date: Wed, 28 Apr 2010 14:36:41 +0200
-Message-ID: <201004281436.42183.arnd@arndb.de>
-References: <20100427150629.cb526876.sfr@canb.auug.org.au> <201004271102.35904.arnd@arndb.de> <20100428162209.cc9b2487.sfr@canb.auug.org.au>
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: Re: linux-next: Apr 27 - S390 boot failure.
+Date: Wed, 28 Apr 2010 17:18:38 +0200
+Message-ID: <20100428151838.GA2772@osiris.boeblingen.de.ibm.com>
+References: <4BD7D399.2090601@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100428162209.cc9b2487.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: =?iso-8859-15?q?Fr=E9d=E9ric?= Weisbecker <fweisbec@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Randy Dunlap <randy.dunlap@oracle.com>, Jens Axboe <jens.axboe@oracle.com>, Peter Osterlund <petero2@telia.com>, Akinobu Mita <akinobu.mita@gmail.com>, Ingo Molnar <mingo@elte.hu>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mtagate6.uk.ibm.com ([194.196.100.166]:57896 "EHLO
+	mtagate6.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754282Ab0D1PR6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Apr 2010 11:17:58 -0400
+Content-Disposition: inline
+In-Reply-To: <4BD7D399.2090601@in.ibm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Sachin Sant <sachinp@in.ibm.com>
+Cc: linux-s390@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 
-The pktcdvd driver uses proper locking and does not need the
-BKL in the ioctl and llseek functions of the character device,
-so kill both. Moving the compat_ioctl handling from common code
-into the driver itself fixes build problems when CONFIG_BLOCK is
-disabled.
+On Wed, Apr 28, 2010 at 11:50:09AM +0530, Sachin Sant wrote:
+> Yesterday's -next (20100427) fails to boot on a s390.
+> Here is the boot log.
+> [...]
+> 01: HCPGSP2627I The virtual machine is placed in CP mode due to a SIGP initial C
+> PU reset from CPU 00.
+> 02: HCPGSP2627I The virtual machine is placed in CP mode due to a SIGP initial C
+> PU reset from CPU 00.
+> 03: HCPGSP2627I The virtual machine is placed in CP mode due to a SIGP initial C
+> PU reset from CPU 00.
+> 
+> At this point the boot process just hangs. Previous -next build
+> (20100415) worked fine.
+> Have attached the .config
 
-Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-On Wednesday 28 April 2010, Stephen Rothwell wrote:
- 
-> My fixes tree is here: ssh://master.kernel.org/~sfr/next-fixes.git it
-> currently only contains your pktcdvd patch.  My understanding was that
-> this patch was a fix for a build problem with Linus' tree.
+Yes, I got several reports about this. The patch "improve irq tracing code
+in entry[64].S" was broken for !CONFIG_PREEMPT. I fixed it and pushed out
+a new version.
+Should be fixed with tomorrow's linux-next.
 
-Ah, I had forgotten that this was still needed and Jens or Peter
-obviously never picked it up.
-
-Linus, could you merge this now to fix building with CONFIG_BLOCK
-disabled? It's fallout of a patch c5ecc484c "pktcdvd: use BIO list
-management functions", but I fixed it because the problem appeared
-in compat_ioctl handling. It now came up because the patch conflicted
-with the BKL pushdown, which the original patch does as a side-effect.
-
-	Arnd
-
-diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
-index ddf1942..8a549db 100644
---- a/drivers/block/pktcdvd.c
-+++ b/drivers/block/pktcdvd.c
-@@ -48,6 +48,7 @@
- #include <linux/module.h>
- #include <linux/types.h>
- #include <linux/kernel.h>
-+#include <linux/compat.h>
- #include <linux/kthread.h>
- #include <linux/errno.h>
- #include <linux/spinlock.h>
-@@ -2984,7 +2985,7 @@ static void pkt_get_status(struct pkt_ctrl_command *ctrl_cmd)
- 	mutex_unlock(&ctl_mutex);
- }
- 
--static int pkt_ctl_ioctl(struct inode *inode, struct file *file, unsigned int cmd, unsigned long arg)
-+static long pkt_ctl_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- {
- 	void __user *argp = (void __user *)arg;
- 	struct pkt_ctrl_command ctrl_cmd;
-@@ -3021,10 +3022,20 @@ static int pkt_ctl_ioctl(struct inode *inode, struct file *file, unsigned int cm
- 	return ret;
- }
- 
-+#ifdef CONFIG_COMPAT
-+static long pkt_ctl_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-+{
-+	return pkt_ctl_ioctl(file, cmd, (unsigned long)compat_ptr(arg));
-+}
-+#endif
- 
- static const struct file_operations pkt_ctl_fops = {
--	.ioctl	 = pkt_ctl_ioctl,
--	.owner	 = THIS_MODULE,
-+	.open		= nonseekable_open,
-+	.unlocked_ioctl	= pkt_ctl_ioctl,
-+#ifdef CONFIG_COMPAT
-+	.compat_ioctl	= pkt_ctl_compat_ioctl,
-+#endif
-+	.owner		= THIS_MODULE,
- };
- 
- static struct miscdevice pkt_misc = {
-diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
-index c32a1b6..641640d 100644
---- a/fs/compat_ioctl.c
-+++ b/fs/compat_ioctl.c
-@@ -102,7 +102,6 @@
- #include <linux/nbd.h>
- #include <linux/random.h>
- #include <linux/filter.h>
--#include <linux/pktcdvd.h>
- 
- #include <linux/hiddev.h>
- 
-@@ -1126,8 +1125,6 @@ COMPATIBLE_IOCTL(PPGETMODE)
- COMPATIBLE_IOCTL(PPGETPHASE)
- COMPATIBLE_IOCTL(PPGETFLAGS)
- COMPATIBLE_IOCTL(PPSETFLAGS)
--/* pktcdvd */
--COMPATIBLE_IOCTL(PACKET_CTRL_CMD)
- /* Big A */
- /* sparc only */
- /* Big Q for sound/OSS */
+Thanks for reporting!
