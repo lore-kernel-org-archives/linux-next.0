@@ -1,39 +1,46 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build warning after merge of the
- driver-core.current tree
-Date: Thu, 29 Apr 2010 16:43:47 -0700
-Message-ID: <20100429234347.GA16141@kroah.com>
-References: <20100430093534.9fc6ab8f.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the bkl-ioctl tree with the fixes tree
+Date: Thu, 29 Apr 2010 15:50:04 +1000
+Message-ID: <20100429155004.26148af5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:40644 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758844Ab0D3Rdd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 30 Apr 2010 13:33:33 -0400
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__29_Apr_2010_15_50_04_+1000_NQKzfK67SSvv/4Ui"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?UTF-8?B?IkZyw6lkw6lyaWMgV2Vpc2JlY2tlciI=?= <fweisbec@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Thu__29_Apr_2010_15_50_04_+1000_NQKzfK67SSvv/4Ui
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20100430093534.9fc6ab8f.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, Tomas Winkler <tomas.winkler@intel.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 30, 2010 at 09:35:34AM +1000, Stephen Rothwell wrote:
-> Hi Grant,
-> 
-> After merging the driver-core.current tree, today's linux-next build
-> (x86_64 allmodconfig) produced this warning:
-> 
-> drivers/base/firmware_class.c: In function 'release_firmware':
-> drivers/base/firmware_class.c:597: warning: passing argument 1 of 'firmware_free_data' discards qualifiers from pointer target type
-> drivers/base/firmware_class.c:133: note: expected 'struct firmware *' but argument is of type 'const struct firmware *'
-> 
-> Introduced by commit 6454d23dedf4019fcae868818ae63c755dd42be0
-> ("firmware_class: fix memory leak - free allocated pages").
+Hi Fr=C3=A9d=C3=A9ric,
 
-Thanks, I've fixed this up, the release call should not have 'const'
-on it as it is going to touch the pointer passed to it :)
+Today's linux-next merge of the bkl-ioctl tree got a conflict in
+drivers/block/pktcdvd.c between commit
+db02df06864ed90b08771914ed3d50daca7cd8d7 ("pktcdvd: improve BKL and
+compat_ioctl.c usage") from the fixes tree and commit
+59ce88717d9d8af8cb14af3a0a505cafb692b482 ("drivers: Push down BKL into
+various drivers") from the bkl-ioctl tree.
 
-thanks,
+I used the version from the fixes tree as that seems to be a superset
+(including removing the [un]lock_kernel() calls).
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-greg k-h
+--Signature=_Thu__29_Apr_2010_15_50_04_+1000_NQKzfK67SSvv/4Ui
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkvZHgwACgkQjjKRsyhoI8wKdACdGaS3X/C8AYan27tSfDjR3NZH
+tFcAn1Rjy27SiGgl3dbgac0E3EUz3vDh
+=I0ps
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__29_Apr_2010_15_50_04_+1000_NQKzfK67SSvv/4Ui--
