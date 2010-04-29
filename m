@@ -1,35 +1,48 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] memrar: fix printk format warning
-Date: Thu, 29 Apr 2010 10:46:32 -0700
-Message-ID: <20100429104632.8558f75c.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the block tree
+Date: Thu, 29 Apr 2010 16:14:42 +1000
+Message-ID: <20100429161442.7a0a4285.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__29_Apr_2010_16_14_42_+1000_c+CzC06X+zni7a3I"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: lkml <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
-Cc: devel@driverdev.osuosl.org, gregkh@suse.de, Ossama Othman <ossama.othman@intel.com>
+To: Jens Axboe <jens.axboe@oracle.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Monakhov <dmonakhov@openvz.org>
 List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+--Signature=_Thu__29_Apr_2010_16_14_42_+1000_c+CzC06X+zni7a3I
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix printk format warning in memrar:
-drivers/staging/memrar/memrar_handler.c:393: warning: format '%u' expects type 'unsigned int', but argument 4 has type 'size_t'
+Hi James,
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Ossama Othman <ossama.othman@intel.com>
----
- drivers/staging/memrar/memrar_handler.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+After merging the block tree, today's linux-next build (powerpc
+ppc44x_defconfig) produced this warning:
 
---- linux-next-20100429.orig/drivers/staging/memrar/memrar_handler.c
-+++ linux-next-20100429/drivers/staging/memrar/memrar_handler.c
-@@ -390,7 +390,7 @@ static int memrar_init_rar_resources(cha
- 			(unsigned long) low,
- 			(unsigned long) high);
- 
--		pr_info("%s: BRAR[%d] size = %u KiB\n",
-+		pr_info("%s: BRAR[%d] size = %zu KiB\n",
- 			devname,
- 			z,
- 			rar->allocator->capacity / 1024);
+block/blk-lib.c: In function 'blkdev_issue_zeroout':
+block/blk-lib.c:190: warning: comparison of distinct pointer types lacks a =
+cast
+
+Introduced by commit 3f14d792f9a8fede64ce918dbb517f934497a4f8 ("blkdev:
+add blkdev_issue_zeroout helper function").
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__29_Apr_2010_16_14_42_+1000_c+CzC06X+zni7a3I
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkvZI9IACgkQjjKRsyhoI8xjfgCcCmxyUkDIkgHcrPsFRdsr67Fr
+FWsAoK7j+21OeC/eT51YzGZZ7g7AXMn3
+=AXII
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__29_Apr_2010_16_14_42_+1000_c+CzC06X+zni7a3I--
