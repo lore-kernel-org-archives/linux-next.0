@@ -1,49 +1,59 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: Re: linux-next: manual merge of the staging-next tree with the v4l-dvb
- tree
-Date: Wed, 28 Apr 2010 16:06:39 -0300
-Message-ID: <4BD8873F.5050807@infradead.org>
-References: <20100428160749.52da847a.sfr@canb.auug.org.au> <20100428152641.GD4483@kroah.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the v9fs tree with Linus' tree
+Date: Thu, 29 Apr 2010 11:21:53 +1000
+Message-ID: <20100429112153.6fe79961.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100428152641.GD4483@kroah.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wouter Van Rooy <wouter.vanrooy@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:37938 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750924Ab0D2BVz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 28 Apr 2010 21:21:55 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sripathi Kodi <sripathik@in.ibm.com>, Tejun Heo <tj@kernel.org>, Eric Van Hensbergen <ericvh@gmail.com>, Jens Axboe <jens.axboe@oracle.com>
 
-Greg KH wrote:
-> On Wed, Apr 28, 2010 at 04:07:49PM +1000, Stephen Rothwell wrote:
->> Hi Greg,
->>
->> Today's linux-next merge of the staging-next tree got a conflict in
->> drivers/staging/cx25821/cx25821-alsa.c between commit
->> 4e0c923a0d23f86c7331b32bc2aeb280e10e029e ("V4L/DVB: Staging: cx25821: fix
->> coding style issues in cx25821-alsa.c") from the v4l-dvb tree and commit
->> 98a178beaaf4c9a0acc4815807be51425b91f0a7 ("Staging: cx25821 fixed C99
->> comments, white spaces and unnecessary braces") from the staging-next
->> tree.
->>
->> I used the v4l-dvb versions of the conflicting bits (they looked neater
->> to me).
-> 
-> Odd, Mauro, why are you applying coding style fixes to the staging tree
-> to your tree?  I'll be glad to take them instead.
+Hi Eric,
 
-This driver (cx25821) came from my tree, so I was just keep maintaining it.
-Although the driver works fine, it has some coding style issues, but the biggest
-issue is that it has the same code that is almost identical replicated 8
-times (one for each simultaneous stream that the device supports), and another
-code duplicated 4 times (for the 4 simultaneous output streams).
+Today's linux-next merge of the v9fs tree got a conflict in
+fs/9p/vfs_super.c between commits 5a0e3ad6af8660be21ca98a971cd00f331318c05
+("include cleanup: Update gfp.h and slab.h includes to prepare for
+breaking implicit slab.h inclusion from percpu.h") and
+0ed07ddb56d1348e5ce33f3b8de20d730351983a ("9p: add bdi backing to mount
+session") from Linus' tree and commits
+0b2d973241f9bdbc8ed62caec42543e00ae6bd1e ("9p: VFS switches for 9p2000.L:
+VFS switches") and a61a60e387303575629706279b3b0018e96a758a ("9p: add
+9P2000.L statfs operation") from the v9fs tree.
 
-Sorry, but I didn't realized that you're also retrieving patches for it. I think
-I just assumed that we're following the same procedure as agreed with relation
-to go7007 driver.
-
-Anyway, the driver maintainer is now preparing a changeset that will hopefully 
-solve the remaining issues that prevented it to be added directly on /drivers/media.
-
+I fixed it up (see below) and can carry the fix for a while.
+-- 
 Cheers,
-Mauro
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc fs/9p/vfs_super.c
+index 806da5d,af2a620..0000000
+--- a/fs/9p/vfs_super.c
++++ b/fs/9p/vfs_super.c
+@@@ -37,7 -37,7 +37,8 @@@
+  #include <linux/mount.h>
+  #include <linux/idr.h>
+  #include <linux/sched.h>
+ +#include <linux/slab.h>
++ #include <linux/statfs.h>
+  #include <net/9p/9p.h>
+  #include <net/9p/client.h>
+  
+@@@ -76,8 -76,10 +77,11 @@@ v9fs_fill_super(struct super_block *sb
+  	sb->s_blocksize_bits = fls(v9ses->maxdata - 1);
+  	sb->s_blocksize = 1 << sb->s_blocksize_bits;
+  	sb->s_magic = V9FS_MAGIC;
+- 	sb->s_op = &v9fs_super_ops;
++ 	if (v9fs_proto_dotl(v9ses))
++ 		sb->s_op = &v9fs_super_ops_dotl;
++ 	else
++ 		sb->s_op = &v9fs_super_ops;
+ +	sb->s_bdi = &v9ses->bdi;
+  
+  	sb->s_flags = flags | MS_ACTIVE | MS_SYNCHRONOUS | MS_DIRSYNC |
+  	    MS_NOATIME;
