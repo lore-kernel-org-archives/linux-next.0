@@ -1,72 +1,62 @@
-From: Sachin Sant <sachinp@in.ibm.com>
-Subject: -next Apr 30: OOPS during eHEA driver initialization
-Date: Fri, 30 Apr 2010 20:42:54 +0530
-Message-ID: <4BDAF376.4030005@in.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the block tree with Linus' tree
+Date: Thu, 29 Apr 2010 13:52:04 +1000
+Message-ID: <20100429135204.eb79a986.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Sender: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-To: Linux/PPC Development <linuxppc-dev@ozlabs.org>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jens Axboe <jens.axboe@oracle.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anton Blanchard <anton@samba.org>, Dmitry Monakhov <dmonakhov@openvz.org>
 List-Id: linux-next.vger.kernel.org
 
-With today's next eHEA drivers fails to initialize.
+Hi Jens,
 
-IBM eHEA ethernet device driver (Release EHEA_0103)
-Unable to handle kernel paging request for data at address 0x00000000
-Faulting instruction address: 0xc0000000004e8d7c
-Oops: Kernel access of bad area, sig: 11 [#1]
-SMP NR_CPUS=1024 NUMA pSeries
-last sysfs file: /sys/devices/vio/30000007/host0/target0:0:2/0:0:2:0/type
-Modules linked in: ehea(+) sr_mod cdrom sg sd_mod crc_t10dif ibmvscsic scsi_transport_srp scsi_tgt scsi_mod
-NIP: c0000000004e8d7c LR: c00000000002614c CTR: c000000000026314
-REGS: c00000000c517810 TRAP: 0300   Not tainted  (2.6.34-rc5-autotest-next-20100430)
-MSR: 8000000000009032 <EE,ME,IR,DR>  CR: 24222228  XER: 20000005
-DAR: 0000000000000000, DSISR: 0000000040000000
-TASK = c00000000cf3ced0[730] 'modprobe' THREAD: c00000000c514000 CPU: 0
-GPR00: c00000000002614c c00000000c517a90 c000000000c96358 0000000000000000
-GPR04: c0000000ffff7858 c0000000004e973c c00000000cf3d9c8 0000000000000000
-GPR08: c000000000e4f8a0 0000000000001eed 0000000000000000 00000000000002e7
-GPR12: d000000001bfb0d0 c000000007440000 0000000000000000 0000000000000000
-GPR16: 0000000000000000 0000000000000000 000000001002c598 0000000000000000
-GPR20: 0000000000000000 0000000000000004 0000000000000000 0000000010030218
-GPR24: 0000000010030160 00000fffb7b00000 0000000010030200 0000000000000000
-GPR28: c0000000ffff7858 0000000000000000 c000000000bfd528 0000000000000000
-NIP [c0000000004e8d7c] .of_match_node+0xc0/0x10c
-LR [c00000000002614c] .ibmebus_create_devices+0x48/0x104
-Call Trace:
-[c00000000c517a90] [c0000000004e973c] .of_get_next_child+0x74/0x98 (unreliable)
-[c00000000c517b20] [c00000000002614c] .ibmebus_create_devices+0x48/0x104
-[c00000000c517bc0] [c000000000026338] .ibmebus_register_driver+0x24/0x4c
-[c00000000c517c50] [d000000001bfa1bc] .ehea_module_init+0x1d4/0x22b8 [ehea]
-[c00000000c517ce0] [c0000000000097a4] .do_one_initcall+0x88/0x1bc
-[c00000000c517d90] [c0000000000cbdf4] .SyS_init_module+0x11c/0x2b0
-[c00000000c517e30] [c0000000000085b4] syscall_exit+0x0/0x40
-Instruction dump:
-7c7de838 881f0040 2f800000 419e0018 7f83e378 389f0040 4bfffdbd 7c63e838
-7c7d07b4 2fbd0000 409e0030 3bff00c8 <881f0000> 2f800000 409eff60 881f0020
----[ end trace cb522a034d760fb8 ]---
+Today's linux-next merge of the block tree got a conflict in
+fs/block_dev.c between commit b8af67e2681c693a21f3933e3bdfce4cf66596d3
+("fs/block_dev.c: fix performance regression in O_DIRECT|O_SYNC writes to
+block devices") from Linus' tree and commit
+fbd9b09a177a481eda256447c881f014f29034fe ("blkdev: generalize flags for
+blkdev_issue_fn functions") from the block tree.
 
-next-20100428 was OK. Will try to bisect.
-
-Thanks
--Sachin
-
-
+I fixed it up (see below) and can carry the fix for a while.
 -- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
----------------------------------
-Sachin Sant
-IBM Linux Technology Center
-India Systems and Technology Labs
-Bangalore, India
----------------------------------
+diff --cc fs/block_dev.c
+index 6dcee88,dd76930..0000000
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@@ -406,23 -406,17 +406,24 @@@ static loff_t block_llseek(struct file 
+   
+  int blkdev_fsync(struct file *filp, struct dentry *dentry, int datasync)
+  {
+ -	struct block_device *bdev = I_BDEV(filp->f_mapping->host);
+ +	struct inode *bd_inode = filp->f_mapping->host;
+ +	struct block_device *bdev = I_BDEV(bd_inode);
+  	int error;
+  
+ -	error = sync_blockdev(bdev);
+ -	if (error)
+ -		return error;
+ -	
+ +	/*
+ +	 * There is no need to serialise calls to blkdev_issue_flush with
+ +	 * i_mutex and doing so causes performance issues with concurrent
+ +	 * O_SYNC writers to a block device.
+ +	 */
+ +	mutex_unlock(&bd_inode->i_mutex);
+ +
+- 	error = blkdev_issue_flush(bdev, NULL);
++ 	error = blkdev_issue_flush(bdev, GFP_KERNEL, NULL,
++ 				(BLKDEV_IFL_WAIT));
+  	if (error == -EOPNOTSUPP)
+  		error = 0;
+ +
+ +	mutex_lock(&bd_inode->i_mutex);
+ +
+  	return error;
+  }
+  EXPORT_SYMBOL(blkdev_fsync);
