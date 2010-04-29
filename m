@@ -1,78 +1,84 @@
-From: John Kacur <jkacur@redhat.com>
+From: Frederic Weisbecker <fweisbec@gmail.com>
 Subject: Re: linux-next: build failure after merge of the bkl-ioctl tree
-Date: Thu, 29 Apr 2010 22:40:56 +0200 (CEST)
-Message-ID: <alpine.LFD.2.00.1004292239320.8472@localhost.localdomain>
-References: <20100429154947.fbacee1f.sfr@canb.auug.org.au>
+Date: Thu, 29 Apr 2010 22:50:28 +0200
+Message-ID: <20100429205026.GB5392@nowhere>
+References: <20100429154947.fbacee1f.sfr@canb.auug.org.au> <alpine.LFD.2.00.1004292239320.8472@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: MULTIPART/MIXED; BOUNDARY="8323328-318342147-1272573660=:8472"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:13490 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933125Ab0D3RVp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 30 Apr 2010 13:21:45 -0400
-In-Reply-To: <20100429154947.fbacee1f.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: =?ISO-8859-15?Q?=22Fr=E9d=E9ric_Weisbecker=22?= <fweisbec@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <alpine.LFD.2.00.1004292239320.8472@localhost.localdomain>
+Sender: linux-kernel-owner@vger.kernel.org
+To: John Kacur <jkacur@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+List-Id: linux-next.vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Thu, Apr 29, 2010 at 10:40:56PM +0200, John Kacur wrote:
+>=20
+>=20
+> On Thu, 29 Apr 2010, Stephen Rothwell wrote:
+>=20
+> > Hi Fr=E9d=E9ric,
+> >=20
+> > After merging the bkl-ioctl tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> >=20
+> > drivers/scsi/3w-xxxx.c: In function 'tw_chrdev_ioctl':
+> > drivers/scsi/3w-xxxx.c:896: error: 'inode' undeclared (first use in=
+ this function)
+> >=20
+> > Caused by commit 5c9af160f830a68734f600fc0f90cba35e26727b ("scsi: P=
+ush
+> > down BKL into ioctl functions").
+> >=20
+> > I have used the version of the blk-ioctl tree from next-20100428 fo=
+r
+> > today.
+>=20
+> Frederic: did you miss one of my patches to fix the scsi compile prob=
+lems?
+>=20
+> The following should have fixed the above:
+>=20
+> From 3605ca2d1b29511fe1c95b47c4c596f392797585 Mon Sep 17 00:00:00 200=
+1
+> From: John Kacur <jkacur@redhat.com>
+> Date: Tue, 27 Apr 2010 10:47:43 +0200
+> Subject: [PATCH 04/10] bkl: Fix missing inode tw_chrdev_ioctl due to =
+bkl pushdown
+> Cc: Arnd Bergmann <arnd@arndb.de>,
+>     Linus Torvalds <torvalds@linux-foundation.org>,
+>     Frederic Weisbecker <fweisbec@gmail.com>,
+>     Jan Blunck <jblunck@gmail.com>,
+>     Thomas Gleixner <tglx@linutronix.de>
+>=20
+> Signed-off-by: John Kacur <jkacur@redhat.com>
+> ---
+>  drivers/scsi/3w-xxxx.c |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
+>=20
+> diff --git a/drivers/scsi/3w-xxxx.c b/drivers/scsi/3w-xxxx.c
+> index 45a737c..2957691 100644
+> --- a/drivers/scsi/3w-xxxx.c
+> +++ b/drivers/scsi/3w-xxxx.c
+> @@ -890,6 +890,7 @@ static long tw_chrdev_ioctl(struct file *file, un=
+signed int cmd, unsigned long a
+>  	unsigned long data_buffer_length_adjusted =3D 0;
+>  	unsigned long *cpu_addr;
+>  	long timeout;
+> +	struct inode *inode =3D file->f_dentry->d_inode;
+>  	TW_New_Ioctl *tw_ioctl;
+>  	TW_Passthru *passthru;
+>  	TW_Device_Extension *tw_dev =3D tw_device_extension_list[iminor(ino=
+de)];
+> --=20
+> 1.6.6.1
 
---8323328-318342147-1272573660=:8472
-Content-Type: TEXT/PLAIN; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
 
 
+My bad, I was really sure I integrated all of your fixes, and it even f=
+ixed
+by build. I probably forgot a git-add.
 
-On Thu, 29 Apr 2010, Stephen Rothwell wrote:
-
-> Hi Frédéric,
-> 
-> After merging the bkl-ioctl tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> drivers/scsi/3w-xxxx.c: In function 'tw_chrdev_ioctl':
-> drivers/scsi/3w-xxxx.c:896: error: 'inode' undeclared (first use in this function)
-> 
-> Caused by commit 5c9af160f830a68734f600fc0f90cba35e26727b ("scsi: Push
-> down BKL into ioctl functions").
-> 
-> I have used the version of the blk-ioctl tree from next-20100428 for
-> today.
-
-Frederic: did you miss one of my patches to fix the scsi compile problems?
-
-The following should have fixed the above:
-
->From 3605ca2d1b29511fe1c95b47c4c596f392797585 Mon Sep 17 00:00:00 2001
-From: John Kacur <jkacur@redhat.com>
-Date: Tue, 27 Apr 2010 10:47:43 +0200
-Subject: [PATCH 04/10] bkl: Fix missing inode tw_chrdev_ioctl due to bkl pushdown
-Cc: Arnd Bergmann <arnd@arndb.de>,
-    Linus Torvalds <torvalds@linux-foundation.org>,
-    Frederic Weisbecker <fweisbec@gmail.com>,
-    Jan Blunck <jblunck@gmail.com>,
-    Thomas Gleixner <tglx@linutronix.de>
-
-Signed-off-by: John Kacur <jkacur@redhat.com>
----
- drivers/scsi/3w-xxxx.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/scsi/3w-xxxx.c b/drivers/scsi/3w-xxxx.c
-index 45a737c..2957691 100644
---- a/drivers/scsi/3w-xxxx.c
-+++ b/drivers/scsi/3w-xxxx.c
-@@ -890,6 +890,7 @@ static long tw_chrdev_ioctl(struct file *file, unsigned int cmd, unsigned long a
- 	unsigned long data_buffer_length_adjusted = 0;
- 	unsigned long *cpu_addr;
- 	long timeout;
-+	struct inode *inode = file->f_dentry->d_inode;
- 	TW_New_Ioctl *tw_ioctl;
- 	TW_Passthru *passthru;
- 	TW_Device_Extension *tw_dev = tw_device_extension_list[iminor(inode)];
--- 
-1.6.6.1
-
---8323328-318342147-1272573660=:8472--
+Will apply this one, thanks!
