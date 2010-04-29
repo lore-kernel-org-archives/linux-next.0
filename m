@@ -1,66 +1,46 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the block tree
-Date: Thu, 29 Apr 2010 13:52:11 +1000
-Message-ID: <20100429135211.3ef89aa3.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the block tree with the ext4 tree
+Date: Thu, 29 Apr 2010 13:51:51 +1000
+Message-ID: <20100429135151.70e2a841.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jens Axboe <jens.axboe@oracle.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Monakhov <dmonakhov@openvz.org>, Jiro SEKIBA <jir@unicus.jp>, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Monakhov <dmonakhov@openvz.org>, Theodore Tso <tytso@MIT.EDU>
 List-Id: linux-next.vger.kernel.org
 
 Hi Jens,
 
-After merging the block tree, today's linux-next build (powerpc ppc64_defconfig)
-failed like this:
+Today's linux-next merge of the block tree got a conflict in
+fs/ext4/fsync.c between commit a68513a1c88248ee9167a25e32ee8164c3dde02b
+("ext4: check missed return value in ext4_sync_file()") from the ext4
+tree and commit fbd9b09a177a481eda256447c881f014f29034fe ("blkdev:
+generalize flags for blkdev_issue_fn functions") from the block tree.
 
-fs/nilfs2/the_nilfs.c: In function 'nilfs_discard_segments':
-fs/nilfs2/the_nilfs.c:673: error: 'DISCARD_FL_BARRIER' undeclared (first use in this function)
-
-Caused by commit fbd9b09a177a481eda256447c881f014f29034fe ("blkdev:
-generalize flags for blkdev_issue_fn functions") interacting with commit
-e902ec9906e844f4613fa6190c6fa65f162dc86e ("nilfs2: issue discard request
-after cleaning segments") (which netered Linus' tree on about March 4 -
-before v2.6.34-rc1).
-
-I applied the following patch for today (but have no way to test it).
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 29 Apr 2010 13:35:14 +1000
-Subject: [PATCH] nilfs: fix for block layer API change
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/nilfs2/the_nilfs.c |    4 +-
- 1 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/nilfs2/the_nilfs.c b/fs/nilfs2/the_nilfs.c
-index 33871f7..7081588 100644
---- a/fs/nilfs2/the_nilfs.c
-+++ b/fs/nilfs2/the_nilfs.c
-@@ -670,7 +670,7 @@ int nilfs_discard_segments(struct the_nilfs *nilfs, __u64 *segnump,
- 						   start * sects_per_block,
- 						   nblocks * sects_per_block,
- 						   GFP_NOFS,
--						   DISCARD_FL_BARRIER);
-+						   BLKDEV_IFL_BARRIER);
- 			if (ret < 0)
- 				return ret;
- 			nblocks = 0;
-@@ -680,7 +680,7 @@ int nilfs_discard_segments(struct the_nilfs *nilfs, __u64 *segnump,
- 		ret = blkdev_issue_discard(nilfs->ns_bdev,
- 					   start * sects_per_block,
- 					   nblocks * sects_per_block,
--					   GFP_NOFS, DISCARD_FL_BARRIER);
-+					   GFP_NOFS, BLKDEV_IFL_BARRIER);
- 	return ret;
- }
- 
--- 
-1.7.1
-
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc fs/ext4/fsync.c
+index 42bd94a,ef3d980e6..0000000
+--- a/fs/ext4/fsync.c
++++ b/fs/ext4/fsync.c
+@@@ -100,9 -100,11 +100,11 @@@ int ext4_sync_file(struct file *file, s
+  		if (ext4_should_writeback_data(inode) &&
+  		    (journal->j_fs_dev != journal->j_dev) &&
+  		    (journal->j_flags & JBD2_BARRIER))
+- 			blkdev_issue_flush(inode->i_sb->s_bdev, NULL);
++ 			blkdev_issue_flush(inode->i_sb->s_bdev, GFP_KERNEL,
++ 					NULL, BLKDEV_IFL_WAIT);
+ -		jbd2_log_wait_commit(journal, commit_tid);
+ +		ret = jbd2_log_wait_commit(journal, commit_tid);
+  	} else if (journal->j_flags & JBD2_BARRIER)
+- 		blkdev_issue_flush(inode->i_sb->s_bdev, NULL);
++ 		blkdev_issue_flush(inode->i_sb->s_bdev, GFP_KERNEL, NULL,
++ 			BLKDEV_IFL_WAIT);
+  	return ret;
+  }
