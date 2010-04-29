@@ -1,40 +1,31 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: linux-next: Tree for April 30
-Date: Fri, 30 Apr 2010 21:27:50 +0200
-Message-ID: <20100430192748.GC5357@nowhere>
-References: <20100430163538.7253a9e0.sfr@canb.auug.org.au>
+From: Piotr Hosowicz <piotr@hosowicz.com>
+Subject: Test
+Date: Thu, 29 Apr 2010 13:43:25 +0200
+Message-ID: <4BD970DD.8030007@example.com>
+Reply-To: piotr@hosowicz.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20100430163538.7253a9e0.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-2; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from 26.mail-out.ovh.net ([91.121.27.225]:54255 "HELO
+	26.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1755887Ab0D3TuM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 30 Apr 2010 15:50:12 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org
 
-On Fri, Apr 30, 2010 at 04:35:38PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20100429:
-> 
-> Dropped trees: tmio-mmc (long unresolved conflicts and unable to fetch)
-> 	hwlat (at the maintainer's request)
-> 
-> My fixes tree contains:
-> 	a patch for a pktcdvd build error from Arnd Bergmann
-> 
-> The v4l-dvb tree still has its build failure, so I used the version from
-> next-20100409.
-> 
-> The block tree lost a conflict and its build failure but gained another
-> conflict against the ext3 tree.
-> 
-> The bk-ioctl tree still has its build failure so I used the version from
-> next-20100428.
+Sorry, I don't know why my messages don't go the to ML.
 
+Regards,
 
-That looks weird, I fixed all the reported conflicts and build error you
-reported. Or may be there are some others left that I missed in allyesconfig?
+Piotr Hosowicz
 
-Thanks.
+-- 
+- Obiecali zbudowac 3 miliony mieszkan! I nie zbudowali!
+- Ale to bardzo dobrze, ze nie zbudowali! Nie od tego jest panstwo!
+- Kwasniewski obiecywal nie 3, a 10 milionow mieszkan!
+- No to wyglada na to, ze Kwasniewski zbudowal siedem,
+   a Kaczynscy teraz musza dobudowac trzy miliony.
+NP: Black Stone Cherry - Please Come In
+NB: 2.6.34-rc5-git9
