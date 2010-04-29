@@ -1,48 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the block tree
-Date: Thu, 29 Apr 2010 16:14:42 +1000
-Message-ID: <20100429161442.7a0a4285.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the block tree
+Date: Thu, 29 Apr 2010 13:52:11 +1000
+Message-ID: <20100429135211.3ef89aa3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__29_Apr_2010_16_14_42_+1000_c+CzC06X+zni7a3I"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jens Axboe <jens.axboe@oracle.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Monakhov <dmonakhov@openvz.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Monakhov <dmonakhov@openvz.org>, Jiro SEKIBA <jir@unicus.jp>, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__29_Apr_2010_16_14_42_+1000_c+CzC06X+zni7a3I
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Jens,
 
-Hi James,
+After merging the block tree, today's linux-next build (powerpc ppc64_defconfig)
+failed like this:
 
-After merging the block tree, today's linux-next build (powerpc
-ppc44x_defconfig) produced this warning:
+fs/nilfs2/the_nilfs.c: In function 'nilfs_discard_segments':
+fs/nilfs2/the_nilfs.c:673: error: 'DISCARD_FL_BARRIER' undeclared (first use in this function)
 
-block/blk-lib.c: In function 'blkdev_issue_zeroout':
-block/blk-lib.c:190: warning: comparison of distinct pointer types lacks a =
-cast
+Caused by commit fbd9b09a177a481eda256447c881f014f29034fe ("blkdev:
+generalize flags for blkdev_issue_fn functions") interacting with commit
+e902ec9906e844f4613fa6190c6fa65f162dc86e ("nilfs2: issue discard request
+after cleaning segments") (which netered Linus' tree on about March 4 -
+before v2.6.34-rc1).
 
-Introduced by commit 3f14d792f9a8fede64ce918dbb517f934497a4f8 ("blkdev:
-add blkdev_issue_zeroout helper function").
+I applied the following patch for today (but have no way to test it).
 
---=20
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 29 Apr 2010 13:35:14 +1000
+Subject: [PATCH] nilfs: fix for block layer API change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/nilfs2/the_nilfs.c |    4 +-
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/nilfs2/the_nilfs.c b/fs/nilfs2/the_nilfs.c
+index 33871f7..7081588 100644
+--- a/fs/nilfs2/the_nilfs.c
++++ b/fs/nilfs2/the_nilfs.c
+@@ -670,7 +670,7 @@ int nilfs_discard_segments(struct the_nilfs *nilfs, __u64 *segnump,
+ 						   start * sects_per_block,
+ 						   nblocks * sects_per_block,
+ 						   GFP_NOFS,
+-						   DISCARD_FL_BARRIER);
++						   BLKDEV_IFL_BARRIER);
+ 			if (ret < 0)
+ 				return ret;
+ 			nblocks = 0;
+@@ -680,7 +680,7 @@ int nilfs_discard_segments(struct the_nilfs *nilfs, __u64 *segnump,
+ 		ret = blkdev_issue_discard(nilfs->ns_bdev,
+ 					   start * sects_per_block,
+ 					   nblocks * sects_per_block,
+-					   GFP_NOFS, DISCARD_FL_BARRIER);
++					   GFP_NOFS, BLKDEV_IFL_BARRIER);
+ 	return ret;
+ }
+ 
+-- 
+1.7.1
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__29_Apr_2010_16_14_42_+1000_c+CzC06X+zni7a3I
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkvZI9IACgkQjjKRsyhoI8xjfgCcCmxyUkDIkgHcrPsFRdsr67Fr
-FWsAoK7j+21OeC/eT51YzGZZ7g7AXMn3
-=AXII
------END PGP SIGNATURE-----
-
---Signature=_Thu__29_Apr_2010_16_14_42_+1000_c+CzC06X+zni7a3I--
