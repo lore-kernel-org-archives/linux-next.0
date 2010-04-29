@@ -1,66 +1,47 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: -next Apr 30: OOPS during eHEA driver initialization
-Date: Fri, 30 Apr 2010 11:43:22 -0600
-Message-ID: <g2mfa686aa41004301043i138ffb2dmac5b641fa3d512c4@mail.gmail.com>
-References: <4BDAF376.4030005@in.ibm.com> <4BDB12FB.5060806@in.ibm.com>
-	<n2kfa686aa41004301035p7e15c017u7a1b98389cc1e466@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tty tree with the net tree
+Date: Thu, 29 Apr 2010 15:56:55 +1000
+Message-ID: <20100429155655.479e0982.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <n2kfa686aa41004301035p7e15c017u7a1b98389cc1e466@mail.gmail.com>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Sender: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-To: Sachin Sant <sachinp@in.ibm.com>
-Cc: Linux/PPC Development <linuxppc-dev@ozlabs.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Greg Kroah-Hartman <gregkh@suse.de>, linux-kernel <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:55498 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933430Ab0D3Rmd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 30 Apr 2010 13:42:33 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sjur Braendeland <sjur.brandeland@stericsson.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Alan Cox <alan@linux.intel.com>
 
-On Fri, Apr 30, 2010 at 11:35 AM, Grant Likely
-<grant.likely@secretlab.ca> wrote:
-> On Fri, Apr 30, 2010 at 11:27 AM, Sachin Sant <sachinp@in.ibm.com> wrote:
->> Sachin Sant wrote:
->>>
->>> With today's next eHEA drivers fails to initialize.
->>
->> If i revert the following patch eHEA network interface is initialized
->> properly.
->>
->> commit cebfe0b6709abdab997c1a00499d67efa32ee1f0
->> drivercore: Add of_match_table to the common device drivers
->
-> That is an easy one to fix. =A0I'll get it updated today and send you the=
- result.
+Hi Greg,
 
-Let me know if this patch fixes it:
+Today's linux-next merge of the tty tree got a conflict in
+include/linux/tty.h between commit
+9b27105b4a44c54bf91ecd7d0315034ae75684f7 ("net-caif-driver: add CAIF
+serial driver (ldisc)") from the net tree and commit
+39658c58ebb52fe7a3488fd520aa89c75721fd20 ("tty: n_gsm line discipline")
+from the tty tree.
 
+I used number 21 for the n_gsm line discipline (see below) and 30 for
+NR_LDISCS and can carry this fix as necessary.
+-- 
 Cheers,
-g.
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --git a/arch/powerpc/kernel/ibmebus.c b/arch/powerpc/kernel/ibmebus.c
-index ce957a4..693b0e6 100644
---- a/arch/powerpc/kernel/ibmebus.c
-+++ b/arch/powerpc/kernel/ibmebus.c
-@@ -201,6 +201,9 @@ static int ibmebus_create_devices(const struct
-of_device_id *matches)
-
- int ibmebus_register_driver(struct of_platform_driver *drv)
- {
-+	if (!drv->driver.of_match_table)
-+		drv->driver.of_match_table =3D drv->match_table;
-+
- 	/* If the driver uses devices that ibmebus doesn't know, add them */
- 	ibmebus_create_devices(drv->driver.of_match_table);
-
-
-
--- =
-
-Grant Likely, B.Sc., P.Eng.
-Secret Lab Technologies Ltd.
+diff --cc include/linux/tty.h
+index bb44fa9,bd5acb7..0000000
+--- a/include/linux/tty.h
++++ b/include/linux/tty.h
+@@@ -47,7 -47,8 +47,8 @@@
+  #define N_SLCAN		17	/* Serial / USB serial CAN Adaptors */
+  #define N_PPS		18	/* Pulse per Second */
+  #define N_V253		19	/* Codec control over voice modem */
+ -#define N_GSM0710	20	/* GSM 0710 Mux */
+ -
+ +#define N_CAIF		20      /* CAIF protocol for talking to modems */
+++#define N_GSM0710	21	/* GSM 0710 Mux */
+  
+  /*
+   * This character is the same as _POSIX_VDISABLE: it cannot be used as
