@@ -1,37 +1,44 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: -next Apr 30: OOPS during eHEA driver initialization
-Date: Fri, 30 Apr 2010 11:35:13 -0600
-Message-ID: <n2kfa686aa41004301035p7e15c017u7a1b98389cc1e466@mail.gmail.com>
-References: <4BDAF376.4030005@in.ibm.com> <4BDB12FB.5060806@in.ibm.com>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: linux-next: manual merge of the rr tree with the net tree
+Date: Thu, 29 Apr 2010 22:23:36 +0930
+Message-ID: <201004292223.36270.rusty@rustcorp.com.au>
+References: <20100427115852.9f4cbb0f.sfr@canb.auug.org.au> <20100427040913.GA19951@redhat.com> <20100428155457.GB7467@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <4BDB12FB.5060806@in.ibm.com>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Sender: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-To: Sachin Sant <sachinp@in.ibm.com>
-Cc: Linux/PPC Development <linuxppc-dev@ozlabs.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Greg Kroah-Hartman <gregkh@suse.de>, linux-kernel <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:52366 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753030Ab0D3Rib (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 30 Apr 2010 13:38:31 -0400
+In-Reply-To: <20100428155457.GB7467@redhat.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
 
-On Fri, Apr 30, 2010 at 11:27 AM, Sachin Sant <sachinp@in.ibm.com> wrote:
-> Sachin Sant wrote:
->>
->> With today's next eHEA drivers fails to initialize.
->
-> If i revert the following patch eHEA network interface is initialized
-> properly.
->
-> commit cebfe0b6709abdab997c1a00499d67efa32ee1f0
-> drivercore: Add of_match_table to the common device drivers
+On Thu, 29 Apr 2010 01:24:57 am Michael S. Tsirkin wrote:
+> On Tue, Apr 27, 2010 at 07:09:13AM +0300, Michael S. Tsirkin wrote:
+> > On Tue, Apr 27, 2010 at 11:58:52AM +1000, Stephen Rothwell wrote:
+> > > Hi Rusty,
+> > > 
+> > > Today's linux-next merge of the rr tree got a conflict in
+> > > drivers/net/virtio_net.c between commit
+> > > 5e01d2f91df62be4d6f282149bc2a8858992ceca ("virtio-net: move sg off
+> > > stack") from the net tree and commit
+> > > 7f62a724a65f864d84f50857bbfd36c240155c8f ("virtio_net: use virtqueue_xxx
+> > > wrappers") from the rr tree.
+> > > 
+> > > I fixed it up (see below) and can carry the fix as necessary.
+> > 
+> > Hmm, Rusty, do you intend for the patches to go through netdev this
+> > time? If you do, it might be simplest to just ask Dave to merge
+> > them in net-next-2.6 now. I can prepare and send them if you like.
 
-That is an easy one to fix.  I'll get it updated today and send you the result.
+Naah, they hit too many random virtio drivers.  It's pretty simple to keep
+them separate, and once the new API is in place I'll send to Dave to merge.
+It could take two cycles, but there's no huge rush.
 
-g.
+Cheers,
+Rusty.
