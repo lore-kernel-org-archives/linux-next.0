@@ -1,37 +1,31 @@
 From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the staging-next tree
-Date: Fri, 30 Apr 2010 07:43:40 -0700
-Message-ID: <20100430144340.GD1824@kroah.com>
-References: <20100430155205.a4171034.sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the tty tree with the net tree
+Date: Wed, 28 Apr 2010 23:13:58 -0700
+Message-ID: <20100429061358.GA7069@kroah.com>
+References: <20100429155655.479e0982.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20100430155205.a4171034.sfr@canb.auug.org.au>
+In-Reply-To: <20100429155655.479e0982.sfr@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, Benjamin Thery <benjamin.thery@bull.net>, NeilBrown <neilb@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sjur Braendeland <sjur.brandeland@stericsson.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Alan Cox <alan@linux.intel.com>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Apr 30, 2010 at 03:52:05PM +1000, Stephen Rothwell wrote:
+On Thu, Apr 29, 2010 at 03:56:55PM +1000, Stephen Rothwell wrote:
 > Hi Greg,
 > 
-> After merging the staging-next tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+> Today's linux-next merge of the tty tree got a conflict in
+> include/linux/tty.h between commit
+> 9b27105b4a44c54bf91ecd7d0315034ae75684f7 ("net-caif-driver: add CAIF
+> serial driver (ldisc)") from the net tree and commit
+> 39658c58ebb52fe7a3488fd520aa89c75721fd20 ("tty: n_gsm line discipline")
+> from the tty tree.
 > 
-> drivers/md/md.c: In function 'level_store':
-> drivers/md/md.c:3029: error: too few arguments to function 'sysfs_get_dirent'
-> 
-> Caused by commit 262f8e4937e7b4a587923ca3c039a184668f49ec ("sysfs:
-> Implement sysfs tagged directory support") from the driver-core tree
-> interacting with commit fecc531e3cc0de60514d326c7d82f1075ed55888 ("md:
-> manage redundancy group in sysfs when changing level") from the md.
-> 
-> I have applied this fixup patch for today and can carry it as necessary.
-> 
-> [This could have been avoided, of course, by creating a new API (maybe
-> sysfs_get_dirent_tagged) and implementing the old API in terms of that].
+> I used number 21 for the n_gsm line discipline (see below) and 30 for
+> NR_LDISCS and can carry this fix as necessary.
 
-Thanks for the fixup.
+That fix looks fine, thanks,
 
 greg k-h
