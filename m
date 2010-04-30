@@ -1,35 +1,57 @@
-From: Jens Axboe <jens.axboe@oracle.com>
-Subject: Re: linux-next: build warning after merge of the block tree
-Date: Thu, 29 Apr 2010 09:28:54 +0200
-Message-ID: <20100429072853.GD27497@kernel.dk>
-References: <20100429161442.7a0a4285.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the input tree
+Date: Fri, 30 Apr 2010 15:51:08 +1000
+Message-ID: <20100430155108.6847891f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 0122700014.0.fullrate.dk ([95.166.99.235]:56651 "EHLO kernel.dk"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34015 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758655Ab0D3RZa (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 30 Apr 2010 13:25:30 -0400
-Content-Disposition: inline
-In-Reply-To: <20100429161442.7a0a4285.sfr@canb.auug.org.au>
+	id S1758486Ab0D3R1k (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 30 Apr 2010 13:27:40 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Monakhov <dmonakhov@openvz.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Axel Lin <axel.lin@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-On Thu, Apr 29 2010, Stephen Rothwell wrote:
-> Hi James,
-> 
-> After merging the block tree, today's linux-next build (powerpc
-> ppc44x_defconfig) produced this warning:
-> 
-> block/blk-lib.c: In function 'blkdev_issue_zeroout':
-> block/blk-lib.c:190: warning: comparison of distinct pointer types lacks a cast
-> 
-> Introduced by commit 3f14d792f9a8fede64ce918dbb517f934497a4f8 ("blkdev:
-> add blkdev_issue_zeroout helper function").
+Hi Greg,
 
-I fixed that warning up.
+Today's linux-next merge of the usb tree got a conflict in
+drivers/input/tablet/acecad.c between commits
+2ef2ed597669f5e120d0c51c295f00e34b2f0801 ("Input: acecad - fix incorrect
+size parameter in usb_buffer_free") and
+5492f6f801c81c9663417cd8e48e759775977c83 ("Input: acecad - simplify
+usb_acecad_disconnect()") from the input tree and commit
+3cc96f50329227fbf34de2459491901b6ee1c98c ("USB: rename usb_buffer_alloc()
+and usb_buffer_free() users") from the usb tree.
 
+I fixed it up (see below) and can carry the fix as necessary.
 -- 
-Jens Axboe
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/input/tablet/acecad.c
+index 37d0539,c047016..0000000
+--- a/drivers/input/tablet/acecad.c
++++ b/drivers/input/tablet/acecad.c
+@@@ -246,11 -252,13 +246,11 @@@ static void usb_acecad_disconnect(struc
+  	struct usb_acecad *acecad = usb_get_intfdata(intf);
+  
+  	usb_set_intfdata(intf, NULL);
+ -	if (acecad) {
+ -		usb_kill_urb(acecad->irq);
+ -		input_unregister_device(acecad->input);
+ -		usb_free_urb(acecad->irq);
+ -		usb_free_coherent(interface_to_usbdev(intf), 10, acecad->data, acecad->data_dma);
+ -		kfree(acecad);
+ -	}
+ +
+ +	input_unregister_device(acecad->input);
+ +	usb_free_urb(acecad->irq);
+- 	usb_buffer_free(acecad->usbdev, 8, acecad->data, acecad->data_dma);
+++	usb_free_coherent(acecad->usbdev, 8, acecad->data, acecad->data_dma);
+ +	kfree(acecad);
+  }
+  
+  static struct usb_device_id usb_acecad_id_table [] = {
