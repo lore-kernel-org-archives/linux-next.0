@@ -1,62 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the block tree with Linus' tree
-Date: Thu, 29 Apr 2010 13:52:04 +1000
-Message-ID: <20100429135204.eb79a986.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (usb tree
+ related)
+Date: Fri, 30 Apr 2010 16:05:55 +1000
+Message-ID: <20100430160555.d58bd9aa.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__30_Apr_2010_16_05_55_+1000_s7wkyK8WnIp0hcN1"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jens Axboe <jens.axboe@oracle.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anton Blanchard <anton@samba.org>, Dmitry Monakhov <dmonakhov@openvz.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Heikki Krogerus <ext-heikki.krogerus@nokia.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi Jens,
+--Signature=_Fri__30_Apr_2010_16_05_55_+1000_s7wkyK8WnIp0hcN1
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the block tree got a conflict in
-fs/block_dev.c between commit b8af67e2681c693a21f3933e3bdfce4cf66596d3
-("fs/block_dev.c: fix performance regression in O_DIRECT|O_SYNC writes to
-block devices") from Linus' tree and commit
-fbd9b09a177a481eda256447c881f014f29034fe ("blkdev: generalize flags for
-blkdev_issue_fn functions") from the block tree.
+Hi Greg,
 
-I fixed it up (see below) and can carry the fix for a while.
--- 
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
+
+drivers/usb/otg/twl4030-usb.c: In function 'twl4030_usb_set_bits':
+drivers/usb/otg/twl4030-usb.c:238: error: implicit declaration of function =
+'ULPI_SET'
+drivers/usb/otg/twl4030-usb.c: In function 'twl4030_usb_clear_bits':
+drivers/usb/otg/twl4030-usb.c:244: error: implicit declaration of function =
+'ULPI_CLR'
+drivers/usb/otg/twl4030-usb.c: In function 'twl4030_usb_set_mode':
+drivers/usb/otg/twl4030-usb.c:303: error: 'ULPI_IFC_CTRL' undeclared (first=
+ use in this function)
+drivers/usb/otg/twl4030-usb.c:304: error: 'ULPI_IFC_CTRL_CARKITMODE' undecl=
+ared (first use in this function)
+drivers/usb/otg/twl4030-usb.c:306: error: 'ULPI_FUNC_CTRL' undeclared (firs=
+t use in this function)
+drivers/usb/otg/twl4030-usb.c:307: error: 'ULPI_FUNC_CTRL_XCVRSEL_MASK' und=
+eclared (first use in this function)
+drivers/usb/otg/twl4030-usb.c:308: error: 'ULPI_FUNC_CTRL_OPMODE_MASK' unde=
+clared (first use in this function)
+
+Caused by commit 57983872ff14cba23d6404a40c89e52063c94854 ("usb: otg:
+twl4030: use the global ULPI register definitions").  I have reverted
+that commit for today.
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc fs/block_dev.c
-index 6dcee88,dd76930..0000000
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@@ -406,23 -406,17 +406,24 @@@ static loff_t block_llseek(struct file 
-   
-  int blkdev_fsync(struct file *filp, struct dentry *dentry, int datasync)
-  {
- -	struct block_device *bdev = I_BDEV(filp->f_mapping->host);
- +	struct inode *bd_inode = filp->f_mapping->host;
- +	struct block_device *bdev = I_BDEV(bd_inode);
-  	int error;
-  
- -	error = sync_blockdev(bdev);
- -	if (error)
- -		return error;
- -	
- +	/*
- +	 * There is no need to serialise calls to blkdev_issue_flush with
- +	 * i_mutex and doing so causes performance issues with concurrent
- +	 * O_SYNC writers to a block device.
- +	 */
- +	mutex_unlock(&bd_inode->i_mutex);
- +
-- 	error = blkdev_issue_flush(bdev, NULL);
-+ 	error = blkdev_issue_flush(bdev, GFP_KERNEL, NULL,
-+ 				(BLKDEV_IFL_WAIT));
-  	if (error == -EOPNOTSUPP)
-  		error = 0;
- +
- +	mutex_lock(&bd_inode->i_mutex);
- +
-  	return error;
-  }
-  EXPORT_SYMBOL(blkdev_fsync);
+--Signature=_Fri__30_Apr_2010_16_05_55_+1000_s7wkyK8WnIp0hcN1
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkvac0MACgkQjjKRsyhoI8w8VgCeJzMCgVZDkDpFqaXcU6Eg0cbh
+qFYAnRcxsiqRQ6adSRlFSxybZTw9sY/A
+=fG9L
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__30_Apr_2010_16_05_55_+1000_s7wkyK8WnIp0hcN1--
