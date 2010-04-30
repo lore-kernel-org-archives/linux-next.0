@@ -1,66 +1,90 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb tree with the input tree
-Date: Fri, 30 Apr 2010 15:51:22 +1000
-Message-ID: <20100430155122.db4d0b54.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the staging-next tree
+Date: Fri, 30 Apr 2010 15:50:52 +1000
+Message-ID: <20100430155052.87507421.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34014 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757525Ab0D3R1k (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 30 Apr 2010 13:27:40 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ping Cheng <pingc@wacom.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Diego Giagio <diego@giagio.com>, Daniel Mack <daniel@caiaq.de>
+List-Id: linux-next.vger.kernel.org
 
 Hi Greg,
 
-Today's linux-next merge of the usb tree got a conflict in
-drivers/input/tablet/wacom_sys.c between commits
-4492efffffeb88d87e7aa74765f3c53b3a7dd40f ("Input: wacom - share pen info
-with touch of the same ID") and 51269fe86c263ec4fafbafe82970e6d7f6f79102
-("Input: wacom - do not allocate wacom_wac separately") from the input
-tree and commit 3cc96f50329227fbf34de2459491901b6ee1c98c ("USB: rename
-usb_buffer_alloc() and usb_buffer_free() users") from the usb tree.
+After merging the staging-next tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary.
+drivers/net/usb/ipheth.c: In function 'ipheth_alloc_urbs':
+drivers/net/usb/ipheth.c:131: error: implicit declaration of function 'usb_buffer_alloc'
+drivers/net/usb/ipheth.c:134: warning: assignment makes pointer from integer without a cast
+drivers/net/usb/ipheth.c:141: warning: assignment makes pointer from integer without a cast
+drivers/net/usb/ipheth.c:153: error: implicit declaration of function 'usb_buffer_free'
+
+Caused by commit 3cc96f50329227fbf34de2459491901b6ee1c98c ("USB: rename
+usb_buffer_alloc() and usb_buffer_free() users") from the usb tree
+interacting with commit a19259c3d589a014e5f47f148f74dfc44422c82b
+("drivers/net/usb: Add new driver ipheth") which entered Linus' tree about
+April 25 via the net tree.
+
+I applied the following fixup patch for today.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 30 Apr 2010 15:44:06 +1000
+Subject: [PATCH] net: fix for usb_buffer_alloc/free rename
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/net/usb/ipheth.c |   10 +++++-----
+ 1 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/usb/ipheth.c b/drivers/net/usb/ipheth.c
+index 418825d..41071d0 100644
+--- a/drivers/net/usb/ipheth.c
++++ b/drivers/net/usb/ipheth.c
+@@ -128,14 +128,14 @@ static int ipheth_alloc_urbs(struct ipheth_device *iphone)
+ 	if (rx_urb == NULL)
+ 		goto free_tx_urb;
+ 
+-	tx_buf = usb_buffer_alloc(iphone->udev,
++	tx_buf = usb_alloc_coherent(iphone->udev,
+ 				  IPHETH_BUF_SIZE,
+ 				  GFP_KERNEL,
+ 				  &tx_urb->transfer_dma);
+ 	if (tx_buf == NULL)
+ 		goto free_rx_urb;
+ 
+-	rx_buf = usb_buffer_alloc(iphone->udev,
++	rx_buf = usb_alloc_coherent(iphone->udev,
+ 				  IPHETH_BUF_SIZE,
+ 				  GFP_KERNEL,
+ 				  &rx_urb->transfer_dma);
+@@ -150,7 +150,7 @@ static int ipheth_alloc_urbs(struct ipheth_device *iphone)
+ 	return 0;
+ 
+ free_tx_buf:
+-	usb_buffer_free(iphone->udev, IPHETH_BUF_SIZE, tx_buf,
++	usb_free_coherent(iphone->udev, IPHETH_BUF_SIZE, tx_buf,
+ 			tx_urb->transfer_dma);
+ free_rx_urb:
+ 	usb_free_urb(rx_urb);
+@@ -162,9 +162,9 @@ error_nomem:
+ 
+ static void ipheth_free_urbs(struct ipheth_device *iphone)
+ {
+-	usb_buffer_free(iphone->udev, IPHETH_BUF_SIZE, iphone->rx_buf,
++	usb_free_coherent(iphone->udev, IPHETH_BUF_SIZE, iphone->rx_buf,
+ 			iphone->rx_urb->transfer_dma);
+-	usb_buffer_free(iphone->udev, IPHETH_BUF_SIZE, iphone->tx_buf,
++	usb_free_coherent(iphone->udev, IPHETH_BUF_SIZE, iphone->tx_buf,
+ 			iphone->tx_urb->transfer_dma);
+ 	usb_free_urb(iphone->rx_urb);
+ 	usb_free_urb(iphone->tx_urb);
+-- 
+1.7.1
+
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/input/tablet/wacom_sys.c
-index d90f4e0,191197c..0000000
---- a/drivers/input/tablet/wacom_sys.c
-+++ b/drivers/input/tablet/wacom_sys.c
-@@@ -534,11 -632,11 +534,11 @@@ static int wacom_probe(struct usb_inter
-  	usb_set_intfdata(intf, wacom);
-  	return 0;
-  
- + fail4:	wacom_remove_shared_data(wacom_wac);
-   fail3:	usb_free_urb(wacom->irq);
--  fail2:	usb_buffer_free(dev, WACOM_PKGLEN_MAX, wacom_wac->data, wacom->data_dma);
-+  fail2:	usb_free_coherent(dev, WACOM_PKGLEN_MAX, wacom_wac->data, wacom->data_dma);
-   fail1:	input_free_device(input_dev);
-  	kfree(wacom);
- -	kfree(wacom_wac);
-  	return error;
-  }
-  
-@@@ -549,11 -647,11 +549,11 @@@ static void wacom_disconnect(struct usb
-  	usb_set_intfdata(intf, NULL);
-  
-  	usb_kill_urb(wacom->irq);
- -	input_unregister_device(wacom->dev);
- +	input_unregister_device(wacom->wacom_wac.input);
-  	usb_free_urb(wacom->irq);
-- 	usb_buffer_free(interface_to_usbdev(intf), WACOM_PKGLEN_MAX,
-+ 	usb_free_coherent(interface_to_usbdev(intf), WACOM_PKGLEN_MAX,
- -			  wacom->wacom_wac->data, wacom->data_dma);
- -	kfree(wacom->wacom_wac);
- +			wacom->wacom_wac.data, wacom->data_dma);
- +	wacom_remove_shared_data(&wacom->wacom_wac);
-  	kfree(wacom);
-  }
-  
+http://www.canb.auug.org.au/~sfr/
