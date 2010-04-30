@@ -1,45 +1,89 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the staging-next tree
-Date: Fri, 30 Apr 2010 07:45:07 -0700
-Message-ID: <20100430144507.GH1824@kroah.com>
-References: <20100430155052.87507421.sfr@canb.auug.org.au>
+From: Daniel Mack <daniel@caiaq.de>
+Subject: Re: linux-next: manual merge of the usb tree with the sound tree
+Date: Fri, 30 Apr 2010 07:59:14 +0200
+Message-ID: <20100430055914.GA30801@buzzloop.caiaq.de>
+References: <20100430155134.a35db59a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:51963 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933265Ab0D3Rnd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 30 Apr 2010 13:43:33 -0400
+Received: from buzzloop.caiaq.de ([212.112.241.133]:39780 "EHLO
+	buzzloop.caiaq.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757724Ab0D3RqQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 30 Apr 2010 13:46:16 -0400
 Content-Disposition: inline
-In-Reply-To: <20100430155052.87507421.sfr@canb.auug.org.au>
+In-Reply-To: <20100430155134.a35db59a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Diego Giagio <diego@giagio.com>, Daniel Mack <daniel@caiaq.de>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
 
-On Fri, Apr 30, 2010 at 03:50:52PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
+On Fri, Apr 30, 2010 at 03:51:34PM +1000, Stephen Rothwell wrote:
+> Today's linux-next merge of the usb tree got a conflict in
+> sound/usb/usbaudio.c between commit
+> e5779998bf8b70e48a6cc208c8b61b33bd6117ea ("ALSA: usb-audio: refactor
+> code") from the sound tree and commit
+> 3cc96f50329227fbf34de2459491901b6ee1c98c ("USB: rename usb_buffer_alloc()
+> and usb_buffer_free() users") from the usb tree.
 > 
-> After merging the staging-next tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> drivers/net/usb/ipheth.c: In function 'ipheth_alloc_urbs':
-> drivers/net/usb/ipheth.c:131: error: implicit declaration of function 'usb_buffer_alloc'
-> drivers/net/usb/ipheth.c:134: warning: assignment makes pointer from integer without a cast
-> drivers/net/usb/ipheth.c:141: warning: assignment makes pointer from integer without a cast
-> drivers/net/usb/ipheth.c:153: error: implicit declaration of function 'usb_buffer_free'
-> 
-> Caused by commit 3cc96f50329227fbf34de2459491901b6ee1c98c ("USB: rename
-> usb_buffer_alloc() and usb_buffer_free() users") from the usb tree
-> interacting with commit a19259c3d589a014e5f47f148f74dfc44422c82b
-> ("drivers/net/usb: Add new driver ipheth") which entered Linus' tree about
-> April 25 via the net tree.
-> 
-> I applied the following fixup patch for today.
+> The former moved the relevant code from usbaudio.c to urb.c, so I applied
+> the changes from the latter to that (see below).
 
-Thanks, I'll be sending in the patch that adds the api call to Linus
-today so that the individual trees can make these changes.
+Oops, yes. Ironically, these are both my patches.
+Thanks for fixing this up, Stephen.
 
-thanks,
+Daniel
 
-greg k-h
+
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 30 Apr 2010 14:44:54 +1000
+> Subject: [PATCH] sound: fixup for usb_buffer_alloc/free rename
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  sound/usb/urb.c |   10 +++++-----
+>  1 files changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/sound/usb/urb.c b/sound/usb/urb.c
+> index 5570a2b..de607d4 100644
+> --- a/sound/usb/urb.c
+> +++ b/sound/usb/urb.c
+> @@ -101,7 +101,7 @@ static void release_urb_ctx(struct snd_urb_ctx *u)
+>  {
+>  	if (u->urb) {
+>  		if (u->buffer_size)
+> -			usb_buffer_free(u->subs->dev, u->buffer_size,
+> +			usb_free_coherent(u->subs->dev, u->buffer_size,
+>  					u->urb->transfer_buffer,
+>  					u->urb->transfer_dma);
+>  		usb_free_urb(u->urb);
+> @@ -154,7 +154,7 @@ void snd_usb_release_substream_urbs(struct snd_usb_substream *subs, int force)
+>  		release_urb_ctx(&subs->dataurb[i]);
+>  	for (i = 0; i < SYNC_URBS; i++)
+>  		release_urb_ctx(&subs->syncurb[i]);
+> -	usb_buffer_free(subs->dev, SYNC_URBS * 4,
+> +	usb_free_coherent(subs->dev, SYNC_URBS * 4,
+>  			subs->syncbuf, subs->sync_dma);
+>  	subs->syncbuf = NULL;
+>  	subs->nurbs = 0;
+> @@ -308,8 +308,8 @@ int snd_usb_init_substream_urbs(struct snd_usb_substream *subs,
+>  		if (!u->urb)
+>  			goto out_of_memory;
+>  		u->urb->transfer_buffer =
+> -			usb_buffer_alloc(subs->dev, u->buffer_size, GFP_KERNEL,
+> -					 &u->urb->transfer_dma);
+> +			usb_alloc_coherent(subs->dev, u->buffer_size,
+> +					   GFP_KERNEL, &u->urb->transfer_dma);
+>  		if (!u->urb->transfer_buffer)
+>  			goto out_of_memory;
+>  		u->urb->pipe = subs->datapipe;
+> @@ -321,7 +321,7 @@ int snd_usb_init_substream_urbs(struct snd_usb_substream *subs,
+>  
+>  	if (subs->syncpipe) {
+>  		/* allocate and initialize sync urbs */
+> -		subs->syncbuf = usb_buffer_alloc(subs->dev, SYNC_URBS * 4,
+> +		subs->syncbuf = usb_alloc_coherent(subs->dev, SYNC_URBS * 4,
+>  						 GFP_KERNEL, &subs->sync_dma);
+>  		if (!subs->syncbuf)
+>  			goto out_of_memory;
+> -- 
+> 1.7.1
