@@ -1,63 +1,66 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb tree with the input tree
-Date: Fri, 30 Apr 2010 15:51:15 +1000
-Message-ID: <20100430155115.fbc54b24.sfr@canb.auug.org.au>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: -next Apr 30: OOPS during eHEA driver initialization
+Date: Fri, 30 Apr 2010 11:43:22 -0600
+Message-ID: <g2mfa686aa41004301043i138ffb2dmac5b641fa3d512c4@mail.gmail.com>
+References: <4BDAF376.4030005@in.ibm.com> <4BDB12FB.5060806@in.ibm.com>
+	<n2kfa686aa41004301035p7e15c017u7a1b98389cc1e466@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Axel Lin <axel.lin@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <n2kfa686aa41004301035p7e15c017u7a1b98389cc1e466@mail.gmail.com>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Sender: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+To: Sachin Sant <sachinp@in.ibm.com>
+Cc: Linux/PPC Development <linuxppc-dev@ozlabs.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Greg Kroah-Hartman <gregkh@suse.de>, linux-kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Greg,
+On Fri, Apr 30, 2010 at 11:35 AM, Grant Likely
+<grant.likely@secretlab.ca> wrote:
+> On Fri, Apr 30, 2010 at 11:27 AM, Sachin Sant <sachinp@in.ibm.com> wrote:
+>> Sachin Sant wrote:
+>>>
+>>> With today's next eHEA drivers fails to initialize.
+>>
+>> If i revert the following patch eHEA network interface is initialized
+>> properly.
+>>
+>> commit cebfe0b6709abdab997c1a00499d67efa32ee1f0
+>> drivercore: Add of_match_table to the common device drivers
+>
+> That is an easy one to fix. =A0I'll get it updated today and send you the=
+ result.
 
-Today's linux-next merge of the usb tree got a conflict in
-drivers/input/tablet/kbtab.c between commits
-ee7aa6ce41e08c68f72b5ca8f14fb61286dc2418 ("Input: kbtab - fix incorrect
-size parameter in usb_buffer_free") and
-331cb022d3ac1f85f7842a51495c33c629e947bc ("Input: kbtab - simplify
-kbtab_disconnect()") from the input tree and commit
-3cc96f50329227fbf34de2459491901b6ee1c98c ("USB: rename usb_buffer_alloc()
-and usb_buffer_free() users") from the usb tree.
+Let me know if this patch fixes it:
 
-I fixed it up (see below) and can carry the fix as necessary.
--- 
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+g.
 
-diff --cc drivers/input/tablet/kbtab.c
-index b9969f1,d31b9c7..0000000
---- a/drivers/input/tablet/kbtab.c
-+++ b/drivers/input/tablet/kbtab.c
-@@@ -173,7 -182,7 +173,7 @@@ static int kbtab_probe(struct usb_inter
-  	return 0;
-  
-   fail3:	usb_free_urb(kbtab->irq);
--  fail2:	usb_buffer_free(dev, 8, kbtab->data, kbtab->data_dma);
- - fail2:	usb_free_coherent(dev, 10, kbtab->data, kbtab->data_dma);
-++ fail2:	usb_free_coherent(dev, 8, kbtab->data, kbtab->data_dma);
-   fail1:	input_free_device(input_dev);
-  	kfree(kbtab);
-  	return error;
-@@@ -184,11 -193,13 +184,11 @@@ static void kbtab_disconnect(struct usb
-  	struct kbtab *kbtab = usb_get_intfdata(intf);
-  
-  	usb_set_intfdata(intf, NULL);
- -	if (kbtab) {
- -		usb_kill_urb(kbtab->irq);
- -		input_unregister_device(kbtab->dev);
- -		usb_free_urb(kbtab->irq);
- -		usb_free_coherent(interface_to_usbdev(intf), 10, kbtab->data, kbtab->data_dma);
- -		kfree(kbtab);
- -	}
- +
- +	input_unregister_device(kbtab->dev);
- +	usb_free_urb(kbtab->irq);
-- 	usb_buffer_free(kbtab->usbdev, 8, kbtab->data, kbtab->data_dma);
-++	usb_free_coherent(kbtab->usbdev, 8, kbtab->data, kbtab->data_dma);
- +	kfree(kbtab);
-  }
-  
-  static struct usb_driver kbtab_driver = {
+diff --git a/arch/powerpc/kernel/ibmebus.c b/arch/powerpc/kernel/ibmebus.c
+index ce957a4..693b0e6 100644
+--- a/arch/powerpc/kernel/ibmebus.c
++++ b/arch/powerpc/kernel/ibmebus.c
+@@ -201,6 +201,9 @@ static int ibmebus_create_devices(const struct
+of_device_id *matches)
+
+ int ibmebus_register_driver(struct of_platform_driver *drv)
+ {
++	if (!drv->driver.of_match_table)
++		drv->driver.of_match_table =3D drv->match_table;
++
+ 	/* If the driver uses devices that ibmebus doesn't know, add them */
+ 	ibmebus_create_devices(drv->driver.of_match_table);
+
+
+
+-- =
+
+Grant Likely, B.Sc., P.Eng.
+Secret Lab Technologies Ltd.
