@@ -1,54 +1,48 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the bkl-ioctl tree
-Date: Thu, 29 Apr 2010 15:49:47 +1000
-Message-ID: <20100429154947.fbacee1f.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the block tree with the ext3 tree
+Date: Fri, 30 Apr 2010 12:46:34 +1000
+Message-ID: <20100430124634.d474fce8.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__29_Apr_2010_15_49_47_+1000_Ow=LcdvZXNFTLhds"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36100 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:36097 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758802Ab0D3Rcg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	id S1758800Ab0D3Rcg (ORCPT <rfc822;linux-next@vger.kernel.org>);
 	Fri, 30 Apr 2010 13:32:36 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: =?UTF-8?B?IkZyw6lkw6lyaWMgV2Vpc2JlY2tlciI=?= <fweisbec@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, John Kacur <jkacur@redhat.com>
+To: Jens Axboe <jens.axboe@oracle.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>, Dmitry Monakhov <dmonakhov@openvz.org>
 
---Signature=_Thu__29_Apr_2010_15_49_47_+1000_Ow=LcdvZXNFTLhds
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Jens,
 
-Hi Fr=C3=A9d=C3=A9ric,
+Today's linux-next merge of the block tree got a conflict in
+fs/ext3/fsync.c between commit a74302d5d82ff478822c49b8345312b6fd5c6e0a
+("ext3: Fix waiting on transaction during fsync") from the ext3 tree and
+commit fbd9b09a177a481eda256447c881f014f29034fe ("blkdev: generalize
+flags for blkdev_issue_fn functions") from the block tree.
 
-After merging the bkl-ioctl tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 
-drivers/scsi/3w-xxxx.c: In function 'tw_chrdev_ioctl':
-drivers/scsi/3w-xxxx.c:896: error: 'inode' undeclared (first use in this fu=
-nction)
-
-Caused by commit 5c9af160f830a68734f600fc0f90cba35e26727b ("scsi: Push
-down BKL into ioctl functions").
-
-I have used the version of the blk-ioctl tree from next-20100428 for
-today.
---=20
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__29_Apr_2010_15_49_47_+1000_Ow=LcdvZXNFTLhds
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkvZHfsACgkQjjKRsyhoI8z9cgCeJ40beHDV3+JMut48yUQVQpES
-EVUAn0YS0Qu99DUMIpLnpqQaUCBph2Ki
-=I35W
------END PGP SIGNATURE-----
-
---Signature=_Thu__29_Apr_2010_15_49_47_+1000_Ow=LcdvZXNFTLhds--
+diff --cc fs/ext3/fsync.c
+index 26289e8,9492f60..0000000
+--- a/fs/ext3/fsync.c
++++ b/fs/ext3/fsync.c
+@@@ -89,7 -90,9 +89,8 @@@ int ext3_sync_file(struct file * file, 
+  	 * disk caches manually so that data really is on persistent
+  	 * storage
+  	 */
+ -	if (test_opt(inode->i_sb, BARRIER))
+ +	if (needs_barrier)
+- 		blkdev_issue_flush(inode->i_sb->s_bdev, NULL);
++ 		blkdev_issue_flush(inode->i_sb->s_bdev, GFP_KERNEL, NULL,
++ 				BLKDEV_IFL_WAIT);
+ -out:
+  	return ret;
+  }
