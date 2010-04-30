@@ -1,39 +1,37 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build warning after merge of the
- driver-core.current tree
-Date: Thu, 29 Apr 2010 16:45:25 -0700
-Message-ID: <20100429234525.GB16141@kroah.com>
-References: <20100430093534.9fc6ab8f.sfr@canb.auug.org.au>
- <20100429234347.GA16141@kroah.com>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: -next Apr 30: OOPS during eHEA driver initialization
+Date: Fri, 30 Apr 2010 11:35:13 -0600
+Message-ID: <n2kfa686aa41004301035p7e15c017u7a1b98389cc1e466@mail.gmail.com>
+References: <4BDAF376.4030005@in.ibm.com> <4BDB12FB.5060806@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20100429234347.GA16141@kroah.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, Tomas Winkler <tomas.winkler@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <4BDB12FB.5060806@in.ibm.com>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Sender: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+To: Sachin Sant <sachinp@in.ibm.com>
+Cc: Linux/PPC Development <linuxppc-dev@ozlabs.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Greg Kroah-Hartman <gregkh@suse.de>, linux-kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Apr 29, 2010 at 04:43:47PM -0700, Greg KH wrote:
-> On Fri, Apr 30, 2010 at 09:35:34AM +1000, Stephen Rothwell wrote:
-> > Hi Grant,
-> > 
-> > After merging the driver-core.current tree, today's linux-next build
-> > (x86_64 allmodconfig) produced this warning:
-> > 
-> > drivers/base/firmware_class.c: In function 'release_firmware':
-> > drivers/base/firmware_class.c:597: warning: passing argument 1 of 'firmware_free_data' discards qualifiers from pointer target type
-> > drivers/base/firmware_class.c:133: note: expected 'struct firmware *' but argument is of type 'const struct firmware *'
-> > 
-> > Introduced by commit 6454d23dedf4019fcae868818ae63c755dd42be0
-> > ("firmware_class: fix memory leak - free allocated pages").
-> 
-> Thanks, I've fixed this up, the release call should not have 'const'
-> on it as it is going to touch the pointer passed to it :)
+On Fri, Apr 30, 2010 at 11:27 AM, Sachin Sant <sachinp@in.ibm.com> wrote:
+> Sachin Sant wrote:
+>>
+>> With today's next eHEA drivers fails to initialize.
+>
+> If i revert the following patch eHEA network interface is initialized
+> properly.
+>
+> commit cebfe0b6709abdab997c1a00499d67efa32ee1f0
+> drivercore: Add of_match_table to the common device drivers
 
-And it's now pushed out in my tree.
+That is an easy one to fix.  I'll get it updated today and send you the result.
 
-thanks,
-
-greg k-h
+g.
