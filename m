@@ -1,48 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the staging-next tree
-Date: Sat, 1 May 2010 01:08:08 +1000
-Message-ID: <20100501010808.db307373.sfr@canb.auug.org.au>
-References: <20100430155052.87507421.sfr@canb.auug.org.au>
-	<20100430144507.GH1824@kroah.com>
+From: Heikki Krogerus <ext-heikki.krogerus@nokia.com>
+Subject: Re: linux-next: build failure after merge of the final tree (usb
+ tree related)
+Date: Fri, 30 Apr 2010 09:22:24 +0300
+Message-ID: <20100430062224.GB27724@esdhcp042221.research.nokia.com>
+References: <20100430160555.d58bd9aa.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sat__1_May_2010_01_08_08_+1000_NbpkKFPtuxcYxaPh"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100430144507.GH1824@kroah.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Diego Giagio <diego@giagio.com>, Daniel Mack <daniel@caiaq.de>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Sat__1_May_2010_01_08_08_+1000_NbpkKFPtuxcYxaPh
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp.nokia.com ([192.100.122.230]:60115 "EHLO
+	mgw-mx03.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757929Ab0D3RCI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 30 Apr 2010 13:02:08 -0400
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20100430160555.d58bd9aa.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: ext Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Greg,
+Hi,
 
-On Fri, 30 Apr 2010 07:45:07 -0700 Greg KH <greg@kroah.com> wrote:
->
-> Thanks, I'll be sending in the patch that adds the api call to Linus
-> today so that the individual trees can make these changes.
+On Fri, Apr 30, 2010 at 08:05:55AM +0200, ext Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> drivers/usb/otg/twl4030-usb.c: In function 'twl4030_usb_set_bits':
+> drivers/usb/otg/twl4030-usb.c:238: error: implicit declaration of function 'ULPI_SET'
+> drivers/usb/otg/twl4030-usb.c: In function 'twl4030_usb_clear_bits':
+> drivers/usb/otg/twl4030-usb.c:244: error: implicit declaration of function 'ULPI_CLR'
+> drivers/usb/otg/twl4030-usb.c: In function 'twl4030_usb_set_mode':
+> drivers/usb/otg/twl4030-usb.c:303: error: 'ULPI_IFC_CTRL' undeclared (first use in this function)
+> drivers/usb/otg/twl4030-usb.c:304: error: 'ULPI_IFC_CTRL_CARKITMODE' undeclared (first use in this function)
+> drivers/usb/otg/twl4030-usb.c:306: error: 'ULPI_FUNC_CTRL' undeclared (first use in this function)
+> drivers/usb/otg/twl4030-usb.c:307: error: 'ULPI_FUNC_CTRL_XCVRSEL_MASK' undeclared (first use in this function)
+> drivers/usb/otg/twl4030-usb.c:308: error: 'ULPI_FUNC_CTRL_OPMODE_MASK' undeclared (first use in this function)
+> 
+> Caused by commit 57983872ff14cba23d6404a40c89e52063c94854 ("usb: otg:
+> twl4030: use the global ULPI register definitions").  I have reverted
+> that commit for today.
 
-That will be great, thanks.
+Already informed Greg that he needs the patch for the global ulpi
+registers before this one.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Sat__1_May_2010_01_08_08_+1000_NbpkKFPtuxcYxaPh
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkva8lgACgkQjjKRsyhoI8zUIgCggjkKr0SPS05oZqkEKVabu8Ax
-ZjEAnRdRDD3+8CrIS/MdUBQxKUztUL/6
-=xnss
------END PGP SIGNATURE-----
-
---Signature=_Sat__1_May_2010_01_08_08_+1000_NbpkKFPtuxcYxaPh--
+-- 
+heikki
