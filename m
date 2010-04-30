@@ -1,85 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb tree with the sound tree
-Date: Fri, 30 Apr 2010 15:51:34 +1000
-Message-ID: <20100430155134.a35db59a.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the staging-next tree
+Date: Fri, 30 Apr 2010 15:52:05 +1000
+Message-ID: <20100430155205.a4171034.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57405 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:57407 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758518Ab0D3RHd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	id S1758515Ab0D3RHd (ORCPT <rfc822;linux-next@vger.kernel.org>);
 	Fri, 30 Apr 2010 13:07:33 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Mack <daniel@caiaq.de>, Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, Benjamin Thery <benjamin.thery@bull.net>, NeilBrown <neilb@suse.de>
 
 Hi Greg,
 
-Today's linux-next merge of the usb tree got a conflict in
-sound/usb/usbaudio.c between commit
-e5779998bf8b70e48a6cc208c8b61b33bd6117ea ("ALSA: usb-audio: refactor
-code") from the sound tree and commit
-3cc96f50329227fbf34de2459491901b6ee1c98c ("USB: rename usb_buffer_alloc()
-and usb_buffer_free() users") from the usb tree.
+After merging the staging-next tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-The former moved the relevant code from usbaudio.c to urb.c, so I applied
-the changes from the latter to that (see below).
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+drivers/md/md.c: In function 'level_store':
+drivers/md/md.c:3029: error: too few arguments to function 'sysfs_get_dirent'
+
+Caused by commit 262f8e4937e7b4a587923ca3c039a184668f49ec ("sysfs:
+Implement sysfs tagged directory support") from the driver-core tree
+interacting with commit fecc531e3cc0de60514d326c7d82f1075ed55888 ("md:
+manage redundancy group in sysfs when changing level") from the md.
+
+I have applied this fixup patch for today and can carry it as necessary.
+
+[This could have been avoided, of course, by creating a new API (maybe
+sysfs_get_dirent_tagged) and implementing the old API in terms of that].
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 30 Apr 2010 14:44:54 +1000
-Subject: [PATCH] sound: fixup for usb_buffer_alloc/free rename
+Date: Fri, 30 Apr 2010 15:00:20 +1000
+Subject: [PATCH] md: fixup for sysfs_get_dirent API change
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- sound/usb/urb.c |   10 +++++-----
- 1 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/md/md.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/sound/usb/urb.c b/sound/usb/urb.c
-index 5570a2b..de607d4 100644
---- a/sound/usb/urb.c
-+++ b/sound/usb/urb.c
-@@ -101,7 +101,7 @@ static void release_urb_ctx(struct snd_urb_ctx *u)
- {
- 	if (u->urb) {
- 		if (u->buffer_size)
--			usb_buffer_free(u->subs->dev, u->buffer_size,
-+			usb_free_coherent(u->subs->dev, u->buffer_size,
- 					u->urb->transfer_buffer,
- 					u->urb->transfer_dma);
- 		usb_free_urb(u->urb);
-@@ -154,7 +154,7 @@ void snd_usb_release_substream_urbs(struct snd_usb_substream *subs, int force)
- 		release_urb_ctx(&subs->dataurb[i]);
- 	for (i = 0; i < SYNC_URBS; i++)
- 		release_urb_ctx(&subs->syncurb[i]);
--	usb_buffer_free(subs->dev, SYNC_URBS * 4,
-+	usb_free_coherent(subs->dev, SYNC_URBS * 4,
- 			subs->syncbuf, subs->sync_dma);
- 	subs->syncbuf = NULL;
- 	subs->nurbs = 0;
-@@ -308,8 +308,8 @@ int snd_usb_init_substream_urbs(struct snd_usb_substream *subs,
- 		if (!u->urb)
- 			goto out_of_memory;
- 		u->urb->transfer_buffer =
--			usb_buffer_alloc(subs->dev, u->buffer_size, GFP_KERNEL,
--					 &u->urb->transfer_dma);
-+			usb_alloc_coherent(subs->dev, u->buffer_size,
-+					   GFP_KERNEL, &u->urb->transfer_dma);
- 		if (!u->urb->transfer_buffer)
- 			goto out_of_memory;
- 		u->urb->pipe = subs->datapipe;
-@@ -321,7 +321,7 @@ int snd_usb_init_substream_urbs(struct snd_usb_substream *subs,
- 
- 	if (subs->syncpipe) {
- 		/* allocate and initialize sync urbs */
--		subs->syncbuf = usb_buffer_alloc(subs->dev, SYNC_URBS * 4,
-+		subs->syncbuf = usb_alloc_coherent(subs->dev, SYNC_URBS * 4,
- 						 GFP_KERNEL, &subs->sync_dma);
- 		if (!subs->syncbuf)
- 			goto out_of_memory;
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index 7f23558..b075b26 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -3026,7 +3026,7 @@ level_store(mddev_t *mddev, const char *buf, size_t len)
+ 			printk(KERN_WARNING
+ 			       "md: cannot register extra attributes for %s\n",
+ 			       mdname(mddev));
+-		mddev->sysfs_action = sysfs_get_dirent(mddev->kobj.sd, "sync_action");
++		mddev->sysfs_action = sysfs_get_dirent(mddev->kobj.sd, NULL, "sync_action");
+ 	}		
+ 	if (mddev->pers->sync_request != NULL &&
+ 	    pers->sync_request == NULL) {
 -- 
 1.7.1
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
