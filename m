@@ -1,57 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the usb tree with the input tree
-Date: Fri, 30 Apr 2010 15:51:08 +1000
-Message-ID: <20100430155108.6847891f.sfr@canb.auug.org.au>
+Date: Fri, 30 Apr 2010 15:51:22 +1000
+Message-ID: <20100430155122.db4d0b54.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34015 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34014 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758486Ab0D3R1k (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	id S1757525Ab0D3R1k (ORCPT <rfc822;linux-next@vger.kernel.org>);
 	Fri, 30 Apr 2010 13:27:40 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Axel Lin <axel.lin@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ping Cheng <pingc@wacom.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
 Hi Greg,
 
 Today's linux-next merge of the usb tree got a conflict in
-drivers/input/tablet/acecad.c between commits
-2ef2ed597669f5e120d0c51c295f00e34b2f0801 ("Input: acecad - fix incorrect
-size parameter in usb_buffer_free") and
-5492f6f801c81c9663417cd8e48e759775977c83 ("Input: acecad - simplify
-usb_acecad_disconnect()") from the input tree and commit
-3cc96f50329227fbf34de2459491901b6ee1c98c ("USB: rename usb_buffer_alloc()
-and usb_buffer_free() users") from the usb tree.
+drivers/input/tablet/wacom_sys.c between commits
+4492efffffeb88d87e7aa74765f3c53b3a7dd40f ("Input: wacom - share pen info
+with touch of the same ID") and 51269fe86c263ec4fafbafe82970e6d7f6f79102
+("Input: wacom - do not allocate wacom_wac separately") from the input
+tree and commit 3cc96f50329227fbf34de2459491901b6ee1c98c ("USB: rename
+usb_buffer_alloc() and usb_buffer_free() users") from the usb tree.
 
 I fixed it up (see below) and can carry the fix as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/input/tablet/acecad.c
-index 37d0539,c047016..0000000
---- a/drivers/input/tablet/acecad.c
-+++ b/drivers/input/tablet/acecad.c
-@@@ -246,11 -252,13 +246,11 @@@ static void usb_acecad_disconnect(struc
-  	struct usb_acecad *acecad = usb_get_intfdata(intf);
+diff --cc drivers/input/tablet/wacom_sys.c
+index d90f4e0,191197c..0000000
+--- a/drivers/input/tablet/wacom_sys.c
++++ b/drivers/input/tablet/wacom_sys.c
+@@@ -534,11 -632,11 +534,11 @@@ static int wacom_probe(struct usb_inter
+  	usb_set_intfdata(intf, wacom);
+  	return 0;
   
-  	usb_set_intfdata(intf, NULL);
- -	if (acecad) {
- -		usb_kill_urb(acecad->irq);
- -		input_unregister_device(acecad->input);
- -		usb_free_urb(acecad->irq);
- -		usb_free_coherent(interface_to_usbdev(intf), 10, acecad->data, acecad->data_dma);
- -		kfree(acecad);
- -	}
- +
- +	input_unregister_device(acecad->input);
- +	usb_free_urb(acecad->irq);
-- 	usb_buffer_free(acecad->usbdev, 8, acecad->data, acecad->data_dma);
-++	usb_free_coherent(acecad->usbdev, 8, acecad->data, acecad->data_dma);
- +	kfree(acecad);
+ + fail4:	wacom_remove_shared_data(wacom_wac);
+   fail3:	usb_free_urb(wacom->irq);
+-  fail2:	usb_buffer_free(dev, WACOM_PKGLEN_MAX, wacom_wac->data, wacom->data_dma);
++  fail2:	usb_free_coherent(dev, WACOM_PKGLEN_MAX, wacom_wac->data, wacom->data_dma);
+   fail1:	input_free_device(input_dev);
+  	kfree(wacom);
+ -	kfree(wacom_wac);
+  	return error;
   }
   
-  static struct usb_device_id usb_acecad_id_table [] = {
+@@@ -549,11 -647,11 +549,11 @@@ static void wacom_disconnect(struct usb
+  	usb_set_intfdata(intf, NULL);
+  
+  	usb_kill_urb(wacom->irq);
+ -	input_unregister_device(wacom->dev);
+ +	input_unregister_device(wacom->wacom_wac.input);
+  	usb_free_urb(wacom->irq);
+- 	usb_buffer_free(interface_to_usbdev(intf), WACOM_PKGLEN_MAX,
++ 	usb_free_coherent(interface_to_usbdev(intf), WACOM_PKGLEN_MAX,
+ -			  wacom->wacom_wac->data, wacom->data_dma);
+ -	kfree(wacom->wacom_wac);
+ +			wacom->wacom_wac.data, wacom->data_dma);
+ +	wacom_remove_shared_data(&wacom->wacom_wac);
+  	kfree(wacom);
+  }
+  
