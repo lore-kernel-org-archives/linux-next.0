@@ -1,35 +1,52 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] staging/cxt1e1: use netdev_priv to fix build
-Date: Fri, 30 Apr 2010 10:07:12 -0700
-Message-ID: <20100430100712.041f6fcc.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build warning after merge of the
+ driver-core.current tree
+Date: Fri, 30 Apr 2010 10:01:02 +1000
+Message-ID: <20100430100102.0f08c9ad.sfr@canb.auug.org.au>
+References: <20100430093534.9fc6ab8f.sfr@canb.auug.org.au>
+	<20100429234347.GA16141@kroah.com>
+	<20100429234525.GB16141@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__30_Apr_2010_10_01_02_+1000_oc5yBUf2UNTuEjN_"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20100429234525.GB16141@kroah.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: lkml <linux-kernel@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, Bob Beers <bob.beers@gmail.com>, gregkh@suse.de
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, Tomas Winkler <tomas.winkler@intel.com>
 List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+--Signature=_Fri__30_Apr_2010_10_01_02_+1000_oc5yBUf2UNTuEjN_
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix cxt1e1 build error:
-drivers/staging/cxt1e1/linux.c:1195: error: 'struct net_device' has no member named 'priv'
+Hi Greg,
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Bob Beers <bob.beers@gmail.com>
----
- drivers/staging/cxt1e1/linux.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, 29 Apr 2010 16:45:25 -0700 Greg KH <greg@kroah.com> wrote:
+>
+> > Thanks, I've fixed this up, the release call should not have 'const'
+> > on it as it is going to touch the pointer passed to it :)
+>=20
+> And it's now pushed out in my tree.
 
---- linux-next-20100430.orig/drivers/staging/cxt1e1/linux.c
-+++ linux-next-20100430/drivers/staging/cxt1e1/linux.c
-@@ -1192,7 +1192,7 @@ c4_add_dev (hdw_info_t * hi, int brdno, 
-                 hi->devname, irq1);
-         unregister_netdev (ndev);
-         free_irq (irq0, ndev);
--        OS_kfree (ndev->priv);
-+        OS_kfree (netdev_priv(ndev));
-         OS_kfree (ndev);
-         error_flag = EIO;
-         return 0;
+Excellent, thanks.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__30_Apr_2010_10_01_02_+1000_oc5yBUf2UNTuEjN_
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkvaHb4ACgkQjjKRsyhoI8xtOgCgvh2evjACoaxxT+9gtQb9bsdM
+PPAAnizzkQvx35ogbIp9YUIR9lwvfrmL
+=o2Ye
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__30_Apr_2010_10_01_02_+1000_oc5yBUf2UNTuEjN_--
