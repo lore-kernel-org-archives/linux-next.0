@@ -1,31 +1,79 @@
-From: Piotr Hosowicz <piotr@hosowicz.com>
-Subject: Test
-Date: Thu, 29 Apr 2010 13:43:25 +0200
-Message-ID: <4BD970DD.8030007@example.com>
-Reply-To: piotr@hosowicz.com
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: Re: -next Apr 30: OOPS during eHEA driver initialization
+Date: Sat, 01 May 2010 15:24:12 +0530
+Message-ID: <4BDBFA44.5080203@in.ibm.com>
+References: <4BDAF376.4030005@in.ibm.com> <4BDB12FB.5060806@in.ibm.com> <n2kfa686aa41004301035p7e15c017u7a1b98389cc1e466@mail.gmail.com> <g2mfa686aa41004301043i138ffb2dmac5b641fa3d512c4@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-2; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 26.mail-out.ovh.net ([91.121.27.225]:54255 "HELO
-	26.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1755887Ab0D3TuM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 30 Apr 2010 15:50:12 -0400
+Received: from e23smtp06.au.ibm.com ([202.81.31.148]:35475 "EHLO
+	e23smtp06.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751802Ab0EAJyS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 1 May 2010 05:54:18 -0400
+In-Reply-To: <g2mfa686aa41004301043i138ffb2dmac5b641fa3d512c4@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: Linux/PPC Development <linuxppc-dev@ozlabs.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Greg Kroah-Hartman <gregkh@suse.de>, linux-kernel <linux-kernel@vger.kernel.org>
 
-Sorry, I don't know why my messages don't go the to ML.
+Grant Likely wrote:
+> On Fri, Apr 30, 2010 at 11:35 AM, Grant Likely
+> <grant.likely@secretlab.ca> wrote:
+>   
+>> On Fri, Apr 30, 2010 at 11:27 AM, Sachin Sant <sachinp@in.ibm.com> wrote:
+>>     
+>>> Sachin Sant wrote:
+>>>       
+>>>> With today's next eHEA drivers fails to initialize.
+>>>>         
+>>> If i revert the following patch eHEA network interface is initialized
+>>> properly.
+>>>
+>>> commit cebfe0b6709abdab997c1a00499d67efa32ee1f0
+>>> drivercore: Add of_match_table to the common device drivers
+>>>       
+>> That is an easy one to fix.  I'll get it updated today and send you the result.
+>>     
+>
+> Let me know if this patch fixes it:
+>   
+Works for me. Thanks Grant. 
 
-Regards,
+Tested-by : Sachin Sant <sachinp@in.ibm.com>
 
-Piotr Hosowicz
+Regards
+-Sachin
+
+
+> Cheers,
+> g.
+>
+> diff --git a/arch/powerpc/kernel/ibmebus.c b/arch/powerpc/kernel/ibmebus.c
+> index ce957a4..693b0e6 100644
+> --- a/arch/powerpc/kernel/ibmebus.c
+> +++ b/arch/powerpc/kernel/ibmebus.c
+> @@ -201,6 +201,9 @@ static int ibmebus_create_devices(const struct
+> of_device_id *matches)
+>
+>  int ibmebus_register_driver(struct of_platform_driver *drv)
+>  {
+> +	if (!drv->driver.of_match_table)
+> +		drv->driver.of_match_table = drv->match_table;
+> +
+>  	/* If the driver uses devices that ibmebus doesn't know, add them */
+>  	ibmebus_create_devices(drv->driver.of_match_table);
+>
+>
+>
+>   
+
 
 -- 
-- Obiecali zbudowac 3 miliony mieszkan! I nie zbudowali!
-- Ale to bardzo dobrze, ze nie zbudowali! Nie od tego jest panstwo!
-- Kwasniewski obiecywal nie 3, a 10 milionow mieszkan!
-- No to wyglada na to, ze Kwasniewski zbudowal siedem,
-   a Kaczynscy teraz musza dobudowac trzy miliony.
-NP: Black Stone Cherry - Please Come In
-NB: 2.6.34-rc5-git9
+
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
