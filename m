@@ -1,33 +1,41 @@
-From: info <infweb62@singnet.com.sg>
-Subject: Irish 2010 Grant Winner
-Date: Sun, 02 May 2010 06:11:40 +0800 (SGT)
-Message-ID: <1272751900.4bdca71cc4340@discus.singnet.com.sg>
-Reply-To: redeemprize2010@live.co.uk
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the staging-next tree
+Date: Sat, 1 May 2010 10:48:53 -0700
+Message-ID: <20100501174853.GA22217@kroah.com>
+References: <20100430155205.a4171034.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from comsmtp2.singnet.com.sg ([165.21.101.75]:46856 "EHLO
-	comsmtp2.singnet.com.sg" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752550Ab0EAWVa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 1 May 2010 18:21:30 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: iri@uk.cc
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20100430155205.a4171034.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Thery <benjamin.thery@bull.net>, NeilBrown <neilb@suse.de>
+List-Id: linux-next.vger.kernel.org
 
-This is to inform you that you have been selected for a cash prize of =A3=
-1,000,000 (British Pounds) held on the 25th
-of April.
+On Fri, Apr 30, 2010 at 03:52:05PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> After merging the staging-next tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> drivers/md/md.c: In function 'level_store':
+> drivers/md/md.c:3029: error: too few arguments to function 'sysfs_get_dirent'
+> 
+> Caused by commit 262f8e4937e7b4a587923ca3c039a184668f49ec ("sysfs:
+> Implement sysfs tagged directory support") from the driver-core tree
+> interacting with commit fecc531e3cc0de60514d326c7d82f1075ed55888 ("md:
+> manage redundancy group in sysfs when changing level") from the md.
+> 
+> I have applied this fixup patch for today and can carry it as necessary.
 
-CLAIM FORM
-Names:_____________
-Tele:_____________
-Age:_________
-Address:___
-occupation:___
-country:___
-next of kin:____
-Email:redeem_prize@live.co.uk
+Thanks, that would be great.
 
-Agent Name: Mr.Mark Foster
-Tel:+44 704-571-0545
+> [This could have been avoided, of course, by creating a new API (maybe
+> sysfs_get_dirent_tagged) and implementing the old API in terms of that].
+
+Hm Eric, any thoughts?
+
+thanks,
+
+greg k-h
