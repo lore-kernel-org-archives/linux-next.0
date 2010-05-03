@@ -1,62 +1,65 @@
-From: ebiederm@xmission.com.z (Eric W. Biederman)
-Subject: Re: linux-next: build failure after merge of the staging-next tree
-Date: Sat, 01 May 2010 21:55:29 -0700
-Message-ID: <m1sk6a9a2m.fsf@fess.ebiederm.org>
-References: <20100430155205.a4171034.sfr@canb.auug.org.au>
-	<20100501174853.GA22217@kroah.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the driver-core.current
+ tree
+Date: Mon, 3 May 2010 10:01:37 +1000
+Message-ID: <20100503100137.a05c9098.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__3_May_2010_10_01_37_+1000_RXy9i_6=8Cy+iHrL"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out02.mta.xmission.com ([166.70.13.232]:54598 "EHLO
-	out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750971Ab0EBEzi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 2 May 2010 00:55:38 -0400
-In-Reply-To: <20100501174853.GA22217@kroah.com> (Greg KH's message of "Sat\, 1 May 2010 10\:48\:53 -0700")
+Received: from chilli.pcug.org.au ([203.10.76.44]:39324 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752604Ab0ECABo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 2 May 2010 20:01:44 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Thery <benjamin.thery@bull.net>, NeilBrown <neilb@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, Tomas Winkler <tomas.winkler@intel.com>
 
-Greg KH <greg@kroah.com> writes:
+--Signature=_Mon__3_May_2010_10_01_37_+1000_RXy9i_6=8Cy+iHrL
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Fri, Apr 30, 2010 at 03:52:05PM +1000, Stephen Rothwell wrote:
->> Hi Greg,
->> 
->> After merging the staging-next tree, today's linux-next build (x86_64
->> allmodconfig) failed like this:
->> 
->> drivers/md/md.c: In function 'level_store':
->> drivers/md/md.c:3029: error: too few arguments to function 'sysfs_get_dirent'
->> 
->> Caused by commit 262f8e4937e7b4a587923ca3c039a184668f49ec ("sysfs:
->> Implement sysfs tagged directory support") from the driver-core tree
->> interacting with commit fecc531e3cc0de60514d326c7d82f1075ed55888 ("md:
->> manage redundancy group in sysfs when changing level") from the md.
->> 
->> I have applied this fixup patch for today and can carry it as necessary.
->
-> Thanks, that would be great.
->
->> [This could have been avoided, of course, by creating a new API (maybe
->> sysfs_get_dirent_tagged) and implementing the old API in terms of that].
->
-> Hm Eric, any thoughts?
+Hi Greg,
 
-I believe I touched all of the users of sysfs_get_dirent outside of sysfs
-that existed when I sent you the patch.
+After merging the driver-core.current tree, today's linux-next build (power=
+pc
+ppc64_defconfig and x86_64 allmodconfig) produced these warning:
 
-Right now using sysfs_get_dirent is a hack to support notifications of
-changes to sysfs files from atomic contexts, where sysfs_notify is
-unsafe because it sleeps on sysfs_mutex.  There are maybe 5 callers of
-sysfs_get_dirent outside of sysfs.  Given that we have a nice compile
-time error I don't think it makes sense to have multiple versions of the
-function.
+drivers/pcmcia/ds.c: In function 'pcmcia_load_firmware':
+drivers/pcmcia/ds.c:761: warning: passing argument 1 of 'release_firmware' =
+discards qualifiers from pointer target type
+include/linux/firmware.h:46: note: expected 'struct firmware *' but argumen=
+t is of type 'const struct firmware *'
+drivers/net/cxgb3/cxgb3_main.c: In function 't3_get_edc_fw':
+drivers/net/cxgb3/cxgb3_main.c:1084: warning: passing argument 1 of 'releas=
+e_firmware' discards qualifiers from pointer target type
+include/linux/firmware.h:46: note: expected 'struct firmware *' but argumen=
+t is of type 'const struct firmware *'
 
-It will probably makes sense at some point to go through and push
-everything to using a less hacky solution, but for the moment the
-solution is correct and doesn't cause too much pain so I'm not too
-worried about it.
+and *lots* more similar warnings ...
 
-As for the fixup patch itself it looked correct.
+Caused by commit d5ae47f7d90f94a15e668f389c12211a11798b6f
+("firmware_class: fix memory leak - free allocated pages").  This patch
+was modified from an earlier version that produced different (though many
+fewer) warnings.
 
-Eric
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__3_May_2010_10_01_37_+1000_RXy9i_6=8Cy+iHrL
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkveEmEACgkQjjKRsyhoI8xGogCfZ+b7yHUBkOZ67kuvGuAZQnyB
+LYYAnAuIOYY+jqL2Wyy6ZZeIwFjpD4Lg
+=80aF
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__3_May_2010_10_01_37_+1000_RXy9i_6=8Cy+iHrL--
