@@ -1,55 +1,56 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH -next] power: fix block_io.c printk warning
-Date: Tue, 4 May 2010 00:00:56 +0200
-Message-ID: <201005040000.56650.rjw@sisk.pl>
-References: <20100503151619.f75e3a80.sfr@canb.auug.org.au> <20100503100611.2ca63b58.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the final tree (usb
+ tree related)
+Date: Tue, 4 May 2010 08:40:42 +1000
+Message-ID: <20100504084042.eeec2dc0.sfr@canb.auug.org.au>
+References: <20100430160555.d58bd9aa.sfr@canb.auug.org.au>
+	<20100430062224.GB27724@esdhcp042221.research.nokia.com>
+	<20100503145715.def1a8f1.sfr@canb.auug.org.au>
+	<20100503171348.GB2533@kroah.com>
+	<20100503173501.GA11567@kroah.com>
+	<20100503180257.GA5901@kroah.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__4_May_2010_08_40_42_+1000_jkcpvA4/YfFjdR9J"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:38673 "EHLO ogre.sisk.pl"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37308 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756882Ab0ECWA2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 3 May 2010 18:00:28 -0400
-In-Reply-To: <20100503100611.2ca63b58.randy.dunlap@oracle.com>
+	id S1758367Ab0ECWks (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 3 May 2010 18:40:48 -0400
+In-Reply-To: <20100503180257.GA5901@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-pm@lists.linux-foundation.org
+To: Greg KH <greg@kroah.com>
+Cc: Heikki Krogerus <ext-heikki.krogerus@nokia.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Monday 03 May 2010, Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> Fix printk format warning in block_io.c:
-> 
-> kernel/power/block_io.c:41: warning: format '%ld' expects type 'long int', but argument 2 has type 'sector_t'
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> Cc: "Rafael J. Wysocki" <rjw@sisk.pl>
+--Signature=_Tue__4_May_2010_08_40_42_+1000_jkcpvA4/YfFjdR9J
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Applied to suspend-2.6/linux-next.
+Hi Greg,
 
-Thanks,
-Rafael
+On Mon, 3 May 2010 11:02:57 -0700 Greg KH <greg@kroah.com> wrote:
+>
+> This should now be resolved.
 
+Great, thanks.
 
-> ---
->  kernel/power/block_io.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> --- linux-next-20100503.orig/kernel/power/block_io.c
-> +++ linux-next-20100503/kernel/power/block_io.c
-> @@ -37,8 +37,8 @@ static int submit(int rw, struct block_d
->  	bio->bi_end_io = end_swap_bio_read;
->  
->  	if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE) {
-> -		printk(KERN_ERR "PM: Adding page to bio failed at %ld\n",
-> -			sector);
-> +		printk(KERN_ERR "PM: Adding page to bio failed at %llu\n",
-> +			(unsigned long long)sector);
->  		bio_put(bio);
->  		return -EFAULT;
->  	}
-> 
-> 
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__4_May_2010_08_40_42_+1000_jkcpvA4/YfFjdR9J
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkvfUOoACgkQjjKRsyhoI8xnRQCeKE8VGBoNxNg+gEgiZhEWonbY
+rSMAoIDXGCOZN81KZgs6HcXmkSMYsCIF
+=06vb
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__4_May_2010_08_40_42_+1000_jkcpvA4/YfFjdR9J--
