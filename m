@@ -1,47 +1,53 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build warnings after merge of the
- driver-core.current tree
-Date: Sun, 2 May 2010 19:59:28 -0700
-Message-ID: <20100503025928.GA28102@kroah.com>
-References: <20100503100137.a05c9098.sfr@canb.auug.org.au>
+From: Peter Jones <pjones@redhat.com>
+Subject: Re: linux-next: April 27 (iscsi_ibft)
+Date: Mon, 03 May 2010 12:01:25 -0400
+Message-ID: <4BDEF355.8050504@redhat.com>
+References: <80edf231-ef31-4f21-ab1b-1a21fda35809@default> <20100427230121.GA31743@andromeda.dapyr.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:53917 "EHLO coco.kroah.org"
+Received: from mx1.redhat.com ([209.132.183.28]:22755 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759026Ab0ECOyY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 3 May 2010 10:54:24 -0400
-Content-Disposition: inline
-In-Reply-To: <20100503100137.a05c9098.sfr@canb.auug.org.au>
+	id S932986Ab0ECQBa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 3 May 2010 12:01:30 -0400
+In-Reply-To: <20100427230121.GA31743@andromeda.dapyr.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, Tomas Winkler <tomas.winkler@intel.com>
+To: Konrad Rzeszutek Wilk <konrad@kernel.org>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Linux-Kernel <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
-On Mon, May 03, 2010 at 10:01:37AM +1000, Stephen Rothwell wrote:
-> Hi Greg,
+On 04/27/2010 07:01 PM, Konrad Rzeszutek Wilk wrote:
+> On Tue, Apr 27, 2010 at 09:13:16AM -0700, Randy Dunlap wrote:
+>> when CONFIG_ACPI is not enabled:
+>>
+>> drivers/firmware/iscsi_ibft_find.c:112: error: dereferencing pointer to incomplete type
+>> drivers/firmware/iscsi_ibft_find.c:112: error: dereferencing pointer to incomplete type
+>> drivers/firmware/iscsi_ibft_find.c:112: warning: type defaults to 'int' in declaration of 'type name'
+>> drivers/firmware/iscsi_ibft_find.c:112: error: dereferencing pointer to incomplete type
+>> drivers/firmware/iscsi_ibft_find.c:112: warning: type defaults to 'int' in declaration of 'type name'
 > 
-> After merging the driver-core.current tree, today's linux-next build (powerpc
-> ppc64_defconfig and x86_64 allmodconfig) produced these warning:
+> Yikes.
 > 
-> drivers/pcmcia/ds.c: In function 'pcmcia_load_firmware':
-> drivers/pcmcia/ds.c:761: warning: passing argument 1 of 'release_firmware' discards qualifiers from pointer target type
-> include/linux/firmware.h:46: note: expected 'struct firmware *' but argument is of type 'const struct firmware *'
-> drivers/net/cxgb3/cxgb3_main.c: In function 't3_get_edc_fw':
-> drivers/net/cxgb3/cxgb3_main.c:1084: warning: passing argument 1 of 'release_firmware' discards qualifiers from pointer target type
-> include/linux/firmware.h:46: note: expected 'struct firmware *' but argument is of type 'const struct firmware *'
+> Randy, thank you for spotting this and sending an e-mail my way.
 > 
-> and *lots* more similar warnings ...
+> It is all b/c we now use the 'struct acpi_table_ibft *ibft_addr' which
+> is gone when !CONFIG_ACPI.
 > 
-> Caused by commit d5ae47f7d90f94a15e668f389c12211a11798b6f
-> ("firmware_class: fix memory leak - free allocated pages").  This patch
-> was modified from an earlier version that produced different (though many
-> fewer) warnings.
+> Peter, if we did in an #ifdef !CONFIG_ACPI in iscsi_ibft.h and included
+> a copy of the old ibft_struct that should work.
+> 
+> Or we make the code dependent on CONFIG_ACPI (in the Kconfig
+> file).
+> 
+> Peter, Randy: Which option do you think makes more sense?
 
-Yeah, the people responsible were been notified last Friday, and they
-sent me a patch today, hopefully it fixes the issue.  I'll test it out
-tomorrow and merge it if it does.
+Or we make that one structure be defined whether CONFIG_ACPI is enabled
+or not.
 
-thanks,
+-- 
+        Peter
 
-greg k-h
+For some reason it has always seemed to me that the term software 
+engineering contains some very optimistic assumptions about the 
+nature of reality.
