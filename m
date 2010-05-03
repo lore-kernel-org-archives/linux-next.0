@@ -1,53 +1,63 @@
-From: Peter Jones <pjones@redhat.com>
-Subject: Re: linux-next: April 27 (iscsi_ibft)
-Date: Mon, 03 May 2010 12:01:25 -0400
-Message-ID: <4BDEF355.8050504@redhat.com>
-References: <80edf231-ef31-4f21-ab1b-1a21fda35809@default> <20100427230121.GA31743@andromeda.dapyr.net>
+From: Tobias Klauser <tklauser@distanz.ch>
+Subject: Re: linux-next: build failure after merge of the staging tree
+Date: Mon, 3 May 2010 18:17:21 +0200
+Message-ID: <20100503161721.GW9489@distanz.ch>
+References: <20100427141224.834a102a.sfr@canb.auug.org.au> <20100427151305.GA7653@kroah.com> <20100428161425.eff4c40a.sfr@canb.auug.org.au> <20100428152809.GF4483@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:22755 "EHLO mx1.redhat.com"
+Received: from symlink.to.noone.org ([85.10.207.172]:48163 "EHLO sym.noone.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932986Ab0ECQBa (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 3 May 2010 12:01:30 -0400
-In-Reply-To: <20100427230121.GA31743@andromeda.dapyr.net>
+	id S932803Ab0ECQRY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 3 May 2010 12:17:24 -0400
+Content-Disposition: inline
+In-Reply-To: <20100428152809.GF4483@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Konrad Rzeszutek Wilk <konrad@kernel.org>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Linux-Kernel <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 04/27/2010 07:01 PM, Konrad Rzeszutek Wilk wrote:
-> On Tue, Apr 27, 2010 at 09:13:16AM -0700, Randy Dunlap wrote:
->> when CONFIG_ACPI is not enabled:
->>
->> drivers/firmware/iscsi_ibft_find.c:112: error: dereferencing pointer to incomplete type
->> drivers/firmware/iscsi_ibft_find.c:112: error: dereferencing pointer to incomplete type
->> drivers/firmware/iscsi_ibft_find.c:112: warning: type defaults to 'int' in declaration of 'type name'
->> drivers/firmware/iscsi_ibft_find.c:112: error: dereferencing pointer to incomplete type
->> drivers/firmware/iscsi_ibft_find.c:112: warning: type defaults to 'int' in declaration of 'type name'
+On 2010-04-28 at 17:28:09 +0200, Greg KH <greg@kroah.com> wrote:
+> On Wed, Apr 28, 2010 at 04:14:25PM +1000, Stephen Rothwell wrote:
+> > Hi Greg,
+> > 
+> > On Tue, 27 Apr 2010 08:13:05 -0700 Greg KH <greg@kroah.com> wrote:
+> > >
+> > > On Tue, Apr 27, 2010 at 02:12:24PM +1000, Stephen Rothwell wrote:
+> > > > 
+> > > > After merging the staging tree, today's linux-next build (x86_64
+> > > > allmodconfig) failed like this:
+> > > > 
+> > > > ERROR: "uart_console_device" [drivers/serial/altera_uart.ko] undefined!
+> > > > ERROR: "uart_console_device" [drivers/serial/altera_jtaguart.ko] undefined!
+> > > > 
+> > > > Introduced by commits 76bdbd933febe791fee114e7bb6c42bbd1a3f4f3 ("serial:
+> > > > Add driver for the Altera UART") and
+> > > > 11c59b34b299d7214b466cf799410a9a540476e3 ("serial: Add driver for the
+> > > > Altera JTAG UART").
+> > > > 
+> > > > I have reverted those commits for today.
+> > > 
+> > > Those came in through the tty quilt tree, not the staging tree, right?
+> > 
+> > Yeah, I just don't do a build between merging the tty and staging trees.
 > 
-> Yikes.
+> Ok, that makes sense.
 > 
-> Randy, thank you for spotting this and sending an e-mail my way.
+> > > Tobias, care to send me a patch to resolve this?  I already fixed one
+> > > Kconfig issue in these patches (forcing the driver to always be built
+> > > in.)  Is that what caused this symbol issue?
+> > 
+> > I have reverted those commits again today.
 > 
-> It is all b/c we now use the 'struct acpi_table_ibft *ibft_addr' which
-> is gone when !CONFIG_ACPI.
-> 
-> Peter, if we did in an #ifdef !CONFIG_ACPI in iscsi_ibft.h and included
-> a copy of the old ibft_struct that should work.
-> 
-> Or we make the code dependent on CONFIG_ACPI (in the Kconfig
-> file).
-> 
-> Peter, Randy: Which option do you think makes more sense?
+> I think I'll go drop these patches now.  Tobias, care to resend them
+> when you have them working properly?
 
-Or we make that one structure be defined whether CONFIG_ACPI is enabled
-or not.
+I just built the current linux-next (20100503) with the patches applied
+(including Greg's Kconfig change) on x86_64 with allmodconfig and wasn't
+able to reproduce the build failure.
 
--- 
-        Peter
+Any pointers on how to reproduce and/or fix this would be appreciated.
 
-For some reason it has always seemed to me that the term software 
-engineering contains some very optimistic assumptions about the 
-nature of reality.
+Thanks,
+Tobias
