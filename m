@@ -1,63 +1,94 @@
-From: Tobias Klauser <tklauser@distanz.ch>
-Subject: Re: linux-next: build failure after merge of the staging tree
-Date: Mon, 3 May 2010 18:17:21 +0200
-Message-ID: <20100503161721.GW9489@distanz.ch>
-References: <20100427141224.834a102a.sfr@canb.auug.org.au> <20100427151305.GA7653@kroah.com> <20100428161425.eff4c40a.sfr@canb.auug.org.au> <20100428152809.GF4483@kroah.com>
+From: Mauro Carvalho Chehab <mchehab@redhat.com>
+Subject: tm6000 compilation breakage on linux-next
+Date: Mon, 03 May 2010 13:33:40 -0300
+Message-ID: <4BDEFAE4.1060700@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from symlink.to.noone.org ([85.10.207.172]:48163 "EHLO sym.noone.org"
+Received: from mx1.redhat.com ([209.132.183.28]:62929 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932803Ab0ECQRY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 3 May 2010 12:17:24 -0400
-Content-Disposition: inline
-In-Reply-To: <20100428152809.GF4483@kroah.com>
+	id S932934Ab0ECQdx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 3 May 2010 12:33:53 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, greg KH <greg@kroah.com>, Randy Dunlap <randy.dunlap@oracle.com>
 
-On 2010-04-28 at 17:28:09 +0200, Greg KH <greg@kroah.com> wrote:
-> On Wed, Apr 28, 2010 at 04:14:25PM +1000, Stephen Rothwell wrote:
-> > Hi Greg,
-> > 
-> > On Tue, 27 Apr 2010 08:13:05 -0700 Greg KH <greg@kroah.com> wrote:
-> > >
-> > > On Tue, Apr 27, 2010 at 02:12:24PM +1000, Stephen Rothwell wrote:
-> > > > 
-> > > > After merging the staging tree, today's linux-next build (x86_64
-> > > > allmodconfig) failed like this:
-> > > > 
-> > > > ERROR: "uart_console_device" [drivers/serial/altera_uart.ko] undefined!
-> > > > ERROR: "uart_console_device" [drivers/serial/altera_jtaguart.ko] undefined!
-> > > > 
-> > > > Introduced by commits 76bdbd933febe791fee114e7bb6c42bbd1a3f4f3 ("serial:
-> > > > Add driver for the Altera UART") and
-> > > > 11c59b34b299d7214b466cf799410a9a540476e3 ("serial: Add driver for the
-> > > > Altera JTAG UART").
-> > > > 
-> > > > I have reverted those commits for today.
-> > > 
-> > > Those came in through the tty quilt tree, not the staging tree, right?
-> > 
-> > Yeah, I just don't do a build between merging the tty and staging trees.
-> 
-> Ok, that makes sense.
-> 
-> > > Tobias, care to send me a patch to resolve this?  I already fixed one
-> > > Kconfig issue in these patches (forcing the driver to always be built
-> > > in.)  Is that what caused this symbol issue?
-> > 
-> > I have reverted those commits again today.
-> 
-> I think I'll go drop these patches now.  Tobias, care to resend them
-> when you have them working properly?
+Hi Stephen,
 
-I just built the current linux-next (20100503) with the patches applied
-(including Greg's Kconfig change) on x86_64 with allmodconfig and wasn't
-able to reproduce the build failure.
+Randy reported a breakage while compiling drivers/staging/tm6000, due to
+this change:
+    commit 1c1b78bee1a94f98deeb9c24b21c4812e191646c
+    Author: Greg Kroah-Hartman <gregkh@suse.de>
+    Date:   Thu Apr 29 15:46:07 2010 -0700
 
-Any pointers on how to reproduce and/or fix this would be appreciated.
+    USB: remove unused usb_buffer_alloc and usb_buffer_free macros
+    
+    Now that all callers are converted over, remove the compatibility
+    functions and all is good.
+    
+    Cc: Daniel Mack <daniel@caiaq.de>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
 
-Thanks,
-Tobias
+A fix patch is as simple as:
+	s/usb_buffer_alloc/usb_alloc_coherent/
+	s/usb_buffer_free/usb_free_coherent/
+
+The problem is that, if I apply such patch on my tree, it will break compilation
+with upstream. So, the better is if you could handle it until the next merge window.
+After Greg's merge, I'll apply it on my tree, and submit tm6000 driver to staging.
+
+Would this be ok for you, or do you have a better approach for such
+kind of conflicts?
+
+
+-- 
+Fix compilation breakage with tm6000
+    
+Randy Dunlap <randy.dunlap@oracle.com>  reported a breakage while compiling
+drivers/staging/tm6000, due to this change:
+    commit 1c1b78bee1a94f98deeb9c24b21c4812e191646c
+    Author: Greg Kroah-Hartman <gregkh@suse.de>
+    Date:   Thu Apr 29 15:46:07 2010 -0700
+
+    USB: remove unused usb_buffer_alloc and usb_buffer_free macros
+
+    Now that all callers are converted over, remove the compatibility
+    functions and all is good.
+
+    Cc: Daniel Mack <daniel@caiaq.de>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+    
+As the function got renamed, the rename should also be applied at
+tm6000 on linux-next.
+    
+Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
+
+diff --git a/drivers/staging/tm6000/tm6000-video.c b/drivers/staging/tm6000/tm6000-video.c
+index 9554472..da1dc07 100644
+--- a/drivers/staging/tm6000/tm6000-video.c
++++ b/drivers/staging/tm6000/tm6000-video.c
+@@ -585,7 +585,7 @@ static void tm6000_uninit_isoc(struct tm6000_core *dev)
+ 			usb_kill_urb(urb);
+ 			usb_unlink_urb(urb);
+ 			if (dev->isoc_ctl.transfer_buffer[i]) {
+-				usb_buffer_free(dev->udev,
++				usb_free_coherent(dev->udev,
+ 						urb->transfer_buffer_length,
+ 						dev->isoc_ctl.transfer_buffer[i],
+ 						urb->transfer_dma);
+@@ -672,7 +672,7 @@ static int tm6000_prepare_isoc(struct tm6000_core *dev, unsigned int framesize)
+ 		}
+ 		dev->isoc_ctl.urb[i] = urb;
+ 
+-		dev->isoc_ctl.transfer_buffer[i] = usb_buffer_alloc(dev->udev,
++		dev->isoc_ctl.transfer_buffer[i] = usb_alloc_coherent(dev->udev,
+ 			sb_size, GFP_KERNEL, &urb->transfer_dma);
+ 		if (!dev->isoc_ctl.transfer_buffer[i]) {
+ 			tm6000_err ("unable to allocate %i bytes for transfer"
+
+
+
+Cheers,
+Mauro
