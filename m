@@ -1,53 +1,61 @@
-From: Mauro Carvalho Chehab <mchehab@redhat.com>
-Subject: Re: tm6000 compilation breakage on linux-next
-Date: Mon, 03 May 2010 14:01:54 -0300
-Message-ID: <4BDF0182.9040903@redhat.com>
-References: <4BDEFAE4.1060700@redhat.com> <20100503164857.GA5750@kroah.com>
+From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH -next] usbserial: fix mos7720 dependencies
+Date: Mon, 3 May 2010 10:07:25 -0700
+Message-ID: <20100503100725.c4006b32.randy.dunlap@oracle.com>
+References: <20100503151619.f75e3a80.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:15566 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754434Ab0ECRCG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 3 May 2010 13:02:06 -0400
-In-Reply-To: <20100503164857.GA5750@kroah.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Randy Dunlap <randy.dunlap@oracle.com>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20100503151619.f75e3a80.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, gregkh-l3A5Bk7waGM@public.gmane.org
+Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, lud <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-Greg KH wrote:
-> On Mon, May 03, 2010 at 01:33:40PM -0300, Mauro Carvalho Chehab wrote:
->> Hi Stephen,
->>
->> Randy reported a breakage while compiling drivers/staging/tm6000, due to
->> this change:
->>     commit 1c1b78bee1a94f98deeb9c24b21c4812e191646c
->>     Author: Greg Kroah-Hartman <gregkh@suse.de>
->>     Date:   Thu Apr 29 15:46:07 2010 -0700
->>
->>     USB: remove unused usb_buffer_alloc and usb_buffer_free macros
->>     
->>     Now that all callers are converted over, remove the compatibility
->>     functions and all is good.
->>     
->>     Cc: Daniel Mack <daniel@caiaq.de>
->>     Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
->>
->> A fix patch is as simple as:
->> 	s/usb_buffer_alloc/usb_alloc_coherent/
->> 	s/usb_buffer_free/usb_free_coherent/
->>
->> The problem is that, if I apply such patch on my tree, it will break compilation
->> with upstream.
-> 
-> Not anymore.  Those functions are now in Linus's tree, so you can safely
-> make the change in your tree now, and all is good :)
+From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
 
-Ah, that makes life easier, thanks!
+Fix mos7720 Kconfig dependencies.
+When an enabled bool selects a tristate, the tristate becomes =y,
+even if it should be limited to modular, so limit the bool kconfig
+option to configs that will build cleanly.
+Also change the if-block to a simple depends on.
 
--- 
+drivers/built-in.o: In function `mos7720_release':
+mos7720.c:(.text+0xad432): undefined reference to `parport_remove_port'
+drivers/built-in.o: In function `mos7715_parport_init':
+mos7720.c:(.text+0xae197): undefined reference to `parport_register_port'
+mos7720.c:(.text+0xae210): undefined reference to `parport_announce_port'
+drivers/built-in.o:(.data+0x201c8): undefined reference to `parport_ieee1284_read_nibble'
+drivers/built-in.o:(.data+0x201d0): undefined reference to `parport_ieee1284_read_byte'
 
-Cheers,
-Mauro
+Signed-off-by: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/usb/serial/Kconfig |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+--- linux-next-20100503.orig/drivers/usb/serial/Kconfig
++++ linux-next-20100503/drivers/usb/serial/Kconfig
+@@ -425,16 +425,15 @@ config USB_SERIAL_MOS7720
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called mos7720.
+ 
+-if USB_SERIAL_MOS7720
+ config USB_SERIAL_MOS7715_PARPORT
+ 	bool "Support for parallel port on the Moschip 7715"
++	depends on USB_SERIAL_MOS7720
++	depends on PARPORT=y || PARPORT=USB_SERIAL_MOS7720
+ 	select PARPORT_NOT_PC
+-	depends on PARPORT
+ 	---help---
+ 	Say Y if you have a Moschip 7715 device and would like to use
+ 	the parallel port it provides.  The port will register with
+ 	the parport subsystem as a low-level driver.
+-endif
+ 
+ config USB_SERIAL_MOS7840
+ 	tristate "USB Moschip 7840/7820 USB Serial Driver"
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
