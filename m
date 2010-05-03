@@ -1,65 +1,36 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the final tree (usb
- tree related)
-Date: Mon, 3 May 2010 11:02:57 -0700
-Message-ID: <20100503180257.GA5901@kroah.com>
-References: <20100430160555.d58bd9aa.sfr@canb.auug.org.au>
- <20100430062224.GB27724@esdhcp042221.research.nokia.com>
- <20100503145715.def1a8f1.sfr@canb.auug.org.au>
- <20100503171348.GB2533@kroah.com>
- <20100503173501.GA11567@kroah.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [PATCH -next] staging: fix cxt1e1 module names
+Date: Mon, 3 May 2010 11:06:57 -0700
+Message-ID: <20100503110657.00b4e140.randy.dunlap@oracle.com>
+References: <20100503151619.f75e3a80.sfr@canb.auug.org.au>
+	<20100503100902.517c146f.randy.dunlap@oracle.com>
+	<1272909764.30040.92.camel@Joe-Laptop.home>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:36317 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755918Ab0ECSDN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 3 May 2010 14:03:13 -0400
-Content-Disposition: inline
-In-Reply-To: <20100503173501.GA11567@kroah.com>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:39268 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755712Ab0ECSLL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 3 May 2010 14:11:11 -0400
+In-Reply-To: <1272909764.30040.92.camel@Joe-Laptop.home>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Heikki Krogerus <ext-heikki.krogerus@nokia.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Joe Perches <joe@perches.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, devel@driverdev.osuosl.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, support@sbei.com, support@onestopsystems.com
 
-On Mon, May 03, 2010 at 10:35:01AM -0700, Greg KH wrote:
-> On Mon, May 03, 2010 at 10:13:48AM -0700, Greg KH wrote:
-> > On Mon, May 03, 2010 at 02:57:15PM +1000, Stephen Rothwell wrote:
-> > > Hi Guys,
-> > > 
-> > > On Fri, 30 Apr 2010 09:22:24 +0300 Heikki Krogerus <ext-heikki.krogerus@nokia.com> wrote:
-> > > >
-> > > > On Fri, Apr 30, 2010 at 08:05:55AM +0200, ext Stephen Rothwell wrote:
-> > > > > 
-> > > > > After merging the final tree, today's linux-next build (powerpc
-> > > > > allyesconfig) failed like this:
-> > > > > 
-> > > > > drivers/usb/otg/twl4030-usb.c: In function 'twl4030_usb_set_bits':
-> > > > > drivers/usb/otg/twl4030-usb.c:238: error: implicit declaration of function 'ULPI_SET'
-> > > > > drivers/usb/otg/twl4030-usb.c: In function 'twl4030_usb_clear_bits':
-> > > > > drivers/usb/otg/twl4030-usb.c:244: error: implicit declaration of function 'ULPI_CLR'
-> > > > > drivers/usb/otg/twl4030-usb.c: In function 'twl4030_usb_set_mode':
-> > > > > drivers/usb/otg/twl4030-usb.c:303: error: 'ULPI_IFC_CTRL' undeclared (first use in this function)
-> > > > > drivers/usb/otg/twl4030-usb.c:304: error: 'ULPI_IFC_CTRL_CARKITMODE' undeclared (first use in this function)
-> > > > > drivers/usb/otg/twl4030-usb.c:306: error: 'ULPI_FUNC_CTRL' undeclared (first use in this function)
-> > > > > drivers/usb/otg/twl4030-usb.c:307: error: 'ULPI_FUNC_CTRL_XCVRSEL_MASK' undeclared (first use in this function)
-> > > > > drivers/usb/otg/twl4030-usb.c:308: error: 'ULPI_FUNC_CTRL_OPMODE_MASK' undeclared (first use in this function)
-> > > > > 
-> > > > > Caused by commit 57983872ff14cba23d6404a40c89e52063c94854 ("usb: otg:
-> > > > > twl4030: use the global ULPI register definitions").  I have reverted
-> > > > > that commit for today.
-> > > > 
-> > > > Already informed Greg that he needs the patch for the global ulpi
-> > > > registers before this one.
-> > > 
-> > > Still got this one today.
+On Mon, 03 May 2010 11:02:44 -0700 Joe Perches wrote:
+
+> On Mon, 2010-05-03 at 10:09 -0700, Randy Dunlap wrote:
+> > From: Randy Dunlap <randy.dunlap@oracle.com>
 > > 
-> > Yes, I need the patch from Heikki...  {hint...}
+> > Lots of cxt1e1 source code uses THIS_MODULE->name, which won't build
+> > when CONFIG_MODULES is not enabled, so use KBUILD_MODNAME instead.
 > 
-> Oh nevermind, I see them now, stupid me.  I'll go queue them up.
+> Perhaps a conversion to pr_<level> is better?
 
-This should now be resolved.
+Sure, fine with me.  Thanks.
 
-thanks,
-
-greg k-h
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
