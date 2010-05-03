@@ -1,48 +1,57 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: tm6000 compilation breakage on linux-next
-Date: Mon, 03 May 2010 10:23:31 -0700
-Message-ID: <4BDF0693.40505@oracle.com>
-References: <4BDEFAE4.1060700@redhat.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the final tree (usb
+ tree related)
+Date: Mon, 3 May 2010 10:13:48 -0700
+Message-ID: <20100503171348.GB2533@kroah.com>
+References: <20100430160555.d58bd9aa.sfr@canb.auug.org.au>
+ <20100430062224.GB27724@esdhcp042221.research.nokia.com>
+ <20100503145715.def1a8f1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:53233 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752511Ab0ECRX5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 3 May 2010 13:23:57 -0400
-In-Reply-To: <4BDEFAE4.1060700@redhat.com>
+Received: from kroah.org ([198.145.64.141]:45512 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753843Ab0ECRYL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 3 May 2010 13:24:11 -0400
+Content-Disposition: inline
+In-Reply-To: <20100503145715.def1a8f1.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, greg KH <greg@kroah.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Heikki Krogerus <ext-heikki.krogerus@nokia.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 05/03/10 09:33, Mauro Carvalho Chehab wrote:
-> Hi Stephen,
+On Mon, May 03, 2010 at 02:57:15PM +1000, Stephen Rothwell wrote:
+> Hi Guys,
 > 
-> Randy reported a breakage while compiling drivers/staging/tm6000, due to
-> this change:
->     commit 1c1b78bee1a94f98deeb9c24b21c4812e191646c
->     Author: Greg Kroah-Hartman <gregkh@suse.de>
->     Date:   Thu Apr 29 15:46:07 2010 -0700
+> On Fri, 30 Apr 2010 09:22:24 +0300 Heikki Krogerus <ext-heikki.krogerus@nokia.com> wrote:
+> >
+> > On Fri, Apr 30, 2010 at 08:05:55AM +0200, ext Stephen Rothwell wrote:
+> > > 
+> > > After merging the final tree, today's linux-next build (powerpc
+> > > allyesconfig) failed like this:
+> > > 
+> > > drivers/usb/otg/twl4030-usb.c: In function 'twl4030_usb_set_bits':
+> > > drivers/usb/otg/twl4030-usb.c:238: error: implicit declaration of function 'ULPI_SET'
+> > > drivers/usb/otg/twl4030-usb.c: In function 'twl4030_usb_clear_bits':
+> > > drivers/usb/otg/twl4030-usb.c:244: error: implicit declaration of function 'ULPI_CLR'
+> > > drivers/usb/otg/twl4030-usb.c: In function 'twl4030_usb_set_mode':
+> > > drivers/usb/otg/twl4030-usb.c:303: error: 'ULPI_IFC_CTRL' undeclared (first use in this function)
+> > > drivers/usb/otg/twl4030-usb.c:304: error: 'ULPI_IFC_CTRL_CARKITMODE' undeclared (first use in this function)
+> > > drivers/usb/otg/twl4030-usb.c:306: error: 'ULPI_FUNC_CTRL' undeclared (first use in this function)
+> > > drivers/usb/otg/twl4030-usb.c:307: error: 'ULPI_FUNC_CTRL_XCVRSEL_MASK' undeclared (first use in this function)
+> > > drivers/usb/otg/twl4030-usb.c:308: error: 'ULPI_FUNC_CTRL_OPMODE_MASK' undeclared (first use in this function)
+> > > 
+> > > Caused by commit 57983872ff14cba23d6404a40c89e52063c94854 ("usb: otg:
+> > > twl4030: use the global ULPI register definitions").  I have reverted
+> > > that commit for today.
+> > 
+> > Already informed Greg that he needs the patch for the global ulpi
+> > registers before this one.
 > 
->     USB: remove unused usb_buffer_alloc and usb_buffer_free macros
->     
->     Now that all callers are converted over, remove the compatibility
->     functions and all is good.
->     
->     Cc: Daniel Mack <daniel@caiaq.de>
->     Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
-> 
-> A fix patch is as simple as:
-> 	s/usb_buffer_alloc/usb_alloc_coherent/
-> 	s/usb_buffer_free/usb_free_coherent/
+> Still got this one today.
 
-Patch:
-Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
+Yes, I need the patch from Heikki...  {hint...}
 
+thanks,
 
-Thanks.
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+greg k-h
