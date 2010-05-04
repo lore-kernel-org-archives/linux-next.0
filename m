@@ -1,35 +1,27 @@
-From: Will Deacon <will.deacon@arm.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
 Subject: Re: linux-next: manual merge of the crypto tree with the arm tree
-Date: Tue, 04 May 2010 10:13:12 +0100
-Message-ID: <1272964392.8533.1.camel@e102144-lin.cambridge.arm.com>
-References: <20100504125355.810e6f54.sfr@canb.auug.org.au>
+Date: Tue, 4 May 2010 21:03:05 +0800
+Message-ID: <20100504130305.GA13529@gondor.apana.org.au>
+References: <20100504125355.810e6f54.sfr@canb.auug.org.au> <4BDFCB98.207@nokia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:48769 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756211Ab0EDJNr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 4 May 2010 05:13:47 -0400
-In-Reply-To: <20100504125355.810e6f54.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Herbert Xu <herbert@gondor.hengli.com.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Dmitry Kasatkin <dmitry.kasatkin@nokia.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <4BDFCB98.207@nokia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Kasatkin <dmitry.kasatkin@nokia.com>
+Cc: ext Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Will Deacon <will.deacon@arm.com>, Russell King <rmk@arm.linux.org.uk>
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
-
-On Tue, 2010-05-04 at 03:53 +0100, Stephen Rothwell wrote:
-> Today's linux-next merge of the crypto tree got a conflict in
-> arch/arm/mach-omap2/devices.c between commit
-> 883413341e479d4e9f9c69def4884b4c6e1cef4e ("ARM: 6046/1: ARM: OMAP:
-> register PMU IRQs during board initialisation") from the arm tree and
-> commit ee5500c45c4860a84bba502c6d9ef5af6395dad6 ("crypto: omap - Updates
-> omap sham device related platform code") from the crypto tree.
+On Tue, May 04, 2010 at 10:24:08AM +0300, Dmitry Kasatkin wrote:
 > 
-> Just context changes.  I fixed it up (see below) and can carry the fix as
-> necessary.
+> This patch looks OK.
 
-Thanks for fixing this. Looks fine to me.
+It looks good to me too.
 
-Will
+Thanks!
+-- 
+Visit Openswan at http://www.openswan.org/
+Email: Herbert Xu ~{PmV>HI~} <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
