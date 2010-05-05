@@ -1,42 +1,40 @@
-From: Greg KH <gregkh@suse.de>
-Subject: Re: linux-next: Tree for April 30 (CONFIG_SYSFS=n)
-Date: Wed, 5 May 2010 09:24:59 -0700
-Message-ID: <20100505162459.GA20296@suse.de>
-References: <20100430163538.7253a9e0.sfr@canb.auug.org.au>
- <20100430105016.40b51636.randy.dunlap@oracle.com>
- <20100505091738.7ec27479.randy.dunlap@oracle.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: [PATCH -next] staging/cxt1e1: Convert bare printks to
+ pr_<level>
+Date: Wed, 5 May 2010 09:21:01 -0700
+Message-ID: <20100505162101.GA12809@kroah.com>
+References: <20100503151619.f75e3a80.sfr@canb.auug.org.au>
+ <20100503110657.00b4e140.randy.dunlap@oracle.com>
+ <1272915196.30040.163.camel@Joe-Laptop.home>
+ <201005051421.14647.PeterHuewe@gmx.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor.suse.de ([195.135.220.2]:55865 "EHLO mx1.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S934813Ab0EEQ1S (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 5 May 2010 12:27:18 -0400
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20100505091738.7ec27479.randy.dunlap@oracle.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Eric Biederman <ebiederm@xmission.com>
+In-Reply-To: <201005051421.14647.PeterHuewe@gmx.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter =?iso-8859-1?Q?H=FCwe?= <PeterHuewe@gmx.de>
+Cc: devel@linuxdriverproject.org, Joe Perches <joe@perches.com>, Randy Dunlap <randy.dunlap@oracle.com>, devel@driverdev.osuosl.org, Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, support@sbei.com, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, support@onestopsystems.com
+List-Id: linux-next.vger.kernel.org
 
-On Wed, May 05, 2010 at 09:17:38AM -0700, Randy Dunlap wrote:
-> On Fri, 30 Apr 2010 10:50:16 -0700 Randy Dunlap wrote:
-> 
-> > On Fri, 30 Apr 2010 16:35:38 +1000 Stephen Rothwell wrote:
-> > 
-> > > Hi all,
-> > > 
-> > > Changes since 20100429:
-> > 
-> > 
-> > When CONFIG_SYSFS is disabled:
-> > 
-> > include/linux/sysfs.h:330: error: parameter 1 ('type') has incomplete type
-> 
-> 
-> Still have this in linux-next of May 5-2010.
+On Wed, May 05, 2010 at 02:21:14PM +0200, Peter H=FCwe wrote:
+> Am Montag 03 Mai 2010 21:33:16 schrieb Joe Perches:
+> > Added #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> > A few line splits for long arguments
+> > A couple of embedded function names converted to "%s", __func__
+> > Removed some uses of THIS_MODULE->name
+> >=20
+> > Signed-off-by: Joe Perches <joe@perches.com>
+>=20
+> Hi,=20
+> I applied Joe's patch, but unfortunately it misses out one part of Ra=
+ndy's=20
+> original patch, i.e. the conversion in line 286 of hwprobe.c.
+>=20
+> Joe: Can you perhaps add this to your patch?
 
-Eric, this is due to your changes, care to fix it up?
+I've already applied Joe's patch, so I'll queue up yours as well.
 
 thanks,
 
