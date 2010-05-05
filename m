@@ -1,37 +1,43 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for April 28 (logfs)
-Date: Wed, 5 May 2010 09:20:20 -0700
-Message-ID: <20100505092020.66a461fa.randy.dunlap@oracle.com>
-References: <20100428164341.cee2911a.sfr@canb.auug.org.au>
-	<20100428085604.0566092a.randy.dunlap@oracle.com>
+From: Greg KH <gregkh@suse.de>
+Subject: Re: linux-next: Tree for April 30 (CONFIG_SYSFS=n)
+Date: Wed, 5 May 2010 09:24:59 -0700
+Message-ID: <20100505162459.GA20296@suse.de>
+References: <20100430163538.7253a9e0.sfr@canb.auug.org.au>
+ <20100430105016.40b51636.randy.dunlap@oracle.com>
+ <20100505091738.7ec27479.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:22118 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932922Ab0EEQUs (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 5 May 2010 12:20:48 -0400
-In-Reply-To: <20100428085604.0566092a.randy.dunlap@oracle.com>
+Received: from cantor.suse.de ([195.135.220.2]:55865 "EHLO mx1.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S934813Ab0EEQ1S (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 5 May 2010 12:27:18 -0400
+Content-Disposition: inline
+In-Reply-To: <20100505091738.7ec27479.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Joern Engel <joern@logfs.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, logfs@logfs.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Eric Biederman <ebiederm@xmission.com>
 
-On Wed, 28 Apr 2010 08:56:04 -0700 Randy Dunlap wrote:
-
+On Wed, May 05, 2010 at 09:17:38AM -0700, Randy Dunlap wrote:
+> On Fri, 30 Apr 2010 10:50:16 -0700 Randy Dunlap wrote:
 > 
-> When CONFIG_BLOCK is not enabled:
+> > On Fri, 30 Apr 2010 16:35:38 +1000 Stephen Rothwell wrote:
+> > 
+> > > Hi all,
+> > > 
+> > > Changes since 20100429:
+> > 
+> > 
+> > When CONFIG_SYSFS is disabled:
+> > 
+> > include/linux/sysfs.h:330: error: parameter 1 ('type') has incomplete type
 > 
-> fs/logfs/super.c:142: error: implicit declaration of function 'bdev_get_queue'
-> fs/logfs/super.c:142: error: invalid type argument of '->' (have 'int')
+> 
+> Still have this in linux-next of May 5-2010.
 
+Eric, this is due to your changes, care to fix it up?
 
-Still have this build error in linux-next-May 5-2010.
+thanks,
 
-[and L:      logfs@logfs.org
-is moderated for non-subscribers]
-
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+greg k-h
