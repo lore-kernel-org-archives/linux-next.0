@@ -1,43 +1,66 @@
-From: =?utf-8?B?SsO2cm4=?= Engel <joern@logfs.org>
-Subject: Re: linux-next: Tree for April 28 (logfs)
-Date: Wed, 5 May 2010 22:35:48 +0200
-Message-ID: <20100505203548.GI25129@logfs.org>
-References: <20100428164341.cee2911a.sfr@canb.auug.org.au>
-	<20100428085604.0566092a.randy.dunlap@oracle.com>
-	<20100505092020.66a461fa.randy.dunlap@oracle.com>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Subject: Re: linux-next: Tree for April 30 (CONFIG_SYSFS=n)
+Date: Wed, 05 May 2010 14:35:03 -0700
+Message-ID: <m1d3xa1188.fsf@fess.ebiederm.org>
+References: <20100430163538.7253a9e0.sfr@canb.auug.org.au>
+	<20100430105016.40b51636.randy.dunlap@oracle.com>
+	<20100505091738.7ec27479.randy.dunlap@oracle.com>
+	<20100505162459.GA20296@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <logfs-bounces@logfs.org>
-Content-Disposition: inline
-In-Reply-To: <20100505092020.66a461fa.randy.dunlap@oracle.com>
-List-Unsubscribe: <http://logfs.org/cgi-bin/mailman/listinfo/logfs>,
-	<mailto:logfs-request@logfs.org?subject=unsubscribe>
-List-Archive: <http://logfs.org/pipermail/logfs>
-List-Post: <mailto:logfs@logfs.org>
-List-Help: <mailto:logfs-request@logfs.org?subject=help>
-List-Subscribe: <http://logfs.org/cgi-bin/mailman/listinfo/logfs>,
-	<mailto:logfs-request@logfs.org?subject=subscribe>
-Sender: logfs-bounces@logfs.org
-Errors-To: logfs-bounces@logfs.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, logfs@logfs.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out01.mta.xmission.com ([166.70.13.231]:32798 "EHLO
+	out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752752Ab0EEVfM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 5 May 2010 17:35:12 -0400
+In-Reply-To: <20100505162459.GA20296@suse.de> (Greg KH's message of "Wed\, 5 May 2010 09\:24\:59 -0700")
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <gregkh@suse.de>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
 
-T24gV2VkLCA1IE1heSAyMDEwIDA5OjIwOjIwIC0wNzAwLCBSYW5keSBEdW5sYXAgd3JvdGU6Cj4g
-T24gV2VkLCAyOCBBcHIgMjAxMCAwODo1NjowNCAtMDcwMCBSYW5keSBEdW5sYXAgd3JvdGU6Cj4g
-Cj4gPiBXaGVuIENPTkZJR19CTE9DSyBpcyBub3QgZW5hYmxlZDoKPiA+IAo+ID4gZnMvbG9nZnMv
-c3VwZXIuYzoxNDI6IGVycm9yOiBpbXBsaWNpdCBkZWNsYXJhdGlvbiBvZiBmdW5jdGlvbiAnYmRl
-dl9nZXRfcXVldWUnCj4gPiBmcy9sb2dmcy9zdXBlci5jOjE0MjogZXJyb3I6IGludmFsaWQgdHlw
-ZSBhcmd1bWVudCBvZiAnLT4nIChoYXZlICdpbnQnKQo+IAo+IFN0aWxsIGhhdmUgdGhpcyBidWls
-ZCBlcnJvciBpbiBsaW51eC1uZXh0LU1heSA1LTIwMTAuCgpTaG91bGQgYmUgZml4ZWQgbm93LiAg
-U29ycnkgYWJvdXQgdGhlIGRlbGF5LgoKPiBbYW5kIEw6ICAgICAgbG9nZnNAbG9nZnMub3JnCj4g
-aXMgbW9kZXJhdGVkIGZvciBub24tc3Vic2NyaWJlcnNdCgpJIGhhdmUgZGlzYWJsZWQgdGhlIGJv
-dW5jZSBtYWlscy4gIFN0aWxsIG1vZGVyYXRlZCwgYnV0IG11Y2ggbGVzcwphbm5veWluZywgSSBo
-b3BlLgoKSsO2cm4KCi0tIApXaHkgZG8gbXVzaWNpYW5zIGNvbXBvc2Ugc3ltcGhvbmllcyBhbmQg
-cG9ldHMgd3JpdGUgcG9lbXM/ClRoZXkgZG8gaXQgYmVjYXVzZSBsaWZlIHdvdWxkbid0IGhhdmUg
-YW55IG1lYW5pbmcgZm9yIHRoZW0gaWYgdGhleSBkaWRuJ3QuClRoYXQncyB3aHkgSSBkcmF3IGNh
-cnRvb25zLiAgSXQncyBteSBsaWZlLgotLSBDaGFybGVzIFNodWx0egoKX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTG9nZnMgbWFpbGluZyBsaXN0CkxvZ2Zz
-QGxvZ2ZzLm9yZwpodHRwOi8vbG9nZnMub3JnL2NnaS1iaW4vbWFpbG1hbi9saXN0aW5mby9sb2dm
-cwo=
+Greg KH <gregkh@suse.de> writes:
+
+> On Wed, May 05, 2010 at 09:17:38AM -0700, Randy Dunlap wrote:
+>> On Fri, 30 Apr 2010 10:50:16 -0700 Randy Dunlap wrote:
+>> 
+>> > On Fri, 30 Apr 2010 16:35:38 +1000 Stephen Rothwell wrote:
+>> > 
+>> > > Hi all,
+>> > > 
+>> > > Changes since 20100429:
+>> > 
+>> > 
+>> > When CONFIG_SYSFS is disabled:
+>> > 
+>> > include/linux/sysfs.h:330: error: parameter 1 ('type') has incomplete type
+>> 
+>> 
+>> Still have this in linux-next of May 5-2010.
+>
+> Eric, this is due to your changes, care to fix it up?
+
+Apologies for not looking at this earlier.  I just took a look
+at this and I believe this error is the result of a gcc bug.
+
+
+This appears to the fragment that doesn't compile.
+
+enum kobj_ns_type;
+static inline void sysfs_exit_ns(enum kobj_ns_type type, const void *tag)
+{
+}
+
+
+I could either include kobject.h or make the fragment:
+static inline void sysfs_exit_ns(int type, const void *tag)
+{
+}
+
+I really don't like either option. 
+
+Does anyone know how to smack gcc up the side of the head and convince
+it has all of the information it needs, and get it to stop complaining?
+
+
+Eric
