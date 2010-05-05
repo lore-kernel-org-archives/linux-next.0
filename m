@@ -1,35 +1,43 @@
-From: Roland Dreier <rdreier@cisco.com>
-Subject: Re: [PATCH -next] infiniband: fix cxgb4 printk format warnings
-Date: Wed, 05 May 2010 11:57:14 -0700
-Message-ID: <adaaasekwhh.fsf@roland-alpha.cisco.com>
+From: =?utf-8?B?SsO2cm4=?= Engel <joern@logfs.org>
+Subject: Re: linux-next: Tree for April 28 (logfs)
+Date: Wed, 5 May 2010 22:35:48 +0200
+Message-ID: <20100505203548.GI25129@logfs.org>
 References: <20100428164341.cee2911a.sfr@canb.auug.org.au>
-	<20100428103356.931ba48c.randy.dunlap@oracle.com>
+	<20100428085604.0566092a.randy.dunlap@oracle.com>
+	<20100505092020.66a461fa.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from sj-iport-4.cisco.com ([171.68.10.86]:26017 "EHLO
-	sj-iport-4.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752739Ab0EES5Y (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 5 May 2010 14:57:24 -0400
-In-Reply-To: <20100428103356.931ba48c.randy.dunlap@oracle.com> (Randy Dunlap's
-	message of "Wed, 28 Apr 2010 10:33:56 -0700")
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <logfs-bounces@logfs.org>
+Content-Disposition: inline
+In-Reply-To: <20100505092020.66a461fa.randy.dunlap@oracle.com>
+List-Unsubscribe: <http://logfs.org/cgi-bin/mailman/listinfo/logfs>,
+	<mailto:logfs-request@logfs.org?subject=unsubscribe>
+List-Archive: <http://logfs.org/pipermail/logfs>
+List-Post: <mailto:logfs@logfs.org>
+List-Help: <mailto:logfs-request@logfs.org?subject=help>
+List-Subscribe: <http://logfs.org/cgi-bin/mailman/listinfo/logfs>,
+	<mailto:logfs-request@logfs.org?subject=subscribe>
+Sender: logfs-bounces@logfs.org
+Errors-To: logfs-bounces@logfs.org
 To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Roland Dreier <rolandd@cisco.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, logfs@logfs.org
+List-Id: linux-next.vger.kernel.org
 
-Thanks, rolled this into the new cxgb4 driver.
-
- > Wouldn't it be Good if virt_to_phys() returned the same typed value
- > on all arches?
-
-heh.
-
- > Note: cxgb4 needs MAINTAINER info.
-
-I'll try to take care of it.
-
-Thanks
--- 
-Roland Dreier <rolandd@cisco.com> || For corporate legal information go to:
-http://www.cisco.com/web/about/doing_business/legal/cri/index.html
+T24gV2VkLCA1IE1heSAyMDEwIDA5OjIwOjIwIC0wNzAwLCBSYW5keSBEdW5sYXAgd3JvdGU6Cj4g
+T24gV2VkLCAyOCBBcHIgMjAxMCAwODo1NjowNCAtMDcwMCBSYW5keSBEdW5sYXAgd3JvdGU6Cj4g
+Cj4gPiBXaGVuIENPTkZJR19CTE9DSyBpcyBub3QgZW5hYmxlZDoKPiA+IAo+ID4gZnMvbG9nZnMv
+c3VwZXIuYzoxNDI6IGVycm9yOiBpbXBsaWNpdCBkZWNsYXJhdGlvbiBvZiBmdW5jdGlvbiAnYmRl
+dl9nZXRfcXVldWUnCj4gPiBmcy9sb2dmcy9zdXBlci5jOjE0MjogZXJyb3I6IGludmFsaWQgdHlw
+ZSBhcmd1bWVudCBvZiAnLT4nIChoYXZlICdpbnQnKQo+IAo+IFN0aWxsIGhhdmUgdGhpcyBidWls
+ZCBlcnJvciBpbiBsaW51eC1uZXh0LU1heSA1LTIwMTAuCgpTaG91bGQgYmUgZml4ZWQgbm93LiAg
+U29ycnkgYWJvdXQgdGhlIGRlbGF5LgoKPiBbYW5kIEw6ICAgICAgbG9nZnNAbG9nZnMub3JnCj4g
+aXMgbW9kZXJhdGVkIGZvciBub24tc3Vic2NyaWJlcnNdCgpJIGhhdmUgZGlzYWJsZWQgdGhlIGJv
+dW5jZSBtYWlscy4gIFN0aWxsIG1vZGVyYXRlZCwgYnV0IG11Y2ggbGVzcwphbm5veWluZywgSSBo
+b3BlLgoKSsO2cm4KCi0tIApXaHkgZG8gbXVzaWNpYW5zIGNvbXBvc2Ugc3ltcGhvbmllcyBhbmQg
+cG9ldHMgd3JpdGUgcG9lbXM/ClRoZXkgZG8gaXQgYmVjYXVzZSBsaWZlIHdvdWxkbid0IGhhdmUg
+YW55IG1lYW5pbmcgZm9yIHRoZW0gaWYgdGhleSBkaWRuJ3QuClRoYXQncyB3aHkgSSBkcmF3IGNh
+cnRvb25zLiAgSXQncyBteSBsaWZlLgotLSBDaGFybGVzIFNodWx0egoKX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTG9nZnMgbWFpbGluZyBsaXN0CkxvZ2Zz
+QGxvZ2ZzLm9yZwpodHRwOi8vbG9nZnMub3JnL2NnaS1iaW4vbWFpbG1hbi9saXN0aW5mby9sb2dm
+cwo=
