@@ -1,41 +1,42 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [linux-pm] linux-next: Tree for May 6 (acpi: PM=n)
-Date: Thu, 6 May 2010 13:32:15 -0700
-Message-ID: <20100506133215.f5dc579a.randy.dunlap@oracle.com>
+From: Len Brown <lenb@kernel.org>
+Subject: Re: linux-next: Tree for May 6 (nouveau)
+Date: Thu, 06 May 2010 16:37:46 -0400 (EDT)
+Message-ID: <alpine.LFD.2.00.1005061636220.12696@localhost.localdomain>
 References: <20100506151502.f97afe54.sfr@canb.auug.org.au>
-	<20100506080538.b566f50e.randy.dunlap@oracle.com>
-	<alpine.LFD.2.00.1005061623060.15286@localhost.localdomain>
+ <20100506111856.ae15cd03.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <alpine.LFD.2.00.1005061623060.15286@localhost.localdomain>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Len Brown <lenb@kernel.org>, James Morris <jmorris@namei.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-pm@lists.linux-foundation.org, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from vms173015pub.verizon.net ([206.46.173.15]:43609 "EHLO
+	vms173015pub.verizon.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932239Ab0EFUiI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 6 May 2010 16:38:08 -0400
+In-reply-to: <20100506111856.ae15cd03.randy.dunlap@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Airlie <airlied@linux.ie>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org
 
-On Thu, 06 May 2010 16:26:13 -0400 (EDT) Len Brown wrote:
-
-> > When CONFIG_PM is not set:
-> > 
-> > drivers/built-in.o: In function `acpi_init':
-> > bus.c:(.init.text+0x2d84): undefined reference to `pm_flags'
-> > bus.c:(.init.text+0x2d91): undefined reference to `pm_flags'
+> When CONFIG_ACPI_BUTTON=m:
 > 
-> CONFIG_ACPI depends on CONFIG_PM,
-> so acpi/bus.c should not be compiled for CONFIG_PM=n
+> drivers/built-in.o: In function `nouveau_connector_detect':
+> nouveau_connector.c:(.text+0x1d81cf): undefined reference to `acpi_lid_open'
 > 
-> Hmm, is is somebody doing something strange, like "select ACPI"
-> without guaranteeing that all of ACPI's dependencies are satisfied?
+> 
+> #ifdef CONFIG_ACPI
+> 		if (!nouveau_ignorelid && !acpi_lid_open())
+> 			status = connector_status_unknown;
+> #endif
+> 
+> 
+> Do you want that to be
+> #ifdef CONFIG_ACPI_BUTTON
+> ?
+> That will still only be built when CONFIG_ACPI_BUTTON=y (not =m).
+> 
 
-Oh, thanks for the clue.
+intel_lvds.c seems to handle this issue without #ifdefs
+by including acpi/button.h
 
-That would be a patch that I commented on and was ignored,
-but James Morris merged it anyway.  Now it should be dropped.
-
-http://lkml.org/lkml/2010/5/4/379
-
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+cheers,
+Len Brown, Intel Open Source Technology Center
