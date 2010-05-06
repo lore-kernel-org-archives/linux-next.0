@@ -1,44 +1,50 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] staging: fix cxt1e1 semaphore build breakage
-Date: Thu, 6 May 2010 16:44:08 -0700
-Message-ID: <20100506164408.412fed05.randy.dunlap@oracle.com>
-References: <20100506151502.f97afe54.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the logfs tree
+Date: Fri, 7 May 2010 09:46:38 +1000
+Message-ID: <20100507094638.11351234.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__7_May_2010_09_46_38_+1000_fH_9Wwb6poBiU193"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:29201 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752085Ab0EFXpF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 6 May 2010 19:45:05 -0400
-In-Reply-To: <20100506151502.f97afe54.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:39365 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751725Ab0EFXqo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 6 May 2010 19:46:44 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, devel@driverdev.osuosl.org
+To: =?UTF-8?B?IkrDtnJuIEVuZ2VsIg==?= <joern@logfs.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+--Signature=_Fri__7_May_2010_09_46_38_+1000_fH_9Wwb6poBiU193
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix build errors by including linux/semaphore.h:
+Hi J=C3=B6rn,
 
-drivers/staging/cxt1e1/pmcc4_private.h:144: error: field 'sr_sem_busy' has incomplete type
-drivers/staging/cxt1e1/pmcc4_private.h:146: error: field 'sr_sem_wait' has incomplete type
-drivers/staging/cxt1e1/pmcc4_private.h:189: error: field 'sem_wdbusy' has incomplete type
-drivers/staging/cxt1e1/musycc.c:617: error: implicit declaration of function 'down'
-drivers/staging/cxt1e1/musycc.c:641: error: implicit declaration of function 'up'
+After merging the logfs tree, today's linux-next build (x86_64 allmodconfig)
+produced this warning:
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- drivers/staging/cxt1e1/pmcc4_private.h |    1 +
- 1 file changed, 1 insertion(+)
+fs/logfs/file.c: In function 'logfs_fsync':
+fs/logfs/file.c:225: warning: unused variable 'super'
 
---- linux-next-20100506.orig/drivers/staging/cxt1e1/pmcc4_private.h
-+++ linux-next-20100506/drivers/staging/cxt1e1/pmcc4_private.h
-@@ -20,6 +20,7 @@
- 
- #include <linux/kernel.h>
- #include <linux/sched.h>
-+#include <linux/semaphore.h>
- #include <linux/spinlock.h>
- #include <linux/interrupt.h>    /* support for tasklets */
- #include <linux/timer.h>        /* support for timer */
+Introduced by commit c0c79c31c9d5fcc19812c6c35f842baf50ee788a ("logfs:
+fix sync").
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__7_May_2010_09_46_38_+1000_fH_9Wwb6poBiU193
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkvjVN4ACgkQjjKRsyhoI8xSFgCgs8K0FiLPkgmiIRva5lgo1NJk
+T4EAmgMVDo9lL7hAClj9xXYhGG/g7liY
+=xowy
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__7_May_2010_09_46_38_+1000_fH_9Wwb6poBiU193--
