@@ -1,73 +1,62 @@
-From: "Justin P. Mattock" <justinmattock@gmail.com>
-Subject: Re: linux-next: manual merge of the security-testing tree with Linus'
- tree
-Date: Thu, 06 May 2010 16:24:21 -0700
-Message-ID: <4BE34FA5.8070906@gmail.com>
-References: <20100506123049.082e98cc.sfr@canb.auug.org.au> <7197.1273142988@redhat.com> <alpine.LRH.2.00.1005070908230.31779@tundra.namei.org>
+From: James Morris <jmorris@namei.org>
+Subject: Re: [linux-pm] linux-next: Tree for May 6 (acpi: PM=n)
+Date: Fri, 7 May 2010 09:27:49 +1000 (EST)
+Message-ID: <alpine.LRH.2.00.1005070910490.31779@tundra.namei.org>
+References: <20100506151502.f97afe54.sfr@canb.auug.org.au> <20100506080538.b566f50e.randy.dunlap@oracle.com> <alpine.LFD.2.00.1005061623060.15286@localhost.localdomain> <20100506133215.f5dc579a.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-px0-f174.google.com ([209.85.212.174]:36322 "EHLO
-	mail-px0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751363Ab0EFXYI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 6 May 2010 19:24:08 -0400
-In-Reply-To: <alpine.LRH.2.00.1005070908230.31779@tundra.namei.org>
+Received: from tundra.namei.org ([65.99.196.166]:46621 "EHLO tundra.namei.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750882Ab0EFXas (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 6 May 2010 19:30:48 -0400
+In-Reply-To: <20100506133215.f5dc579a.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Morris <jmorris@namei.org>
-Cc: David Howells <dhowells@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Toshiyuki Okajima <toshi.okajima@jp.fujitsu.com>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Len Brown <lenb@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-pm@lists.linux-foundation.org, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mimi Zohar <zohar@linux.vnet.ibm.com>, Rajiv Andrade <srajiv@linux.vnet.ibm.com>
 
-On 05/06/2010 04:10 PM, James Morris wrote:
-> On Thu, 6 May 2010, David Howells wrote:
->
->>
->> Stephen Rothwell<sfr@canb.auug.org.au>  wrote:
->>
->>> I just used the version from Linus' tree.
->>
->> Okay.
->>
->> However, I'd like to NAK some bits of c5b60b5e67af8be4c58d3ffcc36894f69c4fbdc1
->> now that I see it...
->
-> Will a patch -R of below be correct enough for you?  Otherwise, please
-> send me a new patch.
->
-> (This is one of the reasons why I'm not so keen on whitespace fixes, also
-> having to resolve merge conflicts, peturbing the history of the code etc.)
->
->
->>
->> 	@@ -1282,16 +1282,16 @@ long keyctl_session_to_parent(void)
->> 	
->> 	        /* the parent must have the same effective ownership and mustn't be
->> 	         * SUID/SGID */
->> 	-       if (pcred->  uid != mycred->euid ||
->> 	+       if (pcred->uid  != mycred->euid ||
->> 	            pcred->euid != mycred->euid ||
->> 	            pcred->suid != mycred->euid ||
->> 	-           pcred->  gid != mycred->egid ||
->> 	+           pcred->gid  != mycred->egid ||
->> 	            pcred->egid != mycred->egid ||
->> 	            pcred->sgid != mycred->egid)
->> 	                goto not_permitted;
->> 	
->> 	        /* the keyrings must have the same UID */
->> 	-       if (pcred ->tgcred->session_keyring->uid != mycred->euid ||
->> 	+       if (pcred->tgcred->session_keyring->uid != mycred->euid ||
->> 	            mycred->tgcred->session_keyring->uid != mycred->euid)
->> 	                goto not_permitted;
->>
->> _Please_ don't do either of these.  The whole point is to line stuff up so
->> that as the eye scans down the lines, it can easily pick out the differences
->> in stuff that's otherwise greatly repetitive.
->>
->> David
->>
->
+On Thu, 6 May 2010, Randy Dunlap wrote:
 
-I never would of thought this. So the != has to be lined
-up so things don't break?!
+> On Thu, 06 May 2010 16:26:13 -0400 (EDT) Len Brown wrote:
+> 
+> > > When CONFIG_PM is not set:
+> > > 
+> > > drivers/built-in.o: In function `acpi_init':
+> > > bus.c:(.init.text+0x2d84): undefined reference to `pm_flags'
+> > > bus.c:(.init.text+0x2d91): undefined reference to `pm_flags'
+> > 
+> > CONFIG_ACPI depends on CONFIG_PM,
+> > so acpi/bus.c should not be compiled for CONFIG_PM=n
+> > 
+> > Hmm, is is somebody doing something strange, like "select ACPI"
+> > without guaranteeing that all of ACPI's dependencies are satisfied?
+> 
+> Oh, thanks for the clue.
+> 
+> That would be a patch that I commented on and was ignored,
+> but James Morris merged it anyway.  Now it should be dropped.
+> 
+> http://lkml.org/lkml/2010/5/4/379
 
-Justin P. Mattock
+You weren't ignored.  Mimi responded and mentioned a subsequent patch, 
+after which, there was no further discussion.
+
+I've reverted:
+
+b89e66e1e396f7b5436af154e58209320cc08aed
+"TPM: ACPI/PNP dependency removal"
+
+a674fa46c79ffa37995bd1c8e4daa2b3be5a95ae
+"ima: remove ACPI dependency"
+
+
+Note: any further ACPI-related changes here should have acks from 
+linux-acpi folk.
+
+
+
+- James
+-- 
+James Morris
+<jmorris@namei.org>
