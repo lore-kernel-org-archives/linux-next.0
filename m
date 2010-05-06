@@ -1,37 +1,55 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging-next tree with the net
-	tree
-Date: Wed, 5 May 2010 23:21:29 -0700
-Message-ID: <20100506062129.GA23076@kroah.com>
-References: <20100506140543.d6f3841f.sfr@canb.auug.org.au> <20100506042048.GA25425@kroah.com> <20100506142139.c1b1c1c3.sfr@canb.auug.org.au>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH -next] usb gadget webcam: depends on VIDEO_DEV
+Date: Thu, 6 May 2010 09:57:13 +0200
+Message-ID: <201005060957.13833.laurent.pinchart@ideasonboard.com>
+References: <20100505123409.ed5678a2.sfr@canb.auug.org.au> <20100505154626.2c036f1d.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:56962 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751082Ab0EFGVu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 6 May 2010 02:21:50 -0400
-Content-Disposition: inline
-In-Reply-To: <20100506142139.c1b1c1c3.sfr@canb.auug.org.au>
+Received: from perceval.irobotique.be ([92.243.18.41]:44473 "EHLO
+	perceval.irobotique.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751082Ab0EFH4a (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 6 May 2010 03:56:30 -0400
+In-Reply-To: <20100505154626.2c036f1d.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Prashant P. Shah" <pshah.mumbai@gmail.com>, Jiri Pirko <jpirko@redhat.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, lud <linux-usb@vger.kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, David Brownell <dbrownell@users.sourceforge.net>, gregkh@suse.de
 
-On Thu, May 06, 2010 at 02:21:39PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
+Hi Randy,
+
+On Thursday 06 May 2010 00:46:26 Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
 > 
-> On Wed, 5 May 2010 21:20:48 -0700 Greg KH <greg@kroah.com> wrote:
-> >
-> > Thanks for doing this.  Hm, the arlan driver is scheduled to be deleted
-> > in .35, so it would make things easier if I just do it now to keep these
-> > kinds of merge issues from happening.  I'll queue that up tomorrow.
+> g_webcam uses v4l[2] interfaces, so it should depend on VIDEO_DEV.
 > 
-> Ah, yes, that would be easier.  Thanks.
+> ERROR: "v4l2_event_unsubscribe" [drivers/usb/gadget/g_webcam.ko] undefined!
+> ERROR: "v4l2_event_queue" [drivers/usb/gadget/g_webcam.ko] undefined!
+> ERROR: "video_device_release" [drivers/usb/gadget/g_webcam.ko] undefined!
+> ERROR: "video_usercopy" [drivers/usb/gadget/g_webcam.ko] undefined!
+> ERROR: "v4l2_event_dequeue" [drivers/usb/gadget/g_webcam.ko] undefined!
+> ERROR: "video_register_device" [drivers/usb/gadget/g_webcam.ko] undefined!
+> ERROR: "video_device_alloc" [drivers/usb/gadget/g_webcam.ko] undefined!
+> ERROR: "v4l2_event_subscribe" [drivers/usb/gadget/g_webcam.ko] undefined!
+> ERROR: "video_unregister_device" [drivers/usb/gadget/g_webcam.ko] ndefined!
+> ERROR: "v4l2_event_pending" [drivers/usb/gadget/g_webcam.ko] undefined!
+> ERROR: "v4l2_fh_init" [drivers/usb/gadget/g_webcam.ko] undefined!
+> ERROR: "v4l2_event_init" [drivers/usb/gadget/g_webcam.ko] undefined!
+> ERROR: "video_devdata" [drivers/usb/gadget/g_webcam.ko] undefined!
+> ERROR: "v4l2_event_alloc" [drivers/usb/gadget/g_webcam.ko] undefined!
+> ERROR: "v4l2_fh_add" [drivers/usb/gadget/g_webcam.ko] undefined!
+> ERROR: "v4l2_fh_del" [drivers/usb/gadget/g_webcam.ko] undefined!
+> ERROR: "v4l2_fh_exit" [drivers/usb/gadget/g_webcam.ko] undefined!
 
-It is now deleted, along with 3 other drivers that were scheduled to be
-deleted in .35, so you will not have any merge issues with them anymore.
+Oops, my bad. Thanks for the patch.
 
-thanks,
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 
-greg k-h
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+-- 
+Regards,
+
+Laurent Pinchart
