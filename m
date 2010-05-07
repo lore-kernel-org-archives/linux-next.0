@@ -1,35 +1,57 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging-next tree with Linus'
- tree
-Date: Fri, 7 May 2010 09:40:12 -0700
-Message-ID: <20100507164012.GA21927@kroah.com>
-References: <20100507152108.49975171.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] media: vivi and mem2mem_testdev need slab.h to build
+Date: Fri, 7 May 2010 11:22:26 -0700
+Message-ID: <20100507112226.f90494a2.randy.dunlap@oracle.com>
+References: <20100507155520.75026a8b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:41506 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752277Ab0EGQwH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 7 May 2010 12:52:07 -0400
-Content-Disposition: inline
-In-Reply-To: <20100507152108.49975171.sfr@canb.auug.org.au>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:51990 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757313Ab0EGSXr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 7 May 2010 14:23:47 -0400
+In-Reply-To: <20100507155520.75026a8b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Cyrill Gorcunov <gorcunov@openvz.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org
 
-On Fri, May 07, 2010 at 03:21:08PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the staging-next tree got a conflict in
-> drivers/staging/hv/hv.c between commit
-> fa8ad0257ea256381126ecf447694622216c600f ("Staging: hv: Fix up memory
-> leak on HvCleanup") from Linus' tree and commit
-> eda95eef15e86e100aaeeec4e8ed3eb1eced2967 ("Staging: hv: rename Hv.c to
-> hv.c") from the staging-next tree.
-> 
-> I used the staging-next version.
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Yes, that's the proper version, thanks.
+Fix vivi and mem2mem_testdev build errors: need to #include <linux/slab.h>:
 
-greg k-h
+drivers/media/video/vivi.c:1144: error: implicit declaration of function 'kfree'
+drivers/media/video/vivi.c:1156: error: implicit declaration of function 'kzalloc'
+drivers/media/video/vivi.c:1156: warning: assignment makes pointer from integer without a cast
+drivers/media/video/mem2mem_testdev.c:862: error: implicit declaration of function 'kzalloc'
+drivers/media/video/mem2mem_testdev.c:862: warning: assignment makes pointer from integer without a cast
+drivers/media/video/mem2mem_testdev.c:874: error: implicit declaration of function 'kfree'
+drivers/media/video/mem2mem_testdev.c:944: warning: assignment makes pointer from integer without a cast
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/media/video/mem2mem_testdev.c |    1 +
+ drivers/media/video/vivi.c            |    1 +
+ 2 files changed, 2 insertions(+)
+
+--- linux-next-20100507.orig/drivers/media/video/vivi.c
++++ linux-next-20100507/drivers/media/video/vivi.c
+@@ -17,6 +17,7 @@
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+ #include <linux/sched.h>
++#include <linux/slab.h>
+ #include <linux/font.h>
+ #include <linux/version.h>
+ #include <linux/mutex.h>
+--- linux-next-20100507.orig/drivers/media/video/mem2mem_testdev.c
++++ linux-next-20100507/drivers/media/video/mem2mem_testdev.c
+@@ -22,6 +22,7 @@
+ #include <linux/version.h>
+ #include <linux/timer.h>
+ #include <linux/sched.h>
++#include <linux/slab.h>
+ 
+ #include <linux/platform_device.h>
+ #include <media/v4l2-mem2mem.h>
