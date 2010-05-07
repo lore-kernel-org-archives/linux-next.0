@@ -1,62 +1,81 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the suspend tree
-Date: Fri, 7 May 2010 13:08:21 +1000
-Message-ID: <20100507130821.3fb72c9d.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the omap_dss2 tree with the omap tree
+Date: Fri, 7 May 2010 13:43:34 +1000
+Message-ID: <20100507134334.75808884.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54211 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753135Ab0EGDIZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 6 May 2010 23:08:25 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Helmut Schaa <Helmut.Schaa@gmx.de>, "John W. Linville" <linville@tuxdriver.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomi Valkeinen <tomi.valkeinen@nokia.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Roger Quadros <roger.quadros@nokia.com>, Jarkko Nikula <jhnikula@gmail.com>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Rafael,
+Hi Tomi,
 
-After merging the suspend tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the omap_dss2 tree got a conflict in
+arch/arm/mach-omap2/board-rx51-peripherals.c between commit
+e87da74e34ad151e6ae75ebb7a7bf447f02c0004 ("omap: rx51: Add supplies for
+the tlv320aic3x codec driver") from the omap tree and commit
+a693839eab0292aa234d7a6f48d40389389baebb ("OMAP: RX51: Add "vdds_sdi"
+supply voltage for SDI") from the omap_dss2 tree.
 
-net/mac80211/scan.c: In function 'ieee80211_scan_state_decision':
-net/mac80211/scan.c:510: error: implicit declaration of function 'pm_qos_requirement'
-
-Caused by commit 62bad14fc6e0911a99882c261390968977d43283 ("PM QOS
-update") from the suspend tree interacting with commit
-df13cce53a7b28a81460e6bfc4857e9df4956141 ("mac80211: Improve software
-scan timing") from the net tree.
-
-I have added the following merge fixup patch and can carry it as
-necessary:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 7 May 2010 13:02:54 +1000
-Subject: [PATCH] wireless: update for pm_qos_requirement to pm_qos_request rename
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- net/mac80211/scan.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/net/mac80211/scan.c b/net/mac80211/scan.c
-index e14c441..e1b0be7 100644
---- a/net/mac80211/scan.c
-+++ b/net/mac80211/scan.c
-@@ -510,7 +510,7 @@ static int ieee80211_scan_state_decision(struct ieee80211_local *local,
- 		bad_latency = time_after(jiffies +
- 				ieee80211_scan_get_channel_time(next_chan),
- 				local->leave_oper_channel_time +
--				usecs_to_jiffies(pm_qos_requirement(PM_QOS_NETWORK_LATENCY)));
-+				usecs_to_jiffies(pm_qos_request(PM_QOS_NETWORK_LATENCY)));
- 
- 		listen_int_exceeded = time_after(jiffies +
- 				ieee80211_scan_get_channel_time(next_chan),
--- 
-1.7.1
-
+Just overlapping additions. I fixed it up (see below) and can carry the
+fix as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+
+diff --cc arch/arm/mach-omap2/board-rx51-peripherals.c
+index 8179d55,020f354..0000000
+--- a/arch/arm/mach-omap2/board-rx51-peripherals.c
++++ b/arch/arm/mach-omap2/board-rx51-peripherals.c
+@@@ -287,35 -315,19 +315,48 @@@ static struct regulator_consumer_suppl
+  	.dev_name = "mmci-omap-hs.1",
+  };
+  
+ +static struct regulator_consumer_supply rx51_vmmc2_supplies[] = {
+ +	/* tlv320aic3x analog supplies */
+ +	{
+ +		.supply		= "AVDD",
+ +		.dev_name	= "2-0018",
+ +	},
+ +	{
+ +		.supply		= "DRVDD",
+ +		.dev_name	= "2-0018",
+ +	},
+ +	/* Keep vmmc as last item. It is not iterated for newer boards */
+ +	{
+ +		.supply		= "vmmc",
+ +		.dev_name	= "mmci-omap-hs.1",
+ +	},
+ +};
+ +
+ +static struct regulator_consumer_supply rx51_vio_supplies[] = {
+ +	/* tlv320aic3x digital supplies */
+ +	{
+ +		.supply		= "IOVDD",
+ +		.dev_name	= "2-0018"
+ +	},
+ +	{
+ +		.supply		= "DVDD",
+ +		.dev_name	= "2-0018"
+ +	},
+ +};
+ +
++ #if defined(CONFIG_FB_OMAP2) || defined(CONFIG_FB_OMAP2_MODULE)
++ extern struct platform_device rx51_display_device;
++ #endif
++ 
++ static struct regulator_consumer_supply rx51_vaux1_consumers[] = {
++ #if defined(CONFIG_FB_OMAP2) || defined(CONFIG_FB_OMAP2_MODULE)
++ 	{
++ 		.supply	= "vdds_sdi",
++ 		.dev	= &rx51_display_device.dev,
++ 	},
++ #endif
++ };
++ 
+  static struct regulator_init_data rx51_vaux1 = {
+  	.constraints = {
+  		.name			= "V28",
