@@ -1,42 +1,31 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: Tree for April 28 (logfs)
-Date: Sun, 9 May 2010 08:20:10 +0200
-Message-ID: <20100509062010.GA9485@elte.hu>
-References: <20100428164341.cee2911a.sfr@canb.auug.org.au>
- <20100428085604.0566092a.randy.dunlap@oracle.com>
- <20100505092020.66a461fa.randy.dunlap@oracle.com>
- <20100505203548.GI25129@logfs.org>
+From: Richard Purdie <rpurdie@rpsys.net>
+Subject: Re: [PATCH] backlight: l4f00242t03: Fix regulators handling code
+ in remove function
+Date: Sat, 08 May 2010 14:39:55 +0100
+Message-ID: <1273325995.4312.35.camel@rex>
+References: <1272315068.3037.99.camel@realization>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:51034 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750944Ab0EIGUU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 9 May 2010 02:20:20 -0400
-Content-Disposition: inline
-In-Reply-To: <20100505203548.GI25129@logfs.org>
+Received: from 93-97-173-237.zone5.bethere.co.uk ([93.97.173.237]:49750 "EHLO
+	tim.rpsys.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753147Ab0EIMGE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 9 May 2010 08:06:04 -0400
+In-Reply-To: <1272315068.3037.99.camel@realization>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: J??rn Engel <joern@logfs.org>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, logfs@logfs.org
+To: Alberto Panizzo <maramaopercheseimorto@gmail.com>
+Cc: linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 
-
-* J??rn Engel <joern@logfs.org> wrote:
-
-> On Wed, 5 May 2010 09:20:20 -0700, Randy Dunlap wrote:
-> > On Wed, 28 Apr 2010 08:56:04 -0700 Randy Dunlap wrote:
-> > 
-> > > When CONFIG_BLOCK is not enabled:
-> > > 
-> > > fs/logfs/super.c:142: error: implicit declaration of function 'bdev_get_queue'
-> > > fs/logfs/super.c:142: error: invalid type argument of '->' (have 'int')
-> > 
-> > Still have this build error in linux-next-May 5-2010.
+On Mon, 2010-04-26 at 22:51 +0200, Alberto Panizzo wrote:
+> Simple swap of regulator free
 > 
-> Should be fixed now.  Sorry about the delay.
+> Signed-off-by: Alberto Panizzo <maramaopercheseimorto@gmail.com>
+> ---
+>  drivers/video/backlight/l4f00242t03.c |    4 ++--
+>  1 files changed, 2 insertions(+), 2 deletions(-)
 
-Please post the fix itself as well, i've ran into this and so did others.
+Queued in the backlight tree, thanks!
 
-Thanks,
-
-	Ingo
+Richard
