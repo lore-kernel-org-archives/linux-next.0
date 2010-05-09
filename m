@@ -1,31 +1,51 @@
-From: Richard Purdie <rpurdie@rpsys.net>
-Subject: Re: [PATCH] backlight: l4f00242t03: Fix regulators handling code
- in remove function
-Date: Sat, 08 May 2010 14:39:55 +0100
-Message-ID: <1273325995.4312.35.camel@rex>
-References: <1272315068.3037.99.camel@realization>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: import of the rr quilt series
+Date: Mon, 10 May 2010 09:24:40 +1000
+Message-ID: <20100510092440.8c7909bc.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__10_May_2010_09_24_40_+1000_ZBH2CelSnuYmKUjo"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 93-97-173-237.zone5.bethere.co.uk ([93.97.173.237]:49750 "EHLO
-	tim.rpsys.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753147Ab0EIMGE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 9 May 2010 08:06:04 -0400
-In-Reply-To: <1272315068.3037.99.camel@realization>
+Received: from chilli.pcug.org.au ([203.10.76.44]:48491 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752767Ab0EIXYs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 9 May 2010 19:24:48 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alberto Panizzo <maramaopercheseimorto@gmail.com>
-Cc: linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 2010-04-26 at 22:51 +0200, Alberto Panizzo wrote:
-> Simple swap of regulator free
-> 
-> Signed-off-by: Alberto Panizzo <maramaopercheseimorto@gmail.com>
-> ---
->  drivers/video/backlight/l4f00242t03.c |    4 ++--
->  1 files changed, 2 insertions(+), 2 deletions(-)
+--Signature=_Mon__10_May_2010_09_24_40_+1000_ZBH2CelSnuYmKUjo
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Queued in the backlight tree, thanks!
+Hi Rusty,
 
-Richard
+The import of the rr quilt series produced this error:
+
+Importing rr based on v2.6.34-rc6-201
+fatal: Needed a single revision
+Unknown BASE
+
+since "v2.6.34-rc6-201" does not unambiguously identify a commit in
+Linus' tree.  I have updated the BASE in the series file to
+v2.6.34-rc6-201-g722154e (which seems sensible).
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__10_May_2010_09_24_40_+1000_ZBH2CelSnuYmKUjo
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkvnRDgACgkQjjKRsyhoI8yGNgCcCzL7+WBLQiejjWyMejfb0cbW
+bvEAoLvxlXQEJlS1smeRRjRPfAhgsCGd
+=X3CR
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__10_May_2010_09_24_40_+1000_ZBH2CelSnuYmKUjo--
