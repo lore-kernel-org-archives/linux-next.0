@@ -1,57 +1,35 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warnings after merge of the rr tree
-Date: Tue, 11 May 2010 01:53:19 +1000
-Message-ID: <20100511015319.24a07e09.sfr@canb.auug.org.au>
-References: <20100510134409.4bbf1873.sfr@canb.auug.org.au>
-	<20100510134620.2e06495b.sfr@canb.auug.org.au>
-	<201005102203.54784.rusty@rustcorp.com.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging-next tree with the rr
+ tree
+Date: Mon, 10 May 2010 09:41:05 -0700
+Message-ID: <20100510164105.GA15945@kroah.com>
+References: <20100510151537.6e987af4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__11_May_2010_01_53_19_+1000_S+QaYzv81S3nc/Fi"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45973 "EHLO smtps.tip.net.au"
+Received: from kroah.org ([198.145.64.141]:38015 "EHLO coco.kroah.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753641Ab0EJPxZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 10 May 2010 11:53:25 -0400
-In-Reply-To: <201005102203.54784.rusty@rustcorp.com.au>
+	id S1755695Ab0EJQyE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 10 May 2010 12:54:04 -0400
+Content-Disposition: inline
+In-Reply-To: <20100510151537.6e987af4.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>, John Church <j.church@ymail.com>, Larry Finger <Larry.Finger@lwfinger.net>
 
---Signature=_Tue__11_May_2010_01_53_19_+1000_S+QaYzv81S3nc/Fi
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, May 10, 2010 at 03:15:37PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the staging-next tree got a conflict in
+> drivers/staging/rtl8187se/r8180_core.c between commit
+> db8b06bcf94dbd02fba2601bee81ac4d9a626095
+> ("param:remove-useless-writable-charp") from the rr tree and commit
+> 3992db8fcb2ead240f311fc3e212443c5e1c43b9 ("Staging: rtl8187se: fix coding
+> style issues in r8180_core.c") from the staging-next tree.
+> 
+> I fixed it up (see below) and can carry the fixes as necessary.
 
-Hi Rusty,
+Thanks, the fix looks great.
 
-On Mon, 10 May 2010 22:03:53 +0930 Rusty Russell <rusty@rustcorp.com.au> wr=
-ote:
->
-> Thanks, these are harmless, and I had followup patches outside linux-next
-> which resolve them.
->=20
-> I've now included them in the linux-next part of the series.
-
-Excellent, thanks.  The problem with "harmless" warnings is that they
-make the important warnings harder to spot. :-(
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__11_May_2010_01_53_19_+1000_S+QaYzv81S3nc/Fi
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkvoK+8ACgkQjjKRsyhoI8wEvQCgn+d7jA8ElNqcEZ15sEDz413t
-xksAoJvmThJWu4dxc5nzZTymJ5u+5XYI
-=xolY
------END PGP SIGNATURE-----
-
---Signature=_Tue__11_May_2010_01_53_19_+1000_S+QaYzv81S3nc/Fi--
+greg k-h
