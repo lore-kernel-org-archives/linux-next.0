@@ -1,51 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rr tree with the net/wireless trees
-Date: Mon, 10 May 2010 11:57:51 +1000
-Message-ID: <20100510115751.fff295d8.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the backlight tree
+Date: Mon, 10 May 2010 12:43:04 +1000
+Message-ID: <20100510124304.2249532c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__10_May_2010_12_43_04_+1000_JNySHyVdKvuXstgs"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:41396 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754987Ab0EJCnM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 9 May 2010 22:43:12 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Richard Purdie <rpurdie@rpsys.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Michael Hennerich <michael.hennerich@analog.com>, Mike Frysinger <vapier@gentoo.org>
+
+--Signature=_Mon__10_May_2010_12_43_04_+1000_JNySHyVdKvuXstgs
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steve deRosier <steve@cozybit.com>, "John W. Linville" <linville@tuxdriver.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Rusty,
+Hi Richard,
 
-Today's linux-next merge of the rr tree got a conflict in
-drivers/net/wireless/libertas_tf/if_usb.c between commit
-e9bd5bcde7af27ebb92bb866afde5ef5e4f3dc6c ("libertastf: add configurable
-debug messages") from the net/wireless trees and commit
-8e4920955f49d45b4df026611e3daef8ed570bf3 ("param:lock-charp-simple") from
-the rr tree.
+After merging the backlight tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary.
--- 
+drivers/video/backlight/adp8860_bl.c: In function 'adp8860_led_probe':
+drivers/video/backlight/adp8860_bl.c:215: error: implicit declaration of fu=
+nction 'kzalloc'
+drivers/video/backlight/adp8860_bl.c:215: warning: assignment makes pointer=
+ from integer without a cast
+drivers/video/backlight/adp8860_bl.c:285: error: implicit declaration of fu=
+nction 'kfree'
+drivers/video/backlight/adp8860_bl.c: In function 'adp8860_probe':
+drivers/video/backlight/adp8860_bl.c:673: warning: assignment makes pointer=
+ from integer without a cast
+drivers/video/backlight/adp8860_bl.c:689: error: too few arguments to funct=
+ion 'backlight_device_register'
+
+Caused by commit 6f1a02240dba279a389fd4a4138445bd3f13f67f ("backlight:
+new driver for the ADP8860 backlight parts").  Use of kzalloc or kfree
+requires including linux/slab.h (see Rule 1 in
+Documentation/SubmitChecklist) and the prototype of
+backlight_device_register changed before v2.6.34-rc2.
+
+Was this even build tested?
+
+I have used the version of the backlight tree from next-20100507 for
+today.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/net/wireless/libertas_tf/if_usb.c
-index 4412c27,5f27411..0000000
---- a/drivers/net/wireless/libertas_tf/if_usb.c
-+++ b/drivers/net/wireless/libertas_tf/if_usb.c
-@@@ -811,14 -651,15 +811,17 @@@ static int if_usb_prog_firmware(struct 
-  	static int reset_count = 10;
-  	int ret = 0;
-  
- +	lbtf_deb_enter(LBTF_DEB_USB);
- +
-+ 	kparam_block_sysfs_write(fw_name);
-  	ret = request_firmware(&cardp->fw, lbtf_fw_name, &cardp->udev->dev);
-  	if (ret < 0) {
- -		printk(KERN_INFO "libertastf: firmware %s not found\n",
- -		       lbtf_fw_name);
- +		pr_err("request_firmware() failed with %#x\n", ret);
- +		pr_err("firmware %s not found\n", lbtf_fw_name);
-+ 		kparam_unblock_sysfs_write(fw_name);
-  		goto done;
-  	}
-+ 	kparam_unblock_sysfs_write(fw_name);
-  
-  	if (check_fwfile_format(cardp->fw->data, cardp->fw->size))
-  		goto release_fw;
+--Signature=_Mon__10_May_2010_12_43_04_+1000_JNySHyVdKvuXstgs
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkvncrgACgkQjjKRsyhoI8wFUwCeLRFfJQLf0DKUfjM4BfA/YM3g
+hXcAn3fmW/f6NAKGYfuR5xAaORAnpaBK
+=aa/0
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__10_May_2010_12_43_04_+1000_JNySHyVdKvuXstgs--
