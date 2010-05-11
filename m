@@ -1,46 +1,33 @@
-From: =?utf-8?B?TWljaGHFgiBOYXphcmV3aWN6?= <m.nazarewicz@samsung.com>
-Subject: Re: [PATCH -next] gadget: f_fs.c needs to include pagemap.h
-Date: Tue, 11 May 2010 12:02:03 +0200
-Message-ID: <op.vcjctphf7p4s8u@pikus>
-References: <20100510160234.54f76c0a.sfr@canb.auug.org.au>
- <20100510105136.eee3e58a.randy.dunlap@oracle.com>
+From: Konrad Rzeszutek Wilk <konrad@darnok.org>
+Subject: Re: linux-next: April 27 (iscsi_ibft)
+Date: Tue, 11 May 2010 13:58:48 -0400
+Message-ID: <201005111358.49290.konrad@darnok.org>
+References: <80edf231-ef31-4f21-ab1b-1a21fda35809@default> <20100427230121.GA31743@andromeda.dapyr.net> <4BD85393.8020400@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed	delsp=yes
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:29244 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757719Ab0EKKBj convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 11 May 2010 06:01:39 -0400
-In-reply-to: <20100510105136.eee3e58a.randy.dunlap@oracle.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, lud <linux-usb@vger.kernel.org>
+Content-Type: text/plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4BD85393.8020400@oracle.com>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Konrad Rzeszutek Wilk <konrad@kernel.org>, Linux-Kernel <linux-kernel@vger.kernel.org>, Peter Jones <pjones@redhat.com>, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 10 May 2010 19:51:36 +0200, Randy Dunlap <randy.dunlap@oracle.c=
-om> wrote:
-> Fix g_ffs build error, add a needed header file:
+> > It is all b/c we now use the 'struct acpi_table_ibft *ibft_addr' which
+> > is gone when !CONFIG_ACPI.
+> >
+> > Peter, if we did in an #ifdef !CONFIG_ACPI in iscsi_ibft.h and included
+> > a copy of the old ibft_struct that should work.
+> >
+> > Or we make the code dependent on CONFIG_ACPI (in the Kconfig
+> > file).
+> >
+> > Peter, Randy: Which option do you think makes more sense?
 >
-> drivers/usb/gadget/f_fs.c:1064:error: 'PAGE_CACHE_SIZE' undeclared (f=
-irst use in this function)
-> drivers/usb/gadget/f_fs.c:1065:error: 'PAGE_CACHE_SHIFT' undeclared (=
-first use in this function)
+> I think that you and Peter know more about that than I do.
+> I'd go for the Kconfig dependency.
 
-> --- linux-next-20100510.orig/drivers/usb/gadget/f_fs.c
-> +++ linux-next-20100510/drivers/usb/gadget/f_fs.c
-> @@ -28,6 +28,7 @@
->  /* #define VERBOSE_DEBUG */
-> #include <linux/blkdev.h>
-> +#include <linux/pagemap.h>
->  #include <asm/unaligned.h>
->  #include <linux/smp_lock.h>
-
-Needles to say, this looks reasonable.
-
---=20
-Best regards,                                        _     _
-| Humble Liege of Serenely Enlightened Majesty of  o' \,=3D./ `o
-| Computer Science,  Micha=C5=82 "mina86" Nazarewicz       (o o)
-+----[mina86*mina86.com]---[mina86*jabber.org]----ooO--(_)--Ooo--
+Found a way that makes this go away. This is by including #include 
+<linux/iscsi_ibft.h> in the module and it fixed the problem.
