@@ -1,38 +1,66 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: linux-next: manual merge of the omap_dss2 tree with the omap
- tree
-Date: Mon, 10 May 2010 13:20:56 -0700
-Message-ID: <20100510202056.GG16460@atomide.com>
-References: <20100507134334.75808884.sfr@canb.auug.org.au>
+From: "Hiremath, Vaibhav" <hvaibhav@ti.com>
+Subject: RE: linux-next: manual merge of the v4l-dvb tree with Linus' tree
+Date: Tue, 11 May 2010 10:49:37 +0530
+Message-ID: <19F8576C6E063C45BE387C64729E7394044E404AA4@dbde02.ent.ti.com>
+References: <20100510103249.55e033bd.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20100507134334.75808884.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Tomi Valkeinen <tomi.valkeinen@nokia.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Roger Quadros <roger.quadros@nokia.com>, Jarkko Nikula <jhnikula@gmail.com>, linux-omap@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from comal.ext.ti.com ([198.47.26.152]:35900 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753186Ab0EKFTw convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 11 May 2010 01:19:52 -0400
+In-Reply-To: <20100510103249.55e033bd.sfr@canb.auug.org.au>
+Content-Language: en-US
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>
 
-* Stephen Rothwell <sfr@canb.auug.org.au> [100506 22:05]:
-> Hi Tomi,
+> -----Original Message-----
+> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
+> Sent: Monday, May 10, 2010 6:03 AM
+> To: Mauro Carvalho Chehab
+> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Guennadi
+> Liakhovetski; Hiremath, Vaibhav
+> Subject: linux-next: manual merge of the v4l-dvb tree with Linus' tree
 > 
-> Today's linux-next merge of the omap_dss2 tree got a conflict in
-> arch/arm/mach-omap2/board-rx51-peripherals.c between commit
-> e87da74e34ad151e6ae75ebb7a7bf447f02c0004 ("omap: rx51: Add supplies for
-> the tlv320aic3x codec driver") from the omap tree and commit
-> a693839eab0292aa234d7a6f48d40389389baebb ("OMAP: RX51: Add "vdds_sdi"
-> supply voltage for SDI") from the omap_dss2 tree.
+> Hi Mauro,
 > 
-> Just overlapping additions. I fixed it up (see below) and can carry the
-> fix as necessary.
+> Today's linux-next merge of the v4l-dvb tree got a conflict in
+> drivers/media/video/Makefile between commit
+> b704e82a54591d69816b45f4324caf143f1a6fc8 ("V4L/DVB: V4L - Makfile:Removed
+> duplicate entry of davinci") from Linus' tree and commit
+> 3b5ce90284aff5f8683cfd08e0e1b38f73ad0aa8 ("V4L/DVB: V4L: SuperH Video
+> Output Unit (VOU) driver") from the v4l-dvb tree.
+> 
+> Just context changes.  I fixed it up (see below) and can carry the fix
+> for a while.
+[Hiremath, Vaibhav] Thanks Stephen,
 
-Thanks again Stephen. We will move the conflicting DSS board-*.c
-file changes over to omap for next.
+Looks ok to me.
 
-Tomi, do you want to do a branch of board-*.c patches for me to
-pull, or do you want me to just pick this one?
+Thanks,
+Vaibhav
 
-Regards,
-
-Tony
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc drivers/media/video/Makefile
+> index c51c386,cc93859..0000000
+> --- a/drivers/media/video/Makefile
+> +++ b/drivers/media/video/Makefile
+> @@@ -160,6 -166,10 +166,8 @@@ obj-$(CONFIG_VIDEO_MX3)			+=
+> mx3_camera
+>   obj-$(CONFIG_VIDEO_PXA27x)		+= pxa_camera.o
+>   obj-$(CONFIG_VIDEO_SH_MOBILE_CEU)	+= sh_mobile_ceu_camera.o
+> 
+>  -obj-$(CONFIG_ARCH_DAVINCI)		+= davinci/
+>  -
+> + obj-$(CONFIG_VIDEO_SH_VOU)		+= sh_vou.o
+> +
+>   obj-$(CONFIG_VIDEO_AU0828) += au0828/
+> 
+>   obj-$(CONFIG_USB_VIDEO_CLASS)	+= uvc/
