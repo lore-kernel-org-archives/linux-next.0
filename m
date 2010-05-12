@@ -1,36 +1,30 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] ibft: Use IBFT_SIGN instead of open-coding the search
- string.
-Date: Wed, 12 May 2010 12:33:23 -0700
-Message-ID: <20100512123323.2badc5a7.akpm@linux-foundation.org>
-References: <4BEAB683.8040600@redhat.com>
-	<1273674308-9366-1-git-send-email-pjones@redhat.com>
-	<201005121035.33199.konrad@kernel.org>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the usb tree with the v4l-dvb tree
+Date: Wed, 12 May 2010 12:49:34 -0700
+Message-ID: <20100512194934.GC31534@kroah.com>
+References: <20100512155750.c6633e4c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:38099 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1757129Ab0ELTdo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 12 May 2010 15:33:44 -0400
-In-Reply-To: <201005121035.33199.konrad@kernel.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Konrad Rzeszutek Wilk <konrad@kernel.org>
-Cc: Peter Jones <pjones@redhat.com>, Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org, gpxe-devel@etherboot.org, linux-next@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20100512155750.c6633e4c.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?iso-8859-1?Q?Jean-Fran=E7ois?= Moine <moinejf@free.fr>, Mauro Carvalho Chehab <mchehab@redhat.com>, Daniel Mack <daniel@caiaq.de>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 12 May 2010 10:35:32 -0400
-Konrad Rzeszutek Wilk <konrad@kernel.org> wrote:
-
-> Please also consider this patch with the others I've sent.
-> I've put this (and the other ones) on:
+On Wed, May 12, 2010 at 03:57:50PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
 > 
->  git://git.kernel.org/pub/scm/linux/kernel/git/konrad/ibft-2.6.git dev.ibft
+> Today's linux-next merge of the usb tree got a conflict in
+> drivers/media/video/gspca/gspca.c between commit
+> 659a02869f4a8be95df9efa76af02e53e400555f ("V4L/DVB: gspca - main: Convert
+> wMaxPacketSize from little endian 16 to cpu") from the v4l-dvb tree and
+> commit 42b4658241d4c16c838daf9d63c0029cd7269fe0 ("USB: rename
+> usb_buffer_alloc() and usb_buffer_free() users") from the usb tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary.
 
-Well, you're the maintainer and you have a git tree and I cannot tell
-the difference between an IBFT and a bar of soap.  So I suggest that
-you ask Stephen to permanently include your git tree in linux-next and
-send Linus a pull request in the 2.6.35-rc1 merge window like so many
-other people do?
+The fix looks great to me, thanks.
+
+greg k-h
