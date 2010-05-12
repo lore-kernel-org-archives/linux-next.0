@@ -1,62 +1,49 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the net tree
-Date: Wed, 12 May 2010 16:51:30 +1000
-Message-ID: <20100512165130.f808f3d1.sfr@canb.auug.org.au>
-References: <20100512125653.38f442c5.sfr@canb.auug.org.au>
-	<20100511.231339.22535803.davem@davemloft.net>
+From: Tomi Valkeinen <tomi.valkeinen@nokia.com>
+Subject: Re: linux-next: manual merge of the omap_dss2 tree with the omap
+ tree
+Date: Wed, 12 May 2010 11:59:04 +0300
+Message-ID: <1273654744.2814.14.camel@tubuntu.research.nokia.com>
+References: <20100507134334.75808884.sfr@canb.auug.org.au>
+	 <20100510202056.GG16460@atomide.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__12_May_2010_16_51_30_+1000_coEJ9PXMt2d0oT7R"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40556 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750778Ab0ELGvg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 12 May 2010 02:51:36 -0400
-In-Reply-To: <20100511.231339.22535803.davem@davemloft.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, kaber@trash.net, andreas.meissner@sphairon.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20100510202056.GG16460@atomide.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: ext Tony Lindgren <tony@atomide.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Quadros Roger (Nokia-D/Helsinki)" <roger.quadros@nokia.com>, Jarkko Nikula <jhnikula@gmail.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__12_May_2010_16_51_30_+1000_coEJ9PXMt2d0oT7R
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Hi Dave,
+On Mon, 2010-05-10 at 22:20 +0200, ext Tony Lindgren wrote:
+> * Stephen Rothwell <sfr@canb.auug.org.au> [100506 22:05]:
+> > Hi Tomi,
+> > 
+> > Today's linux-next merge of the omap_dss2 tree got a conflict in
+> > arch/arm/mach-omap2/board-rx51-peripherals.c between commit
+> > e87da74e34ad151e6ae75ebb7a7bf447f02c0004 ("omap: rx51: Add supplies for
+> > the tlv320aic3x codec driver") from the omap tree and commit
+> > a693839eab0292aa234d7a6f48d40389389baebb ("OMAP: RX51: Add "vdds_sdi"
+> > supply voltage for SDI") from the omap_dss2 tree.
+> > 
+> > Just overlapping additions. I fixed it up (see below) and can carry the
+> > fix as necessary.
+> 
+> Thanks again Stephen. We will move the conflicting DSS board-*.c
+> file changes over to omap for next.
+> 
+> Tomi, do you want to do a branch of board-*.c patches for me to
+> pull, or do you want me to just pick this one?
 
-On Tue, 11 May 2010 23:13:39 -0700 (PDT) David Miller <davem@davemloft.net>=
- wrote:
->
-> Tricky merge :-)
+I think it's ok to pick just this one. It's just adds a regulator
+supply, and doesn't interfere with anything. I just need to make sure
+linux-omap's for-next is merged first, before I send my pull request.
 
-Yeah, I got it right the second time :-)
+I made a branch for it, based on linux-omap/for-next:
+git://gitorious.org/linux-omap-dss2/linux.git for-tony
 
-> I'll clear all of these issues up for you tonight Stephen, thanks!
+And I dropped the patch from my for-next branch.
 
-Thanks.
-
-> There should have been a merge conflict in
-> Documentation/feature-removal-schedule.txt due to some recent
-> netfilter commits too, I'll take care of that too of course :)
-
-Yeah, but I have stopped reporting those when they are just clashes
-between people adding new entries at the end.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__12_May_2010_16_51_30_+1000_coEJ9PXMt2d0oT7R
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkvqT/IACgkQjjKRsyhoI8zWTgCgk88/Y4c//Moi9u67xWJO+u9l
-tK8AoL0p2WQKHc1HXQ5cnVDIo0ZS7lHU
-=0WTZ
------END PGP SIGNATURE-----
-
---Signature=_Wed__12_May_2010_16_51_30_+1000_coEJ9PXMt2d0oT7R--
+ Tomi
