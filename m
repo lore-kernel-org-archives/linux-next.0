@@ -1,46 +1,40 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: Tree for May 12 (netfilter: xt_TEE)
-Date: Wed, 12 May 2010 14:53:39 -0700 (PDT)
-Message-ID: <20100512.145339.00461355.davem@davemloft.net>
-References: <20100512085045.483f0e2d.randy.dunlap@oracle.com>
-	<alpine.LSU.2.01.1005122210180.11190@obet.zrqbmnf.qr>
-	<20100512131942.f487b3a9.randy.dunlap@oracle.com>
+From: "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH] ibft: Use IBFT_SIGN instead of open-coding the search
+ string.
+Date: Wed, 12 May 2010 16:53:11 -0700
+Message-ID: <4BEB3F67.4050608@zytor.com>
+References: <4BEAB683.8040600@redhat.com>	<1273674308-9366-1-git-send-email-pjones@redhat.com>	<201005121035.33199.konrad@kernel.org> <20100512123323.2badc5a7.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:41191
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755851Ab0ELVxc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 12 May 2010 17:53:32 -0400
-In-Reply-To: <20100512131942.f487b3a9.randy.dunlap@oracle.com>
+Received: from terminus.zytor.com ([198.137.202.10]:51948 "EHLO mail.zytor.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750805Ab0EMAAZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 12 May 2010 20:00:25 -0400
+In-Reply-To: <20100512123323.2badc5a7.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: randy.dunlap@oracle.com
-Cc: jengelh@medozas.de, kaber@trash.net, sfr@canb.auug.org.au, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, sebastian.classen@freenet.ag
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Konrad Rzeszutek Wilk <konrad@kernel.org>, Peter Jones <pjones@redhat.com>, Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org, gpxe-devel@etherboot.org, linux-next@vger.kernel.org
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Date: Wed, 12 May 2010 13:19:42 -0700
-
-> On Wed, 12 May 2010 22:11:35 +0200 (CEST) Jan Engelhardt wrote:
+On 05/12/2010 12:33 PM, Andrew Morton wrote:
+> On Wed, 12 May 2010 10:35:32 -0400
+> Konrad Rzeszutek Wilk <konrad@kernel.org> wrote:
 > 
->> parent cba7a98a474a4f2a9316473734ba76829191a78a (v2.6.34-rc5-1489-gcba7a98)
->> commit cff884ea0de4bf8729ac33bb5d98ac9d39d09019
->> Author: Jan Engelhardt <jengelh@medozas.de>
->> Date:   Wed May 12 22:10:03 2010 +0200
->> 
->> netfilter: xtables: add missing depends for xt_TEE
->> 
->> Aviod these link-time errors when IPV6=m, XT_TEE=y:
->> 
->> net/built-in.o: In function `tee_tg_route6':
->> xt_TEE.c:(.text+0x45ca5): undefined reference to `ip6_route_output'
->> net/built-in.o: In function `tee_tg6':
->> xt_TEE.c:(.text+0x45d79): undefined reference to `ip6_local_out'
->> 
->> Signed-off-by: Jan Engelhardt <jengelh@medozas.de>
- ...
-> Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
+>> Please also consider this patch with the others I've sent.
+>> I've put this (and the other ones) on:
+>>
+>>  git://git.kernel.org/pub/scm/linux/kernel/git/konrad/ibft-2.6.git dev.ibft
+> 
+> Well, you're the maintainer and you have a git tree and I cannot tell
+> the difference between an IBFT and a bar of soap.  So I suggest that
+> you ask Stephen to permanently include your git tree in linux-next and
+> send Linus a pull request in the 2.6.35-rc1 merge window like so many
+> other people do?
+> 
 
-I'll apply this directly, thanks everyone.
+Either that or send it via Len Brown, since iBFT really is an ACPI
+extension.
+
+	-hpa
