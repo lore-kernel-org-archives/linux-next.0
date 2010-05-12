@@ -1,68 +1,36 @@
-From: reinette chatre <reinette.chatre@intel.com>
-Subject: Re: linux-next: manual merge of the net tree with the
- wireless-current tree
-Date: Wed, 12 May 2010 09:15:43 -0700
-Message-ID: <1273680943.2370.9533.camel@rchatre-DESK>
-References: <20100512121539.8956720a.sfr@canb.auug.org.au>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] ibft: Use IBFT_SIGN instead of open-coding the search
+ string.
+Date: Wed, 12 May 2010 12:33:23 -0700
+Message-ID: <20100512123323.2badc5a7.akpm@linux-foundation.org>
+References: <4BEAB683.8040600@redhat.com>
+	<1273674308-9366-1-git-send-email-pjones@redhat.com>
+	<201005121035.33199.konrad@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20100512121539.8956720a.sfr@canb.auug.org.au>
-Sender: netdev-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Berg, Johannes" <johannes.berg@intel.com>, "John W. Linville" <linville@tuxdriver.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:38099 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1757129Ab0ELTdo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 12 May 2010 15:33:44 -0400
+In-Reply-To: <201005121035.33199.konrad@kernel.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Konrad Rzeszutek Wilk <konrad@kernel.org>
+Cc: Peter Jones <pjones@redhat.com>, Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org, gpxe-devel@etherboot.org, linux-next@vger.kernel.org
 
-Hi Stephen,
+On Wed, 12 May 2010 10:35:32 -0400
+Konrad Rzeszutek Wilk <konrad@kernel.org> wrote:
 
-On Tue, 2010-05-11 at 19:15 -0700, Stephen Rothwell wrote:
-> Today's linux-next merge of the net tree got a conflict in
-> drivers/net/wireless/iwlwifi/iwl-dev.h between commit
-> 562db532760827f6ce30801a08e6b568848bc9f2 ("iwlagn: wait for
-> asynchronous
-> firmware loading") from the wireless-current tree and commit
-> ee525d13f501baeaa33209620398adaf0a820629 ("iwlwifi: move 3945 specific
-> data into union") from the net tree.
+> Please also consider this patch with the others I've sent.
+> I've put this (and the other ones) on:
 > 
-> Just context changes. I fixed it up (see below) and can carry the fix
-> for
-> a while.
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc drivers/net/wireless/iwlwifi/iwl-dev.h
-> index 4d4c651,58c69a5..0000000
-> --- a/drivers/net/wireless/iwlwifi/iwl-dev.h
-> +++ b/drivers/net/wireless/iwlwifi/iwl-dev.h
-> @@@ -1304,12 -1274,6 +1274,8 @@@ struct iwl_priv 
->         struct delayed_work alive_start;
->         struct delayed_work scan_check;
->   
->  +      struct completion firmware_loading_complete;
->  +
+>  git://git.kernel.org/pub/scm/linux/kernel/git/konrad/ibft-2.6.git dev.ibft
 
-Please note that this member of iwl_priv is now located in two
-places ... here and also in the device specific union a few lines up
-inside the _agn struct. In the code it is indeed the one in the _agn
-struct that is being used (see usage in iwl-agn.c), so adding this line
-is not necessary.
-
-This should not cause any problems with driver operation and can
-probably remain as such if indeed it is cleaned up somewhere else before
-it hits you again or linux-2.6.
-
-> -       /*For 3945 only*/
-> -       struct delayed_work thermal_periodic;
-> -       struct delayed_work rfkill_poll;
-> - 
->         /* TX Power */
->         s8 tx_power_user_lmt;
->         s8 tx_power_device_lmt;
-> 
-> 
-
-Reinette
-
-
+Well, you're the maintainer and you have a git tree and I cannot tell
+the difference between an IBFT and a bar of soap.  So I suggest that
+you ask Stephen to permanently include your git tree in linux-next and
+send Linus a pull request in the 2.6.35-rc1 merge window like so many
+other people do?
