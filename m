@@ -1,40 +1,63 @@
-From: "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH] ibft: Use IBFT_SIGN instead of open-coding the search
- string.
-Date: Wed, 12 May 2010 16:53:11 -0700
-Message-ID: <4BEB3F67.4050608@zytor.com>
-References: <4BEAB683.8040600@redhat.com>	<1273674308-9366-1-git-send-email-pjones@redhat.com>	<201005121035.33199.konrad@kernel.org> <20100512123323.2badc5a7.akpm@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the net tree with the
+ wireless-current tree
+Date: Thu, 13 May 2010 11:02:48 +1000
+Message-ID: <20100513110248.06cc6ee7.sfr@canb.auug.org.au>
+References: <20100512121539.8956720a.sfr@canb.auug.org.au>
+	<1273680943.2370.9533.camel@rchatre-DESK>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__13_May_2010_11_02_48_+1000_RdT26GH2h/3z9OPG"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from terminus.zytor.com ([198.137.202.10]:51948 "EHLO mail.zytor.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:45253 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750805Ab0EMAAZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 12 May 2010 20:00:25 -0400
-In-Reply-To: <20100512123323.2badc5a7.akpm@linux-foundation.org>
+	id S1752947Ab0EMBC4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 12 May 2010 21:02:56 -0400
+In-Reply-To: <1273680943.2370.9533.camel@rchatre-DESK>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Konrad Rzeszutek Wilk <konrad@kernel.org>, Peter Jones <pjones@redhat.com>, Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org, gpxe-devel@etherboot.org, linux-next@vger.kernel.org
+To: reinette chatre <reinette.chatre@intel.com>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Berg, Johannes" <johannes.berg@intel.com>, "John W. Linville" <linville@tuxdriver.com>
 
-On 05/12/2010 12:33 PM, Andrew Morton wrote:
-> On Wed, 12 May 2010 10:35:32 -0400
-> Konrad Rzeszutek Wilk <konrad@kernel.org> wrote:
-> 
->> Please also consider this patch with the others I've sent.
->> I've put this (and the other ones) on:
->>
->>  git://git.kernel.org/pub/scm/linux/kernel/git/konrad/ibft-2.6.git dev.ibft
-> 
-> Well, you're the maintainer and you have a git tree and I cannot tell
-> the difference between an IBFT and a bar of soap.  So I suggest that
-> you ask Stephen to permanently include your git tree in linux-next and
-> send Linus a pull request in the 2.6.35-rc1 merge window like so many
-> other people do?
-> 
+--Signature=_Thu__13_May_2010_11_02_48_+1000_RdT26GH2h/3z9OPG
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Either that or send it via Len Brown, since iBFT really is an ACPI
-extension.
+Hi Reinette,
 
-	-hpa
+On Wed, 12 May 2010 09:15:43 -0700 reinette chatre <reinette.chatre@intel.c=
+om> wrote:
+>
+> Please note that this member of iwl_priv is now located in two
+> places ... here and also in the device specific union a few lines up
+> inside the _agn struct. In the code it is indeed the one in the _agn
+> struct that is being used (see usage in iwl-agn.c), so adding this line
+> is not necessary.
+>=20
+> This should not cause any problems with driver operation and can
+> probably remain as such if indeed it is cleaned up somewhere else before
+> it hits you again or linux-2.6.
+
+Thanks for pointing this out.  I will update my merge resolution in
+linux-next and I assume it will be done correctly when Dave or John also
+do that merge.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__13_May_2010_11_02_48_+1000_RdT26GH2h/3z9OPG
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkvrT7gACgkQjjKRsyhoI8yKIQCdEdoBjymrK72iUFURllMjQUuW
+bMkAn0DfK3r029BFvcXcsqJbZEhf1OLD
+=eWUG
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__13_May_2010_11_02_48_+1000_RdT26GH2h/3z9OPG--
