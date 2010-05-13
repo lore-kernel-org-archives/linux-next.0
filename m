@@ -1,47 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the v4l-dvb tree with Linus' tree
-Date: Thu, 13 May 2010 11:52:58 +1000
-Message-ID: <20100513115258.41b01dec.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the v4l-dvb tree
+Date: Thu, 13 May 2010 13:00:16 +1000
+Message-ID: <20100513130016.25b76c3f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__13_May_2010_13_00_16_+1000_1nXgIXgpmQpV0h93"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48467 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:42988 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753424Ab0EMBw7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 12 May 2010 21:52:59 -0400
+	id S1753867Ab0EMDAW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 12 May 2010 23:00:22 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+
+--Signature=_Thu__13_May_2010_13_00_16_+1000_1nXgIXgpmQpV0h93
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi Mauro,
 
-Today's linux-next merge of the v4l-dvb tree got a conflict in
-drivers/input/evdev.c between commit
-58b939959d228681208ba997595411fddc860849 ("Input: scancode in
-get/set_keycodes should be unsigned") from Linus' tree and commit
-edeada2cde748860846784cf3e5518d7c7c51ca2 ("V4L/DVB: input: Add support
-for EVIO[CS]GKEYCODEBIG") from the v4l-dvb tree.
+Today's linux-next merge of the v4l-dvb tree produced a mountain of
+conflicts so I have used the version from next-20100512 for today.
+Please either merge Linus' tree into yours or rebase you tree on top of
+Linus' tree.  There are a large number of commits that are in your tree
+that have been rebased before being included into Linus' tree and this
+caused conflicts with further changes in your tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix
-for a while.
--- 
+Please consider changing your work flow so that you don't rebase things
+in your tree before sending them to Linus.
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/input/evdev.c
-index 2ee6c7a,1730b5b..0000000
---- a/drivers/input/evdev.c
-+++ b/drivers/input/evdev.c
-@@@ -515,7 -513,9 +515,9 @@@ static long evdev_do_ioctl(struct file 
-  	struct input_absinfo abs;
-  	struct ff_effect effect;
-  	int __user *ip = (int __user *)p;
-+ 	struct keycode_table_entry kt, *kt_p = p;
-+ 	char scancode[16];
- -	int i, t, u, v;
- +	unsigned int i, t, u, v;
-  	int error;
-  
-  	switch (cmd) {
+--Signature=_Thu__13_May_2010_13_00_16_+1000_1nXgIXgpmQpV0h93
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkvra0AACgkQjjKRsyhoI8wRxwCgqWVgiAAF5eMRifmVsJDthfdO
+DgQAoIPy6wp+rH3m4tnwrOPut7QlWU/k
+=3Dir
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__13_May_2010_13_00_16_+1000_1nXgIXgpmQpV0h93--
