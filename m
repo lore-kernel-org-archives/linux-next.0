@@ -1,50 +1,78 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: manual merge of the v4l-dvb tree
-Date: Thu, 13 May 2010 02:18:33 -0300
-Message-ID: <4BEB8BA9.5070001@infradead.org>
+Date: Thu, 13 May 2010 15:59:39 +1000
+Message-ID: <20100513155939.c73f3747.sfr@canb.auug.org.au>
 References: <20100513130016.25b76c3f.sfr@canb.auug.org.au>
+	<4BEB8BA9.5070001@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__13_May_2010_15_59_39_+1000_r=xAHjBByf4o./JO"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:50640 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752003Ab0EMFSh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 13 May 2010 01:18:37 -0400
-In-Reply-To: <20100513130016.25b76c3f.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:52666 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752308Ab0EMF7o (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 13 May 2010 01:59:44 -0400
+In-Reply-To: <4BEB8BA9.5070001@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Stephen Rothwell wrote:
-> Hi Mauro,
-> 
-> Today's linux-next merge of the v4l-dvb tree produced a mountain of
-> conflicts so I have used the version from next-20100512 for today.
-> Please either merge Linus' tree into yours or rebase you tree on top of
-> Linus' tree.  There are a large number of commits that are in your tree
-> that have been rebased before being included into Linus' tree and this
-> caused conflicts with further changes in your tree.
+--Signature=_Thu__13_May_2010_15_59_39_+1000_r=xAHjBByf4o./JO
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'll be pulling from Linus on my tree. I did it yesterday, after my last changes,
-but it seems that I've made a huge mistake... Several conflicts that I've already
-fixed reappeared. I suspect that I've merged it with an older temporary branch
-by mistake.
+Hi Mauro,
 
-Anyway, it is fixed, by simply going back to the last reflog before the error,
-and re-merging the new patches again. A pull from Linus didn't show any conflict.
+On Thu, 13 May 2010 02:18:33 -0300 Mauro Carvalho Chehab <mchehab@infradead=
+.org> wrote:
+>
+> I'll be pulling from Linus on my tree. I did it yesterday, after my last =
+changes,
+> but it seems that I've made a huge mistake... Several conflicts that I've=
+ already
+> fixed reappeared. I suspect that I've merged it with an older temporary b=
+ranch
+> by mistake.
 
-So, it should be now OK for you to merge.
+That explains it.
 
-> Please consider changing your work flow so that you don't rebase things
-> in your tree before sending them to Linus.
+> Anyway, it is fixed, by simply going back to the last reflog before the e=
+rror,
+> and re-merging the new patches again. A pull from Linus didn't show any c=
+onflict.
+>=20
+> So, it should be now OK for you to merge.
 
-I'm already in process of changing my procedure. The problem is that I didn't find
-yet a perfect way to handle my tree. I'm getting some new ideas, and intend to implement
-them for 2.6.35 development cycle (linux-next for 2.6.36).
+Excellent, thanks.
 
--- 
+> > Please consider changing your work flow so that you don't rebase things
+> > in your tree before sending them to Linus.
+>=20
+> I'm already in process of changing my procedure. The problem is that I di=
+dn't find
+> yet a perfect way to handle my tree. I'm getting some new ideas, and inte=
+nd to implement
+> them for 2.6.35 development cycle (linux-next for 2.6.36).
 
+OK, good.  The process doesn't have to be perfect ... ;-)
+
+--=20
 Cheers,
-Mauro
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__13_May_2010_15_59_39_+1000_r=xAHjBByf4o./JO
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkvrlUsACgkQjjKRsyhoI8ymEgCeNrgoskK7HghN0x5AH0N4Ght8
+HpcAoIHdREljHmDSOP3WXP7105G7ifFu
+=5JVO
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__13_May_2010_15_59_39_+1000_r=xAHjBByf4o./JO--
