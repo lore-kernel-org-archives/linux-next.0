@@ -1,58 +1,37 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the kgdb tree
-Date: Fri, 14 May 2010 14:14:06 +1000
-Message-ID: <20100514141406.68a6bf6f.sfr@canb.auug.org.au>
+From: Sage Weil <sage@newdream.net>
+Subject: Re: linux-next: manual merge of the ceph tree with Linus' tree
+Date: Thu, 13 May 2010 21:25:45 -0700 (PDT)
+Message-ID: <Pine.LNX.4.64.1005132124170.25892@cobra.newdream.net>
+References: <20100514100747.42445cdf.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38306 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751344Ab0ENEOL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 14 May 2010 00:14:11 -0400
+Received: from cobra.newdream.net ([66.33.216.30]:40580 "EHLO
+	cobra.newdream.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751344Ab0ENEWg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 14 May 2010 00:22:36 -0400
+In-Reply-To: <20100514100747.42445cdf.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Don Zickus <dzickus@redhat.com>, Jason Wessel <jason.wessel@windriver.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Cheng Renquan <crquan@gmail.com>
 
-Hi all,
+Hi Stephen,
 
-Today's linux-next merge of the tip tree got a conflict in
-kernel/Makefile between commit 7d63ecbc5ce463c8ba60e357eafaf47774521f1a
-("Move kernel/kgdb.c to kernel/debug/debug_core.c") from the kgdb tree
-and commit 58687acba59266735adb8ccd9b5b9aa2c7cd205b ("lockup_detector:
-Combine nmi_watchdog and softlockup detector") from the tip tree.
+On Fri, 14 May 2010, Stephen Rothwell wrote:
+> Hi Sage,
+> 
+> Today's linux-next merge of the ceph tree got a conflict in
+> fs/ceph/super.c between commit 5dfc589a8467470226feccdc50f1b32713318e7b
+> ("ceph: unregister bdi before kill_anon_super releases device name") from
+> Linus' tree and commits 9f2a2a1faa0fd990d4930605583a67d7dff28bff ("ceph:
+> use ceph_sb_to_client instead of ceph_client") and
+> c72b09ba224e6f2c00bcf810a0a62059fcf405f7 ("ceph: name bdi ceph-%d instead
+> of major:minor") from the ceph tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix
-as necessary.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Aie, sorry...  I rebased everything queued for the next window yesterday 
+but forgot to update the for-next tag.  These conflicts should all 
+disappear next time around.
 
-diff --cc kernel/Makefile
-index 4313d0e,34d123b..0000000
---- a/kernel/Makefile
-+++ b/kernel/Makefile
-@@@ -68,17 -68,16 +68,17 @@@ obj-$(CONFIG_USER_NS) += user_namespace
-  obj-$(CONFIG_PID_NS) += pid_namespace.o
-  obj-$(CONFIG_IKCONFIG) += configs.o
-  obj-$(CONFIG_RESOURCE_COUNTERS) += res_counter.o
-- obj-$(CONFIG_STOP_MACHINE) += stop_machine.o
-+ obj-$(CONFIG_SMP) += stop_machine.o
-  obj-$(CONFIG_KPROBES_SANITY_TEST) += test_kprobes.o
- -obj-$(CONFIG_AUDIT) += audit.o auditfilter.o audit_watch.o
- +obj-$(CONFIG_AUDIT) += audit.o auditfilter.o
-  obj-$(CONFIG_AUDITSYSCALL) += auditsc.o
- -obj-$(CONFIG_GCOV_KERNEL) += gcov/
- +obj-$(CONFIG_AUDIT_WATCH) += audit_watch.o
-  obj-$(CONFIG_AUDIT_TREE) += audit_tree.o
- +obj-$(CONFIG_GCOV_KERNEL) += gcov/
-  obj-$(CONFIG_KPROBES) += kprobes.o
- -obj-$(CONFIG_KGDB) += kgdb.o
- +obj-$(CONFIG_KGDB) += debug/
-- obj-$(CONFIG_DETECT_SOFTLOCKUP) += softlockup.o
-  obj-$(CONFIG_DETECT_HUNG_TASK) += hung_task.o
-+ obj-$(CONFIG_LOCKUP_DETECTOR) += watchdog.o
-  obj-$(CONFIG_GENERIC_HARDIRQS) += irq/
-  obj-$(CONFIG_SECCOMP) += seccomp.o
-  obj-$(CONFIG_RCU_TORTURE_TEST) += rcutorture.o
+Thanks!
+sage
