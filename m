@@ -1,27 +1,22 @@
 From: Peter =?iso-8859-1?q?H=FCwe?= <PeterHuewe@gmx.de>
 Subject: Re: [PATCH] media/IR: Add missing include file to rc-map.c
-Date: Fri, 14 May 2010 13:22:41 +0200
-Message-ID: <201005141322.41370.PeterHuewe@gmx.de>
-References: <201005051720.22617.PeterHuewe@gmx.de>
-	<201005112042.14889.PeterHuewe@gmx.de>
-	<20100514060240.GD12002@linux-sh.org>
+Date: Fri, 14 May 2010 13:26:51 +0200
+Message-ID: <201005141326.52099.PeterHuewe@gmx.de>
+References: <201005051720.22617.PeterHuewe@gmx.de> <201005112042.14889.PeterHuewe@gmx.de> <20100514060240.GD12002@linux-sh.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.gmx.net ([213.165.64.20]:32974 "HELO mail.gmx.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
+	id S1754563Ab0ENL0z (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 14 May 2010 07:26:55 -0400
 In-Reply-To: <20100514060240.GD12002@linux-sh.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Sender: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: linux-next@vger.kernel.org
-Cc: linux-mips@linux-mips.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, David H?rdeman <david@hardeman.nu>, Mauro Carvalho Chehab <mchehab@infradead.org>, linuxppc-dev@ozlabs.org, linux-m68k@lists.linux-m68k.org, Paul Mundt <lethal@linux-sh.org>, linux-media@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Cc: Paul Mundt <lethal@linux-sh.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, linuxppc-dev@ozlabs.org, David H?rdeman <david@hardeman.nu>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sh@vger.kernel.org, linux-mips@linux-mips.org, linux-m68k@lists.linux-m68k.org
 
 From: Peter Huewe <peterhuewe@gmx.de>
 
