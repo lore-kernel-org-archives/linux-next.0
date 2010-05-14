@@ -1,114 +1,61 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Fixups for secretlab/next-devicetree branch
-Date: Fri, 14 May 2010 10:59:01 +0200
-Message-ID: <AANLkTimktQ8gM5789JcpCi3N1cRc7mWGu-k-I-1J6B2f@mail.gmail.com>
+From: Peter =?iso-8859-1?q?H=FCwe?= <PeterHuewe@gmx.de>
+Subject: Re: [PATCH] media/IR: Add missing include file to rc-map.c
+Date: Fri, 14 May 2010 13:22:41 +0200
+Message-ID: <201005141322.41370.PeterHuewe@gmx.de>
+References: <201005051720.22617.PeterHuewe@gmx.de>
+	<201005112042.14889.PeterHuewe@gmx.de>
+	<20100514060240.GD12002@linux-sh.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=000e0cd2435c49235004868a17f8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gx0-f217.google.com ([209.85.217.217]:62156 "EHLO
-	mail-gx0-f217.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751499Ab0ENI7X (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 14 May 2010 04:59:23 -0400
-Received: by gxk9 with SMTP id 9so1464971gxk.8
-        for <linux-next@vger.kernel.org>; Fri, 14 May 2010 01:59:22 -0700 (PDT)
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <20100514060240.GD12002@linux-sh.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Sender: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+To: linux-next@vger.kernel.org
+Cc: linux-mips@linux-mips.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, David H?rdeman <david@hardeman.nu>, Mauro Carvalho Chehab <mchehab@infradead.org>, linuxppc-dev@ozlabs.org, linux-m68k@lists.linux-m68k.org, Paul Mundt <lethal@linux-sh.org>, linux-media@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---000e0cd2435c49235004868a17f8
-Content-Type: text/plain; charset=ISO-8859-1
+From: Peter Huewe <peterhuewe@gmx.de>
 
-Hi Stephen.
+This patch adds a missing include linux/delay.h to prevent
+build failures[1-5]
 
-I've pushed out changes to my next-devicetree branch that cause a
-conflict and a build error when merged with linux-next.  I could pull
-in the conflicting trees, but I'm not sure whether or not that is a
-good idea.  In the mean time I've attached the patches needed to
-resolve the problems.
+Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+---
+Forwarded to linux-next mailing list - 
+breakage still exists in linux-next of 20100514 - please apply
 
-Cheers,
-g.
+KernelVersion: linux-next-20100505
 
+References:
+[1] http://kisskb.ellerman.id.au/kisskb/buildresult/2571452/
+[2] http://kisskb.ellerman.id.au/kisskb/buildresult/2571188/
+[3] http://kisskb.ellerman.id.au/kisskb/buildresult/2571479/
+[4] http://kisskb.ellerman.id.au/kisskb/buildresult/2571429/
+[5] http://kisskb.ellerman.id.au/kisskb/buildresult/2571432/
+
+drivers/media/IR/rc-map.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/media/IR/rc-map.c b/drivers/media/IR/rc-map.c
+index caf6a27..46a8f15 100644
+--- a/drivers/media/IR/rc-map.c
++++ b/drivers/media/IR/rc-map.c
+@@ -14,6 +14,7 @@
+ 
+ #include <media/ir-core.h>
+ #include <linux/spinlock.h>
++#include <linux/delay.h>
+ 
+ /* Used to handle IR raw handler extensions */
+ static LIST_HEAD(rc_map_list);
 -- 
-Grant Likely, B.Sc., P.Eng.
-Secret Lab Technologies Ltd.
-
---000e0cd2435c49235004868a17f8
-Content-Type: application/octet-stream; name=0001-fixup-on-merge
-Content-Disposition: attachment; filename=0001-fixup-on-merge
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_g96rytm80
-
-Y29tbWl0IDMyZDNlN2JkYjc0OWQzYmI5Y2JkOGFmMTk4YzZiZjhlZjRiN2YzY2QKTWVyZ2U6IGIw
-ODM2OWQgMjZkZmI2MgpBdXRob3I6IEdyYW50IExpa2VseSA8Z3JhbnQubGlrZWx5QHNlY3JldGxh
-Yi5jYT4KRGF0ZTogICBUaHUgTWF5IDEzIDEwOjAwOjQ3IDIwMTAgKzAyMDAKCiAgICBNZXJnZSBy
-ZW1vdGUgYnJhbmNoICdsaW51eC1uZXh0JyBpbnRvIHNlY3JldGxhYi90ZXN0LWRldmljZXRyZWUK
-ICAgIAogICAgQ29uZmxpY3RzOgogICAgCWRyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtY3BtLmMKICAg
-IAlkcml2ZXJzL2kyYy9idXNzZXMvaTJjLW1wYy5jCiAgICAJZHJpdmVycy9zZXJpYWwvbXBjNTJ4
-eF91YXJ0LmMKCmRpZmYgLS1jYyBkcml2ZXJzL2kyYy9idXNzZXMvaTJjLWNwbS5jCmluZGV4IDc2
-MzdlMTIsMTY5NDhkYi4uYjAyYjQ1MwotLS0gYS9kcml2ZXJzL2kyYy9idXNzZXMvaTJjLWNwbS5j
-CisrKyBiL2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtY3BtLmMKQEBAIC00NDAsOCAtNDQwLDggKzQ0
-MCw4IEBAQCBzdGF0aWMgaW50IF9fZGV2aW5pdCBjcG1faTJjX3NldHVwKHN0cnUKICAKICAJaW5p
-dF93YWl0cXVldWVfaGVhZCgmY3BtLT5pMmNfd2FpdCk7CiAgCiAtCWNwbS0+aXJxID0gb2ZfaXJx
-X3RvX3Jlc291cmNlKG9mZGV2LT5ub2RlLCAwLCBOVUxMKTsKICsJY3BtLT5pcnEgPSBvZl9pcnFf
-dG9fcmVzb3VyY2Uob2ZkZXYtPmRldi5vZl9ub2RlLCAwLCBOVUxMKTsKLSAJaWYgKGNwbS0+aXJx
-ID09IE5PX0lSUSkKKyAJaWYgKCFjcG0tPmlycSkKICAJCXJldHVybiAtRUlOVkFMOwogIAogIAkv
-KiBJbnN0YWxsIGludGVycnVwdCBoYW5kbGVyLiAqLwpkaWZmIC0tY2MgZHJpdmVycy9pMmMvYnVz
-c2VzL2kyYy1tcGMuYwppbmRleCA3OTFiNzFmLGU4NmNlZjMuLmRmMDBlYjEKLS0tIGEvZHJpdmVy
-cy9pMmMvYnVzc2VzL2kyYy1tcGMuYworKysgYi9kcml2ZXJzL2kyYy9idXNzZXMvaTJjLW1wYy5j
-CkBAQCAtNTY3LDggLTU2Nyw4ICs1NjcsOCBAQEAgc3RhdGljIGludCBfX2RldmluaXQgZnNsX2ky
-Y19wcm9iZShzdHJ1CiAgCQlnb3RvIGZhaWxfbWFwOwogIAl9CiAgCiAtCWkyYy0+aXJxID0gaXJx
-X29mX3BhcnNlX2FuZF9tYXAob3AtPm5vZGUsIDApOwogKwlpMmMtPmlycSA9IGlycV9vZl9wYXJz
-ZV9hbmRfbWFwKG9wLT5kZXYub2Zfbm9kZSwgMCk7Ci0gCWlmIChpMmMtPmlycSAhPSBOT19JUlEp
-IHsgLyogaTJjLT5pcnEgPSBOT19JUlEgaW1wbGllcyBwb2xsaW5nICovCisgCWlmIChpMmMtPmly
-cSkgeyAvKiBubyBpMmMtPmlycSBpbXBsaWVzIHBvbGxpbmcgKi8KICAJCXJlc3VsdCA9IHJlcXVl
-c3RfaXJxKGkyYy0+aXJxLCBtcGNfaTJjX2lzciwKICAJCQkJICAgICBJUlFGX1NIQVJFRCwgImky
-Yy1tcGMiLCBpMmMpOwogIAkJaWYgKHJlc3VsdCA8IDApIHsKZGlmZiAtLWNjIGRyaXZlcnMvc2Vy
-aWFsL21wYzUyeHhfdWFydC5jCmluZGV4IDRmYjMyZTMsYTVkNTI1YS4uODg5ZWFmNQotLS0gYS9k
-cml2ZXJzL3NlcmlhbC9tcGM1Mnh4X3VhcnQuYworKysgYi9kcml2ZXJzL3NlcmlhbC9tcGM1Mnh4
-X3VhcnQuYwpAQEAgLTEzMzUsNyAtMTM4NiwxMCArMTM4NiwxMCBAQEAgbXBjNTJ4eF91YXJ0X29m
-X3Byb2JlKHN0cnVjdCBvZl9kZXZpY2UgCiAgCXByX2RlYnVnKCJGb3VuZCAlcyBhc3NpZ25lZCB0
-byB0dHlQU0MleFxuIiwKICAJCSBtcGM1Mnh4X3VhcnRfbm9kZXNbaWR4XS0+ZnVsbF9uYW1lLCBp
-ZHgpOwogIAotIAl1YXJ0Y2xrID0gcHNjX29wcy0+Z2V0dWFydGNsayhvcC0+ZGV2Lm9mX25vZGUp
-OworIAkvKiBzZXQgdGhlIHVhcnQgY2xvY2sgdG8gdGhlIGlucHV0IGNsb2NrIG9mIHRoZSBwc2Ms
-IHRoZSBkaWZmZXJlbnQKKyAJICogcHJlc2NhbGVycyBhcmUgdGFrZW4gaW50byBhY2NvdW50IGlu
-IHRoZSBzZXRfYmF1ZHJhdGUoKSBtZXRob2RzCisgCSAqIG9mIHRoZSByZXNwZWN0aXZlIGNoaXAg
-Ki8KIC0JdWFydGNsayA9IG1wYzV4eHhfZ2V0X2J1c19mcmVxdWVuY3kob3AtPm5vZGUpOworKwl1
-YXJ0Y2xrID0gbXBjNXh4eF9nZXRfYnVzX2ZyZXF1ZW5jeShvcC0+ZGV2Lm9mX25vZGUpOwogIAlp
-ZiAodWFydGNsayA9PSAwKSB7CiAgCQlkZXZfZGJnKCZvcC0+ZGV2LCAiQ291bGQgbm90IGZpbmQg
-dWFydCBjbG9jayBmcmVxdWVuY3khXG4iKTsKICAJCXJldHVybiAtRUlOVkFMOwpkaWZmIC0tY2Mg
-ZHJpdmVycy9zZXJpYWwvdWFydGxpdGUuYwppbmRleCA4MTA3M2UzLGU2NjM5YTkuLjhhY2NjZDUK
-LS0tIGEvZHJpdmVycy9zZXJpYWwvdWFydGxpdGUuYworKysgYi9kcml2ZXJzL3NlcmlhbC91YXJ0
-bGl0ZS5jCkBAQCAtNTk3LDExIC01OTcsMTEgKzU5NywxMSBAQEAgdWxpdGVfb2ZfcHJvYmUoc3Ry
-dWN0IG9mX2RldmljZSAqb3AsIGNvCiAgCQlyZXR1cm4gcmM7CiAgCX0KICAKIC0JaXJxID0gaXJx
-X29mX3BhcnNlX2FuZF9tYXAob3AtPm5vZGUsIDApOwogKwlpcnEgPSBpcnFfb2ZfcGFyc2VfYW5k
-X21hcChvcC0+ZGV2Lm9mX25vZGUsIDApOwogIAogLQlpZCA9IG9mX2dldF9wcm9wZXJ0eShvcC0+
-bm9kZSwgInBvcnQtbnVtYmVyIiwgTlVMTCk7CiArCWlkID0gb2ZfZ2V0X3Byb3BlcnR5KG9wLT5k
-ZXYub2Zfbm9kZSwgInBvcnQtbnVtYmVyIiwgTlVMTCk7CiAgCi0gCXJldHVybiB1bGl0ZV9hc3Np
-Z24oJm9wLT5kZXYsIGlkID8gKmlkIDogLTEsIHJlcy5zdGFydCszLCBpcnEpOworIAlyZXR1cm4g
-dWxpdGVfYXNzaWduKCZvcC0+ZGV2LCBpZCA/ICppZCA6IC0xLCByZXMuc3RhcnQsIGlycSk7CiAg
-fQogIAogIHN0YXRpYyBpbnQgX19kZXZleGl0IHVsaXRlX29mX3JlbW92ZShzdHJ1Y3Qgb2ZfZGV2
-aWNlICpvcCkK
---000e0cd2435c49235004868a17f8
-Content-Type: text/x-patch; charset=US-ASCII;
-	name="0002-fixup-arch-powerpc-kernel-vio.c.patch"
-Content-Disposition: attachment;
-	filename="0002-fixup-arch-powerpc-kernel-vio.c.patch"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_g96rzc9z1
-
-RnJvbSA2MTU2NDEzMmZhN2I2NjBiZDI3NzgwZmViYWM2ZmRiN2Y1NDdmYWMyIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBHcmFudCBMaWtlbHkgPGdyYW50Lmxpa2VseUBzZWNyZXRsYWIu
-Y2E+CkRhdGU6IFRodSwgMTMgTWF5IDIwMTAgMTY6MzQ6MjcgKzAyMDAKU3ViamVjdDogW1BBVENI
-XSBmaXh1cCBhcmNoL3Bvd2VycGMva2VybmVsL3Zpby5jCgotLS0KIGFyY2gvcG93ZXJwYy9rZXJu
-ZWwvdmlvLmMgfCAgICAyICstCiAxIGZpbGVzIGNoYW5nZWQsIDEgaW5zZXJ0aW9ucygrKSwgMSBk
-ZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9hcmNoL3Bvd2VycGMva2VybmVsL3Zpby5jIGIvYXJj
-aC9wb3dlcnBjL2tlcm5lbC92aW8uYwppbmRleCBiMjM0MTE4Li5lZWFlMDAyIDEwMDY0NAotLS0g
-YS9hcmNoL3Bvd2VycGMva2VybmVsL3Zpby5jCisrKyBiL2FyY2gvcG93ZXJwYy9rZXJuZWwvdmlv
-LmMKQEAgLTEzMzIsNyArMTMzMiw3IEBAIHN0YXRpYyBzc2l6ZV90IG1vZGFsaWFzX3Nob3coc3Ry
-dWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlX2F0dHJpYnV0ZSAqYXR0ciwKIAlzdHJ1Y3Qg
-ZGV2aWNlX25vZGUgKmRuOwogCWNvbnN0IGNoYXIgKmNwOwogCi0JZG4gPSBkZXYtPmFyY2hkYXRh
-Lm9mX25vZGU7CisJZG4gPSBkZXYtPm9mX25vZGU7CiAJaWYgKCFkbikKIAkJcmV0dXJuIC1FTk9E
-RVY7CiAJY3AgPSBvZl9nZXRfcHJvcGVydHkoZG4sICJjb21wYXRpYmxlIiwgTlVMTCk7Ci0tIAox
-LjcuMC40Cgo=
---000e0cd2435c49235004868a17f8--
+1.6.4.4
