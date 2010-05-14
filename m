@@ -1,41 +1,46 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] IR: fix ir-nec-decoder build, select BITREVERSE
-Date: Fri, 14 May 2010 10:09:57 -0700
-Message-ID: <20100514100957.b4f9753f.randy.dunlap@oracle.com>
+Subject: [PATCH -next] netfilter: xt_TEE depends on NF_CONNTRACK
+Date: Fri, 14 May 2010 10:12:18 -0700
+Message-ID: <20100514101218.16cdb0ad.randy.dunlap@oracle.com>
 References: <20100514161407.740da901.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:61461 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755069Ab0ENRO1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 14 May 2010 13:14:27 -0400
 In-Reply-To: <20100514161407.740da901.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-media@vger.kernel.org
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>
-List-Id: linux-next.vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, netdev <netdev@vger.kernel.org>, Jan Engelhardt <jengelh@medozas.de>, netfilter-devel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Patrick McHardy <kaber@trash.net>
 
 From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Fix ir-nec-decoder build: it uses bitrev library code, so
-select BITREVERSE in its Kconfig.
+Fix xt_TEE build for the case of NF_CONNTRACK=m and
+NETFILTER_XT_TARGET_TEE=y:
 
-ir-nec-decoder.c:(.text+0x1a2517): undefined reference to `byte_rev_table'
-ir-nec-decoder.c:(.text+0x1a2526): undefined reference to `byte_rev_table'
-ir-nec-decoder.c:(.text+0x1a2530): undefined reference to `byte_rev_table'
-ir-nec-decoder.c:(.text+0x1a2539): undefined reference to `byte_rev_table'
+xt_TEE.c:(.text+0x6df5c): undefined reference to `nf_conntrack_untracked'
+4x
+
+Built with all 4 m/y combinations.
 
 Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc:	Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc:	Patrick McHardy <kaber@trash.net>
+Cc:	Jan Engelhardt <jengelh@medozas.de>
 ---
- drivers/media/IR/Kconfig |    1 +
+ net/netfilter/Kconfig |    1 +
  1 file changed, 1 insertion(+)
 
---- linux-next-20100514.orig/drivers/media/IR/Kconfig
-+++ linux-next-20100514/drivers/media/IR/Kconfig
-@@ -13,6 +13,7 @@ source "drivers/media/IR/keymaps/Kconfig
- config IR_NEC_DECODER
- 	tristate "Enable IR raw decoder for the NEC protocol"
- 	depends on IR_CORE
-+	select BITREVERSE
- 	default y
- 
+--- linux-next-20100514.orig/net/netfilter/Kconfig
++++ linux-next-20100514/net/netfilter/Kconfig
+@@ -506,6 +506,7 @@ config NETFILTER_XT_TARGET_TEE
+ 	tristate '"TEE" - packet cloning to alternate destiantion'
+ 	depends on NETFILTER_ADVANCED
+ 	depends on (IPV6 || IPV6=n)
++	depends on !NF_CONNTRACK || NF_CONNTRACK
  	---help---
+ 	This option adds a "TEE" target with which a packet can be cloned and
+ 	this clone be rerouted to another nexthop.
