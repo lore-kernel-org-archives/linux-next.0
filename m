@@ -1,53 +1,63 @@
-From: =?utf-8?B?TWljaGHFgiBOYXphcmV3aWN6?= <m.nazarewicz@samsung.com>
-Subject: Re: [PATCH -next] usb: fix functionfs for CONFIG_NET disabled
-Date: Thu, 13 May 2010 20:12:44 +0200
-Message-ID: <op.vcnovimh7p4s8u@pikus>
-References: <20100513171540.54b308d0.sfr@canb.auug.org.au>
- <20100513094112.86acf7c2.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ceph tree with Linus' tree
+Date: Fri, 14 May 2010 10:07:47 +1000
+Message-ID: <20100514100747.42445cdf.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed	delsp=yes
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:17456 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752221Ab0EMSMR convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 13 May 2010 14:12:17 -0400
-In-reply-to: <20100513094112.86acf7c2.randy.dunlap@oracle.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:57208 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751783Ab0ENAHu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 13 May 2010 20:07:50 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Sage Weil <sage@newdream.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Cheng Renquan <crquan@gmail.com>
 
-On Thu, 13 May 2010 18:41:12 +0200, Randy Dunlap <randy.dunlap@oracle.c=
-om> wrote:
-> Fix functionfs build to handle CONFIG_NET not enabled, to prevent
-> these build errors:
->
-> ERROR: "netif_carrier_on" [drivers/usb/gadget/g_ffs.ko] undefined!
-[...]
+Hi Sage,
 
-> @@ -726,7 +726,7 @@ config USB_FUNCTIONFS
-> config USB_FUNCTIONFS_ETH
->  	bool "Include CDC ECM (Ethernet) function"
-> -	depends on USB_FUNCTIONFS
-> +	depends on USB_FUNCTIONFS && NET
->  	help
->  	  Include an CDC ECM (Ethernet) funcion in the CDC ECM (Funcion)
->  	  Filesystem.  If you also say "y" to the RNDIS query below the
-> @@ -734,7 +734,7 @@ config USB_FUNCTIONFS_ETH
-> config USB_FUNCTIONFS_RNDIS
->  	bool "Include RNDIS (Ethernet) function"
-> -	depends on USB_FUNCTIONFS
-> +	depends on USB_FUNCTIONFS && NET
->  	help
->  	  Include an RNDIS (Ethernet) funcion in the Funcion Filesystem.
->  	  If you also say "y" to the CDC ECM query above the gadget will
+Today's linux-next merge of the ceph tree got a conflict in
+fs/ceph/super.c between commit 5dfc589a8467470226feccdc50f1b32713318e7b
+("ceph: unregister bdi before kill_anon_super releases device name") from
+Linus' tree and commits 9f2a2a1faa0fd990d4930605583a67d7dff28bff ("ceph:
+use ceph_sb_to_client instead of ceph_client") and
+c72b09ba224e6f2c00bcf810a0a62059fcf405f7 ("ceph: name bdi ceph-%d instead
+of major:minor") from the ceph tree.
 
-Looks reasonable.  Thanks!
+I fixed it up (see below) and can carry the fix for a while.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---=20
-Best regards,                                        _     _
-| Humble Liege of Serenely Enlightened Majesty of  o' \,=3D./ `o
-| Computer Science,  Micha=C5=82 "mina86" Nazarewicz       (o o)
-+----[mina86*mina86.com]---[mina86*jabber.org]----ooO--(_)--Ooo--
+diff --cc fs/ceph/super.c
+index 110857b,30fa891..0000000
+--- a/fs/ceph/super.c
++++ b/fs/ceph/super.c
+@@@ -8,14 -8,10 +8,11 @@@
+  #include <linux/module.h>
+  #include <linux/mount.h>
+  #include <linux/parser.h>
+- #include <linux/rwsem.h>
+  #include <linux/sched.h>
+  #include <linux/seq_file.h>
+ +#include <linux/slab.h>
+  #include <linux/statfs.h>
+  #include <linux/string.h>
+- #include <linux/version.h>
+- #include <linux/vmalloc.h>
+  
+  #include "decode.h"
+  #include "super.h"
+@@@ -893,9 -910,8 +921,10 @@@ static int ceph_register_bdi(struct sup
+  		client->backing_dev_info.ra_pages =
+  			(client->mount_args->rsize + PAGE_CACHE_SIZE - 1)
+  			>> PAGE_SHIFT;
+- 	err = bdi_register_dev(&client->backing_dev_info, sb->s_dev);
++ 	err = bdi_register(&client->backing_dev_info, NULL, "ceph-%d",
++ 			   atomic_long_inc_return(&bdi_seq));
+ +	if (!err)
+ +		sb->s_bdi = &client->backing_dev_info;
+  	return err;
+  }
+  
