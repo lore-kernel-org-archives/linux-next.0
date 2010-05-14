@@ -1,15 +1,15 @@
 From: Don Zickus <dzickus@redhat.com>
 Subject: Re: linux-next: build failure after merge of the final tree
-Date: Fri, 14 May 2010 11:11:21 -0400
-Message-ID: <20100514151121.GR15159@redhat.com>
+Date: Fri, 14 May 2010 11:03:43 -0400
+Message-ID: <20100514150343.GQ15159@redhat.com>
 References: <20100514155312.9684cb9d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:4269 "EHLO mx1.redhat.com"
+Received: from mx1.redhat.com ([209.132.183.28]:40894 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751140Ab0ENPM0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 14 May 2010 11:12:26 -0400
+	id S1751140Ab0ENPVb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 14 May 2010 11:21:31 -0400
 Content-Disposition: inline
 In-Reply-To: <20100514155312.9684cb9d.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
@@ -43,24 +43,13 @@ On Fri, May 14, 2010 at 03:53:12PM +1000, Stephen Rothwell wrote:
 > So I have left is as it is for today.  Please see if someone can come up
 > with a solution.
 
-I realized I was lazy and different provide a formal patch (and I had a
-couple of warnings too).  Here is something better.
+Sorry for the mess.  I think the following patch cleans it up.  The last
+piece deals with the sparc mess, the other two pieces should deal with the
+x86 fallout.
 
 Cheers,
 Don
 
----
-commit 578178d5133403e469543bfff8a4e404d878563b
-Author: Don Zickus <dzickus@redhat.com>
-Date:   Fri May 14 11:04:52 2010 -0400
-
-    [watchdog] nmi: cross arch compile fixes
-    
-    Combining the softlockup and hardlockup code causes watchdog.c to always be
-    compiled.  Surround some code which prevents the hardlockup stuff from being
-    compiled if other arches have a different NMI handler.
-    
-    Signed-off-by: Don Zickus <dzickus@redhat.com>
 
 diff --git a/arch/x86/kernel/apic/Makefile b/arch/x86/kernel/apic/Makefile
 index 52f32e0..3a57a04 100644
@@ -93,26 +82,10 @@ index abd48aa..9a30da4 100644
  {
  	touch_softlockup_watchdog();
 diff --git a/kernel/watchdog.c b/kernel/watchdog.c
-index be5e74e..65429dd 100644
+index be5e74e..61b63ca 100644
 --- a/kernel/watchdog.c
 +++ b/kernel/watchdog.c
-@@ -31,13 +31,13 @@ int watchdog_enabled;
- int __read_mostly softlockup_thresh = 60;
- 
- static DEFINE_PER_CPU(unsigned long, watchdog_touch_ts);
--static DEFINE_PER_CPU(bool, watchdog_nmi_touch);
- static DEFINE_PER_CPU(struct task_struct *, softlockup_watchdog);
- static DEFINE_PER_CPU(struct hrtimer, watchdog_hrtimer);
- static DEFINE_PER_CPU(bool, softlockup_touch_sync);
--static DEFINE_PER_CPU(bool, hard_watchdog_warn);
- static DEFINE_PER_CPU(bool, soft_watchdog_warn);
- #ifdef CONFIG_PERF_EVENTS_NMI
-+static DEFINE_PER_CPU(bool, hard_watchdog_warn);
-+static DEFINE_PER_CPU(bool, watchdog_nmi_touch);
- static DEFINE_PER_CPU(unsigned long, hrtimer_interrupts);
- static DEFINE_PER_CPU(unsigned long, hrtimer_interrupts_saved);
- static DEFINE_PER_CPU(struct perf_event *, watchdog_ev);
-@@ -139,6 +139,7 @@ void touch_all_softlockup_watchdogs(void)
+@@ -139,12 +139,14 @@ void touch_all_softlockup_watchdogs(void)
  		per_cpu(watchdog_touch_ts, cpu) = 0;
  }
  
@@ -120,12 +93,10 @@ index be5e74e..65429dd 100644
  void touch_nmi_watchdog(void)
  {
  	__get_cpu_var(watchdog_nmi_touch) = true;
-@@ -146,6 +147,8 @@ void touch_nmi_watchdog(void)
+ 	touch_softlockup_watchdog();
  }
  EXPORT_SYMBOL(touch_nmi_watchdog);
- 
 +#endif
-+
+ 
  void touch_softlockup_watchdog_sync(void)
  {
- 	__raw_get_cpu_var(softlockup_touch_sync) = true;
