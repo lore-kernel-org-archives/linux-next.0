@@ -1,350 +1,114 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for May 14
-Date: Fri, 14 May 2010 16:14:07 +1000
-Message-ID: <20100514161407.740da901.sfr@canb.auug.org.au>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Fixups for secretlab/next-devicetree branch
+Date: Fri, 14 May 2010 10:59:01 +0200
+Message-ID: <AANLkTimktQ8gM5789JcpCi3N1cRc7mWGu-k-I-1J6B2f@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__14_May_2010_16_14_07_+1000_aAapIOaP5KYI6zSu"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/mixed; boundary=000e0cd2435c49235004868a17f8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-gx0-f217.google.com ([209.85.217.217]:62156 "EHLO
+	mail-gx0-f217.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751499Ab0ENI7X (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 14 May 2010 04:59:23 -0400
+Received: by gxk9 with SMTP id 9so1464971gxk.8
+        for <linux-next@vger.kernel.org>; Fri, 14 May 2010 01:59:22 -0700 (PDT)
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>
 
---Signature=_Fri__14_May_2010_16_14_07_+1000_aAapIOaP5KYI6zSu
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+--000e0cd2435c49235004868a17f8
+Content-Type: text/plain; charset=ISO-8859-1
 
-Hi all,
+Hi Stephen.
 
-Changes since 20100513:
+I've pushed out changes to my next-devicetree branch that cause a
+conflict and a build error when merged with linux-next.  I could pull
+in the conflicting trees, but I'm not sure whether or not that is a
+good idea.  In the mean time I've attached the patches needed to
+resolve the problems.
 
-Dropped trees: tmio-mmc (long unresolved conflicts and unable to fetch)
-	hwlat (at the maintainer's request)
-
-The ceph tree gained 3 conflicts against Linus' tree.
-
-The vl4-dvb tree lost its conflicts.
-
-The backlight tree still has its build failure so I used the version from
-next-20100507.
-
-The tip tree gained a conflict against the kgdb tree and a build failure
-(on sparc64 at least).
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
-and sparc64 defconfig. These builds also have
-CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
-CONFIG_DEBUG_INFO disabled when necessary.
-
-Below is a summary of the state of the merge.
-
-We are up to 162 trees (counting Linus' and 22 trees of patches pending
-for Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+g.
 
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging fixes/fixes
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/for-linus
-Merging quilt/driver-core.current
-Merging quilt/tty.current
-Merging quilt/usb.current
-Merging quilt/staging.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging ide-curent/master
-Merging dwmw2/master
-Merging gcl-current/merge
-Merging arm/devel
-Applying: arm: update gfp/slab.h includes
-Merging davinci/davinci-next
-Applying: davinci: update gfp/slab.h includes
-Merging i.MX/for-next
-Merging msm/for-next
-CONFLICT (content): Merge conflict in arch/arm/mach-msm/Kconfig
-Merging omap/for-next
-Merging pxa/for-next
-Merging samsung/next-samsung
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-Merging m68knommu/for-next
-Merging microblaze/next
-Merging mips/mips-for-linux-next
-Merging parisc/next
-Merging powerpc/next
-Merging 4xx/next
-Merging 52xx-and-virtex/next
-Merging galak/next
-Merging s390/features
-Merging sh/master
-Merging genesis/master
-Merging sparc/master
-Merging xtensa/master
-Merging ceph/for-next
-CONFLICT (content): Merge conflict in fs/ceph/caps.c
-CONFLICT (content): Merge conflict in fs/ceph/messenger.c
-CONFLICT (content): Merge conflict in fs/ceph/super.c
-Merging cifs/master
-Merging configfs/linux-next
-Merging ecryptfs/next
-Merging ext3/for_next
-Merging ext4/next
-Merging fatfs/master
-Merging fuse/for-next
-Merging gfs2/master
-Merging jfs/next
-Merging logfs/master
-Merging nfs/linux-next
-Merging nfsd/nfsd-next
-Merging nilfs2/for-next
-Merging ocfs2/linux-next
-Applying: ocfs2: update gfp/slab.h includes
-Merging squashfs/master
-Merging udf/for_next
-Merging v9fs/for-next
-CONFLICT (content): Merge conflict in fs/9p/vfs_super.c
-Merging ubifs/linux-next
-Merging xfs/master
-Merging vfs/for-next
-CONFLICT (content): Merge conflict in fs/cifs/file.c
-CONFLICT (content): Merge conflict in fs/namei.c
-CONFLICT (content): Merge conflict in fs/nfs/inode.c
-CONFLICT (content): Merge conflict in fs/nfsd/nfs4xdr.c
-CONFLICT (content): Merge conflict in fs/nfsd/vfs.c
-CONFLICT (content): Merge conflict in fs/ufs/inode.c
-CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_super.c
-CONFLICT (content): Merge conflict in security/tomoyo/realpath.c
-Merging pci/linux-next
-Merging hid/for-next
-Merging quilt/i2c
-Merging bjdooks-i2c/next-i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-Applying: v4l-dvb: update gfp/slab.h includes
-Merging kbuild/for-next
-Merging kconfig/for-next
-Merging ide/master
-Merging libata/NEXT
-Merging infiniband/for-next
-Merging acpi/test
-Applying: acpi: update gfp/slab.h includes
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/linux-next
-CONFLICT (content): Merge conflict in kernel/fork.c
-Merging dlm/next
-Merging ibft/master
-Merging scsi/master
-Merging async_tx/next
-Merging net/master
-CONFLICT (content): Merge conflict in Documentation/feature-removal-schedul=
-e.txt
-CONFLICT (content): Merge conflict in drivers/net/wireless/iwlwifi/iwl-dev.h
-Merging wireless/master
-CONFLICT (content): Merge conflict in drivers/net/wireless/iwlwifi/iwl-dev.h
-Applying: wireless: update gfp/slab.h includes
-Merging mtd/master
-Applying: mtd: update gfp/slab.h includes
-Merging crypto/master
-CONFLICT (content): Merge conflict in arch/arm/mach-omap2/devices.c
-Merging sound/for-next
-Merging cpufreq/next
-Merging quilt/rr
-CONFLICT (content): Merge conflict in drivers/net/virtio_net.c
-CONFLICT (content): Merge conflict in drivers/net/wireless/libertas_tf/if_u=
-sb.c
-CONFLICT (content): Merge conflict in include/linux/mod_devicetable.h
-CONFLICT (content): Merge conflict in scripts/mod/file2alias.c
-Merging mmc/next
-Merging input/next
-CONFLICT (content): Merge conflict in Documentation/feature-removal-schedul=
-e.txt
-Merging lsm/for-next
-Merging block/for-next
-CONFLICT (content): Merge conflict in fs/ext3/fsync.c
-CONFLICT (content): Merge conflict in fs/ext4/fsync.c
-Merging quilt/device-mapper
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-CONFLICT (content): Merge conflict in drivers/net/pcmcia/3c589_cs.c
-CONFLICT (content): Merge conflict in drivers/net/wireless/orinoco/orinoco_=
-cs.c
-CONFLICT (content): Merge conflict in drivers/net/wireless/orinoco/spectrum=
-_cs.c
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-$ git reset --hard HEAD^
-Merging refs/next/20100507/backlight
-Merging kgdb/kgdb-next
-Applying: kgdb: update for sysrq handling change
-Applying: kdb: update gfp/slab.h includes
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-CONFLICT (content): Merge conflict in drivers/dma/Makefile
-CONFLICT (add/add): Merge conflict in drivers/dma/timb_dma.c
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-CONFLICT (content): Merge conflict in drivers/gpu/drm/i915/i915_drv.h
-CONFLICT (content): Merge conflict in drivers/gpu/drm/radeon/r300.c
-Merging viafb/viafb-next
-Merging voltage/for-next
-Merging security-testing/next
-Merging lblnet/master
-Merging agp/agp-next
-Merging uwb/for-upstream
-Merging watchdog/master
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-Merging audit/for-next
-Merging quilt/aoe
-Merging suspend/linux-next
-Applying: wireless: update for pm_qos_requirement to pm_qos_request rename
-Merging bluetooth/master
-Merging fsnotify/for-next
-Applying: fsnotify: update gfp/slab.h includes
-Merging irda/for-next
-CONFLICT (content): Merge conflict in drivers/net/irda/irda-usb.c
-Merging drbd/for-jens
-Merging catalin/for-next
-Merging alacrity/linux-next
-CONFLICT (content): Merge conflict in include/linux/Kbuild
-CONFLICT (content): Merge conflict in lib/Kconfig
-Applying: vbus: use of kzalloc/kfree requires the include of slab.h
-Applying: vbus: update gfp/slab.h includes
-Merging i7core_edac/linux_next
-Merging devicetree/next-devicetree
-Merging spi/next-spi
-Merging omap_dss2/for-next
-Merging tip/auto-latest
-CONFLICT (content): Merge conflict in Documentation/feature-removal-schedul=
-e.txt
-CONFLICT (content): Merge conflict in kernel/Makefile
-CONFLICT (content): Merge conflict in kernel/fork.c
-Merging edac-amd/for-next
-Merging oprofile/for-next
-Merging percpu/for-next
-Merging workqueues/for-next
-Merging sfi/sfi-test
-Merging asm-generic/next
-Merging hwpoison/hwpoison
-Merging sysctl/master
-Merging bkl-core/bkl/core
-Merging bkl-procfs/bkl/procfs
-Merging bkl-ioctl/bkl/ioctl
-CONFLICT (content): Merge conflict in arch/cris/arch-v10/drivers/ds1302.c
-CONFLICT (content): Merge conflict in drivers/block/pktcdvd.c
-Merging quilt/driver-core
-CONFLICT (content): Merge conflict in drivers/base/platform.c
-Applying: md: fixup for sysfs_get_dirent API change
-Merging quilt/tty
-CONFLICT (content): Merge conflict in include/linux/tty.h
-Merging quilt/usb
-CONFLICT (content): Merge conflict in drivers/input/tablet/acecad.c
-CONFLICT (content): Merge conflict in drivers/input/tablet/kbtab.c
-CONFLICT (content): Merge conflict in drivers/input/tablet/wacom_sys.c
-CONFLICT (content): Merge conflict in drivers/media/video/gspca/gspca.c
-CONFLICT (delete/modify): sound/usb/usbaudio.c deleted in HEAD and modified=
- in quilt/usb. Version quilt/usb of sound/usb/usbaudio.c left in tree.
-$ git rm -f sound/usb/usbaudio.c
-Applying: usb: update gfp/slab.h includes
-Applying: sound: fixup for usb_buffer_alloc/free rename
-Merging staging-next/staging-next
-CONFLICT (rename/modify): Merge conflict in drivers/staging/hv/hv.c
-CONFLICT (delete/modify): drivers/staging/arlan/arlan-main.c deleted in sta=
-ging-next/staging-next and modified in HEAD. Version HEAD of drivers/stagin=
-g/arlan/arlan-main.c left in tree.
-CONFLICT (content): Merge conflict in drivers/staging/comedi/drivers/cb_das=
-16_cs.c
-CONFLICT (content): Merge conflict in drivers/staging/cx25821/cx25821-alsa.c
-CONFLICT (content): Merge conflict in drivers/staging/dt3155/dt3155_drv.c
-CONFLICT (delete/modify): drivers/staging/netwave/netwave_cs.c deleted in s=
-taging-next/staging-next and modified in HEAD. Version HEAD of drivers/stag=
-ing/netwave/netwave_cs.c left in tree.
-CONFLICT (content): Merge conflict in drivers/staging/rtl8187se/r8180_core.c
-CONFLICT (delete/modify): drivers/staging/wavelan/wavelan.c deleted in stag=
-ing-next/staging-next and modified in HEAD. Version HEAD of drivers/staging=
-/wavelan/wavelan.c left in tree.
-CONFLICT (delete/modify): drivers/staging/wavelan/wavelan_cs.c deleted in s=
-taging-next/sResolved 'drivers/staging/comedi/drivers/cb_das16_cs.c' using =
-previous resolution.
-CONFLICT (content): Merge conflict in drivers/staging/wlags49_h2/wl_cs.c
-$ git rm -f drivers/staging/arlan/arlan-main.c
-$ git rm -f drivers/staging/netwave/netwave_cs.c
-$ git rm -f drivers/staging/wavelan/wavelan.c
-$ git rm -f drivers/staging/wavelan/wavelan_cs.c
-Merging slabh/slabh
-Merging scsi-post-merge/master
+-- 
+Grant Likely, B.Sc., P.Eng.
+Secret Lab Technologies Ltd.
 
---Signature=_Fri__14_May_2010_16_14_07_+1000_aAapIOaP5KYI6zSu
-Content-Type: application/pgp-signature
+--000e0cd2435c49235004868a17f8
+Content-Type: application/octet-stream; name=0001-fixup-on-merge
+Content-Disposition: attachment; filename=0001-fixup-on-merge
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_g96rytm80
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+Y29tbWl0IDMyZDNlN2JkYjc0OWQzYmI5Y2JkOGFmMTk4YzZiZjhlZjRiN2YzY2QKTWVyZ2U6IGIw
+ODM2OWQgMjZkZmI2MgpBdXRob3I6IEdyYW50IExpa2VseSA8Z3JhbnQubGlrZWx5QHNlY3JldGxh
+Yi5jYT4KRGF0ZTogICBUaHUgTWF5IDEzIDEwOjAwOjQ3IDIwMTAgKzAyMDAKCiAgICBNZXJnZSBy
+ZW1vdGUgYnJhbmNoICdsaW51eC1uZXh0JyBpbnRvIHNlY3JldGxhYi90ZXN0LWRldmljZXRyZWUK
+ICAgIAogICAgQ29uZmxpY3RzOgogICAgCWRyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtY3BtLmMKICAg
+IAlkcml2ZXJzL2kyYy9idXNzZXMvaTJjLW1wYy5jCiAgICAJZHJpdmVycy9zZXJpYWwvbXBjNTJ4
+eF91YXJ0LmMKCmRpZmYgLS1jYyBkcml2ZXJzL2kyYy9idXNzZXMvaTJjLWNwbS5jCmluZGV4IDc2
+MzdlMTIsMTY5NDhkYi4uYjAyYjQ1MwotLS0gYS9kcml2ZXJzL2kyYy9idXNzZXMvaTJjLWNwbS5j
+CisrKyBiL2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtY3BtLmMKQEBAIC00NDAsOCAtNDQwLDggKzQ0
+MCw4IEBAQCBzdGF0aWMgaW50IF9fZGV2aW5pdCBjcG1faTJjX3NldHVwKHN0cnUKICAKICAJaW5p
+dF93YWl0cXVldWVfaGVhZCgmY3BtLT5pMmNfd2FpdCk7CiAgCiAtCWNwbS0+aXJxID0gb2ZfaXJx
+X3RvX3Jlc291cmNlKG9mZGV2LT5ub2RlLCAwLCBOVUxMKTsKICsJY3BtLT5pcnEgPSBvZl9pcnFf
+dG9fcmVzb3VyY2Uob2ZkZXYtPmRldi5vZl9ub2RlLCAwLCBOVUxMKTsKLSAJaWYgKGNwbS0+aXJx
+ID09IE5PX0lSUSkKKyAJaWYgKCFjcG0tPmlycSkKICAJCXJldHVybiAtRUlOVkFMOwogIAogIAkv
+KiBJbnN0YWxsIGludGVycnVwdCBoYW5kbGVyLiAqLwpkaWZmIC0tY2MgZHJpdmVycy9pMmMvYnVz
+c2VzL2kyYy1tcGMuYwppbmRleCA3OTFiNzFmLGU4NmNlZjMuLmRmMDBlYjEKLS0tIGEvZHJpdmVy
+cy9pMmMvYnVzc2VzL2kyYy1tcGMuYworKysgYi9kcml2ZXJzL2kyYy9idXNzZXMvaTJjLW1wYy5j
+CkBAQCAtNTY3LDggLTU2Nyw4ICs1NjcsOCBAQEAgc3RhdGljIGludCBfX2RldmluaXQgZnNsX2ky
+Y19wcm9iZShzdHJ1CiAgCQlnb3RvIGZhaWxfbWFwOwogIAl9CiAgCiAtCWkyYy0+aXJxID0gaXJx
+X29mX3BhcnNlX2FuZF9tYXAob3AtPm5vZGUsIDApOwogKwlpMmMtPmlycSA9IGlycV9vZl9wYXJz
+ZV9hbmRfbWFwKG9wLT5kZXYub2Zfbm9kZSwgMCk7Ci0gCWlmIChpMmMtPmlycSAhPSBOT19JUlEp
+IHsgLyogaTJjLT5pcnEgPSBOT19JUlEgaW1wbGllcyBwb2xsaW5nICovCisgCWlmIChpMmMtPmly
+cSkgeyAvKiBubyBpMmMtPmlycSBpbXBsaWVzIHBvbGxpbmcgKi8KICAJCXJlc3VsdCA9IHJlcXVl
+c3RfaXJxKGkyYy0+aXJxLCBtcGNfaTJjX2lzciwKICAJCQkJICAgICBJUlFGX1NIQVJFRCwgImky
+Yy1tcGMiLCBpMmMpOwogIAkJaWYgKHJlc3VsdCA8IDApIHsKZGlmZiAtLWNjIGRyaXZlcnMvc2Vy
+aWFsL21wYzUyeHhfdWFydC5jCmluZGV4IDRmYjMyZTMsYTVkNTI1YS4uODg5ZWFmNQotLS0gYS9k
+cml2ZXJzL3NlcmlhbC9tcGM1Mnh4X3VhcnQuYworKysgYi9kcml2ZXJzL3NlcmlhbC9tcGM1Mnh4
+X3VhcnQuYwpAQEAgLTEzMzUsNyAtMTM4NiwxMCArMTM4NiwxMCBAQEAgbXBjNTJ4eF91YXJ0X29m
+X3Byb2JlKHN0cnVjdCBvZl9kZXZpY2UgCiAgCXByX2RlYnVnKCJGb3VuZCAlcyBhc3NpZ25lZCB0
+byB0dHlQU0MleFxuIiwKICAJCSBtcGM1Mnh4X3VhcnRfbm9kZXNbaWR4XS0+ZnVsbF9uYW1lLCBp
+ZHgpOwogIAotIAl1YXJ0Y2xrID0gcHNjX29wcy0+Z2V0dWFydGNsayhvcC0+ZGV2Lm9mX25vZGUp
+OworIAkvKiBzZXQgdGhlIHVhcnQgY2xvY2sgdG8gdGhlIGlucHV0IGNsb2NrIG9mIHRoZSBwc2Ms
+IHRoZSBkaWZmZXJlbnQKKyAJICogcHJlc2NhbGVycyBhcmUgdGFrZW4gaW50byBhY2NvdW50IGlu
+IHRoZSBzZXRfYmF1ZHJhdGUoKSBtZXRob2RzCisgCSAqIG9mIHRoZSByZXNwZWN0aXZlIGNoaXAg
+Ki8KIC0JdWFydGNsayA9IG1wYzV4eHhfZ2V0X2J1c19mcmVxdWVuY3kob3AtPm5vZGUpOworKwl1
+YXJ0Y2xrID0gbXBjNXh4eF9nZXRfYnVzX2ZyZXF1ZW5jeShvcC0+ZGV2Lm9mX25vZGUpOwogIAlp
+ZiAodWFydGNsayA9PSAwKSB7CiAgCQlkZXZfZGJnKCZvcC0+ZGV2LCAiQ291bGQgbm90IGZpbmQg
+dWFydCBjbG9jayBmcmVxdWVuY3khXG4iKTsKICAJCXJldHVybiAtRUlOVkFMOwpkaWZmIC0tY2Mg
+ZHJpdmVycy9zZXJpYWwvdWFydGxpdGUuYwppbmRleCA4MTA3M2UzLGU2NjM5YTkuLjhhY2NjZDUK
+LS0tIGEvZHJpdmVycy9zZXJpYWwvdWFydGxpdGUuYworKysgYi9kcml2ZXJzL3NlcmlhbC91YXJ0
+bGl0ZS5jCkBAQCAtNTk3LDExIC01OTcsMTEgKzU5NywxMSBAQEAgdWxpdGVfb2ZfcHJvYmUoc3Ry
+dWN0IG9mX2RldmljZSAqb3AsIGNvCiAgCQlyZXR1cm4gcmM7CiAgCX0KICAKIC0JaXJxID0gaXJx
+X29mX3BhcnNlX2FuZF9tYXAob3AtPm5vZGUsIDApOwogKwlpcnEgPSBpcnFfb2ZfcGFyc2VfYW5k
+X21hcChvcC0+ZGV2Lm9mX25vZGUsIDApOwogIAogLQlpZCA9IG9mX2dldF9wcm9wZXJ0eShvcC0+
+bm9kZSwgInBvcnQtbnVtYmVyIiwgTlVMTCk7CiArCWlkID0gb2ZfZ2V0X3Byb3BlcnR5KG9wLT5k
+ZXYub2Zfbm9kZSwgInBvcnQtbnVtYmVyIiwgTlVMTCk7CiAgCi0gCXJldHVybiB1bGl0ZV9hc3Np
+Z24oJm9wLT5kZXYsIGlkID8gKmlkIDogLTEsIHJlcy5zdGFydCszLCBpcnEpOworIAlyZXR1cm4g
+dWxpdGVfYXNzaWduKCZvcC0+ZGV2LCBpZCA/ICppZCA6IC0xLCByZXMuc3RhcnQsIGlycSk7CiAg
+fQogIAogIHN0YXRpYyBpbnQgX19kZXZleGl0IHVsaXRlX29mX3JlbW92ZShzdHJ1Y3Qgb2ZfZGV2
+aWNlICpvcCkK
+--000e0cd2435c49235004868a17f8
+Content-Type: text/x-patch; charset=US-ASCII;
+	name="0002-fixup-arch-powerpc-kernel-vio.c.patch"
+Content-Disposition: attachment;
+	filename="0002-fixup-arch-powerpc-kernel-vio.c.patch"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_g96rzc9z1
 
-iEYEARECAAYFAkvs6i8ACgkQjjKRsyhoI8w+rwCfQN4eOH7x2y9DB70c40V684Ju
-XNMAoK1QVnNqECrMHGIGxAxwU52It90S
-=aQ4j
------END PGP SIGNATURE-----
-
---Signature=_Fri__14_May_2010_16_14_07_+1000_aAapIOaP5KYI6zSu--
+RnJvbSA2MTU2NDEzMmZhN2I2NjBiZDI3NzgwZmViYWM2ZmRiN2Y1NDdmYWMyIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBHcmFudCBMaWtlbHkgPGdyYW50Lmxpa2VseUBzZWNyZXRsYWIu
+Y2E+CkRhdGU6IFRodSwgMTMgTWF5IDIwMTAgMTY6MzQ6MjcgKzAyMDAKU3ViamVjdDogW1BBVENI
+XSBmaXh1cCBhcmNoL3Bvd2VycGMva2VybmVsL3Zpby5jCgotLS0KIGFyY2gvcG93ZXJwYy9rZXJu
+ZWwvdmlvLmMgfCAgICAyICstCiAxIGZpbGVzIGNoYW5nZWQsIDEgaW5zZXJ0aW9ucygrKSwgMSBk
+ZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9hcmNoL3Bvd2VycGMva2VybmVsL3Zpby5jIGIvYXJj
+aC9wb3dlcnBjL2tlcm5lbC92aW8uYwppbmRleCBiMjM0MTE4Li5lZWFlMDAyIDEwMDY0NAotLS0g
+YS9hcmNoL3Bvd2VycGMva2VybmVsL3Zpby5jCisrKyBiL2FyY2gvcG93ZXJwYy9rZXJuZWwvdmlv
+LmMKQEAgLTEzMzIsNyArMTMzMiw3IEBAIHN0YXRpYyBzc2l6ZV90IG1vZGFsaWFzX3Nob3coc3Ry
+dWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlX2F0dHJpYnV0ZSAqYXR0ciwKIAlzdHJ1Y3Qg
+ZGV2aWNlX25vZGUgKmRuOwogCWNvbnN0IGNoYXIgKmNwOwogCi0JZG4gPSBkZXYtPmFyY2hkYXRh
+Lm9mX25vZGU7CisJZG4gPSBkZXYtPm9mX25vZGU7CiAJaWYgKCFkbikKIAkJcmV0dXJuIC1FTk9E
+RVY7CiAJY3AgPSBvZl9nZXRfcHJvcGVydHkoZG4sICJjb21wYXRpYmxlIiwgTlVMTCk7Ci0tIAox
+LjcuMC40Cgo=
+--000e0cd2435c49235004868a17f8--
