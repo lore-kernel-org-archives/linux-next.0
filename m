@@ -1,80 +1,63 @@
-From: Frederic Weisbecker <fweisbec@gmail.com>
-Subject: Re: linux-next: build failure after merge of the final tree
-Date: Sat, 15 May 2010 22:28:32 +0200
-Message-ID: <20100515202829.GA7645@nowhere>
-References: <20100514155312.9684cb9d.sfr@canb.auug.org.au> <20100514150343.GQ15159@redhat.com> <20100515073732.GA17120@elte.hu>
+From: Mauro Carvalho Chehab <mchehab@infradead.org>
+Subject: Re: [PATCH] media/IR: Add missing include file to rc-map.c
+Date: Sat, 15 May 2010 22:54:40 -0300
+Message-ID: <4BEF5060.5050105@infradead.org>
+References: <201005051720.22617.PeterHuewe@gmx.de> <201005112042.14889.PeterHuewe@gmx.de> <20100514060240.GD12002@linux-sh.org> <201005141326.52099.PeterHuewe@gmx.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20100515073732.GA17120@elte.hu>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Don Zickus <dzickus@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <201005141326.52099.PeterHuewe@gmx.de>
+Sender: linux-media-owner@vger.kernel.org
+To: =?ISO-8859-1?Q?Peter_H=FCwe?= <PeterHuewe@gmx.de>
+Cc: linux-next@vger.kernel.org, Paul Mundt <lethal@linux-sh.org>, linuxppc-dev@ozlabs.org, David H?rdeman <david@hardeman.nu>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sh@vger.kernel.org, linux-mips@linux-mips.org, linux-m68k@lists.linux-m68k.org
 List-Id: linux-next.vger.kernel.org
 
-On Sat, May 15, 2010 at 09:37:32AM +0200, Ingo Molnar wrote:
-> 
-> * Don Zickus <dzickus@redhat.com> wrote:
-> 
-> > Sorry for the mess.  I think the following patch 
-> > cleans it up.  The last piece deals with the sparc 
-> > mess, the other two pieces should deal with the x86 
-> > fallout.
-> 
-> This patch breaks x86:
-> 
-> arch/x86/built-in.o: In function `show_stack_log_lvl':
-> (.text+0xc2c0): undefined reference to `touch_nmi_watchdog'
-> arch/x86/built-in.o: In function `print_trace_address':
-> dumpstack.c:(.text+0xd893): undefined reference to `touch_nmi_watchdog'
-> arch/x86/built-in.o: In function `mce_timed_out':
-> mce.c:(.text+0x20008): undefined reference to `touch_nmi_watchdog'
-> arch/x86/built-in.o: In function `enable_lapic_nmi_watchdog':
-> (.text+0x261f2): undefined reference to `touch_nmi_watchdog'
-> 
-> CONFIG_CLOCKSOURCE_WATCHDOG=y
-> CONFIG_PERF_EVENTS_NMI=y
-> CONFIG_IPMI_WATCHDOG=m
-> CONFIG_WATCHDOG=y
-> CONFIG_WATCHDOG_NOWAYOUT=y
-> # CONFIG_SOFT_WATCHDOG is not set
-> CONFIG_HP_WATCHDOG=y
-> CONFIG_SBC_EPX_C3_WATCHDOG=m
-> # CONFIG_PCIPCWATCHDOG is not set
-> # CONFIG_USBPCWATCHDOG is not set
-> CONFIG_HAVE_FTRACE_NMI_ENTER=y
-> CONFIG_FTRACE_NMI_ENTER=y
-> 
-> I'd _strongly_ suggest to simplify the code. There's 
-> a few things that could be done to that end:
-> 
-> - just have a single watchdog option and dont split 
->   the soft-dog from the hard-dog.
+Peter H=FCwe wrote:
+> From: Peter Huewe <peterhuewe@gmx.de>
+>=20
+> This patch adds a missing include linux/delay.h to prevent
+> build failures[1-5]
+>=20
+> Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+> ---
+> Forwarded to linux-next mailing list -=20
+> breakage still exists in linux-next of 20100514 - please apply
+>=20
+> KernelVersion: linux-next-20100505
+
+Sorry for not answer earlier. I was traveling. Anyway, this
+patch got applied on May, 12:
+
+http://git.kernel.org/?p=3Dlinux/kernel/git/mchehab/linux-next.git;a=3D=
+commitdiff;h=3D4ace7aa2998b2974948f1948a61a5d348ddae472
+
+>=20
+> References:
+> [1] http://kisskb.ellerman.id.au/kisskb/buildresult/2571452/
+> [2] http://kisskb.ellerman.id.au/kisskb/buildresult/2571188/
+> [3] http://kisskb.ellerman.id.au/kisskb/buildresult/2571479/
+> [4] http://kisskb.ellerman.id.au/kisskb/buildresult/2571429/
+> [5] http://kisskb.ellerman.id.au/kisskb/buildresult/2571432/
+>=20
+> drivers/media/IR/rc-map.c |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
+>=20
+> diff --git a/drivers/media/IR/rc-map.c b/drivers/media/IR/rc-map.c
+> index caf6a27..46a8f15 100644
+> --- a/drivers/media/IR/rc-map.c
+> +++ b/drivers/media/IR/rc-map.c
+> @@ -14,6 +14,7 @@
+> =20
+>  #include <media/ir-core.h>
+>  #include <linux/spinlock.h>
+> +#include <linux/delay.h>
+> =20
+>  /* Used to handle IR raw handler extensions */
+>  static LIST_HEAD(rc_map_list);
 
 
-This is what we have, ie: CONFIG_LOCKUP_DETECTOR
+--=20
 
-But we need to keep the softlockup detection out of
-the perf dependency. This is what we had previously.
-And more especially softlockup detection doesn't need
-perf.
-
-
-
-> - provide a smooth pathway for architectures that 
->   have an NMI watchdog right now. Dont overlap their 
->   symbols for example.
-
-
-
-Agreed.
-
-
- 
-> ... and similar measures.
-
-
-And I add: remove the old nmi watchdog code from x86, for good.
-
-I'm working on it.
+Cheers,
+Mauro
