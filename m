@@ -1,34 +1,30 @@
 From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build warning after merge of the usb tree
-Date: Mon, 17 May 2010 11:01:00 -0700
-Message-ID: <20100517180100.GA16419@kroah.com>
-References: <20100517161603.f83a98d8.sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the staging-next tree with the rr
+ tree
+Date: Mon, 17 May 2010 11:01:56 -0700
+Message-ID: <20100517180156.GD16419@kroah.com>
+References: <20100517154452.93fbac66.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:34164 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751742Ab0EQSUV (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 May 2010 14:20:21 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20100517161603.f83a98d8.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+In-Reply-To: <20100517154452.93fbac66.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Youn <John.Youn@synopsys.com>, Sarah Sharp <sarah.a.sharp@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Prashant P. Shah" <pshah.mumbai@gmail.com>, Rusty Russell <rusty@rustcorp.com.au>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, May 17, 2010 at 04:16:03PM +1000, Stephen Rothwell wrote:
+On Mon, May 17, 2010 at 03:44:52PM +1000, Stephen Rothwell wrote:
 > Hi Greg,
 > 
-> After merging the usb tree, today's linux-next build (powerpc allyesconfig)
-> produced this warning:
+> Today's linux-next merge of the staging-next tree got a conflict in
+> drivers/staging/rtl8187se/r8180_core.c between commit
+> 9080984577cb3e04226d94c8f733534b60541f01
+> ("param:remove-useless-writable-charp") from the rr tree and commit
+> bbfb56520c8da666383c08220985495ff918d4ad ("") from the staging-next tree.
 > 
-> drivers/usb/host/xhci-ring.c: In function 'prepare_ring':
-> drivers/usb/host/xhci-ring.c:1729: warning: unused variable 'addr'
-> 
-> Introduced by commit a2fbb0e4784f6d1b3be0779918e84dd3c0c73f04 ("USB:
-> xhci: Transfer ring link TRB activation change").
+> I fixed it up (see below) and can carry the fix as necessary.
 
-Thanks, I'll go fix this up.
+Looks good, thanks.
 
 greg k-h
