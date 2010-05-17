@@ -1,63 +1,54 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: Re: [PATCH] media/IR: Add missing include file to rc-map.c
-Date: Sat, 15 May 2010 22:54:40 -0300
-Message-ID: <4BEF5060.5050105@infradead.org>
-References: <201005051720.22617.PeterHuewe@gmx.de> <201005112042.14889.PeterHuewe@gmx.de> <20100514060240.GD12002@linux-sh.org> <201005141326.52099.PeterHuewe@gmx.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Fixups for secretlab/next-devicetree branch
+Date: Mon, 17 May 2010 11:44:11 +1000
+Message-ID: <20100517114411.b81a7717.sfr@canb.auug.org.au>
+References: <AANLkTimktQ8gM5789JcpCi3N1cRc7mWGu-k-I-1J6B2f@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <201005141326.52099.PeterHuewe@gmx.de>
-Sender: linux-media-owner@vger.kernel.org
-To: =?ISO-8859-1?Q?Peter_H=FCwe?= <PeterHuewe@gmx.de>
-Cc: linux-next@vger.kernel.org, Paul Mundt <lethal@linux-sh.org>, linuxppc-dev@ozlabs.org, David H?rdeman <david@hardeman.nu>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sh@vger.kernel.org, linux-mips@linux-mips.org, linux-m68k@lists.linux-m68k.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__17_May_2010_11_44_11_+1000_zjw2EVZH0/H6TsNP"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:49455 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751962Ab0EQBoU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 16 May 2010 21:44:20 -0400
+In-Reply-To: <AANLkTimktQ8gM5789JcpCi3N1cRc7mWGu-k-I-1J6B2f@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next <linux-next@vger.kernel.org>
 
-Peter H=FCwe wrote:
-> From: Peter Huewe <peterhuewe@gmx.de>
->=20
-> This patch adds a missing include linux/delay.h to prevent
-> build failures[1-5]
->=20
-> Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
-> ---
-> Forwarded to linux-next mailing list -=20
-> breakage still exists in linux-next of 20100514 - please apply
->=20
-> KernelVersion: linux-next-20100505
+--Signature=_Mon__17_May_2010_11_44_11_+1000_zjw2EVZH0/H6TsNP
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sorry for not answer earlier. I was traveling. Anyway, this
-patch got applied on May, 12:
+Hi Grant,
 
-http://git.kernel.org/?p=3Dlinux/kernel/git/mchehab/linux-next.git;a=3D=
-commitdiff;h=3D4ace7aa2998b2974948f1948a61a5d348ddae472
+On Fri, 14 May 2010 10:59:01 +0200 Grant Likely <grant.likely@secretlab.ca>=
+ wrote:
+>
+> I've pushed out changes to my next-devicetree branch that cause a
+> conflict and a build error when merged with linux-next.  I could pull
+> in the conflicting trees, but I'm not sure whether or not that is a
+> good idea.  In the mean time I've attached the patches needed to
+> resolve the problems.
 
->=20
-> References:
-> [1] http://kisskb.ellerman.id.au/kisskb/buildresult/2571452/
-> [2] http://kisskb.ellerman.id.au/kisskb/buildresult/2571188/
-> [3] http://kisskb.ellerman.id.au/kisskb/buildresult/2571479/
-> [4] http://kisskb.ellerman.id.au/kisskb/buildresult/2571429/
-> [5] http://kisskb.ellerman.id.au/kisskb/buildresult/2571432/
->=20
-> drivers/media/IR/rc-map.c |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
->=20
-> diff --git a/drivers/media/IR/rc-map.c b/drivers/media/IR/rc-map.c
-> index caf6a27..46a8f15 100644
-> --- a/drivers/media/IR/rc-map.c
-> +++ b/drivers/media/IR/rc-map.c
-> @@ -14,6 +14,7 @@
-> =20
->  #include <media/ir-core.h>
->  #include <linux/spinlock.h>
-> +#include <linux/delay.h>
-> =20
->  /* Used to handle IR raw handler extensions */
->  static LIST_HEAD(rc_map_list);
-
-
+Thanks for the heads up, I will see how it goes.
 --=20
-
 Cheers,
-Mauro
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__17_May_2010_11_44_11_+1000_zjw2EVZH0/H6TsNP
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkvwn2sACgkQjjKRsyhoI8y6KACdF+RkDagLdkJElfPA9TSuRjAC
+P8oAoKsk7gxO6TjSoQiA8/5wtRPaqC0A
+=KnaX
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__17_May_2010_11_44_11_+1000_zjw2EVZH0/H6TsNP--
