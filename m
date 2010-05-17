@@ -1,33 +1,33 @@
 From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging-next tree with the
- pcmcia tree
-Date: Mon, 17 May 2010 11:01:30 -0700
-Message-ID: <20100517180130.GC16419@kroah.com>
-References: <20100517154919.535f12a1.sfr@canb.auug.org.au>
+Subject: Re: linux-next: build warning after merge of the usb tree
+Date: Mon, 17 May 2010 11:01:15 -0700
+Message-ID: <20100517180115.GB16419@kroah.com>
+References: <20100517160958.b5208a24.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from kroah.org ([198.145.64.141]:34171 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753301Ab0EQSUX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 May 2010 14:20:23 -0400
 Content-Disposition: inline
-In-Reply-To: <20100517154919.535f12a1.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20100517160958.b5208a24.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Henk de Groot <henk.de.groot@hetnet.nl>, Dominik Brodowski <linux@dominikbrodowski.net>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ming Lei <tom.leiming@gmail.com>
 
-On Mon, May 17, 2010 at 03:49:19PM +1000, Stephen Rothwell wrote:
+On Mon, May 17, 2010 at 04:09:58PM +1000, Stephen Rothwell wrote:
 > Hi Greg,
 > 
-> Today's linux-next merge of the staging-next tree got a conflict in
-> drivers/staging/wlags49_h2/wl_cs.c between commit
-> eb14120f743d29744d9475bffec56ff4ad43a749 ("pcmcia: re-work
-> pcmcia_request_irq()") from the pcmcia tree and commit
-> 93822ad193f1b1d92422dc3d539456acbe1a85ef ("Staging: wlags49_hs2: Fix
-> wlags49_hs2 driver after build fixes broke it") from the staging-next
-> tree.
+> After merging the usb tree, today's linux-next build (powerpc
+> ppc44x_defconfig) produced this warning:
 > 
-> I fixed it up (see below - basically the staging-next version) and can
-> carry the fix as necessary.
+> drivers/usb/core/usb.c:596: warning: 'match_device' defined but not used
+> 
+> Introduced by commit c8a3789b05e2ed43d8fd98934edbf66587cd3f96 ("USB:
+> remove usb_find_device") which removed the last user of this function.
 
-Looks good to me, thanks.
+Thanks, Ming just sent me a patch to resolve this, I'll go apply it now.
 
 greg k-h
