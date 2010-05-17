@@ -1,54 +1,49 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Fixups for secretlab/next-devicetree branch
-Date: Mon, 17 May 2010 11:44:11 +1000
-Message-ID: <20100517114411.b81a7717.sfr@canb.auug.org.au>
-References: <AANLkTimktQ8gM5789JcpCi3N1cRc7mWGu-k-I-1J6B2f@mail.gmail.com>
+Subject: linux-next: manual merge of the net tree with Linus' tree
+Date: Mon, 17 May 2010 12:09:22 +1000
+Message-ID: <20100517120922.50d5e0fb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__17_May_2010_11_44_11_+1000_zjw2EVZH0/H6TsNP"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49455 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:39557 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751962Ab0EQBoU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 16 May 2010 21:44:20 -0400
-In-Reply-To: <AANLkTimktQ8gM5789JcpCi3N1cRc7mWGu-k-I-1J6B2f@mail.gmail.com>
+	id S1752141Ab0EQCJ1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 16 May 2010 22:09:27 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: linux-next <linux-next@vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Engelhardt <jengelh@medozas.de>, Chris Wright <chrisw@sous-sol.org>
 
---Signature=_Mon__17_May_2010_11_44_11_+1000_zjw2EVZH0/H6TsNP
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-Hi Grant,
+Today's linux-next merge of the net tree got a conflict in
+include/linux/if_link.h between commit
+c02db8c6290bb992442fec1407643c94cc414375 ("rtnetlink: make SR-IOV VF
+interface symmetric") from Linus' tree and commit
+10708f37ae729baba9b67bd134c3720709d4ae62 ("net: core: add IFLA_STATS64
+support") from the net tree.
 
-On Fri, 14 May 2010 10:59:01 +0200 Grant Likely <grant.likely@secretlab.ca>=
- wrote:
->
-> I've pushed out changes to my next-devicetree branch that cause a
-> conflict and a build error when merged with linux-next.  I could pull
-> in the conflicting trees, but I'm not sure whether or not that is a
-> good idea.  In the mean time I've attached the patches needed to
-> resolve the problems.
-
-Thanks for the heads up, I will see how it goes.
---=20
+Just context changes.  I fixed it up (see below) and can carry the fix
+for a while.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__17_May_2010_11_44_11_+1000_zjw2EVZH0/H6TsNP
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkvwn2sACgkQjjKRsyhoI8y6KACdF+RkDagLdkJElfPA9TSuRjAC
-P8oAoKsk7gxO6TjSoQiA8/5wtRPaqC0A
-=KnaX
------END PGP SIGNATURE-----
-
---Signature=_Mon__17_May_2010_11_44_11_+1000_zjw2EVZH0/H6TsNP--
+diff --cc include/linux/if_link.h
+index d94963b,cfd420b..0000000
+--- a/include/linux/if_link.h
++++ b/include/linux/if_link.h
+@@@ -79,7 -111,11 +111,8 @@@ enum 
+  	IFLA_NET_NS_PID,
+  	IFLA_IFALIAS,
+  	IFLA_NUM_VF,		/* Number of VFs if device is SR-IOV PF */
+ -	IFLA_VF_MAC,		/* Hardware queue specific attributes */
+ -	IFLA_VF_VLAN,
+ -	IFLA_VF_TX_RATE,	/* TX Bandwidth Allocation */
+ -	IFLA_VFINFO,
+ +	IFLA_VFINFO_LIST,
++ 	IFLA_STATS64,
+  	__IFLA_MAX
+  };
+  
