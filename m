@@ -1,51 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the usb tree
-Date: Mon, 17 May 2010 16:16:03 +1000
-Message-ID: <20100517161603.f83a98d8.sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the net tree with Linus' tree
+Date: Mon, 17 May 2010 16:24:57 +1000
+Message-ID: <20100517162457.16d58054.sfr@canb.auug.org.au>
+References: <20100517120922.50d5e0fb.sfr@canb.auug.org.au>
+	<20100516.222803.226762774.davem@davemloft.net>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__17_May_2010_16_16_03_+1000_Y6itJAAk=1RqcfPn"
+ boundary="Signature=_Mon__17_May_2010_16_24_57_+1000_ihxVIUsbYOAvczKu"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40942 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58353 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753276Ab0EQGQK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 May 2010 02:16:10 -0400
+	id S1753099Ab0EQGZD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 May 2010 02:25:03 -0400
+In-Reply-To: <20100516.222803.226762774.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Youn <John.Youn@synopsys.com>, Sarah Sharp <sarah.a.sharp@linux.intel.com>
+To: David Miller <davem@davemloft.net>
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, jengelh@medozas.de, chrisw@sous-sol.org
 
---Signature=_Mon__17_May_2010_16_16_03_+1000_Y6itJAAk=1RqcfPn
+--Signature=_Mon__17_May_2010_16_24_57_+1000_ihxVIUsbYOAvczKu
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Dave,
 
-After merging the usb tree, today's linux-next build (powerpc allyesconfig)
-produced this warning:
+On Sun, 16 May 2010 22:28:03 -0700 (PDT) David Miller <davem@davemloft.net>=
+ wrote:
+>
+> I'll merge net-2.6 into net-next-2.6 to fix this for you, and
+> in fact your merge is exactly what I will use.
 
-drivers/usb/host/xhci-ring.c: In function 'prepare_ring':
-drivers/usb/host/xhci-ring.c:1729: warning: unused variable 'addr'
-
-Introduced by commit a2fbb0e4784f6d1b3be0779918e84dd3c0c73f04 ("USB:
-xhci: Transfer ring link TRB activation change").
+Great, thanks.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__17_May_2010_16_16_03_+1000_Y6itJAAk=1RqcfPn
+--Signature=_Mon__17_May_2010_16_24_57_+1000_ihxVIUsbYOAvczKu
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkvw3yMACgkQjjKRsyhoI8xi6gCfTIUfYbAey+GPJKKS1lIc41ul
-quwAn33uNOXFLGbGph5yxIitHLu4T0Et
-=Fuc/
+iEYEARECAAYFAkvw4TkACgkQjjKRsyhoI8zn/QCfTBU8cU/OIZ8UuKW1UVzv23v7
+wS8An0LcyzWRKLKSXAzCGiRgL38IEPdd
+=K1NQ
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__17_May_2010_16_16_03_+1000_Y6itJAAk=1RqcfPn--
+--Signature=_Mon__17_May_2010_16_24_57_+1000_ihxVIUsbYOAvczKu--
