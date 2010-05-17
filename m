@@ -1,52 +1,49 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the tip tree
-Date: Mon, 17 May 2010 15:58:02 +1000
-Message-ID: <20100517155802.5f82a85c.sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the usb tree
+Date: Mon, 17 May 2010 16:09:58 +1000
+Message-ID: <20100517160958.b5208a24.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__17_May_2010_15_58_02_+1000__GCW4Hf6WIGDaCyv"
+ boundary="Signature=_Mon__17_May_2010_16_09_58_+1000_bD1CeZzwTOMvuUZ."
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52097 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:47271 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753068Ab0EQF6Z (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 May 2010 01:58:25 -0400
+	id S1751742Ab0EQGKG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 May 2010 02:10:06 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Breeds <tony@bakeyournoodle.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ming Lei <tom.leiming@gmail.com>
 
---Signature=_Mon__17_May_2010_15_58_02_+1000__GCW4Hf6WIGDaCyv
+--Signature=_Mon__17_May_2010_16_09_58_+1000_bD1CeZzwTOMvuUZ.
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Greg,
 
-After merging the staging-next tree, today's linux-next build (powerpc
-ppc64_defconfig) produced this warning:
+After merging the usb tree, today's linux-next build (powerpc
+ppc44x_defconfig) produced this warning:
 
-kernel/mutex.c: In function '__mutex_lock_common':
-kernel/mutex.c:148: warning: unused variable 'timeout'
+drivers/usb/core/usb.c:596: warning: 'match_device' defined but not used
 
-Introduced by commit 227945799cc10d77c6ef812f3eb8a61a78689454 ("mutex:
-Fix optimistic spinning vs. BKL") for a build with
-CONFIG_MUTEX_SPIN_ON_OWNER not set.
-
+Introduced by commit c8a3789b05e2ed43d8fd98934edbf66587cd3f96 ("USB:
+remove usb_find_device") which removed the last user of this function.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__17_May_2010_15_58_02_+1000__GCW4Hf6WIGDaCyv
+--Signature=_Mon__17_May_2010_16_09_58_+1000_bD1CeZzwTOMvuUZ.
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkvw2uoACgkQjjKRsyhoI8xedACfbcDygqdoPEZC1kqUQjGYjrQ4
-PAMAn3y8FpxAzvdoXmRUCVubmDC/ijFw
-=WSTo
+iEYEARECAAYFAkvw3bYACgkQjjKRsyhoI8zZDgCgtBapz7oA071W9D2Q5MYwvFzm
+TfcAniNtnoPWrTzj8VmbE3w81I4qjPIM
+=z4bt
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__17_May_2010_15_58_02_+1000__GCW4Hf6WIGDaCyv--
+--Signature=_Mon__17_May_2010_16_09_58_+1000_bD1CeZzwTOMvuUZ.--
