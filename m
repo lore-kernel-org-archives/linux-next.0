@@ -1,47 +1,70 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pcmcia tree with the mtd tree
-Date: Mon, 17 May 2010 13:22:39 +1000
-Message-ID: <20100517132239.5cb9eb5d.sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the backlight tree
+Date: Mon, 17 May 2010 13:32:39 +1000
+Message-ID: <20100517133239.8a30df8e.sfr@canb.auug.org.au>
+References: <20100510124304.2249532c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__17_May_2010_13_32_39_+1000_L0PtpMCrg.seHt/f"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:36061 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752343Ab0EQDct (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 16 May 2010 23:32:49 -0400
+In-Reply-To: <20100510124304.2249532c.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Richard Purdie <rpurdie@rpsys.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Michael Hennerich <michael.hennerich@analog.com>, Mike Frysinger <vapier@gentoo.org>
+
+--Signature=_Mon__17_May_2010_13_32_39_+1000_L0PtpMCrg.seHt/f
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Kurz <linux@blala.de>, David Woodhouse <dwmw2@infradead.org>
-List-Id: linux-next.vger.kernel.org
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Dominik,
+Hi Richard,
 
-Today's linux-next merge of the pcmcia tree got a conflict in
-drivers/mtd/maps/pcmciamtd.c between commit
-9bdde162ebcc0237e722e8c3d0d376e35188a98f ("pcmciamtd: coding style
-cleanups") from the mtd tree and commit
-317b6d63000b3cc48c43d582d76063500e531a6c ("pcmcia: dev_node removal
-(write-only drivers)") from the pcmcia tree.
+On Mon, 10 May 2010 12:43:04 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the backlight tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>=20
+> drivers/video/backlight/adp8860_bl.c: In function 'adp8860_led_probe':
+> drivers/video/backlight/adp8860_bl.c:215: error: implicit declaration of =
+function 'kzalloc'
+> drivers/video/backlight/adp8860_bl.c:215: warning: assignment makes point=
+er from integer without a cast
+> drivers/video/backlight/adp8860_bl.c:285: error: implicit declaration of =
+function 'kfree'
+> drivers/video/backlight/adp8860_bl.c: In function 'adp8860_probe':
+> drivers/video/backlight/adp8860_bl.c:673: warning: assignment makes point=
+er from integer without a cast
+> drivers/video/backlight/adp8860_bl.c:689: error: too few arguments to fun=
+ction 'backlight_device_register'
+>=20
+> Caused by commit 6f1a02240dba279a389fd4a4138445bd3f13f67f ("backlight:
+> new driver for the ADP8860 backlight parts").  Use of kzalloc or kfree
+> requires including linux/slab.h (see Rule 1 in
+> Documentation/SubmitChecklist) and the prototype of
+> backlight_device_register changed before v2.6.34-rc2.
 
-I fixed it up (see below) and can carry the fix as necessary.
--- 
+I am still getting these build failures ...
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/mtd/maps/pcmciamtd.c
-index c4aacbf,87b2b8f..0000000
---- a/drivers/mtd/maps/pcmciamtd.c
-+++ b/drivers/mtd/maps/pcmciamtd.c
-@@@ -656,12 -646,11 +655,10 @@@ static int pcmciamtd_config(struct pcmc
-  		pcmciamtd_release(link);
-  		return -ENODEV;
-  	}
-- 	snprintf(dev->node.dev_name, sizeof(dev->node.dev_name), "mtd%d", mtd->index);
- -	info("mtd%d: %s", mtd->index, mtd->name);
- +	dev_info(&dev->p_dev->dev, "mtd%d: %s\n", mtd->index, mtd->name);
-- 	link->dev_node = &dev->node;
-  	return 0;
-  
- - failed:
- -	err("CS Error, exiting");
- +	dev_err(&dev->p_dev->dev, "CS Error, exiting\n");
-  	pcmciamtd_release(link);
-  	return -ENODEV;
-  }
+--Signature=_Mon__17_May_2010_13_32_39_+1000_L0PtpMCrg.seHt/f
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkvwuNcACgkQjjKRsyhoI8xxhQCfbDXhOp/R078FVfaLUYmqaFUc
+JosAoLZMlNpAW0LtW/nA8EYdCgkkuR5w
+=/pVg
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__17_May_2010_13_32_39_+1000_L0PtpMCrg.seHt/f--
