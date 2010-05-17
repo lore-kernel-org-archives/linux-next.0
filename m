@@ -1,73 +1,34 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH -next] bridge: fix build for CONFIG_SYSFS disabled
-Date: Mon, 17 May 2010 11:01:12 -0700
-Message-ID: <4BF18468.5010005@oracle.com>
-References: <20100517163521.649526d0.sfr@canb.auug.org.au> <20100517091756.e232bdc2.randy.dunlap@oracle.com> <20100517105654.2451e61f@nehalam>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build warning after merge of the usb tree
+Date: Mon, 17 May 2010 11:01:00 -0700
+Message-ID: <20100517180100.GA16419@kroah.com>
+References: <20100517161603.f83a98d8.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:32244 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754708Ab0EQSBY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 17 May 2010 14:01:24 -0400
-In-Reply-To: <20100517105654.2451e61f@nehalam>
+Received: from kroah.org ([198.145.64.141]:34164 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751742Ab0EQSUV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 May 2010 14:20:21 -0400
+Content-Disposition: inline
+In-Reply-To: <20100517161603.f83a98d8.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Hemminger <shemminger@vyatta.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org, davem@davemloft.net
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Youn <John.Youn@synopsys.com>, Sarah Sharp <sarah.a.sharp@linux.intel.com>
 
-On 05/17/10 10:56, Stephen Hemminger wrote:
-> On Mon, 17 May 2010 09:17:56 -0700
-> Randy Dunlap <randy.dunlap@oracle.com> wrote:
+On Mon, May 17, 2010 at 04:16:03PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
 > 
->> From: Randy Dunlap <randy.dunlap@oracle.com>
->>
->> Fix build when CONFIG_SYSFS is not enabled:
->>
->> net/bridge/br_if.c:136: error: 'struct net_bridge_port' has no member named 'sysfs_name'
->>
->> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
->> ---
->>  net/bridge/br_if.c |    2 ++
->>  1 file changed, 2 insertions(+)
->>
->> --- linux-next-20100517.orig/net/bridge/br_if.c
->> +++ linux-next-20100517/net/bridge/br_if.c
->> @@ -133,7 +133,9 @@ static void del_nbp(struct net_bridge_po
->>  	struct net_bridge *br = p->br;
->>  	struct net_device *dev = p->dev;
->>  
->> +#ifdef CONFIG_SYSFS
->>  	sysfs_remove_link(br->ifobj, p->sysfs_name);
->> +#endif
->>  
->>  	dev_set_promiscuity(dev, -1);
->>  
+> After merging the usb tree, today's linux-next build (powerpc allyesconfig)
+> produced this warning:
 > 
-> I don't like peppering code with #ifdef like this.
+> drivers/usb/host/xhci-ring.c: In function 'prepare_ring':
+> drivers/usb/host/xhci-ring.c:1729: warning: unused variable 'addr'
+> 
+> Introduced by commit a2fbb0e4784f6d1b3be0779918e84dd3c0c73f04 ("USB:
+> xhci: Transfer ring link TRB activation change").
 
-Thanks.  I didn't like it either.
+Thanks, I'll go fix this up.
 
-> Turns out that in this place sysfs_name is always the same
-> as the device name so instead:
-> 
-> 
-> --- a/net/bridge/br_if.c	2010-05-17 10:40:49.808031840 -0700
-> +++ b/net/bridge/br_if.c	2010-05-17 10:49:47.767669246 -0700
-> @@ -133,7 +133,7 @@ static void del_nbp(struct net_bridge_po
->  	struct net_bridge *br = p->br;
->  	struct net_device *dev = p->dev;
->  
-> -	sysfs_remove_link(br->ifobj, p->sysfs_name);
-> +	sysfs_remove_link(br->ifobj, p->dev->name);
->  
->  	dev_set_promiscuity(dev, -1);
->  
-> 
-> 
-
-
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+greg k-h
