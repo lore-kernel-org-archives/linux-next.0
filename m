@@ -1,49 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the block tree with the vfs tree
-Date: Tue, 18 May 2010 13:04:01 +1000
-Message-ID: <20100518130401.f6286112.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the block tree
+Date: Tue, 18 May 2010 13:37:10 +1000
+Message-ID: <20100518133710.8b1545dd.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__18_May_2010_13_37_10_+1000_WyGs035oBlbgt_AN"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54674 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:54839 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751637Ab0ERDEF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 May 2010 23:04:05 -0400
+	id S1752469Ab0ERDhU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 May 2010 23:37:20 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Jens Axboe <jens.axboe@oracle.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, H Hartley Sweeten <hartleys@visionengravers.com>, Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+
+--Signature=_Tue__18_May_2010_13_37_10_+1000_WyGs035oBlbgt_AN
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi Jens,
 
-Today's linux-next merge of the block tree got a conflict in
-fs/fs-writeback.c between commit 1c9539ad0dd1c3c3964ea35d5a355a0ed19c39c7
-("fs-writeback.c: bitfields should be unsigned") from the vfs tree and
-commit e913fc825dc685a444cb4c1d0f9d32f372f59861 ("writeback: fix
-WB_SYNC_NONE writeback from umount") from the block tree.
+After merging the block tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary.
--- 
+block/blk-core.c: In function 'laptop_mode_timer_fn':
+block/blk-core.c:503: error: too few arguments to function 'bdi_start_write=
+back'
+
+Caused by commit e913fc825dc685a444cb4c1d0f9d32f372f59861 ("writeback:
+fix WB_SYNC_NONE writeback from umount") from the block tree interacting
+with commit 42bd225c0ba7c95af39293d39a950c48e7e5cb23 (""laptop-mode: Make
+flushes per-device" fix") also from the block tree.  The merge
+6205ed4658a0df8c2879519977bbed6853014016 should have changed the code in
+block/blk-core.c that moved from mm/page-writeback.c.
+
+Mind you, I think that the change to laptop_mode_timer_fn in commit
+e913fc825dc685a444cb4c1d0f9d32f372f59861 was wrong anyway (the 0 should
+have been added at the end, surely).
+
+I have used the block tree from next-20100517 for today.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc fs/fs-writeback.c
-index 24e85ce,0f62957..0000000
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@@ -42,9 -42,10 +42,10 @@@ struct wb_writeback_args 
-  	long nr_pages;
-  	struct super_block *sb;
-  	enum writeback_sync_modes sync_mode;
- -	int for_kupdate:1;
- -	int range_cyclic:1;
- -	int for_background:1;
- -	int sb_pinned:1;
- +	unsigned int for_kupdate:1;
- +	unsigned int range_cyclic:1;
- +	unsigned int for_background:1;
-++	unsigned int sb_pinned:1;
-  };
-  
-  /*
+--Signature=_Tue__18_May_2010_13_37_10_+1000_WyGs035oBlbgt_AN
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkvyC2YACgkQjjKRsyhoI8zOZACgm+SatbD3aZxkIHqg5RCJ2kSK
+/RsAn1Y/QtFB5B2AJSGTNBJ2H0BdlUD0
+=sU3c
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__18_May_2010_13_37_10_+1000_WyGs035oBlbgt_AN--
