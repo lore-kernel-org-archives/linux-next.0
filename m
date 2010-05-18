@@ -1,79 +1,57 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
+From: Chris Wright <chrisw@sous-sol.org>
 Subject: Re: linux-next: build failure after merge of the driver-core tree
-Date: Tue, 18 May 2010 12:58:33 -0700
-Message-ID: <m1hbm5f0d2.fsf@fess.ebiederm.org>
-References: <20100518164520.7e9652b1.sfr@canb.auug.org.au>
+Date: Tue, 18 May 2010 14:06:07 -0700
+Message-ID: <20100518210607.GI8301@sequoia.sous-sol.org>
+References: <20100518164409.8b19c786.sfr@canb.auug.org.au>
+ <20100518140226.GB24113@kroah.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out01.mta.xmission.com ([166.70.13.231]:43493 "EHLO
-	out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753899Ab0ERT6n (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 18 May 2010 15:58:43 -0400
-In-Reply-To: <20100518164520.7e9652b1.sfr@canb.auug.org.au> (Stephen Rothwell's message of "Tue\, 18 May 2010 16\:45\:20 +1000")
+Received: from sous-sol.org ([216.99.217.87]:38213 "EHLO sequoia.sous-sol.org"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1752380Ab0ERVGP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 18 May 2010 17:06:15 -0400
+Content-Disposition: inline
+In-Reply-To: <20100518140226.GB24113@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Chris Wright <chrisw@sous-sol.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
+* Greg KH (greg@kroah.com) wrote:
+> On Tue, May 18, 2010 at 04:44:09PM +1000, Stephen Rothwell wrote:
+> > Hi Greg,
+> > 
+> > After merging the driver-core tree, today's linux-next build (powerpc
+> > ppc64_defconfig) failed like this:
+> > 
+> > cc1: warnings being treated as errors
+> > In file included from include/linux/kobject.h:21,
+> >                  from include/linux/device.h:17,
+> >                  from arch/powerpc/lib/devres.c:10:
+> > include/linux/sysfs.h:97: error: 'struct file' declared inside parameter list
+> > include/linux/sysfs.h:97: error: its scope is only this definition or declaration, which is probably not what you want
+> > include/linux/sysfs.h:99: error: 'struct file' declared inside parameter list
+> > include/linux/sysfs.h:101: error: 'struct file' declared inside parameter list
+> > 
+> > and many more (arch/powerpc is built with -Werror (as do some other
+> > architectures)) and lots of similar warnings ...
+> > 
+> > Caused by commit f8e898186196a22756b50b908ecd92123265f8a2 ("sysfs: add
+> > struct file* to bin_attr callbacks").   See Rule 1 in
+> > Documentation/SubmitChecklist.  The header file probably just needs
+> > "struct file;" added in the right place.
+> > 
+> > I have reverted that commit for today (and commit
+> > 44e425ab9f887ec6d3a7a4481f3b0c99f120de19 ("pci: check caps from sysfs
+> > file open to read device dependent config space") that depends on it).
+> 
+> Ick.
+> 
+> Chris, care to send a patch to resolve this?
 
-Greg this fixes the conflict with the vfs tree we see in linux-next.
+Would you prefer incremental to fold in, or respin?  It's just this
+one-liner fwd declaration as Stephen mentioned.
 
-Al I will be happy to work with you to rework this hunk of code in the
-next cycle so you can kill sb_lock.  It is just too late in the cycle
-to be making more than the minimal change necessary.
-
-Eric
-
-From: Eric W. Biederman <ebiederm@aristanetworks.com>
-Date: Tue, 18 May 2010 12:24:26 -0700
-Subject: [PATCH] sysfs:  Remove usage of S_BIAS to avoid merge conflict with the vfs tree
-
-In Al's latest vfs tree the code is reworked and S_BIAS has been removed.
-
-It turns out that checking to see if a super block is in the
-middle of an unmount in sysfs_exit_ns is unnecessary because we
-remove the super_block from the s_supers/s_instances list before
-struct sysfs_super_info pointed to by sb->s_fs_info is freed.
-
-For now just delete the unnecessary check to see if a superblock is in the
-middle of an unmount, it isn't necessary with or without Al's changes
-and it just causes a needless conflict.
-
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Eric W. Biederman <ebiederm@aristanetworks.com>
----
- fs/sysfs/mount.c |   11 ++++++++---
- 1 files changed, 8 insertions(+), 3 deletions(-)
-
-diff --git a/fs/sysfs/mount.c b/fs/sysfs/mount.c
-index bbba090..74f0529 100644
---- a/fs/sysfs/mount.c
-+++ b/fs/sysfs/mount.c
-@@ -144,6 +144,9 @@ static void sysfs_kill_sb(struct super_block *sb)
- {
- 	struct sysfs_super_info *info = sysfs_info(sb);
- 
-+	/* Remove the superblock from fs_supers/s_instances
-+	 * so we can't find it, before freeing sysfs_super_info.
-+	 */
- 	kill_anon_super(sb);
- 	kfree(info);
- }
-@@ -162,9 +165,11 @@ void sysfs_exit_ns(enum kobj_ns_type type, const void *ns)
- 	spin_lock(&sb_lock);
- 	list_for_each_entry(sb, &sysfs_fs_type.fs_supers, s_instances) {
- 		struct sysfs_super_info *info = sysfs_info(sb);
--		/* Ignore superblocks that are in the process of unmounting */
--		if (sb->s_count <= S_BIAS)
--			continue;
-+		/*
-+		 * If we see a superblock on the fs_supers/s_instances
-+		 * list the unmount has not completed and sb->s_fs_info
-+		 * points to a valid struct sysfs_super_info.
-+		 */
- 		/* Ignore superblocks with the wrong ns */
- 		if (info->ns[type] != ns)
- 			continue;
--- 
-1.6.6.1
+thanks,
+-chris
