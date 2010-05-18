@@ -1,46 +1,52 @@
-From: Jens Axboe <jens.axboe-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Subject: Re: linux-next: manual merge of the drbd tree with the
-	block tree
-Date: Tue, 18 May 2010 15:05:46 +0200
-Message-ID: <20100518130545.GZ25951@kernel.dk>
-References: <20100518152031.9a244971.sfr@canb.auug.org.au>
-	<201005181345.22986.philipp.reisner@linbit.com>
+From: Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: linux-next: build failure after merge of the usb tree
+Date: Tue, 18 May 2010 09:54:45 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.1005180949560.1795-100000@iolanthe.rowland.org>
+References: <20100518174253.37e38d66.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <201005181345.22986.philipp.reisner-63ez5xqkn6DQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <http://lists.linbit.com/mailman/options/drbd-dev>,
-	<mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linbit.com/pipermail/drbd-dev>
-List-Post: <mailto:drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org>
-List-Help: <mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.linbit.com/mailman/listinfo/drbd-dev>,
-	<mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=subscribe>
-Sender: drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
-Errors-To: drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
-To: Philipp Reisner <philipp.reisner-63ez5xqkn6DQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from iolanthe.rowland.org ([192.131.102.54]:56402 "HELO
+	iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1757542Ab0ERNyu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 18 May 2010 09:54:50 -0400
+In-Reply-To: <20100518174253.37e38d66.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Kernel development list <linux-kernel@vger.kernel.org>
 
-On Tue, May 18 2010, Philipp Reisner wrote:
-> Hi Stephen,
-> 
-> FYI:
-> I use 
-> git://git.drbd.org/linux-2.6-drbd.git for-jens
-> as path of my patches to Jens.
-> 
-> I switched that tree to Jens' 
-> git://git.kernel.dk/linux-2.6-block.git for-2.6.35
-> and provided the DRBD patches on top of that.
-> 
-> Not that I am not willing to help, I have the feeling that this
-> merge conflict has nothing to do with DRBD.
+On Tue, 18 May 2010, Stephen Rothwell wrote:
 
-I suspect that the merge will go smoothly with the updated branches when
-Stephen runs his scripts tomorrow.
+> Hi Greg,
+> 
+> After merging the usb tree, today's linux-next build (powerpc
+> ppc6xx_defconfig) failed like this:
+> 
+> drivers/usb/host/ehci-fsl.c:316: error: 'ehci' undeclared (first use in this function)
+> 
+> Caused by commit d19f8cd047971b43844d61d995be736dacb4826a ("USB: EHCI:
+> fix controller wakeup flag settings during suspend").
 
--- 
-Jens Axboe
+Here's a fix for the problem.  It's awfully easy to mess things up when 
+changing code for architectures you don't have.
+
+Greg, can you merge this in with the original patch?
+
+Alan Stern
+
+
+
+Index: usb-2.6/drivers/usb/host/ehci-fsl.c
+===================================================================
+--- usb-2.6.orig/drivers/usb/host/ehci-fsl.c
++++ usb-2.6/drivers/usb/host/ehci-fsl.c
+@@ -313,7 +313,7 @@ static int ehci_fsl_drv_suspend(struct d
+ 	struct ehci_fsl *ehci_fsl = hcd_to_ehci_fsl(hcd);
+ 	void __iomem *non_ehci = hcd->regs;
+ 
+-	ehci_prepare_ports_for_controller_suspend(ehci);
++	ehci_prepare_ports_for_controller_suspend(hcd_to_ehci(hcd));
+ 	if (!fsl_deep_sleep())
+ 		return 0;
+ 
