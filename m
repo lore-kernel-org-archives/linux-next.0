@@ -1,39 +1,58 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: linux-next: build failure after merge of the final tree
-	(devicetree tree related)
-Date: Tue, 18 May 2010 16:16:30 -0600
-Message-ID: <AANLkTik0G8QXBrqbJXwylJOE1QoSzGe4yixUrTenYtdO@mail.gmail.com>
-References: <20100518174750.cc965d84.sfr@canb.auug.org.au>
-	<AANLkTil4MIKUrzK-SOS9satdcL34F5B_3D6ddFn6lThL@mail.gmail.com>
+From: Chris Wright <chrisw@sous-sol.org>
+Subject: [PATCH] sysfs: compile fix, struct file forward declaration
+Date: Tue, 18 May 2010 15:32:19 -0700
+Message-ID: <20100518223219.GJ8301@sequoia.sous-sol.org>
+References: <20100518164409.8b19c786.sfr@canb.auug.org.au>
+ <20100518140226.GB24113@kroah.com>
+ <20100518210607.GI8301@sequoia.sous-sol.org>
+ <20100518212448.GA31331@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gw0-f46.google.com ([74.125.83.46]:49723 "EHLO
-	mail-gw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755274Ab0ERWQw convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 18 May 2010 18:16:52 -0400
-In-Reply-To: <AANLkTil4MIKUrzK-SOS9satdcL34F5B_3D6ddFn6lThL@mail.gmail.com>
+Received: from sous-sol.org ([216.99.217.87]:56086 "EHLO sequoia.sous-sol.org"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751742Ab0ERWc0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 18 May 2010 18:32:26 -0400
+Content-Disposition: inline
+In-Reply-To: <20100518212448.GA31331@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: Chris Wright <chrisw@sous-sol.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, May 18, 2010 at 5:52 AM, Grant Likely <grant.likely@secretlab.c=
-a> wrote:
-> On Tue, May 18, 2010 at 1:47 AM, Stephen Rothwell <sfr@canb.auug.org.=
-au> wrote:
->> Hi Grant,
->>
->> After merging the final tree, yesterday's linux-next build (powerpc
->> mpc85xx_defconfig) failed like this:
->>
->> http://kisskb.ellerman.id.au/kisskb/buildresult/2615202/
->>
->> I suspect that is something to do with the devicetree tree.
->
-> Ah, yes. =A0I'll push out fixes for those this morning.
+On Tue, May 18, 2010 at 04:44:09PM +1000, Stephen Rothwell wrote:
+> After merging the driver-core tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> cc1: warnings being treated as errors
+> In file included from include/linux/kobject.h:21,
+>                  from include/linux/device.h:17,
+>                  from arch/powerpc/lib/devres.c:10:
+> include/linux/sysfs.h:97: error: 'struct file' declared inside parameter list
+> include/linux/sysfs.h:97: error: its scope is only this definition or
+> declaration, which is probably not what you want
+> include/linux/sysfs.h:99: error: 'struct file' declared inside parameter list
+> include/linux/sysfs.h:101: error: 'struct file' declared inside parameter list
+> 
+> and many more (arch/powerpc is built with -Werror (as do some other
+> architectures)) and lots of similar warnings ...
 
-=46ixed tree pushed out.
+Add missing forward declaration
 
-g.
+Signed-off-by: Chris Wright <chrisw@sous-sol.org>
+---
+ include/linux/sysfs.h |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/include/linux/sysfs.h b/include/linux/sysfs.h
+index 2a0d278..f06b1f1 100644
+--- a/include/linux/sysfs.h
++++ b/include/linux/sysfs.h
+@@ -86,6 +86,7 @@ struct attribute_group {
+ 
+ #define attr_name(_attr) (_attr).attr.name
+ 
++struct file;
+ struct vm_area_struct;
+ 
+ struct bin_attribute {
