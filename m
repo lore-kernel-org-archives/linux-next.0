@@ -1,31 +1,39 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Subject: Re: linux-next: build failure after merge of the driver-core tree
-Date: Tue, 18 May 2010 14:59:09 -0700
-Message-ID: <m1zkzwdg7m.fsf@fess.ebiederm.org>
-References: <20100518164520.7e9652b1.sfr@canb.auug.org.au>
-	<m1hbm5f0d2.fsf@fess.ebiederm.org> <20100518212502.GB31331@kroah.com>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: linux-next: build failure after merge of the final tree
+	(devicetree tree related)
+Date: Tue, 18 May 2010 16:16:30 -0600
+Message-ID: <AANLkTik0G8QXBrqbJXwylJOE1QoSzGe4yixUrTenYtdO@mail.gmail.com>
+References: <20100518174750.cc965d84.sfr@canb.auug.org.au>
+	<AANLkTil4MIKUrzK-SOS9satdcL34F5B_3D6ddFn6lThL@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out01.mta.xmission.com ([166.70.13.231]:45443 "EHLO
-	out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752633Ab0ERV7S (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 18 May 2010 17:59:18 -0400
-In-Reply-To: <20100518212502.GB31331@kroah.com> (Greg KH's message of "Tue\, 18 May 2010 14\:25\:02 -0700")
+Received: from mail-gw0-f46.google.com ([74.125.83.46]:49723 "EHLO
+	mail-gw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755274Ab0ERWQw convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 18 May 2010 18:16:52 -0400
+In-Reply-To: <AANLkTil4MIKUrzK-SOS9satdcL34F5B_3D6ddFn6lThL@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Greg KH <greg@kroah.com> writes:
-
-> On Tue, May 18, 2010 at 12:58:33PM -0700, Eric W. Biederman wrote:
->> 
->> Greg this fixes the conflict with the vfs tree we see in linux-next.
+On Tue, May 18, 2010 at 5:52 AM, Grant Likely <grant.likely@secretlab.c=
+a> wrote:
+> On Tue, May 18, 2010 at 1:47 AM, Stephen Rothwell <sfr@canb.auug.org.=
+au> wrote:
+>> Hi Grant,
+>>
+>> After merging the final tree, yesterday's linux-next build (powerpc
+>> mpc85xx_defconfig) failed like this:
+>>
+>> http://kisskb.ellerman.id.au/kisskb/buildresult/2615202/
+>>
+>> I suspect that is something to do with the devicetree tree.
 >
-> Thanks, I can apply this to my tree right now, right?
+> Ah, yes. =A0I'll push out fixes for those this morning.
 
-Yes it is safe to apply to your tree right now.  Apologies if that
-wasn't clear.
+=46ixed tree pushed out.
 
-Eric
+g.
