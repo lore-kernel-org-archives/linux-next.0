@@ -1,49 +1,49 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next -> 2.6.34: Tree for April 28 (logfs)
-Date: Tue, 18 May 2010 02:40:48 +0200
-Message-ID: <20100518004048.GF20590@elte.hu>
-References: <20100428164341.cee2911a.sfr@canb.auug.org.au>
- <20100428085604.0566092a.randy.dunlap@oracle.com>
- <20100505092020.66a461fa.randy.dunlap@oracle.com>
- <20100505203548.GI25129@logfs.org>
- <20100509062010.GA9485@elte.hu>
- <20100516204826.2625eed2.randy.dunlap@oracle.com>
- <20100517193159.GE28003@logfs.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the block tree with the vfs tree
+Date: Tue, 18 May 2010 13:04:01 +1000
+Message-ID: <20100518130401.f6286112.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:59720 "EHLO mx2.mail.elte.hu"
+Received: from chilli.pcug.org.au ([203.10.76.44]:54674 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752542Ab0ERAlT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 17 May 2010 20:41:19 -0400
-Content-Disposition: inline
-In-Reply-To: <20100517193159.GE28003@logfs.org>
+	id S1751637Ab0ERDEF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 May 2010 23:04:05 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: =?iso-8859-1?Q?J=F6rn?= Engel <joern@logfs.org>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, logfs@logfs.org
+To: Jens Axboe <jens.axboe@oracle.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, H Hartley Sweeten <hartleys@visionengravers.com>, Al Viro <viro@ZenIV.linux.org.uk>
 
+Hi Jens,
 
-* J=F6rn Engel <joern@logfs.org> wrote:
+Today's linux-next merge of the block tree got a conflict in
+fs/fs-writeback.c between commit 1c9539ad0dd1c3c3964ea35d5a355a0ed19c39c7
+("fs-writeback.c: bitfields should be unsigned") from the vfs tree and
+commit e913fc825dc685a444cb4c1d0f9d32f372f59861 ("writeback: fix
+WB_SYNC_NONE writeback from umount") from the block tree.
 
-> On Sun, 16 May 2010 20:48:26 -0700, Randy Dunlap wrote:
-> >=20
-> > This fix is now needed in 2.6.34....
->=20
-> I didn't send Linus a pull request, as I was on=20
-> vacation last week.  Bad timing, given the 2.6.34=20
-> release date. :(
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Dont worry about it too much - the likehood of the=20
-build failure was very low, around 1:50 in my=20
-randconfig tests. I doubt any real user ran into this=20
-spontaenously - and randconfig folks know how to fix=20
-rare build failures :-)
-
-You might still want to forward the commit to=20
--stable, once it's in Linus's tree.
-
-Thanks,
-
-	Ingo
+diff --cc fs/fs-writeback.c
+index 24e85ce,0f62957..0000000
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@@ -42,9 -42,10 +42,10 @@@ struct wb_writeback_args 
+  	long nr_pages;
+  	struct super_block *sb;
+  	enum writeback_sync_modes sync_mode;
+ -	int for_kupdate:1;
+ -	int range_cyclic:1;
+ -	int for_background:1;
+ -	int sb_pinned:1;
+ +	unsigned int for_kupdate:1;
+ +	unsigned int range_cyclic:1;
+ +	unsigned int for_background:1;
+++	unsigned int sb_pinned:1;
+  };
+  
+  /*
