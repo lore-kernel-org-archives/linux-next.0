@@ -1,59 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the driver-core tree
-Date: Tue, 18 May 2010 17:54:51 +1000
-Message-ID: <20100518175451.a01e314b.sfr@canb.auug.org.au>
-References: <20100518164520.7e9652b1.sfr@canb.auug.org.au>
-	<m1wrv13dam.fsf@fess.ebiederm.org>
+From: Jens Axboe <jens.axboe@oracle.com>
+Subject: Re: linux-next: build failure after merge of the block tree
+Date: Tue, 18 May 2010 10:56:13 +0200
+Message-ID: <20100518085613.GU25951@kernel.dk>
+References: <20100518133710.8b1545dd.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__18_May_2010_17_54_51_+1000_F8RrUVjRw0N5MMX6"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53656 "EHLO smtps.tip.net.au"
+Received: from 0122700014.0.fullrate.dk ([95.166.99.235]:45468 "EHLO kernel.dk"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754101Ab0ERHy6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 18 May 2010 03:54:58 -0400
-In-Reply-To: <m1wrv13dam.fsf@fess.ebiederm.org>
+	id S1755624Ab0ERI4P (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 18 May 2010 04:56:15 -0400
+Content-Disposition: inline
+In-Reply-To: <20100518133710.8b1545dd.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Tue__18_May_2010_17_54_51_+1000_F8RrUVjRw0N5MMX6
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, May 18 2010, Stephen Rothwell wrote:
+> Hi Jens,
+> 
+> After merging the block tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> block/blk-core.c: In function 'laptop_mode_timer_fn':
+> block/blk-core.c:503: error: too few arguments to function 'bdi_start_writeback'
+> 
+> Caused by commit e913fc825dc685a444cb4c1d0f9d32f372f59861 ("writeback:
+> fix WB_SYNC_NONE writeback from umount") from the block tree interacting
+> with commit 42bd225c0ba7c95af39293d39a950c48e7e5cb23 (""laptop-mode: Make
+> flushes per-device" fix") also from the block tree.  The merge
+> 6205ed4658a0df8c2879519977bbed6853014016 should have changed the code in
+> block/blk-core.c that moved from mm/page-writeback.c.
+> 
+> Mind you, I think that the change to laptop_mode_timer_fn in commit
+> e913fc825dc685a444cb4c1d0f9d32f372f59861 was wrong anyway (the 0 should
+> have been added at the end, surely).
+> 
+> I have used the block tree from next-20100517 for today.
 
-Hi Eric,
+Thanks, it looks like a merge/commit error on for-next alone, for-2.6.35
+is fine. I'll make sure this gets fixed up now.
 
-On Tue, 18 May 2010 00:00:01 -0700 ebiederm@xmission.com (Eric W. Biederman=
-) wrote:
->
-> Stephen what is the easiest way to get a copy of Al's tree so I can take
-> a look to see what needs to happen?
-
-It is here:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs-2.6.git#for-next
-
-[The latest list of trees included in linux-next can always be found here:
-http://git.kernel.org/?p=3Dlinux/kernel/git/next/linux-next.git;a=3Dblob;f=
-=3DNext/Trees]
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__18_May_2010_17_54_51_+1000_F8RrUVjRw0N5MMX6
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkvyR8sACgkQjjKRsyhoI8yWpQCgu9PMSzawtRcouXj2XnfP923d
-6gYAnjahpH+do0IM4N8uV2nq1lEysOHD
-=EdHF
------END PGP SIGNATURE-----
-
---Signature=_Tue__18_May_2010_17_54_51_+1000_F8RrUVjRw0N5MMX6--
+-- 
+Jens Axboe
