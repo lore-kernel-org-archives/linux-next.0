@@ -1,39 +1,49 @@
-From: =?utf-8?B?SsO2cm4=?= Engel <joern@logfs.org>
+From: Ingo Molnar <mingo@elte.hu>
 Subject: Re: linux-next -> 2.6.34: Tree for April 28 (logfs)
-Date: Mon, 17 May 2010 21:31:59 +0200
-Message-ID: <20100517193159.GE28003@logfs.org>
+Date: Tue, 18 May 2010 02:40:48 +0200
+Message-ID: <20100518004048.GF20590@elte.hu>
 References: <20100428164341.cee2911a.sfr@canb.auug.org.au>
-	<20100428085604.0566092a.randy.dunlap@oracle.com>
-	<20100505092020.66a461fa.randy.dunlap@oracle.com>
-	<20100505203548.GI25129@logfs.org> <20100509062010.GA9485@elte.hu>
-	<20100516204826.2625eed2.randy.dunlap@oracle.com>
+ <20100428085604.0566092a.randy.dunlap@oracle.com>
+ <20100505092020.66a461fa.randy.dunlap@oracle.com>
+ <20100505203548.GI25129@logfs.org>
+ <20100509062010.GA9485@elte.hu>
+ <20100516204826.2625eed2.randy.dunlap@oracle.com>
+ <20100517193159.GE28003@logfs.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <logfs-bounces@logfs.org>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx2.mail.elte.hu ([157.181.151.9]:59720 "EHLO mx2.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752542Ab0ERAlT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 17 May 2010 20:41:19 -0400
 Content-Disposition: inline
-In-Reply-To: <20100516204826.2625eed2.randy.dunlap@oracle.com>
-List-Unsubscribe: <http://logfs.org/cgi-bin/mailman/listinfo/logfs>,
-	<mailto:logfs-request@logfs.org?subject=unsubscribe>
-List-Archive: <http://logfs.org/pipermail/logfs>
-List-Post: <mailto:logfs@logfs.org>
-List-Help: <mailto:logfs-request@logfs.org?subject=help>
-List-Subscribe: <http://logfs.org/cgi-bin/mailman/listinfo/logfs>,
-	<mailto:logfs-request@logfs.org?subject=subscribe>
-Sender: logfs-bounces@logfs.org
-Errors-To: logfs-bounces@logfs.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, logfs@logfs.org
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20100517193159.GE28003@logfs.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: =?iso-8859-1?Q?J=F6rn?= Engel <joern@logfs.org>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, logfs@logfs.org
 
-T24gU3VuLCAxNiBNYXkgMjAxMCAyMDo0ODoyNiAtMDcwMCwgUmFuZHkgRHVubGFwIHdyb3RlOgo+
-IAo+IFRoaXMgZml4IGlzIG5vdyBuZWVkZWQgaW4gMi42LjM0Li4uLgoKSSBkaWRuJ3Qgc2VuZCBM
-aW51cyBhIHB1bGwgcmVxdWVzdCwgYXMgSSB3YXMgb24gdmFjYXRpb24gbGFzdCB3ZWVrLiAgQmFk
-CnRpbWluZywgZ2l2ZW4gdGhlIDIuNi4zNCByZWxlYXNlIGRhdGUuIDooCgpKw7ZybgoKLS0gCllv
-dSBjYW5ub3Qgc3VwcG9zZSB0aGF0IE1vbGllcmUgZXZlciB0cm91YmxlZCBoaW1zZWxmIHRvIGJl
-IG9yaWdpbmFsIGluIHRoZQptYXR0ZXIgb2YgaWRlYXMuIFlvdSBjYW5ub3Qgc3VwcG9zZSB0aGF0
-IHRoZSBzdG9yaWVzIGhlIHRlbGxzIGluIGhpcyBwbGF5cwpoYXZlIG5ldmVyIGJlZW4gdG9sZCBi
-ZWZvcmUuIFRoZXkgd2VyZSBjdWxsZWQsIGFzIHlvdSB2ZXJ5IHdlbGwga25vdy4KLS0gQW5kcmUt
-TG91aXMgTW9yZWF1IGluIFNjYXJhYm91Y2hlCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fXwpMb2dmcyBtYWlsaW5nIGxpc3QKTG9nZnNAbG9nZnMub3JnCmh0
-dHA6Ly9sb2dmcy5vcmcvY2dpLWJpbi9tYWlsbWFuL2xpc3RpbmZvL2xvZ2ZzCg==
+
+* J=F6rn Engel <joern@logfs.org> wrote:
+
+> On Sun, 16 May 2010 20:48:26 -0700, Randy Dunlap wrote:
+> >=20
+> > This fix is now needed in 2.6.34....
+>=20
+> I didn't send Linus a pull request, as I was on=20
+> vacation last week.  Bad timing, given the 2.6.34=20
+> release date. :(
+
+Dont worry about it too much - the likehood of the=20
+build failure was very low, around 1:50 in my=20
+randconfig tests. I doubt any real user ran into this=20
+spontaenously - and randconfig folks know how to fix=20
+rare build failures :-)
+
+You might still want to forward the commit to=20
+-stable, once it's in Linus's tree.
+
+Thanks,
+
+	Ingo
