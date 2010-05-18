@@ -1,37 +1,23 @@
 From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the usb tree
-Date: Tue, 18 May 2010 14:11:11 -0700
-Message-ID: <20100518211111.GA27870@kroah.com>
-References: <20100518174253.37e38d66.sfr@canb.auug.org.au>
- <Pine.LNX.4.44L0.1005180949560.1795-100000@iolanthe.rowland.org>
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+Date: Tue, 18 May 2010 14:25:02 -0700
+Message-ID: <20100518212502.GB31331@kroah.com>
+References: <20100518164520.7e9652b1.sfr@canb.auug.org.au>
+ <m1hbm5f0d2.fsf@fess.ebiederm.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1005180949560.1795-100000@iolanthe.rowland.org>
+In-Reply-To: <m1hbm5f0d2.fsf@fess.ebiederm.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Kernel development list <linux-kernel@vger.kernel.org>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, May 18, 2010 at 09:54:45AM -0400, Alan Stern wrote:
-> On Tue, 18 May 2010, Stephen Rothwell wrote:
+On Tue, May 18, 2010 at 12:58:33PM -0700, Eric W. Biederman wrote:
 > 
-> > Hi Greg,
-> > 
-> > After merging the usb tree, today's linux-next build (powerpc
-> > ppc6xx_defconfig) failed like this:
-> > 
-> > drivers/usb/host/ehci-fsl.c:316: error: 'ehci' undeclared (first use in this function)
-> > 
-> > Caused by commit d19f8cd047971b43844d61d995be736dacb4826a ("USB: EHCI:
-> > fix controller wakeup flag settings during suspend").
-> 
-> Here's a fix for the problem.  It's awfully easy to mess things up when 
-> changing code for architectures you don't have.
-> 
-> Greg, can you merge this in with the original patch?
+> Greg this fixes the conflict with the vfs tree we see in linux-next.
 
-Thanks, now merged and pushed out.
+Thanks, I can apply this to my tree right now, right?
 
 greg k-h
