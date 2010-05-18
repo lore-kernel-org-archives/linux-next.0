@@ -1,48 +1,69 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH -next] bridge: fix build for CONFIG_SYSFS disabled
-Date: Mon, 17 May 2010 22:32:37 -0700 (PDT)
-Message-ID: <20100517.223237.55871633.davem@davemloft.net>
-References: <20100517091756.e232bdc2.randy.dunlap@oracle.com>
-	<20100517105654.2451e61f@nehalam>
-	<4BF18468.5010005@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the driver-core tree
+Date: Tue, 18 May 2010 16:44:09 +1000
+Message-ID: <20100518164409.8b19c786.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__18_May_2010_16_44_09_+1000_CD41NQWC/Uw/8UHv"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:41926
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755876Ab0ERFc2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 18 May 2010 01:32:28 -0400
-In-Reply-To: <4BF18468.5010005@oracle.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:39119 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756742Ab0ERGoQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 18 May 2010 02:44:16 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: randy.dunlap@oracle.com
-Cc: shemminger@vyatta.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Wright <chrisw@sous-sol.org>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Date: Mon, 17 May 2010 11:01:12 -0700
+--Signature=_Tue__18_May_2010_16_44_09_+1000_CD41NQWC/Uw/8UHv
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On 05/17/10 10:56, Stephen Hemminger wrote:
->> On Mon, 17 May 2010 09:17:56 -0700
->> Randy Dunlap <randy.dunlap@oracle.com> wrote:
->> 
->>> From: Randy Dunlap <randy.dunlap@oracle.com>
->>>
->>> Fix build when CONFIG_SYSFS is not enabled:
->>>
->>> net/bridge/br_if.c:136: error: 'struct net_bridge_port' has no member named 'sysfs_name'
->>>
->>> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-...
->> I don't like peppering code with #ifdef like this.
-> 
-> Thanks.  I didn't like it either.
-> 
->> Turns out that in this place sysfs_name is always the same
->> as the device name so instead:
+Hi Greg,
 
-Stephen, please give me a formal submission of this fix with proper
-signoff and credit to Randy.
+After merging the driver-core tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Thanks!
+cc1: warnings being treated as errors
+In file included from include/linux/kobject.h:21,
+                 from include/linux/device.h:17,
+                 from arch/powerpc/lib/devres.c:10:
+include/linux/sysfs.h:97: error: 'struct file' declared inside parameter li=
+st
+include/linux/sysfs.h:97: error: its scope is only this definition or decla=
+ration, which is probably not what you want
+include/linux/sysfs.h:99: error: 'struct file' declared inside parameter li=
+st
+include/linux/sysfs.h:101: error: 'struct file' declared inside parameter l=
+ist
+
+and many more (arch/powerpc is built with -Werror (as do some other
+architectures)) and lots of similar warnings ...
+
+Caused by commit f8e898186196a22756b50b908ecd92123265f8a2 ("sysfs: add
+struct file* to bin_attr callbacks").   See Rule 1 in
+Documentation/SubmitChecklist.  The header file probably just needs
+"struct file;" added in the right place.
+
+I have reverted that commit for today (and commit
+44e425ab9f887ec6d3a7a4481f3b0c99f120de19 ("pci: check caps from sysfs
+file open to read device dependent config space") that depends on it).
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__18_May_2010_16_44_09_+1000_CD41NQWC/Uw/8UHv
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkvyNzkACgkQjjKRsyhoI8xHwQCgtEomCrJs3GaECrRT/MHSdwg+
+YisAn1sSfTf/k+SN42x4N4qT1fxnF2DP
+=iMXG
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__18_May_2010_16_44_09_+1000_CD41NQWC/Uw/8UHv--
