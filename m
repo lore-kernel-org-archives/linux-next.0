@@ -1,41 +1,45 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the usb tree
-Date: Tue, 18 May 2010 07:08:06 -0700
-Message-ID: <20100518140806.GA24463@kroah.com>
-References: <20100518174253.37e38d66.sfr@canb.auug.org.au>
- <Pine.LNX.4.44L0.1005180949560.1795-100000@iolanthe.rowland.org>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+Date: Tue, 18 May 2010 16:02:11 +0100
+Message-ID: <20100518150211.GG31073@ZenIV.linux.org.uk>
+References: <20100518164520.7e9652b1.sfr@canb.auug.org.au>
+ <m1wrv13dam.fsf@fess.ebiederm.org>
+ <20100518175451.a01e314b.sfr@canb.auug.org.au>
+ <m1iq6lh50h.fsf@fess.ebiederm.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:46555 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757315Ab0EROI1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 18 May 2010 10:08:27 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:38932 "EHLO
+	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756686Ab0ERPCT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 18 May 2010 11:02:19 -0400
 Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1005180949560.1795-100000@iolanthe.rowland.org>
+In-Reply-To: <m1iq6lh50h.fsf@fess.ebiederm.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Kernel development list <linux-kernel@vger.kernel.org>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, May 18, 2010 at 09:54:45AM -0400, Alan Stern wrote:
-> On Tue, 18 May 2010, Stephen Rothwell wrote:
+On Tue, May 18, 2010 at 03:35:10AM -0700, Eric W. Biederman wrote:
+> Thanks.
 > 
-> > Hi Greg,
-> > 
-> > After merging the usb tree, today's linux-next build (powerpc
-> > ppc6xx_defconfig) failed like this:
-> > 
-> > drivers/usb/host/ehci-fsl.c:316: error: 'ehci' undeclared (first use in this function)
-> > 
-> > Caused by commit d19f8cd047971b43844d61d995be736dacb4826a ("USB: EHCI:
-> > fix controller wakeup flag settings during suspend").
+> I will cook up a proper incremental patch after I get some sleep.  Stephen
+> it appears those two lines you have commented out are actually unnecessary.
 > 
-> Here's a fix for the problem.  It's awfully easy to mess things up when 
-> changing code for architectures you don't have.
+> We have
+> deactivate_super
+>   kill_sb aka sysfs_kill_sb
+>     kill_anon_super
+>       generic_shutdown_super
+>          sb_lock
+>          list_del(sb->s_instances)
+>          sb_unlock
+>   kfree(info)
 > 
-> Greg, can you merge this in with the original patch?
+> Nothing generic stomps on s_fs_info.
+> 
+> Which means that if I find a superblock on sb->s_instances sb->s_fs_info
+> still points to a valid sysfs_super_info.
 
-Will do, thanks for the patch.
-
-greg k-h
+Except that sb_lock is going away next cycle.  There are very few users left
+outside of fs/super.c and I'd much prefer it to become static.
