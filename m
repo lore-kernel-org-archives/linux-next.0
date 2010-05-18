@@ -1,50 +1,54 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (devicetree
- tree related)
-Date: Tue, 18 May 2010 17:47:50 +1000
-Message-ID: <20100518174750.cc965d84.sfr@canb.auug.org.au>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+Date: Tue, 18 May 2010 08:48:13 +0100
+Message-ID: <20100518074813.GF31073@ZenIV.linux.org.uk>
+References: <20100518164520.7e9652b1.sfr@canb.auug.org.au>
+ <m1wrv13dam.fsf@fess.ebiederm.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__18_May_2010_17_47_50_+1000_djFlXtAFhPZ80++h"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46909 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755896Ab0ERHr6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 18 May 2010 03:47:58 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-
---Signature=_Tue__18_May_2010_17_47_50_+1000_djFlXtAFhPZ80++h
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <m1wrv13dam.fsf@fess.ebiederm.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Grant,
+On Tue, May 18, 2010 at 12:00:01AM -0700, Eric W. Biederman wrote:
+> Stephen Rothwell <sfr@canb.auug.org.au> writes:
+> 
+> > Hi Greg,
+> >
+> > After merging the driver-core tree, today's linux-next build (powerpc
+> > ppc64_defconfig) failed like this:
+> >
+> > fs/sysfs/mount.c: In function 'sysfs_exit_ns':
+> > fs/sysfs/mount.c:160: error: 'S_BIAS' undeclared (first use in this function)
+> >
+> > Caused by commit c80e63f000aa7cf73a430b2cb57dbbb91554a847 ("sysfs:
+> > Implement sysfs tagged directory support") from the driver-core tree
+> > interacting with commit f3ffc7acb6a6ebec0a9e660d9211ed048d7e90f5 ("get
+> > rid of S_BIAS") from the vfs tree.
+> >
+> > I don't know how to fix this, so I just commented the code out for now
+> > (see below). Please someone supply a correct fix.
+> >
+> > [Al, I notice that the "get rid of S_BIAS" patch has an author date of
+> > March 22 - it would have been nice if it had been in linux-next during
+> > the last two months so that we could have had a fix for this some time
+> > ago.]
+> 
+> Stephen what is the easiest way to get a copy of Al's tree so I can take
+> a look to see what needs to happen?
 
-After merging the final tree, yesterday's linux-next build (powerpc
-mpc85xx_defconfig) failed like this:
+What needs to happen is the end of s_instances abuse in there.  If you
+do something to all your sysfs_super_info instances, put those into a
+list of its own.  What seems to be done there is blind "slap NULL at
+that member in all those structures, no matter what might be going on".
+Since the only thing you apparently care about is that sb->s_fs_info won't
+disappear under you...
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/2615202/
-
-I suspect that is something to do with the devicetree tree.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__18_May_2010_17_47_50_+1000_djFlXtAFhPZ80++h
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkvyRiYACgkQjjKRsyhoI8xvkQCghi9gdTh+SDLARj1wIlMp/pHU
-XSAAoIxsE0TH6yXm95ClVR2Nvg5iU/kf
-=qxmX
------END PGP SIGNATURE-----
-
---Signature=_Tue__18_May_2010_17_47_50_+1000_djFlXtAFhPZ80++h--
+I really wonder what you intend to happen with readdir/sysfs_exit_ns races,
+but that's a separate question.  Note that there you drop all locks many
+times (and don't get me started on the amount of contention in sysfs), you
+have no protection against old info->ns[...] contents getting stale, AFAICS.
