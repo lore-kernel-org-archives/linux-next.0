@@ -1,49 +1,56 @@
-From: Greg KH <greg@kroah.com>
+From: Chris Wright <chrisw@sous-sol.org>
 Subject: Re: linux-next: build failure after merge of the driver-core tree
-Date: Tue, 18 May 2010 07:02:26 -0700
-Message-ID: <20100518140226.GB24113@kroah.com>
+Date: Tue, 18 May 2010 07:04:26 -0700
+Message-ID: <20100518140426.GG8301@sequoia.sous-sol.org>
 References: <20100518164409.8b19c786.sfr@canb.auug.org.au>
+ <20100518140226.GB24113@kroah.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from sous-sol.org ([216.99.217.87]:37093 "EHLO sequoia.sous-sol.org"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1757649Ab0EROEj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 18 May 2010 10:04:39 -0400
 Content-Disposition: inline
-In-Reply-To: <20100518164409.8b19c786.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Chris Wright <chrisw@sous-sol.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20100518140226.GB24113@kroah.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Chris Wright <chrisw@sous-sol.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, May 18, 2010 at 04:44:09PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
+* Greg KH (greg@kroah.com) wrote:
+> On Tue, May 18, 2010 at 04:44:09PM +1000, Stephen Rothwell wrote:
+> > Hi Greg,
+> > 
+> > After merging the driver-core tree, today's linux-next build (powerpc
+> > ppc64_defconfig) failed like this:
+> > 
+> > cc1: warnings being treated as errors
+> > In file included from include/linux/kobject.h:21,
+> >                  from include/linux/device.h:17,
+> >                  from arch/powerpc/lib/devres.c:10:
+> > include/linux/sysfs.h:97: error: 'struct file' declared inside parameter list
+> > include/linux/sysfs.h:97: error: its scope is only this definition or declaration, which is probably not what you want
+> > include/linux/sysfs.h:99: error: 'struct file' declared inside parameter list
+> > include/linux/sysfs.h:101: error: 'struct file' declared inside parameter list
+> > 
+> > and many more (arch/powerpc is built with -Werror (as do some other
+> > architectures)) and lots of similar warnings ...
+> > 
+> > Caused by commit f8e898186196a22756b50b908ecd92123265f8a2 ("sysfs: add
+> > struct file* to bin_attr callbacks").   See Rule 1 in
+> > Documentation/SubmitChecklist.  The header file probably just needs
+> > "struct file;" added in the right place.
+> > 
+> > I have reverted that commit for today (and commit
+> > 44e425ab9f887ec6d3a7a4481f3b0c99f120de19 ("pci: check caps from sysfs
+> > file open to read device dependent config space") that depends on it).
 > 
-> After merging the driver-core tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
+> Ick.
 > 
-> cc1: warnings being treated as errors
-> In file included from include/linux/kobject.h:21,
->                  from include/linux/device.h:17,
->                  from arch/powerpc/lib/devres.c:10:
-> include/linux/sysfs.h:97: error: 'struct file' declared inside parameter list
-> include/linux/sysfs.h:97: error: its scope is only this definition or declaration, which is probably not what you want
-> include/linux/sysfs.h:99: error: 'struct file' declared inside parameter list
-> include/linux/sysfs.h:101: error: 'struct file' declared inside parameter list
-> 
-> and many more (arch/powerpc is built with -Werror (as do some other
-> architectures)) and lots of similar warnings ...
-> 
-> Caused by commit f8e898186196a22756b50b908ecd92123265f8a2 ("sysfs: add
-> struct file* to bin_attr callbacks").   See Rule 1 in
-> Documentation/SubmitChecklist.  The header file probably just needs
-> "struct file;" added in the right place.
-> 
-> I have reverted that commit for today (and commit
-> 44e425ab9f887ec6d3a7a4481f3b0c99f120de19 ("pci: check caps from sysfs
-> file open to read device dependent config space") that depends on it).
+> Chris, care to send a patch to resolve this?
 
-Ick.
-
-Chris, care to send a patch to resolve this?
+Yeah, I'll see where the header is missing.
 
 thanks,
-
-greg k-h
+-chris
