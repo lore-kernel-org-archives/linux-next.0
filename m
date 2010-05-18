@@ -1,46 +1,40 @@
-From: Stephen Hemminger <shemminger@vyatta.com>
-Subject: [PATCH -next] bridge: fix build for CONFIG_SYSFS disabled
-Date: Tue, 18 May 2010 10:28:37 -0700
-Message-ID: <20100518102837.2622c3b1@nehalam>
-References: <20100517091756.e232bdc2.randy.dunlap@oracle.com>
-	<20100517105654.2451e61f@nehalam>
-	<4BF18468.5010005@oracle.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH -next] bridge: fix build for CONFIG_SYSFS disabled
+Date: Tue, 18 May 2010 12:26:40 -0700 (PDT)
+Message-ID: <20100518.122640.24579847.davem@davemloft.net>
+References: <4BF18468.5010005@oracle.com>
 	<20100517.223237.55871633.davem@davemloft.net>
+	<20100518102837.2622c3b1@nehalam>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.vyatta.com ([76.74.103.46]:57728 "EHLO mail.vyatta.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754619Ab0ERR2o (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 18 May 2010 13:28:44 -0400
-In-Reply-To: <20100517.223237.55871633.davem@davemloft.net>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:54674
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755766Ab0ERT0c (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 18 May 2010 15:26:32 -0400
+In-Reply-To: <20100518102837.2622c3b1@nehalam>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
+To: shemminger@vyatta.com
 Cc: randy.dunlap@oracle.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
 
+From: Stephen Hemminger <shemminger@vyatta.com>
+Date: Tue, 18 May 2010 10:28:37 -0700
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> Fix build when CONFIG_SYSFS is not enabled:
+> net/bridge/br_if.c:136: error: 'struct net_bridge_port' has no member named 'sysfs_name'
+> 
+> Note: dev->name == sysfs_name except when change name is in
+> progress, and we are protected from that by RTNL mutex.
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> Acked-off-by: Stephen Hemminger <shemminger@vyatta.com>
 
-Fix build when CONFIG_SYSFS is not enabled:
-net/bridge/br_if.c:136: error: 'struct net_bridge_port' has no member named 'sysfs_name'
+It's "Acked-by" :-)
 
-Note: dev->name == sysfs_name except when change name is in
-progress, and we are protected from that by RTNL mutex.
-
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Acked-off-by: Stephen Hemminger <shemminger@vyatta.com>
-
-
---- a/net/bridge/br_if.c	2010-05-17 10:51:48.638634187 -0700
-+++ b/net/bridge/br_if.c	2010-05-18 10:22:28.892111158 -0700
-@@ -133,7 +133,7 @@ static void del_nbp(struct net_bridge_po
- 	struct net_bridge *br = p->br;
- 	struct net_device *dev = p->dev;
- 
--	sysfs_remove_link(br->ifobj, p->sysfs_name);
-+	sysfs_remove_link(br->ifobj, p->dev->name);
- 
- 	dev_set_promiscuity(dev, -1);
- 
+Applied, thanks!
