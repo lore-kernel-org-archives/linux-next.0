@@ -1,50 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the fsnotify tree with the vfs tree
-Date: Tue, 18 May 2010 15:10:37 +1000
-Message-ID: <20100518151037.69226b52.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drbd tree with the block tree
+Date: Tue, 18 May 2010 15:20:31 +1000
+Message-ID: <20100518152031.9a244971.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__18_May_2010_15_10_37_+1000_sFPI=kA=aOR6ZLRk"
+ boundary="Signature=_Tue__18_May_2010_15_20_31_+1000_NelEjYw54Z3ygQJ7"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37989 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37128 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755540Ab0ERFKo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 18 May 2010 01:10:44 -0400
+	id S1754558Ab0ERFUi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 18 May 2010 01:20:38 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Eric Paris <eparis@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+To: Philipp Reisner <philipp.reisner@linbit.com>, drbd-dev@linbit.com
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jens Axboe <jens.axboe@oracle.com>, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Tue__18_May_2010_15_10_37_+1000_sFPI=kA=aOR6ZLRk
+--Signature=_Tue__18_May_2010_15_20_31_+1000_NelEjYw54Z3ygQJ7
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Eric,
+Hi all,
 
-Today's linux-next merge of the fsnotify tree got a conflict in
-fs/notify/inotify/inotify.c between commits
-f3ffc7acb6a6ebec0a9e660d9211ed048d7e90f5 ("get rid of S_BIAS") and
-73b38e074b51e5d8d2801691dff6e403631e927f ("Saner locking around
-deactivate_super()") from the vfs tree and commit
-b6bacae18f2f7722df9e8e516ed77b2815bd1ac7 ("inotify: remove inotify in
-kernel interface") from the fsnotify tree.
+Today's linux-next merge of the drbd tree got a conflict in
+mm/page-writeback.c between commit
+42bd225c0ba7c95af39293d39a950c48e7e5cb23 (""laptop-mode: Make flushes
+per-device" fix") from the block tree and commit
+e913fc825dc685a444cb4c1d0f9d32f372f59861 ("writeback: fix WB_SYNC_NONE
+writeback from umount") from the drbd tree (via its merge of the block
+tree).
 
-The latter just removed the file, so I did that as well.
+I used the next-20100517 version of the block tree today (because the
+above conflict was not resolved correctly in the block tree and caused a
+build failure), so I will also use the next-20100517 version of the drbd
+tree for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__18_May_2010_15_10_37_+1000_sFPI=kA=aOR6ZLRk
+--Signature=_Tue__18_May_2010_15_20_31_+1000_NelEjYw54Z3ygQJ7
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkvyIU0ACgkQjjKRsyhoI8zhGwCfY7+cjmAz9FbXt/MIWvb+i7V+
-m74AoJOnehT3Fb/C6pJBqw14cTzV2ie2
-=Qasd
+iEYEARECAAYFAkvyI58ACgkQjjKRsyhoI8wzaQCcC7BjrS41+6/VunWH2k22rV9I
+5q8AnAzKvtDlvBqH2ypu67DzeLvaU2KU
+=GaEt
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__18_May_2010_15_10_37_+1000_sFPI=kA=aOR6ZLRk--
+--Signature=_Tue__18_May_2010_15_20_31_+1000_NelEjYw54Z3ygQJ7--
