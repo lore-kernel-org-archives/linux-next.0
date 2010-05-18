@@ -1,40 +1,79 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH -next] bridge: fix build for CONFIG_SYSFS disabled
-Date: Tue, 18 May 2010 12:26:40 -0700 (PDT)
-Message-ID: <20100518.122640.24579847.davem@davemloft.net>
-References: <4BF18468.5010005@oracle.com>
-	<20100517.223237.55871633.davem@davemloft.net>
-	<20100518102837.2622c3b1@nehalam>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+Date: Tue, 18 May 2010 12:58:33 -0700
+Message-ID: <m1hbm5f0d2.fsf@fess.ebiederm.org>
+References: <20100518164520.7e9652b1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:54674
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755766Ab0ERT0c (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 18 May 2010 15:26:32 -0400
-In-Reply-To: <20100518102837.2622c3b1@nehalam>
+Received: from out01.mta.xmission.com ([166.70.13.231]:43493 "EHLO
+	out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753899Ab0ERT6n (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 18 May 2010 15:58:43 -0400
+In-Reply-To: <20100518164520.7e9652b1.sfr@canb.auug.org.au> (Stephen Rothwell's message of "Tue\, 18 May 2010 16\:45\:20 +1000")
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: shemminger@vyatta.com
-Cc: randy.dunlap@oracle.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
 
-From: Stephen Hemminger <shemminger@vyatta.com>
-Date: Tue, 18 May 2010 10:28:37 -0700
 
-> 
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> Fix build when CONFIG_SYSFS is not enabled:
-> net/bridge/br_if.c:136: error: 'struct net_bridge_port' has no member named 'sysfs_name'
-> 
-> Note: dev->name == sysfs_name except when change name is in
-> progress, and we are protected from that by RTNL mutex.
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> Acked-off-by: Stephen Hemminger <shemminger@vyatta.com>
+Greg this fixes the conflict with the vfs tree we see in linux-next.
 
-It's "Acked-by" :-)
+Al I will be happy to work with you to rework this hunk of code in the
+next cycle so you can kill sb_lock.  It is just too late in the cycle
+to be making more than the minimal change necessary.
 
-Applied, thanks!
+Eric
+
+From: Eric W. Biederman <ebiederm@aristanetworks.com>
+Date: Tue, 18 May 2010 12:24:26 -0700
+Subject: [PATCH] sysfs:  Remove usage of S_BIAS to avoid merge conflict with the vfs tree
+
+In Al's latest vfs tree the code is reworked and S_BIAS has been removed.
+
+It turns out that checking to see if a super block is in the
+middle of an unmount in sysfs_exit_ns is unnecessary because we
+remove the super_block from the s_supers/s_instances list before
+struct sysfs_super_info pointed to by sb->s_fs_info is freed.
+
+For now just delete the unnecessary check to see if a superblock is in the
+middle of an unmount, it isn't necessary with or without Al's changes
+and it just causes a needless conflict.
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Eric W. Biederman <ebiederm@aristanetworks.com>
+---
+ fs/sysfs/mount.c |   11 ++++++++---
+ 1 files changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/fs/sysfs/mount.c b/fs/sysfs/mount.c
+index bbba090..74f0529 100644
+--- a/fs/sysfs/mount.c
++++ b/fs/sysfs/mount.c
+@@ -144,6 +144,9 @@ static void sysfs_kill_sb(struct super_block *sb)
+ {
+ 	struct sysfs_super_info *info = sysfs_info(sb);
+ 
++	/* Remove the superblock from fs_supers/s_instances
++	 * so we can't find it, before freeing sysfs_super_info.
++	 */
+ 	kill_anon_super(sb);
+ 	kfree(info);
+ }
+@@ -162,9 +165,11 @@ void sysfs_exit_ns(enum kobj_ns_type type, const void *ns)
+ 	spin_lock(&sb_lock);
+ 	list_for_each_entry(sb, &sysfs_fs_type.fs_supers, s_instances) {
+ 		struct sysfs_super_info *info = sysfs_info(sb);
+-		/* Ignore superblocks that are in the process of unmounting */
+-		if (sb->s_count <= S_BIAS)
+-			continue;
++		/*
++		 * If we see a superblock on the fs_supers/s_instances
++		 * list the unmount has not completed and sb->s_fs_info
++		 * points to a valid struct sysfs_super_info.
++		 */
+ 		/* Ignore superblocks with the wrong ns */
+ 		if (info->ns[type] != ns)
+ 			continue;
+-- 
+1.6.6.1
