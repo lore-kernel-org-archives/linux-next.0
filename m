@@ -1,78 +1,33 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Subject: Re: linux-next: build failure after merge of the driver-core tree
-Date: Tue, 18 May 2010 03:35:10 -0700
-Message-ID: <m1iq6lh50h.fsf@fess.ebiederm.org>
-References: <20100518164520.7e9652b1.sfr@canb.auug.org.au>
-	<m1wrv13dam.fsf@fess.ebiederm.org>
-	<20100518175451.a01e314b.sfr@canb.auug.org.au>
+From: Jens Axboe <jens.axboe@oracle.com>
+Subject: Re: linux-next: build failure after merge of the block tree
+Date: Tue, 18 May 2010 12:50:00 +0200
+Message-ID: <20100518105000.GX25951@kernel.dk>
+References: <20100518133710.8b1545dd.sfr@canb.auug.org.au> <20100518085613.GU25951@kernel.dk> <20100518202044.a91d7f64.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out02.mta.xmission.com ([166.70.13.232]:48615 "EHLO
-	out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755785Ab0ERKfR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 18 May 2010 06:35:17 -0400
-In-Reply-To: <20100518175451.a01e314b.sfr@canb.auug.org.au> (Stephen Rothwell's message of "Tue\, 18 May 2010 17\:54\:51 +1000")
+Received: from 0122700014.0.fullrate.dk ([95.166.99.235]:50916 "EHLO kernel.dk"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756380Ab0ERKuD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 18 May 2010 06:50:03 -0400
+Content-Disposition: inline
+In-Reply-To: <20100518202044.a91d7f64.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+On Tue, May 18 2010, Stephen Rothwell wrote:
+> On Tue, 18 May 2010 10:56:13 +0200 Jens Axboe <jens.axboe@oracle.com> wrote:
+> >
+> > Thanks, it looks like a merge/commit error on for-next alone, for-2.6.35
+> > is fine. I'll make sure this gets fixed up now.
+> 
+> So why is for-2.6.35 different from for-next?
 
-> Hi Eric,
->
-> On Tue, 18 May 2010 00:00:01 -0700 ebiederm@xmission.com (Eric W. Biederman) wrote:
->>
->> Stephen what is the easiest way to get a copy of Al's tree so I can take
->> a look to see what needs to happen?
->
-> It is here:
->
-> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs-2.6.git#for-next
->
-> [The latest list of trees included in linux-next can always be found here:
-> http://git.kernel.org/?p=linux/kernel/git/next/linux-next.git;a=blob;f=Next/Trees]
+Because I had a for-linus branch at one point which was headed for
+2.6.34 (which has been merged now) which was changed and merged with
+for-2.6.35 to form for-next. But now it should just be a copy.
 
-Thanks.
-
-I will cook up a proper incremental patch after I get some sleep.  Stephen
-it appears those two lines you have commented out are actually unnecessary.
-
-We have
-deactivate_super
-  kill_sb aka sysfs_kill_sb
-    kill_anon_super
-      generic_shutdown_super
-         sb_lock
-         list_del(sb->s_instances)
-         sb_unlock
-  kfree(info)
-
-Nothing generic stomps on s_fs_info.
-
-Which means that if I find a superblock on sb->s_instances sb->s_fs_info
-still points to a valid sysfs_super_info.
-
-
-
-
-
-As as for the race Al mentions between sysfs_exit_ns and
-sysfs_readdir, I looked and a small race has crept in.  The primary
-prevention of problems is that all matching sysfs_dirents for that
-namespace are required to be removed before sysfs_exit_ns is called.
-
-What remains is the tiniest of races where a namespace structure is
-freed and a new namespace structure of the same type is allocated at
-the same address and sysfs_dirents for it are created, all during the
-a single kernel readdir operation.  Possible with slabs, and
-copy_to_user triggering a page fault.  Still the worst case is that we
-tell userspace some name that it wasn't supposed to see on that mount
-point.  From a userspace point of view this seems to fall under a
-readdir implementations license to return some odd things if the
-directory is changing during the readdir call.  Overall we do preserve
-the property of returning everything that is in the directory between
-opendir and the time readdir his the end of file.
-
-Eric
+-- 
+Jens Axboe
