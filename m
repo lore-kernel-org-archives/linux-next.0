@@ -1,63 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH 17/17] arm: update gfp/slab.h includes
-Date: Thu, 20 May 2010 01:56:43 +1000
-Message-ID: <20100520015643.d94636c0.sfr@canb.auug.org.au>
-References: <1269885165-18617-1-git-send-email-tj@kernel.org>
-	<1269885165-18617-18-git-send-email-tj@kernel.org>
+Subject: Re: linux-next: build failure after merge of the slabh tree
+Date: Thu, 20 May 2010 02:23:57 +1000
+Message-ID: <20100520022357.d57a6673.sfr@canb.auug.org.au>
+References: <20100329170727.7a7b9a6d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45699 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:49955 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753745Ab0ESP4p (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 19 May 2010 11:56:45 -0400
-In-Reply-To: <1269885165-18617-18-git-send-email-tj@kernel.org>
+	id S1753975Ab0ESQYA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 19 May 2010 12:24:00 -0400
+In-Reply-To: <20100329170727.7a7b9a6d.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King <linux@arm.linux.org.uk>
+To: Gregory Haskins <ghaskins@novell.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
 
-Hi Russell,
+Hi Gregory,
 
-On Tue, 30 Mar 2010 02:52:45 +0900 Tejun Heo <tj@kernel.org> wrote:
+On Mon, 29 Mar 2010 17:07:27 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> Implicit slab.h inclusion via percpu.h is about to go away.  Make sure
-> gfp.h or slab.h is included as necessary.
+> After merging the slabh tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> drivers/vbus/bus-proxy.c: In function 'vbus_driver_ioq_release':
+> drivers/vbus/bus-proxy.c:192: error: implicit declaration of function 'kfree'
+> drivers/vbus/bus-proxy.c: In function 'vbus_driver_ioq_alloc':
+> drivers/vbus/bus-proxy.c:210: error: implicit declaration of function 'kzalloc'
+> drivers/vbus/bus-proxy.c:210: warning: assignment makes pointer from integer without a cast
+> drivers/vbus/bus-proxy.c:214: warning: assignment makes pointer from integer without a cast
+> 
+> Caused by commit d103d3b3e8512312b5254950035366d4422a479a ("percpu: don't
+> implicitly include slab.h from percpu.h") from the slabh tree interacting
+> with commit 5ff775e4c3d6b0ead7d8784797123a2deed73364 ("ioq: add
+> driver-side vbus helpers") from the alacrity tree.
+> 
+> I applied the following merge fixup patch which should be applied to the
+> alacrity tree (see Documentation/SubmitChecklist Rule #1 :-)).
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 29 Mar 2010 17:03:25 +1100
+> Subject: [PATCH] vbus: use of kzalloc/kfree requires the include of slab.h
 
-Please apply to the arm tree (patch reposted below).
+This patch is needed on the alacrity tree since the slabh tree has been
+merged int Linus' tree some time ago.  Pleas apply (patch reposted below).
 
-From: Tejun Heo <tj@kernel.org>
-To: sfr@canb.auug.org.au, linux-next@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>, Russell King <linux@arm.linux.org.uk>
-Subject: [PATCH 17/17] arm: update gfp/slab.h includes
-Date: Tue, 30 Mar 2010 02:52:45 +0900
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 29 Mar 2010 17:03:25 +1100
+Subject: [PATCH] vbus: use of kzalloc/kfree requires the include of slab.h
 
-Implicit slab.h inclusion via percpu.h is about to go away.  Make sure
-gfp.h or slab.h is included as necessary.
-
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Russell King <linux@arm.linux.org.uk>
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- arch/arm/mach-vexpress/ct-ca9x4.c |    1 +
+ drivers/vbus/bus-proxy.c |    1 +
  1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-vexpress/ct-ca9x4.c b/arch/arm/mach-vexpress/ct-ca9x4.c
-index 5a0449c..b4b0bb4 100644
---- a/arch/arm/mach-vexpress/ct-ca9x4.c
-+++ b/arch/arm/mach-vexpress/ct-ca9x4.c
-@@ -2,6 +2,7 @@
-  * Versatile Express Core Tile Cortex A9x4 Support
+diff --git a/drivers/vbus/bus-proxy.c b/drivers/vbus/bus-proxy.c
+index 4792842..ae11f67 100644
+--- a/drivers/vbus/bus-proxy.c
++++ b/drivers/vbus/bus-proxy.c
+@@ -19,6 +19,7 @@
   */
- #include <linux/init.h>
-+#include <linux/gfp.h>
- #include <linux/device.h>
- #include <linux/dma-mapping.h>
- #include <linux/platform_device.h>
+ 
+ #include <linux/module.h>
++#include <linux/slab.h>
+ #include <linux/vbus_driver.h>
+ 
+ MODULE_AUTHOR("Gregory Haskins");
 -- 
-1.6.4.2
+1.7.0.3
+
 
 -- 
 Cheers,
