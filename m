@@ -1,87 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH 11/17] mtd: update gfp/slab.h includes
-Date: Thu, 20 May 2010 01:51:43 +1000
-Message-ID: <20100520015143.a7593612.sfr@canb.auug.org.au>
-References: <1269885165-18617-1-git-send-email-tj@kernel.org>
-	<1269885165-18617-12-git-send-email-tj@kernel.org>
+From: Jason Wessel <jason.wessel@windriver.com>
+Subject: Re: [PATCH 02/17] kdb: update gfp/slab.h includes
+Date: Wed, 19 May 2010 10:50:39 -0500
+Message-ID: <4BF408CF.5020209@windriver.com>
+References: <1269885165-18617-1-git-send-email-tj@kernel.org><1269885165-18617-3-git-send-email-tj@kernel.org> <20100520013340.1fcc2c0d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1269885165-18617-12-git-send-email-tj@kernel.org>
+In-Reply-To: <20100520013340.1fcc2c0d.sfr@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Woodhouse <dwmw2@infradead.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi David,
-
-On Tue, 30 Mar 2010 02:52:39 +0900 Tejun Heo <tj@kernel.org> wrote:
+On 05/19/2010 10:33 AM, Stephen Rothwell wrote:
+> Hi Jason,
 >
-> Implicit slab.h inclusion via percpu.h is about to go away.  Make sure
-> gfp.h or slab.h is included as necessary.
+> On Tue, 30 Mar 2010 02:52:30 +0900 Tejun Heo <tj@kernel.org> wrote:
+>   
+>> Implicit slab.h inclusion via percpu.h is about to go away.  Make sure
+>> gfp.h or slab.h is included as necessary.
+>>
+>> Signed-off-by: Tejun Heo <tj@kernel.org>
+>> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+>> Cc: Jason Wessel <jason.wessel@windriver.com>
+>>     
+>
+> Please apply to the kgdb tree (patch reposted below).
+>
+>   
 
-Please apply to the mtd tree (patch reposted below).
+No problem.
 
-From: Tejun Heo <tj@kernel.org>
-To: sfr@canb.auug.org.au, linux-next@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>, David Woodhouse <dwmw2@infradead.org>
-Subject: [PATCH 11/17] mtd: update gfp/slab.h includes
-Date: Tue, 30 Mar 2010 02:52:39 +0900
+Looks like it got missed earlier, because I have a fixup from you for
+the kdb_support.c file.
 
-Implicit slab.h inclusion via percpu.h is about to go away.  Make sure
-gfp.h or slab.h is included as necessary.
+I folded this into kgdb-next.
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Woodhouse <dwmw2@infradead.org>
----
- drivers/mtd/mtdcore.c          |    1 +
- drivers/mtd/nand/mpc5121_nfc.c |    1 +
- drivers/mtd/nand/r852.c        |    1 +
- 3 files changed, 3 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
-index e8573c9..3c48193 100644
---- a/drivers/mtd/mtdcore.c
-+++ b/drivers/mtd/mtdcore.c
-@@ -18,6 +18,7 @@
- #include <linux/proc_fs.h>
- #include <linux/idr.h>
- #include <linux/backing-dev.h>
-+#include <linux/gfp.h>
- 
- #include <linux/mtd/mtd.h>
-
-diff --git a/drivers/mtd/nand/mpc5121_nfc.c b/drivers/mtd/nand/mpc5121_nfc.c
-index d7333f4..1a06f78 100644
---- a/drivers/mtd/nand/mpc5121_nfc.c
-+++ b/drivers/mtd/nand/mpc5121_nfc.c
-@@ -27,6 +27,7 @@
- 
- #include <linux/module.h>
- #include <linux/clk.h>
-+#include <linux/gfp.h>
- #include <linux/delay.h>
- #include <linux/init.h>
- #include <linux/interrupt.h>
-diff --git a/drivers/mtd/nand/r852.c b/drivers/mtd/nand/r852.c
-index 96bfbd8..dd5158c 100644
---- a/drivers/mtd/nand/r852.c
-+++ b/drivers/mtd/nand/r852.c
-@@ -15,6 +15,7 @@
- #include <linux/pci.h>
- #include <linux/pci_ids.h>
- #include <linux/delay.h>
-+#include <linux/slab.h>
- #include <asm/byteorder.h>
- #include <linux/sched.h>
- #include "sm_common.h"
--- 
-1.6.4.2
-
--- 
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Jason.
