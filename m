@@ -1,56 +1,56 @@
-From: "Gregory Haskins" <ghaskins@novell.com>
-Subject: Re: [PATCH 06/17] vbus: update gfp/slab.h includes
-Date: Wed, 19 May 2010 14:31:32 -0600
-Message-ID: <4BF412640200005A000679FE@soto.provo.novell.com>
-References: <1269885165-18617-1-git-send-email-tj@kernel.org>
- <1269885165-18617-7-git-send-email-tj@kernel.org>
- <4BB2FF000200005A0006349E@soto.provo.novell.com>
- <20100520014225.e4343903.sfr@canb.auug.org.au>
+From: Alexander Kurz <linux@blala.de>
+Subject: [PATCH 2/2] staging/comedi: fixing ni_tio to mite PCI dependancy
+Date: Thu, 20 May 2010 00:32:42 +0400 (MSD)
+Message-ID: <alpine.DEB.1.10.1005200028420.20214@blala.de>
+References: <alpine.DEB.1.10.1005081218220.5727@blala.de> <20100514190142.GA2505@kroah.com> <201005142029.37408.fmhess@speakeasy.net> <20100515034423.GA3811@suse.de> <20100519103203.155c9527.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-In-Reply-To: 
-Content-Disposition: inline
+Received: from vs81.sauer-cs.de ([80.244.252.81]:38063 "EHLO kbdbabel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751733Ab0ESUdK (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 19 May 2010 16:33:10 -0400
+In-Reply-To: <20100519103203.155c9527.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Greg KH <gregkh@suse.de>, linux-next@vger.kernel.org, fmhess@users.sourceforge.net, Greg KH <greg@kroah.com>, Alexander Kurz <linux@blala.de>, Ian Abbott <abbotti@mev.co.uk>, Dominik Brodowski <linux@dominikbrodowski.net>, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
 
->>> On 5/19/2010 at 12:56 PM, in message <4BF41843.61E : 90 : 47687>, Gregory
-Haskins wrote: 
-> >>> On 5/19/2010 at 11:42 AM, in message
-> <20100520014225.e4343903.sfr@canb.auug.org.au>, Stephen Rothwell
-> <sfr@canb.auug.org.au> wrote: 
->> Hi Gregory,
->> 
->> On Wed, 31 Mar 2010 05:51:28 -0600 "Gregory Haskins" <ghaskins@novell.com> 
->> wrote:
->>>
->>> >>> On 3/29/2010 at 01:52 PM, in message
->>> <1269885165-18617-7-git-send-email-tj@kernel.org>, Tejun Heo <tj@kernel.org>
->>> wrote: 
->>> > Implicit slab.h inclusion via percpu.h is about to go away.  Make sure
->>> > gfp.h or slab.h is included as necessary.
->>> > 
->>> > Signed-off-by: Tejun Heo <tj@kernel.org>
->>> > Cc: Stephen Rothwell <sfr@canb.auug.org.au>
->>> > Cc: Gregory Haskins <ghaskins@novell.com>
->>> 
->>> Thanks Tejun,
->>> 
->>> Acked-by: Gregory Haskins <ghaskins@novell.com>
->>> 
->>> (will add to my tree)
->> 
->> It never made it as far as I can see ... maybe something equivalent went in.
+On Wed, 19 May 2010, Randy Dunlap wrote:
+> linux-next of 2010-0519:
+> when CONFIG_PCI is not enabled:
 > 
-> Hi Steven,
-> 
-> I dropped the ball on this.  Will merge when I return from lunch.
-> 
-> -Greg
+> drivers/staging/comedi/drivers/mite.c: In function 'mite_init':
+> drivers/staging/comedi/drivers/mite.c:89: error: implicit declaration of function 'pci_dev_get'
+> drivers/staging/comedi/drivers/mite.c:89: warning: assignment makes pointer from integer without a cast
+> make[5]: *** [drivers/staging/comedi/drivers/mite.o] Error 1
 
-Pushed (and sorry for the name mis-spelling above, Stephen!)
+thanks, this patch is a follow-up to
+> [PATCH] staging/comedi: fixing 8255 and DAS08 Kconfig dependancies.
 
--Greg
+>From 9804b6bc8c997433411b24f477417f8e7cc9a19d Mon Sep 17 00:00:00 2001
+From: Alexander Kurz <linux@kbdbabel.org>
+Date: Wed, 19 May 2010 22:23:00 +0200
+Subject: [PATCH 2/2] staging/comedi: fixing ni_tio to mite PCI dependancy
+
+Signed-off-by: Alexander Kurz <linux@kbdbabel.org>
+---
+ drivers/staging/comedi/Kconfig |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/staging/comedi/Kconfig b/drivers/staging/comedi/Kconfig
+index ebc68ee..0aa2b0d 100644
+--- a/drivers/staging/comedi/Kconfig
++++ b/drivers/staging/comedi/Kconfig
+@@ -1258,8 +1258,8 @@ config COMEDI_MITE
+ 
+ config COMEDI_NI_TIO
+ 	tristate "NI general purpose counter support"
++	depends on COMEDI_MITE
+ 	select COMEDI_8255
+-	select COMEDI_MITE
+ 	default N
+ 	---help---
+ 	  Enable support for National Instruments general purpose counters.
+-- 
+1.7.1
