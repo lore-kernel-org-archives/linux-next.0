@@ -1,61 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH 08/17] davinci: update gfp/slab.h includes
-Date: Thu, 20 May 2010 01:45:54 +1000
-Message-ID: <20100520014554.7bd9dbc6.sfr@canb.auug.org.au>
-References: <1269885165-18617-1-git-send-email-tj@kernel.org>
-	<1269885165-18617-9-git-send-email-tj@kernel.org>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH 10/17] wireless: update gfp/slab.h includes
+Date: Wed, 19 May 2010 17:46:17 +0200
+Message-ID: <4BF407C9.2020202@kernel.org>
+References: <1269885165-18617-1-git-send-email-tj@kernel.org>	<1269885165-18617-11-git-send-email-tj@kernel.org>	<20100519190230.52385a65.sfr@canb.auug.org.au>	<20100519144505.GD2412@tuxdriver.com> <20100520012829.709931dc.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1269885165-18617-9-git-send-email-tj@kernel.org>
+In-Reply-To: <20100520012829.709931dc.sfr@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kevin Hilman <khilman@deeprootsystems.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 List-Id: linux-next.vger.kernel.org
 
-Hi Kevin,
+Hello, John, Stephen.
 
-On Tue, 30 Mar 2010 02:52:36 +0900 Tejun Heo <tj@kernel.org> wrote:
->
-> Implicit slab.h inclusion via percpu.h is about to go away.  Make sure
-> gfp.h or slab.h is included as necessary.
+On 05/19/2010 05:28 PM, Stephen Rothwell wrote:
+>> Looks like this was part of a series...who merged the rest of it?
+>> I guess I presumed they would take care of the series.
 
-Please apply to the davinci tree (patch reposted below).
+Most of the series have been applied circa 2.6.34-rc4.  Stephen has
+been carrying patches for branches which weren't yet in mainline.
+IOW, these patches are necessary for a branch to be merged into
+mainline.
 
-From: Tejun Heo <tj@kernel.org>
-To: sfr@canb.auug.org.au, linux-next@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>, Kevin Hilman <khilman@deeprootsystems.com>
-Subject: [PATCH 08/17] davinci: update gfp/slab.h includes
-Date: Tue, 30 Mar 2010 02:52:36 +0900
+> It was a series of patches that were only relevant to the trees in
+> linux-next (for a change that happened in Linus' tree).  My hope (and I
+> assume Tejun's) was that each maintainer would take the patch relevant to
+> their tree (some did - I just checked I still have 10 of them being
+> applied to linux-next :-().
 
-Implicit slab.h inclusion via percpu.h is about to go away.  Make sure
-gfp.h or slab.h is included as necessary.
+Yeap, I hoped that more of them would sort themselves out during devel
+cycle, but I guess rc1 window isn't too bad.
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Kevin Hilman <khilman@deeprootsystems.com>
----
- drivers/rtc/rtc-davinci.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/rtc/rtc-davinci.c b/drivers/rtc/rtc-davinci.c
-index 92a8f6c..34647fc 100644
---- a/drivers/rtc/rtc-davinci.c
-+++ b/drivers/rtc/rtc-davinci.c
-@@ -29,6 +29,7 @@
- #include <linux/bcd.h>
- #include <linux/platform_device.h>
- #include <linux/io.h>
-+#include <linux/slab.h>
- 
- /*
-  * The DaVinci RTC is a simple RTC with the following
--- 
-1.6.4.2
+Thank you.
 
 -- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+tejun
