@@ -1,58 +1,53 @@
-From: Chris Wright <chrisw@sous-sol.org>
-Subject: [PATCH] sysfs: compile fix, struct file forward declaration
-Date: Tue, 18 May 2010 15:32:19 -0700
-Message-ID: <20100518223219.GJ8301@sequoia.sous-sol.org>
-References: <20100518164409.8b19c786.sfr@canb.auug.org.au>
- <20100518140226.GB24113@kroah.com>
- <20100518210607.GI8301@sequoia.sous-sol.org>
- <20100518212448.GA31331@kroah.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the backlight tree
+Date: Wed, 19 May 2010 10:56:49 +1000
+Message-ID: <20100519105649.ab2d4d26.sfr@canb.auug.org.au>
+References: <20100510124304.2249532c.sfr@canb.auug.org.au>
+	<20100517133239.8a30df8e.sfr@canb.auug.org.au>
+	<1274198064.24454.252.camel@rex>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__19_May_2010_10_56_49_+1000_kKyftPuLxO3Kcg3C"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from sous-sol.org ([216.99.217.87]:56086 "EHLO sequoia.sous-sol.org"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751742Ab0ERWc0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 18 May 2010 18:32:26 -0400
-Content-Disposition: inline
-In-Reply-To: <20100518212448.GA31331@kroah.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:48138 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752947Ab0ESA4z (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 18 May 2010 20:56:55 -0400
+In-Reply-To: <1274198064.24454.252.camel@rex>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Chris Wright <chrisw@sous-sol.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Richard Purdie <rpurdie@rpsys.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Michael Hennerich <michael.hennerich@analog.com>, Mike Frysinger <vapier@gentoo.org>
 
-On Tue, May 18, 2010 at 04:44:09PM +1000, Stephen Rothwell wrote:
-> After merging the driver-core tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> cc1: warnings being treated as errors
-> In file included from include/linux/kobject.h:21,
->                  from include/linux/device.h:17,
->                  from arch/powerpc/lib/devres.c:10:
-> include/linux/sysfs.h:97: error: 'struct file' declared inside parameter list
-> include/linux/sysfs.h:97: error: its scope is only this definition or
-> declaration, which is probably not what you want
-> include/linux/sysfs.h:99: error: 'struct file' declared inside parameter list
-> include/linux/sysfs.h:101: error: 'struct file' declared inside parameter list
-> 
-> and many more (arch/powerpc is built with -Werror (as do some other
-> architectures)) and lots of similar warnings ...
+--Signature=_Wed__19_May_2010_10_56_49_+1000_kKyftPuLxO3Kcg3C
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Add missing forward declaration
+Hi Richard,
 
-Signed-off-by: Chris Wright <chrisw@sous-sol.org>
----
- include/linux/sysfs.h |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+On Tue, 18 May 2010 08:54:24 -0700 Richard Purdie <rpurdie@rpsys.net> wrote:
+>
+> Sorry about that. A bad combination of travel with limited internet
+> access followed by illness. I've pushed a fix, thanks.
 
-diff --git a/include/linux/sysfs.h b/include/linux/sysfs.h
-index 2a0d278..f06b1f1 100644
---- a/include/linux/sysfs.h
-+++ b/include/linux/sysfs.h
-@@ -86,6 +86,7 @@ struct attribute_group {
- 
- #define attr_name(_attr) (_attr).attr.name
- 
-+struct file;
- struct vm_area_struct;
- 
- struct bin_attribute {
+Thanks for that.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__19_May_2010_10_56_49_+1000_kKyftPuLxO3Kcg3C
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkvzN1EACgkQjjKRsyhoI8xreACeNgjOdJU/FjgG+6mPZcdGYevH
+EwcAoJeOsN0SmoLRMHOzN8kh+hzBkkPw
+=p3+m
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__19_May_2010_10_56_49_+1000_kKyftPuLxO3Kcg3C--
