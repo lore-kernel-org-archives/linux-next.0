@@ -1,39 +1,78 @@
-From: Tejun Heo <tj@kernel.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: [PATCH 10/17] wireless: update gfp/slab.h includes
-Date: Wed, 19 May 2010 17:46:17 +0200
-Message-ID: <4BF407C9.2020202@kernel.org>
-References: <1269885165-18617-1-git-send-email-tj@kernel.org>	<1269885165-18617-11-git-send-email-tj@kernel.org>	<20100519190230.52385a65.sfr@canb.auug.org.au>	<20100519144505.GD2412@tuxdriver.com> <20100520012829.709931dc.sfr@canb.auug.org.au>
+Date: Thu, 20 May 2010 01:50:05 +1000
+Message-ID: <20100520015005.21089eb9.sfr@canb.auug.org.au>
+References: <1269885165-18617-1-git-send-email-tj@kernel.org>
+	<1269885165-18617-11-git-send-email-tj@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100520012829.709931dc.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:33257 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753067Ab0ESPuH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 19 May 2010 11:50:07 -0400
+In-Reply-To: <1269885165-18617-11-git-send-email-tj@kernel.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, linux-wireless@vger.kernel.org
 
-Hello, John, Stephen.
+Hi John,
 
-On 05/19/2010 05:28 PM, Stephen Rothwell wrote:
->> Looks like this was part of a series...who merged the rest of it?
->> I guess I presumed they would take care of the series.
+On Tue, 30 Mar 2010 02:52:38 +0900 Tejun Heo <tj@kernel.org> wrote:
+>
+> Implicit slab.h inclusion via percpu.h is about to go away.  Make sure
+> gfp.h or slab.h is included as necessary.
 
-Most of the series have been applied circa 2.6.34-rc4.  Stephen has
-been carrying patches for branches which weren't yet in mainline.
-IOW, these patches are necessary for a branch to be merged into
-mainline.
+Please apply to the wireless tree (patch reposted below).
 
-> It was a series of patches that were only relevant to the trees in
-> linux-next (for a change that happened in Linus' tree).  My hope (and I
-> assume Tejun's) was that each maintainer would take the patch relevant to
-> their tree (some did - I just checked I still have 10 of them being
-> applied to linux-next :-().
+From: Tejun Heo <tj@kernel.org>
+To: sfr@canb.auug.org.au, linux-next@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>, "John W. Linville" <linville@tuxdriver.com>
+Subject: [PATCH 10/17] wireless: update gfp/slab.h includes
+Date: Tue, 30 Mar 2010 02:52:38 +0900
 
-Yeap, I hoped that more of them would sort themselves out during devel
-cycle, but I guess rc1 window isn't too bad.
+Implicit slab.h inclusion via percpu.h is about to go away.  Make sure
+gfp.h or slab.h is included as necessary.
 
-Thank you.
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: John W. Linville <linville@tuxdriver.com>
+---
+ drivers/net/wireless/ath/ath9k/htc.h       |    1 +
+ drivers/net/wireless/iwlwifi/iwl-agn-ict.c |    1 +
+ 2 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/net/wireless/ath/ath9k/htc.h b/drivers/net/wireless/ath/ath9k/htc.h
+index 7770649..4497479 100644
+--- a/drivers/net/wireless/ath/ath9k/htc.h
++++ b/drivers/net/wireless/ath/ath9k/htc.h
+@@ -23,6 +23,7 @@
+ #include <linux/skbuff.h>
+ #include <linux/netdevice.h>
+ #include <linux/leds.h>
++#include <linux/slab.h>
+ #include <net/mac80211.h>
+ 
+ #include "common.h"
+diff --git a/drivers/net/wireless/iwlwifi/iwl-agn-ict.c b/drivers/net/wireless/iwlwifi/iwl-agn-ict.c
+index 4c5395e..0cc7fd9 100644
+--- a/drivers/net/wireless/iwlwifi/iwl-agn-ict.c
++++ b/drivers/net/wireless/iwlwifi/iwl-agn-ict.c
+@@ -30,6 +30,7 @@
+ #include <linux/module.h>
+ #include <linux/etherdevice.h>
+ #include <linux/sched.h>
++#include <linux/gfp.h>
+ #include <net/mac80211.h>
+ 
+ #include "iwl-dev.h"
+-- 
+1.6.4.2
 
 -- 
-tejun
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
