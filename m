@@ -1,40 +1,24 @@
-From: Jens Axboe <jens.axboe@oracle.com>
-Subject: Re: linux-next: Tree for May 19 (mm/page-writeback)
-Date: Wed, 19 May 2010 19:50:18 +0200
-Message-ID: <20100519175018.GW25951@kernel.dk>
-References: <20100519163554.80c7fcd3.sfr@canb.auug.org.au> <20100519104800.5a43346f.randy.dunlap@oracle.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH 17/17] arm: update gfp/slab.h includes
+Date: Wed, 19 May 2010 18:56:29 +0100
+Message-ID: <20100519175628.GC24520@n2100.arm.linux.org.uk>
+References: <1269885165-18617-1-git-send-email-tj@kernel.org> <1269885165-18617-18-git-send-email-tj@kernel.org> <20100520015643.d94636c0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 0122700014.0.fullrate.dk ([95.166.99.235]:55176 "EHLO kernel.dk"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753720Ab0ESRuW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 19 May 2010 13:50:22 -0400
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:42494 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753471Ab0ESR4l (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 19 May 2010 13:56:41 -0400
 Content-Disposition: inline
-In-Reply-To: <20100519104800.5a43346f.randy.dunlap@oracle.com>
+In-Reply-To: <20100520015643.d94636c0.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
 
-On Wed, May 19 2010, Randy Dunlap wrote:
-> On Wed, 19 May 2010 16:35:54 +1000 Stephen Rothwell wrote:
-> 
-> > Hi all,
-> > 
-> > We are in the merge window again.  I remind you all not to add stuff for
-> > 2.6.36 to your linux-next trees until after 2.6.35-rc1.
-> > 
-> > Changes since 20100518:
-> 
-> 
-> When CONFIG_BLOCK is not enabled:
-> 
-> mm/page-writeback.c: In function 'laptop_mode_timer_fn':
-> mm/page-writeback.c:708: error: dereferencing pointer to incomplete type
-> mm/page-writeback.c:709: error: dereferencing pointer to incomplete type
+On Thu, May 20, 2010 at 01:56:43AM +1000, Stephen Rothwell wrote:
+> Hi Russell,
 
-Thanks Randy, I'll fix that up.
-
--- 
-Jens Axboe
+I'm afraid it's too late for the first round; I sent Linus the pull
+request yesterday.  However, I'll queue it in a few days as a fix.
