@@ -1,51 +1,48 @@
-From: Chris Wright <chrisw@sous-sol.org>
-Subject: Re: [PATCH] sysfs: compile fix, struct file forward declaration
-Date: Thu, 20 May 2010 11:39:47 -0700
-Message-ID: <20100520183947.GR8301@sequoia.sous-sol.org>
-References: <20100518164409.8b19c786.sfr@canb.auug.org.au>
- <20100518140226.GB24113@kroah.com>
- <20100518210607.GI8301@sequoia.sous-sol.org>
- <20100518212448.GA31331@kroah.com>
- <20100518223219.GJ8301@sequoia.sous-sol.org>
- <20100520173622.GB5927@kroah.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for May 20 (ceph)
+Date: Thu, 20 May 2010 12:52:32 -0700
+Message-ID: <20100520125232.0341d995.randy.dunlap@oracle.com>
+References: <20100520163042.9486e077.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from sous-sol.org ([216.99.217.87]:50556 "EHLO sequoia.sous-sol.org"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1754147Ab0ETTjJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 20 May 2010 15:39:09 -0400
-Content-Disposition: inline
-In-Reply-To: <20100520173622.GB5927@kroah.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Chris Wright <chrisw@sous-sol.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20100520163042.9486e077.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Sage Weil <sage@newdream.net>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, ceph-devel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-* Greg KH (greg@kroah.com) wrote:
-> On Tue, May 18, 2010 at 03:32:19PM -0700, Chris Wright wrote:
-> > On Tue, May 18, 2010 at 04:44:09PM +1000, Stephen Rothwell wrote:
-> > > After merging the driver-core tree, today's linux-next build (powerpc
-> > > ppc64_defconfig) failed like this:
-> > > 
-> > > cc1: warnings being treated as errors
-> > > In file included from include/linux/kobject.h:21,
-> > >                  from include/linux/device.h:17,
-> > >                  from arch/powerpc/lib/devres.c:10:
-> > > include/linux/sysfs.h:97: error: 'struct file' declared inside parameter list
-> > > include/linux/sysfs.h:97: error: its scope is only this definition or
-> > > declaration, which is probably not what you want
-> > > include/linux/sysfs.h:99: error: 'struct file' declared inside parameter list
-> > > include/linux/sysfs.h:101: error: 'struct file' declared inside parameter list
-> > > 
-> > > and many more (arch/powerpc is built with -Werror (as do some other
-> > > architectures)) and lots of similar warnings ...
-> > 
-> > Add missing forward declaration
-> > 
-> > Signed-off-by: Chris Wright <chrisw@sous-sol.org>
+On Thu, 20 May 2010 16:30:42 +1000 Stephen Rothwell wrote:
+
+> Hi all,
 > 
-> Thanks, now merged in.
+> We are in the merge window again.  I remind you all not to add stuff for
+> 2.6.36 to your linux-next trees until after 2.6.35-rc1.
 
-Thanks Greg, sorry about the mess up.
--chris
+
+when CONFIG_BLOCK is not enabled:
+
+fs/ceph/messenger.c:732: error: dereferencing pointer to incomplete type
+fs/ceph/messenger.c:740: error: dereferencing pointer to incomplete type
+fs/ceph/messenger.c:740: error: dereferencing pointer to incomplete type
+fs/ceph/messenger.c:740: error: dereferencing pointer to incomplete type
+fs/ceph/messenger.c:743: error: dereferencing pointer to incomplete type
+fs/ceph/messenger.c:744: error: dereferencing pointer to incomplete type
+fs/ceph/messenger.c:793: error: implicit declaration of function 'bio_iovec_idx'
+fs/ceph/messenger.c:793: warning : assignment makes pointer from integer without a cast
+fs/ceph/messenger.c:794: error: dereferencing pointer to incomplete type
+fs/ceph/messenger.c:795: error: dereferencing pointer to incomplete type
+fs/ceph/messenger.c:798: error: dereferencing pointer to incomplete type
+fs/ceph/messenger.c:1406: warning: initialization makes pointer from integer without a cast
+fs/ceph/messenger.c:1413: error: dereferencing pointer to incomplete type
+fs/ceph/messenger.c:1413: warning: type defaults to 'int' in declaration of '_min2'
+fs/ceph/messenger.c:1413: error: dereferencing pointer to incomplete type
+fs/ceph/messenger.c:1416: error: dereferencing pointer to incomplete type
+fs/ceph/messenger.c:1416: error: dereferencing pointer to incomplete type
+fs/ceph/messenger.c:1424: error: dereferencing pointer to incomplete type
+fs/ceph/messenger.c:1429: error: dereferencing pointer to incomplete type
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
