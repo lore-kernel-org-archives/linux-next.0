@@ -1,36 +1,43 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the usb tree
-Date: Wed, 19 May 2010 23:39:49 -0700
-Message-ID: <20100520063949.GA1443@kroah.com>
-References: <20100518174253.37e38d66.sfr@canb.auug.org.au>
- <Pine.LNX.4.44L0.1005180949560.1795-100000@iolanthe.rowland.org>
- <20100518211111.GA27870@kroah.com>
- <20100520084938.192eaa44.sfr@canb.auug.org.au>
+From: Jens Axboe <jens.axboe@oracle.com>
+Subject: Re: linux-next: Tree for May 19 (mm/page-writeback)
+Date: Thu, 20 May 2010 09:21:21 +0200
+Message-ID: <20100520072121.GG25951@kernel.dk>
+References: <20100519163554.80c7fcd3.sfr@canb.auug.org.au> <20100519104800.5a43346f.randy.dunlap@oracle.com> <20100519175018.GW25951@kernel.dk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:35297 "EHLO coco.kroah.org"
+Received: from 0122700014.0.fullrate.dk ([95.166.99.235]:35774 "EHLO kernel.dk"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752345Ab0ETGkJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 20 May 2010 02:40:09 -0400
+	id S1751146Ab0ETHVX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 20 May 2010 03:21:23 -0400
 Content-Disposition: inline
-In-Reply-To: <20100520084938.192eaa44.sfr@canb.auug.org.au>
+In-Reply-To: <20100519175018.GW25951@kernel.dk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Alan Stern <stern@rowland.harvard.edu>, linux-next@vger.kernel.org, Kernel development list <linux-kernel@vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Thu, May 20, 2010 at 08:49:38AM +1000, Stephen Rothwell wrote:
-> Hi Greg,
+On Wed, May 19 2010, Jens Axboe wrote:
+> On Wed, May 19 2010, Randy Dunlap wrote:
+> > On Wed, 19 May 2010 16:35:54 +1000 Stephen Rothwell wrote:
+> > 
+> > > Hi all,
+> > > 
+> > > We are in the merge window again.  I remind you all not to add stuff for
+> > > 2.6.36 to your linux-next trees until after 2.6.35-rc1.
+> > > 
+> > > Changes since 20100518:
+> > 
+> > 
+> > When CONFIG_BLOCK is not enabled:
+> > 
+> > mm/page-writeback.c: In function 'laptop_mode_timer_fn':
+> > mm/page-writeback.c:708: error: dereferencing pointer to incomplete type
+> > mm/page-writeback.c:709: error: dereferencing pointer to incomplete type
 > 
-> On Tue, 18 May 2010 14:11:11 -0700 Greg KH <greg@kroah.com> wrote:
-> >
-> > Thanks, now merged and pushed out.
-> 
-> I haven't seen that fix in your published quilt series, yet.
+> Thanks Randy, I'll fix that up.
 
-Sorry, forgot to push properly.  It should be there now.
+Fixed up in for-2.6.35/for-next now.
 
-thanks,
-
-greg k-h
+-- 
+Jens Axboe
