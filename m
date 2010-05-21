@@ -1,51 +1,60 @@
-From: Jason Wessel <jason.wessel@windriver.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the kgdb tree
-Date: Thu, 20 May 2010 19:49:51 -0500
-Message-ID: <4BF5D8AF.6010408@windriver.com>
-References: <20100323150443.608ad7f0.sfr@canb.auug.org.au><20100325154307.9cdeae10.sfr@canb.auug.org.au><201003242159.25770.dmitry.torokhov@gmail.com> <20100521102158.bf6df441.sfr@canb.auug.org.au>
+Date: Fri, 21 May 2010 11:09:38 +1000
+Message-ID: <20100521110938.7bbbbf59.sfr@canb.auug.org.au>
+References: <20100323150443.608ad7f0.sfr@canb.auug.org.au>
+	<20100325154307.9cdeae10.sfr@canb.auug.org.au>
+	<201003242159.25770.dmitry.torokhov@gmail.com>
+	<20100521102158.bf6df441.sfr@canb.auug.org.au>
+	<4BF5D8AF.6010408@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__21_May_2010_11_09_38_+1000_JK.m8j92zw6_Gi+w"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:33267 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754991Ab0EUAt6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 20 May 2010 20:49:58 -0400
-In-Reply-To: <20100521102158.bf6df441.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:44034 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754413Ab0EUBJp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 20 May 2010 21:09:45 -0400
+In-Reply-To: <4BF5D8AF.6010408@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jason Wessel <jason.wessel@windriver.com>
 Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 05/20/2010 07:21 PM, Stephen Rothwell wrote:
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  kernel/debug/kdb/kdb_main.c |    6 ++----
->  1 files changed, 2 insertions(+), 4 deletions(-)
+--Signature=_Fri__21_May_2010_11_09_38_+1000_JK.m8j92zw6_Gi+w
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Jason,
+
+On Thu, 20 May 2010 19:49:51 -0500 Jason Wessel <jason.wessel@windriver.com=
+> wrote:
 >
-> diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
-> index f1f9309..bad8e63 100644
-> --- a/kernel/debug/kdb/kdb_main.c
-> +++ b/kernel/debug/kdb/kdb_main.c
-> @@ -1819,10 +1819,8 @@ static int kdb_sr(int argc, const char **argv)
->  {
->  	if (argc != 1)
->  		return KDB_ARGCOUNT;
-> -	if (!__sysrq_enabled) {
-> -		kdb_printf("Auto activating sysrq\n");
-> -		__sysrq_enabled = 1;
-> -	}
-> +
-> +	sysrq_toggle_support(1);
->  
->  	kdb_trap_printk++;
->  	handle_sysrq(*argv[1], NULL);
->   
+> Before brute force toggling it, it seems we should check the value and
+> restore it after the execution of handle_sysrq().
 
+Indeed, at the time I couldn't find an easy way to do that.
 
-Before brute force toggling it, it seems we should check the value and
-restore it after the execution of handle_sysrq().
+> I'll have to look and see if there is an access function for this.
 
-I'll have to look and see if there is an access function for this.
+Great, thanks.
 
-Jason.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__21_May_2010_11_09_38_+1000_JK.m8j92zw6_Gi+w
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkv13VIACgkQjjKRsyhoI8ziTACZARRVTGV44Ta9YCL+ue0Vh0nq
+RL8AoKEUWXyBVNnVdFae1/lurA0mFwQd
+=pQ/f
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__21_May_2010_11_09_38_+1000_JK.m8j92zw6_Gi+w--
