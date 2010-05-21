@@ -1,44 +1,43 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the driver-core tree with the net
- tree
-Date: Fri, 21 May 2010 08:13:23 -0700
-Message-ID: <20100521151323.GA32573@kroah.com>
-References: <20100521162134.6b6326bd.sfr@canb.auug.org.au>
- <m1tyq1wy4h.fsf@fess.ebiederm.org>
- <20100520.235008.97331614.davem@davemloft.net>
- <m1pr0pwvgk.fsf@fess.ebiederm.org>
+From: Chris Wright <chrisw@sous-sol.org>
+Subject: Re: linux-next: build warnings after merge of the driver-core tree
+Date: Fri, 21 May 2010 09:22:21 -0700
+Message-ID: <20100521162221.GU8301@sequoia.sous-sol.org>
+References: <20100521161843.20e795db.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:58738 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756183Ab0EUPQr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 21 May 2010 11:16:47 -0400
+Received: from sous-sol.org ([216.99.217.87]:45154 "EHLO sequoia.sous-sol.org"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1755873Ab0EUQWq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 21 May 2010 12:22:46 -0400
 Content-Disposition: inline
-In-Reply-To: <m1pr0pwvgk.fsf@fess.ebiederm.org>
+In-Reply-To: <20100521161843.20e795db.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: David Miller <davem@davemloft.net>, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, therbert@google.com, netdev@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan Achatz <erazor_de@users.sourceforge.net>, Jiri Kosina <jikos@jikos.cz>, Chris Wright <chrisw@sous-sol.org>
 
-On Fri, May 21, 2010 at 12:43:55AM -0700, Eric W. Biederman wrote:
-> David Miller <davem@davemloft.net> writes:
+* Stephen Rothwell (sfr@canb.auug.org.au) wrote:
+...
+> drivers/hid/hid-roccat-kone.c:731: warning: initialization from incompatible pointer type
 > 
-> > From: ebiederm@xmission.com (Eric W. Biederman)
-> > Date: Thu, 20 May 2010 23:46:22 -0700
-> >
-> >> It looks right, except perhaps the RPS code looks like it will cause a
-> >> build failure with sysfs disabled, but that has nothing to do with your
-> >> changes.
-> >
-> > CONFIG_RPS depends upon CONFIG_SMP && CONFIG_SYSFS, so no that build
-> > failure is not possible.
+> Introduced by commit 867040163f10f2b52b45bc573f330d6eb28f5914 ("sysfs:
+> add struct file* to bin_attr callbacks") from the driver-core tree
+> interacting with commit 14bf62cde79423a02a590e02664ed29a36facec1 ("HID:
+> add driver for Roccat Kone gaming mouse") from the hid tree.
 > 
-> That's the bit I'm missing.  My apologies if I caused any unnecessary worry.
+> I added the following patch:
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 21 May 2010 16:15:32 +1000
+> Subject: [PATCH] hid: fix hid-roccat-kone for bin_attr API change
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-I've now fixed this all up in my tree and have pushed it out.
-I'll also go push the patches themselves to Linus later today.
+Yep, looks good.  I figured we'd hit one or two of those w/ the API
+change.
+
+Acked-by: Chris Wright <chrisw@sous-sol.org>
 
 thanks,
-
-greg k-h
+-chris
