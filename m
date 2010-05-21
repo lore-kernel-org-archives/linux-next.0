@@ -1,91 +1,77 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the kgdb tree
-Date: Fri, 21 May 2010 10:21:58 +1000
-Message-ID: <20100521102158.bf6df441.sfr@canb.auug.org.au>
-References: <20100323150443.608ad7f0.sfr@canb.auug.org.au>
-	<20100325154307.9cdeae10.sfr@canb.auug.org.au>
-	<201003242159.25770.dmitry.torokhov@gmail.com>
+Subject: Re: linux-next: build failure after merge of the suspend tree
+Date: Fri, 21 May 2010 10:29:13 +1000
+Message-ID: <20100521102913.ae4e8cd2.sfr@canb.auug.org.au>
+References: <20100507130821.3fb72c9d.sfr@canb.auug.org.au>
+	<201005080413.24465.rjw@sisk.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56075 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:38595 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754991Ab0EUAWD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 20 May 2010 20:22:03 -0400
-In-Reply-To: <201003242159.25770.dmitry.torokhov@gmail.com>
+	id S1757254Ab0EUA3R (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 20 May 2010 20:29:17 -0400
+In-Reply-To: <201005080413.24465.rjw@sisk.pl>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jason Wessel <jason.wessel@windriver.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "John W. Linville" <linville@tuxdriver.com>, David Miller <davem@davemloft.net>, Linus <torvalds@linux-foundation.org>
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Helmut Schaa <Helmut.Schaa@gmx.de>, netdev@vger.kernel.org
 
-Hi Jason,
+Hi John, Dave,
 
-On Wed, 24 Mar 2010 21:59:25 -0700 Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
+On Sat, 8 May 2010 04:13:24 +0200 "Rafael J. Wysocki" <rjw@sisk.pl> wrote:
 >
-> On Wednesday 24 March 2010 09:43:07 pm Stephen Rothwell wrote:
-> > Hi Jason, Dmitry,
+> On Friday 07 May 2010, Stephen Rothwell wrote:
 > > 
-> > On Tue, 23 Mar 2010 15:04:43 +1100 Stephen Rothwell <sfr@canb.auug.org.au> 
-> wrote:
-> > > After merging the kgdb tree, today's linux-next build (x86_64
-> > > allmodconfig) failed like this:
-> > > 
-> > > kernel/debug/kdb/kdb_main.c: In function 'kdb_sr':
-> > > kernel/debug/kdb/kdb_main.c:1822: error: '__sysrq_enabled' undeclared
-> > > (first use in this function)
-> > > 
-> > > Caused by commit ab28988df9667f8dd70c7434c8ca463beb00b300 ("kdb: core for
-> > > kgdb back end (1 of 2)") from the kgdb tree interacting with commit
-> > > edc6e384f9d96e54a6d03068d3b03fa5b56b6449 ("") fromInput: implement SysRq
-> > > as a separate input handler the input tree.
+> > After merging the suspend tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
 > > 
-> > I got this again today (I stopped reverting the input tree commits that I
-> > was reverting for another build problem).  The patch below still seems to
-> > work OK.
+> > net/mac80211/scan.c: In function 'ieee80211_scan_state_decision':
+> > net/mac80211/scan.c:510: error: implicit declaration of function 'pm_qos_requirement'
+> > 
+> > Caused by commit 62bad14fc6e0911a99882c261390968977d43283 ("PM QOS
+> > update") from the suspend tree interacting with commit
+> > df13cce53a7b28a81460e6bfc4857e9df4956141 ("mac80211: Improve software
+> > scan timing") from the net tree.
+> > 
+> > I have added the following merge fixup patch and can carry it as
+> > necessary:
 > 
-> Yes, I  of __sysrq_enabled is not global anymore...
+> Thanks a lot, please do so if that's not a problem.
 > 
-> I am not sure I like kgdb enabling sysrq functonality on its own, I'd rather
-> export __handle_sysrq that does not check sysrq state...
+> Both trees are based on Linus' current and I don't see a good way of fixing
+> this issue in any of them individually.
 
-The input changes that require change in the kgdb tree are now in Linus'
-tree (I think) so this patch (or something else) should be added to the
-kgdb tree before it is sent to Linus for merging.
-
-Dmitry, any thoughts?
+The suspend tree has been merged into Linus' tree, so this patch is
+needed in the net tree before it is merged (or as part of the merge).
 
 Here is the patch again:
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 23 Mar 2010 14:45:22 +1100
-Subject: [PATCH] kgdb: update for sysrq handling change
+Date: Fri, 7 May 2010 13:02:54 +1000
+Subject: [PATCH] wireless: update for pm_qos_requirement to pm_qos_request rename
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- kernel/debug/kdb/kdb_main.c |    6 ++----
- 1 files changed, 2 insertions(+), 4 deletions(-)
+ net/mac80211/scan.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
-index f1f9309..bad8e63 100644
---- a/kernel/debug/kdb/kdb_main.c
-+++ b/kernel/debug/kdb/kdb_main.c
-@@ -1819,10 +1819,8 @@ static int kdb_sr(int argc, const char **argv)
- {
- 	if (argc != 1)
- 		return KDB_ARGCOUNT;
--	if (!__sysrq_enabled) {
--		kdb_printf("Auto activating sysrq\n");
--		__sysrq_enabled = 1;
--	}
-+
-+	sysrq_toggle_support(1);
+diff --git a/net/mac80211/scan.c b/net/mac80211/scan.c
+index e14c441..e1b0be7 100644
+--- a/net/mac80211/scan.c
++++ b/net/mac80211/scan.c
+@@ -510,7 +510,7 @@ static int ieee80211_scan_state_decision(struct ieee80211_local *local,
+ 		bad_latency = time_after(jiffies +
+ 				ieee80211_scan_get_channel_time(next_chan),
+ 				local->leave_oper_channel_time +
+-				usecs_to_jiffies(pm_qos_requirement(PM_QOS_NETWORK_LATENCY)));
++				usecs_to_jiffies(pm_qos_request(PM_QOS_NETWORK_LATENCY)));
  
- 	kdb_trap_printk++;
- 	handle_sysrq(*argv[1], NULL);
+ 		listen_int_exceeded = time_after(jiffies +
+ 				ieee80211_scan_get_channel_time(next_chan),
 -- 
-1.7.0.2
-
+1.7.1
 
 -- 
 Cheers,
