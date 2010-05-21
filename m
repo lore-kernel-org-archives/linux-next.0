@@ -1,77 +1,102 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the suspend tree
-Date: Fri, 21 May 2010 10:29:13 +1000
-Message-ID: <20100521102913.ae4e8cd2.sfr@canb.auug.org.au>
-References: <20100507130821.3fb72c9d.sfr@canb.auug.org.au>
-	<201005080413.24465.rjw@sisk.pl>
+Subject: Re: linux-next: manual merge of the usb tree with the sound tree
+Date: Fri, 21 May 2010 10:39:40 +1000
+Message-ID: <20100521103940.927764a0.sfr@canb.auug.org.au>
+References: <20100430155134.a35db59a.sfr@canb.auug.org.au>
+	<20100430055914.GA30801@buzzloop.caiaq.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38595 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:45908 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757254Ab0EUA3R (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 20 May 2010 20:29:17 -0400
-In-Reply-To: <201005080413.24465.rjw@sisk.pl>
+	id S1753549Ab0EUAjo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 20 May 2010 20:39:44 -0400
+In-Reply-To: <20100430055914.GA30801@buzzloop.caiaq.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>, David Miller <davem@davemloft.net>, Linus <torvalds@linux-foundation.org>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Helmut Schaa <Helmut.Schaa@gmx.de>, netdev@vger.kernel.org
+To: Greg KH <greg@kroah.com>, Takashi Iwai <tiwai@suse.de>
+Cc: Daniel Mack <daniel@caiaq.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
 
-Hi John, Dave,
+Hi Greg, Takashi,
 
-On Sat, 8 May 2010 04:13:24 +0200 "Rafael J. Wysocki" <rjw@sisk.pl> wrote:
+On Fri, 30 Apr 2010 07:59:14 +0200 Daniel Mack <daniel@caiaq.de> wrote:
 >
-> On Friday 07 May 2010, Stephen Rothwell wrote:
+> On Fri, Apr 30, 2010 at 03:51:34PM +1000, Stephen Rothwell wrote:
+> > Today's linux-next merge of the usb tree got a conflict in
+> > sound/usb/usbaudio.c between commit
+> > e5779998bf8b70e48a6cc208c8b61b33bd6117ea ("ALSA: usb-audio: refactor
+> > code") from the sound tree and commit
+> > 3cc96f50329227fbf34de2459491901b6ee1c98c ("USB: rename usb_buffer_alloc()
+> > and usb_buffer_free() users") from the usb tree.
 > > 
-> > After merging the suspend tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
-> > 
-> > net/mac80211/scan.c: In function 'ieee80211_scan_state_decision':
-> > net/mac80211/scan.c:510: error: implicit declaration of function 'pm_qos_requirement'
-> > 
-> > Caused by commit 62bad14fc6e0911a99882c261390968977d43283 ("PM QOS
-> > update") from the suspend tree interacting with commit
-> > df13cce53a7b28a81460e6bfc4857e9df4956141 ("mac80211: Improve software
-> > scan timing") from the net tree.
-> > 
-> > I have added the following merge fixup patch and can carry it as
-> > necessary:
+> > The former moved the relevant code from usbaudio.c to urb.c, so I applied
+> > the changes from the latter to that (see below).
 > 
-> Thanks a lot, please do so if that's not a problem.
-> 
-> Both trees are based on Linus' current and I don't see a good way of fixing
-> this issue in any of them individually.
+> Oops, yes. Ironically, these are both my patches.
+> Thanks for fixing this up, Stephen.
 
-The suspend tree has been merged into Linus' tree, so this patch is
-needed in the net tree before it is merged (or as part of the merge).
+The sound tree has now been merged int Linus', so this patch needs to be
+applied to the usb tree before it is merged into Linus'.   This patch can
+be applied to Linus' tree right now, as usb_free_coherent() already
+exists there.
 
 Here is the patch again:
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 7 May 2010 13:02:54 +1000
-Subject: [PATCH] wireless: update for pm_qos_requirement to pm_qos_request rename
+Date: Fri, 30 Apr 2010 14:44:54 +1000
+Subject: [PATCH] sound: fixup for usb_buffer_alloc/free rename
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- net/mac80211/scan.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ sound/usb/urb.c |   10 +++++-----
+ 1 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/net/mac80211/scan.c b/net/mac80211/scan.c
-index e14c441..e1b0be7 100644
---- a/net/mac80211/scan.c
-+++ b/net/mac80211/scan.c
-@@ -510,7 +510,7 @@ static int ieee80211_scan_state_decision(struct ieee80211_local *local,
- 		bad_latency = time_after(jiffies +
- 				ieee80211_scan_get_channel_time(next_chan),
- 				local->leave_oper_channel_time +
--				usecs_to_jiffies(pm_qos_requirement(PM_QOS_NETWORK_LATENCY)));
-+				usecs_to_jiffies(pm_qos_request(PM_QOS_NETWORK_LATENCY)));
+diff --git a/sound/usb/urb.c b/sound/usb/urb.c
+index 5570a2b..de607d4 100644
+--- a/sound/usb/urb.c
++++ b/sound/usb/urb.c
+@@ -101,7 +101,7 @@ static void release_urb_ctx(struct snd_urb_ctx *u)
+ {
+ 	if (u->urb) {
+ 		if (u->buffer_size)
+-			usb_buffer_free(u->subs->dev, u->buffer_size,
++			usb_free_coherent(u->subs->dev, u->buffer_size,
+ 					u->urb->transfer_buffer,
+ 					u->urb->transfer_dma);
+ 		usb_free_urb(u->urb);
+@@ -154,7 +154,7 @@ void snd_usb_release_substream_urbs(struct snd_usb_substream *subs, int force)
+ 		release_urb_ctx(&subs->dataurb[i]);
+ 	for (i = 0; i < SYNC_URBS; i++)
+ 		release_urb_ctx(&subs->syncurb[i]);
+-	usb_buffer_free(subs->dev, SYNC_URBS * 4,
++	usb_free_coherent(subs->dev, SYNC_URBS * 4,
+ 			subs->syncbuf, subs->sync_dma);
+ 	subs->syncbuf = NULL;
+ 	subs->nurbs = 0;
+@@ -308,8 +308,8 @@ int snd_usb_init_substream_urbs(struct snd_usb_substream *subs,
+ 		if (!u->urb)
+ 			goto out_of_memory;
+ 		u->urb->transfer_buffer =
+-			usb_buffer_alloc(subs->dev, u->buffer_size, GFP_KERNEL,
+-					 &u->urb->transfer_dma);
++			usb_alloc_coherent(subs->dev, u->buffer_size,
++					   GFP_KERNEL, &u->urb->transfer_dma);
+ 		if (!u->urb->transfer_buffer)
+ 			goto out_of_memory;
+ 		u->urb->pipe = subs->datapipe;
+@@ -321,7 +321,7 @@ int snd_usb_init_substream_urbs(struct snd_usb_substream *subs,
  
- 		listen_int_exceeded = time_after(jiffies +
- 				ieee80211_scan_get_channel_time(next_chan),
+ 	if (subs->syncpipe) {
+ 		/* allocate and initialize sync urbs */
+-		subs->syncbuf = usb_buffer_alloc(subs->dev, SYNC_URBS * 4,
++		subs->syncbuf = usb_alloc_coherent(subs->dev, SYNC_URBS * 4,
+ 						 GFP_KERNEL, &subs->sync_dma);
+ 		if (!subs->syncbuf)
+ 			goto out_of_memory;
 -- 
 1.7.1
+
 
 -- 
 Cheers,
