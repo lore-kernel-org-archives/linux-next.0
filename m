@@ -1,61 +1,61 @@
 From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build warnings after merge of the driver-core tree
-Date: Fri, 21 May 2010 15:27:41 -0700
-Message-ID: <20100521222741.GC12517@kroah.com>
-References: <20100521161843.20e795db.sfr@canb.auug.org.au>
- <20100521164730.GA11173@kroah.com>
- <alpine.LRH.2.00.1005212330060.14809@twin.jikos.cz>
+Subject: Re: linux-next: build failure after merge of the staging-next tree
+Date: Fri, 21 May 2010 16:36:55 -0700
+Message-ID: <20100521233655.GD31430@kroah.com>
+References: <20100430155205.a4171034.sfr@canb.auug.org.au>
+ <20100430144340.GD1824@kroah.com>
+ <20100518153020.06d5a602@notabene.brown>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from kroah.org ([198.145.64.141]:33333 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758779Ab0EUXhH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 21 May 2010 19:37:07 -0400
 Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.00.1005212330060.14809@twin.jikos.cz>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan Achatz <erazor_de@users.sourceforge.net>, Chris Wright <chrisw@sous-sol.org>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20100518153020.06d5a602@notabene.brown>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Neil Brown <neilb@suse.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, Benjamin Thery <benjamin.thery@bull.net>
 
-On Fri, May 21, 2010 at 11:30:37PM +0200, Jiri Kosina wrote:
-> On Fri, 21 May 2010, Greg KH wrote:
+On Tue, May 18, 2010 at 03:30:20PM +1000, Neil Brown wrote:
+> On Fri, 30 Apr 2010 07:43:40 -0700
+> Greg KH <greg@kroah.com> wrote:
 > 
-> > > drivers/hid/hid-roccat-kone.c:694: warning: initialization from incompatible pointer type
-> > > drivers/hid/hid-roccat-kone.c:696: warning: initialization from incompatible pointer type
-> > > drivers/hid/hid-roccat-kone.c:701: warning: initialization from incompatible pointer type
-> > > drivers/hid/hid-roccat-kone.c:703: warning: initialization from incompatible pointer type
-> > > drivers/hid/hid-roccat-kone.c:708: warning: initialization from incompatible pointer type
-> > > drivers/hid/hid-roccat-kone.c:710: warning: initialization from incompatible pointer type
-> > > drivers/hid/hid-roccat-kone.c:715: warning: initialization from incompatible pointer type
-> > > drivers/hid/hid-roccat-kone.c:717: warning: initialization from incompatible pointer type
-> > > drivers/hid/hid-roccat-kone.c:722: warning: initialization from incompatible pointer type
-> > > drivers/hid/hid-roccat-kone.c:724: warning: initialization from incompatible pointer type
-> > > drivers/hid/hid-roccat-kone.c:729: warning: initialization from incompatible pointer type
-> > > drivers/hid/hid-roccat-kone.c:731: warning: initialization from incompatible pointer type
+> > On Fri, Apr 30, 2010 at 03:52:05PM +1000, Stephen Rothwell wrote:
+> > > Hi Greg,
 > > > 
-> > > Introduced by commit 867040163f10f2b52b45bc573f330d6eb28f5914 ("sysfs:
-> > > add struct file* to bin_attr callbacks") from the driver-core tree
-> > > interacting with commit 14bf62cde79423a02a590e02664ed29a36facec1 ("HID:
-> > > add driver for Roccat Kone gaming mouse") from the hid tree.
+> > > After merging the staging-next tree, today's linux-next build (x86_64
+> > > allmodconfig) failed like this:
 > > > 
-> > > I added the following patch:
+> > > drivers/md/md.c: In function 'level_store':
+> > > drivers/md/md.c:3029: error: too few arguments to function 'sysfs_get_dirent'
 > > > 
-> > > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > Date: Fri, 21 May 2010 16:15:32 +1000
-> > > Subject: [PATCH] hid: fix hid-roccat-kone for bin_attr API change
+> > > Caused by commit 262f8e4937e7b4a587923ca3c039a184668f49ec ("sysfs:
+> > > Implement sysfs tagged directory support") from the driver-core tree
+> > > interacting with commit fecc531e3cc0de60514d326c7d82f1075ed55888 ("md:
+> > > manage redundancy group in sysfs when changing level") from the md.
 > > > 
-> > > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > ---
-> > >  drivers/hid/hid-roccat-kone.c |   24 ++++++++++++------------
+> > > I have applied this fixup patch for today and can carry it as necessary.
+> > > 
+> > > [This could have been avoided, of course, by creating a new API (maybe
+> > > sysfs_get_dirent_tagged) and implementing the old API in terms of that].
 > > 
-> > That patch looks fine, but I can't take it in my tree as the HID tree
-> > isn't merged with Linus's tree yet :(
+> > Thanks for the fixup.
 > 
-> It is merged now, so you can proceed.
+> hi Greg,
+>  I'm assuming that you will submit you patch queue to Linus first, then I
+>  will create a merge which fixes this issue and ask Linus to pull that - so
+>  everything is all still bisectable without me rebasing.
+> 
+>  If you are OK with that, please let me know when you have submitted your
+>  queue..  I'll try to keep and eye open, but I might miss it...
 
-Heh, so is the driver core changes as well.
+The drivercore queue is now in Linus's tree.
 
-Care to take this through your tree as it does only touch drivers/hid/ ?
-
-Sorry about this.
+Oh, you missed a kref_set() usage in the tree as well, you might want to
+fix that up also.
 
 thanks,
 
