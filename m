@@ -1,24 +1,39 @@
-From: Chris Wright <chrisw@sous-sol.org>
+From: Greg KH <greg@kroah.com>
 Subject: Re: linux-next: build warnings after merge of the driver-core tree
-Date: Fri, 21 May 2010 09:22:21 -0700
-Message-ID: <20100521162221.GU8301@sequoia.sous-sol.org>
+Date: Fri, 21 May 2010 09:47:30 -0700
+Message-ID: <20100521164730.GA11173@kroah.com>
 References: <20100521161843.20e795db.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from sous-sol.org ([216.99.217.87]:45154 "EHLO sequoia.sous-sol.org"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1755873Ab0EUQWq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 21 May 2010 12:22:46 -0400
+Received: from kroah.org ([198.145.64.141]:50266 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758233Ab0EUQvs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 21 May 2010 12:51:48 -0400
 Content-Disposition: inline
 In-Reply-To: <20100521161843.20e795db.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan Achatz <erazor_de@users.sourceforge.net>, Jiri Kosina <jikos@jikos.cz>, Chris Wright <chrisw@sous-sol.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan Achatz <erazor_de@users.sourceforge.net>, Jiri Kosina <jikos@jikos.cz>, Chris Wright <chrisw@sous-sol.org>
 
-* Stephen Rothwell (sfr@canb.auug.org.au) wrote:
-...
+On Fri, May 21, 2010 at 04:18:43PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> After merging the driver-core tree, today's linux-next build (x86_64
+> allmodconfig) produced these warnings:
+> 
+> drivers/hid/hid-roccat-kone.c:694: warning: initialization from incompatible pointer type
+> drivers/hid/hid-roccat-kone.c:696: warning: initialization from incompatible pointer type
+> drivers/hid/hid-roccat-kone.c:701: warning: initialization from incompatible pointer type
+> drivers/hid/hid-roccat-kone.c:703: warning: initialization from incompatible pointer type
+> drivers/hid/hid-roccat-kone.c:708: warning: initialization from incompatible pointer type
+> drivers/hid/hid-roccat-kone.c:710: warning: initialization from incompatible pointer type
+> drivers/hid/hid-roccat-kone.c:715: warning: initialization from incompatible pointer type
+> drivers/hid/hid-roccat-kone.c:717: warning: initialization from incompatible pointer type
+> drivers/hid/hid-roccat-kone.c:722: warning: initialization from incompatible pointer type
+> drivers/hid/hid-roccat-kone.c:724: warning: initialization from incompatible pointer type
+> drivers/hid/hid-roccat-kone.c:729: warning: initialization from incompatible pointer type
 > drivers/hid/hid-roccat-kone.c:731: warning: initialization from incompatible pointer type
 > 
 > Introduced by commit 867040163f10f2b52b45bc573f330d6eb28f5914 ("sysfs:
@@ -33,11 +48,12 @@ Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kern
 > Subject: [PATCH] hid: fix hid-roccat-kone for bin_attr API change
 > 
 > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/hid/hid-roccat-kone.c |   24 ++++++++++++------------
 
-Yep, looks good.  I figured we'd hit one or two of those w/ the API
-change.
-
-Acked-by: Chris Wright <chrisw@sous-sol.org>
+That patch looks fine, but I can't take it in my tree as the HID tree
+isn't merged with Linus's tree yet :(
 
 thanks,
--chris
+
+greg k-h
