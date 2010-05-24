@@ -1,40 +1,45 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] platform/x86: msi-laptop depends on SERIO_I8042
-Date: Sun, 23 May 2010 16:33:17 -0700
-Message-ID: <20100523163317.d1224414.randy.dunlap@oracle.com>
+Subject: [PATCH -next] nouveau: fix acpi_lid_open undefined
+Date: Sun, 23 May 2010 17:00:40 -0700
+Message-ID: <20100523170040.3c4aa87c.randy.dunlap@oracle.com>
 References: <20100522170459.4c89723d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:36935 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754190Ab0EXABC (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 23 May 2010 20:01:02 -0400
 In-Reply-To: <20100522170459.4c89723d.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Lennart Poettering <mzxreary@0pointer.de>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Matthew Garrett <mjg@redhat.com>, platform-driver-x86@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Ben Skeggs <bskeggs@redhat.com>, dri-devel@lists.freedesktop.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, David Airlie <airlied@linux.ie>
 
 From: Randy Dunlap <randy.dunlap@oracle.com>
 
-msi-laptop uses i8042_*() interfaces, so it should depend on
-SERIO_I8042.  E.g., when SERIO_I8042=m and MSI_LAPTOP=y:
+When CONFIG_ACPI_BUTTON=m (and probably when ACPI_BUTTON is not enabled)
+and NOUVEAU is built-in (not as a loadable module):
 
-msi-laptop.c:(.text+0x18a7fe): undefined reference to `i8042_install_filter'
-msi-laptop.c:(.init.text+0xd69d): undefined reference to `i8042_remove_filter'
-msi-laptop.c:(.exit.text+0x19c3): undefined reference to `i8042_remove_filter'
+nouveau_connector.c:(.text+0xe17ce): undefined reference to `acpi_lid_open'
 
 Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Lennart Poettering <mzxreary@0pointer.de>
+Cc: David Airlie <airlied@linux.ie>
+Cc: dri-devel@lists.freedesktop.org
 ---
- drivers/platform/x86/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/nouveau/nouveau_connector.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- linux-next-20100522.orig/drivers/platform/x86/Kconfig
-+++ linux-next-20100522/drivers/platform/x86/Kconfig
-@@ -151,6 +151,7 @@ config MSI_LAPTOP
- 	depends on ACPI
- 	depends on BACKLIGHT_CLASS_DEVICE
- 	depends on RFKILL
-+	depends on SERIO_I8042
- 	---help---
- 	  This is a driver for laptops built by MSI (MICRO-STAR
- 	  INTERNATIONAL):
+--- linux-next-20100522.orig/drivers/gpu/drm/nouveau/nouveau_connector.c
++++ linux-next-20100522/drivers/gpu/drm/nouveau/nouveau_connector.c
+@@ -241,7 +241,8 @@ nouveau_connector_detect(struct drm_conn
+ 	if (nv_encoder && nv_connector->native_mode) {
+ 		unsigned status = connector_status_connected;
+ 
+-#ifdef CONFIG_ACPI
++#if defined(CONFIG_ACPI_BUTTON) || \
++	(defined(CONFIG_ACPI_BUTTON_MODULE) && defined(MODULE))
+ 		if (!nouveau_ignorelid && !acpi_lid_open())
+ 			status = connector_status_unknown;
+ #endif
