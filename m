@@ -1,39 +1,56 @@
-From: Jason Wessel <jason.wessel@windriver.com>
-Subject: Re: linux-next: build failure after merge of the kgdb tree
-Date: Mon, 24 May 2010 15:50:04 -0500
-Message-ID: <4BFAE67C.6080000@windriver.com>
-References: <20100323150443.608ad7f0.sfr@canb.auug.org.au> <20100524181735.GC6033@core.coreip.homeip.net> <4BFADBC1.9000802@windriver.com> <201005241334.04277.dmitry.torokhov@gmail.com>
+From: Dave Airlie <airlied@redhat.com>
+Subject: Re: [PATCH -next] nouveau: fix acpi_lid_open undefined
+Date: Tue, 25 May 2010 08:47:35 +1000
+Message-ID: <1274741255.3416.1.camel@clockmaker-el6>
+References: <20100522170459.4c89723d.sfr@canb.auug.org.au>
+	<20100523170040.3c4aa87c.randy.dunlap@oracle.com>
+	<20100524125628.GA14278@srcf.ucam.org> <4BFA84EF.7070609@oracle.com>
+	<20100524135940.GA15892@srcf.ucam.org>  <4BFA8A71.4080900@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:63978 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756850Ab0EXUuK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 May 2010 16:50:10 -0400
-In-Reply-To: <201005241334.04277.dmitry.torokhov@gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
+In-Reply-To: <4BFA8A71.4080900@oracle.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, linux-next@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>, Matthew Garrett <mjg@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-On 05/24/2010 03:34 PM, Dmitry Torokhov wrote:
-> On Monday 24 May 2010 01:04:17 pm Jason Wessel wrote:
->   
->> On 05/24/2010 01:17 PM, Dmitry Torokhov wrote:
->>     
->>> Do we really need to force SysRq on or off? Maybe we should export
->>> __handle_sysrq() instead?
->>>       
->> It seems cleanest to export __handle_sysrq() if that is ok?
->>     
->
-> Yes, I think this is the best option. Please feel free to merge through
-> your tree.
->   
+On Mon, 2010-05-24 at 07:17 -0700, Randy Dunlap wrote:
+> On 05/24/10 06:59, Matthew Garrett wrote:
+> > On Mon, May 24, 2010 at 06:53:51AM -0700, Randy Dunlap wrote:
+> >> On 05/24/10 05:56, Matthew Garrett wrote:
+> >>> Won't this result in a behavioural difference? The desirable outcome is 
+> >>
+> >> It could, yes.
+> >>
+> >>> that that configuration be impossible, not for that configuration to 
+> >>> build but be buggy.
+> >>
+> >> so nouveau should depend on (or select, if ACPI is enabled) ACPI_BUTTON?
+> > 
+> > There's an argument that it doesn't need to depend on it, but if button 
+> > is a module then nouveau has to be. Except the inverse isn't true. 
+> > Kconfig is hard, let's weep gently.
+> 
+> Maybe Dave can weep with us when he is back at work...
 
-Will do, I'll add your ack and queue it for the minor -rc1 fixes I am
-accumulating for kgdb/kdb.
+Yeah I've had problems like this a few times lately with the drm, I'm
+torn between just adding select all over the place, or assuming someone
+sane is configuring the kernel.
 
-Thanks,
-Jason.
+I'm sort of erring on the someone sane is configuring the kernel just
+because Linus's objects to "default y" things seems to point at that we
+can't really give pointers to the people who haven't done it before. So
+I'm quite happy to leave it having different behaviour depending on the
+configuration and simply ignoring bug reports from incompetents.
+
+Dave.
