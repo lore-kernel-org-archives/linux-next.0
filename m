@@ -1,39 +1,36 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
+From: Matthew Garrett <mjg@redhat.com>
 Subject: Re: [PATCH -next] nouveau: fix acpi_lid_open undefined
-Date: Mon, 24 May 2010 06:53:51 -0700
-Message-ID: <4BFA84EF.7070609@oracle.com>
-References: <20100522170459.4c89723d.sfr@canb.auug.org.au> <20100523170040.3c4aa87c.randy.dunlap@oracle.com> <20100524125628.GA14278@srcf.ucam.org>
+Date: Mon, 24 May 2010 14:59:40 +0100
+Message-ID: <20100524135940.GA15892@srcf.ucam.org>
+References: <20100522170459.4c89723d.sfr@canb.auug.org.au> <20100523170040.3c4aa87c.randy.dunlap@oracle.com> <20100524125628.GA14278@srcf.ucam.org> <4BFA84EF.7070609@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:30014 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757074Ab0EXNyQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 May 2010 09:54:16 -0400
-In-Reply-To: <20100524125628.GA14278@srcf.ucam.org>
+Received: from cavan.codon.org.uk ([93.93.128.6]:52378 "EHLO
+	cavan.codon.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757137Ab0EXN7w (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 24 May 2010 09:59:52 -0400
+Content-Disposition: inline
+In-Reply-To: <4BFA84EF.7070609@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Matthew Garrett <mjg@redhat.com>
+To: Randy Dunlap <randy.dunlap@oracle.com>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Ben Skeggs <bskeggs@redhat.com>, dri-devel@lists.freedesktop.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, David Airlie <airlied@linux.ie>
 
-On 05/24/10 05:56, Matthew Garrett wrote:
-> On Sun, May 23, 2010 at 05:00:40PM -0700, Randy Dunlap wrote:
->> From: Randy Dunlap <randy.dunlap@oracle.com>
->>
->> When CONFIG_ACPI_BUTTON=m (and probably when ACPI_BUTTON is not enabled)
->> and NOUVEAU is built-in (not as a loadable module):
+On Mon, May 24, 2010 at 06:53:51AM -0700, Randy Dunlap wrote:
+> On 05/24/10 05:56, Matthew Garrett wrote:
+> > Won't this result in a behavioural difference? The desirable outcome is 
 > 
-> Won't this result in a behavioural difference? The desirable outcome is 
+> It could, yes.
+> 
+> > that that configuration be impossible, not for that configuration to 
+> > build but be buggy.
+> 
+> so nouveau should depend on (or select, if ACPI is enabled) ACPI_BUTTON?
 
-It could, yes.
-
-> that that configuration be impossible, not for that configuration to 
-> build but be buggy.
-
-so nouveau should depend on (or select, if ACPI is enabled) ACPI_BUTTON?
-
+There's an argument that it doesn't need to depend on it, but if button 
+is a module then nouveau has to be. Except the inverse isn't true. 
+Kconfig is hard, let's weep gently.
 
 -- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+Matthew Garrett | mjg59@srcf.ucam.org
