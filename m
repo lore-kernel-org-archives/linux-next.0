@@ -1,36 +1,65 @@
-From: Matthew Garrett <mjg@redhat.com>
-Subject: Re: [PATCH -next] nouveau: fix acpi_lid_open undefined
-Date: Mon, 24 May 2010 14:59:40 +0100
-Message-ID: <20100524135940.GA15892@srcf.ucam.org>
-References: <20100522170459.4c89723d.sfr@canb.auug.org.au> <20100523170040.3c4aa87c.randy.dunlap@oracle.com> <20100524125628.GA14278@srcf.ucam.org> <4BFA84EF.7070609@oracle.com>
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: Re: linux-next: build warnings after merge of the driver-core tree
+Date: Mon, 24 May 2010 16:03:00 +0200 (CEST)
+Message-ID: <alpine.LNX.2.00.1005241602320.28092@pobox.suse.cz>
+References: <20100521161843.20e795db.sfr@canb.auug.org.au> <20100521164730.GA11173@kroah.com> <alpine.LRH.2.00.1005212330060.14809@twin.jikos.cz> <20100521222741.GC12517@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cavan.codon.org.uk ([93.93.128.6]:52378 "EHLO
-	cavan.codon.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757137Ab0EXN7w (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 24 May 2010 09:59:52 -0400
-Content-Disposition: inline
-In-Reply-To: <4BFA84EF.7070609@oracle.com>
+Received: from cantor2.suse.de ([195.135.220.15]:45319 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757016Ab0EXODH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 24 May 2010 10:03:07 -0400
+In-Reply-To: <20100521222741.GC12517@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Ben Skeggs <bskeggs@redhat.com>, dri-devel@lists.freedesktop.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, David Airlie <airlied@linux.ie>
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan Achatz <erazor_de@users.sourceforge.net>, Chris Wright <chrisw@sous-sol.org>
 
-On Mon, May 24, 2010 at 06:53:51AM -0700, Randy Dunlap wrote:
-> On 05/24/10 05:56, Matthew Garrett wrote:
-> > Won't this result in a behavioural difference? The desirable outcome is 
-> 
-> It could, yes.
-> 
-> > that that configuration be impossible, not for that configuration to 
-> > build but be buggy.
-> 
-> so nouveau should depend on (or select, if ACPI is enabled) ACPI_BUTTON?
+On Fri, 21 May 2010, Greg KH wrote:
 
-There's an argument that it doesn't need to depend on it, but if button 
-is a module then nouveau has to be. Except the inverse isn't true. 
-Kconfig is hard, let's weep gently.
+> > > > drivers/hid/hid-roccat-kone.c:696: warning: initialization from incompatible pointer type
+> > > > drivers/hid/hid-roccat-kone.c:701: warning: initialization from incompatible pointer type
+> > > > drivers/hid/hid-roccat-kone.c:703: warning: initialization from incompatible pointer type
+> > > > drivers/hid/hid-roccat-kone.c:708: warning: initialization from incompatible pointer type
+> > > > drivers/hid/hid-roccat-kone.c:710: warning: initialization from incompatible pointer type
+> > > > drivers/hid/hid-roccat-kone.c:715: warning: initialization from incompatible pointer type
+> > > > drivers/hid/hid-roccat-kone.c:717: warning: initialization from incompatible pointer type
+> > > > drivers/hid/hid-roccat-kone.c:722: warning: initialization from incompatible pointer type
+> > > > drivers/hid/hid-roccat-kone.c:724: warning: initialization from incompatible pointer type
+> > > > drivers/hid/hid-roccat-kone.c:729: warning: initialization from incompatible pointer type
+> > > > drivers/hid/hid-roccat-kone.c:731: warning: initialization from incompatible pointer type
+> > > > 
+> > > > Introduced by commit 867040163f10f2b52b45bc573f330d6eb28f5914 ("sysfs:
+> > > > add struct file* to bin_attr callbacks") from the driver-core tree
+> > > > interacting with commit 14bf62cde79423a02a590e02664ed29a36facec1 ("HID:
+> > > > add driver for Roccat Kone gaming mouse") from the hid tree.
+> > > > 
+> > > > I added the following patch:
+> > > > 
+> > > > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > > > Date: Fri, 21 May 2010 16:15:32 +1000
+> > > > Subject: [PATCH] hid: fix hid-roccat-kone for bin_attr API change
+> > > > 
+> > > > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > > > ---
+> > > >  drivers/hid/hid-roccat-kone.c |   24 ++++++++++++------------
+> > > 
+> > > That patch looks fine, but I can't take it in my tree as the HID tree
+> > > isn't merged with Linus's tree yet :(
+> > 
+> > It is merged now, so you can proceed.
+> 
+> Heh, so is the driver core changes as well.
+> 
+> Care to take this through your tree as it does only touch drivers/hid/ ?
+> 
+> Sorry about this.
+
+Yup, I have now applied it to my tree.
+
+Thanks,
 
 -- 
-Matthew Garrett | mjg59@srcf.ucam.org
+Jiri Kosina
+SUSE Labs, Novell Inc.
