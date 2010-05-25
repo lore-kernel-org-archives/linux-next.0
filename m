@@ -1,83 +1,33 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree (leds
- tree related)
-Date: Fri, 28 May 2010 01:35:49 +1000
-Message-ID: <20100528013549.9c17f6e4.sfr@canb.auug.org.au>
-References: <20100527151656.889b5977.sfr@canb.auug.org.au>
-	<1274960190.1931.429.camel@pasglop>
-	<1274965644.24079.1427.camel@rex>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: linux-next: manual merge of the ext3 tree with Linus' tree
+Date: Tue, 25 May 2010 23:55:52 +0200
+Message-ID: <20100525215552.GA12633@quack.suse.cz>
+References: <20100522154532.bc0f8008.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__28_May_2010_01_35_49_+1000_bDQs/+J+I.acJ8gF"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52235 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754998Ab0E0Pfz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 27 May 2010 11:35:55 -0400
-In-Reply-To: <1274965644.24079.1427.camel@rex>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Richard Purdie <rpurdie@rpsys.net>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bjarke Istrup Pedersen <gurligebis@gentoo.org>, Randy Dunlap <randy.dunlap@oracle.com>, Alessandro Zummo <a.zummo@towertech.it>, Andrew Morton <akpm@linux-foundation.org>
-
---Signature=_Fri__28_May_2010_01_35_49_+1000_bDQs/+J+I.acJ8gF
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20100522154532.bc0f8008.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jan Kara <jack@suse.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, Al Viro <viro@zeniv.linux.org.uk>
+List-Id: linux-next.vger.kernel.org
 
-Hi Richard,
+  Hi Stephen,
 
-On Thu, 27 May 2010 14:07:24 +0100 Richard Purdie <rpurdie@rpsys.net> wrote:
->
-> On Thu, 2010-05-27 at 21:36 +1000, Benjamin Herrenschmidt wrote:
-> > On Thu, 2010-05-27 at 15:16 +1000, Stephen Rothwell wrote:
-> > >=20
-> > > drivers/leds/leds-net5501.c:20:23: error: asm/geode.h: No such file o=
-r directory
-> > > drivers/leds/leds-net5501.c: In function 'soekris_init':
-> > > drivers/leds/leds-net5501.c:63: error: implicit declaration of functi=
-on 'is_geode'
-> >=20
-> > Looks like something is missing an ifdef CONFIG_X86 :-)
->=20
-> Right, that driver/board is x86 only. I've pushed a fix.
->=20
-> > > Caused by commit 14e40f644b020d473415342461b7c62e3bb5e312 ("leds: Add=
- LED
-> > > driver for the Soekris net5501 board").  Presumably only tested on x8=
-6?
-> > >=20
-> > > drivers/leds/leds-gpio.c: In function 'of_gpio_leds_probe':
-> > > drivers/leds/leds-gpio.c:253: error: 'struct gpio_led' has no member =
-named 'blinking'
-> > >=20
-> > > Caused by commit 2146325df2c2640059a9e064890c30c6e259b458 ("leds:
-> > > leds-gpio: Change blink_set callback to be able to turn off blinking"=
-).
->=20
-> This error looks like its from Ben's patch, probably when openfirmware
-> is enabled. I've queued a fix for this too:
->=20
-> http://git.o-hand.com/cgit.cgi/linux-rpurdie-leds/commit/?id=3Da4b4433c51=
-1cf4361bb0afabba69e16632002d32
+On Sat 22-05-10 15:45:32, Stephen Rothwell wrote:
+> Today's linux-next merge of the ext3 tree got a conflict in fs/super.c
+> between commits b20bd1a5e78af267dc4b6e1ffed48d5d776302c5 ("get rid of
+> S_BIAS"), 1712ac8fda7d8bc4dc921f5777b7423aacad7263 ("Saner locking around
+> deactivate_super()") and e1e46bf1866317d4f86f66bf18d3f07317d9f9ee ("Trim
+> includes in fs/super.c") from Linus' tree and commits
+> c3134141c78d5ea233a08b703b553e70cfb5c585 ("quota: move unmount handling
+> into the filesystem") and cdb89ca659f5a39edf88f3c55e545ea3347533d1
+> ("quota: explicitly set ->dq_op and ->s_qcop") from the ext3 tree.
+  Thanks! I've now rebased for_next branch on recent Linus's tree and
+so this conflict should go away.
 
-Great, thanks.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__28_May_2010_01_35_49_+1000_bDQs/+J+I.acJ8gF
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkv+kVUACgkQjjKRsyhoI8yjIACeNJIEQrup6F1uoLvJXj+Edk57
-tH4AoIKIUfDlNhRIdORFHMQUpnyeqEC8
-=vYRc
------END PGP SIGNATURE-----
-
---Signature=_Fri__28_May_2010_01_35_49_+1000_bDQs/+J+I.acJ8gF--
+								Honza
+-- 
+Jan Kara <jack@suse.cz>
+SUSE Labs, CR
