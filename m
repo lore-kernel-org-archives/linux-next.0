@@ -1,39 +1,52 @@
-From: Russell King <rmk@arm.linux.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure (arm tree related)
-Date: Tue, 25 May 2010 08:25:08 +0100
-Message-ID: <20100525072508.GA7612@flint.arm.linux.org.uk>
+Date: Tue, 25 May 2010 19:09:18 +1000
+Message-ID: <20100525190918.c3ee376b.sfr@canb.auug.org.au>
 References: <20100525165606.239a0465.sfr@canb.auug.org.au>
+	<20100525072508.GA7612@flint.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__25_May_2010_19_09_18_+1000_1E_seB4ZVv5O.gwi"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:53634 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751067Ab0EYHZ3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 May 2010 03:25:29 -0400
-Content-Disposition: inline
-In-Reply-To: <20100525165606.239a0465.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:44409 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754707Ab0EYJJ1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 25 May 2010 05:09:27 -0400
+In-Reply-To: <20100525072508.GA7612@flint.arm.linux.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Russell King <rmk@arm.linux.org.uk>
 Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ben Dooks <ben-linux@fluff.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Tue, May 25, 2010 at 04:56:06PM +1000, Stephen Rothwell wrote:
-> Hi Russell,
-> 
-> Most (all?) of the arm builds are failing for next-20100525:
-> 
-> arch/arm/Kconfig:883: can't open file "arch/arm/plat-s5pc1xx/Kconfig"
-> 
-> I think this may be a bad merge 211cc52a36dedd1e90147af43f6ab5eeb57952ac
-> ("Merge branch 'for-rmk/samsung3' of git://git.fluff.org/bjdooks/linux
-> into devel-stable") which resurrected the include of
-> arch/arm/plat-s5pc1xx/Kconfig after it was removed in commit
-> acc84707d3487735fc666fdeab76185d086428c0 ("ARM: SAMSUNG: move S5PC100
-> support from plat-s5pc1xx to plat-s5p framework").
+--Signature=_Tue__25_May_2010_19_09_18_+1000_1E_seB4ZVv5O.gwi
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yea, found that last night but forgot to push the fixed tree out.
+Hi Russell,
 
--- 
-Russell King
- Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
- maintainer of:
+On Tue, 25 May 2010 08:25:08 +0100 Russell King <rmk@arm.linux.org.uk> wrot=
+e:
+>
+> Yea, found that last night but forgot to push the fixed tree out.
+
+OK, thanks.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__25_May_2010_19_09_18_+1000_1E_seB4ZVv5O.gwi
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkv7k74ACgkQjjKRsyhoI8xkhwCgpaERjffEIlsPlGPAH9yQpukh
+RpIAn2c6isnlEriOl49OMH00PzaXjDLR
+=ssZI
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__25_May_2010_19_09_18_+1000_1E_seB4ZVv5O.gwi--
