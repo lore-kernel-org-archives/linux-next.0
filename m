@@ -1,30 +1,58 @@
-From: Jonathan Corbet <corbet@lwn.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the viafb tree
-Date: Tue, 25 May 2010 06:56:47 -0600
-Message-ID: <20100525065647.76931339@bike.lwn.net>
+Date: Tue, 25 May 2010 23:30:25 +1000
+Message-ID: <20100525233025.595b49d4.sfr@canb.auug.org.au>
 References: <20100525125718.703fdc08.sfr@canb.auug.org.au>
+	<20100525065647.76931339@bike.lwn.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__25_May_2010_23_30_25_+1000_ZHDP7jL3zpSgWeWH"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from tex.lwn.net ([70.33.254.29]:43104 "EHLO vena.lwn.net"
+Received: from chilli.pcug.org.au ([203.10.76.44]:48847 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753903Ab0EYM4t (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 25 May 2010 08:56:49 -0400
-In-Reply-To: <20100525125718.703fdc08.sfr@canb.auug.org.au>
+	id S1756573Ab0EYNal (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 25 May 2010 09:30:41 -0400
+In-Reply-To: <20100525065647.76931339@bike.lwn.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jonathan Corbet <corbet@lwn.net>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Gross <mgross@linux.intel.com>
 
-On Tue, 25 May 2010 12:57:18 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+--Signature=_Tue__25_May_2010_23_30_25_+1000_ZHDP7jL3zpSgWeWH
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> drivers/media/video/via-camera.c: In function 'viacam_streamon':
-> drivers/media/video/via-camera.c:1032: error: implicit declaration of function 'pm_qos_add_requirement'
+Hi Jon,
 
-Argh.  I should have known that would happen, sorry.  Will fix shortly.
+On Tue, 25 May 2010 06:56:47 -0600 Jonathan Corbet <corbet@lwn.net> wrote:
+>
+> On Tue, 25 May 2010 12:57:18 +1000
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>=20
+> > drivers/media/video/via-camera.c: In function 'viacam_streamon':
+> > drivers/media/video/via-camera.c:1032: error: implicit declaration of f=
+unction 'pm_qos_add_requirement'
+>=20
+> Argh.  I should have known that would happen, sorry.  Will fix shortly.
 
-Thanks,
+Thanks.
 
-jon
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__25_May_2010_23_30_25_+1000_ZHDP7jL3zpSgWeWH
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkv70PEACgkQjjKRsyhoI8x5XgCffDOa+6xiCjYCc2zl7a8EXeNV
+hV0An1Akd9Od5nTcvn3v8x3x3wNzWLtv
+=2ptV
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__25_May_2010_23_30_25_+1000_ZHDP7jL3zpSgWeWH--
