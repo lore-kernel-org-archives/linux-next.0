@@ -1,35 +1,38 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for May 25 (kernel/power, SUSPEND=n)
-Date: Tue, 25 May 2010 08:49:59 -0700
-Message-ID: <20100525084959.4ff9e924.randy.dunlap@oracle.com>
+From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Subject: Re: linux-next: Tree for May 25 (infiniband/hw/qib)
+Date: Tue, 25 May 2010 10:23:17 -0700
+Message-ID: <4BFC0785.5010409@oracle.com>
 References: <20100525142657.c2ae7804.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet11.oracle.com ([148.87.113.123]:57340 "EHLO
-	rcsinet11.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751873Ab0EYPu7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 May 2010 11:50:59 -0400
-In-Reply-To: <20100525142657.c2ae7804.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-pm@lists.linux-foundation.org
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>
+Return-path: <linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20100525142657.c2ae7804.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Sender: linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-On Tue, 25 May 2010 14:26:57 +1000 Stephen Rothwell wrote:
-
+Stephen Rothwell wrote:
 > Hi all,
 > 
 > We are in the merge window again.  I remind you all not to add stuff for
 > 2.6.36 to your linux-next trees until after 2.6.35-rc1.
+> 
+> Changes since 20100524:
 
 
-when CONFIG_SUSPEND=n, CONFIG_OPPORTUNISTIC_SUSPEND=n, CONFIG_PM=y:
+when CONFIG_PCI_MSI is not enabled:
 
-kernel/power/main.c:66: error: 'pm_states' undeclared (first use in this function)
+ERROR: "qib_init_iba6120_funcs" [drivers/infiniband/hw/qib/ib_qib.ko] undefined!
 
 
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+
+fwiw, I would make building iba6120 support dependent on PCI_MSI
+(i.e., change Kconfig), remove all of the PCI_MSI ifdef-ery
+in qib_iba6120.c, and add a printk or 2 in qib_init for unsupported
+devices.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
