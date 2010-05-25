@@ -1,79 +1,75 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for May 25 (kernel/power, SUSPEND=n)
-Date: Tue, 25 May 2010 12:49:23 -0700
-Message-ID: <4BFC29C3.1080005@oracle.com>
-References: <20100525142657.c2ae7804.sfr@canb.auug.org.au> <20100525084959.4ff9e924.randy.dunlap@oracle.com> <201005252124.52108.rjw@sisk.pl>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build warning in Linus' tree
+Date: Tue, 25 May 2010 16:19:29 -0700 (PDT)
+Message-ID: <20100525.161929.112591425.davem@davemloft.net>
+References: <20100525114614.fd61d822.sfr@canb.auug.org.au>
+	<20100524.215822.13254177.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:20974 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758317Ab0EYTvy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 May 2010 15:51:54 -0400
-In-Reply-To: <201005252124.52108.rjw@sisk.pl>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:36796
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932617Ab0EYXTT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 25 May 2010 19:19:19 -0400
+In-Reply-To: <20100524.215822.13254177.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-pm@lists.linux-foundation.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, NeilJay@gmail.com
 
-On 05/25/10 12:24, Rafael J. Wysocki wrote:
-> On Tuesday 25 May 2010, Randy Dunlap wrote:
->> On Tue, 25 May 2010 14:26:57 +1000 Stephen Rothwell wrote:
->>
->>> Hi all,
->>>
->>> We are in the merge window again.  I remind you all not to add stuff for
->>> 2.6.36 to your linux-next trees until after 2.6.35-rc1.
->>
->>
->> when CONFIG_SUSPEND=n, CONFIG_OPPORTUNISTIC_SUSPEND=n, CONFIG_PM=y:
->>
->> kernel/power/main.c:66: error: 'pm_states' undeclared (first use in this function)
+From: David Miller <davem@davemloft.net>
+Date: Mon, 24 May 2010 21:58:22 -0700 (PDT)
+
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 25 May 2010 11:46:14 +1000
 > 
-> Thanks, the patch below fixes this.
+>> Hi Dave,
+>> 
+>> Today's linux-next build (x86_64 allmodconfig) produced this warning:
+>> 
+>> drivers/net/usb/asix.c: In function 'asix_rx_fixup':
+>> drivers/net/usb/asix.c:325: warning: cast from pointer to integer of different size
+>> drivers/net/usb/asix.c:354: warning: cast from pointer to integer of different size
+>> 
+>> Introduced by commit 3f78d1f210ff89af77f042ab7f4a8fee39feb1c9
+>> ("drivers/net/usb/asix.c: Fix unaligned accesses").  This commit casts
+>> skb->data to u32.
 > 
-> Rafael
-> 
-> ---
-> From: Rafael J. Wysocki <rjw@sisk.pl>
-> Subject: PM: Fix build with CONFIG_SUSPEND unset
-> 
-> If CONFIG_SUSPEND is unset, pm_state_valid() doesn't build because
-> the pm_states[] array is not defined, but pm_state_valid() is only
-> used under #ifdef CONFIG_SUSPEND, so don't try to build it if
-> CONFIG_SUSPEND is unset.
-> 
-> Signed-off-by: Rafael J. Wysocki <rjw@sisk.pl>
+> Thanks I'll look into this.
 
-Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
+Here is how I fixed this:
 
-Thanks.
+--------------------
+drivers/net/usb/asix.c: Fix pointer cast.
 
+Stephen Rothwell reports the following new warning:
 
-> ---
->  kernel/power/main.c |    2 ++
->  1 file changed, 2 insertions(+)
-> 
-> Index: linux-2.6/kernel/power/main.c
-> ===================================================================
-> --- linux-2.6.orig/kernel/power/main.c
-> +++ linux-2.6/kernel/power/main.c
-> @@ -61,10 +61,12 @@ static inline int pm_enter_state(int sta
->  
->  static inline bool hibernation_supported(void) { return true; }
->  
-> +#ifdef CONFIG_SUSPEND
->  static inline bool pm_state_valid(int state_idx)
->  {
->  	return pm_states[state_idx] && valid_state(state_idx);
->  }
-> +#endif /* CONFIG_SUSPEND */
->  
->  static inline int pm_enter_state(int state_idx)
->  {
+drivers/net/usb/asix.c: In function 'asix_rx_fixup':
+drivers/net/usb/asix.c:325: warning: cast from pointer to integer of different size
+drivers/net/usb/asix.c:354: warning: cast from pointer to integer of different size
 
+The code just cares about the low alignment bits, so use
+an "unsigned long" cast instead of one to "u32".
 
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/usb/asix.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/net/usb/asix.c b/drivers/net/usb/asix.c
+index 31b7331..ea75f47 100644
+--- a/drivers/net/usb/asix.c
++++ b/drivers/net/usb/asix.c
+@@ -322,7 +322,7 @@ static int asix_rx_fixup(struct usbnet *dev, struct sk_buff *skb)
+ 		size = (u16) (header & 0x0000ffff);
+ 
+ 		if ((skb->len) - ((size + 1) & 0xfffe) == 0) {
+-			u8 alignment = (u32)skb->data & 0x3;
++			u8 alignment = (unsigned long)skb->data & 0x3;
+ 			if (alignment != 0x2) {
+ 				/*
+ 				 * not 16bit aligned so use the room provided by
 -- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+1.7.0.4
