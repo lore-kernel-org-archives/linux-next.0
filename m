@@ -1,58 +1,57 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the viafb tree
-Date: Tue, 25 May 2010 12:57:18 +1000
-Message-ID: <20100525125718.703fdc08.sfr@canb.auug.org.au>
+From: Nigel Cunningham <ncunningham@crca.org.au>
+Subject: Re: [PATCH -next] nouveau: fix acpi_lid_open undefined
+Date: Tue, 25 May 2010 13:27:06 +1000
+Message-ID: <4BFB438A.8000909@crca.org.au>
+References: <20100522170459.4c89723d.sfr@canb.auug.org.au>	 <20100523170040.3c4aa87c.randy.dunlap@oracle.com>	 <20100524125628.GA14278@srcf.ucam.org> <4BFA84EF.7070609@oracle.com>	 <20100524135940.GA15892@srcf.ucam.org>  <4BFA8A71.4080900@oracle.com> <1274741255.3416.1.camel@clockmaker-el6>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__25_May_2010_12_57_18_+1000_rDkOHSP.=IhO7+Ce"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36362 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755471Ab0EYC5Z (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 24 May 2010 22:57:25 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Gross <mgross@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1274741255.3416.1.camel@clockmaker-el6>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dave Airlie <airlied@redhat.com>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Matthew Garrett <mjg@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, linux-next@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__25_May_2010_12_57_18_+1000_rDkOHSP.=IhO7+Ce
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi.
 
-Hi Jonathan,
+On 25/05/10 08:47, Dave Airlie wrote:
+> On Mon, 2010-05-24 at 07:17 -0700, Randy Dunlap wrote:
+>> On 05/24/10 06:59, Matthew Garrett wrote:
+>>> On Mon, May 24, 2010 at 06:53:51AM -0700, Randy Dunlap wrote:
+>>>> On 05/24/10 05:56, Matthew Garrett wrote:
+>>>>> Won't this result in a behavioural difference? The desirable outcome is
+>>>>
+>>>> It could, yes.
+>>>>
+>>>>> that that configuration be impossible, not for that configuration to
+>>>>> build but be buggy.
+>>>>
+>>>> so nouveau should depend on (or select, if ACPI is enabled) ACPI_BUTTON?
+>>>
+>>> There's an argument that it doesn't need to depend on it, but if button
+>>> is a module then nouveau has to be. Except the inverse isn't true.
+>>> Kconfig is hard, let's weep gently.
+>>
+>> Maybe Dave can weep with us when he is back at work...
+>
+> Yeah I've had problems like this a few times lately with the drm, I'm
+> torn between just adding select all over the place, or assuming someone
+> sane is configuring the kernel.
+>
+> I'm sort of erring on the someone sane is configuring the kernel just
+> because Linus's objects to "default y" things seems to point at that we
+> can't really give pointers to the people who haven't done it before. So
+> I'm quite happy to leave it having different behaviour depending on the
+> configuration and simply ignoring bug reports from incompetents.
 
-After merging the viafb tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+'scuse me for butting in, but would you at least consider adding 
+something to the help for the Nouveau and/or ACPI button options? You 
+might have a sane person configuring the kernel, but that doesn't mean a 
+dependency like this would necessarily be obvious to them.
 
-drivers/media/video/via-camera.c: In function 'viacam_streamon':
-drivers/media/video/via-camera.c:1032: error: implicit declaration of funct=
-ion 'pm_qos_add_requirement'
-drivers/media/video/via-camera.c: In function 'viacam_streamoff':
-drivers/media/video/via-camera.c:1052: error: implicit declaration of funct=
-ion 'pm_qos_remove_requirement'
+Personally, I'd argue for the select.
 
-Caused by commit d9acc26333e04633af61e634a5bd91c066162fca ("Add the viafb
-video capture driver") interacting with commit
-ed77134bfccf5e75b6cbadab268e559dbe6a4ebb ("PM QOS update") from Linus'
-tree.  The pm_qos_..._requirement functions were renamed.
+Regards,
 
-I have used the viafb tree from next-20100524 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__25_May_2010_12_57_18_+1000_rDkOHSP.=IhO7+Ce
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkv7PI4ACgkQjjKRsyhoI8wtRwCgg6ra933MwJ81EC2MboXhPxBa
-h7YAnAzGfii1VBM79z+CAi0S0qpdDvn/
-=at90
------END PGP SIGNATURE-----
-
---Signature=_Tue__25_May_2010_12_57_18_+1000_rDkOHSP.=IhO7+Ce--
+Nigel
