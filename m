@@ -1,72 +1,48 @@
-From: Joakim Tjernlund <joakim.tjernlund@transmode.se>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 Subject: Re: linux-next: build warning in Linus'tree
-Date: Wed, 26 May 2010 12:21:51 +0200
-Message-ID: <OFE5212A1C.B62E8E51-ONC125772F.00371EE7-C125772F.0038EEC8@transmode.se>
-References: <20100526110506.f2f4f22c.sfr@canb.auug.org.au>	<20100525182040.f1882d0a.akpm@linux-foundation.org>
-	<20100526140900.5b091c16.sfr@canb.auug.org.au>	<OFC00BDFAC.5596A841-ONC125772F.0022984D-C125772F.0023AF14@transmode.se>
-	<20100525234116.71889c71.akpm@linux-foundation.org> <20100526171424.447fac18.sfr@canb.auug.org.au>
+Date: Wed, 26 May 2010 08:26:04 -0700 (PDT)
+Message-ID: <alpine.LFD.2.00.1005260819560.3689@i5.linux-foundation.org>
+References: <20100526110506.f2f4f22c.sfr@canb.auug.org.au> <20100525182040.f1882d0a.akpm@linux-foundation.org> <20100526140900.5b091c16.sfr@canb.auug.org.au> <OFC00BDFAC.5596A841-ONC125772F.0022984D-C125772F.0023AF14@transmode.se>
+ <20100525234116.71889c71.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gw1.transmode.se ([213.115.205.20]:34133 "EHLO gw1.transmode.se"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752265Ab0EZKWg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 26 May 2010 06:22:36 -0400
-In-Reply-To: <20100526171424.447fac18.sfr@canb.auug.org.au>
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:35700 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755395Ab0EZP3i (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 26 May 2010 11:29:38 -0400
+In-Reply-To: <20100525234116.71889c71.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Linus <torvalds@linux-foundation.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Joakim Tjernlund <joakim.tjernlund@transmode.se>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> wrote on 2010/05/26 09:14:24:
->
-> Hi Andrew, Joakim,
->
-> On Tue, 25 May 2010 23:41:16 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
-> >
-> > On Wed, 26 May 2010 08:29:45 +0200 Joakim Tjernlund
-> <joakim.tjernlund@transmode.se> wrote:
-> >
-> > > Stephen Rothwell <sfr@canb.auug.org.au> wrote on 2010/05/26 06:09:00:
-> > > >
-> > > > On Tue, 25 May 2010 18:20:40 -0700 Andrew Morton <akpm@linux-
-> foundation.org> wrote:
-> > > > >
-> > > > > hmpf.  Does this fix?
-> > > >
-> > > > No.
-> > > >
-> > > > The problem is that __LITTLE_ENDIAN is only defined in
-> > > > linux/byteorder/little_endian.h which is only included by little endian
-> > > > architectures ...
-> > >
-> > > Ah, not sure how to fix this ATM. Perhaps best to revert
-> > >    crc32: use __BYTE_ORDER macro for endian detection
-> > > for now.
-> >
-> > yup.
->
-> We also need to revert b3b77c8caef1750ebeea1054e39e358550ea9f55 ("endian:
-> #define __BYTE_ORDER") in order to get rid of the other warning I pointed out:
->
-> In file included from fs/jfs/jfs_types.h:33,
->                  from fs/jfs/jfs_incore.h:26,
->                  from fs/jfs/file.c:22:
-> fs/jfs/endian24.h:36:101: warning: "__LITTLE_ENDIAN" is not defined
->
-> I get this warning on powerpc builds for most of the files in fs/jfs ...
 
-endian24.h has:
-#if (defined(__KERNEL__) && defined(__LITTLE_ENDIAN)) || (defined(__BYTE_ORDER) && (__BYTE_ORDER == __LITTLE_ENDIAN))
-That won't work for BE CPU's. Perhaps something like this will?
-#if defined(__BIG_ENDIAN) && defined(__LITTLE_ENDIAN) && (__BYTE_ORDER == __LITTLE_ENDIAN) || defined(__LITTLE_ENDIAN)
 
-The kernel borrows __LITTLE_ENDIAN/__BIG_ENDIAN from user space but does not impl. the
-full semantics that user space has. Adding full user space semantics isn't easy as it clashes with
-current use of __LITTLE_ENDIAN/__BIG_ENDIAN.
+On Tue, 25 May 2010, Andrew Morton wrote:
+> 
+> > I suspect fixing this entails moving all endian tests to #if __BYTE_ORDER ...
+> > and then always define both __LITTLE_ENDIAN and __BIG_ENDIAN
+> 
+> Yes we can't define __LITTLE_ENDIAN to anything on big-endian without
+> breaking lots of other things.
 
-If my suggestion above works, then one could start transforming current uses of __BYTE_ORDER,
-into similar constructs and once all are done, #define both __LITTLE_ENDIAN/__BIG_ENDIAN and
-move back to #if __BYTE_ORDER == __LITTLE_ENDIAN
+Indeed. The whole glibc thing of doing
 
- Jocke
+	# if __BYTE_ORDER == __BIG_ENDIAN
+
+(see "grep ENDIAN /usr/include/*") is a f*cking idiotic. It is way less 
+readable, and insane to do. I guess it's some traditional unix disease.
+
+The way to do it in Linux is to just do
+
+	#ifdef __{BIG,LITTLE}_ENDIAN
+
+which is a lot more readable. 
+
+If anybody wants to change that, they still shouldn't change it to the 
+idiotic glibc model. If you want it to be more readable, maybe somebody 
+can introduce a CONFIG_{BIG,LITTLE}_ENDIAN{_BITFIELDS}
+
+			Linus
