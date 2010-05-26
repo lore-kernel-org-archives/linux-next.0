@@ -1,62 +1,71 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: linux-next: build warning in Linus'tree
-Date: Wed, 26 May 2010 09:46:11 -0700 (PDT)
-Message-ID: <alpine.LFD.2.00.1005260939030.3689@i5.linux-foundation.org>
-References: <20100526110506.f2f4f22c.sfr@canb.auug.org.au> <20100525182040.f1882d0a.akpm@linux-foundation.org> <20100526140900.5b091c16.sfr@canb.auug.org.au> <OFC00BDFAC.5596A841-ONC125772F.0022984D-C125772F.0023AF14@transmode.se>
- <20100525234116.71889c71.akpm@linux-foundation.org> <20100526171424.447fac18.sfr@canb.auug.org.au> <OFE5212A1C.B62E8E51-ONC125772F.00371EE7-C125772F.0038EEC8@transmode.se> <alpine.LFD.2.00.1005260828320.3689@i5.linux-foundation.org>
- <OF6B2D521C.109F3133-ONC125772F.00576DF0-C125772F.005B18F3@transmode.se>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the kbuild tree with the kernel-doc
+ tree
+Date: Thu, 27 May 2010 02:50:20 +1000
+Message-ID: <20100527025020.da0c1bb7.sfr@canb.auug.org.au>
+References: <20100526115346.da5a02aa.sfr@canb.auug.org.au>
+	<4BFD42A6.6060206@oracle.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__27_May_2010_02_50_20_+1000_AFhcd=WD=JW8pIr_"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:40839 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755381Ab0EZQt3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 26 May 2010 12:49:29 -0400
-In-Reply-To: <OF6B2D521C.109F3133-ONC125772F.00576DF0-C125772F.005B18F3@transmode.se>
+Received: from chilli.pcug.org.au ([203.10.76.44]:56871 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755381Ab0EZQuo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 26 May 2010 12:50:44 -0400
+In-Reply-To: <4BFD42A6.6060206@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Joakim Tjernlund <joakim.tjernlund@transmode.se>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Michal Marek <mmarek@suse.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, matt mooney <mfm@muteddisk.com>, Kirill Smelkov <kirr@mns.spb.ru>
 
+--Signature=_Thu__27_May_2010_02_50_20_+1000_AFhcd=WD=JW8pIr_
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi Randy,
 
-On Wed, 26 May 2010, Joakim Tjernlund wrote:
-> 
-> 1) It silently breaks when neither of {__LITTLE_,__BIG}_ENDIAN (or both)are
->    defined depending on the endianess of the target CPU.
->    The glibc model generates a compile error if you forget to include __BYTE_ORDER.
+On Wed, 26 May 2010 08:47:50 -0700 Randy Dunlap <randy.dunlap@oracle.com> w=
+rote:
+>
+> On 05/25/10 18:53, Stephen Rothwell wrote:
+> >=20
+> > Today's linux-next merge of the kbuild tree got a conflict in
+> > Documentation/kbuild/makefiles.txt between commit
+> > 74bb7003010ff0998e280a6ade09381168ff20ec
+> > ("docs-kbuild-make-examples-content2") from the kernel-doc tree and
+> > commit e8d400a933fa44e2fba3849b084e1ae5814d7fca ("kbuild: fix a couple =
+of
+> > typos in Documentation") from the kbuild tree.
+> >=20
+> > The former also fixed the typo, so I used that.
+>=20
+> If Michal has merged it, I'll drop it.
+>=20
+> Michal, can I view your tree by using gitweb?  (i.e., http)
+> or is it only accessible by pulling/cloning?
 
-Umm. Except when it doesn't (yes, Linux has the "Wundefined" thing, and 
-has had for a long time). I've seen the glibc model do the wrong thing 
-exactly because traditional C semantics is "undefined symbol is 0 in 
-evaluations"
+The kernel-doc tree is a quilt series :-(
 
-Try compiling this
+You can, of course, see the above commit in the linux-next tree via
+gitweb on kernel.org.
 
-	#include <stdio.h>
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-	#if NOT_HERE == NOT_THERE
-	int main()
-	{
-		printf("Hello world!\n");
-	}
-	#endif
+--Signature=_Thu__27_May_2010_02_50_20_+1000_AFhcd=WD=JW8pIr_
+Content-Type: application/pgp-signature
 
-and even with -Wall it compiles perfectly happily.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-So no. The glibc model is _not_ any better in practice.
+iEYEARECAAYFAkv9UUwACgkQjjKRsyhoI8yyMQCfdJ29teP/DpA51fS4rXessOpy
+/ZMAn21lJmkB0mQgCIPcAIn73RWK4/RP
+=Sk00
+-----END PGP SIGNATURE-----
 
-> 2) It clashes with user space so one cannot use it in exported header files.
-
-Which is annoying, I agree. But you shouldn't generally use kernel headers 
-for user space anyway, much less export anything that is byteorder- 
-specific. So anybody who has this problem is likely doing something iffy 
-to begin with.
-
-Besides, you can solve it cleanly by simply avoiding the crazy glibc 
-semantics entirely. IOW, the CONFIG_BIG_ENDIAN option I suggested (and 
-again, you should damn well not export things that depend on it to user 
-space - there are architectures where user-space might be switchable)
-
-			Linus
+--Signature=_Thu__27_May_2010_02_50_20_+1000_AFhcd=WD=JW8pIr_--
