@@ -1,37 +1,60 @@
-From: Paul Mundt <lethal@linux-sh.org>
-Subject: Re: linux-next: manual merge of the genesis tree with the sh tree
-Date: Wed, 26 May 2010 10:54:36 +0900
-Message-ID: <20100526015436.GB8920@linux-sh.org>
-References: <20100526112331.cbd37c4b.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build warning in Linus' tree
+Date: Wed, 26 May 2010 12:04:06 +1000
+Message-ID: <20100526120406.1906cecc.sfr@canb.auug.org.au>
+References: <20100525114614.fd61d822.sfr@canb.auug.org.au>
+	<20100524.215822.13254177.davem@davemloft.net>
+	<20100525.161929.112591425.davem@davemloft.net>
+	<20100525.162446.183058933.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 124x34x33x190.ap124.ftth.ucom.ne.jp ([124.34.33.190]:37469 "EHLO
-	master.linux-sh.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756667Ab0EZByr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 May 2010 21:54:47 -0400
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__26_May_2010_12_04_06_+1000_PwQ2G/=KdwW1ODXi"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20100525.162446.183058933.davem@davemloft.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, NeilJay@gmail.com
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Wed__26_May_2010_12_04_06_+1000_PwQ2G/=KdwW1ODXi
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20100526112331.cbd37c4b.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Magnus Damm <damm@opensource.se>
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 26, 2010 at 11:23:31AM +1000, Stephen Rothwell wrote:
-> Hi Paul,
-> 
-> Today's linux-next merge of the genesis tree got a conflict in
-> include/linux/serial_sci.h between commit
-> 14baf9d7f275f0bbf42c1216ff1eef1109ca42ba ("serial: sh-sci: fix up serial
-> DMA build") from the sh tree and commit
-> 927a7c9c1793def3a55d60c926d3945528e6bf1b ("dmaengine: shdma: Enable on
-> SH-Mobile ARM") from the genesis tree.
-> 
-Sorry about that, I needed the fix in the sh tree since the genesis tree
-hadn't been merged yet, so the interdependencies have created a bit of a
-mess.
+Hi Dave,
 
-> I used the version from the sh tree (i.e. no "#ifdef
-> CONFIG_SERIAL_SH_SCI_DMA" around the include of linux/sh_dma.h).
+On Tue, 25 May 2010 16:24:46 -0700 (PDT) David Miller <davem@davemloft.net>=
+ wrote:
+>
+> From: David Miller <davem@davemloft.net>
+> Date: Tue, 25 May 2010 16:19:29 -0700 (PDT)
+>=20
+> > Here is how I fixed this:
+> >=20
+> > --------------------
+> > drivers/net/usb/asix.c: Fix pointer cast.
+>=20
+> Sorry, that only took care of one of the two warnings :-)
+>=20
+> This patch is better.
 
-Sounds good, thanks!
+Thanks, looks good.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__26_May_2010_12_04_06_+1000_PwQ2G/=KdwW1ODXi
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkv8gZYACgkQjjKRsyhoI8yAywCdHfuAtKNUWMgCzKaqpCJDJHdb
+sPQAoIMtGvnWnswfj4fBJvfkmw/MzifC
+=kiYx
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__26_May_2010_12_04_06_+1000_PwQ2G/=KdwW1ODXi--
