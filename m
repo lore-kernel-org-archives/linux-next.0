@@ -1,50 +1,44 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] media/IR: nec-decoder needs to select BITREV
-Date: Wed, 26 May 2010 10:08:51 -0700
-Message-ID: <20100526100851.25b57d9b.randy.dunlap@oracle.com>
+Subject: [PATCH -next] staging/phison: depends on ATA_BMDMA
+Date: Wed, 26 May 2010 10:30:02 -0700
+Message-ID: <20100526103002.ac2c6703.randy.dunlap@oracle.com>
 References: <20100526153443.f18a4d2b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:57802 "EHLO
+Received: from rcsinet10.oracle.com ([148.87.113.121]:44015 "EHLO
 	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755149Ab0EZRJ0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 26 May 2010 13:09:26 -0400
+	with ESMTP id S1754725Ab0EZRbz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 26 May 2010 13:31:55 -0400
 In-Reply-To: <20100526153443.f18a4d2b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@infradead.org>, linux-media@vger.kernel.org
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, evan_ko@phison.com
 
 From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Fix ir-nec-decoder build: it uses bitrev library code, so
-select BITREVERSE in its Kconfig.
+phison uses interfaces and data that are built only when
+ATA_BMDMA is enabled, so it should depend on that symbol.
 
-ir-nec-decoder.c:(.text+0x1a2517): undefined reference to `byte_rev_table'
-ir-nec-decoder.c:(.text+0x1a2526): undefined reference to `byte_rev_table'
-ir-nec-decoder.c:(.text+0x1a2530): undefined reference to `byte_rev_table'
-ir-nec-decoder.c:(.text+0x1a2539): undefined reference to `byte_rev_table'
+drivers/staging/phison/phison.c:43: error: implicit declaration of function 'ATA_BMDMA_SHT'
+drivers/staging/phison/phison.c:43: error: initializer element is not constant
+drivers/staging/phison/phison.c:43: error: (near initialization for 'phison_sht.module')
+drivers/staging/phison/phison.c:47: error: 'ata_bmdma_port_ops' undeclared here (not in a function)
 
 Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc:	Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: evan_ko@phison.com
 ---
-[resend from May 14, 2010; still needed for linux-next 2010-May-26]
+ drivers/staging/phison/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/media/IR/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
-
---- linux-next-20100514.orig/drivers/media/IR/Kconfig
-+++ linux-next-20100514/drivers/media/IR/Kconfig
-@@ -13,6 +13,7 @@ source "drivers/media/IR/keymaps/Kconfig
- config IR_NEC_DECODER
- 	tristate "Enable IR raw decoder for the NEC protocol"
- 	depends on IR_CORE
-+	select BITREVERSE
- 	default y
- 
+--- linux-next-20100526.orig/drivers/staging/phison/Kconfig
++++ linux-next-20100526/drivers/staging/phison/Kconfig
+@@ -1,5 +1,5 @@
+ config IDE_PHISON
+ 	tristate "PCIE ATA PS5000 IDE support"
+-	depends on PCI && ATA && ATA_SFF
++	depends on PCI && ATA && ATA_SFF && ATA_BMDMA
  	---help---
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+ 	  This is an experimental driver for PS5000 IDE driver.
