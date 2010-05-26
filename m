@@ -1,55 +1,63 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the fuse tree
-Date: Wed, 26 May 2010 11:44:06 +1000
-Message-ID: <20100526114406.d3a68d1f.sfr@canb.auug.org.au>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: linux-next: build warning in Linus' tree
+Date: Wed, 26 May 2010 11:51:10 +1000
+Message-ID: <20100526015110.GA21587@gondor.apana.org.au>
+References: <20100526114306.5fa6fa0e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__26_May_2010_11_44_06_+1000_.B6LGE6o1NC4+zdp"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47710 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933290Ab0EZBoL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 25 May 2010 21:44:11 -0400
+Received: from ringil.hengli.com.au ([216.59.3.182]:42954 "EHLO
+	arnor.apana.org.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S933282Ab0EZBvS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 25 May 2010 21:51:18 -0400
+Content-Disposition: inline
+In-Reply-To: <20100526114306.5fa6fa0e.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
 
---Signature=_Wed__26_May_2010_11_44_06_+1000_.B6LGE6o1NC4+zdp
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, May 26, 2010 at 11:43:06AM +1000, Stephen Rothwell wrote:
+> Hi Dave,
+> 
+> Today's linux-next build (x86_64 allmodconfig) produced this warning:
+> 
+> net/core/sock.c: In function 'sock_update_classid':
+> include/net/cls_cgroup.h:42: warning: 'classid' may be used uninitialized in this function
+> include/net/cls_cgroup.h:42: note: 'classid' was declared here
+> 
+> In the case that rcu_dereference() returns a value < 0, classid will not
+> be assigned in task_cls_classid().  I don't know if this is possible - if
+> not, then why is the test there?
 
-Hi Miklos,
+This is a genuine bug.  I don't know why my gcc didn't warn about
+it.
 
-After merging the fuse tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+cls_cgroup: Initialise classid when module is absent
 
-ERROR: "generic_pipe_buf_map" [fs/fuse/fuse.ko] undefined!
-ERROR: "generic_pipe_buf_confirm" [fs/fuse/fuse.ko] undefined!
-ERROR: "generic_pipe_buf_get" [fs/fuse/fuse.ko] undefined!
-ERROR: "generic_pipe_buf_unmap" [fs/fuse/fuse.ko] undefined!
-ERROR: "generic_pipe_buf_release" [fs/fuse/fuse.ko] undefined!
+When the cls_cgroup module is not loaded, task_cls_classid will
+return an uninitialised classid instead of zero.
 
-Caused by commit c3021629a0d820247ee12b6c5192a1d5380e21c6 ("fuse: support
-splice() reading from fuse device").
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 
-I have used the version of the fuse tree from next-20100525 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+diff --git a/include/net/cls_cgroup.h b/include/net/cls_cgroup.h
+index 6cf4486..726cc35 100644
+--- a/include/net/cls_cgroup.h
++++ b/include/net/cls_cgroup.h
+@@ -39,7 +39,7 @@ extern int net_cls_subsys_id;
+ static inline u32 task_cls_classid(struct task_struct *p)
+ {
+ 	int id;
+-	u32 classid;
++	u32 classid = 0;
+ 
+ 	if (in_interrupt())
+ 		return 0;
 
---Signature=_Wed__26_May_2010_11_44_06_+1000_.B6LGE6o1NC4+zdp
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkv8fOYACgkQjjKRsyhoI8xjdACeIslj5BnT2ox2XDesV4zY4DjV
-mD4An2uEcV8k+N0mzqGp8LqwkjZh4UmS
-=pcCH
------END PGP SIGNATURE-----
-
---Signature=_Wed__26_May_2010_11_44_06_+1000_.B6LGE6o1NC4+zdp--
+Thanks,
+-- 
+Visit Openswan at http://www.openswan.org/
+Email: Herbert Xu ~{PmV>HI~} <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
