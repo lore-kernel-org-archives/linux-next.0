@@ -1,34 +1,84 @@
-From: Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: linux-next: build failure after merge of the fuse tree
-Date: Wed, 26 May 2010 08:46:46 +0200
-Message-ID: <E1OHAO6-0007wV-BK@pomaz-ex.szeredi.hu>
-References: <20100526114406.d3a68d1f.sfr@canb.auug.org.au>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20100526114406.d3a68d1f.sfr@canb.auug.org.au> (message from
-	Stephen Rothwell on Wed, 26 May 2010 11:44:06 +1000)
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: miklos@szeredi.hu, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build warning in Linus'tree
+Date: Wed, 26 May 2010 17:14:24 +1000
+Message-ID: <20100526171424.447fac18.sfr@canb.auug.org.au>
+References: <20100526110506.f2f4f22c.sfr@canb.auug.org.au>
+	<20100525182040.f1882d0a.akpm@linux-foundation.org>
+	<20100526140900.5b091c16.sfr@canb.auug.org.au>
+	<OFC00BDFAC.5596A841-ONC125772F.0022984D-C125772F.0023AF14@transmode.se>
+	<20100525234116.71889c71.akpm@linux-foundation.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__26_May_2010_17_14_24_+1000_u5nwQ6BQuoC2bvOE"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:49217 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933376Ab0EZHOd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 26 May 2010 03:14:33 -0400
+In-Reply-To: <20100525234116.71889c71.akpm@linux-foundation.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Joakim Tjernlund <joakim.tjernlund@transmode.se>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Linus <torvalds@linux-foundation.org>
 
-Hi Stephen,
+--Signature=_Wed__26_May_2010_17_14_24_+1000_u5nwQ6BQuoC2bvOE
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 26 May 2010, Stephen Rothwell wrote:
-> After merging the fuse tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> ERROR: "generic_pipe_buf_map" [fs/fuse/fuse.ko] undefined!
-> ERROR: "generic_pipe_buf_confirm" [fs/fuse/fuse.ko] undefined!
-> ERROR: "generic_pipe_buf_get" [fs/fuse/fuse.ko] undefined!
-> ERROR: "generic_pipe_buf_unmap" [fs/fuse/fuse.ko] undefined!
-> ERROR: "generic_pipe_buf_release" [fs/fuse/fuse.ko] undefined!
-> 
-> Caused by commit c3021629a0d820247ee12b6c5192a1d5380e21c6 ("fuse: support
-> splice() reading from fuse device").
+Hi Andrew, Joakim,
 
-Oops, missed one patch, and forgot to test with modular kernel.  It's
-now fixed in the for-next branch.
+On Tue, 25 May 2010 23:41:16 -0700 Andrew Morton <akpm@linux-foundation.org=
+> wrote:
+>
+> On Wed, 26 May 2010 08:29:45 +0200 Joakim Tjernlund <joakim.tjernlund@tra=
+nsmode.se> wrote:
+>=20
+> > Stephen Rothwell <sfr@canb.auug.org.au> wrote on 2010/05/26 06:09:00:
+> > >
+> > > On Tue, 25 May 2010 18:20:40 -0700 Andrew Morton <akpm@linux-foundati=
+on.org> wrote:
+> > > >
+> > > > hmpf.  Does this fix?
+> > >
+> > > No.
+> > >
+> > > The problem is that __LITTLE_ENDIAN is only defined in
+> > > linux/byteorder/little_endian.h which is only included by little endi=
+an
+> > > architectures ...
+> >=20
+> > Ah, not sure how to fix this ATM. Perhaps best to revert
+> >    crc32: use __BYTE_ORDER macro for endian detection
+> > for now.
+>=20
+> yup.
 
-Thanks for letting me know.
+We also need to revert b3b77c8caef1750ebeea1054e39e358550ea9f55 ("endian:
+#define __BYTE_ORDER") in order to get rid of the other warning I pointed o=
+ut:
 
-Miklos
+In file included from fs/jfs/jfs_types.h:33,
+                 from fs/jfs/jfs_incore.h:26,
+                 from fs/jfs/file.c:22:
+fs/jfs/endian24.h:36:101: warning: "__LITTLE_ENDIAN" is not defined
+
+I get this warning on powerpc builds for most of the files in fs/jfs ...
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__26_May_2010_17_14_24_+1000_u5nwQ6BQuoC2bvOE
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkv8ylAACgkQjjKRsyhoI8y59ACgpTECm6WZS8UakYPQyGVnnC/y
+LVUAnRnaZPSNHlxKvaBDe8xR3O1b7qhY
+=uAxp
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__26_May_2010_17_14_24_+1000_u5nwQ6BQuoC2bvOE--
