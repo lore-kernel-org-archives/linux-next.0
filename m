@@ -1,75 +1,57 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build warning in Linus' tree
-Date: Tue, 25 May 2010 16:24:46 -0700 (PDT)
-Message-ID: <20100525.162446.183058933.davem@davemloft.net>
-References: <20100525114614.fd61d822.sfr@canb.auug.org.au>
-	<20100524.215822.13254177.davem@davemloft.net>
-	<20100525.161929.112591425.davem@davemloft.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning in Linus'tree
+Date: Wed, 26 May 2010 11:05:06 +1000
+Message-ID: <20100526110506.f2f4f22c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__26_May_2010_11_05_06_+1000_sjAMTDJwyHgOtG8p"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:47227
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S933018Ab0EYXYg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 25 May 2010 19:24:36 -0400
-In-Reply-To: <20100525.161929.112591425.davem@davemloft.net>
+Received: from chilli.pcug.org.au ([203.10.76.44]:39195 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754155Ab0EZBFO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 25 May 2010 21:05:14 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, NeilJay@gmail.com
+To: Linus <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Joakim Tjernlund <Joakim.Tjernlund@transmode.se>
 
-From: David Miller <davem@davemloft.net>
-Date: Tue, 25 May 2010 16:19:29 -0700 (PDT)
+--Signature=_Wed__26_May_2010_11_05_06_+1000_sjAMTDJwyHgOtG8p
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Here is how I fixed this:
-> 
-> --------------------
-> drivers/net/usb/asix.c: Fix pointer cast.
+Hi Linus,
 
-Sorry, that only took care of one of the two warnings :-)
+Today's linux-next build (powerpc ppc64_defconfig) produced this warning:
 
-This patch is better.
+lib/crc32.c:53:22: warning: "__LITTLE_ENDIAN" is not defined
+lib/crc32.c:53:22: warning: "__LITTLE_ENDIAN" is not defined
+In file included from fs/jfs/jfs_types.h:33,
+                 from fs/jfs/jfs_incore.h:26,
+                 from fs/jfs/file.c:22:
+fs/jfs/endian24.h:36:101: warning: "__LITTLE_ENDIAN" is not defined
 
---------------------
-drivers/net/usb/asix.c: Fix pointer cast.
+and more of the same ...
 
-Stephen Rothwell reports the following new warning:
+Introduced by commit 4762bbc1a3a1f22095278b74dd1b8cee04858641 ("crc32:
+use __BYTE_ORDER macro for endian detection") and (probably) commit b3b77c8=
+caef1750ebeea1054e39e358550ea9f55 ("endian: #define __BYTE_ORDER").
 
-drivers/net/usb/asix.c: In function 'asix_rx_fixup':
-drivers/net/usb/asix.c:325: warning: cast from pointer to integer of different size
-drivers/net/usb/asix.c:354: warning: cast from pointer to integer of different size
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-The code just cares about the low alignment bits, so use
-an "unsigned long" cast instead of one to "u32".
+--Signature=_Wed__26_May_2010_11_05_06_+1000_sjAMTDJwyHgOtG8p
+Content-Type: application/pgp-signature
 
-Signed-off-by: David S. Miller <davem@davemloft.net>
----
- drivers/net/usb/asix.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-diff --git a/drivers/net/usb/asix.c b/drivers/net/usb/asix.c
-index 31b7331..1f802e9 100644
---- a/drivers/net/usb/asix.c
-+++ b/drivers/net/usb/asix.c
-@@ -322,7 +322,7 @@ static int asix_rx_fixup(struct usbnet *dev, struct sk_buff *skb)
- 		size = (u16) (header & 0x0000ffff);
- 
- 		if ((skb->len) - ((size + 1) & 0xfffe) == 0) {
--			u8 alignment = (u32)skb->data & 0x3;
-+			u8 alignment = (unsigned long)skb->data & 0x3;
- 			if (alignment != 0x2) {
- 				/*
- 				 * not 16bit aligned so use the room provided by
-@@ -351,7 +351,7 @@ static int asix_rx_fixup(struct usbnet *dev, struct sk_buff *skb)
- 		}
- 		ax_skb = skb_clone(skb, GFP_ATOMIC);
- 		if (ax_skb) {
--			u8 alignment = (u32)packet & 0x3;
-+			u8 alignment = (unsigned long)packet & 0x3;
- 			ax_skb->len = size;
- 
- 			if (alignment != 0x2) {
--- 
-1.7.0.4
+iEYEARECAAYFAkv8c8IACgkQjjKRsyhoI8ywAQCfcbouvU4PoKngixFlPZQy0dn/
+vAEAn26VmkYHJJ/eLq5+A4kXhjNxavqs
+=4iWW
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__26_May_2010_11_05_06_+1000_sjAMTDJwyHgOtG8p--
