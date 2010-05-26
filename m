@@ -1,63 +1,51 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: linux-next: build warning in Linus' tree
-Date: Wed, 26 May 2010 11:51:10 +1000
-Message-ID: <20100526015110.GA21587@gondor.apana.org.au>
-References: <20100526114306.5fa6fa0e.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kbuild tree with the kernel-doc
+ tree
+Date: Wed, 26 May 2010 11:53:46 +1000
+Message-ID: <20100526115346.da5a02aa.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__26_May_2010_11_53_46_+1000_IM.Sp9/LYbNxzOel"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ringil.hengli.com.au ([216.59.3.182]:42954 "EHLO
-	arnor.apana.org.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S933282Ab0EZBvS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 25 May 2010 21:51:18 -0400
-Content-Disposition: inline
-In-Reply-To: <20100526114306.5fa6fa0e.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:55147 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759170Ab0EZBxy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 25 May 2010 21:53:54 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
+To: Michal Marek <mmarek@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, matt mooney <mfm@muteddisk.com>, Randy Dunlap <randy.dunlap@oracle.com>, Kirill Smelkov <kirr@mns.spb.ru>
 
-On Wed, May 26, 2010 at 11:43:06AM +1000, Stephen Rothwell wrote:
-> Hi Dave,
-> 
-> Today's linux-next build (x86_64 allmodconfig) produced this warning:
-> 
-> net/core/sock.c: In function 'sock_update_classid':
-> include/net/cls_cgroup.h:42: warning: 'classid' may be used uninitialized in this function
-> include/net/cls_cgroup.h:42: note: 'classid' was declared here
-> 
-> In the case that rcu_dereference() returns a value < 0, classid will not
-> be assigned in task_cls_classid().  I don't know if this is possible - if
-> not, then why is the test there?
+--Signature=_Wed__26_May_2010_11_53_46_+1000_IM.Sp9/LYbNxzOel
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This is a genuine bug.  I don't know why my gcc didn't warn about
-it.
+Hi Michal,
 
-cls_cgroup: Initialise classid when module is absent
+Today's linux-next merge of the kbuild tree got a conflict in
+Documentation/kbuild/makefiles.txt between commit
+74bb7003010ff0998e280a6ade09381168ff20ec
+("docs-kbuild-make-examples-content2") from the kernel-doc tree and
+commit e8d400a933fa44e2fba3849b084e1ae5814d7fca ("kbuild: fix a couple of
+typos in Documentation") from the kbuild tree.
 
-When the cls_cgroup module is not loaded, task_cls_classid will
-return an uninitialised classid instead of zero.
+The former also fixed the typo, so I used that.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+--Signature=_Wed__26_May_2010_11_53_46_+1000_IM.Sp9/LYbNxzOel
+Content-Type: application/pgp-signature
 
-diff --git a/include/net/cls_cgroup.h b/include/net/cls_cgroup.h
-index 6cf4486..726cc35 100644
---- a/include/net/cls_cgroup.h
-+++ b/include/net/cls_cgroup.h
-@@ -39,7 +39,7 @@ extern int net_cls_subsys_id;
- static inline u32 task_cls_classid(struct task_struct *p)
- {
- 	int id;
--	u32 classid;
-+	u32 classid = 0;
- 
- 	if (in_interrupt())
- 		return 0;
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-Thanks,
--- 
-Visit Openswan at http://www.openswan.org/
-Email: Herbert Xu ~{PmV>HI~} <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+iEYEARECAAYFAkv8fyoACgkQjjKRsyhoI8zA1QCglfMxECVcFG0fS3VacWMMUz/B
+lEoAoLduDtPDk+G3TE84q5LjvO59bkHm
+=ayRv
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__26_May_2010_11_53_46_+1000_IM.Sp9/LYbNxzOel--
