@@ -1,40 +1,43 @@
-From: Joakim Tjernlund <joakim.tjernlund@transmode.se>
-Subject: Re: linux-next: build warning in Linus'tree
-Date: Wed, 26 May 2010 08:29:45 +0200
-Message-ID: <OFC00BDFAC.5596A841-ONC125772F.0022984D-C125772F.0023AF14@transmode.se>
-References: <20100526110506.f2f4f22c.sfr@canb.auug.org.au>	<20100525182040.f1882d0a.akpm@linux-foundation.org> <20100526140900.5b091c16.sfr@canb.auug.org.au>
+From: Wim Van Sebroeck <wim@iguana.be>
+Subject: Re: linux-next: manual merge of the watchdog tree with Linus' tree
+Date: Wed, 26 May 2010 08:35:34 +0200
+Message-ID: <20100526063534.GI3972@infomag.iguana.be>
+References: <20100526133815.e62bacb8.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gw1.transmode.se ([213.115.205.20]:40851 "EHLO gw1.transmode.se"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752574Ab0EZGcT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 26 May 2010 02:32:19 -0400
-In-Reply-To: <20100526140900.5b091c16.sfr@canb.auug.org.au>
+Received: from mailrelay006.isp.belgacom.be ([195.238.6.172]:5996 "EHLO
+	mailrelay006.isp.belgacom.be" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752574Ab0EZGfg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 26 May 2010 02:35:36 -0400
+Content-Disposition: inline
+In-Reply-To: <20100526133815.e62bacb8.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Linus <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>, Linus <torvalds@linux-foundation.org>
 
-Stephen Rothwell <sfr@canb.auug.org.au> wrote on 2010/05/26 06:09:00:
->
-> Hi Andrew,
->
-> On Tue, 25 May 2010 18:20:40 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
-> >
-> > hmpf.  Does this fix?
->
-> No.
->
-> The problem is that __LITTLE_ENDIAN is only defined in
-> linux/byteorder/little_endian.h which is only included by little endian
-> architectures ...
+Hi Stephen,
 
-Ah, not sure how to fix this ATM. Perhaps best to revert
-   crc32: use __BYTE_ORDER macro for endian detection
-for now.
+> These are two versions of the same patch.  I used the version from Linus'
+> tree - but I do need to ask what is the point of having a patch in
+> linux-next for two days and then submitting a different version of the
+> patch to Linus?  The changes are not insignificant. Both patches have the
+> same Author date and SOB etc lines.
 
-I suspect fixing this entails moving all endian tests to #if __BYTE_ORDER ...
-and then always define both __LITTLE_ENDIAN and __BIG_ENDIAN
+The one that went to Linus is the correct one.
+I must apologise, I indeed fucked things up. I wasn't completely happy
+with Wolfram's patch, changed it, Wolfram pointed out some things that
+still could be improved and then we tested the final version, saw that
+everything was OK and much beter then what we had.
+And then I made the error to want to rush it in during this merge window
+still (due to the fact that we are allready reviewing this driver for a
+long time). So yes sorry, this was the wrong thing to do (well, not having
+a better driver in, but the way the testing should have been done and the
+correct process that should have been followed).
 
- Jocke
+I will clean up the watchdog-next tree.
+
+Sorry again,
+Wim.
