@@ -1,47 +1,72 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the watchdog tree with Linus' tree
-Date: Wed, 26 May 2010 17:33:55 +1000
-Message-ID: <20100526173355.be4c3c3e.sfr@canb.auug.org.au>
-References: <20100526133815.e62bacb8.sfr@canb.auug.org.au>
-	<20100526063534.GI3972@infomag.iguana.be>
+From: Joakim Tjernlund <joakim.tjernlund@transmode.se>
+Subject: Re: linux-next: build warning in Linus'tree
+Date: Wed, 26 May 2010 12:21:51 +0200
+Message-ID: <OFE5212A1C.B62E8E51-ONC125772F.00371EE7-C125772F.0038EEC8@transmode.se>
+References: <20100526110506.f2f4f22c.sfr@canb.auug.org.au>	<20100525182040.f1882d0a.akpm@linux-foundation.org>
+	<20100526140900.5b091c16.sfr@canb.auug.org.au>	<OFC00BDFAC.5596A841-ONC125772F.0022984D-C125772F.0023AF14@transmode.se>
+	<20100525234116.71889c71.akpm@linux-foundation.org> <20100526171424.447fac18.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__26_May_2010_17_33_55_+1000_fcChd4lDD9OnHqMB"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100526063534.GI3972@infomag.iguana.be>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Wim Van Sebroeck <wim@iguana.be>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>, Linus <torvalds@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Wed__26_May_2010_17_33_55_+1000_fcChd4lDD9OnHqMB
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from gw1.transmode.se ([213.115.205.20]:34133 "EHLO gw1.transmode.se"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752265Ab0EZKWg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 26 May 2010 06:22:36 -0400
+In-Reply-To: <20100526171424.447fac18.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Linus <torvalds@linux-foundation.org>
 
-Hi Wim,
-
-On Wed, 26 May 2010 08:35:34 +0200 Wim Van Sebroeck <wim@iguana.be> wrote:
+Stephen Rothwell <sfr@canb.auug.org.au> wrote on 2010/05/26 09:14:24:
 >
-> I will clean up the watchdog-next tree.
+> Hi Andrew, Joakim,
+>
+> On Tue, 25 May 2010 23:41:16 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
+> >
+> > On Wed, 26 May 2010 08:29:45 +0200 Joakim Tjernlund
+> <joakim.tjernlund@transmode.se> wrote:
+> >
+> > > Stephen Rothwell <sfr@canb.auug.org.au> wrote on 2010/05/26 06:09:00:
+> > > >
+> > > > On Tue, 25 May 2010 18:20:40 -0700 Andrew Morton <akpm@linux-
+> foundation.org> wrote:
+> > > > >
+> > > > > hmpf.  Does this fix?
+> > > >
+> > > > No.
+> > > >
+> > > > The problem is that __LITTLE_ENDIAN is only defined in
+> > > > linux/byteorder/little_endian.h which is only included by little endian
+> > > > architectures ...
+> > >
+> > > Ah, not sure how to fix this ATM. Perhaps best to revert
+> > >    crc32: use __BYTE_ORDER macro for endian detection
+> > > for now.
+> >
+> > yup.
+>
+> We also need to revert b3b77c8caef1750ebeea1054e39e358550ea9f55 ("endian:
+> #define __BYTE_ORDER") in order to get rid of the other warning I pointed out:
+>
+> In file included from fs/jfs/jfs_types.h:33,
+>                  from fs/jfs/jfs_incore.h:26,
+>                  from fs/jfs/file.c:22:
+> fs/jfs/endian24.h:36:101: warning: "__LITTLE_ENDIAN" is not defined
+>
+> I get this warning on powerpc builds for most of the files in fs/jfs ...
 
-OK, thanks.
+endian24.h has:
+#if (defined(__KERNEL__) && defined(__LITTLE_ENDIAN)) || (defined(__BYTE_ORDER) && (__BYTE_ORDER == __LITTLE_ENDIAN))
+That won't work for BE CPU's. Perhaps something like this will?
+#if defined(__BIG_ENDIAN) && defined(__LITTLE_ENDIAN) && (__BYTE_ORDER == __LITTLE_ENDIAN) || defined(__LITTLE_ENDIAN)
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+The kernel borrows __LITTLE_ENDIAN/__BIG_ENDIAN from user space but does not impl. the
+full semantics that user space has. Adding full user space semantics isn't easy as it clashes with
+current use of __LITTLE_ENDIAN/__BIG_ENDIAN.
 
---Signature=_Wed__26_May_2010_17_33_55_+1000_fcChd4lDD9OnHqMB
-Content-Type: application/pgp-signature
+If my suggestion above works, then one could start transforming current uses of __BYTE_ORDER,
+into similar constructs and once all are done, #define both __LITTLE_ENDIAN/__BIG_ENDIAN and
+move back to #if __BYTE_ORDER == __LITTLE_ENDIAN
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkv8zuMACgkQjjKRsyhoI8yzSQCfarf3ktpGPs8z+50U2QNDfOrV
-wiMAn2N6Vydos5tPf7m3kFTDyi1dan5X
-=FfHS
------END PGP SIGNATURE-----
-
---Signature=_Wed__26_May_2010_17_33_55_+1000_fcChd4lDD9OnHqMB--
+ Jocke
