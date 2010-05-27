@@ -1,68 +1,83 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the kbuild tree with the kernel-doc
- tree
-Date: Fri, 28 May 2010 01:34:02 +1000
-Message-ID: <20100528013402.a350a3bd.sfr@canb.auug.org.au>
-References: <20100526115346.da5a02aa.sfr@canb.auug.org.au>
-	<4BFD42A6.6060206@oracle.com>
-	<20100527025020.da0c1bb7.sfr@canb.auug.org.au>
-	<20100526095606.beed820e.randy.dunlap@oracle.com>
-	<20100527090923.c17a7ed4.sfr@canb.auug.org.au>
-	<4BFDB60B.50106@oracle.com>
-	<20100527110357.f295d4ef.sfr@canb.auug.org.au>
-	<4BFE7EAC.9090408@suse.cz>
+Subject: Re: linux-next: build failure after merge of the final tree (leds
+ tree related)
+Date: Fri, 28 May 2010 01:35:49 +1000
+Message-ID: <20100528013549.9c17f6e4.sfr@canb.auug.org.au>
+References: <20100527151656.889b5977.sfr@canb.auug.org.au>
+	<1274960190.1931.429.camel@pasglop>
+	<1274965644.24079.1427.camel@rex>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__28_May_2010_01_34_02_+1000_sqxwlP44PrCRRhVK"
+ boundary="Signature=_Fri__28_May_2010_01_35_49_+1000_bDQs/+J+I.acJ8gF"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52196 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:52235 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756891Ab0E0PeY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 27 May 2010 11:34:24 -0400
-In-Reply-To: <4BFE7EAC.9090408@suse.cz>
+	id S1754998Ab0E0Pfz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 27 May 2010 11:35:55 -0400
+In-Reply-To: <1274965644.24079.1427.camel@rex>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michal Marek <mmarek@suse.cz>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, matt mooney <mfm@muteddisk.com>, Kirill Smelkov <kirr@mns.spb.ru>
+To: Richard Purdie <rpurdie@rpsys.net>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bjarke Istrup Pedersen <gurligebis@gentoo.org>, Randy Dunlap <randy.dunlap@oracle.com>, Alessandro Zummo <a.zummo@towertech.it>, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Fri__28_May_2010_01_34_02_+1000_sqxwlP44PrCRRhVK
+--Signature=_Fri__28_May_2010_01_35_49_+1000_bDQs/+J+I.acJ8gF
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Michal,
+Hi Richard,
 
-On Thu, 27 May 2010 16:16:12 +0200 Michal Marek <mmarek@suse.cz> wrote:
+On Thu, 27 May 2010 14:07:24 +0100 Richard Purdie <rpurdie@rpsys.net> wrote:
 >
-> On 27.5.2010 03:03, Stephen Rothwell wrote:
-> > Hi Randy,
+> On Thu, 2010-05-27 at 21:36 +1000, Benjamin Herrenschmidt wrote:
+> > On Thu, 2010-05-27 at 15:16 +1000, Stephen Rothwell wrote:
+> > >=20
+> > > drivers/leds/leds-net5501.c:20:23: error: asm/geode.h: No such file o=
+r directory
+> > > drivers/leds/leds-net5501.c: In function 'soekris_init':
+> > > drivers/leds/leds-net5501.c:63: error: implicit declaration of functi=
+on 'is_geode'
 > >=20
-> > On Wed, 26 May 2010 17:00:11 -0700 Randy Dunlap <randy.dunlap@oracle.co=
-m> wrote:
-> >> uh oh.  OK, thanks, I'll restore them.
-> >=20
-> > Thanks.  I picked them up.
+> > Looks like something is missing an ifdef CONFIG_X86 :-)
 >=20
-> I reverted part of the kbuild patch so that the two trees merge cleanly
-> again.
+> Right, that driver/board is x86 only. I've pushed a fix.
+>=20
+> > > Caused by commit 14e40f644b020d473415342461b7c62e3bb5e312 ("leds: Add=
+ LED
+> > > driver for the Soekris net5501 board").  Presumably only tested on x8=
+6?
+> > >=20
+> > > drivers/leds/leds-gpio.c: In function 'of_gpio_leds_probe':
+> > > drivers/leds/leds-gpio.c:253: error: 'struct gpio_led' has no member =
+named 'blinking'
+> > >=20
+> > > Caused by commit 2146325df2c2640059a9e064890c30c6e259b458 ("leds:
+> > > leds-gpio: Change blink_set callback to be able to turn off blinking"=
+).
+>=20
+> This error looks like its from Ben's patch, probably when openfirmware
+> is enabled. I've queued a fix for this too:
+>=20
+> http://git.o-hand.com/cgit.cgi/linux-rpurdie-leds/commit/?id=3Da4b4433c51=
+1cf4361bb0afabba69e16632002d32
 
-Thanks.
+Great, thanks.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__28_May_2010_01_34_02_+1000_sqxwlP44PrCRRhVK
+--Signature=_Fri__28_May_2010_01_35_49_+1000_bDQs/+J+I.acJ8gF
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkv+kOoACgkQjjKRsyhoI8zY0wCfUXJDC51668zuNM4j97m54l2c
-0OsAnRtqNLoPwYMdS5+uv9HCtNABbRno
-=0I4X
+iEYEARECAAYFAkv+kVUACgkQjjKRsyhoI8yjIACeNJIEQrup6F1uoLvJXj+Edk57
+tH4AoIKIUfDlNhRIdORFHMQUpnyeqEC8
+=vYRc
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__28_May_2010_01_34_02_+1000_sqxwlP44PrCRRhVK--
+--Signature=_Fri__28_May_2010_01_35_49_+1000_bDQs/+J+I.acJ8gF--
