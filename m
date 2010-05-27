@@ -1,57 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the kbuild tree with the kernel-doc
- tree
-Date: Thu, 27 May 2010 11:03:57 +1000
-Message-ID: <20100527110357.f295d4ef.sfr@canb.auug.org.au>
-References: <20100526115346.da5a02aa.sfr@canb.auug.org.au>
-	<4BFD42A6.6060206@oracle.com>
-	<20100527025020.da0c1bb7.sfr@canb.auug.org.au>
-	<20100526095606.beed820e.randy.dunlap@oracle.com>
-	<20100527090923.c17a7ed4.sfr@canb.auug.org.au>
-	<4BFDB60B.50106@oracle.com>
+Subject: linux-next: build warnings after merge of the acpi tree
+Date: Thu, 27 May 2010 14:41:11 +1000
+Message-ID: <20100527144111.84b2e651.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__27_May_2010_11_03_57_+1000_eGPyQp5XMuzAw6nt"
+ boundary="Signature=_Thu__27_May_2010_14_41_11_+1000_jD28dIZwBzXe1gFx"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41884 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:47048 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754894Ab0E0BEF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 26 May 2010 21:04:05 -0400
-In-Reply-To: <4BFDB60B.50106@oracle.com>
+	id S1751382Ab0E0ElU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 27 May 2010 00:41:20 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Michal Marek <mmarek@suse.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, matt mooney <mfm@muteddisk.com>, Kirill Smelkov <kirr@mns.spb.ru>
+To: Len Brown <lenb@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Thu__27_May_2010_11_03_57_+1000_eGPyQp5XMuzAw6nt
+--Signature=_Thu__27_May_2010_14_41_11_+1000_jD28dIZwBzXe1gFx
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Randy,
+Hi Len,
 
-On Wed, 26 May 2010 17:00:11 -0700 Randy Dunlap <randy.dunlap@oracle.com> w=
-rote:
->
-> uh oh.  OK, thanks, I'll restore them.
+After merging the acpi tree, today's linux-next build (x86_64 allmodconfig)
+produced these warnings:
 
-Thanks.  I picked them up.
+drivers/idle/intel_idle.c: In function 'intel_idle_cpuidle_devices_init':
+drivers/idle/intel_idle.c:324: warning: unused variable 'cstate'
+drivers/idle/intel_idle.c: At top level:
+drivers/idle/intel_idle.c:141: warning: 'atom_cstates' defined but not used
 
+Introduced by commit 7869a4e97e18b5c129ede0fca820d1ed3da8e18b
+("intel_idle: create a native cpuidle driver for select intel
+processors").
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__27_May_2010_11_03_57_+1000_eGPyQp5XMuzAw6nt
+--Signature=_Thu__27_May_2010_14_41_11_+1000_jD28dIZwBzXe1gFx
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkv9xP0ACgkQjjKRsyhoI8xqqwCgumCxh31aFE8nB7v8HsDRXwRh
-nZIAoIU4G9irwjLDch5PxQRW09tJl6gW
-=xN8P
+iEYEARECAAYFAkv99+cACgkQjjKRsyhoI8xW6ACgvGexyJBnQ+AQXmuyocAxEPkc
+QvYAnAwg/7YSb8db1miUhqZR9/Dux/Fl
+=rPsm
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__27_May_2010_11_03_57_+1000_eGPyQp5XMuzAw6nt--
+--Signature=_Thu__27_May_2010_14_41_11_+1000_jD28dIZwBzXe1gFx--
