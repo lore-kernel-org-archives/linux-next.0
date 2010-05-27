@@ -1,33 +1,52 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: linux-next: manual merge of the ext3 tree with Linus' tree
-Date: Tue, 25 May 2010 23:55:52 +0200
-Message-ID: <20100525215552.GA12633@quack.suse.cz>
-References: <20100522154532.bc0f8008.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for May 27 (infiniband: qib)
+Date: Thu, 27 May 2010 09:05:03 -0700
+Message-ID: <20100527090503.d229dc53.randy.dunlap@oracle.com>
+References: <20100527152628.b23a14c6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20100522154532.bc0f8008.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jan Kara <jack@suse.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, Al Viro <viro@zeniv.linux.org.uk>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:59970 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752831Ab0E0QGG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 27 May 2010 12:06:06 -0400
+In-Reply-To: <20100527152628.b23a14c6.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Ralph Campbell <ralph.campbell@qlogic.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-rdma@vger.kernel.org
 
-  Hi Stephen,
+On Thu, 27 May 2010 15:26:28 +1000 Stephen Rothwell wrote:
 
-On Sat 22-05-10 15:45:32, Stephen Rothwell wrote:
-> Today's linux-next merge of the ext3 tree got a conflict in fs/super.c
-> between commits b20bd1a5e78af267dc4b6e1ffed48d5d776302c5 ("get rid of
-> S_BIAS"), 1712ac8fda7d8bc4dc921f5777b7423aacad7263 ("Saner locking around
-> deactivate_super()") and e1e46bf1866317d4f86f66bf18d3f07317d9f9ee ("Trim
-> includes in fs/super.c") from Linus' tree and commits
-> c3134141c78d5ea233a08b703b553e70cfb5c585 ("quota: move unmount handling
-> into the filesystem") and cdb89ca659f5a39edf88f3c55e545ea3347533d1
-> ("quota: explicitly set ->dq_op and ->s_qcop") from the ext3 tree.
-  Thanks! I've now rebased for_next branch on recent Linus's tree and
-so this conflict should go away.
+> Hi all,
+> 
+> We are in the merge window again.  I remind you all not to add stuff for
+> 2.6.36 to your linux-next trees until after 2.6.35-rc1.
+> 
+> Changes since 20100526:
 
-								Honza
--- 
-Jan Kara <jack@suse.cz>
-SUSE Labs, CR
+
+when CONFIG_INFINIBAND_QIB=y and CONFIG_DCA=m:
+
+drivers/built-in.o: In function `qib_update_sdma_dca':
+qib_iba7322.c:(.text+0x409219): undefined reference to `dca3_get_tag'
+drivers/built-in.o: In function `qib_update_rhdrq_dca':
+qib_iba7322.c:(.text+0x40a1f9): undefined reference to `dca3_get_tag'
+drivers/built-in.o: In function `qib_setup_7322_cleanup':
+qib_iba7322.c:(.text+0x40f91f): undefined reference to `dca_remove_requester'
+drivers/built-in.o: In function `qib_init_iba7322_funcs':
+(.text+0x419b6f): undefined reference to `dca_add_requester'
+
+
+However, it looks like qib needs to handle DCA config in a way that
+is similar to how it is handled in drivers/net/{myri10ge,igb,ixgbe}/
+instead of assuming that DCA is enabled.
+
+
+And please fix the linux-next 2010-may-25 reported qib problem:
+  http://lkml.org/lkml/2010/5/25/321
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
