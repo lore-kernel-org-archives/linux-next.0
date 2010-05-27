@@ -1,39 +1,53 @@
-From: Avi Kivity <avi@redhat.com>
-Subject: Re: linux-next: build warning after merge of the kvm tree
-Date: Thu, 27 May 2010 15:13:35 +0300
-Message-ID: <4BFE61EF.3080102@redhat.com>
-References: <20100527145307.0e6d537c.sfr@canb.auug.org.au> <20100527101957.GT3266@amd.com>
+From: Richard Purdie <rpurdie@rpsys.net>
+Subject: Re: linux-next: build failure after merge of the final tree (leds
+ tree related)
+Date: Thu, 27 May 2010 14:07:24 +0100
+Message-ID: <1274965644.24079.1427.camel@rex>
+References: <20100527151656.889b5977.sfr@canb.auug.org.au>
+	 <1274960190.1931.429.camel@pasglop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:9944 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754572Ab0E0MNl (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 27 May 2010 08:13:41 -0400
-In-Reply-To: <20100527101957.GT3266@amd.com>
+Received: from 93-97-173-237.zone5.bethere.co.uk ([93.97.173.237]:59633 "EHLO
+	tim.rpsys.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753658Ab0E0NIo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 27 May 2010 09:08:44 -0400
+In-Reply-To: <1274960190.1931.429.camel@pasglop>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Roedel, Joerg" <Joerg.Roedel@amd.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Marcelo Tosatti <mtosatti@redhat.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bjarke Istrup Pedersen <gurligebis@gentoo.org>, Randy Dunlap <randy.dunlap@oracle.com>, Alessandro Zummo <a.zummo@towertech.it>, Andrew Morton <akpm@linux-foundation.org>
 
-On 05/27/2010 01:19 PM, Roedel, Joerg wrote:
-> On Thu, May 27, 2010 at 12:53:07AM -0400, Stephen Rothwell wrote:
->    
->> After merging the kvm tree, today's linux-next build (x86_64 allmodconfig)
->> produced this warning:
->>
->> arch/x86/kvm/svm.c: In function 'svm_handle_mce':
->> arch/x86/kvm/svm.c:1489: warning: unused variable 'kvm_run'
->>
->> Introduced by commit 5c91e7b615f7b6b36f6ad32356bb786bed5b7764 ("KVM: SVM:
->> Implement workaround for Erratum 383").
->>      
-> Fix for that is already posted and should be in the KVM tree soon.
->
->    
+On Thu, 2010-05-27 at 21:36 +1000, Benjamin Herrenschmidt wrote:
+> On Thu, 2010-05-27 at 15:16 +1000, Stephen Rothwell wrote:
+> > Hi Richard,
+> > 
+> > After merging the final tree, today's linux-next build (powerpc
+> > allyesconfig) failed like this:
+> > 
+> > drivers/leds/leds-net5501.c:20:23: error: asm/geode.h: No such file or directory
+> > drivers/leds/leds-net5501.c: In function 'soekris_init':
+> > drivers/leds/leds-net5501.c:63: error: implicit declaration of function 'is_geode'
+> 
+> Looks like something is missing an ifdef CONFIG_X86 :-)
 
-I've just pushed it to linux-next.
+Right, that driver/board is x86 only. I've pushed a fix.
 
--- 
-error compiling committee.c: too many arguments to function
+> > Caused by commit 14e40f644b020d473415342461b7c62e3bb5e312 ("leds: Add LED
+> > driver for the Soekris net5501 board").  Presumably only tested on x86?
+> > 
+> > drivers/leds/leds-gpio.c: In function 'of_gpio_leds_probe':
+> > drivers/leds/leds-gpio.c:253: error: 'struct gpio_led' has no member named 'blinking'
+> > 
+> > Caused by commit 2146325df2c2640059a9e064890c30c6e259b458 ("leds:
+> > leds-gpio: Change blink_set callback to be able to turn off blinking").
+
+This error looks like its from Ben's patch, probably when openfirmware
+is enabled. I've queued a fix for this too:
+
+http://git.o-hand.com/cgit.cgi/linux-rpurdie-leds/commit/?id=a4b4433c511cf4361bb0afabba69e16632002d32
+
+Cheers,
+
+Richard
