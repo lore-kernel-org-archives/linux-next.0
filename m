@@ -1,53 +1,32 @@
-From: Richard Purdie <rpurdie@rpsys.net>
-Subject: Re: linux-next: build failure after merge of the final tree (leds
- tree related)
-Date: Thu, 27 May 2010 14:07:24 +0100
-Message-ID: <1274965644.24079.1427.camel@rex>
-References: <20100527151656.889b5977.sfr@canb.auug.org.au>
-	 <1274960190.1931.429.camel@pasglop>
+From: Michal Marek <mmarek@suse.cz>
+Subject: Re: linux-next: manual merge of the kbuild tree with the kernel-doc
+ tree
+Date: Thu, 27 May 2010 16:16:12 +0200
+Message-ID: <4BFE7EAC.9090408@suse.cz>
+References: <20100526115346.da5a02aa.sfr@canb.auug.org.au>	<4BFD42A6.6060206@oracle.com>	<20100527025020.da0c1bb7.sfr@canb.auug.org.au>	<20100526095606.beed820e.randy.dunlap@oracle.com>	<20100527090923.c17a7ed4.sfr@canb.auug.org.au>	<4BFDB60B.50106@oracle.com> <20100527110357.f295d4ef.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ISO-8859-2
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 93-97-173-237.zone5.bethere.co.uk ([93.97.173.237]:59633 "EHLO
-	tim.rpsys.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753658Ab0E0NIo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 27 May 2010 09:08:44 -0400
-In-Reply-To: <1274960190.1931.429.camel@pasglop>
+Received: from cantor.suse.de ([195.135.220.2]:56145 "EHLO mx1.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751063Ab0E0OQM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 27 May 2010 10:16:12 -0400
+In-Reply-To: <20100527110357.f295d4ef.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bjarke Istrup Pedersen <gurligebis@gentoo.org>, Randy Dunlap <randy.dunlap@oracle.com>, Alessandro Zummo <a.zummo@towertech.it>, Andrew Morton <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, matt mooney <mfm@muteddisk.com>, Kirill Smelkov <kirr@mns.spb.ru>
 
-On Thu, 2010-05-27 at 21:36 +1000, Benjamin Herrenschmidt wrote:
-> On Thu, 2010-05-27 at 15:16 +1000, Stephen Rothwell wrote:
-> > Hi Richard,
-> > 
-> > After merging the final tree, today's linux-next build (powerpc
-> > allyesconfig) failed like this:
-> > 
-> > drivers/leds/leds-net5501.c:20:23: error: asm/geode.h: No such file or directory
-> > drivers/leds/leds-net5501.c: In function 'soekris_init':
-> > drivers/leds/leds-net5501.c:63: error: implicit declaration of function 'is_geode'
+On 27.5.2010 03:03, Stephen Rothwell wrote:
+> Hi Randy,
 > 
-> Looks like something is missing an ifdef CONFIG_X86 :-)
+> On Wed, 26 May 2010 17:00:11 -0700 Randy Dunlap <randy.dunlap@oracle.com> wrote:
+>> uh oh.  OK, thanks, I'll restore them.
+> 
+> Thanks.  I picked them up.
 
-Right, that driver/board is x86 only. I've pushed a fix.
+I reverted part of the kbuild patch so that the two trees merge cleanly
+again.
 
-> > Caused by commit 14e40f644b020d473415342461b7c62e3bb5e312 ("leds: Add LED
-> > driver for the Soekris net5501 board").  Presumably only tested on x86?
-> > 
-> > drivers/leds/leds-gpio.c: In function 'of_gpio_leds_probe':
-> > drivers/leds/leds-gpio.c:253: error: 'struct gpio_led' has no member named 'blinking'
-> > 
-> > Caused by commit 2146325df2c2640059a9e064890c30c6e259b458 ("leds:
-> > leds-gpio: Change blink_set callback to be able to turn off blinking").
-
-This error looks like its from Ben's patch, probably when openfirmware
-is enabled. I've queued a fix for this too:
-
-http://git.o-hand.com/cgit.cgi/linux-rpurdie-leds/commit/?id=a4b4433c511cf4361bb0afabba69e16632002d32
-
-Cheers,
-
-Richard
+Michal
