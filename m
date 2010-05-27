@@ -1,51 +1,24 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the kvm tree
-Date: Thu, 27 May 2010 14:53:07 +1000
-Message-ID: <20100527145307.0e6d537c.sfr@canb.auug.org.au>
+From: Len Brown <lenb@kernel.org>
+Subject: Re: linux-next: build warnings after merge of the acpi tree
+Date: Thu, 27 May 2010 01:14:21 -0400 (EDT)
+Message-ID: <alpine.LFD.2.00.1005270113170.4039@localhost.localdomain>
+References: <20100527144111.84b2e651.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__27_May_2010_14_53_07_+1000_jcM4bKgzCAsSLPld"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54778 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933514Ab0E0ExN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 27 May 2010 00:53:13 -0400
+Received: from vms173019pub.verizon.net ([206.46.173.19]:60936 "EHLO
+	vms173019pub.verizon.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932190Ab0E0FO0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 27 May 2010 01:14:26 -0400
+In-reply-to: <20100527144111.84b2e651.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Avi Kivity <avi@qumranet.com>, Marcelo Tosatti <mtosatti@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joerg Roedel <joerg.roedel@amd.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Thu__27_May_2010_14_53_07_+1000_jcM4bKgzCAsSLPld
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> drivers/idle/intel_idle.c:324: warning: unused variable 'cstate'
 
-Hi all,
+fixed in the latest version.
 
-After merging the kvm tree, today's linux-next build (x86_64 allmodconfig)
-produced this warning:
-
-arch/x86/kvm/svm.c: In function 'svm_handle_mce':
-arch/x86/kvm/svm.c:1489: warning: unused variable 'kvm_run'
-
-Introduced by commit 5c91e7b615f7b6b36f6ad32356bb786bed5b7764 ("KVM: SVM:
-Implement workaround for Erratum 383").
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__27_May_2010_14_53_07_+1000_jcM4bKgzCAsSLPld
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkv9+rMACgkQjjKRsyhoI8xq0gCglKcIRMOjOx+CtUXDa0pIYjV/
-aVMAn1tZnyDiX6WhLoMAnmZnCjOCI9HP
-=bNJ/
------END PGP SIGNATURE-----
-
---Signature=_Thu__27_May_2010_14_53_07_+1000_jcM4bKgzCAsSLPld--
+thanks,
+Len Brown, Intel Open Source Technology Center
