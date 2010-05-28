@@ -1,99 +1,96 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings after merge of the idle-test tree
-Date: Fri, 28 May 2010 12:53:38 +1000
-Message-ID: <20100528125338.b9a295ff.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (linus'
+ tree related)
+Date: Fri, 28 May 2010 15:08:42 +1000
+Message-ID: <20100528150842.d5a751ba.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__28_May_2010_12_53_38_+1000_y86GodFL/9/I4Lbh"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36256 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:45228 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755143Ab0E1Cxp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 27 May 2010 22:53:45 -0400
+	id S1751126Ab0E1FIu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 28 May 2010 01:08:50 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Len Brown <lenb@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Steven Rostedt <srostedt@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, ppc-dev <linuxppc-dev@lists.ozlabs.org>, paulus@samba.org, Anton Blanchard ZZ <anton@samba.org>
 
---Signature=_Fri__28_May_2010_12_53_38_+1000_y86GodFL/9/I4Lbh
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Steven,
 
-Hi Len,
+After merging the final tree, today's linux-next build (powerpc allyesconfig) failed like this:
 
-After merging the idle-test tree, today's linux-next build (x86_64
-allmodconfig) produced these warning:
+arch/powerpc/platforms/pseries/hvCall_inst.c: In function 'hcall_inst_init':
+arch/powerpc/platforms/pseries/hvCall_inst.c:143: warning: passing argument 1 of 'register_trace_hcall_entry' from incompatible pointer type
+arch/powerpc/include/asm/trace.h:100: note: expected 'void (*)(void *, long unsigned int,  long unsigned int *)' but argument is of type 'void (*)(long unsigned int,  long unsigned int *)'
+arch/powerpc/platforms/pseries/hvCall_inst.c:143: error: too few arguments to function 'register_trace_hcall_entry'
+arch/powerpc/platforms/pseries/hvCall_inst.c:146: warning: passing argument 1 of 'register_trace_hcall_exit' from incompatible pointer type
+arch/powerpc/include/asm/trace.h:122: note: expected 'void (*)(void *, long unsigned int,  long unsigned int,  long unsigned int *)' but argument is of type 'void (*)(long unsigned int,  long unsigned int,  long unsigned int *)'
+arch/powerpc/platforms/pseries/hvCall_inst.c:146: error: too few arguments to function 'register_trace_hcall_exit'
+arch/powerpc/platforms/pseries/hvCall_inst.c:147: warning: passing argument 1 of 'unregister_trace_hcall_entry' from incompatible pointer type
+arch/powerpc/include/asm/trace.h:100: note: expected 'void (*)(void *, long unsigned int,  long unsigned int *)' but argument is of type 'void (*)(long unsigned int,  long unsigned int *)'
+arch/powerpc/platforms/pseries/hvCall_inst.c:147: error: too few arguments to function 'unregister_trace_hcall_entry'
 
-drivers/idle/intel_idle.c:115: warning: missing braces around initializer
-drivers/idle/intel_idle.c:115: warning: (near initialization for 'nehalem_c=
-states[0].name')
-drivers/idle/intel_idle.c:115: warning: initialization makes integer from p=
-ointer without a cast
-drivers/idle/intel_idle.c:115: warning: initialization makes integer from p=
-ointer without a cast
-drivers/idle/intel_idle.c:125: warning: initialization makes integer from p=
-ointer without a cast
-drivers/idle/intel_idle.c:125: warning: initialization makes integer from p=
-ointer without a cast
-drivers/idle/intel_idle.c:126: warning: initialization makes integer from p=
-ointer without a cast
-drivers/idle/intel_idle.c:126: warning: initialization makes integer from p=
-ointer without a cast
-drivers/idle/intel_idle.c:127: warning: initialization makes integer from p=
-ointer without a cast
-drivers/idle/intel_idle.c:127: warning: initialization makes integer from p=
-ointer without a cast
-drivers/idle/intel_idle.c:128: warning: initialization makes integer from p=
-ointer without a cast
-drivers/idle/intel_idle.c:128: warning: initialization makes integer from p=
-ointer without a cast
-drivers/idle/intel_idle.c:132: warning: missing braces around initializer
-drivers/idle/intel_idle.c:132: warning: (near initialization for 'atom_csta=
-tes[0].name')
-drivers/idle/intel_idle.c:132: warning: initialization makes integer from p=
-ointer without a cast
-drivers/idle/intel_idle.c:132: warning: initialization makes integer from p=
-ointer without a cast
-drivers/idle/intel_idle.c:139: warning: initialization makes integer from p=
-ointer without a cast
-drivers/idle/intel_idle.c:139: warning: initialization makes integer from p=
-ointer without a cast
-drivers/idle/intel_idle.c:145: warning: initialization makes integer from p=
-ointer without a cast
-drivers/idle/intel_idle.c:145: warning: initialization makes integer from p=
-ointer without a cast
-drivers/idle/intel_idle.c:147: warning: initialization makes integer from p=
-ointer without a cast
-drivers/idle/intel_idle.c:147: warning: initialization makes integer from p=
-ointer without a cast
-drivers/idle/intel_idle.c:153: warning: initialization makes integer from p=
-ointer without a cast
-drivers/idle/intel_idle.c:153: warning: initialization makes integer from p=
-ointer without a cast
-drivers/idle/intel_idle.c:155: warning: initialization makes integer from p=
-ointer without a cast
-drivers/idle/intel_idle.c:155: warning: initialization makes integer from p=
-ointer without a cast
+Probably caused by commit 38516ab59fbc5b3bb278cf5e1fe2867c70cff32e
+("tracing: Let tracepoints have data passed to tracepoint callbacks").
 
-Introduced by commit dc81ce2e1b88c58e011971ab584ffb70a5caf887
-("intel_idle: create a native cpuidle driver for select intel
-processors").  You can't initialise a char[] with NULL ...
---=20
+I applied this patch which builds (but may be incorrect).
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 28 May 2010 15:05:00 +1000
+Subject: [PATCH] tracing: fix for tracepoint API change
+
+Commit 38516ab59fbc5b3bb278cf5e1fe2867c70cff32e "tracing: Let tracepoints
+have data passed to tracepoint callbacks" requires this fixup to the
+powerpc code.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/powerpc/platforms/pseries/hvCall_inst.c |   10 +++++-----
+ 1 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/arch/powerpc/platforms/pseries/hvCall_inst.c b/arch/powerpc/platforms/pseries/hvCall_inst.c
+index 1fefae7..e19ff02 100644
+--- a/arch/powerpc/platforms/pseries/hvCall_inst.c
++++ b/arch/powerpc/platforms/pseries/hvCall_inst.c
+@@ -102,7 +102,7 @@ static const struct file_operations hcall_inst_seq_fops = {
+ #define CPU_NAME_BUF_SIZE	32
+ 
+ 
+-static void probe_hcall_entry(unsigned long opcode, unsigned long *args)
++static void probe_hcall_entry(void *ignored, unsigned long opcode, unsigned long *args)
+ {
+ 	struct hcall_stats *h;
+ 
+@@ -114,7 +114,7 @@ static void probe_hcall_entry(unsigned long opcode, unsigned long *args)
+ 	h->purr_start = mfspr(SPRN_PURR);
+ }
+ 
+-static void probe_hcall_exit(unsigned long opcode, unsigned long retval,
++static void probe_hcall_exit(void *ignored, unsigned long opcode, unsigned long retval,
+ 			     unsigned long *retbuf)
+ {
+ 	struct hcall_stats *h;
+@@ -140,11 +140,11 @@ static int __init hcall_inst_init(void)
+ 	if (!firmware_has_feature(FW_FEATURE_LPAR))
+ 		return 0;
+ 
+-	if (register_trace_hcall_entry(probe_hcall_entry))
++	if (register_trace_hcall_entry(probe_hcall_entry, NULL))
+ 		return -EINVAL;
+ 
+-	if (register_trace_hcall_exit(probe_hcall_exit)) {
+-		unregister_trace_hcall_entry(probe_hcall_entry);
++	if (register_trace_hcall_exit(probe_hcall_exit, NULL)) {
++		unregister_trace_hcall_entry(probe_hcall_entry, NULL);
+ 		return -EINVAL;
+ 	}
+ 
+-- 
+1.7.1
+
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__28_May_2010_12_53_38_+1000_y86GodFL/9/I4Lbh
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkv/MDIACgkQjjKRsyhoI8znbQCfbUEJ5AxlMEudyt5uNbHUSllh
-lXIAn3+ZjZnuKqWWkfMY0ncKQ0VTi11S
-=NUWj
------END PGP SIGNATURE-----
-
---Signature=_Fri__28_May_2010_12_53_38_+1000_y86GodFL/9/I4Lbh--
