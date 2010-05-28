@@ -1,92 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree (leds
- tree related)
-Date: Fri, 28 May 2010 10:11:57 +1000
-Message-ID: <20100528101157.aff693f4.sfr@canb.auug.org.au>
-References: <20100527151656.889b5977.sfr@canb.auug.org.au>
-	<1274960190.1931.429.camel@pasglop>
-	<1274965644.24079.1427.camel@rex>
-	<20100528013549.9c17f6e4.sfr@canb.auug.org.au>
+Subject: linux-next: build warning in Linus' tree
+Date: Fri, 28 May 2010 10:56:13 +1000
+Message-ID: <20100528105613.fdf00a99.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__28_May_2010_10_11_57_+1000_DRU.9I=QVd1dE=u9"
+ boundary="Signature=_Fri__28_May_2010_10_56_13_+1000_ousfok09jR.IxZ6/"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38529 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:44436 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752789Ab0E1AMG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 27 May 2010 20:12:06 -0400
-In-Reply-To: <20100528013549.9c17f6e4.sfr@canb.auug.org.au>
+	id S1753608Ab0E1A4T (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 27 May 2010 20:56:19 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Richard Purdie <rpurdie@rpsys.net>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bjarke Istrup Pedersen <gurligebis@gentoo.org>, Randy Dunlap <randy.dunlap@oracle.com>, Alessandro Zummo <a.zummo@towertech.it>, Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>
+To: Kevin Hilman <khilman@deeprootsystems.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Torokhov <dtor@mail.ru>
 
---Signature=_Fri__28_May_2010_10_11_57_+1000_DRU.9I=QVd1dE=u9
+--Signature=_Fri__28_May_2010_10_56_13_+1000_ousfok09jR.IxZ6/
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Richard,
+Hi Kevin,
 
-On Fri, 28 May 2010 01:35:49 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> On Thu, 27 May 2010 14:07:24 +0100 Richard Purdie <rpurdie@rpsys.net> wro=
-te:
-> >
-> > On Thu, 2010-05-27 at 21:36 +1000, Benjamin Herrenschmidt wrote:
-> > > On Thu, 2010-05-27 at 15:16 +1000, Stephen Rothwell wrote:
-> > > >=20
-> > > > drivers/leds/leds-net5501.c:20:23: error: asm/geode.h: No such file=
- or directory
-> > > > drivers/leds/leds-net5501.c: In function 'soekris_init':
-> > > > drivers/leds/leds-net5501.c:63: error: implicit declaration of func=
-tion 'is_geode'
-> > >=20
-> > > Looks like something is missing an ifdef CONFIG_X86 :-)
-> >=20
-> > Right, that driver/board is x86 only. I've pushed a fix.
-> >=20
-> > > > Caused by commit 14e40f644b020d473415342461b7c62e3bb5e312 ("leds: A=
-dd LED
-> > > > driver for the Soekris net5501 board").  Presumably only tested on =
-x86?
-> > > >=20
-> > > > drivers/leds/leds-gpio.c: In function 'of_gpio_leds_probe':
-> > > > drivers/leds/leds-gpio.c:253: error: 'struct gpio_led' has no membe=
-r named 'blinking'
-> > > >=20
-> > > > Caused by commit 2146325df2c2640059a9e064890c30c6e259b458 ("leds:
-> > > > leds-gpio: Change blink_set callback to be able to turn off blinkin=
-g").
-> >=20
-> > This error looks like its from Ben's patch, probably when openfirmware
-> > is enabled. I've queued a fix for this too:
-> >=20
-> > http://git.o-hand.com/cgit.cgi/linux-rpurdie-leds/commit/?id=3Da4b4433c=
-511cf4361bb0afabba69e16632002d32
->=20
-> Great, thanks.
+Today's linux-next build (x86_64 allmodconfig) produced this warning:
 
-Except, of course, Linus has merged the broken tree without the fixes :-(
+drivers/input/touchscreen/ads7846.c: In function 'ads7846_probe':
+drivers/input/touchscreen/ads7846.c:1167: warning: format '%ld' expects typ=
+e 'long int', but argument 4 has type 'int'
 
-Oh, well.
-
+Introduced by commit 067fb2f648543894ce775082c5636f4c32b99e4f ("Input:
+ads7846 - return error on regulator_get() failure").
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__28_May_2010_10_11_57_+1000_DRU.9I=QVd1dE=u9
+--Signature=_Fri__28_May_2010_10_56_13_+1000_ousfok09jR.IxZ6/
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkv/Ck0ACgkQjjKRsyhoI8xsVACgkmjaK/3shBd59NDcMQYcMlTb
-qREAniVTEVXyP51txfKoBfbyfZWxl9Ww
-=+7j+
+iEYEARECAAYFAkv/FK0ACgkQjjKRsyhoI8zffgCgptQWR8cSUddgsWrMNBaYA+89
+oEUAmgKr/huYkP5o30+n0Z3WAhQpm4F0
+=AeCp
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__28_May_2010_10_11_57_+1000_DRU.9I=QVd1dE=u9--
+--Signature=_Fri__28_May_2010_10_56_13_+1000_ousfok09jR.IxZ6/--
