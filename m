@@ -1,50 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning in Linus' tree
-Date: Fri, 28 May 2010 10:56:13 +1000
-Message-ID: <20100528105613.fdf00a99.sfr@canb.auug.org.au>
+Subject: linux-next: build failure in Linus' tree
+Date: Fri, 28 May 2010 10:57:19 +1000
+Message-ID: <20100528105719.a356ba4f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__28_May_2010_10_56_13_+1000_ousfok09jR.IxZ6/"
+ boundary="Signature=_Fri__28_May_2010_10_57_19_+1000_bB8D7b4aL/bCa0jj"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44436 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34477 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753608Ab0E1A4T (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 27 May 2010 20:56:19 -0400
+	id S1752715Ab0E1A5Z (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 27 May 2010 20:57:25 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kevin Hilman <khilman@deeprootsystems.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Torokhov <dtor@mail.ru>
+To: Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jack Steiner <steiner@sgi.com>, Lee Schermerhorn <lee.schermerhorn@hp.com>
 
---Signature=_Fri__28_May_2010_10_56_13_+1000_ousfok09jR.IxZ6/
+--Signature=_Fri__28_May_2010_10_57_19_+1000_bB8D7b4aL/bCa0jj
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Kevin,
+Hi Linus,
 
-Today's linux-next build (x86_64 allmodconfig) produced this warning:
+After merging the gcl-current tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-drivers/input/touchscreen/ads7846.c: In function 'ads7846_probe':
-drivers/input/touchscreen/ads7846.c:1167: warning: format '%ld' expects typ=
-e 'long int', but argument 4 has type 'int'
+kernel/built-in.o: In function `.copy_process':
+fork.c:(.text+0x14c34): undefined reference to `.__node_random'
+fork.c:(.text+0x14c44): undefined reference to `.__node_random'
 
-Introduced by commit 067fb2f648543894ce775082c5636f4c32b99e4f ("Input:
-ads7846 - return error on regulator_get() failure").
+Caused by commit 0ac0c0d0f837c499afd02a802f9cf52d3027fa3b ("cpusets:
+randomize node rotor used in cpuset_mem_spread_node()").
+
+This commit assumes that __node_random() exists if (MAX_NUMNODES > 1) and
+uses it if CONFIG_CPUSETS is set, but only creates it for x86 ...  there
+is at least one other architecture where those conditions are true.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__28_May_2010_10_56_13_+1000_ousfok09jR.IxZ6/
+--Signature=_Fri__28_May_2010_10_57_19_+1000_bB8D7b4aL/bCa0jj
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkv/FK0ACgkQjjKRsyhoI8zffgCgptQWR8cSUddgsWrMNBaYA+89
-oEUAmgKr/huYkP5o30+n0Z3WAhQpm4F0
-=AeCp
+iEYEARECAAYFAkv/FO8ACgkQjjKRsyhoI8xBSACfa71X4OK2XoP7Mf3X6VHjpEUH
+X/gAoLkJZExWOASMHhyJWjO0T2DhRBZm
+=rO3u
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__28_May_2010_10_56_13_+1000_ousfok09jR.IxZ6/--
+--Signature=_Fri__28_May_2010_10_57_19_+1000_bB8D7b4aL/bCa0jj--
