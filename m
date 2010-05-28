@@ -1,64 +1,102 @@
-From: Richard Purdie <rpurdie@rpsys.net>
-Subject: Re: linux-next: build failure after merge of the final tree (leds
- tree related)
-Date: Fri, 28 May 2010 08:41:12 +0100
-Message-ID: <1275032472.24079.1466.camel@rex>
-References: <20100527151656.889b5977.sfr@canb.auug.org.au>
-	 <1274960190.1931.429.camel@pasglop> <1274965644.24079.1427.camel@rex>
-	 <20100528013549.9c17f6e4.sfr@canb.auug.org.au>
-	 <20100528101157.aff693f4.sfr@canb.auug.org.au>
+From: Steven Rostedt <srostedt@redhat.com>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (linus' tree related)
+Date: Fri, 28 May 2010 08:50:57 -0400
+Message-ID: <1275051057.13426.46.camel@localhost.localdomain>
+References: <20100528150842.d5a751ba.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 93-97-173-237.zone5.bethere.co.uk ([93.97.173.237]:54151 "EHLO
-	tim.rpsys.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754636Ab0E1HmM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 28 May 2010 03:42:12 -0400
-In-Reply-To: <20100528101157.aff693f4.sfr@canb.auug.org.au>
+Received: from mx1.redhat.com ([209.132.183.28]:42958 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753412Ab0E1MwD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 28 May 2010 08:52:03 -0400
+In-Reply-To: <20100528150842.d5a751ba.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bjarke Istrup Pedersen <gurligebis@gentoo.org>, Randy Dunlap <randy.dunlap@oracle.com>, Alessandro Zummo <a.zummo@towertech.it>, Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, ppc-dev <linuxppc-dev@lists.ozlabs.org>, paulus@samba.org, Anton Blanchard ZZ <anton@samba.org>
 
-On Fri, 2010-05-28 at 10:11 +1000, Stephen Rothwell wrote:
-> On Fri, 28 May 2010 01:35:49 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > On Thu, 27 May 2010 14:07:24 +0100 Richard Purdie <rpurdie@rpsys.net> wrote:
-> > >
-> > > On Thu, 2010-05-27 at 21:36 +1000, Benjamin Herrenschmidt wrote:
-> > > > On Thu, 2010-05-27 at 15:16 +1000, Stephen Rothwell wrote:
-> > > > > 
-> > > > > drivers/leds/leds-net5501.c:20:23: error: asm/geode.h: No such file or directory
-> > > > > drivers/leds/leds-net5501.c: In function 'soekris_init':
-> > > > > drivers/leds/leds-net5501.c:63: error: implicit declaration of function 'is_geode'
-> > > > 
-> > > > Looks like something is missing an ifdef CONFIG_X86 :-)
-> > > 
-> > > Right, that driver/board is x86 only. I've pushed a fix.
-> > > 
-> > > > > Caused by commit 14e40f644b020d473415342461b7c62e3bb5e312 ("leds: Add LED
-> > > > > driver for the Soekris net5501 board").  Presumably only tested on x86?
-> > > > > 
-> > > > > drivers/leds/leds-gpio.c: In function 'of_gpio_leds_probe':
-> > > > > drivers/leds/leds-gpio.c:253: error: 'struct gpio_led' has no member named 'blinking'
-> > > > > 
-> > > > > Caused by commit 2146325df2c2640059a9e064890c30c6e259b458 ("leds:
-> > > > > leds-gpio: Change blink_set callback to be able to turn off blinking").
-> > > 
-> > > This error looks like its from Ben's patch, probably when openfirmware
-> > > is enabled. I've queued a fix for this too:
-> > > 
-> > > http://git.o-hand.com/cgit.cgi/linux-rpurdie-leds/commit/?id=a4b4433c511cf4361bb0afabba69e16632002d32
-> > 
-> > Great, thanks.
+On Fri, 2010-05-28 at 15:08 +1000, Stephen Rothwell wrote:
+> Hi Steven,
 > 
-> Except, of course, Linus has merged the broken tree without the fixes :-(
+> After merging the final tree, today's linux-next build (powerpc allyesconfig) failed like this:
 > 
-> Oh, well.
+> arch/powerpc/platforms/pseries/hvCall_inst.c: In function 'hcall_inst_init':
+> arch/powerpc/platforms/pseries/hvCall_inst.c:143: warning: passing argument 1 of 'register_trace_hcall_entry' from incompatible pointer type
+> arch/powerpc/include/asm/trace.h:100: note: expected 'void (*)(void *, long unsigned int,  long unsigned int *)' but argument is of type 'void (*)(long unsigned int,  long unsigned int *)'
+> arch/powerpc/platforms/pseries/hvCall_inst.c:143: error: too few arguments to function 'register_trace_hcall_entry'
+> arch/powerpc/platforms/pseries/hvCall_inst.c:146: warning: passing argument 1 of 'register_trace_hcall_exit' from incompatible pointer type
+> arch/powerpc/include/asm/trace.h:122: note: expected 'void (*)(void *, long unsigned int,  long unsigned int,  long unsigned int *)' but argument is of type 'void (*)(long unsigned int,  long unsigned int,  long unsigned int *)'
+> arch/powerpc/platforms/pseries/hvCall_inst.c:146: error: too few arguments to function 'register_trace_hcall_exit'
+> arch/powerpc/platforms/pseries/hvCall_inst.c:147: warning: passing argument 1 of 'unregister_trace_hcall_entry' from incompatible pointer type
+> arch/powerpc/include/asm/trace.h:100: note: expected 'void (*)(void *, long unsigned int,  long unsigned int *)' but argument is of type 'void (*)(long unsigned int,  long unsigned int *)'
+> arch/powerpc/platforms/pseries/hvCall_inst.c:147: error: too few arguments to function 'unregister_trace_hcall_entry'
+> 
+> Probably caused by commit 38516ab59fbc5b3bb278cf5e1fe2867c70cff32e
+> ("tracing: Let tracepoints have data passed to tracepoint callbacks").
+> 
+> I applied this patch which builds (but may be incorrect).
+> 
 
-At least we have fixes, I've asked him to pull them.
+Looks good to me.
 
-Cheers,
+Acked-by: Steven Rostedt <rostedt@goodmis.org>
 
-Richard
+-- Steve
+
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 28 May 2010 15:05:00 +1000
+> Subject: [PATCH] tracing: fix for tracepoint API change
+> 
+> Commit 38516ab59fbc5b3bb278cf5e1fe2867c70cff32e "tracing: Let tracepoints
+> have data passed to tracepoint callbacks" requires this fixup to the
+> powerpc code.
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  arch/powerpc/platforms/pseries/hvCall_inst.c |   10 +++++-----
+>  1 files changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/powerpc/platforms/pseries/hvCall_inst.c b/arch/powerpc/platforms/pseries/hvCall_inst.c
+> index 1fefae7..e19ff02 100644
+> --- a/arch/powerpc/platforms/pseries/hvCall_inst.c
+> +++ b/arch/powerpc/platforms/pseries/hvCall_inst.c
+> @@ -102,7 +102,7 @@ static const struct file_operations hcall_inst_seq_fops = {
+>  #define CPU_NAME_BUF_SIZE	32
+>  
+> 
+> -static void probe_hcall_entry(unsigned long opcode, unsigned long *args)
+> +static void probe_hcall_entry(void *ignored, unsigned long opcode, unsigned long *args)
+>  {
+>  	struct hcall_stats *h;
+>  
+> @@ -114,7 +114,7 @@ static void probe_hcall_entry(unsigned long opcode, unsigned long *args)
+>  	h->purr_start = mfspr(SPRN_PURR);
+>  }
+>  
+> -static void probe_hcall_exit(unsigned long opcode, unsigned long retval,
+> +static void probe_hcall_exit(void *ignored, unsigned long opcode, unsigned long retval,
+>  			     unsigned long *retbuf)
+>  {
+>  	struct hcall_stats *h;
+> @@ -140,11 +140,11 @@ static int __init hcall_inst_init(void)
+>  	if (!firmware_has_feature(FW_FEATURE_LPAR))
+>  		return 0;
+>  
+> -	if (register_trace_hcall_entry(probe_hcall_entry))
+> +	if (register_trace_hcall_entry(probe_hcall_entry, NULL))
+>  		return -EINVAL;
+>  
+> -	if (register_trace_hcall_exit(probe_hcall_exit)) {
+> -		unregister_trace_hcall_entry(probe_hcall_entry);
+> +	if (register_trace_hcall_exit(probe_hcall_exit, NULL)) {
+> +		unregister_trace_hcall_entry(probe_hcall_entry, NULL);
+>  		return -EINVAL;
+>  	}
+>  
+> -- 
+> 1.7.1
+> 
+> 
