@@ -1,56 +1,54 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Jens Axboe <jaxboe@fusionio.com>
 Subject: Re: linux-next: manual merge of the drbd tree with Linus' tree
-Date: Tue, 1 Jun 2010 20:35:23 +1000
-Message-ID: <20100601203523.961409da.sfr@canb.auug.org.au>
-References: <20100601141324.edf41f7f.sfr@canb.auug.org.au>
-	<20100601081823.GA29991@infradead.org>
-	<20100601182213.479a777e.sfr@canb.auug.org.au>
-	<20100601083126.GB3564@kernel.dk>
-	<20100601184237.5755044d.sfr@canb.auug.org.au>
-	<20100601085311.GD3564@kernel.dk>
+Date: Tue, 1 Jun 2010 12:45:15 +0200
+Message-ID: <20100601104515.GM3564@kernel.dk>
+References: <20100601141324.edf41f7f.sfr@canb.auug.org.au> <20100601081823.GA29991@infradead.org> <20100601182213.479a777e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__1_Jun_2010_20_35_23_+1000_70QV=xUZYyjdOO_U"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41678 "EHLO smtps.tip.net.au"
+Received: from 0122700014.0.fullrate.dk ([95.166.99.235]:44044 "EHLO kernel.dk"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751783Ab0FAKff (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 1 Jun 2010 06:35:35 -0400
-In-Reply-To: <20100601085311.GD3564@kernel.dk>
+	id S1753718Ab0FAKpQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 1 Jun 2010 06:45:16 -0400
+Content-Disposition: inline
+In-Reply-To: <20100601182213.479a777e.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <jaxboe@fusionio.com>
-Cc: Christoph Hellwig <hch@infradead.org>, Philipp Reisner <philipp.reisner@linbit.com>, "drbd-dev@linbit.com" <drbd-dev@linbit.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Julia Lawall <julia@diku.dk>, Al Viro <viro@zeniv.linux.org.uk>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Christoph Hellwig <hch@infradead.org>, Philipp Reisner <philipp.reisner@linbit.com>, drbd-dev@linbit.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>, Al Viro <viro@zeniv.linux.org.uk>
 
---Signature=_Tue__1_Jun_2010_20_35_23_+1000_70QV=xUZYyjdOO_U
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jun 01 2010, Stephen Rothwell wrote:
+> [Replacing Jens' Oracle address ...]
+> 
+> Hi Christoph,
+> 
+> On Tue, 1 Jun 2010 04:18:23 -0400 Christoph Hellwig <hch@infradead.org> wrote:
+> >
+> > On Tue, Jun 01, 2010 at 02:13:24PM +1000, Stephen Rothwell wrote:
+> > > Hi all,
+> > > 
+> > > Today's linux-next merge of the drbd tree got a conflict in fs/pipe.c
+> > > between commit cc967be54710d97c05229b2e5ba2d00df84ddd64 ("fs: Add missing
+> > > mutex_unlock") from Linus' tree and commits
+> > > 0191f8697bbdfefcd36e7b8dc3eeddfe82893e4b ("pipe: F_SETPIPE_SZ should
+> > > return -EPERM for non-root") and b9598db3401282bb27b4aef77e3eee12015f7f29
+> > > ("pipe: make F_{GET,SET}PIPE_SZ deal with byte sizes") from the drbd tree.
+> > > 
+> > > I fixed it up (see below) and can carry the fix for a while.
+> > 
+> > Why is the drbd tree touching fs/pipe.c anyway?
+> 
+> It is based on the block tree.  I assume that it is currently based on a
+> version of the block tree that Jens has not yet pushed into
+> linux-next.  :-(
 
-Hi Jens,
+So the pipe patches were the same, the problem was that a fix for a
+missing pipe_unlock() had gone into mainline and for-linus/for-next
+weren't synced up to that. I'm guessing you pull drbd before for-next
+and that is why it showed up there.
 
-On Tue, 1 Jun 2010 10:53:11 +0200 Jens Axboe <jaxboe@fusionio.com> wrote:
->
-> Either one will work fine, but axboe@kernel.dk goes directly here so
-> just use that.
+BTW, I would recommend moving for-next from the block tree up before any
+potential other trees being based off it if that is the case.
 
-OK, thanks
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__1_Jun_2010_20_35_23_+1000_70QV=xUZYyjdOO_U
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkwE4msACgkQjjKRsyhoI8wqPACeNdu8vpoLBGuZphZyJurorQ/H
-34cAnArq7fAY5ARqnQKFYeyEgEzu5ajo
-=GY+R
------END PGP SIGNATURE-----
-
---Signature=_Tue__1_Jun_2010_20_35_23_+1000_70QV=xUZYyjdOO_U--
+-- 
+Jens Axboe
