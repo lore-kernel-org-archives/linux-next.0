@@ -1,48 +1,85 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the rr tree
-Date: Tue, 1 Jun 2010 13:11:47 +1000
-Message-ID: <20100601131147.4c2de43b.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Subject: linux-next: manual merge of the drbd tree with Linus'
+	tree
+Date: Tue, 1 Jun 2010 14:13:24 +1000
+Message-ID: <20100601141324.edf41f7f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__1_Jun_2010_13_11_47_+1000_Lv/tyLO7cYb8uJyR"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org>
+List-Unsubscribe: <http://lists.linbit.com/mailman/options/drbd-dev>,
+	<mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linbit.com/pipermail/drbd-dev>
+List-Post: <mailto:drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org>
+List-Help: <mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.linbit.com/mailman/listinfo/drbd-dev>,
+	<mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=subscribe>
+Sender: drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
+Errors-To: drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
+To: Philipp Reisner <philipp.reisner-63ez5xqkn6DQT0dZR+AlfA@public.gmane.org>, drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
+Cc: Jens Axboe <jens.axboe-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Julia Lawall <julia-dAYI7NvHqcQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Al Viro <viro-RmSDqhL/yNMiFSDQTTA3OLVCufUGDwFn@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__1_Jun_2010_13_11_47_+1000_Lv/tyLO7cYb8uJyR
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-Hi Rusty,
+Today's linux-next merge of the drbd tree got a conflict in fs/pipe.c
+between commit cc967be54710d97c05229b2e5ba2d00df84ddd64 ("fs: Add missing
+mutex_unlock") from Linus' tree and commits
+0191f8697bbdfefcd36e7b8dc3eeddfe82893e4b ("pipe: F_SETPIPE_SZ should
+return -EPERM for non-root") and b9598db3401282bb27b4aef77e3eee12015f7f29
+("pipe: make F_{GET,SET}PIPE_SZ deal with byte sizes") from the drbd tree.
 
-After merging the rr tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
-
-kernel/module.c: In function 'SYSC_delete_module':
-kernel/module.c:787: error: label 'out_stop' used but not defined
-
-Caused by commit b50e0d273194c53851fbf6d119047a9b742c49c6
-("module:reduce-locking").
-
-I have used the rr tree from next-20100531 for today.
---=20
+I fixed it up (see below) and can carry the fix for a while.
+-- 
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Stephen Rothwell                    sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
 
---Signature=_Tue__1_Jun_2010_13_11_47_+1000_Lv/tyLO7cYb8uJyR
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkwEenMACgkQjjKRsyhoI8wSMACgrOlCKMrouEK2kmX/6clJJZKJ
-cMMAn1utsYA09fwgVKpIo2zz8xuVm9O1
-=4Z9b
------END PGP SIGNATURE-----
-
---Signature=_Tue__1_Jun_2010_13_11_47_+1000_Lv/tyLO7cYb8uJyR--
+diff --cc fs/pipe.c
+index db6eaab,bdd3f96..0000000
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@@ -1174,23 -1162,30 +1168,34 @@@ long pipe_fcntl(struct file *file, unsi
+  	mutex_lock(&pipe->inode->i_mutex);
+  
+  	switch (cmd) {
+- 	case F_SETPIPE_SZ:
+- 		if (!capable(CAP_SYS_ADMIN) && arg > pipe_max_pages) {
+- 			ret = -EINVAL;
++ 	case F_SETPIPE_SZ: {
++ 		unsigned long nr_pages;
++ 
++ 		/*
++ 		 * Currently the array must be a power-of-2 size, so adjust
++ 		 * upwards if needed.
++ 		 */
++ 		nr_pages = (arg + PAGE_SIZE - 1) >> PAGE_SHIFT;
++ 		nr_pages = roundup_pow_of_two(nr_pages);
++ 
+ -		if (!capable(CAP_SYS_ADMIN) && nr_pages > pipe_max_pages)
+ -			return -EPERM;
+++		if (!capable(CAP_SYS_ADMIN) && nr_pages > pipe_max_pages) {
+++			ret = -EPERM;
+ +			goto out;
+ +		}
++ 
+  		/*
+  		 * The pipe needs to be at least 2 pages large to
+  		 * guarantee POSIX behaviour.
+  		 */
+- 		if (arg < 2) {
+ -		if (nr_pages < 2)
+ -			return -EINVAL;
+++		if (nr_pages < 2) {
+ +			ret = -EINVAL;
+ +			goto out;
+ +		}
+- 		ret = pipe_set_size(pipe, arg);
++ 		ret = pipe_set_size(pipe, nr_pages);
+  		break;
++ 		}
+  	case F_GETPIPE_SZ:
+- 		ret = pipe->buffers;
++ 		ret = pipe->buffers * PAGE_SIZE;
+  		break;
+  	default:
+  		ret = -EINVAL;
