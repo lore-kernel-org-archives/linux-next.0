@@ -1,34 +1,32 @@
-From: Andi Kleen <andi@firstfloor.org>
-Subject: Re: linux-next: build failure after merge of the hwpoison tree
-Date: Tue, 1 Jun 2010 09:22:33 +0200
-Message-ID: <20100601072233.GB30556@basil.fritz.box>
-References: <20100601160050.91404d78.sfr@canb.auug.org.au>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: linux-next: manual merge of the drbd tree with Linus' tree
+Date: Tue, 1 Jun 2010 04:18:23 -0400
+Message-ID: <20100601081823.GA29991@infradead.org>
+References: <20100601141324.edf41f7f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from one.firstfloor.org ([213.235.205.2]:56862 "EHLO
-	one.firstfloor.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753482Ab0FAHWf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Jun 2010 03:22:35 -0400
+Received: from bombadil.infradead.org ([18.85.46.34]:45973 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753104Ab0FAIS3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Jun 2010 04:18:29 -0400
 Content-Disposition: inline
-In-Reply-To: <20100601160050.91404d78.sfr@canb.auug.org.au>
+In-Reply-To: <20100601141324.edf41f7f.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andi Kleen <andi@firstfloor.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc: Philipp Reisner <philipp.reisner@linbit.com>, drbd-dev@linbit.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>, Al Viro <viro@zeniv.linux.org.uk>, Jens Axboe <jens.axboe@oracle.com>
 
-On Tue, Jun 01, 2010 at 04:00:50PM +1000, Stephen Rothwell wrote:
-> Hi Andi,
+On Tue, Jun 01, 2010 at 02:13:24PM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> After merging the hwpoison tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+> Today's linux-next merge of the drbd tree got a conflict in fs/pipe.c
+> between commit cc967be54710d97c05229b2e5ba2d00df84ddd64 ("fs: Add missing
+> mutex_unlock") from Linus' tree and commits
+> 0191f8697bbdfefcd36e7b8dc3eeddfe82893e4b ("pipe: F_SETPIPE_SZ should
+> return -EPERM for non-root") and b9598db3401282bb27b4aef77e3eee12015f7f29
+> ("pipe: make F_{GET,SET}PIPE_SZ deal with byte sizes") from the drbd tree.
 > 
-> ERROR: "PageHuge" [mm/hwpoison-inject.ko] undefined!
+> I fixed it up (see below) and can carry the fix for a while.
 
-Thanks Stephen. I pushed out an updated tree including
-the missing EXPORT_SYMBOL. So hopefully tomorrow it will
-work.
-
--Andi
--- 
-ak@linux.intel.com -- Speaking for myself only.
+Why is the drbd tree touching fs/pipe.c anyway?
