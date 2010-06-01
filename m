@@ -1,28 +1,56 @@
-From: Jens Axboe <jaxboe@fusionio.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: manual merge of the drbd tree with Linus' tree
-Date: Tue, 1 Jun 2010 10:36:13 +0200
-Message-ID: <20100601083613.GC3564@kernel.dk>
-References: <20100601141324.edf41f7f.sfr@canb.auug.org.au> <20100601081823.GA29991@infradead.org> <20100601082246.GA3564@kernel.dk> <20100601083244.GA2496@infradead.org>
+Date: Tue, 1 Jun 2010 18:42:37 +1000
+Message-ID: <20100601184237.5755044d.sfr@canb.auug.org.au>
+References: <20100601141324.edf41f7f.sfr@canb.auug.org.au>
+	<20100601081823.GA29991@infradead.org>
+	<20100601182213.479a777e.sfr@canb.auug.org.au>
+	<20100601083126.GB3564@kernel.dk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__1_Jun_2010_18_42_37_+1000_c.=IpPumQ2AMbmhA"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 0122700014.0.fullrate.dk ([95.166.99.235]:51737 "EHLO kernel.dk"
+Received: from chilli.pcug.org.au ([203.10.76.44]:50417 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753328Ab0FAIgP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 1 Jun 2010 04:36:15 -0400
-Content-Disposition: inline
-In-Reply-To: <20100601083244.GA2496@infradead.org>
+	id S1751696Ab0FAImo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 1 Jun 2010 04:42:44 -0400
+In-Reply-To: <20100601083126.GB3564@kernel.dk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Philipp Reisner <philipp.reisner@linbit.com>, "drbd-dev@linbit.com" <drbd-dev@linbit.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Julia Lawall <julia@diku.dk>, Al Viro <viro@zeniv.linux.org.uk>
+To: Jens Axboe <jaxboe@fusionio.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Philipp Reisner <philipp.reisner@linbit.com>, drbd-dev@linbit.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Julia Lawall <julia@diku.dk>, Al Viro <viro@zeniv.linux.org.uk>
 
-On Tue, Jun 01 2010, Christoph Hellwig wrote:
-> Talking about the block tree: can we please get the two writeback
-> reverts in?  -rc1 is copletly unsuable under heavy I/O loads as it
-> stands.
+--Signature=_Tue__1_Jun_2010_18_42_37_+1000_c.=IpPumQ2AMbmhA
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes, it'll go out today, it was supposed to land in -rc1 :/
+Hi Jens,
 
--- 
-Jens Axboe
+On Tue, 1 Jun 2010 10:31:26 +0200 Jens Axboe <jaxboe@fusionio.com> wrote:
+>
+> Just checked, and it is indeed for-next that is behind... Will update
+> it.
+
+Thanks.
+
+BTW, what email address should I now use for you?
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__1_Jun_2010_18_42_37_+1000_c.=IpPumQ2AMbmhA
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkwEx/0ACgkQjjKRsyhoI8xjMgCgjAUDes27DOEWr8mv6FVYK4Mm
+P5YAn1yTatkARupBsKiRIS+mrwfFdRoX
+=Nenz
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__1_Jun_2010_18_42_37_+1000_c.=IpPumQ2AMbmhA--
