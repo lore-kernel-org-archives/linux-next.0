@@ -1,49 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the rr tree
-Date: Wed, 2 Jun 2010 12:03:45 +1000
-Message-ID: <20100602120345.e530c53b.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drbd tree with the block tree
+Date: Wed, 2 Jun 2010 14:03:22 +1000
+Message-ID: <20100602140322.7e374a2e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__2_Jun_2010_12_03_45_+1000_z/Kb8XemOpJ9tjpI"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Wed__2_Jun_2010_14_03_22_+1000_qmgOgDBi0rK_YRSd"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:39447 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750828Ab0FBED3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 2 Jun 2010 00:03:29 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Philipp Reisner <philipp.reisner@linbit.com>, drbd-dev@linbit.com
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
 
---Signature=_Wed__2_Jun_2010_12_03_45_+1000_z/Kb8XemOpJ9tjpI
+--Signature=_Wed__2_Jun_2010_14_03_22_+1000_qmgOgDBi0rK_YRSd
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rusty,
+Hi all,
 
-After merging the rr tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+Today's linux-next merge of the drbd tree got a conflict in
+fs/fs-writeback.c between commit f17625b318d9b151e7bd41e31223e9d89b2aaa77
+("Revert "writeback: ensure that WB_SYNC_NONE writeback with sb pinned is
+sync"") from the block tree and commits
+5c92877730b509fefc445bbba6b3bc441c2c272a ("writeback: fix early free of
+work struct") and dff38fd3d1d0914ac0715445bbe21fbce9abed15 ("writeback:
+fix non-integrity write-back") from the drbd tree.
 
-kernel/debug/kdb/kdb_main.c: In function 'kdb_lsmod':
-kernel/debug/kdb/kdb_main.c:1897: error: 'struct module' has no member name=
-d 'modules_which_use_me'
-kernel/debug/kdb/kdb_main.c:1897: error: 'struct module' has no member name=
-d 'modules_which_use_me'
-
-I have used the rr tree from next-20100531 again for today.
-
+I suspect this is caused because the drbd tree id based on a different
+version of the block tree to what is in the block tree for-next branch.
+I just used the version of this file from the block tree.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__2_Jun_2010_12_03_45_+1000_z/Kb8XemOpJ9tjpI
+--Signature=_Wed__2_Jun_2010_14_03_22_+1000_qmgOgDBi0rK_YRSd
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkwFvAEACgkQjjKRsyhoI8yJsACdGW3o06xftpv76GBns9TTHeg/
-xl0AnR/b6m0SCt7RAYXiR9RVElgnhjm+
-=XYLr
+iEYEARECAAYFAkwF2AoACgkQjjKRsyhoI8y7WwCdHpBjAr/Jr/EGUhwowhgFPrz8
+qEgAoLfPWJrydOrd+3Mvqdk6I9nVWc7i
+=RKTC
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__2_Jun_2010_12_03_45_+1000_z/Kb8XemOpJ9tjpI--
+--Signature=_Wed__2_Jun_2010_14_03_22_+1000_qmgOgDBi0rK_YRSd--
