@@ -1,68 +1,131 @@
-From: "Guy, Wey-Yi" <wey-yi.w.guy-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: Re: linux-next: Tree for June 3 (iwlwifi)
-Date: Thu, 03 Jun 2010 10:42:03 -0700
-Message-ID: <1275586923.16009.0.camel@wwguy-ubuntu>
-References: <20100603134753.710a64b3.sfr@canb.auug.org.au>
-	 <20100603085501.ac113779.randy.dunlap@oracle.com>
-	 <20100603172114.GA14597@tuxdriver.com>
+From: Anirban Chakraborty <anirban.chakraborty@qlogic.com>
+Subject: [PATCH net-next-2.6] qlcnic: Fix Compilation Issue when CONFIG_INET
+ was not set
+Date: Thu, 3 Jun 2010 10:50:56 -0700
+Message-ID: <alpine.OSX.2.00.1006031034500.48386@macintosh-2.qlogic.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20100603172114.GA14597-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>
-Cc: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, "linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Chatre, Reinette" <reinette.chatre-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="US-ASCII"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from avexcashub1.qlogic.com ([198.70.193.61]:22593 "EHLO
+	avexcashub1.qlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754052Ab0FCRvI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Jun 2010 13:51:08 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org, netdev <netdev@vger.kernel.org>
+Cc: Ameen Rahman <ameen.rahman@qlogic.com>, Amit Salecha <amit.salecha@qlogic.com>
 
-Hi John,
+Please apply.
 
-On Thu, 2010-06-03 at 10:21 -0700, John W. Linville wrote:
-> On Thu, Jun 03, 2010 at 08:55:01AM -0700, Randy Dunlap wrote:
-> > On Thu, 3 Jun 2010 13:47:53 +1000 Stephen Rothwell wrote:
-> > 
-> > > Hi all,
-> > > 
-> > > Changes since 20100602:
-> > 
-> > 
-> > when CONFIG_IWLAGN=n:
-> > 
-> > drivers/net/wireless/iwlwifi/iwl-rx.c:254: error: 'struct iwl_priv' has no member named '_agn'
-> > drivers/net/wireless/iwlwifi/iwl-rx.c:303: error: 'struct iwl_priv' has no member named '_agn'
-> > drivers/net/wireless/iwlwifi/iwl-rx.c:304: error: 'struct iwl_priv' has no member named '_agn'
-> > drivers/net/wireless/iwlwifi/iwl-rx.c:305: error: 'struct iwl_priv' has no member named '_agn'
-> > drivers/net/wireless/iwlwifi/iwl-rx.c:306: error: 'struct iwl_priv' has no member named '_agn'
-> > 
-> > and many more.
-> > 
-> > Haven't we seen this movie before?
-> 
-> Ugh...caused be this:
-> 
-> commit a2064b7a4a22d118087898e4308670da7ac07911
-> Author: Wey-Yi Guy <wey-yi.w.guy-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-> Date:   Fri Apr 30 14:21:48 2010 -0700
-> 
->     iwlwifi: move _agn statistics related structure
->     
->     agn and 3945 has different statistics_notif data structure; since 3945
->     has it statistics_notif data structure inside the _3945 portion of
->     iwl_priv, it make sense to move the agn statistics_notif into _agn portion.
->     
->     Signed-off-by: Wey-Yi Guy <wey-yi.w.guy-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
->     Signed-off-by: Reinette Chatre <reinette.chatre-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-> 
-> Since iwl-rx.o is part of iwlcore.ko, this change seems wrong.
-> Reinette, any reason why I shouldn't just revert it?
-> 
-Sorry for the mistake, please revert it and I will fix the issue and
-re-submit.
+thanks,
+Anirban
 
-Thanks
-Wey
+Original code was placed incorrectly inside a block of code marked
+with CONFIG_INET directive. Fix by moving it outside.
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Anirban Chakraborty <anirban.chakraborty@qlogic.com>
+---
+ drivers/net/qlcnic/qlcnic_main.c |   81 +++++++++++++++++++-------------------
+ 1 files changed, 40 insertions(+), 41 deletions(-)
+
+diff --git a/drivers/net/qlcnic/qlcnic_main.c b/drivers/net/qlcnic/qlcnic_main.c
+index 119bcae..99371bc 100644
+--- a/drivers/net/qlcnic/qlcnic_main.c
++++ b/drivers/net/qlcnic/qlcnic_main.c
+@@ -2581,6 +2581,46 @@ reschedule:
+ 	qlcnic_schedule_work(adapter, qlcnic_fw_poll_work, FW_POLL_DELAY);
+ }
+ 
++static int
++qlcnicvf_start_firmware(struct qlcnic_adapter *adapter)
++{
++	int err;
++
++	err = qlcnic_can_start_firmware(adapter);
++	if (err)
++		return err;
++
++	qlcnic_check_options(adapter);
++
++	adapter->need_fw_reset = 0;
++
++	return err;
++}
++
++static int
++qlcnicvf_config_bridged_mode(struct qlcnic_adapter *adapter, u32 enable)
++{
++	return -EOPNOTSUPP;
++}
++
++static int
++qlcnicvf_config_led(struct qlcnic_adapter *adapter, u32 state, u32 rate)
++{
++	return -EOPNOTSUPP;
++}
++
++static int
++qlcnicvf_set_ilb_mode(struct qlcnic_adapter *adapter)
++{
++	return -EOPNOTSUPP;
++}
++
++static void
++qlcnicvf_clear_ilb_mode(struct qlcnic_adapter *adapter)
++{
++	return;
++}
++
+ static ssize_t
+ qlcnic_store_bridged_mode(struct device *dev,
+ 		struct device_attribute *attr, const char *buf, size_t len)
+@@ -2954,47 +2994,6 @@ done:
+ 	return NOTIFY_DONE;
+ }
+ 
+-static int
+-qlcnicvf_start_firmware(struct qlcnic_adapter *adapter)
+-{
+-	int err;
+-
+-	err = qlcnic_can_start_firmware(adapter);
+-	if (err)
+-		return err;
+-
+-	qlcnic_check_options(adapter);
+-
+-	adapter->need_fw_reset = 0;
+-
+-	return err;
+-}
+-
+-static int
+-qlcnicvf_config_bridged_mode(struct qlcnic_adapter *adapter, u32 enable)
+-{
+-	return -EOPNOTSUPP;
+-}
+-
+-static int
+-qlcnicvf_config_led(struct qlcnic_adapter *adapter, u32 state, u32 rate)
+-{
+-	return -EOPNOTSUPP;
+-}
+-
+-static int
+-qlcnicvf_set_ilb_mode(struct qlcnic_adapter *adapter)
+-{
+-	return -EOPNOTSUPP;
+-}
+-
+-static void
+-qlcnicvf_clear_ilb_mode(struct qlcnic_adapter *adapter)
+-{
+-	return;
+-}
+-
+-
+ static struct notifier_block	qlcnic_netdev_cb = {
+ 	.notifier_call = qlcnic_netdev_event,
+ };
+-- 
+1.6.0.2
