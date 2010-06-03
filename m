@@ -1,62 +1,43 @@
-From: "John W. Linville" <linville@tuxdriver.com>
-Subject: Re: linux-next: Tree for June 3 (iwlwifi)
-Date: Thu, 3 Jun 2010 13:21:15 -0400
-Message-ID: <20100603172114.GA14597@tuxdriver.com>
+From: Anirban Chakraborty <anirban.chakraborty@qlogic.com>
+Subject: Re: linux-next: Tree for June 3 (qlcnic)
+Date: Thu, 3 Jun 2010 10:31:40 -0700
+Message-ID: <4A3D4210-F6CF-4D74-A21A-F6AA4A287445@qlogic.com>
 References: <20100603134753.710a64b3.sfr@canb.auug.org.au>
- <20100603085501.ac113779.randy.dunlap@oracle.com>
+ <20100603084618.387a39fa.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:55947 "EHLO
-	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753403Ab0FCRaL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Jun 2010 13:30:11 -0400
-Content-Disposition: inline
-In-Reply-To: <20100603085501.ac113779.randy.dunlap@oracle.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20100603084618.387a39fa.randy.dunlap@oracle.com>
+Content-Language: en-US
+Sender: netdev-owner@vger.kernel.org
 To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-wireless@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, reinette.chatre@intel.com
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, netdev <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Linux Driver <Linux-Driver@qlogic.com>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Jun 03, 2010 at 08:55:01AM -0700, Randy Dunlap wrote:
+
+On Jun 3, 2010, at 8:46 AM, Randy Dunlap wrote:
+
 > On Thu, 3 Jun 2010 13:47:53 +1000 Stephen Rothwell wrote:
 > 
-> > Hi all,
-> > 
-> > Changes since 20100602:
+>> Hi all,
+>> 
+>> Changes since 20100602:
 > 
 > 
-> when CONFIG_IWLAGN=n:
+> when CONFIG_INET=n:
 > 
-> drivers/net/wireless/iwlwifi/iwl-rx.c:254: error: 'struct iwl_priv' has no member named '_agn'
-> drivers/net/wireless/iwlwifi/iwl-rx.c:303: error: 'struct iwl_priv' has no member named '_agn'
-> drivers/net/wireless/iwlwifi/iwl-rx.c:304: error: 'struct iwl_priv' has no member named '_agn'
-> drivers/net/wireless/iwlwifi/iwl-rx.c:305: error: 'struct iwl_priv' has no member named '_agn'
-> drivers/net/wireless/iwlwifi/iwl-rx.c:306: error: 'struct iwl_priv' has no member named '_agn'
+> ERROR: "qlcnicvf_set_ilb_mode" [drivers/net/qlcnic/qlcnic.ko] undefined!
+> ERROR: "qlcnicvf_config_bridged_mode" [drivers/net/qlcnic/qlcnic.ko] undefined!
+> ERROR: "qlcnicvf_config_led" [drivers/net/qlcnic/qlcnic.ko] undefined!
+> ERROR: "qlcnicvf_clear_ilb_mode" [drivers/net/qlcnic/qlcnic.ko] undefined!
+> ERROR: "qlcnicvf_start_firmware" [drivers/net/qlcnic/qlcnic.ko] undefined!
 > 
-> and many more.
+> full config is attached.
 > 
-> Haven't we seen this movie before?
 
-Ugh...caused be this:
+Sorry about that. I will send fix right away.
 
-commit a2064b7a4a22d118087898e4308670da7ac07911
-Author: Wey-Yi Guy <wey-yi.w.guy@intel.com>
-Date:   Fri Apr 30 14:21:48 2010 -0700
+thanks,
+Anirban
 
-    iwlwifi: move _agn statistics related structure
-    
-    agn and 3945 has different statistics_notif data structure; since 3945
-    has it statistics_notif data structure inside the _3945 portion of
-    iwl_priv, it make sense to move the agn statistics_notif into _agn portion.
-    
-    Signed-off-by: Wey-Yi Guy <wey-yi.w.guy@intel.com>
-    Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
-
-Since iwl-rx.o is part of iwlcore.ko, this change seems wrong.
-Reinette, any reason why I shouldn't just revert it?
-
-John
--- 
-John W. Linville		Someday the world will need a hero, and you
-linville@tuxdriver.com			might be all we have.  Be ready.
