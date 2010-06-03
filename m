@@ -1,41 +1,57 @@
-From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Subject: Re: linux-next: Tree for June 3 (iwlwifi)
-Date: Thu, 3 Jun 2010 08:55:01 -0700
-Message-ID: <20100603085501.ac113779.randy.dunlap@oracle.com>
-References: <20100603134753.710a64b3.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: boot failure with next-20100603
+Date: Fri, 4 Jun 2010 02:06:59 +1000
+Message-ID: <20100604020659.1be823cf.sfr@canb.auug.org.au>
+References: <20100603174251.226da45d.sfr@canb.auug.org.au>
+	<alpine.LFD.2.00.1006030748590.8175@i5.linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20100603134753.710a64b3.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__4_Jun_2010_02_06_59_+1000_JeIPZy87WEE=gZDO"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <alpine.LFD.2.00.1006030748590.8175@i5.linux-foundation.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, 3 Jun 2010 13:47:53 +1000 Stephen Rothwell wrote:
+--Signature=_Fri__4_Jun_2010_02_06_59_+1000_JeIPZy87WEE=gZDO
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi all,
-> 
-> Changes since 20100602:
+Hi Linus,
 
+On Thu, 3 Jun 2010 07:51:35 -0700 (PDT) Linus Torvalds <torvalds@linux-foun=
+dation.org> wrote:
+>
+> I can't read PPC oopses in my sleep the way I can do x86, and in=20
+> particular, I can't pinpoint that to the source code by just decoding the=
+=20
+> instructions and matching them against what I have. Do you have that=20
+> binary, and can you do a 'gdb vmlinux' on it, and then have gdb tell you=
+=20
+> where in load_module "load_module+0x990" and "load_module+0x958" are?
 
-when CONFIG_IWLAGN=n:
+I was hoping to avoid that :-)
 
-drivers/net/wireless/iwlwifi/iwl-rx.c:254: error: 'struct iwl_priv' has no member named '_agn'
-drivers/net/wireless/iwlwifi/iwl-rx.c:303: error: 'struct iwl_priv' has no member named '_agn'
-drivers/net/wireless/iwlwifi/iwl-rx.c:304: error: 'struct iwl_priv' has no member named '_agn'
-drivers/net/wireless/iwlwifi/iwl-rx.c:305: error: 'struct iwl_priv' has no member named '_agn'
-drivers/net/wireless/iwlwifi/iwl-rx.c:306: error: 'struct iwl_priv' has no member named '_agn'
+Rusty seems to have already figured out an obvious cause, so I will see
+if that fixes it tomorrow (later today).
 
-and many more.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Haven't we seen this movie before?
+--Signature=_Fri__4_Jun_2010_02_06_59_+1000_JeIPZy87WEE=gZDO
+Content-Type: application/pgp-signature
 
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkwH0yMACgkQjjKRsyhoI8zNlACfTPXLFBhMHGMKKJ0SGrlZoax2
+QssAn3rlGkLuKyuAZn7MGm8ecZ3WZBi/
+=IakR
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__4_Jun_2010_02_06_59_+1000_JeIPZy87WEE=gZDO--
