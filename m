@@ -1,56 +1,46 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH] staging/comedi: fixing ni_labpc to mite dependancy
-Date: Thu, 03 Jun 2010 09:21:53 -0700
-Message-ID: <4C07D6A1.1080906@oracle.com>
-References: <20100602151439.6de66132.sfr@canb.auug.org.au> <20100602100735.0812c063.randy.dunlap@oracle.com> <alpine.DEB.1.10.1006031545010.23736@blala.de>
+Subject: [PATCH -next] classmate-laptop: fix for RFKILL=m, CMPC=y
+Date: Thu, 3 Jun 2010 09:39:03 -0700
+Message-ID: <20100603093903.d9378c9a.randy.dunlap@oracle.com>
+References: <20100603134753.710a64b3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:28264 "EHLO
+Received: from rcsinet10.oracle.com ([148.87.113.121]:18642 "EHLO
 	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754329Ab0FCQYV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Jun 2010 12:24:21 -0400
-In-Reply-To: <alpine.DEB.1.10.1006031545010.23736@blala.de>
+	with ESMTP id S1753430Ab0FCQkq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Jun 2010 12:40:46 -0400
+In-Reply-To: <20100603134753.710a64b3.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexander Kurz <linux@blala.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Alexander Kurz <linux@kbdbabel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, gregkh@suse.de
+To: Stephen Rothwell <sfr@canb.auug.org.au>, platform-driver-x86@vger.kernel.org, Matthew Garrett <mjg@redhat.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>, Daniel Oliveira Nascimento <don@syst.com.br>
 
-On 06/03/10 04:50, Alexander Kurz wrote:
-> Hi,
->  the dependancy of ni_labpc on mite was missing,
->  it will be fixed with this patch
->  thanks for the report,
->  Alexander
-> 
-> From d310498ef2a61057c3f28b10bb417238f33e8265 Mon Sep 17 00:00:00 2001
-> From: Alexander Kurz <linux@kbdbabel.org>
-> Date: Thu, 3 Jun 2010 12:00:37 +0200
-> Subject: [PATCH] staging/comedi: fixing ni_labpc to mite dependancy
-> 
-> Signed-off-by: Alexander Kurz <linux@kbdbabel.org>
-> ---
->  drivers/staging/comedi/Kconfig |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/staging/comedi/Kconfig b/drivers/staging/comedi/Kconfig
-> index 0aa2b0d..79f5f2e 100644
-> --- a/drivers/staging/comedi/Kconfig
-> +++ b/drivers/staging/comedi/Kconfig
-> @@ -1272,6 +1272,7 @@ config COMEDI_NI_TIO
->  
->  config COMEDI_NI_LABPC
->  	tristate "NI Lab-PC and compatibles ISA and PCI support"
-> +	depends on COMEDI_MITE
->  	select COMEDI_8255
->  	select COMEDI_FC
->  	default N
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
+Fix build error when CONFIG_RFKILL=m and CONFIG_ACPI_CMPC=y:
+classmate-laptop should depend on RFKILL or RFKILL=n.
 
-thanks.
+classmate-laptop.c:(.text+0x1351fc): undefined reference to `rfkill_unregister'
+classmate-laptop.c:(.text+0x135204): undefined reference to `rfkill_destroy'
+classmate-laptop.c:(.text+0x135237): undefined reference to `rfkill_set_sw_state'
+classmate-laptop.c:(.text+0x1352b9): undefined reference to `rfkill_alloc'
+classmate-laptop.c:(.text+0x1352ca): undefined reference to `rfkill_register'
+classmate-laptop.c:(.text+0x1352d6): undefined reference to `rfkill_destroy'
 
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/platform/x86/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- linux-next-20100603.orig/drivers/platform/x86/Kconfig
++++ linux-next-20100603/drivers/platform/x86/Kconfig
+@@ -520,6 +520,7 @@ config TOSHIBA_BT_RFKILL
+ config ACPI_CMPC
+ 	tristate "CMPC Laptop Extras"
+ 	depends on X86 && ACPI
++	depends on RFKILL || RFKILL=n
+ 	select INPUT
+ 	select BACKLIGHT_CLASS_DEVICE
+ 	default n
