@@ -1,152 +1,71 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH net-next-2.6] qlcnic: Fix Compilation Issue when
- CONFIG_INET was not set
-Date: Thu, 3 Jun 2010 11:20:06 -0700
-Message-ID: <20100603112006.0827a847.randy.dunlap@oracle.com>
-References: <alpine.OSX.2.00.1006031034500.48386@macintosh-2.qlogic.org>
+From: reinette chatre <reinette.chatre@intel.com>
+Subject: Re: linux-next: Tree for June 3 (iwlwifi)
+Date: Thu, 03 Jun 2010 10:45:57 -0700
+Message-ID: <1275587157.2091.31847.camel@rchatre-DESK>
+References: <20100603134753.710a64b3.sfr@canb.auug.org.au>
+	 <20100603085501.ac113779.randy.dunlap@oracle.com>
+	 <20100603172114.GA14597@tuxdriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:62783 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751191Ab0FCSV2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Jun 2010 14:21:28 -0400
-In-Reply-To: <alpine.OSX.2.00.1006031034500.48386@macintosh-2.qlogic.org>
+Received: from mga11.intel.com ([192.55.52.93]:65316 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755000Ab0FCSoV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 3 Jun 2010 14:44:21 -0400
+In-Reply-To: <20100603172114.GA14597@tuxdriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Anirban Chakraborty <anirban.chakraborty@qlogic.com>
-Cc: linux-next@vger.kernel.org, netdev <netdev@vger.kernel.org>, Ameen Rahman <ameen.rahman@qlogic.com>, Amit Salecha <amit.salecha@qlogic.com>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "Guy, Wey-Yi W" <wey-yi.w.guy@intel.com>
 
-On Thu, 3 Jun 2010 10:50:56 -0700 Anirban Chakraborty wrote:
+Hi John,
 
-> Please apply.
+On Thu, 2010-06-03 at 10:21 -0700, John W. Linville wrote:
+> On Thu, Jun 03, 2010 at 08:55:01AM -0700, Randy Dunlap wrote:
+> > On Thu, 3 Jun 2010 13:47:53 +1000 Stephen Rothwell wrote:
+> > 
+> > > Hi all,
+> > > 
+> > > Changes since 20100602:
+> > 
+> > 
+> > when CONFIG_IWLAGN=n:
+> > 
+> > drivers/net/wireless/iwlwifi/iwl-rx.c:254: error: 'struct iwl_priv' has no member named '_agn'
+> > drivers/net/wireless/iwlwifi/iwl-rx.c:303: error: 'struct iwl_priv' has no member named '_agn'
+> > drivers/net/wireless/iwlwifi/iwl-rx.c:304: error: 'struct iwl_priv' has no member named '_agn'
+> > drivers/net/wireless/iwlwifi/iwl-rx.c:305: error: 'struct iwl_priv' has no member named '_agn'
+> > drivers/net/wireless/iwlwifi/iwl-rx.c:306: error: 'struct iwl_priv' has no member named '_agn'
+> > 
+> > and many more.
+> > 
+> > Haven't we seen this movie before?
 > 
-> thanks,
-> Anirban
+> Ugh...caused be this:
 > 
-> Original code was placed incorrectly inside a block of code marked
-> with CONFIG_INET directive. Fix by moving it outside.
+> commit a2064b7a4a22d118087898e4308670da7ac07911
+> Author: Wey-Yi Guy <wey-yi.w.guy@intel.com>
+> Date:   Fri Apr 30 14:21:48 2010 -0700
 > 
-> Signed-off-by: Anirban Chakraborty <anirban.chakraborty@qlogic.com>
-
-Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
-Tested-by: Randy Dunlap <randy.dunlap@oracle.com>
-
-Thanks for the patch.
-
-> ---
->  drivers/net/qlcnic/qlcnic_main.c |   81 +++++++++++++++++++-------------------
->  1 files changed, 40 insertions(+), 41 deletions(-)
+>     iwlwifi: move _agn statistics related structure
+>     
+>     agn and 3945 has different statistics_notif data structure; since 3945
+>     has it statistics_notif data structure inside the _3945 portion of
+>     iwl_priv, it make sense to move the agn statistics_notif into _agn portion.
+>     
+>     Signed-off-by: Wey-Yi Guy <wey-yi.w.guy@intel.com>
+>     Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 > 
-> diff --git a/drivers/net/qlcnic/qlcnic_main.c b/drivers/net/qlcnic/qlcnic_main.c
-> index 119bcae..99371bc 100644
-> --- a/drivers/net/qlcnic/qlcnic_main.c
-> +++ b/drivers/net/qlcnic/qlcnic_main.c
-> @@ -2581,6 +2581,46 @@ reschedule:
->  	qlcnic_schedule_work(adapter, qlcnic_fw_poll_work, FW_POLL_DELAY);
->  }
->  
-> +static int
-> +qlcnicvf_start_firmware(struct qlcnic_adapter *adapter)
-> +{
-> +	int err;
-> +
-> +	err = qlcnic_can_start_firmware(adapter);
-> +	if (err)
-> +		return err;
-> +
-> +	qlcnic_check_options(adapter);
-> +
-> +	adapter->need_fw_reset = 0;
-> +
-> +	return err;
-> +}
-> +
-> +static int
-> +qlcnicvf_config_bridged_mode(struct qlcnic_adapter *adapter, u32 enable)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +
-> +static int
-> +qlcnicvf_config_led(struct qlcnic_adapter *adapter, u32 state, u32 rate)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +
-> +static int
-> +qlcnicvf_set_ilb_mode(struct qlcnic_adapter *adapter)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +
-> +static void
-> +qlcnicvf_clear_ilb_mode(struct qlcnic_adapter *adapter)
-> +{
-> +	return;
-> +}
-> +
->  static ssize_t
->  qlcnic_store_bridged_mode(struct device *dev,
->  		struct device_attribute *attr, const char *buf, size_t len)
-> @@ -2954,47 +2994,6 @@ done:
->  	return NOTIFY_DONE;
->  }
->  
-> -static int
-> -qlcnicvf_start_firmware(struct qlcnic_adapter *adapter)
-> -{
-> -	int err;
-> -
-> -	err = qlcnic_can_start_firmware(adapter);
-> -	if (err)
-> -		return err;
-> -
-> -	qlcnic_check_options(adapter);
-> -
-> -	adapter->need_fw_reset = 0;
-> -
-> -	return err;
-> -}
-> -
-> -static int
-> -qlcnicvf_config_bridged_mode(struct qlcnic_adapter *adapter, u32 enable)
-> -{
-> -	return -EOPNOTSUPP;
-> -}
-> -
-> -static int
-> -qlcnicvf_config_led(struct qlcnic_adapter *adapter, u32 state, u32 rate)
-> -{
-> -	return -EOPNOTSUPP;
-> -}
-> -
-> -static int
-> -qlcnicvf_set_ilb_mode(struct qlcnic_adapter *adapter)
-> -{
-> -	return -EOPNOTSUPP;
-> -}
-> -
-> -static void
-> -qlcnicvf_clear_ilb_mode(struct qlcnic_adapter *adapter)
-> -{
-> -	return;
-> -}
-> -
-> -
->  static struct notifier_block	qlcnic_netdev_cb = {
->  	.notifier_call = qlcnic_netdev_event,
->  };
-> -- 
-> 1.6.0.2
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe netdev" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Since iwl-rx.o is part of iwlcore.ko, this change seems wrong.
 
+Indeed. Sorry about this.
 
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+> Reinette, any reason why I shouldn't just revert it?
+
+No - please do revert it. I am getting an unfamiliar error when I tried
+to revert it from linux-2.6 as well as wireless-testing, but perhaps it
+is something your are familiar with. Please let me know if you need a
+patch that will take care of the revert.
+
+Reinette
