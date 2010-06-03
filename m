@@ -1,57 +1,56 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: boot failure with next-20100603
-Date: Fri, 4 Jun 2010 02:06:59 +1000
-Message-ID: <20100604020659.1be823cf.sfr@canb.auug.org.au>
-References: <20100603174251.226da45d.sfr@canb.auug.org.au>
-	<alpine.LFD.2.00.1006030748590.8175@i5.linux-foundation.org>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [PATCH] staging/comedi: fixing ni_labpc to mite dependancy
+Date: Thu, 03 Jun 2010 09:21:53 -0700
+Message-ID: <4C07D6A1.1080906@oracle.com>
+References: <20100602151439.6de66132.sfr@canb.auug.org.au> <20100602100735.0812c063.randy.dunlap@oracle.com> <alpine.DEB.1.10.1006031545010.23736@blala.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__4_Jun_2010_02_06_59_+1000_JeIPZy87WEE=gZDO"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <alpine.LFD.2.00.1006030748590.8175@i5.linux-foundation.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:28264 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754329Ab0FCQYV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Jun 2010 12:24:21 -0400
+In-Reply-To: <alpine.DEB.1.10.1006031545010.23736@blala.de>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Alexander Kurz <linux@blala.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Alexander Kurz <linux@kbdbabel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, gregkh@suse.de
 
---Signature=_Fri__4_Jun_2010_02_06_59_+1000_JeIPZy87WEE=gZDO
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 06/03/10 04:50, Alexander Kurz wrote:
+> Hi,
+>  the dependancy of ni_labpc on mite was missing,
+>  it will be fixed with this patch
+>  thanks for the report,
+>  Alexander
+> 
+> From d310498ef2a61057c3f28b10bb417238f33e8265 Mon Sep 17 00:00:00 2001
+> From: Alexander Kurz <linux@kbdbabel.org>
+> Date: Thu, 3 Jun 2010 12:00:37 +0200
+> Subject: [PATCH] staging/comedi: fixing ni_labpc to mite dependancy
+> 
+> Signed-off-by: Alexander Kurz <linux@kbdbabel.org>
+> ---
+>  drivers/staging/comedi/Kconfig |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/staging/comedi/Kconfig b/drivers/staging/comedi/Kconfig
+> index 0aa2b0d..79f5f2e 100644
+> --- a/drivers/staging/comedi/Kconfig
+> +++ b/drivers/staging/comedi/Kconfig
+> @@ -1272,6 +1272,7 @@ config COMEDI_NI_TIO
+>  
+>  config COMEDI_NI_LABPC
+>  	tristate "NI Lab-PC and compatibles ISA and PCI support"
+> +	depends on COMEDI_MITE
+>  	select COMEDI_8255
+>  	select COMEDI_FC
+>  	default N
 
-Hi Linus,
+Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
 
-On Thu, 3 Jun 2010 07:51:35 -0700 (PDT) Linus Torvalds <torvalds@linux-foun=
-dation.org> wrote:
->
-> I can't read PPC oopses in my sleep the way I can do x86, and in=20
-> particular, I can't pinpoint that to the source code by just decoding the=
-=20
-> instructions and matching them against what I have. Do you have that=20
-> binary, and can you do a 'gdb vmlinux' on it, and then have gdb tell you=
-=20
-> where in load_module "load_module+0x990" and "load_module+0x958" are?
+thanks.
 
-I was hoping to avoid that :-)
-
-Rusty seems to have already figured out an obvious cause, so I will see
-if that fixes it tomorrow (later today).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__4_Jun_2010_02_06_59_+1000_JeIPZy87WEE=gZDO
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkwH0yMACgkQjjKRsyhoI8zNlACfTPXLFBhMHGMKKJ0SGrlZoax2
-QssAn3rlGkLuKyuAZn7MGm8ecZ3WZBi/
-=IakR
------END PGP SIGNATURE-----
-
---Signature=_Fri__4_Jun_2010_02_06_59_+1000_JeIPZy87WEE=gZDO--
+-- 
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
