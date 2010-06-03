@@ -1,88 +1,95 @@
-From: Dave Young <hidave.darkstar@gmail.com>
-Subject: Re: linux-next: Tree for June 3
-Date: Thu, 3 Jun 2010 15:39:25 +0800
-Message-ID: <AANLkTilr92GkR8bfgyjtb8ToYEEAv4oCsFsfsy04HJRU@mail.gmail.com>
-References: <20100603134753.710a64b3.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: boot failure with next-20100603
+Date: Thu, 3 Jun 2010 17:42:51 +1000
+Message-ID: <20100603174251.226da45d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__3_Jun_2010_17_42_51_+1000_7HjbrSiUjkpw2oNA"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gy0-f174.google.com ([209.85.160.174]:44365 "EHLO
-	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755602Ab0FCHj0 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Jun 2010 03:39:26 -0400
-In-Reply-To: <20100603134753.710a64b3.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:60744 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752148Ab0FCHm7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 3 Jun 2010 03:42:59 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Rusty Russell <rusty@rustcorp.com.au>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>
 
-On Thu, Jun 3, 2010 at 11:47 AM, Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> Hi all,
->
-> Changes since 20100602:
->
-> My fixes tree contains:
-> =C2=A0 =C2=A0 =C2=A0v4l-dvb: update gfp/slab.h includes
-> =C2=A0 =C2=A0 =C2=A0arm: update gfp/slab.h includes
-> =C2=A0 =C2=A0 =C2=A0davinci: update gfp/slab.h includes
-> =C2=A0 =C2=A0 =C2=A0ocfs2: update gfp/slab.h includes
-> =C2=A0 =C2=A0 =C2=A0acpi: update gfp/slab.h includes
->
-> The sh tree lost its build failure.
->
-> The rr tree lost its build failure.
->
-> ---------------------------------------------------------------------=
--------
->
-> I have created today's linux-next tree at
-> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> (patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ). =C2=A0=
-If you
-> are tracking the linux-next tree using git, you should not use "git p=
-ull"
-> to do so as that will try to merge the new linux-next release with th=
-e
-> old one. =C2=A0You should use "git fetch" as mentioned in the FAQ on =
-the wiki
-> (see below).
->
+--Signature=_Thu__3_Jun_2010_17_42_51_+1000_7HjbrSiUjkpw2oNA
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Rusty,
 
-With this build, I got weird module refcount:
+Today's linux-next produced these messages during the boot of a Power7
+box:
 
-bash-3.1$ cat /proc/modules
-radeon 703776 4294967295 - Live 0xffffffffa017c000
-ttm 55891 0 radeon, Live 0xffffffffa0164000
-drm_kms_helper 25154 0 radeon, Live 0xffffffffa015b000
-drm 174333 2 radeon,ttm,drm_kms_helper, Live 0xffffffffa011f000
-fb 45136 1 radeon,drm_kms_helper, Live 0xffffffffa00ff000
-fbdev 861 0 fb, Live 0xffffffffa009e000
-i2c_algo_bit 4925 0 radeon, Live 0xffffffffa0069000
-cfbcopyarea 3229 0 radeon, Live 0xffffffffa0059000
-cfbimgblt 2138 0 radeon, Live 0xffffffffa002c000
-cfbfillrect 3241 0 radeon, Live 0xffffffffa0026000
-tun 13180 2 - Live 0xffffffffa0039000
-kvm_intel 42801 4294967295 - Live 0xffffffffa0112000
-kvm 250629 0 kvm_intel, Live 0xffffffffa00bf000
-dell_wmi 2939 4294967295 - Live 0xffffffffa000e000
-snd_hda_codec_analog 72342 0 - Live 0xffffffffa00ab000
-wmi 7636 0 dell_wmi, Live 0xffffffffa0004000
-e1000e 186408 4294967295 - Live 0xffffffffa006e000
-snd_hda_intel 22245 4294967295 - Live 0xffffffffa0061000
-snd_hda_codec 69600 1 snd_hda_codec_analog,snd_hda_intel, Live 0xffffff=
-ffa004600
-0
-snd_hwdep 5914 0 snd_hda_codec, Live 0xffffffffa003e000
-8139too 31275 4294967295 - Live 0xffffffffa002f000
-snd_pcm 70720 1 snd_hda_intel,snd_hda_codec, Live 0xffffffffa0012000
-snd_timer 18357 0 snd_pcm, Live 0xffffffffa0007000
-snd_page_alloc 7365 1 snd_hda_intel,snd_pcm, Live 0xffffffffa0000000
+Starting udev: udevd[2739]: udev: missing sysfs features; please update the=
+ kernel or disable the kernel's CONFIG_SYSFS_DEPRECATED option; udev may fa=
+il to work correctly
 
-As you can see, some refcount become negtive
---
-Regards
-dave
+%GUnable to handle kernel paging request for data at address 0x00330000
+Faulting instruction address: 0xc0000000000a2f50
+Oops: Kernel access of bad area, sig: 11 [#1]
+SMP NR_CPUS=3D128 NUMA pSeries
+last sysfs file: /sys/block/sda/uevent
+Modules linked in:
+NIP: c0000000000a2f50 LR: c0000000000a2f18 CTR: 0000000000000000
+REGS: c00000000228f9a0 TRAP: 0300   Not tainted  (2.6.35-rc1-autokern1-next=
+-20100603)
+MSR: 8000000000009032 <EE,ME,IR,DR>  CR: 44422448  XER: 20000001
+DAR: 0000000000330000, DSISR: 0000000042000000
+TASK =3D c0000000fbe1ae40[2855] 'modprobe' THREAD: c00000000228c000 CPU: 12
+GPR00: 0000000000000001 c00000000228fc20 c00000000099f620 d0000000010b7040=
+=20
+GPR04: d0000000010a4dac 0000000000000005 0000000000000000 0000000000000223=
+=20
+GPR08: 6c6f635f72656769 0000000000000000 0000000000000020 0000000000330000=
+=20
+GPR12: d9fb876c951b89f3 c00000000f331800 0000000000012510 0000000000010320=
+=20
+GPR16: 000000000000002a 0000000000000012 0000000000000000 c0000000fb90cc00=
+=20
+GPR20: 0000000000000010 0000000000000021 0000000000000029 d000000001098b68=
+=20
+GPR24: d000000001098ba8 c000000002174800 d0000000010b7040 d000000001097fb9=
+=20
+GPR28: d000000001088000 d000000001098128 c00000000092d120 d0000000010b7040=
+=20
+NIP [c0000000000a2f50] .load_module+0x990/0x1458
+LR [c0000000000a2f18] .load_module+0x958/0x1458
+Call Trace:
+[c00000000228fc20] [c0000000000a2f18] .load_module+0x958/0x1458 (unreliable)
+[c00000000228fd90] [c0000000000a3a78] .SyS_init_module+0x60/0x244
+[c00000000228fe30] [c00000000000852c] syscall_exit+0x0/0x40
+Instruction dump:
+7c7a1b78 7fa30040 41dd09cc 39230210 38030220 f9230218 f8030228 f9230210=20
+f8030220 e9230240 38000001 e96d0040 <7c09592e> e80d01b0 f8030230 38800004=20
+---[ end trace 85cf1caaf6abfc45 ]---
+udevd-work[2749]: '/sbin/modprobe -b of:NlheaT<NULL>CIBM,lhea' unexpected e=
+xit with status 0x000b
+
+This was followed by several other similaar OOPSes also in load_module.
+
+I assume that this may have something to do with the module loading
+fix/cleanup that is in progress ...
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__3_Jun_2010_17_42_51_+1000_7HjbrSiUjkpw2oNA
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkwHXPsACgkQjjKRsyhoI8w4igCcC/sQcH9ykEU3fWCOnwtoQlKc
+mgsAn1ujSWyeW7DCx18pVdeAQpfKcF0U
+=wYph
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__3_Jun_2010_17_42_51_+1000_7HjbrSiUjkpw2oNA--
