@@ -1,274 +1,88 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for June 3
-Date: Thu, 3 Jun 2010 13:47:53 +1000
-Message-ID: <20100603134753.710a64b3.sfr@canb.auug.org.au>
+From: Dave Young <hidave.darkstar@gmail.com>
+Subject: Re: linux-next: Tree for June 3
+Date: Thu, 3 Jun 2010 15:39:25 +0800
+Message-ID: <AANLkTilr92GkR8bfgyjtb8ToYEEAv4oCsFsfsy04HJRU@mail.gmail.com>
+References: <20100603134753.710a64b3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__3_Jun_2010_13_47_53_+1000_w8K2ok4QUjXOoMku"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45435 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933806Ab0FCDsA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 2 Jun 2010 23:48:00 -0400
+Received: from mail-gy0-f174.google.com ([209.85.160.174]:44365 "EHLO
+	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755602Ab0FCHj0 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Jun 2010 03:39:26 -0400
+In-Reply-To: <20100603134753.710a64b3.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Rusty Russell <rusty@rustcorp.com.au>
 
---Signature=_Thu__3_Jun_2010_13_47_53_+1000_w8K2ok4QUjXOoMku
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jun 3, 2010 at 11:47 AM, Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> Hi all,
+>
+> Changes since 20100602:
+>
+> My fixes tree contains:
+> =C2=A0 =C2=A0 =C2=A0v4l-dvb: update gfp/slab.h includes
+> =C2=A0 =C2=A0 =C2=A0arm: update gfp/slab.h includes
+> =C2=A0 =C2=A0 =C2=A0davinci: update gfp/slab.h includes
+> =C2=A0 =C2=A0 =C2=A0ocfs2: update gfp/slab.h includes
+> =C2=A0 =C2=A0 =C2=A0acpi: update gfp/slab.h includes
+>
+> The sh tree lost its build failure.
+>
+> The rr tree lost its build failure.
+>
+> ---------------------------------------------------------------------=
+-------
+>
+> I have created today's linux-next tree at
+> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+> (patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ). =C2=A0=
+If you
+> are tracking the linux-next tree using git, you should not use "git p=
+ull"
+> to do so as that will try to merge the new linux-next release with th=
+e
+> old one. =C2=A0You should use "git fetch" as mentioned in the FAQ on =
+the wiki
+> (see below).
+>
 
-Hi all,
+Hi,
 
-Changes since 20100602:
+With this build, I got weird module refcount:
 
-My fixes tree contains:
-      v4l-dvb: update gfp/slab.h includes
-      arm: update gfp/slab.h includes
-      davinci: update gfp/slab.h includes
-      ocfs2: update gfp/slab.h includes
-      acpi: update gfp/slab.h includes
+bash-3.1$ cat /proc/modules
+radeon 703776 4294967295 - Live 0xffffffffa017c000
+ttm 55891 0 radeon, Live 0xffffffffa0164000
+drm_kms_helper 25154 0 radeon, Live 0xffffffffa015b000
+drm 174333 2 radeon,ttm,drm_kms_helper, Live 0xffffffffa011f000
+fb 45136 1 radeon,drm_kms_helper, Live 0xffffffffa00ff000
+fbdev 861 0 fb, Live 0xffffffffa009e000
+i2c_algo_bit 4925 0 radeon, Live 0xffffffffa0069000
+cfbcopyarea 3229 0 radeon, Live 0xffffffffa0059000
+cfbimgblt 2138 0 radeon, Live 0xffffffffa002c000
+cfbfillrect 3241 0 radeon, Live 0xffffffffa0026000
+tun 13180 2 - Live 0xffffffffa0039000
+kvm_intel 42801 4294967295 - Live 0xffffffffa0112000
+kvm 250629 0 kvm_intel, Live 0xffffffffa00bf000
+dell_wmi 2939 4294967295 - Live 0xffffffffa000e000
+snd_hda_codec_analog 72342 0 - Live 0xffffffffa00ab000
+wmi 7636 0 dell_wmi, Live 0xffffffffa0004000
+e1000e 186408 4294967295 - Live 0xffffffffa006e000
+snd_hda_intel 22245 4294967295 - Live 0xffffffffa0061000
+snd_hda_codec 69600 1 snd_hda_codec_analog,snd_hda_intel, Live 0xffffff=
+ffa004600
+0
+snd_hwdep 5914 0 snd_hda_codec, Live 0xffffffffa003e000
+8139too 31275 4294967295 - Live 0xffffffffa002f000
+snd_pcm 70720 1 snd_hda_intel,snd_hda_codec, Live 0xffffffffa0012000
+snd_timer 18357 0 snd_pcm, Live 0xffffffffa0007000
+snd_page_alloc 7365 1 snd_hda_intel,snd_pcm, Live 0xffffffffa0000000
 
-The sh tree lost its build failure.
-
-The rr tree lost its build failure.
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
-and sparc64 defconfig. These builds also have
-CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
-CONFIG_DEBUG_INFO disabled when necessary.
-
-Below is a summary of the state of the merge.
-
-We are up to 162 trees (counting Linus' and 22 trees of patches pending
-for Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging fixes/fixes
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/for-linus
-Merging quilt/driver-core.current
-Merging quilt/tty.current
-Merging quilt/usb.current
-Merging quilt/staging.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging ide-curent/master
-Merging dwmw2/master
-Merging gcl-current/merge
-Merging arm/devel
-Merging davinci/davinci-next
-Merging i.MX/for-next
-Merging msm/for-next
-Merging omap/for-next
-Merging pxa/for-next
-Merging samsung/next-samsung
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-Merging m68knommu/for-next
-Merging microblaze/next
-Merging mips/mips-for-linux-next
-Merging parisc/next
-Merging powerpc/next
-Merging 4xx/next
-Merging 52xx-and-virtex/next
-CONFLICT (content): Merge conflict in drivers/serial/mpc52xx_uart.c
-Merging galak/next
-Merging s390/features
-Merging sh/master
-Merging genesis/master
-CONFLICT (content): Merge conflict in include/linux/serial_sci.h
-Merging sparc/master
-Merging xtensa/master
-Merging ceph/for-next
-Merging cifs/master
-Merging configfs/linux-next
-Merging ecryptfs/next
-CONFLICT (content): Merge conflict in fs/ecryptfs/main.c
-Merging ext3/for_next
-Merging ext4/next
-Merging fatfs/master
-Merging fuse/for-next
-Merging gfs2/master
-Merging jfs/next
-Merging logfs/master
-CONFLICT (content): Merge conflict in fs/logfs/logfs.h
-Merging nfs/linux-next
-Merging nfsd/nfsd-next
-Merging nilfs2/for-next
-Merging ocfs2/linux-next
-Merging squashfs/master
-Merging udf/for_next
-Merging v9fs/for-next
-Merging ubifs/linux-next
-Merging xfs/master
-Merging vfs/for-next
-Merging pci/linux-next
-Merging hid/for-next
-Merging quilt/i2c
-Merging bjdooks-i2c/next-i2c
-CONFLICT (content): Merge conflict in arch/arm/plat-omap/i2c.c
-CONFLICT (content): Merge conflict in drivers/i2c/busses/i2c-cpm.c
-CONFLICT (content): Merge conflict in drivers/i2c/busses/i2c-mpc.c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-Merging kbuild/for-next
-Merging kconfig/for-next
-Merging ide/master
-Merging libata/NEXT
-Merging infiniband/for-next
-Merging acpi/test
-Merging idle-test/idle-test
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/linux-next
-Merging dlm/next
-Merging ibft/master
-Merging scsi/master
-Merging async_tx/next
-Merging net/master
-Merging wireless/master
-Merging mtd/master
-Merging crypto/master
-Merging sound/for-next
-Merging cpufreq/next
-Merging quilt/rr
-Merging mmc/next
-Merging input/next
-Merging lsm/for-next
-Merging block/for-next
-Merging quilt/device-mapper
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging viafb/viafb-next
-Merging voltage/for-next
-Merging security-testing/next
-Merging lblnet/master
-Merging agp/agp-next
-Merging uwb/for-upstream
-Merging watchdog/master
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-Merging audit/for-next
-Merging quilt/aoe
-Merging suspend/linux-next
-Merging bluetooth/master
-Merging fsnotify/for-next
-CONFLICT (delete/modify): fs/notify/inotify/inotify.c deleted in fsnotify/f=
-or-next and modified in HEAD. Version HEAD of fs/notify/inotify/inotify.c l=
-eft in tree.
-$ git rm -f fs/notify/inotify/inotify.c
-Applying: fsnotify: update gfp/slab.h includes
-Merging irda/for-next
-CONFLICT (content): Merge conflict in drivers/net/irda/irda-usb.c
-Merging drbd/for-jens
-CONFLICT (content): Merge conflict in fs/fs-writeback.c
-Merging catalin/for-next
-Merging alacrity/linux-next
-Merging i7core_edac/linux_next
-Merging devicetree/next-devicetree
-Merging spi/next-spi
-Merging omap_dss2/for-next
-Merging tip/auto-latest
-CONFLICT (content): Merge conflict in Documentation/feature-removal-schedul=
-e.txt
-Merging edac-amd/for-next
-Merging oprofile/for-next
-Merging percpu/for-next
-Merging workqueues/for-next
-Merging sfi/sfi-test
-Merging asm-generic/next
-Merging drivers-x86/linux-next
-Merging hwpoison/hwpoison
-Merging sysctl/master
-Merging bkl-core/bkl/core
-Merging bkl-procfs/bkl/procfs
-Merging bkl-ioctl/bkl/ioctl
-Merging quilt/driver-core
-Merging quilt/tty
-Merging quilt/usb
-Merging staging-next/staging-next
-Merging slabh/slabh
-Merging scsi-post-merge/master
-
---Signature=_Thu__3_Jun_2010_13_47_53_+1000_w8K2ok4QUjXOoMku
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkwHJekACgkQjjKRsyhoI8y7LQCgm9uUItu7fqYmQyWuxoZXwxZl
-2G4AoIQeHP/YWUenvFvdAoP/VaK91Nzl
-=9MXB
------END PGP SIGNATURE-----
-
---Signature=_Thu__3_Jun_2010_13_47_53_+1000_w8K2ok4QUjXOoMku--
+As you can see, some refcount become negtive
+--
+Regards
+dave
