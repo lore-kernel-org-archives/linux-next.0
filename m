@@ -1,72 +1,40 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: "Luck, Tony" <tony.luck@intel.com>
 Subject: RE: linux-next: Tree for June 3
-Date: Fri, 4 Jun 2010 15:05:01 -0700 (PDT)
-Message-ID: <alpine.LFD.2.00.1006041452130.8175@i5.linux-foundation.org>
-References: <20100603134753.710a64b3.sfr@canb.auug.org.au> <AANLkTilr92GkR8bfgyjtb8ToYEEAv4oCsFsfsy04HJRU@mail.gmail.com> <AANLkTim6v2s-Q5BndAKLOZKaA1wYgbU3UKJwNy-6Jkki@mail.gmail.com> <201006032222.57411.rusty@rustcorp.com.au>
- <AANLkTikN_3oLIFQ0CRiLwXUV79myy_aqriezdCgnZHFT@mail.gmail.com> <alpine.LFD.2.00.1006041255210.8175@i5.linux-foundation.org> <987664A83D2D224EAE907B061CE93D530114C3DC47@orsmsx505.amr.corp.intel.com>
+Date: Fri, 4 Jun 2010 15:50:41 -0700
+Message-ID: <987664A83D2D224EAE907B061CE93D530114C3DE4D@orsmsx505.amr.corp.intel.com>
+References: <20100603134753.710a64b3.sfr@canb.auug.org.au>
+ <AANLkTilr92GkR8bfgyjtb8ToYEEAv4oCsFsfsy04HJRU@mail.gmail.com>
+ <AANLkTim6v2s-Q5BndAKLOZKaA1wYgbU3UKJwNy-6Jkki@mail.gmail.com>
+ <201006032222.57411.rusty@rustcorp.com.au>
+ <AANLkTikN_3oLIFQ0CRiLwXUV79myy_aqriezdCgnZHFT@mail.gmail.com>
+ <alpine.LFD.2.00.1006041255210.8175@i5.linux-foundation.org>
+ <987664A83D2D224EAE907B061CE93D530114C3DC47@orsmsx505.amr.corp.intel.com>
+ <alpine.LFD.2.00.1006041452130.8175@i5.linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:50793 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754289Ab0FDWKB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Jun 2010 18:10:01 -0400
-In-Reply-To: <987664A83D2D224EAE907B061CE93D530114C3DC47@orsmsx505.amr.corp.intel.com>
+Received: from mga01.intel.com ([192.55.52.88]:44590 "EHLO mga01.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751530Ab0FDWuo convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Jun 2010 18:50:44 -0400
+In-Reply-To: <alpine.LFD.2.00.1006041452130.8175@i5.linux-foundation.org>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Luck, Tony" <tony.luck@intel.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Rusty Russell <rusty@rustcorp.com.au>, Dave Young <hidave.darkstar@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
+> Does this fix it? I stopped looking for other possible causes when I found 
+> this one.
 
+It gets rid of the oops. So that's good.  Something is still
+hokey in linux-next land though because no modules get loaded.
+So no ehci/uhci available :-(
 
-On Fri, 4 Jun 2010, Luck, Tony wrote:
-> 
-> This almost always means that we dereferenced a NULL pointer ... though
-> any access into the bottom PAGE_SIZE of kernel virtual address space
-> will result in this trap.  This happens on ia64 because we have a "NaT"
-> page mapped at 0x0 so that speculative loads that chase NULL pointers
-> at the end of lists behave more rationally.
-> 
-> Sadly I don't have the actual address. The register that was used
-> for the dereference isn't included in the OOPS output.
+No obvious looking error messages on the console.
 
-Ok, so it confirms just that load_module() has returned a pointer that is 
-either NULL or at least within PAGE_SIZE-552.
-
-It could be a negative error pointer (and the offset of 552 turns it into 
-the NULL page), but that's what the whole IS_ERR() thing checks for, so 
-that's not the case.
-
-So the
-
-	if (err)
-		return ERR_PTR(err);
-
-case does seem pretty likely (most of them with a "goto <error-case>", but 
-some directly. Many of them have the stricter form of "if (err < 0)", but 
-there's a number that do not.
-
-And in fact, I think I see the bad one:
-
-        /* Figure out module layout, and allocate all the memory. */
-        mod = layout_and_allocate(&info);
-        if (IS_ERR(mod))
-                goto free_copy;
-
-which looks fine, but "free_copy:" expects the error number in "err", 
-which is what the other error cases do.
-
-I think this was introduced by Rusty's commit 5d3f5be82944 ("module: 
-layout_and_allocate"), and here's a suggested fix.. The easiest fix is to 
-actually change the "free_copy" target to return "mod" as the above goto 
-expects, and then just do a conversion before the fall-through from the 
-other error cases (that have it in 'err').
-
-Does this fix it? I stopped looking for other possible causes when I found 
-this one.
-
-		Linus
-
+-Tony
 ---
  kernel/module.c |    3 ++-
  1 files changed, 2 insertions(+), 1 deletions(-)
