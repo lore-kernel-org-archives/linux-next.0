@@ -1,47 +1,38 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: linux-next: Tree for June 3
-Date: Fri, 4 Jun 2010 13:04:00 -0700 (PDT)
-Message-ID: <alpine.LFD.2.00.1006041255210.8175@i5.linux-foundation.org>
-References: <20100603134753.710a64b3.sfr@canb.auug.org.au> <AANLkTilr92GkR8bfgyjtb8ToYEEAv4oCsFsfsy04HJRU@mail.gmail.com> <AANLkTim6v2s-Q5BndAKLOZKaA1wYgbU3UKJwNy-6Jkki@mail.gmail.com> <201006032222.57411.rusty@rustcorp.com.au>
+From: "Luck, Tony" <tony.luck@intel.com>
+Subject: RE: linux-next: Tree for June 3
+Date: Fri, 4 Jun 2010 13:46:49 -0700
+Message-ID: <987664A83D2D224EAE907B061CE93D530114C3DC47@orsmsx505.amr.corp.intel.com>
+References: <20100603134753.710a64b3.sfr@canb.auug.org.au>
+ <AANLkTilr92GkR8bfgyjtb8ToYEEAv4oCsFsfsy04HJRU@mail.gmail.com>
+ <AANLkTim6v2s-Q5BndAKLOZKaA1wYgbU3UKJwNy-6Jkki@mail.gmail.com>
+ <201006032222.57411.rusty@rustcorp.com.au>
  <AANLkTikN_3oLIFQ0CRiLwXUV79myy_aqriezdCgnZHFT@mail.gmail.com>
+ <alpine.LFD.2.00.1006041255210.8175@i5.linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:44413 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750762Ab0FDUJd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Jun 2010 16:09:33 -0400
-In-Reply-To: <AANLkTikN_3oLIFQ0CRiLwXUV79myy_aqriezdCgnZHFT@mail.gmail.com>
+Received: from mga01.intel.com ([192.55.52.88]:33500 "EHLO mga01.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756020Ab0FDUq4 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Jun 2010 16:46:56 -0400
+In-Reply-To: <alpine.LFD.2.00.1006041255210.8175@i5.linux-foundation.org>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tony Luck <tony.luck@intel.com>
-Cc: Rusty Russell <rusty@rustcorp.com.au>, Dave Young <hidave.darkstar@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, Dave Young <hidave.darkstar@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
+> What does a NaT consumption fault mean, and does it give the invalid 
+> address it was loaded off?
 
+This almost always means that we dereferenced a NULL pointer ... though
+any access into the bottom PAGE_SIZE of kernel virtual address space
+will result in this trap.  This happens on ia64 because we have a "NaT"
+page mapped at 0x0 so that speculative loads that chase NULL pointers
+at the end of lists behave more rationally.
 
-On Fri, 4 Jun 2010, Tony Luck wrote:
-> 
-> At the point of dereference it looks like we were trying
-> to load a 4-byte data object from offset 552 into the
-> "struct module *" that wa returned by load_module().
+Sadly I don't have the actual address. The register that was used
+for the dereference isn't included in the OOPS output.
 
-Sounds like 'mod->num_ctors' loaded by do_mod_ctors(). It's a 4-byte field 
-in roughly that area.
-
-What does a NaT consumption fault mean, and does it give the invalid 
-address it was loaded off? In the successful path of "load_module()", we 
-will have dereferenced the "mod" pointer we return just before, so I 
-wonder if there's some error case that incorrectly returns a positive 
-errno instead of a negative one, and causes us to miss the "IS_ERR()" 
-check or something.
-
-There's a couple of checking routines in module.c that do not return a 
-negative error, but instead return 0/1. The one I looked at was converted 
-into a negative error, but there are several cases of
-
-	if (err)
-		return ERR_PTR(err)
-
-and if something does that on a 0/1 value, it will return a bogus pointer.
-
-		Linus
+-Tony
