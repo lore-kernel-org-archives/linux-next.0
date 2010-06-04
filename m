@@ -1,83 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the wireless tree with the net tree
-Date: Fri, 4 Jun 2010 11:48:01 +1000
-Message-ID: <20100604114801.df31fb50.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH net-next-2.6] qlcnic: Fix Compilation Issue when
+ CONFIG_INET was not set
+Date: Thu, 03 Jun 2010 20:05:50 -0700 (PDT)
+Message-ID: <20100603.200550.39168599.davem@davemloft.net>
+References: <alpine.OSX.2.00.1006031034500.48386@macintosh-2.qlogic.org>
+	<20100603112006.0827a847.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33522 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932071Ab0FDBsG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 3 Jun 2010 21:48:06 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Juuso Oikarinen <juuso.oikarinen@nokia.com>, Luciano Coelho <luciano.coelho@nokia.com>, Eric Dumazet <eric.dumazet@gmail.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20100603112006.0827a847.randy.dunlap@oracle.com>
+Sender: netdev-owner@vger.kernel.org
+To: randy.dunlap@oracle.com
+Cc: anirban.chakraborty@qlogic.com, linux-next@vger.kernel.org, netdev@vger.kernel.org, ameen.rahman@qlogic.com, amit.salecha@qlogic.com
+List-Id: linux-next.vger.kernel.org
 
-Hi John,
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Date: Thu, 3 Jun 2010 11:20:06 -0700
 
-Today's linux-next merge of the wireless tree got a conflict in
-drivers/net/wireless/wl12xx/wl1271.h
-drivers/net/wireless/wl12xx/wl1271_cmd.h between commit
-ba2d3587912f82d1ab4367975b1df460db60fb1e ("drivers/net: use __packed
-annotation") from the net tree and commit
-eb70eb723b489dd4e233e22e47d993f59858cdd8 ("wl1271: Update handling of the
-NVS file / INI parameters") from the wireless tree.
+> On Thu, 3 Jun 2010 10:50:56 -0700 Anirban Chakraborty wrote:
+> 
+>> Please apply.
+>> 
+>> thanks,
+>> Anirban
+>> 
+>> Original code was placed incorrectly inside a block of code marked
+>> with CONFIG_INET directive. Fix by moving it outside.
+>> 
+>> Signed-off-by: Anirban Chakraborty <anirban.chakraborty@qlogic.com>
+> 
+> Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
+> Tested-by: Randy Dunlap <randy.dunlap@oracle.com>
 
-I fixed up some if it (see below) and can carry the fixes as necessary.
-The latter patch also moved some of the structures to another file
-(drivers/net/wireless/wl12xx/wl1271_ini.h), so they will need fixing up
-there.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/net/wireless/wl12xx/wl1271_cmd.h
-index d88faf9,68001df..0000000
---- a/drivers/net/wireless/wl12xx/wl1271_cmd.h
-+++ b/drivers/net/wireless/wl12xx/wl1271_cmd.h
-@@@ -439,25 -439,31 +439,31 @@@ struct wl1271_general_parms_cmd 
-  
-  	struct wl1271_cmd_test_header test;
-  
-- 	u8 params[WL1271_NVS_GENERAL_PARAMS_SIZE];
-- 	s8 reserved[23];
-- } __packed;
-+ 	struct wl1271_ini_general_params general_params;
-  
-- #define WL1271_STAT_RADIO_PARAMS_5_SIZE    29
-- #define WL1271_DYN_RADIO_PARAMS_5_SIZE    104
-+ 	u8 sr_debug_table[WL1271_INI_MAX_SMART_REFLEX_PARAM];
-+ 	u8 sr_sen_n_p;
-+ 	u8 sr_sen_n_p_gain;
-+ 	u8 sr_sen_nrn;
-+ 	u8 sr_sen_prn;
-+ 	u8 padding[3];
- -} __attribute__ ((packed));
-++} __packed;
-  
-  struct wl1271_radio_parms_cmd {
-  	struct wl1271_cmd_header header;
-  
-  	struct wl1271_cmd_test_header test;
-  
-- 	u8 stat_radio_params[WL1271_NVS_STAT_RADIO_PARAMS_SIZE];
-- 	u8 stat_radio_params_5[WL1271_STAT_RADIO_PARAMS_5_SIZE];
-+ 	/* Static radio parameters */
-+ 	struct wl1271_ini_band_params_2 static_params_2;
-+ 	struct wl1271_ini_band_params_5 static_params_5;
-  
-- 	u8 dyn_radio_params[WL1271_NVS_DYN_RADIO_PARAMS_SIZE];
-- 	u8 reserved;
-- 	u8 dyn_radio_params_5[WL1271_DYN_RADIO_PARAMS_5_SIZE];
-+ 	/* Dynamic radio parameters */
-+ 	struct wl1271_ini_fem_params_2 dyn_params_2;
-+ 	u8 padding2;
-+ 	struct wl1271_ini_fem_params_5 dyn_params_5;
-+ 	u8 padding3[2];
- -} __attribute__ ((packed));
- +} __packed;
-  
-  struct wl1271_cmd_cal_channel_tune {
-  	struct wl1271_cmd_header header;
+Applied, thanks everyone.
