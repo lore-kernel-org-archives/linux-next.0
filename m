@@ -1,41 +1,43 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: linux-next: build failure after merge of the final tree (rr tree related)
-Date: Fri, 4 Jun 2010 15:06:59 +0930
-Message-ID: <201006041506.59887.rusty@rustcorp.com.au>
-References: <20100604144933.86b3f2a8.sfr@canb.auug.org.au>
+From: Luciano Coelho <luciano.coelho@nokia.com>
+Subject: Re: linux-next: manual merge of the wireless tree with the net tree
+Date: Fri, 04 Jun 2010 09:14:24 +0300
+Message-ID: <1275632064.15894.18.camel@chilepepper>
+References: <20100604114801.df31fb50.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:51156 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750969Ab0FDFhD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 4 Jun 2010 01:37:03 -0400
-In-Reply-To: <20100604144933.86b3f2a8.sfr@canb.auug.org.au>
+Received: from smtp.nokia.com ([192.100.122.233]:65057 "EHLO
+	mgw-mx06.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751239Ab0FDGPJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Jun 2010 02:15:09 -0400
+In-Reply-To: <20100604114801.df31fb50.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: ext Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "John W. Linville" <linville@tuxdriver.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Oikarinen Juuso (Nokia-D/Tampere)" <juuso.oikarinen@nokia.com>, Eric Dumazet <eric.dumazet@gmail.com>, David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
 
-On Fri, 4 Jun 2010 02:19:33 pm Stephen Rothwell wrote:
-> Hi Rusty,
+On Fri, 2010-06-04 at 03:48 +0200, ext Stephen Rothwell wrote:
+> Hi John,
 > 
-> After merging the final tree, today's linux-next build (powerpc
-> ppc44x_defconfig) failed like this:
+> Today's linux-next merge of the wireless tree got a conflict in
+> drivers/net/wireless/wl12xx/wl1271.h
+> drivers/net/wireless/wl12xx/wl1271_cmd.h between commit
+> ba2d3587912f82d1ab4367975b1df460db60fb1e ("drivers/net: use __packed
+> annotation") from the net tree and commit
+> eb70eb723b489dd4e233e22e47d993f59858cdd8 ("wl1271: Update handling of the
+> NVS file / INI parameters") from the wireless tree.
 > 
-> kernel/module.c: In function 'post_relocation':
-> kernel/module.c:2526: error: 'struct module' has no member named 'percpu_size'
-> 
-> Caused by commit fc77407bc287ed250f9355fda435df5f78b45885 ("module:
-> simplify per-cpu handling a little").
-> 
-> This build has CONFIG_SMP not set
+> I fixed up some if it (see below) and can carry the fixes as necessary.
+> The latter patch also moved some of the structures to another file
+> (drivers/net/wireless/wl12xx/wl1271_ini.h), so they will need fixing up
+> there.
 
-Actually, I think that cleanup is broken.  If someone were to have relocations
-inside their per-cpu area, the relocation code would smash something random.
+Acked-by: Luciano Coelho <luciano.coelho@nokia.com>
 
-So, a doubly bad idea.  I've dropped the commit.
+Thanks for the merge.  I'll submit a new patch fixing the annotation
+from the structs that were moved.
 
-Thanks!
-Rusty.
+-- 
+Cheers,
+Luca.
