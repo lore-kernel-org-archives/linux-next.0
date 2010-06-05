@@ -1,74 +1,39 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: linux-next: Tree for June 3
-Date: Sat, 5 Jun 2010 13:31:25 +0930
-Message-ID: <201006051331.26359.rusty@rustcorp.com.au>
-References: <20100603134753.710a64b3.sfr@canb.auug.org.au> <201006051209.51664.rusty@rustcorp.com.au> <201006051221.38088.rusty@rustcorp.com.au>
+From: Alexander Kurz <linux@blala.de>
+Subject: Re: linux-next: Tree for June 2 (staging/comedi)
+Date: Sat, 5 Jun 2010 20:50:57 +0400 (MSD)
+Message-ID: <alpine.DEB.1.10.1006052043140.21893@vs81.sauer-cs.de>
+References: <20100602151439.6de66132.sfr@canb.auug.org.au> <20100602100735.0812c063.randy.dunlap@oracle.com> <20100603091555.GA25287@aftab>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:40895 "EHLO ozlabs.org"
+Received: from vs81.sauer-cs.de ([80.244.252.81]:43029 "EHLO kbdbabel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750894Ab0FEEBc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 5 Jun 2010 00:01:32 -0400
-In-Reply-To: <201006051221.38088.rusty@rustcorp.com.au>
+	id S933666Ab0FEQvo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 5 Jun 2010 12:51:44 -0400
+In-Reply-To: <20100603091555.GA25287@aftab>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "Luck, Tony" <tony.luck@intel.com>, Dave Young <hidave.darkstar@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Borislav Petkov <bp@amd64.org>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Alexander Kurz <linux@kbdbabel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, gregkh@suse.de
 
-On Sat, 5 Jun 2010 12:21:37 pm Rusty Russell wrote:
-> On Sat, 5 Jun 2010 12:09:51 pm Rusty Russell wrote:
-> > Here's a tree with all current fixes: still no module load?
+Hi,
+could you please repeat the test on 2.6.35-rc1-git3 or later
+
+On Thu, 3 Jun 2010, Borislav Petkov wrote:
+> I get a different set of errors with 2.6.35-rc1:
 > 
-> Erk, terminally broken tree.  Will re-xmit once fixed...
+> ERROR: "cfc_write_array_to_buffer" [drivers/staging/comedi/drivers/usbduxfast.ko] undefined!
+> ERROR: "cfc_write_array_to_buffer" [drivers/staging/comedi/drivers/comedi_test.ko] undefined!
+was caused by
+> CONFIG_COMEDI_FC=y
+and is fixed in 824196248c1f28aa7d151fd5b11d76182c751f19
+by adding COMEDI_FC depends on COMEDI.
+CONFIG_COMEDI_FC=m would be correct.
 
-I'd introduced a bug with MODVERSIONS=y in "module: refactor out section
-header rewriting".  Not doing too well on this...
+> ERROR: "subdev_8255_cleanup" [drivers/staging/comedi/drivers/das08.ko] undefined!
+> ERROR: "subdev_8255_init" [drivers/staging/comedi/drivers/das08.ko] undefined! 
+CONFIG_COMEDI_8255=m should have been set.
+this should be as well fixed in 824196248c1f28aa7d151fd5b11d76182c751f19 
+by pulling das08 out of the ISA group.
 
-Fixed that, too (see below for fix if curious).
-
-This time for sure!
-	git://git.kernel.org/pub/scm/linux/kernel/git/rusty/linux-2.6.git module
-
-Subject: module: refactor out section header rewriting: FIX modversions
-
-We can't do the find_sec after removing the SHF_ALLOC flags; it won't
-find the sections.
-
-Signed-off-by: Rusty Russell <rusty@rustcorp.com.au>
----
- kernel/module.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/kernel/module.c b/kernel/module.c
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -2217,11 +2217,13 @@ static int rewrite_section_headers(struc
- 		if (strstarts(info->secstrings+shdr->sh_name, ".exit"))
- 			shdr->sh_flags &= ~(unsigned long)SHF_ALLOC;
- #endif
--		/* Don't keep modinfo and version sections. */
--		if (!strcmp(info->secstrings+shdr->sh_name, "__versions")
--		    || !strcmp(info->secstrings+shdr->sh_name, ".modinfo"))
--			shdr->sh_flags &= ~(unsigned long)SHF_ALLOC;
- 	}
-+
-+	/* Track but don't keep modinfo and version sections. */
-+	info->index.vers = find_sec(info->hdr, info->sechdrs, info->secstrings, "__versions");
-+	info->index.info = find_sec(info->hdr, info->sechdrs, info->secstrings, ".modinfo");
-+	info->sechdrs[info->index.info].sh_flags &= ~(unsigned long)SHF_ALLOC;
-+	info->sechdrs[info->index.vers].sh_flags &= ~(unsigned long)SHF_ALLOC;
- 	return 0;
- }
- 
-@@ -2274,8 +2276,6 @@ static struct module *setup_load_info(st
- 		return ERR_PTR(-ENOEXEC);
- 	}
- 
--	info->index.vers = find_sec(info->hdr, info->sechdrs, info->secstrings, "__versions");
--	info->index.info = find_sec(info->hdr, info->sechdrs, info->secstrings, ".modinfo");
- 	info->index.pcpu = find_pcpusec(info->hdr, info->sechdrs, info->secstrings);
- 
- 	/* Check module struct version now, before we try to use module. */
+thanks, Alexander
