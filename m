@@ -1,54 +1,32 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: linux-next: manual merge of the devicetree tree with Linus' tree
-Date: Mon, 7 Jun 2010 11:03:35 -0600
-Message-ID: <AANLkTinfvexAjfzrLtQXqqCLIqootCGhaVLmajLC8rtO@mail.gmail.com>
-References: <20100607125343.cd109629.sfr@canb.auug.org.au>
+From: "Luck, Tony" <tony.luck@intel.com>
+Subject: RE: linux-next: Tree for June 3
+Date: Mon, 7 Jun 2010 11:16:36 -0700
+Message-ID: <987664A83D2D224EAE907B061CE93D530114F86372@orsmsx505.amr.corp.intel.com>
+References: <20100603134753.710a64b3.sfr@canb.auug.org.au>
+ <201006051209.51664.rusty@rustcorp.com.au>
+ <201006051221.38088.rusty@rustcorp.com.au>
+ <201006051331.26359.rusty@rustcorp.com.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-yw0-f187.google.com ([209.85.211.187]:51644 "EHLO
-	mail-yw0-f187.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751863Ab0FGREA convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Jun 2010 13:04:00 -0400
-In-Reply-To: <20100607125343.cd109629.sfr@canb.auug.org.au>
+Received: from mga11.intel.com ([192.55.52.93]:7776 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752162Ab0FGSQl convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Jun 2010 14:16:41 -0400
+In-Reply-To: <201006051331.26359.rusty@rustcorp.com.au>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rusty Russell <rusty@rustcorp.com.au>, Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Dave Young <hidave.darkstar@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-On Sun, Jun 6, 2010 at 8:53 PM, Stephen Rothwell <sfr@canb.auug.org.au>=
- wrote:
-> Hi Grant,
->
-> Today's linux-next merge of the devicetree tree got a conflict in
-> drivers/usb/host/ehci-hcd.c between commit
-> 1f23b2d98c11fed43c552a5dbd00c793f81a8736 ("usb: fix ehci_hcd build
-> failure when both generic-OF and xilinx is selected") from the =A0tre=
-e and
-> commit 4c018c4ab1edd8f4154848868960ebe132c3d138 ("usb/of: fix build
-> errors") from the devicetree tree.
->
-> They look like two version of the same fix. =A0I used the version fro=
-m
-> Linus' tree.
+> This time for sure!
 
-Yup, that's right.  The commit in my devicetree-next branch is stale
-and has been superseeded.  I just hadn't pushed out the new tree yet.
-I'm refresh it today.
+Something very like that patch showed up in next-20100607 ... so
+I took that for a spin. Everything seems tickety-boo. Modules get
+loaded with no OOPSen. All my devices are found and working.
 
-Cheers,
-g.
+Thanks
 
-> --
-> Cheers,
-> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
-=2Eorg.au
-> http://www.canb.auug.org.au/~sfr/
->
-
-
-
---=20
-Grant Likely, B.Sc., P.Eng.
-Secret Lab Technologies Ltd.
+-Tony
