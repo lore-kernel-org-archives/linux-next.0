@@ -1,32 +1,32 @@
-From: Chris Metcalf <cmetcalf@tilera.com>
-Subject: Re: linux-next: build failure after merge of the final tree (tile
- tree related)
-Date: Mon, 07 Jun 2010 08:56:57 -0400
-Message-ID: <4C0CEC99.3020909@tilera.com>
-References: <20100607140140.870c0fb5.sfr@canb.auug.org.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] Revert adding some arch-specific signal syscalls to <linux/syscalls.h>.
+Date: Mon, 7 Jun 2010 15:18:33 +0200
+Message-ID: <201006071518.34013.arnd@arndb.de>
+References: <201006071254.o57CsAwG002729@farm-0002.internal.tilera.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100607140140.870c0fb5.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Arnd Bergmann <arnd@arndb.de>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from moutng.kundenserver.de ([212.227.17.8]:63777 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755132Ab0FGNSq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Jun 2010 09:18:46 -0400
+In-Reply-To: <201006071254.o57CsAwG002729@farm-0002.internal.tilera.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Chris Metcalf <cmetcalf@tilera.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 
-On 6/7/2010 12:01 AM, Stephen Rothwell wrote:
-> I applied this patch for today.  Something better could probably be
-> done.  I note that there is already a declaration of sys_rt_sigaction in
-> include/asm-generic/syscalls.h ...
->   
+On Monday 07 June 2010, Chris Metcalf wrote:
+> It turns out there is some variance on the calling conventions for
+> these syscalls, and <asm-generic/syscalls.h> is already the mechanism
+> used to handle this.  Switch arch/tile over to using that mechanism and
+> tweak the calling conventions for a couple of tile syscalls to match
+> <asm-generic/syscalls.h>.
+> 
+> Signed-off-by: Chris Metcalf <cmetcalf@tilera.com>
 
-Yes, thanks for the pointer.  In fact by adjusting a couple of tile
-syscalls slightly I can just use <asm-generic/syscalls.h> wholesale.  I
-reverted the addition of sys_rt_sigaction() and sys_rt_sigsuspend() to
-<linux/syscalls.h> and cleaned up the arch/tile/include/asm/syscalls.h
-as well.  I mailed the patch as another reply-to to Stephen's original
-message.
+Looks good to me.
 
--- 
-Chris Metcalf, Tilera Corp.
-http://www.tilera.com
+Acked-by: Arnd Bergmann <arnd@arndb.de>
