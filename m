@@ -1,32 +1,57 @@
-From: "Luck, Tony" <tony.luck@intel.com>
-Subject: RE: linux-next: Tree for June 3
-Date: Mon, 7 Jun 2010 11:16:36 -0700
-Message-ID: <987664A83D2D224EAE907B061CE93D530114F86372@orsmsx505.amr.corp.intel.com>
-References: <20100603134753.710a64b3.sfr@canb.auug.org.au>
- <201006051209.51664.rusty@rustcorp.com.au>
- <201006051221.38088.rusty@rustcorp.com.au>
- <201006051331.26359.rusty@rustcorp.com.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+From: "John W. Linville" <linville@tuxdriver.com>
+Subject: [PATCH] iwlwifi: fix-up botched revert
+Date: Mon,  7 Jun 2010 14:49:36 -0400
+Message-ID: <1275936576-15590-1-git-send-email-linville@tuxdriver.com>
+References: <20100607090230.deed8bd1.randy.dunlap@oracle.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:7776 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752162Ab0FGSQl convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Jun 2010 14:16:41 -0400
-In-Reply-To: <201006051331.26359.rusty@rustcorp.com.au>
-Content-Language: en-US
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:35867 "EHLO
+	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752368Ab0FGTAM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Jun 2010 15:00:12 -0400
+In-Reply-To: <20100607090230.deed8bd1.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>, Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Dave Young <hidave.darkstar@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: linux-wireless@vger.kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Randy Dunlap <randy.dunlap@oracle.com>, "John W. Linville" <linville@tuxdriver.com>
 
-> This time for sure!
+In the revert of "iwlwifi: move _agn statistics related structure", I
+need to use CONFIG_IWLWIFI_DEBUGFS instead of CONFIG_IWLWIFI_DEBUG in
+the private structure definition.  Without this patch, it is possible
+to get this:
 
-Something very like that patch showed up in next-20100607 ... so
-I took that for a spin. Everything seems tickety-boo. Modules get
-loaded with no OOPSen. All my devices are found and working.
+drivers/net/wireless/iwlwifi/iwl-rx.c: In function 'iwl_accumulative_statistics':
+drivers/net/wireless/iwlwifi/iwl-rx.c:304: error: 'struct iwl_priv' has no member named 'accum_statistics'
+drivers/net/wireless/iwlwifi/iwl-rx.c:305: error: 'struct iwl_priv' has no member named 'delta_statistics'
+drivers/net/wireless/iwlwifi/iwl-rx.c:306: error: 'struct iwl_priv' has no member named 'max_delta'
+drivers/net/wireless/iwlwifi/iwl-rx.c:321: error: 'struct iwl_priv' has no member named 'accum_statistics'
+drivers/net/wireless/iwlwifi/iwl-rx.c:323: error: 'struct iwl_priv' has no member named 'accum_statistics'
+drivers/net/wireless/iwlwifi/iwl-rx.c:325: error: 'struct iwl_priv' has no member named 'accum_statistics'
+drivers/net/wireless/iwlwifi/iwl-rx.c:327: error: 'struct iwl_priv' has no member named 'accum_statistics'
+drivers/net/wireless/iwlwifi/iwl-rx.c:329: error: 'struct iwl_priv' has no member named 'accum_statistics'
+drivers/net/wireless/iwlwifi/iwl-rx.c:331: error: 'struct iwl_priv' has no member named 'accum_statistics'
+drivers/net/wireless/iwlwifi/iwl-rx.c: In function 'iwl_reply_statistics':
+drivers/net/wireless/iwlwifi/iwl-rx.c:484: error: 'struct iwl_priv' has no member named 'accum_statistics'
+drivers/net/wireless/iwlwifi/iwl-rx.c:486: error: 'struct iwl_priv' has no member named 'delta_statistics'
+drivers/net/wireless/iwlwifi/iwl-rx.c:488: error: 'struct iwl_priv' has no member named 'max_delta'
 
-Thanks
+Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
+Signed-off-by: John W. Linville <linville@tuxdriver.com>
+---
+ drivers/net/wireless/iwlwifi/iwl-dev.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
--Tony
+diff --git a/drivers/net/wireless/iwlwifi/iwl-dev.h b/drivers/net/wireless/iwlwifi/iwl-dev.h
+index f359d9f..a00248c 100644
+--- a/drivers/net/wireless/iwlwifi/iwl-dev.h
++++ b/drivers/net/wireless/iwlwifi/iwl-dev.h
+@@ -1208,7 +1208,7 @@ struct iwl_priv {
+ 	struct iwl_tt_mgmt thermal_throttle;
+ 
+ 	struct iwl_notif_statistics statistics;
+-#ifdef CONFIG_IWLWIFI_DEBUG
++#ifdef CONFIG_IWLWIFI_DEBUGFS
+ 	struct iwl_notif_statistics accum_statistics;
+ 	struct iwl_notif_statistics delta_statistics;
+ 	struct iwl_notif_statistics max_delta;
+-- 
+1.6.6.1
