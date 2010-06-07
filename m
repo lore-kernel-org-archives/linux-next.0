@@ -1,80 +1,54 @@
-From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Subject: Re: linux-next: Tree for June 7 (iwlwifi)
-Date: Mon, 7 Jun 2010 09:02:30 -0700
-Message-ID: <20100607090230.deed8bd1.randy.dunlap@oracle.com>
-References: <20100607142034.c96c2509.sfr@canb.auug.org.au>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: linux-next: manual merge of the devicetree tree with Linus' tree
+Date: Mon, 7 Jun 2010 11:03:35 -0600
+Message-ID: <AANLkTinfvexAjfzrLtQXqqCLIqootCGhaVLmajLC8rtO@mail.gmail.com>
+References: <20100607125343.cd109629.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20100607142034.c96c2509.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-yw0-f187.google.com ([209.85.211.187]:51644 "EHLO
+	mail-yw0-f187.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751863Ab0FGREA convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Jun 2010 13:04:00 -0400
+In-Reply-To: <20100607125343.cd109629.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 7 Jun 2010 14:20:34 +1000 Stephen Rothwell wrote:
+On Sun, Jun 6, 2010 at 8:53 PM, Stephen Rothwell <sfr@canb.auug.org.au>=
+ wrote:
+> Hi Grant,
+>
+> Today's linux-next merge of the devicetree tree got a conflict in
+> drivers/usb/host/ehci-hcd.c between commit
+> 1f23b2d98c11fed43c552a5dbd00c793f81a8736 ("usb: fix ehci_hcd build
+> failure when both generic-OF and xilinx is selected") from the =A0tre=
+e and
+> commit 4c018c4ab1edd8f4154848868960ebe132c3d138 ("usb/of: fix build
+> errors") from the devicetree tree.
+>
+> They look like two version of the same fix. =A0I used the version fro=
+m
+> Linus' tree.
 
-> Hi all,
-> 
-> Changes since 20100604:
+Yup, that's right.  The commit in my devicetree-next branch is stale
+and has been superseeded.  I just hadn't pushed out the new tree yet.
+I'm refresh it today.
 
+Cheers,
+g.
 
-2 different builds:
-
-drivers/net/wireless/iwlwifi/iwl-rx.c: In function 'iwl_accumulative_statistics':
-drivers/net/wireless/iwlwifi/iwl-rx.c:304: error: 'struct iwl_priv' has no member named 'accum_statistics'
-drivers/net/wireless/iwlwifi/iwl-rx.c:305: error: 'struct iwl_priv' has no member named 'delta_statistics'
-drivers/net/wireless/iwlwifi/iwl-rx.c:306: error: 'struct iwl_priv' has no member named 'max_delta'
-drivers/net/wireless/iwlwifi/iwl-rx.c:321: error: 'struct iwl_priv' has no member named 'accum_statistics'
-drivers/net/wireless/iwlwifi/iwl-rx.c:323: error: 'struct iwl_priv' has no member named 'accum_statistics'
-drivers/net/wireless/iwlwifi/iwl-rx.c:325: error: 'struct iwl_priv' has no member named 'accum_statistics'
-drivers/net/wireless/iwlwifi/iwl-rx.c:327: error: 'struct iwl_priv' has no member named 'accum_statistics'
-drivers/net/wireless/iwlwifi/iwl-rx.c:329: error: 'struct iwl_priv' has no member named 'accum_statistics'
-drivers/net/wireless/iwlwifi/iwl-rx.c:331: error: 'struct iwl_priv' has no member named 'accum_statistics'
-drivers/net/wireless/iwlwifi/iwl-rx.c: In function 'iwl_reply_statistics':
-drivers/net/wireless/iwlwifi/iwl-rx.c:484: error: 'struct iwl_priv' has no member named 'accum_statistics'
-drivers/net/wireless/iwlwifi/iwl-rx.c:486: error: 'struct iwl_priv' has no member named 'delta_statistics'
-drivers/net/wireless/iwlwifi/iwl-rx.c:488: error: 'struct iwl_priv' has no member named 'max_delta'
-
-
---and--
-
-drivers/net/wireless/iwlwifi/iwl-agn-debugfs.c: In function 'iwl_ucode_rx_stats_read':
-drivers/net/wireless/iwlwifi/iwl-agn-debugfs.c:86: error: 'struct iwl_priv' has no member named 'accum_statistics'
-drivers/net/wireless/iwlwifi/iwl-agn-debugfs.c:87: error: 'struct iwl_priv' has no member named 'accum_statistics'
-drivers/net/wireless/iwlwifi/iwl-agn-debugfs.c:88: error: 'struct iwl_priv' has no member named 'accum_statistics'
-drivers/net/wireless/iwlwifi/iwl-agn-debugfs.c:89: error: 'struct iwl_priv' has no member named 'accum_statistics'
-drivers/net/wireless/iwlwifi/iwl-agn-debugfs.c:90: error: 'struct iwl_priv' has no member named 'delta_statistics'
-drivers/net/wireless/iwlwifi/iwl-agn-debugfs.c:91: error: 'struct iwl_priv' has no member named 'delta_statistics'
-drivers/net/wireless/iwlwifi/iwl-agn-debugfs.c:92: error: 'struct iwl_priv' has no member named 'delta_statistics'
-drivers/net/wireless/iwlwifi/iwl-agn-debugfs.c:93: error: 'struct iwl_priv' has no member named 'delta_statistics'
-drivers/net/wireless/iwlwifi/iwl-agn-debugfs.c:94: error: 'struct iwl_priv' has no member named 'max_delta'
-drivers/net/wireless/iwlwifi/iwl-agn-debugfs.c:95: error: 'struct iwl_priv' has no member named 'max_delta'
-drivers/net/wireless/iwlwifi/iwl-agn-debugfs.c:96: error: 'struct iwl_priv' has no member named 'max_delta'
-drivers/net/wireless/iwlwifi/iwl-agn-debugfs.c:97: error: 'struct iwl_priv' has no member named 'max_delta'
-drivers/net/wireless/iwlwifi/iwl-agn-debugfs.c: In function 'iwl_ucode_tx_stats_read':
-drivers/net/wireless/iwlwifi/iwl-agn-debugfs.c:564: error: 'struct iwl_priv' has no member named 'accum_statistics'
-drivers/net/wireless/iwlwifi/iwl-agn-debugfs.c:565: error: 'struct iwl_priv' has no member named 'delta_statistics'
-drivers/net/wireless/iwlwifi/iwl-agn-debugfs.c:566: error: 'struct iwl_priv' has no member named 'max_delta'
-drivers/net/wireless/iwlwifi/iwl-agn-debugfs.c: In function 'iwl_ucode_general_stats_read':
-drivers/net/wireless/iwlwifi/iwl-agn-debugfs.c:783: error: 'struct iwl_priv' has no member named 'accum_statistics'
-drivers/net/wireless/iwlwifi/iwl-agn-debugfs.c:784: error: 'struct iwl_priv' has no member named 'delta_statistics'
-drivers/net/wireless/iwlwifi/iwl-agn-debugfs.c:785: error: 'struct iwl_priv' has no member named 'max_delta'
-drivers/net/wireless/iwlwifi/iwl-agn-debugfs.c:786: error: 'struct iwl_priv' has no member named 'accum_statistics'
-drivers/net/wireless/iwlwifi/iwl-agn-debugfs.c:787: error: 'struct iwl_priv' has no member named 'delta_statistics'
-drivers/net/wireless/iwlwifi/iwl-agn-debugfs.c:788: error: 'struct iwl_priv' has no member named 'max_delta'
-drivers/net/wireless/iwlwifi/iwl-agn-debugfs.c:789: error: 'struct iwl_priv' has no member named 'accum_statistics'
-drivers/net/wireless/iwlwifi/iwl-agn-debugfs.c:790: error: 'struct iwl_priv' has no member named 'delta_statistics'
-drivers/net/wireless/iwlwifi/iwl-agn-debugfs.c:791: error: 'struct iwl_priv' has no member named 'max_delta'
+> --
+> Cheers,
+> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
+=2Eorg.au
+> http://www.canb.auug.org.au/~sfr/
+>
 
 
-config files available if needed.
 
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--=20
+Grant Likely, B.Sc., P.Eng.
+Secret Lab Technologies Ltd.
