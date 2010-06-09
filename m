@@ -1,50 +1,43 @@
-From: Borislav Petkov <bp@alien8.de>
-Subject: Re: linux-next: Tree for June 2 (staging/comedi)
-Date: Wed, 9 Jun 2010 11:53:15 +0200
-Message-ID: <20100609095315.GA19580@a1.tnic>
-References: <20100602151439.6de66132.sfr@canb.auug.org.au>
- <20100602100735.0812c063.randy.dunlap@oracle.com>
- <20100603091555.GA25287@aftab>
- <alpine.DEB.1.10.1006052043140.21893@vs81.sauer-cs.de>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for June 9 (niu)
+Date: Wed, 9 Jun 2010 10:36:57 -0700
+Message-ID: <20100609103657.66252a27.randy.dunlap@oracle.com>
+References: <20100609133443.38f1f957.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.1.10.1006052043140.21893@vs81.sauer-cs.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexander Kurz <linux@blala.de>
-Cc: Borislav Petkov <bp@amd64.org>, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Alexander Kurz <linux@kbdbabel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, gregkh@suse.de
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:18195 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752734Ab0FIRiD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 9 Jun 2010 13:38:03 -0400
+In-Reply-To: <20100609133443.38f1f957.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, netdev <netdev@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, davem@davemloft.net
 
-From: Alexander Kurz <linux@blala.de>
-Date: Sat, Jun 05, 2010 at 08:50:57PM +0400
+On Wed, 9 Jun 2010 13:34:43 +1000 Stephen Rothwell wrote:
 
-> Hi,
-> could you please repeat the test on 2.6.35-rc1-git3 or later
+> Hi all,
 > 
-> On Thu, 3 Jun 2010, Borislav Petkov wrote:
-> > I get a different set of errors with 2.6.35-rc1:
-> > 
-> > ERROR: "cfc_write_array_to_buffer" [drivers/staging/comedi/drivers/usbduxfast.ko] undefined!
-> > ERROR: "cfc_write_array_to_buffer" [drivers/staging/comedi/drivers/comedi_test.ko] undefined!
-> was caused by
-> > CONFIG_COMEDI_FC=y
-> and is fixed in 824196248c1f28aa7d151fd5b11d76182c751f19
-> by adding COMEDI_FC depends on COMEDI.
-> CONFIG_COMEDI_FC=m would be correct.
+> Changes since 20100608:
 > 
-> > ERROR: "subdev_8255_cleanup" [drivers/staging/comedi/drivers/das08.ko] undefined!
-> > ERROR: "subdev_8255_init" [drivers/staging/comedi/drivers/das08.ko] undefined! 
-> CONFIG_COMEDI_8255=m should have been set.
-> this should be as well fixed in 824196248c1f28aa7d151fd5b11d76182c751f19 
-> by pulling das08 out of the ISA group.
+> My fixes tree contains:
+>       v4l-dvb: update gfp/slab.h includes
+>       arm: update gfp/slab.h includes
+>       davinci: update gfp/slab.h includes
+>       ocfs2: update gfp/slab.h includes
+>       acpi: update gfp/slab.h includes
 
-sorry, but I'm away from my testing machines right now and won't be able
-to do it until next week. But you could do it yourself in the meantime
-using the randconfig I had attached to the previous message.
 
-Thanks.
 
--- 
-Regards/Gruss,
-Boris.
+on x86_64 or i386, CONFIG_OF_DEVICE is not enabled:
+
+drivers/net/niu.c:9700: warning: 'struct of_device' declared inside parameter list
+drivers/net/niu.c:9700: warning: its scope is only this definition or declaration, which is probably not what you want
+drivers/net/niu.c:9716: warning: assignment from incompatible pointer type
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
