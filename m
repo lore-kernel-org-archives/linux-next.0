@@ -1,58 +1,90 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for June 9 (niu)
-Date: Wed, 09 Jun 2010 11:08:03 -0700
-Message-ID: <4C0FD883.8040605@oracle.com>
-References: <20100609133443.38f1f957.sfr@canb.auug.org.au>	<20100609103657.66252a27.randy.dunlap@oracle.com> <20100609.110638.112605100.davem@davemloft.net>
+From: Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>
+Subject: Re: [PATCH -next] classmate-laptop: fix for RFKILL=m, CMPC=y
+Date: Wed, 9 Jun 2010 17:02:18 -0300
+Message-ID: <20100609200218.GD2551@barata.holoscopio.com>
+References: <20100603134753.710a64b3.sfr@canb.auug.org.au>
+ <20100603093903.d9378c9a.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100609.110638.112605100.davem@davemloft.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="T7mxYSe680VjQnyC"
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20100603093903.d9378c9a.randy.dunlap@oracle.com>
+Sender: platform-driver-x86-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, platform-driver-x86@vger.kernel.org, Matthew Garrett <mjg@redhat.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Daniel Oliveira Nascimento <don@syst.com.br>
 List-Id: linux-next.vger.kernel.org
 
-On 06/09/10 11:06, David Miller wrote:
+
+--T7mxYSe680VjQnyC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Jun 03, 2010 at 09:39:03AM -0700, Randy Dunlap wrote:
 > From: Randy Dunlap <randy.dunlap@oracle.com>
-> Date: Wed, 9 Jun 2010 10:36:57 -0700
-> 
->> On Wed, 9 Jun 2010 13:34:43 +1000 Stephen Rothwell wrote:
->>
->>> Changes since 20100608:
->>>
->>> My fixes tree contains:
->>>       v4l-dvb: update gfp/slab.h includes
->>>       arm: update gfp/slab.h includes
->>>       davinci: update gfp/slab.h includes
->>>       ocfs2: update gfp/slab.h includes
->>>       acpi: update gfp/slab.h includes
->>
->>
->>
->> on x86_64 or i386, CONFIG_OF_DEVICE is not enabled:
->>
->> drivers/net/niu.c:9700: warning: 'struct of_device' declared inside parameter list
->> drivers/net/niu.c:9700: warning: its scope is only this definition or declaration, which is probably not what you want
->> drivers/net/niu.c:9716: warning: assignment from incompatible pointer type
-> 
-> Hmmm, I'm confused why this never happened before :-)
-> 
-> We conditionalize linux/of_device.h inclusion with CONFIG_SPARC64, yet
-> we unconditionally use "struct of_device *" pointers in the driver
-> with no such ifdef protection.
-> 
-> Even if we unconditionally included linux/of_device.h, that file does
-> nothing unless CONFIG_OF_DEVICE is defined so it should have always
-> produced these warnings since I can't see from where else it could
-> have gotten even a "struct of_device;" somewhere.
-> 
-> Do you have any idea Randy?  Pease try analyze this further so we can
-> fix it properly.
+>=20
+> Fix build error when CONFIG_RFKILL=3Dm and CONFIG_ACPI_CMPC=3Dy:
+> classmate-laptop should depend on RFKILL or RFKILL=3Dn.
+>=20
+> classmate-laptop.c:(.text+0x1351fc): undefined reference to `rfkill_unreg=
+ister'
+> classmate-laptop.c:(.text+0x135204): undefined reference to `rfkill_destr=
+oy'
+> classmate-laptop.c:(.text+0x135237): undefined reference to `rfkill_set_s=
+w_state'
+> classmate-laptop.c:(.text+0x1352b9): undefined reference to `rfkill_alloc'
+> classmate-laptop.c:(.text+0x1352ca): undefined reference to `rfkill_regis=
+ter'
+> classmate-laptop.c:(.text+0x1352d6): undefined reference to `rfkill_destr=
+oy'
+>=20
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> ---
 
 
-I looked and was confuzed, but I'll look again.
+Randy,
 
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+Since this implies a build failure, shouldn't it be sent for rc too?
+
+Best Regards,
+Cascardo.
+
+>  drivers/platform/x86/Kconfig |    1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> --- linux-next-20100603.orig/drivers/platform/x86/Kconfig
+> +++ linux-next-20100603/drivers/platform/x86/Kconfig
+> @@ -520,6 +520,7 @@ config TOSHIBA_BT_RFKILL
+>  config ACPI_CMPC
+>  	tristate "CMPC Laptop Extras"
+>  	depends on X86 && ACPI
+> +	depends on RFKILL || RFKILL=3Dn
+>  	select INPUT
+>  	select BACKLIGHT_CLASS_DEVICE
+>  	default n
+
+--T7mxYSe680VjQnyC
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+Content-Disposition: inline
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQIcBAEBAgAGBQJMD/NJAAoJEEWxSg7udFZIEjIQAIenV6K05GdBWoI1YqO038Wf
+mSUDfHv5jpeHUk2FR/nHo5Ky48uO+kHHQJ1zdZXUy4XZSnTlCXfiWCAc4rHdL2KC
+V83a9xtQNTxCnqFuLWaOG3VYvbIyt/XHmfVRQg1aZyjhRqs3LjXYLi+LZ9ryDnZQ
+63n6RpysYu3gi1yurA9SBmVj7MjEU2mZryEbUVGyKbKbm0fSx8Kd50rRJHVXcqFk
+8JH9uImiW8kvNUq2Zpn0oarBRVSO+oCzVNnLGaSKT41n2dWQCHP1iFftxkwU2tO1
+KkLu3+7fPTyJNAKboEMJRg8UVgjThdTBwYpON5invH4mkNypuz7ux5F9wnqEEjTl
+Q/rFLgG5jASv/q+5/u03sdpdibXxe9vT0mGXUojmMWx+7tlrUyeyU5sljT9nV8qf
+5MDLJQFuxwOOeIzgSVlUlAy9YmB7XQWJnai2Y6Z4+nvBCTeLdqDAyX7B4wGVvmEA
+yQOxz6fJsYmQUWSWc8VlbIP/P3U3etx4uQ6Q3itWMvDuWmhsjd9f4F8jjO/r+qAz
+JKvKoMzdOwAhYQV2TRnAoeNBqKYn8bSroJtISrxSNMtewwd/VeilIcg749ZMS4NI
+sGFCig8LyzBcRUUFj7tER2BLlCXd9flDTjTewWY/w4S3s0mqC209efVUL85BEz2M
+G630J4qyYNdP0qUhfgvW
+=vXM3
+-----END PGP SIGNATURE-----
+
+--T7mxYSe680VjQnyC--
