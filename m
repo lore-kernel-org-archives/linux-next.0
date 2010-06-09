@@ -1,28 +1,79 @@
-From: Matthew Garrett <mjg59@srcf.ucam.org>
-Subject: Re: [PATCH -next] classmate-laptop: fix for RFKILL=m, CMPC=y
-Date: Wed, 9 Jun 2010 21:11:18 +0100
-Message-ID: <20100609201118.GA27593@srcf.ucam.org>
-References: <20100603134753.710a64b3.sfr@canb.auug.org.au> <20100603093903.d9378c9a.randy.dunlap@oracle.com> <20100609200218.GD2551@barata.holoscopio.com> <4C0FF3F0.2080601@oracle.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH] input: fixup X86_MRST selects
+Date: Wed, 9 Jun 2010 15:29:21 -0700
+Message-ID: <20100609152921.61fb7db9.randy.dunlap@oracle.com>
+References: <20100609133443.38f1f957.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <4C0FF3F0.2080601@oracle.com>
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Thadeu Lima de Souza Cascardo <cascardo@holoscopio.com>, Stephen Rothwell <sfr@canb.auug.org.au>, platform-driver-x86@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Daniel Oliveira Nascimento <don@syst.com.br>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <20100609133443.38f1f957.sfr@canb.auug.org.au>
+Sender: linux-input-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jacob Pan <jacob.jun.pan@intel.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-input@vger.kernel.org, akpm <akpm@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Jun 09, 2010 at 01:05:04PM -0700, Randy Dunlap wrote:
-> On 06/09/10 13:02, Thadeu Lima de Souza Cascardo wrote:
-> > Since this implies a build failure, shouldn't it be sent for rc too?
-> 
-> Yes, it should.
-> I hit the problem during a linux-next build, but it does apply to mainline as well.
-> Thanks.
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-It's been sent upstream, but Linus didn't pull. I'll see if I can find a 
-set he's willing to take.
+Some of the recent X86_MRST additions make some "select"s
+conditional on X86_MRST but missed some related kconfig symbols,
+causing:
 
--- 
-Matthew Garrett | mjg59@srcf.ucam.org
+drivers/built-in.o: In function `ps2_end_command':
+(.text+0x257ab2): undefined reference to `i8042_check_port_owner'
+drivers/built-in.o: In function `ps2_end_command':
+(.text+0x257ae1): undefined reference to `i8042_unlock_chip'
+drivers/built-in.o: In function `ps2_begin_command':
+(.text+0x257b40): undefined reference to `i8042_check_port_owner'
+drivers/built-in.o: In function `ps2_begin_command':
+(.text+0x257b6f): undefined reference to `i8042_lock_chip'
+
+when SERIO_I8042=m, SERIO_LIBPS2=y, KEYBOARD_ATKBD=y.
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc:	Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:	Jacob Pan <jacob.jun.pan@intel.com>
+---
+[found in linux-next but also applies to mainline]
+
+ drivers/input/keyboard/Kconfig |    3 ++-
+ drivers/input/mouse/Kconfig    |    2 +-
+ drivers/input/serio/Kconfig    |    2 +-
+ 3 files changed, 4 insertions(+), 3 deletions(-)
+
+--- linux-next-20100609.orig/drivers/input/keyboard/Kconfig
++++ linux-next-20100609/drivers/input/keyboard/Kconfig
+@@ -70,9 +70,10 @@ config KEYBOARD_ATARI
+ 
+ config KEYBOARD_ATKBD
+ 	tristate "AT keyboard" if EMBEDDED || !X86
++	depends on !X86 || (X86 && !X86_MRST)
+ 	default y
+ 	select SERIO
+-	select SERIO_LIBPS2
++	select SERIO_LIBPS2 if !X86_MRST
+ 	select SERIO_I8042 if X86 && !X86_MRST
+ 	select SERIO_GSCPS2 if GSC
+ 	help
+--- linux-next-20100609.orig/drivers/input/mouse/Kconfig
++++ linux-next-20100609/drivers/input/mouse/Kconfig
+@@ -16,7 +16,7 @@ config MOUSE_PS2
+ 	tristate "PS/2 mouse"
+ 	default y
+ 	select SERIO
+-	select SERIO_LIBPS2
++	select SERIO_LIBPS2 if !X86_MRST
+ 	select SERIO_I8042 if X86 && !X86_MRST
+ 	select SERIO_GSCPS2 if GSC
+ 	help
+--- linux-next-20100609.orig/drivers/input/serio/Kconfig
++++ linux-next-20100609/drivers/input/serio/Kconfig
+@@ -168,7 +168,7 @@ config SERIO_MACEPS2
+ 	  module will be called maceps2.
+ 
+ config SERIO_LIBPS2
+-	tristate "PS/2 driver library" if EMBEDDED
++	tristate "PS/2 driver library" if EMBEDDED && !X86_MRST
+ 	depends on SERIO_I8042 || SERIO_I8042=n
+ 	help
+ 	  Say Y here if you are using a driver for device connected
