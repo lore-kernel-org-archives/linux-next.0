@@ -1,47 +1,67 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drbd tree with the block trees
-Date: Thu, 10 Jun 2010 13:52:03 +1000
-Message-ID: <20100610135203.4649453a.sfr@canb.auug.org.au>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: [PATCH] of/device: Move struct of_device define outside of
+	CONFIG_OF_DEVICE test
+Date: Wed, 09 Jun 2010 22:54:10 -0600
+Message-ID: <20100610045159.615.89343.stgit@angua>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__10_Jun_2010_13_52_03_+1000_you=wQaCdG6.Z_Oj"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46129 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753853Ab0FJDwM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 9 Jun 2010 23:52:12 -0400
+Received: from mail-pv0-f174.google.com ([74.125.83.174]:50185 "EHLO
+	mail-pv0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751122Ab0FJEyN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Jun 2010 00:54:13 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Philipp Reisner <philipp.reisner@linbit.com>, drbd-dev@linbit.com
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Thu__10_Jun_2010_13_52_03_+1000_you=wQaCdG6.Z_Oj
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Some code uses of_device even when CONFIG_OF_DEVICE is not set.  This
+patch makes of_device valid all the time by moving it outside of the
+ifdef CONFIG_OF_DEVICE test.
 
-Hi all,
+Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
+Signed-off-by: Grant Likely <grant.likely@secretlab.ca>
+---
 
-Today's linux-next merge of the drbd tree got a conflicts in
-fs/fs-writeback.c against the block tree.
+Hi Randy,
 
-It looks like the block tree has moved under the drbd tree again.  I used
-the version of this file from the block tree for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Here's what I applied to my tree to fix the niu driver compile warning.
+I've compile tested it on several architectures, and am pushing it out
+to my linux-next branch now.
 
---Signature=_Thu__10_Jun_2010_13_52_03_+1000_you=wQaCdG6.Z_Oj
-Content-Type: application/pgp-signature
+g.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+ include/linux/of_device.h |   12 +++++-------
+ 1 files changed, 5 insertions(+), 7 deletions(-)
 
-iEYEARECAAYFAkwQYWMACgkQjjKRsyhoI8yEAwCeL6kicpb/0nbdh0HOzwoKfUZb
-v6kAoIghvlDHLarzhUg2MYytPS4KT/As
-=sfiT
------END PGP SIGNATURE-----
-
---Signature=_Thu__10_Jun_2010_13_52_03_+1000_you=wQaCdG6.Z_Oj--
+diff --git a/include/linux/of_device.h b/include/linux/of_device.h
+index c877d54..8cd1fe7 100644
+--- a/include/linux/of_device.h
++++ b/include/linux/of_device.h
+@@ -1,13 +1,6 @@
+ #ifndef _LINUX_OF_DEVICE_H
+ #define _LINUX_OF_DEVICE_H
+ 
+-#ifdef CONFIG_OF_DEVICE
+-#include <linux/device.h>
+-#include <linux/platform_device.h>
+-#include <linux/of.h>
+-#include <linux/mod_devicetable.h>
+-
+-
+ /*
+  * The of_device *was* a kind of "base class" that was a superset of
+  * struct device for use by devices attached to an OF node and probed
+@@ -22,7 +15,12 @@
+  * from the kernel.
+  */
+ #define of_device platform_device
++#include <linux/platform_device.h>
+ 
++#ifdef CONFIG_OF_DEVICE
++#include <linux/device.h>
++#include <linux/of.h>
++#include <linux/mod_devicetable.h>
+ #include <asm/of_device.h>
+ 
+ #define	to_of_device(d) container_of(d, struct of_device, dev)
