@@ -1,49 +1,56 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH 2/2 -next] niu: always include of_device.h
-Date: Wed, 09 Jun 2010 17:29:25 -0700 (PDT)
-Message-ID: <20100609.172925.183044544.davem@davemloft.net>
-References: <20100609.110638.112605100.davem@davemloft.net>
-	<20100609154409.bf024c0c.randy.dunlap@oracle.com>
-	<AANLkTikuIgeSMC5_IzAQGEQRso4udBvBGPcioAiArWb5@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the kbuid-current tree
+Date: Thu, 10 Jun 2010 11:15:17 +1000
+Message-ID: <20100610111517.3a4ed458.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <AANLkTikuIgeSMC5_IzAQGEQRso4udBvBGPcioAiArWb5@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: grant.likely@secretlab.ca
-Cc: randy.dunlap@oracle.com, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__10_Jun_2010_11_15_17_+1000_X74L7HcsqHpLQERK"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:58478 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754869Ab0FJBPV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 9 Jun 2010 21:15:21 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Michal Marek <mmarek@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-=46rom: Grant Likely <grant.likely@secretlab.ca>
-Date: Wed, 9 Jun 2010 17:45:54 -0600
+--Signature=_Thu__10_Jun_2010_11_15_17_+1000_X74L7HcsqHpLQERK
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Wed, Jun 9, 2010 at 4:44 PM, Randy Dunlap <randy.dunlap@oracle.com=
-> wrote:
->> From: Randy Dunlap <randy.dunlap@oracle.com>
->>
->> The niu driver uses struct of_device when built on any arch, not
->> only SPARC64, so always #include <linux/of_device.h>.
->>
->> drivers/net/niu.c:9700: warning: 'struct of_device' declared inside =
-parameter list
->> drivers/net/niu.c:9700: warning: its scope is only this definition o=
-r declaration, which is probably not what you want
->> drivers/net/niu.c:9716: warning: assignment from incompatible pointe=
-r type
->>
->> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
->> Cc: =A0 =A0 Grant Likely <grant.likely@secretlab.ca>
->> Cc: =A0 =A0 Dave Miller <davem@davemloft.net>
->> ---
->> =A0drivers/net/niu.c | =A0 =A03 ---
->=20
-> Looks okay to me (but I haven't build tested it yet).  The bulk of
-> of_device.h is compiled out when CONFIG_OF_DEVICE is not selected.
->=20
-> David, are you okay with me taking this via my tree as it depends on
-> Randy's other patch?
+Hi Michal,
 
-Yep, that's totally fine with me:
+After merging the kbuild-current tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Acked-by: David S. Miller <davem@davemloft.net>
+/bin/sh: line 1: init/modules.builtin: No such file or directory
+make[2]: *** [init/modules.builtin] Error 1
+make[1]: *** [init/modules.builtin] Error 2
+
+Caused by commit 2da30e703c5a56e27249fa8b8607708123fa52f5 ("kbuild:
+Generate modules.builtin in make modules").
+
+I started with a completely empty separate object directory ...
+
+I have used the version of the kbuild-current tree from next-20100609 for
+today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__10_Jun_2010_11_15_17_+1000_X74L7HcsqHpLQERK
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkwQPKUACgkQjjKRsyhoI8y7NwCgphClbe4mSyXHmNj8/l3Qu9WC
+iswAoJeC+hjbBTw2eWf9YMs/hZhZcWnK
+=j65q
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__10_Jun_2010_11_15_17_+1000_X74L7HcsqHpLQERK--
