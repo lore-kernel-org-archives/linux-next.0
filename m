@@ -1,67 +1,45 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: [PATCH] of/device: Move struct of_device define outside of
-	CONFIG_OF_DEVICE test
-Date: Wed, 09 Jun 2010 22:54:10 -0600
-Message-ID: <20100610045159.615.89343.stgit@angua>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the hwpoison tree with the kvm tree
+Date: Thu, 10 Jun 2010 15:11:15 +1000
+Message-ID: <20100610151115.8019d072.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pv0-f174.google.com ([74.125.83.174]:50185 "EHLO
-	mail-pv0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751122Ab0FJEyN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Jun 2010 00:54:13 -0400
+Received: from chilli.pcug.org.au ([203.10.76.44]:51628 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753615Ab0FJFLX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 10 Jun 2010 01:11:23 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andi Kleen <andi@firstfloor.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Huang Ying <ying.huang@intel.com>, Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>, Avi Kivity <avi@qumranet.com>, Marcelo Tosatti <mtosatti@redhat.com>
 
-Some code uses of_device even when CONFIG_OF_DEVICE is not set.  This
-patch makes of_device valid all the time by moving it outside of the
-ifdef CONFIG_OF_DEVICE test.
+Hi Andi,
 
-Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
-Signed-off-by: Grant Likely <grant.likely@secretlab.ca>
----
+Today's linux-next merge of the hwpoison tree got a conflict in
+mm/memory-failure.c between commit
+7c5663142a8e9fbf31c82fc9ab6ebc3fda10d6b9 ("KVM: Avoid killing userspace
+through guest SRAO MCE on unmapped pages") from the kvm tree and commit
+2164d3b53f002264d760c76799958ad7a48b9f41 ("HWPOISON, hugetlb: enable
+error handling path for hugepage") from the hwpoison tree.
 
-Hi Randy,
+Just overlapping additions.  I fixed it up (see below) and can carry the
+fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Here's what I applied to my tree to fix the niu driver compile warning.
-I've compile tested it on several architectures, and am pushing it out
-to my linux-next branch now.
-
-g.
-
- include/linux/of_device.h |   12 +++++-------
- 1 files changed, 5 insertions(+), 7 deletions(-)
-
-diff --git a/include/linux/of_device.h b/include/linux/of_device.h
-index c877d54..8cd1fe7 100644
---- a/include/linux/of_device.h
-+++ b/include/linux/of_device.h
-@@ -1,13 +1,6 @@
- #ifndef _LINUX_OF_DEVICE_H
- #define _LINUX_OF_DEVICE_H
- 
--#ifdef CONFIG_OF_DEVICE
--#include <linux/device.h>
--#include <linux/platform_device.h>
--#include <linux/of.h>
--#include <linux/mod_devicetable.h>
--
--
- /*
-  * The of_device *was* a kind of "base class" that was a superset of
-  * struct device for use by devices attached to an OF node and probed
-@@ -22,7 +15,12 @@
-  * from the kernel.
-  */
- #define of_device platform_device
-+#include <linux/platform_device.h>
- 
-+#ifdef CONFIG_OF_DEVICE
-+#include <linux/device.h>
-+#include <linux/of.h>
-+#include <linux/mod_devicetable.h>
- #include <asm/of_device.h>
- 
- #define	to_of_device(d) container_of(d, struct of_device, dev)
+diff --cc mm/memory-failure.c
+index 378b0f6,d0b420a..0000000
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@@ -45,7 -45,7 +45,8 @@@
+  #include <linux/page-isolation.h>
+  #include <linux/suspend.h>
+  #include <linux/slab.h>
+ +#include <linux/swapops.h>
++ #include <linux/hugetlb.h>
+  #include "internal.h"
+  
+  int sysctl_memory_failure_early_kill __read_mostly = 0;
