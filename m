@@ -1,46 +1,52 @@
-From: Artem Bityutskiy <dedekind1@gmail.com>
-Subject: Re: linux-next: build warning after merge of the ubi tree
-Date: Mon, 14 Jun 2010 05:34:47 +0300
-Message-ID: <1276482887.9881.0.camel@localhost.localdomain>
-References: <20100614115822.728c3199.sfr@canb.auug.org.au>
-Reply-To: dedekind1@gmail.com
+From: Jens Axboe <axboe@kernel.dk>
+Subject: Re: linux-next: manual merge of the drbd tree with the block trees
+Date: Mon, 14 Jun 2010 11:08:28 +0200
+Message-ID: <4C15F18C.3050905@kernel.dk>
+References: <20100610135203.4649453a.sfr@canb.auug.org.au>	<4C107FBF.9050209@kernel.dk> <20100614112639.ef45a777.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-fx0-f46.google.com ([209.85.161.46]:51586 "EHLO
-	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754982Ab0FNCex (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 13 Jun 2010 22:34:53 -0400
-In-Reply-To: <20100614115822.728c3199.sfr@canb.auug.org.au>
+Received: from 0122700014.0.fullrate.dk ([95.166.99.235]:55911 "EHLO kernel.dk"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755690Ab0FNJIb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 14 Jun 2010 05:08:31 -0400
+In-Reply-To: <20100614112639.ef45a777.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Philipp Reisner <philipp.reisner@linbit.com>, drbd-dev@linbit.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 2010-06-14 at 11:58 +1000, Stephen Rothwell wrote:
-> Hi Artem,
->=20
-> After merging the ubi tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
->=20
-> drivers/mtd/ubi/io.c: In function 'ubi_io_read':
-> drivers/mtd/ubi/io.c:153: warning: initialization makes integer from =
-pointer without a cast
-> drivers/mtd/ubi/io.c:170: warning: format '%s' expects type 'char *',=
- but argument 5 has type 'int'
-> drivers/mtd/ubi/io.c:177: warning: format '%zd' expects type 'signed =
-size_t', but argument 7 has type 'int'
-> drivers/mtd/ubi/io.c:177: warning: too many arguments for format
->=20
-> Introduced by commit 1a49af2ca019dcb4614c32f832bbcb814b61409c ("UBI:
-> improve ECC error message").
+On 2010-06-14 03:26, Stephen Rothwell wrote:
+> Hi Jens, Philipp,
+> 
+> On Thu, 10 Jun 2010 08:01:35 +0200 Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> I'm starting to think that it would be a little easier if you did not
+>> pull the drbd tree, I really should be pulling that into my -next branch
+>> instead.
+> 
+> Given that the drbd tree has not been updated to match the increasingly
+> different block tree, I have dropped it for today.
+> 
+> There a a few possibilities here:
+> 	- I just drop the drbd tree completely and it only gets merged
+> into the block tree.
+> 	- if the drbd tree doesn't actually depend on any of the features
+> in the block tree then it could be rebased onto Linus tree (and I would
+> cope with any merge fixups - as I do with many other trees).
+> 	- if it does depend on things in the block tree, those particular
+> features in the block tree could be put in a separate branch that is
+> never rebased and then that branch could be merged into both the block
+> and drbd trees (this has been done before e.g. stuff in the vfs tree.
+> 	- the drbd tree could be rebased on tom of the current block tree
+> (but then it must be kept up to date if the block tree is rebased).
 
-Thanks Stephen,
+The thing with the dependencies is that sometimes they are true,
+sometimes they are not. What I suggested to the drbd team is that they
+always just base off Linus and then ask me to pull their changes, then I
+will resolve any potential conflicts when that happens. The consequence
+would be that you stop pulling the drbd tree separately.
 
-I'll take care of these today.
-
---=20
-Best Regards,
-Artem Bityutskiy (=D0=90=D1=80=D1=82=D1=91=D0=BC =D0=91=D0=B8=D1=82=D1=8E=
-=D1=86=D0=BA=D0=B8=D0=B9)
+-- 
+Jens Axboe
