@@ -1,96 +1,89 @@
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-Subject: Re: next June 10: S390 build failure [arch/s390/kvm/kvm.ko]
-Date: Sat, 12 Jun 2010 08:54:13 +0200
-Message-ID: <201006120854.14259.borntraeger@de.ibm.com>
-References: <20100610160012.30ea7606.sfr@canb.auug.org.au> <4C10DCB7.7090903@in.ibm.com> <20100610154848.616aff99@mschwide.boeblingen.de.ibm.com>
+From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Subject: Re: linux-next: manual merge of the drbd tree with the
+	block trees
+Date: Mon, 14 Jun 2010 11:26:39 +1000
+Message-ID: <20100614112639.ef45a777.sfr@canb.auug.org.au>
+References: <20100610135203.4649453a.sfr@canb.auug.org.au>
+	<4C107FBF.9050209@kernel.dk>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100610154848.616aff99@mschwide.boeblingen.de.ibm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Martin Schwidefsky <schwidefsky@de.ibm.com>, Avi Kivity <avi@redhat.com>
-Cc: Sachin Sant <sachinp@in.ibm.com>, Carsten Otte <cotte@de.ibm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-s390@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>
+Content-Type: multipart/mixed; boundary="===============7146904712283891052=="
+Return-path: <drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org>
+In-Reply-To: <4C107FBF.9050209-tSWWG44O7X1aa/9Udqfwiw@public.gmane.org>
+List-Unsubscribe: <http://lists.linbit.com/mailman/options/drbd-dev>,
+	<mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linbit.com/pipermail/drbd-dev>
+List-Post: <mailto:drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org>
+List-Help: <mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.linbit.com/mailman/listinfo/drbd-dev>,
+	<mailto:drbd-dev-request-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org?subject=subscribe>
+Mime-version: 1.0
+Sender: drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
+Errors-To: drbd-dev-bounces-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
+To: Jens Axboe <axboe-tSWWG44O7X1aa/9Udqfwiw@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Philipp Reisner <philipp.reisner-63ez5xqkn6DQT0dZR+AlfA@public.gmane.org>, drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
 List-Id: linux-next.vger.kernel.org
 
-Am Donnerstag 10 Juni 2010, 15:48:48 schrieb Martin Schwidefsky:
-> On Thu, 10 Jun 2010 18:08:15 +0530
-> Sachin Sant <sachinp@in.ibm.com> wrote:
-> 
-> > Today's next fails to build on a s390 box with
-> > 
-> > ERROR: "__kvm_s390_vcpu_store_status" [arch/s390/kvm/kvm.ko] undefined!
-> > 
-> > Yesterday's next was good.
-> 
-> That is caused by git commit fbc5eec58e652339e9df1332cd5e10e8d8250aaf
-> which fails to take git commit 5288fbf0ef041ba0e8b4dcb2df4536b5e3a48b32
-> into account. There is a second caller of __kvm_s390_vcpu_store_status
-> in arch/s390/kvm/intercept.c. As far as I understand the code you could
-> just drop the 'static' from kvm_s390_vcpu_store_status and call it from
-> handle_stop instead of the old __kvm_s390_vcpu_store_status.
-> 
-> Carsten, Christian: could one of you have a look please?
+--===============7146904712283891052==
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__14_Jun_2010_11_26_39_+1000_oL/Hwo6W0EN0Jg5q"
 
-that patch should do the trick. Avi can you add that to kvm.git?
+--Signature=_Mon__14_Jun_2010_11_26_39_+1000_oL/Hwo6W0EN0Jg5q
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-kvm-s390: Fix build failure 
+Hi Jens, Philipp,
 
-This patch fixes 
-ERROR: "__kvm_s390_vcpu_store_status" [arch/s390/kvm/kvm.ko] undefined!
+On Thu, 10 Jun 2010 08:01:35 +0200 Jens Axboe <axboe-tSWWG44O7X1aa/9Udqfwiw@public.gmane.org> wrote:
+>
+> I'm starting to think that it would be a little easier if you did not
+> pull the drbd tree, I really should be pulling that into my -next branch
+> instead.
 
-triggered by
-commit 3268c56840dcee78c3e928336550f4e1861504c4 (kvm.git)
-Author: Avi Kivity <avi@redhat.com>
-Date:   Thu May 13 12:21:46 2010 +0300
-    KVM: s390: Centrally lock arch specific vcpu ioctls
-    
-Reported-by: Sachin Sant <sachinp@in.ibm.com>
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Given that the drbd tree has not been updated to match the increasingly
+different block tree, I have dropped it for today.
 
----
- arch/s390/kvm/intercept.c |    2 +-
- arch/s390/kvm/kvm-s390.c  |    2 +-
- arch/s390/kvm/kvm-s390.h  |    2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+There a a few possibilities here:
+	- I just drop the drbd tree completely and it only gets merged
+into the block tree.
+	- if the drbd tree doesn't actually depend on any of the features
+in the block tree then it could be rebased onto Linus tree (and I would
+cope with any merge fixups - as I do with many other trees).
+	- if it does depend on things in the block tree, those particular
+features in the block tree could be put in a separate branch that is
+never rebased and then that branch could be merged into both the block
+and drbd trees (this has been done before e.g. stuff in the vfs tree.
+	- the drbd tree could be rebased on tom of the current block tree
+(but then it must be kept up to date if the block tree is rebased).
 
-Index: kvm/arch/s390/kvm/intercept.c
-===================================================================
---- kvm.orig/arch/s390/kvm/intercept.c
-+++ kvm/arch/s390/kvm/intercept.c
-@@ -135,7 +135,7 @@ static int handle_stop(struct kvm_vcpu *
- 	spin_lock_bh(&vcpu->arch.local_int.lock);
- 	if (vcpu->arch.local_int.action_bits & ACTION_STORE_ON_STOP) {
- 		vcpu->arch.local_int.action_bits &= ~ACTION_STORE_ON_STOP;
--		rc = __kvm_s390_vcpu_store_status(vcpu,
-+		rc = kvm_s390_vcpu_store_status(vcpu,
- 						  KVM_S390_STORE_STATUS_NOADDR);
- 		if (rc >= 0)
- 			rc = -EOPNOTSUPP;
-Index: kvm/arch/s390/kvm/kvm-s390.c
-===================================================================
---- kvm.orig/arch/s390/kvm/kvm-s390.c
-+++ kvm/arch/s390/kvm/kvm-s390.c
-@@ -569,7 +569,7 @@ static int __guestcopy(struct kvm_vcpu *
-  * KVM_S390_STORE_STATUS_NOADDR: -> 0x1200 on 64 bit
-  * KVM_S390_STORE_STATUS_PREFIXED: -> prefix
-  */
--static int kvm_s390_vcpu_store_status(struct kvm_vcpu *vcpu, unsigned long addr)
-+int kvm_s390_vcpu_store_status(struct kvm_vcpu *vcpu, unsigned long addr)
- {
- 	const unsigned char archmode = 1;
- 	int prefix;
-Index: kvm/arch/s390/kvm/kvm-s390.h
-===================================================================
---- kvm.orig/arch/s390/kvm/kvm-s390.h
-+++ kvm/arch/s390/kvm/kvm-s390.h
-@@ -92,7 +92,7 @@ int kvm_s390_handle_b2(struct kvm_vcpu *
- int kvm_s390_handle_sigp(struct kvm_vcpu *vcpu);
- 
- /* implemented in kvm-s390.c */
--int __kvm_s390_vcpu_store_status(struct kvm_vcpu *vcpu,
-+int kvm_s390_vcpu_store_status(struct kvm_vcpu *vcpu,
- 				 unsigned long addr);
- /* implemented in diag.c */
- int kvm_s390_handle_diag(struct kvm_vcpu *vcpu);
+--=20
+Cheers,
+Stephen Rothwell                    sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__14_Jun_2010_11_26_39_+1000_oL/Hwo6W0EN0Jg5q
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkwVhU8ACgkQjjKRsyhoI8w7mACcC5IH+E4sX4sag6CLghdiHQuq
+bXoAn3C91BgaFpPPAZYnyFR/7zvMXsAD
+=OBWy
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__14_Jun_2010_11_26_39_+1000_oL/Hwo6W0EN0Jg5q--
+
+--===============7146904712283891052==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+drbd-dev mailing list
+drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
+http://lists.linbit.com/mailman/listinfo/drbd-dev
+
+--===============7146904712283891052==--
