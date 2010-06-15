@@ -1,47 +1,47 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] vivi: fix depends again
-Date: Mon, 14 Jun 2010 17:03:19 -0700
-Message-ID: <20100614170319.7647ab62.randy.dunlap@oracle.com>
-References: <20100614123056.64aad41b.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree with the net-current tree
+Date: Tue, 15 Jun 2010 12:00:41 +1000
+Message-ID: <20100615120041.27b02c6f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:48681 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754901Ab0FOAEa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 14 Jun 2010 20:04:30 -0400
-In-Reply-To: <20100614123056.64aad41b.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Emil Tantilov <emil.s.tantilov@intel.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>, Andy Gospodarek <andy@greyhouse.net>
+List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+Hi all,
 
-My previous patch to depend on FONTS was not sufficient since
-FONTS is boolean.  VIDEO_VIVI needs to depend on a tristate so that
-it won't be enabled as =y when framebuffer is built as modular, so
-modify it to depend on the same symbols that FONTS depends on, which
-are FRAMEBUFFER_CONSOLE || STI_CONSOLE.
+Today's linux-next merge of the net tree got a conflict in
+drivers/net/ixgbe/ixgbe_ethtool.c between commit
+28c8e4790ca5ef75f54895ca46437f9fbb433ddf ("ixgbe: fix automatic LRO/RSC
+settings for low latency") from the net-current tree and commit
+849c45423c0c108e08d67644728cc9b0ed225fa1 ("ixgbe: Use netdev_<level>,
+dev_<level>, pr_<level>") from the net tree.
 
-Fixes this build error when VIDEO_VIVI=y and FRAMEBUFFER_CONSOLE=m:
-vivi.c:(.init.text+0x7205): undefined reference to `find_font'
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- drivers/media/video/Kconfig |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
---- linux-next-20100614.orig/drivers/media/video/Kconfig
-+++ linux-next-20100614/drivers/media/video/Kconfig
-@@ -559,7 +559,8 @@ config VIDEO_DAVINCI_VPIF
- 
- config VIDEO_VIVI
- 	tristate "Virtual Video Driver"
--	depends on VIDEO_DEV && VIDEO_V4L2 && !SPARC32 && !SPARC64 && FONTS
-+	depends on VIDEO_DEV && VIDEO_V4L2 && !SPARC32 && !SPARC64
-+	depends on (FRAMEBUFFER_CONSOLE || STI_CONSOLE) && FONTS
- 	select FONT_8x16
- 	select VIDEOBUF_VMALLOC
- 	default n
+diff --cc drivers/net/ixgbe/ixgbe_ethtool.c
+index 3a93a81,644e3d2..0000000
+--- a/drivers/net/ixgbe/ixgbe_ethtool.c
++++ b/drivers/net/ixgbe/ixgbe_ethtool.c
+@@@ -2132,11 -2155,9 +2130,10 @@@ static int ixgbe_set_coalesce(struct ne
+  		 */
+  		if (adapter->flags2 & IXGBE_FLAG2_RSC_ENABLED) {
+  			adapter->flags2 &= ~IXGBE_FLAG2_RSC_ENABLED;
+ -			netdev->features &= ~NETIF_F_LRO;
+ -			e_info("rx-usecs set to 0, disabling RSC\n");
+ -
+ +			if (netdev->features & NETIF_F_LRO) {
+ +				netdev->features &= ~NETIF_F_LRO;
+- 				DPRINTK(PROBE, INFO, "rx-usecs set to 0, "
+- 					"disabling LRO/RSC\n");
+++				e_info("rx-usecs set to 0, disabling LRO/RSC\n");
+ +			}
+  			need_reset = true;
+  		}
+  	}
