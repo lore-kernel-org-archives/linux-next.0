@@ -1,41 +1,47 @@
-From: "John W. Linville" <linville@tuxdriver.com>
-Subject: Re: linux-next: manual merge of the wireless tree with Linus' tree
-Date: Tue, 15 Jun 2010 10:42:05 -0400
-Message-ID: <20100615144205.GA2415@tuxdriver.com>
-References: <20100615120048.5d497ce1.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [PATCH] input: fixup X86_MRST selects
+Date: Tue, 15 Jun 2010 08:17:21 -0700
+Message-ID: <4C179981.6040404@oracle.com>
+References: <20100609133443.38f1f957.sfr@canb.auug.org.au> <201006091540.43122.dmitry.torokhov@gmail.com> <4C1018C0.6020304@oracle.com> <201006101204.45709.dmitry.torokhov@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:47024 "EHLO
-	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757890Ab0FOOpL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Jun 2010 10:45:11 -0400
-Content-Disposition: inline
-In-Reply-To: <20100615120048.5d497ce1.sfr@canb.auug.org.au>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:63857 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753744Ab0FOPSN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Jun 2010 11:18:13 -0400
+In-Reply-To: <201006101204.45709.dmitry.torokhov@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jacob Pan <jacob.jun.pan@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-input@vger.kernel.org, akpm <akpm@linux-foundation.org>
 
-On Tue, Jun 15, 2010 at 12:00:48PM +1000, Stephen Rothwell wrote:
-> Hi John,
+On 06/10/10 12:04, Dmitry Torokhov wrote:
+> On Wednesday, June 09, 2010 03:42:08 pm Randy Dunlap wrote:
+>> On 06/09/10 15:40, Dmitry Torokhov wrote:
+>>> On Wednesday, June 09, 2010 03:29:21 pm Randy Dunlap wrote:
+>>>> +++ linux-next-20100609/drivers/input/keyboard/Kconfig
+>>>> @@ -70,9 +70,10 @@ config KEYBOARD_ATARI
+>>>>  
+>>>>  config KEYBOARD_ATKBD
+>>>>         tristate "AT keyboard" if EMBEDDED || !X86
+>>>> +       depends on !X86 || (X86 && !X86_MRST)
+>>>
+>>> Should it be simply 'depends on !X86_MRST' and then we could kill
+>>> '!X86_MRST' conditionals in selects?
+>>
+>> Duh, that sounds good, yes.
 > 
-> Today's linux-next merge of the wireless tree got a conflict in
-> net/mac80211/mlme.c between commit
-> b054b747a694927879c94dd11af54d04346aed7d ("mac80211: fix deauth before
-> assoc") from Linus' tree and commit
-> 36b3a628a4e85d002ee8813ebd2a5caef6d3c1a7 ("mac80211: common work skb
-> freeing") from the wireless tree.
+> Actually, I do not think this is a correct approach. While Moorestown does
+> not have i8042 theoretically it is possible to add AT-style keyboard by
+> other means (however unlikely it is) so we should not be disabling it.
 > 
-> Just context changes.  I fixed it up (see below) and can carry the fix
-> for a while.
+> We should, however, disallow i8042 from being selected. Could you please
+> tell me if the patch below works for you?
 
-Yes, that looks correct.  I will get the merge sorted-out when I send
-the next pull request to Dave, probably this week.
+Yes, that's good.  Thanks.
 
-Thanks,
-
-John
 -- 
-John W. Linville		Someday the world will need a hero, and you
-linville@tuxdriver.com			might be all we have.  Be ready.
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
