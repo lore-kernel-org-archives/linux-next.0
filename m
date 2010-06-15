@@ -1,41 +1,51 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the net tree
-Date: Mon, 14 Jun 2010 19:13:56 -0700 (PDT)
-Message-ID: <20100614.191356.193722104.davem@davemloft.net>
-References: <20100615120052.7202f20d.sfr@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100615120052.7202f20d.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, andy@greyhouse.net, emil.s.tantilov@intel.com, jeffrey.t.kirsher@intel.com
-List-Id: linux-next.vger.kernel.org
-
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 15 Jun 2010 12:00:52 +1000
+Subject: linux-next: manual merge of the battery tree with the arm-current
+ tree
+Date: Tue, 15 Jun 2010 12:55:12 +1000
+Message-ID: <20100615125512.09c79d9b.sfr@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__15_Jun_2010_12_55_12_+1000_DLcMIFS+VE8M5V/h"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:39635 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756587Ab0FOCzV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 14 Jun 2010 22:55:21 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Anton Vorontsov <avorontsov@ru.mvista.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>, Eric Miao <eric.y.miao@gmail.com>, Russell King <rmk@arm.linux.org.uk>, Huang Weiyi <weiyi.huang@gmail.com>
 
-> Hi Dave,
-> 
-> After merging the wireless tree, today's linux-next build (powerpc ppc64_defconfig)
-> failed like this:
-> 
-> drivers/net/ixgbe/ixgbe_ethtool.c: In function 'ixgbe_set_flags':
-> drivers/net/ixgbe/ixgbe_ethtool.c:2232: error: implicit declaration of function 'DPRINTK'
-> drivers/net/ixgbe/ixgbe_ethtool.c:2232: error: 'PROBE' undeclared (first use in this function)
-> drivers/net/ixgbe/ixgbe_ethtool.c:2232: error: 'INFO' undeclared (first use in this function)
-> 
-> Commit 28c8e4790ca5ef75f54895ca46437f9fbb433ddf ("ixgbe: fix automatic
-> LRO/RSC settings for low latency") from the net-current tree added
-> another use of DPRINTK which needs comverting to e_info().  I applied the
-> following patch:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 15 Jun 2010 11:43:33 +1000
-> Subject: [PATCH] net: ixgbe_ethtool merge fix up
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+--Signature=_Tue__15_Jun_2010_12_55_12_+1000_DLcMIFS+VE8M5V/h
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'll incorporate your merge and build fixups when I merge net-2.6 into
-net-next-2.6 later tonight, thanks Stephen!
+Hi Anton,
+
+Today's linux-next merge of the battery tree got a conflict in
+drivers/power/z2_battery.c between commit
+56b925fccc58cd43fc553a8302dbbdd440aef288 ("[ARM] pxa/z2: fix missing
+include in battery driver") from the arm-current tree and commit
+5d111107b7994349feb681466f873b1a4f8a09d6 ("z2_battery: Remove duplicated
+#include") from the battery tree.
+
+The former is a superset of the latter.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__15_Jun_2010_12_55_12_+1000_DLcMIFS+VE8M5V/h
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkwW65AACgkQjjKRsyhoI8zmJQCgkTwCQ96Gwu4V7fe/+QyeEm/4
+QBgAn1laYf1m4ETtMNklEIbnBjDelr9V
+=x6if
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__15_Jun_2010_12_55_12_+1000_DLcMIFS+VE8M5V/h--
