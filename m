@@ -1,45 +1,54 @@
-From: Eric Miao <eric.y.miao@gmail.com>
-Subject: Re: linux-next: manual merge of the battery tree with the arm-current
-	tree
-Date: Tue, 15 Jun 2010 14:54:58 +0800
-Message-ID: <AANLkTilwnVs1970j0DkobtpyDKY8mOX9EX6iFP2uSvYR@mail.gmail.com>
-References: <20100615125512.09c79d9b.sfr@canb.auug.org.au>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: linux-next: Tree for June 11
+Date: Tue, 15 Jun 2010 18:56:37 +0930
+Message-ID: <201006151856.38882.rusty@rustcorp.com.au>
+References: <20100611141738.cf8a6bbf.sfr@canb.auug.org.au> <20100611163124.bbc01d34.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100615125512.09c79d9b.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Anton Vorontsov <avorontsov@ru.mvista.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>, Russell King <rmk@arm.linux.org.uk>, Huang Weiyi <weiyi.huang@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:60880 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751443Ab0FOJ0m (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 15 Jun 2010 05:26:42 -0400
+In-Reply-To: <20100611163124.bbc01d34.akpm@linux-foundation.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, Jun 15, 2010 at 10:55 AM, Stephen Rothwell <sfr@canb.auug.org.a=
-u> wrote:
-> Hi Anton,
->
-> Today's linux-next merge of the battery tree got a conflict in
-> drivers/power/z2_battery.c between commit
-> 56b925fccc58cd43fc553a8302dbbdd440aef288 ("[ARM] pxa/z2: fix missing
-> include in battery driver") from the arm-current tree and commit
-> 5d111107b7994349feb681466f873b1a4f8a09d6 ("z2_battery: Remove duplica=
-ted
-> #include") from the battery tree.
->
-> The former is a superset of the latter.
+On Sat, 12 Jun 2010 09:01:24 am Andrew Morton wrote:
+> On Fri, 11 Jun 2010 14:17:38 +1000
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> 
+> > I have created today's linux-next tree at
+> > git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+> > (patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).
+> 
+> Rusty broke your kernel!
+> 
+> oops: http://userweb.kernel.org/~akpm/IMG_20100611_155611.jpg
+> 
+> config: http://userweb.kernel.org/~akpm/stuff/config-akpm2-small.txt
+> 
+> (gdb) l *0xffffffff8105f9fb
+> 0xffffffff8105f9fb is in get_ksymbol (kernel/module.c:2784).
+> 2779                    if (mod->symtab[i].st_shndx == SHN_UNDEF)
+> 2780                            continue;
+> 2781    
+> 2782                    /* We ignore unnamed symbols: they're uninformative
+> 2783                     * and inserted at a whim. */
+> 2784                    if (mod->symtab[i].st_value <= addr
+> 2785                        && mod->symtab[i].st_value > mod->symtab[best].st_value
+> 2786                        && *(mod->strtab + mod->symtab[i].st_name) != '\0'
+> 2787                        && !is_arm_mapping_symbol(mod->strtab + mod->symtab[i].st_name))
+> 2788                            best = i;
 
-Marek has submitted a revised patch which goes into the -pxa tree
-due to dependency of z2_battery and some of the pxa machine files.
+Hmm, I can't reproduce this :(  I'm only 32 bit here, have to dig out my
+64-bit machine tomorrow.
 
-Anton,
+One wonders why we're in get_ksymbol at all.  Has something already gone
+horribly wrong?
 
-Any suggestion? Or if you feel OK for this to go through the -pxa tree,=
- I'd
-like to have your Ack.
-
-> --
-> Cheers,
-> Stephen Rothwell =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
->
+Rusty.
