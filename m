@@ -1,47 +1,48 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH] input: fixup X86_MRST selects
-Date: Tue, 15 Jun 2010 08:17:21 -0700
-Message-ID: <4C179981.6040404@oracle.com>
-References: <20100609133443.38f1f957.sfr@canb.auug.org.au> <201006091540.43122.dmitry.torokhov@gmail.com> <4C1018C0.6020304@oracle.com> <201006101204.45709.dmitry.torokhov@gmail.com>
+Subject: Re: linux-next: Tree for June 15 (video/uvc & gadget/webcam)
+Date: Tue, 15 Jun 2010 08:54:43 -0700
+Message-ID: <20100615085443.e49beae5.randy.dunlap@oracle.com>
+References: <20100615150907.5fb984da.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:63857 "EHLO
+Received: from rcsinet10.oracle.com ([148.87.113.121]:55229 "EHLO
 	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753744Ab0FOPSN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Jun 2010 11:18:13 -0400
-In-Reply-To: <201006101204.45709.dmitry.torokhov@gmail.com>
+	with ESMTP id S1751930Ab0FOPzH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Jun 2010 11:55:07 -0400
+In-Reply-To: <20100615150907.5fb984da.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jacob Pan <jacob.jun.pan@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-input@vger.kernel.org, akpm <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On 06/10/10 12:04, Dmitry Torokhov wrote:
-> On Wednesday, June 09, 2010 03:42:08 pm Randy Dunlap wrote:
->> On 06/09/10 15:40, Dmitry Torokhov wrote:
->>> On Wednesday, June 09, 2010 03:29:21 pm Randy Dunlap wrote:
->>>> +++ linux-next-20100609/drivers/input/keyboard/Kconfig
->>>> @@ -70,9 +70,10 @@ config KEYBOARD_ATARI
->>>>  
->>>>  config KEYBOARD_ATKBD
->>>>         tristate "AT keyboard" if EMBEDDED || !X86
->>>> +       depends on !X86 || (X86 && !X86_MRST)
->>>
->>> Should it be simply 'depends on !X86_MRST' and then we could kill
->>> '!X86_MRST' conditionals in selects?
->>
->> Duh, that sounds good, yes.
+On Tue, 15 Jun 2010 15:09:07 +1000 Stephen Rothwell wrote:
+
+> Hi all,
 > 
-> Actually, I do not think this is a correct approach. While Moorestown does
-> not have i8042 theoretically it is possible to add AT-style keyboard by
-> other means (however unlikely it is) so we should not be disabling it.
-> 
-> We should, however, disallow i8042 from being selected. Could you please
-> tell me if the patch below works for you?
+> Changes since 20100614:
 
-Yes, that's good.  Thanks.
+(FYI)
 
--- 
+CONFIG_USB_VIDEO_CLASS=y
+CONFIG_USB_G_WEBCAM=y
+
+(.text+0x1b72a0): multiple definition of `uvc_queue_poll'
+(.text+0x1b74a0): multiple definition of `uvc_queue_buffer'
+(.text+0x1b7030): multiple definition of `uvc_queue_cancel'
+(.text+0x1b7140): multiple definition of `uvc_queue_enable'
+(.text+0x1b82b0): multiple definition of `uvc_alloc_buffers'
+(.text+0x1b8070): multiple definition of `uvc_query_buffer'
+(.text+0x1b85c0): multiple definition of `uvc_queue_init'
+(.text+0x1bfa60): multiple definition of `uvc_video_init'
+(.text+0x1b7c90): multiple definition of `uvc_dequeue_buffer'
+drivers/media/built-in.o:(.bss+0x73a04): multiple definition of `uvc_trace_param'
+(.text+0x1bf6e0): multiple definition of `uvc_video_enable'
+(.text+0x1b8140): multiple definition of `uvc_free_buffers'
+(.text+0x1b6e50): multiple definition of `uvc_queue_next_buffer'
+
+
+---
 ~Randy
 *** Remember to use Documentation/SubmitChecklist when testing your code ***
