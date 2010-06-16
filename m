@@ -1,59 +1,49 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warnings after merge of the net tree
-Date: Wed, 16 Jun 2010 16:30:48 +1000
-Message-ID: <20100616163048.f72345c7.sfr@canb.auug.org.au>
-References: <20100616133854.1bbbbb37.sfr@canb.auug.org.au>
-	<20100615.215212.214211994.davem@davemloft.net>
+From: Anton Vorontsov <cbouatmailru@gmail.com>
+Subject: Re: linux-next: manual merge of the battery tree with the
+ arm-current tree
+Date: Wed, 16 Jun 2010 16:26:19 +0400
+Message-ID: <20100616122619.GA22259@oksana.dev.rtsoft.ru>
+References: <20100615125512.09c79d9b.sfr@canb.auug.org.au>
+ <AANLkTilwnVs1970j0DkobtpyDKY8mOX9EX6iFP2uSvYR@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__16_Jun_2010_16_30_48_+1000_+er/GVaxO2Thwcku"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33608 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754739Ab0FPGax (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Jun 2010 02:30:53 -0400
-In-Reply-To: <20100615.215212.214211994.davem@davemloft.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, bhutchings@solarflare.com
-
---Signature=_Wed__16_Jun_2010_16_30_48_+1000_+er/GVaxO2Thwcku
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <AANLkTilwnVs1970j0DkobtpyDKY8mOX9EX6iFP2uSvYR@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Eric Miao <eric.y.miao@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>, Russell King <rmk@arm.linux.org.uk>, Huang Weiyi <weiyi.huang@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Dave,
+On Tue, Jun 15, 2010 at 02:54:58PM +0800, Eric Miao wrote:
+> On Tue, Jun 15, 2010 at 10:55 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > Hi Anton,
+> >
+> > Today's linux-next merge of the battery tree got a conflict in
+> > drivers/power/z2_battery.c between commit
+> > 56b925fccc58cd43fc553a8302dbbdd440aef288 ("[ARM] pxa/z2: fix missing
+> > include in battery driver") from the arm-current tree and commit
+> > 5d111107b7994349feb681466f873b1a4f8a09d6 ("z2_battery: Remove duplicated
+> > #include") from the battery tree.
+> >
+> > The former is a superset of the latter.
+> 
+> Marek has submitted a revised patch which goes into the -pxa tree
+> due to dependency of z2_battery and some of the pxa machine files.
+> 
+> Anton,
+> 
+> Any suggestion? Or if you feel OK for this to go through the -pxa tree, I'd
+> like to have your Ack.
 
-On Tue, 15 Jun 2010 21:52:12 -0700 (PDT) David Miller <davem@davemloft.net>=
- wrote:
->
-> I've commited the patch below to deal with this, thanks for the report.
+Sure thing,
 
-Thanks.
+Acked-by: Anton Vorontsov <cbouatmailru@gmail.com>
 
-> There's some pre-existing warnings someone will need to deal with at
-> some point:
->=20
-> drivers/usb/gadget/rndis.c: whole file: warning: coding style is bolixed
+Meanwhile, I dropped the "z2_battery: Remove duplicated #include"
+patch from battery-2.6.git.
 
-:-)
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__16_Jun_2010_16_30_48_+1000_+er/GVaxO2Thwcku
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkwYb5gACgkQjjKRsyhoI8zAagCfSiACMgT3znDDo3zHjcbpY9B2
-FCkAnRom+lesCiC4AgaVR0jJDHHDsROX
-=EG3p
------END PGP SIGNATURE-----
-
---Signature=_Wed__16_Jun_2010_16_30_48_+1000_+er/GVaxO2Thwcku--
+-- 
+Anton Vorontsov
+email: cbouatmailru@gmail.com
+irc://irc.freenode.net/bd2
