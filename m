@@ -1,77 +1,58 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build warnings after merge of the net tree
-Date: Tue, 15 Jun 2010 21:52:12 -0700 (PDT)
-Message-ID: <20100615.215212.214211994.davem@davemloft.net>
-References: <20100616133854.1bbbbb37.sfr@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:49096
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751873Ab0FPEwB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Jun 2010 00:52:01 -0400
-In-Reply-To: <20100616133854.1bbbbb37.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, bhutchings@solarflare.com
-
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 16 Jun 2010 13:38:54 +1000
+Subject: Re: linux-next: build warning after merge of the final tree (net
+ tree related)
+Date: Wed, 16 Jun 2010 16:30:01 +1000
+Message-ID: <20100616163001.c504331f.sfr@canb.auug.org.au>
+References: <20100616134848.3edd4a25.sfr@canb.auug.org.au>
+	<20100616035630.GB17440@gondor.apana.org.au>
+	<20100615.214406.45904170.davem@davemloft.net>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__16_Jun_2010_16_30_01_+1000_FCbIh5YgOOfeQtjn"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20100615.214406.45904170.davem@davemloft.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: herbert@gondor.apana.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-> After merging the net tree, today's linux-next build (x86_64 allmodconfig)
-> produced these warnings:
-> 
-> In file included from drivers/usb/gadget/ether.c:123:
-> drivers/usb/gadget/rndis.c: In function 'gen_ndis_query_resp':
-> drivers/usb/gadget/rndis.c:197: warning: assignment from incompatible pointer type
-> In file included from drivers/usb/gadget/multi.c:67:
-> drivers/usb/gadget/rndis.c: In function 'gen_ndis_query_resp':
-> drivers/usb/gadget/rndis.c:197: warning: assignment from incompatible pointer type
-> In file included from drivers/usb/gadget/g_ffs.c:30:
-> drivers/usb/gadget/rndis.c: In function 'gen_ndis_query_resp':
-> drivers/usb/gadget/rndis.c:197: warning: assignment from incompatible pointer type
-> 
-> Introduced by commit be1f3c2c027cc5ad735df6a45a542ed1db7ec48b ("net:
-> Enable 64-bit net device statistics on 32-bit architectures").  This is a
-> call to dev_get_stats() and the return value is being assigned to a
-> "struct net_device_stats *".
+--Signature=_Wed__16_Jun_2010_16_30_01_+1000_FCbIh5YgOOfeQtjn
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I've commited the patch below to deal with this, thanks for the report.
+On Tue, 15 Jun 2010 21:44:06 -0700 (PDT) David Miller <davem@davemloft.net>=
+ wrote:
+>
+> From: Herbert Xu <herbert@gondor.apana.org.au>
+> Date: Wed, 16 Jun 2010 13:56:30 +1000
+>=20
+> > bridge: Add const to dummy br_netpoll_send_skb
+> >=20
+> > The version of br_netpoll_send_skb used when netpoll is off is
+> > missing a const thus causing a warning.
+> >=20
+> > Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+>=20
+> Applied.
 
-There's some pre-existing warnings someone will need to deal with at
-some point:
+Thanks guys.
 
-drivers/usb/gadget/rndis.c: whole file: warning: coding style is bolixed
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-:-)
+--Signature=_Wed__16_Jun_2010_16_30_01_+1000_FCbIh5YgOOfeQtjn
+Content-Type: application/pgp-signature
 
->From fdb93f8ac39aa5902f3d264edd50dffcabfdd13b Mon Sep 17 00:00:00 2001
-From: David S. Miller <davem@davemloft.net>
-Date: Tue, 15 Jun 2010 21:50:14 -0700
-Subject: [PATCH] gadget/rndis: dev_get_stats() now returns rtnl_link_stats64.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-Based upon a report by Stephen Rothwell.
+iEYEARECAAYFAkwYb2kACgkQjjKRsyhoI8yjXACfe4YNP9IUcImdB93/ExpMILi/
+o0wAoKfmDdgXrl3ApwDu8N4n2qnHm5lv
+=IuBj
+-----END PGP SIGNATURE-----
 
-Signed-off-by: David S. Miller <davem@davemloft.net>
----
- drivers/usb/gadget/rndis.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/usb/gadget/rndis.c b/drivers/usb/gadget/rndis.c
-index 5c0d06c..fb69b01 100644
---- a/drivers/usb/gadget/rndis.c
-+++ b/drivers/usb/gadget/rndis.c
-@@ -171,7 +171,7 @@ gen_ndis_query_resp (int configNr, u32 OID, u8 *buf, unsigned buf_len,
- 	int			i, count;
- 	rndis_query_cmplt_type	*resp;
- 	struct net_device	*net;
--	const struct net_device_stats	*stats;
-+	const struct rtnl_link_stats64 *stats;
- 
- 	if (!r) return -ENOMEM;
- 	resp = (rndis_query_cmplt_type *) r->buf;
--- 
-1.7.0.4
+--Signature=_Wed__16_Jun_2010_16_30_01_+1000_FCbIh5YgOOfeQtjn--
