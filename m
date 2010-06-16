@@ -1,48 +1,63 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for June 15 (video/uvc & gadget/webcam)
-Date: Tue, 15 Jun 2010 08:54:43 -0700
-Message-ID: <20100615085443.e49beae5.randy.dunlap@oracle.com>
-References: <20100615150907.5fb984da.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the net tree
+Date: Wed, 16 Jun 2010 13:38:54 +1000
+Message-ID: <20100616133854.1bbbbb37.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__16_Jun_2010_13_38_54_+1000_mlmjYNNFlOR/cK6T"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:55229 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751930Ab0FOPzH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Jun 2010 11:55:07 -0400
-In-Reply-To: <20100615150907.5fb984da.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:51897 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754425Ab0FPDjC (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 15 Jun 2010 23:39:02 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Hutchings <bhutchings@solarflare.com>
 
-On Tue, 15 Jun 2010 15:09:07 +1000 Stephen Rothwell wrote:
+--Signature=_Wed__16_Jun_2010_13_38_54_+1000_mlmjYNNFlOR/cK6T
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi all,
-> 
-> Changes since 20100614:
+Hi Dave,
 
-(FYI)
+After merging the net tree, today's linux-next build (x86_64 allmodconfig)
+produced these warnings:
 
-CONFIG_USB_VIDEO_CLASS=y
-CONFIG_USB_G_WEBCAM=y
+In file included from drivers/usb/gadget/ether.c:123:
+drivers/usb/gadget/rndis.c: In function 'gen_ndis_query_resp':
+drivers/usb/gadget/rndis.c:197: warning: assignment from incompatible point=
+er type
+In file included from drivers/usb/gadget/multi.c:67:
+drivers/usb/gadget/rndis.c: In function 'gen_ndis_query_resp':
+drivers/usb/gadget/rndis.c:197: warning: assignment from incompatible point=
+er type
+In file included from drivers/usb/gadget/g_ffs.c:30:
+drivers/usb/gadget/rndis.c: In function 'gen_ndis_query_resp':
+drivers/usb/gadget/rndis.c:197: warning: assignment from incompatible point=
+er type
 
-(.text+0x1b72a0): multiple definition of `uvc_queue_poll'
-(.text+0x1b74a0): multiple definition of `uvc_queue_buffer'
-(.text+0x1b7030): multiple definition of `uvc_queue_cancel'
-(.text+0x1b7140): multiple definition of `uvc_queue_enable'
-(.text+0x1b82b0): multiple definition of `uvc_alloc_buffers'
-(.text+0x1b8070): multiple definition of `uvc_query_buffer'
-(.text+0x1b85c0): multiple definition of `uvc_queue_init'
-(.text+0x1bfa60): multiple definition of `uvc_video_init'
-(.text+0x1b7c90): multiple definition of `uvc_dequeue_buffer'
-drivers/media/built-in.o:(.bss+0x73a04): multiple definition of `uvc_trace_param'
-(.text+0x1bf6e0): multiple definition of `uvc_video_enable'
-(.text+0x1b8140): multiple definition of `uvc_free_buffers'
-(.text+0x1b6e50): multiple definition of `uvc_queue_next_buffer'
+Introduced by commit be1f3c2c027cc5ad735df6a45a542ed1db7ec48b ("net:
+Enable 64-bit net device statistics on 32-bit architectures").  This is a
+call to dev_get_stats() and the return value is being assigned to a
+"struct net_device_stats *".
 
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+--Signature=_Wed__16_Jun_2010_13_38_54_+1000_mlmjYNNFlOR/cK6T
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkwYR04ACgkQjjKRsyhoI8wLqACfTy3XaBsmvmBUChhuf1XeTze0
+ZKMAoK+heaf5UztEnxGlCaIER9q937RZ
+=y7pG
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__16_Jun_2010_13_38_54_+1000_mlmjYNNFlOR/cK6T--
