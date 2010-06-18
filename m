@@ -1,53 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree (usb
- tree related)
-Date: Fri, 18 Jun 2010 08:34:01 +1000
-Message-ID: <20100618083401.9be07376.sfr@canb.auug.org.au>
-References: <20100617145331.7bbefc4a.sfr@canb.auug.org.au>
-	<20100617172515.GA20453@kroah.com>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: linux-next: import failure of the rr quilt series
+Date: Fri, 18 Jun 2010 10:56:09 +0930
+Message-ID: <201006181056.10130.rusty@rustcorp.com.au>
+References: <20100617110226.a507c7d0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__18_Jun_2010_08_34_01_+1000_yn1/LahCn+jamTqW"
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55385 "EHLO smtps.tip.net.au"
+Received: from ozlabs.org ([203.10.76.45]:35605 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753543Ab0FQWeK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 17 Jun 2010 18:34:10 -0400
-In-Reply-To: <20100617172515.GA20453@kroah.com>
+	id S1751603Ab0FRB0W (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 17 Jun 2010 21:26:22 -0400
+In-Reply-To: <20100617110226.a507c7d0.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alek Du <alek.du@intel.com>, Jacob Pan <jacob.jun.pan@intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__18_Jun_2010_08_34_01_+1000_yn1/LahCn+jamTqW
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 17 Jun 2010 10:32:26 am Stephen Rothwell wrote:
+> Hi Rusty,
+> 
+> The import of the rr quilt series failed like this:
+> 
+> misc:pci_msi_off.patch
+> error: patch failed: drivers/pci/pci.c:2293
+> error: drivers/pci/pci.c: patch does not apply
+> 
+> I have commented out that patch for today.
 
-Hi Greg,
+Sorry, damage to that part of the series.  I've fixed this properly
+now and just pushed.
 
-On Thu, 17 Jun 2010 10:25:16 -0700 Greg KH <greg@kroah.com> wrote:
->
-> thanks, I've merged your fix in with the main patch so this problem will
-> not show up, and pushed the updated patches out.
-
-Thanks.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__18_Jun_2010_08_34_01_+1000_yn1/LahCn+jamTqW
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkwaotkACgkQjjKRsyhoI8xaswCdECexa7MBXkX7NwAerujS7H5i
-epsAnRsfP3bnW1PgSf+QTShovARnN7NM
-=7CQU
------END PGP SIGNATURE-----
-
---Signature=_Fri__18_Jun_2010_08_34_01_+1000_yn1/LahCn+jamTqW--
+Thanks,
+Rusty.
