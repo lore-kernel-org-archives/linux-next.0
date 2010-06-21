@@ -1,38 +1,53 @@
-From: Jean Delvare <khali@linux-fr.org>
-Subject: Re: linux-next: build failure after merge of the i2c tree
-Date: Mon, 21 Jun 2010 07:57:33 +0200
-Message-ID: <20100621075733.5904b461@hyperion.delvare>
-References: <20100621120331.1c6c1754.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the net tree
+Date: Mon, 21 Jun 2010 16:16:09 +1000
+Message-ID: <20100621161609.935d0085.sfr@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__21_Jun_2010_16_16_09_+1000_NEGrOnCn9kXH9th6"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:44363 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755000Ab0FUGQV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 21 Jun 2010 02:16:21 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Jiri Pirko <jpirko@redhat.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+
+--Signature=_Mon__21_Jun_2010_16_16_09_+1000_NEGrOnCn9kXH9th6
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100621120331.1c6c1754.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 21 Jun 2010 12:03:31 +1000, Stephen Rothwell wrote:
-> Hi Jean,
-> 
-> After merging the i2c tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> drivers/i2c/i2c-core.c: In function 'i2c_detect':
-> drivers/i2c/i2c-core.c:1460: error: 'adap' undeclared (first use in this function)
+Hi all,
 
-Oops, sorry, forgot to refresh the patch before pushing it. This is
-fixed now.
+Today's linux-next merge of the tip tree got a conflict in
+net/bridge/br_fdb.c net/bridge/netfilter/ebt_redirect.c
+net/bridge/netfilter/ebt_ulog.c net/bridge/netfilter/ebtables.c
+net/netfilter/nfnetlink_log.c between commit
+f350a0a87374418635689471606454abc7beaa3a ("bridge: use rx_handler_data
+pointer to store net_bridge_port pointer") from the net tree and commit
+81bdf5bd7349bd4523538cbd7878f334bc2bfe14 ("net: Make accesses to
+->br_port safe for sparse RCU") from the tip tree.
 
-> Caused by commit b741e61eb906816f78acbf361797fd408abdc715 ("i2c: Fix
-> probability check").  The typo in this patch is probably why the later
-> patch that I dropped would not apply ...
+The net tree commit looks like a superset of the tip tree commit, so I
+effectively reverted the tip tree commit.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-You are correct.
+--Signature=_Mon__21_Jun_2010_16_16_09_+1000_NEGrOnCn9kXH9th6
+Content-Type: application/pgp-signature
 
-> I have used the i2c tree form next-20100618 for today.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
+iEYEARECAAYFAkwfA6kACgkQjjKRsyhoI8wegQCgr4/t9h1BRhdYciQ7nJhDUVMx
+90QAmgIdEfl3Jv6rN/sXnoNwC93wL9Xk
+=TIs3
+-----END PGP SIGNATURE-----
 
--- 
-Jean Delvare
+--Signature=_Mon__21_Jun_2010_16_16_09_+1000_NEGrOnCn9kXH9th6--
