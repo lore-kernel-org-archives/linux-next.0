@@ -1,120 +1,291 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the block tree
-Date: Mon, 21 Jun 2010 16:16:23 +1000
-Message-ID: <20100621161623.3dfedc32.sfr@canb.auug.org.au>
+Subject: linux-next: Tree for June 21
+Date: Mon, 21 Jun 2010 17:00:56 +1000
+Message-ID: <20100621170056.2fcf10ad.sfr@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__21_Jun_2010_17_00_56_+1000_5p2J91l5MjGU9VSq"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:49926 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751221Ab0FUHBD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 21 Jun 2010 03:01:03 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
+
+--Signature=_Mon__21_Jun_2010_17_00_56_+1000_5p2J91l5MjGU9VSq
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-List-Id: linux-next.vger.kernel.org
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the tip tree got a conflict in
-fs/fs-writeback.c between commits 7f0e7bed936a0c422641a046551829a01341dd80
-("writeback: fix writeback completion notifications") and
-3c4d716538f3eefb1c1f10961a047a6456a2b590 ("writeback: queue work on stack
-in writeback_inodes_sb") from the block tree and commit
-b97181f24212f4c29197890ce1b2b9100bcc184d ("fs: remove all rcu head
-initializations, except on_stack initializations") from the tip tree.
+Changes since 20100618:
 
-I fixed it up (I hope - see below) and can carry the fix as necessary.
--- 
+My fixes tree contains:
+      v4l-dvb: update gfp/slab.h includes
+      arm: update gfp/slab.h includes
+      davinci: update gfp/slab.h includes
+      ocfs2: update gfp/slab.h includes
+      acpi: update gfp/slab.h includes
+
+The i2c tree gained a build failure so I used the version from
+next-20100618.
+
+The tip tree gained conflicts against the block and net trees.
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups (if any), it is also built with powerpc allnoconfig (32 and
+64 bit), ppc44x_defconfig and allyesconfig (minus
+CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
+and sparc64 defconfig. These builds also have
+CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
+CONFIG_DEBUG_INFO disabled when necessary.
+
+Below is a summary of the state of the merge.
+
+We are up to 164 trees (counting Linus' and 22 trees of patches pending
+for Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Jan Dittmer for adding the linux-next tree to his build tests
+at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
+Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc fs/fs-writeback.c
-index 5455009,af92100..0000000
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@@ -63,16 -63,45 +63,37 @@@ struct bdi_work 
-  };
-  
-  enum {
- -	WS_USED_B = 0,
- -	WS_ONSTACK_B,
- +	WS_INPROGRESS = 0,
- +	WS_ONSTACK,
-  };
-  
-- static inline void bdi_work_init(struct bdi_work *work,
-- 				 struct wb_writeback_args *args)
- -#define WS_USED (1 << WS_USED_B)
- -#define WS_ONSTACK (1 << WS_ONSTACK_B)
- -
- -static inline bool bdi_work_on_stack(struct bdi_work *work)
- -{
- -	return test_bit(WS_ONSTACK_B, &work->state);
- -}
- -
-+ static inline void __bdi_work_init(struct bdi_work *work,
-+ 				   struct wb_writeback_args *args,
-+ 				   int on_stack)
-  {
-- 	INIT_RCU_HEAD(&work->rcu_head);
-  	work->args = *args;
- -	work->state = WS_USED;
- +	__set_bit(WS_INPROGRESS, &work->state);
-+ 	if (on_stack) {
- -		work->state |= WS_ONSTACK;
-++		__set_bit(WS_ONSTACK, &work->state);
-+ 		init_rcu_head_on_stack(&work->rcu_head);
-+ 	}
-+ }
-+ 
-+ static inline void bdi_work_init(struct bdi_work *work,
-+ 				 struct wb_writeback_args *args)
-+ {
-+ 	__bdi_work_init(work, args, false);
-+ }
-+ 
-+ static inline void bdi_work_init_on_stack(struct bdi_work *work,
-+ 					  struct wb_writeback_args *args)
-+ {
-+ 	__bdi_work_init(work, args, true);
-+ }
-+ 
-+ static inline void bdi_destroy_work_on_stack(struct bdi_work *work)
-+ {
-+ 	destroy_rcu_head_on_stack(&work->rcu_head);
-  }
-  
-  /**
-@@@ -182,19 -239,26 +203,19 @@@ static void bdi_alloc_queue_work(struc
-   * @sb: write inodes from this super_block
-   *
-   * Description:
- - *   This does WB_SYNC_ALL data integrity writeback and waits for the
- - *   IO to complete. Callers must hold the sb s_umount semaphore for
- + *   This function initiates writeback and waits for the operation to
- + *   complete. Callers must hold the sb s_umount semaphore for
-   *   reading, to avoid having the super disappear before we are done.
-   */
- -static void bdi_sync_writeback(struct backing_dev_info *bdi,
- -			       struct super_block *sb)
- +static void bdi_queue_work_onstack(struct wb_writeback_args *args)
-  {
- -	struct wb_writeback_args args = {
- -		.sb		= sb,
- -		.sync_mode	= WB_SYNC_ALL,
- -		.nr_pages	= LONG_MAX,
- -		.range_cyclic	= 0,
- -	};
-  	struct bdi_work work;
-  
-- 	bdi_work_init(&work, args);
-- 	__set_bit(WS_ONSTACK, &work.state);
- -	bdi_work_init_on_stack(&work, &args);
-++	bdi_work_init_on_stack(&work, args);
-  
- -	bdi_queue_work(bdi, &work);
- -	bdi_wait_on_work_clear(&work);
- +	bdi_queue_work(args->sb->s_bdi, &work);
- +	bdi_wait_on_work_done(&work);
-+ 	bdi_destroy_work_on_stack(&work);
-  }
-  
-  /**
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master
+Merging fixes/fixes
+Merging arm-current/master
+Merging m68k-current/for-linus
+Merging powerpc-merge/merge
+Merging sparc-current/master
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sound-current/for-linus
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging kbuild-current/for-linus
+Merging quilt/driver-core.current
+Merging quilt/tty.current
+Merging quilt/usb.current
+Merging quilt/staging.current
+Merging cpufreq-current/fixes
+Merging input-current/for-linus
+Merging md-current/for-linus
+Merging audit-current/for-linus
+Merging crypto-current/master
+Merging ide-curent/master
+Merging dwmw2/master
+Merging gcl-current/merge
+Merging arm/devel
+Merging davinci/davinci-next
+Merging i.MX/for-next
+Merging msm/for-next
+Merging omap/for-next
+Merging pxa/for-next
+Merging samsung/next-samsung
+Merging tegra/for-next
+Merging avr32/avr32-arch
+Merging blackfin/for-linus
+Merging cris/for-next
+Merging ia64/test
+Merging m68k/for-next
+Merging m68knommu/for-next
+Merging microblaze/next
+Merging mips/mips-for-linux-next
+Merging parisc/next
+Merging powerpc/next
+Merging 4xx/next
+Merging 52xx-and-virtex/next
+CONFLICT (content): Merge conflict in drivers/serial/mpc52xx_uart.c
+Merging galak/next
+Merging s390/features
+Merging sh/master
+Merging genesis/master
+CONFLICT (content): Merge conflict in include/linux/serial_sci.h
+Merging sparc/master
+Merging tile/master
+Merging xtensa/master
+Merging ceph/for-next
+Merging cifs/master
+Merging configfs/linux-next
+Merging ecryptfs/next
+CONFLICT (content): Merge conflict in fs/ecryptfs/main.c
+Merging ext3/for_next
+Merging ext4/next
+Merging fatfs/master
+Merging fuse/for-next
+Merging gfs2/master
+Merging jfs/next
+Merging logfs/master
+CONFLICT (content): Merge conflict in fs/logfs/logfs.h
+Merging nfs/linux-next
+Merging nfsd/nfsd-next
+Merging nilfs2/for-next
+Merging ocfs2/linux-next
+Merging squashfs/master
+Merging udf/for_next
+Merging v9fs/for-next
+Merging ubifs/linux-next
+Merging xfs/master
+Merging vfs/for-next
+Merging pci/linux-next
+Merging hid/for-next
+Merging quilt/i2c
+$ git reset --hard HEAD^
+Merging refs/next/20100618/i2c
+Merging bjdooks-i2c/next-i2c
+CONFLICT (content): Merge conflict in arch/arm/plat-omap/i2c.c
+CONFLICT (content): Merge conflict in drivers/i2c/busses/i2c-cpm.c
+CONFLICT (content): Merge conflict in drivers/i2c/busses/i2c-mpc.c
+Merging quilt/jdelvare-hwmon
+Merging quilt/kernel-doc
+Merging v4l-dvb/master
+Merging kbuild/for-next
+Merging kconfig/for-next
+Merging ide/master
+Merging libata/NEXT
+Merging infiniband/for-next
+Merging acpi/test
+Merging idle-test/idle-test
+Merging ieee1394/for-next
+Merging ubi/linux-next
+Merging kvm/linux-next
+Merging dlm/next
+Merging ibft/master
+Merging swiotlb/master
+Merging scsi/master
+Merging async_tx/next
+Merging net/master
+Merging wireless/master
+Merging mtd/master
+Merging crypto/master
+Merging sound/for-next
+Merging cpufreq/next
+Merging quilt/rr
+Merging mmc/next
+Merging input/next
+Merging lsm/for-next
+Merging block/for-next
+Merging quilt/device-mapper
+Merging embedded/master
+Merging firmware/master
+Merging pcmcia/master
+Merging battery/master
+Merging leds/for-mm
+Merging backlight/for-mm
+Merging kgdb/kgdb-next
+Merging slab/for-next
+Merging uclinux/for-next
+Merging md/for-next
+Merging mfd/for-next
+Merging hdlc/hdlc-next
+Merging drm/drm-next
+CONFLICT (content): Merge conflict in drivers/gpu/drm/radeon/evergreen.c
+CONFLICT (content): Merge conflict in drivers/gpu/drm/radeon/r600.c
+CONFLICT (content): Merge conflict in drivers/gpu/drm/radeon/radeon_combios=
+.c
+CONFLICT (content): Merge conflict in drivers/gpu/drm/radeon/radeon_pm.c
+CONFLICT (content): Merge conflict in drivers/gpu/drm/radeon/rv770.c
+Merging viafb/viafb-next
+Merging voltage/for-next
+Merging security-testing/next
+Merging lblnet/master
+Merging agp/agp-next
+Merging uwb/for-upstream
+Merging watchdog/master
+Merging bdev/master
+Merging dwmw2-iommu/master
+Merging cputime/cputime
+Merging osd/linux-next
+Merging jc_docs/docs-next
+Merging nommu/master
+Merging trivial/for-next
+Merging audit/for-next
+Merging quilt/aoe
+Merging suspend/linux-next
+Merging bluetooth/master
+Merging fsnotify/for-next
+CONFLICT (delete/modify): fs/notify/inotify/inotify.c deleted in fsnotify/f=
+or-next and modified in HEAD. Version HEAD of fs/notify/inotify/inotify.c l=
+eft in tree.
+$ git rm -f fs/notify/inotify/inotify.c
+Applying: fsnotify: update gfp/slab.h includes
+Merging irda/for-next
+CONFLICT (content): Merge conflict in drivers/net/irda/irda-usb.c
+Merging catalin/for-next
+Merging alacrity/linux-next
+Merging i7core_edac/linux_next
+Merging devicetree/next-devicetree
+Merging spi/next-spi
+Merging omap_dss2/for-next
+Merging tip/auto-latest
+CONFLICT (content): Merge conflict in fs/fs-writeback.c
+CONFLICT (content): Merge conflict in net/bridge/br_fdb.c
+CONFLICT (content): Merge conflict in net/bridge/netfilter/ebt_redirect.c
+CONFLICT (content): Merge conflict in net/bridge/netfilter/ebt_ulog.c
+CONFLICT (content): Merge conflict in net/bridge/netfilter/ebtables.c
+CONFLICT (content): Merge conflict in net/netfilter/nfnetlink_log.c
+CONFLICT (content): Merge conflict in net/netfilter/nfnetlink_queue.c
+Applying: net: merge fixups for bridge rcu code
+Merging edac-amd/for-next
+Merging oprofile/for-next
+Merging percpu/for-next
+Merging workqueues/for-next
+Merging sfi/sfi-test
+Merging asm-generic/next
+Merging drivers-x86/linux-next
+Merging hwpoison/hwpoison
+CONFLICT (content): Merge conflict in mm/memory-failure.c
+Merging sysctl/master
+Merging bkl-core/bkl/core
+Merging bkl-procfs/bkl/procfs
+Merging bkl-ioctl/bkl/ioctl
+Merging quilt/driver-core
+Merging quilt/tty
+Merging quilt/usb
+Merging staging-next/staging-next
+Merging slabh/slabh
+Merging scsi-post-merge/master
+
+--Signature=_Mon__21_Jun_2010_17_00_56_+1000_5p2J91l5MjGU9VSq
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkwfDigACgkQjjKRsyhoI8zkqgCgjURqf2LIv1z3uwQT2GCQm6vW
+3h0An1XhgvEtGO7saJXotwpXsgQiP6Q9
+=0edk
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__21_Jun_2010_17_00_56_+1000_5p2J91l5MjGU9VSq--
