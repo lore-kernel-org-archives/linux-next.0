@@ -1,52 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the i2c tree
-Date: Mon, 21 Jun 2010 17:09:47 +1000
-Message-ID: <20100621170947.daf75a8e.sfr@canb.auug.org.au>
-References: <20100621120331.1c6c1754.sfr@canb.auug.org.au>
-	<20100621075733.5904b461@hyperion.delvare>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for June 21 (staging/easycap)
+Date: Mon, 21 Jun 2010 09:00:49 -0700
+Message-ID: <20100621090049.c7f11c2d.randy.dunlap@oracle.com>
+References: <20100621170056.2fcf10ad.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__21_Jun_2010_17_09_47_+1000_lnkiS=ZbnByqDSgK"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40549 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752235Ab0FUHJx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 21 Jun 2010 03:09:53 -0400
-In-Reply-To: <20100621075733.5904b461@hyperion.delvare>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jean Delvare <khali@linux-fr.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-
---Signature=_Mon__21_Jun_2010_17_09_47_+1000_lnkiS=ZbnByqDSgK
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20100621170056.2fcf10ad.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, devel@driverdev.osuosl.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Jean,
+On Mon, 21 Jun 2010 17:00:56 +1000 Stephen Rothwell wrote:
 
-On Mon, 21 Jun 2010 07:57:33 +0200 Jean Delvare <khali@linux-fr.org> wrote:
->
-> Oops, sorry, forgot to refresh the patch before pushing it. This is
-> fixed now.
+> Hi all,
+> 
+> Changes since 20100618:
 
-OK, thanks.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+When CONFIG_USB is not enabled:
 
---Signature=_Mon__21_Jun_2010_17_09_47_+1000_lnkiS=ZbnByqDSgK
-Content-Type: application/pgp-signature
+ERROR: "usb_kill_urb" [drivers/staging/easycap/easycap.ko] undefined!
+ERROR: "usb_deregister_dev" [drivers/staging/easycap/easycap.ko] undefined!
+ERROR: "video_register_device" [drivers/staging/easycap/easycap.ko] undefined!
+ERROR: "usb_deregister" [drivers/staging/easycap/easycap.ko] undefined!
+ERROR: "video_unregister_device" [drivers/staging/easycap/easycap.ko] undefined!
+ERROR: "usb_set_interface" [drivers/staging/easycap/easycap.ko] undefined!
+ERROR: "usb_register_dev" [drivers/staging/easycap/easycap.ko] undefined!
+ERROR: "usb_control_msg" [drivers/staging/easycap/easycap.ko] undefined!
+ERROR: "usb_submit_urb" [drivers/staging/easycap/easycap.ko] undefined!
+ERROR: "usb_get_dev" [drivers/staging/easycap/easycap.ko] undefined!
+ERROR: "usb_find_interface" [drivers/staging/easycap/easycap.ko] undefined!
+ERROR: "usb_register_driver" [drivers/staging/easycap/easycap.ko] undefined!
+ERROR: "usb_free_urb" [drivers/staging/easycap/easycap.ko] undefined!
+ERROR: "usb_alloc_urb" [drivers/staging/easycap/easycap.ko] undefined!
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkwfEDsACgkQjjKRsyhoI8xzLACeKRET8XcdB7XnOc2Q8VqC5AtB
-XuoAoLxHok0RI0AfhD7jIjrhpx/AuYSN
-=QKlJ
------END PGP SIGNATURE-----
+Adding "depends on USB" to EASYCAP is a good start.
+After that and enabling CONFIG_USB, build of easycap gets:
 
---Signature=_Mon__21_Jun_2010_17_09_47_+1000_lnkiS=ZbnByqDSgK--
+ERROR: "video_register_device" [drivers/staging/easycap/easycap.ko] undefined!
+ERROR: "video_unregister_device" [drivers/staging/easycap/easycap.ko] undefined!
+
+because there is no media/video support enabled.  Also no SOUND enabled,
+so I expect there to be build errors associated with sound also, meaning that
+the Kconfig file should probably modified with something like
+
+config EASYCAP
++	depends on USB && VIDEO_DEV && SND
+
+
+This is something that the driver author should know the answer to and submit a
+patch for.
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
