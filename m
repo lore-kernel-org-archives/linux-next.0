@@ -1,77 +1,292 @@
-From: Sachin Sant <sachinp@in.ibm.com>
-Subject: -next June 21: WARNING: at include/linux/tty.h
-Date: Tue, 22 Jun 2010 10:55:54 +0530
-Message-ID: <4C204962.70208@in.ibm.com>
-References: <20100621170056.2fcf10ad.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Tree for June 22
+Date: Tue, 22 Jun 2010 16:05:18 +1000
+Message-ID: <20100622160518.2ef7afcc.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__22_Jun_2010_16_05_18_+1000_sOjlFjMOLGuwmFVm"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e23smtp08.au.ibm.com ([202.81.31.141]:44639 "EHLO
-	e23smtp08.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751710Ab0FVF0E (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Jun 2010 01:26:04 -0400
-In-Reply-To: <20100621170056.2fcf10ad.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:34846 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752527Ab0FVGFZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 22 Jun 2010 02:05:25 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, arnd@arndb.de, Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-With next-20100621 on a x86_64 box came across this warning :
+--Signature=_Tue__22_Jun_2010_16_05_18_+1000_sOjlFjMOLGuwmFVm
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-TCP cubic registered
-registered taskstats version 1
-------------[ cut here ]------------
-WARNING: at include/linux/tty.h:589 tty_open+0x76/0x57a()
-Hardware name: BladeCenter LS21 -[79716AA]-
-Modules linked in:
-Pid: 1, comm: swapper Not tainted 2.6.35-rc3-autotest-next-20100621 #1
-Call Trace:
- [<ffffffff812428d8>] ? tty_open+0x76/0x57a
- [<ffffffff8103cf39>] warn_slowpath_common+0x80/0xae
- [<ffffffff8103cf7c>] warn_slowpath_null+0x15/0x17
- [<ffffffff812428d8>] tty_open+0x76/0x57a
- [<ffffffff810d4544>] ? exact_match+0x0/0x9
- [<ffffffff810d491f>] chrdev_open+0x133/0x152
- [<ffffffff810d47ec>] ? chrdev_open+0x0/0x152
- [<ffffffff810d07b4>] __dentry_open+0x140/0x252
- [<ffffffff810d0990>] nameidata_to_filp+0x3e/0x4f
- [<ffffffff810db588>] do_last+0x51a/0x643
- [<ffffffff810dd621>] do_filp_open+0x23d/0x5f8
- [<ffffffff810c1ba8>] ? slab_node+0x3c/0x78
- [<ffffffff810d05a1>] do_sys_open+0x5a/0xf0
- [<ffffffff810d0660>] sys_open+0x1b/0x1d
- [<ffffffff818e66fc>] kernel_init+0x1b3/0x220
- [<ffffffff810036d4>] kernel_thread_helper+0x4/0x10
- [<ffffffff818e6549>] ? kernel_init+0x0/0x220
- [<ffffffff810036d0>] ? kernel_thread_helper+0x0/0x10
----[ end trace 108cb769a1c0e534 ]---
+Hi all,
 
-This warning seem to have been introduced with next-20100617.
-The corresponding code is :
+Changes since 20100621:
 
-585 static inline void tty_lock(void) __acquires(kernel_lock)
-586 {
-587 #ifdef CONFIG_LOCK_KERNEL
-588         /* kernel_locked is 1 for !CONFIG_LOCK_KERNEL */
-589         WARN_ON(kernel_locked());
-590 #endif
-591         lock_kernel();
-592 }
+My fixes tree contains:
+      v4l-dvb: update gfp/slab.h includes
+      arm: update gfp/slab.h includes
+      davinci: update gfp/slab.h includes
+      ocfs2: update gfp/slab.h includes
+      acpi: update gfp/slab.h includes
 
-which was added by commit 01510c869f9..
+The vfs tree gained a build failure due to an interaction with the v9fs
+tree for which I applied a merge fix patch.
 
-tty: replace BKL with a new tty_lock
+The i2c tree lost its build failure.
 
-Thanks
--Sachin
+The tip tree gained a conflict against the block tree.
 
+----------------------------------------------------------------------------
 
--- 
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
 
----------------------------------
-Sachin Sant
-IBM Linux Technology Center
-India Systems and Technology Labs
-Bangalore, India
----------------------------------
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups (if any), it is also built with powerpc allnoconfig (32 and
+64 bit), ppc44x_defconfig and allyesconfig (minus
+CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
+and sparc64 defconfig. These builds also have
+CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
+CONFIG_DEBUG_INFO disabled when necessary.
+
+Below is a summary of the state of the merge.
+
+We are up to 164 trees (counting Linus' and 22 trees of patches pending
+for Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Jan Dittmer for adding the linux-next tree to his build tests
+at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
+Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master
+Merging fixes/fixes
+Merging arm-current/master
+Merging m68k-current/for-linus
+Merging powerpc-merge/merge
+Merging sparc-current/master
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sound-current/for-linus
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging kbuild-current/for-linus
+Merging quilt/driver-core.current
+Merging quilt/tty.current
+Merging quilt/usb.current
+Merging quilt/staging.current
+Merging cpufreq-current/fixes
+Merging input-current/for-linus
+Merging md-current/for-linus
+Merging audit-current/for-linus
+Merging crypto-current/master
+Merging ide-curent/master
+Merging dwmw2/master
+Merging gcl-current/merge
+Merging arm/devel
+Merging davinci/davinci-next
+Merging i.MX/for-next
+Merging msm/for-next
+Merging omap/for-next
+Merging pxa/for-next
+Merging samsung/next-samsung
+Merging tegra/for-next
+Merging avr32/avr32-arch
+Merging blackfin/for-linus
+Merging cris/for-next
+Merging ia64/test
+Merging m68k/for-next
+Merging m68knommu/for-next
+Merging microblaze/next
+Merging mips/mips-for-linux-next
+Merging parisc/next
+Merging powerpc/next
+Merging 4xx/next
+Merging 52xx-and-virtex/next
+CONFLICT (content): Merge conflict in drivers/serial/mpc52xx_uart.c
+Merging galak/next
+Merging s390/features
+Merging sh/master
+Merging genesis/master
+CONFLICT (content): Merge conflict in include/linux/serial_sci.h
+Merging sparc/master
+Merging tile/master
+Merging xtensa/master
+Merging ceph/for-next
+Merging cifs/master
+Merging configfs/linux-next
+Merging ecryptfs/next
+CONFLICT (content): Merge conflict in fs/ecryptfs/main.c
+Merging ext3/for_next
+Merging ext4/next
+Merging fatfs/master
+Merging fuse/for-next
+Merging gfs2/master
+Merging jfs/next
+Merging logfs/master
+CONFLICT (content): Merge conflict in fs/logfs/logfs.h
+Merging nfs/linux-next
+Merging nfsd/nfsd-next
+Merging nilfs2/for-next
+Merging ocfs2/linux-next
+Merging squashfs/master
+Merging udf/for_next
+Merging v9fs/for-next
+Merging ubifs/linux-next
+Merging xfs/master
+Merging vfs/for-next
+Applying: v9fs: fixup for inode_setattr being removed
+Merging pci/linux-next
+Merging hid/for-next
+Merging quilt/i2c
+Merging bjdooks-i2c/next-i2c
+CONFLICT (content): Merge conflict in arch/arm/plat-omap/i2c.c
+CONFLICT (content): Merge conflict in drivers/i2c/busses/i2c-cpm.c
+CONFLICT (content): Merge conflict in drivers/i2c/busses/i2c-mpc.c
+Merging quilt/jdelvare-hwmon
+Merging quilt/kernel-doc
+Merging v4l-dvb/master
+Merging kbuild/for-next
+Merging kconfig/for-next
+Merging ide/master
+Merging libata/NEXT
+Merging infiniband/for-next
+Merging acpi/test
+Merging idle-test/idle-test
+Merging ieee1394/for-next
+Merging ubi/linux-next
+Merging kvm/linux-next
+Merging dlm/next
+Merging ibft/master
+Merging swiotlb/master
+Merging scsi/master
+Merging async_tx/next
+Merging net/master
+Merging wireless/master
+Merging mtd/master
+Merging crypto/master
+Merging sound/for-next
+Merging cpufreq/next
+Merging quilt/rr
+Merging mmc/next
+Merging input/next
+Merging lsm/for-next
+Merging block/for-next
+Merging quilt/device-mapper
+Merging embedded/master
+Merging firmware/master
+Merging pcmcia/master
+Merging battery/master
+Merging leds/for-mm
+Merging backlight/for-mm
+Merging kgdb/kgdb-next
+Merging slab/for-next
+Merging uclinux/for-next
+Merging md/for-next
+Merging mfd/for-next
+Merging hdlc/hdlc-next
+Merging drm/drm-next
+CONFLICT (content): Merge conflict in drivers/gpu/drm/radeon/evergreen.c
+CONFLICT (content): Merge conflict in drivers/gpu/drm/radeon/r600.c
+CONFLICT (content): Merge conflict in drivers/gpu/drm/radeon/radeon_combios=
+.c
+CONFLICT (content): Merge conflict in drivers/gpu/drm/radeon/radeon_pm.c
+CONFLICT (content): Merge conflict in drivers/gpu/drm/radeon/rv770.c
+Merging viafb/viafb-next
+Merging voltage/for-next
+Merging security-testing/next
+Merging lblnet/master
+Merging agp/agp-next
+Merging uwb/for-upstream
+Merging watchdog/master
+Merging bdev/master
+Merging dwmw2-iommu/master
+Merging cputime/cputime
+Merging osd/linux-next
+Merging jc_docs/docs-next
+Merging nommu/master
+Merging trivial/for-next
+Merging audit/for-next
+Merging quilt/aoe
+Merging suspend/linux-next
+Merging bluetooth/master
+Merging fsnotify/for-next
+CONFLICT (delete/modify): fs/notify/inotify/inotify.c deleted in fsnotify/f=
+or-next and modified in HEAD. Version HEAD of fs/notify/inotify/inotify.c l=
+eft in tree.
+$ git rm -f fs/notify/inotify/inotify.c
+Applying: fsnotify: update gfp/slab.h includes
+Merging irda/for-next
+CONFLICT (content): Merge conflict in drivers/net/irda/irda-usb.c
+Merging catalin/for-next
+Merging alacrity/linux-next
+Merging i7core_edac/linux_next
+Merging devicetree/next-devicetree
+Merging spi/next-spi
+Merging omap_dss2/for-next
+Merging tip/auto-latest
+CONFLICT (content): Merge conflict in fs/fs-writeback.c
+CONFLICT (content): Merge conflict in net/bridge/br_fdb.c
+CONFLICT (content): Merge conflict in net/bridge/netfilter/ebt_redirect.c
+CONFLICT (content): Merge conflict in net/bridge/netfilter/ebt_ulog.c
+CONFLICT (content): Merge conflict in net/bridge/netfilter/ebtables.c
+CONFLICT (content): Merge conflict in net/netfilter/nfnetlink_log.c
+CONFLICT (content): Merge conflict in net/netfilter/nfnetlink_queue.c
+Applying: net: merge fixups for bridge rcu code
+Merging edac-amd/for-next
+Merging oprofile/for-next
+Merging percpu/for-next
+Merging workqueues/for-next
+Merging sfi/sfi-test
+Merging asm-generic/next
+Merging drivers-x86/linux-next
+Merging hwpoison/hwpoison
+CONFLICT (content): Merge conflict in mm/memory-failure.c
+Merging sysctl/master
+Merging bkl-core/bkl/core
+Merging bkl-procfs/bkl/procfs
+Merging bkl-ioctl/bkl/ioctl
+Merging quilt/driver-core
+Merging quilt/tty
+Merging quilt/usb
+Merging staging-next/staging-next
+Merging slabh/slabh
+Merging scsi-post-merge/master
+
+--Signature=_Tue__22_Jun_2010_16_05_18_+1000_sOjlFjMOLGuwmFVm
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkwgUp4ACgkQjjKRsyhoI8xbagCgj6oLpdh5CHBCuXOOVvQVEAoI
+RhcAn32avZ3F27ZnEqp2nXnXlBQd6bOS
+=KadI
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__22_Jun_2010_16_05_18_+1000_sOjlFjMOLGuwmFVm--
