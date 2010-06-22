@@ -1,48 +1,37 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: Tree for June 22 (staging/spectra)
-Date: Tue, 22 Jun 2010 13:42:10 -0700
-Message-ID: <20100622204210.GC31047@kroah.com>
-References: <20100622160518.2ef7afcc.sfr@canb.auug.org.au>
- <20100622083032.8abe1605.randy.dunlap@oracle.com>
- <20100622085903.4232617d.randy.dunlap@oracle.com>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: linux-next: manual merge of the tip tree with the block tree
+Date: Tue, 22 Jun 2010 14:06:07 -0700
+Message-ID: <20100622210607.GN2290@linux.vnet.ibm.com>
+References: <20100622143121.186fe9c4.sfr@canb.auug.org.au>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from e8.ny.us.ibm.com ([32.97.182.138]:51295 "EHLO e8.ny.us.ibm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752199Ab0FVVGO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 22 Jun 2010 17:06:14 -0400
 Content-Disposition: inline
-In-Reply-To: <20100622085903.4232617d.randy.dunlap@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, devel@driverdev.osuosl.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20100622143121.186fe9c4.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 
-On Tue, Jun 22, 2010 at 08:59:03AM -0700, Randy Dunlap wrote:
-> On Tue, 22 Jun 2010 08:30:32 -0700 Randy Dunlap wrote:
+On Tue, Jun 22, 2010 at 02:31:21PM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> > On Tue, 22 Jun 2010 16:05:18 +1000 Stephen Rothwell wrote:
-> > 
-> > > Hi all,
-> > > 
-> > > Changes since 20100621:
-> > > 
-> > > My fixes tree contains:
-> > >       v4l-dvb: update gfp/slab.h includes
-> > >       arm: update gfp/slab.h includes
-> > >       davinci: update gfp/slab.h includes
-> > >       ocfs2: update gfp/slab.h includes
-> > >       acpi: update gfp/slab.h includes
-> > 
-> > 
-> > drivers/staging/spectra/ffsport.c:307: error: implicit declaration of function 'blk_fs_request'
-> > 
-> > Where is this function??
+> Today's linux-next merge of the tip tree got a conflict in
+> fs/fs-writeback.c between commit 79338d2a78ab78efdc1698f1309766a039addf9d
+> ("writeback: simplify the write back thread queue") from the block tree
+> and commit b97181f24212f4c29197890ce1b2b9100bcc184d ("fs: remove all rcu
+> head initializations, except on_stack initializations") from the tip tree.
 > 
-> The macro was deleted from include/linux/blkdev.h.  Just change that line to
-> 
-> -	if (!blk_fs_request(req))
-> +	if (req->cmd_type != REQ_TYPE_FS)
+> This time it is not clear if the RCU updates are needed any more at all,
+> so for today I just used the version of fs/fs-writeback.c from the block
+> tree.
 
-Care to send a patch?
+The current -next tree has gotten rid of all teh RCU_INIT_HEAD, RCU_HEAD,
+and INIT_RCU_HEAD calls, as it should.  Woo-hoo!!!  ;-)
 
-thanks,
-
-greg k-h
+							Thanx, Paul
