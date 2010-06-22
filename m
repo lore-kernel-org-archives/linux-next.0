@@ -1,46 +1,78 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: linux-next: manual merge of the tip tree with the block tree
-Date: Mon, 21 Jun 2010 17:40:30 -0700
-Message-ID: <20100622004030.GN2354@linux.vnet.ibm.com>
-References: <20100621161623.3dfedc32.sfr@canb.auug.org.au>
- <20100621171300.GF2354@linux.vnet.ibm.com>
- <20100622094033.3becf09f.sfr@canb.auug.org.au>
- <20100622100423.205ae0a4.sfr@canb.auug.org.au>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the vfs tree
+Date: Tue, 22 Jun 2010 11:22:01 +1000
+Message-ID: <20100622112201.08505101.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e6.ny.us.ibm.com ([32.97.182.146]:51098 "EHLO e6.ny.us.ibm.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34269 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750967Ab0FVAkd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 21 Jun 2010 20:40:33 -0400
-Content-Disposition: inline
-In-Reply-To: <20100622100423.205ae0a4.sfr@canb.auug.org.au>
+	id S1752026Ab0FVBWG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 21 Jun 2010 21:22:06 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sripathi Kodi <sripathik@in.ibm.com>, Eric Van Hensbergen <ericvh@gmail.com>, Christoph Hellwig <hch@lst.de>
 
-On Tue, Jun 22, 2010 at 10:04:23AM +1000, Stephen Rothwell wrote:
-> Hi Paul,
-> 
-> On Tue, 22 Jun 2010 09:40:33 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > On Mon, 21 Jun 2010 10:13:00 -0700 "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
-> > >
-> > > I took a look, and all of the changes from "fs: remove all rcu head
-> > > initializations, except on_stack initializations" are reflected in -next.
-> > 
-> > Thanks for checking.
-> 
-> Is there some way that this commit can be merged via the block tree?  Or
-> does later work in your tree depend on it?  There is considerable and
-> ongoing work in the block tree on the same areas as your commit changes.
-> Even today, this conflict is going to be much worse.
+Hi Al,
 
-I have no problem with this patch being applied via the block tree, as
-long as it doesn't take too many minor releases for it to hit mainline.  ;-)
+After merging the vfs tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-How would everyone like to proceed?
+fs/9p/vfs_inode.c: In function 'v9fs_vfs_setattr_dotl':
+fs/9p/vfs_inode.c:1056: error: implicit declaration of function 'inode_setattr'
 
-							Thanx, Paul
+Caused by commit 463942d48d7f05812f0d6426dd8051ff53ea24a3 ("9p: Implement
+client side of setattr for 9P2000.L protocol") from the v9fs tree
+interacting with commit 3d9bf66940b6001a30aa30d5ac9f816326d9b3a0 ("remove
+inode_setattr") from the vfs tree.
+
+I have applied the following patch (using the changes in the above vfs
+tree commit as a guide) as a merge fix for today, but am not sure if it
+is correct.  I assume that this (or something similar) could be applied
+to the v9fs tree now - is that correct Christoph?
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 22 Jun 2010 11:15:01 +1000
+Subject: [PATCH] v9fs: fixup for inode_setattr being removed
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/9p/vfs_inode.c |   15 ++++++++++++---
+ 1 files changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
+index f027a42..2ec7bfa 100644
+--- a/fs/9p/vfs_inode.c
++++ b/fs/9p/vfs_inode.c
+@@ -1052,10 +1052,19 @@ static int v9fs_vfs_setattr_dotl(struct dentry *dentry, struct iattr *iattr)
+ 		return PTR_ERR(fid);
+ 
+ 	retval = p9_client_setattr(fid, &p9attr);
+-	if (retval >= 0)
+-		retval = inode_setattr(dentry->d_inode, iattr);
++	if (retval < 0)
++		return retval;
+ 
+-	return retval;
++	if ((iattr->ia_valid & ATTR_SIZE) &&
++	    iattr->ia_size != i_size_read(dentry->d_inode)) {
++		retval = vmtruncate(dentry->d_inode, iattr->ia_size);
++		if (retval)
++			return retval;
++	}
++
++	setattr_copy(dentry->d_inode, iattr);
++	mark_inode_dirty(dentry->d_inode);
++	return 0;
+ }
+ 
+ /**
+-- 
+1.7.1
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
