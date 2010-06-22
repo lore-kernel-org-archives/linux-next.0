@@ -1,37 +1,68 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: linux-next: manual merge of the tip tree with the block tree
-Date: Tue, 22 Jun 2010 14:06:07 -0700
-Message-ID: <20100622210607.GN2290@linux.vnet.ibm.com>
-References: <20100622143121.186fe9c4.sfr@canb.auug.org.au>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: Tree for June 21 (staging/easycap)
+Date: Tue, 22 Jun 2010 15:36:12 -0700
+Message-ID: <20100622223612.GB3898@kroah.com>
+References: <20100621170056.2fcf10ad.sfr@canb.auug.org.au>
+ <20100621090049.c7f11c2d.randy.dunlap@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e8.ny.us.ibm.com ([32.97.182.138]:51295 "EHLO e8.ny.us.ibm.com"
+Received: from kroah.org ([198.145.64.141]:58092 "EHLO coco.kroah.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752199Ab0FVVGO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 22 Jun 2010 17:06:14 -0400
+	id S1750994Ab0FVWlr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 22 Jun 2010 18:41:47 -0400
 Content-Disposition: inline
-In-Reply-To: <20100622143121.186fe9c4.sfr@canb.auug.org.au>
+In-Reply-To: <20100621090049.c7f11c2d.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, devel@driverdev.osuosl.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, Jun 22, 2010 at 02:31:21PM +1000, Stephen Rothwell wrote:
-> Hi all,
+On Mon, Jun 21, 2010 at 09:00:49AM -0700, Randy Dunlap wrote:
+> On Mon, 21 Jun 2010 17:00:56 +1000 Stephen Rothwell wrote:
 > 
-> Today's linux-next merge of the tip tree got a conflict in
-> fs/fs-writeback.c between commit 79338d2a78ab78efdc1698f1309766a039addf9d
-> ("writeback: simplify the write back thread queue") from the block tree
-> and commit b97181f24212f4c29197890ce1b2b9100bcc184d ("fs: remove all rcu
-> head initializations, except on_stack initializations") from the tip tree.
+> > Hi all,
+> > 
+> > Changes since 20100618:
 > 
-> This time it is not clear if the RCU updates are needed any more at all,
-> so for today I just used the version of fs/fs-writeback.c from the block
-> tree.
+> 
+> When CONFIG_USB is not enabled:
+> 
+> ERROR: "usb_kill_urb" [drivers/staging/easycap/easycap.ko] undefined!
+> ERROR: "usb_deregister_dev" [drivers/staging/easycap/easycap.ko] undefined!
+> ERROR: "video_register_device" [drivers/staging/easycap/easycap.ko] undefined!
+> ERROR: "usb_deregister" [drivers/staging/easycap/easycap.ko] undefined!
+> ERROR: "video_unregister_device" [drivers/staging/easycap/easycap.ko] undefined!
+> ERROR: "usb_set_interface" [drivers/staging/easycap/easycap.ko] undefined!
+> ERROR: "usb_register_dev" [drivers/staging/easycap/easycap.ko] undefined!
+> ERROR: "usb_control_msg" [drivers/staging/easycap/easycap.ko] undefined!
+> ERROR: "usb_submit_urb" [drivers/staging/easycap/easycap.ko] undefined!
+> ERROR: "usb_get_dev" [drivers/staging/easycap/easycap.ko] undefined!
+> ERROR: "usb_find_interface" [drivers/staging/easycap/easycap.ko] undefined!
+> ERROR: "usb_register_driver" [drivers/staging/easycap/easycap.ko] undefined!
+> ERROR: "usb_free_urb" [drivers/staging/easycap/easycap.ko] undefined!
+> ERROR: "usb_alloc_urb" [drivers/staging/easycap/easycap.ko] undefined!
+> 
+> 
+> Adding "depends on USB" to EASYCAP is a good start.
+> After that and enabling CONFIG_USB, build of easycap gets:
+> 
+> ERROR: "video_register_device" [drivers/staging/easycap/easycap.ko] undefined!
+> ERROR: "video_unregister_device" [drivers/staging/easycap/easycap.ko] undefined!
+> 
+> because there is no media/video support enabled.  Also no SOUND enabled,
+> so I expect there to be build errors associated with sound also, meaning that
+> the Kconfig file should probably modified with something like
+> 
+> config EASYCAP
+> +	depends on USB && VIDEO_DEV && SND
+> 
+> 
+> This is something that the driver author should know the answer to and submit a
+> patch for.
 
-The current -next tree has gotten rid of all teh RCU_INIT_HEAD, RCU_HEAD,
-and INIT_RCU_HEAD calls, as it should.  Woo-hoo!!!  ;-)
+You are right, care to make up a patch for this?
 
-							Thanx, Paul
+thanks,
+
+greg k-h
