@@ -1,78 +1,77 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the vfs tree
-Date: Tue, 22 Jun 2010 11:22:01 +1000
-Message-ID: <20100622112201.08505101.sfr@canb.auug.org.au>
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: -next June 21: WARNING: at include/linux/tty.h
+Date: Tue, 22 Jun 2010 10:55:54 +0530
+Message-ID: <4C204962.70208@in.ibm.com>
+References: <20100621170056.2fcf10ad.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34269 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752026Ab0FVBWG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 21 Jun 2010 21:22:06 -0400
+Received: from e23smtp08.au.ibm.com ([202.81.31.141]:44639 "EHLO
+	e23smtp08.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751710Ab0FVF0E (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Jun 2010 01:26:04 -0400
+In-Reply-To: <20100621170056.2fcf10ad.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sripathi Kodi <sripathik@in.ibm.com>, Eric Van Hensbergen <ericvh@gmail.com>, Christoph Hellwig <hch@lst.de>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, arnd@arndb.de, Alan Cox <alan@lxorguk.ukuu.org.uk>
 
-Hi Al,
+With next-20100621 on a x86_64 box came across this warning :
 
-After merging the vfs tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+TCP cubic registered
+registered taskstats version 1
+------------[ cut here ]------------
+WARNING: at include/linux/tty.h:589 tty_open+0x76/0x57a()
+Hardware name: BladeCenter LS21 -[79716AA]-
+Modules linked in:
+Pid: 1, comm: swapper Not tainted 2.6.35-rc3-autotest-next-20100621 #1
+Call Trace:
+ [<ffffffff812428d8>] ? tty_open+0x76/0x57a
+ [<ffffffff8103cf39>] warn_slowpath_common+0x80/0xae
+ [<ffffffff8103cf7c>] warn_slowpath_null+0x15/0x17
+ [<ffffffff812428d8>] tty_open+0x76/0x57a
+ [<ffffffff810d4544>] ? exact_match+0x0/0x9
+ [<ffffffff810d491f>] chrdev_open+0x133/0x152
+ [<ffffffff810d47ec>] ? chrdev_open+0x0/0x152
+ [<ffffffff810d07b4>] __dentry_open+0x140/0x252
+ [<ffffffff810d0990>] nameidata_to_filp+0x3e/0x4f
+ [<ffffffff810db588>] do_last+0x51a/0x643
+ [<ffffffff810dd621>] do_filp_open+0x23d/0x5f8
+ [<ffffffff810c1ba8>] ? slab_node+0x3c/0x78
+ [<ffffffff810d05a1>] do_sys_open+0x5a/0xf0
+ [<ffffffff810d0660>] sys_open+0x1b/0x1d
+ [<ffffffff818e66fc>] kernel_init+0x1b3/0x220
+ [<ffffffff810036d4>] kernel_thread_helper+0x4/0x10
+ [<ffffffff818e6549>] ? kernel_init+0x0/0x220
+ [<ffffffff810036d0>] ? kernel_thread_helper+0x0/0x10
+---[ end trace 108cb769a1c0e534 ]---
 
-fs/9p/vfs_inode.c: In function 'v9fs_vfs_setattr_dotl':
-fs/9p/vfs_inode.c:1056: error: implicit declaration of function 'inode_setattr'
+This warning seem to have been introduced with next-20100617.
+The corresponding code is :
 
-Caused by commit 463942d48d7f05812f0d6426dd8051ff53ea24a3 ("9p: Implement
-client side of setattr for 9P2000.L protocol") from the v9fs tree
-interacting with commit 3d9bf66940b6001a30aa30d5ac9f816326d9b3a0 ("remove
-inode_setattr") from the vfs tree.
+585 static inline void tty_lock(void) __acquires(kernel_lock)
+586 {
+587 #ifdef CONFIG_LOCK_KERNEL
+588         /* kernel_locked is 1 for !CONFIG_LOCK_KERNEL */
+589         WARN_ON(kernel_locked());
+590 #endif
+591         lock_kernel();
+592 }
 
-I have applied the following patch (using the changes in the above vfs
-tree commit as a guide) as a merge fix for today, but am not sure if it
-is correct.  I assume that this (or something similar) could be applied
-to the v9fs tree now - is that correct Christoph?
+which was added by commit 01510c869f9..
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 22 Jun 2010 11:15:01 +1000
-Subject: [PATCH] v9fs: fixup for inode_setattr being removed
+tty: replace BKL with a new tty_lock
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/9p/vfs_inode.c |   15 ++++++++++++---
- 1 files changed, 12 insertions(+), 3 deletions(-)
+Thanks
+-Sachin
 
-diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
-index f027a42..2ec7bfa 100644
---- a/fs/9p/vfs_inode.c
-+++ b/fs/9p/vfs_inode.c
-@@ -1052,10 +1052,19 @@ static int v9fs_vfs_setattr_dotl(struct dentry *dentry, struct iattr *iattr)
- 		return PTR_ERR(fid);
- 
- 	retval = p9_client_setattr(fid, &p9attr);
--	if (retval >= 0)
--		retval = inode_setattr(dentry->d_inode, iattr);
-+	if (retval < 0)
-+		return retval;
- 
--	return retval;
-+	if ((iattr->ia_valid & ATTR_SIZE) &&
-+	    iattr->ia_size != i_size_read(dentry->d_inode)) {
-+		retval = vmtruncate(dentry->d_inode, iattr->ia_size);
-+		if (retval)
-+			return retval;
-+	}
-+
-+	setattr_copy(dentry->d_inode, iattr);
-+	mark_inode_dirty(dentry->d_inode);
-+	return 0;
- }
- 
- /**
--- 
-1.7.1
 
 -- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
