@@ -1,57 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (tip tree
- related)
-Date: Wed, 23 Jun 2010 10:50:11 +1000
-Message-ID: <20100623105011.d4df34ba.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree with the net-current tree
+Date: Wed, 23 Jun 2010 12:51:16 +1000
+Message-ID: <20100623125116.1370bdd4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__23_Jun_2010_10_50_11_+1000_oq/qAvmBhzKtsVkS"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34762 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:41103 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750777Ab0FWAuW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 22 Jun 2010 20:50:22 -0400
+	id S1751183Ab0FWCvU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 22 Jun 2010 22:51:20 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-
---Signature=_Wed__23_Jun_2010_10_50_11_+1000_oq/qAvmBhzKtsVkS
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, Changli Gao <xiaosuo@gmail.com>, Eric Dumazet <eric.dumazet@gmail.com>
 
 Hi all,
 
-After merging the  tree, today's linux-next build (i386 allmodconfig)
-failed like this:
+Today's linux-next merge of the net tree got a conflict in
+net/ipv4/ip_output.c between commit
+26cde9f7e2747b6d254b704594eed87ab959afa5 ("udp: Fix bogus UFO packet
+generation") from the net-current tree and commit
+d8d1f30b95a635dbd610dcc5eb641aca8f4768cf ("net-next: remove useless union
+keyword") from the net tree.
 
-  VDSO    arch/x86/vdso/vdso32-int80.so.dbg
-/scratch/kisskb/src/arch/x86/vdso/checkundef.sh: line 4: ccache /opt/crosst=
-ool/gcc-4.4.3-nolibc/i386-linux/bin/i386-linux-nm: No such file or directory
-  VDSO    arch/x86/vdso/vdso32-sysenter.so.dbg
-/scratch/kisskb/src/arch/x86/vdso/checkundef.sh: line 4: ccache /opt/crosst=
-ool/gcc-4.4.3-nolibc/i386-linux/bin/i386-linux-nm: No such file or directory
+Just context changes. I fixed it up (see below) and can carry the fix as
+necessary.
 
-Caused by commit 05d0b0889ca9d033a960542af7f8a13b3ad4f630 ("x86, vdso:
-Error out if the vdso contains external references") interacting with a
-cross build that also uses ccache.
-
---=20
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__23_Jun_2010_10_50_11_+1000_oq/qAvmBhzKtsVkS
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkwhWkMACgkQjjKRsyhoI8xQ8wCeMVGkf2Ir4xtq0diXDxcrj1Cl
-bf8Anjzm+rl2jvCPBuNm3t2qul00QGGH
-=MwON
------END PGP SIGNATURE-----
-
---Signature=_Wed__23_Jun_2010_10_50_11_+1000_oq/qAvmBhzKtsVkS--
+diff --cc net/ipv4/ip_output.c
+index 041d41d,6cbeb2e..0000000
+--- a/net/ipv4/ip_output.c
++++ b/net/ipv4/ip_output.c
+@@@ -873,12 -873,10 +873,12 @@@ int ip_append_data(struct sock *sk
+  	    !exthdrlen)
+  		csummode = CHECKSUM_PARTIAL;
+  
+ +	skb = skb_peek_tail(&sk->sk_write_queue);
+ +
+  	inet->cork.length += length;
+ -	if (((length> mtu) || !skb_queue_empty(&sk->sk_write_queue)) &&
+ +	if (((length > mtu) || (skb && skb_is_gso(skb))) &&
+  	    (sk->sk_protocol == IPPROTO_UDP) &&
+- 	    (rt->u.dst.dev->features & NETIF_F_UFO)) {
++ 	    (rt->dst.dev->features & NETIF_F_UFO)) {
+  		err = ip_ufo_append_data(sk, getfrag, from, length, hh_len,
+  					 fragheaderlen, transhdrlen, mtu,
+  					 flags);
+@@@ -1123,9 -1121,8 +1123,9 @@@ ssize_t	ip_append_page(struct sock *sk
+  		return -EINVAL;
+  
+  	inet->cork.length += size;
+ -	if ((sk->sk_protocol == IPPROTO_UDP) &&
+ +	if ((size + skb->len > mtu) &&
+ +	    (sk->sk_protocol == IPPROTO_UDP) &&
+- 	    (rt->u.dst.dev->features & NETIF_F_UFO)) {
++ 	    (rt->dst.dev->features & NETIF_F_UFO)) {
+  		skb_shinfo(skb)->gso_size = mtu - fragheaderlen;
+  		skb_shinfo(skb)->gso_type = SKB_GSO_UDP;
+  	}
