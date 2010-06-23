@@ -1,71 +1,124 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the wireless tree with the net tree
-Date: Wed, 23 Jun 2010 12:51:38 +1000
-Message-ID: <20100623125138.dff6c368.sfr@canb.auug.org.au>
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: Re: next June 10: S390 build failure [arch/s390/kvm/kvm.ko]
+Date: Wed, 23 Jun 2010 10:03:01 +0530
+Message-ID: <4C218E7D.8070006@in.ibm.com>
+References: <20100610160012.30ea7606.sfr@canb.auug.org.au> <4C10DCB7.7090903@in.ibm.com> <20100610154848.616aff99@mschwide.boeblingen.de.ibm.com> <201006120854.14259.borntraeger@de.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Kiran Divekar <dkiran@marvell.com>, Amitkumar Karwar <akarwar@marvell.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from e23smtp09.au.ibm.com ([202.81.31.142]:36186 "EHLO
+	e23smtp09.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750833Ab0FWEdI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Jun 2010 00:33:08 -0400
+In-Reply-To: <201006120854.14259.borntraeger@de.ibm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Christian Borntraeger <borntraeger@de.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>, Avi Kivity <avi@redhat.com>, Carsten Otte <cotte@de.ibm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-s390@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>
 
-Hi John,
+Christian Borntraeger wrote:
+> Am Donnerstag 10 Juni 2010, 15:48:48 schrieb Martin Schwidefsky:
+>   
+>> On Thu, 10 Jun 2010 18:08:15 +0530
+>> Sachin Sant <sachinp@in.ibm.com> wrote:
+>>
+>>     
+>>> Today's next fails to build on a s390 box with
+>>>
+>>> ERROR: "__kvm_s390_vcpu_store_status" [arch/s390/kvm/kvm.ko] undefined!
+>>>
+>>> Yesterday's next was good.
+>>>       
+>> That is caused by git commit fbc5eec58e652339e9df1332cd5e10e8d8250aaf
+>> which fails to take git commit 5288fbf0ef041ba0e8b4dcb2df4536b5e3a48b32
+>> into account. There is a second caller of __kvm_s390_vcpu_store_status
+>> in arch/s390/kvm/intercept.c. As far as I understand the code you could
+>> just drop the 'static' from kvm_s390_vcpu_store_status and call it from
+>> handle_stop instead of the old __kvm_s390_vcpu_store_status.
+>>
+>> Carsten, Christian: could one of you have a look please?
+>>     
+>
+> that patch should do the trick. Avi can you add that to kvm.git?
+>
+> kvm-s390: Fix build failure 
+>   
+ping on the patch. Still not merged with next.
 
-Today's linux-next merge of the wireless tree got a conflict in
-drivers/net/wireless/libertas/host.h between commit
-ba2d3587912f82d1ab4367975b1df460db60fb1e ("drivers/net: use __packed
-annotation") from the net tree and commit
-c2af450168af531b70564e3ceb20983199a66216 ("Libertas: Added 11d support
-using cfg80211") from the wireless tree.
+Thanks
+-Sachin
 
-Just a white space change clashing with a real change!  I fixed it up
-(and changed some newly added "__attribute__ ((packed))" to "__packed" as
-well ...) (see below) and can carry the fix as necessary.
+> This patch fixes 
+> ERROR: "__kvm_s390_vcpu_store_status" [arch/s390/kvm/kvm.ko] undefined!
+>
+> triggered by
+> commit 3268c56840dcee78c3e928336550f4e1861504c4 (kvm.git)
+> Author: Avi Kivity <avi@redhat.com>
+> Date:   Thu May 13 12:21:46 2010 +0300
+>     KVM: s390: Centrally lock arch specific vcpu ioctls
+>     
+> Reported-by: Sachin Sant <sachinp@in.ibm.com>
+> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>
+> ---
+>  arch/s390/kvm/intercept.c |    2 +-
+>  arch/s390/kvm/kvm-s390.c  |    2 +-
+>  arch/s390/kvm/kvm-s390.h  |    2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+>
+> Index: kvm/arch/s390/kvm/intercept.c
+> ===================================================================
+> --- kvm.orig/arch/s390/kvm/intercept.c
+> +++ kvm/arch/s390/kvm/intercept.c
+> @@ -135,7 +135,7 @@ static int handle_stop(struct kvm_vcpu *
+>  	spin_lock_bh(&vcpu->arch.local_int.lock);
+>  	if (vcpu->arch.local_int.action_bits & ACTION_STORE_ON_STOP) {
+>  		vcpu->arch.local_int.action_bits &= ~ACTION_STORE_ON_STOP;
+> -		rc = __kvm_s390_vcpu_store_status(vcpu,
+> +		rc = kvm_s390_vcpu_store_status(vcpu,
+>  						  KVM_S390_STORE_STATUS_NOADDR);
+>  		if (rc >= 0)
+>  			rc = -EOPNOTSUPP;
+> Index: kvm/arch/s390/kvm/kvm-s390.c
+> ===================================================================
+> --- kvm.orig/arch/s390/kvm/kvm-s390.c
+> +++ kvm/arch/s390/kvm/kvm-s390.c
+> @@ -569,7 +569,7 @@ static int __guestcopy(struct kvm_vcpu *
+>   * KVM_S390_STORE_STATUS_NOADDR: -> 0x1200 on 64 bit
+>   * KVM_S390_STORE_STATUS_PREFIXED: -> prefix
+>   */
+> -static int kvm_s390_vcpu_store_status(struct kvm_vcpu *vcpu, unsigned long addr)
+> +int kvm_s390_vcpu_store_status(struct kvm_vcpu *vcpu, unsigned long addr)
+>  {
+>  	const unsigned char archmode = 1;
+>  	int prefix;
+> Index: kvm/arch/s390/kvm/kvm-s390.h
+> ===================================================================
+> --- kvm.orig/arch/s390/kvm/kvm-s390.h
+> +++ kvm/arch/s390/kvm/kvm-s390.h
+> @@ -92,7 +92,7 @@ int kvm_s390_handle_b2(struct kvm_vcpu *
+>  int kvm_s390_handle_sigp(struct kvm_vcpu *vcpu);
+>
+>  /* implemented in kvm-s390.c */
+> -int __kvm_s390_vcpu_store_status(struct kvm_vcpu *vcpu,
+> +int kvm_s390_vcpu_store_status(struct kvm_vcpu *vcpu,
+>  				 unsigned long addr);
+>  /* implemented in diag.c */
+>  int kvm_s390_handle_diag(struct kvm_vcpu *vcpu);
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-s390" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>   
+
 
 -- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/net/wireless/libertas/host.h
-index 3bd5d3b,112fbf1..0000000
---- a/drivers/net/wireless/libertas/host.h
-+++ b/drivers/net/wireless/libertas/host.h
-@@@ -387,8 -387,32 +387,32 @@@ struct enc_key 
-  struct lbs_offset_value {
-  	u32 offset;
-  	u32 value;
- -} __attribute__ ((packed));
- +} __packed;
-  
-+ #define MRVDRV_MAX_TRIPLET_802_11D              83
-+ 
-+ #define COUNTRY_CODE_LEN                        3
-+ 
-+ struct mrvl_ie_domain_param_set {
-+ 	struct mrvl_ie_header header;
-+ 
-+ 	u8 countrycode[COUNTRY_CODE_LEN];
-+ 	struct ieee80211_country_ie_triplet triplet[1];
- -} __attribute__ ((packed));
-++} __packed;
-+ 
-+ struct cmd_ds_802_11d_domain_info {
-+ 	__le16 action;
-+ 	struct mrvl_ie_domain_param_set domain;
- -} __attribute__ ((packed));
-++} __packed;
-+ 
-+ struct lbs_802_11d_domain_reg {
-+ 	/** Country code*/
-+ 	u8 country_code[COUNTRY_CODE_LEN];
-+ 	/** No. of triplet*/
-+ 	u8 no_triplet;
-+ 	struct ieee80211_country_ie_triplet triplet[MRVDRV_MAX_TRIPLET_802_11D];
- -} __attribute__ ((packed));
-++} __packed;
-+ 
-  /*
-   * Define data structure for CMD_GET_HW_SPEC
-   * This structure defines the response for the GET_HW_SPEC command
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
