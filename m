@@ -1,58 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree
-Date: Thu, 24 Jun 2010 02:19:49 +1000
-Message-ID: <20100624021949.62910287.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (tip tree
+ related)
+Date: Thu, 24 Jun 2010 02:31:17 +1000
+Message-ID: <20100624023117.219953e4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__24_Jun_2010_02_19_49_+1000_2nh7gepX9KZqOLG3"
+ boundary="Signature=_Thu__24_Jun_2010_02_31_17_+1000_ILM9iCXMaFf5L7bd"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57782 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:53321 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750841Ab0FWQUB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 23 Jun 2010 12:20:01 -0400
+	id S1752224Ab0FWQb0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 23 Jun 2010 12:31:26 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Phil Carmody <ext-phil.2.carmody@nokia.com>, Catalin Marinas <catalin.marinas@arm.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>, Paul Mackerras <paulus@samba.org>, Paul Mundt <lethal@linux-sh.org>
 
---Signature=_Thu__24_Jun_2010_02_19_49_+1000_2nh7gepX9KZqOLG3
+--Signature=_Thu__24_Jun_2010_02_31_17_+1000_ILM9iCXMaFf5L7bd
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the final tree, the next-20100616 and later linux-next
-builds for most arm configs (including versatile_defconfig) failed like thi=
-s:
+After merging the final tree, today's linux-next build (sh allnoconfig -
+in fact, all the sh configs) failed like this:
 
-In file included from include/linux/module.h:23,
-                 from include/linux/device.h:23,
-                 from include/linux/dma-mapping.h:4,
-                 from arch/arm/kernel/asm-offsets.c:15:
-include/trace/events/module.h:11: error: two or more data types in declarat=
-ion=20
+cc1: warnings being treated as errors
+In file included from include/linux/ftrace_event.h:8,
+                 from include/trace/syscall.h:6,
+                 from include/linux/syscalls.h:75,
+                 from arch/sh/kernel/sys_sh32.c:9:
+include/linux/perf_event.h:937: error: 'struct regs' declared inside parame=
+ter list
+include/linux/perf_event.h:937: error: its scope is only this definition or=
+ declaration, which is probably not what you want
+include/linux/perf_event.h: In function 'perf_fetch_caller_regs':
+include/linux/perf_event.h:952: error: passing argument 1 of 'perf_arch_fet=
+ch_caller_regs' from incompatible pointer type
 
-Reverting commit f0028612a8ffedcdafa8b7ae83ab090d8b0318b4 ("ARM: 6171/1:
-module - simplify unwind table handling") (and
-cecaa4c6b8173b02c9f7ecfdbbc81f573a7a9f33 ("ARM: 6172/1: module -
-additional unwind tables for exit/devexit sections") that depends on it)
-fixes this build error.
+This started after next-20100618.
+
+Caused by commit b0f82b81fe6bbcf78d478071f33e44554726bc81 ("perf: Drop
+the skip argument from perf_arch_fetch_regs_caller") which contained a
+typo in the type of the first argument to perf_arch_fetch_caller_regs()
+in the case that the architecture did not define
+perf_arch_fetch_caller_regs.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__24_Jun_2010_02_19_49_+1000_2nh7gepX9KZqOLG3
+--Signature=_Thu__24_Jun_2010_02_31_17_+1000_ILM9iCXMaFf5L7bd
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAkwiNCUACgkQjjKRsyhoI8yOuQCgikZyNrxbN3xIuCvmkyAq0len
-DbYAn3DpCPg6Jwc/4Qi5S5aSHq55dpAl
-=01xo
+iEYEARECAAYFAkwiNtUACgkQjjKRsyhoI8yu8gCeKREkmNlazieVGXmPwBA7nj8b
+NxsAoIIlA2FIWWF8wFMh1PiO1k78aeCw
+=Rjfq
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__24_Jun_2010_02_19_49_+1000_2nh7gepX9KZqOLG3--
+--Signature=_Thu__24_Jun_2010_02_31_17_+1000_ILM9iCXMaFf5L7bd--
