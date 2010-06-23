@@ -1,50 +1,40 @@
-From: Avi Kivity <avi@redhat.com>
-Subject: Re: next June 10: S390 build failure [arch/s390/kvm/kvm.ko]
-Date: Wed, 23 Jun 2010 12:04:36 +0300
-Message-ID: <4C21CE24.2010609@redhat.com>
-References: <20100610160012.30ea7606.sfr@canb.auug.org.au> <4C10DCB7.7090903@in.ibm.com> <20100610154848.616aff99@mschwide.boeblingen.de.ibm.com> <201006120854.14259.borntraeger@de.ibm.com> <4C218E7D.8070006@in.ibm.com>
+From: "John W. Linville" <linville@tuxdriver.com>
+Subject: Re: linux-next: build failure after merge of the wireless tree
+Date: Wed, 23 Jun 2010 10:57:04 -0400
+Message-ID: <20100623145703.GD15205@tuxdriver.com>
+References: <20100623125149.bdd7b1e6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:47659 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751892Ab0FWJEo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 23 Jun 2010 05:04:44 -0400
-In-Reply-To: <4C218E7D.8070006@in.ibm.com>
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:34801 "EHLO
+	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752537Ab0FWPAP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Jun 2010 11:00:15 -0400
+Content-Disposition: inline
+In-Reply-To: <20100623125149.bdd7b1e6.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sachin Sant <sachinp@in.ibm.com>
-Cc: Christian Borntraeger <borntraeger@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Carsten Otte <cotte@de.ibm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-s390@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 06/23/2010 07:33 AM, Sachin Sant wrote:
-> Christian Borntraeger wrote:
->> Am Donnerstag 10 Juni 2010, 15:48:48 schrieb Martin Schwidefsky:
->>> On Thu, 10 Jun 2010 18:08:15 +0530
->>> Sachin Sant <sachinp@in.ibm.com> wrote:
->>>
->>>> Today's next fails to build on a s390 box with
->>>>
->>>> ERROR: "__kvm_s390_vcpu_store_status" [arch/s390/kvm/kvm.ko] 
->>>> undefined!
->>>>
->>>> Yesterday's next was good.
->>> That is caused by git commit fbc5eec58e652339e9df1332cd5e10e8d8250aaf
->>> which fails to take git commit 5288fbf0ef041ba0e8b4dcb2df4536b5e3a48b32
->>> into account. There is a second caller of __kvm_s390_vcpu_store_status
->>> in arch/s390/kvm/intercept.c. As far as I understand the code you could
->>> just drop the 'static' from kvm_s390_vcpu_store_status and call it from
->>> handle_stop instead of the old __kvm_s390_vcpu_store_status.
->>>
->>> Carsten, Christian: could one of you have a look please?
->>
->> that patch should do the trick. Avi can you add that to kvm.git?
->>
->> kvm-s390: Fix build failure 
-> ping on the patch. Still not merged with next.
+On Wed, Jun 23, 2010 at 12:51:49PM +1000, Stephen Rothwell wrote:
+> Hi John,
+> 
+> After merging the wireless tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+> 
+> ERROR: "mesh_handler_def" [drivers/net/wireless/libertas/libertas.ko] undefined!
+> 
+> Caused by commit cbca36ab906ce8c8d959eca1e0b5465e9182b0f0 ("Libertas:
+> cfg80211 support") which removed mesh_handler_def even though there is
+> still a reference to it in drivers/net/wireless/libertas/mesh.c when
+> WIRELESS_EXT is defined.
+> 
+> I have used the wireless tree from next-20100622 for today.
 
-Missed it somehow.  Now applied to kvm.git next and kvm-updates/2.6.36 
-(which is the linux-next queue).
+Yes, sorry about that!  I'll correct it today.
 
+John
 -- 
-error compiling committee.c: too many arguments to function
+John W. Linville		Someday the world will need a hero, and you
+linville@tuxdriver.com			might be all we have.  Be ready.
