@@ -1,40 +1,58 @@
-From: "John W. Linville" <linville@tuxdriver.com>
-Subject: Re: linux-next: build failure after merge of the wireless tree
-Date: Wed, 23 Jun 2010 10:57:04 -0400
-Message-ID: <20100623145703.GD15205@tuxdriver.com>
-References: <20100623125149.bdd7b1e6.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree
+Date: Thu, 24 Jun 2010 02:19:49 +1000
+Message-ID: <20100624021949.62910287.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__24_Jun_2010_02_19_49_+1000_2nh7gepX9KZqOLG3"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:34801 "EHLO
-	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752537Ab0FWPAP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Jun 2010 11:00:15 -0400
-Content-Disposition: inline
-In-Reply-To: <20100623125149.bdd7b1e6.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:57782 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750841Ab0FWQUB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 23 Jun 2010 12:20:01 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Phil Carmody <ext-phil.2.carmody@nokia.com>, Catalin Marinas <catalin.marinas@arm.com>
 
-On Wed, Jun 23, 2010 at 12:51:49PM +1000, Stephen Rothwell wrote:
-> Hi John,
-> 
-> After merging the wireless tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
-> 
-> ERROR: "mesh_handler_def" [drivers/net/wireless/libertas/libertas.ko] undefined!
-> 
-> Caused by commit cbca36ab906ce8c8d959eca1e0b5465e9182b0f0 ("Libertas:
-> cfg80211 support") which removed mesh_handler_def even though there is
-> still a reference to it in drivers/net/wireless/libertas/mesh.c when
-> WIRELESS_EXT is defined.
-> 
-> I have used the wireless tree from next-20100622 for today.
+--Signature=_Thu__24_Jun_2010_02_19_49_+1000_2nh7gepX9KZqOLG3
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes, sorry about that!  I'll correct it today.
+Hi all,
 
-John
--- 
-John W. Linville		Someday the world will need a hero, and you
-linville@tuxdriver.com			might be all we have.  Be ready.
+After merging the final tree, the next-20100616 and later linux-next
+builds for most arm configs (including versatile_defconfig) failed like thi=
+s:
+
+In file included from include/linux/module.h:23,
+                 from include/linux/device.h:23,
+                 from include/linux/dma-mapping.h:4,
+                 from arch/arm/kernel/asm-offsets.c:15:
+include/trace/events/module.h:11: error: two or more data types in declarat=
+ion=20
+
+Reverting commit f0028612a8ffedcdafa8b7ae83ab090d8b0318b4 ("ARM: 6171/1:
+module - simplify unwind table handling") (and
+cecaa4c6b8173b02c9f7ecfdbbc81f573a7a9f33 ("ARM: 6172/1: module -
+additional unwind tables for exit/devexit sections") that depends on it)
+fixes this build error.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__24_Jun_2010_02_19_49_+1000_2nh7gepX9KZqOLG3
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkwiNCUACgkQjjKRsyhoI8yOuQCgikZyNrxbN3xIuCvmkyAq0len
+DbYAn3DpCPg6Jwc/4Qi5S5aSHq55dpAl
+=01xo
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__24_Jun_2010_02_19_49_+1000_2nh7gepX9KZqOLG3--
