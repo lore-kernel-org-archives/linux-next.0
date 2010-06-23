@@ -1,68 +1,57 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: Tree for June 21 (staging/easycap)
-Date: Tue, 22 Jun 2010 15:36:12 -0700
-Message-ID: <20100622223612.GB3898@kroah.com>
-References: <20100621170056.2fcf10ad.sfr@canb.auug.org.au>
- <20100621090049.c7f11c2d.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (tip tree
+ related)
+Date: Wed, 23 Jun 2010 10:50:11 +1000
+Message-ID: <20100623105011.d4df34ba.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__23_Jun_2010_10_50_11_+1000_oq/qAvmBhzKtsVkS"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:58092 "EHLO coco.kroah.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34762 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750994Ab0FVWlr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 22 Jun 2010 18:41:47 -0400
-Content-Disposition: inline
-In-Reply-To: <20100621090049.c7f11c2d.randy.dunlap@oracle.com>
+	id S1750777Ab0FWAuW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 22 Jun 2010 20:50:22 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, devel@driverdev.osuosl.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Jun 21, 2010 at 09:00:49AM -0700, Randy Dunlap wrote:
-> On Mon, 21 Jun 2010 17:00:56 +1000 Stephen Rothwell wrote:
-> 
-> > Hi all,
-> > 
-> > Changes since 20100618:
-> 
-> 
-> When CONFIG_USB is not enabled:
-> 
-> ERROR: "usb_kill_urb" [drivers/staging/easycap/easycap.ko] undefined!
-> ERROR: "usb_deregister_dev" [drivers/staging/easycap/easycap.ko] undefined!
-> ERROR: "video_register_device" [drivers/staging/easycap/easycap.ko] undefined!
-> ERROR: "usb_deregister" [drivers/staging/easycap/easycap.ko] undefined!
-> ERROR: "video_unregister_device" [drivers/staging/easycap/easycap.ko] undefined!
-> ERROR: "usb_set_interface" [drivers/staging/easycap/easycap.ko] undefined!
-> ERROR: "usb_register_dev" [drivers/staging/easycap/easycap.ko] undefined!
-> ERROR: "usb_control_msg" [drivers/staging/easycap/easycap.ko] undefined!
-> ERROR: "usb_submit_urb" [drivers/staging/easycap/easycap.ko] undefined!
-> ERROR: "usb_get_dev" [drivers/staging/easycap/easycap.ko] undefined!
-> ERROR: "usb_find_interface" [drivers/staging/easycap/easycap.ko] undefined!
-> ERROR: "usb_register_driver" [drivers/staging/easycap/easycap.ko] undefined!
-> ERROR: "usb_free_urb" [drivers/staging/easycap/easycap.ko] undefined!
-> ERROR: "usb_alloc_urb" [drivers/staging/easycap/easycap.ko] undefined!
-> 
-> 
-> Adding "depends on USB" to EASYCAP is a good start.
-> After that and enabling CONFIG_USB, build of easycap gets:
-> 
-> ERROR: "video_register_device" [drivers/staging/easycap/easycap.ko] undefined!
-> ERROR: "video_unregister_device" [drivers/staging/easycap/easycap.ko] undefined!
-> 
-> because there is no media/video support enabled.  Also no SOUND enabled,
-> so I expect there to be build errors associated with sound also, meaning that
-> the Kconfig file should probably modified with something like
-> 
-> config EASYCAP
-> +	depends on USB && VIDEO_DEV && SND
-> 
-> 
-> This is something that the driver author should know the answer to and submit a
-> patch for.
+--Signature=_Wed__23_Jun_2010_10_50_11_+1000_oq/qAvmBhzKtsVkS
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-You are right, care to make up a patch for this?
+Hi all,
 
-thanks,
+After merging the  tree, today's linux-next build (i386 allmodconfig)
+failed like this:
 
-greg k-h
+  VDSO    arch/x86/vdso/vdso32-int80.so.dbg
+/scratch/kisskb/src/arch/x86/vdso/checkundef.sh: line 4: ccache /opt/crosst=
+ool/gcc-4.4.3-nolibc/i386-linux/bin/i386-linux-nm: No such file or directory
+  VDSO    arch/x86/vdso/vdso32-sysenter.so.dbg
+/scratch/kisskb/src/arch/x86/vdso/checkundef.sh: line 4: ccache /opt/crosst=
+ool/gcc-4.4.3-nolibc/i386-linux/bin/i386-linux-nm: No such file or directory
+
+Caused by commit 05d0b0889ca9d033a960542af7f8a13b3ad4f630 ("x86, vdso:
+Error out if the vdso contains external references") interacting with a
+cross build that also uses ccache.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__23_Jun_2010_10_50_11_+1000_oq/qAvmBhzKtsVkS
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iEYEARECAAYFAkwhWkMACgkQjjKRsyhoI8xQ8wCeMVGkf2Ir4xtq0diXDxcrj1Cl
+bf8Anjzm+rl2jvCPBuNm3t2qul00QGGH
+=MwON
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__23_Jun_2010_10_50_11_+1000_oq/qAvmBhzKtsVkS--
