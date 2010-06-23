@@ -1,110 +1,50 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: -next June 21: WARNING: at include/linux/tty.h
-Date: Wed, 23 Jun 2010 09:32:00 +0200
-Message-ID: <201006230932.00445.arnd@arndb.de>
-References: <20100621170056.2fcf10ad.sfr@canb.auug.org.au> <4C204962.70208@in.ibm.com> <20100623165557.d793dc41.sfr@canb.auug.org.au>
+From: Avi Kivity <avi@redhat.com>
+Subject: Re: next June 10: S390 build failure [arch/s390/kvm/kvm.ko]
+Date: Wed, 23 Jun 2010 12:04:36 +0300
+Message-ID: <4C21CE24.2010609@redhat.com>
+References: <20100610160012.30ea7606.sfr@canb.auug.org.au> <4C10DCB7.7090903@in.ibm.com> <20100610154848.616aff99@mschwide.boeblingen.de.ibm.com> <201006120854.14259.borntraeger@de.ibm.com> <4C218E7D.8070006@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.186]:55390 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751500Ab0FWHcR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Jun 2010 03:32:17 -0400
-In-Reply-To: <20100623165557.d793dc41.sfr@canb.auug.org.au>
+Received: from mx1.redhat.com ([209.132.183.28]:47659 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751892Ab0FWJEo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 23 Jun 2010 05:04:44 -0400
+In-Reply-To: <4C218E7D.8070006@in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Sachin Sant <sachinp@in.ibm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Alan Cox <alan@lxorguk.ukuu.org.uk>
+To: Sachin Sant <sachinp@in.ibm.com>
+Cc: Christian Borntraeger <borntraeger@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Carsten Otte <cotte@de.ibm.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-s390@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>
 
-On Wednesday 23 June 2010 08:55:57 Stephen Rothwell wrote:
-> On Tue, 22 Jun 2010 10:55:54 +0530 Sachin Sant <sachinp@in.ibm.com> wrote:
-> >
-> > With next-20100621 on a x86_64 box came across this warning :
-> > 
-> > TCP cubic registered
-> > registered taskstats version 1
-> > ------------[ cut here ]------------
-> > WARNING: at include/linux/tty.h:589 tty_open+0x76/0x57a()
->
-> I get this twice for each boot.
+On 06/23/2010 07:33 AM, Sachin Sant wrote:
+> Christian Borntraeger wrote:
+>> Am Donnerstag 10 Juni 2010, 15:48:48 schrieb Martin Schwidefsky:
+>>> On Thu, 10 Jun 2010 18:08:15 +0530
+>>> Sachin Sant <sachinp@in.ibm.com> wrote:
+>>>
+>>>> Today's next fails to build on a s390 box with
+>>>>
+>>>> ERROR: "__kvm_s390_vcpu_store_status" [arch/s390/kvm/kvm.ko] 
+>>>> undefined!
+>>>>
+>>>> Yesterday's next was good.
+>>> That is caused by git commit fbc5eec58e652339e9df1332cd5e10e8d8250aaf
+>>> which fails to take git commit 5288fbf0ef041ba0e8b4dcb2df4536b5e3a48b32
+>>> into account. There is a second caller of __kvm_s390_vcpu_store_status
+>>> in arch/s390/kvm/intercept.c. As far as I understand the code you could
+>>> just drop the 'static' from kvm_s390_vcpu_store_status and call it from
+>>> handle_stop instead of the old __kvm_s390_vcpu_store_status.
+>>>
+>>> Carsten, Christian: could one of you have a look please?
+>>
+>> that patch should do the trick. Avi can you add that to kvm.git?
+>>
+>> kvm-s390: Fix build failure 
+> ping on the patch. Still not merged with next.
 
-Tony Luck also reported this, it's harmless and gets fixed 
-by the patch below, which belongs to another series. 
-There are still a few dependencies between the other
-BKL removal series, which I try to minimize and then
-I'll ask you to add those to -next.
+Missed it somehow.  Now applied to kvm.git next and kvm-updates/2.6.36 
+(which is the linux-next queue).
 
----
-
-I have shown by code review that no driver takes
-the BKL at init time any more, so whatever the
-init code was locking against is no longer there
-and it is now safe to remove the BKL there.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-diff --git a/init/main.c b/init/main.c
-index 3bdb152..81821e1 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -434,7 +434,6 @@ static noinline void __init_refok rest_init(void)
- 	rcu_read_lock();
- 	kthreadd_task = find_task_by_pid_ns(pid, &init_pid_ns);
- 	rcu_read_unlock();
--	unlock_kernel();
- 
- 	/*
- 	 * The boot idle thread must execute schedule()
-@@ -555,7 +554,6 @@ asmlinkage void __init start_kernel(void)
-  * Interrupts are still disabled. Do necessary setups, then
-  * enable them
-  */
--	lock_kernel();
- 	tick_init();
- 	boot_cpu_init();
- 	page_address_init();
-@@ -819,7 +817,6 @@ static noinline int init_post(void)
- 	/* need to finish all async __init code before freeing the memory */
- 	async_synchronize_full();
- 	free_initmem();
--	unlock_kernel();
- 	mark_rodata_ro();
- 	system_state = SYSTEM_RUNNING;
- 	numa_default_policy();
-@@ -855,8 +852,6 @@ static noinline int init_post(void)
- 
- static int __init kernel_init(void * unused)
- {
--	lock_kernel();
--
- 	/*
- 	 * init can allocate pages on any node
- 	 */
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 086d363..8047ca5 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -734,13 +734,6 @@ __acquires(kernel_lock)
- 		return -1;
- 	}
- 
--	/*
--	 * When this gets called we hold the BKL which means that
--	 * preemption is disabled. Various trace selftests however
--	 * need to disable and enable preemption for successful tests.
--	 * So we drop the BKL here and grab it after the tests again.
--	 */
--	unlock_kernel();
- 	mutex_lock(&trace_types_lock);
- 
- 	tracing_selftest_running = true;
-@@ -822,7 +815,6 @@ __acquires(kernel_lock)
- #endif
- 
-  out_unlock:
--	lock_kernel();
- 	return ret;
- }
- 
+-- 
+error compiling committee.c: too many arguments to function
