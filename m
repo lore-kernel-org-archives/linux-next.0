@@ -1,59 +1,48 @@
-From: Nitin Gupta <ngupta@vflare.org>
-Subject: Re: [PATCH -next] zram: fix build errors, depends on BLOCK
-Date: Thu, 24 Jun 2010 21:37:11 +0530
-Message-ID: <4C2382AF.2030807@vflare.org>
-References: <20100623154531.0a4b02e1.sfr@canb.auug.org.au> <20100623202709.4ecb798c.randy.dunlap@oracle.com> <4C22E0B3.60203@vflare.org> <4C236C93.1020407@oracle.com> <4C237E12.9020903@vflare.org> <4C237F75.70603@oracle.com>
-Reply-To: ngupta@vflare.org
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] solo: depends on SND
+Date: Thu, 24 Jun 2010 15:11:04 -0700
+Message-ID: <20100624151104.8c96c25e.randy.dunlap@oracle.com>
+References: <20100624171826.282ae29a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-px0-f174.google.com ([209.85.212.174]:39874 "EHLO
-	mail-px0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754299Ab0FXQGy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Jun 2010 12:06:54 -0400
-In-Reply-To: <4C237F75.70603@oracle.com>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:20184 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751070Ab0FXWLV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Jun 2010 18:11:21 -0400
+In-Reply-To: <20100624171826.282ae29a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, devel@driverdev.osuosl.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, gregkh@suse.de
+To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ben Collins <bcollins@bluecherry.net>, devel@driverdev.osuosl.org
 
-On 06/24/2010 09:23 PM, Randy Dunlap wrote:
-> On 06/24/10 08:47, Nitin Gupta wrote:
->> On 06/24/2010 08:02 PM, Randy Dunlap wrote:
->>> On 06/23/10 21:36, Nitin Gupta wrote:
->>>> On 06/24/2010 08:57 AM, Randy Dunlap wrote:
->>>>> From: Randy Dunlap <randy.dunlap@oracle.com>
->>>>>
->>>>> Fix 49 zram build errors in one swoop.  Examples:
->>>>>
->>>>> drivers/staging/zram/zram_drv.c:225: error: dereferencing pointer to incomplete type
->>>>> drivers/staging/zram/zram_drv.c:226: error: implicit declaration of function 'bio_for_each_segment'
->>>>> drivers/staging/zram/zram_drv.c:226: error: expected ';' before '{' token
->>>>> drivers/staging/zram/zram_drv.c:281: error: implicit declaration of function 'bio_endio'
->>>>> drivers/staging/zram/zram_drv.c:285: error: implicit declaration of function 'bio_io_error'
->>>>> drivers/staging/zram/zram_drv.c:545: error: implicit declaration of function 'set_capacity'
->>>>> drivers/staging/zram/zram_drv.c:548: error: implicit declaration of function 'queue_flag_set_unlocked'
->>>>> drivers/staging/zram/zram_drv.c:548: error: 'QUEUE_FLAG_NONROT' undeclared (first use in this function)
->>>>> drivers/staging/zram/zram_drv.c:548: error: dereferencing pointer to incomplete type
->>>>>
->>>>
->>>>
->>>> Thanks for the fix. Strangely, I didn't get any of these
->>>> errors when I compiled against mainline.
->>>
->>> This patch isn't against mainline, it's against linux-next.
->>> See subject's "[PATCH -next]" hint.
->>>
->>
->> Randy, I understood that your patch is against linux-next. I was just wondering
->> why the error did not come up when I applied and tested this whole zram thing
->> against linux mainline.
-> 
-> Did you test a build with CONFIG_BLOCK disabled?
->
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Ah, now I got it.    No, I didn't test with CONFIG_BLOCK disabled.
+Fix 56 undefined references to snd_*() functions. First 5 are:
 
-Thanks,
-Nitin
+drivers/built-in.o: In function `solo_g723_exit':
+(.text+0xa4a4aa): undefined reference to `snd_card_free'
+drivers/built-in.o: In function `solo_snd_pcm_init':
+solo6010-g723.c:(.text+0xa4a677): undefined reference to `snd_pcm_new'
+solo6010-g723.c:(.text+0xa4a6b1): undefined reference to `snd_pcm_set_ops'
+solo6010-g723.c:(.text+0xa4a74d): undefined reference to `snd_pcm_lib_preallocate_pages_for_all'
+drivers/built-in.o: In function `solo_g723_init':
+(.text+0xa4a7f6): undefined reference to `snd_card_create'
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Ben Collins <bcollins@bluecherry.net>
+---
+ drivers/staging/solo6x10/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20100624.orig/drivers/staging/solo6x10/Kconfig
++++ linux-next-20100624/drivers/staging/solo6x10/Kconfig
+@@ -1,6 +1,6 @@
+ config SOLO6X10
+ 	tristate "Softlogic 6x10 MPEG codec cards"
+-	depends on PCI && VIDEO_DEV
++	depends on PCI && VIDEO_DEV && SND
+ 	select VIDEOBUF_DMA_CONTIG
+ 	---help---
+ 	  This driver supports the Softlogic based MPEG-4 and h.264 codec
