@@ -1,59 +1,46 @@
-From: Phil Carmody <ext-phil.2.carmody@nokia.com>
-Subject: Re: linux-next: build failure after merge of the final tree
-Date: Thu, 24 Jun 2010 13:18:05 +0300
-Message-ID: <20100624101805.GM17639@pcarmody-desktop>
-References: <20100624021949.62910287.sfr@canb.auug.org.au> <20100624103619.46a88a63.sfr@canb.auug.org.au> <1277370056.30452.9.camel@e102109-lin.cambridge.arm.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [PATCH -next] zram: fix build errors, depends on BLOCK
+Date: Thu, 24 Jun 2010 07:32:51 -0700
+Message-ID: <4C236C93.1020407@oracle.com>
+References: <20100623154531.0a4b02e1.sfr@canb.auug.org.au> <20100623202709.4ecb798c.randy.dunlap@oracle.com> <4C22E0B3.60203@vflare.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.nokia.com ([192.100.122.230]:52848 "EHLO
-	mgw-mx03.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753391Ab0FXKNa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Jun 2010 06:13:30 -0400
-Content-Disposition: inline
-In-Reply-To: <1277370056.30452.9.camel@e102109-lin.cambridge.arm.com>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:58310 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754511Ab0FXOew (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Jun 2010 10:34:52 -0400
+In-Reply-To: <4C22E0B3.60203@vflare.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: ext Catalin Marinas <catalin.marinas@arm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Russell King <rmk@arm.linux.org.uk>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: ngupta@vflare.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, devel@driverdev.osuosl.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, gregkh@suse.de
 
-On 24/06/10 11:00 +0200, ext Catalin Marinas wrote:
-> On Thu, 2010-06-24 at 10:36 +1000, Stephen Rothwell wrote:
-> > Hi Russell,
-> > 
-> > On Thu, 24 Jun 2010 02:19:49 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > >
-> > > After merging the final tree, the next-20100616 and later linux-next
-> > > builds for most arm configs (including versatile_defconfig) failed like this:
-> > > 
-> > > In file included from include/linux/module.h:23,
-> > >                  from include/linux/device.h:23,
-> > >                  from include/linux/dma-mapping.h:4,
-> > >                  from arch/arm/kernel/asm-offsets.c:15:
-> > > include/trace/events/module.h:11: error: two or more data types in declaration 
-> > > 
-> > > Reverting commit f0028612a8ffedcdafa8b7ae83ab090d8b0318b4 ("ARM: 6171/1:
-> > > module - simplify unwind table handling") (and
-> > > cecaa4c6b8173b02c9f7ecfdbbc81f573a7a9f33 ("ARM: 6172/1: module -
-> > > additional unwind tables for exit/devexit sections") that depends on it)
-> > > fixes this build error.
-> > 
-> > I have reverted those 2 commits in linux-next today.
+On 06/23/10 21:36, Nitin Gupta wrote:
+> On 06/24/2010 08:57 AM, Randy Dunlap wrote:
+>> From: Randy Dunlap <randy.dunlap@oracle.com>
+>>
+>> Fix 49 zram build errors in one swoop.  Examples:
+>>
+>> drivers/staging/zram/zram_drv.c:225: error: dereferencing pointer to incomplete type
+>> drivers/staging/zram/zram_drv.c:226: error: implicit declaration of function 'bio_for_each_segment'
+>> drivers/staging/zram/zram_drv.c:226: error: expected ';' before '{' token
+>> drivers/staging/zram/zram_drv.c:281: error: implicit declaration of function 'bio_endio'
+>> drivers/staging/zram/zram_drv.c:285: error: implicit declaration of function 'bio_io_error'
+>> drivers/staging/zram/zram_drv.c:545: error: implicit declaration of function 'set_capacity'
+>> drivers/staging/zram/zram_drv.c:548: error: implicit declaration of function 'queue_flag_set_unlocked'
+>> drivers/staging/zram/zram_drv.c:548: error: 'QUEUE_FLAG_NONROT' undeclared (first use in this function)
+>> drivers/staging/zram/zram_drv.c:548: error: dereferencing pointer to incomplete type
+>>
 > 
-> Thanks. Stephen, do you build with just the standard defconfig for
-> ARCH=arm?
 > 
-> The problem is commit f0028612a8f which contains the hunk below for
-> the !ARM_UNWIND case):
-> 
-> +struct mod_arch_specific {
-> +}
-> 
-> Phil, could you please add a semicolon after '}' and send Russell a
-> patch?
+> Thanks for the fix. Strangely, I didn't get any of these
+> errors when I compiled against mainline.
 
-Such a patch has already been sent by Peter Huewe, last week:
-http://lkml.org/lkml/2010/6/17/73
+This patch isn't against mainline, it's against linux-next.
+See subject's "[PATCH -next]" hint.
 
-
-Phil
+-- 
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
