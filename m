@@ -1,49 +1,56 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the sound tree
-Date: Thu, 24 Jun 2010 13:03:41 +1000
-Message-ID: <20100624130341.0ccf9102.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] zram: fix build errors, depends on BLOCK
+Date: Wed, 23 Jun 2010 20:27:09 -0700
+Message-ID: <20100623202709.4ecb798c.randy.dunlap@oracle.com>
+References: <20100623154531.0a4b02e1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__24_Jun_2010_13_03_41_+1000_bWHMXGc_.j4QfxU="
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20100623154531.0a4b02e1.sfr@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Takashi Iwai <tiwai@suse.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Mack <daniel@caiaq.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Nitin Gupta <ngupta@vflare.org>, devel@driverdev.osuosl.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, gregkh@suse.de
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__24_Jun_2010_13_03_41_+1000_bWHMXGc_.j4QfxU=
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Hi Takashi,
+Fix 49 zram build errors in one swoop.  Examples:
 
-After merging the sound tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+drivers/staging/zram/zram_drv.c:225: error: dereferencing pointer to incomplete type
+drivers/staging/zram/zram_drv.c:226: error: implicit declaration of function 'bio_for_each_segment'
+drivers/staging/zram/zram_drv.c:226: error: expected ';' before '{' token
+drivers/staging/zram/zram_drv.c:281: error: implicit declaration of function 'bio_endio'
+drivers/staging/zram/zram_drv.c:285: error: implicit declaration of function 'bio_io_error'
+drivers/staging/zram/zram_drv.c:545: error: implicit declaration of function 'set_capacity'
+drivers/staging/zram/zram_drv.c:548: error: implicit declaration of function 'queue_flag_set_unlocked'
+drivers/staging/zram/zram_drv.c:548: error: 'QUEUE_FLAG_NONROT' undeclared (first use in this function)
+drivers/staging/zram/zram_drv.c:548: error: dereferencing pointer to incomplete type
 
-sound/usb/mixer.c: In function 'get_ctl_value_v1':
-sound/usb/mixer.c:308: error: 'struct usb_mixer_interface' has no member na=
-med 'ctrlif'
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc:	devel@driverdev.osuosl.org
+Cc:	Nitin Gupta <ngupta@vflare.org>
+---
+ drivers/staging/zram/Kconfig    |    1 +
+ drivers/staging/zram/zram_drv.c |    1 +
+ 2 files changed, 2 insertions(+)
 
-Caused by commit 3d8d4dcfd423b01ef7ea7c3c97720764b7adb6df ("ALSA:
-usb-audio: simplify control interface access").  Grep is your friend ...
-
-I have used the sound tree from next-20100623 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__24_Jun_2010_13_03_41_+1000_bWHMXGc_.j4QfxU=
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkwiyw0ACgkQjjKRsyhoI8xDyACfaP/+jM6uNmUcXpyoyGddoHav
-OZMAn0vIjIBnV5lH2qTzw2n06eW18Nbe
-=qKdH
------END PGP SIGNATURE-----
-
---Signature=_Thu__24_Jun_2010_13_03_41_+1000_bWHMXGc_.j4QfxU=--
+--- linux-next-20100623.orig/drivers/staging/zram/Kconfig
++++ linux-next-20100623/drivers/staging/zram/Kconfig
+@@ -1,5 +1,6 @@
+ config ZRAM
+ 	tristate "Compressed RAM block device support"
++	depends on BLOCK
+ 	select LZO_COMPRESS
+ 	select LZO_DECOMPRESS
+ 	default n
+--- linux-next-20100623.orig/drivers/staging/zram/zram_drv.c
++++ linux-next-20100623/drivers/staging/zram/zram_drv.c
+@@ -17,6 +17,7 @@
+ 
+ #include <linux/module.h>
+ #include <linux/kernel.h>
++#include <linux/bio.h>
+ #include <linux/bitops.h>
+ #include <linux/blkdev.h>
+ #include <linux/buffer_head.h>
