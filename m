@@ -1,23 +1,23 @@
-From: Russell King <rmk@arm.linux.org.uk>
+From: Phil Carmody <ext-phil.2.carmody@nokia.com>
 Subject: Re: linux-next: build failure after merge of the final tree
-Date: Thu, 24 Jun 2010 10:09:17 +0100
-Message-ID: <20100624090917.GA25508@flint.arm.linux.org.uk>
+Date: Thu, 24 Jun 2010 13:18:05 +0300
+Message-ID: <20100624101805.GM17639@pcarmody-desktop>
 References: <20100624021949.62910287.sfr@canb.auug.org.au> <20100624103619.46a88a63.sfr@canb.auug.org.au> <1277370056.30452.9.camel@e102109-lin.cambridge.arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:36511 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754340Ab0FXJJh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Jun 2010 05:09:37 -0400
+Received: from smtp.nokia.com ([192.100.122.230]:52848 "EHLO
+	mgw-mx03.nokia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753391Ab0FXKNa (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Jun 2010 06:13:30 -0400
 Content-Disposition: inline
 In-Reply-To: <1277370056.30452.9.camel@e102109-lin.cambridge.arm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Phil Carmody <ext-phil.2.carmody@nokia.com>
+To: ext Catalin Marinas <catalin.marinas@arm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Russell King <rmk@arm.linux.org.uk>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Jun 24, 2010 at 10:00:56AM +0100, Catalin Marinas wrote:
+On 24/06/10 11:00 +0200, ext Catalin Marinas wrote:
 > On Thu, 2010-06-24 at 10:36 +1000, Stephen Rothwell wrote:
 > > Hi Russell,
 > > 
@@ -42,18 +42,18 @@ On Thu, Jun 24, 2010 at 10:00:56AM +0100, Catalin Marinas wrote:
 > 
 > Thanks. Stephen, do you build with just the standard defconfig for
 > ARCH=arm?
-
-The linux-next website has all the build results for all the defconfigs.
-You can get to the ARM build results via:
-
-  http://kisskb.ellerman.id.au/kisskb/compiler/11/
-
+> 
+> The problem is commit f0028612a8f which contains the hunk below for
+> the !ARM_UNWIND case):
+> 
+> +struct mod_arch_specific {
+> +}
+> 
 > Phil, could you please add a semicolon after '}' and send Russell a
 > patch?
 
-... and also test the result before sending.
+Such a patch has already been sent by Peter Huewe, last week:
+http://lkml.org/lkml/2010/6/17/73
 
--- 
-Russell King
- Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
- maintainer of:
+
+Phil
