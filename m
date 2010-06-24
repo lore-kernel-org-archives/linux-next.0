@@ -1,48 +1,61 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] solo: depends on SND
-Date: Thu, 24 Jun 2010 15:11:04 -0700
-Message-ID: <20100624151104.8c96c25e.randy.dunlap@oracle.com>
-References: <20100624171826.282ae29a.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@Oracle.com>
+Subject: [PATCH -next] ipmi: fix module param sparse warnings
+Date: Thu, 24 Jun 2010 15:21:22 -0700
+Message-ID: <20100624152122.bfc0472a.randy.dunlap@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:20184 "EHLO
+Received: from rcsinet10.oracle.com ([148.87.113.121]:63268 "EHLO
 	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751070Ab0FXWLV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Jun 2010 18:11:21 -0400
-In-Reply-To: <20100624171826.282ae29a.sfr@canb.auug.org.au>
+	with ESMTP id S1751048Ab0FXWW6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Jun 2010 18:22:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ben Collins <bcollins@bluecherry.net>, devel@driverdev.osuosl.org
+To: lkml <linux-kernel@vger.kernel.org>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, Corey Minyard <minyard@acm.org>
 
 From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Fix 56 undefined references to snd_*() functions. First 5 are:
+The <arg> parameter in module_param_cb() should be a pointer,
+i.e., like one of these:
+	union {
+		void *arg;
+		const struct kparam_string *str;
+		const struct kparam_array *arr;
+	};
 
-drivers/built-in.o: In function `solo_g723_exit':
-(.text+0xa4a4aa): undefined reference to `snd_card_free'
-drivers/built-in.o: In function `solo_snd_pcm_init':
-solo6010-g723.c:(.text+0xa4a677): undefined reference to `snd_pcm_new'
-solo6010-g723.c:(.text+0xa4a6b1): undefined reference to `snd_pcm_set_ops'
-solo6010-g723.c:(.text+0xa4a74d): undefined reference to `snd_pcm_lib_preallocate_pages_for_all'
-drivers/built-in.o: In function `solo_g723_init':
-(.text+0xa4a7f6): undefined reference to `snd_card_create'
+sparse complains:
+drivers/char/ipmi/ipmi_watchdog.c:303:1: error: cannot dereference this type
+drivers/char/ipmi/ipmi_watchdog.c:307:1: error: cannot dereference this type
+drivers/char/ipmi/ipmi_watchdog.c:311:1: error: cannot dereference this type
 
 Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Ben Collins <bcollins@bluecherry.net>
+Cc: Corey Minyard <minyard@acm.org>
 ---
- drivers/staging/solo6x10/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Note: patch is against linux-next, since these lines have changed recently.
 
---- linux-next-20100624.orig/drivers/staging/solo6x10/Kconfig
-+++ linux-next-20100624/drivers/staging/solo6x10/Kconfig
-@@ -1,6 +1,6 @@
- config SOLO6X10
- 	tristate "Softlogic 6x10 MPEG codec cards"
--	depends on PCI && VIDEO_DEV
-+	depends on PCI && VIDEO_DEV && SND
- 	select VIDEOBUF_DMA_CONTIG
- 	---help---
- 	  This driver supports the Softlogic based MPEG-4 and h.264 codec
+ drivers/char/ipmi/ipmi_watchdog.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+--- linux-next-20100528.orig/drivers/char/ipmi/ipmi_watchdog.c
++++ linux-next-20100528/drivers/char/ipmi/ipmi_watchdog.c
+@@ -300,15 +300,15 @@ MODULE_PARM_DESC(timeout, "Timeout value
+ module_param(pretimeout, timeout, 0644);
+ MODULE_PARM_DESC(pretimeout, "Pretimeout value in seconds.");
+ 
+-module_param_cb(action, &param_ops_str, action_op, 0644);
++module_param_cb(action, &param_ops_str, &action_op, 0644);
+ MODULE_PARM_DESC(action, "Timeout action. One of: "
+ 		 "reset, none, power_cycle, power_off.");
+ 
+-module_param_cb(preaction, &param_ops_str, preaction_op, 0644);
++module_param_cb(preaction, &param_ops_str, &preaction_op, 0644);
+ MODULE_PARM_DESC(preaction, "Pretimeout action.  One of: "
+ 		 "pre_none, pre_smi, pre_nmi, pre_int.");
+ 
+-module_param_cb(preop, &param_ops_str, preop_op, 0644);
++module_param_cb(preop, &param_ops_str, &preop_op, 0644);
+ MODULE_PARM_DESC(preop, "Pretimeout driver operation.  One of: "
+ 		 "preop_none, preop_panic, preop_give_data.");
+ 
