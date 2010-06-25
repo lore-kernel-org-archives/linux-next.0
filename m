@@ -1,62 +1,75 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the drivers-x86 tree
-Date: Fri, 25 Jun 2010 14:16:29 +1000
-Message-ID: <20100625141629.43a7261d.sfr@canb.auug.org.au>
-References: <20100625132545.50e226e3.sfr@canb.auug.org.au>
-	<20100625034141.GB15720@srcf.ucam.org>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: [PATCH -next] ipmi: fix module param sparse warnings
+Date: Fri, 25 Jun 2010 22:20:15 +0930
+Message-ID: <201006252220.17228.rusty@rustcorp.com.au>
+References: <20100624152122.bfc0472a.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__25_Jun_2010_14_16_29_+1000_5hh=h5TyeLiYXKbZ"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58655 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750788Ab0FYEQf (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 25 Jun 2010 00:16:35 -0400
-In-Reply-To: <20100625034141.GB15720@srcf.ucam.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Matthew Garrett <mjg59@srcf.ucam.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>, Greg Kroah-Hartman <gregkh@suse.de>
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20100624152122.bfc0472a.randy.dunlap@oracle.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: lkml <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Corey Minyard <minyard@acm.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__25_Jun_2010_14_16_29_+1000_5hh=h5TyeLiYXKbZ
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, 25 Jun 2010 07:51:22 am Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> The <arg> parameter in module_param_cb() should be a pointer,
 
-Hi Matthew,
+Well, I don't think there's anything wrong with it being a function.
 
-On Fri, 25 Jun 2010 04:41:41 +0100 Matthew Garrett <mjg59@srcf.ucam.org> wr=
-ote:
->
-> On Fri, Jun 25, 2010 at 01:25:45PM +1000, Stephen Rothwell wrote:
->=20
-> > RAR_REGISTER is also still defined in
-> > drivers/staging/rar_register/Kconfig ...  Also, that commit did not move
-> > intel_rar_register.c from staging ...
->=20
-> Sorry, I managed to utterly novice git. Fixed tree pushed.
+The actual problem is that it tries to figure out if the arg is a bool
+or an int: if someone wants to work through the 700-odd cases of 
+module_param*bool and convert those vars to actual bools, that'd allow
+us to get rid of that logic.
 
-Thanks.
+Meanwhile, we can do this instead.  Does it solve it as well?
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Subject: ipmi: fix module param sparse warnings
+Date: Thu, 24 Jun 2010 15:21:22 -0700
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
---Signature=_Fri__25_Jun_2010_14_16_29_+1000_5hh=h5TyeLiYXKbZ
-Content-Type: application/pgp-signature
+The <arg> parameter in module_param_cb() should be a pointer,
+i.e., like one of these:
+	union {
+		void *arg;
+		const struct kparam_string *str;
+		const struct kparam_array *arr;
+	};
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+sparse complains:
+drivers/char/ipmi/ipmi_watchdog.c:303:1: error: cannot dereference this type
+drivers/char/ipmi/ipmi_watchdog.c:307:1: error: cannot dereference this type
+drivers/char/ipmi/ipmi_watchdog.c:311:1: error: cannot dereference this type
 
-iQEcBAEBAgAGBQJMJC2dAAoJEDMEi1NhKgbslrQH/iVp0XflCN8/L5sd7uU2Qe35
-oWF6LV0Cd5IhqgIzHpG6AjjYPPsagWKJEecuKcXClJQvXhTEMOJFpCJeVMj6MWKc
-rydQHhLgwcm5ovBaSBF/cerorAw7SkFq70zVTfpgTTVT1Hv/YJpcWJh1nKmYuGp2
-bpi96wLttIdOkfPS39ROBr30S5yrckR6AmtHnAGf4jy+XF5Nm6RCZ2WIT1Rl9oOo
-zSe6Ezw00WIxDSFsGHLamGMuhhYaU12/tAGI3Un1aqlHVOIAJ45m9zBrJ3ig9Egd
-7Zu9Ed71qEZ5PbmV+Ujm6s4gviVZBzdRBwBJrJWDVTDgq7l4KmpkpBNarjVYZ/A=
-=xHsk
------END PGP SIGNATURE-----
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Corey Minyard <minyard@acm.org>
+Signed-off-by: Rusty Russell <rusty@rustcorp.com.au>
+---
+ drivers/char/ipmi/ipmi_watchdog.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---Signature=_Fri__25_Jun_2010_14_16_29_+1000_5hh=h5TyeLiYXKbZ--
+--- linux-next-20100528.orig/drivers/char/ipmi/ipmi_watchdog.c
++++ linux-next-20100528/drivers/char/ipmi/ipmi_watchdog.c
+@@ -300,15 +300,15 @@ MODULE_PARM_DESC(timeout, "Timeout value
+ module_param(pretimeout, timeout, 0644);
+ MODULE_PARM_DESC(pretimeout, "Pretimeout value in seconds.");
+ 
+-module_param_cb(action, &param_ops_str, action_op, 0644);
++module_param_cb(action, &param_ops_str, &action_op, 0644);
+ MODULE_PARM_DESC(action, "Timeout action. One of: "
+ 		 "reset, none, power_cycle, power_off.");
+ 
+-module_param_cb(preaction, &param_ops_str, preaction_op, 0644);
++module_param_cb(preaction, &param_ops_str, &preaction_op, 0644);
+ MODULE_PARM_DESC(preaction, "Pretimeout action.  One of: "
+ 		 "pre_none, pre_smi, pre_nmi, pre_int.");
+ 
+-module_param_cb(preop, &param_ops_str, preop_op, 0644);
++module_param_cb(preop, &param_ops_str, &preop_op, 0644);
+ MODULE_PARM_DESC(preop, "Pretimeout driver operation.  One of: "
+ 		 "preop_none, preop_panic, preop_give_data.");
+ 
