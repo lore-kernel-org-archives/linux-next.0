@@ -1,42 +1,42 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: [PATCH -next] ipmi: fix module param sparse warnings
-Date: Mon, 28 Jun 2010 19:05:58 +0930
-Message-ID: <201006281905.59387.rusty@rustcorp.com.au>
-References: <20100624152122.bfc0472a.randy.dunlap@oracle.com> <201006252220.17228.rusty@rustcorp.com.au> <4C24D779.6020209@oracle.com>
+From: Daniel Mack <daniel@caiaq.de>
+Subject: Re: linux-next: build failure after merge of the sound tree
+Date: Mon, 28 Jun 2010 18:33:13 +0200
+Message-ID: <20100628163313.GH2698@buzzloop.caiaq.de>
+References: <20100624130341.0ccf9102.sfr@canb.auug.org.au>
+ <s5hbpb1dkp7.wl%tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:39545 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751036Ab0F1JgJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 28 Jun 2010 05:36:09 -0400
-In-Reply-To: <4C24D779.6020209@oracle.com>
+Received: from buzzloop.caiaq.de ([212.112.241.133]:50000 "EHLO
+	buzzloop.caiaq.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750762Ab0F1QdR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Jun 2010 12:33:17 -0400
+Content-Disposition: inline
+In-Reply-To: <s5hbpb1dkp7.wl%tiwai@suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: lkml <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Corey Minyard <minyard@acm.org>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, 26 Jun 2010 01:51:13 am Randy Dunlap wrote:
-> On 06/25/10 05:50, Rusty Russell wrote:
-> > On Fri, 25 Jun 2010 07:51:22 am Randy Dunlap wrote:
-> >> From: Randy Dunlap <randy.dunlap@oracle.com>
-> >>
-> >> The <arg> parameter in module_param_cb() should be a pointer,
+On Thu, Jun 24, 2010 at 08:11:00AM +0200, Takashi Iwai wrote:
+> At Thu, 24 Jun 2010 13:03:41 +1000,
+> Stephen Rothwell wrote:
 > > 
-> > Well, I don't think there's anything wrong with it being a function.
+> > Hi Takashi,
+> > 
+> > After merging the sound tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> > 
+> > sound/usb/mixer.c: In function 'get_ctl_value_v1':
+> > sound/usb/mixer.c:308: error: 'struct usb_mixer_interface' has no member named 'ctrlif'
+> > 
+> > Caused by commit 3d8d4dcfd423b01ef7ea7c3c97720764b7adb6df ("ALSA:
+> > usb-audio: simplify control interface access").  Grep is your friend ...
+> > 
+> > I have used the sound tree from next-20100623 for today.
 > 
-> Ah, yes, I see.  That makes it a sparse error, right?
+> Fixed now.  I've forgotten the build tests with debug options...
 
-Well, it's a weird corner case, but yes.
+Oops, sorry and thanks for fixing this up!
 
-> > Meanwhile, we can do this instead.  Does it solve it as well?
-> 
-> Yes, that also fixes it.
-> Thanks.
-
-Thanks, I've added your tested-by.
-
-Cheers,
-Rusty.
+Daniel
