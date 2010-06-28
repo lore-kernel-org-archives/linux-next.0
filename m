@@ -1,42 +1,47 @@
-From: Daniel Mack <daniel@caiaq.de>
-Subject: Re: linux-next: build failure after merge of the sound tree
-Date: Mon, 28 Jun 2010 18:33:13 +0200
-Message-ID: <20100628163313.GH2698@buzzloop.caiaq.de>
-References: <20100624130341.0ccf9102.sfr@canb.auug.org.au>
- <s5hbpb1dkp7.wl%tiwai@suse.de>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: problem: Re: [PATCH] input: fixup X86_MRST selects
+Date: Mon, 28 Jun 2010 12:03:44 -0700
+Message-ID: <4C28F210.7030909@oracle.com>
+References: <20100609133443.38f1f957.sfr@canb.auug.org.au> <201006091540.43122.dmitry.torokhov@gmail.com> <4C1018C0.6020304@oracle.com> <201006101204.45709.dmitry.torokhov@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from buzzloop.caiaq.de ([212.112.241.133]:50000 "EHLO
-	buzzloop.caiaq.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750762Ab0F1QdR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Jun 2010 12:33:17 -0400
-Content-Disposition: inline
-In-Reply-To: <s5hbpb1dkp7.wl%tiwai@suse.de>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <201006101204.45709.dmitry.torokhov@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jacob Pan <jacob.jun.pan@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-input@vger.kernel.org, akpm <akpm@linux-foundation.org>, chuck.lever@oracle.com
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Jun 24, 2010 at 08:11:00AM +0200, Takashi Iwai wrote:
-> At Thu, 24 Jun 2010 13:03:41 +1000,
-> Stephen Rothwell wrote:
-> > 
-> > Hi Takashi,
-> > 
-> > After merging the sound tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
-> > 
-> > sound/usb/mixer.c: In function 'get_ctl_value_v1':
-> > sound/usb/mixer.c:308: error: 'struct usb_mixer_interface' has no member named 'ctrlif'
-> > 
-> > Caused by commit 3d8d4dcfd423b01ef7ea7c3c97720764b7adb6df ("ALSA:
-> > usb-audio: simplify control interface access").  Grep is your friend ...
-> > 
-> > I have used the sound tree from next-20100623 for today.
+On 06/10/10 12:04, Dmitry Torokhov wrote:
+> On Wednesday, June 09, 2010 03:42:08 pm Randy Dunlap wrote:
+>> On 06/09/10 15:40, Dmitry Torokhov wrote:
+>>> On Wednesday, June 09, 2010 03:29:21 pm Randy Dunlap wrote:
+>>>> +++ linux-next-20100609/drivers/input/keyboard/Kconfig
+>>>> @@ -70,9 +70,10 @@ config KEYBOARD_ATARI
+>>>>  
+>>>>  config KEYBOARD_ATKBD
+>>>>         tristate "AT keyboard" if EMBEDDED || !X86
+>>>> +       depends on !X86 || (X86 && !X86_MRST)
+>>>
+>>> Should it be simply 'depends on !X86_MRST' and then we could kill
+>>> '!X86_MRST' conditionals in selects?
+>>
+>> Duh, that sounds good, yes.
 > 
-> Fixed now.  I've forgotten the build tests with debug options...
+> Actually, I do not think this is a correct approach. While Moorestown does
+> not have i8042 theoretically it is possible to add AT-style keyboard by
+> other means (however unlikely it is) so we should not be disabling it.
+> 
+> We should, however, disallow i8042 from being selected. Could you please
+> tell me if the patch below works for you?
 
-Oops, sorry and thanks for fixing this up!
+Dmitry,
 
-Daniel
+This patch (in current mainline git) causes a problem when X86_MRST is enabled.
+CONFIG_SERIO_I8042 is no longer enabled when X86_MRST is enabled,
+and X86_MRST could be enabled when someone is trying to build a generic kernel.
+
+-- 
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
