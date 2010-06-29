@@ -1,54 +1,45 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for June 29 (staging/spectra)
-Date: Tue, 29 Jun 2010 08:07:57 -0700
-Message-ID: <20100629080757.a8028091.randy.dunlap@oracle.com>
+From: Jean Delvare <khali@linux-fr.org>
+Subject: Re: [lm-sensors] linux-next: Tree for June 29 (hwmon/coretemp)
+Date: Tue, 29 Jun 2010 21:05:32 +0200
+Message-ID: <20100629210532.314250ba@hyperion.delvare>
 References: <20100629151938.6981044d.sfr@canb.auug.org.au>
+	<20100629080257.43b365dd.randy.dunlap@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:26048 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756477Ab0F2PIv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 29 Jun 2010 11:08:51 -0400
-In-Reply-To: <20100629151938.6981044d.sfr@canb.auug.org.au>
+Received: from poutre.nerim.net ([62.4.16.124]:50469 "EHLO poutre.nerim.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755091Ab0F2TFh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 29 Jun 2010 15:05:37 -0400
+In-Reply-To: <20100629080257.43b365dd.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Gao Yunpeng <yunpeng.gao@intel.com>, gregkh@suse.de
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Rudolf Marek <r.marek@assembler.cz>, Huaxu Wan <huaxu.wan@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, lm-sensors@lm-sensors.org
 
-On Tue, 29 Jun 2010 15:19:38 +1000 Stephen Rothwell wrote:
+Hi Randy,
 
-> Hi all,
+On Tue, 29 Jun 2010 08:02:57 -0700, Randy Dunlap wrote:
+> On Tue, 29 Jun 2010 15:19:38 +1000 Stephen Rothwell wrote:
 > 
-> Changes since 20100628:
+> > Hi all,
+> > 
+> > Changes since 20100628:
+> > 
+> > My fixes tree is now empty.
 > 
-> My fixes tree is now empty.
+> 
+> when CONFIG_SMP is not enabled:
+> 
+> drivers/hwmon/coretemp.c:308: error: 'struct cpuinfo_x86' has no member named 'cpu_core_id'
+> drivers/hwmon/coretemp.c:428: error: 'struct cpuinfo_x86' has no member named 'phys_proc_id'
+> drivers/hwmon/coretemp.c:429: error: 'struct cpuinfo_x86' has no member named 'cpu_core_id'
+> drivers/hwmon/coretemp.c:457: error: 'struct cpuinfo_x86' has no member named 'phys_proc_id'
+> drivers/hwmon/coretemp.c:458: error: 'struct cpuinfo_x86' has no member named 'cpu_core_id'
 
+Thanks for the heads up, I hadn't considered the no-SMP case. I'll take
+a look immediately.
 
-When CONFIG_MTD=m and
-CONFIG_SPECTRA=y
-# CONFIG_SPECTRA_MRST_HW is not set
-CONFIG_SPECTRA_MTD=y
-# CONFIG_SPECTRA_EMU is not set
-
-build-r3554.out:(.text+0x28bc7c): undefined reference to `put_mtd_device'
-build-r3554.out:(.text+0x28bcb1): undefined reference to `get_mtd_device'
-
-due to this in spectra/Kconfig:
-
-config SPECTRA_MTD
-	bool "Linux MTD mode"
-	depends on MTD
-
-so when CONFIG_MTD=m, the "depends on MTD" on a 'bool' makes the bool become 'y',
-which is not good.
-
-Is this supposed to build a separate lld_mtd driver?
-Can't it be tristate instead of bool?
-
-
-
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+-- 
+Jean Delvare
