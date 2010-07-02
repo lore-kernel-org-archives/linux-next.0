@@ -1,45 +1,44 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the driver-core tree with the
- jdelvare-hwmon tree
-Date: Fri, 2 Jul 2010 14:25:48 -0700
-Message-ID: <20100702212548.GA10228@kroah.com>
-References: <20100702153827.cecff5e6.sfr@canb.auug.org.au>
- <20100702054648.GA18023@kroah.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] staging/solo: add delay.h header
+Date: Fri, 2 Jul 2010 16:44:13 -0700
+Message-ID: <20100702164413.20171588.randy.dunlap@oracle.com>
+References: <20100702163505.272e6fca.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:58515 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750868Ab0GBVZz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 2 Jul 2010 17:25:55 -0400
-Content-Disposition: inline
-In-Reply-To: <20100702054648.GA18023@kroah.com>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:50260 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753199Ab0GBXpU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 2 Jul 2010 19:45:20 -0400
+In-Reply-To: <20100702163505.272e6fca.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steve Glendinning <steve.glendinning@smsc.com>, Jean Delvare <khali@linux-fr.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, bcollins@bluecherry.net
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Thu, Jul 01, 2010 at 10:46:48PM -0700, Greg KH wrote:
-> On Fri, Jul 02, 2010 at 03:38:27PM +1000, Stephen Rothwell wrote:
-> > Hi Greg,
-> > 
-> > Today's linux-next merge of the driver-core tree got a conflict in
-> > MAINTAINERS drivers/hwmon/emc2103.c between commit
-> > 7c73bc52c98623e7ae2831ec8df80e882aa4087f ("hwmon: Add driver for SMSC
-> > EMC2103 temperature monitor and fan controller") from the jdelvare-hwmon
-> > tree and commit 3b52586d66843792f6556b3dd33205375d9b4196 ("hwmon: Add
-> > driver for SMSC EMC2103 temperature monitor and fan controller") from the
-> > driver-core tree.
-> > 
-> > Looks like two versions of the same patch.  I used the newer one (from
-> > the jdelvare-hwmon tree).  I guess this should be dropped from one of the
-> > two trees.
-> 
-> Yes, it will be dropped from my tree tomorrow, sorry, I was busy with
-> the -stable stuff for the past few days.
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-It is now removed from my tree.
+Several solo drivers need <linux/delay.h>, so add it to the
+private solo6010.h header file.
 
-thanks,
+drivers/staging/solo6x10/solo6010-core.c:191: error: implicit declaration of function 'mdelay'
+drivers/staging/solo6x10/solo6010-tw28.c:181: error: implicit declaration of function 'msleep_interruptible'
+drivers/staging/solo6x10/solo6010-gpio.c:78: error: implicit declaration of function 'udelay'
+drivers/staging/solo6x10/solo6010-v4l2-enc.c:254: error: implicit declaration of function 'mdelay'
 
-greg k-h
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/staging/solo6x10/solo6010.h |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- linux-next-20100702.orig/drivers/staging/solo6x10/solo6010.h
++++ linux-next-20100702/drivers/staging/solo6x10/solo6010.h
+@@ -26,6 +26,7 @@
+ #include <linux/semaphore.h>
+ #include <linux/mutex.h>
+ #include <linux/list.h>
++#include <linux/delay.h>
+ #include <linux/wait.h>
+ #include <asm/io.h>
+ #include <asm/atomic.h>
