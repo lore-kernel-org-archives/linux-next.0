@@ -1,41 +1,56 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the driver-core tree with the
- jdelvare-hwmon tree
-Date: Thu, 1 Jul 2010 22:46:48 -0700
-Message-ID: <20100702054648.GA18023@kroah.com>
-References: <20100702153827.cecff5e6.sfr@canb.auug.org.au>
+From: "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: problem: Re: [PATCH] input: fixup X86_MRST selects
+Date: Thu, 01 Jul 2010 23:27:13 -0700
+Message-ID: <4C2D86C1.1060007@zytor.com>
+References: <20100609133443.38f1f957.sfr@canb.auug.org.au> <201006101204.45709.dmitry.torokhov@gmail.com> <4C28F210.7030909@oracle.com> <201006281318.16377.dmitry.torokhov@gmail.com> <4C2904D0.3000409@oracle.com> <43F901BD926A4E43B106BF17856F0755EA339079@orsmsx508.amr.corp.intel.com> <20100628224440.GA19087@core.coreip.homeip.net> <43F901BD926A4E43B106BF17856F0755EA339200@orsmsx508.amr.corp.intel.com> <20100702044607.GA1203@core.coreip.homeip.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:34950 "EHLO coco.kroah.org"
+Received: from terminus.zytor.com ([198.137.202.10]:36606 "EHLO mail.zytor.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751644Ab0GBFrU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 2 Jul 2010 01:47:20 -0400
-Content-Disposition: inline
-In-Reply-To: <20100702153827.cecff5e6.sfr@canb.auug.org.au>
+	id S1755922Ab0GBG1l (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 2 Jul 2010 02:27:41 -0400
+In-Reply-To: <20100702044607.GA1203@core.coreip.homeip.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steve Glendinning <steve.glendinning@smsc.com>, Jean Delvare <khali@linux-fr.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: "Pan, Jacob jun" <jacob.jun.pan@intel.com>, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, akpm <akpm@linux-foundation.org>, "chuck.lever@oracle.com" <chuck.lever@oracle.com>, Arjan van de Ven <arjan@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, kphillisjr@gmail.com
 
-On Fri, Jul 02, 2010 at 03:38:27PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
+On 07/01/2010 09:46 PM, Dmitry Torokhov wrote:
+> On Mon, Jun 28, 2010 at 04:22:03PM -0700, Pan, Jacob jun wrote:
+>> There is no DMI support yet in MRST FW.  We have a new x86 HW subarch
+>> ID in boot_param, then we use it to select x86_init abstractions. Both
+>> boot_param and x86_init are x86 arch specific so I guess we can use
+>> them in 8042 driver under CONFIG_X86. Not sure if it is possible to
+>> move x86 i8042_platform_init under x86_init (the x86 part).
+>>
 > 
-> Today's linux-next merge of the driver-core tree got a conflict in
-> MAINTAINERS drivers/hwmon/emc2103.c between commit
-> 7c73bc52c98623e7ae2831ec8df80e882aa4087f ("hwmon: Add driver for SMSC
-> EMC2103 temperature monitor and fan controller") from the jdelvare-hwmon
-> tree and commit 3b52586d66843792f6556b3dd33205375d9b4196 ("hwmon: Add
-> driver for SMSC EMC2103 temperature monitor and fan controller") from the
-> driver-core tree.
+> Moving i8042_platform_init() into platform code is quite invasive,
+> how about we to the following?
 > 
-> Looks like two versions of the same patch.  I used the newer one (from
-> the jdelvare-hwmon tree).  I guess this should be dropped from one of the
-> two trees.
+> Thanks.
+> 
 
-Yes, it will be dropped from my tree tomorrow, sorry, I was busy with
-the -stable stuff for the past few days.
+Uck, no!
 
-thanks,
+	----
+Moorestown does not have legacy hardware (i8042, i8259) and does not
+like legacy ports being poked by drivers. Instead of playing with
+Kconfig selections let's check if we set up dummy (null) legacy PIC
+during startup and abort i8042 initialization as well. This should
+fix the following bug:
+	----
 
-greg k-h
+The presence of 8042 and 8259 are orthogonal.  In fact, there are quite
+a few systems on the market which have 8259 but not 8042, and at least
+having the ability to handle that correctly instead of just assuming
+that those I/O ports are safe is pretty key.
+
+So please don't commingle these completely unrelated platform attributes.
+
+	-hpa
+
+-- 
+H. Peter Anvin, Intel Open Source Technology Center
+I work for Intel.  I don't speak on their behalf.
