@@ -1,56 +1,45 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: linux-next: Tree for July 2 (touchscreen/ad7879)
-Date: Fri, 2 Jul 2010 09:58:03 -0700
-Message-ID: <201007020958.05448.dmitry.torokhov@gmail.com>
-References: <20100702163505.272e6fca.sfr@canb.auug.org.au> <20100702093944.b0ebe49a.randy.dunlap@oracle.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the driver-core tree with the
+ jdelvare-hwmon tree
+Date: Fri, 2 Jul 2010 14:25:48 -0700
+Message-ID: <20100702212548.GA10228@kroah.com>
+References: <20100702153827.cecff5e6.sfr@canb.auug.org.au>
+ <20100702054648.GA18023@kroah.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100702093944.b0ebe49a.randy.dunlap@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Michael Hennerich <hennerich@blackfin.uclinux.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from kroah.org ([198.145.64.141]:58515 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750868Ab0GBVZz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 2 Jul 2010 17:25:55 -0400
+Content-Disposition: inline
+In-Reply-To: <20100702054648.GA18023@kroah.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steve Glendinning <steve.glendinning@smsc.com>, Jean Delvare <khali@linux-fr.org>
 
-On Friday, July 02, 2010 09:39:44 am Randy Dunlap wrote:
-> On Fri, 2 Jul 2010 16:35:05 +1000 Stephen Rothwell wrote:
-> > Hi all,
+On Thu, Jul 01, 2010 at 10:46:48PM -0700, Greg KH wrote:
+> On Fri, Jul 02, 2010 at 03:38:27PM +1000, Stephen Rothwell wrote:
+> > Hi Greg,
 > > 
-> > Changes since 20100630:
+> > Today's linux-next merge of the driver-core tree got a conflict in
+> > MAINTAINERS drivers/hwmon/emc2103.c between commit
+> > 7c73bc52c98623e7ae2831ec8df80e882aa4087f ("hwmon: Add driver for SMSC
+> > EMC2103 temperature monitor and fan controller") from the jdelvare-hwmon
+> > tree and commit 3b52586d66843792f6556b3dd33205375d9b4196 ("hwmon: Add
+> > driver for SMSC EMC2103 temperature monitor and fan controller") from the
+> > driver-core tree.
 > > 
-> > The tip tree lost a conflict.
-> > 
-> > The driver-core tree gained a conflict agains the jdelvare-hwmon tree.
-> > 
-> > -------------------------------------------------------------------------
-> > ---
+> > Looks like two versions of the same patch.  I used the newer one (from
+> > the jdelvare-hwmon tree).  I guess this should be dropped from one of the
+> > two trees.
 > 
-> drivers/input/touchscreen/ad7879.c: In function 'ad7879_probe':
-> drivers/input/touchscreen/ad7879.c:487: error: 'struct ad7879' has no
-> member named 'mutex' drivers/input/touchscreen/ad7879.c:578: warning:
-> passing argument 1 of 'ad7879_gpio_add' from incompatible pointer type
-> drivers/input/touchscreen/ad7879.c:444: note: expected 'struct device *'
-> but argument is of type 'struct ad7879 *'
-> drivers/input/touchscreen/ad7879.c:578: error: too many arguments to
-> function 'ad7879_gpio_add' drivers/input/touchscreen/ad7879.c:589:
-> warning: passing argument 1 of 'ad7879_gpio_remove' from incompatible
-> pointer type drivers/input/touchscreen/ad7879.c:449: note: expected
-> 'struct device *' but argument is of type 'struct ad7879 *'
-> drivers/input/touchscreen/ad7879.c: In function 'ad7879_remove':
-> drivers/input/touchscreen/ad7879.c:604: warning: passing argument 1 of
-> 'ad7879_gpio_remove' from incompatible pointer type
-> drivers/input/touchscreen/ad7879.c:449: note: expected 'struct device *'
-> but argument is of type 'struct ad7879 *'
-> 
-> 
-> config file is attached.
-> 
+> Yes, it will be dropped from my tree tomorrow, sorry, I was busy with
+> the -stable stuff for the past few days.
 
-Oops, I will fix that up.
+It is now removed from my tree.
 
-Thanks for the report Randy.
+thanks,
 
--- 
-Dmitry
+greg k-h
