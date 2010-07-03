@@ -1,53 +1,65 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the driver-core tree with the
- jdelvare-hwmon tree
-Date: Sat, 3 Jul 2010 10:28:13 +1000
-Message-ID: <20100703102813.609c94ea.sfr@canb.auug.org.au>
-References: <20100702153827.cecff5e6.sfr@canb.auug.org.au>
-	<20100702054648.GA18023@kroah.com>
-	<20100702212548.GA10228@kroah.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: linux-next: Tree for July 2 (touchscreen/ad7879)
+Date: Sat, 3 Jul 2010 13:17:06 -0700
+Message-ID: <20100703201706.GA8405@core.coreip.homeip.net>
+References: <20100702163505.272e6fca.sfr@canb.auug.org.au>
+ <20100702093944.b0ebe49a.randy.dunlap@oracle.com>
+ <201007020958.05448.dmitry.torokhov@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sat__3_Jul_2010_10_28_13_+1000_7r7Rdwo.Wr621E5t"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100702212548.GA10228@kroah.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steve Glendinning <steve.glendinning@smsc.com>, Jean Delvare <khali@linux-fr.org>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Sat__3_Jul_2010_10_28_13_+1000_7r7Rdwo.Wr621E5t
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pw0-f46.google.com ([209.85.160.46]:60220 "EHLO
+	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752202Ab0GCURM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 3 Jul 2010 16:17:12 -0400
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <201007020958.05448.dmitry.torokhov@gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Michael Hennerich <hennerich@blackfin.uclinux.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Hi Greg,
+On Fri, Jul 02, 2010 at 09:58:03AM -0700, Dmitry Torokhov wrote:
+> On Friday, July 02, 2010 09:39:44 am Randy Dunlap wrote:
+> > On Fri, 2 Jul 2010 16:35:05 +1000 Stephen Rothwell wrote:
+> > > Hi all,
+> > > 
+> > > Changes since 20100630:
+> > > 
+> > > The tip tree lost a conflict.
+> > > 
+> > > The driver-core tree gained a conflict agains the jdelvare-hwmon tree.
+> > > 
+> > > -------------------------------------------------------------------------
+> > > ---
+> > 
+> > drivers/input/touchscreen/ad7879.c: In function 'ad7879_probe':
+> > drivers/input/touchscreen/ad7879.c:487: error: 'struct ad7879' has no
+> > member named 'mutex' drivers/input/touchscreen/ad7879.c:578: warning:
+> > passing argument 1 of 'ad7879_gpio_add' from incompatible pointer type
+> > drivers/input/touchscreen/ad7879.c:444: note: expected 'struct device *'
+> > but argument is of type 'struct ad7879 *'
+> > drivers/input/touchscreen/ad7879.c:578: error: too many arguments to
+> > function 'ad7879_gpio_add' drivers/input/touchscreen/ad7879.c:589:
+> > warning: passing argument 1 of 'ad7879_gpio_remove' from incompatible
+> > pointer type drivers/input/touchscreen/ad7879.c:449: note: expected
+> > 'struct device *' but argument is of type 'struct ad7879 *'
+> > drivers/input/touchscreen/ad7879.c: In function 'ad7879_remove':
+> > drivers/input/touchscreen/ad7879.c:604: warning: passing argument 1 of
+> > 'ad7879_gpio_remove' from incompatible pointer type
+> > drivers/input/touchscreen/ad7879.c:449: note: expected 'struct device *'
+> > but argument is of type 'struct ad7879 *'
+> > 
+> > 
+> > config file is attached.
+> > 
+> 
+> Oops, I will fix that up.
+> 
+> Thanks for the report Randy.
+> 
 
-On Fri, 2 Jul 2010 14:25:48 -0700 Greg KH <greg@kroah.com> wrote:
->
-> It is now removed from my tree.
+Should be better now.
 
-Thanks.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Sat__3_Jul_2010_10_28_13_+1000_7r7Rdwo.Wr621E5t
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMLoQdAAoJEDMEi1NhKgbsHsYH/1D12/vWbwc0ebbjXYJ+ocmu
-Pl9NBdvJGpxnREJs22SW6IPzeXMlBINDhsGq1SMQciaI06YqRlxA6Q3619FqVh2p
-F5ZWtaAvytkzvsG91ir7goXGVAuuvwzTGYaNPM1+rs6bWW5+Ws29wsPa+/KZYL6J
-R9Qt8biXuikC3C9x/P+o+4RtaRZLkyEUt4s5+xXc1yvYq0Dvl/L1PXxA3vSQzpDi
-/ZR/BlMkRLq4qXW+DHQVee9IMtbjevFCLYM+Gj7yA/sNAqPbAND4bVEIHXcvN0qs
-ifqLFirZ6OZmeu0RQ+yeAyTSgHMauNCMVn9PpIQirr08A/xhiFH2sTzNviVGq08=
-=L+OB
------END PGP SIGNATURE-----
-
---Signature=_Sat__3_Jul_2010_10_28_13_+1000_7r7Rdwo.Wr621E5t--
+-- 
+Dmitry
