@@ -1,44 +1,53 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] staging/solo: add delay.h header
-Date: Fri, 2 Jul 2010 16:44:13 -0700
-Message-ID: <20100702164413.20171588.randy.dunlap@oracle.com>
-References: <20100702163505.272e6fca.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the driver-core tree with the
+ jdelvare-hwmon tree
+Date: Sat, 3 Jul 2010 10:28:13 +1000
+Message-ID: <20100703102813.609c94ea.sfr@canb.auug.org.au>
+References: <20100702153827.cecff5e6.sfr@canb.auug.org.au>
+	<20100702054648.GA18023@kroah.com>
+	<20100702212548.GA10228@kroah.com>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sat__3_Jul_2010_10_28_13_+1000_7r7Rdwo.Wr621E5t"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20100702212548.GA10228@kroah.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steve Glendinning <steve.glendinning@smsc.com>, Jean Delvare <khali@linux-fr.org>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Sat__3_Jul_2010_10_28_13_+1000_7r7Rdwo.Wr621E5t
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:50260 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753199Ab0GBXpU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 2 Jul 2010 19:45:20 -0400
-In-Reply-To: <20100702163505.272e6fca.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, bcollins@bluecherry.net
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+Hi Greg,
 
-Several solo drivers need <linux/delay.h>, so add it to the
-private solo6010.h header file.
+On Fri, 2 Jul 2010 14:25:48 -0700 Greg KH <greg@kroah.com> wrote:
+>
+> It is now removed from my tree.
 
-drivers/staging/solo6x10/solo6010-core.c:191: error: implicit declaration of function 'mdelay'
-drivers/staging/solo6x10/solo6010-tw28.c:181: error: implicit declaration of function 'msleep_interruptible'
-drivers/staging/solo6x10/solo6010-gpio.c:78: error: implicit declaration of function 'udelay'
-drivers/staging/solo6x10/solo6010-v4l2-enc.c:254: error: implicit declaration of function 'mdelay'
+Thanks.
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- drivers/staging/solo6x10/solo6010.h |    1 +
- 1 file changed, 1 insertion(+)
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---- linux-next-20100702.orig/drivers/staging/solo6x10/solo6010.h
-+++ linux-next-20100702/drivers/staging/solo6x10/solo6010.h
-@@ -26,6 +26,7 @@
- #include <linux/semaphore.h>
- #include <linux/mutex.h>
- #include <linux/list.h>
-+#include <linux/delay.h>
- #include <linux/wait.h>
- #include <asm/io.h>
- #include <asm/atomic.h>
+--Signature=_Sat__3_Jul_2010_10_28_13_+1000_7r7Rdwo.Wr621E5t
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMLoQdAAoJEDMEi1NhKgbsHsYH/1D12/vWbwc0ebbjXYJ+ocmu
+Pl9NBdvJGpxnREJs22SW6IPzeXMlBINDhsGq1SMQciaI06YqRlxA6Q3619FqVh2p
+F5ZWtaAvytkzvsG91ir7goXGVAuuvwzTGYaNPM1+rs6bWW5+Ws29wsPa+/KZYL6J
+R9Qt8biXuikC3C9x/P+o+4RtaRZLkyEUt4s5+xXc1yvYq0Dvl/L1PXxA3vSQzpDi
+/ZR/BlMkRLq4qXW+DHQVee9IMtbjevFCLYM+Gj7yA/sNAqPbAND4bVEIHXcvN0qs
+ifqLFirZ6OZmeu0RQ+yeAyTSgHMauNCMVn9PpIQirr08A/xhiFH2sTzNviVGq08=
+=L+OB
+-----END PGP SIGNATURE-----
+
+--Signature=_Sat__3_Jul_2010_10_28_13_+1000_7r7Rdwo.Wr621E5t--
