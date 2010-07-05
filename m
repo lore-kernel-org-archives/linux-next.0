@@ -1,57 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the omap tree with the arm tree
-Date: Mon, 5 Jul 2010 17:14:28 +1000
-Message-ID: <20100705171428.cb58b867.sfr@canb.auug.org.au>
-References: <20100705092055.859d31d8.sfr@canb.auug.org.au>
-	<alpine.LFD.2.00.1007042144410.6020@xanadu.home>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: linux-next: build warning after merge of the vfs tree
+Date: Mon, 5 Jul 2010 09:10:19 +0100
+Message-ID: <20100705081019.GQ31073@ZenIV.linux.org.uk>
+References: <20100705100121.d089bf12.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__5_Jul_2010_17_14_28_+1000_/vDDx_G0VNELdCOB"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57764 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753373Ab0GEHOg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 5 Jul 2010 03:14:36 -0400
-In-Reply-To: <alpine.LFD.2.00.1007042144410.6020@xanadu.home>
+Received: from zeniv.linux.org.uk ([195.92.253.2]:35054 "EHLO
+	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750891Ab0GEIKW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Jul 2010 04:10:22 -0400
+Content-Disposition: inline
+In-Reply-To: <20100705100121.d089bf12.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Nicolas Pitre <nico@fluxnic.net>
-Cc: Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeff Layton <jlayton@redhat.com>
 
---Signature=_Mon__5_Jul_2010_17_14_28_+1000_/vDDx_G0VNELdCOB
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Jul 05, 2010 at 10:01:21AM +1000, Stephen Rothwell wrote:
+> Hi Al,
+> 
+> After merging the vfs tree, today's linux-next build (powerpc
+> ppc64_defconfig) produced these warnings:
+> 
+> fs/cifs/cifsfs.c: In function 'cifs_drop_inode':
+> fs/cifs/cifsfs.c:481: warning: 'return' with a value, in function returning void
+> fs/cifs/cifsfs.c:483: warning: 'return' with a value, in function returning void
+> fs/cifs/cifsfs.c: At top level:
+> fs/cifs/cifsfs.c:491: warning: initialization from incompatible pointer type
+> 
+> Introduced by commit 12420ac341533f3715b3deb788637568f22b78ff ("cifs:
+> implement drop_inode superblock op") (which entered Linus' tree on June
+> 28) interacting with commit 1fd3b83deb5125288bee98f32a41c3267b8ed534
+> ("Make ->drop_inode() just return whether inode needs to be dropped")
+> from the vfs tree.  I guess the cifs tree was missed bye the vfs tree
+> update.
 
-Hi Nicolas,
-
-On Sun, 04 Jul 2010 21:46:27 -0400 (EDT) Nicolas Pitre <nico@fluxnic.net> w=
-rote:
->
-> Yes, the fix is fine.  If you can carry it until either of those is=20
-> merged upstream that would be great.
-
-Thanks for the confirmation.  I can carry the merge fix as long as
-necessary.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__5_Jul_2010_17_14_28_+1000_/vDDx_G0VNELdCOB
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMMYZUAAoJEDMEi1NhKgbsUv4H/0pIpdoRc7OZRb75AKq9Wpzj
-9UC4iSiMu2FLBbxwfmnCmLHw5B9Uk6v12hDlGEY1gl9L5WIuyXzRsv8nwkcjrD36
-dyRdrEMhWMZ6janlHSIs4NQ+CbZnoBPriJESdKyvViF98aw7Cqo5mDBVwRGvmra6
-4P2GUL8GIgZ/tu/7CUzKr53b4bE9yEOvob/AowVemqLpmkSgv51WiGrPTNxfXnq9
-iYpwG6t0ir7uoVJuFmfgaSAw2upWm2Sqpkux6eSvLRGL9Nlif5dL3b4eDi4z1UlX
-4eN3Nn9trRDGF2LvrBWecGkPKWx3fgnM34JJ4CvTfb+ehjdNUCcBtuHgqulI2jw=
-=lhrh
------END PGP SIGNATURE-----
-
---Signature=_Mon__5_Jul_2010_17_14_28_+1000_/vDDx_G0VNELdCOB--
+Fixed.  Incidentally, could somebody explain WTF do we put the inodes into
+icache in case !serverino?
