@@ -1,52 +1,34 @@
-From: Jeff Layton <jlayton@redhat.com>
-Subject: Re: linux-next: build warning after merge of the vfs tree
-Date: Mon, 5 Jul 2010 08:15:42 -0400
-Message-ID: <20100705081542.41f6bdc8@corrin.poochiereds.net>
-References: <20100705100121.d089bf12.sfr@canb.auug.org.au>
-	<20100705081019.GQ31073@ZenIV.linux.org.uk>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: linux-next: manual merge of the omap tree with the arm tree
+Date: Mon, 5 Jul 2010 16:44:02 +0300
+Message-ID: <20100705134401.GC15951@atomide.com>
+References: <20100705092055.859d31d8.sfr@canb.auug.org.au>
+ <alpine.LFD.2.00.1007042144410.6020@xanadu.home>
+ <20100705171428.cb58b867.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:25171 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758287Ab0GEMNa (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 5 Jul 2010 08:13:30 -0400
-In-Reply-To: <20100705081019.GQ31073@ZenIV.linux.org.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20100705171428.cb58b867.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Nicolas Pitre <nico@fluxnic.net>, linux-omap@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 5 Jul 2010 09:10:19 +0100
-Al Viro <viro@ZenIV.linux.org.uk> wrote:
-
-> On Mon, Jul 05, 2010 at 10:01:21AM +1000, Stephen Rothwell wrote:
-> > Hi Al,
-> > 
-> > After merging the vfs tree, today's linux-next build (powerpc
-> > ppc64_defconfig) produced these warnings:
-> > 
-> > fs/cifs/cifsfs.c: In function 'cifs_drop_inode':
-> > fs/cifs/cifsfs.c:481: warning: 'return' with a value, in function returning void
-> > fs/cifs/cifsfs.c:483: warning: 'return' with a value, in function returning void
-> > fs/cifs/cifsfs.c: At top level:
-> > fs/cifs/cifsfs.c:491: warning: initialization from incompatible pointer type
-> > 
-> > Introduced by commit 12420ac341533f3715b3deb788637568f22b78ff ("cifs:
-> > implement drop_inode superblock op") (which entered Linus' tree on June
-> > 28) interacting with commit 1fd3b83deb5125288bee98f32a41c3267b8ed534
-> > ("Make ->drop_inode() just return whether inode needs to be dropped")
-> > from the vfs tree.  I guess the cifs tree was missed bye the vfs tree
-> > update.
+* Stephen Rothwell <sfr@canb.auug.org.au> [100705 10:08]:
+> Hi Nicolas,
 > 
-> Fixed.  Incidentally, could somebody explain WTF do we put the inodes into
-> icache in case !serverino?
+> On Sun, 04 Jul 2010 21:46:27 -0400 (EDT) Nicolas Pitre <nico@fluxnic.net> wrote:
+> >
+> > Yes, the fix is fine.  If you can carry it until either of those is 
+> > merged upstream that would be great.
+> 
+> Thanks for the confirmation.  I can carry the merge fix as long as
+> necessary.
 
-Thanks, Al.
+Thanks, I've dropped this patch from omap for-next branch, I'll send
+it into Russell's patch system.
 
-We use iunique to generate inode numbers in that case, and I believe
-that requires hashed inodes to ensure uniqueness.
+Regards,
 
--- 
-Jeff Layton <jlayton@redhat.com>
+Tony
