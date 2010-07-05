@@ -1,97 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs tree with the xfs tree
-Date: Mon, 5 Jul 2010 10:02:48 +1000
-Message-ID: <20100705100248.173ec8ee.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the kbuild-current tree
+Date: Mon, 5 Jul 2010 10:39:41 +1000
+Message-ID: <20100705103941.9b57282d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__5_Jul_2010_10_39_41_+1000_DVFNj1zrtR1XTcAT"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Michal Marek <mmarek@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Mon__5_Jul_2010_10_39_41_+1000_DVFNj1zrtR1XTcAT
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49923 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754882Ab0GEACu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 4 Jul 2010 20:02:50 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Al,
+Hi Michal,
 
-Today's linux-next merge of the vfs tree got a conflict in
-fs/xfs/linux-2.6/xfs_super.c between commit
-04d2da9c682ce2687db29136c60d8679e37e3b35 ("xfs: split xfs_itrace_entry")
-from the xfs tree and commit b43cb885cc49c782dd0734292d3cd95631200e5c
-("convert remaining ->clear_inode() to ->evict_inode()") from the vfs
-tree.
+After merging the libata tree, today's linux-next build produced this
+warning (but it should be a failure ...):
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.  I guess that the tracing code needs updating for the
-xfs_fs_clear_inode -> xfs_fs_evict_inode name change as well.  And I am
-wondering if the tracing wants to go ahead of the truncate_inode_pages()
-call?
+/bin/sh: scripts/setlocalversion: No such file or directory
 
-In anticipation, I have added this merge fix patch as well:
+Probably introduced by commit 0a564b2645c8766a669c55bde1f1ef5b0518caec
+("kbuild: Propagate LOCALVERSION=3D down to scripts/setlocalversion").
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 5 Jul 2010 09:43:42 +1000
-Subject: [PATCH] xfs: update tracing for clear_inode to evit_inode transition
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/xfs/linux-2.6/xfs_super.c |    4 ++--
- fs/xfs/linux-2.6/xfs_trace.h |    2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/fs/xfs/linux-2.6/xfs_super.c b/fs/xfs/linux-2.6/xfs_super.c
-index 157aaed..3e5052c 100644
---- a/fs/xfs/linux-2.6/xfs_super.c
-+++ b/fs/xfs/linux-2.6/xfs_super.c
-@@ -1107,10 +1107,10 @@ xfs_fs_evict_inode(
- {
- 	xfs_inode_t		*ip = XFS_I(inode);
- 
-+	trace_xfs_evict_inode(ip);
-+
- 	truncate_inode_pages(&inode->i_data, 0);
- 	end_writeback(inode);
--	trace_xfs_clear_inode(ip);
--
- 	XFS_STATS_INC(vn_rele);
- 	XFS_STATS_INC(vn_remove);
- 	XFS_STATS_DEC(vn_active);
-diff --git a/fs/xfs/linux-2.6/xfs_trace.h b/fs/xfs/linux-2.6/xfs_trace.h
-index d506753..76de133 100644
---- a/fs/xfs/linux-2.6/xfs_trace.h
-+++ b/fs/xfs/linux-2.6/xfs_trace.h
-@@ -576,7 +576,7 @@ DEFINE_INODE_EVENT(xfs_ioctl_setattr);
- DEFINE_INODE_EVENT(xfs_file_fsync);
- DEFINE_INODE_EVENT(xfs_destroy_inode);
- DEFINE_INODE_EVENT(xfs_write_inode);
--DEFINE_INODE_EVENT(xfs_clear_inode);
-+DEFINE_INODE_EVENT(xfs_evict_inode);
- 
- DEFINE_INODE_EVENT(xfs_dquot_dqalloc);
- DEFINE_INODE_EVENT(xfs_dquot_dqdetach);
--- 
-1.7.1
-
--- 
+That commit really isn't ready for inclusion in Linus' tree ...
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc fs/xfs/linux-2.6/xfs_super.c
-index e3de46c,1dc602f..0000000
---- a/fs/xfs/linux-2.6/xfs_super.c
-+++ b/fs/xfs/linux-2.6/xfs_super.c
-@@@ -1107,8 -1156,9 +1107,10 @@@ xfs_fs_evict_inode
-  {
-  	xfs_inode_t		*ip = XFS_I(inode);
-  
-+ 	truncate_inode_pages(&inode->i_data, 0);
-+ 	end_writeback(inode);
- -	xfs_itrace_entry(ip);
- +	trace_xfs_clear_inode(ip);
- +
-  	XFS_STATS_INC(vn_rele);
-  	XFS_STATS_INC(vn_remove);
-  	XFS_STATS_DEC(vn_active);
+--Signature=_Mon__5_Jul_2010_10_39_41_+1000_DVFNj1zrtR1XTcAT
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMMSnNAAoJEDMEi1NhKgbsfM4H/jnInkBDEvjhXE7Zp38EmqSO
+7J5cNWJv/XwKyaVjWthczZ1Fp0CFh/ViXVm0gG5KIBI5GaFj5zQsTRc1GmORye43
+QRNxtCnqyW2N2s4YpI2hAO8w0GjCmVVUgYXmRaeY/sFaCrbVi3YPenltGdDhzXl4
+bekdwGecdTEolGONq+kRchNAM49wrva6vue26uFXwu2KxNEHdxuTBF9VkNhcE7pn
+HgqkBgcF5ZdBqifJTxe+szLz6C2Njw4BEEwKPZPu95X4BKRe41J938dgEBIs00qi
+EXIySiwkCFQh0v3oGNhBQha87FeDoQKamWRBR3ISIBzR1onQJ9W5xPkRpe15xLo=
+=ojAg
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__5_Jul_2010_10_39_41_+1000_DVFNj1zrtR1XTcAT--
