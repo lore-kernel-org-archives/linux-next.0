@@ -1,43 +1,62 @@
-From: Piotr Hosowicz <piotr@hosowicz.com>
-Subject: Has somethimg changed in next's Debian package generation?
-Date: Mon, 05 Jul 2010 17:09:52 +0200
-Message-ID: <4C31F5C0.2020106@example.com>
-Reply-To: piotr@hosowicz.com
+From: Michal Marek <mmarek@suse.cz>
+Subject: Re: Linux 2.6.35-rc4 - CONFIG_LOCALVERSION ignored?
+Date: Mon, 5 Jul 2010 23:43:04 +0200
+Message-ID: <20100705214304.GA24291@sepie.suse.cz>
+References: <201007052325.56971.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-2;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 63.mail-out.ovh.net ([91.121.185.56]:33534 "HELO
-	63.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1758170Ab0GEPJ5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Jul 2010 11:09:57 -0400
+Received: from cantor2.suse.de ([195.135.220.15]:32786 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755645Ab0GEVnJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 5 Jul 2010 17:43:09 -0400
+Content-Disposition: inline
+In-Reply-To: <201007052325.56971.rjw@sisk.pl>
+ <20100705103941.9b57282d.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
 
-Hello,
+On Mon, Jul 05, 2010 at 11:25:56PM +0200, Rafael J. Wysocki wrote:
+> Hmm.  Am I dong anything particularly wrong, or is CONFIG_LOCALVERSION ignored
+> now, as it seems?
 
-I build the kernel with make-kpkg under debian like:
+(also reported by Stephen earlier that day)
 
-make-kpkg kernel_image
+On Mon, Jul 05, 2010 at 10:39:41AM +1000, Stephen Rothwell wrote:
+> After merging the libata tree, today's linux-next build produced this
+> warning (but it should be a failure ...):
+> 
+> /bin/sh: scripts/setlocalversion: No such file or directory
+> 
+> Probably introduced by commit 0a564b2645c8766a669c55bde1f1ef5b0518caec
+> ("kbuild: Propagate LOCALVERSION= down to scripts/setlocalversion").
+> 
+> That commit really isn't ready for inclusion in Linus' tree ...
 
-I have had done it this way also with linux next. Lacking fresh sources=
-=20
-after a short break from next I tried to build today's next as always=20
-but the build failed when it was to finally build the package saying=20
-that there is a inconsisteny in control file. I tried to tinker a bit=20
-with ./debian/control but to no effect.
 
-Has something changed? It used to work just like that, there were no=20
-problems at all.
+Oops, I'm an idiot. The below patch should fix localversion again:
 
-Regards,
+From: Michal Marek <mmarek@suse.cz>
+Subject: [PATCH] kbuild: Fix path to scripts/setlocalversion
 
-Piotr Hosowicz
+Commit 0a564b2 broke LOCALVERSION for O=... builds. Ouch.
 
---=20
-R=F3=BFnica mi=EAdzy PiS, a PO jest taka, =BFe PO nie zro-
-bi=B3a liberalizacji, a PiS nie zrobi=B3 lustracji.
-NP: Chickenfoot - Oh Yeah
-NB: 2.6.35-rc4
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Reported-by: Rafael J. Wysocki <rjw@sisk.pl>
+Signed-off-by: Michal Marek <mmarek@suse.cz>
+
+diff --git a/Makefile b/Makefile
+index 12ab175..df16c4f 100644
+--- a/Makefile
++++ b/Makefile
+@@ -886,7 +886,7 @@ $(vmlinux-dirs): prepare scripts
+ # Store (new) KERNELRELASE string in include/config/kernel.release
+ include/config/kernel.release: include/config/auto.conf FORCE
+ 	$(Q)rm -f $@
+-	$(Q)echo "$(KERNELVERSION)$$($(CONFIG_SHELL) scripts/setlocalversion $(srctree))" > $@
++	$(Q)echo "$(KERNELVERSION)$$($(CONFIG_SHELL) $(srctree)/scripts/setlocalversion $(srctree))" > $@
+ 
+ 
+ # Things we need to do before we recursively start building the kernel
