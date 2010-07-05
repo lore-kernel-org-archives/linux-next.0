@@ -1,34 +1,43 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: linux-next: manual merge of the omap tree with the arm tree
-Date: Mon, 5 Jul 2010 16:44:02 +0300
-Message-ID: <20100705134401.GC15951@atomide.com>
-References: <20100705092055.859d31d8.sfr@canb.auug.org.au>
- <alpine.LFD.2.00.1007042144410.6020@xanadu.home>
- <20100705171428.cb58b867.sfr@canb.auug.org.au>
+From: Piotr Hosowicz <piotr@hosowicz.com>
+Subject: Has somethimg changed in next's Debian package generation?
+Date: Mon, 05 Jul 2010 17:09:52 +0200
+Message-ID: <4C31F5C0.2020106@example.com>
+Reply-To: piotr@hosowicz.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20100705171428.cb58b867.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Nicolas Pitre <nico@fluxnic.net>, linux-omap@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-2;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from 63.mail-out.ovh.net ([91.121.185.56]:33534 "HELO
+	63.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1758170Ab0GEPJ5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 5 Jul 2010 11:09:57 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org
 
-* Stephen Rothwell <sfr@canb.auug.org.au> [100705 10:08]:
-> Hi Nicolas,
-> 
-> On Sun, 04 Jul 2010 21:46:27 -0400 (EDT) Nicolas Pitre <nico@fluxnic.net> wrote:
-> >
-> > Yes, the fix is fine.  If you can carry it until either of those is 
-> > merged upstream that would be great.
-> 
-> Thanks for the confirmation.  I can carry the merge fix as long as
-> necessary.
+Hello,
 
-Thanks, I've dropped this patch from omap for-next branch, I'll send
-it into Russell's patch system.
+I build the kernel with make-kpkg under debian like:
+
+make-kpkg kernel_image
+
+I have had done it this way also with linux next. Lacking fresh sources=
+=20
+after a short break from next I tried to build today's next as always=20
+but the build failed when it was to finally build the package saying=20
+that there is a inconsisteny in control file. I tried to tinker a bit=20
+with ./debian/control but to no effect.
+
+Has something changed? It used to work just like that, there were no=20
+problems at all.
 
 Regards,
 
-Tony
+Piotr Hosowicz
+
+--=20
+R=F3=BFnica mi=EAdzy PiS, a PO jest taka, =BFe PO nie zro-
+bi=B3a liberalizacji, a PiS nie zrobi=B3 lustracji.
+NP: Chickenfoot - Oh Yeah
+NB: 2.6.35-rc4
