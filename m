@@ -1,76 +1,310 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the usb tree with the v4l-dvb tree
-Date: Tue, 6 Jul 2010 18:51:32 +1000
-Message-ID: <20100706185132.7dd72993.sfr@canb.auug.org.au>
-References: <20100706175332.952fec90.sfr@canb.auug.org.au>
-	<201007061018.21674.laurent.pinchart@ideasonboard.com>
+Subject: linux-next: Tree for July 6
+Date: Tue, 6 Jul 2010 19:05:19 +1000
+Message-ID: <20100706190519.93d8b785.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__6_Jul_2010_18_51_32_+1000_vn9kYuvFovc0uO3+"
+ boundary="Signature=_Tue__6_Jul_2010_19_05_19_+1000_DZ/aON3NjhHgxKZQ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33472 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:45492 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755039Ab0GFIvh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 6 Jul 2010 04:51:37 -0400
-In-Reply-To: <201007061018.21674.laurent.pinchart@ideasonboard.com>
+	id S1752069Ab0GFJF3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 6 Jul 2010 05:05:29 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Tue__6_Jul_2010_18_51_32_+1000_vn9kYuvFovc0uO3+
+--Signature=_Tue__6_Jul_2010_19_05_19_+1000_DZ/aON3NjhHgxKZQ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Laurent,
+Hi all,
 
-On Tue, 6 Jul 2010 10:18:20 +0200 Laurent Pinchart <laurent.pinchart@ideaso=
-nboard.com> wrote:
->
-> > diff --cc include/linux/usb/video.h
-> > index 2d5b7fc,429c91a..0000000
-> > --- a/include/linux/usb/video.h
-> > +++ b/include/linux/usb/video.h
-> > @@@ -160,12 -160,402 +160,409 @@@
->=20
-> [snip]
->=20
-> >  +/* 4.1.2. Control Capabilities */
-> >  +#define UVC_CONTROL_CAP_GET                           (1 << 0)
-> >  +#define UVC_CONTROL_CAP_SET                           (1 << 1)
-> >  +#define UVC_CONTROL_CAP_DISABLED                      (1 << 2)
-> >  +#define UVC_CONTROL_CAP_AUTOUPDATE                    (1 << 3)
-> >  +#define UVC_CONTROL_CAP_ASYNCHRONOUS                  (1 << 4)
-> >  +
->=20
-> Can you move those to the first part of the header file, with the other=20
-> constants ?
+Changes since 20100705:
 
-Sure, I just put it there because of the section numbering in the
-comments.  This, of course, will not influence how the file looks after
-Linus merges it - unless the conflict is fixed up by one of the
-maintainers before Linus gets it.
+My fixes tree contains:
+	kbuild: Fix path to scripts/setlocalversion
+
+The omap tree lost its conflict.
+
+The genesis tree lost its conflict.
+
+The v4l-dvb tree gained a conflict against Linus' tree.
+
+The block tree gained a conflict against the rr tree.
+
+The device-mapper tree gained a conflict against the block tree.
+
+The trivial tree gained a conflict against the v4l-dvb tree.
+
+The usb tree gained a conflict against the v4l-dvb tree.
+
+The staging-next tree gained a conflict against the v4l-dvb tree.
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups (if any), it is also built with powerpc allnoconfig (32 and
+64 bit), ppc44x_defconfig and allyesconfig (minus
+CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
+and sparc64 defconfig. These builds also have
+CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
+CONFIG_DEBUG_INFO disabled when necessary.
+
+Below is a summary of the state of the merge.
+
+We are up to 164 trees (counting Linus' and 22 trees of patches pending
+for Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Jan Dittmer for adding the linux-next tree to his build tests
+at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
+Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__6_Jul_2010_18_51_32_+1000_vn9kYuvFovc0uO3+
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master
+Merging fixes/fixes
+Merging arm-current/master
+Merging m68k-current/for-linus
+Merging powerpc-merge/merge
+Merging sparc-current/master
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sound-current/for-linus
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging kbuild-current/rc-fixes
+Merging quilt/driver-core.current
+Merging quilt/tty.current
+Merging quilt/usb.current
+Merging quilt/staging.current
+Merging cpufreq-current/fixes
+Merging input-current/for-linus
+Merging md-current/for-linus
+Merging audit-current/for-linus
+Merging crypto-current/master
+Merging ide-curent/master
+Merging dwmw2/master
+Merging gcl-current/merge
+Merging arm/devel
+Merging davinci/davinci-next
+Merging i.MX/for-next
+Merging msm/for-next
+Merging omap/for-next
+Merging pxa/for-next
+Merging samsung/next-samsung
+Merging s5p/for-next
+Merging tegra/for-next
+Merging avr32/avr32-arch
+Merging blackfin/for-linus
+Merging cris/for-next
+Merging ia64/test
+Merging m68k/for-next
+Merging m68knommu/for-next
+Merging microblaze/next
+Merging mips/mips-for-linux-next
+Merging parisc/next
+Merging powerpc/next
+Merging 4xx/next
+Merging 52xx-and-virtex/next
+CONFLICT (content): Merge conflict in drivers/serial/mpc52xx_uart.c
+Merging galak/next
+Merging s390/features
+Merging sh/master
+Merging genesis/master
+Merging sparc/master
+Merging tile/master
+Merging xtensa/master
+Merging ceph/for-next
+Merging cifs/master
+Merging configfs/linux-next
+Merging ecryptfs/next
+Merging ext3/for_next
+Merging ext4/next
+Merging fatfs/master
+Merging fuse/for-next
+Merging gfs2/master
+Merging jfs/next
+Merging logfs/master
+CONFLICT (content): Merge conflict in fs/logfs/logfs.h
+Merging nfs/linux-next
+Merging nfsd/nfsd-next
+Merging nilfs2/for-next
+Merging ocfs2/linux-next
+Merging squashfs/master
+Merging udf/for_next
+Merging v9fs/for-next
+Merging ubifs/linux-next
+Merging xfs/master
+Merging vfs/for-next
+CONFLICT (content): Merge conflict in fs/nilfs2/super.c
+CONFLICT (content): Merge conflict in fs/xfs/linux-2.6/xfs_super.c
+Applying: v9fs: fixup for inode_setattr being removed
+Applying: xfs: update tracing for clear_inode to evit_inode transition
+Merging pci/linux-next
+Merging hid/for-next
+Merging quilt/i2c
+Merging bjdooks-i2c/next-i2c
+CONFLICT (content): Merge conflict in arch/arm/plat-omap/i2c.c
+CONFLICT (content): Merge conflict in drivers/i2c/busses/i2c-cpm.c
+CONFLICT (content): Merge conflict in drivers/i2c/busses/i2c-mpc.c
+Merging quilt/jdelvare-hwmon
+Merging quilt/kernel-doc
+Merging v4l-dvb/master
+CONFLICT (content): Merge conflict in drivers/staging/tm6000/tm6000-alsa.c
+Merging kbuild/for-next
+Merging kconfig/for-next
+Merging ide/master
+Merging libata/NEXT
+Merging infiniband/for-next
+Merging acpi/test
+Merging idle-test/idle-test
+Merging ieee1394/for-next
+Merging ubi/linux-next
+Merging kvm/linux-next
+Merging dlm/next
+Merging ibft/master
+Merging swiotlb/master
+Merging scsi/master
+Merging async_tx/next
+Merging net/master
+Merging wireless/master
+Merging mtd/master
+Merging crypto/master
+Merging sound/for-next
+CONFLICT (content): Merge conflict in Documentation/kernel-parameters.txt
+Merging cpufreq/next
+Merging quilt/rr
+CONFLICT (content): Merge conflict in kernel/module.c
+Merging input/next
+Merging lsm/for-next
+Merging block/for-next
+CONFLICT (content): Merge conflict in drivers/block/virtio_blk.c
+Merging quilt/device-mapper
+CONFLICT (content): Merge conflict in drivers/md/dm.c
+Applying: device-mapper: fix for bio API change
+Merging embedded/master
+Merging firmware/master
+Merging pcmcia/master
+Merging battery/master
+Merging leds/for-mm
+Merging backlight/for-mm
+Merging kgdb/kgdb-next
+Merging slab/for-next
+Merging uclinux/for-next
+Merging md/for-next
+Merging mfd/for-next
+Merging hdlc/hdlc-next
+Merging drm/drm-next
+Merging viafb/viafb-next
+Merging voltage/for-next
+Merging security-testing/next
+Merging lblnet/master
+Merging agp/agp-next
+Merging uwb/for-upstream
+Merging watchdog/master
+Merging bdev/master
+Merging dwmw2-iommu/master
+Merging cputime/cputime
+Merging osd/linux-next
+Merging jc_docs/docs-next
+Merging nommu/master
+Merging trivial/for-next
+CONFLICT (delete/modify): drivers/media/video/ov511.c deleted in HEAD and m=
+odified in trivial/for-next. Version trivial/for-next of drivers/media/vide=
+o/ov511.c left in tree.
+$ git rm -f drivers/media/video/ov511.c
+Merging audit/for-next
+Merging quilt/aoe
+Merging suspend/linux-next
+Merging bluetooth/master
+Merging fsnotify/for-next
+CONFLICT (delete/modify): fs/notify/inotify/inotify.c deleted in fsnotify/f=
+or-next and modified in HEAD. Version HEAD of fs/notify/inotify/inotify.c l=
+eft in tree.
+$ git rm -f fs/notify/inotify/inotify.c
+Applying: fsnotify: update gfp/slab.h includes
+Merging irda/for-next
+CONFLICT (content): Merge conflict in drivers/net/irda/irda-usb.c
+Merging catalin/for-next
+Merging alacrity/linux-next
+Merging i7core_edac/linux_next
+Merging devicetree/next-devicetree
+Merging spi/next-spi
+Merging omap_dss2/for-next
+Merging tip/auto-latest
+CONFLICT (content): Merge conflict in Makefile
+Merging edac-amd/for-next
+Merging oprofile/for-next
+Merging percpu/for-next
+Merging workqueues/for-next
+Merging sfi/sfi-test
+Merging asm-generic/next
+Merging drivers-x86/linux-next
+Merging hwpoison/hwpoison
+CONFLICT (content): Merge conflict in mm/memory-failure.c
+Merging sysctl/master
+Merging bkl-core/bkl/core
+Merging bkl-procfs/bkl/procfs
+Merging bkl-ioctl/bkl/ioctl
+Merging quilt/driver-core
+Merging quilt/tty
+Merging quilt/usb
+CONFLICT (content): Merge conflict in drivers/media/video/uvc/uvcvideo.h
+CONFLICT (content): Merge conflict in include/linux/usb/video.h
+Merging staging-next/staging-next
+CONFLICT (content): Merge conflict in drivers/staging/batman-adv/bat_sysfs.c
+CONFLICT (delete/modify): drivers/staging/batman-adv/device.c deleted in st=
+aging-next/staging-next and modified in HEAD. Version HEAD of drivers/stagi=
+ng/batman-adv/device.c left in tree.
+CONFLICT (delete/modify): drivers/staging/cx25821/cx25821-audups11.c delete=
+d in HEAD and modified in staging-next/staging-next. Version staging-next/s=
+taging-next of drivers/staging/cx25821/cx25821-audups11.c left in tree.
+$ git rm -f drivers/staging/batman-adv/device.c
+$ git rm -f drivers/staging/cx25821/cx25821-audups11.c
+Merging slabh/slabh
+Merging scsi-post-merge/master
+
+--Signature=_Tue__6_Jul_2010_19_05_19_+1000_DZ/aON3NjhHgxKZQ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMMu6UAAoJEDMEi1NhKgbsdy8H/RANeo3MuJ+r1STvY8GVfHjz
-6RENd6wf83wZ1Jk/OTIWezaE2mXMvGj7luJKixGg76OrY9FiDqK92JGlswQj+jTc
-FRv6sZX+uqoPyd6esTIInCN7g6K2Gyle+oK8YJ9ULSLy2j0GnPwWWhGHrMK2H/aA
-G8NVPKWrbfgedOmJWZcFFeoasg4JJ5SvYblskr5O3jFm7fwK2QrgZf+nI7SAJ4fb
-UziSMLeVj7L56EuGJeJLXHtO1JRzI1e3lim7aaYU2SFURpq3gKJLUzL+Vm7eKh5C
-ekLXk0BJOXm+4+a0M2hnyzapy952BEykPcb731WyciSx97oeuF0RlHNx0tCcI/I=
-=nspR
+iQEcBAEBAgAGBQJMMvHPAAoJEDMEi1NhKgbsN4wH/03szVSh1qUN6dW+MVpWia73
+zxu5ecMFNIJZ96FATD1w6GH4+FSsC9bnA8+doIkBOMXMB/VGxrIHYk0aFZ+ZAsIY
+OVVTqh3GnpDL8/JJ0iuIokZ0X/zK6k8CH144Z3qhNAKZrEoy4ETX3BehworMgo7e
+2zms2tfmihRfA/yA46RO+nAwhjBQaiJTYdvrNFC6nRARhK3Ee54OLLG5ZLR2zIk/
+NG1QtFQS3xNAX1arFUYrNCCy8suG5680DljL0IITassSDlbZAf8KetPnDBcm76LF
+Zo8ZRGn3e+9LnJqGtlQhbj5rgEWTp9QUrRwCC7qx5BjthUJEDYnL37iUXY7Fnqw=
+=02i/
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__6_Jul_2010_18_51_32_+1000_vn9kYuvFovc0uO3+--
+--Signature=_Tue__6_Jul_2010_19_05_19_+1000_DZ/aON3NjhHgxKZQ--
