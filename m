@@ -1,67 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the net tree
-Date: Tue, 6 Jul 2010 14:25:42 +1000
-Message-ID: <20100706142542.d723903f.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the block tree with the rr tree
+Date: Tue, 6 Jul 2010 14:25:53 +1000
+Message-ID: <20100706142553.e1bdd94f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__6_Jul_2010_14_25_42_+1000_1JvcP1rZUw03U4Ac"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53218 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:53225 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750915Ab0GFEZt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 6 Jul 2010 00:25:49 -0400
+	id S1750933Ab0GFEZz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 6 Jul 2010 00:25:55 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Greg Kroah-Hartman <gregkh@suse.de>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Rusty Russell <rusty@rustcorp.com.au>, FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>
 
---Signature=_Tue__6_Jul_2010_14_25_42_+1000_1JvcP1rZUw03U4Ac
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Jens,
 
-Hi Dave,
+Today's linux-next merge of the block tree got a conflict in
+drivers/block/virtio_blk.c between commit
+0e41b2d3ea0f5bf472a2b163c54305f62ab7b776 ("virtio_blk: support barriers
+without FLUSH feature") from the rr tree and commits
+3789fdefa13bcaa7ad06d952ac6010f0a81bf04e ("virtio_blk: stop using
+q->prepare_flush_fn") and 5e27e27e73b5bff903b3c30ffd5a0e17eb95c087
+("block: remove q->prepare_flush_fn completely") from the block tree.
 
-After merging the net tree, today's linux-next build (powerpc
-ppc64_defconfig) produced these warnings:
-
-drivers/scsi/sym53c8xx_2/sym_hipd.c: In function 'sym_print_msg':
-drivers/scsi/sym53c8xx_2/sym_hipd.c:78: warning: zero-length gnu_printf for=
-mat string
-drivers/scsi/constants.c: In function 'scsi_print_sense':
-drivers/scsi/constants.c:1407: warning: zero-length gnu_printf format string
-drivers/scsi/constants.c:1413: warning: zero-length gnu_printf format string
-drivers/scsi/constants.c: In function 'scsi_print_result':
-drivers/scsi/constants.c:1456: warning: zero-length gnu_printf format string
-drivers/scsi/sd.c: In function 'sd_print_sense_hdr':
-drivers/scsi/sd.c:2599: warning: zero-length gnu_printf format string
-drivers/scsi/sd.c:2601: warning: zero-length gnu_printf format string
-drivers/scsi/sd.c: In function 'sd_print_result':
-drivers/scsi/sd.c:2607: warning: zero-length gnu_printf format string
-
-(There may be more ...)
-
-Introduced by commit 99bcf217183e02ebae46373896fba7f12d588001 ("device.h
-drivers/base/core.c Convert dev_<level> logging macros to functions").
---=20
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__6_Jul_2010_14_25_42_+1000_1JvcP1rZUw03U4Ac
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMMrBGAAoJEDMEi1NhKgbsRzYH/jaepTNeQmuFW+FzXr5hHYMy
-QxdDHb08EVUC0/3MPefxIARoqPdF0CM4lXvkH0+20UXTCupyz8CvzqVIaYC5dSrk
-7+lcCX7j6J//KtWqS9ojGBxy+2PWgMF5cj16vbH32R16G+t5yGaNdVT2KGfrA1H3
-g5RHh0h5pPzV0Kb2PG2BG5/W0FqlCSmwwBHLwmu/auvmF7/sqLvQUH71pAEp8y2a
-RPtX77cHXMzuLAlhC2d9Fxv4HWyiklyREWsFHQz9URpzPAouKsIb9DjfmDWVyHYB
-NzXV0oUwLwwK1vgwh3+3UPBkb5rKkGSpWQJys6iAU/tFn5w1M4MbnNTL35JEX0E=
-=bo2m
------END PGP SIGNATURE-----
-
---Signature=_Tue__6_Jul_2010_14_25_42_+1000_1JvcP1rZUw03U4Ac--
+diff --cc drivers/block/virtio_blk.c
+index 23b7c48,0a3222f..0000000
+--- a/drivers/block/virtio_blk.c
++++ b/drivers/block/virtio_blk.c
+@@@ -377,32 -364,11 +375,31 @@@ static int __devinit virtblk_probe(stru
+  	vblk->disk->driverfs_dev = &vdev->dev;
+  	index++;
+  
+ -	/* If barriers are supported, tell block layer that queue is ordered */
+ -	if (virtio_has_feature(vdev, VIRTIO_BLK_F_FLUSH))
+ +	if (virtio_has_feature(vdev, VIRTIO_BLK_F_FLUSH)) {
+ +		/*
+ +		 * If the FLUSH feature is supported we do have support for
+ +		 * flushing a volatile write cache on the host.  Use that
+ +		 * to implement write barrier support.
+ +		 */
+- 		blk_queue_ordered(q, QUEUE_ORDERED_DRAIN_FLUSH,
+- 				  virtblk_prepare_flush);
++ 		blk_queue_ordered(q, QUEUE_ORDERED_DRAIN_FLUSH);
+ -	else if (virtio_has_feature(vdev, VIRTIO_BLK_F_BARRIER))
+ +	} else if (virtio_has_feature(vdev, VIRTIO_BLK_F_BARRIER)) {
+ +		/*
+ +		 * If the BARRIER feature is supported the host expects us
+ +		 * to order request by tags.  This implies there is not
+ +		 * volatile write cache on the host, and that the host
+ +		 * never re-orders outstanding I/O.  This feature is not
+ +		 * useful for real life scenarious and deprecated.
+ +		 */
+- 		blk_queue_ordered(q, QUEUE_ORDERED_TAG, NULL);
++ 		blk_queue_ordered(q, QUEUE_ORDERED_TAG);
+ +	} else {
+ +		/*
+ +		 * If the FLUSH feature is not supported we must assume that
+ +		 * the host does not perform any kind of volatile write
+ +		 * caching. We still need to drain the queue to provider
+ +		 * proper barrier semantics.
+ +		 */
+- 		blk_queue_ordered(q, QUEUE_ORDERED_DRAIN, NULL);
+++		blk_queue_ordered(q, QUEUE_ORDERED_DRAIN);
+ +	}
+  
+  	/* If disk is read-only in the host, the guest should obey */
+  	if (virtio_has_feature(vdev, VIRTIO_BLK_F_RO))
