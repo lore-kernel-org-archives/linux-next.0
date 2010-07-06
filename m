@@ -1,52 +1,63 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging-next tree with the v4l-dvb
- tree
-Date: Tue, 6 Jul 2010 17:53:37 +1000
-Message-ID: <20100706175337.bec9305a.sfr@canb.auug.org.au>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: linux-next: manual merge of the usb tree with the v4l-dvb tree
+Date: Tue, 6 Jul 2010 10:18:20 +0200
+Message-ID: <201007061018.21674.laurent.pinchart@ideasonboard.com>
+References: <20100706175332.952fec90.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__6_Jul_2010_17_53_37_+1000_Q_DeX4QlKoOgOhw="
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Palash Bandyopadhyay <Palash.Bandyopadhyay@conexant.com>, Mauro Carvalho Chehab <mchehab@redhat.com>, Scott Kidder <scott.kidder11@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from perceval.irobotique.be ([92.243.18.41]:49984 "EHLO
+	perceval.irobotique.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756259Ab0GFIRg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Jul 2010 04:17:36 -0400
+In-Reply-To: <20100706175332.952fec90.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>
 
---Signature=_Tue__6_Jul_2010_17_53_37_+1000_Q_DeX4QlKoOgOhw=
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi Greg,
+On Tuesday 06 July 2010 09:53:32 Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the usb tree got a conflict in
+> drivers/media/video/uvc/uvcvideo.h include/linux/usb/video.h between
+> commits c3810b43416155d040a200e7a7301f379c8ae8a0 ("V4L/DVB: uvcvideo:
+> Support menu controls in the control mapping API") and
+> da1df555fcbb98a9d2054304ea54545d9ff523cf ("V4L/DVB: uvcvideo: Define
+> control information bits using macros") from the v4l-dvb tree and commit
+> bb03b5daa9ab053adcce09e939d4115a873abf39 ("USB: uvc: Move constants and
+> structures definitions to linux/usb/video.h") from the usb tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary.  Though
+> moving the USB patch into the v4l-dvb tree may fix the conflicts as
+> well ...
 
-Today's linux-next merge of the staging-next tree got a conflict in
-drivers/staging/cx25821/cx25821-audups11.c between commit
-e302c8255a198a567dab3a4ace7bd0222a6dc037 ("V4L/DVB: cx25821: Removed
-duplicate code and cleaned up") from the v4l-dvb tree and commit
-231ded903f2f30b2bcdbf6672c7197187e3bb1ee ("Staging: cx25821: added KERN_
-facility levels") from the staging-next tree.
+[snip]
 
-The former moved all te code in this file into other files, so I
-effectively just dropped the usb patch by deleting this file.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+> diff --cc include/linux/usb/video.h
+> index 2d5b7fc,429c91a..0000000
+> --- a/include/linux/usb/video.h
+> +++ b/include/linux/usb/video.h
+> @@@ -160,12 -160,402 +160,409 @@@
 
---Signature=_Tue__6_Jul_2010_17_53_37_+1000_Q_DeX4QlKoOgOhw=
-Content-Type: application/pgp-signature
+[snip]
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+>  +/* 4.1.2. Control Capabilities */
+>  +#define UVC_CONTROL_CAP_GET                           (1 << 0)
+>  +#define UVC_CONTROL_CAP_SET                           (1 << 1)
+>  +#define UVC_CONTROL_CAP_DISABLED                      (1 << 2)
+>  +#define UVC_CONTROL_CAP_AUTOUPDATE                    (1 << 3)
+>  +#define UVC_CONTROL_CAP_ASYNCHRONOUS                  (1 << 4)
+>  +
 
-iQEcBAEBAgAGBQJMMuEBAAoJEDMEi1NhKgbsQrUH/iJ7Rx3q0djQSfv1HHphjWdF
-vHQPN1BLxIgGuhhl6FYw03Ay8/HEpBXWW0UtJzvgKAP5afhtG5GYEVObOdbGAbvH
-y8QcYdI7cKH45MC0M+olux6kMg8Dt7hp7kW1PAc1PS2LGYz02D30UJMNatLLTCQo
-Ep4Af3udyqGHx6dlckqzluhOMcOs44AXkWEWorOoxsqTxkjgOx1tabPkJe/t096b
-/wGh30Wmkhz29oL+ZgLTeSd+hFAtcWJQ1Raz8UDFh34jrsWrOA7e3FlNpnrzjoHj
-4hl/xh+/dHnWQBhwe8vkVPW1+mZ9/kB0Qqit3+Tl2m0tzMIOz2BYfeQI4I3jb1s=
-=a0cn
------END PGP SIGNATURE-----
+Can you move those to the first part of the header file, with the other 
+constants ?
 
---Signature=_Tue__6_Jul_2010_17_53_37_+1000_Q_DeX4QlKoOgOhw=--
+-- 
+Regards,
+
+Laurent Pinchart
