@@ -1,113 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the device-mapper tree with the block
- tree
-Date: Tue, 6 Jul 2010 14:33:13 +1000
-Message-ID: <20100706143313.1d4e2909.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the trivial tree with the v4l-dvb tree
+Date: Tue, 6 Jul 2010 15:25:29 +1000
+Message-ID: <20100706152529.371c7800.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__6_Jul_2010_15_25_29_+1000_y+MAoYv=qgM/3_Se"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40869 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:47105 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751661Ab0GFEdP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 6 Jul 2010 00:33:15 -0400
+	id S1752525Ab0GFFZk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 6 Jul 2010 01:25:40 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alasdair G Kergon <agk@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>, Jens Axboe <axboe@kernel.dk>, Mike Snitzer <snitzer@redhat.com>
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Amerigo Wang <amwang@redhat.com>, Mauro Carvalho Chehab <mchehab@redhat.com>, =?UTF-8?B?IlV3ZSBLbGVpbmUtS8O2bmlnIg==?= <u.kleine-koenig@pengutronix.de>
 
-Hi Alasdair,
+--Signature=_Tue__6_Jul_2010_15_25_29_+1000_y+MAoYv=qgM/3_Se
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the device-mapper tree got a conflict in
-drivers/md/dm.c between commits 9add80db6089272d6bf13ef6b5dc7b3ddda1a887
-("dm: stop using q->prepare_flush_fn") and
-5e27e27e73b5bff903b3c30ffd5a0e17eb95c087 ("block: remove
-q->prepare_flush_fn completely") from the block tree and commit
-90c50ea6a71bcb1bdf1482007932cc7fb0902455
-("dm-do-not-initialise-full-request-queue-when-bio-based") from the
-device-mapper tree.
+Hi Jiri,
 
-I fixed it up (see below) and can carry the fix as necessary.
--- 
+Today's linux-next merge of the trivial tree got a conflict in
+drivers/media/video/ov511.c between commit
+b2bde15c455d09057dc7bd9f5b9ed67b9ac99b8a ("V4L/DVB: Remove obsolete ov511
+driver") from the v4l-dvb tree and commit
+421f91d21ad6f799dc7b489bb33cc560ccc56f98 ("fix typos concerning "initiali
+[zs]e"") from the trivial tree.
+
+The former just removes the file, so I removed it.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/md/dm.c
-index d505a96,c49818a..0000000
---- a/drivers/md/dm.c
-+++ b/drivers/md/dm.c
-@@@ -2116,6 -2165,73 +2154,72 @@@ int dm_create(int minor, struct mapped_
-  	return 0;
-  }
-  
-+ /*
-+  * Functions to manage md->type.
-+  * All are required to hold md->type_lock.
-+  */
-+ void dm_lock_md_type(struct mapped_device *md)
-+ {
-+ 	mutex_lock(&md->type_lock);
-+ }
-+ 
-+ void dm_unlock_md_type(struct mapped_device *md)
-+ {
-+ 	mutex_unlock(&md->type_lock);
-+ }
-+ 
-+ void dm_set_md_type(struct mapped_device *md, unsigned type)
-+ {
-+ 	md->type = type;
-+ }
-+ 
-+ unsigned dm_get_md_type(struct mapped_device *md)
-+ {
-+ 	return md->type;
-+ }
-+ 
-+ /*
-+  * Fully initialize a request-based queue (->elevator, ->request_fn, etc).
-+  */
-+ static int dm_init_request_based_queue(struct mapped_device *md)
-+ {
-+ 	struct request_queue *q = NULL;
-+ 
-+ 	if (md->queue->elevator)
-+ 		return 1;
-+ 
-+ 	/* Fully initialize the queue */
-+ 	q = blk_init_allocated_queue(md->queue, dm_request_fn, NULL);
-+ 	if (!q)
-+ 		return 0;
-+ 
-+ 	md->queue = q;
-+ 	md->saved_make_request_fn = md->queue->make_request_fn;
-+ 	dm_init_md_queue(md);
-+ 	blk_queue_softirq_done(md->queue, dm_softirq_done);
-+ 	blk_queue_prep_rq(md->queue, dm_prep_fn);
-+ 	blk_queue_lld_busy(md->queue, dm_lld_busy);
- -	blk_queue_ordered(md->queue, QUEUE_ORDERED_DRAIN_FLUSH,
- -			  dm_rq_prepare_flush);
-++	blk_queue_ordered(md->queue, QUEUE_ORDERED_DRAIN_FLUSH);
-+ 
-+ 	elv_register_queue(md->queue);
-+ 
-+ 	return 1;
-+ }
-+ 
-+ /*
-+  * Setup the DM device's queue based on md's type
-+  */
-+ int dm_setup_md_queue(struct mapped_device *md)
-+ {
-+ 	if ((dm_get_md_type(md) == DM_TYPE_REQUEST_BASED) &&
-+ 	    !dm_init_request_based_queue(md)) {
-+ 		DMWARN("Cannot initialize queue for request-based mapped device");
-+ 		return -EINVAL;
-+ 	}
-+ 
-+ 	return 0;
-+ }
-+ 
-  static struct mapped_device *dm_find_md(dev_t dev)
-  {
-  	struct mapped_device *md;
+--Signature=_Tue__6_Jul_2010_15_25_29_+1000_y+MAoYv=qgM/3_Se
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMMr5JAAoJEDMEi1NhKgbsffkH/1VTqWg02opeAa2gadCIgx8K
+2na3kFS9Z93PibQ3aeYF6+1B7OPtUtqJknN82OT7WJtAnobjndAPm6Wws8FtjSg1
+gYsZMKT2kE5IiXksSZQ1lrLW03+QOA2jop5I6UbKC6sUxrPrQO+HKiDyAtYxxH9m
+oZigpCDUGAJc//rmkOCLi+Cik6LVldlmddMfW4t61iMWCTK+v4wo9tAxexCijA3j
+xZk8HWJ1P5XSZpipx3l5R32aU+vPdWxH/vpvuohbVtf2lIk8zYjfCZ2KIplYPZQR
+rGJJT53Sp2Ww4opaJoEZ3i2tQmKaEX7bTL0Jgv6dyU+qesedkw1Nco2+/6isMHE=
+=iMqx
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__6_Jul_2010_15_25_29_+1000_y+MAoYv=qgM/3_Se--
