@@ -1,63 +1,76 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: manual merge of the usb tree with the v4l-dvb tree
-Date: Tue, 6 Jul 2010 10:18:20 +0200
-Message-ID: <201007061018.21674.laurent.pinchart@ideasonboard.com>
+Date: Tue, 6 Jul 2010 18:51:32 +1000
+Message-ID: <20100706185132.7dd72993.sfr@canb.auug.org.au>
 References: <20100706175332.952fec90.sfr@canb.auug.org.au>
+	<201007061018.21674.laurent.pinchart@ideasonboard.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__6_Jul_2010_18_51_32_+1000_vn9kYuvFovc0uO3+"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from perceval.irobotique.be ([92.243.18.41]:49984 "EHLO
-	perceval.irobotique.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756259Ab0GFIRg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Jul 2010 04:17:36 -0400
-In-Reply-To: <20100706175332.952fec90.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:33472 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755039Ab0GFIvh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 6 Jul 2010 04:51:37 -0400
+In-Reply-To: <201007061018.21674.laurent.pinchart@ideasonboard.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>
 
-Hi Stephen,
+--Signature=_Tue__6_Jul_2010_18_51_32_+1000_vn9kYuvFovc0uO3+
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tuesday 06 July 2010 09:53:32 Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the usb tree got a conflict in
-> drivers/media/video/uvc/uvcvideo.h include/linux/usb/video.h between
-> commits c3810b43416155d040a200e7a7301f379c8ae8a0 ("V4L/DVB: uvcvideo:
-> Support menu controls in the control mapping API") and
-> da1df555fcbb98a9d2054304ea54545d9ff523cf ("V4L/DVB: uvcvideo: Define
-> control information bits using macros") from the v4l-dvb tree and commit
-> bb03b5daa9ab053adcce09e939d4115a873abf39 ("USB: uvc: Move constants and
-> structures definitions to linux/usb/video.h") from the usb tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary.  Though
-> moving the USB patch into the v4l-dvb tree may fix the conflicts as
-> well ...
+Hi Laurent,
 
-[snip]
+On Tue, 6 Jul 2010 10:18:20 +0200 Laurent Pinchart <laurent.pinchart@ideaso=
+nboard.com> wrote:
+>
+> > diff --cc include/linux/usb/video.h
+> > index 2d5b7fc,429c91a..0000000
+> > --- a/include/linux/usb/video.h
+> > +++ b/include/linux/usb/video.h
+> > @@@ -160,12 -160,402 +160,409 @@@
+>=20
+> [snip]
+>=20
+> >  +/* 4.1.2. Control Capabilities */
+> >  +#define UVC_CONTROL_CAP_GET                           (1 << 0)
+> >  +#define UVC_CONTROL_CAP_SET                           (1 << 1)
+> >  +#define UVC_CONTROL_CAP_DISABLED                      (1 << 2)
+> >  +#define UVC_CONTROL_CAP_AUTOUPDATE                    (1 << 3)
+> >  +#define UVC_CONTROL_CAP_ASYNCHRONOUS                  (1 << 4)
+> >  +
+>=20
+> Can you move those to the first part of the header file, with the other=20
+> constants ?
 
-> diff --cc include/linux/usb/video.h
-> index 2d5b7fc,429c91a..0000000
-> --- a/include/linux/usb/video.h
-> +++ b/include/linux/usb/video.h
-> @@@ -160,12 -160,402 +160,409 @@@
+Sure, I just put it there because of the section numbering in the
+comments.  This, of course, will not influence how the file looks after
+Linus merges it - unless the conflict is fixed up by one of the
+maintainers before Linus gets it.
 
-[snip]
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
->  +/* 4.1.2. Control Capabilities */
->  +#define UVC_CONTROL_CAP_GET                           (1 << 0)
->  +#define UVC_CONTROL_CAP_SET                           (1 << 1)
->  +#define UVC_CONTROL_CAP_DISABLED                      (1 << 2)
->  +#define UVC_CONTROL_CAP_AUTOUPDATE                    (1 << 3)
->  +#define UVC_CONTROL_CAP_ASYNCHRONOUS                  (1 << 4)
->  +
+--Signature=_Tue__6_Jul_2010_18_51_32_+1000_vn9kYuvFovc0uO3+
+Content-Type: application/pgp-signature
 
-Can you move those to the first part of the header file, with the other 
-constants ?
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
--- 
-Regards,
+iQEcBAEBAgAGBQJMMu6UAAoJEDMEi1NhKgbsdy8H/RANeo3MuJ+r1STvY8GVfHjz
+6RENd6wf83wZ1Jk/OTIWezaE2mXMvGj7luJKixGg76OrY9FiDqK92JGlswQj+jTc
+FRv6sZX+uqoPyd6esTIInCN7g6K2Gyle+oK8YJ9ULSLy2j0GnPwWWhGHrMK2H/aA
+G8NVPKWrbfgedOmJWZcFFeoasg4JJ5SvYblskr5O3jFm7fwK2QrgZf+nI7SAJ4fb
+UziSMLeVj7L56EuGJeJLXHtO1JRzI1e3lim7aaYU2SFURpq3gKJLUzL+Vm7eKh5C
+ekLXk0BJOXm+4+a0M2hnyzapy952BEykPcb731WyciSx97oeuF0RlHNx0tCcI/I=
+=nspR
+-----END PGP SIGNATURE-----
 
-Laurent Pinchart
+--Signature=_Tue__6_Jul_2010_18_51_32_+1000_vn9kYuvFovc0uO3+--
