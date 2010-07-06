@@ -1,22 +1,24 @@
-From: Ilya Dryomov <idryomov@gmail.com>
+From: Greg KH <gregkh@suse.de>
 Subject: Re: Problem with tty changes in linux-next
-Date: Tue, 6 Jul 2010 17:40:52 +0300
-Message-ID: <20100706144052.GB8569@kwango>
-References: <20100706130403.GD3991@pengutronix.de> <201007061623.48363.arnd@arndb.de>
+Date: Tue, 6 Jul 2010 08:14:54 -0700
+Message-ID: <20100706151454.GB12444@suse.de>
+References: <20100706130403.GD3991@pengutronix.de>
+ <201007061623.48363.arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-fx0-f46.google.com ([209.85.161.46]:60499 "EHLO
-	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753067Ab0GFPGd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Jul 2010 11:06:33 -0400
+Received: from cantor2.suse.de ([195.135.220.15]:41278 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752131Ab0GFPQA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 6 Jul 2010 11:16:00 -0400
 Content-Disposition: inline
 In-Reply-To: <201007061623.48363.arnd@arndb.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Arnd Bergmann <arnd@arndb.de>
-Cc: Luotao Fu <l.fu@pengutronix.de>, Greg Kroah-Hartman <gregkh@suse.de>, Alan Cox <alan@linux.intel.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Luotao Fu <l.fu@pengutronix.de>, Alan Cox <alan@linux.intel.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Frederic Weisbecker <fweisbec@gmail.com>
 
+On Tue, Jul 06, 2010 at 04:23:48PM +0200, Arnd Bergmann wrote:
 > > 2. A more serious problem is that printing kernel message no more works
 > > after running into userspace.
 > > ....
@@ -46,18 +48,10 @@ Cc: Luotao Fu <l.fu@pengutronix.de>, Greg Kroah-Hartman <gregkh@suse.de>, Alan C
 > I have the patch on a different machine, but will resend it to Greg
 > when I get there to make sure it doesn't get lost.
 
-I had the same issue. Here is the patch:
+It's in my todo queue, sorry, I spent last week on the 5 stable kernel
+releases, I should get to this today and push it into the next
+linux-next release.
 
-https://patchwork.kernel.org/patch/108700/
+thanks,
 
-Thanks,
-
-		Ilya
-
-> 
-> 	Arnd
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+greg k-h
