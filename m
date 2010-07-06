@@ -1,62 +1,45 @@
-From: Michal Marek <mmarek@suse.cz>
-Subject: Re: Linux 2.6.35-rc4 - CONFIG_LOCALVERSION ignored?
-Date: Mon, 5 Jul 2010 23:43:04 +0200
-Message-ID: <20100705214304.GA24291@sepie.suse.cz>
-References: <201007052325.56971.rjw@sisk.pl>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the v4l-dvb tree with Linus' tree
+Date: Tue, 6 Jul 2010 12:01:13 +1000
+Message-ID: <20100706120113.407d588c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:32786 "EHLO mx2.suse.de"
+Received: from chilli.pcug.org.au ([203.10.76.44]:41339 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755645Ab0GEVnJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 5 Jul 2010 17:43:09 -0400
-Content-Disposition: inline
-In-Reply-To: <201007052325.56971.rjw@sisk.pl>
- <20100705103941.9b57282d.sfr@canb.auug.org.au>
+	id S1752354Ab0GFCBS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 5 Jul 2010 22:01:18 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
 
-On Mon, Jul 05, 2010 at 11:25:56PM +0200, Rafael J. Wysocki wrote:
-> Hmm.  Am I dong anything particularly wrong, or is CONFIG_LOCALVERSION ignored
-> now, as it seems?
+Hi Mauro,
 
-(also reported by Stephen earlier that day)
+Today's linux-next merge of the v4l-dvb tree got a conflict in
+drivers/staging/tm6000/tm6000-alsa.c between commit
+4ef09889d7b4c7be2aa3e132efb77029f51c95b7 ("v4l-dvb: update gfp/slab.h
+includes") from Linus' tree and commit
+813605a98db924123530784d29964e99a705482d ("tm6000-alsa: rework audio
+buffer allocation/deallocation") from the v4l-dvb tree.
 
-On Mon, Jul 05, 2010 at 10:39:41AM +1000, Stephen Rothwell wrote:
-> After merging the libata tree, today's linux-next build produced this
-> warning (but it should be a failure ...):
-> 
-> /bin/sh: scripts/setlocalversion: No such file or directory
-> 
-> Probably introduced by commit 0a564b2645c8766a669c55bde1f1ef5b0518caec
-> ("kbuild: Propagate LOCALVERSION= down to scripts/setlocalversion").
-> 
-> That commit really isn't ready for inclusion in Linus' tree ...
+Just overlapping additions.  I fixed ti up (see below) and can carry the
+fix for a while.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-
-Oops, I'm an idiot. The below patch should fix localversion again:
-
-From: Michal Marek <mmarek@suse.cz>
-Subject: [PATCH] kbuild: Fix path to scripts/setlocalversion
-
-Commit 0a564b2 broke LOCALVERSION for O=... builds. Ouch.
-
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Reported-by: Rafael J. Wysocki <rjw@sisk.pl>
-Signed-off-by: Michal Marek <mmarek@suse.cz>
-
-diff --git a/Makefile b/Makefile
-index 12ab175..df16c4f 100644
---- a/Makefile
-+++ b/Makefile
-@@ -886,7 +886,7 @@ $(vmlinux-dirs): prepare scripts
- # Store (new) KERNELRELASE string in include/config/kernel.release
- include/config/kernel.release: include/config/auto.conf FORCE
- 	$(Q)rm -f $@
--	$(Q)echo "$(KERNELVERSION)$$($(CONFIG_SHELL) scripts/setlocalversion $(srctree))" > $@
-+	$(Q)echo "$(KERNELVERSION)$$($(CONFIG_SHELL) $(srctree)/scripts/setlocalversion $(srctree))" > $@
- 
- 
- # Things we need to do before we recursively start building the kernel
+diff --cc drivers/staging/tm6000/tm6000-alsa.c
+index 273e26e,aa38577..0000000
+--- a/drivers/staging/tm6000/tm6000-alsa.c
++++ b/drivers/staging/tm6000/tm6000-alsa.c
+@@@ -15,7 -15,7 +15,8 @@@
+  #include <linux/device.h>
+  #include <linux/interrupt.h>
+  #include <linux/usb.h>
+ +#include <linux/slab.h>
++ #include <linux/vmalloc.h>
+  
+  #include <asm/delay.h>
+  #include <sound/core.h>
