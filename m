@@ -1,47 +1,76 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for July 6 (NET_DSA + PHYLIB kconfig)
-Date: Tue, 6 Jul 2010 10:34:17 -0700
-Message-ID: <20100706103417.8923b697.randy.dunlap@oracle.com>
-References: <20100706190519.93d8b785.sfr@canb.auug.org.au>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: Linux 2.6.35-rc4 - CONFIG_LOCALVERSION ignored?
+Date: Tue, 6 Jul 2010 20:29:34 +0200
+Message-ID: <201007062029.34535.rjw@sisk.pl>
+References: <20100705214304.GA24291@sepie.suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:46121 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751377Ab0GFRfu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Jul 2010 13:35:50 -0400
-In-Reply-To: <20100706190519.93d8b785.sfr@canb.auug.org.au>
+Received: from ogre.sisk.pl ([217.79.144.158]:56442 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752498Ab0GFSbM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 6 Jul 2010 14:31:12 -0400
+In-Reply-To: <20100705214304.GA24291@sepie.suse.cz>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, netdev <netdev@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Michal Marek <mmarek@suse.cz>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
 
-On Tue, 6 Jul 2010 19:05:19 +1000 Stephen Rothwell wrote:
-
-> Hi all,
+On Monday, July 05, 2010, Michal Marek wrote:
+> On Mon, Jul 05, 2010 at 11:25:56PM +0200, Rafael J. Wysocki wrote:
+> > Hmm.  Am I dong anything particularly wrong, or is CONFIG_LOCALVERSION ignored
+> > now, as it seems?
 > 
-> Changes since 20100705:
+> (also reported by Stephen earlier that day)
 > 
-> My fixes tree contains:
-> 	kbuild: Fix path to scripts/setlocalversion
+> On Mon, Jul 05, 2010 at 10:39:41AM +1000, Stephen Rothwell wrote:
+> > After merging the libata tree, today's linux-next build produced this
+> > warning (but it should be a failure ...):
+> > 
+> > /bin/sh: scripts/setlocalversion: No such file or directory
+> > 
+> > Probably introduced by commit 0a564b2645c8766a669c55bde1f1ef5b0518caec
+> > ("kbuild: Propagate LOCALVERSION= down to scripts/setlocalversion").
+> > 
+> > That commit really isn't ready for inclusion in Linus' tree ...
 > 
-> ----------------------------------------------------------------------------
+> 
+> Oops, I'm an idiot. The below patch should fix localversion again:
 
-kconfig now detects symbol dependency errors and warns about them.
-E.g.:
+Yes, it helps here.
 
-warning: (NET_DSA && NET && EXPERIMENTAL && !S390 || MACB && NETDEVICES && NET_ETHERNET && (AVR32 || ARCH_AT91SAM9260 || ARCH_AT91SAM9263 || ARCH_AT91SAM9G20 || ARCH_AT91SAM9G45 || ARCH_AT91CAP9) || IXP4XX_ETH && NETDEVICES && NET_ETHERNET && ARM && ARCH_IXP4XX && IXP4XX_NPE && IXP4XX_QMGR || W90P910_ETH && NETDEVICES && NET_ETHERNET && ARM && ARCH_W90X900 || MIPS_AU1X00_ENET && NETDEVICES && NET_ETHERNET && SOC_AU1X00 || SH_ETH && NETDEVICES && NET_ETHERNET && SUPERH && (CPU_SUBTYPE_SH7710 {{20 lines deleted}}
-selects PHYLIB which has unmet direct dependencies (!S390 && NET_ETHERNET)
+Thanks,
+Rafael
 
-says that NET_DSA & PHYLIB have some kind of problem.
-NET_DSA selects PHYLIB.  PHYLIB depends on NET_ETHERNET, which is not enabled
-in this randconfig.  net/dsa code does need PHYLIB code, so PHYLIB symbol should
-either drop "depends on NET_ETHERNET" or it should be changed to
-	depends on NET_ETHERNET || NET_DSA
 
-Preference?
-
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+> From: Michal Marek <mmarek@suse.cz>
+> Subject: [PATCH] kbuild: Fix path to scripts/setlocalversion
+> 
+> Commit 0a564b2 broke LOCALVERSION for O=... builds. Ouch.
+> 
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Reported-by: Rafael J. Wysocki <rjw@sisk.pl>
+> Signed-off-by: Michal Marek <mmarek@suse.cz>
+> 
+> diff --git a/Makefile b/Makefile
+> index 12ab175..df16c4f 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -886,7 +886,7 @@ $(vmlinux-dirs): prepare scripts
+>  # Store (new) KERNELRELASE string in include/config/kernel.release
+>  include/config/kernel.release: include/config/auto.conf FORCE
+>  	$(Q)rm -f $@
+> -	$(Q)echo "$(KERNELVERSION)$$($(CONFIG_SHELL) scripts/setlocalversion $(srctree))" > $@
+> +	$(Q)echo "$(KERNELVERSION)$$($(CONFIG_SHELL) $(srctree)/scripts/setlocalversion $(srctree))" > $@
+>  
+>  
+>  # Things we need to do before we recursively start building the kernel
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
+> 
+> 
