@@ -1,68 +1,47 @@
-From: Luotao Fu <l.fu@pengutronix.de>
-Subject: Re: Problem with tty changes in linux-next
-Date: Tue, 6 Jul 2010 17:48:12 +0200
-Message-ID: <20100706154812.GA2813@pengutronix.de>
-References: <20100706130403.GD3991@pengutronix.de> <201007061623.48363.arnd@arndb.de> <20100706151454.GB12444@suse.de> <201007061735.02881.arnd@arndb.de>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for July 6 (NET_DSA + PHYLIB kconfig)
+Date: Tue, 6 Jul 2010 10:34:17 -0700
+Message-ID: <20100706103417.8923b697.randy.dunlap@oracle.com>
+References: <20100706190519.93d8b785.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="y0ulUmNC+osPPQO6"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <201007061735.02881.arnd@arndb.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Greg KH <gregkh@suse.de>, Luotao Fu <l.fu@pengutronix.de>, Alan Cox <alan@linux.intel.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Frederic Weisbecker <fweisbec@gmail.com>, Ilya Dryomov <idryomov@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:46121 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751377Ab0GFRfu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 6 Jul 2010 13:35:50 -0400
+In-Reply-To: <20100706190519.93d8b785.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, netdev <netdev@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
+On Tue, 6 Jul 2010 19:05:19 +1000 Stephen Rothwell wrote:
 
---y0ulUmNC+osPPQO6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Hi all,
+> 
+> Changes since 20100705:
+> 
+> My fixes tree contains:
+> 	kbuild: Fix path to scripts/setlocalversion
+> 
+> ----------------------------------------------------------------------------
 
-Hi,
+kconfig now detects symbol dependency errors and warns about them.
+E.g.:
 
-On Tue, Jul 06, 2010 at 05:35:02PM +0200, Arnd Bergmann wrote:
-> On Tuesday 06 July 2010 17:14:54 Greg KH wrote:
-> > I should get to this today and push it into the next
-> > linux-next release.
->=20
-> Ok, thanks!
->=20
-> On Tuesday 06 July 2010 16:40:52 Ilya Dryomov wrote:
-> > I had the same issue. Here is the patch:
-> >=20
-> > https://patchwork.kernel.org/patch/108700/
->=20
-> Yes, that's the one. It would be good to get another confirmation
-> from Luotao Fu that this fixes all the problems with missing characters.
-> As I mentioned, the boot-time warning will get taken care of by
-> a different patch, but can be safely ignored.
+warning: (NET_DSA && NET && EXPERIMENTAL && !S390 || MACB && NETDEVICES && NET_ETHERNET && (AVR32 || ARCH_AT91SAM9260 || ARCH_AT91SAM9263 || ARCH_AT91SAM9G20 || ARCH_AT91SAM9G45 || ARCH_AT91CAP9) || IXP4XX_ETH && NETDEVICES && NET_ETHERNET && ARM && ARCH_IXP4XX && IXP4XX_NPE && IXP4XX_QMGR || W90P910_ETH && NETDEVICES && NET_ETHERNET && ARM && ARCH_W90X900 || MIPS_AU1X00_ENET && NETDEVICES && NET_ETHERNET && SOC_AU1X00 || SH_ETH && NETDEVICES && NET_ETHERNET && SUPERH && (CPU_SUBTYPE_SH7710 {{20 lines deleted}}
+selects PHYLIB which has unmet direct dependencies (!S390 && NET_ETHERNET)
 
-I picked up the patch and did a quick test. The console message printing
-works so far.
+says that NET_DSA & PHYLIB have some kind of problem.
+NET_DSA selects PHYLIB.  PHYLIB depends on NET_ETHERNET, which is not enabled
+in this randconfig.  net/dsa code does need PHYLIB code, so PHYLIB symbol should
+either drop "depends on NET_ETHERNET" or it should be changed to
+	depends on NET_ETHERNET || NET_DSA
 
-Thanks
+Preference?
 
-Cheers
-Luotao Fu
---=20
-Pengutronix e.K.                           | Dipl.-Ing. Luotao Fu        |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
-
---y0ulUmNC+osPPQO6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAkwzUDwACgkQkLuxfMCkDTaFjgCfcx9Rk6p6EnFeDJTWs7San2nn
-C78AnRax1sF2ZJVL9sRQMKDeRPGZi9Ic
-=VE+y
------END PGP SIGNATURE-----
-
---y0ulUmNC+osPPQO6--
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
