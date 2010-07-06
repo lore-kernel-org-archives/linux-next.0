@@ -1,45 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the v4l-dvb tree with Linus' tree
-Date: Tue, 6 Jul 2010 12:01:13 +1000
-Message-ID: <20100706120113.407d588c.sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the net tree
+Date: Tue, 6 Jul 2010 14:25:42 +1000
+Message-ID: <20100706142542.d723903f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__6_Jul_2010_14_25_42_+1000_1JvcP1rZUw03U4Ac"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41339 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:53218 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752354Ab0GFCBS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 5 Jul 2010 22:01:18 -0400
+	id S1750915Ab0GFEZt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 6 Jul 2010 00:25:49 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Greg Kroah-Hartman <gregkh@suse.de>
 
-Hi Mauro,
+--Signature=_Tue__6_Jul_2010_14_25_42_+1000_1JvcP1rZUw03U4Ac
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the v4l-dvb tree got a conflict in
-drivers/staging/tm6000/tm6000-alsa.c between commit
-4ef09889d7b4c7be2aa3e132efb77029f51c95b7 ("v4l-dvb: update gfp/slab.h
-includes") from Linus' tree and commit
-813605a98db924123530784d29964e99a705482d ("tm6000-alsa: rework audio
-buffer allocation/deallocation") from the v4l-dvb tree.
+Hi Dave,
 
-Just overlapping additions.  I fixed ti up (see below) and can carry the
-fix for a while.
--- 
+After merging the net tree, today's linux-next build (powerpc
+ppc64_defconfig) produced these warnings:
+
+drivers/scsi/sym53c8xx_2/sym_hipd.c: In function 'sym_print_msg':
+drivers/scsi/sym53c8xx_2/sym_hipd.c:78: warning: zero-length gnu_printf for=
+mat string
+drivers/scsi/constants.c: In function 'scsi_print_sense':
+drivers/scsi/constants.c:1407: warning: zero-length gnu_printf format string
+drivers/scsi/constants.c:1413: warning: zero-length gnu_printf format string
+drivers/scsi/constants.c: In function 'scsi_print_result':
+drivers/scsi/constants.c:1456: warning: zero-length gnu_printf format string
+drivers/scsi/sd.c: In function 'sd_print_sense_hdr':
+drivers/scsi/sd.c:2599: warning: zero-length gnu_printf format string
+drivers/scsi/sd.c:2601: warning: zero-length gnu_printf format string
+drivers/scsi/sd.c: In function 'sd_print_result':
+drivers/scsi/sd.c:2607: warning: zero-length gnu_printf format string
+
+(There may be more ...)
+
+Introduced by commit 99bcf217183e02ebae46373896fba7f12d588001 ("device.h
+drivers/base/core.c Convert dev_<level> logging macros to functions").
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/staging/tm6000/tm6000-alsa.c
-index 273e26e,aa38577..0000000
---- a/drivers/staging/tm6000/tm6000-alsa.c
-+++ b/drivers/staging/tm6000/tm6000-alsa.c
-@@@ -15,7 -15,7 +15,8 @@@
-  #include <linux/device.h>
-  #include <linux/interrupt.h>
-  #include <linux/usb.h>
- +#include <linux/slab.h>
-+ #include <linux/vmalloc.h>
-  
-  #include <asm/delay.h>
-  #include <sound/core.h>
+--Signature=_Tue__6_Jul_2010_14_25_42_+1000_1JvcP1rZUw03U4Ac
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMMrBGAAoJEDMEi1NhKgbsRzYH/jaepTNeQmuFW+FzXr5hHYMy
+QxdDHb08EVUC0/3MPefxIARoqPdF0CM4lXvkH0+20UXTCupyz8CvzqVIaYC5dSrk
+7+lcCX7j6J//KtWqS9ojGBxy+2PWgMF5cj16vbH32R16G+t5yGaNdVT2KGfrA1H3
+g5RHh0h5pPzV0Kb2PG2BG5/W0FqlCSmwwBHLwmu/auvmF7/sqLvQUH71pAEp8y2a
+RPtX77cHXMzuLAlhC2d9Fxv4HWyiklyREWsFHQz9URpzPAouKsIb9DjfmDWVyHYB
+NzXV0oUwLwwK1vgwh3+3UPBkb5rKkGSpWQJys6iAU/tFn5w1M4MbnNTL35JEX0E=
+=bo2m
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__6_Jul_2010_14_25_42_+1000_1JvcP1rZUw03U4Ac--
