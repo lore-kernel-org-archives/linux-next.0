@@ -1,66 +1,32 @@
 From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the usb tree with the v4l-dvb tree
-Date: Wed, 7 Jul 2010 08:13:55 -0700
-Message-ID: <20100707151355.GB2121@kroah.com>
-References: <20100706175332.952fec90.sfr@canb.auug.org.au>
- <201007061018.21674.laurent.pinchart@ideasonboard.com>
- <20100706185132.7dd72993.sfr@canb.auug.org.au>
- <201007061310.06197.laurent.pinchart@ideasonboard.com>
- <4C3322EB.2050806@infradead.org>
+Subject: Re: linux-next: manual merge of the staging-next tree with the
+ v4l-dvb tree
+Date: Wed, 7 Jul 2010 08:14:19 -0700
+Message-ID: <20100707151419.GC2121@kroah.com>
+References: <20100706175337.bec9305a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:60687 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756467Ab0GGPSt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 7 Jul 2010 11:18:49 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <4C3322EB.2050806@infradead.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20100706175337.bec9305a.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Palash Bandyopadhyay <Palash.Bandyopadhyay@conexant.com>, Mauro Carvalho Chehab <mchehab@redhat.com>, Scott Kidder <scott.kidder11@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Jul 06, 2010 at 09:34:51AM -0300, Mauro Carvalho Chehab wrote:
-> Em 06-07-2010 08:10, Laurent Pinchart escreveu:
-> > Hi Stephen,
-> > 
-> > On Tuesday 06 July 2010 10:51:32 Stephen Rothwell wrote:
-> >> On Tue, 6 Jul 2010 10:18:20 +0200 Laurent Pinchart wrote:
-> >>>> diff --cc include/linux/usb/video.h
-> >>>> index 2d5b7fc,429c91a..0000000
-> >>>> --- a/include/linux/usb/video.h
-> >>>> +++ b/include/linux/usb/video.h
-> >>>> @@@ -160,12 -160,402 +160,409 @@@
-> >>>
-> >>> [snip]
-> >>>
-> >>>>  +/* 4.1.2. Control Capabilities */
-> >>>>  +#define UVC_CONTROL_CAP_GET                           (1 << 0)
-> >>>>  +#define UVC_CONTROL_CAP_SET                           (1 << 1)
-> >>>>  +#define UVC_CONTROL_CAP_DISABLED                      (1 << 2)
-> >>>>  +#define UVC_CONTROL_CAP_AUTOUPDATE                    (1 << 3)
-> >>>>  +#define UVC_CONTROL_CAP_ASYNCHRONOUS                  (1 << 4)
-> >>>>  +
-> >>>
-> >>> Can you move those to the first part of the header file, with the other
-> >>> constants ?
-> >>
-> >> Sure, I just put it there because of the section numbering in the
-> >> comments.  This, of course, will not influence how the file looks after
-> >> Linus merges it - unless the conflict is fixed up by one of the
-> >> maintainers before Linus gets it.
-> > 
-> > I had the impression that the conflict resolutions in linux-next would end up 
-> > in mainline. I must have been wrong, sorry.
-> > 
-> > Mauro, can the uvc-gadget patches go through the linux-media tree ?
+On Tue, Jul 06, 2010 at 05:53:37PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> If Greg is ok, that's fine for me.
+> Today's linux-next merge of the staging-next tree got a conflict in
+> drivers/staging/cx25821/cx25821-audups11.c between commit
+> e302c8255a198a567dab3a4ace7bd0222a6dc037 ("V4L/DVB: cx25821: Removed
+> duplicate code and cleaned up") from the v4l-dvb tree and commit
+> 231ded903f2f30b2bcdbf6672c7197187e3bb1ee ("Staging: cx25821: added KERN_
+> facility levels") from the staging-next tree.
+> 
+> The former moved all te code in this file into other files, so I
+> effectively just dropped the usb patch by deleting this file.
 
-That's fine with me.  Let me know when you have them and then I'll drop
-them from my tree.
-
-thanks,
+That sounds correct to me, thanks for doing this.
 
 greg k-h
