@@ -1,52 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the vfs tree with the xfs tree
-Date: Wed, 7 Jul 2010 13:50:08 +1000
-Message-ID: <20100707135008.d27fca06.sfr@canb.auug.org.au>
-References: <20100705100248.173ec8ee.sfr@canb.auug.org.au>
-	<20100707014813.GB2950@infradead.org>
+Subject: linux-next: build warning after merge of the net tree
+Date: Wed, 7 Jul 2010 14:30:45 +1000
+Message-ID: <20100707143045.0c472f5d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__7_Jul_2010_13_50_08_+1000_6xr438k4Mz=5xIfV"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100707014813.GB2950@infradead.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Al Viro <viro@ZenIV.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Wed__7_Jul_2010_14_30_45_+1000_0o6T=ZOCeMRirle2"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:45633 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750916Ab0GGEax (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 7 Jul 2010 00:30:53 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jonas Bonn <jonas@southpole.se>
 
---Signature=_Wed__7_Jul_2010_13_50_08_+1000_6xr438k4Mz=5xIfV
+--Signature=_Wed__7_Jul_2010_14_30_45_+1000_0o6T=ZOCeMRirle2
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Christoph,
+Hi Dave,
 
-On Tue, 6 Jul 2010 21:48:13 -0400 Christoph Hellwig <hch@infradead.org> wro=
-te:
->
-> the merge looks good to me.
+After merging the net tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-Thanks for the confirmation.
+drivers/net/ethoc.c: In function 'ethoc_init_ring':
+drivers/net/ethoc.c:302: warning: assignment makes integer from pointer wit=
+hout a cast
+
+Introduced by commit f8555ad0cfb0ba6cbc8729f337341fb11c82db89 ("ethoc:
+Write bus addresses to registers").
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__7_Jul_2010_13_50_08_+1000_6xr438k4Mz=5xIfV
+--Signature=_Wed__7_Jul_2010_14_30_45_+1000_0o6T=ZOCeMRirle2
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMM/lwAAoJEDMEi1NhKgbsrFIH+gM7u67+SAwLkoku/h1aajW0
-VYn2hsMmq6YvHAxO5HAXkxgQhNN+i0J2AN9y98HRlxjEb4CvjFqi9Md5jqmCT/RX
-yMt+53Ey7GnDCYFXEztcBTs+auRSrRVZ70OHYXyAWvu4dDV5C5iDXsHe+GxTP0JD
-v6ObOSOX0cP9IIHtwf3XVj04LChY9Na0f48kSgu94bgQNX/QpOCAP/26narxxDsv
-KOFDvGSDC7YLtcXsprt3NvXh06/7dwkp+oPDZbNbsqai+Uk1BCBuaXFW9rV0WFjx
-ZAWNkX/lXJHE/S3LgbI2488d4BTi3xsehrDn3xs2SfDNTKqF2csBNcE0rRcvFAI=
-=DJIe
+iQEcBAEBAgAGBQJMNAL1AAoJEDMEi1NhKgbsLJwH/3G76rFeIds4FeW7yXK5SMe7
+buiRLklzCVeUOP+DeNHCjFWH0+CXl5cEcZer8ef974VVi/PJezqn2Ef5vlH8Fs82
+oJOdaFtb0DFXd57TLcSvFoXQUbS5/4j6l4QX+hKhF92ZXHJ1b8YBROLvuR0LRr0N
+vbEtbnghp1P/WlYRmD4u5OSGaw5xpkwiHpL6OQNtmMdFuQQLIkoruJzHUngEI25s
+YncF9LcebmCQOyn4yCwOynrDVWigSf9G9aflDcpm0Y91ybqobxU9KJcWVxGP0qfB
+pzSP+0D84bVS3wQXV3rRa+/AKbqHlt0kC0EjrxA9VPD9hvNyBTDPji0gbV1uyT0=
+=jH/W
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__7_Jul_2010_13_50_08_+1000_6xr438k4Mz=5xIfV--
+--Signature=_Wed__7_Jul_2010_14_30_45_+1000_0o6T=ZOCeMRirle2--
