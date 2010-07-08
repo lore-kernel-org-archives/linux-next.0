@@ -1,56 +1,46 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: linux-next: manual merge of the omap tree with the arm tree
-Date: Thu, 8 Jul 2010 13:14:23 +0300
-Message-ID: <20100708101422.GD1920@atomide.com>
-References: <20100708113730.c2683125.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for July 8 (nouveau)
+Date: Thu, 8 Jul 2010 09:48:42 -0700
+Message-ID: <20100708094842.2753a194.randy.dunlap@oracle.com>
+References: <20100708151022.d2517577.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mho-02-ewr.mailhop.org ([204.13.248.72]:54507 "EHLO
-	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755812Ab0GHKOh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Jul 2010 06:14:37 -0400
-Content-Disposition: inline
-In-Reply-To: <20100708113730.c2683125.sfr@canb.auug.org.au>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:18377 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754202Ab0GHQtx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Jul 2010 12:49:53 -0400
+In-Reply-To: <20100708151022.d2517577.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-omap@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Mike Rapoport <mike@compulab.co.il>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, David Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org
 
-* Stephen Rothwell <sfr@canb.auug.org.au> [100708 04:31]:
+On Thu, 8 Jul 2010 15:10:22 +1000 Stephen Rothwell wrote:
+
 > Hi all,
 > 
-> Today's linux-next merge of the omap tree got conflicts in
-> arch/arm/mach-omap2/board-3430sdp.c,
-> arch/arm/mach-omap2/board-3630sdp.c,
-> arch/arm/mach-omap2/board-am3517evm.c,
-> arch/arm/mach-omap2/board-cm-t35.c,
-> arch/arm/mach-omap2/board-devkit8000.c,
-> arch/arm/mach-omap2/board-igep0020.c,
-> arch/arm/mach-omap2/board-ldp.c,
-> arch/arm/mach-omap2/board-omap3beagle.c,
-> arch/arm/mach-omap2/board-omap3evm.c,
-> arch/arm/mach-omap2/board-omap3pandora.c,
-> arch/arm/mach-omap2/board-omap3touchbook.c,
-> arch/arm/mach-omap2/board-overo.c,
-> arch/arm/mach-omap2/board-zoom2.c and
-> arch/arm/mach-omap2/board-zoom3.c
-> between commit 1e6d923b4e5729b73518d241edf87a3ab2d5688c ("ARM: OMAP:
-> Convert to use ->reserve method to reserve boot time memory") from the
-> arm tree and commit c752ab9d5a5b6899f14fe1c6643c0fe0b499a4ba ("omap3:
-> introduce omap3_map_io") from the omap tree.
+> Changes since 20100707:
 > 
-> Just context changes.  I fixed it up (see below) and can carry the fix as
-> necessary.
+> The i.MX tree mismerge has been fixed.
+> 
+> The omap tree gained a conflict (involving serveral files) against the
+> arm tree.
+> 
+> ----------------------------------------------------------------------------
 
-Thanks, I'll merge with Russell's lmb branch when I
-have confirmation that it will stay static.
- 
-> P.S. Tony, that omap tree commit has a fairly unuseful changelog and no
-> SOB from its purported author ...
 
-Oops, I'll check that.
+Should nouveau depend on PCI?
+It has build errors when PCI is disabled:
 
-Regards,
+drivers/gpu/drm/nouveau/nouveau_bios.c: In function 'load_vbios_pci':
+drivers/gpu/drm/nouveau/nouveau_bios.c:167: error: implicit declaration of function 'pci_enable_rom'
+drivers/gpu/drm/nouveau/nouveau_bios.c:171: error: implicit declaration of function 'pci_map_rom'
+drivers/gpu/drm/nouveau/nouveau_bios.c:171: warning: assignment makes pointer from integer without a cast
+drivers/gpu/drm/nouveau/nouveau_bios.c:175: error: implicit declaration of function 'pci_unmap_rom'
+drivers/gpu/drm/nouveau/nouveau_bios.c:178: error: implicit declaration of function 'pci_disable_rom'
 
-Tony
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
