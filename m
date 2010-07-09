@@ -1,38 +1,59 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the tty tree with the genesis tree
-Date: Thu, 8 Jul 2010 22:04:01 -0700
-Message-ID: <20100709050401.GA6568@kroah.com>
-References: <20100709134939.71170dae.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the infiniband tree
+Date: Fri, 9 Jul 2010 16:16:24 +1000
+Message-ID: <20100709161624.b27e8d7a.sfr@canb.auug.org.au>
+References: <20100709110427.c05987cc.sfr@canb.auug.org.au>
+	<ada4og9z5a1.fsf@roland-alpha.cisco.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__9_Jul_2010_16_16_24_+1000_J1rS3=IKGkE6njG0"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:48890 "EHLO coco.kroah.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:33566 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750870Ab0GIFEF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 9 Jul 2010 01:04:05 -0400
-Content-Disposition: inline
-In-Reply-To: <20100709134939.71170dae.sfr@canb.auug.org.au>
+	id S1751595Ab0GIGQe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 9 Jul 2010 02:16:34 -0400
+In-Reply-To: <ada4og9z5a1.fsf@roland-alpha.cisco.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Paul Mundt <lethal@linux-sh.org>, Alan Cox <alan@linux.intel.com>
+To: Roland Dreier <rdreier@cisco.com>
+Cc: linux-rdma@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Hutchings <ben@decadent.org.uk>
 
-On Fri, Jul 09, 2010 at 01:49:39PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the tty tree got a conflict in
-> include/linux/serial_core.h between commit
-> 75b93489b449db4a34f0424c72f51821d985f52f ("serial: add a new port type,
-> found on some sh-mobile SoCs") from the genesis tree and commit
-> 4286e9ca73813ee0ab5b0bd63b7eaefeb4994334 ("serial: max3107: Abstract out
-> the platform specific bits") from the tty tree.
-> 
-> Just overlapping additions.  I fixed it up (see below) and can carry the
-> fix as necessary.
+--Signature=_Fri__9_Jul_2010_16_16_24_+1000_J1rS3=IKGkE6njG0
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, as long as the numbers are sequencial, and they are, it should
-be fine.  Alan was good in making the patch up correctly :)
+Hi Roland,
 
-thanks,
+On Thu, 08 Jul 2010 20:46:14 -0700 Roland Dreier <rdreier@cisco.com> wrote:
+>
+> Sorry, I took the version of the patch that Ralph sent me, instead of
+> Ben's original patch, and that version dropped the most important part,
+> namely the actual firmware file.
+>=20
+> Should be fixed now.
 
-greg k-h
+Thanks, I will pick it up on Monday.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__9_Jul_2010_16_16_24_+1000_J1rS3=IKGkE6njG0
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMNr64AAoJEDMEi1NhKgbsexoH/2e0BHRDfkmdXhRIYzvLgKsA
+Zja31i9ykgsama7ifF213YwY0z288aMxtbdKgt02tFhLgXk9r7KTkryUUfCia9OB
+q6eybv+3iF4t1WHFhrJSQu3zA6tcndG8cW1gpXd3j6eqqI1QvgZs+zbff9yFw+nx
+ztZd0dqeKUq8qfIfC3xmGD0FR/9SEOKuBdsImevs+HYcizyN782yDN1posKE3hzq
+8cEKz5kOlaBXDfcBm/PQhNvdzv4yD/xjEm98Pm/W8NhGXt5WHrFI4lj8/AujiIm2
+j62nwIBYD1oR7ncpmpgVCp6jjCp77mWfiT7Ibi0/NY7NTi0DBPe1d49bFfCmzwo=
+=DMu9
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__9_Jul_2010_16_16_24_+1000_J1rS3=IKGkE6njG0--
