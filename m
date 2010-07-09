@@ -1,32 +1,50 @@
-From: Roland Dreier <rdreier-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
-Subject: Re: linux-next: build failure after merge of the infiniband tree
-Date: Thu, 08 Jul 2010 20:46:14 -0700
-Message-ID: <ada4og9z5a1.fsf@roland-alpha.cisco.com>
-References: <20100709110427.c05987cc.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tty tree with the genesis tree
+Date: Fri, 9 Jul 2010 13:49:39 +1000
+Message-ID: <20100709134939.71170dae.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20100709110427.c05987cc.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org> (Stephen
-	Rothwell's message of "Fri, 9 Jul 2010 11:04:27 +1000")
-Sender: linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Cc: linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ben Hutchings <ben-/+tVBieCtBitmTQ+vhA3Yw@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:58279 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751227Ab0GIDto (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 8 Jul 2010 23:49:44 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Paul Mundt <lethal@linux-sh.org>, Alan Cox <alan@linux.intel.com>
 
- > After merging the infiniband tree, today's linux-next build (x86_64
- > allmodconfig) failed like this:
- > 
- > make[2]: *** No rule to make target `firmware/qlogic/sd7220.fw', needed by `__fw_modbuild'.  Stop.
+Hi Greg,
 
-Sorry, I took the version of the patch that Ralph sent me, instead of
-Ben's original patch, and that version dropped the most important part,
-namely the actual firmware file.
+Today's linux-next merge of the tty tree got a conflict in
+include/linux/serial_core.h between commit
+75b93489b449db4a34f0424c72f51821d985f52f ("serial: add a new port type,
+found on some sh-mobile SoCs") from the genesis tree and commit
+4286e9ca73813ee0ab5b0bd63b7eaefeb4994334 ("serial: max3107: Abstract out
+the platform specific bits") from the tty tree.
 
-Should be fixed now.
+Just overlapping additions.  I fixed it up (see below) and can carry the
+fix as necessary.
 -- 
-Roland Dreier <rolandd-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org> || For corporate legal information go to:
-http://www.cisco.com/web/about/doing_business/legal/cri/index.html
---
-To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc include/linux/serial_core.h
+index 5228320,9ddc866..0000000
+--- a/include/linux/serial_core.h
++++ b/include/linux/serial_core.h
+@@@ -186,9 -186,10 +186,13 @@@
+  #define PORT_ALTERA_JTAGUART	91
+  #define PORT_ALTERA_UART	92
+  
+ +/* SH-SCI */
+ +#define PORT_SCIFB	93
+ +
++ /* MAX3107 */
++ #define PORT_MAX3107	94
++ 
++ 
+  #ifdef __KERNEL__
+  
+  #include <linux/compiler.h>
