@@ -1,69 +1,73 @@
-From: Piotr Hosowicz <piotr@hosowicz.com>
-Subject: Re: Has somethimg changed in next's Debian package generation?
-Date: Fri, 09 Jul 2010 17:38:51 +0200
-Message-ID: <4C37428B.8000901@example.com>
-References: <4C31F5C0.2020106@example.com> <4C3732EA.7070105@example.com>
-Reply-To: piotr@hosowicz.com
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: Re: [-next July 9 - s390 ] Badness at fs/sysfs/symlink.c:82 during
+ qeth initalization
+Date: Fri, 09 Jul 2010 21:26:40 +0530
+Message-ID: <4C3746B8.9050303@in.ibm.com>
+References: <20100709150117.51612026.sfr@canb.auug.org.au> <4C36EF9C.7010804@in.ibm.com> <m1d3ux55od.fsf@fess.ebiederm.org> <4C36F974.4030608@in.ibm.com> <20100709142818.GB9041@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-2; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 63.mail-out.ovh.net ([91.121.185.56]:50437 "HELO
-	63.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1756156Ab0GIPi4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 9 Jul 2010 11:38:56 -0400
-In-Reply-To: <4C3732EA.7070105@example.com>
+Received: from e23smtp04.au.ibm.com ([202.81.31.146]:49537 "EHLO
+	e23smtp04.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757184Ab0GIP4p (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 9 Jul 2010 11:56:45 -0400
+In-Reply-To: <20100709142818.GB9041@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: piotr@hosowicz.com
-Cc: linux-next@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>, linux-s390@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Heiko Carstens <heiko.carstens@de.ibm.com>
 
-On 09.07.2010 16:32, Piotr Hosowicz wrote:
-> On 05.07.2010 17:09, Piotr Hosowicz wrote:
->> Hello,
+Greg KH wrote:
+> On Fri, Jul 09, 2010 at 03:57:00PM +0530, Sachin Sant wrote:
+>   
+>> Eric W. Biederman wrote:
+>>     
+>>>> With today's next(20100709) qeth interface fails to initialize
+>>>> with following Badness message:
+>>>>     sysfs: symlink across ns_types 0.0.6000/net:eth0 -> net/eth0
+>>>>     
+>>>>         
+>>> Is this with CONFIG_SYSFS_DEPRECATED set?
+>>>
+>>> I think I may have made my warning check a little extra strict.
+>>>   
+>>>       
+>> Yes.
 >>
->> I build the kernel with make-kpkg under debian like:
->>
->> make-kpkg kernel_image
->>
->> I have had done it this way also with linux next. Lacking fresh sources
->> after a short break from next I tried to build today's next as always
->> but the build failed when it was to finally build the package saying
->> that there is a inconsisteny in control file. I tried to tinker a bit
->> with ./debian/control but to no effect.
->>
->> Has something changed? It used to work just like that, there were no
->> problems at all.
+>> CONFIG_SYSFS_DEPRECATED=y
+>> CONFIG_SYSFS_DEPRECATED_V2=y
+>>     
 >
-> Anybody has any advice?
+> Why do you have those options enabled?  Does your userspace really
+> require them?  I want to remove those options soon, and it would be good
+> to find out what is still relying on them.
 >
-> Thanks in advance.
+> If you disable those options, does it then work?
+>   
+Not sure when and why i enabled these options.
 
-I tried again, precise cmd line was:
+Without them i don't see any problem (including the badness).
 
-LANG=C CONCURRENCY_LEVEL=10 make-kpkg kernel_image
+Thanks
+-Sachin
 
-I ended with:
+> thanks,
+>
+> greg k-h
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-s390" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>   
 
-dpkg-gencontrol: error: package linux-image-2.6.35-rc4-next-20100709 not 
-in control info
-make[2]: *** [debian/stamp/binary/linux-image-2.6.35-rc4-next-20100709] 
-Error 255
-make[2]: Leaving directory `/usr/src/linux-2.6.35-rc4-next-20100709'
-make[1]: *** 
-[debian/stamp/binary/pre-linux-image-2.6.35-rc4-next-20100709] Error 2
-make[1]: Leaving directory `/usr/src/linux-2.6.35-rc4-next-20100709'
-make: *** [kernel_image] Error 2
-
-Can someone help me on this?
-
-Regards,
-
-Piotr Hosowicz
 
 -- 
-Janusz Korwin-Mikke:
-"Idiota z dyplomem to taki sam idiota,
-jak przedtem - tylko z pretensjami."
-NP: Mark Knopfler - Cleaning My Gun
-NB: 2.6.35-rc4-git4
+
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
