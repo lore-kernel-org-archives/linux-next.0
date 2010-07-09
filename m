@@ -1,42 +1,57 @@
-From: Dave Airlie <airlied@redhat.com>
-Subject: Re: linux-next: Tree for July 8 (nouveau)
-Date: Fri, 09 Jul 2010 07:49:34 +1000
-Message-ID: <1278625774.23716.8.camel@clockmaker-el6>
-References: <20100708151022.d2517577.sfr@canb.auug.org.au>
-	 <20100708094842.2753a194.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the infiniband tree
+Date: Fri, 9 Jul 2010 11:04:27 +1000
+Message-ID: <20100709110427.c05987cc.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__9_Jul_2010_11_04_27_+1000_5WCz/VCZhfwrMdic"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:34564 "EHLO mx1.redhat.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:41500 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756004Ab0GHVuC (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 8 Jul 2010 17:50:02 -0400
-In-Reply-To: <20100708094842.2753a194.randy.dunlap@oracle.com>
+	id S1751436Ab0GIBEe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 8 Jul 2010 21:04:34 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Airlie <airlied@linux.ie>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org
+To: Roland Dreier <rdreier@cisco.com>, linux-rdma@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Hutchings <ben@decadent.org.uk>
 
-On Thu, 2010-07-08 at 09:48 -0700, Randy Dunlap wrote:
-> On Thu, 8 Jul 2010 15:10:22 +1000 Stephen Rothwell wrote:
-> 
-> > Hi all,
-> > 
-> > Changes since 20100707:
-> > 
-> > The i.MX tree mismerge has been fixed.
-> > 
-> > The omap tree gained a conflict (involving serveral files) against the
-> > arm tree.
-> > 
-> > ----------------------------------------------------------------------------
-> 
-> 
-> Should nouveau depend on PCI?
-> It has build errors when PCI is disabled:
+--Signature=_Fri__9_Jul_2010_11_04_27_+1000_5WCz/VCZhfwrMdic
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Should be fixed in todays drm-next tree, when we moved the PCI depend
-from the toplevel it didn't make it into all the sublevel drivers.
+Hi all,
 
-Dave.
+After merging the infiniband tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+make[2]: *** No rule to make target `firmware/qlogic/sd7220.fw', needed by =
+`__fw_modbuild'.  Stop.
+
+Probably caused by commit bd4d621eacaa6455da1c23260909da89ef4c1a01
+("IB/qib: Use request_firmware() to load SD7220 firmware").
+
+I have used the version of the infiniband tree from next-20100708 for
+today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__9_Jul_2010_11_04_27_+1000_5WCz/VCZhfwrMdic
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMNnWbAAoJEDMEi1NhKgbsTfwH/RiyT0e72A4h23qRP5BjJVBk
+NN2R9018JEYAbas872hAopNuX0Q+bIKulzOiZ/eUMAg/Zr7xqdYMLbB/h8uDaQ+r
+ydPs+Ee7N2FB/+GKHqTIEDwoGjYBsyQZd3qVn0tMlcND0tpYA/wjm9rM4pyQHGYO
+2t9X5RsQTcXfUz2Iou2NwCEGe1cQ1f5UUnX8M5sZrqJm9mUwz/vhaPNVtKTDZxi1
+epXoMx/APp9yNsnYmwIvdNk/Vv225zDxP31sWwBGNuHGRB0lwSxH/yUnBNtdqY+v
+Gb97PluANOHb1NSyJDH4CvvOM90lBv2lwnBAJzxfeH+/acr2LcAs7GzPON/Tlgw=
+=FTkA
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__9_Jul_2010_11_04_27_+1000_5WCz/VCZhfwrMdic--
