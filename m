@@ -1,55 +1,71 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the wireless tree with the net tree
-Date: Fri, 9 Jul 2010 11:51:19 +1000
-Message-ID: <20100709115119.6c88f8d2.sfr@canb.auug.org.au>
+From: Ben Hutchings <ben@decadent.org.uk>
+Subject: Re: linux-next: build failure after merge of the infiniband tree
+Date: Fri, 09 Jul 2010 04:05:45 +0100
+Message-ID: <1278644745.4854.119.camel@localhost>
+References: <20100709110427.c05987cc.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__9_Jul_2010_11_51_19_+1000_+ybeaPsdpAXC7QsI"
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature"; boundary="=-SDxkJnFeFJD33hkNdZuF"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34447 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752313Ab0GIBv0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 8 Jul 2010 21:51:26 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55278 "EHLO
+	shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750985Ab0GIDF6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 8 Jul 2010 23:05:58 -0400
+In-Reply-To: <20100709110427.c05987cc.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Luciano Coelho <luciano.coelho@nokia.com>, Eric Dumazet <eric.dumazet@gmail.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Roland Dreier <rdreier@cisco.com>, linux-rdma@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__9_Jul_2010_11_51_19_+1000_+ybeaPsdpAXC7QsI
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
+
+--=-SDxkJnFeFJD33hkNdZuF
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi John,
+On Fri, 2010-07-09 at 11:04 +1000, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> After merging the infiniband tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>=20
+> make[2]: *** No rule to make target `firmware/qlogic/sd7220.fw', needed b=
+y `__fw_modbuild'.  Stop.
+>=20
+> Probably caused by commit bd4d621eacaa6455da1c23260909da89ef4c1a01
+> ("IB/qib: Use request_firmware() to load SD7220 firmware").
+>=20
+> I have used the version of the infiniband tree from next-20100708 for
+> today.
 
-Today's linux-next merge of the wireless tree got a conflict in
-drivers/net/wireless/wl12xx/wl1271_cmd.h between commit
-ba2d3587912f82d1ab4367975b1df460db60fb1e ("drivers/net: use __packed
-annotation") from the net tree and commit
-34dd2aaac4a4b908c093980a9894fd878aeb6deb ("wl1271: moved scan operations
-to a separate file") from the wireless tree.
+The patch that I sent included the addition of
+firmware/qlogic/sd7220.fw.ihex but it seems to have been lost somewhere
+along the way.
 
-I didn't bother changing __attribute((packed)) to __packed where this
-code has been moved to.  Maybe someone could write a patch to do that ...
+Ben.
+
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Ben Hutchings
+Once a job is fouled up, anything done to improve it makes it worse.
 
---Signature=_Fri__9_Jul_2010_11_51_19_+1000_+ybeaPsdpAXC7QsI
-Content-Type: application/pgp-signature
+--=-SDxkJnFeFJD33hkNdZuF
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMNoCXAAoJEDMEi1NhKgbswMwH/1rRe2pRvN2JB6Wge38UYGww
-CXJUsjTUkPGK7ve2HDtBlbPcZv8Ow3iO/aTYWawYqjJRYZdVZr7ocmYgFGu5AiZE
-Wc2l429G4tGnFp6zDJbxIGPBVtrEujAgnTT56JxzzeRwkKehQRtrhv4GFB9L059t
-d5rZv8vcoVCJYoVzqOLNyS19YfWsVKejHZj1dHsMxBsbRDEqaRa+KJFXTmGnV7vX
-yPEkJ210wFubBLh7Zsq2E2D0D2mZKuJ+h8vN9TfLfSD9TR6XQ2deGMl8T+IHWTqN
-MBefMG14XDZhtpIjQuFmuU7AOUG9NlhMq3slile+TY/k3q/pydTGFbQKcOePaXs=
-=e7Pn
+iQIVAwUATDaSA+e/yOyVhhEJAQIS2w/9ErspPMPPD1t1i9hVJiYXuQKE4ljL5HxK
+Y/yk3AiZsRrlI7+YJFTWCeivrRsGbW0MZxPKEVwNBB4nIFhwLa1ZJMOhZ+FFbdg9
+YIvMjTWC1n8jCHUS/HQN6dUBEJDxMG3i6RcmSHkqodxEyby55fgOpi9z00sQNrbl
+1K1lBWV8s40onYBPBnf9JE7vHav3b5bsxn4MJxDMtFOmOdpE1OegM6OmN9wT+xIb
+1TiSncJGK10M8NveXO9aK8pTX9twdnxaZzceRa8BjixxAQlwxw47jznJDQjNie7g
+gyHmBy+odZOX+DVvLkQceuCOLKMJgfP6F5lD05z5XrhNxYJ5DzK5ykHy6+zqrjuV
+LO/LJFnccRbxNyTduozZIvRhg1mUQ4IDm/V8d+4RPSF12WVyLSb6/MH0QOuEkXpz
+vBNKTeBK6p72LfuzLsCByAoms58eVqbO/vJw/J3yD4iJBgkpNDlvfSG2k2WajN6w
+4q2DflC1NdpNivsLRwskSXVKNB/ejq1WvnN7RyckYcXqrWp5OT7ZJRE7hsk7Ah8x
+xp8eXs/t0XCe1nnhK+95YI0EVbeFuuBHqfsoRVWNKanEXI/hyVWgDJUyIcn4ePSp
+isPVJgkAgM1UgNNttIrk3O9PUqSQLdLV00W6UUzZu1ZQGKGqmTX3K6zGFMEtggTE
+gfdJm1LsvAY=
+=KZ/3
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__9_Jul_2010_11_51_19_+1000_+ybeaPsdpAXC7QsI--
+--=-SDxkJnFeFJD33hkNdZuF--
