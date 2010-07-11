@@ -1,40 +1,43 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: linux-next: manual merge of the trivial tree with the v4l-dvb
- tree
-Date: Sun, 11 Jul 2010 22:41:48 +0200 (CEST)
-Message-ID: <alpine.LNX.2.00.1007112241280.4741@pobox.suse.cz>
-References: <20100706152529.371c7800.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for July 9 (serial/max3107)
+Date: Sun, 11 Jul 2010 15:27:23 -0700
+Message-ID: <20100711152723.a8a3ad74.randy.dunlap@oracle.com>
+References: <20100709150117.51612026.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:41221 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754194Ab0GKUlu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 11 Jul 2010 16:41:50 -0400
-In-Reply-To: <20100706152529.371c7800.sfr@canb.auug.org.au>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:28476 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754753Ab0GKW3H (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 11 Jul 2010 18:29:07 -0400
+In-Reply-To: <20100709150117.51612026.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Amerigo Wang <amwang@redhat.com>, Mauro Carvalho Chehab <mchehab@redhat.com>, =?ISO-8859-15?Q?=22Uwe_Kleine-K=F6nig=22?= <u.kleine-koenig@pengutronix.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, 6 Jul 2010, Stephen Rothwell wrote:
+On Fri, 9 Jul 2010 15:01:17 +1000 Stephen Rothwell wrote:
 
-> Hi Jiri,
+> Hi all,
 > 
-> Today's linux-next merge of the trivial tree got a conflict in
-> drivers/media/video/ov511.c between commit
-> b2bde15c455d09057dc7bd9f5b9ed67b9ac99b8a ("V4L/DVB: Remove obsolete ov511
-> driver") from the v4l-dvb tree and commit
-> 421f91d21ad6f799dc7b489bb33cc560ccc56f98 ("fix typos concerning "initiali
-> [zs]e"") from the trivial tree.
+> Changes since 20100708:
 > 
-> The former just removes the file, so I removed it.
+> The infiniband tree gained a build failure so I used the version from
+> next-20100708.
+> 
+> The wireless tree gained a conflict against the net tree.
+> 
+> The block tree gained a build failure for which I applied a patch.
+> 
+> The tty tree gained a conflict against the genesis tree.
 
-Hi Stephen,
 
-thanks for reporting it, I have reverted the drivers/media/video/ov511.c 
-hunk.
+when CONFIG_GPIOLIB is not enabled:
 
--- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+drivers/serial/max3107.h:372: error: field 'chip' has incomplete type
+
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
