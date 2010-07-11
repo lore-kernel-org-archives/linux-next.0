@@ -1,28 +1,52 @@
 From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: Tree for July 6 (NET_DSA + PHYLIB kconfig)
-Date: Sat, 10 Jul 2010 19:09:54 -0700 (PDT)
-Message-ID: <20100710.190954.245403400.davem@davemloft.net>
-References: <20100706190519.93d8b785.sfr@canb.auug.org.au>
-	<20100706103417.8923b697.randy.dunlap@oracle.com>
+Subject: Re: linux-next: build warning after merge of the net tree
+Date: Sat, 10 Jul 2010 19:52:10 -0700 (PDT)
+Message-ID: <20100710.195210.200371025.davem@davemloft.net>
+References: <20100707.174522.148565561.davem@davemloft.net>
+	<20100707.181847.62350965.davem@davemloft.net>
+	<1278562423.1712.43.camel@Joe-Laptop>
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100706103417.8923b697.randy.dunlap@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: randy.dunlap@oracle.com
-Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:33957
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753909Ab0GKCv4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Sat, 10 Jul 2010 22:51:56 -0400
+In-Reply-To: <1278562423.1712.43.camel@Joe-Laptop>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: joe@perches.com
+Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@suse.de
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Date: Tue, 6 Jul 2010 10:34:17 -0700
+From: Joe Perches <joe@perches.com>
+Date: Wed, 07 Jul 2010 21:13:42 -0700
 
-> NET_DSA selects PHYLIB.  PHYLIB depends on NET_ETHERNET, which is not enabled
-> in this randconfig.  net/dsa code does need PHYLIB code, so PHYLIB symbol should
-> either drop "depends on NET_ETHERNET" or it should be changed to
-> 	depends on NET_ETHERNET || NET_DSA
+> On Wed, 2010-07-07 at 18:18 -0700, David Miller wrote:
+>> It looks like there are just a hand-ful of cases, so maybe we can tweak
+>> them by hand.  For example, in the sym53c8xx_2 driver bits we can replace
+>> the NULL labels passed to sym_print_msg() with a real string and therefore
+>> remove the "" case.
+>> 
+>> Joe, any better ideas?
 > 
-> Preference?
+> You're right there are just a few cases where dev_info
+> is uses as a preface for a hex_dump style display.
+> 
+> Maybe it'd be OK to simply add a trailing space to the
+> preface and remove any leading spaces from the subsequent
+> initial printks.
+> 
+> dev_info(dev, " ");
 
-The situations seems to suggest NET_DSA depends upon NET_ETHERNET, so
-adding NET_ETHERNET to NET_DSA's dependencies probably works better.
+That might work.
+
+The sym53c8xx_2 doesn't even need this, like I said, you could
+just remove the NULL 'label' argument cases and then have that
+bit cured.
+
+Could you take a stab at this and the other scsi bits that
+trigger this warning?
+
+Thanks Joe!
