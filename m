@@ -1,50 +1,40 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH net-next] drivers/scsi: Remove warnings after vsprintf
- %pV introduction
-Date: Sat, 10 Jul 2010 23:10:26 -0700 (PDT)
-Message-ID: <20100710.231026.233698429.davem@davemloft.net>
-References: <1278562423.1712.43.camel@Joe-Laptop>
-	<20100710.195210.200371025.davem@davemloft.net>
-	<1278824921.1501.37.camel@Joe-Laptop.home>
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: Re: linux-next: manual merge of the trivial tree with the v4l-dvb
+ tree
+Date: Sun, 11 Jul 2010 22:41:48 +0200 (CEST)
+Message-ID: <alpine.LNX.2.00.1007112241280.4741@pobox.suse.cz>
+References: <20100706152529.371c7800.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:51898
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750873Ab0GKGKM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Sun, 11 Jul 2010 02:10:12 -0400
-In-Reply-To: <1278824921.1501.37.camel@Joe-Laptop.home>
+Received: from cantor2.suse.de ([195.135.220.15]:41221 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754194Ab0GKUlu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 11 Jul 2010 16:41:50 -0400
+In-Reply-To: <20100706152529.371c7800.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: joe@perches.com
-Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@suse.de, James.Bottomley@suse.de, matthew@wil.cx, linux-scsi@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Amerigo Wang <amwang@redhat.com>, Mauro Carvalho Chehab <mchehab@redhat.com>, =?ISO-8859-15?Q?=22Uwe_Kleine-K=F6nig=22?= <u.kleine-koenig@pengutronix.de>
 
-From: Joe Perches <joe@perches.com>
-Date: Sat, 10 Jul 2010 22:08:41 -0700
+On Tue, 6 Jul 2010, Stephen Rothwell wrote:
 
-> On Sat, 2010-07-10 at 19:52 -0700, David Miller wrote:
->> Could you take a stab at this and the other scsi bits that
->> trigger this warning?
+> Hi Jiri,
 > 
-> Remove warnings introduced by conversions of dev_<level>
-> macros to functions.
+> Today's linux-next merge of the trivial tree got a conflict in
+> drivers/media/video/ov511.c between commit
+> b2bde15c455d09057dc7bd9f5b9ed67b9ac99b8a ("V4L/DVB: Remove obsolete ov511
+> driver") from the v4l-dvb tree and commit
+> 421f91d21ad6f799dc7b489bb33cc560ccc56f98 ("fix typos concerning "initiali
+> [zs]e"") from the trivial tree.
 > 
-> Compile tested only.
-> 
-> Signed-off-by: Joe Perches <joe@perches.com>
+> The former just removes the file, so I removed it.
 
-SCSI folks, the background is that we have moved the dev_*() printk
-macros to external functions, so that the prefixing printf strings
-don't get emitting at every call site.
+Hi Stephen,
 
-As a consequence, dev_*() calls that try to use an empty string as the
-printf format emit a warning from gcc since an empty constant string
-is not a valid printf format.
+thanks for reporting it, I have reverted the drivers/media/video/ov511.c 
+hunk.
 
-That's what this change is all about.
-
-Anyways:
-
-Acked-by: David S. Miller <davem@davemloft.net>
+-- 
+Jiri Kosina
+SUSE Labs, Novell Inc.
