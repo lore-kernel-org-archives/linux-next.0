@@ -1,36 +1,48 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: Upstream tree for OMFS?
-Date: Mon, 12 Jul 2010 10:44:35 -0700
-Message-ID: <20100712104435.2ca47c0a.akpm@linux-foundation.org>
-References: <AANLkTilI-GLcmJjC5n2aT-0ywdOK0M5VGSUdEGYXa3VJ@mail.gmail.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for July 12 (debugfs/sysfs/rcu)
+Date: Mon, 12 Jul 2010 12:47:50 -0700
+Message-ID: <20100712124750.8ab5e870.randy.dunlap@oracle.com>
+References: <20100712155109.d997bf1c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:34232 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752589Ab0GLRqE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 12 Jul 2010 13:46:04 -0400
-In-Reply-To: <AANLkTilI-GLcmJjC5n2aT-0ywdOK0M5VGSUdEGYXa3VJ@mail.gmail.com>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:22933 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752119Ab0GLTtz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Jul 2010 15:49:55 -0400
+In-Reply-To: <20100712155109.d997bf1c.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bob Copeland <me@bobcopeland.com>
-Cc: linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Mon, 12 Jul 2010 11:49:01 -0400 Bob Copeland <me@bobcopeland.com> wrote:
+On Mon, 12 Jul 2010 15:51:09 +1000 Stephen Rothwell wrote:
 
-> Hello fs devs,
+> Hi all,
 > 
-> I have a few patches to send on to -next for OMFS
-> and I finally got around to setting up a git tree for
-> it.  Previously I sent things through akpm or the
-> trivial tree.
-> 
-> I doubt anyone but me cares too much about this FS
-> but I thought I'd ask first if anyone wants to be the
-> upstream instead of me sending pull requests directly
-> to Linus.  Of course I'll post patches here for
-> review in either case.
+> Changes since 20100709:
 
-Please ask Stephen to include the tree in the linux-next lineup.
+Greg,
+What is there about debugfs that requires sysfs?
+
+(lib/Kconfig.debug:)
+
+config DEBUG_FS
+	bool "Debug Filesystem"
+	depends on SYSFS
+
+I ask because kconfig now (in linux-next) warns about kconfig dependency
+problems, like this one:
+
+warning: (TREE_RCU_TRACE || AMD_IOMMU_STATS && AMD_IOMMU || MTD_UBI_DEBUG && MTD && SYSFS && MTD_UBI || UBIFS_FS_DEBUG && MISC_FILESYSTEMS && UBIFS_FS || DEBUG_KMEMLEAK && DEBUG_KERNEL && EXPERIMENTAL && !MEMORY_HOTPLUG && (X86 || ARM || PPC || S390 || SPARC64 || SUPERH || MICROBLAZE) && SYSFS || TRACING || X86_PTDUMP && DEBUG_KERNEL || BLK_DEV_IO_TRACE && TRACING_SUPPORT && FTRACE && SYSFS && BLOCK) selects DEBUG_FS which has unmet direct dependencies (SYSFS)
+
+because TREE_RCU_TRACE selects DEBUG_FS, even when SYSFS is not enabled.
+I first made a patch to have TREE_RCU_TRACE depend on SYSFS, but then I just
+removed the DEBUG_FS "depends on SYSFS" and the kernel builds fine,
+hence the first question.
+
+thanks,
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
