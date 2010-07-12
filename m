@@ -1,64 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the vfs tree
-Date: Mon, 12 Jul 2010 12:24:58 +1000
-Message-ID: <20100712122458.3fe5c01a.sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the trivial tree with the v4l-dvb
+ tree
+Date: Mon, 12 Jul 2010 14:15:46 +1000
+Message-ID: <20100712141546.ae508a32.sfr@canb.auug.org.au>
+References: <20100706152529.371c7800.sfr@canb.auug.org.au>
+	<alpine.LNX.2.00.1007112241280.4741@pobox.suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__12_Jul_2010_14_15_46_+1000_9AZsh/02rrt2/IDM"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56249 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:59708 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755203Ab0GLCZD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 11 Jul 2010 22:25:03 -0400
+	id S1750859Ab0GLEPx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 12 Jul 2010 00:15:53 -0400
+In-Reply-To: <alpine.LNX.2.00.1007112241280.4741@pobox.suse.cz>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Amerigo Wang <amwang@redhat.com>, Mauro Carvalho Chehab <mchehab@redhat.com>, =?UTF-8?B?IlV3ZSBLbGVpbmUtS8O2bmlnIg==?= <u.kleine-koenig@pengutronix.de>
 
-Hi Al,
+--Signature=_Mon__12_Jul_2010_14_15_46_+1000_9AZsh/02rrt2/IDM
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-After merging the vfs tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Hi Jiri,
 
-fs/nilfs2/inode.c: In function 'nilfs_clear_inode':
-fs/nilfs2/inode.c:630: error: implicit declaration of function 'nilfs_btnode_cache_clear'
+On Sun, 11 Jul 2010 22:41:48 +0200 (CEST) Jiri Kosina <jkosina@suse.cz> wro=
+te:
+>
+> thanks for reporting it, I have reverted the drivers/media/video/ov511.c=
+=20
+> hunk.
 
-Caused by commit 743a0a2f1a89e53d656ec6a2f715111d92642bcb ("convert
-nilfs2 to ->evict_inode()") interacting with commit
-ceb4f9c819c321e7eabf53b51f956ff959561573 ("nilfs2: get rid of
-nilfs_bmap_union") from the nilfs2 tree which removed the implicit
-inclusion of btnode.h (via bmap_union.h via nilfs.h).
+Thanks.
 
-I have added the following patch for today (which should be applied to
-the vfs tree or merged into the above vfs tree commit):
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 12 Jul 2010 12:17:47 +1000
-Subject: [PATCH] nilfs2: inode.c needs to include btnode.h directly now
-
-Due to the new usage of nilfs_btnode_cache_clear().
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/nilfs2/inode.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/fs/nilfs2/inode.c b/fs/nilfs2/inode.c
-index 8fea40e..eccb2f2 100644
---- a/fs/nilfs2/inode.c
-+++ b/fs/nilfs2/inode.c
-@@ -27,6 +27,7 @@
- #include <linux/writeback.h>
- #include <linux/uio.h>
- #include "nilfs.h"
-+#include "btnode.h"
- #include "segment.h"
- #include "page.h"
- #include "mdt.h"
--- 
-1.7.1
-
--- 
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__12_Jul_2010_14_15_46_+1000_9AZsh/02rrt2/IDM
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMOpbyAAoJEDMEi1NhKgbsaXQIAJoPluxZX1SVz12dBm9AdmUm
+i5m0pLpFOQk/fMoGv1RJWRHGm/zJMXaP/K1547l7jrol/nbPk2NftFZ8CqJ9hobo
+abxbiF45ynXAZXXjesc4fpr3uHLm6YTCPo9w+tPK3kMeWRT8rK2W+6YrhR7aRCiU
+5TfSyvbvKKpEdBqxLoA2T8vwPH3x8U2SGg6z2AmKjw6wG16IhRE8h4vq76WeGby+
+6hcwwVAaqY7Eqgc4KsmflLgJBrtFKFs499lnGcbrjbVkrxNpCQUwHqPUPZmIsaLj
+d9vhlqFP2ngq9GTfPnNCVAn1ziE5F+N6t0P2UrMCTQNHUB4uOuXzPfW036P+a24=
+=g1r8
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__12_Jul_2010_14_15_46_+1000_9AZsh/02rrt2/IDM--
