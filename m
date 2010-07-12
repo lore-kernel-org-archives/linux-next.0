@@ -1,48 +1,45 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for July 12 (debugfs/sysfs/rcu)
-Date: Mon, 12 Jul 2010 12:47:50 -0700
-Message-ID: <20100712124750.8ab5e870.randy.dunlap@oracle.com>
-References: <20100712155109.d997bf1c.sfr@canb.auug.org.au>
+Subject: Re: [PATCH] uvc: Fix multiple symbols definitions with UVC gadget
+ and host drivers
+Date: Mon, 12 Jul 2010 14:12:45 -0700
+Message-ID: <4C3B854D.9050201@oracle.com>
+References: <1278789185-24989-1-git-send-email-laurent.pinchart@ideasonboard.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:22933 "EHLO
+Received: from rcsinet10.oracle.com ([148.87.113.121]:32080 "EHLO
 	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752119Ab0GLTtz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Jul 2010 15:49:55 -0400
-In-Reply-To: <20100712155109.d997bf1c.sfr@canb.auug.org.au>
+	with ESMTP id S1752554Ab0GLVNL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Jul 2010 17:13:11 -0400
+In-Reply-To: <1278789185-24989-1-git-send-email-laurent.pinchart@ideasonboard.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: mchehab@infradead.org, mingo@elte.hu, sfr@canb.auug.org.au, linux-next@vger.kernel.org
 
-On Mon, 12 Jul 2010 15:51:09 +1000 Stephen Rothwell wrote:
-
-> Hi all,
+Laurent Pinchart wrote:
+> The UVC gadget driver borrowed code from the UVC host driver without
+> changing the symbol names. This results in a namespace clash with
+> multiple definitions of several symbols when compiling both drivers in
+> the kernel.
 > 
-> Changes since 20100709:
+> Make all generic UVC functions and variables static in the UVC gadget
+> driver, as the symbols are not referenced outside of the gadget driver.
+> Rename the uvc_trace_param global variable to uvc_gadget_trace_param.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Greg,
-What is there about debugfs that requires sysfs?
+Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
 
-(lib/Kconfig.debug:)
+Thanks.
 
-config DEBUG_FS
-	bool "Debug Filesystem"
-	depends on SYSFS
-
-I ask because kconfig now (in linux-next) warns about kconfig dependency
-problems, like this one:
-
-warning: (TREE_RCU_TRACE || AMD_IOMMU_STATS && AMD_IOMMU || MTD_UBI_DEBUG && MTD && SYSFS && MTD_UBI || UBIFS_FS_DEBUG && MISC_FILESYSTEMS && UBIFS_FS || DEBUG_KMEMLEAK && DEBUG_KERNEL && EXPERIMENTAL && !MEMORY_HOTPLUG && (X86 || ARM || PPC || S390 || SPARC64 || SUPERH || MICROBLAZE) && SYSFS || TRACING || X86_PTDUMP && DEBUG_KERNEL || BLK_DEV_IO_TRACE && TRACING_SUPPORT && FTRACE && SYSFS && BLOCK) selects DEBUG_FS which has unmet direct dependencies (SYSFS)
-
-because TREE_RCU_TRACE selects DEBUG_FS, even when SYSFS is not enabled.
-I first made a patch to have TREE_RCU_TRACE depend on SYSFS, but then I just
-removed the DEBUG_FS "depends on SYSFS" and the kernel builds fine,
-hence the first question.
-
-thanks,
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+> ---
+>  drivers/usb/gadget/f_uvc.c     |    4 +-
+>  drivers/usb/gadget/uvc.h       |   10 +--
+>  drivers/usb/gadget/uvc_queue.c |  153 +++++++++++++++++++++-------------------
+>  drivers/usb/gadget/uvc_queue.h |   20 -----
+>  drivers/usb/gadget/uvc_v4l2.c  |    2 +-
+>  drivers/usb/gadget/uvc_video.c |    6 +-
+>  drivers/usb/gadget/webcam.c    |    4 +-
+>  7 files changed, 89 insertions(+), 110 deletions(-)
