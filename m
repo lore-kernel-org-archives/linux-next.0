@@ -1,55 +1,34 @@
-From: Greg KH <gregkh@suse.de>
-Subject: Re: linux-next: Tree for July 12 (debugfs/sysfs/rcu)
-Date: Mon, 12 Jul 2010 14:21:26 -0700
-Message-ID: <20100712212126.GA2684@suse.de>
-References: <20100712155109.d997bf1c.sfr@canb.auug.org.au> <20100712124750.8ab5e870.randy.dunlap@oracle.com>
+From: Bob Copeland <me@bobcopeland.com>
+Subject: Re: Upstream tree for OMFS?
+Date: Mon, 12 Jul 2010 18:13:07 -0400
+Message-ID: <20100712221307.GB8787@hash.localnet>
+References: <AANLkTilI-GLcmJjC5n2aT-0ywdOK0M5VGSUdEGYXa3VJ@mail.gmail.com> <20100712104435.2ca47c0a.akpm@linux-foundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:52744 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753814Ab0GLVWn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 12 Jul 2010 17:22:43 -0400
+Received: from mail.deathmatch.net ([72.66.92.28]:4397 "EHLO
+	mail.deathmatch.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754798Ab0GLWPD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Jul 2010 18:15:03 -0400
 Content-Disposition: inline
-In-Reply-To: <20100712124750.8ab5e870.randy.dunlap@oracle.com>
+In-Reply-To: <20100712104435.2ca47c0a.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
 
-On Mon, Jul 12, 2010 at 12:47:50PM -0700, Randy Dunlap wrote:
-> On Mon, 12 Jul 2010 15:51:09 +1000 Stephen Rothwell wrote:
+On Mon, Jul 12, 2010 at 10:44:35AM -0700, Andrew Morton wrote:
+> > I doubt anyone but me cares too much about this FS
+> > but I thought I'd ask first if anyone wants to be the
+> > upstream instead of me sending pull requests directly
+> > to Linus.  Of course I'll post patches here for
+> > review in either case.
 > 
-> > Hi all,
-> > 
-> > Changes since 20100709:
-> 
-> Greg,
-> What is there about debugfs that requires sysfs?
+> Please ask Stephen to include the tree in the linux-next lineup.
 
-Look at commit 3348e05a4f25489908d9f7ed4e80ac291ead18f4 almost 5 years
-ago:
-    [PATCH] DEBUG_FS must depend on SYSFS
-    
-    CONFIG_DEBUG_FS=y and CONFIG_SYSFS=n results in the following compile
-    error:
-    
-    <--  snip  -->
-    
-    ...
-      LD      vmlinux
-    fs/built-in.o: In function `debugfs_init':
-    inode.c:(.init.text+0x31be): undefined reference to `kernel_subsys'
-    make: *** [vmlinux] Error 1
-    
-    <--  snip  -->
+Ok - Stephen would you mind including this tree for omfs?
 
-But, there is no "kernel_subsys" anymore, it is called kernel_kobj, and
-is in kernel/ksysfs.c and always is built now, even if CONFIG_SYSFS is
-disabled.
+git://git.kernel.org/pub/scm/linux/kernel/git/bcopeland/omfs.git#for-next
 
-So it should be safe to remove that dependancy if you want to.
-
-thanks,
-
-greg k-h
+-- 
+Bob Copeland %% www.bobcopeland.com
