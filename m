@@ -1,42 +1,64 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for July 9 (staging/ti_st)
-Date: Sun, 11 Jul 2010 15:33:16 -0700
-Message-ID: <20100711153316.8f54c297.randy.dunlap@oracle.com>
-References: <20100709150117.51612026.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the vfs tree
+Date: Mon, 12 Jul 2010 12:24:58 +1000
+Message-ID: <20100712122458.3fe5c01a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:53827 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755414Ab0GKWfI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 11 Jul 2010 18:35:08 -0400
-In-Reply-To: <20100709150117.51612026.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:56249 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755203Ab0GLCZD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 11 Jul 2010 22:25:03 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
 
-On Fri, 9 Jul 2010 15:01:17 +1000 Stephen Rothwell wrote:
+Hi Al,
 
-> Hi all,
-> 
-> Changes since 20100708:
-> 
-> The infiniband tree gained a build failure so I used the version from
-> next-20100708.
-> 
-> The wireless tree gained a conflict against the net tree.
-> 
-> The block tree gained a build failure for which I applied a patch.
-> 
-> The tty tree gained a conflict against the genesis tree.
+After merging the vfs tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
+fs/nilfs2/inode.c: In function 'nilfs_clear_inode':
+fs/nilfs2/inode.c:630: error: implicit declaration of function 'nilfs_btnode_cache_clear'
 
-Can't find this function in the linux-next source tree:
+Caused by commit 743a0a2f1a89e53d656ec6a2f715111d92642bcb ("convert
+nilfs2 to ->evict_inode()") interacting with commit
+ceb4f9c819c321e7eabf53b51f956ff959561573 ("nilfs2: get rid of
+nilfs_bmap_union") from the nilfs2 tree which removed the implicit
+inclusion of btnode.h (via bmap_union.h via nilfs.h).
 
-ERROR: "st_get_plat_device" [drivers/staging/ti-st/st_drv.ko] undefined!
+I have added the following patch for today (which should be applied to
+the vfs tree or merged into the above vfs tree commit):
 
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 12 Jul 2010 12:17:47 +1000
+Subject: [PATCH] nilfs2: inode.c needs to include btnode.h directly now
+
+Due to the new usage of nilfs_btnode_cache_clear().
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+ fs/nilfs2/inode.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/fs/nilfs2/inode.c b/fs/nilfs2/inode.c
+index 8fea40e..eccb2f2 100644
+--- a/fs/nilfs2/inode.c
++++ b/fs/nilfs2/inode.c
+@@ -27,6 +27,7 @@
+ #include <linux/writeback.h>
+ #include <linux/uio.h>
+ #include "nilfs.h"
++#include "btnode.h"
+ #include "segment.h"
+ #include "page.h"
+ #include "mdt.h"
+-- 
+1.7.1
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
