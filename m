@@ -1,45 +1,55 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH] uvc: Fix multiple symbols definitions with UVC gadget
- and host drivers
-Date: Mon, 12 Jul 2010 14:12:45 -0700
-Message-ID: <4C3B854D.9050201@oracle.com>
-References: <1278789185-24989-1-git-send-email-laurent.pinchart@ideasonboard.com>
+From: Greg KH <gregkh@suse.de>
+Subject: Re: linux-next: Tree for July 12 (debugfs/sysfs/rcu)
+Date: Mon, 12 Jul 2010 14:21:26 -0700
+Message-ID: <20100712212126.GA2684@suse.de>
+References: <20100712155109.d997bf1c.sfr@canb.auug.org.au> <20100712124750.8ab5e870.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:32080 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752554Ab0GLVNL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Jul 2010 17:13:11 -0400
-In-Reply-To: <1278789185-24989-1-git-send-email-laurent.pinchart@ideasonboard.com>
+Received: from cantor2.suse.de ([195.135.220.15]:52744 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753814Ab0GLVWn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 12 Jul 2010 17:22:43 -0400
+Content-Disposition: inline
+In-Reply-To: <20100712124750.8ab5e870.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: mchehab@infradead.org, mingo@elte.hu, sfr@canb.auug.org.au, linux-next@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Laurent Pinchart wrote:
-> The UVC gadget driver borrowed code from the UVC host driver without
-> changing the symbol names. This results in a namespace clash with
-> multiple definitions of several symbols when compiling both drivers in
-> the kernel.
+On Mon, Jul 12, 2010 at 12:47:50PM -0700, Randy Dunlap wrote:
+> On Mon, 12 Jul 2010 15:51:09 +1000 Stephen Rothwell wrote:
 > 
-> Make all generic UVC functions and variables static in the UVC gadget
-> driver, as the symbols are not referenced outside of the gadget driver.
-> Rename the uvc_trace_param global variable to uvc_gadget_trace_param.
+> > Hi all,
+> > 
+> > Changes since 20100709:
 > 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Greg,
+> What is there about debugfs that requires sysfs?
 
-Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
+Look at commit 3348e05a4f25489908d9f7ed4e80ac291ead18f4 almost 5 years
+ago:
+    [PATCH] DEBUG_FS must depend on SYSFS
+    
+    CONFIG_DEBUG_FS=y and CONFIG_SYSFS=n results in the following compile
+    error:
+    
+    <--  snip  -->
+    
+    ...
+      LD      vmlinux
+    fs/built-in.o: In function `debugfs_init':
+    inode.c:(.init.text+0x31be): undefined reference to `kernel_subsys'
+    make: *** [vmlinux] Error 1
+    
+    <--  snip  -->
 
-Thanks.
+But, there is no "kernel_subsys" anymore, it is called kernel_kobj, and
+is in kernel/ksysfs.c and always is built now, even if CONFIG_SYSFS is
+disabled.
 
-> ---
->  drivers/usb/gadget/f_uvc.c     |    4 +-
->  drivers/usb/gadget/uvc.h       |   10 +--
->  drivers/usb/gadget/uvc_queue.c |  153 +++++++++++++++++++++-------------------
->  drivers/usb/gadget/uvc_queue.h |   20 -----
->  drivers/usb/gadget/uvc_v4l2.c  |    2 +-
->  drivers/usb/gadget/uvc_video.c |    6 +-
->  drivers/usb/gadget/webcam.c    |    4 +-
->  7 files changed, 89 insertions(+), 110 deletions(-)
+So it should be safe to remove that dependancy if you want to.
+
+thanks,
+
+greg k-h
