@@ -1,54 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the s5p tree with Linus' tree
-Date: Tue, 13 Jul 2010 10:54:55 +1000
-Message-ID: <20100713105455.e49afeb9.sfr@canb.auug.org.au>
+Date: Tue, 13 Jul 2010 11:14:51 +1000
+Message-ID: <20100713111451.8b6162e4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__13_Jul_2010_10_54_55_+1000_lf8yi6Qod6KDRr+j"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36931 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753860Ab0GMAzB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 12 Jul 2010 20:55:01 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-
---Signature=_Tue__13_Jul_2010_10_54_55_+1000_lf8yi6Qod6KDRr+j
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>
+List-Id: linux-next.vger.kernel.org
 
 Hi Kukjin,
 
 Today's linux-next merge of the s5p tree got a conflict in
-arch/arm/configs/s5pc110_defconfig between commit
+arch/arm/configs/s5pv210_defconfig between commit
 07a8c03f3e06129e847acd068b8b89c13357ee64 ("ARM: reduce defconfigs") from
 Linus' tree and commit 2976beb1dd86974ae98a992ca23a626f8be7e7dd ("ARM:
 s5pv210_defconfig: Update for removing s5pc110_defconfig") from the s5p
 tree.
 
-The latter just removes the file, so I did that.
---=20
+I fixed it up (see below - it may no longer be minimal) and can carry the
+fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__13_Jul_2010_10_54_55_+1000_lf8yi6Qod6KDRr+j
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMO7lfAAoJEDMEi1NhKgbsc4EIAJEZEv6h6ZIWMcFtUbj50giz
-A7J/HjTrfSqqzjCV2a5uQJM9nVgGF5KIqrGDT+zPlZyMAlafAfW8C6Ee5JHohOCs
-vwE/GXj5OU1n4G0r90/aaGZNIQSbN125klLrIMGASN86bLJshjnWPNp9hYpgMByq
-qHXPL3hsFXvAKI23p8BXs35Q1/ZDj6Z0TcUc3fuFr+AC47gDyKQ4G9/4PcPJtoeA
-cTmuoP/qdYkoEqzJ/x3kENLaBMj/HoFp9io/3wd9i5f3DLx/N4jQhYUlqedh4SYQ
-D97b3cotMTaUM1bu3v4Zhw1PDMV4Pv3je80nNXudgbYy1il5GcQ2rSG52AQAc3Q=
-=cbaq
------END PGP SIGNATURE-----
-
---Signature=_Tue__13_Jul_2010_10_54_55_+1000_lf8yi6Qod6KDRr+j--
+diff --git a/arch/arm/configs/s5pv210_defconfig b/arch/arm/configs/s5pv210_defconfig
+index 1753836..bbb1736 100644
+--- a/arch/arm/configs/s5pv210_defconfig
++++ b/arch/arm/configs/s5pv210_defconfig
+@@ -7,6 +7,10 @@ CONFIG_MODULE_UNLOAD=y
+ # CONFIG_BLK_DEV_BSG is not set
+ CONFIG_ARCH_S5PV210=y
+ CONFIG_S3C_LOWLEVEL_UART_PORT=1
++CONFIG_S3C_DEV_FB=y
++CONFIG_S5PV210_SETUP_FB_24BPP=y
++CONFIG_MACH_AQUILA=y
++CONFIG_MACH_SMDKC110=y
+ CONFIG_MACH_SMDKV210=y
+ CONFIG_VMSPLIT_2G=y
+ CONFIG_PREEMPT=y
+@@ -31,6 +35,9 @@ CONFIG_SERIAL_SAMSUNG=y
+ CONFIG_SERIAL_SAMSUNG_CONSOLE=y
+ CONFIG_HW_RANDOM=y
+ # CONFIG_HWMON is not set
++# CONFIG_RAMOOPS is not set
++CONFIG_MFD_SUPPORT=y
++# CONFIG_ABX500_CORE is not set
+ # CONFIG_VGA_CONSOLE is not set
+ # CONFIG_HID_SUPPORT is not set
+ # CONFIG_USB_SUPPORT is not set
