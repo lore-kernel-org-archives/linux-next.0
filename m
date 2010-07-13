@@ -1,87 +1,136 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Upstream tree for OMFS?
-Date: Tue, 13 Jul 2010 23:03:06 +1000
-Message-ID: <20100713230306.b3270644.sfr@canb.auug.org.au>
-References: <AANLkTilI-GLcmJjC5n2aT-0ywdOK0M5VGSUdEGYXa3VJ@mail.gmail.com>
-	<20100712104435.2ca47c0a.akpm@linux-foundation.org>
-	<20100712221307.GB8787@hash.localnet>
+From: Mauro Carvalho Chehab <mchehab@infradead.org>
+Subject: Re: linux-next: manual merge of the usb tree with the v4l-dvb tree
+Date: Tue, 13 Jul 2010 12:34:02 -0300
+Message-ID: <4C3C876A.5090005@infradead.org>
+References: <20100706175332.952fec90.sfr@canb.auug.org.au> <201007061018.21674.laurent.pinchart@ideasonboard.com> <20100706185132.7dd72993.sfr@canb.auug.org.au> <201007061310.06197.laurent.pinchart@ideasonboard.com> <4C3322EB.2050806@infradead.org> <20100707151355.GB2121@kroah.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__13_Jul_2010_23_03_06_+1000_2x.rVqaC7nL6ckEl"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40381 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752956Ab0GMNDQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 13 Jul 2010 09:03:16 -0400
-In-Reply-To: <20100712221307.GB8787@hash.localnet>
+Received: from bombadil.infradead.org ([18.85.46.34]:33998 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753965Ab0GMPde (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Jul 2010 11:33:34 -0400
+In-Reply-To: <20100707151355.GB2121@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bob Copeland <me@bobcopeland.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, linux-next@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__13_Jul_2010_23_03_06_+1000_2x.rVqaC7nL6ckEl
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Em 07-07-2010 12:13, Greg KH escreveu:
+> On Tue, Jul 06, 2010 at 09:34:51AM -0300, Mauro Carvalho Chehab wrote:
+>> Em 06-07-2010 08:10, Laurent Pinchart escreveu:
+>>> Hi Stephen,
+>>>
+>>> On Tuesday 06 July 2010 10:51:32 Stephen Rothwell wrote:
+>>>> On Tue, 6 Jul 2010 10:18:20 +0200 Laurent Pinchart wrote:
+>>>>>> diff --cc include/linux/usb/video.h
+>>>>>> index 2d5b7fc,429c91a..0000000
+>>>>>> --- a/include/linux/usb/video.h
+>>>>>> +++ b/include/linux/usb/video.h
+>>>>>> @@@ -160,12 -160,402 +160,409 @@@
+>>>>>
+>>>>> [snip]
+>>>>>
+>>>>>>  +/* 4.1.2. Control Capabilities */
+>>>>>>  +#define UVC_CONTROL_CAP_GET                           (1 << 0)
+>>>>>>  +#define UVC_CONTROL_CAP_SET                           (1 << 1)
+>>>>>>  +#define UVC_CONTROL_CAP_DISABLED                      (1 << 2)
+>>>>>>  +#define UVC_CONTROL_CAP_AUTOUPDATE                    (1 << 3)
+>>>>>>  +#define UVC_CONTROL_CAP_ASYNCHRONOUS                  (1 << 4)
+>>>>>>  +
+>>>>>
+>>>>> Can you move those to the first part of the header file, with the other
+>>>>> constants ?
+>>>>
+>>>> Sure, I just put it there because of the section numbering in the
+>>>> comments.  This, of course, will not influence how the file looks after
+>>>> Linus merges it - unless the conflict is fixed up by one of the
+>>>> maintainers before Linus gets it.
+>>>
+>>> I had the impression that the conflict resolutions in linux-next would end up 
+>>> in mainline. I must have been wrong, sorry.
+>>>
+>>> Mauro, can the uvc-gadget patches go through the linux-media tree ?
 
-Hi Bob,
+It will not be simple to fix this conflict from my tree. I tried to apply them
+against a 2.6.35-rc5, but it failed:
 
-On Mon, 12 Jul 2010 18:13:07 -0400 Bob Copeland <me@bobcopeland.com> wrote:
->
-> Ok - Stephen would you mind including this tree for omfs?
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/bcopeland/omfs.git#for-next
+|diff --git a/drivers/media/video/uvc/uvcvideo.h b/drivers/media/video/uvc/uvcvideo.h
+|index 47b20e7..ac27245 100644
+|--- a/drivers/media/video/uvc/uvcvideo.h
+|+++ b/drivers/media/video/uvc/uvcvideo.h
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 73
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git a/drivers/usb/gadget/f_uvc.c b/drivers/usb/gadget/f_uvc.c
+|index fc2611f..b6aed97 100644
+|--- a/drivers/usb/gadget/f_uvc.c
+|+++ b/drivers/usb/gadget/f_uvc.c
+--------------------------
+No file to patch.  Skipping patch.
+5 out of 5 hunks ignored
+can't find file to patch at input line 138
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git a/drivers/usb/gadget/f_uvc.h b/drivers/usb/gadget/f_uvc.h
+|index 8a5db7c..e18a663 100644
+|--- a/drivers/usb/gadget/f_uvc.h
+|+++ b/drivers/usb/gadget/f_uvc.h
+--------------------------
+No file to patch.  Skipping patch.
+1 out of 1 hunk ignored
+can't find file to patch at input line 501
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git a/drivers/usb/gadget/uvc.h b/drivers/usb/gadget/uvc.h
+|index 0a705e6..b05bcb7 100644
+|--- a/drivers/usb/gadget/uvc.h
+|+++ b/drivers/usb/gadget/uvc.h
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+can't find file to patch at input line 555
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git a/drivers/usb/gadget/webcam.c b/drivers/usb/gadget/webcam.c
+|index 417fd68..98e9c8b 100644
+|--- a/drivers/usb/gadget/webcam.c
+|+++ b/drivers/usb/gadget/webcam.c
+--------------------------
+No file to patch.  Skipping patch.
+12 out of 12 hunks ignored
+can't find file to patch at input line 667
+Perhaps you used the wrong -p or --strip option?
+The text leading up to this was:
+--------------------------
+|diff --git a/include/linux/usb/video.h b/include/linux/usb/video.h
+|index 2d5b7fc..3b3b95e 100644
+|--- a/include/linux/usb/video.h
+|+++ b/include/linux/usb/video.h
+--------------------------
+No file to patch.  Skipping patch.
+2 out of 2 hunks ignored
+>>> Patch patches/lmml_111238_for_2_6_36_uvc_move_constants_and_structures_definitions_to_linux_usb_video_h.patch doesn't apply
 
-I added this tree today.
+It seems that the files you're patching at include/linux/usb & cia are not upstream
+yet. So, just adding this patch won't solve it.
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
+>>
+>> If Greg is ok, that's fine for me.
+> 
+> That's fine with me.  Let me know when you have them and then I'll drop
+> them from my tree.
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-	Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
+I'll be out for vacations for some days. Greg/Laurent, it seems that the better is
+to keep Stephen workaround for now, eventually applying it at Greg's tree.
 
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
---=20
 Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
-
-Legal Stuff:
-By participating in linux-next, your subsystem tree contributions are
-public and will be included in the linux-next trees.  You may be sent
-e-mail messages indicating errors or other issues when the
-patches/commits from your subsystem tree are merged and tested in
-linux-next.  These messages may also be cross-posted to the linux-next
-mailing list, the linux-kernel mailing list, etc.  The linux-next tree
-project and IBM (my employer) make no warranties regarding the linux-next
-project, the testing procedures, the results, the e-mails, etc.  If you
-don't agree to these ground rules, let me know and I'll remove your tree
-from participation in linux-next.
-
---Signature=_Tue__13_Jul_2010_23_03_06_+1000_2x.rVqaC7nL6ckEl
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMPGQKAAoJEDMEi1NhKgbsb1sH/2z4kf1LghR9wHOgwrn9crwx
-4DYKHENPIKx90ut7rTCR0U+bT0SMRQ9SHm9r/x85R1YSI70j48ibYfehsEhUbjDF
-0gp7TV2nTDhmjPCsZiXWeeX8WQd5aF3zm4sdw3f9wa586L02dR8p9JYv6YcYL5K8
-J7skwXVf+6qs3iPgVtAO+EG8VAgjnwJbtrE7Es1sfaWXkUa0fW0bzFlzcDJR8jrv
-mONbpLcx2ERklQtiM7tS2tL2LDi/Bf/sZtdpJC6CESnlo38n2AT/9J6wUooQ/X1x
-ZlbE8dW8IqhTGTGfM1Oyk009ICQShtgDVw6OkGOeLE0qeDSTvYIDqbThFrzdU7k=
-=WDvY
------END PGP SIGNATURE-----
-
---Signature=_Tue__13_Jul_2010_23_03_06_+1000_2x.rVqaC7nL6ckEl--
+Mauro.
