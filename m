@@ -1,54 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: failed import of the i2c quilt series
-Date: Tue, 13 Jul 2010 10:27:36 +1000
-Message-ID: <20100713102736.b66c2c2f.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm tree with Linus' tree
+Date: Tue, 13 Jul 2010 10:51:30 +1000
+Message-ID: <20100713105130.3c927926.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__13_Jul_2010_10_27_36_+1000_5tgK+stZwwF2YN0p"
+ boundary="Signature=_Tue__13_Jul_2010_10_51_30_+1000_DSpSMkFklaosU_Ql"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34107 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:57936 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751622Ab0GMA1n (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 12 Jul 2010 20:27:43 -0400
+	id S1753543Ab0GMAvf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 12 Jul 2010 20:51:35 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jean Delvare <khali@linux-fr.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>
 
---Signature=_Tue__13_Jul_2010_10_27_36_+1000_5tgK+stZwwF2YN0p
+--Signature=_Tue__13_Jul_2010_10_51_30_+1000_DSpSMkFklaosU_Ql
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jean,
+Hi Russell,
 
-Importing of the i2c quilt tree this morning produced this error:
+Today's linux-next merge of the arm tree got a conflict in
+arch/arm/configs/lusl7200_defconfig between commit
+07a8c03f3e06129e847acd068b8b89c13357ee64 ("ARM: reduce defconfigs") from
+Linus' tree and commit c9c6fe5033191d82e1d819105485c795062107fd ("ARM:
+Remove support for LinkUp Systems L7200 SDP") from the arm tree.
 
-i2c-drop-preliminary-probability-checks.patch
-error: patch failed: drivers/i2c/i2c-core.c:1456
-error: drivers/i2c/i2c-core.c: patch does not apply
-
-I will use the i2c tree from next-20100712 for today.
-
+The latter removes the file, so I did that.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__13_Jul_2010_10_27_36_+1000_5tgK+stZwwF2YN0p
+--Signature=_Tue__13_Jul_2010_10_51_30_+1000_DSpSMkFklaosU_Ql
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMO7L4AAoJEDMEi1NhKgbst/YH+wecMyuT4BwzmpLz6OU2+I9o
-DH2amDWf4cY+JlsgJFIdVpQ3rsWcMUwUyTHBT0YMaRCi8dzyUjq959zJgc4EvEBY
-G5L5lmg4/d8kUi09yhCMEIxMxLmUHAxx4/KHuYQiFvljiagZuNpBp2SVYPxVkCLB
-d9OupVMJ5DwFAhIqy0SwFtXEI+2c3NBkKHJxYuUG7ZylVTkRDZ1j0J1xdXaaRy/Z
-yCVxHQykVwQDB/6ndWIt4knWXLeZsEnQKick3t8B/O/tgtlTJjbObXVIUtTKG0NR
-yCs0XgQNvhrFy+dfTrvys5Tp7PD2/WeiHCUTiRj+U3UokJ3Jo2SUZrPPb7B9wdE=
-=cB23
+iQEcBAEBAgAGBQJMO7iSAAoJEDMEi1NhKgbsGEAIAIqbuSxkVRGsTr4tXayMfkoV
+ny5+pPtAGSc4sarCheoOIBKiMJQTGgg8c1b0f9UpL7T8hs4sUBBiHsOiyrLbfdkT
+lsCBSfPAGze299o3+4VAyoLFrCgapEsnHPJ+UC26Q/MpsLcXLvi29XaIeMf0LW2o
+ivUgbsv+vUgbJMZG3zmTz8LPSM7FIgra2Fu688eHanWcE0mASYtsQ9vmOvtda9AU
+YbR21mslkO0XTV9ng+5JT5MxGCAS1mocHY8dLxUAKFpVDWN09Z5FtiRo+kri1JU6
+h0Ova716t9hHamdLEo5Cw4TF1UvR3iRvHGa8QCx6xQiIs7+S4GZeoZaqj8O8564=
+=bnbk
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__13_Jul_2010_10_27_36_+1000_5tgK+stZwwF2YN0p--
+--Signature=_Tue__13_Jul_2010_10_51_30_+1000_DSpSMkFklaosU_Ql--
