@@ -1,34 +1,54 @@
-From: Bob Copeland <me@bobcopeland.com>
-Subject: Re: Upstream tree for OMFS?
-Date: Mon, 12 Jul 2010 18:13:07 -0400
-Message-ID: <20100712221307.GB8787@hash.localnet>
-References: <AANLkTilI-GLcmJjC5n2aT-0ywdOK0M5VGSUdEGYXa3VJ@mail.gmail.com> <20100712104435.2ca47c0a.akpm@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: failed import of the i2c quilt series
+Date: Tue, 13 Jul 2010 10:27:36 +1000
+Message-ID: <20100713102736.b66c2c2f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__13_Jul_2010_10_27_36_+1000_5tgK+stZwwF2YN0p"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.deathmatch.net ([72.66.92.28]:4397 "EHLO
-	mail.deathmatch.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754798Ab0GLWPD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Jul 2010 18:15:03 -0400
-Content-Disposition: inline
-In-Reply-To: <20100712104435.2ca47c0a.akpm@linux-foundation.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:34107 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751622Ab0GMA1n (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 12 Jul 2010 20:27:43 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jean Delvare <khali@linux-fr.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Jul 12, 2010 at 10:44:35AM -0700, Andrew Morton wrote:
-> > I doubt anyone but me cares too much about this FS
-> > but I thought I'd ask first if anyone wants to be the
-> > upstream instead of me sending pull requests directly
-> > to Linus.  Of course I'll post patches here for
-> > review in either case.
-> 
-> Please ask Stephen to include the tree in the linux-next lineup.
+--Signature=_Tue__13_Jul_2010_10_27_36_+1000_5tgK+stZwwF2YN0p
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ok - Stephen would you mind including this tree for omfs?
+Hi Jean,
 
-git://git.kernel.org/pub/scm/linux/kernel/git/bcopeland/omfs.git#for-next
+Importing of the i2c quilt tree this morning produced this error:
 
--- 
-Bob Copeland %% www.bobcopeland.com
+i2c-drop-preliminary-probability-checks.patch
+error: patch failed: drivers/i2c/i2c-core.c:1456
+error: drivers/i2c/i2c-core.c: patch does not apply
+
+I will use the i2c tree from next-20100712 for today.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__13_Jul_2010_10_27_36_+1000_5tgK+stZwwF2YN0p
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMO7L4AAoJEDMEi1NhKgbst/YH+wecMyuT4BwzmpLz6OU2+I9o
+DH2amDWf4cY+JlsgJFIdVpQ3rsWcMUwUyTHBT0YMaRCi8dzyUjq959zJgc4EvEBY
+G5L5lmg4/d8kUi09yhCMEIxMxLmUHAxx4/KHuYQiFvljiagZuNpBp2SVYPxVkCLB
+d9OupVMJ5DwFAhIqy0SwFtXEI+2c3NBkKHJxYuUG7ZylVTkRDZ1j0J1xdXaaRy/Z
+yCVxHQykVwQDB/6ndWIt4knWXLeZsEnQKick3t8B/O/tgtlTJjbObXVIUtTKG0NR
+yCs0XgQNvhrFy+dfTrvys5Tp7PD2/WeiHCUTiRj+U3UokJ3Jo2SUZrPPb7B9wdE=
+=cB23
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__13_Jul_2010_10_27_36_+1000_5tgK+stZwwF2YN0p--
