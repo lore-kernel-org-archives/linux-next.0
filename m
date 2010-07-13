@@ -1,78 +1,27 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: linux-next: manual merge of the s5p tree with Linus' tree
-Date: Tue, 13 Jul 2010 11:29:22 +0900
-Message-ID: <00d301cb2233$375169f0$a5f43dd0$%kim@samsung.com>
-References: <20100713111451.8b6162e4.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH net-next] drivers/scsi: Remove warnings after vsprintf
+ %pV introduction
+Date: Mon, 12 Jul 2010 20:37:11 -0700 (PDT)
+Message-ID: <20100712.203711.84385391.davem@davemloft.net>
+References: <1278824921.1501.37.camel@Joe-Laptop.home>
+	<20100710.231026.233698429.davem@davemloft.net>
+	<1278923239.32614.1.camel@mulgrave.site>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:27425 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756204Ab0GMC3W (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Jul 2010 22:29:22 -0400
-In-reply-to: <20100713111451.8b6162e4.sfr@canb.auug.org.au>
-Content-language: ko
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: 'Stephen Rothwell' <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?ISO-8859-1?Q?'Uwe_Kleine-K=F6nig'?= <u.kleine-koenig@pengutronix.de>
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1278923239.32614.1.camel@mulgrave.site>
+Sender: linux-kernel-owner@vger.kernel.org
+To: James.Bottomley@suse.de
+Cc: joe@perches.com, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@suse.de, matthew@wil.cx, linux-scsi@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell wrote:
-> 
-> Hi Kukjin,
-> 
-Hi :-)
+From: James Bottomley <James.Bottomley@suse.de>
+Date: Mon, 12 Jul 2010 04:27:18 -0400
 
-> Today's linux-next merge of the s5p tree got a conflict in
-> arch/arm/configs/s5pv210_defconfig between commit
-> 07a8c03f3e06129e847acd068b8b89c13357ee64 ("ARM: reduce defconfigs") from
-> Linus' tree and commit 2976beb1dd86974ae98a992ca23a626f8be7e7dd ("ARM:
-> s5pv210_defconfig: Update for removing s5pc110_defconfig") from the s5p
-> tree.
-> 
-> I fixed it up (see below - it may no longer be minimal) and can carry the
-> fix as necessary.
+> What's the other 60% of the patch about? the strange addition of
+> scsi_show_extd_sense_args() and all the KERN_CONT bits?
 
-Thanks..and I will fix it in my tree.
-
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --git a/arch/arm/configs/s5pv210_defconfig
-> b/arch/arm/configs/s5pv210_defconfig
-> index 1753836..bbb1736 100644
-> --- a/arch/arm/configs/s5pv210_defconfig
-> +++ b/arch/arm/configs/s5pv210_defconfig
-> @@ -7,6 +7,10 @@ CONFIG_MODULE_UNLOAD=y
->  # CONFIG_BLK_DEV_BSG is not set
->  CONFIG_ARCH_S5PV210=y
->  CONFIG_S3C_LOWLEVEL_UART_PORT=1
-> +CONFIG_S3C_DEV_FB=y
-> +CONFIG_S5PV210_SETUP_FB_24BPP=y
-> +CONFIG_MACH_AQUILA=y
-> +CONFIG_MACH_SMDKC110=y
->  CONFIG_MACH_SMDKV210=y
->  CONFIG_VMSPLIT_2G=y
->  CONFIG_PREEMPT=y
-> @@ -31,6 +35,9 @@ CONFIG_SERIAL_SAMSUNG=y
->  CONFIG_SERIAL_SAMSUNG_CONSOLE=y
->  CONFIG_HW_RANDOM=y
->  # CONFIG_HWMON is not set
-> +# CONFIG_RAMOOPS is not set
-> +CONFIG_MFD_SUPPORT=y
-> +# CONFIG_ABX500_CORE is not set
->  # CONFIG_VGA_CONSOLE is not set
->  # CONFIG_HID_SUPPORT is not set
->  # CONFIG_USB_SUPPORT is not set
-
-
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Well the new function is for logical seperation, and KERN_CONT
+is what is supposed to be at the front of every printk format
+that continues a partially-printed line.
