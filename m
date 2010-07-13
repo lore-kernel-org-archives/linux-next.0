@@ -1,50 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tegra tree with the arm tree
-Date: Tue, 13 Jul 2010 11:23:14 +1000
-Message-ID: <20100713112314.2d468a71.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the genesis tree with Linus' tree
+Date: Tue, 13 Jul 2010 11:28:14 +1000
+Message-ID: <20100713112814.39dbd280.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__13_Jul_2010_11_28_14_+1000_YHJk2XcfKUh0bnz0"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35292 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:46115 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754825Ab0GMBXQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 12 Jul 2010 21:23:16 -0400
+	id S1752449Ab0GMB2U (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 12 Jul 2010 21:28:20 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Erik Gilling <konkers@android.com>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>, Russell King <rmk@arm.linux.org.uk>
+To: Paul Mundt <lethal@linux-sh.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>
 
-Hi all,
+--Signature=_Tue__13_Jul_2010_11_28_14_+1000_YHJk2XcfKUh0bnz0
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the tegra tree got a conflict in
-arch/arm/Kconfig between commit bde28b846e7e0ea6fea78f6ad1c43091fdf4d3e0
-("ARM: 6218/1: Versatile Express: add support for local timers on CA9X4
-daughterboard") from the arm tree and commit
-c9dfc86214ffc3bcd0155b38bfe04383accc054a ("[ARM] tegra: SMP support")
-from the tegra tree.
+Hi Paul,
 
-I fixed it up (see below) and can carry the fix as necessary.
--- 
+Today's linux-next merge of the genesis tree got a conflict in
+arch/arm/configs/ap4evb_defconfig arch/arm/configs/g3evm_defconfig
+arch/arm/configs/g4evm_defconfig between commit
+07a8c03f3e06129e847acd068b8b89c13357ee64 ("ARM: reduce defconfigs") from
+Linus' tree and commits 4a539a2023fd2f7384916ef6e7777ad234a00dcd ("ARM:
+mach-shmobile: update defconfigs") and
+1ddb76fd29da170d77d70b94cdcba74b0d935152 ("ARM: mach-shmobile: update
+ap4evb defconfig for MMC/DMA changes") from the genesis tree.
+
+The changes are far to extensive for me to fix up, so I have used the
+versions from the genesis tree for today.
+
+Paul you should merge in Linus' tree (or rebase) and use Uwe's script on
+your updated config files ...
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/arm/Kconfig
-index 7e73d07,c8f28f8..0000000
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@@ -1155,9 -1187,10 +1170,10 @@@ config LOCAL_TIMER
-  	bool "Use local timer interrupts"
-  	depends on SMP && (REALVIEW_EB_ARM11MP || MACH_REALVIEW_PB11MP || \
-  		REALVIEW_EB_A9MP || MACH_REALVIEW_PBX || ARCH_OMAP4 || \
-- 		ARCH_U8500 || ARCH_VEXPRESS_CA9X4)
- -		ARCH_U8500 || ARCH_TEGRA)
-++		ARCH_U8500 || ARCH_VEXPRESS_CA9X4 || ARCH_TEGRA)
-  	default y
-- 	select HAVE_ARM_TWD if (ARCH_REALVIEW || ARCH_VEXPRESS || ARCH_OMAP4 || ARCH_U8500)
- -	select HAVE_ARM_TWD if (ARCH_REALVIEW || ARCH_OMAP4 || ARCH_U8500 || \
-++	select HAVE_ARM_TWD if (ARCH_REALVIEW || ARCH_VEXPRESS || ARCH_OMAP4 || ARCH_U8500 || \
-+ 		ARCH_TEGRA)
-  	help
-  	  Enable support for local timers on SMP platforms, rather then the
-  	  legacy IPI broadcast method.  Local timers allows the system
+--Signature=_Tue__13_Jul_2010_11_28_14_+1000_YHJk2XcfKUh0bnz0
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMO8EuAAoJEDMEi1NhKgbsvYsH/0jcvtLbOnxZEg7kX7SkKEeY
+KDxTEDZ14r0B8iXJJNZ1KSwkFe9TlDAG//Ghm+o50YPp9kKXj0YzuOMDAnfqncwA
+/1HltJeInSQLaF8U/u0T4+xNom9sB1pTVu/v56HFQCX036hyrhgpUbIij1/JkFj/
+RyGaENy+ber/0xExGhJ+swWweQOVfjl9OBbNxhQj8+R/IoLBtpcOuEHiYSr3lR8U
+2hEfpPlv+AgWnEgJyFde8IHQJiMJvlCXjFaCmHL+YAQ9nZKdgIU4zWp5x9aNrq60
+lp9wkceWyAKsZQZtR3govUMboL/D8euF6x/uIKtBCG47FySiOkgxLmrdEbcFIxk=
+=yfp/
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__13_Jul_2010_11_28_14_+1000_YHJk2XcfKUh0bnz0--
