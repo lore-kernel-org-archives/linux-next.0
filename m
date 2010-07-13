@@ -1,136 +1,71 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Subject: Re: linux-next: manual merge of the usb tree with the v4l-dvb tree
-Date: Tue, 13 Jul 2010 12:34:02 -0300
-Message-ID: <4C3C876A.5090005@infradead.org>
-References: <20100706175332.952fec90.sfr@canb.auug.org.au> <201007061018.21674.laurent.pinchart@ideasonboard.com> <20100706185132.7dd72993.sfr@canb.auug.org.au> <201007061310.06197.laurent.pinchart@ideasonboard.com> <4C3322EB.2050806@infradead.org> <20100707151355.GB2121@kroah.com>
+Date: Tue, 13 Jul 2010 19:23:31 +0200
+Message-ID: <201007131923.31877.laurent.pinchart@ideasonboard.com>
+References: <20100706175332.952fec90.sfr@canb.auug.org.au> <20100707151355.GB2121@kroah.com> <4C3C876A.5090005@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:33998 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753965Ab0GMPde (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Jul 2010 11:33:34 -0400
-In-Reply-To: <20100707151355.GB2121@kroah.com>
+Received: from perceval.irobotique.be ([92.243.18.41]:48144 "EHLO
+	perceval.irobotique.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755955Ab0GMRXi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 13 Jul 2010 13:23:38 -0400
+In-Reply-To: <4C3C876A.5090005@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Em 07-07-2010 12:13, Greg KH escreveu:
-> On Tue, Jul 06, 2010 at 09:34:51AM -0300, Mauro Carvalho Chehab wrote:
->> Em 06-07-2010 08:10, Laurent Pinchart escreveu:
->>> Hi Stephen,
->>>
->>> On Tuesday 06 July 2010 10:51:32 Stephen Rothwell wrote:
->>>> On Tue, 6 Jul 2010 10:18:20 +0200 Laurent Pinchart wrote:
->>>>>> diff --cc include/linux/usb/video.h
->>>>>> index 2d5b7fc,429c91a..0000000
->>>>>> --- a/include/linux/usb/video.h
->>>>>> +++ b/include/linux/usb/video.h
->>>>>> @@@ -160,12 -160,402 +160,409 @@@
->>>>>
->>>>> [snip]
->>>>>
->>>>>>  +/* 4.1.2. Control Capabilities */
->>>>>>  +#define UVC_CONTROL_CAP_GET                           (1 << 0)
->>>>>>  +#define UVC_CONTROL_CAP_SET                           (1 << 1)
->>>>>>  +#define UVC_CONTROL_CAP_DISABLED                      (1 << 2)
->>>>>>  +#define UVC_CONTROL_CAP_AUTOUPDATE                    (1 << 3)
->>>>>>  +#define UVC_CONTROL_CAP_ASYNCHRONOUS                  (1 << 4)
->>>>>>  +
->>>>>
->>>>> Can you move those to the first part of the header file, with the other
->>>>> constants ?
->>>>
->>>> Sure, I just put it there because of the section numbering in the
->>>> comments.  This, of course, will not influence how the file looks after
->>>> Linus merges it - unless the conflict is fixed up by one of the
->>>> maintainers before Linus gets it.
->>>
->>> I had the impression that the conflict resolutions in linux-next would end up 
->>> in mainline. I must have been wrong, sorry.
->>>
->>> Mauro, can the uvc-gadget patches go through the linux-media tree ?
+Hi Mauro,
 
-It will not be simple to fix this conflict from my tree. I tried to apply them
-against a 2.6.35-rc5, but it failed:
+On Tuesday 13 July 2010 17:34:02 Mauro Carvalho Chehab wrote:
+> Em 07-07-2010 12:13, Greg KH escreveu:
+> > On Tue, Jul 06, 2010 at 09:34:51AM -0300, Mauro Carvalho Chehab wrote:
+> >> Em 06-07-2010 08:10, Laurent Pinchart escreveu:
 
-|diff --git a/drivers/media/video/uvc/uvcvideo.h b/drivers/media/video/uvc/uvcvideo.h
-|index 47b20e7..ac27245 100644
-|--- a/drivers/media/video/uvc/uvcvideo.h
-|+++ b/drivers/media/video/uvc/uvcvideo.h
---------------------------
-No file to patch.  Skipping patch.
-1 out of 1 hunk ignored
-can't find file to patch at input line 73
-Perhaps you used the wrong -p or --strip option?
-The text leading up to this was:
---------------------------
-|diff --git a/drivers/usb/gadget/f_uvc.c b/drivers/usb/gadget/f_uvc.c
-|index fc2611f..b6aed97 100644
-|--- a/drivers/usb/gadget/f_uvc.c
-|+++ b/drivers/usb/gadget/f_uvc.c
---------------------------
-No file to patch.  Skipping patch.
-5 out of 5 hunks ignored
-can't find file to patch at input line 138
-Perhaps you used the wrong -p or --strip option?
-The text leading up to this was:
---------------------------
-|diff --git a/drivers/usb/gadget/f_uvc.h b/drivers/usb/gadget/f_uvc.h
-|index 8a5db7c..e18a663 100644
-|--- a/drivers/usb/gadget/f_uvc.h
-|+++ b/drivers/usb/gadget/f_uvc.h
---------------------------
-No file to patch.  Skipping patch.
-1 out of 1 hunk ignored
-can't find file to patch at input line 501
-Perhaps you used the wrong -p or --strip option?
-The text leading up to this was:
---------------------------
-|diff --git a/drivers/usb/gadget/uvc.h b/drivers/usb/gadget/uvc.h
-|index 0a705e6..b05bcb7 100644
-|--- a/drivers/usb/gadget/uvc.h
-|+++ b/drivers/usb/gadget/uvc.h
---------------------------
-No file to patch.  Skipping patch.
-2 out of 2 hunks ignored
-can't find file to patch at input line 555
-Perhaps you used the wrong -p or --strip option?
-The text leading up to this was:
---------------------------
-|diff --git a/drivers/usb/gadget/webcam.c b/drivers/usb/gadget/webcam.c
-|index 417fd68..98e9c8b 100644
-|--- a/drivers/usb/gadget/webcam.c
-|+++ b/drivers/usb/gadget/webcam.c
---------------------------
-No file to patch.  Skipping patch.
-12 out of 12 hunks ignored
-can't find file to patch at input line 667
-Perhaps you used the wrong -p or --strip option?
-The text leading up to this was:
---------------------------
-|diff --git a/include/linux/usb/video.h b/include/linux/usb/video.h
-|index 2d5b7fc..3b3b95e 100644
-|--- a/include/linux/usb/video.h
-|+++ b/include/linux/usb/video.h
---------------------------
-No file to patch.  Skipping patch.
-2 out of 2 hunks ignored
->>> Patch patches/lmml_111238_for_2_6_36_uvc_move_constants_and_structures_definitions_to_linux_usb_video_h.patch doesn't apply
+[snip]
 
-It seems that the files you're patching at include/linux/usb & cia are not upstream
-yet. So, just adding this patch won't solve it.
-
->>
->> If Greg is ok, that's fine for me.
+> >>> Mauro, can the uvc-gadget patches go through the linux-media tree ?
 > 
-> That's fine with me.  Let me know when you have them and then I'll drop
-> them from my tree.
+> It will not be simple to fix this conflict from my tree. I tried to apply
+> them against a 2.6.35-rc5, but it failed:
+> |diff --git a/drivers/media/video/uvc/uvcvideo.h
+> |b/drivers/media/video/uvc/uvcvideo.h index 47b20e7..ac27245 100644
+> |--- a/drivers/media/video/uvc/uvcvideo.h
+> |+++ b/drivers/media/video/uvc/uvcvideo.h
+> 
+> --------------------------
+> No file to patch.  Skipping patch.
+> 1 out of 1 hunk ignored
+> can't find file to patch at input line 73
+> Perhaps you used the wrong -p or --strip option?
 
-I'll be out for vacations for some days. Greg/Laurent, it seems that the better is
-to keep Stephen workaround for now, eventually applying it at Greg's tree.
+drivers/media/video/uvc/uvcvideo.h has been there for years. Perhaps you used 
+the wrong -p or --strip option? :-)
 
-Cheers,
-Mauro.
+[snip]
+
+> >>> Patch
+> >>> patches/lmml_111238_for_2_6_36_uvc_move_constants_and_structures_defin
+> >>> itions_to_linux_usb_video_h.patch doesn't apply
+> 
+> It seems that the files you're patching at include/linux/usb & cia are not
+> upstream yet. So, just adding this patch won't solve it.
+> 
+> >> If Greg is ok, that's fine for me.
+> > 
+> > That's fine with me.  Let me know when you have them and then I'll drop
+> > them from my tree.
+> 
+> I'll be out for vacations for some days. Greg/Laurent, it seems that the
+> better is to keep Stephen workaround for now, eventually applying it at
+> Greg's tree.
+
+If it's not too late, can you retry with the right -p option ?
+
+-- 
+Regards,
+
+Laurent Pinchart
