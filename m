@@ -1,69 +1,78 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rr tree with the sound tree
-Date: Tue, 13 Jul 2010 12:13:48 +1000
-Message-ID: <20100713121348.c9e76987.sfr@canb.auug.org.au>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: linux-next: manual merge of the s5p tree with Linus' tree
+Date: Tue, 13 Jul 2010 11:29:22 +0900
+Message-ID: <00d301cb2233$375169f0$a5f43dd0$%kim@samsung.com>
+References: <20100713111451.8b6162e4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35855 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754173Ab0GMCNv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 12 Jul 2010 22:13:51 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:27425 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756204Ab0GMC3W (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 12 Jul 2010 22:29:22 -0400
+In-reply-to: <20100713111451.8b6162e4.sfr@canb.auug.org.au>
+Content-language: ko
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Takashi Iwai <tiwai@suse.de>
+To: 'Stephen Rothwell' <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?ISO-8859-1?Q?'Uwe_Kleine-K=F6nig'?= <u.kleine-koenig@pengutronix.de>
 
-Hi Rusty,
+Stephen Rothwell wrote:
+> 
+> Hi Kukjin,
+> 
+Hi :-)
 
-Today's linux-next merge of the rr tree got a conflict in
-arch/um/drivers/hostaudio_kern.c between commit
-90dc763fef4c869e60b2a7ad92e1a7dab68575ea ("sound: push BKL into open
-functions") from the sound tree and commit
-6aad4054c113f2d8a8bbdee64e7167950dd06c92 ("param:lock-charp-simple") from
-the rr tree.
+> Today's linux-next merge of the s5p tree got a conflict in
+> arch/arm/configs/s5pv210_defconfig between commit
+> 07a8c03f3e06129e847acd068b8b89c13357ee64 ("ARM: reduce defconfigs") from
+> Linus' tree and commit 2976beb1dd86974ae98a992ca23a626f8be7e7dd ("ARM:
+> s5pv210_defconfig: Update for removing s5pc110_defconfig") from the s5p
+> tree.
+> 
+> I fixed it up (see below - it may no longer be minimal) and can carry the
+> fix as necessary.
 
-Overlapping additions.  I fixed it up (see below) and carry the fix as necessary.
+Thanks..and I will fix it in my tree.
 
-I was not sure if the kparam_(un)block_sysfs_write() calls needed to be
-surrounded by the (un)lock_kernel() calls or vice verse.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --git a/arch/arm/configs/s5pv210_defconfig
+> b/arch/arm/configs/s5pv210_defconfig
+> index 1753836..bbb1736 100644
+> --- a/arch/arm/configs/s5pv210_defconfig
+> +++ b/arch/arm/configs/s5pv210_defconfig
+> @@ -7,6 +7,10 @@ CONFIG_MODULE_UNLOAD=y
+>  # CONFIG_BLK_DEV_BSG is not set
+>  CONFIG_ARCH_S5PV210=y
+>  CONFIG_S3C_LOWLEVEL_UART_PORT=1
+> +CONFIG_S3C_DEV_FB=y
+> +CONFIG_S5PV210_SETUP_FB_24BPP=y
+> +CONFIG_MACH_AQUILA=y
+> +CONFIG_MACH_SMDKC110=y
+>  CONFIG_MACH_SMDKV210=y
+>  CONFIG_VMSPLIT_2G=y
+>  CONFIG_PREEMPT=y
+> @@ -31,6 +35,9 @@ CONFIG_SERIAL_SAMSUNG=y
+>  CONFIG_SERIAL_SAMSUNG_CONSOLE=y
+>  CONFIG_HW_RANDOM=y
+>  # CONFIG_HWMON is not set
+> +# CONFIG_RAMOOPS is not set
+> +CONFIG_MFD_SUPPORT=y
+> +# CONFIG_ABX500_CORE is not set
+>  # CONFIG_VGA_CONSOLE is not set
+>  # CONFIG_HID_SUPPORT is not set
+>  # CONFIG_USB_SUPPORT is not set
 
-diff --cc arch/um/drivers/hostaudio_kern.c
-index 68142df,162855c..0000000
---- a/arch/um/drivers/hostaudio_kern.c
-+++ b/arch/um/drivers/hostaudio_kern.c
-@@@ -199,10 -200,9 +201,12 @@@ static int hostaudio_open(struct inode 
-  	if (file->f_mode & FMODE_WRITE)
-  		w = 1;
-  
- +	lock_kernel();
-+ 	kparam_block_sysfs_write(dsp);
-  	ret = os_open_file(dsp, of_set_rw(OPENFLAGS(), r, w), 0);
-+ 	kparam_unblock_sysfs_write(dsp);
- +	unlock_kernel();
- +
-  	if (ret < 0) {
-  		kfree(state);
-  		return ret;
-@@@ -258,13 -258,15 +262,17 @@@ static int hostmixer_open_mixdev(struc
-  	if (file->f_mode & FMODE_WRITE)
-  		w = 1;
-  
- +	lock_kernel();
-+ 	kparam_block_sysfs_write(mixer);
-  	ret = os_open_file(mixer, of_set_rw(OPENFLAGS(), r, w), 0);
-+ 	kparam_unblock_sysfs_write(mixer);
- +	unlock_kernel();
-  
-  	if (ret < 0) {
-+ 		kparam_block_sysfs_write(dsp);
-  		printk(KERN_ERR "hostaudio_open_mixdev failed to open '%s', "
-  		       "err = %d\n", dsp, -ret);
-+ 		kparam_unblock_sysfs_write(dsp);
-  		kfree(state);
-  		return ret;
-  	}
+
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
