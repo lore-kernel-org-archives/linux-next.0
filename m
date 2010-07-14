@@ -1,63 +1,67 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: sound/oss-msnd-pinnacle: ioctl needs the inode
-Date: Wed, 14 Jul 2010 08:54:50 -0700
-Message-ID: <4C3DDDCA.50900@oracle.com>
-References: <20100713144007.55d3abc9.sfr@canb.auug.org.au> <20100713103623.bfb0d9b8.randy.dunlap@oracle.com> <201007141511.39507.arnd@arndb.de>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: Tree for July 7
+Date: Wed, 14 Jul 2010 15:20:42 -0700
+Message-ID: <20100714152042.5b83f03b.akpm@linux-foundation.org>
+References: <20100707165539.957e7d1c.sfr@canb.auug.org.au>
+	<20100707172136.3658fb17.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:62771 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754592Ab0GNP4V (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 14 Jul 2010 11:56:21 -0400
-In-Reply-To: <201007141511.39507.arnd@arndb.de>
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:36040 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1757417Ab0GNWU6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 14 Jul 2010 18:20:58 -0400
+In-Reply-To: <20100707172136.3658fb17.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Takashi Iwai <tiwai@suse.de>, Jaroslav Kysela <perex@perex.cz>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>, Al Viro <viro@z>
 
-On 07/14/10 06:11, Arnd Bergmann wrote:
-> This broke in sound/oss: convert to unlocked_ioctl, when I missed one
-> of the ioctl functions still using the inode pointer.
+On Wed, 7 Jul 2010 17:21:36 -0700
+Andrew Morton <akpm@linux-foundation.org> wrote:
+
+> (resend with viro cc)
 > 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
-
-Thanks.
-
-> ---
-> On Tuesday 13 July 2010, Randy Dunlap wrote:
->> On Tue, 13 Jul 2010 14:40:07 +1000 Stephen Rothwell wrote:
->>
->>> Hi all,
->>>
->>> Not unexpectedly, we got some conflicts with the arm defconfig files
->>> today ...
->>
->>
->> sound/oss/msnd_pinnacle.c:644:error: 'inode' undeclared (first use in this function)
->>
+> On Wed, 7 Jul 2010 16:55:39 +1000
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > 
-> Sorry about that, my fault. Please apply.
+> > I have created today's linux-next tree at
+> > git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+> > (patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).
 > 
-> I checked all the other files I touched in the same patch, they either did
-> not have this problem, or I had done it correctly.
+> I'm getting a vast stream of BUG()s from the
 > 
-> --- a/sound/oss/msnd_pinnacle.c
-> +++ b/sound/oss/msnd_pinnacle.c
-> @@ -641,7 +641,7 @@ static int mixer_ioctl(unsigned int cmd, unsigned long arg)
->  
->  static long dev_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
->  {
-> -	int minor = iminor(inode);
-> +	int minor = iminor(file->f_path.dentry->d_inode);
->  	int ret;
->  
->  	if (cmd == OSS_GETVERSION) {
+> 	BUG_ON(inode->i_state != (I_FREEING | I_CLEAR));
+> 
+> in iput_final().
+> 
+> After turning it into a WARN_ON():
+> 
+> [   49.780786] inode->i_state=0x67
+> [   49.780945] ------------[ cut here ]------------
+> [   49.781113] WARNING: at fs/inode.c:1246 iput+0x232/0x23f()
+> [   49.781279] Modules linked in: dm_mirror dm_region_hash dm_log dm_multipath dm_mod video output sbs sbshc battery ac lp parport sg ide_cd_mod cdrom option usb_wwan usbserial serio_raw floppy snd_hda_intel snd_hda_codec snd_seq_oss snd_seq_midi_event snd_seq button snd_seq_device snd_pcm_oss snd_mixer_oss snd_pcm snd_timer i2c_i801 i2c_core snd soundcore snd_page_alloc pcspkr shpchp ehci_hcd ohci_hcd uhci_hcd
+> [   49.783960] Pid: 2418, comm: mount Tainted: G        W   2.6.35-rc4 #3
+> [   49.784127] Call Trace:
+> [   49.784288]  [<ffffffff810cec31>] ? iput+0x1fe/0x23f
+> [   49.784454]  [<ffffffff810cec65>] ? iput+0x232/0x23f
+> [   49.784623]  [<ffffffff81036283>] warn_slowpath_common+0x7e/0x97
+> [   49.784790]  [<ffffffff810362b1>] warn_slowpath_null+0x15/0x17
+> [   49.784958]  [<ffffffff810cec65>] iput+0x232/0x23f
+> [   49.785134]  [<ffffffff810c59a5>] do_unlinkat+0x104/0x15a
+> [   49.785301]  [<ffffffff81002a1c>] ? sysret_check+0x27/0x62
+> [   49.785470]  [<ffffffff8137518b>] ? trace_hardirqs_on_thunk+0x3a/0x3f
+> [   49.785639]  [<ffffffff810c5a0c>] sys_unlink+0x11/0x13
+> [   49.785806]  [<ffffffff810029eb>] system_call_fastpath+0x16/0x1b
+> [   49.785973] ---[ end trace 6458c1d95dac3fde ]---
+> 
+> So I_DIRTY_SYNC, I_DIRTY_DATASYNC and I_DIRTY_PAGES are set.
+> 
+> Config: http://userweb.kernel.org/~akpm/stuff/config-akpm2.txt
 
+Bug is still there.  Reverting ""Make ->drop_inode() just return
+whether inode needs to be dropped" makes it go away.
 
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+Al, please don't just dump crap in linux-next and then ignore bug reports. 
+People are trying to get work done here.
