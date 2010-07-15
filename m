@@ -1,82 +1,42 @@
-From: Dave Chinner <david@fromorbit.com>
-Subject: Re: linux-next: Tree for July 7
-Date: Thu, 15 Jul 2010 17:18:42 +1000
-Message-ID: <20100715071842.GH30737@dastard>
-References: <20100707165539.957e7d1c.sfr@canb.auug.org.au>
- <20100707172136.3658fb17.akpm@linux-foundation.org>
- <20100714152042.5b83f03b.akpm@linux-foundation.org>
- <20100715094513.8941fa25.sfr@canb.auug.org.au>
- <20100714172741.f520b7a3.akpm@linux-foundation.org>
- <20100715004639.GG30737@dastard>
- <20100714175345.0721abb7.akpm@linux-foundation.org>
- <20100715021237.GB23223@dastard>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: "Luck, Tony" <tony.luck@intel.com>
+Subject: [PATCH] Fix xfs build when CONFIG_XFS_POSIX_ACL=n
+Date: Thu, 15 Jul 2010 10:18:07 -0700
+Message-ID: <4c3f42cf1240489af5@agluck-desktop.sc.intel.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bld-mail19.adl2.internode.on.net ([150.101.137.104]:33583 "EHLO
-	mail.internode.on.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1753588Ab0GOHTq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Jul 2010 03:19:46 -0400
-Content-Disposition: inline
-In-Reply-To: <20100715021237.GB23223@dastard>
+Received: from mga03.intel.com ([143.182.124.21]:58882 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933808Ab0GORSJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 15 Jul 2010 13:18:09 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>
+To: Alex Elder <aelder@sgi.com>
+Cc: xfs-masters@oss.sgi.com, linux-next@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Dave Chinner <dchinner@redhat.com>, Randy Dunlap <randy.dunlap@oracle.com>
 
-On Thu, Jul 15, 2010 at 12:12:37PM +1000, Dave Chinner wrote:
-> On Wed, Jul 14, 2010 at 05:53:45PM -0700, Andrew Morton wrote:
-> > On Thu, 15 Jul 2010 10:46:39 +1000 Dave Chinner <david@fromorbit.com> wrote:
-> > > On Wed, Jul 14, 2010 at 05:27:41PM -0700, Andrew Morton wrote:
-> > > > On Thu, 15 Jul 2010 09:45:13 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > > > Hi Andrew, Al,
-> > > > > On Wed, 14 Jul 2010 15:20:42 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
-> > > > > > Bug is still there.  Reverting ""Make ->drop_inode() just return
-> > > > > > whether inode needs to be dropped" makes it go away.
-> > > > > > 
-> > > > > > Al, please don't just dump crap in linux-next and then ignore bug reports. 
-> > > > > > People are trying to get work done here.
-> > > > > 
-> > > > > I will revert that commit in linux-next today if it is still there (and
-> > > > > not fixed).
-> > > > 
-> > > > Reverting the patch didn't help - the patch moved the BUG_ON() from
-> > > > generic_delete_inode() into __iput_final().  With the patch reverted
-> > > > the kernel still goes BUG over the same test in generic_delete_inode().
-> > > > 
-> > > > It could be that the bug was caused by fs-writeback.c changes.  David,
-> > > > do you have time to take a look at this?
-> > 
-> > > What filesystem(s) are you seeing this on?
-> > 
-> > ext3 at least.
-> > 
-> > > Any particular workload that triggers it?
-> > 
-> > Booting FC6 :( I get an enormous storm of these things.
-> > 
-> > whee, progress!
-> > 
-> > With Rusty's patch for the modules bug, and reverting Greg
-> > Vandal-Hartman's "driver core: remove CONFIG_SYSFS_DEPRECATED" and
-> > deleting the BUG_ON from generic_delete_inode(), I have a login prompt!
-> > Admittedly I don't have any networking any more, but that seems a
-> > minor quibble.
-> 
-> I just booted an unmodified current linux-next tree with my standard
-> config and it's come up on an ext3 root and running xfsqa on XFS
-> without any problems so far. I'm going to try your config from your
-> original bug report and see if that generates the problem...
+When CONFIG_XFS_POSIX_ACL is not set "xfs_check_acl" is #defined
+to NULL - which breaks the code attempting to add a tracepoint
+on this function.
 
-I've had a couple of VMs running all afternoon trying to trigger
-this on current linux-next kernels and different filesystems, but I
-have not seen any problems. So I'm afraid I'm can't do much to help
-you solve the problem right now, Andrew. Do you have any ideas that
-might help reproduce it?
+Only define the tracepoint when the function exists.
 
-Cheers,
+Signed-off-by: Tony Luck <tony.luck@intel.com>
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+---
+
+Broken in linux-next for a few days by the "xfs: split xfs_itrace_entry"
+commit. This patch should go after it (or better, should be merged into
+it before this goes upstream).
+
+diff --git a/fs/xfs/linux-2.6/xfs_trace.h b/fs/xfs/linux-2.6/xfs_trace.h
+index 76de133..bb4803c 100644
+--- a/fs/xfs/linux-2.6/xfs_trace.h
++++ b/fs/xfs/linux-2.6/xfs_trace.h
+@@ -568,7 +568,9 @@ DEFINE_INODE_EVENT(xfs_readlink);
+ DEFINE_INODE_EVENT(xfs_alloc_file_space);
+ DEFINE_INODE_EVENT(xfs_free_file_space);
+ DEFINE_INODE_EVENT(xfs_readdir);
++#ifdef CONFIG_XFS_POSIX_ACL
+ DEFINE_INODE_EVENT(xfs_check_acl);
++#endif
+ DEFINE_INODE_EVENT(xfs_vm_bmap);
+ DEFINE_INODE_EVENT(xfs_file_ioctl);
+ DEFINE_INODE_EVENT(xfs_file_compat_ioctl);
