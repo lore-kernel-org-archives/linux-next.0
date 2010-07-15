@@ -1,53 +1,53 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH] Fix xfs build when CONFIG_XFS_POSIX_ACL=n
-Date: Thu, 15 Jul 2010 11:06:41 -0700
-Message-ID: <4C3F4E31.90102@oracle.com>
-References: <4c3f42cf1240489af5@agluck-desktop.sc.intel.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the microblaze tree with the Linus'
+ tree
+Date: Fri, 16 Jul 2010 09:29:17 +1000
+Message-ID: <20100716092917.f1047d8c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:57104 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933730Ab0GOSIL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 15 Jul 2010 14:08:11 -0400
-In-Reply-To: <4c3f42cf1240489af5@agluck-desktop.sc.intel.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:60931 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933661Ab0GOX3T (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 15 Jul 2010 19:29:19 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: Alex Elder <aelder@sgi.com>, xfs-masters@oss.sgi.com, linux-next@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Dave Chinner <dchinner@redhat.com>, Randy Dunlap <randy.dunlap@oracle.com>
+To: Michal Simek <michal.simek@petalogix.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>
 
-Luck, Tony wrote:
-> When CONFIG_XFS_POSIX_ACL is not set "xfs_check_acl" is #defined
-> to NULL - which breaks the code attempting to add a tracepoint
-> on this function.
-> 
-> Only define the tracepoint when the function exists.
-> 
-> Signed-off-by: Tony Luck <tony.luck@intel.com>
+Hi Michal,
 
-Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
+Today's linux-next merge of the microblaze tree got a conflict in
+arch/microblaze/mm/init.c between commit
+95f72d1ed41a66f1c1c29c24d479de81a0bea36f ("lmb: rename to memblock") from
+Linus' tree and commit c30842ca4d432f553f53d4d6849523fd9b8ebb40
+("microblaze: Sync noMMU and MMU setup_memory") from the microblaze tree.
 
-Thanks, Tony.
+Just context changes.  I fixed it up (see below) and can carry the fix
+for a while.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-> ---
-> 
-> Broken in linux-next for a few days by the "xfs: split xfs_itrace_entry"
-> commit. This patch should go after it (or better, should be merged into
-> it before this goes upstream).
-> 
-> diff --git a/fs/xfs/linux-2.6/xfs_trace.h b/fs/xfs/linux-2.6/xfs_trace.h
-> index 76de133..bb4803c 100644
-> --- a/fs/xfs/linux-2.6/xfs_trace.h
-> +++ b/fs/xfs/linux-2.6/xfs_trace.h
-> @@ -568,7 +568,9 @@ DEFINE_INODE_EVENT(xfs_readlink);
->  DEFINE_INODE_EVENT(xfs_alloc_file_space);
->  DEFINE_INODE_EVENT(xfs_free_file_space);
->  DEFINE_INODE_EVENT(xfs_readdir);
-> +#ifdef CONFIG_XFS_POSIX_ACL
->  DEFINE_INODE_EVENT(xfs_check_acl);
-> +#endif
->  DEFINE_INODE_EVENT(xfs_vm_bmap);
->  DEFINE_INODE_EVENT(xfs_file_ioctl);
->  DEFINE_INODE_EVENT(xfs_file_compat_ioctl);
-> --
+diff --cc arch/microblaze/mm/init.c
+index db59349,573b97e..0000000
+--- a/arch/microblaze/mm/init.c
++++ b/arch/microblaze/mm/init.c
+@@@ -134,14 -134,9 +134,9 @@@ void __init setup_memory(void
+  	 * for 4GB of memory, using 4kB pages), plus 1 page
+  	 * (in case the address isn't page-aligned).
+  	 */
+- #ifndef CONFIG_MMU
+- 	map_size = init_bootmem_node(NODE_DATA(0), PFN_UP(TOPHYS((u32)klimit)),
+- 					min_low_pfn, max_low_pfn);
+- #else
+- 	map_size = init_bootmem_node(&contig_page_data,
++ 	map_size = init_bootmem_node(NODE_DATA(0),
+  		PFN_UP(TOPHYS((u32)klimit)), min_low_pfn, max_low_pfn);
+- #endif
+ -	lmb_reserve(PFN_UP(TOPHYS((u32)klimit)) << PAGE_SHIFT, map_size);
+ +	memblock_reserve(PFN_UP(TOPHYS((u32)klimit)) << PAGE_SHIFT, map_size);
+  
+  	/* free bootmem is whole main memory */
+  	free_bootmem(memory_start, memory_size);
