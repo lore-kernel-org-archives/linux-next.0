@@ -1,53 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the microblaze tree with the Linus'
- tree
-Date: Fri, 16 Jul 2010 09:29:17 +1000
-Message-ID: <20100716092917.f1047d8c.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the cifs tree
+Date: Fri, 16 Jul 2010 09:51:26 +1000
+Message-ID: <20100716095126.e084dde0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__16_Jul_2010_09_51_26_+1000_LqgdqtRqq/phIJLe"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60931 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37878 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933661Ab0GOX3T (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 15 Jul 2010 19:29:19 -0400
+	id S933992Ab0GOXvc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 15 Jul 2010 19:51:32 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michal Simek <michal.simek@petalogix.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>
+To: Steve French <smfrench@gmail.com>, linux-cifs-client@lists.samba.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Suresh Jayaraman <sjayaraman@suse.de>
 
-Hi Michal,
+--Signature=_Fri__16_Jul_2010_09_51_26_+1000_LqgdqtRqq/phIJLe
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the microblaze tree got a conflict in
-arch/microblaze/mm/init.c between commit
-95f72d1ed41a66f1c1c29c24d479de81a0bea36f ("lmb: rename to memblock") from
-Linus' tree and commit c30842ca4d432f553f53d4d6849523fd9b8ebb40
-("microblaze: Sync noMMU and MMU setup_memory") from the microblaze tree.
+Hi Steve,
 
-Just context changes.  I fixed it up (see below) and can carry the fix
-for a while.
--- 
+After merging the cifs tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
+
+In file included from fs/cifs/cifsfs.c:50:
+fs/cifs/fscache.h:49: error: expected identifier or '(' before '{' token
+
+Caused by commit 07be494ba2f46852ec6d1faab8111f5179cc7bb4 ("cifs: define
+server-level cache index objects and register them").
+CONFIG_CIFS_FSCACHE is not defined in this build.
+
+I have used the cifs tree from next-20100715 for today.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/microblaze/mm/init.c
-index db59349,573b97e..0000000
---- a/arch/microblaze/mm/init.c
-+++ b/arch/microblaze/mm/init.c
-@@@ -134,14 -134,9 +134,9 @@@ void __init setup_memory(void
-  	 * for 4GB of memory, using 4kB pages), plus 1 page
-  	 * (in case the address isn't page-aligned).
-  	 */
-- #ifndef CONFIG_MMU
-- 	map_size = init_bootmem_node(NODE_DATA(0), PFN_UP(TOPHYS((u32)klimit)),
-- 					min_low_pfn, max_low_pfn);
-- #else
-- 	map_size = init_bootmem_node(&contig_page_data,
-+ 	map_size = init_bootmem_node(NODE_DATA(0),
-  		PFN_UP(TOPHYS((u32)klimit)), min_low_pfn, max_low_pfn);
-- #endif
- -	lmb_reserve(PFN_UP(TOPHYS((u32)klimit)) << PAGE_SHIFT, map_size);
- +	memblock_reserve(PFN_UP(TOPHYS((u32)klimit)) << PAGE_SHIFT, map_size);
-  
-  	/* free bootmem is whole main memory */
-  	free_bootmem(memory_start, memory_size);
+--Signature=_Fri__16_Jul_2010_09_51_26_+1000_LqgdqtRqq/phIJLe
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMP57+AAoJEDMEi1NhKgbsjD0H/Azg82a6Tvh/HR0uhOfsqx1F
+6eK7OrIqVV/ik+LOjV338iFdy5dh+xwOad4po1U+F/tbrBHbtcN+8ad1VaKkMAaR
+VthMfMt5bNB2Gzd2ZZlcjL46YSFzsgUgEIoUn/QPHX+rQtH9U47OuQJRKNFZ/T8z
+jBc7yGNJOhNltHjeRWXNgHhsxqO9mYWk6DRQneaH/mKRPnYixZBgwoTwIRcbU9Dw
+NQFSzGY2Hs8WwA5N/SKitWfsVY/EASsaxtQWob6D2YE1KIt8giPGcvM9qeFy6D24
+DJCz0Wsqu7MD+InLvYIcaowwoCcAls66ZjM+OwlRMfL8izRfHwD4qX+vNC2vwRA=
+=xOTi
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__16_Jul_2010_09_51_26_+1000_LqgdqtRqq/phIJLe--
