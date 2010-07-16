@@ -1,54 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (powerpc
- related)
-Date: Fri, 16 Jul 2010 17:19:20 +1000
-Message-ID: <20100716171920.51ce1b88.sfr@canb.auug.org.au>
+From: Yinghai Lu <yinghai@kernel.org>
+Subject: Re: linux-next: build failure after merge of the final tree
+Date: Fri, 16 Jul 2010 11:39:34 -0700
+Message-ID: <4C40A766.6060309@kernel.org>
+References: <20100716171124.064cf319.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__16_Jul_2010_17_19_20_+1000_lYfodvP+Q6=ZuAhj"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57290 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S935747Ab0GPHTZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 16 Jul 2010 03:19:25 -0400
+Received: from rcsinet10.oracle.com ([148.87.113.121]:27448 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757696Ab0GPSm7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 16 Jul 2010 14:42:59 -0400
+In-Reply-To: <20100716171124.064cf319.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Martyn Welch <martyn.welch@ge.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Russell King <rmk@arm.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
---Signature=_Fri__16_Jul_2010_17_19_20_+1000_lYfodvP+Q6=ZuAhj
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 07/16/2010 12:11 AM, Stephen Rothwell wrote:
+> Hi Russell,
+> 
+> After merging the final tree, today's linux-next build (most, if not all
+> arm configs) failed (not unexpectedly) due to the lmb -> memblock rename
+> (commit 95f72d1ed41a66f1c1c29c24d479de81a0bea36f "lmb: rename to
+> memblock").
+> 
+> See http://kisskb.ellerman.id.au/kisskb/branch/9/
 
-Hi all,
+You or Russell may need to run the scripts in that patch
 
-After merging the final tree, today's linux-next build (powerpc
-allmodconfig) failed like this:
+      FILES=$(find * -type f | grep -vE 'oprofile|[^K]config')
 
-ERROR: "of_i8042_kbd_irq" [drivers/input/serio/i8042.ko] undefined!
-ERROR: "of_i8042_aux_irq" [drivers/input/serio/i8042.ko] undefined!
+      sed -i \
+        -e 's/lmb/memblock/g' \
+        -e 's/LMB/MEMBLOCK/g' \
+        $FILES
 
-Presumably missing EXPORT_SYMBOLs ..
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+      for N in $(find . -name lmb.[ch]); do
+        M=$(echo $N | sed 's/lmb/memblock/g')
+        mv $N $M
+      done
 
---Signature=_Fri__16_Jul_2010_17_19_20_+1000_lYfodvP+Q6=ZuAhj
-Content-Type: application/pgp-signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+Thanks
 
-iQEcBAEBAgAGBQJMQAf4AAoJEDMEi1NhKgbsFSoIAJXfCe3PuQaXJLvnVkr8eUHT
-oYRCtR3kEWPCpdedg5MSaWMNL6LUepCwdINPcL+FisvYZHhyBm92mrNdLIzvL4YF
-MK+aUCTSF5Fi2zL0N2T4zH6sJHXXJdg/tlGL5bG0CEuuuBCn2gdDzZUtNmJrNy42
-NyrwQNS7G+judqbNjws5L1LPxjeybSRHz60dLTUSiALQK6V7v1aNGkJhepG4XNO1
-9+ZFKfKlCJmelmOGwytl1a5FKcb75CWBDDwcPRirQnDG2hJLuMjnCT8eOUZrFKcZ
-UH6laP8bVaB1uWsn5C27NSp/T+u8OxMjKxsy0HUzyIkekCC8C5D/lgzXQ1pIMio=
-=0pZN
------END PGP SIGNATURE-----
-
---Signature=_Fri__16_Jul_2010_17_19_20_+1000_lYfodvP+Q6=ZuAhj--
+Yinghai
