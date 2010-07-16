@@ -1,43 +1,52 @@
-From: Steve French <smfrench@gmail.com>
-Subject: Re: linux-next: build failure after merge of the cifs tree
-Date: Thu, 15 Jul 2010 23:34:06 -0500
-Message-ID: <AANLkTinZwjJDO7DendPYE6-AuysleKIuKgpkysYRTIzE@mail.gmail.com>
-References: <20100716095126.e084dde0.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree
+Date: Fri, 16 Jul 2010 17:11:24 +1000
+Message-ID: <20100716171124.064cf319.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__16_Jul_2010_17_11_24_+1000_tvt=U5h_coHdSTys"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vw0-f46.google.com ([209.85.212.46]:41691 "EHLO
-	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751074Ab0GPEeJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 16 Jul 2010 00:34:09 -0400
-In-Reply-To: <20100716095126.e084dde0.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:36339 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S935725Ab0GPHLc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 16 Jul 2010 03:11:32 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-cifs-client@lists.samba.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Suresh Jayaraman <sjayaraman@suse.de>
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-On Thu, Jul 15, 2010 at 6:51 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Steve,
->
-> After merging the cifs tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
->
-> In file included from fs/cifs/cifsfs.c:50:
-> fs/cifs/fscache.h:49: error: expected identifier or '(' before '{' token
->
-> Caused by commit 07be494ba2f46852ec6d1faab8111f5179cc7bb4 ("cifs: define
-> server-level cache index objects and register them").
-> CONFIG_CIFS_FSCACHE is not defined in this build.
->
-> I have used the cifs tree from next-20100715 for today.
+--Signature=_Fri__16_Jul_2010_17_11_24_+1000_tvt=U5h_coHdSTys
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thx.  I have fixed this in cifs-2.6.git
+Hi Russell,
 
-There were three places where Suresh's fscache patch set for cifs
-forgot ifdefs or misdefined the stub function (when fscache support is
-turned off).
+After merging the final tree, today's linux-next build (most, if not all
+arm configs) failed (not unexpectedly) due to the lmb -> memblock rename
+(commit 95f72d1ed41a66f1c1c29c24d479de81a0bea36f "lmb: rename to
+memblock").
 
--- 
-Thanks,
+See http://kisskb.ellerman.id.au/kisskb/branch/9/
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Steve
+--Signature=_Fri__16_Jul_2010_17_11_24_+1000_tvt=U5h_coHdSTys
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMQAYcAAoJEDMEi1NhKgbs5BsIAIRq/cPSMjaBSZzKJQHqkeCq
+nklIUU9+7iwiL3lXxDgGEh1AYEoMytawLZqk4UuSv8caIlpUInJO3cvzcrhzG4/E
+bYYwdZyl2eG2C4btEzktaCwBP7d5YY6aClvnvaoZzyZvnEvVmmzfCEkPpGSOonSe
+8txCrelUeglpvDQVhU1USGpklAB5KTA/W1/TI/QinnEU1cY3WhKm4SIj5o194JTZ
+5VkVw01ZdVO5LoWOwJ2kiucXMlQl9VDkW+p21844ztw27sqCYXJbw9+Xbao5jtWB
+hFDUAYxaSXbZUHUA98tnJecCA3IZ5G+4IYUxA+uLw9JoOnfjC9sp+PhE6k7W7tQ=
+=+uX3
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__16_Jul_2010_17_11_24_+1000_tvt=U5h_coHdSTys--
