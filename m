@@ -1,57 +1,46 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the cifs tree
-Date: Fri, 16 Jul 2010 09:51:26 +1000
-Message-ID: <20100716095126.e084dde0.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the devicetree tree with Linus' tree
+Date: Fri, 16 Jul 2010 11:15:20 +1000
+Message-ID: <20100716111520.732bd29a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__16_Jul_2010_09_51_26_+1000_LqgdqtRqq/phIJLe"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37878 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:57521 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933992Ab0GOXvc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 15 Jul 2010 19:51:32 -0400
+	id S935038Ab0GPBPX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 15 Jul 2010 21:15:23 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Steve French <smfrench@gmail.com>, linux-cifs-client@lists.samba.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Suresh Jayaraman <sjayaraman@suse.de>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Andres Salomon <dilinger@queued.net>
 
---Signature=_Fri__16_Jul_2010_09_51_26_+1000_LqgdqtRqq/phIJLe
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Grant,
 
-Hi Steve,
+Today's linux-next merge of the devicetree tree got a conflict in
+arch/sparc/kernel/prom_64.c between commit
+95f72d1ed41a66f1c1c29c24d479de81a0bea36f ("lmb: rename to memblock") from
+Linus' tree and commit 035ebefc737cce56d3938e9b7eaa5ac0e9c28715
+("of/sparc: move is_root_node() to of.h") from the devicetree tree.
 
-After merging the cifs tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
-
-In file included from fs/cifs/cifsfs.c:50:
-fs/cifs/fscache.h:49: error: expected identifier or '(' before '{' token
-
-Caused by commit 07be494ba2f46852ec6d1faab8111f5179cc7bb4 ("cifs: define
-server-level cache index objects and register them").
-CONFIG_CIFS_FSCACHE is not defined in this build.
-
-I have used the cifs tree from next-20100715 for today.
---=20
+Just context changes. I fixed it up (see below) and can carry the fix for
+a while.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__16_Jul_2010_09_51_26_+1000_LqgdqtRqq/phIJLe
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMP57+AAoJEDMEi1NhKgbsjD0H/Azg82a6Tvh/HR0uhOfsqx1F
-6eK7OrIqVV/ik+LOjV338iFdy5dh+xwOad4po1U+F/tbrBHbtcN+8ad1VaKkMAaR
-VthMfMt5bNB2Gzd2ZZlcjL46YSFzsgUgEIoUn/QPHX+rQtH9U47OuQJRKNFZ/T8z
-jBc7yGNJOhNltHjeRWXNgHhsxqO9mYWk6DRQneaH/mKRPnYixZBgwoTwIRcbU9Dw
-NQFSzGY2Hs8WwA5N/SKitWfsVY/EASsaxtQWob6D2YE1KIt8giPGcvM9qeFy6D24
-DJCz0Wsqu7MD+InLvYIcaowwoCcAls66ZjM+OwlRMfL8izRfHwD4qX+vNC2vwRA=
-=xOTi
------END PGP SIGNATURE-----
-
---Signature=_Fri__16_Jul_2010_09_51_26_+1000_LqgdqtRqq/phIJLe--
+diff --cc arch/sparc/kernel/prom_64.c
+index 466a327,0bffafd..0000000
+--- a/arch/sparc/kernel/prom_64.c
++++ b/arch/sparc/kernel/prom_64.c
+@@@ -20,8 -20,8 +20,8 @@@
+  #include <linux/string.h>
+  #include <linux/mm.h>
+  #include <linux/module.h>
+ -#include <linux/lmb.h>
+ +#include <linux/memblock.h>
+- #include <linux/of_device.h>
++ #include <linux/of.h>
+  
+  #include <asm/prom.h>
+  #include <asm/oplib.h>
