@@ -1,32 +1,48 @@
-From: Jean Delvare <khali@linux-fr.org>
-Subject: Re: linux-next: failed import of the i2c quilt series
-Date: Mon, 19 Jul 2010 11:26:46 +0200
-Message-ID: <20100719112646.12d35b56@hyperion.delvare>
-References: <20100713102736.b66c2c2f.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for July 9 (staging/ti_st)
+Date: Mon, 19 Jul 2010 08:54:24 -0700
+Message-ID: <20100719085424.02d3b090.randy.dunlap@oracle.com>
+References: <20100709150117.51612026.sfr@canb.auug.org.au>
+	<20100711153316.8f54c297.randy.dunlap@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100713102736.b66c2c2f.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:64515 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S936159Ab0GSPy7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Jul 2010 11:54:59 -0400
+In-Reply-To: <20100711153316.8f54c297.randy.dunlap@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>, devel@driverdev.osuosl.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Hi Stephen,
+On Sun, 11 Jul 2010 15:33:16 -0700 Randy Dunlap wrote:
 
-On Tue, 13 Jul 2010 10:27:36 +1000, Stephen Rothwell wrote:
-> Importing of the i2c quilt tree this morning produced this error:
+> On Fri, 9 Jul 2010 15:01:17 +1000 Stephen Rothwell wrote:
 > 
-> i2c-drop-preliminary-probability-checks.patch
-> error: patch failed: drivers/i2c/i2c-core.c:1456
-> error: drivers/i2c/i2c-core.c: patch does not apply
+> > Hi all,
+> > 
+> > Changes since 20100708:
+> > 
+> > The infiniband tree gained a build failure so I used the version from
+> > next-20100708.
+> > 
+> > The wireless tree gained a conflict against the net tree.
+> > 
+> > The block tree gained a build failure for which I applied a patch.
+> > 
+> > The tty tree gained a conflict against the genesis tree.
 > 
-> I will use the i2c tree from next-20100712 for today.
+> 
+> Can't find this function in the linux-next source tree:
+> 
+> ERROR: "st_get_plat_device" [drivers/staging/ti-st/st_drv.ko] undefined!
 
-Probably caused by me not being quick enough to remove the patches from
-my queue after Linus merged them (I was travelling.) Should be fixed by
-now.
 
--- 
-Jean Delvare
+Still seeing this error in linux-next 20100719.
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
