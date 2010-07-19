@@ -1,30 +1,39 @@
-From: "Grant Mayor" <grantfinancing@gmail.com>
-Subject: (unknown)
-Date: Sat, 17 Jul 2010 10:06:45 +0200 (CEST)
-Message-ID: <2148.41.138.190.28.1279354005.squirrel__17405.692235525$1279354227$gmane$org@www.scalabrini.net>
-Reply-To: to.grantfinancing@gmail.com
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: linux-next: build failure after merge of the final tree
+	(powerpc related)
+Date: Mon, 19 Jul 2010 10:15:41 +1000
+Message-ID: <1279498541.10390.1773.camel@pasglop>
+References: <20100716171920.51ce1b88.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.10]:59561 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752466Ab0GQIJm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 17 Jul 2010 04:09:42 -0400
-Subject: 
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <20100716171920.51ce1b88.sfr@canb.auug.org.au>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Sender: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Martyn Welch <martyn.welch@ge.com>, linuxppc-dev@lists.ozlabs.org, linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-FUNDING NOTIFICATION.............I am Mr Grant Mayor. i am a loan lender
-as well as an angel investor, I offer funds based on demands and i use the
-best possible interest rate so that it can make both paties smile. I allow
-my clients to decide the loan repayment duration. So i have my door for
-funding opened to all that is in need, If you have been turned down be
-many financial institutions, this is a great time for you to make things
-up. If you need a stress free funing, kindly get back to me with a mail of
-application for funding and you will get funded within 3 working days.
-Send all mails of application to: to.grantfinancing@gmail.com.
+On Fri, 2010-07-16 at 17:19 +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the final tree, today's linux-next build (powerpc
+> allmodconfig) failed like this:
+> 
+> ERROR: "of_i8042_kbd_irq" [drivers/input/serio/i8042.ko] undefined!
+> ERROR: "of_i8042_aux_irq" [drivers/input/serio/i8042.ko] undefined!
+> 
+> Presumably missing EXPORT_SYMBOLs ..
 
-I await your response.
+Thanks. I'll fix that up.
 
-Grant Mayor.
+Cheers,
+Ben.
