@@ -1,143 +1,96 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] staging: don't use default init_module/cleanup_module
- function names
-Date: Mon, 19 Jul 2010 17:23:10 -0700
-Message-ID: <20100719172310.87625ce4.randy.dunlap@oracle.com>
-References: <20100719133841.babc9ccb.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: writable limits into -next
+Date: Tue, 20 Jul 2010 11:08:14 +1000
+Message-ID: <20100720110814.ffe72bc0.sfr@canb.auug.org.au>
+References: <4C448344.9020807@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__20_Jul_2010_11_08_14_+1000_I5idg0/U=nt2X2BN"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:61123 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754734Ab0GTAYP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Jul 2010 20:24:15 -0400
-In-Reply-To: <20100719133841.babc9ccb.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:51390 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757005Ab0GTBIW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 19 Jul 2010 21:08:22 -0400
+In-Reply-To: <4C448344.9020807@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Scott Smedley <ss@aao.gov.au>, gregkh@suse.de
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Marek Lindner <lindner_marek@yahoo.de>, Simon Wunderlich <siwu@hrz.tu-chemnitz.de>, Andrew Lunn <andrew@lunn.ch>, b.a.t.m.a.n@lists.open-mesh.net
+To: Jiri Slaby <jirislaby@gmail.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Fromy: Randy Dunlap <randy.dunlap@oracle.com>
+--Signature=_Tue__20_Jul_2010_11_08_14_+1000_I5idg0/U=nt2X2BN
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix two staging drivers to use module_init()/module_exit()
-instead of default init_module() and cleanup_module() function names
-so that there are no name conflicts when both are built-in.
+Hi Jiri,
 
-drivers/staging/dt3155/built-in.o: In function `cleanup_module':
-(.text+0xc0): multiple definition of `cleanup_module'
-drivers/staging/batman-adv/built-in.o:(.text+0x330): first defined here
-drivers/staging/dt3155/built-in.o: In function `init_module':
-(.text+0xe60): multiple definition of `init_module'
-drivers/staging/batman-adv/built-in.o:(.text+0x400): first defined here
+On Mon, 19 Jul 2010 18:54:28 +0200 Jiri Slaby <jirislaby@gmail.com> wrote:
+>
+> could I ask you to include wrlimits tree into the -next. I refactored it
+> according to comments and will try to merge it on my own (as nobody is
+> willing to merge it apparently).
+>=20
+> It's at:
+> git://decibel.fi.muni.cz/~xslaby/linux#writable_limits
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Scott Smedley <ss@aao.gov.au>
-Cc: Marek  Lindner  <lindner_marek@yahoo.de>
-Cc: Simon  Wunderlich  <siwu@hrz.tu-chemnitz.de>
-Cc:	Andrew Lunn <andrew@lunn.ch>
-Cc:	b.a.t.m.a.n@lists.open-mesh.net
-Cc:	Greg Kroah-Hartman <gregkh@suse.de
----
- drivers/staging/batman-adv/main.c   |    7 +++++--
- drivers/staging/dt3155/dt3155_drv.c |   23 ++++++++++-------------
- 2 files changed, 15 insertions(+), 15 deletions(-)
+Added back from today.
 
---- linux-next-20100719.orig/drivers/staging/batman-adv/main.c
-+++ linux-next-20100719/drivers/staging/batman-adv/main.c
-@@ -59,7 +59,7 @@ static struct packet_type batman_adv_pac
- 
- struct workqueue_struct *bat_event_workqueue;
- 
--int init_module(void)
-+int batman_init(void)
- {
- 	int retval;
- 
-@@ -131,7 +131,7 @@ end:
- 	return -ENOMEM;
- }
- 
--void cleanup_module(void)
-+void batman_exit(void)
- {
- 	deactivate_module();
- 
-@@ -273,6 +273,9 @@ int is_mcast(uint8_t *addr)
- 	return *addr & 0x01;
- }
- 
-+module_init(batman_init);
-+module_exit(batman_exit);
-+
- MODULE_LICENSE("GPL");
- 
- MODULE_AUTHOR(DRIVER_AUTHOR);
---- linux-next-20100719.orig/drivers/staging/dt3155/dt3155_drv.c
-+++ linux-next-20100719/drivers/staging/dt3155/dt3155_drv.c
-@@ -47,7 +47,7 @@ MA 02111-1307 USA
-  + might want to get rid of MAXboards for allocating initial buffer.
-     confusing and not necessary
- 
-- + in cleanup_module the MOD_IN_USE looks like it is check after it should
-+ + in dt3155_exit the MOD_IN_USE looks like it is check after it should
- 
-  * GFP_DMA should not be set with a PCI system (pg 291)
- 
-@@ -166,7 +166,7 @@ static void quick_stop (int minor)
-  *
-  * - looks like this isr supports IRQ sharing (or could) JML
-  * - Assumes irq's are disabled, via SA_INTERRUPT flag
-- * being set in request_irq() call from init_module()
-+ * being set in request_irq() call from dt3155_init()
-  *****************************************************/
- static void dt3155_isr(int irq, void *dev_id, struct pt_regs *regs)
- {
-@@ -836,7 +836,7 @@ dt3155_unlocked_ioctl(struct file *file,
- 
- /*****************************************************
-  * file operations supported by DT3155 driver
-- *  needed by init_module
-+ *  needed by dt3155_init
-  *  register_chrdev
-  *****************************************************/
- static struct file_operations dt3155_fops = {
-@@ -937,10 +937,8 @@ err:
- 
- u32 allocatorAddr = 0;
- 
--/*****************************************************
-- * init_module()
-- *****************************************************/
--int init_module(void)
-+
-+int dt3155_init(void)
- {
-   struct dt3155_status *dts;
-   int index;
-@@ -1059,16 +1057,13 @@ int init_module(void)
-   return 0;
- }
- 
--/*****************************************************
-- * cleanup_module(void)
-- *
-- *****************************************************/
--void cleanup_module(void)
-+
-+void dt3155_exit(void)
- {
-   struct dt3155_status *dts;
-   int index;
- 
--  printk("DT3155:  cleanup_module called\n");
-+  printk("DT3155:  dt3155_exit called\n");
- 
-   /* removed DMA allocated with the allocator */
- #ifdef STANDALONE_ALLOCATOR
-@@ -1092,3 +1087,5 @@ void cleanup_module(void)
-     }
- }
- 
-+module_init(dt3155_init);
-+module_exit(dt3155_exit);
+> There will be merge conflicts in unistd files with "unistd: add
+> __NR_prlimit64 syscall numbers". You can take a look at
+> http://decibel.fi.muni.cz/cgi-bin/gitweb.cgi?p=3Dmm.git;a=3Dshortlog;h=3D=
+refs/heads/devel
+> to see how it looks like in -next.
+
+Not sure how this is useful as it is your mm tree?
+
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+	Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+Legal Stuff:
+By participating in linux-next, your subsystem tree contributions are
+public and will be included in the linux-next trees.  You may be sent
+e-mail messages indicating errors or other issues when the
+patches/commits from your subsystem tree are merged and tested in
+linux-next.  These messages may also be cross-posted to the linux-next
+mailing list, the linux-kernel mailing list, etc.  The linux-next tree
+project and IBM (my employer) make no warranties regarding the linux-next
+project, the testing procedures, the results, the e-mails, etc.  If you
+don't agree to these ground rules, let me know and I'll remove your tree
+from participation in linux-next.
+
+--Signature=_Tue__20_Jul_2010_11_08_14_+1000_I5idg0/U=nt2X2BN
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMRPb+AAoJEDMEi1NhKgbsrR4H/i20Jovex15IBFen9Lx8qyn7
+uC6hTylRGctJiXNZTT90VhhN6YZpdcsT5mdDHpwpCzixVIWSbrPBUc+pWTZa0SYI
+lh7X0FdQYAAizhRotS4owu77UaYAXCm4Onof4oxQCBs+Gd5bpW/cpcuQ4KxQgTnK
+hVjZ0yFjU2SnVnWqTLk7EHOK7ZO07T2p3TziGkj9ekWjxx0T3NEl0nskaPfeFtwS
+2JuEH8FjtGwm7KxwMX6xz96+na+KKW4qqzmhamLRfKYZm4sMm9uRNpu2M34tLT5G
+j7M0p56Ci2lbG2mvsDdmlia3BFS7TM4L05ywME4u/9oi2+ZSVCG2vOdXcT2otvA=
+=wbDU
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__20_Jul_2010_11_08_14_+1000_I5idg0/U=nt2X2BN--
