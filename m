@@ -1,29 +1,71 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: manual merge of the sound tree with the arm tree
-Date: Tue, 20 Jul 2010 10:03:55 +0100
-Message-ID: <20100720090355.GL10222@rakim.wolfsonmicro.main>
-References: <20100719110054.de489964.sfr@canb.auug.org.au>
+From: Tejun Heo <tj@kernel.org>
+Subject: [PATCH wq#for-next] workqueue: fix build problem on !CONFIG_SMP
+Date: Tue, 20 Jul 2010 11:17:03 +0200
+Message-ID: <4C45698F.9010607@kernel.org>
+References: <20100720151030.f874832e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20100719110054.de489964.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from hera.kernel.org ([140.211.167.34]:59479 "EHLO hera.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758413Ab0GTJRJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 20 Jul 2010 05:17:09 -0400
+In-Reply-To: <20100720151030.f874832e.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Takashi Iwai <tiwai@suse.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>, Ryan Mallon <ryan@bluewatersys.com>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Jul 19, 2010 at 11:00:54AM +1000, Stephen Rothwell wrote:
+Commit f3421797 (workqueue: implement unbound workqueue) incorrectly
+tested CONFIG_SMP as part of a C expression in alloc/free_cwqs().  As
+CONFIG_SMP is not defined in UP, this breaks build.  Fix it by using
 
-> Today's linux-next merge of the sound tree got a conflict in
-> arch/arm/mach-ep93xx/clock.c between commit
-> 5c6649e3c1511b183f12d2e884d2c172fe9001e0 ("ARM: AMBA: Add pclk definition
-> for platforms using primecells") from the arm tree and commit
-> ed67ea82c0d9a163458dc6a69a7a3123db1a8b3b ("EP93xx: Add i2s core support")
-> from the sound tree.
+Found during linux-next build test.
 
-> Just overlapping additions.  I fixed it up (see below) and can carry the
-> fix as necessary.
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ kernel/workqueue.c |   18 ++++++++++++++----
+ 1 files changed, 14 insertions(+), 4 deletions(-)
 
-Ryan, can you investigate where (if anywhere is good) the best place to
-carry the merge fixup is please?
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+index aca9472..79a11e4 100644
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -2615,11 +2615,15 @@ static int alloc_cwqs(struct workqueue_struct *wq)
+ 	const size_t size = sizeof(struct cpu_workqueue_struct);
+ 	const size_t align = max_t(size_t, 1 << WORK_STRUCT_FLAG_BITS,
+ 				   __alignof__(unsigned long long));
++#ifdef CONFIG_SMP
++	bool percpu = !(wq->flags & WQ_UNBOUND);
++#else
++	bool percpu = false;
++#endif
+
+-	if (CONFIG_SMP && !(wq->flags & WQ_UNBOUND)) {
+-		/* on SMP, percpu allocator can align itself */
++	if (percpu)
+ 		wq->cpu_wq.pcpu = __alloc_percpu(size, align);
+-	} else {
++	else {
+ 		void *ptr;
+
+ 		/*
+@@ -2641,7 +2645,13 @@ static int alloc_cwqs(struct workqueue_struct *wq)
+
+ static void free_cwqs(struct workqueue_struct *wq)
+ {
+-	if (CONFIG_SMP && !(wq->flags & WQ_UNBOUND))
++#ifdef CONFIG_SMP
++	bool percpu = !(wq->flags & WQ_UNBOUND);
++#else
++	bool percpu = false;
++#endif
++
++	if (percpu)
+ 		free_percpu(wq->cpu_wq.pcpu);
+ 	else if (wq->cpu_wq.single) {
+ 		/* the pointer to free is stored right after the cwq */
+-- 
+1.6.4.2
