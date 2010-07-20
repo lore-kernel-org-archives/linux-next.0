@@ -1,70 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the workqueues tree with the tip tree
-Date: Tue, 20 Jul 2010 14:46:57 +1000
-Message-ID: <20100720144657.47ad6afb.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (workqueues
+ tree related)
+Date: Tue, 20 Jul 2010 15:10:30 +1000
+Message-ID: <20100720151030.f874832e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__20_Jul_2010_15_10_30_+1000_78lNxlb598Y3vl+C"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:52175 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752573Ab0GTFKi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 20 Jul 2010 01:10:38 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Tejun Heo <tj@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Li Zefan <lizf@cn.fujitsu.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+
+--Signature=_Tue__20_Jul_2010_15_10_30_+1000_78lNxlb598Y3vl+C
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi Tejun,
 
-Today's linux-next merge of the workqueues tree got a conflict in
-kernel/trace/Kconfig between commit
-039ca4e74a1cf60bd7487324a564ecf5c981f254 ("tracing: Remove kmemtrace
-ftrace plugin") from the tip tree and commit
-64166699752006f1a23a9cf7c96ae36654ccfc2c ("workqueue: temporarily remove
-workqueue tracing") from the workqueues tree.
+After merging the final tree, today's linux-next build (powerpc
+allnoconfig) failed like this:
 
-Juts context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
--- 
+kernel/workqueue.c: In function 'alloc_cwqs':
+kernel/workqueue.c:2634: error: 'CONFIG_SMP' undeclared (first use in this =
+function)
+kernel/workqueue.c: In function 'free_cwqs':
+kernel/workqueue.c:2659: error: 'CONFIG_SMP' undeclared (first use in this =
+function)
+
+Caused by commit f34217977d717385a3e9fd7018ac39fade3964c0 ("workqueue:
+implement unbound workqueue").  Config symbols need to be checked for
+being defined ...
+
+I have used the workqueues tree from next-20100719 for today.
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc kernel/trace/Kconfig
-index f669092,a0d95c1f..0000000
---- a/kernel/trace/Kconfig
-+++ b/kernel/trace/Kconfig
-@@@ -354,17 -371,26 +354,6 @@@ config STACK_TRACE
-  
-  	  Say N if unsure.
-  
-- config WORKQUEUE_TRACER
-- 	bool "Trace workqueues"
-- 	select GENERIC_TRACER
-- 	help
-- 	  The workqueue tracer provides some statistical information
--           about each cpu workqueue thread such as the number of the
--           works inserted and executed since their creation. It can help
--           to evaluate the amount of work each of them has to perform.
--           For example it can help a developer to decide whether he should
--           choose a per-cpu workqueue instead of a singlethreaded one.
-- 
- -config KMEMTRACE
- -	bool "Trace SLAB allocations"
- -	select GENERIC_TRACER
- -	help
- -	  kmemtrace provides tracing for slab allocator functions, such as
- -	  kmalloc, kfree, kmem_cache_alloc, kmem_cache_free, etc. Collected
- -	  data is then fed to the userspace application in order to analyse
- -	  allocation hotspots, internal fragmentation and so on, making it
- -	  possible to see how well an allocator performs, as well as debug
- -	  and profile kernel code.
- -
- -	  This requires an userspace application to use. See
- -	  Documentation/trace/kmemtrace.txt for more information.
- -
- -	  Saying Y will make the kernel somewhat larger and slower. However,
- -	  if you disable kmemtrace at run-time or boot-time, the performance
- -	  impact is minimal (depending on the arch the kernel is built for).
- -
- -	  If unsure, say N.
- -
-  config BLK_DEV_IO_TRACE
-  	bool "Support for tracing block IO actions"
-  	depends on SYSFS
+--Signature=_Tue__20_Jul_2010_15_10_30_+1000_78lNxlb598Y3vl+C
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMRS/GAAoJEDMEi1NhKgbs0rwIAJBQZ30cnsq6ImvXOWMMQS5R
+UlV0ofIoazW32eeko8Nb+Xmbcf8e4l/krO7bmOe/32xohrw59+tC/6zaTlPFpQDf
+ejKvhIl94IpbV5e+OUt20ue3ger40YyzzPFeGZ2hnuX4oKL9Mr9vRoBjboc6pnqk
+ZrXe+aJfb0NJK9gnSu263s9NrLiD0fs6xnTr/k6o2m7sRshLwaDv28Xd0x+/lvyl
+DtpSjO53Xttt5/nPIQDSu0cRHnj4fSAxABWsRvf7kpa7qAC7QSH3EuTTq1sDD1/M
+Nmf+rd3fBQcNs7ZXVaO2jxlEtm4j3GGsb1plOu03slRFlNNM1xW/9nGgKrXJvrk=
+=L0BF
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__20_Jul_2010_15_10_30_+1000_78lNxlb598Y3vl+C--
