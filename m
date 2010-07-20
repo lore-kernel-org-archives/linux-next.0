@@ -1,82 +1,48 @@
-From: Dave Chinner <david@fromorbit.com>
-Subject: Re: linux-next: OOPS at boot time
-Date: Wed, 21 Jul 2010 08:45:25 +1000
-Message-ID: <20100720224525.GO32635@dastard>
-References: <20100720164145.e06242b3.sfr@canb.auug.org.au>
- <20100720033656.0ce6356f.akpm@linux-foundation.org>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] net: NET_DSA depends on NET_ETHERNET
+Date: Tue, 20 Jul 2010 16:03:32 -0700
+Message-ID: <4C462B44.5010107@oracle.com>
+References: <20100706190519.93d8b785.sfr@canb.auug.org.au>	<20100706103417.8923b697.randy.dunlap@oracle.com> <20100710.190954.245403400.davem@davemloft.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20100720033656.0ce6356f.akpm@linux-foundation.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Al Viro <viro@zeniv.linux.org.uk>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:54597 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932810Ab0GTXEo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Jul 2010 19:04:44 -0400
+In-Reply-To: <20100710.190954.245403400.davem@davemloft.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>
+Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lennert Buytenhek <buytenh@wantstofly.org>
 
-On Tue, Jul 20, 2010 at 03:36:56AM -0700, Andrew Morton wrote:
-> On Tue, 20 Jul 2010 16:41:45 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
-> > Hi Al,
-> > 
-> > All of my PowerPC boot tests are getting this after getting to user mode
-> > (sometimes several times):
-> > 
-> > ------------[ cut here ]------------
-> > kernel BUG at fs/inode.c:1244!
-> > Oops: Exception in kernel mode, sig: 5 [#1]
-> > SMP NR_CPUS=128 NUMA pSeries
-> > last sysfs file: /sys/kernel/uevent_seqnum
-> > Modules linked in: ehea xt_tcpudp iptable_filter ip_tables nfnetlink nf_conntrack_ipv4 nf_defrag_ipv4 xt_state nf_conntrack ipt_REJECT x_tables dm_mirror dm_region_hash dm_log dm_zero dm_snapshot parport_pc parport dm_multipath autofs4
-> > NIP: c000000000168074 LR: c000000000168064 CTR: 0000000000000000
-> > REGS: c0000000063d39f0 TRAP: 0700   Not tainted  (2.6.35-rc5-autokern1)
-> > MSR: 8000000000029032 <EE,ME,CE,IR,DR>  CR: 22008422  XER: 20000001
-> > TASK = c000000003a25840[4995] 'rm' THREAD: c0000000063d0000 CPU: 2
-> > GPR00: 0000000000000001 c0000000063d3c70 c000000000bfdea0 c0000000015f2090 
-> > GPR04: 0000000000000003 0000000000000001 c0000000063d3bd0 c000000000c5a388 
-> > GPR08: 80c0000000000000 0000000000000006 6000000000000000 8000000000000000 
-> > GPR12: c0000000056c0598 c0000000074d6400 0000000003100000 0000000000779b68 
-> > GPR16: 00000000007782f0 0000000010018875 00000000ff9c74b8 0000000000000000 
-> > GPR20: 0000000000000000 0000000000000000 0000000010010000 0000000010010000 
-> > GPR24: 0000000000000001 00000000fffba994 0000000000000002 000000001001a038 
-> > GPR28: c000000006617800 c000000000aefd40 c000000000b586b8 c0000000056c0748 
-> > NIP [c000000000168074] .iput+0x288/0x2d0
-> > LR [c000000000168064] .iput+0x278/0x2d0
-> > Call Trace:
-> > [c0000000063d3c70] [c000000000168064] .iput+0x278/0x2d0 (unreliable)
-> > [c0000000063d3d00] [c00000000015e964] .do_unlinkat+0x124/0x1b8
-> > [c0000000063d3e30] [c000000000008554] syscall_exit+0x0/0x40
-> > Instruction dump:
-> > 38000000 f81f0008 f81f0000 e87e8090 48457d8d 60000000 7fe3fb78 4bfff339 
-> > e81f03b0 68000060 3120ffff 7c090110 <0b000000> 38210090 7fe3fb78 e8010010 
-> > ---[ end trace 9ace9d3884bc0aac ]---
-> > Trace/breakpoint trap
-> > ------------[ cut here ]------------
-> > 
-> > This is:
-> > 	BUG_ON(inode->i_state != (I_FREEING | I_CLEAR));
-> > in iput_final().
-> > 
-> > That BUG_ON was added by commit c0ae81f2 ("Make ->drop_inode() just
-> > return whether inode needs to be dropped").
-> > 
-> > Has anyone seen this or something similar?
-> 
-> I get it all the time.  See the thread "Subject: Re: linux-next: Tree for
-> July 7".
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Yet nobody else seems to be able to reproduce it. Given that powerPC
-is good at triggering reace conditions, maybe there is one that
-only you are unlucky eough to trigger.
+NET_DSA code selects and uses PHYLIB code, but PHYLIB depends on
+NET_ETHERNET.  However, "select" does not follow kconfig dependencies,
+so explicitly list that requirement here instead.
 
-Rather than just commenting out the BUG_ON() and ignoring the
-problem, can you print out the inode state (and enough information
-to identify the filesystem the inode belongs to) before triggering
-the BUG_ON() so we can get some idea of how this is triggering?
+Fixes this kconfig warning:
 
-Cheers,
+warning: (NET_DSA && NET && EXPERIMENTAL && !S390 ...) selects PHYLIB which has unmet direct dependencies (!S390 && NET_ETHERNET)
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Lennert Buytenhek <buytenh@wantstofly.org>
+---
+ net/dsa/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Is there some reason that NET_DSA is bool instead of tristate?
+I.e., net/dsa/ code cannot be built as loadable modules?
+--- linux-next-20100713.orig/net/dsa/Kconfig
++++ linux-next-20100713/net/dsa/Kconfig
+@@ -1,7 +1,7 @@
+ menuconfig NET_DSA
+ 	bool "Distributed Switch Architecture support"
+ 	default n
+-	depends on EXPERIMENTAL && !S390
++	depends on EXPERIMENTAL && !S390 && NET_ETHERNET
+ 	select PHYLIB
+ 	---help---
+ 	  This allows you to use hardware switch chips that use
