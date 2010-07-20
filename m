@@ -1,37 +1,143 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next/resend] writeback.h: needs linux/device.h
-Date: Mon, 19 Jul 2010 16:49:17 -0700
-Message-ID: <20100719164917.fb77b1d7.randy.dunlap@oracle.com>
+Subject: [PATCH -next] staging: don't use default init_module/cleanup_module
+ function names
+Date: Mon, 19 Jul 2010 17:23:10 -0700
+Message-ID: <20100719172310.87625ce4.randy.dunlap@oracle.com>
 References: <20100719133841.babc9ccb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:61123 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754734Ab0GTAYP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 19 Jul 2010 20:24:15 -0400
 In-Reply-To: <20100719133841.babc9ccb.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, axboe@kernel.dk
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Scott Smedley <ss@aao.gov.au>, gregkh@suse.de
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Marek Lindner <lindner_marek@yahoo.de>, Simon Wunderlich <siwu@hrz.tu-chemnitz.de>, Andrew Lunn <andrew@lunn.ch>, b.a.t.m.a.n@lists.open-mesh.net
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+Fromy: Randy Dunlap <randy.dunlap@oracle.com>
 
-include/trace/events/writeback.h uses dev_name(), so it needs to
-include linux/device.h.
+Fix two staging drivers to use module_init()/module_exit()
+instead of default init_module() and cleanup_module() function names
+so that there are no name conflicts when both are built-in.
 
-include/trace/events/writeback.h:12: error: implicit declaration of function 'dev_name'
+drivers/staging/dt3155/built-in.o: In function `cleanup_module':
+(.text+0xc0): multiple definition of `cleanup_module'
+drivers/staging/batman-adv/built-in.o:(.text+0x330): first defined here
+drivers/staging/dt3155/built-in.o: In function `init_module':
+(.text+0xe60): multiple definition of `init_module'
+drivers/staging/batman-adv/built-in.o:(.text+0x400): first defined here
 
 Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Scott Smedley <ss@aao.gov.au>
+Cc: Marek  Lindner  <lindner_marek@yahoo.de>
+Cc: Simon  Wunderlich  <siwu@hrz.tu-chemnitz.de>
+Cc:	Andrew Lunn <andrew@lunn.ch>
+Cc:	b.a.t.m.a.n@lists.open-mesh.net
+Cc:	Greg Kroah-Hartman <gregkh@suse.de
 ---
- include/trace/events/writeback.h |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/staging/batman-adv/main.c   |    7 +++++--
+ drivers/staging/dt3155/dt3155_drv.c |   23 ++++++++++-------------
+ 2 files changed, 15 insertions(+), 15 deletions(-)
 
---- linux-next-20100708.orig/include/trace/events/writeback.h
-+++ linux-next-20100708/include/trace/events/writeback.h
-@@ -5,6 +5,7 @@
- #define _TRACE_WRITEBACK_H
+--- linux-next-20100719.orig/drivers/staging/batman-adv/main.c
++++ linux-next-20100719/drivers/staging/batman-adv/main.c
+@@ -59,7 +59,7 @@ static struct packet_type batman_adv_pac
  
- #include <linux/backing-dev.h>
-+#include <linux/device.h>
- #include <linux/writeback.h>
+ struct workqueue_struct *bat_event_workqueue;
  
- struct wb_writeback_work;
+-int init_module(void)
++int batman_init(void)
+ {
+ 	int retval;
+ 
+@@ -131,7 +131,7 @@ end:
+ 	return -ENOMEM;
+ }
+ 
+-void cleanup_module(void)
++void batman_exit(void)
+ {
+ 	deactivate_module();
+ 
+@@ -273,6 +273,9 @@ int is_mcast(uint8_t *addr)
+ 	return *addr & 0x01;
+ }
+ 
++module_init(batman_init);
++module_exit(batman_exit);
++
+ MODULE_LICENSE("GPL");
+ 
+ MODULE_AUTHOR(DRIVER_AUTHOR);
+--- linux-next-20100719.orig/drivers/staging/dt3155/dt3155_drv.c
++++ linux-next-20100719/drivers/staging/dt3155/dt3155_drv.c
+@@ -47,7 +47,7 @@ MA 02111-1307 USA
+  + might want to get rid of MAXboards for allocating initial buffer.
+     confusing and not necessary
+ 
+- + in cleanup_module the MOD_IN_USE looks like it is check after it should
++ + in dt3155_exit the MOD_IN_USE looks like it is check after it should
+ 
+  * GFP_DMA should not be set with a PCI system (pg 291)
+ 
+@@ -166,7 +166,7 @@ static void quick_stop (int minor)
+  *
+  * - looks like this isr supports IRQ sharing (or could) JML
+  * - Assumes irq's are disabled, via SA_INTERRUPT flag
+- * being set in request_irq() call from init_module()
++ * being set in request_irq() call from dt3155_init()
+  *****************************************************/
+ static void dt3155_isr(int irq, void *dev_id, struct pt_regs *regs)
+ {
+@@ -836,7 +836,7 @@ dt3155_unlocked_ioctl(struct file *file,
+ 
+ /*****************************************************
+  * file operations supported by DT3155 driver
+- *  needed by init_module
++ *  needed by dt3155_init
+  *  register_chrdev
+  *****************************************************/
+ static struct file_operations dt3155_fops = {
+@@ -937,10 +937,8 @@ err:
+ 
+ u32 allocatorAddr = 0;
+ 
+-/*****************************************************
+- * init_module()
+- *****************************************************/
+-int init_module(void)
++
++int dt3155_init(void)
+ {
+   struct dt3155_status *dts;
+   int index;
+@@ -1059,16 +1057,13 @@ int init_module(void)
+   return 0;
+ }
+ 
+-/*****************************************************
+- * cleanup_module(void)
+- *
+- *****************************************************/
+-void cleanup_module(void)
++
++void dt3155_exit(void)
+ {
+   struct dt3155_status *dts;
+   int index;
+ 
+-  printk("DT3155:  cleanup_module called\n");
++  printk("DT3155:  dt3155_exit called\n");
+ 
+   /* removed DMA allocated with the allocator */
+ #ifdef STANDALONE_ALLOCATOR
+@@ -1092,3 +1087,5 @@ void cleanup_module(void)
+     }
+ }
+ 
++module_init(dt3155_init);
++module_exit(dt3155_exit);
