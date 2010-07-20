@@ -1,41 +1,29 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: linux-next: build failure after merge of the final tree (workqueues
- tree related)
-Date: Tue, 20 Jul 2010 10:42:52 +0200
-Message-ID: <4C45618C.2040905@kernel.org>
-References: <20100720151030.f874832e.sfr@canb.auug.org.au>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: linux-next: manual merge of the sound tree with the arm tree
+Date: Tue, 20 Jul 2010 10:03:55 +0100
+Message-ID: <20100720090355.GL10222@rakim.wolfsonmicro.main>
+References: <20100719110054.de489964.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hera.kernel.org ([140.211.167.34]:48275 "EHLO hera.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758275Ab0GTInA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 20 Jul 2010 04:43:00 -0400
-In-Reply-To: <20100720151030.f874832e.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20100719110054.de489964.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Takashi Iwai <tiwai@suse.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>, Ryan Mallon <ryan@bluewatersys.com>
+List-Id: linux-next.vger.kernel.org
 
-On 07/20/2010 07:10 AM, Stephen Rothwell wrote:
-> Hi Tejun,
-> 
-> After merging the final tree, today's linux-next build (powerpc
-> allnoconfig) failed like this:
-> 
-> kernel/workqueue.c: In function 'alloc_cwqs':
-> kernel/workqueue.c:2634: error: 'CONFIG_SMP' undeclared (first use in this function)
-> kernel/workqueue.c: In function 'free_cwqs':
-> kernel/workqueue.c:2659: error: 'CONFIG_SMP' undeclared (first use in this function)
-> 
-> Caused by commit f34217977d717385a3e9fd7018ac39fade3964c0 ("workqueue:
-> implement unbound workqueue").  Config symbols need to be checked for
-> being defined ...
+On Mon, Jul 19, 2010 at 11:00:54AM +1000, Stephen Rothwell wrote:
 
-Heh, yeah, I have no idea what I was thinking.  Will fix up soon.
+> Today's linux-next merge of the sound tree got a conflict in
+> arch/arm/mach-ep93xx/clock.c between commit
+> 5c6649e3c1511b183f12d2e884d2c172fe9001e0 ("ARM: AMBA: Add pclk definition
+> for platforms using primecells") from the arm tree and commit
+> ed67ea82c0d9a163458dc6a69a7a3123db1a8b3b ("EP93xx: Add i2s core support")
+> from the sound tree.
 
-Thanks.
+> Just overlapping additions.  I fixed it up (see below) and can carry the
+> fix as necessary.
 
--- 
-tejun
+Ryan, can you investigate where (if anywhere is good) the best place to
+carry the merge fixup is please?
