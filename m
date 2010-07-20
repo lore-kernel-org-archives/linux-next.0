@@ -1,28 +1,59 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: linux-next: manual merge of the net tree with the net-current
- tree
-Date: Mon, 19 Jul 2010 19:34:00 -0700
-Message-ID: <1279593240.19374.2.camel@Joe-Laptop.home>
-References: <20100720122032.88e0fcd9.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the limits tree with the tile tree
+Date: Tue, 20 Jul 2010 13:48:33 +1000
+Message-ID: <20100720134833.4082eed4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100720122032.88e0fcd9.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeff Dike <jdike@addtoit.com>, "Michael S. Tsirkin" <mst@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:51216 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1761131Ab0GTDsf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 19 Jul 2010 23:48:35 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jiri Slaby <jirislaby@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Metcalf <cmetcalf@tilera.com>
 
-On Tue, 2010-07-20 at 12:20 +1000, Stephen Rothwell wrote:
-> I fixed it up (see below) and can carry the fix as necessary.
-@@@ -527,15 -527,12 +527,14 @@@ static long vhost_net_set_backend(struc
+Hi Jiri,
+
+Today's linux-next merge of the limits tree got a conflict in
+include/asm-generic/unistd.h between commits
+5360bd776f73d0a7da571d72a09a03f237e99900 ("Fix up the "generic" unistd.h
+ABI to be more useful") and b51cae21ee66f77a368428e6bdf75a0c012c9fd7
+("Add wait4() back to the set of <asm-generic/unistd.h> syscalls") from
+the tile tree and commit f33ebbe9da2c3c24664a0ad4f8fd83f293547e63
+("unistd: add __NR_prlimit64 syscall numbers") from the limits tree.
+
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc include/asm-generic/unistd.h
+index c17cebc,0dfd517..0000000
+--- a/include/asm-generic/unistd.h
++++ b/include/asm-generic/unistd.h
+@@@ -631,18 -626,11 +631,20 @@@ __SYSCALL(__NR_perf_event_open, sys_per
+  __SYSCALL(__NR_accept4, sys_accept4)
+  #define __NR_recvmmsg 243
+  __SYSCALL(__NR_recvmmsg, sys_recvmmsg)
++ #define __NR_prlimit64 244
++ __SYSCALL(__NR_prlimit64, sys_prlimit64)
   
-        /* start polling new socket */
-        oldsock = vq->private_data;
--       if (sock == oldsock)
--               goto done;
-+       if (sock != oldsock){
-
-Trivial: missing space before open brace in commit
-dd1f4078f0d2de74a308f00a2dffbd550cfba59f
+ +/*
+ + * Architectures may provide up to 16 syscalls of their own
+ + * starting with this value.
+ + */
+- #define __NR_arch_specific_syscall 244
+++#define __NR_arch_specific_syscall 245
+ +
+ +#define __NR_wait4 260
+ +__SYSCALL(__NR_wait4, sys_wait4)
+ +
+  #undef __NR_syscalls
+ -#define __NR_syscalls 245
+ +#define __NR_syscalls 261
+  
+  /*
+   * All syscalls below here should go away really,
