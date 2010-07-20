@@ -1,48 +1,44 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] net: NET_DSA depends on NET_ETHERNET
-Date: Tue, 20 Jul 2010 16:03:32 -0700
-Message-ID: <4C462B44.5010107@oracle.com>
-References: <20100706190519.93d8b785.sfr@canb.auug.org.au>	<20100706103417.8923b697.randy.dunlap@oracle.com> <20100710.190954.245403400.davem@davemloft.net>
+Subject: [PATCH -next] debugfs: no longer needs to depend on SYSFS
+Date: Tue, 20 Jul 2010 16:04:51 -0700
+Message-ID: <4C462B93.2050403@oracle.com>
+References: <20100712155109.d997bf1c.sfr@canb.auug.org.au> <20100712124750.8ab5e870.randy.dunlap@oracle.com> <20100712212126.GA2684@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:54597 "EHLO
+Received: from rcsinet10.oracle.com ([148.87.113.121]:55825 "EHLO
 	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932810Ab0GTXEo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Jul 2010 19:04:44 -0400
-In-Reply-To: <20100710.190954.245403400.davem@davemloft.net>
+	with ESMTP id S932946Ab0GTXGq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Jul 2010 19:06:46 -0400
+In-Reply-To: <20100712212126.GA2684@suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lennert Buytenhek <buytenh@wantstofly.org>
+To: Greg KH <gregkh@suse.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Randy Dunlap <randy.dunlap@oracle.com>
 
-NET_DSA code selects and uses PHYLIB code, but PHYLIB depends on
-NET_ETHERNET.  However, "select" does not follow kconfig dependencies,
-so explicitly list that requirement here instead.
+debugfs no longer uses 'kernel_subsys' (which is gone), and other
+kernel/ksysfs.c code is always built, so DEBUG_FS does not need
+to depend on SYSFS.
 
 Fixes this kconfig warning:
 
-warning: (NET_DSA && NET && EXPERIMENTAL && !S390 ...) selects PHYLIB which has unmet direct dependencies (!S390 && NET_ETHERNET)
+warning: (TREE_RCU_TRACE || AMD_IOMMU_STATS && AMD_IOMMU || MTD_UBI_DEBUG && MTD && SYSFS && MTD_UBI || UBIFS_FS_DEBUG && MISC_FILESYSTEMS && UBIFS_FS || DEBUG_KMEMLEAK && DEBUG_KERNEL && EXPERIMENTAL && !MEMORY_HOTPLUG && (X86 || ARM || PPC || S390 || SPARC64 || SUPERH || MICROBLAZE) && SYSFS || TRACING || X86_PTDUMP && DEBUG_KERNEL || BLK_DEV_IO_TRACE && TRACING_SUPPORT && FTRACE && SYSFS && BLOCK) selects DEBUG_FS which has unmet direct dependencies (SYSFS)
 
 Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Lennert Buytenhek <buytenh@wantstofly.org>
 ---
- net/dsa/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/Kconfig.debug |    1 -
+ 1 file changed, 1 deletion(-)
 
-Is there some reason that NET_DSA is bool instead of tristate?
-I.e., net/dsa/ code cannot be built as loadable modules?
---- linux-next-20100713.orig/net/dsa/Kconfig
-+++ linux-next-20100713/net/dsa/Kconfig
-@@ -1,7 +1,7 @@
- menuconfig NET_DSA
- 	bool "Distributed Switch Architecture support"
- 	default n
--	depends on EXPERIMENTAL && !S390
-+	depends on EXPERIMENTAL && !S390 && NET_ETHERNET
- 	select PHYLIB
- 	---help---
- 	  This allows you to use hardware switch chips that use
+--- linux-next-20100713.orig/lib/Kconfig.debug
++++ linux-next-20100713/lib/Kconfig.debug
+@@ -76,7 +76,6 @@ config UNUSED_SYMBOLS
+ 
+ config DEBUG_FS
+ 	bool "Debug Filesystem"
+-	depends on SYSFS
+ 	help
+ 	  debugfs is a virtual file system that kernel developers use to put
+ 	  debugging files into.  Enable this option to be able to read and
