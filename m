@@ -1,33 +1,41 @@
-From: Jiri Slaby <jirislaby@gmail.com>
-Subject: Re: writable limits into -next
-Date: Tue, 20 Jul 2010 10:08:34 +0200
-Message-ID: <4C455982.1000800@gmail.com>
-References: <4C448344.9020807@gmail.com> <20100720110814.ffe72bc0.sfr@canb.auug.org.au>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: linux-next: build failure after merge of the final tree (workqueues
+ tree related)
+Date: Tue, 20 Jul 2010 10:42:52 +0200
+Message-ID: <4C45618C.2040905@kernel.org>
+References: <20100720151030.f874832e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:54768 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752884Ab0GTIIj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Jul 2010 04:08:39 -0400
-In-Reply-To: <20100720110814.ffe72bc0.sfr@canb.auug.org.au>
+Received: from hera.kernel.org ([140.211.167.34]:48275 "EHLO hera.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758275Ab0GTInA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 20 Jul 2010 04:43:00 -0400
+In-Reply-To: <20100720151030.f874832e.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 07/20/2010 03:08 AM, Stephen Rothwell wrote:
->> There will be merge conflicts in unistd files with "unistd: add
->> __NR_prlimit64 syscall numbers". You can take a look at
->> http://decibel.fi.muni.cz/cgi-bin/gitweb.cgi?p=mm.git;a=shortlog;h=refs/heads/devel
->> to see how it looks like in -next.
+On 07/20/2010 07:10 AM, Stephen Rothwell wrote:
+> Hi Tejun,
 > 
-> Not sure how this is useful as it is your mm tree?
+> After merging the final tree, today's linux-next build (powerpc
+> allnoconfig) failed like this:
+> 
+> kernel/workqueue.c: In function 'alloc_cwqs':
+> kernel/workqueue.c:2634: error: 'CONFIG_SMP' undeclared (first use in this function)
+> kernel/workqueue.c: In function 'free_cwqs':
+> kernel/workqueue.c:2659: error: 'CONFIG_SMP' undeclared (first use in this function)
+> 
+> Caused by commit f34217977d717385a3e9fd7018ac39fade3964c0 ("workqueue:
+> implement unbound workqueue").  Config symbols need to be checked for
+> being defined ...
 
-Hi, feel free to ignore it. It was intended just as a hint how the
-conflicts may be resolved.
+Heh, yeah, I have no idea what I was thinking.  Will fix up soon.
 
-thanks,
+Thanks.
+
 -- 
-js
+tejun
