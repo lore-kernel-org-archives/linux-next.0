@@ -1,37 +1,45 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: linux-next: OOPS at boot time
-Date: Wed, 21 Jul 2010 14:19:31 +0200
-Message-ID: <20100721121930.GE3447@quack.suse.cz>
-References: <20100720164145.e06242b3.sfr@canb.auug.org.au>
- <20100720033656.0ce6356f.akpm@linux-foundation.org>
- <20100720224525.GO32635@dastard>
- <20100720174424.12a4bf64.akpm@linux-foundation.org>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: [-next July 21] s390 build failure : kernel/workqueue.o
+Date: Wed, 21 Jul 2010 17:57:09 +0200
+Message-ID: <4C4718D5.1080902@kernel.org>
+References: <4C46CEA3.7040503@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor.suse.de ([195.135.220.2]:49832 "EHLO mx1.suse.de"
+Received: from hera.kernel.org ([140.211.167.34]:54917 "EHLO hera.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756662Ab0GUMUB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 21 Jul 2010 08:20:01 -0400
-Content-Disposition: inline
-In-Reply-To: <20100720174424.12a4bf64.akpm@linux-foundation.org>
+	id S1758230Ab0GUP5S (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 21 Jul 2010 11:57:18 -0400
+In-Reply-To: <4C46CEA3.7040503@in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Dave Chinner <david@fromorbit.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Al Viro <viro@zeniv.linux.org.uk>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>
+To: Sachin Sant <sachinp@in.ibm.com>
+Cc: linux-s390@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-On Tue 20-07-10 17:44:24, Andrew Morton wrote:
-> On Wed, 21 Jul 2010 08:45:25 +1000
-...
-> This isn't necessarily a problem in the quota code (setting aside the
-> question: why the heck does dquot_free_space() set I_DIRTY_PAGES??).
-  Because sometime in the dark past (2.4 days I believe), I used
-mark_inode_dirty in quota functions (not sure whether there even were
-different inode dirty flags back then) and it stayed this way upto now.
-mark_inode_dirty_sync() is of course more appropriate for quota code these
-days. Cleanup is on its way...
+Hello,
 
-								Honza
+On 07/21/2010 12:40 PM, Sachin Sant wrote:
+> Today's next fails to build on a s390 box with
+> 
+>  CC      kernel/workqueue.o
+> kernel/workqueue.c: In function 'init_workqueues':
+> kernel/workqueue.c:3525: error: negative width in bit-field '<anonymous>'
+> make[1]: *** [kernel/workqueue.o] Error 1
+> 
+> Yesterday's next was good.
+> The following patches added/changed the BUILD_BUG_ON() statement.
+> 
+> bdbc5dd7de5d07d6c9d3536e598956165a031d4c
+>        workqueue: prepare for WQ_UNBOUND implementation
+> 7a22ad757ec75186ad43a5b4670fa7423ee8f480
+>         workqueue: carry cpu number in work data once execution starts
+> 
+> I have gcc version 4.3.2 installed on the system.
+
+Hmmm... that's surprising.  Can you please attach the .config?
+
+Thanks.
+
 -- 
-Jan Kara <jack@suse.cz>
-SUSE Labs, CR
+tejun
