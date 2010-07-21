@@ -1,45 +1,53 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: [-next July 21] s390 build failure : kernel/workqueue.o
-Date: Wed, 21 Jul 2010 17:57:09 +0200
-Message-ID: <4C4718D5.1080902@kernel.org>
-References: <4C46CEA3.7040503@in.ibm.com>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: linux-next: OOPS at boot time
+Date: Wed, 21 Jul 2010 18:49:52 +0100
+Message-ID: <20100721174952.GT31073@ZenIV.linux.org.uk>
+References: <20100720164145.e06242b3.sfr@canb.auug.org.au>
+ <20100720033656.0ce6356f.akpm@linux-foundation.org>
+ <20100720224525.GO32635@dastard>
+ <20100720174424.12a4bf64.akpm@linux-foundation.org>
+ <20100721052007.GT32635@dastard>
+ <20100721002907.639802cd.akpm@linux-foundation.org>
+ <20100721174809.4781c244.sfr@canb.auug.org.au>
+ <20100721121116.GD3447@quack.suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hera.kernel.org ([140.211.167.34]:54917 "EHLO hera.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758230Ab0GUP5S (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 21 Jul 2010 11:57:18 -0400
-In-Reply-To: <4C46CEA3.7040503@in.ibm.com>
+Received: from zeniv.linux.org.uk ([195.92.253.2]:55651 "EHLO
+	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751537Ab0GURuS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Jul 2010 13:50:18 -0400
+Content-Disposition: inline
+In-Reply-To: <20100721121116.GD3447@quack.suse.cz>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sachin Sant <sachinp@in.ibm.com>
-Cc: linux-s390@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Dave Chinner <david@fromorbit.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 
-Hello,
+On Wed, Jul 21, 2010 at 02:11:17PM +0200, Jan Kara wrote:
+>   Thanks for bisecting this. The patch series indeed seems to uncover
+> some discrepancies.
+>   Ext3 has always dirtied inode in it's ->delete_inode method (via quota
+> code). But previously clear_inode() just overwrote the state with I_CLEAR
+> and thus we never saw the BUG_ON. After Al's patches, i_state is set in
+> end_writeback() which happens earlier. In particular it happens before
+> ext3_free_inode() which dirties the inode through quota code while freeing
+> xattrs - they are accounted in i_blocks, so i_blocks are updated during
+> freeing and inode is dirtied.
+>   Actually, ext3_mark_inode_dirty() called during each mark_inode_dirty()
+> call writes the inode state to the journal so the dirty flag in the inode
+> state is in fact stale and overwriting it with I_CLEAR never mattered. In
+> this sense, the BUG_ON triggered is a false positive. But I believe this is
+> a separate story.
+>   I'm not sure how to really fix this. It seems a bit premature to me to
+> mark inode as I_CLEAR before the filesystem is actually done with it. So
+> maybe the line
+>   inode->i_state = I_FREEING | I_CLEAR;
+> should be moved to evict() fuction?
 
-On 07/21/2010 12:40 PM, Sachin Sant wrote:
-> Today's next fails to build on a s390 box with
-> 
->  CC      kernel/workqueue.o
-> kernel/workqueue.c: In function 'init_workqueues':
-> kernel/workqueue.c:3525: error: negative width in bit-field '<anonymous>'
-> make[1]: *** [kernel/workqueue.o] Error 1
-> 
-> Yesterday's next was good.
-> The following patches added/changed the BUILD_BUG_ON() statement.
-> 
-> bdbc5dd7de5d07d6c9d3536e598956165a031d4c
->        workqueue: prepare for WQ_UNBOUND implementation
-> 7a22ad757ec75186ad43a5b4670fa7423ee8f480
->         workqueue: carry cpu number in work data once execution starts
-> 
-> I have gcc version 4.3.2 installed on the system.
+Nope.  I_CLEAR is "no async calls from vfs anymore; it's under complete
+fs control and is about to die now".
 
-Hmmm... that's surprising.  Can you please attach the .config?
-
-Thanks.
-
--- 
-tejun
+In any case, I'll post a dumb replacement for ext3 after I verify it on
+the laptop I have with me.  Should be in an hour or so (the damn thing is
+_slow_).
