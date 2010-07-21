@@ -1,68 +1,40 @@
-From: Ryan Mallon <ryan@bluewatersys.com>
-Subject: Re: Your patch: ARM: AMBA: Add pclk definition for platforms using
- primecells
-Date: Wed, 21 Jul 2010 12:49:11 +1200
-Message-ID: <4C464407.5060305@bluewatersys.com>
-References: <0D753D10438DA54287A00B02708426976374051D65@AUSP01VMBX24.collaborationhost.net>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: manual merge of the net tree with the net-current
+ tree
+Date: Tue, 20 Jul 2010 18:27:54 -0700 (PDT)
+Message-ID: <20100720.182754.140729379.davem@davemloft.net>
+References: <20100720122032.88e0fcd9.sfr@canb.auug.org.au>
+	<1279593240.19374.2.camel@Joe-Laptop.home>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.bluewatersys.com ([202.124.120.130]:36125 "EHLO
-	hayes.bluewaternz.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1760825Ab0GUAsk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Jul 2010 20:48:40 -0400
-In-Reply-To: <0D753D10438DA54287A00B02708426976374051D65@AUSP01VMBX24.collaborationhost.net>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:41040
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1761771Ab0GUB1i (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 20 Jul 2010 21:27:38 -0400
+In-Reply-To: <1279593240.19374.2.camel@Joe-Laptop.home>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: H Hartley Sweeten <hartleys@visionengravers.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Stephen Rothwell <sfr@canb.auug.org.au>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Takashi Iwai <tiwai@suse.de>, linux-next@vger.kernel.org, linux kernel <linux-kernel@vger.kernel.org>
+To: joe@perches.com
+Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, jdike@addtoit.com, mst@redhat.com
 
-On 07/21/2010 11:54 AM, H Hartley Sweeten wrote:
-> Hello Russell,
+From: Joe Perches <joe@perches.com>
+Date: Mon, 19 Jul 2010 19:34:00 -0700
+
+> On Tue, 2010-07-20 at 12:20 +1000, Stephen Rothwell wrote:
+>> I fixed it up (see below) and can carry the fix as necessary.
+> @@@ -527,15 -527,12 +527,14 @@@ static long vhost_net_set_backend(struc
+>   
+>         /* start polling new socket */
+>         oldsock = vq->private_data;
+> -       if (sock == oldsock)
+> -               goto done;
+> +       if (sock != oldsock){
 > 
-> Your patch added a new clock to the ep93xx platform called "apb_pclk".  This
-> clock was already available as "pclk" on that platform.
-> 
-> Since there are no users of "pclk" in the kernel I have no problems just
-> renaming it to "apb_pclk" and removing the dummy_apb_pclk that you added.
-> 
-> Would you like me to submit the ncessary patch or can you fix it?
+> Trivial: missing space before open brace in commit
+> dd1f4078f0d2de74a308f00a2dffbd550cfba59f
 
-The dummy_apb_pclk definition caused a merge conflict in next with the
-ep93xx i2s audio clock code, which Stephen wrote a fixup patch for. Can
-we sort this out all in one big go? Stephen's original message copied below.
-
-~Ryan
-
----
-
-> Hi Takashi,
-> 
-> Today's linux-next merge of the sound tree got a conflict in
-> arch/arm/mach-ep93xx/clock.c between commit
-> 5c6649e3c1511b183f12d2e884d2c172fe9001e0 ("ARM: AMBA: Add pclk definition
-> for platforms using primecells") from the arm tree and commit
-> ed67ea82c0d9a163458dc6a69a7a3123db1a8b3b ("EP93xx: Add i2s core support")
-> from the sound tree.
-> 
-> Just overlapping additions.  I fixed it up (see below) and can carry the
-> fix as necessary.
-
----
-diff --cc arch/arm/mach-ep93xx/clock.c
-index d40826a,8031624..0000000
---- a/arch/arm/mach-ep93xx/clock.c
-+++ b/arch/arm/mach-ep93xx/clock.c
-@@@ -43,9 -43,9 +43,11 @@@ static unsigned long get_uart_rate(stru
-
-  static int set_keytchclk_rate(struct clk *clk, unsigned long rate);
-  static int set_div_rate(struct clk *clk, unsigned long rate);
-+ static int set_i2s_sclk_rate(struct clk *clk, unsigned long rate);
-+ static int set_i2s_lrclk_rate(struct clk *clk, unsigned long rate);
-
- +static struct clk dummy_apb_pclk;
- +
-  static struct clk clk_xtali = {
-  	.rate		= EP93XX_EXT_CLK_RATE,
-  };
+Thanks guys, I'm taking care of this as I merge net-2.6 into
+net-next-2.6
