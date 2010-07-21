@@ -1,54 +1,67 @@
-From: mark gross <markgross@thegnar.org>
-Subject: Re: linux-next: manual merge of the suspend tree with the wireless
- tree
-Date: Wed, 21 Jul 2010 15:15:16 -0700
-Message-ID: <20100721221516.GC2610@gvim.org>
-References: <20100721132006.ff026db8.sfr@canb.auug.org.au>
-Reply-To: markgross@thegnar.org
+From: Dave Chinner <david@fromorbit.com>
+Subject: Re: linux-next: OOPS at boot time
+Date: Thu, 22 Jul 2010 09:19:28 +1000
+Message-ID: <20100721231928.GY32635@dastard>
+References: <20100720164145.e06242b3.sfr@canb.auug.org.au>
+ <20100720033656.0ce6356f.akpm@linux-foundation.org>
+ <20100720224525.GO32635@dastard>
+ <20100720174424.12a4bf64.akpm@linux-foundation.org>
+ <20100721052007.GT32635@dastard>
+ <20100721002907.639802cd.akpm@linux-foundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-px0-f174.google.com ([209.85.212.174]:64036 "EHLO
-	mail-px0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751559Ab0GUWPV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Jul 2010 18:15:21 -0400
+Received: from bld-mail13.adl6.internode.on.net ([150.101.137.98]:50937 "EHLO
+	mail.internode.on.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1754907Ab0GUXT6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Jul 2010 19:19:58 -0400
 Content-Disposition: inline
-In-Reply-To: <20100721132006.ff026db8.sfr@canb.auug.org.au>
+In-Reply-To: <20100721002907.639802cd.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Bottomley <James.Bottomley@suse.de>, mark gross <markgross@thegnar.org>, "John W. Linville" <linville@tuxdriver.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Al Viro <viro@zeniv.linux.org.uk>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>
 
-On Wed, Jul 21, 2010 at 01:20:06PM +1000, Stephen Rothwell wrote:
-> Hi Rafael,
+On Wed, Jul 21, 2010 at 12:29:07AM -0700, Andrew Morton wrote:
+> On Wed, 21 Jul 2010 15:20:07 +1000 Dave Chinner <david@fromorbit.com> wrote:
 > 
-> Today's linux-next merge of the suspend tree got a conflict in
-> drivers/net/wireless/ipw2x00/ipw2100.c between commit
-> d267be307a3345ef06889511cad2aa1fecc83db7 ("ipw2100: mark
-> ipw2100_pm_qos_req static") from the wireless tree and commit
-> 82f682514a5df89ffb3890627eebf0897b7a84ec ("pm_qos: Get rid of the
-> allocation in pm_qos_add_request()") from the suspend tree.
+> > > and they were dirtied within dquot_free_space().
+> > 
+> > AFAICT dquot_free_space() is called deep in the guts of
+> > ext3_truncate() via dquot_free_block(), which is called directly
+> > before end_writeback(). That should overwrite any state changes made
+> > inside ext3_truncate. I wonder if iput_final() is racing with
+> > something else here?
+> > 
 > 
-> I fixed it up (see below) and can carry the fix as necessary.
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+> This isn't a race.  I type `make' and the warnings spew out at hundreds
+> per second - every unlink, I'd say.
 > 
-> diff --cc drivers/net/wireless/ipw2x00/ipw2100.c
-> index 5bbff4c,7f0d98b..0000000
-> --- a/drivers/net/wireless/ipw2x00/ipw2100.c
-> +++ b/drivers/net/wireless/ipw2x00/ipw2100.c
-> @@@ -174,7 -174,7 +174,7 @@@ that only one external action is invoke
->   #define DRV_DESCRIPTION	"Intel(R) PRO/Wireless 2100 Network Driver"
->   #define DRV_COPYRIGHT	"Copyright(c) 2003-2006 Intel Corporation"
->   
-> - static struct pm_qos_request_list *ipw2100_pm_qos_req;
->  -struct pm_qos_request_list ipw2100_pm_qos_req;
-> ++static struct pm_qos_request_list ipw2100_pm_qos_req
+> Did you try my .config?
 
-It should be static.  Thanks
---mgross
+Yes, I did - it was the second thing I tried after using my usual
+.config (*).
 
->   
->   /* Debugging stuff */
->   #ifdef CONFIG_IPW2100_DEBUG
+I'm not an ext3 expert, so I might be missing something, but I
+cannot see (from code inspection) where those flags are being set
+after end_writeback is called.  My experience with inode flag
+corruptions on XFS that can only be reprodued by a small number of
+machines is that it is usually the result of a race condition.
+It looks and smells similar to me.
+
+Anyway, I'm not sure I can help much more at this point - until I
+can reproduce it I'm just making SWAGs...
+
+Cheers,
+
+Dave.
+
+(*) I eventually worked out that the ext3 corruption I was chasing
+on that one filesystem was a result of using a kernel built with
+your config because it didn't have CONFIG_EXT3_DEFAULTS_TO_ORDERED=y
+set and I did the equivalent of yanking the power cord to the VM
+(I do that all the time) while that kernel was running...
+
+-- 
+Dave Chinner
+david@fromorbit.com
