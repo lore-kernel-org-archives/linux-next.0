@@ -1,38 +1,45 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: linux-next: manual merge of the net tree with Linus' tree
-Date: Wed, 21 Jul 2010 10:31:15 +0800
-Message-ID: <20100721023114.GA14529@gondor.apana.org.au>
-References: <20100721120448.31e325fd.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the suspend tree with the wireless tree
+Date: Wed, 21 Jul 2010 13:20:06 +1000
+Message-ID: <20100721132006.ff026db8.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from helcar.apana.org.au ([209.40.204.226]:36506 "EHLO
-	fornost.hengli.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933031Ab0GUCbV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Jul 2010 22:31:21 -0400
-Content-Disposition: inline
-In-Reply-To: <20100721120448.31e325fd.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:60819 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932940Ab0GUDUI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 20 Jul 2010 23:20:08 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Bottomley <James.Bottomley@suse.de>, mark gross <markgross@thegnar.org>, "John W. Linville" <linville@tuxdriver.com>
 
-On Wed, Jul 21, 2010 at 12:04:48PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the net tree got a conflict in
-> net/bridge/br_device.c between commit
-> 573201f36fd9c7c6d5218cdcd9948cee700b277d ("bridge: Partially disable
-> netpoll support") from Linus' tree and commit
-> 91d2c34a4eed32876ca333b0ca44f3bc56645805 ("bridge: Fix netpoll support")
-> from the net tree.
-> 
-> The net tree commit seems to be a fuller fix, so I used that.
+Hi Rafael,
 
-Yeah, 573201f is just the temporary fix for 2.6.35.
+Today's linux-next merge of the suspend tree got a conflict in
+drivers/net/wireless/ipw2x00/ipw2100.c between commit
+d267be307a3345ef06889511cad2aa1fecc83db7 ("ipw2100: mark
+ipw2100_pm_qos_req static") from the wireless tree and commit
+82f682514a5df89ffb3890627eebf0897b7a84ec ("pm_qos: Get rid of the
+allocation in pm_qos_add_request()") from the suspend tree.
 
-Thanks,
+I fixed it up (see below) and can carry the fix as necessary.
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/net/wireless/ipw2x00/ipw2100.c
+index 5bbff4c,7f0d98b..0000000
+--- a/drivers/net/wireless/ipw2x00/ipw2100.c
++++ b/drivers/net/wireless/ipw2x00/ipw2100.c
+@@@ -174,7 -174,7 +174,7 @@@ that only one external action is invoke
+  #define DRV_DESCRIPTION	"Intel(R) PRO/Wireless 2100 Network Driver"
+  #define DRV_COPYRIGHT	"Copyright(c) 2003-2006 Intel Corporation"
+  
+- static struct pm_qos_request_list *ipw2100_pm_qos_req;
+ -struct pm_qos_request_list ipw2100_pm_qos_req;
+++static struct pm_qos_request_list ipw2100_pm_qos_req;
+  
+  /* Debugging stuff */
+  #ifdef CONFIG_IPW2100_DEBUG
