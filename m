@@ -1,44 +1,73 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] debugfs: no longer needs to depend on SYSFS
-Date: Tue, 20 Jul 2010 16:04:51 -0700
-Message-ID: <4C462B93.2050403@oracle.com>
-References: <20100712155109.d997bf1c.sfr@canb.auug.org.au> <20100712124750.8ab5e870.randy.dunlap@oracle.com> <20100712212126.GA2684@suse.de>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH -next] net: NET_DSA depends on NET_ETHERNET
+Date: Tue, 20 Jul 2010 17:45:30 -0700 (PDT)
+Message-ID: <20100720.174530.139530021.davem@davemloft.net>
+References: <20100706103417.8923b697.randy.dunlap@oracle.com>
+	<20100710.190954.245403400.davem@davemloft.net>
+	<4C462B44.5010107@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:55825 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932946Ab0GTXGq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Jul 2010 19:06:46 -0400
-In-Reply-To: <20100712212126.GA2684@suse.de>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:47954
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1761501Ab0GUApO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 20 Jul 2010 20:45:14 -0400
+In-Reply-To: <4C462B44.5010107@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <gregkh@suse.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: randy.dunlap@oracle.com
+Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, buytenh@wantstofly.org
 
 From: Randy Dunlap <randy.dunlap@oracle.com>
+Date: Tue, 20 Jul 2010 16:03:32 -0700
 
-debugfs no longer uses 'kernel_subsys' (which is gone), and other
-kernel/ksysfs.c code is always built, so DEBUG_FS does not need
-to depend on SYSFS.
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> NET_DSA code selects and uses PHYLIB code, but PHYLIB depends on
+> NET_ETHERNET.  However, "select" does not follow kconfig dependencies,
+> so explicitly list that requirement here instead.
+> 
+> Fixes this kconfig warning:
+> 
+> warning: (NET_DSA && NET && EXPERIMENTAL && !S390 ...) selects PHYLIB which has unmet direct dependencies (!S390 && NET_ETHERNET)
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 
-Fixes this kconfig warning:
+Randy, this has been fixed in net-2.6 for some time now.
 
-warning: (TREE_RCU_TRACE || AMD_IOMMU_STATS && AMD_IOMMU || MTD_UBI_DEBUG && MTD && SYSFS && MTD_UBI || UBIFS_FS_DEBUG && MISC_FILESYSTEMS && UBIFS_FS || DEBUG_KMEMLEAK && DEBUG_KERNEL && EXPERIMENTAL && !MEMORY_HOTPLUG && (X86 || ARM || PPC || S390 || SPARC64 || SUPERH || MICROBLAZE) && SYSFS || TRACING || X86_PTDUMP && DEBUG_KERNEL || BLK_DEV_IO_TRACE && TRACING_SUPPORT && FTRACE && SYSFS && BLOCK) selects DEBUG_FS which has unmet direct dependencies (SYSFS)
+And I'm pretty sure I sent a copy of this to you when I
+checked it in :-)
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+--------------------
+>From 336a283b9cbe47748ccd68fd8c5158f67cee644b Mon Sep 17 00:00:00 2001
+From: David S. Miller <davem@davemloft.net>
+Date: Mon, 12 Jul 2010 20:03:42 -0700
+Subject: [PATCH 09/24] dsa: Fix Kconfig dependencies.
+
+Based upon a report by Randy Dunlap.
+
+DSA needs PHYLIB, but PHYLIB needs NET_ETHERNET.  So, in order
+to select PHYLIB we have to make DSA depend upon NET_ETHERNET.
+
+Signed-off-by: David S. Miller <davem@davemloft.net>
 ---
- lib/Kconfig.debug |    1 -
- 1 file changed, 1 deletion(-)
+ net/dsa/Kconfig |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
---- linux-next-20100713.orig/lib/Kconfig.debug
-+++ linux-next-20100713/lib/Kconfig.debug
-@@ -76,7 +76,6 @@ config UNUSED_SYMBOLS
- 
- config DEBUG_FS
- 	bool "Debug Filesystem"
--	depends on SYSFS
- 	help
- 	  debugfs is a virtual file system that kernel developers use to put
- 	  debugging files into.  Enable this option to be able to read and
+diff --git a/net/dsa/Kconfig b/net/dsa/Kconfig
+index c51b554..1120178 100644
+--- a/net/dsa/Kconfig
++++ b/net/dsa/Kconfig
+@@ -1,7 +1,7 @@
+ menuconfig NET_DSA
+ 	bool "Distributed Switch Architecture support"
+ 	default n
+-	depends on EXPERIMENTAL && !S390
++	depends on EXPERIMENTAL && NET_ETHERNET && !S390
+ 	select PHYLIB
+ 	---help---
+ 	  This allows you to use hardware switch chips that use
+-- 
+1.7.1.1
