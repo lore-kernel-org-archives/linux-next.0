@@ -1,50 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree with Linus' tree
-Date: Wed, 21 Jul 2010 12:04:48 +1000
-Message-ID: <20100721120448.31e325fd.sfr@canb.auug.org.au>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: linux-next: manual merge of the net tree with Linus' tree
+Date: Wed, 21 Jul 2010 10:31:15 +0800
+Message-ID: <20100721023114.GA14529@gondor.apana.org.au>
+References: <20100721120448.31e325fd.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__21_Jul_2010_12_04_48_+1000_Bli2YTYNr394HT7F"
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Wed__21_Jul_2010_12_04_48_+1000_Bli2YTYNr394HT7F
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from helcar.apana.org.au ([209.40.204.226]:36506 "EHLO
+	fornost.hengli.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933031Ab0GUCbV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 20 Jul 2010 22:31:21 -0400
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20100721120448.31e325fd.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi all,
+On Wed, Jul 21, 2010 at 12:04:48PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the net tree got a conflict in
+> net/bridge/br_device.c between commit
+> 573201f36fd9c7c6d5218cdcd9948cee700b277d ("bridge: Partially disable
+> netpoll support") from Linus' tree and commit
+> 91d2c34a4eed32876ca333b0ca44f3bc56645805 ("bridge: Fix netpoll support")
+> from the net tree.
+> 
+> The net tree commit seems to be a fuller fix, so I used that.
 
-Today's linux-next merge of the net tree got a conflict in
-net/bridge/br_device.c between commit
-573201f36fd9c7c6d5218cdcd9948cee700b277d ("bridge: Partially disable
-netpoll support") from Linus' tree and commit
-91d2c34a4eed32876ca333b0ca44f3bc56645805 ("bridge: Fix netpoll support")
-from the net tree.
+Yeah, 573201f is just the temporary fix for 2.6.35.
 
-The net tree commit seems to be a fuller fix, so I used that.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__21_Jul_2010_12_04_48_+1000_Bli2YTYNr394HT7F
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMRlXAAAoJEDMEi1NhKgbsB90IAJEA6zRC7IhRzMFhCYX4h3uB
-NmhdSyqlUXvb40MZHyp6gy9+hoMl82fEkN6Xw0kAckggwbrt2PfcZmR073jObRhw
-7vyKRGqC946GGRHEuKHWGg6wCcAdfWraR3r49tnNYXsAz2niu7rzuwyfZy2NjS69
-r9DMjk6fN5fiSDzmthyPUCxFV0B1vL0Tup292+NLEvefxywqI3VUd0V+IkXoVKNM
-cvFnWkBha1Hsj3Wbi8KYABrbTNGYLsOvAoKpVzmnz8c4f8ozjlnf9WJHH8no3B5P
-C0IHAxhn6pVzw4Y+sCwG7lTOWWeTxd5d2sxRtoA30gWB9N63pL/gFCY5+535Thw=
-=e274
------END PGP SIGNATURE-----
-
---Signature=_Wed__21_Jul_2010_12_04_48_+1000_Bli2YTYNr394HT7F--
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
