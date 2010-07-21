@@ -1,72 +1,78 @@
-From: Dave Chinner <david@fromorbit.com>
-Subject: Re: linux-next: OOPS at boot time
-Date: Wed, 21 Jul 2010 15:20:07 +1000
-Message-ID: <20100721052007.GT32635@dastard>
-References: <20100720164145.e06242b3.sfr@canb.auug.org.au>
- <20100720033656.0ce6356f.akpm@linux-foundation.org>
- <20100720224525.GO32635@dastard>
- <20100720174424.12a4bf64.akpm@linux-foundation.org>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [PATCH -next] net: NET_DSA depends on NET_ETHERNET
+Date: Tue, 20 Jul 2010 22:41:23 -0700
+Message-ID: <4C468883.4050207@oracle.com>
+References: <20100706103417.8923b697.randy.dunlap@oracle.com>	<20100710.190954.245403400.davem@davemloft.net>	<4C462B44.5010107@oracle.com> <20100720.174530.139530021.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20100720174424.12a4bf64.akpm@linux-foundation.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Al Viro <viro@zeniv.linux.org.uk>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:28630 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751428Ab0GUFld (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Jul 2010 01:41:33 -0400
+In-Reply-To: <20100720.174530.139530021.davem@davemloft.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>
+Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, buytenh@wantstofly.org
 
-On Tue, Jul 20, 2010 at 05:44:24PM -0700, Andrew Morton wrote:
-> On Wed, 21 Jul 2010 08:45:25 +1000 Dave Chinner <david@fromorbit.com> wrote:
-> > On Tue, Jul 20, 2010 at 03:36:56AM -0700, Andrew Morton wrote:
-> > > On Tue, 20 Jul 2010 16:41:45 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > > Has anyone seen this or something similar?
-> > > 
-> > > I get it all the time.  See the thread "Subject: Re: linux-next: Tree for
-> > > July 7".
-> > 
-> > Yet nobody else seems to be able to reproduce it. Given that powerPC
-> > is good at triggering reace conditions, maybe there is one that
-> > only you are unlucky eough to trigger.
-> > 
-> > Rather than just commenting out the BUG_ON() and ignoring the
-> > problem, can you print out the inode state (and enough information
-> > to identify the filesystem the inode belongs to) before triggering
-> > the BUG_ON() so we can get some idea of how this is triggering?
+On 07/20/10 17:45, David Miller wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> Date: Tue, 20 Jul 2010 16:03:32 -0700
 > 
-> Already did.  ext3.  I_DIRTY_SYNC, I_DIRTY_DATASYNC and I_DIRTY_PAGES
-> are set (i_state=0x67).
->
-> A bit of poking around indicates that these inodes always have zero
-> attached pages,
-
-They should, because by the time that bug fires they should have had
-all their pages stripped away.
-
-> and they were dirtied within dquot_free_space().
-
-AFAICT dquot_free_space() is called deep in the guts of
-ext3_truncate() via dquot_free_block(), which is called directly
-before end_writeback(). That should overwrite any state changes made
-inside ext3_truncate. I wonder if iput_final() is racing with
-something else here?
-
-> This isn't necessarily a problem in the quota code (setting aside the
-> question: why the heck does dquot_free_space() set I_DIRTY_PAGES??). 
-> If the vfs is asked to kill off a dirty inode, it should at least clean
-> the thing first.
+>> From: Randy Dunlap <randy.dunlap@oracle.com>
+>>
+>> NET_DSA code selects and uses PHYLIB code, but PHYLIB depends on
+>> NET_ETHERNET.  However, "select" does not follow kconfig dependencies,
+>> so explicitly list that requirement here instead.
+>>
+>> Fixes this kconfig warning:
+>>
+>> warning: (NET_DSA && NET && EXPERIMENTAL && !S390 ...) selects PHYLIB which has unmet direct dependencies (!S390 && NET_ETHERNET)
+>>
+>> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 > 
-> I dunno.  That fs/inode.c patch series from Viro looks fishy.  I guess
-> I get to bisect it tomorrow.
+> Randy, this has been fixed in net-2.6 for some time now.
 
-I suspect that is the only way to get to the bottom of this, short
-of a reliable reproducer being discovered. I'm still trying to
-reproduce it - I've even turned quota on - but I'm not having any
-more luck than over the weekend, though...
+OK, I did see the commit get merged today.
 
-Cheers,
+> And I'm pretty sure I sent a copy of this to you when I
+> checked it in :-)
 
-Dave.
+I missed it somehow.  Thanks.
+
+> --------------------
+> From 336a283b9cbe47748ccd68fd8c5158f67cee644b Mon Sep 17 00:00:00 2001
+> From: David S. Miller <davem@davemloft.net>
+> Date: Mon, 12 Jul 2010 20:03:42 -0700
+> Subject: [PATCH 09/24] dsa: Fix Kconfig dependencies.
+> 
+> Based upon a report by Randy Dunlap.
+> 
+> DSA needs PHYLIB, but PHYLIB needs NET_ETHERNET.  So, in order
+> to select PHYLIB we have to make DSA depend upon NET_ETHERNET.
+> 
+> Signed-off-by: David S. Miller <davem@davemloft.net>
+> ---
+>  net/dsa/Kconfig |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> diff --git a/net/dsa/Kconfig b/net/dsa/Kconfig
+> index c51b554..1120178 100644
+> --- a/net/dsa/Kconfig
+> +++ b/net/dsa/Kconfig
+> @@ -1,7 +1,7 @@
+>  menuconfig NET_DSA
+>  	bool "Distributed Switch Architecture support"
+>  	default n
+> -	depends on EXPERIMENTAL && !S390
+> +	depends on EXPERIMENTAL && NET_ETHERNET && !S390
+>  	select PHYLIB
+>  	---help---
+>  	  This allows you to use hardware switch chips that use
+
+
 -- 
-Dave Chinner
-david@fromorbit.com
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
