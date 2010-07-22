@@ -1,67 +1,55 @@
-From: Dave Chinner <david@fromorbit.com>
-Subject: Re: linux-next: OOPS at boot time
-Date: Thu, 22 Jul 2010 09:19:28 +1000
-Message-ID: <20100721231928.GY32635@dastard>
-References: <20100720164145.e06242b3.sfr@canb.auug.org.au>
- <20100720033656.0ce6356f.akpm@linux-foundation.org>
- <20100720224525.GO32635@dastard>
- <20100720174424.12a4bf64.akpm@linux-foundation.org>
- <20100721052007.GT32635@dastard>
- <20100721002907.639802cd.akpm@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the sound tree with the arm tree
+Date: Thu, 22 Jul 2010 11:28:31 +1000
+Message-ID: <20100722112831.c6345379.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__22_Jul_2010_11_28_31_+1000_svmBv4vh_QMon2gA"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bld-mail13.adl6.internode.on.net ([150.101.137.98]:50937 "EHLO
-	mail.internode.on.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1754907Ab0GUXT6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 21 Jul 2010 19:19:58 -0400
-Content-Disposition: inline
-In-Reply-To: <20100721002907.639802cd.akpm@linux-foundation.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:34041 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752126Ab0GVB2i (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 21 Jul 2010 21:28:38 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Al Viro <viro@zeniv.linux.org.uk>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
 
-On Wed, Jul 21, 2010 at 12:29:07AM -0700, Andrew Morton wrote:
-> On Wed, 21 Jul 2010 15:20:07 +1000 Dave Chinner <david@fromorbit.com> wrote:
-> 
-> > > and they were dirtied within dquot_free_space().
-> > 
-> > AFAICT dquot_free_space() is called deep in the guts of
-> > ext3_truncate() via dquot_free_block(), which is called directly
-> > before end_writeback(). That should overwrite any state changes made
-> > inside ext3_truncate. I wonder if iput_final() is racing with
-> > something else here?
-> > 
-> 
-> This isn't a race.  I type `make' and the warnings spew out at hundreds
-> per second - every unlink, I'd say.
-> 
-> Did you try my .config?
+--Signature=_Thu__22_Jul_2010_11_28_31_+1000_svmBv4vh_QMon2gA
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes, I did - it was the second thing I tried after using my usual
-.config (*).
+Hi Takashi,
 
-I'm not an ext3 expert, so I might be missing something, but I
-cannot see (from code inspection) where those flags are being set
-after end_writeback is called.  My experience with inode flag
-corruptions on XFS that can only be reprodued by a small number of
-machines is that it is usually the result of a race condition.
-It looks and smells similar to me.
+Today's linux-next merge of the sound tree got a conflict in
+arch/arm/mach-ep93xx/clock.c between commit
+a99b53f80962ed98f4b598dc22f8c030b5dae55a ("ARM: AMBA: Add pclk support to
+AMBA bus infrastructure") from the arm tree and commit
+ed67ea82c0d9a163458dc6a69a7a3123db1a8b3b ("EP93xx: Add i2s core support")
+from the sound tree.
 
-Anyway, I'm not sure I can help much more at this point - until I
-can reproduce it I'm just making SWAGs...
-
+Just context changes.  I fixed it up (it was just a blank line) and can
+carry the fix as necessary.
+--=20
 Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Dave.
+--Signature=_Thu__22_Jul_2010_11_28_31_+1000_svmBv4vh_QMon2gA
+Content-Type: application/pgp-signature
 
-(*) I eventually worked out that the ext3 corruption I was chasing
-on that one filesystem was a result of using a kernel built with
-your config because it didn't have CONFIG_EXT3_DEFAULTS_TO_ORDERED=y
-set and I did the equivalent of yanking the power cord to the VM
-(I do that all the time) while that kernel was running...
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
--- 
-Dave Chinner
-david@fromorbit.com
+iQEcBAEBAgAGBQJMR56/AAoJEDMEi1NhKgbs6n4H/ipJsj0ushOfuceS+Mcfn8gy
+Ka9mikTy6OZ2K4OV6uarF3jxWrO0H3TYY75AZymHWRt0ypGbMEhpNZmQ3ro29c3Y
+bTkec8iIXOQnizRGBK4flsQNJelZ/IeU3f7wFvvzZ7XRlcWBel3OXl5guvV7Y9zi
+i9PUfWOpJ9w1PFqyAFKs57JDSXSiH4/S3hqJHLeBqu5+gl+bQzogMwqOOEE6gEE+
+yOvR8Q4K1xQlvucYjS0q6zwjpH+9cxw/Kll41pbgGicf4HjAeNVVDopVse4CNJs2
+4/WDVpGY4Pt0jWCyt4bsKwncpaZQKfU1GxYz+IGrr6EykcFJIJTJ5ePcZeuG4cM=
+=JfKN
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__22_Jul_2010_11_28_31_+1000_svmBv4vh_QMon2gA--
