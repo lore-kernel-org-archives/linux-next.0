@@ -1,55 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the sound tree with the arm tree
-Date: Thu, 22 Jul 2010 11:28:31 +1000
-Message-ID: <20100722112831.c6345379.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the input tree with the s5p tree
+Date: Thu, 22 Jul 2010 11:46:55 +1000
+Message-ID: <20100722114655.1140fb61.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__22_Jul_2010_11_28_31_+1000_svmBv4vh_QMon2gA"
+ boundary="Signature=_Thu__22_Jul_2010_11_46_55_+1000_lg/M1miGI30F_z6_"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34041 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:43253 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752126Ab0GVB2i (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 21 Jul 2010 21:28:38 -0400
+	id S1751599Ab0GVBrI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 21 Jul 2010 21:47:08 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
---Signature=_Thu__22_Jul_2010_11_28_31_+1000_svmBv4vh_QMon2gA
+--Signature=_Thu__22_Jul_2010_11_46_55_+1000_lg/M1miGI30F_z6_
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Takashi,
+Hi Dmitry,
 
-Today's linux-next merge of the sound tree got a conflict in
-arch/arm/mach-ep93xx/clock.c between commit
-a99b53f80962ed98f4b598dc22f8c030b5dae55a ("ARM: AMBA: Add pclk support to
-AMBA bus infrastructure") from the arm tree and commit
-ed67ea82c0d9a163458dc6a69a7a3123db1a8b3b ("EP93xx: Add i2s core support")
-from the sound tree.
+Today's linux-next merge of the input tree got a conflict in
+arch/arm/plat-samsung/include/plat/keypad.h between commit
+1e3241300503df18a098dd35098f6975dcf622e2 ("ARM: SAMSUNG: Add keypad
+device support") from the s5p tree and commit
+0fffed27f92d9d7a34de9fe017b7082b5958bb93 ("Input: samsung-keypad - Add
+samsung keypad driver") from the input tree.
 
-Just context changes.  I fixed it up (it was just a blank line) and can
-carry the fix as necessary.
+This just looks like two versions of the same driver (or two drivers
+sharing the same header) - please sort this out.  I have fixed up the
+header for today (by including both versions where necessary).
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__22_Jul_2010_11_28_31_+1000_svmBv4vh_QMon2gA
+--Signature=_Thu__22_Jul_2010_11_46_55_+1000_lg/M1miGI30F_z6_
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMR56/AAoJEDMEi1NhKgbs6n4H/ipJsj0ushOfuceS+Mcfn8gy
-Ka9mikTy6OZ2K4OV6uarF3jxWrO0H3TYY75AZymHWRt0ypGbMEhpNZmQ3ro29c3Y
-bTkec8iIXOQnizRGBK4flsQNJelZ/IeU3f7wFvvzZ7XRlcWBel3OXl5guvV7Y9zi
-i9PUfWOpJ9w1PFqyAFKs57JDSXSiH4/S3hqJHLeBqu5+gl+bQzogMwqOOEE6gEE+
-yOvR8Q4K1xQlvucYjS0q6zwjpH+9cxw/Kll41pbgGicf4HjAeNVVDopVse4CNJs2
-4/WDVpGY4Pt0jWCyt4bsKwncpaZQKfU1GxYz+IGrr6EykcFJIJTJ5ePcZeuG4cM=
-=JfKN
+iQEcBAEBAgAGBQJMR6MPAAoJEDMEi1NhKgbsNRUH/05/2fZL8oUSPLzIy5MJOTOw
+Wt9Xxyq9iX0NCW+ePDtNcQ5mmb8uJwM7LlfyPklbXBkayDtO+fVFgxm7uYEmXUsr
+p/IOxs9cj8Nh10aVhX1sMwm3dHFnX86dSSPH4wVOOGUeH3JNyo31IOQcU2tlctRP
+4Bft+78L3gYUgXsebNQx/OZQB6PkRbXEhtvu27NRFh0H7f0yTavsLBWtDENZEpV1
+6hPKM1UUebPMbXkwxFkUYoXASrYv4Cc455SMX+8qycfsFd8Szkk+2LZ92QLaOdac
+53Uevv8wafbtD9dP6F4c+Zfd4hYWK291OrY1i5DRuaCcs6F64Un9zBBRXD4K+hg=
+=PyTG
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__22_Jul_2010_11_28_31_+1000_svmBv4vh_QMon2gA--
+--Signature=_Thu__22_Jul_2010_11_46_55_+1000_lg/M1miGI30F_z6_--
