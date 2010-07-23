@@ -1,55 +1,111 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kgdb tree with Linus' tree
-Date: Fri, 23 Jul 2010 12:26:46 +1000
-Message-ID: <20100723122646.a788fc86.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the catalin tree with the arm tree
+Date: Fri, 23 Jul 2010 13:15:09 +1000
+Message-ID: <20100723131509.8614658a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__23_Jul_2010_12_26_46_+1000_/2H4MAE/m_EmqTqh"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49547 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:54518 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751043Ab0GWC0v (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 22 Jul 2010 22:26:51 -0400
+	id S1750743Ab0GWDPN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 22 Jul 2010 23:15:13 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jason Wessel <jason.wessel@windriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
 
---Signature=_Fri__23_Jul_2010_12_26_46_+1000_/2H4MAE/m_EmqTqh
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Catalin,
 
-Hi Jason,
+Today's linux-next merge of the catalin tree got a conflict in
+arch/arm/mm/mmu.c between commit 3abe9d33b382cb9eee7bfee8d90b10078f4baa4d
+("ARM: early_alloc()") from the arm tree and commit
+838105a674b7b72cb26c346155a40901c5bf7723 ("ARM: Remove the domain
+switching on ARMv6k/v7 CPUs") from the catalin tree.
 
-Today's linux-next merge of the kgdb tree got a conflict in
-kernel/debug/kdb/kdb_main.c between commit
-edd63cb6b91024332d6983fc51058ac1ef0c081e ("sysrq,kdb: Use __handle_sysrq
-() for kdb's sysrq function") from Linus' tree and commit
-93c47fada46e034941106fb34b76a00a87108fc5 ("kdb: Restore previous sysrq
-state") from the kgdb tree.
-
-These are two fixes for the same problem.  I effectively reverted the one
-from the kgdb tree.
---=20
+I fixed it up (I think - see below) and can carry the fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__23_Jul_2010_12_26_46_+1000_/2H4MAE/m_EmqTqh
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMSP3mAAoJEDMEi1NhKgbs9+wH/0TPWCUv3doJI2FzcG+ev0yd
-eqs5PJTpoSeFpcBW+C4kJrWY/ls3R0+M8Nzx9DKQ1EWLBHZolodWBPnMUBCaHXL5
-F7foe3PO7jR0RtOxxLvX1KOcp5rMOKtAB4NVnl5ZaRgSpEzanHMc7BjliwytkcIz
-MEFao6sB9pXoWgzpuvWZcc1ybqu2TSyvWvzcYnoHlgd73xhcgAConABRBCRjnaUQ
-uXTFnrd1WCQ+a7C7wVeXUJVLxPwBgjuCicdflqETUl17fHDiw/7AC0XcnFKg2otI
-twlXLbVd+z1LEcza3c/FmzVAb9RCQMm+UF2/e+AT51jpXRm6qwaK01JuL68bdBU=
-=T7RO
------END PGP SIGNATURE-----
-
---Signature=_Fri__23_Jul_2010_12_26_46_+1000_/2H4MAE/m_EmqTqh--
+diff --cc arch/arm/mm/mmu.c
+index 9ee3c75,e107f1b..0000000
+--- a/arch/arm/mm/mmu.c
++++ b/arch/arm/mm/mmu.c
+@@@ -11,12 -11,14 +11,13 @@@
+  #include <linux/kernel.h>
+  #include <linux/errno.h>
+  #include <linux/init.h>
+ -#include <linux/bootmem.h>
+  #include <linux/mman.h>
+  #include <linux/nodemask.h>
+ +#include <linux/memblock.h>
+  #include <linux/sort.h>
++ #include <linux/fs.h>
+  
+  #include <asm/cputype.h>
+ -#include <asm/mach-types.h>
+  #include <asm/sections.h>
+  #include <asm/cachetype.h>
+  #include <asm/setup.h>
+@@@ -498,30 -488,33 +500,43 @@@ static void __init build_mem_type_table
+  	}
+  }
+  
++ #ifdef CONFIG_ARM_DMA_MEM_BUFFERABLE
++ pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
++ 			      unsigned long size, pgprot_t vma_prot)
++ {
++ 	if (!pfn_valid(pfn))
++ 		return pgprot_noncached(vma_prot);
++ 	else if (file->f_flags & O_SYNC)
++ 		return pgprot_writecombine(vma_prot);
++ 	return vma_prot;
++ }
++ EXPORT_SYMBOL(phys_mem_access_prot);
++ #endif
++ 
+  #define vectors_base()	(vectors_high() ? 0xffff0000 : 0)
+  
+ -static void __init alloc_init_pte(pmd_t *pmd, unsigned long addr,
+ -				  unsigned long end, unsigned long pfn,
+ -				  const struct mem_type *type)
+ +static void __init *early_alloc(unsigned long sz)
+  {
+ -	pte_t *pte;
+ +	void *ptr = __va(memblock_alloc(sz, sz));
+ +	memset(ptr, 0, sz);
+ +	return ptr;
+ +}
+  
+ +static pte_t *early_pte_alloc(pmd_t *pmd, unsigned long addr, unsigned long prot)
+ +{
+  	if (pmd_none(*pmd)) {
+ -		pte = alloc_bootmem_low_pages(2 * PTRS_PER_PTE * sizeof(pte_t));
+ -		__pmd_populate(pmd, __pa(pte) | type->prot_l1);
+ +		pte_t *pte = early_alloc(2 * PTRS_PER_PTE * sizeof(pte_t));
+ +		__pmd_populate(pmd, __pa(pte) | prot);
+  	}
+ +	BUG_ON(pmd_bad(*pmd));
+ +	return pte_offset_kernel(pmd, addr);
+ +}
+  
+ -	pte = pte_offset_kernel(pmd, addr);
+ +static void __init alloc_init_pte(pmd_t *pmd, unsigned long addr,
+ +				  unsigned long end, unsigned long pfn,
+ +				  const struct mem_type *type)
+ +{
+ +	pte_t *pte = early_pte_alloc(pmd, addr, type->prot_l1);
+  	do {
+  		set_pte_ext(pte, pfn_pte(pfn, __pgprot(type->prot_pte)), 0);
+  		pfn++;
+@@@ -888,7 -954,7 +902,7 @@@ static void __init devicemaps_init(stru
+  	/*
+  	 * Allocate the vector page early.
+  	 */
+- 	vectors = early_alloc(PAGE_SIZE);
+ -	vectors_page = alloc_bootmem_low_pages(PAGE_SIZE);
+++	vectors_page = early_alloc(PAGE_SIZE);
+  
+  	for (addr = VMALLOC_END; addr; addr += PGDIR_SIZE)
+  		pmd_clear(pmd_off_k(addr));
