@@ -1,84 +1,120 @@
-From: Sven Eckelmann <sven.eckelmann@gmx.de>
-Subject: Re: linux-next: manual merge of the staging-next tree with the net tree
-Date: Fri, 23 Jul 2010 09:09:31 +0200
-Message-ID: <201007230909.32763.sven.eckelmann@gmx.de>
-References: <20100723150323.daa04d5f.sfr@canb.auug.org.au>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: linux-next: OOPS at boot time
+Date: Fri, 23 Jul 2010 12:04:08 +0200
+Message-ID: <20100723100408.GB3305@quack.suse.cz>
+References: <20100720164145.e06242b3.sfr@canb.auug.org.au>
+ <20100720033656.0ce6356f.akpm@linux-foundation.org>
+ <20100720224525.GO32635@dastard>
+ <20100720174424.12a4bf64.akpm@linux-foundation.org>
+ <20100721052007.GT32635@dastard>
+ <20100721002907.639802cd.akpm@linux-foundation.org>
+ <20100721174809.4781c244.sfr@canb.auug.org.au>
+ <20100721121116.GD3447@quack.suse.cz>
+ <20100721214016.GA903@ZenIV.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed;
-  boundary="nextPart2161160.qE1jM2RogY";
-  protocol="application/pgp-signature";
-  micalg=pgp-sha512
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.gmx.net ([213.165.64.20]:48832 "HELO mail.gmx.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
-	id S1752986Ab0GWHJf (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 23 Jul 2010 03:09:35 -0400
-In-Reply-To: <20100723150323.daa04d5f.sfr@canb.auug.org.au>
+Received: from cantor.suse.de ([195.135.220.2]:57650 "EHLO mx1.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753435Ab0GWKEk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 23 Jul 2010 06:04:40 -0400
+Content-Disposition: inline
+In-Reply-To: <20100721214016.GA903@ZenIV.linux.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Jan Kara <jack@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Dave Chinner <david@fromorbit.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 
---nextPart2161160.qE1jM2RogY
-Content-Type: Text/Plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+  Hi Al,
 
-Stephen Rothwell wrote:
-> Hi Greg,
->=20
-> Today's linux-next merge of the staging-next tree got a conflict in
-> drivers/staging/batman-adv/hard-interface.c between commit
-> 28172739f0a276eb8d6ca917b3974c2edb036da3 ("net: fix 64 bit counters on 32
-> bit arches") from the net tree and commit
-> a1a38cad4c71bc08403b204fbe0ba98b4447f8bf ("Staging: batman-adv: Don't
-> increment stats of foreign device") from the staging-next tree.
->=20
-> The latter just removes the code fixed by the former, so I did that.
+On Wed 21-07-10 22:40:16, Al Viro wrote:
+> On Wed, Jul 21, 2010 at 02:11:17PM +0200, Jan Kara wrote:
+> >   Thanks for bisecting this. The patch series indeed seems to uncover
+> > some discrepancies.
+> >   Ext3 has always dirtied inode in it's ->delete_inode method (via quota
+> > code). But previously clear_inode() just overwrote the state with I_CLEAR
+> > and thus we never saw the BUG_ON. After Al's patches, i_state is set in
+> > end_writeback() which happens earlier. In particular it happens before
+> > ext3_free_inode() which dirties the inode through quota code while freeing
+> > xattrs - they are accounted in i_blocks, so i_blocks are updated during
+> > freeing and inode is dirtied.
+> >   Actually, ext3_mark_inode_dirty() called during each mark_inode_dirty()
+> > call writes the inode state to the journal so the dirty flag in the inode
+> > state is in fact stale and overwriting it with I_CLEAR never mattered. In
+> > this sense, the BUG_ON triggered is a false positive. But I believe this is
+> > a separate story.
+> 
+> Could you please explain why the hell does ext2_xattr_delete_inode() call the
+> dirtying variant of dquot_free_block()?  Note that the inode is well beyond
+> the point where writeback would consider touching it; this mark_inode_dirty()
+> will do nothing useful whatsoever at that place.
+  Yes, I'm aware that dirtying inode does nothing useful at that point.
+But OTOH it does no harm so why not call the standard variant of quota
+function? But I have no strong opinion on this particular callsite so
+using dquot_free_block_nodirty() at that place is OK with me.
+ 
+> Anyway, I've dealt with ext3 and ext2 (both b0rken with quota) and AFAICS
+> the rest of quota-supporting filesystems had been OK.  Changes:
+> 
+> ext3_evict_inode() hd end_writeback() shifted downstream (needed anyway)
+  I like this.
 
-That is absolutely correct. The netdev guys noticed that the commits around=
-=20
-"net: fix 64 bit counters on 32 bit arches" made those lines a real bug=20
-(casting stuff around, writing on memory it should only read, probably writ=
-ing=20
-on unrelated memory). We reviewed those lines again and noticed that they m=
-ake=20
-no sense at all and removed them to fix that bug and another minor bug.
+> ext2 switched to nodirty variant of dquot_free_block()
+  But I don't like this - see comments in the patch. I'd be much more happy
+if ext2 did the same thing as ext3 - pulled ext2_xattr_delete_inode()
+call out of ext2_free_inode called end_writeback() after it.
 
-I am sorry that this created a merge conflict for you, but only those commi=
-ts=20
-by the netdev guys made us aware that there is something going wrong in the=
-=20
-batman-adv receive code.
+> ext2_xattr_delete_inode() doesn't try to dirty inode anymore (always
+> had been pointless).
+  As I wrote above I don't care about this very much.
 
-Thanks a lot for your linux-next repository and your work on it. It is a bi=
-g=20
-help to see what is going on elsewhere and how it may affect our code.
+> It's in for-next, should propagate to git.kernel.org in a few.
+> 
+> Diff against the buggy version follows, feel free to try.
+> diff --git a/fs/ext2/balloc.c b/fs/ext2/balloc.c
+> index e8766a3..c6c684b 100644
+> --- a/fs/ext2/balloc.c
+> +++ b/fs/ext2/balloc.c
+> @@ -571,7 +571,7 @@ do_more:
+>  error_return:
+>  	brelse(bitmap_bh);
+>  	release_blocks(sb, freed);
+> -	dquot_free_block(inode, freed);
+> +	dquot_free_block_nodirty(inode, freed);
+>  }
+The above call in ext2_free_blocks() modifies the inode and
+ext2_free_blocks is enough "black-box" function that it should do the right
+thing and dirty the inode if it modified it.
+ 
+>  /**
+> @@ -1418,7 +1418,8 @@ allocated:
+>  
+>  	*errp = 0;
+>  	brelse(bitmap_bh);
+> -	dquot_free_block(inode, *count-num);
+> +	dquot_free_block_nodirty(inode, *count-num);
+> +	mark_inode_dirty(inode);
+>  	*count = num;
+>  	return ret_block;
+>  
+> @@ -1428,8 +1429,10 @@ out:
+>  	/*
+>  	 * Undo the block allocation
+>  	 */
+> -	if (!performed_allocation)
+> -		dquot_free_block(inode, *count);
+> +	if (!performed_allocation) {
+> +		dquot_free_block_nodirty(inode, *count);
+> +		mark_inode_dirty(inode);
+> +	}
+>  	brelse(bitmap_bh);
+>  	return 0;
+>  }
+  Sorry, but the above two changes look stupid... Why call _nodirty variant
+and dirty the inode immediately after that? It happens in two other places
+in your patch as well...
 
-Best regards,
-	Sven
-
---nextPart2161160.qE1jM2RogY
-Content-Type: application/pgp-signature; name=signature.asc 
-Content-Description: This is a digitally signed message part.
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQIcBAABCgAGBQJMSUAsAAoJEF2HCgfBJntG7t0QAM1hMVp1TEf7i9xr11wTgO/N
-ck+ALLNL5X9OSIblPwAWwwDtrPKPfImgg2U00CQbvsw4p3we3Ap/7oa31+778LJt
-4QwfVxX5WrwXwAF/mKerm1y1kyhJ6W2eMsrwF/HvKYoP7zvz2xZVMjxg8H8kO7Jk
-ZXpzssjscbKkNGkBnAm0dbICzfEtL41NlmUNHz9NBp5SMJEBe+d7O5T1/D0BtmN4
-TAQcjLEYZdn340YkzbhBLLXowI3ytkiLETfYBqWfKUpedBfXGrHraL+SRQjQ4PHS
-aTrQescsDykWhyAOq+X7BxxO01q8mhRZBpOOP7z9oEprdJ3DcilARN8Oz/sl9rH3
-mMJuMt7xljiAGZqo2fpXWWMEt2SiRoMhwc16OWL1tIlIe7OXLMQr9ONkuDiJHWVL
-yC8WuprrJOTHZLYun+nBfrJaWwEvSn/k+atZx8zxNkOqt/z9N/aFjXzqQxGFqflR
-Wh3Cs6ZxmdXXgwDV5CrhCS/zvM8eTiBTOUZb5W9MuvZf9MFyyFBzBGCHPjjg7c8m
-y+nHFWvCoUbYoGGnY1ZNa8nSKoxTSGJ5+yofUQz+0JIRWh08iLFBabNgYkzyMtiS
-hjLFKAjHfOIMeVy2xMEgDiwWtAQFFSU8xbptm3usuAUMIXygo+kFfVhrfASYykov
-p2mgLN5jfr5BHq5q2O1b
-=30hq
------END PGP SIGNATURE-----
-
---nextPart2161160.qE1jM2RogY--
+								Honza
+-- 
+Jan Kara <jack@suse.cz>
+SUSE Labs, CR
