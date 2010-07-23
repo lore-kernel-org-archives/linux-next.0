@@ -1,29 +1,55 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH wq#for-next] workqueue: fix how cpu number is stored in
- work->data
-Date: Thu, 22 Jul 2010 22:41:10 +0200
-Message-ID: <4C48ACE6.4090303@kernel.org>
-References: <4C46CEA3.7040503@in.ibm.com>	<4C4718D5.1080902@kernel.org>	<20100722112557.14b65077@mschwide.boeblingen.de.ibm.com>	<4C4838B8.1080400@kernel.org> <20100722171028.2aa0b8f2@mschwide.boeblingen.de.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kgdb tree with Linus' tree
+Date: Fri, 23 Jul 2010 12:26:46 +1000
+Message-ID: <20100723122646.a788fc86.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__23_Jul_2010_12_26_46_+1000_/2H4MAE/m_EmqTqh"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hera.kernel.org ([140.211.167.34]:58237 "EHLO hera.kernel.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:49547 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756352Ab0GVUl0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 22 Jul 2010 16:41:26 -0400
-In-Reply-To: <20100722171028.2aa0b8f2@mschwide.boeblingen.de.ibm.com>
+	id S1751043Ab0GWC0v (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 22 Jul 2010 22:26:51 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: Sachin Sant <sachinp@in.ibm.com>, linux-s390@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Jason Wessel <jason.wessel@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 07/22/2010 05:10 PM, Martin Schwidefsky wrote:
-> Compiles and boots for s390. Thanks.
+--Signature=_Fri__23_Jul_2010_12_26_46_+1000_/2H4MAE/m_EmqTqh
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Added Tested-by's and applied to wq#for-next.
+Hi Jason,
 
-Thanks.
+Today's linux-next merge of the kgdb tree got a conflict in
+kernel/debug/kdb/kdb_main.c between commit
+edd63cb6b91024332d6983fc51058ac1ef0c081e ("sysrq,kdb: Use __handle_sysrq
+() for kdb's sysrq function") from Linus' tree and commit
+93c47fada46e034941106fb34b76a00a87108fc5 ("kdb: Restore previous sysrq
+state") from the kgdb tree.
 
--- 
-tejun
+These are two fixes for the same problem.  I effectively reverted the one
+from the kgdb tree.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__23_Jul_2010_12_26_46_+1000_/2H4MAE/m_EmqTqh
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMSP3mAAoJEDMEi1NhKgbs9+wH/0TPWCUv3doJI2FzcG+ev0yd
+eqs5PJTpoSeFpcBW+C4kJrWY/ls3R0+M8Nzx9DKQ1EWLBHZolodWBPnMUBCaHXL5
+F7foe3PO7jR0RtOxxLvX1KOcp5rMOKtAB4NVnl5ZaRgSpEzanHMc7BjliwytkcIz
+MEFao6sB9pXoWgzpuvWZcc1ybqu2TSyvWvzcYnoHlgd73xhcgAConABRBCRjnaUQ
+uXTFnrd1WCQ+a7C7wVeXUJVLxPwBgjuCicdflqETUl17fHDiw/7AC0XcnFKg2otI
+twlXLbVd+z1LEcza3c/FmzVAb9RCQMm+UF2/e+AT51jpXRm6qwaK01JuL68bdBU=
+=T7RO
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__23_Jul_2010_12_26_46_+1000_/2H4MAE/m_EmqTqh--
