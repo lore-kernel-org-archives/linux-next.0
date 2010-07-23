@@ -1,46 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the catalin tree with the arm tree
-Date: Fri, 23 Jul 2010 13:15:14 +1000
-Message-ID: <20100723131514.8d3b97e9.sfr@canb.auug.org.au>
+From: Jason Wessel <jason.wessel@windriver.com>
+Subject: Re: linux-next: manual merge of the kgdb tree with Linus' tree
+Date: Thu, 22 Jul 2010 22:38:24 -0500
+Message-ID: <4C490EB0.2030007@windriver.com>
+References: <20100723122646.a788fc86.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Pitre <nico@fluxnic.net>, Russell King <rmk@arm.linux.org.uk>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.windriver.com ([147.11.1.11]:41809 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753243Ab0GWDif (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 22 Jul 2010 23:38:35 -0400
+In-Reply-To: <20100723122646.a788fc86.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Catalin,
+On 07/22/2010 09:26 PM, Stephen Rothwell wrote:
+> Hi Jason,
+>
+> Today's linux-next merge of the kgdb tree got a conflict in
+> kernel/debug/kdb/kdb_main.c between commit
+> edd63cb6b91024332d6983fc51058ac1ef0c081e ("sysrq,kdb: Use __handle_sysrq
+> () for kdb's sysrq function") from Linus' tree and commit
+> 93c47fada46e034941106fb34b76a00a87108fc5 ("kdb: Restore previous sysrq
+> state") from the kgdb tree.
+>
+> These are two fixes for the same problem.  I effectively reverted the one
+> from the kgdb tree.
+>   
 
-Today's linux-next merge of the catalin tree got a conflict in
-arch/arm/kernel/entry-armv.S between commit
-df0698be14c6683606d5df2d83e3ae40f85ed0d9 ("ARM: stack protector: change
-the canary value per task") from the arm tree and commit
-838105a674b7b72cb26c346155a40901c5bf7723 ("ARM: Remove the domain
-switching on ARMv6k/v7 CPUs") from the catalin tree.
+This already fixed.  The problem was caused by the for_linus pull branch
+being out of sync with kgdb-next.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc arch/arm/kernel/entry-armv.S
-index bb8e93a,d05e080..0000000
---- a/arch/arm/kernel/entry-armv.S
-+++ b/arch/arm/kernel/entry-armv.S
-@@@ -737,12 -737,7 +737,12 @@@ ENTRY(__switch_to
-  	ldr	r6, [r2, #TI_CPU_DOMAIN]
-  #endif
-  	set_tls	r3, r4, r5
- +#if defined(CONFIG_CC_STACKPROTECTOR) && !defined(CONFIG_SMP)
- +	ldr	r7, [r2, #TI_TASK]
- +	ldr	r8, =__stack_chk_guard
- +	ldr	r7, [r7, #TSK_STACK_CANARY]
- +#endif
-- #ifdef CONFIG_MMU
-+ #ifdef CONFIG_CPU_USE_DOMAINS
-  	mcr	p15, 0, r6, c3, c0, 0		@ Set domain register
-  #endif
-  	mov	r5, r0
+Thanks,
+Jason.
