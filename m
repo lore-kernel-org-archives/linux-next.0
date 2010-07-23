@@ -1,54 +1,72 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging-next tree with the net tree
-Date: Fri, 23 Jul 2010 15:03:23 +1000
-Message-ID: <20100723150323.daa04d5f.sfr@canb.auug.org.au>
+From: Jeremy Fitzhardinge <jeremy@goop.org>
+Subject: Re: linux-next: build failure after merge of the xen tree
+Date: Thu, 22 Jul 2010 22:56:13 -0700
+Message-ID: <4C492EFD.1090007@goop.org>
+References: <20100723140107.2883b2d3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__23_Jul_2010_15_03_23_+1000_sEdJulbjqN_KzaZL"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58440 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751863Ab0GWFDa (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 23 Jul 2010 01:03:30 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Sven Eckelmann <sven.eckelmann@gmx.de>
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20100723140107.2883b2d3.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Ingo Molnar <mingo@redhat.com>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__23_Jul_2010_15_03_23_+1000_sEdJulbjqN_KzaZL
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 07/22/2010 09:01 PM, Stephen Rothwell wrote:
+> After merging the xen tree, today's linux-next build (86_64 allmodconfig)
+> failed like this:
+>
+> arch/x86/xen/enlighten.c:71: error: __pcpu_scope_xen_vcpu causes a section type conflict
+> arch/x86/xen/enlighten.c:72: error: __pcpu_scope_xen_vcpu_info causes a section type conflict
+> arch/x86/xen/enlighten.c:71: error: __pcpu_unique_xen_vcpu causes a section type conflict
+> arch/x86/xen/enlighten.c:72: error: __pcpu_unique_xen_vcpu_info causes a section type conflict
+> arch/x86/xen/enlighten.c:558: error: __pcpu_unique_idt_desc causes a section type conflict
+> arch/x86/xen/enlighten.c:760: error: __pcpu_unique_xen_cr0_value causes a section type conflict
+>
+> Not sure what has caused this.  I have dropped the xen tree for today.
+>
+> gcc version 4.4.4 binutils version 2.20.1.
+>   
 
-Hi Greg,
+I can reproduce this.
 
-Today's linux-next merge of the staging-next tree got a conflict in
-drivers/staging/batman-adv/hard-interface.c between commit
-28172739f0a276eb8d6ca917b3974c2edb036da3 ("net: fix 64 bit counters on 32
-bit arches") from the net tree and commit
-a1a38cad4c71bc08403b204fbe0ba98b4447f8bf ("Staging: batman-adv: Don't
-increment stats of foreign device") from the staging-next tree.
+I bisected it down to change bee6ab53e652a414af20392899879b58cd80d033.
 
-The latter just removes the code fixed by the former, so I did that.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Ah!   That change uses RESERVE_BRK(), which creates a dummy function and
+puts it into the .discard section.  Presumably that makes gcc think that
+.discard is for code, and so when the percpu stuff starts putting data
+into .discard, gcc (now) complains.  If we add more .discard.* sections
+then everyone is happy:
 
---Signature=_Fri__23_Jul_2010_15_03_23_+1000_sEdJulbjqN_KzaZL
-Content-Type: application/pgp-signature
+diff --git a/arch/x86/include/asm/setup.h b/arch/x86/include/asm/setup.h
+index 86b1506..ef292c7 100644
+--- a/arch/x86/include/asm/setup.h
++++ b/arch/x86/include/asm/setup.h
+@@ -82,7 +82,7 @@ void *extend_brk(size_t size, size_t align);
+  * executable.)
+  */
+ #define RESERVE_BRK(name,sz)						\
+-	static void __section(.discard) __used				\
++	static void __section(.discard.text) __used			\
+ 	__brk_reservation_fn_##name##__(void) {				\
+ 		asm volatile (						\
+ 			".pushsection .brk_reservation,\"aw\",@nobits;" \
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index 48c5299..ae6b88e 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -643,6 +643,7 @@
+ 	EXIT_DATA							\
+ 	EXIT_CALL							\
+ 	*(.discard)							\
++	*(.discard.*)							\
+ 	}
+ 
+ /**
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+I'll write up a proper patch.
 
-iQEcBAEBAgAGBQJMSSKbAAoJEDMEi1NhKgbslIwH/1WTpz2zwBRKXsRXqAFi9odl
-u6up4/NAXhZe9R974iILL37diIiO1hCQjKfql5mMCtWqqXhCNkWZ9yLIdLJmmrgG
-NwLKpaCprS1p+vMRLkHyKhGar5YeGvMAPRrQt17w0ZhuUAe0jsNrLOQcdyttOqCm
-jNKkCvUzloreTsZM2hdOLwGWPuFEDi4+9/YQbjtxTHI021zi6R/9QTGOe7vEauuG
-+x1Ms7MQzfw+986tBeYsxirurT0PJN3GsURNpz9smcSE19WMAutbErkLSYfe8YJU
-ccspHrsDrodBsniUgZ/sWIezUVjEGo740UhyTQc60cumVyGOsS9j+acOQWfd2VQ=
-=urUy
------END PGP SIGNATURE-----
 
---Signature=_Fri__23_Jul_2010_15_03_23_+1000_sEdJulbjqN_KzaZL--
+Thanks,
+    J
