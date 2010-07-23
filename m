@@ -1,27 +1,34 @@
-From: David Howells <dhowells-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Subject: Re: linux-next: manual merge of the workqueues tree with the Linus' tree
-Date: Fri, 23 Jul 2010 13:05:54 +0100
-Message-ID: <19175.1279886754@redhat.com>
-References: <20100723144600.dd4da992.sfr@canb.auug.org.au>
-Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20100723144600.dd4da992.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Cc: dhowells-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for July 23 (fscache)
+Date: Fri, 23 Jul 2010 09:08:31 -0700
+Message-ID: <20100723090831.6af4a288.randy.dunlap@oracle.com>
+References: <20100723164931.7bf2160f.sfr@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:40482 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759778Ab0GWQLU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 23 Jul 2010 12:11:20 -0400
+In-Reply-To: <20100723164931.7bf2160f.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, tj@kernel.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org> wrote:
+On Fri, 23 Jul 2010 16:49:31 +1000 Stephen Rothwell wrote:
 
-> Today's linux-next merge of the workqueues tree got a conflict in
-> fs/cifs/cifsfs.c between commit 4c0c03ca54f72fdd5912516ad0a23ec5cf01bda7
-> ("CIFS: Fix a malicious redirect problem in the DNS lookup code") from
-> Linus' tree and commit 9b646972467fb5fdc677f9e4251875db20bdbb64 ("cifs:
-> use workqueue instead of slow-work") from the workqueues tree.
+> Hi all,
 > 
-> I fixed it up (I think - I removed the call to cifs_exit_dns_resolver()
-> as there is no way to get to that code any more) and can carry the fix
-> for a while.
+> Changes since 20100722:
 
-Looks right.
 
-David
+when CONFIG_SYSCTL is not enabled:
+
+fs/fscache/main.c:189: error: 'fscache_sysctl_header' undeclared (first use in this function)
+
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
