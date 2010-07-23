@@ -1,120 +1,46 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: linux-next: OOPS at boot time
-Date: Fri, 23 Jul 2010 12:04:08 +0200
-Message-ID: <20100723100408.GB3305@quack.suse.cz>
-References: <20100720164145.e06242b3.sfr@canb.auug.org.au>
- <20100720033656.0ce6356f.akpm@linux-foundation.org>
- <20100720224525.GO32635@dastard>
- <20100720174424.12a4bf64.akpm@linux-foundation.org>
- <20100721052007.GT32635@dastard>
- <20100721002907.639802cd.akpm@linux-foundation.org>
- <20100721174809.4781c244.sfr@canb.auug.org.au>
- <20100721121116.GD3447@quack.suse.cz>
- <20100721214016.GA903@ZenIV.linux.org.uk>
+From: Subrata Modak <subrata@linux.vnet.ibm.com>
+Subject: [next-20100722] drivers/input/serio/i8042.ko undefined error & Bad
+	Relocations warning
+Date: Fri, 23 Jul 2010 15:45:12 +0530
+Message-ID: <1279880113.11936.7.camel@subratamodak.linux.ibm.com>
+Reply-To: subrata@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor.suse.de ([195.135.220.2]:57650 "EHLO mx1.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753435Ab0GWKEk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 23 Jul 2010 06:04:40 -0400
-Content-Disposition: inline
-In-Reply-To: <20100721214016.GA903@ZenIV.linux.org.uk>
+Received: from e35.co.us.ibm.com ([32.97.110.153]:54506 "EHLO
+	e35.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756234Ab0GWKQJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 23 Jul 2010 06:16:09 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Jan Kara <jack@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Dave Chinner <david@fromorbit.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+To: Vojtech Pavlik <vojtech@suse.cz>
+Cc: linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, Paul Mackerras <paulus@au1.ibm.com>, sachinp <sachinp@linux.vnet.ibm.com>, Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, "divya.vikas" <divya.vikas@in.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-  Hi Al,
+With linux-next-20100722 on Power7 and allmodconfig, i get the following
+undefined error and Bad relocation warning:
 
-On Wed 21-07-10 22:40:16, Al Viro wrote:
-> On Wed, Jul 21, 2010 at 02:11:17PM +0200, Jan Kara wrote:
-> >   Thanks for bisecting this. The patch series indeed seems to uncover
-> > some discrepancies.
-> >   Ext3 has always dirtied inode in it's ->delete_inode method (via quota
-> > code). But previously clear_inode() just overwrote the state with I_CLEAR
-> > and thus we never saw the BUG_ON. After Al's patches, i_state is set in
-> > end_writeback() which happens earlier. In particular it happens before
-> > ext3_free_inode() which dirties the inode through quota code while freeing
-> > xattrs - they are accounted in i_blocks, so i_blocks are updated during
-> > freeing and inode is dirtied.
-> >   Actually, ext3_mark_inode_dirty() called during each mark_inode_dirty()
-> > call writes the inode state to the journal so the dirty flag in the inode
-> > state is in fact stale and overwriting it with I_CLEAR never mattered. In
-> > this sense, the BUG_ON triggered is a false positive. But I believe this is
-> > a separate story.
-> 
-> Could you please explain why the hell does ext2_xattr_delete_inode() call the
-> dirtying variant of dquot_free_block()?  Note that the inode is well beyond
-> the point where writeback would consider touching it; this mark_inode_dirty()
-> will do nothing useful whatsoever at that place.
-  Yes, I'm aware that dirtying inode does nothing useful at that point.
-But OTOH it does no harm so why not call the standard variant of quota
-function? But I have no strong opinion on this particular callsite so
-using dquot_free_block_nodirty() at that place is OK with me.
- 
-> Anyway, I've dealt with ext3 and ext2 (both b0rken with quota) and AFAICS
-> the rest of quota-supporting filesystems had been OK.  Changes:
-> 
-> ext3_evict_inode() hd end_writeback() shifted downstream (needed anyway)
-  I like this.
+ERROR: "of_i8042_kbd_irq" [drivers/input/serio/i8042.ko] undefined!
+ERROR: "of_i8042_aux_irq" [drivers/input/serio/i8042.ko] undefined!
 
-> ext2 switched to nodirty variant of dquot_free_block()
-  But I don't like this - see comments in the patch. I'd be much more happy
-if ext2 did the same thing as ext3 - pulled ext2_xattr_delete_inode()
-call out of ext2_free_inode called end_writeback() after it.
+...
+and
+...
 
-> ext2_xattr_delete_inode() doesn't try to dirty inode anymore (always
-> had been pointless).
-  As I wrote above I don't care about this very much.
+WARNING: 3 bad relocations
+c000000000008590 R_PPC64_ADDR32    .text+0x4000000000008460
+c000000000008594 R_PPC64_ADDR32    .text+0x4000000000008598
+c000000000add890 R_PPC64_ADDR64    __crc_softirq_work_list
 
-> It's in for-next, should propagate to git.kernel.org in a few.
-> 
-> Diff against the buggy version follows, feel free to try.
-> diff --git a/fs/ext2/balloc.c b/fs/ext2/balloc.c
-> index e8766a3..c6c684b 100644
-> --- a/fs/ext2/balloc.c
-> +++ b/fs/ext2/balloc.c
-> @@ -571,7 +571,7 @@ do_more:
->  error_return:
->  	brelse(bitmap_bh);
->  	release_blocks(sb, freed);
-> -	dquot_free_block(inode, freed);
-> +	dquot_free_block_nodirty(inode, freed);
->  }
-The above call in ext2_free_blocks() modifies the inode and
-ext2_free_blocks is enough "black-box" function that it should do the right
-thing and dirty the inode if it modified it.
- 
->  /**
-> @@ -1418,7 +1418,8 @@ allocated:
->  
->  	*errp = 0;
->  	brelse(bitmap_bh);
-> -	dquot_free_block(inode, *count-num);
-> +	dquot_free_block_nodirty(inode, *count-num);
-> +	mark_inode_dirty(inode);
->  	*count = num;
->  	return ret_block;
->  
-> @@ -1428,8 +1429,10 @@ out:
->  	/*
->  	 * Undo the block allocation
->  	 */
-> -	if (!performed_allocation)
-> -		dquot_free_block(inode, *count);
-> +	if (!performed_allocation) {
-> +		dquot_free_block_nodirty(inode, *count);
-> +		mark_inode_dirty(inode);
-> +	}
->  	brelse(bitmap_bh);
->  	return 0;
->  }
-  Sorry, but the above two changes look stupid... Why call _nodirty variant
-and dirty the inode immediately after that? It happens in two other places
-in your patch as well...
+I reported the above on 2.6.35-rc5 alone few days back:
+http://marc.info/?t=127919383300002&r=1&w=2,
 
-								Honza
--- 
-Jan Kara <jack@suse.cz>
-SUSE Labs, CR
+However,
+c000000000add890 R_PPC64_ADDR64    __crc_softirq_work_list
+
+is newly seen apart from:
+c000000000008590 R_PPC64_ADDR32    .text+0x4000000000008460
+c000000000008594 R_PPC64_ADDR32    .text+0x4000000000008598
+
+Regards--
+Subrata
