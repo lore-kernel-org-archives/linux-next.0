@@ -1,38 +1,65 @@
-From: Jason Wessel <jason.wessel@windriver.com>
-Subject: Re: linux-next: manual merge of the kgdb tree with Linus' tree
-Date: Thu, 22 Jul 2010 22:38:24 -0500
-Message-ID: <4C490EB0.2030007@windriver.com>
-References: <20100723122646.a788fc86.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the xen tree
+Date: Fri, 23 Jul 2010 14:01:07 +1000
+Message-ID: <20100723140107.2883b2d3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__23_Jul_2010_14_01_07_+1000_2FbpSyKIBOwZ5llc"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:41809 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753243Ab0GWDif (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 22 Jul 2010 23:38:35 -0400
-In-Reply-To: <20100723122646.a788fc86.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:57191 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750701Ab0GWEBP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 23 Jul 2010 00:01:15 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jeremy Fitzhardinge <jeremy@goop.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 07/22/2010 09:26 PM, Stephen Rothwell wrote:
-> Hi Jason,
->
-> Today's linux-next merge of the kgdb tree got a conflict in
-> kernel/debug/kdb/kdb_main.c between commit
-> edd63cb6b91024332d6983fc51058ac1ef0c081e ("sysrq,kdb: Use __handle_sysrq
-> () for kdb's sysrq function") from Linus' tree and commit
-> 93c47fada46e034941106fb34b76a00a87108fc5 ("kdb: Restore previous sysrq
-> state") from the kgdb tree.
->
-> These are two fixes for the same problem.  I effectively reverted the one
-> from the kgdb tree.
->   
+--Signature=_Fri__23_Jul_2010_14_01_07_+1000_2FbpSyKIBOwZ5llc
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This already fixed.  The problem was caused by the for_linus pull branch
-being out of sync with kgdb-next.
+Hi Jeremy,
 
-Thanks,
-Jason.
+After merging the xen tree, today's linux-next build (86_64 allmodconfig)
+failed like this:
+
+arch/x86/xen/enlighten.c:71: error: __pcpu_scope_xen_vcpu causes a section =
+type conflict
+arch/x86/xen/enlighten.c:72: error: __pcpu_scope_xen_vcpu_info causes a sec=
+tion type conflict
+arch/x86/xen/enlighten.c:71: error: __pcpu_unique_xen_vcpu causes a section=
+ type conflict
+arch/x86/xen/enlighten.c:72: error: __pcpu_unique_xen_vcpu_info causes a se=
+ction type conflict
+arch/x86/xen/enlighten.c:558: error: __pcpu_unique_idt_desc causes a sectio=
+n type conflict
+arch/x86/xen/enlighten.c:760: error: __pcpu_unique_xen_cr0_value causes a s=
+ection type conflict
+
+Not sure what has caused this.  I have dropped the xen tree for today.
+
+gcc version 4.4.4 binutils version 2.20.1.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__23_Jul_2010_14_01_07_+1000_2FbpSyKIBOwZ5llc
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMSRQDAAoJEDMEi1NhKgbsHi4IAJyihaRtkN9vHpX7LDLUCkJF
+7knQCqCqAKnzyHp1nNrQ6rpZuquyArxX/HVkZmPrNFB1iM3Nq9W6FJrqtVrfn0lz
+lv1I0XRE0v5JOQuljMYvU1QcVX9OzHvk3mUCoHHPLqP4XfzfRinYdjVtRhG+6dy/
+qAs81w8RCiB9LnrfOUK+ZCFhV3lRbsKKSJUKQdyzdBQf2+R4H1uRk3rEwzVKe+WQ
+3Mgxz5tB1KDxzbqqmsKfxiXv7uLRV9HuE3R6rc38ilAfBrBPOaQxlPAqeBprfGqp
+HJ2zwTMlZ8lHj0U9df5NOKVus++IzslMeaauKZS7Y0ZMBgn0Hd/2yLrM9ZFXQCU=
+=G8n5
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__23_Jul_2010_14_01_07_+1000_2FbpSyKIBOwZ5llc--
