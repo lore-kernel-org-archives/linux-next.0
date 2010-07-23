@@ -1,37 +1,27 @@
-From: Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: linux-next: manual merge of the workqueues tree with the Linus'
- tree
-Date: Fri, 23 Jul 2010 13:45:16 +0200
-Message-ID: <4C4980CC.7070909@kernel.org>
-References: <20100723144600.dd4da992.sfr@canb.auug.org.au>	<4C497CD5.5010908@kernel.org>	<20100723213148.3d2193a3.sfr@canb.auug.org.au>	<4C497E5F.80301@kernel.org> <20100723214233.7cb7de8d.sfr@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: David Howells <dhowells-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Subject: Re: linux-next: manual merge of the workqueues tree with the Linus' tree
+Date: Fri, 23 Jul 2010 13:05:54 +0100
+Message-ID: <19175.1279886754@redhat.com>
+References: <20100723144600.dd4da992.sfr@canb.auug.org.au>
 Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20100723214233.7cb7de8d.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+In-Reply-To: <20100723144600.dd4da992.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
 Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, David Howells <dhowells-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: dhowells-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-next.vger.kernel.org
 
-Hello,
+Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org> wrote:
 
-On 07/23/2010 01:42 PM, Stephen Rothwell wrote:
-> On Fri, 23 Jul 2010 13:34:55 +0200 Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
->>
->> I was thinking about sending pull request w/ a note describing how to
->> resolve the conflict.  Would pulling in master before requesting pull
->> be better?
+> Today's linux-next merge of the workqueues tree got a conflict in
+> fs/cifs/cifsfs.c between commit 4c0c03ca54f72fdd5912516ad0a23ec5cf01bda7
+> ("CIFS: Fix a malicious redirect problem in the DNS lookup code") from
+> Linus' tree and commit 9b646972467fb5fdc677f9e4251875db20bdbb64 ("cifs:
+> use workqueue instead of slow-work") from the workqueues tree.
 > 
-> Either would work.  Linus is fine with doing merge fixups and, after all,
-> I figured it out. :-)
-> 
-> A description always helps, of course.
+> I fixed it up (I think - I removed the call to cifs_exit_dns_resolver()
+> as there is no way to get to that code any more) and can carry the fix
+> for a while.
 
-Yeah, sorry about causng headaches in linux-next.  I'll test merge w/
-mainline and let you know non-trivial conflicts for future commits.
+Looks right.
 
-Thank you.
-
--- 
-tejun
+David
