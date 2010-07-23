@@ -1,46 +1,36 @@
-From: Subrata Modak <subrata@linux.vnet.ibm.com>
-Subject: [next-20100722] drivers/input/serio/i8042.ko undefined error & Bad
-	Relocations warning
-Date: Fri, 23 Jul 2010 15:45:12 +0530
-Message-ID: <1279880113.11936.7.camel@subratamodak.linux.ibm.com>
-Reply-To: subrata@linux.vnet.ibm.com
+From: Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: linux-next: manual merge of the workqueues tree with the Linus'
+ tree
+Date: Fri, 23 Jul 2010 13:28:21 +0200
+Message-ID: <4C497CD5.5010908@kernel.org>
+References: <20100723144600.dd4da992.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e35.co.us.ibm.com ([32.97.110.153]:54506 "EHLO
-	e35.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756234Ab0GWKQJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 23 Jul 2010 06:16:09 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Vojtech Pavlik <vojtech@suse.cz>
-Cc: linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Linuxppc-dev <Linuxppc-dev@ozlabs.org>, Paul Mackerras <paulus@au1.ibm.com>, sachinp <sachinp@linux.vnet.ibm.com>, Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>, "divya.vikas" <divya.vikas@in.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20100723144600.dd4da992.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, David Howells <dhowells-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-With linux-next-20100722 on Power7 and allmodconfig, i get the following
-undefined error and Bad relocation warning:
+Hello, Stephen.
 
-ERROR: "of_i8042_kbd_irq" [drivers/input/serio/i8042.ko] undefined!
-ERROR: "of_i8042_aux_irq" [drivers/input/serio/i8042.ko] undefined!
+On 07/23/2010 06:46 AM, Stephen Rothwell wrote:
+> Hi Tejun,
+> 
+> Today's linux-next merge of the workqueues tree got a conflict in
+> fs/cifs/cifsfs.c between commit 4c0c03ca54f72fdd5912516ad0a23ec5cf01bda7
+> ("CIFS: Fix a malicious redirect problem in the DNS lookup code") from
+> Linus' tree and commit 9b646972467fb5fdc677f9e4251875db20bdbb64 ("cifs:
+> use workqueue instead of slow-work") from the workqueues tree.
+> 
+> I fixed it up (I think - I removed the call to cifs_exit_dns_resolver()
+> as there is no way to get to that code any more) and can carry the fix
+> for a while.
 
-...
-and
-...
+Yes, one failure case is removed, so that would be correct.  Thank you
+very much for taking care of the conflict.
 
-WARNING: 3 bad relocations
-c000000000008590 R_PPC64_ADDR32    .text+0x4000000000008460
-c000000000008594 R_PPC64_ADDR32    .text+0x4000000000008598
-c000000000add890 R_PPC64_ADDR64    __crc_softirq_work_list
-
-I reported the above on 2.6.35-rc5 alone few days back:
-http://marc.info/?t=127919383300002&r=1&w=2,
-
-However,
-c000000000add890 R_PPC64_ADDR64    __crc_softirq_work_list
-
-is newly seen apart from:
-c000000000008590 R_PPC64_ADDR32    .text+0x4000000000008460
-c000000000008594 R_PPC64_ADDR32    .text+0x4000000000008598
-
-Regards--
-Subrata
+-- 
+tejun
