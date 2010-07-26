@@ -1,47 +1,210 @@
-From: Piotr Hosowicz <piotr@hosowicz.com>
-Subject: Re: Why is next changing constantly?
-Date: Mon, 26 Jul 2010 11:28:48 +0200
-Message-ID: <4C4D5550.9010607@example.com>
-References: <4C4D5146.1030109@example.com> <20100726192525.4cca7d52.sfr@canb.auug.org.au>
-Reply-To: piotr@hosowicz.com
+From: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+Subject: Re: linux-next: build failure after merge of the final tree (xen
+ tree related)
+Date: Mon, 26 Jul 2010 11:43:36 +0100
+Message-ID: <alpine.DEB.2.00.1007261132180.22235@kaball-desktop>
+References: <20100726152908.951a95b7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-2;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 30.mail-out.ovh.net ([213.186.62.213]:48805 "HELO
-	30.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1753971Ab0GZJ2x (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Jul 2010 05:28:53 -0400
-In-Reply-To: <20100726192525.4cca7d52.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset="US-ASCII"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20100726152908.951a95b7.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Nexy <linux-next@vger.kernel.org>
+Cc: Jeremy Fitzhardinge <jeremy@goop.org>, Xen Devel <Xen-devel@lists.xensource.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sheng Yang <sheng@linux.intel.com>
+List-Id: linux-next.vger.kernel.org
 
-On 26.07.2010 11:25, Stephen Rothwell wrote:
-> Hi Piotr,
->
-> On Mon, 26 Jul 2010 11:11:34 +0200 Piotr Hosowicz<piotr@hosowicz.com>=
-  wrote:
->>
->> I see linux-next row at kernel.org constatnly changing between 24 Ju=
-ly
->> and todau 26 July. Why is that?
->
-> My guess would be that some of the git.kernel.org mirrors are out of =
-date.
+On Mon, 26 Jul 2010, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the final tree, today's linux-next build (i386 defconfig)
+> failed like this:
+> 
+> arch/x86/built-in.o: In function `init_hypervisor_platform':
+> (.init.text+0x3ca4): undefined reference to `x86_hyper_xen_hvm'
+> arch/x86/built-in.o: In function `init_hypervisor_platform':
+> (.init.text+0x3cad): undefined reference to `x86_hyper_xen_hvm'
+> 
+> Caused by commit bee6ab53e652a414af20392899879b58cd80d033 ("x86: early PV
+> on HVM features initialization").
+> 
+> I reverted commit 4b9100d12d15c0eaf23d9edc86228e1bdf452dc2 ("Merge branch
+> 'upstream/pvhvm' into upstream/xen") for today (since there were
+> dependencies on the above commit).
 
-Which is the main one? I have a script sensing me an email about new=20
-versions and now it is flooding my inbox, I think I should use the main=
-=20
-server.
+The problem is that x86_hyper_xen_hvm is in arch/x86/xen/enlighten.c,
+that is compiled only when CONFIG_XEN is enabled.
+The appended patch fixes the issue moving x86_hyper_xen_hvm to
+arch/x86/kernel/cpu/xen.c that is always compiled.
 
-Regards,
+An shorter alternative solution would be just to ifdef CONFIG_XEN
+x86_hyper_xen_hvm in arch/x86/kernel/cpu/hypervisor.c. 
 
-Piotr Hosowicz
 
---=20
-TV: "Grucha=B3a jest taka, =BFe cieszy si=EA z ka=BFdego pchni=EAcia."
-NP: Patrick O'Hearn - Magnificent River
-NB: 2.6.35-rc6-git1
+Signed-off-by: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+
+---
+
+diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
+index 5e3a351..25d2e82 100644
+--- a/arch/x86/kernel/cpu/Makefile
++++ b/arch/x86/kernel/cpu/Makefile
+@@ -15,6 +15,7 @@ CFLAGS_common.o		:= $(nostackp)
+ obj-y			:= intel_cacheinfo.o scattered.o topology.o
+ obj-y			+= proc.o capflags.o powerflags.o common.o
+ obj-y			+= vmware.o hypervisor.o sched.o mshyperv.o
++obj-y			+= xen.o
+ 
+ obj-$(CONFIG_X86_32)	+= bugs.o cmpxchg.o
+ obj-$(CONFIG_X86_64)	+= bugs_64.o
+diff --git a/arch/x86/kernel/cpu/xen.c b/arch/x86/kernel/cpu/xen.c
+new file mode 100644
+index 0000000..b879de5
+--- /dev/null
++++ b/arch/x86/kernel/cpu/xen.c
+@@ -0,0 +1,68 @@
++/*
++ * Copyright (C) 2010, Citrix Systems
++ * Author : Stefano Stabellini <stefano.stabellini@eu.citrix.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful, but
++ * WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE, GOOD TITLE or
++ * NON INFRINGEMENT.  See the GNU General Public License for more
++ * details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ */
++
++#include <linux/init.h>
++#include <asm/x86_init.h>
++#include <asm/hypervisor.h>
++#include <asm/processor.h>
++#include <xen/xen.h>
++
++uint32_t xen_cpuid_base(void)
++{
++	uint32_t base, eax, ebx, ecx, edx;
++	char signature[13];
++
++	for (base = 0x40000000; base < 0x40010000; base += 0x100) {
++		cpuid(base, &eax, &ebx, &ecx, &edx);
++		*(uint32_t *)(signature + 0) = ebx;
++		*(uint32_t *)(signature + 4) = ecx;
++		*(uint32_t *)(signature + 8) = edx;
++		signature[12] = 0;
++
++		if (!strcmp("XenVMMXenVMM", signature) && ((eax - base) >= 2))
++			return base;
++	}
++
++	return 0;
++}
++
++static void __init __xen_hvm_guest_init(void)
++{
++	xen_hvm_guest_init();
++}
++
++static bool __init xen_hvm_platform(void)
++{
++	if (xen_pv_domain())
++		return false;
++
++	if (!xen_cpuid_base())
++		return false;
++
++	return true;
++}
++
++const __refconst struct hypervisor_x86 x86_hyper_xen_hvm = {
++	.name			= "Xen HVM",
++	.detect			= xen_hvm_platform,
++	.init_platform		= __xen_hvm_guest_init,
++};
++EXPORT_SYMBOL(x86_hyper_xen_hvm);
+diff --git a/arch/x86/xen/enlighten.c b/arch/x86/xen/enlighten.c
+index 75b479a..06f954d 100644
+--- a/arch/x86/xen/enlighten.c
++++ b/arch/x86/xen/enlighten.c
+@@ -1205,25 +1205,6 @@ asmlinkage void __init xen_start_kernel(void)
+ #endif
+ }
+ 
+-static uint32_t xen_cpuid_base(void)
+-{
+-	uint32_t base, eax, ebx, ecx, edx;
+-	char signature[13];
+-
+-	for (base = 0x40000000; base < 0x40010000; base += 0x100) {
+-		cpuid(base, &eax, &ebx, &ecx, &edx);
+-		*(uint32_t *)(signature + 0) = ebx;
+-		*(uint32_t *)(signature + 4) = ecx;
+-		*(uint32_t *)(signature + 8) = edx;
+-		signature[12] = 0;
+-
+-		if (!strcmp("XenVMMXenVMM", signature) && ((eax - base) >= 2))
+-			return base;
+-	}
+-
+-	return 0;
+-}
+-
+ static int init_hvm_pv_info(int *major, int *minor)
+ {
+ 	uint32_t eax, ebx, ecx, edx, pages, msr, base;
+@@ -1300,7 +1281,7 @@ static struct notifier_block __cpuinitdata xen_hvm_cpu_notifier = {
+ 	.notifier_call	= xen_hvm_cpu_notify,
+ };
+ 
+-static void __init xen_hvm_guest_init(void)
++void __init xen_hvm_guest_init(void)
+ {
+ 	int r;
+ 	int major, minor;
+@@ -1320,21 +1301,3 @@ static void __init xen_hvm_guest_init(void)
+ 	xen_hvm_init_time_ops();
+ 	xen_hvm_init_mmu_ops();
+ }
+-
+-static bool __init xen_hvm_platform(void)
+-{
+-	if (xen_pv_domain())
+-		return false;
+-
+-	if (!xen_cpuid_base())
+-		return false;
+-
+-	return true;
+-}
+-
+-const __refconst struct hypervisor_x86 x86_hyper_xen_hvm = {
+-	.name			= "Xen HVM",
+-	.detect			= xen_hvm_platform,
+-	.init_platform		= xen_hvm_guest_init,
+-};
+-EXPORT_SYMBOL(x86_hyper_xen_hvm);
+diff --git a/include/xen/xen.h b/include/xen/xen.h
+index a164024..dfc2784 100644
+--- a/include/xen/xen.h
++++ b/include/xen/xen.h
+@@ -9,9 +9,12 @@ enum xen_domain_type {
+ 
+ #ifdef CONFIG_XEN
+ extern enum xen_domain_type xen_domain_type;
++extern void __init xen_hvm_guest_init(void);
+ #else
+ #define xen_domain_type		XEN_NATIVE
++#define xen_hvm_guest_init() do { } while (0)
+ #endif
++extern uint32_t xen_cpuid_base(void);
+ 
+ #define xen_domain()		(xen_domain_type != XEN_NATIVE)
+ #define xen_pv_domain()		(xen_domain() &&			\
