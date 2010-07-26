@@ -1,56 +1,54 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH wq#for-next] fscache: fix build on !CONFIG_SYSCTL
-Date: Sun, 25 Jul 2010 15:18:41 -0700
-Message-ID: <4C4CB841.8010804@oracle.com>
-References: <20100723164931.7bf2160f.sfr@canb.auug.org.au> <20100723090831.6af4a288.randy.dunlap@oracle.com> <4C4AAEE9.8050903@kernel.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: unable to fetch mips tree
+Date: Mon, 26 Jul 2010 10:38:32 +1000
+Message-ID: <20100726103832.34ec95dd.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__26_Jul_2010_10_38_32_+1000_BK/gQXzgKSMCHpBr"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:64649 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751971Ab0GYWU1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 25 Jul 2010 18:20:27 -0400
-In-Reply-To: <4C4AAEE9.8050903@kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:37680 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751319Ab0GZAij (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 25 Jul 2010 20:38:39 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On 07/24/10 02:14, Tejun Heo wrote:
-> Commit 8b8edefa (fscache: convert object to use workqueue instead of
-> slow-work) made fscache_exit() call unregister_sysctl_table()
-> unconditionally breaking build when sysctl is disabled.  Fix it by
-> putting it inside CONFIG_SYSCTL.
-> 
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
-> Cc: David Howells <dhowells@redhat.com>
-> ---
-> This should fix it.  Thanks.
+--Signature=_Mon__26_Jul_2010_10_38_32_+1000_BK/gQXzgKSMCHpBr
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ack.  Thanks.
+Hi Ralf,
 
-> 
->  fs/fscache/main.c |    2 ++
->  1 files changed, 2 insertions(+), 0 deletions(-)
-> 
-> diff --git a/fs/fscache/main.c b/fs/fscache/main.c
-> index 500936d..f9d8567 100644
-> --- a/fs/fscache/main.c
-> +++ b/fs/fscache/main.c
-> @@ -186,7 +186,9 @@ static void __exit fscache_exit(void)
-> 
->  	kobject_put(fscache_root);
->  	kmem_cache_destroy(fscache_cookie_jar);
-> +#ifdef CONFIG_SYSCTL
->  	unregister_sysctl_table(fscache_sysctl_header);
-> +#endif
->  	fscache_proc_cleanup();
->  	destroy_workqueue(fscache_op_wq);
->  	destroy_workqueue(fscache_object_wq);
+Fetching the mips tree today, I received this error:
 
+git.linux-mips.org[0: 78.24.191.183]: errno=3DConnection refused
+fatal: unable to connect a socket (Connection refused)
 
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+Just a heads up.  I will use the mips tree that I fetched over the
+weekend (top commit 18931956adefdb896025a3a03a9939571c84a2cf "MIPS:
+Octeon: HOTPLUG_CPU fixes").
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__26_Jul_2010_10_38_32_+1000_BK/gQXzgKSMCHpBr
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMTNkIAAoJEDMEi1NhKgbsJbkH/2AiUipzD1mYBokmlbL+bRIw
+qjOiTFddJipxdnjVKEpbJs2aeuhAhe2R6meRRPiCwzgQ/xSL73H5aGhVLQcxhErX
+NKpmJo3GCvDvUY7Fr7kZnUznY/6STBSzpFiMFLPOgSJzb+e9bPeO8dMFIGwHQciK
+vz93XAl+hvi91igUyf9fy33rOi2hTWVQYsIHI/QmCgFF3Ig3Dc0ymSN/9apq1ycv
+hDKtUjEMWdVlYLkeXrgF/LVt3Y3ywHHAhNlCa3uQcB6pdKQjp8A8B5OyaMD/3JQS
+CXZy8ENH/Ibp9O/Eq4OaPFofbai3MDlkwCR2/urw1hAv/JtWOIqrblLiQn/g3UE=
+=P170
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__26_Jul_2010_10_38_32_+1000_BK/gQXzgKSMCHpBr--
