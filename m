@@ -1,55 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the vfs tree with the xfs tree
-Date: Mon, 26 Jul 2010 14:05:42 +1000
-Message-ID: <20100726140542.cc5d0703.sfr@canb.auug.org.au>
-References: <20100726115116.1e6de038.sfr@canb.auug.org.au>
-	<20100726035950.GE7362@dastard>
+Subject: linux-next: build failure after merge of the final tree (kvm tree
+ related)
+Date: Mon, 26 Jul 2010 14:27:25 +1000
+Message-ID: <20100726142725.fbc5d94e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__26_Jul_2010_14_05_42_+1000_/mq+rZIQPCKQmxjo"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52894 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:50400 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750698Ab0GZEFr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 26 Jul 2010 00:05:47 -0400
-In-Reply-To: <20100726035950.GE7362@dastard>
+	id S1750856Ab0GZE13 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 26 Jul 2010 00:27:29 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Al Viro <viro@ZenIV.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, xfs-masters@oss.sgi.com
+To: Avi Kivity <avi@qumranet.com>, Marcelo Tosatti <mtosatti@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joerg Roedel <joerg.roedel@amd.com>
 
---Signature=_Mon__26_Jul_2010_14_05_42_+1000_/mq+rZIQPCKQmxjo
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-Hi Dave,
+After merging the final tree, today's linux-next build (powerpc
+ppc44x_defconfig) failed like this:
 
-On Mon, 26 Jul 2010 13:59:50 +1000 Dave Chinner <david@fromorbit.com> wrote:
->
-> The fix looks OK. Thanks Stephen.
+cc1: warnings being treated as errors
+arch/powerpc/kvm/44x_tlb.c: In function 'kvmppc_mmu_map':
+arch/powerpc/kvm/44x_tlb.c:319: error: format '%lx' expects type 'long unsigned int', but argument 2 has type 'gfn_t'
 
-Thanks for the confirmation.
+Caused by commit 05c07e00b15e00632a2502dcbf253415449e89da ("KVM: Use u64
+for frame data types").  I applied the following patch for today:
 
---=20
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 26 Jul 2010 14:25:12 +1000
+Subject: [PATCH] kvm: u64's should be printed with %llx
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/powerpc/kvm/44x_tlb.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/arch/powerpc/kvm/44x_tlb.c b/arch/powerpc/kvm/44x_tlb.c
+index 8123125..9b9b5cd 100644
+--- a/arch/powerpc/kvm/44x_tlb.c
++++ b/arch/powerpc/kvm/44x_tlb.c
+@@ -316,7 +316,8 @@ void kvmppc_mmu_map(struct kvm_vcpu *vcpu, u64 gvaddr, gpa_t gpaddr,
+ 	gfn = gpaddr >> PAGE_SHIFT;
+ 	new_page = gfn_to_page(vcpu->kvm, gfn);
+ 	if (is_error_page(new_page)) {
+-		printk(KERN_ERR "Couldn't get guest page for gfn %lx!\n", gfn);
++		printk(KERN_ERR "Couldn't get guest page for gfn %llx!\n",
++			(unsigned long long)gfn);
+ 		kvm_release_page_clean(new_page);
+ 		return;
+ 	}
+-- 
+1.7.1
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__26_Jul_2010_14_05_42_+1000_/mq+rZIQPCKQmxjo
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMTQmWAAoJEDMEi1NhKgbsX0gH/jwTQAO7dCVcrjBwU/2XBm/P
-QFn0Zg4IDYxLsJ+dp9Pb5Gv+jcq7FPFzZVXrFwgpJ4HA1aiI4AUY/aavfj1/WabZ
-AtF4UUVK6ksoSTw33BPr5QMFauMC6eGumEvSQQ7n92I2NMNXGZRn1waK+EZm3d+s
-Uq/bPmZttq3T7tl/VromGAQNTu+gs0vwd0u4z5CUcVOIg0ugFIS3+PWgphxhn2m6
-3yyvH3iN7YsOMUqi6xnfQ/JtT22LeVBVnaeWz4DQ3M/GYKdc+Ldmprnm0t1Up7HD
-1JvR6K/ZXibc7dJJFDUwD4sBqaRthszpRqEMGA1U07YQo9szMrw5oJRcRg0Aatc=
-=fSQS
------END PGP SIGNATURE-----
-
---Signature=_Mon__26_Jul_2010_14_05_42_+1000_/mq+rZIQPCKQmxjo--
