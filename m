@@ -1,129 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs tree with the xfs tree
-Date: Mon, 26 Jul 2010 11:51:16 +1000
-Message-ID: <20100726115116.1e6de038.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with Linus' tree
+Date: Mon, 26 Jul 2010 13:39:03 +1000
+Message-ID: <20100726133903.a050ec49.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__26_Jul_2010_13_39_03_+1000_pc5Ubkcxqk2qErrf"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56576 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:59474 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753215Ab0GZBvS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 25 Jul 2010 21:51:18 -0400
+	id S1753387Ab0GZDjM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 25 Jul 2010 23:39:12 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Conny Seidel <conny.seidel@amd.com>
 
-Hi Al,
+--Signature=_Mon__26_Jul_2010_13_39_03_+1000_pc5Ubkcxqk2qErrf
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[These became irrelevant when I reverted the xfs tree for a build error,
-but will be done when the xfs tree is fixed.]
+Hi all,
 
-Today's linux-next merge of the vfs tree got a conflict in
-fs/xfs/linux-2.6/xfs_aops.c between commit
-7346e1197eb76e22199b6b4625f129331e0fd7ac ("xfs simplify and speed up
-direct I/O completions") from the xfs tree and commit
-b682ce06449c35a85dc5e63fcaab7dba2ba6df9b ("sort out blockdev_direct_IO
-variants") from the vfs tree.
+Today's linux-next merge of the tip tree got a conflict in
+tools/perf/Makefile between commit
+8a4fd31e0e8dc33f00b8949a12ac56310bac57bc ("perf tools: Fix fallback to
+cplus_demangle() when bfd_demangle() is not available") from Linus' tree
+and commit 167a58f10d9cd1bdf6a911aa1eecbdff596de156 ("perf tools: Fix
+fallback to cplus_demangle() when bfd_demangle() is not available") from
+the tip tree.
 
-Also between commit 6f6b39eb706f5617750cf02952e4e6d7470c40bf ("xfs: use
-GFP_NOFS for page cache allocation") from the xfs tree and commit
-4478b21470275454f9eb6f590dfe7cc54d643978 ("get rid of
-block_write_begin_newtrunc") from the vfs tree.
-
-I fixed them up (I think - see below) and can carry the fix as necessary.
--- 
+I assumed that these commits were meant to have the same affect (I only
+got a conflict because of earlier changes in the tip tree) and so used
+the version form the tip tree.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc fs/xfs/linux-2.6/xfs_aops.c
-index d24e78f,77a9ecc..0000000
---- a/fs/xfs/linux-2.6/xfs_aops.c
-+++ b/fs/xfs/linux-2.6/xfs_aops.c
-@@@ -1471,26 -1655,22 +1471,26 @@@ xfs_vm_direct_IO
-  	loff_t			offset,
-  	unsigned long		nr_segs)
-  {
- -	struct file	*file = iocb->ki_filp;
- -	struct inode	*inode = file->f_mapping->host;
- -	struct block_device *bdev;
- -	ssize_t		ret;
- -
- -	bdev = xfs_find_bdev_for_inode(inode);
- -
- -	iocb->private = xfs_alloc_ioend(inode, rw == WRITE ?
- -					IO_UNWRITTEN : IO_READ);
- -
- -	ret = __blockdev_direct_IO(rw, iocb, inode, bdev, iov, offset,
- -				   nr_segs, xfs_get_blocks_direct,
- -				   xfs_end_io_direct, NULL, 0);
- +	struct inode		*inode = iocb->ki_filp->f_mapping->host;
- +	struct block_device	*bdev = xfs_find_bdev_for_inode(inode);
- +	ssize_t			ret;
- +
- +	if (rw & WRITE) {
- +		iocb->private = xfs_alloc_ioend(inode, IO_NEW);
- +
-- 		ret = blockdev_direct_IO_no_locking(rw, iocb, inode, bdev, iov,
-- 						    offset, nr_segs,
-- 						    xfs_get_blocks_direct,
-- 						    xfs_end_io_direct_write);
-++		ret = __blockdev_direct_IO(rw, iocb, inode, bdev, iov,
-++					   offset, nr_segs,
-++					   xfs_get_blocks_direct,
-++					   xfs_end_io_direct_write, NULL, 0);
- +		if (ret != -EIOCBQUEUED && iocb->private)
- +			xfs_destroy_ioend(iocb->private);
- +	} else {
-- 		ret = blockdev_direct_IO_no_locking(rw, iocb, inode, bdev, iov,
-- 						    offset, nr_segs,
-- 						    xfs_get_blocks_direct,
-- 						    NULL);
-++		ret = __blockdev_direct_IO(rw, iocb, inode, bdev, iov,
-++					   offset, nr_segs,
-++					   xfs_get_blocks_direct,
-++					   NULL, NULL, 0);
- +	}
-  
- -	if (unlikely(ret != -EIOCBQUEUED && iocb->private))
- -		xfs_destroy_ioend(iocb->private);
-  	return ret;
-  }
-  
-@@@ -1504,9 -1700,31 +1520,31 @@@ xfs_vm_write_begin
-  	struct page		**pagep,
-  	void			**fsdata)
-  {
-- 	*pagep = NULL;
-- 	return block_write_begin(file, mapping, pos, len, flags | AOP_FLAG_NOFS,
-- 				 pagep, fsdata, xfs_get_blocks);
-+ 	int			ret;
-+ 
- -	ret = block_write_begin(mapping, pos, len, flags, pagep,
-++	ret = block_write_begin(mapping, pos, len, flags | AOP_FLAG_NOFS, pagep,
-+ 				xfs_get_blocks);
-+ 	if (unlikely(ret))
-+ 		xfs_vm_write_failed(mapping, pos + len);
-+ 	return ret;
-+ }
-+ 
-+ STATIC int
-+ xfs_vm_write_end(
-+ 	struct file		*file,
-+ 	struct address_space	*mapping,
-+ 	loff_t			pos,
-+ 	unsigned		len,
-+ 	unsigned		copied,
-+ 	struct page		*page,
-+ 	void			*fsdata)
-+ {
-+ 	int			ret;
-+ 
-+ 	ret = generic_write_end(file, mapping, pos, len, copied, page, fsdata);
-+ 	if (unlikely(ret < len))
-+ 		xfs_vm_write_failed(mapping, pos + len);
-+ 	return ret;
-  }
-  
-  STATIC sector_t
+--Signature=_Mon__26_Jul_2010_13_39_03_+1000_pc5Ubkcxqk2qErrf
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMTQNXAAoJEDMEi1NhKgbs6tAH/iwNteaim9Nxr8bKzfryQLLh
+t8jG49OT/x93EtDFLeKhDZVq9Pt8eIqTvXAQjUtOTMCIu/RAAZ5WPpdJ7Zt3QyFa
+OCyEQr8qvb6p55WpypNPNfZc9n6i4uUnz0RqZ50lgZiNJHUFdiitm/kX5eqZB0+C
+NGtdmRaDhL/UL9Is22HjU8jKQsxDhsSNptLGJhJR+rhB7JpcqCxkOQH7rUwpPiVF
+nWXZmw95TMDwlSuyC8xFglrElA7n4VagsdQcXYHmkNOab3IAu8Ad9HQuVNSvib1g
+niU8XIX82ZlvVAmDPlAA6ITPBoV+CIQNLMwFSowiVZ8cBD7UkbMhRzGY4Cid/Sc=
+=GOW7
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__26_Jul_2010_13_39_03_+1000_pc5Ubkcxqk2qErrf--
