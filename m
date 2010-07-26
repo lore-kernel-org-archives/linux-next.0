@@ -1,57 +1,68 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with Linus' tree
-Date: Mon, 26 Jul 2010 13:39:03 +1000
-Message-ID: <20100726133903.a050ec49.sfr@canb.auug.org.au>
+From: Dave Chinner <david@fromorbit.com>
+Subject: Re: linux-next: build failure after merge of the xfs tree
+Date: Mon, 26 Jul 2010 13:54:42 +1000
+Message-ID: <20100726035442.GD7362@dastard>
+References: <20100726115107.3c3b7303.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__26_Jul_2010_13_39_03_+1000_pc5Ubkcxqk2qErrf"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59474 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753387Ab0GZDjM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 25 Jul 2010 23:39:12 -0400
+Received: from bld-mail18.adl2.internode.on.net ([150.101.137.103]:56131 "EHLO
+	mail.internode.on.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1753353Ab0GZDzM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 25 Jul 2010 23:55:12 -0400
+Content-Disposition: inline
+In-Reply-To: <20100726115107.3c3b7303.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Conny Seidel <conny.seidel@amd.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: xfs-masters@oss.sgi.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
 
---Signature=_Mon__26_Jul_2010_13_39_03_+1000_pc5Ubkcxqk2qErrf
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Jul 26, 2010 at 11:51:07AM +1000, Stephen Rothwell wrote:
+> Hi David,
+> 
+> After merging the xfs tree, today's linux-next build (powerpc ppc64_defconfig)
+> failed like this:
+> 
+> fs/xfs/xfs_inode_item.c: In function 'xfs_inode_item_format':
+> fs/xfs/xfs_inode_item.c:319: error: 'nrecs' undeclared (first use in this function)
+> 
+> Caused by commit 0fd7275cc42ab734eaa1a2c747e65479bd1e42af ("xfs: fix gcc
+> 4.6 set but not read and unused statement warnings").
 
-Hi all,
+Can you check the following patch fixes the problem?
 
-Today's linux-next merge of the tip tree got a conflict in
-tools/perf/Makefile between commit
-8a4fd31e0e8dc33f00b8949a12ac56310bac57bc ("perf tools: Fix fallback to
-cplus_demangle() when bfd_demangle() is not available") from Linus' tree
-and commit 167a58f10d9cd1bdf6a911aa1eecbdff596de156 ("perf tools: Fix
-fallback to cplus_demangle() when bfd_demangle() is not available") from
-the tip tree.
-
-I assumed that these commits were meant to have the same affect (I only
-got a conflict because of earlier changes in the tip tree) and so used
-the version form the tip tree.
---=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__26_Jul_2010_13_39_03_+1000_pc5Ubkcxqk2qErrf
-Content-Type: application/pgp-signature
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+xfs: fix big endian build
 
-iQEcBAEBAgAGBQJMTQNXAAoJEDMEi1NhKgbs6tAH/iwNteaim9Nxr8bKzfryQLLh
-t8jG49OT/x93EtDFLeKhDZVq9Pt8eIqTvXAQjUtOTMCIu/RAAZ5WPpdJ7Zt3QyFa
-OCyEQr8qvb6p55WpypNPNfZc9n6i4uUnz0RqZ50lgZiNJHUFdiitm/kX5eqZB0+C
-NGtdmRaDhL/UL9Is22HjU8jKQsxDhsSNptLGJhJR+rhB7JpcqCxkOQH7rUwpPiVF
-nWXZmw95TMDwlSuyC8xFglrElA7n4VagsdQcXYHmkNOab3IAu8Ad9HQuVNSvib1g
-niU8XIX82ZlvVAmDPlAA6ITPBoV+CIQNLMwFSowiVZ8cBD7UkbMhRzGY4Cid/Sc=
-=GOW7
------END PGP SIGNATURE-----
+From: Dave Chinner <dchinner@redhat.com>
 
---Signature=_Mon__26_Jul_2010_13_39_03_+1000_pc5Ubkcxqk2qErrf--
+Commit 0fd7275cc42ab734eaa1a2c747e65479bd1e42af ("xfs: fix gcc 4.6
+set but not read and unused statement warnings") failed to convert
+some code inside XFS_NATIVE_HOST (big endian host code only) and
+hence fails to build on such machines. Fix it.
+
+Signed-off-by: Dave Chinner <dchinner@redhat.com>
+---
+ fs/xfs/xfs_inode_item.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/fs/xfs/xfs_inode_item.c b/fs/xfs/xfs_inode_item.c
+index 2d6fcfd..016b60d 100644
+--- a/fs/xfs/xfs_inode_item.c
++++ b/fs/xfs/xfs_inode_item.c
+@@ -316,7 +316,8 @@ xfs_inode_item_format(
+ 			ASSERT((ip->i_df.if_bytes /
+ 				(uint)sizeof(xfs_bmbt_rec_t)) > 0);
+ #ifdef XFS_NATIVE_HOST
+-			if (nrecs == ip->i_d.di_nextents) {
++			if (ip->i_d.di_nextents == ip->i_df.if_bytes /
++						(uint)sizeof(xfs_bmbt_rec_t)) {
+ 				/*
+ 				 * There are no delayed allocation
+ 				 * extents, so just point to the
