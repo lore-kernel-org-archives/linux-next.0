@@ -1,54 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: unable to fetch mips tree
-Date: Mon, 26 Jul 2010 10:38:32 +1000
-Message-ID: <20100726103832.34ec95dd.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm tree with the arm-current tree
+Date: Mon, 26 Jul 2010 11:13:40 +1000
+Message-ID: <20100726111340.a0bb25c1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__26_Jul_2010_10_38_32_+1000_BK/gQXzgKSMCHpBr"
+ boundary="Signature=_Mon__26_Jul_2010_11_13_40_+1000_mdGWcqLxyrqc8R3a"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37680 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:33704 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751319Ab0GZAij (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 25 Jul 2010 20:38:39 -0400
+	id S1752519Ab0GZBN7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 25 Jul 2010 21:13:59 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeremy Kerr <jeremy.kerr@canonical.com>
 
---Signature=_Mon__26_Jul_2010_10_38_32_+1000_BK/gQXzgKSMCHpBr
+--Signature=_Mon__26_Jul_2010_11_13_40_+1000_mdGWcqLxyrqc8R3a
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ralf,
+Hi Russell,
 
-Fetching the mips tree today, I received this error:
+Today's linux-next merge of the arm tree got a conflict in
+arch/arm/mach-l7200/include/mach/debug-macro.S between commit
+a2d7c57a2eb1d30a7fdb8df9e965dea721b75711 ("ARM: 6257/1: arm/l7200: fix
+debug macro compilation failure") from the arm-current tree and commit
+c9c6fe5033191d82e1d819105485c795062107fd ("ARM: Remove support for LinkUp
+Systems L7200 SDP") from the arm tree.
 
-git.linux-mips.org[0: 78.24.191.183]: errno=3DConnection refused
-fatal: unable to connect a socket (Connection refused)
-
-Just a heads up.  I will use the mips tree that I fetched over the
-weekend (top commit 18931956adefdb896025a3a03a9939571c84a2cf "MIPS:
-Octeon: HOTPLUG_CPU fixes").
+The latter just removes the file, so I did that.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__26_Jul_2010_10_38_32_+1000_BK/gQXzgKSMCHpBr
+--Signature=_Mon__26_Jul_2010_11_13_40_+1000_mdGWcqLxyrqc8R3a
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMTNkIAAoJEDMEi1NhKgbsJbkH/2AiUipzD1mYBokmlbL+bRIw
-qjOiTFddJipxdnjVKEpbJs2aeuhAhe2R6meRRPiCwzgQ/xSL73H5aGhVLQcxhErX
-NKpmJo3GCvDvUY7Fr7kZnUznY/6STBSzpFiMFLPOgSJzb+e9bPeO8dMFIGwHQciK
-vz93XAl+hvi91igUyf9fy33rOi2hTWVQYsIHI/QmCgFF3Ig3Dc0ymSN/9apq1ycv
-hDKtUjEMWdVlYLkeXrgF/LVt3Y3ywHHAhNlCa3uQcB6pdKQjp8A8B5OyaMD/3JQS
-CXZy8ENH/Ibp9O/Eq4OaPFofbai3MDlkwCR2/urw1hAv/JtWOIqrblLiQn/g3UE=
-=P170
+iQEcBAEBAgAGBQJMTOFEAAoJEDMEi1NhKgbsJisH/21KBGeREpgXQDVXAGweejE5
+ZBAqK+il9WVl0XYeRVxG8eeFP/snq92Y3k1CW1HxW3N3eE0sfI15gG2v1j5plIYy
+IbZkybrHp7MJsBR87cljPw5mYQrw5RX1Uei6GMdv9+ojFgkiZjNkuz9uRQGYgkZx
+6iolLUTmPfsKJ2vNVnK/CXfWri1dvcz8k6QO0IzUhs1Z5Bcrwr3VYMgrf9DPxlRu
+ZYVGqFGiSGRu2cw58zf1G7jZQRgcobvR0RuALxpQxloVzLzznQ2iUAF9gPE5+Woa
+AAbYvYzpfPBnocSATOje9Topm/OPvu97pwkJIF7IH/u8TcdMLE8VYBbg+vJhHPM=
+=lr2I
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__26_Jul_2010_10_38_32_+1000_BK/gQXzgKSMCHpBr--
+--Signature=_Mon__26_Jul_2010_11_13_40_+1000_mdGWcqLxyrqc8R3a--
