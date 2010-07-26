@@ -1,54 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm tree with the arm-current tree
-Date: Mon, 26 Jul 2010 11:13:40 +1000
-Message-ID: <20100726111340.a0bb25c1.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the xfs tree
+Date: Mon, 26 Jul 2010 11:51:07 +1000
+Message-ID: <20100726115107.3c3b7303.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__26_Jul_2010_11_13_40_+1000_mdGWcqLxyrqc8R3a"
+ boundary="Signature=_Mon__26_Jul_2010_11_51_07_+1000_rYI3M=J/5F3ceXga"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33704 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:56567 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752519Ab0GZBN7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 25 Jul 2010 21:13:59 -0400
+	id S1753131Ab0GZBvO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 25 Jul 2010 21:51:14 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeremy Kerr <jeremy.kerr@canonical.com>
+To: David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
 
---Signature=_Mon__26_Jul_2010_11_13_40_+1000_mdGWcqLxyrqc8R3a
+--Signature=_Mon__26_Jul_2010_11_51_07_+1000_rYI3M=J/5F3ceXga
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Russell,
+Hi David,
 
-Today's linux-next merge of the arm tree got a conflict in
-arch/arm/mach-l7200/include/mach/debug-macro.S between commit
-a2d7c57a2eb1d30a7fdb8df9e965dea721b75711 ("ARM: 6257/1: arm/l7200: fix
-debug macro compilation failure") from the arm-current tree and commit
-c9c6fe5033191d82e1d819105485c795062107fd ("ARM: Remove support for LinkUp
-Systems L7200 SDP") from the arm tree.
+After merging the xfs tree, today's linux-next build (powerpc ppc64_defconf=
+ig)
+failed like this:
 
-The latter just removes the file, so I did that.
+fs/xfs/xfs_inode_item.c: In function 'xfs_inode_item_format':
+fs/xfs/xfs_inode_item.c:319: error: 'nrecs' undeclared (first use in this f=
+unction)
+
+Caused by commit 0fd7275cc42ab734eaa1a2c747e65479bd1e42af ("xfs: fix gcc
+4.6 set but not read and unused statement warnings").
+
+I have used the version of the xfs tree from next-20100723 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__26_Jul_2010_11_13_40_+1000_mdGWcqLxyrqc8R3a
+--Signature=_Mon__26_Jul_2010_11_51_07_+1000_rYI3M=J/5F3ceXga
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMTOFEAAoJEDMEi1NhKgbsJisH/21KBGeREpgXQDVXAGweejE5
-ZBAqK+il9WVl0XYeRVxG8eeFP/snq92Y3k1CW1HxW3N3eE0sfI15gG2v1j5plIYy
-IbZkybrHp7MJsBR87cljPw5mYQrw5RX1Uei6GMdv9+ojFgkiZjNkuz9uRQGYgkZx
-6iolLUTmPfsKJ2vNVnK/CXfWri1dvcz8k6QO0IzUhs1Z5Bcrwr3VYMgrf9DPxlRu
-ZYVGqFGiSGRu2cw58zf1G7jZQRgcobvR0RuALxpQxloVzLzznQ2iUAF9gPE5+Woa
-AAbYvYzpfPBnocSATOje9Topm/OPvu97pwkJIF7IH/u8TcdMLE8VYBbg+vJhHPM=
-=lr2I
+iQEcBAEBAgAGBQJMTOoLAAoJEDMEi1NhKgbsujYH/2MB9XkyGEwo7hdr71ETfkHW
+N3vf5ZTZA0xv96geUS7mKme3FU2zBH6A4KcB4FSOCpz9tBBQNikPVghU+x7YY7GB
+KDo+yxHvlklK0ZgJ1M/GUtPZuZNtbahHLe8aBk7aDsOKNUOF6VbEwr14RsMDRDhW
+sZ+OADaxoo2FnFXfmeHwZFEya8Fsh9mceb/FSzhD64N3ynO6rGnD/pzhzs5K/6uZ
+k2BggHWOhwZLgewIHX4XTTzmBIDEiY28cVfgWAGMycAyP27XqcL79JkBmNPbpHTg
+B0qJYQy3y4NjSHajVCjOywdljsszi1u6DB9nShe41jl/PaJhRmnC3Ho3IxQB208=
+=MTn+
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__26_Jul_2010_11_13_40_+1000_mdGWcqLxyrqc8R3a--
+--Signature=_Mon__26_Jul_2010_11_51_07_+1000_rYI3M=J/5F3ceXga--
