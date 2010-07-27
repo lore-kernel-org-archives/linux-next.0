@@ -1,71 +1,55 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: linux-next: manual merge of the devicetree tree with the
-	microblaze tree
-Date: Mon, 26 Jul 2010 21:19:38 -0600
-Message-ID: <AANLkTik6ERg9G4=f=c2gUivmO7ZAngxNyAya=960aa-W@mail.gmail.com>
-References: <20100727131740.38ea876e.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the xen tree with Linus' tree
+Date: Tue, 27 Jul 2010 13:32:07 +1000
+Message-ID: <20100727133207.9b6846fe.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__27_Jul_2010_13_32_07_+1000_c_.kCZYTL0WeILUD"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-iw0-f174.google.com ([209.85.214.174]:35729 "EHLO
-	mail-iw0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752202Ab0G0D1s convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 26 Jul 2010 23:27:48 -0400
-In-Reply-To: <20100727131740.38ea876e.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:35507 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752202Ab0G0DcS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 26 Jul 2010 23:32:18 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jonas Bonn <jonas@southpole.se>, "Steven J. Magnani" <steve@digidescorp.com>, Michal Simek <michal.simek@petalogix.com>
+To: Jeremy Fitzhardinge <jeremy@goop.org>, Xen Devel <Xen-devel@lists.xensource.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Thomas Gleixner <tglx@linutronix.de>
 
-On Mon, Jul 26, 2010 at 9:17 PM, Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> Hi Grant,
->
-> Today's linux-next merge of the devicetree tree got a conflict in
-> arch/microblaze/kernel/Makefile between commit
-> 117aa948321f3b019d9d8160591dc8256a6035cd ("microblaze: Add stack
-> unwinder") from the microblaze tree and commit
-> c0dd394ca5e78649b7013c3ce2d6338af9f228f0 ("of: remove
-> of_default_bus_ids") from the devicetree tree.
->
-> Just context changes. I fixed it up (see below) and can carry the fix=
- as
-> necessary.
+--Signature=_Tue__27_Jul_2010_13_32_07_+1000_c_.kCZYTL0WeILUD
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks Stephen.  Looks right to me.
+Hi all,
 
-g.
+Today's linux-next merge of the xen tree got a conflict in
+arch/x86/kernel/hpet.c between commit
+ff4878089e1eaeac79d57878ad4ea32910fb4037 ("x86: Do not try to disable
+hpet if it hasn't been initialized before") from Linus' tree and commit
+ef7612e63eafaa6101f5d3185ed8d9bf232ba627 ("x86: Do not try to disable
+hpet if it hasn't been initialized before") from the xen tree.
 
-> --
-> Cheers,
-> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
-=2Eorg.au
->
-> diff --cc arch/microblaze/kernel/Makefile
-> index d66ddef,7fcc5f7..0000000
-> --- a/arch/microblaze/kernel/Makefile
-> +++ b/arch/microblaze/kernel/Makefile
-> @@@ -15,9 -15,9 +15,9 @@@ endi
-> =A0extra-y :=3D head.o vmlinux.lds
->
-> =A0obj-y +=3D dma.o exceptions.o \
-> - =A0 =A0 =A0 hw_exception_handler.o init_task.o intc.o irq.o of_devi=
-ce.o \
-> - =A0 =A0 =A0 of_platform.o process.o prom.o prom_parse.o ptrace.o \
-> + =A0 =A0 =A0 hw_exception_handler.o init_task.o intc.o irq.o \
-> + =A0 =A0 =A0 process.o prom.o prom_parse.o ptrace.o \
-> =A0- =A0 =A0 =A0setup.o signal.o sys_microblaze.o timer.o traps.o res=
-et.o
-> =A0+ =A0 =A0 =A0reset.o setup.o signal.o sys_microblaze.o timer.o tra=
-ps.o unwind.o
->
-> =A0obj-y +=3D cpu/
->
->
-
-
-
+Two versions of the same patch.  I used the version from Linus' tree
+since it was dated later and had been modified by Thomas.
 --=20
-Grant Likely, B.Sc., P.Eng.
-Secret Lab Technologies Ltd.
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__27_Jul_2010_13_32_07_+1000_c_.kCZYTL0WeILUD
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMTlM3AAoJEDMEi1NhKgbs+aIH/jo1JsOSvcVWhkOeYo+eMELG
+e/HFMv0lgVuznfvHFzMXjyVTqVMhnGo8ShTqTMUUswpv1cYm+wrPkCRXJVjFNsZK
+DYyygANuWIInkEUUlvc9jw71VIY8eA5HkOK+w9g1L1FPk+WZPY9FofGCdS9X4BAY
+sHy02uWYUyMU4If7EtYICAosN8JfzgTuic88gh2whQQ0NLgsD8yHrQ+hN5CIu6dt
+oizg+XNis4EmopXjvk+HoknZ3c+dGntJIVYrR5vD9FboUQ/pMpKavcLhwvAJr2oe
+DFL30bRhYuF30ighP/4XR1gRIvGH5r9Opn1opoi7koLotwQh5vU0eYYcAdc0czo=
+=8/el
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__27_Jul_2010_13_32_07_+1000_c_.kCZYTL0WeILUD--
