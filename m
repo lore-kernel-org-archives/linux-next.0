@@ -1,72 +1,62 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the usb tree with the v4l-dvb tree
-Date: Mon, 26 Jul 2010 14:42:09 -0700
-Message-ID: <20100726214209.GB21158@kroah.com>
-References: <20100706175332.952fec90.sfr@canb.auug.org.au>
- <201007131923.31877.laurent.pinchart@ideasonboard.com>
- <4C4B07A6.4050009@infradead.org>
- <201007261024.05863.laurent.pinchart@ideasonboard.com>
- <4C4D953F.4050700@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the final tree (xen
+ tree related)
+Date: Tue, 27 Jul 2010 10:01:37 +1000
+Message-ID: <20100727100137.c9ec453c.sfr@canb.auug.org.au>
+References: <20100726152908.951a95b7.sfr@canb.auug.org.au>
+	<4C4DE64C.9070004@goop.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__27_Jul_2010_10_01_37_+1000_NDkhPZOr+/PhG_+t"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:35101 "EHLO coco.kroah.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:59123 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752922Ab0GZVpB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 26 Jul 2010 17:45:01 -0400
-Content-Disposition: inline
-In-Reply-To: <4C4D953F.4050700@infradead.org>
+	id S1751349Ab0G0ABt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 26 Jul 2010 20:01:49 -0400
+In-Reply-To: <4C4DE64C.9070004@goop.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jeremy Fitzhardinge <jeremy@goop.org>
+Cc: Xen Devel <Xen-devel@lists.xensource.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sheng Yang <sheng@linux.intel.com>, Dave McCracken <dcm@mccr.org>
 
-On Mon, Jul 26, 2010 at 11:01:35AM -0300, Mauro Carvalho Chehab wrote:
-> Em 26-07-2010 05:24, Laurent Pinchart escreveu:
-> > Hi Mauro,
-> > 
-> > On Saturday 24 July 2010 17:32:54 Mauro Carvalho Chehab wrote:
-> >> Em 13-07-2010 14:23, Laurent Pinchart escreveu:
-> >>> On Tuesday 13 July 2010 17:34:02 Mauro Carvalho Chehab wrote:
-> >>>> Em 07-07-2010 12:13, Greg KH escreveu:
-> >>>>> On Tue, Jul 06, 2010 at 09:34:51AM -0300, Mauro Carvalho Chehab wrote:
-> >>>>>> Em 06-07-2010 08:10, Laurent Pinchart escreveu:
-> >>> [snip]
-> >>>
-> >>>>>>> Mauro, can the uvc-gadget patches go through the linux-media tree ?
-> >>>>
-> >>>> It will not be simple to fix this conflict from my tree. I tried to
-> >>>> apply
-> >>>>
-> >>>> them against a 2.6.35-rc5, but it failed:
-> >>>> |diff --git a/drivers/media/video/uvc/uvcvideo.h
-> >>>> |b/drivers/media/video/uvc/uvcvideo.h index 47b20e7..ac27245 100644
-> >>>> |--- a/drivers/media/video/uvc/uvcvideo.h
-> >>>> |+++ b/drivers/media/video/uvc/uvcvideo.h
-> >>>>
-> >>>> --------------------------
-> >>>> No file to patch.  Skipping patch.
-> >>>> 1 out of 1 hunk ignored
-> >>>> can't find file to patch at input line 73
-> >>>> Perhaps you used the wrong -p or --strip option?
-> >>>
-> >>> drivers/media/video/uvc/uvcvideo.h has been there for years. Perhaps you
-> >>> used the wrong -p or --strip option? :-)
-> >>
-> >> Doubtful. My scripts apply the patches using -p1. Not sure what happened.
-> > 
-> > [snip]
-> > 
-> >> Could you please re-send the patch, being sure that it will apply against a
-> >> -rc kernel?
-> > 
-> > The patch I've sent you applies unmodified against 2.6.35-rc6. I'm pretty sure 
-> > you made a mistake somewhere.
-> 
-> Likely. I've just applied it to my trees. This time, it applied fine.
+--Signature=_Tue__27_Jul_2010_10_01_37_+1000_NDkhPZOr+/PhG_+t
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ok, I've dropped the patch from my usb tree right now.
+Hi Jeremy,
 
-thanks,
+On Mon, 26 Jul 2010 12:47:24 -0700 Jeremy Fitzhardinge <jeremy@goop.org> wr=
+ote:
+>
+>   On 07/25/2010 10:29 PM, Stephen Rothwell wrote:
+> > Hi all,
+> >
+> > After merging the final tree, today's linux-next build (i386 defconfig)
+> > failed like this:
+>=20
+> Both these build failures should be fixed in upstream/xen now.
 
-greg k-h
+Thanks.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__27_Jul_2010_10_01_37_+1000_NDkhPZOr+/PhG_+t
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMTiHhAAoJEDMEi1NhKgbsHMUH/jh5hnfncj8hkR8u5rWvGimu
+uGH3avtgqa5USHibgj/Mi8418JnMuq3joAnfTYhtJa7AnnQe8wcTjpjtvuQKsjj9
+/B0eHWugQGz9Ott8+7bLXzJ8a52Ccy1VJULaieUXR7T4ybbWKgyo0pcCYJBjg+++
+klekRzsjVdlsG4Gfeb+mkzAhaF3mvkxsxc0EmJCY2qnMWfAjB/raVyDzG6C7+AwR
+jK2WzhTajPImDyiSdJJAzfqKyVspHPac993eCQNliiRQD4t77/HIDnc7SMP/peBt
+sEiVEq+lDYtQpte1Ak7hCwUcoAvgsxc/WtfUvwtx+RuMiGMVZFuADthNtE+V5rQ=
+=Hkqd
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__27_Jul_2010_10_01_37_+1000_NDkhPZOr+/PhG_+t--
