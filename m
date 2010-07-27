@@ -1,47 +1,45 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the tty tree
-Date: Tue, 27 Jul 2010 09:47:17 -0700
-Message-ID: <20100727164717.GB9541@kroah.com>
-References: <20100727151843.7d253148.sfr@canb.auug.org.au>
- <20100727084353.5b14224a@lxorguk.ukuu.org.uk>
+From: Alex Elder <aelder@sgi.com>
+Subject: Re: linux-next: Tree for July 27
+Date: Tue, 27 Jul 2010 13:35:43 -0500
+Message-ID: <1280255743.2002.184.camel@doink>
+References: <20100727160708.722c39c1.sfr@canb.auug.org.au>
+Reply-To: aelder@sgi.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:39596 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751778Ab0G0Qre (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 27 Jul 2010 12:47:34 -0400
-Content-Disposition: inline
-In-Reply-To: <20100727084353.5b14224a@lxorguk.ukuu.org.uk>
+Received: from relay3.sgi.com ([192.48.152.1]:54943 "EHLO relay.sgi.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1753284Ab0G0Sfp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 27 Jul 2010 14:35:45 -0400
+In-Reply-To: <20100727160708.722c39c1.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Feng Tang <feng.tang@intel.com>, Alan Cox <alan@linux.intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, Jul 27, 2010 at 08:43:53AM +0100, Alan Cox wrote:
-> On Tue, 27 Jul 2010 15:18:43 +1000
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Tue, 2010-07-27 at 16:07 +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> > Hi Greg,
-> > 
-> > After merging the tty tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
-> > 
-> > drivers/serial/mfd.c:37:30: error: linux/serial_mfd.h: No such file or directory
-> > drivers/serial/mfd.c: In function 'port_show_regs':
-> > drivers/serial/mfd.c:166: error: 'UART_FOR' undeclared (first use in this function)
-> > 
-> > ... and on ... and on ...
-> > 
-> > Caused by commit c3190cf68dfc58c33de0fd59b919cbb864acbba4 ("hsu: driver
-> > for Medfield High Speed UART device") and following.   Did it miss a file?
-> > 
-> > A little more care and testing, please.
+> Changes since 20100726:
 > 
-> Yes although I had a local copy so it built and tested beautifully 8(
+> The arm tree lost its conflict.
 > 
-> Will send Greg and updated set of those patches versus todays -next
+> The microblaze tree lost its conflict.
+> 
+> The mips tree gained a build failure so I used the version from
+> next-20100726.
+> 
+> The xfs tree still has its build failure so I used the version from
+> next-20100723.
 
-Now fixed up, sorry for missing this.
+The XFS master branch has been updated.  It includes
+a fix for the problem caused by this commit:
 
-greg k-h
+    0fd7275cc42ab734eaa1a2c747e65479bd1e42af
+
+...which was is the cause of this linux-next build failure.
+
+The branch has also been re-based to 2.6.35-rc6.
+
+					-Alex
