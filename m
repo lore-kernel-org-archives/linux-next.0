@@ -1,57 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for July 27
-Date: Tue, 27 Jul 2010 17:28:24 +1000
-Message-ID: <20100727172824.109929c0.sfr@canb.auug.org.au>
-References: <20100727160708.722c39c1.sfr@canb.auug.org.au>
-	<AANLkTi=ki084ymBzsnbgnFw952BSnSDzUyL+YH-4353b@mail.gmail.com>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: linux-next: build failure after merge of the tty tree
+Date: Tue, 27 Jul 2010 08:43:53 +0100
+Message-ID: <20100727084353.5b14224a@lxorguk.ukuu.org.uk>
+References: <20100727151843.7d253148.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__27_Jul_2010_17_28_24_+1000_+pbqLt7W1yQz+5rV"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48891 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751904Ab0G0H2d (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 27 Jul 2010 03:28:33 -0400
-In-Reply-To: <AANLkTi=ki084ymBzsnbgnFw952BSnSDzUyL+YH-4353b@mail.gmail.com>
+Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:45694 "EHLO
+	www.etchedpixels.co.uk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752706Ab0G0HcY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 27 Jul 2010 03:32:24 -0400
+In-Reply-To: <20100727151843.7d253148.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jaswinder Singh Rajput <jaswinderlinux@gmail.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Avi Kivity <avi@redhat.com>, Linux SCSI List <linux-scsi@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Feng Tang <feng.tang@intel.com>, Alan Cox <alan@linux.intel.com>
 
---Signature=_Tue__27_Jul_2010_17_28_24_+1000_+pbqLt7W1yQz+5rV
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, 27 Jul 2010 15:18:43 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi Jaswinder,
+> Hi Greg,
+> 
+> After merging the tty tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> drivers/serial/mfd.c:37:30: error: linux/serial_mfd.h: No such file or directory
+> drivers/serial/mfd.c: In function 'port_show_regs':
+> drivers/serial/mfd.c:166: error: 'UART_FOR' undeclared (first use in this function)
+> 
+> ... and on ... and on ...
+> 
+> Caused by commit c3190cf68dfc58c33de0fd59b919cbb864acbba4 ("hsu: driver
+> for Medfield High Speed UART device") and following.   Did it miss a file?
+> 
+> A little more care and testing, please.
 
-On Tue, 27 Jul 2010 12:54:22 +0530 Jaswinder Singh Rajput <jaswinderlinux@g=
-mail.com> wrote:
->
-> I am getting following compilation warnings in linux-next 20100727:
+Yes although I had a local copy so it built and tested beautifully 8(
 
-Thanks for the report.  All these have been previously reported and most
-have patches (that are not in linux-next yet).
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__27_Jul_2010_17_28_24_+1000_+pbqLt7W1yQz+5rV
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMToqYAAoJEDMEi1NhKgbsYZEH/277Kh5XGBNC9wnTLmPh8ZZs
-R9dUj7qtSbmG3W6H5m/qf6gmQiBdAaLt25aT7hb86sifzck6IBLADgt1H5UbJtoC
-PeHmJlfY0v4Sb5/kEId6Mf1Lxe+8V5v8db6N7xG6QodCqyd2mpIxZqZpqAkdmj5O
-YrrlE5kIzKpeOtPJcpkeFiMeTmQx1e+CSqMEM23dI4xOhqcykDN0NKFk6swOcPpm
-HIy8BS4Ru/7PyyMJ3mTr3M1UBjpKZvO1Qe+HGSdifVNlfHquTg02/i+aStLc7jWG
-etQDj9H8+WIIusoGA/w9+T05kdnPesoWRGZY6v9fsv8m7H+xS9QPrUcQNzYOmO4=
-=O+6X
------END PGP SIGNATURE-----
-
---Signature=_Tue__27_Jul_2010_17_28_24_+1000_+pbqLt7W1yQz+5rV--
+Will send Greg and updated set of those patches versus todays -next
