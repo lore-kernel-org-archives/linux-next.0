@@ -1,62 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the mips tree
-Date: Tue, 27 Jul 2010 11:14:22 +1000
-Message-ID: <20100727111422.673b4919.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the ieee1394 tree
+Date: Tue, 27 Jul 2010 11:48:39 +1000
+Message-ID: <20100727114839.06d25309.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__27_Jul_2010_11_14_22_+1000_m5YeOWhW+SyVqixs"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Tue__27_Jul_2010_11_48_39_+1000_KR6DasizNe0Bh+Ss"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:49425 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751430Ab0G0Bsq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 26 Jul 2010 21:48:46 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stefan Richter <stefanr@s5r6.in-berlin.de>, linux1394-devel@lists.sourceforge.net
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__27_Jul_2010_11_14_22_+1000_m5YeOWhW+SyVqixs
+--Signature=_Tue__27_Jul_2010_11_48_39_+1000_KR6DasizNe0Bh+Ss
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ralf,
+Hi all,
 
-After merging the xtensa tree, today's linux-next build (x86_64
+After merging the ieee1394 tree, today's linux-next build (x86_64
 allmodconfig) failed like this:
 
-drivers/video/jz4740_fb.c:29:39: error: asm/mach-jz4740/jz4740_fb.h: No suc=
-h file or directory
-drivers/video/jz4740_fb.c:30:34: error: asm/mach-jz4740/gpio.h: No such fil=
-e or directory
-drivers/video/jz4740_fb.c:149: error: array type has incomplete element type
-drivers/video/jz4740_fb.c:150: error: implicit declaration of function 'JZ_=
-GPIO_BULK_PIN'
-drivers/video/jz4740_fb.c:150: error: 'LCD_PCLK' undeclared here (not in a =
-function)
+drivers/firewire/nosy.c: In function 'packet_buffer_get':
+drivers/firewire/nosy.c:154: error: 'TASK_INTERRUPTIBLE' undeclared (first =
+use in this function)
+drivers/firewire/nosy.c:154: error: implicit declaration of function 'signa=
+l_pending'
+drivers/firewire/nosy.c:154: error: implicit declaration of function 'sched=
+ule'
+drivers/firewire/nosy.c: In function 'packet_buffer_put':
+drivers/firewire/nosy.c:221: error: 'TASK_INTERRUPTIBLE' undeclared (first =
+use in this function)
+drivers/firewire/nosy.c: In function 'remove_card':
+drivers/firewire/nosy.c:514: error: 'TASK_INTERRUPTIBLE' undeclared (first =
+use in this function)
 
-... and on and on ...
+Forgot to include something?
 
-Caused by commit e457478bc296ea3f2ae51ca7c165a59621c1655d ("FBDEV:
-JZ4740: Add framebuffer driver").  Presumably this driver will only build
-on MIPS?
-
-I have used the mips tree from next-20100726 for today.
+I have used the ieee1394 tree from next-20100726 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__27_Jul_2010_11_14_22_+1000_m5YeOWhW+SyVqixs
+--Signature=_Tue__27_Jul_2010_11_48_39_+1000_KR6DasizNe0Bh+Ss
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMTjLuAAoJEDMEi1NhKgbs234H/08PF7lp1Q5WsQzaStcMwIVC
-bgJCqAb/KtYcpzYYkPgsJkZcobXdqQgzqhiqCX3ZsH7VkWMpoT2HZY1ae4oWGH1Z
-UMBo2hIbL4he0HQnZuSY50biXH43jE3C7Mou2aSfuIpUjTPLI54RcKvX42ISVhZN
-ONr5WfjmxsVlxeZGig+Vh4BJ/PZTlnY7QRUT6x20oEi3omzJzXEvJpw6PglvegUl
-pzahQI4iUjmCTmW0M1ZRlemAq3GJsvP6s4Azxz3Cl+eRKdSB8eaCzVC+PjwcS84I
-fQQjesj4cBgZYcUfHN2V2+IDApX5Vc3/Wm5XXkC+maa1WclJXndbxFzP1xizL3g=
-=Xqef
+iQEcBAEBAgAGBQJMTjr3AAoJEDMEi1NhKgbsYCQH/2cQ8xx10c+ZcwyVzQgsBpY7
+eaz5EzSkH89R54zaEyn+PnQCq/VSAxC7ZpRL1SMfbhks9qhmhA6ntHEO5PBZgRg3
+0gZYDMIqzCqbvtxwiSzj7KvLybi3M/+vSZ3yz9KOUqTYn7fKCZj195eTciPPwtHi
+HE8wDL5KHOS9AIhlR2xynwuqCaco0AJS/9kz+ZL8D2OCxJNAJX9ew5eBXgqDODBH
+8TEMo01rRZY43Sh19OB53XbxvT9/Hd8IRBzhMitjyqpCWOzk/rtRGK65xXEo0QpS
+UMNr+7Rxm+ZIiD3UZuQRQXP/Brr5hYrcY7oQdS7BoiWW8fgYVNJaYWVBG7ibjPw=
+=McMz
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__27_Jul_2010_11_14_22_+1000_m5YeOWhW+SyVqixs--
+--Signature=_Tue__27_Jul_2010_11_48_39_+1000_KR6DasizNe0Bh+Ss--
