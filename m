@@ -1,62 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree (xen
- tree related)
-Date: Tue, 27 Jul 2010 10:01:37 +1000
-Message-ID: <20100727100137.c9ec453c.sfr@canb.auug.org.au>
-References: <20100726152908.951a95b7.sfr@canb.auug.org.au>
-	<4C4DE64C.9070004@goop.org>
+From: Jeremy Fitzhardinge <jeremy@goop.org>
+Subject: Re: linux-next: Tree for July 26 (xen)
+Date: Mon, 26 Jul 2010 17:38:40 -0700
+Message-ID: <4C4E2A90.3040902@goop.org>
+References: <20100726154809.7f42c137.sfr@canb.auug.org.au> <20100726091651.f4ed28b8.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__27_Jul_2010_10_01_37_+1000_NDkhPZOr+/PhG_+t"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59123 "EHLO smtps.tip.net.au"
+Received: from claw.goop.org ([74.207.240.146]:38308 "EHLO claw.goop.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751349Ab0G0ABt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 26 Jul 2010 20:01:49 -0400
-In-Reply-To: <4C4DE64C.9070004@goop.org>
+	id S1752245Ab0G0Ail (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 26 Jul 2010 20:38:41 -0400
+In-Reply-To: <20100726091651.f4ed28b8.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jeremy Fitzhardinge <jeremy@goop.org>
-Cc: Xen Devel <Xen-devel@lists.xensource.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sheng Yang <sheng@linux.intel.com>, Dave McCracken <dcm@mccr.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Tue__27_Jul_2010_10_01_37_+1000_NDkhPZOr+/PhG_+t
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Jeremy,
-
-On Mon, 26 Jul 2010 12:47:24 -0700 Jeremy Fitzhardinge <jeremy@goop.org> wr=
-ote:
+  On 07/26/2010 09:16 AM, Randy Dunlap wrote:
+> On Mon, 26 Jul 2010 15:48:09 +1000 Stephen Rothwell wrote:
 >
->   On 07/25/2010 10:29 PM, Stephen Rothwell wrote:
-> > Hi all,
-> >
-> > After merging the final tree, today's linux-next build (i386 defconfig)
-> > failed like this:
->=20
-> Both these build failures should be fixed in upstream/xen now.
+>> Hi all,
+>>
+>> Changes since 20100723:
+>>
+>> Undropped tree: xen
+>>
+>> The xen tree lost its build problems but gained a couple more for which I
+>> reverted a commit and a subtreee.
+>
+> when CONFIG_SMP is not enabled:
+>
+> arch/x86/xen/enlighten.c:112: error: 'setup_max_cpus' undeclared (first use in this function)
 
-Thanks.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Thanks, I've fixed it up.
 
---Signature=_Tue__27_Jul_2010_10_01_37_+1000_NDkhPZOr+/PhG_+t
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMTiHhAAoJEDMEi1NhKgbsHMUH/jh5hnfncj8hkR8u5rWvGimu
-uGH3avtgqa5USHibgj/Mi8418JnMuq3joAnfTYhtJa7AnnQe8wcTjpjtvuQKsjj9
-/B0eHWugQGz9Ott8+7bLXzJ8a52Ccy1VJULaieUXR7T4ybbWKgyo0pcCYJBjg+++
-klekRzsjVdlsG4Gfeb+mkzAhaF3mvkxsxc0EmJCY2qnMWfAjB/raVyDzG6C7+AwR
-jK2WzhTajPImDyiSdJJAzfqKyVspHPac993eCQNliiRQD4t77/HIDnc7SMP/peBt
-sEiVEq+lDYtQpte1Ak7hCwUcoAvgsxc/WtfUvwtx+RuMiGMVZFuADthNtE+V5rQ=
-=Hkqd
------END PGP SIGNATURE-----
-
---Signature=_Tue__27_Jul_2010_10_01_37_+1000_NDkhPZOr+/PhG_+t--
+     J
