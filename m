@@ -1,51 +1,44 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for July 28 (lirc #2)
-Date: Wed, 28 Jul 2010 10:24:17 -0700
-Message-ID: <20100728102417.be60049a.randy.dunlap@oracle.com>
-References: <20100728162855.4968e561.sfr@canb.auug.org.au>
+Subject: Re: [PATCH] Fix xfs build when CONFIG_XFS_POSIX_ACL=n
+Date: Wed, 28 Jul 2010 10:25:49 -0700
+Message-ID: <4C50681D.6020306@oracle.com>
+References: <4c3f42cf1240489af5@agluck-desktop.sc.intel.com>	 <20100726084829.b173ffe3.randy.dunlap@oracle.com> <1280326978.2238.4.camel@doink>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <20100728162855.4968e561.sfr@canb.auug.org.au>
-Sender: linux-media-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, lirc-list@lists.sourceforge.net, Jarod Wilson <jarod@wilsonet.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Maxim Levitsky <maximlevitsky@gmail.com>, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:23379 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754526Ab0G1R0R (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Jul 2010 13:26:17 -0400
+In-Reply-To: <1280326978.2238.4.camel@doink>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: aelder@sgi.com
+Cc: "Luck, Tony" <tony.luck@intel.com>, xfs-masters@oss.sgi.com, linux-next@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Dave Chinner <dchinner@redhat.com>
 
-On Wed, 28 Jul 2010 16:28:55 +1000 Stephen Rothwell wrote:
-
-> Hi all,
+On 07/28/10 07:22, Alex Elder wrote:
+> On Mon, 2010-07-26 at 08:48 -0700, Randy Dunlap wrote:
+>> On Thu, 15 Jul 2010 10:18:07 -0700 Luck, Tony wrote:
+>>
+>>> When CONFIG_XFS_POSIX_ACL is not set "xfs_check_acl" is #defined
+>>> to NULL - which breaks the code attempting to add a tracepoint
+>>> on this function.
+>>>
+>>> Only define the tracepoint when the function exists.
+>>>
+>>> Signed-off-by: Tony Luck <tony.luck@intel.com>
+>>
+>> Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
+>>
+>> Alex, can we get this merged for linux-next, please?
+>> This problem causes lots of xfs build errors in linux-next without this patch.
 > 
-> Changes since 20100727:
+> Confirmed fixed as of today's linux-next build.	-Alex
 
 
-When USB_SUPPORT is not enabled and MEDIA_SUPPORT is not enabled:
+Thanks.  I'm not seeing those errors today.
 
-
-ERROR: "lirc_dev_fop_close" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
-ERROR: "lirc_dev_fop_open" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
-ERROR: "lirc_dev_fop_poll" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
-ERROR: "lirc_dev_fop_write" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
-ERROR: "lirc_dev_fop_read" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
-ERROR: "usb_register_driver" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
-ERROR: "lirc_register_driver" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
-ERROR: "usb_string" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
-ERROR: "usb_alloc_urb" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
-ERROR: "usb_alloc_coherent" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
-ERROR: "lirc_dev_fop_ioctl" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
-ERROR: "lirc_get_pdata" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
-ERROR: "usb_free_coherent" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
-ERROR: "usb_free_urb" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
-ERROR: "lirc_unregister_driver" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
-ERROR: "usb_kill_urb" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
-ERROR: "usb_submit_urb" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
-ERROR: "usb_deregister" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
-ERROR: "lirc_dev_fop_close" [drivers/staging/lirc/lirc_sir.ko] undefined!
-ERROR: "lirc_dev_fop_open" [drivers/staging/lirc/lirc_sir.ko] undefined!
-ERROR: "lirc_register_driver" [drivers/staging/lirc/lirc_sir.ko] undefined!
-ERROR: "lirc_unregister_driver" [drivers/staging/lirc/lirc_sir.ko] undefined!
-
----
+-- 
 ~Randy
 *** Remember to use Documentation/SubmitChecklist when testing your code ***
