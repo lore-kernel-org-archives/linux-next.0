@@ -1,45 +1,51 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] staging/quickstart: depends on INPUT
-Date: Wed, 28 Jul 2010 10:16:07 -0700
-Message-ID: <20100728101607.6e6e5260.randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for July 28 (lirc #2)
+Date: Wed, 28 Jul 2010 10:24:17 -0700
+Message-ID: <20100728102417.be60049a.randy.dunlap@oracle.com>
 References: <20100728162855.4968e561.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:25575 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755918Ab0G1RQX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Jul 2010 13:16:23 -0400
+Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <20100728162855.4968e561.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, Angelo Arrifano <miknix@gmail.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, lirc-list@lists.sourceforge.net, Jarod Wilson <jarod@wilsonet.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Maxim Levitsky <maximlevitsky@gmail.com>, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+On Wed, 28 Jul 2010 16:28:55 +1000 Stephen Rothwell wrote:
 
-quickstart uses input_*() functions so it should depend on INPUT.
+> Hi all,
+> 
+> Changes since 20100727:
 
-ERROR: "input_register_device" [drivers/staging/quickstart/quickstart.ko] undefined!
-ERROR: "input_allocate_device" [drivers/staging/quickstart/quickstart.ko] undefined!
-ERROR: "input_event" [drivers/staging/quickstart/quickstart.ko] undefined!
-ERROR: "input_free_device" [drivers/staging/quickstart/quickstart.ko] undefined!
-ERROR: "input_unregister_device" [drivers/staging/quickstart/quickstart.ko] undefined!
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Angelo Arrifano <miknix@gmail.com>
+When USB_SUPPORT is not enabled and MEDIA_SUPPORT is not enabled:
+
+
+ERROR: "lirc_dev_fop_close" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
+ERROR: "lirc_dev_fop_open" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
+ERROR: "lirc_dev_fop_poll" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
+ERROR: "lirc_dev_fop_write" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
+ERROR: "lirc_dev_fop_read" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
+ERROR: "usb_register_driver" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
+ERROR: "lirc_register_driver" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
+ERROR: "usb_string" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
+ERROR: "usb_alloc_urb" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
+ERROR: "usb_alloc_coherent" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
+ERROR: "lirc_dev_fop_ioctl" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
+ERROR: "lirc_get_pdata" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
+ERROR: "usb_free_coherent" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
+ERROR: "usb_free_urb" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
+ERROR: "lirc_unregister_driver" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
+ERROR: "usb_kill_urb" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
+ERROR: "usb_submit_urb" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
+ERROR: "usb_deregister" [drivers/staging/lirc/lirc_streamzap.ko] undefined!
+ERROR: "lirc_dev_fop_close" [drivers/staging/lirc/lirc_sir.ko] undefined!
+ERROR: "lirc_dev_fop_open" [drivers/staging/lirc/lirc_sir.ko] undefined!
+ERROR: "lirc_register_driver" [drivers/staging/lirc/lirc_sir.ko] undefined!
+ERROR: "lirc_unregister_driver" [drivers/staging/lirc/lirc_sir.ko] undefined!
+
 ---
- drivers/staging/quickstart/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- linux-next-20100728.orig/drivers/staging/quickstart/Kconfig
-+++ linux-next-20100728/drivers/staging/quickstart/Kconfig
-@@ -1,6 +1,6 @@
- config ACPI_QUICKSTART
- 	tristate "ACPI Quickstart key driver"
--	depends on ACPI
-+	depends on ACPI && INPUT
- 	help
- 	  Say Y here if you have a platform that supports the ACPI
- 	  quickstart key protocol.
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
