@@ -1,47 +1,56 @@
-From: Marcelo Tosatti <mtosatti@redhat.com>
-Subject: Re: [PATCH] KVM: fix compile warning
-Date: Tue, 27 Jul 2010 18:40:31 -0300
-Message-ID: <20100727214031.GB12889@amt.cnet>
-References: <20100726151405.2dfd20ee.sfr@canb.auug.org.au>
- <4C4D216B.5040004@cn.fujitsu.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: [PATCH -next] staging/line6: needs to select SND_PCM
+Date: Wed, 28 Jul 2010 08:19:08 -0700
+Message-ID: <20100728151908.GA20600@kroah.com>
+References: <20100727160708.722c39c1.sfr@canb.auug.org.au>
+ <4C4F31AF.2090701@oracle.com>
+ <s5hhbjjvh9l.wl%tiwai@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from kroah.org ([198.145.64.141]:44320 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754553Ab0G1PX4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 28 Jul 2010 11:23:56 -0400
 Content-Disposition: inline
-In-Reply-To: <4C4D216B.5040004@cn.fujitsu.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Xiao Guangrong <xiaoguangrong@cn.fujitsu.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Avi Kivity <avi@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, KVM list <kvm@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <s5hhbjjvh9l.wl%tiwai@suse.de>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Markus Grabner <grabner@icg.tugraz.at>, gregkh@suse.de, devel@driverdev.osuosl.org
 
-On Mon, Jul 26, 2010 at 01:47:23PM +0800, Xiao Guangrong wrote:
-> 
-> Stephen Rothwell wrote:
-> > Hi all,
+On Wed, Jul 28, 2010 at 03:59:50PM +0200, Takashi Iwai wrote:
+> At Tue, 27 Jul 2010 12:21:19 -0700,
+> Randy Dunlap wrote:
 > > 
-> > After merging the kvm tree, today's linux-next build (x86_64
-> > allmodconfig) produced this warning:
+> > From: Randy Dunlap <randy.dunlap@oracle.com>
 > > 
-> > arch/x86/kvm/mmu.c: In function 'kvm_mmu_pte_write':
-> > arch/x86/kvm/mmu.c:2908: warning: suggest parentheses around operand of '!' or change '&' to '&&' or '!' to '~'
+> > line6 uses snd_pcm*() functions, so it should select SND_PCM.
 > > 
-> > Introduced by commit af8720393c71a8f81ade71c404798d80c68c5d73 ("KVM: MMU:
-> > add missing reserved bits check in speculative path").
+> > ERROR: "snd_pcm_period_elapsed" [drivers/staging/line6/line6usb.ko] undefined!
+> > ERROR: "snd_pcm_set_ops" [drivers/staging/line6/line6usb.ko] undefined!
+> > ERROR: "snd_pcm_lib_free_pages" [drivers/staging/line6/line6usb.ko] undefined!
+> > ERROR: "snd_pcm_lib_ioctl" [drivers/staging/line6/line6usb.ko] undefined!
+> > ERROR: "snd_pcm_lib_malloc_pages" [drivers/staging/line6/line6usb.ko] undefined!
+> > ERROR: "snd_pcm_hw_constraint_ratdens" [drivers/staging/line6/line6usb.ko] undefined!
+> > ERROR: "snd_pcm_format_physical_width" [drivers/staging/line6/line6usb.ko] undefined!
+> > ERROR: "snd_pcm_lib_preallocate_pages_for_all" [drivers/staging/line6/line6usb.ko] undefined!
+> > ERROR: "snd_pcm_new" [drivers/staging/line6/line6usb.ko] undefined!
+> > 
+> > Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> > Cc: Markus Grabner <grabner@icg.tugraz.at>
+> > ---
+> >  drivers/staging/line6/Kconfig |    1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > Third patch to staging/line6/Kconfig.  :(
+> > Developers should know what kernel services their code needs
+> > and how to configure for those needs.
 > 
-> Hi Stephen,
-> 
-> Thanks for your report, this patch can fix it.
-> 
-> Subject: [PATCH] KVM: fix compile warning
-> 
-> Fix:
-> arch/x86/kvm/mmu.c: In function 'kvm_mmu_pte_write':
-> arch/x86/kvm/mmu.c:2908: warning: suggest parentheses around operand of '!' or change '&' to '&&' or '!' to '~'
-> 
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Xiao Guangrong <xiaoguangrong@cn.fujitsu.com>
-> ---
->  arch/x86/kvm/mmu.c |    4 ++--
->  1 files changed, 2 insertions(+), 2 deletions(-)
+> I think this should be applied rather to 2.6.35 tree.
 
-Applied, thanks.
+I'll queue this up for stable to get it into the .35 tree eventually :)
+
+thanks,
+
+greg k-h
