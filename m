@@ -1,39 +1,45 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for July 28 (lirc)
-Date: Wed, 28 Jul 2010 10:13:58 -0700
-Message-ID: <20100728101358.e0dcd54d.randy.dunlap@oracle.com>
+Subject: [PATCH -next] staging/quickstart: depends on INPUT
+Date: Wed, 28 Jul 2010 10:16:07 -0700
+Message-ID: <20100728101607.6e6e5260.randy.dunlap@oracle.com>
 References: <20100728162855.4968e561.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:23324 "EHLO
+Received: from rcsinet10.oracle.com ([148.87.113.121]:25575 "EHLO
 	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753946Ab0G1ROh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Jul 2010 13:14:37 -0400
+	with ESMTP id S1755918Ab0G1RQX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Jul 2010 13:16:23 -0400
 In-Reply-To: <20100728162855.4968e561.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, lirc-list@lists.sourceforge.net, Jarod Wilson <jarod@wilsonet.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Maxim Levitsky <maximlevitsky@gmail.com>, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, Angelo Arrifano <miknix@gmail.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Wed, 28 Jul 2010 16:28:55 +1000 Stephen Rothwell wrote:
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-> Hi all,
-> 
-> Changes since 20100727:
+quickstart uses input_*() functions so it should depend on INPUT.
 
+ERROR: "input_register_device" [drivers/staging/quickstart/quickstart.ko] undefined!
+ERROR: "input_allocate_device" [drivers/staging/quickstart/quickstart.ko] undefined!
+ERROR: "input_event" [drivers/staging/quickstart/quickstart.ko] undefined!
+ERROR: "input_free_device" [drivers/staging/quickstart/quickstart.ko] undefined!
+ERROR: "input_unregister_device" [drivers/staging/quickstart/quickstart.ko] undefined!
 
-when CONFIG_MODULES is not enabled:
-
-drivers/staging/lirc/lirc_parallel.c:243: error: implicit declaration of function 'module_refcount'
-drivers/staging/lirc/lirc_it87.c:150: error: implicit declaration of function 'module_refcount'
-drivers/built-in.o: In function `it87_probe':
-lirc_it87.c:(.text+0x4079b0): undefined reference to `init_chrdev'
-lirc_it87.c:(.text+0x4079cc): undefined reference to `drop_chrdev'
-drivers/built-in.o: In function `lirc_it87_exit':
-lirc_it87.c:(.exit.text+0x38a5): undefined reference to `drop_chrdev'
-
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Angelo Arrifano <miknix@gmail.com>
 ---
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+ drivers/staging/quickstart/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20100728.orig/drivers/staging/quickstart/Kconfig
++++ linux-next-20100728/drivers/staging/quickstart/Kconfig
+@@ -1,6 +1,6 @@
+ config ACPI_QUICKSTART
+ 	tristate "ACPI Quickstart key driver"
+-	depends on ACPI
++	depends on ACPI && INPUT
+ 	help
+ 	  Say Y here if you have a platform that supports the ACPI
+ 	  quickstart key protocol.
