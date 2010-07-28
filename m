@@ -1,37 +1,71 @@
-From: Ralf Baechle <ralf@linux-mips.org>
-Subject: Re: [PATCH] fbdev: Make jz4740-fb depends on MACH_JZ4740
-Date: Wed, 28 Jul 2010 03:35:01 +0100
-Message-ID: <20100728023500.GA7530@linux-mips.org>
-References: <20100727111422.673b4919.sfr@canb.auug.org.au>
- <1280197979-24307-1-git-send-email-lars@metafoo.de>
- <20100727055546.GA5469@linux-mips.org>
- <20100728113136.97942d63.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the battery tree with the mips tree
+Date: Wed, 28 Jul 2010 13:15:59 +1000
+Message-ID: <20100728131559.8b8ac475.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from h5.dl5rb.org.uk ([81.2.74.5]:57123 "EHLO h5.dl5rb.org.uk"
+Received: from chilli.pcug.org.au ([203.10.76.44]:60044 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752458Ab0G1CfP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 27 Jul 2010 22:35:15 -0400
-Content-Disposition: inline
-In-Reply-To: <20100728113136.97942d63.sfr@canb.auug.org.au>
+	id S1751879Ab0G1DQF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 27 Jul 2010 23:16:05 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Anton Vorontsov <avorontsov@ru.mvista.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nithish Mahalingam <nithish.mahalingam@intel.com>, Lars-Peter Clausen <lars@metafoo.de>, Ralf Baechle <ralf@linux-mips.org>
 
-On Wed, Jul 28, 2010 at 11:31:36AM +1000, Stephen Rothwell wrote:
+Hi Anton,
 
-> On Tue, 27 Jul 2010 06:55:46 +0100 Ralf Baechle <ralf@linux-mips.org> wrote:
-> >
-> > On Tue, Jul 27, 2010 at 04:32:59AM +0200, Lars-Peter Clausen wrote:
-> > 
-> > > The jz4740-fb driver should only be selectabed of MACH_JZ4740 is selected.
-> > 
-> > Thanks, folded into the original patch.
-> 
-> But it didn't make it into your mips-for-linux-next branch today?
+Today's linux-next merge of the battery tree got a conflict in
+drivers/power/Kconfig drivers/power/Makefile between commit
+0a5518307648808ce7d62cbfa6d7bdbb01c4e84a ("POWER: Add JZ4740 battery
+driver") from the mips tree and commit
+6721081b6b911a067fe6ca3d6f5534c4a11a9e59 ("Intel MID platform battery
+driver") from the battery tree.
 
-Fixed.  Sorry.
+Just overlapping additions.  I fixed it up (see below) and can carry the
+fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-  Ralf
+diff --cc drivers/power/Kconfig
+index 1e5506b,d1d3c70..0000000
+--- a/drivers/power/Kconfig
++++ b/drivers/power/Kconfig
+@@@ -142,15 -148,11 +148,22 @@@ config CHARGER_PCF5063
+  	help
+  	 Say Y to include support for NXP PCF50633 Main Battery Charger.
+  
+ +config BATTERY_JZ4740
+ +	tristate "Ingenic JZ4740 battery"
+ +	depends on MACH_JZ4740
+ +	depends on MFD_JZ4740_ADC
+ +	help
+ +	  Say Y to enable support for the battery on Ingenic JZ4740 based
+ +	  boards.
+ +
+ +	  This driver can be build as a module. If so, the module will be
+ +	  called jz4740-battery.
+ +
++ config BATTERY_INTEL_MID
++ 	tristate "Battery driver for Intel MID platforms"
++ 	depends on INTEL_SCU_IPC && SPI
++ 	help
++ 	  Say Y here to enable the battery driver on Intel MID
++ 	  platforms.
++ 
+  endif # POWER_SUPPLY
+diff --cc drivers/power/Makefile
+index cf95009,705675a..0000000
+--- a/drivers/power/Makefile
++++ b/drivers/power/Makefile
+@@@ -33,5 -33,6 +33,7 @@@ obj-$(CONFIG_BATTERY_BQ27x00)	+= bq27x0
+  obj-$(CONFIG_BATTERY_DA9030)	+= da9030_battery.o
+  obj-$(CONFIG_BATTERY_MAX17040)	+= max17040_battery.o
+  obj-$(CONFIG_BATTERY_Z2)	+= z2_battery.o
++ obj-$(CONFIG_BATTERY_S3C_ADC)	+= s3c_adc_battery.o
+  obj-$(CONFIG_CHARGER_PCF50633)	+= pcf50633-charger.o
+ +obj-$(CONFIG_BATTERY_JZ4740)	+= jz4740-battery.o
++ obj-$(CONFIG_BATTERY_INTEL_MID)	+= intel_mid_battery.o
