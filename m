@@ -1,30 +1,65 @@
-From: Rabin VINCENT <rabin.vincent@stericsson.com>
-Subject: Re: linux-next: manual merge of the async_tx tree with the arm tree
-Date: Wed, 28 Jul 2010 09:28:49 +0530
-Message-ID: <20100728035849.GA14721@bnru02.bnr.st.com>
-References: <20100727120805.f583c70b.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (kgdb tree
+ related)
+Date: Wed, 28 Jul 2010 14:05:56 +1000
+Message-ID: <20100728140556.2bdacbf3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__28_Jul_2010_14_05_56_+1000_on4IKzyjfasCl7OX"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:42594 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750806Ab0G1EGI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 28 Jul 2010 00:06:08 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jason Wessel <jason.wessel@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>, Steven Rostedt <rostedt@goodmis.org>
+
+--Signature=_Wed__28_Jul_2010_14_05_56_+1000_on4IKzyjfasCl7OX
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20100727120805.f583c70b.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dan Williams <dan.j.williams@intel.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King <rmk@arm.linux.org.uk>, Jonas ABERG <jonas.aberg@stericsson.com>, Linus WALLEIJ <linus.walleij@stericsson.com>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-Hi Stephen,
+Hi all,
 
-On Tue, Jul 27, 2010 at 04:08:05 +0200, Stephen Rothwell wrote:
-> Today's linux-next merge of the async_tx tree got a conflict in
-> arch/arm/mach-ux500/devices-db8500.c between commit
-> 6055930cba8fdb2c8855b32bae262aaf69c1fdb4 ("ARM: 6266/1: ux500: add
-> separate irq lists for DB8500 and DB5500") from the arm tree and commit
-> 5aa12e8c9c57741606e52f43e62ab1b9dc8e9dcc ("DMAENGINE: ste_dma40: arch
-> updates for LCLA and LCPA") from the async_tx tree.
-> 
-> I fixed it up (I think - see below) and can carry the fix as necessary.
+After merging the final tree, next-20100726 build (i386 allmodconfig)
+failed like this:
 
-The fixup is correct, thanks.
+In file included from arch/x86/include/asm/uaccess.h:571,
+                 from include/linux/uaccess.h:5,
+                 from include/linux/highmem.h:6,
+                 from include/linux/pagemap.h:10,
+                 from kernel/trace/trace.c:24:
+arch/x86/include/asm/uaccess_32.h: In function 'copy_from_user':
+arch/x86/include/asm/uaccess_32.h:212: error: call to 'copy_from_user_overf=
+low' declared with attribute error: copy_from_user() buffer size is not pro=
+vably correct
 
-Rabin
+Probably caused by commit e5738a3d75254c6d135ccad925e513ddb860967e
+("ftrace,kdb: Extend kdb to be able to dump the ftrace buffer") from the
+kgdb tree which turned off optimization (and therefore probably inlining)
+for kernel/trace/trace.c ...
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__28_Jul_2010_14_05_56_+1000_on4IKzyjfasCl7OX
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMT6ykAAoJEDMEi1NhKgbsPvoH/Ao4rMkHLo2MrtteHKv/w+oZ
+WdWQit9/i2de8Eyk0dg0YMdfxbV5kLwg8zyQQsDk5OCKweGOF1h3685ncny6ufqp
+In+yLLCiIsIh0jptEYfpP9hlbebbv9zD6Q0qyqY0mQDTVwHEL4l5oUkCyGHhMRZn
+pv7Af+xQ4WrNDZn/5Fb7bWqJeIGBIqLIOjY7VO265yETVOoSSiYPVyaiSCf+V2eO
+FNiClxtUrPmmxMu36YH78+3jREEPI7ArU/pHWkGvestY+xyT4Iw+D6U1zCh1sM4w
+gity/1ROBfK0FFoRDdik1uNn2HX0upxlWv4fglBDtgS2H/WgDDxdr7bQ0ZsIJnA=
+=EUQh
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__28_Jul_2010_14_05_56_+1000_on4IKzyjfasCl7OX--
