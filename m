@@ -1,189 +1,61 @@
-From: Jarod Wilson <jarod@wilsonet.com>
-Subject: Re: linux-next: Tree for July 28 (lirc #2)
-Date: Wed, 28 Jul 2010 18:27:26 -0400
-Message-ID: <AANLkTi=DLHOnzgXmpzNE3PQXp-xSkm8vLdxBBf1mcFuO@mail.gmail.com>
-References: <20100728162855.4968e561.sfr@canb.auug.org.au>
-	<20100728102417.be60049a.randy.dunlap@oracle.com>
-	<20100728220454.GK8564@aniel.lan>
-	<4C50AC26.1080100@oracle.com>
+From: Linus Walleij <linus.ml.walleij@gmail.com>
+Subject: Re: linux-next: manual merge of the async_tx tree with the arm tree
+Date: Thu, 29 Jul 2010 01:50:19 +0200
+Message-ID: <AANLkTikTdLcYQ2cqt7HOoEANTRYOB_ySqdud5QEs5pd5@mail.gmail.com>
+References: <20100727120805.f583c70b.sfr@canb.auug.org.au>
+	<AANLkTin4EAQ48HP3ETDUMqBe2AzcznRuZdBdG+_RhR8x@mail.gmail.com>
+	<20100728074322.GA8147@flint.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4C50AC26.1080100@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Janne Grunau <j@jannau.net>, Stephen Rothwell <sfr@canb.auug.org.au>, lirc-list@lists.sourceforge.net, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Maxim Levitsky <maximlevitsky@gmail.com>, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:34423 "EHLO
+	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751225Ab0G1XuU convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Jul 2010 19:50:20 -0400
+In-Reply-To: <20100728074322.GA8147@flint.arm.linux.org.uk>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Russell King <rmk@arm.linux.org.uk>, Dan Williams <dan.j.williams@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rabin Vincent <rabin.vincent@stericsson.com>, Jonas Aaberg <jonas.aberg@stericsson.com>
 
-On Wed, Jul 28, 2010 at 6:16 PM, Randy Dunlap <randy.dunlap@oracle.com>=
- wrote:
-> On 07/28/10 15:04, Janne Grunau wrote:
->> On Wed, Jul 28, 2010 at 10:24:17AM -0700, Randy Dunlap wrote:
->>> On Wed, 28 Jul 2010 16:28:55 +1000 Stephen Rothwell wrote:
->>>
->>>> Hi all,
->>>>
->>>> Changes since 20100727:
->>>
->>>
->>> When USB_SUPPORT is not enabled and MEDIA_SUPPORT is not enabled:
->>>
+2010/7/28 Russell King <rmk@arm.linux.org.uk>:
+> On Wed, Jul 28, 2010 at 12:11:19AM -0700, Dan Williams wrote:
+>> On Mon, Jul 26, 2010 at 7:08 PM, Stephen Rothwell <sfr@canb.auug.org=
+=2Eau> wrote:
+>> > Hi Dan,
+>> >
+>> > Today's linux-next merge of the async_tx tree got a conflict in
+>> > arch/arm/mach-ux500/devices-db8500.c between commit
+>> > 6055930cba8fdb2c8855b32bae262aaf69c1fdb4 ("ARM: 6266/1: ux500: add
+>> > separate irq lists for DB8500 and DB5500") from the arm tree and c=
+ommit
+>> > 5aa12e8c9c57741606e52f43e62ab1b9dc8e9dcc ("DMAENGINE: ste_dma40: a=
+rch
+>> > updates for LCLA and LCPA") from the async_tx tree.
+>> >
+>> > I fixed it up (I think - see below) and can carry the fix as neces=
+sary.
+>> > --
 >>
->> following patch should fix it
+>> Thanks Stephen!
 >>
->> Janne
+>> Russell, the dma40 driver updates and related arch fixups have been
+>> sitting in next for a month, I'd prefer not to lose this baseline.
+>> Assuming this change is brand new any chance the dma40 specific part
+>> of this patch can be peeled off and sent through my tree, or are you
+>> in a similar "can't/won't" rebase position?
 >
-> Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
->
-> Thanks.
+> I don't see how the change in the ARM tree could be reasonably split.
+> Up to Rabin/Linus to decide what they want to do about this.
 
-Acked-by: Jarod Wilson <jarod@redhat.com>
+Actually the way subsystem maintainers fix up conflicts and resolve the=
+m
+is a bit of opaque to me, I'd be happy to help in any way possible.
 
-Indeed, thanks much, Janne!
+Isn't it so that whoever hits the merge window first goes in and the
+other apply Stephens patch before issuing any pull request and be
+done with it? That was my na=EFve idea about these things...
 
-
->> From 7d1cc98c19a6c27dd74a28f04dfe4248a0b335ce Mon Sep 17 00:00:00 20=
-01
->> From: Janne Grunau <j@jannau.net>
->> Date: Wed, 28 Jul 2010 23:53:35 +0200
->> Subject: [PATCH 1/2] staging/lirc: fix Kconfig dependencies
->>
->> Signed-off-by: Janne Grunau <j@jannau.net>
->> ---
->> =A0drivers/staging/lirc/Kconfig | =A0 28 ++++++++++++++-------------=
--
->> =A01 files changed, 14 insertions(+), 14 deletions(-)
->>
->> diff --git a/drivers/staging/lirc/Kconfig b/drivers/staging/lirc/Kco=
-nfig
->> index 968c2ade..3981a4a 100644
->> --- a/drivers/staging/lirc/Kconfig
->> +++ b/drivers/staging/lirc/Kconfig
->> @@ -13,13 +13,13 @@ if LIRC_STAGING
->>
->> =A0config LIRC_BT829
->> =A0 =A0 =A0 =A0 =A0tristate "BT829 based hardware"
->> - =A0 =A0 depends on LIRC_STAGING
->> + =A0 =A0 depends on LIRC && LIRC_STAGING
->> =A0 =A0 =A0 help
->> =A0 =A0 =A0 =A0 Driver for the IR interface on BT829-based hardware
->>
->> =A0config LIRC_ENE0100
->> =A0 =A0 =A0 tristate "ENE KB3924/ENE0100 CIR Port Reciever"
->> - =A0 =A0 depends on LIRC_STAGING
->> + =A0 =A0 depends on LIRC && LIRC_STAGING
->> =A0 =A0 =A0 help
->> =A0 =A0 =A0 =A0 This is a driver for CIR port handled by ENE KB3924 =
-embedded
->> =A0 =A0 =A0 =A0 controller found on some notebooks.
->> @@ -27,20 +27,20 @@ config LIRC_ENE0100
->>
->> =A0config LIRC_I2C
->> =A0 =A0 =A0 tristate "I2C Based IR Receivers"
->> - =A0 =A0 depends on LIRC_STAGING
->> + =A0 =A0 depends on I2C && LIRC && LIRC_STAGING
->> =A0 =A0 =A0 help
->> =A0 =A0 =A0 =A0 Driver for I2C-based IR receivers, such as those com=
-monly
->> =A0 =A0 =A0 =A0 found onboard Hauppauge PVR-150/250/350 video captur=
-e cards
->>
->> =A0config LIRC_IGORPLUGUSB
->> =A0 =A0 =A0 tristate "Igor Cesko's USB IR Receiver"
->> - =A0 =A0 depends on LIRC_STAGING && USB
->> + =A0 =A0 depends on USB && LIRC && LIRC_STAGING && USB
->> =A0 =A0 =A0 help
->> =A0 =A0 =A0 =A0 Driver for Igor Cesko's USB IR Receiver
->>
->> =A0config LIRC_IMON
->> =A0 =A0 =A0 tristate "Legacy SoundGraph iMON Receiver and Display"
->> - =A0 =A0 depends on LIRC_STAGING
->> + =A0 =A0 depends on LIRC && LIRC_STAGING
->> =A0 =A0 =A0 help
->> =A0 =A0 =A0 =A0 Driver for the original SoundGraph iMON IR Receiver =
-and Display
->>
->> @@ -48,31 +48,31 @@ config LIRC_IMON
->>
->> =A0config LIRC_IT87
->> =A0 =A0 =A0 tristate "ITE IT87XX CIR Port Receiver"
->> - =A0 =A0 depends on LIRC_STAGING
->> + =A0 =A0 depends on LIRC && LIRC_STAGING
->> =A0 =A0 =A0 help
->> =A0 =A0 =A0 =A0 Driver for the ITE IT87xx IR Receiver
->>
->> =A0config LIRC_ITE8709
->> =A0 =A0 =A0 tristate "ITE8709 CIR Port Receiver"
->> - =A0 =A0 depends on LIRC_STAGING && PNP
->> + =A0 =A0 depends on LIRC && LIRC_STAGING && PNP
->> =A0 =A0 =A0 help
->> =A0 =A0 =A0 =A0 Driver for the ITE8709 IR Receiver
->>
->> =A0config LIRC_PARALLEL
->> =A0 =A0 =A0 tristate "Homebrew Parallel Port Receiver"
->> - =A0 =A0 depends on LIRC_STAGING && !SMP
->> + =A0 =A0 depends on LIRC && LIRC_STAGING && !SMP
->> =A0 =A0 =A0 help
->> =A0 =A0 =A0 =A0 Driver for Homebrew Parallel Port Receivers
->>
->> =A0config LIRC_SASEM
->> =A0 =A0 =A0 tristate "Sasem USB IR Remote"
->> - =A0 =A0 depends on LIRC_STAGING
->> + =A0 =A0 depends on USB && LIRC && LIRC_STAGING
->> =A0 =A0 =A0 help
->> =A0 =A0 =A0 =A0 Driver for the Sasem OnAir Remocon-V or Dign HV5 HTP=
-C IR/VFD Module
->>
->> =A0config LIRC_SERIAL
->> =A0 =A0 =A0 tristate "Homebrew Serial Port Receiver"
->> - =A0 =A0 depends on LIRC_STAGING
->> + =A0 =A0 depends on LIRC && LIRC_STAGING
->> =A0 =A0 =A0 help
->> =A0 =A0 =A0 =A0 Driver for Homebrew Serial Port Receivers
->>
->> @@ -85,25 +85,25 @@ config LIRC_SERIAL_TRANSMITTER
->>
->> =A0config LIRC_SIR
->> =A0 =A0 =A0 tristate "Built-in SIR IrDA port"
->> - =A0 =A0 depends on LIRC_STAGING
->> + =A0 =A0 depends on LIRC && LIRC_STAGING
->> =A0 =A0 =A0 help
->> =A0 =A0 =A0 =A0 Driver for the SIR IrDA port
->>
->> =A0config LIRC_STREAMZAP
->> =A0 =A0 =A0 tristate "Streamzap PC Receiver"
->> - =A0 =A0 depends on LIRC_STAGING
->> + =A0 =A0 depends on USB && LIRC && LIRC_STAGING
->> =A0 =A0 =A0 help
->> =A0 =A0 =A0 =A0 Driver for the Streamzap PC Receiver
->>
->> =A0config LIRC_TTUSBIR
->> =A0 =A0 =A0 tristate "Technotrend USB IR Receiver"
->> - =A0 =A0 depends on LIRC_STAGING && USB
->> + =A0 =A0 depends on USB && LIRC && LIRC_STAGING && USB
->> =A0 =A0 =A0 help
->> =A0 =A0 =A0 =A0 Driver for the Technotrend USB IR Receiver
->>
->> =A0config LIRC_ZILOG
->> =A0 =A0 =A0 tristate "Zilog/Hauppauge IR Transmitter"
->> - =A0 =A0 depends on LIRC_STAGING
->> + =A0 =A0 depends on I2C && LIRC && LIRC_STAGING
->> =A0 =A0 =A0 help
->> =A0 =A0 =A0 =A0 Driver for the Zilog/Hauppauge IR Transmitter, found=
- on
->> =A0 =A0 =A0 =A0 PVR-150/500, HVR-1200/1250/1700/1800, HD-PVR and oth=
-er cards
->
->
-> --
-> ~Randy
-> *** Remember to use Documentation/SubmitChecklist when testing your c=
-ode ***
->
-
-
-
---=20
-Jarod Wilson
-jarod@wilsonet.com
+Yours,
+Linus Walleij
