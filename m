@@ -1,92 +1,74 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: please pull in from lost-spurious-irq branch
-Date: Thu, 29 Jul 2010 01:35:09 +1000
-Message-ID: <20100729013509.22731f11.sfr@canb.auug.org.au>
-References: <4C5035BF.9040904@kernel.org>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for July 27 (xen)
+Date: Wed, 28 Jul 2010 08:47:05 -0700
+Message-ID: <4C5050F9.9080001@oracle.com>
+References: <20100727160708.722c39c1.sfr@canb.auug.org.au> <4C4F27A3.5040109@oracle.com> <alpine.DEB.2.00.1007281410030.19809@kaball-desktop>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__29_Jul_2010_01_35_09_+1000_Mz+QQOM61RVq8N/L"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52471 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752808Ab0G1PfS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 28 Jul 2010 11:35:18 -0400
-In-Reply-To: <4C5035BF.9040904@kernel.org>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:53094 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751136Ab0G1Pr0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Jul 2010 11:47:26 -0400
+In-Reply-To: <alpine.DEB.2.00.1007281410030.19809@kaball-desktop>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, LKML <linux-kernel@vger.kernel.org>
+To: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "jeremy@goop.org" <jeremy@goop.org>, Jeremy Fitzhardinge <Jeremy.Fitzhardinge@citrix.com>
 
---Signature=_Thu__29_Jul_2010_01_35_09_+1000_Mz+QQOM61RVq8N/L
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 07/28/10 06:11, Stefano Stabellini wrote:
+> On Tue, 27 Jul 2010, Randy Dunlap wrote:
+>> Stephen Rothwell wrote:
+>>> Hi all,
+>>>
+>>> Changes since 20100726:
+>>>
+>>>
+>>> The xen tree lost its build problems but gained a conflict against Linus'
+>>> tree.
+>>
+>> when X86_32=y, SMP=n, X86_LOCAL_APIC=n:
+>>
+>> drivers/built-in.o: In function `xen_callback_vector':
+>> (.text+0x41238): undefined reference to `first_system_vector'
+>>
+>> alloc_intr_gate() calls alloc_system_vector(), which uses first_system_vector.
+> 
+> this patch should solve the issue:
 
-Hi Tejun,
+Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
 
-On Wed, 28 Jul 2010 15:50:55 +0200 Tejun Heo <tj@kernel.org> wrote:
->
-> If possible, can you please pull the following branch into linux-next?
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/tj/misc.git lost-spurious=
--irq
->=20
-> It's scheduled to go through tip/genirq, so once it shows up in tip,
-> the above branch can be dropped from linux-next.  As the merge window
-> is closing in, I'm hoping to get it tested enough in linux-next.  The
-> branch is based on rc3 but merges without conflict into the current
-> mainline.
+Thanks.
 
-OK, added from today.  I'll keep an eye out for it in the tip tree.
+> ---
+> 
+> alloc_system_vector: access first_system_vector when X86_LOCAL_APIC=y
+> 
+> Currently alloc_system_vector reads and writes first_system_vector
+> unconditionally while first_system_vector is only defined when
+> CONFIG_X86_LOCAL_APIC=y.
+> This patch makes sure first_system_vector is accessed only in that case.
+> 
+> Signed-off-by: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+> 
+> diff --git a/arch/x86/include/asm/desc.h b/arch/x86/include/asm/desc.h
+> index 617bd56..f83e055 100644
+> --- a/arch/x86/include/asm/desc.h
+> +++ b/arch/x86/include/asm/desc.h
+> @@ -341,8 +341,10 @@ static inline void alloc_system_vector(int vector)
+>  {
+>  	if (!test_bit(vector, used_vectors)) {
+>  		set_bit(vector, used_vectors);
+> +#if defined(CONFIG_X86_LOCAL_APIC)
+>  		if (first_system_vector > vector)
+>  			first_system_vector = vector;
+> +#endif
+>  	} else
+>  		BUG();
+>  }
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-	Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
---=20
-Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
-
-Legal Stuff:
-By participating in linux-next, your subsystem tree contributions are
-public and will be included in the linux-next trees.  You may be sent
-e-mail messages indicating errors or other issues when the
-patches/commits from your subsystem tree are merged and tested in
-linux-next.  These messages may also be cross-posted to the linux-next
-mailing list, the linux-kernel mailing list, etc.  The linux-next tree
-project and IBM (my employer) make no warranties regarding the linux-next
-project, the testing procedures, the results, the e-mails, etc.  If you
-don't agree to these ground rules, let me know and I'll remove your tree
-from participation in linux-next.
-
---Signature=_Thu__29_Jul_2010_01_35_09_+1000_Mz+QQOM61RVq8N/L
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMUE4tAAoJEDMEi1NhKgbsPPQH/0/wPk7kXvirolFvdlsiO4pY
-laN5uMwj8X8vj6k50+fme6tYfcRmy1hWLaXdrbgZ4EITN1BIW90jyGjHThIEs17S
-IaRUvaBFojd3SRWaqDBXF1w4yBr/2fRChyXiYqH/PkeVddMinNPq/w6okgAf9/go
-6WiEFp/CFWXf9NydOCy3bj/evv0lnxfTUJqtje5DcQS6q5GYWrUgea+krnbJqjoZ
-BdAT/PUEQXuGALbzyCM97PFvwslOvR5m5FTjJcMSkyn+ZX/Sy/ZgK/qOEaoEPfqW
-7xABeSUNTmotFVN9w0oZZ0AIcu6WF41LAjTnyr533yzvOKjJrnapMzFncjHiez4=
-=G9MZ
------END PGP SIGNATURE-----
-
---Signature=_Thu__29_Jul_2010_01_35_09_+1000_Mz+QQOM61RVq8N/L--
+-- 
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
