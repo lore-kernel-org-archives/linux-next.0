@@ -1,57 +1,59 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] staging/line6: needs to select SND_PCM
-Date: Tue, 27 Jul 2010 12:21:19 -0700
-Message-ID: <4C4F31AF.2090701@oracle.com>
-References: <20100727160708.722c39c1.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the tty tree
+Date: Wed, 28 Jul 2010 11:19:18 +1000
+Message-ID: <20100728111918.daa8dc69.sfr@canb.auug.org.au>
+References: <20100727151843.7d253148.sfr@canb.auug.org.au>
+	<20100727084353.5b14224a@lxorguk.ukuu.org.uk>
+	<20100727164717.GB9541@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devel-bounces@linuxdriverproject.org>
-In-Reply-To: <20100727160708.722c39c1.sfr@canb.auug.org.au>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/devel>,
-	<mailto:devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/devel>
-List-Post: <mailto:devel@linuxdriverproject.org>
-List-Help: <mailto:devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/devel>,
-	<mailto:devel-request@linuxdriverproject.org?subject=subscribe>
-Sender: devel-bounces@linuxdriverproject.org
-Errors-To: devel-bounces@linuxdriverproject.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: devel@driverdev.osuosl.org, Markus Grabner <grabner@icg.tugraz.at>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, gregkh@suse.de
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__28_Jul_2010_11_19_18_+1000_LQ9tukJ_J.cw6oN5"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:40582 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753377Ab0G1BT0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 27 Jul 2010 21:19:26 -0400
+In-Reply-To: <20100727164717.GB9541@kroah.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Feng Tang <feng.tang@intel.com>, Alan Cox <alan@linux.intel.com>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+--Signature=_Wed__28_Jul_2010_11_19_18_+1000_LQ9tukJ_J.cw6oN5
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-line6 uses snd_pcm*() functions, so it should select SND_PCM.
+Hi Greg, Alan,
 
-ERROR: "snd_pcm_period_elapsed" [drivers/staging/line6/line6usb.ko] undefined!
-ERROR: "snd_pcm_set_ops" [drivers/staging/line6/line6usb.ko] undefined!
-ERROR: "snd_pcm_lib_free_pages" [drivers/staging/line6/line6usb.ko] undefined!
-ERROR: "snd_pcm_lib_ioctl" [drivers/staging/line6/line6usb.ko] undefined!
-ERROR: "snd_pcm_lib_malloc_pages" [drivers/staging/line6/line6usb.ko] undefined!
-ERROR: "snd_pcm_hw_constraint_ratdens" [drivers/staging/line6/line6usb.ko] undefined!
-ERROR: "snd_pcm_format_physical_width" [drivers/staging/line6/line6usb.ko] undefined!
-ERROR: "snd_pcm_lib_preallocate_pages_for_all" [drivers/staging/line6/line6usb.ko] undefined!
-ERROR: "snd_pcm_new" [drivers/staging/line6/line6usb.ko] undefined!
+On Tue, 27 Jul 2010 09:47:17 -0700 Greg KH <greg@kroah.com> wrote:
+>
+> On Tue, Jul 27, 2010 at 08:43:53AM +0100, Alan Cox wrote:
+> >=20
+> > Will send Greg and updated set of those patches versus todays -next
+>=20
+> Now fixed up, sorry for missing this.
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Markus Grabner <grabner@icg.tugraz.at>
----
- drivers/staging/line6/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+Thanks guys.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Third patch to staging/line6/Kconfig.  :(
-Developers should know what kernel services their code needs
-and how to configure for those needs.
+--Signature=_Wed__28_Jul_2010_11_19_18_+1000_LQ9tukJ_J.cw6oN5
+Content-Type: application/pgp-signature
 
---- linux-next-20100727.orig/drivers/staging/line6/Kconfig
-+++ linux-next-20100727/drivers/staging/line6/Kconfig
-@@ -2,6 +2,7 @@ config LINE6_USB
- 	tristate "Line6 USB support"
- 	depends on USB && SND
- 	select SND_RAWMIDI
-+	select SND_PCM
- 	help
- 	  This is a driver for the guitar amp, cab, and effects modeller
- 	  PODxt Pro by Line6 (and similar devices), supporting the
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMT4WWAAoJEDMEi1NhKgbsXBoH/RhnJQBC3niZ5VFO13HYQE/Y
+PaE7TtaNjBc8K74BxdpV+ckj5JF+8BvFINXxISZ33Kik17fkZUES9oaGmQvTu0J5
+qTTIaahpieccxJ/Dz5Tl3d9gtexcnPyTr6KjJAvJnm2C15zW2fLezK5uisNSsKcy
+pEKZhZ7RZ+1cOoZAJhE/0ygLj5QsPEMCSx3QQadCkFveeBZXQONc0qtMv/tjCTKc
+HY0cIzope69AWDAFpSiVv/qcLXVo5vC+vW2w1qeAcVOaicJUrIEEY3WXQs4WdspN
+/sBGn+B+bYcuPPpdRmJ+OmNQs8ca8zdtcYw73hNmP11S8yCtL7Pnzehn3AHFdRk=
+=23ZV
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__28_Jul_2010_11_19_18_+1000_LQ9tukJ_J.cw6oN5--
