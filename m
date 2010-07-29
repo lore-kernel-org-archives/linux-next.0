@@ -1,47 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the workqueues tree with the
- lost-spurious-irq tree
-Date: Thu, 29 Jul 2010 13:19:53 +1000
-Message-ID: <20100729131953.e51a0242.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (net tree
+ related)
+Date: Thu, 29 Jul 2010 14:13:06 +1000
+Message-ID: <20100729141306.f27fad7a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37517 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:60541 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751401Ab0G2DTz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 28 Jul 2010 23:19:55 -0400
+	id S1750809Ab0G2ENM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 29 Jul 2010 00:13:12 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Kravkov <dmitry@broadcom.com>, Eilon Greenstein <eilong@broadcom.com>
 
-Hi Tejun,
+Hi Dave,
 
-Today's linux-next merge of the workqueues tree got a conflict in
-include/linux/libata.h between commit
-fa7cd37f808c487f722d7a2ce9c0923a323922df ("libata: use IRQ expecting")
-from the lost-spurious-irq tree and commit
-ad72cf9885c536e3adae03f8337557ac9dd1e4bb ("libata: take advantage of cmwq
-and remove concurrency limitations") from the workqueues tree.
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-Just overlapping additions.  I fixed it up (see below) and can carry the
-fix as necessary.
+drivers/net/bnx2x/bnx2x_cmn.c: In function 'bnx2x_start_xmit':
+drivers/net/bnx2x/bnx2x_cmn.c:2015: error: implicit declaration of function 'csum_ipv6_magic'
+
+Caused by commit 9f6c925889ad9204c7d1f5ca116d2e5fd6036c72 ("bnx2x: Create
+bnx2x_cmn.* files").  See Rule 1 in Documentation/SubmitChecklist. :-)
+
+I applied the following patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 29 Jul 2010 14:07:49 +1000
+Subject: [PATCH] net: bnx2x_cmn.c needs net/ip6_checksum.h for csum_ipv6_magic
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/net/bnx2x/bnx2x_cmn.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/net/bnx2x/bnx2x_cmn.c b/drivers/net/bnx2x/bnx2x_cmn.c
+index 30d20c7..02bf710 100644
+--- a/drivers/net/bnx2x/bnx2x_cmn.c
++++ b/drivers/net/bnx2x/bnx2x_cmn.c
+@@ -19,6 +19,7 @@
+ #include <linux/etherdevice.h>
+ #include <linux/ip.h>
+ #include <linux/ipv6.h>
++#include <net/ip6_checksum.h>
+ #include "bnx2x_cmn.h"
+ 
+ #ifdef BCM_VLAN
+-- 
+1.7.1
+
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc include/linux/libata.h
-index 3f5f159,f010f18..0000000
---- a/include/linux/libata.h
-+++ b/include/linux/libata.h
-@@@ -751,8 -751,7 +751,9 @@@ struct ata_port 
-  	struct ata_host		*host;
-  	struct device 		*dev;
-  
- +	struct irq_expect	*irq_expect;	/* for irq expecting */
- +
-+ 	struct mutex		scsi_scan_mutex;
-  	struct delayed_work	hotplug_task;
-  	struct work_struct	scsi_rescan_task;
-  
+http://www.canb.auug.org.au/~sfr/
