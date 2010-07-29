@@ -1,73 +1,169 @@
-From: Jiri Pirko <jpirko@redhat.com>
-Subject: Re: linux-next: manual merge of the net tree with the net-current
- tree
-Date: Thu, 29 Jul 2010 07:51:43 +0200
-Message-ID: <20100729055143.GB2647@psychotron.redhat.com>
-References: <20100729110504.df0b5791.sfr@canb.auug.org.au>
+From: Janne Grunau <j@jannau.net>
+Subject: Re: linux-next: Tree for July 28 (lirc #2)
+Date: Thu, 29 Jul 2010 14:39:41 +0200
+Message-ID: <20100729123941.GL8564@aniel.lan>
+References: <20100728162855.4968e561.sfr@canb.auug.org.au>
+ <20100728102417.be60049a.randy.dunlap@oracle.com>
+ <20100728220454.GK8564@aniel.lan>
+ <4C50AC26.1080100@oracle.com>
+ <AANLkTi=DLHOnzgXmpzNE3PQXp-xSkm8vLdxBBf1mcFuO@mail.gmail.com>
+ <AANLkTimTbZ6Vjqe5rqNVtNwPV=qoo=BOsOwG_6fS1SZU@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <netdev-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from tichy.grunau.be ([85.131.189.73]:47875 "EHLO tichy.grunau.be"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754186Ab0G2MjB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 29 Jul 2010 08:39:01 -0400
 Content-Disposition: inline
-In-Reply-To: <20100729110504.df0b5791.sfr@canb.auug.org.au>
-Sender: netdev-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, stephen hemminger <shemminger@vyatta.com>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <AANLkTimTbZ6Vjqe5rqNVtNwPV=qoo=BOsOwG_6fS1SZU@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jarod Wilson <jarod@wilsonet.com>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, lirc-list@lists.sourceforge.net, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Maxim Levitsky <maximlevitsky@gmail.com>, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@redhat.com>
 
-Looks good to me.
+On Thu, Jul 29, 2010 at 12:27:01AM -0400, Jarod Wilson wrote:
+> On Wed, Jul 28, 2010 at 6:27 PM, Jarod Wilson <jarod@wilsonet.com> wrote:
+> > On Wed, Jul 28, 2010 at 6:16 PM, Randy Dunlap <randy.dunlap@oracle.com> wrote:
+> >> On 07/28/10 15:04, Janne Grunau wrote:
+> >>> On Wed, Jul 28, 2010 at 10:24:17AM -0700, Randy Dunlap wrote:
+> >>>> On Wed, 28 Jul 2010 16:28:55 +1000 Stephen Rothwell wrote:
+> >>>>
+> >>>>> Hi all,
+> >>>>>
+> >>>>> Changes since 20100727:
+> >>>>
+> >>>>
+> >>>> When USB_SUPPORT is not enabled and MEDIA_SUPPORT is not enabled:
+> >>>>
+> >>>
+> >>> following patch should fix it
+> >>>
+> >>> Janne
+> >>
+> >> Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
+> >>
+> >> Thanks.
+> >
+> > Acked-by: Jarod Wilson <jarod@redhat.com>
+> >
+> > Indeed, thanks much, Janne!
+> 
+> D'oh, I should have looked a bit closer... What if instead of making
+> all the drivers depend on both LIRC && LIRC_STAGING, LIRC_STAGING just
+> depends on LIRC?
 
-Thu, Jul 29, 2010 at 03:05:04AM CEST, sfr@canb.auug.org.au wrote:
->Hi all,
->
->Today's linux-next merge of the net tree got a conflict in
->net/bridge/br_input.c between commit
->eeaf61d8891f9c9ed12c1a667e72bf83f0857954 ("bridge: add rcu_read_lock on
->transmit") from the net-current tree and commit
->ab95bfe01f9872459c8678572ccadbf646badad0 ("net: replace hooks in
->__netif_receive_skb V5") from the net tree.
->
->Just overlapping changes in a comment.  I fixed it up (see below) and can
->carry the fix for a while.
->-- 
->Cheers,
->Stephen Rothwell                    sfr@canb.auug.org.au
->
->diff --cc net/bridge/br_input.c
->index 114365c,5fc1c5b..0000000
->--- a/net/bridge/br_input.c
->+++ b/net/bridge/br_input.c
->@@@ -108,13 -110,12 +110,12 @@@ drop
->  	goto out;
->  }
->  
-> -/* note: already called with rcu_read_lock (preempt_disabled) */
-> +/* note: already called with rcu_read_lock */
->  static int br_handle_local_finish(struct sk_buff *skb)
->  {
->- 	struct net_bridge_port *p = rcu_dereference(skb->dev->br_port);
->+ 	struct net_bridge_port *p = br_port_get_rcu(skb->dev);
->  
->- 	if (p)
->- 		br_fdb_update(p->br, p, eth_hdr(skb)->h_source);
->+ 	br_fdb_update(p->br, p, eth_hdr(skb)->h_source);
->  	return 0;	 /* process further */
->  }
->  
->@@@ -131,12 -132,13 +132,12 @@@ static inline int is_link_local(const u
->  }
->  
->  /*
->-  * Called via br_handle_frame_hook.
->   * Return NULL if skb is handled
->-  * note: already called with rcu_read_lock
-> - * note: already called with rcu_read_lock (preempt_disabled) from
-> - * netif_receive_skb
->++ * note: already called with rcu_read_lock from netif_receive_skb
->   */
->- struct sk_buff *br_handle_frame(struct net_bridge_port *p, struct sk_buff *skb)
->+ struct sk_buff *br_handle_frame(struct sk_buff *skb)
->  {
->+ 	struct net_bridge_port *p;
->  	const unsigned char *dest = eth_hdr(skb)->h_dest;
->  	int (*rhook)(struct sk_buff *skb);
->  
+I started adding LIRC to each driver by one. Adding LIRC as LIRC_STAGING
+dependency is simpler. See updated patch.
+
+> And there are a few depends lines with duplicate
+> USB's in them and LIRC_IMON should have USB added to it (technically,
+
+D'oh, I've must have stopped reading after LIRC_STAG...
+
+fixed and added additional dependencies
+
+Janne
+
+
+>From 45d384de90e3709a986700db14888eff77bb7e1f Mon Sep 17 00:00:00 2001
+From: Janne Grunau <j@jannau.net>
+Date: Wed, 28 Jul 2010 23:53:35 +0200
+Subject: [PATCH 1/2] V4L/DVB: staging/lirc: fix Kconfig dependencies
+
+Signed-off-by: Janne Grunau <j@jannau.net>
+---
+ drivers/staging/lirc/Kconfig |   19 ++++++++++---------
+ 1 files changed, 10 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/staging/lirc/Kconfig b/drivers/staging/lirc/Kconfig
+index 968c2ade..ab30a09 100644
+--- a/drivers/staging/lirc/Kconfig
++++ b/drivers/staging/lirc/Kconfig
+@@ -3,6 +3,7 @@
+ #
+ menuconfig LIRC_STAGING
+ 	bool "Linux Infrared Remote Control IR receiver/transmitter drivers"
++	depends on LIRC
+ 	help
+ 	  Say Y here, and all supported Linux Infrared Remote Control IR and
+ 	  RF receiver and transmitter drivers will be displayed. When paired
+@@ -13,13 +14,13 @@ if LIRC_STAGING
+ 
+ config LIRC_BT829
+         tristate "BT829 based hardware"
+-	depends on LIRC_STAGING
++	depends on LIRC_STAGING && PCI
+ 	help
+ 	  Driver for the IR interface on BT829-based hardware
+ 
+ config LIRC_ENE0100
+ 	tristate "ENE KB3924/ENE0100 CIR Port Reciever"
+-	depends on LIRC_STAGING
++	depends on LIRC_STAGING && PNP
+ 	help
+ 	  This is a driver for CIR port handled by ENE KB3924 embedded
+ 	  controller found on some notebooks.
+@@ -27,7 +28,7 @@ config LIRC_ENE0100
+ 
+ config LIRC_I2C
+ 	tristate "I2C Based IR Receivers"
+-	depends on LIRC_STAGING
++	depends on LIRC_STAGING && I2C
+ 	help
+ 	  Driver for I2C-based IR receivers, such as those commonly
+ 	  found onboard Hauppauge PVR-150/250/350 video capture cards
+@@ -40,7 +41,7 @@ config LIRC_IGORPLUGUSB
+ 
+ config LIRC_IMON
+ 	tristate "Legacy SoundGraph iMON Receiver and Display"
+-	depends on LIRC_STAGING
++	depends on LIRC_STAGING && USB
+ 	help
+ 	  Driver for the original SoundGraph iMON IR Receiver and Display
+ 
+@@ -48,7 +49,7 @@ config LIRC_IMON
+ 
+ config LIRC_IT87
+ 	tristate "ITE IT87XX CIR Port Receiver"
+-	depends on LIRC_STAGING
++	depends on LIRC_STAGING && PNP
+ 	help
+ 	  Driver for the ITE IT87xx IR Receiver
+ 
+@@ -60,13 +61,13 @@ config LIRC_ITE8709
+ 
+ config LIRC_PARALLEL
+ 	tristate "Homebrew Parallel Port Receiver"
+-	depends on LIRC_STAGING && !SMP
++	depends on LIRC_STAGING && PARPORT && !SMP
+ 	help
+ 	  Driver for Homebrew Parallel Port Receivers
+ 
+ config LIRC_SASEM
+ 	tristate "Sasem USB IR Remote"
+-	depends on LIRC_STAGING
++	depends on LIRC_STAGING && USB
+ 	help
+ 	  Driver for the Sasem OnAir Remocon-V or Dign HV5 HTPC IR/VFD Module
+ 
+@@ -91,7 +92,7 @@ config LIRC_SIR
+ 
+ config LIRC_STREAMZAP
+ 	tristate "Streamzap PC Receiver"
+-	depends on LIRC_STAGING
++	depends on LIRC_STAGING && USB
+ 	help
+ 	  Driver for the Streamzap PC Receiver
+ 
+@@ -103,7 +104,7 @@ config LIRC_TTUSBIR
+ 
+ config LIRC_ZILOG
+ 	tristate "Zilog/Hauppauge IR Transmitter"
+-	depends on LIRC_STAGING
++	depends on LIRC_STAGING && I2C
+ 	help
+ 	  Driver for the Zilog/Hauppauge IR Transmitter, found on
+ 	  PVR-150/500, HVR-1200/1250/1700/1800, HD-PVR and other cards
+-- 
+1.7.2
