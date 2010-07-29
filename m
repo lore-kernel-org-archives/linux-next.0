@@ -1,71 +1,46 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the net tree with the net-current tree
-Date: Thu, 29 Jul 2010 11:05:04 +1000
-Message-ID: <20100729110504.df0b5791.sfr@canb.auug.org.au>
+Date: Thu, 29 Jul 2010 11:19:04 +1000
+Message-ID: <20100729111904.90b148a6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43763 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:38760 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751163Ab0G2BFJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 28 Jul 2010 21:05:09 -0400
+	id S1751178Ab0G2BTI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 28 Jul 2010 21:19:08 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, stephen hemminger <shemminger@vyatta.com>, Jiri Pirko <jpirko@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bruce Allan <bruce.w.allan@intel.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 
 Hi all,
 
 Today's linux-next merge of the net tree got a conflict in
-net/bridge/br_input.c between commit
-eeaf61d8891f9c9ed12c1a667e72bf83f0857954 ("bridge: add rcu_read_lock on
-transmit") from the net-current tree and commit
-ab95bfe01f9872459c8678572ccadbf646badad0 ("net: replace hooks in
-__netif_receive_skb V5") from the net tree.
+drivers/net/e1000e/hw.h between commit
+ff847ac2d3e90edd94674c28bade25ae1e6a2e49 ("") from the net-current tree
+and commit d3738bb8203acf8552c3ec8b3447133fc0938ddd ("e1000e: initial
+support for 82579 LOMs") from the net tree.
 
-Just overlapping changes in a comment.  I fixed it up (see below) and can
-carry the fix for a while.
+Just context changes. I fixed it up (see below) and can carry the fix for
+a while.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc net/bridge/br_input.c
-index 114365c,5fc1c5b..0000000
---- a/net/bridge/br_input.c
-+++ b/net/bridge/br_input.c
-@@@ -108,13 -110,12 +110,12 @@@ drop
-  	goto out;
-  }
+diff --cc drivers/net/e1000e/hw.h
+index 664ed58,0cd569a..0000000
+--- a/drivers/net/e1000e/hw.h
++++ b/drivers/net/e1000e/hw.h
+@@@ -308,8 -312,8 +312,8 @@@ enum e1e_registers 
+  #define E1000_KMRNCTRLSTA_INBAND_PARAM	0x9    /* Kumeran InBand Parameters */
+  #define E1000_KMRNCTRLSTA_DIAG_NELPBK	0x1000 /* Nearend Loopback mode */
+  #define E1000_KMRNCTRLSTA_K1_CONFIG	0x7
+ -#define E1000_KMRNCTRLSTA_K1_ENABLE	0x140E
+ +#define E1000_KMRNCTRLSTA_K1_ENABLE	0x0002
+- #define E1000_KMRNCTRLSTA_K1_DISABLE	0x1400
++ #define E1000_KMRNCTRLSTA_HD_CTRL	0x0002
   
- -/* note: already called with rcu_read_lock (preempt_disabled) */
- +/* note: already called with rcu_read_lock */
-  static int br_handle_local_finish(struct sk_buff *skb)
-  {
-- 	struct net_bridge_port *p = rcu_dereference(skb->dev->br_port);
-+ 	struct net_bridge_port *p = br_port_get_rcu(skb->dev);
-  
-- 	if (p)
-- 		br_fdb_update(p->br, p, eth_hdr(skb)->h_source);
-+ 	br_fdb_update(p->br, p, eth_hdr(skb)->h_source);
-  	return 0;	 /* process further */
-  }
-  
-@@@ -131,12 -132,13 +132,12 @@@ static inline int is_link_local(const u
-  }
-  
-  /*
--  * Called via br_handle_frame_hook.
-   * Return NULL if skb is handled
--  * note: already called with rcu_read_lock
- - * note: already called with rcu_read_lock (preempt_disabled) from
- - * netif_receive_skb
-++ * note: already called with rcu_read_lock from netif_receive_skb
-   */
-- struct sk_buff *br_handle_frame(struct net_bridge_port *p, struct sk_buff *skb)
-+ struct sk_buff *br_handle_frame(struct sk_buff *skb)
-  {
-+ 	struct net_bridge_port *p;
-  	const unsigned char *dest = eth_hdr(skb)->h_dest;
-  	int (*rhook)(struct sk_buff *skb);
-  
+  #define IFE_PHY_EXTENDED_STATUS_CONTROL	0x10
+  #define IFE_PHY_SPECIAL_CONTROL		0x11 /* 100BaseTx PHY Special Control */
