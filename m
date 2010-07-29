@@ -1,61 +1,71 @@
-From: Linus Walleij <linus.ml.walleij@gmail.com>
-Subject: Re: linux-next: manual merge of the async_tx tree with the arm tree
-Date: Thu, 29 Jul 2010 01:50:19 +0200
-Message-ID: <AANLkTikTdLcYQ2cqt7HOoEANTRYOB_ySqdud5QEs5pd5@mail.gmail.com>
-References: <20100727120805.f583c70b.sfr@canb.auug.org.au>
-	<AANLkTin4EAQ48HP3ETDUMqBe2AzcznRuZdBdG+_RhR8x@mail.gmail.com>
-	<20100728074322.GA8147@flint.arm.linux.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree with the net-current tree
+Date: Thu, 29 Jul 2010 11:05:04 +1000
+Message-ID: <20100729110504.df0b5791.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:34423 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751225Ab0G1XuU convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Jul 2010 19:50:20 -0400
-In-Reply-To: <20100728074322.GA8147@flint.arm.linux.org.uk>
+Received: from chilli.pcug.org.au ([203.10.76.44]:43763 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751163Ab0G2BFJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 28 Jul 2010 21:05:09 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@arm.linux.org.uk>, Dan Williams <dan.j.williams@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rabin Vincent <rabin.vincent@stericsson.com>, Jonas Aaberg <jonas.aberg@stericsson.com>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, stephen hemminger <shemminger@vyatta.com>, Jiri Pirko <jpirko@redhat.com>
 
-2010/7/28 Russell King <rmk@arm.linux.org.uk>:
-> On Wed, Jul 28, 2010 at 12:11:19AM -0700, Dan Williams wrote:
->> On Mon, Jul 26, 2010 at 7:08 PM, Stephen Rothwell <sfr@canb.auug.org=
-=2Eau> wrote:
->> > Hi Dan,
->> >
->> > Today's linux-next merge of the async_tx tree got a conflict in
->> > arch/arm/mach-ux500/devices-db8500.c between commit
->> > 6055930cba8fdb2c8855b32bae262aaf69c1fdb4 ("ARM: 6266/1: ux500: add
->> > separate irq lists for DB8500 and DB5500") from the arm tree and c=
-ommit
->> > 5aa12e8c9c57741606e52f43e62ab1b9dc8e9dcc ("DMAENGINE: ste_dma40: a=
-rch
->> > updates for LCLA and LCPA") from the async_tx tree.
->> >
->> > I fixed it up (I think - see below) and can carry the fix as neces=
-sary.
->> > --
->>
->> Thanks Stephen!
->>
->> Russell, the dma40 driver updates and related arch fixups have been
->> sitting in next for a month, I'd prefer not to lose this baseline.
->> Assuming this change is brand new any chance the dma40 specific part
->> of this patch can be peeled off and sent through my tree, or are you
->> in a similar "can't/won't" rebase position?
->
-> I don't see how the change in the ARM tree could be reasonably split.
-> Up to Rabin/Linus to decide what they want to do about this.
+Hi all,
 
-Actually the way subsystem maintainers fix up conflicts and resolve the=
-m
-is a bit of opaque to me, I'd be happy to help in any way possible.
+Today's linux-next merge of the net tree got a conflict in
+net/bridge/br_input.c between commit
+eeaf61d8891f9c9ed12c1a667e72bf83f0857954 ("bridge: add rcu_read_lock on
+transmit") from the net-current tree and commit
+ab95bfe01f9872459c8678572ccadbf646badad0 ("net: replace hooks in
+__netif_receive_skb V5") from the net tree.
 
-Isn't it so that whoever hits the merge window first goes in and the
-other apply Stephens patch before issuing any pull request and be
-done with it? That was my na=EFve idea about these things...
+Just overlapping changes in a comment.  I fixed it up (see below) and can
+carry the fix for a while.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Yours,
-Linus Walleij
+diff --cc net/bridge/br_input.c
+index 114365c,5fc1c5b..0000000
+--- a/net/bridge/br_input.c
++++ b/net/bridge/br_input.c
+@@@ -108,13 -110,12 +110,12 @@@ drop
+  	goto out;
+  }
+  
+ -/* note: already called with rcu_read_lock (preempt_disabled) */
+ +/* note: already called with rcu_read_lock */
+  static int br_handle_local_finish(struct sk_buff *skb)
+  {
+- 	struct net_bridge_port *p = rcu_dereference(skb->dev->br_port);
++ 	struct net_bridge_port *p = br_port_get_rcu(skb->dev);
+  
+- 	if (p)
+- 		br_fdb_update(p->br, p, eth_hdr(skb)->h_source);
++ 	br_fdb_update(p->br, p, eth_hdr(skb)->h_source);
+  	return 0;	 /* process further */
+  }
+  
+@@@ -131,12 -132,13 +132,12 @@@ static inline int is_link_local(const u
+  }
+  
+  /*
+-  * Called via br_handle_frame_hook.
+   * Return NULL if skb is handled
+-  * note: already called with rcu_read_lock
+ - * note: already called with rcu_read_lock (preempt_disabled) from
+ - * netif_receive_skb
+++ * note: already called with rcu_read_lock from netif_receive_skb
+   */
+- struct sk_buff *br_handle_frame(struct net_bridge_port *p, struct sk_buff *skb)
++ struct sk_buff *br_handle_frame(struct sk_buff *skb)
+  {
++ 	struct net_bridge_port *p;
+  	const unsigned char *dest = eth_hdr(skb)->h_dest;
+  	int (*rhook)(struct sk_buff *skb);
+  
