@@ -1,66 +1,55 @@
-From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Subject: Re: linux-next: manual merge of the net tree with the net-current
-	tree
-Date: Wed, 28 Jul 2010 18:26:54 -0700
-Message-ID: <AANLkTimFauHpzYk4C3sW=o-k+9yJP0iz1kWKXE9Brnzn@mail.gmail.com>
-References: <20100729111904.90b148a6.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the tip tree
+Date: Thu, 29 Jul 2010 13:04:16 +1000
+Message-ID: <20100729130416.452c2f93.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-iw0-f174.google.com ([209.85.214.174]:47702 "EHLO
-	mail-iw0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750996Ab0G2B04 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 28 Jul 2010 21:26:56 -0400
-In-Reply-To: <20100729111904.90b148a6.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bruce Allan <bruce.w.allan@intel.com>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__29_Jul_2010_13_04_16_+1000_nGP4EwAObIZlBTsJ"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Wessel <jason.wessel@windriver.com>, John Stultz <johnstul@us.ibm.com>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Jul 28, 2010 at 18:19, Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
-> Hi all,
->
-> Today's linux-next merge of the net tree got a conflict in
-> drivers/net/e1000e/hw.h between commit
-> ff847ac2d3e90edd94674c28bade25ae1e6a2e49 ("") from the net-current tr=
-ee
-> and commit d3738bb8203acf8552c3ec8b3447133fc0938ddd ("e1000e: initial
-> support for 82579 LOMs") from the net tree.
->
-> Just context changes. I fixed it up (see below) and can carry the fix=
- for
-> a while.
-> --
-> Cheers,
-> Stephen Rothwell =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0sfr@canb.auug.org.au
->
-> diff --cc drivers/net/e1000e/hw.h
-> index 664ed58,0cd569a..0000000
-> --- a/drivers/net/e1000e/hw.h
-> +++ b/drivers/net/e1000e/hw.h
-> @@@ -308,8 -312,8 +312,8 @@@ enum e1e_registers
-> =C2=A0#define E1000_KMRNCTRLSTA_INBAND_PARAM =C2=A0 =C2=A0 =C2=A0 =C2=
-=A00x9 =C2=A0 =C2=A0/* Kumeran InBand Parameters */
-> =C2=A0#define E1000_KMRNCTRLSTA_DIAG_NELPBK 0x1000 /* Nearend Loopbac=
-k mode */
-> =C2=A0#define E1000_KMRNCTRLSTA_K1_CONFIG =C2=A0 0x7
-> =C2=A0-#define E1000_KMRNCTRLSTA_K1_ENABLE =C2=A0 0x140E
-> =C2=A0+#define E1000_KMRNCTRLSTA_K1_ENABLE =C2=A0 0x0002
-> - #define E1000_KMRNCTRLSTA_K1_DISABLE =C2=A00x1400
-> + #define E1000_KMRNCTRLSTA_HD_CTRL =C2=A0 =C2=A0 0x0002
->
-> =C2=A0#define IFE_PHY_EXTENDED_STATUS_CONTROL =C2=A0 =C2=A0 =C2=A0 0x=
-10
-> =C2=A0#define IFE_PHY_SPECIAL_CONTROL =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 0x11 /* 100BaseTx PHY Special Control */
-> --
+--Signature=_Thu__29_Jul_2010_13_04_16_+1000_nGP4EwAObIZlBTsJ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-yes, that is fine and expected.  When Dave sync's up is net-next-2.6
-tree with net-2.6 tree, this issue will be fixed up.
+Hi all,
 
+After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
+
+kernel/debug/kdb/kdb_main.c: In function 'kdb_summary':
+kernel/debug/kdb/kdb_main.c:2457: error: 'xtime' undeclared (first use in t=
+his function)
+
+Caused by commit 0fb86b06298b6cd3205cac2e68a499f269282dac ("imekeeping:
+Make xtime and wall_to_monotonic static") from the tip tree interacting
+with commit 5d5314d6795f3c1c0f415348ff8c51f7de042b77 ("kdb: core for kgdb
+back end (1 of 2)") which was merged before v2.6.35-rc1.
+
+I have used the tip tree from next-20100727 for today.
 --=20
 Cheers,
-Jeff
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__29_Jul_2010_13_04_16_+1000_nGP4EwAObIZlBTsJ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMUO+wAAoJEDMEi1NhKgbsN/sH/RlbT5Cc7WRpvqjbo5Iy3kF0
+cSTjBeISnq+KrRCyl3/+h0Jvomi2FBaOohB1KNVmVwOygoO2pBQwrVOmTWCNeVAp
+o+unossNd8fb8/MXqh+CjrKFjPpbR13oCh5x4w2GXCpy3RVUQyBnuSOZu6SZ+syX
+HOItV4+YM8JP6v/mMr227g48mYyITAiwaR7ZNlhVMfbGwIHDDFE29jdBPXoJdBTm
+fVrhuHxUiMwyGlAbLdUwQ3cf/o1m8vlaeksJBCEsJm08ZykYSmE7kjHCJwSYVLdp
+ZXtn+XpKpU5EgKsDZp9XbC+7xMsysV1Fb43s50hzI5zo/ke6ik/l+YD+ZGe2pmg=
+=MC0f
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__29_Jul_2010_13_04_16_+1000_nGP4EwAObIZlBTsJ--
