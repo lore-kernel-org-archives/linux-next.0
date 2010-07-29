@@ -1,59 +1,54 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (net tree
- related)
-Date: Thu, 29 Jul 2010 14:13:06 +1000
-Message-ID: <20100729141306.f27fad7a.sfr@canb.auug.org.au>
+From: Jarod Wilson <jarod@wilsonet.com>
+Subject: Re: linux-next: Tree for July 28 (lirc #2)
+Date: Thu, 29 Jul 2010 00:27:01 -0400
+Message-ID: <AANLkTimTbZ6Vjqe5rqNVtNwPV=qoo=BOsOwG_6fS1SZU@mail.gmail.com>
+References: <20100728162855.4968e561.sfr@canb.auug.org.au>
+	<20100728102417.be60049a.randy.dunlap@oracle.com>
+	<20100728220454.GK8564@aniel.lan>
+	<4C50AC26.1080100@oracle.com>
+	<AANLkTi=DLHOnzgXmpzNE3PQXp-xSkm8vLdxBBf1mcFuO@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60541 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750809Ab0G2ENM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 29 Jul 2010 00:13:12 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Kravkov <dmitry@broadcom.com>, Eilon Greenstein <eilong@broadcom.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <AANLkTi=DLHOnzgXmpzNE3PQXp-xSkm8vLdxBBf1mcFuO@mail.gmail.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Janne Grunau <j@jannau.net>, Stephen Rothwell <sfr@canb.auug.org.au>, lirc-list@lists.sourceforge.net, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Maxim Levitsky <maximlevitsky@gmail.com>, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Dave,
+On Wed, Jul 28, 2010 at 6:27 PM, Jarod Wilson <jarod@wilsonet.com> wrote:
+> On Wed, Jul 28, 2010 at 6:16 PM, Randy Dunlap <randy.dunlap@oracle.com> wrote:
+>> On 07/28/10 15:04, Janne Grunau wrote:
+>>> On Wed, Jul 28, 2010 at 10:24:17AM -0700, Randy Dunlap wrote:
+>>>> On Wed, 28 Jul 2010 16:28:55 +1000 Stephen Rothwell wrote:
+>>>>
+>>>>> Hi all,
+>>>>>
+>>>>> Changes since 20100727:
+>>>>
+>>>>
+>>>> When USB_SUPPORT is not enabled and MEDIA_SUPPORT is not enabled:
+>>>>
+>>>
+>>> following patch should fix it
+>>>
+>>> Janne
+>>
+>> Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
+>>
+>> Thanks.
+>
+> Acked-by: Jarod Wilson <jarod@redhat.com>
+>
+> Indeed, thanks much, Janne!
 
-After merging the final tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
-
-drivers/net/bnx2x/bnx2x_cmn.c: In function 'bnx2x_start_xmit':
-drivers/net/bnx2x/bnx2x_cmn.c:2015: error: implicit declaration of function 'csum_ipv6_magic'
-
-Caused by commit 9f6c925889ad9204c7d1f5ca116d2e5fd6036c72 ("bnx2x: Create
-bnx2x_cmn.* files").  See Rule 1 in Documentation/SubmitChecklist. :-)
-
-I applied the following patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 29 Jul 2010 14:07:49 +1000
-Subject: [PATCH] net: bnx2x_cmn.c needs net/ip6_checksum.h for csum_ipv6_magic
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/net/bnx2x/bnx2x_cmn.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/net/bnx2x/bnx2x_cmn.c b/drivers/net/bnx2x/bnx2x_cmn.c
-index 30d20c7..02bf710 100644
---- a/drivers/net/bnx2x/bnx2x_cmn.c
-+++ b/drivers/net/bnx2x/bnx2x_cmn.c
-@@ -19,6 +19,7 @@
- #include <linux/etherdevice.h>
- #include <linux/ip.h>
- #include <linux/ipv6.h>
-+#include <net/ip6_checksum.h>
- #include "bnx2x_cmn.h"
- 
- #ifdef BCM_VLAN
--- 
-1.7.1
+D'oh, I should have looked a bit closer... What if instead of making
+all the drivers depend on both LIRC && LIRC_STAGING, LIRC_STAGING just
+depends on LIRC? And there are a few depends lines with duplicate
+USB's in them and LIRC_IMON should have USB added to it (technically,
+I think ene0100 should also have a PNP, but we already have patches
+pending that move it from staging to an ir-core driver).
 
 -- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Jarod Wilson
+jarod@wilsonet.com
