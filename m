@@ -1,120 +1,43 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH] staging/lirc: fix non-CONFIG_MODULES build horkage
-Date: Thu, 29 Jul 2010 09:24:48 -0700
-Message-ID: <4C51AB50.9040701@oracle.com>
-References: <20100729153535.GB7507@redhat.com>
+Subject: [PATCH -next] mtd: redwood depends on MTD_PARTITIONS
+Date: Thu, 29 Jul 2010 10:13:06 -0700
+Message-ID: <20100729101306.36c20611.randy.dunlap@oracle.com>
+References: <20100729143211.9e7edaed.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100729153535.GB7507@redhat.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jarod Wilson <jarod@redhat.com>
-Cc: sfr@canb.auug.org.au, lirc-list@lists.sourceforge.net, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, mchehab@redhat.com
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:61048 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754848Ab0G2ROf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 29 Jul 2010 13:14:35 -0400
+In-Reply-To: <20100729143211.9e7edaed.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, David Woodhouse <dwmw2@infradead.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mtd@lists.infradead.org
 
-On 07/29/10 08:35, Jarod Wilson wrote:
-> Fix when CONFIG_MODULES is not enabled:
-> 
-> drivers/staging/lirc/lirc_parallel.c:243: error: implicit declaration of function 'module_refcount'
-> drivers/staging/lirc/lirc_it87.c:150: error: implicit declaration of function 'module_refcount'
-> drivers/built-in.o: In function `it87_probe':
-> lirc_it87.c:(.text+0x4079b0): undefined reference to `init_chrdev'
-> lirc_it87.c:(.text+0x4079cc): undefined reference to `drop_chrdev'
-> drivers/built-in.o: In function `lirc_it87_exit':
-> lirc_it87.c:(.exit.text+0x38a5): undefined reference to `drop_chrdev'
-> 
-> Its a quick hack and untested beyond building, since I don't have the
-> hardware, but it should do the trick.
-> 
-> Signed-off-by: Jarod Wilson <jarod@redhat.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
+redwood uses add/del_mtd_partitions(), so it should depend on
+MTD_PARTITIONS.
 
-Thanks.
+ERROR: "add_mtd_partitions" [drivers/mtd/maps/redwood.ko] undefined!
+ERROR: "del_mtd_partitions" [drivers/mtd/maps/redwood.ko] undefined!
 
-> ---
->  drivers/staging/lirc/lirc_it87.c     |    9 ++++++---
->  drivers/staging/lirc/lirc_parallel.c |    4 ++--
->  2 files changed, 8 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/staging/lirc/lirc_it87.c b/drivers/staging/lirc/lirc_it87.c
-> index 781abc3..72f07f1 100644
-> --- a/drivers/staging/lirc/lirc_it87.c
-> +++ b/drivers/staging/lirc/lirc_it87.c
-> @@ -109,6 +109,7 @@ static DECLARE_WAIT_QUEUE_HEAD(lirc_read_queue);
->  
->  static DEFINE_SPINLOCK(hardware_lock);
->  static DEFINE_SPINLOCK(dev_lock);
-> +static bool device_open;
->  
->  static int rx_buf[RBUF_LEN];
->  unsigned int rx_tail, rx_head;
-> @@ -147,10 +148,11 @@ static void drop_port(void);
->  static int lirc_open(struct inode *inode, struct file *file)
->  {
->  	spin_lock(&dev_lock);
-> -	if (module_refcount(THIS_MODULE)) {
-> +	if (device_open) {
->  		spin_unlock(&dev_lock);
->  		return -EBUSY;
->  	}
-> +	device_open = true;
->  	spin_unlock(&dev_lock);
->  	return 0;
->  }
-> @@ -158,6 +160,9 @@ static int lirc_open(struct inode *inode, struct file *file)
->  
->  static int lirc_close(struct inode *inode, struct file *file)
->  {
-> +	spin_lock(&dev_lock);
-> +	device_open = false;
-> +	spin_unlock(&dev_lock);
->  	return 0;
->  }
->  
-> @@ -363,7 +368,6 @@ static struct lirc_driver driver = {
->  };
->  
->  
-> -#ifdef MODULE
->  static int init_chrdev(void)
->  {
->  	driver.minor = lirc_register_driver(&driver);
-> @@ -380,7 +384,6 @@ static void drop_chrdev(void)
->  {
->  	lirc_unregister_driver(driver.minor);
->  }
-> -#endif
->  
->  
->  /* SECTION: Hardware */
-> diff --git a/drivers/staging/lirc/lirc_parallel.c b/drivers/staging/lirc/lirc_parallel.c
-> index df12e7b..04ce97713 100644
-> --- a/drivers/staging/lirc/lirc_parallel.c
-> +++ b/drivers/staging/lirc/lirc_parallel.c
-> @@ -240,7 +240,7 @@ static void irq_handler(void *blah)
->  	unsigned int level, newlevel;
->  	unsigned int timeout;
->  
-> -	if (!module_refcount(THIS_MODULE))
-> +	if (!is_open)
->  		return;
->  
->  	if (!is_claimed)
-> @@ -515,7 +515,7 @@ static long lirc_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
->  
->  static int lirc_open(struct inode *node, struct file *filep)
->  {
-> -	if (module_refcount(THIS_MODULE) || !lirc_claim())
-> +	if (is_open || !lirc_claim())
->  		return -EBUSY;
->  
->  	parport_enable_irq(pport);
-> 
-> 
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/mtd/maps/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+--- linux-next-20100729.orig/drivers/mtd/maps/Kconfig
++++ linux-next-20100729/drivers/mtd/maps/Kconfig
+@@ -321,7 +321,7 @@ config MTD_CFI_FLAGADM
+ 
+ config MTD_REDWOOD
+ 	tristate "CFI Flash devices mapped on IBM Redwood"
+-	depends on MTD_CFI
++	depends on MTD_CFI && MTD_PARTITIONS
+ 	help
+ 	  This enables access routines for the flash chips on the IBM
+ 	  Redwood board. If you have one of these boards and would like to
