@@ -1,33 +1,36 @@
 From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: linux-next: build warning after merge of the devicetree tree
-Date: Fri, 30 Jul 2010 00:10:08 -0600
-Message-ID: <AANLkTimuYkDkAPXTAKLW-Fdj9dyEci9PGutMRRm2k3mM@mail.gmail.com>
-References: <20100730145415.8ed17b7e.sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the devicetree tree
+Date: Fri, 30 Jul 2010 00:11:21 -0600
+Message-ID: <AANLkTiknZ8xMEj3vJKrgCVfwepGmaveV2X+Ai5BP=BYm@mail.gmail.com>
+References: <20100730135721.5c1df39c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gw0-f46.google.com ([74.125.83.46]:62072 "EHLO
-	mail-gw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750945Ab0G3GK3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 30 Jul 2010 02:10:29 -0400
-In-Reply-To: <20100730145415.8ed17b7e.sfr@canb.auug.org.au>
+Received: from mail-yw0-f46.google.com ([209.85.213.46]:40985 "EHLO
+	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750945Ab0G3GLm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 30 Jul 2010 02:11:42 -0400
+In-Reply-To: <20100730135721.5c1df39c.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anatolij Gustschin <agust@denx.de>
 
-On Thu, Jul 29, 2010 at 10:54 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Thu, Jul 29, 2010 at 9:57 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > Hi Grant,
 >
-> After merging the devicetree tree, today's linux-next build (powerpc64
-> allnoconfig) produced this warning:
+> After merging the devicetree tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 >
-> drivers/of/irq.c: In function 'of_irq_map_raw':
-> drivers/of/irq.c:102: warning: cast from pointer to integer of different size
+> drivers/spi/xilinx_spi.c: In function 'xilinx_spi_init':
+> drivers/spi/xilinx_spi.c:393: error: 'struct device' has no member named 'of_node'
+> drivers/spi/xilinx_spi.c:393: error: 'struct device' has no member named 'of_node'
 >
-> Introduced by commit 7d12c3ee9e1843b1d19d9c308988bb163fb9aa0b ("of/irq:
-> Fix endian issues in parsing interrupt specifiers").
+> Caused by commit 65b25b3c3080d96c42b31e0d97e7fcf4fabceeb4 ("of/spi: call
+> of_register_spi_devices() from spi core code").
+>
+> I have used the devicetree tree from next-20100729 for today.
 
-Thanks.  fixed now and pushed out.  Silly typo.
+Thanks Stephen.  Should be fixed now.
 
 g.
