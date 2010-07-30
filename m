@@ -1,61 +1,33 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the security-testing
- tree
-Date: Fri, 30 Jul 2010 16:01:55 +1000
-Message-ID: <20100730160155.016b8a85.sfr@canb.auug.org.au>
-References: <20100730120624.f3112742.sfr@canb.auug.org.au>
-	<alpine.LRH.2.00.1007301353340.8846@tundra.namei.org>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: linux-next: build warning after merge of the devicetree tree
+Date: Fri, 30 Jul 2010 00:10:08 -0600
+Message-ID: <AANLkTimuYkDkAPXTAKLW-Fdj9dyEci9PGutMRRm2k3mM@mail.gmail.com>
+References: <20100730145415.8ed17b7e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__30_Jul_2010_16_01_55_+1000_R8BRBUxQrQhkvCfs"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52646 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750945Ab0G3GCE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 30 Jul 2010 02:02:04 -0400
-In-Reply-To: <alpine.LRH.2.00.1007301353340.8846@tundra.namei.org>
+Received: from mail-gw0-f46.google.com ([74.125.83.46]:62072 "EHLO
+	mail-gw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750945Ab0G3GK3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 30 Jul 2010 02:10:29 -0400
+In-Reply-To: <20100730145415.8ed17b7e.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Morris <jmorris@namei.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Johansen <john.johansen@canonical.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__30_Jul_2010_16_01_55_+1000_R8BRBUxQrQhkvCfs
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi James,
-
-On Fri, 30 Jul 2010 13:54:01 +1000 (EST) James Morris <jmorris@namei.org> w=
-rote:
+On Thu, Jul 29, 2010 at 10:54 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Grant,
 >
-> I don't know how to use git.
+> After merging the devicetree tree, today's linux-next build (powerpc64
+> allnoconfig) produced this warning:
+>
+> drivers/of/irq.c: In function 'of_irq_map_raw':
+> drivers/of/irq.c:102: warning: cast from pointer to integer of different size
+>
+> Introduced by commit 7d12c3ee9e1843b1d19d9c308988bb163fb9aa0b ("of/irq:
+> Fix endian issues in parsing interrupt specifiers").
 
-:-)
+Thanks.  fixed now and pushed out.  Silly typo.
 
-> Should be fixed now.
-
-Thanks.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__30_Jul_2010_16_01_55_+1000_R8BRBUxQrQhkvCfs
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMUmrTAAoJEDMEi1NhKgbsNgcH/14NMTU1TROSIGJ03RX2jU2s
-kKZnf8pG5QcpWj8fpBJOB4U+Fjn+WnDt9v9gSqWIO+UcYW2dlPVc5IwsqerNS8lx
-dWEmQlzOb0UT1jFvZOSbV9ynrTdX/wukmu6tfLGLKD3A2qe0/LVhIT5nxjjxbCfU
-HkuSqY4Zvr8ZGA9vqaYz+YDFIgCrF5XppOa03SCmoanhe7G3if4ai1QJcYcmS2v+
-KlWhhfqgdQ+ORoK9nxRGiVHx+aMSKQDogClgkqvtq/yL8ly9owan0KHpqj8daRNd
-EL62vZekYajR3Z7awRu9ZTPmt0JT5gt7yQNgQ1s2IqoP+6+CsSHLtW+zZDprOWI=
-=ovrV
------END PGP SIGNATURE-----
-
---Signature=_Fri__30_Jul_2010_16_01_55_+1000_R8BRBUxQrQhkvCfs--
+g.
