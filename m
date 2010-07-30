@@ -1,58 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the tegra tree with the s5p tree
-Date: Fri, 30 Jul 2010 14:03:31 +1000
-Message-ID: <20100730140331.04c60f73.sfr@canb.auug.org.au>
-References: <20100730105834.d7ac047f.sfr@canb.auug.org.au>
-	<015801cb2f8a$9bca9b90$d35fd2b0$%kim@samsung.com>
+Subject: linux-next: build warning after merge of the devicetree tree
+Date: Fri, 30 Jul 2010 14:54:15 +1000
+Message-ID: <20100730145415.8ed17b7e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__30_Jul_2010_14_03_31_+1000_nxCMXc1MDbujn7/M"
+ boundary="Signature=_Fri__30_Jul_2010_14_54_15_+1000_xENWtqD8Gt9xZUPw"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49034 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35550 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750787Ab0G3EDg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 30 Jul 2010 00:03:36 -0400
-In-Reply-To: <015801cb2f8a$9bca9b90$d35fd2b0$%kim@samsung.com>
+	id S1752153Ab0G3EyX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 30 Jul 2010 00:54:23 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Erik Gilling' <konkers@android.com>, 'Colin Cross' <ccross@android.com>, 'Olof Johansson' <olof@lixom.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Changhwan Youn' <chaos.youn@samsung.com>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__30_Jul_2010_14_03_31_+1000_nxCMXc1MDbujn7/M
+--Signature=_Fri__30_Jul_2010_14_54_15_+1000_xENWtqD8Gt9xZUPw
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Grant,
 
-On Fri, 30 Jul 2010 10:57:41 +0900 Kukjin Kim <kgene.kim@samsung.com> wrote:
->
-> If there is some conflicts, how can/should I do for it...
-> Stephen, please let me know.
+After merging the devicetree tree, today's linux-next build (powerpc64
+allnoconfig) produced this warning:
 
-In this case, do nothing :-)  The conflicts will get fixed up when either
-Russell or Linus merges your tree into theirs.  My email was more of a
-"heads up" to let you know that there is some conflict.
+drivers/of/irq.c: In function 'of_irq_map_raw':
+drivers/of/irq.c:102: warning: cast from pointer to integer of different si=
+ze
+
+Introduced by commit 7d12c3ee9e1843b1d19d9c308988bb163fb9aa0b ("of/irq:
+Fix endian issues in parsing interrupt specifiers").
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__30_Jul_2010_14_03_31_+1000_nxCMXc1MDbujn7/M
+--Signature=_Fri__30_Jul_2010_14_54_15_+1000_xENWtqD8Gt9xZUPw
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMUk8TAAoJEDMEi1NhKgbsjxYH/j2XOyb04TJDWEYkhGCYYHPg
-nTLTvvhBW7zeweGuE1fS7M0FEl0/tPDt8aMqJA1pEUttghl9puiwVR5mB38Cf4ID
-jAcvTmyur/SCMF0vjrsQdyrrxRpjKILiKcnKHKRrq8T46/KuumfxudWp1xGV/Tqe
-hAMYSu7PprQOVB881FltUSWvQMYeqa3EwfuABmxTOsrTFt4SlSann2JnDErE3C5I
-VUt0YplQMVmCc7OH1j4jNSkycz/fdwRHLvg4QSeiZ3RpZJUuI+t1bPTfMdH7KswI
-VR7q2H+z4EAHHhzhK/9O4v5KGvn3mBIx5hR4TRfU5mze7nagYn/MNuX0QM63c6U=
-=TCMY
+iQEcBAEBAgAGBQJMUlr3AAoJEDMEi1NhKgbs/ZgIAIf0hiVYA+l3pwOmtCBb/Qk4
+hiA+ovDKB9FjfEWzWBpKJMklJMS4NqA2xU5bFa9YZDgeRie4E/HQz4xOx3RWzOee
+tKeWCfD43Q/HlyM6CimlOzYt2DmVdfSXdGyU1uYr7wx1CTvoz8gU2SMoSq+0wC+c
+aite7JHYFX/MFiQKhZyEYmVCVkaMTxBRvP3aAI1jqAmbwhL7TFuvKLm/sFbPaysC
+y1fQ/oHzEQoNbGAS6CebmCRPI25COH5nacfFjno607vpPE48eLoEihQ69tqqJGBa
+hR5E9Y0Qv2FPbn/yJ9qfTveJ2PHIsTBDIFkcpXLutKw6oybzYTlo2lTzE9AXD9s=
+=4X3I
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__30_Jul_2010_14_03_31_+1000_nxCMXc1MDbujn7/M--
+--Signature=_Fri__30_Jul_2010_14_54_15_+1000_xENWtqD8Gt9xZUPw--
