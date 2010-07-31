@@ -1,41 +1,34 @@
-From: John Johansen <john.johansen@canonical.com>
-Subject: Re: linux-next: build failure after merge of the security-testing
- tree
-Date: Fri, 30 Jul 2010 00:31:37 -0700
-Message-ID: <4C527FD9.3060708@canonical.com>
-References: <20100730120624.f3112742.sfr@canb.auug.org.au> <alpine.LRH.2.00.1007301353340.8846@tundra.namei.org>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH -next] net: ks8842 depends on DMA_ENGINE
+Date: Fri, 30 Jul 2010 22:10:12 -0700 (PDT)
+Message-ID: <20100730.221012.112594570.davem@davemloft.net>
+References: <20100729143211.9e7edaed.sfr@canb.auug.org.au>
+	<20100729101427.2aafd6e7.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from adelie.canonical.com ([91.189.90.139]:37733 "EHLO
-	adelie.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751397Ab0G3Hbl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 30 Jul 2010 03:31:41 -0400
-In-Reply-To: <alpine.LRH.2.00.1007301353340.8846@tundra.namei.org>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:38642
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751143Ab0GaFJy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Sat, 31 Jul 2010 01:09:54 -0400
+In-Reply-To: <20100729101427.2aafd6e7.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Morris <jmorris@namei.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: randy.dunlap@oracle.com
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
 
-On 07/29/2010 08:54 PM, James Morris wrote:
-> On Fri, 30 Jul 2010, Stephen Rothwell wrote:
-> 
->> Hi James,
->>
->> After merging the security-testing tree, today's linux-next build
->> (powerpc ppc64_defconfig) failed like this:
->>
->> security/Kconfig:144: can't open file "security/apparmor/Kconfig"
->>
->> Caused by commit 32bd8e5273c0be4189274ab55c4d16862f0dd87d ("AppArmor:
->> Enable configuring and building of the AppArmor security module").  Looks
->> like a file was missed.
-> 
-> I don't know how to use git.
-> 
-> Should be fixed now.
-> 
-works for me,
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Date: Thu, 29 Jul 2010 10:14:27 -0700
 
-thanks James
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> ks8842 uses dma channel functions, so it should depend on DMA_ENGINE.
+> 
+> ERROR: "__dma_request_channel" [drivers/net/ks8842.ko] undefined!
+> ERROR: "dma_release_channel" [drivers/net/ks8842.ko] undefined!
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+
+Applied, thanks Randy.
