@@ -1,82 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings after merge of the final tree
-Date: Mon, 2 Aug 2010 14:10:35 +1000
-Message-ID: <20100802141035.f84f9132.sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the final tree (usb tree
+ related)
+Date: Mon, 2 Aug 2010 14:18:23 +1000
+Message-ID: <20100802141823.143b2a36.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__2_Aug_2010_14_10_35_+1000_I=XGqEgkTrk.17vY"
+ boundary="Signature=_Mon__2_Aug_2010_14_18_23_+1000_3k1TGobrxsBdi4CE"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51780 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:50439 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751255Ab0HBEKm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 2 Aug 2010 00:10:42 -0400
+	id S1751541Ab0HBES1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 2 Aug 2010 00:18:27 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andy.shevchenko@gmail.com>
 
---Signature=_Mon__2_Aug_2010_14_10_35_+1000_I=XGqEgkTrk.17vY
+--Signature=_Mon__2_Aug_2010_14_18_23_+1000_3k1TGobrxsBdi4CE
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Greg,
 
 After merging the final tree, today's linux-next build (powerpc
-allnoconfig with CONFIG_DEBUG_SECTION_MISMATCH=3Dy) produced these warnings:
+allyesconfig) produced these warnings:
 
-WARNING: mm/built-in.o(.text+0x24324): Section mismatch in reference from t=
-he function memblock_find_in_range() to the function .init.text:memblock_fi=
-nd_base()
-The function memblock_find_in_range() references
-the function __init memblock_find_base().
-This is often because memblock_find_in_range lacks a __init=20
-annotation or the annotation of memblock_find_base is wrong.
+/scratch/sfr/next/drivers/usb/gadget/storage_common.c:718: warning: 'fsg_sh=
+ow_nofua' defined but not used
+/scratch/sfr/next/drivers/usb/gadget/storage_common.c:782: warning: 'fsg_st=
+ore_nofua' defined but not used
+/scratch/sfr/next/drivers/usb/gadget/storage_common.c:718: warning: 'fsg_sh=
+ow_nofua' defined but not used
+/scratch/sfr/next/drivers/usb/gadget/storage_common.c:782: warning: 'fsg_st=
+ore_nofua' defined but not used
 
-WARNING: mm/built-in.o(.text+0x24610): Section mismatch in reference from t=
-he function memblock_double_array() to the function .init.text:memblock_fre=
-e()
-The function memblock_double_array() references
-the function __init memblock_free().
-This is often because memblock_double_array lacks a __init=20
-annotation or the annotation of memblock_free is wrong.
-
-WARNING: mm/built-in.o(.text+0x24670): Section mismatch in reference from t=
-he function memblock_double_array() to the function .init.text:memblock_fin=
-d_base()
-The function memblock_double_array() references
-the function __init memblock_find_base().
-This is often because memblock_double_array lacks a __init=20
-annotation or the annotation of memblock_find_base is wrong.
-
-WARNING: vmlinux.o(.text+0x10264): Section mismatch in reference from the f=
-unction setup_initial_memory_limit() to the function .init.text:memblock_se=
-t_current_limit()
-The function setup_initial_memory_limit() references
-the function __init memblock_set_current_limit().
-This is often because setup_initial_memory_limit lacks a __init=20
-annotation or the annotation of memblock_set_current_limit is wrong.
-
-Introduced by the memblock series in the tip tree.
+Introduced by commit ed4825f7332669779540be27cb263daf22af3b1c ("USB:
+gadget: storage: optional SCSI WRITE FUA bit") from the usb tree.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__2_Aug_2010_14_10_35_+1000_I=XGqEgkTrk.17vY
+--Signature=_Mon__2_Aug_2010_14_18_23_+1000_3k1TGobrxsBdi4CE
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMVkU7AAoJEDMEi1NhKgbsr5sIAJOQEL/NTEoJCq0Qdo5PnusC
-7+/Vz1APem8ZdiTeUxn6XeELN4y91dPK4g5kbILBh9NaS5o6B978M1pWvBCeuyjj
-hbAm07lq3ZtXR6S0JMlQXJ8p4DnMnDcwziniPBou8RH5aRJSJRvzWvQ/eFzQsx00
-eqCKAW3b8VJOPKR8OPODrrMve9ExPXvHviBia31QZMH/kRuHTTRCd6q7+LsXJ0lq
-iH5WMJakmh1RI9ZaLkybSfOBb2k5Lb/KKYahh8ncfzlp9g+4NvjzANZbE0vbPcBe
-zlHZkG2QvaKvQtRKGIdD9Vpm9iEMEAZsMV4RDWf6lnR6yooFv2y2SN/Mjbb8Sps=
-=+ZjI
+iQEcBAEBAgAGBQJMVkcPAAoJEDMEi1NhKgbsXEwH/08+Gh+wpscjwsZ+26SnJj39
+nNC6BLzhLXE39sFKomD75W62qHApGtyx1rM7H+35nli1MGvJb6UVRYhydSEfBJPE
+62CbDgxg94I8pbEjRYzUDw6oXqmbi2uW0ZIx/yUfqwGwBmCyIBRjsUnFZN1Mbh9B
+kgUZUIRQUJAaoaT3Iq18XffAwJVrwq+jcPpcaQsTlh1+T8sl4DhyAqAL2XC90zZQ
+egM/GkyAo4wsD2XcmlR8Gnqq279uEvvUK8+uXv1uFShl0ThzulMWmRYS5qdobTPp
+HSgyfUuM8pIN5C8/4G17qkYWmCHhK9lb6N4vjU5501QUqyrY9IGmJPd0VKqmjW4=
+=A1T8
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__2_Aug_2010_14_10_35_+1000_I=XGqEgkTrk.17vY--
+--Signature=_Mon__2_Aug_2010_14_18_23_+1000_3k1TGobrxsBdi4CE--
