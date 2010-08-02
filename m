@@ -1,55 +1,143 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warnings after merge of the pci tree
-Date: Mon, 2 Aug 2010 11:38:18 +1000
-Message-ID: <20100802113818.df43c241.sfr@canb.auug.org.au>
-References: <20100802111838.8a568df7.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the security-testing tree
+Date: Mon, 2 Aug 2010 12:16:01 +1000
+Message-ID: <20100802121601.363af4a9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__2_Aug_2010_11_38_18_+1000_DTBNdpKbXV5Ws9WN"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41239 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:59438 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752190Ab0HBBiX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 1 Aug 2010 21:38:23 -0400
-In-Reply-To: <20100802111838.8a568df7.sfr@canb.auug.org.au>
+	id S1751827Ab0HBCQF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 1 Aug 2010 22:16:05 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jesse Barnes <jbarnes@virtuousgeek.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Narendra K <Narendra_K@dell.com>, Jordan Hargrave <jordan_hargrave@dell.com>
+To: James Morris <jmorris@namei.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Johansen <john.johansen@canonical.com>, Rusty Russell <rusty@rustcorp.com.au>
 
---Signature=_Mon__2_Aug_2010_11_38_18_+1000_DTBNdpKbXV5Ws9WN
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi James,
 
-Hi Jesse,
+After merging the security-testing tree, today's linux-next build (x86_64
+allmodconfig) failed like this (also some warnings ...):
 
-On Mon, 2 Aug 2010 11:18:38 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> After merging the rr tree, today's linux-next build (powerpc
-                    ^^
-I meant the pci tree, of course.
+security/apparmor/ipc.c: In function 'aa_ptrace':
+security/apparmor/ipc.c:103: warning: initialization discards qualifiers from pointer target type
+security/apparmor/domain.c: In function 'may_change_ptraced_domain':
+security/apparmor/domain.c:73: warning: assignment discards qualifiers from pointer target type
+security/apparmor/lsm.c:701: error: 'param_ops_aabool' undeclared here (not in a function)
+security/apparmor/lsm.c:721: error: 'param_ops_aalockpolicy' undeclared here (not in a function)
+security/apparmor/lsm.c:729: error: 'param_ops_aauint' undeclared here (not in a function)
 
---=20
+Error caused by commit e0500000b50a50ec8cc9967001f3ed201b83cb36
+("AppArmor: LSM interface, and security module initialization")
+interacting with commit 0685652df0929cec7d78efa85127f6eb34962132
+("param:param_ops") from the rr tree.
+
+I applied the following merge fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 2 Aug 2010 12:00:43 +1000
+Subject: [PATCH] AppArmor: update for module_param_named API change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ security/apparmor/lsm.c |   36 ++++++++++++++++++++++++------------
+ 1 files changed, 24 insertions(+), 12 deletions(-)
+
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 8db33a8..d5666d3 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -667,17 +667,29 @@ static struct security_operations apparmor_ops = {
+  * AppArmor sysfs module parameters
+  */
+ 
+-static int param_set_aabool(const char *val, struct kernel_param *kp);
+-static int param_get_aabool(char *buffer, struct kernel_param *kp);
++static int param_set_aabool(const char *val, const struct kernel_param *kp);
++static int param_get_aabool(char *buffer, const struct kernel_param *kp);
+ #define param_check_aabool(name, p) __param_check(name, p, int)
++static struct kernel_param_ops param_ops_aabool = {
++	.set = param_set_aabool,
++	.get = param_get_aabool
++};
+ 
+-static int param_set_aauint(const char *val, struct kernel_param *kp);
+-static int param_get_aauint(char *buffer, struct kernel_param *kp);
++static int param_set_aauint(const char *val, const struct kernel_param *kp);
++static int param_get_aauint(char *buffer, const struct kernel_param *kp);
+ #define param_check_aauint(name, p) __param_check(name, p, int)
++static struct kernel_param_ops param_ops_aauint = {
++	.set = param_set_aauint,
++	.get = param_get_aauint
++};
+ 
+-static int param_set_aalockpolicy(const char *val, struct kernel_param *kp);
+-static int param_get_aalockpolicy(char *buffer, struct kernel_param *kp);
++static int param_set_aalockpolicy(const char *val, const struct kernel_param *kp);
++static int param_get_aalockpolicy(char *buffer, const struct kernel_param *kp);
+ #define param_check_aalockpolicy(name, p) __param_check(name, p, int)
++static struct kernel_param_ops param_ops_aalockpolicy = {
++	.set = param_set_aalockpolicy,
++	.get = param_get_aalockpolicy
++};
+ 
+ static int param_set_audit(const char *val, struct kernel_param *kp);
+ static int param_get_audit(char *buffer, struct kernel_param *kp);
+@@ -751,7 +763,7 @@ static int __init apparmor_enabled_setup(char *str)
+ __setup("apparmor=", apparmor_enabled_setup);
+ 
+ /* set global flag turning off the ability to load policy */
+-static int param_set_aalockpolicy(const char *val, struct kernel_param *kp)
++static int param_set_aalockpolicy(const char *val, const struct kernel_param *kp)
+ {
+ 	if (!capable(CAP_MAC_ADMIN))
+ 		return -EPERM;
+@@ -760,35 +772,35 @@ static int param_set_aalockpolicy(const char *val, struct kernel_param *kp)
+ 	return param_set_bool(val, kp);
+ }
+ 
+-static int param_get_aalockpolicy(char *buffer, struct kernel_param *kp)
++static int param_get_aalockpolicy(char *buffer, const struct kernel_param *kp)
+ {
+ 	if (!capable(CAP_MAC_ADMIN))
+ 		return -EPERM;
+ 	return param_get_bool(buffer, kp);
+ }
+ 
+-static int param_set_aabool(const char *val, struct kernel_param *kp)
++static int param_set_aabool(const char *val, const struct kernel_param *kp)
+ {
+ 	if (!capable(CAP_MAC_ADMIN))
+ 		return -EPERM;
+ 	return param_set_bool(val, kp);
+ }
+ 
+-static int param_get_aabool(char *buffer, struct kernel_param *kp)
++static int param_get_aabool(char *buffer, const struct kernel_param *kp)
+ {
+ 	if (!capable(CAP_MAC_ADMIN))
+ 		return -EPERM;
+ 	return param_get_bool(buffer, kp);
+ }
+ 
+-static int param_set_aauint(const char *val, struct kernel_param *kp)
++static int param_set_aauint(const char *val, const struct kernel_param *kp)
+ {
+ 	if (!capable(CAP_MAC_ADMIN))
+ 		return -EPERM;
+ 	return param_set_uint(val, kp);
+ }
+ 
+-static int param_get_aauint(char *buffer, struct kernel_param *kp)
++static int param_get_aauint(char *buffer, const struct kernel_param *kp)
+ {
+ 	if (!capable(CAP_MAC_ADMIN))
+ 		return -EPERM;
+-- 
+1.7.1
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__2_Aug_2010_11_38_18_+1000_DTBNdpKbXV5Ws9WN
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMViGKAAoJEDMEi1NhKgbsWqcIAKBC3ppeNgp6xOnJgCX7GUYg
-DEWVfepWuSaoE9DsDQDAFen3nGZdqgWmICsAawHa9y2136zc/vK7pBRCd0B5sFmd
-cCDS/rWRmd3j93iJ16zCkDnM+rIV9cJyZd/QsqMdkBOpylhCK+mb5DGhFXhb3WHD
-7+8FoQG/Zx8aglpQFxAuP7eyZj6Vsuaohnu661BiXRkXtOn1mGgSvYTlziPUwJZL
-2QNTvE+Ql/Goe7voqnoyGe83m1whpqVJ6522IczcE7Y2JgytswuSLJPobEbEhoSw
-gtRPEA0lACa2pNObrGqTlCVt5QzhchvTdQ4id1uk25/SumVHLWbWKXeZNjXvvhM=
-=CdZm
------END PGP SIGNATURE-----
-
---Signature=_Mon__2_Aug_2010_11_38_18_+1000_DTBNdpKbXV5Ws9WN--
