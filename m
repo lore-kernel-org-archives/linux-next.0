@@ -1,57 +1,49 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warnings after merge of the final tree
-Date: Mon, 2 Aug 2010 18:51:17 +1000
-Message-ID: <20100802185117.b34f905b.sfr@canb.auug.org.au>
-References: <20100802141035.f84f9132.sfr@canb.auug.org.au>
-	<1280736230.1902.56.camel@pasglop>
+From: Michal Simek <michal.simek@petalogix.com>
+Subject: microblaze FAULT: memblock: Introduce for_each_memblock() and new
+ accessors, and use it
+Date: Mon, 02 Aug 2010 12:25:42 +0200
+Message-ID: <4C569D26.1000907@petalogix.com>
+Reply-To: michal.simek@petalogix.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__2_Aug_2010_18_51_17_+1000_TG+8/dQvEj09hw_5"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55737 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752683Ab0HBIva (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 2 Aug 2010 04:51:30 -0400
-In-Reply-To: <1280736230.1902.56.camel@pasglop>
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:58771 "EHLO
+	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751417Ab0HBK3O (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Aug 2010 06:29:14 -0400
+Received: by bwz1 with SMTP id 1so1374218bwz.19
+        for <linux-next@vger.kernel.org>; Mon, 02 Aug 2010 03:29:12 -0700 (PDT)
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-
---Signature=_Mon__2_Aug_2010_18_51_17_+1000_TG+8/dQvEj09hw_5
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
 Hi Ben,
 
-On Mon, 02 Aug 2010 18:03:50 +1000 Benjamin Herrenschmidt <benh@kernel.cras=
-hing.org> wrote:
->
-> Ok, so those are my fault but none are deadly. I'll do a fixup patch on
-> top of this.
+your commit 53e16bfaf19346f59b3502e207aa66c61332075c in linux-next
+breaks microblaze kernel compilation. It is easy to remove. Patch is 
+below. Please add this change to your commit.
 
-OK, thanks.
+Thanks,
+Michal
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+diff --git a/arch/microblaze/mm/init.c b/arch/microblaze/mm/init.c
+index 10bae6e..840026c 100644
+--- a/arch/microblaze/mm/init.c
++++ b/arch/microblaze/mm/init.c
+@@ -143,7 +143,7 @@ void __init setup_memory(void)
 
---Signature=_Mon__2_Aug_2010_18_51_17_+1000_TG+8/dQvEj09hw_5
-Content-Type: application/pgp-signature
+         /* reserve allocate blocks */
+         for_each_memblock(reserved, reg) {
+-               pr_debug("reserved %d - 0x%08x-0x%08x\n", i,
++               pr_debug("reserved - 0x%08x-0x%08x\n",
+                          (u32) reg->base, (u32) reg->size);
+                 reserve_bootmem(reg->base, reg->size, BOOTMEM_DEFAULT);
+         }
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMVocFAAoJEDMEi1NhKgbsajUIAI3KKe0KVRmzkAFLwhqbTIrz
-1/CXXDiRy9SqhDb/pINcxAbHurRFZvLAPRvqzCbInhOZ725P6+Hs32DGDBOqG2a6
-6ZKTdNbuKcSLT18a2noABUe9vFiYcZPNHbn8FbmnQTMRG1IP1eu97FwLgyee7i4p
-S4K3BxmsbF0W30eLlaz8qTZKYiLzcDsDIiVjS+f4PLiVw52aqdSf8Dg+kcOdzU9Y
-/mo0rGgbj9eCAmKuOll3UA4WAQYiDXzTTNvw7a2o8uOhwqo3FFqNTkVV17/2AF0I
-Mh62qOIfn1N+W9zhWNim2sQaB9z1xZn/S/f9E/INv4ukMMe0FnMeXhAtgYj3PgM=
-=FxXB
------END PGP SIGNATURE-----
-
---Signature=_Mon__2_Aug_2010_18_51_17_+1000_TG+8/dQvEj09hw_5--
+-- 
+Michal Simek, Ing. (M.Eng)
+PetaLogix - Linux Solutions for a Reconfigurable World
+w: www.petalogix.com p: +61-7-30090663,+42-0-721842854 f: +61-7-30090663
