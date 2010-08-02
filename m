@@ -1,56 +1,41 @@
-From: Konrad Rzeszutek Wilk <konrad@kernel.org>
-Subject: Re: linux-next: build failure after merge of the final tree (scsi-post-merge tree related)
-Date: Mon, 2 Aug 2010 15:59:40 -0400
-Message-ID: <20100802195940.GC32503@andromeda.dapyr.net>
-References: <20100803024445.0bf7ec86.sfr@canb.auug.org.au> <20100803024701.b3dff69a.sfr@canb.auug.org.au> <1280768048.2843.242.camel@mulgrave.site> <4C570464.9010204@cs.wisc.edu> <20100802185925.GA32503@andromeda.dapyr.net> <4C5717E6.8010805@cs.wisc.edu>
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+Subject: Re: linux-next: Tree for August 2 (scsi/pcmcia)
+Date: Mon, 2 Aug 2010 22:10:38 +0200
+Message-ID: <20100802201038.GB21063@comet.dominikbrodowski.net>
+References: <20100802144432.70293bda.sfr@canb.auug.org.au>
+ <20100802102707.5fbd9072.randy.dunlap@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from andromeda.dapyr.net ([206.212.254.10]:51859 "EHLO
-	andromeda.dapyr.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755182Ab0HBUAd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Aug 2010 16:00:33 -0400
+Received: from isilmar-3.linta.de ([188.40.101.200]:48029 "EHLO linta.de"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1754405Ab0HBUMK (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 2 Aug 2010 16:12:10 -0400
 Content-Disposition: inline
-In-Reply-To: <4C5717E6.8010805@cs.wisc.edu>
+In-Reply-To: <20100802102707.5fbd9072.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mike Christie <michaelc@cs.wisc.edu>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jayamohan Kallickal <jayamohank@serverengines.com>, Randy Dunlap <randy.dunlap@oracle.com>, linux-scsi <linux-scsi@vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-pcmcia@lists.infradead.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-> >Yikes. Last minute change, eh?
+Hey,
+
+On Mon, Aug 02, 2010 at 10:27:07AM -0700, Randy Dunlap wrote:
+> pcmcia changes cause these build errors in drivers/scsi/pcmcia/nsp_cs.c:
 > 
-> I do not know what you mean. The patches always had iscsi_boot_sysfs in 
-> the firmware dir. You mean this is a last minute change?
+> drivers/scsi/pcmcia/nsp_cs.c:1907:1: error: unterminated argument list invoking macro "release_region"
+> drivers/scsi/pcmcia/nsp_cs.c:1720: error: 'release_region' undeclared (first use in this function)
+> drivers/scsi/pcmcia/nsp_cs.c:1720: error: (Each undeclared identifier is reported only once
+> drivers/scsi/pcmcia/nsp_cs.c:1720: error: for each function it appears in.)
+> drivers/scsi/pcmcia/nsp_cs.c:1720: error: expected ';' at end of input
+> drivers/scsi/pcmcia/nsp_cs.c:1720: error: expected declaration or statement at end of input
+> drivers/scsi/pcmcia/nsp_cs.c:1720: error: expected declaration or statement at end of input
+> drivers/scsi/pcmcia/nsp_cs.c:1720: error: expected declaration or statement at end of input
 
-Yes, this rename.
-> 
-> >
-> >>interface is generic and should be used on any arch and with anything
-> >>(ibft or iscsi driver) that wants to export iscsi boot info. The
-> >>attached patch moves iscsi_boot_sysfs to drivers/scsi. It was made over
-> >>linux-next. I have only compile tested it.
-> >
-> >did you compile test it with the x86 native iBFT driver?
-> 
-> Yes.
+ah, this driver depends on !x86_64, so my make allmodconfig run didn't catch
+it... Thanks!
 
-Excellent. The patch does not look like it has changed at all, so:
+Should be fixed for the next -next.
 
- 1). Signed-off-by: Konrad Rzeszutek Wilk <konrad@kernel.org>
-   for the removal from firmware/ibft, and
- 2). Reviewed-by: Konrad Rzeszutek Wilk <konrad@kernel.org> for the
- the part that puts in drivers/scsi and will make it now under James'
- mainternship.
-
-James,
-
-I've asked Linus to pull my iBFT tree before yours as there was this
-dependency. Are you OK putting this patch in your tree, or would you prefer
-that I expunge Mike's patch from mine?
-
-
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-scsi" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Best,
+	Dominik
