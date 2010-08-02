@@ -1,62 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings after merge of the pci tree
-Date: Mon, 2 Aug 2010 11:18:38 +1000
-Message-ID: <20100802111838.8a568df7.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the device-mapper tree
+Date: Mon, 2 Aug 2010 11:31:48 +1000
+Message-ID: <20100802113148.e0b70b34.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__2_Aug_2010_11_18_38_+1000_lFiKVk0+g5WyEgDg"
+ boundary="Signature=_Mon__2_Aug_2010_11_31_48_+1000_w4n8vlU6wBVMTyad"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46884 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:45065 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752420Ab0HBBSo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 1 Aug 2010 21:18:44 -0400
+	id S1752371Ab0HBBby (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 1 Aug 2010 21:31:54 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jesse Barnes <jbarnes@virtuousgeek.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Narendra K <Narendra_K@dell.com>, Jordan Hargrave <jordan_hargrave@dell.com>
+To: Alasdair G Kergon <agk@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Milan Broz <mbroz@redhat.com>
 
---Signature=_Mon__2_Aug_2010_11_18_38_+1000_lFiKVk0+g5WyEgDg
+--Signature=_Mon__2_Aug_2010_11_31_48_+1000_w4n8vlU6wBVMTyad
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jesse,
+Hi Alasdair,
 
-After merging the rr tree, today's linux-next build (powerpc
-ppc64_defconfig) produced lots of these warnings:
+After merging the device-mapper tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-drivers/pci/pci.h: In function 'pci_create_firmware_label_files':
-drivers/pci/pci.h:16: warning: 'return' with a value, in function returning=
- void
-drivers/pci/pci.h: In function 'pci_remove_firmware_label_files':
-drivers/pci/pci.h:18: warning: 'return' with a value, in function returning=
- void
+drivers/md/dm-crypt.c: In function 'crypt_ctr_cipher':
+drivers/md/dm-crypt.c:1095: error: 'bad_mem' undeclared (first use in this =
+function)
 
-Introduced by commit 911e1c9b05a8e3559a7aa89083930700a0b9e7ee ("PCI:
-export SMBIOS provided firmware instance and label to sysfs").
+Caused by commit 460328b294ddd132945bdf536a9130f2d6cd6ace
+("dm-crypt-simplify-crypt_ctr").
 
-Please build with and without the CONFIG options your new code depends
-on ...  This adds considerably to the build noise.
+Please do test builds ... "No functional change in this patch." :-(
 
+I will use the device-mapper tree from next-20100730 for today.
+
+P.S. the patch summaries could be more informative ... i.e. you should
+put "Subject:" lines in the patches.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__2_Aug_2010_11_18_38_+1000_lFiKVk0+g5WyEgDg
+--Signature=_Mon__2_Aug_2010_11_31_48_+1000_w4n8vlU6wBVMTyad
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMVhzuAAoJEDMEi1NhKgbsN0IIAIXiI06nVCuYbCBlOmFzokWb
-muX3V0cz6E0ZWmHTMBYZRttYGvqlwwDAPNZNicqc+aXomqSRuSRb/kvTfXrYIHd5
-rrY1L+Ed165YMqXc2KyuVDLogRCKzyzITfwoq0nnS75k4Q3+wi83Yi4MpFLYdvzB
-rQNKnVlglYqHwC576NS/ybmL0lRNiJA7LUwDUxmTs1vg3JJ0+nBGVAzFKk6ugJdz
-kNbPVM8EQdxZFC3Mg1CCBuK0Sk8Gb5Sy2IHJOWJ78+IpYWvGlc8n/r95XtNZTrKs
-nFwL5gr1+Qi8tDAk9z/HUiZR/kwuV9O+5x93GgrORcUyRTa+xJJEUQXLAh7tYe0=
-=JOe4
+iQEcBAEBAgAGBQJMViAEAAoJEDMEi1NhKgbsGS8H/iOLsG8KHtpAtfMyQBNG7EIT
+futcOSqvYKh/6F8TrU1Ak+OODsXQAYB+rONZyf4209PGrhsC4FWsx+XtnD7hD0It
+hCcCpYkvkSSmieTzs61shZkUgFzapUkf87v0b1gG4hge1I4kFcIKD21CY0pgoeJk
+8VzzJI9kJql0jdZxAf3btJQ7Kq9PJq13zqFcYnRramTtucn/fZN2cM1N8l3q3bpB
+koNgA0uAwFAjgTe9TrQ1Rr5ZaLlH0AMTunXJnUC2vZ2RvINFUPSNeFEHRndvubZm
+xPF0fc9ZsaUt7YN2SSjos73T7pkC84/Kj9l4vt8GiNBG5ZbJAecR5/K0G2wDraQ=
+=fCKs
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__2_Aug_2010_11_18_38_+1000_lFiKVk0+g5WyEgDg--
+--Signature=_Mon__2_Aug_2010_11_31_48_+1000_w4n8vlU6wBVMTyad--
