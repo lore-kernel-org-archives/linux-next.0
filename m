@@ -1,54 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree with the net-current tree
-Date: Mon, 2 Aug 2010 11:04:01 +1000
-Message-ID: <20100802110401.e05c3ec6.sfr@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the pci tree
+Date: Mon, 2 Aug 2010 11:18:38 +1000
+Message-ID: <20100802111838.8a568df7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__2_Aug_2010_11_18_38_+1000_lFiKVk0+g5WyEgDg"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58468 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:46884 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751982Ab0HBBEG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 1 Aug 2010 21:04:06 -0400
+	id S1752420Ab0HBBSo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 1 Aug 2010 21:18:44 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Narendra K <Narendra_K@dell.com>, Jordan Hargrave <jordan_hargrave@dell.com>
 
-Hi all,
+--Signature=_Mon__2_Aug_2010_11_18_38_+1000_lFiKVk0+g5WyEgDg
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the net tree got a conflict in
-net/bridge/br_device.c between commit
-6d1d1d398cb7db7a12c5d652d50f85355345234f ("bridge: Fix skb leak when
-multicast parsing fails on TX") from the net-current tree and commit
-91d2c34a4eed32876ca333b0ca44f3bc56645805 ("bridge: Fix netpoll support")
-from the net tree.
+Hi Jesse,
 
-Just context changes. I fixed it up (see below) and can carry the fix for
-a while.
--- 
+After merging the rr tree, today's linux-next build (powerpc
+ppc64_defconfig) produced lots of these warnings:
+
+drivers/pci/pci.h: In function 'pci_create_firmware_label_files':
+drivers/pci/pci.h:16: warning: 'return' with a value, in function returning=
+ void
+drivers/pci/pci.h: In function 'pci_remove_firmware_label_files':
+drivers/pci/pci.h:18: warning: 'return' with a value, in function returning=
+ void
+
+Introduced by commit 911e1c9b05a8e3559a7aa89083930700a0b9e7ee ("PCI:
+export SMBIOS provided firmware instance and label to sysfs").
+
+Please build with and without the CONFIG options your new code depends
+on ...  This adds considerably to the build noise.
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc net/bridge/br_device.c
-index f49bcd9,075c435..0000000
---- a/net/bridge/br_device.c
-+++ b/net/bridge/br_device.c
-@@@ -46,12 -48,13 +48,16 @@@ netdev_tx_t br_dev_xmit(struct sk_buff 
-  	skb_reset_mac_header(skb);
-  	skb_pull(skb, ETH_HLEN);
-  
- +	rcu_read_lock();
-  	if (is_multicast_ether_addr(dest)) {
-+ 		if (unlikely(netpoll_tx_running(dev))) {
-+ 			br_flood_deliver(br, skb);
-+ 			goto out;
-+ 		}
- -		if (br_multicast_rcv(br, NULL, skb))
- +		if (br_multicast_rcv(br, NULL, skb)) {
- +			kfree_skb(skb);
-  			goto out;
- +		}
-  
-  		mdst = br_mdb_get(br, skb);
-  		if (mdst || BR_INPUT_SKB_CB_MROUTERS_ONLY(skb))
+--Signature=_Mon__2_Aug_2010_11_18_38_+1000_lFiKVk0+g5WyEgDg
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMVhzuAAoJEDMEi1NhKgbsN0IIAIXiI06nVCuYbCBlOmFzokWb
+muX3V0cz6E0ZWmHTMBYZRttYGvqlwwDAPNZNicqc+aXomqSRuSRb/kvTfXrYIHd5
+rrY1L+Ed165YMqXc2KyuVDLogRCKzyzITfwoq0nnS75k4Q3+wi83Yi4MpFLYdvzB
+rQNKnVlglYqHwC576NS/ybmL0lRNiJA7LUwDUxmTs1vg3JJ0+nBGVAzFKk6ugJdz
+kNbPVM8EQdxZFC3Mg1CCBuK0Sk8Gb5Sy2IHJOWJ78+IpYWvGlc8n/r95XtNZTrKs
+nFwL5gr1+Qi8tDAk9z/HUiZR/kwuV9O+5x93GgrORcUyRTa+xJJEUQXLAh7tYe0=
+=JOe4
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__2_Aug_2010_11_18_38_+1000_lFiKVk0+g5WyEgDg--
