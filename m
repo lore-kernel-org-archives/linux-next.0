@@ -1,57 +1,52 @@
-From: James Bottomley <James.Bottomley@suse.de>
-Subject: Re: linux-next: build failure after merge of the final tree
- (scsi-post-merge tree related)
-Date: Mon, 02 Aug 2010 15:14:02 -0500
-Message-ID: <1280780042.2843.628.camel@mulgrave.site>
-References: <20100803024445.0bf7ec86.sfr@canb.auug.org.au>
-	 <20100803024701.b3dff69a.sfr@canb.auug.org.au>
-	 <1280768048.2843.242.camel@mulgrave.site> <4C570464.9010204@cs.wisc.edu>
-	 <20100802185925.GA32503@andromeda.dapyr.net> <4C5717E6.8010805@cs.wisc.edu>
-	 <20100802195940.GC32503@andromeda.dapyr.net>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: microblaze FAULT: memblock: Introduce for_each_memblock() and
+ new accessors, and use it
+Date: Tue, 03 Aug 2010 07:20:30 +1000
+Message-ID: <1280784030.1902.62.camel@pasglop>
+References: <4C569D26.1000907@petalogix.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100802195940.GC32503@andromeda.dapyr.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Konrad Rzeszutek Wilk <konrad@kernel.org>
-Cc: Mike Christie <michaelc@cs.wisc.edu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jayamohan Kallickal <jayamohank@serverengines.com>, Randy Dunlap <randy.dunlap@oracle.com>, linux-scsi <linux-scsi@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from gate.crashing.org ([63.228.1.57]:42315 "EHLO gate.crashing.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753752Ab0HBVUm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 2 Aug 2010 17:20:42 -0400
+In-Reply-To: <4C569D26.1000907@petalogix.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: michal.simek@petalogix.com
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>
 
-On Mon, 2010-08-02 at 15:59 -0400, Konrad Rzeszutek Wilk wrote:
-> > >Yikes. Last minute change, eh?
-> > 
-> > I do not know what you mean. The patches always had iscsi_boot_sysfs in 
-> > the firmware dir. You mean this is a last minute change?
+On Mon, 2010-08-02 at 12:25 +0200, Michal Simek wrote:
+> Hi Ben,
 > 
-> Yes, this rename.
-> > 
-> > >
-> > >>interface is generic and should be used on any arch and with anything
-> > >>(ibft or iscsi driver) that wants to export iscsi boot info. The
-> > >>attached patch moves iscsi_boot_sysfs to drivers/scsi. It was made over
-> > >>linux-next. I have only compile tested it.
-> > >
-> > >did you compile test it with the x86 native iBFT driver?
-> > 
-> > Yes.
-> 
-> Excellent. The patch does not look like it has changed at all, so:
-> 
->  1). Signed-off-by: Konrad Rzeszutek Wilk <konrad@kernel.org>
->    for the removal from firmware/ibft, and
->  2). Reviewed-by: Konrad Rzeszutek Wilk <konrad@kernel.org> for the
->  the part that puts in drivers/scsi and will make it now under James'
->  mainternship.
-> 
-> James,
-> 
-> I've asked Linus to pull my iBFT tree before yours as there was this
-> dependency. Are you OK putting this patch in your tree, or would you prefer
-> that I expunge Mike's patch from mine?
+> your commit 53e16bfaf19346f59b3502e207aa66c61332075c in linux-next
+> breaks microblaze kernel compilation. It is easy to remove. Patch is 
+> below. Please add this change to your commit.
 
-I can put this patch into my post merge tree.  I suspect you having a
-post-post-merge tree (needed for the build problems) might be a bit
-overkill ...
+Ooops. It may be too late to rebase, not sure. Ingo, are you sending
+that stuff to Linus or are you waiting for me to do so ? In the later
+case, I can fold that fix in easily.
 
-James
+Cheers,
+Ben.
+
+> Thanks,
+> Michal
+> 
+> diff --git a/arch/microblaze/mm/init.c b/arch/microblaze/mm/init.c
+> index 10bae6e..840026c 100644
+> --- a/arch/microblaze/mm/init.c
+> +++ b/arch/microblaze/mm/init.c
+> @@ -143,7 +143,7 @@ void __init setup_memory(void)
+> 
+>          /* reserve allocate blocks */
+>          for_each_memblock(reserved, reg) {
+> -               pr_debug("reserved %d - 0x%08x-0x%08x\n", i,
+> +               pr_debug("reserved - 0x%08x-0x%08x\n",
+>                           (u32) reg->base, (u32) reg->size);
+>                  reserve_bootmem(reg->base, reg->size, BOOTMEM_DEFAULT);
+>          }
+> 
+> 
