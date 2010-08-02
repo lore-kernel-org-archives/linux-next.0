@@ -1,62 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the device-mapper tree
-Date: Mon, 2 Aug 2010 11:31:48 +1000
-Message-ID: <20100802113148.e0b70b34.sfr@canb.auug.org.au>
+Subject: Re: linux-next: build warnings after merge of the pci tree
+Date: Mon, 2 Aug 2010 11:38:18 +1000
+Message-ID: <20100802113818.df43c241.sfr@canb.auug.org.au>
+References: <20100802111838.8a568df7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__2_Aug_2010_11_31_48_+1000_w4n8vlU6wBVMTyad"
+ boundary="Signature=_Mon__2_Aug_2010_11_38_18_+1000_DTBNdpKbXV5Ws9WN"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45065 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:41239 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752371Ab0HBBby (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 1 Aug 2010 21:31:54 -0400
+	id S1752190Ab0HBBiX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 1 Aug 2010 21:38:23 -0400
+In-Reply-To: <20100802111838.8a568df7.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alasdair G Kergon <agk@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Milan Broz <mbroz@redhat.com>
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Narendra K <Narendra_K@dell.com>, Jordan Hargrave <jordan_hargrave@dell.com>
 
---Signature=_Mon__2_Aug_2010_11_31_48_+1000_w4n8vlU6wBVMTyad
+--Signature=_Mon__2_Aug_2010_11_38_18_+1000_DTBNdpKbXV5Ws9WN
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Alasdair,
+Hi Jesse,
 
-After merging the device-mapper tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+On Mon, 2 Aug 2010 11:18:38 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> After merging the rr tree, today's linux-next build (powerpc
+                    ^^
+I meant the pci tree, of course.
 
-drivers/md/dm-crypt.c: In function 'crypt_ctr_cipher':
-drivers/md/dm-crypt.c:1095: error: 'bad_mem' undeclared (first use in this =
-function)
-
-Caused by commit 460328b294ddd132945bdf536a9130f2d6cd6ace
-("dm-crypt-simplify-crypt_ctr").
-
-Please do test builds ... "No functional change in this patch." :-(
-
-I will use the device-mapper tree from next-20100730 for today.
-
-P.S. the patch summaries could be more informative ... i.e. you should
-put "Subject:" lines in the patches.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__2_Aug_2010_11_31_48_+1000_w4n8vlU6wBVMTyad
+--Signature=_Mon__2_Aug_2010_11_38_18_+1000_DTBNdpKbXV5Ws9WN
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMViAEAAoJEDMEi1NhKgbsGS8H/iOLsG8KHtpAtfMyQBNG7EIT
-futcOSqvYKh/6F8TrU1Ak+OODsXQAYB+rONZyf4209PGrhsC4FWsx+XtnD7hD0It
-hCcCpYkvkSSmieTzs61shZkUgFzapUkf87v0b1gG4hge1I4kFcIKD21CY0pgoeJk
-8VzzJI9kJql0jdZxAf3btJQ7Kq9PJq13zqFcYnRramTtucn/fZN2cM1N8l3q3bpB
-koNgA0uAwFAjgTe9TrQ1Rr5ZaLlH0AMTunXJnUC2vZ2RvINFUPSNeFEHRndvubZm
-xPF0fc9ZsaUt7YN2SSjos73T7pkC84/Kj9l4vt8GiNBG5ZbJAecR5/K0G2wDraQ=
-=fCKs
+iQEcBAEBAgAGBQJMViGKAAoJEDMEi1NhKgbsWqcIAKBC3ppeNgp6xOnJgCX7GUYg
+DEWVfepWuSaoE9DsDQDAFen3nGZdqgWmICsAawHa9y2136zc/vK7pBRCd0B5sFmd
+cCDS/rWRmd3j93iJ16zCkDnM+rIV9cJyZd/QsqMdkBOpylhCK+mb5DGhFXhb3WHD
+7+8FoQG/Zx8aglpQFxAuP7eyZj6Vsuaohnu661BiXRkXtOn1mGgSvYTlziPUwJZL
+2QNTvE+Ql/Goe7voqnoyGe83m1whpqVJ6522IczcE7Y2JgytswuSLJPobEbEhoSw
+gtRPEA0lACa2pNObrGqTlCVt5QzhchvTdQ4id1uk25/SumVHLWbWKXeZNjXvvhM=
+=CdZm
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__2_Aug_2010_11_31_48_+1000_w4n8vlU6wBVMTyad--
+--Signature=_Mon__2_Aug_2010_11_38_18_+1000_DTBNdpKbXV5Ws9WN--
