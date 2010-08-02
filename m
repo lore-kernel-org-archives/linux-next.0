@@ -1,209 +1,82 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging-next tree with the pcmcia
- tree
-Date: Mon, 2 Aug 2010 13:57:46 +1000
-Message-ID: <20100802135746.b869dabc.sfr@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the final tree
+Date: Mon, 2 Aug 2010 14:10:35 +1000
+Message-ID: <20100802141035.f84f9132.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__2_Aug_2010_14_10_35_+1000_I=XGqEgkTrk.17vY"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37763 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:51780 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752480Ab0HBD5r (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 1 Aug 2010 23:57:47 -0400
+	id S1751255Ab0HBEKm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 2 Aug 2010 00:10:42 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Prashant P. Shah" <pshah.mumbai@gmail.com>, Dominik Brodowski <linux@dominikbrodowski.net>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-Hi Greg,
+--Signature=_Mon__2_Aug_2010_14_10_35_+1000_I=XGqEgkTrk.17vY
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the staging-next tree got a conflict in
-drivers/staging/wlags49_h2/wl_cs.c between commits
-9b3efec734d2d79d82a6f5cef25a618d41a6b2c5 ("pcmcia: do not use io_req_t
-after call to pcmcia_request_io()") and
-cd8ae1e0a5d36406b518cea25446492f07ddddcf ("pcmcia: do not use io_req_t
-when calling pcmcia_request_io()") from the pcmcia tree and commit
-6d98be390ab55bb5f617d69aedf9bec27d039b3b ("Staging: wl_cs.c: converted
-space to tabs in wl_cs.c") from the staging-next tree.
+Hi all,
 
-I fixed it up (see below) and can carry the fix as necessary.
--- 
+After merging the final tree, today's linux-next build (powerpc
+allnoconfig with CONFIG_DEBUG_SECTION_MISMATCH=3Dy) produced these warnings:
+
+WARNING: mm/built-in.o(.text+0x24324): Section mismatch in reference from t=
+he function memblock_find_in_range() to the function .init.text:memblock_fi=
+nd_base()
+The function memblock_find_in_range() references
+the function __init memblock_find_base().
+This is often because memblock_find_in_range lacks a __init=20
+annotation or the annotation of memblock_find_base is wrong.
+
+WARNING: mm/built-in.o(.text+0x24610): Section mismatch in reference from t=
+he function memblock_double_array() to the function .init.text:memblock_fre=
+e()
+The function memblock_double_array() references
+the function __init memblock_free().
+This is often because memblock_double_array lacks a __init=20
+annotation or the annotation of memblock_free is wrong.
+
+WARNING: mm/built-in.o(.text+0x24670): Section mismatch in reference from t=
+he function memblock_double_array() to the function .init.text:memblock_fin=
+d_base()
+The function memblock_double_array() references
+the function __init memblock_find_base().
+This is often because memblock_double_array lacks a __init=20
+annotation or the annotation of memblock_find_base is wrong.
+
+WARNING: vmlinux.o(.text+0x10264): Section mismatch in reference from the f=
+unction setup_initial_memory_limit() to the function .init.text:memblock_se=
+t_current_limit()
+The function setup_initial_memory_limit() references
+the function __init memblock_set_current_limit().
+This is often because setup_initial_memory_limit lacks a __init=20
+annotation or the annotation of memblock_set_current_limit is wrong.
+
+Introduced by the memblock series in the tip tree.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/staging/wlags49_h2/wl_cs.c
-index f15afd2,464b067..0000000
---- a/drivers/staging/wlags49_h2/wl_cs.c
-+++ b/drivers/staging/wlags49_h2/wl_cs.c
-@@@ -132,35 -133,36 +132,35 @@@ extern dbg_info_t *DbgInfo
-   ******************************************************************************/
-  static int wl_adapter_attach(struct pcmcia_device *link)
-  {
--     struct net_device   *dev;
--     struct wl_private	*lp;
--     /*------------------------------------------------------------------------*/
-- 
--     DBG_FUNC( "wl_adapter_attach" );
--     DBG_ENTER( DbgInfo );
-- 
--     dev = wl_device_alloc();
--     if(dev == NULL) {
--         DBG_ERROR( DbgInfo, "wl_device_alloc returned NULL\n");
-- 	return -ENOMEM;
--     }
-- 
--     link->resource[0]->end      = HCF_NUM_IO_PORTS;
--     link->resource[0]->flags    = IO_DATA_PATH_WIDTH_16;
--     link->conf.Attributes   = CONF_ENABLE_IRQ;
--     link->conf.IntType      = INT_MEMORY_AND_IO;
--     link->conf.ConfigIndex  = 5;
--     link->conf.Present      = PRESENT_OPTION;
-- 
--     link->priv = dev;
--     lp = wl_priv(dev);
--     lp->link = link;
-- 
--     wl_adapter_insert(link);
-- 
--     DBG_LEAVE( DbgInfo );
--     return 0;
-- } // wl_adapter_attach
-+ 	struct net_device   *dev;
-+ 	struct wl_private   *lp;
-+ 	/*--------------------------------------------------------------------*/
-+ 
-+ 	DBG_FUNC("wl_adapter_attach");
-+ 	DBG_ENTER(DbgInfo);
-+ 
-+ 	dev = wl_device_alloc();
-+ 	if (dev == NULL) {
-+ 		DBG_ERROR(DbgInfo, "wl_device_alloc returned NULL\n");
-+ 		return -ENOMEM;
-+ 	}
-+ 
- -	link->io.NumPorts1      = HCF_NUM_IO_PORTS;
- -	link->io.Attributes1    = IO_DATA_PATH_WIDTH_16;
- -	link->io.IOAddrLines    = 6;
-++	link->resource[0]->end  = HCF_NUM_IO_PORTS;
-++	link->resource[0]->flags = IO_DATA_PATH_WIDTH_16;
-+ 	link->conf.Attributes   = CONF_ENABLE_IRQ;
-+ 	link->conf.IntType      = INT_MEMORY_AND_IO;
-+ 	link->conf.ConfigIndex  = 5;
-+ 	link->conf.Present      = PRESENT_OPTION;
-+ 
-+ 	link->priv = dev;
-+ 	lp = wl_priv(dev);
-+ 	lp->link = link;
-+ 
-+ 	wl_adapter_insert(link);
-+ 
-+ 	DBG_LEAVE(DbgInfo);
-+ 	return 0;
-+ } /* wl_adapter_attach */
-  /*============================================================================*/
-  
-  
-@@@ -289,61 -290,59 +288,60 @@@ static int wl_adapter_resume(struct pcm
-   *      N/A
-   *
-   ******************************************************************************/
-- void wl_adapter_insert( struct pcmcia_device *link )
-+ void wl_adapter_insert(struct pcmcia_device *link)
-  {
--     struct net_device       *dev;
--     int i;
--     int                     ret;
--     /*------------------------------------------------------------------------*/
-+ 	struct net_device *dev;
-+ 	int i;
-+ 	int ret;
-+ 	/*--------------------------------------------------------------------*/
-  
--     DBG_FUNC( "wl_adapter_insert" );
--     DBG_ENTER( DbgInfo );
--     DBG_PARAM( DbgInfo, "link", "0x%p", link );
-+ 	DBG_FUNC("wl_adapter_insert");
-+ 	DBG_ENTER(DbgInfo);
-+ 	DBG_PARAM(DbgInfo, "link", "0x%p", link);
-  
--     dev     = link->priv;
-+ 	dev     = link->priv;
-  
--     /* Do we need to allocate an interrupt? */
--     link->conf.Attributes |= CONF_ENABLE_IRQ;
--     link->io_lines = 6;
-+ 	/* Do we need to allocate an interrupt? */
-+ 	link->conf.Attributes |= CONF_ENABLE_IRQ;
-++	link->io_lines = 6;
-  
--     ret = pcmcia_request_io(link);
--     if (ret != 0)
--         goto failed;
- -	ret = pcmcia_request_io(link, &link->io);
-++	ret = pcmcia_request_io(link);
-+ 	if (ret != 0)
-+ 		goto failed;
-  
--     ret = pcmcia_request_irq(link, (void *) wl_isr);
--     if (ret != 0)
--         goto failed;
-+ 	ret = pcmcia_request_irq(link, (void *) wl_isr);
-+ 	if (ret != 0)
-+ 		goto failed;
-  
--     ret = pcmcia_request_configuration(link, &link->conf);
--     if (ret != 0)
--         goto failed;
-+ 	ret = pcmcia_request_configuration(link, &link->conf);
-+ 	if (ret != 0)
-+ 		goto failed;
-  
--     dev->irq        = link->irq;
--     dev->base_addr  = link->resource[0]->start;
-+ 	dev->irq        = link->irq;
- -	dev->base_addr  = link->io.BasePort1;
-++	dev->base_addr  = link->resource[0]->start;
-  
--     SET_NETDEV_DEV(dev, &link->dev);
--     if (register_netdev(dev) != 0) {
-- 	printk("%s: register_netdev() failed\n", MODULE_NAME);
-- 	goto failed;
--     }
-+ 	SET_NETDEV_DEV(dev, &link->dev);
-+ 	if (register_netdev(dev) != 0) {
-+ 		printk("%s: register_netdev() failed\n", MODULE_NAME);
-+ 		goto failed;
-+ 	}
-  
--     register_wlags_sysfs(dev);
-+ 	register_wlags_sysfs(dev);
-  
--     printk(KERN_INFO "%s: Wireless, io_addr %#03lx, irq %d, ""mac_address ",
--                dev->name, dev->base_addr, dev->irq);
--     for( i = 0; i < ETH_ALEN; i++ ) {
--         printk("%02X%c", dev->dev_addr[i], ((i < (ETH_ALEN-1)) ? ':' : '\n'));
--     }
-+ 	printk(KERN_INFO "%s: Wireless, io_addr %#03lx, irq %d, ""mac_address ",
-+ 		dev->name, dev->base_addr, dev->irq);
-+ 	for (i = 0; i < ETH_ALEN; i++)
-+ 		printk("%02X%c", dev->dev_addr[i], ((i < (ETH_ALEN-1)) ? ':' : '\n'));
-  
--     DBG_LEAVE( DbgInfo );
--     return;
-+ 	DBG_LEAVE(DbgInfo);
-+ 	return;
-  
-  failed:
--     wl_adapter_release( link );
-+ 	wl_adapter_release(link);
-  
--     DBG_LEAVE(DbgInfo);
--     return;
-- } // wl_adapter_insert
-+ 	DBG_LEAVE(DbgInfo);
-+ 	return;
-+ } /* wl_adapter_insert */
-  /*============================================================================*/
-  
-  
+--Signature=_Mon__2_Aug_2010_14_10_35_+1000_I=XGqEgkTrk.17vY
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMVkU7AAoJEDMEi1NhKgbsr5sIAJOQEL/NTEoJCq0Qdo5PnusC
+7+/Vz1APem8ZdiTeUxn6XeELN4y91dPK4g5kbILBh9NaS5o6B978M1pWvBCeuyjj
+hbAm07lq3ZtXR6S0JMlQXJ8p4DnMnDcwziniPBou8RH5aRJSJRvzWvQ/eFzQsx00
+eqCKAW3b8VJOPKR8OPODrrMve9ExPXvHviBia31QZMH/kRuHTTRCd6q7+LsXJ0lq
+iH5WMJakmh1RI9ZaLkybSfOBb2k5Lb/KKYahh8ncfzlp9g+4NvjzANZbE0vbPcBe
+zlHZkG2QvaKvQtRKGIdD9Vpm9iEMEAZsMV4RDWf6lnR6yooFv2y2SN/Mjbb8Sps=
+=+ZjI
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__2_Aug_2010_14_10_35_+1000_I=XGqEgkTrk.17vY--
