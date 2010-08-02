@@ -1,52 +1,37 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: microblaze FAULT: memblock: Introduce for_each_memblock() and
- new accessors, and use it
-Date: Tue, 03 Aug 2010 07:20:30 +1000
-Message-ID: <1280784030.1902.62.camel@pasglop>
-References: <4C569D26.1000907@petalogix.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging-next tree with the
+ pcmcia tree
+Date: Mon, 2 Aug 2010 15:23:35 -0700
+Message-ID: <20100802222335.GA26966@kroah.com>
+References: <20100802135746.b869dabc.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:42315 "EHLO gate.crashing.org"
+Received: from kroah.org ([198.145.64.141]:36618 "EHLO coco.kroah.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753752Ab0HBVUm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 2 Aug 2010 17:20:42 -0400
-In-Reply-To: <4C569D26.1000907@petalogix.com>
+	id S1751979Ab0HBWbL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 2 Aug 2010 18:31:11 -0400
+Content-Disposition: inline
+In-Reply-To: <20100802135746.b869dabc.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: michal.simek@petalogix.com
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Prashant P. Shah" <pshah.mumbai@gmail.com>, Dominik Brodowski <linux@dominikbrodowski.net>
 
-On Mon, 2010-08-02 at 12:25 +0200, Michal Simek wrote:
-> Hi Ben,
+On Mon, Aug 02, 2010 at 01:57:46PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> your commit 53e16bfaf19346f59b3502e207aa66c61332075c in linux-next
-> breaks microblaze kernel compilation. It is easy to remove. Patch is 
-> below. Please add this change to your commit.
+> Today's linux-next merge of the staging-next tree got a conflict in
+> drivers/staging/wlags49_h2/wl_cs.c between commits
+> 9b3efec734d2d79d82a6f5cef25a618d41a6b2c5 ("pcmcia: do not use io_req_t
+> after call to pcmcia_request_io()") and
+> cd8ae1e0a5d36406b518cea25446492f07ddddcf ("pcmcia: do not use io_req_t
+> when calling pcmcia_request_io()") from the pcmcia tree and commit
+> 6d98be390ab55bb5f617d69aedf9bec27d039b3b ("Staging: wl_cs.c: converted
+> space to tabs in wl_cs.c") from the staging-next tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary.
 
-Ooops. It may be too late to rebase, not sure. Ingo, are you sending
-that stuff to Linus or are you waiting for me to do so ? In the later
-case, I can fold that fix in easily.
+Those fixes are fine, thanks for doing this.
 
-Cheers,
-Ben.
-
-> Thanks,
-> Michal
-> 
-> diff --git a/arch/microblaze/mm/init.c b/arch/microblaze/mm/init.c
-> index 10bae6e..840026c 100644
-> --- a/arch/microblaze/mm/init.c
-> +++ b/arch/microblaze/mm/init.c
-> @@ -143,7 +143,7 @@ void __init setup_memory(void)
-> 
->          /* reserve allocate blocks */
->          for_each_memblock(reserved, reg) {
-> -               pr_debug("reserved %d - 0x%08x-0x%08x\n", i,
-> +               pr_debug("reserved - 0x%08x-0x%08x\n",
->                           (u32) reg->base, (u32) reg->size);
->                  reserve_bootmem(reg->base, reg->size, BOOTMEM_DEFAULT);
->          }
-> 
-> 
+greg k-h
