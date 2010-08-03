@@ -1,146 +1,73 @@
-From: John Johansen <john.johansen@canonical.com>
-Subject: Re: linux-next: build failure after merge of the security-testing
- tree
-Date: Mon, 02 Aug 2010 17:04:28 -0700
-Message-ID: <4C575D0C.9080203@canonical.com>
-References: <20100802121601.363af4a9.sfr@canb.auug.org.au>
+From: Christoph Fritz <chf.fritz@googlemail.com>
+Subject: [BUG -next] pcmcia: setup IRQ to be used by PCMCIA drivers at card
+ insert
+Date: Tue, 03 Aug 2010 02:38:19 +0200
+Message-ID: <1280795899.11158.52.camel@lovely.krouter>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from adelie.canonical.com ([91.189.90.139]:53394 "EHLO
-	adelie.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752044Ab0HCAEg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Aug 2010 20:04:36 -0400
-In-Reply-To: <20100802121601.363af4a9.sfr@canb.auug.org.au>
+Received: from mail-wy0-f174.google.com ([74.125.82.174]:55347 "EHLO
+	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751611Ab0HCAfW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 2 Aug 2010 20:35:22 -0400
+Received: by wyb39 with SMTP id 39so3856972wyb.19
+        for <linux-next@vger.kernel.org>; Mon, 02 Aug 2010 17:35:20 -0700 (PDT)
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: linux-next <linux-next@vger.kernel.org>
 
-On 08/01/2010 07:16 PM, Stephen Rothwell wrote:
-> Hi James,
-> 
-> After merging the security-testing tree, today's linux-next build (x86_64
-> allmodconfig) failed like this (also some warnings ...):
-> 
-> security/apparmor/ipc.c: In function 'aa_ptrace':
-> security/apparmor/ipc.c:103: warning: initialization discards qualifiers from pointer target type
-> security/apparmor/domain.c: In function 'may_change_ptraced_domain':
-> security/apparmor/domain.c:73: warning: assignment discards qualifiers from pointer target type
-> security/apparmor/lsm.c:701: error: 'param_ops_aabool' undeclared here (not in a function)
-> security/apparmor/lsm.c:721: error: 'param_ops_aalockpolicy' undeclared here (not in a function)
-> security/apparmor/lsm.c:729: error: 'param_ops_aauint' undeclared here (not in a function)
-> 
-> Error caused by commit e0500000b50a50ec8cc9967001f3ed201b83cb36
-> ("AppArmor: LSM interface, and security module initialization")
-> interacting with commit 0685652df0929cec7d78efa85127f6eb34962132
-> ("param:param_ops") from the rr tree.
-> 
-> I applied the following merge fix patch:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 2 Aug 2010 12:00:43 +1000
-> Subject: [PATCH] AppArmor: update for module_param_named API change
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-looks good, thanks Stephen
+Hi,
 
-Signed-off-by: John Johansen <john.johansen@canonical.com>
+buffer overflow in next-tree's commit 6f0f38c45a8f2f511c25893e33011ff32fc811db:
+ size of array pcmcia_used_irq[] can be less than 32
 
+in drivers/pcmcia/pcmcia_resource.c
+   +static int pcmcia_setup_isa_irq(struct pcmcia_device *p_dev, int type)
+   +{
+   [..]
+   +       for (try = 0; try < 64; try++) {
+   +               irq = try % 32;
+   [..]
+   +
+   +               /* avoid an IRQ which is already used by another PCMCIA card */
+   +               if ((try < 32) && pcmcia_used_irq[irq])
+   +                       continue;
 
+drivers/pcmcia/pcmcia_resource.c
+   static u8 pcmcia_used_irq[NR_IRQS];
 
-> ---
->  security/apparmor/lsm.c |   36 ++++++++++++++++++++++++------------
->  1 files changed, 24 insertions(+), 12 deletions(-)
-> 
-> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> index 8db33a8..d5666d3 100644
-> --- a/security/apparmor/lsm.c
-> +++ b/security/apparmor/lsm.c
-> @@ -667,17 +667,29 @@ static struct security_operations apparmor_ops = {
->   * AppArmor sysfs module parameters
->   */
->  
-> -static int param_set_aabool(const char *val, struct kernel_param *kp);
-> -static int param_get_aabool(char *buffer, struct kernel_param *kp);
-> +static int param_set_aabool(const char *val, const struct kernel_param *kp);
-> +static int param_get_aabool(char *buffer, const struct kernel_param *kp);
->  #define param_check_aabool(name, p) __param_check(name, p, int)
-> +static struct kernel_param_ops param_ops_aabool = {
-> +	.set = param_set_aabool,
-> +	.get = param_get_aabool
-> +};
->  
-> -static int param_set_aauint(const char *val, struct kernel_param *kp);
-> -static int param_get_aauint(char *buffer, struct kernel_param *kp);
-> +static int param_set_aauint(const char *val, const struct kernel_param *kp);
-> +static int param_get_aauint(char *buffer, const struct kernel_param *kp);
->  #define param_check_aauint(name, p) __param_check(name, p, int)
-> +static struct kernel_param_ops param_ops_aauint = {
-> +	.set = param_set_aauint,
-> +	.get = param_get_aauint
-> +};
->  
-> -static int param_set_aalockpolicy(const char *val, struct kernel_param *kp);
-> -static int param_get_aalockpolicy(char *buffer, struct kernel_param *kp);
-> +static int param_set_aalockpolicy(const char *val, const struct kernel_param *kp);
-> +static int param_get_aalockpolicy(char *buffer, const struct kernel_param *kp);
->  #define param_check_aalockpolicy(name, p) __param_check(name, p, int)
-> +static struct kernel_param_ops param_ops_aalockpolicy = {
-> +	.set = param_set_aalockpolicy,
-> +	.get = param_get_aalockpolicy
-> +};
->  
->  static int param_set_audit(const char *val, struct kernel_param *kp);
->  static int param_get_audit(char *buffer, struct kernel_param *kp);
-> @@ -751,7 +763,7 @@ static int __init apparmor_enabled_setup(char *str)
->  __setup("apparmor=", apparmor_enabled_setup);
->  
->  /* set global flag turning off the ability to load policy */
-> -static int param_set_aalockpolicy(const char *val, struct kernel_param *kp)
-> +static int param_set_aalockpolicy(const char *val, const struct kernel_param *kp)
->  {
->  	if (!capable(CAP_MAC_ADMIN))
->  		return -EPERM;
-> @@ -760,35 +772,35 @@ static int param_set_aalockpolicy(const char *val, struct kernel_param *kp)
->  	return param_set_bool(val, kp);
->  }
->  
-> -static int param_get_aalockpolicy(char *buffer, struct kernel_param *kp)
-> +static int param_get_aalockpolicy(char *buffer, const struct kernel_param *kp)
->  {
->  	if (!capable(CAP_MAC_ADMIN))
->  		return -EPERM;
->  	return param_get_bool(buffer, kp);
->  }
->  
-> -static int param_set_aabool(const char *val, struct kernel_param *kp)
-> +static int param_set_aabool(const char *val, const struct kernel_param *kp)
->  {
->  	if (!capable(CAP_MAC_ADMIN))
->  		return -EPERM;
->  	return param_set_bool(val, kp);
->  }
->  
-> -static int param_get_aabool(char *buffer, struct kernel_param *kp)
-> +static int param_get_aabool(char *buffer, const struct kernel_param *kp)
->  {
->  	if (!capable(CAP_MAC_ADMIN))
->  		return -EPERM;
->  	return param_get_bool(buffer, kp);
->  }
->  
-> -static int param_set_aauint(const char *val, struct kernel_param *kp)
-> +static int param_set_aauint(const char *val, const struct kernel_param *kp)
->  {
->  	if (!capable(CAP_MAC_ADMIN))
->  		return -EPERM;
->  	return param_set_uint(val, kp);
->  }
->  
-> -static int param_get_aauint(char *buffer, struct kernel_param *kp)
-> +static int param_get_aauint(char *buffer, const struct kernel_param *kp)
->  {
->  	if (!capable(CAP_MAC_ADMIN))
->  		return -EPERM;
+arch/x86/include/asm/irq_vectors.h
+   #define NR_IRQS_LEGACY                    16
+   [..]
+   #else /* !CONFIG_X86_IO_APIC: */
+   # define NR_IRQS                        NR_IRQS_LEGACY
+   #endif
+
+---
+non-tested fix:
+---
+diff --git a/drivers/pcmcia/pcmcia_resource.c b/drivers/pcmcia/pcmcia_resource.c
+index d48437f..f8363e6 100644
+--- a/drivers/pcmcia/pcmcia_resource.c
++++ b/drivers/pcmcia/pcmcia_resource.c
+@@ -697,15 +697,15 @@ static int pcmcia_setup_isa_irq(struct pcmcia_device *p_dev, int type)
+ 	u32 mask = s->irq_mask;
+ 	int ret = -ENODEV;
+ 
+-	for (try = 0; try < 64; try++) {
+-		irq = try % 32;
++	for (try = 0; try < (NR_IRQS * 2); try++) {
++		irq = try % NR_IRQS;
+ 
+ 		/* marked as available by driver, not blocked by userspace? */
+ 		if (!((mask >> irq) & 1))
+ 			continue;
+ 
+ 		/* avoid an IRQ which is already used by another PCMCIA card */
+-		if ((try < 32) && pcmcia_used_irq[irq])
++		if ((try < NR_IRQS) && pcmcia_used_irq[irq])
+ 			continue;
+ 
+ 		/* register the correct driver, if possible, to check whether
