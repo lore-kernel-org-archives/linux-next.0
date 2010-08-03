@@ -1,34 +1,43 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+From: Ingo Molnar <mingo@elte.hu>
 Subject: Re: linux-next: build failure after merge of the final tree (tip
  tree related)
-Date: Tue, 03 Aug 2010 14:32:35 +1000
-Message-ID: <1280809955.1902.85.camel@pasglop>
+Date: Tue, 3 Aug 2010 07:29:11 +0200
+Message-ID: <20100803052911.GA25362@elte.hu>
 References: <20100803022310.bec3ba79.sfr@canb.auug.org.au>
-	 <20100802162810.GB4755@flint.arm.linux.org.uk>
-	 <1280799724.1902.84.camel@pasglop>  <4C57895C.1070402@zytor.com>
+ <20100802162810.GB4755@flint.arm.linux.org.uk>
+ <1280799724.1902.84.camel@pasglop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gate.crashing.org ([63.228.1.57]:32990 "EHLO gate.crashing.org"
+Received: from mx2.mail.elte.hu ([157.181.151.9]:44130 "EHLO mx2.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750873Ab0HCEdN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 3 Aug 2010 00:33:13 -0400
-In-Reply-To: <4C57895C.1070402@zytor.com>
+	id S1752254Ab0HCF33 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 3 Aug 2010 01:29:29 -0400
+Content-Disposition: inline
+In-Reply-To: <1280799724.1902.84.camel@pasglop>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Russell King <rmk@arm.linux.org.uk>, Stephen Rothwell <sfr@canb.auug.org.au>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Peter Zijlstra <peterz@infradead.org>, Yinghai Lu <yinghai@kernel.org>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Russell King <rmk@arm.linux.org.uk>, Stephen Rothwell <sfr@canb.auug.org.au>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
-On Mon, 2010-08-02 at 20:13 -0700, H. Peter Anvin wrote:
-> I still think that the memblock approach of having a separate data
-> structure for all of memory and one for various used blocks is flawed,
-> and that it would be a lot better to have a single data structure with
-> attributes.  It would definitely make allocation saner.  Given that,
-> there is a strong reason to keep as little of the guts exposed as
-> possible.
 
-I agree, and in fact, turning the current implementation into a single
-list with attributes wouldn't necessarily be that hard as a first step. 
+* Benjamin Herrenschmidt <benh@kernel.crashing.org> wrote:
 
-Ben.
+> > Please, no, don't break the memblock code now.  I'm not reworking the
+> > ARM implementation just as the merge window has opened - especially
+> > as the ARM implementation has now been pulled into other people's
+> > trees.
+> > 
+> > If there's changes to memblock which haven't been in linux-next (which,
+> > as this is a new failure, that is most definitely the case), then they
+> > shouldn't be going into this merge window.
+> 
+> I'm happy to wait and sit on the memblock churn until after ARM's in.
+> 
+> I can then fixup my patches.
+
+Ok, i've zapped it all from -tip.
+
+Thanks,
+
+	Ingo
