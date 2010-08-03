@@ -1,50 +1,49 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the davinci tree with Linus' tree
-Date: Tue, 3 Aug 2010 11:48:53 +1000
-Message-ID: <20100803114853.27a29365.sfr@canb.auug.org.au>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: linux-next: build failure after merge of the final tree (tip
+ tree related)
+Date: Tue, 03 Aug 2010 11:41:34 +1000
+Message-ID: <1280799694.1902.83.camel@pasglop>
+References: <20100803022310.bec3ba79.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46507 "EHLO smtps.tip.net.au"
+Received: from gate.crashing.org ([63.228.1.57]:33432 "EHLO gate.crashing.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750957Ab0HCBs5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 2 Aug 2010 21:48:57 -0400
+	id S1751178Ab0HCB40 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 2 Aug 2010 21:56:26 -0400
+In-Reply-To: <20100803022310.bec3ba79.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kevin Hilman <khilman@deeprootsystems.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
-Hi Kevin,
+On Tue, 2010-08-03 at 02:23 +1000, Stephen Rothwell wrote:
+> 
+> Lots (if not all) of the arm builds failed for next-20100802 with these
+> errors:
+> 
+> arch/arm/mm/init.c: In function 'arm_bootmem_init':
+> arch/arm/mm/init.c:184: error: implicit declaration of function 'memblock_start_pfn'
+> arch/arm/mm/init.c:186: error: implicit declaration of function 'memblock_end_pfn'
+> arch/arm/mm/init.c:188: error: implicit declaration of function 'memblock_size_bytes'
+> 
+> Caused by commit 53e16bfaf19346f59b3502e207aa66c61332075c ("memblock:
+> Introduce for_each_memblock() and new accessors, and use it") interacting
+> with commit 2778f62056ada442414392d7ccd41188bb631619 ("ARM: initial LMB
+> trial") and some others from the arm tree.
+> 
+> Ben, is there no way to retain the old APIs while creating the new ones? 
 
-Today's linux-next merge of the davinci tree got a conflict in
-arch/arm/mach-davinci/board-da850-evm.c between commit
-8b24599e72c9aee1ea1187e29cb9c5de9f449cce ("davinci: da850/omap-l138 evm:
-account for DEFDCDC{2,3} being tied high") from Linus' tree and commit
-ebd1e7808b2fe72d627bdab7bcf61126a831ca5a ("davinci: da850 evm: sparse
-cleanup: make file local variables static") from the davinci tree.
+I'll have a second look. It might be doable if it's only those 3
+functions.
 
-Just context changes.  I fixed it up (see below) and can carry the fix
-for a while.
--- 
+In any case, I'm happy to delay that, wait for ARM to go in, then sent a
+new batch that also fixes ARM up.
+
+Once those patches are in, we get some saner APIs to memblocks which
+make it a lot easier to rewrite the core, which I think Peter want to do
+(and I like his ideas of using a single list very much too).
+
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc arch/arm/mach-davinci/board-da850-evm.c
-index b280efb,f6942dd..0000000
---- a/arch/arm/mach-davinci/board-da850-evm.c
-+++ b/arch/arm/mach-davinci/board-da850-evm.c
-@@@ -470,12 -469,7 +470,12 @@@ static struct regulator_consumer_suppl
-  	},
-  };
-  
- +/* We take advantage of the fact that both defdcdc{2,3} are tied high */
- +static struct tps6507x_reg_platform_data tps6507x_platform_data = {
- +	.defdcdc_default = true,
- +};
- +
-- struct regulator_init_data tps65070_regulator_data[] = {
-+ static struct regulator_init_data tps65070_regulator_data[] = {
-  	/* dcdc1 */
-  	{
-  		.constraints = {
+Ben.
