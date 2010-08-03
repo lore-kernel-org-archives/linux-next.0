@@ -1,44 +1,42 @@
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-Subject: Re: [PATCH] pcmcia: avoid buffer overflow in pcmcia_setup_isa_irq
-Date: Tue, 3 Aug 2010 09:42:57 +0200
-Message-ID: <20100803074257.GA28420@comet.dominikbrodowski.net>
-References: <1280795899.11158.52.camel@lovely.krouter>
- <20100803074022.GA28158@comet.dominikbrodowski.net>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: Re: linux-next: build failure after merge of the block tree
+Date: Tue, 03 Aug 2010 09:46:05 +0200
+Message-ID: <4C57C93D.5060900@kernel.dk>
+References: <20100803131202.422af85f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from isilmar-3.linta.de ([188.40.101.200]:57111 "EHLO linta.de"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1752171Ab0HCHnm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 3 Aug 2010 03:43:42 -0400
-Content-Disposition: inline
-In-Reply-To: <20100803074022.GA28158@comet.dominikbrodowski.net>
+Received: from 0122700014.0.fullrate.dk ([95.166.99.235]:39333 "EHLO kernel.dk"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751401Ab0HCHqI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 3 Aug 2010 03:46:08 -0400
+In-Reply-To: <20100803131202.422af85f.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoph Fritz <chf.fritz@googlemail.com>, linux-pcmcia@lists.infradead.org, linux-next <linux-next@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Yehuda Sadeh <yehuda@hq.newdream.net>, Sage Weil <sage@newdream.net>
 
-The corresponding fix for 2.6.34 and earlier would be:
+On 2010-08-03 05:12, Stephen Rothwell wrote:
+> Hi Jens,
+> 
+> After merging the block tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> fs/ceph/rbd.c: In function 'rbd_rq_fn':
+> fs/ceph/rbd.c:1101: error: implicit declaration of function 'blk_fs_request'
+> fs/ceph/rbd.c:1101: error: implicit declaration of function 'blk_barrier_rq'
+> 
+> Caused by commit fc734ac98dbce1e3d3e1e1359524c279a336ac49 ("block: remove
+> wrappers for request type/flags") interacting with commit
+> e7fdb915217126d23ff2aafb2d5fdce21b763df1 ("ceph-rbd: rados block device")
+> from the ceph tree.
+> 
+> I applied the following merge fix patch (Christoph, I assume that this
+> should be directly applicable to the ceph tree, right?):
 
-diff --git a/drivers/pcmcia/pcmcia_resource.c b/drivers/pcmcia/pcmcia_resource.c
-index 7c3d03b..cfcf868 100644
---- a/drivers/pcmcia/pcmcia_resource.c
-+++ b/drivers/pcmcia/pcmcia_resource.c
-@@ -41,7 +41,7 @@ module_param(io_speed, int, 0444);
- #ifdef CONFIG_PCMCIA_PROBE
- #include <asm/irq.h>
- /* mask of IRQs already reserved by other cards, we should avoid using them */
--static u8 pcmcia_used_irq[NR_IRQS];
-+static u8 pcmcia_used_irq[32];
- #endif
- 
- static int pcmcia_adjust_io_region(struct resource *res, unsigned long start,
-@@ -768,6 +768,9 @@ int pcmcia_request_irq(struct pcmcia_device *p_dev, irq_req_t *req)
- 		for (try = 0; try < 64; try++) {
- 			irq = try % 32;
- 
-+			if (irq > NR_IRQS)
-+				continue;
-+
- 			/* marked as available by driver, and not blocked by userspace? */
- 			if (!((mask >> irq) & 1))
- 				continue;
+Yep, that'll work and should be applicable to ceph even when run outside
+of the block tree merge.
+
+-- 
+Jens Axboe
