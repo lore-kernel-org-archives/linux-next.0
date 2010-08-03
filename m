@@ -1,46 +1,65 @@
-From: "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: linux-next: build failure after merge of the final tree (tip
- tree related)
-Date: Mon, 02 Aug 2010 20:13:32 -0700
-Message-ID: <4C57895C.1070402@zytor.com>
-References: <20100803022310.bec3ba79.sfr@canb.auug.org.au>	 <20100802162810.GB4755@flint.arm.linux.org.uk> <1280799724.1902.84.camel@pasglop>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the xen tree with the swiotlb tree
+Date: Tue, 3 Aug 2010 14:13:51 +1000
+Message-ID: <20100803141351.cd70beca.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from terminus.zytor.com ([198.137.202.10]:60378 "EHLO mail.zytor.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35285 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751852Ab0HCDPB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 2 Aug 2010 23:15:01 -0400
-In-Reply-To: <1280799724.1902.84.camel@pasglop>
+	id S1752254Ab0HCEN5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 3 Aug 2010 00:13:57 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Russell King <rmk@arm.linux.org.uk>, Stephen Rothwell <sfr@canb.auug.org.au>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Peter Zijlstra <peterz@infradead.org>, Yinghai Lu <yinghai@kernel.org>
+To: Jeremy Fitzhardinge <jeremy@goop.org>, Xen Devel <Xen-devel@lists.xensource.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Sheng Yang <sheng@linux.intel.com>
 
-On 08/02/2010 06:42 PM, Benjamin Herrenschmidt wrote:
-> 
-> I'm happy to wait and sit on the memblock churn until after ARM's in.
-> 
-> I can then fixup my patches.
-> 
+Hi all,
 
-As far as x86 is concerned, I would like to try to get the whole thing
-into -tip fairly early in a kernel cycle, so that it can get -tip/-next
-testing for a while before merging.
+Today's linux-next merge of the xen tree got a conflict in
+drivers/xen/Kconfig drivers/xen/Makefile between commit
+b097186fd29d5bc5a26d1ae87995821ffc27b66e ("swiotlb-xen: SWIOTLB library
+for Xen PV guest with PCI passthrough") from the swiotlb tree and commit
+183d03cc4ff39e0f0d952c09aa96d0abfd6e0c3c ("xen: Xen PCI platform device
+driver") from the xen tree.
 
-I would much rather smoke out bugs like the qla2xxx failing to implement
-.shutdown and therefore doing DMA on random memory than just paper it
-over by functionally re-implementing a bunch of the memblock guts in x86.
-
-I still think that the memblock approach of having a separate data
-structure for all of memory and one for various used blocks is flawed,
-and that it would be a lot better to have a single data structure with
-attributes.  It would definitely make allocation saner.  Given that,
-there is a strong reason to keep as little of the guts exposed as possible.
-
-	-hpa
-
+Just overlapping additions.  I fixed it up (see below) and can carry the
+fix as necessary.
 -- 
-H. Peter Anvin, Intel Open Source Technology Center
-I work for Intel.  I don't speak on their behalf.
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/xen/Kconfig
+index 97199c2,0a88269..0000000
+--- a/drivers/xen/Kconfig
++++ b/drivers/xen/Kconfig
+@@@ -62,8 -62,13 +62,18 @@@ config XEN_SYS_HYPERVISO
+  	 virtual environment, /sys/hypervisor will still be present,
+  	 but will have no xen contents.
+  
+ +config SWIOTLB_XEN
+ +	def_bool y
+ +	depends on SWIOTLB
+ +
++ config XEN_PLATFORM_PCI
++ 	tristate "xen platform pci device driver"
++ 	depends on XEN_PVHVM
++ 	default m
++ 	help
++ 	  Driver for the Xen PCI Platform device: it is responsible for
++ 	  initializing xenbus and grant_table when running in a Xen HVM
++ 	  domain. As a consequence this driver is required to run any Xen PV
++ 	  frontend on Xen HVM.
+++
+  endmenu
+diff --cc drivers/xen/Makefile
+index 85f84cf,e392fb7..0000000
+--- a/drivers/xen/Makefile
++++ b/drivers/xen/Makefile
+@@@ -10,4 -10,4 +10,5 @@@ obj-$(CONFIG_XEN_BALLOON)	+= balloon.
+  obj-$(CONFIG_XEN_DEV_EVTCHN)	+= evtchn.o
+  obj-$(CONFIG_XENFS)		+= xenfs/
+  obj-$(CONFIG_XEN_SYS_HYPERVISOR)	+= sys-hypervisor.o
+ +obj-$(CONFIG_SWIOTLB_XEN)	+= swiotlb-xen.o
++ obj-$(CONFIG_XEN_PLATFORM_PCI)	+= platform-pci.o
