@@ -1,77 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the rr tree
-Date: Wed, 4 Aug 2010 12:15:11 +1000
-Message-ID: <20100804121511.a9b38b0d.sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the scsi tree
+Date: Wed, 4 Aug 2010 13:13:00 +1000
+Message-ID: <20100804131300.8570fe77.sfr@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__4_Aug_2010_13_13_00_+1000_gkjS+vD3cs9/D/PB"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:47649 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757957Ab0HDDNJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 3 Aug 2010 23:13:09 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>
+
+--Signature=_Wed__4_Aug_2010_13_13_00_+1000_gkjS+vD3cs9/D/PB
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Trond Myklebust <trond.myklebust@fys.uio.no>
-List-Id: linux-next.vger.kernel.org
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Rusty,
+Hi James,
 
-After merging the rr tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+After merging the scsi tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
 
-net/sunrpc/auth.c:74: error: 'param_ops_hashtbl_sz' undeclared here (not in a function)
+drivers/scsi/scsi_sysfs.c:384: warning: dereferencing 'void *' pointer
 
-Caused by commit 0685652df0929cec7d78efa85127f6eb34962132
-("param:param_ops") interacting with commit
-f8f853ab19fcc415b6eadd273373edc424916212 ("SUNRPC: Make the credential
-cache hashtable size configurable") from the nfs tree.
+Introduced by commit db5bd1e0b505c54ff492172ce4abc245cf6cd639 ("[SCSI]
+convert to the new PM framework").  This build does not have
+CONFIG_PM_OPS set.
 
-I added the following merge fix patch:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 4 Aug 2010 12:11:22 +1000
-Subject: [PATCH] nfs: update for module_param_named API change
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- net/sunrpc/auth.c |    9 +++++++--
- 1 files changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/net/sunrpc/auth.c b/net/sunrpc/auth.c
-index 880d0de..36cb660 100644
---- a/net/sunrpc/auth.c
-+++ b/net/sunrpc/auth.c
-@@ -39,7 +39,7 @@ static LIST_HEAD(cred_unused);
- static unsigned long number_cred_unused;
- 
- #define MAX_HASHTABLE_BITS (10) 
--static int param_set_hashtbl_sz(const char *val, struct kernel_param *kp)
-+static int param_set_hashtbl_sz(const char *val, const struct kernel_param *kp)
- {
- 	unsigned long num;
- 	unsigned int nbits;
-@@ -61,7 +61,7 @@ out_inval:
- 	return -EINVAL;
- }
- 
--static int param_get_hashtbl_sz(char *buffer, struct kernel_param *kp)
-+static int param_get_hashtbl_sz(char *buffer, const struct kernel_param *kp)
- {
- 	unsigned int nbits;
- 
-@@ -71,6 +71,11 @@ static int param_get_hashtbl_sz(char *buffer, struct kernel_param *kp)
- 
- #define param_check_hashtbl_sz(name, p) __param_check(name, p, unsigned int);
- 
-+static struct kernel_param_ops param_ops_hashtbl_sz = {
-+	.set = param_set_hashtbl_sz,
-+	.get = param_get_hashtbl_sz,
-+};
-+
- module_param_named(auth_hashtable_size, auth_hashbits, hashtbl_sz, 0644);
- MODULE_PARM_DESC(auth_hashtable_size, "RPC credential cache hashtable size");
- 
--- 
-1.7.1
-
--- 
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__4_Aug_2010_13_13_00_+1000_gkjS+vD3cs9/D/PB
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMWNq8AAoJEDMEi1NhKgbs9acIAITbCHXGDwOTZRj63wqyw5El
+f+VqpRlmXboHeF/wkVB3Snq5alElv/8sOyvYODUe/5Dy/8xH21HvEaOaOPENGndu
+KZ1y9GXKEb14pFZuQfpAd5RZjJdnoGRUV7w7DiiT+8iuWTYBIN7msi1xAwpPFoQL
+E3kK/bX0d4HvvKfbTyVnZvJyQfuW/DUBYVCxWqFVnrJiGxF+n9sZdfg2ZqE8QNGF
+aDJP+3KjZNDx+yL4jrJPhTdu7xLpr01FSppMG8pl67SM5gF3/7U9+hJVOUkDJuDE
+WkRy7pKxiLP7qVJpTF0rVArvrmgLlt1SKpP/D0SLlACYnTiNepKpzI9owPo4SVk=
+=YRjD
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__4_Aug_2010_13_13_00_+1000_gkjS+vD3cs9/D/PB--
