@@ -1,77 +1,54 @@
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: Re: [Xen-devel] linux-next: manual merge of the xen tree with the
- swiotlb tree
-Date: Tue, 3 Aug 2010 09:49:47 -0400
-Message-ID: <20100803134947.GC4751@phenom.dumpdata.com>
-References: <20100803141351.cd70beca.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the nfs tree
+Date: Wed, 4 Aug 2010 11:32:14 +1000
+Message-ID: <20100804113214.62913199.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__4_Aug_2010_11_32_14_+1000_0W/C=q.m31.J5a=T"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:36753 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756509Ab0HCNui (ORCPT
-	<rfc822;<linux-next@vger.kernel.org>>);
-	Tue, 3 Aug 2010 09:50:38 -0400
-Content-Disposition: inline
-In-Reply-To: <20100803141351.cd70beca.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:34731 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757956Ab0HDBcV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 3 Aug 2010 21:32:21 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jeremy Fitzhardinge <jeremy@goop.org>, Xen Devel <Xen-devel@lists.xensource.com>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Konrad@rcsinet12.oracle.com, Sheng Yang <sheng@linux.intel.com>
+To: Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Aug 03, 2010 at 02:13:51PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the xen tree got a conflict in
-> drivers/xen/Kconfig drivers/xen/Makefile between commit
-> b097186fd29d5bc5a26d1ae87995821ffc27b66e ("swiotlb-xen: SWIOTLB library
-> for Xen PV guest with PCI passthrough") from the swiotlb tree and commit
-> 183d03cc4ff39e0f0d952c09aa96d0abfd6e0c3c ("xen: Xen PCI platform device
-> driver") from the xen tree.
-> 
-> Just overlapping additions.  I fixed it up (see below) and can carry the
-> fix as necessary.
+--Signature=_Wed__4_Aug_2010_11_32_14_+1000_0W/C=q.m31.J5a=T
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thank you!
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc drivers/xen/Kconfig
-> index 97199c2,0a88269..0000000
-> --- a/drivers/xen/Kconfig
-> +++ b/drivers/xen/Kconfig
-> @@@ -62,8 -62,13 +62,18 @@@ config XEN_SYS_HYPERVISO
->   	 virtual environment, /sys/hypervisor will still be present,
->   	 but will have no xen contents.
->   
->  +config SWIOTLB_XEN
->  +	def_bool y
->  +	depends on SWIOTLB
->  +
-> + config XEN_PLATFORM_PCI
-> + 	tristate "xen platform pci device driver"
-> + 	depends on XEN_PVHVM
-> + 	default m
-> + 	help
-> + 	  Driver for the Xen PCI Platform device: it is responsible for
-> + 	  initializing xenbus and grant_table when running in a Xen HVM
-> + 	  domain. As a consequence this driver is required to run any Xen PV
-> + 	  frontend on Xen HVM.
-> ++
->   endmenu
-> diff --cc drivers/xen/Makefile
-> index 85f84cf,e392fb7..0000000
-> --- a/drivers/xen/Makefile
-> +++ b/drivers/xen/Makefile
-> @@@ -10,4 -10,4 +10,5 @@@ obj-$(CONFIG_XEN_BALLOON)	+= balloon.
->   obj-$(CONFIG_XEN_DEV_EVTCHN)	+= evtchn.o
->   obj-$(CONFIG_XENFS)		+= xenfs/
->   obj-$(CONFIG_XEN_SYS_HYPERVISOR)	+= sys-hypervisor.o
->  +obj-$(CONFIG_SWIOTLB_XEN)	+= swiotlb-xen.o
-> + obj-$(CONFIG_XEN_PLATFORM_PCI)	+= platform-pci.o
-> 
-> _______________________________________________
-> Xen-devel mailing list
-> Xen-devel@lists.xensource.com
-> http://lists.xensource.com/xen-devel
+Hi Trond,
+
+After merging the nfs tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
+
+fs/nfs/file.c: In function 'nfs_file_flush':
+fs/nfs/file.c:211: warning: unused variable 'ctx'
+
+Introduced by commit 7f09dcf61bc211b0a71a5caa15ceb9b7bbec2126 ("NFS: Fix
+up the fsync code").
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__4_Aug_2010_11_32_14_+1000_0W/C=q.m31.J5a=T
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMWMMeAAoJEDMEi1NhKgbsHTwIAIFsvrLpFY5EdaCFBScljgCs
+ajkMei30epReL+p2w42p15B3nNLJMa1xJyWW4OyKoz9/IKXDtUSBbbzROnKptq4/
+yuhZBB4mFE3M/ZsMUzIbv+HsEi49M8mcrMebzhR63NfT2d/iW95hDPrfADV3k9/o
+bMxZDPVJ+pNRyy7gBZzXiTkQQ5vgREXuRSizbwG71ZGbC4CjUubtpmyuummZ8Gfi
+uGrIRHx2QKFG5CFrrgvIAXsxIiRUSQVIXCzQ0mjD8NrAM2v0LMIrbg8HKI0SzLru
+iuCCQq2QiAvEaa+Mn8jyGXEtMLgXsK9xkCg+IBeVUruVrbglOcjemrDww1DufSk=
+=Ek3P
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__4_Aug_2010_11_32_14_+1000_0W/C=q.m31.J5a=T--
