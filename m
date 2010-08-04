@@ -1,50 +1,41 @@
-From: Trond Myklebust <trond.myklebust@fys.uio.no>
-Subject: Re: linux-next: build failure after merge of the final tree (nfs
- tree related)
-Date: Wed, 04 Aug 2010 08:58:56 -0400
-Message-ID: <1280926736.3011.24.camel@heimdal.trondhjem.org>
-References: <20100804145406.f0fc5ea4.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+Date: Wed, 4 Aug 2010 08:52:13 -0700
+Message-ID: <20100804155213.GA27244@kroah.com>
+References: <20100804142531.aea95c0b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-out1.uio.no ([129.240.10.57]:35483 "EHLO mail-out1.uio.no"
+Received: from kroah.org ([198.145.64.141]:59919 "EHLO coco.kroah.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932455Ab0HDM7L (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 4 Aug 2010 08:59:11 -0400
-In-Reply-To: <20100804145406.f0fc5ea4.sfr@canb.auug.org.au>
+	id S1754426Ab0HDPxJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 4 Aug 2010 11:53:09 -0400
+Content-Disposition: inline
+In-Reply-To: <20100804142531.aea95c0b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Narendra K <Narendra_K@dell.com>, Jordan Hargrave <jordan_hargrave@dell.com>, Jesse Barnes <jbarnes@virtuousgeek.org>, Guenter Roeck <guenter.roeck@ericsson.com>
 
-On Wed, 2010-08-04 at 14:54 +1000, Stephen Rothwell wrote:
-> Hi Trond,
+On Wed, Aug 04, 2010 at 02:25:31PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> After merging the final tree, today's linux-next build (sparc
-> defconfig) failed like this:
+> After merging the driver-core tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 > 
-> `rpc_destroy_authunix' referenced in section `.init.text' of net/built-in.o: defined in discarded section `.exit.text' of net/built-in.o
+> drivers/pci/pci-label.c:100: error: unknown field 'owner' specified in initializer
+> drivers/pci/pci-label.c:100: warning: initialization from incompatible pointer type
+> drivers/pci/pci-label.c:105: error: unknown field 'owner' specified in initializer
+> drivers/pci/pci-label.c:105: warning: initialization from incompatible pointer type
 > 
-> Caused by commit 4c09a3aef02ef9bfab8322fadde269290563ede2 ("NFS: Ensure
-> the AUTH_UNIX credcache is allocated dynamically").
+> Caused by commit 60cc62ad579afa0eb5bded82e08dd0617d461d52 ("sysfs: Remove
+> owner field from sysfs struct attribute") interacting with commit
+> 911e1c9b05a8e3559a7aa89083930700a0b9e7ee ("PCI: export SMBIOS provided
+> firmware instance and label to sysfs") from the pci tree.
 > 
-> It also caused these warnings:
-> 
-> WARNING: vmlinux.o(.init.text+0x1e3b4): Section mismatch in reference from the f
-> unction rpcauth_init_module() to the function .exit.text:rpc_destroy_authunix()
-> The function __init rpcauth_init_module() references
-> a function __exit rpc_destroy_authunix().
-> This is often seen when error handling in the init function
-> uses functionality in the exit path.
-> The fix is often to remove the __exit annotation of
-> rpc_destroy_authunix() so it may be used outside an exit section.
-> 
-> I applied the following patch for today:
+> I applied the following merge fix patch (Jesse, this patch can already be
+> applied to the pci tree without problems):
 
-Hi Stephen,
+Thanks, your fix looks correct, that field is now gone.
 
-Thanks! I've fixed this up in the NFS linux-next tree.
-
-Cheers
-  Trond
+greg k-h
