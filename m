@@ -1,43 +1,50 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] ceph: rbd depends on BLOCK
-Date: Wed, 4 Aug 2010 10:16:24 -0700
-Message-ID: <20100804101624.5189893c.randy.dunlap@oracle.com>
-References: <20100804151035.14678528.sfr@canb.auug.org.au>
+From: Jesse Barnes <jbarnes@virtuousgeek.org>
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+Date: Wed, 4 Aug 2010 14:24:12 -0700
+Message-ID: <20100804142412.429e6b06@virtuousgeek.org>
+References: <20100804142531.aea95c0b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:58590 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755107Ab0HDRQl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Aug 2010 13:16:41 -0400
-In-Reply-To: <20100804151035.14678528.sfr@canb.auug.org.au>
+Received: from cpoproxy1-pub.bluehost.com ([69.89.21.11]:57886 "HELO
+	cpoproxy1-pub.bluehost.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with SMTP id S1759091Ab0HDVYP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Aug 2010 17:24:15 -0400
+In-Reply-To: <20100804142531.aea95c0b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Sage Weil <sage@newdream.net>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, ceph-devel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Narendra K <Narendra_K@dell.com>, Jordan Hargrave <jordan_hargrave@dell.com>, Guenter Roeck <guenter.roeck@ericsson.com>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+On Wed, 4 Aug 2010 14:25:31 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-When CONFIG_BLOCK is not enabled, fs/ceph/rbd has:
-file: fs/ceph/rbd.c: errors: 71, warnings: 18
+> Hi Greg,
+> 
+> After merging the driver-core tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> drivers/pci/pci-label.c:100: error: unknown field 'owner' specified in initializer
+> drivers/pci/pci-label.c:100: warning: initialization from incompatible pointer type
+> drivers/pci/pci-label.c:105: error: unknown field 'owner' specified in initializer
+> drivers/pci/pci-label.c:105: warning: initialization from incompatible pointer type
+> 
+> Caused by commit 60cc62ad579afa0eb5bded82e08dd0617d461d52 ("sysfs: Remove
+> owner field from sysfs struct attribute") interacting with commit
+> 911e1c9b05a8e3559a7aa89083930700a0b9e7ee ("PCI: export SMBIOS provided
+> firmware instance and label to sysfs") from the pci tree.
+> 
+> I applied the following merge fix patch (Jesse, this patch can already be
+> applied to the pci tree without problems):
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 4 Aug 2010 14:21:42 +1000
+> Subject: [PATCH] pci: update for owner removal from struct device_attribute
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-This is due to BLOCK being spelled as CONFIG_BLOCK
-(and depends on being spelled as select).
+Applied, thanks.
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- fs/ceph/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- linux-next-20100804.orig/fs/ceph/Kconfig
-+++ linux-next-20100804/fs/ceph/Kconfig
-@@ -28,7 +28,7 @@ config CEPH_FS_PRETTYDEBUG
- config CEPH_RBD
- 	bool "Rados block device (RBD)"
- 	depends on CEPH_FS
--	select  CONFIG_BLOCK
-+	depends on BLOCK
- 	default y
- 	help
- 	  If you say Y here, ceph will include rbd, the RADOS block
+-- 
+Jesse Barnes, Intel Open Source Technology Center
