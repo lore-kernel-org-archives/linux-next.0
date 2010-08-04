@@ -1,41 +1,70 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: Re: linux-next: build warning after merge of the scsi tree
-Date: Wed, 04 Aug 2010 00:17:56 -0400
-Message-ID: <1280895476.11045.323.camel@mulgrave.site>
-References: <20100804131300.8570fe77.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the driver-core tree
+Date: Wed, 4 Aug 2010 14:25:31 +1000
+Message-ID: <20100804142531.aea95c0b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:32986 "EHLO
-	bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751628Ab0HDESJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 4 Aug 2010 00:18:09 -0400
-In-Reply-To: <20100804131300.8570fe77.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:39501 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752577Ab0HDEZi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 4 Aug 2010 00:25:38 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, linux-scsi <linux-scsi@vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Narendra K <Narendra_K@dell.com>, Jordan Hargrave <jordan_hargrave@dell.com>, Jesse Barnes <jbarnes@virtuousgeek.org>, Guenter Roeck <guenter.roeck@ericsson.com>
 
-cc linux-scsi added
+Hi Greg,
 
-On Wed, 2010-08-04 at 13:13 +1000, Stephen Rothwell wrote:
-> Hi James,
-> 
-> After merging the scsi tree, today's linux-next build (powerpc
-> ppc64_defconfig) produced this warning:
-> 
-> drivers/scsi/scsi_sysfs.c:384: warning: dereferencing 'void *' pointer
-> 
-> Introduced by commit db5bd1e0b505c54ff492172ce4abc245cf6cd639 ("[SCSI]
-> convert to the new PM framework").  This build does not have
-> CONFIG_PM_OPS set.
+After merging the driver-core tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-So this one looks to be a compiler error.  in the none CONFIG_PM_OPS
-case, we have
+drivers/pci/pci-label.c:100: error: unknown field 'owner' specified in initializer
+drivers/pci/pci-label.c:100: warning: initialization from incompatible pointer type
+drivers/pci/pci-label.c:105: error: unknown field 'owner' specified in initializer
+drivers/pci/pci-label.c:105: warning: initialization from incompatible pointer type
 
-scsi_priv.h:#define scsi_bus_pm_ops             (*NULL)
+Caused by commit 60cc62ad579afa0eb5bded82e08dd0617d461d52 ("sysfs: Remove
+owner field from sysfs struct attribute") interacting with commit
+911e1c9b05a8e3559a7aa89083930700a0b9e7ee ("PCI: export SMBIOS provided
+firmware instance and label to sysfs") from the pci tree.
 
-So &scsi_bus_pm_ops should be NULL (not a deref of null).
+I applied the following merge fix patch (Jesse, this patch can already be
+applied to the pci tree without problems):
 
-James
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 4 Aug 2010 14:21:42 +1000
+Subject: [PATCH] pci: update for owner removal from struct device_attribute
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/pci/pci-label.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pci/pci-label.c b/drivers/pci/pci-label.c
+index 111500e..90c0a72 100644
+--- a/drivers/pci/pci-label.c
++++ b/drivers/pci/pci-label.c
+@@ -97,12 +97,12 @@ smbiosinstance_show(struct device *dev,
+ }
+ 
+ static struct device_attribute smbios_attr_label = {
+-	.attr = {.name = "label", .mode = 0444, .owner = THIS_MODULE},
++	.attr = {.name = "label", .mode = 0444},
+ 	.show = smbioslabel_show,
+ };
+ 
+ static struct device_attribute smbios_attr_instance = {
+-	.attr = {.name = "index", .mode = 0444, .owner = THIS_MODULE},
++	.attr = {.name = "index", .mode = 0444},
+ 	.show = smbiosinstance_show,
+ };
+ 
+-- 
+1.7.1
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
