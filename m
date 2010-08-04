@@ -1,33 +1,77 @@
-From: Trond Myklebust <trond.myklebust@fys.uio.no>
-Subject: Re: linux-next: build warning after merge of the nfs tree
-Date: Tue, 03 Aug 2010 22:09:21 -0400
-Message-ID: <1280887762.24669.25.camel@heimdal.trondhjem.org>
-References: <20100804113214.62913199.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the rr tree
+Date: Wed, 4 Aug 2010 12:15:11 +1000
+Message-ID: <20100804121511.a9b38b0d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100804113214.62913199.sfr@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Trond Myklebust <trond.myklebust@fys.uio.no>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, 2010-08-04 at 11:32 +1000, Stephen Rothwell wrote:
-> Hi Trond,
-> 
-> After merging the nfs tree, today's linux-next build (powerpc
-> ppc64_defconfig) produced this warning:
-> 
-> fs/nfs/file.c: In function 'nfs_file_flush':
-> fs/nfs/file.c:211: warning: unused variable 'ctx'
-> 
-> Introduced by commit 7f09dcf61bc211b0a71a5caa15ceb9b7bbec2126 ("NFS: Fix
-> up the fsync code").
+Hi Rusty,
 
-Hi Stephen,
+After merging the rr tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Sorry. I've fixed the above warning up in today's tree.
+net/sunrpc/auth.c:74: error: 'param_ops_hashtbl_sz' undeclared here (not in a function)
 
-Cheers
-  Trond
+Caused by commit 0685652df0929cec7d78efa85127f6eb34962132
+("param:param_ops") interacting with commit
+f8f853ab19fcc415b6eadd273373edc424916212 ("SUNRPC: Make the credential
+cache hashtable size configurable") from the nfs tree.
+
+I added the following merge fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 4 Aug 2010 12:11:22 +1000
+Subject: [PATCH] nfs: update for module_param_named API change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ net/sunrpc/auth.c |    9 +++++++--
+ 1 files changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/net/sunrpc/auth.c b/net/sunrpc/auth.c
+index 880d0de..36cb660 100644
+--- a/net/sunrpc/auth.c
++++ b/net/sunrpc/auth.c
+@@ -39,7 +39,7 @@ static LIST_HEAD(cred_unused);
+ static unsigned long number_cred_unused;
+ 
+ #define MAX_HASHTABLE_BITS (10) 
+-static int param_set_hashtbl_sz(const char *val, struct kernel_param *kp)
++static int param_set_hashtbl_sz(const char *val, const struct kernel_param *kp)
+ {
+ 	unsigned long num;
+ 	unsigned int nbits;
+@@ -61,7 +61,7 @@ out_inval:
+ 	return -EINVAL;
+ }
+ 
+-static int param_get_hashtbl_sz(char *buffer, struct kernel_param *kp)
++static int param_get_hashtbl_sz(char *buffer, const struct kernel_param *kp)
+ {
+ 	unsigned int nbits;
+ 
+@@ -71,6 +71,11 @@ static int param_get_hashtbl_sz(char *buffer, struct kernel_param *kp)
+ 
+ #define param_check_hashtbl_sz(name, p) __param_check(name, p, unsigned int);
+ 
++static struct kernel_param_ops param_ops_hashtbl_sz = {
++	.set = param_set_hashtbl_sz,
++	.get = param_get_hashtbl_sz,
++};
++
+ module_param_named(auth_hashtable_size, auth_hashbits, hashtbl_sz, 0644);
+ MODULE_PARM_DESC(auth_hashtable_size, "RPC credential cache hashtable size");
+ 
+-- 
+1.7.1
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
