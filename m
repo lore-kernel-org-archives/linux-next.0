@@ -1,44 +1,83 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tty tree with the kgdb tree
-Date: Thu, 5 Aug 2010 13:17:00 +1000
-Message-ID: <20100805131700.5c03444c.sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the workqueues tree with the Linus'
+ tree
+Date: Thu, 5 Aug 2010 13:45:45 +1000
+Message-ID: <20100805134545.93ccb1b4.sfr@canb.auug.org.au>
+References: <20100723144600.dd4da992.sfr@canb.auug.org.au>
+	<4C497CD5.5010908@kernel.org>
+	<20100723213148.3d2193a3.sfr@canb.auug.org.au>
+	<4C497E5F.80301@kernel.org>
+	<20100723214233.7cb7de8d.sfr@canb.auug.org.au>
+	<20100805130459.f62468cd.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__5_Aug_2010_13_45_45_+1000_u819=hHGuf89bSBC"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:42125 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:54833 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756958Ab0HEDRC (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 4 Aug 2010 23:17:02 -0400
+	id S1758684Ab0HEDpu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 4 Aug 2010 23:45:50 -0400
+In-Reply-To: <20100805130459.f62468cd.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Wessel <jason.wessel@windriver.com>, Jesse Barnes <jbarnes@virtuousgeek.org>, Andy Shevchenko <ext-andriy.shevchenko@nokia.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Steve French <smfrench@gmail.com>, linux-cifs@vger.kernel.org
 
-Hi Greg,
+--Signature=_Thu__5_Aug_2010_13_45_45_+1000_u819=hHGuf89bSBC
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the tty tree got a conflict in
-drivers/char/vt.c between commit be6f9f80724e1684987c486c33c4eb882ba50680
-("vt,console,kdb: automatically set kdb LINES variable") from the kgdb
-tree and commit 46ca223803ae544fb5460bc81d961244866fcdc4 ("vt: clean up
-the code - use kernel library") from the tty tree.
+Hi Tejun,
 
-Just overlapping additions.  I fixed it up (see below) and can carry the
-fix as necessary.
--- 
+On Thu, 5 Aug 2010 13:04:59 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> On Fri, 23 Jul 2010 21:42:33 +1000 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> >
+> > On Fri, 23 Jul 2010 13:34:55 +0200 Tejun Heo <tj@kernel.org> wrote:
+> > >
+> > > I was thinking about sending pull request w/ a note describing how to
+> > > resolve the conflict.  Would pulling in master before requesting pull
+> > > be better?
+> >=20
+> > Either would work.  Linus is fine with doing merge fixups and, after al=
+l,
+> > I figured it out. :-)
+> >=20
+> > A description always helps, of course.
+>=20
+> Linus has merged the cifs tree, so you could fix these conflicts in your
+> tree by merging the cifs tree that Linus' merged (rather than merging
+> against all of Linus' tree).   That would be commit
+> cb76d5e25008b76fb8e348c861d32659430ac3fa ("cifs: fsc should not default
+> to "on"") in Linus' tree.
+>=20
+> Or you could leave it all to Linus if you want to.
+
+Actually there is some more stuff in the cifs tree that has not gone to
+Linus, yet.  Sorry about that.
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/char/vt.c
-index 4a9eb30,0ecde1b..0000000
---- a/drivers/char/vt.c
-+++ b/drivers/char/vt.c
-@@@ -104,7 -104,7 +104,8 @@@
-  #include <linux/io.h>
-  #include <asm/system.h>
-  #include <linux/uaccess.h>
- +#include <linux/kdb.h>
-+ #include <linux/ctype.h>
-  
-  #define MAX_NR_CON_DRIVER 16
-  
+--Signature=_Thu__5_Aug_2010_13_45_45_+1000_u819=hHGuf89bSBC
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMWjPpAAoJEDMEi1NhKgbsG3QH/3JSjfxsFgHtA9V85DxJ078c
+VLQFoIdzdvyNgm+MraWk+bfzU4rqBwwDLOCr0O5EsUpVs6xd1BN9Cc5j3oO3rNIb
+daOkYH0Q+OGyHoZuXdFQi2nxqQtYlucNxDfrbKtbehBGmkDLY3QDriPCXlxT5Whv
+70n0Kqi34XP+43urXCKwgGuXP6cwtBBDSPriu/IYXSa9p4l+PfZ0ymqhA9T7oaW9
+JlyiTwiktnuQcxKfbV34BM0zEhPy6z3Oo1Rb0XHR5G3Rb0CLBSHYivxxImfEx4RC
+D0FTA5jvUe3H6SVeXE6quqAvYWs2qCqXhNuQPV07Ub44PwzD2vHZV4Klo8NuZ54=
+=J3gW
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__5_Aug_2010_13_45_45_+1000_u819=hHGuf89bSBC--
