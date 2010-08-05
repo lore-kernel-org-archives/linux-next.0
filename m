@@ -1,34 +1,64 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the tty tree with the kgdb tree
-Date: Thu, 5 Aug 2010 08:51:26 -0700
-Message-ID: <20100805155126.GB11121@kroah.com>
-References: <20100805131700.5c03444c.sfr@canb.auug.org.au>
+From: Kevin Hilman <khilman@deeprootsystems.com>
+Subject: Re: linux-next: manual merge of the davinci tree with Linus' tree
+Date: Thu, 5 Aug 2010 09:30:15 -0700
+Message-ID: <AANLkTimMLts_x_BujsqYupkmA-UyB9mNyD6KZ0OeNRWd@mail.gmail.com>
+References: <20100803114853.27a29365.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:46554 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752491Ab0HEPwD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 5 Aug 2010 11:52:03 -0400
-Content-Disposition: inline
-In-Reply-To: <20100805131700.5c03444c.sfr@canb.auug.org.au>
+Received: from mail-iw0-f174.google.com ([209.85.214.174]:50861 "EHLO
+	mail-iw0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933640Ab0HEQaR convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Aug 2010 12:30:17 -0400
+In-Reply-To: <20100803114853.27a29365.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Wessel <jason.wessel@windriver.com>, Jesse Barnes <jbarnes@virtuousgeek.org>, Andy Shevchenko <ext-andriy.shevchenko@nokia.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>
 
-On Thu, Aug 05, 2010 at 01:17:00PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the tty tree got a conflict in
-> drivers/char/vt.c between commit be6f9f80724e1684987c486c33c4eb882ba50680
-> ("vt,console,kdb: automatically set kdb LINES variable") from the kgdb
-> tree and commit 46ca223803ae544fb5460bc81d961244866fcdc4 ("vt: clean up
-> the code - use kernel library") from the tty tree.
-> 
-> Just overlapping additions.  I fixed it up (see below) and can carry the
-> fix as necessary.
+On Mon, Aug 2, 2010 at 6:48 PM, Stephen Rothwell <sfr@canb.auug.org.au>=
+ wrote:
+> Hi Kevin,
+>
+> Today's linux-next merge of the davinci tree got a conflict in
+> arch/arm/mach-davinci/board-da850-evm.c between commit
+> 8b24599e72c9aee1ea1187e29cb9c5de9f449cce ("davinci: da850/omap-l138 e=
+vm:
+> account for DEFDCDC{2,3} being tied high") from Linus' tree and commi=
+t
+> ebd1e7808b2fe72d627bdab7bcf61126a831ca5a ("davinci: da850 evm: sparse
+> cleanup: make file local variables static") from the davinci tree.
+>
+> Just context changes. =A0I fixed it up (see below) and can carry the =
+fix
+> for a while.
 
-Thanks, that's an easy fixup.
+Thanks for catching this.
 
-greg k-h
+Before I submit to Linus, I'll merge this with the original tree
+(Liam's voltage-2.6 tree) so Linus doesn't have to fix this up.
+
+Kevin
+
+> diff --cc arch/arm/mach-davinci/board-da850-evm.c
+> index b280efb,f6942dd..0000000
+> --- a/arch/arm/mach-davinci/board-da850-evm.c
+> +++ b/arch/arm/mach-davinci/board-da850-evm.c
+> @@@ -470,12 -469,7 +470,12 @@@ static struct regulator_consumer_suppl
+> =A0 =A0 =A0 =A0},
+> =A0};
+>
+> =A0+/* We take advantage of the fact that both defdcdc{2,3} are tied =
+high */
+> =A0+static struct tps6507x_reg_platform_data tps6507x_platform_data =3D=
+ {
+> =A0+ =A0 =A0 =A0.defdcdc_default =3D true,
+> =A0+};
+> =A0+
+> - struct regulator_init_data tps65070_regulator_data[] =3D {
+> + static struct regulator_init_data tps65070_regulator_data[] =3D {
+> =A0 =A0 =A0 =A0/* dcdc1 */
+> =A0 =A0 =A0 =A0{
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.constraints =3D {
+>
