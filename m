@@ -1,70 +1,73 @@
-From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Subject: Re: linux-next: manual merge of the workqueues tree with the Linus'
- tree
-Date: Thu, 5 Aug 2010 13:04:59 +1000
-Message-ID: <20100805130459.f62468cd.sfr@canb.auug.org.au>
-References: <20100723144600.dd4da992.sfr@canb.auug.org.au>
-	<4C497CD5.5010908@kernel.org>
-	<20100723213148.3d2193a3.sfr@canb.auug.org.au>
-	<4C497E5F.80301@kernel.org>
-	<20100723214233.7cb7de8d.sfr@canb.auug.org.au>
+From: James Morris <jmorris@namei.org>
+Subject: Re: [PATCH -next] apparmor: depends on NET
+Date: Thu, 5 Aug 2010 13:15:16 +1000 (EST)
+Message-ID: <alpine.LRH.2.00.1008051313500.8765@tundra.namei.org>
+References: <20100802144432.70293bda.sfr@canb.auug.org.au> <20100802105218.c2050fff.randy.dunlap@oracle.com> <4C57825E.6020103@canonical.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__5_Aug_2010_13_04_59_+1000_MI9q3On79epXvy56"
-Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20100723214233.7cb7de8d.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, David Howells <dhowells-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from tundra.namei.org ([65.99.196.166]:41974 "EHLO tundra.namei.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756958Ab0HEDP0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 4 Aug 2010 23:15:26 -0400
+In-Reply-To: <4C57825E.6020103@canonical.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: John Johansen <john.johansen@canonical.com>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-security-module@vger.kernel.org
 
---Signature=_Thu__5_Aug_2010_13_04_59_+1000_MI9q3On79epXvy56
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 2 Aug 2010, John Johansen wrote:
 
-Hi Tejun,
+> On 08/02/2010 10:52 AM, Randy Dunlap wrote:
+> > From: Randy Dunlap <randy.dunlap@oracle.com>
+> > 
+> > SECURITY_APPARMOR should depend on NET since AUDIT needs
+> > (depends on) NET.
+> > 
+> yes, thanks .that depends seems to have been dropped when I
+> split out networking hooks for later submission
+> 
+> Signed-off-by: John Johansen <john.johansen@canonical.com>
 
-On Fri, 23 Jul 2010 21:42:33 +1000 Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org> =
-wrote:
->
-> On Fri, 23 Jul 2010 13:34:55 +0200 Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
-> >
-> > I was thinking about sending pull request w/ a note describing how to
-> > resolve the conflict.  Would pulling in master before requesting pull
-> > be better?
->=20
-> Either would work.  Linus is fine with doing merge fixups and, after all,
-> I figured it out. :-)
->=20
-> A description always helps, of course.
+Thanks, I'll fix these up in the next day or so now that the code is 
+merged with Linus.
 
-Linus has merged the cifs tree, so you could fix these conflicts in your
-tree by merging the cifs tree that Linus' merged (rather than merging
-against all of Linus' tree).   That would be commit
-cb76d5e25008b76fb8e348c861d32659430ac3fa ("cifs: fsc should not default
-to "on"") in Linus' tree.
 
-Or you could leave it all to Linus if you want to.
---=20
-Cheers,
-Stephen Rothwell                    sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
-http://www.canb.auug.org.au/~sfr/
+> 
+> > Fixes 70-80 errors that occur when CONFIG_NET is not enabled,
+> > but APPARMOR selects AUDIT without qualification.  E.g.:
+> > 
+> > audit.c:(.text+0x33361): undefined reference to `netlink_unicast'
+> > (.text+0x333df): undefined reference to `netlink_unicast'
+> > audit.c:(.text+0x3341d): undefined reference to `skb_queue_tail'
+> > audit.c:(.text+0x33424): undefined reference to `kfree_skb'
+> > audit.c:(.text+0x334cb): undefined reference to `kfree_skb'
+> > audit.c:(.text+0x33597): undefined reference to `skb_put'
+> > audit.c:(.text+0x3369b): undefined reference to `__alloc_skb'
+> > audit.c:(.text+0x336d7): undefined reference to `kfree_skb'
+> > (.text+0x3374c): undefined reference to `__alloc_skb'
+> > auditfilter.c:(.text+0x35305): undefined reference to `skb_queue_tail'
+> > lsm_audit.c:(.text+0x2873): undefined reference to `init_net'
+> > lsm_audit.c:(.text+0x2878): undefined reference to `dev_get_by_index'
+> > 
+> > Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> > Cc: John Johansen <john.johansen@canonical.com>
+> > ---
+> >  security/apparmor/Kconfig |    2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > --- linux-next-20100802.orig/security/apparmor/Kconfig
+> > +++ linux-next-20100802/security/apparmor/Kconfig
+> > @@ -1,6 +1,6 @@
+> >  config SECURITY_APPARMOR
+> >  	bool "AppArmor support"
+> > -	depends on SECURITY
+> > +	depends on SECURITY && NET
+> >  	select AUDIT
+> >  	select SECURITY_PATH
+> >  	select SECURITYFS
+> 
 
---Signature=_Thu__5_Aug_2010_13_04_59_+1000_MI9q3On79epXvy56
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMWipbAAoJEDMEi1NhKgbsIXwIAKDIhgsSkw+dLH5zuFDoUcuq
-DbcgI0RXEmnR2Nd8PcH/XKGdYcevGmrbT/n6TwU0glPDNHYDEirNRn5BLLy4wCx8
-aC23nEA15TrqqwlwO4wQ45n7t+EKJgLNnxlggbhDU0x2CMusWK9+xhplNDcsTKm+
-4366RF7zhvAPc/z7r1hcSMhe2ZAvp1XnnxyKu+HKRG7SdFh2AvM0dwotYb0A0M0R
-OHeOTnUZi/K2wTpiFxVrHSSBwyDJHPili4bRKx7P093cp8CWICR5xOtxALI52ixB
-gRESUdXpSX8wR+U/INQzR/goOYsDK9g7WXtz/eRDFD0rZGFmtuSSEt0dpQBmR6U=
-=IgVT
------END PGP SIGNATURE-----
-
---Signature=_Thu__5_Aug_2010_13_04_59_+1000_MI9q3On79epXvy56--
+-- 
+James Morris
+<jmorris@namei.org>
