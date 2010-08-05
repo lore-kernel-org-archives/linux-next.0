@@ -1,45 +1,54 @@
-From: John Fastabend <john.r.fastabend@intel.com>
-Subject: Re: build failure
-Date: Thu, 05 Aug 2010 09:48:01 -0700
-Message-ID: <4C5AEB41.9050903@intel.com>
-References: <4C5A4CF4.4070203@linux.vnet.ibm.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the usb tree with Linus' tree
+Date: Thu, 5 Aug 2010 15:36:49 -0700
+Message-ID: <20100805223649.GD18619@kroah.com>
+References: <20100805132208.74bf6ab9.sfr@canb.auug.org.au>
+ <alpine.LNX.2.00.1008051216260.29919@pobox.suse.cz>
+ <op.vgynpf0k7p4s8u@pikus>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:62323 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750881Ab0HEQsC (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 5 Aug 2010 12:48:02 -0400
-In-Reply-To: <4C5A4CF4.4070203@linux.vnet.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: divya <dipraksh@linux.vnet.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linuxppc-dev@ozlabs.org" <linuxppc-dev@ozlabs.org>, netdev <netdev@vger.kernel.org>, "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <op.vgynpf0k7p4s8u@pikus>
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?utf-8?Q?Micha=C5=82?= Nazarewicz <m.nazarewicz@samsung.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jiri Kosina <jkosina@suse.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Justin P.Mattock" <justinmattock@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Thomas Weber <weber@corscience.de>, Mike Frysinger <vapier.adi@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-divya wrote:
-> Yestersday's linux-next(2.6.35_next_20100802) build fails with the following error on both system p and x.
-> 
-> 
->    drivers/net/ixgbe/ixgbe_main.c: In function 'ixgbe_select_queue':
->    drivers/net/ixgbe/ixgbe_main.c:6159: error: 'struct ixgbe_fcoe' has no member named 'up'
->    drivers/net/ixgbe/ixgbe_main.c: In function 'ixgbe_xmit_frame':
->    drivers/net/ixgbe/ixgbe_main.c:6221: error: 'struct ixgbe_fcoe' has no member named 'up'
->    make[3]: *** [drivers/net/ixgbe/ixgbe_main.o] Error 1
->    make[2]: *** [drivers/net/ixgbe] Error 2
->    make[2]: *** Waiting for unfinished jobs....
->    make[1]: *** [drivers/net] Error 2
->    make: *** [drivers] Error 2
-> 
-> Thanks
-> Divya
-> 
-> 
+On Thu, Aug 05, 2010 at 12:35:29PM +0200, Micha=C5=82 Nazarewicz wrote:
+> On Thu, 05 Aug 2010 12:17:05 +0200, Jiri Kosina <jkosina@suse.cz> wro=
+te:
+>=20
+> >On Thu, 5 Aug 2010, Stephen Rothwell wrote:
+> >
+> >>Today's linux-next merge of the usb tree got a conflict in
+> >>Documentation/usb/linux.inf between commit
+> >>0ea6e61122196509af82cc4f36cbdaacbefb8227 ("Documentation: update br=
+oken
+> >>web addresses") from Linus' tree and commit
+> >>2e73ce9389be011587a0ca581b6798b135e64807 ("USB: gadget: g_ether: up=
+dated
+> >>INF file") from the usb tree.
+> >>
+> >>The URL that was fixed by the former was removed by the latter, so =
+I just
+> >>used the latter version.
+> >
+> >I see. Greg, will you just rebase the patch in USB tree on top of cu=
+rrent
+> >Linus' tree please?
+>=20
+> It should be enough to add this delta to the "USB: gadget: g_ether: u=
+pdated
+> INF file":
+>=20
+> -;   http://www.microsoft.com/whdc/hwdev/resources/HWservices/rndis.m=
+spx
+> +;   http://www.microsoft.com/whdc/device/network/ndis/rmndis.mspx
 
-Hi Divya,
+I've fixed this up in my tree now.
 
-Jeff should have a fix for this in his queue already.  This is caused by 
-building with CONFIG_FCOE and without CONFIG_IXGBE_DCB.
+thanks,
 
-Thanks,
-John.
+greg k-h
