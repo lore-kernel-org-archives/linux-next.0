@@ -1,37 +1,38 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: linux-next: build failure after merge of the block tree
-Date: Thu, 05 Aug 2010 08:35:26 +0200
-Message-ID: <4C5A5BAE.9070301@kernel.dk>
-References: <20100805114725.7e46da74.sfr@canb.auug.org.au>
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: Re: linux-next: manual merge of the usb tree with Linus' tree
+Date: Thu, 5 Aug 2010 12:17:05 +0200 (CEST)
+Message-ID: <alpine.LNX.2.00.1008051216260.29919@pobox.suse.cz>
+References: <20100805132208.74bf6ab9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 0122700014.0.fullrate.dk ([95.166.99.235]:43654 "EHLO kernel.dk"
+Received: from cantor.suse.de ([195.135.220.2]:33351 "EHLO mx1.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758803Ab0HEGf2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 5 Aug 2010 02:35:28 -0400
-In-Reply-To: <20100805114725.7e46da74.sfr@canb.auug.org.au>
+	id S1752717Ab0HEKRJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 5 Aug 2010 06:17:09 -0400
+In-Reply-To: <20100805132208.74bf6ab9.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Justin P.Mattock" <justinmattock@gmail.com>, Michal Nazarewicz <m.nazarewicz@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Thomas Weber <weber@corscience.de>, Mike Frysinger <vapier.adi@gmail.com>
 
-On 2010-08-05 03:47, Stephen Rothwell wrote:
-> Hi Jens,
-> 
-> After merging the block tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> usr/include/linux/fs.h:11: included file 'linux/blk_types.h' is not exported
-> 
-> Caused by commit 9d3dbbcd9a84518ff5e32ffe671d06a48cf84fd9 ("bio, fs:
-> separate out bio_types.h and define READ/WRITE constants in terms of
-> BIO_RW_* flags").
-> 
-> I used the block tree from next-20100804 for today.
+On Thu, 5 Aug 2010, Stephen Rothwell wrote:
 
-Thanks Stephen, I fixed this one up now and pushed it out.
+> Today's linux-next merge of the usb tree got a conflict in
+> Documentation/usb/linux.inf between commit
+> 0ea6e61122196509af82cc4f36cbdaacbefb8227 ("Documentation: update broken
+> web addresses") from Linus' tree and commit
+> 2e73ce9389be011587a0ca581b6798b135e64807 ("USB: gadget: g_ether: updated
+> INF file") from the usb tree.
+> 
+> The URL that was fixed by the former was removed by the latter, so I just
+> used the latter version.
+
+I see. Greg, will you just rebase the patch in USB tree on top of current 
+Linus' tree please?
+
+Thanks,
 
 -- 
-Jens Axboe
+Jiri Kosina
+SUSE Labs, Novell Inc.
