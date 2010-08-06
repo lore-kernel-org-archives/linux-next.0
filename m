@@ -1,112 +1,47 @@
-From: Steve French <smfrench@gmail.com>
-Subject: Re: linux-next: build failure after merge of the final tree (cifs
-	tree related)
-Date: Thu, 5 Aug 2010 21:35:50 -0500
-Message-ID: <AANLkTimW1pwO468c2iHNvEdzt42b-O4PeAKUgqN_30Jk@mail.gmail.com>
-References: <20100805135149.98b2001b.sfr@canb.auug.org.au>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: linux-next: manual merge of the input tree with the s5p tree
+Date: Fri, 06 Aug 2010 12:20:26 +0900
+Message-ID: <4C5B7F7A.1000707@samsung.com>
+References: <20100722114655.1140fb61.sfr@canb.auug.org.au>
+ <20100806102419.3e875933.sfr@canb.auug.org.au>
+ <004801cb3500$69824bd0$3c86e370$%kim@samsung.com>
+ <20100806114314.6d15d4fb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100805135149.98b2001b.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-cifs@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wang Lei <wang840925@gmail.com>, David Howells <dhowells@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:38357 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755100Ab0HFDU2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 5 Aug 2010 23:20:28 -0400
+In-reply-to: <20100806114314.6d15d4fb.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Dmitry Torokhov' <dmitry.torokhov@gmail.com>
 
-The fix for the missing err.h include is merged.   Not sure why I did
-not run into that on my Ubuntu test builds or Dave on his builds.
+On 8/6/2010 10:43 AM, Stephen Rothwell wrote:
+> Hi,
+> 
+> On Fri, 06 Aug 2010 09:43:34 +0900 Kukjin Kim <kgene.kim@samsung.com> wrote:
+>> I know that Dmitry's 'Input: samsung-keypad...patch' which includes
+>> plat/keypad.h has been merged Linus' tree in this merge window.
+>> And Joonyoung's another patch which is in my tree needs to update it, but my
+>> tree is don't having it against Linus' 2.6.35.
+>>
+>> So happened conflict...how can/should I handle this...
+>> Should I rebase my tree against Linus' latest?
+> 
+> Either rebase (worst), or just merge Linus' tree (better) into yours or
+> (best) merge what Dmitry merged into Linus' tree.  To do this last, you
+> need to merge commit d01d0756f75e7a5b4b43764ad45b83c4340f11d6 from Linus'
+> tree.  Doing this brings in the minimum amount of extra stuff to your
+> tree, but allows you to sort out the conflict.
+> 
 
-Have not heard any feedback about the init.h change that Ben suggested =
-yet.
+Kukjin,
 
-On Wed, Aug 4, 2010 at 10:51 PM, Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> Hi Steve,
->
-> After merging the final tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
->
-> net/dns_resolver/dns_key.c: In function 'init_dns_resolver':
-> net/dns_resolver/dns_key.c:170: error: implicit declaration of functi=
-on 'IS_ERR'
-> net/dns_resolver/dns_key.c:171: error: implicit declaration of functi=
-on 'PTR_ERR'
-> net/dns_resolver/dns_query.c: In function 'dns_query':
-> net/dns_resolver/dns_query.c:126: error: implicit declaration of func=
-tion 'IS_ERR'
-> net/dns_resolver/dns_query.c:127: error: implicit declaration of func=
-tion 'PTR_ERR'
->
-> Caused by commit bae8da144bd6254d1e9cec2a7d6da7cade84e00e ("DNS: Sepa=
-rate
-> out CIFS DNS Resolver code").
->
-> See Rule 1 in Documentation/SubmitChecklist.
->
-> I have added this patch for today:
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Thu, 5 Aug 2010 13:49:29 +1000
-> Subject: [PATCH] cifs: include linux/err.h for IS_ERR and PTR_ERR
->
-> Fixes build errors:
->
-> net/dns_resolver/dns_key.c: In function 'init_dns_resolver':
-> net/dns_resolver/dns_key.c:170: error: implicit declaration of functi=
-on 'IS_ERR'
-> net/dns_resolver/dns_key.c:171: error: implicit declaration of functi=
-on 'PTR_ERR'
-> net/dns_resolver/dns_query.c: In function 'dns_query':
-> net/dns_resolver/dns_query.c:126: error: implicit declaration of func=
-tion 'IS_ERR'
-> net/dns_resolver/dns_query.c:127: error: implicit declaration of func=
-tion 'PTR_ERR'
->
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
-> =A0net/dns_resolver/dns_key.c =A0 | =A0 =A01 +
-> =A0net/dns_resolver/dns_query.c | =A0 =A01 +
-> =A02 files changed, 2 insertions(+), 0 deletions(-)
->
-> diff --git a/net/dns_resolver/dns_key.c b/net/dns_resolver/dns_key.c
-> index 1b1b411..400a04d 100644
-> --- a/net/dns_resolver/dns_key.c
-> +++ b/net/dns_resolver/dns_key.c
-> @@ -28,6 +28,7 @@
-> =A0#include <linux/string.h>
-> =A0#include <linux/kernel.h>
-> =A0#include <linux/keyctl.h>
-> +#include <linux/err.h>
-> =A0#include <keys/dns_resolver-type.h>
-> =A0#include <keys/user-type.h>
-> =A0#include "internal.h"
-> diff --git a/net/dns_resolver/dns_query.c b/net/dns_resolver/dns_quer=
-y.c
-> index 6c0cf31..b33e1f7 100644
-> --- a/net/dns_resolver/dns_query.c
-> +++ b/net/dns_resolver/dns_query.c
-> @@ -39,6 +39,7 @@
-> =A0#include <linux/module.h>
-> =A0#include <linux/slab.h>
-> =A0#include <linux/dns_resolver.h>
-> +#include <linux/err.h>
-> =A0#include <keys/dns_resolver-type.h>
-> =A0#include <keys/user-type.h>
->
-> --
-> 1.7.1
->
-> --
-> Cheers,
-> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
-=2Eorg.au
-> http://www.canb.auug.org.au/~sfr/
->
+If you rebase and need, i can send updated patches. It uses "ARM:
+SAMSUNG: Add helper to clone and set platform data" patch of Ben Dooks.
 
-
-
---=20
-Thanks,
-
-Steve
+Thanks.
