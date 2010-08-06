@@ -1,67 +1,112 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the input tree with the s5p tree
-Date: Fri, 6 Aug 2010 11:43:14 +1000
-Message-ID: <20100806114314.6d15d4fb.sfr@canb.auug.org.au>
-References: <20100722114655.1140fb61.sfr@canb.auug.org.au>
-	<20100806102419.3e875933.sfr@canb.auug.org.au>
-	<004801cb3500$69824bd0$3c86e370$%kim@samsung.com>
+From: Steve French <smfrench@gmail.com>
+Subject: Re: linux-next: build failure after merge of the final tree (cifs
+	tree related)
+Date: Thu, 5 Aug 2010 21:35:50 -0500
+Message-ID: <AANLkTimW1pwO468c2iHNvEdzt42b-O4PeAKUgqN_30Jk@mail.gmail.com>
+References: <20100805135149.98b2001b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__6_Aug_2010_11_43_14_+1000_OrijStOwQgi27aGM"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45264 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758937Ab0HFBnX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 5 Aug 2010 21:43:23 -0400
-In-Reply-To: <004801cb3500$69824bd0$3c86e370$%kim@samsung.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Joonyoung Shim' <jy0922.shim@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Dmitry Torokhov' <dmitry.torokhov@gmail.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20100805135149.98b2001b.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-cifs@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wang Lei <wang840925@gmail.com>, David Howells <dhowells@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__6_Aug_2010_11_43_14_+1000_OrijStOwQgi27aGM
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The fix for the missing err.h include is merged.   Not sure why I did
+not run into that on my Ubuntu test builds or Dave on his builds.
 
-Hi,
+Have not heard any feedback about the init.h change that Ben suggested =
+yet.
 
-On Fri, 06 Aug 2010 09:43:34 +0900 Kukjin Kim <kgene.kim@samsung.com> wrote:
+On Wed, Aug 4, 2010 at 10:51 PM, Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> Hi Steve,
 >
-> I know that Dmitry's 'Input: samsung-keypad...patch' which includes
-> plat/keypad.h has been merged Linus' tree in this merge window.
-> And Joonyoung's another patch which is in my tree needs to update it, but=
- my
-> tree is don't having it against Linus' 2.6.35.
->=20
-> So happened conflict...how can/should I handle this...
-> Should I rebase my tree against Linus' latest?
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+>
+> net/dns_resolver/dns_key.c: In function 'init_dns_resolver':
+> net/dns_resolver/dns_key.c:170: error: implicit declaration of functi=
+on 'IS_ERR'
+> net/dns_resolver/dns_key.c:171: error: implicit declaration of functi=
+on 'PTR_ERR'
+> net/dns_resolver/dns_query.c: In function 'dns_query':
+> net/dns_resolver/dns_query.c:126: error: implicit declaration of func=
+tion 'IS_ERR'
+> net/dns_resolver/dns_query.c:127: error: implicit declaration of func=
+tion 'PTR_ERR'
+>
+> Caused by commit bae8da144bd6254d1e9cec2a7d6da7cade84e00e ("DNS: Sepa=
+rate
+> out CIFS DNS Resolver code").
+>
+> See Rule 1 in Documentation/SubmitChecklist.
+>
+> I have added this patch for today:
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 5 Aug 2010 13:49:29 +1000
+> Subject: [PATCH] cifs: include linux/err.h for IS_ERR and PTR_ERR
+>
+> Fixes build errors:
+>
+> net/dns_resolver/dns_key.c: In function 'init_dns_resolver':
+> net/dns_resolver/dns_key.c:170: error: implicit declaration of functi=
+on 'IS_ERR'
+> net/dns_resolver/dns_key.c:171: error: implicit declaration of functi=
+on 'PTR_ERR'
+> net/dns_resolver/dns_query.c: In function 'dns_query':
+> net/dns_resolver/dns_query.c:126: error: implicit declaration of func=
+tion 'IS_ERR'
+> net/dns_resolver/dns_query.c:127: error: implicit declaration of func=
+tion 'PTR_ERR'
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+> =A0net/dns_resolver/dns_key.c =A0 | =A0 =A01 +
+> =A0net/dns_resolver/dns_query.c | =A0 =A01 +
+> =A02 files changed, 2 insertions(+), 0 deletions(-)
+>
+> diff --git a/net/dns_resolver/dns_key.c b/net/dns_resolver/dns_key.c
+> index 1b1b411..400a04d 100644
+> --- a/net/dns_resolver/dns_key.c
+> +++ b/net/dns_resolver/dns_key.c
+> @@ -28,6 +28,7 @@
+> =A0#include <linux/string.h>
+> =A0#include <linux/kernel.h>
+> =A0#include <linux/keyctl.h>
+> +#include <linux/err.h>
+> =A0#include <keys/dns_resolver-type.h>
+> =A0#include <keys/user-type.h>
+> =A0#include "internal.h"
+> diff --git a/net/dns_resolver/dns_query.c b/net/dns_resolver/dns_quer=
+y.c
+> index 6c0cf31..b33e1f7 100644
+> --- a/net/dns_resolver/dns_query.c
+> +++ b/net/dns_resolver/dns_query.c
+> @@ -39,6 +39,7 @@
+> =A0#include <linux/module.h>
+> =A0#include <linux/slab.h>
+> =A0#include <linux/dns_resolver.h>
+> +#include <linux/err.h>
+> =A0#include <keys/dns_resolver-type.h>
+> =A0#include <keys/user-type.h>
+>
+> --
+> 1.7.1
+>
+> --
+> Cheers,
+> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
+=2Eorg.au
+> http://www.canb.auug.org.au/~sfr/
+>
 
-Either rebase (worst), or just merge Linus' tree (better) into yours or
-(best) merge what Dmitry merged into Linus' tree.  To do this last, you
-need to merge commit d01d0756f75e7a5b4b43764ad45b83c4340f11d6 from Linus'
-tree.  Doing this brings in the minimum amount of extra stuff to your
-tree, but allows you to sort out the conflict.
+
 
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Thanks,
 
---Signature=_Fri__6_Aug_2010_11_43_14_+1000_OrijStOwQgi27aGM
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMW2iyAAoJEDMEi1NhKgbsbgsH/2vDPkAJu0oPdEBsjOBmq5Ex
-/hGCdQGXOIe/JfGQATNGHVNlUhDFvCq4hq9qGmaQV+MOfMtVVWj/KkLWOYqyWZxy
-4d4DtH+yXLkmhUz5D7+dvry0IAq8RS+vu/sV+Mh4fdmuCYqHu9UquOXkwdndE3/n
-i5crMv99qvtPl5V6mGqK0DPFHpQo84dtW5EXMiPW0L7pVOwaeLq0+xeuMWS+OXmv
-jPel43gfoJkSywtoZEC1bk1OBVsXPnmBAt88CUv1r8Gx9F9SfrybnTeY+74s0cET
-7rqA0JQd8RgBBmuVVycpmwcc9IJA+KHzcZKTewqaLPn9yhKgrOV3r/t3P4UelXM=
-=3+OQ
------END PGP SIGNATURE-----
-
---Signature=_Fri__6_Aug_2010_11_43_14_+1000_OrijStOwQgi27aGM--
+Steve
