@@ -1,54 +1,64 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the usb tree with Linus' tree
-Date: Thu, 5 Aug 2010 15:36:49 -0700
-Message-ID: <20100805223649.GD18619@kroah.com>
-References: <20100805132208.74bf6ab9.sfr@canb.auug.org.au>
- <alpine.LNX.2.00.1008051216260.29919@pobox.suse.cz>
- <op.vgynpf0k7p4s8u@pikus>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the input tree with the s5p tree
+Date: Fri, 6 Aug 2010 10:24:19 +1000
+Message-ID: <20100806102419.3e875933.sfr@canb.auug.org.au>
+References: <20100722114655.1140fb61.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__6_Aug_2010_10_24_19_+1000_X+sJZW5aoIUSUG03"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:34603 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756530Ab0HFAY0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 5 Aug 2010 20:24:26 -0400
+In-Reply-To: <20100722114655.1140fb61.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+
+--Signature=_Fri__6_Aug_2010_10_24_19_+1000_X+sJZW5aoIUSUG03
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <op.vgynpf0k7p4s8u@pikus>
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?utf-8?Q?Micha=C5=82?= Nazarewicz <m.nazarewicz@samsung.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jiri Kosina <jkosina@suse.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Justin P.Mattock" <justinmattock@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Thomas Weber <weber@corscience.de>, Mike Frysinger <vapier.adi@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 05, 2010 at 12:35:29PM +0200, Micha=C5=82 Nazarewicz wrote:
-> On Thu, 05 Aug 2010 12:17:05 +0200, Jiri Kosina <jkosina@suse.cz> wro=
-te:
+Hi all,
+
+On Thu, 22 Jul 2010 11:46:55 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the input tree got a conflict in
+> arch/arm/plat-samsung/include/plat/keypad.h between commit
+> 1e3241300503df18a098dd35098f6975dcf622e2 ("ARM: SAMSUNG: Add keypad
+> device support") from the s5p tree and commit
+> 0fffed27f92d9d7a34de9fe017b7082b5958bb93 ("Input: samsung-keypad - Add
+> samsung keypad driver") from the input tree.
 >=20
-> >On Thu, 5 Aug 2010, Stephen Rothwell wrote:
-> >
-> >>Today's linux-next merge of the usb tree got a conflict in
-> >>Documentation/usb/linux.inf between commit
-> >>0ea6e61122196509af82cc4f36cbdaacbefb8227 ("Documentation: update br=
-oken
-> >>web addresses") from Linus' tree and commit
-> >>2e73ce9389be011587a0ca581b6798b135e64807 ("USB: gadget: g_ether: up=
-dated
-> >>INF file") from the usb tree.
-> >>
-> >>The URL that was fixed by the former was removed by the latter, so =
-I just
-> >>used the latter version.
-> >
-> >I see. Greg, will you just rebase the patch in USB tree on top of cu=
-rrent
-> >Linus' tree please?
->=20
-> It should be enough to add this delta to the "USB: gadget: g_ether: u=
-pdated
-> INF file":
->=20
-> -;   http://www.microsoft.com/whdc/hwdev/resources/HWservices/rndis.m=
-spx
-> +;   http://www.microsoft.com/whdc/device/network/ndis/rmndis.mspx
+> This just looks like two versions of the same driver (or two drivers
+> sharing the same header) - please sort this out.  I have fixed up the
+> header for today (by including both versions where necessary).
 
-I've fixed this up in my tree now.
+I got this again (something obviously changed a little) but the input
+tree version is now in Linus' tree.  Please fix this up.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-thanks,
+--Signature=_Fri__6_Aug_2010_10_24_19_+1000_X+sJZW5aoIUSUG03
+Content-Type: application/pgp-signature
 
-greg k-h
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEbBAEBAgAGBQJMW1YzAAoJEDMEi1NhKgbsG48H91G7QEqU4sHSnyYxUesgmsLk
+XY24AGh4PRIjp3xy3nGRVR1IIKLjX0LHfo7L1wGuETAEmjtoLHtcLFoAySmu+MHt
+DQQaz8uuUx1UFBboJf/sgr4xV2Y7HJ0XefVz6GxCy0MsHRqF8wTO5ILhPDht6b+N
+9bzKsEaX1cO9AjcyscdFzMQhPuOLlhqipyN6BHjmPLctZViAsJRxcNtnyXyWuP6Q
+3+5/BQHPajyPdPCyZLuSG1C9t/n3fmDjbw7UCmoYq9FbYq6wNpYf584NNMRFAqiS
+TwCQNvsZGWskQC3SehVyWVzN10WL0K8ctmci4+C2cOWifFDQOiZvz20PimGKdA==
+=8Dt9
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__6_Aug_2010_10_24_19_+1000_X+sJZW5aoIUSUG03--
