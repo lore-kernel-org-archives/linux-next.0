@@ -1,64 +1,65 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: linux-next: manual merge of the input tree with the s5p tree
-Date: Fri, 06 Aug 2010 14:15:07 +0900
-Message-ID: <006e01cb3526$592816e0$0b7844a0$%kim@samsung.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the input tree with the s5p tree
+Date: Fri, 6 Aug 2010 15:17:19 +1000
+Message-ID: <20100806151719.b4b58107.sfr@canb.auug.org.au>
 References: <20100722114655.1140fb61.sfr@canb.auug.org.au>
- <20100806102419.3e875933.sfr@canb.auug.org.au>
- <004801cb3500$69824bd0$3c86e370$%kim@samsung.com>
- <20100806114314.6d15d4fb.sfr@canb.auug.org.au> <4C5B7F7A.1000707@samsung.com>
+	<20100806102419.3e875933.sfr@canb.auug.org.au>
+	<004801cb3500$69824bd0$3c86e370$%kim@samsung.com>
+	<20100806114314.6d15d4fb.sfr@canb.auug.org.au>
+	<006b01cb3520$869ca6f0$93d5f4d0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:62437 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753107Ab0HFFPD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 6 Aug 2010 01:15:03 -0400
-In-reply-to: <4C5B7F7A.1000707@samsung.com>
-Content-language: ko
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: 'Joonyoung Shim' <jy0922.shim@samsung.com>
-Cc: 'Stephen Rothwell' <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Dmitry Torokhov' <dmitry.torokhov@gmail.com>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__6_Aug_2010_15_17_19_+1000_S1tAeL/I21Ivj4PC"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <006b01cb3520$869ca6f0$93d5f4d0$%kim@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Joonyoung Shim' <jy0922.shim@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Dmitry Torokhov' <dmitry.torokhov@gmail.com>, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>
+List-Id: linux-next.vger.kernel.org
 
-Joonyoung Shim wrote:
-> 
-> On 8/6/2010 10:43 AM, Stephen Rothwell wrote:
-> > Hi,
-> >
-> > On Fri, 06 Aug 2010 09:43:34 +0900 Kukjin Kim <kgene.kim@samsung.com>
-> wrote:
-> >> I know that Dmitry's 'Input: samsung-keypad...patch' which includes
-> >> plat/keypad.h has been merged Linus' tree in this merge window.
-> >> And Joonyoung's another patch which is in my tree needs to update it, but my
-> >> tree is don't having it against Linus' 2.6.35.
-> >>
-> >> So happened conflict...how can/should I handle this...
-> >> Should I rebase my tree against Linus' latest?
-> >
-> > Either rebase (worst), or just merge Linus' tree (better) into yours or
-> > (best) merge what Dmitry merged into Linus' tree.  To do this last, you
-> > need to merge commit d01d0756f75e7a5b4b43764ad45b83c4340f11d6 from
-> Linus'
-> > tree.  Doing this brings in the minimum amount of extra stuff to your
-> > tree, but allows you to sort out the conflict.
-> >
-> 
-> Kukjin,
-> 
-> If you rebase and need, i can send updated patches. It uses "ARM:
-> SAMSUNG: Add helper to clone and set platform data" patch of Ben Dooks.
-> 
-> Thanks.
+--Signature=_Fri__6_Aug_2010_15_17_19_+1000_S1tAeL/I21Ivj4PC
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ok...please send it in today.
+Hi,
 
-I have a plan to send 'pull request' to Russell in this weekend or the beginning of next week.
+On Fri, 06 Aug 2010 13:33:27 +0900 Kukjin Kim <kgene.kim@samsung.com> wrote:
+>
+> I will merge Dmitry's merge commit that you inform to me in my tree.
+> Then, conflict may be not happened tomorrow. :-)
 
-Thanks.
+OK.  Thanks.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+> I wonder...as you know, my tree will going to upstream through Russell's
+> tree...if his tree doesn't having it, is it no problem when he merges my
+> tree?
+> I mean, is it no problem that there are Dmitry's stuff which has been mer=
+ged
+> into Linus' in my tree when I'm sending 'pull request' to Russell?
+
+It should cause no problem to Russell or Linus - git is good at ignoring
+common subtrees when merging.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__6_Aug_2010_15_17_19_+1000_S1tAeL/I21Ivj4PC
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMW5rfAAoJEDMEi1NhKgbsLfsH/1c5846LcsOquuqZvoMp61uj
+65m2NdiuPz6rMCg9aNvLXnfrrs/XuWWcvCxuyoi1X9eGnOxseR02ZFj8Ea3t8npY
+lhV/OdVKxAoKHpdbeQlKBheTMurQbdLq0oc7Od0p5p8oE8snBWnQ3DE3NQvn0YVV
+jEdD71U34WERveBouR0GI2aF+agGhAD7XyCV8xuWXXIEeAkKbd4bHYLhzyelq/89
+90DlSu1xqt5JpfBmDDos879fAeuOEJcBO+QzwH4aVkY6Tr9sUcFaKJvtDFxc5VeF
+DyK6O4iM+fvTyNXR6YaHGjOUQ8inym4GkaxS9Cby/U8LoMRr+AnxjHi24urQA+M=
+=WH1p
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__6_Aug_2010_15_17_19_+1000_S1tAeL/I21Ivj4PC--
