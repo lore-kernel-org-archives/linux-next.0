@@ -1,65 +1,73 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the input tree with the s5p tree
-Date: Fri, 6 Aug 2010 15:17:19 +1000
-Message-ID: <20100806151719.b4b58107.sfr@canb.auug.org.au>
-References: <20100722114655.1140fb61.sfr@canb.auug.org.au>
-	<20100806102419.3e875933.sfr@canb.auug.org.au>
-	<004801cb3500$69824bd0$3c86e370$%kim@samsung.com>
-	<20100806114314.6d15d4fb.sfr@canb.auug.org.au>
-	<006b01cb3520$869ca6f0$93d5f4d0$%kim@samsung.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for August 6 (kgdboc)
+Date: Fri, 6 Aug 2010 11:53:44 -0700
+Message-ID: <20100806115344.52c712b7.randy.dunlap@oracle.com>
+References: <20100806132758.6001d416.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__6_Aug_2010_15_17_19_+1000_S1tAeL/I21Ivj4PC"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <006b01cb3520$869ca6f0$93d5f4d0$%kim@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Joonyoung Shim' <jy0922.shim@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Dmitry Torokhov' <dmitry.torokhov@gmail.com>, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>
+Content-Type: multipart/mixed;
+	boundary="Multipart=_Fri__6_Aug_2010_11_53_44_-0700_h976G_n1VrryK+om"
+Return-path: <kgdb-bugreport-bounces@lists.sourceforge.net>
+In-Reply-To: <20100806132758.6001d416.sfr@canb.auug.org.au>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/kgdb-bugreport>,
+	<mailto:kgdb-bugreport-request@lists.sourceforge.net?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=kgdb-bugreport>
+List-Post: <mailto:kgdb-bugreport@lists.sourceforge.net>
+List-Help: <mailto:kgdb-bugreport-request@lists.sourceforge.net?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/kgdb-bugreport>,
+	<mailto:kgdb-bugreport-request@lists.sourceforge.net?subject=subscribe>
+Errors-To: kgdb-bugreport-bounces@lists.sourceforge.net
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Jason Wessel <jason.wessel@windriver.com>
+Cc: kgdb-bugreport@lists.sourceforge.net, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__6_Aug_2010_15_17_19_+1000_S1tAeL/I21Ivj4PC
+This is a multi-part message in MIME format.
+
+--Multipart=_Fri__6_Aug_2010_11_53_44_-0700_h976G_n1VrryK+om
 Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+
+On Fri, 6 Aug 2010 13:27:58 +1000 Stephen Rothwell wrote:
+
+> Hi all,
+> 
+> As the merge window is open, please do not add 2.6.37 material to your
+> linux-next included trees until after 2.6.36-rc1.
+> 
+> Changes since 20100805:
+
+
+ERROR: "con_debug_enter" [drivers/serial/kgdboc.ko] undefined!
+ERROR: "vc_cons" [drivers/serial/kgdboc.ko] undefined!
+ERROR: "fg_console" [drivers/serial/kgdboc.ko] undefined!
+ERROR: "con_debug_leave" [drivers/serial/kgdboc.ko] undefined!
+
+.config is attached.
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
+
+--Multipart=_Fri__6_Aug_2010_11_53_44_-0700_h976G_n1VrryK+om
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
+------------------------------------------------------------------------------
+This SF.net email is sponsored by 
 
-On Fri, 06 Aug 2010 13:33:27 +0900 Kukjin Kim <kgene.kim@samsung.com> wrote:
->
-> I will merge Dmitry's merge commit that you inform to me in my tree.
-> Then, conflict may be not happened tomorrow. :-)
+Make an app they can't live without
+Enter the BlackBerry Developer Challenge
+http://p.sf.net/sfu/RIM-dev2dev 
+--Multipart=_Fri__6_Aug_2010_11_53_44_-0700_h976G_n1VrryK+om
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-OK.  Thanks.
+_______________________________________________
+Kgdb-bugreport mailing list
+Kgdb-bugreport@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/kgdb-bugreport
 
-> I wonder...as you know, my tree will going to upstream through Russell's
-> tree...if his tree doesn't having it, is it no problem when he merges my
-> tree?
-> I mean, is it no problem that there are Dmitry's stuff which has been mer=
-ged
-> into Linus' in my tree when I'm sending 'pull request' to Russell?
-
-It should cause no problem to Russell or Linus - git is good at ignoring
-common subtrees when merging.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__6_Aug_2010_15_17_19_+1000_S1tAeL/I21Ivj4PC
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMW5rfAAoJEDMEi1NhKgbsLfsH/1c5846LcsOquuqZvoMp61uj
-65m2NdiuPz6rMCg9aNvLXnfrrs/XuWWcvCxuyoi1X9eGnOxseR02ZFj8Ea3t8npY
-lhV/OdVKxAoKHpdbeQlKBheTMurQbdLq0oc7Od0p5p8oE8snBWnQ3DE3NQvn0YVV
-jEdD71U34WERveBouR0GI2aF+agGhAD7XyCV8xuWXXIEeAkKbd4bHYLhzyelq/89
-90DlSu1xqt5JpfBmDDos879fAeuOEJcBO+QzwH4aVkY6Tr9sUcFaKJvtDFxc5VeF
-DyK6O4iM+fvTyNXR6YaHGjOUQ8inym4GkaxS9Cby/U8LoMRr+AnxjHi24urQA+M=
-=WH1p
------END PGP SIGNATURE-----
-
---Signature=_Fri__6_Aug_2010_15_17_19_+1000_S1tAeL/I21Ivj4PC--
+--Multipart=_Fri__6_Aug_2010_11_53_44_-0700_h976G_n1VrryK+om--
