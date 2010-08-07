@@ -1,55 +1,120 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mtd tree with Linus' tree
-Date: Sat, 7 Aug 2010 13:37:40 +1000
-Message-ID: <20100807133740.a3549810.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kgdb tree with Linus' tree
+Date: Sat, 7 Aug 2010 14:05:42 +1000
+Message-ID: <20100807140542.bea61032.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sat__7_Aug_2010_13_37_40_+1000_rtsNFU4hX0+e2gpA"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60081 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34607 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751225Ab0HGDiH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 6 Aug 2010 23:38:07 -0400
+	id S1750989Ab0HGEFp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 7 Aug 2010 00:05:45 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christian Dietrich <qy03fugy@stud.informatik.uni-erlangen.de>, Christoph Egger <siccegge@cs.fau.de>, Josh Boyer <jwboyer@linux.vnet.ibm.com>
+To: Jason Wessel <jason.wessel@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 
---Signature=_Sat__7_Aug_2010_13_37_40_+1000_rtsNFU4hX0+e2gpA
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Jason,
 
-Hi David,
+Today's linux-next merge of the kgdb tree got a conflict in
+include/linux/rcupdate.h between commits
+551d55a944b143ef26fbd482d1c463199d6f65cf ("tree/tiny rcu: Add debug RCU
+head objects") and f5155b33277c9678041a27869165619bb34f722f ("rcu: add an
+rcu_dereference_index_check()") from Linus' tree and commit
+9e213357d0aeaeb81e213cfd3b9415db5fccc1b5 ("rcu,debug_core: allow the
+kernel debugger to reset the rcu stall timer") from the kgdb tree.
 
-Today's linux-next merge of the mtd tree got a conflict in
-drivers/mtd/maps/Kconfig and drivers/mtd/maps/redwood.c between commit
-c76986cca8379db619de4b6c6b7359125df0e341 ("Remove REDWOOD_[456] config
-options and conditional code") from Linus' tree and commit
-73ee5760253dc8893502e19a9cb118d25dab21ec ("mtd: remove redwood map
-driver") from the mtd tree.
-
-The latter just went further by actually removing the driver so I used
-that.
---=20
+Just overlapping additions.  I fixed it up (see below) and can carry the
+fix for a while.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Sat__7_Aug_2010_13_37_40_+1000_rtsNFU4hX0+e2gpA
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMXNUEAAoJEDMEi1NhKgbshS8H/2AWaQDuV+g6dfFQjfQ6JCm/
-Y9M4ScRKbH0eY/25bd1FxAKeBfQ9QWOdzMRDFyC960wAhrbSLq8QHlfUSSrjvIwf
-McnDZsZA8FBOiYm/p+ma3X18Xf4ogWOsg0iu8kNeBLl6dW8uSUeF/N3FSR0YLEsO
-zw3rlI/7PlQz8KF66DT7tXKBcImiKX/jHrNXoAJvIGAqFiVNZD9T8r0dlAvT/YgT
-3ohRxH+Vd9h9KMFFlPPybVJIPNBxAbzyzdujY+JQXULct4oEeZpnH7kYeowHuxdo
-Qln3nUhn1DeWGdciH9Zfey6ZRQe10MUDXganKpjA6D2mVjwm3SoqhGab0M9arRc=
-=0w5l
------END PGP SIGNATURE-----
-
---Signature=_Sat__7_Aug_2010_13_37_40_+1000_rtsNFU4hX0+e2gpA--
+diff --cc include/linux/rcupdate.h
+index 9fbc54a,585efef..0000000
+--- a/include/linux/rcupdate.h
++++ b/include/linux/rcupdate.h
+@@@ -529,74 -517,12 +529,82 @@@ extern void call_rcu(struct rcu_head *h
+  extern void call_rcu_bh(struct rcu_head *head,
+  			void (*func)(struct rcu_head *head));
+  
+ +/*
+ + * debug_rcu_head_queue()/debug_rcu_head_unqueue() are used internally
+ + * by call_rcu() and rcu callback execution, and are therefore not part of the
+ + * RCU API. Leaving in rcupdate.h because they are used by all RCU flavors.
+ + */
+ +
+ +#ifdef CONFIG_DEBUG_OBJECTS_RCU_HEAD
+ +# define STATE_RCU_HEAD_READY	0
+ +# define STATE_RCU_HEAD_QUEUED	1
+ +
+ +extern struct debug_obj_descr rcuhead_debug_descr;
+ +
+ +static inline void debug_rcu_head_queue(struct rcu_head *head)
+ +{
+ +	debug_object_activate(head, &rcuhead_debug_descr);
+ +	debug_object_active_state(head, &rcuhead_debug_descr,
+ +				  STATE_RCU_HEAD_READY,
+ +				  STATE_RCU_HEAD_QUEUED);
+ +}
+ +
+ +static inline void debug_rcu_head_unqueue(struct rcu_head *head)
+ +{
+ +	debug_object_active_state(head, &rcuhead_debug_descr,
+ +				  STATE_RCU_HEAD_QUEUED,
+ +				  STATE_RCU_HEAD_READY);
+ +	debug_object_deactivate(head, &rcuhead_debug_descr);
+ +}
+ +#else	/* !CONFIG_DEBUG_OBJECTS_RCU_HEAD */
+ +static inline void debug_rcu_head_queue(struct rcu_head *head)
+ +{
+ +}
+ +
+ +static inline void debug_rcu_head_unqueue(struct rcu_head *head)
+ +{
+ +}
+ +#endif	/* #else !CONFIG_DEBUG_OBJECTS_RCU_HEAD */
+ +
+ +#ifndef CONFIG_PROVE_RCU
+ +#define __do_rcu_dereference_check(c) do { } while (0)
+ +#endif /* #ifdef CONFIG_PROVE_RCU */
+ +
+ +#define __rcu_dereference_index_check(p, c) \
+ +	({ \
+ +		typeof(p) _________p1 = ACCESS_ONCE(p); \
+ +		__do_rcu_dereference_check(c); \
+ +		smp_read_barrier_depends(); \
+ +		(_________p1); \
+ +	})
+ +
+ +/**
+ + * rcu_dereference_index_check() - rcu_dereference for indices with debug checking
+ + * @p: The pointer to read, prior to dereferencing
+ + * @c: The conditions under which the dereference will take place
+ + *
+ + * Similar to rcu_dereference_check(), but omits the sparse checking.
+ + * This allows rcu_dereference_index_check() to be used on integers,
+ + * which can then be used as array indices.  Attempting to use
+ + * rcu_dereference_check() on an integer will give compiler warnings
+ + * because the sparse address-space mechanism relies on dereferencing
+ + * the RCU-protected pointer.  Dereferencing integers is not something
+ + * that even gcc will put up with.
+ + *
+ + * Note that this function does not implicitly check for RCU read-side
+ + * critical sections.  If this function gains lots of uses, it might
+ + * make sense to provide versions for each flavor of RCU, but it does
+ + * not make sense as of early 2010.
+ + */
+ +#define rcu_dereference_index_check(p, c) \
+ +	__rcu_dereference_index_check((p), (c))
+ +
++ #ifdef CONFIG_RCU_CPU_STALL_DETECTOR
++ extern void rcu_cpu_stall_reset(void);
++ #else /* #ifdef CONFIG_RCU_CPU_STALL_DETECTOR */
++ static void rcu_cpu_stall_reset()
++ {
++ }
++ #endif /* #ifdef CONFIG_RCU_CPU_STALL_DETECTOR */
++ 
+  #endif /* __LINUX_RCUPDATE_H */
