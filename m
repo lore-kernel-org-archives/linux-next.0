@@ -1,48 +1,40 @@
-From: <vikas.chaudhary@qlogic.com>
-Subject: [PATCH] qla4xxx: fix compilation warning
-Date: Sat, 7 Aug 2010 13:42:38 +0530
-Message-ID: <1281168758-13751-1-git-send-email-vikas.chaudhary@qlogic.com>
+From: Jason Wessel <jason.wessel@windriver.com>
+Subject: Re: linux-next: build error after merge of the kgdb tree
+Date: Sat, 07 Aug 2010 06:09:35 -0500
+Message-ID: <4C5D3EEF.2080806@windriver.com>
+References: <20100807142122.a305ed8a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from avexcashub1.qlogic.com ([198.70.193.61]:26476 "EHLO
-	avexcashub1.qlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751124Ab0HGIQO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 7 Aug 2010 04:16:14 -0400
+Received: from mail.windriver.com ([147.11.1.11]:59974 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752904Ab0HGLJm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 7 Aug 2010 07:09:42 -0400
+In-Reply-To: <20100807142122.a305ed8a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au, James.Bottomley@suse.de, linux-scsi@vger.kernel.org
-Cc: Vikas Chaudhary <vikas.chaudhary@qlogic.com>, ravi.anand@qlogic.com, karen.higgins@qlogic.com, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Vikas Chaudhary <vikas.chaudhary@qlogic.com>
+On 08/06/2010 11:21 PM, Stephen Rothwell wrote:
+> Hi Jason,
+>
+> After merging the kgdb tree, today's linux-next build (powerpc
+> ppc64_defconfig) produced this error (and hundreds of similar
+> errors/warnings):
+>
+> In file included from include/linux/rculist.h:10,
+>                  from include/linux/dcache.h:6,
+>                  from include/linux/fs.h:375,
+>                  from include/linux/security.h:25,
+>                  from security/min_addr.c:3:
+> include/linux/rcupdate.h:606: warning: function declaration isn't a prototype
+>
+>   
 
-Fix following warning:
+I removed the kgdb rcu stall detector patches from the queue until they
+are re-worked against the latest rcu changes pending in linux-next.
 
-drivers/scsi/qla4xxx/ql4_nx.c: In function 'qla4_8xxx_get_flash_info':
-drivers/scsi/qla4xxx/ql4_nx.c:1952: warning: 'mid' may be used uninitialized in this function
-drivers/scsi/qla4xxx/ql4_nx.c:1952: note: 'mid' was declared here
-drivers/scsi/qla4xxx/ql4_nx.c:1952: warning: 'fid' may be used uninitialized in this function
-drivers/scsi/qla4xxx/ql4_nx.c:1952: note: 'fid' was declared here
-
-Signed-off-by: Vikas Chaudhary <vikas.chaudhary@qlogic.com>
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/scsi/qla4xxx/ql4_nx.c |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/scsi/qla4xxx/ql4_nx.c b/drivers/scsi/qla4xxx/ql4_nx.c
-index 1b85235..e031a73 100644
---- a/drivers/scsi/qla4xxx/ql4_nx.c
-+++ b/drivers/scsi/qla4xxx/ql4_nx.c
-@@ -1953,7 +1953,8 @@ qla4_8xxx_get_fdt_info(struct scsi_qla_host *ha)
- 	uint16_t cnt, chksum;
- 	uint16_t *wptr;
- 	struct qla_fdt_layout *fdt;
--	uint16_t mid, fid;
-+	uint16_t mid = 0;
-+	uint16_t fid = 0;
- 	struct ql82xx_hw_data *hw = &ha->hw;
- 
- 	hw->flash_conf_off = FARX_ACCESS_FLASH_CONF;
--- 
-1.7.0.5
+Thanks,
+Jason.
