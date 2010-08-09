@@ -1,72 +1,92 @@
-From: Jason Wessel <jason.wessel@windriver.com>
-Subject: Re: linux-next: manual merge of the kgdb tree with Linus' tree
-Date: Mon, 09 Aug 2010 00:13:01 -0500
-Message-ID: <4C5F8E5D.9030404@windriver.com>
-References: <20100807140542.bea61032.sfr@canb.auug.org.au> <20100807211728.GA28829@linux.vnet.ibm.com>
+From: Mauro Carvalho Chehab <mchehab@redhat.com>
+Subject: Re: linux-next: Tree for August 7 (IR)
+Date: Mon, 09 Aug 2010 03:11:58 -0300
+Message-ID: <4C5F9C2E.50001@redhat.com>
+References: <20100807160710.b7c8d838.sfr@canb.auug.org.au>	<20100807203920.83134a60.randy.dunlap@oracle.com> <20100808135511.269f670c.randy.dunlap@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:39135 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751232Ab0HIFNN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 9 Aug 2010 01:13:13 -0400
-In-Reply-To: <20100807211728.GA28829@linux.vnet.ibm.com>
+Received: from mx1.redhat.com ([209.132.183.28]:52638 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753519Ab0HIGLX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 9 Aug 2010 02:11:23 -0400
+In-Reply-To: <20100808135511.269f670c.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: paulmck@linux.vnet.ibm.com
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: linux-media@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On 08/07/2010 04:17 PM, Paul E. McKenney wrote:
-> On Sat, Aug 07, 2010 at 02:05:42PM +1000, Stephen Rothwell wrote:
->   
->> Hi Jason,
+Em 08-08-2010 17:55, Randy Dunlap escreveu:
+> On Sat, 7 Aug 2010 20:39:20 -0700 Randy Dunlap wrote:
+> 
+> [adding linux-media]
+> 
+>> On Sat, 7 Aug 2010 16:07:10 +1000 Stephen Rothwell wrote:
 >>
->> Today's linux-next merge of the kgdb tree got a conflict in
->> include/linux/rcupdate.h between commits
->> 551d55a944b143ef26fbd482d1c463199d6f65cf ("tree/tiny rcu: Add debug RCU
->> head objects") and f5155b33277c9678041a27869165619bb34f722f ("rcu: add an
->> rcu_dereference_index_check()") from Linus' tree and commit
->> 9e213357d0aeaeb81e213cfd3b9415db5fccc1b5 ("rcu,debug_core: allow the
->> kernel debugger to reset the rcu stall timer") from the kgdb tree.
->>     
->
-> Hello, Jason,
->
-> Just trying to make sure I understand this...
->
-> This cannot be a "stop the machine" debugger, because otherwise the
-> jiffies counter would stop and you would not get RCU CPU stall warnings.
->
-> It might be a "stop the machine" debugger, but where the jiffies counter
-> catches up quickly as soon as the machine restarts.  In this case,
-> your patch would be a reasonable approach, but RCU CPU stall warnings
-> are going to be the least of your problems. 
+>>> Hi all,
+>>>
+>>> As the merge window is open, please do not add 2.6.37 material to your
+>>> linux-next included trees until after 2.6.36-rc1.
+>>>
+>>> Changes since 20100806:
+>>
+>> 2 sets of IR build errors (2 .config files attached):
+>>
+>> #5091:
+>> ERROR: "ir_keydown" [drivers/media/video/ir-kbd-i2c.ko] undefined!
+>> ERROR: "__ir_input_register" [drivers/media/video/ir-kbd-i2c.ko] undefined!
+>> ERROR: "get_rc_map" [drivers/media/video/ir-kbd-i2c.ko] undefined!
+>> ERROR: "ir_input_unregister" [drivers/media/video/ir-kbd-i2c.ko] undefined!
+>> ERROR: "get_rc_map" [drivers/media/video/cx88/cx88xx.ko] undefined!
+>> ERROR: "ir_repeat" [drivers/media/video/cx88/cx88xx.ko] undefined!
+>> ERROR: "ir_input_unregister" [drivers/media/video/cx88/cx88xx.ko] undefined!
+>> ERROR: "ir_keydown" [drivers/media/video/cx88/cx88xx.ko] undefined!
+>> ERROR: "__ir_input_register" [drivers/media/video/cx88/cx88xx.ko] undefined!
+>> ERROR: "get_rc_map" [drivers/media/video/bt8xx/bttv.ko] undefined!
+>> ERROR: "ir_input_unregister" [drivers/media/video/bt8xx/bttv.ko] undefined!
+>> ERROR: "__ir_input_register" [drivers/media/video/bt8xx/bttv.ko] undefined!
+>> ERROR: "ir_g_keycode_from_table" [drivers/media/IR/ir-common.ko] undefined!
+>>
+>>
+>> #5101:
+>> (.text+0x8306e2): undefined reference to `ir_core_debug'
+>> (.text+0x830729): undefined reference to `ir_core_debug'
+>> ir-functions.c:(.text+0x830906): undefined reference to `ir_core_debug'
+>> (.text+0x8309d8): undefined reference to `ir_g_keycode_from_table'
+>> (.text+0x830acf): undefined reference to `ir_core_debug'
+>> (.text+0x830b92): undefined reference to `ir_core_debug'
+>> (.text+0x830bef): undefined reference to `ir_core_debug'
+>> (.text+0x830c6a): undefined reference to `ir_core_debug'
+>> (.text+0x830cf7): undefined reference to `ir_core_debug'
+>> budget-ci.c:(.text+0x89f5c8): undefined reference to `ir_keydown'
+>> budget-ci.c:(.text+0x8a0c58): undefined reference to `get_rc_map'
+>> budget-ci.c:(.text+0x8a0c80): undefined reference to `__ir_input_register'
+>> budget-ci.c:(.text+0x8a0ee0): undefined reference to `get_rc_map'
+>> budget-ci.c:(.text+0x8a11cd): undefined reference to `ir_input_unregister'
+>> (.text+0x8a8adb): undefined reference to `ir_input_unregister'
+>> dvb-usb-remote.c:(.text+0x8a9188): undefined reference to `get_rc_map'
+>> dvb-usb-remote.c:(.text+0x8a91b1): undefined reference to `__ir_input_register'
+>> dvb-usb-remote.c:(.text+0x8a9238): undefined reference to `get_rc_map'
+>> dib0700_core.c:(.text+0x8b04ca): undefined reference to `ir_keydown'
+>> dib0700_devices.c:(.text+0x8b2ea8): undefined reference to `ir_keydown'
+>> dib0700_devices.c:(.text+0x8b2ef0): undefined reference to `ir_keydown'
 
-You should have the patches now in as I posted them to LKML as an RFC.  
-If there are other problems in this area I am interested in
-understanding what further issues exist that still have yet to be dealt
-with.
+Hmm... clearly, there are some bad dependencies at the Kconfig. Maybe ir-core were compiled
+as module, while some drivers as built-in.
 
-The general idea is that the kernel can take an exception and execute
-for a short period of time with all the processors spinning in a wait
-loop and then resume kernel execution.  As you might guess the debugger
-is a "multipurpose" tool and there are quite a few circumstances where
-the a trip into the debugger is really a one way trip to a reboot when
-you are done inspecting.
-
->  Actually, I have only seen
-> one piece of your patch.  Could you please send me the rest of it?
->
-> If you are permitting some tasks to run while others are halted,
-> then the RCU CPU stall is simply a symptom of an underlying problem,
-> namely that if you halt a task in an RCU read-side critical section
-> for long enough, you will OOM the system.
->
->   
-
-We are definitely not "partially running".  Picking an choosing threads
-to run without a complete integration with the scheduler and all other
-related systems like RCU would be a _really_ bad idea.  :-)
-
-Jason.
+Could you please pass the .config file for this build?
+>>
+>>
+>> ---
+>> ~Randy
+>> *** Remember to use Documentation/SubmitChecklist when testing your code ***
+> 
+> 
+> ---
+> ~Randy
+> *** Remember to use Documentation/SubmitChecklist when testing your code ***
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-media" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
