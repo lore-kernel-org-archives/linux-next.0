@@ -1,21 +1,25 @@
-From: Mike Rapoport <mike@compulab.co.il>
+From: Samuel Ortiz <sameo@linux.intel.com>
 Subject: Re: linux-next: build failure after merge of the mfd tree
-Date: Mon, 09 Aug 2010 11:51:41 +0300
-Message-ID: <4C5FC19D.6050100@compulab.co.il>
+Date: Mon, 9 Aug 2010 11:10:20 +0200
+Message-ID: <20100809091019.GA2513@sortiz-mobl>
 References: <20100809114042.7beb076a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga09.intel.com ([134.134.136.24]:21246 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755911Ab0HIJKQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 9 Aug 2010 05:10:16 -0400
+Content-Disposition: inline
 In-Reply-To: <20100809114042.7beb076a.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Rapoport <mike@compulab.co.il>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Rapoport <mike@compulab.co.il>
 
-Hi Samuel,
+Hi Stephen,
 
-Stephen Rothwell wrote:
+On Mon, Aug 09, 2010 at 11:40:42AM +1000, Stephen Rothwell wrote:
 > Hi Samuel,
 > 
 > After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
@@ -35,13 +39,20 @@ Stephen Rothwell wrote:
 > Caused by commit 8232c2794cf0e39b38d089eff49500461ecdbb8f ("mfd: Add
 > TPS6586x driver").  "struct tps6586x_platform_data" is not defined
 > anywhere ...
+Sorry about that, it should be all fixed now.
 
-It seems to me that the include/linux/mfd/tps6586x.h was omitted from your 
-commit to the mfd tree. Can you please check?
+Cheers,
+Samuel.
+
 
 > I have used the mfd tree from next-20100807 for today.
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
+
 
 
 -- 
-Sincerely yours,
-Mike.
+Intel Open Source Technology Centre
+http://oss.intel.com/
