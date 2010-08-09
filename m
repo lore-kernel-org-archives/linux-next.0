@@ -1,83 +1,57 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for August 7 (IR)
-Date: Sun, 8 Aug 2010 13:55:11 -0700
-Message-ID: <20100808135511.269f670c.randy.dunlap@oracle.com>
-References: <20100807160710.b7c8d838.sfr@canb.auug.org.au>
-	<20100807203920.83134a60.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the block tree
+Date: Mon, 9 Aug 2010 11:28:31 +1000
+Message-ID: <20100809112831.0dc41e76.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__9_Aug_2010_11_28_31_+1000_q7UUZdYMaK=Qjt5K"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:48480 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753799Ab0HHUzf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 8 Aug 2010 16:55:35 -0400
-In-Reply-To: <20100807203920.83134a60.randy.dunlap@oracle.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:46393 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755132Ab0HIB2k (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 8 Aug 2010 21:28:40 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>, linux-media@vger.kernel.org
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Stodden <daniel.stodden@citrix.com>, Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>
 
-On Sat, 7 Aug 2010 20:39:20 -0700 Randy Dunlap wrote:
+--Signature=_Mon__9_Aug_2010_11_28_31_+1000_q7UUZdYMaK=Qjt5K
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[adding linux-media]
+Hi Jens,
 
-> On Sat, 7 Aug 2010 16:07:10 +1000 Stephen Rothwell wrote:
-> 
-> > Hi all,
-> > 
-> > As the merge window is open, please do not add 2.6.37 material to your
-> > linux-next included trees until after 2.6.36-rc1.
-> > 
-> > Changes since 20100806:
-> 
-> 2 sets of IR build errors (2 .config files attached):
-> 
-> #5091:
-> ERROR: "ir_keydown" [drivers/media/video/ir-kbd-i2c.ko] undefined!
-> ERROR: "__ir_input_register" [drivers/media/video/ir-kbd-i2c.ko] undefined!
-> ERROR: "get_rc_map" [drivers/media/video/ir-kbd-i2c.ko] undefined!
-> ERROR: "ir_input_unregister" [drivers/media/video/ir-kbd-i2c.ko] undefined!
-> ERROR: "get_rc_map" [drivers/media/video/cx88/cx88xx.ko] undefined!
-> ERROR: "ir_repeat" [drivers/media/video/cx88/cx88xx.ko] undefined!
-> ERROR: "ir_input_unregister" [drivers/media/video/cx88/cx88xx.ko] undefined!
-> ERROR: "ir_keydown" [drivers/media/video/cx88/cx88xx.ko] undefined!
-> ERROR: "__ir_input_register" [drivers/media/video/cx88/cx88xx.ko] undefined!
-> ERROR: "get_rc_map" [drivers/media/video/bt8xx/bttv.ko] undefined!
-> ERROR: "ir_input_unregister" [drivers/media/video/bt8xx/bttv.ko] undefined!
-> ERROR: "__ir_input_register" [drivers/media/video/bt8xx/bttv.ko] undefined!
-> ERROR: "ir_g_keycode_from_table" [drivers/media/IR/ir-common.ko] undefined!
-> 
-> 
-> #5101:
-> (.text+0x8306e2): undefined reference to `ir_core_debug'
-> (.text+0x830729): undefined reference to `ir_core_debug'
-> ir-functions.c:(.text+0x830906): undefined reference to `ir_core_debug'
-> (.text+0x8309d8): undefined reference to `ir_g_keycode_from_table'
-> (.text+0x830acf): undefined reference to `ir_core_debug'
-> (.text+0x830b92): undefined reference to `ir_core_debug'
-> (.text+0x830bef): undefined reference to `ir_core_debug'
-> (.text+0x830c6a): undefined reference to `ir_core_debug'
-> (.text+0x830cf7): undefined reference to `ir_core_debug'
-> budget-ci.c:(.text+0x89f5c8): undefined reference to `ir_keydown'
-> budget-ci.c:(.text+0x8a0c58): undefined reference to `get_rc_map'
-> budget-ci.c:(.text+0x8a0c80): undefined reference to `__ir_input_register'
-> budget-ci.c:(.text+0x8a0ee0): undefined reference to `get_rc_map'
-> budget-ci.c:(.text+0x8a11cd): undefined reference to `ir_input_unregister'
-> (.text+0x8a8adb): undefined reference to `ir_input_unregister'
-> dvb-usb-remote.c:(.text+0x8a9188): undefined reference to `get_rc_map'
-> dvb-usb-remote.c:(.text+0x8a91b1): undefined reference to `__ir_input_register'
-> dvb-usb-remote.c:(.text+0x8a9238): undefined reference to `get_rc_map'
-> dib0700_core.c:(.text+0x8b04ca): undefined reference to `ir_keydown'
-> dib0700_devices.c:(.text+0x8b2ea8): undefined reference to `ir_keydown'
-> dib0700_devices.c:(.text+0x8b2ef0): undefined reference to `ir_keydown'
-> 
-> 
-> ---
-> ~Randy
-> *** Remember to use Documentation/SubmitChecklist when testing your code ***
+After merging the block tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
+drivers/block/xen-blkfront.c: In function 'blkif_release':
+drivers/block/xen-blkfront.c:1238: error: label 'out' used but not defined
 
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+Caused by commit acfca3c622a009fb62b566604452ab9fb3a11019 ("blkfront:
+Remove obsolete info->users").  I assume something went wrong in the
+rebase ...
+
+I have used the block tree from next-20100807 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__9_Aug_2010_11_28_31_+1000_q7UUZdYMaK=Qjt5K
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMX1m/AAoJEDMEi1NhKgbsHO0H/07xb0+oQO2PabLb4KyLV5Lr
+hIn/mH5OK++Vber//bhcuX/j/DkGn/8Y80qXmir2w1OnfjTAJvxPLKUwx3gb2rMk
+jE6e2hL69J6zDAMD6DEpdeU+mj/Fon/YmXykhg9Gd9jzyJd5M9M/Q3SYuX/41+VO
+RJj/cNFMHCDqfhU2EmO4cTbPbiVwSZja6zABMppKJsBthA2CsgEAQRKYlpfmKFKa
+2yoIRfdPCCsxqyyxj9teJmnTUIdzHjFZzqyXijj/GosU30OeJUCKtz8BU+gQaLrF
+DcYgIninAYKcZYhQGkxNt44ZU94u1cn+5o2OOZIL4VQREZ2y1Dll4h6dtFrND7Y=
+=Rgwh
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__9_Aug_2010_11_28_31_+1000_q7UUZdYMaK=Qjt5K--
