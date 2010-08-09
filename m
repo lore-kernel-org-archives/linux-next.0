@@ -1,92 +1,47 @@
-From: Mauro Carvalho Chehab <mchehab@redhat.com>
-Subject: Re: linux-next: Tree for August 7 (IR)
-Date: Mon, 09 Aug 2010 03:11:58 -0300
-Message-ID: <4C5F9C2E.50001@redhat.com>
-References: <20100807160710.b7c8d838.sfr@canb.auug.org.au>	<20100807203920.83134a60.randy.dunlap@oracle.com> <20100808135511.269f670c.randy.dunlap@oracle.com>
+From: Mike Rapoport <mike@compulab.co.il>
+Subject: Re: linux-next: build failure after merge of the mfd tree
+Date: Mon, 09 Aug 2010 11:51:41 +0300
+Message-ID: <4C5FC19D.6050100@compulab.co.il>
+References: <20100809114042.7beb076a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:52638 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753519Ab0HIGLX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 9 Aug 2010 02:11:23 -0400
-In-Reply-To: <20100808135511.269f670c.randy.dunlap@oracle.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: linux-media@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20100809114042.7beb076a.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Rapoport <mike@compulab.co.il>
+List-Id: linux-next.vger.kernel.org
 
-Em 08-08-2010 17:55, Randy Dunlap escreveu:
-> On Sat, 7 Aug 2010 20:39:20 -0700 Randy Dunlap wrote:
-> 
-> [adding linux-media]
-> 
->> On Sat, 7 Aug 2010 16:07:10 +1000 Stephen Rothwell wrote:
->>
->>> Hi all,
->>>
->>> As the merge window is open, please do not add 2.6.37 material to your
->>> linux-next included trees until after 2.6.36-rc1.
->>>
->>> Changes since 20100806:
->>
->> 2 sets of IR build errors (2 .config files attached):
->>
->> #5091:
->> ERROR: "ir_keydown" [drivers/media/video/ir-kbd-i2c.ko] undefined!
->> ERROR: "__ir_input_register" [drivers/media/video/ir-kbd-i2c.ko] undefined!
->> ERROR: "get_rc_map" [drivers/media/video/ir-kbd-i2c.ko] undefined!
->> ERROR: "ir_input_unregister" [drivers/media/video/ir-kbd-i2c.ko] undefined!
->> ERROR: "get_rc_map" [drivers/media/video/cx88/cx88xx.ko] undefined!
->> ERROR: "ir_repeat" [drivers/media/video/cx88/cx88xx.ko] undefined!
->> ERROR: "ir_input_unregister" [drivers/media/video/cx88/cx88xx.ko] undefined!
->> ERROR: "ir_keydown" [drivers/media/video/cx88/cx88xx.ko] undefined!
->> ERROR: "__ir_input_register" [drivers/media/video/cx88/cx88xx.ko] undefined!
->> ERROR: "get_rc_map" [drivers/media/video/bt8xx/bttv.ko] undefined!
->> ERROR: "ir_input_unregister" [drivers/media/video/bt8xx/bttv.ko] undefined!
->> ERROR: "__ir_input_register" [drivers/media/video/bt8xx/bttv.ko] undefined!
->> ERROR: "ir_g_keycode_from_table" [drivers/media/IR/ir-common.ko] undefined!
->>
->>
->> #5101:
->> (.text+0x8306e2): undefined reference to `ir_core_debug'
->> (.text+0x830729): undefined reference to `ir_core_debug'
->> ir-functions.c:(.text+0x830906): undefined reference to `ir_core_debug'
->> (.text+0x8309d8): undefined reference to `ir_g_keycode_from_table'
->> (.text+0x830acf): undefined reference to `ir_core_debug'
->> (.text+0x830b92): undefined reference to `ir_core_debug'
->> (.text+0x830bef): undefined reference to `ir_core_debug'
->> (.text+0x830c6a): undefined reference to `ir_core_debug'
->> (.text+0x830cf7): undefined reference to `ir_core_debug'
->> budget-ci.c:(.text+0x89f5c8): undefined reference to `ir_keydown'
->> budget-ci.c:(.text+0x8a0c58): undefined reference to `get_rc_map'
->> budget-ci.c:(.text+0x8a0c80): undefined reference to `__ir_input_register'
->> budget-ci.c:(.text+0x8a0ee0): undefined reference to `get_rc_map'
->> budget-ci.c:(.text+0x8a11cd): undefined reference to `ir_input_unregister'
->> (.text+0x8a8adb): undefined reference to `ir_input_unregister'
->> dvb-usb-remote.c:(.text+0x8a9188): undefined reference to `get_rc_map'
->> dvb-usb-remote.c:(.text+0x8a91b1): undefined reference to `__ir_input_register'
->> dvb-usb-remote.c:(.text+0x8a9238): undefined reference to `get_rc_map'
->> dib0700_core.c:(.text+0x8b04ca): undefined reference to `ir_keydown'
->> dib0700_devices.c:(.text+0x8b2ea8): undefined reference to `ir_keydown'
->> dib0700_devices.c:(.text+0x8b2ef0): undefined reference to `ir_keydown'
+Hi Samuel,
 
-Hmm... clearly, there are some bad dependencies at the Kconfig. Maybe ir-core were compiled
-as module, while some drivers as built-in.
+Stephen Rothwell wrote:
+> Hi Samuel,
+> 
+> After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+> 
+> drivers/mfd/tps6586x.c: In function 'tps6586x_add_subdevs':
+> drivers/mfd/tps6586x.c:272: error: dereferencing pointer to incomplete type
+> drivers/mfd/tps6586x.c:273: error: dereferencing pointer to incomplete type
+> drivers/mfd/tps6586x.c:275: error: dereferencing pointer to incomplete type
+> drivers/mfd/tps6586x.c:275: error: dereferencing pointer to incomplete type
+> drivers/mfd/tps6586x.c:278: error: dereferencing pointer to incomplete type
+> drivers/mfd/tps6586x.c: In function 'tps6586x_i2c_probe':
+> drivers/mfd/tps6586x.c:324: warning: passing argument 2 of 'tps6586x_add_subdevs' from incompatible pointer type
+> drivers/mfd/tps6586x.c:265: note: expected 'struct tps6586x_platform_data *' but argument is of type 'struct tps6586x_platform_data *'
+> drivers/mfd/tps6586x.c:330: error: dereferencing pointer to incomplete type
+> 
+> Caused by commit 8232c2794cf0e39b38d089eff49500461ecdbb8f ("mfd: Add
+> TPS6586x driver").  "struct tps6586x_platform_data" is not defined
+> anywhere ...
 
-Could you please pass the .config file for this build?
->>
->>
->> ---
->> ~Randy
->> *** Remember to use Documentation/SubmitChecklist when testing your code ***
-> 
-> 
-> ---
-> ~Randy
-> *** Remember to use Documentation/SubmitChecklist when testing your code ***
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+It seems to me that the include/linux/mfd/tps6586x.h was omitted from your 
+commit to the mfd tree. Can you please check?
+
+> I have used the mfd tree from next-20100807 for today.
+
+
+-- 
+Sincerely yours,
+Mike.
