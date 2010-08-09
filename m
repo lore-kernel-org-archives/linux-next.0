@@ -1,38 +1,95 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: linux-next: build failure after merge of the block tree
-Date: Sun, 08 Aug 2010 21:50:57 -0400
-Message-ID: <4C5F5F01.2090802@kernel.dk>
-References: <20100809112831.0dc41e76.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the spi tree with the devicetree tree
+Date: Mon, 9 Aug 2010 12:05:09 +1000
+Message-ID: <20100809120509.be36a4fa.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 0122700014.0.fullrate.dk ([95.166.99.235]:53855 "EHLO kernel.dk"
+Received: from chilli.pcug.org.au ([203.10.76.44]:60673 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752917Ab0HIBvD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 8 Aug 2010 21:51:03 -0400
-In-Reply-To: <20100809112831.0dc41e76.sfr@canb.auug.org.au>
+	id S1752917Ab0HICFM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 8 Aug 2010 22:05:12 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Stodden <daniel.stodden@citrix.com>, Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anatolij Gustschin <agust@denx.de>
 
-On 08/08/2010 09:28 PM, Stephen Rothwell wrote:
-> Hi Jens,
-> 
-> After merging the block tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> drivers/block/xen-blkfront.c: In function 'blkif_release':
-> drivers/block/xen-blkfront.c:1238: error: label 'out' used but not defined
-> 
-> Caused by commit acfca3c622a009fb62b566604452ab9fb3a11019 ("blkfront:
-> Remove obsolete info->users").  I assume something went wrong in the
-> rebase ...
-> 
-> I have used the block tree from next-20100807 for today.
+Hi Grant,
 
-Oops, fixed up.
+Today's linux-next merge of the spi tree got a conflict in
+drivers/spi/mpc512x_psc_spi.c between commit
+2dc11581376829303b98eadb2de253bee065a56a ("of/device: Replace struct
+of_device with struct platform_device") from the devicetree tree and
+commit cf40f082f8d3a98e28af02af20d00d2500eb6a65 ("spi/mpc5121: change
+annotations for probe and remove functions") from the spi tree.
+
+I fixed it up (as suggested by you - see below) and can carry the fix as
+necessary.
+
+I also added this merge fix patch (as suggest by you):
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 9 Aug 2010 12:02:19 +1000
+Subject: [PATCH] spi: update for of_device to platform_device replacement
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/ata/sata_dwc_460ex.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/ata/sata_dwc_460ex.c b/drivers/ata/sata_dwc_460ex.c
+index ea24c1e..2673a3d 100644
+--- a/drivers/ata/sata_dwc_460ex.c
++++ b/drivers/ata/sata_dwc_460ex.c
+@@ -1588,7 +1588,7 @@ static const struct ata_port_info sata_dwc_port_info[] = {
+ 	},
+ };
+ 
+-static int sata_dwc_probe(struct of_device *ofdev,
++static int sata_dwc_probe(struct platform_device *ofdev,
+ 			const struct of_device_id *match)
+ {
+ 	struct sata_dwc_device *hsdev;
+@@ -1702,7 +1702,7 @@ error_out:
+ 	return err;
+ }
+ 
+-static int sata_dwc_remove(struct of_device *ofdev)
++static int sata_dwc_remove(struct platform_device *ofdev)
+ {
+ 	struct device *dev = &ofdev->dev;
+ 	struct ata_host *host = dev_get_drvdata(dev);
+-- 
+1.7.1
 
 -- 
-Jens Axboe
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/spi/mpc512x_psc_spi.c
+index cddbfce,c8d69fc..0000000
+--- a/drivers/spi/mpc512x_psc_spi.c
++++ b/drivers/spi/mpc512x_psc_spi.c
+@@@ -507,8 -505,8 +507,8 @@@ static int __devexit mpc512x_psc_spi_do
+  	return 0;
+  }
+  
+- static int __init mpc512x_psc_spi_of_probe(struct platform_device *op,
+ -static int __devinit mpc512x_psc_spi_of_probe(struct of_device *op,
+ -					      const struct of_device_id *match)
+++static int __devinit mpc512x_psc_spi_of_probe(struct platform_device *op,
+ +					   const struct of_device_id *match)
+  {
+  	const u32 *regaddr_p;
+  	u64 regaddr64, size64;
+@@@ -539,7 -537,7 +539,7 @@@
+  				irq_of_parse_and_map(op->dev.of_node, 0), id);
+  }
+  
+- static int __exit mpc512x_psc_spi_of_remove(struct platform_device *op)
+ -static int __devexit mpc512x_psc_spi_of_remove(struct of_device *op)
+++static int __devexit mpc512x_psc_spi_of_remove(struct platform_device *op)
+  {
+  	return mpc512x_psc_spi_do_remove(&op->dev);
+  }
