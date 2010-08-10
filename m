@@ -1,78 +1,58 @@
-From: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-Subject: Re: [patch -NEXT] usb/gadget/webcam: fix Kconfig depends again
-Date: Tue, 10 Aug 2010 16:53:04 +0200
-Message-ID: <201008101653.08358.laurent.pinchart@ideasonboard.com>
-References: <20100809132314.789e13f3.sfr@canb.auug.org.au> <201008101416.31188.laurent.pinchart@ideasonboard.com> <4C6166D9.60607@oracle.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for August 6 (block git tree)
+Date: Tue, 10 Aug 2010 08:37:37 -0700
+Message-ID: <20100810083737.c761fc8f.randy.dunlap@oracle.com>
+References: <20100806132758.6001d416.sfr@canb.auug.org.au>
+	<20100806120456.5eca82b7.randy.dunlap@oracle.com>
+	<4C5C5D18.6050905@oracle.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4C6166D9.60607-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, gregkh-l3A5Bk7waGM@public.gmane.org, lud <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, David Brownell <dbrownell-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:54710 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757572Ab0HJPio (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Aug 2010 11:38:44 -0400
+In-Reply-To: <4C5C5D18.6050905@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, axboe@kernel.dk, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Hi Randy,
+On Fri, 06 Aug 2010 12:06:00 -0700 Randy Dunlap wrote:
 
-On Tuesday 10 August 2010 16:48:57 Randy Dunlap wrote:
-> On 08/10/10 05:16, Laurent Pinchart wrote:
-> > On Monday 09 August 2010 19:55:20 Randy Dunlap wrote:
-> >> From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-> >> 
-> >> The USB gadget webcam driver uses V4L2 interfaces, so it should depend
-> >> on VIDEO_V4L2 instead of VIDEO_DEV.  This fixes a lot of build errors
-> >> when V4L2 is not enabled:
-> >> 
-> >> ERROR: "v4l2_event_unsubscribe" [drivers/usb/gadget/g_webcam.ko]
-> >> undefined! ERROR: "v4l2_event_queue" [drivers/usb/gadget/g_webcam.ko]
-> >> undefined! ERROR: "video_device_release"
-> >> [drivers/usb/gadget/g_webcam.ko] undefined! ERROR: "video_usercopy"
-> >> [drivers/usb/gadget/g_webcam.ko] undefined! ERROR: "v4l2_event_dequeue"
-> >> [drivers/usb/gadget/g_webcam.ko] undefined! ERROR:
-> >> "video_register_device" [drivers/usb/gadget/g_webcam.ko] undefined!
-> >> ERROR: "video_device_alloc" [drivers/usb/gadget/g_webcam.ko] undefined!
-> >> ERROR: "v4l2_event_subscribe" [drivers/usb/gadget/g_webcam.ko]
-> >> undefined! ERROR: "video_unregister_device"
-> >> [drivers/usb/gadget/g_webcam.ko] undefined!
-> >> ERROR: "v4l2_fh_init" [drivers/usb/gadget/g_webcam.ko] undefined!
-> >> ERROR: "v4l2_event_pending" [drivers/usb/gadget/g_webcam.ko] undefined!
-> >> ERROR: "v4l2_event_init" [drivers/usb/gadget/g_webcam.ko] undefined!
-> >> ERROR: "video_devdata" [drivers/usb/gadget/g_webcam.ko] undefined!
-> >> ERROR: "v4l2_event_alloc" [drivers/usb/gadget/g_webcam.ko] undefined!
-> >> ERROR: "v4l2_fh_add" [drivers/usb/gadget/g_webcam.ko] undefined!
-> >> ERROR: "v4l2_fh_del" [drivers/usb/gadget/g_webcam.ko] undefined!
-> >> ERROR: "v4l2_fh_exit" [drivers/usb/gadget/g_webcam.ko] undefined!
+> On 08/06/10 12:04, Randy Dunlap wrote:
+> > On Fri, 6 Aug 2010 13:27:58 +1000 Stephen Rothwell wrote:
 > > 
-> > All those symbols should be defined when VIDEO_DEV is selected.
+> >> Hi all,
+> >>
+> >> As the merge window is open, please do not add 2.6.37 material to your
+> >> linux-next included trees until after 2.6.36-rc1.
+> >>
+> >> Changes since 20100805:
+> >>
+> >> The block tree lost its build failure and a conflict.
 > > 
-> >> ERROR: "v4l2_ctrl_fill" [drivers/media/video/v4l2-common.ko] undefined!
-> >> ERROR: "v4l2_ctrl_get_menu" [drivers/media/video/v4l2-common.ko]
-> >> undefined!
 > > 
-> > Those 2 symbols require VIDEO_V4L2 but are not used by the webcam gadget
-> > driver.
+> > Lots of source files now need <linux/blk_types.h>:
 > > 
-> >> ERROR: "v4l2_device_unregister_subdev"
-> >> [drivers/media/video/v4l2-common.ko] undefined!
-> >> ERROR: "v4l2_device_register_subdev"
-> >> [drivers/media/video/v4l2-common.ko] undefined!
-> > 
-> > Those two symbols should be defined when VIDEO_DEV is selected. They are
-> > not used by the webcam gadget driver.
+> > mm/filemap.c:2164: error: 'REQ_WRITE' undeclared
+> > fs/read_write.c:362: error: 'REQ_WRITE' undeclared
+> > fs/splice.c:1108: error: 'REQ_WRITE' undeclared
+> > fs/aio.c:1496: error: 'REQ_WRITE' undeclared
+> > drivers/memstick/core/memstick.c:272: error: 'REQ_WRITE' undeclared
+> > drivers/memstick/host/tifm_ms.c:218: error: 'REQ_WRITE' undeclared
+> > drivers/memstick/host/jmb38x_ms.c:333: error: 'REQ_WRITE' undeclared
+> > drivers/staging/spectra/ffsport.c:277: error: 'REQ_TYPE_LINUX_BLOCK' undeclared
+> > fs/compat.c:1274: error: 'REQ_WRITE' undeclared
 > 
-> Summary:  I should drop this patch and look elsewhere for the problem,
-> Right?
+> 
+> Sorry, I see that this has already been fixed.
 
-I think the problem comes from somewhere else, yes. Your patch won't hurt, but 
-I don't see how it could fix the problem either.
+s/fixed/addressed/  but not yet merged into linux-next.
+Can we get that fixed, please?
 
--- 
-Regards,
 
-Laurent Pinchart
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
