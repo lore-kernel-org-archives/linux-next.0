@@ -1,57 +1,35 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for August 10 (acpi/apei)
-Date: Tue, 10 Aug 2010 10:02:28 -0700
-Message-ID: <20100810100228.525d952e.randy.dunlap@oracle.com>
-References: <20100810135601.4777e310.sfr@canb.auug.org.au>
+From: Boaz Harrosh <bharrosh@panasas.com>
+Subject: Re: linux-next: manual merge of the trivial tree with the vfs tree
+Date: Tue, 10 Aug 2010 18:19:01 -0400
+Message-ID: <4C61D055.4090909@panasas.com>
+References: <20100810121900.cbceb878.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:48373 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754860Ab0HJRCt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Aug 2010 13:02:49 -0400
-In-Reply-To: <20100810135601.4777e310.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-acpi@vger.kernel.org, Huang Ying <ying.huang@intel.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20100810121900.cbceb878.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Bolle <pebolle@tiscali.nl>, Al Viro <viro@ZenIV.linux.org.uk>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, 10 Aug 2010 13:56:01 +1000 Stephen Rothwell wrote:
-
-> Hi all,
+On 08/09/2010 10:19 PM, Stephen Rothwell wrote:
+> Hi Jiri,
 > 
-> As the merge window is open, please do not add 2.6.37 material to your
-> linux-next included trees until after 2.6.36-rc1.
+> Today's linux-next merge of the trivial tree got a conflict in
+> fs/exofs/inode.c between commit 21883a7d05d4c1e97943fa1a587aa2c2a3b09e8c
+> ("exofs: New truncate sequence") from the vfs tree and commit
+> 426d31071ac476ea62c62656b242930c17b58c00 ("fix printk typo 'faild'") from
+> the trivial tree.
 > 
-> Changes since 20100809:
+> Just context changes.  I fixed it up (see below) and can carry it for a
+> while.
 
+The "exofs: New truncate sequence" is now in the Kernel. So perhaps
+fix printk typo 'faild'" could be rebased.
 
-on 32-bit i386:
+Or you can send the patch to me and I'll push it. Which ever you
+prefer
 
-drivers/acpi/apei/erst-dbg.c:106: warning: format '%lx' expects type 'long unsigned int', but argument 3 has type 'ssize_t'
-erst-dbg.c:(.text+0xede6d): undefined reference to `__get_user_X'
-
-For the __get_user_X() call, in erst-dbg.c::erst_dbg_ioctl():
-
-	case APEI_ERST_CLEAR_RECORD:
-		rc = get_user(record_id, (u64 __user *)arg);
-
--> arch/x86/include/asm/uaccess.h:
-
-#ifdef CONFIG_X86_32
-#define __get_user_8(__ret_gu, __val_gu, ptr)				\
-		__get_user_x(X, __ret_gu, __val_gu, ptr)
-#else
-#define __get_user_8(__ret_gu, __val_gu, ptr)				\
-		__get_user_x(8, __ret_gu, __val_gu, ptr)
-#endif
-
-
-so is __get_user_8() not supported on X86_32?
-or is this something else?
-
-
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+Thanks
+Boaz
