@@ -1,40 +1,37 @@
-From: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Subject: Re: linux-next: Tree for August 10
-Date: Tue, 10 Aug 2010 10:56:51 +0100
-Message-ID: <20100810105651.5b49850d@lxorguk.ukuu.org.uk>
-References: <20100810135601.4777e310.sfr@canb.auug.org.au>
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: Re: linux-next: manual merge of the trivial tree with Linus' tree
+Date: Tue, 10 Aug 2010 13:22:48 +0200 (CEST)
+Message-ID: <alpine.LNX.2.00.1008101322260.29919@pobox.suse.cz>
+References: <20100810121117.8710aa26.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:39062 "EHLO
-	www.etchedpixels.co.uk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752252Ab0HJJmR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Aug 2010 05:42:17 -0400
-In-Reply-To: <20100810135601.4777e310.sfr@canb.auug.org.au>
+Received: from cantor.suse.de ([195.135.220.2]:50919 "EHLO mx1.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757458Ab0HJLWu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 Aug 2010 07:22:50 -0400
+In-Reply-To: <20100810121117.8710aa26.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Bolle <pebolle@tiscali.nl>, Christoph Egger <siccegge@cs.fau.de>
 
-On Tue, 10 Aug 2010 13:56:01 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Tue, 10 Aug 2010, Stephen Rothwell wrote:
 
-> Hi all,
+> Today's linux-next merge of the trivial tree got a conflict in
+> arch/arm/mach-omap1/board-nokia770.c between commit
+> ab6f7751905e5cf713d081dbb3b97b8f6909ab34 ("Removing dead OMAP_DSP") from
+> Linus' tree and commit 426d31071ac476ea62c62656b242930c17b58c00 ("fix
+> printk typo 'faild'") from the trivial tree.
 > 
-> As the merge window is open, please do not add 2.6.37 material to your
-> linux-next included trees until after 2.6.36-rc1.
+> The former removes the code that the latter is updating.  So I just
+> removed it.
 
-Breaks on x86-32 with
+Hi Stephen,
 
-ERROR: "st_get_plat_device" [drivers/staging/ti-st/st_drv.ko] undefined!
-ERROR: "__get_user_X" [drivers/acpi/apei/erst-dbg.ko] undefined!
-WARNING: modpost: Found 17 section mismatch(es).
-To see full details build your kernel with:
-'make CONFIG_DEBUG_SECTION_MISMATCH=y'
-make[1]: *** [__modpost] Error 1
-make: *** [modules] Error 2
+I have now merged Linus' master into for-next branch, so this conflict 
+should now be gone.
 
-
-
-Alan
+-- 
+Jiri Kosina
+SUSE Labs, Novell Inc.
