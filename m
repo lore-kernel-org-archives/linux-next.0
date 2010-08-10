@@ -1,51 +1,57 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] mfd: tps6586x depends on GPIOLIB
-Date: Tue, 10 Aug 2010 09:40:59 -0700
-Message-ID: <20100810094059.c320b916.randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for August 10 (acpi/apei)
+Date: Tue, 10 Aug 2010 10:02:28 -0700
+Message-ID: <20100810100228.525d952e.randy.dunlap@oracle.com>
 References: <20100810135601.4777e310.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:56864 "EHLO
+Received: from rcsinet10.oracle.com ([148.87.113.121]:48373 "EHLO
 	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932370Ab0HJQlh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Aug 2010 12:41:37 -0400
+	with ESMTP id S1754860Ab0HJRCt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Aug 2010 13:02:49 -0400
 In-Reply-To: <20100810135601.4777e310.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Samuel Ortiz <sameo@linux.intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-acpi@vger.kernel.org, Huang Ying <ying.huang@intel.com>
 Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+On Tue, 10 Aug 2010 13:56:01 +1000 Stephen Rothwell wrote:
 
-tps6586x uses gpio interfaces, so it should depend on GPIOLIB.
+> Hi all,
+> 
+> As the merge window is open, please do not add 2.6.37 material to your
+> linux-next included trees until after 2.6.36-rc1.
+> 
+> Changes since 20100809:
 
-Fixes these build errors:
 
-drivers/mfd/tps6586x.c:41: error: field 'gpio' has incomplete type
-drivers/mfd/tps6586x.c:195: warning: type defaults to 'int' in declaration of '__mptr'
-drivers/mfd/tps6586x.c:195: warning: initialization from incompatible pointer type
-drivers/mfd/tps6586x.c:210: warning: type defaults to 'int' in declaration of '__mptr'
-drivers/mfd/tps6586x.c:210: warning: initialization from incompatible pointer type
-drivers/mfd/tps6586x.c:219: warning: type defaults to 'int' in declaration of '__mptr'
-drivers/mfd/tps6586x.c:219: warning: initialization from incompatible pointer type
-drivers/mfd/tps6586x.c:249: error: implicit declaration of function 'gpiochip_add'
+on 32-bit i386:
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Samuel Ortiz <sameo@linux.intel.com>
+drivers/acpi/apei/erst-dbg.c:106: warning: format '%lx' expects type 'long unsigned int', but argument 3 has type 'ssize_t'
+erst-dbg.c:(.text+0xede6d): undefined reference to `__get_user_X'
+
+For the __get_user_X() call, in erst-dbg.c::erst_dbg_ioctl():
+
+	case APEI_ERST_CLEAR_RECORD:
+		rc = get_user(record_id, (u64 __user *)arg);
+
+-> arch/x86/include/asm/uaccess.h:
+
+#ifdef CONFIG_X86_32
+#define __get_user_8(__ret_gu, __val_gu, ptr)				\
+		__get_user_x(X, __ret_gu, __val_gu, ptr)
+#else
+#define __get_user_8(__ret_gu, __val_gu, ptr)				\
+		__get_user_x(8, __ret_gu, __val_gu, ptr)
+#endif
+
+
+so is __get_user_8() not supported on X86_32?
+or is this something else?
+
+
 ---
- drivers/mfd/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- linux-next-20100810.orig/drivers/mfd/Kconfig
-+++ linux-next-20100810/drivers/mfd/Kconfig
-@@ -543,7 +543,7 @@ config MFD_JZ4740_ADC
- 
- config MFD_TPS6586X
- 	tristate "TPS6586x Power Management chips"
--	depends on I2C
-+	depends on I2C && GPIOLIB
- 	select MFD_CORE
- 	help
- 	  If you say yes here you get support for the TPS6586X series of
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
