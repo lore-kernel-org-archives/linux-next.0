@@ -1,35 +1,61 @@
-From: Boaz Harrosh <bharrosh@panasas.com>
-Subject: Re: linux-next: manual merge of the trivial tree with the vfs tree
-Date: Tue, 10 Aug 2010 18:19:01 -0400
-Message-ID: <4C61D055.4090909@panasas.com>
-References: <20100810121900.cbceb878.sfr@canb.auug.org.au>
+From: Samuel Ortiz <sameo@linux.intel.com>
+Subject: Re: [PATCH -next] mfd: tps6586x depends on GPIOLIB
+Date: Wed, 11 Aug 2010 01:14:22 +0200
+Message-ID: <20100810231421.GA2571@sortiz-mobl>
+References: <20100810135601.4777e310.sfr@canb.auug.org.au>
+ <20100810094059.c320b916.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100810121900.cbceb878.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Bolle <pebolle@tiscali.nl>, Al Viro <viro@ZenIV.linux.org.uk>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga09.intel.com ([134.134.136.24]:15638 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751881Ab0HJXOa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 Aug 2010 19:14:30 -0400
+Content-Disposition: inline
+In-Reply-To: <20100810094059.c320b916.randy.dunlap@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On 08/09/2010 10:19 PM, Stephen Rothwell wrote:
-> Hi Jiri,
+On Tue, Aug 10, 2010 at 09:40:59AM -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
 > 
-> Today's linux-next merge of the trivial tree got a conflict in
-> fs/exofs/inode.c between commit 21883a7d05d4c1e97943fa1a587aa2c2a3b09e8c
-> ("exofs: New truncate sequence") from the vfs tree and commit
-> 426d31071ac476ea62c62656b242930c17b58c00 ("fix printk typo 'faild'") from
-> the trivial tree.
+> tps6586x uses gpio interfaces, so it should depend on GPIOLIB.
+Thanks Randy, I merged this one into the yet to be pulled tps6586x driver.
+
+Cheers,
+Samuel.
+
+> Fixes these build errors:
 > 
-> Just context changes.  I fixed it up (see below) and can carry it for a
-> while.
+> drivers/mfd/tps6586x.c:41: error: field 'gpio' has incomplete type
+> drivers/mfd/tps6586x.c:195: warning: type defaults to 'int' in declaration of '__mptr'
+> drivers/mfd/tps6586x.c:195: warning: initialization from incompatible pointer type
+> drivers/mfd/tps6586x.c:210: warning: type defaults to 'int' in declaration of '__mptr'
+> drivers/mfd/tps6586x.c:210: warning: initialization from incompatible pointer type
+> drivers/mfd/tps6586x.c:219: warning: type defaults to 'int' in declaration of '__mptr'
+> drivers/mfd/tps6586x.c:219: warning: initialization from incompatible pointer type
+> drivers/mfd/tps6586x.c:249: error: implicit declaration of function 'gpiochip_add'
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> Cc: Samuel Ortiz <sameo@linux.intel.com>
+> ---
+>  drivers/mfd/Kconfig |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> --- linux-next-20100810.orig/drivers/mfd/Kconfig
+> +++ linux-next-20100810/drivers/mfd/Kconfig
+> @@ -543,7 +543,7 @@ config MFD_JZ4740_ADC
+>  
+>  config MFD_TPS6586X
+>  	tristate "TPS6586x Power Management chips"
+> -	depends on I2C
+> +	depends on I2C && GPIOLIB
+>  	select MFD_CORE
+>  	help
+>  	  If you say yes here you get support for the TPS6586X series of
 
-The "exofs: New truncate sequence" is now in the Kernel. So perhaps
-fix printk typo 'faild'" could be rebased.
-
-Or you can send the patch to me and I'll push it. Which ever you
-prefer
-
-Thanks
-Boaz
+-- 
+Intel Open Source Technology Centre
+http://oss.intel.com/
