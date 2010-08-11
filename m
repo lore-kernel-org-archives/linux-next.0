@@ -1,70 +1,57 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the samsung tree with Linus' and the
- arm tree
-Date: Wed, 11 Aug 2010 11:09:33 +1000
-Message-ID: <20100811110933.de205605.sfr@canb.auug.org.au>
+From: Huang Ying <ying.huang@intel.com>
+Subject: Re: linux-next: Tree for August 10 (acpi/apei)
+Date: Wed, 11 Aug 2010 09:32:01 +0800
+Message-ID: <1281490321.2744.1325.camel@yhuang-dev>
+References: <20100810135601.4777e310.sfr@canb.auug.org.au>
+	 <20100810100228.525d952e.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49510 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756236Ab0HKBJi (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 Aug 2010 21:09:38 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Ben Dooks <ben-linux@fluff.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Abhilash Kesavan <a.kesavan@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Naveen Krishna Ch <ch.naveen@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Russell King <rmk@arm.linux.org.uk>
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <20100810100228.525d952e.randy.dunlap@oracle.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Ben,
+On Wed, 2010-08-11 at 01:02 +0800, Randy Dunlap wrote:
+> On Tue, 10 Aug 2010 13:56:01 +1000 Stephen Rothwell wrote:
+> 
+> > Hi all,
+> > 
+> > As the merge window is open, please do not add 2.6.37 material to your
+> > linux-next included trees until after 2.6.36-rc1.
+> > 
+> > Changes since 20100809:
+> 
+> 
+> on 32-bit i386:
+> 
+> drivers/acpi/apei/erst-dbg.c:106: warning: format '%lx' expects type 'long unsigned int', but argument 3 has type 'ssize_t'
+> erst-dbg.c:(.text+0xede6d): undefined reference to `__get_user_X'
+> 
+> For the __get_user_X() call, in erst-dbg.c::erst_dbg_ioctl():
+> 
+> 	case APEI_ERST_CLEAR_RECORD:
+> 		rc = get_user(record_id, (u64 __user *)arg);
+> 
+> -> arch/x86/include/asm/uaccess.h:
+> 
+> #ifdef CONFIG_X86_32
+> #define __get_user_8(__ret_gu, __val_gu, ptr)				\
+> 		__get_user_x(X, __ret_gu, __val_gu, ptr)
+> #else
+> #define __get_user_8(__ret_gu, __val_gu, ptr)				\
+> 		__get_user_x(8, __ret_gu, __val_gu, ptr)
+> #endif
+> 
+> 
+> so is __get_user_8() not supported on X86_32?
+> or is this something else?
 
-Today's linux-next merge of the samsung tree got a conflict in
-arch/arm/mach-s3c64xx/mach-smdk6410.c between commits
-85b14a3fc4036473ec6776d8e5d92c022155d581 ("ARM: S3C64XX: Add Touchscreen
-support for S3C64XX") from Linus' tree,
-290d0983b86f6243beffaa3ddb02c14adc30f02a ("ARM: S3C64XX: Add keypad device to the SMDK6410 board"), 0ab0b6d226caa4a0268ecbce76a7376c3f40ee6b ("ARM: S3C64XX: Add support for Compact Flash driver on SMDK6410") from the arm tree and
-commit 96e9d908a7b5b5be774ba26aca0d6633e7c97f63 ("ARM: SMDK6410: Register
-AC97 controller") from the samsung tree.
+Will fix that via replacing get_user with copy_from_user for u64.
 
-I fixed it up (see below) and can carry the fix for a while.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Best Regards,
+Huang Ying
 
-diff --cc arch/arm/mach-s3c64xx/mach-smdk6410.c
-index b5d7861,6878fbd..0000000
---- a/arch/arm/mach-s3c64xx/mach-smdk6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-@@@ -66,9 -64,7 +66,10 @@@
-  #include <plat/clock.h>
-  #include <plat/devs.h>
-  #include <plat/cpu.h>
- +#include <plat/adc.h>
- +#include <plat/ts.h>
- +#include <plat/keypad.h>
-+ #include <plat/audio.h>
-  
-  #define UCON S3C2410_UCON_DEFAULT | S3C2410_UCON_UCLK
-  #define ULCON S3C2410_LCON_CS8 | S3C2410_LCON_PNONE | S3C2410_LCON_STOPB
-@@@ -282,8 -255,8 +283,9 @@@ static struct platform_device *smdk6410
-  	&s3c_device_fb,
-  	&s3c_device_ohci,
-  	&s3c_device_usb_hsotg,
-+ 	&s3c64xx_device_ac97,
-  	&s3c64xx_device_iisv4,
- +	&samsung_device_keypad,
-  
-  #ifdef CONFIG_REGULATOR
-  	&smdk6410_b_pwr_5v,
-@@@ -696,8 -654,9 +698,11 @@@ static void __init smdk6410_machine_ini
-  	i2c_register_board_info(0, i2c_devs0, ARRAY_SIZE(i2c_devs0));
-  	i2c_register_board_info(1, i2c_devs1, ARRAY_SIZE(i2c_devs1));
-  
- +	s3c_ide_set_platdata(&smdk6410_ide_pdata);
- +
-+ 	/* Board defualt with CFG2.1 off */
-+ 	s3c64xx_ac97_setup_gpio(S3C64XX_AC97_GPD);
-+ 
-  	platform_add_devices(smdk6410_devices, ARRAY_SIZE(smdk6410_devices));
-  }
-  
+
