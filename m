@@ -1,31 +1,70 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: remove inode_setattr
-Date: Wed, 11 Aug 2010 02:01:52 +0100
-Message-ID: <20100811010152.GD31363@ZenIV.linux.org.uk>
-References: <201008101859.o7AIx9BM026915@hera.kernel.org>
- <20100810155011.b9657102.akpm@linux-foundation.org>
- <20100811101751.1afdded8.sfr@canb.auug.org.au>
- <20100811104503.4082f68f.sfr@canb.auug.org.au>
- <20100811005216.GB31363@ZenIV.linux.org.uk>
- <20100810175944.5919319e.akpm@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the samsung tree with Linus' and the
+ arm tree
+Date: Wed, 11 Aug 2010 11:09:33 +1000
+Message-ID: <20100811110933.de205605.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:56395 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752370Ab0HKBB6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 Aug 2010 21:01:58 -0400
-Content-Disposition: inline
-In-Reply-To: <20100810175944.5919319e.akpm@linux-foundation.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:49510 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756236Ab0HKBJi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 Aug 2010 21:09:38 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Christoph Hellwig <hch@lst.de>, Linus Torvalds <torvalds@linux-foundation.org>, Eric Van Hensbergen <ericvh@gmail.com>, Sripathi Kodi <sripathik@in.ibm.com>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Abhilash Kesavan <a.kesavan@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Naveen Krishna Ch <ch.naveen@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Russell King <rmk@arm.linux.org.uk>
 
-On Tue, Aug 10, 2010 at 05:59:44PM -0700, Andrew Morton wrote:
+Hi Ben,
 
-> That's v9fs_vfs_setattr().  The problem is in the new
-> v9fs_vfs_setattr_dotl().
+Today's linux-next merge of the samsung tree got a conflict in
+arch/arm/mach-s3c64xx/mach-smdk6410.c between commits
+85b14a3fc4036473ec6776d8e5d92c022155d581 ("ARM: S3C64XX: Add Touchscreen
+support for S3C64XX") from Linus' tree,
+290d0983b86f6243beffaa3ddb02c14adc30f02a ("ARM: S3C64XX: Add keypad device to the SMDK6410 board"), 0ab0b6d226caa4a0268ecbce76a7376c3f40ee6b ("ARM: S3C64XX: Add support for Compact Flash driver on SMDK6410") from the arm tree and
+commit 96e9d908a7b5b5be774ba26aca0d6633e7c97f63 ("ARM: SMDK6410: Register
+AC97 controller") from the samsung tree.
 
-Yeah, see another posting...  Fix is in the queue I'm putting together
-for tonight.  Sorry about that...
+I fixed it up (see below) and can carry the fix for a while.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/arm/mach-s3c64xx/mach-smdk6410.c
+index b5d7861,6878fbd..0000000
+--- a/arch/arm/mach-s3c64xx/mach-smdk6410.c
++++ b/arch/arm/mach-s3c64xx/mach-smdk6410.c
+@@@ -66,9 -64,7 +66,10 @@@
+  #include <plat/clock.h>
+  #include <plat/devs.h>
+  #include <plat/cpu.h>
+ +#include <plat/adc.h>
+ +#include <plat/ts.h>
+ +#include <plat/keypad.h>
++ #include <plat/audio.h>
+  
+  #define UCON S3C2410_UCON_DEFAULT | S3C2410_UCON_UCLK
+  #define ULCON S3C2410_LCON_CS8 | S3C2410_LCON_PNONE | S3C2410_LCON_STOPB
+@@@ -282,8 -255,8 +283,9 @@@ static struct platform_device *smdk6410
+  	&s3c_device_fb,
+  	&s3c_device_ohci,
+  	&s3c_device_usb_hsotg,
++ 	&s3c64xx_device_ac97,
+  	&s3c64xx_device_iisv4,
+ +	&samsung_device_keypad,
+  
+  #ifdef CONFIG_REGULATOR
+  	&smdk6410_b_pwr_5v,
+@@@ -696,8 -654,9 +698,11 @@@ static void __init smdk6410_machine_ini
+  	i2c_register_board_info(0, i2c_devs0, ARRAY_SIZE(i2c_devs0));
+  	i2c_register_board_info(1, i2c_devs1, ARRAY_SIZE(i2c_devs1));
+  
+ +	s3c_ide_set_platdata(&smdk6410_ide_pdata);
+ +
++ 	/* Board defualt with CFG2.1 off */
++ 	s3c64xx_ac97_setup_gpio(S3C64XX_AC97_GPD);
++ 
+  	platform_add_devices(smdk6410_devices, ARRAY_SIZE(smdk6410_devices));
+  }
+  
