@@ -1,112 +1,329 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree
-Date: Wed, 11 Aug 2010 13:38:12 +1000
-Message-ID: <20100811133812.2b594551.sfr@canb.auug.org.au>
+Subject: linux-next: Tree for August 11
+Date: Wed, 11 Aug 2010 14:00:09 +1000
+Message-ID: <20100811140009.6ff33109.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__11_Aug_2010_13_38_12_+1000_qba66bv3HGSl.knC"
+ boundary="Signature=_Wed__11_Aug_2010_14_00_09_+1000_6Amkh1qR2h5iAHZv"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34845 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:48304 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932427Ab0HKDiU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 Aug 2010 23:38:20 -0400
+	id S1750720Ab0HKEAQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 Aug 2010 00:00:16 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexey Fomenko <ext-alexey.fomenko@nokia.com>, Rusty Russell <rusty@rustcorp.com.au>, Michal Marek <mmarek@suse.cz>, Trevor Keith <tsrk@tsrk.net>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Wed__11_Aug_2010_13_38_12_+1000_qba66bv3HGSl.knC
+--Signature=_Wed__11_Aug_2010_14_00_09_+1000_6Amkh1qR2h5iAHZv
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi ,
+Hi all,
 
-After merging the final tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+As the merge window is open, please do not add 2.6.37 material to your
+linux-next included trees until after 2.6.36-rc1.
 
-*** glibc detected *** scripts/mod/modpost: munmap_chunk(): invalid pointer=
-: 0x00000000004095fc ***
-=3D=3D=3D=3D=3D=3D=3D Backtrace: =3D=3D=3D=3D=3D=3D=3D=3D=3D
-/lib/libc.so.6(+0x71b16)[0x2b4f000b6b16]
-scripts/mod/modpost[0x40284e]
-scripts/mod/modpost[0x403aee]
-scripts/mod/modpost[0x40446e]
-/lib/libc.so.6(__libc_start_main+0xfd)[0x2b4f00063c4d]
-scripts/mod/modpost[0x401219]
-=3D=3D=3D=3D=3D=3D=3D Memory map: =3D=3D=3D=3D=3D=3D=3D=3D
-00400000-0040e000 r-xp 00000000 08:11 30327842                           /s=
-cratch/sfr/powerpc_allyesconfig/scripts/mod/modpost
-0060d000-0060e000 rw-p 0000d000 08:11 30327842                           /s=
-cratch/sfr/powerpc_allyesconfig/scripts/mod/modpost
-0060e000-00611000 rw-p 00000000 00:00 0=20
-006cf000-006f0000 rw-p 00000000 00:00 0                                  [h=
-eap]
-2b4effe25000-2b4effe43000 r-xp 00000000 08:01 483871                     /l=
-ib/ld-2.11.2.so
-2b4effe43000-2b4effe45000 rw-p 00000000 00:00 0=20
-2b4effe45000-2b4efff9e000 rw-p 00000000 08:11 30334167                   /s=
-cratch/sfr/powerpc_allyesconfig/arch/powerpc/kernel/built-in.o
-2b4f00042000-2b4f00043000 r--p 0001d000 08:01 483871                     /l=
-ib/ld-2.11.2.so
-2b4f00043000-2b4f00044000 rw-p 0001e000 08:01 483871                     /l=
-ib/ld-2.11.2.so
-2b4f00044000-2b4f00045000 rw-p 00000000 00:00 0=20
-2b4f00045000-2b4f0019d000 r-xp 00000000 08:01 483859                     /l=
-ib/libc-2.11.2.so
-2b4f0019d000-2b4f0039c000 ---p 00158000 08:01 483859                     /l=
-ib/libc-2.11.2.so
-2b4f0039c000-2b4f003a0000 r--p 00157000 08:01 483859                     /l=
-ib/libc-2.11.2.so
-2b4f003a0000-2b4f003a1000 rw-p 0015b000 08:01 483859                     /l=
-ib/libc-2.11.2.so
-2b4f003a1000-2b4f003a8000 rw-p 00000000 00:00 0=20
-2b4f003a8000-2b4f003be000 r-xp 00000000 08:01 482546                     /l=
-ib/libgcc_s.so.1
-2b4f003be000-2b4f005bd000 ---p 00016000 08:01 482546                     /l=
-ib/libgcc_s.so.1
-2b4f005bd000-2b4f005be000 rw-p 00015000 08:01 482546                     /l=
-ib/libgcc_s.so.1
-7fffe11d6000-7fffe11f8000 rw-p 00000000 00:00 0                          [s=
-tack]
-7fffe11ff000-7fffe1200000 r-xp 00000000 00:00 0                          [v=
-dso]
-ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [v=
-syscall]
-/bin/sh: line 1:  5229 Aborted                 scripts/mod/modpost arch/pow=
-erpc/kernel/built-in.o
+Changes since 20100810:
 
-I got this error a few times during that build and during the sparc64
-defconfig build as well.
+Linus' tree needed a patch to fix a merge and a revert for a modpost
+patch.
 
-This was an x86_64 hosted build using libc 2.11.2 from Debian (so eglibc
-based), gcc 4.4.4 and binutils 2.20.1-system.20100303.
+The samsung tree gained conflicts against Linus' and the arm tree.
 
-The only patch new to linux-next since yesterday that affects scripts/mod
-is commit 37ed19d5cce35a40d3913cf9aa208ce9f60db3d7
-("scripts/mod/modpost.c: fix memory leak") from Linus' tree.
+The ceph tree lost its merge fix.
 
-I have reverted that commit in linux-next for today as that makes the
-error go away.
+The vfs tree lost its conflicts and merge fixes.
+
+The bjdooks-i2c lost its conflicts.
+
+The async_tx tree lost its conflict.
+
+The mtd tree lost its conflicts.
+
+The block tree lost its conflicts.
+
+The trivial tree lost a conflict.
+
+The fsnotify tree lost its conflict.
+
+The limits tree lost its conflicts.
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups (if any), it is also built with powerpc allnoconfig (32 and
+64 bit), ppc44x_defconfig and allyesconfig (minus
+CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
+and sparc64 defconfig. These builds also have
+CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
+CONFIG_DEBUG_INFO disabled when necessary.
+
+Below is a summary of the state of the merge.
+
+We are up to 169 trees (counting Linus' and 22 trees of patches pending
+for Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Jan Dittmer for adding the linux-next tree to his build tests
+at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
+Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__11_Aug_2010_13_38_12_+1000_qba66bv3HGSl.knC
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master
+Merging fixes/fixes
+Merging arm-current/master
+Merging m68k-current/for-linus
+Merging powerpc-merge/merge
+Merging sparc-current/master
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sound-current/for-linus
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging kbuild-current/rc-fixes
+Merging quilt/driver-core.current
+Merging quilt/tty.current
+Merging quilt/usb.current
+Merging quilt/staging.current
+Merging cpufreq-current/fixes
+Merging input-current/for-linus
+Merging md-current/for-linus
+Merging audit-current/for-linus
+Merging crypto-current/master
+Merging ide-curent/master
+Merging dwmw2/master
+Merging gcl-current/merge
+Applying: v9fs: fixup for inode_setattr being removed
+Merging arm/devel
+CONFLICT (content): Merge conflict in arch/arm/Kconfig
+CONFLICT (content): Merge conflict in arch/arm/mm/Kconfig
+CONFLICT (content): Merge conflict in include/linux/serial_core.h
+Merging davinci/davinci-next
+Merging i.MX/for-next
+Merging msm/for-next
+Merging omap/for-next
+Merging pxa/for-next
+Merging samsung/next-samsung
+CONFLICT (content): Merge conflict in arch/arm/mach-s3c64xx/Makefile
+CONFLICT (content): Merge conflict in arch/arm/mach-s3c64xx/mach-smdk6410.c
+CONFLICT (content): Merge conflict in arch/arm/plat-samsung/Kconfig
+CONFLICT (content): Merge conflict in drivers/input/touchscreen/s3c2410_ts.c
+Merging s5p/for-next
+Merging tegra/for-next
+CONFLICT (content): Merge conflict in arch/arm/Kconfig
+CONFLICT (content): Merge conflict in arch/arm/mm/Kconfig
+Merging avr32/avr32-arch
+Merging blackfin/for-linus
+Merging cris/for-next
+Merging ia64/test
+Merging m68k/for-next
+Merging m68knommu/for-next
+Merging microblaze/next
+Merging mips/mips-for-linux-next
+Merging parisc/next
+Merging powerpc/next
+Merging 4xx/next
+Merging 52xx-and-virtex/next
+Merging galak/next
+Merging s390/features
+Merging sh/master
+CONFLICT (content): Merge conflict in drivers/Makefile
+Merging genesis/master
+Merging sparc/master
+Merging tile/master
+Merging xtensa/master
+CONFLICT (content): Merge conflict in arch/xtensa/configs/iss_defconfig
+Merging ceph/for-next
+Merging cifs/master
+Merging configfs/linux-next
+Merging ecryptfs/next
+Merging ext3/for_next
+Merging ext4/next
+Merging fatfs/master
+Merging fuse/for-next
+Merging gfs2/master
+Merging jfs/next
+Merging logfs/master
+CONFLICT (content): Merge conflict in fs/logfs/logfs.h
+Merging nfs/linux-next
+Merging nfsd/nfsd-next
+Merging nilfs2/for-next
+Merging ocfs2/linux-next
+Merging omfs/for-next
+Merging squashfs/master
+Merging udf/for_next
+Merging v9fs/for-next
+Merging ubifs/linux-next
+Merging xfs/master
+Merging vfs/for-next
+Merging pci/linux-next
+Merging hid/for-next
+Merging quilt/i2c
+Merging bjdooks-i2c/next-i2c
+Merging quilt/jdelvare-hwmon
+CONFLICT (content): Merge conflict in MAINTAINERS
+Merging quilt/kernel-doc
+CONFLICT (content): Merge conflict in Documentation/kernel-parameters.txt
+Merging v4l-dvb/master
+CONFLICT (content): Merge conflict in drivers/media/video/cx23885/Kconfig
+CONFLICT (add/add): Merge conflict in drivers/media/video/v4l2-ctrls.c
+Applying: v4l-dvb: fix up bad automatic merge
+Merging kbuild/for-next
+Merging kconfig/for-next
+Merging ide/master
+Merging libata/NEXT
+Merging infiniband/for-next
+Merging acpi/test
+Merging idle-test/idle-test
+Merging ieee1394/for-next
+Merging ubi/linux-next
+Merging kvm/linux-next
+Merging dlm/next
+Merging swiotlb/master
+Merging swiotlb-xen/master
+CONFLICT (content): Merge conflict in drivers/xen/Kconfig
+CONFLICT (content): Merge conflict in drivers/xen/Makefile
+CONFLICT (content): Merge conflict in include/xen/xen-ops.h
+Merging ibft/master
+Merging scsi/master
+Merging async_tx/next
+Merging net/master
+Merging wireless/master
+Merging mtd/master
+Merging crypto/master
+Merging sound/for-next
+Merging cpufreq/next
+Merging quilt/rr
+CONFLICT (content): Merge conflict in arch/um/drivers/hostaudio_kern.c
+CONFLICT (content): Merge conflict in drivers/block/virtio_blk.c
+CONFLICT (content): Merge conflict in kernel/module.c
+Applying: nfs: update for module_param_named API change
+Applying: AppArmor: update for module_param_named API change
+Merging input/next
+Merging lsm/for-next
+Merging block/for-next
+Merging quilt/device-mapper
+CONFLICT (content): Merge conflict in drivers/md/dm.c
+Merging embedded/master
+Merging firmware/master
+Merging pcmcia/master
+Merging battery/master
+CONFLICT (content): Merge conflict in drivers/power/Kconfig
+CONFLICT (content): Merge conflict in drivers/power/Makefile
+Merging leds/for-mm
+Merging backlight/for-mm
+Merging kgdb/kgdb-next
+Merging slab/for-next
+Merging uclinux/for-next
+Merging md/for-next
+Merging mfd/for-next
+Merging hdlc/hdlc-next
+Merging drm/drm-next
+Merging viafb/viafb-next
+Merging voltage/for-next
+Merging security-testing/next
+Merging lblnet/master
+Merging agp/agp-next
+Merging uwb/for-upstream
+Merging watchdog/master
+Merging bdev/master
+Merging dwmw2-iommu/master
+Merging cputime/cputime
+Merging osd/linux-next
+Merging jc_docs/docs-next
+Merging nommu/master
+Merging trivial/for-next
+CONFLICT (content): Merge conflict in fs/exofs/inode.c
+Merging audit/for-next
+Merging quilt/aoe
+Merging suspend/linux-next
+Merging bluetooth/master
+Merging fsnotify/for-next
+Merging irda/for-next
+CONFLICT (content): Merge conflict in drivers/net/irda/irda-usb.c
+Merging catalin/for-next
+Merging alacrity/linux-next
+Merging i7core_edac/linux_next
+CONFLICT (content): Merge conflict in MAINTAINERS
+Merging devicetree/next-devicetree
+Merging spi/next-spi
+CONFLICT (content): Merge conflict in drivers/spi/mpc512x_psc_spi.c
+Applying: spi: update for of_device to platform_device replacement
+Merging limits/writable_limits
+Merging omap_dss2/for-next
+Merging xen/upstream/xen
+Merging tip/auto-latest
+Merging lost-spurious-irq/lost-spurious-irq
+CONFLICT (content): Merge conflict in drivers/ata/sata_fsl.c
+CONFLICT (content): Merge conflict in drivers/ata/sata_mv.c
+CONFLICT (content): Merge conflict in drivers/ata/sata_nv.c
+CONFLICT (content): Merge conflict in include/linux/libata.h
+Merging edac-amd/for-next
+Merging oprofile/for-next
+Merging percpu/for-next
+Merging workqueues/for-next
+Merging sfi/sfi-test
+Merging asm-generic/next
+Merging drivers-x86/linux-next
+Merging hwpoison/hwpoison
+CONFLICT (content): Merge conflict in mm/memory-failure.c
+Merging sysctl/master
+Merging bkl-core/bkl/core
+Merging bkl-procfs/bkl/procfs
+Merging bkl-ioctl/bkl/ioctl
+Merging quilt/driver-core
+Merging quilt/tty
+CONFLICT (content): Merge conflict in drivers/char/Makefile
+CONFLICT (content): Merge conflict in drivers/char/vt.c
+CONFLICT (content): Merge conflict in include/linux/serial_core.h
+CONFLICT (content): Merge conflict in include/linux/tty.h
+Merging quilt/usb
+Merging staging-next/staging-next
+Merging slabh/slabh
+Merging scsi-post-merge/merge-base:master
+$ git checkout scsi-post-merge/master
+[master 9b3e523] Revert "scripts/mod/modpost.c: fix memory leak"
+
+--Signature=_Wed__11_Aug_2010_14_00_09_+1000_6Amkh1qR2h5iAHZv
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMYhskAAoJEDMEi1NhKgbsCAEIAIfgeQeb6aKd3vNk+OUa6Diz
-MtT8YcJoPf1b86wHuqi6uTK2ducb0hz19le76VmuqVxiX7d9IhEkOMh6q+8Hdij0
-HALmBLV9SmaTqFWum56oOrzTYp7H8RizJse9cq6BwYy3adJzWIjipUJf0sCXNbJH
-AUg+pK+0w6EIPmqpMPDsyqzjlvNZDqALgLdVvkyGWq4+FDOZboIo+np3whxgivdZ
-SExttGoiMo1s4ZNLRKBi6miYCPU4tvBMcKH2ASReZQIotrOBlk2GqYjJ/WyCYlKp
-4YDZnB3sW1GZi54rU0m6narG1Dtltf3JWXuHCKnMHjipUd2m2jFiaWwO59CZwUk=
-=fkDy
+iQEcBAEBAgAGBQJMYiBJAAoJEDMEi1NhKgbsITMH/0kbt3l0gIxSyI6SWK836zuk
+kktatWH/ROHe9lc47bnZo6FrwacUelxBWdO1AwnT+gTohnq48omGUKN9d3fY8FbB
+TonUe7WNLzIsX3xotmlmBnkacYODjggI3qhLaJoNiKh+42niQ+smeQeTZ/NW6mVF
+cDCCLbCaGH3otktBnA6UtehiHN62WrsiPGLUUcwApnB+bfbBOQNnirTWQmXmWfmB
+18vr1miYlaMiLP5dGYhKgccfFFLQ3/UUOGY13W9Jwh6QoyIPAEb49l1QidTm0mYZ
+GZuLSzVQWRryVm22UQ3sdaX50qqBb8A7zk0DflO4d5BnBpMXMlPWndQdCw6FsBM=
+=XfTE
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__11_Aug_2010_13_38_12_+1000_qba66bv3HGSl.knC--
+--Signature=_Wed__11_Aug_2010_14_00_09_+1000_6Amkh1qR2h5iAHZv--
