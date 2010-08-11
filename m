@@ -1,77 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree
-Date: Wed, 11 Aug 2010 17:38:29 +1000
-Message-ID: <20100811173829.40638b5d.sfr@canb.auug.org.au>
-References: <20100811133812.2b594551.sfr@canb.auug.org.au>
-	<20100810222310.e04f7031.akpm@linux-foundation.org>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for August 11 (hpet)
+Date: Wed, 11 Aug 2010 08:51:38 -0700
+Message-ID: <20100811085138.67782931.randy.dunlap@oracle.com>
+References: <20100811140009.6ff33109.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__11_Aug_2010_17_38_29_+1000_puo49JNFnvBPZFVK"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51612 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752956Ab0HKHig (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 11 Aug 2010 03:38:36 -0400
-In-Reply-To: <20100810222310.e04f7031.akpm@linux-foundation.org>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:43859 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753209Ab0HKPvz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Aug 2010 11:51:55 -0400
+In-Reply-To: <20100811140009.6ff33109.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexey Fomenko <ext-alexey.fomenko@nokia.com>, Rusty Russell <rusty@rustcorp.com.au>, Michal Marek <mmarek@suse.cz>, Trevor Keith <tsrk@tsrk.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, John Stultz <johnstul@us.ibm.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Wed__11_Aug_2010_17_38_29_+1000_puo49JNFnvBPZFVK
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 11 Aug 2010 14:00:09 +1000 Stephen Rothwell wrote:
 
-Hi Andrew,
+> Hi all,
+> 
+> As the merge window is open, please do not add 2.6.37 material to your
+> linux-next included trees until after 2.6.36-rc1.
+> 
+> Changes since 20100810:
 
-On Tue, 10 Aug 2010 22:23:10 -0700 Andrew Morton <akpm@linux-foundation.org=
-> wrote:
->
-> doh.  This?
->=20
->=20
-> From: Andrew Morton <akpm@linux-foundation.org>
->=20
-> - don't kfree("")
->=20
-> - fix one missed conversion
->=20
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Cc: Alexey Fomenko <ext-alexey.fomenko@nokia.com>
-> Cc: Trevor Keith <tsrk@tsrk.net>
-> Cc: Rusty Russell <rusty@rustcorp.com.au>
-> Cc: Michal Marek <mmarek@suse.cz>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 
-works for me, thanks.
+on i386 (X86_32):
 
-Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
+arch/x86/kernel/hpet.c:840: warning: integer overflow in expression
 
-Now, don't you wish that had been in linux-next?  ;-)
+	hpet_freq = FSEC_PER_NSEC * NSEC_PER_SEC;
 
-Please send to Linus (if you haven't already) and I will add it to my
-fixes tree for linux-next tomorrow unless Linus has taken it by then.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__11_Aug_2010_17_38_29_+1000_puo49JNFnvBPZFVK
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMYlN1AAoJEDMEi1NhKgbs83QH/jjr1uo7qzvsTodT1aW0VCBJ
-lLB9lkQhB4RWgSCoaUuN4CZxX9A3fucR3UYk2V1EEf04opMX+m8C0wmHBtJdCUgx
-sENQxH6bjU4T4BJeueSsne2yKSHuompuAB6cIBL7J4HJpRa3G2rEUIodTrHI/5O0
-Pr5YaaEDPhFEIlu5OuDTK2zuf9gWizfbP6+lm0mvWyE0pcdSkyGeHoY6kXZdLscT
-6xv21r/clBl0597CcewwGS5SaMygwh+fgGQ+R6erPaSvWW0ORtHumhlz956WHWYl
-NAS/ObQXgkENiZtR3r2kcuStHt3CJuxcBxFaP8fqoroIzZBZ8W9GmDvOGiqmZfc=
-=1z88
------END PGP SIGNATURE-----
-
---Signature=_Wed__11_Aug_2010_17_38_29_+1000_puo49JNFnvBPZFVK--
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
