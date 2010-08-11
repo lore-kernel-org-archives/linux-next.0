@@ -1,61 +1,71 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Subject: Re: [PATCH -next] mfd: tps6586x depends on GPIOLIB
-Date: Wed, 11 Aug 2010 01:14:22 +0200
-Message-ID: <20100810231421.GA2571@sortiz-mobl>
-References: <20100810135601.4777e310.sfr@canb.auug.org.au>
- <20100810094059.c320b916.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: remove inode_setattr
+Date: Wed, 11 Aug 2010 10:45:03 +1000
+Message-ID: <20100811104503.4082f68f.sfr@canb.auug.org.au>
+References: <201008101859.o7AIx9BM026915@hera.kernel.org>
+	<20100810155011.b9657102.akpm@linux-foundation.org>
+	<20100811101751.1afdded8.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:15638 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751881Ab0HJXOa (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 Aug 2010 19:14:30 -0400
-Content-Disposition: inline
-In-Reply-To: <20100810094059.c320b916.randy.dunlap@oracle.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20100811101751.1afdded8.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>, Linus Torvalds <torvalds@linux-foundation.org>, Eric Van Hensbergen <ericvh@gmail.com>, Sripathi Kodi <sripathik@in.ibm.com>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Aug 10, 2010 at 09:40:59AM -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> tps6586x uses gpio interfaces, so it should depend on GPIOLIB.
-Thanks Randy, I merged this one into the yet to be pulled tps6586x driver.
+Hi All,
 
-Cheers,
-Samuel.
+On Wed, 11 Aug 2010 10:17:51 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Reported by me June 22 with a fixup, reminded Aug 4 and yesterday ... it
+> needed to be fixed up by Linus when he merged Al's tree ...
 
-> Fixes these build errors:
-> 
-> drivers/mfd/tps6586x.c:41: error: field 'gpio' has incomplete type
-> drivers/mfd/tps6586x.c:195: warning: type defaults to 'int' in declaration of '__mptr'
-> drivers/mfd/tps6586x.c:195: warning: initialization from incompatible pointer type
-> drivers/mfd/tps6586x.c:210: warning: type defaults to 'int' in declaration of '__mptr'
-> drivers/mfd/tps6586x.c:210: warning: initialization from incompatible pointer type
-> drivers/mfd/tps6586x.c:219: warning: type defaults to 'int' in declaration of '__mptr'
-> drivers/mfd/tps6586x.c:219: warning: initialization from incompatible pointer type
-> drivers/mfd/tps6586x.c:249: error: implicit declaration of function 'gpiochip_add'
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> Cc: Samuel Ortiz <sameo@linux.intel.com>
-> ---
->  drivers/mfd/Kconfig |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> --- linux-next-20100810.orig/drivers/mfd/Kconfig
-> +++ linux-next-20100810/drivers/mfd/Kconfig
-> @@ -543,7 +543,7 @@ config MFD_JZ4740_ADC
->  
->  config MFD_TPS6586X
->  	tristate "TPS6586x Power Management chips"
-> -	depends on I2C
-> +	depends on I2C && GPIOLIB
->  	select MFD_CORE
->  	help
->  	  If you say yes here you get support for the TPS6586X series of
+I will apply this fix patch to linux-next today ... Al, Christoph, this
+is the fix I sent out earlier.  Is it correct enough for Linus to apply
+it?
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 22 Jun 2010 11:15:01 +1000
+Subject: [PATCH] v9fs: fixup for inode_setattr being removed
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/9p/vfs_inode.c |   15 ++++++++++++---
+ 1 files changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
+index f027a42..2ec7bfa 100644
+--- a/fs/9p/vfs_inode.c
++++ b/fs/9p/vfs_inode.c
+@@ -1052,10 +1052,19 @@ static int v9fs_vfs_setattr_dotl(struct dentry *dentry, struct iattr *iattr)
+ 		return PTR_ERR(fid);
+ 
+ 	retval = p9_client_setattr(fid, &p9attr);
+-	if (retval >= 0)
+-		retval = inode_setattr(dentry->d_inode, iattr);
++	if (retval < 0)
++		return retval;
+ 
+-	return retval;
++	if ((iattr->ia_valid & ATTR_SIZE) &&
++	    iattr->ia_size != i_size_read(dentry->d_inode)) {
++		retval = vmtruncate(dentry->d_inode, iattr->ia_size);
++		if (retval)
++			return retval;
++	}
++
++	setattr_copy(dentry->d_inode, iattr);
++	mark_inode_dirty(dentry->d_inode);
++	return 0;
+ }
+ 
+ /**
+-- 
+1.7.1
 
 -- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
