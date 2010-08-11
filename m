@@ -1,46 +1,40 @@
-From: Guenter Roeck <guenter.roeck@ericsson.com>
-Subject: Re: [PATCH -next] hwmon: jc42 depends on I2C
-Date: Wed, 11 Aug 2010 10:43:31 -0700
-Message-ID: <1281548611.5745.287.camel@groeck-laptop>
+From: john stultz <johnstul@us.ibm.com>
+Subject: Re: linux-next: Tree for August 11 (hpet)
+Date: Wed, 11 Aug 2010 11:06:25 -0700
+Message-ID: <1281549985.1745.65.camel@work-vm>
 References: <20100811140009.6ff33109.sfr@canb.auug.org.au>
-	 <20100811103511.41428e62.randy.dunlap@oracle.com>
-Reply-To: guenter.roeck@ericsson.com
+	 <20100811085138.67782931.randy.dunlap@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100811103511.41428e62.randy.dunlap@oracle.com>
+In-Reply-To: <20100811085138.67782931.randy.dunlap@oracle.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "lm-sensors@lm-sensors.org" <lm-sensors@lm-sensors.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, akpm <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, 2010-08-11 at 13:35 -0400, Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
+On Wed, 2010-08-11 at 08:51 -0700, Randy Dunlap wrote:
+> On Wed, 11 Aug 2010 14:00:09 +1000 Stephen Rothwell wrote:
 > 
-> jc42 uses i2c interfaces, so it should depend on I2C.
+> > Hi all,
+> > 
+> > As the merge window is open, please do not add 2.6.37 material to your
+> > linux-next included trees until after 2.6.36-rc1.
+> > 
+> > Changes since 20100810:
 > 
-> drivers/hwmon/jc42.c:426: error: implicit declaration of function 'i2c_check_functionality'
-> drivers/hwmon/jc42.c:521: error: implicit declaration of function 'i2c_smbus_read_word_data'
-> drivers/hwmon/jc42.c:529: error: implicit declaration of function 'i2c_smbus_write_word_data'
-> drivers/hwmon/jc42.c:580: error: implicit declaration of function 'i2c_add_driver'
-> drivers/hwmon/jc42.c:585: error: implicit declaration of function 'i2c_del_driver'
 > 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> Cc:	lm-sensors@lm-sensors.org
-Acked-by: Guenter Roeck <guenter.roeck@ericsson.com>
+> on i386 (X86_32):
+> 
+> arch/x86/kernel/hpet.c:840: warning: integer overflow in expression
+> 
+> 	hpet_freq = FSEC_PER_NSEC * NSEC_PER_SEC;
 
-> ---
->  drivers/hwmon/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> --- linux-next-20100811.orig/drivers/hwmon/Kconfig
-> +++ linux-next-20100811/drivers/hwmon/Kconfig
-> @@ -465,6 +465,7 @@ config SENSORS_JZ4740
->  
->  config SENSORS_JC42
->  	tristate "JEDEC JC42.4 compliant temperature sensors"
-> +	depends on I2C
->  	help
->  	  If you say yes here you get support for Jedec JC42.4 compliant
->  	  temperature sensors. Support will include, but not be limited to,
+I think the patch from Chris Wilson resolves this. 
+
+Thomas: I sent this with another fix that needs to go in. Could you
+merge those in when you get a chance?
+
+thanks
+-john
