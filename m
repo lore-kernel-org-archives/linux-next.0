@@ -1,45 +1,44 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] hwmon: jc42 depends on I2C
-Date: Wed, 11 Aug 2010 10:35:11 -0700
-Message-ID: <20100811103511.41428e62.randy.dunlap@oracle.com>
+Subject: [PATCH -next] firmware: ibft depends on SCSI
+Date: Wed, 11 Aug 2010 10:36:20 -0700
+Message-ID: <20100811103620.2d25d573.randy.dunlap@oracle.com>
 References: <20100811140009.6ff33109.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:42081 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753424Ab0HKRgn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 11 Aug 2010 13:36:43 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20100811140009.6ff33109.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, lm-sensors@lm-sensors.org, Guenter Roeck <guenter.roeck@ericsson.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, akpm <akpm@linux-foundation.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Peter Jones <pjones@redhat.com>, Konrad Rzeszutek Wilk <konrad@kernel.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, scsi <linux-scsi@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
 From: Randy Dunlap <randy.dunlap@oracle.com>
 
-jc42 uses i2c interfaces, so it should depend on I2C.
+Prevent build errors when SCSI is not enabled:
 
-drivers/hwmon/jc42.c:426: error: implicit declaration of function 'i2c_check_functionality'
-drivers/hwmon/jc42.c:521: error: implicit declaration of function 'i2c_smbus_read_word_data'
-drivers/hwmon/jc42.c:529: error: implicit declaration of function 'i2c_smbus_write_word_data'
-drivers/hwmon/jc42.c:580: error: implicit declaration of function 'i2c_add_driver'
-drivers/hwmon/jc42.c:585: error: implicit declaration of function 'i2c_del_driver'
+iscsi_ibft.c:(.init.text+0x548d): undefined reference to `iscsi_boot_create_initiator'
+iscsi_ibft.c:(.init.text+0x54a9): undefined reference to `iscsi_boot_create_ethernet'
+iscsi_ibft.c:(.init.text+0x54c5): undefined reference to `iscsi_boot_create_target'
+iscsi_ibft.c:(.init.text+0x55ff): undefined reference to `iscsi_boot_destroy_kset'
+iscsi_ibft.c:(.init.text+0x561e): undefined reference to `iscsi_boot_create_kset'
+iscsi_ibft.c:(.exit.text+0xe2c): undefined reference to `iscsi_boot_destroy_kset'
 
 Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc:	lm-sensors@lm-sensors.org
+Cc:	Peter Jones <pjones@redhat.com>
+Cc:	Konrad Rzeszutek Wilk <konrad@kernel.org>
 ---
- drivers/hwmon/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/firmware/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- linux-next-20100811.orig/drivers/hwmon/Kconfig
-+++ linux-next-20100811/drivers/hwmon/Kconfig
-@@ -465,6 +465,7 @@ config SENSORS_JZ4740
- 
- config SENSORS_JC42
- 	tristate "JEDEC JC42.4 compliant temperature sensors"
-+	depends on I2C
+--- linux-next-20100811.orig/drivers/firmware/Kconfig
++++ linux-next-20100811/drivers/firmware/Kconfig
+@@ -125,7 +125,7 @@ config ISCSI_IBFT_FIND
+ config ISCSI_IBFT
+ 	tristate "iSCSI Boot Firmware Table Attributes module"
+ 	select ISCSI_BOOT_SYSFS
+-	depends on ISCSI_IBFT_FIND
++	depends on ISCSI_IBFT_FIND && SCSI
+ 	default	n
  	help
- 	  If you say yes here you get support for Jedec JC42.4 compliant
- 	  temperature sensors. Support will include, but not be limited to,
+ 	  This option enables support for detection and exposing of iSCSI
