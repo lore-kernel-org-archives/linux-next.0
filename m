@@ -1,67 +1,166 @@
-From: Peter Jones <pjones@redhat.com>
-Subject: Re: [PATCH -next] firmware: ibft depends on SCSI
-Date: Thu, 12 Aug 2010 10:31:38 -0400
-Message-ID: <4C6405CA.3080701@redhat.com>
-References: <20100811140009.6ff33109.sfr@canb.auug.org.au> <20100811103620.2d25d573.randy.dunlap@oracle.com>
+From: Bryan Schumaker <bjschuma-HgOvQuBEEgTQT0dZR+AlfA@public.gmane.org>
+Subject: Re: linux-next: build failure after merge of the cifs tree
+Date: Thu, 12 Aug 2010 11:18:44 -0400
+Message-ID: <4C6410D4.6050100@netapp.com>
+References: <20100812131741.f3a800d7.sfr@canb.auug.org.au>	<AANLkTi=iHi=kpk+nsB396B9GWdefj=WJywA2K1PawHxi@mail.gmail.com> <20100812174621.b1dbc20f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:11811 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753875Ab0HLOaK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 12 Aug 2010 10:30:10 -0400
-In-Reply-To: <20100811103620.2d25d573.randy.dunlap@oracle.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Konrad Rzeszutek Wilk <konrad@kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, scsi <linux-scsi@vger.kernel.org>
+Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20100812174621.b1dbc20f.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Cc: Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wang Lei <wang840925-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Howells <dhowells-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-On 08/11/2010 01:36 PM, Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
+Hi
+
+I updated my NFS DNS patch.  The new version will set CONFIG_KEYS when CONFIG_NFS_USE_KERNEL_DNS is set.
+
+Thanks for letting me know about this!
+
+Bryan Schumaker
+
+
+
+Use the kernel DNS resolver to translate hostnames to IP addresses.  Create a
+new config option to choose between the legacy DNS resolver and the new
+resolver.
+
+Signed-off-by: Bryan Schumaker <bjschuma-HgOvQuBEEgTQT0dZR+AlfA@public.gmane.org>
+Acked-by: Trond Myklebust <Trond.Myklebust-HgOvQuBEEgTQT0dZR+AlfA@public.gmane.org>
+---
+Fix for KEYS dependency
+
+ fs/nfs/Kconfig       |   16 ++++++++++++++++
+ fs/nfs/dns_resolve.c |   24 ++++++++++++++++++++++++
+ fs/nfs/dns_resolve.h |   12 ++++++++++++
+ 3 files changed, 52 insertions(+), 0 deletions(-)
+
+diff --git a/fs/nfs/Kconfig b/fs/nfs/Kconfig
+index cc1bb33..c5bbdca 100644
+--- a/fs/nfs/Kconfig
++++ b/fs/nfs/Kconfig
+@@ -100,3 +100,19 @@ config NFS_FSCACHE
+ 	help
+ 	  Say Y here if you want NFS data to be cached locally on disc through
+ 	  the general filesystem cache manager
++
++config NFS_USE_LEGACY_DNS
++	bool "Use the legacy NFS DNS resolver"
++	depends on NFS_V4
++	help
++	  The kernel now provides a method for translating a host name into an
++	  IP address.  Select Y here if you would rather use your own DNS
++	  resolver script.
++
++	  If unsure, say N
++
++config NFS_USE_KERNEL_DNS
++	bool
++	depends on NFS_V4 && !NFS_USE_LEGACY_DNS
++	select DNS_RESOLVER
++	select KEYS
++	default y
+diff --git a/fs/nfs/dns_resolve.c b/fs/nfs/dns_resolve.c
+index 76fd235..dba50a5 100644
+--- a/fs/nfs/dns_resolve.c
++++ b/fs/nfs/dns_resolve.c
+@@ -6,6 +6,29 @@
+  * Resolves DNS hostnames into valid ip addresses
+  */
+
++#ifdef CONFIG_NFS_USE_KERNEL_DNS
++
++#include <linux/sunrpc/clnt.h>
++#include <linux/dns_resolver.h>
++
++ssize_t nfs_dns_resolve_name(char *name, size_t namelen,
++		struct sockaddr *sa, size_t salen)
++{
++	ssize_t ret;
++	char *ip_addr = NULL;
++	int ip_len;
++
++	ip_len = dns_query(NULL, name, namelen, NULL, &ip_addr, NULL);
++	if (ip_len > 0)
++		ret = rpc_pton(ip_addr, ip_len, sa, salen);
++	else
++		ret = -ESRCH;
++	kfree(ip_addr);
++	return ret;
++}
++
++#else
++
+ #include <linux/hash.h>
+ #include <linux/string.h>
+ #include <linux/kmod.h>
+@@ -346,3 +369,4 @@ void nfs_dns_resolver_destroy(void)
+ 	nfs_cache_unregister(&nfs_dns_resolve);
+ }
+
++#endif
+diff --git a/fs/nfs/dns_resolve.h b/fs/nfs/dns_resolve.h
+index a3f0938..199bb55 100644
+--- a/fs/nfs/dns_resolve.h
++++ b/fs/nfs/dns_resolve.h
+@@ -6,8 +6,20 @@
+
+ #define NFS_DNS_HOSTNAME_MAXLEN	(128)
+
++
++#ifdef CONFIG_NFS_USE_KERNEL_DNS
++static inline int nfs_dns_resolver_init(void)
++{
++	return 0;
++}
++
++static inline void nfs_dns_resolver_destroy(void)
++{}
++#else
+ extern int nfs_dns_resolver_init(void);
+ extern void nfs_dns_resolver_destroy(void);
++#endif
++
+ extern ssize_t nfs_dns_resolve_name(char *name, size_t namelen,
+ 		struct sockaddr *sa, size_t salen);
+
+
+
+
+On 08/12/2010 03:46 AM, Stephen Rothwell wrote:
+> Hi Steve,
 > 
-> Prevent build errors when SCSI is not enabled:
+> On Wed, 11 Aug 2010 23:04:36 -0500 Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>>
+>> Are you sure that this is a valid config file?  CONFIG_KEYS should be
+>> set if CONFIG_DNS_RESOLVER is set?
 > 
-> iscsi_ibft.c:(.init.text+0x548d): undefined reference to `iscsi_boot_create_initiator'
-> iscsi_ibft.c:(.init.text+0x54a9): undefined reference to `iscsi_boot_create_ethernet'
-> iscsi_ibft.c:(.init.text+0x54c5): undefined reference to `iscsi_boot_create_target'
-> iscsi_ibft.c:(.init.text+0x55ff): undefined reference to `iscsi_boot_destroy_kset'
-> iscsi_ibft.c:(.init.text+0x561e): undefined reference to `iscsi_boot_create_kset'
-> iscsi_ibft.c:(.exit.text+0xe2c): undefined reference to `iscsi_boot_destroy_kset'
+> It is a ppc64_defconfig.  It has:
 > 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> Cc:	Peter Jones <pjones@redhat.com>
-> Cc:	Konrad Rzeszutek Wilk <konrad@kernel.org>
-
-This looks good to me, thanks for catching it.
-
-Signed-of-by: Peter Jones <pjones@redhat.com>
-
-> ---
->  drivers/firmware/Kconfig |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> # CONFIG_KEYS is not set
+> CONFIG_DNS_RESOLVER=y
 > 
-> --- linux-next-20100811.orig/drivers/firmware/Kconfig
-> +++ linux-next-20100811/drivers/firmware/Kconfig
-> @@ -125,7 +125,7 @@ config ISCSI_IBFT_FIND
->  config ISCSI_IBFT
->  	tristate "iSCSI Boot Firmware Table Attributes module"
->  	select ISCSI_BOOT_SYSFS
-> -	depends on ISCSI_IBFT_FIND
-> +	depends on ISCSI_IBFT_FIND && SCSI
->  	default	n
->  	help
->  	  This option enables support for detection and exposing of iSCSI
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
-
-
--- 
-        Peter
-
-RFC 882 put the dots in .com.
-
-01234567890123456789012345678901234567890123456789012345678901234567890123456789
+> CONFIG_NFS_USE_KERNEL_DNS just selects CONFIG_DNS_RESOLVER but there is
+> no dependency on CONFIG_KEYS (select does not care about the
+> dependencies of the selected config option).
+> 
+>> key.h looks like it is included in all arch in this path
+>>
+>> net/dns_resolver/dns_key.c includes
+>> include/keys/dns_resolver-type.h which includes
+>> include/linux/key-type.h which includes
+>> include/linux/key.h
+>>
+>> the line 258 "key_instantiate_and_link" error could occur if
+>> "CONFIG_KEYS" is not set in .config
+> 
+> Which t isn't.
+> 
+>> net/dns_resolver/Kconfig config DNS_RESOLVER "depends on NET && KEYS"
+>> so ... CONFIG_KEYS should be set ....
+> 
+> See above.  You need CONFIG_NFS_USE_KERNEL_DNS to also depend on
+> CONFIG_KEYS ...
+> 
