@@ -1,50 +1,65 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the ocfs2 tree with Linus' tree
-Date: Fri, 13 Aug 2010 10:33:51 +1000
-Message-ID: <20100813103351.cc54cb8b.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the acpi tree
+Date: Fri, 13 Aug 2010 10:56:02 +1000
+Message-ID: <20100813105602.a6daf552.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__13_Aug_2010_10_33_51_+1000_NmU/nUAJhwK7p4YI"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Joel Becker <Joel.Becker@oracle.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tao Ma <tao.ma@oracle.com>, Christoph Hellwig <hch@lst.de>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Fri__13_Aug_2010_10_33_51_+1000_NmU/nUAJhwK7p4YI
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:37502 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751699Ab0HMA4F (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 12 Aug 2010 20:56:05 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Len Brown <lenb@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>
 
-Hi Joel,
+Hi Len,
 
-Today's linux-next merge of the ocfs2 tree got a conflict in
-fs/ocfs2/file.c between commit 2c27c65ed0696f0b5df2dad2cf6462d72164d547
-("check ATTR_SIZE contraints in inode_change_ok") from Linus' tree and
-commit 7b2beb150acfe03445fc61c1302c4225c633776c ("ocfs2: Remove obscure
-error handling in direct_write") from the ocfs2 tree.
+After merging the acpi tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-The latter just removes that code that the former is modifying, so I did
-that.
---=20
+drivers/acpi/debugfs.c: In function 'cm_write':
+drivers/acpi/debugfs.c:36: error: implicit declaration of function 'copy_from_user'
+
+Caused by commit c0b82d427637c7598af5d7926187a7781c03bce8 ("ACPI:
+introduce drivers/acpi/debugfs.c"), interacting with something that
+stopped linux/uaccess.h from being implicitly included.  See Rule 1 in
+Documentation/SubmitChecklist.
+
+I have added the following patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 13 Aug 2010 10:52:30 +1000
+Subject: [PATCH] acpi: using copy_from_user needs linux/uaccess.h
+
+fixes this build error:
+
+drivers/acpi/debugfs.c: In function 'cm_write':
+drivers/acpi/debugfs.c:36: error: implicit declaration of function 'copy_from_user'
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/acpi/debugfs.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/acpi/debugfs.c b/drivers/acpi/debugfs.c
+index f0cd0e7..4f19078 100644
+--- a/drivers/acpi/debugfs.c
++++ b/drivers/acpi/debugfs.c
+@@ -6,6 +6,7 @@
+ #include <linux/module.h>
+ #include <linux/kernel.h>
+ #include <linux/debugfs.h>
++#include <linux/uaccess.h>
+ #include <acpi/acpi_drivers.h>
+ 
+ #define _COMPONENT		ACPI_SYSTEM_COMPONENT
+-- 
+1.7.1
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__13_Aug_2010_10_33_51_+1000_NmU/nUAJhwK7p4YI
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMZJLvAAoJEDMEi1NhKgbs6LgIAJbfMv0z50ZN6YEpkUg2vpUC
-PYgheL7LmVh+e5YLhhAB2JuISfqUUKt6U7mpCTkCzCWBoXomP7CKM2zvlivSNT3G
-QA2z09CLIBkJg4n5QQLxOAn/Vre5+eRnZwjwiTGIVtfsnLrJ29niYaaBzRrBD7CD
-QsxSo8onuU5M/CdfSsw1Vso8l5vlAWbGug6Is0PbcLWBOFOmzKOhYQRuBVgm7ErD
-gWamzP7JaRY2pa4Y+uqT3nvi/xd5ySfAb3WIvSPWveIYjB9Vgbqh7XZpCvQNk7Fk
-QphsZHpxp9vugUuUTnw6nUtQDfVPlnHt+wcpzunryRpyp9TxAXMcTg2N8z8Qppw=
-=lZcL
------END PGP SIGNATURE-----
-
---Signature=_Fri__13_Aug_2010_10_33_51_+1000_NmU/nUAJhwK7p4YI--
