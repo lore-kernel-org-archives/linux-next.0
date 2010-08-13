@@ -1,43 +1,41 @@
-From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Subject: Re: linux-next tree addition request (viafb)
-Date: Fri, 13 Aug 2010 01:19:33 +0200
-Message-ID: <4C648185.1030804@gmx.de>
-References: <4C640502.5030207@gmx.de> <20100813085749.ac82e91e.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ceph tree with Linus' tree
+Date: Fri, 13 Aug 2010 10:28:36 +1000
+Message-ID: <20100813102836.c301232d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout-de.gmx.net ([213.165.64.23]:42137 "HELO mail.gmx.net"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with SMTP
-	id S1754416Ab0HLXTg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 12 Aug 2010 19:19:36 -0400
-In-Reply-To: <20100813085749.ac82e91e.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:42090 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1761214Ab0HMA2j (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 12 Aug 2010 20:28:39 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+To: Sage Weil <sage@newdream.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wang Lei <wang840925@gmail.com>, David Howells <dhowells@redhat.com>, Steve French <sfrench@us.ibm.com>
 
-Hi Stephen,
+Hi Sage,
 
-Stephen Rothwell schrieb:
-> Hi Florian,
-> 
-> On Thu, 12 Aug 2010 16:28:18 +0200 Florian Tobias Schandinat <FlorianSchandinat@gmx.de> wrote:
->> can you please add
->>
->> 	git://github.com/schandinat/linux-2.6.git viafb-next
->>
->> to linux-next.
->> It contains patches for viafb intended for 2.6.37. All patches that are 
->> currently there have been posted.
-> 
-> I will add this after 2.6.36-rc1 has been released.  Do you want to be
-> the sole contact for warnings/errors/problems?  Or should I add some
-> other email addresses as well?
+Today's linux-next merge of the ceph tree got a conflict in net/Makefile
+between commit 1a4240f4764ac78adbf4b0ebb49b3bd8c72ffa11 ("DNS: Separate
+out CIFS DNS Resolver code") from Linus' tree and commit
+28419a6b287727e879aa94f2f8662a3810d14182 ("ceph: factor out libceph from
+Ceph file system") from the ceph tree.
 
-Thanks. As probably no one else is interested being the sole contact should be fine.
+Just overlapping additions.  I fixed it up (see below) and can carry the
+fix for a while.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-
-Best regards,
-
-Florian Tobias Schandinat
+diff --cc net/Makefile
+index ea60fbc,873c2ae..0000000
+--- a/net/Makefile
++++ b/net/Makefile
+@@@ -67,4 -67,4 +67,5 @@@ ifeq ($(CONFIG_NET),y
+  obj-$(CONFIG_SYSCTL)		+= sysctl_net.o
+  endif
+  obj-$(CONFIG_WIMAX)		+= wimax/
+ +obj-$(CONFIG_DNS_RESOLVER)	+= dns_resolver/
++ obj-$(CONFIG_CEPH_LIB)		+= ceph/
