@@ -1,108 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for August 16
-Date: Mon, 16 Aug 2010 15:04:20 +1000
-Message-ID: <20100816150420.7f3f8cfd.sfr@canb.auug.org.au>
+Subject: Re: linux-next tree addition request (viafb)
+Date: Mon, 16 Aug 2010 15:11:01 +1000
+Message-ID: <20100816151101.bcb01bcf.sfr@canb.auug.org.au>
+References: <4C640502.5030207@gmx.de>
+	<20100813085749.ac82e91e.sfr@canb.auug.org.au>
+	<4C648185.1030804@gmx.de>
+	<20100816123224.32a32909.sfr@canb.auug.org.au>
+	<20100815203932.074b8e60@bike.lwn.net>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__16_Aug_2010_15_04_20_+1000_tX48TE4HkYmiwSWO"
+ boundary="Signature=_Mon__16_Aug_2010_15_11_01_+1000_iWp8a+WqnVOVdGwi"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49265 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:48435 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750797Ab0HPFEb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 16 Aug 2010 01:04:31 -0400
+	id S1750800Ab0HPFLG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 Aug 2010 01:11:06 -0400
+In-Reply-To: <20100815203932.074b8e60@bike.lwn.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-next@vger.kernel.org
 
---Signature=_Mon__16_Aug_2010_15_04_20_+1000_tX48TE4HkYmiwSWO
+--Signature=_Mon__16_Aug_2010_15_11_01_+1000_iWp8a+WqnVOVdGwi
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Sun, 15 Aug 2010 20:39:32 -0600 Jonathan Corbet <corbet@lwn.net> wrote:
+>
+> On Mon, 16 Aug 2010 12:32:24 +1000
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>=20
+> > OK, I came to add this tree this morning only to discover that I already
+> > have a viafb tree owned by Jonathan.  I have called your new tree
+> > "florian-viafb" for now but I wonder if Jonathan's tree is still releva=
+nt?
+>=20
+> I have some viafb stuff I really need to get back to, but I'm happy to
+> merge it through Florian.  So it probably makes sense to drop my tree in
+> favor of his.
 
-As the merge window has closed, let the flood commence. :-)
-
-Changes since 20100813:
-
-New tree; florian-viafb
-
-My fixes tree contains:
-	spi: update for of_device to platform_device replacement
-
-The sh tree gained a conflict against Linus' tree.
-
-The ocfs2 tree lost its conflict.
-
-The v4l-dvb tree lost its conflicts.
-
-The acpi tree lost its build failure.
-
-The rr tree lost its conflicts.
-
-The alacrity tree gained a conflict against Linus' tree.
-
-The spi tree lost its conflict.
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
-and sparc64 defconfig. These builds also have
-CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
-CONFIG_DEBUG_INFO disabled when necessary.
-
-Below is a summary of the state of the merge.
-
-We are up to 170 trees (counting Linus' and 22 trees of patches pending
-for Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+OK, so I will drop your tree and rename florian-viafb to viafb tomorrow.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__16_Aug_2010_15_04_20_+1000_tX48TE4HkYmiwSWO
+--Signature=_Mon__16_Aug_2010_15_11_01_+1000_iWp8a+WqnVOVdGwi
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMaMbUAAoJEDMEi1NhKgbs4KoH/ijVeDab1U2CjGAF3g52ZsUC
-IbaYgTql40BIBq9HtHWmgqvH5gYTnz4GoXYTISo+qvcbNibleHnTfBW2x0B9eVVR
-wB7GjZYdZlwn0MPbRxBzbjv9h+1r0nHjNe7Rrv6lUC22vDEy8mO2qd7amCbgPRae
-DzWx8xsKFP0PZq9IENwWDuHSk5OWNxRd1mtzbjaE78S7nykyqepGazHh2mLy3eCA
-7H/iBCaN24hj/PkiQpjgy2JZHI/8ZRlNDvc5aWAKam0VfBZidD3MzltiqTMUD+tz
-bVXvxeXUiSF8pWBcjUGILRz0H5N9FSsBBsrM8328MglA/vQK+QGI/LLzWZ3G6Wg=
-=SyOa
+iQEcBAEBAgAGBQJMaMhlAAoJEDMEi1NhKgbsrhkIAIujdtpCqPBrjws/+H5CNYCB
+UX8PjXKhE1RptTv1kB0Qai8WDAXNPk8IrTybbAqJzFPTXW9XwcZRaQigaxyz94l8
+PkjYoGnaxVWuVg42H4ErYFGXXUZBIP2qt9riw3gFEJf4jElq8iFEDBOsgi6h/deY
+ZuNCq0Ka6dpRWsiZzbBAcRyz+mFjrxl0Sq7nTnPfW/tyhrVwCWzh3uOMNKEhnlbt
+V8HS5P2uignNWyI8f/DkGzJKmC133sl6b6EkIBb769cG7Mn4Mdawvu+t/dBOvSZB
+yINXAXVpSeCK7SoFQjLFO5462rOj5g9FinjO2t3I2sPC1ALNz64A9+mp9wn7G/4=
+=EI2j
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__16_Aug_2010_15_04_20_+1000_tX48TE4HkYmiwSWO--
+--Signature=_Mon__16_Aug_2010_15_11_01_+1000_iWp8a+WqnVOVdGwi--
