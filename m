@@ -1,48 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the sh tree with the  tree
-Date: Mon, 16 Aug 2010 13:00:05 +1000
-Message-ID: <20100816130005.20c2cbf7.sfr@canb.auug.org.au>
+From: Jonathan Corbet <corbet@lwn.net>
+Subject: Re: linux-next tree addition request (viafb)
+Date: Sun, 15 Aug 2010 20:39:32 -0600
+Message-ID: <20100815203932.074b8e60@bike.lwn.net>
+References: <4C640502.5030207@gmx.de>
+	<20100813085749.ac82e91e.sfr@canb.auug.org.au>
+	<4C648185.1030804@gmx.de>
+	<20100816123224.32a32909.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Mundt <lethal@linux-sh.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from tex.lwn.net ([70.33.254.29]:41199 "EHLO vena.lwn.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751551Ab0HPDGu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 15 Aug 2010 23:06:50 -0400
+In-Reply-To: <20100816123224.32a32909.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-next@vger.kernel.org
 
-Hi Paul,
+On Mon, 16 Aug 2010 12:32:24 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Today's linux-next merge of the sh tree got a conflict in
-arch/sh/include/asm/Kbuild between commit
-bf56fba6703592149e1bcd19220c60eb42dff9b7 ("archs: replace unifdef-y with
-header-y") from Linus' tree and commit
-da28c597996a964a195529595c37f7aacd6dad09 ("sh: split out ptrace header
-for _32/_64 variants") from the sh tree.
+> OK, I came to add this tree this morning only to discover that I already
+> have a viafb tree owned by Jonathan.  I have called your new tree
+> "florian-viafb" for now but I wonder if Jonathan's tree is still relevant?
 
-I fixed it up (see below) and can carry the fix for a while.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+I have some viafb stuff I really need to get back to, but I'm happy to
+merge it through Florian.  So it probably makes sense to drop my tree in
+favor of his.
 
-diff --cc arch/sh/include/asm/Kbuild
-index 0eed47b,b4d3462..0000000
---- a/arch/sh/include/asm/Kbuild
-+++ b/arch/sh/include/asm/Kbuild
-@@@ -3,7 -3,10 +3,9 @@@ include include/asm-generic/Kbuild.as
-  header-y += cachectl.h
-  header-y += cpu-features.h
-  header-y += hw_breakpoint.h
- -
- -unifdef-y += unistd_32.h
- -unifdef-y += unistd_64.h
- -unifdef-y += posix_types_32.h
- -unifdef-y += posix_types_64.h
- -unifdef-y += ptrace_32.h
- -unifdef-y += ptrace_64.h
- +header-y += posix_types_32.h
- +header-y += posix_types_64.h
- +header-y += unistd_32.h
- +header-y += unistd_64.h
-++header-y += ptrace_32.h
-++header-y += ptrace_64.h
+Thanks,
+
+jon
