@@ -1,482 +1,108 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the alacrity tree with Linus' tree
-Date: Mon, 16 Aug 2010 14:19:52 +1000
-Message-ID: <20100816141952.455bd3ad.sfr@canb.auug.org.au>
+Subject: linux-next: Tree for August 16
+Date: Mon, 16 Aug 2010 15:04:20 +1000
+Message-ID: <20100816150420.7f3f8cfd.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__16_Aug_2010_15_04_20_+1000_tX48TE4HkYmiwSWO"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60374 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:49265 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750735Ab0HPETz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 16 Aug 2010 00:19:55 -0400
+	id S1750797Ab0HPFEb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 Aug 2010 01:04:31 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Gregory Haskins <gregory.haskins@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-Hi Gregory,
+--Signature=_Mon__16_Aug_2010_15_04_20_+1000_tX48TE4HkYmiwSWO
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the alacrity tree got a conflict in
-include/linux/Kbuild between commit
-60641aa1f379820e99ac7f45a38b43795670c741 ("include: replace unifdef-y
-with header-y") from Linus' tree and several commits from the alacrity
-tree.
+Hi all,
 
-I fixed it up (see below) and can carry the fix for a while.
--- 
+As the merge window has closed, let the flood commence. :-)
+
+Changes since 20100813:
+
+New tree; florian-viafb
+
+My fixes tree contains:
+	spi: update for of_device to platform_device replacement
+
+The sh tree gained a conflict against Linus' tree.
+
+The ocfs2 tree lost its conflict.
+
+The v4l-dvb tree lost its conflicts.
+
+The acpi tree lost its build failure.
+
+The rr tree lost its conflicts.
+
+The alacrity tree gained a conflict against Linus' tree.
+
+The spi tree lost its conflict.
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups (if any), it is also built with powerpc allnoconfig (32 and
+64 bit), ppc44x_defconfig and allyesconfig (minus
+CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
+and sparc64 defconfig. These builds also have
+CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
+CONFIG_DEBUG_INFO disabled when necessary.
+
+Below is a summary of the state of the merge.
+
+We are up to 170 trees (counting Linus' and 22 trees of patches pending
+for Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Jan Dittmer for adding the linux-next tree to his build tests
+at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
+Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc include/linux/Kbuild
-index 626b629,1a31099..0000000
---- a/include/linux/Kbuild
-+++ b/include/linux/Kbuild
-@@@ -125,105 -70,43 +125,106 @@@ header-y += fd.
-  header-y += fdreg.h
-  header-y += fib_rules.h
-  header-y += fiemap.h
- +header-y += filter.h
-  header-y += firewire-cdev.h
-  header-y += firewire-constants.h
- +header-y += flat.h
- +header-y += fs.h
-  header-y += fuse.h
- -header-y += genetlink.h
- +header-y += futex.h
- +header-y += gameport.h
-  header-y += gen_stats.h
- +header-y += generic_serial.h
- +header-y += genetlink.h
-  header-y += gfs2_ondisk.h
-  header-y += gigaset_dev.h
- +header-y += hdlc.h
- +header-y += hdlcdrv.h
- +header-y += hdreg.h
- +header-y += hid.h
- +header-y += hiddev.h
- +header-y += hidraw.h
- +header-y += hpet.h
-  header-y += hysdn_if.h
- +header-y += i2c-dev.h
- +header-y += i2c.h
-  header-y += i2o-dev.h
-  header-y += i8k.h
- +header-y += icmp.h
- +header-y += icmpv6.h
- +header-y += if.h
- +header-y += if_addr.h
-  header-y += if_addrlabel.h
-  header-y += if_arcnet.h
- +header-y += if_arp.h
-  header-y += if_bonding.h
- +header-y += if_bridge.h
-  header-y += if_cablemodem.h
- +header-y += if_ec.h
- +header-y += if_eql.h
- +header-y += if_ether.h
-  header-y += if_fc.h
- -header-y += if.h
- +header-y += if_fddi.h
- +header-y += if_frad.h
-  header-y += if_hippi.h
-  header-y += if_infiniband.h
- +header-y += if_link.h
- +header-y += if_ltalk.h
-  header-y += if_packet.h
- +header-y += if_phonet.h
-  header-y += if_plip.h
-  header-y += if_ppp.h
- +header-y += if_pppol2tp.h
- +header-y += if_pppox.h
-  header-y += if_slip.h
-  header-y += if_strip.h
- +header-y += if_tr.h
-  header-y += if_tun.h
- +header-y += if_tunnel.h
- +header-y += if_vlan.h
- +header-y += if_x25.h
- +header-y += igmp.h
- +header-y += in.h
- +header-y += in6.h
-  header-y += in_route.h
- +header-y += inet_diag.h
- +header-y += inotify.h
- +header-y += input.h
-++header-y += ioq.h
-  header-y += ioctl.h
- +header-y += ip.h
-  header-y += ip6_tunnel.h
- +header-y += ip_vs.h
- +header-y += ipc.h
- +header-y += ipmi.h
-  header-y += ipmi_msgdefs.h
-  header-y += ipsec.h
- -header-y += ip_vs.h
- +header-y += ipv6.h
- +header-y += ipv6_route.h
-  header-y += ipx.h
-  header-y += irda.h
- +header-y += irqnr.h
- +header-y += isdn.h
- +header-y += isdn_divertif.h
- +header-y += isdn_ppp.h
- +header-y += isdnif.h
-  header-y += iso_fs.h
- +header-y += ivtv.h
- +header-y += ivtvfb.h
-  header-y += ixjuser.h
-  header-y += jffs2.h
- +header-y += joystick.h
- +header-y += kd.h
- +header-y += kdev_t.h
- +header-y += kernel.h
- +header-y += kernelcapi.h
- +header-y += keyboard.h
-  header-y += keyctl.h
- +header-y += l2tp.h
-  header-y += limits.h
- +header-y += llc.h
- +header-y += loop.h
- +header-y += lp.h
-  header-y += magic.h
-  header-y += major.h
-  header-y += map_to_7segment.h
-@@@ -286,109 -136,259 +287,112 @@@ header-y += phantom.
-  header-y += phonet.h
-  header-y += pkt_cls.h
-  header-y += pkt_sched.h
- +header-y += pktcdvd.h
- +header-y += pmu.h
- +header-y += poll.h
-  header-y += posix_types.h
-  header-y += ppdev.h
- +header-y += ppp-comp.h
- +header-y += ppp_defs.h
- +header-y += pps.h
-  header-y += prctl.h
- -header-y += qnxtypes.h
- +header-y += ptrace.h
-  header-y += qnx4_fs.h
- +header-y += qnxtypes.h
- +header-y += quota.h
-  header-y += radeonfb.h
- +header-y += random.h
-  header-y += raw.h
- +header-y += reboot.h
- +header-y += reiserfs_fs.h
- +header-y += reiserfs_xattr.h
-  header-y += resource.h
- +header-y += rfkill.h
-  header-y += romfs_fs.h
-  header-y += rose.h
- +header-y += route.h
- +header-y += rtc.h
- +header-y += rtnetlink.h
- +header-y += scc.h
- +header-y += sched.h
- +header-y += screen_info.h
- +header-y += sdla.h
- +header-y += securebits.h
- +header-y += selinux_netlink.h
- +header-y += sem.h
- +header-y += serial.h
- +header-y += serial_core.h
-  header-y += serial_reg.h
- +header-y += serio.h
- +header-y += shm.h
-++header-y += shm_signal.h
- +header-y += signal.h
- +header-y += signalfd.h
- +header-y += smb.h
- +header-y += smb_fs.h
- +header-y += smb_mount.h
-  header-y += smbno.h
-  header-y += snmp.h
- +header-y += socket.h
-  header-y += sockios.h
-  header-y += som.h
- +header-y += sonet.h
- +header-y += sonypi.h
-  header-y += sound.h
- +header-y += soundcard.h
- +header-y += stat.h
- +header-y += stddef.h
- +header-y += string.h
-  header-y += suspend_ioctls.h
- +header-y += swab.h
- +header-y += synclink.h
- +header-y += sysctl.h
-  header-y += taskstats.h
- +header-y += tcp.h
-  header-y += telephony.h
-  header-y += termios.h
- +header-y += time.h
-  header-y += times.h
- +header-y += timex.h
-  header-y += tiocl.h
-  header-y += tipc.h
-  header-y += tipc_config.h
-  header-y += toshiba.h
- +header-y += tty.h
- +header-y += types.h
-  header-y += udf_fs_i.h
- +header-y += udp.h
- +header-y += uinput.h
- +header-y += uio.h
-  header-y += ultrasound.h
-  header-y += un.h
- +header-y += unistd.h
- +header-y += usbdevice_fs.h
-  header-y += utime.h
- +header-y += utsname.h
-  header-y += veth.h
- +header-y += vhost.h
-++header-y += vbus_pci.h
-++header-y += venet.h
- +header-y += videodev.h
- +header-y += videodev2.h
-  header-y += videotext.h
- -header-y += x25.h
- -
- -unifdef-y += acct.h
- -unifdef-y += adb.h
- -unifdef-y += adfs_fs.h
- -unifdef-y += agpgart.h
- -ifneq ($(wildcard $(srctree)/arch/$(SRCARCH)/include/asm/a.out.h \
- -      		  $(srctree)/include/asm-$(SRCARCH)/a.out.h),)
- -unifdef-y += a.out.h
- -endif
- -unifdef-y += apm_bios.h
- -unifdef-y += atalk.h
- -unifdef-y += atmdev.h
- -unifdef-y += atm.h
- -unifdef-y += atm_tcp.h
- -unifdef-y += audit.h
- -unifdef-y += auto_fs.h
- -unifdef-y += auxvec.h
- -unifdef-y += binfmts.h
- -unifdef-y += blktrace_api.h
- -unifdef-y += capability.h
- -unifdef-y += capi.h
- -unifdef-y += cciss_ioctl.h
- -unifdef-y += cdrom.h
- -unifdef-y += cm4000_cs.h
- -unifdef-y += cn_proc.h
- -unifdef-y += coda.h
- -unifdef-y += connector.h
- -unifdef-y += cuda.h
- -unifdef-y += cyclades.h
- -unifdef-y += dccp.h
- -unifdef-y += dlm.h
- -unifdef-y += dlm_plock.h
- -unifdef-y += edd.h
- -unifdef-y += elf.h
- -unifdef-y += elfcore.h
- -unifdef-y += errno.h
- -unifdef-y += errqueue.h
- -unifdef-y += ethtool.h
- -unifdef-y += eventpoll.h
- -unifdef-y += signalfd.h
- -unifdef-y += ext2_fs.h
- -unifdef-y += fb.h
- -unifdef-y += fcntl.h
- -unifdef-y += filter.h
- -unifdef-y += flat.h
- -unifdef-y += futex.h
- -unifdef-y += fs.h
- -unifdef-y += gameport.h
- -unifdef-y += generic_serial.h
- -unifdef-y += hdlcdrv.h
- -unifdef-y += hdlc.h
- -unifdef-y += hdreg.h
- -unifdef-y += hid.h
- -unifdef-y += hiddev.h
- -unifdef-y += hidraw.h
- -unifdef-y += hpet.h
- -unifdef-y += i2c.h
- -unifdef-y += i2c-dev.h
- -unifdef-y += icmp.h
- -unifdef-y += icmpv6.h
- -unifdef-y += if_addr.h
- -unifdef-y += if_arp.h
- -unifdef-y += if_bridge.h
- -unifdef-y += if_ec.h
- -unifdef-y += if_eql.h
- -unifdef-y += if_ether.h
- -unifdef-y += if_fddi.h
- -unifdef-y += if_frad.h
- -unifdef-y += if_ltalk.h
- -unifdef-y += if_link.h
- -unifdef-y += if_phonet.h
- -unifdef-y += if_pppol2tp.h
- -unifdef-y += if_pppox.h
- -unifdef-y += if_tr.h
- -unifdef-y += if_tunnel.h
- -unifdef-y += if_vlan.h
- -unifdef-y += igmp.h
- -unifdef-y += inet_diag.h
- -unifdef-y += in.h
- -unifdef-y += in6.h
- -unifdef-y += inotify.h
- -unifdef-y += input.h
- -unifdef-y += ioq.h
- -unifdef-y += ip.h
- -unifdef-y += ipc.h
- -unifdef-y += ipmi.h
- -unifdef-y += ipv6.h
- -unifdef-y += ipv6_route.h
- -unifdef-y += isdn.h
- -unifdef-y += isdnif.h
- -unifdef-y += isdn_divertif.h
- -unifdef-y += isdn_ppp.h
- -unifdef-y += ivtv.h
- -unifdef-y += ivtvfb.h
- -unifdef-y += joystick.h
- -unifdef-y += kdev_t.h
- -unifdef-y += kd.h
- -unifdef-y += kernelcapi.h
- -unifdef-y += kernel.h
- -unifdef-y += keyboard.h
- -ifneq ($(wildcard $(srctree)/arch/$(SRCARCH)/include/asm/kvm.h \
- -      		  $(srctree)/include/asm-$(SRCARCH)/kvm.h),)
- -unifdef-y += kvm.h
- -endif
- -ifneq ($(wildcard $(srctree)/arch/$(SRCARCH)/include/asm/kvm_para.h \
- -		  $(srctree)/include/asm-$(SRCARCH)/kvm_para.h),)
- -unifdef-y += kvm_para.h
- -endif
- -unifdef-y += llc.h
- -unifdef-y += loop.h
- -unifdef-y += lp.h
- -unifdef-y += mempolicy.h
- -unifdef-y += mii.h
- -unifdef-y += mman.h
- -unifdef-y += mroute.h
- -unifdef-y += mroute6.h
- -unifdef-y += msdos_fs.h
- -unifdef-y += msg.h
- -unifdef-y += nbd.h
- -unifdef-y += ncp_fs.h
- -unifdef-y += ncp.h
- -unifdef-y += ncp_mount.h
- -unifdef-y += netdevice.h
- -unifdef-y += netfilter_bridge.h
- -unifdef-y += netfilter_decnet.h
- -unifdef-y += netfilter.h
- -unifdef-y += netfilter_ipv4.h
- -unifdef-y += netfilter_ipv6.h
- -unifdef-y += net.h
- -unifdef-y += netlink.h
- -unifdef-y += nfs3.h
- -unifdef-y += nfs4.h
- -unifdef-y += nfsacl.h
- -unifdef-y += nfs_fs.h
- -unifdef-y += nfs.h
- -unifdef-y += nfs_idmap.h
- -unifdef-y += n_r3964.h
- -unifdef-y += nubus.h
- -unifdef-y += nvram.h
- -unifdef-y += oom.h
- -unifdef-y += parport.h
- -unifdef-y += patchkey.h
- -unifdef-y += pci.h
- -unifdef-y += personality.h
- -unifdef-y += pktcdvd.h
- -unifdef-y += pmu.h
- -unifdef-y += poll.h
- -unifdef-y += ppp_defs.h
- -unifdef-y += ppp-comp.h
- -unifdef-y += pps.h
- -unifdef-y += ptrace.h
- -unifdef-y += quota.h
- -unifdef-y += random.h
- -unifdef-y += rfkill.h
- -unifdef-y += irqnr.h
- -unifdef-y += reboot.h
- -unifdef-y += reiserfs_fs.h
- -unifdef-y += reiserfs_xattr.h
- -unifdef-y += route.h
- -unifdef-y += rtc.h
- -unifdef-y += rtnetlink.h
- -unifdef-y += scc.h
- -unifdef-y += sched.h
- -unifdef-y += screen_info.h
- -unifdef-y += sdla.h
- -unifdef-y += securebits.h
- -unifdef-y += selinux_netlink.h
- -unifdef-y += sem.h
- -unifdef-y += serial_core.h
- -unifdef-y += serial.h
- -unifdef-y += serio.h
- -unifdef-y += shm.h
- -unifdef-y += shm_signal.h
- -unifdef-y += signal.h
- -unifdef-y += smb_fs.h
- -unifdef-y += smb.h
- -unifdef-y += smb_mount.h
- -unifdef-y += socket.h
- -unifdef-y += sonet.h
- -unifdef-y += sonypi.h
- -unifdef-y += soundcard.h
- -unifdef-y += stat.h
- -unifdef-y += stddef.h
- -unifdef-y += string.h
- -unifdef-y += swab.h
- -unifdef-y += synclink.h
- -unifdef-y += sysctl.h
- -unifdef-y += tcp.h
- -unifdef-y += time.h
- -unifdef-y += timex.h
- -unifdef-y += tty.h
- -unifdef-y += types.h
- -unifdef-y += udp.h
- -unifdef-y += uinput.h
- -unifdef-y += uio.h
- -unifdef-y += unistd.h
- -unifdef-y += usbdevice_fs.h
- -unifdef-y += utsname.h
- -unifdef-y += vhost.h
- -unifdef-y += vbus_pci.h
- -unifdef-y += venet.h
- -unifdef-y += videodev2.h
- -unifdef-y += videodev.h
- -unifdef-y += virtio_config.h
- -unifdef-y += virtio_ids.h
- -unifdef-y += virtio_blk.h
- -unifdef-y += virtio_net.h
- -unifdef-y += virtio_9p.h
- -unifdef-y += virtio_balloon.h
- -unifdef-y += virtio_console.h
- -unifdef-y += virtio_pci.h
- -unifdef-y += virtio_ring.h
- -unifdef-y += virtio_rng.h
- -unifdef-y += vt.h
- -unifdef-y += wait.h
- -unifdef-y += wanrouter.h
- -unifdef-y += watchdog.h
- -unifdef-y += wireless.h
- -unifdef-y += xattr.h
- -unifdef-y += xfrm.h
- -
- -objhdr-y += version.h
- +header-y += virtio_9p.h
- +header-y += virtio_balloon.h
- +header-y += virtio_blk.h
- +header-y += virtio_config.h
- +header-y += virtio_console.h
- +header-y += virtio_ids.h
- +header-y += virtio_net.h
- +header-y += virtio_pci.h
- +header-y += virtio_ring.h
- +header-y += virtio_rng.h
- +header-y += vt.h
- +header-y += wait.h
- +header-y += wanrouter.h
- +header-y += watchdog.h
-  header-y += wimax.h
- -header-y += wimax/
- +header-y += wireless.h
- +header-y += x25.h
- +header-y += xattr.h
- +header-y += xfrm.h
+--Signature=_Mon__16_Aug_2010_15_04_20_+1000_tX48TE4HkYmiwSWO
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMaMbUAAoJEDMEi1NhKgbs4KoH/ijVeDab1U2CjGAF3g52ZsUC
+IbaYgTql40BIBq9HtHWmgqvH5gYTnz4GoXYTISo+qvcbNibleHnTfBW2x0B9eVVR
+wB7GjZYdZlwn0MPbRxBzbjv9h+1r0nHjNe7Rrv6lUC22vDEy8mO2qd7amCbgPRae
+DzWx8xsKFP0PZq9IENwWDuHSk5OWNxRd1mtzbjaE78S7nykyqepGazHh2mLy3eCA
+7H/iBCaN24hj/PkiQpjgy2JZHI/8ZRlNDvc5aWAKam0VfBZidD3MzltiqTMUD+tz
+bVXvxeXUiSF8pWBcjUGILRz0H5N9FSsBBsrM8328MglA/vQK+QGI/LLzWZ3G6Wg=
+=SyOa
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__16_Aug_2010_15_04_20_+1000_tX48TE4HkYmiwSWO--
