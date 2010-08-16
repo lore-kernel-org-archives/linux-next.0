@@ -1,59 +1,77 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH] spi: update for of_device to platform_device replacement
-Date: Mon, 16 Aug 2010 12:20:59 +1000
-Message-ID: <20100816122059.c3ee7f6a.sfr@canb.auug.org.au>
-References: <20100809120509.be36a4fa.sfr@canb.auug.org.au>
+Subject: Re: linux-next tree addition request (viafb)
+Date: Mon, 16 Aug 2010 12:32:24 +1000
+Message-ID: <20100816123224.32a32909.sfr@canb.auug.org.au>
+References: <4C640502.5030207@gmx.de>
+	<20100813085749.ac82e91e.sfr@canb.auug.org.au>
+	<4C648185.1030804@gmx.de>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__16_Aug_2010_12_32_24_+1000_phwQdfnTZvpp+dt0"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:36085 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752177Ab0HPCcb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 15 Aug 2010 22:32:31 -0400
+In-Reply-To: <4C648185.1030804@gmx.de>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Cc: linux-next@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+
+--Signature=_Mon__16_Aug_2010_12_32_24_+1000_phwQdfnTZvpp+dt0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100809120509.be36a4fa.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Grant Likely <grant.likely@secretlab.ca>, Linus <torvalds@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi Florian,
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/ata/sata_dwc_460ex.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
-
-Hi Grant,
-
-On Mon, 9 Aug 2010 12:05:09 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Fri, 13 Aug 2010 01:19:33 +0200 Florian Tobias Schandinat <FlorianSchand=
+inat@gmx.de> wrote:
 >
-> I also added this merge fix patch (as suggest by you):
+> Stephen Rothwell schrieb:
+> >=20
+> > On Thu, 12 Aug 2010 16:28:18 +0200 Florian Tobias Schandinat <FlorianSc=
+handinat@gmx.de> wrote:
+> >> can you please add
+> >>
+> >> 	git://github.com/schandinat/linux-2.6.git viafb-next
+> >>
+> >> to linux-next.
+> >> It contains patches for viafb intended for 2.6.37. All patches that ar=
+e=20
+> >> currently there have been posted.
+> >=20
+> > I will add this after 2.6.36-rc1 has been released.  Do you want to be
+> > the sole contact for warnings/errors/problems?  Or should I add some
+> > other email addresses as well?
+>=20
+> Thanks. As probably no one else is interested being the sole contact shou=
+ld be fine.
 
-This patch now is needed in Linus' tree.  I will add it to my fixes tree
-for today.  Linus, can you take this, please?
+OK, I came to add this tree this morning only to discover that I already
+have a viafb tree owned by Jonathan.  I have called your new tree
+"florian-viafb" for now but I wonder if Jonathan's tree is still relevant?
 
-diff --git a/drivers/ata/sata_dwc_460ex.c b/drivers/ata/sata_dwc_460ex.c
-index ea24c1e..2673a3d 100644
---- a/drivers/ata/sata_dwc_460ex.c
-+++ b/drivers/ata/sata_dwc_460ex.c
-@@ -1588,7 +1588,7 @@ static const struct ata_port_info sata_dwc_port_info[] = {
- 	},
- };
- 
--static int sata_dwc_probe(struct of_device *ofdev,
-+static int sata_dwc_probe(struct platform_device *ofdev,
- 			const struct of_device_id *match)
- {
- 	struct sata_dwc_device *hsdev;
-@@ -1702,7 +1702,7 @@ error_out:
- 	return err;
- }
- 
--static int sata_dwc_remove(struct of_device *ofdev)
-+static int sata_dwc_remove(struct platform_device *ofdev)
- {
- 	struct device *dev = &ofdev->dev;
- 	struct ata_host *host = dev_get_drvdata(dev);
--- 
-1.7.1
-
--- 
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__16_Aug_2010_12_32_24_+1000_phwQdfnTZvpp+dt0
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMaKM4AAoJEDMEi1NhKgbsE5AIAJBwFpv7p6vv+bCmnOK1VOHH
+Yx+NmEhOe+KbCXXq7WJAt1mmtPFs8zGwWQiXEODh8XcUd4Z1inW7sDvNsKb1/V/B
+HxzEpUOTFicQ+XpY+OPLD0NYb4hR5Nol9amlpkBTKT5XLwz4yF4e6K+dCTtoqBkp
+f8s9CGa0YzoCUDrm1IMq4SXWezi7HXII2tSz+dn3c3hdbP7KKog5bg3T/gfD4cf+
+1FhJnmM/Rg/fg01lgJuXbHTNh7Jgz7enHOzAl3rTLWHgkMdm/+MQCJZW8CBpOJLs
+Cf8+bfEAjpYPjqxB2hXYreOSl9w0TZipPg+60lo9V3xkOzLtLG6nH++wcLgJUCE=
+=LKaX
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__16_Aug_2010_12_32_24_+1000_phwQdfnTZvpp+dt0--
