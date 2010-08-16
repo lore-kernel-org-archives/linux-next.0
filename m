@@ -1,36 +1,52 @@
-From: Jonathan Corbet <corbet@lwn.net>
-Subject: Re: linux-next tree addition request (viafb)
-Date: Sun, 15 Aug 2010 20:39:32 -0600
-Message-ID: <20100815203932.074b8e60@bike.lwn.net>
-References: <4C640502.5030207@gmx.de>
-	<20100813085749.ac82e91e.sfr@canb.auug.org.au>
-	<4C648185.1030804@gmx.de>
-	<20100816123224.32a32909.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning in Linus' tree
+Date: Mon, 16 Aug 2010 14:00:11 +1000
+Message-ID: <20100816140011.f899996d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__16_Aug_2010_14_00_11_+1000_ThbiMGUjPQemIghv"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chen Gong <gong.chen@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Mon__16_Aug_2010_14_00_11_+1000_ThbiMGUjPQemIghv
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from tex.lwn.net ([70.33.254.29]:41199 "EHLO vena.lwn.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751551Ab0HPDGu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 15 Aug 2010 23:06:50 -0400
-In-Reply-To: <20100816123224.32a32909.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>, linux-next@vger.kernel.org
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 16 Aug 2010 12:32:24 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi all,
 
-> OK, I came to add this tree this morning only to discover that I already
-> have a viafb tree owned by Jonathan.  I have called your new tree
-> "florian-viafb" for now but I wonder if Jonathan's tree is still relevant?
+After merging the slab tree, today's linux-next build (x86_64
+allmodconfig) produced these warnings:
 
-I have some viafb stuff I really need to get back to, but I'm happy to
-merge it through Florian.  So it probably makes sense to drop my tree in
-favor of his.
+/scratch/sfr/next/drivers/hwmon/coretemp.c: In function 'coretemp_init':
+/scratch/sfr/next/drivers/hwmon/coretemp.c:521: warning: unused variable 'n'
+/scratch/sfr/next/drivers/hwmon/coretemp.c:521: warning: unused variable 'p'
 
-Thanks,
+Introduced by commit 851b29cb3b196cb66452ec964ab5f66c9c9cd1ed ("hwmon:
+coretemp: enable coretemp device add operation failure").
 
-jon
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__16_Aug_2010_14_00_11_+1000_ThbiMGUjPQemIghv
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMaLfLAAoJEDMEi1NhKgbsnDMH/AjxqvyeF6YlAFAmm/apW/zz
+tLMLbmVOmhcOGvAZlZBteQb9y1XHCfOWUCzI6igtnaV7+WaU3xDVKxRDXaCmMep4
+nL4E8bCsFMfdavQFtXHNywr8DjJN8Z1lJdRpdV4Jm+3wV75cVI3C2+Ut8BrZi//v
+AJ5gdWFOs1bN0PFpNGAPuTBonTgglrukl1XUHiU8XTkb5l7kXb+LiVCYuPvuBp+K
+917z5LKCDjgjq/HCBHPGPyCJwxMM73elWlTRsH9ST7vAghl13Wzyr7QXItXwx6u+
+YO4UrTY9l42giyDaVJ0sLDaOVqRZ5fGiH2fN/AWc66p6zsg3CSX+MBj1KWgzRl8=
+=jJwY
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__16_Aug_2010_14_00_11_+1000_ThbiMGUjPQemIghv--
