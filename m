@@ -1,84 +1,97 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH] spi: update for of_device to platform_device replacement
-Date: Mon, 16 Aug 2010 15:19:40 -0600
-Message-ID: <AANLkTinNyf4TYpz0iSe2ArYk6X_AMVu1nKTuWFsHxaik@mail.gmail.com>
-References: <20100809120509.be36a4fa.sfr@canb.auug.org.au> <20100816122059.c3ee7f6a.sfr@canb.auug.org.au>
- <df0c23b2-b602-4555-a363-795deb0cde28@email.android.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Temporary ASoC tree for next
+Date: Tue, 17 Aug 2010 10:59:50 +1000
+Message-ID: <20100817105950.11fdbb77.sfr@canb.auug.org.au>
+References: <20100816163457.GF3276@rakim.wolfsonmicro.main>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__17_Aug_2010_10_59_50_+1000_HpULTVfnyPoPyVXZ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gy0-f174.google.com ([209.85.160.174]:51228 "EHLO
-	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755313Ab0HPVUA convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 16 Aug 2010 17:20:00 -0400
-In-Reply-To: <df0c23b2-b602-4555-a363-795deb0cde28@email.android.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:45902 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753803Ab0HQBAA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 Aug 2010 21:00:00 -0400
+In-Reply-To: <20100816163457.GF3276@rakim.wolfsonmicro.main>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Linus <torvalds@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Takashi Iwai <tiwai@suse.de>, Liam Girdwood <lrg@slimlogic.co.uk>, linux-next@vger.kernel.org, alsa-devel@alsa-project.org
 
-On Sun, Aug 15, 2010 at 11:22 PM, Grant Likely
-<grant.likely@secretlab.ca> wrote:
->
->
-> "Stephen Rothwell" <sfr@canb.auug.org.au> wrote:
->
->>
->>Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
->
->>This patch now is needed in Linus' tree. =A0I will add it to my fixes=
- tree
->>for today. =A0Linus, can you take this, please?
+--Signature=_Tue__17_Aug_2010_10_59_50_+1000_HpULTVfnyPoPyVXZ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Linus, I'm collecting a number of OF-related fixup patches anyway, so
-I'll pick this up into my tree, make sure I haven't broken anything,
-and send you a pull req this afternoon.
+Hi Mark,
 
-Cheers,
-g.
-
->>
->>diff --git a/drivers/ata/sata_dwc_460ex.c b/drivers/ata/sata_dwc_460e=
-x.c
->>index ea24c1e..2673a3d 100644
->>--- a/drivers/ata/sata_dwc_460ex.c
->>+++ b/drivers/ata/sata_dwc_460ex.c
->>@@ -1588,7 +1588,7 @@ static const struct ata_port_info sata_dwc_port=
-_info[] =3D {
->> =A0 =A0 =A0 },
->> };
->>
->>-static int sata_dwc_probe(struct of_device *ofdev,
->>+static int sata_dwc_probe(struct platform_device *ofdev,
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 const struct of_device_i=
-d *match)
->> {
->> =A0 =A0 =A0 struct sata_dwc_device *hsdev;
->>@@ -1702,7 +1702,7 @@ error_out:
->> =A0 =A0 =A0 return err;
->> }
->>
->>-static int sata_dwc_remove(struct of_device *ofdev)
->>+static int sata_dwc_remove(struct platform_device *ofdev)
->> {
->> =A0 =A0 =A0 struct device *dev =3D &ofdev->dev;
->> =A0 =A0 =A0 struct ata_host *host =3D dev_get_drvdata(dev);
->>--
->>1.7.1
->>
->>--
->>Cheers,
->>Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
-=2Eorg.au
->>http://www.canb.auug.org.au/~sfr/
+On Mon, 16 Aug 2010 17:34:57 +0100 Mark Brown <broonie@opensource.wolfsonmi=
+cro.com> wrote:
 >
-> --
-> Sent from my Android phone with K-9 Mail. Please excuse my brevity.
->
+> Liam has recently done some work on ASoC to enhance the ability to work
+> with multiple external devices which we're expecting to get in for .37.
+> Since this work required some architecture modifications and we've had a
+> bit of trouble getting testers we're expecting a higher than average
+> degree of cross-tree issues this cycle so in order to avoid affecting
+> all other ALSA work we'd like to have a separate ASoC-specific tree in
+> -next for this release cycle if possible:
+>=20
+>    git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound-2.6.git fo=
+r-next
+>=20
+> Please also include Liam as a contact for the tree.
 
+Added from today - called sound-asoc.  I will merge it before the main
+sound tree so we see the conflicts in this tree and (hopefully) not in
+the main sound tree.
 
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+	Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
 
 --=20
-Grant Likely, B.Sc., P.Eng.
-Secret Lab Technologies Ltd.
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+Legal Stuff:
+By participating in linux-next, your subsystem tree contributions are
+public and will be included in the linux-next trees.  You may be sent
+e-mail messages indicating errors or other issues when the
+patches/commits from your subsystem tree are merged and tested in
+linux-next.  These messages may also be cross-posted to the linux-next
+mailing list, the linux-kernel mailing list, etc.  The linux-next tree
+project and IBM (my employer) make no warranties regarding the linux-next
+project, the testing procedures, the results, the e-mails, etc.  If you
+don't agree to these ground rules, let me know and I'll remove your tree
+from participation in linux-next.
+
+--Signature=_Tue__17_Aug_2010_10_59_50_+1000_HpULTVfnyPoPyVXZ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMad8GAAoJEDMEi1NhKgbsKroH/1tOJrCx5iq/or8as/WWYUva
+XfMPFBb080HduDbpv3dJEOihrZv0JnU/w86jAPtGh9i9BGQUlQI7GgOklHlXuor2
+w2RZFWAA9Bh4EdY6s+KN3JmxYvVkUtNjc1vmHJ8xtCqyixezeWacQwbAq9F7EJjI
+H1fLq331XvtcV7O1wm3BdYyBVjKCttCkM1PRRkE4BtLQc/pcULSeeAOsVkneY/Il
+WAj42AOs+RK4qCdN8nNxq8b76R7/t/kq3f5pOOXTJszPSkgmppDaAAeB7pcQlm9/
+NKqhYkCJ5fdhRwCG37gkE2YLPsjgUilp9LKCBejIycl3cPQ0Zil7u/laEI9lcOA=
+=y38v
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__17_Aug_2010_10_59_50_+1000_HpULTVfnyPoPyVXZ--
