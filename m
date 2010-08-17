@@ -1,94 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings in Linus' tree
-Date: Tue, 17 Aug 2010 11:24:39 +1000
-Message-ID: <20100817112439.18f9d958.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the wireless tree with Linus' tree
+Date: Tue, 17 Aug 2010 11:52:03 +1000
+Message-ID: <20100817115203.e8a76e44.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__17_Aug_2010_11_24_39_+1000_rWgcAkuVN0b13g=0"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48508 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752341Ab0HQBYr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 16 Aug 2010 21:24:47 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Len Brown <lenb@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>
+ boundary="Signature=_Tue__17_Aug_2010_11_52_03_+1000_f9fD2nJTg4H4nnlC"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Williams <dcbw@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>, libertas-dev@lists.infradead.org, netdev@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__17_Aug_2010_11_24_39_+1000_rWgcAkuVN0b13g=0
+--Signature=_Tue__17_Aug_2010_11_52_03_+1000_f9fD2nJTg4H4nnlC
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi John,
 
-Today's linux-next build (x86_64 allmodconfig) produced these warnings:
+Today's linux-next merge of the wireless tree got a conflict in
+drivers/net/wireless/libertas/if_sdio.c between commit
+886275ce41a9751117367fb387ed171049eb6148 ("param: lock if_sdio's
+lbs_helper_name and lbs_fw_name against sysfs changes") from Linus' tree
+and commit 3d32a58b87cd251b50842f93b87d5458061c0cfc ("libertas: [sdio]
+use common firmware request helper and new firmware locations") from the
+wireless tree.
 
-drivers/acpi/sysfs.c:152: warning: passing argument 1 of '__check_old_set_p=
-aram' from incompatible pointer type
-include/linux/moduleparam.h:165: note: expected 'int (*)(const char *, stru=
-ct kernel_param *)' but argument is of type 'int (*)(const char *, const st=
-ruct kernel_param *)'
-drivers/acpi/sysfs.c:152: warning: passing argument 1 of '__check_old_set_p=
-aram' from incompatible pointer type
-include/linux/moduleparam.h:165: note: expected 'int (*)(const char *, stru=
-ct kernel_param *)' but argument is of type 'int (*)(const char *, const st=
-ruct kernel_param *)'
-drivers/acpi/sysfs.c:152: warning: passing argument 1 of '__check_old_set_p=
-aram' from incompatible pointer type
-include/linux/moduleparam.h:165: note: expected 'int (*)(const char *, stru=
-ct kernel_param *)' but argument is of type 'int (*)(const char *, const st=
-ruct kernel_param *)'
-drivers/acpi/sysfs.c:152: warning: passing argument 1 of '__check_old_set_p=
-aram' from incompatible pointer type
-include/linux/moduleparam.h:165: note: expected 'int (*)(const char *, stru=
-ct kernel_param *)' but argument is of type 'int (*)(const char *, const st=
-ruct kernel_param *)'
-drivers/acpi/sysfs.c:154: warning: passing argument 1 of '__check_old_set_p=
-aram' from incompatible pointer type
-include/linux/moduleparam.h:165: note: expected 'int (*)(const char *, stru=
-ct kernel_param *)' but argument is of type 'int (*)(const char *, const st=
-ruct kernel_param *)'
-drivers/acpi/sysfs.c:154: warning: passing argument 1 of '__check_old_set_p=
-aram' from incompatible pointer type
-include/linux/moduleparam.h:165: note: expected 'int (*)(const char *, stru=
-ct kernel_param *)' but argument is of type 'int (*)(const char *, const st=
-ruct kernel_param *)'
-drivers/acpi/sysfs.c:154: warning: passing argument 1 of '__check_old_set_p=
-aram' from incompatible pointer type
-include/linux/moduleparam.h:165: note: expected 'int (*)(const char *, stru=
-ct kernel_param *)' but argument is of type 'int (*)(const char *, const st=
-ruct kernel_param *)'
-drivers/acpi/sysfs.c:154: warning: passing argument 1 of '__check_old_set_p=
-aram' from incompatible pointer type
-include/linux/moduleparam.h:165: note: expected 'int (*)(const char *, stru=
-ct kernel_param *)' but argument is of type 'int (*)(const char *, const st=
-ruct kernel_param *)'
-
-Introduced by commit 1c8fce27e275fd7c6b75bc6455745f02d3903ee6 ("ACPI:
-introduce drivers/acpi/sysfs.c") interacting with commit
-9bbb9e5a33109b2832e2e63dcc7a132924ab374b ("param: use ops in struct
-kernel_param, rather than get and set fns directly").
-
+OK, I can't quite figure out what is going on here.  The latter commit
+removes that code that was modified by the former, so I effectively
+reverted the former commit (by using this file from the wireless tree)
+since the "helper" and "firmware" fields of struct if_sdio_card don't
+seem to be used anywhere anymore.  Can they be removed as well?
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__17_Aug_2010_11_24_39_+1000_rWgcAkuVN0b13g=0
+--Signature=_Tue__17_Aug_2010_11_52_03_+1000_f9fD2nJTg4H4nnlC
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMaeTXAAoJEDMEi1NhKgbsXtEH/2kZK+pdSL5c+sL/gbpEaAgS
-Qc1m/1KMfQiOQ1Pihw3rFz8v0UyrFQNGnKCoSP4Aa8ECCmTUPx+6T4i2m27/BP4s
-ychU3P+4SxTQVlhnJaeXeCpIPlex1mYQMm9BSYqQf5Bp5HOjjtOLkBCZGEkcJSoN
-thn3QAFpst/zzmK2YfZ+wAGuIQ5WXfmdPAg5YMyM9G5q8cjHx42uYCt31ewlY2ZJ
-3yShEmHSRQpyyn2YFWZkXY4hF4AaZv007YBFIHej2JUvbf9t8+nnppRrRRNMzOTR
-Rpevornx9XSFrydCf7xLmoFbLpMR74JVJcHy5POqJH3DPSicg2WKUfWmzEE571c=
-=ldsk
+iQEcBAEBAgAGBQJMaetDAAoJEDMEi1NhKgbsRhQIAIB8A2VzaoVXsUqtHjO40sNk
+k2TMIrioH6v5PvgR6KW1Cwy/ZHhDfksv/ksJ11Jwj46oBqGh25MpIrPUUTMMwGMs
+byZAMzPV/BZ6zpFOvBxbL/HN8Cy4QEfkNa1NkwWIvBSJwtQoWZT1Vo/mDShJgTBr
+g6+3ul31pUdoWnIl8Pm+etG8nb7MWWkRoGyss7b5P7VwWch6qXNE2jsNHBQDyBlr
+qMMJw+SVOr2v/QnQHa6l70hbj42VuzAFv0Pz9SsBhzs6khi+mfwrJdWK2+M4DJUc
+mOsm3McJ5+4DhiHp1JbnlXyXNQDrDemXSc0MbRct4JMRb6pzkR7C9vWl/Q8apW8=
+=dvps
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__17_Aug_2010_11_24_39_+1000_rWgcAkuVN0b13g=0--
+--Signature=_Tue__17_Aug_2010_11_52_03_+1000_f9fD2nJTg4H4nnlC--
