@@ -1,54 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the  tree
-Date: Tue, 17 Aug 2010 12:24:04 +1000
-Message-ID: <20100817122404.ac35bbdb.sfr@canb.auug.org.au>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: linux-next: manual merge of the wireless tree with Linus' tree
+Date: Tue, 17 Aug 2010 12:29:44 +0930
+Message-ID: <201008171229.46175.rusty@rustcorp.com.au>
+References: <20100817115203.e8a76e44.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__17_Aug_2010_12_24_04_+1000_VSRY0+meTM+=jS.J"
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:42612 "EHLO smtps.tip.net.au"
+Received: from ozlabs.org ([203.10.76.45]:34752 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753814Ab0HQCYJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 16 Aug 2010 22:24:09 -0400
+	id S1754765Ab0HQC74 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 Aug 2010 22:59:56 -0400
+In-Reply-To: <20100817115203.e8a76e44.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Williams <dcbw@redhat.com>, libertas-dev@lists.infradead.org, netdev@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
 
---Signature=_Tue__17_Aug_2010_12_24_04_+1000_VSRY0+meTM+=jS.J
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, 17 Aug 2010 11:22:03 am Stephen Rothwell wrote:
+> Hi John,
+> 
+> Today's linux-next merge of the wireless tree got a conflict in
+> drivers/net/wireless/libertas/if_sdio.c between commit
+> 886275ce41a9751117367fb387ed171049eb6148 ("param: lock if_sdio's
+> lbs_helper_name and lbs_fw_name against sysfs changes") from Linus' tree
+> and commit 3d32a58b87cd251b50842f93b87d5458061c0cfc ("libertas: [sdio]
+> use common firmware request helper and new firmware locations") from the
+> wireless tree.
+> 
+> OK, I can't quite figure out what is going on here.  The latter commit
+> removes that code that was modified by the former, so I effectively
+> reverted the former commit (by using this file from the wireless tree)
+> since the "helper" and "firmware" fields of struct if_sdio_card don't
+> seem to be used anywhere anymore.  Can they be removed as well?
 
-Hi all,
+I'm looking at the wireless tree now.
 
-After merging the slab tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+You can drop the commit as you have done.  But it leaves three problematic
+writable charp parameters in the libertas/ directory which now need lifetime
+management.
 
-sound/soc/codecs/wm8974.c: In function 'wm8974_probe':
-sound/soc/codecs/wm8974.c:610: warning: unused variable 'wm8974'
+ie. kparam_block_sysfs_write()/unblock around them, and probably they need
+to be copied.
 
-Introduced by commit af3751a0bfe4d461e0567961dc06448f2128e26f ("ASoC:
-Remove unneeded control_data management from Wolfson drivers").
---=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__17_Aug_2010_12_24_04_+1000_VSRY0+meTM+=jS.J
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMafLEAAoJEDMEi1NhKgbsBywH/jxEcj5QeTCQXLifzsc+uIQk
-gg9J/lZfKgfd140Nls5k32BWGEBihNISmXXmC4MaHA79yKoQQy0CLO5pM6dl96Cl
-5wiaqGMkMc6CuLpsxwmpOxY76YBtGFjtWGi5yyRTl+yro9DFbq6M7fwEgauYdIP2
-dDCaq9FHU48AhSFGCBiqHIjTRClrCZgOy3a9Gh52gqYOIW1n0BS1l47iaSoFS+4a
-pWMZRmtW1z4qZAWS8DScfEF67C62NhC6zHnIbPgQcxBdeuYM0NRRENd7jDbdtV5M
-ZLyKQKHOm+9IqbFc/4qU/pHO2KP+ZxCcF6inwIyaiPVcUTsdf0Vtac0y6mmuYtI=
-=czg2
------END PGP SIGNATURE-----
-
---Signature=_Tue__17_Aug_2010_12_24_04_+1000_VSRY0+meTM+=jS.J--
+Rusty.
