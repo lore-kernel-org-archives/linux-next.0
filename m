@@ -1,97 +1,94 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Temporary ASoC tree for next
-Date: Tue, 17 Aug 2010 10:59:50 +1000
-Message-ID: <20100817105950.11fdbb77.sfr@canb.auug.org.au>
-References: <20100816163457.GF3276@rakim.wolfsonmicro.main>
+Subject: linux-next: build warnings in Linus' tree
+Date: Tue, 17 Aug 2010 11:24:39 +1000
+Message-ID: <20100817112439.18f9d958.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__17_Aug_2010_10_59_50_+1000_HpULTVfnyPoPyVXZ"
+ boundary="Signature=_Tue__17_Aug_2010_11_24_39_+1000_rWgcAkuVN0b13g=0"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45902 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:48508 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753803Ab0HQBAA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 16 Aug 2010 21:00:00 -0400
-In-Reply-To: <20100816163457.GF3276@rakim.wolfsonmicro.main>
+	id S1752341Ab0HQBYr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 Aug 2010 21:24:47 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Takashi Iwai <tiwai@suse.de>, Liam Girdwood <lrg@slimlogic.co.uk>, linux-next@vger.kernel.org, alsa-devel@alsa-project.org
+To: Len Brown <lenb@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>
 
---Signature=_Tue__17_Aug_2010_10_59_50_+1000_HpULTVfnyPoPyVXZ
+--Signature=_Tue__17_Aug_2010_11_24_39_+1000_rWgcAkuVN0b13g=0
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mark,
+Hi all,
 
-On Mon, 16 Aug 2010 17:34:57 +0100 Mark Brown <broonie@opensource.wolfsonmi=
-cro.com> wrote:
->
-> Liam has recently done some work on ASoC to enhance the ability to work
-> with multiple external devices which we're expecting to get in for .37.
-> Since this work required some architecture modifications and we've had a
-> bit of trouble getting testers we're expecting a higher than average
-> degree of cross-tree issues this cycle so in order to avoid affecting
-> all other ALSA work we'd like to have a separate ASoC-specific tree in
-> -next for this release cycle if possible:
->=20
->    git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound-2.6.git fo=
-r-next
->=20
-> Please also include Liam as a contact for the tree.
+Today's linux-next build (x86_64 allmodconfig) produced these warnings:
 
-Added from today - called sound-asoc.  I will merge it before the main
-sound tree so we see the conflicts in this tree and (hopefully) not in
-the main sound tree.
+drivers/acpi/sysfs.c:152: warning: passing argument 1 of '__check_old_set_p=
+aram' from incompatible pointer type
+include/linux/moduleparam.h:165: note: expected 'int (*)(const char *, stru=
+ct kernel_param *)' but argument is of type 'int (*)(const char *, const st=
+ruct kernel_param *)'
+drivers/acpi/sysfs.c:152: warning: passing argument 1 of '__check_old_set_p=
+aram' from incompatible pointer type
+include/linux/moduleparam.h:165: note: expected 'int (*)(const char *, stru=
+ct kernel_param *)' but argument is of type 'int (*)(const char *, const st=
+ruct kernel_param *)'
+drivers/acpi/sysfs.c:152: warning: passing argument 1 of '__check_old_set_p=
+aram' from incompatible pointer type
+include/linux/moduleparam.h:165: note: expected 'int (*)(const char *, stru=
+ct kernel_param *)' but argument is of type 'int (*)(const char *, const st=
+ruct kernel_param *)'
+drivers/acpi/sysfs.c:152: warning: passing argument 1 of '__check_old_set_p=
+aram' from incompatible pointer type
+include/linux/moduleparam.h:165: note: expected 'int (*)(const char *, stru=
+ct kernel_param *)' but argument is of type 'int (*)(const char *, const st=
+ruct kernel_param *)'
+drivers/acpi/sysfs.c:154: warning: passing argument 1 of '__check_old_set_p=
+aram' from incompatible pointer type
+include/linux/moduleparam.h:165: note: expected 'int (*)(const char *, stru=
+ct kernel_param *)' but argument is of type 'int (*)(const char *, const st=
+ruct kernel_param *)'
+drivers/acpi/sysfs.c:154: warning: passing argument 1 of '__check_old_set_p=
+aram' from incompatible pointer type
+include/linux/moduleparam.h:165: note: expected 'int (*)(const char *, stru=
+ct kernel_param *)' but argument is of type 'int (*)(const char *, const st=
+ruct kernel_param *)'
+drivers/acpi/sysfs.c:154: warning: passing argument 1 of '__check_old_set_p=
+aram' from incompatible pointer type
+include/linux/moduleparam.h:165: note: expected 'int (*)(const char *, stru=
+ct kernel_param *)' but argument is of type 'int (*)(const char *, const st=
+ruct kernel_param *)'
+drivers/acpi/sysfs.c:154: warning: passing argument 1 of '__check_old_set_p=
+aram' from incompatible pointer type
+include/linux/moduleparam.h:165: note: expected 'int (*)(const char *, stru=
+ct kernel_param *)' but argument is of type 'int (*)(const char *, const st=
+ruct kernel_param *)'
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
-
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-	Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+Introduced by commit 1c8fce27e275fd7c6b75bc6455745f02d3903ee6 ("ACPI:
+introduce drivers/acpi/sysfs.c") interacting with commit
+9bbb9e5a33109b2832e2e63dcc7a132924ab374b ("param: use ops in struct
+kernel_param, rather than get and set fns directly").
 
 --=20
 Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Legal Stuff:
-By participating in linux-next, your subsystem tree contributions are
-public and will be included in the linux-next trees.  You may be sent
-e-mail messages indicating errors or other issues when the
-patches/commits from your subsystem tree are merged and tested in
-linux-next.  These messages may also be cross-posted to the linux-next
-mailing list, the linux-kernel mailing list, etc.  The linux-next tree
-project and IBM (my employer) make no warranties regarding the linux-next
-project, the testing procedures, the results, the e-mails, etc.  If you
-don't agree to these ground rules, let me know and I'll remove your tree
-from participation in linux-next.
-
---Signature=_Tue__17_Aug_2010_10_59_50_+1000_HpULTVfnyPoPyVXZ
+--Signature=_Tue__17_Aug_2010_11_24_39_+1000_rWgcAkuVN0b13g=0
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMad8GAAoJEDMEi1NhKgbsKroH/1tOJrCx5iq/or8as/WWYUva
-XfMPFBb080HduDbpv3dJEOihrZv0JnU/w86jAPtGh9i9BGQUlQI7GgOklHlXuor2
-w2RZFWAA9Bh4EdY6s+KN3JmxYvVkUtNjc1vmHJ8xtCqyixezeWacQwbAq9F7EJjI
-H1fLq331XvtcV7O1wm3BdYyBVjKCttCkM1PRRkE4BtLQc/pcULSeeAOsVkneY/Il
-WAj42AOs+RK4qCdN8nNxq8b76R7/t/kq3f5pOOXTJszPSkgmppDaAAeB7pcQlm9/
-NKqhYkCJ5fdhRwCG37gkE2YLPsjgUilp9LKCBejIycl3cPQ0Zil7u/laEI9lcOA=
-=y38v
+iQEcBAEBAgAGBQJMaeTXAAoJEDMEi1NhKgbsXtEH/2kZK+pdSL5c+sL/gbpEaAgS
+Qc1m/1KMfQiOQ1Pihw3rFz8v0UyrFQNGnKCoSP4Aa8ECCmTUPx+6T4i2m27/BP4s
+ychU3P+4SxTQVlhnJaeXeCpIPlex1mYQMm9BSYqQf5Bp5HOjjtOLkBCZGEkcJSoN
+thn3QAFpst/zzmK2YfZ+wAGuIQ5WXfmdPAg5YMyM9G5q8cjHx42uYCt31ewlY2ZJ
+3yShEmHSRQpyyn2YFWZkXY4hF4AaZv007YBFIHej2JUvbf9t8+nnppRrRRNMzOTR
+Rpevornx9XSFrydCf7xLmoFbLpMR74JVJcHy5POqJH3DPSicg2WKUfWmzEE571c=
+=ldsk
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__17_Aug_2010_10_59_50_+1000_HpULTVfnyPoPyVXZ--
+--Signature=_Tue__17_Aug_2010_11_24_39_+1000_rWgcAkuVN0b13g=0--
