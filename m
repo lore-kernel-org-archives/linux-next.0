@@ -1,50 +1,72 @@
 From: Jarkko Nikula <jhnikula@gmail.com>
-Subject: Re: linux-next: manual merge of the sound-asoc tree with the omap
- tree
-Date: Tue, 17 Aug 2010 09:34:45 +0300
-Message-ID: <20100817093445.ade1b4a4.jhnikula@gmail.com>
-References: <20100817122145.f399e543.sfr@canb.auug.org.au>
-	<20100817061558.GD12184@atomide.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <20100817061558.GD12184@atomide.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Subject: [PATCH] ASoC: multi-component - Drop board-n8x0.c changes
+Date: Tue, 17 Aug 2010 09:58:02 +0300
+Message-ID: <1282028282-13264-1-git-send-email-jhnikula@gmail.com>
+References: <20100817093445.ade1b4a4.jhnikula@gmail.com>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ey0-f174.google.com ([209.85.215.174]:41641 "EHLO
+	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756460Ab0HQG6F (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Aug 2010 02:58:05 -0400
+Received: by eyg5 with SMTP id 5so1745797eyg.19
+        for <linux-next@vger.kernel.org>; Mon, 16 Aug 2010 23:58:04 -0700 (PDT)
+In-Reply-To: <20100817093445.ade1b4a4.jhnikula@gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: alsa-devel@alsa-project.org
+Cc: linux-next@vger.kernel.org, Liam Girdwood <lrg@slimlogic.co.uk>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Tony Lindgren <tony@atomide.com>, Jarkko Nikula <jhnikula@gmail.com>
 
-On Tue, 17 Aug 2010 09:15:59 +0300
-Tony Lindgren <tony@atomide.com> wrote:
+These will conflict with queued changes to board-n8x0.c coming from
+linux-omap tree. Only side effect from this dropping is that the integrated
+digital microphone on Nokia N810 will stop working when ASoC multi-component
+is merged.
 
-> * Stephen Rothwell <sfr@canb.auug.org.au> [100817 05:14]:
-> > Hi all,
-> > 
-> > Today's linux-next merge of the sound-asoc tree got a conflict in
-> > arch/arm/mach-omap2/board-n8x0.c between commits
-> > 1c37553eb1778802f0e7b6730df36542752e801e ("omap: n8x0: Cleanup i2c1 and
-> > menelaus registration") and 69be0f6f4b8e3be992ab6a333a3a82e043784c52
-> > ("omap: n8x0: Register i2c2 and add board info with tlv320aic3xfor N810")
-> > from the omap tree and commit f0fba2ad1b6b53d5360125c41953b7afcd6deff0
-> > ("ASoC: multi-component - ASoC Multi-Component Support") from the
-> > sound-asoc tree.
-> > 
-> > I couldn't figure this out, so I effectively reverted the part of the
-> > latter commit affecting that file.  Is there no way that the latter
-> > commit can be broken up into smaller self contained pieces?
-> 
-> Let's let Jarkko and Liam to queue these along with the other
-> ASoC patches, I'll drop them from omap for-next.
-> 
-> Jarkko, can you please rebase them?
-> 
-I think it's easier if you keep them in l-o for-next and I send a
-patch to ASoC multi-component removing board-n8x0.c changes.
+As currently the N810 is not very usable in mainline, I consider this as a
+minor issue that can be fixed in linux-omap tree the after the
+multi-component is merged.
 
-That way the N810 audio is usable in linux-omap before m-c merge and m-c
-patch touch less board files.
+Signed-off-by: Jarkko Nikula <jhnikula@gmail.com>
+---
+ arch/arm/mach-omap2/board-n8x0.c |   15 ---------------
+ 1 files changed, 0 insertions(+), 15 deletions(-)
 
-
+diff --git a/arch/arm/mach-omap2/board-n8x0.c b/arch/arm/mach-omap2/board-n8x0.c
+index 04df912..3ccc34e 100644
+--- a/arch/arm/mach-omap2/board-n8x0.c
++++ b/arch/arm/mach-omap2/board-n8x0.c
+@@ -20,7 +20,6 @@
+ #include <linux/i2c.h>
+ #include <linux/spi/spi.h>
+ #include <linux/usb/musb.h>
+-#include <sound/tlv320aic3x.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/mach-types.h>
+@@ -613,25 +612,11 @@ static int n8x0_menelaus_late_init(struct device *dev)
+ 	return 0;
+ }
+ 
+-static struct aic3x_setup_data n810_aic33_setup = {
+-	.gpio_func[0] = AIC3X_GPIO1_FUNC_DISABLED,
+-	.gpio_func[1] = AIC3X_GPIO2_FUNC_DIGITAL_MIC_INPUT,
+-};
+-
+-static struct aic3x_pdata n810_aic33_data = {
+-	.setup = &n810_aic33_setup,
+-	.gpio_reset = -1,
+-};
+-
+ static struct i2c_board_info __initdata n8x0_i2c_board_info_1[] = {
+ 	{
+ 		I2C_BOARD_INFO("menelaus", 0x72),
+ 		.irq = INT_24XX_SYS_NIRQ,
+ 	},
+-	{
+-		I2C_BOARD_INFO("tlv320aic3x", 0x1b),
+-		.platform_data = &n810_aic33_data,
+-	},
+ };
+ 
+ static struct menelaus_platform_data n8x0_menelaus_platform_data = {
 -- 
-Jarkko
+1.7.1
