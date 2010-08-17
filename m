@@ -1,55 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the wireless tree with Linus' tree
-Date: Tue, 17 Aug 2010 11:52:03 +1000
-Message-ID: <20100817115203.e8a76e44.sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the sound-asoc tree
+Date: Tue, 17 Aug 2010 12:21:03 +1000
+Message-ID: <20100817122103.5e14eaeb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__17_Aug_2010_11_52_03_+1000_f9fD2nJTg4H4nnlC"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "John W. Linville" <linville@tuxdriver.com>, linux-wireless@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Williams <dcbw@redhat.com>, Rusty Russell <rusty@rustcorp.com.au>, libertas-dev@lists.infradead.org, netdev@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Tue__17_Aug_2010_12_21_03_+1000_8ehT7ECfRuh2Mh__"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:52312 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752509Ab0HQCVL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 Aug 2010 22:21:11 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__17_Aug_2010_11_52_03_+1000_f9fD2nJTg4H4nnlC
+--Signature=_Tue__17_Aug_2010_12_21_03_+1000_8ehT7ECfRuh2Mh__
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi John,
+Hi ,
 
-Today's linux-next merge of the wireless tree got a conflict in
-drivers/net/wireless/libertas/if_sdio.c between commit
-886275ce41a9751117367fb387ed171049eb6148 ("param: lock if_sdio's
-lbs_helper_name and lbs_fw_name against sysfs changes") from Linus' tree
-and commit 3d32a58b87cd251b50842f93b87d5458061c0cfc ("libertas: [sdio]
-use common firmware request helper and new firmware locations") from the
-wireless tree.
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-OK, I can't quite figure out what is going on here.  The latter commit
-removes that code that was modified by the former, so I effectively
-reverted the former commit (by using this file from the wireless tree)
-since the "helper" and "firmware" fields of struct if_sdio_card don't
-seem to be used anywhere anymore.  Can they be removed as well?
+sound/soc/soc-core.c: In function 'snd_soc_register_dais':
+sound/soc/soc-core.c:2919: warning: format '%d' expects type 'int', but arg=
+ument 5 has type 'size_t'
+
+Caused by commit f0fba2ad1b6b53d5360125c41953b7afcd6deff0 ("ASoC:
+multi-component - ASoC Multi-Component Support").
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__17_Aug_2010_11_52_03_+1000_f9fD2nJTg4H4nnlC
+--Signature=_Tue__17_Aug_2010_12_21_03_+1000_8ehT7ECfRuh2Mh__
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMaetDAAoJEDMEi1NhKgbsRhQIAIB8A2VzaoVXsUqtHjO40sNk
-k2TMIrioH6v5PvgR6KW1Cwy/ZHhDfksv/ksJ11Jwj46oBqGh25MpIrPUUTMMwGMs
-byZAMzPV/BZ6zpFOvBxbL/HN8Cy4QEfkNa1NkwWIvBSJwtQoWZT1Vo/mDShJgTBr
-g6+3ul31pUdoWnIl8Pm+etG8nb7MWWkRoGyss7b5P7VwWch6qXNE2jsNHBQDyBlr
-qMMJw+SVOr2v/QnQHa6l70hbj42VuzAFv0Pz9SsBhzs6khi+mfwrJdWK2+M4DJUc
-mOsm3McJ5+4DhiHp1JbnlXyXNQDrDemXSc0MbRct4JMRb6pzkR7C9vWl/Q8apW8=
-=dvps
+iQEcBAEBAgAGBQJMafIPAAoJEDMEi1NhKgbsNtwH/2xY1JHw43btPUMZLZdTQF41
+1U/juhxJTz68nHQorpmvO+5Tce83f13byFjh0BdiJYNBWuQ35BAouPRd5P4an+zp
+WwLVV3ED88GYr0d9pbJemR75KA2VLzfRaXfCkvJb/QnsufxVMJcyKV1StVxrmmb3
+P+idjkzN8v1g8SgVeQBdNKTtpqTiWzYPn1oHAQVIE3XCJoAjd0wSLcK5JlT/Nmze
+X5BBYnYHDWoioc4mUZwVg8gCa4+mFsmXsgnFbb9txaj7QEeNBjO7meUHG4qrta3F
+RiIaIg56rLLN+hhV/yLCUe/lB12HZMl9xFDJKdv8IJQgM6KC2sT36BGR3aPeFVU=
+=UdSn
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__17_Aug_2010_11_52_03_+1000_f9fD2nJTg4H4nnlC--
+--Signature=_Tue__17_Aug_2010_12_21_03_+1000_8ehT7ECfRuh2Mh__--
