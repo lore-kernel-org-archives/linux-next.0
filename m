@@ -1,48 +1,59 @@
 From: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
 Subject: Re: [PATCH -next] optprobes: fix kconfig depends/selects
-Date: Tue, 17 Aug 2010 23:55:27 +0900
-Message-ID: <4C6AA2DF.5020301@hitachi.com>
-References: <20100812122641.fe88e846.randy.dunlap@oracle.com>
+Date: Wed, 18 Aug 2010 00:03:56 +0900
+Message-ID: <4C6AA4DC.8090307@hitachi.com>
+References: <20100812122641.fe88e846.randy.dunlap@oracle.com> <4C6AA2DF.5020301@hitachi.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100812122641.fe88e846.randy.dunlap@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail9.hitachi.co.jp ([133.145.228.44]:39909 "EHLO
+	mail9.hitachi.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751261Ab0HQPEC (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Aug 2010 11:04:02 -0400
+In-Reply-To: <4C6AA2DF.5020301@hitachi.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Randy Dunlap <randy.dunlap@oracle.com>
 Cc: lkml <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Ananth N Mavinakayanahalli <ananth@in.ibm.com>, Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>, "David S. Miller" <davem@davemloft.net>, akpm <akpm@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
 
-Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
+Masami Hiramatsu wrote:
+> Randy Dunlap wrote:
+>> From: Randy Dunlap <randy.dunlap@oracle.com>
+>>
+>> KALLSYMS and KALLSYMS_ALL depend on DEBUG_KERNEL, so add that dependency.
+>> KALLSYMS_ALL depends on KALLSYMS, so select both of them, not just KALLSYMS_ALL.
 > 
-> KALLSYMS and KALLSYMS_ALL depend on DEBUG_KERNEL, so add that dependency.
-> KALLSYMS_ALL depends on KALLSYMS, so select both of them, not just KALLSYMS_ALL.
+> Indeed, Thanks for pointing it!
+> 
+> Signed-off-by: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
 
-Indeed, Thanks for pointing it!
+Oops, I meant;
+Acked-by: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
 
-Signed-off-by: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
-
+Sorry:(
 > 
-> warning: (OPTPROBES && KPROBES && HAVE_OPTPROBES && !PREEMPT || MTD_UBI_DEBUG && MTD && SYSFS && MTD_UBI || UBIFS_FS_DEBUG && MISC_FILESYSTEMS && UBIFS_FS || LOCKDEP && DEBUG_KERNEL && TRACE_IRQFLAGS_SUPPORT && STACKTRACE_SUPPORT && LOCKDEP_SUPPORT || LATENCYTOP && HAVE_LATENCYTOP_SUPPORT) selects KALLSYMS_ALL which has unmet direct dependencies (DEBUG_KERNEL && KALLSYMS)
+>> warning: (OPTPROBES && KPROBES && HAVE_OPTPROBES && !PREEMPT || MTD_UBI_DEBUG && MTD && SYSFS && MTD_UBI || UBIFS_FS_DEBUG && MISC_FILESYSTEMS && UBIFS_FS || LOCKDEP && DEBUG_KERNEL && TRACE_IRQFLAGS_SUPPORT && STACKTRACE_SUPPORT && LOCKDEP_SUPPORT || LATENCYTOP && HAVE_LATENCYTOP_SUPPORT) selects KALLSYMS_ALL which has unmet direct dependencies (DEBUG_KERNEL && KALLSYMS)
+>>
+>> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+>> Cc:	Ananth N Mavinakayanahalli <ananth@in.ibm.com>
+>> Cc:	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+>> Cc:	"David S. Miller" <davem@davemloft.net>
+>> Cc:	Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
+>> ---
+>>  arch/Kconfig |    2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> --- linux-next-20100810.orig/arch/Kconfig
+>> +++ linux-next-20100810/arch/Kconfig
+>> @@ -45,6 +45,8 @@ config OPTPROBES
+>>  	def_bool y
+>>  	depends on KPROBES && HAVE_OPTPROBES
+>>  	depends on !PREEMPT
+>> +	depends on DEBUG_KERNEL
+>> +	select KALLSYMS
+>>  	select KALLSYMS_ALL
+>>  
+>>  config HAVE_EFFICIENT_UNALIGNED_ACCESS
 > 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> Cc:	Ananth N Mavinakayanahalli <ananth@in.ibm.com>
-> Cc:	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
-> Cc:	"David S. Miller" <davem@davemloft.net>
-> Cc:	Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
-> ---
->  arch/Kconfig |    2 ++
->  1 file changed, 2 insertions(+)
 > 
-> --- linux-next-20100810.orig/arch/Kconfig
-> +++ linux-next-20100810/arch/Kconfig
-> @@ -45,6 +45,8 @@ config OPTPROBES
->  	def_bool y
->  	depends on KPROBES && HAVE_OPTPROBES
->  	depends on !PREEMPT
-> +	depends on DEBUG_KERNEL
-> +	select KALLSYMS
->  	select KALLSYMS_ALL
->  
->  config HAVE_EFFICIENT_UNALIGNED_ACCESS
