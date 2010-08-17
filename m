@@ -1,79 +1,131 @@
-From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [patch -NEXT] usb/gadget/webcam: fix Kconfig depends again
-Date: Tue, 17 Aug 2010 11:03:39 -0700
-Message-ID: <4C6ACEFB.7060706@oracle.com>
-References: <20100809132314.789e13f3.sfr@canb.auug.org.au> <201008101416.31188.laurent.pinchart@ideasonboard.com> <4C6166D9.60607@oracle.com> <201008101653.08358.laurent.pinchart@ideasonboard.com>
+From: Trond Myklebust <trond.myklebust-41N18TsMXrtuMpJDpNschA@public.gmane.org>
+Subject: Re: linux-next: Tree for August 9 (nfs)
+Date: Tue, 17 Aug 2010 17:23:28 -0400
+Message-ID: <1282080208.12506.7.camel@heimdal.trondhjem.org>
+References: <20100809132314.789e13f3.sfr@canb.auug.org.au>
+	 <20100809100856.b03a9bc1.randy.dunlap@oracle.com>
+	 <20100812091842.6a3b84b9.randy.dunlap@oracle.com>
+	 <1281634268.14329.18.camel@heimdal.trondhjem.org>
+	 <4C643136.5090808@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <201008101653.08358.laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, gregkh-l3A5Bk7waGM@public.gmane.org, lud <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, David Brownell <dbrownell-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+Return-path: <linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <4C643136.5090808-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Sender: linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, "J. Bruce Fields" <bfields-uC3wQj2KruNg9hUCZPvPmw@public.gmane.org>
+Cc: linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
-On 08/10/10 07:53, Laurent Pinchart wrote:
-> Hi Randy,
+On Thu, 2010-08-12 at 10:36 -0700, Randy Dunlap wrote:
+> On 08/12/10 10:31, Trond Myklebust wrote:
+> > On Thu, 2010-08-12 at 09:18 -0700, Randy Dunlap wrote:
+> >> On Mon, 9 Aug 2010 10:08:56 -0700 Randy Dunlap wrote:
+> >>
+> >> ping??
+> > 
+> > Hi Randy,
+> > 
+> > I'm sorry. A heavy travel schedule is affecting my response time at the
+> > moment. I'll try to take care of this by Tuesday (when I get back home)
+> > if not before.
 > 
-> On Tuesday 10 August 2010 16:48:57 Randy Dunlap wrote:
->> On 08/10/10 05:16, Laurent Pinchart wrote:
->>> On Monday 09 August 2010 19:55:20 Randy Dunlap wrote:
->>>> From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
->>>>
->>>> The USB gadget webcam driver uses V4L2 interfaces, so it should depend
->>>> on VIDEO_V4L2 instead of VIDEO_DEV.  This fixes a lot of build errors
->>>> when V4L2 is not enabled:
->>>>
->>>> ERROR: "v4l2_event_unsubscribe" [drivers/usb/gadget/g_webcam.ko]
->>>> undefined! ERROR: "v4l2_event_queue" [drivers/usb/gadget/g_webcam.ko]
->>>> undefined! ERROR: "video_device_release"
->>>> [drivers/usb/gadget/g_webcam.ko] undefined! ERROR: "video_usercopy"
->>>> [drivers/usb/gadget/g_webcam.ko] undefined! ERROR: "v4l2_event_dequeue"
->>>> [drivers/usb/gadget/g_webcam.ko] undefined! ERROR:
->>>> "video_register_device" [drivers/usb/gadget/g_webcam.ko] undefined!
->>>> ERROR: "video_device_alloc" [drivers/usb/gadget/g_webcam.ko] undefined!
->>>> ERROR: "v4l2_event_subscribe" [drivers/usb/gadget/g_webcam.ko]
->>>> undefined! ERROR: "video_unregister_device"
->>>> [drivers/usb/gadget/g_webcam.ko] undefined!
->>>> ERROR: "v4l2_fh_init" [drivers/usb/gadget/g_webcam.ko] undefined!
->>>> ERROR: "v4l2_event_pending" [drivers/usb/gadget/g_webcam.ko] undefined!
->>>> ERROR: "v4l2_event_init" [drivers/usb/gadget/g_webcam.ko] undefined!
->>>> ERROR: "video_devdata" [drivers/usb/gadget/g_webcam.ko] undefined!
->>>> ERROR: "v4l2_event_alloc" [drivers/usb/gadget/g_webcam.ko] undefined!
->>>> ERROR: "v4l2_fh_add" [drivers/usb/gadget/g_webcam.ko] undefined!
->>>> ERROR: "v4l2_fh_del" [drivers/usb/gadget/g_webcam.ko] undefined!
->>>> ERROR: "v4l2_fh_exit" [drivers/usb/gadget/g_webcam.ko] undefined!
->>>
->>> All those symbols should be defined when VIDEO_DEV is selected.
->>>
->>>> ERROR: "v4l2_ctrl_fill" [drivers/media/video/v4l2-common.ko] undefined!
->>>> ERROR: "v4l2_ctrl_get_menu" [drivers/media/video/v4l2-common.ko]
->>>> undefined!
->>>
->>> Those 2 symbols require VIDEO_V4L2 but are not used by the webcam gadget
->>> driver.
->>>
->>>> ERROR: "v4l2_device_unregister_subdev"
->>>> [drivers/media/video/v4l2-common.ko] undefined!
->>>> ERROR: "v4l2_device_register_subdev"
->>>> [drivers/media/video/v4l2-common.ko] undefined!
->>>
->>> Those two symbols should be defined when VIDEO_DEV is selected. They are
->>> not used by the webcam gadget driver.
->>
->> Summary:  I should drop this patch and look elsewhere for the problem,
->> Right?
-> 
-> I think the problem comes from somewhere else, yes. Your patch won't hurt, but 
-> I don't see how it could fix the problem either.
+> No problem.  Just wanted to make sure that it's not lost.
 
-Agreed.  Patch is withdrawn.  Thanks.
+Hi Randy,
 
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+How about the following fix?
+
+Cheers
+  Trond
+
+------------------------------------------------------------------------------------
+Subject: [PATCH] NFS: Fix the selection of security flavours in Kconfig
+From: Trond Myklebust <Trond.Myklebust-HgOvQuBEEgTQT0dZR+AlfA@public.gmane.org>
+
+Randy Dunlap reports:
+
+ERROR: "svc_gss_principal" [fs/nfs/nfs.ko] undefined!
+
+
+because in fs/nfs/Kconfig, NFS_V4 selects RPCSEC_GSS_KRB5
+and/or in fs/nfsd/Kconfig, NFSD_V4 selects RPCSEC_GSS_KRB5.
+
+RPCSEC_GSS_KRB5 does 5 selects, but none of these is enforced/followed
+by the fs/nfs[d]/Kconfig configs:
+
+	select SUNRPC_GSS
+	select CRYPTO
+	select CRYPTO_MD5
+	select CRYPTO_DES
+	select CRYPTO_CBC
+
+Reported-by: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Cc: J. Bruce Fields <bfields-uC3wQj2KruNg9hUCZPvPmw@public.gmane.org>
+Signed-off-by: Trond Myklebust <Trond.Myklebust-HgOvQuBEEgTQT0dZR+AlfA@public.gmane.org>
+---
+
+ fs/nfs/Kconfig     |    1 -
+ fs/nfsd/Kconfig    |    1 -
+ net/sunrpc/Kconfig |    9 +++++----
+ 3 files changed, 5 insertions(+), 6 deletions(-)
+
+
+diff --git a/fs/nfs/Kconfig b/fs/nfs/Kconfig
+index cc1bb33..2ddc384 100644
+--- a/fs/nfs/Kconfig
++++ b/fs/nfs/Kconfig
+@@ -63,7 +63,6 @@ config NFS_V3_ACL
+ config NFS_V4
+ 	bool "NFS client support for NFS version 4"
+ 	depends on NFS_FS
+-	select RPCSEC_GSS_KRB5
+ 	help
+ 	  This option enables support for version 4 of the NFS protocol
+ 	  (RFC 3530) in the kernel's NFS client.
+diff --git a/fs/nfsd/Kconfig b/fs/nfsd/Kconfig
+index 503b9da..95932f5 100644
+--- a/fs/nfsd/Kconfig
++++ b/fs/nfsd/Kconfig
+@@ -69,7 +69,6 @@ config NFSD_V4
+ 	depends on NFSD && PROC_FS && EXPERIMENTAL
+ 	select NFSD_V3
+ 	select FS_POSIX_ACL
+-	select RPCSEC_GSS_KRB5
+ 	help
+ 	  This option enables support in your system's NFS server for
+ 	  version 4 of the NFS protocol (RFC 3530).
+diff --git a/net/sunrpc/Kconfig b/net/sunrpc/Kconfig
+index 443c161..3376d76 100644
+--- a/net/sunrpc/Kconfig
++++ b/net/sunrpc/Kconfig
+@@ -18,10 +18,11 @@ config SUNRPC_XPRT_RDMA
+ 	  If unsure, say N.
+ 
+ config RPCSEC_GSS_KRB5
+-	tristate "Secure RPC: Kerberos V mechanism (EXPERIMENTAL)"
+-	depends on SUNRPC && EXPERIMENTAL
++	tristate
++	depends on SUNRPC && CRYPTO
++	prompt "Secure RPC: Kerberos V mechanism" if !(NFS_V4 || NFSD_V4)
++	default y
+ 	select SUNRPC_GSS
+-	select CRYPTO
+ 	select CRYPTO_MD5
+ 	select CRYPTO_DES
+ 	select CRYPTO_CBC
+@@ -34,7 +35,7 @@ config RPCSEC_GSS_KRB5
+ 	  available from http://linux-nfs.org/.  In addition, user-space
+ 	  Kerberos support should be installed.
+ 
+-	  If unsure, say N.
++	  If unsure, say Y.
+ 
+ config RPCSEC_GSS_SPKM3
+ 	tristate "Secure RPC: SPKM3 mechanism (EXPERIMENTAL)"
+
+
 --
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
