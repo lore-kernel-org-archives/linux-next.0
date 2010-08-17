@@ -1,39 +1,48 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] ASoC: multi-component - Drop board-n8x0.c
-	changes
-Date: Tue, 17 Aug 2010 11:12:49 +0100
-Message-ID: <20100817101249.GB21985@rakim.wolfsonmicro.main>
-References: <20100817093445.ade1b4a4.jhnikula@gmail.com>
-	<1282028282-13264-1-git-send-email-jhnikula@gmail.com>
+From: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
+Subject: Re: [PATCH -next] optprobes: fix kconfig depends/selects
+Date: Tue, 17 Aug 2010 23:55:27 +0900
+Message-ID: <4C6AA2DF.5020301@hitachi.com>
+References: <20100812122641.fe88e846.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-Content-Disposition: inline
-In-Reply-To: <1282028282-13264-1-git-send-email-jhnikula@gmail.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
-To: Jarkko Nikula <jhnikula@gmail.com>
-Cc: Tony Lindgren <tony@atomide.com>, Stephen Rothwell <sfr@canb.auug.org.au>, alsa-devel@alsa-project.org, linux-next@vger.kernel.org, Liam Girdwood <lrg@slimlogic.co.uk>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20100812122641.fe88e846.randy.dunlap@oracle.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: lkml <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Ananth N Mavinakayanahalli <ananth@in.ibm.com>, Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>, "David S. Miller" <davem@davemloft.net>, akpm <akpm@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Aug 17, 2010 at 09:58:02AM +0300, Jarkko Nikula wrote:
-> These will conflict with queued changes to board-n8x0.c coming from
-> linux-omap tree. Only side effect from this dropping is that the integrated
-> digital microphone on Nokia N810 will stop working when ASoC multi-component
-> is merged.
+Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
 > 
-> As currently the N810 is not very usable in mainline, I consider this as a
-> minor issue that can be fixed in linux-omap tree the after the
-> multi-component is merged.
-> 
-> Signed-off-by: Jarkko Nikula <jhnikula@gmail.com>
+> KALLSYMS and KALLSYMS_ALL depend on DEBUG_KERNEL, so add that dependency.
+> KALLSYMS_ALL depends on KALLSYMS, so select both of them, not just KALLSYMS_ALL.
 
-Applied, thanks.  Note that m-c is now the mainline for ASoC.
+Indeed, Thanks for pointing it!
+
+Signed-off-by: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
+
+> 
+> warning: (OPTPROBES && KPROBES && HAVE_OPTPROBES && !PREEMPT || MTD_UBI_DEBUG && MTD && SYSFS && MTD_UBI || UBIFS_FS_DEBUG && MISC_FILESYSTEMS && UBIFS_FS || LOCKDEP && DEBUG_KERNEL && TRACE_IRQFLAGS_SUPPORT && STACKTRACE_SUPPORT && LOCKDEP_SUPPORT || LATENCYTOP && HAVE_LATENCYTOP_SUPPORT) selects KALLSYMS_ALL which has unmet direct dependencies (DEBUG_KERNEL && KALLSYMS)
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> Cc:	Ananth N Mavinakayanahalli <ananth@in.ibm.com>
+> Cc:	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+> Cc:	"David S. Miller" <davem@davemloft.net>
+> Cc:	Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
+> ---
+>  arch/Kconfig |    2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> --- linux-next-20100810.orig/arch/Kconfig
+> +++ linux-next-20100810/arch/Kconfig
+> @@ -45,6 +45,8 @@ config OPTPROBES
+>  	def_bool y
+>  	depends on KPROBES && HAVE_OPTPROBES
+>  	depends on !PREEMPT
+> +	depends on DEBUG_KERNEL
+> +	select KALLSYMS
+>  	select KALLSYMS_ALL
+>  
+>  config HAVE_EFFICIENT_UNALIGNED_ACCESS
