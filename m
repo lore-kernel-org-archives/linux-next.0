@@ -1,66 +1,63 @@
-From: Liam Girdwood <lrg@slimlogic.co.uk>
-Subject: Re: linux-next: build warning after merge of the sound-asoc tree
-Date: Wed, 18 Aug 2010 00:30:30 +0100
-Message-ID: <1282087830.3095.116.camel@odin>
-References: <20100817122103.5e14eaeb.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the libata tree
+Date: Wed, 18 Aug 2010 10:40:57 +1000
+Message-ID: <20100818104057.5fdaf20d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__18_Aug_2010_10_40_57_+1000_+LTNxUCFzUyOTRuK"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:53989 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751219Ab0HQXae (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 17 Aug 2010 19:30:34 -0400
-In-Reply-To: <20100817122103.5e14eaeb.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:44553 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752478Ab0HRAlG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 17 Aug 2010 20:41:06 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jeff Garzik <jeff@garzik.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gwendal Grignou <gwendal@google.com>, Grant Grundler <grundler@google.com>
 
-On Tue, 2010-08-17 at 12:21 +1000, Stephen Rothwell wrote:
-> Hi ,
-> 
-> After merging the sound-asoc tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
-> 
-> sound/soc/soc-core.c: In function 'snd_soc_register_dais':
-> sound/soc/soc-core.c:2919: warning: format '%d' expects type 'int', but argument 5 has type 'size_t'
-> 
-> Caused by commit f0fba2ad1b6b53d5360125c41953b7afcd6deff0 ("ASoC:
-> multi-component - ASoC Multi-Component Support").
+--Signature=_Wed__18_Aug_2010_10_40_57_+1000_+LTNxUCFzUyOTRuK
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ah, this never showed up on ARM since size_t is 32 bits.
+Hi Jeff,
 
-Mark, could you apply this fix.
+After merging the libata tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Thanks
+drivers/ata/libata-transport.c: In function 'ata_attach_transport':
+drivers/ata/libata-transport.c:678: error: implicit declaration of function=
+ 'kzalloc'
+drivers/ata/libata-transport.c:678: warning: assignment makes pointer from =
+integer without a cast
+drivers/ata/libata-transport.c: In function 'ata_release_transport':
+drivers/ata/libata-transport.c:741: error: implicit declaration of function=
+ 'kfree'
 
-Liam
+Caused by commit 97395d39931160a171959ac2e1fbff1caba3374b ("[libata] Add
+ATA transport class") neglecting to include linux/slab.h.   See Rule 1 in
+Documentation/SubmitChecklist.
 
->From 4c3f9d5fcb46d769f4a52a044fead863419c1d58 Mon Sep 17 00:00:00 2001
-From: Liam Girdwood <lrg@slimlogic.co.uk>
-Date: Wed, 18 Aug 2010 00:25:12 +0100
-Subject: [PATCH] ASoC: core - fix build warning on x86_64
+I have used the libata tree form next-20100817 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Output size_t type as a "%Zu" to avoid warnings.
+--Signature=_Wed__18_Aug_2010_10_40_57_+1000_+LTNxUCFzUyOTRuK
+Content-Type: application/pgp-signature
 
-Signed-off-by: Liam Girdwood <lrg@slimlogic.co.uk>
----
- sound/soc/soc-core.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index 3d480eb..7093c17 100644
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -2916,7 +2916,7 @@ int snd_soc_register_dais(struct device *dev,
- 	struct snd_soc_dai *dai;
- 	int i, ret = 0;
- 
--	dev_dbg(dev, "dai register %s #%d\n", dev_name(dev), count);
-+	dev_dbg(dev, "dai register %s #%Zu\n", dev_name(dev), count);
- 
- 	for (i = 0; i < count; i++) {
- 
--- 
-1.7.0.4
+iQEcBAEBAgAGBQJMaywZAAoJEDMEi1NhKgbs0+wIAIjaC+SjlEzbSvmavh2ymgIt
+Aj+3dkj+QuBpbAwlmE94iJ9L9gcu2ROnfbJ9HmCDo2ZXsHP4yyoCuC3J8EWlEFPj
+T58NiQCK6tE+R8reFeAI5QJB8utYsli4/aldx8rlvrGSka13UgyZHdvh93lR0kjo
+GFk7giFqZ5+xBH8AWRVdyaLE960NOoLUXWB8BfejnG7fS+EkaZt97cRiZkDowKQS
+44jGm9FE/AZmTwrdbTSD0DySiS/+EdB+pgd7ELXMySh85Yt4EKssBRmCU4lWan9I
+06cTXYtiDOF6JSnunhopsh1Ym+jq51mm8PWoL+CEwzp7xKsrDmy/MetqcGOpRuw=
+=4C4E
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__18_Aug_2010_10_40_57_+1000_+LTNxUCFzUyOTRuK--
