@@ -1,66 +1,297 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the input tree
-Date: Thu, 19 Aug 2010 11:35:45 +1000
-Message-ID: <20100819113545.ee9d52ec.sfr@canb.auug.org.au>
+Subject: linux-next: Tree for August 19
+Date: Thu, 19 Aug 2010 14:39:41 +1000
+Message-ID: <20100819143941.d3ea5cb4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__19_Aug_2010_11_35_45_+1000_HRAkn.R+dF_M97nU"
+ boundary="Signature=_Thu__19_Aug_2010_14_39_41_+1000_8UI33XYhZT0NsQm+"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59535 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:38828 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751262Ab0HSBfz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 18 Aug 2010 21:35:55 -0400
+	id S1750918Ab0HSEjt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 19 Aug 2010 00:39:49 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bill Pemberton <wfp5p@virginia.edu>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Thu__19_Aug_2010_11_35_45_+1000_HRAkn.R+dF_M97nU
+--Signature=_Thu__19_Aug_2010_14_39_41_+1000_8UI33XYhZT0NsQm+
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dmitry,
+Hi all,
 
-After merging the input tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Changes since 20100818:
 
-drivers/usb/serial/ssu100.c:599: warning: passing argument 1 of 'usb_serial=
-_handle_sysrq_char' from incompatible pointer type
-include/linux/usb/serial.h:345: note: expected 'struct usb_serial_port *' b=
-ut argument is of type 'struct tty_struct *'
-drivers/usb/serial/ssu100.c:599: warning: passing argument 2 of 'usb_serial=
-_handle_sysrq_char' makes integer from pointer without a cast
-include/linux/usb/serial.h:345: note: expected 'unsigned int' but argument =
-is of type 'struct usb_serial_port *'
-drivers/usb/serial/ssu100.c:599: error: too many arguments to function 'usb=
-_serial_handle_sysrq_char'
+My fixes tree is empty.
 
-Caused by commit 0c870dc9828fee03abd60b441f9025a1b4e3d3e6 ("USB: drop tty
-argument from usb_serial_handle_sysrq_char()") interacting with
-52af954599396e5945a895035525c703f2761b20 ("USB: add USB serial ssu100
-driver") from Linus' tree.
+The sh tree gained a conflict against Linus' tree.
 
-I have used the input tree from next-20100818 for today.
+The libata tree still has a build failure, so I used the version from
+next-20100817.
+
+The input tree gained a build failure, so I used the version from
+next-20100818.
+
+The voltage tree lost its conflict.
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups (if any), it is also built with powerpc allnoconfig (32 and
+64 bit), ppc44x_defconfig and allyesconfig (minus
+CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
+and sparc64 defconfig. These builds also have
+CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
+CONFIG_DEBUG_INFO disabled when necessary.
+
+Below is a summary of the state of the merge.
+
+We are up to 170 trees (counting Linus' and 22 trees of patches pending
+for Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Jan Dittmer for adding the linux-next tree to his build tests
+at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
+Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__19_Aug_2010_11_35_45_+1000_HRAkn.R+dF_M97nU
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master
+Merging fixes/fixes
+Merging arm-current/master
+Merging m68k-current/for-linus
+Merging powerpc-merge/merge
+Merging sparc-current/master
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sound-current/for-linus
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging kbuild-current/rc-fixes
+Merging quilt/driver-core.current
+Merging quilt/tty.current
+Merging quilt/usb.current
+Merging quilt/staging.current
+Merging cpufreq-current/fixes
+Merging input-current/for-linus
+Merging md-current/for-linus
+Merging audit-current/for-linus
+Merging crypto-current/master
+Merging ide-curent/master
+Merging dwmw2/master
+Merging gcl-current/merge
+Merging arm/devel
+Merging davinci/davinci-next
+Merging i.MX/for-next
+Merging msm/for-next
+Merging omap/for-next
+Merging pxa/for-next
+Merging samsung/next-samsung
+CONFLICT (content): Merge conflict in arch/arm/mach-s3c64xx/Makefile
+CONFLICT (content): Merge conflict in arch/arm/mach-s3c64xx/mach-smdk6410.c
+CONFLICT (content): Merge conflict in arch/arm/plat-samsung/Kconfig
+CONFLICT (content): Merge conflict in drivers/input/touchscreen/s3c2410_ts.c
+Merging s5p/for-next
+Merging tegra/for-next
+CONFLICT (content): Merge conflict in arch/arm/Kconfig
+CONFLICT (content): Merge conflict in arch/arm/mm/Kconfig
+Merging avr32/avr32-arch
+Merging blackfin/for-linus
+Merging cris/for-next
+Merging ia64/test
+Merging m68k/for-next
+Merging m68knommu/for-next
+Merging microblaze/next
+Merging mips/mips-for-linux-next
+Merging parisc/next
+Merging powerpc/next
+Merging 4xx/next
+Merging 52xx-and-virtex/next
+Merging galak/next
+Merging s390/features
+Merging sh/master
+CONFLICT (content): Merge conflict in arch/sh/kernel/process_32.c
+Applying: sh: fix prototype of sys_execve to match the new one
+Merging genesis/master
+Merging sparc/master
+Merging tile/master
+Merging xtensa/master
+CONFLICT (content): Merge conflict in arch/xtensa/configs/iss_defconfig
+Merging ceph/for-next
+CONFLICT (content): Merge conflict in net/Makefile
+Merging cifs/master
+Merging configfs/linux-next
+Merging ecryptfs/next
+Merging ext3/for_next
+Merging ext4/next
+Merging fatfs/master
+Merging fuse/for-next
+Merging gfs2/master
+Merging jfs/next
+Merging logfs/master
+CONFLICT (content): Merge conflict in fs/logfs/logfs.h
+Merging nfs/linux-next
+Merging nfsd/nfsd-next
+Merging nilfs2/for-next
+Merging ocfs2/linux-next
+Merging omfs/for-next
+Merging squashfs/master
+Merging udf/for_next
+Merging v9fs/for-next
+Merging ubifs/linux-next
+Merging xfs/master
+Merging vfs/for-next
+Merging pci/linux-next
+Merging hid/for-next
+Merging quilt/i2c
+Merging bjdooks-i2c/next-i2c
+Merging quilt/jdelvare-hwmon
+Merging quilt/kernel-doc
+Merging v4l-dvb/master
+Merging kbuild/for-next
+Merging kconfig/for-next
+Merging ide/master
+Merging libata/NEXT
+$ git reset --hard HEAD^
+Merging refs/next/20100817/libata
+Merging infiniband/for-next
+Merging acpi/test
+Merging idle-test/idle-test
+Merging ieee1394/for-next
+Merging ubi/linux-next
+Merging kvm/linux-next
+Merging dlm/next
+Merging swiotlb/master
+Merging swiotlb-xen/master
+Merging ibft/master
+Merging scsi/master
+Merging async_tx/next
+Merging net/master
+Merging wireless/master
+CONFLICT (content): Merge conflict in drivers/net/wireless/libertas/if_sdio=
+.c
+Merging mtd/master
+Merging crypto/master
+Merging sound-asoc/for-next
+CONFLICT (content): Merge conflict in arch/arm/mach-s3c64xx/mach-smdk6410.c
+Merging sound/for-next
+Merging cpufreq/next
+Merging quilt/rr
+Merging input/next
+$ git reset --hard HEAD^
+Merging refs/next/20100818/input
+Merging lsm/for-next
+Merging block/for-next
+Merging quilt/device-mapper
+Merging embedded/master
+Merging firmware/master
+Merging pcmcia/master
+Merging battery/master
+Merging leds/for-mm
+Merging backlight/for-mm
+Merging kgdb/kgdb-next
+Merging slab/for-next
+Merging uclinux/for-next
+Merging md/for-next
+Merging mfd/for-next
+Merging hdlc/hdlc-next
+Merging drm/drm-next
+Merging viafb/viafb-next
+Merging voltage/for-next
+Merging security-testing/next
+Merging lblnet/master
+Merging agp/agp-next
+Merging uwb/for-upstream
+Merging watchdog/master
+Merging bdev/master
+Merging dwmw2-iommu/master
+Merging cputime/cputime
+Merging osd/linux-next
+Merging jc_docs/docs-next
+Merging nommu/master
+Merging trivial/for-next
+Merging audit/for-next
+Merging quilt/aoe
+Merging suspend/linux-next
+Merging bluetooth/master
+Merging fsnotify/for-next
+Merging irda/for-next
+CONFLICT (content): Merge conflict in drivers/net/irda/irda-usb.c
+Merging catalin/for-next
+Merging alacrity/linux-next
+CONFLICT (content): Merge conflict in include/linux/Kbuild
+Merging i7core_edac/linux_next
+CONFLICT (content): Merge conflict in MAINTAINERS
+Merging devicetree/next-devicetree
+Merging spi/next-spi
+Merging limits/writable_limits
+Merging omap_dss2/for-next
+Merging xen/upstream/xen
+Merging tip/auto-latest
+Merging lost-spurious-irq/lost-spurious-irq
+CONFLICT (content): Merge conflict in drivers/ata/sata_fsl.c
+CONFLICT (content): Merge conflict in drivers/ata/sata_mv.c
+CONFLICT (content): Merge conflict in drivers/ata/sata_nv.c
+CONFLICT (content): Merge conflict in include/linux/libata.h
+Merging edac-amd/for-next
+Merging oprofile/for-next
+Merging percpu/for-next
+Merging workqueues/for-next
+Merging sfi/sfi-test
+Merging asm-generic/next
+Merging drivers-x86/linux-next
+Merging hwpoison/hwpoison
+Merging sysctl/master
+Merging bkl-core/bkl/core
+Merging bkl-procfs/bkl/procfs
+Merging bkl-ioctl/bkl/ioctl
+Merging quilt/driver-core
+Merging quilt/tty
+Merging quilt/usb
+Merging staging-next/staging-next
+Merging slabh/slabh
+Merging scsi-post-merge/merge-base:master
+$ git checkout scsi-post-merge/master
+
+--Signature=_Thu__19_Aug_2010_14_39_41_+1000_8UI33XYhZT0NsQm+
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMbIpxAAoJEDMEi1NhKgbsh5UIAJILfJD/xhyvbJpsHnhKVufw
-NeYkckx3+GW51kvgYRiWCdKzAd3fIxyrxNbhzw5BDY5j9dv1NFQHYkXBHkKdwnqM
-i4qMv7JIHwnRFSpUpxiZ9jwhoYMG0n9pajD/MqA3+nd445PbqRB68rJfpFgldmn9
-ParaE2Ygqr3YMDkZaZessjAIeLsNZaERiS5zejdLd49mGE7R9qy9XQvla9oTx5jK
-15wi8+gUD8+iffZqt6nUpoMIFb6T+9qxetOmvtuLBayhbGR2A/1z5Goe8adRRer6
-qWyN6cfC3LLdn2u8r9B0nUrGTYKkgl5ruQLJcnH8Bpv0Em9iQB0hbu06dUlQvxQ=
-=MM70
+iQEcBAEBAgAGBQJMbLWNAAoJEDMEi1NhKgbsFlIH/jMTb8dQ6BaqHdGo7LK0KZJF
+us/JhBdnfsJO0j1IwB6f9Z8QSrZwLHNWe+45j/z+fK8Q/KPSQ+jiyizUU9GRt6vd
+DcUWG9IP5ASWjkpqa2NS1xzvgdFkTtPs+OzXrTr1zRWp/s7mrFoCUZU9s5Weonwd
+g83MdvbMU4ySbnWkvLcPJIwSoKQA5SZmje4RxBv0b9tlBYGCJOjzgH71tswB4F4U
+ERc+Mek6sz0wWtXHcRTBfeoZakvF9NEaGXvRT9/6b+rIw1rED3M5evqTgR9MvJL+
+vjeqCf/y7Teg3dNb6u/t4gtW1Ow5lwoBBU8JHd+1ovc751qMnB6S0tohnPR/eoU=
+=81PU
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__19_Aug_2010_11_35_45_+1000_HRAkn.R+dF_M97nU--
+--Signature=_Thu__19_Aug_2010_14_39_41_+1000_8UI33XYhZT0NsQm+--
