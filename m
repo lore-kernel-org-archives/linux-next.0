@@ -1,62 +1,42 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] isdn/avm: fix build when PCMCIA is not enabled
-Date: Thu, 19 Aug 2010 10:07:23 -0700
-Message-ID: <20100819100723.d0c0578e.randy.dunlap@oracle.com>
+Subject: [PATCH -next] tm6000: depends on IR_CORE
+Date: Thu, 19 Aug 2010 10:42:14 -0700
+Message-ID: <20100819104214.2f95bcf4.randy.dunlap@oracle.com>
 References: <20100819143941.d3ea5cb4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:61121 "EHLO
+Received: from rcsinet10.oracle.com ([148.87.113.121]:22906 "EHLO
 	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753621Ab0HSRIr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Aug 2010 13:08:47 -0400
+	with ESMTP id S1751050Ab0HSRmk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Aug 2010 13:42:40 -0400
 In-Reply-To: <20100819143941.d3ea5cb4.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Carsten Paeth <calle@calle.de>, Karsten Keil <isdn@linux-pingi.de>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-media@vger.kernel.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>
 
 From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Why wouldn't kconfig symbol ISDN_DRV_AVMB1_B1PCMCIA also depend on
-PCMCIA?
+tm6000 uses IR interfaces, so it should depend on IR_CORE.
 
-Fix build for PCMCIA not enabled:
-
-ERROR: "b1_free_card" [drivers/isdn/hardware/avm/b1pcmcia.ko] undefined!
-ERROR: "b1ctl_proc_fops" [drivers/isdn/hardware/avm/b1pcmcia.ko] undefined!
-ERROR: "b1_reset_ctr" [drivers/isdn/hardware/avm/b1pcmcia.ko] undefined!
-ERROR: "b1_load_firmware" [drivers/isdn/hardware/avm/b1pcmcia.ko] undefined!
-ERROR: "b1_send_message" [drivers/isdn/hardware/avm/b1pcmcia.ko] undefined!
-ERROR: "b1_release_appl" [drivers/isdn/hardware/avm/b1pcmcia.ko] undefined!
-ERROR: "b1_register_appl" [drivers/isdn/hardware/avm/b1pcmcia.ko] undefined!
-ERROR: "b1_getrevision" [drivers/isdn/hardware/avm/b1pcmcia.ko] undefined!
-ERROR: "b1_detect" [drivers/isdn/hardware/avm/b1pcmcia.ko] undefined!
-ERROR: "b1_interrupt" [drivers/isdn/hardware/avm/b1pcmcia.ko] undefined!
-ERROR: "b1_alloc_card" [drivers/isdn/hardware/avm/b1pcmcia.ko] undefined!
+ERROR: "get_rc_map" [drivers/staging/tm6000/tm6000.ko] undefined!
+ERROR: "ir_input_unregister" [drivers/staging/tm6000/tm6000.ko] undefined!
+ERROR: "__ir_input_register" [drivers/staging/tm6000/tm6000.ko] undefined!
 
 Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Carsten Paeth <calle@calle.de>
-Cc: Karsten Keil <isdn@linux-pingi.de>
 ---
- drivers/isdn/hardware/avm/Kconfig |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/staging/tm6000/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- linux-next-20100819.orig/drivers/isdn/hardware/avm/Kconfig
-+++ linux-next-20100819/drivers/isdn/hardware/avm/Kconfig
-@@ -36,12 +36,13 @@ config ISDN_DRV_AVMB1_T1ISA
- 
- config ISDN_DRV_AVMB1_B1PCMCIA
- 	tristate "AVM B1/M1/M2 PCMCIA support"
-+	depends on PCMCIA
- 	help
- 	  Enable support for the PCMCIA version of the AVM B1 card.
- 
- config ISDN_DRV_AVMB1_AVM_CS
- 	tristate "AVM B1/M1/M2 PCMCIA cs module"
--	depends on ISDN_DRV_AVMB1_B1PCMCIA && PCMCIA
-+	depends on ISDN_DRV_AVMB1_B1PCMCIA
- 	help
- 	  Enable the PCMCIA client driver for the AVM B1/M1/M2
- 	  PCMCIA cards.
+--- linux-next-20100819.orig/drivers/staging/tm6000/Kconfig
++++ linux-next-20100819/drivers/staging/tm6000/Kconfig
+@@ -1,6 +1,6 @@
+ config VIDEO_TM6000
+ 	tristate "TV Master TM5600/6000/6010 driver"
+-	depends on VIDEO_DEV && I2C && INPUT && USB && EXPERIMENTAL
++	depends on VIDEO_DEV && I2C && INPUT && IR_CORE && USB && EXPERIMENTAL
+ 	select VIDEO_TUNER
+ 	select MEDIA_TUNER_XC2028
+ 	select MEDIA_TUNER_XC5000
