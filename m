@@ -1,56 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the input tree
-Date: Fri, 20 Aug 2010 11:33:45 +1000
-Message-ID: <20100820113345.dc8f2a1d.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (input tree
+ related)
+Date: Fri, 20 Aug 2010 13:12:24 +1000
+Message-ID: <20100820131224.02f7cb9f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__20_Aug_2010_11_33_45_+1000_hgeV9xlYd+Db+rmo"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56708 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751052Ab0HTBdy (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 19 Aug 2010 21:33:54 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-
---Signature=_Fri__20_Aug_2010_11_33_45_+1000_hgeV9xlYd+Db+rmo
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@lxorguk.ukuu.org.uk>, Jason Wessel <jason.wessel@windriver.com>, Greg Kroah-Hartman <gregkh@suse.de>
+List-Id: linux-next.vger.kernel.org
 
 Hi Dmitry,
 
-After merging the battery tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+After merging the final tree, today's linux-next build (i386 defconfig)
+failed like this:
 
-kernel/debug/debug_core.c:763: warning: initialization from incompatible po=
-inter type
+In file included from drivers/gpu/drm/i915/i915_irq.c:29:
+include/linux/sysrq.h:45: error: expected declaration specifiers or '...' before 'bool'
 
-Introduced by commit 18a2700652683a04cceccbd08d5b415f7246cc26 ("Input:
-sysrq - drop tty argument from sysrq ops handlers").  Grep is your
-friend ...
+Caused by commit a821bafce37b26499e2bfbf2e6b96b0636efc014 ("Input: sysrq
+- drop tty argument form handle_sysrq()") from the input tree which
+(despite not mentioning this) changed an "int" argument to "bool" but
+neglected to include linux/types.h.
 
---=20
+I added this patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 20 Aug 2010 13:06:30 +1000
+Subject: [PATCH] input: using bool in sysrq.h requires including types.h
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/sysrq.h |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/include/linux/sysrq.h b/include/linux/sysrq.h
+index 32d360a..387fa7d 100644
+--- a/include/linux/sysrq.h
++++ b/include/linux/sysrq.h
+@@ -15,6 +15,7 @@
+ #define _LINUX_SYSRQ_H
+ 
+ #include <linux/errno.h>
++#include <linux/types.h>
+ 
+ /* Possible values of bitmask for enabling sysrq functions */
+ /* 0x0001 is reserved for enable everything */
+-- 
+1.7.1
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__20_Aug_2010_11_33_45_+1000_hgeV9xlYd+Db+rmo
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMbdt5AAoJEDMEi1NhKgbsXroH/j3ao07h5PQeaR+b5dcEEKcG
-RJa2wlX4VYCcW7VM9FckhjiYrwyY/nyH96iRoFD0O8JIlN4s+EINciQIZD84sTSG
-XK3q1ZFDDleSr/manXfGjtuAjjE41EpuQuwl1dRVKBNYFgTEC2KhuykczUNUgHY3
-Sn8I9HHpVzxfmyMwKvSIWKvYOluBnlclAOrbry5912N4PvdbCFD+c11Xofp43R/+
-X2BYW6q2TuO8eBD2Oz70/K/y7xWx4ALqnYiSll3KeQIrXKJBKDtSGK3qdTy3bsvM
-k77SLY1UXAtbBQZsKuMjDkXNQ8Fcgc6ZlkwlLlXbu+6OTZ7+NBTnCsLAOfIk90E=
-=xMkx
------END PGP SIGNATURE-----
-
---Signature=_Fri__20_Aug_2010_11_33_45_+1000_hgeV9xlYd+Db+rmo--
