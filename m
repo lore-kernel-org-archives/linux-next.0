@@ -1,44 +1,56 @@
-From: Jeff Garzik <jeff@garzik.org>
-Subject: Re: linux-next: build failure after merge of the libata tree
-Date: Thu, 19 Aug 2010 16:15:24 -0400
-Message-ID: <4C6D90DC.4050202@garzik.org>
-References: <20100818104057.5fdaf20d.sfr@canb.auug.org.au> <AANLkTinJ8ks85Ym11wd4csdqFVgQpS7nw=RrfhMrLPUH@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the input tree
+Date: Fri, 20 Aug 2010 11:33:45 +1000
+Message-ID: <20100820113345.dc8f2a1d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__20_Aug_2010_11_33_45_+1000_hgeV9xlYd+Db+rmo"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vw0-f46.google.com ([209.85.212.46]:49470 "EHLO
-	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751423Ab0HSUP2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 Aug 2010 16:15:28 -0400
-In-Reply-To: <AANLkTinJ8ks85Ym11wd4csdqFVgQpS7nw=RrfhMrLPUH@mail.gmail.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:56708 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751052Ab0HTBdy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 19 Aug 2010 21:33:54 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Gwendal Grignou <gwendal@google.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Grant Grundler <grundler@google.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 08/17/2010 08:46 PM, Gwendal Grignou wrote:
-> Let me fix it and send a patch to Jeff.
->
-> Gwendal.
->
-> On Tue, Aug 17, 2010 at 5:40 PM, Stephen Rothwell<sfr@canb.auug.org.au>  wrote:
->> Hi Jeff,
->>
->> After merging the libata tree, today's linux-next build (powerpc
->> ppc64_defconfig) failed like this:
->>
->> drivers/ata/libata-transport.c: In function 'ata_attach_transport':
->> drivers/ata/libata-transport.c:678: error: implicit declaration of function 'kzalloc'
->> drivers/ata/libata-transport.c:678: warning: assignment makes pointer from integer without a cast
->> drivers/ata/libata-transport.c: In function 'ata_release_transport':
->> drivers/ata/libata-transport.c:741: error: implicit declaration of function 'kfree'
->>
->> Caused by commit 97395d39931160a171959ac2e1fbff1caba3374b ("[libata] Add
->> ATA transport class") neglecting to include linux/slab.h.   See Rule 1 in
->> Documentation/SubmitChecklist.
->>
->> I have used the libata tree form next-20100817 for today.
+--Signature=_Fri__20_Aug_2010_11_33_45_+1000_hgeV9xlYd+Db+rmo
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi Dmitry,
 
-Never received a patch; pushed out the obvious fix myself.
+After merging the battery tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
+
+kernel/debug/debug_core.c:763: warning: initialization from incompatible po=
+inter type
+
+Introduced by commit 18a2700652683a04cceccbd08d5b415f7246cc26 ("Input:
+sysrq - drop tty argument from sysrq ops handlers").  Grep is your
+friend ...
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__20_Aug_2010_11_33_45_+1000_hgeV9xlYd+Db+rmo
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMbdt5AAoJEDMEi1NhKgbsXroH/j3ao07h5PQeaR+b5dcEEKcG
+RJa2wlX4VYCcW7VM9FckhjiYrwyY/nyH96iRoFD0O8JIlN4s+EINciQIZD84sTSG
+XK3q1ZFDDleSr/manXfGjtuAjjE41EpuQuwl1dRVKBNYFgTEC2KhuykczUNUgHY3
+Sn8I9HHpVzxfmyMwKvSIWKvYOluBnlclAOrbry5912N4PvdbCFD+c11Xofp43R/+
+X2BYW6q2TuO8eBD2Oz70/K/y7xWx4ALqnYiSll3KeQIrXKJBKDtSGK3qdTy3bsvM
+k77SLY1UXAtbBQZsKuMjDkXNQ8Fcgc6ZlkwlLlXbu+6OTZ7+NBTnCsLAOfIk90E=
+=xMkx
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__20_Aug_2010_11_33_45_+1000_hgeV9xlYd+Db+rmo--
