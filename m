@@ -1,40 +1,53 @@
 From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: linux-next: build failure after merge of the final tree (input
- tree related)
-Date: Sat, 21 Aug 2010 00:39:27 -0700
-Message-ID: <20100821073927.GA2160@core.coreip.homeip.net>
-References: <20100820131224.02f7cb9f.sfr@canb.auug.org.au>
+Subject: Re: [-next PATCH] Fix s390 keyboard driver build break
+Date: Sat, 21 Aug 2010 00:40:19 -0700
+Message-ID: <20100821074018.GB2160@core.coreip.homeip.net>
+References: <20100821072126.8965.41003.sendpatchset@localhost.localdomain>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-px0-f174.google.com ([209.85.212.174]:56342 "EHLO
+Received: from mail-px0-f174.google.com ([209.85.212.174]:55023 "EHLO
 	mail-px0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751348Ab0HUHje (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 21 Aug 2010 03:39:34 -0400
+	with ESMTP id S1751335Ab0HUHkX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 21 Aug 2010 03:40:23 -0400
 Content-Disposition: inline
-In-Reply-To: <20100820131224.02f7cb9f.sfr@canb.auug.org.au>
+In-Reply-To: <20100821072126.8965.41003.sendpatchset@localhost.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@lxorguk.ukuu.org.uk>, Jason Wessel <jason.wessel@windriver.com>, Greg Kroah-Hartman <gregkh@suse.de>
+To: Sachin Sant <sachinp@in.ibm.com>
+Cc: schwidefsky@de.ibm.com, linux-s390@vger.kernel.org, heiko.carstens@de.ibm.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-Hi Stephen,
+Hi Sachin,
 
-On Fri, Aug 20, 2010 at 01:12:24PM +1000, Stephen Rothwell wrote:
-> Hi Dmitry,
+On Sat, Aug 21, 2010 at 12:51:26PM +0530, Sachin Sant wrote:
+> Next 20100820 fails to build on s390 with 
 > 
-> After merging the final tree, today's linux-next build (i386 defconfig)
-> failed like this:
+> drivers/s390/char/keyboard.c: In function 'kbd_keycode':
+> drivers/s390/char/keyboard.c:308: error: too many arguments to function 'handle_sysrq'
+> make[2]: *** [drivers/s390/char/keyboard.o] Error 1
 > 
-> In file included from drivers/gpu/drm/i915/i915_irq.c:29:
-> include/linux/sysrq.h:45: error: expected declaration specifiers or '...' before 'bool'
+> The following commit changed handle_sysrq() function to accept single argument. 
 > 
-> Caused by commit a821bafce37b26499e2bfbf2e6b96b0636efc014 ("Input: sysrq
-> - drop tty argument form handle_sysrq()") from the input tree which
-> (despite not mentioning this) changed an "int" argument to "bool" but
-> neglected to include linux/types.h.
+> commit a821bafce37b26499e2bfbf2e6b96b0636efc014
+> Input: sysrq - drop tty argument form handle_sysrq()
 > 
-> I added this patch for today:
+> Adapt the code accordingly to fix the build break.
+> 
+> Signed-off-by: Sachin Sant <sachinp@in.ibm.com>
+> ---
+> 
+> diff -Naurp next20100820/drivers/s390/char/keyboard.c next20100820-new//drivers/s390/char/keyboard.c
+> --- next20100820/drivers/s390/char/keyboard.c	2010-08-16 06:11:37.000000000 +0530
+> +++ next20100820-new//drivers/s390/char/keyboard.c	2010-08-21 11:55:25.000000000 +0530
+> @@ -305,7 +305,7 @@ kbd_keycode(struct kbd_data *kbd, unsign
+>  		if (kbd->sysrq) {
+>  			if (kbd->sysrq == K(KT_LATIN, '-')) {
+>  				kbd->sysrq = 0;
+> -				handle_sysrq(value, kbd->tty);
+> +				handle_sysrq(value);
+>  				return;
+>  			}
+>  			if (value == '-') {
 
 Thank you very much for the patch. I folded it into original patch to
 avoid build failures in case someone needs to bisect.
