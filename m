@@ -1,56 +1,66 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [-next PATCH] Fix s390 keyboard driver build break
-Date: Sat, 21 Aug 2010 00:40:19 -0700
-Message-ID: <20100821074018.GB2160@core.coreip.homeip.net>
-References: <20100821072126.8965.41003.sendpatchset@localhost.localdomain>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (net tree
+ related)
+Date: Mon, 23 Aug 2010 13:27:34 +1000
+Message-ID: <20100823132734.ffc076ae.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-px0-f174.google.com ([209.85.212.174]:55023 "EHLO
-	mail-px0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751335Ab0HUHkX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 21 Aug 2010 03:40:23 -0400
-Content-Disposition: inline
-In-Reply-To: <20100821072126.8965.41003.sendpatchset@localhost.localdomain>
+Received: from chilli.pcug.org.au ([203.10.76.44]:42656 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752853Ab0HWD1i (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 22 Aug 2010 23:27:38 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sachin Sant <sachinp@in.ibm.com>
-Cc: schwidefsky@de.ibm.com, linux-s390@vger.kernel.org, heiko.carstens@de.ibm.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?Ikdyw6lnb2lyZSBCYXJvbiI=?= <baronchon@n7mm.org>
 
-Hi Sachin,
+Hi all,
 
-On Sat, Aug 21, 2010 at 12:51:26PM +0530, Sachin Sant wrote:
-> Next 20100820 fails to build on s390 with 
-> 
-> drivers/s390/char/keyboard.c: In function 'kbd_keycode':
-> drivers/s390/char/keyboard.c:308: error: too many arguments to function 'handle_sysrq'
-> make[2]: *** [drivers/s390/char/keyboard.o] Error 1
-> 
-> The following commit changed handle_sysrq() function to accept single argument. 
-> 
-> commit a821bafce37b26499e2bfbf2e6b96b0636efc014
-> Input: sysrq - drop tty argument form handle_sysrq()
-> 
-> Adapt the code accordingly to fix the build break.
-> 
-> Signed-off-by: Sachin Sant <sachinp@in.ibm.com>
-> ---
-> 
-> diff -Naurp next20100820/drivers/s390/char/keyboard.c next20100820-new//drivers/s390/char/keyboard.c
-> --- next20100820/drivers/s390/char/keyboard.c	2010-08-16 06:11:37.000000000 +0530
-> +++ next20100820-new//drivers/s390/char/keyboard.c	2010-08-21 11:55:25.000000000 +0530
-> @@ -305,7 +305,7 @@ kbd_keycode(struct kbd_data *kbd, unsign
->  		if (kbd->sysrq) {
->  			if (kbd->sysrq == K(KT_LATIN, '-')) {
->  				kbd->sysrq = 0;
-> -				handle_sysrq(value, kbd->tty);
-> +				handle_sysrq(value);
->  				return;
->  			}
->  			if (value == '-') {
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-Thank you very much for the patch. I folded it into original patch to
-avoid build failures in case someone needs to bisect.
+net/sched/act_csum.c: In function 'tcf_csum_ipv6_icmp':
+net/sched/act_csum.c:178: error: implicit declaration of function 'csum_ipv6_magic'
+
+Caused by commit eb4d40654505e47aa9d2035bb97f631fa61d14b4 ("net/sched:
+add ACT_CSUM action to update packets checksums").
+
+I added this patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 23 Aug 2010 13:23:22 +1000
+Subject: [PATCH] net/sched: need to include net/ip6_checksum.h
+
+for the declararion of csum_ipv6_magic.
+
+Fixes this build error on PowerPC (at least):
+
+net/sched/act_csum.c: In function 'tcf_csum_ipv6_icmp':
+net/sched/act_csum.c:178: error: implicit declaration of function 'csum_ipv6_magic'
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ net/sched/act_csum.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/net/sched/act_csum.c b/net/sched/act_csum.c
+index 58d7f36..be41f1c 100644
+--- a/net/sched/act_csum.c
++++ b/net/sched/act_csum.c
+@@ -29,6 +29,7 @@
+ #include <linux/igmp.h>
+ #include <net/tcp.h>
+ #include <net/udp.h>
++#include <net/ip6_checksum.h>
+ 
+ #include <net/act_api.h>
+ 
+-- 
+1.7.1
 
 -- 
-Dmitry
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
