@@ -1,46 +1,48 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: linux-next: manual merge of the block tree with the s390 tree
-Date: Tue, 24 Aug 2010 10:17:59 +0200
-Message-ID: <4C738037.20201@kernel.dk>
-References: <20100824105328.9bf22335.sfr@canb.auug.org.au> <20100824091344.3945ccdc@mschwide.boeblingen.de.ibm.com>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH] Fix section mismatch: ata_sff_exit
+Date: Tue, 24 Aug 2010 10:47:33 +0200
+Message-ID: <4C738725.5070101@kernel.org>
+References: <4c72d77a17302aa2a9@agluck-desktop.sc.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 0122700014.0.fullrate.dk ([95.166.99.235]:55852 "EHLO kernel.dk"
+Received: from hera.kernel.org ([140.211.167.34]:37892 "EHLO hera.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751207Ab0HXIRp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 24 Aug 2010 04:17:45 -0400
-In-Reply-To: <20100824091344.3945ccdc@mschwide.boeblingen.de.ibm.com>
+	id S1753372Ab0HXIws (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 24 Aug 2010 04:52:48 -0400
+In-Reply-To: <4c72d77a17302aa2a9@agluck-desktop.sc.intel.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Oberparleiter <peter.oberparleiter@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
+To: "Luck, Tony" <tony.luck@intel.com>, Jeff Garzik <jgarzik@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-ide@vger.kernel.org
 
-On 2010-08-24 09:13, Martin Schwidefsky wrote:
-> Hi Stephen,
+On 08/23/2010 10:18 PM, Luck, Tony wrote:
+> This build error showed up in linux-next tag next-20100820 for ia64:
 > 
-> On Tue, 24 Aug 2010 10:53:28 +1000
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> WARNING: vmlinux.o(.init.text+0x4a952): Section mismatch in reference from the function ata_init() to the function .exit.text:ata_sff_exit()
+> The function __init ata_init() references
+> a function __exit ata_sff_exit().
+> This is often seen when error handling in the init function
+> uses functionality in the exit path.
+> The fix is often to remove the __exit annotation of
+> ata_sff_exit() so it may be used outside an exit section.
 > 
->> Hi Jens,
->>
->> Today's linux-next merge of the block tree got a conflict in
->> drivers/s390/char/tape_block.c between commit
->> 7dc74a8fdb22f4410a2d8e45353c9ea75821a9ba ("[S390] tape: fix kernel panic
->> when setting tape device offline") from the s390 tree and commit
->> 52cc2eef31587b22ce9fbe77b064a031a9613ab0 ("block: switch s390 tape_block
->> and mg_disk to elevator_change()") from the block tree.
->>
->> I assume that the latter removes the need for the former, so I used that.
+> Sure enough, dropping the __exit fixes the problem.
 > 
-> The patch in the block tree includes the fix for the s390 tape driver.
-> So I guess its best if I remove the s390 specific patch from the
-> git390 tree.
+> Signed-off-by: Tony Luck <tony.luck@intel.com>
+> ---
 > 
+> Tejun: I didn't pin down which commit broke this ... but you seem
+> to have a number of recent commits here.
 
-Probably best, since the change in my tree is different from the
-one you likely merged. So it will clash, as Stephen also reports.
+It's the scsi transport addition.  It adds an init failure case where
+ata_sff_exit() is called to undo initialization, so your fix is
+correct.
+
+Acked-by: Tejun Heo <tj@kernel.org>
+
+Thanks.
 
 -- 
-Jens Axboe
+tejun
