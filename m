@@ -1,54 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the block tree with the s390 tree
-Date: Tue, 24 Aug 2010 10:53:28 +1000
-Message-ID: <20100824105328.9bf22335.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (slab tree
+ related)
+Date: Tue, 24 Aug 2010 12:07:14 +1000
+Message-ID: <20100824120714.8918f8de.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__24_Aug_2010_10_53_28_+1000_75.op3XUQ3XJDyxm"
+ boundary="Signature=_Tue__24_Aug_2010_12_07_14_+1000_uXutboyzVcA0/CPb"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37330 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:33850 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752254Ab0HXAxj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 23 Aug 2010 20:53:39 -0400
+	id S1752227Ab0HXCHa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 23 Aug 2010 22:07:30 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Oberparleiter <peter.oberparleiter@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
+To: Pekka Enberg <penberg@cs.helsinki.fi>, Christoph Lameter <cl@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__24_Aug_2010_10_53_28_+1000_75.op3XUQ3XJDyxm
+--Signature=_Tue__24_Aug_2010_12_07_14_+1000_uXutboyzVcA0/CPb
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jens,
+Hi all,
 
-Today's linux-next merge of the block tree got a conflict in
-drivers/s390/char/tape_block.c between commit
-7dc74a8fdb22f4410a2d8e45353c9ea75821a9ba ("[S390] tape: fix kernel panic
-when setting tape device offline") from the s390 tree and commit
-52cc2eef31587b22ce9fbe77b064a031a9613ab0 ("block: switch s390 tape_block
-and mg_disk to elevator_change()") from the block tree.
+After merging the final tree, today's linux-next build (powerpc
+allnoconfig) failed like this:
 
-I assume that the latter removes the need for the former, so I used that.
+mm/slub.c: In function 'alloc_kmem_cache_cpus':
+mm/slub.c:2094: error: 'PERCPU_DYNAMIC_EARLY_SIZE' undeclared (first use in=
+ this function)
+mm/slub.c:2094: error: (Each undeclared identifier is reported only once
+mm/slub.c:2094: error: for each function it appears in.)
+mm/slub.c:2094: error: bit-field '<anonymous>' width not an integer constant
+
+Caused by commit e18d65f0500b95d8724b17d8ea9f1116cf390bbe ("slub: Remove
+static kmem_cache_cpu array for boot"). PERCPU_DYNAMIC_EARLY_SIZE is only
+defined for SMP (and only in linux/percpu.h which is not explicitly
+included).  This build does not have CONFIG_SMP set.
+
+I have used the version of the slab tree from next-20100823 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__24_Aug_2010_10_53_28_+1000_75.op3XUQ3XJDyxm
+--Signature=_Tue__24_Aug_2010_12_07_14_+1000_uXutboyzVcA0/CPb
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMcxgIAAoJEDMEi1NhKgbsHlsH/A2X0PUGfBSZhGoy4p3I24hg
-3vqqtOc24o0lwTjWYMWsOLLdnVeAfrZt+Pye/Gg52nHbnB0EINIFJzUbLHCPBqI3
-EGA5efdQDy8GwxsPyg8YryV2jb4XklrAVqV4iPmWiT+KPrWNECSz2nOICF3AQ/fY
-R6q//9wY19Po/yIM1XDB5GTdxPQOTjbvTVSxm9MDyg7i9i29qjLg2ZqHm3ZVx5Wj
-noW4w/xbY2Ppj/TcDhUU29T3jwtRZ++8J2x97s2u8lZV0rKUa1Cd/fDUQs1+4gzH
-/kYKNYdrrAkJh8tjOC7dyqulJWjnrwc/Vk20o8NQIH8BrXdxOE3x2CH4XSVr8Zk=
-=L30R
+iQEcBAEBAgAGBQJMcylSAAoJEDMEi1NhKgbs1pEIAIXZs2/YE8p0xKiJXR3QsrEI
+nYClG8vmPZVqQf+wBefHIYL404rk7gu6RYVmNSeAARqTMw4yhawmHPQLPGD7q1+E
+Rel+qY2WQb5vkt6dX0dhpTtR27P1iv565zpBMv+bb466LFU4R+YKWLDGD8si7TIx
+Du8RasxJzP+XplNh90W1R07UF5hyW7BXVvq/vNP4NiIsZNE+oEczeT/e08pYp4Ou
+rW5FN+84/VP5um1adat21ky4oxv3vYbDS0+Tmkpuvc8wtmftW+O1cYdDAMeDzg7q
+NLunAHzQ3hM831TCwttw0ms/V3yTi78oXPSiMb+dqMFP5/P0ekJD+QTwHKUZJtc=
+=xPau
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__24_Aug_2010_10_53_28_+1000_75.op3XUQ3XJDyxm--
+--Signature=_Tue__24_Aug_2010_12_07_14_+1000_uXutboyzVcA0/CPb--
