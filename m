@@ -1,54 +1,44 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: Tree for August 23 (networking)
-Date: Mon, 23 Aug 2010 20:42:44 -0700 (PDT)
-Message-ID: <20100823.204244.216743717.davem@davemloft.net>
-References: <20100823133738.f0a45152.sfr@canb.auug.org.au>
-	<20100823175044.9210f050.randy.dunlap@oracle.com>
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: Re: linux-next: manual merge of the block tree with the s390 tree
+Date: Tue, 24 Aug 2010 09:13:44 +0200
+Message-ID: <20100824091344.3945ccdc@mschwide.boeblingen.de.ibm.com>
+References: <20100824105328.9bf22335.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:54117
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751867Ab0HXDm0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 23 Aug 2010 23:42:26 -0400
-In-Reply-To: <20100823175044.9210f050.randy.dunlap@oracle.com>
+Received: from mtagate1.de.ibm.com ([195.212.17.161]:40538 "EHLO
+	mtagate1.de.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751555Ab0HXHNs (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 24 Aug 2010 03:13:48 -0400
+In-Reply-To: <20100824105328.9bf22335.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: randy.dunlap@oracle.com
-Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Oberparleiter <peter.oberparleiter@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Date: Mon, 23 Aug 2010 17:50:44 -0700
+Hi Stephen,
 
-> ERROR: "ip_send_check" [net/sched/act_csum.ko] undefined!
+On Tue, 24 Aug 2010 10:53:28 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-I've applied the following to fix this:
+> Hi Jens,
+> 
+> Today's linux-next merge of the block tree got a conflict in
+> drivers/s390/char/tape_block.c between commit
+> 7dc74a8fdb22f4410a2d8e45353c9ea75821a9ba ("[S390] tape: fix kernel panic
+> when setting tape device offline") from the s390 tree and commit
+> 52cc2eef31587b22ce9fbe77b064a031a9613ab0 ("block: switch s390 tape_block
+> and mg_disk to elevator_change()") from the block tree.
+> 
+> I assume that the latter removes the need for the former, so I used that.
 
---------------------
-pkt_sched: Make act_csum depend upon INET.
+The patch in the block tree includes the fix for the s390 tape driver.
+So I guess its best if I remove the s390 specific patch from the
+git390 tree.
 
-It uses ip_send_check() and stuff like that.
-
-Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
----
- net/sched/Kconfig |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/net/sched/Kconfig b/net/sched/Kconfig
-index 522d5a9..a36270a 100644
---- a/net/sched/Kconfig
-+++ b/net/sched/Kconfig
-@@ -520,7 +520,7 @@ config NET_ACT_SKBEDIT
- 
- config NET_ACT_CSUM
-         tristate "Checksum Updating"
--        depends on NET_CLS_ACT
-+        depends on NET_CLS_ACT && INET
-         ---help---
- 	  Say Y here to update some common checksum after some direct
- 	  packet alterations.
 -- 
-1.7.2.2
+blue skies,
+   Martin.
+
+"Reality continues to ruin my life." - Calvin.
