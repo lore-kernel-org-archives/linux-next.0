@@ -1,19 +1,48 @@
-From: Christoph Lameter <cl@linux.com>
-Subject: Re: linux-next: build failure after merge of the final tree (slab
+From: Rasesh Mody <rmody@brocade.com>
+Subject: RE: linux-next: build failure after merge of the final tree (net
  tree related)
-Date: Wed, 25 Aug 2010 16:37:16 -0500 (CDT)
-Message-ID: <alpine.DEB.2.00.1008251635560.25892@router.home>
-References: <20100824120714.8918f8de.sfr@canb.auug.org.au> <4C740450.3030000@cs.helsinki.fi> <alpine.DEB.2.00.1008241256280.4763@router.home> <4C741029.7090300@cs.helsinki.fi> <alpine.DEB.2.00.1008241352240.5388@router.home> <4C74D1D7.4080608@kernel.org>
- <alpine.DEB.2.00.1008251509080.22117@router.home>
+Date: Wed, 25 Aug 2010 14:53:39 -0700
+Message-ID: <E5313AF6F2BFD14293E5FD0F94750F86A4AE2260D2@HQ1-EXCH01.corp.brocade.com>
+References: <20100825120927.c469ce20.sfr@canb.auug.org.au>
+	<E5313AF6F2BFD14293E5FD0F94750F86A4AE225EE8@HQ1-EXCH01.corp.brocade.com>
+	<20100825.003526.35028751.davem@davemloft.net>
+ <20100825.135957.112609658.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <alpine.DEB.2.00.1008251509080.22117@router.home>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tejun Heo <tj@kernel.org>
-Cc: Pekka Enberg <penberg@cs.helsinki.fi>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20100825.135957.112609658.davem@davemloft.net>
+Content-Language: en-US
+Sender: netdev-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jing Huang <huangj@Brocade.COM>, Debashis Dutt <ddutt@Brocade.COM>, "James.Bottomley@HansenPartnership.com" <James.Bottomley@HansenPartnership.com>
 List-Id: linux-next.vger.kernel.org
 
-Err... Sorry there was patch under testing in there (remove the boot
-pageset from the page allocator and use early allocpercpu) which resulted
-in the reserve area becoming a bit tight. Sorry.
+>From: David Miller <davem@davemloft.net>
+>Date: Wed, 25 Aug 2010 00:35:26 -0700 (PDT)
+>
+>> From: Rasesh Mody <rmody@brocade.com>
+>> Date: Tue, 24 Aug 2010 21:22:19 -0700
+>> 
+>>> All,
+>>> 
+>>> We are working on a fix and we will submit a patch soon.
+>
+>Well, where is the fix and why is it taking so long?
+>
+>Stephen Rothwell is going to build his -next tree for today any minute
+>now and will have to revert your driver from his tree again since a
+>fix is not yet in place.
+>
+>If I don't see a fix quickly, I'll fix it however I like and however
+>I like might be yanking your driver out of the tree.
+>
+>Thanks.
+
+Hi David,
+
+We have submitted a patch to fix this issue.
+Please let us know if this is good.
+
+Thanks,
+Rasesh
