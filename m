@@ -1,35 +1,62 @@
-From: Christoph Lameter <cl@linux.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the final tree (slab
  tree related)
-Date: Tue, 24 Aug 2010 13:53:35 -0500 (CDT)
-Message-ID: <alpine.DEB.2.00.1008241352240.5388@router.home>
-References: <20100824120714.8918f8de.sfr@canb.auug.org.au> <4C740450.3030000@cs.helsinki.fi> <alpine.DEB.2.00.1008241256280.4763@router.home> <4C741029.7090300@cs.helsinki.fi>
+Date: Wed, 25 Aug 2010 10:13:20 +1000
+Message-ID: <20100825101320.bed89b2a.sfr@canb.auug.org.au>
+References: <20100824120714.8918f8de.sfr@canb.auug.org.au>
+	<4C740450.3030000@cs.helsinki.fi>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4C741029.7090300@cs.helsinki.fi>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__25_Aug_2010_10_13_20_+1000_lmk9PtW3NYyEHAkt"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:52691 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755122Ab0HYAN1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 24 Aug 2010 20:13:27 -0400
+In-Reply-To: <4C740450.3030000@cs.helsinki.fi>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Pekka Enberg <penberg@cs.helsinki.fi>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
-List-Id: linux-next.vger.kernel.org
+Cc: Christoph Lameter <cl@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 24 Aug 2010, Pekka Enberg wrote:
+--Signature=_Wed__25_Aug_2010_10_13_20_+1000_lmk9PtW3NYyEHAkt
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On 24.8.2010 20.59, Christoph Lameter wrote:
-> > On Tue, 24 Aug 2010, Pekka Enberg wrote:
-> >
-> > > Thanks for the report. The problem should be fixed by this commit:
-> >
-> > Its not that easy. __alloc_percpu falls back to kzalloc() on UP and this
-> > can result in unique bootstrap problems with UP since the bootstrap array
-> > is no longer there. Does the UP kernel boot?
+Hi Pekka,
+
+On Tue, 24 Aug 2010 20:41:36 +0300 Pekka Enberg <penberg@cs.helsinki.fi> wr=
+ote:
 >
-> No, I get this under kvm:
+> Thanks for the report. The problem should be fixed by this commit:
+>=20
+> http://git.kernel.org/?p=3Dlinux/kernel/git/penberg/slab-2.6.git;a=3Dcomm=
+itdiff;h=3D5792949c540c9fd719c3fc0d6edc97374222e792
 
-> [    0.000000] Kernel panic - not syncing: Cannot create slab kmem_cache
-> size=232 realsize=256 order=0 offset=0 flags=42000
+A small point:  I did *not* review that patch.  I *did* report the bug
+(and seemingly provided the commit message).
 
-alloc per cpu result in kmalloc which fails.
+Thanks for the build fix.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Tejon: Is there some way we could get a reserved per cpu area under UP
-instead of fallback to slab allocations during bootup?
+--Signature=_Wed__25_Aug_2010_10_13_20_+1000_lmk9PtW3NYyEHAkt
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMdGAgAAoJEDMEi1NhKgbsKYEIAJBmQiqjDVLrgtIStg+aLaqd
+LZ0RpkwkiKMphQrgVBJMhPUZMpDuaYa/2me2+n4l6a+o8Je5fXsQLRiVZ73ie3U3
+rnb6Fl6y10laSeIRfJ/n5fwXu/kgLvPGDKvvSJLIKaeV8qEr8EjHpOcUlTMxeHH+
+9JJNb3qN1gZdmkf4vTwkkjKvVgp1PEoNqGJJXErQ+GXNPyrrmBkAGsvBxA8N8fpn
+JWB4nxUhZ4J/dxe6pewR4BHlx/tYY6PaiYYFLY17K7lgvlIo0P/oomvP7NS17FtN
+vX7I2nZI/VVeNdrovBgEkTAQNfCygNJC6vJNVNu/8VupxrmMzTiUFtrqgDF0/yY=
+=SKLw
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__25_Aug_2010_10_13_20_+1000_lmk9PtW3NYyEHAkt--
