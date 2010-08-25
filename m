@@ -1,48 +1,27 @@
-From: Rasesh Mody <rmody@brocade.com>
-Subject: RE: linux-next: build failure after merge of the final tree (net
- tree related)
-Date: Wed, 25 Aug 2010 14:53:39 -0700
-Message-ID: <E5313AF6F2BFD14293E5FD0F94750F86A4AE2260D2@HQ1-EXCH01.corp.brocade.com>
-References: <20100825120927.c469ce20.sfr@canb.auug.org.au>
-	<E5313AF6F2BFD14293E5FD0F94750F86A4AE225EE8@HQ1-EXCH01.corp.brocade.com>
-	<20100825.003526.35028751.davem@davemloft.net>
- <20100825.135957.112609658.davem@davemloft.net>
+From: David Rientjes <rientjes@google.com>
+Subject: Re: linux-next: Tree for August 25 (mm/slub)
+Date: Wed, 25 Aug 2010 16:18:58 -0700 (PDT)
+Message-ID: <alpine.DEB.2.00.1008251618400.31521@chino.kir.corp.google.com>
+References: <20100825132057.c8416bef.sfr@canb.auug.org.au> <20100825094559.bc652afe.randy.dunlap@oracle.com> <alpine.DEB.2.00.1008251405590.22117@router.home>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20100825.135957.112609658.davem@davemloft.net>
-Content-Language: en-US
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>
-Cc: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jing Huang <huangj@Brocade.COM>, Debashis Dutt <ddutt@Brocade.COM>, "James.Bottomley@HansenPartnership.com" <James.Bottomley@HansenPartnership.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp-out.google.com ([216.239.44.51]:1384 "EHLO
+	smtp-out.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751392Ab0HYXTE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 25 Aug 2010 19:19:04 -0400
+In-Reply-To: <alpine.DEB.2.00.1008251405590.22117@router.home>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Christoph Lameter <cl@linux.com>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-mm@kvack.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Pekka Enberg <penberg@cs.helsinki.fi>
 
->From: David Miller <davem@davemloft.net>
->Date: Wed, 25 Aug 2010 00:35:26 -0700 (PDT)
->
->> From: Rasesh Mody <rmody@brocade.com>
->> Date: Tue, 24 Aug 2010 21:22:19 -0700
->> 
->>> All,
->>> 
->>> We are working on a fix and we will submit a patch soon.
->
->Well, where is the fix and why is it taking so long?
->
->Stephen Rothwell is going to build his -next tree for today any minute
->now and will have to revert your driver from his tree again since a
->fix is not yet in place.
->
->If I don't see a fix quickly, I'll fix it however I like and however
->I like might be yanking your driver out of the tree.
->
->Thanks.
+On Wed, 25 Aug 2010, Christoph Lameter wrote:
 
-Hi David,
+> Subject: slub: Add dummy functions for the !SLUB_DEBUG case
+> 
+> Provide the fall back functions to empty hooks if SLUB_DEBUG is not set.
+> 
+> Signed-off-by: Christoph Lameter <cl@linux.com>
 
-We have submitted a patch to fix this issue.
-Please let us know if this is good.
-
-Thanks,
-Rasesh
+Acked-by: David Rientjes <rientjes@google.com>
