@@ -1,76 +1,43 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for August 25 (mm/slub)
-Date: Wed, 25 Aug 2010 13:30:22 -0700
-Message-ID: <4C757D5E.1040307@oracle.com>
-References: <20100825132057.c8416bef.sfr@canb.auug.org.au> <20100825094559.bc652afe.randy.dunlap@oracle.com> <alpine.DEB.2.00.1008251405590.22117@router.home>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build failure after merge of the final tree (net
+ tree related)
+Date: Wed, 25 Aug 2010 13:59:57 -0700 (PDT)
+Message-ID: <20100825.135957.112609658.davem@davemloft.net>
+References: <20100825120927.c469ce20.sfr@canb.auug.org.au>
+	<E5313AF6F2BFD14293E5FD0F94750F86A4AE225EE8@HQ1-EXCH01.corp.brocade.com>
+	<20100825.003526.35028751.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <alpine.DEB.2.00.1008251405590.22117@router.home>
-Sender: owner-linux-mm@kvack.org
-To: Christoph Lameter <cl@linux.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-mm@kvack.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Pekka Enberg <penberg@cs.helsinki.fi>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:52676
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752654Ab0HYU7m (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 25 Aug 2010 16:59:42 -0400
+In-Reply-To: <20100825.003526.35028751.davem@davemloft.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: rmody@brocade.com
+Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, huangj@Brocade.COM, James.Bottomley@HansenPartnership.com
 
-On 08/25/10 12:07, Christoph Lameter wrote:
-> On Wed, 25 Aug 2010, Randy Dunlap wrote:
-> 
->> mm/slub.c:1732: error: implicit declaration of function 'slab_pre_alloc_hook'
->> mm/slub.c:1751: error: implicit declaration of function 'slab_post_alloc_hook'
->> mm/slub.c:1881: error: implicit declaration of function 'slab_free_hook'
->> mm/slub.c:1886: error: implicit declaration of function 'slab_free_hook_irq'
-> 
-> Empty functions are missing if the runtime debuggability option is
-> compiled
-> out.
-> 
-> 
-> Subject: slub: Add dummy functions for the !SLUB_DEBUG case
-> 
-> Provide the fall back functions to empty hooks if SLUB_DEBUG is not set.
-> 
-> Signed-off-by: Christoph Lameter <cl@linux.com>
+From: David Miller <davem@davemloft.net>
+Date: Wed, 25 Aug 2010 00:35:26 -0700 (PDT)
 
-Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
+> From: Rasesh Mody <rmody@brocade.com>
+> Date: Tue, 24 Aug 2010 21:22:19 -0700
+> 
+>> All,
+>> 
+>> We are working on a fix and we will submit a patch soon.
+
+Well, where is the fix and why is it taking so long?
+
+Stephen Rothwell is going to build his -next tree for today any minute
+now and will have to revert your driver from his tree again since a
+fix is not yet in place.
+
+If I don't see a fix quickly, I'll fix it however I like and however
+I like might be yanking your driver out of the tree.
 
 Thanks.
-
-> ---
->  mm/slub.c |   12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> Index: linux-2.6/mm/slub.c
-> ===================================================================
-> --- linux-2.6.orig/mm/slub.c	2010-08-25 14:02:43.000000000 -0500
-> +++ linux-2.6/mm/slub.c	2010-08-25 14:04:23.000000000 -0500
-> @@ -1098,6 +1098,18 @@ static inline void inc_slabs_node(struct
->  							int objects) {}
->  static inline void dec_slabs_node(struct kmem_cache *s, int node,
->  							int objects) {}
-> +
-> +static inline int slab_pre_alloc_hook(struct kmem_cache *s, gfp_t flags)
-> +							{ return 0; }
-> +
-> +static inline void slab_post_alloc_hook(struct kmem_cache *s, gfp_t flags,
-> +		void *object) {}
-> +
-> +static inline void slab_free_hook(struct kmem_cache *s, void *x) {}
-> +
-> +static inline void slab_free_hook_irq(struct kmem_cache *s,
-> +		void *object) {}
-> +
->  #endif
-> 
->  /*
-
-
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
