@@ -1,51 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drivers-x86 tree with Linus' tree
-Date: Wed, 25 Aug 2010 11:22:36 +1000
-Message-ID: <20100825112236.6ec0390e.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree
+ (pci-current tree related)
+Date: Wed, 25 Aug 2010 11:56:04 +1000
+Message-ID: <20100825115604.07928f97.sfr@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__25_Aug_2010_11_56_04_+1000_ePwKUw6WiF15vl.p"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Wed__25_Aug_2010_11_56_04_+1000_ePwKUw6WiF15vl.p
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36126 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751710Ab0HYBWm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 24 Aug 2010 21:22:42 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Matthew Garrett <mjg59@srcf.ucam.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Matthew,
+Hi Jesse,
 
-Today's linux-next merge of the drivers-x86 tree got a conflict in
-drivers/platform/x86/Kconfig between commit
-c76a3e1d6c52c5cc1371f1abc7381c5715ebdf7f ("ACPI_TOSHIBA needs LEDS
-support") from Lunus' tree and commit
-35989e9d7e19deb4b395aee7d120b1536337b4af ("toshiba-acpi - switch to using
-sparse keymap") from the drivers-x86 tree.
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
--- 
+drivers/pci/hotplug/pciehp_core.c: In function 'pciehp_probe':
+drivers/pci/hotplug/pciehp_core.c:238: error: implicit declaration of funct=
+ion 'pciehp_acpi_slot_detection_check'
+
+Caused by commit 28eb5f274a305bf3a13b2c80c4804d4515d05c64 ("PCI: PCIe:
+Ask BIOS for control of all native services at once").  This function is
+only declared if CONFIG_ACPI is defined.
+
+I have reverted that commit for today (and the two that interact with it:
+2bd50dd800b52245294cfceb56be62020cdc7515 "PCI: PCIe: Disable PCIe port
+services during port initialization" and
+271fb719cc472af3b1e96d8c527bb0da7060a172 "PCI: PCIe: Move PCIe PME code
+to the pcie directory").
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/platform/x86/Kconfig
-index cff7cc2,8498389..0000000
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@@ -486,12 -490,10 +490,12 @@@ config TOPSTAR_LAPTO
-  config ACPI_TOSHIBA
-  	tristate "Toshiba Laptop Extras"
-  	depends on ACPI
- +	depends on LEDS_CLASS
- +	depends on NEW_LEDS
- +	depends on BACKLIGHT_CLASS_DEVICE
-  	depends on INPUT
-  	depends on RFKILL || RFKILL = n
-- 	select INPUT_POLLDEV
-+ 	select INPUT_SPARSEKMAP
- -	select BACKLIGHT_CLASS_DEVICE
-  	---help---
-  	  This driver adds support for access to certain system settings
-  	  on "legacy free" Toshiba laptops.  These laptops can be recognized by
+--Signature=_Wed__25_Aug_2010_11_56_04_+1000_ePwKUw6WiF15vl.p
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMdHg0AAoJEDMEi1NhKgbsbxQIAIU83Xz8uMx1LmyDvXu55aSQ
+NC/EjjVSg855VqbBhV6suZBwv2UBD7TulcKZQDBF5Qvt1Dlju3xiDF6ZAns2p0oX
+kJ2dggG4Yl/IvANVg50z0emra8KpDqtimbrl1B9lBAm51HF6C11hrtQhLNureg7i
+jjboalrMrpyLfU3BWwKrFeFVEroITni8dxJkuv8+isc8czHJDjn8C6dVN6J7RFap
+v4aZQrWSvGl1TE6KnjjYOT55Y6I/CbLXWo1PTsIe/pt6jvkeaS0T0P5Edx4d2ICN
+uFM0XxHGjUyBAYmN8lhfVEoZXOH9FdbMoPZlgSbgSibwqxALiKB5rpzspkq5JfM=
+=f13I
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__25_Aug_2010_11_56_04_+1000_ePwKUw6WiF15vl.p--
