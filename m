@@ -1,62 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree (slab
- tree related)
-Date: Wed, 25 Aug 2010 10:13:20 +1000
-Message-ID: <20100825101320.bed89b2a.sfr@canb.auug.org.au>
-References: <20100824120714.8918f8de.sfr@canb.auug.org.au>
-	<4C740450.3030000@cs.helsinki.fi>
+Subject: linux-next: manual merge of the drivers-x86 tree with Linus' tree
+Date: Wed, 25 Aug 2010 11:22:36 +1000
+Message-ID: <20100825112236.6ec0390e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__25_Aug_2010_10_13_20_+1000_lmk9PtW3NYyEHAkt"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52691 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:36126 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755122Ab0HYAN1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 24 Aug 2010 20:13:27 -0400
-In-Reply-To: <4C740450.3030000@cs.helsinki.fi>
+	id S1751710Ab0HYBWm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 24 Aug 2010 21:22:42 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Pekka Enberg <penberg@cs.helsinki.fi>
-Cc: Christoph Lameter <cl@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Matthew Garrett <mjg59@srcf.ucam.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
---Signature=_Wed__25_Aug_2010_10_13_20_+1000_lmk9PtW3NYyEHAkt
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Matthew,
 
-Hi Pekka,
+Today's linux-next merge of the drivers-x86 tree got a conflict in
+drivers/platform/x86/Kconfig between commit
+c76a3e1d6c52c5cc1371f1abc7381c5715ebdf7f ("ACPI_TOSHIBA needs LEDS
+support") from Lunus' tree and commit
+35989e9d7e19deb4b395aee7d120b1536337b4af ("toshiba-acpi - switch to using
+sparse keymap") from the drivers-x86 tree.
 
-On Tue, 24 Aug 2010 20:41:36 +0300 Pekka Enberg <penberg@cs.helsinki.fi> wr=
-ote:
->
-> Thanks for the report. The problem should be fixed by this commit:
->=20
-> http://git.kernel.org/?p=3Dlinux/kernel/git/penberg/slab-2.6.git;a=3Dcomm=
-itdiff;h=3D5792949c540c9fd719c3fc0d6edc97374222e792
-
-A small point:  I did *not* review that patch.  I *did* report the bug
-(and seemingly provided the commit message).
-
-Thanks for the build fix.
---=20
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__25_Aug_2010_10_13_20_+1000_lmk9PtW3NYyEHAkt
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMdGAgAAoJEDMEi1NhKgbsKYEIAJBmQiqjDVLrgtIStg+aLaqd
-LZ0RpkwkiKMphQrgVBJMhPUZMpDuaYa/2me2+n4l6a+o8Je5fXsQLRiVZ73ie3U3
-rnb6Fl6y10laSeIRfJ/n5fwXu/kgLvPGDKvvSJLIKaeV8qEr8EjHpOcUlTMxeHH+
-9JJNb3qN1gZdmkf4vTwkkjKvVgp1PEoNqGJJXErQ+GXNPyrrmBkAGsvBxA8N8fpn
-JWB4nxUhZ4J/dxe6pewR4BHlx/tYY6PaiYYFLY17K7lgvlIo0P/oomvP7NS17FtN
-vX7I2nZI/VVeNdrovBgEkTAQNfCygNJC6vJNVNu/8VupxrmMzTiUFtrqgDF0/yY=
-=SKLw
------END PGP SIGNATURE-----
-
---Signature=_Wed__25_Aug_2010_10_13_20_+1000_lmk9PtW3NYyEHAkt--
+diff --cc drivers/platform/x86/Kconfig
+index cff7cc2,8498389..0000000
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@@ -486,12 -490,10 +490,12 @@@ config TOPSTAR_LAPTO
+  config ACPI_TOSHIBA
+  	tristate "Toshiba Laptop Extras"
+  	depends on ACPI
+ +	depends on LEDS_CLASS
+ +	depends on NEW_LEDS
+ +	depends on BACKLIGHT_CLASS_DEVICE
+  	depends on INPUT
+  	depends on RFKILL || RFKILL = n
+- 	select INPUT_POLLDEV
++ 	select INPUT_SPARSEKMAP
+ -	select BACKLIGHT_CLASS_DEVICE
+  	---help---
+  	  This driver adds support for access to certain system settings
+  	  on "legacy free" Toshiba laptops.  These laptops can be recognized by
