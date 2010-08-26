@@ -1,35 +1,50 @@
-From: Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: linux-next: build warning after merge of the cifs tree
-Date: Wed, 25 Aug 2010 21:07:08 -0500
-Message-ID: <AANLkTikvKchHEFR_F-Fdo6Z8n2XKbi4tRh0eYnjzVQJ9@mail.gmail.com>
-References: <20100826110229.931ab5bf.sfr@canb.auug.org.au>
+From: David Rientjes <rientjes@google.com>
+Subject: Re: linux-next: build failure after merge of the final tree (slab
+ tree related)
+Date: Wed, 25 Aug 2010 20:16:05 -0700 (PDT)
+Message-ID: <alpine.DEB.2.00.1008252014560.10986@chino.kir.corp.google.com>
+References: <20100824120714.8918f8de.sfr@canb.auug.org.au> <4C740450.3030000@cs.helsinki.fi> <20100825101320.bed89b2a.sfr@canb.auug.org.au> <4C74A01E.1060809@cs.helsinki.fi> <alpine.DEB.2.00.1008250905490.13026@router.home> <alpine.DEB.2.00.1008251656390.22018@chino.kir.corp.google.com>
+ <alpine.DEB.2.00.1008252031560.32421@router.home>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20100826110229.931ab5bf.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Cc: linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Shirish Pargaonkar <shirishpargaonkar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp-out.google.com ([74.125.121.35]:60179 "EHLO
+	smtp-out.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751392Ab0HZDQM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 25 Aug 2010 23:16:12 -0400
+In-Reply-To: <alpine.DEB.2.00.1008252031560.32421@router.home>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Christoph Lameter <cl@linux.com>
+Cc: Pekka Enberg <penberg@cs.helsinki.fi>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
 
-On Wed, Aug 25, 2010 at 8:02 PM, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org> wrote:
-> Hi all,
->
-> After merging the cifs tree, today's linux-next build (powerpc
-> ppc64_defconfig) produced this warning:
->
-> fs/cifs/sess.c: In function 'CIFS_SessSetup':
-> fs/cifs/sess.c:623: warning: unused variable 'ntlmsspblob'
->
-> Introduced by commit 9fbc590860e75785bdaf8b83e48fabfe4d4f7d58 ("[CIFS]
-> Fix ntlmv2 auth with ntlmssp").
+On Wed, 25 Aug 2010, Christoph Lameter wrote:
 
-Shirish's patch doesn't use that local variable when experimental is
-off - I will talk to him about simply moving the local variable to
-eliminate the unused variable warning.
+> > > +	 * Special hack for UP mode. allocpercpu() falls back to kmalloc
+> > > +	 * operations. So we cannot use that before the slab allocator is up
+> > > +	 * Simply get the smallest possible compound page. The page will be
+> > > +	 * released via kfree() when the cpu caches are resized later.
+> > > +	 */
+> > > +	if (slab_state < UP)
+> > > +		s->cpu_slab = (__percpu void *)__get_free_page(GFP_NOWAIT, 1);
+> >
+> > __get_free_pages() takes an order argument.
+> 
+> Right. Patch not refreshed after the last tinzy winzy change. Seems that I
+> got a bit rusty.
+> 
+> Subject: Slub: UP bandaid
+> 
+> Since the percpu allocator does not provide early allocation in UP
+> mode (only in SMP configurations) use __get_free_page() to improvise
+> a compound page allocation that can be later freed via kfree().
+> 
+> Compound pages will be released when the cpu caches are resized.
+> 
+> Signed-off-by: Christoph Lameter <cl@linux.com>
 
+Acked-by: David Rientjes <rientjes@google.com>
 
--- 
-Thanks,
-
-Steve
+I'm really hoping that we can remove this hack soon when the percpu 
+allocator can handle these allocations on UP without any specialized slab 
+behavior.
