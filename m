@@ -1,51 +1,61 @@
-From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Subject: linux-next: build warning after merge of the cifs tree
-Date: Thu, 26 Aug 2010 11:02:29 +1000
-Message-ID: <20100826110229.931ab5bf.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the final tree (net
+ tree related)
+Date: Thu, 26 Aug 2010 11:05:42 +1000
+Message-ID: <20100826110542.0269df75.sfr@canb.auug.org.au>
+References: <20100825120927.c469ce20.sfr@canb.auug.org.au>
+	<E5313AF6F2BFD14293E5FD0F94750F86A4AE225EE8@HQ1-EXCH01.corp.brocade.com>
+	<20100825.003526.35028751.davem@davemloft.net>
+	<20100825.135957.112609658.davem@davemloft.net>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__26_Aug_2010_11_02_29_+1000_AciCO.adYFhdrfXG"
-Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Thu__26_Aug_2010_11_05_42_+1000_eOiU=i+muyeUFIBP"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:40419 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752168Ab0HZBFu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 25 Aug 2010 21:05:50 -0400
+In-Reply-To: <20100825.135957.112609658.davem@davemloft.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>
+Cc: rmody@brocade.com, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, huangj@Brocade.COM, James.Bottomley@HansenPartnership.com
 
---Signature=_Thu__26_Aug_2010_11_02_29_+1000_AciCO.adYFhdrfXG
+--Signature=_Thu__26_Aug_2010_11_05_42_+1000_eOiU=i+muyeUFIBP
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Dave,
 
-After merging the cifs tree, today's linux-next build (powerpc
-ppc64_defconfig) produced this warning:
+On Wed, 25 Aug 2010 13:59:57 -0700 (PDT) David Miller <davem@davemloft.net>=
+ wrote:
+>
+> Stephen Rothwell is going to build his -next tree for today any minute
+> now and will have to revert your driver from his tree again since a
+> fix is not yet in place.
 
-fs/cifs/sess.c: In function 'CIFS_SessSetup':
-fs/cifs/sess.c:623: warning: unused variable 'ntlmsspblob'
-
-Introduced by commit 9fbc590860e75785bdaf8b83e48fabfe4d4f7d58 ("[CIFS]
-Fix ntlmv2 auth with ntlmssp").
+I have done that ...
 
 --=20
 Cheers,
-Stephen Rothwell                    sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
+Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__26_Aug_2010_11_02_29_+1000_AciCO.adYFhdrfXG
+--Signature=_Thu__26_Aug_2010_11_05_42_+1000_eOiU=i+muyeUFIBP
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMdb0lAAoJEDMEi1NhKgbs18kH/15opIEe5erl4cfcnq0ltBZr
-P2tWui20d1QUCpswswWOjQmtlrO3er7hTUkXVEQixG75Gj4iRQ7kagDNrb3RzALM
-TcnMfM3jvm3fxPw4AuNF5auc+d23phQ1yRmlhWhb+iUdg4PACylJ64657lxOmFTq
-BqojFhmHDNyeKppp1fObzlgn776V07/6+b937+qjBzSGzD2F8GakZ4SDJMw0VmY4
-82RnFXMIReZbCQ5CukBhQjLF9ylBsHPbL/Hi6YjlxlNguT7tVLBZO02J3IYF4kb6
-LVU0la/fYDUbi0rZok2j8JOZvEuX3LEMZmB4Cw8JdU73st81h7YR0TYxQzduWvo=
-=o8Se
+iQEcBAEBAgAGBQJMdb3mAAoJEDMEi1NhKgbsoE8H/01Faz/SEC9cY+IpqolcrAgh
+uTKPuiJhfCzAM42xOH+DcQtyfCOOXevy8h7jZLrHQXN/gcVdY045T7UQBx9IQjWQ
+vE8ons788rfgW1q/7Ixbo1drlZ1P+xFKVqL30wBwSkXRcutJCo+sjUhZjSWp9WqG
+o8Fw+3v+0a4GR1dDlmjaHgCQEa8AGro6pFDwcQYpV/UoenI5MgrD72Kiq++0GwhM
+43snUzKBkiKleu4gKzIfTvFFNuHPaUbsqitmlQ5P86v5D5Me1tGPYztJ2CdWYF+G
+1nqlp5oFG2ORCf4xohhs2tOHeCiJX5fZm/PVYPhVuiIJhyWqW188pU2umOYt+ko=
+=oFU5
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__26_Aug_2010_11_02_29_+1000_AciCO.adYFhdrfXG--
+--Signature=_Thu__26_Aug_2010_11_05_42_+1000_eOiU=i+muyeUFIBP--
