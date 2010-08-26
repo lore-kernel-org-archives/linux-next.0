@@ -1,65 +1,51 @@
-From: David Rientjes <rientjes@google.com>
-Subject: Re: linux-next: build failure after merge of the final tree (slab
- tree related)
-Date: Wed, 25 Aug 2010 17:01:27 -0700 (PDT)
-Message-ID: <alpine.DEB.2.00.1008251656390.22018@chino.kir.corp.google.com>
-References: <20100824120714.8918f8de.sfr@canb.auug.org.au> <4C740450.3030000@cs.helsinki.fi> <20100825101320.bed89b2a.sfr@canb.auug.org.au> <4C74A01E.1060809@cs.helsinki.fi> <alpine.DEB.2.00.1008250905490.13026@router.home>
+From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Subject: linux-next: build warning after merge of the cifs tree
+Date: Thu, 26 Aug 2010 11:02:29 +1000
+Message-ID: <20100826110229.931ab5bf.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp-out.google.com ([74.125.121.35]:60982 "EHLO
-	smtp-out.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752723Ab0HZABf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 25 Aug 2010 20:01:35 -0400
-In-Reply-To: <alpine.DEB.2.00.1008250905490.13026@router.home>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Christoph Lameter <cl@linux.com>
-Cc: Pekka Enberg <penberg@cs.helsinki.fi>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__26_Aug_2010_11_02_29_+1000_AciCO.adYFhdrfXG"
+Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 25 Aug 2010, Christoph Lameter wrote:
+--Signature=_Thu__26_Aug_2010_11_02_29_+1000_AciCO.adYFhdrfXG
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Since the percpu allocator does not provide early allocation in UP
-> mode (only in SMP configurations) use __get_free_page() to improvise
-> a compound page allocation that can be later freed via kfree().
-> 
-> Compound pages will be released when the cpu caches are resized.
-> 
-> Signed-off-by: Christoph Lameter <cl@linux.com>
-> 
-> ---
->  mm/slub.c |    6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> Index: linux-2.6/mm/slub.c
-> ===================================================================
-> --- linux-2.6.orig/mm/slub.c	2010-08-24 20:07:12.766010774 -0500
-> +++ linux-2.6/mm/slub.c	2010-08-24 20:15:46.304130417 -0500
-> @@ -2064,8 +2064,24 @@
-> 
->  static inline int alloc_kmem_cache_cpus(struct kmem_cache *s)
->  {
-> +#ifdef CONFIG_SMP
-> +	/*
-> +	 * Will use reserve that does not require slab operation during
-> +	 * early boot.
-> +	 */
->  	BUILD_BUG_ON(PERCPU_DYNAMIC_EARLY_SIZE <
->  			SLUB_PAGE_SHIFT * sizeof(struct kmem_cache_cpu));
-> +#else
-> +	/*
-> +	 * Special hack for UP mode. allocpercpu() falls back to kmalloc
-> +	 * operations. So we cannot use that before the slab allocator is up
-> +	 * Simply get the smallest possible compound page. The page will be
-> +	 * released via kfree() when the cpu caches are resized later.
-> +	 */
-> +	if (slab_state < UP)
-> +		s->cpu_slab = (__percpu void *)__get_free_page(GFP_NOWAIT, 1);
+Hi all,
 
-__get_free_pages() takes an order argument.
+After merging the cifs tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
 
-> +	else
-> +#endif
-> 
->  	s->cpu_slab = alloc_percpu(struct kmem_cache_cpu);
-> 
+fs/cifs/sess.c: In function 'CIFS_SessSetup':
+fs/cifs/sess.c:623: warning: unused variable 'ntlmsspblob'
+
+Introduced by commit 9fbc590860e75785bdaf8b83e48fabfe4d4f7d58 ("[CIFS]
+Fix ntlmv2 auth with ntlmssp").
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__26_Aug_2010_11_02_29_+1000_AciCO.adYFhdrfXG
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMdb0lAAoJEDMEi1NhKgbs18kH/15opIEe5erl4cfcnq0ltBZr
+P2tWui20d1QUCpswswWOjQmtlrO3er7hTUkXVEQixG75Gj4iRQ7kagDNrb3RzALM
+TcnMfM3jvm3fxPw4AuNF5auc+d23phQ1yRmlhWhb+iUdg4PACylJ64657lxOmFTq
+BqojFhmHDNyeKppp1fObzlgn776V07/6+b937+qjBzSGzD2F8GakZ4SDJMw0VmY4
+82RnFXMIReZbCQ5CukBhQjLF9ylBsHPbL/Hi6YjlxlNguT7tVLBZO02J3IYF4kb6
+LVU0la/fYDUbi0rZok2j8JOZvEuX3LEMZmB4Cw8JdU73st81h7YR0TYxQzduWvo=
+=o8Se
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__26_Aug_2010_11_02_29_+1000_AciCO.adYFhdrfXG--
