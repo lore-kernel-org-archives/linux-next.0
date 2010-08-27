@@ -1,37 +1,58 @@
-From: Tony Breeds <tony@bakeyournoodle.com>
-Subject: Re: Power machines fail to boot after build being successful
-Date: Fri, 27 Aug 2010 10:46:26 +1000
-Message-ID: <20100827004626.GU24591@ozlabs.org>
-References: <4C764F52.5050707@linux.vnet.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net tree
+Date: Fri, 27 Aug 2010 11:14:00 +1000
+Message-ID: <20100827111400.58bf82d1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__27_Aug_2010_11_14_00_+1000_8dEXRpqSHJ3=dM=T"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:37041 "EHLO ozlabs.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:55360 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751341Ab0H0Aq1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 26 Aug 2010 20:46:27 -0400
-Content-Disposition: inline
-In-Reply-To: <4C764F52.5050707@linux.vnet.ibm.com>
+	id S1751392Ab0H0BOL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 26 Aug 2010 21:14:11 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: divya <dipraksh@linux.vnet.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, benh@kernel.crashing.org, LinuxPPC-dev <linuxppc-dev@lists.ozlabs.org>, linux-next@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Giuseppe CAVALLARO <peppe.cavallaro@st.com>
 
-On Thu, Aug 26, 2010 at 04:56:10PM +0530, divya wrote:
-> Hi,
-> 
-> After successfully building the kernel version 2.6.36-rc2-git4(commitid
-> d4348c678977c) with the config file attached(used make oldconfig),
-> P5 and P6 power machines fails to reboot with the following logs
+--Signature=_Fri__27_Aug_2010_11_14_00_+1000_8dEXRpqSHJ3=dM=T
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-<snip>
+Hi all,
 
-> Preparing to boot Linux version 2.6.36-rc2-autotest-next-20100826 (root@llm62) (gcc version 4.3.2 [gcc-4_3-branch revision 141291] (SUSE Linux) ) #1 SMP Thu Aug 26 10:55:01 IST 2010
+After merging the nert tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-You say you're booting -git4 but you're running kernel is Linux next from Aug.
-26th  Can you confirm you see this boot failure with Linus's tree NOT linux
-next?
+drivers/net/stmmac/stmmac_timer.c: In function 'stmmac_open_ext_timer':
+drivers/net/stmmac/stmmac_timer.c:60: error: 'CONFIG_RTC_HCTOSYS_DEVICE' un=
+declared (first use in this function)
 
-Adding linux-ppc and linux-next lists.
+Maybe exposed by commit ac75791aa943c7953521cb4fa7728bf51f9abd2d ("stmmac:
+remove dead option in the driver's Kconfig") since presumably we used to
+not build this driver.
 
-Yours Tony
+I have used the net tree from next-20100826 (with the 2 reverts) for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__27_Aug_2010_11_14_00_+1000_8dEXRpqSHJ3=dM=T
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMdxFYAAoJEDMEi1NhKgbsrRwH/3V+p6pcvpDIOZxjMWIAsKRF
+uy4o+ysnHqfnJKw8yauk+hYOV0ztpHjBVxjVjjvOpOCgsMg7tuKzWvNQ00VwrdDw
+ea6uFmphk3zJ4K84AXBzOGam5WYGk4pLfrMhqYN0z8SdTbri8O8LamYRypdzWyyG
+7OUgIMU/fSOPUK8xEj+dPhir0pup+XLOtxnWOj2/tuXhl7tlwClJwlwutZZXhwTg
+YBy5a4Mx1g1i8VeJdsQclQzxy439q9KBDJFm1nbmIkc/O5blTMPuKvc8DuTtu3/E
+z5g6jRSKXp+E+HBE2fx5U9ciAEANOcd64lLT0f8Zx0yFZonNZWLZGoiYde1AeEc=
+=brKZ
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__27_Aug_2010_11_14_00_+1000_8dEXRpqSHJ3=dM=T--
