@@ -1,29 +1,37 @@
-From: Pekka Enberg <penberg@cs.helsinki.fi>
-Subject: Re: linux-next: Tree for August 25 (mm/slub)
-Date: Thu, 26 Aug 2010 21:17:40 +0300
-Message-ID: <4C76AFC4.9070601@cs.helsinki.fi>
-References: <20100825132057.c8416bef.sfr@canb.auug.org.au> <20100825094559.bc652afe.randy.dunlap@oracle.com> <alpine.DEB.2.00.1008251409260.22117@router.home> <20100825122134.2ac33360.randy.dunlap@oracle.com> <alpine.DEB.2.00.1008251447410.22117@router.home> <alpine.DEB.2.00.1008251622500.31521@chino.kir.corp.google.com> <alpine.DEB.2.00.1008252030470.32421@router.home>
+From: Tony Breeds <tony@bakeyournoodle.com>
+Subject: Re: Power machines fail to boot after build being successful
+Date: Fri, 27 Aug 2010 10:46:26 +1000
+Message-ID: <20100827004626.GU24591@ozlabs.org>
+References: <4C764F52.5050707@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <alpine.DEB.2.00.1008252030470.32421@router.home>
-Sender: owner-linux-mm@kvack.org
-To: Christoph Lameter <cl@linux.com>
-Cc: David Rientjes <rientjes@google.com>, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-mm@kvack.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:37041 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751341Ab0H0Aq1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 26 Aug 2010 20:46:27 -0400
+Content-Disposition: inline
+In-Reply-To: <4C764F52.5050707@linux.vnet.ibm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: divya <dipraksh@linux.vnet.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, benh@kernel.crashing.org, LinuxPPC-dev <linuxppc-dev@lists.ozlabs.org>, linux-next@vger.kernel.org
 
-On 26.8.2010 4.31, Christoph Lameter wrote:
-> On Wed, 25 Aug 2010, David Rientjes wrote:
->
->> slub: fix SLUB_RESILIENCY_TEST for dynamic kmalloc caches
->
-> Acked-by: Christoph Lameter<cl@linux.com>
+On Thu, Aug 26, 2010 at 04:56:10PM +0530, divya wrote:
+> Hi,
+> 
+> After successfully building the kernel version 2.6.36-rc2-git4(commitid
+> d4348c678977c) with the config file attached(used make oldconfig),
+> P5 and P6 power machines fails to reboot with the following logs
 
-Applied, thanks!
+<snip>
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+> Preparing to boot Linux version 2.6.36-rc2-autotest-next-20100826 (root@llm62) (gcc version 4.3.2 [gcc-4_3-branch revision 141291] (SUSE Linux) ) #1 SMP Thu Aug 26 10:55:01 IST 2010
+
+You say you're booting -git4 but you're running kernel is Linux next from Aug.
+26th  Can you confirm you see this boot failure with Linus's tree NOT linux
+next?
+
+Adding linux-ppc and linux-next lists.
+
+Yours Tony
