@@ -1,58 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the net tree
-Date: Fri, 27 Aug 2010 11:14:00 +1000
-Message-ID: <20100827111400.58bf82d1.sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the drivers-x86 tree
+Date: Fri, 27 Aug 2010 11:59:50 +1000
+Message-ID: <20100827115950.dd942b90.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__27_Aug_2010_11_14_00_+1000_8dEXRpqSHJ3=dM=T"
+ boundary="Signature=_Fri__27_Aug_2010_11_59_50_+1000_S__Bne9c=aGu_jws"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55360 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:42568 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751392Ab0H0BOL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 26 Aug 2010 21:14:11 -0400
+	id S1754756Ab0H0B75 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 26 Aug 2010 21:59:57 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Giuseppe CAVALLARO <peppe.cavallaro@st.com>
+To: Matthew Garrett <mjg59@srcf.ucam.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
---Signature=_Fri__27_Aug_2010_11_14_00_+1000_8dEXRpqSHJ3=dM=T
+--Signature=_Fri__27_Aug_2010_11_59_50_+1000_S__Bne9c=aGu_jws
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Matthew,
 
-After merging the nert tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+After merging the drivers-x86 tree, today's linux-next build (powerpc
+ppc64_defconfig and x86_64 allmodconfig) produced this warning:
 
-drivers/net/stmmac/stmmac_timer.c: In function 'stmmac_open_ext_timer':
-drivers/net/stmmac/stmmac_timer.c:60: error: 'CONFIG_RTC_HCTOSYS_DEVICE' un=
-declared (first use in this function)
+drivers/video/backlight/Kconfig:117:error: recursive dependency detected!
+drivers/video/backlight/Kconfig:117:	symbol BACKLIGHT_CLASS_DEVICE is selec=
+ted by ACPI_TOSHIBA
+drivers/platform/x86/Kconfig:490:	symbol ACPI_TOSHIBA depends on LEDS_CLASS
+drivers/leds/Kconfig:12:	symbol LEDS_CLASS is selected by BACKLIGHT_ADP8860
+drivers/video/backlight/Kconfig:285:	symbol BACKLIGHT_ADP8860 depends on BA=
+CKLIGHT_CLASS_DEVICE
 
-Maybe exposed by commit ac75791aa943c7953521cb4fa7728bf51f9abd2d ("stmmac:
-remove dead option in the driver's Kconfig") since presumably we used to
-not build this driver.
-
-I have used the net tree from next-20100826 (with the 2 reverts) for today.
+Introduced by commit af7ad65329f59cdfdd564ec26148160ed42a8b70
+("toshiba-acpi - switch to using sparse keymap")
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__27_Aug_2010_11_14_00_+1000_8dEXRpqSHJ3=dM=T
+--Signature=_Fri__27_Aug_2010_11_59_50_+1000_S__Bne9c=aGu_jws
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMdxFYAAoJEDMEi1NhKgbsrRwH/3V+p6pcvpDIOZxjMWIAsKRF
-uy4o+ysnHqfnJKw8yauk+hYOV0ztpHjBVxjVjjvOpOCgsMg7tuKzWvNQ00VwrdDw
-ea6uFmphk3zJ4K84AXBzOGam5WYGk4pLfrMhqYN0z8SdTbri8O8LamYRypdzWyyG
-7OUgIMU/fSOPUK8xEj+dPhir0pup+XLOtxnWOj2/tuXhl7tlwClJwlwutZZXhwTg
-YBy5a4Mx1g1i8VeJdsQclQzxy439q9KBDJFm1nbmIkc/O5blTMPuKvc8DuTtu3/E
-z5g6jRSKXp+E+HBE2fx5U9ciAEANOcd64lLT0f8Zx0yFZonNZWLZGoiYde1AeEc=
-=brKZ
+iQEcBAEBAgAGBQJMdxwWAAoJEDMEi1NhKgbsRE8H/3giqHSaGCnh/ztb+ZpUqp/m
+008ZN+vkE8ZhAQ1FuJv1IqDGK6wgWqa3UXQFsyoiToLTO7oZO5AkXAAcUH8bFc+P
+YpT/S/lcYoPs+dDh0ufm4Ev59hyOYv3Y8x/40d+nvoQGixk1j9apOSLrcGvKyl8i
+HEPl0FdsJnVQiIcRVa4HvADsyzaijf6BIQcFbRD8QGbRB+j9QOb8UXw0auXS79DQ
+gehr61ZBcwpu+AVIkl2crPQssAE7fkSKlWWJ/FqHRMez1PsFXnKdpAV9cOU7b0FH
+7kAblb5d5J6IfLF0YRHfXVFb9S7XH1z+FPiy+4hAiZKTDzhqRvfTTI7m4mdTv0g=
+=SOxd
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__27_Aug_2010_11_14_00_+1000_8dEXRpqSHJ3=dM=T--
+--Signature=_Fri__27_Aug_2010_11_59_50_+1000_S__Bne9c=aGu_jws--
