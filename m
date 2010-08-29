@@ -1,13 +1,13 @@
-From: caiqian-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org
+From: CAI Qian <caiqian-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
 Subject: Re: kdump regression compared to v2.6.35
-Date: Sun, 29 Aug 2010 07:41:33 -0400 (EDT)
-Message-ID: <171172387.1479581283082093912.JavaMail.root@zmail06.collab.prod.int.phx2.redhat.com>
-References: <123671462.1479561283081998014.JavaMail.root@zmail06.collab.prod.int.phx2.redhat.com>
+Date: Sun, 29 Aug 2010 07:56:45 -0400 (EDT)
+Message-ID: <1236896997.1479691283083005518.JavaMail.root@zmail06.collab.prod.int.phx2.redhat.com>
+References: <171172387.1479581283082093912.JavaMail.root@zmail06.collab.prod.int.phx2.redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <kexec-bounces+glkk-kexec=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <123671462.1479561283081998014.JavaMail.root-k5qu2F3t005+R5eDjrG6zsCp5Q1pQRjfhaY/URYTgi6ny3qCrzbmXA@public.gmane.org>
+In-Reply-To: <171172387.1479581283082093912.JavaMail.root-k5qu2F3t005+R5eDjrG6zsCp5Q1pQRjfhaY/URYTgi6ny3qCrzbmXA@public.gmane.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/kexec>,
 	<mailto:kexec-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/kexec/>
@@ -22,56 +22,65 @@ Cc: kexec <kexec-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-next-
 List-Id: linux-next.vger.kernel.org
 
 
------ "Tejun Heo" <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
+----- caiqian-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org wrote:
 
-> Hello,
+> ----- "Tejun Heo" <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
 > 
-> On 08/29/2010 01:24 PM, CAI Qian wrote:
-> >> On 08/29/2010 09:01 AM, caiqian-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org wrote:
-> >>> Further bisect indicated this bad commit from the merge. Given kdump
-> >>> kernel was running with maxcpus=1, I guess this work caused
-> fs/bio.c
-> >>> hung in the workqueue on UP. Reverted the whole merge let kdump
-> work
-> >>> again.
-> >>
-> >> Can you please pull from the following git tree and see whether it
-> >> fixes the problem?  There was a bug in nr_active accounting.
+> > Hello,
 > >
-> > It had the same problem.
+> > On 08/29/2010 01:24 PM, CAI Qian wrote:
+> > >> On 08/29/2010 09:01 AM, caiqian-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org wrote:
+> > >>> Further bisect indicated this bad commit from the merge. Given
+> kdump
+> > >>> kernel was running with maxcpus=1, I guess this work caused
+> > fs/bio.c
+> > >>> hung in the workqueue on UP. Reverted the whole merge let kdump
+> > work
+> > >>> again.
+> > >>
+> > >> Can you please pull from the following git tree and see whether
+> it
+> > >> fixes the problem?  There was a bug in nr_active accounting.
+> > >
+> > > It had the same problem.
+> >
+> > I see.  Hmm... a different issue then.  Can you please tell me how
+> to
+> > reproduce the problem?
+It is easy to reproduce by passing maxcpus=1 to the first kernel.
+> First, to configure kdump - see Documentation/kdump/kdump.txt. It
+> might be easier if you are using a distro that provide advanced kdump
+> tools. Then, to trigger the kdump - echo c >/proc/sysrq-trigger. In
+> case needed, here is the system information,
+> # lscpu
+> Architecture:          x86_64
+> CPU op-mode(s):        32-bit, 64-bit
+> CPU(s):                64
+> Thread(s) per core:    2
+> Core(s) per socket:    8
+> CPU socket(s):         4
+> NUMA node(s):          4
+> Vendor ID:             GenuineIntel
+> CPU family:            6
+> Model:                 46
+> Stepping:              6
+> CPU MHz:               1064.000
+> Virtualization:        VT-x
+> L1d cache:             32K
+> L1i cache:             32K
+> L2 cache:              256K
+> L3 cache:              18432K
+> NUMA node0 CPU(s):     0,4,8,12,16,20,24,28,32,36,40,44,48,52,56,60
+> NUMA node1 CPU(s):     1,5,9,13,17,21,25,29,33,37,41,45,49,53,57,61
+> NUMA node2 CPU(s):     2,6,10,14,18,22,26,30,34,38,42,46,50,54,58,62
+> NUMA node3 CPU(s):     3,7,11,15,19,23,27,31,35,39,43,47,51,55,59,63
 > 
-> I see.  Hmm... a different issue then.  Can you please tell me how to
-> reproduce the problem?
-First, to configure kdump - see Documentation/kdump/kdump.txt. It might be easier if you are using a distro that provide advanced kdump tools. Then, to trigger the kdump - echo c >/proc/sysrq-trigger. In case needed, here is the system information,
-# lscpu
-Architecture:          x86_64
-CPU op-mode(s):        32-bit, 64-bit
-CPU(s):                64
-Thread(s) per core:    2
-Core(s) per socket:    8
-CPU socket(s):         4
-NUMA node(s):          4
-Vendor ID:             GenuineIntel
-CPU family:            6
-Model:                 46
-Stepping:              6
-CPU MHz:               1064.000
-Virtualization:        VT-x
-L1d cache:             32K
-L1i cache:             32K
-L2 cache:              256K
-L3 cache:              18432K
-NUMA node0 CPU(s):     0,4,8,12,16,20,24,28,32,36,40,44,48,52,56,60
-NUMA node1 CPU(s):     1,5,9,13,17,21,25,29,33,37,41,45,49,53,57,61
-NUMA node2 CPU(s):     2,6,10,14,18,22,26,30,34,38,42,46,50,54,58,62
-NUMA node3 CPU(s):     3,7,11,15,19,23,27,31,35,39,43,47,51,55,59,63
-
-> Thanks.
-> 
-> -- 
-> tejun
-> 
-> _______________________________________________
-> kexec mailing list
-> kexec-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-> http://lists.infradead.org/mailman/listinfo/kexec
+> > Thanks.
+> >
+> > --
+> > tejun
+> >
+> > _______________________________________________
+> > kexec mailing list
+> > kexec-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> > http://lists.infradead.org/mailman/listinfo/kexec
