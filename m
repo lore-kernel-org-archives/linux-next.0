@@ -1,48 +1,104 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the final tree (net
- tree related)
-Date: Sun, 29 Aug 2010 21:23:11 -0700 (PDT)
-Message-ID: <20100829.212311.35029746.davem@davemloft.net>
-References: <20100830130453.d810b086.sfr@canb.auug.org.au>
-	<20100830032935.GA18072@verge.net.au>
+From: Zhang Rui <rui.zhang@intel.com>
+Subject: Re: linux-next: build warnings in Linus' tree
+Date: Mon, 30 Aug 2010 14:08:02 +0800
+Message-ID: <1283148482.3707.167.camel@rui>
+References: <20100817112439.18f9d958.sfr@canb.auug.org.au>
+	 <20100830114222.3a1f53e6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20100830032935.GA18072@verge.net.au>
-Sender: netdev-owner@vger.kernel.org
-To: horms@verge.net.au
-Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga09.intel.com ([134.134.136.24]:24141 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750760Ab0H3GEs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 30 Aug 2010 02:04:48 -0400
+In-Reply-To: <20100830114222.3a1f53e6.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Len Brown <lenb@kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Simon Horman <horms@verge.net.au>
-Date: Mon, 30 Aug 2010 12:29:39 +0900
-
-> On Mon, Aug 30, 2010 at 01:04:53PM +1000, Stephen Rothwell wrote:
->> Hi all,
->> 
->> After merging the final tree, today's linux-next build (powerpc
->> allyesconfig) failed like this:
->> 
->> net/netfilter/ipvs/ip_vs_core.c: In function 'ip_vs_nat_icmp_v6':
->> net/netfilter/ipvs/ip_vs_core.c:640: error: implicit declaration of function 'csum_ipv6_magic'
->> 
->> Caused by commit 8870f8427b8fe30b2684b9e569e5ce038faf41ac ("IPVS: ICMPv6
->> checksum calculation").  I added the following patch:
->> [I think we have seen this before :-(]
->> 
->> From: Stephen Rothwell <sfr@canb.auug.org.au>
->> Date: Mon, 30 Aug 2010 13:01:20 +1000
->> Subject: [PATCH] IPVS: include net/ip6_checksum.h for csum_ipv6_magic
->> 
->> Fixes this build error:
->> 
->> net/netfilter/ipvs/ip_vs_core.c: In function 'ip_vs_nat_icmp_v6':
->> net/netfilter/ipvs/ip_vs_core.c:640: error: implicit declaration of function 'csum_ipv6_magic'
+On Mon, 2010-08-30 at 09:42 +0800, Stephen Rothwell wrote:
+> Hi Len,
 > 
-> Sorry about that, I didn't notice it because it doesn't show up on x86.
+> On Tue, 17 Aug 2010 11:24:39 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Today's linux-next build (x86_64 allmodconfig) produced these warnings:
+> > 
+> > drivers/acpi/sysfs.c:152: warning: passing argument 1 of '__check_old_set_param' from incompatible pointer type
+> > include/linux/moduleparam.h:165: note: expected 'int (*)(const char *, struct kernel_param *)' but argument is of type 'int (*)(const char *, const struct kernel_param *)'
+> > drivers/acpi/sysfs.c:152: warning: passing argument 1 of '__check_old_set_param' from incompatible pointer type
+> > include/linux/moduleparam.h:165: note: expected 'int (*)(const char *, struct kernel_param *)' but argument is of type 'int (*)(const char *, const struct kernel_param *)'
+> > drivers/acpi/sysfs.c:152: warning: passing argument 1 of '__check_old_set_param' from incompatible pointer type
+> > include/linux/moduleparam.h:165: note: expected 'int (*)(const char *, struct kernel_param *)' but argument is of type 'int (*)(const char *, const struct kernel_param *)'
+> > drivers/acpi/sysfs.c:152: warning: passing argument 1 of '__check_old_set_param' from incompatible pointer type
+> > include/linux/moduleparam.h:165: note: expected 'int (*)(const char *, struct kernel_param *)' but argument is of type 'int (*)(const char *, const struct kernel_param *)'
+> > drivers/acpi/sysfs.c:154: warning: passing argument 1 of '__check_old_set_param' from incompatible pointer type
+> > include/linux/moduleparam.h:165: note: expected 'int (*)(const char *, struct kernel_param *)' but argument is of type 'int (*)(const char *, const struct kernel_param *)'
+> > drivers/acpi/sysfs.c:154: warning: passing argument 1 of '__check_old_set_param' from incompatible pointer type
+> > include/linux/moduleparam.h:165: note: expected 'int (*)(const char *, struct kernel_param *)' but argument is of type 'int (*)(const char *, const struct kernel_param *)'
+> > drivers/acpi/sysfs.c:154: warning: passing argument 1 of '__check_old_set_param' from incompatible pointer type
+> > include/linux/moduleparam.h:165: note: expected 'int (*)(const char *, struct kernel_param *)' but argument is of type 'int (*)(const char *, const struct kernel_param *)'
+> > drivers/acpi/sysfs.c:154: warning: passing argument 1 of '__check_old_set_param' from incompatible pointer type
+> > include/linux/moduleparam.h:165: note: expected 'int (*)(const char *, struct kernel_param *)' but argument is of type 'int (*)(const char *, const struct kernel_param *)'
+> > 
+> > Introduced by commit 1c8fce27e275fd7c6b75bc6455745f02d3903ee6 ("ACPI:
+> > introduce drivers/acpi/sysfs.c") interacting with commit
+> > 9bbb9e5a33109b2832e2e63dcc7a132924ab374b ("param: use ops in struct
+> > kernel_param, rather than get and set fns directly").
 > 
->> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Simon Horman <horms@verge.net.au>
+> Can we have this fixed, please?
+patch attached. :)
 
-Applied thanks everyone.
+Use module_param_cb instead of the obsoleted module_param_call to fix a build warning.
+
+Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+---
+ drivers/acpi/sysfs.c |   20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
+
+Index: linux-2.6/drivers/acpi/sysfs.c
+===================================================================
+--- linux-2.6.orig/drivers/acpi/sysfs.c
++++ linux-2.6/drivers/acpi/sysfs.c
+@@ -100,7 +100,7 @@ static const struct acpi_dlevel acpi_deb
+ 	ACPI_DEBUG_INIT(ACPI_LV_EVENTS),
+ };
+ 
+-static int param_get_debug_layer(char *buffer, struct kernel_param *kp)
++static int param_get_debug_layer(char *buffer, const struct kernel_param *kp)
+ {
+ 	int result = 0;
+ 	int i;
+@@ -128,7 +128,7 @@ static int param_get_debug_layer(char *b
+ 	return result;
+ }
+ 
+-static int param_get_debug_level(char *buffer, struct kernel_param *kp)
++static int param_get_debug_level(char *buffer, const struct kernel_param *kp)
+ {
+ 	int result = 0;
+ 	int i;
+@@ -149,10 +149,18 @@ static int param_get_debug_level(char *b
+ 	return result;
+ }
+ 
+-module_param_call(debug_layer, param_set_uint, param_get_debug_layer,
+-		  &acpi_dbg_layer, 0644);
+-module_param_call(debug_level, param_set_uint, param_get_debug_level,
+-		  &acpi_dbg_level, 0644);
++static struct kernel_param_ops param_ops_debug_layer = {
++	.set = param_set_uint,
++	.get = param_get_debug_layer,
++};
++
++static struct kernel_param_ops param_ops_debug_level = {
++	.set = param_set_uint,
++	.get = param_get_debug_level,
++};
++
++module_param_cb(debug_layer, &param_ops_debug_layer, &acpi_dbg_layer, 0644);
++module_param_cb(debug_level, &param_ops_debug_level, &acpi_dbg_level, 0644);
+ 
+ static char trace_method_name[6];
+ module_param_string(trace_method_name, trace_method_name, 6, 0644);
