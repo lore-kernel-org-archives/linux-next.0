@@ -1,44 +1,68 @@
-From: Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: kdump regression compared to v2.6.35
-Date: Sun, 29 Aug 2010 14:36:37 +0200
-Message-ID: <4C7A5455.7060905@kernel.org>
-References: <779893521.1479771283083393771.JavaMail.root@zmail06.collab.prod.int.phx2.redhat.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the kvm tree
+Date: Mon, 30 Aug 2010 11:35:23 +1000
+Message-ID: <20100830113523.28e6fa9e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <kexec-bounces+glkk-kexec=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <779893521.1479771283083393771.JavaMail.root-k5qu2F3t005+R5eDjrG6zsCp5Q1pQRjfhaY/URYTgi6ny3qCrzbmXA@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/kexec>,
-	<mailto:kexec-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/kexec/>
-List-Post: <mailto:kexec-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:kexec-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/kexec>,
-	<mailto:kexec-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: kexec-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Errors-To: kexec-bounces+glkk-kexec=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: CAI Qian <caiqian-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kexec <kexec-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__30_Aug_2010_11_35_23_+1000_k2AbCgCp80YfFQO2"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:51407 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754170Ab0H3Bfd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 29 Aug 2010 21:35:33 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Avi Kivity <avi@qumranet.com>, Marcelo Tosatti <mtosatti@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Graf <agraf@suse.de>
 
-Hello,
+--Signature=_Mon__30_Aug_2010_11_35_23_+1000_k2AbCgCp80YfFQO2
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 08/29/2010 02:03 PM, CAI Qian wrote:
-> 
-> ----- "Tejun Heo" <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
-> 
->> On 08/29/2010 01:56 PM, CAI Qian wrote:
->>> It is easy to reproduce by passing maxcpus=1 to the first kernel.
->>
->> Do you mean booting w/ maxcpus=1 hangs the first kernel even w/o
->> kdump?
-> Yes, here was the log,
+Hi all,
 
-Hmmm... I can't reproduce it here.  I wonder what the difference is.
-Can you please trigger sysrq-t after the boot is hung and post the
-result?
+After merging the kvm tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Thanks.
+arch/powerpc/kernel/asm-offsets.c: In function 'main':
+arch/powerpc/kernel/asm-offsets.c:470: error: invalid use of undefined type=
+ 'struct kvm_vcpu_arch_shared'
+arch/powerpc/kernel/asm-offsets.c:472: error: invalid use of undefined type=
+ 'struct kvm_vcpu_arch_shared'
+arch/powerpc/kernel/asm-offsets.c:474: error: invalid use of undefined type=
+ 'struct kvm_vcpu_arch_shared'
+arch/powerpc/kernel/asm-offsets.c:476: error: invalid use of undefined type=
+ 'struct kvm_vcpu_arch_shared'
+arch/powerpc/kernel/asm-offsets.c:478: error: invalid use of undefined type=
+ 'struct kvm_vcpu_arch_shared'
+arch/powerpc/kernel/asm-offsets.c:479: error: invalid use of undefined type=
+ 'struct kvm_vcpu_arch_shared'
 
--- 
-tejun
+Caused by commits 3623fdb1aa54678f73da95e797eb6e4756d4bd0e ("KVM: PPC:
+Convert MSR to shared page") and 158a244474a6620715c626d4647fec4d61aaeee7
+("KVM: PPC: Generic KVM PV guest support").
+
+I have used the kvm tree from next-20100827 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__30_Aug_2010_11_35_23_+1000_k2AbCgCp80YfFQO2
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMewrbAAoJEDMEi1NhKgbsj8MH/2n7ax5uDVbQIVHpYuY8093/
+3b9b9FVmonpIs+jGH+C8BR/8zkmLeksZdFWrxevf+4N+JagfBfHviBvZtP6XriRm
+xNeSeT39pv/ZNZlM3FVy9ZhzwG528/148muoKdOVl6nqhsYC3deGSlpjgOVm8ziv
+QJ18lx4SSFUaQIJ/Q5LA0X3VdeRPsp+96Pi3FB6bIkYNlh3BYilkERgQK0kcA3mg
+HVYXf4l3PZIFIeorZPONEflIXOQUQVLcFRHXX2cMLZX/eoNaKfHMCGfrGNChQ0yd
+OvRDHhsjqHo01bnXb6g0w7tx1JgQPM0fk9kfws+3yM/8MjNFDT/T3EUc7ucHfdI=
+=Osus
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__30_Aug_2010_11_35_23_+1000_k2AbCgCp80YfFQO2--
