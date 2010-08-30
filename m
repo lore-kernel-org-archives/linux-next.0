@@ -1,100 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warnings in Linus' tree
-Date: Mon, 30 Aug 2010 11:42:22 +1000
-Message-ID: <20100830114222.3a1f53e6.sfr@canb.auug.org.au>
-References: <20100817112439.18f9d958.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the wireless tree with the
+ wireless-current tree
+Date: Mon, 30 Aug 2010 11:58:50 +1000
+Message-ID: <20100830115850.81829b70.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__30_Aug_2010_11_42_22_+1000_bg+xvqMihjQNRumZ"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53446 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:52881 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754352Ab0H3Bm3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 29 Aug 2010 21:42:29 -0400
-In-Reply-To: <20100817112439.18f9d958.sfr@canb.auug.org.au>
+	id S1754090Ab0H3B6x (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 29 Aug 2010 21:58:53 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Len Brown <lenb@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christian Lamparter <chunkeey@googlemail.com>, Johannes Berg <johannes.berg@intel.com>
 
---Signature=_Mon__30_Aug_2010_11_42_22_+1000_bg+xvqMihjQNRumZ
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi John,
 
-Hi Len,
+Today's linux-next merge of the wireless tree got a conflict in
+net/mac80211/main.c between commit
+95fed448c6d7dac3fb36847cda7094f3524a6cb7 ("mac80211: delete work timer")
+from the wireless-current tree and commit
+258086a48b766d12a500f98834654ffa927ca475 ("mac80211: cancel restart_work
+in ieee80211_unregister_hw") from the wireless tree.
 
-On Tue, 17 Aug 2010 11:24:39 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Today's linux-next build (x86_64 allmodconfig) produced these warnings:
->=20
-> drivers/acpi/sysfs.c:152: warning: passing argument 1 of '__check_old_set=
-_param' from incompatible pointer type
-> include/linux/moduleparam.h:165: note: expected 'int (*)(const char *, st=
-ruct kernel_param *)' but argument is of type 'int (*)(const char *, const =
-struct kernel_param *)'
-> drivers/acpi/sysfs.c:152: warning: passing argument 1 of '__check_old_set=
-_param' from incompatible pointer type
-> include/linux/moduleparam.h:165: note: expected 'int (*)(const char *, st=
-ruct kernel_param *)' but argument is of type 'int (*)(const char *, const =
-struct kernel_param *)'
-> drivers/acpi/sysfs.c:152: warning: passing argument 1 of '__check_old_set=
-_param' from incompatible pointer type
-> include/linux/moduleparam.h:165: note: expected 'int (*)(const char *, st=
-ruct kernel_param *)' but argument is of type 'int (*)(const char *, const =
-struct kernel_param *)'
-> drivers/acpi/sysfs.c:152: warning: passing argument 1 of '__check_old_set=
-_param' from incompatible pointer type
-> include/linux/moduleparam.h:165: note: expected 'int (*)(const char *, st=
-ruct kernel_param *)' but argument is of type 'int (*)(const char *, const =
-struct kernel_param *)'
-> drivers/acpi/sysfs.c:154: warning: passing argument 1 of '__check_old_set=
-_param' from incompatible pointer type
-> include/linux/moduleparam.h:165: note: expected 'int (*)(const char *, st=
-ruct kernel_param *)' but argument is of type 'int (*)(const char *, const =
-struct kernel_param *)'
-> drivers/acpi/sysfs.c:154: warning: passing argument 1 of '__check_old_set=
-_param' from incompatible pointer type
-> include/linux/moduleparam.h:165: note: expected 'int (*)(const char *, st=
-ruct kernel_param *)' but argument is of type 'int (*)(const char *, const =
-struct kernel_param *)'
-> drivers/acpi/sysfs.c:154: warning: passing argument 1 of '__check_old_set=
-_param' from incompatible pointer type
-> include/linux/moduleparam.h:165: note: expected 'int (*)(const char *, st=
-ruct kernel_param *)' but argument is of type 'int (*)(const char *, const =
-struct kernel_param *)'
-> drivers/acpi/sysfs.c:154: warning: passing argument 1 of '__check_old_set=
-_param' from incompatible pointer type
-> include/linux/moduleparam.h:165: note: expected 'int (*)(const char *, st=
-ruct kernel_param *)' but argument is of type 'int (*)(const char *, const =
-struct kernel_param *)'
->=20
-> Introduced by commit 1c8fce27e275fd7c6b75bc6455745f02d3903ee6 ("ACPI:
-> introduce drivers/acpi/sysfs.c") interacting with commit
-> 9bbb9e5a33109b2832e2e63dcc7a132924ab374b ("param: use ops in struct
-> kernel_param, rather than get and set fns directly").
-
-Can we have this fixed, please?
---=20
+Just overlapping additions.  I fixed it up (see below) and can carry the
+fix for a while.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__30_Aug_2010_11_42_22_+1000_bg+xvqMihjQNRumZ
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMewx+AAoJEDMEi1NhKgbs9EIH/0WxZDbk/LYWggbKb4ZlKttN
-WhgSorr+E1hfkJqs92nKb09aGArvgjHPnwHKPBmy0QQ8uBbctrWcuBnf1XiPFfFc
-FPS9eA7ADP/SIn7Hu9viAKj8Ut6+5iPc5vdxMUWQLgwbGZaOkg66YWRAja1UjudN
-KcTtu5ic7k/O/cKrB8A7Q9JqG4wHcRGM9rvQx9MYt3CNcgG3E5GXy/CwRc1B2QeG
-JBwzKQf2fT/QlSgP6+PVC0BxzGSUGmmQ5wFA3FwHLYg0bLK+PNF6lwEvhFBgSffg
-KAIDxae0BP+KJT0V6Dy+tgHuqp8HUBY1ZFvl7pC4uw+oOEivB8YvUIt77SInjwU=
-=OMZ8
------END PGP SIGNATURE-----
-
---Signature=_Mon__30_Aug_2010_11_42_22_+1000_bg+xvqMihjQNRumZ--
+diff --cc net/mac80211/main.c
+index ea433b6,93194f6..0000000
+--- a/net/mac80211/main.c
++++ b/net/mac80211/main.c
+@@@ -807,12 -844,7 +844,13 @@@ void ieee80211_unregister_hw(struct iee
+  
+  	rtnl_unlock();
+  
+ +	/*
+ +	 * Now all work items will be gone, but the
+ +	 * timer might still be armed, so delete it
+ +	 */
+ +	del_timer_sync(&local->work_timer);
+ +
++ 	cancel_work_sync(&local->restart_work);
+  	cancel_work_sync(&local->reconfig_filter);
+  
+  	ieee80211_clear_tx_pending(local);
