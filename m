@@ -1,76 +1,44 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: linux-next: build failure after merge of the final tree (net
- tree related)
-Date: Mon, 30 Aug 2010 12:29:39 +0900
-Message-ID: <20100830032935.GA18072@verge.net.au>
-References: <20100830130453.d810b086.sfr@canb.auug.org.au>
+From: CAI Qian <caiqian@redhat.com>
+Subject: Re: kdump regression compared to v2.6.35
+Date: Sun, 29 Aug 2010 23:42:53 -0400 (EDT)
+Message-ID: <1888320510.1487031283139773505.JavaMail.root@zmail06.collab.prod.int.phx2.redhat.com>
+References: <4C7A5455.7060905@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:49319 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754616Ab0H3D3p (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 29 Aug 2010 23:29:45 -0400
-Content-Disposition: inline
-In-Reply-To: <20100830130453.d810b086.sfr@canb.auug.org.au>
+Received: from mx4-phx2.redhat.com ([209.132.183.25]:41994 "EHLO
+	mx02.colomx.prod.int.phx2.redhat.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1754616Ab0H3DnP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Sun, 29 Aug 2010 23:43:15 -0400
+In-Reply-To: <4C7A5455.7060905@kernel.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>
+Cc: kexec <kexec@lists.infradead.org>, linux-next@vger.kernel.org, torvalds@linux-foundation.org, linux-kernel <linux-kernel@vger.kernel.org>
 
-On Mon, Aug 30, 2010 at 01:04:53PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the final tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
-> 
-> net/netfilter/ipvs/ip_vs_core.c: In function 'ip_vs_nat_icmp_v6':
-> net/netfilter/ipvs/ip_vs_core.c:640: error: implicit declaration of function 'csum_ipv6_magic'
-> 
-> Caused by commit 8870f8427b8fe30b2684b9e569e5ce038faf41ac ("IPVS: ICMPv6
-> checksum calculation").  I added the following patch:
-> [I think we have seen this before :-(]
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 30 Aug 2010 13:01:20 +1000
-> Subject: [PATCH] IPVS: include net/ip6_checksum.h for csum_ipv6_magic
-> 
-> Fixes this build error:
-> 
-> net/netfilter/ipvs/ip_vs_core.c: In function 'ip_vs_nat_icmp_v6':
-> net/netfilter/ipvs/ip_vs_core.c:640: error: implicit declaration of function 'csum_ipv6_magic'
 
-Sorry about that, I didn't notice it because it doesn't show up on x86.
+----- "Tejun Heo" <tj@kernel.org> wrote:
 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Simon Horman <horms@verge.net.au>
-
-> ---
->  net/netfilter/ipvs/ip_vs_core.c |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
+> Hello,
 > 
-> diff --git a/net/netfilter/ipvs/ip_vs_core.c b/net/netfilter/ipvs/ip_vs_core.c
-> index 69661db..edbfb96 100644
-> --- a/net/netfilter/ipvs/ip_vs_core.c
-> +++ b/net/netfilter/ipvs/ip_vs_core.c
-> @@ -40,6 +40,7 @@
->  #include <net/udp.h>
->  #include <net/icmp.h>                   /* for icmp_send */
->  #include <net/route.h>
-> +#include <net/ip6_checksum.h>
->  
->  #include <linux/netfilter.h>
->  #include <linux/netfilter_ipv4.h>
-> -- 
-> 1.7.1
+> On 08/29/2010 02:03 PM, CAI Qian wrote:
+> > 
+> > ----- "Tejun Heo" <tj@kernel.org> wrote:
+> > 
+> >> On 08/29/2010 01:56 PM, CAI Qian wrote:
+> >>> It is easy to reproduce by passing maxcpus=1 to the first kernel.
+> >>
+> >> Do you mean booting w/ maxcpus=1 hangs the first kernel even w/o
+> >> kdump?
+> > Yes, here was the log,
 > 
+> Hmmm... I can't reproduce it here.  I wonder what the difference is.
+> Can you please trigger sysrq-t after the boot is hung and post the
+> result?
+Sysrq keys did not work at this early stage of booting for me even adding sysrq_always_enabled.
+> Thanks.
 > 
 > -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+> tejun
