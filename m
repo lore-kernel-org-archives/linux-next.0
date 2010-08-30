@@ -1,67 +1,96 @@
-From: Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+From: CAI Qian <caiqian@redhat.com>
 Subject: Re: kdump regression compared to v2.6.35
-Date: Mon, 30 Aug 2010 16:21:02 +0200
-Message-ID: <4C7BBE4E.8080901@kernel.org>
-References: <1141332926.1524871283176937097.JavaMail.root@zmail06.collab.prod.int.phx2.redhat.com>
+Date: Mon, 30 Aug 2010 10:47:26 -0400 (EDT)
+Message-ID: <331762715.1536681283179646594.JavaMail.root@zmail06.collab.prod.int.phx2.redhat.com>
+References: <4C7BBE4E.8080901@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <kexec-bounces+glkk-kexec=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1141332926.1524871283176937097.JavaMail.root-k5qu2F3t005+R5eDjrG6zsCp5Q1pQRjfhaY/URYTgi6ny3qCrzbmXA@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/kexec>,
-	<mailto:kexec-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/kexec/>
-List-Post: <mailto:kexec-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:kexec-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/kexec>,
-	<mailto:kexec-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: kexec-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Errors-To: kexec-bounces+glkk-kexec=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: CAI Qian <caiqian-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kexec <kexec-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx4-phx2.redhat.com ([209.132.183.25]:41951 "EHLO
+	mx02.colomx.prod.int.phx2.redhat.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1754556Ab0H3Orl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 30 Aug 2010 10:47:41 -0400
+In-Reply-To: <4C7BBE4E.8080901@kernel.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: torvalds@linux-foundation.org, linux-next@vger.kernel.org, kexec <kexec@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>
 
-Hello,
 
-On 08/30/2010 04:02 PM, CAI Qian wrote:
->> Hmm, odd.  So, here's the said debug patch.  It will periodically
->> check all works and report if any work is being delayed for too long.
->> If the max wait goes over 30secs, it will dump all task states and
->> disable itself.  Can you please apply the patch on top of rc2 +
->> wq#for-linus and report the output?  It should tell us who's stuck
->> where.
->
-> Nothing new was printed after around 10 minutes.
+----- "Tejun Heo" <tj@kernel.org> wrote:
 
-Eh... that's interesting.  That means no work is stalled on
-workqueues, so it at least is not a workqueue stall.  Can you please
-try the following then?  Or if sysrq wasn't working because your
-keyboard wasn't initialized at that point, you can setup serial
-console and trigger sysrq that way.
+> Hello,
+> 
+> On 08/30/2010 04:02 PM, CAI Qian wrote:
+> >> Hmm, odd.  So, here's the said debug patch.  It will periodically
+> >> check all works and report if any work is being delayed for too
+> long.
+> >> If the max wait goes over 30secs, it will dump all task states and
+> >> disable itself.  Can you please apply the patch on top of rc2 +
+> >> wq#for-linus and report the output?  It should tell us who's stuck
+> >> where.
+> >
+> > Nothing new was printed after around 10 minutes.
+> 
+> Eh... that's interesting.  That means no work is stalled on
+> workqueues, so it at least is not a workqueue stall.  Can you please
+> try the following then?  Or if sysrq wasn't working because your
+...
+SMP alternatives: switching to UP code
+ACPI: Core revision 20100702
+ftrace: converting mcount calls to 0f 1f 44 00 00
+ftrace: allocating 18488 entries in 73 pages
+XXX show_state_timer registered
+Not enabling x2apic, Intr-remapping init failed.
+Setting APIC routing to physical flat
+..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
+CPU0: Intel(R) Xeon(R) CPU           X7550  @ 2.00GHz stepping 06
+Brought up 1 CPUs
+Total of 1 processors activated (3990.10 BogoMIPS).
+devtmpfs: initialized
+regulator: core version 0.5
+NET: Registered protocol family 16
+ACPI FADT declares the system doesn't support PCIe ASPM, so disable it
+ACPI: bus type pci registered
+PCI: MMCONFIG for domain 0000 [bus 00-ff] at [mem 0x80000000-0x8fffffff] (base 0x80000000)
+PCI: MMCONFIG at [mem 0x80000000-0x8fffffff] reserved in E820
+PCI: Using configuration type 1 for base access
+bio: create slab <bio-0> at 0
 
-Thanks.
-
-diff --git a/init/main.c b/init/main.c
-index 94ab488..e156b8f 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -423,11 +423,19 @@ static void __init setup_command_line(char *command_line)
-
- static __initdata DECLARE_COMPLETION(kthreadd_done);
-
-+static void show_state_timer_fn(unsigned long data)
-+{
-+	show_state();
-+}
-+static DEFINE_TIMER(show_state_timer, show_state_timer_fn, 0, 0);
-+
- static noinline void __init_refok rest_init(void)
- 	__releases(kernel_lock)
- {
- 	int pid;
-
-+	printk("XXX show_state_timer registered\n");
-+	mod_timer(&show_state_timer, jiffies + 180 * HZ);
- 	rcu_scheduler_starting();
- 	/*
- 	 * We need to spawn init first so that it obtains pid 1, however
+> keyboard wasn't initialized at that point, you can setup serial
+> console and trigger sysrq that way.
+Yes, it was triggered from a serial console.
+> Thanks.
+> 
+> diff --git a/init/main.c b/init/main.c
+> index 94ab488..e156b8f 100644
+> --- a/init/main.c
+> +++ b/init/main.c
+> @@ -423,11 +423,19 @@ static void __init setup_command_line(char
+> *command_line)
+> 
+>  static __initdata DECLARE_COMPLETION(kthreadd_done);
+> 
+> +static void show_state_timer_fn(unsigned long data)
+> +{
+> +	show_state();
+> +}
+> +static DEFINE_TIMER(show_state_timer, show_state_timer_fn, 0, 0);
+> +
+>  static noinline void __init_refok rest_init(void)
+>  	__releases(kernel_lock)
+>  {
+>  	int pid;
+> 
+> +	printk("XXX show_state_timer registered\n");
+> +	mod_timer(&show_state_timer, jiffies + 180 * HZ);
+>  	rcu_scheduler_starting();
+>  	/*
+>  	 * We need to spawn init first so that it obtains pid 1, however
+> 
+> _______________________________________________
+> kexec mailing list
+> kexec@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/kexec
