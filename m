@@ -1,70 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the drivers-x86 tree
-Date: Mon, 30 Aug 2010 12:51:19 +1000
-Message-ID: <20100830125119.b6a6cb22.sfr@canb.auug.org.au>
-References: <20100827115950.dd942b90.sfr@canb.auug.org.au>
-	<20100827025148.GA25469@srcf.ucam.org>
-	<20100827074048.GB9120@core.coreip.homeip.net>
+Subject: linux-next: build failure after merge of the final tree (net tree
+ related)
+Date: Mon, 30 Aug 2010 13:04:53 +1000
+Message-ID: <20100830130453.d810b086.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49738 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754015Ab0H3CvZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 29 Aug 2010 22:51:25 -0400
-In-Reply-To: <20100827074048.GB9120@core.coreip.homeip.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Matthew Garrett <mjg59@srcf.ucam.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>
+List-Id: linux-next.vger.kernel.org
 
 Hi all,
 
-On Fri, 27 Aug 2010 00:40:48 -0700 Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
->
-> On Fri, Aug 27, 2010 at 03:51:48AM +0100, Matthew Garrett wrote:
-> > On Fri, Aug 27, 2010 at 11:59:50AM +1000, Stephen Rothwell wrote:
-> > 
-> > > After merging the drivers-x86 tree, today's linux-next build (powerpc
-> > > ppc64_defconfig and x86_64 allmodconfig) produced this warning:
-> > 
-> > Oh Lordy. I should stop merging anything that contains "select". I'll 
-> > take a look at this tomorrow, but I'm about to head away for a week - if 
-> > anyone has a fix, feel free to find a way to get it merged.
-> > 
-> > (Dmitry, there was a Kconfig issue when I merged your patch, so it's 
-> > entirely plausible that you're a completely innocent bystander here)
-> 
-> Yeah, I think I am innocent here. My patch was adding "select
-> INPUT_SPARCEKMAP" which is a library module and which I ensure to be
-> selectable as long as INPUT is enabled. I do not want to switch it
-> around into "depends on" since it is implementation detail and user
-> should not care.
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-I applied this patch for today ...
+net/netfilter/ipvs/ip_vs_core.c: In function 'ip_vs_nat_icmp_v6':
+net/netfilter/ipvs/ip_vs_core.c:640: error: implicit declaration of function 'csum_ipv6_magic'
+
+Caused by commit 8870f8427b8fe30b2684b9e569e5ce038faf41ac ("IPVS: ICMPv6
+checksum calculation").  I added the following patch:
+[I think we have seen this before :-(]
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 30 Aug 2010 12:47:51 +1000
-Subject: [PATCH] Fix Kconfig mistaken update
+Date: Mon, 30 Aug 2010 13:01:20 +1000
+Subject: [PATCH] IPVS: include net/ip6_checksum.h for csum_ipv6_magic
+
+Fixes this build error:
+
+net/netfilter/ipvs/ip_vs_core.c: In function 'ip_vs_nat_icmp_v6':
+net/netfilter/ipvs/ip_vs_core.c:640: error: implicit declaration of function 'csum_ipv6_magic'
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- drivers/platform/x86/Kconfig |    1 -
- 1 files changed, 0 insertions(+), 1 deletions(-)
+ net/netfilter/ipvs/ip_vs_core.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index b96db80..55579f1 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -497,7 +497,6 @@ config ACPI_TOSHIBA
- 	depends on RFKILL || RFKILL = n
- 	select INPUT_POLLDEV
- 	select INPUT_SPARSEKMAP
--	select BACKLIGHT_CLASS_DEVICE
- 	---help---
- 	  This driver adds support for access to certain system settings
- 	  on "legacy free" Toshiba laptops.  These laptops can be recognized by
+diff --git a/net/netfilter/ipvs/ip_vs_core.c b/net/netfilter/ipvs/ip_vs_core.c
+index 69661db..edbfb96 100644
+--- a/net/netfilter/ipvs/ip_vs_core.c
++++ b/net/netfilter/ipvs/ip_vs_core.c
+@@ -40,6 +40,7 @@
+ #include <net/udp.h>
+ #include <net/icmp.h>                   /* for icmp_send */
+ #include <net/route.h>
++#include <net/ip6_checksum.h>
+ 
+ #include <linux/netfilter.h>
+ #include <linux/netfilter_ipv4.h>
 -- 
 1.7.1
 
