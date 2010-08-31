@@ -1,70 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings after merge of the net tree
-Date: Tue, 31 Aug 2010 11:55:08 +1000
-Message-ID: <20100831115508.078eb2fa.sfr@canb.auug.org.au>
+Subject: Re: linux-next: build warning after merge of the net tree
+Date: Tue, 31 Aug 2010 12:57:38 +1000
+Message-ID: <20100831125738.7f18610b.sfr@canb.auug.org.au>
+References: <20100706142542.d723903f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__31_Aug_2010_11_55_08_+1000_a2BO.BmthvtArIjo"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:39273 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756544Ab0HaBzQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 30 Aug 2010 21:55:16 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+ boundary="Signature=_Tue__31_Aug_2010_12_57_38_+1000_VFySImY6pPgQK0F3"
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20100706142542.d723903f.sfr@canb.auug.org.au>
+Sender: netdev-owner@vger.kernel.org
 To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Giuseppe CAVALLARO <peppe.cavallaro@st.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Greg Kroah-Hartman <gregkh@suse.de>, James Bottomley <James.Bottomley@suse.de>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__31_Aug_2010_11_55_08_+1000_a2BO.BmthvtArIjo
+--Signature=_Tue__31_Aug_2010_12_57_38_+1000_VFySImY6pPgQK0F3
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the net tree, today's linux-next build (x86_64
-allmodconfig) produced these warnings:
+On Tue, 6 Jul 2010 14:25:42 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> After merging the net tree, today's linux-next build (powerpc
+> ppc64_defconfig) produced these warnings:
+>=20
+> drivers/scsi/sym53c8xx_2/sym_hipd.c: In function 'sym_print_msg':
+> drivers/scsi/sym53c8xx_2/sym_hipd.c:78: warning: zero-length gnu_printf f=
+ormat string
+> drivers/scsi/constants.c: In function 'scsi_print_sense':
+> drivers/scsi/constants.c:1407: warning: zero-length gnu_printf format str=
+ing
+> drivers/scsi/constants.c:1413: warning: zero-length gnu_printf format str=
+ing
+> drivers/scsi/constants.c: In function 'scsi_print_result':
+> drivers/scsi/constants.c:1456: warning: zero-length gnu_printf format str=
+ing
+> drivers/scsi/sd.c: In function 'sd_print_sense_hdr':
+> drivers/scsi/sd.c:2599: warning: zero-length gnu_printf format string
+> drivers/scsi/sd.c:2601: warning: zero-length gnu_printf format string
+> drivers/scsi/sd.c: In function 'sd_print_result':
+> drivers/scsi/sd.c:2607: warning: zero-length gnu_printf format string
+>=20
+> (There may be more ...)
+>=20
+> Introduced by commit 99bcf217183e02ebae46373896fba7f12d588001 ("device.h
+> drivers/base/core.c Convert dev_<level> logging macros to functions").
 
-In file included from drivers/net/stmmac/stmmac_ethtool.c:30:
-drivers/net/stmmac/stmmac.h:111: warning: 'struct platform_device' declared=
- inside parameter list
-drivers/net/stmmac/stmmac.h:111: warning: its scope is only this definition=
- or declaration, which is probably not what you want
-drivers/net/stmmac/stmmac_main.c: In function 'stmmac_dvr_probe':
-drivers/net/stmmac/stmmac_main.c:1744: warning: cast from pointer to intege=
-r of different size
-In file included from drivers/net/stmmac/stmmac_mdio.c:31:
-drivers/net/stmmac/stmmac.h:111: warning: 'struct platform_device' declared=
- inside parameter list
-drivers/net/stmmac/stmmac.h:111: warning: its scope is only this definition=
- or declaration, which is probably not what you want
-drivers/net/stmmac/dwmac1000_core.c: In function 'dwmac1000_dump_regs':
-drivers/net/stmmac/dwmac1000_core.c:56: warning: cast from pointer to integ=
-er of different size
-
-Probably all revealed by commit ac75791aa943c7953521cb4fa7728bf51f9abd2d
-("stmmac: remove dead option in the driver's Kconfig") which allowed this
-driver to be built on most platforms.
-
+Can we have a fix for these please?  They make too much noise in the builds.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__31_Aug_2010_11_55_08_+1000_a2BO.BmthvtArIjo
+--Signature=_Tue__31_Aug_2010_12_57_38_+1000_VFySImY6pPgQK0F3
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMfGD8AAoJEDMEi1NhKgbsOpUIAJNj39RLYV2OWawNup622XVs
-BfG760DbZtMcWQv8f75GbOJEumVAcvqv9UA0DJLA19QaYdfsRbSF2d7c/hfdAmSo
-u9rakcTMtxRfeLqGeSLr1uz4ClSNbf01M0q5n2OYn3+C4Hq+aRGcrfrnJy5dZoDE
-qvWG/1WiMQ96DB2yrXpSlWhGYZxaEuHicbgk0lUvOdqLkoiqYJKBMlY7KzKM/k85
-LKKjTZxtRjq6OxWs993JVmqdwTMwRJr8DFcJmq42rDpAMvDtlka2g1EHb0NRFfQJ
-Bxswp+h+JBn2sq69j/5mWrrJKF0sXhvOf5XZtRY8TKdX6Tvy1FlR4L39lIUIBsQ=
-=O0NB
+iQEcBAEBAgAGBQJMfG+iAAoJEDMEi1NhKgbsztMH/2AQV1CSd2cAYQypxMqZgZ9D
+JAmIw387jJwnn45mWnVhkLUQPlrm0tmGPkefjMpx9yOCegFl3KEmh4CnJkrUlhS3
+BDvep+VM8ufLs4sSdcCLP/Bd+JE8XbiHEvRBV8tyHaEJ1Wj6CfQ3BHjavWZbG/pU
+JGuTbZTjkP1JTYWQolIdzZWoC8Hc+xAHzM6QOl06dpdjTDJwTeWy1oIp75WwLL4t
+g9NCz6gN3X2fCqpfZlT2v40PG3dOCx66sOYCjktpOrPCgH8rQYPXqrUgkQ2C6RH/
+rek6UabL2H7eUJI8cqid3onKFweVTITH+6AQyW1ojZ4/hZPVpk3po0UCB5ZofW4=
+=TydS
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__31_Aug_2010_11_55_08_+1000_a2BO.BmthvtArIjo--
+--Signature=_Tue__31_Aug_2010_12_57_38_+1000_VFySImY6pPgQK0F3--
