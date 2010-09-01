@@ -1,43 +1,61 @@
-From: Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: kdump regression compared to v2.6.35
-Date: Tue, 31 Aug 2010 11:22:40 +0200
-Message-ID: <4C7CC9E0.20501@kernel.org>
-References: <2044609874.1606211283216015254.JavaMail.root@zmail06.collab.prod.int.phx2.redhat.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build warnings after merge of the net tree
+Date: Wed, 1 Sep 2010 11:25:01 +1000
+Message-ID: <20100901112501.570e06a1.sfr@canb.auug.org.au>
+References: <20100831115508.078eb2fa.sfr@canb.auug.org.au>
+	<20100830.215641.71568585.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <kexec-bounces+glkk-kexec=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <2044609874.1606211283216015254.JavaMail.root-k5qu2F3t005+R5eDjrG6zsCp5Q1pQRjfhaY/URYTgi6ny3qCrzbmXA@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/kexec>,
-	<mailto:kexec-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/kexec/>
-List-Post: <mailto:kexec-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:kexec-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/kexec>,
-	<mailto:kexec-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: kexec-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Errors-To: kexec-bounces+glkk-kexec=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: caiqian-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org
-Cc: kexec <kexec-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__1_Sep_2010_11_25_01_+1000_I2_Brd3JCOGWyPtW"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20100830.215641.71568585.davem@davemloft.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, peppe.cavallaro@st.com
 List-Id: linux-next.vger.kernel.org
 
-Hello,
+--Signature=_Wed__1_Sep_2010_11_25_01_+1000_I2_Brd3JCOGWyPtW
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for verifyiing.  Can you please apply this patch on top and
-check that those debug messages go away?
+Hi Dave,
 
-Thanks.
+On Mon, 30 Aug 2010 21:56:41 -0700 (PDT) David Miller <davem@davemloft.net>=
+ wrote:
+>
+> I've checked the following into net-next-2.6 to combat-this (see,
+> proactively fixing warnings in code I'm more or less responsible for
+> instead of letting the issue rot for 2 months :-):
 
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index c8183b2..7855429 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -196,7 +196,7 @@ typedef cpumask_var_t mayday_mask_t;
- 	cpumask_test_and_set_cpu((cpu), (mask))
- #define mayday_clear_cpu(cpu, mask)		cpumask_clear_cpu((cpu), (mask))
- #define for_each_mayday_cpu(cpu, mask)		for_each_cpu((cpu), (mask))
--#define alloc_mayday_mask(maskp, gfp)		alloc_cpumask_var((maskp), (gfp))
-+#define alloc_mayday_mask(maskp, gfp)		zalloc_cpumask_var((maskp), (gfp))
- #define free_mayday_mask(mask)			free_cpumask_var((mask))
- #else
- typedef unsigned long mayday_mask_t;
+Thanks for that :-)
+
+However, I missed one yesterday ...
+
+drivers/net/stmmac/dwmac100_core.c: In function 'dwmac100_dump_mac_regs':
+drivers/net/stmmac/dwmac100_core.c:47: warning: cast from pointer to intege=
+r of different size
+
+Sorry about that
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__1_Sep_2010_11_25_01_+1000_I2_Brd3JCOGWyPtW
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMfatuAAoJEDMEi1NhKgbsxWQIAJD9mN67oaIYUnAM0WgicMG3
+GNRUEZIhZx3+tAcY+c48R6e3N1OmCtDUT5m4zFZtnn1IYKvyhyZTQyNK3eZ8OlDB
+DZTruCDvw5Ncd9Fezk6rPGo/9xIMEgzFLFv8A8AQ8lSrEWyqju//b7NRhTVIDt9x
+c1AP9WWqeUeGRX+KeZX90MPyvqH00JZH/UEYhPIi7DFkEQmjGFBeIZlFc6Nh+oBq
++X3YQFmcXpWvf6EV+RKPJmPE6uj8qG3rL5qt1Us8okFAec6gX1g5sdhDjIYa/tnl
+MxE8JJY14nCbj4ldd+JMiY8RkNHMAb8j+A7c+E/nWDY3NMXLTFCSzmAnoHPcU5M=
+=Zwq/
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__1_Sep_2010_11_25_01_+1000_I2_Brd3JCOGWyPtW--
