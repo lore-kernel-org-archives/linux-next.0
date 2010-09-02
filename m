@@ -1,60 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the input tree with the
- input-current tree
-Date: Thu, 2 Sep 2010 14:00:34 +1000
-Message-ID: <20100902140034.a72bce6c.sfr@canb.auug.org.au>
-References: <20100902115958.982d7618.sfr@canb.auug.org.au>
-	<20100902024617.GA9303@core.coreip.homeip.net>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the usb tree
+Date: Wed, 1 Sep 2010 21:32:54 -0700
+Message-ID: <20100902043254.GB30689@kroah.com>
+References: <20100902135450.59d6b96a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__2_Sep_2010_14_00_34_+1000_eQLVIBlVNSoQKTqj"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52820 "EHLO smtps.tip.net.au"
+Received: from kroah.org ([198.145.64.141]:35214 "EHLO coco.kroah.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750696Ab0IBEAp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 2 Sep 2010 00:00:45 -0400
-In-Reply-To: <20100902024617.GA9303@core.coreip.homeip.net>
+	id S1750806Ab0IBEcJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 2 Sep 2010 00:32:09 -0400
+Content-Disposition: inline
+In-Reply-To: <20100902135450.59d6b96a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kevin Wells <wellsk40@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Uwe Kleine-K??nig <u.kleine-koenig@pengutronix.de>, Micha?? Nazarewicz <m.nazarewicz@samsung.com>
 
---Signature=_Thu__2_Sep_2010_14_00_34_+1000_eQLVIBlVNSoQKTqj
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Sep 02, 2010 at 01:54:50PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> After merging the usb tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> drivers/usb/gadget/nokia.c:244: error: unknown field 'bind' specified in initializer
+> drivers/usb/gadget/nokia.c:244: warning: initialization makes integer from pointer without a cast
+> drivers/usb/gadget/nokia.c:244: error: initializer element is not computable at load time
+> drivers/usb/gadget/nokia.c:244: error: (near initialization for 'nokia_driver.needs_serial')
+> drivers/usb/gadget/nokia.c: In function 'nokia_init':
+> drivers/usb/gadget/nokia.c:250: error: implicit declaration of function 'usb_composite_register'
+> 
+> Caused by commit cc604fa9db859b7d6899de807d6bd8df80fc0a1a ("usb gadget:
+> don't save bind callback in struct usb_configuration").  The 'bind' and
+> 'usb_composite_register' references above were added before 2.6.34-rc1
+> but missed in this patch.
+> 
+> Please make every attempt to (at least) build every file that gets
+> modified when testing a patch.  (and grep is your friend)
+> 
+> I have used the usb tree from next-20100901 for today.
 
-Hi Dmitry,
+Sorry about that, my build didn't catch this.  I'll fix it up tomorrow.
 
-On Wed, 1 Sep 2010 19:46:17 -0700 Dmitry Torokhov <dmitry.torokhov@gmail.co=
-m> wrote:
->
-> Doh! I did not mean to put mrst changes into 'for-linus'. It is too late
-> to re-fetch, isn't it?
+thanks,
 
-It is too late for next-20100902, but if you haven't asked Linus to pull
-your tree, just remove it again (I will just fetch and merge whatever you
-have in your tree tomorrow).  (In any case, he is not pulling stuff this
-week.)
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__2_Sep_2010_14_00_34_+1000_eQLVIBlVNSoQKTqj
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMfyFiAAoJEDMEi1NhKgbsDEsIAJ6VTucodKfoNV5IPJ1dFb1C
-6AG92BmFKw3nv0dtZBmYMijabPtS+i1UvLniQhKCspQF9vTOHwmqmgTGP+IZWHDT
-oEb6zdMB9OpPpWzOgsTQxKmiIwyw3ulp14BTBR6a+d8pV5twz9ROP6LH3/Qkm1/U
-u/DHAPfVbbewULQMT4xW6YGx1RA5LZ5a+qTJ0H/VxXQyutkhcLWAMUM6mFZsMcwq
-cmE9z7IubEHX3qq+9XhOzPVUzDWLUVYNiWITvhfyVF6sv4ZJJ71ZNRpJN6oJqBrb
-8fIoSGGJA91RE84SbQWpYkmEzhAbmvfNgFrM5LXQelclRDMslBpV/dk3AapUzjo=
-=ktIp
------END PGP SIGNATURE-----
-
---Signature=_Thu__2_Sep_2010_14_00_34_+1000_eQLVIBlVNSoQKTqj--
+greg k-h
