@@ -1,48 +1,55 @@
-From: Robert Richter <robert.richter@amd.com>
-Subject: Re: [PATCH next&mainline] oprofile: fix build when CONFIG_PM is
- disabled
-Date: Wed, 1 Sep 2010 21:33:48 +0200
-Message-ID: <20100901193348.GP22783@erda.amd.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: Tree for September 1
+Date: Wed, 01 Sep 2010 18:38:35 -0700 (PDT)
+Message-ID: <20100901.183835.219746796.davem@davemloft.net>
 References: <20100901133614.2580f238.sfr@canb.auug.org.au>
- <20100901094132.e734ad94.randy.dunlap@oracle.com>
- <20100901165002.GN22783@erda.amd.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from va3ehsobe006.messaging.microsoft.com ([216.32.180.16]:27321
-	"EHLO VA3EHSOBE008.bigfish.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752756Ab0IATie (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Sep 2010 15:38:34 -0400
-Content-Disposition: inline
-In-Reply-To: <20100901165002.GN22783@erda.amd.com>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:39737
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752359Ab0IBBiS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Sep 2010 21:38:18 -0400
+In-Reply-To: <20100901133614.2580f238.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>
+To: sfr@canb.auug.org.au
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 01.09.10 18:50:02, Robert Richter wrote:
-> On 01.09.10 12:41:32, Randy Dunlap wrote:
-> > From: Randy Dunlap <randy.dunlap@oracle.com>
-> > 
-> > Using do/while for a function-returning-a-value does not
-> > make gcc happy, so change it to a static inline function.
-> > (happens when CONFIG_PM is not enabled)
-> > 
-> > arch/x86/oprofile/nmi_int.c:784: error: expected expression before 'do'
-> > 
-> > Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> I already sent a fix to Ingo that fixes this.
-> 
-> Will update my for-next branch as soon as it is applied in tip.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 1 Sep 2010 13:36:14 +1000
 
-The patch is now upstream in urgent of the oprofile tree. For-next is
-also updated.
+> The net tree still has its build failure for which I have reverted a
+> commit.
 
-Sorry for the trouble.
+Stephen I'm about to commit the following to net-next-2.6 in the meantime
+to deal with that so you don't have to revert whilst Fujita works on
+the more cleaner solution.
 
--Robert
+--------------------
+starfire: Temporary kludge to fix powerpc build.
 
+Add a dma_addr_t 64-bit case for powerpc with 64-bit phys addresses.
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+ drivers/net/starfire.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/net/starfire.c b/drivers/net/starfire.c
+index c3bf288..4adf124 100644
+--- a/drivers/net/starfire.c
++++ b/drivers/net/starfire.c
+@@ -148,7 +148,7 @@ static int full_duplex[MAX_UNITS] = {0, };
+  * This SUCKS.
+  * We need a much better method to determine if dma_addr_t is 64-bit.
+  */
+-#if (defined(__i386__) && defined(CONFIG_HIGHMEM64G)) || defined(__x86_64__) || defined (__ia64__) || defined(__alpha__) || defined(__mips64__) || (defined(__mips__) && defined(CONFIG_HIGHMEM) && defined(CONFIG_64BIT_PHYS_ADDR))
++#if (defined(__i386__) && defined(CONFIG_HIGHMEM64G)) || defined(__x86_64__) || defined (__ia64__) || defined(__alpha__) || defined(__mips64__) || (defined(__mips__) && defined(CONFIG_HIGHMEM) && defined(CONFIG_64BIT_PHYS_ADDR)) || (defined(__powerpc64__) || defined(CONFIG_PHYS_64BIT))
+ /* 64-bit dma_addr_t */
+ #define ADDR_64BITS	/* This chip uses 64 bit addresses. */
+ #define netdrv_addr_t __le64
 -- 
-Advanced Micro Devices, Inc.
-Operating System Research Center
+1.7.2.2
