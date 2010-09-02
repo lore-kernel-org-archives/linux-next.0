@@ -1,38 +1,39 @@
 From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the usb tree with the trivial tree
-Date: Wed, 1 Sep 2010 20:26:04 -0700
-Message-ID: <20100902032604.GB27598@kroah.com>
-References: <20100902130118.add62d4a.sfr@canb.auug.org.au>
+Subject: Re: linux-next: build warning after merge of the driver-core tree
+Date: Wed, 1 Sep 2010 20:29:11 -0700
+Message-ID: <20100902032911.GA28546@kroah.com>
+References: <20100902131835.6a8f8c83.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:59357 "EHLO coco.kroah.org"
+Received: from kroah.org ([198.145.64.141]:45663 "EHLO coco.kroah.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752504Ab0IBD0a (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 1 Sep 2010 23:26:30 -0400
+	id S1752861Ab0IBDcY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 1 Sep 2010 23:32:24 -0400
 Content-Disposition: inline
-In-Reply-To: <20100902130118.add62d4a.sfr@canb.auug.org.au>
+In-Reply-To: <20100902131835.6a8f8c83.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, JiebingLi <jiebing.li@intel.com>, Joe Perches <joe@perches.com>, Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Renninger <trenn@suse.de>, Jason Baron <jbaron@redhat.com>
 
-On Thu, Sep 02, 2010 at 01:01:18PM +1000, Stephen Rothwell wrote:
+On Thu, Sep 02, 2010 at 01:18:35PM +1000, Stephen Rothwell wrote:
 > Hi Greg,
 > 
-> Today's linux-next merge of the usb tree got a conflict in
-> drivers/usb/gadget/langwell_udc.c between commit
-> 7f26b3a7533bbc1ddd88b297c935ee4da8f74cea ("drivers/usb: Remove
-> unnecessary return's from void functions") from the trivial tree and
-> commit 0f92bbacd2d1a26e8bf863d2cc05572df43bf7fb ("USB: langwell: USB
-> Client driver code cleanup") from the usb tree.
+> After merging the driver-core tree, today's linux-next build (powerpc
+> ppc64_defconfig) produced this warning:
 > 
-> Just context changes.  I fixed it up (see below) and can carry the fix
-> while necessary.  Though, if that trivial tree commit was in the usb tree,
-> the conflict could be resolved there ...
+> kernel/params.c: In function 'parse_args':
+> kernel/params.c:200: warning: passing argument 2 of 'snprintf' makes integer from pointer without a cast
+> include/linux/kernel.h:203: note: expected 'size_t' but argument is of type 'char *'
+> 
+> Caused by commit d1aa8e2ab38942b21d543611d4f829597d8791d4 ("Dynamic
+> Debug: Introduce global fake module param module.ddebug").
+> 
+> Some warnings should not be ignored ... and it does make me wonder how
+> much testing this has had ...
 
-Joe, care to break this one change out and have me take it through the
-usb tree?
+Odd.  Thomas and Jason, care to fix this up please?
 
 thanks,
 
