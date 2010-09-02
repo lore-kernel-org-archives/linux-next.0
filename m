@@ -1,46 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the input tree with the input-current
- tree
-Date: Thu, 2 Sep 2010 11:59:58 +1000
-Message-ID: <20100902115958.982d7618.sfr@canb.auug.org.au>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: linux-next: manual merge of the input tree with the
+ input-current tree
+Date: Wed, 1 Sep 2010 19:46:17 -0700
+Message-ID: <20100902024617.GA9303@core.coreip.homeip.net>
+References: <20100902115958.982d7618.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35620 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752145Ab0IBCAE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 1 Sep 2010 22:00:04 -0400
+Received: from mail-gx0-f174.google.com ([209.85.161.174]:62821 "EHLO
+	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752297Ab0IBCqZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Sep 2010 22:46:25 -0400
+Content-Disposition: inline
+In-Reply-To: <20100902115958.982d7618.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kevin Wells <wellsk40@gmail.com>
 
-Hi Dmitry,
+On Thu, Sep 02, 2010 at 11:59:58AM +1000, Stephen Rothwell wrote:
+> Hi Dmitry,
+> 
+> Today's linux-next merge of the input tree got a conflict in
+> drivers/input/touchscreen/Makefile between commit
+> 948e90e22f01287302d84b5b8d4ba330a41dbf8a ("Input: mrst-touchscreen - move
+> out of staging") from the input-current tree and commit
+> 3045a5f5202a1e0ab6ba2bf90a786cf4cae6932a ("Input: add LPC32xx touchscreen
+> controller driver") from the input tree.
+> 
+> Just overlapping additions.  I fixed it up (see below) and can carry the
+> fix for a while.
 
-Today's linux-next merge of the input tree got a conflict in
-drivers/input/touchscreen/Makefile between commit
-948e90e22f01287302d84b5b8d4ba330a41dbf8a ("Input: mrst-touchscreen - move
-out of staging") from the input-current tree and commit
-3045a5f5202a1e0ab6ba2bf90a786cf4cae6932a ("Input: add LPC32xx touchscreen
-controller driver") from the input tree.
+Doh! I did not mean to put mrst changes into 'for-linus'. It is too late
+to re-fetch, isn't it?
 
-Just overlapping additions.  I fixed it up (see below) and can carry the
-fix for a while.
 -- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/input/touchscreen/Makefile
-index 9061042,22e2d59..0000000
---- a/drivers/input/touchscreen/Makefile
-+++ b/drivers/input/touchscreen/Makefile
-@@@ -23,7 -23,7 +23,8 @@@ obj-$(CONFIG_TOUCHSCREEN_EETI)		+= eeti
-  obj-$(CONFIG_TOUCHSCREEN_ELO)		+= elo.o
-  obj-$(CONFIG_TOUCHSCREEN_FUJITSU)	+= fujitsu_ts.o
-  obj-$(CONFIG_TOUCHSCREEN_INEXIO)	+= inexio.o
- +obj-$(CONFIG_TOUCHSCREEN_INTEL_MID)	+= intel-mid-touch.o
-+ obj-$(CONFIG_TOUCHSCREEN_LPC32XX)	+= lpc32xx_ts.o
-  obj-$(CONFIG_TOUCHSCREEN_MC13783)	+= mc13783_ts.o
-  obj-$(CONFIG_TOUCHSCREEN_MCS5000)	+= mcs5000_ts.o
-  obj-$(CONFIG_TOUCHSCREEN_MIGOR)		+= migor_ts.o
+Dmitry
