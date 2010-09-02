@@ -1,442 +1,314 @@
-From: Michal Nazarewicz <m.nazarewicz@samsung.com>
-Subject: [PATCH] usb gadget: don't save bind callback in struct
- usb_composite_driver
-Date: Thu, 02 Sep 2010 07:33:08 +0200
-Message-ID: <fd8a8c411073c30df87c273da283c9b7eebfe872.1283403154.git.mina86@mina86.com>
-References: <20100902135450.59d6b96a.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Tree for September 2
+Date: Thu, 2 Sep 2010 16:13:45 +1000
+Message-ID: <20100902161345.b634857f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__2_Sep_2010_16_13_45_+1000_DY.g+JhaoW07IMn="
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:30008 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750739Ab0IBFd4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 2 Sep 2010 01:33:56 -0400
-In-reply-to: <20100902135450.59d6b96a.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:37880 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750799Ab0IBGN7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 2 Sep 2010 02:13:59 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rotwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Michal Nazarewicz <m.nazarewicz@samsung.com>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-The bind function is most of the time only called at init time so there
-is no need to save a pointer to it in the composite driver structure.
+--Signature=_Thu__2_Sep_2010_16_13_45_+1000_DY.g+JhaoW07IMn=
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This fixes many section mismatches reported by modpost.
+Hi all,
 
-Signed-off-by: Micha=C5=82 Nazarewicz <m.nazarewicz@samsung.com>
-Acked-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
----
- drivers/usb/gadget/audio.c        |    3 +--
- drivers/usb/gadget/cdc2.c         |    3 +--
- drivers/usb/gadget/composite.c    |   15 +++++++++++----
- drivers/usb/gadget/ether.c        |    3 +--
- drivers/usb/gadget/g_ffs.c        |    3 +--
- drivers/usb/gadget/hid.c          |    3 +--
- drivers/usb/gadget/mass_storage.c |    3 +--
- drivers/usb/gadget/multi.c        |    3 +--
- drivers/usb/gadget/nokia.c        |    3 +--
- drivers/usb/gadget/serial.c       |    3 +--
- drivers/usb/gadget/webcam.c       |    3 +--
- drivers/usb/gadget/zero.c         |    3 +--
- include/linux/usb/composite.h     |   19 +++++--------------
- 13 files changed, 27 insertions(+), 40 deletions(-)
+Changes since 20100901:
 
-On Thu, 02 Sep 2010 05:54:50 +0200, Stephen Rothwell wrote:
-> After merging the usb tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> drivers/usb/gadget/nokia.c:244: error: unknown field 'bind' specified=
- in initializer
-> drivers/usb/gadget/nokia.c:244: warning: initialization makes integer=
- from pointer without a cast
-> drivers/usb/gadget/nokia.c:244: error: initializer element is not com=
-putable at load time
-> drivers/usb/gadget/nokia.c:244: error: (near initialization for 'noki=
-a_driver.needs_serial')
-> drivers/usb/gadget/nokia.c: In function 'nokia_init':
-> drivers/usb/gadget/nokia.c:250: error: implicit declaration of functi=
-on 'usb_composite_register'
->
-> Caused by commit cc604fa9db859b7d6899de807d6bd8df80fc0a1a ("usb gadge=
-t:
-> don't save bind callback in struct usb_configuration").  The 'bind' a=
-nd
-> 'usb_composite_register' references above were added before 2.6.34-rc=
-1
-> but missed in this patch.
+The input tree gained a conflict against the input-current tree.
 
-Sorry about that.  Nokia composite gadget requires Phonet and that's
-why I failed to catch this error.  (Truly, grep would probably work
-better).
+The net tree still has its build failure for which I have reverted a
+commit.
 
-Attached is an updated patch that takes nokia.c into consideration as
-well. Greg, please replace the non-working version of the patch in
-your tree with this one.
+I still have a patch to the drivers-x86 tree to remove a Kconfig warning.
 
-diff --git a/drivers/usb/gadget/audio.c b/drivers/usb/gadget/audio.c
-index a62af7b..5a65fbb 100644
---- a/drivers/usb/gadget/audio.c
-+++ b/drivers/usb/gadget/audio.c
-@@ -166,13 +166,12 @@ static struct usb_composite_driver audio_driver =3D=
- {
- 	.name		=3D "g_audio",
- 	.dev		=3D &device_desc,
- 	.strings	=3D audio_strings,
--	.bind		=3D audio_bind,
- 	.unbind		=3D __exit_p(audio_unbind),
- };
-=20
- static int __init init(void)
- {
--	return usb_composite_register(&audio_driver);
-+	return usb_composite_probe(&audio_driver, audio_bind);
- }
- module_init(init);
-=20
-diff --git a/drivers/usb/gadget/cdc2.c b/drivers/usb/gadget/cdc2.c
-index 928137d..1f2a9b1 100644
---- a/drivers/usb/gadget/cdc2.c
-+++ b/drivers/usb/gadget/cdc2.c
-@@ -245,7 +245,6 @@ static struct usb_composite_driver cdc_driver =3D {
- 	.name		=3D "g_cdc",
- 	.dev		=3D &device_desc,
- 	.strings	=3D dev_strings,
--	.bind		=3D cdc_bind,
- 	.unbind		=3D __exit_p(cdc_unbind),
- };
-=20
-@@ -255,7 +254,7 @@ MODULE_LICENSE("GPL");
-=20
- static int __init init(void)
- {
--	return usb_composite_register(&cdc_driver);
-+	return usb_composite_probe(&cdc_driver, cdc_bind);
- }
- module_init(init);
-=20
-diff --git a/drivers/usb/gadget/composite.c b/drivers/usb/gadget/compos=
-ite.c
-index 717de39..3c84002 100644
---- a/drivers/usb/gadget/composite.c
-+++ b/drivers/usb/gadget/composite.c
-@@ -40,6 +40,7 @@
- #define USB_BUFSIZ	1024
-=20
- static struct usb_composite_driver *composite;
-+static int (*composite_gadget_bind)(struct usb_composite_dev *cdev);
-=20
- /* Some systems will need runtime overrides for the  product identifer=
-s
-  * published in the device descriptor, either numbers or strings or bo=
-th.
-@@ -1115,7 +1116,7 @@ static int composite_bind(struct usb_gadget *gadg=
-et)
- 	 * serial number), register function drivers, potentially update
- 	 * power state and consumption, etc
- 	 */
--	status =3D composite->bind(cdev);
-+	status =3D composite_gadget_bind(cdev);
- 	if (status < 0)
- 		goto fail;
-=20
-@@ -1228,8 +1229,12 @@ static struct usb_gadget_driver composite_driver=
- =3D {
- };
-=20
- /**
-- * usb_composite_register() - register a composite driver
-+ * usb_composite_probe() - register a composite driver
-  * @driver: the driver to register
-+ * @bind: the callback used to allocate resources that are shared acro=
-ss the
-+ *	whole device, such as string IDs, and add its configurations using
-+ *	@usb_add_config().  This may fail by returning a negative errno
-+ *	value; it should return zero on successful initialization.
-  * Context: single threaded during gadget setup
-  *
-  * This function is used to register drivers using the composite drive=
-r
-@@ -1242,9 +1247,10 @@ static struct usb_gadget_driver composite_driver=
- =3D {
-  * while it was binding.  That would usually be done in order to wait =
-for
-  * some userspace participation.
-  */
--int usb_composite_register(struct usb_composite_driver *driver)
-+extern int usb_composite_probe(struct usb_composite_driver *driver,
-+			       int (*bind)(struct usb_composite_dev *cdev))
- {
--	if (!driver || !driver->dev || !driver->bind || composite)
-+	if (!driver || !driver->dev || !bind || composite)
- 		return -EINVAL;
-=20
- 	if (!driver->iProduct)
-@@ -1254,6 +1260,7 @@ int usb_composite_register(struct usb_composite_d=
-river *driver)
- 	composite_driver.function =3D  (char *) driver->name;
- 	composite_driver.driver.name =3D driver->name;
- 	composite =3D driver;
-+	composite_gadget_bind =3D bind;
-=20
- 	return usb_gadget_register_driver(&composite_driver);
- }
-diff --git a/drivers/usb/gadget/ether.c b/drivers/usb/gadget/ether.c
-index 400f803..33076bc 100644
---- a/drivers/usb/gadget/ether.c
-+++ b/drivers/usb/gadget/ether.c
-@@ -402,7 +402,6 @@ static struct usb_composite_driver eth_driver =3D {
- 	.name		=3D "g_ether",
- 	.dev		=3D &device_desc,
- 	.strings	=3D dev_strings,
--	.bind		=3D eth_bind,
- 	.unbind		=3D __exit_p(eth_unbind),
- };
-=20
-@@ -412,7 +411,7 @@ MODULE_LICENSE("GPL");
-=20
- static int __init init(void)
- {
--	return usb_composite_register(&eth_driver);
-+	return usb_composite_probe(&eth_driver, eth_bind);
- }
- module_init(init);
-=20
-diff --git a/drivers/usb/gadget/g_ffs.c b/drivers/usb/gadget/g_ffs.c
-index 52fd3fa..9fcb158 100644
---- a/drivers/usb/gadget/g_ffs.c
-+++ b/drivers/usb/gadget/g_ffs.c
-@@ -147,7 +147,6 @@ static struct usb_composite_driver gfs_driver =3D {
- 	.name		=3D DRIVER_NAME,
- 	.dev		=3D &gfs_dev_desc,
- 	.strings	=3D gfs_dev_strings,
--	.bind		=3D gfs_bind,
- 	.unbind		=3D gfs_unbind,
- 	.iProduct	=3D DRIVER_DESC,
- };
-@@ -187,7 +186,7 @@ static int functionfs_ready_callback(struct ffs_dat=
-a *ffs)
- 		return -EBUSY;
-=20
- 	gfs_ffs_data =3D ffs;
--	ret =3D usb_composite_register(&gfs_driver);
-+	ret =3D usb_composite_probe(&gfs_driver, gfs_bind);
- 	if (unlikely(ret < 0))
- 		clear_bit(0, &gfs_registered);
- 	return ret;
-diff --git a/drivers/usb/gadget/hid.c b/drivers/usb/gadget/hid.c
-index 7757226..77f4952 100644
---- a/drivers/usb/gadget/hid.c
-+++ b/drivers/usb/gadget/hid.c
-@@ -256,7 +256,6 @@ static struct usb_composite_driver hidg_driver =3D =
-{
- 	.name		=3D "g_hid",
- 	.dev		=3D &device_desc,
- 	.strings	=3D dev_strings,
--	.bind		=3D hid_bind,
- 	.unbind		=3D __exit_p(hid_unbind),
- };
-=20
-@@ -282,7 +281,7 @@ static int __init hidg_init(void)
- 	if (status < 0)
- 		return status;
-=20
--	status =3D usb_composite_register(&hidg_driver);
-+	status =3D usb_composite_probe(&hidg_driver, hid_bind);
- 	if (status < 0)
- 		platform_driver_unregister(&hidg_plat_driver);
-=20
-diff --git a/drivers/usb/gadget/mass_storage.c b/drivers/usb/gadget/mas=
-s_storage.c
-index 05e9bd3..a5e4a77 100644
---- a/drivers/usb/gadget/mass_storage.c
-+++ b/drivers/usb/gadget/mass_storage.c
-@@ -169,7 +169,6 @@ static int __init msg_bind(struct usb_composite_dev=
- *cdev)
- static struct usb_composite_driver msg_driver =3D {
- 	.name		=3D "g_mass_storage",
- 	.dev		=3D &msg_device_desc,
--	.bind		=3D msg_bind,
- 	.iProduct	=3D DRIVER_DESC,
- 	.needs_serial	=3D 1,
- };
-@@ -180,7 +179,7 @@ MODULE_LICENSE("GPL");
-=20
- static int __init msg_init(void)
- {
--	return usb_composite_register(&msg_driver);
-+	return usb_composite_probe(&msg_driver, msg_bind);
- }
- module_init(msg_init);
-=20
-diff --git a/drivers/usb/gadget/multi.c b/drivers/usb/gadget/multi.c
-index ca51661..91170a0 100644
---- a/drivers/usb/gadget/multi.c
-+++ b/drivers/usb/gadget/multi.c
-@@ -353,7 +353,6 @@ static struct usb_composite_driver multi_driver =3D=
- {
- 	.name		=3D "g_multi",
- 	.dev		=3D &device_desc,
- 	.strings	=3D dev_strings,
--	.bind		=3D multi_bind,
- 	.unbind		=3D __exit_p(multi_unbind),
- 	.iProduct	=3D DRIVER_DESC,
- 	.needs_serial	=3D 1,
-@@ -362,7 +361,7 @@ static struct usb_composite_driver multi_driver =3D=
- {
-=20
- static int __init multi_init(void)
- {
--	return usb_composite_register(&multi_driver);
-+	return usb_composite_probe(&multi_driver, multi_bind);
- }
- module_init(multi_init);
-=20
-diff --git a/drivers/usb/gadget/nokia.c b/drivers/usb/gadget/nokia.c
-index 7d6b66a..8aec728 100644
---- a/drivers/usb/gadget/nokia.c
-+++ b/drivers/usb/gadget/nokia.c
-@@ -241,13 +241,12 @@ static struct usb_composite_driver nokia_driver =3D=
- {
- 	.name		=3D "g_nokia",
- 	.dev		=3D &device_desc,
- 	.strings	=3D dev_strings,
--	.bind		=3D nokia_bind,
- 	.unbind		=3D __exit_p(nokia_unbind),
- };
-=20
- static int __init nokia_init(void)
- {
--	return usb_composite_register(&nokia_driver);
-+	return usb_composite_probe(&nokia_driver, nokia_bind);
- }
- module_init(nokia_init);
-=20
-diff --git a/drivers/usb/gadget/serial.c b/drivers/usb/gadget/serial.c
-index f46a609..0b81d7b 100644
---- a/drivers/usb/gadget/serial.c
-+++ b/drivers/usb/gadget/serial.c
-@@ -242,7 +242,6 @@ static struct usb_composite_driver gserial_driver =3D=
- {
- 	.name		=3D "g_serial",
- 	.dev		=3D &device_desc,
- 	.strings	=3D dev_strings,
--	.bind		=3D gs_bind,
- };
-=20
- static int __init init(void)
-@@ -271,7 +270,7 @@ static int __init init(void)
- 	}
- 	strings_dev[STRING_DESCRIPTION_IDX].s =3D serial_config_driver.label;
-=20
--	return usb_composite_register(&gserial_driver);
-+	return usb_composite_probe(&gserial_driver, gs_bind);
- }
- module_init(init);
-=20
-diff --git a/drivers/usb/gadget/webcam.c b/drivers/usb/gadget/webcam.c
-index 288d211..de65b80 100644
---- a/drivers/usb/gadget/webcam.c
-+++ b/drivers/usb/gadget/webcam.c
-@@ -373,14 +373,13 @@ static struct usb_composite_driver webcam_driver =
-=3D {
- 	.name		=3D "g_webcam",
- 	.dev		=3D &webcam_device_descriptor,
- 	.strings	=3D webcam_device_strings,
--	.bind		=3D webcam_bind,
- 	.unbind		=3D webcam_unbind,
- };
-=20
- static int __init
- webcam_init(void)
- {
--	return usb_composite_register(&webcam_driver);
-+	return usb_composite_probe(&webcam_driver, webcam_bind);
- }
-=20
- static void __exit
-diff --git a/drivers/usb/gadget/zero.c b/drivers/usb/gadget/zero.c
-index 807280d..6d16db9 100644
---- a/drivers/usb/gadget/zero.c
-+++ b/drivers/usb/gadget/zero.c
-@@ -340,7 +340,6 @@ static struct usb_composite_driver zero_driver =3D =
-{
- 	.name		=3D "zero",
- 	.dev		=3D &device_desc,
- 	.strings	=3D dev_strings,
--	.bind		=3D zero_bind,
- 	.unbind		=3D zero_unbind,
- 	.suspend	=3D zero_suspend,
- 	.resume		=3D zero_resume,
-@@ -351,7 +350,7 @@ MODULE_LICENSE("GPL");
-=20
- static int __init init(void)
- {
--	return usb_composite_register(&zero_driver);
-+	return usb_composite_probe(&zero_driver, zero_bind);
- }
- module_init(init);
-=20
-diff --git a/include/linux/usb/composite.h b/include/linux/usb/composit=
-e.h
-index a78e813..e28b662 100644
---- a/include/linux/usb/composite.h
-+++ b/include/linux/usb/composite.h
-@@ -248,11 +248,7 @@ int usb_add_config(struct usb_composite_dev *,
-  *	and language IDs provided in control requests
-  * @needs_serial: set to 1 if the gadget needs userspace to provide
-  * 	a serial number.  If one is not provided, warning will be printed.
-- * @bind: (REQUIRED) Used to allocate resources that are shared across=
- the
-- *	whole device, such as string IDs, and add its configurations using
-- *	@usb_add_config().  This may fail by returning a negative errno
-- *	value; it should return zero on successful initialization.
-- * @unbind: Reverses @bind(); called as a side effect of unregistering
-+ * @unbind: Reverses bind; called as a side effect of unregistering
-  *	this driver.
-  * @disconnect: optional driver disconnect method
-  * @suspend: Notifies when the host stops sending USB traffic,
-@@ -263,7 +259,7 @@ int usb_add_config(struct usb_composite_dev *,
-  * Devices default to reporting self powered operation.  Devices which=
- rely
-  * on bus powered operation should report this in their @bind() method=
-=2E
-  *
-- * Before returning from @bind, various fields in the template descrip=
-tor
-+ * Before returning from bind, various fields in the template descript=
-or
-  * may be overridden.  These include the idVendor/idProduct/bcdDevice =
-values
-  * normally to bind the appropriate host side driver, and the three st=
-rings
-  * (iManufacturer, iProduct, iSerialNumber) normally used to provide u=
-ser
-@@ -279,12 +275,6 @@ struct usb_composite_driver {
- 	struct usb_gadget_strings		**strings;
- 	unsigned		needs_serial:1;
-=20
--	/* REVISIT:  bind() functions can be marked __init, which
--	 * makes trouble for section mismatch analysis.  See if
--	 * we can't restructure things to avoid mismatching...
--	 */
--
--	int			(*bind)(struct usb_composite_dev *);
- 	int			(*unbind)(struct usb_composite_dev *);
-=20
- 	void			(*disconnect)(struct usb_composite_dev *);
-@@ -294,8 +284,9 @@ struct usb_composite_driver {
- 	void			(*resume)(struct usb_composite_dev *);
- };
-=20
--extern int usb_composite_register(struct usb_composite_driver *);
--extern void usb_composite_unregister(struct usb_composite_driver *);
-+extern int usb_composite_probe(struct usb_composite_driver *driver,
-+			       int (*bind)(struct usb_composite_dev *cdev));
-+extern void usb_composite_unregister(struct usb_composite_driver *driv=
-er);
-=20
-=20
- /**
+The usb tree gained a conflict against the trivial tree and a build
+failure so I used the version from next-20100901.
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups (if any), it is also built with powerpc allnoconfig (32 and
+64 bit), ppc44x_defconfig and allyesconfig (minus
+CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
+and sparc64 defconfig. These builds also have
+CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
+CONFIG_DEBUG_INFO disabled when necessary.
+
+Below is a summary of the state of the merge.
+
+We are up to 171 trees (counting Linus' and 22 trees of patches pending
+for Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Jan Dittmer for adding the linux-next tree to his build tests
+at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
+Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+
 --=20
-1.7.1
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master
+Merging fixes/fixes
+Merging arm-current/master
+Merging m68k-current/for-linus
+Merging powerpc-merge/merge
+Merging sparc-current/master
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sound-current/for-linus
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging kbuild-current/rc-fixes
+Merging quilt/driver-core.current
+Merging quilt/tty.current
+Merging quilt/usb.current
+Merging quilt/staging.current
+Merging cpufreq-current/fixes
+Merging input-current/for-linus
+Merging md-current/for-linus
+Merging audit-current/for-linus
+Merging crypto-current/master
+Merging ide-curent/master
+Merging dwmw2/master
+Merging gcl-current/merge
+Merging arm/devel
+Merging davinci/davinci-next
+Merging i.MX/for-next
+Merging msm/for-next
+Merging omap/for-next
+Merging pxa/for-next
+Merging samsung/next-samsung
+CONFLICT (content): Merge conflict in arch/arm/mach-s3c64xx/Makefile
+CONFLICT (content): Merge conflict in arch/arm/mach-s3c64xx/mach-smdk6410.c
+CONFLICT (content): Merge conflict in arch/arm/plat-samsung/Kconfig
+CONFLICT (content): Merge conflict in drivers/input/touchscreen/s3c2410_ts.c
+Merging s5p/for-next
+Merging tegra/for-next
+Merging avr32/avr32-arch
+Merging blackfin/for-linus
+Merging cris/for-next
+Merging ia64/test
+Merging m68k/for-next
+Merging m68knommu/for-next
+Merging microblaze/next
+Merging mips/mips-for-linux-next
+Merging parisc/next
+Merging powerpc/next
+Merging 4xx/next
+Merging 52xx-and-virtex/next
+Merging galak/next
+Merging s390/features
+Merging sh/master
+Merging genesis/master
+Merging sparc/master
+Merging tile/master
+Merging xtensa/master
+CONFLICT (content): Merge conflict in arch/xtensa/configs/iss_defconfig
+Merging ceph/for-next
+Merging cifs/master
+Merging configfs/linux-next
+Merging ecryptfs/next
+Merging ext3/for_next
+Merging ext4/next
+Merging fatfs/master
+Merging fuse/for-next
+Merging gfs2/master
+Merging jfs/next
+Merging logfs/master
+CONFLICT (content): Merge conflict in fs/logfs/logfs.h
+Merging nfs/linux-next
+Merging nfsd/nfsd-next
+Merging nilfs2/for-next
+Merging ocfs2/linux-next
+Merging omfs/for-next
+Merging squashfs/master
+Merging udf/for_next
+Merging v9fs/for-next
+Merging ubifs/linux-next
+Merging xfs/master
+Merging vfs/for-next
+Merging pci/linux-next
+Merging hid/for-next
+Merging quilt/i2c
+Merging bjdooks-i2c/next-i2c
+Merging quilt/jdelvare-hwmon
+Merging quilt/kernel-doc
+Merging v4l-dvb/master
+CONFLICT (content): Merge conflict in drivers/media/IR/ir-raw-event.c
+CONFLICT (add/add): Merge conflict in drivers/media/video/s5p-fimc/fimc-cor=
+e.c
+Merging kbuild/for-next
+Merging kconfig/for-next
+Merging ide/master
+Merging libata/NEXT
+Merging infiniband/for-next
+Merging acpi/test
+Merging idle-test/idle-test
+Merging ieee1394/for-next
+Merging ubi/linux-next
+Merging kvm/linux-next
+Merging dlm/next
+Merging swiotlb/master
+Merging swiotlb-xen/master
+Merging ibft/master
+Merging scsi/master
+Merging async_tx/next
+Merging net/master
+[master 51f873a] Revert "starfire: use BUILD_BUG_ON for netdrv_addr_t"
+Merging wireless/master
+CONFLICT (content): Merge conflict in net/mac80211/main.c
+Merging mtd/master
+Merging crypto/master
+Merging sound-asoc/for-next
+CONFLICT (content): Merge conflict in arch/arm/mach-s3c64xx/mach-smdk6410.c
+Merging sound/for-next
+Merging cpufreq/next
+Merging quilt/rr
+Merging input/next
+CONFLICT (content): Merge conflict in drivers/input/touchscreen/Makefile
+Merging lsm/for-next
+Merging block/for-next
+Merging quilt/device-mapper
+Merging embedded/master
+Merging firmware/master
+Merging pcmcia/master
+Merging battery/master
+Merging leds/for-mm
+Merging backlight/for-mm
+Merging kgdb/kgdb-next
+Merging slab/for-next
+Merging uclinux/for-next
+Merging md/for-next
+Merging mfd/for-next
+Merging hdlc/hdlc-next
+Merging drm/drm-next
+Merging viafb/viafb-next
+Merging voltage/for-next
+Merging security-testing/next
+Merging lblnet/master
+Merging agp/agp-next
+Merging uwb/for-upstream
+Merging watchdog/master
+Merging bdev/master
+Merging dwmw2-iommu/master
+Merging cputime/cputime
+Merging osd/linux-next
+Merging jc_docs/docs-next
+Merging nommu/master
+Merging trivial/for-next
+Merging audit/for-next
+Merging quilt/aoe
+Merging suspend/linux-next
+Merging bluetooth/master
+Merging fsnotify/for-next
+Merging irda/for-next
+CONFLICT (content): Merge conflict in drivers/net/irda/irda-usb.c
+Merging catalin/for-next
+Merging alacrity/linux-next
+CONFLICT (content): Merge conflict in include/linux/Kbuild
+Merging i7core_edac/linux_next
+CONFLICT (content): Merge conflict in MAINTAINERS
+Merging devicetree/next-devicetree
+Merging spi/next-spi
+Merging limits/writable_limits
+Merging omap_dss2/for-next
+Merging xen/upstream/xen
+Merging rcu/rcu/next
+Merging tip/auto-latest
+Merging lost-spurious-irq/lost-spurious-irq
+CONFLICT (content): Merge conflict in drivers/ata/libata-core.c
+CONFLICT (content): Merge conflict in include/linux/libata.h
+Merging edac-amd/for-next
+Merging oprofile/for-next
+Merging percpu/for-next
+Merging workqueues/for-next
+Merging sfi/sfi-test
+Merging asm-generic/next
+Merging drivers-x86/linux-next
+Applying: Fix Kconfig mistaken update
+Merging hwpoison/hwpoison
+Merging sysctl/master
+Merging bkl-core/bkl/core
+Merging bkl-procfs/bkl/procfs
+Merging bkl-ioctl/bkl/ioctl
+Merging quilt/driver-core
+Merging quilt/tty
+Merging quilt/usb
+CONFLICT (content): Merge conflict in drivers/usb/gadget/langwell_udc.c
+Merging staging-next/staging-next
+CONFLICT (content): Merge conflict in drivers/staging/Makefile
+CONFLICT (delete/modify): drivers/staging/mrst-touchscreen/Makefile deleted=
+ in HEAD and modified in staging-next/staging-next. Version staging-next/st=
+aging-next of drivers/staging/mrst-touchscreen/Makefile left in tree.
+CONFLICT (delete/modify): drivers/staging/mrst-touchscreen/intel-mid-touch.=
+c deleted in HEAD and modified in staging-next/staging-next. Version stagin=
+g-next/staging-next of drivers/staging/mrst-touchscreen/intel-mid-touch.c l=
+eft in tree.
+$ git rm -f drivers/staging/mrst-touchscreen/Makefile
+$ git rm -f drivers/staging/mrst-touchscreen/intel-mid-touch.c
+$ git reset --hard HEAD^
+Merging refs/next/20100901/usb
+Merging staging-next/staging-next
+CONFLICT (content): Merge conflict in drivers/staging/Makefile
+CONFLICT (delete/modify): drivers/staging/mrst-touchscreen/Makefile deleted=
+ in HEAD and modified in staging-next/staging-next. Version staging-next/st=
+aging-next of drivers/staging/mrst-touchscreen/Makefile left in tree.
+CONFLICT (delete/modify): drivers/staging/mrst-touchscreen/intel-mid-touch.=
+c deleted in HEAD and modified in staging-next/staging-next. Version stagin=
+g-next/staging-next of drivers/staging/mrst-touchscreen/intel-mid-touch.c l=
+eft in tree.
+$ git rm -f drivers/staging/mrst-touchscreen/Makefile
+$ git rm -f drivers/staging/mrst-touchscreen/intel-mid-touch.c
+Merging slabh/slabh
+Merging scsi-post-merge/merge-base:master
+$ git checkout scsi-post-merge/master
+
+--Signature=_Thu__2_Sep_2010_16_13_45_+1000_DY.g+JhaoW07IMn=
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMf0CZAAoJEDMEi1NhKgbscUMH/jMjSKtnqV1E2w+8oZXFHVv1
+rzhQCYRUrScp/RGx547x52E5C+oXLRqJvHHdcQndTrsDyPj/elcqL5M+225ULWL8
+aoC9NkU6QGM41Z4tEAJq/nbZkRTzi5SbTFdew4T4B0/vhqxrsrr6cwutCGSoMqu8
+nKFvZNNk59s37gwWScxvOyWOBLolkV5KtV1nj4Hou6cvVu0PWBTUU7DY/L2fGtNj
+NFQbob/Mn0t9C0Y7XclWc9CB16EwWFzzJ3oLYiwA10XizrFcM78Xb/VxxWwzhXBG
+e/r1kIg8OniFx+t7/xsBggdJd9dl+yF3RQi7m+8zNmAfD64EJfQsZOp26nGVbZo=
+=syLd
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__2_Sep_2010_16_13_45_+1000_DY.g+JhaoW07IMn=--
