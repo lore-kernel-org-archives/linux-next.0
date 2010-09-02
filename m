@@ -1,314 +1,212 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for September 2
-Date: Thu, 2 Sep 2010 16:13:45 +1000
-Message-ID: <20100902161345.b634857f.sfr@canb.auug.org.au>
+From: Thomas Renninger <trenn@suse.de>
+Subject: Re: linux-next: build warning after merge of the driver-core tree
+Date: Thu, 2 Sep 2010 12:14:27 +0200
+Message-ID: <201009021214.27970.trenn@suse.de>
+References: <20100902131835.6a8f8c83.sfr@canb.auug.org.au> <20100902032911.GA28546@kroah.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__2_Sep_2010_16_13_45_+1000_DY.g+JhaoW07IMn="
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37880 "EHLO smtps.tip.net.au"
+Received: from cantor2.suse.de ([195.135.220.15]:51836 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750799Ab0IBGN7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 2 Sep 2010 02:13:59 -0400
+	id S1751187Ab0IBKOa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 2 Sep 2010 06:14:30 -0400
+In-Reply-To: <20100902032911.GA28546@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Baron <jbaron@redhat.com>
 
---Signature=_Thu__2_Sep_2010_16_13_45_+1000_DY.g+JhaoW07IMn=
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thursday 02 September 2010 05:29:11 Greg KH wrote:
+> On Thu, Sep 02, 2010 at 01:18:35PM +1000, Stephen Rothwell wrote:
+> > Hi Greg,
+...
+> > kernel/params.c: In function 'parse_args':
+> > kernel/params.c:200: warning: passing argument 2 of 'snprintf' makes integer from pointer without a cast
+> > include/linux/kernel.h:203: note: expected 'size_t' but argument is of type 'char *'
+> > 
+> > Caused by commit d1aa8e2ab38942b21d543611d4f829597d8791d4 ("Dynamic
+> > Debug: Introduce global fake module param module.ddebug").
+> > 
+> > Some warnings should not be ignored ... and it does make me wonder how
+> > much testing this has had ...
+Strange, I tried this out and it worked, I doubt that this version could.
+Possibly it slipped in when getting dddebug patches together for resending
+to Greg, no idea.
 
-Hi all,
+Sorry about that,
 
-Changes since 20100901:
+      Thomas
 
-The input tree gained a conflict against the input-current tree.
+Fixed version:
 
-The net tree still has its build failure for which I have reverted a
-commit.
+---------
 
-I still have a patch to the drivers-x86 tree to remove a Kconfig warning.
+Dynamic Debug: Introduce global fake module param module.ddebug - V2
 
-The usb tree gained a conflict against the trivial tree and a build
-failure so I used the version from next-20100901.
+Dynamic Debug allows enabling of pr_debug or KERN_DEBUG messages at runtime.
+This is controlled via /sys/kernel/debug/dynamic_debug/control.
+One major drawback is that the whole initialization of a module cannot be
+tracked, because ddebug is only aware of debug strings of loaded modules.
+But this is the most interesting part...
 
-----------------------------------------------------------------------------
+This patch introduces a fake module parameter module.ddebug(not shown in
+/sys/module/*/parameters, thus it does not use any resources/memory).
 
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
+If a module passes ddebug as a module parameter (e.g. via module.ddebug
+kernel boot param or via "modprobe module ddebug"), all debug strings of this
+module get activated by issuing "module module_name +p" internally
+(not via sysfs) when the module gets loaded.
 
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
-and sparc64 defconfig. These builds also have
-CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
-CONFIG_DEBUG_INFO disabled when necessary.
+Possible enhancements for the future if ddebug might get extended with
+further flags:
+module.ddebug=flags
+Then module.ddebug="p" would be the same as module.ddebug, but if there
+is a "x" ddebug flag added, one could pass:
+module.ddebug="xp"
+which would result in such a dynamic debug query:
+module module_name +xp
 
-Below is a summary of the state of the merge.
+Modules must not use "ddebug" as module parameter or it will get ignored.
+If it's tried, a warning will show up at module load time that it will get
+ignored (this is the only part which got added late and is compile tested only).
 
-We are up to 171 trees (counting Linus' and 22 trees of patches pending
-for Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
+Tested with (additional added pr_debug messages):
+options hp-wmi ddebug
+in modprobe.conf
+-> works and pr_debug messages issued at module initialization time show
+up. Also "p" flag gets set for the whole hp-wmi module:
+grep hp-wmi /sys/../dynamic_debug/control
 
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
+Signed-off-by: Thomas Renninger <trenn@suse.de>
+Acked-by: Jason Baron <jbaron@redhat.com>
+CC: greg@kroah.com
 
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging fixes/fixes
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/rc-fixes
-Merging quilt/driver-core.current
-Merging quilt/tty.current
-Merging quilt/usb.current
-Merging quilt/staging.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging ide-curent/master
-Merging dwmw2/master
-Merging gcl-current/merge
-Merging arm/devel
-Merging davinci/davinci-next
-Merging i.MX/for-next
-Merging msm/for-next
-Merging omap/for-next
-Merging pxa/for-next
-Merging samsung/next-samsung
-CONFLICT (content): Merge conflict in arch/arm/mach-s3c64xx/Makefile
-CONFLICT (content): Merge conflict in arch/arm/mach-s3c64xx/mach-smdk6410.c
-CONFLICT (content): Merge conflict in arch/arm/plat-samsung/Kconfig
-CONFLICT (content): Merge conflict in drivers/input/touchscreen/s3c2410_ts.c
-Merging s5p/for-next
-Merging tegra/for-next
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-Merging m68knommu/for-next
-Merging microblaze/next
-Merging mips/mips-for-linux-next
-Merging parisc/next
-Merging powerpc/next
-Merging 4xx/next
-Merging 52xx-and-virtex/next
-Merging galak/next
-Merging s390/features
-Merging sh/master
-Merging genesis/master
-Merging sparc/master
-Merging tile/master
-Merging xtensa/master
-CONFLICT (content): Merge conflict in arch/xtensa/configs/iss_defconfig
-Merging ceph/for-next
-Merging cifs/master
-Merging configfs/linux-next
-Merging ecryptfs/next
-Merging ext3/for_next
-Merging ext4/next
-Merging fatfs/master
-Merging fuse/for-next
-Merging gfs2/master
-Merging jfs/next
-Merging logfs/master
-CONFLICT (content): Merge conflict in fs/logfs/logfs.h
-Merging nfs/linux-next
-Merging nfsd/nfsd-next
-Merging nilfs2/for-next
-Merging ocfs2/linux-next
-Merging omfs/for-next
-Merging squashfs/master
-Merging udf/for_next
-Merging v9fs/for-next
-Merging ubifs/linux-next
-Merging xfs/master
-Merging vfs/for-next
-Merging pci/linux-next
-Merging hid/for-next
-Merging quilt/i2c
-Merging bjdooks-i2c/next-i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-CONFLICT (content): Merge conflict in drivers/media/IR/ir-raw-event.c
-CONFLICT (add/add): Merge conflict in drivers/media/video/s5p-fimc/fimc-cor=
-e.c
-Merging kbuild/for-next
-Merging kconfig/for-next
-Merging ide/master
-Merging libata/NEXT
-Merging infiniband/for-next
-Merging acpi/test
-Merging idle-test/idle-test
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/linux-next
-Merging dlm/next
-Merging swiotlb/master
-Merging swiotlb-xen/master
-Merging ibft/master
-Merging scsi/master
-Merging async_tx/next
-Merging net/master
-[master 51f873a] Revert "starfire: use BUILD_BUG_ON for netdrv_addr_t"
-Merging wireless/master
-CONFLICT (content): Merge conflict in net/mac80211/main.c
-Merging mtd/master
-Merging crypto/master
-Merging sound-asoc/for-next
-CONFLICT (content): Merge conflict in arch/arm/mach-s3c64xx/mach-smdk6410.c
-Merging sound/for-next
-Merging cpufreq/next
-Merging quilt/rr
-Merging input/next
-CONFLICT (content): Merge conflict in drivers/input/touchscreen/Makefile
-Merging lsm/for-next
-Merging block/for-next
-Merging quilt/device-mapper
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging viafb/viafb-next
-Merging voltage/for-next
-Merging security-testing/next
-Merging lblnet/master
-Merging agp/agp-next
-Merging uwb/for-upstream
-Merging watchdog/master
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-Merging audit/for-next
-Merging quilt/aoe
-Merging suspend/linux-next
-Merging bluetooth/master
-Merging fsnotify/for-next
-Merging irda/for-next
-CONFLICT (content): Merge conflict in drivers/net/irda/irda-usb.c
-Merging catalin/for-next
-Merging alacrity/linux-next
-CONFLICT (content): Merge conflict in include/linux/Kbuild
-Merging i7core_edac/linux_next
-CONFLICT (content): Merge conflict in MAINTAINERS
-Merging devicetree/next-devicetree
-Merging spi/next-spi
-Merging limits/writable_limits
-Merging omap_dss2/for-next
-Merging xen/upstream/xen
-Merging rcu/rcu/next
-Merging tip/auto-latest
-Merging lost-spurious-irq/lost-spurious-irq
-CONFLICT (content): Merge conflict in drivers/ata/libata-core.c
-CONFLICT (content): Merge conflict in include/linux/libata.h
-Merging edac-amd/for-next
-Merging oprofile/for-next
-Merging percpu/for-next
-Merging workqueues/for-next
-Merging sfi/sfi-test
-Merging asm-generic/next
-Merging drivers-x86/linux-next
-Applying: Fix Kconfig mistaken update
-Merging hwpoison/hwpoison
-Merging sysctl/master
-Merging bkl-core/bkl/core
-Merging bkl-procfs/bkl/procfs
-Merging bkl-ioctl/bkl/ioctl
-Merging quilt/driver-core
-Merging quilt/tty
-Merging quilt/usb
-CONFLICT (content): Merge conflict in drivers/usb/gadget/langwell_udc.c
-Merging staging-next/staging-next
-CONFLICT (content): Merge conflict in drivers/staging/Makefile
-CONFLICT (delete/modify): drivers/staging/mrst-touchscreen/Makefile deleted=
- in HEAD and modified in staging-next/staging-next. Version staging-next/st=
-aging-next of drivers/staging/mrst-touchscreen/Makefile left in tree.
-CONFLICT (delete/modify): drivers/staging/mrst-touchscreen/intel-mid-touch.=
-c deleted in HEAD and modified in staging-next/staging-next. Version stagin=
-g-next/staging-next of drivers/staging/mrst-touchscreen/intel-mid-touch.c l=
-eft in tree.
-$ git rm -f drivers/staging/mrst-touchscreen/Makefile
-$ git rm -f drivers/staging/mrst-touchscreen/intel-mid-touch.c
-$ git reset --hard HEAD^
-Merging refs/next/20100901/usb
-Merging staging-next/staging-next
-CONFLICT (content): Merge conflict in drivers/staging/Makefile
-CONFLICT (delete/modify): drivers/staging/mrst-touchscreen/Makefile deleted=
- in HEAD and modified in staging-next/staging-next. Version staging-next/st=
-aging-next of drivers/staging/mrst-touchscreen/Makefile left in tree.
-CONFLICT (delete/modify): drivers/staging/mrst-touchscreen/intel-mid-touch.=
-c deleted in HEAD and modified in staging-next/staging-next. Version stagin=
-g-next/staging-next of drivers/staging/mrst-touchscreen/intel-mid-touch.c l=
-eft in tree.
-$ git rm -f drivers/staging/mrst-touchscreen/Makefile
-$ git rm -f drivers/staging/mrst-touchscreen/intel-mid-touch.c
-Merging slabh/slabh
-Merging scsi-post-merge/merge-base:master
-$ git checkout scsi-post-merge/master
-
---Signature=_Thu__2_Sep_2010_16_13_45_+1000_DY.g+JhaoW07IMn=
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMf0CZAAoJEDMEi1NhKgbscUMH/jMjSKtnqV1E2w+8oZXFHVv1
-rzhQCYRUrScp/RGx547x52E5C+oXLRqJvHHdcQndTrsDyPj/elcqL5M+225ULWL8
-aoC9NkU6QGM41Z4tEAJq/nbZkRTzi5SbTFdew4T4B0/vhqxrsrr6cwutCGSoMqu8
-nKFvZNNk59s37gwWScxvOyWOBLolkV5KtV1nj4Hou6cvVu0PWBTUU7DY/L2fGtNj
-NFQbob/Mn0t9C0Y7XclWc9CB16EwWFzzJ3oLYiwA10XizrFcM78Xb/VxxWwzhXBG
-e/r1kIg8OniFx+t7/xsBggdJd9dl+yF3RQi7m+8zNmAfD64EJfQsZOp26nGVbZo=
-=syLd
------END PGP SIGNATURE-----
-
---Signature=_Thu__2_Sep_2010_16_13_45_+1000_DY.g+JhaoW07IMn=--
+diff --git a/Documentation/dynamic-debug-howto.txt b/Documentation/dynamic-debug-howto.txt
+index 58ea64a..ebbbbdd 100644
+--- a/Documentation/dynamic-debug-howto.txt
++++ b/Documentation/dynamic-debug-howto.txt
+@@ -213,7 +213,7 @@ Note also that there is no convenient syntax to remove all
+ the flags at once, you need to use "-psc".
+ 
+ 
+-Debug messages during boot process
++Debug Messages during Boot Process
+ ==================================
+ 
+ To be able to activate debug messages during the boot process,
+@@ -232,6 +232,32 @@ PCI (or other devices) initialization also is a hot candidate for using
+ this boot parameter for debugging purposes.
+ 
+ 
++Debug Messages at Module Initialization Time
++============================================
++
++Enabling debug messages inside a module is only possible if the module itself
++is loaded already. If you unload a module, the dynamic debug flags associated
++to its debug messages are lost.
++Therefore, enabling debug messages that get processed at module initialization
++time through the <debugfs>/dynamic_debug/control interface is not possible.
++Instead, a "ddebug" module paramter can be passed:
++
++	- via kernel boot parameter:
++	  module.ddebug
++
++	- as an ordinary module parameter via modprobe
++	  modprobe module ddebug
++
++	- or the parameter can be used permanently via modprobe.conf(.local)
++	  options module ddebug
++
++The ddebug option is not implemented as an ordinary module parameter and thus
++will not show up in /sys/module/module_name/parameters/ddebug
++The settings can get reverted through the sysfs interface again when the
++module got loaded as soon as debug messages are not needed anymore:
++echo "module module_name -p" > <debugfs>/dynamic_debug/control
++as described in the "Command Language Reference" chapter above.
++
+ Examples
+ ========
+ 
+diff --git a/include/linux/dynamic_debug.h b/include/linux/dynamic_debug.h
+index 52c0da4..095adf6 100644
+--- a/include/linux/dynamic_debug.h
++++ b/include/linux/dynamic_debug.h
+@@ -41,6 +41,7 @@ int ddebug_add_module(struct _ddebug *tab, unsigned int n,
+ 
+ #if defined(CONFIG_DYNAMIC_DEBUG)
+ extern int ddebug_remove_module(const char *mod_name);
++extern int ddebug_exec_query(char *query_string);
+ 
+ #define __dynamic_dbg_enabled(dd)  ({	     \
+ 	int __ret = 0;							     \
+@@ -77,6 +78,10 @@ static inline int ddebug_remove_module(const char *mod)
+ {
+ 	return 0;
+ }
++static inline int ddebug_exec_query(char *query_string)
++{
++	return 0;
++}
+ 
+ #define dynamic_pr_debug(fmt, ...)					\
+ 	do { if (0) printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__); } while (0)
+diff --git a/kernel/params.c b/kernel/params.c
+index 0b30ecd..42f49c5 100644
+--- a/kernel/params.c
++++ b/kernel/params.c
+@@ -24,6 +24,7 @@
+ #include <linux/err.h>
+ #include <linux/slab.h>
+ #include <linux/ctype.h>
++#include <linux/dynamic_debug.h>
+ 
+ #if 0
+ #define DEBUGP printk
+@@ -132,10 +133,17 @@ int parse_args(const char *name,
+ 	       unsigned num,
+ 	       int (*unknown)(char *param, char *val))
+ {
+-	char *param, *val;
++	char *param, *val, ddebug[1024];
++	int i;
+ 
+ 	DEBUGP("Parsing ARGS: %s\n", args);
+ 
++	for (i = 0; i < num; i++) {
++		if (parameq("ddebug", params[i].name))
++			pr_warning("Module %s uses reserved keyword *ddebug* as"
++				   "parameter which will get ignored\n", name);
++	}
++
+ 	/* Chew leading spaces */
+ 	args = skip_spaces(args);
+ 
+@@ -144,6 +152,13 @@ int parse_args(const char *name,
+ 		int irq_was_disabled;
+ 
+ 		args = next_arg(args, &param, &val);
++
++		if (parameq(param, "ddebug")) {
++			snprintf(ddebug, 1024, "module %s +p", name);
++			ddebug_exec_query(ddebug);
++			continue;
++		}
++
+ 		irq_was_disabled = irqs_disabled();
+ 		ret = parse_one(param, val, params, num, unknown);
+ 		if (irq_was_disabled && !irqs_disabled()) {
+diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
+index a687d90..7f8ba5f 100644
+--- a/lib/dynamic_debug.c
++++ b/lib/dynamic_debug.c
+@@ -429,7 +429,7 @@ static int ddebug_parse_flags(const char *str, unsigned int *flagsp,
+ 	return 0;
+ }
+ 
+-static int ddebug_exec_query(char *query_string)
++int ddebug_exec_query(char *query_string)
+ {
+ 	unsigned int flags = 0, mask = 0;
+ 	struct ddebug_query query;
