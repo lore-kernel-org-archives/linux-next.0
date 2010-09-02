@@ -1,55 +1,46 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: Tree for September 1
-Date: Wed, 01 Sep 2010 18:38:35 -0700 (PDT)
-Message-ID: <20100901.183835.219746796.davem@davemloft.net>
-References: <20100901133614.2580f238.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the input tree with the input-current
+ tree
+Date: Thu, 2 Sep 2010 11:59:58 +1000
+Message-ID: <20100902115958.982d7618.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:39737
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752359Ab0IBBiS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Sep 2010 21:38:18 -0400
-In-Reply-To: <20100901133614.2580f238.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:35620 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752145Ab0IBCAE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 1 Sep 2010 22:00:04 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kevin Wells <wellsk40@gmail.com>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 1 Sep 2010 13:36:14 +1000
+Hi Dmitry,
 
-> The net tree still has its build failure for which I have reverted a
-> commit.
+Today's linux-next merge of the input tree got a conflict in
+drivers/input/touchscreen/Makefile between commit
+948e90e22f01287302d84b5b8d4ba330a41dbf8a ("Input: mrst-touchscreen - move
+out of staging") from the input-current tree and commit
+3045a5f5202a1e0ab6ba2bf90a786cf4cae6932a ("Input: add LPC32xx touchscreen
+controller driver") from the input tree.
 
-Stephen I'm about to commit the following to net-next-2.6 in the meantime
-to deal with that so you don't have to revert whilst Fujita works on
-the more cleaner solution.
-
---------------------
-starfire: Temporary kludge to fix powerpc build.
-
-Add a dma_addr_t 64-bit case for powerpc with 64-bit phys addresses.
-
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: David S. Miller <davem@davemloft.net>
----
- drivers/net/starfire.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/net/starfire.c b/drivers/net/starfire.c
-index c3bf288..4adf124 100644
---- a/drivers/net/starfire.c
-+++ b/drivers/net/starfire.c
-@@ -148,7 +148,7 @@ static int full_duplex[MAX_UNITS] = {0, };
-  * This SUCKS.
-  * We need a much better method to determine if dma_addr_t is 64-bit.
-  */
--#if (defined(__i386__) && defined(CONFIG_HIGHMEM64G)) || defined(__x86_64__) || defined (__ia64__) || defined(__alpha__) || defined(__mips64__) || (defined(__mips__) && defined(CONFIG_HIGHMEM) && defined(CONFIG_64BIT_PHYS_ADDR))
-+#if (defined(__i386__) && defined(CONFIG_HIGHMEM64G)) || defined(__x86_64__) || defined (__ia64__) || defined(__alpha__) || defined(__mips64__) || (defined(__mips__) && defined(CONFIG_HIGHMEM) && defined(CONFIG_64BIT_PHYS_ADDR)) || (defined(__powerpc64__) || defined(CONFIG_PHYS_64BIT))
- /* 64-bit dma_addr_t */
- #define ADDR_64BITS	/* This chip uses 64 bit addresses. */
- #define netdrv_addr_t __le64
+Just overlapping additions.  I fixed it up (see below) and can carry the
+fix for a while.
 -- 
-1.7.2.2
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/input/touchscreen/Makefile
+index 9061042,22e2d59..0000000
+--- a/drivers/input/touchscreen/Makefile
++++ b/drivers/input/touchscreen/Makefile
+@@@ -23,7 -23,7 +23,8 @@@ obj-$(CONFIG_TOUCHSCREEN_EETI)		+= eeti
+  obj-$(CONFIG_TOUCHSCREEN_ELO)		+= elo.o
+  obj-$(CONFIG_TOUCHSCREEN_FUJITSU)	+= fujitsu_ts.o
+  obj-$(CONFIG_TOUCHSCREEN_INEXIO)	+= inexio.o
+ +obj-$(CONFIG_TOUCHSCREEN_INTEL_MID)	+= intel-mid-touch.o
++ obj-$(CONFIG_TOUCHSCREEN_LPC32XX)	+= lpc32xx_ts.o
+  obj-$(CONFIG_TOUCHSCREEN_MC13783)	+= mc13783_ts.o
+  obj-$(CONFIG_TOUCHSCREEN_MCS5000)	+= mcs5000_ts.o
+  obj-$(CONFIG_TOUCHSCREEN_MIGOR)		+= migor_ts.o
