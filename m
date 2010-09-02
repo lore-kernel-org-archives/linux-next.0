@@ -1,65 +1,70 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for September 1
-Date: Thu, 2 Sep 2010 13:33:42 +1000
-Message-ID: <20100902133342.4d3206b9.sfr@canb.auug.org.au>
-References: <20100901133614.2580f238.sfr@canb.auug.org.au>
-	<20100901.183835.219746796.davem@davemloft.net>
+Subject: linux-next: build failure after merge of the usb tree
+Date: Thu, 2 Sep 2010 13:54:50 +1000
+Message-ID: <20100902135450.59d6b96a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__2_Sep_2010_13_33_42_+1000_rJBCfAXucY8=WsX1"
+ boundary="Signature=_Thu__2_Sep_2010_13_54_50_+1000_JSC.PW_mJ6myYlzB"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59192 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:45640 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753078Ab0IBDdt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 1 Sep 2010 23:33:49 -0400
-In-Reply-To: <20100901.183835.219746796.davem@davemloft.net>
+	id S1752321Ab0IBDy6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 1 Sep 2010 23:54:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IlV3ZSBLbGVpbmUtS8O2bmlnIg==?= <u.kleine-koenig@pengutronix.de>, =?UTF-8?B?Ik1pY2hhxYIgTmF6YXJld2ljeiI=?= <m.nazarewicz@samsung.com>
 
---Signature=_Thu__2_Sep_2010_13_33_42_+1000_rJBCfAXucY8=WsX1
+--Signature=_Thu__2_Sep_2010_13_54_50_+1000_JSC.PW_mJ6myYlzB
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi Greg,
 
-On Wed, 01 Sep 2010 18:38:35 -0700 (PDT) David Miller <davem@davemloft.net>=
- wrote:
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 1 Sep 2010 13:36:14 +1000
->=20
-> > The net tree still has its build failure for which I have reverted a
-> > commit.
->=20
-> Stephen I'm about to commit the following to net-next-2.6 in the meantime
-> to deal with that so you don't have to revert whilst Fujita works on
-> the more cleaner solution.
+After merging the usb tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-OK, thanks.  I still reverted the commit today as I fetched your tree
-before you committed this.
+drivers/usb/gadget/nokia.c:244: error: unknown field 'bind' specified in in=
+itializer
+drivers/usb/gadget/nokia.c:244: warning: initialization makes integer from =
+pointer without a cast
+drivers/usb/gadget/nokia.c:244: error: initializer element is not computabl=
+e at load time
+drivers/usb/gadget/nokia.c:244: error: (near initialization for 'nokia_driv=
+er.needs_serial')
+drivers/usb/gadget/nokia.c: In function 'nokia_init':
+drivers/usb/gadget/nokia.c:250: error: implicit declaration of function 'us=
+b_composite_register'
 
+Caused by commit cc604fa9db859b7d6899de807d6bd8df80fc0a1a ("usb gadget:
+don't save bind callback in struct usb_configuration").  The 'bind' and
+'usb_composite_register' references above were added before 2.6.34-rc1
+but missed in this patch.
+
+Please make every attempt to (at least) build every file that gets
+modified when testing a patch.  (and grep is your friend)
+
+I have used the usb tree from next-20100901 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__2_Sep_2010_13_33_42_+1000_rJBCfAXucY8=WsX1
+--Signature=_Thu__2_Sep_2010_13_54_50_+1000_JSC.PW_mJ6myYlzB
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMfxsWAAoJEDMEi1NhKgbsg5wIAJVHoS2g1F0+7mTZnkR8YiUT
-q9tWOoyaZaLh2eTY8LpmAidAr4HNdaeZxoyqt92IKvOgkt+nu4WK7V3at+Ojffc7
-Y4EruzoIAf5B1WjmpE5s0cdFMfpMvqOLT841QUZRqeKcS4XFO9LGo9sfdy9mF+wq
-/hK6Nclm8Q1XAa/o61SR033Nck9iBcH3yjaDA63y49Gwfv/CXBo3QqGeffSFLzCu
-B9DZKuOnZ9y1v9YQyBh8APWmSIN0zQAjy8ztGaaM46gtfbdLF4VSUPG6ExE6sRFH
-aVTzCA4c7jqsgaCBAsK6+rerxLln2rmtJCLji7RahG1Il0qbtrPsABZwotXjbug=
-=Sh0N
+iQEcBAEBAgAGBQJMfyAKAAoJEDMEi1NhKgbsRTEH+wRNQo8345579LL+iSBADqo/
+iQz1x2Lh1hCwm4QG6mdQaPhSGeQB8nNRrRfBfTQtDBTzR3rJA5wreQgl3Gxyg886
+iZ+1Okx8l239v+dYOI/J1gmfxFZy88p7EswFi5A28uXwu49Ohkp0yceaqY2f2RDy
+xb/Wc8OsOZGYoIrGE/C0p9lUEf3cqp0GjyWgw8ArCRj6G+xNzSkxguzCKuG/qxsV
+Zq7ZObwXAE5U4vOoeWaDpEcONbwq3tDMYjHq3yBXqNTzug2UGDTpBsykYlqQuMCJ
+ZQHukrtimaiCwz1lpQSHJtGI3gq/XXJDO9zOPKImBLzEL/rmsBjf7M6pnSzMj1s=
+=8Jbx
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__2_Sep_2010_13_33_42_+1000_rJBCfAXucY8=WsX1--
+--Signature=_Thu__2_Sep_2010_13_54_50_+1000_JSC.PW_mJ6myYlzB--
