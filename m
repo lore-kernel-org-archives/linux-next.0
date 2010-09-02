@@ -1,38 +1,67 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: linux-next: manual merge of the input tree with the
- input-current tree
-Date: Wed, 1 Sep 2010 19:46:17 -0700
-Message-ID: <20100902024617.GA9303@core.coreip.homeip.net>
-References: <20100902115958.982d7618.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the trivial tree
+Date: Thu, 2 Sep 2010 13:01:18 +1000
+Message-ID: <20100902130118.add62d4a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:62821 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752297Ab0IBCqZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Sep 2010 22:46:25 -0400
-Content-Disposition: inline
-In-Reply-To: <20100902115958.982d7618.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:53246 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752469Ab0IBDBZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 1 Sep 2010 23:01:25 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kevin Wells <wellsk40@gmail.com>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, JiebingLi <jiebing.li@intel.com>, Joe Perches <joe@perches.com>, Jiri Kosina <jkosina@suse.cz>
 
-On Thu, Sep 02, 2010 at 11:59:58AM +1000, Stephen Rothwell wrote:
-> Hi Dmitry,
-> 
-> Today's linux-next merge of the input tree got a conflict in
-> drivers/input/touchscreen/Makefile between commit
-> 948e90e22f01287302d84b5b8d4ba330a41dbf8a ("Input: mrst-touchscreen - move
-> out of staging") from the input-current tree and commit
-> 3045a5f5202a1e0ab6ba2bf90a786cf4cae6932a ("Input: add LPC32xx touchscreen
-> controller driver") from the input tree.
-> 
-> Just overlapping additions.  I fixed it up (see below) and can carry the
-> fix for a while.
+Hi Greg,
 
-Doh! I did not mean to put mrst changes into 'for-linus'. It is too late
-to re-fetch, isn't it?
+Today's linux-next merge of the usb tree got a conflict in
+drivers/usb/gadget/langwell_udc.c between commit
+7f26b3a7533bbc1ddd88b297c935ee4da8f74cea ("drivers/usb: Remove
+unnecessary return's from void functions") from the trivial tree and
+commit 0f92bbacd2d1a26e8bf863d2cc05572df43bf7fb ("USB: langwell: USB
+Client driver code cleanup") from the usb tree.
 
+Just context changes.  I fixed it up (see below) and can carry the fix
+while necessary.  Though, if that trivial tree commit was in the usb tree,
+the conflict could be resolved there ...
 -- 
-Dmitry
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/usb/gadget/langwell_udc.c
+index d41b69c,1ef17a6..0000000
+--- a/drivers/usb/gadget/langwell_udc.c
++++ b/drivers/usb/gadget/langwell_udc.c
+@@@ -283,7 -253,8 +253,7 @@@ static void ep0_reset(struct langwell_u
+  		ep_reset(&dev->ep[0], 0, i, USB_ENDPOINT_XFER_CONTROL);
+  	}
+  
+- 	VDBG(dev, "<--- %s()\n", __func__);
++ 	dev_vdbg(&dev->pdev->dev, "<--- %s()\n", __func__);
+ -	return;
+  }
+  
+  
+@@@ -1484,7 -1501,8 +1500,7 @@@ static void langwell_udc_start(struct l
+  	usbcmd |= CMD_RUNSTOP;
+  	writel(usbcmd, &dev->op_regs->usbcmd);
+  
+- 	DBG(dev, "<--- %s()\n", __func__);
++ 	dev_dbg(&dev->pdev->dev, "<--- %s()\n", __func__);
+ -	return;
+  }
+  
+  
+@@@ -1506,7 -1524,8 +1522,7 @@@ static void langwell_udc_stop(struct la
+  	usbcmd &= ~CMD_RUNSTOP;
+  	writel(usbcmd, &dev->op_regs->usbcmd);
+  
+- 	DBG(dev, "<--- %s()\n", __func__);
++ 	dev_dbg(&dev->pdev->dev, "<--- %s()\n", __func__);
+ -	return;
+  }
+  
+  
