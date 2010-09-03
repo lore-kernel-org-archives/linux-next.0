@@ -1,23 +1,55 @@
-From: Len Brown <lenb@kernel.org>
-Subject: Re: linux-next: build warnings in Linus' tree
-Date: Thu, 02 Sep 2010 22:36:50 -0400 (EDT)
-Message-ID: <alpine.LFD.2.00.1009022236470.24145@localhost.localdomain>
-References: <20100817112439.18f9d958.sfr@canb.auug.org.au>
- <20100830114222.3a1f53e6.sfr@canb.auug.org.au> <1283148482.3707.167.camel@rui>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tty tree with the microblaze tree
+Date: Fri, 3 Sep 2010 13:02:36 +1000
+Message-ID: <20100903130236.1f5f331c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__3_Sep_2010_13_02_36_+1000_FZjSB2SnnnimE+Y_"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from vms173015pub.verizon.net ([206.46.173.15]:46163 "EHLO
-	vms173015pub.verizon.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754699Ab0ICChI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 2 Sep 2010 22:37:08 -0400
-In-reply-to: <1283148482.3707.167.camel@rui>
+Received: from chilli.pcug.org.au ([203.10.76.44]:51634 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752817Ab0ICDCp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 2 Sep 2010 23:02:45 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Simek <michal.simek@petalogix.com>, Jason Wessel <jason.wessel@windriver.com>
 
-applied
+--Signature=_Fri__3_Sep_2010_13_02_36_+1000_FZjSB2SnnnimE+Y_
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-thanks,
-Len Brown, Intel Open Source Technology Center
+Hi Greg,
+
+Today's linux-next merge of the tty tree got a conflict in
+drivers/serial/uartlite.c between commit
+52ea4a7ef12f286bd68d13a93daaa688f56a1e14 ("serial: Add CONSOLE_POLL
+support for uartlite") from the microblaze tree and commit
+0e5176373d9c9a7741b54ce81a9eea342291bdca ("serial: Add CONSOLE_POLL
+support for uartlite") from the tty tree.
+
+The same, but slightly different patch. I used the version from the tty
+tree.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__3_Sep_2010_13_02_36_+1000_FZjSB2SnnnimE+Y_
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMgGVNAAoJEDMEi1NhKgbsF68H/idVjPsFawwu4pZE43//zNox
+C8595Kdw4Kf1lu+zWKrCpZj/t2q5zzErkwV9MJY1BJ+e8jU1tNY99w/nk/czMaU4
+W2hWCzs70HmqVhyCB2P+n57LXatOY8STxdt06X6O3PwEfns/ky1JhTz8bTzt32rx
+hpzwu69JkPp9NMkIpdOThbgF534pXWkce079xPY87HAJcCztmx7FD1IH/jISsqrH
+47J38v9G3b2jWcV+o5wkS7XXvswPonezO7/XhLWg1aOhUZlxYO3R/E9iChZsdIcf
+i1R4oOFCrJOIl3Q55hLZqNsKXaWHUFE+uL80TstM2PgadhtwoSY1tuQ0/mhFJJA=
+=G7Hf
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__3_Sep_2010_13_02_36_+1000_FZjSB2SnnnimE+Y_--
