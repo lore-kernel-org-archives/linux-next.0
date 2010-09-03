@@ -1,55 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tty tree with the microblaze tree
-Date: Fri, 3 Sep 2010 13:02:36 +1000
-Message-ID: <20100903130236.1f5f331c.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (powerpc
+ related)
+Date: Fri, 3 Sep 2010 13:24:10 +1000
+Message-ID: <20100903132410.ede593ed.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__3_Sep_2010_13_02_36_+1000_FZjSB2SnnnimE+Y_"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51634 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:44906 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752817Ab0ICDCp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 2 Sep 2010 23:02:45 -0400
+	id S1755453Ab0ICDYN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 2 Sep 2010 23:24:13 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Simek <michal.simek@petalogix.com>, Jason Wessel <jason.wessel@windriver.com>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ian Munsie <imunsie@au1.ibm.com>
 
---Signature=_Fri__3_Sep_2010_13_02_36_+1000_FZjSB2SnnnimE+Y_
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-Hi Greg,
+After merging the final tree, today's linux-next build
+(powerpc64 allnoconfig) failed like this:
 
-Today's linux-next merge of the tty tree got a conflict in
-drivers/serial/uartlite.c between commit
-52ea4a7ef12f286bd68d13a93daaa688f56a1e14 ("serial: Add CONSOLE_POLL
-support for uartlite") from the microblaze tree and commit
-0e5176373d9c9a7741b54ce81a9eea342291bdca ("serial: Add CONSOLE_POLL
-support for uartlite") from the tty tree.
+arch/powerpc/kernel/built-in.o: In function `.sys_call_table':
+(.text+0x8d48): undefined reference to `.compat_sys_recv'
 
-The same, but slightly different patch. I used the version from the tty
-tree.
---=20
+Caused by commit 86250b9d12caa1a3dee12a7cf638b7dd70eaadb6 ("powerpc: Wire
+up direct socket system calls").
+
+I have applied this patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 3 Sep 2010 13:19:04 +1000
+Subject: [PATCH] powerpc: define a compat_sys_recv cond_syscall
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ kernel/sys_ni.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
+index bad369e..c782fe9 100644
+--- a/kernel/sys_ni.c
++++ b/kernel/sys_ni.c
+@@ -50,6 +50,7 @@ cond_syscall(compat_sys_sendmsg);
+ cond_syscall(sys_recvmsg);
+ cond_syscall(sys_recvmmsg);
+ cond_syscall(compat_sys_recvmsg);
++cond_syscall(compat_sys_recv);
+ cond_syscall(compat_sys_recvfrom);
+ cond_syscall(compat_sys_recvmmsg);
+ cond_syscall(sys_socketcall);
+-- 
+1.7.1
+
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__3_Sep_2010_13_02_36_+1000_FZjSB2SnnnimE+Y_
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMgGVNAAoJEDMEi1NhKgbsF68H/idVjPsFawwu4pZE43//zNox
-C8595Kdw4Kf1lu+zWKrCpZj/t2q5zzErkwV9MJY1BJ+e8jU1tNY99w/nk/czMaU4
-W2hWCzs70HmqVhyCB2P+n57LXatOY8STxdt06X6O3PwEfns/ky1JhTz8bTzt32rx
-hpzwu69JkPp9NMkIpdOThbgF534pXWkce079xPY87HAJcCztmx7FD1IH/jISsqrH
-47J38v9G3b2jWcV+o5wkS7XXvswPonezO7/XhLWg1aOhUZlxYO3R/E9iChZsdIcf
-i1R4oOFCrJOIl3Q55hLZqNsKXaWHUFE+uL80TstM2PgadhtwoSY1tuQ0/mhFJJA=
-=G7Hf
------END PGP SIGNATURE-----
-
---Signature=_Fri__3_Sep_2010_13_02_36_+1000_FZjSB2SnnnimE+Y_--
