@@ -1,79 +1,56 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: [PATCH] usb gadget: don't save bind callback in struct
- usb_composite_driver
-Date: Thu, 2 Sep 2010 13:01:57 -0700
-Message-ID: <20100902200157.GB16897@kroah.com>
-References: <20100902135450.59d6b96a.sfr@canb.auug.org.au>
- <fd8a8c411073c30df87c273da283c9b7eebfe872.1283403154.git.mina86@mina86.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the galak tree with the powerpc-merge
+ tree
+Date: Fri, 3 Sep 2010 11:12:02 +1000
+Message-ID: <20100903111202.6529b9c4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__3_Sep_2010_11_12_02_+1000_FoOh2.BmjlSlcK1B"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:37153 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750761Ab0ICBMM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 2 Sep 2010 21:12:12 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Kumar Gala <galak@kernel.crashing.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Graf <agraf@suse.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+
+--Signature=_Fri__3_Sep_2010_11_12_02_+1000_FoOh2.BmjlSlcK1B
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <fd8a8c411073c30df87c273da283c9b7eebfe872.1283403154.git.mina86@mina86.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Michal Nazarewicz <m.nazarewicz@samsung.com>
-Cc: Stephen Rotwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 02, 2010 at 07:33:08AM +0200, Michal Nazarewicz wrote:
-> The bind function is most of the time only called at init time so the=
-re
-> is no need to save a pointer to it in the composite driver structure.
->=20
-> This fixes many section mismatches reported by modpost.
->=20
-> Signed-off-by: Micha=C5=82 Nazarewicz <m.nazarewicz@samsung.com>
-> Acked-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
-> ---
->  drivers/usb/gadget/audio.c        |    3 +--
->  drivers/usb/gadget/cdc2.c         |    3 +--
->  drivers/usb/gadget/composite.c    |   15 +++++++++++----
->  drivers/usb/gadget/ether.c        |    3 +--
->  drivers/usb/gadget/g_ffs.c        |    3 +--
->  drivers/usb/gadget/hid.c          |    3 +--
->  drivers/usb/gadget/mass_storage.c |    3 +--
->  drivers/usb/gadget/multi.c        |    3 +--
->  drivers/usb/gadget/nokia.c        |    3 +--
->  drivers/usb/gadget/serial.c       |    3 +--
->  drivers/usb/gadget/webcam.c       |    3 +--
->  drivers/usb/gadget/zero.c         |    3 +--
->  include/linux/usb/composite.h     |   19 +++++--------------
->  13 files changed, 27 insertions(+), 40 deletions(-)
->=20
-> On Thu, 02 Sep 2010 05:54:50 +0200, Stephen Rothwell wrote:
-> > After merging the usb tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
-> >
-> > drivers/usb/gadget/nokia.c:244: error: unknown field 'bind' specifi=
-ed in initializer
-> > drivers/usb/gadget/nokia.c:244: warning: initialization makes integ=
-er from pointer without a cast
-> > drivers/usb/gadget/nokia.c:244: error: initializer element is not c=
-omputable at load time
-> > drivers/usb/gadget/nokia.c:244: error: (near initialization for 'no=
-kia_driver.needs_serial')
-> > drivers/usb/gadget/nokia.c: In function 'nokia_init':
-> > drivers/usb/gadget/nokia.c:250: error: implicit declaration of func=
-tion 'usb_composite_register'
-> >
-> > Caused by commit cc604fa9db859b7d6899de807d6bd8df80fc0a1a ("usb gad=
-get:
-> > don't save bind callback in struct usb_configuration").  The 'bind'=
- and
-> > 'usb_composite_register' references above were added before 2.6.34-=
-rc1
-> > but missed in this patch.
->=20
-> Sorry about that.  Nokia composite gadget requires Phonet and that's
-> why I failed to catch this error.  (Truly, grep would probably work
-> better).
->=20
-> Attached is an updated patch that takes nokia.c into consideration as
-> well. Greg, please replace the non-working version of the patch in
-> your tree with this one.
+Hi Kumar,
 
-Now replaced, thanks.
+Today's linux-next merge of the galak tree got a conflict in
+arch/powerpc/platforms/85xx/mpc85xx_mds.c between commit
+6d4f2fb0860c36e7ef16cc41126242a8b6542771 ("powerpc/85xx: Fix compilation
+of mpc85xx_mds.c") from the powerpc-merge tree and commit
+5dc45967402dd124980fce88d34d7f4a012a381b ("powerpc/85xx: Fix compile
+error in mpc85xx_mds.c") from the galak tree.
 
-greg k-h
+I used the version in the powerpc-merge tree as the inititalisation of np
+is unnecessary.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__3_Sep_2010_11_12_02_+1000_FoOh2.BmjlSlcK1B
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMgEtiAAoJEDMEi1NhKgbsh6oH/jrfmOL7kCK6FhIe5T7E4nDi
+HE/vSbMMW5tPQupQTy2srr9drBupSnBUg6EMuJJrbHmk4c+0iD3YjtmT4RYHYHNG
+oy05IccAIYmNuf+w3zOY/CewZPTr/ibLNMdbML7C1OrR3+RY6ZCfCcpTDBcy4COA
+LBBLfTgA4176QRVhcU7YdckxeSCVyB6K3vXkNCJNUpnERoJzEWV7XMe056/7DiuR
+Ij/zGn5LdGyS4zHbHTOEHr4vZDWIR/acwKx5c5ro0hvIi5CrMeTdOxM1n+BXLyT6
+Q1L7jAs221gCwGAdNrv0nH2Pci5OsS+eyys8wBMd13ruUhzsTAR2h+YnlAjM/tc=
+=DHLf
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__3_Sep_2010_11_12_02_+1000_FoOh2.BmjlSlcK1B--
