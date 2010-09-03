@@ -1,56 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the galak tree with the powerpc-merge
- tree
-Date: Fri, 3 Sep 2010 11:12:02 +1000
-Message-ID: <20100903111202.6529b9c4.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (kvm tree
+ related)
+Date: Fri, 3 Sep 2010 11:32:16 +1000
+Message-ID: <20100903113216.08db65c0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__3_Sep_2010_11_12_02_+1000_FoOh2.BmjlSlcK1B"
+ boundary="Signature=_Fri__3_Sep_2010_11_32_16_+1000_JWP.yg_fR.wzGki4"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37153 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:55958 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750761Ab0ICBMM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 2 Sep 2010 21:12:12 -0400
+	id S1752755Ab0ICBcX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 2 Sep 2010 21:32:23 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kumar Gala <galak@kernel.crashing.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Graf <agraf@suse.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+To: Avi Kivity <avi@qumranet.com>, Marcelo Tosatti <mtosatti@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Graf <agraf@suse.de>
 
---Signature=_Fri__3_Sep_2010_11_12_02_+1000_FoOh2.BmjlSlcK1B
+--Signature=_Fri__3_Sep_2010_11_32_16_+1000_JWP.yg_fR.wzGki4
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Kumar,
+Hi all,
 
-Today's linux-next merge of the galak tree got a conflict in
-arch/powerpc/platforms/85xx/mpc85xx_mds.c between commit
-6d4f2fb0860c36e7ef16cc41126242a8b6542771 ("powerpc/85xx: Fix compilation
-of mpc85xx_mds.c") from the powerpc-merge tree and commit
-5dc45967402dd124980fce88d34d7f4a012a381b ("powerpc/85xx: Fix compile
-error in mpc85xx_mds.c") from the galak tree.
+After merging the final tree, the next-20100831 (and later) build
+(powerpc allmodconfig) failed like this:
 
-I used the version in the powerpc-merge tree as the inititalisation of np
-is unnecessary.
+include/asm/kvm_para.h:24: included file 'linux/of.h' is not exported
+
+Caused by commit 6e13db5991fea393973f284ec3e951ae8ac3795c ("KVM: PPC:
+Implement hypervisor interface").  The include of linux/of.h needs to be
+protected by __KERNEL__ .
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__3_Sep_2010_11_12_02_+1000_FoOh2.BmjlSlcK1B
+--Signature=_Fri__3_Sep_2010_11_32_16_+1000_JWP.yg_fR.wzGki4
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMgEtiAAoJEDMEi1NhKgbsh6oH/jrfmOL7kCK6FhIe5T7E4nDi
-HE/vSbMMW5tPQupQTy2srr9drBupSnBUg6EMuJJrbHmk4c+0iD3YjtmT4RYHYHNG
-oy05IccAIYmNuf+w3zOY/CewZPTr/ibLNMdbML7C1OrR3+RY6ZCfCcpTDBcy4COA
-LBBLfTgA4176QRVhcU7YdckxeSCVyB6K3vXkNCJNUpnERoJzEWV7XMe056/7DiuR
-Ij/zGn5LdGyS4zHbHTOEHr4vZDWIR/acwKx5c5ro0hvIi5CrMeTdOxM1n+BXLyT6
-Q1L7jAs221gCwGAdNrv0nH2Pci5OsS+eyys8wBMd13ruUhzsTAR2h+YnlAjM/tc=
-=DHLf
+iQEcBAEBAgAGBQJMgFAgAAoJEDMEi1NhKgbsKYQIAJX+RmfUIqV9qYPuU552R1BE
+SGkNkE6LuuUkTShwkW9AbqU2y9z+23sspfMPBQ0MlzONYQSlik1N0R6El4jYQBNH
+FwQTUD1FACEYa4JNUV3KU1D6COxZrIbttqoTtch5lgjLeiglqzm8oBHwngAbl1PZ
+h2/w96+tam0jhd9kropNVlmP7QVnO0QzxbrWfb7H0RXL32aEb7F7uNf9g1TLHTqa
+COHFApSa6wyLoZe6292Qzsj8WrWRITAFgm9adKDW6NnlmUdNcOq9J+4S8P+wWSJA
+E18wfSICVU12p8gz16bgOhbvK1/jOWhH2GNPD6GHOW0zW/zLInUxpMO14hkxmk4=
+=erbf
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__3_Sep_2010_11_12_02_+1000_FoOh2.BmjlSlcK1B--
+--Signature=_Fri__3_Sep_2010_11_32_16_+1000_JWP.yg_fR.wzGki4--
