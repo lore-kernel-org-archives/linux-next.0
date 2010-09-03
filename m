@@ -1,67 +1,74 @@
-From: Haicheng Li <haicheng.li@linux.intel.com>
-Subject: Re: linux-next: build warning after merge of the tip tree
-Date: Fri, 03 Sep 2010 18:07:55 +0800
-Message-ID: <4C80C8FB.6070902@linux.intel.com>
-References: <20100903121023.54c40e73.sfr@canb.auug.org.au> <20100903121201.336c4ba8.sfr@canb.auug.org.au> <20100903090407.GA19771@localhost>
+From: Tejun Heo <tj@kernel.org>
+Subject: [PATCH 1/3] vmalloc: pcpu_get/free_vm_areas() aren't needed on UP
+Date: Fri, 03 Sep 2010 18:25:02 +0200
+Message-ID: <4C81215E.1070108@kernel.org>
+References: <20100824120714.8918f8de.sfr@canb.auug.org.au> <4C740450.3030000@cs.helsinki.fi> <alpine.DEB.2.00.1008241256280.4763@router.home> <4C741029.7090300@cs.helsinki.fi> <alpine.DEB.2.00.1008241352240.5388@router.home> <4C74D1D7.4080608@kernel.org> <4C74DB05.7000101@cs.helsinki.fi> <alpine.DEB.2.00.1008250846590.13026@router.home> <4C762734.1030402@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:1471 "EHLO mga01.intel.com"
+Received: from hera.kernel.org ([140.211.167.34]:47827 "EHLO hera.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753271Ab0ICKH5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 3 Sep 2010 06:07:57 -0400
-In-Reply-To: <20100903090407.GA19771@localhost>
+	id S1752655Ab0ICQZl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 3 Sep 2010 12:25:41 -0400
+In-Reply-To: <4C762734.1030402@kernel.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Wu Fengguang <fengguang.wu@intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andi Kleen <ak@linux.intel.com>
+To: Christoph Lameter <cl@linux.com>
+Cc: Pekka Enberg <penberg@cs.helsinki.fi>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Nick Piggin <npiggin@suse.de>
 
-Wu Fengguang wrote:
-> On Fri, Sep 03, 2010 at 10:12:01AM +0800, Stephen Rothwell wrote:
->> On Fri, 3 Sep 2010 12:10:23 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>> After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
->>> produced this warning:
->>>
->>> arch/x86/mm/init_64.c: In function 'kernel_physical_mapping_init':
->>> arch/x86/mm/init_64.c:601: warning: 'addr' may be used uninitialized in this function
->>>
->>> The code does look suspicious ... 'addr' gets declared and then passed to
->>> a function, but is not set anywhere ...
->> Forgot to say:
->>
->> Introduced by commit 9b861528a8012e7bc4d1f7bae07395b225331477 ("x86-64,
->> mem: Update all PGDs for direct mapping and vmemmap mapping changes").
-> 
-> 
-> The original patch has the following line, however get lost some time
-> later:
-> 
->         http://www.spinics.net/lists/linux-mm/msg08152.html
-> 
-> ===
-> x86, mm: fix uninitialized addr in kernel_physical_mapping_init()
-> 
-> This re-adds the lost chunk in commit 9b861528a80.
-> 
-> CC: Haicheng Li <haicheng.li@linux.intel.com>
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Wu Fengguang <fengguang.wu@intel.com>
-> ---
-> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-> index 64e7bc2..74f0f35 100644
-> --- a/arch/x86/mm/init_64.c
-> +++ b/arch/x86/mm/init_64.c
-> @@ -570,6 +570,7 @@ kernel_physical_mapping_init(unsigned long start,
->  
->  	start = (unsigned long)__va(start);
->  	end = (unsigned long)__va(end);
-> +	addr = start;
+These functions are used only by percpu memory allocator on SMP.
+Don't build them on UP.
 
-weird, this line was in my original patch: http://lkml.org/lkml/2010/8/20/166
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Cc: Nick Piggin <npiggin@kernel.dk>
+---
+So, something like these three patches.
 
-Acked-by: Haicheng Li <haicheng.li@linux.intel.com>
+Nick, can I route this one through percpu tree?
 
->  	for (; start < end; start = next) {
->  		pgd_t *pgd = pgd_offset_k(start);
-> 
+Thanks.
+
+ include/linux/vmalloc.h |    2 ++
+ mm/vmalloc.c            |    2 ++
+ 2 files changed, 4 insertions(+), 0 deletions(-)
+
+diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
+index de05e96..3d510e8 100644
+--- a/include/linux/vmalloc.h
++++ b/include/linux/vmalloc.h
+@@ -115,10 +115,12 @@ extern rwlock_t vmlist_lock;
+ extern struct vm_struct *vmlist;
+ extern __init void vm_area_register_early(struct vm_struct *vm, size_t align);
+
++#ifdef CONFIG_SMP
+ struct vm_struct **pcpu_get_vm_areas(const unsigned long *offsets,
+ 				     const size_t *sizes, int nr_vms,
+ 				     size_t align, gfp_t gfp_mask);
+
+ void pcpu_free_vm_areas(struct vm_struct **vms, int nr_vms);
++#endif
+
+ #endif /* _LINUX_VMALLOC_H */
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index b7e314b..eb57a63 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -2052,6 +2052,7 @@ void free_vm_area(struct vm_struct *area)
+ }
+ EXPORT_SYMBOL_GPL(free_vm_area);
+
++#ifdef CONFIG_SMP
+ static struct vmap_area *node_to_va(struct rb_node *n)
+ {
+ 	return n ? rb_entry(n, struct vmap_area, rb_node) : NULL;
+@@ -2332,6 +2333,7 @@ void pcpu_free_vm_areas(struct vm_struct **vms, int nr_vms)
+ 		free_vm_area(vms[i]);
+ 	kfree(vms);
+ }
++#endif	/* CONFIG_SMP */
+
+ #ifdef CONFIG_PROC_FS
+ static void *s_start(struct seq_file *m, loff_t *pos)
+-- 
+1.7.1
