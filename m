@@ -1,60 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (powerpc
- related)
-Date: Fri, 3 Sep 2010 13:24:10 +1000
-Message-ID: <20100903132410.ede593ed.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the tty tree with the microblaze
+	tree
+Date: Thu, 2 Sep 2010 20:27:18 -0700
+Message-ID: <20100903032718.GA13847@kroah.com>
+References: <20100903130236.1f5f331c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44906 "EHLO smtps.tip.net.au"
+Received: from kroah.org ([198.145.64.141]:36303 "EHLO coco.kroah.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755453Ab0ICDYN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 2 Sep 2010 23:24:13 -0400
+	id S1752832Ab0ICDa4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 2 Sep 2010 23:30:56 -0400
+Content-Disposition: inline
+In-Reply-To: <20100903130236.1f5f331c.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ian Munsie <imunsie@au1.ibm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Simek <michal.simek@petalogix.com>, Jason Wessel <jason.wessel@windriver.com>
 
-Hi all,
+On Fri, Sep 03, 2010 at 01:02:36PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the tty tree got a conflict in
+> drivers/serial/uartlite.c between commit
+> 52ea4a7ef12f286bd68d13a93daaa688f56a1e14 ("serial: Add CONSOLE_POLL
+> support for uartlite") from the microblaze tree and commit
+> 0e5176373d9c9a7741b54ce81a9eea342291bdca ("serial: Add CONSOLE_POLL
+> support for uartlite") from the tty tree.
+> 
+> The same, but slightly different patch. I used the version from the tty
+> tree.
 
-After merging the final tree, today's linux-next build
-(powerpc64 allnoconfig) failed like this:
+Yes please, that's the version that works :)
 
-arch/powerpc/kernel/built-in.o: In function `.sys_call_table':
-(.text+0x8d48): undefined reference to `.compat_sys_recv'
+Can someone drop it from the microblaze tree please?
 
-Caused by commit 86250b9d12caa1a3dee12a7cf638b7dd70eaadb6 ("powerpc: Wire
-up direct socket system calls").
+thanks,
 
-I have applied this patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 3 Sep 2010 13:19:04 +1000
-Subject: [PATCH] powerpc: define a compat_sys_recv cond_syscall
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- kernel/sys_ni.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
-index bad369e..c782fe9 100644
---- a/kernel/sys_ni.c
-+++ b/kernel/sys_ni.c
-@@ -50,6 +50,7 @@ cond_syscall(compat_sys_sendmsg);
- cond_syscall(sys_recvmsg);
- cond_syscall(sys_recvmmsg);
- cond_syscall(compat_sys_recvmsg);
-+cond_syscall(compat_sys_recv);
- cond_syscall(compat_sys_recvfrom);
- cond_syscall(compat_sys_recvmmsg);
- cond_syscall(sys_socketcall);
--- 
-1.7.1
-
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+greg k-h
