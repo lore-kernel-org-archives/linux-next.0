@@ -1,74 +1,48 @@
 From: Tejun Heo <tj@kernel.org>
-Subject: [PATCH 1/3] vmalloc: pcpu_get/free_vm_areas() aren't needed on UP
-Date: Fri, 03 Sep 2010 18:25:02 +0200
-Message-ID: <4C81215E.1070108@kernel.org>
+Subject: [PATCH 2/3] percpu: reduce PCPU_MIN_UNIT_SIZE to 32k
+Date: Fri, 03 Sep 2010 18:26:09 +0200
+Message-ID: <4C8121A1.8060809@kernel.org>
 References: <20100824120714.8918f8de.sfr@canb.auug.org.au> <4C740450.3030000@cs.helsinki.fi> <alpine.DEB.2.00.1008241256280.4763@router.home> <4C741029.7090300@cs.helsinki.fi> <alpine.DEB.2.00.1008241352240.5388@router.home> <4C74D1D7.4080608@kernel.org> <4C74DB05.7000101@cs.helsinki.fi> <alpine.DEB.2.00.1008250846590.13026@router.home> <4C762734.1030402@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hera.kernel.org ([140.211.167.34]:47827 "EHLO hera.kernel.org"
+Received: from hera.kernel.org ([140.211.167.34]:47890 "EHLO hera.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752655Ab0ICQZl (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 3 Sep 2010 12:25:41 -0400
+	id S1752655Ab0ICQ0m (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 3 Sep 2010 12:26:42 -0400
 In-Reply-To: <4C762734.1030402@kernel.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Christoph Lameter <cl@linux.com>
-Cc: Pekka Enberg <penberg@cs.helsinki.fi>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, Nick Piggin <npiggin@suse.de>
+Cc: Pekka Enberg <penberg@cs.helsinki.fi>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>
 
-These functions are used only by percpu memory allocator on SMP.
-Don't build them on UP.
+In preparation of enabling percpu allocator for UP, reduce
+PCPU_MIN_UNIT_SIZE to 32k.  On UP, the first chunk doesn't have to
+include static percpu variables and chunk size can be smaller which is
+important as UP percpu allocator will use contiguous kernel memory to
+populate chunks.
+
+PCPU_MIN_UNIT_SIZE also determines the maximum supported allocation
+size but 32k should still be enough.
 
 Signed-off-by: Tejun Heo <tj@kernel.org>
-Cc: Nick Piggin <npiggin@kernel.dk>
 ---
-So, something like these three patches.
+ include/linux/percpu.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Nick, can I route this one through percpu tree?
+diff --git a/include/linux/percpu.h b/include/linux/percpu.h
+index 49466b1..fc8130a 100644
+--- a/include/linux/percpu.h
++++ b/include/linux/percpu.h
+@@ -42,7 +42,7 @@
+ #ifdef CONFIG_SMP
 
-Thanks.
+ /* minimum unit size, also is the maximum supported allocation size */
+-#define PCPU_MIN_UNIT_SIZE		PFN_ALIGN(64 << 10)
++#define PCPU_MIN_UNIT_SIZE		PFN_ALIGN(32 << 10)
 
- include/linux/vmalloc.h |    2 ++
- mm/vmalloc.c            |    2 ++
- 2 files changed, 4 insertions(+), 0 deletions(-)
-
-diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
-index de05e96..3d510e8 100644
---- a/include/linux/vmalloc.h
-+++ b/include/linux/vmalloc.h
-@@ -115,10 +115,12 @@ extern rwlock_t vmlist_lock;
- extern struct vm_struct *vmlist;
- extern __init void vm_area_register_early(struct vm_struct *vm, size_t align);
-
-+#ifdef CONFIG_SMP
- struct vm_struct **pcpu_get_vm_areas(const unsigned long *offsets,
- 				     const size_t *sizes, int nr_vms,
- 				     size_t align, gfp_t gfp_mask);
-
- void pcpu_free_vm_areas(struct vm_struct **vms, int nr_vms);
-+#endif
-
- #endif /* _LINUX_VMALLOC_H */
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index b7e314b..eb57a63 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -2052,6 +2052,7 @@ void free_vm_area(struct vm_struct *area)
- }
- EXPORT_SYMBOL_GPL(free_vm_area);
-
-+#ifdef CONFIG_SMP
- static struct vmap_area *node_to_va(struct rb_node *n)
- {
- 	return n ? rb_entry(n, struct vmap_area, rb_node) : NULL;
-@@ -2332,6 +2333,7 @@ void pcpu_free_vm_areas(struct vm_struct **vms, int nr_vms)
- 		free_vm_area(vms[i]);
- 	kfree(vms);
- }
-+#endif	/* CONFIG_SMP */
-
- #ifdef CONFIG_PROC_FS
- static void *s_start(struct seq_file *m, loff_t *pos)
+ /*
+  * Percpu allocator can serve percpu allocations before slab is
 -- 
 1.7.1
