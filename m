@@ -1,84 +1,47 @@
-From: Vipin Mehta <Vipin.Mehta@Atheros.com>
-Subject: RE: linux-next: Tree for September 3 (ar6k)
-Date: Fri, 3 Sep 2010 19:02:36 -0700
-Message-ID: <35B17FE5076C7040809188FBE7913F983F23479B57@SC1EXMB-MBCL.global.atheros.com>
-References: <20100903135206.d9bc2093.sfr@canb.auug.org.au>
- <20100903180614.81e5eee0.randy.dunlap@oracle.com>
+From: Greg KH <gregkh@suse.de>
+Subject: Re: linux-next: Tree for September 3 (ar6k)
+Date: Fri, 3 Sep 2010 19:05:36 -0700
+Message-ID: <20100904020536.GA6204@suse.de>
+References: <20100903135206.d9bc2093.sfr@canb.auug.org.au> <20100903180614.81e5eee0.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.atheros.com ([12.19.149.2]:41033 "EHLO mail.atheros.com"
+Received: from cantor.suse.de ([195.135.220.2]:51783 "EHLO mx1.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753320Ab0IDCCh convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 3 Sep 2010 22:02:37 -0400
-Received: from mail.atheros.com ([10.10.20.105])
-	by sidewinder.atheros.com
-	for <linux-next@vger.kernel.org>; Fri, 03 Sep 2010 19:02:32 -0700
+	id S1754369Ab0IDCOc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 3 Sep 2010 22:14:32 -0400
+Content-Disposition: inline
 In-Reply-To: <20100903180614.81e5eee0.randy.dunlap@oracle.com>
-Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "gregkh@suse.de" <gregkh@suse.de>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Vipin Mehta <vmehta@atheros.com>
 
-Apologies for the inconvenience. I synced to the linux-next tree and looked into the drivers/staging/ath6kl directory. I was able to compile the driver without any issues.
-
-One of the reasons this might happen is if the following symbolic link is broken.
-
-drivers/staging/ath6kl/include/common/AR6002/hw2.0/hw
-
-The link should point to drivers/staging/ath6kl/include/common/AR6002/hw2.0/hw.0
-
-Can you pls send me the output of
-ls -al drivers/staging/ath6kl/include/common/AR6002/hw2.0/
-
-or if someone can help with the steps to reproduce the problem.
-
-Regards,
-Vipin
-
-> -----Original Message-----
-> From: Randy Dunlap [mailto:randy.dunlap@oracle.com]
-> Sent: Friday, September 03, 2010 6:06 PM
-> To: Stephen Rothwell; gregkh@suse.de
-> Cc: linux-next@vger.kernel.org; LKML; Vipin Mehta
-> Subject: Re: linux-next: Tree for September 3 (ar6k)
-> 
+On Fri, Sep 03, 2010 at 06:06:14PM -0700, Randy Dunlap wrote:
 > On Fri, 3 Sep 2010 13:52:06 +1000 Stephen Rothwell wrote:
 > 
 > > Hi all,
-> >
+> > 
 > > Changes since 20100902:
 > 
 > 
-> drivers/staging/ath6kl/htc2/AR6000/ar6k.c:29:43: error:
-> AR6002/hw2.0/hw/mbox_host_reg.h: No such file or directory
+> drivers/staging/ath6kl/htc2/AR6000/ar6k.c:29:43: error: AR6002/hw2.0/hw/mbox_host_reg.h: No such file or directory
 > 
 > which leads to lots of these (this is just a sample):
 > 
-> drivers/staging/ath6kl/htc2/AR6000/ar6k.c:227: error: implicit declaration
-> of function 'INT_STATUS_ENABLE_ERROR_SET'
-> drivers/staging/ath6kl/htc2/AR6000/ar6k.c:228: error: implicit declaration
-> of function 'INT_STATUS_ENABLE_CPU_SET'
-> drivers/staging/ath6kl/htc2/AR6000/ar6k.c:229: error: implicit declaration
-> of function 'INT_STATUS_ENABLE_COUNTER_SET'
-> drivers/staging/ath6kl/htc2/AR6000/ar6k.c:232: error: implicit declaration
-> of function 'INT_STATUS_ENABLE_MBOX_DATA_SET'
-> drivers/staging/ath6kl/htc2/AR6000/ar6k.c:245: error: implicit declaration
-> of function 'CPU_INT_STATUS_ENABLE_BIT_SET'
-> drivers/staging/ath6kl/htc2/AR6000/ar6k.c:249: error: implicit declaration
-> of function 'ERROR_STATUS_ENABLE_RX_UNDERFLOW_SET'
-> drivers/staging/ath6kl/htc2/AR6000/ar6k.c:250: error: implicit declaration
-> of function 'ERROR_STATUS_ENABLE_TX_OVERFLOW_SET'
-> drivers/staging/ath6kl/htc2/AR6000/ar6k.c:254: error: implicit declaration
-> of function 'COUNTER_INT_STATUS_ENABLE_BIT_SET'
-> drivers/staging/ath6kl/htc2/AR6000/ar6k.c:263: error:
-> 'INT_STATUS_ENABLE_ADDRESS' undeclared (first use in this function)
-> drivers/staging/ath6kl/htc2/AR6000/ar6k.c:296: error:
-> 'INT_STATUS_ENABLE_ADDRESS' undeclared (first use in this function)
-> 
-> ---
-> ~Randy
-> *** Remember to use Documentation/SubmitChecklist when testing your code
-> ***
+> drivers/staging/ath6kl/htc2/AR6000/ar6k.c:227: error: implicit declaration of function 'INT_STATUS_ENABLE_ERROR_SET'
+> drivers/staging/ath6kl/htc2/AR6000/ar6k.c:228: error: implicit declaration of function 'INT_STATUS_ENABLE_CPU_SET'
+> drivers/staging/ath6kl/htc2/AR6000/ar6k.c:229: error: implicit declaration of function 'INT_STATUS_ENABLE_COUNTER_SET'
+> drivers/staging/ath6kl/htc2/AR6000/ar6k.c:232: error: implicit declaration of function 'INT_STATUS_ENABLE_MBOX_DATA_SET'
+> drivers/staging/ath6kl/htc2/AR6000/ar6k.c:245: error: implicit declaration of function 'CPU_INT_STATUS_ENABLE_BIT_SET'
+> drivers/staging/ath6kl/htc2/AR6000/ar6k.c:249: error: implicit declaration of function 'ERROR_STATUS_ENABLE_RX_UNDERFLOW_SET'
+> drivers/staging/ath6kl/htc2/AR6000/ar6k.c:250: error: implicit declaration of function 'ERROR_STATUS_ENABLE_TX_OVERFLOW_SET'
+> drivers/staging/ath6kl/htc2/AR6000/ar6k.c:254: error: implicit declaration of function 'COUNTER_INT_STATUS_ENABLE_BIT_SET'
+> drivers/staging/ath6kl/htc2/AR6000/ar6k.c:263: error: 'INT_STATUS_ENABLE_ADDRESS' undeclared (first use in this function)
+> drivers/staging/ath6kl/htc2/AR6000/ar6k.c:296: error: 'INT_STATUS_ENABLE_ADDRESS' undeclared (first use in this function)
+
+Vipin, can you please take care of this?
+
+thanks,
+
+greg k-h
