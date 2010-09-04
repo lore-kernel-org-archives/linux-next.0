@@ -1,59 +1,55 @@
-From: Vipin Mehta <Vipin.Mehta@Atheros.com>
-Subject: RE: linux-next: Tree for September 3 (ar6k)
-Date: Fri, 3 Sep 2010 19:46:07 -0700
-Message-ID: <35B17FE5076C7040809188FBE7913F983F23479B6A@SC1EXMB-MBCL.global.atheros.com>
-References: <20100903135206.d9bc2093.sfr@canb.auug.org.au>
- <20100903180614.81e5eee0.randy.dunlap@oracle.com>
- <35B17FE5076C7040809188FBE7913F983F23479B57@SC1EXMB-MBCL.global.atheros.com>
- <20100904021627.GA7695@suse.de>
+From: Pekka Enberg <penberg@cs.helsinki.fi>
+Subject: Re: [PATCH 3/3] percpu: use percpu allocator on UP too
+Date: Sat, 04 Sep 2010 09:54:36 +0300
+Message-ID: <4C81ED2C.6000304@cs.helsinki.fi>
+References: <20100824120714.8918f8de.sfr@canb.auug.org.au> <4C740450.3030000@cs.helsinki.fi> <alpine.DEB.2.00.1008241256280.4763@router.home> <4C741029.7090300@cs.helsinki.fi> <alpine.DEB.2.00.1008241352240.5388@router.home> <4C74D1D7.4080608@kernel.org> <4C74DB05.7000101@cs.helsinki.fi> <alpine.DEB.2.00.1008250846590.13026@router.home> <4C762734.1030402@kernel.org> <4C8121BC.7040609@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.atheros.com ([12.19.149.2]:41745 "EHLO mail.atheros.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753436Ab0IDCqJ convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 3 Sep 2010 22:46:09 -0400
-Received: from mail.atheros.com ([10.10.20.105])
-	by sidewinder.atheros.com
-	for <linux-next@vger.kernel.org>; Fri, 03 Sep 2010 19:46:04 -0700
-In-Reply-To: <20100904021627.GA7695@suse.de>
-Content-Language: en-US
+Received: from courier.cs.helsinki.fi ([128.214.9.1]:39923 "EHLO
+	mail.cs.helsinki.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750749Ab0IDGyx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 4 Sep 2010 02:54:53 -0400
+In-Reply-To: <4C8121BC.7040609@kernel.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <gregkh@suse.de>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: Christoph Lameter <cl@linux.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Sure. Will do that.
+On 3.9.2010 19.26, Tejun Heo wrote:
+> On UP, percpu allocations were redirected to kmalloc.  This has the
+> following problems.
+>
+> * For certain amount of allocations (determined by
+>    PERCPU_DYNAMIC_EARLY_SLOTS and PERCPU_DYNAMIC_EARLY_SIZE), percpu
+>    allocator can be used before the usual kernel memory allocator is
+>    brought online.  On SMP, this is used to initialize the kernel
+>    memory allocator.
+>
+> * percpu allocator honors alignment upto PAGE_SIZE but kmalloc()
+>    doesn't.  For example, workqueue makes use of larger alignments for
+>    cpu_workqueues.
+>
+> Currently, users of percpu allocators need to handle UP differently,
+> which is somewhat fragile and ugly.  Other than small amount of
+> memory, there isn't much to lose by enabling percpu allocator on UP.
+> It can simply use kernel memory based chunk allocation which was added
+> for SMP archs w/o MMUs.
+>
+> This patch removes mm/percpu_up.c, builds mm/percpu.c on UP too and
+> makes UP build use percpu-km.  As percpu addresses and kernel
+> addresses are always identity mapped and static percpu variables don't
+> need any special treatment, nothing is arch dependent and mm/percpu.c
+> implements generic setup_per_cpu_areas() for UP.
+>
+> Signed-off-by: Tejun Heo<tj@kernel.org>
+> Cc: Christoph Lameter<cl@linux-foundation.org>
+> Cc: Pekka Enberg<penberg@cs.helsinki.fi>
 
-Regards,
-Vipin
+Acked-by: Pekka Enberg <penberg@kernel.org>
 
-> -----Original Message-----
-> From: Greg KH [mailto:gregkh@suse.de]
-> Sent: Friday, September 03, 2010 7:16 PM
-> To: Vipin Mehta
-> Cc: Randy Dunlap; Stephen Rothwell; linux-next@vger.kernel.org; LKML
-> Subject: Re: linux-next: Tree for September 3 (ar6k)
-> 
-> On Fri, Sep 03, 2010 at 07:02:36PM -0700, Vipin Mehta wrote:
-> > Apologies for the inconvenience. I synced to the linux-next tree and
-> looked into the drivers/staging/ath6kl directory. I was able to compile
-> the driver without any issues.
-> >
-> > One of the reasons this might happen is if the following symbolic link
-> is broken.
-> >
-> > drivers/staging/ath6kl/include/common/AR6002/hw2.0/hw
-> >
-> > The link should point to
-> drivers/staging/ath6kl/include/common/AR6002/hw2.0/hw.0
-> 
-> I applied the patch and the symlink "should" be there, but in general,
-> we shouldn't rely on a symlink in the kernel tree to work properly.
-> 
-> Can you send me a patch to fix this up so it works without a symlink?
-> 
-> thanks,
-> 
-> greg k-h
+Is this going into some public append-only branch I could cherry-pick 
+the changeset from to my 'slub/cleanups' branch?
+
+			Pekka
