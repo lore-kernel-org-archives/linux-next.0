@@ -1,23 +1,43 @@
-From: Christoph Lameter <cl@linux.com>
-Subject: Re: [PATCH 3/3] percpu: use percpu allocator on UP too
-Date: Fri, 3 Sep 2010 13:43:42 -0500 (CDT)
-Message-ID: <alpine.DEB.2.00.1009031343210.10602@router.home>
-References: <20100824120714.8918f8de.sfr@canb.auug.org.au> <4C740450.3030000@cs.helsinki.fi> <alpine.DEB.2.00.1008241256280.4763@router.home> <4C741029.7090300@cs.helsinki.fi> <alpine.DEB.2.00.1008241352240.5388@router.home> <4C74D1D7.4080608@kernel.org>
- <4C74DB05.7000101@cs.helsinki.fi> <alpine.DEB.2.00.1008250846590.13026@router.home> <4C762734.1030402@kernel.org> <4C8121BC.7040609@kernel.org>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] staging: mrst touchscreen depends on SPI
+Date: Fri, 3 Sep 2010 18:01:56 -0700
+Message-ID: <20100903180156.af17d4a8.randy.dunlap@oracle.com>
+References: <20100903135206.d9bc2093.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp102.prem.mail.ac4.yahoo.com ([76.13.13.41]:32132 "HELO
-	smtp102.prem.mail.ac4.yahoo.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with SMTP id S1753893Ab0ICSnp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 3 Sep 2010 14:43:45 -0400
-In-Reply-To: <4C8121BC.7040609@kernel.org>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:36076 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752212Ab0IDBCe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 3 Sep 2010 21:02:34 -0400
+In-Reply-To: <20100903135206.d9bc2093.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Pekka Enberg <penberg@cs.helsinki.fi>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, sreedhara.ds@intel.com
 
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-As much as I can review looks okay.
+Moorestown touchscreen driver should depend on SPI.
+Fixes these build errors:
 
-Reviewed-by: Christoph Lameter <cl@linux.com>
+intel-mid-touch.c:(.init.text+0xdd34): undefined reference to `spi_register_driver'
+drivers/built-in.o:(.data+0x21778): undefined reference to `spi_bus_type'
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: sreedhara.ds@intel.com
+---
+ drivers/staging/mrst-touchscreen/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20100903.orig/drivers/staging/mrst-touchscreen/Kconfig
++++ linux-next-20100903/drivers/staging/mrst-touchscreen/Kconfig
+@@ -1,6 +1,6 @@
+ config TOUCHSCREEN_INTEL_MID
+ 	tristate "Intel MID platform resistive touchscreen"
+-	depends on INTEL_SCU_IPC
++	depends on INTEL_SCU_IPC && SPI
+ 	default y
+ 	help
+ 	  Say Y here if you have a Intel MID based touchscreen
