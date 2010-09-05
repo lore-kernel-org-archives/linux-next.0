@@ -1,32 +1,52 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH 3/3] percpu: use percpu allocator on UP too
-Date: Sat, 04 Sep 2010 11:47:37 +0200
-Message-ID: <4C8215B9.8060606@kernel.org>
-References: <20100824120714.8918f8de.sfr@canb.auug.org.au> <4C740450.3030000@cs.helsinki.fi> <alpine.DEB.2.00.1008241256280.4763@router.home> <4C741029.7090300@cs.helsinki.fi> <alpine.DEB.2.00.1008241352240.5388@router.home> <4C74D1D7.4080608@kernel.org> <4C74DB05.7000101@cs.helsinki.fi> <alpine.DEB.2.00.1008250846590.13026@router.home> <4C762734.1030402@kernel.org> <4C8121BC.7040609@kernel.org> <4C81ED2C.6000304@cs.helsinki.fi>
+From: "WESTERN UNION PAYMENT" <westernuniontransfer807@yahoo.com.hk>
+Subject: Re: Western Union Payment MTCN to you
+Date: Sun, 5 Sep 2010 12:14:06 +0300 (EEST)
+Message-ID: <4518970dbb56f8617ccecb8d9f283cc9.squirrel@mail.makeevka.com>
+Reply-To: westernuniontransfer807@yahoo.com.hk
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hera.kernel.org ([140.211.167.34]:50335 "EHLO hera.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751029Ab0IDJrm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 4 Sep 2010 05:47:42 -0400
-In-Reply-To: <4C81ED2C.6000304@cs.helsinki.fi>
+Received: from mail.makeevka.com ([193.109.160.2]:40202 "EHLO
+	mail.makeevka.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752231Ab0IEJqA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 5 Sep 2010 05:46:00 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Pekka Enberg <penberg@cs.helsinki.fi>
-Cc: Christoph Lameter <cl@linux.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello,
 
-On 09/04/2010 08:54 AM, Pekka Enberg wrote:
-> Is this going into some public append-only branch I could
-> cherry-pick the changeset from to my 'slub/cleanups' branch?
 
-I'll put it into percpu#for-next once Linus pulls in the currently
-pending set of fixes.  I'll let you know.
 
-Thanks.
 
--- 
-tejun
+Western Union Money Transfer
+Phone: +2348184364371
+Email: westernuniontransfer809@yahoo.com.hk
+
+Attention :
+
+We have just send the first US$5000,00 to you right now due to your
+inability to receive the total funds from bank to bank transfer. Down here
+is the payment information except Question and answer.
+
+Sender's Name:......... Amechi Obeluo
+Control-MTCN:........... 0752470490
+Amount sent:........ $5000.00
+
+But the directors of this payment says that you will have to update/renew
+your file for the payment before we will give you the full information to
+pickup the money , The total money on your name here is US$600,000,00  .We
+will be sending $5000.00 to you everyday untill the payment is completed.
+The update /renewal of your file here will cost you $160.00 only .
+
+Please You are advice to adhere to this directive so that we can meet up
+with the time scheduled for the sending $5000,00 to you everyday untill
+you receive the total US$600,000.00,Please don't go for pickup untill I
+give you the question and answer .
+
+Get back to me so I can give you the name you will send the $160.00 to
+.You can call me for more details :
+
+Sincerely Regards
+MR.PAUL TURNER.
+Western Union Payment Officer
+Phone: +2348184364371
