@@ -1,65 +1,52 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the rcu tree
-Date: Mon, 6 Sep 2010 12:14:08 +1000
-Message-ID: <20100906121408.33946fbe.sfr@canb.auug.org.au>
+From: Neil Brown <neilb@suse.de>
+Subject: Re: linux-next: build warning after merge of the rcu tree
+Date: Mon, 6 Sep 2010 12:32:55 +1000
+Message-ID: <20100906123255.3eef4311@notabene>
+References: <20100906121408.33946fbe.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__6_Sep_2010_12_14_08_+1000_kbic0tRelF_CNZ46"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46716 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754864Ab0IFCOS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 5 Sep 2010 22:14:18 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Neil Brown <neilb@suse.de>
-
---Signature=_Mon__6_Sep_2010_12_14_08_+1000_kbic0tRelF_CNZ46
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20100906121408.33946fbe.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Paul,
+On Mon, 6 Sep 2010 12:14:08 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-After merging the rcu tree, today's linux-next build
-(powerpc ppc64_defconfig) produced this warning:
+> Hi Paul,
+> 
+> After merging the rcu tree, today's linux-next build
+> (powerpc ppc64_defconfig) produced this warning:
+> 
+> drivers/md/raid1.c: In function 'read_balance':
+> drivers/md/raid1.c:445: warning: operation on 'new_disk' may be undefined
+> 
+> I am picking on the rcu tree because the line above has not changed since
+> 2005.  The line is:
+> 
+>                 for (rdev = rcu_dereference(conf->mirrors[new_disk].rdev);
+>                      r1_bio->bios[new_disk] == IO_BLOCKED ||
+>                      !rdev || !test_bit(In_sync, &rdev->flags)
+>                              || test_bit(WriteMostly, &rdev->flags);
+>                      rdev = rcu_dereference(conf->mirrors[++new_disk].rdev)) {
+> 
+> Where new_disk is being updated in the parameter to the last
+> rcu_dereference.
+> 
 
-drivers/md/raid1.c: In function 'read_balance':
-drivers/md/raid1.c:445: warning: operation on 'new_disk' may be undefined
+Hi Stephen,
 
-I am picking on the rcu tree because the line above has not changed since
-2005.  The line is:
+ There is a patch in linux-kernel
+    "PATCH] md: do not use ++ in rcu_dereference() argument"
 
-                for (rdev =3D rcu_dereference(conf->mirrors[new_disk].rdev);
-                     r1_bio->bios[new_disk] =3D=3D IO_BLOCKED ||
-                     !rdev || !test_bit(In_sync, &rdev->flags)
-                             || test_bit(WriteMostly, &rdev->flags);
-                     rdev =3D rcu_dereference(conf->mirrors[++new_disk].rde=
-v)) {
+ that addresses this - it is a problem in md: I guess rcu as become more
+ helpful in finding these problems.
 
-Where new_disk is being updated in the parameter to the last
-rcu_dereference.
+ I'll probably fix it a little differently, but I'll have something in my
+ for-next for tomorrow.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__6_Sep_2010_12_14_08_+1000_kbic0tRelF_CNZ46
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMhE5wAAoJEDMEi1NhKgbsfTQH/3vbqHfUp9bdRp+1WXe80ovn
-AWhVr6Iir1Bbi1p4pd4wKppmnfc3sCvwjYgRlvHxg2HpMf8tlWAYcTorkuC2AM5l
-nealWmV5HEksTYglBNSJfV41alzMsTadhRsWhcC+bwhYOa1/8zI4zakDlI8ObFkt
-8GvYlss7R0VipsNiS4ULZb9gvEqPjFCGFKr2108N165cL9YOLln/tg03mlyHVXwb
-WCGo1pX5COEjZXyYU3K+LZMy9qZEFG0PMSw+WqxZOe/e2Zme161Hs20r0HX19sql
-LW7SyGa6S0dVY9nZavLscFnX0GOlHRfXsnMnqbekskFW6Zlc3n09NhCZplCVSC4=
-=6wPi
------END PGP SIGNATURE-----
-
---Signature=_Mon__6_Sep_2010_12_14_08_+1000_kbic0tRelF_CNZ46--
+Thanks,
+NeilBrown
