@@ -1,295 +1,413 @@
 From: matthieu castet <castet.matthieu@free.fr>
-Subject: [PATCH 2/3 V8] [tip:x86/mm] NX protection for kernel data
-Date: Mon, 06 Sep 2010 23:50:09 +0200
-Message-ID: <4C856211.7080802@free.fr>
+Subject: [PATCH 4/4 V12] [tip:x86/mm] RO/NX protection for loadable kernel
+Date: Mon, 06 Sep 2010 23:53:52 +0200
+Message-ID: <4C8562F0.3070400@free.fr>
 Mime-Version: 1.0
 Content-Type: multipart/mixed;
- boundary="------------060602000500000308040901"
+ boundary="------------070707080105070709060606"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp6-g21.free.fr ([212.27.42.6]:35544 "EHLO smtp6-g21.free.fr"
+Received: from smtp6-g21.free.fr ([212.27.42.6]:34879 "EHLO smtp6-g21.free.fr"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752196Ab0IFVuP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 6 Sep 2010 17:50:15 -0400
+	id S1752196Ab0IFVyB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 6 Sep 2010 17:54:01 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org
 Cc: Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, Rusty Russell <rusty@rustcorp.com.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>, Siarhei Liakh <sliakh.lkml@gmail.com>
 
 This is a multi-part message in MIME format.
---------------060602000500000308040901
+--------------070707080105070709060606
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-    Note: this patch depends on "Correct improper large page preservation" patch
-    
-    This patch expands functionality of CONFIG_DEBUG_RODATA to set main
-    (static) kernel data area as NX.
-    The following steps are taken to achieve this:
-    1. Linker script is adjusted so .text always starts and ends on a page bound
-    2. Linker script is adjusted so .rodata always start and
-    end on a page boundary
-    3. NX is set for all pages from _etext through _end in mark_rodata_ro.
-    4. free_init_pages() sets released memory NX in arch/x86/mm/init.c
-    5. bios rom is set to x when pcibios is used.
-    
-    The results of patch application may be observed in the diff of kernel page
-    table dumps.
-    pcibios :
-    --- data_nx_pt_before.txt       2009-10-13 07:48:59.000000000 -0400
-    +++ data_nx_pt_after.txt        2009-10-13 07:26:46.000000000 -0400
-    @@ -2,8 +2,9 @@
-     0x00000000-0xc0000000           3G                           pmd
-     ---[ Kernel Mapping ]---
-    -0xc0000000-0xc0100000           1M     RW             GLB x  pte
-    +0xc0000000-0xc00a0000         640K     RW             GLB NX pte
-    +0xc00a0000-0xc0100000         384K     RW             GLB x  pte
-    -0xc0100000-0xc03d7000        2908K     ro             GLB x  pte
-    +0xc0100000-0xc0318000        2144K     ro             GLB x  pte
-    +0xc0318000-0xc03d7000         764K     ro             GLB NX pte
-    -0xc03d7000-0xc0600000        2212K     RW             GLB x  pte
-    +0xc03d7000-0xc0600000        2212K     RW             GLB NX pte
-     0xc0600000-0xf7a00000         884M     RW         PSE GLB NX pmd
-     0xf7a00000-0xf7bfe000        2040K     RW             GLB NX pte
-     0xf7bfe000-0xf7c00000           8K                           pte
-    
-    no pcibios :
-    --- data_nx_pt_before.txt       2009-10-13 07:48:59.000000000 -0400
-    +++ data_nx_pt_after.txt        2009-10-13 07:26:46.000000000 -0400
-    @@ -2,8 +2,9 @@
-     0x00000000-0xc0000000           3G                           pmd
-     ---[ Kernel Mapping ]---
-    -0xc0000000-0xc0100000           1M     RW             GLB x  pte
-    +0xc0000000-0xc0100000           1M     RW             GLB NX pte
-    -0xc0100000-0xc03d7000        2908K     ro             GLB x  pte
-    +0xc0100000-0xc0318000        2144K     ro             GLB x  pte
-    +0xc0318000-0xc03d7000         764K     ro             GLB NX pte
-    -0xc03d7000-0xc0600000        2212K     RW             GLB x  pte
-    +0xc03d7000-0xc0600000        2212K     RW             GLB NX pte
-     0xc0600000-0xf7a00000         884M     RW         PSE GLB NX pmd
-     0xf7a00000-0xf7bfe000        2040K     RW             GLB NX pte
-     0xf7bfe000-0xf7c00000           8K                           pte
-    
-    The patch have been developed for Linux 2.6.34-rc2 x86 by Siarhei Liakh
-    <sliakh.lkml@gmail.com> and Xuxian Jiang <jiang@cs.ncsu.edu>.
-    
-    V1:  initial patch for 2.6.30
-    V2:  patch for 2.6.31-rc7
-    V3:  moved all code into arch/x86, adjusted credits
-    V4:  fixed ifdef, removed credits from CREDITS
-    V5:  fixed an address calculation bug in mark_nxdata_nx()
-    V6:  added acked-by and PT dump diff to commit log
-    V7:  minor adjustments for -tip
-    V8:  rework with the merge of "Set first MB as RW+NX"
-    
-    Signed-off-by: Siarhei Liakh <sliakh.lkml@gmail.com>
-    Signed-off-by: Xuxian Jiang <jiang@cs.ncsu.edu>
-    Signed-off-by: Matthieu CASTET <castet.matthieu@free.fr>
+This patch is a logical extension of the protection provided by
+CONFIG_DEBUG_RODATA to LKMs. The protection is provided by splitting
+module_core and module_init into three logical parts each and setting
+appropriate page access permissions for each individual section:
 
---------------060602000500000308040901
+ 1. Code: RO+X
+ 2. RO data: RO+NX
+ 3. RW data: RW+NX
+
+In order to achieve proper protection, layout_sections() have been
+modified to align each of the three parts mentioned above onto page
+boundary. Next, the corresponding page access permissions are set
+right before successful exit from load_module(). Further, free_module()
+and sys_init_module have been modified to set module_core and
+module_init as RW+NX right before calling module_free().
+
+By default, the original section layout and access flags are preserved.
+When compiled with CONFIG_DEBUG_SET_MODULE_RONX=y, the patch
+will page-align each group of sections to ensure that each page contains
+only one type of content and will enforce RO/NX for each group of pages.
+
+V1: Initial proof-of-concept patch.
+V2: The patch have been re-written to reduce the number of #ifdefs and
+to make it architecture-agnostic. Code formatting have been corrected also.
+V3: Opportunistic RO/NX protectiuon is now unconditional. Section
+page-alignment is enabled when CONFIG_DEBUG_RODATA=y.
+V4: Removed most macros and improved coding style.
+V5: Changed page-alignment and RO/NX section size calculation
+V6: Fixed comments. Restricted RO/NX enforcement to x86 only
+V7: Introduced CONFIG_DEBUG_SET_MODULE_RONX, added calls to
+set_all_modules_text_rw() and set_all_modules_text_ro() in ftrace
+V8: updated for compatibility with linux 2.6.33-rc5
+V9: coding style fixes
+V10: more coding style fixes
+V11: minor adjutments for -tip
+V12: minor adjutments for v2.6.35-rc2-tip
+
+Signed-off-by: Siarhei Liakh <sliakh.lkml@gmail.com>
+Signed-off-by: Xuxian Jiang <jiang@cs.ncsu.edu>
+Acked-by: Arjan van de Ven <arjan@linux.intel.com>
+Reviewed-by: James Morris <jmorris@namei.org>
+Signed-off-by: H. Peter Anvin <hpa@zytor.com>
+
+--------------070707080105070709060606
 Content-Type: text/x-diff;
- name="x86_nx_kernel_data.diff"
+ name="x86_nx_module_data.diff"
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline;
- filename="x86_nx_kernel_data.diff"
+ filename="x86_nx_module_data.diff"
 
-diff --git a/arch/x86/include/asm/pci.h b/arch/x86/include/asm/pci.h
-index 404a880..d5cecf3 100644
---- a/arch/x86/include/asm/pci.h
-+++ b/arch/x86/include/asm/pci.h
-@@ -62,6 +62,7 @@ extern unsigned long pci_mem_start;
+diff --git a/arch/x86/Kconfig.debug b/arch/x86/Kconfig.debug
+index 7508508..4fdbe88 100644
+--- a/arch/x86/Kconfig.debug
++++ b/arch/x86/Kconfig.debug
+@@ -113,6 +113,17 @@ config DEBUG_RODATA_TEST
+ 	  feature as well as for the change_page_attr() infrastructure.
+ 	  If in doubt, say "N"
  
- #define PCIBIOS_MIN_CARDBUS_IO	0x4000
++config DEBUG_SET_MODULE_RONX
++	bool "Set loadable kernel module data as NX and text as RO"
++	default n
++	depends on X86 && MODULES
++	---help---
++	  This option helps to catch unintended modifications to loadable
++	  kernel module's text and read-only data. It also prevents execution
++	  of LKM's data. Such protection may interfere with run-time code
++	  patching and dynamic kernel tracing.
++	  If in doubt, say "N".
++
+ config DEBUG_NX_TEST
+ 	tristate "Testcase for the NX non-executable stack feature"
+ 	depends on DEBUG_KERNEL && m
+diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
+index cd37469..fa9f170 100644
+--- a/arch/x86/kernel/ftrace.c
++++ b/arch/x86/kernel/ftrace.c
+@@ -19,6 +19,7 @@
+ #include <linux/sched.h>
+ #include <linux/init.h>
+ #include <linux/list.h>
++#include <linux/module.h>
  
-+extern int pcibios_enabled;
- void pcibios_config_init(void);
- struct pci_bus *pcibios_scan_root(int bus);
+ #include <trace/syscall.h>
  
-diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-index d0bb522..958ac45 100644
---- a/arch/x86/kernel/vmlinux.lds.S
-+++ b/arch/x86/kernel/vmlinux.lds.S
-@@ -69,7 +69,7 @@ jiffies_64 = jiffies;
- 
- PHDRS {
- 	text PT_LOAD FLAGS(5);          /* R_E */
--	data PT_LOAD FLAGS(7);          /* RWE */
-+	data PT_LOAD FLAGS(6);          /* RW_ */
- #ifdef CONFIG_X86_64
- 	user PT_LOAD FLAGS(5);          /* R_E */
- #ifdef CONFIG_SMP
-@@ -116,6 +116,10 @@ SECTIONS
- 
- 	EXCEPTION_TABLE(16) :text = 0x9090
- 
-+#if defined(CONFIG_DEBUG_RODATA)
-+	/* .text should occupy whole number of pages */
-+	. = ALIGN(PAGE_SIZE);
-+#endif
- 	X64_ALIGN_DEBUG_RODATA_BEGIN
- 	RO_DATA(PAGE_SIZE)
- 	X64_ALIGN_DEBUG_RODATA_END
-@@ -307,7 +311,7 @@ SECTIONS
- 		__bss_start = .;
- 		*(.bss..page_aligned)
- 		*(.bss)
--		. = ALIGN(4);
-+		. = ALIGN(PAGE_SIZE);
- 		__bss_stop = .;
- 	}
- 
-diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
-index b278535..bfacdbe 100644
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -362,8 +362,9 @@ void free_init_pages(char *what, unsigned long begin, unsigned long end)
- 	/*
- 	 * We just marked the kernel text read only above, now that
- 	 * we are going to free part of that, we need to make that
--	 * writeable first.
-+	 * writeable and non-executable first.
- 	 */
-+	set_memory_nx(begin, (end - begin) >> PAGE_SHIFT);
- 	set_memory_rw(begin, (end - begin) >> PAGE_SHIFT);
- 
- 	printk(KERN_INFO "Freeing %s: %luk freed\n", what, (end - begin) >> 10);
-diff --git a/arch/x86/mm/init_32.c b/arch/x86/mm/init_32.c
-index bca7909..85a1a75 100644
---- a/arch/x86/mm/init_32.c
-+++ b/arch/x86/mm/init_32.c
-@@ -225,7 +225,7 @@ page_table_range_init(unsigned long start, unsigned long end, pgd_t *pgd_base)
- 
- static inline int is_kernel_text(unsigned long addr)
+@@ -49,6 +50,7 @@ static DEFINE_PER_CPU(int, save_modifying_code);
+ int ftrace_arch_code_modify_prepare(void)
  {
--	if (addr >= PAGE_OFFSET && addr <= (unsigned long)__init_end)
-+	if (addr >= (unsigned long)_text && addr <= (unsigned long)__init_end)
- 		return 1;
+ 	set_kernel_text_rw();
++	set_all_modules_text_rw();
+ 	modifying_code = 1;
  	return 0;
  }
-@@ -1033,6 +1033,22 @@ void set_kernel_text_ro(void)
- 	set_pages_ro(virt_to_page(start), size >> PAGE_SHIFT);
- }
- 
-+static void mark_nxdata_nx(void)
-+{
-+	/*
-+	 * When this called, init has already been executed and released,
-+	 * so everything past _etext sould be NX.
-+	 */
-+	unsigned long start = PFN_ALIGN(_etext);
-+	/* this comes from is_kernel_text upper limit. Also HPAGE where used */
-+	unsigned long size = (((unsigned long)__init_end + HPAGE_SIZE) & HPAGE_MASK)- start;
-+
-+	if (__supported_pte_mask & _PAGE_NX)
-+		printk(KERN_INFO "NX-protecting the kernel data: %luk\n",
-+			size >> 10);
-+	set_pages_nx(virt_to_page(start), size >> PAGE_SHIFT);
-+}
-+
- void mark_rodata_ro(void)
+@@ -56,6 +58,7 @@ int ftrace_arch_code_modify_prepare(void)
+ int ftrace_arch_code_modify_post_process(void)
  {
- 	unsigned long start = PFN_ALIGN(_text);
-@@ -1067,6 +1083,7 @@ void mark_rodata_ro(void)
- 	printk(KERN_INFO "Testing CPA: write protecting again\n");
- 	set_pages_ro(virt_to_page(start), size >> PAGE_SHIFT);
- #endif
-+	mark_nxdata_nx();
+ 	modifying_code = 0;
++	set_all_modules_text_ro();
+ 	set_kernel_text_ro();
+ 	return 0;
  }
- #endif
+diff --git a/include/linux/module.h b/include/linux/module.h
+index 8a6b9fd..89094de 100644
+--- a/include/linux/module.h
++++ b/include/linux/module.h
+@@ -308,6 +308,9 @@ struct module
+ 	/* The size of the executable code in each section.  */
+ 	unsigned int init_text_size, core_text_size;
  
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index 9a66746..6dfacec 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -762,6 +762,7 @@ void mark_rodata_ro(void)
- 	unsigned long rodata_start =
- 		((unsigned long)__start_rodata + PAGE_SIZE - 1) & PAGE_MASK;
- 	unsigned long end = (unsigned long) &__end_rodata_hpage_align;
-+	unsigned long kernel_end = (((unsigned long)&__init_end + HPAGE_SIZE) & HPAGE_MASK);
- 	unsigned long text_end = PAGE_ALIGN((unsigned long) &__stop___ex_table);
- 	unsigned long rodata_end = PAGE_ALIGN((unsigned long) &__end_rodata);
- 	unsigned long data_start = (unsigned long) &_sdata;
-@@ -776,7 +777,7 @@ void mark_rodata_ro(void)
- 	 * The rodata section (but not the kernel text!) should also be
- 	 * not-executable.
- 	 */
--	set_memory_nx(rodata_start, (end - rodata_start) >> PAGE_SHIFT);
-+	set_memory_nx(rodata_start, (kernel_end - rodata_start) >> PAGE_SHIFT);
- 
- 	rodata_test();
- 
-diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
-index 91ce756..ab01c6d 100644
---- a/arch/x86/mm/pageattr.c
-+++ b/arch/x86/mm/pageattr.c
-@@ -13,6 +13,7 @@
- #include <linux/pfn.h>
- #include <linux/percpu.h>
- #include <linux/gfp.h>
-+#include <linux/pci.h>
- 
- #include <asm/e820.h>
- #include <asm/processor.h>
-@@ -261,8 +262,11 @@ static inline pgprot_t static_protections(pgprot_t prot, unsigned long address,
- 	 * The BIOS area between 640k and 1Mb needs to be executable for
- 	 * PCI BIOS based config access (CONFIG_PCI_GOBIOS) support.
- 	 */
--	if (within(pfn, BIOS_BEGIN >> PAGE_SHIFT, BIOS_END >> PAGE_SHIFT))
-+#ifdef CONFIG_PCI_BIOS
-+	if (pcibios_enabled &&
-+			within(pfn, BIOS_BEGIN >> PAGE_SHIFT, BIOS_END >> PAGE_SHIFT))
- 		pgprot_val(forbidden) |= _PAGE_NX;
-+#endif
- 
- 	/*
- 	 * The kernel text needs to be executable for obvious reasons
-diff --git a/arch/x86/pci/pcbios.c b/arch/x86/pci/pcbios.c
-index 2492d16..e1f08b5 100644
---- a/arch/x86/pci/pcbios.c
-+++ b/arch/x86/pci/pcbios.c
-@@ -9,6 +9,7 @@
- #include <linux/uaccess.h>
- #include <asm/pci_x86.h>
- #include <asm/pci-functions.h>
-+#include <asm/cacheflush.h>
- 
- /* BIOS32 signature: "_32_" */
- #define BIOS32_SIGNATURE	(('_' << 0) + ('3' << 8) + ('2' << 16) + ('_' << 24))
-@@ -25,6 +26,28 @@
- #define PCIBIOS_HW_TYPE1_SPEC		0x10
- #define PCIBIOS_HW_TYPE2_SPEC		0x20
- 
-+int pcibios_enabled;
++	/* Size of RO sections of the module (text+rodata) */
++	unsigned int init_ro_size, core_ro_size;
 +
-+/* according some bios specification 
-+ * http://members.datafast.net.au/dft0802/specs/bios21.pdf, we could 
-+ * restrict the x zone to some pages and make it ro. But this may be
-+ * broken on some bios, complex to handle with static_protections.
-+ * We could make the 0xe0000-0x100000 range rox, but this can break
-+ * some ISA mapping.
-+ *
-+ * So we let's an rw and x hole when pcibios is used. This shouldn't
-+ * happen for modern system with mmconfig, and if you don't want it
-+ * you could disable pcibios...
-+ */
-+static inline void set_bios_x(void)
+ 	/* Arch-specific module values */
+ 	struct mod_arch_specific arch;
+ 
+@@ -545,6 +548,9 @@ extern void print_modules(void);
+ extern void module_update_tracepoints(void);
+ extern int module_get_iter_tracepoints(struct tracepoint_iter *iter);
+ 
++void set_all_modules_text_rw(void);
++void set_all_modules_text_ro(void);
++
+ #else /* !CONFIG_MODULES... */
+ #define EXPORT_SYMBOL(sym)
+ #define EXPORT_SYMBOL_GPL(sym)
+@@ -670,6 +676,13 @@ static inline int module_get_iter_tracepoints(struct tracepoint_iter *iter)
+ 	return 0;
+ }
+ 
++static inline void set_all_modules_text_rw(void)
 +{
-+	pcibios_enabled = 1;
-+	set_memory_x(PAGE_OFFSET + BIOS_BEGIN, (BIOS_END - BIOS_BEGIN) >> PAGE_SHIFT);
-+	if (__supported_pte_mask & _PAGE_NX)
-+		printk(KERN_INFO "PCI : PCI BIOS aera is rw and x. "
-+				"Use pci=nobios if you want it NX.\n");
 +}
 +
- /*
-  * This is the standard structure used to identify the entry point
-  * to the BIOS32 Service Directory, as documented in
-@@ -332,6 +355,7 @@ static struct pci_raw_ops * __devinit pci_find_bios(void)
- 			DBG("PCI: BIOS32 Service Directory entry at 0x%lx\n",
- 					bios32_entry);
- 			bios32_indirect.address = bios32_entry + PAGE_OFFSET;
-+			set_bios_x();
- 			if (check_pcibios())
- 				return &pci_bios_access;
++static inline void set_all_modules_text_ro(void)
++{
++}
+ #endif /* CONFIG_MODULES */
+ 
+ #ifdef CONFIG_SYSFS
+diff --git a/kernel/module.c b/kernel/module.c
+index d0b5f8d..e39d477 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -55,6 +55,7 @@
+ #include <linux/async.h>
+ #include <linux/percpu.h>
+ #include <linux/kmemleak.h>
++#include <linux/pfn.h>
+ 
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/module.h>
+@@ -69,6 +70,26 @@
+ #define ARCH_SHF_SMALL 0
+ #endif
+ 
++/*
++ * Modules' sections will be aligned on page boundaries
++ * to ensure complete separation of code and data, but
++ * only when CONFIG_DEBUG_SET_MODULE_RONX=y
++ */
++#ifdef CONFIG_DEBUG_SET_MODULE_RONX
++#define debug_align(X) ALIGN(X, PAGE_SIZE)
++#else
++#define debug_align(X) (X)
++#endif
++
++/*
++ * Given BASE and SIZE this macro calculates the number of pages the
++ * memory regions occupies
++ */
++#define NUMBER_OF_PAGES(BASE, SIZE) (((SIZE) > 0) ?		\
++		(PFN_DOWN((unsigned long)(BASE) + (SIZE) - 1) -	\
++			 PFN_DOWN((unsigned long)BASE) + 1)	\
++		: (0UL))
++
+ /* If this is set, the section belongs in the init part of the module */
+ #define INIT_OFFSET_MASK (1UL << (BITS_PER_LONG-1))
+ 
+@@ -1540,6 +1561,126 @@ static int __unlink_module(void *_mod)
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_DEBUG_SET_MODULE_RONX
++/*
++ * LKM RO/NX protection: protect module's text/ro-data
++ * from modification and any data from execution.
++ */
++void set_page_attributes(void *start, void *end,
++		int (*set)(unsigned long start, int num_pages))
++{
++	unsigned long begin_pfn = PFN_DOWN((unsigned long)start);
++	unsigned long end_pfn = PFN_DOWN((unsigned long)end);
++	if (end_pfn > begin_pfn)
++		set(begin_pfn << PAGE_SHIFT, end_pfn - begin_pfn);
++}
++
++static void set_section_ro_nx(void *base,
++			unsigned long text_size,
++			unsigned long ro_size,
++			unsigned long total_size)
++{
++	/* begin and end PFNs of the current subsection */
++	unsigned long begin_pfn;
++	unsigned long end_pfn;
++
++	/*
++	 * Set RO for module text and RO-data:
++	 * - Always protect first page.
++	 * - Do not protect last partial page.
++	 */
++	if (ro_size > 0)
++		set_page_attributes(base, base + ro_size, set_memory_ro);
++
++	/*
++	 * Set NX permissions for module data:
++	 * - Do not protect first partial page.
++	 * - Always protect last page.
++	 */
++	if (total_size > text_size) {
++		begin_pfn = PFN_UP((unsigned long)base + text_size);
++		end_pfn = PFN_UP((unsigned long)base + total_size);
++		if (end_pfn > begin_pfn)
++			set_memory_nx(begin_pfn << PAGE_SHIFT,
++						end_pfn - begin_pfn);
++	}
++}
++
++/* Setting memory back to RW+NX before releasing it */
++void unset_section_ro_nx(struct module *mod, void *module_region)
++{
++	unsigned long total_pages;
++
++	if (mod->module_core == module_region) {
++		/* Set core as NX+RW */
++		total_pages = NUMBER_OF_PAGES(mod->module_core, mod->core_size);
++		set_memory_nx((unsigned long)mod->module_core, total_pages);
++		set_memory_rw((unsigned long)mod->module_core, total_pages);
++
++	} else if (mod->module_init == module_region) {
++		/* Set init as NX+RW */
++		total_pages = NUMBER_OF_PAGES(mod->module_init, mod->init_size);
++		set_memory_nx((unsigned long)mod->module_init, total_pages);
++		set_memory_rw((unsigned long)mod->module_init, total_pages);
++	}
++}
++
++/* Iterate through all modules and set each module's text as RW */
++void set_all_modules_text_rw()
++{
++	struct module *mod;
++
++	mutex_lock(&module_mutex);
++	list_for_each_entry_rcu(mod, &modules, list) {
++		if ((mod->module_core) && (mod->core_text_size)) {
++			set_page_attributes(mod->module_core,
++						mod->module_core
++							+ mod->core_text_size,
++						set_memory_rw);
++		}
++		if ((mod->module_init) && (mod->init_text_size)) {
++			set_page_attributes(mod->module_init,
++						mod->module_init
++							+ mod->init_text_size,
++						set_memory_rw);
++		}
++	}
++	mutex_unlock(&module_mutex);
++}
++
++/* Iterate through all modules and set each module's text as RO */
++void set_all_modules_text_ro()
++{
++	struct module *mod;
++
++	mutex_lock(&module_mutex);
++	list_for_each_entry_rcu(mod, &modules, list) {
++		if ((mod->module_core) && (mod->core_text_size)) {
++			set_page_attributes(mod->module_core,
++						mod->module_core
++							+ mod->core_text_size,
++						set_memory_ro);
++		}
++		if ((mod->module_init) && (mod->init_text_size)) {
++			set_page_attributes(mod->module_init,
++						mod->module_init
++							+ mod->init_text_size,
++						set_memory_ro);
++		}
++	}
++	mutex_unlock(&module_mutex);
++}
++#else
++static void set_section_ro_nx(void *base,
++			unsigned long text_size,
++			unsigned long ro_size,
++			unsigned long total_size) { }
++
++void unset_section_ro_nx(struct module *mod, void *module_region) { }
++void set_all_modules_text_rw() { }
++void set_all_modules_text_ro() { }
++#endif
++
+ /* Free a module, remove from lists, etc. */
+ static void free_module(struct module *mod)
+ {
+@@ -1564,6 +1705,7 @@ static void free_module(struct module *mod)
+ 	destroy_params(mod->kp, mod->num_kp);
+ 
+ 	/* This may be NULL, but that's OK */
++	unset_section_ro_nx(mod, mod->module_init);
+ 	module_free(mod, mod->module_init);
+ 	kfree(mod->args);
+ 	percpu_modfree(mod);
+@@ -1572,6 +1714,7 @@ static void free_module(struct module *mod)
+ 	lockdep_free_key_range(mod->module_core, mod->core_size);
+ 
+ 	/* Finally, free the core (containing the module structure) */
++	unset_section_ro_nx(mod, mod->module_core);
+ 	module_free(mod, mod->module_core);
+ 
+ #ifdef CONFIG_MPU
+@@ -1775,8 +1918,19 @@ static void layout_sections(struct module *mod, struct load_info *info)
+ 			s->sh_entsize = get_offset(mod, &mod->core_size, s, i);
+ 			DEBUGP("\t%s\n", name);
  		}
+-		if (m == 0)
++		switch (m) {
++		case 0: /* executable */
++			mod->core_size = debug_align(mod->core_size);
+ 			mod->core_text_size = mod->core_size;
++			break;
++		case 1: /* RO: text and ro-data */
++			mod->core_size = debug_align(mod->core_size);
++			mod->core_ro_size = mod->core_size;
++			break;
++		case 3: /* whole core */
++			mod->core_size = debug_align(mod->core_size);
++			break;
++		}
+ 	}
+ 
+ 	DEBUGP("Init section allocation order:\n");
+@@ -1794,8 +1948,19 @@ static void layout_sections(struct module *mod, struct load_info *info)
+ 					 | INIT_OFFSET_MASK);
+ 			DEBUGP("\t%s\n", sname);
+ 		}
+-		if (m == 0)
++		switch (m) {
++		case 0: /* executable */
++			mod->init_size = debug_align(mod->init_size);
+ 			mod->init_text_size = mod->init_size;
++			break;
++		case 1: /* RO: text and ro-data */
++			mod->init_size = debug_align(mod->init_size);
++			mod->init_ro_size = mod->init_size;
++			break;
++		case 3: /* whole init */
++			mod->init_size = debug_align(mod->init_size);
++			break;
++		}
+ 	}
+ }
+ 
+@@ -2642,6 +2807,18 @@ static struct module *load_module(void __user *umod,
+ 	kfree(info.strmap);
+ 	free_copy(&info);
+ 
++	/* Set RO and NX regions for core */
++	set_section_ro_nx(mod->module_core,
++				mod->core_text_size,
++				mod->core_ro_size,
++				mod->core_size);
++
++	/* Set RO and NX regions for init */
++	set_section_ro_nx(mod->module_init,
++				mod->init_text_size,
++				mod->init_ro_size,
++				mod->init_size);
++
+ 	/* Done! */
+ 	trace_module_load(mod);
+ 	return mod;
+@@ -2743,6 +2920,7 @@ SYSCALL_DEFINE3(init_module, void __user *, umod,
+ 	mod->symtab = mod->core_symtab;
+ 	mod->strtab = mod->core_strtab;
+ #endif
++	unset_section_ro_nx(mod, mod->module_init);
+ 	module_free(mod, mod->module_init);
+ 	mod->module_init = NULL;
+ 	mod->init_size = 0;
 
---------------060602000500000308040901--
+--------------070707080105070709060606--
