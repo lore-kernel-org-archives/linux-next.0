@@ -1,311 +1,89 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for September 9
-Date: Thu, 9 Sep 2010 21:12:49 +1000
-Message-ID: <20100909211249.2c70ac41.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: [PATCH 08/43] memblock/microblaze: Use new accessors
+Date: Thu, 9 Sep 2010 13:54:45 +0200
+Message-ID: <20100909115445.GB16157@elte.hu>
+References: <1281071724-28740-1-git-send-email-benh@kernel.crashing.org>
+ <1281071724-28740-9-git-send-email-benh@kernel.crashing.org>
+ <4C5BCD41.3040501@monstr.eu>
+ <1281135046.2168.40.camel@pasglop>
+ <4C88BD8F.5080208@monstr.eu>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__9_Sep_2010_21_12_49_+1000_qCZ=TkcMUW/8Wy.3"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:42535 "EHLO smtps.tip.net.au"
+Received: from mx2.mail.elte.hu ([157.181.151.9]:42884 "EHLO mx2.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751063Ab0IILM5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 9 Sep 2010 07:12:57 -0400
+	id S1752109Ab0IILzB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 9 Sep 2010 07:55:01 -0400
+Content-Disposition: inline
+In-Reply-To: <4C88BD8F.5080208@monstr.eu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Michal Simek <monstr@monstr.eu>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "H. Peter Anvin" <hpa@zytor.com>, Yinghai Lu <yinghai@kernel.org>
 
---Signature=_Thu__9_Sep_2010_21_12_49_+1000_qCZ=TkcMUW/8Wy.3
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+* Michal Simek <monstr@monstr.eu> wrote:
 
-Changes since 20100908:
+> Benjamin Herrenschmidt wrote:
+> >On Fri, 2010-08-06 at 10:52 +0200, Michal Simek wrote:
+> >>Benjamin Herrenschmidt wrote:
+> >>>CC: Michal Simek <monstr@monstr.eu>
+> >>>Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> >>This patch remove bug which I reported but there is another
+> >>place which needs to be changed.
+> >>
+> >>I am not sure if my patch is correct but at least point you on
+> >>places which is causing compilation errors.
+> >>
+> >>I tested your memblock branch with this fix and microblaze can boot.
+> >
+> >Ok, that's missing in my initial rename patch. I'll fix it up. Thanks.
+> >
+> >Cheers,
+> >Ben.
+> 
+> I don't know why but this unfixed old patch is in linux-next today.
 
-The powerpc tree still has its build failure for which I applied a patch.
+Yep, i asked benh to have a look (see the mail below) but got no 
+response, as i assumed it had all been taken care of.
 
-The kgdb tree still has its build failure for which I applied a patch.
+Ben, Peter?
 
-The catalin tree gained a conflict against the arm tree.
+	Ingo
 
-The suspend tree gained a build failure for which I reverted a commit.
+----- Forwarded message from Ingo Molnar <mingo@elte.hu> -----
 
-I still have a patch to the drivers-x86 tree to remove a Kconfig warning.
+Date: Tue, 31 Aug 2010 09:29:47 +0200
+From: Ingo Molnar <mingo@elte.hu>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, hpa@zytor.com,
+	tglx@linutronix.de, linux-tip-commits@vger.kernel.org
+Subject: Re: [tip:core/memblock] memblock: Rename memblock_region to
+	memblock_type and memblock_property to memblock_region
 
-----------------------------------------------------------------------------
 
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
+* Benjamin Herrenschmidt <benh@kernel.crashing.org> wrote:
 
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
-and sparc64 defconfig. These builds also have
-CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
-CONFIG_DEBUG_INFO disabled when necessary.
+> On Sat, 2010-08-28 at 00:37 +0000, tip-bot for Benjamin Herrenschmidt
+> wrote:
+> > Commit-ID:  e3239ff92a17976ac5d26fa0fe40ef3a9daf2523
+> > Gitweb:     http://git.kernel.org/tip/e3239ff92a17976ac5d26fa0fe40ef3a9daf2523
+> > Author:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> > AuthorDate: Wed, 4 Aug 2010 14:06:41 +1000
+> > Committer:  Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> > CommitDate: Wed, 4 Aug 2010 14:21:49 +1000
+> > 
+> > memblock: Rename memblock_region to memblock_type and memblock_property to memblock_region
+> 
+> He, I was just about to rebase them :-)
+> 
+> Do you still need me to do that ?
 
-Below is a summary of the state of the merge.
+Btw., because this is an older base, before we can push this to 
+linux-next i suspect we'll need fixes for those architectures that did a 
+memblock conversion in this cycle?
 
-We are up to 171 trees (counting Linus' and 22 trees of patches pending
-for Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
+Thanks,
 
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Jan Dittmer for adding the linux-next tree to his build tests
-at http://l4x.org/k/ , the guys at http://test.kernel.org/ and Randy
-Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging fixes/fixes
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/rc-fixes
-Merging quilt/driver-core.current
-Merging quilt/tty.current
-Merging quilt/usb.current
-Merging quilt/staging.current
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging ide-curent/master
-Merging dwmw2/master
-Merging gcl-current/merge
-Merging arm/devel
-Merging davinci/davinci-next
-Merging i.MX/for-next
-Merging msm/for-next
-Merging omap/for-next
-Merging pxa/for-next
-Merging samsung/next-samsung
-CONFLICT (content): Merge conflict in arch/arm/mach-s3c64xx/Makefile
-CONFLICT (content): Merge conflict in arch/arm/mach-s3c64xx/mach-smdk6410.c
-CONFLICT (content): Merge conflict in arch/arm/plat-samsung/Kconfig
-CONFLICT (content): Merge conflict in drivers/input/touchscreen/s3c2410_ts.c
-Merging s5p/for-next
-Merging tegra/for-next
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-Merging m68knommu/for-next
-Merging microblaze/next
-Merging mips/mips-for-linux-next
-Merging parisc/next
-Merging powerpc/next
-Applying: powerpc: define a compat_sys_recv cond_syscall
-Merging 4xx/next
-Merging 52xx-and-virtex/next
-Merging galak/next
-CONFLICT (content): Merge conflict in arch/powerpc/platforms/85xx/mpc85xx_m=
-ds.c
-Merging s390/features
-Merging sh/master
-Merging genesis/master
-Merging sparc/master
-Merging tile/master
-Merging xtensa/master
-CONFLICT (content): Merge conflict in arch/xtensa/configs/iss_defconfig
-Merging ceph/for-next
-Merging cifs/master
-Merging configfs/linux-next
-Merging ecryptfs/next
-Merging ext3/for_next
-Merging ext4/next
-Merging fatfs/master
-Merging fuse/for-next
-Merging gfs2/master
-Merging jfs/next
-Merging logfs/master
-CONFLICT (content): Merge conflict in fs/logfs/logfs.h
-Merging nfs/linux-next
-Merging nfsd/nfsd-next
-Merging nilfs2/for-next
-Merging ocfs2/linux-next
-Merging omfs/for-next
-Merging squashfs/master
-Merging udf/for_next
-Merging v9fs/for-next
-Merging ubifs/linux-next
-Merging xfs/master
-Merging vfs/for-next
-Merging pci/linux-next
-Merging hid/for-next
-Merging quilt/i2c
-Merging bjdooks-i2c/next-i2c
-Merging quilt/jdelvare-hwmon
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-CONFLICT (content): Merge conflict in drivers/media/IR/ir-keytable.c
-CONFLICT (content): Merge conflict in drivers/media/IR/ir-lirc-codec.c
-CONFLICT (content): Merge conflict in drivers/media/IR/ir-raw-event.c
-CONFLICT (add/add): Merge conflict in drivers/media/IR/streamzap.c
-CONFLICT (content): Merge conflict in drivers/media/dvb/siano/smscoreapi.c
-CONFLICT (add/add): Merge conflict in drivers/media/video/s5p-fimc/fimc-cor=
-e.c
-Merging kbuild/for-next
-Merging kconfig/for-next
-Merging ide/master
-Merging libata/NEXT
-Merging infiniband/for-next
-Merging acpi/test
-Merging idle-test/idle-test
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/linux-next
-Merging dlm/next
-Merging swiotlb/master
-Merging swiotlb-xen/master
-Merging ibft/master
-Merging scsi/master
-Merging async_tx/next
-Merging net/master
-CONFLICT (content): Merge conflict in net/mac80211/main.c
-Merging wireless/master
-Merging mtd/master
-Merging crypto/master
-Merging sound-asoc/for-next
-CONFLICT (content): Merge conflict in arch/arm/mach-s3c64xx/mach-smdk6410.c
-Merging sound/for-next
-Merging cpufreq/next
-Merging quilt/rr
-Merging input/next
-Merging lsm/for-next
-Merging block/for-next
-Merging quilt/device-mapper
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-Merging backlight/for-mm
-Merging kgdb/kgdb-next
-Applying: kgdb: merge fix for mode_set_base_atomic API change
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging viafb/viafb-next
-Merging voltage/for-next
-Merging security-testing/next
-Merging lblnet/master
-Merging agp/agp-next
-Merging uwb/for-upstream
-Merging watchdog/master
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-Merging audit/for-next
-Merging quilt/aoe
-Merging suspend/linux-next
-Merging bluetooth/master
-Merging fsnotify/for-next
-Merging irda/for-next
-CONFLICT (content): Merge conflict in drivers/net/irda/irda-usb.c
-Merging catalin/for-next
-CONFLICT (content): Merge conflict in arch/arm/kernel/Makefile
-Merging alacrity/linux-next
-CONFLICT (content): Merge conflict in include/linux/Kbuild
-Merging i7core_edac/linux_next
-CONFLICT (content): Merge conflict in MAINTAINERS
-Merging devicetree/next-devicetree
-Merging spi/next-spi
-Merging limits/writable_limits
-Merging omap_dss2/for-next
-Merging xen/upstream/xen
-Merging rcu/rcu/next
-Merging tip/auto-latest
-Merging lost-spurious-irq/lost-spurious-irq
-CONFLICT (content): Merge conflict in drivers/ata/libata-core.c
-CONFLICT (content): Merge conflict in include/linux/libata.h
-Merging edac-amd/for-next
-Merging oprofile/for-next
-Merging percpu/for-next
-Merging workqueues/for-next
-Merging sfi/sfi-test
-Merging asm-generic/next
-Merging drivers-x86/linux-next
-Applying: Fix Kconfig mistaken update
-Merging hwpoison/hwpoison
-Merging sysctl/master
-Merging bkl-core/bkl/core
-Merging bkl-procfs/bkl/procfs
-Merging bkl-ioctl/bkl/ioctl
-Merging quilt/driver-core
-Merging quilt/tty
-CONFLICT (content): Merge conflict in drivers/serial/uartlite.c
-Merging quilt/usb
-Merging staging-next/staging-next
-CONFLICT (content): Merge conflict in drivers/staging/Makefile
-CONFLICT (content): Merge conflict in drivers/staging/batman-adv/hard-inter=
-face.c
-CONFLICT (delete/modify): drivers/staging/mrst-touchscreen/Makefile deleted=
- in HEAD and modified in staging-next/staging-next. Version staging-next/st=
-aging-next of drivers/staging/mrst-touchscreen/Makefile left in tree.
-CONFLICT (delete/modify): drivers/staging/mrst-touchscreen/intel-mid-touch.=
-c deleted in HEAD and modified in staging-next/staging-next. Version stagin=
-g-next/staging-next of drivers/staging/mrst-touchscreen/intel-mid-touch.c l=
-eft in tree.
-$ git rm -f drivers/staging/mrst-touchscreen/Makefile drivers/staging/mrst-=
-touchscreen/intel-mid-touch.c
-Merging slabh/slabh
-Merging scsi-post-merge/merge-base:master
-[master b09c9c8] Revert "PM / Hibernate: Compress hibernation image with LZ=
-O"
-
---Signature=_Thu__9_Sep_2010_21_12_49_+1000_qCZ=TkcMUW/8Wy.3
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMiMExAAoJEDMEi1NhKgbsmrMH+wfaFiNpb032eB3AZuNnkOdW
-SNSe/VFyiHRq5bB4WmF+CZhXx9VMJ/q4CB7kSTP6j+ElmqOenHGAUpnX7C8wqZYe
-OuPrVe0QiqbtuocAZnW9fZn8aWQZgMQgnVw9tcQYwNHI7kHIc245g1XnBkJsto7S
-svGQ9agfExg3SN3J7kFM7m0Zzw7XSJdslsa4NIKjowY4awXGigTK75phjmFRYBLP
-aD4BsGxbtwVucGj/+R1MgPex8kp85hD9ZjIMQjChusdimnoWAqXPQdnok4E38xMo
-OQBZyFsYDiyVICqDus1P2lprawQZttpYNx9gp+tbuws3JGXQ1z3EFtNaB0uten0=
-=+jLy
------END PGP SIGNATURE-----
-
---Signature=_Thu__9_Sep_2010_21_12_49_+1000_qCZ=TkcMUW/8Wy.3--
+	Ingo
+	
