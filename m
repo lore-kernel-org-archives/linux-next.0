@@ -1,45 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the catalin tree with the arm tree
-Date: Thu, 9 Sep 2010 11:41:44 +1000
-Message-ID: <20100909114144.aa76efdb.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (suspend
+ tree related)
+Date: Thu, 9 Sep 2010 12:58:38 +1000
+Message-ID: <20100909125838.6c82edc4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__9_Sep_2010_12_58_38_+1000_+od2_IVNiLLHl4nL"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47249 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:44663 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754993Ab0IIBlw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 8 Sep 2010 21:41:52 -0400
+	id S1751873Ab0IIC6p (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 8 Sep 2010 22:58:45 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>, Russell King <rmk@arm.linux.org.uk>, Leif Lindholm <leif.lindholm@arm.com>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bojan Smojver <bojan@rexursive.com>
 
-Hi Catalin,
+--Signature=_Thu__9_Sep_2010_12_58_38_+1000_+od2_IVNiLLHl4nL
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the catalin tree got a conflict in
-arch/arm/kernel/Makefile between commit
-19852e59002fbba1c2c6ba0f154095a37ad2ac03 ("ARM: 6358/1: hw-breakpoint:
-add HAVE_HW_BREAKPOINT to Kconfig") from the arm tree and commit
-028543791a6c0652949046218da16ad0f744c158 ("ARM: Add SWP/SWPB emulation
-for ARMv7 processors (v5)") from the catalin tree.
+Hi Rafael,
 
-Just overlapping additions.  I fixed it up (see below) and can carry the
-fix as necessary.
--- 
+After merging the final tree, today's linux-next build (powerpc allyesconfi=
+g)
+failed like this:
+
+kernel/power/swap.c: In function 'save_image_lzo':
+kernel/power/swap.c:447: error: implicit declaration of function 'vmalloc'
+kernel/power/swap.c:447: warning: assignment makes pointer from integer wit=
+hout a cast
+kernel/power/swap.c:454: warning: assignment makes pointer from integer wit=
+hout a cast
+kernel/power/swap.c:457: error: implicit declaration of function 'vfree'
+kernel/power/swap.c:462: warning: assignment makes pointer from integer wit=
+hout a cast
+kernel/power/swap.c: In function 'load_image_lzo':
+kernel/power/swap.c:767: warning: assignment makes pointer from integer wit=
+hout a cast
+kernel/power/swap.c:774: warning: assignment makes pointer from integer wit=
+hout a cast
+
+Caused by commit 2b2609c19ff19361360552786bd252ef40dfe5ce ("PM /
+Hibernate: Compress hibernation image with LZO").
+
+See Rule 1 in Documentation/SubmitChecklist.  There is a missing include
+of linux/vmalloc.h.
+
+I have reverted that commit for today.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/arm/kernel/Makefile
-index 5b9b268,d3430ee..0000000
---- a/arch/arm/kernel/Makefile
-+++ b/arch/arm/kernel/Makefile
-@@@ -42,7 -42,7 +42,8 @@@ obj-$(CONFIG_KGDB)		+= kgdb.
-  obj-$(CONFIG_ARM_UNWIND)	+= unwind.o
-  obj-$(CONFIG_HAVE_TCM)		+= tcm.o
-  obj-$(CONFIG_CRASH_DUMP)	+= crash_dump.o
- +obj-$(CONFIG_HAVE_HW_BREAKPOINT)	+= hw_breakpoint.o
-+ obj-$(CONFIG_SWP_EMULATE)	+= swp_emulate.o
-  
-  obj-$(CONFIG_CRUNCH)		+= crunch.o crunch-bits.o
-  AFLAGS_crunch-bits.o		:= -Wa,-mcpu=ep9312
+--Signature=_Thu__9_Sep_2010_12_58_38_+1000_+od2_IVNiLLHl4nL
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMiE1eAAoJEDMEi1NhKgbsEOsH/iU1jjKH94H4ZWGXm+1Qc1Wj
+/E1WvTQpUmZibauZC2riCkS9y9PykOEYsZu4rzHkE8vnZYS5XJzDlBRDw4rV4icp
+BeVNQnYofoYLovvdVoMqocplU7rop2VzNwUJfjVw9bJIRePHk+Hqu7ful4u4AIuG
+BH1m8Dh7htVrJ1xmUUxigAqzZ2M3CReT3MCfShGO1Hs1cmHaO3u2DxJg0PZXWZ/I
+qcOu53R0kV0IRgLvwOeKs7c16sFPaXcocjHTLUE7jIoNdLQ9fs2sfFLnNmGsO6rk
+IPmokcRPJ16X4f7Qg4+5PrjlAvXcIk2mDdxoXb8z3OAtx4Ap1Mcm2GXN7sXgXjg=
+=Cww5
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__9_Sep_2010_12_58_38_+1000_+od2_IVNiLLHl4nL--
