@@ -1,52 +1,26 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: unable to fetch the limits tree
-Date: Fri, 10 Sep 2010 10:49:25 +1000
-Message-ID: <20100910104925.329bdba6.sfr@canb.auug.org.au>
+From: Ralf Baechle <ralf@linux-mips.org>
+Subject: Re: linux-next: unable to fetch the mips tree
+Date: Fri, 10 Sep 2010 02:49:54 +0200
+Message-ID: <20100910004954.GA8325@linux-mips.org>
+References: <20100910102614.61909592.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__10_Sep_2010_10_49_25_+1000_qRXW=W=Ee=iB2bZ7"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48867 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754614Ab0IJAta (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 9 Sep 2010 20:49:30 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jiri Slaby <jirislaby@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-
---Signature=_Fri__10_Sep_2010_10_49_25_+1000_qRXW=W=Ee=iB2bZ7
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20100910102614.61909592.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Jiri,
+On Fri, Sep 10, 2010 at 10:26:14AM +1000, Stephen Rothwell wrote:
 
-For the past couple of days, I have been getting this error when fetching
-the limits tree:
+> For the last couple of days, I have been getting the following error when
+> trying to fetch mips tree:
+> 
+> git.linux-mips.org[0: 78.24.191.183]: errno=Connection refused
 
-decibel.fi.muni.cz[0: 147.251.50.163]: errno=3DConnection refused
+About 30h, I guess.  That's when the machine was upgraded and rebooted.
+Fixed now.  Thanks for leting me know.
 
-Just letting you know.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__10_Sep_2010_10_49_25_+1000_qRXW=W=Ee=iB2bZ7
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMiYCVAAoJEDMEi1NhKgbstD0H/AvLHWh7xPCwqbeNSntgkiD5
-DwJSf9z3Q99/crBfs6qe23aXJJsrogGPh8IPaXwjra1jWKRlWQJ3r1DpeHNpO+qZ
-GNS76zXT3FukfR4mXqYUBeK9h6F0BerTuIQPEQvJoALQhXJ3/l8OUCnTSRvtE9r7
-6cNVmWZQzSyx1MbVjJOJwxQ0ffxsx5Z/XqDuglDGmakjcp4vG+9ZFaJC4Ba335C9
-C3qbidmpYGR/UnOvJk3NsQECD36VmAOlUgv4tzASR3ggqPKBH3D7Y56ugtA4zRLi
-AlQJJagg5Qlxk5Wa9aUkRzkbyOie+/HYk+iT0HwCVHXH0lonoLkZnbIMmhFjjUU=
-=+k8h
------END PGP SIGNATURE-----
-
---Signature=_Fri__10_Sep_2010_10_49_25_+1000_qRXW=W=Ee=iB2bZ7--
+  Ralf
