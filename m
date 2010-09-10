@@ -1,33 +1,39 @@
-From: Jiri Slaby <jirislaby@gmail.com>
-Subject: Re: linux-next: unable to fetch the limits tree
-Date: Fri, 10 Sep 2010 08:10:09 +0200
-Message-ID: <4C89CBC1.1030602@gmail.com>
-References: <20100910104925.329bdba6.sfr@canb.auug.org.au>
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: [-next Sept 10] Build break - arch/s390/mm/pgtable.c (INIT_RCU_HEAD)
+Date: Fri, 10 Sep 2010 13:43:20 +0530
+Message-ID: <4C89E8A0.1050905@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-2
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-fx0-f46.google.com ([209.85.161.46]:59091 "EHLO
-	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757665Ab0IJGKP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 10 Sep 2010 02:10:15 -0400
-In-Reply-To: <20100910104925.329bdba6.sfr@canb.auug.org.au>
+Received: from e23smtp01.au.ibm.com ([202.81.31.143]:56738 "EHLO
+	e23smtp01.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753522Ab0IJIN0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 10 Sep 2010 04:13:26 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-s390@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-On 09/10/2010 02:49 AM, Stephen Rothwell wrote:
-> Hi Jiri,
-> 
-> For the past couple of days, I have been getting this error when fetching
-> the limits tree:
-> 
-> decibel.fi.muni.cz[0: 147.251.50.163]: errno=Connection refused
+Today's next fails to build on a s390 box with
 
-Hi Stephen, thanks for letting me know. Feel free to drop it anyway, as
-it was merged, it is empty now.
+arch/s390/mm/pgtable.c: In function 'rcu_table_freelist_finish':
+arch/s390/mm/pgtable.c:79: error: implicit declaration of function 'INIT_RCU_HEAD'
+make[2]: *** [arch/s390/mm/pgtable.o] Error 1
 
-thanks,
+This code in question was added via following commit:
+
+commit e726023d9ff7e4968e3e0622782174a4695d68a4
+S390] lockless get_user_pages_fast()
+
+Thanks
+-Sachin
+
 -- 
-js
+
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
