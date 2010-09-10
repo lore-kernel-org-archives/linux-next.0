@@ -1,53 +1,33 @@
-From: Sachin Sant <sachinp@in.ibm.com>
-Subject: Re: [-next Sept 9] S309 Build break (mm/percpu.c)
-Date: Fri, 10 Sep 2010 11:39:33 +0530
-Message-ID: <4C89CB9D.6010005@in.ibm.com>
-References: <4C88D48A.3070702@in.ibm.com> <4C88EE00.70004@kernel.org>
+From: Jiri Slaby <jirislaby@gmail.com>
+Subject: Re: linux-next: unable to fetch the limits tree
+Date: Fri, 10 Sep 2010 08:10:09 +0200
+Message-ID: <4C89CBC1.1030602@gmail.com>
+References: <20100910104925.329bdba6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=ISO-8859-2
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e28smtp03.in.ibm.com ([122.248.162.3]:59900 "EHLO
-	e28smtp03.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750962Ab0IJGJh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 10 Sep 2010 02:09:37 -0400
-In-Reply-To: <4C88EE00.70004@kernel.org>
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:59091 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757665Ab0IJGKP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 10 Sep 2010 02:10:15 -0400
+In-Reply-To: <20100910104925.329bdba6.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-s390@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>, linux-kernel <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Tejun Heo wrote:
-> Commit bbddff05 (percpu: use percpu allocator on UP too) incorrectly
-> excluded pcpu_build_alloc_info() on SMP configurations which use
-> generic setup_per_cpu_area() like s390.  The config ifdefs are
-> becoming confusing.  Fix and clean it up by,
->
-> * Move pcpu_build_alloc_info() right on top of its two users -
->   pcpu_{embed|page}_first_chunk() which are already in CONFIG_SMP
->   block.
->
-> * Define BUILD_{EMBED|PAGE}_FIRST_CHUNK which indicate whether each
->   first chunk function needs to be included and use them to control
->   inclusion of the three functions to reduce confusion.
->
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Reported-by: Sachin Sant <sachinp@in.ibm.com>
-> ---
-> Can you please test this patch?
->   
-Tested the patch against yesterday's next release(20100909). Works fine.
+On 09/10/2010 02:49 AM, Stephen Rothwell wrote:
+> Hi Jiri,
+> 
+> For the past couple of days, I have been getting this error when fetching
+> the limits tree:
+> 
+> decibel.fi.muni.cz[0: 147.251.50.163]: errno=Connection refused
 
-Thanks Tejun.
+Hi Stephen, thanks for letting me know. Feel free to drop it anyway, as
+it was merged, it is empty now.
 
-Regards
--Sachin
-
+thanks,
 -- 
-
----------------------------------
-Sachin Sant
-IBM Linux Technology Center
-India Systems and Technology Labs
-Bangalore, India
----------------------------------
+js
