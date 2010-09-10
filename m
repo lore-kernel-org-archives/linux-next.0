@@ -1,162 +1,100 @@
 From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 Subject: Re: [PATCH 08/43] memblock/microblaze: Use new accessors
-Date: Fri, 10 Sep 2010 18:17:37 +1000
-Message-ID: <1284106657.6515.45.camel@pasglop>
+Date: Fri, 10 Sep 2010 18:18:31 +1000
+Message-ID: <1284106711.6515.46.camel@pasglop>
 References: <1281071724-28740-1-git-send-email-benh@kernel.crashing.org>
 	 <1281071724-28740-9-git-send-email-benh@kernel.crashing.org>
 	 <4C5BCD41.3040501@monstr.eu> <1281135046.2168.40.camel@pasglop>
-	 <4C88BD8F.5080208@monstr.eu>
+	 <4C88BD8F.5080208@monstr.eu>  <20100909115445.GB16157@elte.hu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <4C88BD8F.5080208@monstr.eu>
+In-Reply-To: <20100909115445.GB16157@elte.hu>
 Sender: owner-linux-mm@kvack.org
-To: monstr@monstr.eu
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@elte.hu>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Michal Simek <monstr@monstr.eu>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "H. Peter Anvin" <hpa@zytor.com>, Yinghai Lu <yinghai@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, 2010-09-09 at 12:57 +0200, Michal Simek wrote:
-> Benjamin Herrenschmidt wrote:
-> > On Fri, 2010-08-06 at 10:52 +0200, Michal Simek wrote:
-> >> Benjamin Herrenschmidt wrote:
-> >>> CC: Michal Simek <monstr@monstr.eu>
-> >>> Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> >> This patch remove bug which I reported but there is another place which 
-> >> needs to be changed.
-> >>
-> >> I am not sure if my patch is correct but at least point you on places 
-> >> which is causing compilation errors.
-> >>
-> >> I tested your memblock branch with this fix and microblaze can boot.
-> > 
-> > Ok, that's missing in my initial rename patch. I'll fix it up. Thanks.
-> > 
-> > Cheers,
-> > Ben.
+On Thu, 2010-09-09 at 13:54 +0200, Ingo Molnar wrote:
+> * Michal Simek <monstr@monstr.eu> wrote:
 > 
-> I don't know why but this unfixed old patch is in linux-next today. Not 
-> sure which tree contains it.
+> > Benjamin Herrenschmidt wrote:
+> > >On Fri, 2010-08-06 at 10:52 +0200, Michal Simek wrote:
+> > >>Benjamin Herrenschmidt wrote:
+> > >>>CC: Michal Simek <monstr@monstr.eu>
+> > >>>Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> > >>This patch remove bug which I reported but there is another
+> > >>place which needs to be changed.
+> > >>
+> > >>I am not sure if my patch is correct but at least point you on
+> > >>places which is causing compilation errors.
+> > >>
+> > >>I tested your memblock branch with this fix and microblaze can boot.
+> > >
+> > >Ok, that's missing in my initial rename patch. I'll fix it up. Thanks.
+> > >
+> > >Cheers,
+> > >Ben.
+> > 
+> > I don't know why but this unfixed old patch is in linux-next today.
+> 
+> Yep, i asked benh to have a look (see the mail below) but got no 
+> response, as i assumed it had all been taken care of.
 
-I'm pretty sure I had all that fixed up including the ARM stuff. I
-wonder if Ingo picked my latest stuff (or maybe I failed to push it
-out).
-
-I'm still travelling, I'll be back next week at which point I can have a
-look.
+Sorry, I must have been confused... I had pushed out a git branch a
+while back with those updates and the ARM bits, at least I think I
+did :-) I might have FAILed there. I'll check next week, I'm about to
+board on a plane right now.
 
 Cheers,
 Ben.
 
+> Ben, Peter?
+> 
+> 	Ingo
+> 
+> ----- Forwarded message from Ingo Molnar <mingo@elte.hu> -----
+> 
+> Date: Tue, 31 Aug 2010 09:29:47 +0200
+> From: Ingo Molnar <mingo@elte.hu>
+> To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, hpa@zytor.com,
+> 	tglx@linutronix.de, linux-tip-commits@vger.kernel.org
+> Subject: Re: [tip:core/memblock] memblock: Rename memblock_region to
+> 	memblock_type and memblock_property to memblock_region
+> 
+> 
+> * Benjamin Herrenschmidt <benh@kernel.crashing.org> wrote:
+> 
+> > On Sat, 2010-08-28 at 00:37 +0000, tip-bot for Benjamin Herrenschmidt
+> > wrote:
+> > > Commit-ID:  e3239ff92a17976ac5d26fa0fe40ef3a9daf2523
+> > > Gitweb:     http://git.kernel.org/tip/e3239ff92a17976ac5d26fa0fe40ef3a9daf2523
+> > > Author:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> > > AuthorDate: Wed, 4 Aug 2010 14:06:41 +1000
+> > > Committer:  Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> > > CommitDate: Wed, 4 Aug 2010 14:21:49 +1000
+> > > 
+> > > memblock: Rename memblock_region to memblock_type and memblock_property to memblock_region
+> > 
+> > He, I was just about to rebase them :-)
+> > 
+> > Do you still need me to do that ?
+> 
+> Btw., because this is an older base, before we can push this to 
+> linux-next i suspect we'll need fixes for those architectures that did a 
+> memblock conversion in this cycle?
+> 
 > Thanks,
-> Michal
 > 
-> >>
-> >>    CC      arch/microblaze/mm/init.o
-> >> arch/microblaze/mm/init.c: In function 'mm_cmdline_setup':
-> >> arch/microblaze/mm/init.c:236: error: 'struct memblock_type' has no 
-> >> member named 'region'
-> >> arch/microblaze/mm/init.c: In function 'mmu_init':
-> >> arch/microblaze/mm/init.c:279: error: 'struct memblock_type' has no 
-> >> member named 'region'
-> >> arch/microblaze/mm/init.c:284: error: 'struct memblock_type' has no 
-> >> member named 'region'
-> >> arch/microblaze/mm/init.c:285: error: 'struct memblock_type' has no 
-> >> member named 'region'
-> >> arch/microblaze/mm/init.c:286: error: 'struct memblock_type' has no 
-> >> member named 'region'
-> >> make[1]: *** [arch/microblaze/mm/init.o] Error 1
-> >> make: *** [arch/microblaze/mm] Error 2
-> >>
-> >>
-> >> diff --git a/arch/microblaze/mm/init.c b/arch/microblaze/mm/init.c
-> >> index 32a702b..a9d7b9b 100644
-> >> --- a/arch/microblaze/mm/init.c
-> >> +++ b/arch/microblaze/mm/init.c
-> >> @@ -233,7 +233,7 @@ static void mm_cmdline_setup(void)
-> >>                  if (maxmem && memory_size > maxmem) {
-> >>                          memory_size = maxmem;
-> >>                          memory_end = memory_start + memory_size;
-> >> -                       memblock.memory.region[0].size = memory_size;
-> >> +                       memblock.memory.regions[0].size = memory_size;
-> >>                  }
-> >>          }
-> >>   }
-> >> @@ -276,14 +276,14 @@ asmlinkage void __init mmu_init(void)
-> >>                  machine_restart(NULL);
-> >>          }
-> >>
-> >> -       if ((u32) memblock.memory.region[0].size < 0x1000000) {
-> >> +       if ((u32) memblock.memory.regions[0].size < 0x1000000) {
-> >>                  printk(KERN_EMERG "Memory must be greater than 16MB\n");
-> >>                  machine_restart(NULL);
-> >>          }
-> >>          /* Find main memory where the kernel is */
-> >> -       memory_start = (u32) memblock.memory.region[0].base;
-> >> -       memory_end = (u32) memblock.memory.region[0].base +
-> >> -                               (u32) memblock.memory.region[0].size;
-> >> +       memory_start = (u32) memblock.memory.regions[0].base;
-> >> +       memory_end = (u32) memblock.memory.regions[0].base +
-> >> +                               (u32) memblock.memory.regions[0].size;
-> >>          memory_size = memory_end - memory_start;
-> >>
-> >>          mm_cmdline_setup(); /* FIXME parse args from command line - not 
-> >> used */
-> >>
-> >>
-> >>
-> >>> ---
-> >>>  arch/microblaze/mm/init.c |   20 +++++++++-----------
-> >>>  1 files changed, 9 insertions(+), 11 deletions(-)
-> >>>
-> >>> diff --git a/arch/microblaze/mm/init.c b/arch/microblaze/mm/init.c
-> >>> index afd6494..32a702b 100644
-> >>> --- a/arch/microblaze/mm/init.c
-> >>> +++ b/arch/microblaze/mm/init.c
-> >>> @@ -70,16 +70,16 @@ static void __init paging_init(void)
-> >>>  
-> >>>  void __init setup_memory(void)
-> >>>  {
-> >>> -	int i;
-> >>>  	unsigned long map_size;
-> >>> +	struct memblock_region *reg;
-> >>> +
-> >>>  #ifndef CONFIG_MMU
-> >>>  	u32 kernel_align_start, kernel_align_size;
-> >>>  
-> >>>  	/* Find main memory where is the kernel */
-> >>> -	for (i = 0; i < memblock.memory.cnt; i++) {
-> >>> -		memory_start = (u32) memblock.memory.regions[i].base;
-> >>> -		memory_end = (u32) memblock.memory.regions[i].base
-> >>> -				+ (u32) memblock.memory.region[i].size;
-> >>> +	for_each_memblock(memory, reg) {
-> >>> +		memory_start = (u32)reg->base;
-> >>> +		memory_end = (u32) reg->base + reg->size;
-> >>>  		if ((memory_start <= (u32)_text) &&
-> >>>  					((u32)_text <= memory_end)) {
-> >>>  			memory_size = memory_end - memory_start;
-> >>> @@ -147,12 +147,10 @@ void __init setup_memory(void)
-> >>>  	free_bootmem(memory_start, memory_size);
-> >>>  
-> >>>  	/* reserve allocate blocks */
-> >>> -	for (i = 0; i < memblock.reserved.cnt; i++) {
-> >>> -		pr_debug("reserved %d - 0x%08x-0x%08x\n", i,
-> >>> -			(u32) memblock.reserved.region[i].base,
-> >>> -			(u32) memblock_size_bytes(&memblock.reserved, i));
-> >>> -		reserve_bootmem(memblock.reserved.region[i].base,
-> >>> -			memblock_size_bytes(&memblock.reserved, i) - 1, BOOTMEM_DEFAULT);
-> >>> +	for_each_memblock(reserved, reg) {
-> >>> +		pr_debug("reserved - 0x%08x-0x%08x\n",
-> >>> +			 (u32) reg->base, (u32) reg->size);
-> >>> +		reserve_bootmem(reg->base, reg->size, BOOTMEM_DEFAULT);
-> >>>  	}
-> >>>  #ifdef CONFIG_MMU
-> >>>  	init_bootmem_done = 1;
-> >>
-> > 
-> > 
-> 
-> 
+> 	Ingo
+> 	
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
 
 
 --
