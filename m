@@ -1,26 +1,56 @@
-From: Ralf Baechle <ralf@linux-mips.org>
-Subject: Re: linux-next: unable to fetch the mips tree
-Date: Fri, 10 Sep 2010 02:49:54 +0200
-Message-ID: <20100910004954.GA8325@linux-mips.org>
-References: <20100910102614.61909592.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the s5p tree with the arm-current tree
+Date: Fri, 10 Sep 2010 11:10:23 +1000
+Message-ID: <20100910111023.671fdba7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__10_Sep_2010_11_10_23_+1000_433dw75kxY_t2ZWx"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:46907 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753659Ab0IJBKe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 9 Sep 2010 21:10:34 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>
+
+--Signature=_Fri__10_Sep_2010_11_10_23_+1000_433dw75kxY_t2ZWx
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20100910102614.61909592.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 10, 2010 at 10:26:14AM +1000, Stephen Rothwell wrote:
+Hi Kukjin,
 
-> For the last couple of days, I have been getting the following error when
-> trying to fetch mips tree:
-> 
-> git.linux-mips.org[0: 78.24.191.183]: errno=Connection refused
+Today's linux-next merge of the s5p tree got a conflict in
+arch/arm/Kconfig between commit 9e84ed63dc71e13b62cea5ec6b0049260cca0b7a
+("ARM: Partially revert "Auto calculate ZRELADDR and provide option for
+exceptions"") from the arm-current tree and commit
+03c1ebb0c4e84c4de78f522a73fe1e813b9a1fc1 ("ARM: S5P64X0: Update Kconfig
+and Makefile") from the s5p tree.
 
-About 30h, I guess.  That's when the machine was upgraded and rebooted.
-Fixed now.  Thanks for leting me know.
+I used the arm-current version, but there may be some fix required for
+the s5p tree.
 
-  Ralf
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__10_Sep_2010_11_10_23_+1000_433dw75kxY_t2ZWx
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMiYV/AAoJEDMEi1NhKgbsnU4H+wQ5qZJFPUf7Er+Z78l4r2gX
+j01JCsJrX+n9lF/4uGY3mhYgyf6pGbqAp+z0J05pR2H4gh7X/sxDHZ1f0ytTqvoS
+9Hhop2L+h9Knu01WMAK3Nfq4H2fZYq+hML4BXMlfJ5qYYY95pdsUJiY8uvyGUsp7
+Av9pztEblC7Cdh7wUFlqeAHowHr4TAkFdtYOvIOwFozdomsQEpKNAzw6avxkSdkq
+I1PVxdECkI1G+jfWKTohHxpnbzCCEj7wsTdI1+8MkACUee3iCzfrNjh20EuwskHl
+/YK6UOb0BvQkrQMcJlZwXxqr9CvJsEUDrCezEaFZzYKwLaZLI5psBzjnUEfNnTw=
+=GQGj
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__10_Sep_2010_11_10_23_+1000_433dw75kxY_t2ZWx--
