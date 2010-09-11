@@ -1,49 +1,44 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: linux-next: manual merge of the s5p tree with the arm-current tree
-Date: Sat, 11 Sep 2010 08:03:33 +0900
-Message-ID: <002401cb513c$66c31660$34494320$%kim@samsung.com>
-References: <20100910111023.671fdba7.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: [PATCH 08/43] memblock/microblaze: Use new accessors
+Date: Sat, 11 Sep 2010 09:29:05 +0200
+Message-ID: <20100911072905.GA26366@elte.hu>
+References: <1281071724-28740-1-git-send-email-benh@kernel.crashing.org>
+ <1281071724-28740-9-git-send-email-benh@kernel.crashing.org>
+ <4C5BCD41.3040501@monstr.eu>
+ <1281135046.2168.40.camel@pasglop>
+ <4C88BD8F.5080208@monstr.eu>
+ <20100909115445.GB16157@elte.hu>
+ <1284106711.6515.46.camel@pasglop>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:36550 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754586Ab0IJXDV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 10 Sep 2010 19:03:21 -0400
-In-reply-to: <20100910111023.671fdba7.sfr@canb.auug.org.au>
-Content-language: ko
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: 'Stephen Rothwell' <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Russell King' <rmk@arm.linux.org.uk>
+Return-path: <owner-linux-mm@kvack.org>
+Content-Disposition: inline
+In-Reply-To: <1284106711.6515.46.camel@pasglop>
+Sender: owner-linux-mm@kvack.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Michal Simek <monstr@monstr.eu>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "H. Peter Anvin" <hpa@zytor.com>, Yinghai Lu <yinghai@kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell wrote:
+
+* Benjamin Herrenschmidt <benh@kernel.crashing.org> wrote:
+
+> > Yep, i asked benh to have a look (see the mail below) but got no 
+> > response, as i assumed it had all been taken care of.
 > 
-> Hi Kukjin,
-> 
-Hi :-)
+> Sorry, I must have been confused... I had pushed out a git branch a 
+> while back with those updates and the ARM bits, at least I think I did
+> :-) I might have FAILed there. I'll check next week, I'm about to 
+> board on a plane right now.
 
-> Today's linux-next merge of the s5p tree got a conflict in
-> arch/arm/Kconfig between commit 9e84ed63dc71e13b62cea5ec6b0049260cca0b7a
-> ("ARM: Partially revert "Auto calculate ZRELADDR and provide option for
-> exceptions"") from the arm-current tree and commit
-> 03c1ebb0c4e84c4de78f522a73fe1e813b9a1fc1 ("ARM: S5P64X0: Update Kconfig
-> and Makefile") from the s5p tree.
-> 
-Oh, ok...thanks for your information.
+Note, i applied the build error fixes from Yinghai. Please double-check 
+things once you have the time.
 
-> I used the arm-current version, but there may be some fix required for
-> the s5p tree.
-> 
-Sure, I fixed my tree for it.
+Thanks,
 
-Have a nice weekend ;-)
+	Ingo
 
-Thanks.
-
-Best regards,
-Kgene.
 --
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
