@@ -1,42 +1,47 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mfd tree with Linus' tree
-Date: Mon, 13 Sep 2010 11:54:04 +1000
-Message-ID: <20100913115404.cfbe7182.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the net tree
+Date: Mon, 13 Sep 2010 12:37:45 +1000
+Message-ID: <20100913123745.e4a4df44.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Hannemann <arnd@arndnet.de>, Paul Mundt <lethal@linux-sh.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:47339 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754168Ab0IMChv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 12 Sep 2010 22:37:51 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Koki Sanagi <sanagi.koki@jp.fujitsu.com>, Frederic Weisbecker <fweisbec@gmail.com>, Changli Gao <xiaosuo@gmail.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
 
-Hi Samuel,
+Hi all,
 
-Today's linux-next merge of the mfd tree got a conflict in
-arch/arm/mach-shmobile/board-ap4evb.c between commit
-410d878bd05315a19894b8b4685107f2cd0712a5 ("ARM: mach-shmobile: ap4evb:
-fix write protect for SDHI1") from Linus' tree and commit
-c3cfb4003377a3397b27de0efe910c9abd838ac3 ("ARM: mach-shmobile: ap4evb:
-Fix hotplug for SDHI1") from the mfd tree.
+Today's linux-next merge of the tip tree got a conflict in net/core/dev.c
+between commit 05532121da0728eaedac2a0a5c3cecad3a95d765 ("net: 802.1q:
+make vlan_hwaccel_do_receive() return void") from the net tree and commit
+cf66ba58b5cb8b1526e9dd2fb96ff8db048d4d44 ("netdev: Add tracepoints to
+netdev layer") from the tip tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix
-for a while.
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-shmobile/board-ap4evb.c
-index 95935c83,6c244a8..0000000
---- a/arch/arm/mach-shmobile/board-ap4evb.c
-+++ b/arch/arm/mach-shmobile/board-ap4evb.c
-@@@ -309,7 -320,8 +322,9 @@@ static struct sh_mobile_sdhi_info sdhi1
-  	.dma_slave_tx	= SHDMA_SLAVE_SDHI1_TX,
-  	.dma_slave_rx	= SHDMA_SLAVE_SDHI1_RX,
-  	.tmio_ocr_mask	= MMC_VDD_165_195,
- +	.tmio_flags	= TMIO_MMC_WRPROTECT_DISABLE,
-+ 	.tmio_caps	= MMC_CAP_NEEDS_POLL,
-+ 	.get_cd		= slot_cn7_get_cd,
-  };
+diff --cc net/core/dev.c
+index fc2dc93,2308cce..0000000
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@@ -2847,8 -2835,9 +2854,9 @@@ static int __netif_receive_skb(struct s
+  	if (!netdev_tstamp_prequeue)
+  		net_timestamp_check(skb);
   
-  static struct resource sdhi1_resources[] = {
++ 	trace_netif_receive_skb(skb);
+ -	if (vlan_tx_tag_present(skb) && vlan_hwaccel_do_receive(skb))
+ -		return NET_RX_SUCCESS;
+ +	if (vlan_tx_tag_present(skb))
+ +		vlan_hwaccel_do_receive(skb);
+  
+  	/* if we've gotten here through NAPI, check netpoll */
+  	if (netpoll_receive_skb(skb))
