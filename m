@@ -1,89 +1,108 @@
-From: Yinghai Lu <yinghai@kernel.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build warnings after merge of the final tree (tip
  treee related)
-Date: Sun, 12 Sep 2010 21:14:15 -0700
-Message-ID: <4C8DA517.9000603@kernel.org>
+Date: Mon, 13 Sep 2010 14:39:42 +1000
+Message-ID: <20100913143942.7344ada4.sfr@canb.auug.org.au>
 References: <20100913132721.5a02cfbc.sfr@canb.auug.org.au>
+	<4C8DA517.9000603@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__13_Sep_2010_14_39_42_+1000_LFB1mbA64F_p94jI"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:30906 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750744Ab0IMEQm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Sep 2010 00:16:42 -0400
-In-Reply-To: <20100913132721.5a02cfbc.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:41149 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750864Ab0IMEjt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 13 Sep 2010 00:39:49 -0400
+In-Reply-To: <4C8DA517.9000603@kernel.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@elte.hu>
-Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, ppc-dev <linuxppc-dev@lists.ozlabs.org>
+To: Yinghai Lu <yinghai@kernel.org>
+Cc: Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, ppc-dev <linuxppc-dev@lists.ozlabs.org>
 
-On 09/12/2010 08:27 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the scsi-post-merge tree, today's linux-next build (powerpc
-> allnoconfig, i386 defconfig and others) produced these warnings (I build
-> with CONFIG_DEBUG_SECTION_MISMATCH=y):
-> 
-> WARNING: mm/built-in.o(.text+0x25910): Section mismatch in reference from the function memblock_find_in_range() to the function .init.text:memblock_find_base()
-> The function memblock_find_in_range() references
-> the function __init memblock_find_base().
-> This is often because memblock_find_in_range lacks a __init 
-> annotation or the annotation of memblock_find_base is wrong.
+--Signature=_Mon__13_Sep_2010_14_39_42_+1000_LFB1mbA64F_p94jI
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-please check it, and it should get into core/memblock branch.
+Hi Yinghai,
 
-Thanks
+On Sun, 12 Sep 2010 21:14:15 -0700 Yinghai Lu <yinghai@kernel.org> wrote:
+>
+> please check it, and it should get into core/memblock branch.
+>=20
+> Thanks
+>=20
+> Yinghai
+>=20
+> [PATCH] memblock: Fix section mismatch warning
+>=20
+> for arches that use memblock other than x86
+>=20
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Yinghai Lu <Yinghai@kernel.org>
 
-Yinghai
+Your patch fixes some of the warnings, but still leaves these for a
+powerpc allnoconfig build:
 
-[PATCH] memblock: Fix section mismatch warning
+WARNING: mm/built-in.o(.text+0x25d80): Section mismatch in reference from t=
+he function memblock_double_array() to the function .init.text:memblock_fre=
+e()
+The function memblock_double_array() references
+the function __init memblock_free().
+This is often because memblock_double_array lacks a __init=20
+annotation or the annotation of memblock_free is wrong.
 
-for arches that use memblock other than x86
+WARNING: mm/built-in.o(.text+0x26318): Section mismatch in reference from t=
+he function memblock_reserve_reserved_regions() to the function .init.text:=
+memblock_reserve()
+The function memblock_reserve_reserved_regions() references
+the function __init memblock_reserve().
+This is often because memblock_reserve_reserved_regions lacks a __init=20
+annotation or the annotation of memblock_reserve is wrong.
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Yinghai Lu <Yinghai@kernel.org>
+WARNING: mm/built-in.o(.text+0x26490): Section mismatch in reference from t=
+he function memblock_free_reserved_regions() to the function .init.text:mem=
+block_free()
+The function memblock_free_reserved_regions() references
+the function __init memblock_free().
+This is often because memblock_free_reserved_regions lacks a __init=20
+annotation or the annotation of memblock_free is wrong.
 
----
- mm/memblock.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+And these for a i386 defconfig build:
 
-Index: linux-2.6/mm/memblock.c
-===================================================================
---- linux-2.6.orig/mm/memblock.c
-+++ linux-2.6/mm/memblock.c
-@@ -125,8 +125,8 @@ static phys_addr_t __init memblock_find_
- 	return MEMBLOCK_ERROR;
- }
- 
--static phys_addr_t __init memblock_find_base(phys_addr_t size, phys_addr_t align,
--					phys_addr_t start, phys_addr_t end)
-+static phys_addr_t __init_memblock memblock_find_base(phys_addr_t size,
-+			phys_addr_t align, phys_addr_t start, phys_addr_t end)
- {
- 	long i;
- 
-@@ -439,12 +439,12 @@ long __init_memblock memblock_remove(phy
- 	return __memblock_remove(&memblock.memory, base, size);
- }
- 
--long __init memblock_free(phys_addr_t base, phys_addr_t size)
-+long __init_memblock memblock_free(phys_addr_t base, phys_addr_t size)
- {
- 	return __memblock_remove(&memblock.reserved, base, size);
- }
- 
--long __init memblock_reserve(phys_addr_t base, phys_addr_t size)
-+long __init_memblock memblock_reserve(phys_addr_t base, phys_addr_t size)
- {
- 	struct memblock_type *_rgn = &memblock.reserved;
- 
-@@ -693,7 +693,7 @@ int __init_memblock memblock_is_region_r
- }
- 
- 
--void __init memblock_set_current_limit(phys_addr_t limit)
-+void __init_memblock memblock_set_current_limit(phys_addr_t limit)
- {
- 	memblock.current_limit = limit;
- }
+WARNING: mm/built-in.o(.text+0x1e261): Section mismatch in reference from t=
+he function memblock_is_memory() to the variable .init.data:memblock
+The function memblock_is_memory() references
+the variable __initdata memblock.
+This is often because memblock_is_memory lacks a __initdata=20
+annotation or the annotation of memblock is wrong.
+
+WARNING: mm/built-in.o(.text+0x1e27f): Section mismatch in reference from t=
+he function memblock_is_region_memory() to the variable .init.data:memblock
+The function memblock_is_region_memory() references
+the variable __initdata memblock.
+This is often because memblock_is_region_memory lacks a __initdata=20
+annotation or the annotation of memblock is wrong.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__13_Sep_2010_14_39_42_+1000_LFB1mbA64F_p94jI
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMjasOAAoJEDMEi1NhKgbsz/4H/iB0Vmgh2Jrw0CadUixbRYZX
+a9Ch6JcU9KN1U74N7yG8o08r9CHb/BGjYIqnnAMfAh5HJfrF7+yNLzUXE76DpTrN
+rgbZBTgJf61hZKbtYrGdIjRDrbU1dL3NhJ8wStVD+oeUCJwQ9h0f6Kh3EHrHcCoe
+0zqrF8S4uR2uxIDzWQvyluUVg7Qlr34o5CKQxkh9XtIacHSgE6fI9DzZa05vYWHQ
+FUOIGZ+coT+zeCsQXy44Hfaxb6g8LB7YKQuvXEk6wvydkkgfeYry0rI1DLRfylYo
+j6QMjbbxU1rz7cYtpY3pPDVAcShf1mMZWFK1rixabGTnf9cL8s5vj5Mixj3z5P4=
+=TEN7
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__13_Sep_2010_14_39_42_+1000_LFB1mbA64F_p94jI--
