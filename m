@@ -1,106 +1,99 @@
-From: Felipe Contreras <felipe.contreras@gmail.com>
+From: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
 Subject: Re: [PATCH -next] optprobes: fix kconfig depends/selects
-Date: Mon, 13 Sep 2010 12:41:57 +0300
-Message-ID: <AANLkTi=rAq7mGYD02bjZQ1j59J3U2ahHS0mqkULv-648@mail.gmail.com>
-References: <20100812122641.fe88e846.randy.dunlap@oracle.com>
-	<AANLkTimu4zHZrpGkLVQkxsqax1DDefjZXwTn2cxy4WsL@mail.gmail.com>
-	<4C8D790B.8000807@hitachi.com>
-	<4C8DCFAE.4020700@hitachi.com>
+Date: Mon, 13 Sep 2010 19:14:13 +0900
+Message-ID: <4C8DF975.4040502@hitachi.com>
+References: <20100812122641.fe88e846.randy.dunlap@oracle.com>	<AANLkTimu4zHZrpGkLVQkxsqax1DDefjZXwTn2cxy4WsL@mail.gmail.com>	<4C8D790B.8000807@hitachi.com>	<4C8DCFAE.4020700@hitachi.com> <AANLkTi=rAq7mGYD02bjZQ1j59J3U2ahHS0mqkULv-648@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-iw0-f174.google.com ([209.85.214.174]:63392 "EHLO
-	mail-iw0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752415Ab0IMJl6 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Sep 2010 05:41:58 -0400
-In-Reply-To: <4C8DCFAE.4020700@hitachi.com>
+Received: from mail9.hitachi.co.jp ([133.145.228.44]:59287 "EHLO
+	mail9.hitachi.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751867Ab0IMKOU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Sep 2010 06:14:20 -0400
+In-Reply-To: <AANLkTi=rAq7mGYD02bjZQ1j59J3U2ahHS0mqkULv-648@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
+To: Felipe Contreras <felipe.contreras@gmail.com>
 Cc: Randy Dunlap <randy.dunlap@oracle.com>, lkml <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Ananth N Mavinakayanahalli <ananth@in.ibm.com>, Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>, "David S. Miller" <davem@davemloft.net>, akpm <akpm@linux-foundation.org>, 2nddept-manager@sdl.hitachi.co.jp
 
-On Mon, Sep 13, 2010 at 10:15 AM, Masami Hiramatsu
-<masami.hiramatsu.pt@hitachi.com> wrote:
-> (2010/09/13 10:06), Masami Hiramatsu wrote:
->> (2010/09/12 19:49), Felipe Contreras wrote:
->>> On Thu, Aug 12, 2010 at 10:26 PM, Randy Dunlap <randy.dunlap@oracle=
-=2Ecom> wrote:
->>>> From: Randy Dunlap <randy.dunlap@oracle.com>
+(2010/09/13 18:41), Felipe Contreras wrote:
+> On Mon, Sep 13, 2010 at 10:15 AM, Masami Hiramatsu
+> <masami.hiramatsu.pt@hitachi.com> wrote:
+>> (2010/09/13 10:06), Masami Hiramatsu wrote:
+>>> (2010/09/12 19:49), Felipe Contreras wrote:
+>>>> On Thu, Aug 12, 2010 at 10:26 PM, Randy Dunlap <randy.dunlap@oracle.com> wrote:
+>>>>> From: Randy Dunlap <randy.dunlap@oracle.com>
+>>>>>
+>>>>> KALLSYMS and KALLSYMS_ALL depend on DEBUG_KERNEL, so add that dependency.
+>>>>> KALLSYMS_ALL depends on KALLSYMS, so select both of them, not just KALLSYMS_ALL.
+>>>>>
+>>>>> warning: (OPTPROBES && KPROBES && HAVE_OPTPROBES && !PREEMPT || MTD_UBI_DEBUG && MTD && SYSFS && MTD_UBI || UBIFS_FS_DEBUG && MISC_FILESYSTEMS && UBIFS_FS || LOCKDEP && DEBUG_KERNEL && TRACE_IRQFLAGS_SUPPORT && STACKTRACE_SUPPORT && LOCKDEP_SUPPORT || LATENCYTOP && HAVE_LATENCYTOP_SUPPORT) selects KALLSYMS_ALL which has unmet direct dependencies (DEBUG_KERNEL && KALLSYMS)
+>>>>>
+>>>>> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+>>>>> Cc:     Ananth N Mavinakayanahalli <ananth@in.ibm.com>
+>>>>> Cc:     Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+>>>>> Cc:     "David S. Miller" <davem@davemloft.net>
+>>>>> Cc:     Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
+>>>>> ---
+>>>>>  arch/Kconfig |    2 ++
+>>>>>  1 file changed, 2 insertions(+)
+>>>>>
+>>>>> --- linux-next-20100810.orig/arch/Kconfig
+>>>>> +++ linux-next-20100810/arch/Kconfig
+>>>>> @@ -45,6 +45,8 @@ config OPTPROBES
+>>>>>        def_bool y
+>>>>>        depends on KPROBES && HAVE_OPTPROBES
+>>>>>        depends on !PREEMPT
+>>>>> +       depends on DEBUG_KERNEL
+>>>>> +       select KALLSYMS
+>>>>>        select KALLSYMS_ALL
+>>>>>
+>>>>>  config HAVE_EFFICIENT_UNALIGNED_ACCESS
+>>>>> --
 >>>>
->>>> KALLSYMS and KALLSYMS_ALL depend on DEBUG_KERNEL, so add that depe=
-ndency.
->>>> KALLSYMS_ALL depends on KALLSYMS, so select both of them, not just=
- KALLSYMS_ALL.
+>>>> This causes another problem:
 >>>>
->>>> warning: (OPTPROBES && KPROBES && HAVE_OPTPROBES && !PREEMPT || MT=
-D_UBI_DEBUG && MTD && SYSFS && MTD_UBI || UBIFS_FS_DEBUG && MISC_FILESY=
-STEMS && UBIFS_FS || LOCKDEP && DEBUG_KERNEL && TRACE_IRQFLAGS_SUPPORT =
-&& STACKTRACE_SUPPORT && LOCKDEP_SUPPORT || LATENCYTOP && HAVE_LATENCYT=
-OP_SUPPORT) selects KALLSYMS_ALL which has unmet direct dependencies (D=
-EBUG_KERNEL && KALLSYMS)
+>>>> arch/Kconfig:33:error: recursive dependency detected!
+>>>> arch/Kconfig:33:     symbol KPROBES depends on KALLSYMS
+>>>> init/Kconfig:825:    symbol KALLSYMS is selected by OPTPROBES
+>>>> arch/Kconfig:44:     symbol OPTPROBES depends on KPROBES
 >>>>
->>>> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
->>>> Cc: =C2=A0 =C2=A0 Ananth N Mavinakayanahalli <ananth@in.ibm.com>
->>>> Cc: =C2=A0 =C2=A0 Anil S Keshavamurthy <anil.s.keshavamurthy@intel=
-=2Ecom>
->>>> Cc: =C2=A0 =C2=A0 "David S. Miller" <davem@davemloft.net>
->>>> Cc: =C2=A0 =C2=A0 Masami Hiramatsu <masami.hiramatsu.pt@hitachi.co=
-m>
->>>> ---
->>>> =C2=A0arch/Kconfig | =C2=A0 =C2=A02 ++
->>>> =C2=A01 file changed, 2 insertions(+)
+>>>> The 'select KALLSYMS' is redundant.
 >>>>
->>>> --- linux-next-20100810.orig/arch/Kconfig
->>>> +++ linux-next-20100810/arch/Kconfig
->>>> @@ -45,6 +45,8 @@ config OPTPROBES
->>>> =C2=A0 =C2=A0 =C2=A0 =C2=A0def_bool y
->>>> =C2=A0 =C2=A0 =C2=A0 =C2=A0depends on KPROBES && HAVE_OPTPROBES
->>>> =C2=A0 =C2=A0 =C2=A0 =C2=A0depends on !PREEMPT
->>>> + =C2=A0 =C2=A0 =C2=A0 depends on DEBUG_KERNEL
->>>> + =C2=A0 =C2=A0 =C2=A0 select KALLSYMS
->>>> =C2=A0 =C2=A0 =C2=A0 =C2=A0select KALLSYMS_ALL
+>>>> Otherwise: Signed-off-by: Felipe Contreras <felipe.contreras@gmail.com>
 >>>>
->>>> =C2=A0config HAVE_EFFICIENT_UNALIGNED_ACCESS
->>>> --
 >>>
->>> This causes another problem:
->>>
->>> arch/Kconfig:33:error: recursive dependency detected!
->>> arch/Kconfig:33: =C2=A0 =C2=A0 symbol KPROBES depends on KALLSYMS
->>> init/Kconfig:825: =C2=A0 =C2=A0symbol KALLSYMS is selected by OPTPR=
-OBES
->>> arch/Kconfig:44: =C2=A0 =C2=A0 symbol OPTPROBES depends on KPROBES
->>>
->>> The 'select KALLSYMS' is redundant.
->>>
->>> Otherwise: Signed-off-by: Felipe Contreras <felipe.contreras@gmail.=
-com>
->>>
+>>> Thanks, let me clear the dependency;
+>>> Kprobes uses kallsyms_lookup for finding target function and checking
+>>> instruction boundary, thus CONFIG_KPROBES should select CONFIG_KALLSYMS
+>>> and CONFIG_KALLSYMS_ALL.
+>>> Optprobe is a optional feature which is supported on x86 arch, and
+>>> it also uses kallsyms_lookup for checking instructions in the target
+>>> function. Anyway, since optprobe itself is depends on kprobes, it doesn't
+>>> need to select both of KALLSYMS/KALLSYMS_ALL.
 >>
->> Thanks, let me clear the dependency;
->> Kprobes uses kallsyms_lookup for finding target function and checkin=
-g
->> instruction boundary, thus CONFIG_KPROBES should select CONFIG_KALLS=
-YMS
->> and CONFIG_KALLSYMS_ALL.
->> Optprobe is a optional feature which is supported on x86 arch, and
->> it also uses kallsyms_lookup for checking instructions in the target
->> function. Anyway, since optprobe itself is depends on kprobes, it do=
-esn't
->> need to select both of KALLSYMS/KALLSYMS_ALL.
->
-> Hmm, wait, I might misunderstand something here. I thought
-> KALLSYMS_ALL added symbols of static functions.
-> But, does KALLSYMS_ALL just add symbols of variables?
-> If so, both of KPROBES and OPTPROBES require only KALLSYMS.
-> It means that they don't need to care about CONFIG_DEBUG_KERNEL.
+>> Hmm, wait, I might misunderstand something here. I thought
+>> KALLSYMS_ALL added symbols of static functions.
+>> But, does KALLSYMS_ALL just add symbols of variables?
+>> If so, both of KPROBES and OPTPROBES require only KALLSYMS.
+>> It means that they don't need to care about CONFIG_DEBUG_KERNEL.
+> 
+> So:
+> -       select KALLSYMS_ALL
+> +       depends on KALLSYMS_ALL
+> 
+> Because KALLSYMS_ALL depends on DEBUG_KERNEL && KALLSYMS.
 
-So:
+No, what I meant is;
 -       select KALLSYMS_ALL
-+       depends on KALLSYMS_ALL
 
-Because KALLSYMS_ALL depends on DEBUG_KERNEL && KALLSYMS.
+:-)
 
---=20
-=46elipe Contreras
+
+
+-- 
+Masami HIRAMATSU
+2nd Dept. Linux Technology Center
+Hitachi, Ltd., Systems Development Laboratory
+E-mail: masami.hiramatsu.pt@hitachi.com
