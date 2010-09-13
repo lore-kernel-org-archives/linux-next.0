@@ -1,66 +1,53 @@
-From: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
-Subject: [PATCH -next,-tip ] kprobes: Fix Kconfig dependency
-Date: Mon, 13 Sep 2010 19:25:41 +0900
-Message-ID: <20100913102541.20260.85700.stgit@ltc236.sdl.hitachi.co.jp>
-References: <4C8DCFAE.4020700@hitachi.com>
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: [-next Sept 13] s390 build break  [nclude/linux/interrupt.h:local_softirq_pending()]
+Date: Mon, 13 Sep 2010 16:32:28 +0530
+Message-ID: <4C8E04C4.4060508@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail4.hitachi.co.jp ([133.145.228.5]:47341 "EHLO
-	mail4.hitachi.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751018Ab0IMKYf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Sep 2010 06:24:35 -0400
-In-Reply-To: <4C8DCFAE.4020700@hitachi.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Ananth N Mavinakayanahalli <ananth@in.ibm.com>, linux-kernel@vger.kernel.org, 2nddept-manager@sdl.hitachi.co.jp, Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>, Felipe Contreras <felipe.contreras@gmail.com>, Randy Dunlap <randy.dunlap@oracle.com>linux-kernel@vger.kernel.org, linux-next@vger.kernel.orgAnanth N Mavinakayanahalli <ananth@in.ibm.com>, Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>, "David S. Miller" <davem@davemloft.net>, akpm <akpm@linux-foundation.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-s390@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>, laijs@cn.fujitsu.com, linux-kernel <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Fix Kconfig dependency among Kprobes, optprobe and kallsyms.
+Today's next build failed on a s390 box with following
 
-Kprobes uses kallsyms_lookup for finding target function and checking
-instruction boundary, thus CONFIG_KPROBES should select CONFIG_KALLSYMS.
+In file included from /tmp/build/linux/arch/s390/include/asm/hardirq.h:18,
+       from include/linux/hardirq.h:10,
+       from include/linux/pagemap.h:15,
+       from include/linux/blkdev.h:12,
+       from init/do_mounts.h:2,
+       from init/do_mounts_initrd.c:11:
+include/linux/interrupt.h: In function '__raise_softirq_irqoff':
+include/linux/interrupt.h:429: error: implicit declaration of function 'local_softirq_pending'
+include/linux/interrupt.h:429: error: lvalue required as left operand of assignment
+In file included from /tmp/build/linux/arch/s390/include/asm/hardirq.h:18,
+       from include/linux/hardirq.h:10,
+       from include/linux/ftrace_event.h:7,
+       from include/trace/syscall.h:6,
+       from include/linux/syscalls.h:76,
+       from init/initramfs.c:9:
+include/linux/interrupt.h: In function '__raise_softirq_irqoff':
+include/linux/interrupt.h:429: error: implicit declaration of function 'local_softirq_pending'
+include/linux/interrupt.h:429: error: lvalue required as left operand of assignment
+make[1]: *** [init/do_mounts_initrd.o] Error 1
 
-Optprobe is an optional feature which is supported on x86 arch, and
-it also uses kallsyms_lookup for checking instructions in the target
-function. Since KALLSYMS_ALL just adds symbols of kernel variables,
-it doesn't need to select KALLSYMS_ALL.
+and many more similar errors ..
 
-Signed-off-by: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
-Cc: Felipe Contreras <felipe.contreras@gmail.com>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>,
-Cc: linux-kernel@vger.kernel.org,
-Cc: linux-next@vger.kernel.org,
-Cc: Ananth N Mavinakayanahalli <ananth@in.ibm.com>,
-Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-Cc: "David S. Miller" <davem@davemloft.net>,
-Cc: akpm <akpm@linux-foundation.org>
----
+The following commit added the code in question.
 
- arch/Kconfig |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+commit 2bf2160d8805de64308e2e7c3cd97813cb58ed2f
+irq: Add tracepoint to softirq_raise
 
-diff --git a/arch/Kconfig b/arch/Kconfig
-index 4877a8c..fe48fc7 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -32,8 +32,9 @@ config HAVE_OPROFILE
- 
- config KPROBES
- 	bool "Kprobes"
--	depends on KALLSYMS && MODULES
-+	depends on MODULES
- 	depends on HAVE_KPROBES
-+	select KALLSYMS
- 	help
- 	  Kprobes allows you to trap at almost any kernel address and
- 	  execute a callback function.  register_kprobe() establishes
-@@ -45,7 +46,6 @@ config OPTPROBES
- 	def_bool y
- 	depends on KPROBES && HAVE_OPTPROBES
- 	depends on !PREEMPT
--	select KALLSYMS_ALL
- 
- config HAVE_EFFICIENT_UNALIGNED_ACCESS
- 	bool
+Thanks
+-Sachin
+
+-- 
+
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
