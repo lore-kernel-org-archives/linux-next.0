@@ -1,34 +1,59 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Subject: Re: linux-next: manual merge of the mfd tree with Linus' tree
-Date: Mon, 13 Sep 2010 15:59:15 +0200
-Message-ID: <20100913135915.GI2555@sortiz-mobl>
-References: <20100913115404.cfbe7182.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (tip tree
+ related)
+Date: Tue, 14 Sep 2010 00:06:13 +1000
+Message-ID: <20100914000613.51fdba90.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__14_Sep_2010_00_06_13_+1000_i+sPqdSJ1xYdleXC"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:57860 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751708Ab0IMOGU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 13 Sep 2010 10:06:20 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mundt <lethal@linux-sh.org>
+
+--Signature=_Tue__14_Sep_2010_00_06_13_+1000_i+sPqdSJ1xYdleXC
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20100913115404.cfbe7182.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Hannemann <arnd@arndnet.de>, Paul Mundt <lethal@linux-sh.org>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-Hi Stephen,
+Hi all,
 
-On Mon, Sep 13, 2010 at 11:54:04AM +1000, Stephen Rothwell wrote:
-> Hi Samuel,
-> 
-> Today's linux-next merge of the mfd tree got a conflict in
-> arch/arm/mach-shmobile/board-ap4evb.c between commit
-> 410d878bd05315a19894b8b4685107f2cd0712a5 ("ARM: mach-shmobile: ap4evb:
-> fix write protect for SDHI1") from Linus' tree and commit
-> c3cfb4003377a3397b27de0efe910c9abd838ac3 ("ARM: mach-shmobile: ap4evb:
-> Fix hotplug for SDHI1") from the mfd tree.
-The conflict should be merged by now. Thanks for the warning.
+After merging the final tree, today's linux-next build (many sh configs)
+failed like this:
 
+arch/sh/kernel/perf_event.c: In function 'sh_pmu_setup':
+arch/sh/kernel/perf_event.c:342: error: parameter 'cpuhw' is initialized
+
+And it went down hill from there.
+
+Caused by commit b0a873ebbf87bf38bf70b5e39a7cadc96099fa13 ("perf:
+Register PMU implementations") which removed the opening brace of that
+function.
+
+--=20
 Cheers,
-Samuel.
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+--Signature=_Tue__14_Sep_2010_00_06_13_+1000_i+sPqdSJ1xYdleXC
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMji/VAAoJEDMEi1NhKgbs0CQH/3to8B+slCLQrcVuBgI9jor0
+nY8eyFXFcvBFPKT0yqwbnSvhLTnyvyv/RcYJWcaRxDFx2Wo+2nD4aqbQ9XYqsUA0
+8q8I3I4FkvkCWwkHjljv/iaYZjmoRT9r7UaKRrHo5+lrafHuxvIgJVE3T1ISXUPX
+CwVXedszijtb3uaUxtS5b8Kirg0Qv4KVAMEKrK+oVJ72bNWQ1DsEXJDb6B5NyjPX
+THVg4RV6HectmocZ6ujptDbUWY8Z2vbZIVrU3qjQy0KTnZV9iBP5nJZOiqne3iYc
+RMyRvUt1FB+imtNHgOH2aieGPg0CtiiXEJGj25KPcgW1eQHrHGpIO+JBqxvjfVQ=
+=HXyt
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__14_Sep_2010_00_06_13_+1000_i+sPqdSJ1xYdleXC--
