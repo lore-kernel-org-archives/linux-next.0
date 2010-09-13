@@ -1,108 +1,85 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warnings after merge of the final tree (tip
- treee related)
-Date: Mon, 13 Sep 2010 14:39:42 +1000
-Message-ID: <20100913143942.7344ada4.sfr@canb.auug.org.au>
-References: <20100913132721.5a02cfbc.sfr@canb.auug.org.au>
-	<4C8DA517.9000603@kernel.org>
+From: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
+Subject: Re: [PATCH -next] optprobes: fix kconfig depends/selects
+Date: Mon, 13 Sep 2010 16:15:58 +0900
+Message-ID: <4C8DCFAE.4020700@hitachi.com>
+References: <20100812122641.fe88e846.randy.dunlap@oracle.com> <AANLkTimu4zHZrpGkLVQkxsqax1DDefjZXwTn2cxy4WsL@mail.gmail.com> <4C8D790B.8000807@hitachi.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__13_Sep_2010_14_39_42_+1000_LFB1mbA64F_p94jI"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41149 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750864Ab0IMEjt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 13 Sep 2010 00:39:49 -0400
-In-Reply-To: <4C8DA517.9000603@kernel.org>
+Received: from mail4.hitachi.co.jp ([133.145.228.5]:49080 "EHLO
+	mail4.hitachi.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751906Ab0IMHQF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Sep 2010 03:16:05 -0400
+In-Reply-To: <4C8D790B.8000807@hitachi.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Yinghai Lu <yinghai@kernel.org>
-Cc: Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, ppc-dev <linuxppc-dev@lists.ozlabs.org>
+To: Felipe Contreras <felipe.contreras@gmail.com>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, lkml <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Ananth N Mavinakayanahalli <ananth@in.ibm.com>, Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>, "David S. Miller" <davem@davemloft.net>, akpm <akpm@linux-foundation.org>, 2nddept-manager@sdl.hitachi.co.jp
 
---Signature=_Mon__13_Sep_2010_14_39_42_+1000_LFB1mbA64F_p94jI
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+(2010/09/13 10:06), Masami Hiramatsu wrote:
+> (2010/09/12 19:49), Felipe Contreras wrote:
+>> On Thu, Aug 12, 2010 at 10:26 PM, Randy Dunlap <randy.dunlap@oracle.com> wrote:
+>>> From: Randy Dunlap <randy.dunlap@oracle.com>
+>>>
+>>> KALLSYMS and KALLSYMS_ALL depend on DEBUG_KERNEL, so add that dependency.
+>>> KALLSYMS_ALL depends on KALLSYMS, so select both of them, not just KALLSYMS_ALL.
+>>>
+>>> warning: (OPTPROBES && KPROBES && HAVE_OPTPROBES && !PREEMPT || MTD_UBI_DEBUG && MTD && SYSFS && MTD_UBI || UBIFS_FS_DEBUG && MISC_FILESYSTEMS && UBIFS_FS || LOCKDEP && DEBUG_KERNEL && TRACE_IRQFLAGS_SUPPORT && STACKTRACE_SUPPORT && LOCKDEP_SUPPORT || LATENCYTOP && HAVE_LATENCYTOP_SUPPORT) selects KALLSYMS_ALL which has unmet direct dependencies (DEBUG_KERNEL && KALLSYMS)
+>>>
+>>> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+>>> Cc:     Ananth N Mavinakayanahalli <ananth@in.ibm.com>
+>>> Cc:     Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+>>> Cc:     "David S. Miller" <davem@davemloft.net>
+>>> Cc:     Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
+>>> ---
+>>>  arch/Kconfig |    2 ++
+>>>  1 file changed, 2 insertions(+)
+>>>
+>>> --- linux-next-20100810.orig/arch/Kconfig
+>>> +++ linux-next-20100810/arch/Kconfig
+>>> @@ -45,6 +45,8 @@ config OPTPROBES
+>>>        def_bool y
+>>>        depends on KPROBES && HAVE_OPTPROBES
+>>>        depends on !PREEMPT
+>>> +       depends on DEBUG_KERNEL
+>>> +       select KALLSYMS
+>>>        select KALLSYMS_ALL
+>>>
+>>>  config HAVE_EFFICIENT_UNALIGNED_ACCESS
+>>> --
+>>
+>> This causes another problem:
+>>
+>> arch/Kconfig:33:error: recursive dependency detected!
+>> arch/Kconfig:33:	symbol KPROBES depends on KALLSYMS
+>> init/Kconfig:825:	symbol KALLSYMS is selected by OPTPROBES
+>> arch/Kconfig:44:	symbol OPTPROBES depends on KPROBES
+>>
+>> The 'select KALLSYMS' is redundant.
+>>
+>> Otherwise: Signed-off-by: Felipe Contreras <felipe.contreras@gmail.com>
+>>
+> 
+> Thanks, let me clear the dependency;
+> Kprobes uses kallsyms_lookup for finding target function and checking
+> instruction boundary, thus CONFIG_KPROBES should select CONFIG_KALLSYMS
+> and CONFIG_KALLSYMS_ALL.
+> Optprobe is a optional feature which is supported on x86 arch, and
+> it also uses kallsyms_lookup for checking instructions in the target
+> function. Anyway, since optprobe itself is depends on kprobes, it doesn't
+> need to select both of KALLSYMS/KALLSYMS_ALL.
 
-Hi Yinghai,
+Hmm, wait, I might misunderstand something here. I thought
+KALLSYMS_ALL added symbols of static functions.
+But, does KALLSYMS_ALL just add symbols of variables?
+If so, both of KPROBES and OPTPROBES require only KALLSYMS.
+It means that they don't need to care about CONFIG_DEBUG_KERNEL.
 
-On Sun, 12 Sep 2010 21:14:15 -0700 Yinghai Lu <yinghai@kernel.org> wrote:
->
-> please check it, and it should get into core/memblock branch.
->=20
-> Thanks
->=20
-> Yinghai
->=20
-> [PATCH] memblock: Fix section mismatch warning
->=20
-> for arches that use memblock other than x86
->=20
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Yinghai Lu <Yinghai@kernel.org>
+Thank you,
 
-Your patch fixes some of the warnings, but still leaves these for a
-powerpc allnoconfig build:
-
-WARNING: mm/built-in.o(.text+0x25d80): Section mismatch in reference from t=
-he function memblock_double_array() to the function .init.text:memblock_fre=
-e()
-The function memblock_double_array() references
-the function __init memblock_free().
-This is often because memblock_double_array lacks a __init=20
-annotation or the annotation of memblock_free is wrong.
-
-WARNING: mm/built-in.o(.text+0x26318): Section mismatch in reference from t=
-he function memblock_reserve_reserved_regions() to the function .init.text:=
-memblock_reserve()
-The function memblock_reserve_reserved_regions() references
-the function __init memblock_reserve().
-This is often because memblock_reserve_reserved_regions lacks a __init=20
-annotation or the annotation of memblock_reserve is wrong.
-
-WARNING: mm/built-in.o(.text+0x26490): Section mismatch in reference from t=
-he function memblock_free_reserved_regions() to the function .init.text:mem=
-block_free()
-The function memblock_free_reserved_regions() references
-the function __init memblock_free().
-This is often because memblock_free_reserved_regions lacks a __init=20
-annotation or the annotation of memblock_free is wrong.
-
-And these for a i386 defconfig build:
-
-WARNING: mm/built-in.o(.text+0x1e261): Section mismatch in reference from t=
-he function memblock_is_memory() to the variable .init.data:memblock
-The function memblock_is_memory() references
-the variable __initdata memblock.
-This is often because memblock_is_memory lacks a __initdata=20
-annotation or the annotation of memblock is wrong.
-
-WARNING: mm/built-in.o(.text+0x1e27f): Section mismatch in reference from t=
-he function memblock_is_region_memory() to the variable .init.data:memblock
-The function memblock_is_region_memory() references
-the variable __initdata memblock.
-This is often because memblock_is_region_memory lacks a __initdata=20
-annotation or the annotation of memblock is wrong.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__13_Sep_2010_14_39_42_+1000_LFB1mbA64F_p94jI
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMjasOAAoJEDMEi1NhKgbsz/4H/iB0Vmgh2Jrw0CadUixbRYZX
-a9Ch6JcU9KN1U74N7yG8o08r9CHb/BGjYIqnnAMfAh5HJfrF7+yNLzUXE76DpTrN
-rgbZBTgJf61hZKbtYrGdIjRDrbU1dL3NhJ8wStVD+oeUCJwQ9h0f6Kh3EHrHcCoe
-0zqrF8S4uR2uxIDzWQvyluUVg7Qlr34o5CKQxkh9XtIacHSgE6fI9DzZa05vYWHQ
-FUOIGZ+coT+zeCsQXy44Hfaxb6g8LB7YKQuvXEk6wvydkkgfeYry0rI1DLRfylYo
-j6QMjbbxU1rz7cYtpY3pPDVAcShf1mMZWFK1rixabGTnf9cL8s5vj5Mixj3z5P4=
-=TEN7
------END PGP SIGNATURE-----
-
---Signature=_Mon__13_Sep_2010_14_39_42_+1000_LFB1mbA64F_p94jI--
+-- 
+Masami HIRAMATSU
+2nd Dept. Linux Technology Center
+Hitachi, Ltd., Systems Development Laboratory
+E-mail: masami.hiramatsu.pt@hitachi.com
