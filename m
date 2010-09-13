@@ -1,85 +1,131 @@
-From: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
-Subject: Re: [PATCH -next] optprobes: fix kconfig depends/selects
-Date: Mon, 13 Sep 2010 16:15:58 +0900
-Message-ID: <4C8DCFAE.4020700@hitachi.com>
-References: <20100812122641.fe88e846.randy.dunlap@oracle.com> <AANLkTimu4zHZrpGkLVQkxsqax1DDefjZXwTn2cxy4WsL@mail.gmail.com> <4C8D790B.8000807@hitachi.com>
+From: Yinghai Lu <yinghai@kernel.org>
+Subject: Re: linux-next: build warnings after merge of the final tree (tip
+ treee related)
+Date: Mon, 13 Sep 2010 01:24:20 -0700
+Message-ID: <4C8DDFB4.1020508@kernel.org>
+References: <20100913132721.5a02cfbc.sfr@canb.auug.org.au>	<4C8DA517.9000603@kernel.org> <20100913143942.7344ada4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail4.hitachi.co.jp ([133.145.228.5]:49080 "EHLO
-	mail4.hitachi.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751906Ab0IMHQF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Sep 2010 03:16:05 -0400
-In-Reply-To: <4C8D790B.8000807@hitachi.com>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:30395 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753903Ab0IMI0q (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Sep 2010 04:26:46 -0400
+In-Reply-To: <20100913143942.7344ada4.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Felipe Contreras <felipe.contreras@gmail.com>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, lkml <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Ananth N Mavinakayanahalli <ananth@in.ibm.com>, Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>, "David S. Miller" <davem@davemloft.net>, akpm <akpm@linux-foundation.org>, 2nddept-manager@sdl.hitachi.co.jp
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, ppc-dev <linuxppc-dev@lists.ozlabs.org>
 
-(2010/09/13 10:06), Masami Hiramatsu wrote:
-> (2010/09/12 19:49), Felipe Contreras wrote:
->> On Thu, Aug 12, 2010 at 10:26 PM, Randy Dunlap <randy.dunlap@oracle.com> wrote:
->>> From: Randy Dunlap <randy.dunlap@oracle.com>
->>>
->>> KALLSYMS and KALLSYMS_ALL depend on DEBUG_KERNEL, so add that dependency.
->>> KALLSYMS_ALL depends on KALLSYMS, so select both of them, not just KALLSYMS_ALL.
->>>
->>> warning: (OPTPROBES && KPROBES && HAVE_OPTPROBES && !PREEMPT || MTD_UBI_DEBUG && MTD && SYSFS && MTD_UBI || UBIFS_FS_DEBUG && MISC_FILESYSTEMS && UBIFS_FS || LOCKDEP && DEBUG_KERNEL && TRACE_IRQFLAGS_SUPPORT && STACKTRACE_SUPPORT && LOCKDEP_SUPPORT || LATENCYTOP && HAVE_LATENCYTOP_SUPPORT) selects KALLSYMS_ALL which has unmet direct dependencies (DEBUG_KERNEL && KALLSYMS)
->>>
->>> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
->>> Cc:     Ananth N Mavinakayanahalli <ananth@in.ibm.com>
->>> Cc:     Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
->>> Cc:     "David S. Miller" <davem@davemloft.net>
->>> Cc:     Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
->>> ---
->>>  arch/Kconfig |    2 ++
->>>  1 file changed, 2 insertions(+)
->>>
->>> --- linux-next-20100810.orig/arch/Kconfig
->>> +++ linux-next-20100810/arch/Kconfig
->>> @@ -45,6 +45,8 @@ config OPTPROBES
->>>        def_bool y
->>>        depends on KPROBES && HAVE_OPTPROBES
->>>        depends on !PREEMPT
->>> +       depends on DEBUG_KERNEL
->>> +       select KALLSYMS
->>>        select KALLSYMS_ALL
->>>
->>>  config HAVE_EFFICIENT_UNALIGNED_ACCESS
->>> --
->>
->> This causes another problem:
->>
->> arch/Kconfig:33:error: recursive dependency detected!
->> arch/Kconfig:33:	symbol KPROBES depends on KALLSYMS
->> init/Kconfig:825:	symbol KALLSYMS is selected by OPTPROBES
->> arch/Kconfig:44:	symbol OPTPROBES depends on KPROBES
->>
->> The 'select KALLSYMS' is redundant.
->>
->> Otherwise: Signed-off-by: Felipe Contreras <felipe.contreras@gmail.com>
->>
+On 09/12/2010 09:39 PM, Stephen Rothwell wrote:
+
 > 
-> Thanks, let me clear the dependency;
-> Kprobes uses kallsyms_lookup for finding target function and checking
-> instruction boundary, thus CONFIG_KPROBES should select CONFIG_KALLSYMS
-> and CONFIG_KALLSYMS_ALL.
-> Optprobe is a optional feature which is supported on x86 arch, and
-> it also uses kallsyms_lookup for checking instructions in the target
-> function. Anyway, since optprobe itself is depends on kprobes, it doesn't
-> need to select both of KALLSYMS/KALLSYMS_ALL.
+> Your patch fixes some of the warnings, but still leaves these for a
+> powerpc allnoconfig build:
+> 
+> WARNING: mm/built-in.o(.text+0x25d80): Section mismatch in reference from the function memblock_double_array() to the function .init.text:memblock_free()
+> The function memblock_double_array() references
+> the function __init memblock_free().
+> This is often because memblock_double_array lacks a __init 
+> annotation or the annotation of memblock_free is wrong.
+> 
+> WARNING: mm/built-in.o(.text+0x26318): Section mismatch in reference from the function memblock_reserve_reserved_regions() to the function .init.text:memblock_reserve()
+> The function memblock_reserve_reserved_regions() references
+> the function __init memblock_reserve().
+> This is often because memblock_reserve_reserved_regions lacks a __init 
+> annotation or the annotation of memblock_reserve is wrong.
+> 
+> WARNING: mm/built-in.o(.text+0x26490): Section mismatch in reference from the function memblock_free_reserved_regions() to the function .init.text:memblock_free()
+> The function memblock_free_reserved_regions() references
+> the function __init memblock_free().
+> This is often because memblock_free_reserved_regions lacks a __init 
+> annotation or the annotation of memblock_free is wrong.
 
-Hmm, wait, I might misunderstand something here. I thought
-KALLSYMS_ALL added symbols of static functions.
-But, does KALLSYMS_ALL just add symbols of variables?
-If so, both of KPROBES and OPTPROBES require only KALLSYMS.
-It means that they don't need to care about CONFIG_DEBUG_KERNEL.
+v1 already changed them all to __init_memblock, so we should not have those warnings.
 
-Thank you,
+> 
+> And these for a i386 defconfig build:
+> 
+> WARNING: mm/built-in.o(.text+0x1e261): Section mismatch in reference from the function memblock_is_memory() to the variable .init.data:memblock
+> The function memblock_is_memory() references
+> the variable __initdata memblock.
+> This is often because memblock_is_memory lacks a __initdata 
+> annotation or the annotation of memblock is wrong.
+> 
+> WARNING: mm/built-in.o(.text+0x1e27f): Section mismatch in reference from the function memblock_is_region_memory() to the variable .init.data:memblock
+> The function memblock_is_region_memory() references
+> the variable __initdata memblock.
+> This is often because memblock_is_region_memory lacks a __initdata 
+> annotation or the annotation of memblock is wrong.
+> 
 
--- 
-Masami HIRAMATSU
-2nd Dept. Linux Technology Center
-Hitachi, Ltd., Systems Development Laboratory
-E-mail: masami.hiramatsu.pt@hitachi.com
+you must have old gcc, those functions are not used with i386.
+
+[PATCH -v2] memblock: Fix section mismatch warning
+
+for arches that use memblock other than x86
+
+-v2: more with memblock_is_meory()
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Yinghai Lu <Yinghai@kernel.org>
+
+---
+ mm/memblock.c |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+Index: linux-2.6/mm/memblock.c
+===================================================================
+--- linux-2.6.orig/mm/memblock.c
++++ linux-2.6/mm/memblock.c
+@@ -125,8 +125,8 @@ static phys_addr_t __init memblock_find_
+ 	return MEMBLOCK_ERROR;
+ }
+ 
+-static phys_addr_t __init memblock_find_base(phys_addr_t size, phys_addr_t align,
+-					phys_addr_t start, phys_addr_t end)
++static phys_addr_t __init_memblock memblock_find_base(phys_addr_t size,
++			phys_addr_t align, phys_addr_t start, phys_addr_t end)
+ {
+ 	long i;
+ 
+@@ -439,12 +439,12 @@ long __init_memblock memblock_remove(phy
+ 	return __memblock_remove(&memblock.memory, base, size);
+ }
+ 
+-long __init memblock_free(phys_addr_t base, phys_addr_t size)
++long __init_memblock memblock_free(phys_addr_t base, phys_addr_t size)
+ {
+ 	return __memblock_remove(&memblock.reserved, base, size);
+ }
+ 
+-long __init memblock_reserve(phys_addr_t base, phys_addr_t size)
++long __init_memblock memblock_reserve(phys_addr_t base, phys_addr_t size)
+ {
+ 	struct memblock_type *_rgn = &memblock.reserved;
+ 
+@@ -671,12 +671,12 @@ int __init memblock_is_reserved(phys_add
+ 	return memblock_search(&memblock.reserved, addr) != -1;
+ }
+ 
+-int memblock_is_memory(phys_addr_t addr)
++int __init_memblock memblock_is_memory(phys_addr_t addr)
+ {
+ 	return memblock_search(&memblock.memory, addr) != -1;
+ }
+ 
+-int memblock_is_region_memory(phys_addr_t base, phys_addr_t size)
++int __init_memblock memblock_is_region_memory(phys_addr_t base, phys_addr_t size)
+ {
+ 	int idx = memblock_search(&memblock.reserved, base);
+ 
+@@ -693,7 +693,7 @@ int __init_memblock memblock_is_region_r
+ }
+ 
+ 
+-void __init memblock_set_current_limit(phys_addr_t limit)
++void __init_memblock memblock_set_current_limit(phys_addr_t limit)
+ {
+ 	memblock.current_limit = limit;
+ }
