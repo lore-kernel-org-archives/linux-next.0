@@ -1,76 +1,52 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH -next,-tip ] kprobes: Fix Kconfig dependency
-Date: Mon, 13 Sep 2010 09:33:48 -0700
-Message-ID: <4C8E526C.8000209@oracle.com>
-References: <4C8DCFAE.4020700@hitachi.com> <20100913102541.20260.85700.stgit@ltc236.sdl.hitachi.co.jp>
+From: Matt Fleming <matt@console-pimps.org>
+Subject: Re: linux-next: build failure after merge of the final tree (tip
+ tree related)
+Date: Mon, 13 Sep 2010 20:17:29 +0100
+Message-ID: <20100913191729.GA6440@console-pimps.org>
+References: <20100914000613.51fdba90.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:60001 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752250Ab0IMQkI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Sep 2010 12:40:08 -0400
-In-Reply-To: <20100913102541.20260.85700.stgit@ltc236.sdl.hitachi.co.jp>
+Received: from arkanian.console-pimps.org ([212.110.184.194]:39515 "EHLO
+	arkanian.console-pimps.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752444Ab0IMTRb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 13 Sep 2010 15:17:31 -0400
+Content-Disposition: inline
+In-Reply-To: <20100914000613.51fdba90.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
-Cc: Ingo Molnar <mingo@elte.hu>, Ananth N Mavinakayanahalli <ananth@in.ibm.com>, linux-kernel@vger.kernel.org, 2nddept-manager@sdl.hitachi.co.jp, Felipe Contreras <felipe.contreras@gmail.com>, linux-next@vger.kernel.org, Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>, "David S. Miller" <davem@davemloft.net>, akpm <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mundt <lethal@linux-sh.org>
 
-On 09/13/10 03:25, Masami Hiramatsu wrote:
-> Fix Kconfig dependency among Kprobes, optprobe and kallsyms.
+On Tue, Sep 14, 2010 at 12:06:13AM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Kprobes uses kallsyms_lookup for finding target function and checking
-> instruction boundary, thus CONFIG_KPROBES should select CONFIG_KALLSYMS.
+> After merging the final tree, today's linux-next build (many sh configs)
+> failed like this:
 > 
-> Optprobe is an optional feature which is supported on x86 arch, and
-> it also uses kallsyms_lookup for checking instructions in the target
-> function. Since KALLSYMS_ALL just adds symbols of kernel variables,
-> it doesn't need to select KALLSYMS_ALL.
+> arch/sh/kernel/perf_event.c: In function 'sh_pmu_setup':
+> arch/sh/kernel/perf_event.c:342: error: parameter 'cpuhw' is initialized
 > 
-> Signed-off-by: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
-> Cc: Felipe Contreras <felipe.contreras@gmail.com>
-> Cc: Randy Dunlap <randy.dunlap@oracle.com>,
-> Cc: linux-kernel@vger.kernel.org,
-> Cc: linux-next@vger.kernel.org,
-> Cc: Ananth N Mavinakayanahalli <ananth@in.ibm.com>,
-> Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-> Cc: "David S. Miller" <davem@davemloft.net>,
-> Cc: akpm <akpm@linux-foundation.org>
-> ---
+> And it went down hill from there.
 > 
->  arch/Kconfig |    4 ++--
->  1 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/Kconfig b/arch/Kconfig
-> index 4877a8c..fe48fc7 100644
-> --- a/arch/Kconfig
-> +++ b/arch/Kconfig
-> @@ -32,8 +32,9 @@ config HAVE_OPROFILE
->  
->  config KPROBES
->  	bool "Kprobes"
-> -	depends on KALLSYMS && MODULES
-> +	depends on MODULES
->  	depends on HAVE_KPROBES
-> +	select KALLSYMS
->  	help
->  	  Kprobes allows you to trap at almost any kernel address and
->  	  execute a callback function.  register_kprobe() establishes
-> @@ -45,7 +46,6 @@ config OPTPROBES
->  	def_bool y
->  	depends on KPROBES && HAVE_OPTPROBES
->  	depends on !PREEMPT
-> -	select KALLSYMS_ALL
->  
->  config HAVE_EFFICIENT_UNALIGNED_ACCESS
->  	bool
-> 
+> Caused by commit b0a873ebbf87bf38bf70b5e39a7cadc96099fa13 ("perf:
+> Register PMU implementations") which removed the opening brace of that
+> function.
 
-Fixes the kconfig dependency problem.  Thanks.
+3f6da390 ("perf: Rework and fix the arch CPU-hotplug hooks") introduced
+this breakage. sh_pmu_setup() is missing an opening curly brace, e.g.
 
-Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
-
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+diff --git a/arch/sh/kernel/perf_event.c b/arch/sh/kernel/perf_event.c
+index cf39c48..036f7a9 100644
+--- a/arch/sh/kernel/perf_event.c
++++ b/arch/sh/kernel/perf_event.c
+@@ -338,7 +338,7 @@ static struct pmu pmu = {
+ };
+ 
+ static void sh_pmu_setup(int cpu)
+-
++{
+ 	struct cpu_hw_events *cpuhw = &per_cpu(cpu_hw_events, cpu);
+ 
+ 	memset(cpuhw, 0, sizeof(struct cpu_hw_events));
