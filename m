@@ -1,60 +1,59 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: linux-next: build failure after merge of the final tree (tip
- tree related)
-Date: Mon, 13 Sep 2010 21:22:42 +0200
-Message-ID: <1284405762.2275.422.camel@laptop>
-References: <20100914000613.51fdba90.sfr@canb.auug.org.au>
-	 <20100913191729.GA6440@console-pimps.org>
+From: Thomas Renninger <trenn@suse.de>
+Subject: Re: linux-next: build warning after merge of the final tree (driver-core tree related)
+Date: Mon, 13 Sep 2010 21:26:13 +0200
+Message-ID: <201009132126.14115.trenn@suse.de>
+References: <20100907115426.fc0c3e13.sfr@canb.auug.org.au> <20100907023404.GA11972@kroah.com> <20100913085155.6b73c9cc.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:46294 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754871Ab0IMTWz convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Sep 2010 15:22:55 -0400
-In-Reply-To: <20100913191729.GA6440@console-pimps.org>
+Received: from cantor.suse.de ([195.135.220.2]:55841 "EHLO mx1.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752780Ab0IMT0b (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 13 Sep 2010 15:26:31 -0400
+In-Reply-To: <20100913085155.6b73c9cc.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Matt Fleming <matt@console-pimps.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mundt <lethal@linux-sh.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Jason Baron <jbaron@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 2010-09-13 at 20:17 +0100, Matt Fleming wrote:
-> 3f6da390 ("perf: Rework and fix the arch CPU-hotplug hooks") introduced
-> this breakage. sh_pmu_setup() is missing an opening curly brace, e.g.
+On Monday 13 September 2010 17:51:55 Randy Dunlap wrote:
+> On Mon, 6 Sep 2010 19:34:04 -0700 Greg KH wrote:
 > 
-> diff --git a/arch/sh/kernel/perf_event.c b/arch/sh/kernel/perf_event.c
-> index cf39c48..036f7a9 100644
-> --- a/arch/sh/kernel/perf_event.c
-> +++ b/arch/sh/kernel/perf_event.c
-> @@ -338,7 +338,7 @@ static struct pmu pmu = {
->  };
+> > On Tue, Sep 07, 2010 at 11:54:26AM +1000, Stephen Rothwell wrote:
+> > > Hi Greg,
+> > > 
+> > > After merging the final tree, today's linux-next build (powerpc
+> > > allnoconfig) produced this warning:
+> > > 
+> > > kernel/params.c: In function 'parse_args':
+> > > kernel/params.c:233: warning: the frame size of 1032 bytes is larger than 1024 bytes
+> > > 
+> > > Introduced by commit 32e6407e9361cd1aac39ff6b744cad48d1802a08 ("Dynamic
+> > > Debug: Introduce global fake module param module.ddebug") which added a
+> > > 1024 byte array to the stack ...
+> > 
+> > Wierd, why didn't this show up yesterday?  The patch was in that tree
+> > then, right?
+> > 
+> > Thomas, care to fix this up?
 >  
->  static void sh_pmu_setup(int cpu)
-> -
-> +{
->         struct cpu_hw_events *cpuhw = &per_cpu(cpu_hw_events, cpu);
->  
->         memset(cpuhw, 0, sizeof(struct cpu_hw_events)); 
+> ping.  Is Thomas around??
+Yep, sorry for not responding.
 
+I tried to reproduce this on ppc64, but above file compiled without
+warning with dynamic debug set. Thus I thought this still came from the
+old patch.
 
-Gah, that's actually breakage from b0a873ebbf8 (perf: Register PMU
-implementations), which has the below fudge:
+I have another solution for that, please drop above patch.
+Jason pointed out that kernel boot params for compiled-in modules are
+not recognized correctly. I fiddled with that for quite some time last week...
 
+I should be able to send something tomorrow.
+I will include lkml as it touches several files, would be great if Greg
+can pick them up again if feedback is positive.
 
-+static struct pmu pmu = {
-+       .event_init     = sh_pmu_event_init,
-+       .enable         = sh_pmu_enable,
-+       .disable        = sh_pmu_disable,
-+       .read           = sh_pmu_read,
-+};
-+
- static void sh_pmu_setup(int cpu)
--{
-+
-        struct cpu_hw_events *cpuhw = &per_cpu(cpu_hw_events, cpu);
- 
-        memset(cpuhw, 0, sizeof(struct cpu_hw_events));
+Thanks,
 
-
-Ingo, could you back-merge this?
+    Thomas
