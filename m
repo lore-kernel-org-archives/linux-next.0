@@ -1,64 +1,47 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: Re: [-next Sept 13] s390 build break
- [nclude/linux/interrupt.h:local_softirq_pending()]
-Date: Mon, 13 Sep 2010 17:42:49 +0200
-Message-ID: <20100913154249.GC2310@osiris.boeblingen.de.ibm.com>
-References: <4C8E04C4.4060508@in.ibm.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: build warning after merge of the final tree
+ (driver-core tree related)
+Date: Mon, 13 Sep 2010 08:51:55 -0700
+Message-ID: <20100913085155.6b73c9cc.randy.dunlap@oracle.com>
+References: <20100907115426.fc0c3e13.sfr@canb.auug.org.au>
+	<20100907023404.GA11972@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <4C8E04C4.4060508@in.ibm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sachin Sant <sachinp@in.ibm.com>
-Cc: linux-s390@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, laijs@cn.fujitsu.com, linux-kernel <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:20991 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751630Ab0IMPxH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Sep 2010 11:53:07 -0400
+In-Reply-To: <20100907023404.GA11972@kroah.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Renninger <trenn@suse.de>, Jason Baron <jbaron@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Sep 13, 2010 at 04:32:28PM +0530, Sachin Sant wrote:
-> Today's next build failed on a s390 box with following
-> 
-> In file included from /tmp/build/linux/arch/s390/include/asm/hardirq.h:18,
->       from include/linux/hardirq.h:10,
->       from include/linux/pagemap.h:15,
->       from include/linux/blkdev.h:12,
->       from init/do_mounts.h:2,
->       from init/do_mounts_initrd.c:11:
-> include/linux/interrupt.h: In function '__raise_softirq_irqoff':
-> include/linux/interrupt.h:429: error: implicit declaration of function 'local_softirq_pending'
-> include/linux/interrupt.h:429: error: lvalue required as left operand of assignment
-> In file included from /tmp/build/linux/arch/s390/include/asm/hardirq.h:18,
->       from include/linux/hardirq.h:10,
->       from include/linux/ftrace_event.h:7,
->       from include/trace/syscall.h:6,
->       from include/linux/syscalls.h:76,
->       from init/initramfs.c:9:
-> include/linux/interrupt.h: In function '__raise_softirq_irqoff':
-> include/linux/interrupt.h:429: error: implicit declaration of function 'local_softirq_pending'
-> include/linux/interrupt.h:429: error: lvalue required as left operand of assignment
-> make[1]: *** [init/do_mounts_initrd.o] Error 1
-> 
-> and many more similar errors ..
-> 
-> The following commit added the code in question.
-> 
-> commit 2bf2160d8805de64308e2e7c3cd97813cb58ed2f
-> irq: Add tracepoint to softirq_raise
+On Mon, 6 Sep 2010 19:34:04 -0700 Greg KH wrote:
 
-Yes, header include dependencies suck here. But it's easy to fix since most
-of the includes in s390's hardirq.h aren't necessary:
+> On Tue, Sep 07, 2010 at 11:54:26AM +1000, Stephen Rothwell wrote:
+> > Hi Greg,
+> > 
+> > After merging the final tree, today's linux-next build (powerpc
+> > allnoconfig) produced this warning:
+> > 
+> > kernel/params.c: In function 'parse_args':
+> > kernel/params.c:233: warning: the frame size of 1032 bytes is larger than 1024 bytes
+> > 
+> > Introduced by commit 32e6407e9361cd1aac39ff6b744cad48d1802a08 ("Dynamic
+> > Debug: Introduce global fake module param module.ddebug") which added a
+> > 1024 byte array to the stack ...
+> 
+> Wierd, why didn't this show up yesterday?  The patch was in that tree
+> then, right?
+> 
+> Thomas, care to fix this up?
 
-diff --git a/arch/s390/include/asm/hardirq.h b/arch/s390/include/asm/hardirq.h
-index 498bc38..881d945 100644
---- a/arch/s390/include/asm/hardirq.h
-+++ b/arch/s390/include/asm/hardirq.h
-@@ -12,10 +12,6 @@
- #ifndef __ASM_HARDIRQ_H
- #define __ASM_HARDIRQ_H
- 
--#include <linux/threads.h>
--#include <linux/sched.h>
--#include <linux/cache.h>
--#include <linux/interrupt.h>
- #include <asm/lowcore.h>
- 
- #define local_softirq_pending() (S390_lowcore.softirq_pending)
+
+ping.  Is Thomas around??
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
