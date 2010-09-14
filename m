@@ -1,113 +1,99 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warnings after merge of the final tree (tip
- treee related)
-Date: Tue, 14 Sep 2010 14:50:25 +1000
-Message-ID: <20100914145025.977ec2a6.sfr@canb.auug.org.au>
-References: <20100913132721.5a02cfbc.sfr@canb.auug.org.au>
-	<4C8DA517.9000603@kernel.org>
-	<20100913143942.7344ada4.sfr@canb.auug.org.au>
-	<4C8DDFB4.1020508@kernel.org>
+From: Arun MURTHY <arun.murthy@stericsson.com>
+Subject: RE: linux-next: build failure after merge of the final tree (mfd
+ tree related)
+Date: Tue, 14 Sep 2010 07:05:23 +0200
+Message-ID: <F45880696056844FA6A73F415B568C69532D594AA0@EXDCVYMBSTM006.EQ1STM.local>
+References: <20100914134321.5eee798a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__14_Sep_2010_14_50_25_+1000_uL/CVplq9TRXS./6"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34685 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751047Ab0INEud (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 14 Sep 2010 00:50:33 -0400
-In-Reply-To: <4C8DDFB4.1020508@kernel.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Yinghai Lu <yinghai@kernel.org>
-Cc: Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, ppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20100914134321.5eee798a.sfr@canb.auug.org.au>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Samuel Ortiz <sameo@linux.intel.com>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linus WALLEIJ <linus.walleij@stericsson.com>, Mattias WALLIN <mattias.wallin@stericsson.com>, Srinidhi KASAGAR <srinidhi.kasagar@stericsson.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__14_Sep_2010_14_50_25_+1000_uL/CVplq9TRXS./6
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen/Samuel,
+	The following patch fixes the build issue.
 
-Hi Yinghai,
+Thanks and Regards,
+Arun R Murthy
+-------------
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig index fbfe14a..841ce47 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -475,7 +475,7 @@ config EZX_PCAP
 
-On Mon, 13 Sep 2010 01:24:20 -0700 Yinghai Lu <yinghai@kernel.org> wrote:
->
-> On 09/12/2010 09:39 PM, Stephen Rothwell wrote:
-> >=20
-> > Your patch fixes some of the warnings, but still leaves these for a
-> > powerpc allnoconfig build:
-> >=20
-> > WARNING: mm/built-in.o(.text+0x25d80): Section mismatch in reference fr=
-om the function memblock_double_array() to the function .init.text:memblock=
-_free()
-> > The function memblock_double_array() references
-> > the function __init memblock_free().
-> > This is often because memblock_double_array lacks a __init=20
-> > annotation or the annotation of memblock_free is wrong.
-> >=20
-> > WARNING: mm/built-in.o(.text+0x26318): Section mismatch in reference fr=
-om the function memblock_reserve_reserved_regions() to the function .init.t=
-ext:memblock_reserve()
-> > The function memblock_reserve_reserved_regions() references
-> > the function __init memblock_reserve().
-> > This is often because memblock_reserve_reserved_regions lacks a __init=
-=20
-> > annotation or the annotation of memblock_reserve is wrong.
-> >=20
-> > WARNING: mm/built-in.o(.text+0x26490): Section mismatch in reference fr=
-om the function memblock_free_reserved_regions() to the function .init.text=
-:memblock_free()
-> > The function memblock_free_reserved_regions() references
-> > the function __init memblock_free().
-> > This is often because memblock_free_reserved_regions lacks a __init=20
-> > annotation or the annotation of memblock_free is wrong.
->=20
-> v1 already changed them all to __init_memblock, so we should not have tho=
-se warnings.
+ config AB8500_CORE
+        bool "ST-Ericsson AB8500 Mixed Signal Power Management chip"
+-       depends on GENERIC_HARDIRQS && ABX500_CORE
++       depends on GENERIC_HARDIRQS && ABX500_CORE && ARCH_U8500
+        select MFD_CORE
+        help
+          Select this option to enable access to AB8500 power management
+------------
 
-They are still marked as __init in include/linux/memblock.h.  I don't
-think that they need to be marked at all there.
-
-> > And these for a i386 defconfig build:
-> >=20
-> > WARNING: mm/built-in.o(.text+0x1e261): Section mismatch in reference fr=
-om the function memblock_is_memory() to the variable .init.data:memblock
-> > The function memblock_is_memory() references
-> > the variable __initdata memblock.
-> > This is often because memblock_is_memory lacks a __initdata=20
-> > annotation or the annotation of memblock is wrong.
-> >=20
-> > WARNING: mm/built-in.o(.text+0x1e27f): Section mismatch in reference fr=
-om the function memblock_is_region_memory() to the variable .init.data:memb=
-lock
-> > The function memblock_is_region_memory() references
-> > the variable __initdata memblock.
-> > This is often because memblock_is_region_memory lacks a __initdata=20
-> > annotation or the annotation of memblock is wrong.
->=20
-> you must have old gcc, those functions are not used with i386.
-
-I am not sure what the compiler version has to do with it, but I am using
-gcc 4.4.4 which is fairly recent.  The X86 Kconfig selects HAVE_MEMBLOCK
-unconditionally, so mm/memblock.c is built on i386.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__14_Sep_2010_14_50_25_+1000_uL/CVplq9TRXS./6
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMjv8RAAoJEDMEi1NhKgbsw5QH/25XOrKNFybBSAnq4AwtfEvr
-ndAUSv2zF8PSzoObfNSpubddyZrkWaSxJPoFy6srXU2jkuhJRVS/JsXd5ZBkwZ7S
-K3R/OTK6+JuFk/6utGN7ua564Z0XSdgz6VMgR/dlG9DB95lsbLg/wjrQ9heeGr+l
-s7bvJsqb/1pOQLMCWvKfItwKYm6o6P/SY16k0a47ktcU7OipNrUPWysCm3bpmGUE
-syY7fZS1H4+68wi5zT/IqAgMhzzUqZd05a+n4b9KlgQeYpHKdt/zoyPDHiDyPdHv
-j4ny2nZl40zKdk3cBvKYVQdtnDn1pRtCxf23GmtPHd8+1473njIpx/XmHch0GcA=
-=EcLo
------END PGP SIGNATURE-----
-
---Signature=_Tue__14_Sep_2010_14_50_25_+1000_uL/CVplq9TRXS./6--
+> -----Original Message-----
+> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
+> Sent: Tuesday, September 14, 2010 9:13 AM
+> To: Samuel Ortiz
+> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Arun
+> MURTHY
+> Subject: linux-next: build failure after merge of the final tree (mfd
+> tree related)
+> 
+> Hi Samuel,
+> 
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> drivers/mfd/built-in.o: In function `__crc_pwm_free':
+> (*ABS*+0x24ba6d1e): multiple definition of `__crc_pwm_free'
+> drivers/mfd/built-in.o: In function `.pwm_free':
+> (.text+0x1ab3c): multiple definition of `.pwm_free'
+> drivers/misc/built-in.o:(.text+0x2620c): first defined here
+> drivers/mfd/built-in.o: In function `__crc_pwm_request':
+> (*ABS*+0xc1f4ec93): multiple definition of `__crc_pwm_request'
+> drivers/mfd/built-in.o: In function `__crc_pwm_enable':
+> (*ABS*+0x9d09808d): multiple definition of `__crc_pwm_enable'
+> drivers/mfd/built-in.o: In function `.pwm_enable':
+> (.text+0x1abc8): multiple definition of `.pwm_enable'
+> drivers/misc/built-in.o:(.text+0x26278): first defined here
+> drivers/mfd/built-in.o: In function `.pwm_request':
+> (.text+0x1a774): multiple definition of `.pwm_request'
+> drivers/misc/built-in.o:(.text+0x2604c): first defined here
+> drivers/mfd/built-in.o: In function `pwm_config':
+> (.opd+0x1ce0): multiple definition of `pwm_config'
+> drivers/misc/built-in.o:(.opd+0x3000): first defined here
+> drivers/mfd/built-in.o: In function `pwm_free':
+> (.opd+0x1d28): multiple definition of `pwm_free'
+> drivers/misc/built-in.o:(.opd+0x2fd0): first defined here
+> drivers/mfd/built-in.o: In function `pwm_request':
+> (.opd+0x1cf8): multiple definition of `pwm_request'
+> drivers/misc/built-in.o:(.opd+0x2f58): first defined here
+> drivers/mfd/built-in.o: In function `__crc_pwm_disable':
+> (*ABS*+0xb0493b18): multiple definition of `__crc_pwm_disable'
+> drivers/mfd/built-in.o: In function `.pwm_disable':
+> (.text+0x1aa24): multiple definition of `.pwm_disable'
+> drivers/misc/built-in.o:(.text+0x2613c): first defined here
+> drivers/mfd/built-in.o: In function `pwm_enable':
+> (.opd+0x1d40): multiple definition of `pwm_enable'
+> drivers/misc/built-in.o:(.opd+0x2fe8): first defined here
+> drivers/mfd/built-in.o: In function `.pwm_config':
+> (.text+0x1a648): multiple definition of `.pwm_config'
+> drivers/misc/built-in.o:(.text+0x26358): first defined here
+> drivers/mfd/built-in.o: In function `pwm_disable':
+> (.opd+0x1d10): multiple definition of `pwm_disable'
+> drivers/misc/built-in.o:(.opd+0x2fb8): first defined here
+> drivers/mfd/built-in.o: In function `__crc_pwm_config':
+> (*ABS*+0xc23f5b9): multiple definition of `__crc_pwm_config'
+> 
+> Caused by commit 03f582a93ecca6e9584b622570022abf08ed03ec ("misc: Add
+> ab8500 pwm driver").  I have reverted that commit for today.
+> 
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
