@@ -1,41 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the driver-core tree with the mfd tree
-Date: Tue, 14 Sep 2010 12:25:10 +1000
-Message-ID: <20100914122510.99c3e3b3.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the trivial tree
+Date: Tue, 14 Sep 2010 12:28:24 +1000
+Message-ID: <20100914122824.9a6f9d8c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:33217 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753140Ab0INC20 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 13 Sep 2010 22:28:26 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Murthy <arun.murthy@stericsson.com>, Samuel Ortiz <sameo@linux.intel.com>, Masayuki Ohtak <masa-korg@dsn.okisemi.com>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Jiri Kosina <jkosina@suse.cz>, Mihai =?UTF-8?B?RG9u?= =?UTF-8?B?yJt1?= <mihai.dontu@gmail.com>
 
 Hi Greg,
 
-Today's linux-next merge of the driver-core tree got a conflict in
-drivers/misc/Makefile between commit
-03f582a93ecca6e9584b622570022abf08ed03ec ("misc: Add ab8500 pwm driver")
-from the mfd tree and commit b6de6c8f5a6fc18c5c67bb4e53f3d0cfd266b07b
-("add Packet hub driver for Topcliff Platform controller hub") from the
-driver-core tree.
+Today's linux-next merge of the usb tree got a conflict in
+drivers/usb/gadget/rndis.c between commit
+7f26b3a7533bbc1ddd88b297c935ee4da8f74cea ("drivers/usb: Remove
+unnecessary return's from void functions") from the trivial tree and
+commit c8feb3bad134f927a624cc19da13f57627b905e2 ("USB: gadget: rndis: fix
+up coding style issues in the file") from the usb tree.
 
-Just overlapping additions.  I fixed it up (see below) and can carry the
-fix as necessary.
+Just context changes. I fixed it up (see below) and can carry the fix as
+necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-P.S. Greg, I noticed that the driver-core patch above does not have a SOB
-from its author.
-
-diff --cc drivers/misc/Makefile
-index 33bc441,21b4761..0000000
---- a/drivers/misc/Makefile
-+++ b/drivers/misc/Makefile
-@@@ -35,4 -35,4 +35,5 @@@ obj-y				+= eeprom
-  obj-y				+= cb710/
-  obj-$(CONFIG_VMWARE_BALLOON)	+= vmware_balloon.o
-  obj-$(CONFIG_ARM_CHARLCD)	+= arm-charlcd.o
- +obj-$(CONFIG_AB8500_PWM)	+= ab8500-pwm.o
-+ obj-$(CONFIG_PCH_PHUB)		+= pch_phub.o
+diff --cc drivers/usb/gadget/rndis.c
+index 33a9475,6a7dd91..0000000
+--- a/drivers/usb/gadget/rndis.c
++++ b/drivers/usb/gadget/rndis.c
+@@@ -914,12 -912,14 +912,12 @@@ int rndis_register(void (*resp_avail)(v
+  	return -ENODEV;
+  }
+  
+- void rndis_deregister (int configNr)
++ void rndis_deregister(int configNr)
+  {
+- 	pr_debug("%s: \n", __func__);
++ 	pr_debug("%s:\n", __func__);
+  
+  	if (configNr >= RNDIS_MAX_CONFIGS) return;
+- 	rndis_per_dev_params [configNr].used = 0;
++ 	rndis_per_dev_params[configNr].used = 0;
+ -
+ -	return;
+  }
+  
+  int rndis_set_param_dev(u8 configNr, struct net_device *dev, u16 *cdc_filter)
