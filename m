@@ -1,58 +1,48 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] staging: cx25821 and go7007 depend on IR_CORE
-Date: Tue, 14 Sep 2010 15:23:59 -0700
-Message-ID: <20100914152359.f871d000.randy.dunlap@oracle.com>
-References: <20100914135802.c99d3672.sfr@canb.auug.org.au>
+Subject: [PATCH -next] staging/bcm: fix build for CONFIG_PM not enabled
+Date: Tue, 14 Sep 2010 15:39:50 -0700
+Message-ID: <20100914153950.6467248a.randy.dunlap@oracle.com>
+References: <20100913134302.a77e9a3e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100914135802.c99d3672.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:20428 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752699Ab0INWk3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Sep 2010 18:40:29 -0400
+In-Reply-To: <20100913134302.a77e9a3e.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, devel@driverdev.osuosl.org
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, driverdevel <devel@driverdev.osuosl.org>
 
 From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Fix build errors in cx25821 and go7007.
-They both use IR functions, so they should depend on IR_CORE.
-(It's not safe to select VIDEO_IR when IR_CORE is not enabled.)
+Handle build case of CONFIG_PM not being enabled.
 
-(.text+0x39065a): undefined reference to `ir_core_debug'
-(.text+0x3906a4): undefined reference to `ir_core_debug'
-ir-functions.c:(.text+0x39080b): undefined reference to `ir_core_debug'
-(.text+0x390893): undefined reference to `ir_g_keycode_from_table'
-(.text+0x390942): undefined reference to `ir_core_debug'
-(.text+0x3909f5): undefined reference to `ir_core_debug'
-(.text+0x390a3a): undefined reference to `ir_core_debug'
-(.text+0x390ab1): undefined reference to `ir_core_debug'
-(.text+0x390b36): undefined reference to `ir_core_debug'
+drivers/staging/bcm/InterfaceInit.c:280: error: 'struct usb_device' has no member named 'autosuspend_delay'
 
 Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: devel@driverdev.osuosl.org
 ---
- drivers/staging/cx25821/Kconfig |    2 +-
- drivers/staging/go7007/Kconfig  |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/bcm/InterfaceInit.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- linux-next-20100914.orig/drivers/staging/cx25821/Kconfig
-+++ linux-next-20100914/drivers/staging/cx25821/Kconfig
-@@ -1,6 +1,6 @@
- config VIDEO_CX25821
- 	tristate "Conexant cx25821 support"
--	depends on DVB_CORE && VIDEO_DEV && PCI && I2C && INPUT
-+	depends on DVB_CORE && VIDEO_DEV && PCI && I2C && INPUT && IR_CORE
- 	select I2C_ALGOBIT
- 	select VIDEO_BTCX
- 	select VIDEO_TVEEPROM
---- linux-next-20100914.orig/drivers/staging/go7007/Kconfig
-+++ linux-next-20100914/drivers/staging/go7007/Kconfig
-@@ -1,6 +1,6 @@
- config VIDEO_GO7007
- 	tristate "WIS GO7007 MPEG encoder support"
--	depends on VIDEO_DEV && PCI && I2C && INPUT
-+	depends on VIDEO_DEV && PCI && I2C && INPUT && IR_CORE
- 	depends on SND
- 	select VIDEOBUF_DMA_SG
- 	select VIDEO_IR
+--- linux-next-20100913.orig/drivers/staging/bcm/InterfaceInit.c
++++ linux-next-20100913/drivers/staging/bcm/InterfaceInit.c
+@@ -277,6 +277,7 @@ usbbcm_device_probe(struct usb_interface
+ 		/* If Suspend then only support dynamic suspend */
+ 		if(psAdapter->bDoSuspend)
+ 		{
++#ifdef CONFIG_PM
+ 			udev->autosuspend_delay = 0;
+ 			intf->needs_remote_wakeup = 1;
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 35)
+@@ -290,6 +291,7 @@ usbbcm_device_probe(struct usb_interface
+ #endif
+ 			INIT_WORK(&psIntfAdapter->usbSuspendWork, putUsbSuspend);
+ 			BCM_DEBUG_PRINT(psAdapter,DBG_TYPE_INITEXIT, DRV_ENTRY, DBG_LVL_ALL, "Enabling USB Auto-Suspend\n");
++#endif
+ 		}
+ 		else
+ 		{
