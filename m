@@ -1,94 +1,322 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (mfd tree
- related)
-Date: Tue, 14 Sep 2010 13:43:21 +1000
-Message-ID: <20100914134321.5eee798a.sfr@canb.auug.org.au>
+Subject: linux-next: Tree for September 14
+Date: Tue, 14 Sep 2010 13:58:02 +1000
+Message-ID: <20100914135802.c99d3672.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__14_Sep_2010_13_43_21_+1000_sqzy2DRlrV4ktv2u"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:50665 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752540Ab0INDn1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 13 Sep 2010 23:43:27 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Murthy <arun.murthy@stericsson.com>
+ boundary="Signature=_Tue__14_Sep_2010_13_58_02_+1000_cu7Pqz3kU+9rfg4l"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__14_Sep_2010_13_43_21_+1000_sqzy2DRlrV4ktv2u
+--Signature=_Tue__14_Sep_2010_13_58_02_+1000_cu7Pqz3kU+9rfg4l
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Samuel,
+Hi all,
 
-After merging the final tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+Changes since 20100913:
 
-drivers/mfd/built-in.o: In function `__crc_pwm_free':
-(*ABS*+0x24ba6d1e): multiple definition of `__crc_pwm_free'
-drivers/mfd/built-in.o: In function `.pwm_free':
-(.text+0x1ab3c): multiple definition of `.pwm_free'
-drivers/misc/built-in.o:(.text+0x2620c): first defined here
-drivers/mfd/built-in.o: In function `__crc_pwm_request':
-(*ABS*+0xc1f4ec93): multiple definition of `__crc_pwm_request'
-drivers/mfd/built-in.o: In function `__crc_pwm_enable':
-(*ABS*+0x9d09808d): multiple definition of `__crc_pwm_enable'
-drivers/mfd/built-in.o: In function `.pwm_enable':
-(.text+0x1abc8): multiple definition of `.pwm_enable'
-drivers/misc/built-in.o:(.text+0x26278): first defined here
-drivers/mfd/built-in.o: In function `.pwm_request':
-(.text+0x1a774): multiple definition of `.pwm_request'
-drivers/misc/built-in.o:(.text+0x2604c): first defined here
-drivers/mfd/built-in.o: In function `pwm_config':
-(.opd+0x1ce0): multiple definition of `pwm_config'
-drivers/misc/built-in.o:(.opd+0x3000): first defined here
-drivers/mfd/built-in.o: In function `pwm_free':
-(.opd+0x1d28): multiple definition of `pwm_free'
-drivers/misc/built-in.o:(.opd+0x2fd0): first defined here
-drivers/mfd/built-in.o: In function `pwm_request':
-(.opd+0x1cf8): multiple definition of `pwm_request'
-drivers/misc/built-in.o:(.opd+0x2f58): first defined here
-drivers/mfd/built-in.o: In function `__crc_pwm_disable':
-(*ABS*+0xb0493b18): multiple definition of `__crc_pwm_disable'
-drivers/mfd/built-in.o: In function `.pwm_disable':
-(.text+0x1aa24): multiple definition of `.pwm_disable'
-drivers/misc/built-in.o:(.text+0x2613c): first defined here
-drivers/mfd/built-in.o: In function `pwm_enable':
-(.opd+0x1d40): multiple definition of `pwm_enable'
-drivers/misc/built-in.o:(.opd+0x2fe8): first defined here
-drivers/mfd/built-in.o: In function `.pwm_config':
-(.text+0x1a648): multiple definition of `.pwm_config'
-drivers/misc/built-in.o:(.text+0x26358): first defined here
-drivers/mfd/built-in.o: In function `pwm_disable':
-(.opd+0x1d10): multiple definition of `pwm_disable'
-drivers/misc/built-in.o:(.opd+0x2fb8): first defined here
-drivers/mfd/built-in.o: In function `__crc_pwm_config':
-(*ABS*+0xc23f5b9): multiple definition of `__crc_pwm_config'
+The m68knommu tree gained a conflict against the m68k tree.
 
-Caused by commit 03f582a93ecca6e9584b622570022abf08ed03ec ("misc: Add
-ab8500 pwm driver").  I have reverted that commit for today.
+The powerpc tree still has its build failure for which I applied a patch.
+
+The mmc tree lost its conflicts.
+
+The kgdb tree still has its build failure for which I applied a patch.
+
+The mfd tree lost its conflict, but gained a build failure for which I
+reverted a commit.
+
+I still have a patch to the drivers-x86 tree to remove a Kconfig warning.
+
+The tip tree lost its conflict.
+
+The driver-core tree gained a conflict against the mfd tree.
+
+The usb tree gained a conflict against the trivial tree and a build
+failure so I used the version from next-20100913.
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups (if any), it is also built with powerpc allnoconfig (32 and
+64 bit), ppc44x_defconfig and allyesconfig (minus
+CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
+and sparc64 defconfig. These builds also have
+CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
+CONFIG_DEBUG_INFO disabled when necessary.
+
+Below is a summary of the state of the merge.
+
+We are up to 171 trees (counting Linus' and 22 trees of patches pending
+for Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Randy Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__14_Sep_2010_13_43_21_+1000_sqzy2DRlrV4ktv2u
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master
+Merging fixes/fixes
+Merging arm-current/master
+Merging m68k-current/for-linus
+Merging powerpc-merge/merge
+Merging sparc-current/master
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sound-current/for-linus
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging kbuild-current/rc-fixes
+Merging quilt/driver-core.current
+Merging quilt/tty.current
+Merging quilt/usb.current
+Merging quilt/staging.current
+Merging cpufreq-current/fixes
+Merging input-current/for-linus
+Merging md-current/for-linus
+Merging audit-current/for-linus
+Merging crypto-current/master
+Merging ide-curent/master
+Merging dwmw2/master
+Merging gcl-current/merge
+Merging arm/devel
+Merging davinci/davinci-next
+Merging i.MX/for-next
+Merging msm/for-next
+Merging omap/for-next
+Merging pxa/for-next
+Merging samsung/next-samsung
+CONFLICT (content): Merge conflict in arch/arm/mach-s3c64xx/Makefile
+CONFLICT (content): Merge conflict in arch/arm/mach-s3c64xx/mach-smdk6410.c
+CONFLICT (content): Merge conflict in arch/arm/plat-samsung/Kconfig
+CONFLICT (content): Merge conflict in drivers/input/touchscreen/s3c2410_ts.c
+Merging s5p/for-next
+Merging tegra/for-next
+Merging avr32/avr32-arch
+Merging blackfin/for-linus
+Merging cris/for-next
+Merging ia64/test
+Merging m68k/for-next
+Merging m68knommu/for-next
+CONFLICT (content): Merge conflict in arch/m68k/sun3/sun3ints.c
+Merging microblaze/next
+Merging mips/mips-for-linux-next
+Merging parisc/next
+Merging powerpc/next
+Applying: powerpc: define a compat_sys_recv cond_syscall
+Merging 4xx/next
+Merging 52xx-and-virtex/next
+Merging galak/next
+CONFLICT (content): Merge conflict in arch/powerpc/platforms/85xx/mpc85xx_m=
+ds.c
+Merging s390/features
+Merging sh/master
+Merging genesis/master
+Merging sparc/master
+Merging tile/master
+Merging xtensa/master
+CONFLICT (content): Merge conflict in arch/xtensa/configs/iss_defconfig
+Merging ceph/for-next
+Merging cifs/master
+Merging configfs/linux-next
+Merging ecryptfs/next
+Merging ext3/for_next
+Merging ext4/next
+Merging fatfs/master
+Merging fuse/for-next
+Merging gfs2/master
+Merging jfs/next
+Merging logfs/master
+CONFLICT (content): Merge conflict in fs/logfs/logfs.h
+Merging nfs/linux-next
+Merging nfsd/nfsd-next
+Merging nilfs2/for-next
+Merging ocfs2/linux-next
+Merging omfs/for-next
+Merging squashfs/master
+Merging udf/for_next
+Merging v9fs/for-next
+Merging ubifs/linux-next
+Merging xfs/master
+Merging vfs/for-next
+Merging pci/linux-next
+Merging hid/for-next
+Merging quilt/i2c
+Merging bjdooks-i2c/next-i2c
+Merging quilt/jdelvare-hwmon
+Merging quilt/kernel-doc
+Merging v4l-dvb/master
+CONFLICT (content): Merge conflict in drivers/media/IR/ir-keytable.c
+CONFLICT (content): Merge conflict in drivers/media/IR/ir-lirc-codec.c
+CONFLICT (content): Merge conflict in drivers/media/IR/ir-raw-event.c
+CONFLICT (add/add): Merge conflict in drivers/media/IR/streamzap.c
+CONFLICT (content): Merge conflict in drivers/media/dvb/siano/smscoreapi.c
+CONFLICT (add/add): Merge conflict in drivers/media/video/s5p-fimc/fimc-cor=
+e.c
+Merging kbuild/for-next
+Merging kconfig/for-next
+Merging ide/master
+Merging libata/NEXT
+Merging infiniband/for-next
+Merging acpi/test
+Merging idle-test/idle-test
+Merging ieee1394/for-next
+Merging ubi/linux-next
+Merging kvm/linux-next
+CONFLICT (content): Merge conflict in arch/x86/include/asm/kvm_emulate.h
+CONFLICT (content): Merge conflict in virt/kvm/kvm_main.c
+Merging dlm/next
+Merging swiotlb/master
+Merging swiotlb-xen/master
+Merging ibft/master
+Merging scsi/master
+Merging async_tx/next
+Merging net/master
+Merging wireless/master
+Merging mtd/master
+Merging crypto/master
+Merging sound-asoc/for-next
+CONFLICT (content): Merge conflict in arch/arm/mach-s3c64xx/mach-smdk6410.c
+Merging sound/for-next
+Merging cpufreq/next
+Merging quilt/rr
+Merging input/next
+Merging lsm/for-next
+Merging block/for-next
+Merging quilt/device-mapper
+Merging embedded/master
+Merging firmware/master
+Merging pcmcia/master
+Merging battery/master
+Merging leds/for-mm
+Merging backlight/for-mm
+Merging mmc/mmc-next
+Merging kgdb/kgdb-next
+Applying: kgdb: merge fix for mode_set_base_atomic API change
+Merging slab/for-next
+Merging uclinux/for-next
+Merging md/for-next
+Merging mfd/for-next
+Merging hdlc/hdlc-next
+Merging drm/drm-next
+Merging viafb/viafb-next
+Merging voltage/for-next
+Merging security-testing/next
+Merging lblnet/master
+Merging agp/agp-next
+Merging uwb/for-upstream
+Merging watchdog/master
+Merging bdev/master
+Merging dwmw2-iommu/master
+Merging cputime/cputime
+Merging osd/linux-next
+Merging jc_docs/docs-next
+Merging nommu/master
+Merging trivial/for-next
+Merging audit/for-next
+Merging quilt/aoe
+Merging suspend/linux-next
+Merging bluetooth/master
+Merging fsnotify/for-next
+Merging irda/for-next
+CONFLICT (content): Merge conflict in drivers/net/irda/irda-usb.c
+Merging catalin/for-next
+CONFLICT (content): Merge conflict in arch/arm/kernel/Makefile
+Merging alacrity/linux-next
+CONFLICT (content): Merge conflict in include/linux/Kbuild
+Merging i7core_edac/linux_next
+CONFLICT (content): Merge conflict in MAINTAINERS
+Merging devicetree/next-devicetree
+Merging spi/next-spi
+Merging limits/writable_limits
+Merging omap_dss2/for-next
+Merging xen/upstream/xen
+Merging rcu/rcu/next
+Merging tip/auto-latest
+Merging lost-spurious-irq/lost-spurious-irq
+CONFLICT (content): Merge conflict in drivers/ata/libata-core.c
+CONFLICT (content): Merge conflict in include/linux/libata.h
+Merging edac-amd/for-next
+Merging oprofile/for-next
+Merging percpu/for-next
+Merging workqueues/for-next
+Merging sfi/sfi-test
+Merging asm-generic/next
+Merging drivers-x86/linux-next
+Applying: Fix Kconfig mistaken update
+Merging hwpoison/hwpoison
+Merging sysctl/master
+Merging bkl-core/bkl/core
+Merging bkl-procfs/bkl/procfs
+Merging bkl-ioctl/bkl/ioctl
+Merging quilt/driver-core
+CONFLICT (content): Merge conflict in drivers/misc/Makefile
+Merging quilt/tty
+Merging quilt/usb
+CONFLICT (content): Merge conflict in drivers/usb/gadget/rndis.c
+$ git reset --hard HEAD^
+Merging refs/next/20100913/usb
+CONFLICT (content): Merge conflict in drivers/misc/Makefile
+[master a8805aa] Merge commit 'refs/next/20100913/usb'
+Merging staging-next/staging-next
+CONFLICT (content): Merge conflict in drivers/staging/Makefile
+CONFLICT (content): Merge conflict in drivers/staging/batman-adv/hard-inter=
+face.c
+CONFLICT (delete/modify): drivers/staging/mrst-touchscreen/Makefile deleted=
+ in HEAD and modified in staging-next/staging-next. Version staging-next/st=
+aging-next of drivers/staging/mrst-touchscreen/Makefile left in tree.
+CONFLICT (delete/modify): drivers/staging/mrst-touchscreen/intel-mid-touch.=
+c deleted in HEAD and modified in staging-next/staging-next. Version stagin=
+g-next/staging-next of drivers/staging/mrst-touchscreen/intel-mid-touch.c l=
+eft in tree.
+$ git rm -f drivers/staging/mrst-touchscreen/Makefile drivers/staging/mrst-=
+touchscreen/intel-mid-touch.c
+Merging slabh/slabh
+Merging scsi-post-merge/merge-base:master
+[master 5aab981] Revert "misc: Add ab8500 pwm driver"
+
+--Signature=_Tue__14_Sep_2010_13_58_02_+1000_cu7Pqz3kU+9rfg4l
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMju9ZAAoJEDMEi1NhKgbsE7cIAJMOWJzwzVO+9YUb4YJ/W9Y1
-gfYxCGw+xrd2J82bEl1LPl8P2+jzJEnU4MqOK58sWXnpJOdzju1Qpa19VngbVdDi
-r+NK1ERNHTWoa6ccnZVCfg9lGiMl8d39wo9X0uSgqSAU86kOFje5dd7li3ITrPZp
-A1rLQCD8/99RE7IW9TqPr8q2bz5sPzTbKzspuJ1to4xxQqLINN91nEi8lNJfMUtF
-PpmEd18zy9zRwlHtouUdKUQYz/H0N7PyOAk+FMnnPUY9gGjRkdFp4sSbYfBVGt9L
-gdMzip86D6khSG0pZqkDlEU7wyNGitv4kgtEcMgKG4KQBZGvRzpAUk7HaCo3nHY=
-=8gn8
+iQEcBAEBAgAGBQJMjvLKAAoJEDMEi1NhKgbsnMAH/1zJJbUayfWCTGAHagE5iSPO
+llalajGCW7vgd7D92KUoGjEU7mbGTfCE6uOLOIu/L3u49PKgQPmRoIWz4+rsYLYG
+0npEoi2GAu6mRHlU6G5JqJUl2dvd5IaeYjQLf3x0l7YgwcSY3sKOUuQ9CdzzEYSG
+6tSf5KoVOj6vMUmpfcu2q+eloixjDa2dhTW8RevG0jS0y2BZVa6w1YTDRmzk28tF
+FS0SpDfkc0KeAHzU2sOlbKchOH08ESQ+s3K8clxocKW4NPSMmqkc1pw7re6xcS1S
+Y2LZCLBS3kTvpQMONN3DpBtj02n5sOpJtC3VXRV6mvoN2z0albVUxOjUrOEKB30=
+=6vt7
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__14_Sep_2010_13_43_21_+1000_sqzy2DRlrV4ktv2u--
+--Signature=_Tue__14_Sep_2010_13_58_02_+1000_cu7Pqz3kU+9rfg4l--
