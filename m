@@ -1,88 +1,58 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [-next Sept 10] Build break - arch/s390/mm/pgtable.c
- (INIT_RCU_HEAD)
-Date: Tue, 14 Sep 2010 18:36:48 +1000
-Message-ID: <20100914183648.b4371ae5.sfr@canb.auug.org.au>
-References: <4C89E8A0.1050905@in.ibm.com>
-	<20100910122806.05548325@mschwide.boeblingen.de.ibm.com>
-	<4C8F2EBF.4060606@in.ibm.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next: manual merge of the m68knommu tree with the m68k tree
+Date: Tue, 14 Sep 2010 10:47:42 +0200
+Message-ID: <AANLkTim+7Q79hVv+r1PO2LeiiSCxb12CaqO3YuR8taL9@mail.gmail.com>
+References: <20100914105129.02eb5b13.sfr@canb.auug.org.au>
+	<4C8ECDFE.6010906@snapgear.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__14_Sep_2010_18_36_48_+1000_j5hN0zhtopU=GyLv"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53173 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752834Ab0INIg5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 14 Sep 2010 04:36:57 -0400
-In-Reply-To: <4C8F2EBF.4060606@in.ibm.com>
+Received: from mail-gy0-f174.google.com ([209.85.160.174]:57183 "EHLO
+	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752428Ab0INIro convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Sep 2010 04:47:44 -0400
+In-Reply-To: <4C8ECDFE.6010906@snapgear.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sachin Sant <sachinp@in.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>, linux-s390@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Greg Ungerer <gerg@snapgear.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christian Dietrich <qy03fugy@stud.informatik.uni-erlangen.de>
 
---Signature=_Tue__14_Sep_2010_18_36_48_+1000_j5hN0zhtopU=GyLv
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Sachin, Martin,
-
-On Tue, 14 Sep 2010 13:43:51 +0530 Sachin Sant <sachinp@in.ibm.com> wrote:
+On Tue, Sep 14, 2010 at 03:21, Greg Ungerer <gerg@snapgear.com> wrote:
+> Stephen Rothwell wrote:
+>>
+>> Today's linux-next merge of the m68knommu tree got a conflict in
+>> arch/m68k/sun3/sun3ints.c between commit
+>> 72fe185cd9acbfc6e8a7afa884ae1152be706e52 ("m68k/m68knommu: Remove de=
+ad
+>> SMP config option") from the m68k tree and commit
+>> 5313b581e4efc214c6132d32f580db6668e5c5a8 ("arch/m68k{,nommu}: Removi=
+ng
+>> dead SMP config option") from the m68knommu tree.
+>>
+>> These appear to be the same patch with some formatting differences. =
+=C2=A0I
+>> used the version from the m68k tree.
 >
-> Martin Schwidefsky wrote:
-> > On Fri, 10 Sep 2010 13:43:20 +0530
-> > Sachin Sant <sachinp@in.ibm.com> wrote:
-> >
-> >  =20
-> >> Today's next fails to build on a s390 box with
-> >>
-> >> arch/s390/mm/pgtable.c: In function 'rcu_table_freelist_finish':
-> >> arch/s390/mm/pgtable.c:79: error: implicit declaration of function 'IN=
-IT_RCU_HEAD'
-> >> make[2]: *** [arch/s390/mm/pgtable.o] Error 1
-> >>
-> >> This code in question was added via following commit:
-> >>
-> >> commit e726023d9ff7e4968e3e0622782174a4695d68a4
-> >> S390] lockless get_user_pages_fast()
-> >>    =20
-> >
-> > I guess that there is an #include <linux/rcupdate.h> missing in pgtable=
-.c. I'll
-> > add it to the patch.
-> >  =20
-> I don't see definition for INIT_RCU_HEAD in rcupdate.h so adding rcupdate=
-.h might
-> not help.
->=20
-> Infact i can't find usage/implementation of INIT_RCU_HEAD anywhere else i=
-n the code.
-> Is this macro deprecated ?
+> Looks like Geert added the same patch to the m68k git tree.
+> I'll drop it from the m68knommu git tree.
 
-It has been removed by commit 5e8067adfdbaf97039a97540765b1e16eb8d61cc
-("rcu head remove init") from the rcu and tip trees.
+Sorry, I should have checked explicitly which patches were already in
+the m68knommu git tree.
+I did leave out one patch I knew (from email) Greg was going to take.
 
-It was just initialising two internal pointers to NULL, so should not be
-needed (for non automatic definitions) even in Linus' current tree.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Gr{oetje,eeting}s,
 
---Signature=_Tue__14_Sep_2010_18_36_48_+1000_j5hN0zhtopU=GyLv
-Content-Type: application/pgp-signature
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 Geert
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
 
-iQEcBAEBAgAGBQJMjzQgAAoJEDMEi1NhKgbsSHIIAIku9YGyfuORv/gsevgRftLH
-T9FYZ3R6YeQty7IDRebxUnH277DibcdR1ltR8uwwyrPIGMYHJvU9BnPBrJdYMj3F
-tZ+pudC8KpUrlA+B3QN+l4bM39qQDyuLytCPNShKVyLwjvcwaKBXg418gqdy/Jbr
-tYM7OoyBvvTkrZ/PBNEqCo2K3RTK+h/yE4HOKnhfDZSZtlH2iDN7ENWCVjJFYLyC
-Q+PVToLBy4qBOvjtnchYpxJzLpUzMvOlCYE9SvBkxCJtGzMmZCMPN0flJicWyxs/
-ADgo46DjAT8HjgYTjW1+vMPsqfCxECj38fdzsnDUV2abYB8hMQP3OpNGMrbtwXE=
-=ZUIq
------END PGP SIGNATURE-----
-
---Signature=_Tue__14_Sep_2010_18_36_48_+1000_j5hN0zhtopU=GyLv--
+In personal conversations with technical people, I call myself a hacker=
+=2E But
+when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
