@@ -1,67 +1,68 @@
 From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build warning after merge of the final tree
- (driver-core tree related)
-Date: Tue, 14 Sep 2010 06:28:42 -0700
-Message-ID: <20100914132842.GC499@kroah.com>
-References: <20100907115426.fc0c3e13.sfr@canb.auug.org.au>
- <201009132126.14115.trenn@suse.de>
- <20100913205712.GB18766@kroah.com>
- <201009140922.51566.trenn@suse.de>
+Subject: Re: linux-next: build failure after merge of the usb tree
+Date: Tue, 14 Sep 2010 06:26:40 -0700
+Message-ID: <20100914132640.GB499@kroah.com>
+References: <20100914125431.1603ffd1.sfr@canb.auug.org.au>
+ <20100914040803.GB11972@kroah.com>
+ <20100914142528.1810936b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <201009140922.51566.trenn@suse.de>
+In-Reply-To: <20100914142528.1810936b.sfr@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Renninger <trenn@suse.de>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Jason Baron <jbaron@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mihai Don??u <mihai.dontu@gmail.com>, David Brownell <dbrownell@users.sourceforge.net>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Sep 14, 2010 at 09:22:51AM +0200, Thomas Renninger wrote:
-> On Monday 13 September 2010 22:57:12 Greg KH wrote:
-> > On Mon, Sep 13, 2010 at 09:26:13PM +0200, Thomas Renninger wrote:
-> > > On Monday 13 September 2010 17:51:55 Randy Dunlap wrote:
-> > > > On Mon, 6 Sep 2010 19:34:04 -0700 Greg KH wrote:
-> > > > 
-> > > > > On Tue, Sep 07, 2010 at 11:54:26AM +1000, Stephen Rothwell wrote:
-> > > > > > Hi Greg,
-> > > > > > 
-> > > > > > After merging the final tree, today's linux-next build (powerpc
-> > > > > > allnoconfig) produced this warning:
-> > > > > > 
-> > > > > > kernel/params.c: In function 'parse_args':
-> > > > > > kernel/params.c:233: warning: the frame size of 1032 bytes is larger than 1024 bytes
-> > > > > > 
-> > > > > > Introduced by commit 32e6407e9361cd1aac39ff6b744cad48d1802a08 ("Dynamic
-> > > > > > Debug: Introduce global fake module param module.ddebug") which added a
-> > > > > > 1024 byte array to the stack ...
-> > > > > 
-> > > > > Wierd, why didn't this show up yesterday?  The patch was in that tree
-> > > > > then, right?
-> > > > > 
-> > > > > Thomas, care to fix this up?
-> > > >  
-> > > > ping.  Is Thomas around??
-> > > Yep, sorry for not responding.
+On Tue, Sep 14, 2010 at 02:25:28PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> On Mon, 13 Sep 2010 21:08:03 -0700 Greg KH <greg@kroah.com> wrote:
+> >
+> > On Tue, Sep 14, 2010 at 12:54:31PM +1000, Stephen Rothwell wrote:
+> > > Hi Greg,
 > > > 
-> > > I tried to reproduce this on ppc64, but above file compiled without
-> > > warning with dynamic debug set. Thus I thought this still came from the
-> > > old patch.
+> > > After merging the usb tree, today's linux-next build (x86_64 allmodconfig)
+> > > failed like this:
 > > > 
-> > > I have another solution for that, please drop above patch.
-> > > Jason pointed out that kernel boot params for compiled-in modules are
-> > > not recognized correctly. I fiddled with that for quite some time last week...
+> > > In file included from drivers/usb/gadget/ether.c:123:
+> > > drivers/usb/gadget/rndis.c: In function 'rndis_init':
+> > > drivers/usb/gadget/rndis.c:1163: error: expected ';' before 'if'
 > > > 
-> > > I should be able to send something tomorrow.
-> > > I will include lkml as it touches several files, would be great if Greg
-> > > can pick them up again if feedback is positive.
+> > > Caused by commit c8feb3bad134f927a624cc19da13f57627b905e2 ("USB: gadget:
+> > > rndis: fix up coding style issues in the file").
+> > > 
+> > > I used the version of the usb tree from next-20100913 for today.
 > > 
-> > Ok, which exact patch do you want me to drop, the "Introduce global fake
-> > module param..." one?
-> Yes, please.
+> > I can't duplicate this at all, are you sure it's coming from my tree?
+> > What is your .config here?
+> 
+> See above: that was an x86_64 allmodconfig build.  You need
+> CONFIG_USB_GADGET_DEBUG_FILES set.
+> 
+> The patch above was not in your usb quilt series when I fetched it
+> yesterday and it was there this morning.  The relevant hunk of the patch
+> looks like this:
+> 
+> @@ -1160,42 +1158,40 @@ int rndis_init(void)
+>  #ifdef	CONFIG_USB_GADGET_DEBUG_FILES
+>  		char name [20];
+>  
+> -		sprintf (name, NAME_TEMPLATE, i);
+> -		if (!(rndis_connect_state [i]
+> -				= proc_create_data(name, 0660, NULL,
+> +		sprintf(name, NAME_TEMPLATE, i);
+> +		rndis_connect_state[i] = proc_create_data(name, 0660, NULL,
+>  					&rndis_proc_fops,
+> -					(void *)(rndis_per_dev_params + i))))
+> -		{
+> -			pr_debug("%s :remove entries", __func__);
+> +					(void *)(rndis_per_dev_params + i))
+>                                                                            ^
+> *** note missing semicolon ...
 
-Now dropped.
-
-thanks,
+Doh, now I got it, sorry, I didn't have that config option enabled.
+I've now fixed this.
 
 greg k-h
