@@ -1,65 +1,56 @@
-From: Thomas Renninger <trenn@suse.de>
-Subject: Re: linux-next: build warning after merge of the final tree (driver-core tree related)
-Date: Tue, 14 Sep 2010 09:22:51 +0200
-Message-ID: <201009140922.51566.trenn@suse.de>
-References: <20100907115426.fc0c3e13.sfr@canb.auug.org.au> <201009132126.14115.trenn@suse.de> <20100913205712.GB18766@kroah.com>
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: Re: [-next Sept 10] Build break - arch/s390/mm/pgtable.c (INIT_RCU_HEAD)
+Date: Tue, 14 Sep 2010 13:43:51 +0530
+Message-ID: <4C8F2EBF.4060606@in.ibm.com>
+References: <4C89E8A0.1050905@in.ibm.com> <20100910122806.05548325@mschwide.boeblingen.de.ibm.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:56016 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751574Ab0INHWy (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 14 Sep 2010 03:22:54 -0400
-In-Reply-To: <20100913205712.GB18766@kroah.com>
+Received: from e23smtp04.au.ibm.com ([202.81.31.146]:48274 "EHLO
+	e23smtp04.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752062Ab0ININz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Sep 2010 04:13:55 -0400
+In-Reply-To: <20100910122806.05548325@mschwide.boeblingen.de.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Jason Baron <jbaron@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: linux-s390@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-On Monday 13 September 2010 22:57:12 Greg KH wrote:
-> On Mon, Sep 13, 2010 at 09:26:13PM +0200, Thomas Renninger wrote:
-> > On Monday 13 September 2010 17:51:55 Randy Dunlap wrote:
-> > > On Mon, 6 Sep 2010 19:34:04 -0700 Greg KH wrote:
-> > > 
-> > > > On Tue, Sep 07, 2010 at 11:54:26AM +1000, Stephen Rothwell wrote:
-> > > > > Hi Greg,
-> > > > > 
-> > > > > After merging the final tree, today's linux-next build (powerpc
-> > > > > allnoconfig) produced this warning:
-> > > > > 
-> > > > > kernel/params.c: In function 'parse_args':
-> > > > > kernel/params.c:233: warning: the frame size of 1032 bytes is larger than 1024 bytes
-> > > > > 
-> > > > > Introduced by commit 32e6407e9361cd1aac39ff6b744cad48d1802a08 ("Dynamic
-> > > > > Debug: Introduce global fake module param module.ddebug") which added a
-> > > > > 1024 byte array to the stack ...
-> > > > 
-> > > > Wierd, why didn't this show up yesterday?  The patch was in that tree
-> > > > then, right?
-> > > > 
-> > > > Thomas, care to fix this up?
-> > >  
-> > > ping.  Is Thomas around??
-> > Yep, sorry for not responding.
-> > 
-> > I tried to reproduce this on ppc64, but above file compiled without
-> > warning with dynamic debug set. Thus I thought this still came from the
-> > old patch.
-> > 
-> > I have another solution for that, please drop above patch.
-> > Jason pointed out that kernel boot params for compiled-in modules are
-> > not recognized correctly. I fiddled with that for quite some time last week...
-> > 
-> > I should be able to send something tomorrow.
-> > I will include lkml as it touches several files, would be great if Greg
-> > can pick them up again if feedback is positive.
-> 
-> Ok, which exact patch do you want me to drop, the "Introduce global fake
-> module param..." one?
-Yes, please.
+Martin Schwidefsky wrote:
+> On Fri, 10 Sep 2010 13:43:20 +0530
+> Sachin Sant <sachinp@in.ibm.com> wrote:
+>
+>   
+>> Today's next fails to build on a s390 box with
+>>
+>> arch/s390/mm/pgtable.c: In function 'rcu_table_freelist_finish':
+>> arch/s390/mm/pgtable.c:79: error: implicit declaration of function 'INIT_RCU_HEAD'
+>> make[2]: *** [arch/s390/mm/pgtable.o] Error 1
+>>
+>> This code in question was added via following commit:
+>>
+>> commit e726023d9ff7e4968e3e0622782174a4695d68a4
+>> S390] lockless get_user_pages_fast()
+>>     
+>
+> I guess that there is an #include <linux/rcupdate.h> missing in pgtable.c. I'll
+> add it to the patch.
+>   
+I don't see definition for INIT_RCU_HEAD in rcupdate.h so adding rcupdate.h might
+not help.
 
-Thanks,
+Infact i can't find usage/implementation of INIT_RCU_HEAD anywhere else in the code.
+Is this macro deprecated ?
 
-       Thomas
+Thanks
+-Sachin
+
+-- 
+
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
