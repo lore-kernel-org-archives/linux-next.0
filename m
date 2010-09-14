@@ -1,68 +1,103 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the usb tree
-Date: Tue, 14 Sep 2010 06:26:40 -0700
-Message-ID: <20100914132640.GB499@kroah.com>
-References: <20100914125431.1603ffd1.sfr@canb.auug.org.au>
- <20100914040803.GB11972@kroah.com>
- <20100914142528.1810936b.sfr@canb.auug.org.au>
+From: matthieu castet <castet.matthieu@free.fr>
+Subject: Re: [PATCH 2/3 V8] [tip:x86/mm] NX protection for kernel data
+Date: Tue, 14 Sep 2010 19:51:18 +0200
+Message-ID: <4C8FB616.2070807@free.fr>
+References: <4C856211.7080802@free.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20100914142528.1810936b.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mihai Don??u <mihai.dontu@gmail.com>, David Brownell <dbrownell@users.sourceforge.net>
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-security-module-owner@vger.kernel.org>
+In-Reply-To: <4C856211.7080802@free.fr>
+Sender: linux-security-module-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org
+Cc: Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, Rusty Russell <rusty@rustcorp.com.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>, Siarhei Liakh <sliakh.lkml@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Sep 14, 2010 at 02:25:28PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> On Mon, 13 Sep 2010 21:08:03 -0700 Greg KH <greg@kroah.com> wrote:
-> >
-> > On Tue, Sep 14, 2010 at 12:54:31PM +1000, Stephen Rothwell wrote:
-> > > Hi Greg,
-> > > 
-> > > After merging the usb tree, today's linux-next build (x86_64 allmodconfig)
-> > > failed like this:
-> > > 
-> > > In file included from drivers/usb/gadget/ether.c:123:
-> > > drivers/usb/gadget/rndis.c: In function 'rndis_init':
-> > > drivers/usb/gadget/rndis.c:1163: error: expected ';' before 'if'
-> > > 
-> > > Caused by commit c8feb3bad134f927a624cc19da13f57627b905e2 ("USB: gadget:
-> > > rndis: fix up coding style issues in the file").
-> > > 
-> > > I used the version of the usb tree from next-20100913 for today.
-> > 
-> > I can't duplicate this at all, are you sure it's coming from my tree?
-> > What is your .config here?
-> 
-> See above: that was an x86_64 allmodconfig build.  You need
-> CONFIG_USB_GADGET_DEBUG_FILES set.
-> 
-> The patch above was not in your usb quilt series when I fetched it
-> yesterday and it was there this morning.  The relevant hunk of the patch
-> looks like this:
-> 
-> @@ -1160,42 +1158,40 @@ int rndis_init(void)
->  #ifdef	CONFIG_USB_GADGET_DEBUG_FILES
->  		char name [20];
->  
-> -		sprintf (name, NAME_TEMPLATE, i);
-> -		if (!(rndis_connect_state [i]
-> -				= proc_create_data(name, 0660, NULL,
-> +		sprintf(name, NAME_TEMPLATE, i);
-> +		rndis_connect_state[i] = proc_create_data(name, 0660, NULL,
->  					&rndis_proc_fops,
-> -					(void *)(rndis_per_dev_params + i))))
-> -		{
-> -			pr_debug("%s :remove entries", __func__);
-> +					(void *)(rndis_per_dev_params + i))
->                                                                            ^
-> *** note missing semicolon ...
+Hi,
 
-Doh, now I got it, sorry, I didn't have that config option enabled.
-I've now fixed this.
+any feedback on that ?
 
-greg k-h
+Thanks,
+
+Matthieu
+
+
+matthieu castet a =C3=A9crit :
+>    Note: this patch depends on "Correct improper large page=20
+> preservation" patch
+>       This patch expands functionality of CONFIG_DEBUG_RODATA to set =
+main
+>    (static) kernel data area as NX.
+>    The following steps are taken to achieve this:
+>    1. Linker script is adjusted so .text always starts and ends on a=20
+> page bound
+>    2. Linker script is adjusted so .rodata always start and
+>    end on a page boundary
+>    3. NX is set for all pages from _etext through _end in mark_rodata=
+_ro.
+>    4. free_init_pages() sets released memory NX in arch/x86/mm/init.c
+>    5. bios rom is set to x when pcibios is used.
+>       The results of patch application may be observed in the diff of=
+=20
+> kernel page
+>    table dumps.
+>    pcibios :
+>    --- data_nx_pt_before.txt       2009-10-13 07:48:59.000000000 -040=
+0
+>    +++ data_nx_pt_after.txt        2009-10-13 07:26:46.000000000 -040=
+0
+>    @@ -2,8 +2,9 @@
+>     0x00000000-0xc0000000           3G                           pmd
+>     ---[ Kernel Mapping ]---
+>    -0xc0000000-0xc0100000           1M     RW             GLB x  pte
+>    +0xc0000000-0xc00a0000         640K     RW             GLB NX pte
+>    +0xc00a0000-0xc0100000         384K     RW             GLB x  pte
+>    -0xc0100000-0xc03d7000        2908K     ro             GLB x  pte
+>    +0xc0100000-0xc0318000        2144K     ro             GLB x  pte
+>    +0xc0318000-0xc03d7000         764K     ro             GLB NX pte
+>    -0xc03d7000-0xc0600000        2212K     RW             GLB x  pte
+>    +0xc03d7000-0xc0600000        2212K     RW             GLB NX pte
+>     0xc0600000-0xf7a00000         884M     RW         PSE GLB NX pmd
+>     0xf7a00000-0xf7bfe000        2040K     RW             GLB NX pte
+>     0xf7bfe000-0xf7c00000           8K                           pte
+>       no pcibios :
+>    --- data_nx_pt_before.txt       2009-10-13 07:48:59.000000000 -040=
+0
+>    +++ data_nx_pt_after.txt        2009-10-13 07:26:46.000000000 -040=
+0
+>    @@ -2,8 +2,9 @@
+>     0x00000000-0xc0000000           3G                           pmd
+>     ---[ Kernel Mapping ]---
+>    -0xc0000000-0xc0100000           1M     RW             GLB x  pte
+>    +0xc0000000-0xc0100000           1M     RW             GLB NX pte
+>    -0xc0100000-0xc03d7000        2908K     ro             GLB x  pte
+>    +0xc0100000-0xc0318000        2144K     ro             GLB x  pte
+>    +0xc0318000-0xc03d7000         764K     ro             GLB NX pte
+>    -0xc03d7000-0xc0600000        2212K     RW             GLB x  pte
+>    +0xc03d7000-0xc0600000        2212K     RW             GLB NX pte
+>     0xc0600000-0xf7a00000         884M     RW         PSE GLB NX pmd
+>     0xf7a00000-0xf7bfe000        2040K     RW             GLB NX pte
+>     0xf7bfe000-0xf7c00000           8K                           pte
+>       The patch have been developed for Linux 2.6.34-rc2 x86 by Siarh=
+ei=20
+> Liakh
+>    <sliakh.lkml@gmail.com> and Xuxian Jiang <jiang@cs.ncsu.edu>.
+>       V1:  initial patch for 2.6.30
+>    V2:  patch for 2.6.31-rc7
+>    V3:  moved all code into arch/x86, adjusted credits
+>    V4:  fixed ifdef, removed credits from CREDITS
+>    V5:  fixed an address calculation bug in mark_nxdata_nx()
+>    V6:  added acked-by and PT dump diff to commit log
+>    V7:  minor adjustments for -tip
+>    V8:  rework with the merge of "Set first MB as RW+NX"
+>       Signed-off-by: Siarhei Liakh <sliakh.lkml@gmail.com>
+>    Signed-off-by: Xuxian Jiang <jiang@cs.ncsu.edu>
+>    Signed-off-by: Matthieu CASTET <castet.matthieu@free.fr>
+>=20
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-securit=
+y-module" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
