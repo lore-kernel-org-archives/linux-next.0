@@ -1,86 +1,113 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the final tree
- (driver-core tree related)
-Date: Tue, 14 Sep 2010 14:31:59 +1000
-Message-ID: <20100914143159.dca830f0.sfr@canb.auug.org.au>
-References: <20100907115426.fc0c3e13.sfr@canb.auug.org.au>
-	<20100907023404.GA11972@kroah.com>
-	<20100913085155.6b73c9cc.randy.dunlap@oracle.com>
-	<201009132126.14115.trenn@suse.de>
+Subject: Re: linux-next: build warnings after merge of the final tree (tip
+ treee related)
+Date: Tue, 14 Sep 2010 14:50:25 +1000
+Message-ID: <20100914145025.977ec2a6.sfr@canb.auug.org.au>
+References: <20100913132721.5a02cfbc.sfr@canb.auug.org.au>
+	<4C8DA517.9000603@kernel.org>
+	<20100913143942.7344ada4.sfr@canb.auug.org.au>
+	<4C8DDFB4.1020508@kernel.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__14_Sep_2010_14_31_59_+1000_mNmsoJrePHf+t=Lf"
+ boundary="Signature=_Tue__14_Sep_2010_14_50_25_+1000_uL/CVplq9TRXS./6"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34489 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34685 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751571Ab0INEcF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 14 Sep 2010 00:32:05 -0400
-In-Reply-To: <201009132126.14115.trenn@suse.de>
+	id S1751047Ab0INEud (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 14 Sep 2010 00:50:33 -0400
+In-Reply-To: <4C8DDFB4.1020508@kernel.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Renninger <trenn@suse.de>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Greg KH <greg@kroah.com>, Jason Baron <jbaron@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Yinghai Lu <yinghai@kernel.org>
+Cc: Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, ppc-dev <linuxppc-dev@lists.ozlabs.org>
 
---Signature=_Tue__14_Sep_2010_14_31_59_+1000_mNmsoJrePHf+t=Lf
+--Signature=_Tue__14_Sep_2010_14_50_25_+1000_uL/CVplq9TRXS./6
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Thomas,
+Hi Yinghai,
 
-On Mon, 13 Sep 2010 21:26:13 +0200 Thomas Renninger <trenn@suse.de> wrote:
+On Mon, 13 Sep 2010 01:24:20 -0700 Yinghai Lu <yinghai@kernel.org> wrote:
 >
-> On Monday 13 September 2010 17:51:55 Randy Dunlap wrote:
-> > On Mon, 6 Sep 2010 19:34:04 -0700 Greg KH wrote:
+> On 09/12/2010 09:39 PM, Stephen Rothwell wrote:
 > >=20
-> > > On Tue, Sep 07, 2010 at 11:54:26AM +1000, Stephen Rothwell wrote:
-> > > >=20
-> > > > After merging the final tree, today's linux-next build (powerpc
-> > > > allnoconfig) produced this warning:
-> > > >=20
-> > > > kernel/params.c: In function 'parse_args':
-> > > > kernel/params.c:233: warning: the frame size of 1032 bytes is large=
-r than 1024 bytes
-> > > >=20
-> > > > Introduced by commit 32e6407e9361cd1aac39ff6b744cad48d1802a08 ("Dyn=
-amic
-> > > > Debug: Introduce global fake module param module.ddebug") which add=
-ed a
-> > > > 1024 byte array to the stack ...
-> > >=20
-> > > Wierd, why didn't this show up yesterday?  The patch was in that tree
-> > > then, right?
-> > >=20
-> > > Thomas, care to fix this up?
-> > =20
-> > ping.  Is Thomas around??
-> Yep, sorry for not responding.
+> > Your patch fixes some of the warnings, but still leaves these for a
+> > powerpc allnoconfig build:
+> >=20
+> > WARNING: mm/built-in.o(.text+0x25d80): Section mismatch in reference fr=
+om the function memblock_double_array() to the function .init.text:memblock=
+_free()
+> > The function memblock_double_array() references
+> > the function __init memblock_free().
+> > This is often because memblock_double_array lacks a __init=20
+> > annotation or the annotation of memblock_free is wrong.
+> >=20
+> > WARNING: mm/built-in.o(.text+0x26318): Section mismatch in reference fr=
+om the function memblock_reserve_reserved_regions() to the function .init.t=
+ext:memblock_reserve()
+> > The function memblock_reserve_reserved_regions() references
+> > the function __init memblock_reserve().
+> > This is often because memblock_reserve_reserved_regions lacks a __init=
+=20
+> > annotation or the annotation of memblock_reserve is wrong.
+> >=20
+> > WARNING: mm/built-in.o(.text+0x26490): Section mismatch in reference fr=
+om the function memblock_free_reserved_regions() to the function .init.text=
+:memblock_free()
+> > The function memblock_free_reserved_regions() references
+> > the function __init memblock_free().
+> > This is often because memblock_free_reserved_regions lacks a __init=20
+> > annotation or the annotation of memblock_free is wrong.
 >=20
-> I tried to reproduce this on ppc64, but above file compiled without
-> warning with dynamic debug set. Thus I thought this still came from the
-> old patch.
+> v1 already changed them all to __init_memblock, so we should not have tho=
+se warnings.
 
-The report is for a powerpc allnoconfig build (see above) i.e. ppc32.
+They are still marked as __init in include/linux/memblock.h.  I don't
+think that they need to be marked at all there.
+
+> > And these for a i386 defconfig build:
+> >=20
+> > WARNING: mm/built-in.o(.text+0x1e261): Section mismatch in reference fr=
+om the function memblock_is_memory() to the variable .init.data:memblock
+> > The function memblock_is_memory() references
+> > the variable __initdata memblock.
+> > This is often because memblock_is_memory lacks a __initdata=20
+> > annotation or the annotation of memblock is wrong.
+> >=20
+> > WARNING: mm/built-in.o(.text+0x1e27f): Section mismatch in reference fr=
+om the function memblock_is_region_memory() to the variable .init.data:memb=
+lock
+> > The function memblock_is_region_memory() references
+> > the variable __initdata memblock.
+> > This is often because memblock_is_region_memory lacks a __initdata=20
+> > annotation or the annotation of memblock is wrong.
+>=20
+> you must have old gcc, those functions are not used with i386.
+
+I am not sure what the compiler version has to do with it, but I am using
+gcc 4.4.4 which is fairly recent.  The X86 Kconfig selects HAVE_MEMBLOCK
+unconditionally, so mm/memblock.c is built on i386.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__14_Sep_2010_14_31_59_+1000_mNmsoJrePHf+t=Lf
+--Signature=_Tue__14_Sep_2010_14_50_25_+1000_uL/CVplq9TRXS./6
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMjvq/AAoJEDMEi1NhKgbsgr8IAJ2iXvcVhOnyMS9VN1YUJipB
-45qFw9C+srXBg3lDJAZ3UdJX7QGpoQ+zH/vlqUVlZwScXX99sm4T2pb9ySNc02pB
-HOhH9qP77e/syFD+dsOZqL4Lc+9cIU1Mmr+umtOxxNoHeXhUJ8bhd8dbJGzvuNq+
-0kxVc6u5z/LAFC/37GX0sKLNauIEWq72t7Cu41AsJa0wZliIdLBaalFoW36TRjam
-laE1Q0LzRCa1ct6nDzAbqcq+YrNbvOOYLYo+hEk/yp2kE/jcDiqGJ1qYxlzheUFn
-lovfRakYMR1oC4HDnu5s0QBT0zqHOG/A3c+M2ULcXGNDiJPCTbS57ShsuHbwpPI=
-=y7+H
+iQEcBAEBAgAGBQJMjv8RAAoJEDMEi1NhKgbsw5QH/25XOrKNFybBSAnq4AwtfEvr
+ndAUSv2zF8PSzoObfNSpubddyZrkWaSxJPoFy6srXU2jkuhJRVS/JsXd5ZBkwZ7S
+K3R/OTK6+JuFk/6utGN7ua564Z0XSdgz6VMgR/dlG9DB95lsbLg/wjrQ9heeGr+l
+s7bvJsqb/1pOQLMCWvKfItwKYm6o6P/SY16k0a47ktcU7OipNrUPWysCm3bpmGUE
+syY7fZS1H4+68wi5zT/IqAgMhzzUqZd05a+n4b9KlgQeYpHKdt/zoyPDHiDyPdHv
+j4ny2nZl40zKdk3cBvKYVQdtnDn1pRtCxf23GmtPHd8+1473njIpx/XmHch0GcA=
+=EcLo
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__14_Sep_2010_14_31_59_+1000_mNmsoJrePHf+t=Lf--
+--Signature=_Tue__14_Sep_2010_14_50_25_+1000_uL/CVplq9TRXS./6--
