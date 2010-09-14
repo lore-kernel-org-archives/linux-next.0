@@ -1,105 +1,86 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the usb tree
-Date: Tue, 14 Sep 2010 14:25:28 +1000
-Message-ID: <20100914142528.1810936b.sfr@canb.auug.org.au>
-References: <20100914125431.1603ffd1.sfr@canb.auug.org.au>
-	<20100914040803.GB11972@kroah.com>
+Subject: Re: linux-next: build warning after merge of the final tree
+ (driver-core tree related)
+Date: Tue, 14 Sep 2010 14:31:59 +1000
+Message-ID: <20100914143159.dca830f0.sfr@canb.auug.org.au>
+References: <20100907115426.fc0c3e13.sfr@canb.auug.org.au>
+	<20100907023404.GA11972@kroah.com>
+	<20100913085155.6b73c9cc.randy.dunlap@oracle.com>
+	<201009132126.14115.trenn@suse.de>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__14_Sep_2010_14_25_28_+1000_0q7_ZcH.DiaITSyA"
+ boundary="Signature=_Tue__14_Sep_2010_14_31_59_+1000_mNmsoJrePHf+t=Lf"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:42958 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34489 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752350Ab0INEZd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 14 Sep 2010 00:25:33 -0400
-In-Reply-To: <20100914040803.GB11972@kroah.com>
+	id S1751571Ab0INEcF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 14 Sep 2010 00:32:05 -0400
+In-Reply-To: <201009132126.14115.trenn@suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mihai Don??u <mihai.dontu@gmail.com>, David Brownell <dbrownell@users.sourceforge.net>
+To: Thomas Renninger <trenn@suse.de>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Greg KH <greg@kroah.com>, Jason Baron <jbaron@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__14_Sep_2010_14_25_28_+1000_0q7_ZcH.DiaITSyA
+--Signature=_Tue__14_Sep_2010_14_31_59_+1000_mNmsoJrePHf+t=Lf
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Thomas,
 
-On Mon, 13 Sep 2010 21:08:03 -0700 Greg KH <greg@kroah.com> wrote:
+On Mon, 13 Sep 2010 21:26:13 +0200 Thomas Renninger <trenn@suse.de> wrote:
 >
-> On Tue, Sep 14, 2010 at 12:54:31PM +1000, Stephen Rothwell wrote:
-> > Hi Greg,
+> On Monday 13 September 2010 17:51:55 Randy Dunlap wrote:
+> > On Mon, 6 Sep 2010 19:34:04 -0700 Greg KH wrote:
 > >=20
-> > After merging the usb tree, today's linux-next build (x86_64 allmodconf=
-ig)
-> > failed like this:
-> >=20
-> > In file included from drivers/usb/gadget/ether.c:123:
-> > drivers/usb/gadget/rndis.c: In function 'rndis_init':
-> > drivers/usb/gadget/rndis.c:1163: error: expected ';' before 'if'
-> >=20
-> > Caused by commit c8feb3bad134f927a624cc19da13f57627b905e2 ("USB: gadget:
-> > rndis: fix up coding style issues in the file").
-> >=20
-> > I used the version of the usb tree from next-20100913 for today.
+> > > On Tue, Sep 07, 2010 at 11:54:26AM +1000, Stephen Rothwell wrote:
+> > > >=20
+> > > > After merging the final tree, today's linux-next build (powerpc
+> > > > allnoconfig) produced this warning:
+> > > >=20
+> > > > kernel/params.c: In function 'parse_args':
+> > > > kernel/params.c:233: warning: the frame size of 1032 bytes is large=
+r than 1024 bytes
+> > > >=20
+> > > > Introduced by commit 32e6407e9361cd1aac39ff6b744cad48d1802a08 ("Dyn=
+amic
+> > > > Debug: Introduce global fake module param module.ddebug") which add=
+ed a
+> > > > 1024 byte array to the stack ...
+> > >=20
+> > > Wierd, why didn't this show up yesterday?  The patch was in that tree
+> > > then, right?
+> > >=20
+> > > Thomas, care to fix this up?
+> > =20
+> > ping.  Is Thomas around??
+> Yep, sorry for not responding.
 >=20
-> I can't duplicate this at all, are you sure it's coming from my tree?
-> What is your .config here?
+> I tried to reproduce this on ppc64, but above file compiled without
+> warning with dynamic debug set. Thus I thought this still came from the
+> old patch.
 
-See above: that was an x86_64 allmodconfig build.  You need
-CONFIG_USB_GADGET_DEBUG_FILES set.
-
-The patch above was not in your usb quilt series when I fetched it
-yesterday and it was there this morning.  The relevant hunk of the patch
-looks like this:
-
-@@ -1160,42 +1158,40 @@ int rndis_init(void)
- #ifdef	CONFIG_USB_GADGET_DEBUG_FILES
- 		char name [20];
-=20
--		sprintf (name, NAME_TEMPLATE, i);
--		if (!(rndis_connect_state [i]
--				=3D proc_create_data(name, 0660, NULL,
-+		sprintf(name, NAME_TEMPLATE, i);
-+		rndis_connect_state[i] =3D proc_create_data(name, 0660, NULL,
- 					&rndis_proc_fops,
--					(void *)(rndis_per_dev_params + i))))
--		{
--			pr_debug("%s :remove entries", __func__);
-+					(void *)(rndis_per_dev_params + i))
-                                                                           ^
-*** note missing semicolon ...
-
-+		if (!rndis_connect_state[i]) {
-+			pr_debug("%s: remove entries", __func__);
- 			while (i) {
--				sprintf (name, NAME_TEMPLATE, --i);
--				remove_proc_entry (name, NULL);
-+				sprintf(name, NAME_TEMPLATE, --i);
-+				remove_proc_entry(name, NULL);
- 			}
- 			pr_debug("\n");
- 			return -EIO;
+The report is for a powerpc allnoconfig build (see above) i.e. ppc32.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__14_Sep_2010_14_25_28_+1000_0q7_ZcH.DiaITSyA
+--Signature=_Tue__14_Sep_2010_14_31_59_+1000_mNmsoJrePHf+t=Lf
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMjvk4AAoJEDMEi1NhKgbskQIH/iFTIyBgkaezbJu5/JoN6sJm
-+jG+i1ePqxTxEqKjEb6lih0O/eH2YVu8P4ZTatU+r/eFruVp3PjK6L6/FKL/4J6d
-bipvg2OGRP7CuZrp31lximK2ythUMqk+sB/GfuNNjPhdhJWBL68MraIiWqbZ3sd9
-OtHxZy/6de7lVxK+Y1EjfFr4NJeBE6XdtTYlgiaVFQZxyCfYjwcwab7c6tizHcYc
-uGkEl52gk6RlahEsOwjTRoNAmoJ4hxSjYXJxy5zzT2xCTQs3Rv4RsplEF0ja6goN
-Tvgfc3JoGv6koVI/nzP2DSyN8JfJLT36q+ZgXxcTFby9x8BxIqUFsPrHfq2hoXA=
-=T4cz
+iQEcBAEBAgAGBQJMjvq/AAoJEDMEi1NhKgbsgr8IAJ2iXvcVhOnyMS9VN1YUJipB
+45qFw9C+srXBg3lDJAZ3UdJX7QGpoQ+zH/vlqUVlZwScXX99sm4T2pb9ySNc02pB
+HOhH9qP77e/syFD+dsOZqL4Lc+9cIU1Mmr+umtOxxNoHeXhUJ8bhd8dbJGzvuNq+
+0kxVc6u5z/LAFC/37GX0sKLNauIEWq72t7Cu41AsJa0wZliIdLBaalFoW36TRjam
+laE1Q0LzRCa1ct6nDzAbqcq+YrNbvOOYLYo+hEk/yp2kE/jcDiqGJ1qYxlzheUFn
+lovfRakYMR1oC4HDnu5s0QBT0zqHOG/A3c+M2ULcXGNDiJPCTbS57ShsuHbwpPI=
+=y7+H
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__14_Sep_2010_14_25_28_+1000_0q7_ZcH.DiaITSyA--
+--Signature=_Tue__14_Sep_2010_14_31_59_+1000_mNmsoJrePHf+t=Lf--
