@@ -1,58 +1,44 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: manual merge of the m68knommu tree with the m68k tree
-Date: Tue, 14 Sep 2010 10:47:42 +0200
-Message-ID: <AANLkTim+7Q79hVv+r1PO2LeiiSCxb12CaqO3YuR8taL9@mail.gmail.com>
-References: <20100914105129.02eb5b13.sfr@canb.auug.org.au>
-	<4C8ECDFE.6010906@snapgear.com>
+From: Tejun Heo <tj@kernel.org>
+Subject: [PATCH] alpha: fix build breakage in asm/cacheflush.h
+Date: Tue, 14 Sep 2010 11:00:22 +0200
+Message-ID: <4C8F39A6.10504@kernel.org>
+References: <20100914002132.bf17c19e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gy0-f174.google.com ([209.85.160.174]:57183 "EHLO
-	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752428Ab0INIro convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Sep 2010 04:47:44 -0400
-In-Reply-To: <4C8ECDFE.6010906@snapgear.com>
+Received: from hera.kernel.org ([140.211.167.34]:36365 "EHLO hera.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753109Ab0INJAv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 14 Sep 2010 05:00:51 -0400
+In-Reply-To: <20100914002132.bf17c19e.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg Ungerer <gerg@snapgear.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christian Dietrich <qy03fugy@stud.informatik.uni-erlangen.de>
+To: Richard Henderson <rth@twiddle.net>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, linux-alpha@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Sep 14, 2010 at 03:21, Greg Ungerer <gerg@snapgear.com> wrote:
-> Stephen Rothwell wrote:
->>
->> Today's linux-next merge of the m68knommu tree got a conflict in
->> arch/m68k/sun3/sun3ints.c between commit
->> 72fe185cd9acbfc6e8a7afa884ae1152be706e52 ("m68k/m68knommu: Remove de=
-ad
->> SMP config option") from the m68k tree and commit
->> 5313b581e4efc214c6132d32f580db6668e5c5a8 ("arch/m68k{,nommu}: Removi=
-ng
->> dead SMP config option") from the m68knommu tree.
->>
->> These appear to be the same patch with some formatting differences. =
-=C2=A0I
->> used the version from the m68k tree.
->
-> Looks like Geert added the same patch to the m68k git tree.
-> I'll drop it from the m68knommu git tree.
+Alpha SMP flush_icache_user_range() is implemented as an inline
+function inside include/asm/cacheflush.h.  It dereferences @current
+but doesn't include linux/sched.h and thus causes build failure if
+linux/sched.h wasn't included previously.  Fix it by including the
+needed header file explicitly.
 
-Sorry, I should have checked explicitly which patches were already in
-the m68knommu git tree.
-I did leave out one patch I knew (from email) Greg was going to take.
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/alpha/include/asm/cacheflush.h |    2 ++
+ 1 file changed, 2 insertions(+)
 
-Gr{oetje,eeting}s,
+diff --git a/arch/alpha/include/asm/cacheflush.h b/arch/alpha/include/asm/cacheflush.h
+index 01d71e1..012f124 100644
+--- a/arch/alpha/include/asm/cacheflush.h
++++ b/arch/alpha/include/asm/cacheflush.h
+@@ -43,6 +43,8 @@ extern void smp_imb(void);
+ /* ??? Ought to use this in arch/alpha/kernel/signal.c too.  */
 
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
-
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
+ #ifndef CONFIG_SMP
++#include <linux/sched.h>
++
+ extern void __load_new_mm_context(struct mm_struct *);
+ static inline void
+ flush_icache_user_range(struct vm_area_struct *vma, struct page *page,
