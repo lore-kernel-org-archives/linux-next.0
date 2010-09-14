@@ -1,57 +1,94 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the usb tree
-Date: Tue, 14 Sep 2010 12:54:31 +1000
-Message-ID: <20100914125431.1603ffd1.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (mfd tree
+ related)
+Date: Tue, 14 Sep 2010 13:43:21 +1000
+Message-ID: <20100914134321.5eee798a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__14_Sep_2010_12_54_31_+1000_iF8kh3ztcdZ5Yis."
+ boundary="Signature=_Tue__14_Sep_2010_13_43_21_+1000_sqzy2DRlrV4ktv2u"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54623 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:50665 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752107Ab0INCyh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 13 Sep 2010 22:54:37 -0400
+	id S1752540Ab0INDn1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 13 Sep 2010 23:43:27 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mihai =?UTF-8?B?RG9uyJt1?= <mihai.dontu@gmail.com>, David Brownell <dbrownell@users.sourceforge.net>
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Murthy <arun.murthy@stericsson.com>
 
---Signature=_Tue__14_Sep_2010_12_54_31_+1000_iF8kh3ztcdZ5Yis.
+--Signature=_Tue__14_Sep_2010_13_43_21_+1000_sqzy2DRlrV4ktv2u
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Samuel,
 
-After merging the usb tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-In file included from drivers/usb/gadget/ether.c:123:
-drivers/usb/gadget/rndis.c: In function 'rndis_init':
-drivers/usb/gadget/rndis.c:1163: error: expected ';' before 'if'
+drivers/mfd/built-in.o: In function `__crc_pwm_free':
+(*ABS*+0x24ba6d1e): multiple definition of `__crc_pwm_free'
+drivers/mfd/built-in.o: In function `.pwm_free':
+(.text+0x1ab3c): multiple definition of `.pwm_free'
+drivers/misc/built-in.o:(.text+0x2620c): first defined here
+drivers/mfd/built-in.o: In function `__crc_pwm_request':
+(*ABS*+0xc1f4ec93): multiple definition of `__crc_pwm_request'
+drivers/mfd/built-in.o: In function `__crc_pwm_enable':
+(*ABS*+0x9d09808d): multiple definition of `__crc_pwm_enable'
+drivers/mfd/built-in.o: In function `.pwm_enable':
+(.text+0x1abc8): multiple definition of `.pwm_enable'
+drivers/misc/built-in.o:(.text+0x26278): first defined here
+drivers/mfd/built-in.o: In function `.pwm_request':
+(.text+0x1a774): multiple definition of `.pwm_request'
+drivers/misc/built-in.o:(.text+0x2604c): first defined here
+drivers/mfd/built-in.o: In function `pwm_config':
+(.opd+0x1ce0): multiple definition of `pwm_config'
+drivers/misc/built-in.o:(.opd+0x3000): first defined here
+drivers/mfd/built-in.o: In function `pwm_free':
+(.opd+0x1d28): multiple definition of `pwm_free'
+drivers/misc/built-in.o:(.opd+0x2fd0): first defined here
+drivers/mfd/built-in.o: In function `pwm_request':
+(.opd+0x1cf8): multiple definition of `pwm_request'
+drivers/misc/built-in.o:(.opd+0x2f58): first defined here
+drivers/mfd/built-in.o: In function `__crc_pwm_disable':
+(*ABS*+0xb0493b18): multiple definition of `__crc_pwm_disable'
+drivers/mfd/built-in.o: In function `.pwm_disable':
+(.text+0x1aa24): multiple definition of `.pwm_disable'
+drivers/misc/built-in.o:(.text+0x2613c): first defined here
+drivers/mfd/built-in.o: In function `pwm_enable':
+(.opd+0x1d40): multiple definition of `pwm_enable'
+drivers/misc/built-in.o:(.opd+0x2fe8): first defined here
+drivers/mfd/built-in.o: In function `.pwm_config':
+(.text+0x1a648): multiple definition of `.pwm_config'
+drivers/misc/built-in.o:(.text+0x26358): first defined here
+drivers/mfd/built-in.o: In function `pwm_disable':
+(.opd+0x1d10): multiple definition of `pwm_disable'
+drivers/misc/built-in.o:(.opd+0x2fb8): first defined here
+drivers/mfd/built-in.o: In function `__crc_pwm_config':
+(*ABS*+0xc23f5b9): multiple definition of `__crc_pwm_config'
 
-Caused by commit c8feb3bad134f927a624cc19da13f57627b905e2 ("USB: gadget:
-rndis: fix up coding style issues in the file").
+Caused by commit 03f582a93ecca6e9584b622570022abf08ed03ec ("misc: Add
+ab8500 pwm driver").  I have reverted that commit for today.
 
-I used the version of the usb tree from next-20100913 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__14_Sep_2010_12_54_31_+1000_iF8kh3ztcdZ5Yis.
+--Signature=_Tue__14_Sep_2010_13_43_21_+1000_sqzy2DRlrV4ktv2u
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMjuPnAAoJEDMEi1NhKgbsuf8H/A8/LQkfgLRWwXz8QqaQQUOi
-PngsW5RZ23aX+Y6jq7XfccSWArrOLquKihDYcwF/rBZcNHKO4NFQ2/ALfPzTa1vJ
-pr9iOV56KkQWDdZ/2iuMEb5gj3MQjsMsD4rdSttmc0cAiuzYYxKbKmLE/aAYrgg9
-GjRXqzIjN3iTzMfrXg8pQkfqkfCJAuukqXtjJivhoBGnHnQag98NCxwx6IQoM16N
-mYJE9N4WPhXsyk1ap7hPPHvG7erYbI5cDNm5A5SbnZgiu/MtMCEWLhocz80h9JQx
-oSfapSkFRLVzLMpGshJTwdAf6dCs54ktrA5Sf4wFZxgf0FXRGWsGwrMsyPcBoK8=
-=//Xp
+iQEcBAEBAgAGBQJMju9ZAAoJEDMEi1NhKgbsE7cIAJMOWJzwzVO+9YUb4YJ/W9Y1
+gfYxCGw+xrd2J82bEl1LPl8P2+jzJEnU4MqOK58sWXnpJOdzju1Qpa19VngbVdDi
+r+NK1ERNHTWoa6ccnZVCfg9lGiMl8d39wo9X0uSgqSAU86kOFje5dd7li3ITrPZp
+A1rLQCD8/99RE7IW9TqPr8q2bz5sPzTbKzspuJ1to4xxQqLINN91nEi8lNJfMUtF
+PpmEd18zy9zRwlHtouUdKUQYz/H0N7PyOAk+FMnnPUY9gGjRkdFp4sSbYfBVGt9L
+gdMzip86D6khSG0pZqkDlEU7wyNGitv4kgtEcMgKG4KQBZGvRzpAUk7HaCo3nHY=
+=8gn8
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__14_Sep_2010_12_54_31_+1000_iF8kh3ztcdZ5Yis.--
+--Signature=_Tue__14_Sep_2010_13_43_21_+1000_sqzy2DRlrV4ktv2u--
