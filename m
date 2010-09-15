@@ -1,94 +1,32 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the bkl-vfs tree with the nilfs2 tree
-Date: Wed, 15 Sep 2010 14:01:14 +1000
-Message-ID: <20100915140114.81406c4f.sfr@canb.auug.org.au>
+From: Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
+Subject: Re: linux-next: manual merge of the bkl-vfs tree with the nilfs2
+ tree
+Date: Wed, 15 Sep 2010 13:16:28 +0900 (JST)
+Message-ID: <20100915.131628.69479307.ryusuke@osrg.net>
+References: <20100915140114.81406c4f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20100915140114.81406c4f.sfr@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Blunck <jblunck@infradead.org>, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
+To: sfr@canb.auug.org.au
+Cc: arnd@arndb.de, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, jblunck@infradead.org, konishi.ryusuke@lab.ntt.co.jp
 List-Id: linux-next.vger.kernel.org
 
-Hi Arnd,
+On Wed, 15 Sep 2010 14:01:14 +1000, Stephen Rothwell wrote:
+> Hi Arnd,
+> 
+> Today's linux-next merge of the bkl-vfs tree got a conflict in
+> fs/nilfs2/super.c between commit 38999dca4fdc4a0d1b92a540bc0772a32b07388a
+> ("nilfs2: do not allocate multiple super block instances for a device")
+> from the nilfs2 tree and commit 3fec873dc6e9026d98e2359202fa50fd06ee7b64
+> ("BKL: Remove BKL from NILFS2") from the bkl-vfs tree.
+> 
+> I fixed it up (I think - see below) and can carry the fix as necessary.
 
-Today's linux-next merge of the bkl-vfs tree got a conflict in
-fs/nilfs2/super.c between commit 38999dca4fdc4a0d1b92a540bc0772a32b07388a
-("nilfs2: do not allocate multiple super block instances for a device")
-from the nilfs2 tree and commit 3fec873dc6e9026d98e2359202fa50fd06ee7b64
-("BKL: Remove BKL from NILFS2") from the bkl-vfs tree.
+The fix looks fine to me.
 
-I fixed it up (I think - see below) and can carry the fix as necessary.
+Thanks!
 
-P.S. Arndt, the first of the above bkl/vfs commits does not have a SOB
-line from you and has a bug (missing open brace) that is fixed in the
-second.  Just in case you decide to rebase this branch at any point ...
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc fs/nilfs2/super.c
-index 3a78f6c,9f4913f..0000000
---- a/fs/nilfs2/super.c
-+++ b/fs/nilfs2/super.c
-@@@ -345,17 -348,16 +342,15 @@@ static void nilfs_put_super(struct supe
-  		nilfs_cleanup_super(sbi);
-  		up_write(&nilfs->ns_sem);
-  	}
- -	down_write(&nilfs->ns_super_sem);
- -	if (nilfs->ns_current == sbi)
- -		nilfs->ns_current = NULL;
- -	up_write(&nilfs->ns_super_sem);
-  
- -	nilfs_detach_checkpoint(sbi);
- -	put_nilfs(sbi->s_nilfs);
- +	iput(nilfs->ns_sufile);
- +	iput(nilfs->ns_cpfile);
- +	iput(nilfs->ns_dat);
- +
- +	destroy_nilfs(nilfs);
-  	sbi->s_super = NULL;
-  	sb->s_fs_info = NULL;
- -	nilfs_put_sbinfo(sbi);
- +	kfree(sbi);
-- 
-- 	unlock_kernel();
-  }
-  
-  static int nilfs_sync_fs(struct super_block *sb, int wait)
-@@@ -970,12 -942,13 +965,10 @@@ static int nilfs_remount(struct super_b
-  	struct the_nilfs *nilfs = sbi->s_nilfs;
-  	unsigned long old_sb_flags;
-  	struct nilfs_mount_options old_opts;
- -	int was_snapshot, err;
- +	int err;
-  
-- 	lock_kernel();
-- 
- -	down_write(&nilfs->ns_super_sem);
-  	old_sb_flags = sb->s_flags;
-  	old_opts.mount_opt = sbi->s_mount_opt;
- -	old_opts.snapshot_cno = sbi->s_snapshot_cno;
- -	was_snapshot = nilfs_test_opt(sbi, SNAPSHOT);
-  
-  	if (!parse_options(data, sb, 1)) {
-  		err = -EINVAL;
-@@@ -1040,13 -1016,14 +1033,11 @@@
-  		up_write(&nilfs->ns_sem);
-  	}
-   out:
-- 	unlock_kernel();
- -	up_write(&nilfs->ns_super_sem);
-  	return 0;
-  
-   restore_opts:
-  	sb->s_flags = old_sb_flags;
-  	sbi->s_mount_opt = old_opts.mount_opt;
-- 	unlock_kernel();
- -	sbi->s_snapshot_cno = old_opts.snapshot_cno;
- -	up_write(&nilfs->ns_super_sem);
-  	return err;
-  }
-  
+Ryusuke Konishi
