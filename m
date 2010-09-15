@@ -1,38 +1,149 @@
-From: Yinghai Lu <yinghai@kernel.org>
-Subject: Re: linux-next: build warnings after merge of the final tree (tip
-	treee related)
-Date: Tue, 14 Sep 2010 18:33:34 -0700
-Message-ID: <4C90226E.4050306@kernel.org>
-References: <20100913132721.5a02cfbc.sfr@canb.auug.org.au>	<4C8DA517.9000603@kernel.org>	<20100913143942.7344ada4.sfr@canb.auug.org.au>	<4C8DDFB4.1020508@kernel.org>	<20100914145025.977ec2a6.sfr@canb.auug.org.au>	<4C8FFE76.8070801@kernel.org>
-	<20100915102930.5e4d59cb.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the sound-asoc tree with the genesis
+ tree
+Date: Wed, 15 Sep 2010 12:11:28 +1000
+Message-ID: <20100915121128.d8fbc4bb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <20100915102930.5e4d59cb.sfr@canb.auug.org.au>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
-	<mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Sender: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, ppc-dev <linuxppc-dev@lists.ozlabs.org>, Thomas Gleixner <tglx@linutronix.de>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:60941 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752066Ab0IOCLg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 14 Sep 2010 22:11:36 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Paul Mundt <lethal@linux-sh.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-On 09/14/2010 05:29 PM, Stephen Rothwell wrote:
-> Hi Yinghai,
-> 
-> On Tue, 14 Sep 2010 16:00:06 -0700 Yinghai Lu <yinghai@kernel.org> wrote:
->>
->> Also, we may need to remove all extern and __init and __initdata etc in .h files.
-> 
-> Do not remove the "extern" key word.
-> 
+Hi all,
 
-why? you got another warning?
+Today's linux-next merge of the sound-asoc tree got a conflict in
+drivers/video/sh_mobile_hdmi.c between commit
+6de9edd5bde0cdfea12e9948690e53ec669c3018 ("fbdev: sh_mobile_hdmi:
+implement locking") from the genesis tree and commits
+1d6be338c11ddc1e58915ab85e19b0f6cbc10782 ("ASoC: Add sh_mobile_hdmi sound
+support") and ec4e5ccd4b8be576f9cd8bfc3cb8651565ed87ef ("fbdev:
+sh_mobile_hdmi: add new label for sound error path") from the sound-asoc
+tree.
 
-Yinghai
+I fixed it up (I think - see below) and can carry the fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/video/sh_mobile_hdmi.c
+index 4d6ab86,ef989d9..0000000
+--- a/drivers/video/sh_mobile_hdmi.c
++++ b/drivers/video/sh_mobile_hdmi.c
+@@@ -227,8 -224,60 +229,60 @@@ static u8 hdmi_read(struct sh_hdmi *hdm
+  	return ioread8(hdmi->base + reg);
+  }
+  
++ /*
++  *	HDMI sound
++  */
++ static unsigned int sh_hdmi_snd_read(struct snd_soc_codec *codec,
++ 				     unsigned int reg)
++ {
++ 	struct sh_hdmi *hdmi = snd_soc_codec_get_drvdata(codec);
++ 
++ 	return hdmi_read(hdmi, reg);
++ }
++ 
++ static int sh_hdmi_snd_write(struct snd_soc_codec *codec,
++ 			     unsigned int reg,
++ 			     unsigned int value)
++ {
++ 	struct sh_hdmi *hdmi = snd_soc_codec_get_drvdata(codec);
++ 
++ 	hdmi_write(hdmi, value, reg);
++ 	return 0;
++ }
++ 
++ static struct snd_soc_dai_driver sh_hdmi_dai = {
++ 	.name = "sh_mobile_hdmi-hifi",
++ 	.playback = {
++ 		.stream_name = "Playback",
++ 		.channels_min = 2,
++ 		.channels_max = 8,
++ 		.rates = SNDRV_PCM_RATE_32000 | SNDRV_PCM_RATE_44100  |
++ 			 SNDRV_PCM_RATE_48000 | SNDRV_PCM_RATE_88200  |
++ 			 SNDRV_PCM_RATE_96000 | SNDRV_PCM_RATE_176400 |
++ 			 SNDRV_PCM_RATE_192000,
++ 		.formats = SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S24_LE,
++ 	},
++ };
++ 
++ static int sh_hdmi_snd_probe(struct snd_soc_codec *codec)
++ {
++ 	dev_info(codec->dev, "SH Mobile HDMI Audio Codec");
++ 
++ 	return 0;
++ }
++ 
++ static struct snd_soc_codec_driver soc_codec_dev_sh_hdmi = {
++ 	.probe		= sh_hdmi_snd_probe,
++ 	.read		= sh_hdmi_snd_read,
++ 	.write		= sh_hdmi_snd_write,
++ };
++ 
++ /*
++  *	HDMI video
++  */
++ 
+  /* External video parameter settings */
+ -static void hdmi_external_video_param(struct sh_hdmi *hdmi)
+ +static void sh_hdmi_external_video_param(struct sh_hdmi *hdmi)
+  {
+  	struct fb_var_screeninfo *var = &hdmi->var;
+  	u16 htotal, hblank, hdelay, vtotal, vblank, vdelay, voffset;
+@@@ -1041,7 -964,11 +1114,12 @@@ static int __init sh_hdmi_probe(struct 
+  		return -ENOMEM;
+  	}
+  
++ 	ret =  snd_soc_register_codec(&pdev->dev,
++ 			&soc_codec_dev_sh_hdmi, &sh_hdmi_dai, 1);
++ 	if (ret < 0)
++ 		goto esndreg;
++ 
+ +	mutex_init(&hdmi->mutex);
+  	hdmi->dev = &pdev->dev;
+  
+  	hdmi->hdmi_clk = clk_get(&pdev->dev, "ick");
+@@@ -1109,7 -1053,9 +1187,9 @@@ ereqreg
+  erate:
+  	clk_put(hdmi->hdmi_clk);
+  egetclk:
+ +	mutex_destroy(&hdmi->mutex);
++ 	snd_soc_unregister_codec(&pdev->dev);
++ esndreg:
+  	kfree(hdmi);
+  
+  	return ret;
+@@@ -1120,19 -1066,17 +1200,21 @@@ static int __exit sh_hdmi_remove(struc
+  	struct sh_mobile_hdmi_info *pdata = pdev->dev.platform_data;
+  	struct sh_hdmi *hdmi = platform_get_drvdata(pdev);
+  	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ +	struct sh_mobile_lcdc_board_cfg	*board_cfg = &pdata->lcd_chan->board_cfg;
+  	int irq = platform_get_irq(pdev, 0);
+  
++ 	snd_soc_unregister_codec(&pdev->dev);
++ 
+ -	pdata->lcd_chan->board_cfg.display_on = NULL;
+ -	pdata->lcd_chan->board_cfg.display_off = NULL;
+ -	pdata->lcd_chan->board_cfg.board_data = NULL;
+ +	board_cfg->display_on = NULL;
+ +	board_cfg->display_off = NULL;
+ +	board_cfg->board_data = NULL;
+ +	board_cfg->owner = NULL;
+  
+ +	/* No new work will be scheduled, wait for running ISR */
+  	free_irq(irq, hdmi);
+ -	pm_runtime_disable(&pdev->dev);
+ +	/* Wait for already scheduled work */
+  	cancel_delayed_work_sync(&hdmi->edid_work);
+ +	pm_runtime_disable(&pdev->dev);
+  	clk_disable(hdmi->hdmi_clk);
+  	clk_put(hdmi->hdmi_clk);
+  	iounmap(hdmi->base);
