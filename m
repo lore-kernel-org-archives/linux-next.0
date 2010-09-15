@@ -1,77 +1,35 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warnings after merge of the final tree (tip
- treee related)
-Date: Wed, 15 Sep 2010 15:00:47 +1000
-Message-ID: <20100915150047.42551e34.sfr@canb.auug.org.au>
-References: <20100913132721.5a02cfbc.sfr@canb.auug.org.au>
-	<4C8DA517.9000603@kernel.org>
-	<20100913143942.7344ada4.sfr@canb.auug.org.au>
-	<4C8DDFB4.1020508@kernel.org>
-	<20100914145025.977ec2a6.sfr@canb.auug.org.au>
-	<4C8FFE76.8070801@kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: manual merge of the bkl-vfs tree with the nilfs2 tree
+Date: Wed, 15 Sep 2010 10:48:43 +0200
+Message-ID: <201009151048.44071.arnd@arndb.de>
+References: <20100915140114.81406c4f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__15_Sep_2010_15_00_47_+1000_xgmT3c.opgJWyIY0"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43416 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751984Ab0IOFA7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 15 Sep 2010 01:00:59 -0400
-In-Reply-To: <4C8FFE76.8070801@kernel.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Yinghai Lu <yinghai@kernel.org>
-Cc: Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, ppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20100915140114.81406c4f.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Blunck <jblunck@infradead.org>, Ryusuke Konishi <konishi.ryusuke@lab.ntt.co.jp>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__15_Sep_2010_15_00_47_+1000_xgmT3c.opgJWyIY0
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wednesday 15 September 2010, Stephen Rothwell wrote:
+> Today's linux-next merge of the bkl-vfs tree got a conflict in
+> fs/nilfs2/super.c between commit 38999dca4fdc4a0d1b92a540bc0772a32b07388a
+> ("nilfs2: do not allocate multiple super block instances for a device")
+> from the nilfs2 tree and commit 3fec873dc6e9026d98e2359202fa50fd06ee7b64
+> ("BKL: Remove BKL from NILFS2") from the bkl-vfs tree.
+> 
+> I fixed it up (I think - see below) and can carry the fix as necessary.
 
-Hi Yinghai,
+Ok, thanks!
 
-On Tue, 14 Sep 2010 16:00:06 -0700 Yinghai Lu <yinghai@kernel.org> wrote:
->
-> Also, we may need to remove all extern and __init and __initdata etc in .=
-h files.
->=20
-> please check
->=20
-> [PATCH -v3] memblock: Fix section mismatch warning
->=20
-> Use __init_memblock to replace __init, and remove __init in memblock.h
->=20
-> -v2: more with memblock_is_meory()
-> -v3: remove __init for function declaring in memblock.h. Pointed out by S=
-tephen.
->=20
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Yinghai Lu <Yinghai@kernel.org>
+> P.S. Arndt, the first of the above bkl/vfs commits does not have a SOB
+> line from you and has a bug (missing open brace) that is fixed in the
+> second.  Just in case you decide to rebase this branch at any point ...
 
-This version fixes all the warnings for me.  So if you put the "extern"s
-back, you can add:
+I'm still rebasing all the branches while people take patches into their
+own trees, so I'll fix this up soon. Thanks for the info.
 
-Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__15_Sep_2010_15_00_47_+1000_xgmT3c.opgJWyIY0
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMkFL/AAoJEDMEi1NhKgbsNGEH/0VnmhtHHiMEe8RzQC3K0zVK
-CeeXGB7GAkaz3j24J+m2UNg6ru4iYLQkrQXy6B4ROAMbFdbYCTDhruuSAaVERpdX
-jxqjDmeBfOVxuMbnmSmWP1p2x83L2d07tXraanLJXfyZmZlWurKFkByo5buo4nj3
-KYumbBLJEZfRPWVd5x7L9BNsVOFw55IB6vHInDBV/+HAfCyq3QDcgIrTyqbLRcsC
-yO3SzvJjjItvkI0ws6ky816MFm29y8/xEcNGfCD8cVYago06vem1XSPPOr+VV2g1
-c9A2kl9RJOhNmgP2vkOcf320bXHn8XK4fqMh+ACRkuTv/QT8A0Nuv0M8E/FatvE=
-=Gl3f
------END PGP SIGNATURE-----
-
---Signature=_Wed__15_Sep_2010_15_00_47_+1000_xgmT3c.opgJWyIY0--
+	Arnd
