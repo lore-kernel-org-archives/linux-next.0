@@ -1,61 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warnings after merge of the final tree (tip
- treee related)
-Date: Wed, 15 Sep 2010 10:29:30 +1000
-Message-ID: <20100915102930.5e4d59cb.sfr@canb.auug.org.au>
-References: <20100913132721.5a02cfbc.sfr@canb.auug.org.au>
-	<4C8DA517.9000603@kernel.org>
-	<20100913143942.7344ada4.sfr@canb.auug.org.au>
-	<4C8DDFB4.1020508@kernel.org>
-	<20100914145025.977ec2a6.sfr@canb.auug.org.au>
-	<4C8FFE76.8070801@kernel.org>
+Subject: linux-next: fetch of md tree failed
+Date: Wed, 15 Sep 2010 10:42:32 +1000
+Message-ID: <20100915104232.98b38ced.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__15_Sep_2010_10_29_30_+1000__P6bUE0_GA63Zk5."
+ boundary="Signature=_Wed__15_Sep_2010_10_42_32_+1000_yH_RTyNQliP4b5kE"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51300 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:55109 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751615Ab0IOA3k (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 14 Sep 2010 20:29:40 -0400
-In-Reply-To: <4C8FFE76.8070801@kernel.org>
+	id S1751739Ab0IOAmi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 14 Sep 2010 20:42:38 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Yinghai Lu <yinghai@kernel.org>
-Cc: Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, ppc-dev <linuxppc-dev@lists.ozlabs.org>
+To: Neil Brown <neilb@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Wed__15_Sep_2010_10_29_30_+1000__P6bUE0_GA63Zk5.
+--Signature=_Wed__15_Sep_2010_10_42_32_+1000_yH_RTyNQliP4b5kE
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Yinghai,
+Hi Neil,
 
-On Tue, 14 Sep 2010 16:00:06 -0700 Yinghai Lu <yinghai@kernel.org> wrote:
->
-> Also, we may need to remove all extern and __init and __initdata etc in .=
-h files.
+Fetching the md tree for the past couple of days has produced this error:
 
-Do not remove the "extern" key word.
+fatal: The remote end hung up unexpectedly
 
+Just so that you know ...
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__15_Sep_2010_10_29_30_+1000__P6bUE0_GA63Zk5.
+--Signature=_Wed__15_Sep_2010_10_42_32_+1000_yH_RTyNQliP4b5kE
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMkBNqAAoJEDMEi1NhKgbsjU8H/jWyF3dOSE6wfc4GmC8PNtzz
-BiYYJbqj1Kxmdja37pfcKSA0HK45kVktwSwjMoPi/nuSTuI3V6rzBAChIA+/Lo0I
-gGMPJpYu4H4I3vRbSMLcBjQjvliUURag2yNvlDOqFss7ybCjPMBqMxuOXnteibQk
-ihc2SvZcUTEJbgP1ulVBjaNBxkjkum153+bL8QYdBIbwCcLWTcQsls00tixkSZYC
-QnkQ3cU6Z/p7oCNr3bBW06x1srSdmvFkyFpULpXn+KM4yjnecBZBa0wuR6YOoBgc
-9qEZ/equOeukk2BzfS9sjHKy+sIVlQuHfLGiQ6SliLj37gnZaPRt5BHWH5HuPfw=
-=lKb4
+iQEcBAEBAgAGBQJMkBZ4AAoJEDMEi1NhKgbsyFwH/imVo8XZHJwvs9e4R0+eXD/k
+OZL6oACgy+Ys88veXClE3B0KFryPVNdCao1VCFIfiyG4keCWeW60eYOwJDIWDN5d
+AVdXLWCu2IReFZsaihsjQDnsDLHT6VpwKrOPyym84e8R3rHrg4xW/5yWPnie1m6u
+e2UaAh85DcYJKKV8ID9rCUaBp3+8tsJef583g7DUXsajGoVIUT1i2BSp0NuD0mGH
+hsh47ULVwlwM0AzkrWdj7zSwuf07JUx/3SjPNQgYs6W5yTFUdyHOE50FoKnU+Pxd
+Vwq+/ZZxhqzo3VB/y+BwroBNjehYCbYGu0AIDFQ+tkqo8qXoWQlWhSAWkQ0LSAA=
+=DwTI
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__15_Sep_2010_10_29_30_+1000__P6bUE0_GA63Zk5.--
+--Signature=_Wed__15_Sep_2010_10_42_32_+1000_yH_RTyNQliP4b5kE--
