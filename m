@@ -1,58 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the block tree
-Date: Thu, 16 Sep 2010 13:30:05 +1000
-Message-ID: <20100916133005.56baad7e.sfr@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__16_Sep_2010_13_30_05_+1000_sBzu4CN3R9s/K__Z"
+From: Namhyung Kim <namhyung@gmail.com>
+Subject: [PATCH] block: fix an warning of calling blk_rq_aligned()
+Date: Thu, 16 Sep 2010 12:55:57 +0900
+Message-ID: <1284609357-3076-1-git-send-email-namhyung@gmail.com>
+References: <20100916133005.56baad7e.sfr@canb.auug.org.au>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34343 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751748Ab0IPDaN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 15 Sep 2010 23:30:13 -0400
+Received: from mail-pw0-f46.google.com ([209.85.160.46]:54609 "EHLO
+	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752386Ab0IPD4K (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 15 Sep 2010 23:56:10 -0400
+In-Reply-To: <20100916133005.56baad7e.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Namhyung Kim <namhyung@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Thu__16_Sep_2010_13_30_05_+1000_sBzu4CN3R9s/K__Z
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+2nd argument of blk_rq_aligned() has changed to 'unsigned long' by
+previous commit 'block: fix an address space warning in blk-map.c'.
+According to that change, its caller has to be modified. This also
+removes address space warnings from sparse.
 
-Hi Jens,
+Signed-off-by: Namhyung Kim <namhyung@gmail.com>
+---
+ drivers/scsi/sg.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-After merging the block tree, today's linux-next build (powerpc
-ppc64_defconfig) produced this warning:
-
-drivers/scsi/sg.c: In function 'sg_start_req':
-drivers/scsi/sg.c:1660: warning: passing argument 2 of 'blk_rq_aligned' mak=
-es integer from pointer without a cast
-include/linux/blkdev.h:1045: note: expected 'long unsigned int' but argumen=
-t is of type 'void *'
-
-Introduced by commit 144177991ca624841ddbd1e7edff958fc0f6d1fe ("block:
-fix an address space warning in blk-map.c").
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__16_Sep_2010_13_30_05_+1000_sBzu4CN3R9s/K__Z
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMkY89AAoJEDMEi1NhKgbsQpgIAI+WlfLXjOhAy5KXkIoTeyI7
-/cZTYRyqHHwgg0+UO3tcnKnNoNYQR8Lz1rPwV9uLgPEcJIDpnMaAixzT8iUYEJ2i
-wYeU4ewsjLIN+xwDVH3XKJkIO6z54b/ZeRHZJnAc1PGFfKyqq4rh0ooxNJbCDxUf
-GAm+2oV4PtdcrmHOrUy74pRK2eSD8fD1OnApFFUT8XynaIDnVUwh5zcT9L1A9ZPq
-df0+exfh2ttBOhNQrXIRSHbD7R8rv2gI5ZUfhPRHMAtfF81rd7FO51lLB9XbWXEo
-+3fQXKOEb8IvOrQ2rcyTB00iPcwhaB9sIkT7P/JQ81CG15zXy1ah2caGuS3ecwo=
-=DfEM
------END PGP SIGNATURE-----
-
---Signature=_Thu__16_Sep_2010_13_30_05_+1000_sBzu4CN3R9s/K__Z--
+diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
+index 78d6163..655ab92 100644
+--- a/drivers/scsi/sg.c
++++ b/drivers/scsi/sg.c
+@@ -1657,7 +1657,7 @@ static int sg_start_req(Sg_request *srp, unsigned char *cmd)
+ 	if (sg_allow_dio && hp->flags & SG_FLAG_DIRECT_IO &&
+ 	    dxfer_dir != SG_DXFER_UNKNOWN && !iov_count &&
+ 	    !sfp->parentdp->device->host->unchecked_isa_dma &&
+-	    blk_rq_aligned(q, hp->dxferp, dxfer_len))
++	    blk_rq_aligned(q, (unsigned long)hp->dxferp, dxfer_len))
+ 		md = NULL;
+ 	else
+ 		md = &map_data;
+-- 
+1.7.2.2
