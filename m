@@ -1,23 +1,28 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the block tree with Linus' tree
-Date: Thu, 16 Sep 2010 12:04:49 +1000
-Message-ID: <20100916120449.3d4f2c5f.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the pcmcia tree with the net tree
+Date: Thu, 16 Sep 2010 12:31:44 +1000
+Message-ID: <20100916123144.d34aa46f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>, Tejun Heo <tj@kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:55905 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752350Ab0IPCbt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 15 Sep 2010 22:31:49 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
 
-Hi Jens,
+Hi Dominik,
 
-Today's linux-next merge of the block tree got a conflict in
-block/blk-core.c between commit 5e00d1b5b4c10fb839afd5ce61db8e24339454b0
-("BLOCK: fix bio.bi_rw handling") from Linus' tree (v2.6.36-rc4) and
-commit 28e7d1845216538303bb95d679d8fd4de50e2f1a ("block: drop barrier
-ordering by queue draining") from the block tree.
+Today's linux-next merge of the pcmcia tree got a conflict in
+drivers/net/pcmcia/smc91c92_cs.c between commit
+636b8116d4e116eca1ac978f546b16fadfc15a6c ("drivers/net/pcmcia: Use
+pr_<level> and netdev_<level>") from the net tree and commit
+ba0ff6e64dab1a2492d88fdcc40b4eddabd8b451 ("pcmcia: split up
+modify_configuration() into two fixup functions") from the pcmcia tree.
 
 Just context changes.  I fixed it up (see below) and can carry the fix as
 necessary.
@@ -25,28 +30,23 @@ necessary.
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc block/blk-core.c
-index 32a1c12,4df8e84..0000000
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@@ -1198,13 -1182,15 +1182,15 @@@ static int __make_request(struct reques
-  	int el_ret;
-  	unsigned int bytes = bio->bi_size;
-  	const unsigned short prio = bio_prio(bio);
- -	const bool sync = (bio->bi_rw & REQ_SYNC);
- -	const bool unplug = (bio->bi_rw & REQ_UNPLUG);
- -	const unsigned int ff = bio->bi_rw & REQ_FAILFAST_MASK;
- +	const bool sync = !!(bio->bi_rw & REQ_SYNC);
- +	const bool unplug = !!(bio->bi_rw & REQ_UNPLUG);
- +	const unsigned long ff = bio->bi_rw & REQ_FAILFAST_MASK;
-+ 	int where = ELEVATOR_INSERT_SORT;
-  	int rw_flags;
+diff --cc drivers/net/pcmcia/smc91c92_cs.c
+index 3d1c549,0af2fc8..0000000
+--- a/drivers/net/pcmcia/smc91c92_cs.c
++++ b/drivers/net/pcmcia/smc91c92_cs.c
+@@@ -819,13 -792,10 +794,10 @@@ static int check_sig(struct pcmcia_devi
+      }
   
-- 	if ((bio->bi_rw & REQ_HARDBARRIER) &&
-- 	    (q->next_ordered == QUEUE_ORDERED_NONE)) {
-+ 	/* REQ_HARDBARRIER is no more */
-+ 	if (WARN_ONCE(bio->bi_rw & REQ_HARDBARRIER,
-+ 		"block: HARDBARRIER is deprecated, use FLUSH/FUA instead\n")) {
-  		bio_endio(bio, -EOPNOTSUPP);
-  		return 0;
-  	}
+      if (width) {
+- 	    modconf_t mod = {
+- 		    .Attributes = CONF_IO_CHANGE_WIDTH,
+- 	    };
+ -	    printk(KERN_INFO "smc91c92_cs: using 8-bit IO window.\n");
+ +	    pr_info("using 8-bit IO window\n");
+  
+  	    smc91c92_suspend(link);
+- 	    pcmcia_modify_configuration(link, &mod);
++ 	    pcmcia_fixup_iowidth(link);
+  	    smc91c92_resume(link);
+  	    return check_sig(link);
+      }
