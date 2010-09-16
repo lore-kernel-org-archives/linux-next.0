@@ -1,56 +1,57 @@
-From: Amit Shah <amit.shah@redhat.com>
-Subject: Re: linux-next: manual merge of the bkl-llseek tree with the rr tree
-Date: Thu, 16 Sep 2010 12:24:39 +0530
-Message-ID: <20100916065438.GE2429@amit-laptop.redhat.com>
-References: <20100915132646.4aef58f8.sfr@canb.auug.org.au>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: linux-next: build failure after merge of the final tree (tip
+	tree related)
+Date: Thu, 16 Sep 2010 08:08:35 +0100
+Message-ID: <20100916070835.GB19994@n2100.arm.linux.org.uk>
+References: <20100914002932.850d02f3.sfr@canb.auug.org.au> <20100916163218.e09be473.sfr@canb.auug.org.au> <20100916063922.GA17596@elte.hu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:45956 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752331Ab0IPGyw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 16 Sep 2010 02:54:52 -0400
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:49137 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752408Ab0IPHJ1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Sep 2010 03:09:27 -0400
 Content-Disposition: inline
-In-Reply-To: <20100915132646.4aef58f8.sfr@canb.auug.org.au>
+In-Reply-To: <20100916063922.GA17596@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Yinghai Lu <yinghai@kernel.org>
 
-On (Wed) Sep 15 2010 [13:26:46], Stephen Rothwell wrote:
-> Hi Arnd,
+On Thu, Sep 16, 2010 at 08:39:22AM +0200, Ingo Molnar wrote:
 > 
-> Today's linux-next merge of the bkl-llseek tree got a conflict in
-> drivers/char/virtio_console.c between commit
-> a0e1acd65fa6c2da3b039a67ac30cc3b73466c37 ("virtio: console: Send SIGIO to
-> processes that request it for host events") from the rr tree and commit
-> 7f09912dd2169ca9ce56c5e3428c7b4c5e92e727 ("llseek: automatically
-> add .llseek fop") from the bkl-llseek tree.
+> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > 
-> Just context changes.  I fixed it up (see below) and can carry the fix as
-> necessary.
+> > Hi all,
+> > 
+> > On Tue, 14 Sep 2010 00:29:32 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > >
+> > > After merging the final tree, today's linux-next build (arm
+> > > assabet_defconfig and serveral other arm configs) failed like this:
+> > > 
+> > > arch/arm/mm/init.c: In function 'arm_memory_present':
+> > > arch/arm/mm/init.c:260: warning: ISO C90 forbids mixed declarations and code
+> > > arch/arm/mm/init.c:338: error: invalid storage class for function 'free_area'
+> > > arch/arm/mm/init.c:357: error: invalid storage class for function 'free_memmap'
+> > > arch/arm/mm/init.c:386: error: invalid storage class for function 'free_unused_memmap'
+> > > arch/arm/mm/init.c:601: error: invalid storage class for function 'keepinitrd_setup'
+> > > arch/arm/mm/init.c:606: error: initializer element is not constant
+> > > arch/arm/mm/init.c:606: error: (near initialization for '__setup_keepinitrd_setup.setup_func')
+> > > arch/arm/mm/init.c:606: error: expected declaration or statement at end of input
+> > > arch/arm/mm/init.c:252: warning: unused variable 'i'
+> > > 
+> > > Caused by commit 719c1514f2fef5f01fcfa2bba81b7bb079c7c6a1 ("memblock/arm:
+> > > Use new accessors") which forgot a closing brace on a new
+> > > for_each_memblock() in arm_memory_present().
+> > 
+> > So this commit is back in tip and the error is back in the builds ...
+> 
+> The ARM defconfig build doesnt fail here:
+> 
+>   WARNING: modpost: Found 5 section mismatch(es).
+>   To see full details build your kernel with:
+>   'make CONFIG_DEBUG_SECTION_MISMATCH=y'
 
-Thanks, this looks correct.
-
-Arnd, the device is supposed to be non-seekable so I'll add a
-nonseekable_open() to the open() call.
-
-So I guess the llseek operation should ne no_llseek instead of
-noop_llseek.  Will you change that in your patchset?  Should I do that
-in the patch I'll queue up?
-
-> diff --cc drivers/char/virtio_console.c
-> index f7adfd3,524907b..0000000
-> --- a/drivers/char/virtio_console.c
-> +++ b/drivers/char/virtio_console.c
-> @@@ -824,7 -728,7 +824,8 @@@ static const struct file_operations por
->   	.write = port_fops_write,
->   	.poll  = port_fops_poll,
->   	.release = port_fops_release,
->  +	.fasync = port_fops_fasync,
-> + 	.llseek = noop_llseek,/* read and write both use no f_pos */
->   };
->   
->   /*
-
-		Amit
+It probably passes because that configuration doesn't result in the
+failing code being built (maybe the failing code is only used for
+sparsemem ?)
