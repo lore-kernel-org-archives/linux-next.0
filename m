@@ -1,71 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the mfd tree
-Date: Thu, 16 Sep 2010 12:54:47 +1000
-Message-ID: <20100916125447.08698025.sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the block tree
+Date: Thu, 16 Sep 2010 13:30:05 +1000
+Message-ID: <20100916133005.56baad7e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__16_Sep_2010_12_54_47_+1000_F3Yw+7I8PVteBaEE"
+ boundary="Signature=_Thu__16_Sep_2010_13_30_05_+1000_sBzu4CN3R9s/K__Z"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44025 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34343 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752421Ab0IPCyy (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 15 Sep 2010 22:54:54 -0400
+	id S1751748Ab0IPDaN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 15 Sep 2010 23:30:13 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gary King <gking@nvidia.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Namhyung Kim <namhyung@gmail.com>
 
---Signature=_Thu__16_Sep_2010_12_54_47_+1000_F3Yw+7I8PVteBaEE
+--Signature=_Thu__16_Sep_2010_13_30_05_+1000_sBzu4CN3R9s/K__Z
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Samuel,
+Hi Jens,
 
-After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+After merging the block tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
 
-drivers/built-in.o: In function `__tps6586x_read':
-tps6586x.c:(.text+0xe4151): undefined reference to `i2c_smbus_read_byte_dat=
-a'
-drivers/built-in.o: In function `__tps6586x_write':
-tps6586x.c:(.text+0xe4345): undefined reference to `i2c_smbus_write_byte_da=
-ta'
-drivers/built-in.o: In function `tps6586x_reads':
-(.text+0xe4762): undefined reference to `i2c_smbus_read_i2c_block_data'
-drivers/built-in.o: In function `tps6586x_writes':
-(.text+0xe4894): undefined reference to `i2c_smbus_write_i2c_block_data'
-drivers/built-in.o: In function `tps6586x_init':
-tps6586x.c:(.init.text+0xc511): undefined reference to `i2c_register_driver'
-drivers/built-in.o: In function `tps6586x_i2c_probe':
-tps6586x.c:(.devinit.text+0x4ae6): undefined reference to `i2c_smbus_read_b=
-yte_data'
-drivers/built-in.o: In function `tps6586x_exit':
-tps6586x.c:(.exit.text+0x574): undefined reference to `i2c_del_driver'
+drivers/scsi/sg.c: In function 'sg_start_req':
+drivers/scsi/sg.c:1660: warning: passing argument 2 of 'blk_rq_aligned' mak=
+es integer from pointer without a cast
+include/linux/blkdev.h:1045: note: expected 'long unsigned int' but argumen=
+t is of type 'void *'
 
-Caused by commit 2d0a9a6d922712267ef62a5e8b38ed2b37cf45cc ("mfd: Add
-basic tps6586x interrupt support").  Presumably a missing dependency.
+Introduced by commit 144177991ca624841ddbd1e7edff958fc0f6d1fe ("block:
+fix an address space warning in blk-map.c").
 
-I have used the mfd tree from next-20100915 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__16_Sep_2010_12_54_47_+1000_F3Yw+7I8PVteBaEE
+--Signature=_Thu__16_Sep_2010_13_30_05_+1000_sBzu4CN3R9s/K__Z
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMkYb3AAoJEDMEi1NhKgbsN3oH/AyrGavm4a1WJIRGM2ddlyjs
-e56TF3x3o8fb4mJaC2ZHWWQcJpRZvse1LwytC/eMbtnBoWPKYevZ/Pxb4VFvFv7R
-mw6A1UXlfmJjdv7EvUs8b1RpchkF2Jwmn6HrRtex/IeepmKPffLZdoKOCrxU967B
-uCfXlj+DVZXfS1m57U9e3NryRml+Q/Je2JF4eL3zF6GYpPEoZq1t3nvqdeWlkyTx
-5IIRzuVPygI9hF7TTgQ6BNWImTr3wXqirRDDVBsQMUuI5vyfLN4rOL8tHO2DVFJQ
-ZuFKiVt93k7IC+dl322bJg1wwoPpWSXd9zYq706T7u7+6GA1+i68fnqFgIir3tM=
-=bLLT
+iQEcBAEBAgAGBQJMkY89AAoJEDMEi1NhKgbsQpgIAI+WlfLXjOhAy5KXkIoTeyI7
+/cZTYRyqHHwgg0+UO3tcnKnNoNYQR8Lz1rPwV9uLgPEcJIDpnMaAixzT8iUYEJ2i
+wYeU4ewsjLIN+xwDVH3XKJkIO6z54b/ZeRHZJnAc1PGFfKyqq4rh0ooxNJbCDxUf
+GAm+2oV4PtdcrmHOrUy74pRK2eSD8fD1OnApFFUT8XynaIDnVUwh5zcT9L1A9ZPq
+df0+exfh2ttBOhNQrXIRSHbD7R8rv2gI5ZUfhPRHMAtfF81rd7FO51lLB9XbWXEo
++3fQXKOEb8IvOrQ2rcyTB00iPcwhaB9sIkT7P/JQ81CG15zXy1ah2caGuS3ecwo=
+=DfEM
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__16_Sep_2010_12_54_47_+1000_F3Yw+7I8PVteBaEE--
+--Signature=_Thu__16_Sep_2010_13_30_05_+1000_sBzu4CN3R9s/K__Z--
