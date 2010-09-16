@@ -1,63 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the irqflags tree
-Date: Thu, 16 Sep 2010 14:52:43 +1000
-Message-ID: <20100916145243.6656cfba.sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the final tree (block tree
+ related)
+Date: Thu, 16 Sep 2010 15:01:01 +1000
+Message-ID: <20100916150101.3ced35b9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__16_Sep_2010_14_52_43_+1000_Lq7gl2ZvcBDgs9Uy"
+ boundary="Signature=_Thu__16_Sep_2010_15_01_01_+1000_kBBxxzXA5TDwxZOO"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56280 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:55441 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751957Ab0IPEwt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 16 Sep 2010 00:52:49 -0400
+	id S1752079Ab0IPFBH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 16 Sep 2010 01:01:07 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Will Drewry <wad@chromium.org>
 
---Signature=_Thu__16_Sep_2010_14_52_43_+1000_Lq7gl2ZvcBDgs9Uy
+--Signature=_Thu__16_Sep_2010_15_01_01_+1000_kBBxxzXA5TDwxZOO
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi David,
+Hi Jens,
 
-After merging the irqflags tree, today's linux-next build (x86_64 allmodcon=
-fig)
-failed like this:
+After merging the final tree, today's linux-next build (powerpc
+allnoconfig with CONFIG_DEBUG_SECTION_MISMATCH=3Dy) produced this warning:
 
-arch/x86/xen/spinlock.c: In function 'xen_spin_lock_slow':
-arch/x86/xen/spinlock.c:227: error: implicit declaration of function '__raw=
-_local_save_flags'
+WARNING: init/mounts.o(.text+0x21a): Section mismatch in reference from the=
+ function name_to_dev_t() to the function .init.text:match_dev_by_uuid()
+The function name_to_dev_t() references
+the function __init match_dev_by_uuid().
+This is often because name_to_dev_t lacks a __init=20
+annotation or the annotation of match_dev_by_uuid is wrong.
 
-Caused by bd7712423fe88b35e4e107a820589406db26a72a ("Fix IRQ flag
-handling naming").
+Introduced by commit b5af921ec02333e943efb59aca4f56b78fc0e100 ("init: add
+support for root devices specified by partition UUID").
 
-I am impressed ... 3 Signed-off-by's, 1 Tested-by, 13 Acked-by's, 2
-Reviewed-by's and still an x86_64 allmodconfig build fails.  :-)
-[Sorry, I couldn't resist and, yes, I do realise that this patch covers
-many architectures and that this statistic is irrelevant]
-
-I have dropped the irqflags tree for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__16_Sep_2010_14_52_43_+1000_Lq7gl2ZvcBDgs9Uy
+--Signature=_Thu__16_Sep_2010_15_01_01_+1000_kBBxxzXA5TDwxZOO
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMkaKbAAoJEDMEi1NhKgbsOAoH/jlXrSU+YjWwIYe999xlRFEI
-X1AyT7jljzEWQjt0fctMFepDwuLtxwajiqzviUfFOrU3Ob609Gu2aHVWG+g/Xe8G
-C5Q9yDV2VO+akuEI9bMMdKAgvQXC3skq0aymjRpGyWSWFMGtbV9NdcwQojUCLeSb
-u3klNl1lf0M65RwpSUoHp5oII2EwaZQRYHarZZPq1FrPAkM6kE5PkpOGJwrSzvF8
-OC5M3F9IaXN2obMXDJajTkfO5u3lL2wAsSCvwgEXuGn1KyKlK9/egLnx49AzUGYJ
-02tcNP2kNMehx+KulZFUFKeaXs77+lDIpwqAett7glKsjBkNdbwwdo1cHgQ/U4o=
-=iZwN
+iQEcBAEBAgAGBQJMkaSNAAoJEDMEi1NhKgbsGBQIAJDf+ERJ9oAioJy+cYIiHPyy
+4jpKJk8dhCtWIicOGuj2tDOUm1/MMJQtKcJtYOG0fR31fnGXBDTPJiQgt9o3DM7q
+i1n5RBJ48ENDCRmsQKyR//To9BEfxrCewIyiD2MXlLTQFKshxex1AzZF+S10KTc4
+hUuglFgbKR6L3g16rXK6nYBFIGicxFlL5eP+thrgJPwGOkXw9D7iW0NsBGlZYkfe
+aRAglB7gt2pPoLjafEN513JUPOXNjiPbF5KmHqBRypgPihhwSFeDRrsu4x36bZwi
+eTCmb5QIaJMOVCSIEg6d15nNikcORvKb4fPycA49ZPRhJ65Q75SXkXaKuMjm0Qo=
+=woiW
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__16_Sep_2010_14_52_43_+1000_Lq7gl2ZvcBDgs9Uy--
+--Signature=_Thu__16_Sep_2010_15_01_01_+1000_kBBxxzXA5TDwxZOO--
