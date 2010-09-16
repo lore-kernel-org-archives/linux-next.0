@@ -1,65 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for September 16 (do_mounts.c)
-Date: Fri, 17 Sep 2010 07:31:26 +1000
-Message-ID: <20100917073126.f382c799.sfr@canb.auug.org.au>
-References: <20100916152805.c9f31656.sfr@canb.auug.org.au>
-	<20100916091125.f12cc17c.randy.dunlap@oracle.com>
+Subject: Re: FW: next build fails
+Date: Fri, 17 Sep 2010 07:52:42 +1000
+Message-ID: <20100917075242.e0bc4b54.sfr@canb.auug.org.au>
+References: <33A307AF30D7BF4F811B1568FE7A9B18043784FF99@EXDCVYMBSTM006.EQ1STM.local>
+	<20100916164442.df749cc1.sfr@canb.auug.org.au>
+	<1284656407.2411.5.camel@c-dwalke-linux.qualcomm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__17_Sep_2010_07_31_26_+1000_fcC0XdsVcFSNL=sZ"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53712 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35250 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752601Ab0IPVbf (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 16 Sep 2010 17:31:35 -0400
-In-Reply-To: <20100916091125.f12cc17c.randy.dunlap@oracle.com>
+	id S1754843Ab0IPVwq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 16 Sep 2010 17:52:46 -0400
+In-Reply-To: <1284656407.2411.5.camel@c-dwalke-linux.qualcomm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Randy Dunlap <randy.dunlap@oracle.com>, Will Drewry <wad@chromium.org>
+To: Daniel Walker <dwalker@fifo99.com>
+Cc: Sundar R IYER <sundar.iyer@stericsson.com>, Linus WALLEIJ <linus.walleij@stericsson.com>, Russell King <rmk@arm.linux.org.uk>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Fri__17_Sep_2010_07_31_26_+1000_fcC0XdsVcFSNL=sZ
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Daniel,
 
-On Thu, 16 Sep 2010 09:11:25 -0700 Randy Dunlap <randy.dunlap@oracle.com> w=
-rote:
+On Thu, 16 Sep 2010 10:00:07 -0700 Daniel Walker <dwalker@fifo99.com> wrote:
 >
-> When CONFIG_BLOCK is not enabled:
->=20
-> init/do_mounts.c:71: error: implicit declaration of function 'dev_to_part'
-> init/do_mounts.c:71: warning: initialization makes pointer from integer w=
-ithout a cast
-> init/do_mounts.c:73: error: dereferencing pointer to incomplete type
-> init/do_mounts.c:76: error: dereferencing pointer to incomplete type
-> init/do_mounts.c:76: error: dereferencing pointer to incomplete type
-> init/do_mounts.c:102: error: implicit declaration of function 'part_pack_=
-uuid'
-> init/do_mounts.c:104: error: 'block_class' undeclared (first use in this =
-function)
+> __v7_ca9mp_proc_info should just duplicate __v7_proc_info (the one below
+> it) ..
 
-Caused by commit b5af921ec02333e943efb59aca4f56b78fc0e100 ("init: add
-support for root devices specified by partition UUID") from the block tree.
---=20
+Do you mean this:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 17 Sep 2010 07:48:25 +1000
+Subject: [PATCH] ARM: fix build failure for legacy PMD_FLAGS
+
+[Updated with advice from Daniel Walker <dwalker@fifo99.com>: sfr]
+
+Acked-by: Linus Walleij <linus.walleij@stericsson.com>
+Signed-off-by: Sundar Iyer <sundar.iyer@stericsson.com>
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/arm/mm/proc-v7.S |   10 ++++++++--
+ 1 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/mm/proc-v7.S b/arch/arm/mm/proc-v7.S
+index 820f6ba..fc8828b 100644
+--- a/arch/arm/mm/proc-v7.S
++++ b/arch/arm/mm/proc-v7.S
+@@ -334,10 +334,16 @@ cpu_elf_name:
+ __v7_ca9mp_proc_info:
+ 	.long	0x410fc090		@ Required ID value
+ 	.long	0xff0ffff0		@ Mask for ID
+-	.long   PMD_TYPE_SECT | \
++	ALT_SMP(.long \
++		PMD_TYPE_SECT | \
+ 		PMD_SECT_AP_WRITE | \
+ 		PMD_SECT_AP_READ | \
+-		PMD_FLAGS
++		PMD_FLAGS_SMP)
++	ALT_UP(.long \
++		PMD_TYPE_SECT | \
++		PMD_SECT_AP_WRITE | \
++		PMD_SECT_AP_READ | \
++		PMD_FLAGS_UP)
+ 	.long   PMD_TYPE_SECT | \
+ 		PMD_SECT_XN | \
+ 		PMD_SECT_AP_WRITE | \
+-- 
+1.7.1
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__17_Sep_2010_07_31_26_+1000_fcC0XdsVcFSNL=sZ
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMkoyuAAoJEDMEi1NhKgbsT/oH/1AZ6gvXzCEluqm1Q+lGUAgO
-4TH9cN9oD1WAc0mb4GNnbpHMO7s7ytJqafBdBgyQfHeM87MyuQkKXTLkQjG6HSsp
-WGQKwf3wEdwdJgozlcmMvQ+i83PZQP9AIyA+QrEDqae1mnCbmqoqzB3oE9IA9UO6
-/B4/AU5DiO4klcdy2XA3Yk+ujCH5YxtdFKJSCV12m+9k2rQszulEgqVjNBxKfeeU
-+wu0r/Lmdh+Ld/6w48ATluIvAvpLdtQ8V7xotILAS9/tTvKzp/Jd+mbysAxlS12U
-2PHAbN2L4KNh/Rem02pkpjdR3qiDLKdyGowiUnwrBfQrSaB6yonp3vbmhz0eXR0=
-=V2Z+
------END PGP SIGNATURE-----
-
---Signature=_Fri__17_Sep_2010_07_31_26_+1000_fcC0XdsVcFSNL=sZ--
