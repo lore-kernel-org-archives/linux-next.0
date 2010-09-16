@@ -1,50 +1,43 @@
 From: Greg KH <greg@kroah.com>
-Subject: Re: [PATCH -next] staging/keucr: update TODO list and ask question
- about it
-Date: Thu, 16 Sep 2010 12:28:31 -0700
-Message-ID: <20100916192831.GB10397@kroah.com>
-References: <20100913134302.a77e9a3e.sfr@canb.auug.org.au>
- <20100914154148.826a0334.randy.dunlap@oracle.com>
+Subject: Re: [PATCH -next] staging: cx25821 and go7007 depend on IR_CORE
+Date: Thu, 16 Sep 2010 12:33:33 -0700
+Message-ID: <20100916193333.GE10397@kroah.com>
+References: <20100914135802.c99d3672.sfr@canb.auug.org.au>
+ <20100914152359.f871d000.randy.dunlap@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:50514 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755962Ab0IPTa6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 16 Sep 2010 15:30:58 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20100914154148.826a0334.randy.dunlap@oracle.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+In-Reply-To: <20100914152359.f871d000.randy.dunlap@oracle.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, Al Cho <acho@novell.com>, driverdevel <devel@driverdev.osuosl.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, devel@driverdev.osuosl.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Sep 14, 2010 at 03:41:48PM -0700, Randy Dunlap wrote:
+On Tue, Sep 14, 2010 at 03:23:59PM -0700, Randy Dunlap wrote:
 > From: Randy Dunlap <randy.dunlap@oracle.com>
 > 
-> Update keucr TODO with additional work items.
+> Fix build errors in cx25821 and go7007.
+> They both use IR functions, so they should depend on IR_CORE.
+> (It's not safe to select VIDEO_IR when IR_CORE is not enabled.)
+> 
+> (.text+0x39065a): undefined reference to `ir_core_debug'
+> (.text+0x3906a4): undefined reference to `ir_core_debug'
+> ir-functions.c:(.text+0x39080b): undefined reference to `ir_core_debug'
+> (.text+0x390893): undefined reference to `ir_g_keycode_from_table'
+> (.text+0x390942): undefined reference to `ir_core_debug'
+> (.text+0x3909f5): undefined reference to `ir_core_debug'
+> (.text+0x390a3a): undefined reference to `ir_core_debug'
+> (.text+0x390ab1): undefined reference to `ir_core_debug'
+> (.text+0x390b36): undefined reference to `ir_core_debug'
 > 
 > Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> Cc: Al Cho <acho@novell.com>
+> Cc: devel@driverdev.osuosl.org
 > ---
->  drivers/staging/keucr/TODO |    3 +++
->  1 file changed, 3 insertions(+)
-> 
-> and I don't understand this TODO comment:
-> "	- determine if the driver should not be using a duplicate
-> 	  version of the usb-storage scsi interface code, but should
-> 	  be merged into the drivers/usb/storage/ directory and
-> 	  infrastructure instead."
-> 
-> Of course the driver should not use a duplicate of the usb-storage
-> SCSI interface code.  Did someone seriously think that it should?
+>  drivers/staging/cx25821/Kconfig |    2 +-
+>  drivers/staging/go7007/Kconfig  |    2 +-
 
-Well, it's not the whole copy, and we are still trying to unwind the
-hooks here.  It might be that this is just another scsi driver, one that
-happens to also be a USB device, as I don't think this device follows
-the usb-storage spec at all.
-
-So it's still an unanswered question.
+These need to go to Mauro.
 
 thanks,
 
