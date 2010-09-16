@@ -1,71 +1,35 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: build failure after merge of the final tree (tip
- tree related)
-Date: Thu, 16 Sep 2010 09:34:33 +0200
-Message-ID: <20100916073433.GA21228@elte.hu>
-References: <20100914002932.850d02f3.sfr@canb.auug.org.au>
- <20100916163218.e09be473.sfr@canb.auug.org.au>
- <20100916063922.GA17596@elte.hu>
- <20100916070835.GB19994@n2100.arm.linux.org.uk>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: manual merge of the bkl-llseek tree with the rr tree
+Date: Thu, 16 Sep 2010 10:20:01 +0200
+Message-ID: <201009161020.01392.arnd@arndb.de>
+References: <20100915132646.4aef58f8.sfr@canb.auug.org.au> <20100916065438.GE2429@amit-laptop.redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:38361 "EHLO mx2.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750727Ab0IPHeu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 16 Sep 2010 03:34:50 -0400
-Content-Disposition: inline
-In-Reply-To: <20100916070835.GB19994@n2100.arm.linux.org.uk>
+Received: from moutng.kundenserver.de ([212.227.17.8]:51348 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752766Ab0IPIUI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Sep 2010 04:20:08 -0400
+In-Reply-To: <20100916065438.GE2429@amit-laptop.redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Yinghai Lu <yinghai@kernel.org>
+To: Amit Shah <amit.shah@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>
 
-
-* Russell King - ARM Linux <linux@arm.linux.org.uk> wrote:
-
-> On Thu, Sep 16, 2010 at 08:39:22AM +0200, Ingo Molnar wrote:
-> > 
-> > * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > 
-> > > Hi all,
-> > > 
-> > > On Tue, 14 Sep 2010 00:29:32 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > >
-> > > > After merging the final tree, today's linux-next build (arm
-> > > > assabet_defconfig and serveral other arm configs) failed like this:
-> > > > 
-> > > > arch/arm/mm/init.c: In function 'arm_memory_present':
-> > > > arch/arm/mm/init.c:260: warning: ISO C90 forbids mixed declarations and code
-> > > > arch/arm/mm/init.c:338: error: invalid storage class for function 'free_area'
-> > > > arch/arm/mm/init.c:357: error: invalid storage class for function 'free_memmap'
-> > > > arch/arm/mm/init.c:386: error: invalid storage class for function 'free_unused_memmap'
-> > > > arch/arm/mm/init.c:601: error: invalid storage class for function 'keepinitrd_setup'
-> > > > arch/arm/mm/init.c:606: error: initializer element is not constant
-> > > > arch/arm/mm/init.c:606: error: (near initialization for '__setup_keepinitrd_setup.setup_func')
-> > > > arch/arm/mm/init.c:606: error: expected declaration or statement at end of input
-> > > > arch/arm/mm/init.c:252: warning: unused variable 'i'
-> > > > 
-> > > > Caused by commit 719c1514f2fef5f01fcfa2bba81b7bb079c7c6a1 ("memblock/arm:
-> > > > Use new accessors") which forgot a closing brace on a new
-> > > > for_each_memblock() in arm_memory_present().
-> > > 
-> > > So this commit is back in tip and the error is back in the builds ...
-> > 
-> > The ARM defconfig build doesnt fail here:
-> > 
-> >   WARNING: modpost: Found 5 section mismatch(es).
-> >   To see full details build your kernel with:
-> >   'make CONFIG_DEBUG_SECTION_MISMATCH=y'
+On Thursday 16 September 2010 08:54:39 Amit Shah wrote:
+> Arnd, the device is supposed to be non-seekable so I'll add a
+> nonseekable_open() to the open() call.
 > 
-> It probably passes because that configuration doesn't result in the
-> failing code being built (maybe the failing code is only used for
-> sparsemem ?)
+> So I guess the llseek operation should ne no_llseek instead of
+> noop_llseek.  Will you change that in your patchset?  Should I do that
+> in the patch I'll queue up?
 
-Yeah. If sparsemem is important then it would be helpful if you could 
-enable it in the ARM defconfig if possible - that's what most people 
-build.
+Yes, I think it's best if you just do both changes in your patch, I'll
+drop this file from my series then.
 
-Thanks,
+Any driver that we can make use no_llseek instead of noop_llseek
+is a step forward.
 
-	Ingo
+	Arnd
