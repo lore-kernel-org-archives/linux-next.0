@@ -1,44 +1,65 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: [PATCH -next] staging: cx25821 and go7007 depend on IR_CORE
-Date: Thu, 16 Sep 2010 12:33:33 -0700
-Message-ID: <20100916193333.GE10397@kroah.com>
-References: <20100914135802.c99d3672.sfr@canb.auug.org.au>
- <20100914152359.f871d000.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for September 16 (do_mounts.c)
+Date: Fri, 17 Sep 2010 07:31:26 +1000
+Message-ID: <20100917073126.f382c799.sfr@canb.auug.org.au>
+References: <20100916152805.c9f31656.sfr@canb.auug.org.au>
+	<20100916091125.f12cc17c.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__17_Sep_2010_07_31_26_+1000_fcC0XdsVcFSNL=sZ"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:53712 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752601Ab0IPVbf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 16 Sep 2010 17:31:35 -0400
+In-Reply-To: <20100916091125.f12cc17c.randy.dunlap@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Randy Dunlap <randy.dunlap@oracle.com>, Will Drewry <wad@chromium.org>
+
+--Signature=_Fri__17_Sep_2010_07_31_26_+1000_fcC0XdsVcFSNL=sZ
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20100914152359.f871d000.randy.dunlap@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, devel@driverdev.osuosl.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 14, 2010 at 03:23:59PM -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> Fix build errors in cx25821 and go7007.
-> They both use IR functions, so they should depend on IR_CORE.
-> (It's not safe to select VIDEO_IR when IR_CORE is not enabled.)
-> 
-> (.text+0x39065a): undefined reference to `ir_core_debug'
-> (.text+0x3906a4): undefined reference to `ir_core_debug'
-> ir-functions.c:(.text+0x39080b): undefined reference to `ir_core_debug'
-> (.text+0x390893): undefined reference to `ir_g_keycode_from_table'
-> (.text+0x390942): undefined reference to `ir_core_debug'
-> (.text+0x3909f5): undefined reference to `ir_core_debug'
-> (.text+0x390a3a): undefined reference to `ir_core_debug'
-> (.text+0x390ab1): undefined reference to `ir_core_debug'
-> (.text+0x390b36): undefined reference to `ir_core_debug'
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> Cc: devel@driverdev.osuosl.org
-> ---
->  drivers/staging/cx25821/Kconfig |    2 +-
->  drivers/staging/go7007/Kconfig  |    2 +-
+On Thu, 16 Sep 2010 09:11:25 -0700 Randy Dunlap <randy.dunlap@oracle.com> w=
+rote:
+>
+> When CONFIG_BLOCK is not enabled:
+>=20
+> init/do_mounts.c:71: error: implicit declaration of function 'dev_to_part'
+> init/do_mounts.c:71: warning: initialization makes pointer from integer w=
+ithout a cast
+> init/do_mounts.c:73: error: dereferencing pointer to incomplete type
+> init/do_mounts.c:76: error: dereferencing pointer to incomplete type
+> init/do_mounts.c:76: error: dereferencing pointer to incomplete type
+> init/do_mounts.c:102: error: implicit declaration of function 'part_pack_=
+uuid'
+> init/do_mounts.c:104: error: 'block_class' undeclared (first use in this =
+function)
 
-These need to go to Mauro.
+Caused by commit b5af921ec02333e943efb59aca4f56b78fc0e100 ("init: add
+support for root devices specified by partition UUID") from the block tree.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-thanks,
+--Signature=_Fri__17_Sep_2010_07_31_26_+1000_fcC0XdsVcFSNL=sZ
+Content-Type: application/pgp-signature
 
-greg k-h
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMkoyuAAoJEDMEi1NhKgbsT/oH/1AZ6gvXzCEluqm1Q+lGUAgO
+4TH9cN9oD1WAc0mb4GNnbpHMO7s7ytJqafBdBgyQfHeM87MyuQkKXTLkQjG6HSsp
+WGQKwf3wEdwdJgozlcmMvQ+i83PZQP9AIyA+QrEDqae1mnCbmqoqzB3oE9IA9UO6
+/B4/AU5DiO4klcdy2XA3Yk+ujCH5YxtdFKJSCV12m+9k2rQszulEgqVjNBxKfeeU
++wu0r/Lmdh+Ld/6w48ATluIvAvpLdtQ8V7xotILAS9/tTvKzp/Jd+mbysAxlS12U
+2PHAbN2L4KNh/Rem02pkpjdR3qiDLKdyGowiUnwrBfQrSaB6yonp3vbmhz0eXR0=
+=V2Z+
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__17_Sep_2010_07_31_26_+1000_fcC0XdsVcFSNL=sZ--
