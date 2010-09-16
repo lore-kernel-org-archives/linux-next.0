@@ -1,37 +1,35 @@
 From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: linux-next: manual merge of the block tree with the Linus' tree
-Date: Thu, 16 Sep 2010 08:26:29 +0200
-Message-ID: <4C91B895.8090808@kernel.dk>
-References: <20100916120440.f3fdcbda.sfr@canb.auug.org.au>
+Subject: Re: linux-next: build warning after merge of the final tree
+Date: Thu, 16 Sep 2010 08:29:14 +0200
+Message-ID: <4C91B93A.7000905@kernel.dk>
+References: <20100916150530.5789eb79.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 0122700014.0.fullrate.dk ([95.166.99.235]:40463 "EHLO kernel.dk"
+Received: from 0122700014.0.fullrate.dk ([95.166.99.235]:41772 "EHLO kernel.dk"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752159Ab0IPG01 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 16 Sep 2010 02:26:27 -0400
-In-Reply-To: <20100916120440.f3fdcbda.sfr@canb.auug.org.au>
+	id S1752439Ab0IPG3M (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 16 Sep 2010 02:29:12 -0400
+In-Reply-To: <20100916150530.5789eb79.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>, Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
 
-On 2010-09-16 04:04, Stephen Rothwell wrote:
+On 2010-09-16 07:05, Stephen Rothwell wrote:
 > Hi Jens,
 > 
-> Today's linux-next merge of the block tree got a conflict in
-> drivers/block/loop.c between commit
-> 5e00d1b5b4c10fb839afd5ce61db8e24339454b0 ("BLOCK: fix bio.bi_rw
-> handling") from Linus' tree and commit
-> 6259f28459a9de820f47a9ece4ffa22d4596a9af ("block/loop: implement
-> REQ_FLUSH/FUA support") from the block tree.
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) produced this warning:
 > 
-> I fixed it up (the latter removed the line that the former changed) and
-> can carry the fix as necessary.
+> drivers/scsi/aic7xxx_old.c: In function 'aic7xxx_buildscb':
+> drivers/scsi/aic7xxx_old.c:10122: warning: unused variable 'req'
+> 
+> Introduced by commit 9cbbdca44ae1a6f512ea1e2be11ced8bbb9d430a ("block:
+> remove spurious uses of REQ_HARDBARRIER").
 
-Thanks Stephen, I will merge in -git in for-next to resolve these
-for you so you don't have to carry it.
+Fixed that up, thanks.
 
 -- 
 Jens Axboe
