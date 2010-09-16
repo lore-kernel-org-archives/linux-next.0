@@ -1,73 +1,33 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: linux-next: build failure after merge of the final tree (tip
-	tree related)
-Date: Thu, 16 Sep 2010 10:02:14 +0100
-Message-ID: <20100916090214.GA20197@n2100.arm.linux.org.uk>
-References: <20100914002932.850d02f3.sfr@canb.auug.org.au> <20100916163218.e09be473.sfr@canb.auug.org.au> <20100916063922.GA17596@elte.hu> <20100916070835.GB19994@n2100.arm.linux.org.uk> <20100916073433.GA21228@elte.hu>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: linux-next: manual merge of the sound-asoc tree with the
+ genesis tree
+Date: Thu, 16 Sep 2010 11:43:33 +0100
+Message-ID: <20100916104333.GC7837@rakim.wolfsonmicro.main>
+References: <20100915121128.d8fbc4bb.sfr@canb.auug.org.au>
+ <20100915095021.GB1866@rakim.wolfsonmicro.main>
+ <Pine.LNX.4.64.1009151344410.31624@axis700.grange>
+ <w3pfwxawlt5.wl%kuninori.morimoto.gx@renesas.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:41325 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751685Ab0IPJC4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 16 Sep 2010 05:02:56 -0400
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:48084 "EHLO
+	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1753085Ab0IPKnf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 16 Sep 2010 06:43:35 -0400
 Content-Disposition: inline
-In-Reply-To: <20100916073433.GA21228@elte.hu>
+In-Reply-To: <w3pfwxawlt5.wl%kuninori.morimoto.gx@renesas.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Yinghai Lu <yinghai@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Liam Girdwood <lrg@slimlogic.co.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mundt <lethal@linux-sh.org>
 
-On Thu, Sep 16, 2010 at 09:34:33AM +0200, Ingo Molnar wrote:
-> 
-> * Russell King - ARM Linux <linux@arm.linux.org.uk> wrote:
-> 
-> > On Thu, Sep 16, 2010 at 08:39:22AM +0200, Ingo Molnar wrote:
-> > > 
-> > > * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > 
-> > > > Hi all,
-> > > > 
-> > > > On Tue, 14 Sep 2010 00:29:32 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > > >
-> > > > > After merging the final tree, today's linux-next build (arm
-> > > > > assabet_defconfig and serveral other arm configs) failed like this:
-> > > > > 
-> > > > > arch/arm/mm/init.c: In function 'arm_memory_present':
-> > > > > arch/arm/mm/init.c:260: warning: ISO C90 forbids mixed declarations and code
-> > > > > arch/arm/mm/init.c:338: error: invalid storage class for function 'free_area'
-> > > > > arch/arm/mm/init.c:357: error: invalid storage class for function 'free_memmap'
-> > > > > arch/arm/mm/init.c:386: error: invalid storage class for function 'free_unused_memmap'
-> > > > > arch/arm/mm/init.c:601: error: invalid storage class for function 'keepinitrd_setup'
-> > > > > arch/arm/mm/init.c:606: error: initializer element is not constant
-> > > > > arch/arm/mm/init.c:606: error: (near initialization for '__setup_keepinitrd_setup.setup_func')
-> > > > > arch/arm/mm/init.c:606: error: expected declaration or statement at end of input
-> > > > > arch/arm/mm/init.c:252: warning: unused variable 'i'
-> > > > > 
-> > > > > Caused by commit 719c1514f2fef5f01fcfa2bba81b7bb079c7c6a1 ("memblock/arm:
-> > > > > Use new accessors") which forgot a closing brace on a new
-> > > > > for_each_memblock() in arm_memory_present().
-> > > > 
-> > > > So this commit is back in tip and the error is back in the builds ...
-> > > 
-> > > The ARM defconfig build doesnt fail here:
-> > > 
-> > >   WARNING: modpost: Found 5 section mismatch(es).
-> > >   To see full details build your kernel with:
-> > >   'make CONFIG_DEBUG_SECTION_MISMATCH=y'
-> > 
-> > It probably passes because that configuration doesn't result in the
-> > failing code being built (maybe the failing code is only used for
-> > sparsemem ?)
-> 
-> Yeah. If sparsemem is important then it would be helpful if you could 
-> enable it in the ARM defconfig if possible - that's what most people 
-> build.
+On Thu, Sep 16, 2010 at 09:53:42AM +0900, Kuninori Morimoto wrote:
 
-But then so is flatmem too - and it's the same story for lots of other
-combinations.  If we had sparsemem enabled then a similar bug could
-have crept into the !SPARSEMEM code just a few lines above.
+> If I (for sound) and Guennadi (for video) would like to add
+> new patches to it in future (in same time),
+> what should I do ?
 
-There's no correct answer here - the only answer is technologies such
-as linux-next and kautobuild to build a range of configs to get the
-build coverage.
+Ideally the patches will be layering on top of the changes in one tree
+or the other so you can follow the affected tree.  Once the merge window
+is over they should be going via the video route.
