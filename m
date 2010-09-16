@@ -1,59 +1,32 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree (mfd
- tree related)
-Date: Thu, 16 Sep 2010 18:51:41 +1000
-Message-ID: <20100916185141.4d471a23.sfr@canb.auug.org.au>
-References: <20100914134321.5eee798a.sfr@canb.auug.org.au>
-	<F45880696056844FA6A73F415B568C69532D96AC51@EXDCVYMBSTM006.EQ1STM.local>
-	<20100916172322.4f37e912.sfr@canb.auug.org.au>
+From: Amit Shah <amit.shah@redhat.com>
+Subject: Re: linux-next: manual merge of the bkl-llseek tree with the rr tree
+Date: Thu, 16 Sep 2010 14:26:08 +0530
+Message-ID: <20100916085608.GB8159@amit-laptop.redhat.com>
+References: <20100915132646.4aef58f8.sfr@canb.auug.org.au>
+ <20100916065438.GE2429@amit-laptop.redhat.com>
+ <201009161020.01392.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__16_Sep_2010_18_51_41_+1000_UU.YaEEk3SNU278y"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100916172322.4f37e912.sfr@canb.auug.org.au>
+Content-Disposition: inline
+In-Reply-To: <201009161020.01392.arnd@arndb.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arun MURTHY <arun.murthy@stericsson.com>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linus WALLEIJ <linus.walleij@stericsson.com>, Mattias WALLIN <mattias.wallin@stericsson.com>, Srinidhi KASAGAR <srinidhi.kasagar@stericsson.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rusty Russell <rusty@rustcorp.com.au>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__16_Sep_2010_18_51_41_+1000_UU.YaEEk3SNU278y
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On (Thu) Sep 16 2010 [10:20:01], Arnd Bergmann wrote:
+> On Thursday 16 September 2010 08:54:39 Amit Shah wrote:
+> > Arnd, the device is supposed to be non-seekable so I'll add a
+> > nonseekable_open() to the open() call.
+> > 
+> > So I guess the llseek operation should ne no_llseek instead of
+> > noop_llseek.  Will you change that in your patchset?  Should I do that
+> > in the patch I'll queue up?
+> 
+> Yes, I think it's best if you just do both changes in your patch, I'll
+> drop this file from my series then.
 
-Hi Arun,
+Great, I'll queue that up.
 
-On Thu, 16 Sep 2010 17:23:22 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> > Please find the patch that fixes this build issue @=20
-> > http://git.kernel.org/?p=3Dlinux/kernel/git/sameo/mfd-2.6.git;a=3Dcommi=
-t;h=3Df33bd494862cdc519db1f5d9b3f8214a1dd4c1ff
->=20
-> That patch was in the tree that produced the error above.  The patch you
-> quote is a fix for a different build problem.
-
-Oops, wrong error.  I need to read better.  Ignore this.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__16_Sep_2010_18_51_41_+1000_UU.YaEEk3SNU278y
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMkdqdAAoJEDMEi1NhKgbslaQH/0ffUkrT139BinpKo95+QlEZ
-PyBMKREi5IQypxsHOdekCHBkB9qYtPX4P2H1qsFGy9PIiGws5AJNj5aFfh4ZfPjp
-CHffbfnHEuwBv5Cvr1TWcCToEz4x0qCo64Jnrw+5U+GHGzWIF81us8ary/ayQW6l
-tQnxb4oUUly+nTXuoVUy3+WWQXwM3KigHi3ax6kEzJarBxkRXG1pDy47Yq11Ny+H
-pbkhLDD48F/Rmr6fVD7lIXviUnBoESoipcgO6iWK6jcvdTK2V8a/oWNbN4Fw+k9F
-34nr9H1TfBcYseXcK9IPseQxoveyULeAtB7FAN/8Fj1FvTYWrDPYuVrC7IfDnuU=
-=0yQD
------END PGP SIGNATURE-----
-
---Signature=_Thu__16_Sep_2010_18_51_41_+1000_UU.YaEEk3SNU278y--
+		Amit
