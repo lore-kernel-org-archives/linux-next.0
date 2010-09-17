@@ -1,35 +1,47 @@
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Subject: Re: linux-next: build failure after merge of the rcu tree
-Date: Fri, 17 Sep 2010 07:34:26 +0200
-Message-ID: <1284701666.4784.36.camel@edumazet-laptop>
-References: <20100917124238.aa0596cb.sfr@canb.auug.org.au>
-	 <20100916.213939.24608537.davem@davemloft.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: "Ian Munsie" <imunsie@au1.ibm.com>
+Subject: [PATCH] powerpc: define a compat_sys_recv cond_syscall
+Date: Fri, 17 Sep 2010 17:05:03 +1000
+Message-ID: <1284707103-4097-1-git-send-email-imunsie@au1.ibm.com>
+References: <20100903132410.ede593ed.sfr@canb.auug.org.au>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:33767 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753996Ab0IQFec (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Sep 2010 01:34:32 -0400
-In-Reply-To: <20100916.213939.24608537.davem@davemloft.net>
+Received: from e23smtp02.au.ibm.com ([202.81.31.144]:37067 "EHLO
+	e23smtp02.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752733Ab0IQHFX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Sep 2010 03:05:23 -0400
+In-Reply-To: <20100903132410.ede593ed.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, paulmck@linux.vnet.ibm.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Ian Munsie <imunsie@au1.ibm.com>, Andrew Morton <akpm@linux-foundation.org>, Eric Paris <eparis@redhat.com>, "David S. Miller" <davem@davemloft.net>, "Eric W. Biederman" <ebiederm@xmission.com>, Russell King <rmk+kernel@arm.linux.org.uk>, linux-kernel@vger.kernel.org
 
-Le jeudi 16 septembre 2010 =C3=A0 21:39 -0700, David Miller a =C3=A9cri=
-t :
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 17 Sep 2010 12:42:38 +1000
->=20
-> > Subject: [PATCH] net: include inetdevice.h for rcu_dereference_raw =
-api change
-> >=20
-> > rcu_dereference_raw() now needs to know the type of its argument.
-> >=20
-> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
->=20
-> I've tossed this into net-next-2.6, thanks!
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 
-Thanks guys
+Since compat_sys_recv is an optionl syscall if the kernel is compiled
+without networking we need a cond_syscall defined for it since it is now
+wired up directly on PowerPC.
+
+Other architectures that wire up the socket calls directly as syscalls
+do not run into this issue either because they don't have to deal with
+the 32bit compat versions of the syscalls or just don't wire up that
+particular compat syscall directly.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Ian Munsie <imunsie@au1.ibm.com>
+---
+ kernel/sys_ni.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
+index bad369e..c782fe9 100644
+--- a/kernel/sys_ni.c
++++ b/kernel/sys_ni.c
+@@ -50,6 +50,7 @@ cond_syscall(compat_sys_sendmsg);
+ cond_syscall(sys_recvmsg);
+ cond_syscall(sys_recvmmsg);
+ cond_syscall(compat_sys_recvmsg);
++cond_syscall(compat_sys_recv);
+ cond_syscall(compat_sys_recvfrom);
+ cond_syscall(compat_sys_recvmmsg);
+ cond_syscall(sys_socketcall);
+-- 
+1.7.1
