@@ -1,39 +1,48 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: linux-next: Tree for September 16 (do_mounts.c)
-Date: Fri, 17 Sep 2010 10:00:39 +0200
-Message-ID: <4C932027.8070501@kernel.dk>
-References: <20100916152805.c9f31656.sfr@canb.auug.org.au>	<20100916091125.f12cc17c.randy.dunlap@oracle.com> <20100917073126.f382c799.sfr@canb.auug.org.au>
+From: Russell King <rmk@arm.linux.org.uk>
+Subject: Re: FW: next build fails
+Date: Fri, 17 Sep 2010 11:35:20 +0100
+Message-ID: <20100917103520.GA30330@flint.arm.linux.org.uk>
+References: <33A307AF30D7BF4F811B1568FE7A9B18043784FF99@EXDCVYMBSTM006.EQ1STM.local> <20100916164442.df749cc1.sfr@canb.auug.org.au> <1284656407.2411.5.camel@c-dwalke-linux.qualcomm.com> <20100917075242.e0bc4b54.sfr@canb.auug.org.au> <1284674337.2411.53.camel@c-dwalke-linux.qualcomm.com> <20100917080439.7c35775a.sfr@canb.auug.org.au> <1284674935.2411.54.camel@c-dwalke-linux.qualcomm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 0122700014.0.fullrate.dk ([95.166.99.235]:36410 "EHLO kernel.dk"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751597Ab0IQIAk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 17 Sep 2010 04:00:40 -0400
-In-Reply-To: <20100917073126.f382c799.sfr@canb.auug.org.au>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:50049 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752457Ab0IQKfx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Sep 2010 06:35:53 -0400
+Content-Disposition: inline
+In-Reply-To: <1284674935.2411.54.camel@c-dwalke-linux.qualcomm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Randy Dunlap <randy.dunlap@oracle.com>, Will Drewry <wad@chromium.org>
+To: Daniel Walker <dwalker@fifo99.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Sundar R IYER <sundar.iyer@stericsson.com>, Linus WALLEIJ <linus.walleij@stericsson.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On 2010-09-16 23:31, Stephen Rothwell wrote:
-> On Thu, 16 Sep 2010 09:11:25 -0700 Randy Dunlap <randy.dunlap@oracle.com> wrote:
->>
->> When CONFIG_BLOCK is not enabled:
->>
->> init/do_mounts.c:71: error: implicit declaration of function 'dev_to_part'
->> init/do_mounts.c:71: warning: initialization makes pointer from integer without a cast
->> init/do_mounts.c:73: error: dereferencing pointer to incomplete type
->> init/do_mounts.c:76: error: dereferencing pointer to incomplete type
->> init/do_mounts.c:76: error: dereferencing pointer to incomplete type
->> init/do_mounts.c:102: error: implicit declaration of function 'part_pack_uuid'
->> init/do_mounts.c:104: error: 'block_class' undeclared (first use in this function)
+On Thu, Sep 16, 2010 at 03:08:55PM -0700, Daniel Walker wrote:
+> On Fri, 2010-09-17 at 08:04 +1000, Stephen Rothwell wrote:
+> > Hi Daniel,
+> > 
+> > On Thu, 16 Sep 2010 14:58:57 -0700 Daniel Walker <dwalker@fifo99.com> wrote:
+> > >
+> > > Yeah, exactly .. This is what I did to update my patch .. Do you want to
+> > > include this, or should I update my version and my tree.. Ultimately my
+> > > version has to go into Russell's tree..
+> > 
+> > Well, you can't really update that in your tree until after your tree is
+> > merged with Russell's, right (since ALT_UP etc are not defined in your
+> > tree)?  In that case, I need to do the fix when I merge your tree into
+> > linux-next (and so with Russell's tree).
 > 
-> Caused by commit b5af921ec02333e943efb59aca4f56b78fc0e100 ("init: add
-> support for root devices specified by partition UUID") from the block tree.
+> Right, I see what your saying .. Ok, thanks.
 
-Thanks for the report Randy, I've merged a fix for this.
+There is another way to handle this - we shouldn't be tinkering with
+the aux control register on non-ARM cores (as we don't know what the
+bits on such cores do) we could view this as a bug fix, and put it
+into -rc.
+
+I'd prefer to do that - so could you send the original patch you posted
+to lakml to the patch system please?
 
 -- 
-Jens Axboe
+Russell King
+ Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
+ maintainer of:
