@@ -1,72 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the rcu tree
-Date: Fri, 17 Sep 2010 12:42:38 +1000
-Message-ID: <20100917124238.aa0596cb.sfr@canb.auug.org.au>
+From: Christoph Hellwig <hch@lst.de>
+Subject: Re: linux-next: build failure after merge of the block tree
+Date: Fri, 17 Sep 2010 05:19:11 +0200
+Message-ID: <20100917031911.GA25217@lst.de>
+References: <20100917113738.f8ecaf63.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52715 "EHLO smtps.tip.net.au"
+Received: from verein.lst.de ([213.95.11.210]:38914 "EHLO verein.lst.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752833Ab0IQCmm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 16 Sep 2010 22:42:42 -0400
+	id S1755751Ab0IQDTU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 16 Sep 2010 23:19:20 -0400
+Content-Disposition: inline
+In-Reply-To: <20100917113738.f8ecaf63.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>
 
-Hi Paul,
+On Fri, Sep 17, 2010 at 11:37:38AM +1000, Stephen Rothwell wrote:
+> Hi Jens,
+> 
+> After merging the block tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> fs/ocfs2/file.c: In function 'ocfs2_sync_file':
+> fs/ocfs2/file.c:191: error: 'BLKDEV_IFL_WAIT' undeclared (first use in this function)
+> fs/ocfs2/file.c:191: error: too many arguments to function 'blkdev_issue_flush'
+> 
+> Caused by commit dd3932eddf428571762596e17b65f5dc92ca361b ("block: remove
+> BLKDEV_IFL_WAIT") interacting with commit
+> 04eda1a18019bb387dc7e97ee99979dd88dc608a ("ocfs2: Flush drive's caches on
+> fdatasync") that entered Linus' tree before v2.6.36-rc4.
 
-After merging the rcu tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
 
-net/core/dev.c: In function 'netdev_run_todo':
-net/core/dev.c:5294: error: dereferencing pointer to incomplete type
-net/core/dev.c:5294: warning: type defaults to 'int' in declaration of '_________p1'
-net/core/dev.c:5294: error: dereferencing pointer to incomplete type
-net/core/dev.c:5294: warning: type defaults to 'int' in declaration of 'type name'
-net/core/dev.c:5294: error: dereferencing pointer to incomplete type
-net/core/dev.c:5294: warning: type defaults to 'int' in declaration of 'type name'
-net/core/dev.c:5294: warning: comparison of distinct pointer types lacks a cast
-net/core/dev.c:5294: error: dereferencing pointer to incomplete type
-net/core/dev.c:5294: warning: type defaults to 'int' in declaration of 'type name'
-
-Caused by commit ca5ecddfa8fcbd948c95530e7e817cee9fb43a3d ("rcu: define
-__rcu address space modifier for sparse") interacting with commit
-95ae6b228f814fc0528d0506ee9f18ac333d6851 ("ipv4: ip_ptr cleanups") from
-the net tree.
-
-rcu_dereference_raw() now needs to know the type of the object its
-argument points to.  I added the following merge fix (which could be
-applied to the net tree anyway).
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 17 Sep 2010 12:36:36 +1000
-Subject: [PATCH] net: include inetdevice.h for rcu_dereference_raw api change
-
-rcu_dereference_raw() now needs to know the type of its argument.
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- net/core/dev.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/net/core/dev.c b/net/core/dev.c
-index c6d837a..cadd28c 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -129,6 +129,7 @@
- #include <linux/random.h>
- #include <trace/events/napi.h>
- #include <linux/pci.h>
-+#include <linux/inetdevice.h>
- 
- #include "net-sysfs.h"
- 
--- 
-1.7.1
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Justremove the last argument for blkdev_issue_flush and it'll be fine.
+Unfortunately Jens' for-next branch which I based the patch again
+doesn't include the ocfs2 commit yet.
