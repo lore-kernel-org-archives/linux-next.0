@@ -1,60 +1,37 @@
-From: Daniel Walker <dwalker@fifo99.com>
-Subject: Re: FW: next build fails
-Date: Fri, 17 Sep 2010 08:44:24 -0700
-Message-ID: <1284738264.4177.25.camel@m0nster>
-References: <33A307AF30D7BF4F811B1568FE7A9B18043784FF99@EXDCVYMBSTM006.EQ1STM.local>
-	 <20100916164442.df749cc1.sfr@canb.auug.org.au>
-	 <1284656407.2411.5.camel@c-dwalke-linux.qualcomm.com>
-	 <20100917075242.e0bc4b54.sfr@canb.auug.org.au>
-	 <1284674337.2411.53.camel@c-dwalke-linux.qualcomm.com>
-	 <20100917080439.7c35775a.sfr@canb.auug.org.au>
-	 <1284674935.2411.54.camel@c-dwalke-linux.qualcomm.com>
-	 <20100917103520.GA30330@flint.arm.linux.org.uk>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for September 17
+Date: Fri, 17 Sep 2010 09:46:14 -0700
+Message-ID: <20100917094614.dc9a7c96.randy.dunlap@oracle.com>
+References: <20100917135832.ab83b7cf.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fifo99.com ([67.223.236.141]:43172 "EHLO fifo99.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754833Ab0IQPoh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 17 Sep 2010 11:44:37 -0400
-In-Reply-To: <20100917103520.GA30330@flint.arm.linux.org.uk>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:38819 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752168Ab0IQQrS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Sep 2010 12:47:18 -0400
+In-Reply-To: <20100917135832.ab83b7cf.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@arm.linux.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Sundar R IYER <sundar.iyer@stericsson.com>, Linus WALLEIJ <linus.walleij@stericsson.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Fri, 2010-09-17 at 11:35 +0100, Russell King wrote:
-> On Thu, Sep 16, 2010 at 03:08:55PM -0700, Daniel Walker wrote:
-> > On Fri, 2010-09-17 at 08:04 +1000, Stephen Rothwell wrote:
-> > > Hi Daniel,
-> > > 
-> > > On Thu, 16 Sep 2010 14:58:57 -0700 Daniel Walker <dwalker@fifo99.com> wrote:
-> > > >
-> > > > Yeah, exactly .. This is what I did to update my patch .. Do you want to
-> > > > include this, or should I update my version and my tree.. Ultimately my
-> > > > version has to go into Russell's tree..
-> > > 
-> > > Well, you can't really update that in your tree until after your tree is
-> > > merged with Russell's, right (since ALT_UP etc are not defined in your
-> > > tree)?  In that case, I need to do the fix when I merge your tree into
-> > > linux-next (and so with Russell's tree).
-> > 
-> > Right, I see what your saying .. Ok, thanks.
+On Fri, 17 Sep 2010 13:58:32 +1000 Stephen Rothwell wrote:
+
+> Hi all,
 > 
-> There is another way to handle this - we shouldn't be tinkering with
-> the aux control register on non-ARM cores (as we don't know what the
-> bits on such cores do) we could view this as a bug fix, and put it
-> into -rc.
+> Changes since 20100916:
 
-Yeah, it does seem to fit that category ..
 
-> I'd prefer to do that - so could you send the original patch you posted
-> to lakml to the patch system please?
+btw, what is this file?
 
-Ok, I submitted it to your patch system (I'm assuming that's what you
-mean by "patch system above").
+-rw-r--r-- 	126 	t_first_entry(&list, struct net_device, todo_list); 	blob | history | raw
 
-http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=6398/1
+as seen from:
+http://git.kernel.org/?p=linux/kernel/git/next/linux-next.git;a=tree
+(or in my local ls -l)
 
-Daniel
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
