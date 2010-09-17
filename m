@@ -1,47 +1,39 @@
-From: "Ian Munsie" <imunsie@au1.ibm.com>
-Subject: [PATCH] powerpc: define a compat_sys_recv cond_syscall
-Date: Fri, 17 Sep 2010 17:05:03 +1000
-Message-ID: <1284707103-4097-1-git-send-email-imunsie@au1.ibm.com>
-References: <20100903132410.ede593ed.sfr@canb.auug.org.au>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: Re: linux-next: Tree for September 16 (do_mounts.c)
+Date: Fri, 17 Sep 2010 10:00:39 +0200
+Message-ID: <4C932027.8070501@kernel.dk>
+References: <20100916152805.c9f31656.sfr@canb.auug.org.au>	<20100916091125.f12cc17c.randy.dunlap@oracle.com> <20100917073126.f382c799.sfr@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e23smtp02.au.ibm.com ([202.81.31.144]:37067 "EHLO
-	e23smtp02.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752733Ab0IQHFX (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Sep 2010 03:05:23 -0400
-In-Reply-To: <20100903132410.ede593ed.sfr@canb.auug.org.au>
+Received: from 0122700014.0.fullrate.dk ([95.166.99.235]:36410 "EHLO kernel.dk"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751597Ab0IQIAk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 17 Sep 2010 04:00:40 -0400
+In-Reply-To: <20100917073126.f382c799.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Ian Munsie <imunsie@au1.ibm.com>, Andrew Morton <akpm@linux-foundation.org>, Eric Paris <eparis@redhat.com>, "David S. Miller" <davem@davemloft.net>, "Eric W. Biederman" <ebiederm@xmission.com>, Russell King <rmk+kernel@arm.linux.org.uk>, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Randy Dunlap <randy.dunlap@oracle.com>, Will Drewry <wad@chromium.org>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+On 2010-09-16 23:31, Stephen Rothwell wrote:
+> On Thu, 16 Sep 2010 09:11:25 -0700 Randy Dunlap <randy.dunlap@oracle.com> wrote:
+>>
+>> When CONFIG_BLOCK is not enabled:
+>>
+>> init/do_mounts.c:71: error: implicit declaration of function 'dev_to_part'
+>> init/do_mounts.c:71: warning: initialization makes pointer from integer without a cast
+>> init/do_mounts.c:73: error: dereferencing pointer to incomplete type
+>> init/do_mounts.c:76: error: dereferencing pointer to incomplete type
+>> init/do_mounts.c:76: error: dereferencing pointer to incomplete type
+>> init/do_mounts.c:102: error: implicit declaration of function 'part_pack_uuid'
+>> init/do_mounts.c:104: error: 'block_class' undeclared (first use in this function)
+> 
+> Caused by commit b5af921ec02333e943efb59aca4f56b78fc0e100 ("init: add
+> support for root devices specified by partition UUID") from the block tree.
 
-Since compat_sys_recv is an optionl syscall if the kernel is compiled
-without networking we need a cond_syscall defined for it since it is now
-wired up directly on PowerPC.
+Thanks for the report Randy, I've merged a fix for this.
 
-Other architectures that wire up the socket calls directly as syscalls
-do not run into this issue either because they don't have to deal with
-the 32bit compat versions of the syscalls or just don't wire up that
-particular compat syscall directly.
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Ian Munsie <imunsie@au1.ibm.com>
----
- kernel/sys_ni.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
-index bad369e..c782fe9 100644
---- a/kernel/sys_ni.c
-+++ b/kernel/sys_ni.c
-@@ -50,6 +50,7 @@ cond_syscall(compat_sys_sendmsg);
- cond_syscall(sys_recvmsg);
- cond_syscall(sys_recvmmsg);
- cond_syscall(compat_sys_recvmsg);
-+cond_syscall(compat_sys_recv);
- cond_syscall(compat_sys_recvfrom);
- cond_syscall(compat_sys_recvmmsg);
- cond_syscall(sys_socketcall);
 -- 
-1.7.1
+Jens Axboe
