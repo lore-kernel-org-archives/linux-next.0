@@ -1,56 +1,72 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mfd tree with the sh tree
-Date: Fri, 17 Sep 2010 12:05:48 +1000
-Message-ID: <20100917120548.5dc723ec.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the rcu tree
+Date: Fri, 17 Sep 2010 12:42:38 +1000
+Message-ID: <20100917124238.aa0596cb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57778 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:52715 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754484Ab0IQCFx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 16 Sep 2010 22:05:53 -0400
+	id S1752833Ab0IQCmm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 16 Sep 2010 22:42:42 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Hannemann <arnd@arndnet.de>, Paul Mundt <lethal@linux-sh.org>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
 
-Hi Samuel,
+Hi Paul,
 
-Today's linux-next merge of the mfd tree got a conflict in
-drivers/mfd/sh_mobile_sdhi.c between commit
-25ab998e2eff46d2e6ede80c9fc02a349fa005a3 ("mfd: Fix up section mismatches
-in SH SDHI") from the sh tree and commit
-6d1b291f5f2728547a8d681b46657ed9528145bf ("mfd: Allow the platform to
-specify the sh_mobile_sdhi get_cd handler") from the mfd tree.
+After merging the rcu tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+net/core/dev.c: In function 'netdev_run_todo':
+net/core/dev.c:5294: error: dereferencing pointer to incomplete type
+net/core/dev.c:5294: warning: type defaults to 'int' in declaration of '_________p1'
+net/core/dev.c:5294: error: dereferencing pointer to incomplete type
+net/core/dev.c:5294: warning: type defaults to 'int' in declaration of 'type name'
+net/core/dev.c:5294: error: dereferencing pointer to incomplete type
+net/core/dev.c:5294: warning: type defaults to 'int' in declaration of 'type name'
+net/core/dev.c:5294: warning: comparison of distinct pointer types lacks a cast
+net/core/dev.c:5294: error: dereferencing pointer to incomplete type
+net/core/dev.c:5294: warning: type defaults to 'int' in declaration of 'type name'
+
+Caused by commit ca5ecddfa8fcbd948c95530e7e817cee9fb43a3d ("rcu: define
+__rcu address space modifier for sparse") interacting with commit
+95ae6b228f814fc0528d0506ee9f18ac333d6851 ("ipv4: ip_ptr cleanups") from
+the net tree.
+
+rcu_dereference_raw() now needs to know the type of the object its
+argument points to.  I added the following merge fix (which could be
+applied to the net tree anyway).
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 17 Sep 2010 12:36:36 +1000
+Subject: [PATCH] net: include inetdevice.h for rcu_dereference_raw api change
+
+rcu_dereference_raw() now needs to know the type of its argument.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ net/core/dev.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/net/core/dev.c b/net/core/dev.c
+index c6d837a..cadd28c 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -129,6 +129,7 @@
+ #include <linux/random.h>
+ #include <trace/events/napi.h>
+ #include <linux/pci.h>
++#include <linux/inetdevice.h>
+ 
+ #include "net-sysfs.h"
+ 
+-- 
+1.7.1
+
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/mfd/sh_mobile_sdhi.c
-index 49b4d06,9d43316..0000000
---- a/drivers/mfd/sh_mobile_sdhi.c
-+++ b/drivers/mfd/sh_mobile_sdhi.c
-@@@ -65,7 -65,18 +65,18 @@@ static void sh_mobile_sdhi_set_pwr(stru
-  		p->set_pwr(pdev, state);
-  }
-  
-+ static int sh_mobile_sdhi_get_cd(struct platform_device *tmio)
-+ {
-+ 	struct platform_device *pdev = to_platform_device(tmio->dev.parent);
-+ 	struct sh_mobile_sdhi_info *p = pdev->dev.platform_data;
-+ 
-+ 	if (p && p->get_cd)
-+ 		return p->get_cd(pdev);
-+ 	else
-+ 		return -ENOSYS;
-+ }
-+ 
- -static int __init sh_mobile_sdhi_probe(struct platform_device *pdev)
- +static int __devinit sh_mobile_sdhi_probe(struct platform_device *pdev)
-  {
-  	struct sh_mobile_sdhi *priv;
-  	struct tmio_mmc_data *mmc_data;
+http://www.canb.auug.org.au/~sfr/
