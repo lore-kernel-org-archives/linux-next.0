@@ -1,61 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the block tree
-Date: Fri, 17 Sep 2010 11:37:38 +1000
-Message-ID: <20100917113738.f8ecaf63.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the mfd tree with the sh tree
+Date: Fri, 17 Sep 2010 12:05:48 +1000
+Message-ID: <20100917120548.5dc723ec.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__17_Sep_2010_11_37_38_+1000_y.p0Wr2/iKA41cin"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40779 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:57778 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752304Ab0IQBhv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 16 Sep 2010 21:37:51 -0400
+	id S1754484Ab0IQCFx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 16 Sep 2010 22:05:53 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Hannemann <arnd@arndnet.de>, Paul Mundt <lethal@linux-sh.org>
 
---Signature=_Fri__17_Sep_2010_11_37_38_+1000_y.p0Wr2/iKA41cin
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Samuel,
 
-Hi Jens,
+Today's linux-next merge of the mfd tree got a conflict in
+drivers/mfd/sh_mobile_sdhi.c between commit
+25ab998e2eff46d2e6ede80c9fc02a349fa005a3 ("mfd: Fix up section mismatches
+in SH SDHI") from the sh tree and commit
+6d1b291f5f2728547a8d681b46657ed9528145bf ("mfd: Allow the platform to
+specify the sh_mobile_sdhi get_cd handler") from the mfd tree.
 
-After merging the block tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
-
-fs/ocfs2/file.c: In function 'ocfs2_sync_file':
-fs/ocfs2/file.c:191: error: 'BLKDEV_IFL_WAIT' undeclared (first use in this=
- function)
-fs/ocfs2/file.c:191: error: too many arguments to function 'blkdev_issue_fl=
-ush'
-
-Caused by commit dd3932eddf428571762596e17b65f5dc92ca361b ("block: remove
-BLKDEV_IFL_WAIT") interacting with commit
-04eda1a18019bb387dc7e97ee99979dd88dc608a ("ocfs2: Flush drive's caches on
-fdatasync") that entered Linus' tree before v2.6.36-rc4.
-
-I have used the block tree from next-20100916 for today.
---=20
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__17_Sep_2010_11_37_38_+1000_y.p0Wr2/iKA41cin
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMksZiAAoJEDMEi1NhKgbs3VcH/3LGbIPB051MrHrjeVS1rHNi
-OuVkIlOz1QS3aEbDOh5dsWnPwwhvDJ70n2jGLdICGL0vQKG2S3oZGUdK0IhXdVUw
-KNCo7vu5AoodCIpeLFsvgYXBAAZxhTIUMTL/bghjFdz6fK92e2pyjVlCgSHqcZ2b
-XNeXly45O0eFkovyBxUigs5V4AabxfzY/TSMCaWSoyca7+ow2NwIr7LqZYzKMy09
-NuYQwtyjNurYk6kvPZdMmvvdX3+HNAOGiDqO2tyda9G+gJoPKdZyu3kaReCgX+4e
-kLVccEmd7PKjOHWw1E79VsOUn5YtyQSD76i9ydrjmwB20TCgFL9DaKE2Oo3Tb+s=
-=reIW
------END PGP SIGNATURE-----
-
---Signature=_Fri__17_Sep_2010_11_37_38_+1000_y.p0Wr2/iKA41cin--
+diff --cc drivers/mfd/sh_mobile_sdhi.c
+index 49b4d06,9d43316..0000000
+--- a/drivers/mfd/sh_mobile_sdhi.c
++++ b/drivers/mfd/sh_mobile_sdhi.c
+@@@ -65,7 -65,18 +65,18 @@@ static void sh_mobile_sdhi_set_pwr(stru
+  		p->set_pwr(pdev, state);
+  }
+  
++ static int sh_mobile_sdhi_get_cd(struct platform_device *tmio)
++ {
++ 	struct platform_device *pdev = to_platform_device(tmio->dev.parent);
++ 	struct sh_mobile_sdhi_info *p = pdev->dev.platform_data;
++ 
++ 	if (p && p->get_cd)
++ 		return p->get_cd(pdev);
++ 	else
++ 		return -ENOSYS;
++ }
++ 
+ -static int __init sh_mobile_sdhi_probe(struct platform_device *pdev)
+ +static int __devinit sh_mobile_sdhi_probe(struct platform_device *pdev)
+  {
+  	struct sh_mobile_sdhi *priv;
+  	struct tmio_mmc_data *mmc_data;
