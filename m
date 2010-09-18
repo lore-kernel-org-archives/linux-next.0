@@ -1,42 +1,46 @@
-From: Will Drewry <wad@chromium.org>
-Subject: Re: linux-next: Tree for September 16 (do_mounts.c)
-Date: Fri, 17 Sep 2010 22:17:47 -0500
-Message-ID: <AANLkTikNpvwuBe9LvDiC3+0=q57N0c=dyf+N=VMv_nYu@mail.gmail.com>
-References: <20100916152805.c9f31656.sfr@canb.auug.org.au>
-	<20100916091125.f12cc17c.randy.dunlap@oracle.com>
-	<20100917073126.f382c799.sfr@canb.auug.org.au>
-	<4C932027.8070501@kernel.dk>
+From: Pekka Enberg <penberg@cs.helsinki.fi>
+Subject: Re: [PATCH 3/3] percpu: use percpu allocator on UP too
+Date: Sat, 18 Sep 2010 20:47:57 +0300
+Message-ID: <4C94FB4D.4020603@cs.helsinki.fi>
+References: <20100824120714.8918f8de.sfr@canb.auug.org.au> <4C740450.3030000@cs.helsinki.fi> <alpine.DEB.2.00.1008241256280.4763@router.home> <4C741029.7090300@cs.helsinki.fi> <alpine.DEB.2.00.1008241352240.5388@router.home> <4C74D1D7.4080608@kernel.org> <4C74DB05.7000101@cs.helsinki.fi> <alpine.DEB.2.00.1008250846590.13026@router.home> <4C762734.1030402@kernel.org> <4C8121BC.7040609@kernel.org> <4C81ED2C.6000304@cs.helsinki.fi> <4C8215B9.8060606@kernel.org> <4C87548D.5080202@kernel.org> <4C8A47E7.8080102@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:35981 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753948Ab0IRDRt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Sep 2010 23:17:49 -0400
-In-Reply-To: <4C932027.8070501@kernel.dk>
+Received: from courier.cs.helsinki.fi ([128.214.9.1]:58539 "EHLO
+	mail.cs.helsinki.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751378Ab0IRRsB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 18 Sep 2010 13:48:01 -0400
+In-Reply-To: <4C8A47E7.8080102@kernel.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Randy Dunlap <randy.dunlap@oracle.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: Christoph Lameter <cl@linux.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Sep 17, 2010 at 3:00 AM, Jens Axboe <axboe@kernel.dk> wrote:
-> On 2010-09-16 23:31, Stephen Rothwell wrote:
->> On Thu, 16 Sep 2010 09:11:25 -0700 Randy Dunlap <randy.dunlap@oracle.com> wrote:
+On 10.9.2010 17.59, Tejun Heo wrote:
+> On 09/08/2010 11:17 AM, Tejun Heo wrote:
+>> On 09/04/2010 11:47 AM, Tejun Heo wrote:
+>>> Hello,
 >>>
->>> When CONFIG_BLOCK is not enabled:
+>>> On 09/04/2010 08:54 AM, Pekka Enberg wrote:
+>>>> Is this going into some public append-only branch I could
+>>>> cherry-pick the changeset from to my 'slub/cleanups' branch?
 >>>
->>> init/do_mounts.c:71: error: implicit declaration of function 'dev_to_part'
->>> init/do_mounts.c:71: warning: initialization makes pointer from integer without a cast
->>> init/do_mounts.c:73: error: dereferencing pointer to incomplete type
->>> init/do_mounts.c:76: error: dereferencing pointer to incomplete type
->>> init/do_mounts.c:76: error: dereferencing pointer to incomplete type
->>> init/do_mounts.c:102: error: implicit declaration of function 'part_pack_uuid'
->>> init/do_mounts.c:104: error: 'block_class' undeclared (first use in this function)
+>>> I'll put it into percpu#for-next once Linus pulls in the currently
+>>> pending set of fixes.  I'll let you know.
 >>
->> Caused by commit b5af921ec02333e943efb59aca4f56b78fc0e100 ("init: add
->> support for root devices specified by partition UUID") from the block tree.
+>> Alright, now in percpu#for-next tree.
+>>
+>>   git://git.kernel.org/pub/scm/linux/kernel/git/tj/percpu.git for-next
+>>
+>> The branch currenly contains only those three patches, so please feel
+>> free to pull from it.
 >
-> Thanks for the report Randy, I've merged a fix for this.
+> Branch updated to fix build for s390 and add missing memory clearing
+> for km- allocator.  You'll at least want to pull upto commit
+> fc1481a956181d0360d3eb129965302489895a1b.
 
-Thanks and sorry!
-will
+I cherry-picked patches from the branch and reverted SLUB bandaid. SLUB 
+works fine here on UP now so I'm putting it in linux-next. Thanks Tejun!
+
+			Pekka
