@@ -1,46 +1,50 @@
-From: Pekka Enberg <penberg@cs.helsinki.fi>
-Subject: Re: [PATCH 3/3] percpu: use percpu allocator on UP too
-Date: Sat, 18 Sep 2010 20:47:57 +0300
-Message-ID: <4C94FB4D.4020603@cs.helsinki.fi>
-References: <20100824120714.8918f8de.sfr@canb.auug.org.au> <4C740450.3030000@cs.helsinki.fi> <alpine.DEB.2.00.1008241256280.4763@router.home> <4C741029.7090300@cs.helsinki.fi> <alpine.DEB.2.00.1008241352240.5388@router.home> <4C74D1D7.4080608@kernel.org> <4C74DB05.7000101@cs.helsinki.fi> <alpine.DEB.2.00.1008250846590.13026@router.home> <4C762734.1030402@kernel.org> <4C8121BC.7040609@kernel.org> <4C81ED2C.6000304@cs.helsinki.fi> <4C8215B9.8060606@kernel.org> <4C87548D.5080202@kernel.org> <4C8A47E7.8080102@kernel.org>
+From: Matt Turner <mattst88@gmail.com>
+Subject: Re: [PATCH] alpha: fix build breakage in asm/cacheflush.h
+Date: Sun, 19 Sep 2010 00:52:19 -0400
+Message-ID: <AANLkTimsf03FvWeTV0mC=dX7vsH=6yihiXa5MH_raAw+@mail.gmail.com>
+References: <20100914002132.bf17c19e.sfr@canb.auug.org.au> <4C8F39A6.10504@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from courier.cs.helsinki.fi ([128.214.9.1]:58539 "EHLO
-	mail.cs.helsinki.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751378Ab0IRRsB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 18 Sep 2010 13:48:01 -0400
-In-Reply-To: <4C8A47E7.8080102@kernel.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-alpha-owner@vger.kernel.org>
+In-Reply-To: <4C8F39A6.10504@kernel.org>
+Sender: linux-alpha-owner@vger.kernel.org
 To: Tejun Heo <tj@kernel.org>
-Cc: Christoph Lameter <cl@linux.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Richard Henderson <rth@twiddle.net>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, linux-alpha@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On 10.9.2010 17.59, Tejun Heo wrote:
-> On 09/08/2010 11:17 AM, Tejun Heo wrote:
->> On 09/04/2010 11:47 AM, Tejun Heo wrote:
->>> Hello,
->>>
->>> On 09/04/2010 08:54 AM, Pekka Enberg wrote:
->>>> Is this going into some public append-only branch I could
->>>> cherry-pick the changeset from to my 'slub/cleanups' branch?
->>>
->>> I'll put it into percpu#for-next once Linus pulls in the currently
->>> pending set of fixes.  I'll let you know.
->>
->> Alright, now in percpu#for-next tree.
->>
->>   git://git.kernel.org/pub/scm/linux/kernel/git/tj/percpu.git for-next
->>
->> The branch currenly contains only those three patches, so please feel
->> free to pull from it.
+On Tue, Sep 14, 2010 at 5:00 AM, Tejun Heo <tj@kernel.org> wrote:
+> Alpha SMP flush_icache_user_range() is implemented as an inline
+> function inside include/asm/cacheflush.h. =A0It dereferences @current
+> but doesn't include linux/sched.h and thus causes build failure if
+> linux/sched.h wasn't included previously. =A0Fix it by including the
+> needed header file explicitly.
 >
-> Branch updated to fix build for s390 and add missing memory clearing
-> for km- allocator.  You'll at least want to pull upto commit
-> fc1481a956181d0360d3eb129965302489895a1b.
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+> =A0arch/alpha/include/asm/cacheflush.h | =A0 =A02 ++
+> =A01 file changed, 2 insertions(+)
+>
+> diff --git a/arch/alpha/include/asm/cacheflush.h b/arch/alpha/include=
+/asm/cacheflush.h
+> index 01d71e1..012f124 100644
+> --- a/arch/alpha/include/asm/cacheflush.h
+> +++ b/arch/alpha/include/asm/cacheflush.h
+> @@ -43,6 +43,8 @@ extern void smp_imb(void);
+> =A0/* ??? Ought to use this in arch/alpha/kernel/signal.c too. =A0*/
+>
+> =A0#ifndef CONFIG_SMP
+> +#include <linux/sched.h>
+> +
+> =A0extern void __load_new_mm_context(struct mm_struct *);
+> =A0static inline void
+> =A0flush_icache_user_range(struct vm_area_struct *vma, struct page *p=
+age,
 
-I cherry-picked patches from the branch and reverted SLUB bandaid. SLUB 
-works fine here on UP now so I'm putting it in linux-next. Thanks Tejun!
-
-			Pekka
+Thanks! Applied this to my tree and sent it to Linus.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-alpha" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
