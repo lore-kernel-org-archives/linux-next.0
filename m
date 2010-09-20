@@ -1,57 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the viafb tree
-Date: Mon, 20 Sep 2010 13:10:14 +1000
-Message-ID: <20100920131014.8393b0e2.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the bkl-trivial tree with the mmc tree
+Date: Mon, 20 Sep 2010 14:58:17 +1000
+Message-ID: <20100920145817.71fa0c35.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__20_Sep_2010_13_10_14_+1000_sOMvTjl7IC3UZ+R8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Chris Ball <cjb@laptop.org>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__20_Sep_2010_13_10_14_+1000_sOMvTjl7IC3UZ+R8
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Arnd,
 
-Hi Florian,
+Today's linux-next merge of the bkl-trivial tree got a conflict in
+drivers/mmc/card/block.c between commit
+28280d210bacf6788a5e4b12c5a9430bd50860b4 ("mmc: make number of mmcblk
+minors configurable") from the mmc tree and commit
+5778067afcfd8b718ffc3744c25fdd194fc886a1 ("block: autoconvert trivial BKL
+users to private mutex") from the bkl-trivial tree.
 
-After merging the viafb tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
-
-drivers/video/via/viafbdev.c: In function 'viafb_init_proc':
-drivers/video/via/viafbdev.c:1605: error: incompatible type for argument 3 =
-of 'proc_create'
-
-Caused by commit 84e3266c11318f2240e7de7868a14aa1119c613c ("viafb: add
-interface for output device configuration") which missed one conversion
-of "*viabf_entry" -> "viafb_entry".
-
-I have used the version of the viafb tree from next-20100917 for today.
-
-Also several commits in this tree have the "subject" line repeated in the
-commit message.
---=20
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__20_Sep_2010_13_10_14_+1000_sOMvTjl7IC3UZ+R8
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMltCWAAoJEDMEi1NhKgbsuHIIAIngLKS6u5ZJEnECvZW8dtTc
-2YCV1WASTDT9m4wbyfZcms6FyecVC+NRuAg7zYshDB5ll/Ih1U80BgLjxEgkXARU
-UyZfi0mBCNJJzADhonKrb/x3kQFKHadJUXWcjXQC66OHY0Cl4B6hk7j4vqMCfRRq
-17hn9vSSw768RbFM9GSXiMf3en4Hx39Z4BNIyH89grYgehPp9fhR8hsWL8Wyw3kX
-Oqnuqa20khNZUO98nq8tYhOS64LAQlSCwinWAagGRh/7BIXjZZBLdgZvXXFdwWls
-UJt8OjSo1i2TebSOBwVy8w83JuAJgbdfcGp8zMa9nPJpwS+Q6GA7XopF4z3ydlM=
-=kFEM
------END PGP SIGNATURE-----
-
---Signature=_Mon__20_Sep_2010_13_10_14_+1000_sOMvTjl7IC3UZ+R8--
+diff --cc drivers/mmc/card/block.c
+index 5568044,00073b7..0000000
+--- a/drivers/mmc/card/block.c
++++ b/drivers/mmc/card/block.c
+@@@ -44,26 -43,15 +43,27 @@@
+  #include "queue.h"
+  
+  MODULE_ALIAS("mmc:block");
+ +#ifdef MODULE_PARAM_PREFIX
+ +#undef MODULE_PARAM_PREFIX
+ +#endif
+ +#define MODULE_PARAM_PREFIX "mmcblk."
+ +
+ +
+ +/*
+ + * The defaults come from config options but can be overriden by module
+ + * or bootarg options.
+ + */
+ +static int perdev_minors = CONFIG_MMC_BLOCK_MINORS;
+  
+  /*
+ - * max 8 partitions per card
+ + * We've only got one major, so number of mmcblk devices is
+ + * limited to 256 / number of minors per device.
+   */
+ -#define MMC_SHIFT	3
+ -#define MMC_NUM_MINORS	(256 >> MMC_SHIFT)
+ +static int max_devices;
+  
++ static DEFINE_MUTEX(block_mutex);
+ -static DECLARE_BITMAP(dev_use, MMC_NUM_MINORS);
+ +/* 256 minors, so at most 256 separate devices */
+ +static DECLARE_BITMAP(dev_use, 256);
+  
+  /*
+   * There is one mmc_blk_data per slot.
