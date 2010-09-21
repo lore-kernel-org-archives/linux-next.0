@@ -1,38 +1,85 @@
-From: Greg KH <gregkh@suse.de>
-Subject: Re: linux-next: Tree for September 21 (staging/keucr)
-Date: Tue, 21 Sep 2010 10:08:07 -0700
-Message-ID: <20100921170807.GB10105@suse.de>
+From: "Henry Ptasinski" <henryp@broadcom.com>
+Subject: Re: [PATCH -next] staging: brcm80211 depends on MAC80211
+Date: Tue, 21 Sep 2010 10:23:23 -0700
+Message-ID: <4C98EA0B.6050903@broadcom.com>
 References: <20100921170055.4512dd19.sfr@canb.auug.org.au>
- <20100921095345.af7d4978.randy.dunlap@oracle.com>
+ <20100921093549.a39a2a8d.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor.suse.de ([195.135.220.2]:36701 "EHLO mx1.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753229Ab0IURJg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 21 Sep 2010 13:09:36 -0400
-Content-Disposition: inline
-In-Reply-To: <20100921095345.af7d4978.randy.dunlap@oracle.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain;
+ charset=iso-8859-1;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20100921093549.a39a2a8d.randy.dunlap@oracle.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Al Cho <acho@novell.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, driverdevel <devel@driverdev.osuosl.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, driverdevel <devel@driverdev.osuosl.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "gregkh@suse.de" <gregkh@suse.de>, Brett Rudley <brudley@broadcom.com>, Nohee Ko <noheek@broadcom.com>, Henry Ptasinski <henryp@broadcom.com>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Sep 21, 2010 at 09:53:45AM -0700, Randy Dunlap wrote:
-> On Tue, 21 Sep 2010 17:00:55 +1000 Stephen Rothwell wrote:
-> 
-> > Hi all,
-> > 
-> > Changes since 20100920:
-> 
-> 
-> drivers/staging/keucr/smcommon.h:9:1: warning: "SUCCESS" redefined
-> drivers/staging/built-in.o: In function `usb_stor_bulk_srb':
-> (.text+0x5199e): multiple definition of `usb_stor_bulk_srb'
+On 09/21/2010 09:35 AM, Randy Dunlap wrote:
+> From: Randy Dunlap<randy.dunlap@oracle.com>
+>
+> Fix brcm890211 build: it should depend on MAC80211.
+> MAC80211 depends on CFG80211, which takes care of<regulatory_hint>
+> below.
+>
+> ERROR: "ieee80211_rx_irqsafe" [drivers/staging/brcm80211/brcm80211.ko] undefined!
+> ERROR: "ieee80211_unregister_hw" [drivers/staging/brcm80211/brcm80211.ko] undefined!
+> ERROR: "ieee80211_stop_queues" [drivers/staging/brcm80211/brcm80211.ko] undefined!
+> ERROR: "ieee80211_wake_queues" [drivers/staging/brcm80211/brcm80211.ko] undefined!
+> ERROR: "ieee80211_stop_tx_ba_cb_irqsafe" [drivers/staging/brcm80211/brcm80211.ko] undefined!
+> ERROR: "ieee80211_tx_status_irqsafe" [drivers/staging/brcm80211/brcm80211.ko] undefined!
+> ERROR: "ieee80211_register_hw" [drivers/staging/brcm80211/brcm80211.ko] undefined!
+> ERROR: "regulatory_hint" [drivers/staging/brcm80211/brcm80211.ko] undefined!
+> ERROR: "ieee80211_alloc_hw" [drivers/staging/brcm80211/brcm80211.ko] undefined!
+> ERROR: "ieee80211_free_hw" [drivers/staging/brcm80211/brcm80211.ko] undefined!
+> ERROR: "ieee80211_start_tx_ba_cb_irqsafe" [drivers/staging/brcm80211/brcm80211.ko] undefined!
+>
+> Signed-off-by: Randy Dunlap<randy.dunlap@oracle.com>
+> Cc: Brett Rudley<brudley@broadcom.com>
+> Cc: Henry Ptasinski<henryp@broadcom.com>
+> Cc: Nohee Ko<noheek@broadcom.com>
+> ---
+>   drivers/staging/brcm80211/Kconfig |    2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> --- linux-next-20100921.orig/drivers/staging/brcm80211/Kconfig
+> +++ linux-next-20100921/drivers/staging/brcm80211/Kconfig
+> @@ -1,6 +1,6 @@
+>   menuconfig BRCM80211
+>   	tristate "Broadcom 802.11 WLAN driver for bcm43xx chips"
+> -	depends on PCI&&  WLAN
+> +	depends on PCI&&  WLAN&&  MAC80211
+>   	select WIRELESS_EXT
+>   	select WEXT_PRIV
+>   	default N
+>
 
-Hm, I don't think the keucr driver can be build into the kernel at the
-moment, I'll go fix that.
+Actually, I think that should be something like:
 
-thanks,
+diff --git a/drivers/staging/brcm80211/Kconfig 
+b/drivers/staging/brcm80211/Kconf
+index 6b74685..228ec37 100644
+--- a/drivers/staging/brcm80211/Kconfig
++++ b/drivers/staging/brcm80211/Kconfig
+@@ -1,6 +1,6 @@
+  menuconfig BRCM80211
+         tristate "Broadcom 802.11 WLAN driver for bcm43xx chips"
+-       depends on PCI && WLAN
++       depends on WLAN
+         select WIRELESS_EXT
+         select WEXT_PRIV
+         default N
+@@ -9,6 +9,6 @@ menuconfig BRCM80211
 
-greg k-h
+  config BRCM80211_PCI
+         bool "Broadcom 802.11 WLAN NIC driver"
+-       depends on BRCM80211
++       depends on BRCM80211 && PCI && MAC80211
+         default y
+
+
+Our fullmac sdio driver is going to use the brcm80211 framework, and 
+it'll only need CFG80211.
+
+- Henry
