@@ -1,64 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (sound tree
- related)
-Date: Tue, 21 Sep 2010 16:40:25 +1000
-Message-ID: <20100921164025.62ace513.sfr@canb.auug.org.au>
+From: Ohad Ben-Cohen <ohad@wizery.com>
+Subject: Re: linux-next: manual merge of the wireless tree with Linus' tree
+Date: Tue, 21 Sep 2010 08:53:43 +0200
+Message-ID: <AANLkTinxssqohSCfod8Q1emhJ6AB4Hkxo7EmkTtTxuf=@mail.gmail.com>
+References: <20100921120919.a38723d3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__21_Sep_2010_16_40_25_+1000_KABOLVhxguv_Szl="
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47914 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753274Ab0IUGkc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 21 Sep 2010 02:40:32 -0400
+Received: from mail-px0-f174.google.com ([209.85.212.174]:60701 "EHLO
+	mail-px0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753560Ab0IUGyD convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 21 Sep 2010 02:54:03 -0400
+In-Reply-To: <20100921120919.a38723d3.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Grazvydas Ignotas <notasas@gmail.com>, Tony Lindgren <tony@atomide.com>
 
---Signature=_Tue__21_Sep_2010_16_40_25_+1000_KABOLVhxguv_Szl=
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi ,
+On Tue, Sep 21, 2010 at 4:09 AM, Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> The wireless tree commit copied the include/linux/spi/wl12xx.h to
+> include/linux but did not remove the spi/ one.
 
-After merging the final tree, today's linux-next build (i386 defconfig)
-failed like this:
+We had that one fixed in
+http://www.mail-archive.com/linux-omap@vger.kernel.org/msg34910.html
+but it seems an older patch accidentally got in.
 
-sound/pci/hda/patch_realtek.c: In function 'alc_resume':
-sound/pci/hda/patch_realtek.c:4131: error: 'struct hda_codec_ops' has no me=
-mber named 'check_power_status'
-sound/pci/hda/patch_realtek.c:4132: error: 'struct hda_codec_ops' has no me=
-mber named 'check_power_status'
-sound/pci/hda/patch_realtek.c: In function 'alc269_resume':
-sound/pci/hda/patch_realtek.c:14706: error: 'struct hda_codec_ops' has no m=
-ember named 'check_power_status'
-sound/pci/hda/patch_realtek.c:14707: error: 'struct hda_codec_ops' has no m=
-ember named 'check_power_status'
+> only the new one ... I fixed the above conflict (see below) on the
+> assumption that the spi/ version of the header file should have been
+> removed.
 
-Caused by commit 0ec33d1f952934ea3251cefc6d108b47818eedd0 ("ALSA: hda -
-Refactor ALC269 power-ups/downs in PM callbacks").  I have reverted that
-commit for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Yes, thank you. I'll send a patch to fix that in the wireless tree too.
 
---Signature=_Tue__21_Sep_2010_16_40_25_+1000_KABOLVhxguv_Szl=
-Content-Type: application/pgp-signature
+Thanks,
+Ohad.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMmFNZAAoJEDMEi1NhKgbsjHYH/007ol4rpcNV7OrtQJB0Du5z
-Hb205tNcPDngF2k+ELcnKg7Pug3nPfrF4WBwGohbduBSRLL2sAuNwNq2RXYS1dbb
-AhVG3GgZdkYchtEuni7YLr0sble6wZFDNJHVJC5DQ2uKCVdNrm60JYsZu9O4TWxt
-vaYOZL4qmY4cLUIqrvrKj9jsJl80lj6UAnIPl/W4dKEoBwIPGAz9X1jRrXLzcaSY
-kMv3pfYzsZgc1ty7wTooy7W75irX7byQI6ZtRZ7WLOGKMIgZeE/XrG3aBl1nwndi
-MmvX6KFFiBYWWLqs0oB/bf7zH877lTJpjspLQriIv0P7YcbC+XG6EFPL4QkpX4I=
-=ZZ2/
------END PGP SIGNATURE-----
-
---Signature=_Tue__21_Sep_2010_16_40_25_+1000_KABOLVhxguv_Szl=--
+> --
+> Cheers,
+> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
+=2Eorg.au
+>
+> diff --cc arch/arm/mach-omap2/board-omap3pandora.c
+> index dd3af2b,9b62b62..0000000
+> --- a/arch/arm/mach-omap2/board-omap3pandora.c
+> +++ b/arch/arm/mach-omap2/board-omap3pandora.c
+> @@@ -25,9 -25,7 +25,9 @@@
+> =A0#include <linux/spi/ads7846.h>
+> =A0#include <linux/regulator/machine.h>
+> =A0#include <linux/i2c/twl.h>
+> - #include <linux/spi/wl12xx.h>
+> + #include <linux/wl12xx.h>
+> =A0+#include <linux/mtd/partitions.h>
+> =A0+#include <linux/mtd/nand.h>
+> =A0#include <linux/leds.h>
+> =A0#include <linux/input.h>
+> =A0#include <linux/input/matrix_keypad.h>
+>
