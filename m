@@ -1,51 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the wireless tree with Linus' tree
-Date: Tue, 21 Sep 2010 12:20:58 +1000
-Message-ID: <20100921122058.bb402193.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the input tree with the davinci tree
+Date: Tue, 21 Sep 2010 12:46:32 +1000
+Message-ID: <20100921124632.3be46417.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__21_Sep_2010_12_20_58_+1000_vwDhPX/VINABVHjs"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bob Copeland <me@bobcopeland.com>, Bruno Randolf <br1@einfach.org>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Tue__21_Sep_2010_12_20_58_+1000_vwDhPX/VINABVHjs
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:35242 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752149Ab0IUCqf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 20 Sep 2010 22:46:35 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Cyril Chemparathy <cyril@ti.com>, Kevin Hilman <khilman@deeprootsystems.com>, Abraham Arce <x0066660@ti.com>, Syed Rafiuddin <rafiuddin.syed@ti.com>
 
-Hi John,
+Hi Dmitry,
 
-Today's linux-next merge of the wireless tree got a conflict in
-drivers/net/wireless/ath/ath5k/base.c between commit
-d8e1ba76d619dbc0be8fbeee4e6c683b5c812d3a ("ath5k: check return value of
-ieee80211_get_tx_rate") from Linus' tree and (probably) commit
-bb18dec05909c96a13754f4e070e5d604cb2b805 ("ath5k: reorder base.c to
-remove fwd decls") from the wireless tree.
+Today's linux-next merge of the input tree got a conflict in
+drivers/input/keyboard/Kconfig between commit
+34dca1011e05d3965c0f60d51a69643789683877 ("input: add driver for
+tnetv107x on-chip keypad controller") from the davinci tree and commit
+a17f79553f052f04d47689a842118f775f81b7e3 ("Input: add support for OMAP4
+keyboard controller") from the input tree.
 
-I fixed it up (I think - I just applied the patch from Linus' tree to the
-new position in the wireless tree file) and can carry the fix as necessary.
---=20
+Just overlapping additions.  I fixed it up (see below) and can carry the
+fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__21_Sep_2010_12_20_58_+1000_vwDhPX/VINABVHjs
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMmBaKAAoJEDMEi1NhKgbslUUH/RqwcquTHPn7r+afCb92fckI
-vOrtpmK5gRcYiBgP57Rm2IfJRD/XYkcd9vCupcM5cbri6aNpq682FdY4G3PTR0wC
-3kHl2tXOOiNtzpClglWbycem9OaLxQydfNN2hNQu0sfBUbG0OGHmoxdYKdnFZxsT
-j1uF3qC4IguyVmkQXoyQou3FSGxovg/7lvmOuPW0kpz6RyI9VlSg0Q3bsBJTE5t/
-lhVm16526pIAV+p7eiSUOZU38JUkCXk2Ow15KqQ8QanMuHqA4v5EU6YT2iUYG7RD
-05O9vHDQhILQh38G4FmbOXOCG/t5g+6Rbul+/oQZb4p39biscli05K0SujJHGwQ=
-=9cy/
------END PGP SIGNATURE-----
-
---Signature=_Tue__21_Sep_2010_12_20_58_+1000_vwDhPX/VINABVHjs--
+diff --cc drivers/input/keyboard/Kconfig
+index df1facb,4f30048..0000000
+--- a/drivers/input/keyboard/Kconfig
++++ b/drivers/input/keyboard/Kconfig
+@@@ -424,15 -424,15 +424,24 @@@ config KEYBOARD_OMA
+  	  To compile this driver as a module, choose M here: the
+  	  module will be called omap-keypad.
+  
++ config KEYBOARD_OMAP4
++ 	tristate "TI OMAP4 keypad support"
++ 	depends on ARCH_OMAP4
++ 	help
++ 	  Say Y here if you want to use the OMAP4 keypad.
++ 
++ 	  To compile this driver as a module, choose M here: the
++ 	  module will be called omap4-keypad.
++ 
+ +config KEYBOARD_TNETV107X
+ +	tristate "TI TNETV107X keypad support"
+ +	depends on ARCH_DAVINCI_TNETV107X
+ +	help
+ +	  Say Y here if you want to use the TNETV107X keypad.
+ +
+ +	  To compile this driver as a module, choose M here: the
+ +	  module will be called tnetv107x-keypad.
+ +
+  config KEYBOARD_TWL4030
+  	tristate "TI TWL4030/TWL5030/TPS659x0 keypad support"
+  	depends on TWL4030_CORE
