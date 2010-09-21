@@ -1,44 +1,55 @@
-From: "John W. Linville" <linville@tuxdriver.com>
-Subject: Re: linux-next: manual merge of the wireless tree with Linus' tree
-Date: Tue, 21 Sep 2010 11:08:21 -0400
-Message-ID: <20100921150820.GA2448@tuxdriver.com>
-References: <20100921120919.a38723d3.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] staging: brcm80211 depends on MAC80211
+Date: Tue, 21 Sep 2010 09:35:49 -0700
+Message-ID: <20100921093549.a39a2a8d.randy.dunlap@oracle.com>
+References: <20100921170055.4512dd19.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:36251 "EHLO
-	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754163Ab0IUPOi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 21 Sep 2010 11:14:38 -0400
-Content-Disposition: inline
-In-Reply-To: <20100921120919.a38723d3.sfr@canb.auug.org.au>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:27012 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753740Ab0IUQh3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 21 Sep 2010 12:37:29 -0400
+In-Reply-To: <20100921170055.4512dd19.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Grazvydas Ignotas <notasas@gmail.com>, Tony Lindgren <tony@atomide.com>, Ohad Ben-Cohen <ohad@wizery.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, driverdevel <devel@driverdev.osuosl.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, gregkh@suse.de, Brett Rudley <brudley@broadcom.com>, Henry Ptasinski <henryp@broadcom.com>, ohee Ko <noheek@broadcom.com>
 
-On Tue, Sep 21, 2010 at 12:09:19PM +1000, Stephen Rothwell wrote:
-> Hi John,
-> 
-> Today's linux-next merge of the wireless tree got a conflict in
-> arch/arm/mach-omap2/board-omap3pandora.c between commit
-> 79ccf549b33c613b57eebcb03f8b24644c545a88 ("omap3: pandora: add NAND and
-> wifi support") from Linus' tree and commit
-> 664279b5121b480f31ffecf202cd2d1591ff356e ("wl12xx: make wl12xx.h common
-> to both spi and sdio") from the wireless tree.
-> 
-> The wireless tree commit copied the include/linux/spi/wl12xx.h to
-> include/linux but did not remove the spi/ one.  Later patches modified
-> only the new one ... I fixed the above conflict (see below) on the
-> assumption that the spi/ version of the header file should have been
-> removed.
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Hmmmm...not sure how the delete part of the move got lost...  I'll fix
-it up.
+Fix brcm890211 build: it should depend on MAC80211.
+MAC80211 depends on CFG80211, which takes care of <regulatory_hint>
+below.
 
-Thanks for letting me know!
+ERROR: "ieee80211_rx_irqsafe" [drivers/staging/brcm80211/brcm80211.ko] undefined!
+ERROR: "ieee80211_unregister_hw" [drivers/staging/brcm80211/brcm80211.ko] undefined!
+ERROR: "ieee80211_stop_queues" [drivers/staging/brcm80211/brcm80211.ko] undefined!
+ERROR: "ieee80211_wake_queues" [drivers/staging/brcm80211/brcm80211.ko] undefined!
+ERROR: "ieee80211_stop_tx_ba_cb_irqsafe" [drivers/staging/brcm80211/brcm80211.ko] undefined!
+ERROR: "ieee80211_tx_status_irqsafe" [drivers/staging/brcm80211/brcm80211.ko] undefined!
+ERROR: "ieee80211_register_hw" [drivers/staging/brcm80211/brcm80211.ko] undefined!
+ERROR: "regulatory_hint" [drivers/staging/brcm80211/brcm80211.ko] undefined!
+ERROR: "ieee80211_alloc_hw" [drivers/staging/brcm80211/brcm80211.ko] undefined!
+ERROR: "ieee80211_free_hw" [drivers/staging/brcm80211/brcm80211.ko] undefined!
+ERROR: "ieee80211_start_tx_ba_cb_irqsafe" [drivers/staging/brcm80211/brcm80211.ko] undefined!
 
-John
--- 
-John W. Linville		Someday the world will need a hero, and you
-linville@tuxdriver.com			might be all we have.  Be ready.
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Brett Rudley <brudley@broadcom.com>
+Cc: Henry Ptasinski <henryp@broadcom.com>
+Cc: Nohee Ko <noheek@broadcom.com>
+---
+ drivers/staging/brcm80211/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20100921.orig/drivers/staging/brcm80211/Kconfig
++++ linux-next-20100921/drivers/staging/brcm80211/Kconfig
+@@ -1,6 +1,6 @@
+ menuconfig BRCM80211
+ 	tristate "Broadcom 802.11 WLAN driver for bcm43xx chips"
+-	depends on PCI && WLAN
++	depends on PCI && WLAN && MAC80211
+ 	select WIRELESS_EXT
+ 	select WEXT_PRIV
+ 	default N
