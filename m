@@ -1,40 +1,56 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: linux-next: manual merge of the input tree with the davinci tree
-Date: Mon, 20 Sep 2010 22:24:38 -0700
-Message-ID: <20100921052438.GB5066@core.coreip.homeip.net>
-References: <20100921124632.3be46417.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the bkl-llseek tree with the
+ staging-next tree
+Date: Tue, 21 Sep 2010 16:06:37 +1000
+Message-ID: <20100921160637.c61d4322.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__21_Sep_2010_16_06_37_+1000_fFeYMTsBe1orEyoK"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-px0-f174.google.com ([209.85.212.174]:34438 "EHLO
-	mail-px0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753440Ab0IUFYo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 21 Sep 2010 01:24:44 -0400
-Content-Disposition: inline
-In-Reply-To: <20100921124632.3be46417.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:56755 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751008Ab0IUGGq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 21 Sep 2010 02:06:46 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Cyril Chemparathy <cyril@ti.com>, Kevin Hilman <khilman@deeprootsystems.com>, Abraham Arce <x0066660@ti.com>, Syed Rafiuddin <rafiuddin.syed@ti.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sven Eckelmann <sven.eckelmann@gmx.de>, Greg Kroah-Hartman <gregkh@suse.de>
 
-On Tue, Sep 21, 2010 at 12:46:32PM +1000, Stephen Rothwell wrote:
-> Hi Dmitry,
-> 
-> Today's linux-next merge of the input tree got a conflict in
-> drivers/input/keyboard/Kconfig between commit
-> 34dca1011e05d3965c0f60d51a69643789683877 ("input: add driver for
-> tnetv107x on-chip keypad controller") from the davinci tree and commit
-> a17f79553f052f04d47689a842118f775f81b7e3 ("Input: add support for OMAP4
-> keyboard controller") from the input tree.
-> 
-> Just overlapping additions.  I fixed it up (see below) and can carry the
-> fix as necessary.
+--Signature=_Tue__21_Sep_2010_16_06_37_+1000_fFeYMTsBe1orEyoK
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I am afraid you'll have to carry this one till the next merge window -
-it seemed that Davinci drivers better be merged through davinci tree so
-we'll have this conflict.
+Hi Arnd,
 
-Sorry about this.
+Today's linux-next merge of the bkl-llseek tree got conflicts in
+drivers/staging/batman-adv/icmp_socket.c and
+drivers/staging/batman-adv/bat_debugfs.c between commit
+2d77bb592f6cabc5ee5322c03ee92b9f96c45f60 ("Staging: batman-adv: Mark
+debugfs files as nonseekable") from the staging-next tree and commit
+5295184fb318693b4ef2cd8056bf1a7cb43586d7 ("llseek: automatically
+add .llseek fop") from the bkl-llseek tree.
 
--- 
-Dmitry
+I used the versions from the staging-next tree.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__21_Sep_2010_16_06_37_+1000_fFeYMTsBe1orEyoK
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMmEttAAoJEDMEi1NhKgbsBOwH/1lLy+1s0jA3nnmqfnOK+Ai3
+FBSENcDK9/LF1fIybI015VOIw2MiY/CXbc6SCISOOrpCLuICohpd7EACb8bWJ1Bp
+0L58m4skRxL5g9ge1bFZhSIB/jY1rPhAqdjDrfnXuoRVVWnw4+ZuS0wma/0OIrri
+CYOPQVVSPLKoMGhnvXjZ7gEGeP3+jgvSjiJOjflrE5gkD22mh8fgrR/KLpiXaZL2
+g7DhOGHs/CjTrNvOHA9TqiLgRBFIR47spbO15BPOP9jrcP/6w5rzoGQIpxyXlleW
+tiEEQ1ma3VOkaSJKM+2JH96vIBtYpDjUVy6peqAnOStx0xhiuD9vJzY2pWRezrs=
+=Ragl
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__21_Sep_2010_16_06_37_+1000_fFeYMTsBe1orEyoK--
