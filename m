@@ -1,40 +1,45 @@
-From: Dominik Brodowski <linux@dominikbrodowski.net>
-Subject: Re: linux-next: Tree for September 20 (scsi/pcmcia/nsp_cs.c)
-Date: Mon, 20 Sep 2010 19:42:55 +0200
-Message-ID: <20100920174255.GA16938@isilmar-3.linta.de>
-References: <20100920161239.f204a507.sfr@canb.auug.org.au> <20100920091811.551ee35a.randy.dunlap@oracle.com>
+From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Subject: Re: linux-next: build failure after merge of the viafb tree
+Date: Tue, 21 Sep 2010 03:35:59 +0200
+Message-ID: <4C980BFF.7070707@gmx.de>
+References: <20100920131014.8393b0e2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-15; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from isilmar-3.linta.de ([188.40.101.200]:53130 "EHLO linta.de"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1755171Ab0ITRm5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 20 Sep 2010 13:42:57 -0400
-Content-Disposition: inline
-In-Reply-To: <20100920091811.551ee35a.randy.dunlap@oracle.com>
+Received: from mailout-de.gmx.net ([213.165.64.22]:41792 "HELO mail.gmx.net"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with SMTP
+	id S1751391Ab0IUBgE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 20 Sep 2010 21:36:04 -0400
+In-Reply-To: <20100920131014.8393b0e2.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, scsi <linux-scsi@vger.kernel.org>, linux-pcmcia@lists.infradead.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, YOKOTA Hiroshi <yokota@netlab.is.tsukuba.ac.jp>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Thanks for testing, should be fixed for tomorrow.
+Hi Stephen,
 
-On Mon, Sep 20, 2010 at 09:18:11AM -0700, Randy Dunlap wrote:
-> On Mon, 20 Sep 2010 16:12:39 +1000 Stephen Rothwell wrote:
+Stephen Rothwell schrieb:
+> Hi Florian,
 > 
-> > Hi all,
-> > 
-> > Changes since 20100917:
+> After merging the viafb tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 > 
+> drivers/video/via/viafbdev.c: In function 'viafb_init_proc':
+> drivers/video/via/viafbdev.c:1605: error: incompatible type for argument 3 of 'proc_create'
 > 
-> drivers/scsi/pcmcia/nsp_cs.c:1573: error: 'cfg' undeclared (first use in this function)
-> drivers/scsi/pcmcia/nsp_cs.c:1592: error: dereferencing pointer to incomplete type
-> drivers/scsi/pcmcia/nsp_cs.c:1595: error: dereferencing pointer to incomplete type
-> drivers/scsi/pcmcia/nsp_cs.c:1697: error: 'struct pcmcia_device' has no member named 'win'
+> Caused by commit 84e3266c11318f2240e7de7868a14aa1119c613c ("viafb: add
+> interface for output device configuration") which missed one conversion
+> of "*viabf_entry" -> "viafb_entry".
 > 
+> I have used the version of the viafb tree from next-20100917 for today.
 > 
-> (rand)config is attached.
-> 
-> ---
-> ~Randy
-> *** Remember to use Documentation/SubmitChecklist when testing your code ***
+> Also several commits in this tree have the "subject" line repeated in the
+> commit message.
+
+Should be fixed now.
+
+
+Thanks,
+
+Florian Tobias Schandinat
