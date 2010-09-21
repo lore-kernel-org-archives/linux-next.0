@@ -1,49 +1,37 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: no release today
-Date: Wed, 22 Sep 2010 08:26:56 +1000
-Message-ID: <20100922082656.40e66177.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: [PATCH -next] driver core: fix build for CONFIG_BLOCK=n
+Date: Tue, 21 Sep 2010 15:31:15 -0700
+Message-ID: <20100921223115.GB21202@kroah.com>
+References: <20100920161239.f204a507.sfr@canb.auug.org.au>
+ <20100920092034.0b3f5898.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__22_Sep_2010_08_26_56_+1000_pE1L=xDy4tAYbTEK"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:32837 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751132Ab0IUW1E (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 21 Sep 2010 18:27:04 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
-
---Signature=_Wed__22_Sep_2010_08_26_56_+1000_pE1L=xDy4tAYbTEK
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20100920092034.0b3f5898.randy.dunlap@oracle.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Kay Sievers <kay.sievers@vrfy.org>, gregkh@suse.de, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+On Mon, Sep 20, 2010 at 09:20:34AM -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> Fix build when CONFIG_BLOCK is not enabled (since SEP-06).
+> Fixes these build errors:
+> 
+> drivers/base/core.c: In function 'get_device_parent':
+> drivers/base/core.c:622: error: 'block_class' undeclared (first use in this function)
+> drivers/base/core.c: In function 'device_add_class_symlinks':
+> drivers/base/core.c:712: error: 'block_class' undeclared (first use in this function)
+> drivers/base/core.c: In function 'device_remove_class_symlinks':
+> drivers/base/core.c:742: error: 'block_class' undeclared (first use in this function)
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 
-There will be no linux-next tree released for today (next-20100922).
-Normal service should recommence tomorrow.
+This should no longer be needed with the next linux-next tree as the
+logic in this area has changed thanks to Andi's patch.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+thanks,
 
---Signature=_Wed__22_Sep_2010_08_26_56_+1000_pE1L=xDy4tAYbTEK
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMmTEwAAoJEDMEi1NhKgbsVqgH/iOumLnuySrbFDHY8GLxuGQI
-k65uliNmxNIdQ29YsugvGCfiUQDmHhn9pj0rcoHFj/cbZBHGvtfV05KcX5d4uKG6
-RUED62LWwNI7X0vWG6yUS0sL4y7uWhiqq6bcMHVlWkcA2z3YicuXPBD7hqG+GeIw
-D+Yt+cRd+oJ4J/5ZmIEwZpSeVm8qrquB3m7kbmlBdyDAONI17rKDXNasEHqBNNrS
-6s6xlglCI/A0Le6CSc7BfWp3GMC4uF+C4ZY8M4vbcWX6K8dHsWWaLB0F3m8pOp8F
-KfSa7eSa5u/98bnYcn3smCsnf0zjBZk5evtKnaa5+mMyq7nir0G/zyJHnmvAPro=
-=Qp/2
------END PGP SIGNATURE-----
-
---Signature=_Wed__22_Sep_2010_08_26_56_+1000_pE1L=xDy4tAYbTEK--
+greg k-h
