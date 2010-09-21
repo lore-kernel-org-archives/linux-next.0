@@ -1,36 +1,44 @@
-From: Greg KH <gregkh@suse.de>
-Subject: Re: linux-next: manual merge of the bkl-llseek tree with the
- staging-next tree
-Date: Tue, 21 Sep 2010 06:31:31 -0700
-Message-ID: <20100921133131.GB2751@suse.de>
-References: <20100921160637.c61d4322.sfr@canb.auug.org.au>
+From: "John W. Linville" <linville@tuxdriver.com>
+Subject: Re: linux-next: manual merge of the wireless tree with Linus' tree
+Date: Tue, 21 Sep 2010 11:08:21 -0400
+Message-ID: <20100921150820.GA2448@tuxdriver.com>
+References: <20100921120919.a38723d3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:57002 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754304Ab0IUNgF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 21 Sep 2010 09:36:05 -0400
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:36251 "EHLO
+	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754163Ab0IUPOi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 21 Sep 2010 11:14:38 -0400
 Content-Disposition: inline
-In-Reply-To: <20100921160637.c61d4322.sfr@canb.auug.org.au>
+In-Reply-To: <20100921120919.a38723d3.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sven Eckelmann <sven.eckelmann@gmx.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Grazvydas Ignotas <notasas@gmail.com>, Tony Lindgren <tony@atomide.com>, Ohad Ben-Cohen <ohad@wizery.com>
 
-On Tue, Sep 21, 2010 at 04:06:37PM +1000, Stephen Rothwell wrote:
-> Hi Arnd,
+On Tue, Sep 21, 2010 at 12:09:19PM +1000, Stephen Rothwell wrote:
+> Hi John,
 > 
-> Today's linux-next merge of the bkl-llseek tree got conflicts in
-> drivers/staging/batman-adv/icmp_socket.c and
-> drivers/staging/batman-adv/bat_debugfs.c between commit
-> 2d77bb592f6cabc5ee5322c03ee92b9f96c45f60 ("Staging: batman-adv: Mark
-> debugfs files as nonseekable") from the staging-next tree and commit
-> 5295184fb318693b4ef2cd8056bf1a7cb43586d7 ("llseek: automatically
-> add .llseek fop") from the bkl-llseek tree.
+> Today's linux-next merge of the wireless tree got a conflict in
+> arch/arm/mach-omap2/board-omap3pandora.c between commit
+> 79ccf549b33c613b57eebcb03f8b24644c545a88 ("omap3: pandora: add NAND and
+> wifi support") from Linus' tree and commit
+> 664279b5121b480f31ffecf202cd2d1591ff356e ("wl12xx: make wl12xx.h common
+> to both spi and sdio") from the wireless tree.
 > 
-> I used the versions from the staging-next tree.
+> The wireless tree commit copied the include/linux/spi/wl12xx.h to
+> include/linux but did not remove the spi/ one.  Later patches modified
+> only the new one ... I fixed the above conflict (see below) on the
+> assumption that the spi/ version of the header file should have been
+> removed.
 
-That sounds correct, thanks for letting us know.
+Hmmmm...not sure how the delete part of the move got lost...  I'll fix
+it up.
 
-greg k-h
+Thanks for letting me know!
+
+John
+-- 
+John W. Linville		Someday the world will need a hero, and you
+linville@tuxdriver.com			might be all we have.  Be ready.
