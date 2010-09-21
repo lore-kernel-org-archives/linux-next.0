@@ -1,111 +1,116 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH -next] staging: brcm80211 depends on MAC80211
-Date: Tue, 21 Sep 2010 11:18:04 -0700
-Message-ID: <4C98F6DC.1070005@oracle.com>
-References: <20100921170055.4512dd19.sfr@canb.auug.org.au> <20100921093549.a39a2a8d.randy.dunlap@oracle.com> <4C98EA0B.6050903@broadcom.com> <20100921180614.GA24227@kroah.com> <4C98F66C.809@broadcom.com>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Re: [PATCH 2/3 V8] [tip:x86/mm] NX protection for kernel data
+Date: Tue, 21 Sep 2010 15:00:06 -0400
+Message-ID: <20100921190006.GA23067@dumpdata.com>
+References: <4C856211.7080802@free.fr>
+ <4C8FB616.2070807@free.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:27465 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755543Ab0IUSTS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 21 Sep 2010 14:19:18 -0400
-In-Reply-To: <4C98F66C.809@broadcom.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Henry Ptasinski <henryp@broadcom.com>
-Cc: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, driverdevel <devel@driverdev.osuosl.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "gregkh@suse.de" <gregkh@suse.de>, Brett Rudley <brudley@broadcom.com>, Nohee Ko <noheek@broadcom.com>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-security-module-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <4C8FB616.2070807@free.fr>
+Sender: linux-security-module-owner@vger.kernel.org
+To: matthieu castet <castet.matthieu@free.fr>
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, Rusty Russell <rusty@rustcorp.com.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>, Siarhei Liakh <sliakh.lkml@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-On 09/21/10 11:16, Henry Ptasinski wrote:
-> On 09/21/2010 11:06 AM, Greg KH wrote:
->> On Tue, Sep 21, 2010 at 10:23:23AM -0700, Henry Ptasinski wrote:
->>> On 09/21/2010 09:35 AM, Randy Dunlap wrote:
->>>> From: Randy Dunlap<randy.dunlap@oracle.com>
->>>>
->>>> Fix brcm890211 build: it should depend on MAC80211.
->>>> MAC80211 depends on CFG80211, which takes care of<regulatory_hint>
->>>> below.
->>>>
->>>> ERROR: "ieee80211_rx_irqsafe"
->>>> [drivers/staging/brcm80211/brcm80211.ko] undefined!
->>>> ERROR: "ieee80211_unregister_hw"
->>>> [drivers/staging/brcm80211/brcm80211.ko] undefined!
->>>> ERROR: "ieee80211_stop_queues"
->>>> [drivers/staging/brcm80211/brcm80211.ko] undefined!
->>>> ERROR: "ieee80211_wake_queues"
->>>> [drivers/staging/brcm80211/brcm80211.ko] undefined!
->>>> ERROR: "ieee80211_stop_tx_ba_cb_irqsafe"
->>>> [drivers/staging/brcm80211/brcm80211.ko] undefined!
->>>> ERROR: "ieee80211_tx_status_irqsafe"
->>>> [drivers/staging/brcm80211/brcm80211.ko] undefined!
->>>> ERROR: "ieee80211_register_hw"
->>>> [drivers/staging/brcm80211/brcm80211.ko] undefined!
->>>> ERROR: "regulatory_hint" [drivers/staging/brcm80211/brcm80211.ko]
->>>> undefined!
->>>> ERROR: "ieee80211_alloc_hw" [drivers/staging/brcm80211/brcm80211.ko]
->>>> undefined!
->>>> ERROR: "ieee80211_free_hw" [drivers/staging/brcm80211/brcm80211.ko]
->>>> undefined!
->>>> ERROR: "ieee80211_start_tx_ba_cb_irqsafe"
->>>> [drivers/staging/brcm80211/brcm80211.ko] undefined!
->>>>
->>>> Signed-off-by: Randy Dunlap<randy.dunlap@oracle.com>
->>>> Cc: Brett Rudley<brudley@broadcom.com>
->>>> Cc: Henry Ptasinski<henryp@broadcom.com>
->>>> Cc: Nohee Ko<noheek@broadcom.com>
->>>> ---
->>>>   drivers/staging/brcm80211/Kconfig |    2 +-
->>>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> --- linux-next-20100921.orig/drivers/staging/brcm80211/Kconfig
->>>> +++ linux-next-20100921/drivers/staging/brcm80211/Kconfig
->>>> @@ -1,6 +1,6 @@
->>>>   menuconfig BRCM80211
->>>>       tristate "Broadcom 802.11 WLAN driver for bcm43xx chips"
->>>> -    depends on PCI&&   WLAN
->>>> +    depends on PCI&&   WLAN&&   MAC80211
->>>>       select WIRELESS_EXT
->>>>       select WEXT_PRIV
->>>>       default N
->>>>
->>>
->>> Actually, I think that should be something like:
->>>
->>> diff --git a/drivers/staging/brcm80211/Kconfig
->>> b/drivers/staging/brcm80211/Kconf
->>> index 6b74685..228ec37 100644
->>> --- a/drivers/staging/brcm80211/Kconfig
->>> +++ b/drivers/staging/brcm80211/Kconfig
->>> @@ -1,6 +1,6 @@
->>>   menuconfig BRCM80211
->>>          tristate "Broadcom 802.11 WLAN driver for bcm43xx chips"
->>> -       depends on PCI&&  WLAN
->>> +       depends on WLAN
->>>          select WIRELESS_EXT
->>>          select WEXT_PRIV
->>>          default N
->>> @@ -9,6 +9,6 @@ menuconfig BRCM80211
->>>
->>>   config BRCM80211_PCI
->>>          bool "Broadcom 802.11 WLAN NIC driver"
->>> -       depends on BRCM80211
->>> +       depends on BRCM80211&&  PCI&&  MAC80211
->>>          default y
->>>
->>>
->>> Our fullmac sdio driver is going to use the brcm80211 framework, and
->>> it'll only need CFG80211.
->>
->> Care to send this in a patch-format that I can apply it (i.e. proper
->> changelog entry, reported-by:, signed-off-by:, etc.)?
-> 
-> Yes, as soon as I figure out the full fix.  There's a build error if
-> BRCM80211 is set and BRCM80211_PCI is not set (somebody pointed this out
-> a couple days ago) that I'd like to resolve also.
+On Tue, Sep 14, 2010 at 07:51:18PM +0200, matthieu castet wrote:
+> Hi,
+>=20
+> any feedback on that ?
 
-Yes, I reported that also.  Glad to hear that it will be addressed.
+I was hoping to run your patch through a Xen guest. In the past modific=
+ations
+in that area caused unbootable kernels :-( But I am still suffering fro=
+m
+post-vacation-amnesia and e-mails so haven't gotten to look at this.
 
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+>=20
+> Thanks,
+>=20
+> Matthieu
+>=20
+>=20
+> matthieu castet a =E9crit :
+> >   Note: this patch depends on "Correct improper large page
+> >preservation" patch
+> >      This patch expands functionality of CONFIG_DEBUG_RODATA to set=
+ main
+> >   (static) kernel data area as NX.
+> >   The following steps are taken to achieve this:
+> >   1. Linker script is adjusted so .text always starts and ends on
+> >a page bound
+> >   2. Linker script is adjusted so .rodata always start and
+> >   end on a page boundary
+> >   3. NX is set for all pages from _etext through _end in mark_rodat=
+a_ro.
+> >   4. free_init_pages() sets released memory NX in arch/x86/mm/init.=
+c
+> >   5. bios rom is set to x when pcibios is used.
+> >      The results of patch application may be observed in the diff
+> >of kernel page
+> >   table dumps.
+> >   pcibios :
+> >   --- data_nx_pt_before.txt       2009-10-13 07:48:59.000000000 -04=
+00
+> >   +++ data_nx_pt_after.txt        2009-10-13 07:26:46.000000000 -04=
+00
+> >   @@ -2,8 +2,9 @@
+> >    0x00000000-0xc0000000           3G                           pmd
+> >    ---[ Kernel Mapping ]---
+> >   -0xc0000000-0xc0100000           1M     RW             GLB x  pte
+> >   +0xc0000000-0xc00a0000         640K     RW             GLB NX pte
+> >   +0xc00a0000-0xc0100000         384K     RW             GLB x  pte
+> >   -0xc0100000-0xc03d7000        2908K     ro             GLB x  pte
+> >   +0xc0100000-0xc0318000        2144K     ro             GLB x  pte
+> >   +0xc0318000-0xc03d7000         764K     ro             GLB NX pte
+> >   -0xc03d7000-0xc0600000        2212K     RW             GLB x  pte
+> >   +0xc03d7000-0xc0600000        2212K     RW             GLB NX pte
+> >    0xc0600000-0xf7a00000         884M     RW         PSE GLB NX pmd
+> >    0xf7a00000-0xf7bfe000        2040K     RW             GLB NX pte
+> >    0xf7bfe000-0xf7c00000           8K                           pte
+> >      no pcibios :
+> >   --- data_nx_pt_before.txt       2009-10-13 07:48:59.000000000 -04=
+00
+> >   +++ data_nx_pt_after.txt        2009-10-13 07:26:46.000000000 -04=
+00
+> >   @@ -2,8 +2,9 @@
+> >    0x00000000-0xc0000000           3G                           pmd
+> >    ---[ Kernel Mapping ]---
+> >   -0xc0000000-0xc0100000           1M     RW             GLB x  pte
+> >   +0xc0000000-0xc0100000           1M     RW             GLB NX pte
+> >   -0xc0100000-0xc03d7000        2908K     ro             GLB x  pte
+> >   +0xc0100000-0xc0318000        2144K     ro             GLB x  pte
+> >   +0xc0318000-0xc03d7000         764K     ro             GLB NX pte
+> >   -0xc03d7000-0xc0600000        2212K     RW             GLB x  pte
+> >   +0xc03d7000-0xc0600000        2212K     RW             GLB NX pte
+> >    0xc0600000-0xf7a00000         884M     RW         PSE GLB NX pmd
+> >    0xf7a00000-0xf7bfe000        2040K     RW             GLB NX pte
+> >    0xf7bfe000-0xf7c00000           8K                           pte
+> >      The patch have been developed for Linux 2.6.34-rc2 x86 by
+> >Siarhei Liakh
+> >   <sliakh.lkml@gmail.com> and Xuxian Jiang <jiang@cs.ncsu.edu>.
+> >      V1:  initial patch for 2.6.30
+> >   V2:  patch for 2.6.31-rc7
+> >   V3:  moved all code into arch/x86, adjusted credits
+> >   V4:  fixed ifdef, removed credits from CREDITS
+> >   V5:  fixed an address calculation bug in mark_nxdata_nx()
+> >   V6:  added acked-by and PT dump diff to commit log
+> >   V7:  minor adjustments for -tip
+> >   V8:  rework with the merge of "Set first MB as RW+NX"
+> >      Signed-off-by: Siarhei Liakh <sliakh.lkml@gmail.com>
+> >   Signed-off-by: Xuxian Jiang <jiang@cs.ncsu.edu>
+> >   Signed-off-by: Matthieu CASTET <castet.matthieu@free.fr>
+> >
+>=20
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-next"=
+ in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--
+To unsubscribe from this list: send the line "unsubscribe linux-securit=
+y-module" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
