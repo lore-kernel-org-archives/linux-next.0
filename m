@@ -1,46 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the block tree with the ext4 tree
-Date: Tue, 21 Sep 2010 14:04:10 +1000
-Message-ID: <20100921140410.f1ba148e.sfr@canb.auug.org.au>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: linux-next: manual merge of the input tree with the davinci tree
+Date: Mon, 20 Sep 2010 22:24:38 -0700
+Message-ID: <20100921052438.GB5066@core.coreip.homeip.net>
+References: <20100921124632.3be46417.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:50837 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750735Ab0IUEEQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 21 Sep 2010 00:04:16 -0400
+Received: from mail-px0-f174.google.com ([209.85.212.174]:34438 "EHLO
+	mail-px0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753440Ab0IUFYo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 21 Sep 2010 01:24:44 -0400
+Content-Disposition: inline
+In-Reply-To: <20100921124632.3be46417.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, Lukas Czerner <lczerner@redhat.com>, Theodore Tso <tytso@MIT.EDU>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Cyril Chemparathy <cyril@ti.com>, Kevin Hilman <khilman@deeprootsystems.com>, Abraham Arce <x0066660@ti.com>, Syed Rafiuddin <rafiuddin.syed@ti.com>
 
-Hi Jens,
+On Tue, Sep 21, 2010 at 12:46:32PM +1000, Stephen Rothwell wrote:
+> Hi Dmitry,
+> 
+> Today's linux-next merge of the input tree got a conflict in
+> drivers/input/keyboard/Kconfig between commit
+> 34dca1011e05d3965c0f60d51a69643789683877 ("input: add driver for
+> tnetv107x on-chip keypad controller") from the davinci tree and commit
+> a17f79553f052f04d47689a842118f775f81b7e3 ("Input: add support for OMAP4
+> keyboard controller") from the input tree.
+> 
+> Just overlapping additions.  I fixed it up (see below) and can carry the
+> fix as necessary.
 
-Today's linux-next merge of the block tree got a conflict in
-fs/ext4/mballoc.c between commit 9c543072a9dd7cf60cbf472914a6480ffda50b27
-("ext4: Check for negative error code from sb_issue_discard") from the
-ext4 tree and commit 2cf6d26a354ab6362e301b5a323832b02867df47 ("block:
-pass gfp_mask and flags to sb_issue_discard") from the block tree.
+I am afraid you'll have to carry this one till the next merge window -
+it seemed that Davinci drivers better be merged through davinci tree so
+we'll have this conflict.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+Sorry about this.
+
 -- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc fs/ext4/mballoc.c
-index e4f4dae,19aa0d4..0000000
---- a/fs/ext4/mballoc.c
-+++ b/fs/ext4/mballoc.c
-@@@ -2612,8 -2566,8 +2612,8 @@@ static inline void ext4_issue_discard(s
-  	discard_block = block + ext4_group_first_block_no(sb, block_group);
-  	trace_ext4_discard_blocks(sb,
-  			(unsigned long long) discard_block, count);
-- 	ret = sb_issue_discard(sb, discard_block, count);
-+ 	ret = sb_issue_discard(sb, discard_block, count, GFP_NOFS, 0);
- -	if (ret == EOPNOTSUPP) {
- +	if (ret == -EOPNOTSUPP) {
-  		ext4_warning(sb, "discard not supported, disabling");
-  		clear_opt(EXT4_SB(sb)->s_mount_opt, DISCARD);
-  	}
+Dmitry
