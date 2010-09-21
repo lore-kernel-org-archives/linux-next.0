@@ -1,60 +1,64 @@
-From: Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: linux-next: manual merge of the bkl-vfs tree with the cifs tree
-Date: Tue, 21 Sep 2010 01:17:43 -0500
-Message-ID: <AANLkTikbM17xs41abm+6DTa9DJLYM8XYeVg=bZr_n8M5@mail.gmail.com>
-References: <20100921161031.7745150e.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (sound tree
+ related)
+Date: Tue, 21 Sep 2010 16:40:25 +1000
+Message-ID: <20100921164025.62ace513.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20100921161031.7745150e.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ben Greear <greearb-my8/4N5VtI7c+919tysfdA@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jan Blunck <jblunck-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__21_Sep_2010_16_40_25_+1000_KABOLVhxguv_Szl="
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:47914 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753274Ab0IUGkc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 21 Sep 2010 02:40:32 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Alternatively - I could merge the trivially modified bkl cifs patch
-into the cifs-2.6.git tree if that is easier
+--Signature=_Tue__21_Sep_2010_16_40_25_+1000_KABOLVhxguv_Szl=
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 21, 2010 at 1:10 AM, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org=
-> wrote:
-> Hi Arnd,
->
-> Today's linux-next merge of the bkl-vfs tree got a conflict in
-> fs/cifs/cifsfs.c between commit d090dbeacd3763845d83d5de4d85aad025a28=
-677
-> ("cifs: Allow binding to local IP address") from the cifs tree and co=
-mmit
-> b8f05b0b9ea89cfaf6759b1eb47fff683e7016a5 ("BKL: Remove BKL from CifsF=
-S")
-> from the bkl-vfs tree.
->
-> Just context changes. =A0I fixed it up (see below) and can carry the =
-fix as
-> necessary.
-> --
-> Cheers,
-> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr-3FnU+UHB4dPYtjvyW6yDsg@public.gmane.org=
-=2Eorg.au
->
-> diff --cc fs/cifs/cifsfs.c
-> index 52e89ea,4e273f7..0000000
-> --- a/fs/cifs/cifsfs.c
-> +++ b/fs/cifs/cifsfs.c
-> @@@ -35,8 -35,6 +35,7 @@@
-> =A0#include <linux/delay.h>
-> =A0#include <linux/kthread.h>
-> =A0#include <linux/freezer.h>
-> - #include <linux/smp_lock.h>
-> =A0+#include <net/ipv6.h>
-> =A0#include "cifsfs.h"
-> =A0#include "cifspdu.h"
-> =A0#define DECLARE_GLOBALS_HERE
->
+Hi ,
 
+After merging the final tree, today's linux-next build (i386 defconfig)
+failed like this:
 
+sound/pci/hda/patch_realtek.c: In function 'alc_resume':
+sound/pci/hda/patch_realtek.c:4131: error: 'struct hda_codec_ops' has no me=
+mber named 'check_power_status'
+sound/pci/hda/patch_realtek.c:4132: error: 'struct hda_codec_ops' has no me=
+mber named 'check_power_status'
+sound/pci/hda/patch_realtek.c: In function 'alc269_resume':
+sound/pci/hda/patch_realtek.c:14706: error: 'struct hda_codec_ops' has no m=
+ember named 'check_power_status'
+sound/pci/hda/patch_realtek.c:14707: error: 'struct hda_codec_ops' has no m=
+ember named 'check_power_status'
 
+Caused by commit 0ec33d1f952934ea3251cefc6d108b47818eedd0 ("ALSA: hda -
+Refactor ALC269 power-ups/downs in PM callbacks").  I have reverted that
+commit for today.
 --=20
-Thanks,
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Steve
+--Signature=_Tue__21_Sep_2010_16_40_25_+1000_KABOLVhxguv_Szl=
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMmFNZAAoJEDMEi1NhKgbsjHYH/007ol4rpcNV7OrtQJB0Du5z
+Hb205tNcPDngF2k+ELcnKg7Pug3nPfrF4WBwGohbduBSRLL2sAuNwNq2RXYS1dbb
+AhVG3GgZdkYchtEuni7YLr0sble6wZFDNJHVJC5DQ2uKCVdNrm60JYsZu9O4TWxt
+vaYOZL4qmY4cLUIqrvrKj9jsJl80lj6UAnIPl/W4dKEoBwIPGAz9X1jRrXLzcaSY
+kMv3pfYzsZgc1ty7wTooy7W75irX7byQI6ZtRZ7WLOGKMIgZeE/XrG3aBl1nwndi
+MmvX6KFFiBYWWLqs0oB/bf7zH877lTJpjspLQriIv0P7YcbC+XG6EFPL4QkpX4I=
+=ZZ2/
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__21_Sep_2010_16_40_25_+1000_KABOLVhxguv_Szl=--
