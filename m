@@ -1,56 +1,44 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the bkl-llseek tree with the
- staging-next tree
-Date: Tue, 21 Sep 2010 16:06:37 +1000
-Message-ID: <20100921160637.c61d4322.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the bkl-vfs tree with the cifs tree
+Date: Tue, 21 Sep 2010 16:10:31 +1000
+Message-ID: <20100921161031.7745150e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__21_Sep_2010_16_06_37_+1000_fFeYMTsBe1orEyoK"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56755 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:38116 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751008Ab0IUGGq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 21 Sep 2010 02:06:46 -0400
+	id S1751008Ab0IUGKe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 21 Sep 2010 02:10:34 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sven Eckelmann <sven.eckelmann@gmx.de>, Greg Kroah-Hartman <gregkh@suse.de>
-
---Signature=_Tue__21_Sep_2010_16_06_37_+1000_fFeYMTsBe1orEyoK
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Greear <greearb@candelatech.com>, Steve French <smfrench@gmail.com>, linux-cifs@vger.kernel.org, Jan Blunck <jblunck@infradead.org>
 
 Hi Arnd,
 
-Today's linux-next merge of the bkl-llseek tree got conflicts in
-drivers/staging/batman-adv/icmp_socket.c and
-drivers/staging/batman-adv/bat_debugfs.c between commit
-2d77bb592f6cabc5ee5322c03ee92b9f96c45f60 ("Staging: batman-adv: Mark
-debugfs files as nonseekable") from the staging-next tree and commit
-5295184fb318693b4ef2cd8056bf1a7cb43586d7 ("llseek: automatically
-add .llseek fop") from the bkl-llseek tree.
+Today's linux-next merge of the bkl-vfs tree got a conflict in
+fs/cifs/cifsfs.c between commit d090dbeacd3763845d83d5de4d85aad025a28677
+("cifs: Allow binding to local IP address") from the cifs tree and commit
+b8f05b0b9ea89cfaf6759b1eb47fff683e7016a5 ("BKL: Remove BKL from CifsFS")
+from the bkl-vfs tree.
 
-I used the versions from the staging-next tree.
---=20
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__21_Sep_2010_16_06_37_+1000_fFeYMTsBe1orEyoK
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMmEttAAoJEDMEi1NhKgbsBOwH/1lLy+1s0jA3nnmqfnOK+Ai3
-FBSENcDK9/LF1fIybI015VOIw2MiY/CXbc6SCISOOrpCLuICohpd7EACb8bWJ1Bp
-0L58m4skRxL5g9ge1bFZhSIB/jY1rPhAqdjDrfnXuoRVVWnw4+ZuS0wma/0OIrri
-CYOPQVVSPLKoMGhnvXjZ7gEGeP3+jgvSjiJOjflrE5gkD22mh8fgrR/KLpiXaZL2
-g7DhOGHs/CjTrNvOHA9TqiLgRBFIR47spbO15BPOP9jrcP/6w5rzoGQIpxyXlleW
-tiEEQ1ma3VOkaSJKM+2JH96vIBtYpDjUVy6peqAnOStx0xhiuD9vJzY2pWRezrs=
-=Ragl
------END PGP SIGNATURE-----
-
---Signature=_Tue__21_Sep_2010_16_06_37_+1000_fFeYMTsBe1orEyoK--
+diff --cc fs/cifs/cifsfs.c
+index 52e89ea,4e273f7..0000000
+--- a/fs/cifs/cifsfs.c
++++ b/fs/cifs/cifsfs.c
+@@@ -35,8 -35,6 +35,7 @@@
+  #include <linux/delay.h>
+  #include <linux/kthread.h>
+  #include <linux/freezer.h>
+- #include <linux/smp_lock.h>
+ +#include <net/ipv6.h>
+  #include "cifsfs.h"
+  #include "cifspdu.h"
+  #define DECLARE_GLOBALS_HERE
