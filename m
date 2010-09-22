@@ -1,37 +1,27 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: [PATCH -next] driver core: fix build for CONFIG_BLOCK=n
-Date: Tue, 21 Sep 2010 15:31:15 -0700
-Message-ID: <20100921223115.GB21202@kroah.com>
-References: <20100920161239.f204a507.sfr@canb.auug.org.au>
- <20100920092034.0b3f5898.randy.dunlap@oracle.com>
+From: Mauro Carvalho Chehab <mchehab@redhat.com>
+Subject: New tree to be added on linux-next
+Date: Wed, 22 Sep 2010 09:52:09 -0300
+Message-ID: <4C99FBF9.3060606@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20100920092034.0b3f5898.randy.dunlap@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Kay Sievers <kay.sievers@vrfy.org>, gregkh@suse.de, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:61807 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754658Ab0IVMwQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 22 Sep 2010 08:52:16 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Linux Edac Mailing List <linux-edac@vger.kernel.org>
 
-On Mon, Sep 20, 2010 at 09:20:34AM -0700, Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> Fix build when CONFIG_BLOCK is not enabled (since SEP-06).
-> Fixes these build errors:
-> 
-> drivers/base/core.c: In function 'get_device_parent':
-> drivers/base/core.c:622: error: 'block_class' undeclared (first use in this function)
-> drivers/base/core.c: In function 'device_add_class_symlinks':
-> drivers/base/core.c:712: error: 'block_class' undeclared (first use in this function)
-> drivers/base/core.c: In function 'device_remove_class_symlinks':
-> drivers/base/core.c:742: error: 'block_class' undeclared (first use in this function)
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Hi Stephen,
 
-This should no longer be needed with the next linux-next tree as the
-logic in this area has changed thanks to Andi's patch.
+Please add the edac.git tree to linux-next:
 
-thanks,
+ssh://master.kernel.org/pub/scm/linux/kernel/git/mchehab/edac.git linux_next
 
-greg k-h
+It currently contains a new driver for i7300_edac.
+
+Thanks,
+Mauro
