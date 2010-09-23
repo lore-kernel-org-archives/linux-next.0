@@ -1,56 +1,58 @@
-From: "J. Bruce Fields" <bfields@fieldses.org>
-Subject: Re: linux-next: build failure after merge of the nfsd tree
-Date: Thu, 23 Sep 2010 00:03:55 -0400
-Message-ID: <20100923040354.GC13554@fieldses.org>
-References: <20100923113429.88f865d2.sfr@canb.auug.org.au>
- <20100923023315.GA10764@fieldses.org>
- <20100923125146.01755207@notabene>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the tty tree
+Date: Thu, 23 Sep 2010 14:20:18 +1000
+Message-ID: <20100923142018.55019d59.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__23_Sep_2010_14_20_18_+1000_INaZb0wLuhTd547T"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fieldses.org ([174.143.236.118]:40061 "EHLO fieldses.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:48829 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750702Ab0IWEF2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 23 Sep 2010 00:05:28 -0400
-Content-Disposition: inline
-In-Reply-To: <20100923125146.01755207@notabene>
+	id S1752486Ab0IWEU0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 23 Sep 2010 00:20:26 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Neil Brown <neilb@suse.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>
 
-On Thu, Sep 23, 2010 at 12:51:46PM +1000, Neil Brown wrote:
-> On Wed, 22 Sep 2010 22:33:15 -0400
-> "J. Bruce Fields" <bfields@fieldses.org> wrote:
-> sched.h says:
-> 
-> 	char comm[TASK_COMM_LEN]; /* executable name excluding path
-> 				     - access with [gs]et_task_comm (which lock
-> 				       it with task_lock())
-> 				     - initialized normally by setup_new_exec */
-> 
-> So we should lock...
-> 
-> But then fs/exec.c says:
-> void set_task_comm(struct task_struct *tsk, char *buf)
-> {
-> 	task_lock(tsk);
-> 
-> 	/*
-> 	 * Threads may access current->comm without holding
-> 	 * the task lock, so write the string carefully.
-> 	 * Readers without a lock may see incomplete new
-> 	 * names but are safe from non-terminating string reads.
-> 	 */
->      .....
-> 
-> So I guess we are safe to use it unlocked for informational purposes.
-> That first comment could do with an update, and where-ever it was that I
-> copied that code from can probably be simplified too.....
+--Signature=_Thu__23_Sep_2010_14_20_18_+1000_INaZb0wLuhTd547T
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sounds good.
+Hi Greg,
 
-I've added a quick modular build to my test scripts too, so hopefully
-that sort of problem won't slip past me next time....
+After merging the tty tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
---b.
+drivers/char/ip2/ip2main.c:459: error: 'ip2_get_icount' undeclared here (no=
+t in a function)
+
+Caused by commit 157be28e51ed476aa357c8718aaef4832f4da66b ("tty: icount
+changeover for other main devices").
+
+Please build test (especially the trivial "cut and paste" changes) ...
+
+I have reverted that commit for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__23_Sep_2010_14_20_18_+1000_INaZb0wLuhTd547T
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMmtWDAAoJEDMEi1NhKgbsH4EH/joJiEPIrC3VpBWysZBVaOCi
+6HM+8U4825tXIOx6jIs8x319H4ZNTwRhuo/FHxvSiiI3FdL6kmr99rIo+5Aae3+Q
+hNlhSvsG7+2HwS73ipyQLUCZEeFREzEVbvNSth2DvVqcAy2vrKoHJWJLuzPU18ge
+yznGtXxglOxBbMFoHP4dStz5tlubiVl7dfL0U8be/8YJ4b8QFDP0owEkNZ+DyiTk
+MTNACp2fxQB9EqGgIyb0uASpLyEt5bLEsz8YBx0/E6LYu8Hs0NLoZOnSumU3GD5q
+k7JOP209eY1BXe7+7jNSRjXblo8R4SgnKTsBYANh0ftDbjd4iZio6kcaYACqqjY=
+=Zu4q
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__23_Sep_2010_14_20_18_+1000_INaZb0wLuhTd547T--
