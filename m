@@ -1,19 +1,23 @@
 From: Alan Cox <alan@lxorguk.ukuu.org.uk>
 Subject: Re: linux-next: build failure after merge of the tty tree
-Date: Thu, 23 Sep 2010 16:46:44 +0100
-Message-ID: <20100923164644.2b82746f@lxorguk.ukuu.org.uk>
+Date: Thu, 23 Sep 2010 18:12:12 +0100
+Message-ID: <20100923181212.422e76c1@lxorguk.ukuu.org.uk>
 References: <20100923142018.55019d59.sfr@canb.auug.org.au>
 	<20100923141433.GC31738@kroah.com>
 	<20100923081350.e028c4ac.rdunlap@xenotime.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:53397 "EHLO
+	www.etchedpixels.co.uk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1755428Ab0IWQtW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Sep 2010 12:49:22 -0400
 In-Reply-To: <20100923081350.e028c4ac.rdunlap@xenotime.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Randy Dunlap <rdunlap@xenotime.net>
 Cc: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Alan Cox <alan@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
 
 On Thu, 23 Sep 2010 08:13:50 -0700
 Randy Dunlap <rdunlap@xenotime.net> wrote:
@@ -39,9 +43,10 @@ Randy Dunlap <rdunlap@xenotime.net> wrote:
 > 
 > 
 > So developers and maintainers are not doing allmodconfig builds?
+> I can understand not doing randconfig builds.
 
-I try to make sure I build all the drivers I touch - I screwed that one
-up. Lots of -next trees build for allmodconfig and not other configs so
-all doing the same build isn't neccessarily good.
+drivers/staging/ti-st/st_kim.c:34:20: error: st_kim.h: No such file or
+directory
 
-Alan
+So there isn't actually much point trying allmodconfig builds (thats not
+the only fail either).
