@@ -1,68 +1,82 @@
-From: Greg KH <gregkh@suse.de>
+From: Randy Dunlap <rdunlap@xenotime.net>
 Subject: Re: [PATCH -next] driver core: fix build for CONFIG_BLOCK=n
-Date: Thu, 23 Sep 2010 13:30:06 -0700
-Message-ID: <20100923203006.GB10687@suse.de>
+Date: Thu, 23 Sep 2010 13:34:54 -0700
+Message-ID: <20100923133454.786049c2.rdunlap@xenotime.net>
 References: <20100920161239.f204a507.sfr@canb.auug.org.au>
- <20100920092034.0b3f5898.randy.dunlap@oracle.com>
- <20100921223115.GB21202@kroah.com>
- <20100923111541.97abcd05.rdunlap@xenotime.net>
- <20100923191629.GB18736@kroah.com>
- <20100923124751.cc59a349.rdunlap@xenotime.net>
+	<20100920092034.0b3f5898.randy.dunlap@oracle.com>
+	<20100921223115.GB21202@kroah.com>
+	<20100923111541.97abcd05.rdunlap@xenotime.net>
+	<20100923191629.GB18736@kroah.com>
+	<20100923124751.cc59a349.rdunlap@xenotime.net>
+	<20100923203006.GB10687@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor.suse.de ([195.135.220.2]:43313 "EHLO mx1.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756493Ab0IWUbL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 23 Sep 2010 16:31:11 -0400
-Content-Disposition: inline
-In-Reply-To: <20100923124751.cc59a349.rdunlap@xenotime.net>
+Received: from xenotime.net ([72.52.115.56]:37384 "HELO xenotime.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
+	id S1753498Ab0IWUe7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 23 Sep 2010 16:34:59 -0400
+Received: from chimera.site ([173.50.240.230]) by xenotime.net for <linux-next@vger.kernel.org>; Thu, 23 Sep 2010 13:34:55 -0700
+In-Reply-To: <20100923203006.GB10687@suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@xenotime.net>
+To: Greg KH <gregkh@suse.de>
 Cc: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Kay Sievers <kay.sievers@vrfy.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Thu, Sep 23, 2010 at 12:47:51PM -0700, Randy Dunlap wrote:
-> On Thu, 23 Sep 2010 12:16:29 -0700 Greg KH wrote:
-> 
-> > On Thu, Sep 23, 2010 at 11:15:41AM -0700, Randy Dunlap wrote:
-> > > On Tue, 21 Sep 2010 15:31:15 -0700 Greg KH wrote:
-> > > 
-> > > > On Mon, Sep 20, 2010 at 09:20:34AM -0700, Randy Dunlap wrote:
-> > > > > From: Randy Dunlap <randy.dunlap@oracle.com>
-> > > > > 
-> > > > > Fix build when CONFIG_BLOCK is not enabled (since SEP-06).
-> > > > > Fixes these build errors:
-> > > > > 
-> > > > > drivers/base/core.c: In function 'get_device_parent':
-> > > > > drivers/base/core.c:622: error: 'block_class' undeclared (first use in this function)
-> > > > > drivers/base/core.c: In function 'device_add_class_symlinks':
-> > > > > drivers/base/core.c:712: error: 'block_class' undeclared (first use in this function)
-> > > > > drivers/base/core.c: In function 'device_remove_class_symlinks':
-> > > > > drivers/base/core.c:742: error: 'block_class' undeclared (first use in this function)
-> > > > > 
-> > > > > Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> > > > 
-> > > > This should no longer be needed with the next linux-next tree as the
-> > > > logic in this area has changed thanks to Andi's patch.
->                                      ~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> > > 
-> > > {sorry about resend, email problems}
-> > > 
-> > > 
-> > > Still seeing this build error. (linux-next 2010-0923)
-> > > Will you be merging some patch soon?
+On Thu, 23 Sep 2010 13:30:06 -0700 Greg KH wrote:
+
+> On Thu, Sep 23, 2010 at 12:47:51PM -0700, Randy Dunlap wrote:
+> > On Thu, 23 Sep 2010 12:16:29 -0700 Greg KH wrote:
 > > 
-> > Not unless someone provides it.  I know of no valid user of the kernel
-> > that does not enable CONFIG_BLOCK, so I really doubt this will ever hit
-> > anyone in "real life" so it's _way_ down the list of things I have to do
-> > at the moment, sorry.
+> > > On Thu, Sep 23, 2010 at 11:15:41AM -0700, Randy Dunlap wrote:
+> > > > On Tue, 21 Sep 2010 15:31:15 -0700 Greg KH wrote:
+> > > > 
+> > > > > On Mon, Sep 20, 2010 at 09:20:34AM -0700, Randy Dunlap wrote:
+> > > > > > From: Randy Dunlap <randy.dunlap@oracle.com>
+> > > > > > 
+> > > > > > Fix build when CONFIG_BLOCK is not enabled (since SEP-06).
+> > > > > > Fixes these build errors:
+> > > > > > 
+> > > > > > drivers/base/core.c: In function 'get_device_parent':
+> > > > > > drivers/base/core.c:622: error: 'block_class' undeclared (first use in this function)
+> > > > > > drivers/base/core.c: In function 'device_add_class_symlinks':
+> > > > > > drivers/base/core.c:712: error: 'block_class' undeclared (first use in this function)
+> > > > > > drivers/base/core.c: In function 'device_remove_class_symlinks':
+> > > > > > drivers/base/core.c:742: error: 'block_class' undeclared (first use in this function)
+> > > > > > 
+> > > > > > Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> > > > > 
+> > > > > This should no longer be needed with the next linux-next tree as the
+> > > > > logic in this area has changed thanks to Andi's patch.
+> >                                      ~~~~~~~~~~~~~~~~~~~~~~~
+> > 
+> > > > 
+> > > > {sorry about resend, email problems}
+> > > > 
+> > > > 
+> > > > Still seeing this build error. (linux-next 2010-0923)
+> > > > Will you be merging some patch soon?
+> > > 
+> > > Not unless someone provides it.  I know of no valid user of the kernel
+> > > that does not enable CONFIG_BLOCK, so I really doubt this will ever hit
+> > > anyone in "real life" so it's _way_ down the list of things I have to do
+> > > at the moment, sorry.
+
+Maybe you should just submit a patch to remove CONFIG_BLOCK.
+(and many other kconfig symbols)
+
+> > so what was your comment about Andi's patch (above)?
 > 
-> so what was your comment about Andi's patch (above)?
+> It's merged already, and because of it, your patch failed to apply.
 
-It's merged already, and because of it, your patch failed to apply.
 
-thanks,
+OK, so I disagree with your comment:
+> > > > > This should no longer be needed with the next linux-next tree as the
+> > > > > logic in this area has changed thanks to Andi's patch.
 
-greg k-h
+but I now understand that my patch failed to apply.  Thanks for the info.
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
