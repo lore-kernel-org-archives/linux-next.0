@@ -1,57 +1,56 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the slab tree
-Date: Thu, 23 Sep 2010 13:44:14 +1000
-Message-ID: <20100923134414.7aa7f696.sfr@canb.auug.org.au>
+From: "J. Bruce Fields" <bfields@fieldses.org>
+Subject: Re: linux-next: build failure after merge of the nfsd tree
+Date: Thu, 23 Sep 2010 00:03:55 -0400
+Message-ID: <20100923040354.GC13554@fieldses.org>
+References: <20100923113429.88f865d2.sfr@canb.auug.org.au>
+ <20100923023315.GA10764@fieldses.org>
+ <20100923125146.01755207@notabene>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:39908 "EHLO smtps.tip.net.au"
+Received: from fieldses.org ([174.143.236.118]:40061 "EHLO fieldses.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751783Ab0IWDoQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 22 Sep 2010 23:44:16 -0400
+	id S1750702Ab0IWEF2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 23 Sep 2010 00:05:28 -0400
+Content-Disposition: inline
+In-Reply-To: <20100923125146.01755207@notabene>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Pekka Enberg <penberg@cs.helsinki.fi>, Christoph Lameter <cl@linux-foundation.org>
+To: Neil Brown <neilb@suse.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi all,
+On Thu, Sep 23, 2010 at 12:51:46PM +1000, Neil Brown wrote:
+> On Wed, 22 Sep 2010 22:33:15 -0400
+> "J. Bruce Fields" <bfields@fieldses.org> wrote:
+> sched.h says:
+> 
+> 	char comm[TASK_COMM_LEN]; /* executable name excluding path
+> 				     - access with [gs]et_task_comm (which lock
+> 				       it with task_lock())
+> 				     - initialized normally by setup_new_exec */
+> 
+> So we should lock...
+> 
+> But then fs/exec.c says:
+> void set_task_comm(struct task_struct *tsk, char *buf)
+> {
+> 	task_lock(tsk);
+> 
+> 	/*
+> 	 * Threads may access current->comm without holding
+> 	 * the task lock, so write the string carefully.
+> 	 * Readers without a lock may see incomplete new
+> 	 * names but are safe from non-terminating string reads.
+> 	 */
+>      .....
+> 
+> So I guess we are safe to use it unlocked for informational purposes.
+> That first comment could do with an update, and where-ever it was that I
+> copied that code from can probably be simplified too.....
 
-Today's linux-next merge of the tip tree got a conflict in
-include/linux/percpu.h between commit
-6fc80ef491b981f59233beaf6aeaccc0c947031d ("percpu: use percpu allocator
-on UP too") from the slab tree and commit
-8b8e2ec1eeca7f6941bc81cefc9663018d6ceb57 ("percpu: Add {get,put}
-_cpu_ptr") from the tip tree.
+Sounds good.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+I've added a quick modular build to my test scripts too, so hopefully
+that sort of problem won't slip past me next time....
 
-diff --cc include/linux/percpu.h
-index aeeeef1,0eb5083..0000000
---- a/include/linux/percpu.h
-+++ b/include/linux/percpu.h
-@@@ -39,8 -39,19 +39,17 @@@
-  	preempt_enable();				\
-  } while (0)
-  
-+ #define get_cpu_ptr(var) ({				\
-+ 	preempt_disable();				\
-+ 	this_cpu_ptr(var); })
-+ 
-+ #define put_cpu_ptr(var) do {				\
-+ 	(void)(var);					\
-+ 	preempt_enable();				\
-+ } while (0)
-+ 
- -#ifdef CONFIG_SMP
- -
-  /* minimum unit size, also is the maximum supported allocation size */
- -#define PCPU_MIN_UNIT_SIZE		PFN_ALIGN(64 << 10)
- +#define PCPU_MIN_UNIT_SIZE		PFN_ALIGN(32 << 10)
-  
-  /*
-   * Percpu allocator can serve percpu allocations before slab is
+--b.
