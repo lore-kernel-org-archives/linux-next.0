@@ -1,29 +1,49 @@
-From: Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: linux-next: build failure after merge of the cifs tree
-Date: Wed, 22 Sep 2010 20:47:55 -0500
-Message-ID: <AANLkTi=4tdTbsdkofgvUy5OTrzktE2sP2KHLtVwhOpEa@mail.gmail.com>
-References: <20100923112004.b47923b7.sfr@canb.auug.org.au>
-	<AANLkTimXtigjQwpL6i46JTiuREdLnr7Yh+2ZCuPfy06G@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree with the net-current tree
+Date: Thu, 23 Sep 2010 12:14:13 +1000
+Message-ID: <20100923121413.d48e2b1b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <AANLkTimXtigjQwpL6i46JTiuREdLnr7Yh+2ZCuPfy06G-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Cc: linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jeff Layton <jlayton-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:60254 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751015Ab0IWCOR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 22 Sep 2010 22:14:17 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>
 
-On Wed, Sep 22, 2010 at 8:32 PM, Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrot=
-e:
-> Sorry about that - we merged one of Jeff's patches (in a series) out
-> of order by three hours due to review comments. =A0Should be ok now -
-> verifying.
+Hi all,
 
-Built fine.   Will try to merge the rest in order.
+Today's linux-next merge of the net tree got a conflict in
+net/ipv4/ip_output.c between commit
+3d13008e7345fa7a79d8f6438150dc15d6ba6e9d ("ip: fix truesize mismatch in
+ip fragmentation") from the net-current tree and commit
+21dc330157454046dd7c494961277d76e1c957fe ("net: Rename skb_has_frags to
+skb_has_frag_list") from the net tree.
 
+Just context changes.  I fixed it up (see below) and can carry the fix
+for a while.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
---=20
-Thanks,
-
-Steve
+diff --cc net/ipv4/ip_output.c
+index 7649d77,e427620..0000000
+--- a/net/ipv4/ip_output.c
++++ b/net/ipv4/ip_output.c
+@@@ -487,9 -487,10 +487,9 @@@ int ip_fragment(struct sk_buff *skb, in
+  	 * LATER: this step can be merged to real generation of fragments,
+  	 * we can switch to copy when see the first bad fragment.
+  	 */
+- 	if (skb_has_frags(skb)) {
++ 	if (skb_has_frag_list(skb)) {
+ -		struct sk_buff *frag;
+ +		struct sk_buff *frag, *frag2;
+  		int first_len = skb_pagelen(skb);
+ -		int truesizes = 0;
+  
+  		if (first_len - hlen > mtu ||
+  		    ((first_len - hlen) & 7) ||
