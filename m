@@ -1,57 +1,57 @@
-From: Sage Weil <sage@newdream.net>
-Subject: Re: linux-next: manual merge of the ceph tree with Linus' tree
-Date: Wed, 22 Sep 2010 20:36:52 -0700 (PDT)
-Message-ID: <Pine.LNX.4.64.1009222036210.14012@cobra.newdream.net>
-References: <20100923102924.25db6970.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the slab tree
+Date: Thu, 23 Sep 2010 13:44:14 +1000
+Message-ID: <20100923134414.7aa7f696.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100923102924.25db6970.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:39908 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751783Ab0IWDoQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 22 Sep 2010 23:44:16 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Pekka Enberg <penberg@cs.helsinki.fi>, Christoph Lameter <cl@linux-foundation.org>
 
-Thanks, Stephen.
+Hi all,
 
-I've rebased my for-next on the latest upstream (now that lock_flocks() is 
-in place), so these should all go away the next time around.
+Today's linux-next merge of the tip tree got a conflict in
+include/linux/percpu.h between commit
+6fc80ef491b981f59233beaf6aeaccc0c947031d ("percpu: use percpu allocator
+on UP too") from the slab tree and commit
+8b8e2ec1eeca7f6941bc81cefc9663018d6ceb57 ("percpu: Add {get,put}
+_cpu_ptr") from the tip tree.
 
-sage
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-
-On Thu, 23 Sep 2010, Stephen Rothwell wrote:
-
-> Hi Sage,
-> 
-> Today's linux-next merge of the ceph tree got a conflict in
-> fs/ceph/Kconfig between commit be4f104dfd3b5e3ae262bff607965cfc38027dec
-> ("ceph: select CRYPTO") from Linus' tree and commit
-> 49dde0c8bee346a349862c4a3eddcd58e0d0ae90 ("ceph: factor out libceph from
-> Ceph file system") from the ceph tree.
-> 
-> Just overlapping additions.  I fixed it up (see below) and can carry the
-> fix for a while.  (though the adding of "default n" is, I think,
-> redundant as that is the default anyway).
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc fs/ceph/Kconfig
-> index 0fcd264,73a7b31..0000000
-> --- a/fs/ceph/Kconfig
-> +++ b/fs/ceph/Kconfig
-> @@@ -1,9 -1,10 +1,11 @@@
->   config CEPH_FS
->           tristate "Ceph distributed file system (EXPERIMENTAL)"
->   	depends on INET && EXPERIMENTAL
-> + 	select CEPH_LIB
->   	select LIBCRC32C
->   	select CRYPTO_AES
->  +	select CRYPTO
-> + 	default n
->   	help
->   	  Choose Y or M here to include support for mounting the
->   	  experimental Ceph distributed file system.  Ceph is an extremely
-> 
-> 
+diff --cc include/linux/percpu.h
+index aeeeef1,0eb5083..0000000
+--- a/include/linux/percpu.h
++++ b/include/linux/percpu.h
+@@@ -39,8 -39,19 +39,17 @@@
+  	preempt_enable();				\
+  } while (0)
+  
++ #define get_cpu_ptr(var) ({				\
++ 	preempt_disable();				\
++ 	this_cpu_ptr(var); })
++ 
++ #define put_cpu_ptr(var) do {				\
++ 	(void)(var);					\
++ 	preempt_enable();				\
++ } while (0)
++ 
+ -#ifdef CONFIG_SMP
+ -
+  /* minimum unit size, also is the maximum supported allocation size */
+ -#define PCPU_MIN_UNIT_SIZE		PFN_ALIGN(64 << 10)
+ +#define PCPU_MIN_UNIT_SIZE		PFN_ALIGN(32 << 10)
+  
+  /*
+   * Percpu allocator can serve percpu allocations before slab is
