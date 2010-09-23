@@ -1,58 +1,52 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the tty tree
-Date: Thu, 23 Sep 2010 14:20:18 +1000
-Message-ID: <20100923142018.55019d59.sfr@canb.auug.org.au>
+From: Mauro Carvalho Chehab <mchehab@redhat.com>
+Subject: Re: New tree to be added on linux-next
+Date: Thu, 23 Sep 2010 02:02:08 -0300
+Message-ID: <4C9ADF50.60505@redhat.com>
+References: <4C99FBF9.3060606@redhat.com> <20100923083406.3c970103.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__23_Sep_2010_14_20_18_+1000_INaZb0wLuhTd547T"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48829 "EHLO smtps.tip.net.au"
+Received: from mx1.redhat.com ([209.132.183.28]:4615 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752486Ab0IWEU0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 23 Sep 2010 00:20:26 -0400
+	id S1753040Ab0IWFCN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 23 Sep 2010 01:02:13 -0400
+In-Reply-To: <20100923083406.3c970103.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, Linux Edac Mailing List <linux-edac@vger.kernel.org>
 
---Signature=_Thu__23_Sep_2010_14_20_18_+1000_INaZb0wLuhTd547T
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Em 22-09-2010 19:34, Stephen Rothwell escreveu:
+> Hi Mauro,
+> 
+> On Wed, 22 Sep 2010 09:52:09 -0300 Mauro Carvalho Chehab <mchehab@redhat.com> wrote:
+>>
+>> Please add the edac.git tree to linux-next:
+>>
+>> ssh://master.kernel.org/pub/scm/linux/kernel/git/mchehab/edac.git linux_next
+>>
+>> It currently contains a new driver for i7300_edac.
+> 
+> Added from today.  I called it i7300_edac (I now have 3 edac trees, this
+> one, i7core_edac and edac-amd).
 
-Hi Greg,
-
-After merging the tty tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
-
-drivers/char/ip2/ip2main.c:459: error: 'ip2_get_icount' undeclared here (no=
-t in a function)
-
-Caused by commit 157be28e51ed476aa357c8718aaef4832f4da66b ("tty: icount
-changeover for other main devices").
-
-Please build test (especially the trivial "cut and paste" changes) ...
-
-I have reverted that commit for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__23_Sep_2010_14_20_18_+1000_INaZb0wLuhTd547T
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMmtWDAAoJEDMEi1NhKgbsH4EH/joJiEPIrC3VpBWysZBVaOCi
-6HM+8U4825tXIOx6jIs8x319H4ZNTwRhuo/FHxvSiiI3FdL6kmr99rIo+5Aae3+Q
-hNlhSvsG7+2HwS73ipyQLUCZEeFREzEVbvNSth2DvVqcAy2vrKoHJWJLuzPU18ge
-yznGtXxglOxBbMFoHP4dStz5tlubiVl7dfL0U8be/8YJ4b8QFDP0owEkNZ+DyiTk
-MTNACp2fxQB9EqGgIyb0uASpLyEt5bLEsz8YBx0/E6LYu8Hs0NLoZOnSumU3GD5q
-k7JOP209eY1BXe7+7jNSRjXblo8R4SgnKTsBYANh0ftDbjd4iZio6kcaYACqqjY=
-=Zu4q
------END PGP SIGNATURE-----
-
---Signature=_Thu__23_Sep_2010_14_20_18_+1000_INaZb0wLuhTd547T--
+Thank you! For its current contents, calling it as i7300_edac seems ok.
+> 
+> Thanks for adding your subsystem tree as a participant of linux-next.  As
+> you may know, this is not a judgment of your code.  The purpose of
+> linux-next is for integration testing and to lower the impact of
+> conflicts between subsystems in the next merge window. 
+> 
+> You will need to ensure that the patches/commits in your tree/series have
+> been:
+>      * submitted under GPL v2 (or later) and include the Contributor's
+> 	Signed-off-by,
+>      * posted to the relevant mailing list,
+>      * reviewed by you (or another maintainer of your subsystem tree),
+>      * successfully unit tested, and 
+>      * destined for the current or next Linux merge window.
+> 
+> Basically, this should be just what you would send to Linus (or ask him
+> to fetch).  It is allowed to be rebased if you deem it necessary.
+> 
