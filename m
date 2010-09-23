@@ -1,49 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree with the net-current tree
-Date: Thu, 23 Sep 2010 12:14:13 +1000
-Message-ID: <20100923121413.d48e2b1b.sfr@canb.auug.org.au>
+From: "J. Bruce Fields" <bfields@fieldses.org>
+Subject: Re: linux-next: build failure after merge of the nfsd tree
+Date: Wed, 22 Sep 2010 22:33:15 -0400
+Message-ID: <20100923023315.GA10764@fieldses.org>
+References: <20100923113429.88f865d2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60254 "EHLO smtps.tip.net.au"
+Received: from fieldses.org ([174.143.236.118]:56417 "EHLO fieldses.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751015Ab0IWCOR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 22 Sep 2010 22:14:17 -0400
+	id S1751015Ab0IWCer (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 22 Sep 2010 22:34:47 -0400
+Content-Disposition: inline
+In-Reply-To: <20100923113429.88f865d2.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, NeilBrown <neilb@suse.de>
 
-Hi all,
+On Thu, Sep 23, 2010 at 11:34:29AM +1000, Stephen Rothwell wrote:
+> Hi Bruce,
+> 
+> After merging the nfsd tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> ERROR: ".get_task_comm" [fs/nfsd/nfsd.ko] undefined!
+> 
+> Caused by commit c67874f942e30039442d925b03793e0a46ddcddd ("nfsd:
+> formally deprecate legacy nfsd syscall interface").
+> 
+> get_task_comm is not exported to modules.
+> 
+> I have used the version of the nfsd tree from next-20100921 for today.
 
-Today's linux-next merge of the net tree got a conflict in
-net/ipv4/ip_output.c between commit
-3d13008e7345fa7a79d8f6438150dc15d6ba6e9d ("ip: fix truesize mismatch in
-ip fragmentation") from the net-current tree and commit
-21dc330157454046dd7c494961277d76e1c957fe ("net: Rename skb_has_frags to
-skb_has_frag_list") from the net tree.
+Oops, thanks.
 
-Just context changes.  I fixed it up (see below) and can carry the fix
-for a while.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+It looks like a lot of places just do a
 
-diff --cc net/ipv4/ip_output.c
-index 7649d77,e427620..0000000
---- a/net/ipv4/ip_output.c
-+++ b/net/ipv4/ip_output.c
-@@@ -487,9 -487,10 +487,9 @@@ int ip_fragment(struct sk_buff *skb, in
-  	 * LATER: this step can be merged to real generation of fragments,
-  	 * we can switch to copy when see the first bad fragment.
-  	 */
-- 	if (skb_has_frags(skb)) {
-+ 	if (skb_has_frag_list(skb)) {
- -		struct sk_buff *frag;
- +		struct sk_buff *frag, *frag2;
-  		int first_len = skb_pagelen(skb);
- -		int truesizes = 0;
-  
-  		if (first_len - hlen > mtu ||
-  		    ((first_len - hlen) & 7) ||
+	printk("%s using deprecated interface ...", current->comm);
+
+so maybe we can get away with just that?
+
+--b.
