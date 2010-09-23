@@ -1,36 +1,35 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: Re: [-next] Latest next does not boot on s390x
-Date: Thu, 23 Sep 2010 16:00:22 +0200
-Message-ID: <20100923140022.GB3832@osiris.boeblingen.de.ibm.com>
-References: <4C9B5AAB.6020000@in.ibm.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the tty tree
+Date: Thu, 23 Sep 2010 07:14:33 -0700
+Message-ID: <20100923141433.GC31738@kroah.com>
+References: <20100923142018.55019d59.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mtagate1.uk.ibm.com ([194.196.100.161]:60839 "EHLO
-	mtagate1.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752805Ab0IWOA3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Sep 2010 10:00:29 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <4C9B5AAB.6020000@in.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Sachin Sant <sachinp@in.ibm.com>
-Cc: linux-s390@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+In-Reply-To: <20100923142018.55019d59.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Alan Cox <alan@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Sep 23, 2010 at 07:18:27PM +0530, Sachin Sant wrote:
-> I cannot boot recent linux-next builds on a s390x box.
+On Thu, Sep 23, 2010 at 02:20:18PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> I first ran into this problem with Sept 17th linux-next build(2.6.36-rc4_next_20100917)
+> After merging the tty tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 > 
-> The following messages are displayed on the console :
+> drivers/char/ip2/ip2main.c:459: error: 'ip2_get_icount' undeclared here (not in a function)
 > 
-> 03: Please choose (default will boot in 20 seconds):
-> 03: Booting default (autotest)...
-> 03: HCPGIR450W CP entered; disabled wait PSW 00020001 80000000 00000000 0010DB3E
+> Caused by commit 157be28e51ed476aa357c8718aaef4832f4da66b ("tty: icount
+> changeover for other main devices").
 > 
-> Any idea what could be the problem or how can i debug this issue ?
+> Please build test (especially the trivial "cut and paste" changes) ...
+> 
+> I have reverted that commit for today.
 
-It crashes when the kernel tries to initialize the memmap. I'll have a
-look at it. Probably tomorrow.
+Ick, sorry about that.  Alan, care to send a fixup patch for this?
 
-Thanks for reporting!
+thanks,
+
+greg k-h
