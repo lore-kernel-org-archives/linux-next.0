@@ -1,58 +1,29 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the nfsd tree
-Date: Thu, 23 Sep 2010 11:34:29 +1000
-Message-ID: <20100923113429.88f865d2.sfr@canb.auug.org.au>
+From: Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: linux-next: build failure after merge of the cifs tree
+Date: Wed, 22 Sep 2010 20:47:55 -0500
+Message-ID: <AANLkTi=4tdTbsdkofgvUy5OTrzktE2sP2KHLtVwhOpEa@mail.gmail.com>
+References: <20100923112004.b47923b7.sfr@canb.auug.org.au>
+	<AANLkTimXtigjQwpL6i46JTiuREdLnr7Yh+2ZCuPfy06G@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__23_Sep_2010_11_34_29_+1000_Sa_YJ8_FOmsEKYn6"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51299 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751271Ab0IWBeh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 22 Sep 2010 21:34:37 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "J. Bruce Fields" <bfields@fieldses.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, NeilBrown <neilb@suse.de>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <AANLkTimXtigjQwpL6i46JTiuREdLnr7Yh+2ZCuPfy06G-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Cc: linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jeff Layton <jlayton-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Thu__23_Sep_2010_11_34_29_+1000_Sa_YJ8_FOmsEKYn6
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Sep 22, 2010 at 8:32 PM, Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrot=
+e:
+> Sorry about that - we merged one of Jeff's patches (in a series) out
+> of order by three hours due to review comments. =A0Should be ok now -
+> verifying.
 
-Hi Bruce,
+Built fine.   Will try to merge the rest in order.
 
-After merging the nfsd tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
-
-ERROR: ".get_task_comm" [fs/nfsd/nfsd.ko] undefined!
-
-Caused by commit c67874f942e30039442d925b03793e0a46ddcddd ("nfsd:
-formally deprecate legacy nfsd syscall interface").
-
-get_task_comm is not exported to modules.
-
-I have used the version of the nfsd tree from next-20100921 for today.
 
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Thanks,
 
---Signature=_Thu__23_Sep_2010_11_34_29_+1000_Sa_YJ8_FOmsEKYn6
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMmq6lAAoJEDMEi1NhKgbsdNAH/3z06fMB97UaSWCUfq9Db/rO
-XBIhYRHKozn1TmkAkxWl+1NM/LLKDVMgGP1dFIaZUQI+ah4V7uyfKCvfc2xZgNrY
-4JVVttb+O5dvaUy18/cnbaai+JJQmIKLi1lCwVKJ3UfY6sFTsVeOnNbL8Xq1BS5X
-xSh0opZLd3jTMhX2ntYc+hMTF6rFccxOvDr2K0o42q3z2VTXdM+R9KB7/6OwXNs7
-HV/BMbB2/ojH6J3OqM/GBSdDuXV2CU0GWg9mOTE30nXJXZX+VA2e/V6FbNcfgJVc
-CrMde1o/cFsiE7CU2QnTr15Ipr5C/9hvDK8D3CXVObEYk0mGBQdVvPx8nmDdkCQ=
-=M2ag
------END PGP SIGNATURE-----
-
---Signature=_Thu__23_Sep_2010_11_34_29_+1000_Sa_YJ8_FOmsEKYn6--
+Steve
