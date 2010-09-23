@@ -1,75 +1,75 @@
-From: Neil Brown <neilb@suse.de>
-Subject: Re: linux-next: build failure after merge of the nfsd tree
-Date: Thu, 23 Sep 2010 12:51:46 +1000
-Message-ID: <20100923125146.01755207@notabene>
-References: <20100923113429.88f865d2.sfr@canb.auug.org.au>
-	<20100923023315.GA10764@fieldses.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with Linus' tree
+Date: Thu, 23 Sep 2010 13:32:14 +1000
+Message-ID: <20100923133214.81014faf.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor.suse.de ([195.135.220.2]:40392 "EHLO mx1.suse.de"
+Received: from chilli.pcug.org.au ([203.10.76.44]:42430 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751711Ab0IWCvy (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 22 Sep 2010 22:51:54 -0400
-In-Reply-To: <20100923023315.GA10764@fieldses.org>
+	id S1752473Ab0IWDcS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 22 Sep 2010 23:32:18 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "J. Bruce Fields" <bfields@fieldses.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
 
-On Wed, 22 Sep 2010 22:33:15 -0400
-"J. Bruce Fields" <bfields@fieldses.org> wrote:
+Hi all,
 
-> On Thu, Sep 23, 2010 at 11:34:29AM +1000, Stephen Rothwell wrote:
-> > Hi Bruce,
-> > 
-> > After merging the nfsd tree, today's linux-next build (powerpc
-> > ppc64_defconfig) failed like this:
-> > 
-> > ERROR: ".get_task_comm" [fs/nfsd/nfsd.ko] undefined!
-> > 
-> > Caused by commit c67874f942e30039442d925b03793e0a46ddcddd ("nfsd:
-> > formally deprecate legacy nfsd syscall interface").
-> > 
-> > get_task_comm is not exported to modules.
-> > 
-> > I have used the version of the nfsd tree from next-20100921 for today.
-> 
-> Oops, thanks.
-> 
-> It looks like a lot of places just do a
-> 
-> 	printk("%s using deprecated interface ...", current->comm);
-> 
-> so maybe we can get away with just that?
-> 
-> --b.
+Today's linux-next merge of the tip tree got a conflict in
+arch/sparc/kernel/perf_event.c between commit
+b343ae51c116dffaef07a8596661774c12212b66 ("sparc64: Support RAW perf
+events") from Linus' tree and commit
+b0a873ebbf87bf38bf70b5e39a7cadc96099fa13 ("perf: Register PMU
+implementations") from the tip tree.
 
-sched.h says:
+I fixed it up (I think - see below) and can carry the fix for a while.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-	char comm[TASK_COMM_LEN]; /* executable name excluding path
-				     - access with [gs]et_task_comm (which lock
-				       it with task_lock())
-				     - initialized normally by setup_new_exec */
-
-So we should lock...
-
-But then fs/exec.c says:
-void set_task_comm(struct task_struct *tsk, char *buf)
-{
-	task_lock(tsk);
-
-	/*
-	 * Threads may access current->comm without holding
-	 * the task lock, so write the string carefully.
-	 * Readers without a lock may see incomplete new
-	 * names but are safe from non-terminating string reads.
-	 */
-     .....
-
-So I guess we are safe to use it unlocked for informational purposes.
-That first comment could do with an update, and where-ever it was that I
-copied that code from can probably be simplified too.....
-
-NeilBrown
+diff --cc arch/sparc/kernel/perf_event.c
+index 6318e62,f9a7067..0000000
+--- a/arch/sparc/kernel/perf_event.c
++++ b/arch/sparc/kernel/perf_event.c
+@@@ -1038,8 -1062,8 +1062,9 @@@ static int sparc_pmu_event_init(struct 
+  	if (atomic_read(&nmi_active) < 0)
+  		return -ENODEV;
+  
+ +	pmap = NULL;
+- 	if (attr->type == PERF_TYPE_HARDWARE) {
++ 	switch (attr->type) {
++ 	case PERF_TYPE_HARDWARE:
+  		if (attr->config >= sparc_pmu->max_events)
+  			return -EINVAL;
+  		pmap = sparc_pmu->event_map(attr->config);
+@@@ -1047,18 -1073,16 +1074,25 @@@
+  		pmap = sparc_map_cache_event(attr->config);
+  		if (IS_ERR(pmap))
+  			return PTR_ERR(pmap);
+- 	} else if (attr->type != PERF_TYPE_RAW)
+- 		return -EOPNOTSUPP;
++ 		break;
++ 
++ 	case PERF_TYPE_RAW:
+ -		return -EOPNOTSUPP;
+++		break;
++ 
++ 	default:
++ 		return -ENOENT;
++ 
++ 	}
+  
+ +	if (pmap) {
+ +		hwc->event_base = perf_event_encode(pmap);
+ +	} else {
+ +		/* User gives us "(encoding << 16) | pic_mask" for
+ +		 * PERF_TYPE_RAW events.
+ +		 */
+ +		hwc->event_base = attr->config;
+ +	}
+ +
+  	/* We save the enable bits in the config_base.  */
+  	hwc->config_base = sparc_pmu->irq_bit;
+  	if (!attr->exclude_user)
