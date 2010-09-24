@@ -1,38 +1,37 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: linux-next: manual merge of the trivial tree with the net tree
-Date: Fri, 24 Sep 2010 14:09:48 +0200 (CEST)
-Message-ID: <alpine.LNX.2.00.1009241409320.26813@pobox.suse.cz>
-References: <20100924121924.8fb5dfb5.sfr@canb.auug.org.au>
+From: Frederic Weisbecker <fweisbec@gmail.com>
+Subject: Re: linux-next: build warning from Linus' tree
+Date: Fri, 24 Sep 2010 14:32:19 +0200
+Message-ID: <20100924123215.GA5368@nowhere>
+References: <20100924140859.038ccf89.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:42412 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754716Ab0IXMJu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 24 Sep 2010 08:09:50 -0400
-In-Reply-To: <20100924121924.8fb5dfb5.sfr@canb.auug.org.au>
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:42892 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753270Ab0IXMc0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 24 Sep 2010 08:32:26 -0400
+Content-Disposition: inline
+In-Reply-To: <20100924140859.038ccf89.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Weber <weber@corscience.de>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 24 Sep 2010, Stephen Rothwell wrote:
-
-> Hi Jiri,
+On Fri, Sep 24, 2010 at 02:08:59PM +1000, Stephen Rothwell wrote:
+> Hi Arnd,
 > 
-> Today's linux-next merge of the trivial tree got a conflict in
-> drivers/net/bnx2x/bnx2x_link.c between commit
-> 62b29a5dd0930e0c956b6740f32d5b3bbaf20136 ("bnx2x: Adjust alignment of
-> split PHY functions") from the net tree and commit
-> 0b1974de66f9ed44f1423449628f4926bf95b854 ("Fix typo: configuation =>
-> configuration") from the trivial tree.
+> Today's (and lots before) linux-next build (i386 defconfig) produced this
+> warning:
 > 
-> The former removes the text updated by the latter, so I used the former.
+> fs/autofs4/root.c:31: warning: 'autofs4_root_compat_ioctl' declared 'static' but never defined
 > 
-> Jiri, you might like to drop that hunk from the patch in your tree.
+> Introduced by commit c9243f5bdd6637b2bb7dc254b54d9edf957ef17e
+> ("autofs/autofs4: Move compat_ioctl handling into fs").
 
-Done now, thanks for reporting.
 
--- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+Yeah, I've seen two patches:
+
+autofs: only declare function when CONFIG_COMPAT is defined
+autofs4: fix compilation warning
+
+I'm going to relay them. Thanks!
