@@ -1,55 +1,37 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning from Linus' tree
-Date: Fri, 24 Sep 2010 14:08:59 +1000
-Message-ID: <20100924140859.038ccf89.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build warning after merge of the tty tree
+Date: Thu, 23 Sep 2010 21:44:03 -0700
+Message-ID: <20100924044403.GB31185@kroah.com>
+References: <20100924140351.b137a3b7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__24_Sep_2010_14_08_59_+1000_bwTfImwWnPG=IMnk"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52261 "EHLO smtps.tip.net.au"
+Received: from kroah.org ([198.145.64.141]:47587 "EHLO coco.kroah.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750734Ab0IXEJF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 24 Sep 2010 00:09:05 -0400
+	id S1750837Ab0IXEnS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 24 Sep 2010 00:43:18 -0400
+Content-Disposition: inline
+In-Reply-To: <20100924140351.b137a3b7.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Alan Cox <alan@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__24_Sep_2010_14_08_59_+1000_bwTfImwWnPG=IMnk
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Sep 24, 2010 at 02:03:51PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> After merging the tty tree, today's linux-next build (powerpc
+> allyesconfig) produced this warning:
+> 
+> drivers/usb/serial/ssu100.c: In function 'ssu100_ioctl':
+> drivers/usb/serial/ssu100.c:448: warning: unused variable 'user_arg'
+> drivers/usb/serial/ssu100.c:447: warning: unused variable 'priv'
+> 
+> Introduced by commit 20e2e6fa50180468e4240a91f811dca3a1c30304 ("tty:
+> Convert the USB drivers to the new icount interface").
 
-Hi Arnd,
+Alan, care to fix this one up as well?
 
-Today's (and lots before) linux-next build (i386 defconfig) produced this
-warning:
+thanks,
 
-fs/autofs4/root.c:31: warning: 'autofs4_root_compat_ioctl' declared 'static=
-' but never defined
-
-Introduced by commit c9243f5bdd6637b2bb7dc254b54d9edf957ef17e
-("autofs/autofs4: Move compat_ioctl handling into fs").
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__24_Sep_2010_14_08_59_+1000_bwTfImwWnPG=IMnk
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMnCRbAAoJEDMEi1NhKgbssd4H/3PcOClw/XQvuRc51q6wo46P
-wJ+wMmubmJo8wkWcnXGajI/5JEFEewQoTOyTD2ITzlSCBriHCf6Mo8Sn4j9F68Wp
-cnAmRx91qTuYQDmKUz8WyRmXSjOYwJ4SIfQHeLuZpCTxQlQFTOpELetpXo7zpg+w
-HOKuu5qqMVC6eNuz3PfBSBXlGUeYyBRvNiIwvyLgg7+EovSR5/+0hcey/80hfjcv
-ja0fxmDnvDQsv+Ryl/+CJIrO+GoHsXqBZDAORBEeJBRkSvbhYzAywYlvECyL4Sdf
-I6QnrIfRl3CK0OO0aklnErOiiPkjP5FyMhZFUZE1+WRlb4X3+bt5jPqn8TUI4S4=
-=tSA+
------END PGP SIGNATURE-----
-
---Signature=_Fri__24_Sep_2010_14_08_59_+1000_bwTfImwWnPG=IMnk--
+greg k-h
