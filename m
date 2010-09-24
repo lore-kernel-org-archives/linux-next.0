@@ -1,56 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the cifs tree
-Date: Fri, 24 Sep 2010 13:55:31 +1000
-Message-ID: <20100924135531.96e5ac72.sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the tty tree
+Date: Fri, 24 Sep 2010 14:03:51 +1000
+Message-ID: <20100924140351.b137a3b7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__24_Sep_2010_13_55_31_+1000_d3jqRQNbsDsMnVps"
+ boundary="Signature=_Fri__24_Sep_2010_14_03_51_+1000_lzP1KSf=rqrBT17P"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34652 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:51872 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753293Ab0IXDzi (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 23 Sep 2010 23:55:38 -0400
+	id S1750715Ab0IXED4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 24 Sep 2010 00:03:56 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Steve French <smfrench@gmail.com>, linux-cifs@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shirish Pargaonkar <shirishpargaonkar@gmail.com>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>
 
---Signature=_Fri__24_Sep_2010_13_55_31_+1000_d3jqRQNbsDsMnVps
+--Signature=_Fri__24_Sep_2010_14_03_51_+1000_lzP1KSf=rqrBT17P
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Greg,
 
-After merging the irqflags tree, today's linux-next build (powerpc
-ppc64_defconfig) produced this warning:
+After merging the tty tree, today's linux-next build (powerpc
+allyesconfig) produced this warning:
 
-fs/cifs/sess.c: In function 'CIFS_SessSetup':
-fs/cifs/sess.c:595: warning: unused variable 'blob_len'
+drivers/usb/serial/ssu100.c: In function 'ssu100_ioctl':
+drivers/usb/serial/ssu100.c:448: warning: unused variable 'user_arg'
+drivers/usb/serial/ssu100.c:447: warning: unused variable 'priv'
 
-Introduced by commit 15f6bdfb9914b0c41848f874719911ba053be931 ("cifs
-NTLMv2/NTLMSSP ntlmv2 within ntlmssp autentication code").
-CONFIG_CIFS_UPCALL is not set in this build.
+Introduced by commit 20e2e6fa50180468e4240a91f811dca3a1c30304 ("tty:
+Convert the USB drivers to the new icount interface").
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__24_Sep_2010_13_55_31_+1000_d3jqRQNbsDsMnVps
+--Signature=_Fri__24_Sep_2010_14_03_51_+1000_lzP1KSf=rqrBT17P
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMnCEzAAoJEDMEi1NhKgbswIUH/32Piz4jPU/U+02C1zsmr1+Y
-qxR6qLiPlgs60MbbwpCoIASsDR+1rcby7n1dyVTphpHRIjAWwx6LsGvKLrITZ4Wy
-4vP4aPvL2fBxEtZPUZlkivyNgUdAU7+fzYa4pEQyIoraVmX6Xq7GvvwCQYsRJF7j
-ZYcu1Zar5DoR5IPkOG5uDbEGDa+dTFooAMisgYK9owybFIpye7QZmC12531Pm4Vu
-qmu8jzDa8FwTs4U9CQobdXveImJR1gRuCuypEQRiqOx/zvqmlAPbgJJvLpGUqrdU
-dgytTQssDyCJMfzLeYZmYcymnkkg2rqZ+DkQlZovpEwF483pzjz1SvA+uzBqWdI=
-=9jLj
+iQEcBAEBAgAGBQJMnCMnAAoJEDMEi1NhKgbsrg8H/idC90ArdvX/4qpuZ8UJescY
+WzZVyeBf6AS47tWoYm5IUxZ1RA5Bl3Cd7/sUxptxsKUgfu0DIP/p8FEm+Fz3wFSS
+C6kaoinm5oqrChl9aiDv8MA715/GuLtM8KHrHOcZq1sCuoq31Q9v4Tjk/4ebCLdN
+uxmyj1E/XTmB9qPkF+/zuUn6OwoULJ/T3AS0lX+wMN1rlElwHoIZhVOOdtSawYO7
+ENbMsXct7NUxpesCT63DJNzaMW7OLWpu1PanwZhgGiuyBAF4UZnUJWP+Z/8ho6Pw
+C8Lrp0HRh6rdoebhRz/SN+YzPjkE5LBfd0W/aAwCfEUNJS22cQwrPvcpo5NXv9M=
+=Fgt7
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__24_Sep_2010_13_55_31_+1000_d3jqRQNbsDsMnVps--
+--Signature=_Fri__24_Sep_2010_14_03_51_+1000_lzP1KSf=rqrBT17P--
