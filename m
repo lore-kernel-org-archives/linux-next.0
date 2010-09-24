@@ -1,41 +1,38 @@
-From: Steffen Sledz <sledz@dresearch.de>
-Subject: [PATCH] ubifs: avoid kernel error if ubifs superblock read fails
-Date: Fri, 24 Sep 2010 11:54:41 +0200
-Message-ID: <1285322081-17144-1-git-send-email-sledz__22180.862472351$1285329265$gmane$org@dresearch.de>
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: Re: linux-next: manual merge of the trivial tree with the net tree
+Date: Fri, 24 Sep 2010 14:09:48 +0200 (CEST)
+Message-ID: <alpine.LNX.2.00.1009241409320.26813@pobox.suse.cz>
+References: <20100924121924.8fb5dfb5.sfr@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from proxy.DResearch.DE ([87.193.137.100]:49425 "EHLO
-	mail.dresearch.de" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1754793Ab0IXLyV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 24 Sep 2010 07:54:21 -0400
-Received: from exchange.intern.dresearch.de (owa.xfer-intern.dresearch.de [192.168.32.16])
-	by mail.dresearch.de (Postfix) with ESMTP id 45D2F491282
-	for <linux-next@vger.kernel.org>; Fri, 24 Sep 2010 13:21:53 +0200 (CEST)
+Received: from cantor2.suse.de ([195.135.220.15]:42412 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754716Ab0IXMJu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 24 Sep 2010 08:09:50 -0400
+In-Reply-To: <20100924121924.8fb5dfb5.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Steffen Sledz <sledz@dresearch.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Weber <weber@corscience.de>
 
-* .get_sb is called on mounts with automatic fs detection too, so this
-  function should not print an error if it cannot read the superblock
-  (new behaviour conforms the other fs types)
+On Fri, 24 Sep 2010, Stephen Rothwell wrote:
 
-Signed-off-by: Steffen Sledz <sledz@dresearch.de>
----
- fs/ubifs/super.c |    2 --
- 1 files changed, 0 insertions(+), 2 deletions(-)
+> Hi Jiri,
+> 
+> Today's linux-next merge of the trivial tree got a conflict in
+> drivers/net/bnx2x/bnx2x_link.c between commit
+> 62b29a5dd0930e0c956b6740f32d5b3bbaf20136 ("bnx2x: Adjust alignment of
+> split PHY functions") from the net tree and commit
+> 0b1974de66f9ed44f1423449628f4926bf95b854 ("Fix typo: configuation =>
+> configuration") from the trivial tree.
+> 
+> The former removes the text updated by the latter, so I used the former.
+> 
+> Jiri, you might like to drop that hunk from the patch in your tree.
 
-diff --git a/fs/ubifs/super.c b/fs/ubifs/super.c
-index cd5900b..e62bb75 100644
---- a/fs/ubifs/super.c
-+++ b/fs/ubifs/super.c
-@@ -2049,8 +2049,6 @@ static int ubifs_get_sb(struct file_system_type *fs_type, int flags,
- 	 */
- 	ubi = open_ubi(name, UBI_READONLY);
- 	if (IS_ERR(ubi)) {
--		ubifs_err("cannot open \"%s\", error %d",
--			  name, (int)PTR_ERR(ubi));
- 		return PTR_ERR(ubi);
- 	}
- 	ubi_get_volume_info(ubi, &vi);
+Done now, thanks for reporting.
+
 -- 
-1.7.1
+Jiri Kosina
+SUSE Labs, Novell Inc.
