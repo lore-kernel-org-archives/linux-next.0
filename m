@@ -1,82 +1,56 @@
-From: Randy Dunlap <rdunlap@xenotime.net>
-Subject: Re: [PATCH -next] driver core: fix build for CONFIG_BLOCK=n
-Date: Thu, 23 Sep 2010 13:34:54 -0700
-Message-ID: <20100923133454.786049c2.rdunlap@xenotime.net>
-References: <20100920161239.f204a507.sfr@canb.auug.org.au>
-	<20100920092034.0b3f5898.randy.dunlap@oracle.com>
-	<20100921223115.GB21202@kroah.com>
-	<20100923111541.97abcd05.rdunlap@xenotime.net>
-	<20100923191629.GB18736@kroah.com>
-	<20100923124751.cc59a349.rdunlap@xenotime.net>
-	<20100923203006.GB10687@suse.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the trivial tree with the net tree
+Date: Fri, 24 Sep 2010 12:19:24 +1000
+Message-ID: <20100924121924.8fb5dfb5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__24_Sep_2010_12_19_24_+1000_T+cqp0Y/sTELpsH9"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from xenotime.net ([72.52.115.56]:37384 "HELO xenotime.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
-	id S1753498Ab0IWUe7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 23 Sep 2010 16:34:59 -0400
-Received: from chimera.site ([173.50.240.230]) by xenotime.net for <linux-next@vger.kernel.org>; Thu, 23 Sep 2010 13:34:55 -0700
-In-Reply-To: <20100923203006.GB10687@suse.de>
+Received: from chilli.pcug.org.au ([203.10.76.44]:60727 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755044Ab0IXCTe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 23 Sep 2010 22:19:34 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <gregkh@suse.de>
-Cc: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Kay Sievers <kay.sievers@vrfy.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Weber <weber@corscience.de>
 
-On Thu, 23 Sep 2010 13:30:06 -0700 Greg KH wrote:
+--Signature=_Fri__24_Sep_2010_12_19_24_+1000_T+cqp0Y/sTELpsH9
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Thu, Sep 23, 2010 at 12:47:51PM -0700, Randy Dunlap wrote:
-> > On Thu, 23 Sep 2010 12:16:29 -0700 Greg KH wrote:
-> > 
-> > > On Thu, Sep 23, 2010 at 11:15:41AM -0700, Randy Dunlap wrote:
-> > > > On Tue, 21 Sep 2010 15:31:15 -0700 Greg KH wrote:
-> > > > 
-> > > > > On Mon, Sep 20, 2010 at 09:20:34AM -0700, Randy Dunlap wrote:
-> > > > > > From: Randy Dunlap <randy.dunlap@oracle.com>
-> > > > > > 
-> > > > > > Fix build when CONFIG_BLOCK is not enabled (since SEP-06).
-> > > > > > Fixes these build errors:
-> > > > > > 
-> > > > > > drivers/base/core.c: In function 'get_device_parent':
-> > > > > > drivers/base/core.c:622: error: 'block_class' undeclared (first use in this function)
-> > > > > > drivers/base/core.c: In function 'device_add_class_symlinks':
-> > > > > > drivers/base/core.c:712: error: 'block_class' undeclared (first use in this function)
-> > > > > > drivers/base/core.c: In function 'device_remove_class_symlinks':
-> > > > > > drivers/base/core.c:742: error: 'block_class' undeclared (first use in this function)
-> > > > > > 
-> > > > > > Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> > > > > 
-> > > > > This should no longer be needed with the next linux-next tree as the
-> > > > > logic in this area has changed thanks to Andi's patch.
-> >                                      ~~~~~~~~~~~~~~~~~~~~~~~
-> > 
-> > > > 
-> > > > {sorry about resend, email problems}
-> > > > 
-> > > > 
-> > > > Still seeing this build error. (linux-next 2010-0923)
-> > > > Will you be merging some patch soon?
-> > > 
-> > > Not unless someone provides it.  I know of no valid user of the kernel
-> > > that does not enable CONFIG_BLOCK, so I really doubt this will ever hit
-> > > anyone in "real life" so it's _way_ down the list of things I have to do
-> > > at the moment, sorry.
+Hi Jiri,
 
-Maybe you should just submit a patch to remove CONFIG_BLOCK.
-(and many other kconfig symbols)
+Today's linux-next merge of the trivial tree got a conflict in
+drivers/net/bnx2x/bnx2x_link.c between commit
+62b29a5dd0930e0c956b6740f32d5b3bbaf20136 ("bnx2x: Adjust alignment of
+split PHY functions") from the net tree and commit
+0b1974de66f9ed44f1423449628f4926bf95b854 ("Fix typo: configuation =3D>
+configuration") from the trivial tree.
 
-> > so what was your comment about Andi's patch (above)?
-> 
-> It's merged already, and because of it, your patch failed to apply.
+The former removes the text updated by the latter, so I used the former.
 
+Jiri, you might like to drop that hunk from the patch in your tree.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-OK, so I disagree with your comment:
-> > > > > This should no longer be needed with the next linux-next tree as the
-> > > > > logic in this area has changed thanks to Andi's patch.
+--Signature=_Fri__24_Sep_2010_12_19_24_+1000_T+cqp0Y/sTELpsH9
+Content-Type: application/pgp-signature
 
-but I now understand that my patch failed to apply.  Thanks for the info.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+iQEcBAEBAgAGBQJMnAqsAAoJEDMEi1NhKgbscFMIAI9K95g49TcXKFQSPcro1zOi
+IQBCtOB1mnsXQCXj/OfopUqzUfHQdSmy8e/oAmbmEjXJAK5JI8hWUPNSDl2ZCYZ8
+xcmnjA9g0/kbsuH56ij+LRZz8X0u0t8sdqvaM/x6rELKRoB+mb8fEhVJq+ZRP2nX
+lvqOPG7SQUJKDxvJPw9kM/W+ylBzToS+F3SQsLaYOx7j1M15DDPhL34FI54wlTwA
+ZGUQgMry1xGUSe5TEg7OOxRUkiLb8hzOz8lL7VTcT3Hs9MhPhVpNfWA4qRFOYDII
+xQs8rB/wLqO+GbwHH+A+R4ncK3Nkzidb+1+MJd0+CLo4T0o85275o+Of9pjU5lU=
+=yBi9
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__24_Sep_2010_12_19_24_+1000_T+cqp0Y/sTELpsH9--
