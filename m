@@ -1,68 +1,57 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: Re: [-next] Latest next does not boot on s390x
-Date: Fri, 24 Sep 2010 12:44:10 +0200
-Message-ID: <20100924104410.GB2230@osiris.boeblingen.de.ibm.com>
-References: <4C9B5AAB.6020000@in.ibm.com>
+From: Jeff Layton <jlayton@redhat.com>
+Subject: Re: linux-next: build warning after merge of the cifs tree
+Date: Fri, 24 Sep 2010 07:13:36 -0400
+Message-ID: <20100924071336.6def0437@corrin.poochiereds.net>
+References: <20100924134841.161d18d3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=PGP-SHA1;
+ boundary="Sig_/G9yeT8oKoqHFfj.1zLjnskP"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mtagate7.uk.ibm.com ([194.196.100.167]:56072 "EHLO
-	mtagate7.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751803Ab0IXKoN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 24 Sep 2010 06:44:13 -0400
-Content-Disposition: inline
-In-Reply-To: <4C9B5AAB.6020000@in.ibm.com>
+Received: from mx1.redhat.com ([209.132.183.28]:8513 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753079Ab0IXLNo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 24 Sep 2010 07:13:44 -0400
+In-Reply-To: <20100924134841.161d18d3.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sachin Sant <sachinp@in.ibm.com>, David Howells <dhowells@redhat.com>
-Cc: linux-s390@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Steve French <smfrench@gmail.com>, linux-cifs@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Sep 23, 2010 at 07:18:27PM +0530, Sachin Sant wrote:
-> I cannot boot recent linux-next builds on a s390x box.
-> 
-> I first ran into this problem with Sept 17th linux-next build(2.6.36-rc4_next_20100917)
-> 
-> The following messages are displayed on the console :
-> 
-> 03: Please choose (default will boot in 20 seconds):
-> 03: Booting default (autotest)...
-> 03: HCPGIR450W CP entered; disabled wait PSW 00020001 80000000 00000000 0010DB3E
-> 
-> Any idea what could be the problem or how can i debug this issue ?
+--Sig_/G9yeT8oKoqHFfj.1zLjnskP
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Caused by "Fix IRQ flag handling naming". It changed a define to a function
-which takes an unsigned long. That adds an implicit cast of the ssm_mask from
-int to unsigned long and changes bit positions.
-In consequence we fail to enable the virtual addressing mode and hence the
-kernel crashes at first access to an address that is only available in
-virtual addressing mode.
-The patch below fixes it.
+On Fri, 24 Sep 2010 13:48:41 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-David, could you please merge it into your "Fix IRQ flag handling naming"
-patch? Thanks!
+> Hi all,
+>=20
+> After merging the cifs tree, today's linux-next build (powerpc
+> ppc64_defconfig) produced this warning:
+>=20
+> fs/cifs/dir.c: In function 'cifs_new_fileinfo':
+> fs/cifs/dir.c:140: warning: unused variable 'cifs_sb'
+>=20
+> Introduced by commit 9a6124e7e18fa30d8693055e6a4526afb4c3fabc ("cifs:
+> have cifs_new_fileinfo take a tcon arg").
+>=20
 
-Reported-by: Sachin Sant <sachinp@in.ibm.com>
-Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
----
+That's fixed in the next patch in the multiuser mount series. It
+probably should have been part of the patch above.
 
-diff --git a/arch/s390/mm/init.c b/arch/s390/mm/init.c
-index d3a24e4..bb40933 100644
---- a/arch/s390/mm/init.c
-+++ b/arch/s390/mm/init.c
-@@ -91,7 +91,6 @@ static unsigned long setup_zero_pages(void)
-  */
- void __init paging_init(void)
- {
--	static const int ssm_mask = 0x04000000L;
- 	unsigned long max_zone_pfns[MAX_NR_ZONES];
- 	unsigned long pgd_type;
- 
-@@ -113,7 +112,7 @@ void __init paging_init(void)
- 	__ctl_load(S390_lowcore.kernel_asce, 1, 1);
- 	__ctl_load(S390_lowcore.kernel_asce, 7, 7);
- 	__ctl_load(S390_lowcore.kernel_asce, 13, 13);
--	arch_local_irq_restore(ssm_mask);
-+	arch_local_irq_restore(4UL << (BITS_PER_LONG - 8));
- 
- 	atomic_set(&init_mm.context.attach_count, 1);
- 
+--=20
+Jeff Layton <jlayton@redhat.com>
+
+--Sig_/G9yeT8oKoqHFfj.1zLjnskP
+Content-Type: application/pgp-signature; name=signature.asc
+Content-Disposition: attachment; filename=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.16 (GNU/Linux)
+
+iEYEARECAAYFAkych+kACgkQojH4PzJJfGXreQCfZ3sUwYbi/6Td8aLJivU8gn9a
+VlIAoMJEYVKnGgjVpQC+Tq+AL6pFIiZR
+=RXtu
+-----END PGP SIGNATURE-----
+
+--Sig_/G9yeT8oKoqHFfj.1zLjnskP--
