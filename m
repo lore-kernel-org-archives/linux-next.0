@@ -1,58 +1,51 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the bkl-llseek tree with the sound tree
-Date: Fri, 24 Sep 2010 13:42:01 +1000
-Message-ID: <20100924134201.e6385b98.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Subject: linux-next: build warning after merge of the cifs tree
+Date: Fri, 24 Sep 2010 13:48:41 +1000
+Message-ID: <20100924134841.161d18d3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__24_Sep_2010_13_42_01_+1000_wbzUg34DnVoI8EI7"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43193 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753491Ab0IXDmI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 23 Sep 2010 23:42:08 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Kacur <jkacur@redhat.com>, Takashi Iwai <tiwai@suse.de>
+ boundary="Signature=_Fri__24_Sep_2010_13_48_41_+1000_NI0zFPy8anBZZZZo"
+Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jeff Layton <jlayton-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__24_Sep_2010_13_42_01_+1000_wbzUg34DnVoI8EI7
+--Signature=_Fri__24_Sep_2010_13_48_41_+1000_NI0zFPy8anBZZZZo
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Arnd,
+Hi all,
 
-Today's linux-next merge of the bkl-llseek tree got a conflict in
-sound/oss/sh_dac_audio.c between commit
-095a0f6df246bdc57b57d616c4698e41fbd3bf43 ("SOUND-OSS: Remove
-sh_dac_audio") from the sound tree and commit
-5295184fb318693b4ef2cd8056bf1a7cb43586d7 ("llseek: automatically
-add .llseek fop") from the bkl-llseek tree.
+After merging the cifs tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
 
-The former just removes the file updated by the latter.  I just removed
-the file.
+fs/cifs/dir.c: In function 'cifs_new_fileinfo':
+fs/cifs/dir.c:140: warning: unused variable 'cifs_sb'
 
-Arnd, (assuming that you will do a rebase anyway) you may as well just
-drop the hunk that affects this file.
+Introduced by commit 9a6124e7e18fa30d8693055e6a4526afb4c3fabc ("cifs:
+have cifs_new_fileinfo take a tcon arg").
+
 --=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Stephen Rothwell                    sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__24_Sep_2010_13_42_01_+1000_wbzUg34DnVoI8EI7
+--Signature=_Fri__24_Sep_2010_13_48_41_+1000_NI0zFPy8anBZZZZo
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMnB4JAAoJEDMEi1NhKgbsocIH/RhSx7yV12CPb2B+b6UrV+3d
-4GuM8ayygOf1Szs2dD3xCk3bMlHzZXjqtoQ4yGPyeaK4JS69MBk03stO1F7zeVoD
-Hxj/Ni0mR5I/XXyzNkRr8jBJxQobh6fpjQNiFadKhwzARZXyziZvPBt+xNlBRUxy
-99HXdMeAqkzwJoWuE+M33yC4mOWOEHvN1uGtoZALOEVmM70+WpXo8G+F9o4M3tiD
-XhNjBm5YEhVI3huGXEiLg4TMpzn5bsaloF2JfZsFd4hfWsYUFKrViES/pJUfrjuE
-Xn5KsoOmh+lVfx/RLm5ZXtAVTqr0Ba61mzVJtQy7i6KiS+JMNWAlBevkKycawmk=
-=fQYn
+iQEcBAEBAgAGBQJMnB+ZAAoJEDMEi1NhKgbszJoH/1R1TKoqSM+bGlQm4lsmtyuj
+G3oI09Npk03pXldQdrVJ0QwH0iKoiSPI98YEPV/sH4qIwJSzwHRjmeFmFcw+Wtwf
+RBdab/JEoqy+KQA6pOBSD/Be3SrZdE7R495BvmAORJQJCbY/zLyEF0921yvMKpVi
+B908Cz0lFeT+lzFy4QQcM9nRuBC0IppWvYqffi1lRxkbCVLFr0G1efx5YPR/wuD7
+g3OyziH1DUnCU/Dw12WjqiPe46uGH6B7tNI58jnu4cV1sFfIiekxdU0qxfr+6uaK
+SFbij9Go/ReXorx/5DhfnoI1dcAdzH8r269MGAzDo5J2rDhAfmkVK+RefwrICO8=
+=Wu6R
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__24_Sep_2010_13_42_01_+1000_wbzUg34DnVoI8EI7--
+--Signature=_Fri__24_Sep_2010_13_48_41_+1000_NI0zFPy8anBZZZZo--
