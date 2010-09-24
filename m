@@ -1,56 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the trivial tree with the net tree
-Date: Fri, 24 Sep 2010 12:19:24 +1000
-Message-ID: <20100924121924.8fb5dfb5.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the bkl-llseek tree with the sound tree
+Date: Fri, 24 Sep 2010 13:42:01 +1000
+Message-ID: <20100924134201.e6385b98.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__24_Sep_2010_12_19_24_+1000_T+cqp0Y/sTELpsH9"
+ boundary="Signature=_Fri__24_Sep_2010_13_42_01_+1000_wbzUg34DnVoI8EI7"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60727 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:43193 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755044Ab0IXCTe (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 23 Sep 2010 22:19:34 -0400
+	id S1753491Ab0IXDmI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 23 Sep 2010 23:42:08 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Weber <weber@corscience.de>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Kacur <jkacur@redhat.com>, Takashi Iwai <tiwai@suse.de>
 
---Signature=_Fri__24_Sep_2010_12_19_24_+1000_T+cqp0Y/sTELpsH9
+--Signature=_Fri__24_Sep_2010_13_42_01_+1000_wbzUg34DnVoI8EI7
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jiri,
+Hi Arnd,
 
-Today's linux-next merge of the trivial tree got a conflict in
-drivers/net/bnx2x/bnx2x_link.c between commit
-62b29a5dd0930e0c956b6740f32d5b3bbaf20136 ("bnx2x: Adjust alignment of
-split PHY functions") from the net tree and commit
-0b1974de66f9ed44f1423449628f4926bf95b854 ("Fix typo: configuation =3D>
-configuration") from the trivial tree.
+Today's linux-next merge of the bkl-llseek tree got a conflict in
+sound/oss/sh_dac_audio.c between commit
+095a0f6df246bdc57b57d616c4698e41fbd3bf43 ("SOUND-OSS: Remove
+sh_dac_audio") from the sound tree and commit
+5295184fb318693b4ef2cd8056bf1a7cb43586d7 ("llseek: automatically
+add .llseek fop") from the bkl-llseek tree.
 
-The former removes the text updated by the latter, so I used the former.
+The former just removes the file updated by the latter.  I just removed
+the file.
 
-Jiri, you might like to drop that hunk from the patch in your tree.
+Arnd, (assuming that you will do a rebase anyway) you may as well just
+drop the hunk that affects this file.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__24_Sep_2010_12_19_24_+1000_T+cqp0Y/sTELpsH9
+--Signature=_Fri__24_Sep_2010_13_42_01_+1000_wbzUg34DnVoI8EI7
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMnAqsAAoJEDMEi1NhKgbscFMIAI9K95g49TcXKFQSPcro1zOi
-IQBCtOB1mnsXQCXj/OfopUqzUfHQdSmy8e/oAmbmEjXJAK5JI8hWUPNSDl2ZCYZ8
-xcmnjA9g0/kbsuH56ij+LRZz8X0u0t8sdqvaM/x6rELKRoB+mb8fEhVJq+ZRP2nX
-lvqOPG7SQUJKDxvJPw9kM/W+ylBzToS+F3SQsLaYOx7j1M15DDPhL34FI54wlTwA
-ZGUQgMry1xGUSe5TEg7OOxRUkiLb8hzOz8lL7VTcT3Hs9MhPhVpNfWA4qRFOYDII
-xQs8rB/wLqO+GbwHH+A+R4ncK3Nkzidb+1+MJd0+CLo4T0o85275o+Of9pjU5lU=
-=yBi9
+iQEcBAEBAgAGBQJMnB4JAAoJEDMEi1NhKgbsocIH/RhSx7yV12CPb2B+b6UrV+3d
+4GuM8ayygOf1Szs2dD3xCk3bMlHzZXjqtoQ4yGPyeaK4JS69MBk03stO1F7zeVoD
+Hxj/Ni0mR5I/XXyzNkRr8jBJxQobh6fpjQNiFadKhwzARZXyziZvPBt+xNlBRUxy
+99HXdMeAqkzwJoWuE+M33yC4mOWOEHvN1uGtoZALOEVmM70+WpXo8G+F9o4M3tiD
+XhNjBm5YEhVI3huGXEiLg4TMpzn5bsaloF2JfZsFd4hfWsYUFKrViES/pJUfrjuE
+Xn5KsoOmh+lVfx/RLm5ZXtAVTqr0Ba61mzVJtQy7i6KiS+JMNWAlBevkKycawmk=
+=fQYn
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__24_Sep_2010_12_19_24_+1000_T+cqp0Y/sTELpsH9--
+--Signature=_Fri__24_Sep_2010_13_42_01_+1000_wbzUg34DnVoI8EI7--
