@@ -1,45 +1,34 @@
-From: Alan Cox <alan@linux.intel.com>
-Subject: [PATCH] tty: Fix warning left over from TIOCGICOUNT changes
-Date: Fri, 24 Sep 2010 15:49:18 +0100
-Message-ID: <20100924144750.11385.24596.stgit@localhost.localdomain>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for September 24 (block/blk-throttle)
+Date: Fri, 24 Sep 2010 08:54:00 -0700
+Message-ID: <20100924085400.eb4f0ac4.randy.dunlap@oracle.com>
+References: <20100924145537.bd092bfb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:51209 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753373Ab0IXPgc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 24 Sep 2010 11:36:32 -0400
+Received: from rcsinet10.oracle.com ([148.87.113.121]:56276 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756032Ab0IXPzB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 24 Sep 2010 11:55:01 -0400
+In-Reply-To: <20100924145537.bd092bfb.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org, greg@kroah.com, linux-serial@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Signed-off-by: Alan Cox <alan@linux.intel.com>
+On Fri, 24 Sep 2010 14:55:37 +1000 Stephen Rothwell wrote:
+
+> Hi all,
+> 
+> Changes since 20100923:
+
+
+on i386:
+
+blk-throttle.c:(.text+0x1abb8): undefined reference to `__udivdi3'
+blk-throttle.c:(.text+0x1b1dc): undefined reference to `__udivdi3'
+
 ---
-
- drivers/usb/serial/ssu100.c |    2 --
- 1 files changed, 0 insertions(+), 2 deletions(-)
-
-
-diff --git a/drivers/usb/serial/ssu100.c b/drivers/usb/serial/ssu100.c
-index 8bd60e3..f5312dd 100644
---- a/drivers/usb/serial/ssu100.c
-+++ b/drivers/usb/serial/ssu100.c
-@@ -444,8 +444,6 @@ static int ssu100_ioctl(struct tty_struct *tty, struct file *file,
- 		    unsigned int cmd, unsigned long arg)
- {
- 	struct usb_serial_port *port = tty->driver_data;
--	struct ssu100_port_private *priv = usb_get_serial_port_data(port);
--	void __user *user_arg = (void __user *)arg;
- 
- 	dbg("%s cmd 0x%04x", __func__, cmd);
- 
-
-
---
-Elephants that sit in trees		Beware craters beneath trees
-Really hate Dutch Elm disease		Lest they have Dutch Elm disease
-In the boughs they sit and sun		For from on high there may thump
-A branch gives way down they come	An elephant in a grump
-Grumpily sat in the plants		In the bushes sat resigned
-Picking splinters from their pants	Peeling you from his behind
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
