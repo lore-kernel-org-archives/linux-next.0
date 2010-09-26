@@ -1,61 +1,32 @@
-From: CAI Qian <caiqian@redhat.com>
-Subject: Re: kexec load failure introduced by "x86, memblock: Replace
- e820_/_early string with memblock_"
-Date: Sun, 26 Sep 2010 02:55:32 -0400 (EDT)
-Message-ID: <637638372.1993021285484132309.JavaMail.root@zmail06.collab.prod.int.phx2.redhat.com>
-References: <4C9EEBCC.8090409@kernel.org>
+From: Yinghai Lu <yinghai-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: kexec load failure introduced by "x86,
+	memblock: Replace e820_/_early string with memblock_"
+Date: Sat, 25 Sep 2010 23:56:24 -0700
+Message-ID: <4C9EEE98.7020906@kernel.org>
+References: <637638372.1993021285484132309.JavaMail.root@zmail06.collab.prod.int.phx2.redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3-phx2.redhat.com ([209.132.183.24]:36442 "EHLO
-	mx01.colomx.prod.int.phx2.redhat.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751061Ab0IZGzg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Sun, 26 Sep 2010 02:55:36 -0400
-In-Reply-To: <4C9EEBCC.8090409@kernel.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Yinghai Lu <yinghai@kernel.org>
-Cc: linux-next <linux-next@vger.kernel.org>, kexec <kexec@lists.infradead.org>, "H. Peter Anvin" <hpa@zytor.com>
+Return-path: <kexec-bounces+glkk-kexec=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <637638372.1993021285484132309.JavaMail.root-k5qu2F3t005+R5eDjrG6zsCp5Q1pQRjfhaY/URYTgi6ny3qCrzbmXA@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/kexec>,
+	<mailto:kexec-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/kexec/>
+List-Post: <mailto:kexec-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:kexec-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/kexec>,
+	<mailto:kexec-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: kexec-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Errors-To: kexec-bounces+glkk-kexec=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: CAI Qian <caiqian-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Cc: linux-next <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kexec <kexec-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "H. Peter Anvin" <hpa-YMNOUZJC4hwAvxtiuMwx3w@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
+On 09/25/2010 11:55 PM, CAI Qian wrote:
+>>
+>> are you kexec from 2.6.35+ to 2.6.36-rc3+?
+> No, both kernels were the same version. I am sorry the above logs were misleading that were copy-and-pasted from different kernel versions.
 
------ "Yinghai Lu" <yinghai@kernel.org> wrote:
+can you check tip instead of next tree?
 
-> On 09/25/2010 08:11 PM, caiqian@redhat.com wrote:
-> > # /sbin/kexec -p '--command-line=ro
-> root=/dev/mapper/VolGroup-lv_root rd_LVM_LV=VolGroup/lv_root
-> rd_LVM_LV=VolGroup/lv_swap rd_NO_LUKS rd_NO_MD rd_NO_DM
-> LANG=en_US.UTF-8 SYSFONT=latarcyrheb-sun16 KEYBOARDTYPE=pc KEYTABLE=us
-> rhgb quiet console=tty0 console=ttyS0,115200 crashkernel=128M irqpoll
-> maxcpus=1 reset_devices cgroup_disable=memory '
-> --initrd=/boot/initrd-2.6.36-rc3+kdump.img /boot/vmlinuz-2.6.36-rc3+
-> > 
-> > BUG: unable to handle kernel paging request at ffff8800dfffe400
-> > IP: [<ffffffff8113376b>] per_cpu_ptr_to_phys+0x3b/0x120
-> > PGD 1a26063 PUD 1fffc067 PMD 1fffd067 PTE 0
-> > Oops: 0000 [#1] SMP 
-> > last sysfs file: /sys/devices/system/cpu/cpu0/crash_notes
-> > CPU 3 
-> > Modules linked in: ipt_REJECT nf_conntrack_ipv4 nf_defrag_ipv4
-> iptable_filter ip_tables ip6t_REJECT nf_conntrack_ipv6 xt_state
-> nf_conntrack ip6table_filter ip6_tables ipv6 virtio_balloon pcspkr
-> 8139too 8139cp mii snd_intel8x0 snd_ac97_codec ac97_bus snd_seq
-> snd_seq_device snd_pcm snd_timer snd soundcore snd_page_alloc sg
-> i2c_piix4 i2c_core ext4 mbcache jbd2 floppy sd_mod crc_t10dif
-> virtio_pci virtio_ring virtio pata_acpi ata_generic ata_piix dm_mod
-> [last unloaded: scsi_wait_scan]
-> > 
-> > Pid: 5671, comm: kexec Not tainted 2.6.35+ #11 /KVM
-> > RIP: 0010:[<ffffffff8113376b>]  [<ffffffff8113376b>]
-> per_cpu_ptr_to_phys+0x3b/0x120
-> 
-> are you kexec from 2.6.35+ to 2.6.36-rc3+?
-No, both kernels were the same version. I am sorry the above logs were misleading that were copy-and-pasted from different kernel versions.
-> 
-> Yinghai
-> 
-> _______________________________________________
-> kexec mailing list
-> kexec@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/kexec
+Yinghai
