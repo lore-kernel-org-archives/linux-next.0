@@ -1,32 +1,42 @@
-From: Andi Kleen <andi@firstfloor.org>
-Subject: Re: linux-next: build warning after merge of the final tree (hwpoison tree related)
-Date: Mon, 27 Sep 2010 09:02:51 +0200
-Message-ID: <20100927070251.GB21952@one.firstfloor.org>
-References: <20100927152804.57c2d66e.sfr@canb.auug.org.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: manual merge of the bkl-trivial tree with the block tree
+Date: Mon, 27 Sep 2010 09:05:02 +0200
+Message-ID: <201009270905.02938.arnd@arndb.de>
+References: <20100927144519.25cd3afa.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from one.firstfloor.org ([213.235.205.2]:51264 "EHLO
-	one.firstfloor.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754250Ab0I0HC6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Sep 2010 03:02:58 -0400
-Content-Disposition: inline
-In-Reply-To: <20100927152804.57c2d66e.sfr@canb.auug.org.au>
+Received: from moutng.kundenserver.de ([212.227.17.10]:51391 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754387Ab0I0HFK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Sep 2010 03:05:10 -0400
+In-Reply-To: <20100927144519.25cd3afa.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andi Kleen <andi@firstfloor.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>, Wu Fengguang <fengguang.wu@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vivek Goyal <vgoyal@redhat.com>, Jens Axboe <axboe@kernel.dk>
 
-On Mon, Sep 27, 2010 at 03:28:04PM +1000, Stephen Rothwell wrote:
-> Hi Andi,
+On Monday 27 September 2010 06:45:19 Stephen Rothwell wrote:
 > 
-> After merging the final tree, today's linux-next build (powerpc
-> ppc64_defconfig) produced this warning:
-> 
-> mm/hugetlb.c:2950: warning: 'is_hugepage_on_freelist' defined but not used
-> 
-> Introduced by commit 19b31e29073e272e49a3d38972c132c49383d5d4 ("HWPOISON,
-> hugetlb: add free check to dequeue_hwpoison_huge_page()").
+>   #undef DEBUG
+>   
+> + static DEFINE_MUTEX(ataflop_mutex);
+>  -static struct request_queue *floppy_queue;
+>   static struct request *fd_request;
+>  +static int fdc_queue;
+>   
+>   /* Disk types: DD, HD, ED */
+>   static struct atari_disk_type {
 
-Fixed now. Thanks for the report.
--Andi
+Looks good, thanks!
+
+Vivek, since you are touching that file with other patches, are you interested
+in taking the floppy part of my automated block driver BKL removal patch
+as well?
+
+I suspect it's possible to come up with a better solution than mine if you
+know the code.
+
+	Arnd
