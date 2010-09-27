@@ -1,42 +1,35 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: manual merge of the bkl-trivial tree with the block tree
-Date: Mon, 27 Sep 2010 09:05:02 +0200
-Message-ID: <201009270905.02938.arnd@arndb.de>
-References: <20100927144519.25cd3afa.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build failure after merge of the final tree (net
+ tree related)
+Date: Mon, 27 Sep 2010 01:17:32 -0700 (PDT)
+Message-ID: <20100927.011732.42806207.davem@davemloft.net>
+References: <20100927154408.55a28127.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.10]:51391 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754387Ab0I0HFK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Sep 2010 03:05:10 -0400
-In-Reply-To: <20100927144519.25cd3afa.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vivek Goyal <vgoyal@redhat.com>, Jens Axboe <axboe@kernel.dk>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20100927154408.55a28127.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ohad@wizery.com, linville@tuxdriver.com
+List-Id: linux-next.vger.kernel.org
 
-On Monday 27 September 2010 06:45:19 Stephen Rothwell wrote:
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 27 Sep 2010 15:44:08 +1000
+
+> After merging the final tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 > 
->   #undef DEBUG
->   
-> + static DEFINE_MUTEX(ataflop_mutex);
->  -static struct request_queue *floppy_queue;
->   static struct request *fd_request;
->  +static int fdc_queue;
->   
->   /* Disk types: DD, HD, ED */
->   static struct atari_disk_type {
+> Assembler messages:
+> Fatal error: can't create drivers/net/wireless/wl12xx/.tmp_wl12xx_platform_data.o: No such file or directory
+> drivers/net/wireless/wl12xx/wl12xx_platform_data.c: In function 'wl12xx_get_platform_data':
+> drivers/net/wireless/wl12xx/wl12xx_platform_data.c:28: error: cannot open drivers/net/wireless/wl12xx/.tmp_wl12xx_platform_data.gcno
+> drivers/net/wireless/wl12xx/wl12xx_platform_data.c:28: confused by earlier errors, bailing out
+> 
+> Presumably caused by commit 61ee7007a5d61aa066076da578e8e8084e122d7d
+> ("wl12xx: add platform data passing support").
+> 
+> I do my builds with a separate object directory (which may be a reason
+> you don't see this).
 
-Looks good, thanks!
-
-Vivek, since you are touching that file with other patches, are you interested
-in taking the floppy part of my automated block driver BKL removal patch
-as well?
-
-I suspect it's possible to come up with a better solution than mine if you
-know the code.
-
-	Arnd
+John, please get this fixed, thanks.
