@@ -1,42 +1,92 @@
-From: Trond Myklebust <trond.myklebust@fys.uio.no>
-Subject: Re: linux-next: build failure after merge of the  tree (nfs tree
- related)
-Date: Mon, 27 Sep 2010 07:47:35 -0400
-Message-ID: <1285588055.19362.7.camel@heimdal.trondhjem.org>
-References: <20100927152304.a6463447.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build warnings in Linus' tree
+Date: Mon, 27 Sep 2010 23:31:15 +1000
+Message-ID: <20100927233115.27a5a379.sfr@canb.auug.org.au>
+References: <20100817112439.18f9d958.sfr@canb.auug.org.au>
+	<20100830114222.3a1f53e6.sfr@canb.auug.org.au>
+	<1283148482.3707.167.camel@rui>
+	<20100917142630.b968977c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__27_Sep_2010_23_31_15_+1000_AjTzLEdK8FCaJ.Hy"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-out2.uio.no ([129.240.10.58]:38770 "EHLO mail-out2.uio.no"
+Received: from chilli.pcug.org.au ([203.10.76.44]:50214 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752658Ab0I0MLx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 27 Sep 2010 08:11:53 -0400
-In-Reply-To: <20100927152304.a6463447.sfr@canb.auug.org.au>
+	id S1751635Ab0I0Nb0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 27 Sep 2010 09:31:26 -0400
+In-Reply-To: <20100917142630.b968977c.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bryan Schumaker <bjschuma@netapp.com>
+To: Len Brown <lenb@kernel.org>
+Cc: Zhang Rui <rui.zhang@intel.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>
 
-On Mon, 2010-09-27 at 15:23 +1000, Stephen Rothwell wrote:
-> Hi Trond,
-> 
-> After merging the final tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> fs/nfs/dir.c: In function 'nfs_readdir_free_large_page':
-> fs/nfs/dir.c:464: error: implicit declaration of function 'vm_unmap_ram'
-> fs/nfs/dir.c: In function 'nfs_readdir_large_page':
-> fs/nfs/dir.c:485: error: implicit declaration of function 'vm_map_ram'
-> fs/nfs/dir.c:485: warning: assignment makes pointer from integer without a cast
-> 
-> Caused by commit 2af4eb9746092aab7811b5b581d004049c068a02 ("NFS: readdir
-> with vmapped pages").
-> 
-> I have reverted that commit for today.
+--Signature=_Mon__27_Sep_2010_23_31_15_+1000_AjTzLEdK8FCaJ.Hy
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Agreed: fs/nfs/dir.c needs to #include <vmalloc.h> in order to use those
-functions. Bryan, can you please fix that up?
+Hi Len,
 
-Thanks Stephen!
-  Trond
+On Fri, 17 Sep 2010 14:26:30 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> On Mon, 30 Aug 2010 14:08:02 +0800 Zhang Rui <rui.zhang@intel.com> wrote:
+> >
+> > On Mon, 2010-08-30 at 09:42 +0800, Stephen Rothwell wrote:
+> > > Hi Len,
+> > >=20
+> > > On Tue, 17 Aug 2010 11:24:39 +1000 Stephen Rothwell <sfr@canb.auug.or=
+g.au> wrote:
+> > > >
+> > > > Today's linux-next build (x86_64 allmodconfig) produced these warni=
+ngs:
+> > > >=20
+> > > > drivers/acpi/sysfs.c:152: warning: passing argument 1 of '__check_o=
+ld_set_param' from incompatible pointer type
+> > > > include/linux/moduleparam.h:165: note: expected 'int (*)(const char=
+ *, struct kernel_param *)' but argument is of type 'int (*)(const char *, =
+const struct kernel_param *)'
+>=20
+> [several more elided]
+>=20
+> > > > Introduced by commit 1c8fce27e275fd7c6b75bc6455745f02d3903ee6 ("ACP=
+I:
+> > > > introduce drivers/acpi/sysfs.c") interacting with commit
+> > > > 9bbb9e5a33109b2832e2e63dcc7a132924ab374b ("param: use ops in struct
+> > > > kernel_param, rather than get and set fns directly").
+> > >=20
+> > > Can we have this fixed, please?
+> > patch attached. :)
+> >=20
+> > Use module_param_cb instead of the obsoleted module_param_call to fix a=
+ build warning.
+> >=20
+> > Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+>=20
+> Now that this has been in linux-next since Sep 6, can you please send it
+> to Linus.  It removes quite a few warnings that were introduced during
+> this merge window - and I think we already have too many warnings.
+
+Ping?
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__27_Sep_2010_23_31_15_+1000_AjTzLEdK8FCaJ.Hy
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMoJyjAAoJEDMEi1NhKgbsUl4IAIBK8u8SsjAR5QX2b8OP6ItC
+U7/scfLbC7xz//Cvk/fEfu7MpbOYzPXg7xiHPoun7yQ6U6+lwCpY2odm7WZms/PP
+NgbHM/DnuSKUpwWg3utNlHX/F2Psl2aEupDnw0ICoAWK5UwFUJ4mRDuKTCAxyV1G
+n8fytJxnvQ4V2ipxqHa6FvEyOX0Y996S3xmaP53ANruvX7DrPbPHnNNS8/VWXNaW
+yj0oI3We3jhE7xXEOjZkm5eHYAXM27nuubI0sxNKSaH3hzffmQwHrIacv4CDzuca
+ZRQ+fSwGBYZuX1XqwmsSVz4F/EVfXrAVDPinIQZ5lRr5cCYH/9PQoF/hrqoErW8=
+=ZbnJ
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__27_Sep_2010_23_31_15_+1000_AjTzLEdK8FCaJ.Hy--
