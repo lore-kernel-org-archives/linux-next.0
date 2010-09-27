@@ -1,65 +1,90 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (hwpoison
- tree related)
-Date: Mon, 27 Sep 2010 15:55:51 +1000
-Message-ID: <20100927155551.2e4e4b26.sfr@canb.auug.org.au>
+From: Yinghai Lu <yinghai-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: kexec load failure introduced by "x86,
+	memblock: Replace e820_/_early string with memblock_"
+Date: Sun, 26 Sep 2010 22:58:45 -0700
+Message-ID: <4CA03295.2060809@kernel.org>
+References: <870873343.2003871285555329846.JavaMail.root@zmail06.collab.prod.int.phx2.redhat.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__27_Sep_2010_15_55_51_+1000_cb6FOK/I59RAKlum"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58293 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753590Ab0I0Fz5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 27 Sep 2010 01:55:57 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andi Kleen <ak@linux.intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>, Jun'ichi Nomura <j-nomura@ce.jp.nec.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <kexec-bounces+glkk-kexec=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <870873343.2003871285555329846.JavaMail.root-k5qu2F3t005+R5eDjrG6zsCp5Q1pQRjfhaY/URYTgi6ny3qCrzbmXA@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/kexec>,
+	<mailto:kexec-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/kexec/>
+List-Post: <mailto:kexec-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:kexec-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/kexec>,
+	<mailto:kexec-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: kexec-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Errors-To: kexec-bounces+glkk-kexec=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: caiqian-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org
+Cc: linux-next <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kexec <kexec-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "H. Peter Anvin" <hpa-YMNOUZJC4hwAvxtiuMwx3w@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__27_Sep_2010_15_55_51_+1000_cb6FOK/I59RAKlum
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Please check this one on top of tip or next.
 
-Hi Andi,
+Thanks
 
-After merging the final tree, today's linux-next build (powerpc allnoconfig)
-failed like this:
+Yinghai
 
-mm/mprotect.o: In function `migrate_huge_page_move_mapping':
-mprotect.c:(.text+0x0): multiple definition of `migrate_huge_page_move_mapp=
-ing'
-mm/shmem.o:shmem.c:(.text+0x0): first defined here
-mm/rmap.o: In function `migrate_huge_page_move_mapping':
-rmap.c:(.text+0x0): multiple definition of `migrate_huge_page_move_mapping'
-mm/shmem.o:shmem.c:(.text+0x0): first defined here
+[PATCH] x86, memblock: Fix crashkernel allocation
 
-Caused by commit 7b217c52ce7f33379beb27aa7685109fa74ed6bf ("hugetlb:
-hugepage migration core").
+Cai Qian found that crashkernel is broken with x86 memblock changes
+1. crashkernel=128M@32M always reported that range is used, even first kernel is small
+   no one use that range
+2. always get following report when using "kexec -p"
+	Could not find a free area of memory of a000 bytes...
+	locate_hole failed
 
-This function is declared as "extern int ..." with a body in
-include/linux/migrate.h for the non CONFIG_MIGRATION case.
+The root cause is that generic memblock_find_in_range() will try to get range from top_down.
+But crashkernel do need from low and specified range.
 
-I reverted the whole hwpoison tree for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Let's limit the target range with rash_base + crash_size to make sure that
+We get range from bottom.
 
---Signature=_Mon__27_Sep_2010_15_55_51_+1000_cb6FOK/I59RAKlum
-Content-Type: application/pgp-signature
+Reported-and-Bisected-by: CAI Qian <caiqian-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Yinghai Lu <yinghai-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+---
+ arch/x86/kernel/setup.c |   19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
-iQEcBAEBAgAGBQJMoDHnAAoJEDMEi1NhKgbsvjYH+wfQO0rTVQPq+2f220T23PjI
-7+EmbYLqWmg86atWGvefJ2P2G/xXgFU72VchMBeunsPyvfmavp2+NJ5zAOnLrWRY
-GBnaZ4rzuma0l7GwxFemq8IXq3XyJklWP3shjTr3H1gRxiTe+s1l3OTshrFJtAa6
-gxk97Li6AJ1+NAo7fAABqFs0Ab5jPGMpZ6CWuq3qs3B4AM3jh0ypKCfy88IL5jEh
-q7HBPSJ2fztidBy3FRtPi76yUicH70NsBJCqv8Bt+cOEboWYyJb8LidHB/EskYTH
-5py2/koxE19qve3pKAOqtcTYaeVV7o/OAF6lDcAfzp2zjhSUywC5LdWKZCrbx/g=
-=akxp
------END PGP SIGNATURE-----
-
---Signature=_Mon__27_Sep_2010_15_55_51_+1000_cb6FOK/I59RAKlum--
+Index: linux-2.6/arch/x86/kernel/setup.c
+===================================================================
+--- linux-2.6.orig/arch/x86/kernel/setup.c
++++ linux-2.6/arch/x86/kernel/setup.c
+@@ -516,19 +516,28 @@ static void __init reserve_crashkernel(v
+ 
+ 	/* 0 means: find the address automatically */
+ 	if (crash_base <= 0) {
++		unsigned long long start = 0;
+ 		const unsigned long long alignment = 16<<20;	/* 16M */
+ 
+-		crash_base = memblock_find_in_range(alignment, ULONG_MAX, crash_size,
+-				 alignment);
+-		if (crash_base == MEMBLOCK_ERROR) {
++		crash_base = alignment;
++		while (crash_base < 0xffffffff) {
++			start = memblock_find_in_range(crash_base,
++				crash_base + crash_size, crash_size, alignment);
++
++			if (start == crash_base)
++				break;
++
++			crash_base += alignment;
++		}
++		if (start != crash_base) {
+ 			pr_info("crashkernel reservation failed - No suitable area found.\n");
+ 			return;
+ 		}
+ 	} else {
+ 		unsigned long long start;
+ 
+-		start = memblock_find_in_range(crash_base, ULONG_MAX, crash_size,
+-				 1<<20);
++		start = memblock_find_in_range(crash_base,
++				 crash_base + crash_size, crash_size, 1<<20);
+ 		if (start != crash_base) {
+ 			pr_info("crashkernel reservation failed - memory is in use.\n");
+ 			return;
