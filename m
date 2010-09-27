@@ -1,54 +1,43 @@
-From: "John W. Linville" <linville@tuxdriver.com>
-Subject: Re: linux-next: build failure after merge of the final tree (net
- tree related)
-Date: Mon, 27 Sep 2010 14:25:47 -0400
-Message-ID: <20100927182546.GE11086@tuxdriver.com>
-References: <20100927154408.55a28127.sfr@canb.auug.org.au>
- <AANLkTinHk82jM7Ztwb1aB1xb-hSLeg5Hb07mhYCaeszi@mail.gmail.com>
- <20100927180412.GD11086@tuxdriver.com>
- <20100927.111818.149846920.davem@davemloft.net>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: Re: linux-next: Tree for September 27 (staging: ath6kl, spectra, &
+ vt6655)
+Date: Mon, 27 Sep 2010 11:38:29 -0700
+Message-ID: <20100927113829.2928636a.rdunlap@xenotime.net>
+References: <20100927162143.3a9c1efe.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20100927.111818.149846920.davem@davemloft.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>
-Cc: ohad@wizery.com, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from xenotime.net ([72.52.115.56]:56829 "HELO xenotime.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
+	id S1757124Ab0I0Sib (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 27 Sep 2010 14:38:31 -0400
+Received: from chimera.site ([173.50.240.230]) by xenotime.net for <linux-next@vger.kernel.org>; Mon, 27 Sep 2010 11:38:30 -0700
+In-Reply-To: <20100927162143.3a9c1efe.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, driverdevel <devel@driverdev.osuosl.org>, gregkh@suse.de
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, forest@alittletooquiet.net, yunpeng.gao@intel.com, vmehta@atheros.com
 
-On Mon, Sep 27, 2010 at 11:18:18AM -0700, David Miller wrote:
-> From: "John W. Linville" <linville@tuxdriver.com>
-> Date: Mon, 27 Sep 2010 14:04:12 -0400
-> 
-> > Subject: [PATCH] wl12xx: fix separate-object-folder builds
-> > 
-> > Make this go away (happens when building with a separate object
-> > directory):
-> > 
-> > Assembler messages:
-> > Fatal error: can't create drivers/net/wireless/wl12xx/.tmp_wl12xx_platform_data.o: No such file or directory
-> > drivers/net/wireless/wl12xx/wl12xx_platform_data.c: In function 'wl12xx_get_platform_data':
-> > drivers/net/wireless/wl12xx/wl12xx_platform_data.c:28: error: cannot open drivers/net/wireless/wl12xx/.tmp_wl12xx_platform_data.gcno
-> > drivers/net/wireless/wl12xx/wl12xx_platform_data.c:28: confused by earlier errors, bailing out
-> > 
-> > Signed-off-by: John W. Linville <linville@tuxdriver.com>
-> > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> 
-> BTW, if this fuglet going to work if the driver is built modular?
-> 
-> The idea of this things seems to be to allow arch platform code to call
-> into it to set things.  Such calls from arch platform code are going
-> to be "obj-y"
-> 
-> So if this is built into the modular driver, I can't see how it
-> can work.
+On Mon, 27 Sep 2010 16:21:43 +1000 Stephen Rothwell wrote:
 
-Dave is right -- these Kconfig dependencies (or lack thereof) seem
-to be wrong.  Seems like the OMAP code needs to select the option
-for this code?
+> Hi all,
+> 
+> Changes since 20100924:
 
-John
--- 
-John W. Linville		Someday the world will need a hero, and you
-linville@tuxdriver.com			might be all we have.  Be ready.
+
+drivers/staging/ath6kl/os/linux/ar6000_drv.c:1370:1: warning: "CONFIG_AR600x_BT_RESET_PIN" redefined
+./include/generated/autoconf.h:419:1: warning: this is the location of the previous definition
+drivers/staging/ath6kl/os/linux/ioctl.c:4673: warning: the frame size of 2052 bytes is larger than 1024 bytes
+drivers/staging/ath6kl/hif/sdio/linux_sdio/src/hif_scatter.c:288: error: 'struct mmc_host' has no member named 'max_hw_segs'
+drivers/staging/ath6kl/hif/sdio/linux_sdio/src/hif_scatter.c:289: error: 'struct mmc_host' has no member named 'max_hw_segs'
+
+drivers/staging/spectra/ffsport.c:659: error: implicit declaration of function 'blk_queue_ordered'
+drivers/staging/spectra/ffsport.c:659: error: 'QUEUE_ORDERED_DRAIN_FLUSH' undeclared (first use in this function)
+
+drivers/staging/vt6655/device_main.c:3579: warning: the frame size of 1868 bytes is larger than 1024 bytes
+
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
