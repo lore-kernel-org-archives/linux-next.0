@@ -1,23 +1,29 @@
-From: David Howells <dhowells@redhat.com>
-Subject: Re: + arch-m68k-include-asm-irqflagsh-fix-build.patch added to -mm tree
-Date: Wed, 29 Sep 2010 00:29:03 +0100
-Message-ID: <6435.1285716543@redhat.com>
-References: <AANLkTikjQsJMHhaYTSg5hq+4Po-WL3WXjqdy6OSiW1Jf@mail.gmail.com> <201009222232.o8MMWHgu020762@imap1.linux-foundation.org>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:7745 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751364Ab0I1XaA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 28 Sep 2010 19:30:00 -0400
-In-Reply-To: <AANLkTikjQsJMHhaYTSg5hq+4Po-WL3WXjqdy6OSiW1Jf@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: dhowells@redhat.com, akpm@linux-foundation.org, mm-commits@vger.kernel.org, Linux-Next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+From: "Luck, Tony" <tony.luck@intel.com>
+Subject: RE: [PATCH] block: set the bounce_pfn to the actual DMA limit
+ rather than to max memory
+Date: Tue, 28 Sep 2010 16:40:25 -0700
+Message-ID: <987664A83D2D224EAE907B061CE93D5301605546A7@orsmsx505.amr.corp.intel.com>
+References: <4ca2688f17705a0195@agluck-desktop.sc.intel.com>
+ <20100928225936.GA8993@us.ibm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-scsi-owner@vger.kernel.org>
+In-Reply-To: <20100928225936.GA8993@us.ibm.com>
+Content-Language: en-US
+Sender: linux-scsi-owner@vger.kernel.org
+To: Malahal Naineni <malahal@us.ibm.com>
+Cc: Jens Axboe <jaxboe@fusionio.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> Let me know if this fixes the problem. Thank you very much.
 
-> David, can you please add this to irqflags/master?
+No it doesn't :-(
 
-Done.  It should appear on kernel.org shortly.
+I still end up with 0xffffffff from the *host_dev->dma_mask
+later in that function.
 
-David
+Just for two devices though ... stack traces lead back to
+usb_stor_scan_thread() for these two.
+
+-Tony
