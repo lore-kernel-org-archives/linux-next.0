@@ -1,59 +1,45 @@
-From: Sage Weil <sage@newdream.net>
-Subject: Re: [PATCH -next] ceph: fix debugfs warnings
-Date: Tue, 28 Sep 2010 12:42:10 -0700 (PDT)
-Message-ID: <Pine.LNX.4.64.1009281241450.16237@cobra.newdream.net>
-References: <20100928141823.8c61000e.sfr@canb.auug.org.au>
- <20100928095310.2983a888.randy.dunlap@oracle.com>
-Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+From: "Luck, Tony" <tony.luck@intel.com>
+Subject: Re: [PATCH] block: set the bounce_pfn to the actual DMA limit rather than to max memory
+Date: Tue, 28 Sep 2010 15:13:35 -0700
+Message-ID: <4ca2688f17705a0195@agluck-desktop.sc.intel.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cobra.newdream.net ([66.33.216.30]:40911 "EHLO
-	cobra.newdream.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758456Ab0I1TkH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Sep 2010 15:40:07 -0400
-In-Reply-To: <20100928095310.2983a888.randy.dunlap@oracle.com>
+Received: from mga09.intel.com ([134.134.136.24]:12734 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754250Ab0I1WNg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 28 Sep 2010 18:13:36 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, ceph-devel@vger.kernel.org
+To: Malahal Naineni <malahal@us.ibm.com>
+Cc: Jens Axboe <jaxboe@fusionio.com>, linux-scsi@vger.kernel.org, linux-next@vger.kernel.org
 
-Thanks, Randy.  This is in my for-next branch now!
+Starting with the next-20100927 tag of linux-next I saw this error
+while booting ia64:
 
-sage
+  Unable to handle kernel NULL pointer dereference (address 0000000000000020)
+  usb-stor-scan[5915]: Oops 8813272891392 [1]
+  Modules linked in: dm_mod usb_storage sg container button usbhid uhci_hcd ehci_hcd usbcore fan processor thermal thermal_sys
 
+  Pid: 5915, CPU 0, comm:        usb-stor-scan
+  psr : 00001010085a6010 ifs : 8000000000000894 ip  : [<a00000010012a630>]    Not tainted (2.6.36-rc5-generic-smp-next-20100927)
+  ip is at mempool_alloc+0x70/0x200
 
-On Tue, 28 Sep 2010, Randy Dunlap wrote:
+The problem was that "page_pool" was NULL, but blk_queue_bounce()
+had decided to use it!  The code in mm/bounce.c looks quite
+fragile here as there are several places where page_pool is used, but
+it is only initialized inside #ifdef CONFIG_HIGHMEM (which is not
+set on ia64).
 
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> Include "super.h" outside of CONFIG_DEBUG_FS to eliminate a compiler warning:
-> 
-> fs/ceph/debugfs.c:266: warning: 'struct ceph_fs_client' declared inside parameter list
-> fs/ceph/debugfs.c:266: warning: its scope is only this definition or declaration, which is probably not what you want
-> fs/ceph/debugfs.c:271: warning: 'struct ceph_fs_client' declared inside parameter list
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> ---
->  fs/ceph/debugfs.c |    3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> --- linux-next-20100927.orig/fs/ceph/debugfs.c
-> +++ linux-next-20100927/fs/ceph/debugfs.c
-> @@ -12,9 +12,10 @@
->  #include <linux/ceph/auth.h>
->  #include <linux/ceph/debugfs.h>
->  
-> +#include "super.h"
-> +
->  #ifdef CONFIG_DEBUG_FS
->  
-> -#include "super.h"
->  #include "mds_client.h"
->  
->  static int mdsmap_show(struct seq_file *s, void *p)
-> --
-> To unsubscribe from this list: send the line "unsubscribe ceph-devel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> 
+Reverting this patch so that the old rules for setting
+q->limits.bounce_pfn are used cures the immediate problem.
+But I think there must be some deeper issues involved.
+
+I think that reverting means that I take the fast exit
+from blk_queue_bounce():
+
+	if (queue_bounce_pfn(q) >= blk_max_pfn)
+		return;
+
+which is probably just avoiding the problem, rather than
+doing the right thing.
+
+-Tony
