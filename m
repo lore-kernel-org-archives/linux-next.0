@@ -1,41 +1,37 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] sound/soc: fix printk format warning
-Date: Tue, 28 Sep 2010 09:58:46 -0700
-Message-ID: <20100928095846.9d4c7641.randy.dunlap@oracle.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH -next] sound/soc: fix printk format warning
+Date: Tue, 28 Sep 2010 10:33:04 -0700
+Message-ID: <20100928173303.GD10739@opensource.wolfsonmicro.com>
 References: <20100928141823.8c61000e.sfr@canb.auug.org.au>
+ <20100928095846.9d4c7641.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:24915 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755678Ab0I1RDS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Sep 2010 13:03:18 -0400
-In-Reply-To: <20100928141823.8c61000e.sfr@canb.auug.org.au>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:41466 "EHLO
+	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751010Ab0I1Rcq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 28 Sep 2010 13:32:46 -0400
+Content-Disposition: inline
+In-Reply-To: <20100928095846.9d4c7641.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Liam Girdwood <lrg@slimlogic.co.uk>, Mark Brown <broonie@opensource.wolfsonmicro.com>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Liam Girdwood <lrg@slimlogic.co.uk>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+On Tue, Sep 28, 2010 at 09:58:46AM -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Fix dev_printk format warning:
+> Fix dev_printk format warning:
 
-sound/soc/codecs/wm8985.c:731: warning: format '%d' expects type 'int', but argument 4 has type 'size_t'
+> sound/soc/codecs/wm8985.c:731: warning: format '%d' expects type 'int', but argument 4 has type 'size_t'
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- sound/soc/codecs/wm8985.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 
---- linux-next-20100927.orig/sound/soc/codecs/wm8985.c
-+++ linux-next-20100927/sound/soc/codecs/wm8985.c
-@@ -728,7 +728,7 @@ static int wm8985_hw_params(struct snd_p
- 		return -EINVAL;
- 	}
- 
--	dev_dbg(dai->dev, "BCLK div = %d\n", i);
-+	dev_dbg(dai->dev, "BCLK div = %zd\n", i);
- 	snd_soc_update_bits(codec, WM8985_CLOCK_GEN_CONTROL,
- 			    WM8985_BCLKDIV_MASK, i << WM8985_BCLKDIV_SHIFT);
- 	return 0;
+Takashi already fixed that (and the change already seems to be in
+-next...).
+
+When reporting type based warnings please always report the
+architecture you're building for, GCC seems to only generate the
+warnings if there's a difference in the underlying typedef which means
+that they don't always trigger on every architecture.
