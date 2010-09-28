@@ -1,40 +1,59 @@
-From: Dan Magenheimer <dan.magenheimer@oracle.com>
-Subject: cleancache into linux-next, target for 2.6.37 merge window?
-Date: Tue, 28 Sep 2010 12:31:18 -0700 (PDT)
-Message-ID: <40229210-a2a6-41ab-9a88-bde956ebc66c@default>
+From: Sage Weil <sage@newdream.net>
+Subject: Re: [PATCH -next] ceph: fix debugfs warnings
+Date: Tue, 28 Sep 2010 12:42:10 -0700 (PDT)
+Message-ID: <Pine.LNX.4.64.1009281241450.16237@cobra.newdream.net>
+References: <20100928141823.8c61000e.sfr@canb.auug.org.au>
+ <20100928095310.2983a888.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:48849 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753935Ab0I1Tbn convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Sep 2010 15:31:43 -0400
+Received: from cobra.newdream.net ([66.33.216.30]:40911 "EHLO
+	cobra.newdream.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758456Ab0I1TkH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Sep 2010 15:40:07 -0400
+In-Reply-To: <20100928095310.2983a888.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, ceph-devel@vger.kernel.org
 
-Hi --
+Thanks, Randy.  This is in my for-next branch now!
 
-The "cleancache" patchset crosses multiple subsystem boundaries and
-at the recent filesystem/storage/mm summit, people suggested that
-after the patchset has stabilized, I should just submit it to
-linux-next and then directly to Linus.  The latest version has received
-no further suggestions or comments.  Previous versions received
-a great deal of review and comment from a wide variety of maintainers
-across all the impacted subsystems, as documented in the commit logs.
+sage
 
-Would it be possible to include the following tree in the linux-next
-build process?
 
-git://git.kernel.org/pub/scm/linux/kernel/git/djm/tmem.git#linux-next
+On Tue, 28 Sep 2010, Randy Dunlap wrote:
 
-The patchset applies cleanly against both 2.6.36-rc3 and -rc5.
-Against next-20100928, I see two very minor merge conflicts in
-mm/Kconfig and include/linux/fs.h due to minor changes from other
-trees.
-
-Thanks,
-Dan Magenheimer
-dan.magenheimer@oracle.com
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> Include "super.h" outside of CONFIG_DEBUG_FS to eliminate a compiler warning:
+> 
+> fs/ceph/debugfs.c:266: warning: 'struct ceph_fs_client' declared inside parameter list
+> fs/ceph/debugfs.c:266: warning: its scope is only this definition or declaration, which is probably not what you want
+> fs/ceph/debugfs.c:271: warning: 'struct ceph_fs_client' declared inside parameter list
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> ---
+>  fs/ceph/debugfs.c |    3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> --- linux-next-20100927.orig/fs/ceph/debugfs.c
+> +++ linux-next-20100927/fs/ceph/debugfs.c
+> @@ -12,9 +12,10 @@
+>  #include <linux/ceph/auth.h>
+>  #include <linux/ceph/debugfs.h>
+>  
+> +#include "super.h"
+> +
+>  #ifdef CONFIG_DEBUG_FS
+>  
+> -#include "super.h"
+>  #include "mds_client.h"
+>  
+>  static int mdsmap_show(struct seq_file *s, void *p)
+> --
+> To unsubscribe from this list: send the line "unsubscribe ceph-devel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
