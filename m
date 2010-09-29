@@ -1,43 +1,75 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
-Date: Tue, 28 Sep 2010 22:40:05 -0300
-Message-ID: <4CA298F5.40309@infradead.org>
-References: <20100929112904.3fd117e0.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (hwpoison tree related)
+Date: Wed, 29 Sep 2010 12:57:56 +1000
+Message-ID: <20100929125756.2e264f7a.sfr@canb.auug.org.au>
+References: <20100927155551.2e4e4b26.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__29_Sep_2010_12_57_56_+1000_Y_eNBaPeI8kX+WGo"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:36619 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754912Ab0I2BkL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Sep 2010 21:40:11 -0400
-In-Reply-To: <20100929112904.3fd117e0.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:58048 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750717Ab0I2C6F (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 28 Sep 2010 22:58:05 -0400
+In-Reply-To: <20100927155551.2e4e4b26.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jean Delvare <khali@linux-fr.org>
+To: Andi Kleen <ak@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>, Jun'ichi Nomura <j-nomura@ce.jp.nec.com>
 
-Em 28-09-2010 22:29, Stephen Rothwell escreveu:
-> Hi Mauro,
-> 
-> After merging the v4l-dvb tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> drivers/media/video/bt8xx/bttv-input.c: In function 'init_bttv_i2c_ir':
-> drivers/media/video/bt8xx/bttv-input.c:306: error: too few arguments to function 'i2c_new_probed_device'
-> 
-> Caused by commit 3c81f945a74224d6e3017596297ee9903929b1a7 ("V4L/DVB:
-> bttv: Move PV951 IR to the right driver") interacting with commit
-> 9a94241afcc9a481691a9c29b7460217925b59b8 ("i2c: Add support for custom
-> probe function") that entered Linus' tree in v2.6.36-rc1.  I guess that
-> the v4l-dvb commit moved that code to a driver that is now being built.
-> 
-> I have used the v4l-dvb tree from next-20100928 for today.
+--Signature=_Wed__29_Sep_2010_12_57_56_+1000_Y_eNBaPeI8kX+WGo
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks. It is probably a badly handled merge conflict. I had to manually merge
-bttv-i2c and cx88-i2c from two different trees locally.
+Hi Andi,
 
-I'll work on it and re-merge for the tomorrow's build.
+On Mon, 27 Sep 2010 15:55:51 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the final tree, today's linux-next build (powerpc allnoconf=
+ig)
+> failed like this:
+>=20
+> mm/mprotect.o: In function `migrate_huge_page_move_mapping':
+> mprotect.c:(.text+0x0): multiple definition of `migrate_huge_page_move_ma=
+pping'
+> mm/shmem.o:shmem.c:(.text+0x0): first defined here
+> mm/rmap.o: In function `migrate_huge_page_move_mapping':
+> rmap.c:(.text+0x0): multiple definition of `migrate_huge_page_move_mappin=
+g'
+> mm/shmem.o:shmem.c:(.text+0x0): first defined here
+>=20
+> Caused by commit 7b217c52ce7f33379beb27aa7685109fa74ed6bf ("hugetlb:
+> hugepage migration core").
+>=20
+> This function is declared as "extern int ..." with a body in
+> include/linux/migrate.h for the non CONFIG_MIGRATION case.
+>=20
+> I reverted the whole hwpoison tree for today.
 
-Thanks,
-Mauro
+This is still not fixed ... so I am still using the hwpoison tree from
+next-20100924.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__29_Sep_2010_12_57_56_+1000_Y_eNBaPeI8kX+WGo
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMoqs0AAoJEDMEi1NhKgbs3p4H/05uX5jJP12fEKV+V+LT0pZa
+O4pExKUQv4Fc0UzCN+vxW+lITV4ws7hysT2Kds4Z5Ad3Sxtvs5lOdk5oYompT+aM
+94zgg3jwqapxnlIdiolk0kpbCpvx+At+qNtDIR/nIk99AvGNkZ+9SaZTjhCIsDZe
+lLe0VYnfDE2uSUl1gFbJR9FsdI+qptO1YC7oWafBVY7ofTDnkUTSMnUU7Ute99nh
+9Ong3lx8TLq0TisXQd8L7NdlFUp3X2OPWKYWCRIT6V89W++ZlXlS2YDjQeE7CoYE
+YLtaCgjxN+ZbG8mjeVNxlybCVEZeQ1wdAQgnTkCqq9LprdV9Q5IOgHTD6LHnKyM=
+=RUkc
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__29_Sep_2010_12_57_56_+1000_Y_eNBaPeI8kX+WGo--
