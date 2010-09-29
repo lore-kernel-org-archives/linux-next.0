@@ -1,101 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: cleancache into linux-next, target for 2.6.37 merge window?
-Date: Wed, 29 Sep 2010 10:48:27 +1000
-Message-ID: <20100929104827.49e29a95.sfr@canb.auug.org.au>
-References: <40229210-a2a6-41ab-9a88-bde956ebc66c@default>
+Subject: linux-next: build failure after merge of the v4l-dvb tree
+Date: Wed, 29 Sep 2010 11:29:04 +1000
+Message-ID: <20100929112904.3fd117e0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__29_Sep_2010_10_48_27_+1000_4mp=MYKs=M3hH0++"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <40229210-a2a6-41ab-9a88-bde956ebc66c@default>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Magenheimer <dan.magenheimer@oracle.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Wed__29_Sep_2010_11_29_04_+1000_qHqZR7X1cx8wn0ZF"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:37025 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752208Ab0I2B3L (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 28 Sep 2010 21:29:11 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jean Delvare <khali@linux-fr.org>
 
---Signature=_Wed__29_Sep_2010_10_48_27_+1000_4mp=MYKs=M3hH0++
+--Signature=_Wed__29_Sep_2010_11_29_04_+1000_qHqZR7X1cx8wn0ZF
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dan,
+Hi Mauro,
 
-On Tue, 28 Sep 2010 12:31:18 -0700 (PDT) Dan Magenheimer <dan.magenheimer@o=
-racle.com> wrote:
->
-> The "cleancache" patchset crosses multiple subsystem boundaries and
-> at the recent filesystem/storage/mm summit, people suggested that
-> after the patchset has stabilized, I should just submit it to
-> linux-next and then directly to Linus.  The latest version has received
-> no further suggestions or comments.  Previous versions received
-> a great deal of review and comment from a wide variety of maintainers
-> across all the impacted subsystems, as documented in the commit logs.
->=20
-> Would it be possible to include the following tree in the linux-next
-> build process?
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/djm/tmem.git#linux-next
+After merging the v4l-dvb tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Included from today.  I have you as the contact (in case I have problems)
-if there is any other address I should notify, just let me know.
+drivers/media/video/bt8xx/bttv-input.c: In function 'init_bttv_i2c_ir':
+drivers/media/video/bt8xx/bttv-input.c:306: error: too few arguments to fun=
+ction 'i2c_new_probed_device'
 
-> The patchset applies cleanly against both 2.6.36-rc3 and -rc5.
-> Against next-20100928, I see two very minor merge conflicts in
-> mm/Kconfig and include/linux/fs.h due to minor changes from other
-> trees.
+Caused by commit 3c81f945a74224d6e3017596297ee9903929b1a7 ("V4L/DVB:
+bttv: Move PV951 IR to the right driver") interacting with commit
+9a94241afcc9a481691a9c29b7460217925b59b8 ("i2c: Add support for custom
+probe function") that entered Linus' tree in v2.6.36-rc1.  I guess that
+the v4l-dvb commit moved that code to a driver that is now being built.
 
-Thanks.  I will send notifications for those (just so you know) and will
-fix them up.  Minor conflicts are not a problem and can be fixed by Linus
-when he merges this tree (or the others that conflict).
-
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
-
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-	Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
+I have used the v4l-dvb tree from next-20100928 for today.
 --=20
 Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Legal Stuff:
-By participating in linux-next, your subsystem tree contributions are
-public and will be included in the linux-next trees.  You may be sent
-e-mail messages indicating errors or other issues when the
-patches/commits from your subsystem tree are merged and tested in
-linux-next.  These messages may also be cross-posted to the linux-next
-mailing list, the linux-kernel mailing list, etc.  The linux-next tree
-project and IBM (my employer) make no warranties regarding the linux-next
-project, the testing procedures, the results, the e-mails, etc.  If you
-don't agree to these ground rules, let me know and I'll remove your tree
-from participation in linux-next.
-
---Signature=_Wed__29_Sep_2010_10_48_27_+1000_4mp=MYKs=M3hH0++
+--Signature=_Wed__29_Sep_2010_11_29_04_+1000_qHqZR7X1cx8wn0ZF
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMoozcAAoJEDMEi1NhKgbs338IAI12C1e7BJWtkRdEXngD2azt
-U6GVR24leqR1mKtTB7wDcJ2Xflx3MMrIXCA0n1hgmh3bgB7Af5TehYCqC2pcemOb
-zesoj5JxCKPHJcTCz7Pj/oTAzW5GsrY5hmiojhyFXIcbSj1bYPOpMbKy1icv5X4g
-VMwsLuD3Z4lFCjQoTQhArTIChIsTgiZlJgJHOoMNVR3I7ujzv6AiaMJ0JrH2knEV
-lMOuUWZbcIpUcsEgNsZQggmXBQQM+ufgQDZA668B+kyAuw7tdXxaAAy3bBUgehz8
-OCUH1nnKmsrDMcd9OtlYEpApLdEfRy/d1ZcPBZswMLiMm6W6/v9Jie5CzsAExes=
-=We9U
+iQEcBAEBAgAGBQJMopZgAAoJEDMEi1NhKgbst10H/RM5c7pRguuuZz25+rOpRpLK
+kMPovEaWsaF6wOaHfR2CAUyeHvkOrlpzhHXXdupZxjawYNmI3XJkmvtmVtMMq7Wq
+rB3x730YIjhySoyke/MZfLphMRbaMir/kHSzpAF1F9FliDGEyEaCAW8mPqXOqg2p
+PVlV/VY0NYQpbLmtPAEuWd4z2YahIUR/aI3L0GWWnhnvE7asDDMqazI3gqI3ktqj
+nvqyCritDUCtCB8kOrDr81ZHm+BTxmrPdwUEkkBYsYnYlq6iLliAXE8kofR0g0mi
+43OoNjCH12S4ZMFWjZAaA6b4XvvPuAf9KRzQMtU5MuQn08eCkagtAZQWGDi3LlY=
+=6XlD
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__29_Sep_2010_10_48_27_+1000_4mp=MYKs=M3hH0++--
+--Signature=_Wed__29_Sep_2010_11_29_04_+1000_qHqZR7X1cx8wn0ZF--
