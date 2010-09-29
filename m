@@ -1,40 +1,101 @@
-From: Malahal Naineni <malahal@us.ibm.com>
-Subject: Re: [PATCH] block: set the bounce_pfn to the actual DMA limit
- rather than to max memory
-Date: Tue, 28 Sep 2010 17:42:14 -0700
-Message-ID: <20100929004213.GA9978@us.ibm.com>
-References: <4ca2688f17705a0195@agluck-desktop.sc.intel.com>
- <20100928225936.GA8993@us.ibm.com>
- <987664A83D2D224EAE907B061CE93D5301605546A7@orsmsx505.amr.corp.intel.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: cleancache into linux-next, target for 2.6.37 merge window?
+Date: Wed, 29 Sep 2010 10:48:27 +1000
+Message-ID: <20100929104827.49e29a95.sfr@canb.auug.org.au>
+References: <40229210-a2a6-41ab-9a88-bde956ebc66c@default>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-scsi-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <987664A83D2D224EAE907B061CE93D5301605546A7@orsmsx505.amr.corp.intel.com>
-Sender: linux-scsi-owner@vger.kernel.org
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: Jens Axboe <jaxboe@fusionio.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__29_Sep_2010_10_48_27_+1000_4mp=MYKs=M3hH0++"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <40229210-a2a6-41ab-9a88-bde956ebc66c@default>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dan Magenheimer <dan.magenheimer@oracle.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Luck, Tony [tony.luck@intel.com] wrote:
-> > Let me know if this fixes the problem. Thank you very much.
-> 
-> No it doesn't :-(
-> 
-> I still end up with 0xffffffff from the *host_dev->dma_mask
-> later in that function.
-> 
-> Just for two devices though ... stack traces lead back to
-> usb_stor_scan_thread() for these two.
+--Signature=_Wed__29_Sep_2010_10_48_27_+1000_4mp=MYKs=M3hH0++
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-What is the USB host controller's PCI device and vendor IDs? I see
-ehci-ps3.c  and ohci-ps3.c setting it to DMA_BIT_MASK(32). That may
-present another bug???
+Hi Dan,
 
-I don't know USB much, but someone seems to be lying that they can't do DMA
-beyond 4GB!
+On Tue, 28 Sep 2010 12:31:18 -0700 (PDT) Dan Magenheimer <dan.magenheimer@o=
+racle.com> wrote:
+>
+> The "cleancache" patchset crosses multiple subsystem boundaries and
+> at the recent filesystem/storage/mm summit, people suggested that
+> after the patchset has stabilized, I should just submit it to
+> linux-next and then directly to Linus.  The latest version has received
+> no further suggestions or comments.  Previous versions received
+> a great deal of review and comment from a wide variety of maintainers
+> across all the impacted subsystems, as documented in the commit logs.
+>=20
+> Would it be possible to include the following tree in the linux-next
+> build process?
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/djm/tmem.git#linux-next
 
-How much memory you have on the system? This probably doesn't matter but
-good to know.
+Included from today.  I have you as the contact (in case I have problems)
+if there is any other address I should notify, just let me know.
 
-Thanks, Malahal.
+> The patchset applies cleanly against both 2.6.36-rc3 and -rc5.
+> Against next-20100928, I see two very minor merge conflicts in
+> mm/Kconfig and include/linux/fs.h due to minor changes from other
+> trees.
+
+Thanks.  I will send notifications for those (just so you know) and will
+fix them up.  Minor conflicts are not a problem and can be fixed by Linus
+when he merges this tree (or the others that conflict).
+
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+	Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+Legal Stuff:
+By participating in linux-next, your subsystem tree contributions are
+public and will be included in the linux-next trees.  You may be sent
+e-mail messages indicating errors or other issues when the
+patches/commits from your subsystem tree are merged and tested in
+linux-next.  These messages may also be cross-posted to the linux-next
+mailing list, the linux-kernel mailing list, etc.  The linux-next tree
+project and IBM (my employer) make no warranties regarding the linux-next
+project, the testing procedures, the results, the e-mails, etc.  If you
+don't agree to these ground rules, let me know and I'll remove your tree
+from participation in linux-next.
+
+--Signature=_Wed__29_Sep_2010_10_48_27_+1000_4mp=MYKs=M3hH0++
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMoozcAAoJEDMEi1NhKgbs338IAI12C1e7BJWtkRdEXngD2azt
+U6GVR24leqR1mKtTB7wDcJ2Xflx3MMrIXCA0n1hgmh3bgB7Af5TehYCqC2pcemOb
+zesoj5JxCKPHJcTCz7Pj/oTAzW5GsrY5hmiojhyFXIcbSj1bYPOpMbKy1icv5X4g
+VMwsLuD3Z4lFCjQoTQhArTIChIsTgiZlJgJHOoMNVR3I7ujzv6AiaMJ0JrH2knEV
+lMOuUWZbcIpUcsEgNsZQggmXBQQM+ufgQDZA668B+kyAuw7tdXxaAAy3bBUgehz8
+OCUH1nnKmsrDMcd9OtlYEpApLdEfRy/d1ZcPBZswMLiMm6W6/v9Jie5CzsAExes=
+=We9U
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__29_Sep_2010_10_48_27_+1000_4mp=MYKs=M3hH0++--
