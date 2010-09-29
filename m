@@ -1,75 +1,151 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree
- (hwpoison tree related)
-Date: Wed, 29 Sep 2010 12:57:56 +1000
-Message-ID: <20100929125756.2e264f7a.sfr@canb.auug.org.au>
-References: <20100927155551.2e4e4b26.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the bkl-llseek tree with the infiniband
+ tree
+Date: Wed, 29 Sep 2010 13:20:35 +1000
+Message-ID: <20100929132035.18e89614.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__29_Sep_2010_12_57_56_+1000_Y_eNBaPeI8kX+WGo"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58048 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:42361 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750717Ab0I2C6F (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 28 Sep 2010 22:58:05 -0400
-In-Reply-To: <20100927155551.2e4e4b26.sfr@canb.auug.org.au>
+	id S1752388Ab0I2DUj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 28 Sep 2010 23:20:39 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andi Kleen <ak@linux.intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>, Jun'ichi Nomura <j-nomura@ce.jp.nec.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steve Wise <swise@opengridcomputing.com>, Roland Dreier <rdreier@cisco.com>, linux-rdma@vger.kernel.org
 
---Signature=_Wed__29_Sep_2010_12_57_56_+1000_Y_eNBaPeI8kX+WGo
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Arnd,
 
-Hi Andi,
+Today's linux-next merge of the bkl-llseek tree got a conflict in
+drivers/infiniband/hw/cxgb4/device.c between commit
+9e8d1fa3420f489da8a5da47c026511aa71fa50b ("RDMA/cxgb4: debugfs files for
+dumping active stags") from the infiniband tree and commit
+9711569d06e7df5f02a943fc4138fb152526e719 ("llseek: automatically
+add .llseek fop") from the bkl-llseek tree.
 
-On Mon, 27 Sep 2010 15:55:51 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the final tree, today's linux-next build (powerpc allnoconf=
-ig)
-> failed like this:
->=20
-> mm/mprotect.o: In function `migrate_huge_page_move_mapping':
-> mprotect.c:(.text+0x0): multiple definition of `migrate_huge_page_move_ma=
-pping'
-> mm/shmem.o:shmem.c:(.text+0x0): first defined here
-> mm/rmap.o: In function `migrate_huge_page_move_mapping':
-> rmap.c:(.text+0x0): multiple definition of `migrate_huge_page_move_mappin=
-g'
-> mm/shmem.o:shmem.c:(.text+0x0): first defined here
->=20
-> Caused by commit 7b217c52ce7f33379beb27aa7685109fa74ed6bf ("hugetlb:
-> hugepage migration core").
->=20
-> This function is declared as "extern int ..." with a body in
-> include/linux/migrate.h for the non CONFIG_MIGRATION case.
->=20
-> I reverted the whole hwpoison tree for today.
-
-This is still not fixed ... so I am still using the hwpoison tree from
-next-20100924.
---=20
+The former added a whole new file_operations (and changed some
+context) ... I fixed it up (see below) and can carry the fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__29_Sep_2010_12_57_56_+1000_Y_eNBaPeI8kX+WGo
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMoqs0AAoJEDMEi1NhKgbs3p4H/05uX5jJP12fEKV+V+LT0pZa
-O4pExKUQv4Fc0UzCN+vxW+lITV4ws7hysT2Kds4Z5Ad3Sxtvs5lOdk5oYompT+aM
-94zgg3jwqapxnlIdiolk0kpbCpvx+At+qNtDIR/nIk99AvGNkZ+9SaZTjhCIsDZe
-lLe0VYnfDE2uSUl1gFbJR9FsdI+qptO1YC7oWafBVY7ofTDnkUTSMnUU7Ute99nh
-9Ong3lx8TLq0TisXQd8L7NdlFUp3X2OPWKYWCRIT6V89W++ZlXlS2YDjQeE7CoYE
-YLtaCgjxN+ZbG8mjeVNxlybCVEZeQ1wdAQgnTkCqq9LprdV9Q5IOgHTD6LHnKyM=
-=RUkc
------END PGP SIGNATURE-----
-
---Signature=_Wed__29_Sep_2010_12_57_56_+1000_Y_eNBaPeI8kX+WGo--
+diff --cc drivers/infiniband/hw/cxgb4/device.c
+index 986cfd7,a72ae12..0000000
+--- a/drivers/infiniband/hw/cxgb4/device.c
++++ b/drivers/infiniband/hw/cxgb4/device.c
+@@@ -177,84 -149,44 +177,86 @@@ out
+  	return ret;
+  }
+  
+ -static ssize_t qp_read(struct file *file, char __user *buf, size_t count,
+ -			loff_t *ppos)
+ +static const struct file_operations qp_debugfs_fops = {
+ +	.owner   = THIS_MODULE,
+ +	.open    = qp_open,
+ +	.release = qp_release,
+ +	.read    = debugfs_read,
+++	.llseek  = default_llseek,
+ +};
+ +
+ +static int dump_stag(int id, void *p, void *data)
+  {
+ -	struct debugfs_qp_data *qpd = file->private_data;
+ -	loff_t pos = *ppos;
+ -	loff_t avail = qpd->pos;
+ +	struct c4iw_debugfs_data *stagd = data;
+ +	int space;
+ +	int cc;
+  
+ -	if (pos < 0)
+ -		return -EINVAL;
+ -	if (pos >= avail)
+ +	space = stagd->bufsize - stagd->pos - 1;
+ +	if (space == 0)
+ +		return 1;
+ +
+ +	cc = snprintf(stagd->buf + stagd->pos, space, "0x%x\n", id<<8);
+ +	if (cc < space)
+ +		stagd->pos += cc;
+ +	return 0;
+ +}
+ +
+ +static int stag_release(struct inode *inode, struct file *file)
+ +{
+ +	struct c4iw_debugfs_data *stagd = file->private_data;
+ +	if (!stagd) {
+ +		printk(KERN_INFO "%s null stagd?\n", __func__);
+  		return 0;
+ -	if (count > avail - pos)
+ -		count = avail - pos;
+ +	}
+ +	kfree(stagd->buf);
+ +	kfree(stagd);
+ +	return 0;
+ +}
+  
+ -	while (count) {
+ -		size_t len = 0;
+ +static int stag_open(struct inode *inode, struct file *file)
+ +{
+ +	struct c4iw_debugfs_data *stagd;
+ +	int ret = 0;
+ +	int count = 1;
+  
+ -		len = min((int)count, (int)qpd->pos - (int)pos);
+ -		if (copy_to_user(buf, qpd->buf + pos, len))
+ -			return -EFAULT;
+ -		if (len == 0)
+ -			return -EINVAL;
+ +	stagd = kmalloc(sizeof *stagd, GFP_KERNEL);
+ +	if (!stagd) {
+ +		ret = -ENOMEM;
+ +		goto out;
+ +	}
+ +	stagd->devp = inode->i_private;
+ +	stagd->pos = 0;
+  
+ -		buf += len;
+ -		pos += len;
+ -		count -= len;
+ +	spin_lock_irq(&stagd->devp->lock);
+ +	idr_for_each(&stagd->devp->mmidr, count_idrs, &count);
+ +	spin_unlock_irq(&stagd->devp->lock);
+ +
+ +	stagd->bufsize = count * sizeof("0x12345678\n");
+ +	stagd->buf = kmalloc(stagd->bufsize, GFP_KERNEL);
+ +	if (!stagd->buf) {
+ +		ret = -ENOMEM;
+ +		goto err1;
+  	}
+ -	count = pos - *ppos;
+ -	*ppos = pos;
+ -	return count;
+ +
+ +	spin_lock_irq(&stagd->devp->lock);
+ +	idr_for_each(&stagd->devp->mmidr, dump_stag, stagd);
+ +	spin_unlock_irq(&stagd->devp->lock);
+ +
+ +	stagd->buf[stagd->pos++] = 0;
+ +	file->private_data = stagd;
+ +	goto out;
+ +err1:
+ +	kfree(stagd);
+ +out:
+ +	return ret;
+  }
+  
+ -static const struct file_operations qp_debugfs_fops = {
+ +static const struct file_operations stag_debugfs_fops = {
+  	.owner   = THIS_MODULE,
+ -	.open    = qp_open,
+ -	.release = qp_release,
+ -	.read    = qp_read,
+ +	.open    = stag_open,
+ +	.release = stag_release,
+ +	.read    = debugfs_read,
++ 	.llseek  = default_llseek,
+  };
+  
+  static int setup_debugfs(struct c4iw_dev *devp)
