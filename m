@@ -1,151 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the bkl-llseek tree with the infiniband
- tree
-Date: Wed, 29 Sep 2010 13:20:35 +1000
-Message-ID: <20100929132035.18e89614.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the cleancache tree with the slab tree
+Date: Wed, 29 Sep 2010 13:53:36 +1000
+Message-ID: <20100929135336.2347427a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:42361 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:48428 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752388Ab0I2DUj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 28 Sep 2010 23:20:39 -0400
+	id S1754376Ab0I2Dxm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 28 Sep 2010 23:53:42 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steve Wise <swise@opengridcomputing.com>, Roland Dreier <rdreier@cisco.com>, linux-rdma@vger.kernel.org
+To: Dan Magenheimer <dan.magenheimer@oracle.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Pekka Enberg <penberg@cs.helsinki.fi>, Christoph Lameter <cl@linux-foundation.org>
 
-Hi Arnd,
+Hi Dan,
 
-Today's linux-next merge of the bkl-llseek tree got a conflict in
-drivers/infiniband/hw/cxgb4/device.c between commit
-9e8d1fa3420f489da8a5da47c026511aa71fa50b ("RDMA/cxgb4: debugfs files for
-dumping active stags") from the infiniband tree and commit
-9711569d06e7df5f02a943fc4138fb152526e719 ("llseek: automatically
-add .llseek fop") from the bkl-llseek tree.
+Today's linux-next merge of the cleancache tree got a conflict in
+mm/Kconfig between commit 6fc80ef491b981f59233beaf6aeaccc0c947031d
+("percpu: use percpu allocator on UP too") from the slab tree and commit
+52f08871df905eec43d34d20102cbaf8e397e280 ("mm: cleancache core ops
+functions and config") from the cleancache tree.
 
-The former added a whole new file_operations (and changed some
-context) ... I fixed it up (see below) and can carry the fix as necessary.
+Just overlapping additions.  I fixed it up (see below) and can carry the
+fax as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/infiniband/hw/cxgb4/device.c
-index 986cfd7,a72ae12..0000000
---- a/drivers/infiniband/hw/cxgb4/device.c
-+++ b/drivers/infiniband/hw/cxgb4/device.c
-@@@ -177,84 -149,44 +177,86 @@@ out
-  	return ret;
-  }
+diff --cc mm/Kconfig
+index c2c8a4a,9ee0751..0000000
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@@ -302,10 -302,24 +302,32 @@@ config NOMMU_INITIAL_TRIM_EXCES
   
- -static ssize_t qp_read(struct file *file, char __user *buf, size_t count,
- -			loff_t *ppos)
- +static const struct file_operations qp_debugfs_fops = {
- +	.owner   = THIS_MODULE,
- +	.open    = qp_open,
- +	.release = qp_release,
- +	.read    = debugfs_read,
-++	.llseek  = default_llseek,
- +};
- +
- +static int dump_stag(int id, void *p, void *data)
-  {
- -	struct debugfs_qp_data *qpd = file->private_data;
- -	loff_t pos = *ppos;
- -	loff_t avail = qpd->pos;
- +	struct c4iw_debugfs_data *stagd = data;
- +	int space;
- +	int cc;
+  	  See Documentation/nommu-mmap.txt for more information.
   
- -	if (pos < 0)
- -		return -EINVAL;
- -	if (pos >= avail)
- +	space = stagd->bufsize - stagd->pos - 1;
- +	if (space == 0)
- +		return 1;
- +
- +	cc = snprintf(stagd->buf + stagd->pos, space, "0x%x\n", id<<8);
- +	if (cc < space)
- +		stagd->pos += cc;
- +	return 0;
- +}
- +
- +static int stag_release(struct inode *inode, struct file *file)
- +{
- +	struct c4iw_debugfs_data *stagd = file->private_data;
- +	if (!stagd) {
- +		printk(KERN_INFO "%s null stagd?\n", __func__);
-  		return 0;
- -	if (count > avail - pos)
- -		count = avail - pos;
- +	}
- +	kfree(stagd->buf);
- +	kfree(stagd);
- +	return 0;
- +}
-  
- -	while (count) {
- -		size_t len = 0;
- +static int stag_open(struct inode *inode, struct file *file)
- +{
- +	struct c4iw_debugfs_data *stagd;
- +	int ret = 0;
- +	int count = 1;
-  
- -		len = min((int)count, (int)qpd->pos - (int)pos);
- -		if (copy_to_user(buf, qpd->buf + pos, len))
- -			return -EFAULT;
- -		if (len == 0)
- -			return -EINVAL;
- +	stagd = kmalloc(sizeof *stagd, GFP_KERNEL);
- +	if (!stagd) {
- +		ret = -ENOMEM;
- +		goto out;
- +	}
- +	stagd->devp = inode->i_private;
- +	stagd->pos = 0;
-  
- -		buf += len;
- -		pos += len;
- -		count -= len;
- +	spin_lock_irq(&stagd->devp->lock);
- +	idr_for_each(&stagd->devp->mmidr, count_idrs, &count);
- +	spin_unlock_irq(&stagd->devp->lock);
- +
- +	stagd->bufsize = count * sizeof("0x12345678\n");
- +	stagd->buf = kmalloc(stagd->bufsize, GFP_KERNEL);
- +	if (!stagd->buf) {
- +		ret = -ENOMEM;
- +		goto err1;
-  	}
- -	count = pos - *ppos;
- -	*ppos = pos;
- -	return count;
- +
- +	spin_lock_irq(&stagd->devp->lock);
- +	idr_for_each(&stagd->devp->mmidr, dump_stag, stagd);
- +	spin_unlock_irq(&stagd->devp->lock);
- +
- +	stagd->buf[stagd->pos++] = 0;
- +	file->private_data = stagd;
- +	goto out;
- +err1:
- +	kfree(stagd);
- +out:
- +	return ret;
-  }
-  
- -static const struct file_operations qp_debugfs_fops = {
- +static const struct file_operations stag_debugfs_fops = {
-  	.owner   = THIS_MODULE,
- -	.open    = qp_open,
- -	.release = qp_release,
- -	.read    = qp_read,
- +	.open    = stag_open,
- +	.release = stag_release,
- +	.read    = debugfs_read,
-+ 	.llseek  = default_llseek,
-  };
-  
-  static int setup_debugfs(struct c4iw_dev *devp)
+ +#
+ +# UP and nommu archs use km based percpu allocator
+ +#
+ +config NEED_PER_CPU_KM
+ +	depends on !SMP
+ +	bool
+ +	default y
+++
++ config CLEANCACHE
++ 	bool "Enable cleancache pseudo-RAM driver to cache clean pages"
++ 	default y
++ 	help
++ 	  Cleancache can be thought of as a page-granularity victim cache
++ 	  for clean pages that the kernel's pageframe replacement algorithm
++ 	  (PFRA) would like to keep around, but can't since there isn't enough
++ 	  memory.  So when the PFRA "evicts" a page, it first attempts to put
++ 	  it into a synchronous concurrency-safe page-oriented pseudo-RAM
++ 	  device (such as Xen's Transcendent Memory, aka "tmem") which is not
++ 	  directly accessible or addressable by the kernel and is of unknown
++ 	  (and possibly time-varying) size.  And when a cleancache-enabled
++ 	  filesystem wishes to access a page in a file on disk, it first
++ 	  checks cleancache to see if it already contains it; if it does,
++ 	  the page is copied into the kernel and a disk access is avoided.
++ 	  When a pseudo-RAM device is available, a significant I/O reduction
++ 	  may be achieved.  When none is available, all cleancache calls
++ 	  are reduced to a single pointer-compare-against-NULL resulting
++ 	  in a negligible performance hit.
++ 
++ 	  If unsure, say Y to enable cleancache
