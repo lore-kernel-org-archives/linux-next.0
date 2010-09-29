@@ -1,83 +1,43 @@
-From: Pavel Emelyanov <xemul@parallels.com>
-Subject: Re: linux-next: build failure after merge of the final tree (Was:
- linux-next: build warning after merge of the final tree)
-Date: Wed, 29 Sep 2010 15:28:26 +0400
-Message-ID: <4CA322DA.90705@parallels.com>
-References: <20100929140238.c987caac.sfr@canb.auug.org.au> <20100929141657.3c076eb7.sfr@canb.auug.org.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: manual merge of the bkl-llseek tree with the infiniband tree
+Date: Wed, 29 Sep 2010 13:59:47 +0200
+Message-ID: <201009291359.47476.arnd@arndb.de>
+References: <20100929132035.18e89614.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20100929141657.3c076eb7.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, "J. Bruce Fields" <bfields@fieldses.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from moutng.kundenserver.de ([212.227.126.187]:56091 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752586Ab0I2L76 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 29 Sep 2010 07:59:58 -0400
+In-Reply-To: <20100929132035.18e89614.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steve Wise <swise@opengridcomputing.com>, Roland Dreier <rdreier@cisco.com>, linux-rdma@vger.kernel.org
 
-> This actually causes a build failure on a sparc32 defconfig build:
+On Wednesday 29 September 2010, Stephen Rothwell wrote:
+> Today's linux-next merge of the bkl-llseek tree got a conflict in
+> drivers/infiniband/hw/cxgb4/device.c between commit
+> 9e8d1fa3420f489da8a5da47c026511aa71fa50b ("RDMA/cxgb4: debugfs files for
+> dumping active stags") from the infiniband tree and commit
+> 9711569d06e7df5f02a943fc4138fb152526e719 ("llseek: automatically
+> add .llseek fop") from the bkl-llseek tree.
 > 
-> `rpcauth_remove_module' referenced in section `.init.text' of net/built-in.o: defined in discarded section `.exit.text' of net/built-in.o
-> 
-> I applied the following patch for today:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 29 Sep 2010 14:07:07 +1000
-> Subject: [PATCH] sunrpc: fix up section mismatch
-> 
-> Fixes:
-> 
-> `rpcauth_remove_module' referenced in section `.init.text' of net/built-in.o: defined in discarded section `.exit.text' of net/built-in.o
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> The former added a whole new file_operations (and changed some
+> context) ... I fixed it up (see below) and can carry the fix as necessary.
 
-Oops :(
+Looks fine, thanks!
 
-Acked-by: Pavel Emelyanov <xemul@openvz.org>
+Steve, Roland:
 
-> ---
->  include/linux/sunrpc/auth.h |    4 ++--
->  net/sunrpc/auth.c           |    2 +-
->  net/sunrpc/auth_generic.c   |    2 +-
->  3 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/linux/sunrpc/auth.h b/include/linux/sunrpc/auth.h
-> index 5bbc447..b202475 100644
-> --- a/include/linux/sunrpc/auth.h
-> +++ b/include/linux/sunrpc/auth.h
-> @@ -122,8 +122,8 @@ extern const struct rpc_authops	authnull_ops;
->  int __init		rpc_init_authunix(void);
->  int __init		rpc_init_generic_auth(void);
->  int __init		rpcauth_init_module(void);
-> -void __exit		rpcauth_remove_module(void);
-> -void __exit		rpc_destroy_generic_auth(void);
-> +void			rpcauth_remove_module(void);
-> +void			rpc_destroy_generic_auth(void);
->  void 			rpc_destroy_authunix(void);
->  
->  struct rpc_cred *	rpc_lookup_cred(void);
-> diff --git a/net/sunrpc/auth.c b/net/sunrpc/auth.c
-> index e9eaaf7..2c0d9e6 100644
-> --- a/net/sunrpc/auth.c
-> +++ b/net/sunrpc/auth.c
-> @@ -658,7 +658,7 @@ out1:
->  	return err;
->  }
->  
-> -void __exit rpcauth_remove_module(void)
-> +void rpcauth_remove_module(void)
->  {
->  	rpc_destroy_authunix();
->  	rpc_destroy_generic_auth();
-> diff --git a/net/sunrpc/auth_generic.c b/net/sunrpc/auth_generic.c
-> index 43162bb..e010a01 100644
-> --- a/net/sunrpc/auth_generic.c
-> +++ b/net/sunrpc/auth_generic.c
-> @@ -158,7 +158,7 @@ int __init rpc_init_generic_auth(void)
->  	return rpcauth_init_credcache(&generic_auth);
->  }
->  
-> -void __exit rpc_destroy_generic_auth(void)
-> +void rpc_destroy_generic_auth(void)
->  {
->  	rpcauth_destroy_credcache(&generic_auth);
->  }
+Would you mind adding an appropriate .llseek method to your file operations
+so I can drop the change from my tree?
+
+The default_llseek function is used because the read function can currently
+be seeked, but I do not know whether that is intentional. If you don't want
+to seek, just make open() call nonseekable_open() and set .llseek to no_llseek.
+
+	Arnd
