@@ -1,29 +1,40 @@
-From: "Luck, Tony" <tony.luck@intel.com>
-Subject: RE: [PATCH] block: set the bounce_pfn to the actual DMA limit
+From: Malahal Naineni <malahal@us.ibm.com>
+Subject: Re: [PATCH] block: set the bounce_pfn to the actual DMA limit
  rather than to max memory
-Date: Tue, 28 Sep 2010 16:40:25 -0700
-Message-ID: <987664A83D2D224EAE907B061CE93D5301605546A7@orsmsx505.amr.corp.intel.com>
+Date: Tue, 28 Sep 2010 17:42:14 -0700
+Message-ID: <20100929004213.GA9978@us.ibm.com>
 References: <4ca2688f17705a0195@agluck-desktop.sc.intel.com>
  <20100928225936.GA8993@us.ibm.com>
+ <987664A83D2D224EAE907B061CE93D5301605546A7@orsmsx505.amr.corp.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-scsi-owner@vger.kernel.org>
-In-Reply-To: <20100928225936.GA8993@us.ibm.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <987664A83D2D224EAE907B061CE93D5301605546A7@orsmsx505.amr.corp.intel.com>
 Sender: linux-scsi-owner@vger.kernel.org
-To: Malahal Naineni <malahal@us.ibm.com>
+To: "Luck, Tony" <tony.luck@intel.com>
 Cc: Jens Axboe <jaxboe@fusionio.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-> Let me know if this fixes the problem. Thank you very much.
+Luck, Tony [tony.luck@intel.com] wrote:
+> > Let me know if this fixes the problem. Thank you very much.
+> 
+> No it doesn't :-(
+> 
+> I still end up with 0xffffffff from the *host_dev->dma_mask
+> later in that function.
+> 
+> Just for two devices though ... stack traces lead back to
+> usb_stor_scan_thread() for these two.
 
-No it doesn't :-(
+What is the USB host controller's PCI device and vendor IDs? I see
+ehci-ps3.c  and ohci-ps3.c setting it to DMA_BIT_MASK(32). That may
+present another bug???
 
-I still end up with 0xffffffff from the *host_dev->dma_mask
-later in that function.
+I don't know USB much, but someone seems to be lying that they can't do DMA
+beyond 4GB!
 
-Just for two devices though ... stack traces lead back to
-usb_stor_scan_thread() for these two.
+How much memory you have on the system? This probably doesn't matter but
+good to know.
 
--Tony
+Thanks, Malahal.
