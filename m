@@ -1,43 +1,28 @@
-From: Arnd Bergmann <arnd@arndb.de>
+From: Roland Dreier <rdreier@cisco.com>
 Subject: Re: [PATCH] RDMA/cxgb4: Add default_llseek to debugfs files.
-Date: Wed, 29 Sep 2010 21:29:31 +0200
-Message-ID: <201009292129.31415.arnd@arndb.de>
-References: <20100929141112.26944.21931.stgit@build.ogc.int> <201009292117.54828.arnd@arndb.de> <ada4od82w5x.fsf@cisco.com>
+Date: Wed, 29 Sep 2010 12:40:19 -0700
+Message-ID: <adazkv01gpo.fsf@cisco.com>
+References: <20100929141112.26944.21931.stgit@build.ogc.int>
+	<201009292117.54828.arnd@arndb.de> <ada4od82w5x.fsf@cisco.com>
+	<201009292129.31415.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.9]:58384 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754970Ab0I2T3i (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 29 Sep 2010 15:29:38 -0400
-In-Reply-To: <ada4od82w5x.fsf@cisco.com>
+Received: from sj-iport-2.cisco.com ([171.71.176.71]:33613 "EHLO
+	sj-iport-2.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755314Ab0I2Tk2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 29 Sep 2010 15:40:28 -0400
+In-Reply-To: <201009292129.31415.arnd@arndb.de> (Arnd Bergmann's message of
+	"Wed, 29 Sep 2010 21:29:31 +0200")
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Roland Dreier <rdreier@cisco.com>
+To: Arnd Bergmann <arnd@arndb.de>
 Cc: Steve Wise <swise@opengridcomputing.com>, linux-rdma@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wednesday 29 September 2010 21:21:14 Roland Dreier wrote:
-> 
->  > The main difference between default_llseek and generic_file_llseek
->  > is that default_llseek doesn't care about the maximum file size
->  > of the underlying file system, which is ULONG_MAX on debugfs,
->  > so they are equivalent.
-> 
-> I thought default_llseek also takes the BKL still?
+ > Yes, but it's a very weak "should". My automatic conversion script
+ > uses default_llseek.
 
-Not any more in linux-next.
+OK, I'll just take steve's patch that does default_llseek if it really
+doesn't matter.
 
->  > In general, the preferred one is no_llseek for those files where
->  > you know you do not need to seek. If you do, I'd use default_llseek
->  > for character devices and generic_file_llseek for file systems
->  > that set the s_maxbytes.
-> 
-> The case in question is for debugfs files, so we should use
-> generic_file_llseek, right?
-
-Yes, but it's a very weak "should". My automatic conversion script
-uses default_llseek.
-
-	Arnd
+ - R.
