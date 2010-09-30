@@ -1,57 +1,60 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
-Date: Thu, 30 Sep 2010 00:44:04 -0300
-Message-ID: <4CA40784.20205@infradead.org>
-References: <20100929112904.3fd117e0.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (nfs tree
+ related)
+Date: Thu, 30 Sep 2010 13:58:34 +1000
+Message-ID: <20100930135834.dc73dfac.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__30_Sep_2010_13_58_34_+1000_BUUwJU_KsCkoL.nA"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([18.85.46.34]:55728 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752978Ab0I3Do0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 29 Sep 2010 23:44:26 -0400
-In-Reply-To: <20100929112904.3fd117e0.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:34049 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753894Ab0I3D6o (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 29 Sep 2010 23:58:44 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jean Delvare <khali@linux-fr.org>
+To: Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bryan Schumaker <bjschuma@netapp.com>
 
-Em 28-09-2010 22:29, Stephen Rothwell escreveu:
-> Hi Mauro,
-> 
-> After merging the v4l-dvb tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> drivers/media/video/bt8xx/bttv-input.c: In function 'init_bttv_i2c_ir':
-> drivers/media/video/bt8xx/bttv-input.c:306: error: too few arguments to function 'i2c_new_probed_device'
-> 
-> Caused by commit 3c81f945a74224d6e3017596297ee9903929b1a7 ("V4L/DVB:
-> bttv: Move PV951 IR to the right driver") interacting with commit
-> 9a94241afcc9a481691a9c29b7460217925b59b8 ("i2c: Add support for custom
-> probe function") that entered Linus' tree in v2.6.36-rc1.  I guess that
-> the v4l-dvb commit moved that code to a driver that is now being built.
-> 
-> I have used the v4l-dvb tree from next-20100928 for today.
+--Signature=_Thu__30_Sep_2010_13_58_34_+1000_BUUwJU_KsCkoL.nA
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ok, that's easy. a new parameter were added to this function, probably via Jean's tree.
-The fix is as simple as:
+Hi Trond,
 
--		i2c_new_probed_device(&btv->c.i2c_adap, &info, addr_list);
-+		i2c_new_probed_device(&btv->c.i2c_adap, &info, addr_list, NULL);
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-The extra parameter is for an extra customized probe function, that it is not
-needed in this case.
+fs/nfs/idmap.c: In function 'nfs_idmap_init':
+fs/nfs/idmap.c:79: error: implicit declaration of function 'IS_ERR'
+fs/nfs/idmap.c:80: error: implicit declaration of function 'PTR_ERR'
+fs/nfs/idmap.c: In function 'nfs_idmap_request_key':
+fs/nfs/idmap.c:170: error: implicit declaration of function 'IS_ERR_OR_NULL'
 
-I got a small merge problem on this function:
+Caused by commit 892c16b2faae80ce1a3b3bd280a93533cd4f04a6 ("NFS: new
+idmapper").  I guess an include of linux/err.h is missing.
 
-drivers/media/video/wm8739.c
-
-I just merged the conflict resolution at the merge object, and added a new
-patch for the extra parameter in order to solve I2C conflict.
-
-I did a compilation test after merging it with next-20100929 and those issues
-were solved on my local build.
-
+I have reverted that commit for today.
+--=20
 Cheers,
-Mauro.
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__30_Sep_2010_13_58_34_+1000_BUUwJU_KsCkoL.nA
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMpArqAAoJEDMEi1NhKgbsqK0H/2tsrvVT4J7x0w+A+f5LlUOA
+E9uK6Cbh/wwoLBaA3SDuo8l3t97NMSuv1FH+LqU+J3J7Q4vaopkfXJn3qT4djNjp
+z9MMl9KJt3EUlhvTAyqSwyZuUFScypMoPFinT+EQWR/CNUBg0mMxwbjRCeWamG5K
+OiIl79RYJaAbYw/NtvIWBDP4CSLJpeiHUOSUlqD+ZyzzJQrOuY9ZBCjiS/Jbnk1r
+PAvQ5f22zkxYXz042nKcksoSR7ifIPkXrZMxXJEpprkwUcCagtAoz3N7KXOqeIZB
+Q/KCpSX3YG7PVL5SSKHGvIqgfKKXS1O/1waNrWoJSIE0O6+xRXLzEWzXLqbIUHg=
+=Mtua
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__30_Sep_2010_13_58_34_+1000_BUUwJU_KsCkoL.nA--
