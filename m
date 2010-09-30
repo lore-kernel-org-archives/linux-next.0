@@ -1,76 +1,62 @@
-From: Vipin Mehta <vmehta@atheros.com>
-Subject: [Vipin.Mehta@Atheros.com: [PATCH] staging: ath6kl: Fixing the
- driver to use modified mmc_host structure
-Date: Wed, 29 Sep 2010 17:34:19 -0700
-Message-ID: <20100930003419.GB5906@vmehta-desktop>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the kbuild tree
+Date: Thu, 30 Sep 2010 10:50:25 +1000
+Message-ID: <20100930105025.c46e2fe0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__30_Sep_2010_10_50_25_+1000_ZIFz1/Ihpu/qgQnF"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.atheros.com ([12.19.149.2]:50578 "EHLO mail.atheros.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37185 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751028Ab0I3AeW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 29 Sep 2010 20:34:22 -0400
-Received: from mail.atheros.com ([10.10.20.105])
-	by sidewinder.atheros.com
-	for <linux-next@vger.kernel.org>; Wed, 29 Sep 2010 17:34:14 -0700
-Content-Disposition: inline
+	id S1750996Ab0I3Auf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 29 Sep 2010 20:50:35 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: linux-next@vger.kernel.org, greg@kroah.com, vmehta@atheros.com
+To: Michal Marek <mmarek@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnaud Lacombe <lacombar@gmail.com>, Sam Ravnborg <sam@ravnborg.org>
 
-Stephen,
-    Can you pls help me apply the following patch to the linux-next 
-tree. The patch fixes a compilation problem with ath6kl due to a
-change in the mmc_host structure. The driver compiles fine in the
-staging-next-2.6 tree which is where the changes for this driver 
-actually go. However, the mmc stack in the linux-next tree and 
-staging-next-2.6 is out of sync and so this patch is only applicable
-to linux-next.
+--Signature=_Thu__30_Sep_2010_10_50_25_+1000_ZIFz1/Ihpu/qgQnF
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Regards,
-Vipin
+Hi Michal,
 
------ Forwarded message from Vipin Mehta <Vipin.Mehta@Atheros.com> -----
+After merging the kbuild tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
 
-Date: Fri, 17 Sep 2010 18:45:38 -0700
-From: Vipin Mehta <Vipin.Mehta@Atheros.com>
-To: "greg@kroah.com" <greg@kroah.com>
-CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	Vipin Mehta <Vipin.Mehta@Atheros.com>,
-	"devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-	"randy.dunlap@oracle.com" <randy.dunlap@oracle.com>
-Subject: [PATCH] staging: ath6kl: Fixing the driver to use modified mmc_host
-	structure
+scripts/kconfig/kxgettext.c: In function 'menu_build_message_list':
+scripts/kconfig/kxgettext.c:175: warning: passing argument 3 of 'message__a=
+dd' discards qualifiers from pointer target type
+scripts/kconfig/kxgettext.c:148: note: expected 'char *' but argument is of=
+ type 'const char * const'
+scripts/kconfig/kxgettext.c:180: warning: passing argument 3 of 'message__a=
+dd' discards qualifiers from pointer target type
+scripts/kconfig/kxgettext.c:148: note: expected 'char *' but argument is of=
+ type 'const char * const'
 
-A recent change in the mmc_host structure removed the distinction
-between hw and phys segments (58cb50c20fde6059f3f8db4466a1bd4d1fff999c)
-Changing the driver to use the modified structure.
+Probably caused by commit 2e7a091833f014cac8a6b92573ca6cd2edd2753c
+("kconfig: constify file name").
 
-Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
-Signed-off-by: Vipin Mehta <vmehta@atheros.com>
----
- .../ath6kl/hif/sdio/linux_sdio/src/hif_scatter.c   |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --git a/drivers/staging/ath6kl/hif/sdio/linux_sdio/src/hif_scatter.c b/drivers/staging/ath6kl/hif/sdio/linux_sdio/src/hif_scatter.c
-index 22c6c66..ee8b477 100644
---- a/drivers/staging/ath6kl/hif/sdio/linux_sdio/src/hif_scatter.c
-+++ b/drivers/staging/ath6kl/hif/sdio/linux_sdio/src/hif_scatter.c
-@@ -285,9 +285,9 @@ A_STATUS SetupHIFScatterSupport(HIF_DEVICE *device, HIF_DEVICE_SCATTER_SUPPORT_I
-     do {
-         
-             /* check if host supports scatter requests and it meets our requirements */
--        if (device->func->card->host->max_hw_segs < MAX_SCATTER_ENTRIES_PER_REQ) {
-+        if (device->func->card->host->max_segs < MAX_SCATTER_ENTRIES_PER_REQ) {
-             AR_DEBUG_PRINTF(ATH_DEBUG_ERR,("HIF-SCATTER : host only supports scatter of : %d entries, need: %d \n",
--                    device->func->card->host->max_hw_segs, MAX_SCATTER_ENTRIES_PER_REQ));
-+                    device->func->card->host->max_segs, MAX_SCATTER_ENTRIES_PER_REQ));
-             status = A_ENOTSUP;
-             break;    
-         }
--- 
-1.6.3.3
+--Signature=_Thu__30_Sep_2010_10_50_25_+1000_ZIFz1/Ihpu/qgQnF
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
------ End forwarded message -----
+iQEcBAEBAgAGBQJMo97RAAoJEDMEi1NhKgbslj8H/0P3V/ne7ILuyCyCpDy3UTmh
+PkM0wb87JuV5eioyV3Hpy2bCkXsmnD7b56wXWyzNAGfgs4c2JgJsjL+tqBeWjr20
+UJyllal28zBBiXlZD68hUAJBI+f8YUdIyEHLebCiTxb68RN1HXQ0o3BAk4Z1TS69
+DGW4G0qWirEuLyjoLthSk8NxKu3A4gsA2XugzdgWP8WoG9wK8iFe9+eCu8vaTQBb
+kIO4xPz6TGwRSXXh9MTEr2AECrCjS2Jnh/fdUOzrMTtFC+w1+SCabBSjnaZrTumM
+TIJDfU9/QAW6iGiaSUdf0iHP1tciprc/xYL6UHMorE31KHJWLhnzFYG04FJ3ixs=
+=0lBA
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__30_Sep_2010_10_50_25_+1000_ZIFz1/Ihpu/qgQnF--
