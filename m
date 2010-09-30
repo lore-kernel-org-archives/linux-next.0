@@ -1,42 +1,82 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: [Vipin.Mehta@Atheros.com: [PATCH] staging: ath6kl: Fixing the
-	driver to use modified mmc_host structure
-Date: Wed, 29 Sep 2010 19:21:40 -0700
-Message-ID: <20100930022140.GA4035@kroah.com>
-References: <20100930003419.GB5906@vmehta-desktop> <20100930105748.5b049c44.sfr@canb.auug.org.au>
+From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (hwpoison tree related)
+Date: Thu, 30 Sep 2010 11:54:51 +0900
+Message-ID: <20100930025451.GB10142@spritzera.linux.bs1.fc.nec.co.jp>
+References: <20100927155551.2e4e4b26.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:56562 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751455Ab0I3CiZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 29 Sep 2010 22:38:25 -0400
+Content-Type: text/plain; charset=iso-2022-jp
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20100930105748.5b049c44.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+In-Reply-To: <20100927155551.2e4e4b26.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Vipin Mehta <vmehta@atheros.com>, linux-next@vger.kernel.org
+Cc: Andi Kleen <ak@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jun'ichi Nomura <j-nomura@ce.jp.nec.com>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Sep 30, 2010 at 10:57:48AM +1000, Stephen Rothwell wrote:
-> Hi Vipin,
+Hi,
+
+On Mon, Sep 27, 2010 at 03:55:51PM +1000, Stephen Rothwell wrote:
+> Hi Andi,
 > 
-> On Wed, 29 Sep 2010 17:34:19 -0700 Vipin Mehta <vmehta@atheros.com> wrote:
-> >
-> >     Can you pls help me apply the following patch to the linux-next 
-> > tree. The patch fixes a compilation problem with ath6kl due to a
-> > change in the mmc_host structure. The driver compiles fine in the
-> > staging-next-2.6 tree which is where the changes for this driver 
-> > actually go. However, the mmc stack in the linux-next tree and 
-> > staging-next-2.6 is out of sync and so this patch is only applicable
-> > to linux-next.
+> After merging the final tree, today's linux-next build (powerpc allnoconfig)
+> failed like this:
 > 
-> I will carry it as a merge fixup patch for the staging-next tree.
-> Someone just needs to make sure that this patch gets applied (or sent to
-> Linus) at the right time.
+> mm/mprotect.o: In function `migrate_huge_page_move_mapping':
+> mprotect.c:(.text+0x0): multiple definition of `migrate_huge_page_move_mapping'
+> mm/shmem.o:shmem.c:(.text+0x0): first defined here
+> mm/rmap.o: In function `migrate_huge_page_move_mapping':
+> rmap.c:(.text+0x0): multiple definition of `migrate_huge_page_move_mapping'
+> mm/shmem.o:shmem.c:(.text+0x0): first defined here
+> 
+> Caused by commit 7b217c52ce7f33379beb27aa7685109fa74ed6bf ("hugetlb:
+> hugepage migration core").
+> 
+> This function is declared as "extern int ..." with a body in
+> include/linux/migrate.h for the non CONFIG_MIGRATION case.
 
-I'll keep in my "todo" file to handle it when the merge happens.
+This build error reappears for x86_64 with !CONFIG_MIGRATION.
+As you commented, "extern int" declaration causes it.
+So please apply the following patch.
 
-thanks,
+Thank you for reporting.
 
-greg k-h
+Thanks,
+Naoya Horiguchi
+
+---
+Date: Thu, 30 Sep 2010 09:56:02 +0900
+Subject: [PATCH] fix build error with !CONFIG_MIGRATION
+
+migrate_huge_page_move_mapping() is declared as "extern int ..."
+in include/linux/migrate.h for !CONFIG_MIGRATION,
+which causes the build error like below:
+
+  mm/mprotect.o: In function `migrate_huge_page_move_mapping':
+  mprotect.c:(.text+0x0): multiple definition of `migrate_huge_page_move_mapping'
+  mm/shmem.o:shmem.c:(.text+0x0): first defined here
+  mm/rmap.o: In function `migrate_huge_page_move_mapping':
+  rmap.c:(.text+0x0): multiple definition of `migrate_huge_page_move_mapping'
+  mm/shmem.o:shmem.c:(.text+0x0): first defined here
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+---
+ include/linux/migrate.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/include/linux/migrate.h b/include/linux/migrate.h
+index 3c1941e..085527f 100644
+--- a/include/linux/migrate.h
++++ b/include/linux/migrate.h
+@@ -50,7 +50,7 @@ static inline int migrate_vmas(struct mm_struct *mm,
+ static inline void migrate_page_copy(struct page *newpage,
+ 				     struct page *page) {}
+ 
+-extern int migrate_huge_page_move_mapping(struct address_space *mapping,
++static inline int migrate_huge_page_move_mapping(struct address_space *mapping,
+ 				  struct page *newpage, struct page *page)
+ {
+ 	return -ENOSYS;
+-- 
+1.7.2.3
