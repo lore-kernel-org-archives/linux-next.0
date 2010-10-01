@@ -1,60 +1,112 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the v4l-dvb tree
-Date: Fri, 1 Oct 2010 11:41:03 +1000
-Message-ID: <20101001114103.c6fb755e.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree with the net-current tree
+Date: Fri, 1 Oct 2010 12:48:30 +1000
+Message-ID: <20101001124830.9c35d36f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__1_Oct_2010_11_41_03_+1000_CyKqto_mMWwoVC1Q"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40866 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751046Ab0JABlL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 30 Sep 2010 21:41:11 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-
---Signature=_Fri__1_Oct_2010_11_41_03_+1000_CyKqto_mMWwoVC1Q
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Damian Lukowski <damian@tvk.rwth-aachen.de>, Jerry Chu <hkchu@google.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Mauro,
+Hi all,
 
-After merging the v4l-dvb tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the net tree got a conflict in
+net/ipv4/tcp_timer.c between commit
+4d22f7d372f5769c6c0149e427ed6353e2dcfe61 ("net-2.6: SYN retransmits: Add
+new parameter to retransmits_timed_out()") from the net-current tree and
+commit dca43c75e7e545694a9dd6288553f55c53e2a3a3 ("tcp: Add
+TCP_USER_TIMEOUT socket option") from the net tree.
 
-usr/include/linux/ivtv.h:26: included file 'linux/videodev2.h' is not expor=
-ted
-usr/include/linux/keyboard.h:4: included file 'linux/wait.h' is not exported
-usr/include/linux/matroxfb.h:6: included file 'linux/videodev2.h' is not ex=
-ported
-
-Presumably caused by a bad merge 770a34e607ff7f5ecc72956a007d01f7f21175bb
-("Merge tag 'v2.6.36-rc5' into new") which has mucked up include/linux/Kbui=
-ld.
-
-I have used the v4l-dvb tree from next-20100928 again for today.
---=20
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__1_Oct_2010_11_41_03_+1000_CyKqto_mMWwoVC1Q
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMpTwvAAoJEDMEi1NhKgbsC5IH/0Hek1ucz5Q0owWYX3+WsmpV
-BchO0RR3SMjrJV+9psYHiELB6RODBxo0QyuDKQbPFHslQNWAAl/N4VmnXZtC1Avt
-q7bknxpPZQ4wzXZXewrkyIjYfl9/7xbu9Q/iQxuZv3NrfxBcf9k4F/A0jJIHELwn
-ckFrpYv/onf6nRWJ2QyGFFlqW0uRrgufbvSJdcRN4OutwFWvfnrqI5H2y9j1YxuF
-Ptmkn4DYl8gYQUm6EuXxySpGq6dNvIWO0j/G//ylhGX9iCNlxENFqLzWWB+Eb8ea
-FihoSDVBEIZhf9mLKPmmu9jspQFRcc6tESJT0FOuQi97A0P1nZpUy3XwLesSdhY=
-=TifT
------END PGP SIGNATURE-----
-
---Signature=_Fri__1_Oct_2010_11_41_03_+1000_CyKqto_mMWwoVC1Q--
+diff --cc net/ipv4/tcp_timer.c
+index 74c54b3,baea4a1..0000000
+--- a/net/ipv4/tcp_timer.c
++++ b/net/ipv4/tcp_timer.c
+@@@ -140,11 -139,9 +140,11 @@@ static void tcp_mtu_probing(struct inet
+   */
+  static bool retransmits_timed_out(struct sock *sk,
+  				  unsigned int boundary,
+ -				  unsigned int timeout)
+++				  unsigned int timeout,
+ +				  bool syn_set)
+  {
+- 	unsigned int timeout, linear_backoff_thresh;
+- 	unsigned int start_ts;
++ 	unsigned int linear_backoff_thresh, start_ts;
+ +	unsigned int rto_base = syn_set ? TCP_TIMEOUT_INIT : TCP_RTO_MIN;
+  
+  	if (!inet_csk(sk)->icsk_retransmits)
+  		return false;
+@@@ -154,14 -151,15 +154,16 @@@
+  	else
+  		start_ts = tcp_sk(sk)->retrans_stamp;
+  
+- 	linear_backoff_thresh = ilog2(TCP_RTO_MAX/rto_base);
++ 	if (likely(timeout == 0)) {
+ -		linear_backoff_thresh = ilog2(TCP_RTO_MAX/TCP_RTO_MIN);
+++		linear_backoff_thresh = ilog2(TCP_RTO_MAX/rto_base);
+  
+- 	if (boundary <= linear_backoff_thresh)
+- 		timeout = ((2 << boundary) - 1) * rto_base;
+- 	else
+- 		timeout = ((2 << linear_backoff_thresh) - 1) * rto_base +
+- 			  (boundary - linear_backoff_thresh) * TCP_RTO_MAX;
++ 		if (boundary <= linear_backoff_thresh)
+ -			timeout = ((2 << boundary) - 1) * TCP_RTO_MIN;
+++			timeout = ((2 << boundary) - 1) * rto_base;
++ 		else
+ -			timeout = ((2 << linear_backoff_thresh) - 1) * TCP_RTO_MIN +
+++			timeout = ((2 << linear_backoff_thresh) - 1) * rto_base +
++ 				(boundary - linear_backoff_thresh) * TCP_RTO_MAX;
+ +
++ 	}
+  	return (tcp_time_stamp - start_ts) >= timeout;
+  }
+  
+@@@ -176,9 -174,8 +178,9 @@@ static int tcp_write_timeout(struct soc
+  		if (icsk->icsk_retransmits)
+  			dst_negative_advice(sk);
+  		retry_until = icsk->icsk_syn_retries ? : sysctl_tcp_syn_retries;
+ +		syn_set = 1;
+  	} else {
+--		if (retransmits_timed_out(sk, sysctl_tcp_retries1, 0)) {
+++		if (retransmits_timed_out(sk, sysctl_tcp_retries1, 0, 0)) {
+  			/* Black hole detection */
+  			tcp_mtu_probing(icsk, sk);
+  
+@@@ -191,14 -188,16 +193,16 @@@
+  
+  			retry_until = tcp_orphan_retries(sk, alive);
+  			do_reset = alive ||
+--				   !retransmits_timed_out(sk, retry_until, 0);
+++				   !retransmits_timed_out(sk, retry_until, 0, 0);
+  
+  			if (tcp_out_of_resources(sk, do_reset))
+  				return 1;
+  		}
+  	}
+  
+- 	if (retransmits_timed_out(sk, retry_until, syn_set)) {
++ 	if (retransmits_timed_out(sk, retry_until,
++ 	    (1 << sk->sk_state) & (TCPF_SYN_SENT | TCPF_SYN_RECV) ? 0 :
+ -	    icsk->icsk_user_timeout)) {
+++	    icsk->icsk_user_timeout, syn_set)) {
+  		/* Has it gone just too far? */
+  		tcp_write_err(sk);
+  		return 1;
+@@@ -440,7 -439,7 +444,7 @@@ out_reset_timer
+  		icsk->icsk_rto = min(icsk->icsk_rto << 1, TCP_RTO_MAX);
+  	}
+  	inet_csk_reset_xmit_timer(sk, ICSK_TIME_RETRANS, icsk->icsk_rto, TCP_RTO_MAX);
+--	if (retransmits_timed_out(sk, sysctl_tcp_retries1 + 1, 0))
+++	if (retransmits_timed_out(sk, sysctl_tcp_retries1 + 1, 0, 0))
+  		__sk_dst_reset(sk);
+  
+  out:;
