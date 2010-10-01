@@ -1,51 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: unable to fetch leds and backlight trees
-Date: Fri, 1 Oct 2010 10:49:35 +1000
-Message-ID: <20101001104935.76efd0b8.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the v4l-dvb tree
+Date: Fri, 1 Oct 2010 11:41:03 +1000
+Message-ID: <20101001114103.c6fb755e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__1_Oct_2010_10_49_35_+1000_B.JqSsEBq6qdlWUX"
+ boundary="Signature=_Fri__1_Oct_2010_11_41_03_+1000_CyKqto_mMWwoVC1Q"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40548 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:40866 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751784Ab0JAAtm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 30 Sep 2010 20:49:42 -0400
+	id S1751046Ab0JABlL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 30 Sep 2010 21:41:11 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Richard Purdie <rpurdie@rpsys.net>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__1_Oct_2010_10_49_35_+1000_B.JqSsEBq6qdlWUX
+--Signature=_Fri__1_Oct_2010_11_41_03_+1000_CyKqto_mMWwoVC1Q
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Richard,
+Hi Mauro,
 
-Fetching the trees produces this error:
+After merging the v4l-dvb tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-git.o-hand.com[0: 70.86.75.186]: errno=3DConnection refused
+usr/include/linux/ivtv.h:26: included file 'linux/videodev2.h' is not expor=
+ted
+usr/include/linux/keyboard.h:4: included file 'linux/wait.h' is not exported
+usr/include/linux/matroxfb.h:6: included file 'linux/videodev2.h' is not ex=
+ported
 
-Just letting you know.
+Presumably caused by a bad merge 770a34e607ff7f5ecc72956a007d01f7f21175bb
+("Merge tag 'v2.6.36-rc5' into new") which has mucked up include/linux/Kbui=
+ld.
+
+I have used the v4l-dvb tree from next-20100928 again for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__1_Oct_2010_10_49_35_+1000_B.JqSsEBq6qdlWUX
+--Signature=_Fri__1_Oct_2010_11_41_03_+1000_CyKqto_mMWwoVC1Q
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMpTAfAAoJEDMEi1NhKgbsE9UH/1nEV7Zs/aZ99bV63Xf0wy7H
-xKbSFjPfaic45i8V1YOckeVWtVjRc90s1oDXtaG3qPFDx42wB/CTOtrLFMsoYlH8
-CO3MTLuxLE61YNPurxK/CUa9b0tac8yRN0s9akEtncLGV/Ed6Y36yObKmtqOymmC
-yi2Z0ukien4ad8oN9f7VyPvTIayxuIAJC/S5LXsghRsIthhohRac+QK7XhymLumz
-ywO4fc0HmGz/qaJeSPAXHah1tXysuzbLSBDhvU1CYNEFqZ+s2pzATP3h2n4wwtr7
-63cAQXAh8tgvAZpB61rw9bYpHgZcAww32fFjFXv6hdp7IU+Q13gLbjj9HCTBgDk=
-=/slT
+iQEcBAEBAgAGBQJMpTwvAAoJEDMEi1NhKgbsC5IH/0Hek1ucz5Q0owWYX3+WsmpV
+BchO0RR3SMjrJV+9psYHiELB6RODBxo0QyuDKQbPFHslQNWAAl/N4VmnXZtC1Avt
+q7bknxpPZQ4wzXZXewrkyIjYfl9/7xbu9Q/iQxuZv3NrfxBcf9k4F/A0jJIHELwn
+ckFrpYv/onf6nRWJ2QyGFFlqW0uRrgufbvSJdcRN4OutwFWvfnrqI5H2y9j1YxuF
+Ptmkn4DYl8gYQUm6EuXxySpGq6dNvIWO0j/G//ylhGX9iCNlxENFqLzWWB+Eb8ea
+FihoSDVBEIZhf9mLKPmmu9jspQFRcc6tESJT0FOuQi97A0P1nZpUy3XwLesSdhY=
+=TifT
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__1_Oct_2010_10_49_35_+1000_B.JqSsEBq6qdlWUX--
+--Signature=_Fri__1_Oct_2010_11_41_03_+1000_CyKqto_mMWwoVC1Q--
