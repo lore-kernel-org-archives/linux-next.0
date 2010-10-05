@@ -1,40 +1,37 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: linux-next: manual merge of the lost-spurious-irq tree with the
- tip tree
-Date: Tue, 05 Oct 2010 07:47:58 +0200
-Message-ID: <4CAABC0E.3030700@kernel.org>
-References: <20101005141334.6a0f15fd.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: manual merge of the net tree with the net-current
+ tree
+Date: Mon, 04 Oct 2010 22:47:35 -0700 (PDT)
+Message-ID: <20101004.224735.191411120.davem@davemloft.net>
+References: <20101001124830.9c35d36f.sfr@canb.auug.org.au>
+	<AANLkTinsNEeTK=SrGpqEjF8VtZZWpiWydgSc+3M854pD@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20101005141334.6a0f15fd.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:40168
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754488Ab0JEFrP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Oct 2010 01:47:15 -0400
+In-Reply-To: <AANLkTinsNEeTK=SrGpqEjF8VtZZWpiWydgSc+3M854pD@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: hkchu@google.com
+Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, damian@tvk.rwth-aachen.de
 
-Hello, Stephen.
+From: Jerry Chu <hkchu@google.com>
+Date: Thu, 30 Sep 2010 20:27:05 -0700
 
-On 10/05/2010 05:13 AM, Stephen Rothwell wrote:
-> Hi Tejun,
+> In tcp_write_timeout():
 > 
-> Today's linux-next merge of the lost-spurious-irq tree got a conflict in
-> kernel/irq/spurious.c between commits
-> 6b8ff3120c758340505dddf08ad685ebb841d5d5 ("genirq: Convert core code to
-> irq_data") and bd151412263a67b5321e9dd1d5b4bf6d96fdebf3 ("genirq: Provide
-> config option to disable deprecated code") from the tip tree and commits
-> 32b5d378f49485f3ae172eb0ac2bfc4ebbbdb060 ("irq: cleanup irqfixup") and
-> 80f97e2b33c3e66c11b10abd2890506a3abeb320 ("irq: make spurious poll timer
-> per desc") from the lost-spurious-irq tree.
+> if (retransmits_timed_out(sk, retry_until,
+>             (1 << sk->sk_state) & (TCPF_SYN_SENT | TCPF_SYN_RECV) ? 0 :
+>             icsk->icsk_user_timeout, syn_set)) {
 > 
-> I think I fixed it all up (see below).  I can carry this fix (or a better
-> one) as necessary.
+> should be simplified to
+> 
+> if (retransmits_timed_out(sk, retry_until,
+>     syn_set ? 0 : icsk->icsk_user_timeout, syn_set)) {
 
-Can you please drop lost-spurious-irq for now?  It needs to be
-reimplemented.  I'll send a merge request again when it's ready.
-
-Thank you.
-
--- 
-tejun
+I've merged net-2.6 into net-next-2.6 and integrated this simplification
+while doing so.
