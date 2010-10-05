@@ -1,73 +1,51 @@
-From: Andres Salomon <dilinger@queued.net>
-Subject: Re: linux-next: Tree for October 1 (staging/olpc_dcon)
-Date: Tue, 5 Oct 2010 12:33:02 -0700
-Message-ID: <20101005123302.399b258f@debxo>
-References: <20101001153756.47b52566.sfr@canb.auug.org.au>
-	<20101001154531.997630a2.randy.dunlap@oracle.com>
-	<20101001192454.0a427cb0@debxo>
-	<20101002185154.GA18020@suse.de>
-	<20101002180334.7894bdfe@debxo>
-	<20101005190818.GD20825@kroah.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: failed to fetch the ecryptfs tree
+Date: Wed, 6 Oct 2010 10:24:18 +1100
+Message-ID: <20101006102418.f1962740.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__6_Oct_2010_10_24_18_+1100_vlGsiZXTzCy4Aq4O"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from LUNGE.MIT.EDU ([18.54.1.69]:52723 "EHLO lunge.queued.net"
+Received: from chilli.pcug.org.au ([203.10.76.44]:42433 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753133Ab0JET02 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 5 Oct 2010 15:26:28 -0400
-In-Reply-To: <20101005190818.GD20825@kroah.com>
+	id S1757566Ab0JEXY0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 5 Oct 2010 19:24:26 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Greg KH <gregkh@suse.de>, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, driverdevel <devel@driverdev.osuosl.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Chris Ball <cjb@laptop.org>, Jon Nettleton <jon.nettleton@gmail.com>
+To: Tyler Hicks <tyhicks@linux.vnet.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 5 Oct 2010 12:08:18 -0700
-Greg KH <greg@kroah.com> wrote:
+--Signature=_Wed__6_Oct_2010_10_24_18_+1100_vlGsiZXTzCy4Aq4O
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Sat, Oct 02, 2010 at 06:03:34PM -0700, Andres Salomon wrote:
-> > On Sat, 2 Oct 2010 11:51:54 -0700
-> > Greg KH <gregkh@suse.de> wrote:
-> > 
-> > > On Fri, Oct 01, 2010 at 07:24:54PM -0700, Andres Salomon wrote:
-> > > > On Fri, 1 Oct 2010 15:45:31 -0700
-> > > > Randy Dunlap <randy.dunlap@oracle.com> wrote:
-> > > > 
-> > > > > On Fri, 1 Oct 2010 15:37:56 +1000 Stephen Rothwell wrote:
-> > > > > 
-> > > > > > Hi all,
-> > > > > > 
-> > > > > > Changes since 20100930:
-> > > > > 
-> > > > > 
-> > > > > drivers/staging/olpc_dcon/olpc_dcon_xo_1.c:57: error: implicit
-> > > > > declaration of function 'geode_gpio_event_irq'
-> > > > > drivers/staging/olpc_dcon/olpc_dcon_xo_1.c:57: error: implicit
-> > > > > declaration of function 'geode_gpio'
-> > > > 
-> > > > Yep, it's pending a cs5535-gpio patch
-> > > > (https://patchwork.kernel.org/patch/209482/).
-> > > 
-> > > Wait, as I didn't apply the later patches, what I did apply should
-> > > have still built properly (remember our rule, no breakage at any
-> > > point in a patch series.)  So, should I revert the last olpc patch
-> > > that caused this problem?
-> > > 
-> > 
-> > Sorry, I thought that was made clear by the "this patch is necessary
-> > for building the driver" comments in each patch description.  The
-> > original driver that was submitted doesn't build unless all patches
-> > are applied (the only which touches external APIs is the pending
-> > cs5535-gpio one).
-> 
-> Ok, I'll go mark the driver as depending on CONFIG_BROKEN for now,
-> until we get that resolved, as we can't have a driver that breaks the
-> build in the tree.
-> 
-> thanks,
-> 
-> greg k-h
+Hi Tyler,
 
+Trying to fetch the ecryptfs tree today gave me this error:
 
-Sounds good.  After the two outstanding patches are applied,
-CONFIG_BROKEN can be safely removed.
+fatal: Couldn't find remote ref refs/heads/next
+
+I will use the ecryptfs tree from next-20101005 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__6_Oct_2010_10_24_18_+1100_vlGsiZXTzCy4Aq4O
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMq7OiAAoJEDMEi1NhKgbsH9oIAIRrFfIO6z7Uve0x5nf0mt1K
+317nE31+blaYMNG3KC74ajrz7oqzQvtcgVRdpqiPxcxxJmUPP2GNDRr+p1qI/2yG
+6BytmSFVj24UoeeWl5gE0paKq9Yn0IqsgPkGSY63+W6SeWHuHzZC+fax8C6wLuCA
+XOH+oeuYL9gctBcZ9majXTGHeYdNr3XM/ysV2h2g5w5ELbnKEJKxIrZCLSIHVUBU
+0jZcoTHGRXn9WUyAdczs4V1equGSVROeTliK/QaTBZKL2N3Cit4DsW/rqlIF6LBH
+zuM0rZl1x53roib1tQO3h7rmjSNcGRbVjD1fDlQiU6rZ3cXWIuso1jTIzXxA1uI=
+=n25m
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__6_Oct_2010_10_24_18_+1100_vlGsiZXTzCy4Aq4O--
