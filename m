@@ -1,58 +1,31 @@
 From: Tejun Heo <tj@kernel.org>
 Subject: Re: linux-next: manual merge of the lost-spurious-irq tree with the
  tip tree
-Date: Tue, 05 Oct 2010 08:55:22 +0200
-Message-ID: <4CAACBDA.6090308@kernel.org>
-References: <20101005141334.6a0f15fd.sfr@canb.auug.org.au> <4CAABC0E.3030700@kernel.org> <20101005063227.GB12267@elte.hu>
+Date: Tue, 05 Oct 2010 08:59:13 +0200
+Message-ID: <4CAACCC1.6000000@kernel.org>
+References: <20101005141334.6a0f15fd.sfr@canb.auug.org.au> <4CAABC0E.3030700@kernel.org> <20101005063227.GB12267@elte.hu> <4CAACBDA.6090308@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hera.kernel.org ([140.211.167.34]:59549 "EHLO hera.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757586Ab0JEGxm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 5 Oct 2010 02:53:42 -0400
-In-Reply-To: <20101005063227.GB12267@elte.hu>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4CAACBDA.6090308@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Ingo Molnar <mingo@elte.hu>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+List-Id: linux-next.vger.kernel.org
 
-Hello, Ingo.
+On 10/05/2010 08:55 AM, Tejun Heo wrote:
+> I think Stephen had done enough.  At the time, I wasn't sure which
+> tree it was going to go through and it took some time before Thomas
+> responded, so I was intending to push it through separately.  I should
+> have retracted the tree right after it was determined to be
+> reimplemented but forgot.  That's my mistake not Stephen's.  Sorry
+> about that.
 
-On 10/05/2010 08:32 AM, Ingo Molnar wrote:
-> 
-> * Tejun Heo <tj@kernel.org> wrote:
-> 
->>> I think I fixed it all up (see below).  I can carry this fix (or a 
->>> better one) as necessary.
->>
->> Can you please drop lost-spurious-irq for now?  It needs to be 
->> reimplemented.  I'll send a merge request again when it's ready.
-> 
-> Please send irq merge requests to Thomas instead and wait for those 
-> genirq bits to show up upstream. (You did so in the past and the review 
-> process was ongoing AFAICS)
-> 
-> Otherwise we would be dilluting linux-next testing with random side 
-> effects from a tree that wasnt yet (in that form) scheduled to go 
-> upstream by its respective maintainer at that time.
-> 
-> We were lucky that this showed up as merge complications - what if 
-> instead it merged 'fine' on the textual and build/boot level but 
-> mis-merged on the functional level in subtle ways? Thomas would be 
-> sending something to Linus that was never really tested in linux-next in 
-> that form, caused problems upstream, and Linus would be rightfully upset 
-> about the situation.
-> 
-> Stephen, you need to enforce such things ...
-
-I think Stephen had done enough.  At the time, I wasn't sure which
-tree it was going to go through and it took some time before Thomas
-responded, so I was intending to push it through separately.  I should
-have retracted the tree right after it was determined to be
-reimplemented but forgot.  That's my mistake not Stephen's.  Sorry
-about that.
+Oooh, apparently I knew it was gonna go through genirq but expected it
+to go through as-is and wanted to accelerate testing.  FWIW, I'm
+sure everyone involved was notified of the move at the time.  At any
+rate, won't happen again.
 
 Thanks.
 
