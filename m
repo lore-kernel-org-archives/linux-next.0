@@ -1,62 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Arnd Bergmann <arnd@arndb.de>
 Subject: Re: linux-next: Tree for October 5
-Date: Tue, 5 Oct 2010 19:42:32 +1100
-Message-ID: <20101005194232.de733b2b.sfr@canb.auug.org.au>
-References: <20101005161220.0bef433f.sfr@canb.auug.org.au>
-	<AANLkTikF+-0ybP3RMA-7wr8DMit6At=G1W7oB0UO4Mvz@mail.gmail.com>
+Date: Tue, 5 Oct 2010 10:50:26 +0200
+Message-ID: <201010051050.26543.arnd@arndb.de>
+References: <20101005161220.0bef433f.sfr@canb.auug.org.au> <AANLkTikF+-0ybP3RMA-7wr8DMit6At=G1W7oB0UO4Mvz@mail.gmail.com> <20101005194232.de733b2b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__5_Oct_2010_19_42_32_+1100_evqXAoM7MXNoxLx."
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56363 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753068Ab0JEImj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 5 Oct 2010 04:42:39 -0400
-In-Reply-To: <AANLkTikF+-0ybP3RMA-7wr8DMit6At=G1W7oB0UO4Mvz@mail.gmail.com>
+Received: from moutng.kundenserver.de ([212.227.126.187]:57181 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753317Ab0JEIug (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Oct 2010 04:50:36 -0400
+In-Reply-To: <20101005194232.de733b2b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Zimny Lech <napohybelskurwysynom2010@gmail.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Valdis.Kletnieks@vt.edu, Arnd Bergmann <arnd@arndb.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Zimny Lech <napohybelskurwysynom2010@gmail.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Valdis.Kletnieks@vt.edu
 
---Signature=_Tue__5_Oct_2010_19_42_32_+1100_evqXAoM7MXNoxLx.
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tuesday 05 October 2010, Stephen Rothwell wrote:
+> Hi,
+> 
+> On Tue, 5 Oct 2010 09:38:49 +0200 Zimny Lech <napohybelskurwysynom2010@gmail.com> wrote:
+> >
+> > Also, I saw this
+> > /home/test/linux-2.6/include/linux/fs.h:1274:20: warning: function
+> > declaration isn't a prototype
+> > /home/test/linux-2.6/include/linux/fs.h:1278:20: warning: function
+> > declaration isn't a prototype
+> > 
+> > It was fixed in -mmotm by Valdis Kletnieks.
+> 
+> Yeah, it was fixed in linux-next, but rebroken by a rebase of the bkl-vfs
+> tree since yesterday.
 
-Hi,
+Ok, fixed it again now. Sorry for messing this up twice.
 
-On Tue, 5 Oct 2010 09:38:49 +0200 Zimny Lech <napohybelskurwysynom2010@gmai=
-l.com> wrote:
->
-> Also, I saw this
-> /home/test/linux-2.6/include/linux/fs.h:1274:20: warning: function
-> declaration isn't a prototype
-> /home/test/linux-2.6/include/linux/fs.h:1278:20: warning: function
-> declaration isn't a prototype
->=20
-> It was fixed in -mmotm by Valdis Kletnieks.
-
-Yeah, it was fixed in linux-next, but rebroken by a rebase of the bkl-vfs
-tree since yesterday.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__5_Oct_2010_19_42_32_+1100_evqXAoM7MXNoxLx.
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMquT4AAoJEDMEi1NhKgbsBuIH/RCeFEsWrmgTFKQlerPNUZVa
-vcKeonyYt+O3V+vzy52SZy3xFmNg4IO3haILsQ7WAutx5cBOnik1x5P0wCfyaEhZ
-R39j/4CL9Kjnxp/SqvBiRWtIv2dzVmiR1mXK7AzCBZtHN9SbDVFB61e118uBuijX
-XqVrWUyk4th5GERPFujDrn0C6pgJXjG1u7ktVVs7F/d0Ii2aIRPX8DzsWee96BJB
-AXeX9sdNZo7B7XdIEWIdYeRRiLFn/8MpebABdO3VRzyKwmzOoA6DnN/vT1Rb7BI4
-WUWROjAmiZ46Eub9t0GmzATnupZqkTytmoAaDvvthWPKIASLAs6mAWrmUAS2gho=
-=z3mq
------END PGP SIGNATURE-----
-
---Signature=_Tue__5_Oct_2010_19_42_32_+1100_evqXAoM7MXNoxLx.--
+	Arnd
