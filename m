@@ -1,67 +1,47 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: manual merge of the lost-spurious-irq tree with the
- tip tree
-Date: Tue, 5 Oct 2010 11:12:23 +0200
-Message-ID: <20101005091223.GA16005@elte.hu>
-References: <20101005141334.6a0f15fd.sfr@canb.auug.org.au>
- <4CAABC0E.3030700@kernel.org>
- <20101005063227.GB12267@elte.hu>
- <20101005174524.b62d14a1.sfr@canb.auug.org.au>
- <20101005070123.GF12267@elte.hu>
- <20101005193803.e805b3eb.sfr@canb.auug.org.au>
+From: Ike Panhc <ike.pan@canonical.com>
+Subject: Re: linux-next: build failure after merge of the drivers-x86 tree
+Date: Tue, 05 Oct 2010 18:36:09 +0800
+Message-ID: <4CAAFF99.6060504@canonical.com>
+References: <20101005151126.eadae817.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:54532 "EHLO mx2.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932314Ab0JEJMn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 5 Oct 2010 05:12:43 -0400
-Content-Disposition: inline
-In-Reply-To: <20101005193803.e805b3eb.sfr@canb.auug.org.au>
+Received: from adelie.canonical.com ([91.189.90.139]:40005 "EHLO
+	adelie.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753938Ab0JEKgX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Oct 2010 06:36:23 -0400
+In-Reply-To: <20101005151126.eadae817.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Matthew Garrett <mjg59@srcf.ucam.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>
 
-
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
-> Hi Ingo,
+On 10/05/2010 12:11 PM, Stephen Rothwell wrote:
+> Hi Matthew,
 > 
-> On Tue, 5 Oct 2010 09:01:23 +0200 Ingo Molnar <mingo@elte.hu> wrote:
->
-> > Fortunately there's a really simple solution: wait for an explicit 
-> > reply from a maintainer before adding a new-feature tree. (Solicite 
-> > again via a To: email if the Cc: went unanswered by the 
-> > maintainers.)
+> After merging the drivers-x86 tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 > 
-> Sure we can try that.
-
-Thanks.
-
-> > Could you please start using that method for all subsystems i 
-> > co-maintain?
+> make[4]: *** No rule to make target `drivers/platform/x86/ideapad_laptop.c', needed by `drivers/platform/x86/ideapad_laptop.o'.  Stop.
 > 
-> So, to be clear, from the MAINTAINERS file that would be LOCKDEP AND 
-> LOCKSTAT, PERFORMANCE EVENTS SUBSYSTEM, SCHEDULER, TRACING, and X86 
-> ARCHITECTURE. [...]
+> Caused by commit 9efe5c1540a1e03cb2e0fca85e49fc4c57c6e771 ("ideapad:
+> Change the driver name to ideapad-laptop").  The commit renames
+> ideapad_acpi.c to ideapad-laptop.c but the Makefile uses ideapad_laptop.o
+> (note underscore v. dash).
+> 
+> Presumably this was never even build tested :-(
+> 
+> I have used the drivers-x86 tree from next-20101004 for today.
 
-Yep - those are the main ones.
+Sorry, my fault.
 
-( You might want to apply the process generally as well - it's rather 
-  rare that trees parallel to maintainer trees get added to linux-next 
-  and IMO it pays to make sure the maintainers are actively fine with 
-  such additions.
+This line is wrong,
 
-  A Cc: to a mail with no patch content is easy to miss and it's useful
-  to solicit a 'yeah, sure it's fine' mail from a maintainer - just like 
-  we solicit Acked-by's from maintainers for much smaller matters than 
-  full trees (individual patches).
++obj-$(CONFIG_IDEAPAD_LAPTOP)	+= ideapad_laptop.o
 
-  This would further ensure that linux-next is indeed a stable
-  approximation of the 'next Linux' as intended by maintainers.
-  To me this looks like a pretty obvious and useful thing to do. )
+shall be
 
-Thanks,
++obj-$(CONFIG_IDEAPAD_LAPTOP)	+= ideapad-laptop.o
 
-	Ingo
+How shall I fix it? resend the whole patches or just this one?
