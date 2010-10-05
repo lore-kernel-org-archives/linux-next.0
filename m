@@ -1,57 +1,61 @@
-From: "Randy Dunlap" <rdunlap@xenotime.net>
-Subject: Re: linux-next: Tree for October 4
-Date: Tue, 5 Oct 2010 11:59:15 -0700 (PDT)
-Message-ID: <49602.216.212.242.109.1286305155.squirrel@xenotime.net>
-References: <20101004113638.a7f8517b.sfr@canb.auug.org.au>
-    <AANLkTi=5k=29G+xLrN_1F-ho+90k_KAwcb++eKzHA+Ai@mail.gmail.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: Tree for October 1 (staging/olpc_dcon)
+Date: Tue, 5 Oct 2010 12:08:18 -0700
+Message-ID: <20101005190818.GD20825@kroah.com>
+References: <20101001153756.47b52566.sfr@canb.auug.org.au>
+ <20101001154531.997630a2.randy.dunlap@oracle.com>
+ <20101001192454.0a427cb0@debxo>
+ <20101002185154.GA18020@suse.de>
+ <20101002180334.7894bdfe@debxo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <AANLkTi=5k=29G+xLrN_1F-ho+90k_KAwcb++eKzHA+Ai@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <20101002180334.7894bdfe@debxo>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Zimny Lech <napohybelskurwysynom2010@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@suse.de>, Randy Dunlap <rdunlap@xenotime.net>
+To: Andres Salomon <dilinger@queued.net>
+Cc: Greg KH <gregkh@suse.de>, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, driverdevel <devel@driverdev.osuosl.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Chris Ball <cjb@laptop.org>, Jon Nettleton <jon.nettleton@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
+On Sat, Oct 02, 2010 at 06:03:34PM -0700, Andres Salomon wrote:
+> On Sat, 2 Oct 2010 11:51:54 -0700
+> Greg KH <gregkh@suse.de> wrote:
+> 
+> > On Fri, Oct 01, 2010 at 07:24:54PM -0700, Andres Salomon wrote:
+> > > On Fri, 1 Oct 2010 15:45:31 -0700
+> > > Randy Dunlap <randy.dunlap@oracle.com> wrote:
+> > > 
+> > > > On Fri, 1 Oct 2010 15:37:56 +1000 Stephen Rothwell wrote:
+> > > > 
+> > > > > Hi all,
+> > > > > 
+> > > > > Changes since 20100930:
+> > > > 
+> > > > 
+> > > > drivers/staging/olpc_dcon/olpc_dcon_xo_1.c:57: error: implicit
+> > > > declaration of function 'geode_gpio_event_irq'
+> > > > drivers/staging/olpc_dcon/olpc_dcon_xo_1.c:57: error: implicit
+> > > > declaration of function 'geode_gpio'
+> > > 
+> > > Yep, it's pending a cs5535-gpio patch
+> > > (https://patchwork.kernel.org/patch/209482/).
+> > 
+> > Wait, as I didn't apply the later patches, what I did apply should
+> > have still built properly (remember our rule, no breakage at any
+> > point in a patch series.)  So, should I revert the last olpc patch
+> > that caused this problem?
+> > 
+> 
+> Sorry, I thought that was made clear by the "this patch is necessary
+> for building the driver" comments in each patch description.  The
+> original driver that was submitted doesn't build unless all patches are
+> applied (the only which touches external APIs is the pending
+> cs5535-gpio one).
 
-On Mon, October 4, 2010 10:48 pm, Zimny Lech wrote:
-> Hi,
->
->
-> 2010/10/4 Stephen Rothwell <sfr@canb.auug.org.au>:
->
->> Hi all,
->>
->>
->> This tree is not as well tested as others since it was only built after
->>  all the merges had been done.
->
-> Randy said that he had already sent a patch for this
->
->
-> /home/test/linux-2.6/drivers/base/core.c: In function
-> 'get_device_parent':
-> /home/test/linux-2.6/drivers/base/core.c:634:3: error: 'block_class'
-> undeclared (first use in this function)
-> /home/test/linux-2.6/drivers/base/core.c:634:3: note: each undeclared
-> identifier is reported only once for each function it appears in
-> /home/test/linux-2.6/drivers/base/core.c: In function
-> 'device_add_class_symlinks':
-> /home/test/linux-2.6/drivers/base/core.c:723:2: error: 'block_class'
-> undeclared (first use in this function)
-> /home/test/linux-2.6/drivers/base/core.c: In function
-> 'device_remove_class_symlinks':
-> /home/test/linux-2.6/drivers/base/core.c:751:2: error: 'block_class'
-> undeclared (first use in this function) make[3]: *** [drivers/base/core.o]
-> Error 1
-> make[2]: *** [drivers/base] Error 2
-> make[1]: *** [drivers] Error 2
-> make: *** [sub-make] Error 2
+Ok, I'll go mark the driver as depending on CONFIG_BROKEN for now, until
+we get that resolved, as we can't have a driver that breaks the build in
+the tree.
 
+thanks,
 
-I sure did, but Greg may be backlogged or just ignoring it.
-
-
--- 
-~Randy
+greg k-h
