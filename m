@@ -1,38 +1,45 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: linux-next: manual merge of the usb tree with the trivial tree
-Date: Wed, 6 Oct 2010 11:36:13 +0200 (CEST)
-Message-ID: <alpine.LNX.2.00.1010061135370.29535@pobox.suse.cz>
-References: <20101006141414.abf7431f.sfr@canb.auug.org.au>
+From: Ike Panhc <ike.pan@canonical.com>
+Subject: Re: linux-next: build failure after merge of the drivers-x86 tree
+Date: Wed, 06 Oct 2010 18:45:11 +0800
+Message-ID: <4CAC5337.3090708@canonical.com>
+References: <20101005151126.eadae817.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor.suse.de ([195.135.220.2]:50251 "EHLO mx1.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932349Ab0JFJgU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 6 Oct 2010 05:36:20 -0400
-In-Reply-To: <20101006141414.abf7431f.sfr@canb.auug.org.au>
+Received: from adelie.canonical.com ([91.189.90.139]:42014 "EHLO
+	adelie.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751114Ab0JFKpW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Oct 2010 06:45:22 -0400
+In-Reply-To: <20101005151126.eadae817.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Sergei Shtylyov <sshtylyov@ru.mvista.com>, Felipe Balbi <balbi@ti.com>
+Cc: Matthew Garrett <mjg59@srcf.ucam.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>
 
-On Wed, 6 Oct 2010, Stephen Rothwell wrote:
+Hi,
 
-> Hi Greg,
+Sorry for the inconvenient.
+
+I update the patches and push to
+  git://kernel.ubuntu.com/ikepanhc/ideapad-laptop.git for-upstream
+
+Just test build and install on ideapad I have. It works fine.
+
+
+On 10/05/2010 12:11 PM, Stephen Rothwell wrote:
+> Hi Matthew,
 > 
-> Today's linux-next merge of the usb tree got a conflict in
-> drivers/usb/musb/musb_gadget.c between commit
-> 7f26b3a7533bbc1ddd88b297c935ee4da8f74cea ("drivers/usb: Remove
-> unnecessary return's from void functions") from the trivial tree and
-> commit 82cccbf2458e50dabf8b9946b3f0ef0e8d31711f ("usb: musb: gadget: kill
-> unreachable code in musb_g_rx()") from the usb tree.
+> After merging the drivers-x86 tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 > 
-> The latter also fixes the problem fixed in the former, so I just used the
-> latter.
-
-I have reverted the hunk in question in my tree, so the conflict should be 
-gone now.
-
--- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+> make[4]: *** No rule to make target `drivers/platform/x86/ideapad_laptop.c', needed by `drivers/platform/x86/ideapad_laptop.o'.  Stop.
+> 
+> Caused by commit 9efe5c1540a1e03cb2e0fca85e49fc4c57c6e771 ("ideapad:
+> Change the driver name to ideapad-laptop").  The commit renames
+> ideapad_acpi.c to ideapad-laptop.c but the Makefile uses ideapad_laptop.o
+> (note underscore v. dash).
+> 
+> Presumably this was never even build tested :-(
+> 
+> I have used the drivers-x86 tree from next-20101004 for today.
