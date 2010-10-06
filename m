@@ -1,95 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kgdb tree with the input tree
-Date: Wed, 6 Oct 2010 13:04:36 +1100
-Message-ID: <20101006130436.45d8a96a.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the rcu tree with Linus' tree
+Date: Wed, 6 Oct 2010 13:38:25 +1100
+Message-ID: <20101006133825.8ca341e4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__6_Oct_2010_13_38_25_+1100_X56Gqs9iJDCzi4jL"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43257 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34555 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750954Ab0JFCEk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 5 Oct 2010 22:04:40 -0400
+	id S1755911Ab0JFCic (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 5 Oct 2010 22:38:32 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jason Wessel <jason.wessel@windriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>
 
-Hi Jason,
+--Signature=_Wed__6_Oct_2010_13_38_25_+1100_X56Gqs9iJDCzi4jL
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the kgdb tree got a conflict in
-drivers/char/sysrq.c between commit
-1966cb225c6f9040ca163802cbd052c393d4448f ("Input: sysrq - add locking to
-sysrq_filter()") from the input tree and commit
-02307772717c91a108aca2e999bbc586a85d06a2 ("sysrq,keyboard: properly deal
-with alt-sysrq in sysrq input filter") from the kgdb tree.
+Hi Paul,
 
-Just context changes.  I fixed it up (see below) and can carry the fax as
-necessary.
--- 
+Today's linux-next merge of the rcu tree got a conflict in
+include/linux/rcupdate.h between commit
+b3a084b9b684622b149e8dcf03855bf0d5fb588b ("rcu: rcu_read_lock_bh_held():
+disabling irqs also disables bh") from Linus' tree and commit
+ca5ecddfa8fcbd948c95530e7e817cee9fb43a3d ("rcu: define __rcu address
+space modifier for sparse") from the rcu tree.
+
+I am not sure how to fix this, so I just used the version from the rcu
+tree.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/char/sysrq.c
-index f0ad694,9b97aad..0000000
---- a/drivers/char/sysrq.c
-+++ b/drivers/char/sysrq.c
-@@@ -566,7 -566,57 +566,58 @@@ static const unsigned char sysrq_xlate[
-  static bool sysrq_down;
-  static int sysrq_alt_use;
-  static int sysrq_alt;
- +static DEFINE_SPINLOCK(sysrq_event_lock);
-+ static bool sysrq_kbd_triggered;
-+ 
-+ /*
-+  * This function was a copy of input_pass_event but modified to allow
-+  * by-passing a specific filter, to allow for injected events without
-+  * filter recursion.
-+  */
-+ static void input_pass_event_ignore(struct input_dev *dev,
-+ 			     unsigned int type, unsigned int code, int value,
-+ 			     struct input_handle *ignore_handle)
-+ {
-+ 	struct input_handler *handler;
-+ 	struct input_handle *handle;
-+ 
-+ 	rcu_read_lock();
-+ 
-+ 	handle = rcu_dereference(dev->grab);
-+ 	if (handle)
-+ 		handle->handler->event(handle, type, code, value);
-+ 	else {
-+ 		bool filtered = false;
-+ 
-+ 		list_for_each_entry_rcu(handle, &dev->h_list, d_node) {
-+ 			if (!handle->open || handle == ignore_handle)
-+ 				continue;
-+ 			handler = handle->handler;
-+ 			if (!handler->filter) {
-+ 				if (filtered)
-+ 					break;
-+ 
-+ 				handler->event(handle, type, code, value);
-+ 
-+ 			} else if (handler->filter(handle, type, code, value))
-+ 				filtered = true;
-+ 		}
-+ 	}
-+ 
-+ 	rcu_read_unlock();
-+ }
-+ 
-+ /*
-+  * Pass along alt-print_screen, if there was no sysrq processing by
-+  * sending a key press down and then passing the key up event.
-+  */
-+ static void simulate_alt_sysrq(struct input_handle *handle)
-+ {
-+ 	input_pass_event_ignore(handle->dev, EV_KEY, KEY_SYSRQ, 1, handle);
-+ 	input_pass_event_ignore(handle->dev, EV_SYN, SYN_REPORT, 0, handle);
-+ 	input_pass_event_ignore(handle->dev, EV_KEY, KEY_SYSRQ, 0, handle);
-+ 	input_pass_event_ignore(handle->dev, EV_SYN, SYN_REPORT, 0, handle);
-+ }
-  
-  static bool sysrq_filter(struct input_handle *handle, unsigned int type,
-  		         unsigned int code, int value)
+--Signature=_Wed__6_Oct_2010_13_38_25_+1100_X56Gqs9iJDCzi4jL
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMq+EiAAoJEDMEi1NhKgbsBdYH/iuOc5yIVLRUWILx6vPfk+3x
+l7BQU5cAuDmi2BaUHZqYF1U4AvQ/Gto/hVOnygpqjz4ThPB71UdLfhD4NlGixQ4W
+f7P0AQr+DR2l1pKKQS6FKbPFCvL7upeAJsP3NiG9FAqnBWASd8ry8XFDqZOB2Zvq
+bYF2jqy5PySkX380850c9xKQjb+5Sub5YUtXLsuFMVKkHc87cVayX+m16KivT/gC
+C5XYpiIZhq9v2L1aQkZinaetwEmwbhXk93W6VGRzTGIZs0+/vVzEz98iKmL4vNaz
+y9O3Du4Tn4GsylCn6tj5iwxszXALWplgbds0pC4dLcDJ7Ct60lDlCg7bQPwIr3k=
+=JTxi
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__6_Oct_2010_13_38_25_+1100_X56Gqs9iJDCzi4jL--
