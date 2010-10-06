@@ -1,65 +1,37 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the bkl-config tree with the
- staging-next tree
-Date: Wed, 6 Oct 2010 14:43:42 +1100
-Message-ID: <20101006144342.6da4a30b.sfr@canb.auug.org.au>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: linux-next: manual merge of the rcu tree with Linus' tree
+Date: Tue, 5 Oct 2010 21:17:00 -0700
+Message-ID: <20101006041700.GA2553@linux.vnet.ibm.com>
+References: <20101006133825.8ca341e4.sfr@canb.auug.org.au>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51396 "EHLO smtps.tip.net.au"
+Received: from e9.ny.us.ibm.com ([32.97.182.139]:42343 "EHLO e9.ny.us.ibm.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758551Ab0JFDnq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 5 Oct 2010 23:43:46 -0400
+	id S1751291Ab0JFERD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 6 Oct 2010 00:17:03 -0400
+Content-Disposition: inline
+In-Reply-To: <20101006133825.8ca341e4.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>
 
-Hi Arnd,
+On Wed, Oct 06, 2010 at 01:38:25PM +1100, Stephen Rothwell wrote:
+> Hi Paul,
+> 
+> Today's linux-next merge of the rcu tree got a conflict in
+> include/linux/rcupdate.h between commit
+> b3a084b9b684622b149e8dcf03855bf0d5fb588b ("rcu: rcu_read_lock_bh_held():
+> disabling irqs also disables bh") from Linus' tree and commit
+> ca5ecddfa8fcbd948c95530e7e817cee9fb43a3d ("rcu: define __rcu address
+> space modifier for sparse") from the rcu tree.
+> 
+> I am not sure how to fix this, so I just used the version from the rcu
+> tree.
 
-Today's linux-next merge of the bkl-config tree got a conflict in
-fs/compat_ioctl.c between commit 2116b7a473bf1c8d26998b477c294e7fe294921f
-("smbfs: move to drivers/staging") from the staging-next tree and commit
-b9abbb0214fbdbdf36fc0edebd4b1adb7ddb3a12 ("fix rawctl compat ioctls
-breakage on amd64 and itanic") from the bkl-config tree.
+I believe that I will have an update that will get rid of the conflict.
+But I will let you be the final judge of that.  ;-)
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc fs/compat_ioctl.c
-index 34cf03c,d0ad09d..0000000
---- a/fs/compat_ioctl.c
-+++ b/fs/compat_ioctl.c
-@@@ -1242,9 -1199,8 +1179,6 @@@ COMPATIBLE_IOCTL(SOUND_MIXER_PRIVATE5
-  COMPATIBLE_IOCTL(SOUND_MIXER_GETLEVELS)
-  COMPATIBLE_IOCTL(SOUND_MIXER_SETLEVELS)
-  COMPATIBLE_IOCTL(OSS_GETVERSION)
-- /* Raw devices */
-- COMPATIBLE_IOCTL(RAW_SETBIND)
-- COMPATIBLE_IOCTL(RAW_GETBIND)
- -/* SMB ioctls which do not need any translations */
- -COMPATIBLE_IOCTL(SMB_IOC_NEWCONN)
-  /* Watchdog */
-  COMPATIBLE_IOCTL(WDIOC_GETSUPPORT)
-  COMPATIBLE_IOCTL(WDIOC_GETSTATUS)
-@@@ -1501,11 -1457,11 +1435,7 @@@ static long do_ioctl_trans(int fd, unsi
-  	case MTIOCGET32:
-  	case MTIOCPOS32:
-  		return mt_ioctl_trans(fd, cmd, argp);
-- 	/* Raw devices */
-- 	case RAW_SETBIND:
-- 	case RAW_GETBIND:
-- 		return raw_ioctl(fd, cmd, argp);
-  #endif
- -	/* One SMB ioctl needs translations. */
- -#define SMB_IOC_GETMOUNTUID_32 _IOR('u', 1, compat_uid_t)
- -	case SMB_IOC_GETMOUNTUID_32:
- -		return do_smb_getmountuid(fd, cmd, argp);
-  	/* Serial */
-  	case TIOCGSERIAL:
-  	case TIOCSSERIAL:
+							Thanx, Paul
