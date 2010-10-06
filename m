@@ -1,51 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: failed to fetch the ecryptfs tree
-Date: Wed, 6 Oct 2010 10:24:18 +1100
-Message-ID: <20101006102418.f1962740.sfr@canb.auug.org.au>
+Subject: linux-next: build failure in Linus' tree
+Date: Wed, 6 Oct 2010 11:09:35 +1100
+Message-ID: <20101006110935.e332fdf9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__6_Oct_2010_10_24_18_+1100_vlGsiZXTzCy4Aq4O"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:42433 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:60621 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757566Ab0JEXY0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 5 Oct 2010 19:24:26 -0400
+	id S1757499Ab0JFAJj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 5 Oct 2010 20:09:39 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tyler Hicks <tyhicks@linux.vnet.ibm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ppc-dev <linuxppc-dev@lists.ozlabs.org>
 
---Signature=_Wed__6_Oct_2010_10_24_18_+1100_vlGsiZXTzCy4Aq4O
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Linus,
 
-Hi Tyler,
+Today's linux-next initial build (powerpc ppc64_defconfig) failed like
+this:
 
-Trying to fetch the ecryptfs tree today gave me this error:
+cc1: warnings being treated as errors
+arch/powerpc/kernel/module.c: In function 'module_finalize':
+arch/powerpc/kernel/module.c:66: error: unused variable 'err'
 
-fatal: Couldn't find remote ref refs/heads/next
+Caused by commit 5336377d6225959624146629ce3fc88ee8ecda3d ("modules: Fix
+module_bug_list list corruption race").
 
-I will use the ecryptfs tree from next-20101005 for today.
---=20
+I added the following patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 6 Oct 2010 11:06:44 +1100
+Subject: [PATCH] powerpc: remove unused variable
+
+Since powerpc uses -Werror on arch powerpc, the build was broken like
+this:
+
+cc1: warnings being treated as errors
+arch/powerpc/kernel/module.c: In function 'module_finalize':
+arch/powerpc/kernel/module.c:66: error: unused variable 'err'
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/powerpc/kernel/module.c |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
+
+diff --git a/arch/powerpc/kernel/module.c b/arch/powerpc/kernel/module.c
+index 4ef93ae..49cee9d 100644
+--- a/arch/powerpc/kernel/module.c
++++ b/arch/powerpc/kernel/module.c
+@@ -63,7 +63,6 @@ int module_finalize(const Elf_Ehdr *hdr,
+ 		const Elf_Shdr *sechdrs, struct module *me)
+ {
+ 	const Elf_Shdr *sect;
+-	int err;
+ 
+ 	/* Apply feature fixups */
+ 	sect = find_section(hdr, sechdrs, "__ftr_fixup");
+-- 
+1.7.1
+
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__6_Oct_2010_10_24_18_+1100_vlGsiZXTzCy4Aq4O
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMq7OiAAoJEDMEi1NhKgbsH9oIAIRrFfIO6z7Uve0x5nf0mt1K
-317nE31+blaYMNG3KC74ajrz7oqzQvtcgVRdpqiPxcxxJmUPP2GNDRr+p1qI/2yG
-6BytmSFVj24UoeeWl5gE0paKq9Yn0IqsgPkGSY63+W6SeWHuHzZC+fax8C6wLuCA
-XOH+oeuYL9gctBcZ9majXTGHeYdNr3XM/ysV2h2g5w5ELbnKEJKxIrZCLSIHVUBU
-0jZcoTHGRXn9WUyAdczs4V1equGSVROeTliK/QaTBZKL2N3Cit4DsW/rqlIF6LBH
-zuM0rZl1x53roib1tQO3h7rmjSNcGRbVjD1fDlQiU6rZ3cXWIuso1jTIzXxA1uI=
-=n25m
------END PGP SIGNATURE-----
-
---Signature=_Wed__6_Oct_2010_10_24_18_+1100_vlGsiZXTzCy4Aq4O--
