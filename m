@@ -1,66 +1,95 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree with the wireless tree
-Date: Wed, 6 Oct 2010 12:09:08 +1100
-Message-ID: <20101006120908.ffe99876.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kgdb tree with the input tree
+Date: Wed, 6 Oct 2010 13:04:36 +1100
+Message-ID: <20101006130436.45d8a96a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Carpenter <error27@gmail.com>, Joe Perches <joe@perches.com>, "John W. Linville" <linville@tuxdriver.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:43257 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750954Ab0JFCEk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 5 Oct 2010 22:04:40 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jason Wessel <jason.wessel@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-Hi all,
+Hi Jason,
 
-Today's linux-next merge of the net tree got a conflict in
-drivers/net/wireless/ipw2x00/ipw2200.c between commit
-2ee4e27cf25ab647137713ca16377d8d9e138ea2 ("ipw2200: check for allocation
-failures") from the wireless tree and commit
-baeb2ffab4e67bb9174e6166e070a9a8ec94b0f6 ("drivers/net: Convert unbounded
-kzalloc calls to kcalloc") from the net tree.
+Today's linux-next merge of the kgdb tree got a conflict in
+drivers/char/sysrq.c between commit
+1966cb225c6f9040ca163802cbd052c393d4448f ("Input: sysrq - add locking to
+sysrq_filter()") from the input tree and commit
+02307772717c91a108aca2e999bbc586a85d06a2 ("sysrq,keyboard: properly deal
+with alt-sysrq in sysrq input filter") from the kgdb tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
+Just context changes.  I fixed it up (see below) and can carry the fax as
 necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/net/wireless/ipw2x00/ipw2200.c
-index d04d760,0f25083..0000000
---- a/drivers/net/wireless/ipw2x00/ipw2200.c
-+++ b/drivers/net/wireless/ipw2x00/ipw2200.c
-@@@ -11467,13 -11467,9 +11467,13 @@@ static int ipw_net_init(struct net_devi
+diff --cc drivers/char/sysrq.c
+index f0ad694,9b97aad..0000000
+--- a/drivers/char/sysrq.c
++++ b/drivers/char/sysrq.c
+@@@ -566,7 -566,57 +566,58 @@@ static const unsigned char sysrq_xlate[
+  static bool sysrq_down;
+  static int sysrq_alt_use;
+  static int sysrq_alt;
+ +static DEFINE_SPINLOCK(sysrq_event_lock);
++ static bool sysrq_kbd_triggered;
++ 
++ /*
++  * This function was a copy of input_pass_event but modified to allow
++  * by-passing a specific filter, to allow for injected events without
++  * filter recursion.
++  */
++ static void input_pass_event_ignore(struct input_dev *dev,
++ 			     unsigned int type, unsigned int code, int value,
++ 			     struct input_handle *ignore_handle)
++ {
++ 	struct input_handler *handler;
++ 	struct input_handle *handle;
++ 
++ 	rcu_read_lock();
++ 
++ 	handle = rcu_dereference(dev->grab);
++ 	if (handle)
++ 		handle->handler->event(handle, type, code, value);
++ 	else {
++ 		bool filtered = false;
++ 
++ 		list_for_each_entry_rcu(handle, &dev->h_list, d_node) {
++ 			if (!handle->open || handle == ignore_handle)
++ 				continue;
++ 			handler = handle->handler;
++ 			if (!handler->filter) {
++ 				if (filtered)
++ 					break;
++ 
++ 				handler->event(handle, type, code, value);
++ 
++ 			} else if (handler->filter(handle, type, code, value))
++ 				filtered = true;
++ 		}
++ 	}
++ 
++ 	rcu_read_unlock();
++ }
++ 
++ /*
++  * Pass along alt-print_screen, if there was no sysrq processing by
++  * sending a key press down and then passing the key up event.
++  */
++ static void simulate_alt_sysrq(struct input_handle *handle)
++ {
++ 	input_pass_event_ignore(handle->dev, EV_KEY, KEY_SYSRQ, 1, handle);
++ 	input_pass_event_ignore(handle->dev, EV_SYN, SYN_REPORT, 0, handle);
++ 	input_pass_event_ignore(handle->dev, EV_KEY, KEY_SYSRQ, 0, handle);
++ 	input_pass_event_ignore(handle->dev, EV_SYN, SYN_REPORT, 0, handle);
++ }
   
-  		bg_band->band = IEEE80211_BAND_2GHZ;
-  		bg_band->n_channels = geo->bg_channels;
-- 		bg_band->channels =
-- 			kzalloc(geo->bg_channels *
-- 				sizeof(struct ieee80211_channel), GFP_KERNEL);
-+ 		bg_band->channels = kcalloc(geo->bg_channels,
-+ 					    sizeof(struct ieee80211_channel),
-+ 					    GFP_KERNEL);
- +		if (!bg_band->channels) {
- +			rc = -ENOMEM;
- +			goto out;
- +		}
-  		/* translate geo->bg to bg_band.channels */
-  		for (i = 0; i < geo->bg_channels; i++) {
-  			bg_band->channels[i].band = IEEE80211_BAND_2GHZ;
-@@@ -11506,13 -11502,9 +11506,13 @@@
-  
-  		a_band->band = IEEE80211_BAND_5GHZ;
-  		a_band->n_channels = geo->a_channels;
-- 		a_band->channels =
-- 			kzalloc(geo->a_channels *
-- 				sizeof(struct ieee80211_channel), GFP_KERNEL);
-+ 		a_band->channels = kcalloc(geo->a_channels,
-+ 					   sizeof(struct ieee80211_channel),
-+ 					   GFP_KERNEL);
- +		if (!a_band->channels) {
- +			rc = -ENOMEM;
- +			goto out;
- +		}
-  		/* translate geo->bg to a_band.channels */
-  		for (i = 0; i < geo->a_channels; i++) {
-  			a_band->channels[i].band = IEEE80211_BAND_2GHZ;
+  static bool sysrq_filter(struct input_handle *handle, unsigned int type,
+  		         unsigned int code, int value)
