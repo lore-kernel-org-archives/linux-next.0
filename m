@@ -1,40 +1,34 @@
-From: Jason Wessel <jason.wessel@windriver.com>
-Subject: Re: linux-next: manual merge of the kgdb tree with the input tree
-Date: Wed, 06 Oct 2010 07:17:05 -0500
-Message-ID: <4CAC68C1.1070706@windriver.com>
-References: <20101006130436.45d8a96a.sfr@canb.auug.org.au>
+From: "John W. Linville" <linville@tuxdriver.com>
+Subject: Re: linux-next: manual merge of the net tree with the wireless tree
+Date: Wed, 6 Oct 2010 09:27:08 -0400
+Message-ID: <20101006132708.GC2472@tuxdriver.com>
+References: <20101006120908.ffe99876.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:54549 "EHLO
-	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754401Ab0JFMRS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Oct 2010 08:17:18 -0400
-In-Reply-To: <20101006130436.45d8a96a.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <netdev-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20101006120908.ffe99876.sfr@canb.auug.org.au>
+Sender: netdev-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Carpenter <error27@gmail.com>, Joe Perches <joe@perches.com>
+List-Id: linux-next.vger.kernel.org
 
-On 10/05/2010 09:04 PM, Stephen Rothwell wrote:
-> Hi Jason,
->
-> Today's linux-next merge of the kgdb tree got a conflict in
-> drivers/char/sysrq.c between commit
-> 1966cb225c6f9040ca163802cbd052c393d4448f ("Input: sysrq - add locking to
-> sysrq_filter()") from the input tree and commit
-> 02307772717c91a108aca2e999bbc586a85d06a2 ("sysrq,keyboard: properly deal
-> with alt-sysrq in sysrq input filter") from the kgdb tree.
->
-> Just context changes.  I fixed it up (see below) and can carry the fax as
+On Wed, Oct 06, 2010 at 12:09:08PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the net tree got a conflict in
+> drivers/net/wireless/ipw2x00/ipw2200.c between commit
+> 2ee4e27cf25ab647137713ca16377d8d9e138ea2 ("ipw2200: check for allocation
+> failures") from the wireless tree and commit
+> baeb2ffab4e67bb9174e6166e070a9a8ec94b0f6 ("drivers/net: Convert unbounded
+> kzalloc calls to kcalloc") from the net tree.
+> 
+> Just context changes.  I fixed it up (see below) and can carry the fix as
 > necessary.
->   
 
-Thanks Stephen,
+That looks correct to me -- thanks!
 
-Hopefully I can get the sysrq / keyboard patches out of my tree and into
-Dmitry's tree which should fix the problem by design. :-)
-
-Thanks,
-Jason.
+John
+-- 
+John W. Linville		Someday the world will need a hero, and you
+linville@tuxdriver.com			might be all we have.  Be ready.
