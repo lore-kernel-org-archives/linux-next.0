@@ -1,34 +1,33 @@
-From: "John W. Linville" <linville@tuxdriver.com>
-Subject: Re: linux-next: manual merge of the net tree with the wireless tree
-Date: Wed, 6 Oct 2010 09:27:08 -0400
-Message-ID: <20101006132708.GC2472@tuxdriver.com>
-References: <20101006120908.ffe99876.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the usb tree with the trivial tree
+Date: Wed, 6 Oct 2010 07:05:56 -0700
+Message-ID: <20101006140556.GA19537@kroah.com>
+References: <20101006141414.abf7431f.sfr@canb.auug.org.au>
+ <20101006061927.GA2659@legolas.emea.dhcp.ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <netdev-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20101006120908.ffe99876.sfr@canb.auug.org.au>
-Sender: netdev-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Carpenter <error27@gmail.com>, Joe Perches <joe@perches.com>
+In-Reply-To: <20101006061927.GA2659@legolas.emea.dhcp.ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Felipe Balbi <balbi@ti.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Joe Perches <joe@perches.com>, Jiri Kosina <jkosina@suse.cz>, Sergei Shtylyov <sshtylyov@ru.mvista.com>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Oct 06, 2010 at 12:09:08PM +1100, Stephen Rothwell wrote:
-> Hi all,
+On Wed, Oct 06, 2010 at 09:19:27AM +0300, Felipe Balbi wrote:
+> On Tue, Oct 05, 2010 at 10:14:14PM -0500, Stephen Rothwell wrote:
+> >Hi Greg,
+> >
+> >Today's linux-next merge of the usb tree got a conflict in
+> >drivers/usb/musb/musb_gadget.c between commit
+> >7f26b3a7533bbc1ddd88b297c935ee4da8f74cea ("drivers/usb: Remove
+> >unnecessary return's from void functions") from the trivial tree and
 > 
-> Today's linux-next merge of the net tree got a conflict in
-> drivers/net/wireless/ipw2x00/ipw2200.c between commit
-> 2ee4e27cf25ab647137713ca16377d8d9e138ea2 ("ipw2200: check for allocation
-> failures") from the wireless tree and commit
-> baeb2ffab4e67bb9174e6166e070a9a8ec94b0f6 ("drivers/net: Convert unbounded
-> kzalloc calls to kcalloc") from the net tree.
-> 
-> Just context changes.  I fixed it up (see below) and can carry the fix as
-> necessary.
+> funny that I wasn't CCed to that one :-(
 
-That looks correct to me -- thanks!
+It was 'trivial' patches, which don't always get sent to the individual
+developer unfortunately.
 
-John
--- 
-John W. Linville		Someday the world will need a hero, and you
-linville@tuxdriver.com			might be all we have.  Be ready.
+sorry,
+
+greg k-h
