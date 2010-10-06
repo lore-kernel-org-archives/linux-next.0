@@ -1,37 +1,66 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: linux-next: manual merge of the rcu tree with Linus' tree
-Date: Tue, 5 Oct 2010 21:17:00 -0700
-Message-ID: <20101006041700.GA2553@linux.vnet.ibm.com>
-References: <20101006133825.8ca341e4.sfr@canb.auug.org.au>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree
+ (jdelvare-hwmon tree related)
+Date: Wed, 6 Oct 2010 15:28:31 +1100
+Message-ID: <20101006152831.f91a5610.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__6_Oct_2010_15_28_31_+1100_YrJAxi/UnN6d_Lpk"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e9.ny.us.ibm.com ([32.97.182.139]:42343 "EHLO e9.ny.us.ibm.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:52574 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751291Ab0JFERD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 6 Oct 2010 00:17:03 -0400
-Content-Disposition: inline
-In-Reply-To: <20101006133825.8ca341e4.sfr@canb.auug.org.au>
+	id S1750721Ab0JFE2o (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 6 Oct 2010 00:28:44 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>
+To: Jean Delvare <khali@linux-fr.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Oct 06, 2010 at 01:38:25PM +1100, Stephen Rothwell wrote:
-> Hi Paul,
-> 
-> Today's linux-next merge of the rcu tree got a conflict in
-> include/linux/rcupdate.h between commit
-> b3a084b9b684622b149e8dcf03855bf0d5fb588b ("rcu: rcu_read_lock_bh_held():
-> disabling irqs also disables bh") from Linus' tree and commit
-> ca5ecddfa8fcbd948c95530e7e817cee9fb43a3d ("rcu: define __rcu address
-> space modifier for sparse") from the rcu tree.
-> 
-> I am not sure how to fix this, so I just used the version from the rcu
-> tree.
+--Signature=_Wed__6_Oct_2010_15_28_31_+1100_YrJAxi/UnN6d_Lpk
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I believe that I will have an update that will get rid of the conflict.
-But I will let you be the final judge of that.  ;-)
+Hi ,
 
-							Thanx, Paul
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
+
+drivers/hwmon/pcf8591.c: In function 'pcf8591_probe':
+drivers/hwmon/pcf8591.c:205: error: implicit declaration of function 'IS_ER=
+R'
+drivers/hwmon/pcf8591.c:206: error: implicit declaration of function 'PTR_E=
+RR'
+
+Caused by commit 63575f5628b811d80f81158825dbc9d3db4ac1a5 ("hwmon:
+(pcf8591) Register as a hwmon device").
+
+See Rule 1 in Documentation/SubmitChecklist.
+
+I have added reverted that commit (and
+3eabb87a17ff8da477f7bf4c5a14063b68937fb1 ("hwmon: (pcf8591) Don't attempt
+to detect devices") that followed it) for today.
+
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__6_Oct_2010_15_28_31_+1100_YrJAxi/UnN6d_Lpk
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMq/rvAAoJEDMEi1NhKgbsgv4H/3oqalpfjFvF9APGnOy6h50z
+RSNCdmRnhFbALO2hg3Ht478WI8hYYO0OgwjeAm2YTIrekkN9bRSxRxRwyD+YWnhR
+/L0VrvrYR4NxZCVc7n92w/fnxODN5aGCZGwxlqbRFeVlPzo2GUFECPVGyCQiq0FS
+1ETjYPu/SpgW5jUpJE4gmo4+MKNqN+vwKLTbrzZNI88VzxrtcZy/Jz+uZniyMChP
+r/r6hBVlCnNsmwJ6dgJrEliRatBj+lH7StFe7b7SD+ATf/b8cgeqWJm0bThunwuh
+TqcUp1MYZ3FpWnMBuBv4hngF9Zm25c9cbWTe+k8ada4mBRqqWMRjcMOxZ+gS5ec=
+=FaMZ
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__6_Oct_2010_15_28_31_+1100_YrJAxi/UnN6d_Lpk--
