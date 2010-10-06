@@ -1,36 +1,65 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging-next tree with the
-	omap tree
-Date: Tue, 5 Oct 2010 20:36:05 -0700
-Message-ID: <20101006033605.GB5719@kroah.com>
-References: <20101006142110.e757f27c.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the bkl-config tree with the
+ staging-next tree
+Date: Wed, 6 Oct 2010 14:43:42 +1100
+Message-ID: <20101006144342.6da4a30b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:34865 "EHLO coco.kroah.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:51396 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758563Ab0JFDf2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 5 Oct 2010 23:35:28 -0400
-Content-Disposition: inline
-In-Reply-To: <20101006142110.e757f27c.sfr@canb.auug.org.au>
+	id S1758551Ab0JFDnq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 5 Oct 2010 23:43:46 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Charulatha V <charu@ti.com>, Felipe Contreras <felipe.contreras@gmail.com>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>
 
-On Wed, Oct 06, 2010 at 02:21:10PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the staging-next tree got a conflict in
-> arch/arm/plat-omap/devices.c between commit
-> f2ce62312650211f6cf665cd6dc519c334c4071e ("OMAP: WDT: Split OMAP1 and
-> OMAP2PLUS device registration") from the omap tree and commit
-> 90173882ed15a8034d6d162da5f343a2c7d87587 ("omap: add dsp platform
-> device") from the staging-next tree.
-> 
-> Just overlapping removal/additions (I think).  I fixed it up (see below)
-> and can carry the changes as necessary.
+Hi Arnd,
 
-Your fixup looks correct to me, thanks for carrying it.
+Today's linux-next merge of the bkl-config tree got a conflict in
+fs/compat_ioctl.c between commit 2116b7a473bf1c8d26998b477c294e7fe294921f
+("smbfs: move to drivers/staging") from the staging-next tree and commit
+b9abbb0214fbdbdf36fc0edebd4b1adb7ddb3a12 ("fix rawctl compat ioctls
+breakage on amd64 and itanic") from the bkl-config tree.
 
-greg k-h
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc fs/compat_ioctl.c
+index 34cf03c,d0ad09d..0000000
+--- a/fs/compat_ioctl.c
++++ b/fs/compat_ioctl.c
+@@@ -1242,9 -1199,8 +1179,6 @@@ COMPATIBLE_IOCTL(SOUND_MIXER_PRIVATE5
+  COMPATIBLE_IOCTL(SOUND_MIXER_GETLEVELS)
+  COMPATIBLE_IOCTL(SOUND_MIXER_SETLEVELS)
+  COMPATIBLE_IOCTL(OSS_GETVERSION)
+- /* Raw devices */
+- COMPATIBLE_IOCTL(RAW_SETBIND)
+- COMPATIBLE_IOCTL(RAW_GETBIND)
+ -/* SMB ioctls which do not need any translations */
+ -COMPATIBLE_IOCTL(SMB_IOC_NEWCONN)
+  /* Watchdog */
+  COMPATIBLE_IOCTL(WDIOC_GETSUPPORT)
+  COMPATIBLE_IOCTL(WDIOC_GETSTATUS)
+@@@ -1501,11 -1457,11 +1435,7 @@@ static long do_ioctl_trans(int fd, unsi
+  	case MTIOCGET32:
+  	case MTIOCPOS32:
+  		return mt_ioctl_trans(fd, cmd, argp);
+- 	/* Raw devices */
+- 	case RAW_SETBIND:
+- 	case RAW_GETBIND:
+- 		return raw_ioctl(fd, cmd, argp);
+  #endif
+ -	/* One SMB ioctl needs translations. */
+ -#define SMB_IOC_GETMOUNTUID_32 _IOR('u', 1, compat_uid_t)
+ -	case SMB_IOC_GETMOUNTUID_32:
+ -		return do_smb_getmountuid(fd, cmd, argp);
+  	/* Serial */
+  	case TIOCGSERIAL:
+  	case TIOCSSERIAL:
