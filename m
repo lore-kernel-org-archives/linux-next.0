@@ -1,35 +1,64 @@
-From: Christoph Lameter <cl@linux.com>
-Subject: Re: linux-next: Tree for October 6
-Date: Wed, 6 Oct 2010 15:09:45 -0500 (CDT)
-Message-ID: <alpine.DEB.2.00.1010061508350.6878@router.home>
-References: <20101006163632.c1943a38.sfr@canb.auug.org.au> <AANLkTikxMdXrm1jRztZM1BUAoCbBtAs6A39v1cAgRnDY@mail.gmail.com> <20101006174831.02cf1691.sfr@canb.auug.org.au> <AANLkTikv4Y3gxCEFXg8SQdgmb2Gqk7OniUT7gBvLf14p@mail.gmail.com>
- <alpine.DEB.2.00.1010061311430.31538@router.home> <4CACBCDE.3000701@cs.helsinki.fi> <alpine.DEB.2.00.1010061319580.4817@router.home> <4CACCCC3.5070203@cs.helsinki.fi>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree with the net-current tree
+Date: Thu, 7 Oct 2010 12:31:04 +1100
+Message-ID: <20101007123104.bf7a9808.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp101.prem.mail.ac4.yahoo.com ([76.13.13.40]:33835 "HELO
-	smtp101.prem.mail.ac4.yahoo.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with SMTP id S1759517Ab0JFUJt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 6 Oct 2010 16:09:49 -0400
-In-Reply-To: <4CACCCC3.5070203@cs.helsinki.fi>
+Received: from chilli.pcug.org.au ([203.10.76.44]:43063 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759612Ab0JGBbJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 6 Oct 2010 21:31:09 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Pekka Enberg <penberg@cs.helsinki.fi>
-Cc: Zimny Lech <napohybelskurwysynom2010@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Joe Perches <joe@perches.com>
 
-On Wed, 6 Oct 2010, Pekka Enberg wrote:
+Hi all,
 
-> On 6.10.2010 21.20, Christoph Lameter wrote:
-> > On Wed, 6 Oct 2010, Pekka Enberg wrote:
-> >
-> > > You already acked my patch to fix it:
-> > >
-> > > http://lkml.org/lkml/2010/10/6/194
-> >
-> > That is a different issue.
->
-> It's the exact same build error and hotplug_memory_notifier() works just fine
-> on !CONFIG_MEMORY_HOTPLUG.
+Today's linux-next merge of the net tree got a conflict in
+net/caif/caif_socket.c between commit
+79315068f4560f3f7bd6e9790190dcb43059770c ("caif: fix two caif_connect()
+bugs") from the net-current tree and commit
+b31fa5bad576cd8180a5ad70c648333b44320d44 ("net/caif: Use pr_fmt") from
+the net tree.
 
-Ahh. I see hotplug_memory_notifier is a macro and the argument just
-vanished for !CONFIG_MEMORY_HOTPLUG. You are right.
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc net/caif/caif_socket.c
+index 4bf28f2,abcba53..0000000
+--- a/net/caif/caif_socket.c
++++ b/net/caif/caif_socket.c
+@@@ -897,23 -888,14 +889,22 @@@ static int caif_connect(struct socket *
+  		cf_sk->sk.sk_state = CAIF_DISCONNECTED;
+  		goto out;
+  	}
+ -	dev = dev_get_by_index(sock_net(sk), ifindex);
+ +
+ +	err = -ENODEV;
+ +	rcu_read_lock();
+ +	dev = dev_get_by_index_rcu(sock_net(sk), ifindex);
+ +	if (!dev) {
+ +		rcu_read_unlock();
+ +		goto out;
+ +	}
+  	cf_sk->headroom = LL_RESERVED_SPACE_EXTRA(dev, headroom);
+ +	mtu = dev->mtu;
+ +	rcu_read_unlock();
+ +
+  	cf_sk->tailroom = tailroom;
+ -	cf_sk->maxframe = dev->mtu - (headroom + tailroom);
+ -	dev_put(dev);
+ +	cf_sk->maxframe = mtu - (headroom + tailroom);
+  	if (cf_sk->maxframe < 1) {
+- 		pr_warning("CAIF: %s(): CAIF Interface MTU too small (%u)\n",
+- 			   __func__, mtu);
+ -		pr_warn("CAIF Interface MTU too small (%d)\n", dev->mtu);
+ -		err = -ENODEV;
+++		pr_warn("CAIF Interface MTU too small (%d)\n", mtu);
+  		goto out;
+  	}
+  
