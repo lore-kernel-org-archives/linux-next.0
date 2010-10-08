@@ -1,41 +1,51 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: Re: linux-next: build warning after merge of the v4l-dvb tree
-Date: Fri, 08 Oct 2010 00:13:19 -0300
-Message-ID: <4CAE8C4F.2060609@infradead.org>
-References: <20101008114945.636093c9.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the hwpoison tree with Linus' tree
+Date: Fri, 8 Oct 2010 14:40:37 +1100
+Message-ID: <20101008144037.f487b6d7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:41633 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751172Ab0JHDN0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Oct 2010 23:13:26 -0400
-In-Reply-To: <20101008114945.636093c9.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:42569 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751140Ab0JHDkl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 7 Oct 2010 23:40:41 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andi Kleen <andi@firstfloor.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Em 07-10-2010 21:49, Stephen Rothwell escreveu:
-> Hi Mauro,
-> 
-> After merging the kvm tree, today's linux-next build (x86_64 allmodconfig)
-> produced this warning:
-> 
-> drivers/media/video/videobuf-dma-sg.c: In function 'videobuf_pages_to_sg':
-> drivers/media/video/videobuf-dma-sg.c:119: warning: comparison of distinct pointer types lacks a cast
-> drivers/media/video/videobuf-dma-sg.c:120: warning: comparison of distinct pointer types lacks a cast
-> 
-> Commit ecc736735ecf922d7f31d34417f7c42f8ec9eb67 ("V4L/DVB:
-> videobuf-dma-sg: Fix a warning due to the usage of min(PAGE_SIZE, arg)")
-> tried to fix it (presumably on a 32 bit build), but is not correct for 64
-> bits .
-> 
-Hi Stephen,
+Hi Andi,
 
-Thanks. I have already a fix for it, using min_t(size_t, PAGE_SIZE, arg).
-I'll add it probably tomorrow for the linux-next tree.
+Today's linux-next merge of the hwpoison tree got a conflict in
+mm/memory-failure.c between commit
+0d9ee6a2d4a6e92c49e6fa9469e5731d21ee203e ("HWPOISON: Report correct
+address granuality for AO huge page errors") from Linus' tree and commit
+3c5ca5455796841ac3cd706a91ba8dada908c375 ("HWPOISON: Report correct
+address granuality for AO huge page errors") from the hwpoison tree.
 
-Thanks,
-Mauro
+Slightly different versions of the same patch.  I used the version from
+Linus' tree (since it was committed later).  The conflict looked like this:
+
+diff --cc mm/memory-failure.c
+index 757f6b0,0966b6a..0000000
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@@ -198,7 -203,8 +203,12 @@@ static int kill_proc_ao(struct task_str
+  #ifdef __ARCH_SI_TRAPNO
+  	si.si_trapno = trapno;
+  #endif
+++<<<<<<< HEAD
+ +	si.si_addr_lsb = compound_order(compound_head(page)) + PAGE_SHIFT;
+++=======
++ 	order = PageCompound(page) ? huge_page_order(page) : PAGE_SHIFT;
++ 	si.si_addr_lsb = order;
+++>>>>>>> hwpoison/hwpoison
+  	/*
+  	 * Don't use force here, it's convenient if the signal
+  	 * can be temporarily blocked.
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
