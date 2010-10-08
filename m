@@ -1,31 +1,74 @@
-From: David Howells <dhowells@redhat.com>
-Subject: Re: linux-next: manual merge of the irqflags tree with Linus' tree
-Date: Thu, 07 Oct 2010 14:11:37 +0100
-Message-ID: <26564.1286457097@redhat.com>
-References: <20101007150835.9e1a49f7.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the xfs tree
+Date: Fri, 8 Oct 2010 11:08:28 +1100
+Message-ID: <20101008110828.1380e307.sfr@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:19439 "EHLO mx1.redhat.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:42146 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1760564Ab0JGNLr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 7 Oct 2010 09:11:47 -0400
-In-Reply-To: <20101007150835.9e1a49f7.sfr@canb.auug.org.au>
+	id S1755157Ab0JHAIb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 7 Oct 2010 20:08:31 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: dhowells@redhat.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>
+To: David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Elder <aelder@sgi.com>
 
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi all,
 
-> Today's linux-next merge of the irqflags tree got a conflict in
-> arch/mips/kernel/irq-gic.c between commit
-> 863cb9bad8f992a9c171e90552045eac77808e84 ("MIPS: GIC: Remove dependencies
-> from Malta files") from Linus' tree and commit
-> 9cbb8e371af264699522030ec637c55a58765859 ("MIPS: Add missing #inclusions
-> of <linux/irq.h>") from the irqflags tree.
-> 
-> Just context changes.  I fixed it up (see below) and can carry the fix as
-> necessary.
+[I tried to cc this to Johannes Weiner <hannes@cmpxchg.org>, but that
+domain does not current resolve :-(]
 
-Fixed in the irqflags tree.
+After merging the xfs tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-David
+fs/xfs/linux-2.6/xfs_sync.c:671: error: redefinition of '__xfs_inode_clear_reclaim_tag'
+fs/xfs/linux-2.6/xfs_sync.c:623: note: previous definition of '__xfs_inode_clear_reclaim_tag' was here
+
+Caused by a mismerge between commit
+081003fff467ea0e727f66d5d435b4f473a789b3 ("xfs: properly account for
+reclaimed inodes") from Linus' tree and commit
+5ae4ef8313c85f443202aa04405fe178e6138a6a ("xfs: properly account for
+reclaimed inodes") from the xfs tree.  The new function __xfs_inode_clear_reclaim_tag() was inserted in different places in each of those commits, so git inserted them both.
+
+I applied the following merge fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 8 Oct 2010 11:00:58 +1100
+Subject: [PATCH] xfs: fix up mismerge of __xfs_inode_clear_reclaim_tag
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/xfs/linux-2.6/xfs_sync.c |   11 -----------
+ 1 files changed, 0 insertions(+), 11 deletions(-)
+
+diff --git a/fs/xfs/linux-2.6/xfs_sync.c b/fs/xfs/linux-2.6/xfs_sync.c
+index 574fb71..37d3325 100644
+--- a/fs/xfs/linux-2.6/xfs_sync.c
++++ b/fs/xfs/linux-2.6/xfs_sync.c
+@@ -667,17 +667,6 @@ xfs_reclaim_inode_grab(
+ 	return 0;
+ }
+ 
+-void
+-__xfs_inode_clear_reclaim_tag(
+-	xfs_mount_t	*mp,
+-	xfs_perag_t	*pag,
+-	xfs_inode_t	*ip)
+-{
+-	radix_tree_tag_clear(&pag->pag_ici_root,
+-			XFS_INO_TO_AGINO(mp, ip->i_ino), XFS_ICI_RECLAIM_TAG);
+-	__xfs_inode_clear_reclaim(pag, ip);
+-}
+-
+ /*
+  * Inodes in different states need to be treated differently, and the return
+  * value of xfs_iflush is not sufficient to get this right. The following table
+-- 
+1.7.1
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
