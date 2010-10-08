@@ -1,74 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the xfs tree
-Date: Fri, 8 Oct 2010 11:08:28 +1100
-Message-ID: <20101008110828.1380e307.sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the v4l-dvb tree
+Date: Fri, 8 Oct 2010 11:49:45 +1100
+Message-ID: <20101008114945.636093c9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__8_Oct_2010_11_49_45_+1100_EQVUAfD6T9Vx6qFI"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:42146 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34143 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755157Ab0JHAIb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 7 Oct 2010 20:08:31 -0400
+	id S1751970Ab0JHAtv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 7 Oct 2010 20:49:51 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Elder <aelder@sgi.com>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi all,
+--Signature=_Fri__8_Oct_2010_11_49_45_+1100_EQVUAfD6T9Vx6qFI
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[I tried to cc this to Johannes Weiner <hannes@cmpxchg.org>, but that
-domain does not current resolve :-(]
+Hi Mauro,
 
-After merging the xfs tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+After merging the kvm tree, today's linux-next build (x86_64 allmodconfig)
+produced this warning:
 
-fs/xfs/linux-2.6/xfs_sync.c:671: error: redefinition of '__xfs_inode_clear_reclaim_tag'
-fs/xfs/linux-2.6/xfs_sync.c:623: note: previous definition of '__xfs_inode_clear_reclaim_tag' was here
+drivers/media/video/videobuf-dma-sg.c: In function 'videobuf_pages_to_sg':
+drivers/media/video/videobuf-dma-sg.c:119: warning: comparison of distinct =
+pointer types lacks a cast
+drivers/media/video/videobuf-dma-sg.c:120: warning: comparison of distinct =
+pointer types lacks a cast
 
-Caused by a mismerge between commit
-081003fff467ea0e727f66d5d435b4f473a789b3 ("xfs: properly account for
-reclaimed inodes") from Linus' tree and commit
-5ae4ef8313c85f443202aa04405fe178e6138a6a ("xfs: properly account for
-reclaimed inodes") from the xfs tree.  The new function __xfs_inode_clear_reclaim_tag() was inserted in different places in each of those commits, so git inserted them both.
+Commit ecc736735ecf922d7f31d34417f7c42f8ec9eb67 ("V4L/DVB:
+videobuf-dma-sg: Fix a warning due to the usage of min(PAGE_SIZE, arg)")
+tried to fix it (presumably on a 32 bit build), but is not correct for 64
+bits .
 
-I applied the following merge fix patch:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 8 Oct 2010 11:00:58 +1100
-Subject: [PATCH] xfs: fix up mismerge of __xfs_inode_clear_reclaim_tag
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/xfs/linux-2.6/xfs_sync.c |   11 -----------
- 1 files changed, 0 insertions(+), 11 deletions(-)
-
-diff --git a/fs/xfs/linux-2.6/xfs_sync.c b/fs/xfs/linux-2.6/xfs_sync.c
-index 574fb71..37d3325 100644
---- a/fs/xfs/linux-2.6/xfs_sync.c
-+++ b/fs/xfs/linux-2.6/xfs_sync.c
-@@ -667,17 +667,6 @@ xfs_reclaim_inode_grab(
- 	return 0;
- }
- 
--void
--__xfs_inode_clear_reclaim_tag(
--	xfs_mount_t	*mp,
--	xfs_perag_t	*pag,
--	xfs_inode_t	*ip)
--{
--	radix_tree_tag_clear(&pag->pag_ici_root,
--			XFS_INO_TO_AGINO(mp, ip->i_ino), XFS_ICI_RECLAIM_TAG);
--	__xfs_inode_clear_reclaim(pag, ip);
--}
--
- /*
-  * Inodes in different states need to be treated differently, and the return
-  * value of xfs_iflush is not sufficient to get this right. The following table
--- 
-1.7.1
-
--- 
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__8_Oct_2010_11_49_45_+1100_EQVUAfD6T9Vx6qFI
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMrmqpAAoJEDMEi1NhKgbsC48H+wdRJkpbnT9gmBTHN4nAgEXf
+o4EAh882DNNsNa8/Zh4sQr3XJiOPC7kmrmOZNU6992qmSiDBx2DRvghvEsiM1Mye
+judhFJlQpzqXsJPejrPa7Xst5gKp4N7gEPGSUxn5HwB12YrEUhkBtIqRK1MYyPYU
+f4M9H3uPAjS8BR8KUE8CQ06Acf9LkG6OS5/BtZxo6wpotTdhR6+mdx+T/Nn2wTCc
+l3UAr4iDmAZi+vAjPc1Pe0lWqSAtaODM10xysZZgYkeqBpfBxfvxvu1225hHF4KK
+EN1ONEewxgG1fk/nSBbR3fYcCzLlBOlqW3H+oRmH2IWcPIitTseLApAHRdUyTNc=
+=hanX
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__8_Oct_2010_11_49_45_+1100_EQVUAfD6T9Vx6qFI--
