@@ -1,48 +1,35 @@
-From: Michal Marek <mmarek@suse.cz>
-Subject: [PATCH] kconfig: Temporarily disable dependency warnings
-Date: Sat,  9 Oct 2010 23:45:01 +0200
-Message-ID: <1286660701-31557-1-git-send-email-mmarek@suse.cz>
-References: <20101008150343.GF4088@hack>
-Return-path: <linux-kbuild-owner@vger.kernel.org>
-In-Reply-To: <20101008150343.GF4088@hack>
-Sender: linux-kbuild-owner@vger.kernel.org
-To: linux-kbuild@vger.kernel.org
-Cc: catalin.marinas@arm.com, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, lacombar@gmail.com, xiyou.wangcong@gmail.com
-List-Id: linux-next.vger.kernel.org
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for October 8 (staging/intel_sst)
+Date: Sun, 10 Oct 2010 11:56:18 -0700
+Message-ID: <20101010115618.b048a89e.randy.dunlap@oracle.com>
+References: <20101008161552.07c9f137.sfr@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:62321 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751262Ab0JJS63 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 10 Oct 2010 14:58:29 -0400
+In-Reply-To: <20101008161552.07c9f137.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, driverdevel <devel@driverdev.osuosl.org>, gregkh <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Vinod Koul <vinod.koul@intel.com>, Harsha Priya <priya.harsha@intel.com>, Dharageswari R <dharageswari.r@intel.com>
 
-After fixing a use-after-free bug in kconfig, a 'make defconfig' or
-'make allmodconfig' fills the screen with warnings that were not
-detected before. Given that we are close to the release now, disable the
-warnings temporarily and deal with them after 2.6.36.
+On Fri, 8 Oct 2010 16:15:52 +1100 Stephen Rothwell wrote:
 
-Signed-off-by: Michal Marek <mmarek@suse.cz>
+> Hi all,
+> 
+> Changes since 20101007:
+
+
+drivers/staging/intel_sst/intel_sst_drv_interface.c:88: error: implicit declaration of function 'msleep'
+
+needs
+#include <linux/delay.h>
+
+
 ---
- scripts/kconfig/symbol.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
-
-diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
-index 943712c..1f8b305 100644
---- a/scripts/kconfig/symbol.c
-+++ b/scripts/kconfig/symbol.c
-@@ -349,16 +349,18 @@ void sym_calc_value(struct symbol *sym)
- 							      prop->visible.tri);
- 				}
- 			}
- 		calc_newval:
-+#if 0
- 			if (sym->dir_dep.tri == no && sym->rev_dep.tri != no) {
- 				fprintf(stderr, "warning: (");
- 				expr_fprint(sym->rev_dep.expr, stderr);
- 				fprintf(stderr, ") selects %s which has unmet direct dependencies (",
- 					sym->name);
- 				expr_fprint(sym->dir_dep.expr, stderr);
- 				fprintf(stderr, ")\n");
- 			}
-+#endif
- 			newval.tri = EXPR_OR(newval.tri, sym->rev_dep.tri);
- 		}
- 		if (newval.tri == mod && sym_get_type(sym) == S_BOOLEAN)
- 			newval.tri = yes;
--- 
-1.7.1
-
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
