@@ -1,84 +1,37 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: Tree for October 11 (staging/keucr)
-Date: Mon, 11 Oct 2010 10:25:30 -0700
-Message-ID: <20101011172530.GA7116@kroah.com>
-References: <20101011162959.86e40961.sfr@canb.auug.org.au> <20101011094222.98a30bce.randy.dunlap@oracle.com>
+From: "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: linux-next: build warning after merge of the final tree (tip
+ tree related)
+Date: Mon, 11 Oct 2010 12:00:17 -0700
+Message-ID: <4CB35EC1.5040909@zytor.com>
+References: <20101011160429.81483d01.sfr@canb.auug.org.au> <4CB344C6.5040408@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:52342 "EHLO coco.kroah.org"
+Received: from terminus.zytor.com ([198.137.202.10]:60067 "EHLO mail.zytor.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755524Ab0JKRjz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 11 Oct 2010 13:39:55 -0400
-Content-Disposition: inline
-In-Reply-To: <20101011094222.98a30bce.randy.dunlap@oracle.com>
+	id S1752037Ab0JKTCF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 11 Oct 2010 15:02:05 -0400
+In-Reply-To: <4CB344C6.5040408@kernel.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, driverdevel <devel@driverdev.osuosl.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Al Cho <acho@novell.com>
+To: Yinghai Lu <yinghai@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Oct 11, 2010 at 09:42:22AM -0700, Randy Dunlap wrote:
-> On Mon, 11 Oct 2010 16:29:59 +1100 Stephen Rothwell wrote:
+On 10/11/2010 10:09 AM, Yinghai Lu wrote:
 > 
-> > Hi all,
-> > 
-> > Changes since 20101008:
+> make all functions in memblock.c without __init to carry __init_memblock.
 > 
-> 
-> linux-next-20101011/drivers/staging/keucr/usb.c: In function 'get_transport':
-> linux-next-20101011/drivers/staging/keucr/usb.c:346: error: 'US_PR_BULK' undeclared (first use in this function)
-> linux-next-20101011/drivers/staging/keucr/usb.c:346: error: (Each undeclared identifier is reported only once
-> linux-next-20101011/drivers/staging/keucr/usb.c:346: error: for each function it appears in.)
-> linux-next-20101011/drivers/staging/keucr/usb.c: In function 'get_protocol':
-> linux-next-20101011/drivers/staging/keucr/usb.c:370: error: 'US_SC_SCSI' undeclared (first use in this function)
-> linux-next-20101011/drivers/staging/keucr/usb.c: In function 'get_pipes':
-> linux-next-20101011/drivers/staging/keucr/usb.c:421: error: 'US_PR_CBI' undeclared (first use in this function)
-> linux-next-20101011/drivers/staging/keucr/usb.c: In function 'usb_stor_scan_thread':
-> linux-next-20101011/drivers/staging/keucr/usb.c:567: error: 'US_PR_BULK' undeclared (first use in this function)
-> linux-next-20101011/drivers/staging/keucr/scsiglue.c: In function 'slave_alloc':
-> linux-next-20101011/drivers/staging/keucr/scsiglue.c:33: error: 'US_SC_UFI' undeclared (first use in this function)
-> linux-next-20101011/drivers/staging/keucr/scsiglue.c:33: error: (Each undeclared identifier is reported only once
-> linux-next-20101011/drivers/staging/keucr/scsiglue.c:33: error: for each function it appears in.)
-> linux-next-20101011/drivers/staging/keucr/scsiglue.c: In function 'slave_configure':
-> linux-next-20101011/drivers/staging/keucr/scsiglue.c:58: error: 'US_SC_SCSI' undeclared (first use in this function)
-> linux-next-20101011/drivers/staging/keucr/scsiglue.c:58: error: 'US_SC_CYP_ATACB' undeclared (first use in this function)
-> linux-next-20101011/drivers/staging/keucr/scsiglue.c:79: error: 'US_PR_CB' undeclared (first use in this function)
-> linux-next-20101011/drivers/staging/keucr/scsiglue.c:79: error: 'US_PR_CBI' undeclared (first use in this function)
-> linux-next-20101011/drivers/staging/keucr/transport.c: In function 'usb_stor_invoke_transport':
-> linux-next-20101011/drivers/staging/keucr/transport.c:318: error: 'US_PR_CB' undeclared (first use in this function)
-> linux-next-20101011/drivers/staging/keucr/transport.c:318: error: (Each undeclared identifier is reported only once
-> linux-next-20101011/drivers/staging/keucr/transport.c:318: error: for each function it appears in.)
-> linux-next-20101011/drivers/staging/keucr/transport.c:318: error: 'US_PR_DPCM_USB' undeclared (first use in this function)
-> linux-next-20101011/drivers/staging/keucr/transport.c:341: error: 'US_SC_RBC' undeclared (first use in this function)
-> linux-next-20101011/drivers/staging/keucr/transport.c:341: error: 'US_SC_SCSI' undeclared (first use in this function)
-> linux-next-20101011/drivers/staging/keucr/transport.c:341: error: 'US_SC_CYP_ATACB' undeclared (first use in this function)
-> In file included from linux-next-20101011/drivers/staging/keucr/smilmain.c:4:
-> linux-next-20101011/drivers/staging/keucr/smcommon.h:9:1: warning: "SUCCESS" redefined
-> In file included from linux-next-20101011/include/scsi/scsi_host.h:9,
->                  from linux-next-20101011/drivers/staging/keucr/usb.h:11,
->                  from linux-next-20101011/drivers/staging/keucr/smilmain.c:2:
-> linux-next-20101011/include/scsi/scsi.h:429:1: warning: this is the location of the previous definition
-> In file included from linux-next-20101011/drivers/staging/keucr/smilsub.c:9:
-> linux-next-20101011/drivers/staging/keucr/smcommon.h:9:1: warning: "SUCCESS" redefined
-> In file included from linux-next-20101011/include/scsi/scsi_host.h:9,
->                  from linux-next-20101011/drivers/staging/keucr/usb.h:11,
->                  from linux-next-20101011/drivers/staging/keucr/smilsub.c:2:
-> linux-next-20101011/include/scsi/scsi.h:429:1: warning: this is the location of the previous definition
-> In file included from linux-next-20101011/drivers/staging/keucr/smilecc.c:6:
-> linux-next-20101011/drivers/staging/keucr/smcommon.h:9:1: warning: "SUCCESS" redefined
-> In file included from linux-next-20101011/include/scsi/scsi_host.h:9,
->                  from linux-next-20101011/drivers/staging/keucr/usb.h:11,
->                  from linux-next-20101011/drivers/staging/keucr/smilecc.c:1:
-> linux-next-20101011/include/scsi/scsi.h:429:1: warning: this is the location of the previous definition
-> 
-> 
-> 
-> config is attached.
+>  
+> -static phys_addr_t __init memblock_find_region(phys_addr_t start, phys_addr_t end,
+> +static phys_addr_t __init_memblock memblock_find_region(phys_addr_t start, phys_addr_t end,
+>  					  phys_addr_t size, phys_addr_t align)
+>  
+> -static int memblock_search(struct memblock_type *type, phys_addr_t addr)
+> +static int __init_memblock memblock_search(struct memblock_type *type, phys_addr_t addr)
+>  
 
-Yes, this is known, I will fix it up when I merge the two trees
-together, it's due to changes in the USB tree that are not in the
-staging-next tree.
+Your patch description doesn't match what your patch does.  Please write
+a correct description.
 
-thanks,
-
-greg k-h
+	-hpa
