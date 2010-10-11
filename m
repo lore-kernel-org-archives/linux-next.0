@@ -1,82 +1,78 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for October 1 (hwmon/pkgtemp)
-Date: Mon, 11 Oct 2010 10:05:01 -0700
-Message-ID: <4CB343BD.9030605@oracle.com>
-References: <20101001153756.47b52566.sfr@canb.auug.org.au> <20101001154314.9db0062c.randy.dunlap@oracle.com> <20101004184445.GA31377@linux-os.sc.intel.com>
+From: Yinghai Lu <yinghai@kernel.org>
+Subject: Re: linux-next: build warning after merge of the final tree (tip
+ tree related)
+Date: Mon, 11 Oct 2010 10:09:26 -0700
+Message-ID: <4CB344C6.5040408@kernel.org>
+References: <20101011160429.81483d01.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:22384 "EHLO
+Received: from rcsinet10.oracle.com ([148.87.113.121]:35978 "EHLO
 	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755541Ab0JKRF3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Oct 2010 13:05:29 -0400
-In-Reply-To: <20101004184445.GA31377@linux-os.sc.intel.com>
+	with ESMTP id S1755585Ab0JKRKH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Oct 2010 13:10:07 -0400
+In-Reply-To: <20101011160429.81483d01.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Fenghua Yu <fenghua.yu@intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 10/04/10 11:44, Fenghua Yu wrote:
-> On Fri, Oct 01, 2010 at 03:43:14PM -0700, Randy Dunlap wrote:
->> On Fri, 1 Oct 2010 15:37:56 +1000 Stephen Rothwell wrote:
->>
->>> Hi all,
->>>
->>> Changes since 20100930:
->>
->>
->> drivers/hwmon/pkgtemp.c:356: error: implicit declaration of function 'cpu_core_mask'
->>
->> CONFIG_SMP is not set.
->>
->> config is attached.
->>
+On 10/10/2010 10:04 PM, Stephen Rothwell wrote:
+> Hi all,
 > 
-> From: Fenghua Yu <fenghua.yu@intel.com>
-> Date: Mon, 4 Oct 2010 11:00:36 -0700
-> Subject: [PATCH] hwmon (pkgtemp): Fix build failure for UP
+> After merging the final tree, today's linux-next build (powerpc
+> allnoconfig) produced this warning:
 > 
-> This fix is only a workaround. Another fix is to add #ifdef CONFIG_SMP around
-> cpu_core_mask. But the code will not be cleaner than this fix.  This fix is
-> similar to coretemp in commit fff2017354a3a9906862aabbf2a1cae5b4330e40.
+> WARNING: mm/built-in.o(.text+0x25ab8): Section mismatch in reference from the function memblock_find_base() to the function .init.text:memblock_find_region()
+> The function memblock_find_base() references
+> the function __init memblock_find_region().
+> This is often because memblock_find_base lacks a __init 
+> annotation or the annotation of memblock_find_region is wrong.
 > 
-> For a real fix, cpu_core_mask() should be defined in UP include code, eg in
-> linux/smp.h, and asm/smp.h should not be included directly. This fix is
-> currently not possible because asm/smp.h define cpu_core_mask() unconditionally
-> and is included directly from many source files.
+> Introduced by commit 3661ca66a42e306aaf53246fb75aec1ea01be0f0 ("memblock:
+> Fix section mismatch warnings").
 > 
-> In the long run, both cpu_sibling_mask and cpu_core_mask will be defined in UP
-> and this workaround and the workaround in coretemp can be removed.
-> 
-> Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
-> Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
-> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> Cc: Ingo Molnar <mingo@elte.hu>
-> Cc: Guenter Roeck <guenter.roeck@ericsson.com>
+please check
 
-Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
+[PATCH] x86: Fix section mismatch with memblock_find_region
 
-Thanks.
+Stephen found
 
-> ---
->  drivers/hwmon/pkgtemp.c |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/hwmon/pkgtemp.c b/drivers/hwmon/pkgtemp.c
-> index c9f652d..36d96c7 100644
-> --- a/drivers/hwmon/pkgtemp.c
-> +++ b/drivers/hwmon/pkgtemp.c
-> @@ -32,6 +32,7 @@
->  #include <linux/list.h>
->  #include <linux/platform_device.h>
->  #include <linux/cpu.h>
-> +#include <asm/smp.h>
->  #include <asm/msr.h>
->  #include <asm/processor.h>
->  
+WARNING: mm/built-in.o(.text+0x25ab8): Section mismatch in reference from the function memblock_find_base() to the function .init.text:memblock_find_region()
+The function memblock_find_base() references
+the function __init memblock_find_region().
+This is often because memblock_find_base lacks a __init 
+annotation or the annotation of memblock_find_region is wrong.
 
+make all functions in memblock.c without __init to carry __init_memblock.
 
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Yinghai Lu <yinghai@kernel.org>
+
+---
+ mm/memblock.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+Index: linux-2.6/mm/memblock.c
+===================================================================
+--- linux-2.6.orig/mm/memblock.c
++++ linux-2.6/mm/memblock.c
+@@ -99,7 +99,7 @@ long __init_memblock memblock_overlaps_r
+  * are top-down.
+  */
+ 
+-static phys_addr_t __init memblock_find_region(phys_addr_t start, phys_addr_t end,
++static phys_addr_t __init_memblock memblock_find_region(phys_addr_t start, phys_addr_t end,
+ 					  phys_addr_t size, phys_addr_t align)
+ {
+ 	phys_addr_t base, res_base;
+@@ -653,7 +653,7 @@ void __init memblock_enforce_memory_limi
+ 	}
+ }
+ 
+-static int memblock_search(struct memblock_type *type, phys_addr_t addr)
++static int __init_memblock memblock_search(struct memblock_type *type, phys_addr_t addr)
+ {
+ 	unsigned int left = 0, right = type->cnt;
+ 
