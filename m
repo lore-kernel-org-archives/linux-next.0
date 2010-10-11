@@ -1,54 +1,47 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: linux-next: manual merge of the sound-asoc tree with the s5p tree
-Date: Tue, 12 Oct 2010 07:26:38 +0900
-Message-ID: <00eb01cb6993$61f84280$25e8c780$%kim@samsung.com>
-References: <20101011133519.cf4fcaa8.sfr@canb.auug.org.au>
- <009201cb6916$a9441740$fbcc45c0$%kim@samsung.com>
- <20101011193336.835d9f78.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm tree with the arm-current tree
+Date: Tue, 12 Oct 2010 10:33:14 +1100
+Message-ID: <20101012103314.41b00cbe.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:52986 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756763Ab0JKW0X (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Oct 2010 18:26:23 -0400
-In-reply-to: <20101011193336.835d9f78.sfr@canb.auug.org.au>
-Content-language: ko
+Received: from chilli.pcug.org.au ([203.10.76.44]:59063 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752387Ab0JKXdU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 11 Oct 2010 19:33:20 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: 'Stephen Rothwell' <sfr@canb.auug.org.au>
-Cc: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Liam Girdwood' <lrg@slimlogic.co.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Dimitris Papastamos' <dp@opensource.wolfsonmicro.com>
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IlV3ZSBLbGVpbmUtS8O2bmlnIg==?= <u.kleine-koenig@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>, =?UTF-8?B?IkVyaWMgQsOpbmFyZCI=?= <eric@eukrea.com>
 
-Stephen Rothwell wrote:
-> 
-> Hi Kgene,
-> 
-> On Mon, 11 Oct 2010 16:33:48 +0900 Kukjin Kim <kgene.kim@samsung.com>
-> wrote:
-> >
-> > > Today's linux-next merge of the sound-asoc tree got a conflict in
-> > > arch/arm/mach-s3c64xx/dev-audio.c between commit
-> > > f08269d850e4ee0cd028cf5279cc08259d0469df ("ARM: S3C64XX: Change to
-> using
-> > > s3c_gpio_cfgpin_range()") from the s5p tree and commit
-> > > e4b6b74ffd32d114227a5dcfe814e2cecd80554b ("ARM: S3C64XX: Fix
-> fallthrough
-> > > bug in i2sv3 gpio configuration, improve logging") from the sound-asoc
-> > > tree.
-> > >
-> > Hmm...how can/should I handle for it?
-> 
-> Don't worry about it.  It is trivial and both I and Linus can take care
-> of it.
-> 
-Hi Stephen :-)
+Hi Russell,
 
-Thank you so much.
-Have a nice day ;-)
+Today's linux-next merge of the arm tree got a conflict in
+arch/arm/mach-imx/mach-cpuimx27.c between commit
+4793ca4028e4dcdbf2740db50995c9378ded3cf8 ("cpuimx27: fix i2c bus
+selection") from the arm-current tree and commit
+77a406da5a5b76445a816d5f043fc9aef4026ff1 ("ARM: imx: fix name of macros
+to add imx-i2c devices") from the arm tree.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+I fixed it up (see below) can can carry the fix for a while.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/arm/mach-imx/mach-cpuimx27.c
+index 6830afd,28f73a1..0000000
+--- a/arch/arm/mach-imx/mach-cpuimx27.c
++++ b/arch/arm/mach-imx/mach-cpuimx27.c
+@@@ -259,8 -258,9 +258,9 @@@ static void __init eukrea_cpuimx27_init
+  	i2c_register_board_info(0, eukrea_cpuimx27_i2c_devices,
+  				ARRAY_SIZE(eukrea_cpuimx27_i2c_devices));
+  
+- 	imx27_add_i2c_imx0(&cpuimx27_i2c1_data);
+ -	imx27_add_imx_i2c(1, &cpuimx27_i2c1_data);
+++	imx27_add_imx_i2c(0, &cpuimx27_i2c1_data);
+  
++ 	imx27_add_fec(NULL);
+  	platform_add_devices(platform_devices, ARRAY_SIZE(platform_devices));
+  
+  #if defined(CONFIG_MACH_EUKREA_CPUIMX27_USESDHC2)
