@@ -1,42 +1,54 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH] kconfig: Temporarily disable dependency warnings
-Date: Mon, 11 Oct 2010 14:59:30 -0700
-Message-ID: <20101011145930.11fe570c.randy.dunlap@oracle.com>
-References: <20101008150343.GF4088@hack>
-	<1286660701-31557-1-git-send-email-mmarek@suse.cz>
-	<1286810580.19739.108.camel@e102109-lin.cambridge.arm.com>
-	<4CB385C8.7010109@suse.cz>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: linux-next: manual merge of the sound-asoc tree with the s5p tree
+Date: Tue, 12 Oct 2010 07:26:38 +0900
+Message-ID: <00eb01cb6993$61f84280$25e8c780$%kim@samsung.com>
+References: <20101011133519.cf4fcaa8.sfr@canb.auug.org.au>
+ <009201cb6916$a9441740$fbcc45c0$%kim@samsung.com>
+ <20101011193336.835d9f78.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kbuild-owner@vger.kernel.org>
-In-Reply-To: <4CB385C8.7010109@suse.cz>
-Sender: linux-kbuild-owner@vger.kernel.org
-To: Michal Marek <mmarek@suse.cz>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, linux-kbuild@vger.kernel.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, lacombar@gmail.com, xiyou.wangcong@gmail.com
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:52986 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756763Ab0JKW0X (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Oct 2010 18:26:23 -0400
+In-reply-to: <20101011193336.835d9f78.sfr@canb.auug.org.au>
+Content-language: ko
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: 'Stephen Rothwell' <sfr@canb.auug.org.au>
+Cc: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Liam Girdwood' <lrg@slimlogic.co.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Dimitris Papastamos' <dp@opensource.wolfsonmicro.com>
 
-On Mon, 11 Oct 2010 23:46:48 +0200 Michal Marek wrote:
-
-> On 11.10.2010 17:23, Catalin Marinas wrote:
-> > On Sat, 2010-10-09 at 22:45 +0100, Michal Marek wrote:
-> >> After fixing a use-after-free bug in kconfig, a 'make defconfig' or
-> >> 'make allmodconfig' fills the screen with warnings that were not
-> >> detected before. Given that we are close to the release now, disable the
-> >> warnings temporarily and deal with them after 2.6.36.
-> >>
-> >> Signed-off-by: Michal Marek <mmarek@suse.cz>
-> > 
-> > Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+Stephen Rothwell wrote:
 > 
-> Thanks, but I already pushed it on Saturday. The good news is that Linus
-> did pull from me, so 2.6.36 will have this.
+> Hi Kgene,
+> 
+> On Mon, 11 Oct 2010 16:33:48 +0900 Kukjin Kim <kgene.kim@samsung.com>
+> wrote:
+> >
+> > > Today's linux-next merge of the sound-asoc tree got a conflict in
+> > > arch/arm/mach-s3c64xx/dev-audio.c between commit
+> > > f08269d850e4ee0cd028cf5279cc08259d0469df ("ARM: S3C64XX: Change to
+> using
+> > > s3c_gpio_cfgpin_range()") from the s5p tree and commit
+> > > e4b6b74ffd32d114227a5dcfe814e2cecd80554b ("ARM: S3C64XX: Fix
+> fallthrough
+> > > bug in i2sv3 gpio configuration, improve logging") from the sound-asoc
+> > > tree.
+> > >
+> > Hmm...how can/should I handle for it?
+> 
+> Don't worry about it.  It is trivial and both I and Linus can take care
+> of it.
+> 
+Hi Stephen :-)
 
+Thank you so much.
+Have a nice day ;-)
 
-Was it disabled (i.e., this patch applied) in linux-next 20101011?
-Seems to be -- I see no warnings.
-Can you undo that now so that warnings are back, please?
-
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
