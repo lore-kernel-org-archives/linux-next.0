@@ -1,48 +1,62 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for October 8 (staging/brcm80211)
-Date: Sun, 10 Oct 2010 21:08:54 -0700
-Message-ID: <4CB28DD6.8000505@oracle.com>
-References: <20101008161552.07c9f137.sfr@canb.auug.org.au> <20101010115832.0bf5dff8.randy.dunlap@oracle.com> <20101010202906.GA4900@kroah.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the final tree (tip tree
+ related)
+Date: Mon, 11 Oct 2010 16:04:29 +1100
+Message-ID: <20101011160429.81483d01.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20101010202906.GA4900@kroah.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, driverdevel <devel@driverdev.osuosl.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Brett Rudley <brudley@broadcom.com>, Henry Ptasinski <henryp@broadcom.com>, Nohee Ko <noheek@broadcom.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__11_Oct_2010_16_04_29_+1100_rMBA4OkWerpIvzGB"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:38236 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751108Ab0JKFEn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 11 Oct 2010 01:04:43 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yinghai Lu <yinghai@kernel.org>
 
-On 10/10/10 13:29, Greg KH wrote:
-> On Sun, Oct 10, 2010 at 11:58:32AM -0700, Randy Dunlap wrote:
->> On Fri, 8 Oct 2010 16:15:52 +1100 Stephen Rothwell wrote:
->>
->>> Hi all,
->>>
->>> Changes since 20101007:
->>
->>
->>
->> drivers/staging/brcm80211/brcmfmac/dhd_linux.c:432: note: expected 'void *' but argument is of type 'sk_buff_data_t'
->> drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c:1337: warning: format '%d' expects type 'int', but argument 3 has type 'size_t'
-> 
-> This is x86-64, right?
+--Signature=_Mon__11_Oct_2010_16_04_29_+1100_rMBA4OkWerpIvzGB
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes.
+Hi all,
 
->> drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c:2120: warning: initialization from incompatible pointer type
->> drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c:2121: warning: initialization from incompatible pointer type
->> drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c:2122: warning: initialization from incompatible pointer type
->> drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c:4035: warning: format '%d' expects type 'int', but argument 2 has type 'size_t'
->> drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c:4048: warning: format '%d' expects type 'int', but argument 2 has type 'size_t'
-> 
-> I'll work on these.
-> 
-> thanks,
-> 
-> greg k-h
+After merging the final tree, today's linux-next build (powerpc
+allnoconfig) produced this warning:
 
+WARNING: mm/built-in.o(.text+0x25ab8): Section mismatch in reference from t=
+he function memblock_find_base() to the function .init.text:memblock_find_r=
+egion()
+The function memblock_find_base() references
+the function __init memblock_find_region().
+This is often because memblock_find_base lacks a __init=20
+annotation or the annotation of memblock_find_region is wrong.
 
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+Introduced by commit 3661ca66a42e306aaf53246fb75aec1ea01be0f0 ("memblock:
+Fix section mismatch warnings").
+
+Sorry, I seem to have missed this before.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__11_Oct_2010_16_04_29_+1100_rMBA4OkWerpIvzGB
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMsprdAAoJEDMEi1NhKgbs3F4H/3ABEr2j31jdcwt+JVXYErLD
+30xbEhTbt/XqGczDd8dRv7wnRSKQD6vBfdGZ1rJgWCA5+/l+8tgWWZMYCf9pc7OX
+CHXZlbFG32BSJwgKyXu9RVxtPEuMiHMMnLVFykmraKqa60GXQxughLoiKQfTNEv6
+1QH1beowOb67M8e8gl3StC9aiBW+KWBVlM8zH1Fn02HbcuWLmy1LoQ9LXSiRMyRJ
++9zeMDtkBkf5fVXX7p9lgrPdPuzc/htESz8LlZQiK8HUS/GKO7PgsIDNRlHhx7iI
+1cbTv6armvg1NxJoTjhEN/DnFM/MSo43hv83bFE8aGwQMrO85+o1dcKgpSLYy8k=
+=pS7A
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__11_Oct_2010_16_04_29_+1100_rMBA4OkWerpIvzGB--
