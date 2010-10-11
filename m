@@ -1,135 +1,32 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: linux-next: manual merge of the sound-asoc tree with the s5p tree
-Date: Mon, 11 Oct 2010 16:33:48 +0900
-Message-ID: <009201cb6916$a9441740$fbcc45c0$%kim@samsung.com>
-References: <20101011133519.cf4fcaa8.sfr@canb.auug.org.au>
+From: Anders Larsen <al@alarsen.net>
+Subject: Re: linux-next: manual merge of the arm tree with the arm-current
+ tree
+Date: Mon, 11 Oct 2010 09:48:36 +0200
+Message-ID: <1286783316l.6006l.0l@i-dmzi_al.realan.de>
+References: <20101011122441.606a0643.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20101011133519.cf4fcaa8.sfr@canb.auug.org.au>
-Content-language: ko
+In-Reply-To: <20101011122441.606a0643.sfr@canb.auug.org.au> (from
+	sfr@canb.auug.org.au on Mon Oct 11 03:24:41 2010)
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: 'Stephen Rothwell' <sfr@canb.auug.org.au>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Liam Girdwood' <lrg@slimlogic.co.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Dimitris Papastamos' <dp@opensource.wolfsonmicro.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Russell King <rmk@arm.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Ungerer <gerg@snapgear.com>
 List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell wrote:
+On 2010-10-11 03:24:41, Stephen Rothwell wrote:
+> Today's linux-next merge of the arm tree got a conflict in
+> arch/arm/mach-at91/include/mach/system.h between commit
+> 5c189208b606a85b4e97109af70d59f10a42fdfd ("ARM: 6436/1: AT91: Fix
+> power-saving in idle-mode on 926T processors") from the arm-current tree
+> and commit cb809b1a5ebffca8cf0314b788919989e8e4ab5f ("AT91: fix use of
+> clock disable on idle for AT91x40 devices") from the arm tree.
 > 
-> Hi all,
-> 
-Hi...
+> I fixed it up (see below) and can carry the fix as necessary.
 
-Thank you for your information :-)
+Acked-by: Anders Larsen <al@alarsen.net>
 
-> Today's linux-next merge of the sound-asoc tree got a conflict in
-> arch/arm/mach-s3c64xx/dev-audio.c between commit
-> f08269d850e4ee0cd028cf5279cc08259d0469df ("ARM: S3C64XX: Change to using
-> s3c_gpio_cfgpin_range()") from the s5p tree and commit
-> e4b6b74ffd32d114227a5dcfe814e2cecd80554b ("ARM: S3C64XX: Fix fallthrough
-> bug in i2sv3 gpio configuration, improve logging") from the sound-asoc
-> tree.
-> 
-Hmm...how can/should I handle for it?
-
-> Both patches added the needed "break".  I fixed it up (see below) and can
-> carry the fix as necessary.
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc arch/arm/mach-s3c64xx/dev-audio.c
-> index e4bb023,3838335..0000000
-> --- a/arch/arm/mach-s3c64xx/dev-audio.c
-> +++ b/arch/arm/mach-s3c64xx/dev-audio.c
-> @@@ -22,19 -22,31 +22,20 @@@
->   #include <plat/audio.h>
->   #include <plat/gpio-cfg.h>
-> 
->  -#include <mach/gpio-bank-c.h>
->  -#include <mach/gpio-bank-d.h>
->  -#include <mach/gpio-bank-e.h>
->  -#include <mach/gpio-bank-h.h>
->  -
->   static int s3c64xx_i2sv3_cfg_gpio(struct platform_device *pdev)
->   {
->  +	unsigned int base;
->  +
->   	switch (pdev->id) {
->   	case 0:
->  -		s3c_gpio_cfgpin(S3C64XX_GPD(0),
-> S3C64XX_GPD0_I2S0_CLK);
->  -		s3c_gpio_cfgpin(S3C64XX_GPD(1),
-> S3C64XX_GPD1_I2S0_CDCLK);
->  -		s3c_gpio_cfgpin(S3C64XX_GPD(2),
-> S3C64XX_GPD2_I2S0_LRCLK);
->  -		s3c_gpio_cfgpin(S3C64XX_GPD(3), S3C64XX_GPD3_I2S0_DI);
->  -		s3c_gpio_cfgpin(S3C64XX_GPD(4), S3C64XX_GPD4_I2S0_D0);
->  +		base = S3C64XX_GPD(0);
->   		break;
->   	case 1:
->  -		s3c_gpio_cfgpin(S3C64XX_GPE(0), S3C64XX_GPE0_I2S1_CLK);
->  -		s3c_gpio_cfgpin(S3C64XX_GPE(1),
-> S3C64XX_GPE1_I2S1_CDCLK);
->  -		s3c_gpio_cfgpin(S3C64XX_GPE(2),
-> S3C64XX_GPE2_I2S1_LRCLK);
->  -		s3c_gpio_cfgpin(S3C64XX_GPE(3), S3C64XX_GPE3_I2S1_DI);
->  -		s3c_gpio_cfgpin(S3C64XX_GPE(4), S3C64XX_GPE4_I2S1_D0);
->  +		base = S3C64XX_GPE(0);
->   		break;
->   	default:
-> - 		printk(KERN_DEBUG "Invalid I2S Controller number!");
-> + 		printk(KERN_DEBUG "Invalid I2S Controller number: %d\n",
-> + 			pdev->id);
->   		return -EINVAL;
->   	}
-> 
-> @@@ -157,17 -170,24 +158,18 @@@ EXPORT_SYMBOL(s3c64xx_device_iisv4)
-> 
->   static int s3c64xx_pcm_cfg_gpio(struct platform_device *pdev)
->   {
->  +	unsigned int base;
->  +
->   	switch (pdev->id) {
->   	case 0:
->  -		s3c_gpio_cfgpin(S3C64XX_GPD(0),
-> S3C64XX_GPD0_PCM0_SCLK);
->  -		s3c_gpio_cfgpin(S3C64XX_GPD(1),
-> S3C64XX_GPD1_PCM0_EXTCLK);
->  -		s3c_gpio_cfgpin(S3C64XX_GPD(2),
-> S3C64XX_GPD2_PCM0_FSYNC);
->  -		s3c_gpio_cfgpin(S3C64XX_GPD(3),
-> S3C64XX_GPD3_PCM0_SIN);
->  -		s3c_gpio_cfgpin(S3C64XX_GPD(4),
-> S3C64XX_GPD4_PCM0_SOUT);
->  +		base = S3C64XX_GPD(0);
->   		break;
->   	case 1:
->  -		s3c_gpio_cfgpin(S3C64XX_GPE(0),
-> S3C64XX_GPE0_PCM1_SCLK);
->  -		s3c_gpio_cfgpin(S3C64XX_GPE(1),
-> S3C64XX_GPE1_PCM1_EXTCLK);
->  -		s3c_gpio_cfgpin(S3C64XX_GPE(2),
-> S3C64XX_GPE2_PCM1_FSYNC);
->  -		s3c_gpio_cfgpin(S3C64XX_GPE(3),
-> S3C64XX_GPE3_PCM1_SIN);
->  -		s3c_gpio_cfgpin(S3C64XX_GPE(4),
-> S3C64XX_GPE4_PCM1_SOUT);
->  +		base = S3C64XX_GPE(0);
->   		break;
->   	default:
-> - 		printk(KERN_DEBUG "Invalid PCM Controller number!");
-> + 		printk(KERN_DEBUG "Invalid PCM Controller number: %d\n",
-> + 			pdev->id);
->   		return -EINVAL;
->   	}
-> 
-
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Thanks
+Anders		(Author of "...6436/1...")
