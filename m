@@ -1,113 +1,84 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for September 29 (media & IR build errors)
-Date: Mon, 11 Oct 2010 10:14:46 -0700
-Message-ID: <4CB34606.1040407@oracle.com>
-References: <20100929143604.3d870ddf.sfr@canb.auug.org.au> <20100929083128.4efc3f0d.randy.dunlap@oracle.com> <4CA41431.1000304@redhat.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: Tree for October 11 (staging/keucr)
+Date: Mon, 11 Oct 2010 10:25:30 -0700
+Message-ID: <20101011172530.GA7116@kroah.com>
+References: <20101011162959.86e40961.sfr@canb.auug.org.au> <20101011094222.98a30bce.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:30616 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755153Ab0JKRQf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Oct 2010 13:16:35 -0400
-In-Reply-To: <4CA41431.1000304@redhat.com>
+Received: from kroah.org ([198.145.64.141]:52342 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755524Ab0JKRjz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 11 Oct 2010 13:39:55 -0400
+Content-Disposition: inline
+In-Reply-To: <20101011094222.98a30bce.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-media@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, driverdevel <devel@driverdev.osuosl.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Al Cho <acho@novell.com>
 
-On 09/29/10 21:38, Mauro Carvalho Chehab wrote:
-> Em 29-09-2010 12:31, Randy Dunlap escreveu:
->> On Wed, 29 Sep 2010 14:36:04 +1000 Stephen Rothwell wrote:
->>
->>> Hi all,
->>>
->>> Changes since 20100928:
->>
->>
->> ERROR: "ir_keydown" [drivers/media/video/ir-kbd-i2c.ko] undefined!
->> ERROR: "__ir_input_register" [drivers/media/video/ir-kbd-i2c.ko] undefined!
->> ERROR: "get_rc_map" [drivers/media/video/ir-kbd-i2c.ko] undefined!
->> ERROR: "ir_input_unregister" [drivers/media/video/ir-kbd-i2c.ko] undefined!
->> ERROR: "get_rc_map" [drivers/media/video/cx88/cx88xx.ko] undefined!
->> ERROR: "ir_repeat" [drivers/media/video/cx88/cx88xx.ko] undefined!
->> ERROR: "ir_input_unregister" [drivers/media/video/cx88/cx88xx.ko] undefined!
->> ERROR: "ir_keydown" [drivers/media/video/cx88/cx88xx.ko] undefined!
->> ERROR: "__ir_input_register" [drivers/media/video/cx88/cx88xx.ko] undefined!
->> ERROR: "get_rc_map" [drivers/media/video/bt8xx/bttv.ko] undefined!
->> ERROR: "ir_input_unregister" [drivers/media/video/bt8xx/bttv.ko] undefined!
->> ERROR: "__ir_input_register" [drivers/media/video/bt8xx/bttv.ko] undefined!
->> ERROR: "ir_core_debug" [drivers/media/IR/ir-common.ko] undefined!
->> ERROR: "ir_g_keycode_from_table" [drivers/media/IR/ir-common.ko] undefined!
+On Mon, Oct 11, 2010 at 09:42:22AM -0700, Randy Dunlap wrote:
+> On Mon, 11 Oct 2010 16:29:59 +1100 Stephen Rothwell wrote:
 > 
-> Randy,
+> > Hi all,
+> > 
+> > Changes since 20101008:
 > 
-> Thanks for the test.
 > 
-> With Sept, 29 + my linux-next tree (that weren't merged on yesterday's build,
-> I didn't notice the above errors). I suspect that the fixes were already on my
-> tree.
+> linux-next-20101011/drivers/staging/keucr/usb.c: In function 'get_transport':
+> linux-next-20101011/drivers/staging/keucr/usb.c:346: error: 'US_PR_BULK' undeclared (first use in this function)
+> linux-next-20101011/drivers/staging/keucr/usb.c:346: error: (Each undeclared identifier is reported only once
+> linux-next-20101011/drivers/staging/keucr/usb.c:346: error: for each function it appears in.)
+> linux-next-20101011/drivers/staging/keucr/usb.c: In function 'get_protocol':
+> linux-next-20101011/drivers/staging/keucr/usb.c:370: error: 'US_SC_SCSI' undeclared (first use in this function)
+> linux-next-20101011/drivers/staging/keucr/usb.c: In function 'get_pipes':
+> linux-next-20101011/drivers/staging/keucr/usb.c:421: error: 'US_PR_CBI' undeclared (first use in this function)
+> linux-next-20101011/drivers/staging/keucr/usb.c: In function 'usb_stor_scan_thread':
+> linux-next-20101011/drivers/staging/keucr/usb.c:567: error: 'US_PR_BULK' undeclared (first use in this function)
+> linux-next-20101011/drivers/staging/keucr/scsiglue.c: In function 'slave_alloc':
+> linux-next-20101011/drivers/staging/keucr/scsiglue.c:33: error: 'US_SC_UFI' undeclared (first use in this function)
+> linux-next-20101011/drivers/staging/keucr/scsiglue.c:33: error: (Each undeclared identifier is reported only once
+> linux-next-20101011/drivers/staging/keucr/scsiglue.c:33: error: for each function it appears in.)
+> linux-next-20101011/drivers/staging/keucr/scsiglue.c: In function 'slave_configure':
+> linux-next-20101011/drivers/staging/keucr/scsiglue.c:58: error: 'US_SC_SCSI' undeclared (first use in this function)
+> linux-next-20101011/drivers/staging/keucr/scsiglue.c:58: error: 'US_SC_CYP_ATACB' undeclared (first use in this function)
+> linux-next-20101011/drivers/staging/keucr/scsiglue.c:79: error: 'US_PR_CB' undeclared (first use in this function)
+> linux-next-20101011/drivers/staging/keucr/scsiglue.c:79: error: 'US_PR_CBI' undeclared (first use in this function)
+> linux-next-20101011/drivers/staging/keucr/transport.c: In function 'usb_stor_invoke_transport':
+> linux-next-20101011/drivers/staging/keucr/transport.c:318: error: 'US_PR_CB' undeclared (first use in this function)
+> linux-next-20101011/drivers/staging/keucr/transport.c:318: error: (Each undeclared identifier is reported only once
+> linux-next-20101011/drivers/staging/keucr/transport.c:318: error: for each function it appears in.)
+> linux-next-20101011/drivers/staging/keucr/transport.c:318: error: 'US_PR_DPCM_USB' undeclared (first use in this function)
+> linux-next-20101011/drivers/staging/keucr/transport.c:341: error: 'US_SC_RBC' undeclared (first use in this function)
+> linux-next-20101011/drivers/staging/keucr/transport.c:341: error: 'US_SC_SCSI' undeclared (first use in this function)
+> linux-next-20101011/drivers/staging/keucr/transport.c:341: error: 'US_SC_CYP_ATACB' undeclared (first use in this function)
+> In file included from linux-next-20101011/drivers/staging/keucr/smilmain.c:4:
+> linux-next-20101011/drivers/staging/keucr/smcommon.h:9:1: warning: "SUCCESS" redefined
+> In file included from linux-next-20101011/include/scsi/scsi_host.h:9,
+>                  from linux-next-20101011/drivers/staging/keucr/usb.h:11,
+>                  from linux-next-20101011/drivers/staging/keucr/smilmain.c:2:
+> linux-next-20101011/include/scsi/scsi.h:429:1: warning: this is the location of the previous definition
+> In file included from linux-next-20101011/drivers/staging/keucr/smilsub.c:9:
+> linux-next-20101011/drivers/staging/keucr/smcommon.h:9:1: warning: "SUCCESS" redefined
+> In file included from linux-next-20101011/include/scsi/scsi_host.h:9,
+>                  from linux-next-20101011/drivers/staging/keucr/usb.h:11,
+>                  from linux-next-20101011/drivers/staging/keucr/smilsub.c:2:
+> linux-next-20101011/include/scsi/scsi.h:429:1: warning: this is the location of the previous definition
+> In file included from linux-next-20101011/drivers/staging/keucr/smilecc.c:6:
+> linux-next-20101011/drivers/staging/keucr/smcommon.h:9:1: warning: "SUCCESS" redefined
+> In file included from linux-next-20101011/include/scsi/scsi_host.h:9,
+>                  from linux-next-20101011/drivers/staging/keucr/usb.h:11,
+>                  from linux-next-20101011/drivers/staging/keucr/smilecc.c:1:
+> linux-next-20101011/include/scsi/scsi.h:429:1: warning: this is the location of the previous definition
 > 
-> I noticed, however, two Kconfig errors on staging (for go7007 and cx25821), related
-> to IR_CORE changes:
 > 
-> warning: (VIDEO_GO7007 && STAGING && !STAGING_EXCLUDE_BUILD && VIDEO_DEV && PCI && I2C && INPUT && BKL && SND || VIDEO_CX25821 && STAGING && !STAGING_EXCLUDE_BUILD && DVB_CORE && VIDEO_DEV && PCI && I2C && INPUT && BKL) selects VIDEO_IR which has unmet direct dependencies (IR_CORE)
-> warning: (VIDEO_CX25821 && STAGING && !STAGING_EXCLUDE_BUILD && DVB_CORE && VIDEO_DEV && PCI && I2C && INPUT && BKL) selects VIDEO_IR which has unmet direct dependencies (IR_CORE)
 > 
-> I'm adding the enclosed patch to my linux-next tree in order to fix this trouble.
-> On a test after the patch on my tree, your randconfig applied well over my tree.
-> So, I'm pushing it to my tree at kernel.org.
-> 
-> Cheers,
-> Mauro
-> 
-> ---
-> 
-> commit 9c1eba02d90134fdfa4140b594b2367e90df1dbf
-> Author: Mauro Carvalho Chehab <mchehab@redhat.com>
-> Date:   Thu Sep 30 00:56:08 2010 -0300
-> 
->     V4L/DVB: Fix Kconfig dependencies for VIDEO_IR
->     
->     warning: (VIDEO_GO7007 && STAGING && !STAGING_EXCLUDE_BUILD && VIDEO_DEV && PCI && I2C && INPUT && BKL && SND || VIDEO_CX25821 && STAGING && !STAGING_EXCLUDE_BUILD && DVB_CORE && VIDEO_DEV && PCI && I2C && INPUT && BKL) selects VIDEO_IR which has unmet direct dependencies (IR_CORE)
->     warning: (VIDEO_CX25821 && STAGING && !STAGING_EXCLUDE_BUILD && DVB_CORE && VIDEO_DEV && PCI && I2C && INPUT && BKL) selects VIDEO_IR which has unmet direct dependencies (IR_CORE)
->     
->     Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
+> config is attached.
 
-Yes, this works.  Thanks.
+Yes, this is known, I will fix it up when I merge the two trees
+together, it's due to changes in the USB tree that are not in the
+staging-next tree.
 
-Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
+thanks,
 
-
-> diff --git a/drivers/staging/cx25821/Kconfig b/drivers/staging/cx25821/Kconfig
-> index df7756a..a766d0b 100644
-> --- a/drivers/staging/cx25821/Kconfig
-> +++ b/drivers/staging/cx25821/Kconfig
-> @@ -4,7 +4,7 @@ config VIDEO_CX25821
->  	select I2C_ALGOBIT
->  	select VIDEO_BTCX
->  	select VIDEO_TVEEPROM
-> -	select VIDEO_IR
-> +	depends on VIDEO_IR
->  	select VIDEOBUF_DVB
->  	select VIDEOBUF_DMA_SG
->  	select VIDEO_CX25840
-> diff --git a/drivers/staging/go7007/Kconfig b/drivers/staging/go7007/Kconfig
-> index e47f683..b816a60 100644
-> --- a/drivers/staging/go7007/Kconfig
-> +++ b/drivers/staging/go7007/Kconfig
-> @@ -3,7 +3,7 @@ config VIDEO_GO7007
->  	depends on VIDEO_DEV && PCI && I2C && INPUT
->  	depends on SND
->  	select VIDEOBUF_DMA_SG
-> -	select VIDEO_IR
-> +	depends on VIDEO_IR
->  	select VIDEO_TUNER
->  	select VIDEO_TVEEPROM
->  	select SND_PCM
-
-
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+greg k-h
