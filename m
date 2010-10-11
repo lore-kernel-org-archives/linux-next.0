@@ -1,32 +1,65 @@
-From: Anders Larsen <al@alarsen.net>
-Subject: Re: linux-next: manual merge of the arm tree with the arm-current
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the sound-asoc tree with the s5p
  tree
-Date: Mon, 11 Oct 2010 09:48:36 +0200
-Message-ID: <1286783316l.6006l.0l@i-dmzi_al.realan.de>
-References: <20101011122441.606a0643.sfr@canb.auug.org.au>
+Date: Mon, 11 Oct 2010 19:33:36 +1100
+Message-ID: <20101011193336.835d9f78.sfr@canb.auug.org.au>
+References: <20101011133519.cf4fcaa8.sfr@canb.auug.org.au>
+	<009201cb6916$a9441740$fbcc45c0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20101011122441.606a0643.sfr@canb.auug.org.au> (from
-	sfr@canb.auug.org.au on Mon Oct 11 03:24:41 2010)
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__11_Oct_2010_19_33_36_+1100_73iDKWib.=XHZo5N"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:54096 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752280Ab0JKIdp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 11 Oct 2010 04:33:45 -0400
+In-Reply-To: <009201cb6916$a9441740$fbcc45c0$%kim@samsung.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Liam Girdwood' <lrg@slimlogic.co.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Dimitris Papastamos' <dp@opensource.wolfsonmicro.com>
+
+--Signature=_Mon__11_Oct_2010_19_33_36_+1100_73iDKWib.=XHZo5N
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Russell King <rmk@arm.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Ungerer <gerg@snapgear.com>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On 2010-10-11 03:24:41, Stephen Rothwell wrote:
-> Today's linux-next merge of the arm tree got a conflict in
-> arch/arm/mach-at91/include/mach/system.h between commit
-> 5c189208b606a85b4e97109af70d59f10a42fdfd ("ARM: 6436/1: AT91: Fix
-> power-saving in idle-mode on 926T processors") from the arm-current tree
-> and commit cb809b1a5ebffca8cf0314b788919989e8e4ab5f ("AT91: fix use of
-> clock disable on idle for AT91x40 devices") from the arm tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary.
+Hi Kgene,
 
-Acked-by: Anders Larsen <al@alarsen.net>
+On Mon, 11 Oct 2010 16:33:48 +0900 Kukjin Kim <kgene.kim@samsung.com> wrote:
+>
+> > Today's linux-next merge of the sound-asoc tree got a conflict in
+> > arch/arm/mach-s3c64xx/dev-audio.c between commit
+> > f08269d850e4ee0cd028cf5279cc08259d0469df ("ARM: S3C64XX: Change to using
+> > s3c_gpio_cfgpin_range()") from the s5p tree and commit
+> > e4b6b74ffd32d114227a5dcfe814e2cecd80554b ("ARM: S3C64XX: Fix fallthrough
+> > bug in i2sv3 gpio configuration, improve logging") from the sound-asoc
+> > tree.
+> >=20
+> Hmm...how can/should I handle for it?
 
-Thanks
-Anders		(Author of "...6436/1...")
+Don't worry about it.  It is trivial and both I and Linus can take care
+of it.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__11_Oct_2010_19_33_36_+1100_73iDKWib.=XHZo5N
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMssvgAAoJEDMEi1NhKgbsBt4H/0FP6xYppD5XfVQhEUeY/AXF
+tCCrRrKYTkpWF7fsaid10gwXosk0uEt6sMXYtZDGLgOK/WTJ5ZL0KI+EIxGlxMXI
+7JtO4Hlcgtt71EnQAllarvAxtk/uX7FDOt1HTeZdgN25hDkAg48grk+Zq2KGanRo
+BlkQgrnRfJvXz7oRC22PU6WDPtBotosDFhu/MCCHP/I5WHGZcX/cVGpcHsOsq74e
+GxxuRoqe7ltJjc/qHHENOqoxIFLUKdgVH+wIlGnlH1CHklbKrSjFZiHO0uzQMs1S
+CG/gE9u9D8bzrVNnlELHsGrQdg6PkMzGgZOBSItVfDEoOoccsOCjU3BslDMUxsI=
+=cLvY
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__11_Oct_2010_19_33_36_+1100_73iDKWib.=XHZo5N--
