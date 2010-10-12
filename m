@@ -1,47 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm tree with the arm-current tree
-Date: Tue, 12 Oct 2010 10:33:14 +1100
-Message-ID: <20101012103314.41b00cbe.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree with the  tree
+Date: Tue, 12 Oct 2010 11:17:16 +1100
+Message-ID: <20101012111716.0c54b093.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__12_Oct_2010_11_17_16_+1100_+C5LqZvz0+wtXK6S"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59063 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35204 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752387Ab0JKXdU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 11 Oct 2010 19:33:20 -0400
+	id S1754759Ab0JLAR1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 11 Oct 2010 20:17:27 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IlV3ZSBLbGVpbmUtS8O2bmlnIg==?= <u.kleine-koenig@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>, =?UTF-8?B?IkVyaWMgQsOpbmFyZCI=?= <eric@eukrea.com>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan Richter <stefanr@s5r6.in-berlin.de>, linux1394-devel@lists.sourceforge.net, Ben Hutchings <bhutchings@solarflare.com>
 
-Hi Russell,
+--Signature=_Tue__12_Oct_2010_11_17_16_+1100_+C5LqZvz0+wtXK6S
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the arm tree got a conflict in
-arch/arm/mach-imx/mach-cpuimx27.c between commit
-4793ca4028e4dcdbf2740db50995c9378ded3cf8 ("cpuimx27: fix i2c bus
-selection") from the arm-current tree and commit
-77a406da5a5b76445a816d5f043fc9aef4026ff1 ("ARM: imx: fix name of macros
-to add imx-i2c devices") from the arm tree.
+Hi all,
 
-I fixed it up (see below) can can carry the fix for a while.
--- 
+Today's linux-next merge of the net tree got a conflict in
+drivers/ieee1394/eth1394.c between commit
+66fa12c571d35e3cd62574c65f1785a460105397 ("ieee1394: remove the old IEEE
+1394 driver stack") from the  tree and commit
+01414802054c382072b6cb9a1bdc6e243c74b2d5 ("ethtool: Provide a default
+implementation of ethtool_ops::get_drvinfo") from the net tree.
+
+The former removes the file.  I just did that.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/arm/mach-imx/mach-cpuimx27.c
-index 6830afd,28f73a1..0000000
---- a/arch/arm/mach-imx/mach-cpuimx27.c
-+++ b/arch/arm/mach-imx/mach-cpuimx27.c
-@@@ -259,8 -258,9 +258,9 @@@ static void __init eukrea_cpuimx27_init
-  	i2c_register_board_info(0, eukrea_cpuimx27_i2c_devices,
-  				ARRAY_SIZE(eukrea_cpuimx27_i2c_devices));
-  
-- 	imx27_add_i2c_imx0(&cpuimx27_i2c1_data);
- -	imx27_add_imx_i2c(1, &cpuimx27_i2c1_data);
-++	imx27_add_imx_i2c(0, &cpuimx27_i2c1_data);
-  
-+ 	imx27_add_fec(NULL);
-  	platform_add_devices(platform_devices, ARRAY_SIZE(platform_devices));
-  
-  #if defined(CONFIG_MACH_EUKREA_CPUIMX27_USESDHC2)
+--Signature=_Tue__12_Oct_2010_11_17_16_+1100_+C5LqZvz0+wtXK6S
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMs6kMAAoJEDMEi1NhKgbsSbgH/RFadt+4RXVZ2xAzo7abYeuc
+jwoMssEU8pGw8BDzu5p3o1cWn6bde6TotWByod6stT1qoh77dkzFc9D7HG+rPXE+
+rsfwaRAy/zK49XwFg1VbO5M++iwXH8tEYSHeP6E/sKmAYIcclNRbI4Szna/Yyd8N
+vm7rLh5+AYLkjSCneZY6EaFW5ukAEVabOe/oXU8zEjw+5UBbqAUOy7VQPB1YDfF1
+nwqvpC8c2qDv/5WCJeWeSZ0XPS6zbWzgCq770x2IcXLDMzkiKBBjSKDKqNWXyGoD
+EVaNKlC5W15vg6UZlIFlAedPCS2e4ZS68yIDv7gBhvU+lbSMQvsU8Q0RiDpwpEQ=
+=xyoH
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__12_Oct_2010_11_17_16_+1100_+C5LqZvz0+wtXK6S--
