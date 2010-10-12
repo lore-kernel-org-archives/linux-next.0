@@ -1,46 +1,40 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the oprofile tree with the tip tree
-Date: Tue, 12 Oct 2010 13:18:28 +1100
-Message-ID: <20101012131828.5fedf1bf.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the workqueues tree with the gfs2 tree
+Date: Tue, 12 Oct 2010 13:53:28 +1100
+Message-ID: <20101012135328.bd1e6caa.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Robert Richter <robert.richter@amd.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matt Helsley <matthltc@us.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Matt Fleming <matt@console-pimps.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steven Whitehouse <swhiteho@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi Robert,
+Hi Tejun,
 
-Today's linux-next merge of the oprofile tree got a conflict in
-arch/arm/oprofile/common.c between commit
-38a81da2205f94e8a2a834b51a6b99c91fc7c2e8 ("perf events: Clean up pid
-passing") from the tip tree and commit
-3d90a00763b51e1db344a7430c966be723b67a29 ("oprofile: Abstract the
-perf-events backend") from the oprofile tree.
+Today's linux-next merge of the workqueues tree got a conflict in
+fs/gfs2/main.c between commit 9fa0ea9f26f64fbfc3dfd51d1dc2c230b65ffb19
+("GFS2: Use new workqueue scheme") from the gfs2 tree and commit
+6370a6ad3b53df90b4700977f7718118a2cd524a ("workqueue: add and use
+WQ_MEM_RECLAIM flag") from the workqueues tree.
 
-The latter moved the code modified by the former, so I used the version
-of this file from the oprofile tree.  I also applied the effect of the
-tip tree patch to the new file drivers/oprofile/oprofile_perf.c:
-
-diff --git a/drivers/oprofile/oprofile_perf.c b/drivers/oprofile/oprofile_perf.c
-index b17235a..afbc43b 100644
---- a/drivers/oprofile/oprofile_perf.c
-+++ b/drivers/oprofile/oprofile_perf.c
-@@ -77,7 +77,7 @@ static int op_create_counter(int cpu, int event)
- 		return 0;
- 
- 	pevent = perf_event_create_kernel_counter(&counter_config[event].attr,
--						  cpu, -1,
-+						  cpu, NULL1,
- 						  op_overflow_handler);
- 
- 	if (IS_ERR(pevent))
--- 
-1.7.1
-
+I fixed it up (see below) and can carry the fix as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+
+diff --cc fs/gfs2/main.c
+index d7eb1e2,1c5f460..0000000
+--- a/fs/gfs2/main.c
++++ b/fs/gfs2/main.c
+@@@ -144,7 -140,7 +144,7 @@@ static int __init init_gfs2_fs(void
+  
+  	error = -ENOMEM;
+  	gfs_recovery_wq = alloc_workqueue("gfs_recovery",
+- 					  WQ_RESCUER | WQ_FREEZEABLE, 0);
+ -					  WQ_NON_REENTRANT | WQ_MEM_RECLAIM, 0);
+++					  WQ_MEM_RECLAIM | WQ_FREEZEABLE, 0);
+  	if (!gfs_recovery_wq)
+  		goto fail_wq;
+  
