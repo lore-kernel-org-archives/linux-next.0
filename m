@@ -1,32 +1,45 @@
-From: Matt Fleming <matt@console-pimps.org>
-Subject: Re: linux-next: manual merge of the oprofile tree with the tip tree
-Date: Tue, 12 Oct 2010 13:51:26 +0100
-Message-ID: <20101012125126.GE12335@console-pimps.org>
-References: <20101012131828.5fedf1bf.sfr@canb.auug.org.au> <20101012060327.GA13409@console-pimps.org> <20101012232349.938f83c0.sfr@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20101012232349.938f83c0.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Robert Richter <robert.richter@amd.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matt Helsley <matthltc@us.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-List-Id: linux-next.vger.kernel.org
+From: Michal Marek <mmarek@suse.cz>
+Subject: [PATCH] Revert "kconfig: Temporarily disable dependency warnings"
+Date: Tue, 12 Oct 2010 15:19:46 +0200
+Message-ID: <1286889586-13483-1-git-send-email-mmarek@suse.cz>
+References: <20101011145930.11fe570c.randy.dunlap@oracle.com>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from cantor.suse.de ([195.135.220.2]:33193 "EHLO mx1.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754055Ab0JLNUM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 12 Oct 2010 09:20:12 -0400
+In-Reply-To: <20101011145930.11fe570c.randy.dunlap@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: randy.dunlap@oracle.com
+Cc: catalin.marinas@arm.com, linux-kbuild@vger.kernel.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, lacombar@gmail.com, xiyou.wangcong@gmail.com
 
-On Tue, Oct 12, 2010 at 11:23:49PM +1100, Stephen Rothwell wrote:
-> Hi Matt,
-> 
-> On Tue, 12 Oct 2010 07:03:27 +0100 Matt Fleming <matt@console-pimps.org> wrote:
-> >
-> > >  		return 0;
-> > >  
-> > >  	pevent = perf_event_create_kernel_counter(&counter_config[event].attr,
-> > > -						  cpu, -1,
-> > > +						  cpu, NULL1,
-> > >  						  op_overflow_handler);
-> > 
-> > Is that a typo? Shouldn't that be NULL, and not NULL1?
-> 
-> Yes, its a typo in my patch :-( .  I will fix it for tomorrow. Sorry about that.
+This reverts commit 71ebc01, which was a 2.6.36-only stopgap solution.
 
-Not a problem! Thanks
+Signed-off-by: Michal Marek <mmarek@suse.cz>
+---
+ scripts/kconfig/symbol.c |    2 --
+ 1 files changed, 0 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
+index cb00568..c0efe10 100644
+--- a/scripts/kconfig/symbol.c
++++ b/scripts/kconfig/symbol.c
+@@ -350,7 +350,6 @@ void sym_calc_value(struct symbol *sym)
+ 				}
+ 			}
+ 		calc_newval:
+-#if 0
+ 			if (sym->dir_dep.tri == no && sym->rev_dep.tri != no) {
+ 				fprintf(stderr, "warning: (");
+ 				expr_fprint(sym->rev_dep.expr, stderr);
+@@ -359,7 +358,6 @@ void sym_calc_value(struct symbol *sym)
+ 				expr_fprint(sym->dir_dep.expr, stderr);
+ 				fprintf(stderr, ")\n");
+ 			}
+-#endif
+ 			newval.tri = EXPR_OR(newval.tri, sym->rev_dep.tri);
+ 		}
+ 		if (newval.tri == mod && sym_get_type(sym) == S_BOOLEAN)
+-- 
+1.7.1
