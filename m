@@ -1,54 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the net tree with the  tree
-Date: Tue, 12 Oct 2010 14:51:35 +1100
-Message-ID: <20101012145135.9697fe21.sfr@canb.auug.org.au>
-References: <20101012111716.0c54b093.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (wireless
+ tree related)
+Date: Tue, 12 Oct 2010 16:35:19 +1100
+Message-ID: <20101012163519.a88f2040.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__12_Oct_2010_14_51_35_+1100_7QyErKK=1Hkmr6+8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20101012111716.0c54b093.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan Richter <stefanr@s5r6.in-berlin.de>, linux1394-devel@lists.sourceforge.net, Ben Hutchings <bhutchings@solarflare.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Tue__12_Oct_2010_16_35_19_+1100_GSI0g558P0SUq6JL"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:36832 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752518Ab0JLFf1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 12 Oct 2010 01:35:27 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Greear <greearb@candelatech.com>
 
---Signature=_Tue__12_Oct_2010_14_51_35_+1100_7QyErKK=1Hkmr6+8
+--Signature=_Tue__12_Oct_2010_16_35_19_+1100_GSI0g558P0SUq6JL
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi John,
 
-On Tue, 12 Oct 2010 11:17:16 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Today's linux-next merge of the net tree got a conflict in
-> drivers/ieee1394/eth1394.c between commit
-> 66fa12c571d35e3cd62574c65f1785a460105397 ("ieee1394: remove the old IEEE
-> 1394 driver stack") from the  tree and commit
-                               ^
-I meant to say "the ieee1394 tree".
+After merging the final tree, today's linux-next build failed like this:
 
+ERROR: ".ath_opmode_to_string" [drivers/net/wireless/ath/ath5k/ath5k.ko] un=
+defined!
+
+CONFIG_ATH5K_DEBUG is not set ...
+
+Caused by commit 92c68a66a8f73c51f062ae8cae958c86a21fea78 ("ath5k: Print
+out opmode in debugfs").
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__12_Oct_2010_14_51_35_+1100_7QyErKK=1Hkmr6+8
+--Signature=_Tue__12_Oct_2010_16_35_19_+1100_GSI0g558P0SUq6JL
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMs9tHAAoJEDMEi1NhKgbsopsIAJnOTsi3Emd4EQAE8cox++70
-XOVPE+BVeTSbUrKVwAVJFqAJIfGZ1hrnKlZJQmTKJovhI/DlUb1asUhgeUhfry20
-7+3V0pLWFwQbnyfwdxmsLZ0GOwEQ8tOJBWx7eXaHe+1FVpZ3JlxgRekCeoQ8x43t
-tZDBH+6XyH5rZh6zf5yGv1PIKQGdI54lmycv5C4pF+ZspmzHIxPRLhWK4gpGaAWZ
-8z9oIaMosPO31P04aRqtDx2c7OvSuuaB10b3v/nFoTg7Il2IhEubjemUsIpL1GKH
-2pnTYccVjCBqW9uKRaZ5ug5qAyI56iyMivXnZ7NVtwM47gZRotJuLE6DtPgyhJY=
-=tWBJ
+iQEcBAEBAgAGBQJMs/OXAAoJEDMEi1NhKgbs2LEIAKLGjZq+9leKTS3M9jJRMxrm
+x5mdySUXEinguwIxrqzvXOxBoEDVZsdbZFgEKaIv9XExfYhiosWyePRLbq1RKf9v
+NsWSRfAmqXWiaZSE0FQeTJwynZjAJyzFV/xLDv2OVV0wbrXRieGjZoXPJzus6Q21
+qMyHLdsD37AemnwiFnnYnJ3lYkn+veh95NDhlw8PNJcgUZCq9ValZHs9H9sLjgxj
+gk6/dp4BwJVcTQco+UH5yhGFJC7MEVx1HPHadm6gyNwSXJF/dT6HxEGZ/Jf1Pfcy
+aIEMhwoOh9JF1lHye8MKd15JSCy2+22UkFbI98VhKu+UB07rj1GmuoDoyWl8+Iw=
+=NaGo
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__12_Oct_2010_14_51_35_+1100_7QyErKK=1Hkmr6+8--
+--Signature=_Tue__12_Oct_2010_16_35_19_+1100_GSI0g558P0SUq6JL--
