@@ -1,28 +1,27 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the trivial tree with the net tree
-Date: Tue, 12 Oct 2010 11:53:31 +1100
-Message-ID: <20101012115331.cc88eb1a.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the oprofile tree with the tip tree
+Date: Tue, 12 Oct 2010 13:13:59 +1100
+Message-ID: <20101012131359.5ade7129.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:42661 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:55517 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755417Ab0JLAxg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 11 Oct 2010 20:53:36 -0400
+	id S1756750Ab0JLCOG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 11 Oct 2010 22:14:06 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Weber <weber@corscience.de>, Samuel Ortiz <samuel@sortiz.org>
+To: Robert Richter <robert.richter@amd.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matt Fleming <matt@console-pimps.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
-Hi Jiri,
+Hi Robert,
 
-Today's linux-next merge of the trivial tree got a conflict in
-net/irda/irnet/irnet_ppp.c between commit
-f8cba16cad68c9b9ee7fecae48a1b91708e8e482 ("irda: Remove BKL instances
-from irnet") from the net tree and commit
-b42e17963c20ecb80905083ceaecc79fd9bd30f1 ("Fix typo configue => configure
-in comments") from the trivial tree.
+Today's linux-next merge of the oprofile tree got a conflict in
+kernel/perf_event.c between commit
+33696fc0d141bbbcb12f75b69608ea83282e3117 ("perf: Per PMU disable") from
+the tip tree and commit 84c7991059c9c4530cc911137c5bf508a41ed129 ("perf:
+New helper function for pmu name") from the oprofile tree.
 
 Just context changes.  I fixed it up (see below) and can carry the fix as
 necessary.
@@ -30,20 +29,73 @@ necessary.
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc net/irda/irnet/irnet_ppp.c
-index 0993bd4,36f43ca..0000000
---- a/net/irda/irnet/irnet_ppp.c
-+++ b/net/irda/irnet/irnet_ppp.c
-@@@ -664,10 -663,8 +664,10 @@@ dev_irnet_ioctl
-        if((val == N_SYNC_PPP) || (val == N_PPP))
-  	{
-  	  DEBUG(FS_INFO, "Entering PPP discipline.\n");
-- 	  /* PPP channel setup (ap->chan in configued in dev_irnet_open())*/
-+ 	  /* PPP channel setup (ap->chan in configured in dev_irnet_open())*/
- -	  lock_kernel();
- +	  if (mutex_lock_interruptible(&ap->lock))
- +		  return -EINTR;
+diff --cc kernel/perf_event.c
+index 64507ea,fc51268..0000000
+--- a/kernel/perf_event.c
++++ b/kernel/perf_event.c
+@@@ -61,38 -67,41 +61,43 @@@ int sysctl_perf_event_sample_rate __rea
+  
+  static atomic64_t perf_event_id;
+  
+ -/*
+ - * Lock for (sysadmin-configurable) event reservations:
+ - */
+ -static DEFINE_SPINLOCK(perf_resource_lock);
+ +void __weak perf_event_print_debug(void)	{ }
+  
+ -/*
+ - * Architecture provided APIs - weak aliases:
+ - */
+ -extern __weak const struct pmu *hw_perf_event_init(struct perf_event *event)
+ +void perf_pmu_disable(struct pmu *pmu)
+  {
+ -	return NULL;
+ +	int *count = this_cpu_ptr(pmu->pmu_disable_count);
+ +	if (!(*count)++)
+ +		pmu->pmu_disable(pmu);
+  }
+  
+ -void __weak hw_perf_disable(void)		{ barrier(); }
+ -void __weak hw_perf_enable(void)		{ barrier(); }
+ -
+ -void __weak perf_event_print_debug(void)	{ }
+ -
++ extern __weak const char *perf_pmu_name(void)
++ {
++ 	return "pmu";
++ }
++ 
+ -static DEFINE_PER_CPU(int, perf_disable_count);
+ -
+ -void perf_disable(void)
+ +void perf_pmu_enable(struct pmu *pmu)
+  {
+ -	if (!__get_cpu_var(perf_disable_count)++)
+ -		hw_perf_disable();
+ +	int *count = this_cpu_ptr(pmu->pmu_disable_count);
+ +	if (!--(*count))
+ +		pmu->pmu_enable(pmu);
+  }
+  
+ -void perf_enable(void)
+ +static DEFINE_PER_CPU(struct list_head, rotation_list);
  +
-  	  err = ppp_register_channel(&ap->chan);
-  	  if(err == 0)
-  	    {
+ +/*
+ + * perf_pmu_rotate_start() and perf_rotate_context() are fully serialized
+ + * because they're strictly cpu affine and rotate_start is called with IRQs
+ + * disabled, while rotate_context is called from IRQ context.
+ + */
+ +static void perf_pmu_rotate_start(struct pmu *pmu)
+  {
+ -	if (!--__get_cpu_var(perf_disable_count))
+ -		hw_perf_enable();
+ +	struct perf_cpu_context *cpuctx = this_cpu_ptr(pmu->pmu_cpu_context);
+ +	struct list_head *head = &__get_cpu_var(rotation_list);
+ +
+ +	WARN_ON(!irqs_disabled());
+ +
+ +	if (list_empty(&cpuctx->rotation_list))
+ +		list_add(&cpuctx->rotation_list, head);
+  }
+  
+  static void get_ctx(struct perf_event_context *ctx)
