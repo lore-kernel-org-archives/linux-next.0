@@ -1,46 +1,64 @@
-From: Sascha Hauer <s.hauer@pengutronix.de>
-Subject: Re: linux-next: manual merge of the arm tree with the arm-current
-	tree
-Date: Tue, 12 Oct 2010 12:35:05 +0200
-Message-ID: <20101012103505.GD28242@pengutronix.de>
-References: <20101012103314.41b00cbe.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the oprofile tree with the tip tree
+Date: Tue, 12 Oct 2010 23:23:49 +1100
+Message-ID: <20101012232349.938f83c0.sfr@canb.auug.org.au>
+References: <20101012131828.5fedf1bf.sfr@canb.auug.org.au>
+	<20101012060327.GA13409@console-pimps.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__12_Oct_2010_23_23_49_+1100_JxCDahWEsLvTMxPe"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:42828 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757024Ab0JLKfK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Oct 2010 06:35:10 -0400
-Content-Disposition: inline
-In-Reply-To: <20101012103314.41b00cbe.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:34228 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753963Ab0JLMYE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 12 Oct 2010 08:24:04 -0400
+In-Reply-To: <20101012060327.GA13409@console-pimps.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Russell King <rmk@arm.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Uwe =?iso-8859-15?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Eric =?iso-8859-15?Q?B=E9nard?= <eric@eukrea.com>
+To: Matt Fleming <matt@console-pimps.org>
+Cc: Robert Richter <robert.richter@amd.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matt Helsley <matthltc@us.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
-On Tue, Oct 12, 2010 at 10:33:14AM +1100, Stephen Rothwell wrote:
-> Hi Russell,
-> 
-> Today's linux-next merge of the arm tree got a conflict in
-> arch/arm/mach-imx/mach-cpuimx27.c between commit
-> 4793ca4028e4dcdbf2740db50995c9378ded3cf8 ("cpuimx27: fix i2c bus
-> selection") from the arm-current tree and commit
-> 77a406da5a5b76445a816d5f043fc9aef4026ff1 ("ARM: imx: fix name of macros
-> to add imx-i2c devices") from the arm tree.
-> 
-> I fixed it up (see below) can can carry the fix for a while.
+--Signature=_Tue__12_Oct_2010_23_23_49_+1100_JxCDahWEsLvTMxPe
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This is because the imx-for-next branch still contained a patch which
-I was hoping to get into 2.6.36. This patch conflicts with another patch
-in the 2.6.37 branch (I resolved this manually in my next branch).
-As all patches for next are now in Russells branch I just scrubbed
-my for-next branch and this merge conflict should be gone now.
+Hi Matt,
 
-Sascha
+On Tue, 12 Oct 2010 07:03:27 +0100 Matt Fleming <matt@console-pimps.org> wr=
+ote:
+>
+> >  		return 0;
+> > =20
+> >  	pevent =3D perf_event_create_kernel_counter(&counter_config[event].at=
+tr,
+> > -						  cpu, -1,
+> > +						  cpu, NULL1,
+> >  						  op_overflow_handler);
+>=20
+> Is that a typo? Shouldn't that be NULL, and not NULL1?
 
+Yes, its a typo in my patch :-( .  I will fix it for tomorrow. Sorry about =
+that.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+--Signature=_Tue__12_Oct_2010_23_23_49_+1100_JxCDahWEsLvTMxPe
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMtFNVAAoJEDMEi1NhKgbs6/EIAJHRRArr8fUtu+4RZJobfndC
+/uB5Yv0QjZOGvr/NKQqje63V2IZph1XnhcYdqUewufut6Qalo8lFoNFOry/oxQB/
+eubTGT5xebYHXCvfWGUCvOk0IW7xDYZYUQqys5NpusZbQWMpEv6XR1CE3WTFMrH/
+4in0AtWuv+4Y4iG1jHUXxUCjSIWrxVzmfsTgKr9D/f1IRPr9x1XNko8kedwSBnyS
+qR+gb7AOwVf7qn/25NhdiWB1sG57Gzqz8hVEaE/ISfCN+ferj44fI1sj2C+RbLyj
+jcAA+YnSxnkAIqulQt/6PfJlsCX4PoIF85IKivbJMlPX6gjvMtepX4z4x0NYrOo=
+=adua
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__12_Oct_2010_23_23_49_+1100_JxCDahWEsLvTMxPe--
