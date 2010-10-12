@@ -1,47 +1,66 @@
-From: Matt Fleming <matt@console-pimps.org>
-Subject: Re: linux-next: manual merge of the oprofile tree with the tip tree
-Date: Tue, 12 Oct 2010 07:03:27 +0100
-Message-ID: <20101012060327.GA13409@console-pimps.org>
-References: <20101012131828.5fedf1bf.sfr@canb.auug.org.au>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: linux-next: manual merge of the arm tree with the arm-current
+	tree
+Date: Tue, 12 Oct 2010 10:03:54 +0200
+Message-ID: <20101012080354.GC29673@pengutronix.de>
+References: <20101012103314.41b00cbe.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from arkanian.console-pimps.org ([212.110.184.194]:44083 "EHLO
-	arkanian.console-pimps.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752993Ab0JLGD3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 12 Oct 2010 02:03:29 -0400
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:43462 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757080Ab0JLIEB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Oct 2010 04:04:01 -0400
 Content-Disposition: inline
-In-Reply-To: <20101012131828.5fedf1bf.sfr@canb.auug.org.au>
+In-Reply-To: <20101012103314.41b00cbe.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Robert Richter <robert.richter@amd.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matt Helsley <matthltc@us.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Russell King <rmk@arm.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>, Eric =?iso-8859-1?Q?B=E9nard?= <eric@eukrea.com>
 
-On Tue, Oct 12, 2010 at 01:18:28PM +1100, Stephen Rothwell wrote:
-> Hi Robert,
-> 
-> Today's linux-next merge of the oprofile tree got a conflict in
-> arch/arm/oprofile/common.c between commit
-> 38a81da2205f94e8a2a834b51a6b99c91fc7c2e8 ("perf events: Clean up pid
-> passing") from the tip tree and commit
-> 3d90a00763b51e1db344a7430c966be723b67a29 ("oprofile: Abstract the
-> perf-events backend") from the oprofile tree.
-> 
-> The latter moved the code modified by the former, so I used the version
-> of this file from the oprofile tree.  I also applied the effect of the
-> tip tree patch to the new file drivers/oprofile/oprofile_perf.c:
-> 
-> diff --git a/drivers/oprofile/oprofile_perf.c b/drivers/oprofile/oprofile_perf.c
-> index b17235a..afbc43b 100644
-> --- a/drivers/oprofile/oprofile_perf.c
-> +++ b/drivers/oprofile/oprofile_perf.c
-> @@ -77,7 +77,7 @@ static int op_create_counter(int cpu, int event)
->  		return 0;
->  
->  	pevent = perf_event_create_kernel_counter(&counter_config[event].attr,
-> -						  cpu, -1,
-> +						  cpu, NULL1,
->  						  op_overflow_handler);
+On Tue, Oct 12, 2010 at 10:33:14AM +1100, Stephen Rothwell wrote:
+> Hi Russell,
+>=20
+> Today's linux-next merge of the arm tree got a conflict in
+> arch/arm/mach-imx/mach-cpuimx27.c between commit
+> 4793ca4028e4dcdbf2740db50995c9378ded3cf8 ("cpuimx27: fix i2c bus
+> selection") from the arm-current tree and commit
+> 77a406da5a5b76445a816d5f043fc9aef4026ff1 ("ARM: imx: fix name of macr=
+os
+> to add imx-i2c devices") from the arm tree.
+>=20
+> I fixed it up (see below) can can carry the fix for a while.
+> --=20
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+>=20
+> diff --cc arch/arm/mach-imx/mach-cpuimx27.c
+> index 6830afd,28f73a1..0000000
+> --- a/arch/arm/mach-imx/mach-cpuimx27.c
+> +++ b/arch/arm/mach-imx/mach-cpuimx27.c
+> @@@ -259,8 -258,9 +258,9 @@@ static void __init eukrea_cpuimx27_init
+>   	i2c_register_board_info(0, eukrea_cpuimx27_i2c_devices,
+>   				ARRAY_SIZE(eukrea_cpuimx27_i2c_devices));
+>  =20
+> - 	imx27_add_i2c_imx0(&cpuimx27_i2c1_data);
+>  -	imx27_add_imx_i2c(1, &cpuimx27_i2c1_data);
+> ++	imx27_add_imx_i2c(0, &cpuimx27_i2c1_data);
+>  =20
+> + 	imx27_add_fec(NULL);
+>   	platform_add_devices(platform_devices, ARRAY_SIZE(platform_devices=
+));
+>  =20
+>   #if defined(CONFIG_MACH_EUKREA_CPUIMX27_USESDHC2)
+>=20
+This is resolved correctly.
 
-Is that a typo? Shouldn't that be NULL, and not NULL1?
+Thanks
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
