@@ -1,50 +1,47 @@
-From: Stefan Richter <stefanr@s5r6.in-berlin.de>
-Subject: Re: linux-next: manual merge of the net tree with the  tree
-Date: Tue, 12 Oct 2010 07:56:42 +0200
-Message-ID: <4CB3F89A.2010005@s5r6.in-berlin.de>
-References: <20101012111716.0c54b093.sfr@canb.auug.org.au>
-	<20101012145135.9697fe21.sfr@canb.auug.org.au>
+From: Matt Fleming <matt@console-pimps.org>
+Subject: Re: linux-next: manual merge of the oprofile tree with the tip tree
+Date: Tue, 12 Oct 2010 07:03:27 +0100
+Message-ID: <20101012060327.GA13409@console-pimps.org>
+References: <20101012131828.5fedf1bf.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux1394-devel-bounces@lists.sourceforge.net>
-In-Reply-To: <20101012145135.9697fe21.sfr@canb.auug.org.au>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/linux1394-devel>,
-	<mailto:linux1394-devel-request@lists.sourceforge.net?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=linux1394-devel>
-List-Post: <mailto:linux1394-devel@lists.sourceforge.net>
-List-Help: <mailto:linux1394-devel-request@lists.sourceforge.net?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/linux1394-devel>,
-	<mailto:linux1394-devel-request@lists.sourceforge.net?subject=subscribe>
-Errors-To: linux1394-devel-bounces@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from arkanian.console-pimps.org ([212.110.184.194]:44083 "EHLO
+	arkanian.console-pimps.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752993Ab0JLGD3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 12 Oct 2010 02:03:29 -0400
+Content-Disposition: inline
+In-Reply-To: <20101012131828.5fedf1bf.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Ben Hutchings <bhutchings@solarflare.com>, linux1394-devel@lists.sourceforge.net, David Miller <davem@davemloft.net>
-List-Id: linux-next.vger.kernel.org
+Cc: Robert Richter <robert.richter@amd.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matt Helsley <matthltc@us.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
-Stephen Rothwell wrote:
-> Hi all,
+On Tue, Oct 12, 2010 at 01:18:28PM +1100, Stephen Rothwell wrote:
+> Hi Robert,
 > 
-> On Tue, 12 Oct 2010 11:17:16 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> Today's linux-next merge of the net tree got a conflict in
->> drivers/ieee1394/eth1394.c between commit
->> 66fa12c571d35e3cd62574c65f1785a460105397 ("ieee1394: remove the old IEEE
->> 1394 driver stack") from the  tree and commit
->                                ^
-> I meant to say "the ieee1394 tree".
+> Today's linux-next merge of the oprofile tree got a conflict in
+> arch/arm/oprofile/common.c between commit
+> 38a81da2205f94e8a2a834b51a6b99c91fc7c2e8 ("perf events: Clean up pid
+> passing") from the tip tree and commit
+> 3d90a00763b51e1db344a7430c966be723b67a29 ("oprofile: Abstract the
+> perf-events backend") from the oprofile tree.
+> 
+> The latter moved the code modified by the former, so I used the version
+> of this file from the oprofile tree.  I also applied the effect of the
+> tip tree patch to the new file drivers/oprofile/oprofile_perf.c:
+> 
+> diff --git a/drivers/oprofile/oprofile_perf.c b/drivers/oprofile/oprofile_perf.c
+> index b17235a..afbc43b 100644
+> --- a/drivers/oprofile/oprofile_perf.c
+> +++ b/drivers/oprofile/oprofile_perf.c
+> @@ -77,7 +77,7 @@ static int op_create_counter(int cpu, int event)
+>  		return 0;
+>  
+>  	pevent = perf_event_create_kernel_counter(&counter_config[event].attr,
+> -						  cpu, -1,
+> +						  cpu, NULL1,
+>  						  op_overflow_handler);
 
-(I should have put the ieee1394 removal into -next much earlier.  OTOH the
-conflicting commit is from August 17 already...)
-
-Would it be useful if I rebase this small ieee1394 removal branch of mine onto
-net?
--- 
-Stefan Richter
--=====-==-=- =-=- -==--
-http://arcgraph.de/sr/
-
-------------------------------------------------------------------------------
-Beautiful is writing same markup. Internet Explorer 9 supports
-standards for HTML5, CSS3, SVG 1.1,  ECMAScript5, and DOM L2 & L3.
-Spend less time writing and  rewriting code and more time creating great
-experiences on the web. Be a part of the beta today.
-http://p.sf.net/sfu/beautyoftheweb
+Is that a typo? Shouldn't that be NULL, and not NULL1?
