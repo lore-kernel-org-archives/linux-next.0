@@ -1,43 +1,39 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the usb tree with the
-	scsi tree
-Date: Wed, 13 Oct 2010 06:36:07 -0700
-Message-ID: <20101013133607.GA8975@kroah.com>
-References: <20101013142558.c46a6311.sfr@canb.auug.org.au>
+From: Sachin Sant <sachinp@in.ibm.com>
+Subject: [-next Oct 13] Build failure drivers/s390/net/ctcm_mpc.o
+Date: Wed, 13 Oct 2010 20:39:16 +0530
+Message-ID: <4CB5CB9C.9030603@in.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:53284 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750937Ab0JMNmm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 13 Oct 2010 09:42:42 -0400
-Content-Disposition: inline
-In-Reply-To: <20101013142558.c46a6311.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, "Martin K. Petersen" <martin.petersen@oracle.com>, James Bottomley <James.Bottomley@HansenPartnership.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: netdev <netdev@vger.kernel.org>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, linux-s390@vger.kernel.org, ursula.braun@de.ibm.com, Eric Dumazet <eric.dumazet@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Oct 13, 2010 at 02:25:58PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> After merging the usb tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> drivers/scsi/sd.c: In function 'read_capacity_10':
-> drivers/scsi/sd.c:1637: error: 'struct scsi_disk' has no member named 'hw_sector_size'
-> 
-> Caused by commit a488ec87ee2e79911d10425cb0c0264290905b38 ("scsi/sd: add
-> a no_read_capacity_16 scsi_device flag") interacting with commit
-> 526f7c7950bbf1271e59177d70d74438c2ef96de ("[SCSI] sd: Fix overflow with
-> big physical blocks") from the scsi tree.
-> 
-> I have applied the following patch for today and will carry it as a merge
-> fix as necessary.
+Today's next fails to build on a s390 box with following
+error
 
-Thanks for carrying the fix, I'll make sure to keep it in mind if I end
-up merging after James does with Linus.
+drivers/s390/net/ctcm_mpc.c: In function ctc_mpc_dealloc_ch:
+drivers/s390/net/ctcm_mpc.c:541: error: struct net_device has no member named refcnt
 
-thanks,
+The code in question was changed by
+commit 29b4433d991c88d86ca48a4c1cc33c671475be4b
+net: percpu net_device refcount
 
-greg k-h
+The net_device struct member refcnt was changed from atomic_t to
+int __percpu.
+
+Thanks
+-Sachin
+
+
+-- 
+
+---------------------------------
+Sachin Sant
+IBM Linux Technology Center
+India Systems and Technology Labs
+Bangalore, India
+---------------------------------
+
