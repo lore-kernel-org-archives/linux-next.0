@@ -1,48 +1,48 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH/RFC] input: hil_mlc - Fix hil_mlc_serio_id file2alias
- failure
-Date: Tue, 12 Oct 2010 23:56:02 -0700
-Message-ID: <20101013065602.GA7014@core.coreip.homeip.net>
-References: <alpine.DEB.2.00.1010122111270.6491@ayla.of.borg>
+From: Jason Wessel <jason.wessel@windriver.com>
+Subject: Re: linux-next: manual merge of the drm tree with the kgdb tree
+Date: Wed, 13 Oct 2010 07:25:03 -0500
+Message-ID: <4CB5A51F.50709@windriver.com>
+References: <20101013131303.c044aa88.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gy0-f174.google.com ([209.85.160.174]:34361 "EHLO
-	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752475Ab0JMG4K (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Oct 2010 02:56:10 -0400
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.00.1010122111270.6491@ayla.of.borg>
+Received: from mail.windriver.com ([147.11.1.11]:58239 "EHLO
+	mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754034Ab0JMMZU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Oct 2010 08:25:20 -0400
+In-Reply-To: <20101013131303.c044aa88.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Dzianis Kahanovich <mahatma@eu.by>, Helge Deller <deller@gmx.de>, linux-next@vger.kernel.org, linux-input@vger.kernel.org, Linux/m68k <linux-m68k@lists.linux-m68k.org>, linux-parisc@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Dave Airlie <airlied@linux.ie>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Oct 12, 2010 at 09:17:49PM +0200, Geert Uytterhoeven wrote:
-> Commit e288bf7c346360ac9dafbc1b6d7b6b1a82b51616 ("Input: HIL keyboard and
-> serio - add missing MODULE_DEVICE_TABLE()") caused the following build
-> failure on m68k/allmodconfig:
-> 
-> FATAL: drivers/input/serio/hil_mlc: struct serio_device_id is not terminated with a NULL entry!
-> 
-> hil_mlc_serio_id is not an array, but a single struct serio_device_id entry.
-> Fix the build by converting it into an array, and adding a NULL entry.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> ---
-> Build failure in linux-next:
-> http://kisskb.ellerman.id.au/kisskb/buildresult/3385851/
-> 
-> I'm not sure this is the right fix, as hil_mlc_serio_id is a catch-all ID.
-> Perhaps the MODULE_DEVICE_TABLE() should just be removed again instead?
-> 
+On 10/12/2010 09:13 PM, Stephen Rothwell wrote:
+> Hi Dave,
+>
+> Today's linux-next merge of the drm tree got conflicts in
+> drivers/gpu/drm/drm_fb_helper.c, drivers/gpu/drm/i915/intel_display.c,
+> drivers/gpu/drm/nouveau/nv04_crtc.c, drivers/gpu/drm/nouveau/nv50_crtc.c,
+> drivers/gpu/drm/radeon/atombios_crtc.c,
+> drivers/gpu/drm/radeon/radeon_legacy_crtc.c,
+> drivers/gpu/drm/radeon/radeon_mode.h and include/drm/drm_crtc_helper.h
+> between commit 92b182171492dc1ac626e6f24ff3a7c917217aa0 ("drm,kdb,kms:
+> Add an enter argument to mode_set_base_atomic() API") from the kgdb tree
+> and commit 413d45d3627be4748058dea697718ed6fb88bd01 ("drm, kdb, kms: Add
+> an enter argument to mode_set_base_atomic() API") from the drm tree.
+>
+> Supposedly the same patch, but not :-(.  I fixed it up by using the
+> version from the drm tree (since that has slightly later author date).
+> Hope I got it right :-)
+>
+> Please sort this out.
+>   
 
-Gah, that original patch was incorrect, I should not have applied it at
-all... The serio_device_id in question is for serio port that is being
-created by the driver and thus of course should not be used in
-MODULE_DEVICE_TABLE().
+Thanks Stephen,
 
-I'll drop it from my 'next' queue.
+There were 3 version of that particular the patch set before things
+settled down.  All the drm patches will be removed from my tree and
+fixes will propagate via the drm-core-next tree.
 
--- 
-Dmitry
+Cheers,
+Jason.
