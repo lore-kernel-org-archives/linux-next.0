@@ -1,34 +1,67 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: Tree for October 13 (net/3c59x)
-Date: Wed, 13 Oct 2010 09:54:32 -0700 (PDT)
-Message-ID: <20101013.095432.71126747.davem@davemloft.net>
+From: "Hennerich, Michael" <Michael.Hennerich@analog.com>
+Subject: RE: linux-next: Tree for October 13 (staging/iio)
+Date: Wed, 13 Oct 2010 20:07:19 +0100
+Message-ID: <544AC56F16B56944AEC3BD4E3D59177130943738AE@LIMKCMBX1.ad.analog.com>
 References: <20101013154522.7b087a20.sfr@canb.auug.org.au>
-	<20101013093836.1ee6f2f9.randy.dunlap@oracle.com>
+ <20101013094117.530baa63.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20101013093836.1ee6f2f9.randy.dunlap@oracle.com>
-Sender: netdev-owner@vger.kernel.org
-To: randy.dunlap@oracle.com
-Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from nwd2mail10.analog.com ([137.71.25.55]:57296 "EHLO
+	nwd2mail10.analog.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750976Ab0JMTHZ convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Oct 2010 15:07:25 -0400
+In-Reply-To: <20101013094117.530baa63.randy.dunlap@oracle.com>
+Content-Language: en-US
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, driverdevel <devel@driverdev.osuosl.org>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "gregkh@suse.de" <gregkh@suse.de>, Jonathan Cameron <jic23@cam.ac.uk>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, Drivers <Drivers@analog.com>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Date: Wed, 13 Oct 2010 09:38:36 -0700
-
+Randy Dunlap wrote on 2010-10-13:
 > On Wed, 13 Oct 2010 15:45:22 +1100 Stephen Rothwell wrote:
-> 
+>
 >> Hi all,
->> 
+>>
 >> Changes since 20101012:
-> 
-> 
-> when CONFIG_PCI is not enabled:
-> 
-> drivers/net/3c59x.c:3211: error:request for member 'current_state' in something not a structure or union
+>
+>
+> drivers/staging/iio/adc/ad7476.h:62: note: expected 'struct device *'
+> but argument is of type 'struct ad7476_state *'
+> drivers/staging/iio/adc/ad7476_core.c:48: error: too few arguments to
+> function 'ad7476_scan_from_ring'
 
-Like all the other PCI interfaces that NOP out into empty inlines when
-CONFIG_PCI is not enabled, it would be nice to have an interface that
-provides pci_dev->current_state in a similar fashion so we don't have
-to add a bunch of ifdefs here.
+Thanks!
+
+That's due to an old prototype active when CONFIG_IIO_RING_BUFFER is not set.
+I'll fix that.
+
+> drivers/staging/iio/adc/ad7476_core.c: At top level:
+> drivers/staging/iio/adc/ad7476_core.c:102: error:
+> 'IIO_SCAN_EL_TYPE_UNSIGNED' undeclared here (not in a function)
+
+Jonathan,
+
+Do we really need to guard the entire ring_generic.h header with
+
+#ifdef CONFIG_IIO_RING_BUFFER
+...
+
+Some of these might be used, even when CONFIG_IIO_RING_BUFFER is not set.
+Or do we really need CONFIG_IIO_RING_BUFFER at all.
+Why not always provide it?
+
+>
+> config is attached.
+>
+> ---
+> ~Randy
+> *** Remember to use Documentation/SubmitChecklist when testing your
+> code ***
+
+Greetings,
+Michael
+
+Analog Devices GmbH      Wilhelm-Wagenfeld-Str. 6      80807 Muenchen
+Sitz der Gesellschaft Muenchen, Registergericht Muenchen HRB 4036 Geschaeftsfuehrer Thomas Wessel, William A. Martin, Margaret Seif
