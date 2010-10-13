@@ -1,62 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm tree with the kgdb tree
-Date: Wed, 13 Oct 2010 13:13:03 +1100
-Message-ID: <20101013131303.c044aa88.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the usb tree with the scsi
+ tree
+Date: Wed, 13 Oct 2010 14:25:58 +1100
+Message-ID: <20101013142558.c46a6311.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__13_Oct_2010_13_13_03_+1100_QfHr4E4JwGsNJ4qk"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55257 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:53762 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751637Ab0JMCNO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 12 Oct 2010 22:13:14 -0400
+	id S1752511Ab0JMD0F (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 12 Oct 2010 23:26:05 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jason Wessel <jason.wessel@windriver.com>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, "Martin K. Petersen" <martin.petersen@oracle.com>, James Bottomley <James.Bottomley@HansenPartnership.com>
 
---Signature=_Wed__13_Oct_2010_13_13_03_+1100_QfHr4E4JwGsNJ4qk
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Greg,
 
-Hi Dave,
+After merging the usb tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Today's linux-next merge of the drm tree got conflicts in
-drivers/gpu/drm/drm_fb_helper.c, drivers/gpu/drm/i915/intel_display.c,
-drivers/gpu/drm/nouveau/nv04_crtc.c, drivers/gpu/drm/nouveau/nv50_crtc.c,
-drivers/gpu/drm/radeon/atombios_crtc.c,
-drivers/gpu/drm/radeon/radeon_legacy_crtc.c,
-drivers/gpu/drm/radeon/radeon_mode.h and include/drm/drm_crtc_helper.h
-between commit 92b182171492dc1ac626e6f24ff3a7c917217aa0 ("drm,kdb,kms:
-Add an enter argument to mode_set_base_atomic() API") from the kgdb tree
-and commit 413d45d3627be4748058dea697718ed6fb88bd01 ("drm, kdb, kms: Add
-an enter argument to mode_set_base_atomic() API") from the drm tree.
+drivers/scsi/sd.c: In function 'read_capacity_10':
+drivers/scsi/sd.c:1637: error: 'struct scsi_disk' has no member named 'hw_sector_size'
 
-Supposedly the same patch, but not :-(.  I fixed it up by using the
-version from the drm tree (since that has slightly later author date).
-Hope I got it right :-)
+Caused by commit a488ec87ee2e79911d10425cb0c0264290905b38 ("scsi/sd: add
+a no_read_capacity_16 scsi_device flag") interacting with commit
+526f7c7950bbf1271e59177d70d74438c2ef96de ("[SCSI] sd: Fix overflow with
+big physical blocks") from the scsi tree.
 
-Please sort this out.
---=20
+I have applied the following patch for today and will carry it as a merge
+fix as necessary.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 13 Oct 2010 14:15:15 +1100
+Subject: [PATCH] scsi/sd: update for hw_sector_size rename
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/scsi/sd.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index 8ca43e5..57d1e3e 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -1634,7 +1634,7 @@ static int read_capacity_10(struct scsi_disk *sdkp, struct scsi_device *sdp,
+ 		   0xffffffff when the want to report a size of 0 (with
+ 		   which they really mean no media is present) */
+ 		sdkp->capacity = 0;
+-		sdkp->hw_sector_size = sector_size;
++		sdkp->physical_block_size = sector_size;
+ 		return sector_size;
+ 	}
+ 
+-- 
+1.7.1
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__13_Oct_2010_13_13_03_+1100_QfHr4E4JwGsNJ4qk
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMtRWvAAoJEDMEi1NhKgbs0D8H/ix1uLfFX1Fr+XJRUEEJPmTC
-VULTLiL6wSej58j1puKVJekYAbO7tu4T8Eqg3lkJhL58ZCAJ5A9byvA9742lWjsA
-6oMGUYaZqmqsmk8I2QpLAb7/1PlocdAyHAKcJpSsGxfa4DnfrMi5WtNybttY0whq
-4X015ZTh3ZmViv/gffOk0Ra/atJ3gHSygGFd+JMncjKgAarU0k1hm0XmX15vwbE3
-TjYRuq/idPFQ13VySX+8cmuY2fTgJiHJ5lo2+AwzR6vBAElQhv3EBqHyIe0bCQRJ
-jcsBTnL5PIVlBClJ7ZY95Ui4Y9qjvX1gV1vW+XtRTxnbFFQbvEKBK9IE6Hrw0wI=
-=Vtcl
------END PGP SIGNATURE-----
-
---Signature=_Wed__13_Oct_2010_13_13_03_+1100_QfHr4E4JwGsNJ4qk--
