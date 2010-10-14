@@ -1,54 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the spi tree
-Date: Thu, 14 Oct 2010 12:59:52 +1100
-Message-ID: <20101014125952.e4be4c9b.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the sh tree
+Date: Thu, 14 Oct 2010 13:19:53 +1100
+Message-ID: <20101014131953.cc24b95d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__14_Oct_2010_12_59_52_+1100_m++b43DNiD2f+VjB"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53384 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58108 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753325Ab0JNB76 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 13 Oct 2010 21:59:58 -0400
+	id S1754157Ab0JNCUA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 13 Oct 2010 22:20:00 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Masayuki Ohtake <masa-korg@dsn.okisemi.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mundt <lethal@linux-sh.org>
 
---Signature=_Thu__14_Oct_2010_12_59_52_+1100_m++b43DNiD2f+VjB
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-Hi Grant,
+Today's linux-next merge of the tip tree got a conflict in
+arch/sh/kernel/perf_event.c between commit
+51c6c9bb34fcd112d4ab8b8f5c1d1b6a10a00e71 ("sh: perf: Set up
+perf_max_events") from the sh tree and commit
+a4eaf7f14675cb512d69f0c928055e73d0c6d252 ("perf: Rework the PMU methods")
+from the tip tree.
 
-After merging the rcu tree, today's linux-next build (x86_64 allmodconfig)
-produced this warning:
-
-drivers/spi/spi_topcliff_pch.c: In function 'pch_spi_process_messages':
-drivers/spi/spi_topcliff_pch.c:752: warning: 'data' is used uninitialized i=
-n this function
-
-and, indeed it is ...
---=20
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__14_Oct_2010_12_59_52_+1100_m++b43DNiD2f+VjB
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMtmQYAAoJEDMEi1NhKgbst04IAIqxA++ki6e9MFRdmNOJTkqH
-56GoR/nxkK3MiEnIZiUU9y2DE4xp6uks37HDoU5UvzBk794P7iNomFv1YZGHyjXh
-TLic55zHQ58CgrOuDr6Gcbz/I8XHkzQi5ZoZeqaEVt8Gc8AmCw9/ujymm/Ql0bYf
-JIkh52GGfy7EdKIZqIsN+4iV5L9LecXSgyx4MQpffc9vljfBsbItkk7D4C21fXO3
-bm/zrW0hgFVXmPiVRLR31Qc3/qdM2CaghIXWfNjoSAHRzI8tmfGfuXiKu4chHbi2
-w6RMXqS2jHajMWeibxn5wzdiXpAZcO+pxRiJpXDTh+/wcqGyGZ9sYnSRxhtptXk=
-=It02
------END PGP SIGNATURE-----
-
---Signature=_Thu__14_Oct_2010_12_59_52_+1100_m++b43DNiD2f+VjB--
+diff --cc arch/sh/kernel/perf_event.c
+index ecef1fe,036f7a9..0000000
+--- a/arch/sh/kernel/perf_event.c
++++ b/arch/sh/kernel/perf_event.c
+@@@ -319,13 -365,13 +365,14 @@@ int __cpuinit register_sh_pmu(struct sh
+  {
+  	if (sh_pmu)
+  		return -EBUSY;
+- 	sh_pmu = pmu;
++ 	sh_pmu = _pmu;
+  
+- 	pr_info("Performance Events: %s support registered\n", pmu->name);
++ 	pr_info("Performance Events: %s support registered\n", _pmu->name);
+  
+- 	WARN_ON(pmu->num_events > MAX_HWEVENTS);
+- 	perf_max_events = pmu->num_events;
++ 	WARN_ON(_pmu->num_events > MAX_HWEVENTS);
+++	perf_max_events = _pmu->num_events;
+  
++ 	perf_pmu_register(&pmu);
+  	perf_cpu_notifier(sh_pmu_notifier);
+  	return 0;
+  }
