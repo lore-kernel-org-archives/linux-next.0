@@ -1,54 +1,37 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the sh tree
-Date: Thu, 14 Oct 2010 13:19:53 +1100
-Message-ID: <20101014131953.cc24b95d.sfr@canb.auug.org.au>
+From: Tony Breeds <tony@bakeyournoodle.com>
+Subject: Re: linux-next: Tree for October 13
+Date: Thu, 14 Oct 2010 13:55:26 +1100
+Message-ID: <20101014025526.GD24185@ozlabs.org>
+References: <20101013154522.7b087a20.sfr@canb.auug.org.au>
+ <20101013173826.f4b911b4.akpm@linux-foundation.org>
+ <4CB651A4.60205@zytor.com>
+ <20101013174740.f48e4ec2.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58108 "EHLO smtps.tip.net.au"
+Received: from ozlabs.org ([203.10.76.45]:38522 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754157Ab0JNCUA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 13 Oct 2010 22:20:00 -0400
+	id S1753827Ab0JNCz2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 13 Oct 2010 22:55:28 -0400
+Content-Disposition: inline
+In-Reply-To: <20101013174740.f48e4ec2.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mundt <lethal@linux-sh.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, Feng Tang <feng.tang@intel.com>
 
-Hi all,
+On Wed, Oct 13, 2010 at 05:47:40PM -0700, Andrew Morton wrote:
 
-Today's linux-next merge of the tip tree got a conflict in
-arch/sh/kernel/perf_event.c between commit
-51c6c9bb34fcd112d4ab8b8f5c1d1b6a10a00e71 ("sh: perf: Set up
-perf_max_events") from the sh tree and commit
-a4eaf7f14675cb512d69f0c928055e73d0c6d252 ("perf: Rework the PMU methods")
-from the tip tree.
+> gcc-4.1.0.  Which is actually an officially banned compiler version:
+> 
+>  # if __GNUC_MINOR__ == 1 && __GNUC_PATCHLEVEL__ <= 1
+>  #  error Your version of gcc miscompiles the __weak directive
+> 
+> lazyass here needs to find a new cross-compiler.
 
-I fixed it up (see below) and can carry the fix as necessary.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+*cough*
+http://kernel.org/pub/tools/crosstool/files/bin/
 
-diff --cc arch/sh/kernel/perf_event.c
-index ecef1fe,036f7a9..0000000
---- a/arch/sh/kernel/perf_event.c
-+++ b/arch/sh/kernel/perf_event.c
-@@@ -319,13 -365,13 +365,14 @@@ int __cpuinit register_sh_pmu(struct sh
-  {
-  	if (sh_pmu)
-  		return -EBUSY;
-- 	sh_pmu = pmu;
-+ 	sh_pmu = _pmu;
-  
-- 	pr_info("Performance Events: %s support registered\n", pmu->name);
-+ 	pr_info("Performance Events: %s support registered\n", _pmu->name);
-  
-- 	WARN_ON(pmu->num_events > MAX_HWEVENTS);
-- 	perf_max_events = pmu->num_events;
-+ 	WARN_ON(_pmu->num_events > MAX_HWEVENTS);
-++	perf_max_events = _pmu->num_events;
-  
-+ 	perf_pmu_register(&pmu);
-  	perf_cpu_notifier(sh_pmu_notifier);
-  	return 0;
-  }
+If there are problems let me know.
+
+Yours Tony
