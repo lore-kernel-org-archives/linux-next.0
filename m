@@ -1,57 +1,54 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: linux-next: build failure after merge of the spi tree
-Date: Wed, 13 Oct 2010 19:58:07 -0600
-Message-ID: <AANLkTinCh3X7XJQpEVoP-fKqyXtVu1EZ+tVX_nNGQXyb@mail.gmail.com>
-References: <20101014125553.dc4ea7be.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the spi tree
+Date: Thu, 14 Oct 2010 12:59:52 +1100
+Message-ID: <20101014125952.e4be4c9b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__14_Oct_2010_12_59_52_+1100_m++b43DNiD2f+VjB"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-yw0-f46.google.com ([209.85.213.46]:46864 "EHLO
-	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753325Ab0JNB6b convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Oct 2010 21:58:31 -0400
-In-Reply-To: <20101014125553.dc4ea7be.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:53384 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753325Ab0JNB76 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 13 Oct 2010 21:59:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mingkai Hu <Mingkai.hu@freescale.com>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Masayuki Ohtake <masa-korg@dsn.okisemi.com>
 
-On Wed, Oct 13, 2010 at 7:55 PM, Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> Hi Grant,
->
-> After merging the spi tree, today's linux-next build (x86_64 allmodco=
-nfig)
-> failed like this:
->
-> drivers/mtd/devices/m25p80.c: In function 'm25p_probe':
-> drivers/mtd/devices/m25p80.c:927: error: 'struct device' has no membe=
-r named 'of_node'
-> drivers/mtd/devices/m25p80.c:929: error: 'struct device' has no membe=
-r named 'of_node'
+--Signature=_Thu__14_Oct_2010_12_59_52_+1100_m++b43DNiD2f+VjB
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Oops, I wasn't supposed to push that patch yet.  I'll pull it out.
+Hi Grant,
 
-g.
+After merging the rcu tree, today's linux-next build (x86_64 allmodconfig)
+produced this warning:
 
->
-> Caused by commit 2bf990280d6074228f6e4c18ad01c0674c5c11c8 ("mtd/m25p8=
-0:
-> add support to parse the partitions by OF node"). CONFIG_OF is not se=
-t
-> for this build.
->
-> I have used the spi tree form next-20101013 for today.
-> --
-> Cheers,
-> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
-=2Eorg.au
-> http://www.canb.auug.org.au/~sfr/
->
+drivers/spi/spi_topcliff_pch.c: In function 'pch_spi_process_messages':
+drivers/spi/spi_topcliff_pch.c:752: warning: 'data' is used uninitialized i=
+n this function
 
-
-
+and, indeed it is ...
 --=20
-Grant Likely, B.Sc., P.Eng.
-Secret Lab Technologies Ltd.
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__14_Oct_2010_12_59_52_+1100_m++b43DNiD2f+VjB
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMtmQYAAoJEDMEi1NhKgbst04IAIqxA++ki6e9MFRdmNOJTkqH
+56GoR/nxkK3MiEnIZiUU9y2DE4xp6uks37HDoU5UvzBk794P7iNomFv1YZGHyjXh
+TLic55zHQ58CgrOuDr6Gcbz/I8XHkzQi5ZoZeqaEVt8Gc8AmCw9/ujymm/Ql0bYf
+JIkh52GGfy7EdKIZqIsN+4iV5L9LecXSgyx4MQpffc9vljfBsbItkk7D4C21fXO3
+bm/zrW0hgFVXmPiVRLR31Qc3/qdM2CaghIXWfNjoSAHRzI8tmfGfuXiKu4chHbi2
+w6RMXqS2jHajMWeibxn5wzdiXpAZcO+pxRiJpXDTh+/wcqGyGZ9sYnSRxhtptXk=
+=It02
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__14_Oct_2010_12_59_52_+1100_m++b43DNiD2f+VjB--
