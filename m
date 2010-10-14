@@ -1,29 +1,44 @@
-From: Kyle McMartin <kyle@mcmartin.ca>
-Subject: Re: [PATCH/RFC] input: hil_mlc - Fix hil_mlc_serio_id file2alias
- failure
-Date: Thu, 14 Oct 2010 11:43:04 -0400
-Message-ID: <20101014154304.GJ24144@bombadil.infradead.org>
-References: <alpine.DEB.2.00.1010122111270.6491@ayla.of.borg>
- <20101013065602.GA7014@core.coreip.homeip.net>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] x86: olpc-xo1 uses/depends on PCI
+Date: Thu, 14 Oct 2010 10:13:13 -0700
+Message-ID: <20101014101313.adf7eb2a.randy.dunlap@oracle.com>
+References: <20101014152642.ef280a33.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-m68k-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20101013065602.GA7014@core.coreip.homeip.net>
-Sender: linux-m68k-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Dzianis Kahanovich <mahatma@eu.by>, Helge Deller <deller@gmx.de>, linux-next@vger.kernel.org, linux-input@vger.kernel.org, Linux/m68k <linux-m68k@lists.linux-m68k.org>, linux-parisc@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:46278 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755566Ab0JNROi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 14 Oct 2010 13:14:38 -0400
+In-Reply-To: <20101014152642.ef280a33.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Drake <dsd@laptop.org>, akpm <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, x86@kernel.org
 
-On Tue, Oct 12, 2010 at 11:56:02PM -0700, Dmitry Torokhov wrote:
-> Gah, that original patch was incorrect, I should not have applied it at
-> all... The serio_device_id in question is for serio port that is being
-> created by the driver and thus of course should not be used in
-> MODULE_DEVICE_TABLE().
-> 
-> I'll drop it from my 'next' queue.
-> 
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Cool, thansk Dmitry!
+olpc-xo1 uses pci_*() interfaces so it should depend on PCI.
 
---Kyle
+arch/x86/kernel/olpc-xo1.c:65: error: implicit declaration of function 'pci_enable_device_io'
+arch/x86/kernel/olpc-xo1.c:71: error: implicit declaration of function 'pci_request_region'
+arch/x86/kernel/olpc-xo1.c:80: error: implicit declaration of function 'pci_release_region'
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Daniel Drake <dsd@laptop.org>
+---
+ arch/x86/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20101014.orig/arch/x86/Kconfig
++++ linux-next-20101014/arch/x86/Kconfig
+@@ -2018,7 +2018,7 @@ config OLPC
+ 
+ config OLPC_XO1
+ 	tristate "OLPC XO-1 support"
+-	depends on OLPC
++	depends on OLPC && PCI
+ 	---help---
+ 	  Add support for non-essential features of the OLPC XO-1 laptop.
+ 
