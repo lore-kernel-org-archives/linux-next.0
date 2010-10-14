@@ -1,35 +1,59 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: linux-next: build warning after merge of the spi tree
-Date: Wed, 13 Oct 2010 23:00:33 -0600
-Message-ID: <20101014050033.GL15286@angua.secretlab.ca>
-References: <20101014125952.e4be4c9b.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (tip tree
+ related)
+Date: Thu, 14 Oct 2010 16:49:25 +1100
+Message-ID: <20101014164925.4fa16b75.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__14_Oct_2010_16_49_25_+1100_v2p.AZJ3C2GEzfUS"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-iw0-f174.google.com ([209.85.214.174]:43078 "EHLO
-	mail-iw0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754259Ab0JNFAh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 14 Oct 2010 01:00:37 -0400
-Content-Disposition: inline
-In-Reply-To: <20101014125952.e4be4c9b.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:56762 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754605Ab0JNFtd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 14 Oct 2010 01:49:33 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Masayuki Ohtake <masa-korg@dsn.okisemi.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Oct 14, 2010 at 12:59:52PM +1100, Stephen Rothwell wrote:
-> Hi Grant,
-> 
-> After merging the rcu tree, today's linux-next build (x86_64 allmodconfig)
-> produced this warning:
-> 
-> drivers/spi/spi_topcliff_pch.c: In function 'pch_spi_process_messages':
-> drivers/spi/spi_topcliff_pch.c:752: warning: 'data' is used uninitialized in this function
-> 
-> and, indeed it is ...
+--Signature=_Thu__14_Oct_2010_16_49_25_+1100_v2p.AZJ3C2GEzfUS
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Oops, so it is.  I messed that up in the refactoring patch.
-Fortunately this is a new driver so it is not a regression.  I'll push
-out the fix this evening.
+Hi all,
 
-g.
+After merging the final tree, linux-next builds (arm corgi_defconfig,
+spitz_defconfig) fail like this:
+
+arch/arm/kernel/perf_event.c: In function 'armpmu_event_init':
+arch/arm/kernel/perf_event.c:543: error: request for member 'num_events' in=
+ something not a structure or union
+
+Caused by commit 15ac9a395a753cb28c674e7ea80386ffdff21785 ("perf: Remove
+the sysfs bits").
+
+This seems to have broken in next-20100913 and noone has noticed/bothered
+to fix it.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__14_Oct_2010_16_49_25_+1100_v2p.AZJ3C2GEzfUS
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMtpnlAAoJEDMEi1NhKgbsDusH/0DBlElSziYImTliMAkLXVI1
+zc+Lg4HkJzLLE3xCc4wN4u4QJAycOegJtsBZUX/b5VSAw8fwZ4Qwuyhanawi/fET
+GztvZVXtBhOfCqoup/tXMmhme6TxrPu+Iqk4Cy6EKQeXHfSCtisxMdQxUT4aqNWj
+7aypT5VMu8K+vsP7bPrEwrlJ7ZECyYpV+HAQr1ruOzbgg81oXnFCn2M9i0eHNXpz
+zLYO7LuqnLBQYyJuEEFwxRr4eue6pQnWs+ac2hYNfY4MNal4/0jLvJZg3o3GFwIc
+1+MsGLVHsFGI1UtoPZPR2vG3+rhMvNalbfrndQ4+jMXfGEZ/AYMo975mgiAPg9Q=
+=wvLZ
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__14_Oct_2010_16_49_25_+1100_v2p.AZJ3C2GEzfUS--
