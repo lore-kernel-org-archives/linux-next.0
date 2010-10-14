@@ -1,56 +1,58 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: build failure after merge of the final tree (tip
- tree related)
-Date: Thu, 14 Oct 2010 08:31:27 +0200
-Message-ID: <20101014063127.GA3664@elte.hu>
-References: <20101014164925.4fa16b75.sfr@canb.auug.org.au>
+From: <michael.hennerich@analog.com>
+Subject: [PATCH] staging: iio: ad7476: fix !CONFIG_IIO_RING_BUFFER build issue reported by Randy Dunlap
+Date: Thu, 14 Oct 2010 10:17:18 +0200
+Message-ID: <1287044238-20220-1-git-send-email-michael.hennerich@analog.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:34727 "EHLO mx2.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750952Ab0JNGbl (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 14 Oct 2010 02:31:41 -0400
-Content-Disposition: inline
-In-Reply-To: <20101014164925.4fa16b75.sfr@canb.auug.org.au>
+Received: from nwd2mail11.analog.com ([137.71.25.57]:13625 "EHLO
+	nwd2mail11.analog.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754945Ab0JNIYD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 14 Oct 2010 04:24:03 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: greg@kroah.com
+Cc: linux-iio@vger.kernel.org, drivers@analog.com, jic23@cam.ac.uk, device-drivers-devel@blackfin.uclinux.org, randy.dunlap@oracle.com, devel@driverdev.osuosl.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, Michael Hennerich <michael.hennerich@analog.com>
 
+From: Michael Hennerich <michael.hennerich@analog.com>
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Fix function function decalration
+Enable CONFIG_IIO_RING_BUFFER for the ad7476 driver
 
-> Hi all,
-> 
-> After merging the final tree, linux-next builds (arm corgi_defconfig,
-> spitz_defconfig) fail like this:
-> 
-> arch/arm/kernel/perf_event.c: In function 'armpmu_event_init':
-> arch/arm/kernel/perf_event.c:543: error: request for member 'num_events' in something
- not a structure or union
-> 
-> Caused by commit 15ac9a395a753cb28c674e7ea80386ffdff21785 ("perf: Remove
-> the sysfs bits").
+Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
+---
+ drivers/staging/iio/adc/Kconfig  |    3 +++
+ drivers/staging/iio/adc/ad7476.h |    4 +---
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
-Thanks, fixed.
-
-> This seems to have broken in next-20100913 and noone has noticed/bothered
-> to fix it.
-
-What appears to have happened is the following: the build bug depends on 
-CONFIG_HW_PERF_EVENTS=y, which is off by default on ARM (which default 
-to a v5 CPU type - while hw pmu support is for v6+ cpus).
-
-So the regular ARM defconfig built fine both in -next and here in the 
-latest perf/core tree:
-
-  testing        arm:  -git:  pass (    0),  -tip:  pass (    4)
-
-Some new change in linux-next appears to have turned on HW_PERF_EVENTS 
-elsewhere which you thus tested for the first time - which triggered the 
-build bug.
-
-Thanks,
-
-	Ingo
+diff --git a/drivers/staging/iio/adc/Kconfig b/drivers/staging/iio/adc/Kconfig
+index 81a7d45..acb6767 100644
+--- a/drivers/staging/iio/adc/Kconfig
++++ b/drivers/staging/iio/adc/Kconfig
+@@ -50,6 +50,9 @@ config AD799X_RING_BUFFER
+ config AD7476
+ 	tristate "Analog Devices AD7475/6/7/8 AD7466/7/8 and AD7495 ADC driver"
+ 	depends on SPI
++	select IIO_RING_BUFFER	
++	select IIO_SW_RING
++	select IIO_TRIGGER 	
+ 	help
+ 	  Say yes here to build support for Analog Devices
+ 	  AD7475, AD7476, AD7477, AD7478, AD7466, AD7467, AD7468, AD7495
+diff --git a/drivers/staging/iio/adc/ad7476.h b/drivers/staging/iio/adc/ad7476.h
+index 6e4a85b..b51b49e 100644
+--- a/drivers/staging/iio/adc/ad7476.h
++++ b/drivers/staging/iio/adc/ad7476.h
+@@ -59,9 +59,7 @@ int ad7476_scan_from_ring(struct ad7476_state *st);
+ int ad7476_register_ring_funcs_and_init(struct iio_dev *indio_dev);
+ void ad7476_ring_cleanup(struct iio_dev *indio_dev);
+ #else /* CONFIG_IIO_RING_BUFFER */
+-static inline ssize_t ad7476_scan_from_ring(struct device *dev,
+-					     struct device_attribute *attr,
+-					     char *buf)
++static inline int ad7476_scan_from_ring(struct ad7476_state *st)
+ {
+ 	return 0;
+ }
+-- 
+1.6.0.2
