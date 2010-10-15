@@ -1,36 +1,29 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for October 15 (usb/xhci)
-Date: Fri, 15 Oct 2010 08:44:20 -0700
-Message-ID: <20101015084420.6624796d.randy.dunlap@oracle.com>
-References: <20101015165002.0b6e418f.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: Change of the bluetooth-next-2.6 tree
+Date: Fri, 15 Oct 2010 09:28:42 -0700 (PDT)
+Message-ID: <20101015.092842.104042327.davem@davemloft.net>
+References: <20101015001817.GE9250@vigoh>
+	<20101015174502.89e566d1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:62747 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755119Ab0JOPom (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 15 Oct 2010 11:44:42 -0400
-In-Reply-To: <20101015165002.0b6e418f.sfr@canb.auug.org.au>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:58786
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754545Ab0JOQ2U (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 15 Oct 2010 12:28:20 -0400
+In-Reply-To: <20101015174502.89e566d1.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh <greg@kroah.com>, Sarah Sharp <sarah.a.sharp@linux.intel.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, lud <linux-usb@vger.kernel.org>
+To: sfr@canb.auug.org.au
+Cc: padovan@profusion.mobi, linux-next@vger.kernel.org, marcel@holtmann.org
 
-On Fri, 15 Oct 2010 16:50:02 +1100 Stephen Rothwell wrote:
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 15 Oct 2010 17:45:02 +1100
 
-> Hi all,
-> 
-> Changes since 20101014:
+> I also think that Marcel used to get Dave Miller to merge his tree
+> instead of asking Linus' directly, so I guess Dave also needs to
+> know about this (unless he already does).
 
-
-When CONFIG_PM is not enabled:
-
-drivers/usb/host/xhci.c:675: error: implicit declaration of function 'usb_root_hub_lost_power'
-
-Also, can xhci.c:xhci_suspend() and xhci_resume() be inside
-#ifdef CONFIG_PM / #endif ?
-
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+I'm already fully aware :-)
