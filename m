@@ -1,87 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Change of the bluetooth-next-2.6 tree
-Date: Mon, 18 Oct 2010 09:27:43 +1100
-Message-ID: <20101018092743.dbde89a9.sfr@canb.auug.org.au>
-References: <20101015001817.GE9250@vigoh>
+Subject: linux-next: manual merge of the davinci tree with the arm tree
+Date: Mon, 18 Oct 2010 10:31:52 +1100
+Message-ID: <20101018103152.33fa12cd.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__18_Oct_2010_09_27_43_+1100_Kv7owYXeFT+o=nBW"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55563 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:49042 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750961Ab0JQW1z (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 17 Oct 2010 18:27:55 -0400
-In-Reply-To: <20101015001817.GE9250@vigoh>
+	id S1751411Ab0JQXb4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 17 Oct 2010 19:31:56 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Gustavo F. Padovan" <padovan@profusion.mobi>
-Cc: linux-next@vger.kernel.org, marcel@holtmann.org
+To: Kevin Hilman <khilman@deeprootsystems.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>, Nicolas Pitre <nicolas.pitre@linaro.org>
 
---Signature=_Mon__18_Oct_2010_09_27_43_+1100_Kv7owYXeFT+o=nBW
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Kevin,
 
-Hi Gustavo,
+Today's linux-next merge of the davinci tree got a conflicts in
+arch/arm/mach-davinci/board-da830-evm.c and
+arch/arm/mach-davinci/board-da850-evm.c between commit
+861bd81ee62a0d6759144c22909a8a3938951656 ("arm: remove
+machine_desc.io_pg_offst and .phys_io") from the arm tree and commit
+48ea89eabee96019a4a84615af921f8703320abb ("davinci: introduce support for
+AM1x ARM9 microprocessors") from the davinci tree.
 
-On Thu, 14 Oct 2010 21:18:17 -0300 "Gustavo F. Padovan" <padovan@profusion.=
-mobi> wrote:
->
-> I want to request the change of the bluetooth for -next stuff in linux
-> tree. (didn't find other place better than this mailing list to request
-> this :) The new tree is at
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/padovan/bluetooth-next-2.6.=
-git
-
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
-
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-	Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
---=20
+Just context changes,  I fixed them up (see below) and can carry the fix
+as necessary.
+-- 
 Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Legal Stuff:
-By participating in linux-next, your subsystem tree contributions are
-public and will be included in the linux-next trees.  You may be sent
-e-mail messages indicating errors or other issues when the
-patches/commits from your subsystem tree are merged and tested in
-linux-next.  These messages may also be cross-posted to the linux-next
-mailing list, the linux-kernel mailing list, etc.  The linux-next tree
-project and IBM (my employer) make no warranties regarding the linux-next
-project, the testing procedures, the results, the e-mails, etc.  If you
-don't agree to these ground rules, let me know and I'll remove your tree
-from participation in linux-next.
-
---Signature=_Mon__18_Oct_2010_09_27_43_+1100_Kv7owYXeFT+o=nBW
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMu3hfAAoJEDMEi1NhKgbs9FQH/R56yvGubzLx37th+1McKCBN
-I2wx37amdQo6ptpelbV2kAJpzCdEwI2sx1mA5Yp6hZeP7/7buNS8FO0grBH+WAxP
-iPiFIPk2HZuO1HBJay/wxq1v/P5ut2kPcIBPdKP6QfeTVSomIB8S0tiHayAFvjZz
-jWZ7qEzbAdHIivDqGJERfr/STyN34F+C5gntA1UMJ581uxQpKEJg8g3I87dFwfrK
-x53rSeSg3mfFXP4PVXgSelc+6CqR4n5o35V2OyejBGxWBPBMLtq4F5Is9zCqb/Pj
-OhXOzqaHqgAPqVxB20J5d7I6sj5YPH7cno9b8+4dcftlZB0dcIR4sBeLYEWjH7w=
-=UJ1G
------END PGP SIGNATURE-----
-
---Signature=_Mon__18_Oct_2010_09_27_43_+1100_Kv7owYXeFT+o=nBW--
+diff --cc arch/arm/mach-davinci/board-da830-evm.c
+index 7f3cdbf,1bb89d3..0000000
+--- a/arch/arm/mach-davinci/board-da830-evm.c
++++ b/arch/arm/mach-davinci/board-da830-evm.c
+@@@ -596,7 -608,9 +608,7 @@@ static void __init da830_evm_map_io(voi
+  	da830_init();
+  }
+  
+- MACHINE_START(DAVINCI_DA830_EVM, "DaVinci DA830/OMAP-L137 EVM")
++ MACHINE_START(DAVINCI_DA830_EVM, "DaVinci DA830/OMAP-L137/AM17x EVM")
+ -	.phys_io	= IO_PHYS,
+ -	.io_pg_offst	= (__IO_ADDRESS(IO_PHYS) >> 18) & 0xfffc,
+  	.boot_params	= (DA8XX_DDR_BASE + 0x100),
+  	.map_io		= da830_evm_map_io,
+  	.init_irq	= cp_intc_init,
+diff --cc arch/arm/mach-davinci/board-da850-evm.c
+index b26f5cb,ef97c7f..0000000
+--- a/arch/arm/mach-davinci/board-da850-evm.c
++++ b/arch/arm/mach-davinci/board-da850-evm.c
+@@@ -816,7 -868,9 +868,7 @@@ static void __init da850_evm_map_io(voi
+  	da850_init();
+  }
+  
+- MACHINE_START(DAVINCI_DA850_EVM, "DaVinci DA850/OMAP-L138 EVM")
++ MACHINE_START(DAVINCI_DA850_EVM, "DaVinci DA850/OMAP-L138/AM18x EVM")
+ -	.phys_io	= IO_PHYS,
+ -	.io_pg_offst	= (__IO_ADDRESS(IO_PHYS) >> 18) & 0xfffc,
+  	.boot_params	= (DA8XX_DDR_BASE + 0x100),
+  	.map_io		= da850_evm_map_io,
+  	.init_irq	= cp_intc_init,
