@@ -1,196 +1,87 @@
-From: Marcin Slusarz <marcin.slusarz@gmail.com>
-Subject: Re: [PATCH] usb: Fix linker errors with CONFIG_PM=n
-Date: Sat, 16 Oct 2010 13:35:21 +0200
-Message-ID: <20101016113521.GA2786@joi.lan>
-References: <20101015205756.GA1757@xanatos>
- <20101015215915.GA25942@xanatos>
- <20101015222301.GA4080@joi.lan>
- <20101015232629.GA26031@xanatos>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Change of the bluetooth-next-2.6 tree
+Date: Mon, 18 Oct 2010 09:27:43 +1100
+Message-ID: <20101018092743.dbde89a9.sfr@canb.auug.org.au>
+References: <20101015001817.GE9250@vigoh>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__18_Oct_2010_09_27_43_+1100_Kv7owYXeFT+o=nBW"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:43593 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753295Ab0JPLfg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 16 Oct 2010 07:35:36 -0400
-Content-Disposition: inline
-In-Reply-To: <20101015232629.GA26031@xanatos>
+Received: from chilli.pcug.org.au ([203.10.76.44]:55563 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750961Ab0JQW1z (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 17 Oct 2010 18:27:55 -0400
+In-Reply-To: <20101015001817.GE9250@vigoh>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sarah Sharp <sarah.a.sharp@linux.intel.com>
-Cc: Greg KH <gregkh@suse.de>, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, lud <linux-usb@vger.kernel.org>, Andiry Xu <andiry.xu@amd.com>, Dong Nguyen <dong.nguyen@amd.com>, Libin Yang <libin.yang@amd.com>
+To: "Gustavo F. Padovan" <padovan@profusion.mobi>
+Cc: linux-next@vger.kernel.org, marcel@holtmann.org
 
-On Fri, Oct 15, 2010 at 04:26:29PM -0700, Sarah Sharp wrote:
-> On Sat, Oct 16, 2010 at 12:23:01AM +0200, Marcin Slusarz wrote:
-> > On Fri, Oct 15, 2010 at 02:59:15PM -0700, Sarah Sharp wrote:
-> > > diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
-> > > index c08928a..93d3bf4 100644
-> > > --- a/drivers/usb/host/xhci.h
-> > > +++ b/drivers/usb/host/xhci.h
-> > > @@ -1405,8 +1405,15 @@ int xhci_init(struct usb_hcd *hcd);
-> > >  int xhci_run(struct usb_hcd *hcd);
-> > >  void xhci_stop(struct usb_hcd *hcd);
-> > >  void xhci_shutdown(struct usb_hcd *hcd);
-> > > +
-> > > +#ifdef	CONFIG_PM
-> > >  int xhci_suspend(struct xhci_hcd *xhci);
-> > >  int xhci_resume(struct xhci_hcd *xhci, bool hibernated);
-> > > +#else
-> > > +#define	xhci_suspend	NULL
-> > > +#define	xhci_resume	NULL
-> > > +#endif
-> > > +
-> >=20
-> > "static inline int xhci_suspend(struct xhci_hcd *) {}"
-> > has the same effect but saves types
+--Signature=_Mon__18_Oct_2010_09_27_43_+1100_Kv7owYXeFT+o=nBW
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Gustavo,
+
+On Thu, 14 Oct 2010 21:18:17 -0300 "Gustavo F. Padovan" <padovan@profusion.=
+mobi> wrote:
+>
+> I want to request the change of the bluetooth for -next stuff in linux
+> tree. (didn't find other place better than this mailing list to request
+> this :) The new tree is at
 >=20
-> That doesn't have the same effect.  Since those functions are only us=
-ed
-> as function pointers, the original patch compiles to less code when
-> CONFIG_PM=3Dn. =20
+> git://git.kernel.org/pub/scm/linux/kernel/git/padovan/bluetooth-next-2.6.=
+git
 
-xhci_suspend is not called through function pointer. xhci_bus_suspend i=
-s.
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
 
-> Also, the original version will cause an oops if those
-> functions are ever called when CONFIG_PM=3Dn, which would indicate a =
-bug
-> in the callee (something we would rather catch anyway).  This is the
-> style that other USB host controller drivers use, like EHCI.
->=20
-> I don't understand what you mean by "saves types".  Is there somethin=
-g
-> I've missed?
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+	Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
 
-Depending on CONFIG_PM xhci_suspend is a function or a constant.
-If someone in the future would decide to call this function directly, w=
-ithout
-CONFIG_PM, he would fail with "error: called object =E2=80=980u=E2=80=99=
- is not a function".
-So, strictly speaking, this patch is not losing type informations. It's=
- just wrong.
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
 
-Sometimes people are tempted to do something like this:
-#define xhci_suspend(X) (-EINVAL)
-or when "function" does not return anything:
-#define void_fun(X) do {} while (0)
-or even worse:
-#define void fun(X) {}
-
-And this loses type information.
-
-Without CONFIG_PM sloppy developer could call this "function" like this=
-:
-struct whatever *p =3D xhci_suspend("foo bar");
-and it would compile fine. Defining it as
-static inline int xhci_suspend(struct xhci_hcd *) { return -EINVAL; }
-would prevent it.
-
-But in this particular case I think the cleanest solutions is to just i=
-fdef
-everything out, without fallbacks. There's only one caller of xhci_susp=
-end
-and it's wrongly guarded by CONFIG_PM. Let's just fix.
-
----
-=46rom: Marcin Slusarz <marcin.slusarz@gmail.com>
-Subject: [PATCH] usb/xhci: fix !CONFIG_PM compile/link errors
-
-drivers/usb/host/xhci.c:675: error: implicit declaration of function 'u=
-sb_root_hub_lost_power'
-
-ERROR: "xhci_bus_resume" [drivers/usb/host/xhci-hcd.ko] undefined!
-ERROR: "xhci_bus_suspend" [drivers/usb/host/xhci-hcd.ko] undefined!
-
-Signed-off-by: Marcin Slusarz <marcin.slusarz@gmail.com>
----
- drivers/usb/host/xhci-hub.c |    5 -----
- drivers/usb/host/xhci-pci.c |    2 ++
- drivers/usb/host/xhci.c     |    2 ++
- drivers/usb/host/xhci.h     |    4 ++++
- 4 files changed, 8 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/usb/host/xhci-hub.c b/drivers/usb/host/xhci-hub.c
-index 7f2f63c..ac63141 100644
---- a/drivers/usb/host/xhci-hub.c
-+++ b/drivers/usb/host/xhci-hub.c
-@@ -742,9 +742,4 @@ int xhci_bus_resume(struct usb_hcd *hcd)
- 	return 0;
- }
-=20
--#else
--
--#define	xhci_bus_suspend	NULL
--#define	xhci_bus_resume		NULL
--
- #endif
-diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
-index bb668a8..d10b45d 100644
---- a/drivers/usb/host/xhci-pci.c
-+++ b/drivers/usb/host/xhci-pci.c
-@@ -189,8 +189,10 @@ static const struct hc_driver xhci_pci_hc_driver =3D=
- {
- 	/* Root hub support */
- 	.hub_control =3D		xhci_hub_control,
- 	.hub_status_data =3D	xhci_hub_status_data,
-+#ifdef CONFIG_PM
- 	.bus_suspend =3D		xhci_bus_suspend,
- 	.bus_resume =3D		xhci_bus_resume,
-+#endif
- };
-=20
- /*--------------------------------------------------------------------=
------*/
-diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-index 33d0034..c9fc85a 100644
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -551,6 +551,7 @@ void xhci_shutdown(struct usb_hcd *hcd)
- 		    xhci_readl(xhci, &xhci->op_regs->status));
- }
-=20
-+#ifdef CONFIG_PM
- static void xhci_save_registers(struct xhci_hcd *xhci)
- {
- 	xhci->s3.command =3D xhci_readl(xhci, &xhci->op_regs->command);
-@@ -760,6 +761,7 @@ int xhci_resume(struct xhci_hcd *xhci, bool hiberna=
-ted)
- 	spin_unlock_irq(&xhci->lock);
- 	return 0;
- }
-+#endif
-=20
- /*--------------------------------------------------------------------=
------*/
-=20
-diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
-index c08928a..6f6ee54 100644
---- a/drivers/usb/host/xhci.h
-+++ b/drivers/usb/host/xhci.h
-@@ -1405,8 +1405,10 @@ int xhci_init(struct usb_hcd *hcd);
- int xhci_run(struct usb_hcd *hcd);
- void xhci_stop(struct usb_hcd *hcd);
- void xhci_shutdown(struct usb_hcd *hcd);
-+#ifdef CONFIG_PM
- int xhci_suspend(struct xhci_hcd *xhci);
- int xhci_resume(struct xhci_hcd *xhci, bool hibernated);
-+#endif
- int xhci_get_frame(struct usb_hcd *hcd);
- irqreturn_t xhci_irq(struct usb_hcd *hcd);
- irqreturn_t xhci_msi_irq(int irq, struct usb_hcd *hcd);
-@@ -1481,8 +1483,10 @@ void xhci_ring_ep_doorbell(struct xhci_hcd *xhci=
-, unsigned int slot_id,
- int xhci_hub_control(struct usb_hcd *hcd, u16 typeReq, u16 wValue, u16=
- wIndex,
- 		char *buf, u16 wLength);
- int xhci_hub_status_data(struct usb_hcd *hcd, char *buf);
-+#ifdef CONFIG_PM
- int xhci_bus_suspend(struct usb_hcd *hcd);
- int xhci_bus_resume(struct usb_hcd *hcd);
-+#endif
- u32 xhci_port_state_to_neutral(u32 state);
- int xhci_find_slot_id_by_port(struct xhci_hcd *xhci, u16 port);
- void xhci_ring_device(struct xhci_hcd *xhci, int slot_id);
 --=20
-1.7.3
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+Legal Stuff:
+By participating in linux-next, your subsystem tree contributions are
+public and will be included in the linux-next trees.  You may be sent
+e-mail messages indicating errors or other issues when the
+patches/commits from your subsystem tree are merged and tested in
+linux-next.  These messages may also be cross-posted to the linux-next
+mailing list, the linux-kernel mailing list, etc.  The linux-next tree
+project and IBM (my employer) make no warranties regarding the linux-next
+project, the testing procedures, the results, the e-mails, etc.  If you
+don't agree to these ground rules, let me know and I'll remove your tree
+from participation in linux-next.
+
+--Signature=_Mon__18_Oct_2010_09_27_43_+1100_Kv7owYXeFT+o=nBW
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMu3hfAAoJEDMEi1NhKgbs9FQH/R56yvGubzLx37th+1McKCBN
+I2wx37amdQo6ptpelbV2kAJpzCdEwI2sx1mA5Yp6hZeP7/7buNS8FO0grBH+WAxP
+iPiFIPk2HZuO1HBJay/wxq1v/P5ut2kPcIBPdKP6QfeTVSomIB8S0tiHayAFvjZz
+jWZ7qEzbAdHIivDqGJERfr/STyN34F+C5gntA1UMJ581uxQpKEJg8g3I87dFwfrK
+x53rSeSg3mfFXP4PVXgSelc+6CqR4n5o35V2OyejBGxWBPBMLtq4F5Is9zCqb/Pj
+OhXOzqaHqgAPqVxB20J5d7I6sj5YPH7cno9b8+4dcftlZB0dcIR4sBeLYEWjH7w=
+=UJ1G
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__18_Oct_2010_09_27_43_+1100_Kv7owYXeFT+o=nBW--
