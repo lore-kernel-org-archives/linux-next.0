@@ -1,54 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the msm tree with the arm tree
-Date: Mon, 18 Oct 2010 10:35:40 +1100
-Message-ID: <20101018103540.7bd9c535.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the s5p tree with the arm tree
+Date: Mon, 18 Oct 2010 10:50:46 +1100
+Message-ID: <20101018105046.368420c2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__18_Oct_2010_10_50_46_+1100_2EwCXjtUkK.N0Q/P"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43983 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58792 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751411Ab0JQXfm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 17 Oct 2010 19:35:42 -0400
+	id S1751554Ab0JQXuz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 17 Oct 2010 19:50:55 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Walker <dwalker@fifo99.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeremy Kerr <jeremy.kerr@canonical.com>, Jeff Ohlstein <johlstei@codeaurora.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeremy Kerr <jeremy.kerr@canonical.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Jason Wang <jason77.wang@gmail.com>, Tony Lindgren <tony@atomide.com>, Russell King <rmk@arm.linux.org.uk>
 
-Hi Daniel,
+--Signature=_Mon__18_Oct_2010_10_50_46_+1100_2EwCXjtUkK.N0Q/P
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the msm tree got a conflict in
-arch/arm/mach-msm/include/mach/debug-macro.S between commit
+Hi Kukjin,
+
+Today's linux-next merge of the s5p tree got a conflict in
+arch/arm/mach-s5p6440/include/mach/debug-macro.S between commit
 08a610d9ef5394525b0328da0162d7b58c982cc4 ("arm: return both physical and
 virtual addresses from addruart") from the arm tree and commit
-46fe5f29e3062f681cc3cf07a604d82396faea89 ("msm: allow uart to be
-conditionally disabled") from the msm tree.
+29159b7dd244def6e0073ff0e2d4cbb59599187f ("ARM: S5P64X0: Add S5P64X0
+(S5P6440 and S5P6450) initialization support") from the s5p tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
--- 
+The latter removed the file modified by the former.  I did that.
+
+The appropriate part of the above arm commit needs to be done for the new
+file arch/arm/mach-s5p64x0/include/mach/debug-macro.S .  Unfortunately, I
+am unqualified to do that ...
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/arm/mach-msm/include/mach/debug-macro.S
-index 3c35b0d,238c4f1..0000000
---- a/arch/arm/mach-msm/include/mach/debug-macro.S
-+++ b/arch/arm/mach-msm/include/mach/debug-macro.S
-@@@ -19,11 -19,13 +19,11 @@@
-  #include <mach/hardware.h>
-  #include <mach/msm_iomap.h>
-  
-- #ifdef CONFIG_MSM_DEBUG_UART
-+ #ifdef CONFIG_HAS_MSM_DEBUG_UART_PHYS
- -	.macro	addruart, rx, tmp
- +	.macro	addruart, rp, rv
-  	@ see if the MMU is enabled and select appropriate base address
- -	mrc	p15, 0, \rx, c1, c0
- -	tst	\rx, #1
- -	ldreq	\rx, =MSM_DEBUG_UART_PHYS
- -	ldrne	\rx, =MSM_DEBUG_UART_BASE
- +	ldr	\rp, =MSM_DEBUG_UART_PHYS
- +	ldr	\rv, =MSM_DEBUG_UART_BASE
-  	.endm
-  
-  	.macro	senduart,rd,rx
+--Signature=_Mon__18_Oct_2010_10_50_46_+1100_2EwCXjtUkK.N0Q/P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMu4vWAAoJEDMEi1NhKgbsUDYH/j9RF4SntwCstGoImazY6IDI
+l1D02xqKVwvxyYnnJQjEOhagOLqlm7ZGu4p044mwhUI6qM9VzGB7qM5PruKvlVqA
+Sqi+raekAAJhMaTJ/6wUE4HPUSgvsq0zISO4iDbnP5kHuczXNzX7DfEFPpHwr3Sw
+otwuVEcW2omZh/1kygGs6C4+ZA3dKc01rgb6QU6r7VywcIdpLLm2z3jWzaIZ4MUZ
+lUVki6egEJDVWaAGU5JPbEDh4KjoIhpybLDFn5oOtSJL6cfQQEEhR/fStZwA3D2n
+iuBDlfE9RtACQssNK4Gmk/zisXXtG207faBT45RkZoTXQxlTWUf+28/lhpspuAg=
+=BMT7
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__18_Oct_2010_10_50_46_+1100_2EwCXjtUkK.N0Q/P--
