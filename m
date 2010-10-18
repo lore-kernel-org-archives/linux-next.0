@@ -1,57 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the bkl-llseek tree with the wireless
- tree
-Date: Mon, 18 Oct 2010 17:35:43 +1100
-Message-ID: <20101018173543.c33530e9.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (mmc tree
+ related)
+Date: Mon, 18 Oct 2010 18:35:40 +1100
+Message-ID: <20101018183540.2a7dfc8f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__18_Oct_2010_18_35_40_+1100__pXb266gHuZ1cmUQ"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:34931 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753675Ab0JRHft (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 18 Oct 2010 03:35:49 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Chris Ball <cjb@laptop.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>
+
+--Signature=_Mon__18_Oct_2010_18_35_40_+1100__pXb266gHuZ1cmUQ
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, Felix Fietkau <nbd@openwrt.org>
-List-Id: linux-next.vger.kernel.org
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Arnd,
+Hi Chris,
 
-Today's linux-next merge of the bkl-llseek tree got a conflict in
-drivers/net/wireless/ath/ath9k/debug.c between commit
-772d5515635fef5bc7a9d0efee785b58b0181ee5 ("ath9k: make rate control
-debugfs stats per station") from the wireless tree and commit
-6038f373a3dc1f1c26496e60b6c40b164716f07e ("llseek: automatically
-add .llseek fop") from the bkl-llseek tree.
+After merging the scsi-post-merge tree, today's linux-next build ()
+failed like this:
 
-The former moved some of the code modified by the latter to another file.
+drivers/mmc/host/sdhci-of-esdhc.c:21:25: error: sdhci-esdhc.c: No such file=
+ or directory
+drivers/mmc/host/sdhci-of-esdhc.c: In function 'esdhc_writeb':
+drivers/mmc/host/sdhci-of-esdhc.c:51: error: 'ESDHC_HOST_CONTROL_RES' undec=
+lared (first use in this function)
+drivers/mmc/host/sdhci-of-esdhc.c:51: error: (Each undeclared identifier is=
+ reported only once
+drivers/mmc/host/sdhci-of-esdhc.c:51: error: for each function it appears i=
+n.)
+drivers/mmc/host/sdhci-of-esdhc.c: In function 'esdhc_of_enable_dma':
+drivers/mmc/host/sdhci-of-esdhc.c:57: error: 'ESDHC_DMA_SYSCTL' undeclared =
+(first use in this function)
+drivers/mmc/host/sdhci-of-esdhc.c:57: error: 'ESDHC_DMA_SNOOP' undeclared (=
+first use in this function)
+drivers/mmc/host/sdhci-of-esdhc.c: At top level:
+drivers/mmc/host/sdhci-of-esdhc.c:76: error: 'ESDHC_DEFAULT_QUIRKS' undecla=
+red here (not in a function)
+drivers/mmc/host/sdhci-of-esdhc.c:84: error: 'esdhc_set_clock' undeclared h=
+ere (not in a function)
 
-I added this merge fix patch:
+Caused by commit a2fe088a5aaa51b54c018cf309cdc728d5f4e540 ("mmc:
+sdhci-of-esdhc: factor out common stuff").
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 18 Oct 2010 17:33:25 +1100
-Subject: [PATCH] ath9k: fix up for .llseek fop change
+This was clearly never build tested ...
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/net/wireless/ath/ath9k/rc.c |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/net/wireless/ath/ath9k/rc.c b/drivers/net/wireless/ath/ath9k/rc.c
-index 0cee90c..e4c1ea3 100644
---- a/drivers/net/wireless/ath/ath9k/rc.c
-+++ b/drivers/net/wireless/ath/ath9k/rc.c
-@@ -1582,7 +1582,8 @@ static ssize_t read_file_rcstat(struct file *file, char __user *user_buf,
- static const struct file_operations fops_rcstat = {
- 	.read = read_file_rcstat,
- 	.open = ath9k_debugfs_open,
--	.owner = THIS_MODULE
-+	.owner = THIS_MODULE,
-+	.llseek = default_llseek,
- };
- 
- static void ath_rate_add_sta_debugfs(void *priv, void *priv_sta,
--- 
-1.7.1
-
--- 
+I have reverted that commit for today.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__18_Oct_2010_18_35_40_+1100__pXb266gHuZ1cmUQ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMu/jMAAoJEDMEi1NhKgbsN4EH/3lU57EcGJvbCzGF6A7Vgy9g
+ZKCEHh6vb49ro7pCQ3Q52fhuatbEdcCHs8MQgJG6jz3VTKNgfnreJLxgKzZ7cm/Y
+1xgtk74rCZc9/ap+PBB1NIVxre7WylrAd0qHKY8toKtO4gTRk+2hAux1yaxvPrUq
+wzAtDkj73HOyUf+rjzo960QuFrWYhxzrO2xgo8hB9k1/V2TylN9+fT0s7ZWUeHHl
+sQKr9hEMFmDBT+KPknHgIwH63tflUxkGeE0euOJW9Rq0p/NVGCltGQxWmB3lcbmt
+uWfhtav4E5hUdQdZuVDe6B9rLQGIdIn3YYtWfcEyELAY4Vxid9ct+XPQcj77yO4=
+=L1JX
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__18_Oct_2010_18_35_40_+1100__pXb266gHuZ1cmUQ--
