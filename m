@@ -1,92 +1,52 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the xen tree with the swiotlb-xen
- tree
-Date: Tue, 19 Oct 2010 01:49:41 +1100
-Message-ID: <20101019014941.adf9d20f.sfr@canb.auug.org.au>
-References: <20101018155249.d9267bfe.sfr@canb.auug.org.au>
-	<4CBC014D.7070302@goop.org>
-	<20101018135512.GA19999@dumpdata.com>
+From: Daniel Walker <dwalker@fifo99.com>
+Subject: Re: linux-next: manual merge of the msm tree with the arm tree
+Date: Mon, 18 Oct 2010 10:26:32 -0700
+Message-ID: <1287422792.4105.14.camel@c-dwalke-linux.qualcomm.com>
+References: <20101018103540.7bd9c535.sfr@canb.auug.org.au>
+	 <20101018110207.131b56ee.sfr@canb.auug.org.au>
+	 <20101018081520.GA10551@flint.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__19_Oct_2010_01_49_41_+1100_PtjQIO+DA_Rj9n+U"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34059 "EHLO smtps.tip.net.au"
+Received: from fifo99.com ([67.223.236.141]:51395 "EHLO fifo99.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755304Ab0JROtt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 18 Oct 2010 10:49:49 -0400
-In-Reply-To: <20101018135512.GA19999@dumpdata.com>
+	id S1751362Ab0JRR1H (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 18 Oct 2010 13:27:07 -0400
+In-Reply-To: <20101018081520.GA10551@flint.arm.linux.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Jeremy Fitzhardinge <jeremy@goop.org>, Xen Devel <Xen-devel@lists.xensource.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeremy Kerr <jeremy.kerr@canonical.com>, Jeff Ohlstein <johlstei@codeaurora.org>
 
---Signature=_Tue__19_Oct_2010_01_49_41_+1100_PtjQIO+DA_Rj9n+U
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 2010-10-18 at 09:15 +0100, Russell King wrote:
+> On Mon, Oct 18, 2010 at 11:02:07AM +1100, Stephen Rothwell wrote:
+> > [ Just cc'ing Russell, sorry about that]
+> > 
+> > On Mon, 18 Oct 2010 10:35:40 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > >
+> > > Hi Daniel,
+> > > 
+> > > Today's linux-next merge of the msm tree got a conflict in
+> > > arch/arm/mach-msm/include/mach/debug-macro.S between commit
+> > > 08a610d9ef5394525b0328da0162d7b58c982cc4 ("arm: return both physical and
+> > > virtual addresses from addruart") from the arm tree and commit
+> > > 46fe5f29e3062f681cc3cf07a604d82396faea89 ("msm: allow uart to be
+> > > conditionally disabled") from the msm tree.
+> > > 
+> > > Just context changes.  I fixed it up (see below) and can carry the fix as
+> > > necessary.
+> 
+> Thanks, but I don't think there's much which can be done about these.
+> Changes such as 08a610d affect all ARM sub-architectures, and as they're
+> spread across multiple git trees...
+> 
+> I think there's going to be some problems during this forthcoming merge
+> window.
 
-Hi Konrad,
+Would be nice to get CC'd ...
 
-On Mon, 18 Oct 2010 09:55:12 -0400 Konrad Rzeszutek Wilk <konrad.wilk@oracl=
-e.com> wrote:
->
-> Since I seem to have a knack for making mistakes, let me get some clarifi=
-cation
-> so that I won't do it again.
->=20
-> When is it Ok for me to put in the #linux-next, new stable features (so
-> reviewed, acked, etc)? a) Is it post rc7? b) Or is it when Linus releases
-> the kernel and Linus's merge window opens?
+Ideally this patch should have been broken up and sent individually to
+each maintainer .. Then I could manage this within my own tree..
 
-Stuff destined for 2.6.n should be enter linux-next (after being posted,
-reviewed and tested) between 2.6.(n-1)-rc1 and about 2 weeks before 2.6.
-(n-1) (usually -rc6 or 7).  That way, hopefully we will have most
-integration problems sorted out before Linus releases 2.6.(n-1) and the
-code can go into Linus' tree during the merge window.  We can then sort
-out any bugs etc in Linus's tree during the -rc releases for 2.6.n (at
-the same time putting features for 2.6.(n+1) into linux-next.
-
-So the answer is c) pre -rc7 :-)
-
-i.e. all the new features for 2.6.37 should have been in linux-next at
-least a week ago ...
-
-In an idea world, the week before the merge window should be spent
-settling stuff down ready to go into Linus' tree.  In the real world,
-everyone seems to madly shove their new features into linux-next, rebase
-their trees against some recent version of Linus' tree or do merges with
-his tree (sometimes all three).  A lot of this latter is completely
-unnecessary and just means that all the previous testing is thrown away
-with the introduction of more code from Linus' tree.
-
-Have a look at the graphs at http://neuling.org/linux-next-size.html .
-In the last week, we have had ~930 new commits enter linux-next (that is
-over 12% of the total in linux-next).  Since -rc7 came out, that number
-is 1580 commits (over 20%). So instead of flattening off (and
-stabilising) as we approach the merge window, the rate of change tends to
-accelerate ...
-
-/me gets off his soap box :-)
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__19_Oct_2010_01_49_41_+1100_PtjQIO+DA_Rj9n+U
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMvF6FAAoJEDMEi1NhKgbslEoH/Rq6qeXQNABb7nIc0bR4SG31
-8j1fRNMPo2REpwwX+35sivPi77RhbJwKLV2UBEbUchO3knfG2Ww8w5rrPxRGkl69
-7a3M+M/w2zWlbqODwHX6dPNsMqkLse2KgQEzGGPx7NQbeZwDL3nDuAM8pE+55snG
-NCNsLP8JHOCXjH7jE2LawEdRDPoBJV08LSwje38W+eMjUanARw8YCtSU3HnjpKRu
-ql2RhArcZs8ip3VQxnBXcBz1oVmqMFgd5MyPiDbTzqID3KLZyxHNqUsrQDfPZsIE
-epzd84A40tRj5Ktuach/WYtKGBnXhgvbmXdDqBSmcTLfm/YFMCE55sTsjBQtJ2A=
-=qg4w
------END PGP SIGNATURE-----
-
---Signature=_Tue__19_Oct_2010_01_49_41_+1100_PtjQIO+DA_Rj9n+U--
+Daniel
