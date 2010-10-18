@@ -1,39 +1,32 @@
-From: Daniel Walker <dwalker@fifo99.com>
+From: Russell King <rmk@arm.linux.org.uk>
 Subject: Re: linux-next: manual merge of the msm tree with the arm tree
-Date: Mon, 18 Oct 2010 14:35:58 -0700
-Message-ID: <1287437758.5588.59.camel@c-dwalke-linux.qualcomm.com>
-References: <20101018103540.7bd9c535.sfr@canb.auug.org.au>
-	 <201010182219.25890.arnd@arndb.de>
-	 <1287434251.5588.23.camel@c-dwalke-linux.qualcomm.com>
-	 <201010182248.36078.arnd@arndb.de>
-	 <1287435928.5588.37.camel@c-dwalke-linux.qualcomm.com>
-	 <alpine.LFD.2.00.1010181714090.2764@xanadu.home>
+Date: Mon, 18 Oct 2010 22:58:15 +0100
+Message-ID: <20101018215815.GC23642@flint.arm.linux.org.uk>
+References: <20101018103540.7bd9c535.sfr@canb.auug.org.au> <20101018110207.131b56ee.sfr@canb.auug.org.au> <20101018081520.GA10551@flint.arm.linux.org.uk> <1287422792.4105.14.camel@c-dwalke-linux.qualcomm.com> <20101018182044.GA558@flint.arm.linux.org.uk> <1287427572.4105.22.camel@c-dwalke-linux.qualcomm.com> <alpine.LFD.2.00.1010181525000.2764@xanadu.home> <1287432774.5588.5.camel@c-dwalke-linux.qualcomm.com> <20101018205847.GB23642@flint.arm.linux.org.uk> <1287437362.5588.57.camel@c-dwalke-linux.qualcomm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <alpine.LFD.2.00.1010181714090.2764@xanadu.home>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Nicolas Pitre <nico@fluxnic.net>
-Cc: Arnd Bergmann <arnd@arndb.de>, Russell King <rmk@arm.linux.org.uk>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeremy Kerr <jeremy.kerr@canonical.com>, Jeff Ohlstein <johlstei@codeaurora.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:47666 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756033Ab0JRV6h (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Oct 2010 17:58:37 -0400
+Content-Disposition: inline
+In-Reply-To: <1287437362.5588.57.camel@c-dwalke-linux.qualcomm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Daniel Walker <dwalker@fifo99.com>
+Cc: Nicolas Pitre <nico@fluxnic.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeremy Kerr <jeremy.kerr@canonical.com>, Jeff Ohlstein <johlstei@codeaurora.org>
 
-On Mon, 2010-10-18 at 17:17 -0400, Nicolas Pitre wrote:
-> On Mon, 18 Oct 2010, Daniel Walker wrote:
-> 
-> > I guess your assuming I send my pull request after Russell's, which
-> > isn't necessarily true, and I'd rather not have that dependency if I
-> > don't have to. 
-> 
-> Look, we're not establishing a straight rule here -- just figuring out a 
-> way to move forward.  What we're asking you to do is either ask RMK to 
-> pull your tree now, or wait until RMK's tree has hit mainline so you can 
-> pull Linus' tree and fix the issue yourself before asking Linus to pull, 
-> or whatever.  Is some collaboration on your part for this particular 
-> issue too much to ask for?
+On Mon, Oct 18, 2010 at 02:29:22PM -0700, Daniel Walker wrote:
+> That's why we have get_maintainer.pl, it adds in all the CC's
+> automatically ..
 
-I'm always very cooperative, if you read back in the thread I basically
-suggested I would be sending a pull request to Russell. That was prior
-to Arnd'd comments.
+$ git diff-tree -u 861bd81ee62a0d6759144c22909a8a3938951656 | scripts/get_maintainer.pl |wc 
+    209     624    8021
 
-Daniel
+209 recipients / 8K of To:/CC: is reasonable?
+
+-- 
+Russell King
+ Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
+ maintainer of:
