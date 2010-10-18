@@ -1,42 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb tree with the mips tree
-Date: Mon, 18 Oct 2010 17:09:11 +1100
-Message-ID: <20101018170911.63f76c60.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the bkl-llseek tree with the wireless
+ tree
+Date: Mon, 18 Oct 2010 17:35:43 +1100
+Message-ID: <20101018173543.c33530e9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53741 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751885Ab0JRGJO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 18 Oct 2010 02:09:14 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Daney <ddaney@caviumnetworks.com>, Ralf Baechle <ralf@linux-mips.org>, Anatolij Gustschin <agust@denx.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>, Felix Fietkau <nbd@openwrt.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Greg,
+Hi Arnd,
 
-Today's linux-next merge of the usb tree got a conflict in
-drivers/usb/host/Makefile between commit
-cd97084c3aff6f1037e00ee711a872719b60441d ("USB: Add EHCI and OHCH glue
-for OCTEON II SOCs") from the mips tree and commit
-f668f1e9868f9bc1bed3d5df1701879ac89cc3ed ("USB: add platform glue driver
-for FSL USB DR controller") from the usb tree.
+Today's linux-next merge of the bkl-llseek tree got a conflict in
+drivers/net/wireless/ath/ath9k/debug.c between commit
+772d5515635fef5bc7a9d0efee785b58b0181ee5 ("ath9k: make rate control
+debugfs stats per station") from the wireless tree and commit
+6038f373a3dc1f1c26496e60b6c40b164716f07e ("llseek: automatically
+add .llseek fop") from the bkl-llseek tree.
 
-I fixed it up (see below) and can carry the fix as necessary.
+The former moved some of the code modified by the latter to another file.
+
+I added this merge fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 18 Oct 2010 17:33:25 +1100
+Subject: [PATCH] ath9k: fix up for .llseek fop change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/net/wireless/ath/ath9k/rc.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/net/wireless/ath/ath9k/rc.c b/drivers/net/wireless/ath/ath9k/rc.c
+index 0cee90c..e4c1ea3 100644
+--- a/drivers/net/wireless/ath/ath9k/rc.c
++++ b/drivers/net/wireless/ath/ath9k/rc.c
+@@ -1582,7 +1582,8 @@ static ssize_t read_file_rcstat(struct file *file, char __user *user_buf,
+ static const struct file_operations fops_rcstat = {
+ 	.read = read_file_rcstat,
+ 	.open = ath9k_debugfs_open,
+-	.owner = THIS_MODULE
++	.owner = THIS_MODULE,
++	.llseek = default_llseek,
+ };
+ 
+ static void ath_rate_add_sta_debugfs(void *priv, void *priv_sta,
+-- 
+1.7.1
+
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/usb/host/Makefile
-index 36099ce,91c5a1b..0000000
---- a/drivers/usb/host/Makefile
-+++ b/drivers/usb/host/Makefile
-@@@ -33,5 -33,4 +33,5 @@@ obj-$(CONFIG_USB_R8A66597_HCD)	+= r8a66
-  obj-$(CONFIG_USB_ISP1760_HCD)	+= isp1760.o
-  obj-$(CONFIG_USB_HWA_HCD)	+= hwa-hc.o
-  obj-$(CONFIG_USB_IMX21_HCD)	+= imx21-hcd.o
- +obj-$(CONFIG_USB_OCTEON2_COMMON) += octeon2-common.o
-- 
-+ obj-$(CONFIG_USB_FSL_MPH_DR_OF)	+= fsl-mph-dr-of.o
+http://www.canb.auug.org.au/~sfr/
