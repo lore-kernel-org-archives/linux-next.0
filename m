@@ -1,49 +1,66 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: linux-next: manual merge of the s5p tree with the arm tree
-Date: Mon, 18 Oct 2010 19:39:57 +0900
-Message-ID: <048201cb6eb0$d0f2bea0$72d83be0$%kim@samsung.com>
-References: <20101018105046.368420c2.sfr@canb.auug.org.au>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Re: linux-next: manual merge of the xen tree with the swiotlb-xen
+ tree
+Date: Mon, 18 Oct 2010 09:55:12 -0400
+Message-ID: <20101018135512.GA19999@dumpdata.com>
+References: <20101018155249.d9267bfe.sfr@canb.auug.org.au>
+ <4CBC014D.7070302@goop.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:36317 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753507Ab0JRKks (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Oct 2010 06:40:48 -0400
-In-reply-to: <20101018105046.368420c2.sfr@canb.auug.org.au>
-Content-language: ko
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: 'Stephen Rothwell' <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Jeremy Kerr' <jeremy.kerr@canonical.com>, 'Lorenzo Pieralisi' <lorenzo.pieralisi@arm.com>, 'Jason Wang' <jason77.wang@gmail.com>, 'Tony Lindgren' <tony@atomide.com>, 'Russell King' <rmk@arm.linux.org.uk>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <4CBC014D.7070302@goop.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jeremy Fitzhardinge <jeremy@goop.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Xen Devel <Xen-devel@lists.xensource.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
-Stephen wrote:
+On Mon, Oct 18, 2010 at 01:11:57AM -0700, Jeremy Fitzhardinge wrote:
+>  On 10/17/2010 09:52 PM, Stephen Rothwell wrote:
+> > Hi all,
+> >
+> > Today's linux-next merge of the xen tree got conplex conflicts in
+> > drivers/xen/events.c between several commits from the swiotlb-xen tree
+> > and several commits from the xen tree.
+> >
+> > I am unqualified to fix this mess, sorry.  I am dropping the xen tree
+> > for today (and only not dropping the swiotlb-xen tree because that would
+> > be too much work).
+
+Ugh. Let me revert the branch to pull this from to what it was a week ago.
+That way Jeremy's tree should not have any trouble.
+
 > 
-> Hi Kukjin,
+> Argh, sorry, I should have coordinated with Konrad.  I'd merged my tree
+> into linux-next to make sure it was OK, but I guess I overlooked something.
 > 
-Hi Stephen,
+> > I wonder, of course, why I have seen nothing in either of these trees
+> > until today (less than a week before the merge window opens).
 
-> Today's linux-next merge of the s5p tree got a conflict in
-> arch/arm/mach-s5p6440/include/mach/debug-macro.S between commit
-> 08a610d9ef5394525b0328da0162d7b58c982cc4 ("arm: return both physical and
-> virtual addresses from addruart") from the arm tree and commit
-> 29159b7dd244def6e0073ff0e2d4cbb59599187f ("ARM: S5P64X0: Add S5P64X0
-> (S5P6440 and S5P6450) initialization support") from the s5p tree.
+That is my fault. I thought the merge window was this _week_ so I happily
+pushed the trigger button.
+
+Since I seem to have a knack for making mistakes, let me get some clarification
+so that I won't do it again.
+
+When is it Ok for me to put in the #linux-next, new stable features (so
+reviewed, acked, etc)? a) Is it post rc7? b) Or is it when Linus releases
+the kernel and Linus's merge window opens?
+
+I was thinking it is a), b/c if it would be b), then there is just two weeks
+to fix any fallout that might happen due to merging of vast new features.
+
 > 
-> The latter removed the file modified by the former.  I did that.
+> I had found Xen regressions that had made it into linux-next and wanted
+> to sort those out before adding anything else to the mix.
 > 
-> The appropriate part of the above arm commit needs to be done for the new
-> file arch/arm/mach-s5p64x0/include/mach/debug-macro.S .  Unfortunately, I
-> am unqualified to do that ...
+> > Please sort this mess out.  I will drop the swiotlb-xen tree as well
+> > tomorrow if nothing has changed.
+> 
+> Will do.
 
-I fixed it up and finished test on the board also..if any problems, please
-let me know.
+Sorry about this. Will definitly work this out.
 
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+> 
+> Thanks,
+>     J
