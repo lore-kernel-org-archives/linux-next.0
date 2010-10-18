@@ -1,59 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the pci tree
-Date: Mon, 18 Oct 2010 13:20:35 +1100
-Message-ID: <20101018132035.c506beff.sfr@canb.auug.org.au>
+From: Jesse Barnes <jbarnes@virtuousgeek.org>
+Subject: Re: linux-next: build failure after merge of the pci tree
+Date: Sun, 17 Oct 2010 20:02:46 -0700
+Message-ID: <20101017200246.195c8e9d@jbarnes-desktop>
+References: <20101018132035.c506beff.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__18_Oct_2010_13_20_35_+1100_AQt/+2pjJahigIjU"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37070 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750961Ab0JRCUo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 17 Oct 2010 22:20:44 -0400
+Received: from cpoproxy3-pub.bluehost.com ([67.222.54.6]:33034 "HELO
+	cpoproxy3-pub.bluehost.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with SMTP id S1751263Ab0JRDDc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Sun, 17 Oct 2010 23:03:32 -0400
+In-Reply-To: <20101018132035.c506beff.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jesse Barnes <jbarnes@virtuousgeek.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
 
---Signature=_Mon__18_Oct_2010_13_20_35_+1100_AQt/+2pjJahigIjU
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 18 Oct 2010 13:20:35 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi Jesse,
+> Hi Jesse,
+> 
+> After merging the pci tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+> 
+> drivers/pci/hotplug/pciehp_core.c: In function 'pcied_init':
+> drivers/pci/hotplug/pciehp_core.c:348: error: implicit declaration of function 'alloc_ordered_workqueue'
+> 
+> That function is not declared anywhere except the (yet to be merged)
+> workqueues tree.
+> 
+> I have used the pci tree from next-20101015 for today.
+> 
+> Please build test what you are exporting for merging into linux-next.
 
-After merging the pci tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+Arg, sorry about that, I'll drop these and just ack them for inclusion
+by Tejun.
 
-drivers/pci/hotplug/pciehp_core.c: In function 'pcied_init':
-drivers/pci/hotplug/pciehp_core.c:348: error: implicit declaration of funct=
-ion 'alloc_ordered_workqueue'
-
-That function is not declared anywhere except the (yet to be merged)
-workqueues tree.
-
-I have used the pci tree from next-20101015 for today.
-
-Please build test what you are exporting for merging into linux-next.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__18_Oct_2010_13_20_35_+1100_AQt/+2pjJahigIjU
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMu67zAAoJEDMEi1NhKgbseDQH/jz9883mp9hgFBGwjuaeS9IL
-kFIocjjMPqfxGQxn3iH8CB+GrbeOb8q81Bv8o04iWbODItHyMCwGawiJPjfd/fzG
-wbQQU1F89PU1zVnIco7Ni8GQN/MdwHaHlAl5d7NTZNpLr6ge5fiLIGPXNuBnYWpV
-eEtxL204k9XQ4Ud0n0GpZL4LMgV6+QU5mLYESAhNLnvt2HiH1/z6HtdWdZMjcUR0
-KbTrUUU7E5FIJBqMIAJscDLOkuLoEbr36g2cXfhFH/tXfsptChqZNqHsslcsGlj5
-k9kWZgvhKAWDpjgjg7FCvHlRJ4rnLuzQcDkciLeEbXP3xvCKZEW2+dhmRqcecBE=
-=LOda
------END PGP SIGNATURE-----
-
---Signature=_Mon__18_Oct_2010_13_20_35_+1100_AQt/+2pjJahigIjU--
+-- 
+Jesse Barnes, Intel Open Source Technology Center
