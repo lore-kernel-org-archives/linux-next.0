@@ -1,43 +1,133 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Subject: Re: linux-next: build failure after merge of the pci tree
-Date: Sun, 17 Oct 2010 20:02:46 -0700
-Message-ID: <20101017200246.195c8e9d@jbarnes-desktop>
-References: <20101018132035.c506beff.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Mon, 18 Oct 2010 14:29:34 +1100
+Message-ID: <20101018142934.65f5d0fa.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__18_Oct_2010_14_29_34_+1100_5nahqLDohn=RUHBf"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cpoproxy3-pub.bluehost.com ([67.222.54.6]:33034 "HELO
-	cpoproxy3-pub.bluehost.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with SMTP id S1751263Ab0JRDDc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Sun, 17 Oct 2010 23:03:32 -0400
-In-Reply-To: <20101018132035.c506beff.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:38489 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751934Ab0JRD3t (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 17 Oct 2010 23:29:49 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Hsiang <Peter.Hsiang@maxim-ic.com>
 
-On Mon, 18 Oct 2010 13:20:35 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+--Signature=_Mon__18_Oct_2010_14_29_34_+1100_5nahqLDohn=RUHBf
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Jesse,
-> 
-> After merging the pci tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
-> 
-> drivers/pci/hotplug/pciehp_core.c: In function 'pcied_init':
-> drivers/pci/hotplug/pciehp_core.c:348: error: implicit declaration of function 'alloc_ordered_workqueue'
-> 
-> That function is not declared anywhere except the (yet to be merged)
-> workqueues tree.
-> 
-> I have used the pci tree from next-20101015 for today.
-> 
-> Please build test what you are exporting for merging into linux-next.
+Hi all,
 
-Arg, sorry about that, I'll drop these and just ack them for inclusion
-by Tejun.
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
--- 
-Jesse Barnes, Intel Open Source Technology Center
+sound/soc/codecs/max98088.c:28:28: error: sound/max98088.h: No such file or=
+ directory
+sound/soc/codecs/max98088.c: In function 'max98088_setup_eq1':
+sound/soc/codecs/max98088.c:1712: error: dereferencing pointer to incomplet=
+e type
+sound/soc/codecs/max98088.c:1713: error: dereferencing pointer to incomplet=
+e type
+sound/soc/codecs/max98088.c:1714: error: dereferencing pointer to incomplet=
+e type
+sound/soc/codecs/max98088.c:1716: error: dereferencing pointer to incomplet=
+e type
+sound/soc/codecs/max98088.c:1720: error: dereferencing pointer to incomplet=
+e type
+sound/soc/codecs/max98088.c:1720: error: dereferencing pointer to incomplet=
+e type
+sound/soc/codecs/max98088.c:1728: error: dereferencing pointer to incomplet=
+e type
+sound/soc/codecs/max98088.c:1730: error: dereferencing pointer to incomplet=
+e type
+sound/soc/codecs/max98088.c:1731: error: dereferencing pointer to incomplet=
+e type
+sound/soc/codecs/max98088.c:1732: error: dereferencing pointer to incomplet=
+e type
+sound/soc/codecs/max98088.c:1733: error: dereferencing pointer to incomplet=
+e type
+sound/soc/codecs/max98088.c:1734: error: dereferencing pointer to incomplet=
+e type
+sound/soc/codecs/max98088.c: In function 'max98088_setup_eq2':
+sound/soc/codecs/max98088.c:1759: error: dereferencing pointer to incomplet=
+e type
+sound/soc/codecs/max98088.c:1760: error: dereferencing pointer to incomplet=
+e type
+sound/soc/codecs/max98088.c:1761: error: dereferencing pointer to incomplet=
+e type
+sound/soc/codecs/max98088.c:1763: error: dereferencing pointer to incomplet=
+e type
+sound/soc/codecs/max98088.c:1767: error: dereferencing pointer to incomplet=
+e type
+sound/soc/codecs/max98088.c:1767: error: dereferencing pointer to incomplet=
+e type
+sound/soc/codecs/max98088.c:1775: error: dereferencing pointer to incomplet=
+e type
+sound/soc/codecs/max98088.c:1777: error: dereferencing pointer to incomplet=
+e type
+sound/soc/codecs/max98088.c:1778: error: dereferencing pointer to incomplet=
+e type
+sound/soc/codecs/max98088.c:1779: error: dereferencing pointer to incomplet=
+e type
+sound/soc/codecs/max98088.c:1780: error: dereferencing pointer to incomplet=
+e type
+sound/soc/codecs/max98088.c:1781: error: dereferencing pointer to incomplet=
+e type
+sound/soc/codecs/max98088.c: In function 'max98088_put_eq_enum':
+sound/soc/codecs/max98088.c:1800: error: dereferencing pointer to incomplet=
+e type
+sound/soc/codecs/max98088.c: In function 'max98088_handle_eq_pdata':
+sound/soc/codecs/max98088.c:1851: error: dereferencing pointer to incomplet=
+e type
+sound/soc/codecs/max98088.c:1852: error: dereferencing pointer to incomplet=
+e type
+sound/soc/codecs/max98088.c:1861: error: invalid use of undefined type 'str=
+uct max98088_eq_cfg'
+sound/soc/codecs/max98088.c:1861: error: dereferencing pointer to incomplet=
+e type
+sound/soc/codecs/max98088.c:1876: error: invalid use of undefined type 'str=
+uct max98088_eq_cfg'
+sound/soc/codecs/max98088.c:1876: error: dereferencing pointer to incomplet=
+e type
+sound/soc/codecs/max98088.c: In function 'max98088_handle_pdata':
+sound/soc/codecs/max98088.c:1902: error: dereferencing pointer to incomplet=
+e type
+sound/soc/codecs/max98088.c:1905: error: dereferencing pointer to incomplet=
+e type
+sound/soc/codecs/max98088.c:1913: error: dereferencing pointer to incomplet=
+e type
+sound/soc/codecs/max98088.c:1918: error: dereferencing pointer to incomplet=
+e type
+
+Caused by commit e65d255a5a610ce9e185e0df855250706aca7c21 ("ASoC: Add
+max98088 CODEC driver").
+
+Please, please build test what you are submitting.
+
+I have used the sound-asoc tree from next-20101015 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__18_Oct_2010_14_29_34_+1100_5nahqLDohn=RUHBf
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMu78eAAoJEDMEi1NhKgbsvqwH/RV9iGDVBDvyh6itrL9zfn6E
+Njyyc5V1e/yQuoxDmpTSNU/i/KU5dyr98ZitJqX0NZrYXjfWdAjnQegTHa6BQvPh
+e9OTgO82MT3NnFFUccVOgLZa37YH9AzFzeR3C7FMC0loBjTvSgZE0aEYERoOt7fI
+yaM4Hn2DcH8wNvwjkAN0vGHh8jxUhsGFisEAD/80eWMoLvJkbu0Yt2XAc/4wiUAV
+Dt1BtPJxPMC33gemmHgXmVYSDrVjrw9yW7iUx+7MlZen/5QeQGK9zR4rcrifnmew
+32AaktegQ21hk0u0SJFg46cIckbEFAuuwtoGNesK3fkCal2r7U87Dg0pSdXl8NM=
+=NGLO
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__18_Oct_2010_14_29_34_+1100_5nahqLDohn=RUHBf--
