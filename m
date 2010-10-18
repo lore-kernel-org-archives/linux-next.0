@@ -1,45 +1,44 @@
-From: Arnd Bergmann <arnd@arndb.de>
+From: Nicolas Pitre <nico@fluxnic.net>
 Subject: Re: linux-next: manual merge of the msm tree with the arm tree
-Date: Mon, 18 Oct 2010 22:48:35 +0200
-Message-ID: <201010182248.36078.arnd@arndb.de>
-References: <20101018103540.7bd9c535.sfr@canb.auug.org.au> <201010182219.25890.arnd@arndb.de> <1287434251.5588.23.camel@c-dwalke-linux.qualcomm.com>
+Date: Mon, 18 Oct 2010 16:57:32 -0400 (EDT)
+Message-ID: <alpine.LFD.2.00.1010181654300.2764@xanadu.home>
+References: <20101018103540.7bd9c535.sfr@canb.auug.org.au>
+ <20101018110207.131b56ee.sfr@canb.auug.org.au>
+ <20101018081520.GA10551@flint.arm.linux.org.uk>
+ <1287422792.4105.14.camel@c-dwalke-linux.qualcomm.com>
+ <20101018182044.GA558@flint.arm.linux.org.uk>
+ <1287427572.4105.22.camel@c-dwalke-linux.qualcomm.com>
+ <alpine.LFD.2.00.1010181525000.2764@xanadu.home>
+ <1287433179.5588.9.camel@c-dwalke-linux.qualcomm.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.9]:51210 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755183Ab0JRUsk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Oct 2010 16:48:40 -0400
-In-Reply-To: <1287434251.5588.23.camel@c-dwalke-linux.qualcomm.com>
+Received: from relais.videotron.ca ([24.201.245.36]:57768 "EHLO
+	relais.videotron.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755181Ab0JRU5e (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Oct 2010 16:57:34 -0400
+In-reply-to: <1287433179.5588.9.camel@c-dwalke-linux.qualcomm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Daniel Walker <dwalker@fifo99.com>
-Cc: Nicolas Pitre <nico@fluxnic.net>, Russell King <rmk@arm.linux.org.uk>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeremy Kerr <jeremy.kerr@canonical.com>, Jeff Ohlstein <johlstei@codeaurora.org>
+Cc: Russell King <rmk@arm.linux.org.uk>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeremy Kerr <jeremy.kerr@canonical.com>, Jeff Ohlstein <johlstei@codeaurora.org>
 
-On Monday 18 October 2010 22:37:31 Daniel Walker wrote:
-> > When you know that Russell does not rebase his tree, you can pull his
-> > tree into yours whenever a change hits his tree that impacts you in
-> > a major way. You shouldn't do this too frequently, but it's a good way
-> > to resolve conflicts like this one.
+On Mon, 18 Oct 2010, Daniel Walker wrote:
+
+> On Mon, 2010-10-18 at 15:29 -0400, Nicolas Pitre wrote:
 > 
-> If I did that all of Russell's changesets would get mixed with mine when
-> I send the pull request .. That would just create confusion .. It's OK
-> if Russell sends my commits to Linus, but I'm not going to send
-> Russell's commits.
+> > RMK has his own merge window which closes about at the same time as 
+> > Linus' one opens.  We thought this was happening last week and therefore 
+> > this change was supposed to be the last one.
+> 
+> I guess what I'm missing here is when does this window open? Is it a two
+> week deal, or does it last the whole -rc cycle?
 
-Actually both are ok, as long as you as the sub-maintainer send your
-pull request after Russell's tree has been merged and you don't
-ask anyone else to pull your tree who has not pulled Russell's tree
-explicitly or implicitly through Linus.
+Linus' merge window is indeed the two-week thing.  No one can predict 
+with certainty when it'll happen, as demonstrated by our merging of the 
+debug macro in RMK's tree last week based on the presumption that we 
+would be in the two-week merge now.
 
-git-request-pull is smart enough to list only the changesets that
-are not in the upstream tree, as will git "log your-branch...upstream"
-or "git diff your-branch upstream".
 
-The other option you have is to ask Russell to pull your tree
-at an early enough time, which also works if you did the occasional
-pull from him before that.
-
-	Arnd
+Nicolas
