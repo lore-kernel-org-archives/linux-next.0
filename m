@@ -1,65 +1,54 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the msm tree with the arm tree
-Date: Mon, 18 Oct 2010 11:02:07 +1100
-Message-ID: <20101018110207.131b56ee.sfr@canb.auug.org.au>
-References: <20101018103540.7bd9c535.sfr@canb.auug.org.au>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: linux-next: manual merge of the s5p tree with the arm tree
+Date: Mon, 18 Oct 2010 09:57:25 +0900
+Message-ID: <03f901cb6e5f$6ff5f690$4fe1e3b0$%kim@samsung.com>
+References: <20101018105046.368420c2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38475 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751859Ab0JRACI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 17 Oct 2010 20:02:08 -0400
-In-Reply-To: <20101018103540.7bd9c535.sfr@canb.auug.org.au>
+Received: from mailout2.samsung.com ([203.254.224.25]:20036 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752663Ab0JRA5X (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 17 Oct 2010 20:57:23 -0400
+In-reply-to: <20101018105046.368420c2.sfr@canb.auug.org.au>
+Content-language: ko
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Walker <dwalker@fifo99.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeremy Kerr <jeremy.kerr@canonical.com>, Jeff Ohlstein <johlstei@codeaurora.org>, Russell King <rmk@arm.linux.org.uk>
+To: 'Stephen Rothwell' <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Jeremy Kerr' <jeremy.kerr@canonical.com>, 'Lorenzo Pieralisi' <lorenzo.pieralisi@arm.com>, 'Jason Wang' <jason77.wang@gmail.com>, 'Tony Lindgren' <tony@atomide.com>, 'Russell King' <rmk@arm.linux.org.uk>
 
-[ Just cc'ing Russell, sorry about that]
-
-On Mon, 18 Oct 2010 10:35:40 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi Daniel,
+Stephen Rothwell wrote:
 > 
-> Today's linux-next merge of the msm tree got a conflict in
-> arch/arm/mach-msm/include/mach/debug-macro.S between commit
+> Hi Kukjin,
+> 
+Hi Stephen :-)
+
+> Today's linux-next merge of the s5p tree got a conflict in
+> arch/arm/mach-s5p6440/include/mach/debug-macro.S between commit
 > 08a610d9ef5394525b0328da0162d7b58c982cc4 ("arm: return both physical and
 > virtual addresses from addruart") from the arm tree and commit
-> 46fe5f29e3062f681cc3cf07a604d82396faea89 ("msm: allow uart to be
-> conditionally disabled") from the msm tree.
+> 29159b7dd244def6e0073ff0e2d4cbb59599187f ("ARM: S5P64X0: Add S5P64X0
+> (S5P6440 and S5P6450) initialization support") from the s5p tree.
 > 
-> Just context changes.  I fixed it up (see below) and can carry the fix as
-> necessary.
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc arch/arm/mach-msm/include/mach/debug-macro.S
-> index 3c35b0d,238c4f1..0000000
-> --- a/arch/arm/mach-msm/include/mach/debug-macro.S
-> +++ b/arch/arm/mach-msm/include/mach/debug-macro.S
-> @@@ -19,11 -19,13 +19,11 @@@
->   #include <mach/hardware.h>
->   #include <mach/msm_iomap.h>
->   
-> - #ifdef CONFIG_MSM_DEBUG_UART
-> + #ifdef CONFIG_HAS_MSM_DEBUG_UART_PHYS
->  -	.macro	addruart, rx, tmp
->  +	.macro	addruart, rp, rv
->   	@ see if the MMU is enabled and select appropriate base address
->  -	mrc	p15, 0, \rx, c1, c0
->  -	tst	\rx, #1
->  -	ldreq	\rx, =MSM_DEBUG_UART_PHYS
->  -	ldrne	\rx, =MSM_DEBUG_UART_BASE
->  +	ldr	\rp, =MSM_DEBUG_UART_PHYS
->  +	ldr	\rv, =MSM_DEBUG_UART_BASE
->   	.endm
->   
->   	.macro	senduart,rd,rx
+Hmm...ok...
 
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+> The latter removed the file modified by the former.  I did that.
+> 
+Ok.
+
+> The appropriate part of the above arm commit needs to be done for the new
+> file arch/arm/mach-s5p64x0/include/mach/debug-macro.S .  Unfortunately, I
+> am unqualified to do that ...
+
+I see...so may I do only fix
+arch/arm/mach-s5p64x0/include/mach/debug-macro.S in my tree?
+Or...need to fix other things?
+
+Anyway, thanks for your linux-next ;-)
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
