@@ -1,80 +1,56 @@
-From: Russell King <rmk@arm.linux.org.uk>
+From: Daniel Walker <dwalker@fifo99.com>
 Subject: Re: linux-next: manual merge of the msm tree with the arm tree
-Date: Mon, 18 Oct 2010 21:58:47 +0100
-Message-ID: <20101018205847.GB23642@flint.arm.linux.org.uk>
-References: <20101018103540.7bd9c535.sfr@canb.auug.org.au> <20101018110207.131b56ee.sfr@canb.auug.org.au> <20101018081520.GA10551@flint.arm.linux.org.uk> <1287422792.4105.14.camel@c-dwalke-linux.qualcomm.com> <20101018182044.GA558@flint.arm.linux.org.uk> <1287427572.4105.22.camel@c-dwalke-linux.qualcomm.com> <alpine.LFD.2.00.1010181525000.2764@xanadu.home> <1287432774.5588.5.camel@c-dwalke-linux.qualcomm.com>
+Date: Mon, 18 Oct 2010 14:05:28 -0700
+Message-ID: <1287435928.5588.37.camel@c-dwalke-linux.qualcomm.com>
+References: <20101018103540.7bd9c535.sfr@canb.auug.org.au>
+	 <201010182219.25890.arnd@arndb.de>
+	 <1287434251.5588.23.camel@c-dwalke-linux.qualcomm.com>
+	 <201010182248.36078.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:56427 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751711Ab0JRU7I (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Oct 2010 16:59:08 -0400
-Content-Disposition: inline
-In-Reply-To: <1287432774.5588.5.camel@c-dwalke-linux.qualcomm.com>
+Received: from fifo99.com ([67.223.236.141]:36281 "EHLO fifo99.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750806Ab0JRVF7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 18 Oct 2010 17:05:59 -0400
+In-Reply-To: <201010182248.36078.arnd@arndb.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Walker <dwalker@fifo99.com>
-Cc: Nicolas Pitre <nico@fluxnic.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeremy Kerr <jeremy.kerr@canonical.com>, Jeff Ohlstein <johlstei@codeaurora.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Nicolas Pitre <nico@fluxnic.net>, Russell King <rmk@arm.linux.org.uk>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeremy Kerr <jeremy.kerr@canonical.com>, Jeff Ohlstein <johlstei@codeaurora.org>
 
-On Mon, Oct 18, 2010 at 01:12:54PM -0700, Daniel Walker wrote:
-> On Mon, 2010-10-18 at 15:29 -0400, Nicolas Pitre wrote:
-> 
-> > > Ok, well in that case why not accept this immediately after the merge
-> > > window? A point when everything is quiet, and most of the tree's are
-> > > empty?
+On Mon, 2010-10-18 at 22:48 +0200, Arnd Bergmann wrote:
+> On Monday 18 October 2010 22:37:31 Daniel Walker wrote:
+> > > When you know that Russell does not rebase his tree, you can pull his
+> > > tree into yours whenever a change hits his tree that impacts you in
+> > > a major way. You shouldn't do this too frequently, but it's a good way
+> > > to resolve conflicts like this one.
 > > 
-> > RMK has his own merge window which closes about at the same time as 
-> > Linus' one opens.  We thought this was happening last week and therefore 
-> > this change was supposed to be the last one.
+> > If I did that all of Russell's changesets would get mixed with mine when
+> > I send the pull request .. That would just create confusion .. It's OK
+> > if Russell sends my commits to Linus, but I'm not going to send
+> > Russell's commits.
 > 
-> It seems like that could potentially make these kinds of problem worse,
-> since your merging things immediately before sending them to Linus. Like
-> right now we only have a fairly short amount of time to correct this
-> conflict. 
+> Actually both are ok, as long as you as the sub-maintainer send your
+> pull request after Russell's tree has been merged and you don't
+> ask anyone else to pull your tree who has not pulled Russell's tree
+> explicitly or implicitly through Linus.
+> 
+> git-request-pull is smart enough to list only the changesets that
+> are not in the upstream tree, as will git "log your-branch...upstream"
+> or "git diff your-branch upstream".
 
-What I would like to do in an ideal world is stop merging stuff into my
-tree one week before the merge window opens precisely so that people can
-regression test it.  If I were to conform to that, I'd be saying "tough,
-it's your problem" right now.  Why?
+I guess your assuming I send my pull request after Russell's, which
+isn't necessarily true, and I'd rather not have that dependency if I
+don't have to. 
 
-This change has been discussed at length on the linux-arm-kernel mailing
-list, where patches have been posted and reviewed for it several times
-since July:
+Even with a one time event what your suggesting seems like it would be
+some what freaky. I wouldn't want to wait around for Russell to get his
+tree merged before I can get a reasonable log of my own activities
+(without jumping through hoops).
 
-	http://marc.info/?l=linux-arm-kernel&w=2&r=1&s=late+mdesc&q=b
+Of course I could do what your suggesting, I just don't think it's the
+easiest way to fix this.
 
-In September it became ready for merging, and this is what I said:
-
-	http://marc.info/?l=linux-arm-kernel&m=128332699032679&w=2
-
-So, there should be absolutely no surprise over it, except from people
-who ignore what's going on in the generic ARM world.  No, you can't
-expect people to copy every single board maintainer - we have something
-like 300 odd board files with various maintainers.  It's one of the
-reasons that we have mailing lists.
-
-What I should be saying at this point is "tough, you've got a problem"
-but I won't.  I've rewound my tree to drop these changes, because it
-seems several people need more time.  You have it - until Tuesday - when
-Nicolas will re-do his patch set on top of whatever my tree is at that
-point.
-
-If you haven't sent me a pull request by Tuesday[*] evening my time, it
-becomes _your_ problem to fix the resulting breakage.  A warning: make
-sure your tree is not based on my devel branch - it's regressed to
-'unstable' state because of this.
-
-You have the opportunity to sort this out avoiding conflicts and bisect
-problems.  I suggest you take advantage of that.  But don't expect me
-to keep on making these kinds of concessions.
-
-* - I really don't like making deadlines for Tuesdays and Wednesdays
-because I tend to only be around in the evening - but there is no option.
-So don't expect something which arrives here at midnight Tuesday to get
-merged.
-
--- 
-Russell King
- Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
- maintainer of:
+Daniel
