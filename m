@@ -1,47 +1,49 @@
-From: Russell King <rmk@arm.linux.org.uk>
-Subject: Re: linux-next: manual merge of the msm tree with the arm tree
-Date: Mon, 18 Oct 2010 09:15:20 +0100
-Message-ID: <20101018081520.GA10551@flint.arm.linux.org.uk>
-References: <20101018103540.7bd9c535.sfr@canb.auug.org.au> <20101018110207.131b56ee.sfr@canb.auug.org.au>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: linux-next: manual merge of the s5p tree with the arm tree
+Date: Mon, 18 Oct 2010 19:39:57 +0900
+Message-ID: <048201cb6eb0$d0f2bea0$72d83be0$%kim@samsung.com>
+References: <20101018105046.368420c2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:55057 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751343Ab0JRIPp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Oct 2010 04:15:45 -0400
-Content-Disposition: inline
-In-Reply-To: <20101018110207.131b56ee.sfr@canb.auug.org.au>
+Received: from mailout4.samsung.com ([203.254.224.34]:36317 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753507Ab0JRKks (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Oct 2010 06:40:48 -0400
+In-reply-to: <20101018105046.368420c2.sfr@canb.auug.org.au>
+Content-language: ko
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Daniel Walker <dwalker@fifo99.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeremy Kerr <jeremy.kerr@canonical.com>, Jeff Ohlstein <johlstei@codeaurora.org>
+To: 'Stephen Rothwell' <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Jeremy Kerr' <jeremy.kerr@canonical.com>, 'Lorenzo Pieralisi' <lorenzo.pieralisi@arm.com>, 'Jason Wang' <jason77.wang@gmail.com>, 'Tony Lindgren' <tony@atomide.com>, 'Russell King' <rmk@arm.linux.org.uk>
 
-On Mon, Oct 18, 2010 at 11:02:07AM +1100, Stephen Rothwell wrote:
-> [ Just cc'ing Russell, sorry about that]
+Stephen wrote:
 > 
-> On Mon, 18 Oct 2010 10:35:40 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Hi Daniel,
-> > 
-> > Today's linux-next merge of the msm tree got a conflict in
-> > arch/arm/mach-msm/include/mach/debug-macro.S between commit
-> > 08a610d9ef5394525b0328da0162d7b58c982cc4 ("arm: return both physical and
-> > virtual addresses from addruart") from the arm tree and commit
-> > 46fe5f29e3062f681cc3cf07a604d82396faea89 ("msm: allow uart to be
-> > conditionally disabled") from the msm tree.
-> > 
-> > Just context changes.  I fixed it up (see below) and can carry the fix as
-> > necessary.
+> Hi Kukjin,
+> 
+Hi Stephen,
 
-Thanks, but I don't think there's much which can be done about these.
-Changes such as 08a610d affect all ARM sub-architectures, and as they're
-spread across multiple git trees...
+> Today's linux-next merge of the s5p tree got a conflict in
+> arch/arm/mach-s5p6440/include/mach/debug-macro.S between commit
+> 08a610d9ef5394525b0328da0162d7b58c982cc4 ("arm: return both physical and
+> virtual addresses from addruart") from the arm tree and commit
+> 29159b7dd244def6e0073ff0e2d4cbb59599187f ("ARM: S5P64X0: Add S5P64X0
+> (S5P6440 and S5P6450) initialization support") from the s5p tree.
+> 
+> The latter removed the file modified by the former.  I did that.
+> 
+> The appropriate part of the above arm commit needs to be done for the new
+> file arch/arm/mach-s5p64x0/include/mach/debug-macro.S .  Unfortunately, I
+> am unqualified to do that ...
 
-I think there's going to be some problems during this forthcoming merge
-window.
+I fixed it up and finished test on the board also..if any problems, please
+let me know.
 
--- 
-Russell King
- Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
- maintainer of:
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
