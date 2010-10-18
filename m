@@ -1,69 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the sound-asoc tree
-Date: Mon, 18 Oct 2010 14:39:25 +1100
-Message-ID: <20101018143925.9e104b48.sfr@canb.auug.org.au>
-References: <20101018142934.65f5d0fa.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the xen tree with the swiotlb-xen tree
+Date: Mon, 18 Oct 2010 15:52:49 +1100
+Message-ID: <20101018155249.d9267bfe.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__18_Oct_2010_14_39_25_+1100__5NMnk47qt5ARXhh"
+ boundary="Signature=_Mon__18_Oct_2010_15_52_49_+1100_OFumicP2HvSJO2Sw"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56779 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:33163 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751002Ab0JRDjc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 17 Oct 2010 23:39:32 -0400
-In-Reply-To: <20101018142934.65f5d0fa.sfr@canb.auug.org.au>
+	id S1750767Ab0JREw7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 18 Oct 2010 00:52:59 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>, Takashi Iwai <tiwai@suse.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Hsiang <Peter.Hsiang@maxim-ic.com>
+To: Jeremy Fitzhardinge <jeremy@goop.org>, Xen Devel <Xen-devel@lists.xensource.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>
 
---Signature=_Mon__18_Oct_2010_14_39_25_+1100__5NMnk47qt5ARXhh
+--Signature=_Mon__18_Oct_2010_15_52_49_+1100_OFumicP2HvSJO2Sw
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Mon, 18 Oct 2010 14:29:34 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the sound-asoc tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->=20
-> sound/soc/codecs/max98088.c:28:28: error: sound/max98088.h: No such file =
-or directory
-	.
-	.
->=20
-> Caused by commit e65d255a5a610ce9e185e0df855250706aca7c21 ("ASoC: Add
-> max98088 CODEC driver").
->=20
-> Please, please build test what you are submitting.
->=20
-> I have used the sound-asoc tree from next-20101015 for today.
+Today's linux-next merge of the xen tree got conplex conflicts in
+drivers/xen/events.c between several commits from the swiotlb-xen tree
+and several commits from the xen tree.
 
-I have also had to use the version of the sound tree from next-20101015
-since it had merged the sound-asoc tree.
+I am unqualified to fix this mess, sorry.  I am dropping the xen tree
+for today (and only not dropping the swiotlb-xen tree because that would
+be too much work).
+
+I wonder, of course, why I have seen nothing in either of these trees
+until today (less than a week before the merge window opens).
+
+Please sort this mess out.  I will drop the swiotlb-xen tree as well
+tomorrow if nothing has changed.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__18_Oct_2010_14_39_25_+1100__5NMnk47qt5ARXhh
+--Signature=_Mon__18_Oct_2010_15_52_49_+1100_OFumicP2HvSJO2Sw
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMu8FtAAoJEDMEi1NhKgbsaWcH/2sNbIor9KfCjENr8sk7b99P
-JBkgDq+nmeV7uk7mZLqL/a0wyQBb6ziy+FYPthkNIucWLg8gEcDvhmzPQap6mZ1M
-5DX+wuou3LzeQ6h6ctwBG8xOJ8dhkgsTaoj4le06L+jS1hPQ5tUzh+8iLWvejgJK
-8sDtfOmqlsrLPs2k4p/6eUDkEGyM8xe1qahKL6mw+AD5LlSAolFBFUxv6JGFy+zG
-2SMHWp4cG8et1KxIis+1khq2RkrZ7FeZdXvtiGgGb/E0/taA+s9VJVgwpuzFgF8z
-a3n88GDLDRnQ0Z2OLoNuMKghhzYhOlZ/EZGG8m3xcWOSoEcW8Jp66j2i3zU2usI=
-=935c
+iQEcBAEBAgAGBQJMu9KhAAoJEDMEi1NhKgbsAUAH/0FBRyzgC5zzt2HbrDAuPCQw
+BapDaGdeW8JrOKlI+EZJDgdkEAb2shDuQg5R4Bqr+vSDinbsNUilhdMC7aMceEpz
+YwyjbSsRkcrpHK49wggKwKFhL/spz29VOc6BwWfg6CDjXiMtxG3xlAgSxiGcc3AV
+mKEf0hglqxpXkCbWBbVjO2zWPI4Nbk1lMf+3zGLYFFEjx8/Gi1bWATOobqXoO0We
+x4AFnzH0Oc9vrrrf/6uZOA2bJPkCXEbpQYhp0jLqKGWkj9lr0lYWFgygb0t6JUQK
+gLUvbOEhikF23lRHKDXJWmIH4ia/Zw+oIZLajbun00wt58artT5chmgZGbmi4IU=
+=T2d1
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__18_Oct_2010_14_39_25_+1100__5NMnk47qt5ARXhh--
+--Signature=_Mon__18_Oct_2010_15_52_49_+1100_OFumicP2HvSJO2Sw--
