@@ -1,67 +1,47 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the final tree (net
- tree related)
-Date: Mon, 18 Oct 2010 01:06:52 -0700 (PDT)
-Message-ID: <20101018.010652.193724757.davem@davemloft.net>
-References: <20101018183616.ef5cde84.sfr@canb.auug.org.au>
+From: Jeremy Fitzhardinge <jeremy@goop.org>
+Subject: Re: linux-next: manual merge of the xen tree with the swiotlb-xen
+ tree
+Date: Mon, 18 Oct 2010 01:11:57 -0700
+Message-ID: <4CBC014D.7070302@goop.org>
+References: <20101018155249.d9267bfe.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-15
 Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20101018183616.ef5cde84.sfr@canb.auug.org.au>
-Sender: netdev-owner@vger.kernel.org
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, shemminger@vyatta.com
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from claw.goop.org ([74.207.240.146]:41303 "EHLO claw.goop.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751935Ab0JRIL7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 18 Oct 2010 04:11:59 -0400
+In-Reply-To: <20101018155249.d9267bfe.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Xen Devel <Xen-devel@lists.xensource.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 18 Oct 2010 18:36:16 +1100
+ On 10/17/2010 09:52 PM, Stephen Rothwell wrote:
+> Hi all,
+>
+> Today's linux-next merge of the xen tree got conplex conflicts in
+> drivers/xen/events.c between several commits from the swiotlb-xen tree
+> and several commits from the xen tree.
+>
+> I am unqualified to fix this mess, sorry.  I am dropping the xen tree
+> for today (and only not dropping the swiotlb-xen tree because that would
+> be too much work).
 
-> net/tipc/core.c:249: error: __ksymtab_tipc_get_mode causes a section type conflict
-> 
-> Caused by commit 31e3c3f6f1f9b154981a0e6620df700463db30ee ("tipc: cleanup
-> function namespace") which made the EXPORTed function tipc_get_mode() static.
-> 
-> I have reverted that commit for today.
+Argh, sorry, I should have coordinated with Konrad.  I'd merged my tree
+into linux-next to make sure it was OK, but I guess I overlooked something.
 
-Thanks I just pushed this fix:
+> I wonder, of course, why I have seen nothing in either of these trees
+> until today (less than a week before the merge window opens).
 
---------------------
-tipc: Kill tipc_get_mode() completely.
+I had found Xen regressions that had made it into linux-next and wanted
+to sort those out before adding anything else to the mix.
 
-It's completely unused and exporting a static symbol
-makes no sense and breaks the build.
+> Please sort this mess out.  I will drop the swiotlb-xen tree as well
+> tomorrow if nothing has changed.
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: David S. Miller <davem@davemloft.net>
----
- net/tipc/core.c |    6 ------
- 1 files changed, 0 insertions(+), 6 deletions(-)
+Will do.
 
-diff --git a/net/tipc/core.c b/net/tipc/core.c
-index c005303..e2a09eb 100644
---- a/net/tipc/core.c
-+++ b/net/tipc/core.c
-@@ -96,11 +96,6 @@ int tipc_net_id;
- int tipc_remote_management;
- 
- 
--static int tipc_get_mode(void)
--{
--	return tipc_mode;
--}
--
- /**
-  * tipc_buf_acquire - creates a TIPC message buffer
-  * @size: message size (including TIPC header)
-@@ -246,7 +241,6 @@ MODULE_VERSION(TIPC_MOD_VER);
- 
- EXPORT_SYMBOL(tipc_attach);
- EXPORT_SYMBOL(tipc_detach);
--EXPORT_SYMBOL(tipc_get_mode);
- EXPORT_SYMBOL(tipc_createport);
- EXPORT_SYMBOL(tipc_deleteport);
- EXPORT_SYMBOL(tipc_ownidentity);
--- 
-1.7.3.1
-
+Thanks,
+    J
