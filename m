@@ -1,42 +1,67 @@
-From: Chris Ball <cjb@laptop.org>
-Subject: Re: linux-next: build failure after merge of the final tree (mmc
-	tree related)
-Date: Mon, 18 Oct 2010 21:24:43 +0100
-Message-ID: <20101018202443.GA4503@void.printf.net>
-References: <20101018183540.2a7dfc8f.sfr@canb.auug.org.au>
+From: Daniel Walker <dwalker@fifo99.com>
+Subject: Re: linux-next: manual merge of the msm tree with the arm tree
+Date: Mon, 18 Oct 2010 13:37:31 -0700
+Message-ID: <1287434251.5588.23.camel@c-dwalke-linux.qualcomm.com>
+References: <20101018103540.7bd9c535.sfr@canb.auug.org.au>
+	 <alpine.LFD.2.00.1010181525000.2764@xanadu.home>
+	 <1287432774.5588.5.camel@c-dwalke-linux.qualcomm.com>
+	 <201010182219.25890.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from void.printf.net ([89.145.121.20]:49980 "EHLO void.printf.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933240Ab0JRUYw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 18 Oct 2010 16:24:52 -0400
-Content-Disposition: inline
-In-Reply-To: <20101018183540.2a7dfc8f.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>, linux-mmc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <201010182219.25890.arnd@arndb.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Nicolas Pitre <nico@fluxnic.net>, Russell King <rmk@arm.linux.org.uk>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeremy Kerr <jeremy.kerr@canonical.com>, Jeff Ohlstein <johlstei@codeaurora.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
-
-On Mon, Oct 18, 2010 at 06:35:40PM +1100, Stephen Rothwell wrote:
-> After merging the scsi-post-merge tree, today's linux-next build ()
-> failed like this:
-[...] 
-> Caused by commit a2fe088a5aaa51b54c018cf309cdc728d5f4e540 ("mmc:
-> sdhci-of-esdhc: factor out common stuff").
+On Mon, 2010-10-18 at 22:19 +0200, Arnd Bergmann wrote:
+> On Monday 18 October 2010 22:12:54 Daniel Walker wrote:
+> > On Mon, 2010-10-18 at 15:29 -0400, Nicolas Pitre wrote:
+> > 
+> > > > Ok, well in that case why not accept this immediately after the merge
+> > > > window? A point when everything is quiet, and most of the tree's are
+> > > > empty?
+> > > 
+> > > RMK has his own merge window which closes about at the same time as 
+> > > Linus' one opens.  We thought this was happening last week and therefore 
+> > > this change was supposed to be the last one.
+> > 
+> > It seems like that could potentially make these kinds of problem worse,
+> > since your merging things immediately before sending them to Linus. Like
+> > right now we only have a fairly short amount of time to correct this
+> > conflict. 
 > 
-> This was clearly never build tested ...
+> What Nicolas was talking about is the *end* of the merge window, not the
+> start. This is how all sensible maintainer trees work: you get to
+> merge stuff into the maintainer tree for a number of weeks (some start
+> at -rc1, other start a bit later). When Linus tells people to get ready
+> for the release, the subsystem goes into regression fix mode and when
+> Linus opens his merge window, everything should be reasonably stable.
+
+I think the term "merge window" is a little mis-leading here.. Your
+describing development. To me the term merge window is indicating a
+short period when you get changes in, not the whole -rc cycle.
+
+> > > > Well how about I merge this change into my tree ?
+> > > 
+> > > If you ask RMK to merge your tree in his that would be much simpler to 
+> > > add this change in a single pass afterwards.
+> > 
+> > I can do that , but would I still be able to merge stuff into my tree?
+> > Seems like I could, Russell would just clean up the conflict and my tree
+> > would just move forward like it has been already , and I would send the
+> > whole thing to Linus.
 > 
-> I have reverted that commit for today.
+> When you know that Russell does not rebase his tree, you can pull his
+> tree into yours whenever a change hits his tree that impacts you in
+> a major way. You shouldn't do this too frequently, but it's a good way
+> to resolve conflicts like this one.
 
-Sorry about this -- you're right, my test compile missed this patch.
-I've pushed a tested fix now.
+If I did that all of Russell's changesets would get mixed with mine when
+I send the pull request .. That would just create confusion .. It's OK
+if Russell sends my commits to Linus, but I'm not going to send
+Russell's commits.
 
-Thanks,
-
-- Chris.
--- 
-Chris Ball   <cjb@laptop.org>   <http://printf.net/>
-One Laptop Per Child
+Daniel
