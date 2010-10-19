@@ -1,40 +1,33 @@
-From: Eric Paris <eparis@redhat.com>
-Subject: [PATCH] secmark: fix config problem when CONFIG_NF_CONNTRACK_SECMARK
-	is not set
-Date: Tue, 19 Oct 2010 18:17:32 -0400
-Message-ID: <20101019221732.11590.22215.stgit@paris.rdu.redhat.com>
+From: James Morris <jmorris@namei.org>
+Subject: Re: [PATCH] secmark: fix config problem when CONFIG_NF_CONNTRACK_SECMARK
+ is not set
+Date: Wed, 20 Oct 2010 09:34:11 +1100 (EST)
+Message-ID: <alpine.LRH.2.00.1010200933580.30418@tundra.namei.org>
+References: <20101019221732.11590.22215.stgit@paris.rdu.redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: jmorris@namei.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from tundra.namei.org ([65.99.196.166]:38158 "EHLO tundra.namei.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755115Ab0JSWei (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 19 Oct 2010 18:34:38 -0400
+In-Reply-To: <20101019221732.11590.22215.stgit@paris.rdu.redhat.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Eric Paris <eparis@redhat.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, paul.moore@hp.com, kaber@trash.net, sfr@canb.auug.org.au
-List-Id: linux-next.vger.kernel.org
 
-When CONFIG_NF_CONNTRACK_SECMARK is not set we accidentally attempt to use
-the secmark fielf of struct nf_conn.  Problem is when that config isn't set
-the field doesn't exist.  whoops.  Wrap the incorrect usage in the config.
+On Tue, 19 Oct 2010, Eric Paris wrote:
 
-Signed-off-by: Eric Paris <eparis@redhat.com>
----
+> When CONFIG_NF_CONNTRACK_SECMARK is not set we accidentally attempt to use
+> the secmark fielf of struct nf_conn.  Problem is when that config isn't set
+> the field doesn't exist.  whoops.  Wrap the incorrect usage in the config.
+> 
+> Signed-off-by: Eric Paris <eparis@redhat.com>
 
- net/netfilter/nf_conntrack_netlink.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+Applied to
+git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/security-testing-2.6#next
 
-diff --git a/net/netfilter/nf_conntrack_netlink.c b/net/netfilter/nf_conntrack_netlink.c
-index b3c6285..146476c 100644
---- a/net/netfilter/nf_conntrack_netlink.c
-+++ b/net/netfilter/nf_conntrack_netlink.c
-@@ -582,9 +582,11 @@ ctnetlink_conntrack_event(unsigned int events, struct nf_ct_event *item)
- 		    && ctnetlink_dump_helpinfo(skb, ct) < 0)
- 			goto nla_put_failure;
- 
-+#ifdef CONFIG_NF_CONNTRACK_SECMARK
- 		if ((events & (1 << IPCT_SECMARK) || ct->secmark)
- 		    && ctnetlink_dump_secctx(skb, ct) < 0)
- 			goto nla_put_failure;
-+#endif
- 
- 		if (events & (1 << IPCT_RELATED) &&
- 		    ctnetlink_dump_master(skb, ct) < 0)
+-- 
+James Morris
+<jmorris@namei.org>
