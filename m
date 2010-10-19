@@ -1,56 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging-next tree with the v4l-dvb
- tree
-Date: Tue, 19 Oct 2010 17:12:33 +1100
-Message-ID: <20101019171233.9f3e1dad.sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the staging-next tree with the
+ v4l-dvb tree
+Date: Tue, 19 Oct 2010 17:23:31 +1100
+Message-ID: <20101019172331.89476ae0.sfr@canb.auug.org.au>
+References: <20101019171233.9f3e1dad.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__19_Oct_2010_17_12_33_+1100_vQa8FP1QT4B.Lu/x"
+ boundary="Signature=_Tue__19_Oct_2010_17_23_31_+1100_QfyEfRIGRwW+hXb7"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60438 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:54503 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754516Ab0JSGMp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 19 Oct 2010 02:12:45 -0400
+	id S1754685Ab0JSGXj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 19 Oct 2010 02:23:39 -0400
+In-Reply-To: <20101019171233.9f3e1dad.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ruslan Pisarev <ruslanpisarev@gmail.com>, Mauro Carvalho Chehab <mchehab@redhat.com>, Gorskin Ilya <revent82@gmail.com>
 
---Signature=_Tue__19_Oct_2010_17_12_33_+1100_vQa8FP1QT4B.Lu/x
+--Signature=_Tue__19_Oct_2010_17_23_31_+1100_QfyEfRIGRwW+hXb7
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-Today's linux-next merge of the staging-next tree got a conflict in
-drivers/staging/cx25821/cx25821-audio-upstream.c between commit
-d6a0215fc954bd16a21bad94a3292f080d9f6f04 ("[media] Staging: cx25821: fix
-braces and space coding style issues") from the v4l-dvb tree and commit
-bb59a4c539140592723e806e852ee171da0eb3eb ("Staging: cx25821: clenup
-warnings found by checkpatch.pl tool in cx25821-audio-upstream.c and
-cx25821-audio.h") from the staging-next tree.
+On Tue, 19 Oct 2010 17:12:33 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the staging-next tree got a conflict in
+> drivers/staging/cx25821/cx25821-audio-upstream.c between commit
+> d6a0215fc954bd16a21bad94a3292f080d9f6f04 ("[media] Staging: cx25821: fix
+> braces and space coding style issues") from the v4l-dvb tree and commit
+> bb59a4c539140592723e806e852ee171da0eb3eb ("Staging: cx25821: clenup
+> warnings found by checkpatch.pl tool in cx25821-audio-upstream.c and
+> cx25821-audio.h") from the staging-next tree.
+>=20
+> Basically different versions of the same patch.  I fixed it up.
 
-Basically different versions of the same patch.  I fixed it up.
+Fixed conflicts in drivers/staging/cx25821/cx25821-audio.h as well.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__19_Oct_2010_17_12_33_+1100_vQa8FP1QT4B.Lu/x
+--Signature=_Tue__19_Oct_2010_17_23_31_+1100_QfyEfRIGRwW+hXb7
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMvTbRAAoJEDMEi1NhKgbs+h8IAIyp5HO++Xy0QlO9bdn/ExTM
-Vn2egzu4a7FUVqGWJQ9RIrXpQPXcvfn21gmWwqhGGGATB0Eek3NcC8CplfshltuE
-elmjhYY3LBoPPGrK6eyGhqVsmE0HUd3ldwX+anrznmfEm8cANBbVC815+MTfQyl/
-VVDv54msxXLUx63zBJq0WEjVpHCZAdb6rXMNPrW8ZnooCavNC2ehfyR7mgjns/pz
-QuCx0B0ZIrdcInZf89bjG8tbSYxy7H0kBdHsuGpJU40NPNxzFBRm4zeIwxiNeS7X
-zd7Mzle1c2hRlR/oZV2HdQ/QZAB+NYCwLqVlrgUDvd/xpBwtRVnLhjZbAxzBN+8=
-=KX92
+iQEcBAEBAgAGBQJMvTljAAoJEDMEi1NhKgbsbx8H/0lrVX6E1KH6wPvqtQRVDEuW
+gfPMjU/yMEzJoj1Ea65ICSDuu8YHxedMJnhinjAwNh5uoqhbp1K/6S16ngX/BzBx
+k1+1pZrWuz7Qn0aKoJqAwNZirkY/tpmHOR2JjrCkrSbYf/XfF0YExe77/3YNc0z4
+k5c3ZBzk9MQiYonC1OJmEyOFfqSsAXbPbp2GOGezBGKKr/I3O96Ix9vSaw+X1IUS
+Vfp+XNs1KMpq3KFYd+x3p2d5d/x7KVJyCWNikG8ue2uijXAOP6kwluY+ucoMRBmB
+vajhE8Ckn56t5MF500uGmXCLxpAMYJfAObZNSBVV+HpiW/NDA2Jjtd8VF/3Dp6Y=
+=WDF/
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__19_Oct_2010_17_12_33_+1100_vQa8FP1QT4B.Lu/x--
+--Signature=_Tue__19_Oct_2010_17_23_31_+1100_QfyEfRIGRwW+hXb7--
