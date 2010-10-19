@@ -1,59 +1,56 @@
-From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Subject: Re: linux-next: build warning after merge of the cifs tree
-Date: Tue, 19 Oct 2010 16:21:20 +1100
-Message-ID: <20101019162120.76e03b4b.sfr@canb.auug.org.au>
-References: <20100924135531.96e5ac72.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging-next tree with the v4l-dvb
+ tree
+Date: Tue, 19 Oct 2010 17:12:33 +1100
+Message-ID: <20101019171233.9f3e1dad.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__19_Oct_2010_16_21_20_+1100_Iha3b_u2=2EIQviC"
-Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20100924135531.96e5ac72.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Shirish Pargaonkar <shirishpargaonkar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Tue__19_Oct_2010_17_12_33_+1100_vQa8FP1QT4B.Lu/x"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:60438 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754516Ab0JSGMp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 19 Oct 2010 02:12:45 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ruslan Pisarev <ruslanpisarev@gmail.com>, Mauro Carvalho Chehab <mchehab@redhat.com>, Gorskin Ilya <revent82@gmail.com>
 
---Signature=_Tue__19_Oct_2010_16_21_20_+1100_Iha3b_u2=2EIQviC
+--Signature=_Tue__19_Oct_2010_17_12_33_+1100_vQa8FP1QT4B.Lu/x
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Steve,
+Hi Greg,
 
-On Fri, 24 Sep 2010 13:55:31 +1000 Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org> =
-wrote:
->
-> After merging the irqflags tree, today's linux-next build (powerpc
-> ppc64_defconfig) produced this warning:
->=20
-> fs/cifs/sess.c: In function 'CIFS_SessSetup':
-> fs/cifs/sess.c:595: warning: unused variable 'blob_len'
->=20
-> Introduced by commit 15f6bdfb9914b0c41848f874719911ba053be931 ("cifs
-> NTLMv2/NTLMSSP ntlmv2 within ntlmssp autentication code").
-> CONFIG_CIFS_UPCALL is not set in this build.
+Today's linux-next merge of the staging-next tree got a conflict in
+drivers/staging/cx25821/cx25821-audio-upstream.c between commit
+d6a0215fc954bd16a21bad94a3292f080d9f6f04 ("[media] Staging: cx25821: fix
+braces and space coding style issues") from the v4l-dvb tree and commit
+bb59a4c539140592723e806e852ee171da0eb3eb ("Staging: cx25821: clenup
+warnings found by checkpatch.pl tool in cx25821-audio-upstream.c and
+cx25821-audio.h") from the staging-next tree.
 
-I am still getting this ...
-
+Basically different versions of the same patch.  I fixed it up.
 --=20
 Cheers,
-Stephen Rothwell                    sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
+Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__19_Oct_2010_16_21_20_+1100_Iha3b_u2=2EIQviC
+--Signature=_Tue__19_Oct_2010_17_12_33_+1100_vQa8FP1QT4B.Lu/x
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMvSrQAAoJEDMEi1NhKgbstscH/1ge2UoyXCskX3ZfNwndQg9m
-fp6oM9LZueFo7n+Ew876WlCMDEVuvEFcjI2vwir2orCUpighnWImuMNDHX8nINkA
-cp1UF6PfvoBSQ86+Z/F0HtAOyGqovzQtzs2qkd+av+C8OkvNuhzUE1L2t+RiJ0pi
-C7+LlyTzpGFzr7NU9c4suPnZP98W7X8SOp0Sz2/QZsuc0HJ2HJUp3Q9bz5sjdtEj
-NsuExebqQ+n1dzKjj+uPo6oPLIuiFviavys9hAGO7mXPzaJi1dw9ucYr92+7hLWq
-2L9M7EyHibA9BC/4YTnHpvc/eSxPTzFKzIlHRl0AtonB2sWryJa91wgmxSp0cyE=
-=CBWz
+iQEcBAEBAgAGBQJMvTbRAAoJEDMEi1NhKgbs+h8IAIyp5HO++Xy0QlO9bdn/ExTM
+Vn2egzu4a7FUVqGWJQ9RIrXpQPXcvfn21gmWwqhGGGATB0Eek3NcC8CplfshltuE
+elmjhYY3LBoPPGrK6eyGhqVsmE0HUd3ldwX+anrznmfEm8cANBbVC815+MTfQyl/
+VVDv54msxXLUx63zBJq0WEjVpHCZAdb6rXMNPrW8ZnooCavNC2ehfyR7mgjns/pz
+QuCx0B0ZIrdcInZf89bjG8tbSYxy7H0kBdHsuGpJU40NPNxzFBRm4zeIwxiNeS7X
+zd7Mzle1c2hRlR/oZV2HdQ/QZAB+NYCwLqVlrgUDvd/xpBwtRVnLhjZbAxzBN+8=
+=KX92
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__19_Oct_2010_16_21_20_+1100_Iha3b_u2=2EIQviC--
+--Signature=_Tue__19_Oct_2010_17_12_33_+1100_vQa8FP1QT4B.Lu/x--
