@@ -1,57 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the tip tree with the powerpc tree
-Date: Tue, 19 Oct 2010 15:56:44 +1100
-Message-ID: <20101019155644.ebd2d802.sfr@canb.auug.org.au>
-References: <20101019154849.126a736a.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the tip tree
+Date: Tue, 19 Oct 2010 16:13:19 +1100
+Message-ID: <20101019161319.92ffcd0d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__19_Oct_2010_16_13_19_+1100_cidXoX12Rls_7c5s"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48707 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:49075 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751074Ab0JSE4r (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 19 Oct 2010 00:56:47 -0400
-In-Reply-To: <20101019154849.126a736a.sfr@canb.auug.org.au>
+	id S1750822Ab0JSFN2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 19 Oct 2010 01:13:28 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-Hi again,
+--Signature=_Tue__19_Oct_2010_16_13_19_+1100_cidXoX12Rls_7c5s
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 19 Oct 2010 15:48:49 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Today's linux-next merge of the tip tree got a conflict in
-> arch/powerpc/kernel/time.c between commit
-> cf9efce0ce3136fa076f53e53154e98455229514 ("powerpc: Account time using
-> timebase rather than PURR") from the powerpc tree and commit
-> e360adbe29241a0194e10e20595360dd7b98a2b3 ("irq_work: Add generic hardirq
-> context callbacks") from the tip tree.
-> 
-> Just context changes.  I fixed it up and can carry the fix as necessary.
+Hi all,
 
-I forgot the merge diff, sorry:
+After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-diff --cc arch/powerpc/kernel/time.c
-index 644f918,54888eb..0000000
---- a/arch/powerpc/kernel/time.c
-+++ b/arch/powerpc/kernel/time.c
-@@@ -578,9 -585,11 +578,9 @@@ void timer_interrupt(struct pt_regs * r
-  	old_regs = set_irq_regs(regs);
-  	irq_enter();
-  
-- 	if (test_perf_event_pending()) {
-- 		clear_perf_event_pending();
-- 		perf_event_do_pending();
- -	calculate_steal_time();
- -
-+ 	if (test_irq_work_pending()) {
-+ 		clear_irq_work_pending();
-+ 		irq_work_run();
-  	}
-  
-  #ifdef CONFIG_PPC_ISERIES
+/bin/sh: /scratch/sfr/x86_64_allmodconfig/scripts/recordmcount: No such fil=
+e or directory
 
--- 
+I use O=3D/scratch/sfr/x86_64_allmodconfig in this build.  The same
+happened yesterday, but it fixed itself when I rebuilt for other
+reasons.  Andrew has also reported this so I applied the patch you
+suggested.
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__19_Oct_2010_16_13_19_+1100_cidXoX12Rls_7c5s
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMvSjvAAoJEDMEi1NhKgbshboH/jJLNJK1OMJGHQv0K+3Kbfxl
+lKxiNVcL/GV4/5Dcnj7QRNB5LVHqw04W0hewQkS7GuGYDEab/KzBkMM5vurugSbd
+vNljCSoddcmQs29q5TjlmKo1q8ps/m7b1GRAZB+t8mV0J0rWVC64bszhIBj/huXt
+om/OuJTsFb5go8v9kOij8o5VO5HjArCWPnVS/In3C/K+o46ml6/CQ1SQv+AIr6q+
+FWYLh7Lp1mEDMFz0HRPz7CE/7vnvpTnO9KhuLmAAQtQ2SZOVYtRAETGX8ZQbbwYs
+ueUto/gZaAgIuICMsDpl/aNCjn/Yp50hyMA2E5zCcfuWSDEjuKER8xg5P/XsT8Q=
+=QJcf
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__19_Oct_2010_16_13_19_+1100_cidXoX12Rls_7c5s--
