@@ -1,37 +1,30 @@
 From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging-next tree with the
- v4l-dvb tree
-Date: Tue, 19 Oct 2010 08:53:24 -0700
-Message-ID: <20101019155324.GJ4589@kroah.com>
-References: <20101019171233.9f3e1dad.sfr@canb.auug.org.au>
- <20101019172331.89476ae0.sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the usb tree with the mips tree
+Date: Tue, 19 Oct 2010 08:47:08 -0700
+Message-ID: <20101019154707.GE4589@kroah.com>
+References: <20101018170911.63f76c60.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20101019172331.89476ae0.sfr@canb.auug.org.au>
+In-Reply-To: <20101018170911.63f76c60.sfr@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ruslan Pisarev <ruslanpisarev@gmail.com>, Mauro Carvalho Chehab <mchehab@redhat.com>, Gorskin Ilya <revent82@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Daney <ddaney@caviumnetworks.com>, Ralf Baechle <ralf@linux-mips.org>, Anatolij Gustschin <agust@denx.de>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Oct 19, 2010 at 05:23:31PM +1100, Stephen Rothwell wrote:
+On Mon, Oct 18, 2010 at 05:09:11PM +1100, Stephen Rothwell wrote:
 > Hi Greg,
 > 
-> On Tue, 19 Oct 2010 17:12:33 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Today's linux-next merge of the staging-next tree got a conflict in
-> > drivers/staging/cx25821/cx25821-audio-upstream.c between commit
-> > d6a0215fc954bd16a21bad94a3292f080d9f6f04 ("[media] Staging: cx25821: fix
-> > braces and space coding style issues") from the v4l-dvb tree and commit
-> > bb59a4c539140592723e806e852ee171da0eb3eb ("Staging: cx25821: clenup
-> > warnings found by checkpatch.pl tool in cx25821-audio-upstream.c and
-> > cx25821-audio.h") from the staging-next tree.
-> > 
-> > Basically different versions of the same patch.  I fixed it up.
+> Today's linux-next merge of the usb tree got a conflict in
+> drivers/usb/host/Makefile between commit
+> cd97084c3aff6f1037e00ee711a872719b60441d ("USB: Add EHCI and OHCH glue
+> for OCTEON II SOCs") from the mips tree and commit
+> f668f1e9868f9bc1bed3d5df1701879ac89cc3ed ("USB: add platform glue driver
+> for FSL USB DR controller") from the usb tree.
 > 
-> Fixed conflicts in drivers/staging/cx25821/cx25821-audio.h as well.
+> I fixed it up (see below) and can carry the fix as necessary.
 
-Thanks for doing this, I appreciate it.
+Thanks for the fix, looks fine.
 
 greg k-h
