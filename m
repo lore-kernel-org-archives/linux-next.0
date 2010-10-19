@@ -1,43 +1,58 @@
-From: Kevin Hilman <khilman@deeprootsystems.com>
-Subject: Re: linux-next: manual merge of the davinci tree with the arm tree
-Date: Tue, 19 Oct 2010 08:46:41 -0700
-Message-ID: <87k4le18ym.fsf@deeprootsystems.com>
-References: <20101018103152.33fa12cd.sfr@canb.auug.org.au>
+From: Shirish Pargaonkar <shirishpargaonkar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: linux-next: build warning after merge of the cifs tree
+Date: Tue, 19 Oct 2010 10:48:10 -0500
+Message-ID: <AANLkTi=kc_8gqDnMVc4Sjm4=XvuUB+-Y5Tz_8sgfkw7P@mail.gmail.com>
+References: <20100924135531.96e5ac72.sfr@canb.auug.org.au>
+	<20101019162120.76e03b4b.sfr@canb.auug.org.au>
+	<20101019091339.38e45faa@tlielax.poochiereds.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-px0-f174.google.com ([209.85.212.174]:50291 "EHLO
-	mail-px0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753458Ab0JSPqt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Oct 2010 11:46:49 -0400
-In-Reply-To: <20101018103152.33fa12cd.sfr@canb.auug.org.au> (Stephen
-	Rothwell's message of "Mon, 18 Oct 2010 10:31:52 +1100")
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>, Nicolas Pitre <nicolas.pitre@linaro.org>, Russell King <rmk+lkml@arm.linux.org.uk>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20101019091339.38e45faa-9yPaYZwiELC+kQycOl6kW4xkIHaj4LzF@public.gmane.org>
+Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jeff Layton <jlayton-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>
+Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
-
-> Hi Kevin,
+On Tue, Oct 19, 2010 at 8:13 AM, Jeff Layton <jlayton-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org> wrote:
+> On Tue, 19 Oct 2010 16:21:20 +1100
+> Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org> wrote:
 >
-> Today's linux-next merge of the davinci tree got a conflicts in
-> arch/arm/mach-davinci/board-da830-evm.c and
-> arch/arm/mach-davinci/board-da850-evm.c between commit
-> 861bd81ee62a0d6759144c22909a8a3938951656 ("arm: remove
-> machine_desc.io_pg_offst and .phys_io") from the arm tree and commit
-> 48ea89eabee96019a4a84615af921f8703320abb ("davinci: introduce support for
-> AM1x ARM9 microprocessors") from the davinci tree.
+>> Hi Steve,
+>>
+>> On Fri, 24 Sep 2010 13:55:31 +1000 Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org> wrote:
+>> >
+>> > After merging the irqflags tree, today's linux-next build (powerpc
+>> > ppc64_defconfig) produced this warning:
+>> >
+>> > fs/cifs/sess.c: In function 'CIFS_SessSetup':
+>> > fs/cifs/sess.c:595: warning: unused variable 'blob_len'
+>> >
+>> > Introduced by commit 15f6bdfb9914b0c41848f874719911ba053be931 ("cifs
+>> > NTLMv2/NTLMSSP ntlmv2 within ntlmssp autentication code").
+>> > CONFIG_CIFS_UPCALL is not set in this build.
+>>
+>> I am still getting this ...
+>>
 >
-> Just context changes,  I fixed them up (see below) and can carry the fix
-> as necessary.
+> Yep. Looks clearly broken. blob_len is also declared twice in that
+> function which is just plain wrong. What probably makes the most sense
+> is to make it a u16 and get rid of the second declaration lower in the
+> function. But, there's another semi-related problem here too...
+>
+> blob_len gets assigned the return value of build_ntlmssp_auth_blob.
+> That function however doesn't have any mechanism to pass back an
+> error, even though it calls setup_ntlmv2_rsp and that function can
+> return one.
+>
+> The whole house of cards needs a bit of rework I think...
+>
+> Shirish, since you're already doing work in this area, can you fix that
+> too?
+>
+> Thanks,
+> --
+> Jeff Layton <jlayton-eUNUBHrolfbYtjvyW6yDsg@public.gmane.org>
+>
 
-Hi Stephen,
-
-Thanks for carrying this.
-
-Russell has (temporarily) dropped his version of the patch, but when he
-adds it back (today, I believe) I will fix this up in the davinci tree
-by pre-merging his branch with mine to handle this conflict.
-
-Kevin
+Looking into it.
