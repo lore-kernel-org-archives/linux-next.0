@@ -1,79 +1,63 @@
-From: Nicolas Pitre <nico@fluxnic.net>
-Subject: Re: linux-next: manual merge of the msm tree with the arm tree
-Date: Mon, 18 Oct 2010 22:47:17 -0400 (EDT)
-Message-ID: <alpine.LFD.2.00.1010182227440.2764@xanadu.home>
-References: <20101018103540.7bd9c535.sfr@canb.auug.org.au>
- <20101018110207.131b56ee.sfr@canb.auug.org.au>
- <20101018081520.GA10551@flint.arm.linux.org.uk>
- <1287422792.4105.14.camel@c-dwalke-linux.qualcomm.com>
- <20101018182044.GA558@flint.arm.linux.org.uk>
- <1287427572.4105.22.camel@c-dwalke-linux.qualcomm.com>
- <alpine.LFD.2.00.1010181525000.2764@xanadu.home>
- <1287432774.5588.5.camel@c-dwalke-linux.qualcomm.com>
- <20101018205847.GB23642@flint.arm.linux.org.uk>
- <1287437362.5588.57.camel@c-dwalke-linux.qualcomm.com>
- <20101018215815.GC23642@flint.arm.linux.org.uk>
- <1287440826.5588.83.camel@c-dwalke-linux.qualcomm.com>
- <alpine.LFD.2.00.1010181833440.2764@xanadu.home>
- <1287443346.5588.120.camel@c-dwalke-linux.qualcomm.com>
- <alpine.LFD.2.00.1010181923450.2764@xanadu.home>
- <1287445545.5588.158.camel@c-dwalke-linux.qualcomm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the security-testing tree
+Date: Tue, 19 Oct 2010 14:57:47 +1100
+Message-ID: <20101019145747.f828be03.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1287445545.5588.158.camel@c-dwalke-linux.qualcomm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Walker <dwalker@fifo99.com>
-Cc: Russell King <rmk@arm.linux.org.uk>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, Jeremy Kerr <jeremy.kerr@canonical.com>, Jeff Ohlstein <johlstei@codeaurora.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__19_Oct_2010_14_57_47_+1100_6Uhz=fAQDyFY/3p."
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:40882 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933700Ab0JSD54 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 18 Oct 2010 23:57:56 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: James Morris <jmorris@namei.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Paris <eparis@redhat.com>, Paul Moore <paul.moore@hp.com>, Patrick McHardy <kaber@trash.net>
 
-On Mon, 18 Oct 2010, Daniel Walker wrote:
+--Signature=_Tue__19_Oct_2010_14_57_47_+1100_6Uhz=fAQDyFY/3p.
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> I can say that I know for a fact that people don't read every patch, or
-> every email, or keep track of every single thread. I don't think it's
-> reasonable to expect people to do that. there's too many email, too many
-> threads, too many discussions etc ..
+Hi James,
 
-I'm not saying that you should keep track of every threads.  But you 
-should at least pay attention to what thread is being discussed, simply 
-by looking at the subject line.  Any good MUA will let you sort emails 
-and collapse them into thread view.  And scoring those incoming emails 
-with "arch/arm/mach-msm" for example is a quick way for you to be 
-noticed when a patch might be changing something in your area.  Tools 
-are there for you.
+After merging the security-testing tree, today's linux-next build (powerpc_=
+ppc64_defconfig)
+failed like this:
 
-> This discussion isn't really about that. It's not about people reading
-> every single patch, which we know they don't do. This is about conflicts
-> in -next.
+net/netfilter/nf_conntrack_netlink.c: In function 'ctnetlink_conntrack_even=
+t':
+net/netfilter/nf_conntrack_netlink.c:585: error: 'struct nf_conn' has no me=
+mber named 'secmark'
 
-Glad to get back to the original issue.
+Caused by commit fd0194de4cf2e64514aec35f40de458fca766656 ("conntrack:
+export lsm context rather than internal secid via netlink").  This build
+has CONFIG_NF_CONNTRACK_SECMARK not set ...
 
-> These patches caused conflicts in -next .. What more could I have done
-> to prevent conflicts coming from another tree and patches that appear
-> not to effect me? Even if I read all the patches, and threads, it still
-> seems unreasonable to expect maintainers to predict conflicts not coming
-> from their own tree's.
+If you change a dependency on a CONFIG option, it is always worth build
+testing with and without the option set.
 
-In this particular case, Stephen did fix the trivial merge conflict.  
-Most probably Linus could have done the same.  There is nothing you 
-needed to do in that case.  Or you could have waited until RMK's tree 
-hits mainline, then you merge that, fixing the issue within that merge, 
-before asking Linus to pull.
+I have used the security-testing tree from next-20101018 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-And if the merge in linux-next turned out not to be that trivial, or you 
-have new machine entries in your tree that failed to compile due to the 
-missing fixup, well that's fine too because that's _exactly_ what the 
-purpose of the linux-next tree is: finding issues like this before the 
-real merge in Linus' tree.  So in this case the system did work: the 
-conflict was identified by the tool and you were notified.
+--Signature=_Tue__19_Oct_2010_14_57_47_+1100_6Uhz=fAQDyFY/3p.
+Content-Type: application/pgp-signature
 
-And the simplest solution to this is simply to merge your stuff into 
-RMK's tree in this case, so the generic change affecting all ARM 
-machines will cover yours as well.  Incidentally that's what has been 
-asked of you.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-See?  Nothing to really get excited about.
+iQEcBAEBAgAGBQJMvRc7AAoJEDMEi1NhKgbsQD4IAKKIm9eQoQpb6E0j8W0obJlm
+4mgqmuVG2jGs2a8eIQxzvRyPpLp659Ko18nu34iE9RNWIp3wrMK4sXA0ml6u+f3z
+rqNyJbtp6J+qSET7ZKxNK0ie/uZVOSas0e5O/tnQqUenehbX32jyGERyeXpf8Dl9
+55JapLKUfnSH99G7HBY2ZcS8H8+rUB6lONp9nJYZykck1qp07yvmeQGW3Pq3p1lw
+0UIrRBOnfCXgTzu8s0k0shdh1qaTCd2vc73/FjScJP+NMIC24DuC0oZQuqI9871l
+fv3Pws6d9wPUvB9YvUXNkbGc66V6caf4Yn1iaGqw+SCflwYONl6ftMTXCNhFFtc=
+=t+ph
+-----END PGP SIGNATURE-----
 
-
-Nicolas
+--Signature=_Tue__19_Oct_2010_14_57_47_+1100_6Uhz=fAQDyFY/3p.--
