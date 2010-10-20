@@ -1,29 +1,68 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: [PATCH V10] RO/NX protection for loadable kernel modules
-Date: Wed, 20 Oct 2010 16:29:10 +1030
-Message-ID: <201010201629.10549.rusty@rustcorp.com.au>
-References: <817ecb6f1002011539g3f30416fi60c7c5222cab8f3@mail.gmail.com> <201002081159.45219.rusty@rustcorp.com.au> <20101020044539.GX6311@outflux.net>
+From: Eric Paris <eparis@redhat.com>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (security-testing tree related)
+Date: Wed, 20 Oct 2010 07:46:02 -0400
+Message-ID: <1287575162.2530.285.camel@localhost.localdomain>
+References: <20101020161024.af794b4a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:46388 "EHLO ozlabs.org"
+Received: from mx1.redhat.com ([209.132.183.28]:44590 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753877Ab0JTF7O (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 20 Oct 2010 01:59:14 -0400
-In-Reply-To: <20101020044539.GX6311@outflux.net>
+	id S1751327Ab0JTLqJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 20 Oct 2010 07:46:09 -0400
+In-Reply-To: <20101020161024.af794b4a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kees Cook <kees.cook@canonical.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Siarhei Liakh <sliakh.lkml@gmail.com>, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 20 Oct 2010 03:15:39 pm Kees Cook wrote:
-> Hi,
-...
-> Sorry for losing track, but where did this patch end up? I don't see it
-> in any of the trees I've looked in.
+On Wed, 2010-10-20 at 16:10 +1100, Stephen Rothwell wrote:
+> Hi James,
+> 
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> security/selinux/ss/services.c: In function 'security_read_policy':
+> security/selinux/ss/services.c:3172: error: implicit declaration of function 'vmalloc_user'
+> security/selinux/ss/services.c:3172: warning: assignment makes pointer from integer without a cast
+> 
+> Caused by commit ed167abda544bb7f8cf09dc3d3608c79e1cfb25f ("SELinux:
+> allow userspace to read policy back out of the kernel") and
+> bb17427490e1e295f3c0550c308684bd952a585d ("selinux: implement mmap
+> on /selinux/policy").
+> 
+> Please see Rule 1 (in Documentation/SubmitChecklist).
+> 
+> I applied the following patch for today:
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 20 Oct 2010 16:08:00 +1100
+> Subject: [PATCH] selinux: include vmalloc.h for vmalloc_user
 
-Good question...  This would be quite nice to have of course.
+Huh, not sure why it builds cleanly here.  I'm applying my patch series
+on top of linux-next from the 18th.  In any case this looks correct.
 
-Rusty.
+Acked-by: Eric Paris <eparis@redhat.com>
+
+> 
+> ---
+>  security/selinux/ss/services.c |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
+> 
+> diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+> index 3a1739b..223c1ff 100644
+> --- a/security/selinux/ss/services.c
+> +++ b/security/selinux/ss/services.c
+> @@ -51,6 +51,7 @@
+>  #include <linux/mutex.h>
+>  #include <linux/selinux.h>
+>  #include <linux/flex_array.h>
+> +#include <linux/vmalloc.h>
+>  #include <net/netlabel.h>
+>  
+>  #include "flask.h"
+> -- 
+> 1.7.1
+> 
