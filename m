@@ -1,68 +1,103 @@
-From: Eric Paris <eparis@redhat.com>
-Subject: Re: linux-next: build failure after merge of the final tree
- (security-testing tree related)
-Date: Wed, 20 Oct 2010 07:46:02 -0400
-Message-ID: <1287575162.2530.285.camel@localhost.localdomain>
-References: <20101020161024.af794b4a.sfr@canb.auug.org.au>
+From: Dan Magenheimer <dan.magenheimer@oracle.com>
+Subject: RE: [Xen-devel] Re: xen PV on HVM and initial domain merge in
+ linux-next
+Date: Wed, 20 Oct 2010 08:11:29 -0700 (PDT)
+Message-ID: <5d143f14-26a1-4452-8b44-dae2a8b6df11@default>
+References: <alpine.DEB.2.00.1010191254460.2423@kaball-desktop>
+ <alpine.DEB.2.00.1010191847290.10348@kaball-desktop
+ 20101020113256.3647b1d9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:44590 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751327Ab0JTLqJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 20 Oct 2010 07:46:09 -0400
-In-Reply-To: <20101020161024.af794b4a.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20101020113256.3647b1d9.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+Cc: xen-devel@lists.xensource.com, Jeremy Fitzhardinge <jeremy@xensource.com>, Konrad Wilk <konrad.wilk@oracle.com>, linux-kernel@vger.kernel.org, Chris Wright <chrisw@sous-sol.org>, virtualization@lists.osdl.org, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 2010-10-20 at 16:10 +1100, Stephen Rothwell wrote:
-> Hi James,
-> 
-> After merging the final tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
-> 
-> security/selinux/ss/services.c: In function 'security_read_policy':
-> security/selinux/ss/services.c:3172: error: implicit declaration of function 'vmalloc_user'
-> security/selinux/ss/services.c:3172: warning: assignment makes pointer from integer without a cast
-> 
-> Caused by commit ed167abda544bb7f8cf09dc3d3608c79e1cfb25f ("SELinux:
-> allow userspace to read policy back out of the kernel") and
-> bb17427490e1e295f3c0550c308684bd952a585d ("selinux: implement mmap
-> on /selinux/policy").
-> 
-> Please see Rule 1 (in Documentation/SubmitChecklist).
-> 
-> I applied the following patch for today:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 20 Oct 2010 16:08:00 +1100
-> Subject: [PATCH] selinux: include vmalloc.h for vmalloc_user
+> Not following the Xen develpment at all, I would like to have a
+> positive reply from the listed Xen contacts, please,
 
-Huh, not sure why it builds cleanly here.  I'm applying my patch series
-on top of linux-next from the 18th.  In any case this looks correct.
+I am not officially listed as a maintainer for Xen, but fwiw:
 
-Acked-by: Eric Paris <eparis@redhat.com>
+Acked-by: Dan Magenheimer <dan.magenheimer@oracle.com>
 
+And, Stephen, I think Chris Wright and virtualization@lists.osdl.org
+are stale entries in the MAINTAINERS file for Xen development,
+so you are unlikely to receive replies from him/them.
+(Chris, virtualization@lists.osdl.org ... please feel free
+to correct me if I am wrong.)
+
+> -----Original Message-----
+> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
+> Sent: Tuesday, October 19, 2010 6:33 PM
+> To: Stefano Stabellini
+> Cc: xen-devel@lists.xensource.com; Jeremy Fitzhardinge; Konrad
+> Rzeszutek Wilk; linux-kernel@vger.kernel.org; Chris Wright;
+> virtualization@lists.osdl.org; linux-next@vger.kernel.org; Andrew
+> Morton
+> Subject: [Xen-devel] Re: xen PV on HVM and initial domain merge in
+> linux-next
 > 
-> ---
->  security/selinux/ss/services.c |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
+> Hi Stefano,
 > 
-> diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
-> index 3a1739b..223c1ff 100644
-> --- a/security/selinux/ss/services.c
-> +++ b/security/selinux/ss/services.c
-> @@ -51,6 +51,7 @@
->  #include <linux/mutex.h>
->  #include <linux/selinux.h>
->  #include <linux/flex_array.h>
-> +#include <linux/vmalloc.h>
->  #include <net/netlabel.h>
->  
->  #include "flask.h"
-> -- 
-> 1.7.1
+> [just casting the net a bit wider ...]
 > 
+> On Tue, 19 Oct 2010 18:51:47 +0100 Stefano Stabellini
+> <stefano.stabellini@eu.citrix.com> wrote:
+> >
+> > I forgot to CC the LKML and linux-next...
+> >
+> > On Tue, 19 Oct 2010, Stefano Stabellini wrote:
+> > > Stephen,
+> > > I have two patch series to merge in linux-next:
+> > >
+> > > PV on HVM: receive interrupts as xen events
+> > > xen: initial domain support
+> > >
+> > > they have all the acked-by needed and are both stable since several
+> > > weeks, however they depend on Konrad's xen-pcifront series and for
+> this
+> > > reason I waited until now to ask for a merge in linux-next.
+> > >
+> > > Could you please pull:
+> > >
+> > > git://xenbits.xen.org/people/sstabellini/linux-pvhvm.git linux-
+> next-initial-domain-v4
+> > >
+> > > it contains both series rebased on Konrad's pcifront series merged
+> on
+> > > linux-next (warning: it still contains the merge commit of
+> > > xen-pcifront-0.8.2 in linux-next).
+> > > Let me know if you have any conflicts or if you need me to change
+> the
+> > > branch somehow.
+> 
+> Not following the Xen develpment at all, I would like to have a
+> positive
+> reply from the listed Xen contacts, please,
+> 
+> I do have concerns that this is turning up so late, but I realise that
+> that is mainly due to a misunderstanding on the part of some of the Xen
+> community.
+> 
+> Also, the above tree is based on next-20101019 which means that I
+> cannot
+> use it as is.  All the trees merged into linux-next must be base on
+> some
+> other stable tree (almost always Linus' tree).  linux-next is rebuilt
+> from scratch every day, so I cannot ever include a previous day's
+> version.
+> 
+> Merging in other stable trees is OK (as long as the other maintainer is
+> aware of that and makes sure that their tree does not reabse).
+> 
+> Basically what you send to me should be what you intend to send to
+> Linus
+> during the next merge window.
+> 
+> --
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
