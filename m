@@ -1,79 +1,74 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for October 20 (xen)
-Date: Wed, 20 Oct 2010 10:21:05 -0700
-Message-ID: <4CBF2501.4030704@oracle.com>
-References: <20101020162053.5595e1bf.sfr@canb.auug.org.au> <20101020092836.e225cfc3.randy.dunlap@oracle.com> <20101020170932.GB23458@dumpdata.com>
+From: James Morris <jmorris@namei.org>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (security-testing tree related)
+Date: Thu, 21 Oct 2010 09:28:36 +1100 (EST)
+Message-ID: <alpine.LRH.2.00.1010210928270.8572@tundra.namei.org>
+References: <20101020161024.af794b4a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:24144 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752866Ab0JTRVZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Oct 2010 13:21:25 -0400
-In-Reply-To: <20101020170932.GB23458@dumpdata.com>
+Received: from tundra.namei.org ([65.99.196.166]:53928 "EHLO tundra.namei.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754102Ab0JTW2x (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 20 Oct 2010 18:28:53 -0400
+In-Reply-To: <20101020161024.af794b4a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, xen-devel@lists.xensource.com, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Paris <eparis@redhat.com>
 
-On 10/20/10 10:09, Konrad Rzeszutek Wilk wrote:
-> On Wed, Oct 20, 2010 at 09:28:36AM -0700, Randy Dunlap wrote:
->> On Wed, 20 Oct 2010 16:20:53 +1100 Stephen Rothwell wrote:
->>
->>> Hi all,
->>>
->>> Changes since 20101019:
->>>
->>>
->>> The swiotlb-xen tree gained a conflict against the pci tree.
->>
->>
->> linux-next-20101020/drivers/xen/biomerge.c: In function 'xen_biovec_phys_mergeable':
->> linux-next-20101020/drivers/xen/biomerge.c:8: error: dereferencing pointer to incomplete type
->> linux-next-20101020/drivers/xen/biomerge.c:9: error: dereferencing pointer to incomplete type
->> linux-next-20101020/drivers/xen/biomerge.c:11: error: implicit declaration of function '__BIOVEC_PHYS_MERGEABLE'
-> 
-> Ok, this patch fixes it. I am sticking it in my tree:
+On Wed, 20 Oct 2010, Stephen Rothwell wrote:
 
-Ack.  Thanks.
+> Hi James,
+> 
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> security/selinux/ss/services.c: In function 'security_read_policy':
+> security/selinux/ss/services.c:3172: error: implicit declaration of function 'vmalloc_user'
+> security/selinux/ss/services.c:3172: warning: assignment makes pointer from integer without a cast
+> 
+> Caused by commit ed167abda544bb7f8cf09dc3d3608c79e1cfb25f ("SELinux:
+> allow userspace to read policy back out of the kernel") and
+> bb17427490e1e295f3c0550c308684bd952a585d ("selinux: implement mmap
+> on /selinux/policy").
+> 
+> Please see Rule 1 (in Documentation/SubmitChecklist).
+> 
+> I applied the following patch for today:
 
-> From 2d7d06dd8ffcbafc03bf2c1cb4b2fb2c4c405ec1 Mon Sep 17 00:00:00 2001
-> From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-> Date: Wed, 20 Oct 2010 13:04:13 -0400
-> Subject: [PATCH] xen: Update Makefile with CONFIG_BLOCK dependency for biomerge.c
+Thanks, applied.
+
 > 
-> Without this dependency we get these compile errors:
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 20 Oct 2010 16:08:00 +1100
+> Subject: [PATCH] selinux: include vmalloc.h for vmalloc_user
 > 
-> linux-next-20101020/drivers/xen/biomerge.c: In function 'xen_biovec_phys_mergeable':
-> linux-next-20101020/drivers/xen/biomerge.c:8: error: dereferencing pointer to incomplete type
-> linux-next-20101020/drivers/xen/biomerge.c:9: error: dereferencing pointer to incomplete type
-> linux-next-20101020/drivers/xen/biomerge.c:11: error: implicit declaration of function '__BIOVEC_PHYS_MERGEABLE'
-> 
-> Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-> Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
 > ---
->  drivers/xen/Makefile |    3 ++-
->  1 files changed, 2 insertions(+), 1 deletions(-)
+>  security/selinux/ss/services.c |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
 > 
-> diff --git a/drivers/xen/Makefile b/drivers/xen/Makefile
-> index b47f5da..b978645 100644
-> --- a/drivers/xen/Makefile
-> +++ b/drivers/xen/Makefile
-> @@ -1,9 +1,10 @@
-> -obj-y	+= grant-table.o features.o events.o manage.o biomerge.o
-> +obj-y	+= grant-table.o features.o events.o manage.o
->  obj-y	+= xenbus/
+> diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+> index 3a1739b..223c1ff 100644
+> --- a/security/selinux/ss/services.c
+> +++ b/security/selinux/ss/services.c
+> @@ -51,6 +51,7 @@
+>  #include <linux/mutex.h>
+>  #include <linux/selinux.h>
+>  #include <linux/flex_array.h>
+> +#include <linux/vmalloc.h>
+>  #include <net/netlabel.h>
 >  
->  nostackp := $(call cc-option, -fno-stack-protector)
->  CFLAGS_features.o			:= $(nostackp)
->  
-> +obj-$(CONFIG_BLOCK)		+= biomerge.o
->  obj-$(CONFIG_HOTPLUG_CPU)	+= cpu_hotplug.o
->  obj-$(CONFIG_XEN_XENCOMM)	+= xencomm.o
->  obj-$(CONFIG_XEN_BALLOON)	+= balloon.o
-
+>  #include "flask.h"
+> -- 
+> 1.7.1
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
+> 
 
 -- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+James Morris
+<jmorris@namei.org>
