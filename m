@@ -1,39 +1,59 @@
-From: Trond Myklebust <trond.myklebust@fys.uio.no>
-Subject: Re: linux-next: build failure after merge of the nfs tree
-Date: Thu, 21 Oct 2010 10:33:47 -0400
-Message-ID: <1287671627.3645.13.camel@heimdal.trondhjem.org>
-References: <20101021113858.f8b9849f.sfr@canb.auug.org.au>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: linux-next: User Mode Linux broken
+Date: Thu, 21 Oct 2010 18:09:22 +0200 (CEST)
+Message-ID: <alpine.LFD.2.00.1010211805040.2418@localhost6.localdomain6>
+References: <201010211315.26679.richard@nod.at>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20101021113858.f8b9849f.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bryan Schumaker <bjschuma@netapp.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from www.tglx.de ([62.245.132.106]:33764 "EHLO www.tglx.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754955Ab0JUQJm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 21 Oct 2010 12:09:42 -0400
+In-Reply-To: <201010211315.26679.richard@nod.at>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Richard Weinberger <richard@nod.at>
+Cc: peterz@infradead.org, hpa@zytor.com, mingo@elte.hu, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
-On Thu, 2010-10-21 at 11:38 +1100, Stephen Rothwell wrote:
-> Hi Trond,
-> 
-> After merging the nfs tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> fs/nfs/dir.c: In function 'nfs_readdir_free_large_page':
-> fs/nfs/dir.c:475: error: implicit declaration of function 'vm_unmap_ram'
-> fs/nfs/dir.c: In function 'nfs_readdir_large_page':
-> fs/nfs/dir.c:496: error: implicit declaration of function 'vm_map_ram'
-> fs/nfs/dir.c:496: warning: assignment makes pointer from integer without a cast
-> 
-> Caused by commit b8aa6064474e186f598584508f9230d49a0004af ("NFS: readdir
-> with vmapped pages").  Forgot to include linux/vmalloc.h.  See Rule 1 (in
-> Documentation/SubmitChecklist).
-> 
-> I have used the nfs tree from next-20101020 for today.
+On Thu, 21 Oct 2010, Richard Weinberger wrote:
 
-Thanks Stephen! Fixed in my linux-next branch.
+> Thomas,
+> 
+> Your commit c5f7563 ("genirq: Provide compat handling for chip->enable()") 
+> breaks UML.
+> It does not start anymore.
+> 
+> When I apply this patch it works fine again.
+> http://userweb.kernel.org/~akpm/mmotm/broken-out/um-migrate-from-__do_irq-to-
+> generic_handle_irq.patch
+> 
+> Maybe your patch breaks all users of __do_IRQ()?
 
-Bryan, please make sure that you update your patches.
+Not intentionally :)
 
-Cheers
-  Trond
+The irq_chip of um has it's own dummy enable function, so the compat
+code uses it.
+
++static void compat_irq_enable(struct irq_data *data)
++{
++	data->chip->enable(data->irq);
++}
++
+
+...
+
++	if (chip->enable)
++		chip->irq_enable = compat_irq_enable;
++
++	/*
++	 * The real defaults
++	 */
++	if (!chip->irq_enable)
++		chip->irq_enable = default_enable;
+
+So I really can't see how's that supposed to break UM
+
+Thanks,
+
+	tglx
