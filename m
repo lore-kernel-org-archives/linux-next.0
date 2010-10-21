@@ -1,62 +1,40 @@
-From: Zimny Lech <napohybelskurwysynom2010@gmail.com>
-Subject: Re: linux-next: Tree for October 20
-Date: Thu, 21 Oct 2010 15:21:29 +0200
-Message-ID: <AANLkTimSXeA3=ewP29H5TM2nR3TEWTVzyS1fi1KST3Ws@mail.gmail.com>
-References: <20101020162053.5595e1bf.sfr@canb.auug.org.au>
-	<20101021130925.GA32548@infradead.org>
+From: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+Subject: Re: xen PV on HVM and initial domain merge in linux-next
+Date: Thu, 21 Oct 2010 14:44:04 +0100
+Message-ID: <alpine.DEB.2.00.1010211443420.10348@kaball-desktop>
+References: <alpine.DEB.2.00.1010191254460.2423@kaball-desktop> <alpine.DEB.2.00.1010191847290.10348@kaball-desktop> <20101020113256.3647b1d9.sfr@canb.auug.org.au> <alpine.DEB.2.00.1010201455160.10348@kaball-desktop> <20101020152808.GA22328@dumpdata.com>
+ <alpine.DEB.2.00.1010201644380.10348@kaball-desktop> <20101021104541.8e10159a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="US-ASCII"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qy0-f174.google.com ([209.85.216.174]:60129 "EHLO
-	mail-qy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757556Ab0JUNVa convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Oct 2010 09:21:30 -0400
-In-Reply-To: <20101021130925.GA32548@infradead.org>
+Received: from smtp.ctxuk.citrix.com ([62.200.22.115]:49835 "EHLO
+	SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756475Ab0JUNoi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Oct 2010 09:44:38 -0400
+In-Reply-To: <20101021104541.8e10159a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, mmarek@suse.cz
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Stefano Stabellini <Stefano.Stabellini@eu.citrix.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Jeremy Fitzhardinge <Jeremy.Fitzhardinge@citrix.com>, Chris Wright <chrisw@sous-sol.org>, "virtualization@lists.osdl.org" <virtualization@lists.osdl.org>, "xen-devel@lists.xensource.com" <xen-devel@lists.xensource.com>
 
-I had a similar problem, mrproper solved it
+On Thu, 21 Oct 2010, Stephen Rothwell wrote:
+> Hi Stefano,
+> 
+> On Wed, 20 Oct 2010 16:47:51 +0100 Stefano Stabellini <stefano.stabellini@eu.citrix.com> wrote:
+> >
+> > Good idea, I have created a link called linux-next to
+> > 2.6.36-rc8-initial-domain-v5 so the following should also work:
+> > 
+> > git://xenbits.xen.org/people/sstabellini/linux-pvhvm.git linux-next
+> 
+> I have added that branch from today with just you listed as the contact
+> (if you ant anyone else (even a mailing list) listed as a contact, just
+> let me know.
+> 
+> Thanks for adding your subsystem tree as a participant of linux-next.  As
+> you may know, this is not a judgment of your code.  The purpose of
+> linux-next is for integration testing and to lower the impact of
+> conflicts between subsystems in the next merge window. 
+> 
 
-2010/10/21 Christoph Hellwig <hch@infradead.org>:
-> I can't even get the required userspace code make oldconfig to compil=
-e:
->
-> hch@brick:~/work/linux-2.6/obj-kvm$ make oldconfig
-> make -C /home/hch/work/linux-2.6 O=3D/home/hch/work/linux-2.6/obj-kvm=
-/. oldconfig
-> =A0GEN =A0 =A0 /home/hch/work/linux-2.6/obj-kvm/Makefile
-> =A0HOSTCC =A0scripts/kconfig/zconf.tab.o
-> In file included from scripts/kconfig/zconf.tab.c:2481:
-> scripts/kconfig/lex.zconf.c:2425: error: conflicting types for 'zconf=
-_curname'
-> /home/hch/work/linux-2.6/scripts/kconfig/lkc.h:79: note: previous dec=
-laration of 'zconf_curname' was here
-> scripts/kconfig/lex.zconf.c: In function 'zconf_curname':
-> scripts/kconfig/lex.zconf.c:2427: warning: return discards qualifiers=
- from pointer target type
->
-> I'm compiling on 32-bit x86, using:
->
-> gcc version 4.4.5 20100728 (prerelease) (Debian 4.4.4-8)
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kerne=
-l" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at =A0http://www.tux.org/lkml/
->
-
-
-
---=20
-Slawa!
-N.P.S.
-
-Les fleurs du mal unfold
-Comme les fleurs du mal
-Dark demons of my soul
-Un amour fatal
+Thank you!
