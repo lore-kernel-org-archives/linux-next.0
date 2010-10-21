@@ -1,32 +1,34 @@
-From: Richard Weinberger <richard@nod.at>
-Subject: linux-next: User Mode Linux broken
-Date: Thu, 21 Oct 2010 13:15:26 +0200
-Message-ID: <201010211315.26679.richard@nod.at>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: linux-next: Tree for October 20
+Date: Thu, 21 Oct 2010 09:09:25 -0400
+Message-ID: <20101021130925.GA32548@infradead.org>
+References: <20101020162053.5595e1bf.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from a.ns.miles-group.at ([95.130.255.143]:57321 "EHLO radon.swed.at"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757119Ab0JULPh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 21 Oct 2010 07:15:37 -0400
+Received: from bombadil.infradead.org ([18.85.46.34]:39465 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754318Ab0JUNJ1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Oct 2010 09:09:27 -0400
+Content-Disposition: inline
+In-Reply-To: <20101020162053.5595e1bf.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: tglx@linutronix.de
-Cc: peterz@infradead.org, hpa@zytor.com, mingo@elte.hu, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, mmarek@suse.cz
 
-Thomas,
+I can't even get the required userspace code make oldconfig to compile:
 
-Your commit c5f7563 ("genirq: Provide compat handling for chip->enable()") 
-breaks UML.
-It does not start anymore.
+hch@brick:~/work/linux-2.6/obj-kvm$ make oldconfig
+make -C /home/hch/work/linux-2.6 O=/home/hch/work/linux-2.6/obj-kvm/. oldconfig
+  GEN     /home/hch/work/linux-2.6/obj-kvm/Makefile
+  HOSTCC  scripts/kconfig/zconf.tab.o
+In file included from scripts/kconfig/zconf.tab.c:2481:
+scripts/kconfig/lex.zconf.c:2425: error: conflicting types for 'zconf_curname'
+/home/hch/work/linux-2.6/scripts/kconfig/lkc.h:79: note: previous declaration of 'zconf_curname' was here
+scripts/kconfig/lex.zconf.c: In function 'zconf_curname':
+scripts/kconfig/lex.zconf.c:2427: warning: return discards qualifiers from pointer target type
 
-When I apply this patch it works fine again.
-http://userweb.kernel.org/~akpm/mmotm/broken-out/um-migrate-from-__do_irq-to-
-generic_handle_irq.patch
+I'm compiling on 32-bit x86, using:
 
-Maybe your patch breaks all users of __do_IRQ()?
-
-Thanks,
-//richard
+gcc version 4.4.5 20100728 (prerelease) (Debian 4.4.4-8) 
