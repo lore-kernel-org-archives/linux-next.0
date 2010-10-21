@@ -1,61 +1,114 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the nfs tree
-Date: Thu, 21 Oct 2010 11:38:58 +1100
-Message-ID: <20101021113858.f8b9849f.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm tree with the s390 tree
+Date: Thu, 21 Oct 2010 12:16:23 +1100
+Message-ID: <20101021121623.fedb389e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__21_Oct_2010_11_38_58_+1100_lZ0Cwm97OIxfQW+j"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57973 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:38012 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751514Ab0JUAjK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 20 Oct 2010 20:39:10 -0400
+	id S1755338Ab0JUBQ3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 20 Oct 2010 21:16:29 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Trond Myklebust <trond.myklebust@fys.uio.no>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bryan Schumaker <bjschuma@netapp.com>
+To: Avi Kivity <avi@qumranet.com>, Marcelo Tosatti <mtosatti@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Alexander Graf <agraf@suse.de>
 
---Signature=_Thu__21_Oct_2010_11_38_58_+1100_lZ0Cwm97OIxfQW+j
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-Hi Trond,
+Today's linux-next merge of the kvm tree got a conflict in
+drivers/s390/kvm/kvm_virtio.c between commit
+b154e491c5d11f44a4804ec6d073312db06e97ef ("[S390] cleanup lowcore access
+from external interrupts") from the s390 tree and commit
+d9ca0637f9ab805ab7b23b0dc8362bf68f22fed0 ("KVM: S390: take a full byte as
+ext_param indicator") from the kvm tree.
 
-After merging the nfs tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
-
-fs/nfs/dir.c: In function 'nfs_readdir_free_large_page':
-fs/nfs/dir.c:475: error: implicit declaration of function 'vm_unmap_ram'
-fs/nfs/dir.c: In function 'nfs_readdir_large_page':
-fs/nfs/dir.c:496: error: implicit declaration of function 'vm_map_ram'
-fs/nfs/dir.c:496: warning: assignment makes pointer from integer without a =
-cast
-
-Caused by commit b8aa6064474e186f598584508f9230d49a0004af ("NFS: readdir
-with vmapped pages").  Forgot to include linux/vmalloc.h.  See Rule 1 (in
-Documentation/SubmitChecklist).
-
-I have used the nfs tree from next-20101020 for today.
---=20
+I fixed it up (hopefully - see below) and can carry the fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__21_Oct_2010_11_38_58_+1100_lZ0Cwm97OIxfQW+j
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMv4uiAAoJEDMEi1NhKgbs0z8IAIOUscWPppThufxIi36ZgJQX
-gdVsMxhAU2Gyy4nROGeaE5FmTtBHHSZd632GbqcJosNOmS9UVydmIHJ4YlZrmGe3
-K99iOt7drrg3iaF9fnWJi6N3eyQ4MY6RvG5iLbysKaJXjPqakeFxcLMQbxXnRz8q
-GBXZTb8PD3KTxvMGDR8hK0uG7SqzBXcTiLq11hpJFnNlmPQIuf5csMUWEZ3l36CC
-osJSGviIsUgLcGkkWxNzdb+T0axK2aJJlxP+wm8uq2MmmSZWuqSmFzmY5EWxwxwQ
-oF51cOwa59TuC6Q7gKiWmhRGNRr6C2JwdxHhYzLLjesE5Ur8kwEB3d3TUy+lx9M=
-=afGN
------END PGP SIGNATURE-----
-
---Signature=_Thu__21_Oct_2010_11_38_58_+1100_lZ0Cwm97OIxfQW+j--
+diff --cc drivers/s390/kvm/kvm_virtio.c
+index a264e1c,5a46b8c..0000000
+--- a/drivers/s390/kvm/kvm_virtio.c
++++ b/drivers/s390/kvm/kvm_virtio.c
+@@@ -328,27 -329,68 +329,69 @@@ static void scan_devices(void
+  }
+  
+  /*
++  * match for a kvm device with a specific desc pointer
++  */
++ static int match_desc(struct device *dev, void *data)
++ {
++ 	if ((ulong)to_kvmdev(dev_to_virtio(dev))->desc == (ulong)data)
++ 		return 1;
++ 
++ 	return 0;
++ }
++ 
++ /*
++  * hotplug_device tries to find changes in the device page.
++  */
++ static void hotplug_devices(struct work_struct *dummy)
++ {
++ 	unsigned int i;
++ 	struct kvm_device_desc *d;
++ 	struct device *dev;
++ 
++ 	for (i = 0; i < PAGE_SIZE; i += desc_size(d)) {
++ 		d = kvm_devices + i;
++ 
++ 		/* end of list */
++ 		if (d->type == 0)
++ 			break;
++ 
++ 		/* device already exists */
++ 		dev = device_find_child(kvm_root, d, match_desc);
++ 		if (dev) {
++ 			/* XXX check for hotplug remove */
++ 			put_device(dev);
++ 			continue;
++ 		}
++ 
++ 		/* new device */
++ 		printk(KERN_INFO "Adding new virtio device %p\n", d);
++ 		add_kvm_device(d, i);
++ 	}
++ }
++ 
++ /*
+   * we emulate the request_irq behaviour on top of s390 extints
+   */
+ -static void kvm_extint_handler(u16 code)
+ +static void kvm_extint_handler(unsigned int ext_int_code,
+ +			       unsigned int param32, unsigned long param64)
+  {
+  	struct virtqueue *vq;
+  	u16 subcode;
+- 	int config_changed;
++ 	u32 param;
+  
+ -	subcode = S390_lowcore.cpu_addr;
+ +	subcode = ext_int_code >> 16;
+  	if ((subcode & 0xff00) != VIRTIO_SUBCODE_64)
+  		return;
+  
+  	/* The LSB might be overloaded, we have to mask it */
+ -	vq = (struct virtqueue *)(S390_lowcore.ext_params2 & ~1UL);
+ +	vq = (struct virtqueue *)(param64 & ~1UL);
+  
+- 	/* We use the LSB of extparam, to decide, if this interrupt is a config
+- 	 * change or a "standard" interrupt */
+- 	config_changed = param32 & 1;
++ 	/* We use ext_params to decide what this interrupt means */
+ -	param = S390_lowcore.ext_params & VIRTIO_PARAM_MASK;
+++	param = param32 & VIRTIO_PARAM_MASK;
+  
+- 	if (config_changed) {
++ 	switch (param) {
++ 	case VIRTIO_PARAM_CONFIG_CHANGED:
++ 	{
+  		struct virtio_driver *drv;
+  		drv = container_of(vq->vdev->dev.driver,
+  				   struct virtio_driver, driver);
