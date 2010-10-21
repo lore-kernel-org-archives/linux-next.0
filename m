@@ -1,114 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: xen PV on HVM and initial domain merge in linux-next
-Date: Thu, 21 Oct 2010 10:45:41 +1100
-Message-ID: <20101021104541.8e10159a.sfr@canb.auug.org.au>
-References: <alpine.DEB.2.00.1010191254460.2423@kaball-desktop>
-	<alpine.DEB.2.00.1010191847290.10348@kaball-desktop>
-	<20101020113256.3647b1d9.sfr@canb.auug.org.au>
-	<alpine.DEB.2.00.1010201455160.10348@kaball-desktop>
-	<20101020152808.GA22328@dumpdata.com>
-	<alpine.DEB.2.00.1010201644380.10348@kaball-desktop>
+Subject: linux-next: build failure after merge of the nfs tree
+Date: Thu, 21 Oct 2010 11:38:58 +1100
+Message-ID: <20101021113858.f8b9849f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0146554102=="
-Return-path: <xen-devel-bounces@lists.xensource.com>
-In-Reply-To: <alpine.DEB.2.00.1010201644380.10348@kaball-desktop>
-List-Unsubscribe: <http://lists.xensource.com/mailman/listinfo/xen-devel>,
-	<mailto:xen-devel-request@lists.xensource.com?subject=unsubscribe>
-List-Post: <mailto:xen-devel@lists.xensource.com>
-List-Help: <mailto:xen-devel-request@lists.xensource.com?subject=help>
-List-Subscribe: <http://lists.xensource.com/mailman/listinfo/xen-devel>,
-	<mailto:xen-devel-request@lists.xensource.com?subject=subscribe>
-Sender: xen-devel-bounces@lists.xensource.com
-Errors-To: xen-devel-bounces@lists.xensource.com
-To: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
-Cc: Jeremy Fitzhardinge <Jeremy.Fitzhardinge@citrix.com>, Stefano Stabellini <Stefano.Stabellini@eu.citrix.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Chris Wright <chrisw@sous-sol.org>, "virtualization@lists.osdl.org" <virtualization@lists.osdl.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, "xen-devel@lists.xensource.com" <xen-devel@lists.xensource.com>
-List-Id: linux-next.vger.kernel.org
-
---===============0146554102==
 Content-Type: multipart/signed; protocol="application/pgp-signature";
-	micalg="PGP-SHA1";
-	boundary="Signature=_Thu__21_Oct_2010_10_45_41_+1100_aOZ1O+a0EbuxnsNc"
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__21_Oct_2010_11_38_58_+1100_lZ0Cwm97OIxfQW+j"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:57973 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751514Ab0JUAjK (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 20 Oct 2010 20:39:10 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bryan Schumaker <bjschuma@netapp.com>
 
---Signature=_Thu__21_Oct_2010_10_45_41_+1100_aOZ1O+a0EbuxnsNc
+--Signature=_Thu__21_Oct_2010_11_38_58_+1100_lZ0Cwm97OIxfQW+j
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Stefano,
+Hi Trond,
 
-On Wed, 20 Oct 2010 16:47:51 +0100 Stefano Stabellini <stefano.stabellini@e=
-u.citrix.com> wrote:
->
-> Good idea, I have created a link called linux-next to
-> 2.6.36-rc8-initial-domain-v5 so the following should also work:
->=20
-> git://xenbits.xen.org/people/sstabellini/linux-pvhvm.git linux-next
+After merging the nfs tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-I have added that branch from today with just you listed as the contact
-(if you ant anyone else (even a mailing list) listed as a contact, just
-let me know.
+fs/nfs/dir.c: In function 'nfs_readdir_free_large_page':
+fs/nfs/dir.c:475: error: implicit declaration of function 'vm_unmap_ram'
+fs/nfs/dir.c: In function 'nfs_readdir_large_page':
+fs/nfs/dir.c:496: error: implicit declaration of function 'vm_map_ram'
+fs/nfs/dir.c:496: warning: assignment makes pointer from integer without a =
+cast
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
+Caused by commit b8aa6064474e186f598584508f9230d49a0004af ("NFS: readdir
+with vmapped pages").  Forgot to include linux/vmalloc.h.  See Rule 1 (in
+Documentation/SubmitChecklist).
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-	Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
+I have used the nfs tree from next-20101020 for today.
 --=20
 Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Legal Stuff:
-By participating in linux-next, your subsystem tree contributions are
-public and will be included in the linux-next trees.  You may be sent
-e-mail messages indicating errors or other issues when the
-patches/commits from your subsystem tree are merged and tested in
-linux-next.  These messages may also be cross-posted to the linux-next
-mailing list, the linux-kernel mailing list, etc.  The linux-next tree
-project and IBM (my employer) make no warranties regarding the linux-next
-project, the testing procedures, the results, the e-mails, etc.  If you
-don't agree to these ground rules, let me know and I'll remove your tree
-from participation in linux-next.
-
---Signature=_Thu__21_Oct_2010_10_45_41_+1100_aOZ1O+a0EbuxnsNc
+--Signature=_Thu__21_Oct_2010_11_38_58_+1100_lZ0Cwm97OIxfQW+j
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMv38lAAoJEDMEi1NhKgbssYcH/Rgoe/X3hHmTyxgC9NHtLPPH
-NJB4HMSj7XUq1IA9ZBodDDhHVnjht20Dgo0ZBX8VU/HLunyHcrWjJ5PqQ4IPaTXm
-KfakafvDOByNQSZ9iFDYRIAFin1EcvjXExJaSNbWqqlzeqZ/Pu1MPTavq+VQwlUM
-+LaSc++JhMzs435lswNiS1UxvbofAkSTH/qu+JPh2kJnK/URF47petNPHLeEg9EK
-RA6xfNiyw24n4ACEJgV2XNGF40nMUWhRNxx2T/1TwWwwEG2KtIW7RmjcuP5BrtnO
-EFX/MRnEc7hE3UPVDDbKr+SH6yFDfNc2aPdyQGTZ0Cm3Ht6sSarn2IfRnGP66lc=
-=3G9U
+iQEcBAEBAgAGBQJMv4uiAAoJEDMEi1NhKgbs0z8IAIOUscWPppThufxIi36ZgJQX
+gdVsMxhAU2Gyy4nROGeaE5FmTtBHHSZd632GbqcJosNOmS9UVydmIHJ4YlZrmGe3
+K99iOt7drrg3iaF9fnWJi6N3eyQ4MY6RvG5iLbysKaJXjPqakeFxcLMQbxXnRz8q
+GBXZTb8PD3KTxvMGDR8hK0uG7SqzBXcTiLq11hpJFnNlmPQIuf5csMUWEZ3l36CC
+osJSGviIsUgLcGkkWxNzdb+T0axK2aJJlxP+wm8uq2MmmSZWuqSmFzmY5EWxwxwQ
+oF51cOwa59TuC6Q7gKiWmhRGNRr6C2JwdxHhYzLLjesE5Ur8kwEB3d3TUy+lx9M=
+=afGN
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__21_Oct_2010_10_45_41_+1100_aOZ1O+a0EbuxnsNc--
-
-
---===============0146554102==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-Xen-devel mailing list
-Xen-devel@lists.xensource.com
-http://lists.xensource.com/xen-devel
-
---===============0146554102==--
+--Signature=_Thu__21_Oct_2010_11_38_58_+1100_lZ0Cwm97OIxfQW+j--
