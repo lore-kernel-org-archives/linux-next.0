@@ -1,52 +1,57 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: linux-next: build warning after merge of the devicetree tree
-Date: Wed, 20 Oct 2010 21:26:57 -0600
-Message-ID: <20101021032657.GB13335@angua.secretlab.ca>
-References: <20101021133726.d1e5f433.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the final tree (xen tree
+ related)
+Date: Thu, 21 Oct 2010 14:53:26 +1100
+Message-ID: <20101021145326.9f133f40.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__21_Oct_2010_14_53_26_+1100_ccG7/drdQyNXLWDE"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-iw0-f174.google.com ([209.85.214.174]:42730 "EHLO
-	mail-iw0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757277Ab0JUD1E (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Oct 2010 23:27:04 -0400
-Content-Disposition: inline
-In-Reply-To: <20101021133726.d1e5f433.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:35377 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757021Ab0JUDxe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 20 Oct 2010 23:53:34 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andres Salomon <dilinger@queued.net>
+To: Jeremy Fitzhardinge <jeremy@goop.org>, Xen Devel <Xen-devel@lists.xensource.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Oct 21, 2010 at 01:37:26PM +1100, Stephen Rothwell wrote:
-> Hi Grant,
-> 
-> After merging the devicetree tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
-> 
-> arch/x86/kernel/irq.c:280: warning: 'struct device_node' declared inside parameter list
-> 
-> Introduced by commit 27f4e2b1060be8bc38146fd30986e7c2858e2a5f ("x86/of:
-> define irq functions to allow drivers/of/* to build on x86").  This build
-> has CONFIG_OF not set.
+--Signature=_Thu__21_Oct_2010_14_53_26_+1100_ccG7/drdQyNXLWDE
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks Stephen.  Does the following patch fix things?
+Hi Jeremy,
 
-diff --git a/arch/x86/kernel/irq.c b/arch/x86/kernel/irq.c
-index 4417f49..23216f7 100644
---- a/arch/x86/kernel/irq.c
-+++ b/arch/x86/kernel/irq.c
-@@ -276,12 +276,14 @@ void smp_x86_platform_ipi(struct pt_regs *regs)
- 
- EXPORT_SYMBOL_GPL(vector_used_by_percpu_irq);
- 
-+#ifdef CONFIG_OF
- unsigned int irq_create_of_mapping(struct device_node *controller,
-                const u32 *intspec, unsigned int intsize)
- {
-        return intspec[0];
- }
- EXPORT_SYMBOL_GPL(irq_create_of_mapping);
-+#endif
- 
- #ifdef CONFIG_HOTPLUG_CPU
- /* A cpu has been removed from cpu_online_mask.  Reset irq affinities. */
+After merging the final tree, today's linux-next build (i386 defconfig)
+produced this warning:
+
+arch/x86/mm/fault.c: In function 'vmalloc_sync_all':
+arch/x86/mm/fault.c:244: warning: assignment makes integer from pointer wit=
+hout a cast
+
+Introduced by commit aef8b70e5c4b7753fc4bf20dbb01e93fc8883027 ("x86: hold
+mm->page_table_lock while doing vmalloc_sync").
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__21_Oct_2010_14_53_26_+1100_ccG7/drdQyNXLWDE
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMv7k2AAoJEDMEi1NhKgbsxqoH/A+BsmjjZH9leDEPyfquiFAd
+uaMjNLi0/GuzGBHhxoDXqiynqb8KYI30WY+MqyZ0wui29Prlbna1p3eIP8w6XC7n
+3DVKw5mUBCFiQ2ugh8t+uluUQlEm01H41oAO12inz9Ga+Zk7hDQydL3zZIIbdjW5
+oN/U6XV0/hJYGm0ejctTgBjzxXTFiilB9jT+xSLTrroumfhwspEj/a1iGfxiHxUb
+phnLrxai1JmcC7gmRHJsi5PYVtJT0CUn39pK/2hIDJ6Zywrjpo7zgjcQgMpWza5J
+qU9F4y7M+zF2e88BB1llCj+6yKj+xWpVHbPaN+euIT3P9jpJBzXgdNtJsIxytb4=
+=0+Yt
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__21_Oct_2010_14_53_26_+1100_ccG7/drdQyNXLWDE--
