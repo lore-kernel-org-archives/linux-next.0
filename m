@@ -1,76 +1,79 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for October 21 (xen)
-Date: Thu, 21 Oct 2010 10:13:24 -0700
-Message-ID: <4CC074B4.7070708@oracle.com>
-References: <20101021151529.392fecea.sfr@canb.auug.org.au> <20101021091316.0587c1a8.randy.dunlap@oracle.com> <20101021163225.GA2456@dumpdata.com> <alpine.DEB.2.00.1010211738530.10348@kaball-desktop>
+From: Richard Weinberger <richard@nod.at>
+Subject: Re: linux-next: User Mode Linux broken
+Date: Thu, 21 Oct 2010 21:22:38 +0200
+Message-ID: <201010212122.38437.richard@nod.at>
+References: <201010211315.26679.richard@nod.at> <alpine.LFD.2.00.1010211805040.2418@localhost6.localdomain6>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:33252 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753533Ab0JUROb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Oct 2010 13:14:31 -0400
-In-Reply-To: <alpine.DEB.2.00.1010211738530.10348@kaball-desktop>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "xen-devel@lists.xensource.com" <xen-devel@lists.xensource.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <alpine.LFD.2.00.1010211805040.2418@localhost6.localdomain6>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: peterz@infradead.org, hpa@zytor.com, mingo@elte.hu, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On 10/21/10 09:53, Stefano Stabellini wrote:
-> On Thu, 21 Oct 2010, Konrad Rzeszutek Wilk wrote:
->> On Thu, Oct 21, 2010 at 09:13:16AM -0700, Randy Dunlap wrote:
->>> On Thu, 21 Oct 2010 15:15:29 +1100 Stephen Rothwell wrote:
->>>
->>>> Hi all,
->>>>
->>>> Reminder: do not add 2.6.38 destined stuff to linux-next until after
->>>> 2.6.37-rc1 is released.
->>>>
->>>> Changes since 20101020:
->>>
->>>
->>> When CONFIG_SMP is not enabled:
->>>
->>> arch/x86/pci/xen.c:401: error: 'nr_ioapics' undeclared (first use in this function)
->>
->> Thank you,
->>
->> Stefano, this one is yours.
->>
+Am Donnerstag 21 Oktober 2010, 18:09:22 schrieb Thomas Gleixner:
+> On Thu, 21 Oct 2010, Richard Weinberger wrote:
+> > Thomas,
+> > 
+> > Your commit c5f7563 ("genirq: Provide compat handling for
+> > chip->enable()") breaks UML.
+> > It does not start anymore.
+> > 
+> > When I apply this patch it works fine again.
+> > http://userweb.kernel.org/~akpm/mmotm/broken-out/um-migrate-from-__do_irq
+> > -to- generic_handle_irq.patch
+> > 
+> > Maybe your patch breaks all users of __do_IRQ()?
 > 
-> Yep.
-> It was a missing #include in arch/x86/pci/xen.c, I fixed it adding a
-> commit to my linux-next branch.
-
-Ack.  Thanks.
-
-> ---
+> Not intentionally :)
 > 
-> commit fa4c2e29e4a30dc3e9d3f83944eeea63f78350a5
-> Author: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
-> Date:   Thu Oct 21 17:40:08 2010 +0100
+> The irq_chip of um has it's own dummy enable function, so the compat
+> code uses it.
 > 
->     xen: add a missing #include to arch/x86/pci/xen.c
->     
->     Add missing #include <asm/io_apic.h> to arch/x86/pci/xen.c.
->     
->     Signed-off-by: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+> +static void compat_irq_enable(struct irq_data *data)
+> +{
+> +	data->chip->enable(data->irq);
+> +}
+> +
 > 
-> diff --git a/arch/x86/pci/xen.c b/arch/x86/pci/xen.c
-> index 4f5df3d..4a32df2 100644
-> --- a/arch/x86/pci/xen.c
-> +++ b/arch/x86/pci/xen.c
-> @@ -10,6 +10,7 @@
->  #include <linux/acpi.h>
->  
->  #include <linux/io.h>
-> +#include <asm/io_apic.h>
->  #include <asm/pci_x86.h>
->  
->  #include <asm/xen/hypervisor.h>
+> ...
+> 
+> +	if (chip->enable)
+> +		chip->irq_enable = compat_irq_enable;
+> +
+> +	/*
+> +	 * The real defaults
+> +	 */
+> +	if (!chip->irq_enable)
+> +		chip->irq_enable = default_enable;
+> 
+> So I really can't see how's that supposed to break UM
+> 
 
+This patch solves the issue for me.
+What do you think?
 
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+Thanks,
+//richard
+
+diff --git a/kernel/irq/resend.c b/kernel/irq/resend.c
+index 891115a..1fb4012 100644
+--- a/kernel/irq/resend.c
++++ b/kernel/irq/resend.c
+@@ -60,8 +60,11 @@ void check_irq_resend(struct irq_desc *desc, unsigned int 
+irq)
+        /*
+         * Make sure the interrupt is enabled, before resending it:
+         */
++#ifndef CONFIG_GENERIC_HARDIRQS_NO_DEPRECATED
++       desc->irq_data.chip->enable(irq);
++#elif
+        desc->irq_data.chip->irq_enable(&desc->irq_data);
+-
++#endif
+        /*
+         * We do not resend level type interrupts. Level type
+         * interrupts are resent by hardware when they are still
