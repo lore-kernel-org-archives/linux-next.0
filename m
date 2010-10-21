@@ -1,64 +1,76 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: linux-next: build warning after merge of the devicetree tree
-Date: Thu, 21 Oct 2010 11:04:29 -0600
-Message-ID: <20101021170429.GA16702@angua.secretlab.ca>
-References: <20101021133726.d1e5f433.sfr@canb.auug.org.au>
- <20101021032657.GB13335@angua.secretlab.ca>
- <20101021080526.GB8775@elte.hu>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for October 21 (xen)
+Date: Thu, 21 Oct 2010 10:13:24 -0700
+Message-ID: <4CC074B4.7070708@oracle.com>
+References: <20101021151529.392fecea.sfr@canb.auug.org.au> <20101021091316.0587c1a8.randy.dunlap@oracle.com> <20101021163225.GA2456@dumpdata.com> <alpine.DEB.2.00.1010211738530.10348@kaball-desktop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:42357 "EHLO
-	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752407Ab0JUREc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Oct 2010 13:04:32 -0400
-Content-Disposition: inline
-In-Reply-To: <20101021080526.GB8775@elte.hu>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:33252 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753533Ab0JUROb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Oct 2010 13:14:31 -0400
+In-Reply-To: <alpine.DEB.2.00.1010211738530.10348@kaball-desktop>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andres Salomon <dilinger@queued.net>, Andrew Morton <akpm@linux-foundation.org>
+To: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "xen-devel@lists.xensource.com" <xen-devel@lists.xensource.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-On Thu, Oct 21, 2010 at 10:05:26AM +0200, Ingo Molnar wrote:
-> > On Thu, Oct 21, 2010 at 01:37:26PM +1100, Stephen Rothwell wrote:
-> > diff --git a/arch/x86/kernel/irq.c b/arch/x86/kernel/irq.c
-> > index 4417f49..23216f7 100644
-> > --- a/arch/x86/kernel/irq.c
-> > +++ b/arch/x86/kernel/irq.c
-> > @@ -276,12 +276,14 @@ void smp_x86_platform_ipi(struct pt_regs *regs)
-> >  
-> >  EXPORT_SYMBOL_GPL(vector_used_by_percpu_irq);
-> >  
-> > +#ifdef CONFIG_OF
-> >  unsigned int irq_create_of_mapping(struct device_node *controller,
-> >                 const u32 *intspec, unsigned int intsize)
-> >  {
-> >         return intspec[0];
-> >  }
-> >  EXPORT_SYMBOL_GPL(irq_create_of_mapping);
-> > +#endif
+On 10/21/10 09:53, Stefano Stabellini wrote:
+> On Thu, 21 Oct 2010, Konrad Rzeszutek Wilk wrote:
+>> On Thu, Oct 21, 2010 at 09:13:16AM -0700, Randy Dunlap wrote:
+>>> On Thu, 21 Oct 2010 15:15:29 +1100 Stephen Rothwell wrote:
+>>>
+>>>> Hi all,
+>>>>
+>>>> Reminder: do not add 2.6.38 destined stuff to linux-next until after
+>>>> 2.6.37-rc1 is released.
+>>>>
+>>>> Changes since 20101020:
+>>>
+>>>
+>>> When CONFIG_SMP is not enabled:
+>>>
+>>> arch/x86/pci/xen.c:401: error: 'nr_ioapics' undeclared (first use in this function)
+>>
+>> Thank you,
+>>
+>> Stefano, this one is yours.
+>>
 > 
-> Sigh, 'of' is the most misnamed Linux subsystem in history! 'CONFIG_OF_' always 
-> makes me ask 'config of what?' irq_create_of_mapping ditto.
+> Yep.
+> It was a missing #include in arch/x86/pci/xen.c, I fixed it adding a
+> commit to my linux-next branch.
+
+Ack.  Thanks.
+
+> ---
 > 
-> Why not OFW or OPENFIRMWARE?
+> commit fa4c2e29e4a30dc3e9d3f83944eeea63f78350a5
+> Author: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+> Date:   Thu Oct 21 17:40:08 2010 +0100
+> 
+>     xen: add a missing #include to arch/x86/pci/xen.c
+>     
+>     Add missing #include <asm/io_apic.h> to arch/x86/pci/xen.c.
+>     
+>     Signed-off-by: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+> 
+> diff --git a/arch/x86/pci/xen.c b/arch/x86/pci/xen.c
+> index 4f5df3d..4a32df2 100644
+> --- a/arch/x86/pci/xen.c
+> +++ b/arch/x86/pci/xen.c
+> @@ -10,6 +10,7 @@
+>  #include <linux/acpi.h>
+>  
+>  #include <linux/io.h>
+> +#include <asm/io_apic.h>
+>  #include <asm/pci_x86.h>
+>  
+>  #include <asm/xen/hypervisor.h>
 
-That's not the half of it.  Most of the new platforms using this code
-don't have openfirmware either.  This subsystem merely supports the
-device tree data structure which originated with OpenFirmware, but has
-been used heavily in non-ofw systems for many years now.  Something
-like dt_* would be more accurate.
 
-The of_ prefixes are entirely historical.  Off and on I consider doing
-a mass rename, but I shy away from the scope of the work (plus nobody
-has complained loud enough to make it a priority).  If I were to do
-such a thing it would probably be best to use a script to handle all
-the renames, and I'd want to organize with Linus to get it committed
-when it will have the least impact on everyone.  Probably
-immediately after a merge window closes.
-
-BTW, I'm actually dropping the patch that added this function to x86
-for this merge window since the patch that uses it isn't quite ready
-yet.  It will sit in my test tree for another cycle.
-
-g.
+-- 
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
