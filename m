@@ -1,55 +1,64 @@
-From: Stephen Rothwell <sfr@au1.ibm.com>
-Subject: linux-next: manual merge of the net tree with Linus' tree
-Date: Fri, 22 Oct 2010 12:19:43 +1100
-Message-ID: <20101022121943.120aa4f2.sfr@au1.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with Linus' tree
+Date: Fri, 22 Oct 2010 13:08:43 +1100
+Message-ID: <20101022130843.710a21a0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Koki Sanagi <sanagi.koki@jp.fujitsu.com>, Frederic Weisbecker <fweisbec@gmail.com>, Jesse Gross <jesse@nicira.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:42891 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751188Ab0JVCIu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 21 Oct 2010 22:08:50 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shaohua Li <shaohua.li@intel.com>, Alexander van Heukelum <heukelum@fastmail.fm>
 
 Hi all,
 
-Today's linux-next merge of the net tree got a conflict in net/core/dev.c
-between commit cf66ba58b5cb8b1526e9dd2fb96ff8db048d4d44 ("netdev: Add
-tracepoints to netdev layer") from Linus' tree and commits
-05532121da0728eaedac2a0a5c3cecad3a95d765 ("net: 802.1q: make
-vlan_hwaccel_do_receive() return void") and
-3701e51382a026cba10c60b03efabe534fba4ca4 ("vlan: Centralize handling of
-hardware acceleration") from the net tree.
+Today's linux-next merge of the tip tree got a conflict in
+include/linux/percpu-defs.h between commit
+c957ef2c59e952803766ddc22e89981ab534606f ("percpu: Introduce a
+read-mostly percpu API") from Linus',  tree and commit
+fe8e0c25cad28e8858ecfa5863333c70685a6811 ("x86, 32-bit: Align percpu area
+and irq stacks to THREAD_SIZE") from the tip tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+Just overlapping additions.  I fixed it up (see below) and can carry the
+fix as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc net/core/dev.c
-index 154e25e,6d4218c..0000000
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@@ -128,9 -128,8 +128,10 @@@
-  #include <linux/jhash.h>
-  #include <linux/random.h>
-  #include <trace/events/napi.h>
- +#include <trace/events/net.h>
- +#include <trace/events/skb.h>
-  #include <linux/pci.h>
-+ #include <linux/inetdevice.h>
+diff --cc include/linux/percpu-defs.h
+index 27ef6b1,ab20d11..0000000
+--- a/include/linux/percpu-defs.h
++++ b/include/linux/percpu-defs.h
+@@@ -139,15 -139,18 +139,27 @@@
+  	__aligned(PAGE_SIZE)
   
-  #include "net-sysfs.h"
-  
-@@@ -2835,10 -2898,6 +2905,8 @@@ static int __netif_receive_skb(struct s
-  	if (!netdev_tstamp_prequeue)
-  		net_timestamp_check(skb);
-  
- +	trace_netif_receive_skb(skb);
-- 	if (vlan_tx_tag_present(skb) && vlan_hwaccel_do_receive(skb))
-- 		return NET_RX_SUCCESS;
+  /*
+ + * Declaration/definition used for per-CPU variables that must be read mostly.
+ + */
+ +#define DECLARE_PER_CPU_READ_MOSTLY(type, name)			\
+ +	DECLARE_PER_CPU_SECTION(type, name, "..readmostly")
  +
-  	/* if we've gotten here through NAPI, check netpoll */
-  	if (netpoll_receive_skb(skb))
-  		return NET_RX_DROP;
+ +#define DEFINE_PER_CPU_READ_MOSTLY(type, name)				\
+ +	DEFINE_PER_CPU_SECTION(type, name, "..readmostly")
+ +
+ +/*
++  * Declaration/definition used for large per-CPU variables that must be
++  * aligned to something larger than the pagesize.
++  */
++ #define DECLARE_PER_CPU_MULTIPAGE_ALIGNED(type, name, size)		\
++ 	DECLARE_PER_CPU_SECTION(type, name, "..page_aligned")		\
++ 	__aligned(size)
++ 
++ #define DEFINE_PER_CPU_MULTIPAGE_ALIGNED(type, name, size)		\
++ 	DEFINE_PER_CPU_SECTION(type, name, "..page_aligned")		\
++ 	__aligned(size)
++ 
++ /*
+   * Intermodule exports for per-CPU variables.  sparse forgets about
+   * address space across EXPORT_SYMBOL(), change EXPORT_SYMBOL() to
+   * noop if __CHECKER__.
