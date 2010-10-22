@@ -1,42 +1,66 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: linux-next: User Mode Linux broken
-Date: Fri, 22 Oct 2010 09:03:44 +0200 (CEST)
-Message-ID: <alpine.LFD.2.00.1010220900230.3467@localhost6.localdomain6>
-References: <201010211315.26679.richard@nod.at> <201010212122.38437.richard@nod.at> <alpine.LFD.2.00.1010212143300.3467@localhost6.localdomain6> <201010212227.12919.richard@nod.at>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: manual merge of the xen tree with the tip tree
+Date: Fri, 22 Oct 2010 10:01:29 +0200
+Message-ID: <20101022080129.GA8474@elte.hu>
+References: <20101022140335.c4a3a48f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from www.tglx.de ([62.245.132.106]:35804 "EHLO www.tglx.de"
+Received: from mx2.mail.elte.hu ([157.181.151.9]:46898 "EHLO mx2.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752671Ab0JVHEE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 22 Oct 2010 03:04:04 -0400
-In-Reply-To: <201010212227.12919.richard@nod.at>
+	id S1752642Ab0JVIB5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 22 Oct 2010 04:01:57 -0400
+Content-Disposition: inline
+In-Reply-To: <20101022140335.c4a3a48f.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Richard Weinberger <richard@nod.at>
-Cc: peterz@infradead.org, hpa@zytor.com, mingo@elte.hu, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jeremy Fitzhardinge <jeremy@goop.org>, Xen Devel <Xen-devel@lists.xensource.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gianluca Guida <gianluca.guida@citrix.com>, Yinghai Lu <yinghai@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linus Torvalds <torvalds@linux-foundation.org>
 
-On Thu, 21 Oct 2010, Richard Weinberger wrote:
-> Am Donnerstag 21 Oktober 2010, 21:45:35 schrieb Thomas Gleixner:
-> > Why shold it solve it ? irq_enable is set to compat_irq_enable which
-> > in turn calls chip->enable.
-> > 
-> > So how's that different ?
+
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+> Hi all,
 > 
-> I took a closer look on the issue.
-> 
-> check_irq_resend() gets called before irq_chip_set_defaults().
-> In the first call to check_irq_resend() desc->irq_data.chip->irq_enable is 
-> NULL. UML dies due to a NULL-pointer dereference...
-> 
-> I don't know why check_irq_resend() is called before irq_chip_set_defaults().
-> It's your code. ;-)
+> Today's linux-next merge of the xen tree got a conflict in
+> arch/x86/mm/init_32.c between commit
+> 1d931264af0f10649b35afa8fbd2e169da51ac08 ("x86-32, memblock: Make
+> add_highpages honor early reserved ranges") from the tip tree and commit
+> 07147a06ac3b1b028124ea00ba44e69eb8ea7685 ("x86/32: honor reservations of
+> high memory") from the xen tree.
 
-Well, but it only gets called via enable_irq(). So that means
-something is calling enable_irq _before_ request/setup_irq().
+Jeremy,
 
-arch/um/kernel/irq.c:init_IRQ() does that :)
+Commit 07147a06ac is all over the x86 tree:
 
-Thanks,
+  arch/x86/mm/init_32.c     |   42 ++++++++++++++++++++++++++++++++----------
+  include/linux/early_res.h |    3 +++
+  kernel/early_res.c        |   30 ++++++++++++++++++++++++++++++
+  3 files changed, 65 insertions(+), 10 deletions(-)
 
-	tglx
+... but there's no x86 person who acked it or was Cc:-ed to this commit AFAICS. It 
+was not even posted to lkml! Nor does the commit title suggest that it affects core 
+kernel code as well.
+
+Also, the AuthorDate field is a total lie:
+
+  commit 07147a06ac3b1b028124ea00ba44e69eb8ea7685
+  Author:     Gianluca Guida <gianluca.guida@citrix.com>
+  AuthorDate: Sun Aug 2 01:25:48 2009 +0100
+  Commit:     Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>
+  CommitDate: Mon Oct 4 14:22:11 2010 -0700
+
+    x86/32: honor reservations of high memory
+
+This commit was written on Aug 2 2009, really? kernel/early_res.c, which is modified 
+by half of this commit, was _CREATED_ in February 2010 ...
+
+I realize that some original patch, much different from this one, was probably 
+written in 2009, and that via a series of undocumented rebases and modifications to 
+the patch you achieved this state.
+
+Crap like that is just _NOT_ acceptable, and you know that perfectly well - if you 
+do this to arch/x86/ i'll be forced to ask for the Xen tree to be removed from 
+linux-next and be done via the x86 tree again.
+
+	Ingo
