@@ -1,64 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with Linus' tree
-Date: Fri, 22 Oct 2010 13:08:43 +1100
-Message-ID: <20101022130843.710a21a0.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the xen tree with the tip tree
+Date: Fri, 22 Oct 2010 14:03:35 +1100
+Message-ID: <20101022140335.c4a3a48f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__22_Oct_2010_14_03_35_+1100_P2b_wdij5HjiYeCF"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:42891 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:51178 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751188Ab0JVCIu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 21 Oct 2010 22:08:50 -0400
+	id S1752018Ab0JVDDq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 21 Oct 2010 23:03:46 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shaohua Li <shaohua.li@intel.com>, Alexander van Heukelum <heukelum@fastmail.fm>
+To: Jeremy Fitzhardinge <jeremy@goop.org>, Xen Devel <Xen-devel@lists.xensource.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gianluca Guida <gianluca.guida@citrix.com>, Yinghai Lu <yinghai@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+
+--Signature=_Fri__22_Oct_2010_14_03_35_+1100_P2b_wdij5HjiYeCF
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the tip tree got a conflict in
-include/linux/percpu-defs.h between commit
-c957ef2c59e952803766ddc22e89981ab534606f ("percpu: Introduce a
-read-mostly percpu API") from Linus',  tree and commit
-fe8e0c25cad28e8858ecfa5863333c70685a6811 ("x86, 32-bit: Align percpu area
-and irq stacks to THREAD_SIZE") from the tip tree.
+Today's linux-next merge of the xen tree got a conflict in
+arch/x86/mm/init_32.c between commit
+1d931264af0f10649b35afa8fbd2e169da51ac08 ("x86-32, memblock: Make
+add_highpages honor early reserved ranges") from the tip tree and commit
+07147a06ac3b1b028124ea00ba44e69eb8ea7685 ("x86/32: honor reservations of
+high memory") from the xen tree.
 
-Just overlapping additions.  I fixed it up (see below) and can carry the
-fix as necessary.
--- 
+I have no idea how to fix this up, sorry, so I have used the xen tree
+from next-20101021 for today.
+
+There were also conflicts in:
+	arch/x86/xen/mmu.c
+	include/linux/early_res.h
+	kernel/early_res.c
+
+These last two were deleted in the tip tree.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc include/linux/percpu-defs.h
-index 27ef6b1,ab20d11..0000000
---- a/include/linux/percpu-defs.h
-+++ b/include/linux/percpu-defs.h
-@@@ -139,15 -139,18 +139,27 @@@
-  	__aligned(PAGE_SIZE)
-  
-  /*
- + * Declaration/definition used for per-CPU variables that must be read mostly.
- + */
- +#define DECLARE_PER_CPU_READ_MOSTLY(type, name)			\
- +	DECLARE_PER_CPU_SECTION(type, name, "..readmostly")
- +
- +#define DEFINE_PER_CPU_READ_MOSTLY(type, name)				\
- +	DEFINE_PER_CPU_SECTION(type, name, "..readmostly")
- +
- +/*
-+  * Declaration/definition used for large per-CPU variables that must be
-+  * aligned to something larger than the pagesize.
-+  */
-+ #define DECLARE_PER_CPU_MULTIPAGE_ALIGNED(type, name, size)		\
-+ 	DECLARE_PER_CPU_SECTION(type, name, "..page_aligned")		\
-+ 	__aligned(size)
-+ 
-+ #define DEFINE_PER_CPU_MULTIPAGE_ALIGNED(type, name, size)		\
-+ 	DEFINE_PER_CPU_SECTION(type, name, "..page_aligned")		\
-+ 	__aligned(size)
-+ 
-+ /*
-   * Intermodule exports for per-CPU variables.  sparse forgets about
-   * address space across EXPORT_SYMBOL(), change EXPORT_SYMBOL() to
-   * noop if __CHECKER__.
+--Signature=_Fri__22_Oct_2010_14_03_35_+1100_P2b_wdij5HjiYeCF
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMwP8HAAoJEDMEi1NhKgbsaEEIAJXWPpVTAAffqsezu9MmSoYT
+4AsozAJPT6zQwna9uQ98vEOivlcTrbOHCmb6zXoKXFA8oohOc6AZYSvwls6Q+RCD
+x6WN3t+F2VYhrJLvtgUNGT1VkxTbt5Wj9NqsT+ncbCIII3A8eqNp7USkbWRigLCW
+RxEhiIuzZFVxlYTL1Hzk7bL37ieBZRHHiPOYDJGLFBJznMCwEsP9TR3Jb+CXtpuN
+1I0pBdSTdXermDDpDxbkl0jOizO4CS5S+QUcSJdT6N6RHCFvPElsxokBD9oH8Hh+
+edtW4UNZl395YqZWidlbvag5bxc79AVNI/8EY/a7BptpRo8BLM/LPgdf3UhfPdE=
+=8HgW
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__22_Oct_2010_14_03_35_+1100_P2b_wdij5HjiYeCF--
