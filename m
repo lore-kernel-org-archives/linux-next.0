@@ -1,47 +1,41 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] nfs: include ratelimit.h, fix nfs4state build error
-Date: Fri, 22 Oct 2010 16:18:52 -0700
-Message-ID: <20101022161852.2ef2638c.randy.dunlap@oracle.com>
+Subject: [PATCH -next] ibm_rtl: fix printk format warning
+Date: Fri, 22 Oct 2010 16:18:47 -0700
+Message-ID: <20101022161847.e70bf995.randy.dunlap@oracle.com>
 References: <20101022152350.fc79e2b9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:53528 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752070Ab0JVXUk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 22 Oct 2010 19:20:40 -0400
+Return-path: <platform-driver-x86-owner@vger.kernel.org>
 In-Reply-To: <20101022152350.fc79e2b9.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Trond Myklebust <Trond.Myklebust@netapp.com>, akpm <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-nfs@vger.kernel.org
+Sender: platform-driver-x86-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Keith Mannthey <kmannth@us.ibm.com>, Vernon Mauery <vernux@us.ibm.com>, akpm <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org, Matthew Garrett <mjg@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
 From: Randy Dunlap <randy.dunlap@oracle.com>
 
-nfs4state.c uses interfaces from ratelimit.h.  It needs to include
-that header file to fix build errors:
+Fix printk format warning:
 
-fs/nfs/nfs4state.c:1195: warning: type defaults to 'int' in declaration of 'DEFINE_RATELIMIT_STATE'
-fs/nfs/nfs4state.c:1195: warning: parameter names (without types) in function declaration
-fs/nfs/nfs4state.c:1195: error: invalid storage class for function 'DEFINE_RATELIMIT_STATE'
-fs/nfs/nfs4state.c:1195: error: implicit declaration of function '__ratelimit'
-fs/nfs/nfs4state.c:1195: error: '_rs' undeclared (first use in this function)
+drivers/platform/x86/ibm_rtl.c:305:warning: format '%#llx' expects type 'long long unsigned int', but argument 2 has type 'phys_addr_t'
 
 Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc:	Trond Myklebust <Trond.Myklebust@netapp.com>
-Cc:	linux-nfs@vger.kernel.org
+Cc: Keith Mannthey <kmannth@us.ibm.com>
+Cc: Vernon Mauery <vernux@us.ibm.com>
+Cc: platform-driver-x86@vger.kernel.org
+Cc: Matthew Garrett <mjg@redhat.com>
 ---
- fs/nfs/nfs4state.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/platform/x86/ibm_rtl.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- linux-next-20101022.orig/fs/nfs/nfs4state.c
-+++ linux-next-20101022/fs/nfs/nfs4state.c
-@@ -46,6 +46,7 @@
- #include <linux/kthread.h>
- #include <linux/module.h>
- #include <linux/random.h>
-+#include <linux/ratelimit.h>
- #include <linux/workqueue.h>
- #include <linux/bitops.h>
- 
+--- linux-next-20101022.orig/drivers/platform/x86/ibm_rtl.c
++++ linux-next-20101022/drivers/platform/x86/ibm_rtl.c
+@@ -302,7 +302,7 @@ static int __init ibm_rtl_init(void) {
+ 			RTL_DEBUG("rtl_cmd_width = %u, rtl_cmd_type = %u\n",
+ 			      rtl_cmd_width, rtl_cmd_type);
+ 			addr = ioread32(&rtl_table->cmd_port_address);
+-			RTL_DEBUG("addr = %#llx\n", addr);
++			RTL_DEBUG("addr = %#llx\n", (unsigned long long)addr);
+ 			plen = rtl_cmd_width/sizeof(char);
+ 			rtl_cmd_addr = rtl_port_map(addr, plen);
+ 			RTL_DEBUG("rtl_cmd_addr = %#llx\n", (u64)rtl_cmd_addr);
