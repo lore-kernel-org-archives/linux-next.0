@@ -1,43 +1,44 @@
-From: Jeremy Fitzhardinge <jeremy@goop.org>
-Subject: Re: linux-next: manual merge of the xen tree with the
-	tip tree
-Date: Fri, 22 Oct 2010 12:10:06 -0700
-Message-ID: <4CC1E18E.9040502@goop.org>
-References: <20101022140335.c4a3a48f.sfr@canb.auug.org.au>
+From: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+Subject: Re: [Xen-devel] Re: linux-next: manual merge of the xen tree with
+ the tip tree
+Date: Fri, 22 Oct 2010 22:32:02 +0100
+Message-ID: <alpine.DEB.2.00.1010222153250.1407@kaball-desktop>
+References: <20101022140335.c4a3a48f.sfr@canb.auug.org.au> <20101022080129.GA8474@elte.hu> <4CC1DA58.8000606@goop.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: 7bit
-Return-path: <xen-devel-bounces@lists.xensource.com>
-In-Reply-To: <20101022140335.c4a3a48f.sfr@canb.auug.org.au>
-List-Unsubscribe: <http://lists.xensource.com/mailman/listinfo/xen-devel>,
-	<mailto:xen-devel-request@lists.xensource.com?subject=unsubscribe>
-List-Post: <mailto:xen-devel@lists.xensource.com>
-List-Help: <mailto:xen-devel-request@lists.xensource.com?subject=help>
-List-Subscribe: <http://lists.xensource.com/mailman/listinfo/xen-devel>,
-	<mailto:xen-devel-request@lists.xensource.com?subject=subscribe>
-Sender: xen-devel-bounces@lists.xensource.com
-Errors-To: xen-devel-bounces@lists.xensource.com
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Xen Devel <Xen-devel@lists.xensource.com>, Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Yinghai Lu <yinghai@kernel.org>, Ingo Molnar <mingo@elte.hu>, Gianluca Guida <gianluca.guida@citrix.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="US-ASCII"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp.eu.citrix.com ([62.200.22.115]:54898 "EHLO
+	SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757176Ab0JVVck (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 22 Oct 2010 17:32:40 -0400
+In-Reply-To: <4CC1DA58.8000606@goop.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jeremy Fitzhardinge <jeremy@goop.org>
+Cc: Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, Xen Devel <Xen-devel@lists.xensource.com>, Peter Zijlstra <peterz@infradead.org>, Linus Torvalds <torvalds@linux-foundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Yinghai Lu <yinghai@kernel.org>, Gianluca Guida <gianluca.guida@citrix.com>
 
- On 10/21/2010 08:03 PM, Stephen Rothwell wrote:
-> Hi all,
->
-> Today's linux-next merge of the xen tree got a conflict in
-> arch/x86/mm/init_32.c between commit
-> 1d931264af0f10649b35afa8fbd2e169da51ac08 ("x86-32, memblock: Make
-> add_highpages honor early reserved ranges") from the tip tree and commit
-> 07147a06ac3b1b028124ea00ba44e69eb8ea7685 ("x86/32: honor reservations of
-> high memory") from the xen tree.
+On Fri, 22 Oct 2010, Jeremy Fitzhardinge wrote:
+> > Crap like that is just _NOT_ acceptable, and you know that perfectly well - if you 
+> > do this to arch/x86/ i'll be forced to ask for the Xen tree to be removed from 
+> > linux-next and be done via the x86 tree again.
+> 
+> Hey, hey, hold your horses.  This is a wildly obsolete patch that we
+> were discussing a few weeks ago, but Yinghai did a proper alternative
+> for the memblock universe.
+> 
+> It was never in linux-next, and never intended to be.  I'm not sure why
+> it has appeared in linux-next now; it isn't in my branch.  I wonder if
+> it appeared in another Xen-related branch.  Let me investigate.
 
-Hm, that change has been completely obsoleted by the memblock stuff from
-tip.  Oh, I see.  Another change which ended up reverting that patch via
-a merge got dropped, so it got left lying around.  I'll pull it out.
+I think I merged in my tree a snapshot of Jeremy's upstream/xen that
+apparently was not meant for upstream at all.
+And I did that just to solve a trivial 5 lines conflict because my patch
+series don't actually depend on any of Jeremy's patches.
 
-(Not sure why it merges cleanly for me however; I guess because you've
-already got the older xen branch in there which contains the merge.)
+I solved the problem taking the radical approach: I removed the
+merge with upstream/xen altogether and also removed the commit that
+conflicts with one of Jeremy's commits.
+There shouldn't be any more conflicts now, and surely there shouldn't be
+any more unwanted old commits.
 
-Anyway, update pushed.
-
-    J
+I apologize for any problems caused but none of this was intentional.
