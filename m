@@ -1,139 +1,69 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the block tree
-Date: Sat, 23 Oct 2010 13:51:33 +1100
-Message-ID: <20101023135133.136f6e19.sfr@canb.auug.org.au>
-References: <20101011141838.fc59ee7c.sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the bkl-llseek tree with the
+ wireless tree
+Date: Sat, 23 Oct 2010 14:23:12 +1100
+Message-ID: <20101023142312.533f6a42.sfr@canb.auug.org.au>
+References: <20101018173543.c33530e9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36708 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:43857 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751605Ab0JWCvg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 22 Oct 2010 22:51:36 -0400
-In-Reply-To: <20101011141838.fc59ee7c.sfr@canb.auug.org.au>
+	id S1755661Ab0JWDXR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 22 Oct 2010 23:23:17 -0400
+In-Reply-To: <20101018173543.c33530e9.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Czerner <lczerner@redhat.com>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, Linus <torvalds@linux-foundation.org>
+To: "John W. Linville" <linville@tuxdriver.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Felix Fietkau <nbd@openwrt.org>, Linus <torvalds@linux-foundation.org>
 
-Hi Ted,
+Hi John, Dave,
 
-On Mon, 11 Oct 2010 14:18:38 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Mon, 18 Oct 2010 17:35:43 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> After merging the block tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
+> Today's linux-next merge of the bkl-llseek tree got a conflict in
+> drivers/net/wireless/ath/ath9k/debug.c between commit
+> 772d5515635fef5bc7a9d0efee785b58b0181ee5 ("ath9k: make rate control
+> debugfs stats per station") from the wireless tree and commit
+> 6038f373a3dc1f1c26496e60b6c40b164716f07e ("llseek: automatically
+> add .llseek fop") from the bkl-llseek tree.
 > 
-> In file included from init/do_mounts.h:2,
->                  from init/do_mounts_md.c:5:
-> include/linux/blkdev.h: In function 'sb_issue_zeroout':
-> include/linux/blkdev.h:900: error: too many arguments to function 'blkdev_issue_zeroout'
+> The former moved some of the code modified by the latter to another file.
 > 
-> Caused by commit dd3932eddf428571762596e17b65f5dc92ca361b ("block: remove
-> BLKDEV_IFL_WAIT") interacting with commit
-> 3be0ead7b05f0caaeb2f56b9902985b8120ef0cf ("Add helper function for
-> blkdev_issue_zeroout (sb_issue_discard)") from the ext4 tree.
-> 
-> I applied the following merge fixup patch which I can carry as necessary
-> (unless there is a better solution).
+> I added this merge fix patch:
 
-This fix (below) will now be necessary when the ext4 tree is merged with
-Linus' tree.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 11 Oct 2010 13:50:22 +1100
-Subject: [PATCH] ext4: merge fix for blkdev_issue_zeroout API change
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/ext4/extents.c      |    3 +--
- fs/ext4/ialloc.c       |    5 +----
- fs/ext4/resize.c       |    5 ++---
- include/linux/blkdev.h |    4 ++--
- 4 files changed, 6 insertions(+), 11 deletions(-)
-
-diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-index a0e6230..a130f02 100644
---- a/fs/ext4/extents.c
-+++ b/fs/ext4/extents.c
-@@ -2545,8 +2545,7 @@ static int ext4_ext_zeroout(struct inode *inode, struct ext4_extent *ex)
- 	ee_len    = ext4_ext_get_actual_len(ex);
- 	ee_pblock = ext_pblock(ex);
- 
--	ret = sb_issue_zeroout(inode->i_sb, ee_pblock, ee_len,
--			       GFP_NOFS, BLKDEV_IFL_WAIT);
-+	ret = sb_issue_zeroout(inode->i_sb, ee_pblock, ee_len, GFP_NOFS);
- 	if (ret > 0)
- 		ret = 0;
- 
-diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
-index 87d228a..f7e25aa 100644
---- a/fs/ext4/ialloc.c
-+++ b/fs/ext4/ialloc.c
-@@ -1238,7 +1238,6 @@ extern int ext4_init_inode_table(struct super_block *sb, ext4_group_t group,
- 	handle_t *handle;
- 	ext4_fsblk_t blk;
- 	int num, ret = 0, used_blks = 0;
--	unsigned long flags = BLKDEV_IFL_WAIT;
- 
- 	/* This should not happen, but just to be sure check this */
- 	if (sb->s_flags & MS_RDONLY) {
-@@ -1303,9 +1302,7 @@ extern int ext4_init_inode_table(struct super_block *sb, ext4_group_t group,
- 
- 	ext4_debug("going to zero out inode table in group %d\n",
- 		   group);
--	if (barrier)
--		flags |= BLKDEV_IFL_BARRIER;
--	ret = sb_issue_zeroout(sb, blk, num, GFP_NOFS, flags);
-+	ret = sb_issue_zeroout(sb, blk, num, GFP_NOFS);
- 	if (ret < 0)
- 		goto err_out;
- 
-diff --git a/fs/ext4/resize.c b/fs/ext4/resize.c
-index 2f5e347..998a462 100644
---- a/fs/ext4/resize.c
-+++ b/fs/ext4/resize.c
-@@ -229,7 +229,7 @@ static int setup_new_group_blocks(struct super_block *sb,
- 	ext4_debug("clear inode table blocks %#04llx -> %#04llx\n",
- 			block, sbi->s_itb_per_group);
- 	err = sb_issue_zeroout(sb, gdblocks + start + 1, reserved_gdb,
--			       GFP_NOFS, BLKDEV_IFL_WAIT);
-+			       GFP_NOFS);
- 	if (err)
- 		goto exit_bh;
- 
-@@ -244,8 +244,7 @@ static int setup_new_group_blocks(struct super_block *sb,
- 	block = input->inode_table;
- 	ext4_debug("clear inode table blocks %#04llx -> %#04llx\n",
- 			block, sbi->s_itb_per_group);
--	err = sb_issue_zeroout(sb, block, sbi->s_itb_per_group,
--			       GFP_NOFS, BLKDEV_IFL_WAIT);
-+	err = sb_issue_zeroout(sb, block, sbi->s_itb_per_group, GFP_NOFS);
- 	if (err)
- 		goto exit_bh;
- 
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index a1dec60..1095272 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -892,12 +892,12 @@ static inline int sb_issue_discard(struct super_block *sb, sector_t block,
- 				    gfp_mask, flags);
- }
- static inline int sb_issue_zeroout(struct super_block *sb, sector_t block,
--		sector_t nr_blocks, gfp_t gfp_mask, unsigned long flags)
-+		sector_t nr_blocks, gfp_t gfp_mask)
- {
- 	return blkdev_issue_zeroout(sb->s_bdev,
- 				    block << (sb->s_blocksize_bits - 9),
- 				    nr_blocks << (sb->s_blocksize_bits - 9),
--				    gfp_mask, flags);
-+				    gfp_mask);
- }
- 
- extern int blk_verify_command(unsigned char *cmd, fmode_t has_write_perm);
--- 
-1.7.1
+This patch (reproduced below) will now be needed if the wireless or net
+tree is merged with Linus' tree.  I also think I have missed a similar
+needed fix in drivers/net/wireless/ath/ath5k/debug.c ...
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 18 Oct 2010 17:33:25 +1100
+Subject: [PATCH] ath9k: fix up for .llseek fop change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/net/wireless/ath/ath9k/rc.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/net/wireless/ath/ath9k/rc.c b/drivers/net/wireless/ath/ath9k/rc.c
+index 0cee90c..e4c1ea3 100644
+--- a/drivers/net/wireless/ath/ath9k/rc.c
++++ b/drivers/net/wireless/ath/ath9k/rc.c
+@@ -1582,7 +1582,8 @@ static ssize_t read_file_rcstat(struct file *file, char __user *user_buf,
+ static const struct file_operations fops_rcstat = {
+ 	.read = read_file_rcstat,
+ 	.open = ath9k_debugfs_open,
+-	.owner = THIS_MODULE
++	.owner = THIS_MODULE,
++	.llseek = default_llseek,
+ };
+ 
+ static void ath_rate_add_sta_debugfs(void *priv, void *priv_sta,
+-- 
+1.7.1
