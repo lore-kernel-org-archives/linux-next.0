@@ -1,35 +1,65 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH -next] pch_can: depends on PCI
-Date: Mon, 25 Oct 2010 16:47:47 -0700 (PDT)
-Message-ID: <20101025.164747.189713145.davem@davemloft.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for October 25 (coda)
+Date: Tue, 26 Oct 2010 10:52:39 +1100
+Message-ID: <20101026105239.e3866312.sfr@canb.auug.org.au>
 References: <20101025145834.9b68e026.sfr@canb.auug.org.au>
-	<20101025162524.570fc82a.randy.dunlap@oracle.com>
+	<20101025163339.a2ffca49.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__26_Oct_2010_10_52_39_+1100_EvEeHx=3oeWDMo/O"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:52732
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1757170Ab0JYXrY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 25 Oct 2010 19:47:24 -0400
-In-Reply-To: <20101025162524.570fc82a.randy.dunlap@oracle.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:47065 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757170Ab0JYXwr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 25 Oct 2010 19:52:47 -0400
+In-Reply-To: <20101025163339.a2ffca49.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: randy.dunlap@oracle.com
-Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: coda@cs.cmu.edu, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Date: Mon, 25 Oct 2010 16:25:24 -0700
+--Signature=_Tue__26_Oct_2010_10_52_39_+1100_EvEeHx=3oeWDMo/O
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> Fix pch_can build when CONFIG_PCI is not enabled.  It uses pci interfaces
-> and data structures, so it should depend on PCI.
-> 
-> drivers/net/can/pch_can.c:1044: error: implicit declaration of function 'pci_enable_msi'
-> drivers/net/can/pch_can.c:1079: error: implicit declaration of function 'pci_disable_msi'
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Hi Randy,
 
-Applied, thanks Randy.
+On Mon, 25 Oct 2010 16:33:39 -0700 Randy Dunlap <randy.dunlap@oracle.com> w=
+rote:
+>
+> The coda BKL fixes (git tree) are not in here yet, right?
+
+I have no coda tree in linux-next (hint, hint :-)).  However, there were
+a few coda patches went into Linus' tree overnight (my time).
+
+> fs/coda/* currently has 12 warnings like these:
+>=20
+> fs/coda/psdev.c:140: error: implicit declaration of function 'lock_kernel'
+> fs/coda/psdev.c:142: error: implicit declaration of function 'unlock_kern=
+el'
+
+Hopefully these are fixed today by the above commits?
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__26_Oct_2010_10_52_39_+1100_EvEeHx=3oeWDMo/O
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMxhhHAAoJEDMEi1NhKgbsLvcH/AiWQvTr7JSOVDQ5dG7JBekx
+P8y+I+rmfboZo8caQ5lv55y9OTIbfkVAj/qid3LFLXQ+14buoXhCaMe1by8eBRXV
+faBP5WFuijQZ5CQkw9U5NlmascTq1CFO73LLs2Pler29X7emhPdOKo9GPTwcajZo
+MO495R8DUTEXUrjDs+xrN7E6o7EJym7ielGLlAKmzrCsXvA+sUcSa8lHzTo9V49C
+dyX16hS58XQKI7v4N4qx1ATLDjPPHJrlV9Glxo8U4oyY+zTsiL/ZV1hP83DTRYsG
+FrlvAOCDIqpauhcWZEy5zEck0Zw6k/D7D8D1GAAtjmayEdSVwmCifQr97+np0HA=
+=aXwr
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__26_Oct_2010_10_52_39_+1100_EvEeHx=3oeWDMo/O--
