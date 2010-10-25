@@ -1,63 +1,41 @@
-From: Ian Campbell <Ian.Campbell@eu.citrix.com>
-Subject: Re: linux-next: build failure after merge of the xen
-	tree
-Date: Mon, 25 Oct 2010 09:38:26 +0100
-Message-ID: <1287995906.11851.14219.camel@zakaz.uk.xensource.com>
-References: <20101025133021.53649fd1.sfr@canb.auug.org.au>
+From: Michal Marek <mmarek@suse.cz>
+Subject: Re: linux-next: Tree for October 20
+Date: Mon, 25 Oct 2010 10:47:51 +0200
+Message-ID: <4CC54437.8050607@suse.cz>
+References: <20101020162053.5595e1bf.sfr@canb.auug.org.au> <20101021130925.GA32548@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <xen-devel-bounces@lists.xensource.com>
-In-Reply-To: <20101025133021.53649fd1.sfr@canb.auug.org.au>
-List-Unsubscribe: <http://lists.xensource.com/mailman/listinfo/xen-devel>,
-	<mailto:xen-devel-request@lists.xensource.com?subject=unsubscribe>
-List-Post: <mailto:xen-devel@lists.xensource.com>
-List-Help: <mailto:xen-devel-request@lists.xensource.com?subject=help>
-List-Subscribe: <http://lists.xensource.com/mailman/listinfo/xen-devel>,
-	<mailto:xen-devel-request@lists.xensource.com?subject=subscribe>
-Sender: xen-devel-bounces@lists.xensource.com
-Errors-To: xen-devel-bounces@lists.xensource.com
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jeremy Fitzhardinge <jeremy@goop.org>, Xen Devel <Xen-devel@lists.xensource.com>, Stefano Stabellini <Stefano.Stabellini@eu.citrix.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from cantor2.suse.de ([195.135.220.15]:49346 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753898Ab0JYIru (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 25 Oct 2010 04:47:50 -0400
+In-Reply-To: <20101021130925.GA32548@infradead.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Mon, 2010-10-25 at 03:30 +0100, Stephen Rothwell wrote:
-> Hi all,
+On 21.10.2010 15:09, Christoph Hellwig wrote:
+> I can't even get the required userspace code make oldconfig to compile:
 > 
-> After merging the xen tree, today's linux-next build (s86_64 allmodconfig)
-> failed like this:
-> 
-> arch/x86/xen/setup.c: In function 'xen_memory_setup':
-> arch/x86/xen/setup.c:161: error: implicit declaration of function 'xen_initial_domain'
-> 
-> Caused by commit 9e9a5fcb04e3af077d1be32710298b852210d93f ("xen: use host
-> E820 map for dom0").  See Rule 1 from Documentation/SubmitChecklist.
-> 
-> I have used the xen tree from next-20101021 for today (due to the complex
-> conflict in Friday's tree).
+> hch@brick:~/work/linux-2.6/obj-kvm$ make oldconfig
+> make -C /home/hch/work/linux-2.6 O=/home/hch/work/linux-2.6/obj-kvm/. oldconfig
+>   GEN     /home/hch/work/linux-2.6/obj-kvm/Makefile
+>   HOSTCC  scripts/kconfig/zconf.tab.o
+> In file included from scripts/kconfig/zconf.tab.c:2481:
+> scripts/kconfig/lex.zconf.c:2425: error: conflicting types for 'zconf_curname'
+> /home/hch/work/linux-2.6/scripts/kconfig/lkc.h:79: note: previous declaration of 'zconf_curname' was here
+> scripts/kconfig/lex.zconf.c: In function 'zconf_curname':
+> scripts/kconfig/lex.zconf.c:2427: warning: return discards qualifiers from pointer target type
 
-Sorry about that, there was a missing #include which was hidden for me
-by a change in the swiotlb-xen tree (d8e0420603cf "xen: define
-BIOVEC_PHYS_MERGEABLE()", FWIW). We shouldn't be relying on indirect
-includes in that way so:
+The zconf_curname() prototype was changed in 2e7a091 and the
+scripts/kconfig/lex.zconf.c_shipped file was updated as well. What
+probably happened is that you ended up using an updated
+scripts/kconfig/lkc.h header versus an old version of
+scripts/kconfig/lex.zconf.c. Ie. the rule that copies
+scripts/kconfig/lex.zconf.c_shipped to scripts/kconfig/lex.zconf.c did
+not trigger, very strange. I'll look further.
 
-8<-----
-
-Subject: xen: include xen/xen.h for definition of xen_initial_domain()
-
-          CC      arch/x86/xen/setup.o
-        arch/x86/xen/setup.c: In function 'xen_memory_setup':
-        arch/x86/xen/setup.c:161: error: implicit declaration of function 'xen_initial_domain'
-
-Signed-off-by: Ian Campbell <ian.campbell@citrix.com>
-
---- arch/x86/xen/setup.c.orig	2010-10-25 09:31:42.000000000 +0100
-+++ arch/x86/xen/setup.c	2010-10-25 09:31:49.000000000 +0100
-@@ -18,6 +18,7 @@
- #include <asm/xen/hypervisor.h>
- #include <asm/xen/hypercall.h>
- 
-+#include <xen/xen.h>
- #include <xen/page.h>
- #include <xen/interface/callback.h>
- #include <xen/interface/memory.h>
+Michal
