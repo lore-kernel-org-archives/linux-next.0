@@ -1,50 +1,63 @@
-From: Jean Delvare <khali@linux-fr.org>
-Subject: Re: linux-next: error importing i2c quilt series
-Date: Mon, 25 Oct 2010 10:34:04 +0200
-Message-ID: <20101025103404.73c24f45@endymion.delvare>
-References: <20101025105900.83472a69.sfr@canb.auug.org.au>
+From: Ian Campbell <Ian.Campbell@eu.citrix.com>
+Subject: Re: linux-next: build failure after merge of the xen
+	tree
+Date: Mon, 25 Oct 2010 09:38:26 +0100
+Message-ID: <1287995906.11851.14219.camel@zakaz.uk.xensource.com>
+References: <20101025133021.53649fd1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zone0.gcu-squad.org ([212.85.147.21]:4491 "EHLO
-	services.gcu-squad.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751434Ab0JYIeR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Oct 2010 04:34:17 -0400
-In-Reply-To: <20101025105900.83472a69.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Return-path: <xen-devel-bounces@lists.xensource.com>
+In-Reply-To: <20101025133021.53649fd1.sfr@canb.auug.org.au>
+List-Unsubscribe: <http://lists.xensource.com/mailman/listinfo/xen-devel>,
+	<mailto:xen-devel-request@lists.xensource.com?subject=unsubscribe>
+List-Post: <mailto:xen-devel@lists.xensource.com>
+List-Help: <mailto:xen-devel-request@lists.xensource.com?subject=help>
+List-Subscribe: <http://lists.xensource.com/mailman/listinfo/xen-devel>,
+	<mailto:xen-devel-request@lists.xensource.com?subject=subscribe>
+Sender: xen-devel-bounces@lists.xensource.com
+Errors-To: xen-devel-bounces@lists.xensource.com
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: Jeremy Fitzhardinge <jeremy@goop.org>, Xen Devel <Xen-devel@lists.xensource.com>, Stefano Stabellini <Stefano.Stabellini@eu.citrix.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
-
-On Mon, 25 Oct 2010 10:59:00 +1100, Stephen Rothwell wrote:
-> Hi Jean,
+On Mon, 2010-10-25 at 03:30 +0100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Trying to import today's i2c quilt series gave me these errors:
+> After merging the xen tree, today's linux-next build (s86_64 allmodconfig)
+> failed like this:
 > 
-> i2c-i801-add-intel-patsburg-device-id.patch
-> error: patch failed: include/linux/pci_ids.h:2444
-> error: include/linux/pci_ids.h: patch does not apply
-> Context reduced to (1/1) to apply fragment at 101
-> Context reduced to (1/1) to apply fragment at 45
-> error: patch failed: drivers/i2c/busses/i2c-i801.c:592
-> error: drivers/i2c/busses/i2c-i801.c: patch does not apply
+> arch/x86/xen/setup.c: In function 'xen_memory_setup':
+> arch/x86/xen/setup.c:161: error: implicit declaration of function 'xen_initial_domain'
 > 
-> I will use the i2c tree from next-20101022 for today.
+> Caused by commit 9e9a5fcb04e3af077d1be32710298b852210d93f ("xen: use host
+> E820 map for dom0").  See Rule 1 from Documentation/SubmitChecklist.
+> 
+> I have used the xen tree from next-20101021 for today (due to the complex
+> conflict in Friday's tree).
 
-This patch depends on a patch adding/updating PCI IDs which I thought
-was in Jesse Barnes' pci tree which you also pull in linux-next.
-Apparently my assumption was wrong.
+Sorry about that, there was a missing #include which was hidden for me
+by a change in the swiotlb-xen tree (d8e0420603cf "xen: define
+BIOVEC_PHYS_MERGEABLE()", FWIW). We shouldn't be relying on indirect
+includes in that way so:
 
-Jesse, where's this patch?
-  https://patchwork.kernel.org/patch/230361/
-I certainly hope it's scheduled for merge soon!
+8<-----
 
-Meanwhile I've removed the other patch from my i2c-next tree, it will
-be back only when I'm certain it applied fine.
+Subject: xen: include xen/xen.h for definition of xen_initial_domain()
 
-Thanks,
--- 
-Jean Delvare
+          CC      arch/x86/xen/setup.o
+        arch/x86/xen/setup.c: In function 'xen_memory_setup':
+        arch/x86/xen/setup.c:161: error: implicit declaration of function 'xen_initial_domain'
+
+Signed-off-by: Ian Campbell <ian.campbell@citrix.com>
+
+--- arch/x86/xen/setup.c.orig	2010-10-25 09:31:42.000000000 +0100
++++ arch/x86/xen/setup.c	2010-10-25 09:31:49.000000000 +0100
+@@ -18,6 +18,7 @@
+ #include <asm/xen/hypervisor.h>
+ #include <asm/xen/hypercall.h>
+ 
++#include <xen/xen.h>
+ #include <xen/page.h>
+ #include <xen/interface/callback.h>
+ #include <xen/interface/memory.h>
