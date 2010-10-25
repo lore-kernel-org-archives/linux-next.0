@@ -1,26 +1,33 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the final tree
- (net-current tree related)
-Date: Sun, 24 Oct 2010 22:26:02 -0700 (PDT)
-Message-ID: <20101024.222602.71095343.davem@davemloft.net>
-References: <20101025141956.d8f0888f.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: build warning in Linus'  tree
+Date: Mon, 25 Oct 2010 08:36:05 +0200
+Message-ID: <20101025063605.GA4040@elte.hu>
+References: <20101025115736.41d51abe.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20101025141956.d8f0888f.sfr@canb.auug.org.au>
+Content-Disposition: inline
+In-Reply-To: <20101025115736.41d51abe.sfr@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, shemminger@vyatta.com, jchapman@katalix.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linus <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Robert Richter <robert.richter@amd.com>
 List-Id: linux-next.vger.kernel.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 25 Oct 2010 14:19:56 +1100
 
-> I wish doing that caused a build failure on other architectures ...
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Me too :-/
+> Hi all,
+> 
+> In building Linus' tree, today's linux-next build (x86_64 allmodconfig)
+> produced this warning:
+> 
+> arch/x86/oprofile/op_model_amd.c: In function 'ibs_eilvt_valid':
+> arch/x86/oprofile/op_model_amd.c:289: warning: 'offset' may be used uninitialized in this function
+> 
+> .. and indeed it may be.
 
-> Subject: [PATCH] l2tp: static functions should not be exported
+Yep, that looks bogus. I've queued up the fix.
 
-I'll add this thanks Stephen.
+Thanks,
+
+	Ingo
