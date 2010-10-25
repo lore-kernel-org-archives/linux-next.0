@@ -1,72 +1,57 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Jean Delvare <khali@linux-fr.org>
 Subject: Re: linux-next: error importing i2c quilt series
-Date: Mon, 25 Oct 2010 19:53:49 +1100
-Message-ID: <20101025195349.f5ac62eb.sfr@canb.auug.org.au>
+Date: Mon, 25 Oct 2010 11:25:19 +0200
+Message-ID: <20101025112519.5d932562@endymion.delvare>
 References: <20101025105900.83472a69.sfr@canb.auug.org.au>
 	<20101025103404.73c24f45@endymion.delvare>
+	<20101025195349.f5ac62eb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__25_Oct_2010_19_53_49_+1100_CXlm2./E65s.neWm"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48417 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751884Ab0JYIx6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 25 Oct 2010 04:53:58 -0400
-In-Reply-To: <20101025103404.73c24f45@endymion.delvare>
+Received: from zone0.gcu-squad.org ([212.85.147.21]:28116 "EHLO
+	services.gcu-squad.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753372Ab0JYJZ1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Oct 2010 05:25:27 -0400
+In-Reply-To: <20101025195349.f5ac62eb.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jean Delvare <khali@linux-fr.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jesse Barnes <jbarnes@virtuousgeek.org>
 
---Signature=_Mon__25_Oct_2010_19_53_49_+1100_CXlm2./E65s.neWm
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 25 Oct 2010 19:53:49 +1100, Stephen Rothwell wrote:
+> Hi Jean,
+> 
+> On Mon, 25 Oct 2010 10:34:04 +0200 Jean Delvare <khali@linux-fr.org> wrote:
+> >
+> > This patch depends on a patch adding/updating PCI IDs which I thought
+> > was in Jesse Barnes' pci tree which you also pull in linux-next.
+> > Apparently my assumption was wrong.
+> 
+> Your series file says that your series is based on 2.6.36-git5, not
+> Jesse's pci tree.  You can add:
+> 
+> # NEXT-BASE pci
+> 
+> to your series file to force me to import your series on top of Jesse's
+> tree instead of 2.6.36-rc5.
 
-Hi Jean,
+I thought it was NEXT_BASE, with an underscore not dash?
 
-On Mon, 25 Oct 2010 10:34:04 +0200 Jean Delvare <khali@linux-fr.org> wrote:
->
-> This patch depends on a patch adding/updating PCI IDs which I thought
-> was in Jesse Barnes' pci tree which you also pull in linux-next.
-> Apparently my assumption was wrong.
+And I also expected the trees to be merged in the order shows in:
+http://git.kernel.org/?p=linux/kernel/git/sfr/linux-next.git;a=blob;f=Next/Trees;hb=HEAD
 
-Your series file says that your series is based on 2.6.36-git5, not
-Jesse's pci tree.  You can add:
+As pci is listed before i2c, I (wrongly) concluded that everything
+would be fine even without using NEXT_BASE. I stand corrected.
 
-# NEXT-BASE pci
+> > Jesse, where's this patch?
+> >   https://patchwork.kernel.org/patch/230361/
+> > I certainly hope it's scheduled for merge soon!
+> > 
+> > Meanwhile I've removed the other patch from my i2c-next tree, it will
+> > be back only when I'm certain it applied fine.
+> 
+> OK, thanks
 
-to your series file to force me to import your series on top of Jesse's
-tree instead of 2.6.36-rc5.
-
-> Jesse, where's this patch?
->   https://patchwork.kernel.org/patch/230361/
-> I certainly hope it's scheduled for merge soon!
->=20
-> Meanwhile I've removed the other patch from my i2c-next tree, it will
-> be back only when I'm certain it applied fine.
-
-OK, thanks
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__25_Oct_2010_19_53_49_+1100_CXlm2./E65s.neWm
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMxUWdAAoJEDMEi1NhKgbskTMH/25DsYpqv103XjfwozsgJSYa
-NuZYIBEtcc0gWRCjeSSVXhkRTg+7bS3X4+9DOEhW5LeJSoL60/dpZ1Cvnx5JkObZ
-0IhC1gV1KkVdLVmxHVWh+ib1hKmYjlzUw9o4Awu+icuO/Tpq/IwQekqp+IeUcjhC
-K+yV+7gvVn8HJwBuzkskT1F98z2wFbFJWY0Mb9DXycdtsvlmRpUTHe2P5fviIdqL
-1YrS8YiRwGxN1DJB67LY161vBeS4uNdn7BlLpRNQhwT8reu7111OgojVHJOf5dRU
-ThJTAqzgFiCez1VxDoT/B3h9xm9theIl1gEqx/7FCNukFdYxnv2Dw/Xp5HcNgaw=
-=xSS/
------END PGP SIGNATURE-----
-
---Signature=_Mon__25_Oct_2010_19_53_49_+1100_CXlm2./E65s.neWm--
+-- 
+Jean Delvare
