@@ -1,40 +1,45 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: Tree for October 25 (netfilter/nf_conntrack_reasm)
-Date: Mon, 25 Oct 2010 22:03:16 -0700 (PDT)
-Message-ID: <20101025.220316.39174493.davem@davemloft.net>
-References: <20101025145834.9b68e026.sfr@canb.auug.org.au>
-	<20101025165529.9cedfeac.randy.dunlap@oracle.com>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: Tree for October 6
+Date: Tue, 26 Oct 2010 10:08:22 +0200
+Message-ID: <20101026080822.GA10520@elte.hu>
+References: <20101006163632.c1943a38.sfr@canb.auug.org.au>
+ <AANLkTimb2NxXcfj-o=F18S1u2rn-o851F+1sgQ_2uOVQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:32954
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751045Ab0JZFCx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 26 Oct 2010 01:02:53 -0400
-In-Reply-To: <20101025165529.9cedfeac.randy.dunlap@oracle.com>
+Received: from mx3.mail.elte.hu ([157.181.1.138]:57949 "EHLO mx3.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751361Ab0JZIJI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 26 Oct 2010 04:09:08 -0400
+Content-Disposition: inline
+In-Reply-To: <AANLkTimb2NxXcfj-o=F18S1u2rn-o851F+1sgQ_2uOVQ@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: randy.dunlap@oracle.com
-Cc: sfr@canb.auug.org.au, netfilter-devel@vger.kernel.org, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Zimny Lech <napohybelskurwysynom2010@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Trond Myklebust <Trond.Myklebust@netapp.com>, linux-nfs@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Date: Mon, 25 Oct 2010 16:55:29 -0700
 
-> On Mon, 25 Oct 2010 14:58:34 +1100 Stephen Rothwell wrote:
-> 
->> Hi all,
->> 
->> Reminder: do not add 2.6.38 destined stuff to linux-next until after
->> 2.6.37-rc1 is released.
-> 
-> net/ipv6/netfilter/nf_conntrack_reasm.c:628: error: 'nf_ct_frag6_sysctl_header' undeclared (first use in this function)
-> net/ipv6/netfilter/nf_conntrack_reasm.c:628: error: 'nf_net_netfilter_sysctl_path' undeclared (first use in this function)
-> net/ipv6/netfilter/nf_conntrack_reasm.c:629: error: 'nf_ct_frag6_sysctl_table' undeclared (first use in this function)
-> net/ipv6/netfilter/nf_conntrack_reasm.c:640: error: 'nf_ct_frag6_sysctl_header' undeclared (first use in this function)
-> 
-> 
-> config file is attached.
+* Zimny Lech <napohybelskurwysynom2010@gmail.com> wrote:
 
-Should also be fixed by the commit I just pointed you to.
+> 2010/10/6 Stephen Rothwell <sfr@canb.auug.org.au>:
+> > Hi all,
+> >
+> > Changes since 20101005:
+> 
+> It looka like a bug or a beetle or something like that
+> 
+> /home/test/linux-2.6/fs/nfs/nfsroot.c: In function 'nfs_root_debug':
+> /home/test/linux-2.6/fs/nfs/nfsroot.c:110:2: error: 'nfs_debug'
+> undeclared (first use in this function)
+> /home/test/linux-2.6/fs/nfs/nfsroot.c:110:2: note: each undeclared
+> identifier is reported only once for each function it appears in
+> make[3]: *** [fs/nfs/nfsroot.o] Error 1
+> make[2]: *** [fs/nfs] Error 2
+> make[1]: *** [fs] Error 2
+> make: *** [sub-make] Error 2
+
+This build bug has now been pushed upstream and triggers rather easily. Trond?
+
+Thanks,
+
+	Ingo
