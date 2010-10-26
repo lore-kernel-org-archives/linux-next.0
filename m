@@ -1,45 +1,43 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: Tree for October 6
-Date: Tue, 26 Oct 2010 10:08:22 +0200
-Message-ID: <20101026080822.GA10520@elte.hu>
-References: <20101006163632.c1943a38.sfr@canb.auug.org.au>
- <AANLkTimb2NxXcfj-o=F18S1u2rn-o851F+1sgQ_2uOVQ@mail.gmail.com>
+From: David Woodhouse <dwmw2@infradead.org>
+Subject: Re: linux-next: build warnings after merge of the final tree (mtd
+ tree related)
+Date: Tue, 26 Oct 2010 09:51:48 +0100
+Message-ID: <1288083108.29264.14.camel@macbook.infradead.org>
+References: <20101026134959.86b807d1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:57949 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751361Ab0JZIJI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 26 Oct 2010 04:09:08 -0400
-Content-Disposition: inline
-In-Reply-To: <AANLkTimb2NxXcfj-o=F18S1u2rn-o851F+1sgQ_2uOVQ@mail.gmail.com>
+Received: from casper.infradead.org ([85.118.1.10]:36723 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750950Ab0JZIvw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 26 Oct 2010 04:51:52 -0400
+In-Reply-To: <20101026134959.86b807d1.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Zimny Lech <napohybelskurwysynom2010@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Trond Myklebust <Trond.Myklebust@netapp.com>, linux-nfs@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-
-* Zimny Lech <napohybelskurwysynom2010@gmail.com> wrote:
-
-> 2010/10/6 Stephen Rothwell <sfr@canb.auug.org.au>:
-> > Hi all,
-> >
-> > Changes since 20101005:
+On Tue, 2010-10-26 at 13:49 +1100, Stephen Rothwell wrote:
 > 
-> It looka like a bug or a beetle or something like that
-> 
-> /home/test/linux-2.6/fs/nfs/nfsroot.c: In function 'nfs_root_debug':
-> /home/test/linux-2.6/fs/nfs/nfsroot.c:110:2: error: 'nfs_debug'
-> undeclared (first use in this function)
-> /home/test/linux-2.6/fs/nfs/nfsroot.c:110:2: note: each undeclared
-> identifier is reported only once for each function it appears in
-> make[3]: *** [fs/nfs/nfsroot.o] Error 1
-> make[2]: *** [fs/nfs] Error 2
-> make[1]: *** [fs] Error 2
-> make: *** [sub-make] Error 2
+> I am not sure where these came from ... 
 
-This build bug has now been pushed upstream and triggers rather easily. Trond?
+It's a config issue. You have chosen to build NOR flash support.
 
-Thanks,
+NOR flash can be wired up many ways. It could be four 8-bit chips in
+parallel in a 32-bit bus, two 16-bit chips in a 32-bit bus, 2 8-bit
+chips in a 16-bit bus, one 16-bit chip in a 16-bus bus, etc...
 
-	Ingo
+You have elected to support *none* of those configurations. No NOR chip
+support can work.
+
+You don't get to choose individual geometry options unless you set
+CONFIG_MTD_ADV_OPTIONS -- by default you get a fully versatile driver
+which can cope with anything at runtime.
+
+I'll build a ppc44x_defconfig and work out what's going wrong. I'd
+expect this kind of thing with randconfig, but not a defconfig.
+
+-- 
+David Woodhouse                            Open Source Technology Centre
+David.Woodhouse@intel.com                              Intel Corporation
