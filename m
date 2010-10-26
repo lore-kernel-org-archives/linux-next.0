@@ -1,35 +1,39 @@
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: Re: linux-next: manual merge of the swiotlb-xen tree with the tip
- tree
-Date: Tue, 26 Oct 2010 10:47:28 -0400
-Message-ID: <20101026144728.GE9557@dumpdata.com>
-References: <20101026130332.002937e5.sfr@canb.auug.org.au>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: linux-next: build failure after merge of the scsi tree
+Date: Tue, 26 Oct 2010 10:50:08 -0500
+Message-ID: <1288108208.8283.116.camel@mulgrave.site>
+References: <20101026111944.9139ee1b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:62549 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752527Ab0JZOtz (ORCPT
-	<rfc822;<linux-next@vger.kernel.org>>);
-	Tue, 26 Oct 2010 10:49:55 -0400
-Content-Disposition: inline
-In-Reply-To: <20101026130332.002937e5.sfr@canb.auug.org.au>
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:47207 "EHLO
+	bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751123Ab0JZPuK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 26 Oct 2010 11:50:10 -0400
+In-Reply-To: <20101026111944.9139ee1b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Dirk Brandewie <dirk.j.brandewie@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Smart <james.smart@emulex.com>, Alex Iannicelli <alex.iannicelli@emulex.com>
 
-On Tue, Oct 26, 2010 at 01:03:32PM +1100, Stephen Rothwell wrote:
-> Hi Konrad,
+On Tue, 2010-10-26 at 11:19 +1100, Stephen Rothwell wrote:
+> Hi James,
 > 
-> Today's linux-next merge of the swiotlb-xen tree got a conflict in
-> arch/x86/include/asm/io_apic.h between commit
-> 23f9b267159b4c7ff59d2e6c8ed31693eff841e3 ("x86: apic: Move
-> probe_nr_irqs_gsi() into ioapic_init_mappings()") from the tip tree and
-> commit 7b586d71858091f0958e5808b7e3d5390c2ae47d ("x86/io_apic: add
-> get_nr_irqs_gsi()") from the swiotlb-xen tree.
+> After merging the scsi tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
 > 
-> Just context changes. I fixed it up (see below) and can carry the fix as
-> necessary.
+> drivers/scsi/lpfc/lpfc_hbadisc.c: In function 'lpfc_mbx_cmpl_fcf_rr_read_fcf_rec':
+> drivers/scsi/lpfc/lpfc_hbadisc.c:2332: error: implicit declaration of function 'msleep'
+> 
+> Caused by commit 2c09c56c0967ff6a0974ebe2b03da39b26073dd0 ("[SCSI] lpfc
+> 8.3.18: Add logic to detect last devloss timeout").
+> 
+> I have used the scsi tree from next-20101025 for today.
 
-Thank you.
+I've fixed this up in scsi-misc (by adding an explicit delay.h to
+lpfc_hbadisc.c).  So hopefully the scsi branch should work for the next
+build.
+
+James
