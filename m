@@ -1,58 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the scsi tree
-Date: Tue, 26 Oct 2010 11:19:44 +1100
-Message-ID: <20101026111944.9139ee1b.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the mtd tree with Linus' tree
+Date: Tue, 26 Oct 2010 11:32:13 +1100
+Message-ID: <20101026113213.1faaf8a1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__26_Oct_2010_11_19_44_+1100_uchaXu7I6kw5gz_h"
+ boundary="Signature=_Tue__26_Oct_2010_11_32_13_+1100_g+fZmG692auiXyhh"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34480 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:48957 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751211Ab0JZATx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 25 Oct 2010 20:19:53 -0400
+	id S1751173Ab0JZAcU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 25 Oct 2010 20:32:20 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Smart <james.smart@emulex.com>, Alex Iannicelli <alex.iannicelli@emulex.com>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Maxim Levitsky <maximlevitsky@gmail.com>, Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
 
---Signature=_Tue__26_Oct_2010_11_19_44_+1100_uchaXu7I6kw5gz_h
+--Signature=_Tue__26_Oct_2010_11_32_13_+1100_g+fZmG692auiXyhh
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi James,
+Hi David,
 
-After merging the scsi tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the mtd tree got a conflict in
+drivers/mtd/mtd_blkdevs.c between commit
+2a48fc0ab24241755dc93bfd4f01d68efab47f5a ("block: autoconvert trivial BKL
+users to private mutex") from the  tree and commit
+480792b7bf188c29b8d4b10fee65c3a06ec5dbf7 ("mtd: blktrans: kill BKL") from
+the mtd tree.
 
-drivers/scsi/lpfc/lpfc_hbadisc.c: In function 'lpfc_mbx_cmpl_fcf_rr_read_fc=
-f_rec':
-drivers/scsi/lpfc/lpfc_hbadisc.c:2332: error: implicit declaration of funct=
-ion 'msleep'
-
-Caused by commit 2c09c56c0967ff6a0974ebe2b03da39b26073dd0 ("[SCSI] lpfc
-8.3.18: Add logic to detect last devloss timeout").
-
-I have used the scsi tree from next-20101025 for today.
+I fixed it up (by removing all the bits of the former commit) and can
+carry the fix as necessary.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__26_Oct_2010_11_19_44_+1100_uchaXu7I6kw5gz_h
+--Signature=_Tue__26_Oct_2010_11_32_13_+1100_g+fZmG692auiXyhh
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMxh6gAAoJEDMEi1NhKgbsVQYH/06ibO9YmfzS9fKVNT2R2wQn
-UPTfQEbDbABHPE7t5jfILlkJSc2aaNM0+Offe3FxpXUJ4fDK7LgHGvHuqkfi5jdD
-q6E6bkq3aJlDb4MALetN9hlTSz0e619O6tI3mOsRTbvElVyPLuqi35rT71pjBvVY
-z272nSbQTu3xbfwYAUl9ipsY9ciR7HAZHTbosTB/ROAZEeHW/SiaTSnDfD8pQUVt
-bT6lPuxWUpvD1d0D83V64k2QAfMGdbxF8CGQegpZLR1wIV7kKJyhS0Koq99Y5Afo
-1t2lsmBE9yCCeDrz3ehXNN4AzVhF8NMpSiJ0clJDne/sKOC4njhkA5r5Oy0+4go=
-=1dNA
+iQEcBAEBAgAGBQJMxiGNAAoJEDMEi1NhKgbsVkoH/2SeDD+LM1iKJY23V9kDzh/n
+qzhjxxuBQCeklUs52wAKlZMfFr8A3eAI3clJlABk/M1LnFX8pcAqIpbM9b6jmqtn
+TK7AJ1jCM3Nh6hw/bPACu+abWTDpUmeGnDasHlIBkWdGUVG//2DfmUyIpc3l+McD
+9OCkU4j2C8GEvw6EVaghN8lzffHv2/6BjsDo88UF3AYHpYfgstBB0+w7nxGknXz/
+Vfc2ankWEQ/hq1xhfujcGLdYH17c0hD1xOqkWJ1VRpKMmGsu9bVz39HsvwX/LG3a
+Y+JJUcYY6p9wdQVOE+2SnC+N0Bq8PjILYHk+GB8wHuqXDtyobNY0b86jqg3pbZM=
+=hzHA
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__26_Oct_2010_11_19_44_+1100_uchaXu7I6kw5gz_h--
+--Signature=_Tue__26_Oct_2010_11_32_13_+1100_g+fZmG692auiXyhh--
