@@ -1,55 +1,46 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mtd tree with Linus' tree
-Date: Tue, 26 Oct 2010 11:32:13 +1100
-Message-ID: <20101026113213.1faaf8a1.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the swiotlb-xen tree with the tip tree
+Date: Tue, 26 Oct 2010 13:03:32 +1100
+Message-ID: <20101026130332.002937e5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__26_Oct_2010_11_32_13_+1100_g+fZmG692auiXyhh"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48957 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:45841 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751173Ab0JZAcU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 25 Oct 2010 20:32:20 -0400
+	id S1755715Ab0JZCDj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 25 Oct 2010 22:03:39 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Maxim Levitsky <maximlevitsky@gmail.com>, Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Dirk Brandewie <dirk.j.brandewie@intel.com>
 
---Signature=_Tue__26_Oct_2010_11_32_13_+1100_g+fZmG692auiXyhh
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Konrad,
 
-Hi David,
+Today's linux-next merge of the swiotlb-xen tree got a conflict in
+arch/x86/include/asm/io_apic.h between commit
+23f9b267159b4c7ff59d2e6c8ed31693eff841e3 ("x86: apic: Move
+probe_nr_irqs_gsi() into ioapic_init_mappings()") from the tip tree and
+commit 7b586d71858091f0958e5808b7e3d5390c2ae47d ("x86/io_apic: add
+get_nr_irqs_gsi()") from the swiotlb-xen tree.
 
-Today's linux-next merge of the mtd tree got a conflict in
-drivers/mtd/mtd_blkdevs.c between commit
-2a48fc0ab24241755dc93bfd4f01d68efab47f5a ("block: autoconvert trivial BKL
-users to private mutex") from the  tree and commit
-480792b7bf188c29b8d4b10fee65c3a06ec5dbf7 ("mtd: blktrans: kill BKL") from
-the mtd tree.
-
-I fixed it up (by removing all the bits of the former commit) and can
-carry the fix as necessary.
---=20
+Just context changes. I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__26_Oct_2010_11_32_13_+1100_g+fZmG692auiXyhh
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMxiGNAAoJEDMEi1NhKgbsVkoH/2SeDD+LM1iKJY23V9kDzh/n
-qzhjxxuBQCeklUs52wAKlZMfFr8A3eAI3clJlABk/M1LnFX8pcAqIpbM9b6jmqtn
-TK7AJ1jCM3Nh6hw/bPACu+abWTDpUmeGnDasHlIBkWdGUVG//2DfmUyIpc3l+McD
-9OCkU4j2C8GEvw6EVaghN8lzffHv2/6BjsDo88UF3AYHpYfgstBB0+w7nxGknXz/
-Vfc2ankWEQ/hq1xhfujcGLdYH17c0hD1xOqkWJ1VRpKMmGsu9bVz39HsvwX/LG3a
-Y+JJUcYY6p9wdQVOE+2SnC+N0Bq8PjILYHk+GB8wHuqXDtyobNY0b86jqg3pbZM=
-=hzHA
------END PGP SIGNATURE-----
-
---Signature=_Tue__26_Oct_2010_11_32_13_+1100_g+fZmG692auiXyhh--
+diff --cc arch/x86/include/asm/io_apic.h
+index 240a0a5,a6b28d0..0000000
+--- a/arch/x86/include/asm/io_apic.h
++++ b/arch/x86/include/asm/io_apic.h
+@@@ -168,6 -168,9 +168,8 @@@ extern int save_IO_APIC_setup(struct IO
+  extern void mask_IO_APIC_setup(struct IO_APIC_route_entry **ioapic_entries);
+  extern int restore_IO_APIC_setup(struct IO_APIC_route_entry **ioapic_entries);
+  
+ -extern void probe_nr_irqs_gsi(void);
++ extern int get_nr_irqs_gsi(void);
++ 
+  extern void setup_ioapic_ids_from_mpc(void);
+  
+  struct mp_ioapic_gsi{
