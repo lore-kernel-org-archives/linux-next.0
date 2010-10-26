@@ -1,46 +1,91 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the swiotlb-xen tree with the tip tree
-Date: Tue, 26 Oct 2010 13:03:32 +1100
-Message-ID: <20101026130332.002937e5.sfr@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the final tree (mtd tree
+ related)
+Date: Tue, 26 Oct 2010 13:49:59 +1100
+Message-ID: <20101026134959.86b807d1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__26_Oct_2010_13_49_59_+1100_.BL933etPaTlW+kd"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45841 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:49795 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755715Ab0JZCDj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 25 Oct 2010 22:03:39 -0400
+	id S1757219Ab0JZCuH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 25 Oct 2010 22:50:07 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Dirk Brandewie <dirk.j.brandewie@intel.com>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Konrad,
+--Signature=_Tue__26_Oct_2010_13_49_59_+1100_.BL933etPaTlW+kd
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the swiotlb-xen tree got a conflict in
-arch/x86/include/asm/io_apic.h between commit
-23f9b267159b4c7ff59d2e6c8ed31693eff841e3 ("x86: apic: Move
-probe_nr_irqs_gsi() into ioapic_init_mappings()") from the tip tree and
-commit 7b586d71858091f0958e5808b7e3d5390c2ae47d ("x86/io_apic: add
-get_nr_irqs_gsi()") from the swiotlb-xen tree.
+Hi David,
 
-Just context changes. I fixed it up (see below) and can carry the fix as
-necessary.
--- 
+After merging the final tree, today's linux-next build (powerpc
+ppc44x_defconfig) produced these warnings:
+
+In file included from drivers/mtd/mtdchar.c:36:
+include/linux/mtd/map.h:145:2: warning: #warning "No CONFIG_MTD_MAP_BANK_WI=
+DTH_xx selected. No NOR chip support can work"
+In file included from drivers/mtd/chips/chipreg.c:11:
+include/linux/mtd/map.h:145:2: warning: #warning "No CONFIG_MTD_MAP_BANK_WI=
+DTH_xx selected. No NOR chip support can work"
+In file included from drivers/mtd/chips/cfi_probe.c:17:
+include/linux/mtd/map.h:145:2: warning: #warning "No CONFIG_MTD_MAP_BANK_WI=
+DTH_xx selected. No NOR chip support can work"
+In file included from drivers/mtd/chips/cfi_probe.c:18:
+include/linux/mtd/cfi.h:75:2: warning: #warning No CONFIG_MTD_CFI_Ix select=
+ed. No NOR chip support can work.
+In file included from drivers/mtd/maps/physmap_of.c:21:
+include/linux/mtd/map.h:145:2: warning: #warning "No CONFIG_MTD_MAP_BANK_WI=
+DTH_xx selected. No NOR chip support can work"
+In file included from drivers/mtd/chips/cfi_cmdset_0002.c:36:
+include/linux/mtd/map.h:145:2: warning: #warning "No CONFIG_MTD_MAP_BANK_WI=
+DTH_xx selected. No NOR chip support can work"
+In file included from drivers/mtd/chips/cfi_cmdset_0002.c:38:
+include/linux/mtd/cfi.h:75:2: warning: #warning No CONFIG_MTD_CFI_Ix select=
+ed. No NOR chip support can work.
+In file included from drivers/mtd/chips/cfi_util.c:23:
+include/linux/mtd/map.h:145:2: warning: #warning "No CONFIG_MTD_MAP_BANK_WI=
+DTH_xx selected. No NOR chip support can work"
+In file included from drivers/mtd/chips/cfi_util.c:24:
+include/linux/mtd/cfi.h:75:2: warning: #warning No CONFIG_MTD_CFI_Ix select=
+ed. No NOR chip support can work.
+In file included from drivers/mtd/chips/gen_probe.c:11:
+include/linux/mtd/map.h:145:2: warning: #warning "No CONFIG_MTD_MAP_BANK_WI=
+DTH_xx selected. No NOR chip support can work"
+In file included from drivers/mtd/chips/gen_probe.c:12:
+include/linux/mtd/cfi.h:75:2: warning: #warning No CONFIG_MTD_CFI_Ix select=
+ed. No NOR chip support can work.
+In file included from drivers/mtd/chips/jedec_probe.c:21:
+include/linux/mtd/map.h:145:2: warning: #warning "No CONFIG_MTD_MAP_BANK_WI=
+DTH_xx selected. No NOR chip support can work"
+In file included from drivers/mtd/chips/jedec_probe.c:22:
+include/linux/mtd/cfi.h:75:2: warning: #warning No CONFIG_MTD_CFI_Ix select=
+ed. No NOR chip support can work.
+
+I am not sure where these came from ...
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/x86/include/asm/io_apic.h
-index 240a0a5,a6b28d0..0000000
---- a/arch/x86/include/asm/io_apic.h
-+++ b/arch/x86/include/asm/io_apic.h
-@@@ -168,6 -168,9 +168,8 @@@ extern int save_IO_APIC_setup(struct IO
-  extern void mask_IO_APIC_setup(struct IO_APIC_route_entry **ioapic_entries);
-  extern int restore_IO_APIC_setup(struct IO_APIC_route_entry **ioapic_entries);
-  
- -extern void probe_nr_irqs_gsi(void);
-+ extern int get_nr_irqs_gsi(void);
-+ 
-  extern void setup_ioapic_ids_from_mpc(void);
-  
-  struct mp_ioapic_gsi{
+--Signature=_Tue__26_Oct_2010_13_49_59_+1100_.BL933etPaTlW+kd
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMxkHXAAoJEDMEi1NhKgbsOhQH/0JdXua643m66LXE3BhAIk7p
+1Ddgbrx4/ZGUnfdGhQZfL7i2O7F48jeyy5JZd4orgrZqUpKXA0IAE4abUd8+O2nb
+XuiwWwv4nVOepiiC60kkMpd+Ittl8klGMgjQxPuwKFg3i+jX7iAYb23vH81QDvTK
+Xve4ff02qohjgmOn1g3tel4gi3xJvWPmbG/XSaxn1dFbYvL57B+o+m+x65lYkSCP
+Aq8ljfZ9zaYubU2+uvPNEE/wIcegZukZFJeZm4Dq/9XNQg/0vi5k24Wje0k5uvTL
+rJtFs0yzEqpNXPT4f7+rMetktSHQy8eDXkw4LqIC3FU+fkeTE4usf0/21N+rUU4=
+=M/SV
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__26_Oct_2010_13_49_59_+1100_.BL933etPaTlW+kd--
