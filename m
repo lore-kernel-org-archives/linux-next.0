@@ -1,46 +1,40 @@
-From: H Hartley Sweeten <hartleys@visionengravers.com>
-Subject: RE: linux-next: build warnings after merge of the final tree (mtd
- tree related)
-Date: Tue, 26 Oct 2010 11:43:34 -0500
-Message-ID: <0D753D10438DA54287A00B027084269764818E2136@AUSP01VMBX24.collaborationhost.net>
-References: <20101026134959.86b807d1.sfr@canb.auug.org.au>
-	 <1288083108.29264.14.camel@macbook.infradead.org>
- <1288090180.29264.26.camel@macbook.infradead.org>
+From: Ingo Molnar <mingo-X9Un+BFzKDI@public.gmane.org>
+Subject: Re: linux-next: Tree for October 6
+Date: Tue, 26 Oct 2010 19:52:56 +0200
+Message-ID: <20101026175256.GA12141@elte.hu>
+References: <20101006163632.c1943a38.sfr@canb.auug.org.au>
+ <AANLkTimb2NxXcfj-o=F18S1u2rn-o851F+1sgQ_2uOVQ@mail.gmail.com>
+ <20101026080822.GA10520@elte.hu>
+ <1288096333.3123.9.camel@heimdal.trondhjem.org>
+ <20101026124113.GA10872@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from p01c12o148.mxlogic.net ([208.65.145.71]:45279 "EHLO
-	p01c12o148.mxlogic.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760082Ab0JZQxo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 26 Oct 2010 12:53:44 -0400
-In-Reply-To: <1288090180.29264.26.camel@macbook.infradead.org>
-Content-Language: en-US
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20101026124113.GA10872-X9Un+BFzKDI@public.gmane.org>
+Sender: linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Trond Myklebust <Trond.Myklebust-HgOvQuBEEgTQT0dZR+AlfA@public.gmane.org>
+Cc: Charles Edward Lever <Chuck.Lever-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Zimny Lech <napohybelskurwysynom2010-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Torvalds <torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-T24gVHVlc2RheSwgT2N0b2JlciAyNiwgMjAxMCAzOjUwIEFNLCBEYXZpZCBXb29kaG91c2Ugd3Jv
-dGU6DQo+IE9uIFR1ZSwgMjAxMC0xMC0yNiBhdCAwOTo1MSArMDEwMCwgRGF2aWQgV29vZGhvdXNl
-IHdyb3RlOg0KPj4gT24gVHVlLCAyMDEwLTEwLTI2IGF0IDEzOjQ5ICsxMTAwLCBTdGVwaGVuIFJv
-dGh3ZWxsIHdyb3RlOg0KPj4+IA0KPj4+IEkgYW0gbm90IHN1cmUgd2hlcmUgdGhlc2UgY2FtZSBm
-cm9tIC4uLiANCj4+IA0KPj4gSXQncyBhIGNvbmZpZyBpc3N1ZS4gWW91IGhhdmUgY2hvc2VuIHRv
-IGJ1aWxkIE5PUiBmbGFzaCBzdXBwb3J0Lg0KPj4gDQo+PiBOT1IgZmxhc2ggY2FuIGJlIHdpcmVk
-IHVwIG1hbnkgd2F5cy4gSXQgY291bGQgYmUgZm91ciA4LWJpdCBjaGlwcyBpbg0KPj4gcGFyYWxs
-ZWwgaW4gYSAzMi1iaXQgYnVzLCB0d28gMTYtYml0IGNoaXBzIGluIGEgMzItYml0IGJ1cywgMiA4
-LWJpdA0KPj4gY2hpcHMgaW4gYSAxNi1iaXQgYnVzLCBvbmUgMTYtYml0IGNoaXAgaW4gYSAxNi1i
-dXMgYnVzLCBldGMuLi4NCj4+IA0KPj4gWW91IGhhdmUgZWxlY3RlZCB0byBzdXBwb3J0ICpub25l
-KiBvZiB0aG9zZSBjb25maWd1cmF0aW9ucy4gTm8gTk9SIGNoaXANCj4+IHN1cHBvcnQgY2FuIHdv
-cmsuDQo+PiANCj4+IFlvdSBkb24ndCBnZXQgdG8gY2hvb3NlIGluZGl2aWR1YWwgZ2VvbWV0cnkg
-b3B0aW9ucyB1bmxlc3MgeW91IHNldA0KPj4gQ09ORklHX01URF9BRFZfT1BUSU9OUyAtLSBieSBk
-ZWZhdWx0IHlvdSBnZXQgYSBmdWxseSB2ZXJzYXRpbGUgZHJpdmVyDQo+PiB3aGljaCBjYW4gY29w
-ZSB3aXRoIGFueXRoaW5nIGF0IHJ1bnRpbWUuDQo+PiANCj4+IEknbGwgYnVpbGQgYSBwcGM0NHhf
-ZGVmY29uZmlnIGFuZCB3b3JrIG91dCB3aGF0J3MgZ29pbmcgd3JvbmcuIEknZA0KPj4gZXhwZWN0
-IHRoaXMga2luZCBvZiB0aGluZyB3aXRoIHJhbmRjb25maWcsIGJ1dCBub3QgYSBkZWZjb25maWcu
-DQo+DQo+IEZpeGVkIGJ5IHJldmVydGluZyB0aGUgb2ZmZW5kaW5nIGNvbW1pdDoNCj4gaHR0cDov
-L2dpdC5pbmZyYWRlYWQub3JnL210ZC0yLjYuZ2l0L2NvbW1pdGRpZmYvNjQxMWJmNmNkDQoNCkkg
-ZGlkbid0IGZvbGxvdyB0aGUgbG9naWMgZm9yIHRoZSBNVERfTUFQX0JBTktfV0lEVEhfKiBhbGwg
-dGhlIHdheSB0aHJ1Lg0KDQpIb25lc3RseSBJIHN0aWxsIGRvbid0IHF1aXRlIGdldCBpdC4gIElm
-IE1URF9DRklfR0VPTUVUUlkgaXMgbiB3b3VsZG4ndA0KYWxsIHRoZSBNVERfTUFQX0JBTktfV0lE
-VEhfKiBhbHNvIGJlIG4/DQoNClNvcnJ5IGFib3V0IHRoZSB0cm91YmxlLg0KDQpIYXJ0bGV5
+
+* Ingo Molnar <mingo-X9Un+BFzKDI@public.gmane.org> wrote:
+
+> 
+> * Trond Myklebust <Trond.Myklebust-HgOvQuBEEgTQT0dZR+AlfA@public.gmane.org> wrote:
+> 
+> > Anyhow, does the following fix the bug?
+> 
+> Thanks, trying it.
+
+It has done the trick.
+
+Tested-by: Ingo Molnar <mingo-X9Un+BFzKDI@public.gmane.org>
+
+Thanks,
+
+	Ingo
+--
+To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
