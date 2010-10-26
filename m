@@ -1,55 +1,58 @@
-From: Ingo Molnar <mingo@elte.hu>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: Tree for October 6
-Date: Tue, 26 Oct 2010 14:41:13 +0200
-Message-ID: <20101026124113.GA10872@elte.hu>
+Date: Tue, 26 Oct 2010 23:57:16 +1100
+Message-ID: <20101026235716.06c0fe3c.sfr@canb.auug.org.au>
 References: <20101006163632.c1943a38.sfr@canb.auug.org.au>
- <AANLkTimb2NxXcfj-o=F18S1u2rn-o851F+1sgQ_2uOVQ@mail.gmail.com>
- <20101026080822.GA10520@elte.hu>
- <1288096333.3123.9.camel@heimdal.trondhjem.org>
+	<AANLkTimb2NxXcfj-o=F18S1u2rn-o851F+1sgQ_2uOVQ@mail.gmail.com>
+	<20101026080822.GA10520@elte.hu>
+	<1288096333.3123.9.camel@heimdal.trondhjem.org>
+	<20101026124113.GA10872@elte.hu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__26_Oct_2010_23_57_16_+1100_6=oxbTPMBh_4nXaa"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mail.elte.hu ([157.181.151.9]:53199 "EHLO mx2.mail.elte.hu"
+Received: from chilli.pcug.org.au ([203.10.76.44]:33966 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759860Ab0JZMle (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 26 Oct 2010 08:41:34 -0400
-Content-Disposition: inline
-In-Reply-To: <1288096333.3123.9.camel@heimdal.trondhjem.org>
+	id S1751167Ab0JZM5Z (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 26 Oct 2010 08:57:25 -0400
+In-Reply-To: <20101026124113.GA10872@elte.hu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Trond Myklebust <Trond.Myklebust@netapp.com>
-Cc: Charles Edward Lever <Chuck.Lever@oracle.com>, Zimny Lech <napohybelskurwysynom2010@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-nfs@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
+To: Ingo Molnar <mingo@elte.hu>
+Cc: Trond Myklebust <Trond.Myklebust@netapp.com>, Charles Edward Lever <Chuck.Lever@oracle.com>, Zimny Lech <napohybelskurwysynom2010@gmail.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-nfs@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
 
+--Signature=_Tue__26_Oct_2010_23_57_16_+1100_6=oxbTPMBh_4nXaa
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-* Trond Myklebust <Trond.Myklebust@netapp.com> wrote:
+On Tue, 26 Oct 2010 14:41:13 +0200 Ingo Molnar <mingo@elte.hu> wrote:
+>
+>   Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-> Anyhow, does the following fix the bug?
+Actually
 
-Thanks, trying it.
+Reported-by: Zimny Lech <napohybelskurwysynom2010@gmail.com>
 
-> Stephen Rothwell reports:
-> 
-> > /home/test/linux-2.6/fs/nfs/nfsroot.c: In function 'nfs_root_debug':
-> > /home/test/linux-2.6/fs/nfs/nfsroot.c:110:2: error: 'nfs_debug'
-> > undeclared (first use in this function)
-> > /home/test/linux-2.6/fs/nfs/nfsroot.c:110:2: note: each undeclared
-> > identifier is reported only once for each function it appears in
-> > make[3]: *** [fs/nfs/nfsroot.o] Error 1
-> > make[2]: *** [fs/nfs] Error 2
-> > make[1]: *** [fs] Error 2
-> > make: *** [sub-make] Error 2
-> 
-> Which is caused by commit 306a075362a288683f6346185f97dd0e06df19da
-> (NFS: Allow NFSROOT debugging messages to be enabled dynamically)
-> 
-> Fix is to disable this code when RPC_DEBUG is disabled.
-> 
-> Signed-off-by: Trond Myklebust <Trond.Myklebust@netapp.com>
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-The commit also needs this tag:
+--Signature=_Tue__26_Oct_2010_23_57_16_+1100_6=oxbTPMBh_4nXaa
+Content-Type: application/pgp-signature
 
-  Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-Thanks,
+iQEcBAEBAgAGBQJMxtAsAAoJEDMEi1NhKgbsnOAH/jjGBEwkC18GBDcCNocPBKjq
+Efz59FJRuTA06+wgAUredbNL3/FLewG6ZyWrxHaCOaZdzzF6s5N62shDwUFgQI2r
+WFv9Mdw0cXzbNTSDpasT12YAEY5teBPJrgYOex9CpGcJ13OKUAbIcRL+H/rLTidX
+Xjl/06tQsnjK+bBqBsbgoE+ZKwfWO5UesXvu1r5Cy7q1qtc4I14glgdwA2QLuLyW
+/TnJKRWQRLArFzrZtcMv2fc+1XqXPbOCCXoZNqHoj7i7QHoRDT/z1kq5VbZNv93F
+YS0/6tqymR4502Cv7HnIYlYDqZbSr93XLd4mVP14P9pzvtLnWOuNqD3rdJikyd4=
+=oE9y
+-----END PGP SIGNATURE-----
 
-	Ingo
+--Signature=_Tue__26_Oct_2010_23_57_16_+1100_6=oxbTPMBh_4nXaa--
