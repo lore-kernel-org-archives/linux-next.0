@@ -1,49 +1,71 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build warning after merge of the final tree (tty
-	tree related)
-Date: Wed, 27 Oct 2010 07:11:53 -0700
-Message-ID: <20101027141153.GC24938@kroah.com>
-References: <20100927153151.9bf66022.sfr@canb.auug.org.au> <20101027110307.e754ef59.sfr@canb.auug.org.au> <20101027101127.6fd49417@linux.intel.com>
+From: Michal Marek <mmarek@suse.cz>
+Subject: Re: linux-next: Tree for October 20
+Date: Wed, 27 Oct 2010 23:20:01 +0200
+Message-ID: <4CC89781.4000309@suse.cz>
+References: <20101020162053.5595e1bf.sfr@canb.auug.org.au>	<20101021130925.GA32548@infradead.org>	<4CC54437.8050607@suse.cz> <AANLkTimO9X1i5pBV-9wQau45q6FLjoDbA0jG-DdNQtBT@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:38395 "EHLO coco.kroah.org"
+Received: from cantor.suse.de ([195.135.220.2]:58294 "EHLO mx1.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756706Ab0J0OMN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 27 Oct 2010 10:12:13 -0400
-Content-Disposition: inline
-In-Reply-To: <20101027101127.6fd49417@linux.intel.com>
+	id S1757158Ab0J0VT5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 27 Oct 2010 17:19:57 -0400
+In-Reply-To: <AANLkTimO9X1i5pBV-9wQau45q6FLjoDbA0jG-DdNQtBT@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alan Cox <alan@linux.intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Arnaud Lacombe <lacombar@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Zimny Lech <napohybelskurwysynom2010@gmail.com>
 
-On Wed, Oct 27, 2010 at 10:11:27AM +0100, Alan Cox wrote:
-> On Wed, 27 Oct 2010 11:03:07 +1100
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On 26.10.2010 18:22, Arnaud Lacombe wrote:
+> Hi,
 > 
-> > Hi Greg,
-> > 
-> > On Mon, 27 Sep 2010 15:31:51 +1000 Stephen Rothwell
-> > <sfr@canb.auug.org.au> wrote:
-> > >
-> > > After merging the final tree, today's linux-next build (x86_64
-> > > allmodconfig) produced this warning:
-> > > 
-> > > drivers/char/nozomi.c: In function 'ntty_ioctl':
-> > > drivers/char/nozomi.c:1831: warning: unused variable 'argp'
-> > > 
-> > > Introduced by commit dd612b1a8edb7fb3a117c388bfb520476e04ed18 ("tty:
-> > > icount changeover for other main devices").
-> > 
-> > This warning is now in Linus' tree ...
+> On Mon, Oct 25, 2010 at 4:47 AM, Michal Marek <mmarek@suse.cz> wrote:
+>> On 21.10.2010 15:09, Christoph Hellwig wrote:
+>>> I can't even get the required userspace code make oldconfig to compile:
+>>>
+>>> hch@brick:~/work/linux-2.6/obj-kvm$ make oldconfig
+>>> make -C /home/hch/work/linux-2.6 O=/home/hch/work/linux-2.6/obj-kvm/. oldconfig
+>>>   GEN     /home/hch/work/linux-2.6/obj-kvm/Makefile
+>>>   HOSTCC  scripts/kconfig/zconf.tab.o
+>>> In file included from scripts/kconfig/zconf.tab.c:2481:
+>>> scripts/kconfig/lex.zconf.c:2425: error: conflicting types for 'zconf_curname'
+>>> /home/hch/work/linux-2.6/scripts/kconfig/lkc.h:79: note: previous declaration of 'zconf_curname' was here
+>>> scripts/kconfig/lex.zconf.c: In function 'zconf_curname':
+>>> scripts/kconfig/lex.zconf.c:2427: warning: return discards qualifiers from pointer target type
+>>
+>> The zconf_curname() prototype was changed in 2e7a091 and the
+>> scripts/kconfig/lex.zconf.c_shipped file was updated as well. What
+>> probably happened is that you ended up using an updated
+>> scripts/kconfig/lkc.h header versus an old version of
+>> scripts/kconfig/lex.zconf.c. Ie. the rule that copies
+>> scripts/kconfig/lex.zconf.c_shipped to scripts/kconfig/lex.zconf.c did
+>> not trigger, very strange. I'll look further.
+>>
+> this is at least the third time there is such a report. I did
+> reproduce this issue while using an external build directory:
 > 
-> Already re-sent GregKH the fix. Guess it got eaten in the post last
-> time.
+> From what I remind:
+> 
+> % gmake menuconfig # generate lex.zconf.c
+> % gmake O=/foo menuconfig # generate lex.zconf.c
+> 
+> % touch scripts/kconfig/lex.zconf.c_shipped
+> 
+> % gmake menuconfig # re-generated lex.zconf.c
+> % gmake O=/foo menuconfig # did _not_ re-generate lex.zconf.c
 
-Sorry, yes, now got it, will pick it up tomorrow when I get back from
-vacation.
+OK, if you mix O= and non-O= builds then things can break in various
+ways. That's why the top-level Makefile tries to detect this and abort,
+unfortunately the check is not strict enough (it checks for the presence
+of include/config/kernel.release, which is not created yet when you run
+make *config). Christoph, is it possible that your case was the same,
+ie. that you had run make *config in the source tree before?
 
-thanks,
+In that case, I'd like to skip this bug for 2.6.37-rc1, because 1) it's
+a user error, 2) Linus shortened the merge window and last-minute
+changes to the top-level Makefile can cause more harm and good, 3) I
+have flu and I only check my mail occasionally this week, so the less
+stuff to deal with, the better :). I'll come up with a fix for -rc2 or so.
 
-greg k-h
+Michal
