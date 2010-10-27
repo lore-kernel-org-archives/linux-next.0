@@ -1,40 +1,55 @@
-From: Ingo Molnar <mingo-X9Un+BFzKDI@public.gmane.org>
-Subject: Re: linux-next: Tree for October 6
-Date: Tue, 26 Oct 2010 19:52:56 +0200
-Message-ID: <20101026175256.GA12141@elte.hu>
-References: <20101006163632.c1943a38.sfr@canb.auug.org.au>
- <AANLkTimb2NxXcfj-o=F18S1u2rn-o851F+1sgQ_2uOVQ@mail.gmail.com>
- <20101026080822.GA10520@elte.hu>
- <1288096333.3123.9.camel@heimdal.trondhjem.org>
- <20101026124113.GA10872@elte.hu>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning from Linus' tree
+Date: Wed, 27 Oct 2010 11:00:38 +1100
+Message-ID: <20101027110038.9f2ca56a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__27_Oct_2010_11_00_38_+1100_svuGtmATILk0pScz"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:58122 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753799Ab0J0AAt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 26 Oct 2010 20:00:49 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>
+
+--Signature=_Wed__27_Oct_2010_11_00_38_+1100_svuGtmATILk0pScz
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20101026124113.GA10872-X9Un+BFzKDI@public.gmane.org>
-Sender: linux-nfs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Trond Myklebust <Trond.Myklebust-HgOvQuBEEgTQT0dZR+AlfA@public.gmane.org>
-Cc: Charles Edward Lever <Chuck.Lever-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Zimny Lech <napohybelskurwysynom2010-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-nfs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Torvalds <torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
+Hi ,
 
-* Ingo Molnar <mingo-X9Un+BFzKDI@public.gmane.org> wrote:
+While building Linus' tree, today's linux-next build (x86_64 allmodconfig)
+produced this warning:
 
-> 
-> * Trond Myklebust <Trond.Myklebust-HgOvQuBEEgTQT0dZR+AlfA@public.gmane.org> wrote:
-> 
-> > Anyhow, does the following fix the bug?
-> 
-> Thanks, trying it.
+drivers/char/pcmcia/synclink_cs.c:2194: warning: 'mgslpc_get_icount' define=
+d but not used
 
-It has done the trick.
+Introduced by commit 0587102cf9f427c185bfdeb2cef41e13ee0264b1 ("tty:
+icount changeover for other main devices").
 
-Tested-by: Ingo Molnar <mingo-X9Un+BFzKDI@public.gmane.org>
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Thanks,
+--Signature=_Wed__27_Oct_2010_11_00_38_+1100_svuGtmATILk0pScz
+Content-Type: application/pgp-signature
 
-	Ingo
---
-To unsubscribe from this list: send the line "unsubscribe linux-nfs" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMx2umAAoJEDMEi1NhKgbsQ3UIAI59bXZhn4AeSyhr4LCH0647
+kXVH8uK7UfHK/fAqGTP3sSAic4Xnl4DDAlcaLKVP6MhqzIhDh93Dld89He8DNFlz
+/sNB+XoNVVnNKDgxBNaR9zwnfWgWxybb83nrnN19EW2+auRiX4ydy4sHVBrBlLD1
+vvAtibbYzXqhfaBR7s+ss/VSfY6fKOI8lFKKrj27wSgDY0xI7860UyAysCzji2Uv
+qmDTLtrK3dZX2o4boPbZlILW6VDcERcio9vhW3dMnyYNAQeNNSHH/99vrDUtDr8L
+4HPDMJtbAC3jcsq6J1W1QbyHdh/MihWiCnsY2eoaiEptNWdubGEw0GaZYZtYkdo=
+=3mq4
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__27_Oct_2010_11_00_38_+1100_svuGtmATILk0pScz--
