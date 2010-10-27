@@ -1,15 +1,15 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the xen tree with Linus' tree
-Date: Wed, 27 Oct 2010 12:00:54 +1100
-Message-ID: <20101027120054.249d1df5.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the xen tree
+Date: Wed, 27 Oct 2010 13:02:49 +1100
+Message-ID: <20101027130249.5b4bc6ff.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38073 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:51379 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1760755Ab0J0BBC (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 26 Oct 2010 21:01:02 -0400
+	id S1751454Ab0J0CCy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 26 Oct 2010 22:02:54 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Jeremy Fitzhardinge <jeremy@goop.org>, Xen Devel <Xen-devel@lists.xensource.com>
@@ -17,29 +17,48 @@ Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
 Hi all,
 
-Today's linux-next merge of the xen tree got a conflict in
-arch/x86/xen/mmu.c between commit
-fef5ba797991f9335bcfc295942b684f9bf613a1 ("xen: Cope with unmapped pages
-when initializing kernel pagetable") from Linus' tree and commit
-41f2e4771a4f1ba26c35438daf32917b9ef7858d ("xen: add support for PAT")
-from the xen tree.
+After merging the xen tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+arch/x86/xen/setup.c: In function 'xen_add_extra_mem':
+arch/x86/xen/setup.c:65: error: implicit declaration of function 'reserve_early'
+
+Caused by commit 42ee1471e9b879479a15debac752314a596c738e ("xen:
+implement "extra" memory to reserve space for pages not present at boot")
+interacting with commit a9ce6bc15100023b411f8117e53a016d61889800 ("x86,
+memblock: Replace e820_/_early string with memblock_").  This latter
+commit was in the xen tree yesterday (via a merge of tip/core/memblock)
+but has been removed today (but it is in Linus' tree).
+
+Linus will need this fixup patch when he merges the xen tree.  I have
+applied it to linux-next today and can carry it as necessary.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 27 Oct 2010 12:57:06 +1100
+Subject: [PATCH] xen: merge fixup for reserve_early name change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/x86/xen/setup.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/arch/x86/xen/setup.c b/arch/x86/xen/setup.c
+index 1163bc5..105db25 100644
+--- a/arch/x86/xen/setup.c
++++ b/arch/x86/xen/setup.c
+@@ -62,7 +62,7 @@ static __init void xen_add_extra_mem(unsigned long pages)
+ 	e820_add_region(extra_start, size, E820_RAM);
+ 	sanitize_e820_map(e820.map, ARRAY_SIZE(e820.map), &e820.nr_map);
+ 
+-	reserve_early(extra_start, extra_start + size, "XEN EXTRA");
++	memblock_x86_reserve_range(extra_start, extra_start + size, "XEN EXTRA");
+ 
+ 	xen_extra_mem_size += size;
+ 
+-- 
+1.7.2.3
+
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc arch/x86/xen/mmu.c
-index f72d18c,6ba8f8a..0000000
---- a/arch/x86/xen/mmu.c
-+++ b/arch/x86/xen/mmu.c
-@@@ -56,7 -55,7 +56,8 @@@
-  #include <asm/e820.h>
-  #include <asm/linkage.h>
-  #include <asm/page.h>
- +#include <asm/init.h>
-+ #include <asm/pat.h>
-  
-  #include <asm/xen/hypercall.h>
-  #include <asm/xen/hypervisor.h>
+http://www.canb.auug.org.au/~sfr/
