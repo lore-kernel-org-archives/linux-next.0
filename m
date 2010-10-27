@@ -1,62 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the final tree (tty
- tree related)
-Date: Wed, 27 Oct 2010 11:03:07 +1100
-Message-ID: <20101027110307.e754ef59.sfr@canb.auug.org.au>
-References: <20100927153151.9bf66022.sfr@canb.auug.org.au>
+Subject: linux-next: build warning from Linus' tree
+Date: Wed, 27 Oct 2010 11:29:04 +1100
+Message-ID: <20101027112904.461a0143.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__27_Oct_2010_11_03_07_+1100_vevi.uZmd01Qw2K5"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:37906 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1760584Ab0J0ADN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 26 Oct 2010 20:03:13 -0400
-In-Reply-To: <20100927153151.9bf66022.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>
+ boundary="Signature=_Wed__27_Oct_2010_11_29_04_+1100_fW4QsOLKUqgp1zYU"
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jesse Gross <jesse@nicira.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__27_Oct_2010_11_03_07_+1100_vevi.uZmd01Qw2K5
+--Signature=_Wed__27_Oct_2010_11_29_04_+1100_fW4QsOLKUqgp1zYU
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi all,
 
-On Mon, 27 Sep 2010 15:31:51 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the final tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
->=20
-> drivers/char/nozomi.c: In function 'ntty_ioctl':
-> drivers/char/nozomi.c:1831: warning: unused variable 'argp'
->=20
-> Introduced by commit dd612b1a8edb7fb3a117c388bfb520476e04ed18 ("tty:
-> icount changeover for other main devices").
+While building Linus' tree, today's linux-next build (x86_64 allmodconfig)
+produced this warning:
 
-This warning is now in Linus' tree ...
+drivers/net/igb/igb_main.c: In function 'igb_xmit_frame_ring_adv':
+drivers/net/igb/igb_main.c:4110: warning: unused variable 'adapter'
+
+Introduced by commit eab6d18d20fc5b5ba04a7e7fcd6f357197870e51 ("vlan:
+Don't check for vlan group before vlan_tx_tag_present").
+
+Sorry I didn't catch it earlier.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__27_Oct_2010_11_03_07_+1100_vevi.uZmd01Qw2K5
+--Signature=_Wed__27_Oct_2010_11_29_04_+1100_fW4QsOLKUqgp1zYU
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJMx2w7AAoJEDMEi1NhKgbsIwEIAJT8ixBzhy8rRXsV+yAZGtFi
-7UIlK4CtJIAz/nUzlui+GkCr15Dmr9NFuHs/MO0WpcxY1IphNrZqxbtM//oMkE82
-+fU2Jtckknv/YPKjKEd6NwNPvzOdH5m3mdHf4vEGKY4isujw+xSgL0plzJ91fb4/
-NvUkz9pTD+VczmyKTDsEAc2b4ClaOu5++HVkcwJkAGsQQA8jliSul3UTbYjHP2ZU
-jTag12vB0Wl+yqwaXBW0G/5RPA36k+VM5oWtWrky/HIBzFYN90v24xkd4pn4YDId
-4UOSNbCU87RBq0SImaOkfKza0+BhzvqZlJwQEsAt2aLRYXe2riT5B5VWDugG2/k=
-=dRDR
+iQEcBAEBAgAGBQJMx3JQAAoJEDMEi1NhKgbs8dwH+wV6qS5UGpXyJ7kh9kXC6HhG
+t1+HiFzeVmzhjc4gN76VOEfyntsd76mHCSarJHiC0HkRkj81Kcpd1k429oo+ZjkT
+e60XD6cwUNltw0oWfkvox8cQStJZva3seIbDfDAOkfGSbsITPF7swhhBRTdIu3IF
+G8unOc05OPL9HxlKlLZmX1TIclH1AuCBm4lMs2k0bELrCvPOaUILpbH00jo6fSxW
++RkRe2e9onWCyIVM62T3/yEdEbHdsxTuDV/kkryf6DNL+jDO9azY6UnePpmWdWr0
+sGcp2KYo2uJbYrcH1xCrBLuzWzdJ4nMU+CLMpHvc2X1DE1nfZV8J3jcnK4kGizo=
+=1+Ge
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__27_Oct_2010_11_03_07_+1100_vevi.uZmd01Qw2K5--
+--Signature=_Wed__27_Oct_2010_11_29_04_+1100_fW4QsOLKUqgp1zYU--
