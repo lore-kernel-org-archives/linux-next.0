@@ -1,58 +1,31 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the slab tree
-Date: Wed, 27 Oct 2010 11:33:41 +1100
-Message-ID: <20101027113341.e77169cc.sfr@canb.auug.org.au>
+From: Jesse Gross <jesse@nicira.com>
+Subject: Re: linux-next: build warning from Linus' tree
+Date: Tue, 26 Oct 2010 17:58:55 -0700
+Message-ID: <AANLkTimyUzz1Bf+FsYjoRdL80mCB83cq_qoBUupJJ92i@mail.gmail.com>
+References: <20101027112904.461a0143.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__27_Oct_2010_11_33_41_+1100_fXpFl.dkRsJtJ_h3"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36232 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1760660Ab0J0Adr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 26 Oct 2010 20:33:47 -0400
+Received: from mail-ww0-f44.google.com ([74.125.82.44]:44142 "EHLO
+	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760748Ab0J0A65 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 26 Oct 2010 20:58:57 -0400
+In-Reply-To: <20101027112904.461a0143.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Pekka Enberg <penberg@cs.helsinki.fi>, Christoph Lameter <cl@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Wed__27_Oct_2010_11_33_41_+1100_fXpFl.dkRsJtJ_h3
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Oct 26, 2010 at 5:29 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> While building Linus' tree, today's linux-next build (x86_64 allmodconfig)
+> produced this warning:
+>
+> drivers/net/igb/igb_main.c: In function 'igb_xmit_frame_ring_adv':
+> drivers/net/igb/igb_main.c:4110: warning: unused variable 'adapter'
+>
+> Introduced by commit eab6d18d20fc5b5ba04a7e7fcd6f357197870e51 ("vlan:
+> Don't check for vlan group before vlan_tx_tag_present").
 
-Hi all,
-
-After merging the slab tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
-
-gcc: /scratch/sfr/next/Documentation/vm/slabinfo.c: No such file or directo=
-ry
-gcc: no input files
-
-Caused by commit f5ac4916e9840292edd33c7a52b10364526547f3 ("slub: move
-slabinfo.c to tools/slub/slabinfo.c").  Missing update to
-Documentation/vm/Makefile?
-
-I have used the slab tree from next-20101026 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__27_Oct_2010_11_33_41_+1100_fXpFl.dkRsJtJ_h3
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJMx3NlAAoJEDMEi1NhKgbsjKkH/2LoUJ44X8p9f5W+XVcuQZRv
-205uQTuyWrtFJ61bSYL7aIdmyC0yLdXkj7B8bX6zg2YRrQP95X3C/qw5Y/Uj0iTK
-OaVPYT2XGaMQTdtVGmmdsuNhJTSQ7Sdl/t4lxfQFneE7r6tZK9mftmSWIF1V6uYa
-o620/hftl1TlOBKlrwYRgQKKSU8Sd6ZzCAMKKHBzWBxETIhiN+G2hsq23Zz88kOn
-y9ZKyF2XruTMM9G+JYl/ci2yvWXEocZAUksG4NHvIuaqcecgztDC35NHu6/hzBJo
-46PhDPGzzL27EfCDunlFgu7JxcQfRJOGyBoltNlHyjEPS84mI0M/lHmT6WWCTwY=
-=DNPG
------END PGP SIGNATURE-----
-
---Signature=_Wed__27_Oct_2010_11_33_41_+1100_fXpFl.dkRsJtJ_h3--
+Patch sent out to resolve this.
