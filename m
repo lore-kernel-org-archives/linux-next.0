@@ -1,71 +1,101 @@
-From: Michal Marek <mmarek@suse.cz>
-Subject: Re: linux-next: Tree for October 20
-Date: Wed, 27 Oct 2010 23:20:01 +0200
-Message-ID: <4CC89781.4000309@suse.cz>
-References: <20101020162053.5595e1bf.sfr@canb.auug.org.au>	<20101021130925.GA32548@infradead.org>	<4CC54437.8050607@suse.cz> <AANLkTimO9X1i5pBV-9wQau45q6FLjoDbA0jG-DdNQtBT@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warnings from Linus' tree
+Date: Thu, 28 Oct 2010 11:27:39 +1100
+Message-ID: <20101028112739.0f400818.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__28_Oct_2010_11_27_39_+1100_EUPa91qJ2eWSW.nN"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor.suse.de ([195.135.220.2]:58294 "EHLO mx1.suse.de"
+Received: from chilli.pcug.org.au ([203.10.76.44]:43835 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757158Ab0J0VT5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 27 Oct 2010 17:19:57 -0400
-In-Reply-To: <AANLkTimO9X1i5pBV-9wQau45q6FLjoDbA0jG-DdNQtBT@mail.gmail.com>
+	id S1751935Ab0J1A1s (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 27 Oct 2010 20:27:48 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnaud Lacombe <lacombar@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Zimny Lech <napohybelskurwysynom2010@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Sweta Bhatt <sweta.bhatt@einfochips.com>, Roland Dreier <rolandd@cisco.com>, Davide Rizzo <elpa.rizzo@gmail.com>, Michael Hennerich <michael.hennerich@analog.com>, Mike Frysinger <vapier@gentoo.org>, Richard Purdie <rpurdie@linux.intel.com>, Joseph Chan <JosephChan@via.com.tw>
 
-On 26.10.2010 18:22, Arnaud Lacombe wrote:
-> Hi,
-> 
-> On Mon, Oct 25, 2010 at 4:47 AM, Michal Marek <mmarek@suse.cz> wrote:
->> On 21.10.2010 15:09, Christoph Hellwig wrote:
->>> I can't even get the required userspace code make oldconfig to compile:
->>>
->>> hch@brick:~/work/linux-2.6/obj-kvm$ make oldconfig
->>> make -C /home/hch/work/linux-2.6 O=/home/hch/work/linux-2.6/obj-kvm/. oldconfig
->>>   GEN     /home/hch/work/linux-2.6/obj-kvm/Makefile
->>>   HOSTCC  scripts/kconfig/zconf.tab.o
->>> In file included from scripts/kconfig/zconf.tab.c:2481:
->>> scripts/kconfig/lex.zconf.c:2425: error: conflicting types for 'zconf_curname'
->>> /home/hch/work/linux-2.6/scripts/kconfig/lkc.h:79: note: previous declaration of 'zconf_curname' was here
->>> scripts/kconfig/lex.zconf.c: In function 'zconf_curname':
->>> scripts/kconfig/lex.zconf.c:2427: warning: return discards qualifiers from pointer target type
->>
->> The zconf_curname() prototype was changed in 2e7a091 and the
->> scripts/kconfig/lex.zconf.c_shipped file was updated as well. What
->> probably happened is that you ended up using an updated
->> scripts/kconfig/lkc.h header versus an old version of
->> scripts/kconfig/lex.zconf.c. Ie. the rule that copies
->> scripts/kconfig/lex.zconf.c_shipped to scripts/kconfig/lex.zconf.c did
->> not trigger, very strange. I'll look further.
->>
-> this is at least the third time there is such a report. I did
-> reproduce this issue while using an external build directory:
-> 
-> From what I remind:
-> 
-> % gmake menuconfig # generate lex.zconf.c
-> % gmake O=/foo menuconfig # generate lex.zconf.c
-> 
-> % touch scripts/kconfig/lex.zconf.c_shipped
-> 
-> % gmake menuconfig # re-generated lex.zconf.c
-> % gmake O=/foo menuconfig # did _not_ re-generate lex.zconf.c
+--Signature=_Thu__28_Oct_2010_11_27_39_+1100_EUPa91qJ2eWSW.nN
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-OK, if you mix O= and non-O= builds then things can break in various
-ways. That's why the top-level Makefile tries to detect this and abort,
-unfortunately the check is not strict enough (it checks for the presence
-of include/config/kernel.release, which is not created yet when you run
-make *config). Christoph, is it possible that your case was the same,
-ie. that you had run make *config in the source tree before?
+Hi all,
 
-In that case, I'd like to skip this bug for 2.6.37-rc1, because 1) it's
-a user error, 2) Linus shortened the merge window and last-minute
-changes to the top-level Makefile can cause more harm and good, 3) I
-have flu and I only check my mail occasionally this week, so the less
-stuff to deal with, the better :). I'll come up with a fix for -rc2 or so.
+While building Linus' tree, today's linux-next build (x86_64 allmodconfig)
+produced these warnings:
 
-Michal
+sound/soc/soc-core.c: In function 'pmdown_time_set':
+sound/soc/soc-core.c:169: warning: ignoring return value of 'strict_strtol'=
+, declared with attribute warn_unused_result
+drivers/infiniband/hw/nes/nes.c: In function 'nes_store_wqm_quanta':
+drivers/infiniband/hw/nes/nes.c:1115: warning: ignoring return value of 'st=
+rict_strtoul', declared with attribute warn_unused_result
+drivers/hwmon/lm95241.c: In function 'set_interval':
+drivers/hwmon/lm95241.c:132: warning: ignoring return value of 'strict_strt=
+ol', declared with attribute warn_unused_result
+drivers/hwmon/lm95241.c: In function 'set_type1':
+drivers/hwmon/lm95241.c:219: warning: ignoring return value of 'strict_strt=
+ol', declared with attribute warn_unused_result
+drivers/hwmon/lm95241.c: In function 'set_type2':
+drivers/hwmon/lm95241.c:220: warning: ignoring return value of 'strict_strt=
+ol', declared with attribute warn_unused_result
+drivers/hwmon/lm95241.c: In function 'set_min1':
+drivers/hwmon/lm95241.c:248: warning: ignoring return value of 'strict_strt=
+ol', declared with attribute warn_unused_result
+drivers/hwmon/lm95241.c: In function 'set_min2':
+drivers/hwmon/lm95241.c:249: warning: ignoring return value of 'strict_strt=
+ol', declared with attribute warn_unused_result
+drivers/hwmon/lm95241.c: In function 'set_max1':
+drivers/hwmon/lm95241.c:277: warning: ignoring return value of 'strict_strt=
+ol', declared with attribute warn_unused_result
+drivers/hwmon/lm95241.c: In function 'set_max2':
+drivers/hwmon/lm95241.c:278: warning: ignoring return value of 'strict_strt=
+ol', declared with attribute warn_unused_result
+drivers/video/backlight/adp8860_bl.c: In function 'adp8860_bl_l1_daylight_m=
+ax_store':
+drivers/video/backlight/adp8860_bl.c:506: warning: ignoring return value of=
+ 'strict_strtoul', declared with attribute warn_unused_result
+drivers/video/via/viafbdev.c: In function 'viafb_dvp0_proc_write':
+drivers/video/via/viafbdev.c:1117: warning: ignoring return value of 'stric=
+t_strtoul, ', declared with attribute warn_unused_result
+drivers/video/via/viafbdev.c: In function 'viafb_dvp1_proc_write':
+drivers/video/via/viafbdev.c:1187: warning: ignoring return value of 'stric=
+t_strtoul', declared with attribute warn_unused_result
+drivers/video/via/viafbdev.c: In function 'viafb_dfph_proc_write':
+drivers/video/via/viafbdev.c:1245: warning: ignoring return value of 'stric=
+t_strtoul', declared with attribute warn_unused_result
+drivers/video/via/viafbdev.c: In function 'viafb_dfpl_proc_write':
+drivers/video/via/viafbdev.c:1284: warning: ignoring return value of 'stric=
+t_strtoul', declared with attribute warn_unused_result
+drivers/video/via/viafbdev.c: In function 'viafb_vt1636_proc_write':
+drivers/video/via/viafbdev.c:1353: warning: ignoring return value of 'stric=
+t_strtoul', declared with attribute warn_unused_result
+drivers/video/via/viafbdev.c:1390: warning: ignoring return value of 'stric=
+t_strtoul', declared with attribute warn_unused_result
+
+Exposed by commit a55621f15bc61826969a29e111ba131a55ef45de
+("include/linux/kernel.h: add __must_check to strict_strto*()").
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__28_Oct_2010_11_27_39_+1100_EUPa91qJ2eWSW.nN
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJMyMN7AAoJEDMEi1NhKgbsdhkH/2GneWDtDnkRJFOItyfi8FbP
+rd0HecZt9pi9cLa2Rk/fo3JyDrFl2qx5QMRa2S9TC7mQA3hN0CDJJsll7frIrk80
+YjWU6rB3GlDPuQz4UFWrT75Q0LLijFGVi+MYGQtrMZ3duvhm8X5z2n10fJFbp8UQ
+4EJy1f2L+hiz7PU32PcFF2YMzo4YnD50Y9ZzqU5eDrceZJUmsSORgEvxnS2xf1oV
+w4njn5/1MhvqXB4oR/GJg/52AxJer6G+s3PGsNbbZkNK7Qz5hPep5QqTh2tp65JV
+J3mTLJMuWuV57/1izCoEGuJXqpXYlDHdO1W2y9B1AsFm2Lhm1hMuHkawlxPC+3M=
+=oIMj
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__28_Oct_2010_11_27_39_+1100_EUPa91qJ2eWSW.nN--
