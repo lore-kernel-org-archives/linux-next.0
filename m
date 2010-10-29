@@ -1,33 +1,44 @@
-From: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
-Subject: Re: linux-next: manual merge of the xen-pvhvm tree with the xen
- tree
-Date: Fri, 29 Oct 2010 17:28:59 +0100
-Message-ID: <alpine.DEB.2.00.1010291728470.1407@kaball-desktop>
-References: <20101029114237.ae45f678.sfr@canb.auug.org.au>
+From: Len Brown <lenb@kernel.org>
+Subject: Re: linux-next: Tree for October 28 (acpi_video)
+Date: Fri, 29 Oct 2010 14:18:04 -0400 (EDT)
+Message-ID: <alpine.LFD.2.00.1010291406560.3423@localhost.localdomain>
+References: <20101028142031.5a4d6612.sfr@canb.auug.org.au>
+ <20101029090131.68709a71.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.eu.citrix.com ([62.200.22.115]:27013 "EHLO
-	SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751572Ab0J2QaA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 29 Oct 2010 12:30:00 -0400
-In-Reply-To: <20101029114237.ae45f678.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Stefano Stabellini <Stefano.Stabellini@eu.citrix.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Juan Quintela <quintela@redhat.com>, Jeremy Fitzhardinge <Jeremy.Fitzhardinge@citrix.com>, Ian Campbell <Ian.Campbell@eu.citrix.com>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-reply-to: <20101029090131.68709a71.randy.dunlap@oracle.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Lee@kernel.org, Chun-Yi <joeyli.kernel@gmail.com>, Dave Airlie <airlied@redhat.com>, Zhang Rui <rui.zhang@intel.com>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, 29 Oct 2010, Stephen Rothwell wrote:
-> Hi Stefano,
-> 
-> Today's linux-next merge of the xen-pvhvm tree got a conflict in
-> arch/x86/xen/setup.c between commit
-> a1857ddc9ba2dfdbfd70171181e481f2f64b8d0b ("xen: do not release any memory
-> under 1M in domain 0") from the xen tree and commit
-> 4ec5387cc36c6472a2ff2c82e9865abe8cab96c2 ("xen: add the direct mapping
-> area for ISA bus access") from the xen-pvhvm tree.
-> 
-> Just differences in a comment.  I just used the version from the xen
-> tree ...
+> drivers/built-in.o: In function `acpi_video_bus_put_one_device':
+> video.c:(.text+0x9d794): undefined reference to `backlight_device_unregister'
 
-I think is fine
+Invalid .config, as ACPI_VIDEO depends on BACKLIGHT_CLASS_DEVICE, which is not set.
+
+This breakage is the infamous "select in Kconfig doesn't" bug,
+which has apparently claimed a new victim, STUB_POULSBO:
+
+(STUB_POULSBO && HAS_IOMEM && PCI && ACPI || DRM_I915 && <choice> && 
+AGP_INTEL && ACPI || DRM_NOUVEAU && STAGING && !STAGING_EXCLUDE_BUILD && 
+DRM && PCI && ACPI) selects ACPI_VIDEO which has unmet direct dependencies 
+(ACPI && X86 && BACKLIGHT_CLASS_DEVICE && VIDEO_OUTPUT_CONTROL && INPUT)
+
+commit e26fd1199ebab0d469fc3e037da5932d382f0669
+Author: Lee, Chun-Yi <joeyli.kernel@gmail.com>
+Date:   Wed Oct 20 13:51:19 2010 +0800
+
+    gpu: Add Intel GMA500(Poulsbo) Stub Driver
+    
+    Currently, there have no GMA500(Poulsbo) native video driver to 
+support
+    intel opregion. So, use this stub driver to enable the acpi backlight
+    control sysfs entry files by requrest acpi_video_register.
+    
+    [airlied: fix warnings]
+    
+    Signed-off-by: Lee, Chun-Yi <jlee@novell.com>
+    Signed-off-by: Dave Airlie <airlied@redhat.com>
+
