@@ -1,58 +1,50 @@
-From: "Hennerich, Michael" <Michael.Hennerich@analog.com>
-Subject: RE: [PATCH] video: backlight: adp8870: Fix warn_unused_result
- warning reported by Stephen Rothwell
-Date: Tue, 2 Nov 2010 08:57:40 +0000
-Message-ID: <544AC56F16B56944AEC3BD4E3D5917713094627148@LIMKCMBX1.ad.analog.com>
-References: <1288364066-18709-1-git-send-email-michael.hennerich@analog.com>
- <20101029122534.d4d6a439.akpm@linux-foundation.org>
+From: Vipin Mehta <Vipin.Mehta@Atheros.com>
+Subject: RE: linux-next: Tree for October 29 (staging/ath6kl)
+Date: Tue, 2 Nov 2010 11:37:23 -0700
+Message-ID: <35B17FE5076C7040809188FBE7913F983F847B52A2@SC1EXMB-MBCL.global.atheros.com>
+References: <20101029121148.d27e03bc.sfr@canb.auug.org.au>
+ <20101029161610.99e6f4ef.randy.dunlap@oracle.com>
+ <20101029235125.GA22122@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from nwd2mail10.analog.com ([137.71.25.55]:31310 "EHLO
-	nwd2mail10.analog.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751980Ab0KBI5p convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Nov 2010 04:57:45 -0400
-In-Reply-To: <20101029122534.d4d6a439.akpm@linux-foundation.org>
+Received: from mail.atheros.com ([12.19.149.2]:32391 "EHLO mail.atheros.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754826Ab0KBShY convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Nov 2010 14:37:24 -0400
+Received: from mail.atheros.com ([10.10.20.105])
+	by sidewinder.atheros.com
+	for <linux-next@vger.kernel.org>; Tue, 02 Nov 2010 11:37:12 -0700
+In-Reply-To: <20101029235125.GA22122@suse.de>
 Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "device-drivers-devel@blackfin.uclinux.org" <device-drivers-devel@blackfin.uclinux.org>, Drivers <Drivers@analog.com>, "rpurdie@linux.intel.com" <rpurdie@linux.intel.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>
+To: Greg KH <gregkh@suse.de>, Randy Dunlap <randy.dunlap@oracle.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Chris Ball <cjb@laptop.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, driverdevel <devel@driverdev.osuosl.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-Andrew Morton wrote on 2010-10-29:
->
-> I have some bones to gnaw.  Not specific to this patch ;)
->
-> On Fri, 29 Oct 2010 16:54:26 +0200
-> <michael.hennerich@analog.com> wrote:
->
->> Subject: [PATCH] video: backlight: adp8870: Fix warn_unused_result
->> warning reported by Stephen Rothwell
->
-> Lots of people are doing this "video: backlight: adp8870:" thing
-> lately.  And it's good, but why not just use
-> "drivers/video/backlight/adp8860_bl.c" to identify the affected
-> susbsytem/file/etc?  It's simple and uniform.  It's not always the
-> appropriate thing to do, but replacing the /'s with ": " seems rather
-> random and pointless.
 
-Think it's easier to read, or better skip reading further.
+On Fri, Oct 29, 2010 at 04:16:10PM -0700, Randy Dunlap wrote:
+> On Fri, 29 Oct 2010 12:11:48 +1100 Stephen Rothwell wrote:
+> 
+> > Hi all,
+> 
+> 
+> drivers/staging/ath6kl/hif/sdio/linux_sdio/src/hif_scatter.c:288: error: 'struct mmc_host' has no member named 'max_hw_segs'
+> drivers/staging/ath6kl/hif/sdio/linux_sdio/src/hif_scatter.c:289: error: 'struct mmc_host' has no member named 'max_hw_segs'
 
-> Secondly, no, the point of this patch is not to fix a
-> warn_unused_result() warning!  The patch actually fixes a bug: the
-> code wasn't checking the strict_strtoul() return value.  The warning
-> is simply what alerted us to the bug.
->
-> So I renamed this patch to
->
->       drivers/video/backlight/adp8860_bl.c: check strict_strtoul() return
-> value
+Looks like it was caused by:
+	a36274e0184193e393fb82957925c3981a6b0477
 
-Agreed - Thanks for fixing it.
+	mmc: Remove distinction between hw and phys segments
 
-Greetings,
-Michael
 
-Analog Devices GmbH      Wilhelm-Wagenfeld-Str. 6      80807 Muenchen
-Sitz der Gesellschaft Muenchen, Registergericht Muenchen HRB 4036 Geschaeftsfuehrer Thomas Wessel, William A. Martin, Margaret Seif
+and it's a simple fix.  I'll do it after -rc1 is out as I'm on my way to
+Boston now...
+
+I had submitted a patch for this a few weeks back and the required
+changes were present in the tag next-20101028. They somehow got
+reverted back in the tag next-20101029. Both Greg and Stephen
+should have the original patch but I can send it again if it helps.
+
+(Sorry my mutt is acting up so sending it through Outlook)
