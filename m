@@ -1,52 +1,36 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for October 28 (acpi_video)
-Date: Sun, 31 Oct 2010 20:09:22 -0700
-Message-ID: <4CCE2F62.7050202@oracle.com>
-References: <20101028142031.5a4d6612.sfr@canb.auug.org.au> <20101029090131.68709a71.randy.dunlap@oracle.com> <alpine.LFD.2.00.1010291406560.3423@localhost.localdomain>
+From: Mike Frysinger <vapier.adi@gmail.com>
+Subject: Re: [Device-drivers-devel] [PATCH] video: backlight: adp8870: Fix
+ warn_unused_result warning reported by Stephen Rothwell
+Date: Tue, 2 Nov 2010 03:35:30 -0400
+Message-ID: <AANLkTikq_D_HjMG0kSqTNc4aoFhtN71usVcNGGz2pAn4@mail.gmail.com>
+References: <1288364066-18709-1-git-send-email-michael.hennerich@analog.com> <20101029122534.d4d6a439.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <alpine.LFD.2.00.1010291406560.3423@localhost.localdomain>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Len Brown <lenb@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Lee@kernel.org, Chun-Yi <joeyli.kernel@gmail.com>, Dave Airlie <airlied@redhat.com>, Zhang Rui <rui.zhang@intel.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ww0-f44.google.com ([74.125.82.44]:38020 "EHLO
+	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754699Ab0KBHfw convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 2 Nov 2010 03:35:52 -0400
+In-Reply-To: <20101029122534.d4d6a439.akpm@linux-foundation.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: michael.hennerich@analog.com, drivers@analog.com, sfr@canb.auug.org.au, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, rpurdie@linux.intel.com, device-drivers-devel@blackfin.uclinux.org
 
-On 10/29/10 11:18, Len Brown wrote:
->> drivers/built-in.o: In function `acpi_video_bus_put_one_device':
->> video.c:(.text+0x9d794): undefined reference to `backlight_device_unregister'
-> 
-> Invalid .config, as ACPI_VIDEO depends on BACKLIGHT_CLASS_DEVICE, which is not set.
-> 
-> This breakage is the infamous "select in Kconfig doesn't" bug,
-> which has apparently claimed a new victim, STUB_POULSBO:
-> 
-> (STUB_POULSBO && HAS_IOMEM && PCI && ACPI || DRM_I915 && <choice> && 
-> AGP_INTEL && ACPI || DRM_NOUVEAU && STAGING && !STAGING_EXCLUDE_BUILD && 
-> DRM && PCI && ACPI) selects ACPI_VIDEO which has unmet direct dependencies 
-> (ACPI && X86 && BACKLIGHT_CLASS_DEVICE && VIDEO_OUTPUT_CONTROL && INPUT)
-> 
-> commit e26fd1199ebab0d469fc3e037da5932d382f0669
-> Author: Lee, Chun-Yi <joeyli.kernel@gmail.com>
-> Date:   Wed Oct 20 13:51:19 2010 +0800
-> 
->     gpu: Add Intel GMA500(Poulsbo) Stub Driver
->     
->     Currently, there have no GMA500(Poulsbo) native video driver to 
-> support
->     intel opregion. So, use this stub driver to enable the acpi backlight
->     control sysfs entry files by requrest acpi_video_register.
->     
->     [airlied: fix warnings]
->     
->     Signed-off-by: Lee, Chun-Yi <jlee@novell.com>
->     Signed-off-by: Dave Airlie <airlied@redhat.com>
-> 
+On Fri, Oct 29, 2010 at 15:25, Andrew Morton wrote:
+>> Subject: [PATCH] video: backlight: adp8870: Fix warn_unused_result w=
+arning reported by Stephen Rothwell
+>
+> Lots of people are doing this "video: backlight: adp8870:" thing
+> lately. =C2=A0And it's good, but why not just use
+> "drivers/video/backlight/adp8860_bl.c" to identify the affected
+> susbsytem/file/etc? =C2=A0It's simple and uniform. =C2=A0It's not alw=
+ays the
+> appropriate thing to do, but replacing the /'s with ": " seems rather
+> random and pointless.
 
-I think that it needs this patch (from 2010-OCT-13):
-  http://lkml.org/lkml/2010/10/13/270
-
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+the colons and spaces make it a lot easier to pick out in a git log.
+your suggestion makes it much harder to read due to the lack of
+whitespace.
+-mike
