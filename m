@@ -1,21 +1,21 @@
-From: Greg KH <gregkh@suse.de>
+From: Greg KH <greg@kroah.com>
 Subject: Re: linux-next: Tree for October 29 (staging/ath6kl)
-Date: Tue, 2 Nov 2010 13:02:28 -0700
-Message-ID: <20101102200228.GA2631@suse.de>
+Date: Wed, 3 Nov 2010 06:31:36 -0700
+Message-ID: <20101103133136.GA18187@kroah.com>
 References: <20101029121148.d27e03bc.sfr@canb.auug.org.au> <20101029161610.99e6f4ef.randy.dunlap@oracle.com> <20101029235125.GA22122@suse.de> <35B17FE5076C7040809188FBE7913F983F847B52A2@SC1EXMB-MBCL.global.atheros.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor.suse.de ([195.135.220.2]:38597 "EHLO mx1.suse.de"
+Received: from kroah.org ([198.145.64.141]:49122 "EHLO coco.kroah.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750988Ab0KCC75 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 2 Nov 2010 22:59:57 -0400
+	id S1751488Ab0KCNfw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 3 Nov 2010 09:35:52 -0400
 Content-Disposition: inline
 In-Reply-To: <35B17FE5076C7040809188FBE7913F983F847B52A2@SC1EXMB-MBCL.global.atheros.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Vipin Mehta <Vipin.Mehta@Atheros.com>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Chris Ball <cjb@laptop.org>, Stephen Rothwell <sfr@canb.auug.org.au>, driverdevel <devel@driverdev.osuosl.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Cc: Greg KH <gregkh@suse.de>, Randy Dunlap <randy.dunlap@oracle.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Chris Ball <cjb@laptop.org>, Stephen Rothwell <sfr@canb.auug.org.au>, driverdevel <devel@driverdev.osuosl.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
 On Tue, Nov 02, 2010 at 11:37:23AM -0700, Vipin Mehta wrote:
 > 
@@ -44,7 +44,7 @@ On Tue, Nov 02, 2010 at 11:37:23AM -0700, Vipin Mehta wrote:
 > 
 > (Sorry my mutt is acting up so sending it through Outlook)
 
-Yes, sorry, I have this in my queue, I too am busy in Boston :)
+It's now in my tree and will get to Linus soon.
 
 thanks,
 
