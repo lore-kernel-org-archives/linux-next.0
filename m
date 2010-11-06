@@ -1,51 +1,60 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: Tree for October 29 (staging/ath6kl)
-Date: Wed, 3 Nov 2010 06:31:36 -0700
-Message-ID: <20101103133136.GA18187@kroah.com>
-References: <20101029121148.d27e03bc.sfr@canb.auug.org.au> <20101029161610.99e6f4ef.randy.dunlap@oracle.com> <20101029235125.GA22122@suse.de> <35B17FE5076C7040809188FBE7913F983F847B52A2@SC1EXMB-MBCL.global.atheros.com>
+From: Kees Cook <kees.cook@canonical.com>
+Subject: RO/NX protection for loadable kernel modules
+Date: Sat, 6 Nov 2010 11:28:52 -0700
+Message-ID: <20101106182852.GC5327@outflux.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:49122 "EHLO coco.kroah.org"
+Received: from smtp.outflux.net ([198.145.64.163]:47858 "EHLO smtp.outflux.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751488Ab0KCNfw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 3 Nov 2010 09:35:52 -0400
+	id S1751828Ab0KFSaU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 6 Nov 2010 14:30:20 -0400
 Content-Disposition: inline
-In-Reply-To: <35B17FE5076C7040809188FBE7913F983F847B52A2@SC1EXMB-MBCL.global.atheros.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Vipin Mehta <Vipin.Mehta@Atheros.com>
-Cc: Greg KH <gregkh@suse.de>, Randy Dunlap <randy.dunlap@oracle.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Chris Ball <cjb@laptop.org>, Stephen Rothwell <sfr@canb.auug.org.au>, driverdevel <devel@driverdev.osuosl.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, Siarhei Liakh <sliakh.lkml@gmail.com>, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>
 
-On Tue, Nov 02, 2010 at 11:37:23AM -0700, Vipin Mehta wrote:
-> 
-> On Fri, Oct 29, 2010 at 04:16:10PM -0700, Randy Dunlap wrote:
-> > On Fri, 29 Oct 2010 12:11:48 +1100 Stephen Rothwell wrote:
+Peter, anyone? What is the state of this? I can see it in the tip tree,
+but it doesn't appear associated with a branch. What will it take to
+get this into Linus's tree?
+
+http://git.kernel.org/?p=linux/kernel/git/x86/linux-2.6-tip.git;a=commitdiff;h=65187d24fa3ef60f691f847c792e8eaca7e19251
+
+This feature is needed before the function-pointer const-ification patches
+will really have any meaning.
+
+Thanks,
+
+-Kees
+
+On Tue, Oct 19, 2010 at 09:45:39PM -0700, Kees Cook wrote:
+> On Mon, Feb 08, 2010 at 11:59:44AM +1030, Rusty Russell wrote:
+> > On Tue, 2 Feb 2010 04:36:49 pm H. Peter Anvin wrote:
+> > > On 02/01/2010 07:59 PM, Rusty Russell wrote:
+> > > > On Tue, 2 Feb 2010 10:09:53 am Siarhei Liakh wrote:
+> > > >> This patch is a logical extension of the protection provided by
+> > > >> CONFIG_DEBUG_RODATA to LKMs. The protection is provided by splitting
+> > > >> module_core and module_init into three logical parts each and setting
+> > > >> appropriate page access permissions for each individual section:
+> > > >>
+> > > >>   1. Code: RO+X
+> > > >>   2. RO data: RO+NX
+> > > >>   3. RW data: RW+NX
+> > > >
+> > > > Thanks, applied!
+> > > 
+> > > I also applied this to the -tip tree... do you prefer to carry it or 
+> > > should I leave it as is?
 > > 
-> > > Hi all,
+> > I'm always happy for you to do my work for me!  There are no other module
+> > patches likely to conflict.
 > > 
-> > 
-> > drivers/staging/ath6kl/hif/sdio/linux_sdio/src/hif_scatter.c:288: error: 'struct mmc_host' has no member named 'max_hw_segs'
-> > drivers/staging/ath6kl/hif/sdio/linux_sdio/src/hif_scatter.c:289: error: 'struct mmc_host' has no member named 'max_hw_segs'
+> > Acked-by: Rusty Russell <rusty@rustcorp.com.au>
 > 
-> Looks like it was caused by:
-> 	a36274e0184193e393fb82957925c3981a6b0477
-> 
-> 	mmc: Remove distinction between hw and phys segments
-> 
-> 
-> and it's a simple fix.  I'll do it after -rc1 is out as I'm on my way to
-> Boston now...
-> 
-> I had submitted a patch for this a few weeks back and the required
-> changes were present in the tag next-20101028. They somehow got
-> reverted back in the tag next-20101029. Both Greg and Stephen
-> should have the original patch but I can send it again if it helps.
-> 
-> (Sorry my mutt is acting up so sending it through Outlook)
+> Sorry for losing track, but where did this patch end up? I don't see it
+> in any of the trees I've looked in.
 
-It's now in my tree and will get to Linus soon.
-
-thanks,
-
-greg k-h
+-- 
+Kees Cook
+Ubuntu Security Team
