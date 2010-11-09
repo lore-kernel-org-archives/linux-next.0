@@ -1,58 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the finaltree
-Date: Tue, 9 Nov 2010 14:51:26 +1100
-Message-ID: <20101109145126.b658e4b4.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree
+Date: Tue, 9 Nov 2010 15:03:02 +1100
+Message-ID: <20101109150302.fa79a73a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__9_Nov_2010_14_51_26_+1100_ak/R7MVRQm9GL.+4"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35831 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751984Ab0KIDvi (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 8 Nov 2010 22:51:38 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
-
---Signature=_Tue__9_Nov_2010_14_51_26_+1100_ak/R7MVRQm9GL.+4
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Linus <torvalds@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Dave,
+Hi Al,
 
-After merging the final tree, today's linux-next build (powerpc
-allyesconfig) produced this warning:
+After merging the scsi-post-merge tree, today's linux-next build (sparc32
+defconfig) failed like this:
 
-In file included from drivers/gpu/stub/poulsbo.c:15:
-include/acpi/video.h:22: warning: 'struct acpi_device' declared inside para=
-meter list
-include/acpi/video.h:22: warning: its scope is only this definition or decl=
-aration, which is probably not what you want
+fs/openpromfs/inode.c: In function 'openprom_mount':
+fs/openpromfs/inode.c:422: error: expected ';' before '}' token
 
-Introduced by commit e26fd1199ebab0d469fc3e037da5932d382f0669 ("gpu: Add
-Intel GMA500(Poulsbo) Stub Driver").  Maybe this driver only needs to be
-built on x86?
---=20
+Caused by commit fc14f2fef682df677d64a145256dbd263df2aa7b ("convert
+get_sb_single() users") from Linus' tree.   Pity that conmmit never made
+it into the linux-next tree :-(
+
+I added this patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 9 Nov 2010 14:58:55 +1100
+Subject: [PATCH] openpromfs: fix for bad get_sb_single() conversion
+
+Fixes:
+
+fs/openpromfs/inode.c: In function 'openprom_mount':
+fs/openpromfs/inode.c:422: error: expected ';' before '}' token
+
+on sparc.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/openpromfs/inode.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/fs/openpromfs/inode.c b/fs/openpromfs/inode.c
+index ddb1f41..911e61f 100644
+--- a/fs/openpromfs/inode.c
++++ b/fs/openpromfs/inode.c
+@@ -418,7 +418,7 @@ out_no_root:
+ static struct dentry *openprom_mount(struct file_system_type *fs_type,
+ 	int flags, const char *dev_name, void *data)
+ {
+-	return mount_single(fs_type, flags, data, openprom_fill_super)
++	return mount_single(fs_type, flags, data, openprom_fill_super);
+ }
+ 
+ static struct file_system_type openprom_fs_type = {
+-- 
+1.7.2.3
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__9_Nov_2010_14_51_26_+1100_ak/R7MVRQm9GL.+4
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJM2MU+AAoJEDMEi1NhKgbsr9cH/0iyIQ/VM8oicfGJZ38spICF
-dPNuM2z07JH/n6m1IHZlgdD4i3d7r3v77b/s8jmjiqy9+vAyzFQHw5My/YNQ+1Q6
-Dk8G0lSkLCfOSP9YbVd+kRXhhtwm+Urruj5FY9B8aaqUqfAASqn34gCLw3IozMZW
-+/TBfuPadgAN8lTsvt0MDnWf4QgZBntIbvVDEp3kfkwBlSh4hwuiV86C64iNeYAu
-eItmzS9BcE1pjxhU/EQ96FG6EounNcruitQZm/Gn7ULRZeupLjv2Btclx/9jneS3
-tofFkKaLIPafZPaYr7f18Z7uoYHS6vc9UITpd6elQNzS/o/iZTV+qF06LNAArhM=
-=NKaW
------END PGP SIGNATURE-----
-
---Signature=_Tue__9_Nov_2010_14_51_26_+1100_ak/R7MVRQm9GL.+4--
