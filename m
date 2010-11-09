@@ -1,60 +1,53 @@
-From: Kees Cook <kees.cook@canonical.com>
-Subject: RO/NX protection for loadable kernel modules
-Date: Sat, 6 Nov 2010 11:28:52 -0700
-Message-ID: <20101106182852.GC5327@outflux.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: failed to fetch the genesis tree
+Date: Tue, 9 Nov 2010 11:49:00 +1100
+Message-ID: <20101109114900.84679f9e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__9_Nov_2010_11_49_00_+1100_EhZ1M6Vn6g7x8Kf+"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.outflux.net ([198.145.64.163]:47858 "EHLO smtp.outflux.net"
+Received: from chilli.pcug.org.au ([203.10.76.44]:41882 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751828Ab0KFSaU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 6 Nov 2010 14:30:20 -0400
-Content-Disposition: inline
+	id S1751959Ab0KIAtH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 8 Nov 2010 19:49:07 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Siarhei Liakh <sliakh.lkml@gmail.com>, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>
+To: Paul Mundt <lethal@linux-sh.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Peter, anyone? What is the state of this? I can see it in the tip tree,
-but it doesn't appear associated with a branch. What will it take to
-get this into Linus's tree?
+--Signature=_Tue__9_Nov_2010_11_49_00_+1100_EhZ1M6Vn6g7x8Kf+
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-http://git.kernel.org/?p=linux/kernel/git/x86/linux-2.6-tip.git;a=commitdiff;h=65187d24fa3ef60f691f847c792e8eaca7e19251
+Hi Paul,
 
-This feature is needed before the function-pointer const-ification patches
-will really have any meaning.
+Fetching the genesis tree today produced this error:
 
-Thanks,
+fatal: '/pub/scm/linux/kernel/git/lethal/genesis-2.6.git' does not appear t=
+o be a git repository
 
--Kees
+I will use the version of the tree from next-20101029 for today.
 
-On Tue, Oct 19, 2010 at 09:45:39PM -0700, Kees Cook wrote:
-> On Mon, Feb 08, 2010 at 11:59:44AM +1030, Rusty Russell wrote:
-> > On Tue, 2 Feb 2010 04:36:49 pm H. Peter Anvin wrote:
-> > > On 02/01/2010 07:59 PM, Rusty Russell wrote:
-> > > > On Tue, 2 Feb 2010 10:09:53 am Siarhei Liakh wrote:
-> > > >> This patch is a logical extension of the protection provided by
-> > > >> CONFIG_DEBUG_RODATA to LKMs. The protection is provided by splitting
-> > > >> module_core and module_init into three logical parts each and setting
-> > > >> appropriate page access permissions for each individual section:
-> > > >>
-> > > >>   1. Code: RO+X
-> > > >>   2. RO data: RO+NX
-> > > >>   3. RW data: RW+NX
-> > > >
-> > > > Thanks, applied!
-> > > 
-> > > I also applied this to the -tip tree... do you prefer to carry it or 
-> > > should I leave it as is?
-> > 
-> > I'm always happy for you to do my work for me!  There are no other module
-> > patches likely to conflict.
-> > 
-> > Acked-by: Rusty Russell <rusty@rustcorp.com.au>
-> 
-> Sorry for losing track, but where did this patch end up? I don't see it
-> in any of the trees I've looked in.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
--- 
-Kees Cook
-Ubuntu Security Team
+--Signature=_Tue__9_Nov_2010_11_49_00_+1100_EhZ1M6Vn6g7x8Kf+
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJM2Jp8AAoJEDMEi1NhKgbswtoH/js+EBLWicIei6szv7KBr0Zs
+mIMYsgkPQ+mCTa7MXKhk1yKyqtZLX7Q8p0E/Et17LzgoYYiUnAB6xXM8VuvzeFbp
+gkiDN/DF157CsrD6FMLqkPFz5NvEzgV78Nh3VVHiu7zgkqnl6DmAhzAhzwqkVWPb
++G09AePNJRCB6eXUxhJgVrU6vpMoap8L0f2CLGwlhsFAoJxST5K1HAswehdKECCo
+vJcDxXSybC3ibbUZJTkgyUlwf3x7nOi6tWu/yIvdnJHpNVttxhlkFysAAQNWK7bh
+JKpX5S49GYqoAkU9hAE8B9t+Hmb6FlToexfsSlSRwxDH3Fk+NpoCaxL5DFL6F3I=
+=rYXV
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__9_Nov_2010_11_49_00_+1100_EhZ1M6Vn6g7x8Kf+--
