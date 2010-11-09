@@ -1,71 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the hid tree with Linus' tree
-Date: Tue, 9 Nov 2010 12:33:26 +1100
-Message-ID: <20101109123326.8e4a3c99.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the trivial tree with the  tree
+Date: Tue, 9 Nov 2010 13:27:25 +1100
+Message-ID: <20101109132725.2e17ae65.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__9_Nov_2010_13_27_25_+1100_GDNCAHsE+vsc0EuK"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35414 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:41168 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753562Ab0KIBda (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 8 Nov 2010 20:33:30 -0500
+	id S1752420Ab0KIC1j (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 8 Nov 2010 21:27:39 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jikos@jikos.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IlV3ZSBLbGVpbmUtS8O2bmlnIg==?= <u.kleine-koenig@pengutronix.de>, Mike Frysinger <vapier@gentoo.org>
+
+--Signature=_Tue__9_Nov_2010_13_27_25_+1100_GDNCAHsE+vsc0EuK
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi Jiri,
 
-Today's linux-next merge of the hid tree got a conflict in
-drivers/hid/hid-input.c between commit
-a0bf0ea809ba0a7621e191ec4cab5775d502ef7e ("Input: hid-input - switch to
-using new keycode interface") from Linus' tree and commit
-587d145200f26758940099fbbc301fdd43d3f391 ("HID: Remove KERN_DEBUG from
-dbg_hid use") from the hid tree.
+Today's linux-next merge of the trivial tree got a conflict in
+arch/blackfin/mach-bf538/include/mach/defBF539.h,
+arch/blackfin/mach-bf518/include/mach/defBF51x_base.h and
+arch/blackfin/mach-bf527/include/mach/defBF52x_base.h between various
+commits from the blackfin tree and commit
+b595076a180a56d1bb170e6eceda6eb9d76f4cd3 ("tree-wide: fix comment/printk
+typos") from the trivial tree.
 
-I fixed it up (see below) and can carry the fix as necessary.
--- 
+I just used the versions from the blackfin tree for now since they moved
+large amounts of code around and deleted the latter 2 files.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/hid/hid-input.c
-index bb0b365,76e1f64..0000000
---- a/drivers/hid/hid-input.c
-+++ b/drivers/hid/hid-input.c
-@@@ -165,24 -127,21 +165,24 @@@ static int hidinput_setkeycode(struct i
-  {
-  	struct hid_device *hid = input_get_drvdata(dev);
-  	struct hid_usage *usage;
- -	int old_keycode;
-  
- -	usage = hidinput_find_key(hid, scancode, 0);
- +	usage = hidinput_locate_usage(hid, ke, NULL);
-  	if (usage) {
- -		old_keycode = usage->code;
- -		usage->code = keycode;
- +		*old_keycode = usage->type == EV_KEY ?
- +				usage->code : KEY_RESERVED;
- +		usage->code = ke->keycode;
-  
- -		clear_bit(old_keycode, dev->keybit);
- +		clear_bit(*old_keycode, dev->keybit);
-  		set_bit(usage->code, dev->keybit);
-- 		dbg_hid(KERN_DEBUG "Assigned keycode %d to HID usage code %x\n",
-+ 		dbg_hid("Assigned keycode %d to HID usage code %x\n",
- -				keycode, scancode);
- -		/* Set the keybit for the old keycode if the old keycode is used
- -		 * by another key */
- -		if (hidinput_find_key (hid, 0, old_keycode))
- -			set_bit(old_keycode, dev->keybit);
- +			usage->code, usage->hid);
- +
- +		/*
- +		 * Set the keybit for the old keycode if the old keycode is used
- +		 * by another key
- +		 */
- +		if (hidinput_find_key(hid, match_keycode, *old_keycode, NULL))
- +			set_bit(*old_keycode, dev->keybit);
-  
-  		return 0;
-  	}
+--Signature=_Tue__9_Nov_2010_13_27_25_+1100_GDNCAHsE+vsc0EuK
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJM2LGNAAoJEDMEi1NhKgbsf7oH/RevOXe/KC8gXeLct3SH66AI
+NEQppZ+YEhcvodI6nhwBQcfdo980NvEaHChnFf36WsrqM7jdAlxdTWh2wlsum9IP
+fozny3vemABu6sPKofYZIucW74D9W7fyYiqm8MOxaTaPAPUiplqu/0EYFgBPI3o4
+FjIX9hawy1ayivoG1UUCD3imp/tyzfMpZp3dciFXXPLx354tQ+uG6dqLLdIpoUe0
+evTAyDJ0gLdyFNcEvzICykn0q3a2C6IfJ3kxyDcByhZOoGm2+6T/4FXRYdZqnws9
+ZgAnoVtQParvgRFCAzb1RKwHJU7nZoYRWEJlB59S9CKeKTC16kwqqOPxa/95HLQ=
+=aTPR
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__9_Nov_2010_13_27_25_+1100_GDNCAHsE+vsc0EuK--
