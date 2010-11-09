@@ -1,53 +1,71 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: failed to fetch the genesis tree
-Date: Tue, 9 Nov 2010 11:49:00 +1100
-Message-ID: <20101109114900.84679f9e.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the hid tree with Linus' tree
+Date: Tue, 9 Nov 2010 12:33:26 +1100
+Message-ID: <20101109123326.8e4a3c99.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__9_Nov_2010_11_49_00_+1100_EhZ1M6Vn6g7x8Kf+"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41882 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35414 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751959Ab0KIAtH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 8 Nov 2010 19:49:07 -0500
+	id S1753562Ab0KIBda (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 8 Nov 2010 20:33:30 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Mundt <lethal@linux-sh.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jiri Kosina <jikos@jikos.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
---Signature=_Tue__9_Nov_2010_11_49_00_+1100_EhZ1M6Vn6g7x8Kf+
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Jiri,
 
-Hi Paul,
+Today's linux-next merge of the hid tree got a conflict in
+drivers/hid/hid-input.c between commit
+a0bf0ea809ba0a7621e191ec4cab5775d502ef7e ("Input: hid-input - switch to
+using new keycode interface") from Linus' tree and commit
+587d145200f26758940099fbbc301fdd43d3f391 ("HID: Remove KERN_DEBUG from
+dbg_hid use") from the hid tree.
 
-Fetching the genesis tree today produced this error:
-
-fatal: '/pub/scm/linux/kernel/git/lethal/genesis-2.6.git' does not appear t=
-o be a git repository
-
-I will use the version of the tree from next-20101029 for today.
-
---=20
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__9_Nov_2010_11_49_00_+1100_EhZ1M6Vn6g7x8Kf+
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJM2Jp8AAoJEDMEi1NhKgbswtoH/js+EBLWicIei6szv7KBr0Zs
-mIMYsgkPQ+mCTa7MXKhk1yKyqtZLX7Q8p0E/Et17LzgoYYiUnAB6xXM8VuvzeFbp
-gkiDN/DF157CsrD6FMLqkPFz5NvEzgV78Nh3VVHiu7zgkqnl6DmAhzAhzwqkVWPb
-+G09AePNJRCB6eXUxhJgVrU6vpMoap8L0f2CLGwlhsFAoJxST5K1HAswehdKECCo
-vJcDxXSybC3ibbUZJTkgyUlwf3x7nOi6tWu/yIvdnJHpNVttxhlkFysAAQNWK7bh
-JKpX5S49GYqoAkU9hAE8B9t+Hmb6FlToexfsSlSRwxDH3Fk+NpoCaxL5DFL6F3I=
-=rYXV
------END PGP SIGNATURE-----
-
---Signature=_Tue__9_Nov_2010_11_49_00_+1100_EhZ1M6Vn6g7x8Kf+--
+diff --cc drivers/hid/hid-input.c
+index bb0b365,76e1f64..0000000
+--- a/drivers/hid/hid-input.c
++++ b/drivers/hid/hid-input.c
+@@@ -165,24 -127,21 +165,24 @@@ static int hidinput_setkeycode(struct i
+  {
+  	struct hid_device *hid = input_get_drvdata(dev);
+  	struct hid_usage *usage;
+ -	int old_keycode;
+  
+ -	usage = hidinput_find_key(hid, scancode, 0);
+ +	usage = hidinput_locate_usage(hid, ke, NULL);
+  	if (usage) {
+ -		old_keycode = usage->code;
+ -		usage->code = keycode;
+ +		*old_keycode = usage->type == EV_KEY ?
+ +				usage->code : KEY_RESERVED;
+ +		usage->code = ke->keycode;
+  
+ -		clear_bit(old_keycode, dev->keybit);
+ +		clear_bit(*old_keycode, dev->keybit);
+  		set_bit(usage->code, dev->keybit);
+- 		dbg_hid(KERN_DEBUG "Assigned keycode %d to HID usage code %x\n",
++ 		dbg_hid("Assigned keycode %d to HID usage code %x\n",
+ -				keycode, scancode);
+ -		/* Set the keybit for the old keycode if the old keycode is used
+ -		 * by another key */
+ -		if (hidinput_find_key (hid, 0, old_keycode))
+ -			set_bit(old_keycode, dev->keybit);
+ +			usage->code, usage->hid);
+ +
+ +		/*
+ +		 * Set the keybit for the old keycode if the old keycode is used
+ +		 * by another key
+ +		 */
+ +		if (hidinput_find_key(hid, match_keycode, *old_keycode, NULL))
+ +			set_bit(*old_keycode, dev->keybit);
+  
+  		return 0;
+  	}
