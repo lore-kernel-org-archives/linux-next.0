@@ -1,47 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the trivial tree with Linus' tree
-Date: Tue, 9 Nov 2010 13:31:55 +1100
-Message-ID: <20101109133155.e979a39b.sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the finaltree
+Date: Tue, 9 Nov 2010 14:51:26 +1100
+Message-ID: <20101109145126.b658e4b4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__9_Nov_2010_14_51_26_+1100_ak/R7MVRQm9GL.+4"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41273 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35831 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752563Ab0KICb5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 8 Nov 2010 21:31:57 -0500
+	id S1751984Ab0KIDvi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 8 Nov 2010 22:51:38 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IlV3ZSBLbGVpbmUtS8O2bmlnIg==?= <u.kleine-koenig@pengutronix.de>, Jing Huang <huangj@brocade.com>
+To: Dave Airlie <airlied@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
 
-Hi Jiri,
+--Signature=_Tue__9_Nov_2010_14_51_26_+1100_ak/R7MVRQm9GL.+4
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the trivial tree got a conflict in
-drivers/scsi/bfa/bfa_fcpim.c between commit
-5fbe25c7a664601666895e8f95eaa59bd9741392 ("[SCSI] bfa: fix comments for c
-files") from Linus' tree and commit
-b595076a180a56d1bb170e6eceda6eb9d76f4cd3 ("tree-wide: fix comment/printk
-typos") from the trivial tree.
+Hi Dave,
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
--- 
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) produced this warning:
+
+In file included from drivers/gpu/stub/poulsbo.c:15:
+include/acpi/video.h:22: warning: 'struct acpi_device' declared inside para=
+meter list
+include/acpi/video.h:22: warning: its scope is only this definition or decl=
+aration, which is probably not what you want
+
+Introduced by commit e26fd1199ebab0d469fc3e037da5932d382f0669 ("gpu: Add
+Intel GMA500(Poulsbo) Stub Driver").  Maybe this driver only needs to be
+built on x86?
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/scsi/bfa/bfa_fcpim.c
-index 135c442,aabbf3d..0000000
---- a/drivers/scsi/bfa/bfa_fcpim.c
-+++ b/drivers/scsi/bfa/bfa_fcpim.c
-@@@ -2091,8 -2091,8 +2091,8 @@@ bfa_ioim_sm_cleanup_qfull(struct bfa_io
-  		break;
-  
-  	case BFA_IOIM_SM_ABORT:
- -		/**
- +		/*
-- 		 * IO is alraedy being cleaned up implicitly
-+ 		 * IO is already being cleaned up implicitly
-  		 */
-  		ioim->io_cbfn = __bfa_cb_ioim_abort;
-  		break;
+--Signature=_Tue__9_Nov_2010_14_51_26_+1100_ak/R7MVRQm9GL.+4
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJM2MU+AAoJEDMEi1NhKgbsr9cH/0iyIQ/VM8oicfGJZ38spICF
+dPNuM2z07JH/n6m1IHZlgdD4i3d7r3v77b/s8jmjiqy9+vAyzFQHw5My/YNQ+1Q6
+Dk8G0lSkLCfOSP9YbVd+kRXhhtwm+Urruj5FY9B8aaqUqfAASqn34gCLw3IozMZW
++/TBfuPadgAN8lTsvt0MDnWf4QgZBntIbvVDEp3kfkwBlSh4hwuiV86C64iNeYAu
+eItmzS9BcE1pjxhU/EQ96FG6EounNcruitQZm/Gn7ULRZeupLjv2Btclx/9jneS3
+tofFkKaLIPafZPaYr7f18Z7uoYHS6vc9UITpd6elQNzS/o/iZTV+qF06LNAArhM=
+=NKaW
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__9_Nov_2010_14_51_26_+1100_ak/R7MVRQm9GL.+4--
