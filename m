@@ -1,48 +1,58 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for November 9 (acpi_video)
-Date: Tue, 9 Nov 2010 17:06:21 -0800
-Message-ID: <20101109170621.32db3873.randy.dunlap@oracle.com>
-References: <20101109151618.a562f77a.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the fsnotify tree
+Date: Wed, 10 Nov 2010 12:53:21 +1100
+Message-ID: <20101110125321.79c5c8a2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__10_Nov_2010_12_53_21_+1100_15_WvkKBcFSRqpda"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:28178 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751315Ab0KJBID (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Nov 2010 20:08:03 -0500
-In-Reply-To: <20101109151618.a562f77a.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:60675 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751406Ab0KJBxc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 9 Nov 2010 20:53:32 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Zhang Rui <rui.zhang@intel.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-acpi@vger.kernel.org
+To: Eric Paris <eparis@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 9 Nov 2010 15:16:18 +1100 Stephen Rothwell wrote:
+--Signature=_Wed__10_Nov_2010_12_53_21_+1100_15_WvkKBcFSRqpda
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi all,
-> 
-> Changes since 20101029:
+Hi Eric,
 
+After merging the fsnotify tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-one build had these errors:
+fs/notify/mark.c: In function 'fsnotify_add_mark':
+fs/notify/mark.c:230: error: 'struct fsnotify_group' has no member named 'f=
+anotify_data'
 
-drivers/built-in.o: In function `acpi_video_bus_put_one_device':
-video.c:(.text+0x59bee): undefined reference to `thermal_cooling_device_unregister'
-video.c:(.text+0x59bff): undefined reference to `video_output_unregister'
-drivers/built-in.o: In function `acpi_video_device_find_cap':
-video.c:(.text+0x5b3fc): undefined reference to `thermal_cooling_device_register'
-video.c:(.text+0x5b57b): undefined reference to `video_output_register'
+Caused by commit 0ed64ab6b338e4269c9f25de83781619ecd624f1 ("fsnotify:
+code and error path cleanup in fsnotify_add_mark").  This build has
+CONFIG_FANOTIFY not set.
 
-and another one had these errors:
+I have used the fsnotify tree from next-20101109 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-drivers/built-in.o: In function `acpi_video_bus_put_one_device':
-video.c:(.text+0xdc14a): undefined reference to `backlight_device_unregister'
-drivers/built-in.o: In function `acpi_video_switch_brightness':
-video.c:(.text+0xdc821): undefined reference to `backlight_force_update'
-drivers/built-in.o: In function `acpi_video_device_find_cap':
-video.c:(.text+0xdd8bd): undefined reference to `backlight_device_register'
+--Signature=_Wed__10_Nov_2010_12_53_21_+1100_15_WvkKBcFSRqpda
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+iQEcBAEBAgAGBQJM2fsRAAoJEDMEi1NhKgbsOsEH/2uC44+zUVtli9D0Ucxj5e8x
+BLwSkYPSExW57uZDdbLwJGTQfPzFFuAiEJ1/GgefTqKb/KlMB8SWld9is0IiOq6Y
+AIo6iy27uVy1WFNQuWoLnFWrnUeLv+3sQvyoXg4WvB4jb1Bk0spJP4Xop9bW3Uro
+WhSE2TugnJWSouWf0hC63Cn4RvTj7ijtlFk0KZZRIjLsX34YlsmVrSPj2I+IEgUf
+MVqsZMp4GVpF7Mo2fjkzXGuwmp1g3WucB7zOMAMvFU2MNZAjG9egm2Uhr9YW6fTk
+bfO7lcxGESsRmnsd8fVr7cDOmXbTzfQmZckH438dY7OaU5fCVreU6Bw6UkRSEBg=
+=B3rN
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__10_Nov_2010_12_53_21_+1100_15_WvkKBcFSRqpda--
