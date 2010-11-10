@@ -1,58 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings after in Linus' tree
-Date: Wed, 10 Nov 2010 11:56:10 +1100
-Message-ID: <20101110115610.45619ae8.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for November 9 (acpi_video)
+Date: Tue, 9 Nov 2010 17:06:21 -0800
+Message-ID: <20101109170621.32db3873.randy.dunlap@oracle.com>
+References: <20101109151618.a562f77a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__10_Nov_2010_11_56_10_+1100__DZjebravDR_/Psy"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46712 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751379Ab0KJA4V (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 9 Nov 2010 19:56:21 -0500
+Received: from rcsinet10.oracle.com ([148.87.113.121]:28178 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751315Ab0KJBID (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 9 Nov 2010 20:08:03 -0500
+In-Reply-To: <20101109151618.a562f77a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Zhang Rui <rui.zhang@intel.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-acpi@vger.kernel.org
 
---Signature=_Wed__10_Nov_2010_11_56_10_+1100__DZjebravDR_/Psy
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, 9 Nov 2010 15:16:18 +1100 Stephen Rothwell wrote:
 
-Hi Al,
+> Hi all,
+> 
+> Changes since 20101029:
 
-With Linus' tree, today's linux-next build (x86_64 allmodconfig)
-produced these warnings:
 
-drivers/xen/xenfs/super.c: In function 'xenfs_mount':
-drivers/xen/xenfs/super.c:128: warning: return makes integer from pointer w=
-ithout a cast
-drivers/xen/xenfs/super.c: At top level:
-drivers/xen/xenfs/super.c:134: warning: initialization from incompatible po=
-inter type
+one build had these errors:
 
-Introduced by commit fc14f2fef682df677d64a145256dbd263df2aa7b ("convert
-get_sb_single() users").
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+drivers/built-in.o: In function `acpi_video_bus_put_one_device':
+video.c:(.text+0x59bee): undefined reference to `thermal_cooling_device_unregister'
+video.c:(.text+0x59bff): undefined reference to `video_output_unregister'
+drivers/built-in.o: In function `acpi_video_device_find_cap':
+video.c:(.text+0x5b3fc): undefined reference to `thermal_cooling_device_register'
+video.c:(.text+0x5b57b): undefined reference to `video_output_register'
 
---Signature=_Wed__10_Nov_2010_11_56_10_+1100__DZjebravDR_/Psy
-Content-Type: application/pgp-signature
+and another one had these errors:
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+drivers/built-in.o: In function `acpi_video_bus_put_one_device':
+video.c:(.text+0xdc14a): undefined reference to `backlight_device_unregister'
+drivers/built-in.o: In function `acpi_video_switch_brightness':
+video.c:(.text+0xdc821): undefined reference to `backlight_force_update'
+drivers/built-in.o: In function `acpi_video_device_find_cap':
+video.c:(.text+0xdd8bd): undefined reference to `backlight_device_register'
 
-iQEcBAEBAgAGBQJM2e2qAAoJEDMEi1NhKgbsIM0H/1xttSuB/zI9YUkP1b+1Ji3t
-KPkK89/gTJt/o5Svo6tahnIj9bw2wNkemOkWA4bWvxeASFAprABlxt5V65JAzyW/
-1WpP0UOy5BSRmePd2CJYSAnaznz6W8IuVP7Ns/NPp08w4km4X+jT8Hz76tVTcIPQ
-thWY7Qo6o23fLF7s/Q9X1ExKBsvTp1wr2jwmIfeT8ekcakLSG8KuY6hfATTAV8u9
-dPcaUb+sx4B3Ng1P17gp0SPDDAZBixeoEihjFWrQk5LSB8llg3q9L+axPoS6mAWo
-Y5mCOozQk9TohiGJtuJ6LwCgqZWIsO3l1qga0RK2N9WmfNJDbkz9bTZtjJo7f4c=
-=Kvt7
------END PGP SIGNATURE-----
 
---Signature=_Wed__10_Nov_2010_11_56_10_+1100__DZjebravDR_/Psy--
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
