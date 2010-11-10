@@ -1,35 +1,30 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for November 10 (kernel/rcutiny)
-Date: Wed, 10 Nov 2010 09:19:26 -0800
-Message-ID: <20101110091926.dc834e84.randy.dunlap@oracle.com>
-References: <20101110140719.139ebe51.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging tree with the  tree
+Date: Wed, 10 Nov 2010 10:40:04 -0800
+Message-ID: <20101110184004.GB15089@kroah.com>
+References: <20101110132408.67f73665.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:23980 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757170Ab0KJRTw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Nov 2010 12:19:52 -0500
-In-Reply-To: <20101110140719.139ebe51.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Paul McKenney <paulmck@linux.vnet.ibm.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20101110132408.67f73665.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Dan Carpenter <error27@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 10 Nov 2010 14:07:19 +1100 Stephen Rothwell wrote:
-
-> Hi all,
+On Wed, Nov 10, 2010 at 01:24:08PM +1100, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> Changes since 20101109:
+> Today's linux-next merge of the staging tree got a conflict in
+> drivers/staging/intel_sst/intel_sst_app_interface.c between commits from
+> the staging.current tree and commit
+> d0f40c5041f9c48afbd8f7fbf8a5faa9e5dbd39a ("Staging: intel_sst: Use
+> pr_fmt, fix misspellings") from the staging tree.
+> 
+> I have just ignored the changes from the staging tree for today.
 
+Thanks, that works, when these patches go to Linus I'll handle the
+merge.
 
-when CONFIG_RCU_BOOST is not enabled:
-
-In file included from linux-next-20101110/kernel/rcutiny.c:53:
-linux-next-20101110/kernel/rcutiny_plugin.h: In function 'rcu_preempt_cpu_qs':
-linux-next-20101110/kernel/rcutiny_plugin.h:413: error: 'struct rcu_preempt_ctrlblk' has no member named 'n_normal_balk_blkd_tasks'
-
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+greg k-h
