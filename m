@@ -1,49 +1,58 @@
-From: Greg KH <greg@kroah.com>
-Subject: Movement of the USB, TTY, Staging, and driver core trees for
- linux-next
-Date: Tue, 9 Nov 2010 09:23:21 -0800
-Message-ID: <20101109172321.GA10927@kroah.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warnings after in Linus' tree
+Date: Wed, 10 Nov 2010 11:56:10 +1100
+Message-ID: <20101110115610.45619ae8.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-serial-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__10_Nov_2010_11_56_10_+1100__DZjebravDR_/Psy"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:46712 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751379Ab0KJA4V (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 9 Nov 2010 19:56:21 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
+
+--Signature=_Wed__10_Nov_2010_11_56_10_+1100__DZjebravDR_/Psy
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-Sender: linux-serial-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org, linux-serial@vger.kernel.org, devel@driverdev.osuosl.org
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-Hi Stephen,
+Hi Al,
 
-As discussed at the kernel summit, I've moved the USB, TTY, Staging, and
-driver core trees into git instead of using quilt.
+With Linus' tree, today's linux-next build (x86_64 allmodconfig)
+produced these warnings:
 
-Previously you had been pulling in the quilt trees from kernel.org, so
-this should hopefully be easier.
+drivers/xen/xenfs/super.c: In function 'xenfs_mount':
+drivers/xen/xenfs/super.c:128: warning: return makes integer from pointer w=
+ithout a cast
+drivers/xen/xenfs/super.c: At top level:
+drivers/xen/xenfs/super.c:134: warning: initialization from incompatible po=
+inter type
 
-The location of the trees are now at:
- USB:
-	git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb-2.6.git
-	with the usb-next and usb-linus branches
- TTY:
-	git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty-2.6.git
-	with the tty-next and tty-linus branches
- driver core:
-	git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core-2.6.git
-	with the driver-core-next and driver-core-linus branches
- staging:
-	git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging-2.6.git
-	with the staging-next and staging-linus branches
+Introduced by commit fc14f2fef682df677d64a145256dbd263df2aa7b ("convert
+get_sb_single() users").
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Note the staging tree has moved from before, it used to be in a
-staging-next-2.6.git/ tree, and now it is together with the main staging
-development tree in just "staging-2.6.git/"
+--Signature=_Wed__10_Nov_2010_11_56_10_+1100__DZjebravDR_/Psy
+Content-Type: application/pgp-signature
 
-There are no known interdependancies between these trees, unlike my
-previous quilt trees, so merges should be fine (if not, I should find
-them as well.)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-If there are any problems with this, please let me know.
+iQEcBAEBAgAGBQJM2e2qAAoJEDMEi1NhKgbsIM0H/1xttSuB/zI9YUkP1b+1Ji3t
+KPkK89/gTJt/o5Svo6tahnIj9bw2wNkemOkWA4bWvxeASFAprABlxt5V65JAzyW/
+1WpP0UOy5BSRmePd2CJYSAnaznz6W8IuVP7Ns/NPp08w4km4X+jT8Hz76tVTcIPQ
+thWY7Qo6o23fLF7s/Q9X1ExKBsvTp1wr2jwmIfeT8ekcakLSG8KuY6hfATTAV8u9
+dPcaUb+sx4B3Ng1P17gp0SPDDAZBixeoEihjFWrQk5LSB8llg3q9L+axPoS6mAWo
+Y5mCOozQk9TohiGJtuJ6LwCgqZWIsO3l1qga0RK2N9WmfNJDbkz9bTZtjJo7f4c=
+=Kvt7
+-----END PGP SIGNATURE-----
 
-thanks,
-
-greg k-h
+--Signature=_Wed__10_Nov_2010_11_56_10_+1100__DZjebravDR_/Psy--
