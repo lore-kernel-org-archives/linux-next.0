@@ -1,45 +1,35 @@
-From: "R.M. Thomas" <rmthomas@sciolus.org>
-Subject: Re: [PATCH -next] staging/easycap: make module params private/static,
- fix build
-Date: Fri, 12 Nov 2010 10:30:15 +0000
-Message-ID: <4CDD1737.6010104@sciolus.org>
-References: <20101111125655.15fa7188.sfr@canb.auug.org.au> <20101111104422.28594510.randy.dunlap@oracle.com> <4CDC67FF.3010006@sciolus.org> <4CDC6BA4.3060307@oracle.com>
+From: Alan Cox <alan@linux.intel.com>
+Subject: Re: linux-next: build failure after merge of the final tree (tty
+ tree related)
+Date: Fri, 12 Nov 2010 10:44:38 +0000
+Message-ID: <20101112104438.34b8c7b6@linux.intel.com>
+References: <20101112125751.7f364d58.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4CDC6BA4.3060307@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, gregkh@suse.de
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga03.intel.com ([143.182.124.21]:55178 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751457Ab0KLLEt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 12 Nov 2010 06:04:49 -0500
+In-Reply-To: <20101112125751.7f364d58.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russ Gorby <richardx.r.gorby@intel.com>
 
-Randy Dunlap wrote:
-> On 11/11/10 14:02, R.M. Thomas wrote:
->> Randy Dunlap wrote:
->>> The easycap driver has module parameters (bars, gain, & debug)
->>> with global scope that intrude on the kernel namespace and cause
->>> build problems.  Change the names of them to be driver-specific
->>> and make 2 of them static.
->> I did do test builds of the driver in-tree prior to submitting the
->> recent set of patches, but did not see any warnings so did not spot
->> this mistake.  There's presumably something wrong with the way I'm
->> building the kernel.
+On Fri, 12 Nov 2010 12:57:51 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+> Hi Greg,
 > 
-> This build problem shows up when this driver is built into the kernel
-> image, not built as a loadable module.  Did you only build as a loadable
-> module, maybe?  and what CPU architecture did you build for?  That could
-> also matter.
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> drivers/serial/ifx6x60.c: In function 'ifx_spi_reset':
+> drivers/serial/ifx6x60.c:928: error: implicit declaration of function
+> 'msleep'
 
-Yes, that's it.  I do development of the driver on a machine running
-Debian stable with 2.6.26.  I detect compilation and house-style
-errors by copying the source into a clone of the linux-next tree and
-running make and checkpatch.pl, but obviously I don't install.  To
-test the run-time behaviour of the driver I copy the driver source to a
-separate (sacrificial) machine which is actually running linux-next and
-build the driver there out-of-tree as a loadable module, complete with
-the installation step.  One machine is x86-64, the other is x86.
+Patch sent to Greg
 
-I'll change my way of working.
-
-Mike
+Alan
