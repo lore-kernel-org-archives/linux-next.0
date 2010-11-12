@@ -1,35 +1,47 @@
-From: Alan Cox <alan@linux.intel.com>
-Subject: Re: linux-next: build failure after merge of the final tree (tty
- tree related)
-Date: Fri, 12 Nov 2010 10:44:38 +0000
-Message-ID: <20101112104438.34b8c7b6@linux.intel.com>
-References: <20101112125751.7f364d58.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] staging: fix ste_rmi4 build, depends on INPUT
+Date: Fri, 12 Nov 2010 14:47:02 -0800
+Message-ID: <20101112144702.117505ee.randy.dunlap@oracle.com>
+References: <20101111125655.15fa7188.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga03.intel.com ([143.182.124.21]:55178 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751457Ab0KLLEt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 12 Nov 2010 06:04:49 -0500
-In-Reply-To: <20101112125751.7f364d58.sfr@canb.auug.org.au>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:42801 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754163Ab0KLWrq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 12 Nov 2010 17:47:46 -0500
+In-Reply-To: <20101111125655.15fa7188.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russ Gorby <richardx.r.gorby@intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, driverdevel <devel@driverdev.osuosl.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, naveen.gaddipati@stericsson.com, js.ha@stericsson.com
 
-On Fri, 12 Nov 2010 12:57:51 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-> Hi Greg,
-> 
-> After merging the final tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
-> 
-> drivers/serial/ifx6x60.c: In function 'ifx_spi_reset':
-> drivers/serial/ifx6x60.c:928: error: implicit declaration of function
-> 'msleep'
+The synaptics_i2c_rmi4 driver uses input_*() interfaces,
+so it should depend on INPUT to fix its build errors:
 
-Patch sent to Greg
+ERROR: "input_event" [drivers/staging/ste_rmi4/synaptics_i2c_rmi4.ko] undefined!
+ERROR: "input_free_device" [drivers/staging/ste_rmi4/synaptics_i2c_rmi4.ko] undefined!
+ERROR: "input_register_device" [drivers/staging/ste_rmi4/synaptics_i2c_rmi4.ko] undefined!
+ERROR: "input_set_abs_params" [drivers/staging/ste_rmi4/synaptics_i2c_rmi4.ko] undefined!
+ERROR: "input_allocate_device" [drivers/staging/ste_rmi4/synaptics_i2c_rmi4.ko] undefined!
+ERROR: "input_unregister_device" [drivers/staging/ste_rmi4/synaptics_i2c_rmi4.ko] undefined!
 
-Alan
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: naveen.gaddipati@stericsson.com, js.ha@stericsson.com
+---
+ drivers/staging/ste_rmi4/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20101111.orig/drivers/staging/ste_rmi4/Kconfig
++++ linux-next-20101111/drivers/staging/ste_rmi4/Kconfig
+@@ -1,6 +1,6 @@
+ config TOUCHSCREEN_SYNAPTICS_I2C_RMI4
+ 	tristate "Synaptics i2c rmi4 touchscreen"
+-	depends on I2C
++	depends on I2C && INPUT
+ 	help
+ 	  Say Y here if you have a Synaptics RMI4 and
+ 	  want to enable support for the built-in touchscreen.
