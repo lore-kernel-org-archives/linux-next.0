@@ -1,34 +1,59 @@
-From: "R.M. Thomas" <rmthomas@sciolus.org>
-Subject: Re: [PATCH -next] staging/easycap: make module params private/static,
- fix build
-Date: Thu, 11 Nov 2010 22:02:39 +0000
-Message-ID: <4CDC67FF.3010006@sciolus.org>
-References: <20101111125655.15fa7188.sfr@canb.auug.org.au> <20101111104422.28594510.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (tty tree
+ related)
+Date: Fri, 12 Nov 2010 12:57:51 +1100
+Message-ID: <20101112125751.7f364d58.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__12_Nov_2010_12_57_51_+1100_8xoS=YtTgE86SAiz"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from claranet-outbound-smtp02.uk.clara.net ([195.8.89.35]:37843 "EHLO
-	claranet-outbound-smtp02.uk.clara.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752835Ab0KKWfj (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 11 Nov 2010 17:35:39 -0500
-In-Reply-To: <20101111104422.28594510.randy.dunlap@oracle.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:41769 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753148Ab0KLB6A (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 11 Nov 2010 20:58:00 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, gregkh@suse.de
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russ Gorby <richardx.r.gorby@intel.com>, Alan Cox <alan@linux.intel.com>
 
-Randy Dunlap wrote:
-> The easycap driver has module parameters (bars, gain, & debug)
-> with global scope that intrude on the kernel namespace and cause
-> build problems.  Change the names of them to be driver-specific
-> and make 2 of them static.
+--Signature=_Fri__12_Nov_2010_12_57_51_+1100_8xoS=YtTgE86SAiz
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I did do test builds of the driver in-tree prior to submitting the
-recent set of patches, but did not see any warnings so did not spot
-this mistake.  There's presumably something wrong with the way I'm
-building the kernel.
+Hi Greg,
 
-Thanks,
-Mike
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
+
+drivers/serial/ifx6x60.c: In function 'ifx_spi_reset':
+drivers/serial/ifx6x60.c:928: error: implicit declaration of function 'msle=
+ep'
+
+Caused by commit af3b8881f4c9852eefe9c7f1a997b3ecf580561b ("ifx6x60: SPI
+protocol driver for Infineon 6x60 modem").  An include is missing
+(linux/delay.h).  See Rule 1 in Documentation/SubmitChecklist.
+
+I have reverted that commit for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__12_Nov_2010_12_57_51_+1100_8xoS=YtTgE86SAiz
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJM3J8fAAoJEDMEi1NhKgbs/9wH/j7bihjQ6fMdQI5Jar8z9eny
+AudVgRiGqVx5SIhnRS02VUIySuZpcPCwjPewY1LTqLcH68xfE1gJYyKtnbLRcc7q
+ZZsZ4jvJai7dsuqqu/hzdZe5HLWvlJJsVqVFHbRRZglFiBsC8BEppaeOmu/8JiFH
+Optzsuvdu/SIxNWwYWiWTaxb2D6Hd7VJrfE7Mc5GPl0dqnAFnjAVtwD+d4TEwgr0
+7Wqfh9C/pzRzIQ+3iA9opqmg50iF5jzHEl9LZ66yXjhjCPM8LHyRhKrUoBNzKUwU
+ikEwbVVQgBZ7JQZoqmN+uL+Qe0eBDvWTldfvj+9dm5krDyVW9ddtxxx+0Yh16j4=
+=N5F7
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__12_Nov_2010_12_57_51_+1100_8xoS=YtTgE86SAiz--
