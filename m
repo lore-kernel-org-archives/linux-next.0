@@ -1,53 +1,51 @@
-From: Borislav Petkov <bp@amd64.org>
-Subject: Re: [PATCH -next] edac: use BIT_64() to eliminate warnings
-Date: Sun, 14 Nov 2010 18:54:51 +0100
-Message-ID: <20101114175451.GA13977@aftab>
-References: <20101112130547.c2a3c2c1.sfr@canb.auug.org.au>
- <20101113084426.b26f1d88.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: failed to fetch the davinci tree
+Date: Mon, 15 Nov 2010 09:20:50 +1100
+Message-ID: <20101115092050.46b514fb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__15_Nov_2010_09_20_50_+1100_+oJUz4NtVRjrvvZb"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from s15228384.onlinehome-server.info ([87.106.30.177]:46176 "EHLO
-	mail.x86-64.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756487Ab0KNRzc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 14 Nov 2010 12:55:32 -0500
-Content-Disposition: inline
-In-Reply-To: <20101113084426.b26f1d88.randy.dunlap@oracle.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:57840 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756076Ab0KNWVD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 14 Nov 2010 17:21:03 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, akpm <akpm@linux-foundation.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Doug Thompson <dougthompson@xmission.com>, "bluesmoke-devel@lists.sourceforge.net" <bluesmoke-devel@lists.sourceforge.net>, edac-devel <linux-edac@vger.kernel.org>
+To: Kevin Hilman <khilman@deeprootsystems.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Nov 13, 2010 at 11:44:26AM -0500, Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> Building for X86_32 produces shift count warnings, so use
-> BIT_64() to eliminate the warnings.
-> 
-> drivers/edac/mce_amd.c:778: warning: left shift count >= width of type
-> drivers/edac/mce_amd.c:778: warning: left shift count >= width of type
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> Cc: Doug Thompson <dougthompson@xmission.com>
-> Cc: Borislav Petkov <borislav.petkov@amd.com>
-> Cc: bluesmoke-devel@lists.sourceforge.net
+--Signature=_Mon__15_Nov_2010_09_20_50_+1100_+oJUz4NtVRjrvvZb
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, applied.
+Hi Kevin,
 
-BTW, Doug, we still carry the bluesmoke-devel ML as edac mailing list
-in MAINTAINERS althouth there's a new linux-edac@vger... which got
-proposed recently. I think we should use that new one and deprecate the
-sourceforge list since the new one is not moderated for subsribers and
-thus more open.
+Trying to fetch the davinci tree this morning produced this error:
 
-Thoughts?
+fatal: Couldn't find remote ref refs/heads/davinci-next
 
--- 
-Regards/Gruss,
-Boris.
+I will use the tree from next-20101112 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Advanced Micro Devices GmbH
-Einsteinring 24, 85609 Dornach
-General Managers: Alberto Bozzo, Andrew Bowd
-Registration: Dornach, Gemeinde Aschheim, Landkreis Muenchen
-Registergericht Muenchen, HRB Nr. 43632
+--Signature=_Mon__15_Nov_2010_09_20_50_+1100_+oJUz4NtVRjrvvZb
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJM4GDCAAoJEDMEi1NhKgbsRKsH/31gV2LhSBIR/JDjQqXWQrYj
+F6GCkfyKABtGtNgLE/GfbppQ0t1JvwD68nXY5ebL4Bo00ZTkGniCt1mSckuUDqyE
+h2QA/XGP5oNvAmKmaituifMy3OcvIrlbvNEI0az9TdiTCfXo0GMZkQBNNpHejSmi
+oMECPchawvvP+dtyePwxtrT5OpzdII5QL4SEQ2zsnMjR52ypp6BlFmeEWohnpovS
+YyxojpG0RIU7xCZdC76OCmQng3wdeZXWqmRLvF3tHdIGtODtpIsbB0mGJ84vwE2D
+EheVOmOzuGKG0bMtWBJwjiviiaM2ToKplTI9fSi80w7wnvoPxf0KRR5h06nlx/8=
+=yPIv
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__15_Nov_2010_09_20_50_+1100_+oJUz4NtVRjrvvZb--
