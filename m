@@ -1,56 +1,92 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the xen tree with Linus' tree
-Date: Mon, 15 Nov 2010 11:23:52 +1100
-Message-ID: <20101115112352.6cbf5604.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (net tree
+ related)
+Date: Mon, 15 Nov 2010 11:46:51 +1100
+Message-ID: <20101115114651.8e6bad6c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__15_Nov_2010_11_23_52_+1100_T4alB4AQUvpqCt0z"
+ boundary="Signature=_Mon__15_Nov_2010_11_46_51_+1100_70vNeCZ14/1f.Dlc"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36290 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:40005 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754659Ab0KOAYE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 14 Nov 2010 19:24:04 -0500
+	id S1752995Ab0KOAq7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 14 Nov 2010 19:46:59 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jeremy Fitzhardinge <jeremy@goop.org>, Xen Devel <Xen-devel@lists.xensource.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>
 
---Signature=_Mon__15_Nov_2010_11_23_52_+1100_T4alB4AQUvpqCt0z
+--Signature=_Mon__15_Nov_2010_11_46_51_+1100_70vNeCZ14/1f.Dlc
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Dave,
 
-Today's linux-next merge of the xen tree got a conflict in
-drivers/block/xen-blkfront.c between commit
-02e031cbc843b010e72fcc05c76113c688b2860f ("block: remove
-REQ_HARDBARRIER") from Linus' tree and commits
-c64e38ea17a81721da0393584fd807f8434050fa ("xen/blkfront: map REQ_FLUSH
-into a full barrier") and be2f8373c188ed1f5d36003c9928e4d695213080
-("xen/blkfront: Implement FUA with BLKIF_OP_WRITE_BARRIER") from the xen
-tree.
+After merging the final tree, today's linux-next build (powerpc
+ppc44x_defconfig) failed like this:
 
-I used the xen tree version.
+net/ipv4/igmp.c: In function 'ip_mc_inc_group':
+net/ipv4/igmp.c:1228: error: implicit declaration of function 'for_each_pmc=
+_rtnl'
+net/ipv4/igmp.c:1228: error: expected ';' before '{' token
+net/ipv4/igmp.c: In function 'ip_mc_unmap':
+net/ipv4/igmp.c:1333: error: expected ';' before 'igmp_group_dropped'
+net/ipv4/igmp.c: In function 'ip_mc_remap':
+net/ipv4/igmp.c:1343: error: expected ';' before 'igmp_group_added'
+net/ipv4/igmp.c: In function 'ip_mc_down':
+net/ipv4/igmp.c:1355: error: expected ';' before 'igmp_group_dropped'
+net/ipv4/igmp.c: In function 'ip_mc_up':
+net/ipv4/igmp.c:1400: error: expected ';' before 'igmp_group_added'
+net/ipv4/igmp.c: In function 'ip_mc_del_src':
+net/ipv4/igmp.c:1521: error: implicit declaration of function 'for_each_pmc=
+_rcu'
+net/ipv4/igmp.c:1521: error: expected ';' before '{' token
+net/ipv4/igmp.c: In function 'ip_mc_add_src':
+net/ipv4/igmp.c:1693: error: expected ';' before '{' token
+net/ipv4/igmp.c: In function 'ip_mc_join_group':
+net/ipv4/igmp.c:1800: error: expected ';' before '{' token
+net/ipv4/igmp.c: In function 'ip_mc_source':
+net/ipv4/igmp.c:1938: error: expected ';' before '{' token
+net/ipv4/igmp.c: In function 'ip_mc_msfilter':
+net/ipv4/igmp.c:2081: error: expected ';' before '{' token
+net/ipv4/igmp.c: In function 'ip_mc_msfget':
+net/ipv4/igmp.c:2159: error: expected ';' before '{' token
+net/ipv4/igmp.c: In function 'ip_mc_gsfget':
+net/ipv4/igmp.c:2212: error: expected ';' before '{' token
+net/ipv4/igmp.c:2240: warning: label 'done' defined but not used
+net/ipv4/igmp.c: In function 'ip_mc_sf_allow':
+net/ipv4/igmp.c:2261: error: expected ';' before '{' token
+net/ipv4/igmp.c: In function 'ip_check_mc':
+net/ipv4/igmp.c:2326: error: expected ';' before '{' token
+net/ipv4/igmp.c:2322: warning: unused variable 'psf'
+
+Caused by commit 1d7138de878d1d4210727c1200193e69596f93b3 ("igmp: RCU
+conversion of in_dev->mc_list").  The for_each_pmc_rtnl and
+for_each_pmc_rcu definitions are protected by  CONFIG_IP_MULTICAST, but
+the uses are not ...
+
+I have reverted that commit for today.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__15_Nov_2010_11_23_52_+1100_T4alB4AQUvpqCt0z
+--Signature=_Mon__15_Nov_2010_11_46_51_+1100_70vNeCZ14/1f.Dlc
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJM4H2YAAoJEDMEi1NhKgbsoGMIAJvYjgUywKfHOPHo1Tp6D6GJ
-3EraF48FDIceOqpJNIbcn5e4keuT8UsSgnTMuZOiZnP/6f9oTtY/7xvuZlnCqGJi
-BH/Ai/iv9nw1QGA2laV5ZUAQp/ZnCHKXLBAPVIJRp4U1NRf2pU+CDOdIrZFn5nJ2
-hFo3CshB9W5zG9ARQD+8i4tv0EVpFRAofH06UADj5mUozsGwJXNeTb1Y4UQpcJU0
-0QNUMTqPfSf3nOWAfbYJ9wRZ7prXWAG6c+j2iAOHchcoRl26kFSkZTmSgzORVNxd
-rcoiP2GBf7LTZuueHJEoXSTZ4qrfqJMFSZ38TOFbAG8Qk9aws8Pt8S0ZJ4oPEqk=
-=uUJm
+iQEcBAEBAgAGBQJM4IL7AAoJEDMEi1NhKgbsiXcH/1ae7ygSHpHgwuE4QD0Mmy1E
+o2PGaFIYYR7jBdcUZ2OEnH/+oY49ES48lZVU8uIZPejlzR0mFbb/bIL7r6Yp8kfb
+4oGA92APu97u38vWFeOVCH2yGAaZJsfzm7W3hieSHfI/Gh+qsWEG5S49rX1mXh/f
+iSu3hE6nZi2WbNlCE9JHAGCqJHAHnKq2Iw1SNtA9cMac699ZXnySClNFvIAG1eQe
+e8fCKZk0SQkazvJXMSWeFRgjoq4he3sIydxd6u77aObHTS2SlV8NPMYyhLCI7aQB
+Afz/tk/b8jdLEeBNyTjk+SEpOWSDHYZi9Ph3N08W5GwQMTa1EF92FJ/xFm2gHS0=
+=r6UA
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__15_Nov_2010_11_23_52_+1100_T4alB4AQUvpqCt0z--
+--Signature=_Mon__15_Nov_2010_11_46_51_+1100_70vNeCZ14/1f.Dlc--
