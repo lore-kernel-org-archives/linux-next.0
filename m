@@ -1,47 +1,37 @@
-From: Tony Finch <dot@dotat.at>
-Subject: Re: [PATCH -next] xen: fix header export to userspace
-Date: Mon, 15 Nov 2010 10:23:48 +0000
-Message-ID: <alpine.LSU.2.00.1011151017570.8553@hermes-2.csi.cam.ac.uk>
-References: <20101112130547.c2a3c2c1.sfr@canb.auug.org.au> <20101113084439.d21bd0f0.randy.dunlap@oracle.com>
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: Re: linux-next: manual merge of the trivial tree with Linus' tree
+Date: Mon, 15 Nov 2010 13:40:38 +0100 (CET)
+Message-ID: <alpine.LNX.2.00.1011151340060.7420@pobox.suse.cz>
+References: <20101109133155.e979a39b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ppsw-51.csi.cam.ac.uk ([131.111.8.151]:60034 "EHLO
-	ppsw-51.csi.cam.ac.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753388Ab0KOKX4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Nov 2010 05:23:56 -0500
-In-Reply-To: <20101113084439.d21bd0f0.randy.dunlap@oracle.com>
+Received: from cantor.suse.de ([195.135.220.2]:34643 "EHLO mx1.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755095Ab0KOMkm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 15 Nov 2010 07:40:42 -0500
+In-Reply-To: <20101109133155.e979a39b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, akpm <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, xen-devel@lists.xensource.com, virtualization@lists.osdl.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?ISO-8859-15?Q?=22Uwe_Kleine-K=F6nig=22?= <u.kleine-koenig@pengutronix.de>, Jing Huang <huangj@brocade.com>
 
-On Sat, 13 Nov 2010, Randy Dunlap wrote:
+On Tue, 9 Nov 2010, Stephen Rothwell wrote:
 
-> From: Randy Dunlap <randy.dunlap@oracle.com>
->
-> scripts/headers_install.pl prevents "__user" from being exported
-> to userspace headers, so just use compiler.h to make sure that
-> __user is defined and avoid the error.
->
-> unifdef: linux-next-20101112/xx64/usr/include/xen/privcmd.h.tmp: 79: Premature EOF (#if line 33 depth 1)
+> Hi Jiri,
+> 
+> Today's linux-next merge of the trivial tree got a conflict in
+> drivers/scsi/bfa/bfa_fcpim.c between commit
+> 5fbe25c7a664601666895e8f95eaa59bd9741392 ("[SCSI] bfa: fix comments for c
+> files") from Linus' tree and commit
+> b595076a180a56d1bb170e6eceda6eb9d76f4cd3 ("tree-wide: fix comment/printk
+> typos") from the trivial tree.
+> 
+> Just context changes.  I fixed it up (see below) and can carry the fix as
+> necessary.
 
-I suggest the following slightly more informative message
+Thank you Stephen, I think that's probably best thing to do here.
 
-> scripts/headers_install.pl strips "__user" when exporting headers to
-> userspace and can introduce a syntax error (detected by unifdef) if
-> "__user" appears in an unexpected place. Simplify by using compiler.h to
-> make sure that __user is defined and avoid the error.
->
-> unifdef: linux-next-20101112/xx64/usr/include/xen/privcmd.h.tmp: 79: Premature EOF (#if line 33 depth 1)
-
-In any case,
-
-Acked-By:	Tony Finch <dot@dotat.at>
-
-Tony.
 -- 
-f.anthony.n.finch  <dot@dotat.at>  http://dotat.at/
-HUMBER THAMES DOVER WIGHT PORTLAND: NORTH BACKING WEST OR NORTHWEST, 5 TO 7,
-DECREASING 4 OR 5, OCCASIONALLY 6 LATER IN HUMBER AND THAMES. MODERATE OR
-ROUGH. RAIN THEN FAIR. GOOD.
+Jiri Kosina
+SUSE Labs, Novell Inc.
