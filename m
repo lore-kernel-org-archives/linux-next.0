@@ -1,87 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the v4l-dvb tree
-Date: Mon, 15 Nov 2010 10:25:54 +1100
-Message-ID: <20101115102554.67514e8d.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the xen tree with Linus' tree
+Date: Mon, 15 Nov 2010 11:23:52 +1100
+Message-ID: <20101115112352.6cbf5604.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__15_Nov_2010_10_25_54_+1100_eXs53=qOVGa=xQdv"
+ boundary="Signature=_Mon__15_Nov_2010_11_23_52_+1100_T4alB4AQUvpqCt0z"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49629 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:36290 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753583Ab0KNX0F (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 14 Nov 2010 18:26:05 -0500
+	id S1754659Ab0KOAYE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 14 Nov 2010 19:24:04 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Patrick Boettcher <pboettcher@kernellabs.com>, Martin Wilks <m.wilks@technisat.com>
+To: Jeremy Fitzhardinge <jeremy@goop.org>, Xen Devel <Xen-devel@lists.xensource.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
 
---Signature=_Mon__15_Nov_2010_10_25_54_+1100_eXs53=qOVGa=xQdv
+--Signature=_Mon__15_Nov_2010_11_23_52_+1100_T4alB4AQUvpqCt0z
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mauro,
+Hi all,
 
-After merging the v4l-dvb tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the xen tree got a conflict in
+drivers/block/xen-blkfront.c between commit
+02e031cbc843b010e72fcc05c76113c688b2860f ("block: remove
+REQ_HARDBARRIER") from Linus' tree and commits
+c64e38ea17a81721da0393584fd807f8434050fa ("xen/blkfront: map REQ_FLUSH
+into a full barrier") and be2f8373c188ed1f5d36003c9928e4d695213080
+("xen/blkfront: Implement FUA with BLKIF_OP_WRITE_BARRIER") from the xen
+tree.
 
-drivers/media/dvb/dvb-usb/technisat-usb2.c: In function 'technisat_usb2_get=
-_ir':
-drivers/media/dvb/dvb-usb/technisat-usb2.c:643: error: 'struct dvb_usb_devi=
-ce' has no member named 'rc_input_dev'
-drivers/media/dvb/dvb-usb/technisat-usb2.c:649: error: 'struct dvb_usb_devi=
-ce' has no member named 'rc_input_dev'
-drivers/media/dvb/dvb-usb/technisat-usb2.c:654: error: 'struct dvb_usb_devi=
-ce' has no member named 'rc_input_dev'
-drivers/media/dvb/dvb-usb/technisat-usb2.c: At top level:
-drivers/media/dvb/dvb-usb/technisat-usb2.c:732: error: unknown field 'rc_pr=
-ops' specified in initializer
-drivers/media/dvb/dvb-usb/technisat-usb2.c:732: warning: braces around scal=
-ar initializer
-drivers/media/dvb/dvb-usb/technisat-usb2.c:732: warning: (near initializati=
-on for 'technisat_usb2_devices.rc.core.rc_interval')
-drivers/media/dvb/dvb-usb/technisat-usb2.c:733: error: field name not in re=
-cord or union initializer
-drivers/media/dvb/dvb-usb/technisat-usb2.c:733: error: (near initialization=
- for 'technisat_usb2_devices.rc.core.rc_interval')
-drivers/media/dvb/dvb-usb/technisat-usb2.c:734: error: field name not in re=
-cord or union initializer
-drivers/media/dvb/dvb-usb/technisat-usb2.c:734: error: (near initialization=
- for 'technisat_usb2_devices.rc.core.rc_interval')
-drivers/media/dvb/dvb-usb/technisat-usb2.c:734: warning: excess elements in=
- scalar initializer
-drivers/media/dvb/dvb-usb/technisat-usb2.c:734: warning: (near initializati=
-on for 'technisat_usb2_devices.rc.core.rc_interval')
-make[5]: *** No rule to make target `drivers/media/rc/keymaps/rc-technisat-=
-usb2.c', needed by `drivers/media/rc/keymaps/rc-technisat-usb2.o'.  Stop.
-
-Caused by commit f29235d71ad3995ef9f74ad2f5931eca4ecabdcd ("[media]
-technisat-usb2: added driver for Technisat's USB2.0 DVB-S/S2 receiver")
-interacting with commit 1639cc0c5348957c076c0304005632d4a1b63252
-("[media] ir-core: make struct rc_dev the primary interface").
-
-Please make sure your build tests build new/modified files.
-
-I have used the v4l-dvb tree from next-20101112 for today.
+I used the xen tree version.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__15_Nov_2010_10_25_54_+1100_eXs53=qOVGa=xQdv
+--Signature=_Mon__15_Nov_2010_11_23_52_+1100_T4alB4AQUvpqCt0z
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJM4HACAAoJEDMEi1NhKgbs0lkH/2Z+S82OsKqkAK6fsYPOqfGp
-juXWBPCCSXl6CVpiPAJ/rT2PubAxztYuZZ0S/AcYPrVxGCXTr1q6oDZsT0U/F/B4
-b0tnxmCjt1QEDusppHlGosKnYoFtvjcc4jOWLd9fAM96IC5cJh+9DkZbOguWyF/a
-dRUePgf9hewqww7i8ZUQ65ixEOTeU2ShERVUfjbEgrBc3d9lw21RWIQBLs8P0I4l
-a7IOqf5ik9poZMOCOjqlxjMjdHdUt+YTT3jkzqKuCdq+bTfWcJSOsNiyrs52ndcL
-lcOzYnH64BZP+V8hyZJQiCB2cKQFbQ2aqw5gUjFsXjTv9r8wDPhO6Nk6ajbZAbI=
-=7Kic
+iQEcBAEBAgAGBQJM4H2YAAoJEDMEi1NhKgbsoGMIAJvYjgUywKfHOPHo1Tp6D6GJ
+3EraF48FDIceOqpJNIbcn5e4keuT8UsSgnTMuZOiZnP/6f9oTtY/7xvuZlnCqGJi
+BH/Ai/iv9nw1QGA2laV5ZUAQp/ZnCHKXLBAPVIJRp4U1NRf2pU+CDOdIrZFn5nJ2
+hFo3CshB9W5zG9ARQD+8i4tv0EVpFRAofH06UADj5mUozsGwJXNeTb1Y4UQpcJU0
+0QNUMTqPfSf3nOWAfbYJ9wRZ7prXWAG6c+j2iAOHchcoRl26kFSkZTmSgzORVNxd
+rcoiP2GBf7LTZuueHJEoXSTZ4qrfqJMFSZ38TOFbAG8Qk9aws8Pt8S0ZJ4oPEqk=
+=uUJm
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__15_Nov_2010_10_25_54_+1100_eXs53=qOVGa=xQdv--
+--Signature=_Mon__15_Nov_2010_11_23_52_+1100_T4alB4AQUvpqCt0z--
