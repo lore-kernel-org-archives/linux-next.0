@@ -1,51 +1,65 @@
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Subject: Re: linux-next: build failure after merge of the final tree (net
- tree related)
-Date: Mon, 15 Nov 2010 17:58:09 +0100
-Message-ID: <1289840289.2607.92.camel@edumazet-laptop>
-References: <20101115114651.8e6bad6c.sfr@canb.auug.org.au>
-	 <20101115.085254.104057401.davem@davemloft.net>
+From: Jeremy Fitzhardinge <jeremy@goop.org>
+Subject: Re: [PATCH -next] xen: fix header export to userspace
+Date: Mon, 15 Nov 2010 10:15:43 -0800
+Message-ID: <4CE178CF.3020308@goop.org>
+References: <20101112130547.c2a3c2c1.sfr@canb.auug.org.au>
+	<20101113084439.d21bd0f0.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20101115.085254.104057401.davem@davemloft.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <xen-devel-bounces@lists.xensource.com>
+In-Reply-To: <20101113084439.d21bd0f0.randy.dunlap@oracle.com>
+List-Unsubscribe: <http://lists.xensource.com/mailman/listinfo/xen-devel>,
+	<mailto:xen-devel-request@lists.xensource.com?subject=unsubscribe>
+List-Post: <mailto:xen-devel@lists.xensource.com>
+List-Help: <mailto:xen-devel-request@lists.xensource.com?subject=help>
+List-Subscribe: <http://lists.xensource.com/mailman/listinfo/xen-devel>,
+	<mailto:xen-devel-request@lists.xensource.com?subject=subscribe>
+Sender: xen-devel-bounces@lists.xensource.com
+Errors-To: xen-devel-bounces@lists.xensource.com
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "xen-devel@lists.xensource.com" <xen-devel@lists.xensource.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Tony Finch <dot@dotat.at>, LKML <linux-kernel@vger.kernel.org>, "virtualization@lists.osdl.org" <virtualization@lists.osdl.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, akpm <akpm@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
-Le lundi 15 novembre 2010 =C3=A0 08:52 -0800, David Miller a =C3=A9crit=
- :
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 15 Nov 2010 11:46:51 +1100
->=20
-> > Caused by commit 1d7138de878d1d4210727c1200193e69596f93b3 ("igmp: R=
-CU
-> > conversion of in_dev->mc_list").  The for_each_pmc_rtnl and
-> > for_each_pmc_rcu definitions are protected by  CONFIG_IP_MULTICAST,=
- but
-> > the uses are not ...
->=20
-> Thanks for the report, I've pushed the following fix:
->=20
-> --------------------
-> ipv4: Fix build with multicast disabled.
->=20
-> net/ipv4/igmp.c: In function 'ip_mc_inc_group':
-> net/ipv4/igmp.c:1228: error: implicit declaration of function 'for_ea=
-ch_pmc_rtnl'
-> net/ipv4/igmp.c:1228: error: expected ';' before '{' token
-> net/ipv4/igmp.c: In function 'ip_mc_unmap':
-> net/ipv4/igmp.c:1333: error: expected ';' before 'igmp_group_dropped'
->  ...
->=20
-> Move for_each_pmc_rcu and for_each_pmc_rtnl macro definitions
-> outside of multicast ifdef protection.
->=20
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: David S. Miller <davem@davemloft.net>
-> ---
-> =20
+On 11/13/2010 08:44 AM, Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+>
+> scripts/headers_install.pl prevents "__user" from being exported
+> to userspace headers, so just use compiler.h to make sure that
+> __user is defined and avoid the error.
+>
+> unifdef: linux-next-20101112/xx64/usr/include/xen/privcmd.h.tmp: 79: Premature EOF (#if line 33 depth 1)
 
-Oops thats right, sorry David, I missed this message.
+Ah, OK, thanks.  I was wondering what the proper fix for this was.  I'll
+stick this in my tree.
+
+Thanks,
+    J
+
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> Cc:	Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>
+> Cc:	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+> Cc:	xen-devel@lists.xensource.com (moderated for non-subscribers)
+> Cc:	virtualization@lists.osdl.org
+> Cc:	Tony Finch <dot@dotat.at>
+> ---
+>  include/xen/privcmd.h |    5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+>
+> --- linux-next-20101112.orig/include/xen/privcmd.h
+> +++ linux-next-20101112/include/xen/privcmd.h
+> @@ -34,13 +34,10 @@
+>  #define __LINUX_PUBLIC_PRIVCMD_H__
+>  
+>  #include <linux/types.h>
+> +#include <linux/compiler.h>
+>  
+>  typedef unsigned long xen_pfn_t;
+>  
+> -#ifndef __user
+> -#define __user
+> -#endif
+> -
+>  struct privcmd_hypercall {
+>  	__u64 op;
+>  	__u64 arg[5];
