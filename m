@@ -1,14 +1,14 @@
 From: Jeremy Fitzhardinge <jeremy@goop.org>
-Subject: Re: [PATCH -next] xen: fix header export to userspace
-Date: Mon, 15 Nov 2010 10:15:43 -0800
-Message-ID: <4CE178CF.3020308@goop.org>
-References: <20101112130547.c2a3c2c1.sfr@canb.auug.org.au>
-	<20101113084439.d21bd0f0.randy.dunlap@oracle.com>
+Subject: Re: linux-next: manual merge of the xen tree with
+	Linus' tree
+Date: Mon, 15 Nov 2010 13:04:59 -0800
+Message-ID: <4CE1A07B.5010202@goop.org>
+References: <20101115112352.6cbf5604.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-15
 Content-Transfer-Encoding: 7bit
 Return-path: <xen-devel-bounces@lists.xensource.com>
-In-Reply-To: <20101113084439.d21bd0f0.randy.dunlap@oracle.com>
+In-Reply-To: <20101115112352.6cbf5604.sfr@canb.auug.org.au>
 List-Unsubscribe: <http://lists.xensource.com/mailman/listinfo/xen-devel>,
 	<mailto:xen-devel-request@lists.xensource.com?subject=unsubscribe>
 List-Post: <mailto:xen-devel@lists.xensource.com>
@@ -17,49 +17,24 @@ List-Subscribe: <http://lists.xensource.com/mailman/listinfo/xen-devel>,
 	<mailto:xen-devel-request@lists.xensource.com?subject=subscribe>
 Sender: xen-devel-bounces@lists.xensource.com
 Errors-To: xen-devel-bounces@lists.xensource.com
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "xen-devel@lists.xensource.com" <xen-devel@lists.xensource.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Tony Finch <dot@dotat.at>, LKML <linux-kernel@vger.kernel.org>, "virtualization@lists.osdl.org" <virtualization@lists.osdl.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, akpm <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jens Axboe <axboe@kernel.dk>, Xen Devel <Xen-devel@lists.xensource.com>, Christoph Hellwig <hch@lst.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On 11/13/2010 08:44 AM, Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
+On 11/14/2010 04:23 PM, Stephen Rothwell wrote:
+> Hi all,
 >
-> scripts/headers_install.pl prevents "__user" from being exported
-> to userspace headers, so just use compiler.h to make sure that
-> __user is defined and avoid the error.
+> Today's linux-next merge of the xen tree got a conflict in
+> drivers/block/xen-blkfront.c between commit
+> 02e031cbc843b010e72fcc05c76113c688b2860f ("block: remove
+> REQ_HARDBARRIER") from Linus' tree and commits
+> c64e38ea17a81721da0393584fd807f8434050fa ("xen/blkfront: map REQ_FLUSH
+> into a full barrier") and be2f8373c188ed1f5d36003c9928e4d695213080
+> ("xen/blkfront: Implement FUA with BLKIF_OP_WRITE_BARRIER") from the xen
+> tree.
 >
-> unifdef: linux-next-20101112/xx64/usr/include/xen/privcmd.h.tmp: 79: Premature EOF (#if line 33 depth 1)
+> I used the xen tree version.
 
-Ah, OK, thanks.  I was wondering what the proper fix for this was.  I'll
-stick this in my tree.
+I'll drop that because you should be seeing those changes come via Jens.
 
-Thanks,
     J
-
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> Cc:	Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>
-> Cc:	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-> Cc:	xen-devel@lists.xensource.com (moderated for non-subscribers)
-> Cc:	virtualization@lists.osdl.org
-> Cc:	Tony Finch <dot@dotat.at>
-> ---
->  include/xen/privcmd.h |    5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
->
-> --- linux-next-20101112.orig/include/xen/privcmd.h
-> +++ linux-next-20101112/include/xen/privcmd.h
-> @@ -34,13 +34,10 @@
->  #define __LINUX_PUBLIC_PRIVCMD_H__
->  
->  #include <linux/types.h>
-> +#include <linux/compiler.h>
->  
->  typedef unsigned long xen_pfn_t;
->  
-> -#ifndef __user
-> -#define __user
-> -#endif
-> -
->  struct privcmd_hypercall {
->  	__u64 op;
->  	__u64 arg[5];
