@@ -1,37 +1,47 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: linux-next: manual merge of the trivial tree with Linus' tree
-Date: Mon, 15 Nov 2010 13:40:38 +0100 (CET)
-Message-ID: <alpine.LNX.2.00.1011151340060.7420@pobox.suse.cz>
-References: <20101109133155.e979a39b.sfr@canb.auug.org.au>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: [PATCH -next] x86/mrst: force support code to be built
+Date: Mon, 15 Nov 2010 13:43:25 +0000
+Message-ID: <20101115134325.199ab1f3@lxorguk.ukuu.org.uk>
+References: <20101112130547.c2a3c2c1.sfr@canb.auug.org.au>
+	<20101113084437.a9707260.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor.suse.de ([195.135.220.2]:34643 "EHLO mx1.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755095Ab0KOMkm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 15 Nov 2010 07:40:42 -0500
-In-Reply-To: <20101109133155.e979a39b.sfr@canb.auug.org.au>
+Received: from earthlight.etchedpixels.co.uk ([81.2.110.250]:35347 "EHLO
+	www.etchedpixels.co.uk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1756453Ab0KONpN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Nov 2010 08:45:13 -0500
+In-Reply-To: <20101113084437.a9707260.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?ISO-8859-15?Q?=22Uwe_Kleine-K=F6nig=22?= <u.kleine-koenig@pengutronix.de>, Jing Huang <huangj@brocade.com>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, akpm <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, x86@kernel.org
 
-On Tue, 9 Nov 2010, Stephen Rothwell wrote:
+On Sat, 13 Nov 2010 08:44:37 -0800
+Randy Dunlap <randy.dunlap@oracle.com> wrote:
 
-> Hi Jiri,
+> From: Randy Dunlap <randy.dunlap@oracle.com>
 > 
-> Today's linux-next merge of the trivial tree got a conflict in
-> drivers/scsi/bfa/bfa_fcpim.c between commit
-> 5fbe25c7a664601666895e8f95eaa59bd9741392 ("[SCSI] bfa: fix comments for c
-> files") from Linus' tree and commit
-> b595076a180a56d1bb170e6eceda6eb9d76f4cd3 ("tree-wide: fix comment/printk
-> typos") from the trivial tree.
+> Fix mrst.c build: make sure that its called functions are built.
 > 
-> Just context changes.  I fixed it up (see below) and can carry the fix as
-> necessary.
+> arch/x86/built-in.o: In function `mrst_reboot':
+> mrst.c:(.text+0x2250b): undefined reference to `intel_scu_ipc_simple_command'
+> arch/x86/built-in.o: In function `mrst_power_off':
+> mrst.c:(.text+0x2252e): undefined reference to `intel_scu_ipc_simple_command'
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> ---
+>  arch/x86/Kconfig |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> --- linux-next-20101112.orig/arch/x86/Kconfig
+> +++ linux-next-20101112/arch/x86/Kconfig
+> @@ -387,6 +387,7 @@ config X86_MRST
+>  	select APB_TIMER
+>  	select I2C
+>  	select SPI
+> +	select X86_PLATFORM_DEVICES
 
-Thank you Stephen, I think that's probably best thing to do here.
-
--- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+We need the SCU so in fact we really want to select that. I'll send a
+patch to Ingo.
