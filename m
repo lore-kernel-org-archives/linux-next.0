@@ -1,41 +1,58 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: linux-next: manual merge of the xen tree with Linus' tree
-Date: Mon, 15 Nov 2010 22:07:48 +0100
-Message-ID: <4CE1A124.3010108@kernel.dk>
-References: <20101115112352.6cbf5604.sfr@canb.auug.org.au> <4CE1A07B.5010202@goop.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net tree
+Date: Tue, 16 Nov 2010 11:34:37 +1100
+Message-ID: <20101116113437.4f536d16.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__16_Nov_2010_11_34_37_+1100_S6.xhMdE8Vnkven9"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 0122700014.0.fullrate.dk ([95.166.99.235]:53463 "EHLO kernel.dk"
+Received: from chilli.pcug.org.au ([203.10.76.44]:56587 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754205Ab0KOVHu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 15 Nov 2010 16:07:50 -0500
-In-Reply-To: <4CE1A07B.5010202@goop.org>
+	id S1753445Ab0KPAes (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 15 Nov 2010 19:34:48 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jeremy Fitzhardinge <jeremy@goop.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Xen Devel <Xen-devel@lists.xensource.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jesse Gross <jesse@nicira.com>
 
-On 2010-11-15 22:04, Jeremy Fitzhardinge wrote:
-> On 11/14/2010 04:23 PM, Stephen Rothwell wrote:
->> Hi all,
->>
->> Today's linux-next merge of the xen tree got a conflict in
->> drivers/block/xen-blkfront.c between commit
->> 02e031cbc843b010e72fcc05c76113c688b2860f ("block: remove
->> REQ_HARDBARRIER") from Linus' tree and commits
->> c64e38ea17a81721da0393584fd807f8434050fa ("xen/blkfront: map REQ_FLUSH
->> into a full barrier") and be2f8373c188ed1f5d36003c9928e4d695213080
->> ("xen/blkfront: Implement FUA with BLKIF_OP_WRITE_BARRIER") from the xen
->> tree.
->>
->> I used the xen tree version.
-> 
-> I'll drop that because you should be seeing those changes come via Jens.
+--Signature=_Tue__16_Nov_2010_11_34_37_+1100_S6.xhMdE8Vnkven9
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yep, since Linus pulled the last batch, for-linus now has the next bits
-(which include the xen barrier set).
+Hi all,
 
--- 
-Jens Axboe
+After merging the net tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
+
+ERROR: "netif_get_vlan_features" [drivers/net/xen-netfront.ko] undefined!
+
+Caused by commit 58e998c6d23988490162cef0784b19ea274d90bb ("offloading:
+Force software GSO for multiple vlan tags").
+
+Presumably netif_get_vlan_features needs exporting.
+
+I have used the net tree from next-20101115 for today (with
+1d7138de878d1d4210727c1200193e69596f93b3 reverted).
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__16_Nov_2010_11_34_37_+1100_S6.xhMdE8Vnkven9
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJM4dGdAAoJEDMEi1NhKgbsyxoH/2wyVT7rK8tXez1gGOCTkBN/
+PA6XMcZo1B3K8Olch+SSlkKet9GyK8sRpwUKgrz03tKxUw56HVI5hq/qsXeH+4xp
+kpgpz5bz05oFvhuJAAna03DtKwz3rd65jK+dfMwjto0zMEcE3bMvFvtaBnJeiEzb
+6Y+Crws6FcbfC8Kc9eaIO5+sKosySAgd6AHc36IkPORBRhW+Wkl4ew/hrrVQMjOJ
+clSsZ0rRkZPK7TpuOjYqsB9aStVloJWwO2xrA4CiNifLVz2BZfEnx5MF9iyFORWg
+o9+g/skHfZ8kpqQbrrnIkqOQmSC5DhTNIsfjdLDX1svHUQqKUvRqduGNfLACS0g=
+=8C/n
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__16_Nov_2010_11_34_37_+1100_S6.xhMdE8Vnkven9--
