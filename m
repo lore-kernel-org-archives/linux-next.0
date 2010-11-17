@@ -1,45 +1,102 @@
-From: Dan Magenheimer <dan.magenheimer@oracle.com>
-Subject: RE: linux-next: fate of the cleancache tree
-Date: Tue, 16 Nov 2010 20:44:42 -0800 (PST)
-Message-ID: <e5499ef1-c26d-4c9c-9336-5c61e65e45bc@default>
-References: <20101117133324.0654bfd9.sfr@canb.auug.org.au>
+From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Subject: Re: linux-next: build failure after merge of the usb tree
+Date: Wed, 17 Nov 2010 10:56:01 -0500 (EST)
+Message-ID: <Pine.LNX.4.44L0.1011171049130.1704-100000@iolanthe.rowland.org>
+References: <20101117042053.GB2999@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:35056 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933027Ab0KQEpY convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 16 Nov 2010 23:45:24 -0500
-In-Reply-To: <20101117133324.0654bfd9.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Linus <torvalds@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>, Christoph Hellwig <hch@lst.de>, Andrew Morton <akpm@linux-foundation.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20101117042053.GB2999-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Greg KH <greg-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kernel development list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
-> To: Linus; Dan Magenheimer
-> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Al Viro;
-> Christoph Hellwig; Andrew Morton
-> Subject: linux-next: fate of the cleancache tree
+On Tue, 16 Nov 2010, Greg KH wrote:
+
+> On Wed, Nov 17, 2010 at 01:14:53PM +1100, Stephen Rothwell wrote:
+> > Hi Greg,
+> > 
+> > After merging the usb tree, today's linux-next build (x86_64 allmodconfig)
+> > failed like this:
+> > 
+> > drivers/media/video/tlg2300/pd-main.c: In function 'poseidon_probe':
+> > drivers/media/video/tlg2300/pd-main.c:455: error: 'struct usb_device' has no member named 'autosuspend_delay'
+> > drivers/net/wimax/i2400m/usb.c: In function 'i2400mu_probe':
+> > drivers/net/wimax/i2400m/usb.c:517: error: 'struct usb_device' has no member named 'autosuspend_delay'
+> > 
+> > Caused by commit fcc4a01eb8661226e80632327673f67bf6a5840b ("USB: use the
+> > runtime-PM autosuspend implementation").  More grepping required ...
+> > 
+> > I have used the usb tree from next-20101116 for today.
 > 
-> Hi Linus, Dan,
-> 
-> I didn't really follow the discussion at Kernel Summit, but there
-> seemed
-> to be some question as to whether the cleancache stuff will be merged
-> or
-> not.  It missed 2.6.37 (obviously), but my question now is do I keep in
-> in linux-next in the hope that it will be merged in 2.6.38?  Or is that
-> not going to happen?
+> Ick.  Alan, care to provide a patch?
 
-Hi Stephen --
+Here it is.  I'm not sure that having this code at all is really the
+best approach.  It means the drivers will override any autosuspend
+values set by userspace when their devices are first detected.
 
-I am continuing to work towards other users for cleancache.  While
-it is not clear if they will be ready in time for the 2.6.38 window,
-it is possible.  If it is not too difficult to keep cleancache in
-linux-next for now, I'd appreciate it if it stayed in.  However
-if you or Linus prefer otherwise, I understand.
+Also there are bogus calls to device_init_wakeup(), and truly silly
+preprocessor tests of the kernel version in the staging-tree file.  
+Nevertheless, this is the minimal fix.
 
-Thanks,
-Dan
+Alan Stern
+
+
+---------------------------------------------------------------------------
+
+USB: fix leftover references to udev->autosuspend_delay
+
+This patch (as1436) takes care of leftover references to
+udev->autosuspend_delay that didn't get removed during the earlier
+conversion to the runtime-PM autosuspend API.
+
+Signed-off-by: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+
+---
+
+Index: usb-2.6/drivers/media/video/tlg2300/pd-main.c
+===================================================================
+--- usb-2.6.orig/drivers/media/video/tlg2300/pd-main.c
++++ usb-2.6/drivers/media/video/tlg2300/pd-main.c
+@@ -452,7 +452,8 @@ static int poseidon_probe(struct usb_int
+ 
+ 	device_init_wakeup(&udev->dev, 1);
+ #ifdef CONFIG_PM
+-	pd->udev->autosuspend_delay = HZ * PM_SUSPEND_DELAY;
++	pm_runtime_set_autosuspend_delay(&pd->udev->dev,
++			1000 * PM_SUSPEND_DELAY);
+ 	usb_enable_autosuspend(pd->udev);
+ 
+ 	if (in_hibernation(pd)) {
+Index: usb-2.6/drivers/net/wimax/i2400m/usb.c
+===================================================================
+--- usb-2.6.orig/drivers/net/wimax/i2400m/usb.c
++++ usb-2.6/drivers/net/wimax/i2400m/usb.c
+@@ -514,7 +514,7 @@ int i2400mu_probe(struct usb_interface *
+ #ifdef CONFIG_PM
+ 	iface->needs_remote_wakeup = 1;		/* autosuspend (15s delay) */
+ 	device_init_wakeup(dev, 1);
+-	usb_dev->autosuspend_delay = 15 * HZ;
++	pm_runtime_set_autosuspend_delay(&usb_dev->dev, 15000);
+ 	usb_enable_autosuspend(usb_dev);
+ #endif
+ 
+Index: usb-2.6/drivers/staging/bcm/InterfaceInit.c
+===================================================================
+--- usb-2.6.orig/drivers/staging/bcm/InterfaceInit.c
++++ usb-2.6/drivers/staging/bcm/InterfaceInit.c
+@@ -277,7 +277,7 @@ usbbcm_device_probe(struct usb_interface
+ 		if(psAdapter->bDoSuspend)
+ 		{
+ #ifdef CONFIG_PM
+-			udev->autosuspend_delay = 0;
++			pm_runtime_set_autosuspend_delay(&udev->dev, 0);
+ 			intf->needs_remote_wakeup = 1;
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 35)
+  			udev->autosuspend_disabled = 0;
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
