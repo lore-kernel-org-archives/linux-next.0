@@ -1,52 +1,41 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: fate of the cleancache tree
-Date: Wed, 17 Nov 2010 13:33:24 +1100
-Message-ID: <20101117133324.0654bfd9.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the cleancache tree with the bkl-config
+ tree
+Date: Wed, 17 Nov 2010 13:33:43 +1100
+Message-ID: <20101117133343.3d75d053.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__17_Nov_2010_13_33_24_+1100__59AbtRlEan0VObW"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51882 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756369Ab0KQCdh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 16 Nov 2010 21:33:37 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Linus <torvalds@linux-foundation.org>, Dan Magenheimer <dan.magenheimer@oracle.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>, Christoph Hellwig <hch@lst.de>, Andrew Morton <akpm@linux-foundation.org>
-
---Signature=_Wed__17_Nov_2010_13_33_24_+1100__59AbtRlEan0VObW
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dan Magenheimer <dan.magenheimer@oracle.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+List-Id: linux-next.vger.kernel.org
 
-Hi Linus, Dan,
+Hi Dan,
 
-I didn't really follow the discussion at Kernel Summit, but there seemed
-to be some question as to whether the cleancache stuff will be merged or
-not.  It missed 2.6.37 (obviously), but my question now is do I keep in
-in linux-next in the hope that it will be merged in 2.6.38?  Or is that
-not going to happen?
+Today's linux-next merge of the cleancache tree got a conflict in
+fs/ocfs2/super.c between commit cdbe83a95ae7c7a8762c10567a2c5d08cfc1cc4d
+("BKL: remove extraneous #include <smp_lock.h>") from the bkl-config tree
+and commit 91bf812da0c4f2efd0883fe02dc057853de731b1 ("ocfs2: add
+cleancache support") from the cleancache tree.
 
---=20
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__17_Nov_2010_13_33_24_+1100__59AbtRlEan0VObW
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJM4z70AAoJEDMEi1NhKgbsjEwH/1XSfvx6XrcO7a9EdCWUZRZi
-TslAyUMp8Ftt3qwi276sfatHx0f6dCAwTZQ8VYom40l858heUCWUirDignlYIdYN
-MYLO4DLk+MLaL9BUfEVlqdQ+VlEKoj/kc5z2fPLrIq70bYuOEcs/9jkQiTITWRdj
-B+saZADpq4KmNX5TrW5QZSo6S/WmsKJ2aiE75TwgRg4eBs86nXekBQHw7/4+U9//
-D7v3gNorAQs6Tw1npV9dL7qmC1FWkR9VlYTyG45ee7GOTjhmIqdCpd+rp2id7FIT
-PGndiweNQfPznJ6YjFLswFNGG6sfpJXuwiLeqvECSLW23p3cI0OztWoDdwG4bjU=
-=4pX8
------END PGP SIGNATURE-----
-
---Signature=_Wed__17_Nov_2010_13_33_24_+1100__59AbtRlEan0VObW--
+diff --cc fs/ocfs2/super.c
+index cfeab7c,e3f0a4e..0000000
+--- a/fs/ocfs2/super.c
++++ b/fs/ocfs2/super.c
+@@@ -41,6 -41,8 +41,7 @@@
+  #include <linux/mount.h>
+  #include <linux/seq_file.h>
+  #include <linux/quotaops.h>
+ -#include <linux/smp_lock.h>
++ #include <linux/cleancache.h>
+  
+  #define MLOG_MASK_PREFIX ML_SUPER
+  #include <cluster/masklog.h>
