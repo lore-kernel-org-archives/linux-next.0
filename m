@@ -1,102 +1,70 @@
-From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-Subject: Re: linux-next: build failure after merge of the usb tree
-Date: Wed, 17 Nov 2010 10:56:01 -0500 (EST)
-Message-ID: <Pine.LNX.4.44L0.1011171049130.1704-100000@iolanthe.rowland.org>
-References: <20101117042053.GB2999@kroah.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: build failure after merge of the final tree (wireless
+ tree related)
+Date: Wed, 17 Nov 2010 08:03:01 -0800
+Message-ID: <4CE3FCB5.6030909@oracle.com>
+References: <20101117134820.bca8d764.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20101117042053.GB2999-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Greg KH <greg-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kernel development list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:18514 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757826Ab0KQQD1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Nov 2010 11:03:27 -0500
+In-Reply-To: <20101117134820.bca8d764.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 16 Nov 2010, Greg KH wrote:
-
-> On Wed, Nov 17, 2010 at 01:14:53PM +1100, Stephen Rothwell wrote:
-> > Hi Greg,
-> > 
-> > After merging the usb tree, today's linux-next build (x86_64 allmodconfig)
-> > failed like this:
-> > 
-> > drivers/media/video/tlg2300/pd-main.c: In function 'poseidon_probe':
-> > drivers/media/video/tlg2300/pd-main.c:455: error: 'struct usb_device' has no member named 'autosuspend_delay'
-> > drivers/net/wimax/i2400m/usb.c: In function 'i2400mu_probe':
-> > drivers/net/wimax/i2400m/usb.c:517: error: 'struct usb_device' has no member named 'autosuspend_delay'
-> > 
-> > Caused by commit fcc4a01eb8661226e80632327673f67bf6a5840b ("USB: use the
-> > runtime-PM autosuspend implementation").  More grepping required ...
-> > 
-> > I have used the usb tree from next-20101116 for today.
+On 11/16/10 18:48, Stephen Rothwell wrote:
+> Hi John,
 > 
-> Ick.  Alan, care to provide a patch?
+> After merging the final tree, today's linux-next build (powerpc allyesconfig)
+> failed like this:
+> 
+> drivers/net/wireless/iwlwifi/iwl3945.o: In function `iwl_legacy_mac_reset_tsf':
+> (.opd+0xf00): multiple definition of `iwl_legacy_mac_reset_tsf'
+> drivers/net/wireless/iwlwifi/iwlagn.o:(.opd+0x90): first defined here
+> drivers/net/wireless/iwlwifi/iwl3945.o: In function `.iwl_legacy_mac_config':
+> (.text+0x50ae4): multiple definition of `.iwl_legacy_mac_config'
+> drivers/net/wireless/iwlwifi/iwlagn.o:(.text+0x2b34): first defined here
+> drivers/net/wireless/iwlwifi/iwl3945.o: In function `.iwl_legacy_mac_bss_info_changed':
+> (.text+0x4f778): multiple definition of `.iwl_legacy_mac_bss_info_changed'
+> drivers/net/wireless/iwlwifi/iwlagn.o:(.text+0x17c8): first defined here
+> drivers/net/wireless/iwlwifi/iwl3945.o: In function `.iwl_legacy_tx_cmd_protection':
+> (.text+0x4dfb0): multiple definition of `.iwl_legacy_tx_cmd_protection'
+> drivers/net/wireless/iwlwifi/iwlagn.o:(.text+0x0): first defined here
+> drivers/net/wireless/iwlwifi/iwl3945.o: In function `iwl_legacy_mac_bss_info_changed':
+> (.opd+0xee8): multiple definition of `iwl_legacy_mac_bss_info_changed'
+> drivers/net/wireless/iwlwifi/iwlagn.o:(.opd+0x78): first defined here
+> drivers/net/wireless/iwlwifi/iwl3945.o: In function `iwl_legacy_tx_cmd_protection':
+> (.opd+0xe70): multiple definition of `iwl_legacy_tx_cmd_protection'
+> drivers/net/wireless/iwlwifi/iwlagn.o:(.opd+0x0): first defined here
+> drivers/net/wireless/iwlwifi/iwl3945.o: In function `.iwl_isr_legacy':
+> (.text+0x4e0e0): multiple definition of `.iwl_isr_legacy'
+> drivers/net/wireless/iwlwifi/iwlagn.o:(.text+0x130): first defined here
+> drivers/net/wireless/iwlwifi/iwl3945.o: In function `.iwl_legacy_mac_reset_tsf':
+> (.text+0x50620): multiple definition of `.iwl_legacy_mac_reset_tsf'
+> drivers/net/wireless/iwlwifi/iwlagn.o:(.text+0x2670): first defined here
+> drivers/net/wireless/iwlwifi/iwl3945.o: In function `iwl_isr_legacy':
+> (.opd+0xe88): multiple definition of `iwl_isr_legacy'
+> drivers/net/wireless/iwlwifi/iwlagn.o:(.opd+0x18): first defined here
+> drivers/net/wireless/iwlwifi/iwl3945.o: In function `iwl_legacy_mac_config':
+> (.opd+0xf18): multiple definition of `iwl_legacy_mac_config'
+> drivers/net/wireless/iwlwifi/iwlagn.o:(.opd+0xa8): first defined here
+> 
+> I should have known when I reported the warning ...
+> 
+> Caused by commit dd0dd411f7178a20ea93a3cfa39123f078a07e25 ("iwlwifi: fix
+> modular legacy build errors").
+> 
+> I have reverted that commit for today.
 
-Here it is.  I'm not sure that having this code at all is really the
-best approach.  It means the drivers will override any autosuspend
-values set by userspace when their devices are first detected.
+Ack.  John, please drop/revert that patch.
 
-Also there are bogus calls to device_init_wakeup(), and truly silly
-preprocessor tests of the kernel version in the staging-tree file.  
-Nevertheless, this is the minimal fix.
-
-Alan Stern
-
-
----------------------------------------------------------------------------
-
-USB: fix leftover references to udev->autosuspend_delay
-
-This patch (as1436) takes care of leftover references to
-udev->autosuspend_delay that didn't get removed during the earlier
-conversion to the runtime-PM autosuspend API.
-
-Signed-off-by: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-
----
-
-Index: usb-2.6/drivers/media/video/tlg2300/pd-main.c
-===================================================================
---- usb-2.6.orig/drivers/media/video/tlg2300/pd-main.c
-+++ usb-2.6/drivers/media/video/tlg2300/pd-main.c
-@@ -452,7 +452,8 @@ static int poseidon_probe(struct usb_int
- 
- 	device_init_wakeup(&udev->dev, 1);
- #ifdef CONFIG_PM
--	pd->udev->autosuspend_delay = HZ * PM_SUSPEND_DELAY;
-+	pm_runtime_set_autosuspend_delay(&pd->udev->dev,
-+			1000 * PM_SUSPEND_DELAY);
- 	usb_enable_autosuspend(pd->udev);
- 
- 	if (in_hibernation(pd)) {
-Index: usb-2.6/drivers/net/wimax/i2400m/usb.c
-===================================================================
---- usb-2.6.orig/drivers/net/wimax/i2400m/usb.c
-+++ usb-2.6/drivers/net/wimax/i2400m/usb.c
-@@ -514,7 +514,7 @@ int i2400mu_probe(struct usb_interface *
- #ifdef CONFIG_PM
- 	iface->needs_remote_wakeup = 1;		/* autosuspend (15s delay) */
- 	device_init_wakeup(dev, 1);
--	usb_dev->autosuspend_delay = 15 * HZ;
-+	pm_runtime_set_autosuspend_delay(&usb_dev->dev, 15000);
- 	usb_enable_autosuspend(usb_dev);
- #endif
- 
-Index: usb-2.6/drivers/staging/bcm/InterfaceInit.c
-===================================================================
---- usb-2.6.orig/drivers/staging/bcm/InterfaceInit.c
-+++ usb-2.6/drivers/staging/bcm/InterfaceInit.c
-@@ -277,7 +277,7 @@ usbbcm_device_probe(struct usb_interface
- 		if(psAdapter->bDoSuspend)
- 		{
- #ifdef CONFIG_PM
--			udev->autosuspend_delay = 0;
-+			pm_runtime_set_autosuspend_delay(&udev->dev, 0);
- 			intf->needs_remote_wakeup = 1;
- #if LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 35)
-  			udev->autosuspend_disabled = 0;
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Sorry about the problem.
+-- 
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
