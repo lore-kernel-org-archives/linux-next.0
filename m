@@ -1,40 +1,45 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the usb tree
-Date: Tue, 16 Nov 2010 20:20:53 -0800
-Message-ID: <20101117042053.GB2999@kroah.com>
-References: <20101117131453.5b94f435.sfr@canb.auug.org.au>
+From: Dan Magenheimer <dan.magenheimer@oracle.com>
+Subject: RE: linux-next: fate of the cleancache tree
+Date: Tue, 16 Nov 2010 20:44:42 -0800 (PST)
+Message-ID: <e5499ef1-c26d-4c9c-9336-5c61e65e45bc@default>
+References: <20101117133324.0654bfd9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:59755 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932768Ab0KQE0g (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 16 Nov 2010 23:26:36 -0500
-Content-Disposition: inline
-In-Reply-To: <20101117131453.5b94f435.sfr@canb.auug.org.au>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:35056 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933027Ab0KQEpY convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 16 Nov 2010 23:45:24 -0500
+In-Reply-To: <20101117133324.0654bfd9.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Linus <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>, Christoph Hellwig <hch@lst.de>, Andrew Morton <akpm@linux-foundation.org>
 
-On Wed, Nov 17, 2010 at 01:14:53PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
+> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
+> To: Linus; Dan Magenheimer
+> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Al Viro;
+> Christoph Hellwig; Andrew Morton
+> Subject: linux-next: fate of the cleancache tree
 > 
-> After merging the usb tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
+> Hi Linus, Dan,
 > 
-> drivers/media/video/tlg2300/pd-main.c: In function 'poseidon_probe':
-> drivers/media/video/tlg2300/pd-main.c:455: error: 'struct usb_device' has no member named 'autosuspend_delay'
-> drivers/net/wimax/i2400m/usb.c: In function 'i2400mu_probe':
-> drivers/net/wimax/i2400m/usb.c:517: error: 'struct usb_device' has no member named 'autosuspend_delay'
-> 
-> Caused by commit fcc4a01eb8661226e80632327673f67bf6a5840b ("USB: use the
-> runtime-PM autosuspend implementation").  More grepping required ...
-> 
-> I have used the usb tree from next-20101116 for today.
+> I didn't really follow the discussion at Kernel Summit, but there
+> seemed
+> to be some question as to whether the cleancache stuff will be merged
+> or
+> not.  It missed 2.6.37 (obviously), but my question now is do I keep in
+> in linux-next in the hope that it will be merged in 2.6.38?  Or is that
+> not going to happen?
 
-Ick.  Alan, care to provide a patch?
+Hi Stephen --
 
-thanks,
+I am continuing to work towards other users for cleancache.  While
+it is not clear if they will be ready in time for the 2.6.38 window,
+it is possible.  If it is not too difficult to keep cleancache in
+linux-next for now, I'd appreciate it if it stayed in.  However
+if you or Linus prefer otherwise, I understand.
 
-greg k-h
+Thanks,
+Dan
