@@ -1,46 +1,53 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for November 17
-Date: Wed, 17 Nov 2010 15:24:51 -0800
-Message-ID: <4CE46443.2000002@oracle.com>
-References: <20101117140956.a8264c75.sfr@canb.auug.org.au>	<AANLkTinBiGOPptOY18-D+=djKLsJj75mXxL6ht6xNJXL@mail.gmail.com>	<20101117095920.2b9e2e6a.randy.dunlap@oracle.com> <20101118101459.472d540b.sfr@canb.auug.org.au>
+Subject: [PATCH -next] staging: clearpad_tm1217 depends on INPUT
+Date: Wed, 17 Nov 2010 15:38:46 -0800
+Message-ID: <20101117153846.072dc988.randy.dunlap@oracle.com>
+References: <20101117140956.a8264c75.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:37452 "EHLO
+Received: from rcsinet10.oracle.com ([148.87.113.121]:31452 "EHLO
 	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751109Ab0KQX1E (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Nov 2010 18:27:04 -0500
-In-Reply-To: <20101118101459.472d540b.sfr@canb.auug.org.au>
+	with ESMTP id S1751375Ab0KQXi7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Nov 2010 18:38:59 -0500
+In-Reply-To: <20101117140956.a8264c75.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Zimny Lech <napohybelskurwysynom2010@gmail.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Linus <torvalds@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, driverdevel <devel@driverdev.osuosl.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ramesh Agarwal <ramesh.agarwal@intel.com>
 
-On 11/17/10 15:14, Stephen Rothwell wrote:
-> On Wed, 17 Nov 2010 09:59:20 -0800 Randy Dunlap <randy.dunlap@oracle.com> wrote:
->>
->> Why was #include <linux/smp_lock.h> removed from <linux/hardirq.h> ?
->>
->> I added #include <linux/smp_lock.h> to i387.h, but them mm/filemap.c build fails
->> with the same error:
->>
->> linux-next-20101117/mm/filemap.c: In function 'iov_iter_copy_from_user_atomic':
->> linux-next-20101117/mm/filemap.c:1936: error: implicit declaration of function 'kernel_locked'
-> 
-> Was this fixed before Linus took that patch?  Also, the #include of
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-This build error was in linux-next of NOV. 17.  What mainline base did it use?
-I don't exactly know how to answer your question...
+clearpad_tm1217 driver uses many input_() interfaces, so it should
+depend on INPUT.
 
+clearpad_tm1217.c:(.text+0xf19ac): undefined reference to `input_unregister_device'
+clearpad_tm1217.c:(.text+0xf1b19): undefined reference to `input_event'
+clearpad_tm1217.c:(.text+0xf1b31): undefined reference to `input_event'
+clearpad_tm1217.c:(.text+0xf1bb4): undefined reference to `input_event'
+clearpad_tm1217.c:(.text+0xf1bf2): undefined reference to `input_event'
+drivers/built-in.o:clearpad_tm1217.c:(.text+0xf1c08): more undefined references to `input_event' follow
+clearpad_tm1217.c:(.text+0xf1df3): undefined reference to `input_allocate_device'
+clearpad_tm1217.c:(.text+0xf1eac): undefined reference to `input_set_abs_params'
+clearpad_tm1217.c:(.text+0xf1ed1): undefined reference to `input_set_abs_params'
+clearpad_tm1217.c:(.text+0xf1ed8): undefined reference to `input_register_device'
+clearpad_tm1217.c:(.text+0xf2040): undefined reference to `input_unregister_device'
+clearpad_tm1217.c:(.text+0xf204b): undefined reference to `input_free_device'
 
-> linux/smp_lock.h in linux/hardirq.h was the only line between #ifdef
-> CONFIG_PREEMPT and #endif ... was this patch even reviewed?
-> 
-> Maybe (after it was reviewed) it should have been given more time in
-> linux-next before being merged.
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Ramesh Agarwal <ramesh.agarwal@intel.com>
+---
+ drivers/staging/cptm1217/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
-
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+--- linux-next-20101117.orig/drivers/staging/cptm1217/Kconfig
++++ linux-next-20101117/drivers/staging/cptm1217/Kconfig
+@@ -2,6 +2,7 @@ config TOUCHSCREEN_CLEARPAD_TM1217
+ 	tristate "Synaptics Clearpad TM1217"
+ 	depends on I2C
+ 	depends on GPIOLIB
++	depends on INPUT
+ 	help
+ 	  Say Y here if you have a Synaptics Clearpad TM1217 Controller
+ 
