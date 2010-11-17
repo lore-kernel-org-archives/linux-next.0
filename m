@@ -1,63 +1,69 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: Tree for November 17
-Date: Wed, 17 Nov 2010 15:09:31 -0800
-Message-ID: <20101117150931.48cbd397.randy.dunlap@oracle.com>
+Date: Thu, 18 Nov 2010 10:14:59 +1100
+Message-ID: <20101118101459.472d540b.sfr@canb.auug.org.au>
 References: <20101117140956.a8264c75.sfr@canb.auug.org.au>
-	<AANLkTimKbxE6MQrp_pdgk-HAUxXU+iukFFPvFtsbP+DB@mail.gmail.com>
+	<AANLkTinBiGOPptOY18-D+=djKLsJj75mXxL6ht6xNJXL@mail.gmail.com>
+	<20101117095920.2b9e2e6a.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__18_Nov_2010_10_14_59_+1100_vI4p0LPVzqw8k4VC"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:42987 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935648Ab0KQXKE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Nov 2010 18:10:04 -0500
-In-Reply-To: <AANLkTimKbxE6MQrp_pdgk-HAUxXU+iukFFPvFtsbP+DB@mail.gmail.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:41995 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S935456Ab0KQXPI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 17 Nov 2010 18:15:08 -0500
+In-Reply-To: <20101117095920.2b9e2e6a.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Zimny Lech <napohybelskurwysynom2010@gmail.com>, paulmck@linux.vnet.ibm.com
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Zimny Lech <napohybelskurwysynom2010@gmail.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Linus <torvalds@linux-foundation.org>
 
-On Wed, 17 Nov 2010 23:53:14 +0100 Zimny Lech wrote:
+--Signature=_Thu__18_Nov_2010_10_14_59_+1100_vI4p0LPVzqw8k4VC
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[adding Paul McKenney]
+On Wed, 17 Nov 2010 09:59:20 -0800 Randy Dunlap <randy.dunlap@oracle.com> w=
+rote:
+>
+> Why was #include <linux/smp_lock.h> removed from <linux/hardirq.h> ?
+>=20
+> I added #include <linux/smp_lock.h> to i387.h, but them mm/filemap.c buil=
+d fails
+> with the same error:
+>=20
+> linux-next-20101117/mm/filemap.c: In function 'iov_iter_copy_from_user_at=
+omic':
+> linux-next-20101117/mm/filemap.c:1936: error: implicit declaration of fun=
+ction 'kernel_locked'
 
+Was this fixed before Linus took that patch?  Also, the #include of
+linux/smp_lock.h in linux/hardirq.h was the only line between #ifdef
+CONFIG_PREEMPT and #endif ... was this patch even reviewed?
 
-> Salve!
-> 
-> 2010/11/17 Stephen Rothwell <sfr@canb.auug.org.au>:
-> > Hi all,
-> >
-> > Changes since 20101116:
-> 
-> Might be something new
-> 
->   CC      kernel/rcutiny.o
-> In file included from /home/test/linux-2.6/kernel/rcutiny_plugin.h:264:0,
->                  from /home/test/linux-2.6/kernel/rcutiny.c:53:
-> /home/test/linux-2.6/kernel/rtmutex_common.h: In function 'task_has_pi_waiters':
-> /home/test/linux-2.6/kernel/rtmutex_common.h:81:29: error: 'struct
-> task_struct' has no member named 'pi_waiters'
-> /home/test/linux-2.6/kernel/rtmutex_common.h: In function 'task_top_pi_waiter':
-> /home/test/linux-2.6/kernel/rtmutex_common.h:87:9: error: 'struct
-> task_struct' has no member named 'pi_waiters'
-> make[2]: *** [kernel/rcutiny.o] Error 1
-> make[1]: *** [kernel] Error 2
-> make: *** [sub-make] Error 2
-> 
-> 
-> Probably know issue
->   CC      sound/oss/ad1848.o
-> /home/test/linux-2.6/sound/oss/ad1848.c:2867:32: warning: 'id_table'
-> defined but not used
->   CC      sound/oss/mpu401.o
-> make[3]: *** No rule to make target `/etc/sound/trxpro.hex', needed by
-> `sound/oss/trix_boot.h'.  Stop.
-> make[2]: *** [sound/oss] Error 2
-> make[1]: *** [sound] Error 2
-> make: *** [sub-make] Error 2
+Maybe (after it was reviewed) it should have been given more time in
+linux-next before being merged.
 
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+--Signature=_Thu__18_Nov_2010_10_14_59_+1100_vI4p0LPVzqw8k4VC
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJM5GHzAAoJEDMEi1NhKgbswGkH/i+IuOztcYLFtqM8YvdcwXdl
+J+W0es+6sspbFryDrTeHo/7LqSj2sL06j4HQvd6V2eTCpfw6DXPLvHDO9Hiau31P
+Yjm4HyId7/yVMRbwpu4/6NJohlSuT3302ho0pnZe+KrtHGz9+wm+b4S4PJqlLqIs
+5JwnQwDxjhRf3T2rDrTd+6TaJ7PTA0C89ivWbuRqPC7t2Ms13728NhrTiwo4JSXk
+RmrqanmirdEei4oA5RvHd7texwltkANEMfPQ2yaevALYUhHHOlHmcZY7RWITsUgG
+TPS1Mpo++DfPAMvbq3+5fRRlbsVwfpPVG97/SQC0W7nvg3YIVuG9j8dvywuPko4=
+=I7gh
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__18_Nov_2010_10_14_59_+1100_vI4p0LPVzqw8k4VC--
