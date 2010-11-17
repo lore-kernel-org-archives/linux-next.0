@@ -1,85 +1,56 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for November 17
-Date: Wed, 17 Nov 2010 09:59:20 -0800
-Message-ID: <20101117095920.2b9e2e6a.randy.dunlap@oracle.com>
-References: <20101117140956.a8264c75.sfr@canb.auug.org.au>
-	<AANLkTinBiGOPptOY18-D+=djKLsJj75mXxL6ht6xNJXL@mail.gmail.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the usb tree
+Date: Wed, 17 Nov 2010 13:25:44 -0800
+Message-ID: <20101117212544.GA10541@kroah.com>
+References: <20101117042053.GB2999@kroah.com>
+ <Pine.LNX.4.44L0.1011171049130.1704-100000@iolanthe.rowland.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:54792 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934788Ab0KQR7d (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Nov 2010 12:59:33 -0500
-In-Reply-To: <AANLkTinBiGOPptOY18-D+=djKLsJj75mXxL6ht6xNJXL@mail.gmail.com>
+Received: from kroah.org ([198.145.64.141]:46556 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754440Ab0KQVhp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 17 Nov 2010 16:37:45 -0500
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44L0.1011171049130.1704-100000@iolanthe.rowland.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Zimny Lech <napohybelskurwysynom2010@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, USB list <linux-usb@vger.kernel.org>, linux-next@vger.kernel.org, Kernel development list <linux-kernel@vger.kernel.org>
 
-On Wed, 17 Nov 2010 18:23:20 +0100 Zimny Lech wrote:
-
-> Ave
+On Wed, Nov 17, 2010 at 10:56:01AM -0500, Alan Stern wrote:
+> On Tue, 16 Nov 2010, Greg KH wrote:
 > 
-> 2010/11/17 Stephen Rothwell <sfr@canb.auug.org.au>:
-> > Hi all,
-> >
-> > Changes since 20101116:
-> >
+> > On Wed, Nov 17, 2010 at 01:14:53PM +1100, Stephen Rothwell wrote:
+> > > Hi Greg,
+> > > 
+> > > After merging the usb tree, today's linux-next build (x86_64 allmodconfig)
+> > > failed like this:
+> > > 
+> > > drivers/media/video/tlg2300/pd-main.c: In function 'poseidon_probe':
+> > > drivers/media/video/tlg2300/pd-main.c:455: error: 'struct usb_device' has no member named 'autosuspend_delay'
+> > > drivers/net/wimax/i2400m/usb.c: In function 'i2400mu_probe':
+> > > drivers/net/wimax/i2400m/usb.c:517: error: 'struct usb_device' has no member named 'autosuspend_delay'
+> > > 
+> > > Caused by commit fcc4a01eb8661226e80632327673f67bf6a5840b ("USB: use the
+> > > runtime-PM autosuspend implementation").  More grepping required ...
+> > > 
+> > > I have used the usb tree from next-20101116 for today.
+> > 
+> > Ick.  Alan, care to provide a patch?
 > 
-> I think that this is well know
->   LD [M]  sound/oss/sound.o
-> make[3]: *** No rule to make target `/etc/sound/dsp001.ld', needed by
-> `sound/oss/pss_boot.h'.  Stop.
-> make[2]: *** [sound/oss] Error 2
-> make[1]: *** [sound] Error 2
-> make: *** [sub-make] Error 2
+> Here it is.  I'm not sure that having this code at all is really the
+> best approach.  It means the drivers will override any autosuspend
+> values set by userspace when their devices are first detected.
 > 
-> This one can be interesting
-> 
->   GEN     /home/test/linux-2.6-obj/Makefile
-> scripts/kconfig/conf --silentoldconfig Kconfig
-> warning: (MTD_NAND && MTD || MTD_DOC2000 && MTD || MTD_DOC2001 && MTD
-> || MTD_DOC2001PLUS && MTD) selects MTD_NAND_IDS which has unmet direct
-> dependencies (MTD
->  && MTD_NAND)
-> warning: (MTD_NAND && MTD || MTD_DOC2000 && MTD || MTD_DOC2001 && MTD
-> || MTD_DOC2001PLUS && MTD) selects MTD_NAND_IDS which has unmet direct
-> dependencies (MTD
->  && MTD_NAND)
->   Using /home/test/linux-2.6 as source for kernel
->   GEN     /home/test/linux-2.6-obj/Makefile
->   CHK     include/linux/version.h
->   CHK     include/generated/utsrelease.h
->   CC      kernel/bounds.s
->   GEN     include/generated/bounds.h
->   CC      arch/x86/kernel/asm-offsets.s
-> In file included from
-> /home/test/linux-2.6/arch/x86/include/asm/suspend_64.h:10:0,
->                  from /home/test/linux-2.6/arch/x86/include/asm/suspend.h:4,
->                  from /home/test/linux-2.6/arch/x86/kernel/asm-offsets_64.c:20,
->                  from /home/test/linux-2.6/arch/x86/kernel/asm-offsets.c:4:
-> /home/test/linux-2.6/arch/x86/include/asm/i387.h: In function 'irq_ts_save':
-> /home/test/linux-2.6/arch/x86/include/asm/i387.h:348:2: error:
-> implicit declaration of function 'kernel_locked'
-> make[2]: *** [arch/x86/kernel/asm-offsets.s] Error 1
-> make[1]: *** [prepare0] Error 2
-> make: *** [sub-make] Error 2
-> 
-> 
-> Config attached.
+> Also there are bogus calls to device_init_wakeup(), and truly silly
+> preprocessor tests of the kernel version in the staging-tree file.  
+> Nevertheless, this is the minimal fix.
 
+Don't worry about that staging driver that much, it has been massivly
+cleaned up for .38, and then abandonded so the future of it is very
+unlikely :)
 
-Why was #include <linux/smp_lock.h> removed from <linux/hardirq.h> ?
+I've applied this now, thanks.
 
-I added #include <linux/smp_lock.h> to i387.h, but them mm/filemap.c build fails
-with the same error:
-
-linux-next-20101117/mm/filemap.c: In function 'iov_iter_copy_from_user_atomic':
-linux-next-20101117/mm/filemap.c:1936: error: implicit declaration of function 'kernel_locked'
-
-
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+greg k-h
