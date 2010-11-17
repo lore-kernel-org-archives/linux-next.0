@@ -1,59 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the usb tree
-Date: Wed, 17 Nov 2010 13:14:53 +1100
-Message-ID: <20101117131453.5b94f435.sfr@canb.auug.org.au>
+Subject: linux-next: fate of the cleancache tree
+Date: Wed, 17 Nov 2010 13:33:24 +1100
+Message-ID: <20101117133324.0654bfd9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__17_Nov_2010_13_14_53_+1100_PqR6Q.g9KMYTB_9+"
+ boundary="Signature=_Wed__17_Nov_2010_13_33_24_+1100__59AbtRlEan0VObW"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34770 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:51882 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933804Ab0KQCO6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 16 Nov 2010 21:14:58 -0500
+	id S1756369Ab0KQCdh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 16 Nov 2010 21:33:37 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>
+To: Linus <torvalds@linux-foundation.org>, Dan Magenheimer <dan.magenheimer@oracle.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>, Christoph Hellwig <hch@lst.de>, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Wed__17_Nov_2010_13_14_53_+1100_PqR6Q.g9KMYTB_9+
+--Signature=_Wed__17_Nov_2010_13_33_24_+1100__59AbtRlEan0VObW
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Linus, Dan,
 
-After merging the usb tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+I didn't really follow the discussion at Kernel Summit, but there seemed
+to be some question as to whether the cleancache stuff will be merged or
+not.  It missed 2.6.37 (obviously), but my question now is do I keep in
+in linux-next in the hope that it will be merged in 2.6.38?  Or is that
+not going to happen?
 
-drivers/media/video/tlg2300/pd-main.c: In function 'poseidon_probe':
-drivers/media/video/tlg2300/pd-main.c:455: error: 'struct usb_device' has n=
-o member named 'autosuspend_delay'
-drivers/net/wimax/i2400m/usb.c: In function 'i2400mu_probe':
-drivers/net/wimax/i2400m/usb.c:517: error: 'struct usb_device' has no membe=
-r named 'autosuspend_delay'
-
-Caused by commit fcc4a01eb8661226e80632327673f67bf6a5840b ("USB: use the
-runtime-PM autosuspend implementation").  More grepping required ...
-
-I have used the usb tree from next-20101116 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__17_Nov_2010_13_14_53_+1100_PqR6Q.g9KMYTB_9+
+--Signature=_Wed__17_Nov_2010_13_33_24_+1100__59AbtRlEan0VObW
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJM4zqdAAoJEDMEi1NhKgbs7XUH/2YWQNc9Fsnwo2kz3uzrcmKU
-z+f3SEQLT6HfrnWe59OnaCmTZff35pDBj2fwHnEFTbbKTHDy/i3S5DfKLB4AUxKK
-gKpC6UxLSsK27NnmuXBC7lB0GqRTcwC48jw/V0vo3KfOyKoSU0yVcqJBLn7A6aa7
-AwMNdE4JqRQuBTPxBp1SeONcFJmTaDWi0nDWou9D+CxOdlODq8xDqD1l66G5KPQH
-ftsjPw0MrEuAUOB4V78kUkIAxv/NkE3lmt9FF9cRgJLuXHow75jYhucOVv37uG7A
-UwDYbCIo93DBICmVImzWGPy9z1qtWoi6/AYxct9vjrSzJ3uWAmGx5nytFwmWb64=
-=VvTm
+iQEcBAEBAgAGBQJM4z70AAoJEDMEi1NhKgbsjEwH/1XSfvx6XrcO7a9EdCWUZRZi
+TslAyUMp8Ftt3qwi276sfatHx0f6dCAwTZQ8VYom40l858heUCWUirDignlYIdYN
+MYLO4DLk+MLaL9BUfEVlqdQ+VlEKoj/kc5z2fPLrIq70bYuOEcs/9jkQiTITWRdj
+B+saZADpq4KmNX5TrW5QZSo6S/WmsKJ2aiE75TwgRg4eBs86nXekBQHw7/4+U9//
+D7v3gNorAQs6Tw1npV9dL7qmC1FWkR9VlYTyG45ee7GOTjhmIqdCpd+rp2id7FIT
+PGndiweNQfPznJ6YjFLswFNGG6sfpJXuwiLeqvECSLW23p3cI0OztWoDdwG4bjU=
+=4pX8
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__17_Nov_2010_13_14_53_+1100_PqR6Q.g9KMYTB_9+--
+--Signature=_Wed__17_Nov_2010_13_33_24_+1100__59AbtRlEan0VObW--
