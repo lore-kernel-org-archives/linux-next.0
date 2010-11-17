@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the usb tree
-Date: Wed, 17 Nov 2010 13:14:27 +1100
-Message-ID: <20101117131427.fd26efd8.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the usb tree
+Date: Wed, 17 Nov 2010 13:14:53 +1100
+Message-ID: <20101117131453.5b94f435.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__17_Nov_2010_13_14_27_+1100_t299i8qTVpE2GR=C"
+ boundary="Signature=_Wed__17_Nov_2010_13_14_53_+1100_PqR6Q.g9KMYTB_9+"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34760 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34770 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933395Ab0KQCOh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 16 Nov 2010 21:14:37 -0500
+	id S933804Ab0KQCO6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 16 Nov 2010 21:14:58 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Nazarewicz <mina86@mina86.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>
 
---Signature=_Wed__17_Nov_2010_13_14_27_+1100_t299i8qTVpE2GR=C
+--Signature=_Wed__17_Nov_2010_13_14_53_+1100_PqR6Q.g9KMYTB_9+
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,41 +24,36 @@ Content-Transfer-Encoding: quoted-printable
 Hi Greg,
 
 After merging the usb tree, today's linux-next build (x86_64 allmodconfig)
-produced this warning:
+failed like this:
 
-In file included from drivers/usb/gadget/g_ffs.c:64:
-drivers/usb/gadget/f_fs.c:30:1: warning: "pr_fmt" redefined
-In file included from include/linux/kernel.h:20,
-                 from arch/x86/include/asm/percpu.h:44,
-                 from arch/x86/include/asm/current.h:5,
-                 from arch/x86/include/asm/processor.h:15,
-                 from include/linux/prefetch.h:14,
-                 from include/linux/list.h:7,
-                 from include/linux/module.h:9,
-                 from drivers/usb/gadget/g_ffs.c:22:
-include/linux/printk.h:161:1: warning: this is the location of the previous=
- definition
+drivers/media/video/tlg2300/pd-main.c: In function 'poseidon_probe':
+drivers/media/video/tlg2300/pd-main.c:455: error: 'struct usb_device' has n=
+o member named 'autosuspend_delay'
+drivers/net/wimax/i2400m/usb.c: In function 'i2400mu_probe':
+drivers/net/wimax/i2400m/usb.c:517: error: 'struct usb_device' has no membe=
+r named 'autosuspend_delay'
 
-Introduced by commit d8df0b611c66db3b7afd0678213979209616681a ("usb:
-gadget: f_fs: remove custom printk() wrappers").
+Caused by commit fcc4a01eb8661226e80632327673f67bf6a5840b ("USB: use the
+runtime-PM autosuspend implementation").  More grepping required ...
+
+I have used the usb tree from next-20101116 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__17_Nov_2010_13_14_27_+1100_t299i8qTVpE2GR=C
+--Signature=_Wed__17_Nov_2010_13_14_53_+1100_PqR6Q.g9KMYTB_9+
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJM4zqDAAoJEDMEi1NhKgbs8LEH/1FGp0zHuBDZo5nU69U20Ezo
-cUdr+b5OtBak1yuZMLaZbZyYW/a2lvb1tOr48fzD0/RaJOxyGa14C6X2XMzn7OZk
-pS4Da8NBB2cqHHCiqLOBvMgDfv9mGAQ6Nb61rDMM7UvOe8MTKyBHBB0r9mEalfbA
-kgFDI2HXGOwWz7rYLAexs7Ii8Yixe02BdGEIGJwWZn6jlrGMZZaMyliW3nk6YE+V
-yK7QDG5hf4gRNQmflLtCUy3Lp/WmNPhVd5QYieLblkBtIUYrIqhXlvKXpRUH74Hp
-mbqjQsm17ztcDSz4w2l+lhM5xDjtyTeLhIMCPakSA9a1abDgp5fT6yDOSnTDOuo=
-=ZgtO
+iQEcBAEBAgAGBQJM4zqdAAoJEDMEi1NhKgbs7XUH/2YWQNc9Fsnwo2kz3uzrcmKU
+z+f3SEQLT6HfrnWe59OnaCmTZff35pDBj2fwHnEFTbbKTHDy/i3S5DfKLB4AUxKK
+gKpC6UxLSsK27NnmuXBC7lB0GqRTcwC48jw/V0vo3KfOyKoSU0yVcqJBLn7A6aa7
+AwMNdE4JqRQuBTPxBp1SeONcFJmTaDWi0nDWou9D+CxOdlODq8xDqD1l66G5KPQH
+ftsjPw0MrEuAUOB4V78kUkIAxv/NkE3lmt9FF9cRgJLuXHow75jYhucOVv37uG7A
+UwDYbCIo93DBICmVImzWGPy9z1qtWoi6/AYxct9vjrSzJ3uWAmGx5nytFwmWb64=
+=VvTm
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__17_Nov_2010_13_14_27_+1100_t299i8qTVpE2GR=C--
+--Signature=_Wed__17_Nov_2010_13_14_53_+1100_PqR6Q.g9KMYTB_9+--
