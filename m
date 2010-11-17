@@ -1,56 +1,33 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the usb tree
-Date: Wed, 17 Nov 2010 13:25:44 -0800
-Message-ID: <20101117212544.GA10541@kroah.com>
-References: <20101117042053.GB2999@kroah.com>
- <Pine.LNX.4.44L0.1011171049130.1704-100000@iolanthe.rowland.org>
+From: Greg KH <greg-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] usb: gadget: g_fs: Fix compilation warning
+Date: Wed, 17 Nov 2010 13:25:55 -0800
+Message-ID: <20101117212555.GB10541@kroah.com>
+References: <20101117131427.fd26efd8.sfr@canb.auug.org.au>
+ <20101116215906.GA2869@kroah.com>
+ <0c1bd123752a7adc7f034ef81d155903da115081.1290007778.git.mina86@mina86.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:46556 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754440Ab0KQVhp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 17 Nov 2010 16:37:45 -0500
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1011171049130.1704-100000@iolanthe.rowland.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, USB list <linux-usb@vger.kernel.org>, linux-next@vger.kernel.org, Kernel development list <linux-kernel@vger.kernel.org>
+In-Reply-To: <0c1bd123752a7adc7f034ef81d155903da115081.1290007778.git.mina86-deATy8a+UHjQT0dZR+AlfA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Michal Nazarewicz <mina86-deATy8a+UHjQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Nov 17, 2010 at 10:56:01AM -0500, Alan Stern wrote:
-> On Tue, 16 Nov 2010, Greg KH wrote:
+On Wed, Nov 17, 2010 at 05:09:47PM +0100, Michal Nazarewicz wrote:
+> This commit fixes warning in f_fs.c introduced by "usb:
+> gadget: f_fs: remove custom printk() wrappers":
 > 
-> > On Wed, Nov 17, 2010 at 01:14:53PM +1100, Stephen Rothwell wrote:
-> > > Hi Greg,
-> > > 
-> > > After merging the usb tree, today's linux-next build (x86_64 allmodconfig)
-> > > failed like this:
-> > > 
-> > > drivers/media/video/tlg2300/pd-main.c: In function 'poseidon_probe':
-> > > drivers/media/video/tlg2300/pd-main.c:455: error: 'struct usb_device' has no member named 'autosuspend_delay'
-> > > drivers/net/wimax/i2400m/usb.c: In function 'i2400mu_probe':
-> > > drivers/net/wimax/i2400m/usb.c:517: error: 'struct usb_device' has no member named 'autosuspend_delay'
-> > > 
-> > > Caused by commit fcc4a01eb8661226e80632327673f67bf6a5840b ("USB: use the
-> > > runtime-PM autosuspend implementation").  More grepping required ...
-> > > 
-> > > I have used the usb tree from next-20101116 for today.
-> > 
-> > Ick.  Alan, care to provide a patch?
+> In file included from drivers/usb/gadget/g_ffs.c:64:
+> drivers/usb/gadget/f_fs.c:30:1: warning: "pr_fmt" redefined
 > 
-> Here it is.  I'm not sure that having this code at all is really the
-> best approach.  It means the drivers will override any autosuspend
-> values set by userspace when their devices are first detected.
-> 
-> Also there are bogus calls to device_init_wakeup(), and truly silly
-> preprocessor tests of the kernel version in the staging-tree file.  
-> Nevertheless, this is the minimal fix.
+> Signed-off-by: Michal Nazarewicz <mina86-deATy8a+UHjQT0dZR+AlfA@public.gmane.org>
 
-Don't worry about that staging driver that much, it has been massivly
-cleaned up for .38, and then abandonded so the future of it is very
-unlikely :)
-
-I've applied this now, thanks.
+Now queued up, thanks.
 
 greg k-h
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
