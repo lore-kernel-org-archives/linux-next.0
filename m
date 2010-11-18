@@ -1,53 +1,68 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] staging: clearpad_tm1217 depends on INPUT
-Date: Wed, 17 Nov 2010 15:38:46 -0800
-Message-ID: <20101117153846.072dc988.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for November 17
+Date: Thu, 18 Nov 2010 11:16:23 +1100
+Message-ID: <20101118111623.15ec8fc3.sfr@canb.auug.org.au>
 References: <20101117140956.a8264c75.sfr@canb.auug.org.au>
+	<AANLkTinBiGOPptOY18-D+=djKLsJj75mXxL6ht6xNJXL@mail.gmail.com>
+	<20101117095920.2b9e2e6a.randy.dunlap@oracle.com>
+	<20101118101459.472d540b.sfr@canb.auug.org.au>
+	<4CE46443.2000002@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__18_Nov_2010_11_16_23_+1100_JvCJKvjfPBDpSV3f"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:31452 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751375Ab0KQXi7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Nov 2010 18:38:59 -0500
-In-Reply-To: <20101117140956.a8264c75.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:48558 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751370Ab0KRAQc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 17 Nov 2010 19:16:32 -0500
+In-Reply-To: <4CE46443.2000002@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, driverdevel <devel@driverdev.osuosl.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ramesh Agarwal <ramesh.agarwal@intel.com>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Zimny Lech <napohybelskurwysynom2010@gmail.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Linus <torvalds@linux-foundation.org>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+--Signature=_Thu__18_Nov_2010_11_16_23_+1100_JvCJKvjfPBDpSV3f
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-clearpad_tm1217 driver uses many input_() interfaces, so it should
-depend on INPUT.
+Hi Randy,
 
-clearpad_tm1217.c:(.text+0xf19ac): undefined reference to `input_unregister_device'
-clearpad_tm1217.c:(.text+0xf1b19): undefined reference to `input_event'
-clearpad_tm1217.c:(.text+0xf1b31): undefined reference to `input_event'
-clearpad_tm1217.c:(.text+0xf1bb4): undefined reference to `input_event'
-clearpad_tm1217.c:(.text+0xf1bf2): undefined reference to `input_event'
-drivers/built-in.o:clearpad_tm1217.c:(.text+0xf1c08): more undefined references to `input_event' follow
-clearpad_tm1217.c:(.text+0xf1df3): undefined reference to `input_allocate_device'
-clearpad_tm1217.c:(.text+0xf1eac): undefined reference to `input_set_abs_params'
-clearpad_tm1217.c:(.text+0xf1ed1): undefined reference to `input_set_abs_params'
-clearpad_tm1217.c:(.text+0xf1ed8): undefined reference to `input_register_device'
-clearpad_tm1217.c:(.text+0xf2040): undefined reference to `input_unregister_device'
-clearpad_tm1217.c:(.text+0xf204b): undefined reference to `input_free_device'
+On Wed, 17 Nov 2010 15:24:51 -0800 Randy Dunlap <randy.dunlap@oracle.com> w=
+rote:
+>
+> On 11/17/10 15:14, Stephen Rothwell wrote:
+> >=20
+> > Was this fixed before Linus took that patch?  Also, the #include of
+>=20
+> This build error was in linux-next of NOV. 17.  What mainline base did it=
+ use?
+> I don't exactly know how to answer your question...
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Ramesh Agarwal <ramesh.agarwal@intel.com>
----
- drivers/staging/cptm1217/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+It was a question for Linus and Arnd, as Linus took Arnd's patch this
+morning (my time) i.e. after next-20101117.  That patch was in linux-next
+for only one day (Nov 17) as it broke my builds the day before and was not
+included then.
 
---- linux-next-20101117.orig/drivers/staging/cptm1217/Kconfig
-+++ linux-next-20101117/drivers/staging/cptm1217/Kconfig
-@@ -2,6 +2,7 @@ config TOUCHSCREEN_CLEARPAD_TM1217
- 	tristate "Synaptics Clearpad TM1217"
- 	depends on I2C
- 	depends on GPIOLIB
-+	depends on INPUT
- 	help
- 	  Say Y here if you have a Synaptics Clearpad TM1217 Controller
- 
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__18_Nov_2010_11_16_23_+1100_JvCJKvjfPBDpSV3f
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJM5HBXAAoJEDMEi1NhKgbsvyEH/2JF8AZ3Tj2Pic1gzMBxGnBf
+PAEimbxQmbJHmLv57U6F7NG0iLx6qpIhWAbXgP7F2sZXIlnXlBp3pN7Z5MOIZtDu
+w9Cxu+6eW+AkU9Sv2CqOtHVJlctnJPUcChkm7B+vGPwSms7CVjSDL5piBAaoGWmW
+WUuZiiDlB1+qaGshgal6/8tZrGw323gwODPn2DzJ06c2uKrL7HU4xCNEJNiqEbZJ
+X2JaLtINMXAwMdU5fsD98DrXIxscYt8LLBt7lJsYAJYooGv86/gBRgy0GvBHCXcY
+jH2gwu4uaGxJVQaKgbSoC2AqrwCXKEBevyTP9V4nTkEelcYo0NHLQxvA49sAA7o=
+=EARb
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__18_Nov_2010_11_16_23_+1100_JvCJKvjfPBDpSV3f--
