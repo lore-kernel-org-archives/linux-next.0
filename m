@@ -1,81 +1,304 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree
- (wireless tree related)
-Date: Thu, 18 Nov 2010 13:27:24 +1100
-Message-ID: <20101118132724.f7d21899.sfr@canb.auug.org.au>
-References: <20101117134820.bca8d764.sfr@canb.auug.org.au>
-	<4CE3FCB5.6030909@oracle.com>
+Subject: linux-next: Tree for November 18
+Date: Thu, 18 Nov 2010 13:42:56 +1100
+Message-ID: <20101118134256.fe132215.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__18_Nov_2010_13_27_24_+1100_uU3AaCT5d.+tDB/k"
+ boundary="Signature=_Thu__18_Nov_2010_13_42_56_+1100_6RB5uqlJ/Qo5R/.6"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36378 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:53126 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753459Ab0KRC1b (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 17 Nov 2010 21:27:31 -0500
-In-Reply-To: <4CE3FCB5.6030909@oracle.com>
+	id S1750850Ab0KRCnH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 17 Nov 2010 21:43:07 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo F. Padovan" <padovan@profusion.mobi>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Thu__18_Nov_2010_13_27_24_+1100_uU3AaCT5d.+tDB/k
+--Signature=_Thu__18_Nov_2010_13_42_56_+1100_6RB5uqlJ/Qo5R/.6
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Wed, 17 Nov 2010 08:03:01 -0800 Randy Dunlap <randy.dunlap@oracle.com> w=
-rote:
->
-> On 11/16/10 18:48, Stephen Rothwell wrote:
-> >=20
-> > After merging the final tree, today's linux-next build (powerpc allyesc=
-onfig)
-> > failed like this:
-> >=20
-> > drivers/net/wireless/iwlwifi/iwl3945.o: In function `iwl_legacy_mac_res=
-et_tsf':
-> > (.opd+0xf00): multiple definition of `iwl_legacy_mac_reset_tsf'
-> > drivers/net/wireless/iwlwifi/iwlagn.o:(.opd+0x90): first defined here
-	.
-	.
-> > I should have known when I reported the warning ...
-> >=20
-> > Caused by commit dd0dd411f7178a20ea93a3cfa39123f078a07e25 ("iwlwifi: fix
-> > modular legacy build errors").
-> >=20
-> > I have reverted that commit for today.
->=20
-> Ack.  John, please drop/revert that patch.
->=20
-> Sorry about the problem.
+Changes since 20101117:
 
-Looks like John removed it but the bluetooth tree (which is based on top
-of the wireless tree) brought it back in by rebasing on top of yesterday's
-wireless tree. :-(
+The ceph tree lost its build failure.
 
-I have reverted it again today.
+The v4l-dvb tree still has its build failure, so I used the version from
+next-20101112.
+
+The wireless tree lost its build failure.
+
+The bluetooth tree gained the build failure from yesterday's wireless
+tree so I reverted the same commit.
+
+The usb tree lost its build failure.
+
+The bkl-config tree gained a conflict against Linus' tree.
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups (if any), it is also built with powerpc allnoconfig (32 and
+64 bit), ppc44x_defconfig and allyesconfig (minus
+CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
+and sparc64 defconfig. These builds also have
+CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
+CONFIG_DEBUG_INFO disabled when necessary.
+
+Below is a summary of the state of the merge.
+
+We are up to 179 trees (counting Linus' and 26 trees of patches pending
+for Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Randy Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__18_Nov_2010_13_27_24_+1100_uU3AaCT5d.+tDB/k
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master
+Merging fixes/fixes
+Merging arm-current/master
+Merging m68k-current/for-linus
+Merging powerpc-merge/merge
+Merging sparc-current/master
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sound-current/for-linus
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging kbuild-current/rc-fixes
+Merging driver-core.current/driver-core-linus
+Merging tty.current/tty-linus
+Merging usb.current/usb-linus
+Merging staging.current/staging-linus
+Merging cpufreq-current/fixes
+Merging input-current/for-linus
+Merging md-current/for-linus
+Merging audit-current/for-linus
+Merging crypto-current/master
+Merging ide-curent/master
+Merging dwmw2/master
+Merging sh-current/sh-fixes-for-linus
+Merging rmobile-current/rmobile-fixes-for-linus
+Merging fbdev-current/fbdev-fixes-for-linus
+Merging gcl-current/merge
+Merging arm/devel
+Merging davinci/davinci-next
+Merging i.MX/for-next
+Merging msm/for-next
+Merging omap/for-next
+Merging pxa/for-next
+Merging samsung/next-samsung
+Merging s5p/for-next
+Merging tegra/for-next
+Merging avr32/avr32-arch
+Merging blackfin/for-linus
+Merging cris/for-next
+Merging ia64/test
+Merging m68k/for-next
+Merging m68knommu/for-next
+Merging microblaze/next
+Merging mips/mips-for-linux-next
+Merging parisc/next
+Merging powerpc/next
+Merging 4xx/next
+Merging 52xx-and-virtex/next
+Merging galak/next
+Merging s390/features
+Merging sh/sh-latest
+Merging rmobile/rmobile-latest
+Merging sparc/master
+Merging tile/master
+Merging xtensa/master
+CONFLICT (content): Merge conflict in arch/xtensa/configs/iss_defconfig
+Merging ceph/for-next
+Merging cifs/master
+Merging configfs/linux-next
+Merging ecryptfs/next
+Merging ext3/for_next
+Merging ext4/next
+Merging fatfs/master
+Merging fuse/for-next
+Merging gfs2/master
+Merging hfsplus/for-next
+Merging jfs/next
+Merging logfs/master
+CONFLICT (content): Merge conflict in fs/logfs/logfs.h
+Merging nfs/linux-next
+Merging nfsd/nfsd-next
+Merging nilfs2/for-next
+Merging ocfs2/linux-next
+Merging omfs/for-next
+Merging squashfs/master
+Merging udf/for_next
+Merging v9fs/for-next
+Merging ubifs/linux-next
+Merging xfs/master
+Merging vfs/for-next
+Merging pci/linux-next
+CONFLICT (content): Merge conflict in drivers/pci/pci-sysfs.c
+Merging hid/for-next
+CONFLICT (content): Merge conflict in drivers/hid/hid-input.c
+Merging quilt/i2c
+Merging bjdooks-i2c/next-i2c
+Merging quilt/jdelvare-hwmon
+Merging hwmon-staging/hwmon-next
+Merging quilt/kernel-doc
+Merging v4l-dvb/master
+$ git reset --hard HEAD^
+Merging refs/next/20101112/v4l-dvb
+Merging kbuild/for-next
+Merging kconfig/for-next
+Merging ide/master
+Merging libata/NEXT
+Merging infiniband/for-next
+Merging acpi/test
+Merging idle-test/idle-test
+Merging ieee1394/for-next
+Merging ubi/linux-next
+Merging kvm/linux-next
+Merging dlm/next
+Merging swiotlb/master
+Merging ibft/master
+Merging scsi/master
+Merging async_tx/next
+Merging net/master
+Merging wireless/master
+Merging bluetooth/master
+Merging mtd/master
+Merging crypto/master
+Merging sound/for-next
+Merging sound-asoc/for-next
+Merging cpufreq/next
+Merging quilt/rr
+Merging input/next
+Merging lsm/for-next
+Merging block/for-next
+Merging quilt/device-mapper
+Merging embedded/master
+Merging firmware/master
+Merging pcmcia/master
+Merging battery/master
+Merging leds/for-mm
+Merging backlight/for-mm
+Merging mmc/mmc-next
+Merging kgdb/kgdb-next
+Merging slab/for-next
+Merging uclinux/for-next
+Merging md/for-next
+Merging mfd/for-next
+Merging hdlc/hdlc-next
+Merging drm/drm-next
+Merging fbdev/master
+Merging viafb/viafb-next
+Merging omap_dss2/for-next
+Merging voltage/for-next
+Merging security-testing/next
+Merging lblnet/master
+Merging agp/agp-next
+Merging watchdog/master
+Merging bdev/master
+Merging dwmw2-iommu/master
+Merging cputime/cputime
+Merging osd/linux-next
+Merging jc_docs/docs-next
+Merging nommu/master
+Merging trivial/for-next
+CONFLICT (content): Merge conflict in MAINTAINERS
+CONFLICT (delete/modify): arch/blackfin/mach-bf518/include/mach/defBF51x_ba=
+se.h deleted in HEAD and modified in trivial/for-next. Version trivial/for-=
+next of arch/blackfin/mach-bf518/include/mach/defBF51x_base.h left in tree.
+CONFLICT (delete/modify): arch/blackfin/mach-bf527/include/mach/defBF52x_ba=
+se.h deleted in HEAD and modified in trivial/for-next. Version trivial/for-=
+next of arch/blackfin/mach-bf527/include/mach/defBF52x_base.h left in tree.
+CONFLICT (content): Merge conflict in arch/blackfin/mach-bf538/include/mach=
+/defBF539.h
+CONFLICT (content): Merge conflict in drivers/scsi/bfa/bfa_fcpim.c
+$ git rm -f arch/blackfin/mach-bf518/include/mach/defBF51x_base.h arch/blac=
+kfin/mach-bf527/include/mach/defBF52x_base.h
+Merging audit/for-next
+Merging suspend/linux-next
+Merging fsnotify/for-next
+Merging irda/for-next
+Merging catalin/for-next
+Merging alacrity/linux-next
+CONFLICT (content): Merge conflict in include/linux/Kbuild
+Merging i7core_edac/linux_next
+Merging i7300_edac/linux_next
+Merging devicetree/next-devicetree
+Merging spi/next-spi
+Merging tip/auto-latest
+Merging rcu/rcu/next
+Merging oprofile/for-next
+Merging xen/upstream/xen
+Merging swiotlb-xen/master
+Merging xen-pvhvm/linux-next
+Merging edac-amd/for-next
+Merging percpu/for-next
+Merging workqueues/for-next
+Merging sfi/sfi-test
+Merging asm-generic/next
+Merging drivers-x86/linux-next
+Merging hwpoison/hwpoison
+Merging sysctl/master
+Merging driver-core/driver-core-next
+Merging tty/tty-next
+Merging usb/usb-next
+Merging staging/staging-next
+Merging slabh/slabh
+Merging bkl-trivial/trivial
+Merging bkl-llseek/llseek
+Merging bkl-vfs/vfs
+Merging bkl-config/config
+CONFLICT (content): Merge conflict in include/linux/smp_lock.h
+Merging irqflags/master
+Merging cleancache/linux-next
+CONFLICT (content): Merge conflict in fs/ocfs2/super.c
+CONFLICT (content): Merge conflict in include/linux/fs.h
+CONFLICT (content): Merge conflict in mm/Kconfig
+Merging scsi-post-merge/merge-base:master
+[master 658d750] Revert "iwlwifi: fix modular legacy build errors"
+
+--Signature=_Thu__18_Nov_2010_13_42_56_+1100_6RB5uqlJ/Qo5R/.6
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJM5I8MAAoJEDMEi1NhKgbsnywH/jk3Z3lZRTCgBVT+VsHS3AvI
-rKvE77UbvuXwk4QqYal+JJ3rjGolKLHmuXCfA1J3mUNXvKToT8Rbt0+TYtLWxmuM
-Uc816uMzj3YesT3YCQ8fnIsQzsCFfm2YO4GpHbBcyiCmT2V2+kGUSMgKXipGTHtr
-c/ui+2NILbEpqSUxQIXdTX8FnRngF6W3QSotNN6oSto4ZYZsEXWBEw55X0Nk/RTq
-TDZA8p/fC7anmJXsuTrWm4CFQfi79QylaPrRdE/moWPUs5M8KLmFlwxDU/PeehdY
-tTnhHNz8RcvUIIxD60W7qUohjFHsBjQO9LXv8DGETeXwTPcrp6rS7ODqoaf8aaM=
-=/mdB
+iQEcBAEBAgAGBQJM5JKwAAoJEDMEi1NhKgbsfUoIAIe+4CCFi7wYWVrRl+T0b7/w
+rDNcQ/U3boPPB5TofJFmp4kN9UfZzD19uE4d9Ih3B/K3xAqEhfHgffCMIcU33Vd5
+1ni/1RjwBPHlFUGLJcoYaa2H1W1grJBulc9jpiV+WjQDqdOa2+FH5Kb82p0vkBTP
++au2tde1lpDnV1A48pRBsR9L/6bOIevYC7QGp8RclwRvfhpsXGWdLqpbV2fuLMv3
+k3JaPbZxiJM845T0INqfj/KCfd3bckFqf/3GUG9Acv+Sl+tJEPQEVadvh3b734yH
+7PL1p3I2BLBMLDrMbFRnj95aK6s/og3JnMhyFYb7t7s2YD/SDuZa8rXr2Lmq3RU=
+=JZ0R
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__18_Nov_2010_13_27_24_+1100_uU3AaCT5d.+tDB/k--
+--Signature=_Thu__18_Nov_2010_13_42_56_+1100_6RB5uqlJ/Qo5R/.6--
