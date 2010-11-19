@@ -1,36 +1,37 @@
-From: Greg KH <gregkh@suse.de>
-Subject: Re: [PATCH -next] staging: fix winbond build, needs delay.h
-Date: Fri, 19 Nov 2010 09:38:31 -0800
-Message-ID: <20101119173831.GA6098@suse.de>
+From: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: Re: linux-next: Tree for November 19
+Date: Fri, 19 Nov 2010 17:42:57 +0000
+Message-ID: <20101119174257.58bb8e32@lxorguk.ukuu.org.uk>
 References: <20101119143207.b2d5731e.sfr@canb.auug.org.au>
- <20101119093018.340dab03.randy.dunlap@oracle.com>
+	<AANLkTik6Aq+kWzpmYckKkV5yVMFPt-J0E7OMM6Rd4ouO@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:34520 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755658Ab0KSRoK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 19 Nov 2010 12:44:10 -0500
-Content-Disposition: inline
-In-Reply-To: <20101119093018.340dab03.randy.dunlap@oracle.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Pavel Machek <pavel@ucw.cz>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <AANLkTik6Aq+kWzpmYckKkV5yVMFPt-J0E7OMM6Rd4ouO@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Zimny Lech <napohybelskurwysynom2010@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Nov 19, 2010 at 09:30:18AM -0800, Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
+On Fri, 19 Nov 2010 18:40:41 +0100
+Zimny Lech <napohybelskurwysynom2010@gmail.com> wrote:
+
+> Salve,
 > 
-> winbond drivers use msleep() and delay(), so include linux/delay.h
-> in a common header file to prevent build errors.
+> 2010/11/19 Stephen Rothwell <sfr@canb.auug.org.au>:
+> > Hi all,
+> >
+> > Changes since 20101118:
 > 
-> drivers/staging/winbond/phy_calibration.c:987: error: implicit declaration of function 'msleep'
-> drivers/staging/winbond/phy_calibration.c:1556: error: implicit declaration of function 'udelay'
-> drivers/staging/winbond/reg.c:894: error: implicit declaration of function 'msleep'
-> drivers/staging/winbond/reg.c:1178: error: implicit declaration of function 'udelay'
+> This probably should not be available on x86_64
+> 
+>   BLD FW  drivers/net/wan/wanxlfw.inc
+> /bin/sh: as68k: command not found
+> /home/test/linux-2.6/drivers/net/wan/wanxlfw.S:39:0: fatal error: when
+> writing output to : Broken pipe
+> compilation terminated.
+> make[4]: *** [drivers/net/wan/wanxlfw.inc] Error 127
 
-Is this error showing up in Linus's tree, or only in linux-next?
-
-thanks,
-
-greg k-h
+If you want to build the wanxl firmware then you need the m68k assembler
+for the firmware, so it is right.
