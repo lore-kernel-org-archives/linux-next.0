@@ -1,82 +1,108 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for November 18
-Date: Fri, 19 Nov 2010 10:33:00 +1100
-Message-ID: <20101119103300.243b17c8.sfr@canb.auug.org.au>
-References: <20101118134256.fe132215.sfr@canb.auug.org.au>
-	<4CE54562.9030603@panasas.com>
+Subject: linux-next: manual merge of the net tree with the net-current tree
+Date: Fri, 19 Nov 2010 11:17:03 +1100
+Message-ID: <20101119111703.8e33c5fb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__19_Nov_2010_10_33_00_+1100_QC1JR4QL57UBmiNz"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59668 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:49808 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757720Ab0KRXdH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 18 Nov 2010 18:33:07 -0500
-In-Reply-To: <4CE54562.9030603@panasas.com>
+	id S1759371Ab0KSARH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 18 Nov 2010 19:17:07 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Boaz Harrosh <bharrosh@panasas.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Graf <tgraf@infradead.org>
 
---Signature=_Fri__19_Nov_2010_10_33_00_+1100_QC1JR4QL57UBmiNz
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-Hi Boaz,
+Today's linux-next merge of the net tree got a conflict in
+net/ipv6/addrconf.c between commit
+18a31e1e282f9ed563b131526a88162ccbe04ee3 ("ipv6: Expose reachable and
+retrans timer values as msecs") from the net-current tree and commit
+b382b191ea9e9ccefc437433d23befe91f4a8925 ("ipv6: AF_INET6 link address
+family") from the net tree.
 
-On Thu, 18 Nov 2010 17:25:22 +0200 Boaz Harrosh <bharrosh@panasas.com> wrot=
-e:
->
-> The uml build from:
->         http://kisskb.ellerman.id.au/kisskb/target/2979/
->=20
-> is failing compilation like:
->   LD      .tmp_vmlinux1
-> /opt/crosstool/gcc-4.2.3-glibc-2.3.6/i386-unknown-linux-gnu/lib/gcc/i386-=
-unknown-linux-gnu/4.2.3/../../../../i386-unknown-linux-gnu/bin/ld:arch/um/k=
-ernel/vmlinux.lds:231: parse error
-> collect2: ld returned 1 exit status
->   KSYM    .tmp_kallsyms1.S
-> /opt/crosstool/gcc-4.2.3-glibc-2.3.6/i386-unknown-linux-gnu/bin/i386-unkn=
-own-linux-gnu-nm: '.tmp_vmlinux1': No such file
-> No valid symbol.
-> make[1]: *** [.tmp_kallsyms1.S] Error 1
-> make: *** [sub-make] Error 2
-> make failed, trying to bisect ..
->=20
-> It looks like a build environment setup problem because it's fine here
-> (for x86_64 at least.) Who is the person responsible for the above URL
-> compilation please?
-
-I am (at least partially) responsible for that build environment.
-
-We only started getting that build failure with next-20101115 (it may
-have been present before then but masked by other build failures), and
-our build system hasn't changed in quite some time ...  In fact, before
-next-20100915, the um i386 build used to succeed.
-
-The build we are doing is 32 bit (not 64 bit).  We are in the process of
-getting a newer tool chain, but I am not sure when that will happen.
---=20
+I fixed it up (I think - see below) and can carry the fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__19_Nov_2010_10_33_00_+1100_QC1JR4QL57UBmiNz
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJM5besAAoJEDMEi1NhKgbsgUcH/2S/OFXupKF6D6LOIN7s1vKK
-ARiKGIxWDZXozjdPANM+UIfep1fwfc7/2zhfFb+Zg7fFUcDC2clXeL4xcICNB1BS
-OuT8s1RzkpEQzFkj9LnNrOOlMCzS8o2B/HqNi+RKcpXg3Ts1syhaF3SEUqrDbPD3
-4nXAUvbi0YKRKbySGTVisOY4KESfdwjfSKlVTpOFjwqDUXIkuXXpbQSs0jeL4U2Y
-FzuDAXgx+97RQPNu0vMQrxn1GnDmSumEFW0XjPgkUvp0TbBYl2oNA0ZzWy8BUyD3
-2UhKEHMncWFZTPXfcBDcezW8pZTFZONy0VOo4guZIvqy7A5hPHtNzlmxf+mz6+E=
-=dFVr
------END PGP SIGNATURE-----
-
---Signature=_Fri__19_Nov_2010_10_33_00_+1100_QC1JR4QL57UBmiNz--
+diff --cc net/ipv6/addrconf.c
+index 2fc35b3,470e7ac..0000000
+--- a/net/ipv6/addrconf.c
++++ b/net/ipv6/addrconf.c
+@@@ -3896,6 -3894,69 +3899,68 @@@ static void snmp6_fill_stats(u64 *stats
+  	}
+  }
+  
++ static int inet6_fill_ifla6_attrs(struct sk_buff *skb, struct inet6_dev *idev)
++ {
++ 	struct nlattr *nla;
++ 	struct ifla_cacheinfo ci;
++ 
++ 	NLA_PUT_U32(skb, IFLA_INET6_FLAGS, idev->if_flags);
++ 
++ 	ci.max_reasm_len = IPV6_MAXPLEN;
+ -	ci.tstamp = (__u32)(TIME_DELTA(idev->tstamp, INITIAL_JIFFIES) / HZ * 100
+ -		    + TIME_DELTA(idev->tstamp, INITIAL_JIFFIES) % HZ * 100 / HZ);
+ -	ci.reachable_time = idev->nd_parms->reachable_time;
+ -	ci.retrans_time = idev->nd_parms->retrans_time;
+++	ci.tstamp = cstamp_delta(idev->tstamp);
+++	ci.reachable_time = jiffies_to_msecs(idev->nd_parms->reachable_time);
+++	ci.retrans_time = jiffies_to_msecs(idev->nd_parms->retrans_time);
++ 	NLA_PUT(skb, IFLA_INET6_CACHEINFO, sizeof(ci), &ci);
++ 
++ 	nla = nla_reserve(skb, IFLA_INET6_CONF, DEVCONF_MAX * sizeof(s32));
++ 	if (nla == NULL)
++ 		goto nla_put_failure;
++ 	ipv6_store_devconf(&idev->cnf, nla_data(nla), nla_len(nla));
++ 
++ 	/* XXX - MC not implemented */
++ 
++ 	nla = nla_reserve(skb, IFLA_INET6_STATS, IPSTATS_MIB_MAX * sizeof(u64));
++ 	if (nla == NULL)
++ 		goto nla_put_failure;
++ 	snmp6_fill_stats(nla_data(nla), idev, IFLA_INET6_STATS, nla_len(nla));
++ 
++ 	nla = nla_reserve(skb, IFLA_INET6_ICMP6STATS, ICMP6_MIB_MAX * sizeof(u64));
++ 	if (nla == NULL)
++ 		goto nla_put_failure;
++ 	snmp6_fill_stats(nla_data(nla), idev, IFLA_INET6_ICMP6STATS, nla_len(nla));
++ 
++ 	return 0;
++ 
++ nla_put_failure:
++ 	return -EMSGSIZE;
++ }
++ 
++ static size_t inet6_get_link_af_size(const struct net_device *dev)
++ {
++ 	if (!__in6_dev_get(dev))
++ 		return 0;
++ 
++ 	return inet6_ifla6_size();
++ }
++ 
++ static int inet6_fill_link_af(struct sk_buff *skb, const struct net_device *dev)
++ {
++ 	struct inet6_dev *idev = __in6_dev_get(dev);
++ 
++ 	if (!idev)
++ 		return -ENODATA;
++ 
++ 	if (inet6_fill_ifla6_attrs(skb, idev) < 0)
++ 		return -EMSGSIZE;
++ 
++ 	return 0;
++ }
++ 
++ static int inet6_parse_link_af(struct net_device *dev, const struct nlattr *nla)
++ {
++ 	return -EOPNOTSUPP;
++ }
++ 
+  static int inet6_fill_ifinfo(struct sk_buff *skb, struct inet6_dev *idev,
+  			     u32 pid, u32 seq, int event, unsigned int flags)
+  {
