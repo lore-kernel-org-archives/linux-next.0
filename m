@@ -1,43 +1,62 @@
-From: Greg KH <gregkh@suse.de>
-Subject: Re: [PATCH -next] staging: fix winbond build, needs delay.h
-Date: Fri, 19 Nov 2010 09:54:43 -0800
-Message-ID: <20101119175443.GA6326@suse.de>
+From: Zimny Lech <napohybelskurwysynom2010@gmail.com>
+Subject: Re: linux-next: Tree for November 19
+Date: Fri, 19 Nov 2010 19:35:05 +0100
+Message-ID: <AANLkTimC51Rb+7eMGYoJ9biGS1Tp1wPC-Ujg55fkOvHR@mail.gmail.com>
 References: <20101119143207.b2d5731e.sfr@canb.auug.org.au>
- <20101119093018.340dab03.randy.dunlap@oracle.com>
- <20101119173831.GA6098@suse.de>
- <4CE6B87C.2010203@oracle.com>
+	<AANLkTik6Aq+kWzpmYckKkV5yVMFPt-J0E7OMM6Rd4ouO@mail.gmail.com>
+	<20101119174257.58bb8e32@lxorguk.ukuu.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-2
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:34970 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755999Ab0KSRzn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 19 Nov 2010 12:55:43 -0500
-Content-Disposition: inline
-In-Reply-To: <4CE6B87C.2010203@oracle.com>
+Received: from mail-qy0-f174.google.com ([209.85.216.174]:61885 "EHLO
+	mail-qy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755247Ab0KSSfH convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Nov 2010 13:35:07 -0500
+In-Reply-To: <20101119174257.58bb8e32@lxorguk.ukuu.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Pavel Machek <pavel@ucw.cz>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Fri, Nov 19, 2010 at 09:48:44AM -0800, Randy Dunlap wrote:
-> On 11/19/10 09:38, Greg KH wrote:
-> > On Fri, Nov 19, 2010 at 09:30:18AM -0800, Randy Dunlap wrote:
-> >> From: Randy Dunlap <randy.dunlap@oracle.com>
-> >>
-> >> winbond drivers use msleep() and delay(), so include linux/delay.h
-> >> in a common header file to prevent build errors.
-> >>
-> >> drivers/staging/winbond/phy_calibration.c:987: error: implicit declaration of function 'msleep'
-> >> drivers/staging/winbond/phy_calibration.c:1556: error: implicit declaration of function 'udelay'
-> >> drivers/staging/winbond/reg.c:894: error: implicit declaration of function 'msleep'
-> >> drivers/staging/winbond/reg.c:1178: error: implicit declaration of function 'udelay'
-> > 
-> > Is this error showing up in Linus's tree, or only in linux-next?
-> 
-> I saw it in linux-next, but it looks like it should also be a build error
-> in mainline.
+2010/11/19 Alan Cox <alan@lxorguk.ukuu.org.uk>:
+> On Fri, 19 Nov 2010 18:40:41 +0100
+> Zimny Lech <napohybelskurwysynom2010@gmail.com> wrote:
+>
+>> Salve,
+>>
+>> 2010/11/19 Stephen Rothwell <sfr@canb.auug.org.au>:
+>> > Hi all,
+>> >
+>> > Changes since 20101118:
+>>
+>> This probably should not be available on x86_64
+>>
+>> =A0 BLD FW =A0drivers/net/wan/wanxlfw.inc
+>> /bin/sh: as68k: command not found
+>> /home/test/linux-2.6/drivers/net/wan/wanxlfw.S:39:0: fatal error: wh=
+en
+>> writing output to : Broken pipe
+>> compilation terminated.
+>> make[4]: *** [drivers/net/wan/wanxlfw.inc] Error 127
+>
+> If you want to build the wanxl firmware then you need the m68k assemb=
+ler
+> for the firmware, so it is right.
+>
 
-Ok, thanks, I'll queue it up for Linus's tree then.
+Ok, thanks for the info.
 
-greg k-h
+I'll try to find souces for this asm and install it to avoid future
+failed builds.
+
+--=20
+Slawa!
+N.P.S.
+
+Chwa=B3a tobie, Szatanie, cze=B6=E6 na wysoko=B6ciach
+Nieba, gdzie kr=F3lowa=B3e=B6, chwa=B3a w g=B3=EAboko=B6ciach
+Piek=B3a, gdzie zwyci=EA=BFony, trwasz w dumnym milczeniu!
+Uczy=F1, niechaj ma dusza spocznie z Tob=B1 w cieniu
+Drzewa Wiedzy, gdy swoje konary rozwinie,
+Jak sklepienie ko=B6cio=B3a, kt=F3ry nie przeminie!
