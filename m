@@ -1,44 +1,61 @@
-From: Anand Gadiyar <gadiyar@ti.com>
-Subject: [PATCH] kernel/cpu.c - fix build warning
-Date: Fri, 19 Nov 2010 10:56:50 +0530
-Message-ID: <1290144410-30981-1-git-send-email-gadiyar@ti.com>
+From: Rakib Mullick <rakib.mullick@gmail.com>
+Subject: Re: [PATCH] kernel/cpu.c - fix build warning
+Date: Fri, 19 Nov 2010 12:24:21 +0600
+Message-ID: <AANLkTik9T_HaciZRntet9nx5-UUcKs23fNpmN0vCam2G@mail.gmail.com>
+References: <1290144410-30981-1-git-send-email-gadiyar@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:34196 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750887Ab0KSF1I (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 19 Nov 2010 00:27:08 -0500
+Received: from mail-wy0-f174.google.com ([74.125.82.174]:32908 "EHLO
+	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750930Ab0KSGYX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Nov 2010 01:24:23 -0500
+In-Reply-To: <1290144410-30981-1-git-send-email-gadiyar@ti.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Cc: Anand Gadiyar <gadiyar@ti.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Ingo Molnar <mingo@elte.hu>
+To: Anand Gadiyar <gadiyar@ti.com>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Peter Zijlstra <a.p.zijlstra@chello.nl>, Ingo Molnar <mingo@elte.hu>
 
-Patch "sched: Simplify cpu-hot-unplug task migration" in
-linux-next as of 20101119 introduced the following compile
-warning. Fix this.
+On 11/19/10, Anand Gadiyar <gadiyar@ti.com> wrote:
+> Patch "sched: Simplify cpu-hot-unplug task migration" in
+> linux-next as of 20101119 introduced the following compile
+> warning. Fix this.
+>
+>   CC      kernel/cpu.o
+> kernel/cpu.c: In function 'take_cpu_down':
+> kernel/cpu.c:200: warning: unused variable 'cpu'
+>
+It's been already fixed by http://lkml.org/lkml/2010/11/18/314.
 
-  CC      kernel/cpu.o
-kernel/cpu.c: In function 'take_cpu_down':
-kernel/cpu.c:200: warning: unused variable 'cpu'
 
-Signed-off-by: Anand Gadiyar <gadiyar@ti.com>
-Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: Ingo Molnar <mingo@elte.hu>
----
-Okay with me to fold this into the original patch if that's
-still possible.
+thanks,
+rakib
 
- kernel/cpu.c |    1 -
- 1 file changed, 1 deletion(-)
-
-Index: linux-2.6/kernel/cpu.c
-===================================================================
---- linux-2.6.orig/kernel/cpu.c
-+++ linux-2.6/kernel/cpu.c
-@@ -197,7 +197,6 @@ struct take_cpu_down_param {
- static int __ref take_cpu_down(void *_param)
- {
- 	struct take_cpu_down_param *param = _param;
--	unsigned int cpu = (unsigned long)param->hcpu;
- 	int err;
- 
- 	/* Ensure this CPU doesn't handle any more interrupts. */
+> Signed-off-by: Anand Gadiyar <gadiyar@ti.com>
+> Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
+> Cc: Ingo Molnar <mingo@elte.hu>
+> ---
+> Okay with me to fold this into the original patch if that's
+> still possible.
+>
+>  kernel/cpu.c |    1 -
+>  1 file changed, 1 deletion(-)
+>
+> Index: linux-2.6/kernel/cpu.c
+> ===================================================================
+> --- linux-2.6.orig/kernel/cpu.c
+> +++ linux-2.6/kernel/cpu.c
+> @@ -197,7 +197,6 @@ struct take_cpu_down_param {
+>  static int __ref take_cpu_down(void *_param)
+>  {
+>  	struct take_cpu_down_param *param = _param;
+> -	unsigned int cpu = (unsigned long)param->hcpu;
+>  	int err;
+>
+>  	/* Ensure this CPU doesn't handle any more interrupts. */
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
+>
