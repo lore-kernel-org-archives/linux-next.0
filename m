@@ -1,69 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the alacrity tree with the wireless
- tree
-Date: Fri, 19 Nov 2010 11:59:14 +1100
-Message-ID: <20101119115914.4501da3f.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the bkl-config tree with Linus' tree
+Date: Fri, 19 Nov 2010 13:05:52 +1100
+Message-ID: <20101119130552.2f195494.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__19_Nov_2010_13_05_52_+1100_LXKCA0lslcEBQpB6"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47254 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:60365 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754151Ab0KSA7T (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 18 Nov 2010 19:59:19 -0500
+	id S1751042Ab0KSCGF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 18 Nov 2010 21:06:05 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Gregory Haskins <gregory.haskins@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bruno Randolf <br1@einfach.org>, "John W. Linville" <linville@tuxdriver.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alessio Igor Bogani <abogani@texware.it>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
 
-Hi Gregory,
+--Signature=_Fri__19_Nov_2010_13_05_52_+1100_LXKCA0lslcEBQpB6
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the alacrity tree got a conflict in
-lib/Kconfig between commit c5485a7e7569ab32eea240c850198519e2a765ef
-("lib: Add generic exponentially weighted moving average (EWMA)
-function") from the wireless tree and commit
-86613d42e6440339e9653a35d69ee5d6db361069 ("shm-signal: shared-memory
-signals") from the alacrity tree.
+Hi Arnd,
 
-Just overlapping additions.  I fixed it up (see below) and can carry the
-fix as necessary.
+Today's linux-next merge of the bkl-config tree got a conflict in
+arch/powerpc/kernel/setup_64.c between commit
+0f6b77ca12bea571e0a97b0588f62aa5f6012d61 ("powerpc: Update a BKL related
+comment") from Linus' tree and commit
+bb2d384ab8184eb7f7146897e47fa5b38583112c ("BKL: remove references to
+lock_kernel from comments") from the bkl-config tree.
 
-I do need to ask if the commits in the alacrity tree are going to be
-merged upstream.  The tree has not been updated since May ...
--- 
+I just used the former version.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc lib/Kconfig
-index 3116aa6,af12831..0000000
---- a/lib/Kconfig
-+++ b/lib/Kconfig
-@@@ -210,7 -210,25 +210,28 @@@ config GENERIC_ATOMIC6
-  config LRU_CACHE
-  	tristate
-  
- +config AVERAGE
- +	bool
- +
-+ config SHM_SIGNAL
-+ 	tristate "SHM Signal - Generic shared-memory signaling mechanism"
-+ 	default n
-+ 	help
-+ 	 Provides a shared-memory based signaling mechanism to indicate
-+          memory-dirty notifications between two end-points.
-+ 
-+ 	 If unsure, say N
-+ 
-+ config IOQ
-+ 	tristate "IO-Queue library - Generic shared-memory queue"
-+ 	select SHM_SIGNAL
-+ 	default n
-+ 	help
-+ 	 IOQ is a generic shared-memory-queue mechanism that happens to be
-+ 	 friendly to virtualization boundaries. It can be used in a variety
-+ 	 of ways, though its intended purpose is to become a low-level
-+ 	 communication path for paravirtualized drivers.
-+ 
-+ 	 If unsure, say N
-+ 
-  endmenu
+--Signature=_Fri__19_Nov_2010_13_05_52_+1100_LXKCA0lslcEBQpB6
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJM5duAAAoJEDMEi1NhKgbs1EcH/2FqhEYGiaTp2Hcqi5sy/BaZ
+MGJyxMM+8Rwd6iLZl7kPgDznFvL0yCX99I3KxJB2rPq3ll2s6+OTbvj2PxB5SzFg
+cTCXar/MngyXHc9/iy3duRc6cV7v7eWtyZjzXYe5iHKp+7ios1vJnqvexRKT2VHc
+8HoC6h9D4JLAW7Q0+xMSTRh7qoZf0l4wko2NnRZd9B8vGEK5t3Ga/DUZOfRpP6HD
+Nxhmk9hR+mq4Q7YaJNycGr6gxQpWl/lujVVlgBe+F9hwMfnlyv/yFJr68rzrUmtL
+lpJU60RhltfnG91NSSt9furMvzh0F085s7fZ5gXeZcNs/yxclVa89s3jzGBgi/g=
+=cdUB
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__19_Nov_2010_13_05_52_+1100_LXKCA0lslcEBQpB6--
