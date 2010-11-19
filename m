@@ -1,40 +1,34 @@
-From: Jiri Kosina <jkosina@suse.cz>
-Subject: Re: linux-next: manual merge of the trivial tree with the  tree
-Date: Fri, 19 Nov 2010 17:08:28 +0100 (CET)
-Message-ID: <alpine.LNX.2.00.1011191708130.7420@pobox.suse.cz>
-References: <20101109132725.2e17ae65.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for November 19 (sched_fair)
+Date: Fri, 19 Nov 2010 09:15:50 -0800
+Message-ID: <20101119091550.83c8149a.randy.dunlap@oracle.com>
+References: <20101119143207.b2d5731e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor.suse.de ([195.135.220.2]:35222 "EHLO mx1.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753925Ab0KSQIa (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 19 Nov 2010 11:08:30 -0500
-In-Reply-To: <20101109132725.2e17ae65.sfr@canb.auug.org.au>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:38592 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755309Ab0KSRRh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Nov 2010 12:17:37 -0500
+In-Reply-To: <20101119143207.b2d5731e.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?ISO-8859-15?Q?=22Uwe_Kleine-K=F6nig=22?= <u.kleine-koenig@pengutronix.de>, Mike Frysinger <vapier@gentoo.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, 9 Nov 2010, Stephen Rothwell wrote:
+On Fri, 19 Nov 2010 14:32:07 +1100 Stephen Rothwell wrote:
 
-> Hi Jiri,
+> Hi all,
 > 
-> Today's linux-next merge of the trivial tree got a conflict in
-> arch/blackfin/mach-bf538/include/mach/defBF539.h,
-> arch/blackfin/mach-bf518/include/mach/defBF51x_base.h and
-> arch/blackfin/mach-bf527/include/mach/defBF52x_base.h between various
-> commits from the blackfin tree and commit
-> b595076a180a56d1bb170e6eceda6eb9d76f4cd3 ("tree-wide: fix comment/printk
-> typos") from the trivial tree.
-> 
-> I just used the versions from the blackfin tree for now since they moved
-> large amounts of code around and deleted the latter 2 files.
+> Changes since 20101118:
 
-I have reverted those hunks in my tree, so it should be conflict-less now.
 
-Thanks,
+when CONFIG_SMP is not enabled:
 
--- 
-Jiri Kosina
-SUSE Labs, Novell Inc.
+kernel/sched_fair.c:566: error: 'struct cfs_rq' has no member named 'load_unacc_exec_time'
+kernel/sched_fair.c:567: error: 'struct cfs_rq' has no member named 'load_unacc_exec_time'
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
