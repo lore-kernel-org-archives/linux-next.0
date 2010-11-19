@@ -1,50 +1,69 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree with the net-current tree
-Date: Fri, 19 Nov 2010 11:17:06 +1100
-Message-ID: <20101119111706.d68efe13.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the alacrity tree with the wireless
+ tree
+Date: Fri, 19 Nov 2010 11:59:14 +1100
+Message-ID: <20101119115914.4501da3f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__19_Nov_2010_11_17_06_+1100_Ui4wnqUT.D8CWZp."
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <eric.dumazet@gmail.com>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Fri__19_Nov_2010_11_17_06_+1100_Ui4wnqUT.D8CWZp.
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:47254 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754151Ab0KSA7T (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 18 Nov 2010 19:59:19 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Gregory Haskins <gregory.haskins@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bruno Randolf <br1@einfach.org>, "John W. Linville" <linville@tuxdriver.com>
 
-Hi all,
+Hi Gregory,
 
-Today's linux-next merge of the net tree got a conflict in
-drivers/net/bonding/bond_main.c between commit
-3006bc38895895f1a0352c2e17e1a503f35f7e2f ("bonding: fix a race in IGMP
-handling") from the net-current tree and commit
-866f3b25a2eb60d7529c227a0ecd80c3aba443fd ("bonding: IGMP handling
-cleanup") from the net tree.
+Today's linux-next merge of the alacrity tree got a conflict in
+lib/Kconfig between commit c5485a7e7569ab32eea240c850198519e2a765ef
+("lib: Add generic exponentially weighted moving average (EWMA)
+function") from the wireless tree and commit
+86613d42e6440339e9653a35d69ee5d6db361069 ("shm-signal: shared-memory
+signals") from the alacrity tree.
 
-I just assumed that the latter is a better solution and used that.
---=20
+Just overlapping additions.  I fixed it up (see below) and can carry the
+fix as necessary.
+
+I do need to ask if the commits in the alacrity tree are going to be
+merged upstream.  The tree has not been updated since May ...
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__19_Nov_2010_11_17_06_+1100_Ui4wnqUT.D8CWZp.
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJM5cICAAoJEDMEi1NhKgbsDsIH/1Ihxu2nPY3UycvyKURjB792
-4cer2c7DyqibH5ELhzvy0BE3C94m/H75nhz8zBYbv4lb3P8kI9KPVFg+2qPUk3Aw
-8nx2Keb9RqDUhNVqlyQLef/ey6+upTkR3Xt2HjAZe2AH8XQEl5hCXDzbX/IbmvoF
-BCSNZJSDDJBIcIXVpkFoT78xByeVM18sMEE/oQKNATpSE2eXslwU8iXyMqp42F/X
-el+GuV0xuMA7H9y/VU5r8yBn8DpkKduvrKevzGRZsxP+vwUHaAgoGmEjyl0zgDuz
-hCVsFjs4MqMWL4kl5WkxzBAvpZ4CGZ0vPI+4zOZvW6ci9nv1YN49j7biUZoZHos=
-=8WSp
------END PGP SIGNATURE-----
-
---Signature=_Fri__19_Nov_2010_11_17_06_+1100_Ui4wnqUT.D8CWZp.--
+diff --cc lib/Kconfig
+index 3116aa6,af12831..0000000
+--- a/lib/Kconfig
++++ b/lib/Kconfig
+@@@ -210,7 -210,25 +210,28 @@@ config GENERIC_ATOMIC6
+  config LRU_CACHE
+  	tristate
+  
+ +config AVERAGE
+ +	bool
+ +
++ config SHM_SIGNAL
++ 	tristate "SHM Signal - Generic shared-memory signaling mechanism"
++ 	default n
++ 	help
++ 	 Provides a shared-memory based signaling mechanism to indicate
++          memory-dirty notifications between two end-points.
++ 
++ 	 If unsure, say N
++ 
++ config IOQ
++ 	tristate "IO-Queue library - Generic shared-memory queue"
++ 	select SHM_SIGNAL
++ 	default n
++ 	help
++ 	 IOQ is a generic shared-memory-queue mechanism that happens to be
++ 	 friendly to virtualization boundaries. It can be used in a variety
++ 	 of ways, though its intended purpose is to become a low-level
++ 	 communication path for paravirtualized drivers.
++ 
++ 	 If unsure, say N
++ 
+  endmenu
