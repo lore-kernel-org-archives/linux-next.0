@@ -1,61 +1,44 @@
-From: Tomoki Sekiyama <tomoki.sekiyama@gmail.com>
-Subject: Re: linux-next: manual merge of the bkl-llseek tree with the wireless tree
-Date: Fri, 19 Nov 2010 13:50:00 +0900
-Message-ID: <AANLkTinRBv00zo-=DWbZYZi7YQTvuF-t61_mk9txO-Bb@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Anand Gadiyar <gadiyar@ti.com>
+Subject: [PATCH] kernel/cpu.c - fix build warning
+Date: Fri, 19 Nov 2010 10:56:50 +0530
+Message-ID: <1290144410-30981-1-git-send-email-gadiyar@ti.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:37854 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751274Ab0KSEuB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 18 Nov 2010 23:50:01 -0500
+Received: from comal.ext.ti.com ([198.47.26.152]:34196 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750887Ab0KSF1I (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 19 Nov 2010 00:27:08 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>, gregkh@suse.de
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "John W. Linville" <linville@tuxdriver.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felix Fietkau <nbd@openwrt.org>, Linus <torvalds@linux-foundation.org>, Christoph Hellwig <hch@infradead.org>
+To: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Cc: Anand Gadiyar <gadiyar@ti.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>, Ingo Molnar <mingo@elte.hu>
 
-Hi Arnd,
+Patch "sched: Simplify cpu-hot-unplug task migration" in
+linux-next as of 20101119 introduced the following compile
+warning. Fix this.
 
-On 2010-10-23 09:27:35, Arnd Bergmann wrote:
-> On Saturday 23 October 2010, Stephen Rothwell wrote:
->> Hi John, Dave,
->>
->> On Mon, 18 Oct 2010 17:35:43 +1100 Stephen Rothwell<sfr@canb.auug.org.au>  wrote:
->>>
->>> Today's linux-next merge of the bkl-llseek tree got a conflict in
->>> drivers/net/wireless/ath/ath9k/debug.c between commit
->>> 772d5515635fef5bc7a9d0efee785b58b0181ee5 ("ath9k: make rate control
->>> debugfs stats per station") from the wireless tree and commit
->>> 6038f373a3dc1f1c26496e60b6c40b164716f07e ("llseek: automatically
->>> add .llseek fop") from the bkl-llseek tree.
-<snip>
->> This patch (reproduced below) will now be needed if the wireless or net
->> tree is merged with Linus' tree.  I also think I have missed a similar
->> needed fix in drivers/net/wireless/ath/ath5k/debug.c ...
->
-> There are also new drivers for speakup, intel_sst and yurex that introduce
-> additional file_operations in next, the patch below is what I had planned
-> to submit once everything is in. I also expect the occasional driver that
-> did not see linux-next, so I'll rerun my scripts after -rc1 to see what
-> we got.
+  CC      kernel/cpu.o
+kernel/cpu.c: In function 'take_cpu_down':
+kernel/cpu.c:200: warning: unused variable 'cpu'
 
-Is your patch that adds .llseek fops planned to be merged to -rc?
+Signed-off-by: Anand Gadiyar <gadiyar@ti.com>
+Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc: Ingo Molnar <mingo@elte.hu>
+---
+Okay with me to fold this into the original patch if that's
+still possible.
 
-The driver for yurex needs your patch that adds .llseek fop
-(the hunk below) to work correctly. (tested in 2.6.36-rc2)
+ kernel/cpu.c |    1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/usb/misc/yurex.c b/drivers/usb/misc/yurex.c
-index 719c618..ac5bfd6 100644
---- a/drivers/usb/misc/yurex.c
-+++ b/drivers/usb/misc/yurex.c
-@@ -536,6 +536,7 @@  static const struct file_operations yurex_fops = {
-  	.open =		yurex_open,
-  	.release =	yurex_release,
-  	.fasync	=	yurex_fasync,
-+	.llseek =	default_llseek,
-  };
-
-
-Thanks,
--- 
-Tomoki Sekiyama
+Index: linux-2.6/kernel/cpu.c
+===================================================================
+--- linux-2.6.orig/kernel/cpu.c
++++ linux-2.6/kernel/cpu.c
+@@ -197,7 +197,6 @@ struct take_cpu_down_param {
+ static int __ref take_cpu_down(void *_param)
+ {
+ 	struct take_cpu_down_param *param = _param;
+-	unsigned int cpu = (unsigned long)param->hcpu;
+ 	int err;
+ 
+ 	/* Ensure this CPU doesn't handle any more interrupts. */
