@@ -1,47 +1,76 @@
-From: Jens Axboe <jaxboe@fusionio.com>
-Subject: Re: linux-next: Tree for November 19
-Date: Sat, 20 Nov 2010 11:44:37 +0100
-Message-ID: <4CE7A695.10508@fusionio.com>
-References: <20101119143207.b2d5731e.sfr@canb.auug.org.au>	<AANLkTik0jXvoNTfNzAGAnzDQbE5oyEVmQ0hVyYt84jGQ@mail.gmail.com> <AANLkTinUToUN8sfRBtTQm=8TeTGxDBwPnJC8j8zrJ_8c@mail.gmail.com>
+From: Boaz Harrosh <bharrosh@panasas.com>
+Subject: Re: linux-next: Tree for November 18
+Date: Sun, 21 Nov 2010 16:41:26 +0200
+Message-ID: <4CE92F96.7000002@panasas.com>
+References: <20101118134256.fe132215.sfr@canb.auug.org.au>	<4CE54562.9030603@panasas.com> <20101119103300.243b17c8.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-2
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <AANLkTinUToUN8sfRBtTQm=8TeTGxDBwPnJC8j8zrJ_8c@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Zimny Lech <napohybelskurwysynom2010@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Mike Miller <mike.miller@hp.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from daytona.panasas.com ([67.152.220.89]:58580 "EHLO
+	daytona.panasas.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751543Ab0KUOlb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 21 Nov 2010 09:41:31 -0500
+In-Reply-To: <20101119103300.243b17c8.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On 2010-11-20 06:52, Zimny Lech wrote:
-> W dniu 20 listopada 2010 06:50 u=BFytkownik Zimny Lech
-> <napohybelskurwysynom2010@gmail.com> napisa=B3:
->> Hi,
+On 11/19/2010 01:33 AM, Stephen Rothwell wrote:
+> Hi Boaz,
+> 
+> On Thu, 18 Nov 2010 17:25:22 +0200 Boaz Harrosh <bharrosh@panasas.com> wrote:
 >>
->> 2010/11/19 Stephen Rothwell <sfr@canb.auug.org.au>:
->>> Hi all,
->>>
->>> Changes since 20101118:
+>> The uml build from:
+>>         http://kisskb.ellerman.id.au/kisskb/target/2979/
 >>
->> I do not recall that I saw it before
->>  CC [M]  drivers/block/cciss.o
->> /home/test/linux-2.6/drivers/block/cciss.c: In function 'cciss_clean=
-up':
->> /home/test/linux-2.6/drivers/block/cciss.c:4929:6: error: 'proc_ccis=
-s'
->> undeclared (first use in this function)
->> /home/test/linux-2.6/drivers/block/cciss.c:4929:6: note: each
->> undeclared identifier is reported only once for each function it
->> appears in
->> make[3]: *** [drivers/block/cciss.o] Error 1
->> make[2]: *** [drivers/block] Error 2
->> make[1]: *** [drivers] Error 2
+>> is failing compilation like:
+>>   LD      .tmp_vmlinux1
+>> /opt/crosstool/gcc-4.2.3-glibc-2.3.6/i386-unknown-linux-gnu/lib/gcc/i386-unknown-linux-gnu/4.2.3/../../../../i386-unknown-linux-gnu/bin/ld:arch/um/kernel/vmlinux.lds:231: parse error
+>> collect2: ld returned 1 exit status
+>>   KSYM    .tmp_kallsyms1.S
+>> /opt/crosstool/gcc-4.2.3-glibc-2.3.6/i386-unknown-linux-gnu/bin/i386-unknown-linux-gnu-nm: '.tmp_vmlinux1': No such file
+>> No valid symbol.
+>> make[1]: *** [.tmp_kallsyms1.S] Error 1
 >> make: *** [sub-make] Error 2
+>> make failed, trying to bisect ..
 >>
->=20
-> BTW. mainline too I guess
+>> It looks like a build environment setup problem because it's fine here
+>> (for x86_64 at least.) Who is the person responsible for the above URL
+>> compilation please?
+> 
+> I am (at least partially) responsible for that build environment.
+> 
+> We only started getting that build failure with next-20101115 (it may
+> have been present before then but masked by other build failures), and
+> our build system hasn't changed in quite some time ...  In fact, before
+> next-20100915, the um i386 build used to succeed.
+> 
+> The build we are doing is 32 bit (not 64 bit).  We are in the process of
+> getting a newer tool chain, but I am not sure when that will happen.
 
-A fix for this is queued up in for-linus, it'll go out shortly.
+Hi Stephen, thank you for your reply
 
---=20
-Jens Axboe
+So... Every x86_64 box is also a potential of an x86_32 cross compilation
+environment, right?. Almost because for instance in Fedora 12 I had to:
+	yum install glibc-devel.i686
+for it to work (On top of the regular Kernel development packages)
+
+So I tried:
+[]$ make ARCH=um SUBARCH=i386 KBUILD_OUTPUT=.build_i386_um defconfig
+[]$ make ARCH=um SUBARCH=i386 KBUILD_OUTPUT=.build_i386_um
+
+And it all worked very nice just as with x86_64.
+What is you box environment? Distro, Arch, version of gcc-for-i386 ...?
+I would like to help resolve it. Since I decided that I should be watching
+out for ARCH=um, before breakage is put into Linus tree, like the last 4
+Kernels.
+
+Meanwhile I have setup a cron job for every-night to checkout linux-next
+and "make". As a backup for above, until it is fixed.
+
+Anything else I can contribute to this cause?
+
+Thanks
+Boaz
