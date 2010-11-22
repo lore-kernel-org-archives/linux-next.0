@@ -1,33 +1,36 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for November 22 (kvm)
-Date: Mon, 22 Nov 2010 13:26:27 -0800
-Message-ID: <20101122132627.bd4e88ef.randy.dunlap@oracle.com>
+From: Greg KH <gregkh@suse.de>
+Subject: Re: linux-next: Tree for November 22
+Date: Mon, 22 Nov 2010 13:31:22 -0800
+Message-ID: <20101122213122.GA2881@suse.de>
 References: <20101122134911.b7e106f9.sfr@canb.auug.org.au>
+ <AANLkTi=QeU_vb6+XRei0pqz7GSfp2E4TC3oTJYy9adv4@mail.gmail.com>
+ <20101122194643.GB21985@suse.de>
+ <400C43189542CE41BC0A5B252FC90136952F05944A@SJEXCHCCR02.corp.ad.broadcom.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:61390 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756434Ab0KVV1V (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Nov 2010 16:27:21 -0500
-In-Reply-To: <20101122134911.b7e106f9.sfr@canb.auug.org.au>
+Received: from cantor.suse.de ([195.135.220.2]:58986 "EHLO mx1.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755747Ab0KVVcU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 22 Nov 2010 16:32:20 -0500
+Content-Disposition: inline
+In-Reply-To: <400C43189542CE41BC0A5B252FC90136952F05944A@SJEXCHCCR02.corp.ad.broadcom.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, kvm@vger.kernel.org
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Arend Van Spriel <arend@broadcom.com>
+Cc: Zimny Lech <napohybelskurwysynom2010@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Brett Rudley <brudley@broadcom.com>, Henry Ptasinski <henryp@broadcom.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
 
-On Mon, 22 Nov 2010 13:49:11 +1100 Stephen Rothwell wrote:
-
-> Hi all,
+On Mon, Nov 22, 2010 at 12:08:28PM -0800, Arend Van Spriel wrote:
+> Hi Greg, Stephen,
 > 
-> Changes since 20101119:
+> The file wl_iw.c declare a struct semaphore variable and uses
+> semaphore function, but there is no explicit inclusion of
+> <linux/semaphore.h>. I hit this problem last week when trying a
+> minimal kernel configuration for my development system. Normally we
+> build and test against kernel configuration similar to Ubuntu
+> configuration and we got the semaphore definitions for free. Expect a
+> patch soon.
 
+Ok, sounds good.
 
-kvm.c:(.init.text+0x11f49): undefined reference to `kvm_register_clock'
-
-when CONFIG_KVM_CLOCK is not enabled.
-
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+greg k-h
