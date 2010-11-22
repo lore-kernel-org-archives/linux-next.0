@@ -1,76 +1,94 @@
-From: Boaz Harrosh <bharrosh@panasas.com>
-Subject: Re: linux-next: Tree for November 18
-Date: Sun, 21 Nov 2010 16:41:26 +0200
-Message-ID: <4CE92F96.7000002@panasas.com>
-References: <20101118134256.fe132215.sfr@canb.auug.org.au>	<4CE54562.9030603@panasas.com> <20101119103300.243b17c8.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
+Date: Mon, 22 Nov 2010 11:43:15 +1100
+Message-ID: <20101122114315.687b4bd5.sfr@canb.auug.org.au>
+References: <20101115102554.67514e8d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__22_Nov_2010_11_43_15_+1100_v/0FTYrJTyxH92lT"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from daytona.panasas.com ([67.152.220.89]:58580 "EHLO
-	daytona.panasas.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751543Ab0KUOlb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 21 Nov 2010 09:41:31 -0500
-In-Reply-To: <20101119103300.243b17c8.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:44307 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755397Ab0KVAn2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 21 Nov 2010 19:43:28 -0500
+In-Reply-To: <20101115102554.67514e8d.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Patrick Boettcher <pboettcher@kernellabs.com>, Martin Wilks <m.wilks@technisat.com>
 
-On 11/19/2010 01:33 AM, Stephen Rothwell wrote:
-> Hi Boaz,
-> 
-> On Thu, 18 Nov 2010 17:25:22 +0200 Boaz Harrosh <bharrosh@panasas.com> wrote:
->>
->> The uml build from:
->>         http://kisskb.ellerman.id.au/kisskb/target/2979/
->>
->> is failing compilation like:
->>   LD      .tmp_vmlinux1
->> /opt/crosstool/gcc-4.2.3-glibc-2.3.6/i386-unknown-linux-gnu/lib/gcc/i386-unknown-linux-gnu/4.2.3/../../../../i386-unknown-linux-gnu/bin/ld:arch/um/kernel/vmlinux.lds:231: parse error
->> collect2: ld returned 1 exit status
->>   KSYM    .tmp_kallsyms1.S
->> /opt/crosstool/gcc-4.2.3-glibc-2.3.6/i386-unknown-linux-gnu/bin/i386-unknown-linux-gnu-nm: '.tmp_vmlinux1': No such file
->> No valid symbol.
->> make[1]: *** [.tmp_kallsyms1.S] Error 1
->> make: *** [sub-make] Error 2
->> make failed, trying to bisect ..
->>
->> It looks like a build environment setup problem because it's fine here
->> (for x86_64 at least.) Who is the person responsible for the above URL
->> compilation please?
-> 
-> I am (at least partially) responsible for that build environment.
-> 
-> We only started getting that build failure with next-20101115 (it may
-> have been present before then but masked by other build failures), and
-> our build system hasn't changed in quite some time ...  In fact, before
-> next-20100915, the um i386 build used to succeed.
-> 
-> The build we are doing is 32 bit (not 64 bit).  We are in the process of
-> getting a newer tool chain, but I am not sure when that will happen.
+--Signature=_Mon__22_Nov_2010_11_43_15_+1100_v/0FTYrJTyxH92lT
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Stephen, thank you for your reply
+Hi Mauro,
 
-So... Every x86_64 box is also a potential of an x86_32 cross compilation
-environment, right?. Almost because for instance in Fedora 12 I had to:
-	yum install glibc-devel.i686
-for it to work (On top of the regular Kernel development packages)
+On Mon, 15 Nov 2010 10:25:54 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the v4l-dvb tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>=20
+> drivers/media/dvb/dvb-usb/technisat-usb2.c: In function 'technisat_usb2_g=
+et_ir':
+> drivers/media/dvb/dvb-usb/technisat-usb2.c:643: error: 'struct dvb_usb_de=
+vice' has no member named 'rc_input_dev'
+> drivers/media/dvb/dvb-usb/technisat-usb2.c:649: error: 'struct dvb_usb_de=
+vice' has no member named 'rc_input_dev'
+> drivers/media/dvb/dvb-usb/technisat-usb2.c:654: error: 'struct dvb_usb_de=
+vice' has no member named 'rc_input_dev'
+> drivers/media/dvb/dvb-usb/technisat-usb2.c: At top level:
+> drivers/media/dvb/dvb-usb/technisat-usb2.c:732: error: unknown field 'rc_=
+props' specified in initializer
+> drivers/media/dvb/dvb-usb/technisat-usb2.c:732: warning: braces around sc=
+alar initializer
+> drivers/media/dvb/dvb-usb/technisat-usb2.c:732: warning: (near initializa=
+tion for 'technisat_usb2_devices.rc.core.rc_interval')
+> drivers/media/dvb/dvb-usb/technisat-usb2.c:733: error: field name not in =
+record or union initializer
+> drivers/media/dvb/dvb-usb/technisat-usb2.c:733: error: (near initializati=
+on for 'technisat_usb2_devices.rc.core.rc_interval')
+> drivers/media/dvb/dvb-usb/technisat-usb2.c:734: error: field name not in =
+record or union initializer
+> drivers/media/dvb/dvb-usb/technisat-usb2.c:734: error: (near initializati=
+on for 'technisat_usb2_devices.rc.core.rc_interval')
+> drivers/media/dvb/dvb-usb/technisat-usb2.c:734: warning: excess elements =
+in scalar initializer
+> drivers/media/dvb/dvb-usb/technisat-usb2.c:734: warning: (near initializa=
+tion for 'technisat_usb2_devices.rc.core.rc_interval')
+> make[5]: *** No rule to make target `drivers/media/rc/keymaps/rc-technisa=
+t-usb2.c', needed by `drivers/media/rc/keymaps/rc-technisat-usb2.o'.  Stop.
+>=20
+> Caused by commit f29235d71ad3995ef9f74ad2f5931eca4ecabdcd ("[media]
+> technisat-usb2: added driver for Technisat's USB2.0 DVB-S/S2 receiver")
+> interacting with commit 1639cc0c5348957c076c0304005632d4a1b63252
+> ("[media] ir-core: make struct rc_dev the primary interface").
+>=20
+> Please make sure your build tests build new/modified files.
+>=20
+> I have used the v4l-dvb tree from next-20101112 for today.
 
-So I tried:
-[]$ make ARCH=um SUBARCH=i386 KBUILD_OUTPUT=.build_i386_um defconfig
-[]$ make ARCH=um SUBARCH=i386 KBUILD_OUTPUT=.build_i386_um
+This is still failing ...
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-And it all worked very nice just as with x86_64.
-What is you box environment? Distro, Arch, version of gcc-for-i386 ...?
-I would like to help resolve it. Since I decided that I should be watching
-out for ARCH=um, before breakage is put into Linus tree, like the last 4
-Kernels.
+--Signature=_Mon__22_Nov_2010_11_43_15_+1100_v/0FTYrJTyxH92lT
+Content-Type: application/pgp-signature
 
-Meanwhile I have setup a cron job for every-night to checkout linux-next
-and "make". As a backup for above, until it is fixed.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-Anything else I can contribute to this cause?
+iQEcBAEBAgAGBQJM6byjAAoJEDMEi1NhKgbsIsAH/j8KrY31QDHKSU7A/ssUSjLv
+OSKHj4IYimFbnah0tDKrm4oFMlKmSta4zNg0z8Yvg9z7YomDC5eh66XzaWV5Y2gC
+3GrnQi6UCcUSrPs5S+/V98yCeTCDfXMfoLflqtb5Pi77FJ8o0MV8B48WvVXi5wRK
+o2In51t3h30QvifhO0l/UEL4XnSAprxd0o93GSH17mZd9+XZySHvaU/FYbbR+XVn
+5H9UuTMpsOQ21p2epkKXTKRxAafOjqRz7rx0P4pcA+gaAE2DhiJLXmZhFNAI/Egl
+qQb65hgJQOCaf5xNWIQATWJyKf1ArQyOvtWMz1kWW7lPYNUyXf14D9hN/TD0yw8=
+=dMOC
+-----END PGP SIGNATURE-----
 
-Thanks
-Boaz
+--Signature=_Mon__22_Nov_2010_11_43_15_+1100_v/0FTYrJTyxH92lT--
