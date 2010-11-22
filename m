@@ -1,36 +1,38 @@
-From: Greg KH <gregkh@suse.de>
-Subject: Re: linux-next: Tree for November 22
-Date: Mon, 22 Nov 2010 13:31:22 -0800
-Message-ID: <20101122213122.GA2881@suse.de>
-References: <20101122134911.b7e106f9.sfr@canb.auug.org.au>
- <AANLkTi=QeU_vb6+XRei0pqz7GSfp2E4TC3oTJYy9adv4@mail.gmail.com>
- <20101122194643.GB21985@suse.de>
- <400C43189542CE41BC0A5B252FC90136952F05944A@SJEXCHCCR02.corp.ad.broadcom.com>
+From: Don Zickus <dzickus@redhat.com>
+Subject: Re: linux-next: build failure after merge of the final tree (tip
+ tree related)
+Date: Mon, 22 Nov 2010 17:00:40 -0500
+Message-ID: <20101122220040.GC18100@redhat.com>
+References: <20101122133949.93201b15.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor.suse.de ([195.135.220.2]:58986 "EHLO mx1.suse.de"
+Received: from mx1.redhat.com ([209.132.183.28]:28142 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755747Ab0KVVcU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 22 Nov 2010 16:32:20 -0500
+	id S1757128Ab0KVWA6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 22 Nov 2010 17:00:58 -0500
 Content-Disposition: inline
-In-Reply-To: <400C43189542CE41BC0A5B252FC90136952F05944A@SJEXCHCCR02.corp.ad.broadcom.com>
+In-Reply-To: <20101122133949.93201b15.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arend Van Spriel <arend@broadcom.com>
-Cc: Zimny Lech <napohybelskurwysynom2010@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Brett Rudley <brudley@broadcom.com>, Henry Ptasinski <henryp@broadcom.com>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>
 
-On Mon, Nov 22, 2010 at 12:08:28PM -0800, Arend Van Spriel wrote:
-> Hi Greg, Stephen,
+On Mon, Nov 22, 2010 at 01:39:49PM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> The file wl_iw.c declare a struct semaphore variable and uses
-> semaphore function, but there is no explicit inclusion of
-> <linux/semaphore.h>. I hit this problem last week when trying a
-> minimal kernel configuration for my development system. Normally we
-> build and test against kernel configuration similar to Ubuntu
-> configuration and we got the semaphore definitions for free. Expect a
-> patch soon.
+> After merging the final tree, today's linux-next build (sparc64 defconfig)
+> failed like this:
+> 
+> arch/sparc/kernel/nmi.c:54: error: redefinition of 'touch_nmi_watchdog'
+> include/linux/nmi.h:21: note: previous definition of 'touch_nmi_watchdog' was here
+> 
+> Caused (or, at least exposed) by commit
+> 5f2b0ba4d94b3ac23cbc4b7f675d98eb677a760a ("x86, nmi_watchdog: Remove the
+> old nmi_watchdog").  Sparc appears to have a touch_nmi_watchdog() and
+> defines ARCH_HAS_NMI_WATCHDOG but not CONFIG_HARDLOCKUP_DETECTOR.
 
-Ok, sounds good.
+Sorry about that.  I'll push another patch to Ingo to fix this.
 
-greg k-h
+Cheers,
+Don
