@@ -1,138 +1,226 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
-Date: Mon, 22 Nov 2010 10:08:45 -0200
-Message-ID: <4CEA5D4D.3050107@infradead.org>
-References: <20101115102554.67514e8d.sfr@canb.auug.org.au> <20101122114315.687b4bd5.sfr@canb.auug.org.au>
+From: KOVACS Krisztian <hidden@balabit.hu>
+Subject: Re: linux-next: Tree for November 18 (netfilter)
+Date: Mon, 22 Nov 2010 13:14:37 +0100
+Message-ID: <1290428077.725556.3.camel@nienna.balabit>
+References: <20101118134256.fe132215.sfr@canb.auug.org.au>
+	 <20101118092520.6ad964c7.randy.dunlap@oracle.com>
+	 <4CE5712B.2080909@trash.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:40447 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753715Ab0KVMIx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Nov 2010 07:08:53 -0500
-In-Reply-To: <20101122114315.687b4bd5.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Patrick Boettcher <pboettcher@kernellabs.com>, Martin Wilks <m.wilks@technisat.com>
+Return-path: <netfilter-devel-owner@vger.kernel.org>
+In-Reply-To: <4CE5712B.2080909@trash.net>
+Sender: netfilter-devel-owner@vger.kernel.org
+To: Patrick McHardy <kaber@trash.net>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, netfilter-devel@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>, Balazs Scheidler <bazsi@balabit.hu>
+List-Id: linux-next.vger.kernel.org
 
-Em 21-11-2010 22:43, Stephen Rothwell escreveu:
-> Hi Mauro,
-> 
-> On Mon, 15 Nov 2010 10:25:54 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> After merging the v4l-dvb tree, today's linux-next build (x86_64
->> allmodconfig) failed like this:
->>
->> drivers/media/dvb/dvb-usb/technisat-usb2.c: In function 'technisat_usb2_get_ir':
->> drivers/media/dvb/dvb-usb/technisat-usb2.c:643: error: 'struct dvb_usb_device' has no member named 'rc_input_dev'
->> drivers/media/dvb/dvb-usb/technisat-usb2.c:649: error: 'struct dvb_usb_device' has no member named 'rc_input_dev'
->> drivers/media/dvb/dvb-usb/technisat-usb2.c:654: error: 'struct dvb_usb_device' has no member named 'rc_input_dev'
->> drivers/media/dvb/dvb-usb/technisat-usb2.c: At top level:
->> drivers/media/dvb/dvb-usb/technisat-usb2.c:732: error: unknown field 'rc_props' specified in initializer
->> drivers/media/dvb/dvb-usb/technisat-usb2.c:732: warning: braces around scalar initializer
->> drivers/media/dvb/dvb-usb/technisat-usb2.c:732: warning: (near initialization for 'technisat_usb2_devices.rc.core.rc_interval')
->> drivers/media/dvb/dvb-usb/technisat-usb2.c:733: error: field name not in record or union initializer
->> drivers/media/dvb/dvb-usb/technisat-usb2.c:733: error: (near initialization for 'technisat_usb2_devices.rc.core.rc_interval')
->> drivers/media/dvb/dvb-usb/technisat-usb2.c:734: error: field name not in record or union initializer
->> drivers/media/dvb/dvb-usb/technisat-usb2.c:734: error: (near initialization for 'technisat_usb2_devices.rc.core.rc_interval')
->> drivers/media/dvb/dvb-usb/technisat-usb2.c:734: warning: excess elements in scalar initializer
->> drivers/media/dvb/dvb-usb/technisat-usb2.c:734: warning: (near initialization for 'technisat_usb2_devices.rc.core.rc_interval')
->> make[5]: *** No rule to make target `drivers/media/rc/keymaps/rc-technisat-usb2.c', needed by `drivers/media/rc/keymaps/rc-technisat-usb2.o'.  Stop.
->>
->> Caused by commit f29235d71ad3995ef9f74ad2f5931eca4ecabdcd ("[media]
->> technisat-usb2: added driver for Technisat's USB2.0 DVB-S/S2 receiver")
->> interacting with commit 1639cc0c5348957c076c0304005632d4a1b63252
->> ("[media] ir-core: make struct rc_dev the primary interface").
->>
->> Please make sure your build tests build new/modified files.
->>
->> I have used the v4l-dvb tree from next-20101112 for today.
-> 
-> This is still failing ...
+Hi,
 
+On Thu, 2010-11-18 at 19:32 +0100, Patrick McHardy wrote:
+> Krisztian, Balazs, could you please have a look at this? If the
+> intention is to use NF_DEFRAG_IPV6 without conntrack, we probably
+> need a couple of ifdefs.
 
-Hi Stephen,
+Indeed, we were missing quite a few of those ifdefs... The patch below
+seems to fix the issue for me.
 
-It is a simple merge confict between two of my trees that got merged on my linux-next. 
-The enclosed patch should fix it. I've already added it to my linux-next tree, so
-the conflict should be fixed for tomorrow's build.
+commit ec0ac6f3e7749e25f481c1e0f75766974820fe84
+Author: KOVACS Krisztian <hidden@balabit.hu>
+Date:   Mon Nov 22 13:07:15 2010 +0100
 
-Mauro.
+    netfilter: fix compilation when conntrack is disabled but tproxy is
+enabled
+    
+    The IPv6 tproxy patches split IPv6 defragmentation off of conntrack,
+but
+    failed to update the #ifdef stanzas guarding the defragmentation
+related
+    fields and code in skbuff and conntrack related code in
+nf_defrag_ipv6.c.
+    
+    This patch adds the required #ifdefs so that IPv6 tproxy can truly
+be used
+    without connection tracking.
+    
+    Original report:
+    http://marc.info/?l=linux-netdev&m=129010118516341&w=2
+    
+    Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
+    Signed-off-by: KOVACS Krisztian <hidden@balabit.hu>
 
->From f80587fdbf8c949d2081aa0e4250d21c09058877 Mon Sep 17 00:00:00 2001
-From: Mauro Carvalho Chehab <mchehab@redhat.com>
-Date: Mon, 22 Nov 2010 10:04:45 -0200
-Subject: [PATCH] [media] linux-next: Fix technisat-usb2 compilation
-
-Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
-
-diff --git a/drivers/media/dvb/dvb-usb/dvb-usb-remote.c b/drivers/media/dvb/dvb-usb/dvb-usb-remote.c
-index bbba149..458fa27 100644
---- a/drivers/media/dvb/dvb-usb/dvb-usb-remote.c
-+++ b/drivers/media/dvb/dvb-usb/dvb-usb-remote.c
-@@ -246,7 +246,7 @@ static int rc_core_dvb_usb_remote_init(struct dvb_usb_device *d)
- 	dev->map_name = d->props.rc.core.rc_codes;
- 	dev->change_protocol = d->props.rc.core.change_protocol;
- 	dev->allowed_protos = d->props.rc.core.allowed_protos;
--	dev->driver_type = RC_DRIVER_SCANCODE;
-+	dev->driver_type = d->props.rc.core.driver_type;
- 	usb_to_input_id(d->udev, &dev->input_id);
- 	dev->input_name = "IR-receiver inside an USB DVB receiver";
- 	dev->input_phys = d->rc_phys;
-diff --git a/drivers/media/dvb/dvb-usb/dvb-usb.h b/drivers/media/dvb/dvb-usb/dvb-usb.h
-index 83aa982..e818f0c 100644
---- a/drivers/media/dvb/dvb-usb/dvb-usb.h
-+++ b/drivers/media/dvb/dvb-usb/dvb-usb.h
-@@ -195,6 +195,7 @@ struct dvb_rc {
- 	int (*rc_query) (struct dvb_usb_device *d);
- 	int rc_interval;
- 	bool bulk_mode;				/* uses bulk mode */
-+	enum rc_driver_type driver_type;
- };
+diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
+index e6ba898..4f2db79 100644
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -255,6 +255,11 @@ typedef unsigned int sk_buff_data_t;
+ typedef unsigned char *sk_buff_data_t;
+ #endif
  
- /**
-diff --git a/drivers/media/dvb/dvb-usb/technisat-usb2.c b/drivers/media/dvb/dvb-usb/technisat-usb2.c
-index 97a6d45..b0e35e9 100644
---- a/drivers/media/dvb/dvb-usb/technisat-usb2.c
-+++ b/drivers/media/dvb/dvb-usb/technisat-usb2.c
-@@ -640,18 +640,18 @@ unlock:
- 	while (1) {
- 		ev.pulse = !ev.pulse;
- 		ev.duration = (*b * FIRMWARE_CLOCK_DIVISOR * FIRMWARE_CLOCK_TICK) / 1000;
--		ir_raw_event_store(d->rc_input_dev, &ev);
-+		ir_raw_event_store(d->rc_dev, &ev);
- 
- 		b++;
- 		if (*b == 0xff) {
- 			ev.pulse = 0;
- 			ev.duration = 888888*2;
--			ir_raw_event_store(d->rc_input_dev, &ev);
-+			ir_raw_event_store(d->rc_dev, &ev);
- 			break;
- 		}
- 	}
- 
--	ir_raw_event_handle(d->rc_input_dev);
-+	ir_raw_event_handle(d->rc_dev);
- 
- 	return 1;
++#if defined(CONFIG_NF_DEFRAG_IPV4) ||
+defined(CONFIG_NF_DEFRAG_IPV4_MODULE) || \
++    defined(CONFIG_NF_DEFRAG_IPV6) ||
+defined(CONFIG_NF_DEFRAG_IPV6_MODULE)
++#define NET_SKBUFF_NF_DEFRAG_NEEDED 1
++#endif
++
+ /** 
+  *	struct sk_buff - socket buffer
+  *	@next: Next buffer in list
+@@ -362,6 +367,8 @@ struct sk_buff {
+ 	void			(*destructor)(struct sk_buff *skb);
+ #if defined(CONFIG_NF_CONNTRACK) || defined(CONFIG_NF_CONNTRACK_MODULE)
+ 	struct nf_conntrack	*nfct;
++#endif
++#ifdef NET_SKBUFF_NF_DEFRAG_NEEDED
+ 	struct sk_buff		*nfct_reasm;
+ #endif
+ #ifdef CONFIG_BRIDGE_NETFILTER
+@@ -2051,6 +2058,8 @@ static inline void nf_conntrack_get(struct
+nf_conntrack *nfct)
+ 	if (nfct)
+ 		atomic_inc(&nfct->use);
  }
-@@ -729,10 +729,8 @@ static struct dvb_usb_device_properties technisat_usb2_devices = {
- 		.rc_codes    = RC_MAP_TECHNISAT_USB2,
- 		.module_name = "technisat-usb2",
- 		.rc_query    = technisat_usb2_rc_query,
--		.rc_props = {
--			.allowed_protos = IR_TYPE_ALL,
--			.driver_type    = RC_DRIVER_IR_RAW,
--		},
-+		.allowed_protos = IR_TYPE_ALL,
-+		.driver_type    = RC_DRIVER_IR_RAW,
- 	}
- };
++#endif
++#ifdef NET_SKBUFF_NF_DEFRAG_NEEDED
+ static inline void nf_conntrack_get_reasm(struct sk_buff *skb)
+ {
+ 	if (skb)
+@@ -2079,6 +2088,8 @@ static inline void nf_reset(struct sk_buff *skb)
+ #if defined(CONFIG_NF_CONNTRACK) || defined(CONFIG_NF_CONNTRACK_MODULE)
+ 	nf_conntrack_put(skb->nfct);
+ 	skb->nfct = NULL;
++#endif
++#ifdef NET_SKBUFF_NF_DEFRAG_NEEDED
+ 	nf_conntrack_put_reasm(skb->nfct_reasm);
+ 	skb->nfct_reasm = NULL;
+ #endif
+@@ -2095,6 +2106,8 @@ static inline void __nf_copy(struct sk_buff *dst,
+const struct sk_buff *src)
+ 	dst->nfct = src->nfct;
+ 	nf_conntrack_get(src->nfct);
+ 	dst->nfctinfo = src->nfctinfo;
++#endif
++#ifdef NET_SKBUFF_NF_DEFRAG_NEEDED
+ 	dst->nfct_reasm = src->nfct_reasm;
+ 	nf_conntrack_get_reasm(src->nfct_reasm);
+ #endif
+@@ -2108,6 +2121,8 @@ static inline void nf_copy(struct sk_buff *dst,
+const struct sk_buff *src)
+ {
+ #if defined(CONFIG_NF_CONNTRACK) || defined(CONFIG_NF_CONNTRACK_MODULE)
+ 	nf_conntrack_put(dst->nfct);
++#endif
++#ifdef NET_SKBUFF_NF_DEFRAG_NEEDED
+ 	nf_conntrack_put_reasm(dst->nfct_reasm);
+ #endif
+ #ifdef CONFIG_BRIDGE_NETFILTER
+diff --git a/include/net/netfilter/ipv6/nf_conntrack_ipv6.h
+b/include/net/netfilter/ipv6/nf_conntrack_ipv6.h
+index 1ee717e..a4c9936 100644
+--- a/include/net/netfilter/ipv6/nf_conntrack_ipv6.h
++++ b/include/net/netfilter/ipv6/nf_conntrack_ipv6.h
+@@ -7,16 +7,6 @@ extern struct nf_conntrack_l4proto
+nf_conntrack_l4proto_tcp6;
+ extern struct nf_conntrack_l4proto nf_conntrack_l4proto_udp6;
+ extern struct nf_conntrack_l4proto nf_conntrack_l4proto_icmpv6;
  
-diff --git a/drivers/media/IR/keymaps/rc-technisat-usb2.c b/drivers/media/rc/keymaps/rc-technisat-usb2.c
-similarity index 100%
-rename from drivers/media/IR/keymaps/rc-technisat-usb2.c
-rename to drivers/media/rc/keymaps/rc-technisat-usb2.c
+-extern int nf_ct_frag6_init(void);
+-extern void nf_ct_frag6_cleanup(void);
+-extern struct sk_buff *nf_ct_frag6_gather(struct sk_buff *skb, u32
+user);
+-extern void nf_ct_frag6_output(unsigned int hooknum, struct sk_buff
+*skb,
+-			       struct net_device *in,
+-			       struct net_device *out,
+-			       int (*okfn)(struct sk_buff *));
+-
+-struct inet_frags_ctl;
+-
+ #include <linux/sysctl.h>
+ extern struct ctl_table nf_ct_ipv6_sysctl_table[];
+ 
+diff --git a/include/net/netfilter/ipv6/nf_defrag_ipv6.h
+b/include/net/netfilter/ipv6/nf_defrag_ipv6.h
+index 94dd54d..fd79c9a 100644
+--- a/include/net/netfilter/ipv6/nf_defrag_ipv6.h
++++ b/include/net/netfilter/ipv6/nf_defrag_ipv6.h
+@@ -3,4 +3,14 @@
+ 
+ extern void nf_defrag_ipv6_enable(void);
+ 
++extern int nf_ct_frag6_init(void);
++extern void nf_ct_frag6_cleanup(void);
++extern struct sk_buff *nf_ct_frag6_gather(struct sk_buff *skb, u32
+user);
++extern void nf_ct_frag6_output(unsigned int hooknum, struct sk_buff
+*skb,
++			       struct net_device *in,
++			       struct net_device *out,
++			       int (*okfn)(struct sk_buff *));
++
++struct inet_frags_ctl;
++
+ #endif /* _NF_DEFRAG_IPV6_H */
+diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+index 104f844..74ebf4b 100644
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -380,6 +380,8 @@ static void skb_release_head_state(struct sk_buff
+*skb)
+ 	}
+ #if defined(CONFIG_NF_CONNTRACK) || defined(CONFIG_NF_CONNTRACK_MODULE)
+ 	nf_conntrack_put(skb->nfct);
++#endif
++#ifdef NET_SKBUFF_NF_DEFRAG_NEEDED
+ 	nf_conntrack_put_reasm(skb->nfct_reasm);
+ #endif
+ #ifdef CONFIG_BRIDGE_NETFILTER
+diff --git a/net/ipv6/netfilter/nf_defrag_ipv6_hooks.c
+b/net/ipv6/netfilter/nf_defrag_ipv6_hooks.c
+index 99abfb5..97c5b21 100644
+--- a/net/ipv6/netfilter/nf_defrag_ipv6_hooks.c
++++ b/net/ipv6/netfilter/nf_defrag_ipv6_hooks.c
+@@ -19,13 +19,15 @@
+ 
+ #include <linux/netfilter_ipv6.h>
+ #include <linux/netfilter_bridge.h>
++#if defined(CONFIG_NF_CONNTRACK) || defined(CONFIG_NF_CONNTRACK_MODULE)
+ #include <net/netfilter/nf_conntrack.h>
+ #include <net/netfilter/nf_conntrack_helper.h>
+ #include <net/netfilter/nf_conntrack_l4proto.h>
+ #include <net/netfilter/nf_conntrack_l3proto.h>
+ #include <net/netfilter/nf_conntrack_core.h>
+-#include <net/netfilter/nf_conntrack_zones.h>
+ #include <net/netfilter/ipv6/nf_conntrack_ipv6.h>
++#endif
++#include <net/netfilter/nf_conntrack_zones.h>
+ #include <net/netfilter/ipv6/nf_defrag_ipv6.h>
+ 
+ static enum ip6_defrag_users nf_ct6_defrag_user(unsigned int hooknum,
+@@ -33,8 +35,10 @@ static enum ip6_defrag_users
+nf_ct6_defrag_user(unsigned int hooknum,
+ {
+ 	u16 zone = NF_CT_DEFAULT_ZONE;
+ 
++#if defined(CONFIG_NF_CONNTRACK) || defined(CONFIG_NF_CONNTRACK_MODULE)
+ 	if (skb->nfct)
+ 		zone = nf_ct_zone((struct nf_conn *)skb->nfct);
++#endif
+ 
+ #ifdef CONFIG_BRIDGE_NETFILTER
+ 	if (skb->nf_bridge &&
+@@ -56,9 +60,11 @@ static unsigned int ipv6_defrag(unsigned int hooknum,
+ {
+ 	struct sk_buff *reasm;
+ 
++#if defined(CONFIG_NF_CONNTRACK) || defined(CONFIG_NF_CONNTRACK_MODULE)
+ 	/* Previously seen (loopback)?	*/
+ 	if (skb->nfct && !nf_ct_is_template((struct nf_conn *)skb->nfct))
+ 		return NF_ACCEPT;
++#endif
+ 
+ 	reasm = nf_ct_frag6_gather(skb, nf_ct6_defrag_user(hooknum, skb));
+ 	/* queued */
+
+
