@@ -1,65 +1,49 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
 Subject: Re: [PATCH] Revert
  "kconfig: Temporarily disable dependency warnings"
-Date: Mon, 22 Nov 2010 11:48:01 +1100
-Message-ID: <20101122114801.2eee4c4d.sfr@canb.auug.org.au>
+Date: Sun, 21 Nov 2010 17:44:56 -0800
+Message-ID: <20101121174456.c6f77f56.randy.dunlap@oracle.com>
 References: <20101011145930.11fe570c.randy.dunlap@oracle.com>
 	<1286889586-13483-1-git-send-email-mmarek@suse.cz>
 	<20101029113731.5c7c54b9.sfr@canb.auug.org.au>
+	<20101122114801.2eee4c4d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__22_Nov_2010_11_48_01_+1100_QpA0UhRlZBHf2=LP"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60937 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755371Ab0KVAsL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 21 Nov 2010 19:48:11 -0500
-In-Reply-To: <20101029113731.5c7c54b9.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Michal Marek <mmarek@suse.cz>
-Cc: randy.dunlap@oracle.com, catalin.marinas@arm.com, linux-kbuild@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, lacombar@gmail.com, xiyou.wangcong@gmail.com, Mauro Carvalho Chehab <mchehab@infradead.org>
-
---Signature=_Mon__22_Nov_2010_11_48_01_+1100_QpA0UhRlZBHf2=LP
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kbuild-owner@vger.kernel.org>
+In-Reply-To: <20101122114801.2eee4c4d.sfr@canb.auug.org.au>
+Sender: linux-kbuild-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Michal Marek <mmarek@suse.cz>, catalin.marinas@arm.com, linux-kbuild@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, lacombar@gmail.com, xiyou.wangcong@gmail.com, Mauro Carvalho Chehab <mchehab@infradead.org>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, 29 Oct 2010 11:37:31 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> On Tue, 12 Oct 2010 15:19:46 +0200 Michal Marek <mmarek@suse.cz> wrote:
+On Mon, 22 Nov 2010 11:48:01 +1100 Stephen Rothwell wrote:
+
+> On Fri, 29 Oct 2010 11:37:31 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > >
-> > This reverts commit 71ebc01, which was a 2.6.36-only stopgap solution.
->=20
-> I was hoping that we would have the number of these warnings down to
-> something reasonable before this revert made it into Linus' tree ...
->=20
-> I guess fixing the V4L stuff will become a bit more urgent, now :-)
+> > On Tue, 12 Oct 2010 15:19:46 +0200 Michal Marek <mmarek@suse.cz> wrote:
+> > >
+> > > This reverts commit 71ebc01, which was a 2.6.36-only stopgap solution.
+> > 
+> > I was hoping that we would have the number of these warnings down to
+> > something reasonable before this revert made it into Linus' tree ...
+> > 
+> > I guess fixing the V4L stuff will become a bit more urgent, now :-)
+> 
+> Is there any chance that the V4L kconfig warnings will be fixed?  It is
+> quite irritating for those of us who do allmodconfig (and allyesconfig)
+> builds ...
 
-Is there any chance that the V4L kconfig warnings will be fixed?  It is
-quite irritating for those of us who do allmodconfig (and allyesconfig)
-builds ...
+Yes, the MEDIA kconfig warnings are irritating.
+I just use "grep -v MEDIA" to ignore them.  :)
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+I haven't seen any email from Michal for more than one week.
+Hopefully he will be back soon.
 
---Signature=_Mon__22_Nov_2010_11_48_01_+1100_QpA0UhRlZBHf2=LP
-Content-Type: application/pgp-signature
+There are patches from Arnaud Lacombe <lacombar@gmail.com>
+to introduce a VISIBLE property for kconfig symbols (this fixes the
+MEDIA kconfig warnings), but Michal has not commented on them.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJM6b3BAAoJEDMEi1NhKgbsXXQH/0d2JlNkYZjGGJcmTedyZ74Y
-ozEWGjHSDKdRp4eBwIZHMqzeSmDFhjviUeDPe49bVYsvg+bqJiPpNcpOK3ZAybIi
-6LdKaKl/w9nsLiCZoRCA0qSI6dEQIw4Bxy0QBbl+KrDjlEHz1d3SyNNpls7Xf0qw
-la+s8S65/sS46m9oyTcexDHkF4KjhqfAnl7CMhfouF2hf02EuLIp/u8gMqnqEaTi
-kY4K5XxKP4uKSp8BFpXPEiTrsFRaIIvSkUjsaS0o/tYn0sGNiCEdhx7FzSnjbX9H
-QvPyuL0T5xSshWJZeTtXGmiRZrAtqQcrF3/KXsOpAzfU3xGPFuq7dRte1MVmSgQ=
-=P9YP
------END PGP SIGNATURE-----
-
---Signature=_Mon__22_Nov_2010_11_48_01_+1100_QpA0UhRlZBHf2=LP--
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
