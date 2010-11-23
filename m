@@ -1,38 +1,58 @@
-From: Don Zickus <dzickus@redhat.com>
-Subject: Re: linux-next: build failure after merge of the final tree (tip
- tree related)
-Date: Mon, 22 Nov 2010 17:00:40 -0500
-Message-ID: <20101122220040.GC18100@redhat.com>
-References: <20101122133949.93201b15.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the v4l-dvbtree
+Date: Tue, 23 Nov 2010 13:33:56 +1100
+Message-ID: <20101123133356.ca69b41a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__23_Nov_2010_13_33_56_+1100_hsb=T8jAG0NaXCKx"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:28142 "EHLO mx1.redhat.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:32899 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757128Ab0KVWA6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 22 Nov 2010 17:00:58 -0500
-Content-Disposition: inline
-In-Reply-To: <20101122133949.93201b15.sfr@canb.auug.org.au>
+	id S1750863Ab0KWCeI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 22 Nov 2010 21:34:08 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>
+To: Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IlJpY2hhcmQgUsO2amZvcnMi?= <richard.rojfors@pelagicore.com>
 
-On Mon, Nov 22, 2010 at 01:39:49PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the final tree, today's linux-next build (sparc64 defconfig)
-> failed like this:
-> 
-> arch/sparc/kernel/nmi.c:54: error: redefinition of 'touch_nmi_watchdog'
-> include/linux/nmi.h:21: note: previous definition of 'touch_nmi_watchdog' was here
-> 
-> Caused (or, at least exposed) by commit
-> 5f2b0ba4d94b3ac23cbc4b7f675d98eb677a760a ("x86, nmi_watchdog: Remove the
-> old nmi_watchdog").  Sparc appears to have a touch_nmi_watchdog() and
-> defines ARCH_HAS_NMI_WATCHDOG but not CONFIG_HARDLOCKUP_DETECTOR.
+--Signature=_Tue__23_Nov_2010_13_33_56_+1100_hsb=T8jAG0NaXCKx
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sorry about that.  I'll push another patch to Ingo to fix this.
+Hi Mauro,
 
+After merging the v4l-dvb tree, today's linux-next build (x86_64
+allmodconfig) produced these warnings:
+
+drivers/media/video/timblogiw.c: In function 'timblogiw_dma_filter_fn':
+drivers/media/video/timblogiw.c:151: warning: cast from pointer to integer =
+of different size
+drivers/media/video/timblogiw.c: In function 'timblogiw_open':
+drivers/media/video/timblogiw.c:671: warning: cast to pointer from integer =
+of different size
+
+Introduced by commit ef6ce9acc5f87e253c97dfd5301f8036f937f595 ("[media]
+[1/2,v4] media: Add timberdale video-in driver").
+--=20
 Cheers,
-Don
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__23_Nov_2010_13_33_56_+1100_hsb=T8jAG0NaXCKx
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJM6ygUAAoJEDMEi1NhKgbsN4MIAJMA12Dr5BpBSdNUralnwciV
+njAZXVTWvV/rzcBhMtNHRT0b1BEPA5Rq15W1q4ACmjpxWTRmdWC+rqCEu4F+dp55
+MsubQhqrKmGgcYazYxygBR/dWg6wWG9twXQwGfOabQXFnif+zoboU+Lq9M1UNdUc
+JdPtEvGUTfujN/g+DrntZh7qjlLyFI3sctAvzcJPY6Vn8Aj7CqIpqc+YOp0cMcYQ
+ueAlcpz6ZDaA0DfaGzP01SA9upDID4YrC9iI37aDvOfAqMxnN5YpRs7k1Tq+v/y+
+MWD1Ns1+wX8WFvRSipMQgxq6R/eLnsHr8QL+7aum7A288RTMJPfoG94HQwHVk84=
+=xR4M
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__23_Nov_2010_13_33_56_+1100_hsb=T8jAG0NaXCKx--
