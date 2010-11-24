@@ -1,23 +1,57 @@
-From: Matthew Garrett <mjg59@srcf.ucam.org>
-Subject: Re: [PATCH -next] ibm_rtl: fix printk format warning
-Date: Wed, 24 Nov 2010 16:48:18 +0000
-Message-ID: <20101124164818.GB2150@srcf.ucam.org>
-References: <20101022152350.fc79e2b9.sfr@canb.auug.org.au> <20101022161847.e70bf995.randy.dunlap@oracle.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] staging: fix intel_sst/intelmid sound build
+Date: Wed, 24 Nov 2010 11:46:09 -0800
+Message-ID: <20101124114609.2b6e030e.randy.dunlap@oracle.com>
+References: <20101124131047.b738bc7c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cavan.codon.org.uk ([93.93.128.6]:60335 "EHLO
-	cavan.codon.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753021Ab0KXQsm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 24 Nov 2010 11:48:42 -0500
-Content-Disposition: inline
-In-Reply-To: <20101022161847.e70bf995.randy.dunlap@oracle.com>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:59516 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756187Ab0KXTqY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 24 Nov 2010 14:46:24 -0500
+In-Reply-To: <20101124131047.b738bc7c.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Keith Mannthey <kmannth@us.ibm.com>, Vernon Mauery <vernux@us.ibm.com>, akpm <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Harsha Priya <priya.harsha@intel.com>, Vinod Koul <vinod.koul@intel.com>, Dharageswari R <dharageswari.r@intel.com>, KP Jeeja <jeeja.kp@intel.com>
 
-Applied, thanks.
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
--- 
-Matthew Garrett | mjg59@srcf.ucam.org
+SND_INTELMID selects 3 SND_* kconfig symbols, but that is useless
+if the SOUND & SND symbols in their hierarchy are not enabled,
+so make this symbol depend on SOUND & SND.
+
+ERROR: "snd_pcm_period_elapsed" [drivers/staging/intel_sst/snd-intelmid.ko] undefined!
+ERROR: "snd_card_create" [drivers/staging/intel_sst/snd-intelmid.ko] undefined!
+ERROR: "snd_pcm_hw_constraint_integer" [drivers/staging/intel_sst/snd-intelmid.ko] undefined!
+ERROR: "snd_device_new" [drivers/staging/intel_sst/snd-intelmid.ko] undefined!
+ERROR: "snd_pcm_set_ops" [drivers/staging/intel_sst/snd-intelmid.ko] undefined!
+ERROR: "snd_jack_new" [drivers/staging/intel_sst/snd-intelmid.ko] undefined!
+ERROR: "snd_pcm_lib_free_pages" [drivers/staging/intel_sst/snd-intelmid.ko] undefined!
+ERROR: "snd_pcm_lib_ioctl" [drivers/staging/intel_sst/snd-intelmid.ko] undefined!
+ERROR: "snd_pcm_lib_malloc_pages" [drivers/staging/intel_sst/snd-intelmid.ko] undefined!
+ERROR: "snd_ctl_new1" [drivers/staging/intel_sst/snd-intelmid.ko] undefined!
+ERROR: "snd_pcm_lib_preallocate_pages_for_all" [drivers/staging/intel_sst/snd-intelmid.ko] undefined!
+ERROR: "snd_card_free" [drivers/staging/intel_sst/snd-intelmid.ko] undefined!
+ERROR: "snd_card_register" [drivers/staging/intel_sst/snd-intelmid.ko] undefined!
+ERROR: "snd_jack_report" [drivers/staging/intel_sst/snd-intelmid.ko] undefined!
+ERROR: "snd_pcm_new" [drivers/staging/intel_sst/snd-intelmid.ko] undefined!
+ERROR: "snd_ctl_add" [drivers/staging/intel_sst/snd-intelmid.ko] undefined!
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/staging/intel_sst/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- linux-next-20101124.orig/drivers/staging/intel_sst/Kconfig
++++ linux-next-20101124/drivers/staging/intel_sst/Kconfig
+@@ -8,6 +8,7 @@ config SND_INTEL_SST
+ 
+ config SND_INTELMID
+ 	tristate "Intel MID sound card driver"
++	depends on SOUND && SND
+ 	select SND_PCM
+ 	select SND_SEQUENCER
+ 	select SND_JACK
