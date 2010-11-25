@@ -1,64 +1,65 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: Re: [PATCH] Revert "kconfig: Temporarily disable dependency warnings"
-Date: Thu, 25 Nov 2010 17:26:39 -0200
-Message-ID: <4CEEB86F.8070105@infradead.org>
-References: <20101011145930.11fe570c.randy.dunlap@oracle.com>	<1286889586-13483-1-git-send-email-mmarek@suse.cz>	<20101029113731.5c7c54b9.sfr@canb.auug.org.au>	<20101122114801.2eee4c4d.sfr@canb.auug.org.au>	<AANLkTikwxBZUupGNA-gsrxWYpyCKK7wiVZu82WaUST-K@mail.gmail.com>	<20101122135715.121b5eb7.sfr@canb.auug.org.au> <AANLkTi=io3tsuL8Hd2a0y8PyBYYAzb-gkJo1GfmpcF+L@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for November 25
+Date: Fri, 26 Nov 2010 09:31:07 +1100
+Message-ID: <20101126093107.e54847da.sfr@canb.auug.org.au>
+References: <20101125164929.3a719716.sfr@canb.auug.org.au>
+	<20101125132518.1c7ebed1@lxorguk.ukuu.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__26_Nov_2010_09_31_07_+1100_6PxXM7gDnykB9.cD"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:53453 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752045Ab0KYT0x (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Nov 2010 14:26:53 -0500
-In-Reply-To: <AANLkTi=io3tsuL8Hd2a0y8PyBYYAzb-gkJo1GfmpcF+L@mail.gmail.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:45501 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752259Ab0KYWbR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 25 Nov 2010 17:31:17 -0500
+In-Reply-To: <20101125132518.1c7ebed1@lxorguk.ukuu.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnaud Lacombe <lacombar@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Michal Marek <mmarek@suse.cz>, randy.dunlap@oracle.com, catalin.marinas@arm.com, linux-kbuild@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, xiyou.wangcong@gmail.com
+To: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
-Em 25-11-2010 15:16, Arnaud Lacombe escreveu:
-> Hi,
-> 
-> On Sun, Nov 21, 2010 at 9:57 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> Hi,
->>
->> On Sun, 21 Nov 2010 20:58:54 -0500 Arnaud Lacombe <lacombar@gmail.com> wrote:
->>>
->>> There is 2 patches which fixes that by adding to the kconfig language
->>> a "visible" property to menus, 1 revert of "another" solution (which
->>> works but does not scale) and 2 patch which makes usage of the new
->>> property. Ack-ed and complemented by Mauro, but still waiting
->>> review/blessing by Michal.
->>>
->>> The core change is available here: https://patchwork.kernel.org/patch/306412/
->>>
->>> Alternatively, if you don't care about the menu structure, Randy
->>> proposed a one-liner.
->>
->> OK, good to know it is being worked on.  Thanks.
->>
-> FYI, I withdrawn the patches and ask for them not to be merged[0], as
-> there is a clear lack of interest to see this issue resolved.
-> 
-> Mauro, may I ask you to remove my patches from:
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-next.git
-> kconfig_fixes
-> 
-> please ?
+--Signature=_Fri__26_Nov_2010_09_31_07_+1100_6PxXM7gDnykB9.cD
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I prefer to have them there, while the issue remains at .37/-next builds.
+Hi Alan,
 
-It is a pain to see all those warnings polluting my console, every time 
-I recompile things, and I can't simply do a grep to discard MEDIA 
-warnings/errors (as someone proposed), as this may prevent me to get real
-errors at media builds.
+On Thu, 25 Nov 2010 13:25:18 +0000 Alan Cox <alan@lxorguk.ukuu.org.uk> wrot=
+e:
+>
+> Umm where did all the x86 changes go ?
+>=20
+> I was going to look at SEP and fixing it but I can't even build a base
+> test tree from -next because all the x86 work seems to be missing from
+> the tree from 23rd onwards.
 
-The better is to give more time to Marek/Sam to review your patch
-series and ack or, if they don't agree, to send an alternative patchset
-to fix the issues or to revert the changeset that started to produce 
-those troubles.
+You need to ask the x86, staging and tip maintainers ...  There was a
+build failure in tip tree on Nov 23 after which the tip tree was rebuilt
+without some of its branches.  Also, there is a boot failure caused by
+the sep driver (which I see one of your patches should fix).
 
+I did not remove any of the code.
+
+--=20
 Cheers,
-Mauro
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__26_Nov_2010_09_31_07_+1100_6PxXM7gDnykB9.cD
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJM7uOrAAoJEDMEi1NhKgbseuYIAIwQP9I5gHx03Jb4Qgu0AtKB
+0GEc9C0ltibffVsa2TJUnGDeOHm061hJ8RGX/jvYcJJZJB3PpCvDorF9JOpgxbgc
+OG0qN0Ydd5u2GfztoUQFZLtxU8ZZL6m4JFH0ROuEQbw+VwuekW3TMeq8Ke8Z3nH8
+JPevZzE7liYiuvfg6ux2tB4J0gFXj3MtJYHMm4HSkz7qoUvfIWjIE2TjnitoUCDg
+aCtIxL4Fofp9cw+GkxXa/mc1kyULIZRW0dLljX8vBYgqVo7zdeUgLSkXzGXX6I2y
+Z1cLlk7L9kybynFyLyWrFTf3V7WGboewl7epwJfkCU488W+IwzuaVqoUi8uFx4U=
+=nnIl
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__26_Nov_2010_09_31_07_+1100_6PxXM7gDnykB9.cD--
