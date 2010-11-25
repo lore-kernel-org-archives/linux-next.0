@@ -1,98 +1,286 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: [PATCH 3/3 V13] RO/NX protection for loadable kernel
-Date: Wed, 24 Nov 2010 22:41:07 -0500
-Message-ID: <24422.1290656467@localhost>
-References: <4CE2F914.9070106@free.fr>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Tree for November 25
+Date: Thu, 25 Nov 2010 16:49:29 +1100
+Message-ID: <20101125164929.3a719716.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1290656466_4815P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__25_Nov_2010_16_49_29_+1100_Cq3ggVlB=InJeG8j"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from lennier.cc.vt.edu ([198.82.162.213]:45101 "EHLO
-	lennier.cc.vt.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751237Ab0KYDnD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 24 Nov 2010 22:43:03 -0500
-In-Reply-To: Your message of "Tue, 16 Nov 2010 22:35:16 +0100."
-             <4CE2F914.9070106@free.fr>
+Received: from chilli.pcug.org.au ([203.10.76.44]:53529 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750903Ab0KYFth (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 25 Nov 2010 00:49:37 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: matthieu castet <castet.matthieu@free.fr>
-Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, Rusty Russell <rusty@rustcorp.com.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>, Siarhei Liakh <sliakh.lkml@gmail.com>, Kees Cook <kees.cook@canonical.com>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
---==_Exmh_1290656466_4815P
-Content-Type: text/plain; charset=us-ascii
+--Signature=_Thu__25_Nov_2010_16_49_29_+1100_Cq3ggVlB=InJeG8j
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 16 Nov 2010 22:35:16 +0100, matthieu castet said:
+Hi all,
 
-> This patch is a logical extension of the protection provided by
-> CONFIG_DEBUG_RODATA to LKMs. The protection is provided by splitting
-> module_core and module_init into three logical parts each and setting
-> appropriate page access permissions for each individual section:
-> 
->  1. Code: RO+X
->  2. RO data: RO+NX
->  3. RW data: RW+NX
+Changes since 20101124:
 
-This is incompatible with CONFIG_JUMP_LABEL:
+New tree: selinux
 
-[  252.093624] BUG: unable to handle kernel paging request at ffffffffa0680764
-[  252.094008] IP: [<ffffffff81225ee0>] generic_swap+0xa/0x1a
-[  252.094008] PGD 1a1e067 PUD 1a22063 PMD 1093ac067 PTE 8000000109786161
-[  252.094008] Oops: 0003 [#1] PREEMPT SMP 
+The v4l-dvb tree still has its build failure for which I applied a patch.
 
-[  252.094008] Pid: 3740, comm: modprobe Not tainted 2.6.37-rc3-mmotm1123 #1 0X564R/Latitude E6500                  
-[  252.094008] RIP: 0010:[<ffffffff81225ee0>]  [<ffffffff81225ee0>] generic_swap+0xa/0x1a
-[  252.094008] RSP: 0018:ffff88011a217d98  EFLAGS: 00010206
-[  252.094008] RAX: 00000000000000d9 RBX: 0000000000000030 RCX: 000000000000007c
-[  252.094008] RDX: 0000000000000017 RSI: ffffffffa0680794 RDI: ffffffffa0680764
-[  252.094008] RBP: ffff88011a217d98 R08: 0000000000000000 R09: ffff88011a217d38
-[  252.094008] R10: 0000000000000000 R11: 000000000000013d R12: ffffffffa0680764
-[  252.094008] R13: 0000000000000018 R14: 0000000000000018 R15: 0000000000000018
-[  252.094008] FS:  00007f6ecb897720(0000) GS:ffff8800df100000(0000) knlGS:0000000000000000
-[  252.094008] CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003b
-[  252.094008] CR2: ffffffffa0680764 CR3: 000000011911e000 CR4: 00000000000406e0
-[  252.094008] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[  252.094008] DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
-[  252.094008] Process modprobe (pid: 3740, threadinfo ffff88011a216000, task ffff88011861e300)
-[  252.094008] Stack:
-[  252.094008]  ffff88011a217e28 ffffffff81226007 ffffffff81a31158 0000000000000000
-[  252.094008]  0000000000000030 0000000000000048 ffffffff8105fa34 ffffffff81225ed6
-[  252.094008]  ffffffff00000018 ffffffff00000018 0000000000000018 00000030ffffffff
-[  252.094008] Call Trace:
-[  252.094008]  [<ffffffff81226007>] sort+0x117/0x1b0
-[  252.094008]  [<ffffffff8105fa34>] ? jump_label_cmp+0x0/0x1b
-[  252.094008]  [<ffffffff81225ed6>] ? generic_swap+0x0/0x1a
-[  252.094008]  [<ffffffff8105faa6>] sort_jump_label_entries+0x2b/0x2d
-[  252.094008]  [<ffffffff8105feda>] jump_label_module_notify+0x58/0x253
-[  252.094008]  [<ffffffff8155e816>] notifier_call_chain+0x54/0x81
-[  252.094008]  [<ffffffff8105d9b2>] __blocking_notifier_call_chain+0x5c/0x79
-[  252.094008]  [<ffffffff8105d9de>] blocking_notifier_call_chain+0xf/0x11
-[  252.094008]  [<ffffffff810778cc>] sys_init_module+0x76/0x1f5
-[  252.094008]  [<ffffffff8100277b>] system_call_fastpath+0x16/0x1b
-[  252.094008] Code: 05 ff c0 48 29 f7 48 39 f7 73 f6 48 89 3a c9 c3 90 90 90 8b 07 8b 16 55 89 17 48 89 e5 89 06 c9 c3 55 48 89 e5 8a 07 8a 0e ff ca <88> 0f 48 ff c7 88 06 48 ff c6 85 d2 7f ec c9 c3 55 89 d0 48 89
-[  252.094008] RIP  [<ffffffff81225ee0>] generic_swap+0xa/0x1a
-[  252.094008]  RSP <ffff88011a217d98>
-[  252.094008] CR2: ffffffffa0680764
-[  252.094008] ---[ end trace f88479be6b01e4c4 ]---
+----------------------------------------------------------------------------
 
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
 
-> +config DEBUG_SET_MODULE_RONX
-> +	bool "Set loadable kernel module data as NX and text as RO"
-> +	default n
-> +	depends on X86 && MODULES
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups (if any), it is also built with powerpc allnoconfig (32 and
+64 bit), ppc44x_defconfig and allyesconfig (minus
+CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
+and sparc64 defconfig. These builds also have
+CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
+CONFIG_DEBUG_INFO disabled when necessary.
 
-	depends on X86 && MODULES && !JUMP_LABEL
+Below is a summary of the state of the merge.
 
---==_Exmh_1290656466_4815P
+We are up to 180 trees (counting Linus' and 26 trees of patches pending
+for Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Randy Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master
+Merging fixes/fixes
+Merging arm-current/master
+Merging m68k-current/for-linus
+Merging powerpc-merge/merge
+Merging sparc-current/master
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sound-current/for-linus
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging kbuild-current/rc-fixes
+Merging driver-core.current/driver-core-linus
+Merging tty.current/tty-linus
+Merging usb.current/usb-linus
+Merging staging.current/staging-linus
+Merging cpufreq-current/fixes
+Merging input-current/for-linus
+Merging md-current/for-linus
+Merging audit-current/for-linus
+Merging crypto-current/master
+Merging ide-curent/master
+Merging dwmw2/master
+Merging sh-current/sh-fixes-for-linus
+Merging rmobile-current/rmobile-fixes-for-linus
+Merging fbdev-current/fbdev-fixes-for-linus
+Merging gcl-current/merge
+Merging arm/devel
+Merging davinci/davinci-next
+Merging i.MX/for-next
+Merging msm/for-next
+Merging omap/for-next
+Merging pxa/for-next
+Merging samsung/next-samsung
+Merging s5p/for-next
+Merging tegra/for-next
+Merging avr32/avr32-arch
+Merging blackfin/for-linus
+Merging cris/for-next
+Merging ia64/test
+Merging m68k/for-next
+Merging m68knommu/for-next
+Merging microblaze/next
+Merging mips/mips-for-linux-next
+Merging parisc/next
+Merging powerpc/next
+Merging 4xx/next
+Merging 52xx-and-virtex/next
+Merging galak/next
+Merging s390/features
+Merging sh/sh-latest
+Merging rmobile/rmobile-latest
+Merging sparc/master
+Merging tile/master
+Merging xtensa/master
+CONFLICT (content): Merge conflict in arch/xtensa/configs/iss_defconfig
+Merging ceph/for-next
+Merging cifs/master
+Merging configfs/linux-next
+Merging ecryptfs/next
+Merging ext3/for_next
+Merging ext4/next
+Merging fatfs/master
+Merging fuse/for-next
+Merging gfs2/master
+Merging hfsplus/for-next
+Merging jfs/next
+Merging logfs/master
+CONFLICT (content): Merge conflict in fs/logfs/logfs.h
+Merging nfs/linux-next
+Merging nfsd/nfsd-next
+Merging nilfs2/for-next
+Merging ocfs2/linux-next
+Merging omfs/for-next
+Merging squashfs/master
+Merging udf/for_next
+Merging v9fs/for-next
+Merging ubifs/linux-next
+Merging xfs/master
+Merging vfs/for-next
+Merging pci/linux-next
+CONFLICT (content): Merge conflict in drivers/pci/pci-sysfs.c
+Merging hid/for-next
+CONFLICT (content): Merge conflict in drivers/hid/hid-input.c
+Merging quilt/i2c
+Merging bjdooks-i2c/next-i2c
+Merging quilt/jdelvare-hwmon
+Merging hwmon-staging/hwmon-next
+Merging quilt/kernel-doc
+Merging v4l-dvb/master
+Applying: media: const and __devinitdata do not mix
+Merging kbuild/for-next
+Merging kconfig/for-next
+Merging ide/master
+Merging libata/NEXT
+Merging infiniband/for-next
+Merging acpi/test
+Merging idle-test/idle-test
+Merging ieee1394/for-next
+Merging ubi/linux-next
+Merging kvm/linux-next
+Merging dlm/next
+Merging swiotlb/master
+Merging ibft/master
+Merging scsi/master
+Merging async_tx/next
+Merging net/master
+Merging wireless/master
+Merging bluetooth/master
+Merging mtd/master
+Merging crypto/master
+Merging sound/for-next
+Merging sound-asoc/for-next
+Merging cpufreq/next
+Merging quilt/rr
+Merging input/next
+Merging lsm/for-next
+Merging block/for-next
+Merging quilt/device-mapper
+Merging embedded/master
+Merging firmware/master
+Merging pcmcia/master
+Merging battery/master
+Merging leds/for-mm
+Merging backlight/for-mm
+Merging mmc/mmc-next
+Merging kgdb/kgdb-next
+Merging slab/for-next
+Merging uclinux/for-next
+Merging md/for-next
+Merging mfd/for-next
+Merging hdlc/hdlc-next
+Merging drm/drm-next
+Merging fbdev/master
+Merging viafb/viafb-next
+Merging omap_dss2/for-next
+Merging voltage/for-next
+Merging security-testing/next
+Merging selinux/master
+Merging lblnet/master
+Merging agp/agp-next
+Merging watchdog/master
+Merging bdev/master
+Merging dwmw2-iommu/master
+Merging cputime/cputime
+Merging osd/linux-next
+Merging jc_docs/docs-next
+Merging nommu/master
+Merging trivial/for-next
+CONFLICT (content): Merge conflict in MAINTAINERS
+CONFLICT (content): Merge conflict in drivers/scsi/bfa/bfa_fcpim.c
+Merging audit/for-next
+Merging suspend/linux-next
+Merging fsnotify/for-next
+Merging irda/for-next
+Merging catalin/for-next
+Merging alacrity/linux-next
+CONFLICT (content): Merge conflict in include/linux/Kbuild
+CONFLICT (content): Merge conflict in lib/Kconfig
+Merging i7core_edac/linux_next
+Merging i7300_edac/linux_next
+Merging devicetree/next-devicetree
+Merging spi/next-spi
+Merging tip/auto-latest
+Merging rcu/rcu/next
+Merging oprofile/for-next
+Merging xen/upstream/xen
+Merging swiotlb-xen/master
+Merging xen-pvhvm/linux-next
+Merging edac-amd/for-next
+Merging percpu/for-next
+Merging workqueues/for-next
+Merging sfi/sfi-test
+Merging asm-generic/next
+Merging drivers-x86/linux-next
+Merging hwpoison/hwpoison
+Merging sysctl/master
+Merging driver-core/driver-core-next
+Merging tty/tty-next
+Merging usb/usb-next
+Merging staging/staging-next
+Merging slabh/slabh
+Merging bkl-trivial/trivial
+Merging bkl-llseek/llseek
+Merging bkl-vfs/vfs
+Merging bkl-config/config
+CONFLICT (content): Merge conflict in arch/powerpc/kernel/setup_64.c
+CONFLICT (content): Merge conflict in include/linux/hardirq.h
+CONFLICT (content): Merge conflict in include/linux/smp_lock.h
+Merging irqflags/master
+Merging cleancache/linux-next
+CONFLICT (content): Merge conflict in fs/ocfs2/super.c
+CONFLICT (content): Merge conflict in include/linux/fs.h
+CONFLICT (content): Merge conflict in mm/Kconfig
+Merging scsi-post-merge/merge-base:master
+
+--Signature=_Thu__25_Nov_2010_16_49_29_+1100_Cq3ggVlB=InJeG8j
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
-Comment: Exmh version 2.5 07/13/2001
 
-iD8DBQFM7drScC3lWbTT17ARAu7UAKCCtsKJhA70typyYIblxrF9JFSvGgCg/DLs
-jIBr0taqwQ3eHkNMCz3qgPQ=
-=Ft0b
+iQEcBAEBAgAGBQJM7fjpAAoJEDMEi1NhKgbsbd4H/2s/2eUfawpBvM402sqS6tze
+ORVdKOapVxjQlz83lKVavztLraurJBs4lERcRD629qICWz1kWn4xw2iXYj1AMl1s
+lNQQuJDd5VF79EQEaFieDF8gFfnzU7Dnp+7idueH8s7+zsWMPNG7KluC9xjtgkjV
+uItplzvEA6tOJJXrwxpUwOsXgwCATHfp/VthwdbN85ukkX3qO+iIitMO+PHPbdj1
+QIEmFFjKB7RIJnLhZuYOwInV3/mi9gY/a/swy19J/Uk+p5tP6ds1vbug3u03Bvvj
+1xj7OcKyoR+4xGibXoNfPbTmAYxWiEA6KE0wbKZ9+HxmsO51a4zbDF0x8rgxtlo=
+=1BlS
 -----END PGP SIGNATURE-----
 
---==_Exmh_1290656466_4815P--
+--Signature=_Thu__25_Nov_2010_16_49_29_+1100_Cq3ggVlB=InJeG8j--
