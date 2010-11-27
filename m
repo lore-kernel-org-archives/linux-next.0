@@ -1,29 +1,16 @@
-From: Jarek Poplawski <jarkao2@gmail.com>
-Subject: Re: linux-next: Tree for November 26
-Date: Sat, 27 Nov 2010 20:02:39 +0100
-Message-ID: <4CF155CF.5090601@gmail.com>
-References: <20101126132823.7ef94f07.sfr@canb.auug.org.au> <AANLkTinJUT=j_P9FSB=GWTLy4Bkr68iWmB2O=5Q3gcT-@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-2
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: "Scott J. Goldman" <scottjg@vmware.com>
+Subject: [PATCH net-next] vmxnet3: fix compilation when RSS is disabled
+Date: Sat, 27 Nov 2010 12:33:54 -0800
+Message-ID: <1290890035-32285-1-git-send-email-scottjg@vmware.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:45852 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752130Ab0K0TCo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 27 Nov 2010 14:02:44 -0500
-In-Reply-To: <AANLkTinJUT=j_P9FSB=GWTLy4Bkr68iWmB2O=5Q3gcT-@mail.gmail.com>
+Received: from smtp-outbound-2.vmware.com ([65.115.85.73]:25163 "EHLO
+	smtp-outbound-2.vmware.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753380Ab0K0Uen (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Sat, 27 Nov 2010 15:34:43 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Zimny Lech <napohybelskurwysynom2010@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Shreyas Bhatewara <sbhatewara@vmware.com>, "VMware, Inc." <pv-drivers@vmware.com>, netdev@vger.kernel.org
+To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+Cc: pv-drivers@vmware.com, randy.dunlap@oracle.com
 
-Zimny Lech wrote:
-=2E..=20
-> --=20
-> Slawa!
-> Zimny "=AFyj i pozw=F3l umrze=E6" Lech z Wawelu
-
-=46YI:
-http://www.kernel.org/pub/linux/docs/lkml/#s3-12
-
-Jarek P.
+Since this was reported on linux-next, we may want to merge it there too.
