@@ -1,81 +1,71 @@
-From: Zimny Lech <napohybelskurwysynom2010@gmail.com>
-Subject: Re: linux-next: Tree for November 26
-Date: Sat, 27 Nov 2010 22:54:08 +0100
-Message-ID: <AANLkTim1=OijO4f0rk4W=2h1CW_xX27tSbDj8s9af7Xw@mail.gmail.com>
-References: <20101126132823.7ef94f07.sfr@canb.auug.org.au>
+From: Greg KH <gregkh@suse.de>
+Subject: Re: The longest build error ever, ever, ever seen :) (Re:
+ linux-next: Tree for November 26)
+Date: Sat, 27 Nov 2010 16:22:28 -0800
+Message-ID: <20101128002228.GB4562@suse.de>
+References: <AANLkTinY3on+arwh-Rvqnbrx_FU4mKDmpwXR_EfkPJ0f@mail.gmail.com>
+ <20101127164555.GA23508@suse.de>
+ <256560.1290881547@localhost>
+ <20101127182723.GA5389@suse.de>
+ <20101128082126.eca68e5b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-2
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:50705 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752749Ab0K0VyJ convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 27 Nov 2010 16:54:09 -0500
-In-Reply-To: <20101126132823.7ef94f07.sfr@canb.auug.org.au>
+Received: from cantor.suse.de ([195.135.220.2]:49217 "EHLO mx1.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753765Ab0K1AVr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 27 Nov 2010 19:21:47 -0500
+Content-Disposition: inline
+In-Reply-To: <20101128082126.eca68e5b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc: Valdis.Kletnieks@vt.edu, Zimny Lech <napohybelskurwysynom2010@gmail.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andres More <more.andres@gmail.com>, Charles Cl?ment <caratorn@gmail.com>, devel@driverdev.osuosl.org, Mike McCormack <mikem@ring3k.org>, Radu Voicilas <rvoicilas@gmail.com>
 
-Salve!
+On Sun, Nov 28, 2010 at 08:21:26AM +1100, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> On Sat, 27 Nov 2010 10:27:23 -0800 Greg KH <gregkh@suse.de> wrote:
+> >
+> > On Sat, Nov 27, 2010 at 01:12:27PM -0500, Valdis.Kletnieks@vt.edu wrote:
+> > > On Sat, 27 Nov 2010 08:45:55 PST, Greg KH said:
+> > > > On Sat, Nov 27, 2010 at 09:56:45AM +0100, Zimny Lech wrote:
+> > > > > Ave!
+> > > > > 
+> > > > > 2010/11/26 Stephen Rothwell <sfr@canb.auug.org.au>:
+> > > > > > Hi all,
+> > > > > >
+> > > > > 
+> > > > > OMG, LOL, this one is awesome :) The longest build error ever, ever,
+> > > > > ever seen! Fscking awesome, someone gets Guiness World Record :)
+> > > > > 
+> > > > >   LD      drivers/staging/built-in.o
+> > > > > drivers/staging/rtl8192e/built-in.o: In function `rtl8192_setBBreg':
+> > > > > (.text+0xae00): multiple definition of `rtl8192_setBBreg'
+> > > > > drivers/staging/rtl8192u/built-in.o:(.text+0xa1a0): first defined here
+> > > > 
+> > > > You built both of these drivers into the kernel, which causes the
+> > > > problem.  Try building them as modules, or just one as a module, and
+> > > > that will solve the problem.
+> > > 
+> > > We probably should create some Kconfig magic to prevent this situation?
+> > > 
+> > > 	depends (othermodule != 'y') || (myself != 'y')
+> > > 
+> > > or am I on the wrong track here?
+> > 
+> > Just make each module depend on 'm' so that they can not be built into
+> > the kernel, and all should be fine.
+> 
+> Surely the real fix is to make sure that the global symbols in these
+> drivers are unique ...
 
-2010/11/26 Stephen Rothwell <sfr@canb.auug.org.au>:
-> Hi all,
->
-> Changes since 20101125:
->
+That would be "ideal" if they both weren't carrying pretty much the
+identical wireless stack within them :)
 
-just a reminder - these errors still occur:
+That's a longer-term fix, the "only build as a module" is common for
+staging drivers for this very reason.
 
-WARNING: modpost: Found 10 section mismatch(es).
-To see full details build your kernel with:
-'make CONFIG_DEBUG_SECTION_MISMATCH=3Dy'
-  GEN     .version
-  CHK     include/generated/compile.h
-  UPD     include/generated/compile.h
-  CC      init/version.o
-  LD      init/built-in.o
-  LD      .tmp_vmlinux1
-arch/x86/built-in.o: In function `kvm_smp_prepare_boot_cpu':
-kvm.c:(.init.text+0xe543): undefined reference to `kvm_register_clock'
-make[1]: *** [.tmp_vmlinux1] Error 1
-make: *** [sub-make] Error 2
+thanks,
 
-make[4]: *** No rule to make target
-`drivers/scsi/aic7xxx/aicasm/*.[chyl]', needed by
-`drivers/scsi/aic7xxx/aicasm/aicasm'.  Stop.
-make[3]: *** [drivers/scsi/aic7xxx] Error 2
-make[2]: *** [drivers/scsi] Error 2
-make[1]: *** [drivers] Error 2
-make: *** [sub-make] Error 2
-
-
-  CC      sound/oss/aedsp16.o
-make[3]: *** No rule to make target `/etc/sound/dsp001.ld', needed by
-`sound/oss/pss_boot.h'.  Stop.
-make[2]: *** [sound/oss] Error 2
-make[1]: *** [sound] Error 2
-make: *** [sub-make] Error 2
-
-  CC [M]  drivers/block/cciss.o
-/home/test/linux-2.6/drivers/block/cciss.c: In function 'cciss_cleanup'=
-:
-/home/test/linux-2.6/drivers/block/cciss.c:4929:6: error: 'proc_cciss'
-undeclared (first use in this function)
-/home/test/linux-2.6/drivers/block/cciss.c:4929:6: note: each
-undeclared identifier is reported only once for each function it
-appears in
-make[3]: *** [drivers/block/cciss.o] Error 1
-make[2]: *** [drivers/block] Error 2
-make[1]: *** [drivers] Error 2
-make: *** [sub-make] Error 2
-
-
-
-
---=20
-Slawa!
-Zimny "=AFyj i pozw=F3l umrze=E6" Lech z Wawelu
-
-That is not dead which can eternal lie.
-And with strange aeons even death may die.
+greg k-h
