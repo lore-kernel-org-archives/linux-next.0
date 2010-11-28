@@ -1,71 +1,78 @@
-From: Greg KH <gregkh@suse.de>
-Subject: Re: The longest build error ever, ever, ever seen :) (Re:
- linux-next: Tree for November 26)
-Date: Sat, 27 Nov 2010 16:22:28 -0800
-Message-ID: <20101128002228.GB4562@suse.de>
-References: <AANLkTinY3on+arwh-Rvqnbrx_FU4mKDmpwXR_EfkPJ0f@mail.gmail.com>
- <20101127164555.GA23508@suse.de>
- <256560.1290881547@localhost>
- <20101127182723.GA5389@suse.de>
- <20101128082126.eca68e5b.sfr@canb.auug.org.au>
+From: Bhavesh Davda <bhavesh@vmware.com>
+Subject: Re: [Pv-drivers] [PATCH] vmxnet3: fix compilation when RSS is
+ disabled
+Date: Sun, 28 Nov 2010 11:09:14 -0800
+Message-ID: <3522C779-FB58-4792-8ADE-80D826FB4606@vmware.com>
+References: <1290890035-32285-1-git-send-email-scottjg@vmware.com>
+ <1290890035-32285-2-git-send-email-scottjg@vmware.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor.suse.de ([195.135.220.2]:49217 "EHLO mx1.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753765Ab0K1AVr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 27 Nov 2010 19:21:47 -0500
-Content-Disposition: inline
-In-Reply-To: <20101128082126.eca68e5b.sfr@canb.auug.org.au>
+Received: from smtp-outbound-1.vmware.com ([65.115.85.69]:28373 "EHLO
+	smtp-outbound-1.vmware.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753929Ab0K1TJD convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 28 Nov 2010 14:09:03 -0500
+In-Reply-To: <1290890035-32285-2-git-send-email-scottjg@vmware.com>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Valdis.Kletnieks@vt.edu, Zimny Lech <napohybelskurwysynom2010@gmail.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andres More <more.andres@gmail.com>, Charles Cl?ment <caratorn@gmail.com>, devel@driverdev.osuosl.org, Mike McCormack <mikem@ring3k.org>, Radu Voicilas <rvoicilas@gmail.com>
+To: Scott Goldman <scottjg@vmware.com>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "pv-drivers@vmware.com" <pv-drivers@vmware.com>, "randy.dunlap@oracle.com" <randy.dunlap@oracle.com>
 
-On Sun, Nov 28, 2010 at 08:21:26AM +1100, Stephen Rothwell wrote:
-> Hi Greg,
+Straightforward enough. Thanks for fixing this Scott!
+
+
+On Nov 27, 2010, at 12:35 PM, "Scott J. Goldman" <scottjg@vmware.com> wrote:
+
+> If RSS is disabled, we can ifdef out some RSS specific code. This fixes
+> the compile error found by Randy Dunlap.
 > 
-> On Sat, 27 Nov 2010 10:27:23 -0800 Greg KH <gregkh@suse.de> wrote:
-> >
-> > On Sat, Nov 27, 2010 at 01:12:27PM -0500, Valdis.Kletnieks@vt.edu wrote:
-> > > On Sat, 27 Nov 2010 08:45:55 PST, Greg KH said:
-> > > > On Sat, Nov 27, 2010 at 09:56:45AM +0100, Zimny Lech wrote:
-> > > > > Ave!
-> > > > > 
-> > > > > 2010/11/26 Stephen Rothwell <sfr@canb.auug.org.au>:
-> > > > > > Hi all,
-> > > > > >
-> > > > > 
-> > > > > OMG, LOL, this one is awesome :) The longest build error ever, ever,
-> > > > > ever seen! Fscking awesome, someone gets Guiness World Record :)
-> > > > > 
-> > > > >   LD      drivers/staging/built-in.o
-> > > > > drivers/staging/rtl8192e/built-in.o: In function `rtl8192_setBBreg':
-> > > > > (.text+0xae00): multiple definition of `rtl8192_setBBreg'
-> > > > > drivers/staging/rtl8192u/built-in.o:(.text+0xa1a0): first defined here
-> > > > 
-> > > > You built both of these drivers into the kernel, which causes the
-> > > > problem.  Try building them as modules, or just one as a module, and
-> > > > that will solve the problem.
-> > > 
-> > > We probably should create some Kconfig magic to prevent this situation?
-> > > 
-> > > 	depends (othermodule != 'y') || (myself != 'y')
-> > > 
-> > > or am I on the wrong track here?
-> > 
-> > Just make each module depend on 'm' so that they can not be built into
-> > the kernel, and all should be fine.
+> Signed-off-by: Scott J. Goldman <scottjg@vmware.com>
+
+Reviewed-by: Bhavesh Davda <bhavesh@vmware.com>
+
+> ---
+> drivers/net/vmxnet3/vmxnet3_ethtool.c |    5 ++++-
+> 1 files changed, 4 insertions(+), 1 deletions(-)
 > 
-> Surely the real fix is to make sure that the global symbols in these
-> drivers are unique ...
-
-That would be "ideal" if they both weren't carrying pretty much the
-identical wireless stack within them :)
-
-That's a longer-term fix, the "only build as a module" is common for
-staging drivers for this very reason.
-
-thanks,
-
-greg k-h
+> diff --git a/drivers/net/vmxnet3/vmxnet3_ethtool.c b/drivers/net/vmxnet3/vmxnet3_ethtool.c
+> index 9ddaea6..8e17fc8 100644
+> --- a/drivers/net/vmxnet3/vmxnet3_ethtool.c
+> +++ b/drivers/net/vmxnet3/vmxnet3_ethtool.c
+> @@ -553,7 +553,7 @@ vmxnet3_get_rxnfc(struct net_device *netdev, struct ethtool_rxnfc *info,
+>    return -EOPNOTSUPP;
+> }
+> 
+> -
+> +#ifdef VMXNET3_RSS
+> static int
+> vmxnet3_get_rss_indir(struct net_device *netdev,
+>              struct ethtool_rxfh_indir *p)
+> @@ -598,6 +598,7 @@ vmxnet3_set_rss_indir(struct net_device *netdev,
+>    return 0;
+> 
+> }
+> +#endif
+> 
+> static struct ethtool_ops vmxnet3_ethtool_ops = {
+>    .get_settings      = vmxnet3_get_settings,
+> @@ -623,8 +624,10 @@ static struct ethtool_ops vmxnet3_ethtool_ops = {
+>    .get_ringparam     = vmxnet3_get_ringparam,
+>    .set_ringparam     = vmxnet3_set_ringparam,
+>    .get_rxnfc         = vmxnet3_get_rxnfc,
+> +#ifdef VMXNET3_RSS
+>    .get_rxfh_indir    = vmxnet3_get_rss_indir,
+>    .set_rxfh_indir    = vmxnet3_set_rss_indir,
+> +#endif
+> };
+> 
+> void vmxnet3_set_ethtool_ops(struct net_device *netdev)
+> -- 
+> 1.7.0.4
+> 
+> _______________________________________________
+> Pv-drivers mailing list
+> Pv-drivers@vmware.com
+> http://mailman2.vmware.com/mailman/listinfo/pv-drivers
