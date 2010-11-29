@@ -1,78 +1,57 @@
-From: Bhavesh Davda <bhavesh@vmware.com>
-Subject: Re: [Pv-drivers] [PATCH] vmxnet3: fix compilation when RSS is
- disabled
-Date: Sun, 28 Nov 2010 11:09:14 -0800
-Message-ID: <3522C779-FB58-4792-8ADE-80D826FB4606@vmware.com>
-References: <1290890035-32285-1-git-send-email-scottjg@vmware.com>
- <1290890035-32285-2-git-send-email-scottjg@vmware.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net tree
+Date: Mon, 29 Nov 2010 11:08:24 +1100
+Message-ID: <20101129110824.639b2659.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__29_Nov_2010_11_08_24_+1100_EAdUC6t0AXb0tCIi"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp-outbound-1.vmware.com ([65.115.85.69]:28373 "EHLO
-	smtp-outbound-1.vmware.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753929Ab0K1TJD convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 28 Nov 2010 14:09:03 -0500
-In-Reply-To: <1290890035-32285-2-git-send-email-scottjg@vmware.com>
-Content-Language: en-US
+Received: from chilli.pcug.org.au ([203.10.76.44]:44599 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754327Ab0K2AIh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 28 Nov 2010 19:08:37 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Scott Goldman <scottjg@vmware.com>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "pv-drivers@vmware.com" <pv-drivers@vmware.com>, "randy.dunlap@oracle.com" <randy.dunlap@oracle.com>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Giuseppe CAVALLARO <peppe.cavallaro@st.com>
 
-Straightforward enough. Thanks for fixing this Scott!
+--Signature=_Mon__29_Nov_2010_11_08_24_+1100_EAdUC6t0AXb0tCIi
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On Nov 27, 2010, at 12:35 PM, "Scott J. Goldman" <scottjg@vmware.com> wrote:
+After merging the net tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-> If RSS is disabled, we can ifdef out some RSS specific code. This fixes
-> the compile error found by Randy Dunlap.
-> 
-> Signed-off-by: Scott J. Goldman <scottjg@vmware.com>
+drivers/net/stmmac/stmmac_main.c: In function 'stmmac_resume':
+drivers/net/stmmac/stmmac_main.c:1849: error: 'struct stmmac_priv' has no m=
+ember named 'shutdown'
 
-Reviewed-by: Bhavesh Davda <bhavesh@vmware.com>
+Caused by commit 874bd42d24c2a74f5dbd65e81e175982240fecd8 ("stmmac:
+convert to dev_pm_ops").
 
-> ---
-> drivers/net/vmxnet3/vmxnet3_ethtool.c |    5 ++++-
-> 1 files changed, 4 insertions(+), 1 deletions(-)
-> 
-> diff --git a/drivers/net/vmxnet3/vmxnet3_ethtool.c b/drivers/net/vmxnet3/vmxnet3_ethtool.c
-> index 9ddaea6..8e17fc8 100644
-> --- a/drivers/net/vmxnet3/vmxnet3_ethtool.c
-> +++ b/drivers/net/vmxnet3/vmxnet3_ethtool.c
-> @@ -553,7 +553,7 @@ vmxnet3_get_rxnfc(struct net_device *netdev, struct ethtool_rxnfc *info,
->    return -EOPNOTSUPP;
-> }
-> 
-> -
-> +#ifdef VMXNET3_RSS
-> static int
-> vmxnet3_get_rss_indir(struct net_device *netdev,
->              struct ethtool_rxfh_indir *p)
-> @@ -598,6 +598,7 @@ vmxnet3_set_rss_indir(struct net_device *netdev,
->    return 0;
-> 
-> }
-> +#endif
-> 
-> static struct ethtool_ops vmxnet3_ethtool_ops = {
->    .get_settings      = vmxnet3_get_settings,
-> @@ -623,8 +624,10 @@ static struct ethtool_ops vmxnet3_ethtool_ops = {
->    .get_ringparam     = vmxnet3_get_ringparam,
->    .set_ringparam     = vmxnet3_set_ringparam,
->    .get_rxnfc         = vmxnet3_get_rxnfc,
-> +#ifdef VMXNET3_RSS
->    .get_rxfh_indir    = vmxnet3_get_rss_indir,
->    .set_rxfh_indir    = vmxnet3_set_rss_indir,
-> +#endif
-> };
-> 
-> void vmxnet3_set_ethtool_ops(struct net_device *netdev)
-> -- 
-> 1.7.0.4
-> 
-> _______________________________________________
-> Pv-drivers mailing list
-> Pv-drivers@vmware.com
-> http://mailman2.vmware.com/mailman/listinfo/pv-drivers
+I have used the net tree from next-20101126 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__29_Nov_2010_11_08_24_+1100_EAdUC6t0AXb0tCIi
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJM8u74AAoJEDMEi1NhKgbsJygH/0/75pGUQg6pDoeSgPaEzFI3
+6BQejrhc7rDFFlMz3tjeLd6CUCupfeBRm9gAbK5PfGtjNPtaIYTb0AnUCQvp2rfq
+nTodeGmkB6nalkZoKjSNEulRxgYGxVFem9Qd3SVoyXYQ0z1/pBvBeMYGZm2++px3
+D3gLloCIiYeo7hbYJ2C4jzm1ueQZPkzbsttu/G9xYJHpeSDydTBYMTQTs+1/T6C0
+CkZIDDvbRFaf703JP5GAq2BcksEmkLOFRJ8blQuKk+7GbV9YFjx4dCbmsVrIob6H
+YdzGNjMM8XP44BcYWI58FELYKHIQptQZgHqNOX6WXrS0zoDAeFZTrgh2e1sAahs=
+=GS1W
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__29_Nov_2010_11_08_24_+1100_EAdUC6t0AXb0tCIi--
