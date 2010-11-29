@@ -1,66 +1,90 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH] vmxnet3: fix compilation when RSS is disabled
-Date: Sun, 28 Nov 2010 19:07:31 -0800
-Message-ID: <4CF318F3.7040600@oracle.com>
-References: <1290890035-32285-1-git-send-email-scottjg@vmware.com> <1290890035-32285-2-git-send-email-scottjg@vmware.com>
+From: Peppe CAVALLARO <peppe.cavallaro@st.com>
+Subject: Re: linux-next: build failure after merge of the net tree
+Date: Mon, 29 Nov 2010 08:25:05 +0100
+Message-ID: <4CF35551.40201@st.com>
+References: <20101129110824.639b2659.sfr@canb.auug.org.au>
+ <20101128.181134.104049260.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1290890035-32285-2-git-send-email-scottjg@vmware.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Scott J. Goldman" <scottjg@vmware.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, pv-drivers@vmware.com
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from eu1sys200aog114.obsmtp.com ([207.126.144.137]:32794 "EHLO
+	eu1sys200aog114.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754780Ab0K2HZ2 convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Nov 2010 02:25:28 -0500
+In-Reply-To: <20101128.181134.104049260.davem@davemloft.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>
+Cc: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 11/27/10 12:33, Scott J. Goldman wrote:
-> If RSS is disabled, we can ifdef out some RSS specific code. This fixes
-> the compile error found by Randy Dunlap.
-> 
-> Signed-off-by: Scott J. Goldman <scottjg@vmware.com>
+On 11/29/2010 3:11 AM, David Miller wrote:
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 29 Nov 2010 11:08:24 +1100
+>
+> > Hi all,
+> >
+> > After merging the net tree, today's linux-next build (x86_64
+> allmodconfig)
+> > failed like this:
+> >
+> > drivers/net/stmmac/stmmac_main.c: In function 'stmmac_resume':
+> > drivers/net/stmmac/stmmac_main.c:1849: error: 'struct stmmac_priv'
+> has no member named 'shutdown'
+> >
+> > Caused by commit 874bd42d24c2a74f5dbd65e81e175982240fecd8 ("stmmac:
+> > convert to dev_pm_ops").
+> >
+>
 
-Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
+Yes, this was my fault.
 
-Thanks.
+> > I have used the net tree from next-20101126 for today.
+>
+> I have pushed the following fix which should cure this:
+>
+> --------------------
+> stmmac: fix stmmac_resume removing not yet used shutdown flag
+>
 
+The patch, David already applied, fixes this problem.
+
+Peppe
+
+> The commit to convert to use the dev_pm_ops struct
+> introduces a bug. The shutdown flag is not yet used
+> because the hibernation on memory is done by using
+> the freeze callback.
+> Thanks to Vlad for having reported it.
+>
+> Reported-by: Vlad Lungu <vlad.lungu@windriver.com>
+> Signed-off-by: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+> Signed-off-by: David S. Miller <davem@davemloft.net>
 > ---
->  drivers/net/vmxnet3/vmxnet3_ethtool.c |    5 ++++-
->  1 files changed, 4 insertions(+), 1 deletions(-)
-> 
-> diff --git a/drivers/net/vmxnet3/vmxnet3_ethtool.c b/drivers/net/vmxnet3/vmxnet3_ethtool.c
-> index 9ddaea6..8e17fc8 100644
-> --- a/drivers/net/vmxnet3/vmxnet3_ethtool.c
-> +++ b/drivers/net/vmxnet3/vmxnet3_ethtool.c
-> @@ -553,7 +553,7 @@ vmxnet3_get_rxnfc(struct net_device *netdev, struct ethtool_rxnfc *info,
->  	return -EOPNOTSUPP;
->  }
->  
+>  drivers/net/stmmac/stmmac_main.c |    7 -------
+>  1 files changed, 0 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/net/stmmac/stmmac_main.c
+> b/drivers/net/stmmac/stmmac_main.c
+> index f1dbc18..730a6fd 100644
+> --- a/drivers/net/stmmac/stmmac_main.c
+> +++ b/drivers/net/stmmac/stmmac_main.c
+> @@ -1846,13 +1846,6 @@ static int stmmac_resume(struct device *dev)
+>         if (!netif_running(ndev))
+>                 return 0;
+>
+> -       if (priv->shutdown) {
+> -               /* Re-open the interface and re-init the MAC/DMA
+> -                  and the rings (i.e. on hibernation stage) */
+> -               stmmac_open(dev);
+> -               return 0;
+> -       }
 > -
-> +#ifdef VMXNET3_RSS
->  static int
->  vmxnet3_get_rss_indir(struct net_device *netdev,
->  		      struct ethtool_rxfh_indir *p)
-> @@ -598,6 +598,7 @@ vmxnet3_set_rss_indir(struct net_device *netdev,
->  	return 0;
->  
->  }
-> +#endif
->  
->  static struct ethtool_ops vmxnet3_ethtool_ops = {
->  	.get_settings      = vmxnet3_get_settings,
-> @@ -623,8 +624,10 @@ static struct ethtool_ops vmxnet3_ethtool_ops = {
->  	.get_ringparam     = vmxnet3_get_ringparam,
->  	.set_ringparam     = vmxnet3_set_ringparam,
->  	.get_rxnfc         = vmxnet3_get_rxnfc,
-> +#ifdef VMXNET3_RSS
->  	.get_rxfh_indir    = vmxnet3_get_rss_indir,
->  	.set_rxfh_indir    = vmxnet3_set_rss_indir,
-> +#endif
->  };
->  
->  void vmxnet3_set_ethtool_ops(struct net_device *netdev)
-
-
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+>         spin_lock(&priv->lock);
+>
+>         /* Power Down bit, into the PM register, is cleared
+> --
+> 1.7.3.2
+>
