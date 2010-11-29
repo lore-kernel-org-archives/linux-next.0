@@ -1,126 +1,61 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH 3/3 V13] RO/NX protection for loadable kernel
-Date: Mon, 29 Nov 2010 13:15:42 -0500
-Message-ID: <20101129181542.GA11630@home.goodmis.org>
-References: <4CE2F914.9070106@free.fr>
-Mime-Version: 1.0
+From: Mathias Krause <minipli@googlemail.com>
+Subject: Re: linux-next: Tree for November 29 (aesni-intel)
+Date: Mon, 29 Nov 2010 19:26:31 +0100
+Message-ID: <DAEDA952-8AD2-406D-9F37-33740F86FC59@googlemail.com>
+References: <20101129140335.19800705.sfr@canb.auug.org.au> <20101129083105.e202e922.randy.dunlap@oracle.com>
+Mime-Version: 1.0 (Apple Message framework v1082)
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <4CE2F914.9070106@free.fr>
-Sender: linux-kernel-owner@vger.kernel.org
-To: matthieu castet <castet.matthieu@free.fr>
-Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, Rusty Russell <rusty@rustcorp.com.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>, Siarhei Liakh <sliakh.lkml@gmail.com>, Kees Cook <kees.cook@canonical.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-crypto-owner@vger.kernel.org>
+In-Reply-To: <20101129083105.e202e922.randy.dunlap@oracle.com>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Huang Ying <ying.huang@intel.com>, Vinodh Gopal <vinodh.gopal@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-crypto@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-This patch breaks function tracer:
+On 29.11.2010, 17:31 Randy Dunlap wrote:
+> On Mon, 29 Nov 2010 14:03:35 +1100 Stephen Rothwell wrote:
+> 
+>> Hi all,
+>> 
+>> Changes since 20101126:
+> 
+> 
+> on i386 builds, I get tons of these (and more) errors:
+> 
+> arch/x86/crypto/aesni-intel_asm.S:841: Error: bad register name `%r12'
+> arch/x86/crypto/aesni-intel_asm.S:842: Error: bad register name `%r13'
+> arch/x86/crypto/aesni-intel_asm.S:843: Error: bad register name `%r14'
+> arch/x86/crypto/aesni-intel_asm.S:844: Error: bad register name `%rsp'
+> arch/x86/crypto/aesni-intel_asm.S:849: Error: bad register name `%rsp'
+> arch/x86/crypto/aesni-intel_asm.S:850: Error: bad register name `%rsp'
+> arch/x86/crypto/aesni-intel_asm.S:851: Error: bad register name `%r9'
+> 
+> even though the kernel .config file says:
+> 
+> CONFIG_CRYPTO_AES=m
+> CONFIG_CRYPTO_AES_586=m
+> CONFIG_CRYPTO_AES_NI_INTEL=m
+> 
+> Should arch/x86/crypto/aesni-intel_asm.S be testing
+> #ifdef CONFIG_X86_64
+> instead of
+> #ifdef __x86_64__
+> or does that not matter?
+> 
+> or is this a toolchain issue?
 
-------------[ cut here ]------------
-WARNING: at kernel/trace/ftrace.c:1014 ftrace_bug+0x114/0x171()
-Hardware name: Precision WorkStation 470    
-Modules linked in: i2c_core(+)
-Pid: 86, comm: modprobe Not tainted 2.6.37-rc2+ #68
-Call Trace:
- [<ffffffff8104e957>] warn_slowpath_common+0x85/0x9d
- [<ffffffffa00026db>] ? __process_new_adapter+0x7/0x34 [i2c_core]
- [<ffffffffa00026db>] ? __process_new_adapter+0x7/0x34 [i2c_core]
- [<ffffffff8104e989>] warn_slowpath_null+0x1a/0x1c
- [<ffffffff810a9dfe>] ftrace_bug+0x114/0x171
- [<ffffffffa00026db>] ? __process_new_adapter+0x7/0x34 [i2c_core]
- [<ffffffff810aa0db>] ftrace_process_locs+0x1ae/0x274
- [<ffffffffa00026db>] ? __process_new_adapter+0x7/0x34 [i2c_core]
- [<ffffffff810aa29e>] ftrace_module_notify+0x39/0x44
- [<ffffffff814405cf>] notifier_call_chain+0x37/0x63
- [<ffffffff8106e054>] __blocking_notifier_call_chain+0x46/0x5b
- [<ffffffff8106e07d>] blocking_notifier_call_chain+0x14/0x16
- [<ffffffff8107ffde>] sys_init_module+0x73/0x1f3
- [<ffffffff8100acf2>] system_call_fastpath+0x16/0x1b
----[ end trace 2aff4f4ca53ec746 ]---
-ftrace faulted on writing [<ffffffffa00026db>]
-__process_new_adapter+0x7/0x34 [i2c_core]
+Well, __x86_64__ should be a build-in define of the compiler while
+CONFIG_X86_64 is defined for 64 bit builds in include/generated/autoconf.h.
+So by using the latter we should be on the safe side but if your compiler
+defines __x86_64__ for 32-bit builds it's simply broken. Also git grep
+showed quite a few more places using __x86_64__ so those would miscompile on
+your toolchain, too.
 
+But it looks like linux-next is just missing
+559ad0ff1368baea14dbc3207d55b02bd69bda4b from Herbert's git repo at
+git://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git.
+That should fix the build issue.
 
-On Tue, Nov 16, 2010 at 10:35:16PM +0100, matthieu castet wrote:
->  
-> @@ -2650,6 +2810,18 @@ static struct module *load_module(void __user *umod,
->  	kfree(info.strmap);
->  	free_copy(&info);
->  
-> +	/* Set RO and NX regions for core */
-> +	set_section_ro_nx(mod->module_core,
-> +				mod->core_text_size,
-> +				mod->core_ro_size,
-> +				mod->core_size);
-> +
-> +	/* Set RO and NX regions for init */
-> +	set_section_ro_nx(mod->module_init,
-> +				mod->init_text_size,
-> +				mod->init_ro_size,
-> +				mod->init_size);
-> +
-
-Here we set the text read only before we call the notifiers. The
-function tracer changes the calls to mcount into nops via a notifier
-call so this must be done after the module notifiers.
-
->  	/* Done! */
->  	trace_module_load(mod);
->  	return mod;
-> @@ -2753,6 +2925,7 @@ SYSCALL_DEFINE3(init_module, void __user *, umod,
->  	mod->symtab = mod->core_symtab;
->  	mod->strtab = mod->core_strtab;
->  #endif
-> +	unset_section_ro_nx(mod, mod->module_init);
->  	module_free(mod, mod->module_init);
->  	mod->module_init = NULL;
->  	mod->init_size = 0;
-
-Below is the patch that fixes this bug.
-
--- Steve
-
-Reported-by: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
-
-diff --git a/kernel/module.c b/kernel/module.c
-index ba421e6..5ccf52c 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -2804,18 +2804,6 @@ static struct module *load_module(void __user *umod,
- 	kfree(info.strmap);
- 	free_copy(&info);
- 
--	/* Set RO and NX regions for core */
--	set_section_ro_nx(mod->module_core,
--				mod->core_text_size,
--				mod->core_ro_size,
--				mod->core_size);
--
--	/* Set RO and NX regions for init */
--	set_section_ro_nx(mod->module_init,
--				mod->init_text_size,
--				mod->init_ro_size,
--				mod->init_size);
--
- 	/* Done! */
- 	trace_module_load(mod);
- 	return mod;
-@@ -2876,6 +2864,18 @@ SYSCALL_DEFINE3(init_module, void __user *, umod,
- 	blocking_notifier_call_chain(&module_notify_list,
- 			MODULE_STATE_COMING, mod);
- 
-+	/* Set RO and NX regions for core */
-+	set_section_ro_nx(mod->module_core,
-+				mod->core_text_size,
-+				mod->core_ro_size,
-+				mod->core_size);
-+
-+	/* Set RO and NX regions for init */
-+	set_section_ro_nx(mod->module_init,
-+				mod->init_text_size,
-+				mod->init_ro_size,
-+				mod->init_size);
-+
- 	do_mod_ctors(mod);
- 	/* Start the module */
- 	if (mod->init != NULL)
+Kind Regards,
+Mathias
