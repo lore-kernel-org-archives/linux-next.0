@@ -1,48 +1,38 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for November 29 (aesni-intel)
-Date: Mon, 29 Nov 2010 08:31:05 -0800
-Message-ID: <20101129083105.e202e922.randy.dunlap@oracle.com>
-References: <20101129140335.19800705.sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for November 22 (kvm)
+Date: Mon, 29 Nov 2010 08:33:24 -0800
+Message-ID: <20101129083324.6870d7da.randy.dunlap@oracle.com>
+References: <20101122134911.b7e106f9.sfr@canb.auug.org.au>
+	<20101122132627.bd4e88ef.randy.dunlap@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-crypto-owner@vger.kernel.org>
-In-Reply-To: <20101129140335.19800705.sfr@canb.auug.org.au>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Huang Ying <ying.huang@intel.com>, Vinodh Gopal <vinodh.gopal@intel.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mathias Krause <minipli@googlemail.com>, linux-crypto@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:56453 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754412Ab0K2Qdq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Nov 2010 11:33:46 -0500
+In-Reply-To: <20101122132627.bd4e88ef.randy.dunlap@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, kvm@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Mon, 29 Nov 2010 14:03:35 +1100 Stephen Rothwell wrote:
+On Mon, 22 Nov 2010 13:26:27 -0800 Randy Dunlap wrote:
 
-> Hi all,
+> On Mon, 22 Nov 2010 13:49:11 +1100 Stephen Rothwell wrote:
 > 
-> Changes since 20101126:
+> > Hi all,
+> > 
+> > Changes since 20101119:
+> 
+> 
+> kvm.c:(.init.text+0x11f49): undefined reference to `kvm_register_clock'
+> 
+> when CONFIG_KVM_CLOCK is not enabled.
 
 
-on i386 builds, I get tons of these (and more) errors:
-
-arch/x86/crypto/aesni-intel_asm.S:841: Error: bad register name `%r12'
-arch/x86/crypto/aesni-intel_asm.S:842: Error: bad register name `%r13'
-arch/x86/crypto/aesni-intel_asm.S:843: Error: bad register name `%r14'
-arch/x86/crypto/aesni-intel_asm.S:844: Error: bad register name `%rsp'
-arch/x86/crypto/aesni-intel_asm.S:849: Error: bad register name `%rsp'
-arch/x86/crypto/aesni-intel_asm.S:850: Error: bad register name `%rsp'
-arch/x86/crypto/aesni-intel_asm.S:851: Error: bad register name `%r9'
-
-even though the kernel .config file says:
-
-CONFIG_CRYPTO_AES=m
-CONFIG_CRYPTO_AES_586=m
-CONFIG_CRYPTO_AES_NI_INTEL=m
-
-Should arch/x86/crypto/aesni-intel_asm.S be testing
-#ifdef CONFIG_X86_64
-instead of
-#ifdef __x86_64__
-or does that not matter?
-
-or is this a toolchain issue?
+BUild error still present in linux-next-2010-NOV-29.
 
 ---
 ~Randy
