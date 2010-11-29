@@ -1,95 +1,126 @@
-From: Zachary Amsden <zamsden@redhat.com>
-Subject: Re: linux-next: Tree for November 22 (kvm)
-Date: Mon, 29 Nov 2010 08:08:30 -1000
-Message-ID: <4CF3EC1E.7050707@redhat.com>
-References: <20101122134911.b7e106f9.sfr@canb.auug.org.au>	<20101122132627.bd4e88ef.randy.dunlap@oracle.com> <20101129083324.6870d7da.randy.dunlap@oracle.com> <4CF3D637.6060204@redhat.com> <4CF3E733.8090809@redhat.com> <4CF3E870.4040308@oracle.com>
+From: Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH 3/3 V13] RO/NX protection for loadable kernel
+Date: Mon, 29 Nov 2010 13:15:42 -0500
+Message-ID: <20101129181542.GA11630@home.goodmis.org>
+References: <4CE2F914.9070106@free.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:28551 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755377Ab0K2SIh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Nov 2010 13:08:37 -0500
-In-Reply-To: <4CF3E870.4040308@oracle.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Avi Kivity <avi@redhat.com>, Glauber Costa <glommer@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, kvm@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <4CE2F914.9070106@free.fr>
+Sender: linux-kernel-owner@vger.kernel.org
+To: matthieu castet <castet.matthieu@free.fr>
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, Rusty Russell <rusty@rustcorp.com.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>, Siarhei Liakh <sliakh.lkml@gmail.com>, Kees Cook <kees.cook@canonical.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>
+List-Id: linux-next.vger.kernel.org
 
-On 11/29/2010 07:52 AM, Randy Dunlap wrote:
-> On 11/29/10 09:47, Zachary Amsden wrote:
->    
->> On 11/29/2010 06:35 AM, Avi Kivity wrote:
->>      
->>> On 11/29/2010 06:33 PM, Randy Dunlap wrote:
->>>        
->>>> On Mon, 22 Nov 2010 13:26:27 -0800 Randy Dunlap wrote:
->>>>
->>>>          
->>>>>   On Mon, 22 Nov 2010 13:49:11 +1100 Stephen Rothwell wrote:
->>>>>
->>>>>            
->>>>>>   Hi all,
->>>>>>
->>>>>>   Changes since 20101119:
->>>>>>              
->>>>>
->>>>>   kvm.c:(.init.text+0x11f49): undefined reference to
->>>>>            
->>>> `kvm_register_clock'
->>>>          
->>>>>   when CONFIG_KVM_CLOCK is not enabled.
->>>>>            
->>>>
->>>> BUild error still present in linux-next-2010-NOV-29.
->>>>
->>>>          
->>> Glauber, Zach?
->>>
->>>        
->> I can only speculate this reference is being called from smpboot without
->> CONFIG guarding?
->>      
-> Sorry, looks like I dropped the first line of the error messages:
->
-> arch/x86/built-in.o: In function `kvm_smp_prepare_boot_cpu':
-> kvm.c:(.init.text+0xad38): undefined reference to `kvm_register_clock'
->
-> from arch/x86/kernel/kvm.c:
->
-> #ifdef CONFIG_SMP
-> static void __init kvm_smp_prepare_boot_cpu(void)
-> {
-> 	WARN_ON(kvm_register_clock("primary cpu clock"));
-> 	kvm_guest_cpu_init();
-> 	native_smp_prepare_boot_cpu();
-> }
->
-> so it looks like you are correct...
->    
+This patch breaks function tracer:
 
-Looks like this is the appropriate fix:
-
-#ifdef CONFIG_SMP
-static void __init kvm_smp_prepare_boot_cpu(void)
-{
-#ifdef CONFIG_KVM_CLOCK
-	WARN_ON(kvm_register_clock("primary cpu clock"));
-#endif
-	kvm_guest_cpu_init();
-	native_smp_prepare_boot_cpu();
-}
+------------[ cut here ]------------
+WARNING: at kernel/trace/ftrace.c:1014 ftrace_bug+0x114/0x171()
+Hardware name: Precision WorkStation 470    
+Modules linked in: i2c_core(+)
+Pid: 86, comm: modprobe Not tainted 2.6.37-rc2+ #68
+Call Trace:
+ [<ffffffff8104e957>] warn_slowpath_common+0x85/0x9d
+ [<ffffffffa00026db>] ? __process_new_adapter+0x7/0x34 [i2c_core]
+ [<ffffffffa00026db>] ? __process_new_adapter+0x7/0x34 [i2c_core]
+ [<ffffffff8104e989>] warn_slowpath_null+0x1a/0x1c
+ [<ffffffff810a9dfe>] ftrace_bug+0x114/0x171
+ [<ffffffffa00026db>] ? __process_new_adapter+0x7/0x34 [i2c_core]
+ [<ffffffff810aa0db>] ftrace_process_locs+0x1ae/0x274
+ [<ffffffffa00026db>] ? __process_new_adapter+0x7/0x34 [i2c_core]
+ [<ffffffff810aa29e>] ftrace_module_notify+0x39/0x44
+ [<ffffffff814405cf>] notifier_call_chain+0x37/0x63
+ [<ffffffff8106e054>] __blocking_notifier_call_chain+0x46/0x5b
+ [<ffffffff8106e07d>] blocking_notifier_call_chain+0x14/0x16
+ [<ffffffff8107ffde>] sys_init_module+0x73/0x1f3
+ [<ffffffff8100acf2>] system_call_fastpath+0x16/0x1b
+---[ end trace 2aff4f4ca53ec746 ]---
+ftrace faulted on writing [<ffffffffa00026db>]
+__process_new_adapter+0x7/0x34 [i2c_core]
 
 
-The SMP code is still buggy as well, wrt printk timing, in that it 
-doesn't get called early enough, correct?  Has anyone thought of a good 
-solution to that problem?
+On Tue, Nov 16, 2010 at 10:35:16PM +0100, matthieu castet wrote:
+>  
+> @@ -2650,6 +2810,18 @@ static struct module *load_module(void __user *umod,
+>  	kfree(info.strmap);
+>  	free_copy(&info);
+>  
+> +	/* Set RO and NX regions for core */
+> +	set_section_ro_nx(mod->module_core,
+> +				mod->core_text_size,
+> +				mod->core_ro_size,
+> +				mod->core_size);
+> +
+> +	/* Set RO and NX regions for init */
+> +	set_section_ro_nx(mod->module_init,
+> +				mod->init_text_size,
+> +				mod->init_ro_size,
+> +				mod->init_size);
+> +
 
-Basically the problem is CPU-1 will get CPU-0's per-cpu areas copied 
-over, and these are not valid for CPU-1.  If the clocksource is used on 
-CPU-1 before kvm clock gets setup, it can go backwards, wreaking havoc, 
-causing panic, etc.
+Here we set the text read only before we call the notifiers. The
+function tracer changes the calls to mcount into nops via a notifier
+call so this must be done after the module notifiers.
 
-What is the best test to guard against this?  Perhaps we should keep the 
-CPU number in the per-cpu data and test against it?
+>  	/* Done! */
+>  	trace_module_load(mod);
+>  	return mod;
+> @@ -2753,6 +2925,7 @@ SYSCALL_DEFINE3(init_module, void __user *, umod,
+>  	mod->symtab = mod->core_symtab;
+>  	mod->strtab = mod->core_strtab;
+>  #endif
+> +	unset_section_ro_nx(mod, mod->module_init);
+>  	module_free(mod, mod->module_init);
+>  	mod->module_init = NULL;
+>  	mod->init_size = 0;
+
+Below is the patch that fixes this bug.
+
+-- Steve
+
+Reported-by: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
+
+diff --git a/kernel/module.c b/kernel/module.c
+index ba421e6..5ccf52c 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -2804,18 +2804,6 @@ static struct module *load_module(void __user *umod,
+ 	kfree(info.strmap);
+ 	free_copy(&info);
+ 
+-	/* Set RO and NX regions for core */
+-	set_section_ro_nx(mod->module_core,
+-				mod->core_text_size,
+-				mod->core_ro_size,
+-				mod->core_size);
+-
+-	/* Set RO and NX regions for init */
+-	set_section_ro_nx(mod->module_init,
+-				mod->init_text_size,
+-				mod->init_ro_size,
+-				mod->init_size);
+-
+ 	/* Done! */
+ 	trace_module_load(mod);
+ 	return mod;
+@@ -2876,6 +2864,18 @@ SYSCALL_DEFINE3(init_module, void __user *, umod,
+ 	blocking_notifier_call_chain(&module_notify_list,
+ 			MODULE_STATE_COMING, mod);
+ 
++	/* Set RO and NX regions for core */
++	set_section_ro_nx(mod->module_core,
++				mod->core_text_size,
++				mod->core_ro_size,
++				mod->core_size);
++
++	/* Set RO and NX regions for init */
++	set_section_ro_nx(mod->module_init,
++				mod->init_text_size,
++				mod->init_ro_size,
++				mod->init_size);
++
+ 	do_mod_ctors(mod);
+ 	/* Start the module */
+ 	if (mod->init != NULL)
