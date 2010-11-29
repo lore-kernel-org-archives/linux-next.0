@@ -1,57 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the net tree
-Date: Mon, 29 Nov 2010 11:08:24 +1100
-Message-ID: <20101129110824.639b2659.sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the mfd tree
+Date: Mon, 29 Nov 2010 11:52:57 +1100
+Message-ID: <20101129115257.9a78ad14.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__29_Nov_2010_11_08_24_+1100_EAdUC6t0AXb0tCIi"
+ boundary="Signature=_Mon__29_Nov_2010_11_52_57_+1100_MogseOtbvw2HzhUh"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44599 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:54575 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754327Ab0K2AIh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 28 Nov 2010 19:08:37 -0500
+	id S1754270Ab0K2AxE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 28 Nov 2010 19:53:04 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Giuseppe CAVALLARO <peppe.cavallaro@st.com>
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andres Salomon <dilinger@queued.net>
 
---Signature=_Mon__29_Nov_2010_11_08_24_+1100_EAdUC6t0AXb0tCIi
+--Signature=_Mon__29_Nov_2010_11_52_57_+1100_MogseOtbvw2HzhUh
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Samuel,
 
-After merging the net tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+After merging the mfd tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-drivers/net/stmmac/stmmac_main.c: In function 'stmmac_resume':
-drivers/net/stmmac/stmmac_main.c:1849: error: 'struct stmmac_priv' has no m=
-ember named 'shutdown'
+drivers/mfd/cs5535-mfd.c: In function 'cs5535_mfd_probe':
+drivers/mfd/cs5535-mfd.c:106: warning: format '%d' expects type 'int', but =
+argument 3 has type 'long unsigned int'
 
-Caused by commit 874bd42d24c2a74f5dbd65e81e175982240fecd8 ("stmmac:
-convert to dev_pm_ops").
+Introduced by commit a0d4503a044e67ac46adfe8f42eddefd2b60f85e ("mfd: Add
+cs5535-mfd driver for AMD Geode's CS5535/CS5536 support").
 
-I have used the net tree from next-20101126 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__29_Nov_2010_11_08_24_+1100_EAdUC6t0AXb0tCIi
+--Signature=_Mon__29_Nov_2010_11_52_57_+1100_MogseOtbvw2HzhUh
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJM8u74AAoJEDMEi1NhKgbsJygH/0/75pGUQg6pDoeSgPaEzFI3
-6BQejrhc7rDFFlMz3tjeLd6CUCupfeBRm9gAbK5PfGtjNPtaIYTb0AnUCQvp2rfq
-nTodeGmkB6nalkZoKjSNEulRxgYGxVFem9Qd3SVoyXYQ0z1/pBvBeMYGZm2++px3
-D3gLloCIiYeo7hbYJ2C4jzm1ueQZPkzbsttu/G9xYJHpeSDydTBYMTQTs+1/T6C0
-CkZIDDvbRFaf703JP5GAq2BcksEmkLOFRJ8blQuKk+7GbV9YFjx4dCbmsVrIob6H
-YdzGNjMM8XP44BcYWI58FELYKHIQptQZgHqNOX6WXrS0zoDAeFZTrgh2e1sAahs=
-=GS1W
+iQEcBAEBAgAGBQJM8vlpAAoJEDMEi1NhKgbsT2sH/je1ehpGwkU1LHcmGzQGdI5z
+Xw35JaHSpVbhPw22/JPcUso28yHCN3ZiHulzBKYaKUFeJJ+VT6wu3HujZ1eG0YgP
+CEJne4xUc7lNCu62IPRQfkqIA/io+0Z0oIHniXxFbkWvNd+X9uQD9ow0bglqcCWX
+5272r4ihj/JqCEBg+9r3vuzLNc0ZYpAH2PDkA84ICdeIbcLuD6f7tJZkgw2Jgvvb
+hx4hA51mI7SMryCR6WwWe2Gbp6GCLZV4WvwbSeO/KrYkY001gHrVPEfG4muiz86I
+t0f8vXyOneET3d+QoWu0Y8vBn6YvEmw2kcoB8OyZu+NJ7bhA0J/V9DSznWoYAOQ=
+=CYK4
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__29_Nov_2010_11_08_24_+1100_EAdUC6t0AXb0tCIi--
+--Signature=_Mon__29_Nov_2010_11_52_57_+1100_MogseOtbvw2HzhUh--
