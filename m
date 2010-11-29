@@ -1,52 +1,31 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: linux-next: build failure after merge of the final tree (tip
- tree related)
-Date: Mon, 29 Nov 2010 23:30:19 +0100
-Message-ID: <1291069819.32004.493.camel@laptop>
-References: <20101129135045.15aec5ed.sfr@canb.auug.org.au>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: [PATCH 3/3 V13] RO/NX protection for loadable kernel
+Date: Tue, 30 Nov 2010 10:05:29 +1030
+Message-ID: <201011301005.29532.rusty@rustcorp.com.au>
+References: <4CE2F914.9070106@free.fr> <20101129181542.GA11630@home.goodmis.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from canuck.infradead.org ([134.117.69.58]:50222 "EHLO
-	canuck.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750860Ab0K2WaH convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Nov 2010 17:30:07 -0500
-In-Reply-To: <20101129135045.15aec5ed.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-security-module-owner@vger.kernel.org>
+In-Reply-To: <20101129181542.GA11630@home.goodmis.org>
+Sender: linux-security-module-owner@vger.kernel.org
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: matthieu castet <castet.matthieu@free.fr>, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>, Siarhei Liakh <sliakh.lkml@gmail.com>, Kees Cook <kees.cook@canonical.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 2010-11-29 at 13:50 +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the final tree, today's linux-next build (sparc64 defconfig)
-> failed like this:
-> 
-> arch/sparc/kernel/perf_event.c:1326: error: 'init_hw_perf_event' undeclared here (not in a function)
-> 
-> Caused by commit 004417a6d468e24399e383645c068b498eed84ad ("perf, arch:
-> Cleanup perf-pmu init vs lockup-detector").
-> 
-> I reverted that commit for today.
+On Tue, 30 Nov 2010 04:45:42 am Steven Rostedt wrote:
+> This patch breaks function tracer:
+...
+> Here we set the text read only before we call the notifiers. The
+> function tracer changes the calls to mcount into nops via a notifier
+> call so this must be done after the module notifiers.
 
-Ingo, can we back-merge this?
+That seems fine.
 
----
- arch/sparc/kernel/perf_event.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+I note that both before and after this patch we potentially execute code
+in the module (via parse_args) before we set it ro & nx.  But fixing this
+last bit of coverage is probably not worth the pain...
 
-diff --git a/arch/sparc/kernel/perf_event.c b/arch/sparc/kernel/perf_event.c
-index 75c5b12..39348b1 100644
---- a/arch/sparc/kernel/perf_event.c
-+++ b/arch/sparc/kernel/perf_event.c
-@@ -1323,7 +1323,7 @@ int __init init_hw_perf_events(void)
- 
- 	return 0;
- }
--early_initcall(init_hw_perf_event);
-+early_initcall(init_hw_perf_events);
- 
- void perf_callchain_kernel(struct perf_callchain_entry *entry,
- 			   struct pt_regs *regs)
+Cheers,
+Rusty.
