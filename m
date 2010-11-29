@@ -1,59 +1,80 @@
-From: Don Zickus <dzickus@redhat.com>
-Subject: Re: linux-next: build failure after merge of the final tree (tip
- tree related)
-Date: Mon, 29 Nov 2010 09:30:47 -0500
-Message-ID: <20101129143047.GM18100@redhat.com>
-References: <20101122133949.93201b15.sfr@canb.auug.org.au>
- <20101129135023.4a931f86.sfr@canb.auug.org.au>
- <20101129082916.GA12374@elte.hu>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: linux-next: Tree for November 29
+Date: Mon, 29 Nov 2010 22:57:17 +0800
+Message-ID: <20101129145717.GA20232@gondor.apana.org.au>
+References: <20101129140335.19800705.sfr@canb.auug.org.au> <AANLkTikiZoNM9zpXw3wSK7-uqh+ZYMpJ+wg0wPpBs_kx@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:19849 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754247Ab0K2ObP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Nov 2010 09:31:15 -0500
+Received: from helcar.apana.org.au ([209.40.204.226]:34168 "EHLO
+	fornost.hengli.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751621Ab0K2O5Y (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Nov 2010 09:57:24 -0500
 Content-Disposition: inline
-In-Reply-To: <20101129082916.GA12374@elte.hu>
+In-Reply-To: <AANLkTikiZoNM9zpXw3wSK7-uqh+ZYMpJ+wg0wPpBs_kx@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>
+To: Zimny Lech <napohybelskurwysynom2010@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
 
-On Mon, Nov 29, 2010 at 09:29:16AM +0100, Ingo Molnar wrote:
+On Mon, Nov 29, 2010 at 09:47:38AM +0000, Zimny Lech wrote:
+> Ave
 > 
-> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
+> 2010/11/29 Stephen Rothwell <sfr@canb.auug.org.au>:
 > > Hi all,
-> > 
-> > On Mon, 22 Nov 2010 13:39:49 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > >
-> > > After merging the final tree, today's linux-next build (sparc64 defconfig)
-> > > failed like this:
-> > > 
-> > > arch/sparc/kernel/nmi.c:54: error: redefinition of 'touch_nmi_watchdog'
-> > > include/linux/nmi.h:21: note: previous definition of 'touch_nmi_watchdog' was here
-> > > 
-> > > Caused (or, at least exposed) by commit
-> > > 5f2b0ba4d94b3ac23cbc4b7f675d98eb677a760a ("x86, nmi_watchdog: Remove the
-> > > old nmi_watchdog").  Sparc appears to have a touch_nmi_watchdog() and
-> > > defines ARCH_HAS_NMI_WATCHDOG but not CONFIG_HARDLOCKUP_DETECTOR.
-> > > 
-> > > I have reverted that commit for today (as well as commit
-> > > 072b198a4ad48bd722ec6d203d65422a4698eae7 "x86, nmi_watchdog: Remove all
-> > > stub function calls from old nmi_watchdog" that depends on it).
-> > 
-> > This build failure is back, so I have reverted the above commits again.
+> >
+> > Changes since 20101126:
 > 
-> Don, have you got a fix for that?
-
-I do.  I posted it last week, but you wanted me to post something
-incremental instead.  I'll get that out today.
-
-Cheers,
-Don
-
 > 
-> Thanks,
-> 
-> 	Ingo
+> Setup is 14188 bytes (padded to 14336 bytes).
+> System is 1267 kB
+> CRC 61cea148
+> Kernel: arch/x86/boot/bzImage is ready  (#1)
+>   Building modules, stage 2.
+>   MODPOST 537 modules
+> ERROR: "sock_no_mmap" [crypto/algif_skcipher.ko] undefined!
+
+I hope this patch fixes it for you.
+
+commit 7451708f39db19a8303bb7fb95f00aca9f673cb5
+Author: Herbert Xu <herbert@gondor.apana.org.au>
+Date:   Mon Nov 29 22:56:03 2010 +0800
+
+    crypto: af_alg - Add dependency on NET
+    
+    Add missing dependency on NET since we require sockets for our
+    interface.
+    
+    Should really be a select but kconfig doesn't like that:
+    
+    net/Kconfig:6:error: found recursive dependency: NET -> NETWORK_FILESYSTEMS -> AFS_FS -> AF_RXRPC -> CRYPTO -> CRYPTO_USER_API_HASH -> CRYPTO_USER_API -> NET
+    
+    Reported-by: Zimny Lech <napohybelskurwysynom2010@gmail.com>
+    Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+
+diff --git a/crypto/Kconfig b/crypto/Kconfig
+index 467491d..96b0e55 100644
+--- a/crypto/Kconfig
++++ b/crypto/Kconfig
+@@ -848,6 +848,7 @@ config CRYPTO_USER_API
+ 
+ config CRYPTO_USER_API_HASH
+ 	tristate "User-space interface for hash algorithms"
++	depends on NET
+ 	select CRYPTO_HASH
+ 	select CRYPTO_USER_API
+ 	help
+@@ -856,6 +857,7 @@ config CRYPTO_USER_API_HASH
+ 
+ config CRYPTO_USER_API_SKCIPHER
+ 	tristate "User-space interface for symmetric key cipher algorithms"
++	depends on NET
+ 	select CRYPTO_BLKCIPHER
+ 	select CRYPTO_USER_API
+ 	help
+
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
