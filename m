@@ -1,56 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the mfd tree
-Date: Mon, 29 Nov 2010 11:52:57 +1100
-Message-ID: <20101129115257.9a78ad14.sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the tip tree
+Date: Mon, 29 Nov 2010 12:11:31 +1100
+Message-ID: <20101129121131.f3e7798b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__29_Nov_2010_11_52_57_+1100_MogseOtbvw2HzhUh"
+ boundary="Signature=_Mon__29_Nov_2010_12_11_31_+1100_EHsax_wZVIbqy_ax"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54575 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:59479 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754270Ab0K2AxE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 28 Nov 2010 19:53:04 -0500
+	id S1751889Ab0K2BLl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 28 Nov 2010 20:11:41 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andres Salomon <dilinger@queued.net>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__29_Nov_2010_11_52_57_+1100_MogseOtbvw2HzhUh
+--Signature=_Mon__29_Nov_2010_12_11_31_+1100_EHsax_wZVIbqy_ax
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Samuel,
+Hi all,
 
-After merging the mfd tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+produced this warning:
 
-drivers/mfd/cs5535-mfd.c: In function 'cs5535_mfd_probe':
-drivers/mfd/cs5535-mfd.c:106: warning: format '%d' expects type 'int', but =
-argument 3 has type 'long unsigned int'
+kernel/sched.c: In function 'sched_destroy_group':
+kernel/sched.c:8098: warning: 'i' is used uninitialized in this function
+kernel/sched.c:8088: note: 'i' was declared here
 
-Introduced by commit a0d4503a044e67ac46adfe8f42eddefd2b60f85e ("mfd: Add
-cs5535-mfd driver for AMD Geode's CS5535/CS5536 support").
+Introduced by commit 3d4b47b4b040c9d77dd68104cfc1055d89a55afd ("sched:
+Implement on-demand (active) cfs_rq list").  I think this is a real bug.
 
+[The wrong function is mentioned above, the actual function is
+unregister_fair_sched_group() - presumably gcc has confused itself via
+inlining.]
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__29_Nov_2010_11_52_57_+1100_MogseOtbvw2HzhUh
+--Signature=_Mon__29_Nov_2010_12_11_31_+1100_EHsax_wZVIbqy_ax
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJM8vlpAAoJEDMEi1NhKgbsT2sH/je1ehpGwkU1LHcmGzQGdI5z
-Xw35JaHSpVbhPw22/JPcUso28yHCN3ZiHulzBKYaKUFeJJ+VT6wu3HujZ1eG0YgP
-CEJne4xUc7lNCu62IPRQfkqIA/io+0Z0oIHniXxFbkWvNd+X9uQD9ow0bglqcCWX
-5272r4ihj/JqCEBg+9r3vuzLNc0ZYpAH2PDkA84ICdeIbcLuD6f7tJZkgw2Jgvvb
-hx4hA51mI7SMryCR6WwWe2Gbp6GCLZV4WvwbSeO/KrYkY001gHrVPEfG4muiz86I
-t0f8vXyOneET3d+QoWu0Y8vBn6YvEmw2kcoB8OyZu+NJ7bhA0J/V9DSznWoYAOQ=
-=CYK4
+iQEcBAEBAgAGBQJM8v3DAAoJEDMEi1NhKgbsG+wIAItMmmSf15f71tBlJHK2H/Ur
+V2TxmeFeY/2WLUIPmef9WKRMMvc5d7q8xI0i30wUoC+mURZMS3OB7U/1MlNYXyfh
+d402CYbLPnLZgg27Ou05CrF8tcWVd1mx9XFNJ49A7U3X3gLMhtFQ6zUvi9LD9CTN
+ms2kxIlXdRxGZHG9VkaObW+xintD4HHyrZq0B8Zsu326ckA+6NhKk6PzMuoGrjE2
+WPwuicctT1tQvcB+ownRKbiBU8qMstCI5fGURi9cX1FQGvWWJYR7xPYbGG2bY7Vq
+CUgs9ZgczIBm8t3sNaLRZ/B+Clntl5MMolxBshy75sjySPrXap1QRnBAtFZsnr4=
+=xr5H
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__29_Nov_2010_11_52_57_+1100_MogseOtbvw2HzhUh--
+--Signature=_Mon__29_Nov_2010_12_11_31_+1100_EHsax_wZVIbqy_ax--
