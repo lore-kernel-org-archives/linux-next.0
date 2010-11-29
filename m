@@ -1,90 +1,53 @@
-From: Peppe CAVALLARO <peppe.cavallaro@st.com>
-Subject: Re: linux-next: build failure after merge of the net tree
-Date: Mon, 29 Nov 2010 08:25:05 +0100
-Message-ID: <4CF35551.40201@st.com>
-References: <20101129110824.639b2659.sfr@canb.auug.org.au>
- <20101128.181134.104049260.davem@davemloft.net>
+From: Shreyas Bhatewara <sbhatewara@vmware.com>
+Subject: RE: linux-next: Tree for November 26
+Date: Mon, 29 Nov 2010 00:03:45 -0800
+Message-ID: <89E2752CFA8EC044846EB8499819134102BD7E186A@EXCH-MBX-4.vmware.com>
+References: <20101126132823.7ef94f07.sfr@canb.auug.org.au>,<AANLkTinJUT=j_P9FSB=GWTLy4Bkr68iWmB2O=5Q3gcT-@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from eu1sys200aog114.obsmtp.com ([207.126.144.137]:32794 "EHLO
-	eu1sys200aog114.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754780Ab0K2HZ2 convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Nov 2010 02:25:28 -0500
-In-Reply-To: <20101128.181134.104049260.davem@davemloft.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=iso-8859-2
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <AANLkTinJUT=j_P9FSB=GWTLy4Bkr68iWmB2O=5Q3gcT-@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Zimny Lech <napohybelskurwysynom2010@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "VMware, Inc." <pv-drivers@vmware.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Scott Goldman <scottjg@vmware.com>
+List-Id: linux-next.vger.kernel.org
 
-On 11/29/2010 3:11 AM, David Miller wrote:
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 29 Nov 2010 11:08:24 +1100
->
-> > Hi all,
-> >
-> > After merging the net tree, today's linux-next build (x86_64
-> allmodconfig)
-> > failed like this:
-> >
-> > drivers/net/stmmac/stmmac_main.c: In function 'stmmac_resume':
-> > drivers/net/stmmac/stmmac_main.c:1849: error: 'struct stmmac_priv'
-> has no member named 'shutdown'
-> >
-> > Caused by commit 874bd42d24c2a74f5dbd65e81e175982240fecd8 ("stmmac:
-> > convert to dev_pm_ops").
-> >
->
+Thanks for reporting.
+Thanks to Scott, the fix went in net-next tree, commit number : e9248fb=
+d6b6f7ef1917bfffe998654e40dfb4cfd
 
-Yes, this was my fault.
+->Shreyas
 
-> > I have used the net tree from next-20101126 for today.
->
-> I have pushed the following fix which should cure this:
->
-> --------------------
-> stmmac: fix stmmac_resume removing not yet used shutdown flag
->
+________________________________________
+=46rom: Zimny Lech [napohybelskurwysynom2010@gmail.com]
+Sent: Saturday, November 27, 2010 12:38 AM
+To: Stephen Rothwell
+Cc: linux-next@vger.kernel.org; LKML; Shreyas Bhatewara; VMware, Inc.; =
+netdev@vger.kernel.org
+Subject: Re: linux-next: Tree for November 26
 
-The patch, David already applied, fixes this problem.
+Ave
 
-Peppe
+2010/11/26 Stephen Rothwell <sfr@canb.auug.org.au>:
+> Hi all,
+>
+> Changes since 20101125:
 
-> The commit to convert to use the dev_pm_ops struct
-> introduces a bug. The shutdown flag is not yet used
-> because the hibernation on memory is done by using
-> the freeze callback.
-> Thanks to Vlad for having reported it.
->
-> Reported-by: Vlad Lungu <vlad.lungu@windriver.com>
-> Signed-off-by: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-> Signed-off-by: David S. Miller <davem@davemloft.net>
-> ---
->  drivers/net/stmmac/stmmac_main.c |    7 -------
->  1 files changed, 0 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/net/stmmac/stmmac_main.c
-> b/drivers/net/stmmac/stmmac_main.c
-> index f1dbc18..730a6fd 100644
-> --- a/drivers/net/stmmac/stmmac_main.c
-> +++ b/drivers/net/stmmac/stmmac_main.c
-> @@ -1846,13 +1846,6 @@ static int stmmac_resume(struct device *dev)
->         if (!netif_running(ndev))
->                 return 0;
->
-> -       if (priv->shutdown) {
-> -               /* Re-open the interface and re-init the MAC/DMA
-> -                  and the rings (i.e. on hibernation stage) */
-> -               stmmac_open(dev);
-> -               return 0;
-> -       }
-> -
->         spin_lock(&priv->lock);
->
->         /* Power Down bit, into the PM register, is cleared
-> --
-> 1.7.3.2
->
+
+  CC      drivers/net/vmxnet3/vmxnet3_drv.o
+  CC      drivers/net/vmxnet3/vmxnet3_ethtool.o
+/home/test/linux-2.6/drivers/net/vmxnet3/vmxnet3_ethtool.c: In
+function 'vmxnet3_get_rss_indir':
+/home/test/linux-2.6/drivers/net/vmxnet3/vmxnet3_ethtool.c:562:40:
+error: 'struct vmxnet3_adapter' has no member named 'rss_conf'
+/home/test/linux-2.6/drivers/net/vmxnet3/vmxnet3_ethtool.c: In
+function 'vmxnet3_set_rss_indir':
+/home/test/linux-2.6/drivers/net/vmxnet3/vmxnet3_ethtool.c:578:40:
+error: 'struct vmxnet3_adapter' has no member named 'rss_conf'
+make[4]: *** [drivers/net/vmxnet3/vmxnet3_ethtool.o] Error 1
+make[3]: *** [drivers/net/vmxnet3] Error 2
+make[2]: *** [drivers/net] Error 2
+make[1]: *** [drivers] Error 2
+make: *** [sub-make] Error 2
