@@ -1,64 +1,98 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for November 29 (aesni-intel)
-Date: Mon, 29 Nov 2010 10:54:03 -0800
-Message-ID: <4CF3F6CB.8080904@oracle.com>
-References: <20101129140335.19800705.sfr@canb.auug.org.au> <20101129083105.e202e922.randy.dunlap@oracle.com> <DAEDA952-8AD2-406D-9F37-33740F86FC59@googlemail.com>
+Subject: Re: linux-next: Tree for November 22 (kvm)
+Date: Mon, 29 Nov 2010 11:05:58 -0800
+Message-ID: <4CF3F996.5070103@oracle.com>
+References: <20101122134911.b7e106f9.sfr@canb.auug.org.au>	<20101122132627.bd4e88ef.randy.dunlap@oracle.com> <20101129083324.6870d7da.randy.dunlap@oracle.com> <4CF3D637.6060204@redhat.com> <4CF3E733.8090809@redhat.com> <4CF3E870.4040308@oracle.com> <4CF3EC1E.7050707@redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-crypto-owner@vger.kernel.org>
-In-Reply-To: <DAEDA952-8AD2-406D-9F37-33740F86FC59@googlemail.com>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Mathias Krause <minipli@googlemail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Huang Ying <ying.huang@intel.com>, Vinodh Gopal <vinodh.gopal@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-crypto@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4CF3EC1E.7050707@redhat.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Zachary Amsden <zamsden@redhat.com>
+Cc: Avi Kivity <avi@redhat.com>, Glauber Costa <glommer@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, kvm@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On 11/29/10 10:26, Mathias Krause wrote:
-> On 29.11.2010, 17:31 Randy Dunlap wrote:
->> On Mon, 29 Nov 2010 14:03:35 +1100 Stephen Rothwell wrote:
+On 11/29/10 10:08, Zachary Amsden wrote:
+> On 11/29/2010 07:52 AM, Randy Dunlap wrote:
+>> On 11/29/10 09:47, Zachary Amsden wrote:
+>>   
+>>> On 11/29/2010 06:35 AM, Avi Kivity wrote:
+>>>     
+>>>> On 11/29/2010 06:33 PM, Randy Dunlap wrote:
+>>>>       
+>>>>> On Mon, 22 Nov 2010 13:26:27 -0800 Randy Dunlap wrote:
+>>>>>
+>>>>>         
+>>>>>>   On Mon, 22 Nov 2010 13:49:11 +1100 Stephen Rothwell wrote:
+>>>>>>
+>>>>>>           
+>>>>>>>   Hi all,
+>>>>>>>
+>>>>>>>   Changes since 20101119:
+>>>>>>>              
+>>>>>>
+>>>>>>   kvm.c:(.init.text+0x11f49): undefined reference to
+>>>>>>            
+>>>>> `kvm_register_clock'
+>>>>>         
+>>>>>>   when CONFIG_KVM_CLOCK is not enabled.
+>>>>>>            
+>>>>>
+>>>>> BUild error still present in linux-next-2010-NOV-29.
+>>>>>
+>>>>>          
+>>>> Glauber, Zach?
+>>>>
+>>>>        
+>>> I can only speculate this reference is being called from smpboot without
+>>> CONFIG guarding?
+>>>      
+>> Sorry, looks like I dropped the first line of the error messages:
 >>
->>> Hi all,
->>>
->>> Changes since 20101126:
+>> arch/x86/built-in.o: In function `kvm_smp_prepare_boot_cpu':
+>> kvm.c:(.init.text+0xad38): undefined reference to `kvm_register_clock'
 >>
+>> from arch/x86/kernel/kvm.c:
 >>
->> on i386 builds, I get tons of these (and more) errors:
+>> #ifdef CONFIG_SMP
+>> static void __init kvm_smp_prepare_boot_cpu(void)
+>> {
+>>     WARN_ON(kvm_register_clock("primary cpu clock"));
+>>     kvm_guest_cpu_init();
+>>     native_smp_prepare_boot_cpu();
+>> }
 >>
->> arch/x86/crypto/aesni-intel_asm.S:841: Error: bad register name `%r12'
->> arch/x86/crypto/aesni-intel_asm.S:842: Error: bad register name `%r13'
->> arch/x86/crypto/aesni-intel_asm.S:843: Error: bad register name `%r14'
->> arch/x86/crypto/aesni-intel_asm.S:844: Error: bad register name `%rsp'
->> arch/x86/crypto/aesni-intel_asm.S:849: Error: bad register name `%rsp'
->> arch/x86/crypto/aesni-intel_asm.S:850: Error: bad register name `%rsp'
->> arch/x86/crypto/aesni-intel_asm.S:851: Error: bad register name `%r9'
->>
->> even though the kernel .config file says:
->>
->> CONFIG_CRYPTO_AES=m
->> CONFIG_CRYPTO_AES_586=m
->> CONFIG_CRYPTO_AES_NI_INTEL=m
->>
->> Should arch/x86/crypto/aesni-intel_asm.S be testing
->> #ifdef CONFIG_X86_64
->> instead of
->> #ifdef __x86_64__
->> or does that not matter?
->>
->> or is this a toolchain issue?
+>> so it looks like you are correct...
+>>    
 > 
-> Well, __x86_64__ should be a build-in define of the compiler while
-> CONFIG_X86_64 is defined for 64 bit builds in include/generated/autoconf.h.
-> So by using the latter we should be on the safe side but if your compiler
-> defines __x86_64__ for 32-bit builds it's simply broken. Also git grep
-> showed quite a few more places using __x86_64__ so those would miscompile on
-> your toolchain, too.
+> Looks like this is the appropriate fix:
 > 
-> But it looks like linux-next is just missing
-> 559ad0ff1368baea14dbc3207d55b02bd69bda4b from Herbert's git repo at
-> git://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git.
-> That should fix the build issue.
+> #ifdef CONFIG_SMP
+> static void __init kvm_smp_prepare_boot_cpu(void)
+> {
+> #ifdef CONFIG_KVM_CLOCK
+>     WARN_ON(kvm_register_clock("primary cpu clock"));
+> #endif
+>     kvm_guest_cpu_init();
+>     native_smp_prepare_boot_cpu();
+> }
 
-The build problem still happens when that patch is applied.
+Sure, that works.  Thanks.
+
+> 
+> The SMP code is still buggy as well, wrt printk timing, in that it
+> doesn't get called early enough, correct?  Has anyone thought of a good
+> solution to that problem?
+> 
+> Basically the problem is CPU-1 will get CPU-0's per-cpu areas copied
+> over, and these are not valid for CPU-1.  If the clocksource is used on
+> CPU-1 before kvm clock gets setup, it can go backwards, wreaking havoc,
+> causing panic, etc.
+> 
+> What is the best test to guard against this?  Perhaps we should keep the
+> CPU number in the per-cpu data and test against it?
+
 
 -- 
 ~Randy
