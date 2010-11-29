@@ -1,21 +1,17 @@
 From: Mathias Krause <minipli@googlemail.com>
 Subject: Re: linux-next: Tree for November 29 (aesni-intel)
-Date: Mon, 29 Nov 2010 20:45:39 +0100
-Message-ID: <45B80502-8597-4650-990F-F23B4FC751B8@googlemail.com>
+Date: Mon, 29 Nov 2010 20:52:02 +0100
+Message-ID: <358E1F68-6B24-4067-835E-94240025B0A3@googlemail.com>
 References: <4CF3F6CB.8080904@oracle.com> <1291058505-9384-1-git-send-email-minipli@googlemail.com> <4CF3FFAE.40906@oracle.com>
 Mime-Version: 1.0 (Apple Message framework v1082)
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:57975 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752569Ab0K2Tpr convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Nov 2010 14:45:47 -0500
+Return-path: <linux-crypto-owner@vger.kernel.org>
 In-Reply-To: <4CF3FFAE.40906@oracle.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Sender: linux-crypto-owner@vger.kernel.org
 To: Randy Dunlap <randy.dunlap@oracle.com>
 Cc: Herbert Xu <herbert@gondor.hengli.com.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Huang Ying <ying.huang@intel.com>, Vinodh Gopal <vinodh.gopal@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-crypto@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
 On 29.11.2010, 20:31 Randy Dunlap wrote:
 > On 11/29/10 11:21, Mathias Krause wrote:
@@ -84,11 +80,11 @@ On 29.11.2010, 20:31 Randy Dunlap wrote:
 > #define __x86_64__ 1
 > 
 > So that's not the problem... and the patch below didn't help.
-
-That's odd. The output of the commands looks good so the x86-64 specific code
-should be left out for 32-bit builds. :/
-
 > Sorry that I even asked about that.  What next?
 
-Can you please post the full error message. Meanwhile I'm checking out a
-linux-next tree, trying to reproduce your problem.
+Sorry, I cannot reproduce the problem with the latest linux-next and commit
+559ad0ff1368baea14dbc3207d55b02bd69bda4b from cryptodev-2.6 applied. Please
+ensure you've applied that patch.
+
+Regards,
+Mathias
