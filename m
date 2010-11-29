@@ -1,99 +1,268 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for November 22 (kvm)
-Date: Mon, 29 Nov 2010 11:05:58 -0800
-Message-ID: <4CF3F996.5070103@oracle.com>
-References: <20101122134911.b7e106f9.sfr@canb.auug.org.au>	<20101122132627.bd4e88ef.randy.dunlap@oracle.com> <20101129083324.6870d7da.randy.dunlap@oracle.com> <4CF3D637.6060204@redhat.com> <4CF3E733.8090809@redhat.com> <4CF3E870.4040308@oracle.com> <4CF3EC1E.7050707@redhat.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4CF3EC1E.7050707@redhat.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Zachary Amsden <zamsden@redhat.com>
-Cc: Avi Kivity <avi@redhat.com>, Glauber Costa <glommer@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, kvm@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+From: Mathias Krause <minipli@googlemail.com>
+Subject: Re: linux-next: Tree for November 29 (aesni-intel)
+Date: Mon, 29 Nov 2010 20:21:45 +0100
+Message-ID: <1291058505-9384-1-git-send-email-minipli@googlemail.com>
+References: <4CF3F6CB.8080904@oracle.com>
+Return-path: <linux-crypto-owner@vger.kernel.org>
+In-Reply-To: <4CF3F6CB.8080904@oracle.com>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Huang Ying <ying.huang@intel.com>, Vinodh Gopal <vinodh.gopal@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-crypto@vger.kernel.org, Mathias Krause <minipli@googlemail.com>
 List-Id: linux-next.vger.kernel.org
 
-On 11/29/10 10:08, Zachary Amsden wrote:
-> On 11/29/2010 07:52 AM, Randy Dunlap wrote:
->> On 11/29/10 09:47, Zachary Amsden wrote:
->>   
->>> On 11/29/2010 06:35 AM, Avi Kivity wrote:
->>>     
->>>> On 11/29/2010 06:33 PM, Randy Dunlap wrote:
->>>>       
->>>>> On Mon, 22 Nov 2010 13:26:27 -0800 Randy Dunlap wrote:
->>>>>
->>>>>         
->>>>>>   On Mon, 22 Nov 2010 13:49:11 +1100 Stephen Rothwell wrote:
->>>>>>
->>>>>>           
->>>>>>>   Hi all,
->>>>>>>
->>>>>>>   Changes since 20101119:
->>>>>>>              
->>>>>>
->>>>>>   kvm.c:(.init.text+0x11f49): undefined reference to
->>>>>>            
->>>>> `kvm_register_clock'
->>>>>         
->>>>>>   when CONFIG_KVM_CLOCK is not enabled.
->>>>>>            
->>>>>
->>>>> BUild error still present in linux-next-2010-NOV-29.
->>>>>
->>>>>          
->>>> Glauber, Zach?
+On 29.11.2010, 19:54 Randy Dunlap wrote:
+> On 11/29/10 10:26, Mathias Krause wrote:
+>> On 29.11.2010, 17:31 Randy Dunlap wrote:
+>>> On Mon, 29 Nov 2010 14:03:35 +1100 Stephen Rothwell wrote:
+>>>
+>>>> Hi all,
 >>>>
->>>>        
->>> I can only speculate this reference is being called from smpboot without
->>> CONFIG guarding?
->>>      
->> Sorry, looks like I dropped the first line of the error messages:
->>
->> arch/x86/built-in.o: In function `kvm_smp_prepare_boot_cpu':
->> kvm.c:(.init.text+0xad38): undefined reference to `kvm_register_clock'
->>
->> from arch/x86/kernel/kvm.c:
->>
->> #ifdef CONFIG_SMP
->> static void __init kvm_smp_prepare_boot_cpu(void)
->> {
->>     WARN_ON(kvm_register_clock("primary cpu clock"));
->>     kvm_guest_cpu_init();
->>     native_smp_prepare_boot_cpu();
->> }
->>
->> so it looks like you are correct...
->>    
-> 
-> Looks like this is the appropriate fix:
-> 
-> #ifdef CONFIG_SMP
-> static void __init kvm_smp_prepare_boot_cpu(void)
-> {
-> #ifdef CONFIG_KVM_CLOCK
->     WARN_ON(kvm_register_clock("primary cpu clock"));
-> #endif
->     kvm_guest_cpu_init();
->     native_smp_prepare_boot_cpu();
-> }
+>>>> Changes since 20101126:
+>>>
+>>>
+>>> on i386 builds, I get tons of these (and more) errors:
+>>>
+>>> arch/x86/crypto/aesni-intel_asm.S:841: Error: bad register name `%r12'
+>>> arch/x86/crypto/aesni-intel_asm.S:842: Error: bad register name `%r13'
+>>> arch/x86/crypto/aesni-intel_asm.S:843: Error: bad register name `%r14'
+>>> arch/x86/crypto/aesni-intel_asm.S:844: Error: bad register name `%rsp'
+>>> arch/x86/crypto/aesni-intel_asm.S:849: Error: bad register name `%rsp'
+>>> arch/x86/crypto/aesni-intel_asm.S:850: Error: bad register name `%rsp'
+>>> arch/x86/crypto/aesni-intel_asm.S:851: Error: bad register name `%r9'
+>>>
+>>> even though the kernel .config file says:
+>>>
+>>> CONFIG_CRYPTO_AES=m
+>>> CONFIG_CRYPTO_AES_586=m
+>>> CONFIG_CRYPTO_AES_NI_INTEL=m
+>>>
+>>> Should arch/x86/crypto/aesni-intel_asm.S be testing
+>>> #ifdef CONFIG_X86_64
+>>> instead of
+>>> #ifdef __x86_64__
+>>> or does that not matter?
+>>>
+>>> or is this a toolchain issue?
+>> 
+>> Well, __x86_64__ should be a build-in define of the compiler while
+>> CONFIG_X86_64 is defined for 64 bit builds in include/generated/autoconf.h.
+>> So by using the latter we should be on the safe side but if your compiler
+>> defines __x86_64__ for 32-bit builds it's simply broken. Also git grep
+>> showed quite a few more places using __x86_64__ so those would miscompile on
+>> your toolchain, too.
+>> 
+>> But it looks like linux-next is just missing
+>> 559ad0ff1368baea14dbc3207d55b02bd69bda4b from Herbert's git repo at
+>> git://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git.
+>> That should fix the build issue.
+>
+> The build problem still happens when that patch is applied.
 
-Sure, that works.  Thanks.
+That's weird. So it must be something with your toolchain.
+Can you please post the output of the following commands?:
 
-> 
-> The SMP code is still buggy as well, wrt printk timing, in that it
-> doesn't get called early enough, correct?  Has anyone thought of a good
-> solution to that problem?
-> 
-> Basically the problem is CPU-1 will get CPU-0's per-cpu areas copied
-> over, and these are not valid for CPU-1.  If the clocksource is used on
-> CPU-1 before kvm clock gets setup, it can go backwards, wreaking havoc,
-> causing panic, etc.
-> 
-> What is the best test to guard against this?  Perhaps we should keep the
-> CPU number in the per-cpu data and test against it?
+$ touch /tmp/null.c; cc -m32 -dD -E /tmp/null.c | grep -E 'x86|i.86'
+$ touch /tmp/null.c; cc -m64 -dD -E /tmp/null.c | grep -E 'x86|i.86'
 
+Beside that, the patch below should fix the issue with your toolchain by using
+CONFIG_X86_64 instead of __x86_64__.
 
+Sorry for the inconvenience,
+Mathias
+
+[PATCH] crypto: aesni-intel - Fixed another build error on x86-32
+
+It looks like not all compilers undef __x86_64__ for 32-bit builds so
+switch to CONFIG_X86_64 to test if we're building for 64 or 32 bit.
+
+Signed-off-by: Mathias Krause <minipli@googlemail.com>
+---
+ arch/x86/crypto/aesni-intel_asm.S |   40 ++++++++++++++++++------------------
+ 1 files changed, 20 insertions(+), 20 deletions(-)
+
+diff --git a/arch/x86/crypto/aesni-intel_asm.S b/arch/x86/crypto/aesni-intel_asm.S
+index d528fde..de0ec32 100644
+--- a/arch/x86/crypto/aesni-intel_asm.S
++++ b/arch/x86/crypto/aesni-intel_asm.S
+@@ -32,7 +32,7 @@
+ #include <linux/linkage.h>
+ #include <asm/inst.h>
+ 
+-#ifdef __x86_64__
++#ifdef CONFIG_X86_64
+ .data
+ POLY:   .octa 0xC2000000000000000000000000000001
+ TWOONE: .octa 0x00000001000000000000000000000001
+@@ -105,7 +105,7 @@ enc:        .octa 0x2
+ #define CTR	%xmm11
+ #define INC	%xmm12
+ 
+-#ifdef __x86_64__
++#ifdef CONFIG_X86_64
+ #define AREG	%rax
+ #define KEYP	%rdi
+ #define OUTP	%rsi
+@@ -132,7 +132,7 @@ enc:        .octa 0x2
+ #endif
+ 
+ 
+-#ifdef __x86_64__
++#ifdef CONFIG_X86_64
+ /* GHASH_MUL MACRO to implement: Data*HashKey mod (128,127,126,121,0)
+ *
+ *
+@@ -1333,7 +1333,7 @@ _key_expansion_256b:
+  *                   unsigned int key_len)
+  */
+ ENTRY(aesni_set_key)
+-#ifndef __x86_64__
++#ifndef CONFIG_X86_64
+ 	pushl KEYP
+ 	movl 8(%esp), KEYP		# ctx
+ 	movl 12(%esp), UKEYP		# in_key
+@@ -1435,7 +1435,7 @@ ENTRY(aesni_set_key)
+ 	cmp TKEYP, KEYP
+ 	jb .Ldec_key_loop
+ 	xor AREG, AREG
+-#ifndef __x86_64__
++#ifndef CONFIG_X86_64
+ 	popl KEYP
+ #endif
+ 	ret
+@@ -1444,7 +1444,7 @@ ENTRY(aesni_set_key)
+  * void aesni_enc(struct crypto_aes_ctx *ctx, u8 *dst, const u8 *src)
+  */
+ ENTRY(aesni_enc)
+-#ifndef __x86_64__
++#ifndef CONFIG_X86_64
+ 	pushl KEYP
+ 	pushl KLEN
+ 	movl 12(%esp), KEYP
+@@ -1455,7 +1455,7 @@ ENTRY(aesni_enc)
+ 	movups (INP), STATE		# input
+ 	call _aesni_enc1
+ 	movups STATE, (OUTP)		# output
+-#ifndef __x86_64__
++#ifndef CONFIG_X86_64
+ 	popl KLEN
+ 	popl KEYP
+ #endif
+@@ -1630,7 +1630,7 @@ _aesni_enc4:
+  * void aesni_dec (struct crypto_aes_ctx *ctx, u8 *dst, const u8 *src)
+  */
+ ENTRY(aesni_dec)
+-#ifndef __x86_64__
++#ifndef CONFIG_X86_64
+ 	pushl KEYP
+ 	pushl KLEN
+ 	movl 12(%esp), KEYP
+@@ -1642,7 +1642,7 @@ ENTRY(aesni_dec)
+ 	movups (INP), STATE		# input
+ 	call _aesni_dec1
+ 	movups STATE, (OUTP)		#output
+-#ifndef __x86_64__
++#ifndef CONFIG_X86_64
+ 	popl KLEN
+ 	popl KEYP
+ #endif
+@@ -1818,7 +1818,7 @@ _aesni_dec4:
+  *		      size_t len)
+  */
+ ENTRY(aesni_ecb_enc)
+-#ifndef __x86_64__
++#ifndef CONFIG_X86_64
+ 	pushl LEN
+ 	pushl KEYP
+ 	pushl KLEN
+@@ -1863,7 +1863,7 @@ ENTRY(aesni_ecb_enc)
+ 	cmp $16, LEN
+ 	jge .Lecb_enc_loop1
+ .Lecb_enc_ret:
+-#ifndef __x86_64__
++#ifndef CONFIG_X86_64
+ 	popl KLEN
+ 	popl KEYP
+ 	popl LEN
+@@ -1875,7 +1875,7 @@ ENTRY(aesni_ecb_enc)
+  *		      size_t len);
+  */
+ ENTRY(aesni_ecb_dec)
+-#ifndef __x86_64__
++#ifndef CONFIG_X86_64
+ 	pushl LEN
+ 	pushl KEYP
+ 	pushl KLEN
+@@ -1921,7 +1921,7 @@ ENTRY(aesni_ecb_dec)
+ 	cmp $16, LEN
+ 	jge .Lecb_dec_loop1
+ .Lecb_dec_ret:
+-#ifndef __x86_64__
++#ifndef CONFIG_X86_64
+ 	popl KLEN
+ 	popl KEYP
+ 	popl LEN
+@@ -1933,7 +1933,7 @@ ENTRY(aesni_ecb_dec)
+  *		      size_t len, u8 *iv)
+  */
+ ENTRY(aesni_cbc_enc)
+-#ifndef __x86_64__
++#ifndef CONFIG_X86_64
+ 	pushl IVP
+ 	pushl LEN
+ 	pushl KEYP
+@@ -1961,7 +1961,7 @@ ENTRY(aesni_cbc_enc)
+ 	jge .Lcbc_enc_loop
+ 	movups STATE, (IVP)
+ .Lcbc_enc_ret:
+-#ifndef __x86_64__
++#ifndef CONFIG_X86_64
+ 	popl KLEN
+ 	popl KEYP
+ 	popl LEN
+@@ -1974,7 +1974,7 @@ ENTRY(aesni_cbc_enc)
+  *		      size_t len, u8 *iv)
+  */
+ ENTRY(aesni_cbc_dec)
+-#ifndef __x86_64__
++#ifndef CONFIG_X86_64
+ 	pushl IVP
+ 	pushl LEN
+ 	pushl KEYP
+@@ -1998,7 +1998,7 @@ ENTRY(aesni_cbc_dec)
+ 	movaps IN1, STATE1
+ 	movups 0x10(INP), IN2
+ 	movaps IN2, STATE2
+-#ifdef __x86_64__
++#ifdef CONFIG_X86_64
+ 	movups 0x20(INP), IN3
+ 	movaps IN3, STATE3
+ 	movups 0x30(INP), IN4
+@@ -2011,7 +2011,7 @@ ENTRY(aesni_cbc_dec)
+ #endif
+ 	call _aesni_dec4
+ 	pxor IV, STATE1
+-#ifdef __x86_64__
++#ifdef CONFIG_X86_64
+ 	pxor IN1, STATE2
+ 	pxor IN2, STATE3
+ 	pxor IN3, STATE4
+@@ -2049,7 +2049,7 @@ ENTRY(aesni_cbc_dec)
+ .Lcbc_dec_ret:
+ 	movups IV, (IVP)
+ .Lcbc_dec_just_ret:
+-#ifndef __x86_64__
++#ifndef CONFIG_X86_64
+ 	popl KLEN
+ 	popl KEYP
+ 	popl LEN
+@@ -2057,7 +2057,7 @@ ENTRY(aesni_cbc_dec)
+ #endif
+ 	ret
+ 
+-#ifdef __x86_64__
++#ifdef CONFIG_X86_64
+ .align 16
+ .Lbswap_mask:
+ 	.byte 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0
 -- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+1.5.6.5
