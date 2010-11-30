@@ -1,45 +1,55 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Please include ux500 core into linux-next
-Date: Tue, 30 Nov 2010 10:31:43 +0100
-Message-ID: <AANLkTi=fXAucNc-m9dqb0cgA6mGJ5c4cXC-pTOz05vwY@mail.gmail.com>
+From: Samuel Ortiz <sameo@linux.intel.com>
+Subject: Re: [PATCH] cs5535-mfd: fix warning on x86-64
+Date: Tue, 30 Nov 2010 11:01:38 +0100
+Message-ID: <20101130100137.GA11125@sortiz-mobl>
+References: <20101129115257.9a78ad14.sfr@canb.auug.org.au>
+ <20101129204410.339805ef@queued.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
-List-Unsubscribe: <http://lists.linaro.org/mailman/options/linaro-dev>,
-	<mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linaro.org/pipermail/linaro-dev>
-List-Post: <mailto:linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
-List-Help: <mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.linaro.org/mailman/listinfo/linaro-dev>,
-	<mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=subscribe>
-Sender: linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
-Errors-To: linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
-To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linaro-dev <linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, Rabin VINCENT <rabin.vincent-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga09.intel.com ([134.134.136.24]:9949 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754754Ab0K3KBl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 30 Nov 2010 05:01:41 -0500
+Content-Disposition: inline
+In-Reply-To: <20101129204410.339805ef@queued.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andres Salomon <dilinger@queued.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Stephen,
+Hi Andres,
 
-please consider to start merging our ux500-core branch into
-linux-next:
+On Mon, Nov 29, 2010 at 08:44:10PM -0800, Andres Salomon wrote:
+> On Mon, 29 Nov 2010 11:52:57 +1100
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> 
+> > Hi Samuel,
+> > 
+> > After merging the mfd tree, today's linux-next build (x86_64
+> > allmodconfig) produced this warning:
+> > 
+> > drivers/mfd/cs5535-mfd.c: In function 'cs5535_mfd_probe':
+> > drivers/mfd/cs5535-mfd.c:106: warning: format '%d' expects type
+> > 'int', but argument 3 has type 'long unsigned int'
+> > 
+> 
+> Ick, ARRAY_SIZE is unsigned int on x86, unsigned long on x86-64.  The
+> patch below fixes this.
+> 
+> 
+> 
+> 
+> From: Andres Salomon <dilinger@queued.net>
+> 
+> ARRAY_SIZE() returns unsigned long on x86-64 (rather than unsigned int);
+> cast it to the desired type to shut gcc up.
+Patch applied, many thanks.
+I'll look at your subdevices patches by the end of this week.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-stericsson.git
-Branch: ux500-core
+Cheers,
+Samuel.
 
-(NB: there is a "next" branch, which include patches to multiple
-subsystems, don't merge that, this is just the ux500 core.)
-
-I rebase this regularly to Torvalds' -rc tags, hope that's OK.
-
-All code is being reviewed on the linux-arm-kernel list, and the
-patches here are intended for pull request to Russell King who
-in turn take them upstream. I hope this procedure is
-acceptable.
-
-We currently have some of these patches in Russells patch tracker
-as well, but they will be taken out in favor of the pull approach
-once this branch lands in -next.
-
-Yours,
-Linus Walleij
+-- 
+Intel Open Source Technology Centre
+http://oss.intel.com/
