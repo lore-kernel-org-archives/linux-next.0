@@ -1,40 +1,118 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH 3/3 V13] RO/NX protection for loadable kernel
-Date: Tue, 30 Nov 2010 09:46:23 -0500
-Message-ID: <1291128383.27486.35.camel@gandalf.stny.rr.com>
-References: <4CE2F914.9070106@free.fr>
-	 <20101129181542.GA11630@home.goodmis.org>
-	 <201011301005.29532.rusty@rustcorp.com.au>
+From: Zachary Amsden <zamsden@redhat.com>
+Subject: Re: linux-next: Tree for November 22 (kvm)
+Date: Tue, 30 Nov 2010 08:09:54 -1000
+Message-ID: <4CF53DF2.2040803@redhat.com>
+References: <20101122134911.b7e106f9.sfr@canb.auug.org.au>	 <20101122132627.bd4e88ef.randy.dunlap@oracle.com>	 <20101129083324.6870d7da.randy.dunlap@oracle.com>	 <4CF3D637.6060204@redhat.com> <4CF3E733.8090809@redhat.com>	 <4CF3E870.4040308@oracle.com>  <4CF3EC1E.7050707@redhat.com> <1291119448.17261.4.camel@mothafucka.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-15"
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from hrndva-omtalb.mail.rr.com ([71.74.56.125]:36073 "EHLO
-	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750877Ab0K3Oq2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 30 Nov 2010 09:46:28 -0500
-In-Reply-To: <201011301005.29532.rusty@rustcorp.com.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: matthieu castet <castet.matthieu@free.fr>, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>, Siarhei Liakh <sliakh.lkml@gmail.com>, Kees Cook <kees.cook@canonical.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1291119448.17261.4.camel@mothafucka.localdomain>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Glauber Costa <glommer@redhat.com>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Avi Kivity <avi@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, kvm@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, 2010-11-30 at 10:05 +1030, Rusty Russell wrote:
-> On Tue, 30 Nov 2010 04:45:42 am Steven Rostedt wrote:
-> > This patch breaks function tracer:
-> ...
-> > Here we set the text read only before we call the notifiers. The
-> > function tracer changes the calls to mcount into nops via a notifier
-> > call so this must be done after the module notifiers.
-> 
-> That seems fine.
-> 
-> I note that both before and after this patch we potentially execute code
-> in the module (via parse_args) before we set it ro & nx.  But fixing this
-> last bit of coverage is probably not worth the pain...
+On 11/30/2010 02:17 AM, Glauber Costa wrote:
+> On Mon, 2010-11-29 at 08:08 -1000, Zachary Amsden wrote:
+>    
+>> On 11/29/2010 07:52 AM, Randy Dunlap wrote:
+>>      
+>>> On 11/29/10 09:47, Zachary Amsden wrote:
+>>>
+>>>        
+>>>> On 11/29/2010 06:35 AM, Avi Kivity wrote:
+>>>>
+>>>>          
+>>>>> On 11/29/2010 06:33 PM, Randy Dunlap wrote:
+>>>>>
+>>>>>            
+>>>>>> On Mon, 22 Nov 2010 13:26:27 -0800 Randy Dunlap wrote:
+>>>>>>
+>>>>>>
+>>>>>>              
+>>>>>>>    On Mon, 22 Nov 2010 13:49:11 +1100 Stephen Rothwell wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>>                
+>>>>>>>>    Hi all,
+>>>>>>>>
+>>>>>>>>    Changes since 20101119:
+>>>>>>>>
+>>>>>>>>                  
+>>>>>>>    kvm.c:(.init.text+0x11f49): undefined reference to
+>>>>>>>
+>>>>>>>                
+>>>>>> `kvm_register_clock'
+>>>>>>
+>>>>>>              
+>>>>>>>    when CONFIG_KVM_CLOCK is not enabled.
+>>>>>>>
+>>>>>>>                
+>>>>>> BUild error still present in linux-next-2010-NOV-29.
+>>>>>>
+>>>>>>
+>>>>>>              
+>>>>> Glauber, Zach?
+>>>>>
+>>>>>
+>>>>>            
+>>>> I can only speculate this reference is being called from smpboot without
+>>>> CONFIG guarding?
+>>>>
+>>>>          
+>>> Sorry, looks like I dropped the first line of the error messages:
+>>>
+>>> arch/x86/built-in.o: In function `kvm_smp_prepare_boot_cpu':
+>>> kvm.c:(.init.text+0xad38): undefined reference to `kvm_register_clock'
+>>>
+>>> from arch/x86/kernel/kvm.c:
+>>>
+>>> #ifdef CONFIG_SMP
+>>> static void __init kvm_smp_prepare_boot_cpu(void)
+>>> {
+>>> 	WARN_ON(kvm_register_clock("primary cpu clock"));
+>>> 	kvm_guest_cpu_init();
+>>> 	native_smp_prepare_boot_cpu();
+>>> }
+>>>
+>>> so it looks like you are correct...
+>>>
+>>>        
+>> Looks like this is the appropriate fix:
+>>
+>> #ifdef CONFIG_SMP
+>> static void __init kvm_smp_prepare_boot_cpu(void)
+>> {
+>> #ifdef CONFIG_KVM_CLOCK
+>> 	WARN_ON(kvm_register_clock("primary cpu clock"));
+>> #endif
+>> 	kvm_guest_cpu_init();
+>> 	native_smp_prepare_boot_cpu();
+>> }
+>>
+>>
+>> The SMP code is still buggy as well, wrt printk timing, in that it
+>> doesn't get called early enough, correct?  Has anyone thought of a good
+>> solution to that problem?
+>>
+>> Basically the problem is CPU-1 will get CPU-0's per-cpu areas copied
+>> over, and these are not valid for CPU-1.  If the clocksource is used on
+>> CPU-1 before kvm clock gets setup, it can go backwards, wreaking havoc,
+>> causing panic, etc.
+>>
+>> What is the best test to guard against this?  Perhaps we should keep the
+>> CPU number in the per-cpu data and test against it?
+>>      
+> Can we identify precisely when it happens? If we can, we can try to
+> force a hypervisor exit or re-register right after the data is copied
+> over. This will force the per-cpu structure to get updated with good
+> values.
+>    
 
-Rusty, can I take this as an "Acked-by"?
+It's as if we need a new type of per-cpu data, per_cpu_zeroed, which is 
+always cleared prior to starting on the AP.
 
-Thanks,
+I imagine other code paths may need this as well.
 
--- Steve
+Zach
