@@ -1,81 +1,45 @@
-From: Andres Salomon <dilinger@queued.net>
-Subject: [PATCH] cs5535-mfd: fix warning on x86-64
-Date: Mon, 29 Nov 2010 20:44:10 -0800
-Message-ID: <20101129204410.339805ef@queued.net>
-References: <20101129115257.9a78ad14.sfr@canb.auug.org.au>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Please include ux500 core into linux-next
+Date: Tue, 30 Nov 2010 10:31:43 +0100
+Message-ID: <AANLkTi=fXAucNc-m9dqb0cgA6mGJ5c4cXC-pTOz05vwY@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=PGP-SHA1;
- boundary="Sig_/XhctqklKEiYj3xdxRT7Ax7h"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20101129115257.9a78ad14.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
+List-Unsubscribe: <http://lists.linaro.org/mailman/options/linaro-dev>,
+	<mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linaro.org/pipermail/linaro-dev>
+List-Post: <mailto:linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
+List-Help: <mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.linaro.org/mailman/listinfo/linaro-dev>,
+	<mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=subscribe>
+Sender: linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
+Errors-To: linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linaro-dev <linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, Rabin VINCENT <rabin.vincent-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-next.vger.kernel.org
 
---Sig_/XhctqklKEiYj3xdxRT7Ax7h
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-On Mon, 29 Nov 2010 11:52:57 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+please consider to start merging our ux500-core branch into
+linux-next:
 
-> Hi Samuel,
->=20
-> After merging the mfd tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
->=20
-> drivers/mfd/cs5535-mfd.c: In function 'cs5535_mfd_probe':
-> drivers/mfd/cs5535-mfd.c:106: warning: format '%d' expects type
-> 'int', but argument 3 has type 'long unsigned int'
->=20
+git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-stericsson.git
+Branch: ux500-core
 
-Ick, ARRAY_SIZE is unsigned int on x86, unsigned long on x86-64.  The
-patch below fixes this.
+(NB: there is a "next" branch, which include patches to multiple
+subsystems, don't merge that, this is just the ux500 core.)
 
+I rebase this regularly to Torvalds' -rc tags, hope that's OK.
 
+All code is being reviewed on the linux-arm-kernel list, and the
+patches here are intended for pull request to Russell King who
+in turn take them upstream. I hope this procedure is
+acceptable.
 
+We currently have some of these patches in Russells patch tracker
+as well, but they will be taken out in favor of the pull approach
+once this branch lands in -next.
 
-From: Andres Salomon <dilinger@queued.net>
-
-ARRAY_SIZE() returns unsigned long on x86-64 (rather than unsigned int);
-cast it to the desired type to shut gcc up.
-
-Signed-off-by: Andres Salomon <dilinger@queued.net>
----
- drivers/mfd/cs5535-mfd.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mfd/cs5535-mfd.c b/drivers/mfd/cs5535-mfd.c
-index b141ca7..e6f7ebc 100644
---- a/drivers/mfd/cs5535-mfd.c
-+++ b/drivers/mfd/cs5535-mfd.c
-@@ -103,8 +103,8 @@ static int __devinit cs5535_mfd_probe(struct pci_dev *p=
-dev,
- 		goto err_disable;
- 	}
-=20
--	dev_info(&pdev->dev, "%d devices registered.\n",
--			ARRAY_SIZE(cs5535_mfd_cells));
-+	dev_info(&pdev->dev, "%u devices registered.\n",
-+			(unsigned int) ARRAY_SIZE(cs5535_mfd_cells));
-=20
- 	return 0;
-=20
---=20
-1.7.2.3
-
-
---Sig_/XhctqklKEiYj3xdxRT7Ax7h
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iEYEARECAAYFAkz0gRoACgkQOmXwGc/ULyaUQACdFncDZWX8zzX4140fCPGrA+rI
-lOQAnjh/9gDfWwIzZccKqYbbQoUoVGBU
-=Z7an
------END PGP SIGNATURE-----
-
---Sig_/XhctqklKEiYj3xdxRT7Ax7h--
+Yours,
+Linus Walleij
