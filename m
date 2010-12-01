@@ -1,59 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rmobile tree with the arm tree
-Date: Wed, 1 Dec 2010 10:43:29 +1100
-Message-ID: <20101201104329.3fdbe25d.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Wed, 1 Dec 2010 11:31:38 +1100
+Message-ID: <20101201113138.f6146790.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__1_Dec_2010_11_31_38_+1100_DluGYa0p.vKCBp+O"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46767 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:55557 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751689Ab0K3Xne (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 30 Nov 2010 18:43:34 -0500
+	id S1752875Ab0LAAbz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 30 Nov 2010 19:31:55 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Mundt <lethal@linux-sh.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jean-Christop PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Russell King <rmk@arm.linux.org.uk>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jarkko Nikula <jhnikula@gmail.com>
 
-Hi Paul,
+--Signature=_Wed__1_Dec_2010_11_31_38_+1100_DluGYa0p.vKCBp+O
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the rmobile tree got a conflict in
-arch/arm/mach-shmobile/Kconfig between commit
-6d803ba736abb5e122dede70a4720e4843dd6df4 ("ARM: 6483/1: arm & sh:
-factorised duplicated clkdev.c") from the arm tree and commit
-6d72ad35f1bfaf6e52ca7133cb51ce0e36f17528 ("ARM: mach-shmobile: Tidy up
-the Kconfig bits") from the rmobile tree.
+Hi all,
 
-The latter removed the lines modified by the former, so I used the
-latter.  I also applied this merge fixup:
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 1 Dec 2010 10:40:34 +1100
-Subject: [PATCH] rmobile: merge fixup for clkdev changes
+sound/soc/soc-core.c: In function 'soc_probe_aux_dev':
+sound/soc/soc-core.c:1647: error: 'struct snd_soc_dapm_context' has no memb=
+er named 'list'
+sound/soc/soc-core.c:1647: error: 'struct snd_soc_card' has no member named=
+ 'dapm_list'
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/arm/Kconfig |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+Caused by commit 2eea392d0a28a0a07d36a9da544eb40f81bf4cb6 ("ASoC: Add
+support for optional auxiliary dailess codecs").
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 1b219e4..9d0ba44 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -609,7 +609,7 @@ config ARCH_MSM
- config ARCH_SHMOBILE
- 	bool "Renesas SH-Mobile / R-Mobile"
- 	select HAVE_CLK
--	select COMMON_CLKDEV
-+	select CLKDEV_LOOKUP
- 	select GENERIC_CLOCKEVENTS
- 	select NO_IOPORT
- 	select SPARSE_IRQ
--- 
-1.7.2.3
-
-
--- 
+I have used the version of the sound-asoc tree from next-20101130 for today
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__1_Dec_2010_11_31_38_+1100_DluGYa0p.vKCBp+O
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJM9ZdqAAoJEDMEi1NhKgbsMv4H/2ghT8wGiHcJTcr2Uhsf+BfW
+piQkRDwHqfdhYStPGFVADITSKrdKNF34nlzGrz5xFGMz8lCPNjliI9az02zQ7QRX
+R9CtCq1P6SbZkBFixD6doj6e708+QzhzAAgNUDirFVpa7HQPNQuL/7RabkCFRhXv
+xu9v7J2SuGsXWGXYIfOfEXjrgMlM/nAl3n458mKPcP+/ZCmG6/Ocfg26xY3PCrE/
+dJWUnM364jz2GLUgCQ86IdxvuN7l3N8NqnfaYdg8hc3M7GxyINknYh1ie+wbQoZc
+vliji8jwO5A7J2OGI8HGHQ/NWxJOWOnVCn1304RyyiHt7oUsxIDyPif2/TyX428=
+=C+tW
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__1_Dec_2010_11_31_38_+1100_DluGYa0p.vKCBp+O--
