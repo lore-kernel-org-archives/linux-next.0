@@ -1,27 +1,37 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] ASoC: Fix build failure in soc-core.c
-Date: Wed, 1 Dec 2010 11:36:23 +0000
-Message-ID: <20101201113623.GI24176@rakim.wolfsonmicro.main>
-References: <20101201113138.f6146790.sfr@canb.auug.org.au>
- <1291187447-1247-1-git-send-email-jhnikula@gmail.com>
+From: Rusty Russell <rusty@rustcorp.com.au>
+Subject: Re: [PATCH 3/3 V13] RO/NX protection for loadable kernel
+Date: Thu, 2 Dec 2010 00:06:45 +1030
+Message-ID: <201012020006.46115.rusty@rustcorp.com.au>
+References: <4CE2F914.9070106@free.fr> <201011301005.29532.rusty@rustcorp.com.au> <1291128383.27486.35.camel@gandalf.stny.rr.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:39770 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751464Ab0LALgZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Dec 2010 06:36:25 -0500
-Content-Disposition: inline
-In-Reply-To: <1291187447-1247-1-git-send-email-jhnikula@gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jarkko Nikula <jhnikula@gmail.com>
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Liam Girdwood <lrg@slimlogic.co.uk>
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-security-module-owner@vger.kernel.org>
+In-Reply-To: <1291128383.27486.35.camel@gandalf.stny.rr.com>
+Sender: linux-security-module-owner@vger.kernel.org
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: matthieu castet <castet.matthieu@free.fr>, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>, Siarhei Liakh <sliakh.lkml@gmail.com>, Kees Cook <kees.cook@canonical.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Dec 01, 2010 at 09:10:47AM +0200, Jarkko Nikula wrote:
-> Commit 2eea392 "ASoC: Add support for optional auxiliary dailess codecs"
-> causes a build failure in soc-core.c: soc_probe_aux_dev since code tries to
-> access non-existing struct snd_soc_dapm_context and struct snd_soc_card
-> members.
+On Wed, 1 Dec 2010 01:16:23 am Steven Rostedt wrote:
+> On Tue, 2010-11-30 at 10:05 +1030, Rusty Russell wrote:
+> > On Tue, 30 Nov 2010 04:45:42 am Steven Rostedt wrote:
+> > > This patch breaks function tracer:
+> > ...
+> > > Here we set the text read only before we call the notifiers. The
+> > > function tracer changes the calls to mcount into nops via a notifier
+> > > call so this must be done after the module notifiers.
+> > 
+> > That seems fine.
+> > 
+> > I note that both before and after this patch we potentially execute code
+> > in the module (via parse_args) before we set it ro & nx.  But fixing this
+> > last bit of coverage is probably not worth the pain...
+> 
+> Rusty, can I take this as an "Acked-by"?
 
-Applied, thanks.
+Yep... Acked-by: Rusty Russell <rusty@rustcorp.com.au>
+
+Thanks,
+Rusty.
