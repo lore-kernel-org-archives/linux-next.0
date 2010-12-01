@@ -1,59 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Date: Wed, 1 Dec 2010 11:31:38 +1100
-Message-ID: <20101201113138.f6146790.sfr@canb.auug.org.au>
+From: Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH 3/3 V13] RO/NX protection for loadable kernel
+Date: Tue, 30 Nov 2010 19:38:05 -0500
+Message-ID: <1291163885.4881.22.camel@gandalf.stny.rr.com>
+References: <4CE2F914.9070106@free.fr>
+	 <20101129181542.GA11630@home.goodmis.org>
+	 <20101130222025.3ccf5c00@mat-laptop>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__1_Dec_2010_11_31_38_+1100_DluGYa0p.vKCBp+O"
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55557 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752875Ab0LAAbz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 30 Nov 2010 19:31:55 -0500
+Received: from hrndva-omtalb.mail.rr.com ([71.74.56.122]:60072 "EHLO
+	hrndva-omtalb.mail.rr.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751977Ab0LAAiK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 30 Nov 2010 19:38:10 -0500
+In-Reply-To: <20101130222025.3ccf5c00@mat-laptop>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jarkko Nikula <jhnikula@gmail.com>
+To: mat <castet.matthieu@free.fr>
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, Rusty Russell <rusty@rustcorp.com.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>, Siarhei Liakh <sliakh.lkml@gmail.com>, Kees Cook <kees.cook@canonical.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>
 
---Signature=_Wed__1_Dec_2010_11_31_38_+1100_DluGYa0p.vKCBp+O
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, 2010-11-30 at 22:20 +0100, mat wrote:
 
-Hi all,
+> That's look fine for me.
+> 
+> But I wonder why ftrace_arch_code_modify_prepare isn't called ?
+> 
+> It is only called when we start/stop tracing ?
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Correct. There's no reason to use it for the changing of mcount callers
+to nops. For core kernel code, it happens before SMP is enabled. For
+modules, it happens before the module code is executed. Except for what
+Rusty stated with the module parameters, but if you are executing
+complex code with that, you deserve what you get ;-)
 
-sound/soc/soc-core.c: In function 'soc_probe_aux_dev':
-sound/soc/soc-core.c:1647: error: 'struct snd_soc_dapm_context' has no memb=
-er named 'list'
-sound/soc/soc-core.c:1647: error: 'struct snd_soc_card' has no member named=
- 'dapm_list'
+The initial changes are made outside of stop machine. The code is not
+being executed by anyone else.
 
-Caused by commit 2eea392d0a28a0a07d36a9da544eb40f81bf4cb6 ("ASoC: Add
-support for optional auxiliary dailess codecs").
-
-I have used the version of the sound-asoc tree from next-20101130 for today
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__1_Dec_2010_11_31_38_+1100_DluGYa0p.vKCBp+O
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJM9ZdqAAoJEDMEi1NhKgbsMv4H/2ghT8wGiHcJTcr2Uhsf+BfW
-piQkRDwHqfdhYStPGFVADITSKrdKNF34nlzGrz5xFGMz8lCPNjliI9az02zQ7QRX
-R9CtCq1P6SbZkBFixD6doj6e708+QzhzAAgNUDirFVpa7HQPNQuL/7RabkCFRhXv
-xu9v7J2SuGsXWGXYIfOfEXjrgMlM/nAl3n458mKPcP+/ZCmG6/Ocfg26xY3PCrE/
-dJWUnM364jz2GLUgCQ86IdxvuN7l3N8NqnfaYdg8hc3M7GxyINknYh1ie+wbQoZc
-vliji8jwO5A7J2OGI8HGHQ/NWxJOWOnVCn1304RyyiHt7oUsxIDyPif2/TyX428=
-=C+tW
------END PGP SIGNATURE-----
-
---Signature=_Wed__1_Dec_2010_11_31_38_+1100_DluGYa0p.vKCBp+O--
+-- Steve
