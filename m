@@ -1,42 +1,27 @@
-From: Liam Girdwood <lrg@slimlogic.co.uk>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
 Subject: Re: [PATCH] ASoC: Fix build failure in soc-core.c
-Date: Wed, 01 Dec 2010 09:50:48 +0000
-Message-ID: <1291197048.3292.2.camel@odin>
+Date: Wed, 1 Dec 2010 11:36:23 +0000
+Message-ID: <20101201113623.GI24176@rakim.wolfsonmicro.main>
 References: <20101201113138.f6146790.sfr@canb.auug.org.au>
-	<1291187447-1247-1-git-send-email-jhnikula@gmail.com>
+ <1291187447-1247-1-git-send-email-jhnikula@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:39770 "EHLO
+	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751464Ab0LALgZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Dec 2010 06:36:25 -0500
+Content-Disposition: inline
 In-Reply-To: <1291187447-1247-1-git-send-email-jhnikula@gmail.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Jarkko Nikula <jhnikula@gmail.com>
-Cc: linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, alsa-devel@alsa-project.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Liam Girdwood <lrg@slimlogic.co.uk>
 
-On Wed, 2010-12-01 at 09:10 +0200, Jarkko Nikula wrote:
+On Wed, Dec 01, 2010 at 09:10:47AM +0200, Jarkko Nikula wrote:
 > Commit 2eea392 "ASoC: Add support for optional auxiliary dailess codecs"
 > causes a build failure in soc-core.c: soc_probe_aux_dev since code tries to
 > access non-existing struct snd_soc_dapm_context and struct snd_soc_card
 > members.
-> 
-> Root cause for this was a double accident. Author sent the RFC patch from
-> top of another patch set and the RFC got committed. Fix the build failure
-> by removing the code line that depends on that another patch set.
-> 
-> Signed-off-by: Jarkko Nikula <jhnikula@gmail.com>
-> ---
 
-Acked-by: Liam Girdwood <lrg@slimlogic.co.uk>
--- 
-Freelance Developer, SlimLogic Ltd
-ASoC and Voltage Regulator Maintainer.
-http://www.slimlogic.co.uk
+Applied, thanks.
