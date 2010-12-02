@@ -1,37 +1,57 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging tree with the
- staging.current tree
-Date: Wed, 1 Dec 2010 20:00:31 -0800
-Message-ID: <20101202040031.GA10016@kroah.com>
-References: <20101202132254.93e019c7.sfr@canb.auug.org.au>
+From: Zimny Lech <napohybelskurwysynom2010@gmail.com>
+Subject: Re: linux-next: Tree for December 2
+Date: Thu, 2 Dec 2010 14:52:56 +0100
+Message-ID: <AANLkTi=aZ3Gm5rkqAh8j-bOvvKULge6Hm5cN_mEovVdq@mail.gmail.com>
+References: <20101202140943.c9742beb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20101202132254.93e019c7.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-qw0-f46.google.com ([209.85.216.46]:62211 "EHLO
+	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757552Ab0LBNw5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 2 Dec 2010 08:52:57 -0500
+In-Reply-To: <20101202140943.c9742beb.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Randy Dunlap <randy.dunlap@oracle.com>, Pekka Enberg <penberg@kernel.org>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Tomoya MORINAGA <tomoya-linux@dsn.okisemi.com>
 
-On Thu, Dec 02, 2010 at 01:22:54PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the staging tree got a conflict in
-> drivers/staging/winbond/sysdef.h between commit
-> 412dc7f368bf10a8049a8a4c41abbfd0108742e7 ("staging: fix winbond build,
-> needs delay.h") from the staging.current tree and commit
-> ddee7e28e7d5e4ba2b8537c6a59b035745c250bb ("Staging: w35und: Remove empty
-> sysdef.h header") from the staging tree.
-> 
-> I removed the file.  I wonder if
-> drivers/staging/winbond/phy_calibration.c and
-> drivers/staging/winbond/reg.c now need their own includes of
-> linux/delay.h ...
+Ave
 
-Heh, probably.  I'll handle this merge when thes staging.current code
-goes to Linus this week.
+2010/12/2 Stephen Rothwell <sfr@canb.auug.org.au>:
+> Hi all,
+>
+> Changes since 20101201:
+>
 
-thanks,
+WARNING: modpost: Found 4 section mismatch(es).
+To see full details build your kernel with:
+'make CONFIG_DEBUG_SECTION_MISMATCH=y'
+  GEN     .version
+  CHK     include/generated/compile.h
+  UPD     include/generated/compile.h
+  CC      init/version.o
+  LD      init/built-in.o
+  LD      .tmp_vmlinux1
+drivers/built-in.o: In function `pch_request_dma':
+/home/test/linux-2.6/drivers/serial/pch_uart.c:565: undefined
+reference to `__dma_request_channel'
+/home/test/linux-2.6/drivers/serial/pch_uart.c:577: undefined
+reference to `__dma_request_channel'
+/home/test/linux-2.6/drivers/serial/pch_uart.c:580: undefined
+reference to `dma_release_channel'
+drivers/built-in.o: In function `pch_free_dma':
+/home/test/linux-2.6/drivers/serial/pch_uart.c:519: undefined
+reference to `dma_release_channel'
+/home/test/linux-2.6/drivers/serial/pch_uart.c:523: undefined
+reference to `dma_release_channel'
+make[1]: *** [.tmp_vmlinux1] Error 1
+make: *** [sub-make] Error 2
 
-greg k-h
+
+-- 
+Slawa!
+Zimny "Spie dziadu!" Lech z Wawelu
+
+That is not dead which can eternal lie.
+And with strange aeons even death may die.
