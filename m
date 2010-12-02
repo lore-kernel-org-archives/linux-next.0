@@ -1,57 +1,61 @@
-From: Zimny Lech <napohybelskurwysynom2010@gmail.com>
-Subject: Re: linux-next: Tree for December 2
-Date: Thu, 2 Dec 2010 14:52:56 +0100
-Message-ID: <AANLkTi=aZ3Gm5rkqAh8j-bOvvKULge6Hm5cN_mEovVdq@mail.gmail.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] serial: fix pch_uart kconfig & build
+Date: Thu, 2 Dec 2010 09:19:48 -0800
+Message-ID: <20101202091948.2142bb5c.randy.dunlap@oracle.com>
 References: <20101202140943.c9742beb.sfr@canb.auug.org.au>
+	<AANLkTi=aZ3Gm5rkqAh8j-bOvvKULge6Hm5cN_mEovVdq@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:62211 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757552Ab0LBNw5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 2 Dec 2010 08:52:57 -0500
-In-Reply-To: <20101202140943.c9742beb.sfr@canb.auug.org.au>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:28158 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752662Ab0LBRUs (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 2 Dec 2010 12:20:48 -0500
+In-Reply-To: <AANLkTi=aZ3Gm5rkqAh8j-bOvvKULge6Hm5cN_mEovVdq@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Tomoya MORINAGA <tomoya-linux@dsn.okisemi.com>
+To: Zimny Lech <napohybelskurwysynom2010@gmail.com>, gregkh@suse.de, akpm <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Tomoya MORINAGA <tomoya-linux@dsn.okisemi.com>
 
-Ave
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-2010/12/2 Stephen Rothwell <sfr@canb.auug.org.au>:
-> Hi all,
->
-> Changes since 20101201:
->
+The dma_request_channel/dma_release_channel interfaces are not
+built when DMADEVICES is not enabled, so make the driver depend on
+DMADEVICES.  Also, the help text says that the driver enables & uses
+PCH_DMA, which is not enabled, so select that.
 
-WARNING: modpost: Found 4 section mismatch(es).
-To see full details build your kernel with:
-'make CONFIG_DEBUG_SECTION_MISMATCH=y'
-  GEN     .version
-  CHK     include/generated/compile.h
-  UPD     include/generated/compile.h
-  CC      init/version.o
-  LD      init/built-in.o
-  LD      .tmp_vmlinux1
-drivers/built-in.o: In function `pch_request_dma':
-/home/test/linux-2.6/drivers/serial/pch_uart.c:565: undefined
-reference to `__dma_request_channel'
-/home/test/linux-2.6/drivers/serial/pch_uart.c:577: undefined
-reference to `__dma_request_channel'
-/home/test/linux-2.6/drivers/serial/pch_uart.c:580: undefined
-reference to `dma_release_channel'
-drivers/built-in.o: In function `pch_free_dma':
-/home/test/linux-2.6/drivers/serial/pch_uart.c:519: undefined
-reference to `dma_release_channel'
-/home/test/linux-2.6/drivers/serial/pch_uart.c:523: undefined
-reference to `dma_release_channel'
-make[1]: *** [.tmp_vmlinux1] Error 1
-make: *** [sub-make] Error 2
+ERROR: "__dma_request_channel" [drivers/serial/pch_uart.ko] undefined!
+ERROR: "dma_release_channel" [drivers/serial/pch_uart.ko] undefined!
 
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Tomoya MORINAGA <tomoya-linux@dsn.okisemi.com>
+Reported-by: Zimny Lech <napohybelskurwysynom2010@gmail.com>
+---
+ drivers/serial/Kconfig |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
--- 
-Slawa!
-Zimny "Spie dziadu!" Lech z Wawelu
+This driver seems to have some other issues:
 
-That is not dead which can eternal lie.
-And with strange aeons even death may die.
+drivers/serial/pch_uart.c: In function 'dma_handle_rx':
+drivers/serial/pch_uart.c:685: warning: cast from pointer to integer of different size
+drivers/serial/pch_uart.c: In function 'dma_handle_tx':
+drivers/serial/pch_uart.c:778: warning: cast from pointer to integer of different size
+drivers/serial/pch_uart.c: In function 'pch_uart_init_port':
+drivers/serial/pch_uart.c:1289: warning: cast to pointer from integer of different size
+drivers/serial/pch_uart.c: In function 'pch_uart_exit_port':
+drivers/serial/pch_uart.c:1328: warning: cast from pointer to integer of different size
+
+--- linux-next-20101202.orig/drivers/serial/Kconfig
++++ linux-next-20101202/drivers/serial/Kconfig
+@@ -1650,8 +1650,9 @@ config SERIAL_IFX6X60
+ 
+ config SERIAL_PCH_UART
+ 	tristate "Intel EG20T PCH UART"
++	depends on PCI && DMADEVICES
+ 	select SERIAL_CORE
+-	depends on PCI
++	select PCH_DMA
+ 	help
+ 	  This driver is for PCH(Platform controller Hub) UART of Intel EG20T
+ 	  which is an IOH(Input/Output Hub) for x86 embedded processor.
