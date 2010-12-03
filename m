@@ -1,51 +1,49 @@
-From: Josh Boyer <jwboyer@linux.vnet.ibm.com>
-Subject: Re: linux-next: build failure after merge of the final tree
-	(powerpc tree related)
-Date: Fri, 3 Dec 2010 06:26:12 -0500
-Message-ID: <20101203112612.GA4489@zod.rchland.ibm.com>
-References: <20101203163206.72258fb8.sfr@canb.auug.org.au>
- <1291355998.32570.417.camel@pasglop>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for December 3 (cifs)
+Date: Fri, 3 Dec 2010 09:48:44 -0800
+Message-ID: <20101203094844.68f2bc40.randy.dunlap@oracle.com>
+References: <20101203130440.9f89dd31.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e5.ny.us.ibm.com ([32.97.182.145]:37594 "EHLO e5.ny.us.ibm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932398Ab0LCL1D (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 3 Dec 2010 06:27:03 -0500
-Content-Disposition: inline
-In-Reply-To: <1291355998.32570.417.camel@pasglop>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:56214 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751550Ab0LCRup (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 3 Dec 2010 12:50:45 -0500
+In-Reply-To: <20101203130440.9f89dd31.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linuxppc-dev@lists.ozlabs.org, linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linux-kernel@vger.kernel.org, Anton Blanchard <anton@samba.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Steve French <sfrench@samba.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-cifs@vger.kernel.org
 
-On Fri, Dec 03, 2010 at 04:59:58PM +1100, Benjamin Herrenschmidt wrote:
->On Fri, 2010-12-03 at 16:32 +1100, Stephen Rothwell wrote:
->> 
->> After merging the  tree, today's linux-next build (powerpc allmodconfig)
->> failed like this:
->> 
->> arch/powerpc/lib/hweight_64.S: Assembler messages:
->> arch/powerpc/lib/hweight_64.S:52: Error: Unrecognized opcode: `popcntw'
->> arch/powerpc/lib/hweight_64.S:77: Error: Unrecognized opcode: `popcntw'
->> arch/powerpc/lib/hweight_64.S:106: Error: Unrecognized opcode: `popcntd'
->> 
->> This is with:
->> 
->> powerpc64-linux-gcc (GCC) 4.4.0
->> GNU assembler (GNU Binutils) 2.19.1
->> 
->> Caused by commit 64ff31287693c1f325cb9cb049569c1611438ef1 ("powerpc: Add
->> support for popcnt instructions"). 
->
->
->This toolchain is a bit ancient I suppose... Anton, do you reckon we
+On Fri, 3 Dec 2010 13:04:40 +1100 Stephen Rothwell wrote:
 
-SLES 11 SP1 still uses gcc 4.3.  4.4.0 is not ancient by any means.  Neither is binutils 2.19.1.
+> Hi all,
+> 
+> Changes since 20101202:
 
->should use .long based macros for these for the time being or just
->require a newer binutils ?
 
-.long macros sound like the proper solution.
+When CIFS_EXPERIMENTAL is not enabled:
 
-josh
+(.text+0xdf6c9): undefined reference to `get_cifs_acl'
+
+from fs/cifs/xattr.c:cifs_getxattr()
+
+
+CONFIG_CIFS=y
+# CONFIG_CIFS_STATS is not set
+CONFIG_CIFS_WEAK_PW_HASH=y
+# CONFIG_CIFS_UPCALL is not set
+CONFIG_CIFS_XATTR=y
+CONFIG_CIFS_POSIX=y
+# CONFIG_CIFS_DEBUG2 is not set
+# CONFIG_CIFS_DFS_UPCALL is not set
+CONFIG_CIFS_FSCACHE=y
+CONFIG_CIFS_ACL=y
+# CONFIG_CIFS_EXPERIMENTAL is not set
+
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
