@@ -1,57 +1,51 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Josh Boyer <jwboyer@linux.vnet.ibm.com>
 Subject: Re: linux-next: build failure after merge of the final tree
- (powerpc tree related)
-Date: Fri, 3 Dec 2010 17:08:05 +1100
-Message-ID: <20101203170805.2d99f70c.sfr@canb.auug.org.au>
+	(powerpc tree related)
+Date: Fri, 3 Dec 2010 06:26:12 -0500
+Message-ID: <20101203112612.GA4489@zod.rchland.ibm.com>
 References: <20101203163206.72258fb8.sfr@canb.auug.org.au>
-	<1291355998.32570.417.camel@pasglop>
+ <1291355998.32570.417.camel@pasglop>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__3_Dec_2010_17_08_05_+1100_chByI1gvvxxoZufB"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58318 "EHLO smtps.tip.net.au"
+Received: from e5.ny.us.ibm.com ([32.97.182.145]:37594 "EHLO e5.ny.us.ibm.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754348Ab0LCGIN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 3 Dec 2010 01:08:13 -0500
+	id S932398Ab0LCL1D (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 3 Dec 2010 06:27:03 -0500
+Content-Disposition: inline
 In-Reply-To: <1291355998.32570.417.camel@pasglop>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anton Blanchard <anton@samba.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linuxppc-dev@lists.ozlabs.org, linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linux-kernel@vger.kernel.org, Anton Blanchard <anton@samba.org>
 
---Signature=_Fri__3_Dec_2010_17_08_05_+1100_chByI1gvvxxoZufB
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, 03 Dec 2010 16:59:58 +1100 Benjamin Herrenschmidt <benh@kernel.cras=
-hing.org> wrote:
+On Fri, Dec 03, 2010 at 04:59:58PM +1100, Benjamin Herrenschmidt wrote:
+>On Fri, 2010-12-03 at 16:32 +1100, Stephen Rothwell wrote:
+>> 
+>> After merging the  tree, today's linux-next build (powerpc allmodconfig)
+>> failed like this:
+>> 
+>> arch/powerpc/lib/hweight_64.S: Assembler messages:
+>> arch/powerpc/lib/hweight_64.S:52: Error: Unrecognized opcode: `popcntw'
+>> arch/powerpc/lib/hweight_64.S:77: Error: Unrecognized opcode: `popcntw'
+>> arch/powerpc/lib/hweight_64.S:106: Error: Unrecognized opcode: `popcntd'
+>> 
+>> This is with:
+>> 
+>> powerpc64-linux-gcc (GCC) 4.4.0
+>> GNU assembler (GNU Binutils) 2.19.1
+>> 
+>> Caused by commit 64ff31287693c1f325cb9cb049569c1611438ef1 ("powerpc: Add
+>> support for popcnt instructions"). 
 >
-> This toolchain is a bit ancient I suppose... Anton, do you reckon we
-> should use .long based macros for these for the time being or just
-> require a newer binutils ?
+>
+>This toolchain is a bit ancient I suppose... Anton, do you reckon we
 
-The currently documented minimum binutils is 2.12 ...
+SLES 11 SP1 still uses gcc 4.3.  4.4.0 is not ancient by any means.  Neither is binutils 2.19.1.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+>should use .long based macros for these for the time being or just
+>require a newer binutils ?
 
---Signature=_Fri__3_Dec_2010_17_08_05_+1100_chByI1gvvxxoZufB
-Content-Type: application/pgp-signature
+.long macros sound like the proper solution.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJM+IlFAAoJEDMEi1NhKgbs49wIAIu7SaBGvGe5+9lk7QKEcIRz
-hXZ1UDEMePw3eykuVD4rEinknQKo1OMAYFd3IEqcRcqBqBf8Fqm4N+IA2dlSO5Gn
-jvPJnc2kst29fJhZm2Du2V5iROeD3qw9UCgii+H4bZcicQ2UQaqAsEGbeIl6TGGZ
-qWI1bJoftYEMbzC4VZzB53UQtc90n/bIqAi8lGjycEIfk+MFsg024nHNeOskGahB
-jGCIyogBi0Nsk/LRbo59QsibHFf9s0V1OpA9bx2foa8kkpyqkNUltgYnEaBfO/23
-Oj4MKXWfwEmnGkbtvdCwDJq4xo5gBXr7TF7IcyRkloh/e6uOpl3eHSxSwJjhg00=
-=CoCE
------END PGP SIGNATURE-----
-
---Signature=_Fri__3_Dec_2010_17_08_05_+1100_chByI1gvvxxoZufB--
+josh
