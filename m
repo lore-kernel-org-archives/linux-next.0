@@ -1,63 +1,78 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: build failure after merge of the acpi tree
-Date: Sat, 4 Dec 2010 00:51:23 +0100
-Message-ID: <201012040051.23769.rjw@sisk.pl>
-References: <20101202112239.c7d05518.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm tree with the arm-current tree
+Date: Mon, 6 Dec 2010 10:58:04 +1100
+Message-ID: <20101206105804.fbfea108.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-2"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:52962 "EHLO ogre.sisk.pl"
+Received: from chilli.pcug.org.au ([203.10.76.44]:45511 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753493Ab0LCXwM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 3 Dec 2010 18:52:12 -0500
-In-Reply-To: <20101202112239.c7d05518.sfr@canb.auug.org.au>
+	id S1751756Ab0LEX6K (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 5 Dec 2010 18:58:10 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Len Brown <lenb@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>
 
-On Thursday, December 02, 2010, Stephen Rothwell wrote:
-> Hi Len,
-> 
-> After merging the acpi tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> In file included from drivers/video/output.c:25:
-> include/linux/video_output.h: In function 'video_output_register':
-> include/linux/video_output.h:49: error: implicit declaration of function 'ERR_PTR'
-> include/linux/video_output.h:49: warning: return makes pointer from integer without a cast
-> In file included from drivers/video/output.c:27:
-> include/linux/err.h: At top level:
-> include/linux/err.h:22: error: conflicting types for 'ERR_PTR'
-> include/linux/video_output.h:49: note: previous implicit declaration of 'ERR_PTR' was here
-> drivers/video/output.c:84: error: redefinition of 'video_output_register'
-> include/linux/video_output.h:44: note: previous definition of 'video_output_register' was here
-> drivers/video/output.c:114: error: redefinition of 'video_output_unregister'
-> include/linux/video_output.h:51: note: previous definition of 'video_output_unregister' was here
-> 
-> Caused by commit 16d21716c8849c3283d1b9e590e6fe8d1966f4b7 ("ACPI: video:
-> fix build for VIDEO_OUTPUT_CONTROL=n").  See Rule 1 in
-> Documentation/SubmitChecklist.
-> 
-> I have used the version of the acpi tree from next-20101201 for today.
+Hi Russell,
 
-Something like this will help, perhaps:
+Today's linux-next merge of the arm tree got a conflict in
+arch/arm/common/gic.c between commit
+e6afec9b6808eff6dc392ac07c1552e87aebcdf7 ("ARM: 6496/1: GIC: Do not try
+to register more then NR_IRQS interrupts") from the arm-current tree and
+commit d9522a4675b30f128d4410a6d453ab63edd18e64 ("ARM: GIC: move gic_data
+[] initialization into gic_init()") from the arm tree.
 
----
- include/linux/video_output.h |    1 +
- 1 file changed, 1 insertion(+)
+I fixed it up (see below) can can carry the fix for a while.
 
-Index: linux-2.6/include/linux/video_output.h
-===================================================================
---- linux-2.6.orig/include/linux/video_output.h
-+++ linux-2.6/include/linux/video_output.h
-@@ -23,6 +23,7 @@
- #ifndef _LINUX_VIDEO_OUTPUT_H
- #define _LINUX_VIDEO_OUTPUT_H
- #include <linux/device.h>
-+#include <linux/err.h>
- struct output_device;
- struct output_properties {
- 	int (*set_state)(struct output_device *);
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/arm/common/gic.c
+index fea1bd7,b6a1d09..0000000
+--- a/arch/arm/common/gic.c
++++ b/arch/arm/common/gic.c
+@@@ -207,15 -210,13 +210,13 @@@ void __init gic_cascade_irq(unsigned in
+  	set_irq_chained_handler(irq, gic_handle_cascade_irq);
+  }
+  
+- void __init gic_dist_init(unsigned int gic_nr, void __iomem *base,
+- 			  unsigned int irq_start)
++ static void __init gic_dist_init(struct gic_chip_data *gic,
++ 	unsigned int irq_start)
+  {
+ -	unsigned int max_irq, i;
+ +	unsigned int gic_irqs, irq_limit, i;
++ 	void __iomem *base = gic->dist_base;
+  	u32 cpumask = 1 << smp_processor_id();
+  
+- 	if (gic_nr >= MAX_GIC_NR)
+- 		BUG();
+- 
+  	cpumask |= cpumask << 8;
+  	cpumask |= cpumask << 16;
+  
+@@@ -259,18 -262,11 +257,18 @@@
+  		writel(0xffffffff, base + GIC_DIST_ENABLE_CLEAR + i * 4 / 32);
+  
+  	/*
+ +	 * Limit number of interrupts registered to the platform maximum
+ +	 */
+- 	irq_limit = gic_data[gic_nr].irq_offset + gic_irqs;
+++	irq_limit = gic->irq_offset + gic_irqs;
+ +	if (WARN_ON(irq_limit > NR_IRQS))
+ +		irq_limit = NR_IRQS;
+ +
+ +	/*
+  	 * Setup the Linux IRQ subsystem.
+  	 */
+ -	for (i = irq_start; i < gic->irq_offset + max_irq; i++) {
+ +	for (i = irq_start; i < irq_limit; i++) {
+  		set_irq_chip(i, &gic_chip);
+- 		set_irq_chip_data(i, &gic_data[gic_nr]);
++ 		set_irq_chip_data(i, gic);
+  		set_irq_handler(i, handle_level_irq);
+  		set_irq_flags(i, IRQF_VALID | IRQF_PROBE);
+  	}
