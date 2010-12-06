@@ -1,78 +1,47 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm tree with the arm-current tree
-Date: Mon, 6 Dec 2010 10:58:04 +1100
-Message-ID: <20101206105804.fbfea108.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the sound tree with the Linus' tree
+Date: Mon, 6 Dec 2010 11:35:42 +1100
+Message-ID: <20101206113542.b1d2f978.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45511 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:57841 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751756Ab0LEX6K (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 5 Dec 2010 18:58:10 -0500
+	id S1752070Ab0LFAfr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 5 Dec 2010 19:35:47 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Paul Mundt <lethal@linux-sh.org>
 
-Hi Russell,
+Hi Takashi,
 
-Today's linux-next merge of the arm tree got a conflict in
-arch/arm/common/gic.c between commit
-e6afec9b6808eff6dc392ac07c1552e87aebcdf7 ("ARM: 6496/1: GIC: Do not try
-to register more then NR_IRQS interrupts") from the arm-current tree and
-commit d9522a4675b30f128d4410a6d453ab63edd18e64 ("ARM: GIC: move gic_data
-[] initialization into gic_init()") from the arm tree.
+Today's linux-next merge of the sound tree got a conflict in
+sound/soc/sh/fsi.c between commit
+d4bc99b977e3a1dd10a84a01ebe59ac2ccebf0cd ("ARM: mach-shmobile: ap4evb:
+FSI clock use proper process for HDMI") from Linus' tree and commit
+2b0e73025f74699e9cc9df60649fcc14cd02481b ("ASoC: sh: fsi: change
+fsi->mst_ctrl to master->a/b_mclk") from the sound tree.
 
-I fixed it up (see below) can can carry the fix for a while.
-
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/common/gic.c
-index fea1bd7,b6a1d09..0000000
---- a/arch/arm/common/gic.c
-+++ b/arch/arm/common/gic.c
-@@@ -207,15 -210,13 +210,13 @@@ void __init gic_cascade_irq(unsigned in
-  	set_irq_chained_handler(irq, gic_handle_cascade_irq);
-  }
+diff --cc sound/soc/sh/fsi.c
+index 4c2404b,19a2f99..0000000
+--- a/sound/soc/sh/fsi.c
++++ b/sound/soc/sh/fsi.c
+@@@ -131,10 -142,6 +142,8 @@@ struct fsi_priv 
   
-- void __init gic_dist_init(unsigned int gic_nr, void __iomem *base,
-- 			  unsigned int irq_start)
-+ static void __init gic_dist_init(struct gic_chip_data *gic,
-+ 	unsigned int irq_start)
-  {
- -	unsigned int max_irq, i;
- +	unsigned int gic_irqs, irq_limit, i;
-+ 	void __iomem *base = gic->dist_base;
-  	u32 cpumask = 1 << smp_processor_id();
-  
-- 	if (gic_nr >= MAX_GIC_NR)
-- 		BUG();
-- 
-  	cpumask |= cpumask << 8;
-  	cpumask |= cpumask << 16;
-  
-@@@ -259,18 -262,11 +257,18 @@@
-  		writel(0xffffffff, base + GIC_DIST_ENABLE_CLEAR + i * 4 / 32);
-  
-  	/*
- +	 * Limit number of interrupts registered to the platform maximum
- +	 */
-- 	irq_limit = gic_data[gic_nr].irq_offset + gic_irqs;
-++	irq_limit = gic->irq_offset + gic_irqs;
- +	if (WARN_ON(irq_limit > NR_IRQS))
- +		irq_limit = NR_IRQS;
+  	struct fsi_stream playback;
+  	struct fsi_stream capture;
  +
- +	/*
-  	 * Setup the Linux IRQ subsystem.
-  	 */
- -	for (i = irq_start; i < gic->irq_offset + max_irq; i++) {
- +	for (i = irq_start; i < irq_limit; i++) {
-  		set_irq_chip(i, &gic_chip);
-- 		set_irq_chip_data(i, &gic_data[gic_nr]);
-+ 		set_irq_chip_data(i, gic);
-  		set_irq_handler(i, handle_level_irq);
-  		set_irq_flags(i, IRQF_VALID | IRQF_PROBE);
-  	}
+ +	long rate;
+- 
+- 	u32 mst_ctrl;
+  };
+  
+  struct fsi_core {
