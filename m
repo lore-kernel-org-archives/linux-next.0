@@ -1,151 +1,104 @@
-From: Zimny Lech <napohybelskurwysynom2010@gmail.com>
-Subject: Re: linux-next: Tree for December 6
-Date: Mon, 6 Dec 2010 16:09:33 +0100
-Message-ID: <AANLkTi=iCZ=XQk3zXwK-BPnK4=9SU5W-arf+rom9dx8V@mail.gmail.com>
-References: <20101206140055.34289498.sfr@canb.auug.org.au>
+From: Shirish Pargaonkar <shirishpargaonkar@gmail.com>
+Subject: Re: linux-next: Tree for December 3 (cifs)
+Date: Mon, 6 Dec 2010 09:40:33 -0600
+Message-ID: <AANLkTimTFi6jji5wmnBTT25XYAXAhJYNY+YmqhW5McEC@mail.gmail.com>
+References: <20101203130440.9f89dd31.sfr@canb.auug.org.au>
+	<20101203094844.68f2bc40.randy.dunlap@oracle.com>
+	<20101206070956.GA5570@elte.hu>
+	<20101206073513.54ca2c71@tlielax.poochiereds.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-2
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:64342 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750837Ab0LFPJf convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 6 Dec 2010 10:09:35 -0500
-In-Reply-To: <20101206140055.34289498.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20101206073513.54ca2c71@tlielax.poochiereds.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jeff Layton <jlayton@redhat.com>
+Cc: Ingo Molnar <mingo@elte.hu>, Randy Dunlap <randy.dunlap@oracle.com>, Steve French <sfrench@samba.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-cifs@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
-Ave,
-
-2010/12/6 Stephen Rothwell <sfr@canb.auug.org.au>:
-> Hi all,
+On Mon, Dec 6, 2010 at 6:35 AM, Jeff Layton <jlayton@redhat.com> wrote:
+> On Mon, 6 Dec 2010 08:09:56 +0100
+> Ingo Molnar <mingo@elte.hu> wrote:
 >
-> [The mirroring on kernel.org is currently being slow, so this release=
- may
-> not be available yet.]
+>>
+>> * Randy Dunlap <randy.dunlap@oracle.com> wrote:
+>>
+>> > On Fri, 3 Dec 2010 13:04:40 +1100 Stephen Rothwell wrote:
+>> >
+>> > > Hi all,
+>> > >
+>> > > Changes since 20101202:
+>> >
+>> >
+>> > When CIFS_EXPERIMENTAL is not enabled:
+>> >
+>> > (.text+0xdf6c9): undefined reference to `get_cifs_acl'
+>> >
+>> > from fs/cifs/xattr.c:cifs_getxattr()
+>> >
+>> >
+>> > CONFIG_CIFS=3Dy
+>> > # CONFIG_CIFS_STATS is not set
+>> > CONFIG_CIFS_WEAK_PW_HASH=3Dy
+>> > # CONFIG_CIFS_UPCALL is not set
+>> > CONFIG_CIFS_XATTR=3Dy
+>> > CONFIG_CIFS_POSIX=3Dy
+>> > # CONFIG_CIFS_DEBUG2 is not set
+>> > # CONFIG_CIFS_DFS_UPCALL is not set
+>> > CONFIG_CIFS_FSCACHE=3Dy
+>> > CONFIG_CIFS_ACL=3Dy
+>> > # CONFIG_CIFS_EXPERIMENTAL is not set
+>>
+>> And this build regression has been pushed upstream now, as of:
+>>
+>> =A0 =A08520eeaa1235: Merge git://git.kernel.org/pub/scm/linux/kernel=
+/git/sfrench/cifs-2.6
+>>
+>> and it is triggering for me too:
+>>
+>> =A0 =A0fs/built-in.o: In function `cifs_getxattr':
+>> =A0 =A0(.text+0xc518e): undefined reference to `get_cifs_acl'
+>>
+>> The regression got introduced by:
+>>
+>> =A0 =A0fbeba8bb16d7: cifs: Handle extended attribute name cifs_acl t=
+o generate cifs acl blob (try #4)
+>>
+>> Which introduced the new CIFS_ACL option.
+>>
+>> Thanks,
+>>
+>> =A0 =A0 =A0 Ingo
 >
-> Changes since 20101203:
+> Yeah, looks like this new Kconfig option depends on some code that's
+> under the (much-overloaded) CIFS_EXPERIMENTAL Kconfig option. I think
+> this patch needs some rework. The simple fix would be to make it
+> dependent on CIFS_EXPERIMENTAL, but that's rather icky since
+
+Making CONFIG_CIFS_ACL dependent on CONFIG_CIFS_EXPERIMENTAL
+works
+
+ config CIFS_ACL
+          bool "Provide CIFS ACL support (EXPERIMENTAL)"
+-         depends on EXPERIMENTAL && CIFS_XATTR
++         depends on CIFS_EXPERIMENTAL && CIFS_XATTR
+          help
+            Allows to fetch CIFS/NTFS ACL from the server.  The DACL bl=
+ob
+            is handed over to the application/caller.
+
+At the minimum function find_readable_file() and three functions
+in cifssmb.c would not have to be in CIFS_EXPERIMENTAL.
+And we would need to move some other cifs acl related functions
+from under CIFS_ACL from CIFS_EXPERIMENTAL.
+
+> CIFS_EXPERIMENTAL pulls in some rather broken stuff...
 >
-
-Nothing new here, only known issues
-
-Kernel: arch/x86/boot/bzImage is ready  (#5)
-  Building modules, stage 2.
-  MODPOST 314 modules
-ERROR: "dma_release_channel" [drivers/serial/pch_uart.ko] undefined!
-ERROR: "__dma_request_channel" [drivers/serial/pch_uart.ko] undefined!
-WARNING: modpost: Found 4 section mismatch(es).
-To see full details build your kernel with:
-'make CONFIG_DEBUG_SECTION_MISMATCH=3Dy'
-make[2]: *** [__modpost] Error 1
-make[1]: *** [modules] Error 2
-make: *** [sub-make] Error 2
-
-
-WARNING: modpost: Found 9 section mismatch(es).
-To see full details build your kernel with:
-'make CONFIG_DEBUG_SECTION_MISMATCH=3Dy'
-  GEN     .version
-  CHK     include/generated/compile.h
-  UPD     include/generated/compile.h
-  CC      init/version.o
-  LD      init/built-in.o
-  LD      .tmp_vmlinux1
-drivers/built-in.o: In function `pch_uart_startup':
-pch_uart.c:(.text+0x102efc): undefined reference to `__dma_request_chan=
-nel'
-pch_uart.c:(.text+0x102f46): undefined reference to `__dma_request_chan=
-nel'
-pch_uart.c:(.text+0x103037): undefined reference to `dma_release_channe=
-l'
-drivers/built-in.o: In function `pch_uart_shutdown':
-pch_uart.c:(.text+0x103135): undefined reference to `dma_release_channe=
-l'
-pch_uart.c:(.text+0x103151): undefined reference to `dma_release_channe=
-l'
-make[1]: *** [.tmp_vmlinux1] Error 1
-make: *** [sub-make] Error 2
-
-
-  LD      drivers/rtc/built-in.o
-make[4]: *** No rule to make target
-`drivers/scsi/aic7xxx/aicasm/*.[chyl]', needed by
-`drivers/scsi/aic7xxx/aicasm/aicasm'.  Stop.
-make[3]: *** [drivers/scsi/aic7xxx] Error 2
-make[2]: *** [drivers/scsi] Error 2
-make[1]: *** [drivers] Error 2
-make: *** [sub-make] Error 2
-
-  GEN     /home/test/linux-2.6-obj/Makefile
-scripts/kconfig/conf --silentoldconfig Kconfig
-warning: (SCSI_SRP && SCSI_LOWLEVEL && SCSI && PCI) selects SCSI_TGT
-which has unmet direct dependencies (SCSI && EXPERIMENTAL)
-warning: (HAVE_TEXT_POKE_SMP && SMP) selects STOP_MACHINE which has
-unmet direct dependencies (SMP && MODULE_UNLOAD || HOTPLUG_CPU)
-warning: (CRYPTO_LRW && CRYPTO && EXPERIMENTAL || CRYPTO_XTS && CRYPTO
-&& EXPERIMENTAL || CRYPTO_GHASH && CRYPTO) selects CRYPTO_GF128MUL
-which has unmet dire
-warning: (MEDIA_TUNER && MEDIA_SUPPORT && VIDEO_MEDIA && I2C &&
-!MEDIA_TUNER_CUSTOMISE) selects MEDIA_TUNER_TEA5761 which has unmet
-direct dependencies (MEDIA
-*
-* Restart config...
-*
-*
-* USB Gadget Support
-*
-USB Gadget Support (USB_GADGET) [Y/n/?] y
-  Debugging information files (DEVELOPMENT) (USB_GADGET_DEBUG_FILES) [N=
-/y/?] n
-  Debugging information files in debugfs (DEVELOPMENT)
-(USB_GADGET_DEBUG_FS) [N/y/?] n
-  Maximum VBUS Power usage (2-500 mA) (USB_GADGET_VBUS_DRAW) [2] 2
-  USB Peripheral Controller
-  > 1. Renesas R8A66597 USB Peripheral Controller (USB_GADGET_R8A66597)
-    2. PXA9xx Processor USB2.0 controller (USB_GADGET_PXA_U2O)
-    3. Renesas M66592 USB Peripheral Controller (USB_GADGET_M66592)
-    4. AMD5536 UDC (USB_GADGET_AMD5536UDC)
-    5. MIPS USB CI13xxx (USB_GADGET_CI13XXX)
-    6. NetChip 228x (USB_GADGET_NET2280)
-    7. Toshiba TC86C001 'Goku-S' (USB_GADGET_GOKU)
-    8. Intel Langwell USB Device Controller (USB_GADGET_LANGWELL)
-    9. Intel EG20T(Topcliff) USB Device controller (USB_GADGET_EG20T)
-    10. Dummy HCD (DEVELOPMENT) (USB_GADGET_DUMMY_HCD)
-  choice[1-10?]: 1
-  USB Gadget Drivers
-    1. Gadget Zero (DEVELOPMENT) (USB_ZERO)
-    2. Audio Gadget (EXPERIMENTAL) (USB_AUDIO)
-  > 3. Ethernet Gadget (with CDC Ethernet support) (USB_ETH)
-    4. File-backed Storage Gadget (USB_FILE_STORAGE)
-    5. Mass Storage Gadget (USB_MASS_STORAGE)
-    6. Serial Gadget (with CDC ACM and CDC OBEX support) (USB_G_SERIAL)
-    7. Printer Gadget (USB_G_PRINTER)
-    8. CDC Composite Device (Ethernet and ACM) (USB_CDC_COMPOSITE)
-    9. Nokia composite gadget (USB_G_NOKIA)
-    10. Multifunction Composite Gadget (EXPERIMENTAL) (USB_G_MULTI)
-    11. HID Gadget (USB_G_HID)
-    12. EHCI Debug Device Gadget (USB_G_DBGP)
-    13. USB Webcam Gadget (USB_G_WEBCAM)
-  choice[1-13?]: 3
-    RNDIS support (USB_ETH_RNDIS) [Y/n/?] (NEW) aborted!
-
-Console input/output is redirected. Run 'make oldconfig' to update
-configuration.
-
-make[3]: *** [silentoldconfig] Error 1
-make[2]: *** [silentoldconfig] Error 2
-make[1]: *** No rule to make target `include/config/auto.conf', needed
-by `include/config/kernel.release'.  Stop.
-make: *** [sub-make] Error 2
-
-
---=20
-Slawa!
-Zimny "Spie dziadu!" Lech z Wawelu
-
-Piekielny strach zagrzmia=B3
-Patrz=EA na sufit
-Krew tam
-Strz=EApy g=B3=F3w w b=F3lach j=EAcz=B1 co=B6
+> --
+> Jeff Layton <jlayton@redhat.com>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-cifs"=
+ in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
