@@ -1,47 +1,70 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the sound tree with the Linus' tree
-Date: Mon, 6 Dec 2010 11:35:42 +1100
-Message-ID: <20101206113542.b1d2f978.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with Linus'  tree
+Date: Mon, 6 Dec 2010 12:47:18 +1100
+Message-ID: <20101206124718.12e49789.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57841 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:44203 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752070Ab0LFAfr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 5 Dec 2010 19:35:47 -0500
+	id S1751732Ab0LFBrX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 5 Dec 2010 20:47:23 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Paul Mundt <lethal@linux-sh.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bob Liu <lliubbo@gmail.com>, Mike Frysinger <vapier@gentoo.org>, Felipe Balbi <balbi@ti.com>, Hema Kalliguddi <hemahk@ti.com>
 
-Hi Takashi,
+Hi Greg,
 
-Today's linux-next merge of the sound tree got a conflict in
-sound/soc/sh/fsi.c between commit
-d4bc99b977e3a1dd10a84a01ebe59ac2ccebf0cd ("ARM: mach-shmobile: ap4evb:
-FSI clock use proper process for HDMI") from Linus' tree and commit
-2b0e73025f74699e9cc9df60649fcc14cd02481b ("ASoC: sh: fsi: change
-fsi->mst_ctrl to master->a/b_mclk") from the sound tree.
+Today's linux-next merge of the usb tree got a conflict in
+drivers/usb/musb/blackfin.c between commit
+1e393c6eece048052d4131ec4dad3b98e35a98e2 ("USB: musb: blackfin: pm: make
+it work") from Linus' tree and commit
+ea65df57c2eea803535a071752efb030c46a11f5 ("usb: musb: remove board_data
+parameter from musb_platform_init()") from the usb tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+I fixed it up (see below) and can carry the fix as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc sound/soc/sh/fsi.c
-index 4c2404b,19a2f99..0000000
---- a/sound/soc/sh/fsi.c
-+++ b/sound/soc/sh/fsi.c
-@@@ -131,10 -142,6 +142,8 @@@ struct fsi_priv 
-  
-  	struct fsi_stream playback;
-  	struct fsi_stream capture;
+diff --cc drivers/usb/musb/blackfin.c
+index fcb5206,e8cbcc5..0000000
+--- a/drivers/usb/musb/blackfin.c
++++ b/drivers/usb/musb/blackfin.c
+@@@ -360,33 -380,6 +360,33 @@@ static void musb_platform_reg_init(stru
+  				EP2_RX_ENA | EP3_RX_ENA | EP4_RX_ENA |
+  				EP5_RX_ENA | EP6_RX_ENA | EP7_RX_ENA);
+  	SSYNC();
+ +}
  +
- +	long rate;
-- 
-- 	u32 mst_ctrl;
-  };
+- int __init musb_platform_init(struct musb *musb, void *board_data)
+++int __init musb_platform_init(struct musb *musb)
+ +{
+ +
+ +	/*
+ +	 * Rev 1.0 BF549 EZ-KITs require PE7 to be high for both DEVICE
+ +	 * and OTG HOST modes, while rev 1.1 and greater require PE7 to
+ +	 * be low for DEVICE mode and high for HOST mode. We set it high
+ +	 * here because we are in host mode
+ +	 */
+ +
+ +	if (gpio_request(musb->config->gpio_vrsel, "USB_VRSEL")) {
+ +		printk(KERN_ERR "Failed ro request USB_VRSEL GPIO_%d\n",
+ +			musb->config->gpio_vrsel);
+ +		return -ENODEV;
+ +	}
+ +	gpio_direction_output(musb->config->gpio_vrsel, 0);
+ +
+ +	usb_nop_xceiv_register();
+ +	musb->xceiv = otg_get_transceiver();
+ +	if (!musb->xceiv) {
+ +		gpio_free(musb->config->gpio_vrsel);
+ +		return -ENODEV;
+ +	}
+ +
+ +	musb_platform_reg_init(musb);
   
-  struct fsi_core {
+  	if (is_host_enabled(musb)) {
+  		musb->board_set_vbus = bfin_set_vbus;
