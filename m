@@ -1,93 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the drivers-x86 tree
-Date: Tue, 7 Dec 2010 13:24:43 +1100
-Message-ID: <20101207132443.6516fd07.sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the wireless tree
+Date: Tue, 7 Dec 2010 14:11:21 +1100
+Message-ID: <20101207141121.966ebcfe.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__7_Dec_2010_13_24_43_+1100_+jMi9/O_7UP45sXS"
+ boundary="Signature=_Tue__7_Dec_2010_14_11_21_+1100_w6u1h1OhkGFmzurN"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52362 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:41808 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751023Ab0LGCYu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 6 Dec 2010 21:24:50 -0500
+	id S1752188Ab0LGDL3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 6 Dec 2010 22:11:29 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Matthew Garrett <mjg59@srcf.ucam.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felix Fietkau <nbd@openwrt.org>
 
---Signature=_Tue__7_Dec_2010_13_24_43_+1100_+jMi9/O_7UP45sXS
+--Signature=_Tue__7_Dec_2010_14_11_21_+1100_w6u1h1OhkGFmzurN
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Matthew,
+Hi John,
 
-After merging the drivers-x86 tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+After merging the wireless tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-drivers/platform/x86/toshiba_acpi.c: In function 'wwan_rfkill_set_block':
-drivers/platform/x86/toshiba_acpi.c:454: error: 'HCI_WIRELESS_WWAN_ENABLE' =
-undeclared (first use in this function)
-drivers/platform/x86/toshiba_acpi.c:454: error: (Each undeclared identifier=
- is reported only once
-drivers/platform/x86/toshiba_acpi.c:454: error: for each function it appear=
-s in.)
+net/mac80211/mlme.c: In function 'ieee80211_sta_work':
+net/mac80211/mlme.c:1981: warning: too many arguments for format
 
-Caused by commit 64ea4efdd949c99d9206a44a43984d2e861350f1 ("wwan rfkill stu=
-bs").
+Introduced by commit 04ac3c0ee2c773c321ec472d892635a20556f34d
+("mac80211: speed up AP probing using nullfunc frames").
 
-I have used the version of the drivers-x86 tree from next-20101206 for toda=
-y.
-
-I also got the following new messages from the build:
-
-drivers/platform/x86/Kconfig:422:error: recursive dependency detected!
-drivers/platform/x86/Kconfig:422:	symbol EEEPC_WMI depends on ACPI_WMI
-drivers/platform/x86/Kconfig:438:	symbol ACPI_WMI is selected by ACER_WMI
-drivers/platform/x86/Kconfig:18:	symbol ACER_WMI depends on LEDS_CLASS
-drivers/leds/Kconfig:10:	symbol LEDS_CLASS is selected by EEEPC_WMI
-
-warning: (ADB_PMU_LED && MACINTOSH_DRIVERS && ADB_PMU || ATH5K && NETDEVICE=
-S && WLAN && ATH_COMMON && (PCI || ATHEROS_AR231X) && MAC80211 || ATH9K && =
-NETDEVICES && WLAN && ATH_COMMON && PCI && MAC80211 || ATH9K_HTC && NETDEVI=
-CES && WLAN && ATH_COMMON && USB && MAC80211 || CARL9170_LEDS && NETDEVICES=
- && WLAN && ATH_COMMON && CARL9170 || INPUT_WISTRON_BTNS && !S390 && INPUT =
-&& INPUT_MISC && X86 && !X86_64 || SENSORS_APPLESMC && HWMON && INPUT && X8=
-6 || SENSORS_LIS3LV02D && HWMON && ACPI && INPUT || IR_WINBOND_CIR && MEDIA=
-_SUPPORT && X86 && PNP && RC_CORE || BACKLIGHT_ADP8860 && HAS_IOMEM && BACK=
-LIGHT_LCD_SUPPORT && BACKLIGHT_CLASS_DEVICE && I2C || MSM_STAGING && STAGIN=
-G && !STAGING_EXCLUDE_BUILD && FB && ARCH_MSM && !FB_MSM || ASUS_LAPTOP && =
-X86 && X86_PLATFORM_DEVICES && ACPI && !ACPI_ASUS && INPUT && (RFKILL || RF=
-KILL=3Dn) || THINKPAD_ACPI && X86 && X86_PLATFORM_DEVICES && ACPI && INPUT =
-&& (RFKILL || RFKILL=3Dn) || EEEPC_LAPTOP && X86 && X86_PLATFORM_DEVICES &&=
- ACPI && INPUT && EXPERIMENTAL && (RFKILL || RFKILL=3Dn) && HOTPLUG_PCI || =
-EEEPC_WMI && X86 && X86_PLATFORM_DEVICES && ACPI_WMI && INPUT && EXPERIMENT=
-AL && BACKLIGHT_CLASS_DEVICE && (RFKILL || RFKILL=3Dn)) selects LEDS_CLASS =
-which has unmet direct dependencies (NEW_LEDS)
-
-drivers/platform/x86/toshiba_acpi.c:460: warning: label 'out' defined but n=
-ot used
-drivers/platform/x86/toshiba_acpi.c:448: warning: unused variable 'radio_st=
-ate'
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__7_Dec_2010_13_24_43_+1100_+jMi9/O_7UP45sXS
+--Signature=_Tue__7_Dec_2010_14_11_21_+1100_w6u1h1OhkGFmzurN
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJM/ZrrAAoJEDMEi1NhKgbsuCMIAJKqKx8WIRqQmdinVdcjWhNc
-ppxagKVCiwr/fR4EthEvoSzTfthNhK4bhuqESEKbsxXeKl0gCC40F8PrB0IebQH6
-vvFaZ/oiWthwuR72+sgo28R2tKW4FJ0yzCAGRuy+QokuG0akXKRmVWtbRi0wpmOJ
-CW11iewYerghjnNiOyP2BzQp64aLXE6jUhHPKaBdCBBR3JCTOy/kkWmC/dB9gOBO
-r9HslRdRSxBxm3NZntaNihcueVZVRhtrTVAwv9pEpzbqA5Z676DbFaY99Uuq5BKT
-FQ7sl5dlYM7W86rbKYk1jYfD8GQmTyqE9+Vcxnue+0OHafxOcaMqwLjN9xKKBs4=
-=JI+R
+iQEcBAEBAgAGBQJM/aXZAAoJEDMEi1NhKgbsjt0H/jLSU9YrExqblTzk2495qwyt
+aUK4Hd4HdLwFvYQOdLJ9lcXiu1Hesk7iFtSWN/WBJGyv2Y5kTmZncrYnYUKm/Kud
+i85/ccuTSJ7dihR03RdBrvQGpGUXassNPT/aOLxsu+XD4HqgJJIXqvTHGXiLbEoq
+NY7PNFihldfdsHjdFc659xvHH5gXbuE6NQF0J3O4ItyhSW8tNgdamXdCYni5hY7s
+3xoVc4zjej20a3ajCbPbmWBHkzEu/i/3gjhqnNc+Qem/GYJJVc0ciSQLub7VXwYL
+8+W2w6ZeIwf3stwRhAGggt55mcx8Pi6CbhFGaK/yUuKcpbw1ltQrbwue9zzvAg4=
+=AxVU
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__7_Dec_2010_13_24_43_+1100_+jMi9/O_7UP45sXS--
+--Signature=_Tue__7_Dec_2010_14_11_21_+1100_w6u1h1OhkGFmzurN--
