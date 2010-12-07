@@ -1,73 +1,39 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the usb tree with Linus'  tree
-Date: Mon, 6 Dec 2010 20:43:58 -0800
-Message-ID: <20101207044358.GB29457@kroah.com>
-References: <20101206124718.12e49789.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build failure after merge of the net tree
+Date: Mon, 06 Dec 2010 20:46:46 -0800 (PST)
+Message-ID: <20101206.204646.59694635.davem@davemloft.net>
+References: <20101207120039.6ea1491e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20101206124718.12e49789.sfr@canb.auug.org.au>
+In-Reply-To: <20101207120039.6ea1491e.sfr@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bob Liu <lliubbo@gmail.com>, Mike Frysinger <vapier@gentoo.org>, Felipe Balbi <balbi@ti.com>, Hema Kalliguddi <hemahk@ti.com>
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, joe@perches.com, leitao@linux.vnet.ibm.com
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Dec 06, 2010 at 12:47:18PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 7 Dec 2010 12:00:39 +1100
+
+> After merging the net tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
 > 
-> Today's linux-next merge of the usb tree got a conflict in
-> drivers/usb/musb/blackfin.c between commit
-> 1e393c6eece048052d4131ec4dad3b98e35a98e2 ("USB: musb: blackfin: pm: make
-> it work") from Linus' tree and commit
-> ea65df57c2eea803535a071752efb030c46a11f5 ("usb: musb: remove board_data
-> parameter from musb_platform_init()") from the usb tree.
+> drivers/net/ehea/ehea_main.c: In function 'ehea_refill_rq1':
+> drivers/net/ehea/ehea_main.c:405: error: implicit declaration of function 'ehea_info'
+> drivers/net/ehea/ehea_main.c: In function 'ehea_init_fill_rq1':
+> drivers/net/ehea/ehea_main.c:429: error: implicit declaration of function 'ehea_error'
+> drivers/net/ehea/ehea_main.c: In function 'ehea_neq_tasklet':
+> drivers/net/ehea/ehea_main.c:1306: warning: format '%lx' expects type 'long unsigned int', but argument 2 has type 'u64'
 > 
-> I fixed it up (see below) and can carry the fix as necessary.
+> Caused by commit 539995d18649023199986424d140f1d620372ce5 ("ehea: Use the
+> standard logging functions") interacting with commit
+> 5c7e57f7cddb83d81d83fefa5822dfe80891130e ("ehea: Add some info messages
+> and fix an issue") which went into Linus' tree before 2.6.37-rc4.
+> 
+> Presumably a merge of net-current into the net tree will need a fixup patch.
+> 
+> I have used the net tree from next-20101206 for today.
 
-Thanks.  Felipe, does this patch look correct?  I should probably merge
-the next -rc release into my USB tree to handle this type of thing.
-
-thanks,
-
-greg k-h
-
-> diff --cc drivers/usb/musb/blackfin.c
-> index fcb5206,e8cbcc5..0000000
-> --- a/drivers/usb/musb/blackfin.c
-> +++ b/drivers/usb/musb/blackfin.c
-> @@@ -360,33 -380,6 +360,33 @@@ static void musb_platform_reg_init(stru
->   				EP2_RX_ENA | EP3_RX_ENA | EP4_RX_ENA |
->   				EP5_RX_ENA | EP6_RX_ENA | EP7_RX_ENA);
->   	SSYNC();
->  +}
->  +
-> - int __init musb_platform_init(struct musb *musb, void *board_data)
-> ++int __init musb_platform_init(struct musb *musb)
->  +{
->  +
->  +	/*
->  +	 * Rev 1.0 BF549 EZ-KITs require PE7 to be high for both DEVICE
->  +	 * and OTG HOST modes, while rev 1.1 and greater require PE7 to
->  +	 * be low for DEVICE mode and high for HOST mode. We set it high
->  +	 * here because we are in host mode
->  +	 */
->  +
->  +	if (gpio_request(musb->config->gpio_vrsel, "USB_VRSEL")) {
->  +		printk(KERN_ERR "Failed ro request USB_VRSEL GPIO_%d\n",
->  +			musb->config->gpio_vrsel);
->  +		return -ENODEV;
->  +	}
->  +	gpio_direction_output(musb->config->gpio_vrsel, 0);
->  +
->  +	usb_nop_xceiv_register();
->  +	musb->xceiv = otg_get_transceiver();
->  +	if (!musb->xceiv) {
->  +		gpio_free(musb->config->gpio_vrsel);
->  +		return -ENODEV;
->  +	}
->  +
->  +	musb_platform_reg_init(musb);
->   
->   	if (is_host_enabled(musb)) {
->   		musb->board_set_vbus = bfin_set_vbus;
+I'm reverting Joe's change from net-next-2.6 to handle this, Joe can
+resubmit after I next do a net-2.6 --> net-next-2.6 merge
