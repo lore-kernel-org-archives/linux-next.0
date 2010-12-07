@@ -1,58 +1,90 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (wireless
- tree related)
-Date: Tue, 7 Dec 2010 14:12:49 +1100
-Message-ID: <20101207141249.d10c5afc.sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (v4l-dvb tree related)
+Date: Tue, 7 Dec 2010 14:18:09 +1100
+Message-ID: <20101207141809.a305b8d5.sfr@canb.auug.org.au>
+References: <20101123133807.ecadba39.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__7_Dec_2010_14_12_49_+1100_F2b9.88d+.y.EiRR"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47792 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:39499 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752188Ab0LGDM4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 6 Dec 2010 22:12:56 -0500
+	id S1751479Ab0LGDSM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 6 Dec 2010 22:18:12 -0500
+In-Reply-To: <20101123133807.ecadba39.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>, Javier Cardona <javier@cozybit.com>
+To: Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IlJpY2hhcmQgUsO2amZvcnMi?= <richard.rojfors@pelagicore.com>
 
---Signature=_Tue__7_Dec_2010_14_12_49_+1100_F2b9.88d+.y.EiRR
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Mauro,
 
-Hi John,
+On Tue, 23 Nov 2010 13:38:07 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> drivers/media/video/timblogiw.c: In function 'timblogiw_probe':
+> drivers/media/video/timblogiw.c:749: error: timblogiw_ioctl_ops causes a section type conflict
+> 
+> Caused by commit ef6ce9acc5f87e253c97dfd5301f8036f937f595 ("[media]
+> [1/2,v4] media: Add timberdale video-in driver") which declared some
+> structs as const and __devinitdata.  They should use __devinitconst.
 
-After merging the final tree, today's linux-next build (i386 defconfig)
-failed like this:
+I am still getting this ...
 
-net/mac80211/main.c: In function 'ieee80211_bss_info_change_notify':
-net/mac80211/main.c:250: error: 'union <anonymous>' has no member named 'me=
-sh'
+This is the patch that I am applying:
 
-Caused by commit 29cbe68c516a48a9a88b3226878570c6cbd83c02
-("cfg80211/mac80211: add mesh join/leave commands").
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 23 Nov 2010 13:35:17 +1100
+Subject: [PATCH] media: const and __devinitdata do not mix
 
-I have reverted that commit for today.
---=20
+This fixes the following error in PowerPC builds:
+
+drivers/media/video/timblogiw.c: In function 'timblogiw_probe':
+drivers/media/video/timblogiw.c:749: error: timblogiw_ioctl_ops causes a section type conflict
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/media/video/timblogiw.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/video/timblogiw.c b/drivers/media/video/timblogiw.c
+index bddcdb6..cf48aa9 100644
+--- a/drivers/media/video/timblogiw.c
++++ b/drivers/media/video/timblogiw.c
+@@ -746,7 +746,7 @@ static int timblogiw_mmap(struct file *file, struct vm_area_struct *vma)
+ 
+ /* Platform device functions */
+ 
+-static const __devinitdata struct v4l2_ioctl_ops timblogiw_ioctl_ops = {
++static __devinitconst struct v4l2_ioctl_ops timblogiw_ioctl_ops = {
+ 	.vidioc_querycap		= timblogiw_querycap,
+ 	.vidioc_enum_fmt_vid_cap	= timblogiw_enum_fmt,
+ 	.vidioc_g_fmt_vid_cap		= timblogiw_g_fmt,
+@@ -768,7 +768,7 @@ static const __devinitdata struct v4l2_ioctl_ops timblogiw_ioctl_ops = {
+ 	.vidioc_enum_framesizes		= timblogiw_enum_framesizes,
+ };
+ 
+-static const __devinitdata struct v4l2_file_operations timblogiw_fops = {
++static __devinitconst struct v4l2_file_operations timblogiw_fops = {
+ 	.owner		= THIS_MODULE,
+ 	.open		= timblogiw_open,
+ 	.release	= timblogiw_close,
+@@ -778,7 +778,7 @@ static const __devinitdata struct v4l2_file_operations timblogiw_fops = {
+ 	.poll		= timblogiw_poll,
+ };
+ 
+-static const __devinitdata struct video_device timblogiw_template = {
++static __devinitconst struct video_device timblogiw_template = {
+ 	.name		= TIMBLOGIWIN_NAME,
+ 	.fops		= &timblogiw_fops,
+ 	.ioctl_ops	= &timblogiw_ioctl_ops,
+-- 
+1.7.2.3
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__7_Dec_2010_14_12_49_+1100_F2b9.88d+.y.EiRR
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJM/aYyAAoJEDMEi1NhKgbsE08IAIW9wrzgzUSOuKr0BRfluD9Z
-+ynBop5ChjmpAngOkGXSuFWwe/p0jrhPeScgfBueSn2NiX/x/qPW50leya/39Sb4
-MaDh/DygjgBiw79sB6x5PY03u1PrYsadvlwMswW/JUYHUkMoDhAT17adZok8u+EF
-3so/ISFOl0LVAvChheZ0r34nnShrCDxd+DkVDfLvtlmYYQrHCJCyZJUVaGT9r/0U
-jyskIARQ70QSil5lQEaDlGzLFj+uyupm7c3huivnkecTXqqp0560johYh7Da+oBO
-eQSEzsAv8UG/Tvw+SzQw1CaKgCLrIQjFpTp0X8WQ2bTIcudsJYRbo2iFLE1ZDG4=
-=3tSZ
------END PGP SIGNATURE-----
-
---Signature=_Tue__7_Dec_2010_14_12_49_+1100_F2b9.88d+.y.EiRR--
