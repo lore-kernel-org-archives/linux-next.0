@@ -1,57 +1,81 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: unsigned commits
-Date: Tue, 7 Dec 2010 10:38:39 +1100
-Message-ID: <20101207103839.1110d7ce.sfr@canb.auug.org.au>
-References: <20101207103346.fbbcf099.sfr@canb.auug.org.au>
-	<20101206233458.GA3738@srcf.ucam.org>
+Subject: Re: linux-next: build failure after merge of the acpi tree
+Date: Tue, 7 Dec 2010 11:27:34 +1100
+Message-ID: <20101207112734.4d1bef8c.sfr@canb.auug.org.au>
+References: <20101202112239.c7d05518.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__7_Dec_2010_10_38_39_+1100_vl4c3m12DMM/55SQ"
+ boundary="Signature=_Tue__7_Dec_2010_11_27_34_+1100_LR/T+JjRj1ft0.YO"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44125 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:45262 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751204Ab0LFXip (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 6 Dec 2010 18:38:45 -0500
-In-Reply-To: <20101206233458.GA3738@srcf.ucam.org>
+	id S1750774Ab0LGA1o (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 6 Dec 2010 19:27:44 -0500
+In-Reply-To: <20101202112239.c7d05518.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Matthew Garrett <mjg59@srcf.ucam.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Len Brown <lenb@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>
 
---Signature=_Tue__7_Dec_2010_10_38_39_+1100_vl4c3m12DMM/55SQ
+--Signature=_Tue__7_Dec_2010_11_27_34_+1100_LR/T+JjRj1ft0.YO
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Matthew,
+Hi Len,
 
-On Mon, 6 Dec 2010 23:34:58 +0000 Matthew Garrett <mjg59@srcf.ucam.org> wro=
-te:
+On Thu, 2 Dec 2010 11:22:39 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
 >
-> They're somewhat WIP - I'll shift them to a topic branch.
+> After merging the acpi tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+>=20
+> In file included from drivers/video/output.c:25:
+> include/linux/video_output.h: In function 'video_output_register':
+> include/linux/video_output.h:49: error: implicit declaration of function =
+'ERR_PTR'
+> include/linux/video_output.h:49: warning: return makes pointer from integ=
+er without a cast
+> In file included from drivers/video/output.c:27:
+> include/linux/err.h: At top level:
+> include/linux/err.h:22: error: conflicting types for 'ERR_PTR'
+> include/linux/video_output.h:49: note: previous implicit declaration of '=
+ERR_PTR' was here
+> drivers/video/output.c:84: error: redefinition of 'video_output_register'
+> include/linux/video_output.h:44: note: previous definition of 'video_outp=
+ut_register' was here
+> drivers/video/output.c:114: error: redefinition of 'video_output_unregist=
+er'
+> include/linux/video_output.h:51: note: previous definition of 'video_outp=
+ut_unregister' was here
+>=20
+> Caused by commit 16d21716c8849c3283d1b9e590e6fe8d1966f4b7 ("ACPI: video:
+> fix build for VIDEO_OUTPUT_CONTROL=3Dn").  See Rule 1 in
+> Documentation/SubmitChecklist.
+>=20
+> I have used the version of the acpi tree from next-20101201 for today.
 
-Thanks.  They really shouldn't be in linux-next until they are (more or
-less) finished.
+I am still getting this failure.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__7_Dec_2010_10_38_39_+1100_vl4c3m12DMM/55SQ
+--Signature=_Tue__7_Dec_2010_11_27_34_+1100_LR/T+JjRj1ft0.YO
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJM/XP/AAoJEDMEi1NhKgbstxwIAIOksNFTU5UuIX1oKb0ZZpAS
-pYkkERbVD10Fy6nEWygJ75Aq6lv7RaEIyxT5dirxF7PBz288fEPapkj32s+rF8Ik
-dqUoFfMbyw6qP/o9fTaJtX21tVnoZ/L4yVYqX6fwJ3Vc99GoxVZ4y6n8QzV3IKpY
-QLCuFRK6HcNam+gFjDBk5wdTJy52ioo7LswYM0tJ1n2YQ6Q/pb2USeEX3iYdRot6
-LRTTrdusnSFX40iiLdlCkL/vFONOfQcUk2y71LmTyzI7QJAWCO3w3W78OkN8xN+u
-Nkfz48APSqwHrSj9PHpmofsVi/q46TiRXB7sKzUokMwfB/prSdXTxOE3LpPRqDY=
-=CWsL
+iQEcBAEBAgAGBQJM/X92AAoJEDMEi1NhKgbsnr4H/2A9dWuqDBg/sbrd5Kl6SQ2l
+Kv7I+zPEusDPePhPfWQdS4Xd8zIjsNlxf2APmXB+lYsKjI3EG0ZNg5QoDnUjB4tt
+1YusvHrgYysMq7HpaXQDlpbCmTVoxURnQU3QSQ6PywBe1RO4+pHTHWAClrzWPcUf
+LEp9j0MmpWacDZi7jJgLdgqWZF6Z07V8nuxGgsP0guHReL8sro50sTbGZ+suoN3C
+WLE7UxA52DfxgWEa5/QYcDvxwB+f4nIXGrCGKAiUOez6Hqo8jY/PldPrcWlQLiJD
+WIKLkvRvkRWkN9VH8vpTqmrJ876mllz3kDqlMy6mv0TJDajfMGAJwg/WL15uhh0=
+=rguc
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__7_Dec_2010_10_38_39_+1100_vl4c3m12DMM/55SQ--
+--Signature=_Tue__7_Dec_2010_11_27_34_+1100_LR/T+JjRj1ft0.YO--
