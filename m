@@ -1,67 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the net tree
-Date: Tue, 7 Dec 2010 12:00:39 +1100
-Message-ID: <20101207120039.6ea1491e.sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the final tree (tip
+ tree related)
+Date: Tue, 7 Dec 2010 12:56:26 +1100
+Message-ID: <20101207125626.1be6cf17.sfr@canb.auug.org.au>
+References: <20101129135045.15aec5ed.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__7_Dec_2010_12_00_39_+1100_wKWHfWrMxxKJQ3v_"
+ boundary="Signature=_Tue__7_Dec_2010_12_56_26_+1100_NGyhjl5x3tsHIkyF"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36882 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58489 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753611Ab0LGBAu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 6 Dec 2010 20:00:50 -0500
+	id S1753968Ab0LGB4g (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 6 Dec 2010 20:56:36 -0500
+In-Reply-To: <20101129135045.15aec5ed.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Breno Leitao <leitao@linux.vnet.ibm.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__7_Dec_2010_12_00_39_+1100_wKWHfWrMxxKJQ3v_
+--Signature=_Tue__7_Dec_2010_12_56_26_+1100_NGyhjl5x3tsHIkyF
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Mon, 29 Nov 2010 13:50:45 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the final tree, today's linux-next build (sparc64 defconfig)
+> failed like this:
+>=20
+> arch/sparc/kernel/perf_event.c:1326: error: 'init_hw_perf_event' undeclar=
+ed here (not in a function)
+>=20
+> Caused by commit 004417a6d468e24399e383645c068b498eed84ad ("perf, arch:
+> Cleanup perf-pmu init vs lockup-detector").
+>=20
+> I reverted that commit for today.
 
-After merging the net tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+I am still reverting that commit.
 
-drivers/net/ehea/ehea_main.c: In function 'ehea_refill_rq1':
-drivers/net/ehea/ehea_main.c:405: error: implicit declaration of function '=
-ehea_info'
-drivers/net/ehea/ehea_main.c: In function 'ehea_init_fill_rq1':
-drivers/net/ehea/ehea_main.c:429: error: implicit declaration of function '=
-ehea_error'
-drivers/net/ehea/ehea_main.c: In function 'ehea_neq_tasklet':
-drivers/net/ehea/ehea_main.c:1306: warning: format '%lx' expects type 'long=
- unsigned int', but argument 2 has type 'u64'
-
-Caused by commit 539995d18649023199986424d140f1d620372ce5 ("ehea: Use the
-standard logging functions") interacting with commit
-5c7e57f7cddb83d81d83fefa5822dfe80891130e ("ehea: Add some info messages
-and fix an issue") which went into Linus' tree before 2.6.37-rc4.
-
-Presumably a merge of net-current into the net tree will need a fixup patch.
-
-I have used the net tree from next-20101206 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__7_Dec_2010_12_00_39_+1100_wKWHfWrMxxKJQ3v_
+--Signature=_Tue__7_Dec_2010_12_56_26_+1100_NGyhjl5x3tsHIkyF
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJM/Yc3AAoJEDMEi1NhKgbskQAH/A1Oco8rh1BwBvmKpGU0tfCX
-DfIozyA7lkhMOggpZptCnpCgjgPHwC0OjV1vkfF6tSnnUUqPPq4xrsVE17Az0p+C
-K8PfqtfnYGJg0gJeqoxiQFfFOXKJBgrqk0No6f0lh+oFpGtDamBVFiGFoos83Dil
-NinJ8C9i5EbkDdlLYwrzS6v/+q0ev88BwpcX0AcIlVhvvzTzT8do8VS7JpYcSFdr
-BE72PJ9F28FBwIrpFprXQNrOohDFM/f1PEmWVYtSo2f74gUeNVcgl/Nm3FxK+yVP
-gDZDWkZnmo7EOfAo7eCnSKZIoQWFzMBXCW22T5x2DouYRyNcxwKWgs7vJAaMG8Y=
-=SrfO
+iQEcBAEBAgAGBQJM/ZRKAAoJEDMEi1NhKgbsEYkH/R0Ws9CZ9eGz3Xvrd/xGyKmJ
+14fp4+Xr7CGP/8MOcpHycQrhEFmT04Kbp9RuAfN/XIYNvtWdDqkRxEjIjgrSPtjZ
+WcyoLuBybuZ6tP23SLZBVsqpQG01wQPs023VrVtiRdDoMGULuj4HunfaTbN/pL9O
+RJ1nmfuBnNGweYIRGRpR5mir0exsyhvfx/5dWqa/vA132vEXMkZnWEQyTN9ktm6w
+pzQyRKZ+e7l+Hr7DwyHNIi7/ryWIH5fRzZ8kbw9+7ql5Mf+WvcltZnRTMyCmsbnr
+S6Ee/caQNxeasgTk2dSxqGEOaRMGFO1mPWdogi938/k704bYAwspn4JYgMx2E2k=
+=V1tx
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__7_Dec_2010_12_00_39_+1100_wKWHfWrMxxKJQ3v_--
+--Signature=_Tue__7_Dec_2010_12_56_26_+1100_NGyhjl5x3tsHIkyF--
