@@ -1,90 +1,93 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree (tip
- tree related)
-Date: Tue, 7 Dec 2010 12:58:22 +1100
-Message-ID: <20101207125822.1d43e572.sfr@canb.auug.org.au>
-References: <20101122133949.93201b15.sfr@canb.auug.org.au>
-	<20101129135023.4a931f86.sfr@canb.auug.org.au>
-	<20101129082916.GA12374@elte.hu>
-	<20101129143047.GM18100@redhat.com>
+Subject: linux-next: build failure after merge of the drivers-x86 tree
+Date: Tue, 7 Dec 2010 13:24:43 +1100
+Message-ID: <20101207132443.6516fd07.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__7_Dec_2010_12_58_22_+1100_kWJ_N8pQ2J7ulh/7"
+ boundary="Signature=_Tue__7_Dec_2010_13_24_43_+1100_+jMi9/O_7UP45sXS"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48811 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:52362 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753161Ab0LGB6d (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 6 Dec 2010 20:58:33 -0500
-In-Reply-To: <20101129143047.GM18100@redhat.com>
+	id S1751023Ab0LGCYu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 6 Dec 2010 21:24:50 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Don Zickus <dzickus@redhat.com>
-Cc: Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>
+To: Matthew Garrett <mjg59@srcf.ucam.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__7_Dec_2010_12_58_22_+1100_kWJ_N8pQ2J7ulh/7
+--Signature=_Tue__7_Dec_2010_13_24_43_+1100_+jMi9/O_7UP45sXS
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, 29 Nov 2010 09:30:47 -0500 Don Zickus <dzickus@redhat.com> wrote:
->
-> On Mon, Nov 29, 2010 at 09:29:16AM +0100, Ingo Molnar wrote:
-> >=20
-> > * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >=20
-> > > On Mon, 22 Nov 2010 13:39:49 +1100 Stephen Rothwell <sfr@canb.auug.or=
-g.au> wrote:
-> > > >
-> > > > After merging the final tree, today's linux-next build (sparc64 def=
-config)
-> > > > failed like this:
-> > > >=20
-> > > > arch/sparc/kernel/nmi.c:54: error: redefinition of 'touch_nmi_watch=
-dog'
-> > > > include/linux/nmi.h:21: note: previous definition of 'touch_nmi_wat=
-chdog' was here
-> > > >=20
-> > > > Caused (or, at least exposed) by commit
-> > > > 5f2b0ba4d94b3ac23cbc4b7f675d98eb677a760a ("x86, nmi_watchdog: Remov=
-e the
-> > > > old nmi_watchdog").  Sparc appears to have a touch_nmi_watchdog() a=
-nd
-> > > > defines ARCH_HAS_NMI_WATCHDOG but not CONFIG_HARDLOCKUP_DETECTOR.
-> > > >=20
-> > > > I have reverted that commit for today (as well as commit
-> > > > 072b198a4ad48bd722ec6d203d65422a4698eae7 "x86, nmi_watchdog: Remove=
- all
-> > > > stub function calls from old nmi_watchdog" that depends on it).
-> > >=20
-> > > This build failure is back, so I have reverted the above commits agai=
-n.
-> >=20
-> > Don, have you got a fix for that?
->=20
-> I do.  I posted it last week, but you wanted me to post something
-> incremental instead.  I'll get that out today.
+Hi Matthew,
 
-I am still reverting those 2 commits.
+After merging the drivers-x86 tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
+drivers/platform/x86/toshiba_acpi.c: In function 'wwan_rfkill_set_block':
+drivers/platform/x86/toshiba_acpi.c:454: error: 'HCI_WIRELESS_WWAN_ENABLE' =
+undeclared (first use in this function)
+drivers/platform/x86/toshiba_acpi.c:454: error: (Each undeclared identifier=
+ is reported only once
+drivers/platform/x86/toshiba_acpi.c:454: error: for each function it appear=
+s in.)
+
+Caused by commit 64ea4efdd949c99d9206a44a43984d2e861350f1 ("wwan rfkill stu=
+bs").
+
+I have used the version of the drivers-x86 tree from next-20101206 for toda=
+y.
+
+I also got the following new messages from the build:
+
+drivers/platform/x86/Kconfig:422:error: recursive dependency detected!
+drivers/platform/x86/Kconfig:422:	symbol EEEPC_WMI depends on ACPI_WMI
+drivers/platform/x86/Kconfig:438:	symbol ACPI_WMI is selected by ACER_WMI
+drivers/platform/x86/Kconfig:18:	symbol ACER_WMI depends on LEDS_CLASS
+drivers/leds/Kconfig:10:	symbol LEDS_CLASS is selected by EEEPC_WMI
+
+warning: (ADB_PMU_LED && MACINTOSH_DRIVERS && ADB_PMU || ATH5K && NETDEVICE=
+S && WLAN && ATH_COMMON && (PCI || ATHEROS_AR231X) && MAC80211 || ATH9K && =
+NETDEVICES && WLAN && ATH_COMMON && PCI && MAC80211 || ATH9K_HTC && NETDEVI=
+CES && WLAN && ATH_COMMON && USB && MAC80211 || CARL9170_LEDS && NETDEVICES=
+ && WLAN && ATH_COMMON && CARL9170 || INPUT_WISTRON_BTNS && !S390 && INPUT =
+&& INPUT_MISC && X86 && !X86_64 || SENSORS_APPLESMC && HWMON && INPUT && X8=
+6 || SENSORS_LIS3LV02D && HWMON && ACPI && INPUT || IR_WINBOND_CIR && MEDIA=
+_SUPPORT && X86 && PNP && RC_CORE || BACKLIGHT_ADP8860 && HAS_IOMEM && BACK=
+LIGHT_LCD_SUPPORT && BACKLIGHT_CLASS_DEVICE && I2C || MSM_STAGING && STAGIN=
+G && !STAGING_EXCLUDE_BUILD && FB && ARCH_MSM && !FB_MSM || ASUS_LAPTOP && =
+X86 && X86_PLATFORM_DEVICES && ACPI && !ACPI_ASUS && INPUT && (RFKILL || RF=
+KILL=3Dn) || THINKPAD_ACPI && X86 && X86_PLATFORM_DEVICES && ACPI && INPUT =
+&& (RFKILL || RFKILL=3Dn) || EEEPC_LAPTOP && X86 && X86_PLATFORM_DEVICES &&=
+ ACPI && INPUT && EXPERIMENTAL && (RFKILL || RFKILL=3Dn) && HOTPLUG_PCI || =
+EEEPC_WMI && X86 && X86_PLATFORM_DEVICES && ACPI_WMI && INPUT && EXPERIMENT=
+AL && BACKLIGHT_CLASS_DEVICE && (RFKILL || RFKILL=3Dn)) selects LEDS_CLASS =
+which has unmet direct dependencies (NEW_LEDS)
+
+drivers/platform/x86/toshiba_acpi.c:460: warning: label 'out' defined but n=
+ot used
+drivers/platform/x86/toshiba_acpi.c:448: warning: unused variable 'radio_st=
+ate'
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__7_Dec_2010_12_58_22_+1100_kWJ_N8pQ2J7ulh/7
+--Signature=_Tue__7_Dec_2010_13_24_43_+1100_+jMi9/O_7UP45sXS
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJM/ZS+AAoJEDMEi1NhKgbsvOoIAJeRXbebu22xMOynkzOdVS2Y
-8DVid8NH//bhCsKvzA32uffmLbjRJsDlhxrAJ0fSjWsGfB73PAf804NSY6U1pkFz
-0IqpOGCMCNNKaKJZguK92snRiS22cr7pzBYGftceXneqJHBVn/RJ6GuS45TrnUQW
-tMTr0gP4ppKiBk/Per/moGjNrvyQ+xFj7qFK8bKRtjT7SPuk19xrOHSdrfF1PGxE
-54cesBjicv5ngaC4BdDBDEP0QRkEnef17tEciQThWX9DDWrcEBxoqeSaGC+BzqmU
-oXtoru65DqboCfWYTRRHBIt9zBf0k/P2NAR/zKCP+Rt0RLNOExjkwoDLW4qVNG4=
-=cqfn
+iQEcBAEBAgAGBQJM/ZrrAAoJEDMEi1NhKgbsuCMIAJKqKx8WIRqQmdinVdcjWhNc
+ppxagKVCiwr/fR4EthEvoSzTfthNhK4bhuqESEKbsxXeKl0gCC40F8PrB0IebQH6
+vvFaZ/oiWthwuR72+sgo28R2tKW4FJ0yzCAGRuy+QokuG0akXKRmVWtbRi0wpmOJ
+CW11iewYerghjnNiOyP2BzQp64aLXE6jUhHPKaBdCBBR3JCTOy/kkWmC/dB9gOBO
+r9HslRdRSxBxm3NZntaNihcueVZVRhtrTVAwv9pEpzbqA5Z676DbFaY99Uuq5BKT
+FQ7sl5dlYM7W86rbKYk1jYfD8GQmTyqE9+Vcxnue+0OHafxOcaMqwLjN9xKKBs4=
+=JI+R
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__7_Dec_2010_12_58_22_+1100_kWJ_N8pQ2J7ulh/7--
+--Signature=_Tue__7_Dec_2010_13_24_43_+1100_+jMi9/O_7UP45sXS--
