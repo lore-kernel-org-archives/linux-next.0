@@ -1,50 +1,78 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next v2] media: fix em28xx build, needs hardirq.h
-Date: Tue, 7 Dec 2010 10:50:09 -0800
-Message-ID: <20101207105009.7d634c7b.randy.dunlap@oracle.com>
-References: <20101206140055.34289498.sfr@canb.auug.org.au>
-	<AANLkTi=XkxnHZGTEsrrRmPGQePitzb=akyS99_Qd6ROy@mail.gmail.com>
-	<20101207103815.26054c38.randy.dunlap@oracle.com>
-	<20101207184453.GA30998@core2.telecom.by>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the drivers-x86 tree
+Date: Wed, 8 Dec 2010 13:32:51 +1100
+Message-ID: <20101208133251.1a39fa47.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__8_Dec_2010_13_32_51_+1100_r4V+6eg+WmFliyrt"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:45854 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752642Ab0LGSuq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Dec 2010 13:50:46 -0500
-In-Reply-To: <20101207184453.GA30998@core2.telecom.by>
+Received: from chilli.pcug.org.au ([203.10.76.44]:54155 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754543Ab0LHCdG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 7 Dec 2010 21:33:06 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Zimny Lech <napohybelskurwysynom2010@gmail.com>, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Matthew Garrett <mjg59@srcf.ucam.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Corentin Chary <corentincj@iksaif.net>
 
+--Signature=_Wed__8_Dec_2010_13_32_51_+1100_r4V+6eg+WmFliyrt
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> It's defined in hardirq.h.
+Hi Matthew,
 
-Yes, I was asleep at the wheel.  :(
+After merging the scsi-post-merge tree, today's linux-next build (all
+builds) produced these warnings:
 
----
-From: Randy Dunlap <randy.dunlap@oracle.com>
+drivers/platform/x86/Kconfig:422:error: recursive dependency detected!
+drivers/platform/x86/Kconfig:422:	symbol EEEPC_WMI depends on ACPI_WMI
+drivers/platform/x86/Kconfig:438:	symbol ACPI_WMI is selected by ACER_WMI
+drivers/platform/x86/Kconfig:18:	symbol ACER_WMI depends on LEDS_CLASS
+drivers/leds/Kconfig:10:	symbol LEDS_CLASS is selected by EEEPC_WMI
 
-Fix em28xx build by adding hardirq.h header file:
+The x86_64 allmodconfig and i386 defconfig builds also produced this:
 
-drivers/media/video/em28xx/em28xx-vbi.c:49: error: implicit declaration of function 'in_interrupt'
+warning: (ADB_PMU_LED && MACINTOSH_DRIVERS && ADB_PMU || ATH5K && NETDEVICE=
+S && WLAN && ATH_COMMON && (PCI || ATHEROS_AR231X) && MAC80211 || ATH9K && =
+NETDEVICES && WLAN && ATH_COMMON && PCI && MAC80211 || ATH9K_HTC && NETDEVI=
+CES && WLAN && ATH_COMMON && USB && MAC80211 || CARL9170_LEDS && NETDEVICES=
+ && WLAN && ATH_COMMON && CARL9170 || INPUT_WISTRON_BTNS && !S390 && INPUT =
+&& INPUT_MISC && X86 && !X86_64 || SENSORS_APPLESMC && HWMON && INPUT && X8=
+6 || SENSORS_LIS3LV02D && HWMON && ACPI && INPUT || IR_WINBOND_CIR && MEDIA=
+_SUPPORT && X86 && PNP && RC_CORE || BACKLIGHT_ADP8860 && HAS_IOMEM && BACK=
+LIGHT_LCD_SUPPORT && BACKLIGHT_CLASS_DEVICE && I2C || MSM_STAGING && STAGIN=
+G && !STAGING_EXCLUDE_BUILD && FB && ARCH_MSM && !FB_MSM || ASUS_LAPTOP && =
+X86 && X86_PLATFORM_DEVICES && ACPI && !ACPI_ASUS && INPUT && (RFKILL || RF=
+KILL=3Dn) || THINKPAD_ACPI && X86 && X86_PLATFORM_DEVICES && ACPI && INPUT =
+&& (RFKILL || RFKILL=3Dn) || EEEPC_LAPTOP && X86 && X86_PLATFORM_DEVICES &&=
+ ACPI && INPUT && EXPERIMENTAL && (RFKILL || RFKILL=3Dn) && HOTPLUG_PCI || =
+EEEPC_WMI && X86 && X86_PLATFORM_DEVICES && ACPI_WMI && INPUT && EXPERIMENT=
+AL && BACKLIGHT_CLASS_DEVICE && (RFKILL || RFKILL=3Dn)) selects LEDS_CLASS =
+which has unmet direct dependencies (NEW_LEDS)
 
-Reported-by: Zimny Lech <napohybelskurwysynom2010@gmail.com>
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- drivers/media/video/em28xx/em28xx-vbi.c |    1 +
- 1 file changed, 1 insertion(+)
+Introduced by commit 41eeea57adfb7d37b4a826877a8a6965cae5fb4a
+("eeepc-wmi: add touchpad led support")?
 
---- linux-next-20101207.orig/drivers/media/video/em28xx/em28xx-vbi.c
-+++ linux-next-20101207/drivers/media/video/em28xx/em28xx-vbi.c
-@@ -23,6 +23,7 @@
- 
- #include <linux/kernel.h>
- #include <linux/module.h>
-+#include <linux/hardirq.h>
- #include <linux/init.h>
- 
- #include "em28xx.h"
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__8_Dec_2010_13_32_51_+1100_r4V+6eg+WmFliyrt
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJM/u5TAAoJEDMEi1NhKgbsLoYH/1DevPn1F2WoijPSD2v28QP+
+XlIdb8kWVHUV3A99LTmSCR8Ux6lLt6XI9M1JXOLl33NT8blTmB90Qid8nYbSYXBy
+oSJ10THcPJCpFdwknefJAyEG8uopZh2uzj9zxfPZgcuuIK8ENlhC7ZIzBPFBLJWl
+8UI/TnRJQuLnWhzMSfeETd7SNPj3WyPARVHI+HSe+9DiNNFFijhvx0P31JdhdZee
+NPeSQj+T/KjPMsXbJVwIR4JDAnKXxG08ampIpbAkk5AeK+GFbMzy2ZeG/nC/2BO8
+Q4z87TvWQyJ3VEOuUSy8rr1gVgV2y3vEf1j3wzuhacBq3NDmFqHb1zR/9AtofcU=
+=doZ+
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__8_Dec_2010_13_32_51_+1100_r4V+6eg+WmFliyrt--
