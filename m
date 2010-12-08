@@ -1,78 +1,318 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings after merge of the drivers-x86 tree
-Date: Wed, 8 Dec 2010 13:32:51 +1100
-Message-ID: <20101208133251.1a39fa47.sfr@canb.auug.org.au>
+Subject: linux-next: Tree for December 8
+Date: Wed, 8 Dec 2010 13:58:58 +1100
+Message-ID: <20101208135858.c1208651.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__8_Dec_2010_13_32_51_+1100_r4V+6eg+WmFliyrt"
+ boundary="Signature=_Wed__8_Dec_2010_13_58_58_+1100_NhYnRSpHF0nBhlGB"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54155 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:47660 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754543Ab0LHCdG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 7 Dec 2010 21:33:06 -0500
+	id S1752918Ab0LHC7D (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 7 Dec 2010 21:59:03 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Matthew Garrett <mjg59@srcf.ucam.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Corentin Chary <corentincj@iksaif.net>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Wed__8_Dec_2010_13_32_51_+1100_r4V+6eg+WmFliyrt
+--Signature=_Wed__8_Dec_2010_13_58_58_+1100_NhYnRSpHF0nBhlGB
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Matthew,
+Hi all,
 
-After merging the scsi-post-merge tree, today's linux-next build (all
-builds) produced these warnings:
+Changes since 20101207:
 
-drivers/platform/x86/Kconfig:422:error: recursive dependency detected!
-drivers/platform/x86/Kconfig:422:	symbol EEEPC_WMI depends on ACPI_WMI
-drivers/platform/x86/Kconfig:438:	symbol ACPI_WMI is selected by ACER_WMI
-drivers/platform/x86/Kconfig:18:	symbol ACER_WMI depends on LEDS_CLASS
-drivers/leds/Kconfig:10:	symbol LEDS_CLASS is selected by EEEPC_WMI
+The arm tree lost its conflict.
 
-The x86_64 allmodconfig and i386 defconfig builds also produced this:
+The v4l-dvb tree still has its build failure for which I applied a patch.
 
-warning: (ADB_PMU_LED && MACINTOSH_DRIVERS && ADB_PMU || ATH5K && NETDEVICE=
-S && WLAN && ATH_COMMON && (PCI || ATHEROS_AR231X) && MAC80211 || ATH9K && =
-NETDEVICES && WLAN && ATH_COMMON && PCI && MAC80211 || ATH9K_HTC && NETDEVI=
-CES && WLAN && ATH_COMMON && USB && MAC80211 || CARL9170_LEDS && NETDEVICES=
- && WLAN && ATH_COMMON && CARL9170 || INPUT_WISTRON_BTNS && !S390 && INPUT =
-&& INPUT_MISC && X86 && !X86_64 || SENSORS_APPLESMC && HWMON && INPUT && X8=
-6 || SENSORS_LIS3LV02D && HWMON && ACPI && INPUT || IR_WINBOND_CIR && MEDIA=
-_SUPPORT && X86 && PNP && RC_CORE || BACKLIGHT_ADP8860 && HAS_IOMEM && BACK=
-LIGHT_LCD_SUPPORT && BACKLIGHT_CLASS_DEVICE && I2C || MSM_STAGING && STAGIN=
-G && !STAGING_EXCLUDE_BUILD && FB && ARCH_MSM && !FB_MSM || ASUS_LAPTOP && =
-X86 && X86_PLATFORM_DEVICES && ACPI && !ACPI_ASUS && INPUT && (RFKILL || RF=
-KILL=3Dn) || THINKPAD_ACPI && X86 && X86_PLATFORM_DEVICES && ACPI && INPUT =
-&& (RFKILL || RFKILL=3Dn) || EEEPC_LAPTOP && X86 && X86_PLATFORM_DEVICES &&=
- ACPI && INPUT && EXPERIMENTAL && (RFKILL || RFKILL=3Dn) && HOTPLUG_PCI || =
-EEEPC_WMI && X86 && X86_PLATFORM_DEVICES && ACPI_WMI && INPUT && EXPERIMENT=
-AL && BACKLIGHT_CLASS_DEVICE && (RFKILL || RFKILL=3Dn)) selects LEDS_CLASS =
-which has unmet direct dependencies (NEW_LEDS)
+The acpi tree still has its build failure so I used the version from
+next-20101201.
 
-Introduced by commit 41eeea57adfb7d37b4a826877a8a6965cae5fb4a
-("eeepc-wmi: add touchpad led support")?
+The net tree lost its build failure.
+
+The wireless tree lost its build failure.
+
+The tip tree still has its build failures so I have reverted 3 commits.
+
+The drivers-x86 tree lost its build failure.
+
+The staging tree lost its conflicts.
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups (if any), it is also built with powerpc allnoconfig (32 and
+64 bit), ppc44x_defconfig and allyesconfig (minus
+CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
+and sparc64 defconfig. These builds also have
+CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
+CONFIG_DEBUG_INFO disabled when necessary.
+
+Below is a summary of the state of the merge.
+
+We are up to 181 trees (counting Linus' and 26 trees of patches pending
+for Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Randy Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__8_Dec_2010_13_32_51_+1100_r4V+6eg+WmFliyrt
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master
+Merging fixes/fixes
+Merging arm-current/master
+Merging m68k-current/for-linus
+Merging powerpc-merge/merge
+Merging sparc-current/master
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sound-current/for-linus
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging kbuild-current/rc-fixes
+Merging driver-core.current/driver-core-linus
+Merging tty.current/tty-linus
+Merging usb.current/usb-linus
+Merging staging.current/staging-linus
+Merging cpufreq-current/fixes
+Merging input-current/for-linus
+Merging md-current/for-linus
+Merging audit-current/for-linus
+Merging crypto-current/master
+Merging ide-curent/master
+Merging dwmw2/master
+Merging sh-current/sh-fixes-for-linus
+Merging rmobile-current/rmobile-fixes-for-linus
+Merging fbdev-current/fbdev-fixes-for-linus
+Merging gcl-current/merge
+Merging arm/devel
+Merging davinci/davinci-next
+Merging i.MX/for-next
+Merging msm/for-next
+Merging omap/for-next
+Merging pxa/for-next
+Merging samsung/next-samsung
+Merging s5p/for-next
+Merging tegra/for-next
+Merging ux500-core/ux500-core
+Merging avr32/avr32-arch
+Merging blackfin/for-linus
+Merging cris/for-next
+Merging ia64/test
+Merging m68k/for-next
+Merging m68knommu/for-next
+Merging microblaze/next
+Merging mips/mips-for-linux-next
+Merging parisc/next
+Merging powerpc/next
+Merging 4xx/next
+Merging 52xx-and-virtex/next
+Merging galak/next
+Merging s390/features
+Merging sh/sh-latest
+Merging rmobile/rmobile-latest
+CONFLICT (content): Merge conflict in arch/arm/mach-shmobile/Kconfig
+Applying: rmobile: merge fixup for clkdev changes
+Merging sparc/master
+Merging tile/master
+Merging xtensa/master
+CONFLICT (content): Merge conflict in arch/xtensa/configs/iss_defconfig
+Merging ceph/for-next
+Merging cifs/master
+Merging configfs/linux-next
+Merging ecryptfs/next
+Merging ext3/for_next
+Merging ext4/next
+Merging fatfs/master
+Merging fuse/for-next
+Merging gfs2/master
+Merging hfsplus/for-next
+Merging jfs/next
+Merging logfs/master
+CONFLICT (content): Merge conflict in fs/logfs/logfs.h
+Merging nfs/linux-next
+Merging nfsd/nfsd-next
+Merging nilfs2/for-next
+Merging ocfs2/linux-next
+Merging omfs/for-next
+Merging squashfs/master
+Merging udf/for_next
+Merging v9fs/for-next
+Merging ubifs/linux-next
+Merging xfs/master
+Merging vfs/for-next
+Merging pci/linux-next
+CONFLICT (content): Merge conflict in drivers/pci/pci-sysfs.c
+Merging hid/for-next
+Merging quilt/i2c
+Merging bjdooks-i2c/next-i2c
+Merging quilt/jdelvare-hwmon
+Merging hwmon-staging/hwmon-next
+Merging quilt/kernel-doc
+Merging v4l-dvb/master
+Applying: media: const and __devinitdata do not mix
+Merging kbuild/for-next
+Merging kconfig/for-next
+Merging ide/master
+Merging libata/NEXT
+Merging infiniband/for-next
+Merging acpi/test
+$ git reset --hard HEAD^
+Merging refs/next/20101201/acpi
+Merging idle-test/idle-test
+Merging ieee1394/for-next
+Merging ubi/linux-next
+Merging kvm/linux-next
+Merging dlm/next
+Merging swiotlb/master
+Merging ibft/master
+Merging scsi/master
+Merging async_tx/next
+Merging net/master
+CONFLICT (content): Merge conflict in drivers/net/wireless/ath/ath9k/ar9003=
+_eeprom.c
+Merging wireless/master
+Merging bluetooth/master
+Merging mtd/master
+Merging crypto/master
+Merging sound/for-next
+CONFLICT (content): Merge conflict in sound/soc/sh/fsi.c
+Merging sound-asoc/for-next
+Merging cpufreq/next
+Merging quilt/rr
+Merging input/next
+Merging lsm/for-next
+Merging block/for-next
+Merging quilt/device-mapper
+Merging embedded/master
+Merging firmware/master
+Merging pcmcia/master
+Merging battery/master
+Merging leds/for-mm
+CONFLICT (content): Merge conflict in drivers/leds/Kconfig
+Merging backlight/for-mm
+Merging mmc/mmc-next
+Merging kgdb/kgdb-next
+Merging slab/for-next
+Merging uclinux/for-next
+Merging md/for-next
+Merging mfd/for-next
+CONFLICT (content): Merge conflict in drivers/mfd/wm8994-core.c
+Merging hdlc/hdlc-next
+Merging drm/drm-next
+Merging fbdev/master
+Merging viafb/viafb-next
+Merging omap_dss2/for-next
+Merging voltage/for-next
+CONFLICT (content): Merge conflict in drivers/regulator/core.c
+Merging security-testing/next
+Merging selinux/master
+Merging lblnet/master
+Merging agp/agp-next
+Merging watchdog/master
+Merging bdev/master
+Merging dwmw2-iommu/master
+Merging cputime/cputime
+Merging osd/linux-next
+Merging jc_docs/docs-next
+Merging nommu/master
+Merging trivial/for-next
+CONFLICT (content): Merge conflict in MAINTAINERS
+CONFLICT (content): Merge conflict in drivers/scsi/bfa/bfa_fcpim.c
+Merging audit/for-next
+Merging suspend/linux-next
+Merging fsnotify/for-next
+Merging irda/for-next
+Merging catalin/for-next
+Merging alacrity/linux-next
+CONFLICT (content): Merge conflict in drivers/Makefile
+CONFLICT (content): Merge conflict in include/linux/Kbuild
+CONFLICT (content): Merge conflict in lib/Kconfig
+Merging i7core_edac/linux_next
+Merging i7300_edac/linux_next
+Merging devicetree/next-devicetree
+Merging spi/next-spi
+Merging tip/auto-latest
+$ git commit -v -a[master 8e885e1] Revert "x86, nmi_watchdog: Remove all st=
+ub function calls from old nmi_watchdog"
+$ git commit -v -a[master 6ace3fa] Revert "x86, nmi_watchdog: Remove the ol=
+d nmi_watchdog"
+[master dd127fc] Revert "perf, arch: Cleanup perf-pmu init vs lockup-detect=
+or"
+Merging rcu/rcu/next
+Merging oprofile/for-next
+Merging xen/upstream/xen
+Merging swiotlb-xen/master
+Merging xen-pvhvm/linux-next
+Merging edac-amd/for-next
+Merging percpu/for-next
+Merging workqueues/for-next
+Merging sfi/sfi-test
+Merging asm-generic/next
+Merging drivers-x86/linux-next
+Merging hwpoison/hwpoison
+Merging sysctl/master
+Merging driver-core/driver-core-next
+Merging tty/tty-next
+Merging usb/usb-next
+CONFLICT (content): Merge conflict in arch/sh/Kconfig
+CONFLICT (content): Merge conflict in drivers/usb/musb/blackfin.c
+Merging staging/staging-next
+Merging slabh/slabh
+Merging bkl-trivial/trivial
+Merging bkl-llseek/llseek
+Merging bkl-vfs/vfs
+Merging bkl-config/config
+CONFLICT (content): Merge conflict in arch/powerpc/kernel/setup_64.c
+CONFLICT (content): Merge conflict in include/linux/hardirq.h
+CONFLICT (content): Merge conflict in include/linux/smp_lock.h
+Merging irqflags/master
+Merging cleancache/linux-next
+CONFLICT (content): Merge conflict in fs/ocfs2/super.c
+CONFLICT (content): Merge conflict in include/linux/fs.h
+CONFLICT (content): Merge conflict in mm/Kconfig
+Merging scsi-post-merge/merge-base:master
+
+--Signature=_Wed__8_Dec_2010_13_58_58_+1100_NhYnRSpHF0nBhlGB
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJM/u5TAAoJEDMEi1NhKgbsLoYH/1DevPn1F2WoijPSD2v28QP+
-XlIdb8kWVHUV3A99LTmSCR8Ux6lLt6XI9M1JXOLl33NT8blTmB90Qid8nYbSYXBy
-oSJ10THcPJCpFdwknefJAyEG8uopZh2uzj9zxfPZgcuuIK8ENlhC7ZIzBPFBLJWl
-8UI/TnRJQuLnWhzMSfeETd7SNPj3WyPARVHI+HSe+9DiNNFFijhvx0P31JdhdZee
-NPeSQj+T/KjPMsXbJVwIR4JDAnKXxG08ampIpbAkk5AeK+GFbMzy2ZeG/nC/2BO8
-Q4z87TvWQyJ3VEOuUSy8rr1gVgV2y3vEf1j3wzuhacBq3NDmFqHb1zR/9AtofcU=
-=doZ+
+iQEcBAEBAgAGBQJM/vRyAAoJEDMEi1NhKgbs1k0H/i52WMZpfwc9phKsXWA2r4EG
+tzhAqZHE7ufcGxGHIhFPufJVvyPBM4pCpjehc/juryFON0bcRS6OwYWP07cobVFS
+NfFURJ+Skxrgdx2iir2Qsc/MfUW9Rf8yDGECbSIKm+jPQi9tsoxu+N8s9fvfmZcD
+nDDpc1aaZumEUJBplCZWPiSkF9FpV0pQPqNDv5FX2Qvx025D7KiYGLC45QytldZF
+NLCwXAQrvlcryQgNHY0nt+sj9+hQlHTGWwTTzvfnGMP8+wLtuN0XgbQpAwxu3YKl
+qiuAh9AWl4K9oydzrYeAGKG9TnAD1fbEXwbZHwocqA+wVGmray6sLkvuGIRVPC8=
+=649V
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__8_Dec_2010_13_32_51_+1100_r4V+6eg+WmFliyrt--
+--Signature=_Wed__8_Dec_2010_13_58_58_+1100_NhYnRSpHF0nBhlGB--
