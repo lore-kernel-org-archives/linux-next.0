@@ -1,44 +1,33 @@
-From: Greg KH <gregkh@suse.de>
-Subject: Re: linux-next: Tree for December 9
-Date: Thu, 9 Dec 2010 07:49:00 -0800
-Message-ID: <20101209154900.GA20190@suse.de>
-References: <20101209154148.ca4ba4e0.sfr@canb.auug.org.au>
- <AANLkTikjGhkYoR_o3uq-sUEY1daXSRWQgRmMBoVJ-n1=@mail.gmail.com>
+From: Pekka Enberg <penberg@kernel.org>
+Subject: Re: linux-next: build failure after merge of the slab tree
+Date: Thu, 09 Dec 2010 18:25:04 +0200
+Message-ID: <1291911904.29040.4.camel@jaguar>
+References: <20101209140325.bec98c5c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:37477 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753902Ab0LIPtJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 9 Dec 2010 10:49:09 -0500
-Content-Disposition: inline
-In-Reply-To: <AANLkTikjGhkYoR_o3uq-sUEY1daXSRWQgRmMBoVJ-n1=@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Zimny Lech <napohybelskurwysynom2010@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20101209140325.bec98c5c.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Christoph Lameter <cl@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steven Rostedt <srostedt@redhat.com>, Richard Kennedy <richard@rsk.demon.co.uk>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Dec 09, 2010 at 12:46:19PM +0100, Zimny Lech wrote:
-> Ave
+On Thu, 2010-12-09 at 14:03 +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> 2010/12/9 Stephen Rothwell <sfr@canb.auug.org.au>:
-> > Hi all,
-> >
-> > Changes since 20101208:
-> >
+> After merging the slab tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
 > 
->   LD      drivers/built-in.o
-> drivers/staging/built-in.o:(.data+0xec80): multiple definition of `log_level'
+> lib/built-in.o: In function `.zlib_inflate_blob':
+> (.text+0x8640): undefined reference to `.kmem_cache_alloc_notrace'
+> 
+> This build failure went away when I removed the lib directory from the
+> object tree and rebuilt.  So I guess we have an unexpressed dependency.
 
-That's coming from the cxt1e1 driver, I'll fix that up to be a "sane"
-global name.
+Did your config change from SLAB to SLUB or something?
+lib/zlib_inflate/infutil.c includes <linux/slab.h> but if your config
+changes, I'm guessing it doesn't work all that well if you change the
+allocator because those tracing functions are in <linux/sl{a,u}b_def.h>.
 
-> drivers/scsi/built-in.o:(.data+0xa71c): first defined here
-
-That's coming from the drivers/scsi/bfa/ driver, and it too should be
-fixed as it shouldn't have a global variable with this name in it.  Care
-to let the maintainer of that driver know about this as well?
-
-thanks,
-
-greg k-h
+			Pekka
