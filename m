@@ -1,46 +1,55 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] staging: solo6010 depends on I2C
-Date: Thu, 9 Dec 2010 09:38:34 -0800
-Message-ID: <20101209093834.8494cfbf.randy.dunlap@oracle.com>
+From: Jing Huang <huangj@Brocade.COM>
+Subject: RE: linux-next: Tree for December 9
+Date: Thu, 9 Dec 2010 11:35:42 -0800
+Message-ID: <E5313AF6F2BFD14293E5FD0F94750F86A5CFCB9049@HQ1-EXCH01.corp.brocade.com>
 References: <20101209154148.ca4ba4e0.sfr@canb.auug.org.au>
+	<AANLkTikjGhkYoR_o3uq-sUEY1daXSRWQgRmMBoVJ-n1=@mail.gmail.com>
+	<20101209154900.GA20190@suse.de>
+ <AANLkTimh-E2By3YdeapZ-HP-H8+Y+PWkt762zjH0sOEG@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:30405 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754577Ab0LIRiy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 9 Dec 2010 12:38:54 -0500
-In-Reply-To: <20101209154148.ca4ba4e0.sfr@canb.auug.org.au>
+Received: from mx0b-000f0801.pphosted.com ([67.231.152.113]:39940 "EHLO
+	mx0b-000f0801.pphosted.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752845Ab0LIUKl convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 9 Dec 2010 15:10:41 -0500
+In-Reply-To: <AANLkTimh-E2By3YdeapZ-HP-H8+Y+PWkt762zjH0sOEG@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh <greg@kroah.com>, driverdevel <devel@driverdev.osuosl.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ben Collins <bcollins@bluecherry.net>
+To: Zimny Lech <napohybelskurwysynom2010@gmail.com>, Greg KH <gregkh@suse.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, Adapter Linux Open SRC Team <adapter_linux_open_src_team@Brocade.COM>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+>2010/12/9 Greg KH <gregkh@suse.de>:
+>> On Thu, Dec 09, 2010 at 12:46:19PM +0100, Zimny Lech wrote:
+>>> Ave
+>>>
+>>> 2010/12/9 Stephen Rothwell <sfr@canb.auug.org.au>:
+>>> > Hi all,
+>>> >
+>>> > Changes since 20101208:
+>>> >
+>>>
+>>> =A0 LD =A0 =A0 =A0drivers/built-in.o
+>>> drivers/staging/built-in.o:(.data+0xec80): multiple definition of `=
+log_level'
+>>
+>> That's coming from the cxt1e1 driver, I'll fix that up to be a "sane=
+"
+>> global name.
+>>
+>>> drivers/scsi/built-in.o:(.data+0xa71c): first defined here
+>>
+>> That's coming from the drivers/scsi/bfa/ driver, and it too should b=
+e
+>> fixed as it shouldn't have a global variable with this name in it.
+>> Care to let the maintainer of that driver know about this as well?
+>
 
-This driver uses i2c interfaces, so it should depend on I2C
-(unless someone wants to break it into pieces or make it more
-config-dependent).
+Hi Zimny,=20
 
-drivers/staging/solo6x10/solo6010-i2c.c:47: error: implicit declaration of function 'i2c_transfer'
-drivers/staging/solo6x10/solo6010-i2c.c:299: error: implicit declaration of function 'i2c_add_adapter'
-drivers/staging/solo6x10/solo6010-i2c.c:310: error: implicit declaration of function 'i2c_del_adapter'
-
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Greg Kroah-Hartman <greg@kroah.com>
-Cc: Ben Collins <bcollins@bluecherry.net>
----
- drivers/staging/solo6x10/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- linux-next-20101209.orig/drivers/staging/solo6x10/Kconfig
-+++ linux-next-20101209/drivers/staging/solo6x10/Kconfig
-@@ -1,6 +1,6 @@
- config SOLO6X10
- 	tristate "Softlogic 6x10 MPEG codec cards"
--	depends on PCI && VIDEO_DEV && SND
-+	depends on PCI && VIDEO_DEV && SND && I2C
- 	select VIDEOBUF_DMA_SG
- 	---help---
- 	  This driver supports the Softlogic based MPEG-4 and h.264 codec
+I will provide a fix for linux-next soon.
+Thanks
+Jing
