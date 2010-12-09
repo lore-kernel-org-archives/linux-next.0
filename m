@@ -1,41 +1,57 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging tree with the
- staging.current tree
-Date: Wed, 8 Dec 2010 14:27:07 -0800
-Message-ID: <20101208222707.GB31802@kroah.com>
-References: <20101202132254.93e019c7.sfr@canb.auug.org.au>
- <20101202040031.GA10016@kroah.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net tree
+Date: Thu, 9 Dec 2010 13:28:36 +1100
+Message-ID: <20101209132836.6f6acfb8.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__9_Dec_2010_13_28_36_+1100_bmZIZ7Jhhn313u.z"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:40310 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756184Ab0LIC2q (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 8 Dec 2010 21:28:46 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Oliver Hartkopp <socketcan@hartkopp.net>
+
+--Signature=_Thu__9_Dec_2010_13_28_36_+1100_bmZIZ7Jhhn313u.z
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20101202040031.GA10016@kroah.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Randy Dunlap <randy.dunlap@oracle.com>, Pekka Enberg <penberg@kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 01, 2010 at 08:00:31PM -0800, Greg KH wrote:
-> On Thu, Dec 02, 2010 at 01:22:54PM +1100, Stephen Rothwell wrote:
-> > Hi Greg,
-> > 
-> > Today's linux-next merge of the staging tree got a conflict in
-> > drivers/staging/winbond/sysdef.h between commit
-> > 412dc7f368bf10a8049a8a4c41abbfd0108742e7 ("staging: fix winbond build,
-> > needs delay.h") from the staging.current tree and commit
-> > ddee7e28e7d5e4ba2b8537c6a59b035745c250bb ("Staging: w35und: Remove empty
-> > sysdef.h header") from the staging tree.
-> > 
-> > I removed the file.  I wonder if
-> > drivers/staging/winbond/phy_calibration.c and
-> > drivers/staging/winbond/reg.c now need their own includes of
-> > linux/delay.h ...
-> 
-> Heh, probably.  I'll handle this merge when thes staging.current code
-> goes to Linus this week.
+Hi all,
 
-Now merged so this conflict should have gone away.
+After merging the net tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-thanks,
+drivers/net/can/slcan.c: In function 'slcan_open':
+drivers/net/can/slcan.c:568: error: dereferencing pointer to incomplete type
 
-greg k-h
+Caused by commit a1044e36e457fb6dbdf90ce756d578b251d99b5e ("can: add
+slcan driver for serial/USB-serial CAN adapters").
+
+I have used the net tree from next-20101208 for today.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__9_Dec_2010_13_28_36_+1100_bmZIZ7Jhhn313u.z
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNAD7UAAoJEDMEi1NhKgbs+3IH/31QM+5BxzK6PBjlfv8oGflv
+n7dzMxKIuFm2GjmdycMyYnI5RNv93elUU3nBgqUr+HMQWGyh+G/IKTmbLE8Z0YVN
+UJtOxwObJhDGiNRx8upKSzMOtNc7Z1bSSuNmdKXQxTkosk2kiRLq9JaBBvKWwlF4
+u73cwweDa5CmE9nha9GtjUGdi3dleVyurU/UOaM4im/YQf4bdptA2d8mDLNiPm3d
+g8YDykZtE3PYKl4DLKEdlXhTUe5rOs/XobXQTBbIhI6CxB3W9huhOsuWtkuQrPQA
+5krXxhCUWFOvXmQnUI8piZ7PByJRaKwBVxi/OAPozhbSlh+2OD7OzY+zYHBll5o=
+=sKqE
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__9_Dec_2010_13_28_36_+1100_bmZIZ7Jhhn313u.z--
