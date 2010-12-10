@@ -1,58 +1,58 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: Tree for December 6 (pch_uart)
-Date: Fri, 10 Dec 2010 15:16:08 -0800
-Message-ID: <20101210231608.GA12155@kroah.com>
-References: <20101206140055.34289498.sfr@canb.auug.org.au>
- <AANLkTi=iCZ=XQk3zXwK-BPnK4=9SU5W-arf+rom9dx8V@mail.gmail.com>
- <20101206081422.0608c50d.randy.dunlap@oracle.com>
- <20101210092010.dbff7834.randy.dunlap@oracle.com>
+From: mat <castet.matthieu@free.fr>
+Subject: Re: [PATCH 3/3 V13] RO/NX protection for loadable kernel
+Date: Sat, 11 Dec 2010 00:18:57 +0100
+Message-ID: <20101211001857.4c5e0794@mat-laptop>
+References: <4CE2F914.9070106@free.fr>
+	<24422.1290656467@localhost>
+	<20101126182355.62615dff@mat-laptop>
+	<20101208221951.GO5750@outflux.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:57710 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751857Ab0LJXS0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 10 Dec 2010 18:18:26 -0500
-Content-Disposition: inline
-In-Reply-To: <20101210092010.dbff7834.randy.dunlap@oracle.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: gregkh@suse.de, Zimny Lech <napohybelskurwysynom2010@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20101208221951.GO5750@outflux.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kees Cook <kees.cook@canonical.com>
+Cc: Valdis.Kletnieks@vt.edu, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, Rusty Russell <rusty@rustcorp.com.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>, Siarhei Liakh <sliakh.lkml@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Dec 10, 2010 at 09:20:10AM -0800, Randy Dunlap wrote:
-> On Mon, 6 Dec 2010 08:14:22 -0800 Randy Dunlap wrote:
-> 
-> > On Mon, 6 Dec 2010 16:09:33 +0100 Zimny Lech wrote:
-> > 
-> > > Ave,
-> > > 
-> > > 2010/12/6 Stephen Rothwell <sfr@canb.auug.org.au>:
-> > > > Hi all,
-> > > >
-> > > > [The mirroring on kernel.org is currently being slow, so this release may
-> > > > not be available yet.]
-> > > >
-> > > > Changes since 20101203:
-> > > >
-> > > 
-> > > Nothing new here, only known issues
-> > > 
-> > > Kernel: arch/x86/boot/bzImage is ready  (#5)
-> > >   Building modules, stage 2.
-> > >   MODPOST 314 modules
-> > > ERROR: "dma_release_channel" [drivers/serial/pch_uart.ko] undefined!
-> > > ERROR: "__dma_request_channel" [drivers/serial/pch_uart.ko] undefined!
-> > > WARNING: modpost: Found 4 section mismatch(es).
-> > > To see full details build your kernel with:
-> > > 'make CONFIG_DEBUG_SECTION_MISMATCH=y'
-> > > make[2]: *** [__modpost] Error 1
-> > > make[1]: *** [modules] Error 2
-> > > make: *** [sub-make] Error 2
-> > 
-> > Greg, are you going to merge the patch that I posted for this one?
-> > 
-> 
-> ping.  Still happening in linux-next 20101210.
+Le Wed, 8 Dec 2010 14:19:51 -0800,
+Kees Cook <kees.cook@canonical.com> a =E9crit :
 
-Now applied.
+> On Fri, Nov 26, 2010 at 06:23:55PM +0100, mat wrote:
+> > could you try the attached patch ?
+> >=20
+> > on module load, we sort the __jump_table section. So we should make
+> > it writable.
+> >=20
+> >=20
+> > Matthieu
+>=20
+> > diff --git a/arch/x86/include/asm/jump_label.h
+> > b/arch/x86/include/asm/jump_label.h index f52d42e..574dbc2 100644
+> > --- a/arch/x86/include/asm/jump_label.h
+> > +++ b/arch/x86/include/asm/jump_label.h
+> > @@ -14,7 +14,7 @@
+> >  	do
+> > {							\ asm
+> > goto("1:"					\
+> > JUMP_LABEL_INITIAL_NOP			\
+> > -			".pushsection __jump_table,  \"a\" \n\t"\
+> > +			".pushsection __jump_table,  \"aw\" \n\t"\
+> >  			_ASM_PTR "1b, %l[" #label "], %c0 \n\t" \
+> >  			".popsection \n\t"			\
+> >  			: :  "i" (key) :  : label);
+> > \
+>=20
+> Acked-by: Kees Cook <kees.cook@canonical.com>
+>=20
+> Can this please get committed to tip?
+I think it is not need anymore with  Steven Rostedt patch [1]
+
+Matthieu
+
+[1]
+> > Here we set the text read only before we call the notifiers. The
+> > function tracer changes the calls to mcount into nops via a notifie=
+r
+> > call so this must be done after the module notifiers.
