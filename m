@@ -1,34 +1,69 @@
-From: Kees Cook <kees.cook@canonical.com>
-Subject: Re: [PATCH 3/3 V13] RO/NX protection for loadable kernel
-Date: Sat, 11 Dec 2010 15:15:02 -0800
-Message-ID: <20101211231502.GZ4464@outflux.net>
-References: <4CE2F914.9070106@free.fr>
- <24422.1290656467@localhost>
- <20101126182355.62615dff@mat-laptop>
- <20101208221951.GO5750@outflux.net>
- <20101211001857.4c5e0794@mat-laptop>
- <20101211002750.GT4464@outflux.net>
- <20101211115735.21b616fe@mat-laptop>
+From: Rakib Mullick <rakib.mullick@gmail.com>
+Subject: Re: linux-next: Tree for December 10 (x86 nmi_watchdog)
+Date: Sun, 12 Dec 2010 11:27:02 +0600
+Message-ID: <AANLkTi=bw8EcxEffbVV6CfdAPVdM25ZMxHqAmz1yukq3@mail.gmail.com>
+References: <20101210135746.0cf6cbcd.sfr@canb.auug.org.au>
+	<20101210092533.4f426650.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-security-module-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20101211115735.21b616fe@mat-laptop>
-Sender: linux-security-module-owner@vger.kernel.org
-To: mat <castet.matthieu@free.fr>
-Cc: Valdis.Kletnieks@vt.edu, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@elte.hu>, Rusty Russell <rusty@rustcorp.com.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>, Siarhei Liakh <sliakh.lkml@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-wy0-f174.google.com ([74.125.82.174]:63764 "EHLO
+	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750806Ab0LLF1E convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 12 Dec 2010 00:27:04 -0500
+In-Reply-To: <20101210092533.4f426650.randy.dunlap@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Don Zickus <dzickus@redhat.com>, Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
 
-On Sat, Dec 11, 2010 at 11:57:35AM +0100, mat wrote:
-> http://marc.info/?l=linux-security-module&m=129105456828505&w=2
+On Fri, Dec 10, 2010 at 11:25 PM, Randy Dunlap <randy.dunlap@oracle.com=
+> wrote:
+> On Fri, 10 Dec 2010 13:57:46 +1100 Stephen Rothwell wrote:
+>
+>> Hi all,
+>>
+>> Changes since 20101209:
+>
+>
+> arch/x86/kernel/apic/hw_nmi.c:28: error: redefinition of 'touch_nmi_w=
+atchdog'
+> include/linux/nmi.h:22: note: previous definition of 'touch_nmi_watch=
+dog' was here
+>
+Hello Randy,
 
-Ah-ha! Thanks for the pointer. So, instead of the other explicit jump_table
-fix, can this get pushed into tip?
+Please checkout the following patch. Does it work?
+----
 
-Thanks!
+x86: Fix kernel build in hw_nmi.c when CONFIG_HARDLOCKUP_DETECTOR=3Dn.
 
--Kees
+This patch fixes kernel build introduced by commit
+96a84c20d635fb1e98ab92f9fc517c4441f5c424. That commit supposed to
+define touch_nmi_watchdog when CONFIG_HARDLOCKUP_DETECTOR=3Dy in
+hw_nmi.c. But mistakenly defines touch_nmi_watchdog when
+CONFIG_HARDLOCKUP_DETECTOR=3Dn in hw_nmi.c.
 
--- 
-Kees Cook
-Ubuntu Security Team
+arch/x86/kernel/apic/hw_nmi.c:28: error: redefinition of =91touch_nmi_w=
+atchdog=92
+include/linux/nmi.h:23: error: previous definition of
+=91touch_nmi_watchdog=92 was here
+
+Signed-off-by: Rakib Mullick <rakib.mullick@gmail.com>
+---
+
+diff --git a/arch/x86/kernel/apic/hw_nmi.c b/arch/x86/kernel/apic/hw_nm=
+i.c
+index c558e11..2056569 100644
+--- a/arch/x86/kernel/apic/hw_nmi.c
++++ b/arch/x86/kernel/apic/hw_nmi.c
+@@ -24,7 +24,7 @@ u64 hw_nmi_get_sample_period(void)
+ }
+ #endif
+
+-#ifndef CONFIG_HARDLOCKUP_DETECTOR
++#ifdef CONFIG_HARDLOCKUP_DETECTOR
+ void touch_nmi_watchdog(void)
+ {
+ 	touch_softlockup_watchdog();
