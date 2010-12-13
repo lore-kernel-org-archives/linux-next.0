@@ -1,65 +1,73 @@
-From: Joe Perches <joe@perches.com>
-Subject: [PATCH V3 -next] cs5535: fix printk format warnings
-Date: Mon, 13 Dec 2010 12:57:14 -0800
-Message-ID: <1292273834.26970.58.camel@Joe-Laptop>
-References: <20101213163607.0b0a7c3a.sfr@canb.auug.org.au>
-	 <20101213114421.3abe0dcb.randy.dunlap@oracle.com>
-	 <1292272085.26970.50.camel@Joe-Laptop>  <4D06852B.8030409@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for December 10 (x86 nmi_watchdog)
+Date: Tue, 14 Dec 2010 10:08:49 +1100
+Message-ID: <20101214100849.52374e25.sfr@canb.auug.org.au>
+References: <20101210135746.0cf6cbcd.sfr@canb.auug.org.au>
+	<20101210092533.4f426650.randy.dunlap@oracle.com>
+	<AANLkTi=bw8EcxEffbVV6CfdAPVdM25ZMxHqAmz1yukq3@mail.gmail.com>
+	<20101213144434.GB18577@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__14_Dec_2010_10_08_49_+1100_+Y7oVtVCrm7LUoQM"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.perches.com ([173.55.12.10]:2561 "EHLO mail.perches.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:60125 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755095Ab0LMU5Q (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 13 Dec 2010 15:57:16 -0500
-In-Reply-To: <4D06852B.8030409@oracle.com>
+	id S1750825Ab0LMXI6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 13 Dec 2010 18:08:58 -0500
+In-Reply-To: <20101213144434.GB18577@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, akpm <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Don Zickus <dzickus@redhat.com>
+Cc: Rakib Mullick <rakib.mullick@gmail.com>, Randy Dunlap <randy.dunlap@oracle.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
 
-Use vsprintf extension %pR to format resource.
+--Signature=_Tue__14_Dec_2010_10_08_49_+1100_+Y7oVtVCrm7LUoQM
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Original-patch-by: Randy Dunlap <randy.dunlap@oracle.com>
-Signed-off-by: Joe Perches <joe@perches.com>
+Hi Don,
 
----
+On Mon, 13 Dec 2010 09:44:34 -0500 Don Zickus <dzickus@redhat.com> wrote:
+>
+> On Sun, Dec 12, 2010 at 11:27:02AM +0600, Rakib Mullick wrote:
+> > On Fri, Dec 10, 2010 at 11:25 PM, Randy Dunlap <randy.dunlap@oracle.com=
+> wrote:
+> > > On Fri, 10 Dec 2010 13:57:46 +1100 Stephen Rothwell wrote:
+> > >
+> > >> Hi all,
+> > >>
+> > >> Changes since 20101209:
+> > >
+> > >
+> > > arch/x86/kernel/apic/hw_nmi.c:28: error: redefinition of 'touch_nmi_w=
+atchdog'
+> > > include/linux/nmi.h:22: note: previous definition of 'touch_nmi_watch=
+dog' was here
+>=20
+> I'll have to checkout that branch to see what got merged.  I thought I
+> fixed all these.  Is there a config I can use to duplicate these?
 
-V3 - Might as well do both files, thanks Randy...
+Randy's original post had the config attached.
 
-Removed Andres Salomon <dilinger@collabora.co.uk> from cc.
-It seems that he's not there anymore.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
- drivers/gpio/cs5535-gpio.c  |    3 +--
- drivers/misc/cs5535-mfgpt.c |    3 +--
- 2 files changed, 2 insertions(+), 4 deletions(-)
+--Signature=_Tue__14_Dec_2010_10_08_49_+1100_+Y7oVtVCrm7LUoQM
+Content-Type: application/pgp-signature
 
-diff --git a/drivers/gpio/cs5535-gpio.c b/drivers/gpio/cs5535-gpio.c
-index b566fd5e..d7da7a1 100644
---- a/drivers/gpio/cs5535-gpio.c
-+++ b/drivers/gpio/cs5535-gpio.c
-@@ -266,8 +266,7 @@ static int __devinit cs5535_gpio_probe(struct platform_device *pdev)
- 	cs5535_gpio_chip.pdev = pdev;
- 	spin_lock_init(&cs5535_gpio_chip.lock);
- 
--	dev_info(&pdev->dev, "region 0x%x - 0x%x reserved\n",
--			res->start, res->end);
-+	dev_info(&pdev->dev, "reserved resource region %pR\n", res);
- 
- 	/* mask out reserved pins */
- 	mask &= 0x1F7FFFFF;
-diff --git a/drivers/misc/cs5535-mfgpt.c b/drivers/misc/cs5535-mfgpt.c
-index 2669306..e90506b 100644
---- a/drivers/misc/cs5535-mfgpt.c
-+++ b/drivers/misc/cs5535-mfgpt.c
-@@ -317,8 +317,7 @@ static int __devinit cs5535_mfgpt_probe(struct platform_device *pdev)
- 	cs5535_mfgpt_chip.pdev = pdev;
- 	spin_lock_init(&cs5535_mfgpt_chip.lock);
- 
--	dev_info(&pdev->dev, "region 0x%x - 0x%x reserved\n", res->start,
--			res->end);
-+	dev_info(&pdev->dev, "reserved resource region %pR\n", res);
- 
- 	/* detect the available timers */
- 	t = scan_timers(&cs5535_mfgpt_chip);
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNBqeBAAoJEDMEi1NhKgbsdBQH/3BZZrNUUd6k6bPVU0ZBKC7O
+sgwreDECjXleRQ4ouM0/qdPM/gkoKdmq9Un1cIcEMXGMAx40CJrEKD6pfhDUYl4i
+u6BTf0l7onv8JU2OvN3iYeQoJr7oe0IG+sGkf0/XoChEp4OkMNtyx2/E25+mLUKK
+akkRvBiUihQ6LON0/hIsXkHwJuBkL9jiWqEnRNjt90avqRSing3UQjSL3i0tBmgY
+ypGZa9loMW6jiJ10vVoOejyCzF45J5DztUsxkujF/FDw9ymvrgsLuSmNPQuBb0Bv
+YbhqkQ5q+iBUt4bNwG9grG8H7dWlPEzhjpRfOA7TJD8hi5BxK70MW5fSevNCtDk=
+=vmON
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__14_Dec_2010_10_08_49_+1100_+Y7oVtVCrm7LUoQM--
