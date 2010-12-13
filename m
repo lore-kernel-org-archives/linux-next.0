@@ -1,69 +1,44 @@
-From: Timur Tabi <timur@freescale.com>
-Subject: [PATCH 2/2] tty: fix typos/errors in tty_driver.h comments
-Date: Mon, 13 Dec 2010 14:08:53 -0600
-Message-ID: <1292270933-4127-2-git-send-email-timur@freescale.com>
-References: <1292270933-4127-1-git-send-email-timur@freescale.com>
+From: Joe Perches <joe@perches.com>
+Subject: [PATCH V2 -next] cs5535: fix printk format warnings
+Date: Mon, 13 Dec 2010 12:28:05 -0800
+Message-ID: <1292272085.26970.50.camel@Joe-Laptop>
+References: <20101213163607.0b0a7c3a.sfr@canb.auug.org.au>
+	 <20101213114421.3abe0dcb.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from db3ehsobe002.messaging.microsoft.com ([213.199.154.140]:23558
-	"EHLO DB3EHSOBE002.bigfish.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754832Ab0LMUYE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 13 Dec 2010 15:24:04 -0500
-In-Reply-To: <1292270933-4127-1-git-send-email-timur@freescale.com>
+Received: from mail.perches.com ([173.55.12.10]:2555 "EHLO mail.perches.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757107Ab0LMU2H (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 13 Dec 2010 15:28:07 -0500
+In-Reply-To: <20101213114421.3abe0dcb.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org, greg@kroah.com
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, akpm <akpm@linux-foundation.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andres Salomon <dilinger@collabora.co.uk>
 
-Fix various typos and other errors in comments of tty_driver.h.  The most
-significant is the wrong name of a function for the description of
-TTY_DRIVER_DYNAMIC_DEV.
+Use vsprintf extension %pR to format resource.
 
-Signed-off-by: Timur Tabi <timur@freescale.com>
+Original-patch-by: Randy Dunlap <randy.dunlap@oracle.com>
+Signed-off-by: Joe Perches <joe@perches.com>
+
 ---
 
-This patch is for linux-next
+ drivers/gpio/cs5535-gpio.c |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
 
- include/linux/tty_driver.h |    8 ++++----
- 1 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/tty_driver.h b/include/linux/tty_driver.h
-index 09678ed..6a8a1fd 100644
---- a/include/linux/tty_driver.h
-+++ b/include/linux/tty_driver.h
-@@ -102,7 +102,7 @@
-  * 	    unsigned int cmd, unsigned long arg);
-  *
-  * 	This routine allows the tty driver to implement
-- *	device-specific ioctl's.  If the ioctl number passed in cmd
-+ *	device-specific ioctls.  If the ioctl number passed in cmd
-  * 	is not recognized by the driver, it should return ENOIOCTLCMD.
-  *
-  *	Optional
-@@ -167,12 +167,12 @@
-  * 
-  * void (*hangup)(struct tty_struct *tty);
-  *
-- * 	This routine notifies the tty driver that it should hangup the
-+ * 	This routine notifies the tty driver that it should hang up the
-  * 	tty device.
-  *
-  *	Optional:
-  *
-- * int (*break_ctl)(struct tty_stuct *tty, int state);
-+ * int (*break_ctl)(struct tty_struct *tty, int state);
-  *
-  * 	This optional routine requests the tty driver to turn on or
-  * 	off BREAK status on the RS-232 port.  If state is -1,
-@@ -358,7 +358,7 @@ static inline struct tty_driver *tty_driver_kref_get(struct tty_driver *d)
-  * 	overruns, either.)
-  *
-  * TTY_DRIVER_DYNAMIC_DEV --- if set, the individual tty devices need
-- *	to be registered with a call to tty_register_driver() when the
-+ *	to be registered with a call to tty_register_device() when the
-  *	device is found in the system and unregistered with a call to
-  *	tty_unregister_device() so the devices will be show up
-  *	properly in sysfs.  If not set, driver->num entries will be
--- 
-1.7.2.3
+diff --git a/drivers/gpio/cs5535-gpio.c b/drivers/gpio/cs5535-gpio.c
+index b566fd5e..d7da7a1 100644
+--- a/drivers/gpio/cs5535-gpio.c
++++ b/drivers/gpio/cs5535-gpio.c
+@@ -266,8 +266,7 @@ static int __devinit cs5535_gpio_probe(struct platform_device *pdev)
+ 	cs5535_gpio_chip.pdev = pdev;
+ 	spin_lock_init(&cs5535_gpio_chip.lock);
+ 
+-	dev_info(&pdev->dev, "region 0x%x - 0x%x reserved\n",
+-			res->start, res->end);
++	dev_info(&pdev->dev, "reserved resource region %pR\n", res);
+ 
+ 	/* mask out reserved pins */
+ 	mask &= 0x1F7FFFFF;
