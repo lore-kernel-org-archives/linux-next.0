@@ -1,46 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the trivial tree with the omap tree
-Date: Mon, 13 Dec 2010 13:44:57 +1100
-Message-ID: <20101213134457.d0fb1e13.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the swiotlb-xen tree with the xen tree
+Date: Mon, 13 Dec 2010 14:26:09 +1100
+Message-ID: <20101213142609.3ad004cf.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kevin Hilman <khilman@deeprootsystems.com>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org, Lionel Debroux <lionel_debroux@yahoo.fr>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:47991 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756649Ab0LMD0N (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 12 Dec 2010 22:26:13 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gerd Hoffmann <kraxel@redhat.com>, Stefano Stabellini <Stefano.Stabellini@eu.citrix.com>, Jeremy Fitzhardinge <jeremy@goop.org>, Xen Devel <Xen-devel@lists.xensource.com>, Ian Campbell <ian.campbell@citrix.com>
 
-Hi Jiri,
+Hi Konrad,
 
-Today's linux-next merge of the trivial tree got a conflict in
-arch/arm/mach-omap2/pm24xx.c between commit
-e83df17f178360a8e7874441bca04a710c869e42 ("OMAP2+: PM/serial: fix console
-semaphore acquire during suspend") from the omap tree and commit
-2f55ac072f5344519348c0c94b3d2f4cca46847b ("suspend: constify
-platform_suspend_ops") from the trivial tree.
+Today's linux-next merge of the swiotlb-xen tree got a conflict in
+drivers/xen/Kconfig drivers/xen/Makefile between commit
+56385560d6d8fd4c89c4f328d3ff0ecc9c44c52d ("xen/gntdev: allow usermode to
+map granted pages") from the xen tree and commits
+06acb015d341946c83ab127f5ab9ba291678d226 ("xen: separate out frontend
+xenbus") and 721657d92623cfcf2f6f68c14abf97eb40fa6b20 ("xen-pciback:
+Enable Xen-PCI-back to be compiled") from the swiotlb-xen tree.
 
-I fixed it up (see below) and can carry the fix as necessary.
+I fixed then up (see below) and can carry the fixes as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-omap2/pm24xx.c
-index aaeea49,aa9764e..0000000
---- a/arch/arm/mach-omap2/pm24xx.c
-+++ b/arch/arm/mach-omap2/pm24xx.c
-@@@ -354,13 -326,7 +354,13 @@@ static void omap2_pm_finish(void
-  	enable_hlt();
-  }
+diff --cc drivers/xen/Kconfig
+index 0c6d2a1,9b61561..0000000
+--- a/drivers/xen/Kconfig
++++ b/drivers/xen/Kconfig
+@@@ -62,13 -134,9 +134,16 @@@ config XEN_SYS_HYPERVISO
+  	 virtual environment, /sys/hypervisor will still be present,
+  	 but will have no xen contents.
   
- +static void omap2_pm_end(void)
- +{
- +	suspend_state = PM_SUSPEND_ON;
- +}
- +
-- static struct platform_suspend_ops omap_pm_ops = {
-+ static const struct platform_suspend_ops omap_pm_ops = {
- +	.begin		= omap2_pm_begin,
-  	.prepare	= omap2_pm_prepare,
-  	.enter		= omap2_pm_enter,
-  	.finish		= omap2_pm_finish,
+ +config XEN_GNTDEV
+ +	tristate "userspace grant access device driver"
+ +	depends on XEN
+ +	select MMU_NOTIFIER
+ +	help
+ +	  Allows userspace processes use grants.
+ +	  
++ config XEN_XENBUS_FRONTEND
++        tristate
++ 
+  config XEN_PLATFORM_PCI
+  	tristate "xen platform pci device driver"
+  	depends on XEN_PVHVM
+diff --cc drivers/xen/Makefile
+index 674fdb5,b813d46..0000000
+--- a/drivers/xen/Makefile
++++ b/drivers/xen/Makefile
+@@@ -9,7 -9,7 +9,8 @@@ obj-$(CONFIG_HOTPLUG_CPU)	+= cpu_hotplu
+  obj-$(CONFIG_XEN_XENCOMM)	+= xencomm.o
+  obj-$(CONFIG_XEN_BALLOON)	+= balloon.o
+  obj-$(CONFIG_XEN_DEV_EVTCHN)	+= xen-evtchn.o
+ +obj-$(CONFIG_XEN_GNTDEV)	+= xen-gntdev.o
++ obj-$(CONFIG_XEN_PCIDEV_BACKEND)	+= pciback/
+  obj-$(CONFIG_XENFS)		+= xenfs/
+  obj-$(CONFIG_XEN_SYS_HYPERVISOR)	+= sys-hypervisor.o
+  obj-$(CONFIG_XEN_PLATFORM_PCI)	+= platform-pci.o
