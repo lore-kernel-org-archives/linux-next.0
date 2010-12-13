@@ -1,63 +1,68 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] cs5535: fix printk format warnings
-Date: Mon, 13 Dec 2010 11:44:21 -0800
-Message-ID: <20101213114421.3abe0dcb.randy.dunlap@oracle.com>
-References: <20101213163607.0b0a7c3a.sfr@canb.auug.org.au>
+From: Timur Tabi <timur@freescale.com>
+Subject: [PATCH 1/2] driver-core: document restrictions on device_rename()
+Date: Mon, 13 Dec 2010 14:08:52 -0600
+Message-ID: <1292270933-4127-1-git-send-email-timur@freescale.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:57707 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752632Ab0LMTp1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Dec 2010 14:45:27 -0500
-In-Reply-To: <20101213163607.0b0a7c3a.sfr@canb.auug.org.au>
+Received: from tx2ehsobe001.messaging.microsoft.com ([65.55.88.11]:12768 "EHLO
+	TX2EHSOBE001.bigfish.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754911Ab0LMUI6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Dec 2010 15:08:58 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, akpm <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andres Salomon <dilinger@collabora.co.uk>
+To: linux-next@vger.kernel.org, greg@kroah.com
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+Add text, courtesy of Kay Sievers, that provides some background on
+device_rename() and why it shouldn't be used.
 
-Fix printk format warnings in cs5535 drivers:
-
-drivers/gpio/cs5535-gpio.c:269: warning: format '%x' expects type 'unsigned int', but argument 3 has type 'resource_size_t'
-drivers/gpio/cs5535-gpio.c:269: warning: format '%x' expects type 'unsigned int', but argument 4 has type 'resource_size_t'
-drivers/misc/cs5535-mfgpt.c:320: warning: format '%x' expects type 'unsigned int', but argument 3 has type 'resource_size_t'
-drivers/misc/cs5535-mfgpt.c:320: warning: format '%x' expects type 'unsigned int', but argument 4 has type 'resource_size_t'
-
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Andres Salomon <dilinger@collabora.co.uk>
+Signed-off-by: Timur Tabi <timur@freescale.com>
 ---
- drivers/gpio/cs5535-gpio.c  |    5 +++--
- drivers/misc/cs5535-mfgpt.c |    5 +++--
- 2 files changed, 6 insertions(+), 4 deletions(-)
 
---- linux-next-20101213.orig/drivers/gpio/cs5535-gpio.c
-+++ linux-next-20101213/drivers/gpio/cs5535-gpio.c
-@@ -266,8 +266,9 @@ static int __devinit cs5535_gpio_probe(s
- 	cs5535_gpio_chip.pdev = pdev;
- 	spin_lock_init(&cs5535_gpio_chip.lock);
- 
--	dev_info(&pdev->dev, "region 0x%x - 0x%x reserved\n",
--			res->start, res->end);
-+	dev_info(&pdev->dev, "region 0x%llx - 0x%llx reserved\n",
-+			(unsigned long long)res->start,
-+			(unsigned long long)res->end);
- 
- 	/* mask out reserved pins */
- 	mask &= 0x1F7FFFFF;
---- linux-next-20101213.orig/drivers/misc/cs5535-mfgpt.c
-+++ linux-next-20101213/drivers/misc/cs5535-mfgpt.c
-@@ -317,8 +317,9 @@ static int __devinit cs5535_mfgpt_probe(
- 	cs5535_mfgpt_chip.pdev = pdev;
- 	spin_lock_init(&cs5535_mfgpt_chip.lock);
- 
--	dev_info(&pdev->dev, "region 0x%x - 0x%x reserved\n", res->start,
--			res->end);
-+	dev_info(&pdev->dev, "region 0x%llx - 0x%llx reserved\n",
-+			(unsigned long long)res->start,
-+			(unsigned long long)res->end);
- 
- 	/* detect the available timers */
- 	t = scan_timers(&cs5535_mfgpt_chip);
+This patch is for linux-next
+
+ drivers/base/core.c |   29 ++++++++++++++++++++++++++++-
+ 1 files changed, 28 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index 080e9ca..9cd3b5c 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -1551,7 +1551,34 @@ EXPORT_SYMBOL_GPL(device_destroy);
+  * on the same device to ensure that new_name is valid and
+  * won't conflict with other devices.
+  *
+- * "Never use this function, bad things will happen" - gregkh
++ * Note: Don't call this function.  Currently, the networking layer calls this
++ * function, but that will change.  The following text from Kay Sievers offers
++ * some insight:
++ *
++ * Renaming devices is racy at many levels, symlinks and other stuff are not
++ * replaced atomically, and you get a "move" uevent, but it's not easy to
++ * connect the event to the old and new device. Device nodes are not renamed at
++ * all, there isn't even support for that in the kernel now.
++ *
++ * In the meantime, during renaming, your target name might be taken by another
++ * driver, creating conflicts. Or the old name is taken directly after you
++ * renamed it -- then you get events for the same DEVPATH, before you even see
++ * the "move" event. It's just a mess, and nothing new should ever rely on
++ * kernel device renaming. Besides that, it's not even implemented now for
++ * other things than (driver-core wise very simple) network devices.
++ *
++ * We are currently about to change network renaming in udev to completely
++ * disallow renaming of devices in the same namespace as the kernel uses,
++ * because we can't solve the problems properly, that arise with swapping names
++ * of multiple interfaces without races. Means, renaming of eth[0-9]* will only
++ * be allowed to some other name than eth[0-9]*, for the aforementioned
++ * reasons.
++ *
++ * Make up a "real" name in the driver before you register anything, or add
++ * some other attributes for userspace to find the device, or use udev to add
++ * symlinks -- but never rename kernel devices later, it's a complete mess. We
++ * don't even want to get into that and try to implement the missing pieces in
++ * the core. We really have other pieces to fix in the driver core mess. :)
+  */
+ int device_rename(struct device *dev, const char *new_name)
+ {
+-- 
+1.7.2.3
