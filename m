@@ -1,57 +1,46 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings after merge of the mfd tree
-Date: Mon, 13 Dec 2010 13:34:04 +1100
-Message-ID: <20101213133404.074eb5df.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the trivial tree with the omap tree
+Date: Mon, 13 Dec 2010 13:44:57 +1100
+Message-ID: <20101213134457.d0fb1e13.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__13_Dec_2010_13_34_04_+1100_0liaiCmofSiixdmF"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49810 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756187Ab0LMCeM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 12 Dec 2010 21:34:12 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andres Salomon <dilinger@queued.net>
-
---Signature=_Mon__13_Dec_2010_13_34_04_+1100_0liaiCmofSiixdmF
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kevin Hilman <khilman@deeprootsystems.com>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org, Lionel Debroux <lionel_debroux@yahoo.fr>
+List-Id: linux-next.vger.kernel.org
 
-Hi Samuel,
+Hi Jiri,
 
-After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
-produced these warnings:
+Today's linux-next merge of the trivial tree got a conflict in
+arch/arm/mach-omap2/pm24xx.c between commit
+e83df17f178360a8e7874441bca04a710c869e42 ("OMAP2+: PM/serial: fix console
+semaphore acquire during suspend") from the omap tree and commit
+2f55ac072f5344519348c0c94b3d2f4cca46847b ("suspend: constify
+platform_suspend_ops") from the trivial tree.
 
-drivers/misc/cs5535-mfgpt.c: In function 'cs5535_mfgpt_probe':
-drivers/misc/cs5535-mfgpt.c:320: warning: format '%x' expects type 'unsigne=
-d int', but argument 3 has type 'resource_size_t'
-drivers/misc/cs5535-mfgpt.c:320: warning: format '%x' expects type 'unsigne=
-d int', but argument 4 has type 'resource_size_t'
-
-Introduced by commit 9ce4f5640c34ce4a468cfead9b848aef424c33ab ("misc:
-Convert cs5535-mfgpt from pci device to platform device").
---=20
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__13_Dec_2010_13_34_04_+1100_0liaiCmofSiixdmF
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNBYYcAAoJEDMEi1NhKgbs6u4H/RF16in+odKsA4901V/mNQuU
-l/c0JnlLX4XIeKFcNr2XcFuYgyJR1PQJYALYfv2Ds8mgwRgdIDESMynq11MOepYL
-r1cVDyWjRyZ8/jUGSXM8CyKuoguA+36EyzV5qsN/DEkFDNJOANxCyhBAy7GDTKCa
-hVTFTLkL0BwY5f4erNlQ85NufRot4D9rsKg34EaXJPCvdqrhEoXZatGTqa6k82pq
-ijgzwpTw/tU8OPi53jacTp9bx4pgA8OW4ebEmip8ziIU3jKW07X0/LeTPIK2ilnj
-WgiLhdVm/5gTIerK+8Dn4L8vkBsVr4UEZ3Mi9/uJolw0a8T/GtDMCMpSL7aA7bk=
-=mIFt
------END PGP SIGNATURE-----
-
---Signature=_Mon__13_Dec_2010_13_34_04_+1100_0liaiCmofSiixdmF--
+diff --cc arch/arm/mach-omap2/pm24xx.c
+index aaeea49,aa9764e..0000000
+--- a/arch/arm/mach-omap2/pm24xx.c
++++ b/arch/arm/mach-omap2/pm24xx.c
+@@@ -354,13 -326,7 +354,13 @@@ static void omap2_pm_finish(void
+  	enable_hlt();
+  }
+  
+ +static void omap2_pm_end(void)
+ +{
+ +	suspend_state = PM_SUSPEND_ON;
+ +}
+ +
+- static struct platform_suspend_ops omap_pm_ops = {
++ static const struct platform_suspend_ops omap_pm_ops = {
+ +	.begin		= omap2_pm_begin,
+  	.prepare	= omap2_pm_prepare,
+  	.enter		= omap2_pm_enter,
+  	.finish		= omap2_pm_finish,
