@@ -1,66 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the swiotlb-xen tree with the xen tree
-Date: Mon, 13 Dec 2010 14:26:09 +1100
-Message-ID: <20101213142609.3ad004cf.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the swiotlb-xen tree
+Date: Mon, 13 Dec 2010 14:33:22 +1100
+Message-ID: <20101213143322.90c45f81.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__13_Dec_2010_14_33_22_+1100_W.AiBGWP2H0RHynC"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47991 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:52356 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756649Ab0LMD0N (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 12 Dec 2010 22:26:13 -0500
+	id S1756671Ab0LMDd2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 12 Dec 2010 22:33:28 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gerd Hoffmann <kraxel@redhat.com>, Stefano Stabellini <Stefano.Stabellini@eu.citrix.com>, Jeremy Fitzhardinge <jeremy@goop.org>, Xen Devel <Xen-devel@lists.xensource.com>, Ian Campbell <ian.campbell@citrix.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>
+
+--Signature=_Mon__13_Dec_2010_14_33_22_+1100_W.AiBGWP2H0RHynC
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi Konrad,
 
-Today's linux-next merge of the swiotlb-xen tree got a conflict in
-drivers/xen/Kconfig drivers/xen/Makefile between commit
-56385560d6d8fd4c89c4f328d3ff0ecc9c44c52d ("xen/gntdev: allow usermode to
-map granted pages") from the xen tree and commits
-06acb015d341946c83ab127f5ab9ba291678d226 ("xen: separate out frontend
-xenbus") and 721657d92623cfcf2f6f68c14abf97eb40fa6b20 ("xen-pciback:
-Enable Xen-PCI-back to be compiled") from the swiotlb-xen tree.
+After merging the swiotlb-xen tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I fixed then up (see below) and can carry the fixes as necessary.
--- 
+ERROR: "xenbus_dev_is_online" [drivers/xen/pciback/xen-pciback.ko] undefine=
+d!
+ERROR: "__xenbus_register_backend" [drivers/xen/pciback/xen-pciback.ko] und=
+efined!
+
+Caused by commit 443b2aafbdb509f218fcb8f4665f063e3a5e1a92 ("xen-pciback:
+Initial copy from linux-2.6.18.hg off pciback driver").
+
+I have used the swiotlb-xen tree from next-20101210 for today.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/xen/Kconfig
-index 0c6d2a1,9b61561..0000000
---- a/drivers/xen/Kconfig
-+++ b/drivers/xen/Kconfig
-@@@ -62,13 -134,9 +134,16 @@@ config XEN_SYS_HYPERVISO
-  	 virtual environment, /sys/hypervisor will still be present,
-  	 but will have no xen contents.
-  
- +config XEN_GNTDEV
- +	tristate "userspace grant access device driver"
- +	depends on XEN
- +	select MMU_NOTIFIER
- +	help
- +	  Allows userspace processes use grants.
- +	  
-+ config XEN_XENBUS_FRONTEND
-+        tristate
-+ 
-  config XEN_PLATFORM_PCI
-  	tristate "xen platform pci device driver"
-  	depends on XEN_PVHVM
-diff --cc drivers/xen/Makefile
-index 674fdb5,b813d46..0000000
---- a/drivers/xen/Makefile
-+++ b/drivers/xen/Makefile
-@@@ -9,7 -9,7 +9,8 @@@ obj-$(CONFIG_HOTPLUG_CPU)	+= cpu_hotplu
-  obj-$(CONFIG_XEN_XENCOMM)	+= xencomm.o
-  obj-$(CONFIG_XEN_BALLOON)	+= balloon.o
-  obj-$(CONFIG_XEN_DEV_EVTCHN)	+= xen-evtchn.o
- +obj-$(CONFIG_XEN_GNTDEV)	+= xen-gntdev.o
-+ obj-$(CONFIG_XEN_PCIDEV_BACKEND)	+= pciback/
-  obj-$(CONFIG_XENFS)		+= xenfs/
-  obj-$(CONFIG_XEN_SYS_HYPERVISOR)	+= sys-hypervisor.o
-  obj-$(CONFIG_XEN_PLATFORM_PCI)	+= platform-pci.o
+--Signature=_Mon__13_Dec_2010_14_33_22_+1100_W.AiBGWP2H0RHynC
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNBZQCAAoJEDMEi1NhKgbsTnYH/3kwWg1ecz0Vva4GMd3nAxrG
+qU891SouvmqVP8pZjyQcYKGaKsN9QXalU+kvpS3OZWyhozcIdqBjjF8MNILoVuaO
+7jH2kaZQe0EKmiqBjWTbocFRPSWTgNDW7wvBTrQhq0D5mPw+cbmTEhR14rWMElWX
+HNwb9IDldblEOa1pPOt6V7ixLwjs3muPdeVNuTLOK18u4UdiEl+q6dLSg1HOCXwP
+Wuw1dP2Wercc0+GxLGiEFb7XxaM+UjWW4Wl+vDI2BC2dqdCWH0sK/x9cDJGpm8IX
+7ceU5uA+O67ptLxmXQz4ZyuV90CbRmuuFu40ZY/pe9iGktVc0j2q50KjkqQVceo=
+=7suH
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__13_Dec_2010_14_33_22_+1100_W.AiBGWP2H0RHynC--
