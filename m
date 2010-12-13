@@ -1,38 +1,57 @@
-From: Avi Kivity <avi@redhat.com>
-Subject: Re: linux-next: Tree for November 22 (kvm)
-Date: Sun, 12 Dec 2010 11:23:20 +0200
-Message-ID: <4D049488.5020105@redhat.com>
-References: <20101122134911.b7e106f9.sfr@canb.auug.org.au>	<20101122132627.bd4e88ef.randy.dunlap@oracle.com>	<20101129083324.6870d7da.randy.dunlap@oracle.com>	<4CF3D637.6060204@redhat.com>	<4CF3E733.8090809@redhat.com>	<4CF3E870.4040308@oracle.com>	<4CF3EC1E.7050707@redhat.com> <20101210091859.63a6a43e.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the mfd tree
+Date: Mon, 13 Dec 2010 13:34:04 +1100
+Message-ID: <20101213133404.074eb5df.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20101210091859.63a6a43e.randy.dunlap@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Zachary Amsden <zamsden@redhat.com>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Glauber Costa <glommer@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, kvm@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__13_Dec_2010_13_34_04_+1100_0liaiCmofSiixdmF"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:49810 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756187Ab0LMCeM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 12 Dec 2010 21:34:12 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andres Salomon <dilinger@queued.net>
 
-On 12/10/2010 07:18 PM, Randy Dunlap wrote:
-> >  Looks like this is the appropriate fix:
-> >
-> >  #ifdef CONFIG_SMP
-> >  static void __init kvm_smp_prepare_boot_cpu(void)
-> >  {
-> >  #ifdef CONFIG_KVM_CLOCK
-> >  	WARN_ON(kvm_register_clock("primary cpu clock"));
-> >  #endif
-> >  	kvm_guest_cpu_init();
-> >  	native_smp_prepare_boot_cpu();
-> >  }
->
->
-> Can we get this fix merged, please?
->
-> Build error is still happening in linux-next 20101210.
->
+--Signature=_Mon__13_Dec_2010_13_34_04_+1100_0liaiCmofSiixdmF
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Zach, a proper patch please.
+Hi Samuel,
 
--- 
-error compiling committee.c: too many arguments to function
+After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
+produced these warnings:
+
+drivers/misc/cs5535-mfgpt.c: In function 'cs5535_mfgpt_probe':
+drivers/misc/cs5535-mfgpt.c:320: warning: format '%x' expects type 'unsigne=
+d int', but argument 3 has type 'resource_size_t'
+drivers/misc/cs5535-mfgpt.c:320: warning: format '%x' expects type 'unsigne=
+d int', but argument 4 has type 'resource_size_t'
+
+Introduced by commit 9ce4f5640c34ce4a468cfead9b848aef424c33ab ("misc:
+Convert cs5535-mfgpt from pci device to platform device").
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__13_Dec_2010_13_34_04_+1100_0liaiCmofSiixdmF
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNBYYcAAoJEDMEi1NhKgbs6u4H/RF16in+odKsA4901V/mNQuU
+l/c0JnlLX4XIeKFcNr2XcFuYgyJR1PQJYALYfv2Ds8mgwRgdIDESMynq11MOepYL
+r1cVDyWjRyZ8/jUGSXM8CyKuoguA+36EyzV5qsN/DEkFDNJOANxCyhBAy7GDTKCa
+hVTFTLkL0BwY5f4erNlQ85NufRot4D9rsKg34EaXJPCvdqrhEoXZatGTqa6k82pq
+ijgzwpTw/tU8OPi53jacTp9bx4pgA8OW4ebEmip8ziIU3jKW07X0/LeTPIK2ilnj
+WgiLhdVm/5gTIerK+8Dn4L8vkBsVr4UEZ3Mi9/uJolw0a8T/GtDMCMpSL7aA7bk=
+=mIFt
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__13_Dec_2010_13_34_04_+1100_0liaiCmofSiixdmF--
