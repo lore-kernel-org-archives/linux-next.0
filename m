@@ -1,55 +1,45 @@
-From: Rakib Mullick <rakib.mullick@gmail.com>
-Subject: Re: linux-next: Tree for December 10 (x86 nmi_watchdog)
-Date: Tue, 14 Dec 2010 11:42:37 +0600
-Message-ID: <AANLkTinuqUTgntBOfBcfLnymKRqn_FAoFquj_Lz7BP-X@mail.gmail.com>
-References: <20101210135746.0cf6cbcd.sfr@canb.auug.org.au>
-	<20101210092533.4f426650.randy.dunlap@oracle.com>
-	<AANLkTi=bw8EcxEffbVV6CfdAPVdM25ZMxHqAmz1yukq3@mail.gmail.com>
-	<20101213144434.GB18577@redhat.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the cleancache tree with the vfs-scale
+ tree
+Date: Tue, 14 Dec 2010 16:55:21 +1100
+Message-ID: <20101214165521.1d67d30b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:35420 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751389Ab0LNFmk convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Dec 2010 00:42:40 -0500
-In-Reply-To: <20101213144434.GB18577@redhat.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:53536 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751934Ab0LNFzZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 14 Dec 2010 00:55:25 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Don Zickus <dzickus@redhat.com>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
+To: Dan Magenheimer <dan.magenheimer@oracle.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nick Piggin <npiggin@kernel.dk>
 
-On Mon, Dec 13, 2010 at 8:44 PM, Don Zickus <dzickus@redhat.com> wrote:
-> On Sun, Dec 12, 2010 at 11:27:02AM +0600, Rakib Mullick wrote:
->> On Fri, Dec 10, 2010 at 11:25 PM, Randy Dunlap <randy.dunlap@oracle.=
-com> wrote:
->> > On Fri, 10 Dec 2010 13:57:46 +1100 Stephen Rothwell wrote:
->> >
->> >> Hi all,
->> >>
->> >> Changes since 20101209:
->> >
->> >
->> > arch/x86/kernel/apic/hw_nmi.c:28: error: redefinition of 'touch_nm=
-i_watchdog'
->> > include/linux/nmi.h:22: note: previous definition of 'touch_nmi_wa=
-tchdog' was here
->
-> I'll have to checkout that branch to see what got merged. =A0I though=
-t I
-> fixed all these. =A0Is there a config I can use to duplicate these?
->
-Allnoconfig also introduces this breakage.
+Hi Dan,
 
+Today's linux-next merge of the cleancache tree got a conflict in
+fs/super.c between commit fb0a35ccc864ca877ed0908abcb7e8d0a5e09858 ("fs:
+dcache per-bucket dcache hash locking") from the vfs-scale tree and
+commit 03e838947c8abe29a9d7abfaf7fd9125a46b70e9 ("mm/fs: add hooks to
+support cleancache") from the cleancache tree.
 
-thanks,
-rakib
+Just trivial overlapping additions.  I fixed it up (see below) and can
+carry the fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-
-
->
-> Cheers,
-> Don
->
->
+diff --cc fs/super.c
+index 968ba01,30a54e0..0000000
+--- a/fs/super.c
++++ b/fs/super.c
+@@@ -30,7 -30,7 +30,8 @@@
+  #include <linux/idr.h>
+  #include <linux/mutex.h>
+  #include <linux/backing-dev.h>
+ +#include <linux/rculist_bl.h>
++ #include <linux/cleancache.h>
+  #include "internal.h"
+  
+  
