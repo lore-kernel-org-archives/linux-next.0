@@ -1,45 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the input tree with Linus' tree
-Date: Tue, 14 Dec 2010 13:26:58 +1100
-Message-ID: <20101214132658.ce0f5bc6.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the voltage tree
+Date: Tue, 14 Dec 2010 15:49:33 +1100
+Message-ID: <20101214154933.a4b36f69.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__14_Dec_2010_15_49_33_+1100_SqMkrBxcI5NaDQ=J"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56939 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35346 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759010Ab0LNC1A (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 13 Dec 2010 21:27:00 -0500
+	id S1757937Ab0LNEtn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 13 Dec 2010 23:49:43 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Liam Girdwood <lrg@slimlogic.co.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yong Shen <yong.shen@linaro.org>
 
-Hi Dmitry,
+--Signature=_Tue__14_Dec_2010_15_49_33_+1100_SqMkrBxcI5NaDQ=J
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the input tree got a conflict in
-include/linux/input.h between commit
-86b17f76f462db460d6d916e105a4c44cb353e36 ("Input: document struct
-input_absinfo") from Linus' tree and commit
-a528f721b7c0ba70433dbddf5947eea458c3e36a ("Input: document new trkid
-field in struct input_dev") from the input tree.
+Hi Liam,
 
-I fixed it up (see below) and can carry the fix as necessary.
--- 
+After merging the voltage tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+drivers/regulator/mc13892-regulator.c:21:21: error: mc13xxx.h: No such file=
+ or directory
+drivers/regulator/mc13892-regulator.c:261: error: array type has incomplete=
+ element type
+drivers/regulator/mc13892-regulator.c:262: error: implicit declaration of f=
+unction 'MC13xxx_DEFINE'
+drivers/regulator/mc13892-regulator.c:262: error: 'MC13892_' undeclared her=
+e (not in a function)
+
+and on and on ....
+
+Caused by commit b0e2417cdbc12b1649245315a607ae8f1072b2bf ("regulator:
+support PMIC mc13892").  A file missing from the commit, I assume.
+
+I have used the voltage tree form next-20101213 for today.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc include/linux/input.h
-index 979d4bd,787aa7e..0000000
---- a/include/linux/input.h
-+++ b/include/linux/input.h
-@@@ -1155,7 -1125,8 +1150,8 @@@ struct ff_effect 
-   *	of tracked contacts
-   * @mtsize: number of MT slots the device uses
-   * @slot: MT slot currently being transmitted
-+  * @trkid: stores MT tracking ID for the current contact
- - * @absinfo: array of &struct absinfo elements holding information
- + * @absinfo: array of &struct input_absinfo elements holding information
-   *	about absolute axes (current value, min, max, flat, fuzz,
-   *	resolution)
-   * @key: reflects current state of device's keys/buttons
+--Signature=_Tue__14_Dec_2010_15_49_33_+1100_SqMkrBxcI5NaDQ=J
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNBvddAAoJEDMEi1NhKgbshNAH/1Y0OMWoEeucQkt4XIfeHQHd
+rDw+Qkq2c1CWl+eLZsb1iurWcBPTohLiuDTZ0fgf6fdfpE8AFNUQnBK4iMs5oCuh
+KLSPsaipv256HLM5u0PU56qELyRJKkfcRvnyJQT3mVoYsR7obsxCQN2lAFjU+9n5
+D1ro4wVrf23zAqJSA/IvppoIOzh8qfO1mE+Um8TYCwZTgNLF5KJLTIsaKL9dPlrt
+MjSLu/N7klbLOeLWesm1M0a7sgYieTPr/JUr7I0nRuc/glxOJj+EhB9PiHA4o0zd
+yq7UqhXCfaz1llOYLVS7hvrU7jQXHM26XbVft5nMcO+ovcK2Ya+x5d5+ut4OAN0=
+=jbgF
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__14_Dec_2010_15_49_33_+1100_SqMkrBxcI5NaDQ=J--
