@@ -1,57 +1,62 @@
-From: Russell King <rmk@arm.linux.org.uk>
-Subject: Re: linux-next: manual merge of the arm tree with the arm-current
-	tree
-Date: Wed, 15 Dec 2010 16:43:16 +0000
-Message-ID: <20101215164316.GA5641@flint.arm.linux.org.uk>
-References: <20101215105435.3ce83f21.sfr@canb.auug.org.au> <20101214235746.GB21913@flint.arm.linux.org.uk> <AANLkTimdZ3FRs82RzSZR19gDJbkNe2UfEY-kLQOwvd_Q@mail.gmail.com>
+From: Liam Girdwood <lrg@slimlogic.co.uk>
+Subject: Re: [PATCH] regulator: Allow modular build of mc13xxx-core
+Date: Wed, 15 Dec 2010 21:30:16 +0000
+Message-ID: <1292448616.3348.33.camel@odin>
+References: <20101215140344.GF5723@sirena.org.uk>
+	 <1292422225-27530-1-git-send-email-broonie@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:42154 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751219Ab0LOQnd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 15 Dec 2010 11:43:33 -0500
-Content-Disposition: inline
-In-Reply-To: <AANLkTimdZ3FRs82RzSZR19gDJbkNe2UfEY-kLQOwvd_Q@mail.gmail.com>
+Received: from mail-wy0-f174.google.com ([74.125.82.174]:49860 "EHLO
+	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752392Ab0LOVaW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 15 Dec 2010 16:30:22 -0500
+In-Reply-To: <1292422225-27530-1-git-send-email-broonie@opensource.wolfsonmicro.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Martin <dave.martin@linaro.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Yong Shen <yong.shen@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, patches@opensource.wolfsonmicro.com
 
-On Wed, Dec 15, 2010 at 12:28:39PM +0000, Dave Martin wrote:
-> Hi,
->=20
-> On Tue, Dec 14, 2010 at 11:57 PM, Russell King <rmk@arm.linux.org.uk>=
- wrote:
-> > On Wed, Dec 15, 2010 at 10:54:35AM +1100, Stephen Rothwell wrote:
-> >> Hi Russell,
-> >>
-> >> Today's linux-next merge of the arm tree got a conflict in
-> >> arch/arm/Kconfig between commit 6e6fc998b8c127fe06b9350a1f16e41bfe=
-4f109d
-> >> ("ARM: 6533/1: Thumb-2: Make CONFIG_THUMB2_KERNEL depend on !CPU_V=
-6")
-> >> from the arm-current tree and commit
-> >> 4a50bfe365a977f634311504484342fbfffe855c ("ARM: Ensure experimenta=
-l
-> >> options are so marked") from the arm tree.
-> >>
-> >> Just context changes. =A0I fixed it up (see below) and can carry t=
-he fix as
-> >> necessary.
-> >
-> > Yea, rather unfortunate. =A0I'll fix it up locally once arm-current=
- is
-> > merged into mainline.
->=20
-> Looks like this was a case of two simple changes on neighbouring line=
-s
-> -- I'll try to avoid such conflicts for the future.
+On Wed, 2010-12-15 at 14:10 +0000, Mark Brown wrote:
+> Since the MFD core for this device and the regulator drivers for these
+> devices can be built modular we should also support modular build of
+> the shared code for the regulator drivers, otherwise we try to link
+> built in code against modular code with unfortunate results.
+> 
+> Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-It's not a problem.
+Thanks Mark !
 
---=20
-Russell King
- Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
- maintainer of:
+It looks like you sent the wrong patch as I had to also add :-
+
+diff --git a/drivers/regulator/mc13xxx-regulator-core.c b/drivers/regulator/mc13xxx-regulator-core.c
+index da46b3c..f53d31b 100644
+--- a/drivers/regulator/mc13xxx-regulator-core.c
++++ b/drivers/regulator/mc13xxx-regulator-core.c
+@@ -89,6 +89,7 @@ int mc13xxx_regulator_list_voltage(struct regulator_dev *rdev,
+ 
+        return mc13xxx_regulators[id].voltages[selector];
+ }
++EXPORT_SYMBOL_GPL(mc13xxx_regulator_list_voltage);
+ 
+ int mc13xxx_get_best_voltage_index(struct regulator_dev *rdev,
+                                                int min_uV, int max_uV)
+@@ -232,6 +233,7 @@ int mc13xxx_sw_regulator_is_enabled(struct regulator_dev *rdev)
+ {
+        return 1;
+ }
++EXPORT_SYMBOL_GPL(mc13xxx_sw_regulator_is_enabled);
+ 
+ MODULE_LICENSE("GPL v2");
+ MODULE_AUTHOR("Yong Shen <yong.shen@linaro.org>");
+
+To get it all building.
+
+Now applied and squashed with above.
+
+Liam
+-- 
+Freelance Developer, SlimLogic Ltd
+ASoC and Voltage Regulator Maintainer.
+http://www.slimlogic.co.uk
