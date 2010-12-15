@@ -1,49 +1,48 @@
-From: Dave Martin <dave.martin@linaro.org>
-Subject: Re: linux-next: manual merge of the arm tree with the arm-current tree
-Date: Wed, 15 Dec 2010 12:28:39 +0000
-Message-ID: <AANLkTimdZ3FRs82RzSZR19gDJbkNe2UfEY-kLQOwvd_Q@mail.gmail.com>
-References: <20101215105435.3ce83f21.sfr@canb.auug.org.au>
-	<20101214235746.GB21913@flint.arm.linux.org.uk>
+From: Boaz Harrosh <bharrosh@panasas.com>
+Subject: Re: linux-next: Tree for November 18
+Date: Wed, 15 Dec 2010 14:47:27 +0200
+Message-ID: <4D08B8DF.9080503@panasas.com>
+References: <20101118134256.fe132215.sfr@canb.auug.org.au>	<4CE54562.9030603@panasas.com>	<20101119103300.243b17c8.sfr@canb.auug.org.au>	<4CE92F96.7000002@panasas.com> <20101214135917.5b5a73e5.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-iw0-f180.google.com ([209.85.214.180]:41587 "EHLO
-	mail-iw0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753272Ab0LOMgo convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 15 Dec 2010 07:36:44 -0500
-In-Reply-To: <20101214235746.GB21913@flint.arm.linux.org.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@arm.linux.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20101214135917.5b5a73e5.randy.dunlap@oracle.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, uml-devel <user-mode-linux-devel@lists.sourceforge.net>
+List-Id: linux-next.vger.kernel.org
 
-Hi,
-
-On Tue, Dec 14, 2010 at 11:57 PM, Russell King <rmk@arm.linux.org.uk> w=
-rote:
-> On Wed, Dec 15, 2010 at 10:54:35AM +1100, Stephen Rothwell wrote:
->> Hi Russell,
+On 12/14/2010 11:59 PM, Randy Dunlap wrote:
+> On Sun, 21 Nov 2010 16:41:26 +0200 Boaz Harrosh wrote:
+> 
 >>
->> Today's linux-next merge of the arm tree got a conflict in
->> arch/arm/Kconfig between commit 6e6fc998b8c127fe06b9350a1f16e41bfe4f=
-109d
->> ("ARM: 6533/1: Thumb-2: Make CONFIG_THUMB2_KERNEL depend on !CPU_V6"=
-)
->> from the arm-current tree and commit
->> 4a50bfe365a977f634311504484342fbfffe855c ("ARM: Ensure experimental
->> options are so marked") from the arm tree.
+>> Meanwhile I have setup a cron job for every-night to checkout linux-next
+>> and "make". As a backup for above, until it is fixed.
 >>
->> Just context changes. =A0I fixed it up (see below) and can carry the=
- fix as
->> necessary.
->
-> Yea, rather unfortunate. =A0I'll fix it up locally once arm-current i=
-s
-> merged into mainline.
+>> Anything else I can contribute to this cause?
+> 
+> 
+> From my small testing, it looks like ARCH=um "defconfig" is about the only
+> config that comes close to building reliably.  allmodconfig/allyesconfig and
+> several randconfig attempts all failed with many horrible errors.
+> 
+> Is that about right?
+> 
+> ---
+> ~Randy
 
-Looks like this was a case of two simple changes on neighbouring lines
--- I'll try to avoid such conflicts for the future.
+Hi Randy
 
-Cheers
----Dave
+Yes you are basically right. One must start with defconfig and add anything
+he needs. UM has neglected to play it nice with Kernel, missing some basic
+implementations of simple things, just for example ndelay. So some code that
+should theoretically work, fails to compile.
+
+I have around an allmodconfig with the minimum of configs turned off, so
+to compile a maximum possible coverage. I have this pet project of half
+Kconfig "depends on !UM" and half "implement some missing parts". But I
+never have time to actually clean it up, patch it and send it upstream.
+
+Thanks
+Boaz
