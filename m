@@ -1,40 +1,91 @@
-From: Russell King <rmk@arm.linux.org.uk>
-Subject: Re: linux-next: manual merge of the arm tree with the arm-current
-	tree
-Date: Tue, 14 Dec 2010 23:57:46 +0000
-Message-ID: <20101214235746.GB21913@flint.arm.linux.org.uk>
-References: <20101215105435.3ce83f21.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ceph tree with Linus' tree
+Date: Wed, 15 Dec 2010 11:14:23 +1100
+Message-ID: <20101215111423.6ba822eb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:50683 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756643Ab0LNX6E (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Dec 2010 18:58:04 -0500
-Content-Disposition: inline
-In-Reply-To: <20101215105435.3ce83f21.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:35257 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755127Ab0LOAO1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 14 Dec 2010 19:14:27 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Martin <dave.martin@linaro.org>
+To: Sage Weil <sage@newdream.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Herb Shiu <herb_shiu@tcloudcomputing.com>
 
-On Wed, Dec 15, 2010 at 10:54:35AM +1100, Stephen Rothwell wrote:
-> Hi Russell,
-> 
-> Today's linux-next merge of the arm tree got a conflict in
-> arch/arm/Kconfig between commit 6e6fc998b8c127fe06b9350a1f16e41bfe4f109d
-> ("ARM: 6533/1: Thumb-2: Make CONFIG_THUMB2_KERNEL depend on !CPU_V6")
-> from the arm-current tree and commit
-> 4a50bfe365a977f634311504484342fbfffe855c ("ARM: Ensure experimental
-> options are so marked") from the arm tree.
-> 
-> Just context changes.  I fixed it up (see below) and can carry the fix as
-> necessary.
+Hi Sage,
 
-Yea, rather unfortunate.  I'll fix it up locally once arm-current is
-merged into mainline.
+Today's linux-next merge of the ceph tree got a conflict in
+fs/ceph/mds_client.c between commit
+25933abdd8c562182ca6dc9f8c4c2cc8265c3a80 ("ceph: Handle file locks in
+replies from the MDS") from Linus' tree and commit
+cba1a66d511d46c426ea02c322293b48f3b88cf2 ("ceph: implement DIRLAYOUTHASH
+feature to get dir layout from MDS") from the ceph tree.
 
+I fixed it up (hopefully correctly, see below) and can carry this fix as
+necessary.
 -- 
-Russell King
- Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
- maintainer of:
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc fs/ceph/mds_client.c
+index 38800ea,bb9ff98..0000000
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@@ -202,38 -212,6 +211,38 @@@ out_bad
+  }
+  
+  /*
+ + * parse fcntl F_GETLK results
+ + */
+ +static int parse_reply_info_filelock(void **p, void *end,
+ +                struct ceph_mds_reply_info_parsed *info)
+ +{
+ +	if (*p + sizeof(*info->filelock_reply) > end)
+ +		goto bad;
+ +
+ +	info->filelock_reply = *p;
+ +	*p += sizeof(*info->filelock_reply);
+ +
+ +	if (unlikely(*p != end))
+ +		goto bad;
+ +	return 0;
+ +
+ +bad:
+ +	return -EIO;
+ +}
+ +
+ +/*
+ + * parse extra results
+ + */
+ +static int parse_reply_info_extra(void **p, void *end,
+-                 struct ceph_mds_reply_info_parsed *info)
+++                struct ceph_mds_reply_info_parsed *info, int features)
+ +{
+ +	if (info->head->op == CEPH_MDS_OP_GETFILELOCK)
+ +		return parse_reply_info_filelock(p, end, info);
+ +	else
+- 		return parse_reply_info_dir(p, end, info);
+++		return parse_reply_info_dir(p, end, info, features);
+ +}
+ +
+ +/*
+   * parse entire mds reply
+   */
+  static int parse_reply_info(struct ceph_msg *msg,
+@@@ -255,10 -234,10 +265,10 @@@
+  			goto out_bad;
+  	}
+  
+ -	/* dir content */
+ +	/* extra */
+  	ceph_decode_32_safe(&p, end, len, bad);
+  	if (len > 0) {
+- 		err = parse_reply_info_extra(&p, p+len, info);
+ -		err = parse_reply_info_dir(&p, p+len, info, features);
+++		err = parse_reply_info_extra(&p, p+len, info, features);
+  		if (err < 0)
+  			goto out_bad;
+  	}
