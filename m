@@ -1,37 +1,62 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] crypto: fix af_alg memory_allocated data type
-Date: Thu, 16 Dec 2010 10:18:00 -0800
-Message-ID: <20101216101800.36529e89.randy.dunlap@oracle.com>
-References: <20101216173745.264eb2ca.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the usb tree with Linus' tree
+Date: Fri, 17 Dec 2010 09:33:30 +1100
+Message-ID: <20101217093330.32adedb4.sfr@canb.auug.org.au>
+References: <20101216140122.ca745f1f.sfr@canb.auug.org.au>
+	<20101216030857.GA12785@kroah.com>
+	<20101216080527.GA2601@legolas.emea.dhcp.ti.com>
+	<20101216084552.GD2601@legolas.emea.dhcp.ti.com>
+	<20101216155225.GA31363@kroah.com>
+	<20101216155554.GA9552@legolas.emea.dhcp.ti.com>
+	<20101216174418.GA3849@kroah.com>
+	<20101216181429.GA19012@kroah.com>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__17_Dec_2010_09_33_30_+1100_rZvMNZPlWDtb0nGy"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:59230 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751119Ab0LPWdj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 16 Dec 2010 17:33:39 -0500
+In-Reply-To: <20101216181429.GA19012@kroah.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: Felipe Balbi <balbi@ti.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bob Liu <lliubbo@gmail.com>, Mike Frysinger <vapier.adi@gmail.com>
+
+--Signature=_Fri__17_Dec_2010_09_33_30_+1100_rZvMNZPlWDtb0nGy
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-crypto-owner@vger.kernel.org>
-In-Reply-To: <20101216173745.264eb2ca.sfr@canb.auug.org.au>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Herbert Xu <herbert@gondor.hengli.com.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-crypto@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+Hi Greg, Felipe,
 
-Change data type to fix warning:
+On Thu, 16 Dec 2010 10:14:29 -0800 Greg KH <greg@kroah.com> wrote:
+>
+> Ok, now merged and pushed out.  Stephen, there shouldn't be any merge
+> errors with the next linux-next and the usb-next branches anymore.
 
-crypto/af_alg.c:35: warning: initialization from incompatible pointer type
+Thanks guys.
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- crypto/af_alg.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---- linux-next-20101216.orig/crypto/af_alg.c
-+++ linux-next-20101216/crypto/af_alg.c
-@@ -27,7 +27,7 @@ struct alg_type_list {
- 	struct list_head list;
- };
- 
--static atomic_t alg_memory_allocated;
-+static atomic_long_t alg_memory_allocated;
- 
- static struct proto alg_proto = {
- 	.name			= "ALG",
+--Signature=_Fri__17_Dec_2010_09_33_30_+1100_rZvMNZPlWDtb0nGy
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNCpO6AAoJEDMEi1NhKgbs7vwH/35qCOLfl4sMgdA93K5aIQXW
+UQdMMeUmlT8/m0zaHOrFcockznx4J9NmlH8DO4vIjkObtTYZlWv3+xrd72Nv7dry
+pJoNQx/f9x0ssTbOIZ39u/TbScW3xkM5vtlAHq1O3b8xpIXfBLIw3Z8G5tlU4hLs
+byvQ7dr8nOp4Yc6QLcahnljVBYqe2HUaG99bstYLIxMHRGrrdcG3kun+a1wV60dP
+mbSXlhc6NdufXCRaymR/ZVfMSsyT1/BgYEHEzQIWSfX+n7yAtMnzsn765Wn8I9If
+hsotKelDNSB/R8DgussoPyAJRVDlpDnlh1q3XA6Bj70wqxt+dxzndthP0RFx+GE=
+=dPIv
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__17_Dec_2010_09_33_30_+1100_rZvMNZPlWDtb0nGy--
