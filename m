@@ -1,62 +1,42 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: linux-next: manual merge of the usb tree with Linus' tree
-Date: Thu, 16 Dec 2010 10:45:52 +0200
-Message-ID: <20101216084552.GD2601@legolas.emea.dhcp.ti.com>
-References: <20101216140122.ca745f1f.sfr@canb.auug.org.au>
- <20101216030857.GA12785@kroah.com>
- <20101216080527.GA2601@legolas.emea.dhcp.ti.com>
-Reply-To: balbi@ti.com
+From: Avi Kivity <avi@redhat.com>
+Subject: Re: linux-next: Tree for November 22 (kvm)
+Date: Thu, 16 Dec 2010 11:37:00 +0200
+Message-ID: <4D09DDBC.4090507@redhat.com>
+References: <20101122134911.b7e106f9.sfr@canb.auug.org.au>	<20101122132627.bd4e88ef.randy.dunlap@oracle.com>	<20101129083324.6870d7da.randy.dunlap@oracle.com>	<4CF3D637.6060204@redhat.com>	<4CF3E733.8090809@redhat.com>	<4CF3E870.4040308@oracle.com>	<4CF3EC1E.7050707@redhat.com> <20101210091859.63a6a43e.randy.dunlap@oracle.com> <4D049488.5020105@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from na3sys009aog101.obsmtp.com ([74.125.149.67]:55684 "EHLO
-	na3sys009aog101.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751201Ab0LPIp5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 16 Dec 2010 03:45:57 -0500
-Content-Disposition: inline
-In-Reply-To: <20101216080527.GA2601@legolas.emea.dhcp.ti.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Felipe Balbi <balbi@ti.com>
-Cc: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bob Liu <lliubbo@gmail.com>, Mike Frysinger <vapier.adi@gmail.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4D049488.5020105@redhat.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Zachary Amsden <zamsden@redhat.com>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Glauber Costa <glommer@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, kvm@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi,
-
-On Thu, Dec 16, 2010 at 10:05:27AM +0200, Felipe Balbi wrote:
->On Wed, Dec 15, 2010 at 07:08:57PM -0800, Greg KH wrote:
->>On Thu, Dec 16, 2010 at 02:01:22PM +1100, Stephen Rothwell wrote:
->>>Hi Greg,
->>>
->>>Today's linux-next merge of the usb tree got a conflict in
->>>drivers/usb/musb/blackfin.c drivers/usb/musb/musb_core.c
->>>drivers/usb/musb/musb_core.h between commit
->>>1e393c6eece048052d4131ec4dad3b98e35a98e2 ("USB: musb: blackfin: pm: make
->>>it work") from Linus' tree (v2.6.37-rc2) and various commits from the usb
->>>tree.
->>>
->>>It was not immediately obvious how to fix these up, so I just used the
->>>versions from the usb tree.  This may not be correct and it would be good
->>>if this was fixed properly in the usb tree.
+On 12/12/2010 11:23 AM, Avi Kivity wrote:
+> On 12/10/2010 07:18 PM, Randy Dunlap wrote:
+>> >  Looks like this is the appropriate fix:
+>> >
+>> >  #ifdef CONFIG_SMP
+>> >  static void __init kvm_smp_prepare_boot_cpu(void)
+>> >  {
+>> >  #ifdef CONFIG_KVM_CLOCK
+>> >      WARN_ON(kvm_register_clock("primary cpu clock"));
+>> >  #endif
+>> >      kvm_guest_cpu_init();
+>> >      native_smp_prepare_boot_cpu();
+>> >  }
 >>
->>Hm.  Felipe, I'll merge in the -rc4 tree into usb-next if it makes sense
->>to do so now, can you send me the patch that ends up being the correct
->>merge?
+>>
+>> Can we get this fix merged, please?
+>>
+>> Build error is still happening in linux-next 20101210.
+>>
 >
->Sure, I'll check it now and send in a patch in a few minutes.
+> Zach, a proper patch please.
+>
 
-There are two commits you didn't have in your usb-next branch which are
-in mainline. Reverting them will make greg/usb-next apply cleanly on top
-of v2.6.47-rc4. The commits are:
-
-32d5dc9520f0c6f60f691dd478741c774e292406 : USB: musb: pm: don't rely fully on clock support
-1e393c6eece048052d4131ec4dad3b98e35a98e2 : USB: musb: blackfin: pm: make it work
-
-Do you want me to rebase on top of -rc4 or is reverting those two enough
-for you ? As a sidenote, the series I sent you already fixes those two
-cases as we moved PM and clock handling entirely to glue layer, so those
-two cases are taken care of on the series, reverting those patches won't
-pose any regressions.
+Should be fixed for the next spin.
 
 -- 
-balbi
+error compiling committee.c: too many arguments to function
