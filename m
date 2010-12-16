@@ -1,79 +1,56 @@
-From: Yong Shen <yong.shen@linaro.org>
-Subject: Re: [PATCH] regulator: Allow modular build of mc13xxx-core
-Date: Thu, 16 Dec 2010 09:52:02 +0800
-Message-ID: <AANLkTik5OydVXN4X2Awa-H+pwKbXw_cbGnC1Ut6npwG9@mail.gmail.com>
-References: <20101215140344.GF5723@sirena.org.uk>
-	<1292422225-27530-1-git-send-email-broonie@opensource.wolfsonmicro.com>
-	<1292448616.3348.33.camel@odin>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with Linus' tree
+Date: Thu, 16 Dec 2010 14:01:22 +1100
+Message-ID: <20101216140122.ca745f1f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__16_Dec_2010_14_01_22_+1100_WH_lfQTTF8NR3q1/"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-yx0-f174.google.com ([209.85.213.174]:55340 "EHLO
-	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752288Ab0LPBwE convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 15 Dec 2010 20:52:04 -0500
-In-Reply-To: <1292448616.3348.33.camel@odin>
+Received: from chilli.pcug.org.au ([203.10.76.44]:49863 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755284Ab0LPDBa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 15 Dec 2010 22:01:30 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Liam Girdwood <lrg@slimlogic.co.uk>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, patches@opensource.wolfsonmicro.com
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bob Liu <lliubbo@gmail.com>, Mike Frysinger <vapier.adi@gmail.com>, Felipe Balbi <balbi@ti.com>
 
-Hi there,
+--Signature=_Thu__16_Dec_2010_14_01_22_+1100_WH_lfQTTF8NR3q1/
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-My bad. My test did not cover module-build case.
-Thanks for fixing this.
+Hi Greg,
 
-Yong
+Today's linux-next merge of the usb tree got a conflict in
+drivers/usb/musb/blackfin.c drivers/usb/musb/musb_core.c
+drivers/usb/musb/musb_core.h between commit
+1e393c6eece048052d4131ec4dad3b98e35a98e2 ("USB: musb: blackfin: pm: make
+it work") from Linus' tree (v2.6.37-rc2) and various commits from the usb
+tree.
 
-On Thu, Dec 16, 2010 at 5:30 AM, Liam Girdwood <lrg@slimlogic.co.uk> wr=
-ote:
-> On Wed, 2010-12-15 at 14:10 +0000, Mark Brown wrote:
->> Since the MFD core for this device and the regulator drivers for the=
-se
->> devices can be built modular we should also support modular build of
->> the shared code for the regulator drivers, otherwise we try to link
->> built in code against modular code with unfortunate results.
->>
->> Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
->
-> Thanks Mark !
->
-> It looks like you sent the wrong patch as I had to also add :-
->
-> diff --git a/drivers/regulator/mc13xxx-regulator-core.c b/drivers/reg=
-ulator/mc13xxx-regulator-core.c
-> index da46b3c..f53d31b 100644
-> --- a/drivers/regulator/mc13xxx-regulator-core.c
-> +++ b/drivers/regulator/mc13xxx-regulator-core.c
-> @@ -89,6 +89,7 @@ int mc13xxx_regulator_list_voltage(struct regulator=
-_dev *rdev,
->
-> =A0 =A0 =A0 =A0return mc13xxx_regulators[id].voltages[selector];
-> =A0}
-> +EXPORT_SYMBOL_GPL(mc13xxx_regulator_list_voltage);
->
-> =A0int mc13xxx_get_best_voltage_index(struct regulator_dev *rdev,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0int min_uV, int max_uV)
-> @@ -232,6 +233,7 @@ int mc13xxx_sw_regulator_is_enabled(struct regula=
-tor_dev *rdev)
-> =A0{
-> =A0 =A0 =A0 =A0return 1;
-> =A0}
-> +EXPORT_SYMBOL_GPL(mc13xxx_sw_regulator_is_enabled);
->
-> =A0MODULE_LICENSE("GPL v2");
-> =A0MODULE_AUTHOR("Yong Shen <yong.shen@linaro.org>");
->
-> To get it all building.
->
-> Now applied and squashed with above.
->
-> Liam
-> --
-> Freelance Developer, SlimLogic Ltd
-> ASoC and Voltage Regulator Maintainer.
-> http://www.slimlogic.co.uk
->
->
+It was not immediately obvious how to fix these up, so I just used the
+versions from the usb tree.  This may not be correct and it would be good
+if this was fixed properly in the usb tree.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__16_Dec_2010_14_01_22_+1100_WH_lfQTTF8NR3q1/
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNCYECAAoJEDMEi1NhKgbscIYH/jscsxlLjzhjvND+qOAOJACS
++KJfR4GEGn9UqMSTOAjTP/qsU+jcM5cdqplgizfDRYjTvWhn2ZmCyNlCLyQ4sX5l
+6t9D1hpLthPBBWBga4sI+UfKYaO02xHCsjoUv1mWsGGvGycwITWAjrldF3tN5avH
+IdDWjBXsGyvHDGn+F/H7PXFsCG3usk+ID3zp/dB62+7P7TWEDmpf8nUCCAiGSh3x
+9opuKRRKN8yOyI7SCaJW4TVFMp4zV5h/BdzCwe4gqo+HUt2jpw9s+Biu8X1W+RH0
+CCv2otZyNRnOUemOeVjujzVdSXXBwGw5AoEQII6w0Mi5u48weN5hV9JNwA+Is7c=
+=C0xv
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__16_Dec_2010_14_01_22_+1100_WH_lfQTTF8NR3q1/--
