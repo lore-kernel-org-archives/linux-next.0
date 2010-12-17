@@ -1,40 +1,42 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the final tree (tty
- tree related)
-Date: Thu, 16 Dec 2010 23:04:31 -0800
-Message-ID: <20101217070431.GA25192@kroah.com>
-References: <20101217171120.295b0c0c.sfr@canb.auug.org.au>
+From: Anca Emanuel <anca.emanuel@gmail.com>
+Subject: Re: linux-next: Tree for December 17
+Date: Fri, 17 Dec 2010 12:00:43 +0200
+Message-ID: <AANLkTinSOm9cK8LgUO4wm6NTsMsCcE9YyjcPyoSv=WJa@mail.gmail.com>
+References: <20101217173237.fe1de00a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:34069 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751156Ab0LQHDo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 17 Dec 2010 02:03:44 -0500
-Content-Disposition: inline
-In-Reply-To: <20101217171120.295b0c0c.sfr@canb.auug.org.au>
+Received: from mail-wy0-f174.google.com ([74.125.82.174]:56752 "EHLO
+	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752951Ab0LQKAo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Dec 2010 05:00:44 -0500
+In-Reply-To: <20101217173237.fe1de00a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Nick Piggin <npiggin@kernel.dk>
 
-On Fri, Dec 17, 2010 at 05:11:20PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> After merging the final tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
-> 
-> drivers/serial/apbuart.c:596: error: conflicting types for 'grlib_apbuart_configure'
-> drivers/serial/apbuart.c:523: note: previous declaration of 'grlib_apbuart_configure' was here
-> 
-> Caused by commit 35c64e5d13c3d7d8c4ad061ad5e20498b9160c24 ("drivers:
-> serial: apbuart: Handle OF failures gracefully").  This build has
-> CONFIG_SERIAL_GRLIB_GAISLER_APBUART_CONSOLE set ...
-> 
-> I have reverted this commit for today.
+On Fri, Dec 17, 2010 at 8:32 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> [The mirroring on kernel.org is running slowly]
+>
+> Changes since 20101216:
+>
+> The vfs-scale tree gained a conflict against the hfsplus tree.
+>
+> The wireless tree lost its build failure.
+>
+> The block tree gained a conflict against the scsi tree.
+>
+> The offending commit was removed from the rcu tree.
+>
+> The tty tree gained a build failure so I reverted a commit.
+>
+> The usb tree lost 3 conflicts.
 
-Ugh.  Thomas, care to send me a patch?
 
-thanks,
+next-20101216 works fine.
 
-greg k-h
+This version failed:
+http://i53.tinypic.com/54vxgp.jpg
