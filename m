@@ -1,42 +1,73 @@
-From: Anca Emanuel <anca.emanuel@gmail.com>
-Subject: Re: linux-next: Tree for December 17
-Date: Fri, 17 Dec 2010 12:00:43 +0200
-Message-ID: <AANLkTinSOm9cK8LgUO4wm6NTsMsCcE9YyjcPyoSv=WJa@mail.gmail.com>
-References: <20101217173237.fe1de00a.sfr@canb.auug.org.au>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: linux-next: build failure after merge of the final tree (tty
+ tree related)
+Date: Fri, 17 Dec 2010 11:16:17 +0100 (CET)
+Message-ID: <alpine.LFD.2.00.1012171107310.12146@localhost6.localdomain6>
+References: <20101217171120.295b0c0c.sfr@canb.auug.org.au> <20101217070431.GA25192@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:56752 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752951Ab0LQKAo (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Dec 2010 05:00:44 -0500
-In-Reply-To: <20101217173237.fe1de00a.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Nick Piggin <npiggin@kernel.dk>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20101217070431.GA25192@kroah.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Dec 17, 2010 at 8:32 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> [The mirroring on kernel.org is running slowly]
->
-> Changes since 20101216:
->
-> The vfs-scale tree gained a conflict against the hfsplus tree.
->
-> The wireless tree lost its build failure.
->
-> The block tree gained a conflict against the scsi tree.
->
-> The offending commit was removed from the rcu tree.
->
-> The tty tree gained a build failure so I reverted a commit.
->
-> The usb tree lost 3 conflicts.
+On Thu, 16 Dec 2010, Greg KH wrote:
+> On Fri, Dec 17, 2010 at 05:11:20PM +1100, Stephen Rothwell wrote:
+> > Hi Greg,
+> > 
+> > After merging the final tree, today's linux-next build (powerpc
+> > allyesconfig) failed like this:
+> > 
+> > drivers/serial/apbuart.c:596: error: conflicting types for 'grlib_apbuart_configure'
+> > drivers/serial/apbuart.c:523: note: previous declaration of 'grlib_apbuart_configure' was here
+> > 
+> > Caused by commit 35c64e5d13c3d7d8c4ad061ad5e20498b9160c24 ("drivers:
+> > serial: apbuart: Handle OF failures gracefully").  This build has
+> > CONFIG_SERIAL_GRLIB_GAISLER_APBUART_CONSOLE set ...
+> > 
+> > I have reverted this commit for today.
+> 
+> Ugh.  Thomas, care to send me a patch?
 
+Sorry, I missed the console part. Patch below.
 
-next-20101216 works fine.
+Thanks,
 
-This version failed:
-http://i53.tinypic.com/54vxgp.jpg
+	tglx
+---
+Subject: drivers: serial: apbuart: Fixup apbuart_console_init()
+From: Thomas Gleixner <tglx@linutronix.de>
+Date: Fri, 17 Dec 2010 11:09:49 +0100
+
+commit 35c64e5d (drivers: serial: apbuart: Handle OF failures
+gracefully) missed that the modified grlib_apbuart_configure()
+function is called from apbuart_console_init() as well.
+
+Fix the fallout.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+ drivers/serial/apbuart.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+Index: linux-2.6-tip/drivers/serial/apbuart.c
+===================================================================
+--- linux-2.6-tip.orig/drivers/serial/apbuart.c
++++ linux-2.6-tip/drivers/serial/apbuart.c
+@@ -520,11 +520,12 @@ static struct console grlib_apbuart_cons
+ };
+ 
+ 
+-static void grlib_apbuart_configure(void);
++static int grlib_apbuart_configure(void);
+ 
+ static int __init apbuart_console_init(void)
+ {
+-	grlib_apbuart_configure();
++	if (grlib_apbuart_configure())
++		return -ENODEV;
+ 	register_console(&grlib_apbuart_console);
+ 	return 0;
+ }
