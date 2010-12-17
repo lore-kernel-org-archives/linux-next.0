@@ -1,73 +1,39 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: linux-next: build failure after merge of the final tree (tty
- tree related)
-Date: Fri, 17 Dec 2010 11:16:17 +0100 (CET)
-Message-ID: <alpine.LFD.2.00.1012171107310.12146@localhost6.localdomain6>
-References: <20101217171120.295b0c0c.sfr@canb.auug.org.au> <20101217070431.GA25192@kroah.com>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: linux-next: manual merge of the block tree with the  tree
+Date: Fri, 17 Dec 2010 09:53:27 -0500
+Message-ID: <1292597607.2820.17.camel@mulgrave.site>
+References: <20101217122831.39300d94.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20101217070431.GA25192@kroah.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:40737 "EHLO
+	bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754854Ab0LQOxa (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 17 Dec 2010 09:53:30 -0500
+In-Reply-To: <20101217122831.39300d94.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, Tejun Heo <tj@kernel.org>
 
-On Thu, 16 Dec 2010, Greg KH wrote:
-> On Fri, Dec 17, 2010 at 05:11:20PM +1100, Stephen Rothwell wrote:
-> > Hi Greg,
-> > 
-> > After merging the final tree, today's linux-next build (powerpc
-> > allyesconfig) failed like this:
-> > 
-> > drivers/serial/apbuart.c:596: error: conflicting types for 'grlib_apbuart_configure'
-> > drivers/serial/apbuart.c:523: note: previous declaration of 'grlib_apbuart_configure' was here
-> > 
-> > Caused by commit 35c64e5d13c3d7d8c4ad061ad5e20498b9160c24 ("drivers:
-> > serial: apbuart: Handle OF failures gracefully").  This build has
-> > CONFIG_SERIAL_GRLIB_GAISLER_APBUART_CONSOLE set ...
-> > 
-> > I have reverted this commit for today.
+On Fri, 2010-12-17 at 12:28 +1100, Stephen Rothwell wrote:
+> Hi Jens,
 > 
-> Ugh.  Thomas, care to send me a patch?
+> Today's linux-next merge of the block tree got a conflict in
+> drivers/scsi/sd.c between commit e765221e4b44b2141704a0ab201632446235712b
+> ("[SCSI] sd: improve logic and efficiecy of media-change detection") from
+> the  tree and commit c8d2e937355d02db3055c2fc203e5f017297ee1f ("sd:
+> implement sd_check_events()") from the block tree.
+> 
+> The changes here are a bit extensive for me to figure out, so I used
+> the block tree version of the conflicting code (there are other changes
+> in the scsi tree as well).  I probably needs checking.
 
-Sorry, I missed the console part. Patch below.
+Tejun, could you respin the sd patch on top of SCSI misc, please?  (I
+promise to review it speedily if you do).
 
 Thanks,
 
-	tglx
----
-Subject: drivers: serial: apbuart: Fixup apbuart_console_init()
-From: Thomas Gleixner <tglx@linutronix.de>
-Date: Fri, 17 Dec 2010 11:09:49 +0100
-
-commit 35c64e5d (drivers: serial: apbuart: Handle OF failures
-gracefully) missed that the modified grlib_apbuart_configure()
-function is called from apbuart_console_init() as well.
-
-Fix the fallout.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- drivers/serial/apbuart.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-Index: linux-2.6-tip/drivers/serial/apbuart.c
-===================================================================
---- linux-2.6-tip.orig/drivers/serial/apbuart.c
-+++ linux-2.6-tip/drivers/serial/apbuart.c
-@@ -520,11 +520,12 @@ static struct console grlib_apbuart_cons
- };
- 
- 
--static void grlib_apbuart_configure(void);
-+static int grlib_apbuart_configure(void);
- 
- static int __init apbuart_console_init(void)
- {
--	grlib_apbuart_configure();
-+	if (grlib_apbuart_configure())
-+		return -ENODEV;
- 	register_console(&grlib_apbuart_console);
- 	return 0;
- }
+James
