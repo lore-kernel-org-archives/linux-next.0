@@ -1,65 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warnings after merge of the ia64 tree
-Date: Fri, 17 Dec 2010 11:59:32 +1100
-Message-ID: <20101217115932.a633519e.sfr@canb.auug.org.au>
-References: <20101217112357.ec7879f1.sfr@canb.auug.org.au>
-	<987664A83D2D224EAE907B061CE93D530193D00A15@orsmsx505.amr.corp.intel.com>
+Subject: linux-next: manual merge of the block tree with the  tree
+Date: Fri, 17 Dec 2010 12:28:31 +1100
+Message-ID: <20101217122831.39300d94.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__17_Dec_2010_11_59_32_+1100_TjhyAP4H7=CvzUK4"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38484 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752301Ab0LQA7k (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 16 Dec 2010 19:59:40 -0500
-In-Reply-To: <987664A83D2D224EAE907B061CE93D530193D00A15@orsmsx505.amr.corp.intel.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+ boundary="Signature=_Fri__17_Dec_2010_12_28_31_+1100_26p.0OAzsgj.cltJ"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, James Bottomley <James.Bottomley@HansenPartnership.com>, Tejun Heo <tj@kernel.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__17_Dec_2010_11_59_32_+1100_TjhyAP4H7=CvzUK4
+--Signature=_Fri__17_Dec_2010_12_28_31_+1100_26p.0OAzsgj.cltJ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Tony,
+Hi Jens,
 
-On Thu, 16 Dec 2010 16:50:14 -0800 "Luck, Tony" <tony.luck@intel.com> wrote:
->
-> > Hmmmh. I wonder why I didn't see them in my build?
->=20
-> Ah - because I only built against Linus' tree, and linux-next
-> has:
->=20
-> commit 3b38bb5f7f06356a89bb2cbf92ad346025e95192
-> Author: Huang Ying <ying.huang@intel.com>
-> Date:   Thu Dec 2 10:40:53 2010 +0800
->=20
->     ACPI, APEI, use raw spinlock in ERST
+Today's linux-next merge of the block tree got a conflict in
+drivers/scsi/sd.c between commit e765221e4b44b2141704a0ab201632446235712b
+("[SCSI] sd: improve logic and efficiecy of media-change detection") from
+the  tree and commit c8d2e937355d02db3055c2fc203e5f017297ee1f ("sd:
+implement sd_check_events()") from the block tree.
 
-That commit is in Linus' tree as of v2.6.37-rc6 so if you merge -rc6 into
-your tree, you can fix the conflict there.
-
+The changes here are a bit extensive for me to figure out, so I used
+the block tree version of the conflicting code (there are other changes
+in the scsi tree as well).  I probably needs checking.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__17_Dec_2010_11_59_32_+1100_TjhyAP4H7=CvzUK4
+--Signature=_Fri__17_Dec_2010_12_28_31_+1100_26p.0OAzsgj.cltJ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNCrX0AAoJEDMEi1NhKgbsIiIH/iFhRzu9nFWc/OXBNS/YmgXL
-VqE47WLPfN61l66jLPfGOjGuGetzhoYKlLVohA2e5VVRbKVPLn2Cl5QvhJVaOpFN
-5Khrb7iJWLiqL+7UulLw7oI7skc5fDlsc/lFNZTLCfcT8iBZsfkYgAgYIHGsTyN1
-Kgnjaf3k+XVAiwI8Q0lWARKbURkDcXkKXw2OylUeH9G2TzIOAeXLzB80pzBlz3ha
-Ug3e2HDfaxJcblUmL0Lj/HF0AeInxOfu7xS3QD6thgPl8BtK7FtEBjSCm5On/bHG
-eqZD3sqCl2xtvuMw24Rp3Uyih2TzMvo9yllyeFHWmDF0HMcZbmSjgS1Za4/Yri8=
-=NPD6
+iQEcBAEBAgAGBQJNCry/AAoJEDMEi1NhKgbs520H/0Vo/+15rmNCDUtSipHnxBAf
+nXdwZg6gW7JjtTbQPoAqi+T7oHR1efeJLo/+UF1wRR7HbSY2NcIbvGgFNgKN2e8c
+rsvI/vtLy+B4pKUePV0P9dhhKc6D60yUi5n9uKZUm2sqqo/yqxF5OFoRt3yv5s3P
+hsPyUhnjDHz7yWndtDgEo/a2iEzu5fXaXawXS8sh6Y9ZqZBvZfUU/H20e1kS4/gb
+IqCI8J2g87A1FFPfU4/yN2Q8oVNI6EAcgliM5fTld0Rjnpe28C0za+bbfwT2pTIw
+udQle/cFrlLvGTVdKSrG070K/QIoewMbfcjh+HzfBJNPisOiVzE7/GZZsYbLQKM=
+=gn5/
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__17_Dec_2010_11_59_32_+1100_TjhyAP4H7=CvzUK4--
+--Signature=_Fri__17_Dec_2010_12_28_31_+1100_26p.0OAzsgj.cltJ--
