@@ -1,62 +1,70 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the usb tree with Linus' tree
-Date: Fri, 17 Dec 2010 09:33:30 +1100
-Message-ID: <20101217093330.32adedb4.sfr@canb.auug.org.au>
-References: <20101216140122.ca745f1f.sfr@canb.auug.org.au>
-	<20101216030857.GA12785@kroah.com>
-	<20101216080527.GA2601@legolas.emea.dhcp.ti.com>
-	<20101216084552.GD2601@legolas.emea.dhcp.ti.com>
-	<20101216155225.GA31363@kroah.com>
-	<20101216155554.GA9552@legolas.emea.dhcp.ti.com>
-	<20101216174418.GA3849@kroah.com>
-	<20101216181429.GA19012@kroah.com>
+Subject: linux-next: build warnings after merge of the ia64 tree
+Date: Fri, 17 Dec 2010 11:23:57 +1100
+Message-ID: <20101217112357.ec7879f1.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__17_Dec_2010_09_33_30_+1100_rZvMNZPlWDtb0nGy"
+ boundary="Signature=_Fri__17_Dec_2010_11_23_57_+1100_8icTkEePM7hLgNP/"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59230 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:57646 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751119Ab0LPWdj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 16 Dec 2010 17:33:39 -0500
-In-Reply-To: <20101216181429.GA19012@kroah.com>
+	id S1753485Ab0LQAYF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 16 Dec 2010 19:24:05 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Felipe Balbi <balbi@ti.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bob Liu <lliubbo@gmail.com>, Mike Frysinger <vapier.adi@gmail.com>
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__17_Dec_2010_09_33_30_+1100_rZvMNZPlWDtb0nGy
+--Signature=_Fri__17_Dec_2010_11_23_57_+1100_8icTkEePM7hLgNP/
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg, Felipe,
+Hi Tony,
 
-On Thu, 16 Dec 2010 10:14:29 -0800 Greg KH <greg@kroah.com> wrote:
->
-> Ok, now merged and pushed out.  Stephen, there shouldn't be any merge
-> errors with the next linux-next and the usb-next branches anymore.
+After merging the ia64 tree, today's linux-next build (x86_64_allmodconfig)
+produced these warnings:
 
-Thanks guys.
+drivers/acpi/apei/erst.c: In function 'erst_reader':
+drivers/acpi/apei/erst.c:826: warning: passing argument 1 of 'spinlock_chec=
+k' from incompatible pointer type
+include/linux/spinlock.h:272: note: expected 'struct spinlock_t *' but argu=
+ment is of type 'struct raw_spinlock_t *'
+drivers/acpi/apei/erst.c:829: warning: passing argument 1 of 'spin_unlock_i=
+rqrestore' from incompatible pointer type
+include/linux/spinlock.h:338: note: expected 'struct spinlock_t *' but argu=
+ment is of type 'struct raw_spinlock_t *'
+drivers/acpi/apei/erst.c:834: warning: passing argument 1 of 'spin_unlock_i=
+rqrestore' from incompatible pointer type
+include/linux/spinlock.h:338: note: expected 'struct spinlock_t *' but argu=
+ment is of type 'struct raw_spinlock_t *'
+drivers/acpi/apei/erst.c:840: warning: passing argument 1 of 'spin_unlock_i=
+rqrestore' from incompatible pointer type
+include/linux/spinlock.h:338: note: expected 'struct spinlock_t *' but argu=
+ment is of type 'struct raw_spinlock_t *'
+
+Introduced by commit ae85bdfb6bd024fab5556f9b78668b1c6aab6fb8 ("pstore:
+X86 platform interface using ACPI/APEI/ERST").
 
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__17_Dec_2010_09_33_30_+1100_rZvMNZPlWDtb0nGy
+--Signature=_Fri__17_Dec_2010_11_23_57_+1100_8icTkEePM7hLgNP/
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNCpO6AAoJEDMEi1NhKgbs7vwH/35qCOLfl4sMgdA93K5aIQXW
-UQdMMeUmlT8/m0zaHOrFcockznx4J9NmlH8DO4vIjkObtTYZlWv3+xrd72Nv7dry
-pJoNQx/f9x0ssTbOIZ39u/TbScW3xkM5vtlAHq1O3b8xpIXfBLIw3Z8G5tlU4hLs
-byvQ7dr8nOp4Yc6QLcahnljVBYqe2HUaG99bstYLIxMHRGrrdcG3kun+a1wV60dP
-mbSXlhc6NdufXCRaymR/ZVfMSsyT1/BgYEHEzQIWSfX+n7yAtMnzsn765Wn8I9If
-hsotKelDNSB/R8DgussoPyAJRVDlpDnlh1q3XA6Bj70wqxt+dxzndthP0RFx+GE=
-=dPIv
+iQEcBAEBAgAGBQJNCq2eAAoJEDMEi1NhKgbsOuUH+gM4WSTE24D3lLBXUc864h7/
+gc95WtYNZ1SUvQBklxEdcCCs19av/JiPEax1gzd73TRmuVPbkwC13NxihyCrVAOH
+kkaBCzpvaFs8r+h6kQksh5XHWAyKo4EYWpemQ651wGq7xfKioka15SD3ugerCMOe
+MQSJ8W9um/wKn9tXH+3ULT62/kXCd8y08OJDK20tuWysKZ23O+Cz3THy6EQNsvK/
+NLtofk6sCHvqleCIhQWoF+0hhW4EQUoiEAFM2Tpm1KL5mr6n5oq4aP9ElNr98BWt
+Yd+mij0WU6mhHrN/dREc7Tzsmb0FNlTGgoDqSTMcNT9liYqvuPYSRgrugoCpauo=
+=bxbm
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__17_Dec_2010_09_33_30_+1100_rZvMNZPlWDtb0nGy--
+--Signature=_Fri__17_Dec_2010_11_23_57_+1100_8icTkEePM7hLgNP/--
