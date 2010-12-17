@@ -1,51 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the block tree with the  tree
-Date: Fri, 17 Dec 2010 12:28:31 +1100
-Message-ID: <20101217122831.39300d94.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (tty tree
+ related)
+Date: Fri, 17 Dec 2010 17:11:20 +1100
+Message-ID: <20101217171120.295b0c0c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__17_Dec_2010_12_28_31_+1100_26p.0OAzsgj.cltJ"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, James Bottomley <James.Bottomley@HansenPartnership.com>, Tejun Heo <tj@kernel.org>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Fri__17_Dec_2010_17_11_20_+1100_=1Hw5kPRz+hYrFiM"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:37339 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751850Ab0LQGLa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 17 Dec 2010 01:11:30 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
 
---Signature=_Fri__17_Dec_2010_12_28_31_+1100_26p.0OAzsgj.cltJ
+--Signature=_Fri__17_Dec_2010_17_11_20_+1100_=1Hw5kPRz+hYrFiM
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jens,
+Hi Greg,
 
-Today's linux-next merge of the block tree got a conflict in
-drivers/scsi/sd.c between commit e765221e4b44b2141704a0ab201632446235712b
-("[SCSI] sd: improve logic and efficiecy of media-change detection") from
-the  tree and commit c8d2e937355d02db3055c2fc203e5f017297ee1f ("sd:
-implement sd_check_events()") from the block tree.
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-The changes here are a bit extensive for me to figure out, so I used
-the block tree version of the conflicting code (there are other changes
-in the scsi tree as well).  I probably needs checking.
+drivers/serial/apbuart.c:596: error: conflicting types for 'grlib_apbuart_c=
+onfigure'
+drivers/serial/apbuart.c:523: note: previous declaration of 'grlib_apbuart_=
+configure' was here
+
+Caused by commit 35c64e5d13c3d7d8c4ad061ad5e20498b9160c24 ("drivers:
+serial: apbuart: Handle OF failures gracefully").  This build has
+CONFIG_SERIAL_GRLIB_GAISLER_APBUART_CONSOLE set ...
+
+I have reverted this commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__17_Dec_2010_12_28_31_+1100_26p.0OAzsgj.cltJ
+--Signature=_Fri__17_Dec_2010_17_11_20_+1100_=1Hw5kPRz+hYrFiM
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNCry/AAoJEDMEi1NhKgbs520H/0Vo/+15rmNCDUtSipHnxBAf
-nXdwZg6gW7JjtTbQPoAqi+T7oHR1efeJLo/+UF1wRR7HbSY2NcIbvGgFNgKN2e8c
-rsvI/vtLy+B4pKUePV0P9dhhKc6D60yUi5n9uKZUm2sqqo/yqxF5OFoRt3yv5s3P
-hsPyUhnjDHz7yWndtDgEo/a2iEzu5fXaXawXS8sh6Y9ZqZBvZfUU/H20e1kS4/gb
-IqCI8J2g87A1FFPfU4/yN2Q8oVNI6EAcgliM5fTld0Rjnpe28C0za+bbfwT2pTIw
-udQle/cFrlLvGTVdKSrG070K/QIoewMbfcjh+HzfBJNPisOiVzE7/GZZsYbLQKM=
-=gn5/
+iQEcBAEBAgAGBQJNCv8IAAoJEDMEi1NhKgbsT5kH/jCNMmjnt6J7ebSBk0jpo7JQ
+QBMkShL5LghsvvPq4BiNoD5F+OZyB/7A9mvV2KjiP0hN5Iq2DU2NC2a9ClblN8wS
+e2pYaMnie8AOzL9eueuO4qeU7cRKRs7D37V/tqS7FQgXwb8eTxIaZhWGh7fMJgt4
+xmE6S5HdKdAvER5kSQFO5lhtb6mHSBPvzBIV2ElYv7QIOLYIey0xNhO9fYn9v2K8
+KSUVjpOb/VTvrRotzwlcbVEHYxPekEt3m+AmbbIow30KILYbNdyhRlHLRbp6E8RN
+lzvLTJ4tfxXXziASg6oJ5pCQ44I+6j6II4fk2X1py8Y8RPbsxIgxTwGG6gU62CM=
+=etMZ
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__17_Dec_2010_12_28_31_+1100_26p.0OAzsgj.cltJ--
+--Signature=_Fri__17_Dec_2010_17_11_20_+1100_=1Hw5kPRz+hYrFiM--
