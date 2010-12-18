@@ -1,36 +1,29 @@
-From: "Luck, Tony" <tony.luck@intel.com>
-Subject: RE: linux-next: build warnings after merge of the ia64 tree
-Date: Fri, 17 Dec 2010 11:58:27 -0800
-Message-ID: <987664A83D2D224EAE907B061CE93D530193D00F91@orsmsx505.amr.corp.intel.com>
-References: <20101217112357.ec7879f1.sfr@canb.auug.org.au>
-	<987664A83D2D224EAE907B061CE93D530193D00A15@orsmsx505.amr.corp.intel.com>
- <20101217115932.a633519e.sfr@canb.auug.org.au>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: linux-next: manual merge of the block tree with the  tree
+Date: Sat, 18 Dec 2010 08:15:23 +0100
+Message-ID: <4D0C5F8B.2090704@kernel.org>
+References: <20101217122831.39300d94.sfr@canb.auug.org.au> <1292597607.2820.17.camel@mulgrave.site>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:60841 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755576Ab0LQT6a convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 17 Dec 2010 14:58:30 -0500
-In-Reply-To: <20101217115932.a633519e.sfr@canb.auug.org.au>
-Content-Language: en-US
+Received: from mail-bw0-f45.google.com ([209.85.214.45]:35562 "EHLO
+	mail-bw0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751790Ab0LRHP1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 18 Dec 2010 02:15:27 -0500
+In-Reply-To: <1292597607.2820.17.camel@mulgrave.site>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jens Axboe <axboe@kernel.dk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>
 
->> commit 3b38bb5f7f06356a89bb2cbf92ad346025e95192
->> Author: Huang Ying <ying.huang@intel.com>
->> Date:   Thu Dec 2 10:40:53 2010 +0800
->> 
->>     ACPI, APEI, use raw spinlock in ERST
->
-> That commit is in Linus' tree as of v2.6.37-rc6 so if you merge -rc6 into
-> your tree, you can fix the conflict there.
+Hello, James.
 
-Ah good. I've rebased a new version of my code on top of -rc6.
+On 12/17/2010 03:53 PM, James Bottomley wrote:
+> Tejun, could you respin the sd patch on top of SCSI misc, please?  (I
+> promise to review it speedily if you do).
 
-Thanks
+Sure, will do later today.  Thanks.
 
--Tony
+-- 
+tejun
