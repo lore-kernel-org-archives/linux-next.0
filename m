@@ -1,33 +1,61 @@
-From: Sedat Dilek <sedat.dilek@googlemail.com>
-Subject: Re: [PATCH] platform/x86: Kconfig: Replace select by depends on ACPI_WMI
-Date: Mon, 20 Dec 2010 17:30:52 +0100
-Message-ID: <AANLkTikRq9MDLKNNyKKw+qRUJzfANWh2ZshVw8U0wtfc@mail.gmail.com>
-References: <AANLkTinbinQjvXo58hKDY4ZaMe1ZrGqWDbhoxdS+JLOG@mail.gmail.com>
-	<20101220161817.GE25502@srcf.ucam.org>
-Reply-To: sedat.dilek@gmail.com
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [PATCH -next] thermal: depends on NET
+Date: Mon, 20 Dec 2010 08:47:31 -0800
+Message-ID: <20101220084731.259bd383.randy.dunlap@oracle.com>
+References: <20101213163607.0b0a7c3a.sfr@canb.auug.org.au>
+	<20101213112033.d0060e6c.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20101220161817.GE25502@srcf.ucam.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Matthew Garrett <mjg59@srcf.ucam.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org, Corentin Chary <corentin.chary@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <randy.dunlap@oracle.com>, David Woodhouse <dwmw2@infradead.org>, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:32197 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932512Ab0LTQt3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 20 Dec 2010 11:49:29 -0500
+In-Reply-To: <20101213112033.d0060e6c.randy.dunlap@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: lkml <linux-kernel@vger.kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, akpm <akpm@linux-foundation.org>, Zhang Rui <rui.zhang@intel.com>, linux-next@vger.kernel.org, Zimny Lech <napohybelskurwysynom2010@gmail.com>
 
-On Mon, Dec 20, 2010 at 5:18 PM, Matthew Garrett <mjg59@srcf.ucam.org> wrote:
-> Applied, thanks. It's easier to handle these if you include the patch in
-> the email body, rather than as an attachment.
->
+This is still needed in linux-next 20101220.
+
+
+On Mon, 13 Dec 2010 11:20:33 -0800 Randy Dunlap wrote:
+
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> ERROR: "genl_register_family" [drivers/thermal/thermal_sys.ko] undefined!
+> ERROR: "genl_unregister_family" [drivers/thermal/thermal_sys.ko] undefined!
+> ERROR: "init_net" [drivers/thermal/thermal_sys.ko] undefined!
+> ERROR: "__alloc_skb" [drivers/thermal/thermal_sys.ko] undefined!
+> ERROR: "netlink_broadcast" [drivers/thermal/thermal_sys.ko] undefined!
+> ERROR: "kfree_skb" [drivers/thermal/thermal_sys.ko] undefined!
+> ERROR: "genl_register_mc_group" [drivers/thermal/thermal_sys.ko] undefined!
+> ERROR: "nla_reserve" [drivers/thermal/thermal_sys.ko] undefined!
+> ERROR: "skb_put" [drivers/thermal/thermal_sys.ko] undefined!
+> 
+> Reported-by: Zimny Lech <napohybelskurwysynom2010@gmail.com>
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> Cc: Zhang Rui <rui.zhang@intel.com>
+> ---
+>  drivers/thermal/Kconfig |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> --- linux-next-20101213.orig/drivers/thermal/Kconfig
+> +++ linux-next-20101213/drivers/thermal/Kconfig
+> @@ -4,6 +4,7 @@
+>  
+>  menuconfig THERMAL
+>  	tristate "Generic Thermal sysfs driver"
+> +	depends on NET
+>  	help
+>  	  Generic Thermal Sysfs driver offers a generic mechanism for
+>  	  thermal management. Usually it's made up of one or more thermal
 > --
-> Matthew Garrett | mjg59@srcf.ucam.org
->
 
-[ CC linux-next ]
 
-Thanks :-)!
-I mostly use web-based Email, but it's time to setup and use
-git-send-email [1] on the working machine.
-
-- Sedat -
-
-[1] http://www.kernel.org/pub/software/scm/git/docs/git-send-email.html
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
+desserts:  http://www.xenotime.net/linux/recipes/
