@@ -1,56 +1,46 @@
-From: Paul Mundt <lethal@linux-sh.org>
-Subject: Re: linux-next: manual merge of the mfd tree with the ux500-core tree
-Date: Mon, 20 Dec 2010 13:23:44 +0900
-Message-ID: <20101220042344.GB10050@linux-sh.org>
-References: <20101220152148.6fedee0d.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: build warnings after merge of the mfd tree
+Date: Sun, 19 Dec 2010 20:27:45 -0800
+Message-ID: <20101219202745.c733f7f8.randy.dunlap@oracle.com>
+References: <20101220152505.f9974119.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 124x34x33x190.ap124.ftth.ucom.ne.jp ([124.34.33.190]:58629 "EHLO
-	master.linux-sh.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752754Ab0LTEZO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 19 Dec 2010 23:25:14 -0500
-Content-Disposition: inline
-In-Reply-To: <20101220152148.6fedee0d.sfr@canb.auug.org.au>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:25894 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752650Ab0LTE3I (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 19 Dec 2010 23:29:08 -0500
+In-Reply-To: <20101220152505.f9974119.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sundar Iyer <sundar.iyer@stericsson.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andres Salomon <dilinger@queued.net>
 
-On Mon, Dec 20, 2010 at 03:21:48PM +1100, Stephen Rothwell wrote:
-> The genirq core is being converted to pass struct irq_data to irq_chip
-> operations rather than an IRQ number. Update the tc35892 driver to the
-> new APIs.
+On Mon, 20 Dec 2010 15:25:05 +1100 Stephen Rothwell wrote:
+
+> Hi Samuel,
 > 
-> Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
-> Acked-by: Rabin Vincent <rabin.vincent@stericsson.com>
-> Signed-off-by: Samuel Ortiz <sameo@linux.intel.com>
+> After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
+> produced these warnings:
+> 
+> drivers/gpio/cs5535-gpio.c: In function 'cs5535_gpio_probe':
+> drivers/gpio/cs5535-gpio.c:269: warning: format '%x' expects type 'unsigned int', but argument 3 has type 'resource_size_t'
+> drivers/gpio/cs5535-gpio.c:269: warning: format '%x' expects type 'unsigned int', but argument 4 has type 'resource_size_t'
+> drivers/misc/cs5535-mfgpt.c: In function 'cs5535_mfgpt_probe':
+> drivers/misc/cs5535-mfgpt.c:320: warning: format '%x' expects type 'unsigned int', but argument 3 has type 'resource_size_t'
+> drivers/misc/cs5535-mfgpt.c:320: warning: format '%x' expects type 'unsigned int', but argument 4 has type 'resource_size_t'
+> 
+> Introduced by commits d8fefd6ff3a8444ab34f6eb6c7c1961f0ca0008a ("gpio:
+> Convert cs5535 from pci device to platform device") and
+> 6a85d28cfca9663c0db297a04ca43777dc5bcaa6 ("misc: Convert cs5535-mfgpt
+> from pci device to platform device").  We have %pR for printing
+> resources ...
 
-Sorry to hijack the thread..
+Yes, and Joe Perches has posted a patch for that.
+It just needs to be merged....
 
-> diff --git a/drivers/mfd/tc3589x.c b/drivers/mfd/tc3589x.c
-> index 32291fe..dde2d858 100644
-> --- a/drivers/mfd/tc3589x.c
-> +++ b/drivers/mfd/tc3589x.c
-> @@ -170,15 +170,15 @@ again:
->  	return IRQ_HANDLED;
->  }
->  
-> -static void tc3589x_irq_dummy(unsigned int irq)
-> +static void tc3589x_irq_dummy(struct irq_data *data)
->  {
->  	/* No mask/unmask at this level */
->  }
->  
->  static struct irq_chip tc3589x_irq_chip = {
-> -	.name	= "tc3589x",
-> -	.mask	= tc3589x_irq_dummy,
-> -	.unmask	= tc3589x_irq_dummy,
-> +	.name		= "tc3589x",
-> +	.irq_mask	= tc3589x_irq_dummy,
-> +	.irq_unmask	= tc3589x_irq_dummy,
->  };
->  
->  static int tc3589x_irq_init(struct tc3589x *tc3589x)
-
-Is there some reason you don't just kill this off and use dummy_irq_chip?
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
+desserts:  http://www.xenotime.net/linux/recipes/
