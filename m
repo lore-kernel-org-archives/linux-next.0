@@ -1,29 +1,64 @@
-From: Sedat Dilek <sedat.dilek@googlemail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: Tree for December 20
-Date: Mon, 20 Dec 2010 12:46:08 +0100
-Message-ID: <AANLkTi=gjHyMt=W4-+PSMzt7PN7i-_Yvmx7EE8z0z74q@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+Date: Mon, 20 Dec 2010 23:00:07 +1100
+Message-ID: <20101220230007.e82487b8.sfr@canb.auug.org.au>
+References: <AANLkTi=gjHyMt=W4-+PSMzt7PN7i-_Yvmx7EE8z0z74q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:55584 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757222Ab0LTLqJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 20 Dec 2010 06:46:09 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__20_Dec_2010_23_00_07_+1100_1NlPXxNi8OBzZvBV"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <AANLkTi=gjHyMt=W4-+PSMzt7PN7i-_Yvmx7EE8z0z74q@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: sedat.dilek@gmail.com
+Cc: Sedat Dilek <sedat.dilek@googlemail.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, ftpadmin@kernel.org
+List-Id: linux-next.vger.kernel.org
 
-> Hi all,
+--Signature=_Mon__20_Dec_2010_23_00_07_+1100_1NlPXxNi8OBzZvBV
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Mon, 20 Dec 2010 12:46:08 +0100 Sedat Dilek <sedat.dilek@googlemail.com>=
+ wrote:
 >
-> [The mirroring on kernel.org is running slowly]
+> >
+> > [The mirroring on kernel.org is running slowly]
+>=20
+> Indeed, you know what's wrong with the mirrors?
 
-Indeed, you know what's wrong with the mirrors?
+I don't know what is wrong.  The mirroring just seems to be much slower
+in the last week or so.  Today, it was just over three hours from when I
+uploaded linux-next until it was mirrored out.
 
-Can you upload the diff-patch (patch-v2.6.37-rc6-next-20101220) to [1]
-from your local-tree or place it somewhere else?
+I have cc'd the admins.
 
-- Sedat -
+> Can you upload the diff-patch (patch-v2.6.37-rc6-next-20101220) to [1]
+> from your local-tree or place it somewhere else?
 
-[1] http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/
+I cannot upload directly to www.kernel.org, I up load to the same place
+on master.kernel.org and the mirroring system puts it on www.kernel.org.=20
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__20_Dec_2010_23_00_07_+1100_1NlPXxNi8OBzZvBV
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJND0VHAAoJEDMEi1NhKgbsiswH/2CHs9bDFeXbfbIC9u4kpWXJ
+Bobxe0Ihqs9GIR0zG38l2Ie4Q1PbaVbw5oXLq52qnH+22EzAU3n05XRFwN1NXLRJ
+MGYP65pTOiH+Xt9RDEajh8nHMJ9s09NwzfIg86b7fUQ2EXhj2gBdTgKJtppn2bgw
+Q3Ky/TYKT12pvrpgRANacSwjGKeOweZUmlZtD6PsDJm+ZOLmiUcPKCAiLeNK5hSS
+1lStb+vQcHMk1odHONZh9aXeK9n7tsj1aWL5OuKxsGj+QwtcGfM26dOz3P9MuZIL
+6GfHr9EtvafAxwpv8XmxztD3yIzG6HeGKdUQA0aN98R8ItGTw+/n02xbMtNcKW8=
+=sX0s
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__20_Dec_2010_23_00_07_+1100_1NlPXxNi8OBzZvBV--
