@@ -1,33 +1,29 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: build failure after merge of the final tree (mfd
- tree related)
-Date: Mon, 20 Dec 2010 10:52:03 +0000
-Message-ID: <20101220105202.GA26706@rakim.wolfsonmicro.main>
-References: <20101220192121.47767525.sfr@canb.auug.org.au>
- <20101220103336.GC11095@sortiz-mobl>
+From: Sedat Dilek <sedat.dilek@googlemail.com>
+Subject: Re: linux-next: Tree for December 20
+Date: Mon, 20 Dec 2010 12:46:08 +0100
+Message-ID: <AANLkTi=gjHyMt=W4-+PSMzt7PN7i-_Yvmx7EE8z0z74q@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:55584 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1754833Ab0LTKwF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 20 Dec 2010 05:52:05 -0500
-Content-Disposition: inline
-In-Reply-To: <20101220103336.GC11095@sortiz-mobl>
+Received: from mail-qw0-f46.google.com ([209.85.216.46]:55584 "EHLO
+	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757222Ab0LTLqJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 20 Dec 2010 06:46:09 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Mon, Dec 20, 2010 at 11:33:37AM +0100, Samuel Ortiz wrote:
-> On Mon, Dec 20, 2010 at 07:21:21PM +1100, Stephen Rothwell wrote:
+> Hi all,
+>
+> [The mirroring on kernel.org is running slowly]
 
-> > After merging the final tree, today's linux-next build (powerpc
-> > allyesconfig) failed like this:
+Indeed, you know what's wrong with the mirrors?
 
-> Ok, I removed Mark's commit, the MFD tree should build fine now.
-> I'm keeping this one for whenever we'll have a proper pwm framework.
+Can you upload the diff-patch (patch-v2.6.37-rc6-next-20101220) to [1]
+from your local-tree or place it somewhere else?
 
-It doesn't need dropping I think, the driver should just need a
-dependency on HAVE_PWM adding.
+- Sedat -
+
+[1] http://www.kernel.org/pub/linux/kernel/people/sfr/linux-next/
