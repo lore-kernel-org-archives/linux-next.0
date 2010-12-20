@@ -1,64 +1,65 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for December 20
-Date: Mon, 20 Dec 2010 23:00:07 +1100
-Message-ID: <20101220230007.e82487b8.sfr@canb.auug.org.au>
-References: <AANLkTi=gjHyMt=W4-+PSMzt7PN7i-_Yvmx7EE8z0z74q@mail.gmail.com>
+From: Samuel Ortiz <sameo@linux.intel.com>
+Subject: Re: linux-next: manual merge of the mfd tree with the ux500-core
+ tree
+Date: Mon, 20 Dec 2010 13:05:11 +0100
+Message-ID: <20101220120510.GE11095@sortiz-mobl>
+References: <20101220152148.6fedee0d.sfr@canb.auug.org.au>
+ <20101220042344.GB10050@linux-sh.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__20_Dec_2010_23_00_07_+1100_1NlPXxNi8OBzZvBV"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <AANLkTi=gjHyMt=W4-+PSMzt7PN7i-_Yvmx7EE8z0z74q@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <20101220042344.GB10050@linux-sh.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: sedat.dilek@gmail.com
-Cc: Sedat Dilek <sedat.dilek@googlemail.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, ftpadmin@kernel.org
+To: Paul Mundt <lethal@linux-sh.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sundar Iyer <sundar.iyer@stericsson.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__20_Dec_2010_23_00_07_+1100_1NlPXxNi8OBzZvBV
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Dec 20, 2010 at 01:23:44PM +0900, Paul Mundt wrote:
+> On Mon, Dec 20, 2010 at 03:21:48PM +1100, Stephen Rothwell wrote:
+> > The genirq core is being converted to pass struct irq_data to irq_chip
+> > operations rather than an IRQ number. Update the tc35892 driver to the
+> > new APIs.
+> > 
+> > Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+> > Acked-by: Rabin Vincent <rabin.vincent@stericsson.com>
+> > Signed-off-by: Samuel Ortiz <sameo@linux.intel.com>
+> 
+> Sorry to hijack the thread..
+> 
+> > diff --git a/drivers/mfd/tc3589x.c b/drivers/mfd/tc3589x.c
+> > index 32291fe..dde2d858 100644
+> > --- a/drivers/mfd/tc3589x.c
+> > +++ b/drivers/mfd/tc3589x.c
+> > @@ -170,15 +170,15 @@ again:
+> >  	return IRQ_HANDLED;
+> >  }
+> >  
+> > -static void tc3589x_irq_dummy(unsigned int irq)
+> > +static void tc3589x_irq_dummy(struct irq_data *data)
+> >  {
+> >  	/* No mask/unmask at this level */
+> >  }
+> >  
+> >  static struct irq_chip tc3589x_irq_chip = {
+> > -	.name	= "tc3589x",
+> > -	.mask	= tc3589x_irq_dummy,
+> > -	.unmask	= tc3589x_irq_dummy,
+> > +	.name		= "tc3589x",
+> > +	.irq_mask	= tc3589x_irq_dummy,
+> > +	.irq_unmask	= tc3589x_irq_dummy,
+> >  };
+> >  
+> >  static int tc3589x_irq_init(struct tc3589x *tc3589x)
+> 
+> Is there some reason you don't just kill this off and use dummy_irq_chip?
+Good point.
+I removed this patch from my branch and sent a fix to LinusW so that he
+carries it from his ux500-core branch.
 
-Hi,
-
-On Mon, 20 Dec 2010 12:46:08 +0100 Sedat Dilek <sedat.dilek@googlemail.com>=
- wrote:
->
-> >
-> > [The mirroring on kernel.org is running slowly]
->=20
-> Indeed, you know what's wrong with the mirrors?
-
-I don't know what is wrong.  The mirroring just seems to be much slower
-in the last week or so.  Today, it was just over three hours from when I
-uploaded linux-next until it was mirrored out.
-
-I have cc'd the admins.
-
-> Can you upload the diff-patch (patch-v2.6.37-rc6-next-20101220) to [1]
-> from your local-tree or place it somewhere else?
-
-I cannot upload directly to www.kernel.org, I up load to the same place
-on master.kernel.org and the mirroring system puts it on www.kernel.org.=20
-
---=20
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Samuel.
 
---Signature=_Mon__20_Dec_2010_23_00_07_+1100_1NlPXxNi8OBzZvBV
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJND0VHAAoJEDMEi1NhKgbsiswH/2CHs9bDFeXbfbIC9u4kpWXJ
-Bobxe0Ihqs9GIR0zG38l2Ie4Q1PbaVbw5oXLq52qnH+22EzAU3n05XRFwN1NXLRJ
-MGYP65pTOiH+Xt9RDEajh8nHMJ9s09NwzfIg86b7fUQ2EXhj2gBdTgKJtppn2bgw
-Q3Ky/TYKT12pvrpgRANacSwjGKeOweZUmlZtD6PsDJm+ZOLmiUcPKCAiLeNK5hSS
-1lStb+vQcHMk1odHONZh9aXeK9n7tsj1aWL5OuKxsGj+QwtcGfM26dOz3P9MuZIL
-6GfHr9EtvafAxwpv8XmxztD3yIzG6HeGKdUQA0aN98R8ItGTw+/n02xbMtNcKW8=
-=sX0s
------END PGP SIGNATURE-----
-
---Signature=_Mon__20_Dec_2010_23_00_07_+1100_1NlPXxNi8OBzZvBV--
+-- 
+Intel Open Source Technology Centre
+http://oss.intel.com/
