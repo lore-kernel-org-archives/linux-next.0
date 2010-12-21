@@ -1,69 +1,60 @@
-From: Nick Piggin <npiggin@kernel.dk>
-Subject: Re: systemd failing with vfs-scale-working patch-set
-Date: Tue, 21 Dec 2010 15:57:13 +1100
-Message-ID: <20101221045713.GA3189@amd>
-References: <AANLkTiku116GCiLJcEa9KcQeLJq+LM8qsBJZdMC7iCrO@mail.gmail.com>
- <AANLkTikabyDocBhHLjBjewkrFfyQLUdSqHiRDRw4q4s9@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the tty tree
+Date: Tue, 21 Dec 2010 18:11:58 +1100
+Message-ID: <20101221181158.53f62590.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__21_Dec_2010_18_11_58_+1100_jVVOSPqfWUgvWEVB"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:36136 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752481Ab0LUHMJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 21 Dec 2010 02:12:09 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>
+
+--Signature=_Tue__21_Dec_2010_18_11_58_+1100_jVVOSPqfWUgvWEVB
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <AANLkTikabyDocBhHLjBjewkrFfyQLUdSqHiRDRw4q4s9@mail.gmail.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: sedat.dilek@gmail.com
-Cc: Nick Piggin <npiggin@kernel.dk>, systemd-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, eparis@redhat.com
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 20, 2010 at 10:07:14PM +0100, Sedat Dilek wrote:
-> Hi Nick,
-> 
-> after upgrading my toolchain and kernel-buildsystem I found some time
-> spending in getting some more infos on the systemd w/ vfs-scale
-> problem.
-> Eric reported in [1] same problems as I have seen.
-> 
-> My systemd is now v15+git20101210.8a9ef77 and Linux kernel is:
-> 
-> # cat /proc/version
-> Linux version 2.6.37-rc6-686 (Debian
-> 2.6.37~rc6-5~next20101220.dileks.1) (sedat.dilek@gmail.com) (gcc
-> version 4.5.2 (Debian 4.5.2-1) ) #1 SMP Mon Dec 20 19:03:29 CET 2010
-> 
-> I could take some new pics [2].
-> 
-> [3] shows a kernel NULL pointer dereference (dmesg command in
-> kdb-console), but the address is not displayed, might be I need to set
-> some additional kernel-debug-options.
-> 
-> [4] shows the output of "btp 4" (backtrace PID #4 from kdb-console),
-> see also in [3] "*pde = 00000000" (8 zeroes) shows <4> (PID #4) at the
-> beginning of the line.
-> 
-> I have also a "btp 1" (systemd has PID #1).
-> 
-> Hope this helps to narrow down the problem.
-> If you need additional informations or (disasm-ed) files, please let me know.
-> 
-> Some pics are doubled, sorry for the bad quality, I won't be a surgery
-> (need a calm hand, turned off auto-flash of my digicam is the real
-> cause I guess ;-)).
+Hi Greg,
 
-Thanks to you both for testing and reporting this. The important part is
-NULL instruction pointer at dput.
+After merging the tty tree, today's linux-next build (powerpc
+ppc64_defconfig) produced these warnings:
 
-I have a patch to set various d_flags according to what d_op functions
-have been defined. This allows branch and cacheline load reduction in
-common cases in fastpaths. However those flags were set but not cleared,
-not expecting d_ops to be switched on active dentries.
+drivers/tty/tty_io.c: In function 'tty_init':
+drivers/tty/tty_io.c:3309: warning: ignoring return value of 'device_create=
+_file', declared with attribute warn_unused_result
+drivers/tty/vt/vt.c: In function 'vty_init':
+drivers/tty/vt/vt.c:2997: warning: ignoring return value of 'device_create_=
+file', declared with attribute warn_unused_result
 
-cgroups filesystem actually switches from simple dentry ops to its own
-one, when turning from a negative to positive dentry. That's possibly OK
-technically (although I didn't consider all races), but AFAIKS it is not
-something that a filesystem is allowed to "know".
+Introduced by commit fbc92a3455577ab17615cbcb91826399061bd789 ("tty: add
+'active' sysfs attribute to tty0 and console device").
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-I'll submit a patch to fix cgroups, and a bugcheck to catch such things
-again.
+P.S. that commits subject appears twice in the commit message.
 
-Thanks,
-Nick
+--Signature=_Tue__21_Dec_2010_18_11_58_+1100_jVVOSPqfWUgvWEVB
+Content-Type: application/pgp-signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNEFM+AAoJEDMEi1NhKgbstowH/0+Er7mIDPs2fWnjU7TkCQve
+XdI1CmLmO4MaAReWIlnLJldxqRVeYJBe6dQx42FIPVpm9jeOHuDutPdXjIqlcxS9
+twEFeemUzLAqSI9LigFeJY8ZX70BhQtE29QuIa1t/6hxCtHE1f45QSwe/CLc/Eiu
+brsUdxWJ2fIhj343WpvAmPtA1gfe/03T02wHaw/3hbEtRBwFdIyg+PIWF+9xbUsC
+tL0PFbJwccR6+Q813/dIgqrjdyK53T+SesJ8WzH/DsPs3EaFazFw+kOcfFdsf8zE
+BP0K/BK8ywIVGemERblGbPPfH5usVDKn7MeUiNFf58ZKy5ZjBtQC0mNIlgCvXk0=
+=Q1uw
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__21_Dec_2010_18_11_58_+1100_jVVOSPqfWUgvWEVB--
