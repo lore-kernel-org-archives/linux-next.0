@@ -1,64 +1,63 @@
-From: James Bottomley <James.Bottomley@suse.de>
-Subject: Re: [PATCH scsi-misc-2.6] sd: implement sd_check_events()
-Date: Tue, 21 Dec 2010 14:24:57 -0600
-Message-ID: <1292963097.3034.21.camel@mulgrave.site>
-References: <20101217122831.39300d94.sfr@canb.auug.org.au>
-	 <1292597607.2820.17.camel@mulgrave.site>  <4D0CF27F.1080601@kernel.org>
-	 <1292862013.3034.7.camel@mulgrave.site>
-	 <1292954953.3034.15.camel@mulgrave.site>  <4D10FDAD.2060801@kernel.dk>
+From: Don Zickus <dzickus@redhat.com>
+Subject: Re: linux-next: Tree for December 21 (nmi watchdog)
+Date: Tue, 21 Dec 2010 16:43:23 -0500
+Message-ID: <20101221214323.GA23095@redhat.com>
+References: <20101221190526.068b2b31.sfr@canb.auug.org.au>
+ <20101221091047.06de6334.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:48038 "EHLO mx2.suse.de"
+Received: from mx1.redhat.com ([209.132.183.28]:31095 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751434Ab0LUUZG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 21 Dec 2010 15:25:06 -0500
-In-Reply-To: <4D10FDAD.2060801@kernel.dk>
+	id S1752862Ab0LUVna (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 21 Dec 2010 16:43:30 -0500
+Content-Disposition: inline
+In-Reply-To: <20101221091047.06de6334.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Tejun Heo <tj@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, Kay Sievers <kay.sievers@vrfy.org>, linux-scsi <linux-scsi@vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, 2010-12-21 at 20:19 +0100, Jens Axboe wrote:
-> On 2010-12-21 19:09, James Bottomley wrote:
-> > On Mon, 2010-12-20 at 10:20 -0600, James Bottomley wrote:
-> >> Added cc: linux-scsi
-> >>
-> >> On Sat, 2010-12-18 at 18:42 +0100, Tejun Heo wrote:
-> >>> Replace sd_media_change() with sd_check_events().
-> >>>
-> >>> * Move media removed logic into set_media_not_present() and
-> >>>   media_not_present() and set sdev->changed iff an existing media is
-> >>>   removed or the device indicates UNIT_ATTENTION.
-> >>>
-> >>> * Make sd_check_events() sets sdev->changed if previously missing
-> >>>   media becomes present.
-> >>>
-> >>> * Event is reported only if sdev->changed is set.
-> >>>
-> >>> This makes media presence event reported if scsi_disk->media_present
-> >>> actually changed or the device indicated UNIT_ATTENTION.  For backward
-> >>> compatibility, SDEV_EVT_MEDIA_CHANGE is generated each time
-> >>> sd_check_events() detects media change event.
-> >>>
-> >>> Signed-off-by: Tejun Heo <tj@kernel.org>
-> >>> Cc: Kay Sievers <kay.sievers@vrfy.org>
-> >>> ---
-> >>> Here it is.  The conflicts were due to Alan's recent patch, which was
-> >>> in the similar direction anyway.
-> >>
-> >> This looks fine to me.  Jens can you strip the SCSI patches out of your
-> >> tree and I'll run them through a postmerge tree to get the fix up?
-> > 
-> > Ping on this, please: I can't build a postmerge tree until block is
-> > sorted out.  I need these four removing:
+On Tue, Dec 21, 2010 at 09:10:47AM -0800, Randy Dunlap wrote:
+> On Tue, 21 Dec 2010 19:05:26 +1100 Stephen Rothwell wrote:
 > 
-> I would need to revert those four then, I can't rebase any of those
-> branches.
+> > Hi all,
+> > 
+> > [The mirroring on kernel.org is running slowly]
+> > 
+> > Changes since 20101220:
+> 
+> 
+> kernel/built-in.o: In function `watchdog_nmi_enable':
+> watchdog.c:(.text+0x58539): undefined reference to `hw_nmi_get_sample_period'
+> 
+> 
+> kernel config file is attached.
 
-That's a bit unfortunate.  OK, just revert the sd one then.  Hopefully
-we're close enough to the merge window that we won't pick up conflicts
-in the others.
+I have a bigger clean up patch that I sent to Ingo that fixes this
+correctly.  But for now, you can use this patch.
 
-James
+Cheers,
+Don
+
+
+diff --git a/arch/x86/kernel/apic/hw_nmi.c b/arch/x86/kernel/apic/hw_nmi.c
+index 93da91d..a4fa849 100644
+--- a/arch/x86/kernel/apic/hw_nmi.c
++++ b/arch/x86/kernel/apic/hw_nmi.c
+@@ -17,7 +17,6 @@
+ #include <linux/nmi.h>
+ #include <linux/module.h>
+ 
+-#ifdef ARCH_HAS_NMI_WATCHDOG
+ #ifdef CONFIG_HARDLOCKUP_DETECTOR
+ u64 hw_nmi_get_sample_period(void)
+ {
+@@ -25,6 +24,7 @@ u64 hw_nmi_get_sample_period(void)
+ }
+ #endif
+ 
++#ifdef ARCH_HAS_NMI_WATCHDOG
+ #ifndef CONFIG_HARDLOCKUP_DETECTOR
+ void touch_nmi_watchdog(void)
+ {
