@@ -1,80 +1,42 @@
-From: James Bottomley <James.Bottomley@suse.de>
-Subject: Re: [PATCH scsi-misc-2.6] sd: implement sd_check_events()
-Date: Tue, 21 Dec 2010 12:09:13 -0600
-Message-ID: <1292954953.3034.15.camel@mulgrave.site>
-References: <20101217122831.39300d94.sfr@canb.auug.org.au>
-	 <1292597607.2820.17.camel@mulgrave.site>  <4D0CF27F.1080601@kernel.org>
-	 <1292862013.3034.7.camel@mulgrave.site>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: [patch] cgroup fs: avoid switching ->d_op on live dentry
+Date: Tue, 21 Dec 2010 18:25:51 +0000
+Message-ID: <20101221182551.GL19804@ZenIV.linux.org.uk>
+References: <AANLkTinod+7fDMwh8_XsQe4mnF1P6WoRWyh36yJXM4LO@mail.gmail.com>
+ <20101221085538.GA9133@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:44310 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751818Ab0LUSJU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 21 Dec 2010 13:09:20 -0500
-In-Reply-To: <1292862013.3034.7.camel@mulgrave.site>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jens Axboe <axboe@kernel.dk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>, Kay Sievers <kay.sievers@vrfy.org>, linux-scsi <linux-scsi@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20101221085538.GA9133@amd>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Nick Piggin <npiggin@kernel.dk>
+Cc: sedat.dilek@gmail.com, systemd-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, eparis@redhat.com
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 2010-12-20 at 10:20 -0600, James Bottomley wrote:
-> Added cc: linux-scsi
+On Tue, Dec 21, 2010 at 07:55:38PM +1100, Nick Piggin wrote:
+> On Tue, Dec 21, 2010 at 09:44:40AM +0100, Sedat Dilek wrote:
+> > Against linux-next (next-20101210) it should look like:
 > 
-> On Sat, 2010-12-18 at 18:42 +0100, Tejun Heo wrote:
-> > Replace sd_media_change() with sd_check_events().
-> > 
-> > * Move media removed logic into set_media_not_present() and
-> >   media_not_present() and set sdev->changed iff an existing media is
-> >   removed or the device indicates UNIT_ATTENTION.
-> > 
-> > * Make sd_check_events() sets sdev->changed if previously missing
-> >   media becomes present.
-> > 
-> > * Event is reported only if sdev->changed is set.
-> > 
-> > This makes media presence event reported if scsi_disk->media_present
-> > actually changed or the device indicated UNIT_ATTENTION.  For backward
-> > compatibility, SDEV_EVT_MEDIA_CHANGE is generated each time
-> > sd_check_events() detects media change event.
-> > 
-> > Signed-off-by: Tejun Heo <tj@kernel.org>
-> > Cc: Kay Sievers <kay.sievers@vrfy.org>
-> > ---
-> > Here it is.  The conflicts were due to Alan's recent patch, which was
-> > in the similar direction anyway.
+> Yep, I'll rebase my tree with the fix shortly.
 > 
-> This looks fine to me.  Jens can you strip the SCSI patches out of your
-> tree and I'll run them through a postmerge tree to get the fix up?
+> > 
+> > $ diff -Naur cgroup-fix/cgroup-fs-avoid-switching-d_op-on-live-dentry.patch
+> > cgroup-fix/cgroup-fs-avoid-switching-d_op-on-live-dentry-v2.patch
+> > --- cgroup-fix/cgroup-fs-avoid-switching-d_op-on-live-dentry.patch
+> >  2010-12-21 09:31:38.649601964 +0100
+> > +++ cgroup-fix/cgroup-fs-avoid-switching-d_op-on-live-dentry-v2.patch
+> >  2010-12-21 09:40:21.151033232 +0100
+> > @@ -83,7 +83,7 @@
+> >                 inode->i_size = 0;
+> >                 inode->i_fop = &cgroup_file_operations;
+> >         }
+> > --      dentry->d_op = &cgroup_dops;
+> > +-      d_set_d_op(dentry, &cgroup_dops);
+> >         d_instantiate(dentry, inode);
+> >         dget(dentry);   /* Extra count - pin the dentry in core */
+> >         return 0;
 
-Ping on this, please: I can't build a postmerge tree until block is
-sorted out.  I need these four removing:
-
-commit 638428ece619495edc9579b1e21493eb00f9687c
-Author: Tejun Heo <tj@kernel.org>
-Date:   Thu Dec 9 11:18:42 2010 +0100
-
-    scsi: fix TUR error handling in sr_media_change()
-  
-commit 9f8a2c23c6c1140f515f601265c4dff7522110b7
-Author: Tejun Heo <tj@kernel.org>
-Date:   Wed Dec 8 20:57:40 2010 +0100
-
-    scsi: replace sr_test_unit_ready() with scsi_test_unit_ready()
- 
-commit 93aae17af1172c40c6f74b7294e93a90c3cfaa5d
-Author: Tejun Heo <tj@kernel.org>
-Date:   Thu Dec 16 17:52:17 2010 +0100
-
-    sr: implement sr_check_events()
-
-commit c8d2e937355d02db3055c2fc203e5f017297ee1f
-Author: Tejun Heo <tj@kernel.org>
-Date:   Wed Dec 8 20:57:42 2010 +0100
-
-    sd: implement sd_check_events()
-
-Thanks,
-
-James
+How about not doing that d_set_d_op() at all?  See #d_op in vfs-2.6.git;
+just set ->s_d_op to that once and be done with that.  No need to reassign
+it on a live dentry...
