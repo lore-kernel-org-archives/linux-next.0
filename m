@@ -1,29 +1,68 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: [PATCH -next] crypto: fix af_alg memory_allocated data type
-Date: Tue, 21 Dec 2010 22:22:59 +1100
-Message-ID: <20101221112259.GA26409@gondor.apana.org.au>
-References: <20101216173745.264eb2ca.sfr@canb.auug.org.au> <20101216101800.36529e89.randy.dunlap@oracle.com>
+From: Sedat Dilek <sedat.dilek@googlemail.com>
+Subject: Re: [patch] cgroup fs: avoid switching ->d_op on
+	live dentry
+Date: Tue, 21 Dec 2010 14:35:05 +0100
+Message-ID: <AANLkTim_ninC_sGJy-5cT89og24aM3=Z--hRvVaAttoA@mail.gmail.com>
+References: <AANLkTinod+7fDMwh8_XsQe4mnF1P6WoRWyh36yJXM4LO@mail.gmail.com>
+	<20101221085538.GA9133@amd>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20101216101800.36529e89.randy.dunlap@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-crypto@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <systemd-devel-bounces+gcssd-systemd-devel=m.gmane.org@lists.freedesktop.org>
+In-Reply-To: <20101221085538.GA9133@amd>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/systemd-devel>,
+	<mailto:systemd-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/systemd-devel>
+List-Post: <mailto:systemd-devel@lists.freedesktop.org>
+List-Help: <mailto:systemd-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/systemd-devel>,
+	<mailto:systemd-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: systemd-devel-bounces+gcssd-systemd-devel=m.gmane.org@lists.freedesktop.org
+Errors-To: systemd-devel-bounces+gcssd-systemd-devel=m.gmane.org@lists.freedesktop.org
+To: Nick Piggin <npiggin@kernel.dk>
+Cc: linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, systemd-devel@lists.freedesktop.org, eparis@redhat.com
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Dec 16, 2010 at 10:18:00AM -0800, Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> Change data type to fix warning:
-> 
-> crypto/af_alg.c:35: warning: initialization from incompatible pointer type
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-
-Applied.  Thanks Randy!
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+T24gVHVlLCBEZWMgMjEsIDIwMTAgYXQgOTo1NSBBTSwgTmljayBQaWdnaW4gPG5waWdnaW5Aa2Vy
+bmVsLmRrPiB3cm90ZToKPiBPbiBUdWUsIERlYyAyMSwgMjAxMCBhdCAwOTo0NDo0MEFNICswMTAw
+LCBTZWRhdCBEaWxlayB3cm90ZToKPj4gQWdhaW5zdCBsaW51eC1uZXh0IChuZXh0LTIwMTAxMjEw
+KSBpdCBzaG91bGQgbG9vayBsaWtlOgo+Cj4gWWVwLCBJJ2xsIHJlYmFzZSBteSB0cmVlIHdpdGgg
+dGhlIGZpeCBzaG9ydGx5Lgo+Cj4+Cj4+ICQgZGlmZiAtTmF1ciBjZ3JvdXAtZml4L2Nncm91cC1m
+cy1hdm9pZC1zd2l0Y2hpbmctZF9vcC1vbi1saXZlLWRlbnRyeS5wYXRjaAo+PiBjZ3JvdXAtZml4
+L2Nncm91cC1mcy1hdm9pZC1zd2l0Y2hpbmctZF9vcC1vbi1saXZlLWRlbnRyeS12Mi5wYXRjaAo+
+PiAtLS0gY2dyb3VwLWZpeC9jZ3JvdXAtZnMtYXZvaWQtc3dpdGNoaW5nLWRfb3Atb24tbGl2ZS1k
+ZW50cnkucGF0Y2gKPj4gwqAyMDEwLTEyLTIxIDA5OjMxOjM4LjY0OTYwMTk2NCArMDEwMAo+PiAr
+KysgY2dyb3VwLWZpeC9jZ3JvdXAtZnMtYXZvaWQtc3dpdGNoaW5nLWRfb3Atb24tbGl2ZS1kZW50
+cnktdjIucGF0Y2gKPj4gwqAyMDEwLTEyLTIxIDA5OjQwOjIxLjE1MTAzMzIzMiArMDEwMAo+PiBA
+QCAtODMsNyArODMsNyBAQAo+PiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBpbm9kZS0+aV9zaXpl
+ID0gMDsKPj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgaW5vZGUtPmlfZm9wID0gJmNncm91cF9m
+aWxlX29wZXJhdGlvbnM7Cj4+IMKgIMKgIMKgIMKgIH0KPj4gLS0gwqAgwqAgwqBkZW50cnktPmRf
+b3AgPSAmY2dyb3VwX2RvcHM7Cj4+ICstIMKgIMKgIMKgZF9zZXRfZF9vcChkZW50cnksICZjZ3Jv
+dXBfZG9wcyk7Cj4+IMKgIMKgIMKgIMKgIGRfaW5zdGFudGlhdGUoZGVudHJ5LCBpbm9kZSk7Cj4+
+IMKgIMKgIMKgIMKgIGRnZXQoZGVudHJ5KTsgwqAgLyogRXh0cmEgY291bnQgLSBwaW4gdGhlIGRl
+bnRyeSBpbiBjb3JlICovCj4+IMKgIMKgIMKgIMKgIHJldHVybiAwOwo+Pgo+PiAtIFNlZGF0IC0K
+PgoKSSBqdXN0IHN0YXJ0ZWQgdGhlIGNvbXBpbGF0aW9uIGR1ZSB0byBzbG93IGtlcm5lbCBtaXJy
+b3JzLCBJIHNlZSB0aGlzIHdhcm5pbmc6CgokIGVncmVwICdrZXJuZWwvY2dyb3VwLm98a2VybmVs
+L2Nncm91cC5jJwpidWlsZF9saW51eC1uZXh0X25leHQyMDEwMTIyMS5kaWxla3MuMS5sb2cKICBD
+QyAgICAgIGtlcm5lbC9jZ3JvdXAubwovaG9tZS9zZC9zcmMvbGludXgtMi42L2xpbnV4LTIuNi4z
+Ny1yYzYvZGViaWFuL2J1aWxkL3NvdXJjZV9pMzg2X25vbmUva2VybmVsL2Nncm91cC5jOgpJbiBm
+dW5jdGlvbiDigJhjZ3JvdXBfbG9va3Vw4oCZOgovaG9tZS9zZC9zcmMvbGludXgtMi42L2xpbnV4
+LTIuNi4zNy1yYzYvZGViaWFuL2J1aWxkL3NvdXJjZV9pMzg2X25vbmUva2VybmVsL2Nncm91cC5j
+OjIyMTk6MzoKd2FybmluZzogaW5pdGlhbGl6YXRpb24gZnJvbSBpbmNvbXBhdGlibGUgcG9pbnRl
+ciB0eXBlCgpbIGtlcm5lbC9jZ3JvdXAuYyBdCi4uLgpzdGF0aWMgaW50IGNncm91cF9kZWxldGVf
+ZGVudHJ5KHN0cnVjdCBkZW50cnkgKmRlbnRyeSkKewogICAgICAgIHJldHVybiAxOwp9CgpzdGF0
+aWMgc3RydWN0IGRlbnRyeSAqY2dyb3VwX2xvb2t1cChzdHJ1Y3QgaW5vZGUgKmRpciwKICAgICAg
+ICAgICAgICAgICAgICAgICAgc3RydWN0IGRlbnRyeSAqZGVudHJ5LCBzdHJ1Y3QgbmFtZWlkYXRh
+ICpuZCkKewogICAgICAgIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZGVudHJ5X29wZXJhdGlvbnMgY2dy
+b3VwX2RlbnRyeV9vcGVyYXRpb25zID0gewogICAgICAgICAgICAgICAgLmRfZGVsZXRlID0gY2dy
+b3VwX2RlbGV0ZV9kZW50cnksIDwtLS0gTElORSAjMjIxOQogICAgICAgICAgICAgICAgLmRfaXB1
+dCA9IGNncm91cF9kaXB1dCwKICAgICAgICB9OwoKICAgICAgICBpZiAoZGVudHJ5LT5kX25hbWUu
+bGVuID4gTkFNRV9NQVgpCiAgICAgICAgICAgICAgICByZXR1cm4gRVJSX1BUUigtRU5BTUVUT09M
+T05HKTsKICAgICAgICBkZW50cnktPmRfb3AgPSAmY2dyb3VwX2RlbnRyeV9vcGVyYXRpb25zOwog
+ICAgICAgIGRfYWRkKGRlbnRyeSwgTlVMTCk7CiAgICAgICAgcmV0dXJuIE5VTEw7Cn0KLi4uCgpD
+YW4geW91IGZpeCB0aGF0IHdpdGggeW91ciByZWJhc2luZywgdG9vPwpUaGFua3MgaW4gYWR2YW5j
+ZS4KCi0gU2VkYXQgLQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpzeXN0ZW1kLWRldmVsIG1haWxpbmcgbGlzdApzeXN0ZW1kLWRldmVsQGxpc3RzLmZyZWVk
+ZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
+c3lzdGVtZC1kZXZlbAo=
