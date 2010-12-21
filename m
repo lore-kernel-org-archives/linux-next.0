@@ -1,65 +1,49 @@
-From: Sedat Dilek <sedat.dilek@googlemail.com>
-Subject: Re: systemd failing with vfs-scale-working patch-set
-Date: Mon, 20 Dec 2010 22:07:14 +0100
-Message-ID: <AANLkTikabyDocBhHLjBjewkrFfyQLUdSqHiRDRw4q4s9@mail.gmail.com>
-References: <AANLkTiku116GCiLJcEa9KcQeLJq+LM8qsBJZdMC7iCrO@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+From: "J.H." <warthog9@kernel.org>
+Subject: Re: patchwork.kernel.org down
+Date: Mon, 20 Dec 2010 17:00:59 -0800
+Message-ID: <4D0FFC4B.9050301@kernel.org>
+References: <AANLkTik4ktaeyDG3ihh-YRB+WVLxA46wSLOgWy6iY_68@mail.gmail.com> <20101220204936.GA21290@huya.qualcomm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <systemd-devel-bounces+gcssd-systemd-devel=m.gmane.org@lists.freedesktop.org>
-In-Reply-To: <AANLkTiku116GCiLJcEa9KcQeLJq+LM8qsBJZdMC7iCrO@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/systemd-devel>,
-	<mailto:systemd-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/systemd-devel>
-List-Post: <mailto:systemd-devel@lists.freedesktop.org>
-List-Help: <mailto:systemd-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/systemd-devel>,
-	<mailto:systemd-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: systemd-devel-bounces+gcssd-systemd-devel=m.gmane.org@lists.freedesktop.org
-Errors-To: systemd-devel-bounces+gcssd-systemd-devel=m.gmane.org@lists.freedesktop.org
-To: Nick Piggin <npiggin@kernel.dk>
-Cc: linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, systemd-devel@lists.freedesktop.org, eparis@redhat.com
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from shards.monkeyblade.net ([198.137.202.13]:46992 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932864Ab0LUA6q (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 20 Dec 2010 19:58:46 -0500
+In-Reply-To: <20101220204936.GA21290@huya.qualcomm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Brown <davidb@codeaurora.org>
+Cc: sedat.dilek@gmail.com, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, ftpadmin@kernel.org, webmaster@kernel.org
 
-Hi Nick,
+On 12/20/2010 12:49 PM, David Brown wrote:
+> On Mon, Dec 20, 2010 at 09:12:58PM +0100, Sedat Dilek wrote:
+> 
+>> just FYI: http://patchwork.kernel.org/ is down!
 
-after upgrading my toolchain and kernel-buildsystem I found some time
-spending in getting some more infos on the systemd w/ vfs-scale
-problem.
-Eric reported in [1] same problems as I have seen.
+More excitement from https://bugzilla.kernel.org/show_bug.cgi?id=20702
 
-My systemd is now v15+git20101210.8a9ef77 and Linux kernel is:
+Anyone want to take a stab at it?  I know I'd be appreciative.  I am
+running a debug kernel with everything I could find and enable I even
+remotely thought might prove helpful.  Nothing has jumped out yet though.
 
-# cat /proc/version
-Linux version 2.6.37-rc6-686 (Debian
-2.6.37~rc6-5~next20101220.dileks.1) (sedat.dilek@gmail.com) (gcc
-version 4.5.2 (Debian 4.5.2-1) ) #1 SMP Mon Dec 20 19:03:29 CET 2010
+> git.kernel.org seems to be down as well.
 
-I could take some new pics [2].
+git isn't down, but it has been unbelievably busy.  Loads are *only* in
+the 60's right now (they have been spiking above 300)
 
-[3] shows a kernel NULL pointer dereference (dmesg command in
-kdb-console), but the address is not displayed, might be I need to set
-some additional kernel-debug-options.
+I did mention the loads and the spikes yesterday:
 
-[4] shows the output of "btp 4" (backtrace PID #4 from kdb-console),
-see also in [3] "*pde = 00000000" (8 zeroes) shows <4> (PID #4) at the
-beginning of the line.
+https://lkml.org/lkml/2010/12/20/317
 
-I have also a "btp 1" (systemd has PID #1).
+and you can see the loads on the odins (the ones that deal with git) here:
 
-Hope this helps to narrow down the problem.
-If you need additional informations or (disasm-ed) files, please let me know.
+http://cacti.kernel.org/graph_view.php?action=tree&tree_id=3
 
-Some pics are doubled, sorry for the bad quality, I won't be a surgery
-(need a calm hand, turned off auto-flash of my digicam is the real
-cause I guess ;-)).
+We are down from the 2700 or so simultaneous git processes to only about
+1600 right now (which again the normal range is 100-200).  The onslaught
+is subsiding, as it does with any big release, just no one knew it was
+going to be nearly as big as it has turned out to be.
 
-Regards,
-- Sedat -
-
-
-[1] http://marc.info/?l=linux-fsdevel&m=129287321819101&w=2
-[2] http://files.iniza.org/for_npiggin/2010-12-20/
-[3] http://files.iniza.org/for_npiggin/2010-12-20/DSCN2344.JPG
-[4] http://files.iniza.org/for_npiggin/2010-12-20/DSCN2353.JPG
+- John 'Warthog9' Hawley
