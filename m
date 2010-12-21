@@ -1,54 +1,69 @@
-From: Sedat Dilek <sedat.dilek@googlemail.com>
-Subject: Re: linux-next: build failure in Linus' tree
-Date: Tue, 21 Dec 2010 05:47:15 +0100
-Message-ID: <AANLkTin_rx3EFVSTnUyK0uVshGxMm_yMVimEg60GSXLi@mail.gmail.com>
-References: <20101221120123.93838d16.sfr@canb.auug.org.au>
-Reply-To: sedat.dilek@gmail.com
+From: Nick Piggin <npiggin@kernel.dk>
+Subject: Re: systemd failing with vfs-scale-working patch-set
+Date: Tue, 21 Dec 2010 15:57:13 +1100
+Message-ID: <20101221045713.GA3189@amd>
+References: <AANLkTiku116GCiLJcEa9KcQeLJq+LM8qsBJZdMC7iCrO@mail.gmail.com>
+ <AANLkTikabyDocBhHLjBjewkrFfyQLUdSqHiRDRw4q4s9@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:45085 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933560Ab0LUErX convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 20 Dec 2010 23:47:23 -0500
-In-Reply-To: <20101221120123.93838d16.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus <torvalds@linux-foundation.org>, Jens Axboe <jaxboe@fusionio.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Stephen M. Cameron" <scameron@beardog.cce.hp.com>, stable@kernel.org, Thiago Farina <tfransosi@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <AANLkTikabyDocBhHLjBjewkrFfyQLUdSqHiRDRw4q4s9@mail.gmail.com>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: sedat.dilek@gmail.com
+Cc: Nick Piggin <npiggin@kernel.dk>, systemd-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, eparis@redhat.com
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Dec 21, 2010 at 2:01 AM, Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> Hi all,
->
-> While building Linus' tree, today's linux-next build (x86_64 allmodco=
-nfig)
-> failed like this:
->
-> drivers/block/cciss.c: In function 'cciss_revalidate':
-> drivers/block/cciss.c:2839: error: expected ';' before 'if'
->
-> Caused by commit 0fc13c8995cd96f4123de400c71c223d80400ed9 ("cciss: fi=
-x
-> cciss_revalidate panic"). =C2=A0Was this even build tested? =C2=A0Mor=
-e care
-> required.
->
-> I have reverted that commit for today.
-> --
-> Cheers,
-> Stephen Rothwell =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
->
+On Mon, Dec 20, 2010 at 10:07:14PM +0100, Sedat Dilek wrote:
+> Hi Nick,
+> 
+> after upgrading my toolchain and kernel-buildsystem I found some time
+> spending in getting some more infos on the systemd w/ vfs-scale
+> problem.
+> Eric reported in [1] same problems as I have seen.
+> 
+> My systemd is now v15+git20101210.8a9ef77 and Linux kernel is:
+> 
+> # cat /proc/version
+> Linux version 2.6.37-rc6-686 (Debian
+> 2.6.37~rc6-5~next20101220.dileks.1) (sedat.dilek@gmail.com) (gcc
+> version 4.5.2 (Debian 4.5.2-1) ) #1 SMP Mon Dec 20 19:03:29 CET 2010
+> 
+> I could take some new pics [2].
+> 
+> [3] shows a kernel NULL pointer dereference (dmesg command in
+> kdb-console), but the address is not displayed, might be I need to set
+> some additional kernel-debug-options.
+> 
+> [4] shows the output of "btp 4" (backtrace PID #4 from kdb-console),
+> see also in [3] "*pde = 00000000" (8 zeroes) shows <4> (PID #4) at the
+> beginning of the line.
+> 
+> I have also a "btp 1" (systemd has PID #1).
+> 
+> Hope this helps to narrow down the problem.
+> If you need additional informations or (disasm-ed) files, please let me know.
+> 
+> Some pics are doubled, sorry for the bad quality, I won't be a surgery
+> (need a calm hand, turned off auto-flash of my digicam is the real
+> cause I guess ;-)).
 
-[ CC Thiago Farina ]
+Thanks to you both for testing and reporting this. The important part is
+NULL instruction pointer at dput.
 
-Did you see the patch "[PATCH] drivers/block/cciss.c: Fix compiling
-error by adding ';' at the end of continue statement." from [1] from
-Thiago?
+I have a patch to set various d_flags according to what d_op functions
+have been defined. This allows branch and cacheline load reduction in
+common cases in fastpaths. However those flags were set but not cleared,
+not expecting d_ops to be switched on active dentries.
 
-- Sedat -
+cgroups filesystem actually switches from simple dentry ops to its own
+one, when turning from a negative to positive dentry. That's possibly OK
+technically (although I didn't consider all races), but AFAIKS it is not
+something that a filesystem is allowed to "know".
 
-[1] http://lkml.org/lkml/2010/12/20/465
+I'll submit a patch to fix cgroups, and a bugcheck to catch such things
+again.
+
+Thanks,
+Nick
+
