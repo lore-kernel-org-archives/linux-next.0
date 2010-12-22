@@ -1,38 +1,102 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH v3 1/1] input/tc3589x: add tc3589x keypad support
-Date: Wed, 22 Dec 2010 02:20:51 -0800
-Message-ID: <20101222102050.GE22590@core.coreip.homeip.net>
-References: <1292927011-6898-1-git-send-email-sundar.iyer@stericsson.com>
+From: Sedat Dilek <sedat.dilek@googlemail.com>
+Subject: Re: [PATCH] drm/radeon: Remove DRIVER_DATE for UMS and KMS
+Date: Wed, 22 Dec 2010 12:32:21 +0100
+Message-ID: <AANLkTinmzPLGkwyV-yjc0s=67hYkR+VehQd3sA9tWrah@mail.gmail.com>
+References: <AANLkTik7SQ76zcAMk5=mgKRF7MWghVHhLtY1CtK-WPKy@mail.gmail.com>
+	<1293004539.19556.70.camel@thor.local>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pw0-f46.google.com ([209.85.160.46]:52898 "EHLO
-	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751759Ab0LVKU7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Dec 2010 05:20:59 -0500
-Received: by pwj3 with SMTP id 3so274836pwj.19
-        for <linux-next@vger.kernel.org>; Wed, 22 Dec 2010 02:20:59 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1292927011-6898-1-git-send-email-sundar.iyer@stericsson.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Sundar Iyer <sundar.iyer@stericsson.com>
-Cc: linux-next@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
+In-Reply-To: <1293004539.19556.70.camel@thor.local>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
+To: =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel@daenzer.net>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Dec 21, 2010 at 03:53:31PM +0530, Sundar Iyer wrote:
-> Add support for the keypad controller module found on the
-> TC3589X devices. This driver default adds the support for
-> TC35893 device.
-> 
-> Signed-off-by: Sundar Iyer <sundar.iyer@stericsson.com>
-> ---
-> Changes:
->  - v3: introduced keypad_stopped flag to check suspend/resume/open/close
->        operations
-
-Acked-by: Dmitry Torokhov <dtor@mail.ru>
-
-Thanks for making the changes.
-
--- 
-Dmitry
+MjAxMC8xMi8yMiBNaWNoZWwgRMOkbnplciA8bWljaGVsQGRhZW56ZXIubmV0PjoKPiBPbiBNaXQs
+IDIwMTAtMTItMjIgYXQgMDg6MzggKzAxMDAsIFNlZGF0IERpbGVrIHdyb3RlOgo+Pgo+PiBzb3Jy
+eSwgSSBzdGlsbCBoYXZlbid0IHNldHVwIGEgZ2l0LXNlbmQtbWFpbCwgdGh1cyBzZW5kaW5nIHRo
+ZQo+PiBvbGQtZmFzaGlvbmVkIHdheSBhcyBhdHRhY2hlZCBwYXRjaC4KPgo+IFlvdXIgbWFpbGVy
+IG1pZ2h0IGFsbG93IGludGVncmF0aW5nIHRoZSBvdXRwdXQgb2YgZ2l0IGZvcm1hdC1wYXRjaCBp
+bnRvCj4gdGhlIG1haWwgYm9keSBkaXJlY3RseSBpbnN0ZWFkLgo+Cj4+IFRoaXMgcGF0Y2ggKGFn
+YWluc3QgbGludXgtbmV4dCkgaXMgb3ZlcmR1ZS4KPj4KPj4gIkRSSVZFUl9EQVRFIGlzIG5vdCBt
+YWludGFpbmVkIG9yIHVwZ3JhZGVkIG9uIGNoYW5nZXMuCj4+Cj4+IEZ1cnRoZXJtb3JlLCBvbmUg
+RFJJVkVSX0RBVEUgZm9yIFVNUyBhbmQgS01TIG1ha2VzIG5vIHNlbnNlLgo+PiBJdCBpcyBlbm91
+Z2ggdG8gYnVtcCB7S01TX31EUklWRVJfTUFKT1IsIHtLTVNffURSSVZFUl9NSU5PUiBhbmQKPj4g
+e0tNU199RFJJVkVSX1BBVENITEVWRUwgZGVmaW5lcy4iCj4KPiBXaGF0IGVuZHMgdXAgYmVpbmcg
+cHJpbnRlZCBhcyB0aGUgZGF0ZSBpbiBkbWVzZz8KPgoKVGhpcyBwYXRjaCB3YXMgbm90IGNvbXBs
+ZXRlLgpJIGNvdWxkIHN0YXJ0IHdpdGggS01TLWVuYWJsZWQgaW50byBydW5sZXZlbC0zIChJSVJD
+IHZlcnNpb24gb2YgcmFkZW9uCndpdGggKG51bGwpIGluIGJyYWNrZXRzKSwgd2hlbiB3YW50aW5n
+IHRvIHN0YXJ0eCwgbWFjaGluZSBkaWVkIHdpdGggYQplcnJvci1tZXNzYWdlLgoKSSBoYXZlIHNl
+bnQgYSBuZXcgcGF0Y2ggIltQQVRDSF0gZHJtOiBSZW1vdmUgRFJJVkVSX0RBVEUgYW5kCkNPUkVf
+REFURSIgKHNlZSBbMV0pLCB3aGljaCB3b3JrcyBhcyBleHBlY3RlZC4KCi0gU2VkYXQgLQoKWzFd
+IGh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvYXJjaGl2ZXMvZHJpLWRldmVsLzIwMTAtRGVj
+ZW1iZXIvMDA2NTg2Lmh0bWwKClAuUy46CgokIGRtZXNnIHwgZWdyZXAgLWkgJ2RybXxyYWRlb258
+a21zfG1vZGVzZXR8ZnJhbWUgYnVmZmVyJwpbICAgIDAuMDAwMDAwXSBLZXJuZWwgY29tbWFuZCBs
+aW5lOgpCT09UX0lNQUdFPS9ib290L3ZtbGludXotMi42LjM3LXJjNi02ODYKcm9vdD1VVUlEPTFj
+ZWI2OWE3LWVjZjQtNDdlOS1hMjMxLWI3NGUwZjBhOWI2MiBybyBpbml0PS9iaW4vc3lzdGVtZApy
+YWRlb24ubW9kZXNldD0xIGxhcGljIDMKWyAgIDEyLjMyODkzN10gW2RybV0gSW5pdGlhbGl6ZWQg
+ZHJtIDEuMS4wClsgICAxMi44MTgzMzBdIFtkcm1dIHJhZGVvbiBrZXJuZWwgbW9kZXNldHRpbmcg
+ZW5hYmxlZC4KWyAgIDEyLjgxODUwMF0gcmFkZW9uIDAwMDA6MDE6MDAuMDogcG93ZXIgc3RhdGUg
+Y2hhbmdlZCBieSBBQ1BJIHRvIEQwClsgICAxMi44MTg1NDBdIHJhZGVvbiAwMDAwOjAxOjAwLjA6
+IHBvd2VyIHN0YXRlIGNoYW5nZWQgYnkgQUNQSSB0byBEMApbICAgMTIuODE4NTg3XSByYWRlb24g
+MDAwMDowMTowMC4wOiBQQ0kgSU5UIEEgLT4gTGlua1tMTktBXSAtPiBHU0kgMTEKKGxldmVsLCBs
+b3cpIC0+IElSUSAxMQpbICAgMTIuODI2Mjk2XSBbZHJtXSBpbml0aWFsaXppbmcga2VybmVsIG1v
+ZGVzZXR0aW5nIChSVjI1MAoweDEwMDI6MHg0QzY2KS4KWyAgIDEyLjg0MTk2MF0gW2RybV0gcmVn
+aXN0ZXIgbW1pbyBiYXNlOiAweEMwMTAwMDAwClsgICAxMi44NDIwMDFdIFtkcm1dIHJlZ2lzdGVy
+IG1taW8gc2l6ZTogNjU1MzYKWyAgIDEyLjg0MjUyNF0gcmFkZW9uIDAwMDA6MDE6MDAuMDogcHV0
+dGluZyBBR1AgVjIgZGV2aWNlIGludG8gNHggbW9kZQpbICAgMTIuODQyNTg3XSByYWRlb24gMDAw
+MDowMTowMC4wOiBHVFQ6IDI1Nk0gMHhEMDAwMDAwMCAtIDB4REZGRkZGRkYKWyAgIDEyLjg0MjYz
+MF0gcmFkZW9uIDAwMDA6MDE6MDAuMDogVlJBTTogMTI4TSAweDAwMDAwMDAwRTAwMDAwMDAgLQow
+eDAwMDAwMDAwRTdGRkZGRkYgKDY0TSB1c2VkKQpbICAgMTIuODQyNjk0XSBbZHJtXSBTdXBwb3J0
+cyB2YmxhbmsgdGltZXN0YW1wIGNhY2hpbmcgUmV2IDEKKDEwLjEwLjIwMTApLgpbICAgMTIuODQy
+NzMxXSBbZHJtXSBEcml2ZXIgc3VwcG9ydHMgcHJlY2lzZSB2YmxhbmsgdGltZXN0YW1wIHF1ZXJ5
+LgpbICAgMTIuODQyNzg1XSBbZHJtXSByYWRlb246IGlycSBpbml0aWFsaXplZC4KWyAgIDEyLjg0
+NTMwMF0gW2RybV0gRGV0ZWN0ZWQgVlJBTSBSQU09MTI4TSwgQkFSPTEyOE0KWyAgIDEyLjg0NTM0
+Ml0gW2RybV0gUkFNIHdpZHRoIDEyOGJpdHMgRERSClsgICAxMi44NDgyMzNdIFtkcm1dIHJhZGVv
+bjogNjRNIG9mIFZSQU0gbWVtb3J5IHJlYWR5ClsgICAxMi44NDgyNzNdIFtkcm1dIHJhZGVvbjog
+MjU2TSBvZiBHVFQgbWVtb3J5IHJlYWR5LgpbICAgMTIuODUwMDU1XSByYWRlb24gMDAwMDowMTow
+MC4wOiBXQiBlbmFibGVkClsgICAxMi44NTA3NjZdIFtkcm1dIExvYWRpbmcgUjIwMCBNaWNyb2Nv
+ZGUKWyAgIDEyLjk2OTA5MF0gW2RybV0gcmFkZW9uOiByaW5nIGF0IDB4MDAwMDAwMDBEMDAwMTAw
+MApbICAgMTIuOTY5MTUyXSBbZHJtXSByaW5nIHRlc3Qgc3VjY2VlZGVkIGluIDEgdXNlY3MKWyAg
+IDEyLjk2OTQ4MV0gW2RybV0gcmFkZW9uOiBpYiBwb29sIHJlYWR5LgpbICAgMTIuOTcwMTU2XSBb
+ZHJtXSBpYiB0ZXN0IHN1Y2NlZWRlZCBpbiAwIHVzZWNzClsgICAxMi45NzE4NDFdIFtkcm1dIFBh
+bmVsIElEIFN0cmluZzogU1hHQSsgU2luZ2xlICg4NU1IeikKWyAgIDEyLjk3MTg3OF0gW2RybV0g
+UGFuZWwgU2l6ZSAxNDAweDEwNTAKWyAgIDEyLjk4MzA0NF0gW2RybV0gcmFkZW9uIGxlZ2FjeSBM
+VkRTIGJhY2tsaWdodCBpbml0aWFsaXplZApbICAgMTIuOTgzNzM3XSBbZHJtXSBObyBUViBEQUMg
+aW5mbyBmb3VuZCBpbiBCSU9TClsgICAxMi45ODM4NjJdIFtkcm1dIFJhZGVvbiBEaXNwbGF5IENv
+bm5lY3RvcnMKWyAgIDEyLjk4Mzg5N10gW2RybV0gQ29ubmVjdG9yIDA6ClsgICAxMi45ODM5Mjld
+IFtkcm1dICAgVkdBClsgICAxMi45ODM5NjNdIFtkcm1dICAgRERDOiAweDYwIDB4NjAgMHg2MCAw
+eDYwIDB4NjAgMHg2MCAweDYwIDB4NjAKWyAgIDEyLjk4NDAxM10gW2RybV0gICBFbmNvZGVyczoK
+WyAgIDEyLjk4NDA0Nl0gW2RybV0gICAgIENSVDE6IElOVEVSTkFMX0RBQzEKWyAgIDEyLjk4NDA4
+MF0gW2RybV0gQ29ubmVjdG9yIDE6ClsgICAxMi45ODQxMTJdIFtkcm1dICAgRFZJLUQKWyAgIDEy
+Ljk4NDE0NF0gW2RybV0gICBIUEQxClsgICAxMi45ODQxNzddIFtkcm1dICAgRERDOiAweDY0IDB4
+NjQgMHg2NCAweDY0IDB4NjQgMHg2NCAweDY0IDB4NjQKWyAgIDEyLjk4NDIxMl0gW2RybV0gICBF
+bmNvZGVyczoKWyAgIDEyLjk4NDI0NV0gW2RybV0gICAgIERGUDE6IElOVEVSTkFMX1RNRFMxClsg
+ICAxMi45ODQyNzhdIFtkcm1dIENvbm5lY3RvciAyOgpbICAgMTIuOTg0MzEwXSBbZHJtXSAgIExW
+RFMKWyAgIDEyLjk4NDM0Ml0gW2RybV0gICBFbmNvZGVyczoKWyAgIDEyLjk4NDM3NF0gW2RybV0g
+ICAgIExDRDE6IElOVEVSTkFMX0xWRFMKWyAgIDEyLjk4NDQwN10gW2RybV0gQ29ubmVjdG9yIDM6
+ClsgICAxMi45ODQ0MzldIFtkcm1dICAgUy12aWRlbwpbICAgMTIuOTg0NDcxXSBbZHJtXSAgIEVu
+Y29kZXJzOgpbICAgMTIuOTg0NTAzXSBbZHJtXSAgICAgVFYxOiBJTlRFUk5BTF9EQUMyClsgICAx
+Mi45OTIxNTJdIFtkcm1dIHJhZGVvbjogcG93ZXIgbWFuYWdlbWVudCBpbml0aWFsaXplZApbICAg
+MTMuMDM4MTQ5XSBbZHJtXSBmYiBtYXBwYWJsZSBhdCAweEUwMDQwMDAwClsgICAxMy4wMzgxODhd
+IFtkcm1dIHZyYW0gYXBwZXIgYXQgMHhFMDAwMDAwMApbICAgMTMuMDM4MjIxXSBbZHJtXSBzaXpl
+IDU5MTQ2MjQKWyAgIDEzLjAzODI1NF0gW2RybV0gZmIgZGVwdGggaXMgMjQKWyAgIDEzLjAzODI4
+Nl0gW2RybV0gICAgcGl0Y2ggaXMgNTYzMgpbICAgMTMuMTA4MjA1XSBDb25zb2xlOiBzd2l0Y2hp
+bmcgdG8gY29sb3VyIGZyYW1lIGJ1ZmZlciBkZXZpY2UgMTc1eDY1ClsgICAxMy4xNDMyMTldIGZi
+MDogcmFkZW9uZHJtZmIgZnJhbWUgYnVmZmVyIGRldmljZQpbICAgMTMuMTQzMzg2XSBkcm06IHJl
+Z2lzdGVyZWQgcGFuaWMgbm90aWZpZXIKWyAgIDEzLjE0NDAxOV0gW2RybV0gSW5pdGlhbGl6ZWQg
+cmFkZW9uIDIuOC4wIGZvciAwMDAwOjAxOjAwLjAgb24gbWlub3IgMAoKLSBFT1QgLQpfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
+ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVk
+ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
