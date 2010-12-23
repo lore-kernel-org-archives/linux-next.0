@@ -1,46 +1,37 @@
 From: Mark Brown <broonie@opensource.wolfsonmicro.com>
 Subject: Re: linux-next: manual merge of the sound tree with the s5p tree
-Date: Thu, 23 Dec 2010 11:50:24 +0000
-Message-ID: <20101223115024.GA28928@sirena.org.uk>
-References: <20101223115339.1ce18216.sfr@canb.auug.org.au> <003f01cba28c$872214f0$95663ed0$%kim@samsung.com> <s5hk4j0n43g.wl%tiwai@suse.de> <004001cba292$3827d2d0$a8777870$%kim@samsung.com>
+Date: Thu, 23 Dec 2010 11:56:44 +0000
+Message-ID: <20101223115644.GA14889@opensource.wolfsonmicro.com>
+References: <20101223115339.1ce18216.sfr@canb.auug.org.au>
+ <003f01cba28c$872214f0$95663ed0$%kim@samsung.com>
+ <s5hk4j0n43g.wl%tiwai@suse.de>
+ <004001cba292$3827d2d0$a8777870$%kim@samsung.com>
+ <20101223115024.GA28928@sirena.org.uk>
+ <4D133872.5050804@example.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:36063 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752830Ab0LWLu2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Dec 2010 06:50:28 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <004001cba292$3827d2d0$a8777870$%kim@samsung.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Takashi Iwai' <tiwai@suse.de>, 'Stephen Rothwell' <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Jassi Brar' <jassi.brar@samsung.com>
+In-Reply-To: <4D133872.5050804@example.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Piotr Hosowicz <piotr@hosowicz.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, 'Takashi Iwai' <tiwai@suse.de>, 'Stephen Rothwell' <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Jassi Brar' <jassi.brar@samsung.com>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Dec 23, 2010 at 08:11:56PM +0900, Kukjin Kim wrote:
-> Takashi Iwai wrote:
+On Thu, Dec 23, 2010 at 12:54:26PM +0100, Piotr Hosowicz wrote:
+> On 23.12.2010 12:50, Mark Brown wrote:
 
-> > > Anyway I need above commits from sound-2.6.git in my tree...
-> > > so how method is better to me instead of cherry-pick it?
+> >topic/asoc is in Takashi's tree and is equivalent to my for-next branch,
+> >it usually lags it by only a small amount.  Takashi's tree is at:
 
-> > You can merge topic/asoc branch of sound git tree.
-> > This brach contains the all necessary commits for ASoC and is almost
-> > never rebased.
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound-2.6.git
 
-> But I can't merge it because there is no 'topic/asoc' branch in
-> sound-2.6.git.
-> (git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound-2.6.git)
+> Each time I get source from Linus tree I get alsa source from
+> Takashi and build the kernel. Should I get the source also from you
+> to be up to date with sound source?
 
-> Is there another repository?
-
-topic/asoc is in Takashi's tree and is equivalent to my for-next branch,
-it usually lags it by only a small amount.  Takashi's tree is at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound-2.6.git
-
-> And should I merge it in my tree even though don't need all of ASoC commits
-> :-( ?
-> I'm not sure how many commits are in there...
-
-There's a lot of stuff in there but it shouldn't do any harm to
-pre-merge (and we're almost at the merge window anyway).
+Only if you're doing embedded development (my tree is only for embedded
+stuff) and then only if you really want the bleeding edge stuff - it's
+usually at most a few days before any changes in the embedded branch get
+sent to Takashi.  If you've never heard of the tree before you probably
+don't need it.
