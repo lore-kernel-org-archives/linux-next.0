@@ -1,52 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: No tree for December 23
-Date: Thu, 23 Dec 2010 22:40:57 +1100
-Message-ID: <20101223224057.3da60db3.sfr@canb.auug.org.au>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: linux-next: manual merge of the sound tree with the s5p tree
+Date: Thu, 23 Dec 2010 11:50:24 +0000
+Message-ID: <20101223115024.GA28928@sirena.org.uk>
+References: <20101223115339.1ce18216.sfr@canb.auug.org.au> <003f01cba28c$872214f0$95663ed0$%kim@samsung.com> <s5hk4j0n43g.wl%tiwai@suse.de> <004001cba292$3827d2d0$a8777870$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__23_Dec_2010_22_40_57_+1100_V/ghN5Igt77s/nud"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41995 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753134Ab0LWLlE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 23 Dec 2010 06:41:04 -0500
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:36063 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752830Ab0LWLu2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Dec 2010 06:50:28 -0500
+Content-Disposition: inline
+In-Reply-To: <004001cba292$3827d2d0$a8777870$%kim@samsung.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Takashi Iwai' <tiwai@suse.de>, 'Stephen Rothwell' <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Jassi Brar' <jassi.brar@samsung.com>
 
---Signature=_Thu__23_Dec_2010_22_40_57_+1100_V/ghN5Igt77s/nud
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Dec 23, 2010 at 08:11:56PM +0900, Kukjin Kim wrote:
+> Takashi Iwai wrote:
 
-Hi all,
+> > > Anyway I need above commits from sound-2.6.git in my tree...
+> > > so how method is better to me instead of cherry-pick it?
 
-Christmas has intervened!  Today's linux-next (I was putting it together
-in my spare moments) took too long, so it is not being released, sorry.
+> > You can merge topic/asoc branch of sound git tree.
+> > This brach contains the all necessary commits for ASoC and is almost
+> > never rebased.
 
-The next release of linux-next will be Dec 27, or 28 (my time).  Have a
-nice break and relax.  :-)
+> But I can't merge it because there is no 'topic/asoc' branch in
+> sound-2.6.git.
+> (git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound-2.6.git)
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+> Is there another repository?
 
---Signature=_Thu__23_Dec_2010_22_40_57_+1100_V/ghN5Igt77s/nud
-Content-Type: application/pgp-signature
+topic/asoc is in Takashi's tree and is equivalent to my for-next branch,
+it usually lags it by only a small amount.  Takashi's tree is at:
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+  git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound-2.6.git
 
-iQEcBAEBAgAGBQJNEzVJAAoJEDMEi1NhKgbssTEH/3l8STqiPHlFzG+lZD6N/rNi
-CnmmngAK9v4iovgVwFclUAu13W1TRzeWpk4RHcT8cSPa049cTidpGQdvLyx5vr38
-/etqM47Hc4k9l8RoiANkSb6pF1QmwbDNvg7zt+OSQsRF/GYuVx58nH+0tfIuInAd
-7OXzCH9PcDt0eT1fisxjYmg97dBG7hvnfRTeT4Ue1MkAq4G49GjFE2xGiOZSR/K5
-FcSGrvOEO26OkFDos+Rzmw5cjSMI6tbksnnf8zIcbDtYW21P1FkLdDce9CuZCpdV
-Qfi7O78W6YF9XWBHTJCSiy4zc1OwamGRxpCaN6N1YgQjLk68n0niW/qFIYfxn3w=
-=6y9u
------END PGP SIGNATURE-----
+> And should I merge it in my tree even though don't need all of ASoC commits
+> :-( ?
+> I'm not sure how many commits are in there...
 
---Signature=_Thu__23_Dec_2010_22_40_57_+1100_V/ghN5Igt77s/nud--
+There's a lot of stuff in there but it shouldn't do any harm to
+pre-merge (and we're almost at the merge window anyway).
