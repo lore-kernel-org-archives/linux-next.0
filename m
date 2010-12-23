@@ -1,48 +1,103 @@
-From: Piotr Hosowicz <piotr@hosowicz.com>
-Subject: Re: linux-next: manual merge of the sound tree with the s5p tree
-Date: Thu, 23 Dec 2010 12:54:26 +0100
-Message-ID: <4D133872.5050804@example.com>
-References: <20101223115339.1ce18216.sfr@canb.auug.org.au> <003f01cba28c$872214f0$95663ed0$%kim@samsung.com> <s5hk4j0n43g.wl%tiwai@suse.de> <004001cba292$3827d2d0$a8777870$%kim@samsung.com> <20101223115024.GA28928@sirena.org.uk>
-Reply-To: piotr@hosowicz.com
+From: Sedat Dilek <sedat.dilek@googlemail.com>
+Subject: Re: linux-next: No tree for December 23
+Date: Thu, 23 Dec 2010 14:13:01 +0100
+Message-ID: <AANLkTimj95TwJ-jLPBQFCdnT1j3wzzzVzLbfxa9YFK47@mail.gmail.com>
+References: <20101223224057.3da60db3.sfr@canb.auug.org.au>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-2;
-	format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 30.mail-out.ovh.net ([213.186.62.213]:56758 "HELO
-	30.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1752829Ab0LWMBL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Dec 2010 07:01:11 -0500
-In-Reply-To: <20101223115024.GA28928@sirena.org.uk>
+Received: from mail-qy0-f174.google.com ([209.85.216.174]:34522 "EHLO
+	mail-qy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751704Ab0LWNND convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Dec 2010 08:13:03 -0500
+In-Reply-To: <20101223224057.3da60db3.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, 'Takashi Iwai' <tiwai@suse.de>, 'Stephen Rothwell' <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Jassi Brar' <jassi.brar@samsung.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On 23.12.2010 12:50, Mark Brown wrote:
-
->> Is there another repository?
+On Thu, Dec 23, 2010 at 12:40 PM, Stephen Rothwell <sfr@canb.auug.org.a=
+u> wrote:
+> Hi all,
 >
-> topic/asoc is in Takashi's tree and is equivalent to my for-next bran=
-ch,
-> it usually lags it by only a small amount.  Takashi's tree is at:
+> Christmas has intervened! =C2=A0Today's linux-next (I was putting it =
+together
+> in my spare moments) took too long, so it is not being released, sorr=
+y.
 >
->    git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound-2.6.git
+> The next release of linux-next will be Dec 27, or 28 (my time). =C2=A0=
+Have a
+> nice break and relax. =C2=A0:-)
+>
+> --
+> Cheers,
+> Stephen Rothwell =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
+>
 
-Each time I get source from Linus tree I get alsa source from Takashi=20
-and build the kernel. Should I get the source also from you to be up to=
-=20
-date with sound source?
+Personally, I have no problems w/o a linux-next (next-20101223)
+release for today.
 
-Regards and Merry Christmas,
+Today, you posted a lot of emails with merge problems from diverse
+trees, beginning with vfs-scale-working.
 
-Piotr Hosowicz
+Last night, I tried to merge rest-of-Linux-2.6.37-rc7 on top of
+linux-next (next-20101221), fixed the conflicts manually.
+Then I tried to pull-in vfs-scale-working and I guess I have solved
+the merge-problems correct, but my build had several errors.
+So, I need more exercise :-).
 
---=20
-Babcia rox! :
-alek:   przyszli do mnie jehowi dzisiaj, otworzy=B3a babcia
-pate_q: i co?
-alek:   po 30 minutach rozmowy chcieli przej=B6=E6 na chrze=B6cija=F1st=
-wo
-NP: Peter Green Splinter Group - Hiding In Shadows
-NB: 2.6.37-rc7
+Now, to my questions:
+
+[1] Linux-next tree as base?
+
+Why are all those for-next/linux-next sub-trees not based/rebased on
+linux-next and prepared for you as *the* main co-ordinator of
+linux-next?
+
+=46unny, there are strange names around like "test" for linux-acpi-2.6
+for example - is this a "for-next" tree or not?
+I mean the nomenclature seems not to be consistent when I look over
+the sub-tress.
+Then submaintainers have branches like (what I prefer) "for-linus"
+(aka upstream, for-2.6.37) or mostly "for-next" (or "linux-next", aka
+for-2.6.38) within a single (same) GIT repository.
+Others prefer two separated repos: For example net-2.6 ->
+upstream/for-2.6.37 and net-next-2.6 -> linux-next/for-2.6.38.
+Surely, it depends on the sub-tree and the interaction with other sub-t=
+rees.
+
+Can't all submaintainers use "for-linus" (upstream-fixes) and
+"for-next" (new code for upcoming release)?
+
+That's leading to my next question: Ideal/optimal work-flow in merging
+tress on top of "parent".
+
+Here an example for a "wise" dependency chain for pulls/merges:
+1. net-2.6 -> 2. wireless-2.6 -> 3. net-next-2.6 -> 4. wireless-next-2.=
+6
+
+So John Linville (maintainer of linux-wireless) and Dave Miller
+(maintainer of net-2.6) are really working together (I missed that
+John also pulls in bluetooth sub-tree). The work (pull-requests) are
+documented by emails to both MLs.
+
+=46or me, it seemd other sub-trees which interact or overlap are not
+well co-ordinated (I have block-2.6, vfs-2.6 and *-fs in mind)
+So, this needs a bit of an analysis/discussion which would help to
+reduce this merge f-ups (I hope).
+
+[2] Merge process?
+
+Is this a script you are using? Is there a standard work-flow you
+follow? tree1, then tree2, then tree3... Is this always the same
+procedure? Does a script exist or you do that manually? Do you use
+"brain-power" or which strategies do you perform to solve merge
+conflicts? Which help can give git tool on this?
+
+My 0.02EUR.
+
+- Sedat -
