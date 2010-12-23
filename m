@@ -1,122 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the block tree
-Date: Thu, 23 Dec 2010 12:53:56 +1100
-Message-ID: <20101223125356.9ce57329.sfr@canb.auug.org.au>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: linux-next: build failure after merge of the sound-asoc tree
+Date: Thu, 23 Dec 2010 02:12:12 +0000
+Message-ID: <20101223021212.GA25886@opensource.wolfsonmicro.com>
+References: <20101223120243.1617cd40.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54303 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752127Ab0LWByD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 22 Dec 2010 20:54:03 -0500
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:44979 "EHLO
+	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752553Ab0LWCMO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 22 Dec 2010 21:12:14 -0500
+Content-Disposition: inline
+In-Reply-To: <20101223120243.1617cd40.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Nicholas Bellinger <nab@linux-iscsi.org>, James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Liam Girdwood <lrg@slimlogic.co.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Jens,
+On Thu, Dec 23, 2010 at 12:02:43PM +1100, Stephen Rothwell wrote:
 
-After merging the block tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+> After merging the sound-asoc tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 
-drivers/target/target_core_iblock.c: In function 'iblock_create_virtdevice':
-drivers/target/target_core_iblock.c:155: error: implicit declaration of function 'open_bdev_exclusive'
-drivers/target/target_core_iblock.c:156: warning: assignment makes pointer from integer without a cast
-drivers/target/target_core_iblock.c: In function 'iblock_free_device':
-drivers/target/target_core_iblock.c:223: error: implicit declaration of function 'close_bdev_exclusive'
-drivers/target/target_core_pscsi.c: In function 'pscsi_create_type_disk':
-drivers/target/target_core_pscsi.c:463: error: implicit declaration of function 'open_bdev_exclusive'
-drivers/target/target_core_pscsi.c:464: warning: assignment makes pointer from integer without a cast
-drivers/target/target_core_pscsi.c:474: error: implicit declaration of function 'close_bdev_exclusive'
+> ERROR: "__tracepoint_snd_soc_jack_irq" [sound/soc/codecs/snd-soc-wm8962.ko] undefined!
+> ERROR: "__tracepoint_snd_soc_jack_irq" [sound/soc/codecs/snd-soc-wm8903.ko] undefined!
 
-Caused by commit 759026ddf4bdcfc68d1d330c7a5a9aee026a77c3 ("[SCSI]
-target: Add LIO target core v4.0.0-rc6") from the scsi tree interacting
-with commits e525fd89d380c4a94c0d63913a1dd1a593ed25e7 ("block: make
-blkdev_get/put() handle exclusive access") and
-d4d77629953eabd3c14f6fa5746f6b28babfc55f ("block: clean up blkdev_get()
-wrappers and their users") from the block tree.
+> Caused by commit 1c9e9795b5e2348df619fd6010d7583dc9b8c811 ("ASoC: Add
+> jack IRQ trace to 88pm860x driver").
 
-We have better ways of deprecating/replacing interfaces ...
-
-I have added the following fix up patch for today ... and can carry it as
-necessary, though someone needs to remember to tell Linus when the latter
-of the block and scsi trees get merged.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 23 Dec 2010 12:34:11 +1100
-Subject: [PATCH] scsi: fix for open/close_bdev_exclusive going away
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/target/target_core_iblock.c |    6 +++---
- drivers/target/target_core_pscsi.c  |   12 ++++++------
- 2 files changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/target/target_core_iblock.c b/drivers/target/target_core_iblock.c
-index e99bfc2..0d55188 100644
---- a/drivers/target/target_core_iblock.c
-+++ b/drivers/target/target_core_iblock.c
-@@ -152,8 +152,8 @@ static struct se_device *iblock_create_virtdevice(
- 	printk(KERN_INFO  "IBLOCK: Claiming struct block_device: %s\n",
- 			ib_dev->ibd_udev_path);
- 
--	bd = open_bdev_exclusive(ib_dev->ibd_udev_path,
--			FMODE_WRITE|FMODE_READ, ib_dev);
-+	bd = blkdev_get_by_path(ib_dev->ibd_udev_path,
-+			FMODE_WRITE|FMODE_READ|FMODE_EXCL, ib_dev);
- 	if (!(bd))
- 		goto failed;
- 	/*
-@@ -220,7 +220,7 @@ static void iblock_free_device(void *p)
- {
- 	struct iblock_dev *ib_dev = p;
- 
--	close_bdev_exclusive(ib_dev->ibd_bd, FMODE_WRITE|FMODE_READ);
-+	blkdev_put(ib_dev->ibd_bd, FMODE_WRITE|FMODE_READ|FMODE_EXCL);
- 	bioset_free(ib_dev->ibd_bio_set);
- 	kfree(ib_dev);
- }
-diff --git a/drivers/target/target_core_pscsi.c b/drivers/target/target_core_pscsi.c
-index 6a7495b..05924d1 100644
---- a/drivers/target/target_core_pscsi.c
-+++ b/drivers/target/target_core_pscsi.c
-@@ -460,10 +460,10 @@ static struct se_device *pscsi_create_type_disk(
- 	 * Claim exclusive struct block_device access to struct scsi_device
- 	 * for TYPE_DISK using supplied udev_path
- 	 */
--	bd = open_bdev_exclusive(se_dev->se_dev_udev_path,
--				FMODE_WRITE|FMODE_READ, pdv);
-+	bd = blkdev_get_by_path(se_dev->se_dev_udev_path,
-+				FMODE_WRITE|FMODE_READ|FMODE_EXCL, pdv);
- 	if (!(bd)) {
--		printk("pSCSI: open_bdev_exclusive() failed\n");
-+		printk("pSCSI: blkdev_get_by_path() failed\n");
- 		scsi_device_put(sd);
- 		return NULL;
- 	}
-@@ -471,7 +471,7 @@ static struct se_device *pscsi_create_type_disk(
- 
- 	dev = pscsi_add_device_to_list(hba, se_dev, pdv, sd, dev_flags);
- 	if (!(dev)) {
--		close_bdev_exclusive(pdv->pdv_bd, FMODE_WRITE|FMODE_READ);
-+		blkdev_put(pdv->pdv_bd, FMODE_WRITE|FMODE_READ|FMODE_EXCL);
- 		scsi_device_put(sd);
- 		return NULL;
- 	}
-@@ -680,8 +680,8 @@ static void pscsi_free_device(void *p)
- 		 * struct scsi_device with TYPE_DISK from pscsi_create_type_disk()
- 		 */
- 		if ((sd->type == TYPE_DISK) && pdv->pdv_bd) {
--			close_bdev_exclusive(pdv->pdv_bd,
--					FMODE_WRITE|FMODE_READ);
-+			blkdev_put(pdv->pdv_bd,
-+					FMODE_WRITE|FMODE_READ|FMODE_EXCL);
- 			pdv->pdv_bd = NULL;
- 		}
- 		/*
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+It's not that commit - that's for a totally different driver to those
+above which can't build on x86 as x86 lacks generic hardirqs.  I've
+pushed up a change which ifdefs out all the tracepoints when things are
+built modular, but it seems unfortunate that x86 isn't doing the right
+thing here, whatever ARM is doing seems to DTRT.
