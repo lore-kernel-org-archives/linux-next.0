@@ -1,75 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (ux500-core
- tree related)
-Date: Thu, 23 Dec 2010 22:36:34 +1100
-Message-ID: <20101223223634.8c92ef31.sfr@canb.auug.org.au>
+Subject: linux-next: No tree for December 23
+Date: Thu, 23 Dec 2010 22:40:57 +1100
+Message-ID: <20101223224057.3da60db3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__23_Dec_2010_22_36_34_+1100_/VQl5OvtmOBhJKmS"
+ boundary="Signature=_Thu__23_Dec_2010_22_40_57_+1100_V/ghN5Igt77s/nud"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:33635 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:41995 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752839Ab0LWLgo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 23 Dec 2010 06:36:44 -0500
+	id S1753134Ab0LWLlE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 23 Dec 2010 06:41:04 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sundar Iyer <sundar.iyer@stericsson.com>, Dmitry Torokhov <dtor@mail.ru>
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Thu__23_Dec_2010_22_36_34_+1100_/VQl5OvtmOBhJKmS
+--Signature=_Thu__23_Dec_2010_22_40_57_+1100_V/ghN5Igt77s/nud
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the final tree, today's linux-next build (powerpc allyesconfi=
-g)
-failed like this:
+Christmas has intervened!  Today's linux-next (I was putting it together
+in my spare moments) took too long, so it is not being released, sorry.
 
-drivers/input/keyboard/tc3589x-keypad.c: In function 'tc3589x_keypad_enable=
-':
-drivers/input/keyboard/tc3589x-keypad.c:239: error: 'keypad' undeclared (fi=
-rst use in this function)
-drivers/input/keyboard/tc3589x-keypad.c: In function 'tc3589x_keypad_disabl=
-e':
-drivers/input/keyboard/tc3589x-keypad.c:268: error: 'keypad' undeclared (fi=
-rst use in this function)
-drivers/input/keyboard/tc3589x-keypad.c: At top level:
-drivers/input/keyboard/tc3589x-keypad.c:448: error: expected ',' or ';' bef=
-ore 'static'
-drivers/input/keyboard/tc3589x-keypad.c: In function 'tc3589x_keypad_init':
-drivers/input/keyboard/tc3589x-keypad.c:460: error: 'tc3589x_keypad_driver'=
- undeclared (first use in this function)
-drivers/input/keyboard/tc3589x-keypad.c: In function 'tc3589x_keypad_exit':
-drivers/input/keyboard/tc3589x-keypad.c:466: error: 'tc3589x_keypad_driver'=
- undeclared (first use in this function)
-drivers/input/keyboard/tc3589x-keypad.c:466: warning: 'return' with a value=
-, in function returning void
+The next release of linux-next will be Dec 27, or 28 (my time).  Have a
+nice break and relax.  :-)
 
-Caused by commit 1967733650dac41c93954a187246c91430c4a94f
-("input/tc3589x: add tc3589x keypad support").
-
-I have not taken any action as I am not releasing linux-next today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__23_Dec_2010_22_36_34_+1100_/VQl5OvtmOBhJKmS
+--Signature=_Thu__23_Dec_2010_22_40_57_+1100_V/ghN5Igt77s/nud
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNEzRCAAoJEDMEi1NhKgbsrwkH/3wU6blFLZWEYoGJXsc6nvkK
-Z6X08tIPkKeJ6JFQC0xB4sgFwnp6vbEp+0QQwcWtgUZ2hxYQq/9PNu/wewnSBj9b
-UiPFrJHe17nb5r+b/WoEVYPXValMwzgXYUHTXK5e4vbyEFBFuDs0ojsSTxR1N5JT
-9iTERb9c2DSPNYzaabwE3LMDYtIq1O5hFt6F2JGuQV/tqhnl3I24vRoWKqHJ6sOX
-1DXOBtqgb/UNqqPQ8sFWifL/31RXQWz2rUOTgiA6F0QJU6nFwIXGQyRE2um0ZX12
-5oINydsQvuAK+kYD+FklE8lcPrplh0Jdrqp1AUUq0MFHDT6fOCvQXdFVJkrfGWU=
-=X+Js
+iQEcBAEBAgAGBQJNEzVJAAoJEDMEi1NhKgbssTEH/3l8STqiPHlFzG+lZD6N/rNi
+CnmmngAK9v4iovgVwFclUAu13W1TRzeWpk4RHcT8cSPa049cTidpGQdvLyx5vr38
+/etqM47Hc4k9l8RoiANkSb6pF1QmwbDNvg7zt+OSQsRF/GYuVx58nH+0tfIuInAd
+7OXzCH9PcDt0eT1fisxjYmg97dBG7hvnfRTeT4Ue1MkAq4G49GjFE2xGiOZSR/K5
+FcSGrvOEO26OkFDos+Rzmw5cjSMI6tbksnnf8zIcbDtYW21P1FkLdDce9CuZCpdV
+Qfi7O78W6YF9XWBHTJCSiy4zc1OwamGRxpCaN6N1YgQjLk68n0niW/qFIYfxn3w=
+=6y9u
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__23_Dec_2010_22_36_34_+1100_/VQl5OvtmOBhJKmS--
+--Signature=_Thu__23_Dec_2010_22_40_57_+1100_V/ghN5Igt77s/nud--
