@@ -1,132 +1,53 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: linux-next: manual merge of the sound tree with the s5p tree
-Date: Fri, 24 Dec 2010 10:32:33 +0900
-Message-ID: <008f01cba30a$72f5c160$58e14420$%kim@samsung.com>
-References: <20101223115339.1ce18216.sfr@canb.auug.org.au>
- <003f01cba28c$872214f0$95663ed0$%kim@samsung.com>
- <s5hk4j0n43g.wl%tiwai@suse.de>
- <004001cba292$3827d2d0$a8777870$%kim@samsung.com>
- <s5hvd2ku49r.wl%tiwai@suse.de>
- <004101cba294$8639de30$92ad9a90$%kim@samsung.com>
- <s5h7hf0tvct.wl%tiwai@suse.de>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: [PATCH 3/3 V13] RO/NX protection for loadable kernel
+Date: Thu, 23 Dec 2010 20:43:50 -0500
+Message-ID: <63168.1293155030@localhost>
+References: <4CE2F914.9070106@free.fr> <24422.1290656467@localhost> <20101126182355.62615dff@mat-laptop> <20101208221951.GO5750@outflux.net> <20101211001857.4c5e0794@mat-laptop> <20101222124019.GG10809@elte.hu> <34428.1293053719@localhost>
+            <1293116508.22802.14.camel@gandalf.stny.rr.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: multipart/signed; boundary="==_Exmh_1293155030_5070P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:44173 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752038Ab0LXBcl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Dec 2010 20:32:41 -0500
-In-reply-to: <s5h7hf0tvct.wl%tiwai@suse.de>
-Content-language: ko
+Received: from lennier.cc.vt.edu ([198.82.162.213]:45965 "EHLO
+	lennier.cc.vt.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752021Ab0LXBpp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Dec 2010 20:45:45 -0500
+In-Reply-To: Your message of "Thu, 23 Dec 2010 10:01:48 EST."
+             <1293116508.22802.14.camel@gandalf.stny.rr.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: 'Takashi Iwai' <tiwai@suse.de>, 'Russell King' <rmk+kernel@arm.linux.org.uk>
-Cc: 'Stephen Rothwell' <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Jassi Brar' <jassi.brar@samsung.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ingo Molnar <mingo@elte.hu>, mat <castet.matthieu@free.fr>, Kees Cook <kees.cook@canonical.com>, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Rusty Russell <rusty@rustcorp.com.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>, Siarhei Liakh <sliakh.lkml@gmail.com>
 
-Takashi Iwai wrote:
+--==_Exmh_1293155030_5070P
+Content-Type: text/plain; charset=us-ascii
+
+On Thu, 23 Dec 2010 10:01:48 EST, Steven Rostedt said:
+> On Wed, 2010-12-22 at 16:35 -0500, Valdis.Kletnieks@vt.edu wrote:
 > 
-> At Thu, 23 Dec 2010 20:28:27 +0900,
-> Kukjin Kim wrote:
-> >
-> > Takashi Iwai wrote:
-> > >
-> >
-> > (snip)
-> >
-> > > > > > Anyway I need above commits from sound-2.6.git in my tree...
-> > > > > > so how method is better to me instead of cherry-pick it?
-> > > > >
-> > > > > You can merge topic/asoc branch of sound git tree.
-> > > > > This brach contains the all necessary commits for ASoC and is
-almost
-> > > > > never rebased.
-> > > >
-> > > > Hi,
-> > > >
-> > > > But I can't merge it because there is no 'topic/asoc' branch in
-> > > > sound-2.6.git.
-> > > >
-(git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound-2.6.git)
-> > > >
-> > > > Is there another repository?
-> > >
-> > > OK, Mark's tree doesn't contain.  But you can merge for-2.6.38 tree
-there.
-> > >
-> > > The main sound git tree is found in
-> > >     git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound-2.6.git
-> > >
-> > Aha~ :-)
-> >
-> > > > And should I merge it in my tree even though don't need all of ASoC
-> > commits
-> > > > :-( ?
-> > >
-> > > In general yes because this is the tree to be merged to 2.6.38.
-> > >
-> > Yeah, I know it.
-> >
-> > > > I'm not sure how many commits are in there...
-> > >
-> > > You can keep two branches.  One contains only your fixes, and another
-> > > is the merged branch from yours and from sound git tree.  Expose the
-> > > latter merged tree for linux-next.
-> > >
-> > Yeah...however, firstly, my tree will be sent to rmk during 38 merge
-window,
-> > if I merge from sound git, for avoiding build error I should send all
-> > including them not only my patches. I think there is no need to
-rmk...hmm
-> >
-> > So I did 'cherry-pick' only needed 2 commits in my tree.
+> > Steve Rostedt's patch that moves the setting of the page permissions seems to
+> > make this patch no longer necessary.  I tripped over this same issue, but the
+> > version in the latest -mmotm does not need it, as it includes Steve's fix.
 > 
-> And that caused problems :)
-> 
-Yup...you're right. As I said, I couldn't suitable some branch for me.
+> Can I add your "Tested-by: ..." to the commit?
 
-> > > There are many other ways to manage such things, but the above has
-> > > worked for me well, at least.
-> >
-> > Yeah I think so...but is there another better way in this case?
-Hehehe...
-> 
-> Well, ideally, create a separate branch containing these cross-tree
-> commits based on vanilla.  Then pull this branch to both arm (or your)
-> and sound trees.  In that way, both trees share the same commits in
-> the least amount.
-> 
-Yeah...
+Sure.  I can verify that the patch series (a) doesn't break well-behaved
+modules and (b) it *does* trigger for misbehaving modules (I sent the
+VirtualBox crew a bug report for a module that tried to write to an area
+marked executable).
 
-> I basically don't like to rebase and the commits have been already in
-> sound tree, but if this is the only way and Russell prefers this, it
-> can be a possible option.
-> 
-I agree with you...now, rebase stuff is unnecessary load to you.
 
-Ok...firstly, need to ask to Russell.
-(Added Russell in To)
+--==_Exmh_1293155030_5070P
+Content-Type: application/pgp-signature
 
-Hi Russell,
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+Comment: Exmh version 2.5 07/13/2001
 
-Sorry for bothering...
-If possible, please read this thread :-)
+iD8DBQFNE/rWcC3lWbTT17ARAiEOAKCiF4UdJ1HEixtqkm/y8HDMCp/0XQCg7FSx
+uaom8HitnXS3acejq/EEylA=
+=S4Kx
+-----END PGP SIGNATURE-----
 
-So...
-
-May/Should I merge sound tree for avoiding build error and conflict between
-each other for 37 merge window instead of cherry-pick?
-Or sound maintainer should rebase his tree so that can make some branch
-which can support to avoid build error for me?
-...Or because Stephen already informed about that so you or Linus can care
-just current tree during merge window?
-
-Which one is better to us? Or another method? Please let me know.
-
-Thanks and Merry Christmas everyone :-)
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+--==_Exmh_1293155030_5070P--
