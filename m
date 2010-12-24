@@ -1,134 +1,132 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Subject: Re: linux-next: build failure after merge of the block tree
-Date: Thu, 23 Dec 2010 14:36:50 -0800
-Message-ID: <1293143810.4649.169.camel@haakon2.linux-iscsi.org>
-References: <20101223125356.9ce57329.sfr@canb.auug.org.au>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: linux-next: manual merge of the sound tree with the s5p tree
+Date: Fri, 24 Dec 2010 10:32:33 +0900
+Message-ID: <008f01cba30a$72f5c160$58e14420$%kim@samsung.com>
+References: <20101223115339.1ce18216.sfr@canb.auug.org.au>
+ <003f01cba28c$872214f0$95663ed0$%kim@samsung.com>
+ <s5hk4j0n43g.wl%tiwai@suse.de>
+ <004001cba292$3827d2d0$a8777870$%kim@samsung.com>
+ <s5hvd2ku49r.wl%tiwai@suse.de>
+ <004101cba294$8639de30$92ad9a90$%kim@samsung.com>
+ <s5h7hf0tvct.wl%tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20101223125356.9ce57329.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, James Bottomley <James.Bottomley@HansenPartnership.com>, Christoph Hellwig <hch@infradead.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:44173 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752038Ab0LXBcl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Dec 2010 20:32:41 -0500
+In-reply-to: <s5h7hf0tvct.wl%tiwai@suse.de>
+Content-language: ko
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: 'Takashi Iwai' <tiwai@suse.de>, 'Russell King' <rmk+kernel@arm.linux.org.uk>
+Cc: 'Stephen Rothwell' <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Jassi Brar' <jassi.brar@samsung.com>
 
-On Thu, 2010-12-23 at 12:53 +1100, Stephen Rothwell wrote:
-> Hi Jens,
+Takashi Iwai wrote:
 > 
-> After merging the block tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+> At Thu, 23 Dec 2010 20:28:27 +0900,
+> Kukjin Kim wrote:
+> >
+> > Takashi Iwai wrote:
+> > >
+> >
+> > (snip)
+> >
+> > > > > > Anyway I need above commits from sound-2.6.git in my tree...
+> > > > > > so how method is better to me instead of cherry-pick it?
+> > > > >
+> > > > > You can merge topic/asoc branch of sound git tree.
+> > > > > This brach contains the all necessary commits for ASoC and is
+almost
+> > > > > never rebased.
+> > > >
+> > > > Hi,
+> > > >
+> > > > But I can't merge it because there is no 'topic/asoc' branch in
+> > > > sound-2.6.git.
+> > > >
+(git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound-2.6.git)
+> > > >
+> > > > Is there another repository?
+> > >
+> > > OK, Mark's tree doesn't contain.  But you can merge for-2.6.38 tree
+there.
+> > >
+> > > The main sound git tree is found in
+> > >     git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound-2.6.git
+> > >
+> > Aha~ :-)
+> >
+> > > > And should I merge it in my tree even though don't need all of ASoC
+> > commits
+> > > > :-( ?
+> > >
+> > > In general yes because this is the tree to be merged to 2.6.38.
+> > >
+> > Yeah, I know it.
+> >
+> > > > I'm not sure how many commits are in there...
+> > >
+> > > You can keep two branches.  One contains only your fixes, and another
+> > > is the merged branch from yours and from sound git tree.  Expose the
+> > > latter merged tree for linux-next.
+> > >
+> > Yeah...however, firstly, my tree will be sent to rmk during 38 merge
+window,
+> > if I merge from sound git, for avoiding build error I should send all
+> > including them not only my patches. I think there is no need to
+rmk...hmm
+> >
+> > So I did 'cherry-pick' only needed 2 commits in my tree.
 > 
-> drivers/target/target_core_iblock.c: In function 'iblock_create_virtdevice':
-> drivers/target/target_core_iblock.c:155: error: implicit declaration of function 'open_bdev_exclusive'
-> drivers/target/target_core_iblock.c:156: warning: assignment makes pointer from integer without a cast
-> drivers/target/target_core_iblock.c: In function 'iblock_free_device':
-> drivers/target/target_core_iblock.c:223: error: implicit declaration of function 'close_bdev_exclusive'
-> drivers/target/target_core_pscsi.c: In function 'pscsi_create_type_disk':
-> drivers/target/target_core_pscsi.c:463: error: implicit declaration of function 'open_bdev_exclusive'
-> drivers/target/target_core_pscsi.c:464: warning: assignment makes pointer from integer without a cast
-> drivers/target/target_core_pscsi.c:474: error: implicit declaration of function 'close_bdev_exclusive'
+> And that caused problems :)
 > 
-> Caused by commit 759026ddf4bdcfc68d1d330c7a5a9aee026a77c3 ("[SCSI]
-> target: Add LIO target core v4.0.0-rc6") from the scsi tree interacting
-> with commits e525fd89d380c4a94c0d63913a1dd1a593ed25e7 ("block: make
-> blkdev_get/put() handle exclusive access") and
-> d4d77629953eabd3c14f6fa5746f6b28babfc55f ("block: clean up blkdev_get()
-> wrappers and their users") from the block tree.
-> 
-> We have better ways of deprecating/replacing interfaces ...
-> 
-> I have added the following fix up patch for today ... and can carry it as
-> necessary, though someone needs to remember to tell Linus when the latter
-> of the block and scsi trees get merged.
-> 
+Yup...you're right. As I said, I couldn't suitable some branch for me.
 
-Hi Stephen and James,
-
-Thank you for catching and fixing this breakage.  Please carry this
-patch for now, and I will get this merged into my upstream tree when I
-pull .38-rc1 from Linus.  The patch is fine so feel free to add my:
-
-Acked-by: Nicholas A. Bellinger <nab@linux-iscsi.org>
-
-Also now that drivers/target/ code is on the linux-next radar, I will
-begin regularly build testing against a 'for-linux-next' branch to catch
-any future issues before they appear on your side.
-
-Thank you and warmest regards,
-
---nab
-
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Thu, 23 Dec 2010 12:34:11 +1100
-> Subject: [PATCH] scsi: fix for open/close_bdev_exclusive going away
+> > > There are many other ways to manage such things, but the above has
+> > > worked for me well, at least.
+> >
+> > Yeah I think so...but is there another better way in this case?
+Hehehe...
 > 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/target/target_core_iblock.c |    6 +++---
->  drivers/target/target_core_pscsi.c  |   12 ++++++------
->  2 files changed, 7 insertions(+), 7 deletions(-)
+> Well, ideally, create a separate branch containing these cross-tree
+> commits based on vanilla.  Then pull this branch to both arm (or your)
+> and sound trees.  In that way, both trees share the same commits in
+> the least amount.
 > 
-> diff --git a/drivers/target/target_core_iblock.c b/drivers/target/target_core_iblock.c
-> index e99bfc2..0d55188 100644
-> --- a/drivers/target/target_core_iblock.c
-> +++ b/drivers/target/target_core_iblock.c
-> @@ -152,8 +152,8 @@ static struct se_device *iblock_create_virtdevice(
->  	printk(KERN_INFO  "IBLOCK: Claiming struct block_device: %s\n",
->  			ib_dev->ibd_udev_path);
->  
-> -	bd = open_bdev_exclusive(ib_dev->ibd_udev_path,
-> -			FMODE_WRITE|FMODE_READ, ib_dev);
-> +	bd = blkdev_get_by_path(ib_dev->ibd_udev_path,
-> +			FMODE_WRITE|FMODE_READ|FMODE_EXCL, ib_dev);
->  	if (!(bd))
->  		goto failed;
->  	/*
-> @@ -220,7 +220,7 @@ static void iblock_free_device(void *p)
->  {
->  	struct iblock_dev *ib_dev = p;
->  
-> -	close_bdev_exclusive(ib_dev->ibd_bd, FMODE_WRITE|FMODE_READ);
-> +	blkdev_put(ib_dev->ibd_bd, FMODE_WRITE|FMODE_READ|FMODE_EXCL);
->  	bioset_free(ib_dev->ibd_bio_set);
->  	kfree(ib_dev);
->  }
-> diff --git a/drivers/target/target_core_pscsi.c b/drivers/target/target_core_pscsi.c
-> index 6a7495b..05924d1 100644
-> --- a/drivers/target/target_core_pscsi.c
-> +++ b/drivers/target/target_core_pscsi.c
-> @@ -460,10 +460,10 @@ static struct se_device *pscsi_create_type_disk(
->  	 * Claim exclusive struct block_device access to struct scsi_device
->  	 * for TYPE_DISK using supplied udev_path
->  	 */
-> -	bd = open_bdev_exclusive(se_dev->se_dev_udev_path,
-> -				FMODE_WRITE|FMODE_READ, pdv);
-> +	bd = blkdev_get_by_path(se_dev->se_dev_udev_path,
-> +				FMODE_WRITE|FMODE_READ|FMODE_EXCL, pdv);
->  	if (!(bd)) {
-> -		printk("pSCSI: open_bdev_exclusive() failed\n");
-> +		printk("pSCSI: blkdev_get_by_path() failed\n");
->  		scsi_device_put(sd);
->  		return NULL;
->  	}
-> @@ -471,7 +471,7 @@ static struct se_device *pscsi_create_type_disk(
->  
->  	dev = pscsi_add_device_to_list(hba, se_dev, pdv, sd, dev_flags);
->  	if (!(dev)) {
-> -		close_bdev_exclusive(pdv->pdv_bd, FMODE_WRITE|FMODE_READ);
-> +		blkdev_put(pdv->pdv_bd, FMODE_WRITE|FMODE_READ|FMODE_EXCL);
->  		scsi_device_put(sd);
->  		return NULL;
->  	}
-> @@ -680,8 +680,8 @@ static void pscsi_free_device(void *p)
->  		 * struct scsi_device with TYPE_DISK from pscsi_create_type_disk()
->  		 */
->  		if ((sd->type == TYPE_DISK) && pdv->pdv_bd) {
-> -			close_bdev_exclusive(pdv->pdv_bd,
-> -					FMODE_WRITE|FMODE_READ);
-> +			blkdev_put(pdv->pdv_bd,
-> +					FMODE_WRITE|FMODE_READ|FMODE_EXCL);
->  			pdv->pdv_bd = NULL;
->  		}
->  		/*
+Yeah...
+
+> I basically don't like to rebase and the commits have been already in
+> sound tree, but if this is the only way and Russell prefers this, it
+> can be a possible option.
 > 
+I agree with you...now, rebase stuff is unnecessary load to you.
+
+Ok...firstly, need to ask to Russell.
+(Added Russell in To)
+
+Hi Russell,
+
+Sorry for bothering...
+If possible, please read this thread :-)
+
+So...
+
+May/Should I merge sound tree for avoiding build error and conflict between
+each other for 37 merge window instead of cherry-pick?
+Or sound maintainer should rebase his tree so that can make some branch
+which can support to avoid build error for me?
+...Or because Stephen already informed about that so you or Linus can care
+just current tree during merge window?
+
+Which one is better to us? Or another method? Please let me know.
+
+Thanks and Merry Christmas everyone :-)
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
