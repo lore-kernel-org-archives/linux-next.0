@@ -1,64 +1,46 @@
-From: Russell King <rmk@arm.linux.org.uk>
-Subject: Re: linux-next: manual merge of the sound tree with the s5p tree
-Date: Fri, 24 Dec 2010 08:27:36 +0000
-Message-ID: <20101224082736.GA31540@flint.arm.linux.org.uk>
-References: <20101223115339.1ce18216.sfr@canb.auug.org.au> <003f01cba28c$872214f0$95663ed0$%kim@samsung.com> <s5hk4j0n43g.wl%tiwai@suse.de> <004001cba292$3827d2d0$a8777870$%kim@samsung.com> <s5hvd2ku49r.wl%tiwai@suse.de> <004101cba294$8639de30$92ad9a90$%kim@samsung.com> <s5h7hf0tvct.wl%tiwai@suse.de> <008f01cba30a$72f5c160$58e14420$%kim@samsung.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the omap tree with the arm tree
+Date: Mon, 27 Dec 2010 09:41:56 +1100
+Message-ID: <20101227094156.5750aa6e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:53053 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751425Ab0LXI2F (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 24 Dec 2010 03:28:05 -0500
-Content-Disposition: inline
-In-Reply-To: <008f01cba30a$72f5c160$58e14420$%kim@samsung.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:36867 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752989Ab0LZWmC (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 26 Dec 2010 17:42:02 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Takashi Iwai' <tiwai@suse.de>, 'Stephen Rothwell' <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Jassi Brar' <jassi.brar@samsung.com>
+To: Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jean-Christop PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Russell King <rmk@arm.linux.org.uk>, Ben Gamari <bgamari.foss@gmail.com>
 
-On Fri, Dec 24, 2010 at 10:32:33AM +0900, Kukjin Kim wrote:
-> Takashi Iwai wrote:
-> > I basically don't like to rebase and the commits have been already in
-> > sound tree, but if this is the only way and Russell prefers this, it
-> > can be a possible option.
-> > 
-> I agree with you...now, rebase stuff is unnecessary load to you.
-> 
-> Ok...firstly, need to ask to Russell.
-> (Added Russell in To)
-> 
-> Hi Russell,
-> 
-> Sorry for bothering...
-> If possible, please read this thread :-)
-> 
-> So...
-> 
-> May/Should I merge sound tree for avoiding build error and conflict between
-> each other for 37 merge window instead of cherry-pick?
+Hi all,
 
-IMHO it is never appropriate to cherry pick commits from someone elses
-tree into your own tree as it creates duplicates in the history.
+Today's linux-next merge of the omap tree got a conflict in
+arch/arm/plat-omap/Kconfig between commit
+6d803ba736abb5e122dede70a4720e4843dd6df4 ("ARM: 6483/1: arm & sh:
+factorised duplicated clkdev.c") from the arm tree and commit
+dc69d1af9e8d9cbbabff88bb35a6782187a22229 ("omap2: Make OMAP2PLUS select
+OMAP_DM_TIMER") from the omap tree.
 
-What would be better is to talk to the person who owns the tree with
-the commits you're interested in, and see about merging the minimal
-set of commits you need into your own tree.  They may tell you the
-name of a branch for you to merge into your tree (preferred), or more
-obscurely tell you a commit id in their tree.
-
-Now there are two options:
-- If you know the branch you need, you can then either pull that branch
-  into your tree, and commit the dependent patches on top of that.
-
-- If you only have a commit ID in the remote tree, you can fetch their
-  tree first, use gitk to visualize the history and check you have it,
-  and then do:
-    git merge --no-commit <commitid>
-  in your tree.  Then commit the result with your own commit message
-  explaining what's going on.
-
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
 -- 
-Russell King
- Linux kernel    2.6 ARM Linux   - http://www.arm.linux.org.uk/
- maintainer of:
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/arm/plat-omap/Kconfig
+index c940843,bc0c7aa..0000000
+--- a/arch/arm/plat-omap/Kconfig
++++ b/arch/arm/plat-omap/Kconfig
+@@@ -17,7 -17,8 +17,8 @@@ config ARCH_OMAP
+  
+  config ARCH_OMAP2PLUS
+  	bool "TI OMAP2/3/4"
+ -	select COMMON_CLKDEV
+ +	select CLKDEV_LOOKUP
++ 	select OMAP_DM_TIMER
+  	help
+  	  "Systems based on OMAP2, OMAP3 or OMAP4"
+  
