@@ -1,46 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the omap tree with the arm tree
-Date: Mon, 27 Dec 2010 09:41:56 +1100
-Message-ID: <20101227094156.5750aa6e.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the sh tree with the sh-current tree
+Date: Mon, 27 Dec 2010 09:45:46 +1100
+Message-ID: <20101227094546.63f76577.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__27_Dec_2010_09_45_46_+1100_WDlnhwlptebDKf=F"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36867 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:60388 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752989Ab0LZWmC (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 26 Dec 2010 17:42:02 -0500
+	id S1753082Ab0LZWpy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 26 Dec 2010 17:45:54 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jean-Christop PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Russell King <rmk@arm.linux.org.uk>, Ben Gamari <bgamari.foss@gmail.com>
+To: Paul Mundt <lethal@linux-sh.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi all,
+--Signature=_Mon__27_Dec_2010_09_45_46_+1100_WDlnhwlptebDKf=F
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the omap tree got a conflict in
-arch/arm/plat-omap/Kconfig between commit
-6d803ba736abb5e122dede70a4720e4843dd6df4 ("ARM: 6483/1: arm & sh:
-factorised duplicated clkdev.c") from the arm tree and commit
-dc69d1af9e8d9cbbabff88bb35a6782187a22229 ("omap2: Make OMAP2PLUS select
-OMAP_DM_TIMER") from the omap tree.
+Hi Paul,
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
--- 
+Today's linux-next merge of the sh tree got a conflict in
+arch/sh/kernel/cpu/sh2a/clock-sh7201.c between commit
+27f1acccd4d310e941d2e879445324595e2fe463 ("sh: Fix up SH7201 clkfwk
+build") from the sh-current tree and commit
+16b259203c513ed28bd31cc9a981e0d3ad517943 ("sh: migrate SH_CLK_MD to mode
+pin API") from the sh tree.
+
+The latter includes the fix from the former, so I used that.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/arm/plat-omap/Kconfig
-index c940843,bc0c7aa..0000000
---- a/arch/arm/plat-omap/Kconfig
-+++ b/arch/arm/plat-omap/Kconfig
-@@@ -17,7 -17,8 +17,8 @@@ config ARCH_OMAP
-  
-  config ARCH_OMAP2PLUS
-  	bool "TI OMAP2/3/4"
- -	select COMMON_CLKDEV
- +	select CLKDEV_LOOKUP
-+ 	select OMAP_DM_TIMER
-  	help
-  	  "Systems based on OMAP2, OMAP3 or OMAP4"
-  
+--Signature=_Mon__27_Dec_2010_09_45_46_+1100_WDlnhwlptebDKf=F
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNF8WaAAoJEDMEi1NhKgbswoQH/R6JFLc9csScpiV9WDq1HP+B
+WWVNCjGcIYgtdonm03p6E0erDTUW5aifA+2QGSPEsNV4mHgl+sa/DqHjDUigl+id
+/xGQbpYiRXiZzc+g9L/mThYiOOugLf4nDXdARglZVyiDCPebUHr7/D4I0KhxBiw6
+GwIeOTw9XqL63UoGM3+R03IVy8NE4OIwr36F78S0Z9PKl7CXnzbdB5VqNpxVaKMX
+uf+uSmHhABINzyWpkld4NHGa6VywIaPtuszMVE4lURw5D9ZXw/FyILHAkrGovAyc
+IG6+Cz4yN0fEUE8lMSqfRBNhA6kOtWhjSaQBjqw8AdRZizhcdjppD2WASMARUHY=
+=PRUz
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__27_Dec_2010_09_45_46_+1100_WDlnhwlptebDKf=F--
