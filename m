@@ -1,68 +1,46 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the Linus' tree
-Date: Mon, 27 Dec 2010 09:58:12 +1100
-Message-ID: <20101227095812.0f727881.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree with Linus' tree
+Date: Mon, 27 Dec 2010 10:41:44 +1100
+Message-ID: <20101227104144.cedc2d63.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__27_Dec_2010_09_58_12_+1100_t5mYniaBhfYpzPE."
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40163 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753128Ab0LZW6W (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 26 Dec 2010 17:58:22 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jeff Garzik <jgarzik@redhat.com>, Linus <torvalds@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wu Zhangjin <wuzhangjin@gmail.com>, Zhang Le <r0bertz@gentoo.org>, Chen Jie <chenj@lemote.com>
-
---Signature=_Mon__27_Dec_2010_09_58_12_+1100_t5mYniaBhfYpzPE.
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Changli Gao <xiaosuo@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
 Hi all,
 
-After merging the Linus' tree, today's linux-next build (x86_64 allmodconfi=
-g)
-produced these warnings:
+Today's linux-next merge of the net tree got a conflict in
+net/ipv4/fib_frontend.c between commit
+e058464990c2ef1f3ecd6b83a154913c3c06f02a ("Revert "ipv4: Allow
+configuring subnets as local addresses"") from Linus' tree and commit
+5811662b15db018c740c57d037523683fd3e6123 ("net: use the macros defined
+for the members of flowi") from the net tree.
 
-drivers/ata/pata_cs5536.c:47:1: warning: "rdmsr" redefined
-In file included from arch/x86/include/asm/irqflags.h:60,
-                 from include/linux/irqflags.h:15,
-                 from arch/x86/include/asm/system.h:11,
-                 from arch/x86/include/asm/processor.h:17,
-                 from include/linux/prefetch.h:14,
-                 from include/linux/list.h:7,
-                 from include/linux/module.h:9,
-                 from drivers/ata/pata_cs5536.c:33:
-arch/x86/include/asm/paravirt.h:146:1: warning: this is the location of the=
- previous definition
-drivers/ata/pata_cs5536.c:48:1: warning: "wrmsr" redefined
-arch/x86/include/asm/paravirt.h:154:1: warning: this is the location of the=
- previous definition
-
-Caused by commit 9272dcc232b84ccb027d6861077934055d42764d ("pata_cs5536:
-Add support for non-X86_32 platforms").
-
---=20
+Just context changes (I think).  I fixed it up (see below) and can carry
+the fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__27_Dec_2010_09_58_12_+1100_t5mYniaBhfYpzPE.
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNF8iEAAoJEDMEi1NhKgbsS4gIAJQxY29ae59u2xt7O0DjCZsD
-JW3Dp+YxFQx11K+UYEroK+YEBmUIslPtIixEyrIQtFWfRVmRJdzWgy2NTtmyWly8
-UG0sxIS8IbTEeCK3YZUV9Iic/Ug2y/YMH6ouRxuZ30jH2ADDZ0DHsGbrEKu0hnXS
-rXsAVbmy+0Rd4PXjZXzdALgBLG2v2jOXptaqCoV5tHUuDch8cYQoenyAEeIVpD+1
-B+1Y5UwmLBWA5WKdPTN7Zaw2CMx1pewX2hRhxeLfyxVnSQvgpKlsEXESE/rMfYLc
-JQUdn6B6c5vABJvlWeXn9XggkKZq0CS1iGphfy3H7RY3DYOlSECgX8orYIXFj2U=
-=fnK7
------END PGP SIGNATURE-----
-
---Signature=_Mon__27_Dec_2010_09_58_12_+1100_t5mYniaBhfYpzPE.--
+diff --cc net/ipv4/fib_frontend.c
+index c19c1f7,9f8bb68..0000000
+--- a/net/ipv4/fib_frontend.c
++++ b/net/ipv4/fib_frontend.c
+@@@ -158,11 -158,8 +158,7 @@@ static void fib_flush(struct net *net
+  struct net_device *__ip_dev_find(struct net *net, __be32 addr, bool devref)
+  {
+  	struct flowi fl = {
+- 		.nl_u = {
+- 			.ip4_u = {
+- 				.daddr = addr
+- 			}
+- 		},
++ 		.fl4_dst = addr,
+ -		.flags = FLOWI_FLAG_MATCH_ANY_IIF
+  	};
+  	struct fib_result res = { 0 };
+  	struct net_device *dev = NULL;
