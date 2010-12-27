@@ -1,39 +1,78 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: build failure after merge of the sound tree (Was:
- Re: linux-next: build failure after merge of the sound-asoc tree)
-Date: Mon, 27 Dec 2010 15:44:21 +0000
-Message-ID: <20101227154421.GB13400@opensource.wolfsonmicro.com>
-References: <20101223120243.1617cd40.sfr@canb.auug.org.au>
- <20101223021212.GA25886@opensource.wolfsonmicro.com>
- <20101227104951.1ecad371.sfr@canb.auug.org.au>
- <20101226235928.GA18334@opensource.wolfsonmicro.com>
- <20101228021657.44144877.sfr@canb.auug.org.au>
+From: Piotr Hosowicz <piotr@hosowicz.com>
+Subject: Re: linux-next: Tree for December 27
+Date: Mon, 27 Dec 2010 16:45:38 +0100
+Message-ID: <4D18B4A2.1030107@example.com>
+References: <20101227170451.a9a9f873.sfr@canb.auug.org.au>	<4D18A480.2060309@example.com>	<AANLkTi=WhSP1ceHBW95n1e-gHwwnt36h3czFGuKsEny6@mail.gmail.com>	<4D18A972.1020205@example.com> <AANLkTikCeqCLmDJAnf9uT6wW+OLkRop-FJ9MDrMM_oX7@mail.gmail.com> <4D18AD30.9070707@example.com>
+Reply-To: piotr@hosowicz.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-2;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:52968 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1754198Ab0L0PoI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 27 Dec 2010 10:44:08 -0500
-Content-Disposition: inline
-In-Reply-To: <20101228021657.44144877.sfr@canb.auug.org.au>
+Received: from 63.mail-out.ovh.net ([91.121.185.56]:42181 "HELO
+	63.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1754213Ab0L0Ppl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Dec 2010 10:45:41 -0500
+In-Reply-To: <4D18AD30.9070707@example.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Takashi Iwai <tiwai@suse.de>, Liam Girdwood <lrg@slimlogic.co.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: piotr@hosowicz.com
+Cc: sedat.dilek@gmail.com, Sedat Dilek <sedat.dilek@googlemail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, Dec 28, 2010 at 02:16:57AM +1100, Stephen Rothwell wrote:
-> On Sun, 26 Dec 2010 23:59:29 +0000 Mark Brown <broonie@opensource.wolfsonmicro.com> wrote:
+On 27.12.2010 16:13, Piotr Hosowicz wrote:
+> On 27.12.2010 16:08, Sedat Dilek wrote:
+>> 2010/12/27 Piotr Hosowicz<piotr@hosowicz.com>:
+>>> On 27.12.2010 15:48, Sedat Dilek wrote:
+>>>>
+>>>> 2010/12/27 Piotr Hosowicz<piotr@hosowicz.com>:
+>>>>>
+>>>>> On 27.12.2010 07:04, Stephen Rothwell wrote:
+>>>>>
+>>>>> Hello,
+>>>>>
+>>>>> I noticed that after first reboot with this kernel that my MP3
+>>>>> collection
+>>>>> in
+>>>>> mocp layed on Ext4 fs opens painfully slow. It is not my mistake,
+>>>>> because
+>>>>> I
+>>>>> always do it the same way, new kernel, then music on. The problem
+>>>>> is not
+>>>>> present in rc7-git4. I could measure it in some way (timing ls -l=
+a
+>>>>> in tht
+>>>>> dir?) if somebody needs it.
+>>>>>
+>>>>> Regards,
+>>>>>
+>>>>> Piotr Hosowicz
+>>>>>
+>>>>
+>>>> You tried mblk_io_submit mount-option for that partition?
+>>>
+>>> No, I do not use it, I do not even know what it is. My options are:
+>>>
+>>> /dev/sda2 on / type ext4 (rw,errors=3Dremount-ro)
+>>>
+>>
+>> Have a closer look at "ext4: Turn off multiple page-io submission by
+>> default"
+>
+> I tried to Google for mblk_io_submit but I didn't find anything helpf=
+ul.
+> Could you tell me how should I add this option in fstab and what will=
+ be
+> its effect?
 
-> > Hrm?  I thought you merged the ASoC tree before the sound tree, in which
-> > case the above is somehwat surprising.  If the ASoC tree merged OK then
-> > Takashi it should be a simple case of pulling my for-2.6.38 branch to
-> > resolve the issue.
+As far as I understand that option regards writing, not reading. The=20
+symptoms I described occured while reading only.
 
-> I started merging the sound-asoc tree *after* the sound tree when the
-> sound-asoc tree started to be merged into the sound tree.
+Regards,
 
-That hasn't changed - ASoC has always been ahead of the sound tree and
-merged into Linus' tree via the sound tree.  The frequency of merges has
-increased.
+Piotr Hosowicz
+
+--=20
+TV: "W tej chwili, =BFe si=EA tak wyra=BF=EA, zaliczonych mamy 17 zawod=
+niczek."
+NP: Peter Green Splinter Group - Say That You Want To
+NB: 2.6.37-rc7-next-20101227
