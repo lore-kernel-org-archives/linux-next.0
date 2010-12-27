@@ -1,54 +1,72 @@
-From: Sedat Dilek <sedat.dilek@googlemail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: Tree for December 27
-Date: Mon, 27 Dec 2010 09:04:06 +0100
-Message-ID: <AANLkTikbiART+SX_JwM=pcAg0NJffVgX1oU=aO42dmbC@mail.gmail.com>
+Date: Mon, 27 Dec 2010 20:11:55 +1100
+Message-ID: <20101227201155.ee8cd1ab.sfr@canb.auug.org.au>
 References: <20101227170451.a9a9f873.sfr@canb.auug.org.au>
-Reply-To: sedat.dilek@gmail.com
+	<AANLkTikbiART+SX_JwM=pcAg0NJffVgX1oU=aO42dmbC@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__27_Dec_2010_20_11_55_+1100_U5BXPxPrHo/3sR4="
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:38378 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752531Ab0L0IFE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Dec 2010 03:05:04 -0500
-In-Reply-To: <20101227170451.a9a9f873.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:51446 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752697Ab0L0JME (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 27 Dec 2010 04:12:04 -0500
+In-Reply-To: <AANLkTikbiART+SX_JwM=pcAg0NJffVgX1oU=aO42dmbC@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: sedat.dilek@gmail.com
+Cc: Sedat Dilek <sedat.dilek@googlemail.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Mon, Dec 27, 2010 at 7:04 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
+--Signature=_Mon__27_Dec_2010_20_11_55_+1100_U5BXPxPrHo/3sR4=
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Mon, 27 Dec 2010 09:04:06 +0100 Sedat Dilek <sedat.dilek@googlemail.com>=
+ wrote:
 >
-> [The mirroring on kernel.org is running slowly]
->
-> Changes since 20101221:
->
+> Can you try to upload/push via IPADDR?
 
-Can you try to upload/push via IPADDR?
+I can only upload to master.kernel.org, the rest is done by the mirroring
+software.  I have no access to any of the other kernel.org machines.
 
-$ host git.kernel.org
-git.kernel.org is an alias for git.geo.kernel.org.
-git.geo.kernel.org is an alias for git.eu.kernel.org.
-git.eu.kernel.org has address 199.6.1.166
-git.eu.kernel.org has address 130.239.17.7
+> > The sound tree gained a build failure, so I used the version that would
+> > have been in next-20101223.
+>=20
+> I thought there was no "next-20101223" :-).
 
-Being in EU, I get nearly maximum of my DSL-6000 download-rate:
+That is why I said "would have been in" :-)
 
-$ git clone git://130.239.17.7/pub/scm/linux/kernel/git/npiggin/linux-npiggin.git
-Cloning into linux-npiggin...
-remote: Counting objects: 1812908, done.
-remote: Compressing objects: 100% (279491/279491), done.
-Receiving objects:  13% (252336/1812908), 111.50 MiB | 689 KiB/s
+> Can you please upload the patch-diff to
+> <http://www.kernel.org/pub/linux/kernel/v2.6/next/>?
 
-> The sound tree gained a build failure, so I used the version that would
-> have been in next-20101223.
->
+If you mean for next-20101223, then there wasn't one.  I ran out of time
+and just threw away what I had done.
 
-I thought there was no "next-20101223" :-).
+If you mean generally, then (see above) it depends on the mirroring
+software.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Can you please upload the patch-diff to
-<http://www.kernel.org/pub/linux/kernel/v2.6/next/>?
-Thanks in advance.
+--Signature=_Mon__27_Dec_2010_20_11_55_+1100_U5BXPxPrHo/3sR4=
+Content-Type: application/pgp-signature
 
-- Sedat -
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNGFhbAAoJEDMEi1NhKgbscTsH/jowPJsG0O8xz30sC1FTmTfo
+yjsM3cQ/FlImnhBFlV9N4PkiKX/U4/SRnKMX1Z4/3pU2nmQH4SpdlFgcVmi38mfz
+ZUYlIR5shP33wsAabSi3HSrlDlyFwOALjmg6EokUK834OgggIRekjWx5IKHBNOQW
+8rmYiLAi8KTSC61/ZqadhPi15Itc/+BfZTWjtRQPrD8EJ4CPZe+GGaTMf17uIeSe
+73NdEu0Tvv6OpY1M8TuHicHI4yHYOUPNe+qNoJwQaV/MCjjiaW/3DYD6MFdl3UIu
+0QOje2NKZo49vvmIyJTn5yMZ4RgCXzry1y6KYByTUfOAsfVE6KtrZP2dYdp76xU=
+=Yfy7
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__27_Dec_2010_20_11_55_+1100_U5BXPxPrHo/3sR4=--
