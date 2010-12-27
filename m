@@ -1,48 +1,44 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for December 27 (drivers/target)
-Date: Mon, 27 Dec 2010 11:57:55 -0800
-Message-ID: <20101227115755.ffcdfc4f.randy.dunlap@oracle.com>
-References: <20101227170451.a9a9f873.sfr@canb.auug.org.au>
+From: Michal Marek <mmarek@suse.cz>
+Subject: Re: [PATCH] kconfig: fix warning
+Date: Mon, 27 Dec 2010 21:53:35 +0100
+Message-ID: <20101227205335.GF21436@pobox.suse.cz>
+References: <20101223110048.09ff9f40.sfr@canb.auug.org.au> <1293092716-15765-1-git-send-email-lacombar@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:64217 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753995Ab0L0T6p (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Dec 2010 14:58:45 -0500
-In-Reply-To: <20101227170451.a9a9f873.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, nab@kernel.org, scsi <linux-scsi@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1293092716-15765-1-git-send-email-lacombar@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnaud Lacombe <lacombar@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 27 Dec 2010 17:04:51 +1100 Stephen Rothwell wrote:
-
-> Hi all,
+On Thu, Dec 23, 2010 at 03:25:16AM -0500, Arnaud Lacombe wrote:
+> In file included from scripts/kconfig/zconf.tab.c:2502:
+> scripts/kconfig/expr.c:1033: warning: no previous prototype for 'expr_simplify_unmet_dep'
 > 
-> [The mirroring on kernel.org is running slowly]
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Arnaud Lacombe <lacombar@gmail.com>
+> ---
+>  scripts/kconfig/expr.h |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
+
+Applied to kbuild-2.6.git#kconfig, thanks.
+
+Michal
 > 
-> Changes since 20101221:
+> diff --git a/scripts/kconfig/expr.h b/scripts/kconfig/expr.h
+> index 218991b..79ab6e7 100644
+> --- a/scripts/kconfig/expr.h
+> +++ b/scripts/kconfig/expr.h
+> @@ -206,6 +206,7 @@ struct expr *expr_extract_eq_and(struct expr **ep1, struct expr **ep2);
+>  struct expr *expr_extract_eq_or(struct expr **ep1, struct expr **ep2);
+>  void expr_extract_eq(enum expr_type type, struct expr **ep, struct expr **ep1, struct expr **ep2);
+>  struct expr *expr_trans_compare(struct expr *e, enum expr_type type, struct symbol *sym);
+> +struct expr *expr_simplify_unmet_dep(struct expr *e1, struct expr *e2);
+>  
+>  void expr_fprint(struct expr *e, FILE *out);
+>  struct gstr; /* forward */
+> -- 
+> 1.7.3.3
 > 
-> Linus' tree lost its build failure.
-
-
-Hi Nick,
-
-Please test building target code when CONFIG_BLOCK is not enabled.
-
-When CONFIG_BLOCK is not enabled, drivers/target/ gets a boat load of build errors.
-
-Should TCM_IBLOCK depend on BLOCK?  That fixes lots of the build errors,
-but not all of them.
-
-
-The header file include/target/target_core_base.h uses struct queue_limits,
-so it should #include <linux/blkdev.h>.
-
-
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
-desserts:  http://www.xenotime.net/linux/recipes/
