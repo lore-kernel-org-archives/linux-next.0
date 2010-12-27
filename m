@@ -1,75 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
 Subject: Re: linux-next: Tree for December 27
-Date: Tue, 28 Dec 2010 02:20:27 +1100
-Message-ID: <20101228022027.8519be82.sfr@canb.auug.org.au>
+Date: Mon, 27 Dec 2010 15:38:43 +0000
+Message-ID: <20101227153843.GA13400@opensource.wolfsonmicro.com>
 References: <20101227170451.a9a9f873.sfr@canb.auug.org.au>
-	<20101227113857.GA31293@sirena.org.uk>
+ <20101227113857.GA31293@sirena.org.uk>
+ <20101228022027.8519be82.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__28_Dec_2010_02_20_27_+1100_KZy/X7wM6iv3CquZ"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52083 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754022Ab0L0PUd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 27 Dec 2010 10:20:33 -0500
-In-Reply-To: <20101227113857.GA31293@sirena.org.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-
---Signature=_Tue__28_Dec_2010_02_20_27_+1100_KZy/X7wM6iv3CquZ
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20101228022027.8519be82.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Mark,
+On Tue, Dec 28, 2010 at 02:20:27AM +1100, Stephen Rothwell wrote:
 
-On Mon, 27 Dec 2010 11:38:58 +0000 Mark Brown <broonie@opensource.wolfsonmi=
-cro.com> wrote:
->
-> On Mon, Dec 27, 2010 at 05:04:51PM +1100, Stephen Rothwell wrote:
->=20
-> > The sound-asoc tree also had a build failure, so I used the version from
-> > next-20101221.
->=20
-> What is the problem you are seeing in the sound-asoc tree?  I saw a mail
-> about the sound tree but didn't see any failures reported for ASoC.
+> I got this error after merging the sound tree:
 
-I got this error after merging the sound tree:
+> ERROR: "__tracepoint_snd_soc_jack_irq" [sound/soc/codecs/snd-soc-wm8962.ko] undefined!
 
-ERROR: "__tracepoint_snd_soc_jack_irq" [sound/soc/codecs/snd-soc-wm8962.ko]=
- undefined!
+> after that, I merged the old version of the sound tree.  I then merged
+> the sound-asoc tree and go the same error.  I presumed that you had fixed
+> the other error:
 
-after that, I merged the old version of the sound tree.  I then merged
-the sound-asoc tree and go the same error.  I presumed that you had fixed
-the other error:
+> ERROR: "__tracepoint_snd_soc_jack_irq" [sound/soc/codecs/snd-soc-wm8903.ko] undefined!
 
-ERROR: "__tracepoint_snd_soc_jack_irq" [sound/soc/codecs/snd-soc-wm8903.ko]=
- undefined!
+> in the sound-asoc tree and then that version of the sound-asoc tree had
+> been merged into the sound tree.
 
-in the sound-asoc tree and then that version of the sound-asoc tree had
-been merged into the sound tree.
+To my knowledge I'd fixed everything.  However, it looks like there's a
+typo in the wm8962 ifdef to work around the x86 failure which was
+causing the problem; since you hadn't mentioned that you'd encountered
+any issue after I'd done the previous fix I'd no idea that this had
+happened and it had appeared that the problem with Takashi's tree was
+simply that he'd not merged up the fix.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__28_Dec_2010_02_20_27_+1100_KZy/X7wM6iv3CquZ
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNGK67AAoJEDMEi1NhKgbsRIkH+wV3B4T0MFY4rmrd3v/znaF9
-wZXVLZpGvqFelWpH98RoJuaXBixntkjqMK4Bclki0UoxmZqWjGUhGLTnp+NIz00D
-cLXvyrEkUocXVJb/g1e/behoAiw0BTRn5uaYZzS/mzEyc9gHTYtsnVmW9tR8bsUB
-4K3UGMA3VeupIyUBQsgZpuoUITfOQTSwxvKupBrMBlWPIsdtskXZxktS7MTq2xA1
-q+X6Rohr1PFrsZMicd1I5ambensnSfvuAhpJLYmrm6O1TfSccTbqIziMp0k6irRn
-LmXnYLWmPYFJGFAAmq4eZPrDOc8KD3FulS+mfPNR5HcwHb9nTpqZBAknFT/auf8=
-=TYom
------END PGP SIGNATURE-----
-
---Signature=_Tue__28_Dec_2010_02_20_27_+1100_KZy/X7wM6iv3CquZ--
+Fixed now, anyway.  Please do report if you see any more issues.
