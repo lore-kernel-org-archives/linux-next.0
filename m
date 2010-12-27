@@ -1,40 +1,39 @@
 From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: linux-next: Tree for December 27
-Date: Mon, 27 Dec 2010 15:38:43 +0000
-Message-ID: <20101227153843.GA13400@opensource.wolfsonmicro.com>
-References: <20101227170451.a9a9f873.sfr@canb.auug.org.au>
- <20101227113857.GA31293@sirena.org.uk>
- <20101228022027.8519be82.sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the sound tree (Was:
+ Re: linux-next: build failure after merge of the sound-asoc tree)
+Date: Mon, 27 Dec 2010 15:44:21 +0000
+Message-ID: <20101227154421.GB13400@opensource.wolfsonmicro.com>
+References: <20101223120243.1617cd40.sfr@canb.auug.org.au>
+ <20101223021212.GA25886@opensource.wolfsonmicro.com>
+ <20101227104951.1ecad371.sfr@canb.auug.org.au>
+ <20101226235928.GA18334@opensource.wolfsonmicro.com>
+ <20101228021657.44144877.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:52968 "EHLO
+	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1754198Ab0L0PoI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 27 Dec 2010 10:44:08 -0500
 Content-Disposition: inline
-In-Reply-To: <20101228022027.8519be82.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20101228021657.44144877.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Cc: Takashi Iwai <tiwai@suse.de>, Liam Girdwood <lrg@slimlogic.co.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Dec 28, 2010 at 02:20:27AM +1100, Stephen Rothwell wrote:
+On Tue, Dec 28, 2010 at 02:16:57AM +1100, Stephen Rothwell wrote:
+> On Sun, 26 Dec 2010 23:59:29 +0000 Mark Brown <broonie@opensource.wolfsonmicro.com> wrote:
 
-> I got this error after merging the sound tree:
+> > Hrm?  I thought you merged the ASoC tree before the sound tree, in which
+> > case the above is somehwat surprising.  If the ASoC tree merged OK then
+> > Takashi it should be a simple case of pulling my for-2.6.38 branch to
+> > resolve the issue.
 
-> ERROR: "__tracepoint_snd_soc_jack_irq" [sound/soc/codecs/snd-soc-wm8962.ko] undefined!
+> I started merging the sound-asoc tree *after* the sound tree when the
+> sound-asoc tree started to be merged into the sound tree.
 
-> after that, I merged the old version of the sound tree.  I then merged
-> the sound-asoc tree and go the same error.  I presumed that you had fixed
-> the other error:
-
-> ERROR: "__tracepoint_snd_soc_jack_irq" [sound/soc/codecs/snd-soc-wm8903.ko] undefined!
-
-> in the sound-asoc tree and then that version of the sound-asoc tree had
-> been merged into the sound tree.
-
-To my knowledge I'd fixed everything.  However, it looks like there's a
-typo in the wm8962 ifdef to work around the x86 failure which was
-causing the problem; since you hadn't mentioned that you'd encountered
-any issue after I'd done the previous fix I'd no idea that this had
-happened and it had appeared that the problem with Takashi's tree was
-simply that he'd not merged up the fix.
-
-Fixed now, anyway.  Please do report if you see any more issues.
+That hasn't changed - ASoC has always been ahead of the sound tree and
+merged into Linus' tree via the sound tree.  The frequency of merges has
+increased.
