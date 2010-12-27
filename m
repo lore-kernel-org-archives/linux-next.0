@@ -1,52 +1,51 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Subject: Re: linux-next: Tree for December 27 (drivers/target)
-Date: Mon, 27 Dec 2010 14:49:39 -0800
-Message-ID: <1293490179.4649.208.camel@haakon2.linux-iscsi.org>
-References: <20101227170451.a9a9f873.sfr@canb.auug.org.au>
-	 <20101227115755.ffcdfc4f.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the sound-asoc tree
+Date: Tue, 28 Dec 2010 10:32:34 +1100
+Message-ID: <20101228103234.29e09106.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-scsi-owner@vger.kernel.org>
-In-Reply-To: <20101227115755.ffcdfc4f.randy.dunlap@oracle.com>
-Sender: linux-scsi-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, scsi <linux-scsi@vger.kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__28_Dec_2010_10_32_34_+1100_UZm.mAUBLfDnpSgF"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@nokia.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, 2010-12-27 at 11:57 -0800, Randy Dunlap wrote:
-> On Mon, 27 Dec 2010 17:04:51 +1100 Stephen Rothwell wrote:
-> 
-> > Hi all,
-> > 
-> > [The mirroring on kernel.org is running slowly]
-> > 
-> > Changes since 20101221:
-> > 
-> > Linus' tree lost its build failure.
-> 
-> 
-> Hi Nick,
-> 
-> Please test building target code when CONFIG_BLOCK is not enabled.
-> 
-> When CONFIG_BLOCK is not enabled, drivers/target/ gets a boat load of build errors.
-> 
-> Should TCM_IBLOCK depend on BLOCK?  That fixes lots of the build errors,
-> but not all of them.
-> 
-> 
-> The header file include/target/target_core_base.h uses struct queue_limits,
-> so it should #include <linux/blkdev.h>.
-> 
-> 
+--Signature=_Tue__28_Dec_2010_10_32_34_+1100_UZm.mAUBLfDnpSgF
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Added the missing include here:
+Hi all,
 
-target: Add linux/blkdev.h include in target_core_base.h
-http://git.kernel.org/?p=linux/kernel/git/nab/linux-next.git;a=commitdiff;h=e8bd07d3a525e71b424d308fc5084b89a6456bb2
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-Thanks Randy!
+sound/soc/codecs/tpa6130a2.c: In function 'tpa6130a2_add_controls':
+sound/soc/codecs/tpa6130a2.c:342: warning: unused variable 'dapm'
 
---nab
+Introduced by commit 39646871a47fd8808c08de0ce7d7ca8393af2805 ("ASoC:
+tpa6130a2: Replace DAPM code with direct interface").
 
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__28_Dec_2010_10_32_34_+1100_UZm.mAUBLfDnpSgF
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNGSISAAoJEDMEi1NhKgbsM/YH/RUL+9ZY/c4VStBfKrdA0lju
+OKKK7Nade7c/7r77ohOLsFsBa5leELoA9upfsTc1XYDIBPBWHAlMbP6prvkBD6ft
+857PD1iZvSyjDZV3emnZQZ0Awu16r7uNoeE/uutjfEh0tojrBMUma8/H8zCGrLIn
+zku4PSY/WBDlCEyNJXpb4mgAx+Jr+9hVGGVhsJ5YxI5gbjcdb2dHuc3mHrfnvc3i
+11wEiVnBkbtctcUf9PF/bXSVgsVeINtLtbx5XAD4PJfrvnNIf1Mke0Xl1SLA+iHu
++NDU8oRG+ziVsKynEjELBlOstYO3eTjtqRId/FaOtfWgkF5CYpRgp3KQf9dfwC0=
+=59yk
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__28_Dec_2010_10_32_34_+1100_UZm.mAUBLfDnpSgF--
