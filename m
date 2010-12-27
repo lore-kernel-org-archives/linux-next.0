@@ -1,36 +1,39 @@
-From: Piotr Hosowicz <piotr@hosowicz.com>
+From: Sedat Dilek <sedat.dilek@googlemail.com>
 Subject: Re: linux-next: Tree for December 27
-Date: Mon, 27 Dec 2010 15:36:48 +0100
-Message-ID: <4D18A480.2060309@example.com>
+Date: Mon, 27 Dec 2010 15:48:27 +0100
+Message-ID: <AANLkTi=WhSP1ceHBW95n1e-gHwwnt36h3czFGuKsEny6@mail.gmail.com>
 References: <20101227170451.a9a9f873.sfr@canb.auug.org.au>
-Reply-To: piotr@hosowicz.com
+	<4D18A480.2060309@example.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-2;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20101227170451.a9a9f873.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-qy0-f174.google.com ([209.85.216.174]:44783 "EHLO
+	mail-qy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753507Ab0L0Os1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Dec 2010 09:48:27 -0500
+In-Reply-To: <4D18A480.2060309@example.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: piotr@hosowicz.com
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On 27.12.2010 07:04, Stephen Rothwell wrote:
+2010/12/27 Piotr Hosowicz <piotr@hosowicz.com>:
+> On 27.12.2010 07:04, Stephen Rothwell wrote:
+>
+> Hello,
+>
+> I noticed that after first reboot with this kernel that my MP3 collection in
+> mocp layed on Ext4 fs opens painfully slow. It is not my mistake, because I
+> always do it the same way, new kernel, then music on. The problem is not
+> present in rc7-git4. I could measure it in some way (timing ls -la in tht
+> dir?) if somebody needs it.
+>
+> Regards,
+>
+> Piotr Hosowicz
+>
 
-Hello,
+You tried mblk_io_submit mount-option for that partition?
 
-I noticed that after first reboot with this kernel that my MP3=20
-collection in mocp layed on Ext4 fs opens painfully slow. It is not my=20
-mistake, because I always do it the same way, new kernel, then music on=
-=2E=20
-The problem is not present in rc7-git4. I could measure it in some way=20
-(timing ls -la in tht dir?) if somebody needs it.
-
-Regards,
-
-Piotr Hosowicz
-
---=20
-Demokracja to kult szakali wyznawany przez os=B3y (Henry Louis Mencken)
-NP: Peter Green Splinter Group - Big Change Is Gonna Come
-NB: 2.6.37-rc7-next-20101227
+- Sedat -
