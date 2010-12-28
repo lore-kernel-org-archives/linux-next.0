@@ -1,28 +1,54 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] ASoC: tpa6130a2: Fix compiler warning
-Date: Tue, 28 Dec 2010 11:37:48 +0000
-Message-ID: <20101228113747.GC31292@opensource.wolfsonmicro.com>
-References: <1293527779-32580-1-git-send-email-peter.ujfalusi@nokia.com>
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: Re: linux-next: manual merge of the trivial tree with the v4l-dvb
+ tree
+Date: Tue, 28 Dec 2010 14:18:23 +0100 (CET)
+Message-ID: <alpine.LNX.2.00.1012281417570.16569@pobox.suse.cz>
+References: <20101228114744.e628825a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:37749 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1753128Ab0L1Lhh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 28 Dec 2010 06:37:37 -0500
-Content-Disposition: inline
-In-Reply-To: <1293527779-32580-1-git-send-email-peter.ujfalusi@nokia.com>
+Received: from cantor2.suse.de ([195.135.220.15]:52477 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752719Ab0L1NSZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 28 Dec 2010 08:18:25 -0500
+In-Reply-To: <20101228114744.e628825a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Peter Ujfalusi <peter.ujfalusi@nokia.com>
-Cc: alsa-devel@alsa-project.org, Liam Girdwood <lrg@slimlogic.co.uk>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@redhat.com>, =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
 
-On Tue, Dec 28, 2010 at 11:16:19AM +0200, Peter Ujfalusi wrote:
-> sound/soc/codecs/tpa6130a2.c: In function 'tpa6130a2_add_controls':
-> sound/soc/codecs/tpa6130a2.c:342: warning: unused variable 'dapm'
+On Tue, 28 Dec 2010, Stephen Rothwell wrote:
+
+> Hi Jiri,
 > 
-> Introduced by commit 39646871a47fd8808c08de0ce7d7ca8393af2805 ("ASoC:
-> tpa6130a2: Replace DAPM code with direct interface").
+> Today's linux-next merge of the trivial tree got a conflict in
+> drivers/media/video/zoran/zoran.h between commit
+> 8221f9b5fa3e08ba35378f08f2a606156e685916 ("[media] zoran: remove V4L1
+> compat code and zoran custom ioctls") from the v4l-dvb tree and commit
+> b595076a180a56d1bb170e6eceda6eb9d76f4cd3 ("tree-wide: fix comment/printk
+> typos") from the trivial tree.
+> 
+> The former removed the code modified by the latter, so I used the former.
 
-Acked-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+On Tue, 28 Dec 2010, Stephen Rothwell wrote:
+
+> Hi Jiri,
+> 
+> Today's linux-next merge of the trivial tree got a conflict in
+> drivers/staging/stradis/stradis.c between commit
+> aef01debdfad83ab71a83b7af8cd90203404c1aa ("[media] cpia, stradis: remove
+> deprecated V4L1 drivers") from the v4l-dvb tree and commit
+> b595076a180a56d1bb170e6eceda6eb9d76f4cd3 ("tree-wide: fix comment/printk
+> typos") from the trivial tree.
+> 
+> The former removed the file modified by the latter, so I removed the file.
+
+Hi Stephen,
+
+I have dropped both hunks, so the conflict should be gone now.
+
+Thanks,
+
+-- 
+Jiri Kosina
+SUSE Labs, Novell Inc.
