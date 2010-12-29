@@ -1,84 +1,60 @@
-From: Sedat Dilek <sedat.dilek@googlemail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: Tree for December 29
-Date: Wed, 29 Dec 2010 10:54:28 +0100
-Message-ID: <AANLkTimHgKKw8eeH==YYY_Z9keewxamfOpRzLVDgKxv6@mail.gmail.com>
+Date: Wed, 29 Dec 2010 21:00:45 +1100
+Message-ID: <20101229210045.f583c18d.sfr@canb.auug.org.au>
 References: <20101229130700.0ef93735.sfr@canb.auug.org.au>
-Reply-To: sedat.dilek@gmail.com
+	<AANLkTimHgKKw8eeH==YYY_Z9keewxamfOpRzLVDgKxv6@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__29_Dec_2010_21_00_45_+1100_OkMLQweS=K0_pN7Y"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qy0-f174.google.com ([209.85.216.174]:33369 "EHLO
-	mail-qy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750758Ab0L2Jy3 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 29 Dec 2010 04:54:29 -0500
-In-Reply-To: <20101229130700.0ef93735.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:50467 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751001Ab0L2KAw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 29 Dec 2010 05:00:52 -0500
+In-Reply-To: <AANLkTimHgKKw8eeH==YYY_Z9keewxamfOpRzLVDgKxv6@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: sedat.dilek@gmail.com
+Cc: Sedat Dilek <sedat.dilek@googlemail.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Wed, Dec 29, 2010 at 3:07 AM, Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> Hi all,
+--Signature=_Wed__29_Dec_2010_21_00_45_+1100_OkMLQweS=K0_pN7Y
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Sedat,
+
+On Wed, 29 Dec 2010 10:54:28 +0100 Sedat Dilek <sedat.dilek@googlemail.com>=
+ wrote:
 >
-> Changes since 20101228:
->
+> What is the recommended way in case of these "comparison" warnings?
+> Send to whom/where?
 
-What is the recommended way in case of these "comparison" warnings?
-Send to whom/where?
+Their respective maintainers (see scripts/get_maintainer.pl), unless you
+can also identify the commit that introduced the warning, then you should
+also cc author(s),
 
-% grep comparison build_linux-next_next20101229.dileks.1.log
-/home/sd/src/linux-2.6/linux-2.6.37-rc7/debian/build/source_i386_none/d=
-rivers/block/DAC960.c:5094:30:
-warning: comparison between =E2=80=98DAC960_V2_IOCTL_Opcode_T=E2=80=99 =
-and =E2=80=98enum
-<anonymous>=E2=80=99
-/home/sd/src/linux-2.6/linux-2.6.37-rc7/debian/build/source_i386_none/d=
-rivers/block/drbd/drbd_nl.c:1010:14:
-warning: comparison between =E2=80=98enum drbd_ret_codes=E2=80=99 and =E2=
-=80=98enum
-drbd_state_ret_codes=E2=80=99
-/home/sd/src/linux-2.6/linux-2.6.37-rc7/debian/build/source_i386_none/f=
-s/pstore/platform.c:55:11:
-warning: comparison of distinct pointer types lacks a cast
-/home/sd/src/linux-2.6/linux-2.6.37-rc7/debian/build/source_i386_none/n=
-et/netfilter/nf_conntrack_netlink.c:790:11:
-warning: comparison between =E2=80=98enum ctattr_tuple=E2=80=99 and =E2=
-=80=98enum ctattr_type=E2=80=99
-/home/sd/src/linux-2.6/linux-2.6.37-rc7/debian/build/source_i386_none/d=
-rivers/media/dvb/dvb-core/dmxdev.c:583:13:
-warning: comparison between =E2=80=98enum dmx_ts_pes=E2=80=99 and =E2=80=
-=98enum <anonymous>=E2=80=99
-/home/sd/src/linux-2.6/linux-2.6.37-rc7/debian/build/source_i386_none/d=
-rivers/media/dvb/frontends/stv090x.c:1486:27:
-warning: comparison between =E2=80=98enum stv090x_search=E2=80=99 and =E2=
-=80=98enum
-stv090x_delsys=E2=80=99
-/home/sd/src/linux-2.6/linux-2.6.37-rc7/debian/build/source_i386_none/d=
-rivers/media/dvb/frontends/stv090x.c:1487:24:
-warning: comparison between =E2=80=98enum stv090x_search=E2=80=99 and =E2=
-=80=98enum
-stv090x_delsys=E2=80=99
-/home/sd/src/linux-2.6/linux-2.6.37-rc7/debian/build/source_i386_none/d=
-rivers/scsi/mvsas/mv_sas.c:1206:34:
-warning: comparison between =E2=80=98enum sas_device_type=E2=80=99 and =
-=E2=80=98enum
-sas_dev_type=E2=80=99
-/home/sd/src/linux-2.6/linux-2.6.37-rc7/debian/build/source_i386_none/d=
-rivers/scsi/mvsas/mv_sas.c:1209:39:
-warning: comparison between =E2=80=98enum sas_device_type=E2=80=99 and =
-=E2=80=98enum
-sas_dev_type=E2=80=99
-/home/sd/src/linux-2.6/linux-2.6.37-rc7/debian/build/source_i386_none/d=
-rivers/scsi/pm8001/pm8001_hwi.c:2934:32:
-warning: comparison between =E2=80=98enum sas_device_type=E2=80=99 and =
-=E2=80=98enum
-sas_dev_type=E2=80=99
-/home/sd/src/linux-2.6/linux-2.6.37-rc7/debian/build/source_i386_none/d=
-rivers/scsi/pm8001/pm8001_hwi.c:2936:37:
-warning: comparison between =E2=80=98enum sas_device_type=E2=80=99 and =
-=E2=80=98enum
-sas_dev_type=E2=80=99
+Thanks
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-- Sedat -
+--Signature=_Wed__29_Dec_2010_21_00_45_+1100_OkMLQweS=K0_pN7Y
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNGwbNAAoJEDMEi1NhKgbs4nIH/iTFx7jwT0er6heOi6LLyEtl
+2acEBBwf8x7NkCLyx8W2few1ORyt1iZWCKoICTS/4+7Tr6VKj/FOc+KUGU+LWJq4
+N86X9HRFxKMSk9FxvOZ2cI2sqNqQS7njWHjmtyar3ruWI2kjf/p29jmtLs3m/k2X
+oq5tRDebUI5wRYVst8odgtfkG2gRtiZpVb/36bS6tA+6SsFBpyRCxPapaJQz/dAJ
+OmLK4yPOms9DYnB/RoR6Wjs2p0KJP2CG5zVhIrVviX/YOVWkuMepy4rXbvhu39hi
+s2D7aFmo63smzp2A/5zGN0cthmR2NZdkMNxsTCtT8p9ur9u0Z7hYI96fz06RKik=
+=Pmi+
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__29_Dec_2010_21_00_45_+1100_OkMLQweS=K0_pN7Y--
