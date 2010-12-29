@@ -1,31 +1,75 @@
-From: Linus Walleij <linus.ml.walleij@gmail.com>
-Subject: Re: linux-next: build failure after merge of the final tree
- (ux500-core tree related)
-Date: Wed, 29 Dec 2010 22:29:05 +0100
-Message-ID: <AANLkTi=w3qq9SNi3r0bDH_VBQx_t7Mve3fXPDu2hOAVu@mail.gmail.com>
-References: <20101223223634.8c92ef31.sfr@canb.auug.org.au>
-	<20101227162021.de3af7bc.sfr@canb.auug.org.au>
-	<AANLkTinjwN2-cVy8qsemuPOntPy-x0WS9_3t-Hc4xh0+@mail.gmail.com>
-	<33A307AF30D7BF4F811B1568FE7A9B18047CAF8DF1@EXDCVYMBSTM006.EQ1STM.local>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the final tree (input
+ tree related)
+Date: Thu, 30 Dec 2010 10:51:30 +1100
+Message-ID: <20101230105130.5d27a82b.sfr@canb.auug.org.au>
+References: <20101229125129.d48fb6fc.sfr@canb.auug.org.au>
+	<20101229023457.GA4206@core.coreip.homeip.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__30_Dec_2010_10_51_30_+1100_TYfNkWvLShv5dawP"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pw0-f46.google.com ([209.85.160.46]:51621 "EHLO
-	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753314Ab0L2V3G (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 29 Dec 2010 16:29:06 -0500
-In-Reply-To: <33A307AF30D7BF4F811B1568FE7A9B18047CAF8DF1@EXDCVYMBSTM006.EQ1STM.local>
+Received: from chilli.pcug.org.au ([203.10.76.44]:50698 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752006Ab0L2Xvi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 29 Dec 2010 18:51:38 -0500
+In-Reply-To: <20101229023457.GA4206@core.coreip.homeip.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sundar R IYER <sundar.iyer@stericsson.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dmitry Torokhov <dtor@mail.ru>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ping Cheng <pinglinux@gmail.com>
 
-2010/12/28 Sundar R IYER <sundar.iyer@stericsson.com>:
+--Signature=_Thu__30_Dec_2010_10_51_30_+1100_TYfNkWvLShv5dawP
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Here is the patch which fixes this build issues. I am very sorry for the inconvenience caused.
+Hi Dmitry,
 
-Such things happen. This patch was badly whitespace mangled after som
-experience with Outlook and/or Exchange, but I fixed it up anyway :-)
+On Tue, 28 Dec 2010 18:34:58 -0800 Dmitry Torokhov <dmitry.torokhov@gmail.c=
+om> wrote:
+>
+> On Wed, Dec 29, 2010 at 12:51:29PM +1100, Stephen Rothwell wrote:
+> >=20
+> > After merging the final tree, today's linux-next build (powerpc
+> > allyesconfig) failed like this:
+> >=20
+> > drivers/input/touchscreen/wacom_w8001.c: In function 'w8001_setup':
+> > drivers/input/touchscreen/wacom_w8001.c:287: error: implicit declaratio=
+n of function 'mdelay'
+> >=20
+> > Caused by commit b8fe15cb1b435928f9967d660e925fe7afb32787 ("Input:
+> > wacom_w8001 - support pen or touch only devices").  See Rule 1 in
+> > Documentation/SubmitChecklist.
+> >=20
+> > I have reverted that commit for today.
+>=20
+> Thank you Stephen, I'll fix this up in my tree.
 
-Yours,
-Linus Walleij
+I note that this commit has been redone in your tree (as commit
+11a862ed9f04558e222fa15a5fbd76698fed11ff) but there have been no changes
+to it at all (except the commit date).
+
+I have reverted that commit from today's linux-next.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__30_Dec_2010_10_51_30_+1100_TYfNkWvLShv5dawP
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEbBAEBAgAGBQJNG8mCAAoJEDMEi1NhKgbsDT4H+J1AvUYDmIp7PPTRZz8p8fCd
+csHb5LpEdkwtgzieOx1pfs3Yl+YO/1XpQk+7edRBDme1zmDWrE/4iBdr1No45ADi
+1TCkkxNLC4bhFv5JOefkN9vYkJBJmgWddls2YS1IPc9Eop6Gd1gVGO+gcakiat3J
+zauoSI5CW1x6rbAb55wglXY9zZGdIy9cRt5IImxMbKZUeBl1x5nAKxfK/YrbaAa5
+cFin4NnJz/PLUidqNcTEEpxIVzzQi4/wvgclu69FpBl6GMDQd//yJaC10redG7Qk
+sP+vHITmW32ZTizxHccCPv+I+TPSbzNKGPzOQjb9GndgrdyYbZoyEfAFwBZ2gQ==
+=5GyO
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__30_Dec_2010_10_51_30_+1100_TYfNkWvLShv5dawP--
