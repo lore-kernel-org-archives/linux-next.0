@@ -1,520 +1,329 @@
-From: Gregory Haskins <gregory.haskins@gmail.com>
-Subject: Re: linux-next: manual merge of the alacrity tree with the  tree
-Date: Wed, 29 Dec 2010 20:22:18 -0500
-Message-ID: <3FCD0DDB-EDC6-4CF2-A5A9-5C93DBA624AA@gmail.com>
-References: <20101230114332.c19ba13b.sfr@canb.auug.org.au>
-Mime-Version: 1.0 (Apple Message framework v1082)
-Content-Type: multipart/signed; protocol="application/pgp-signature"; micalg=pgp-sha1; boundary="Apple-Mail-6--315157671"
-Content-Transfer-Encoding: 7bit
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Tree for December 30
+Date: Thu, 30 Dec 2010 12:58:19 +1100
+Message-ID: <20101230125819.351debfc.sfr@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__30_Dec_2010_12_58_19_+1100_7OspajQ.Ga+Y9tYi"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:59859 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754182Ab0L3BWW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 29 Dec 2010 20:22:22 -0500
-In-Reply-To: <20101230114332.c19ba13b.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:40836 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754455Ab0L3B6a (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 29 Dec 2010 20:58:30 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
---Apple-Mail-6--315157671
+--Signature=_Thu__30_Dec_2010_12_58_19_+1100_7OspajQ.Ga+Y9tYi
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=us-ascii
 
-Hi Stephen,
+Hi all,
 
-On Dec 29, 2010, at 7:43 PM, Stephen Rothwell wrote:
+Changes since 20101229:
 
-> Hi Gregory,
->=20
-> Today's linux-next merge of the alacrity tree got a conflict in
-> include/linux/Kbuild between various commits from various trees and
-> various commits from the alacrity tree.
->=20
-> I fixed it up (again - see below).  I must ask, though, since the =
-commits
-> in the alacrity tree have been there since May, is there is any =
-progress
-> towards getting them integrated into Llinus' tree?
+The input tree still has its build failure for which I reverted a commit.
 
-Sorry about all that.  I haven't had a chance to play with that code =
-base for a while and the requisite demand Linus was looking for hasn't =
-been very vocal.  I'd say just drop my tree for now if its a nuisance, =
-and I will re-post it to you once I have a chance to give it some love.
+The tty tree still has its build failure for which I reverted a commit.
 
-Thanks,
--Greg
+----------------------------------------------------------------------------
 
-> --=20
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
->=20
-> diff --cc include/linux/Kbuild
-> index 2296d8b,1a31099..0000000
-> --- a/include/linux/Kbuild
-> +++ b/include/linux/Kbuild
-> @@@ -128,106 -70,43 +128,107 @@@ header-y +=3D fd.
->  header-y +=3D fdreg.h
->  header-y +=3D fib_rules.h
->  header-y +=3D fiemap.h
-> +header-y +=3D filter.h
->  header-y +=3D firewire-cdev.h
->  header-y +=3D firewire-constants.h
-> +header-y +=3D flat.h
-> +header-y +=3D fs.h
->  header-y +=3D fuse.h
-> -header-y +=3D genetlink.h
-> +header-y +=3D futex.h
-> +header-y +=3D gameport.h
->  header-y +=3D gen_stats.h
-> +header-y +=3D generic_serial.h
-> +header-y +=3D genetlink.h
->  header-y +=3D gfs2_ondisk.h
->  header-y +=3D gigaset_dev.h
-> +header-y +=3D hdlc.h
-> +header-y +=3D hdlcdrv.h
-> +header-y +=3D hdreg.h
-> +header-y +=3D hid.h
-> +header-y +=3D hiddev.h
-> +header-y +=3D hidraw.h
-> +header-y +=3D hpet.h
->  header-y +=3D hysdn_if.h
-> +header-y +=3D i2c-dev.h
-> +header-y +=3D i2c.h
->  header-y +=3D i2o-dev.h
->  header-y +=3D i8k.h
-> +header-y +=3D icmp.h
-> +header-y +=3D icmpv6.h
-> +header-y +=3D if.h
-> +header-y +=3D if_addr.h
->  header-y +=3D if_addrlabel.h
-> +header-y +=3D if_alg.h
->  header-y +=3D if_arcnet.h
-> +header-y +=3D if_arp.h
->  header-y +=3D if_bonding.h
-> +header-y +=3D if_bridge.h
->  header-y +=3D if_cablemodem.h
-> +header-y +=3D if_ec.h
-> +header-y +=3D if_eql.h
-> +header-y +=3D if_ether.h
->  header-y +=3D if_fc.h
-> -header-y +=3D if.h
-> +header-y +=3D if_fddi.h
-> +header-y +=3D if_frad.h
->  header-y +=3D if_hippi.h
->  header-y +=3D if_infiniband.h
-> +header-y +=3D if_link.h
-> +header-y +=3D if_ltalk.h
->  header-y +=3D if_packet.h
-> +header-y +=3D if_phonet.h
->  header-y +=3D if_plip.h
->  header-y +=3D if_ppp.h
-> +header-y +=3D if_pppol2tp.h
-> +header-y +=3D if_pppox.h
->  header-y +=3D if_slip.h
->  header-y +=3D if_strip.h
-> +header-y +=3D if_tr.h
->  header-y +=3D if_tun.h
-> +header-y +=3D if_tunnel.h
-> +header-y +=3D if_vlan.h
-> +header-y +=3D if_x25.h
-> +header-y +=3D igmp.h
-> +header-y +=3D in.h
-> +header-y +=3D in6.h
->  header-y +=3D in_route.h
-> +header-y +=3D inet_diag.h
-> +header-y +=3D inotify.h
-> +header-y +=3D input.h
->  header-y +=3D ioctl.h
-> ++header-y +=3D ioq.h
-> +header-y +=3D ip.h
->  header-y +=3D ip6_tunnel.h
-> +header-y +=3D ip_vs.h
-> +header-y +=3D ipc.h
-> +header-y +=3D ipmi.h
->  header-y +=3D ipmi_msgdefs.h
->  header-y +=3D ipsec.h
-> -header-y +=3D ip_vs.h
-> +header-y +=3D ipv6.h
-> +header-y +=3D ipv6_route.h
->  header-y +=3D ipx.h
->  header-y +=3D irda.h
-> +header-y +=3D irqnr.h
-> +header-y +=3D isdn.h
-> +header-y +=3D isdn_divertif.h
-> +header-y +=3D isdn_ppp.h
-> +header-y +=3D isdnif.h
->  header-y +=3D iso_fs.h
-> +header-y +=3D ivtv.h
-> +header-y +=3D ivtvfb.h
->  header-y +=3D ixjuser.h
->  header-y +=3D jffs2.h
-> +header-y +=3D joystick.h
-> +header-y +=3D kd.h
-> +header-y +=3D kdev_t.h
-> +header-y +=3D kernel.h
-> +header-y +=3D kernelcapi.h
-> +header-y +=3D keyboard.h
->  header-y +=3D keyctl.h
-> +header-y +=3D l2tp.h
->  header-y +=3D limits.h
-> +header-y +=3D llc.h
-> +header-y +=3D loop.h
-> +header-y +=3D lp.h
->  header-y +=3D magic.h
->  header-y +=3D major.h
->  header-y +=3D map_to_7segment.h
-> @@@ -290,104 -136,259 +291,107 @@@ header-y +=3D phantom.
->  header-y +=3D phonet.h
->  header-y +=3D pkt_cls.h
->  header-y +=3D pkt_sched.h
-> +header-y +=3D pktcdvd.h
-> +header-y +=3D pmu.h
-> +header-y +=3D poll.h
->  header-y +=3D posix_types.h
->  header-y +=3D ppdev.h
-> +header-y +=3D ppp-comp.h
-> +header-y +=3D ppp_defs.h
-> +header-y +=3D pps.h
->  header-y +=3D prctl.h
-> -header-y +=3D qnxtypes.h
-> +header-y +=3D ptrace.h
->  header-y +=3D qnx4_fs.h
-> +header-y +=3D qnxtypes.h
-> +header-y +=3D quota.h
->  header-y +=3D radeonfb.h
-> +header-y +=3D random.h
->  header-y +=3D raw.h
-> +header-y +=3D rds.h
-> +header-y +=3D reboot.h
-> +header-y +=3D reiserfs_fs.h
-> +header-y +=3D reiserfs_xattr.h
->  header-y +=3D resource.h
-> +header-y +=3D rfkill.h
->  header-y +=3D romfs_fs.h
->  header-y +=3D rose.h
-> +header-y +=3D route.h
-> +header-y +=3D rtc.h
-> +header-y +=3D rtnetlink.h
-> +header-y +=3D scc.h
-> +header-y +=3D sched.h
-> +header-y +=3D screen_info.h
-> +header-y +=3D sdla.h
-> +header-y +=3D securebits.h
-> +header-y +=3D selinux_netlink.h
-> +header-y +=3D sem.h
-> +header-y +=3D serial.h
-> +header-y +=3D serial_core.h
->  header-y +=3D serial_reg.h
-> -header-y +=3D smbno.h
-> +header-y +=3D serio.h
-> +header-y +=3D shm.h
-> ++header-y +=3D shm_signal.h
-> +header-y +=3D signal.h
-> +header-y +=3D signalfd.h
->  header-y +=3D snmp.h
-> +header-y +=3D socket.h
->  header-y +=3D sockios.h
->  header-y +=3D som.h
-> +header-y +=3D sonet.h
-> +header-y +=3D sonypi.h
->  header-y +=3D sound.h
-> +header-y +=3D soundcard.h
-> +header-y +=3D stat.h
-> +header-y +=3D stddef.h
-> +header-y +=3D string.h
->  header-y +=3D suspend_ioctls.h
-> +header-y +=3D swab.h
-> +header-y +=3D synclink.h
-> +header-y +=3D sysctl.h
->  header-y +=3D taskstats.h
-> +header-y +=3D tcp.h
->  header-y +=3D telephony.h
->  header-y +=3D termios.h
-> +header-y +=3D time.h
->  header-y +=3D times.h
-> +header-y +=3D timex.h
->  header-y +=3D tiocl.h
->  header-y +=3D tipc.h
->  header-y +=3D tipc_config.h
->  header-y +=3D toshiba.h
-> +header-y +=3D tty.h
-> +header-y +=3D types.h
->  header-y +=3D udf_fs_i.h
-> +header-y +=3D udp.h
-> +header-y +=3D uinput.h
-> +header-y +=3D uio.h
->  header-y +=3D ultrasound.h
->  header-y +=3D un.h
-> +header-y +=3D unistd.h
-> +header-y +=3D usbdevice_fs.h
->  header-y +=3D utime.h
-> +header-y +=3D utsname.h
-> ++header-y +=3D vbus_pci.h
-> ++header-y +=3D venet.h
->  header-y +=3D veth.h
-> -header-y +=3D videotext.h
-> -header-y +=3D x25.h
-> -
-> -unifdef-y +=3D acct.h
-> -unifdef-y +=3D adb.h
-> -unifdef-y +=3D adfs_fs.h
-> -unifdef-y +=3D agpgart.h
-> -ifneq ($(wildcard $(srctree)/arch/$(SRCARCH)/include/asm/a.out.h \
-> -      		  $(srctree)/include/asm-$(SRCARCH)/a.out.h),)
-> -unifdef-y +=3D a.out.h
-> -endif
-> -unifdef-y +=3D apm_bios.h
-> -unifdef-y +=3D atalk.h
-> -unifdef-y +=3D atmdev.h
-> -unifdef-y +=3D atm.h
-> -unifdef-y +=3D atm_tcp.h
-> -unifdef-y +=3D audit.h
-> -unifdef-y +=3D auto_fs.h
-> -unifdef-y +=3D auxvec.h
-> -unifdef-y +=3D binfmts.h
-> -unifdef-y +=3D blktrace_api.h
-> -unifdef-y +=3D capability.h
-> -unifdef-y +=3D capi.h
-> -unifdef-y +=3D cciss_ioctl.h
-> -unifdef-y +=3D cdrom.h
-> -unifdef-y +=3D cm4000_cs.h
-> -unifdef-y +=3D cn_proc.h
-> -unifdef-y +=3D coda.h
-> -unifdef-y +=3D connector.h
-> -unifdef-y +=3D cuda.h
-> -unifdef-y +=3D cyclades.h
-> -unifdef-y +=3D dccp.h
-> -unifdef-y +=3D dlm.h
-> -unifdef-y +=3D dlm_plock.h
-> -unifdef-y +=3D edd.h
-> -unifdef-y +=3D elf.h
-> -unifdef-y +=3D elfcore.h
-> -unifdef-y +=3D errno.h
-> -unifdef-y +=3D errqueue.h
-> -unifdef-y +=3D ethtool.h
-> -unifdef-y +=3D eventpoll.h
-> -unifdef-y +=3D signalfd.h
-> -unifdef-y +=3D ext2_fs.h
-> -unifdef-y +=3D fb.h
-> -unifdef-y +=3D fcntl.h
-> -unifdef-y +=3D filter.h
-> -unifdef-y +=3D flat.h
-> -unifdef-y +=3D futex.h
-> -unifdef-y +=3D fs.h
-> -unifdef-y +=3D gameport.h
-> -unifdef-y +=3D generic_serial.h
-> -unifdef-y +=3D hdlcdrv.h
-> -unifdef-y +=3D hdlc.h
-> -unifdef-y +=3D hdreg.h
-> -unifdef-y +=3D hid.h
-> -unifdef-y +=3D hiddev.h
-> -unifdef-y +=3D hidraw.h
-> -unifdef-y +=3D hpet.h
-> -unifdef-y +=3D i2c.h
-> -unifdef-y +=3D i2c-dev.h
-> -unifdef-y +=3D icmp.h
-> -unifdef-y +=3D icmpv6.h
-> -unifdef-y +=3D if_addr.h
-> -unifdef-y +=3D if_arp.h
-> -unifdef-y +=3D if_bridge.h
-> -unifdef-y +=3D if_ec.h
-> -unifdef-y +=3D if_eql.h
-> -unifdef-y +=3D if_ether.h
-> -unifdef-y +=3D if_fddi.h
-> -unifdef-y +=3D if_frad.h
-> -unifdef-y +=3D if_ltalk.h
-> -unifdef-y +=3D if_link.h
-> -unifdef-y +=3D if_phonet.h
-> -unifdef-y +=3D if_pppol2tp.h
-> -unifdef-y +=3D if_pppox.h
-> -unifdef-y +=3D if_tr.h
-> -unifdef-y +=3D if_tunnel.h
-> -unifdef-y +=3D if_vlan.h
-> -unifdef-y +=3D igmp.h
-> -unifdef-y +=3D inet_diag.h
-> -unifdef-y +=3D in.h
-> -unifdef-y +=3D in6.h
-> -unifdef-y +=3D inotify.h
-> -unifdef-y +=3D input.h
-> -unifdef-y +=3D ioq.h
-> -unifdef-y +=3D ip.h
-> -unifdef-y +=3D ipc.h
-> -unifdef-y +=3D ipmi.h
-> -unifdef-y +=3D ipv6.h
-> -unifdef-y +=3D ipv6_route.h
-> -unifdef-y +=3D isdn.h
-> -unifdef-y +=3D isdnif.h
-> -unifdef-y +=3D isdn_divertif.h
-> -unifdef-y +=3D isdn_ppp.h
-> -unifdef-y +=3D ivtv.h
-> -unifdef-y +=3D ivtvfb.h
-> -unifdef-y +=3D joystick.h
-> -unifdef-y +=3D kdev_t.h
-> -unifdef-y +=3D kd.h
-> -unifdef-y +=3D kernelcapi.h
-> -unifdef-y +=3D kernel.h
-> -unifdef-y +=3D keyboard.h
-> -ifneq ($(wildcard $(srctree)/arch/$(SRCARCH)/include/asm/kvm.h \
-> -      		  $(srctree)/include/asm-$(SRCARCH)/kvm.h),)
-> -unifdef-y +=3D kvm.h
-> -endif
-> -ifneq ($(wildcard $(srctree)/arch/$(SRCARCH)/include/asm/kvm_para.h \
-> -		  $(srctree)/include/asm-$(SRCARCH)/kvm_para.h),)
-> -unifdef-y +=3D kvm_para.h
-> -endif
-> -unifdef-y +=3D llc.h
-> -unifdef-y +=3D loop.h
-> -unifdef-y +=3D lp.h
-> -unifdef-y +=3D mempolicy.h
-> -unifdef-y +=3D mii.h
-> -unifdef-y +=3D mman.h
-> -unifdef-y +=3D mroute.h
-> -unifdef-y +=3D mroute6.h
-> -unifdef-y +=3D msdos_fs.h
-> -unifdef-y +=3D msg.h
-> -unifdef-y +=3D nbd.h
-> -unifdef-y +=3D ncp_fs.h
-> -unifdef-y +=3D ncp.h
-> -unifdef-y +=3D ncp_mount.h
-> -unifdef-y +=3D netdevice.h
-> -unifdef-y +=3D netfilter_bridge.h
-> -unifdef-y +=3D netfilter_decnet.h
-> -unifdef-y +=3D netfilter.h
-> -unifdef-y +=3D netfilter_ipv4.h
-> -unifdef-y +=3D netfilter_ipv6.h
-> -unifdef-y +=3D net.h
-> -unifdef-y +=3D netlink.h
-> -unifdef-y +=3D nfs3.h
-> -unifdef-y +=3D nfs4.h
-> -unifdef-y +=3D nfsacl.h
-> -unifdef-y +=3D nfs_fs.h
-> -unifdef-y +=3D nfs.h
-> -unifdef-y +=3D nfs_idmap.h
-> -unifdef-y +=3D n_r3964.h
-> -unifdef-y +=3D nubus.h
-> -unifdef-y +=3D nvram.h
-> -unifdef-y +=3D oom.h
-> -unifdef-y +=3D parport.h
-> -unifdef-y +=3D patchkey.h
-> -unifdef-y +=3D pci.h
-> -unifdef-y +=3D personality.h
-> -unifdef-y +=3D pktcdvd.h
-> -unifdef-y +=3D pmu.h
-> -unifdef-y +=3D poll.h
-> -unifdef-y +=3D ppp_defs.h
-> -unifdef-y +=3D ppp-comp.h
-> -unifdef-y +=3D pps.h
-> -unifdef-y +=3D ptrace.h
-> -unifdef-y +=3D quota.h
-> -unifdef-y +=3D random.h
-> -unifdef-y +=3D rfkill.h
-> -unifdef-y +=3D irqnr.h
-> -unifdef-y +=3D reboot.h
-> -unifdef-y +=3D reiserfs_fs.h
-> -unifdef-y +=3D reiserfs_xattr.h
-> -unifdef-y +=3D route.h
-> -unifdef-y +=3D rtc.h
-> -unifdef-y +=3D rtnetlink.h
-> -unifdef-y +=3D scc.h
-> -unifdef-y +=3D sched.h
-> -unifdef-y +=3D screen_info.h
-> -unifdef-y +=3D sdla.h
-> -unifdef-y +=3D securebits.h
-> -unifdef-y +=3D selinux_netlink.h
-> -unifdef-y +=3D sem.h
-> -unifdef-y +=3D serial_core.h
-> -unifdef-y +=3D serial.h
-> -unifdef-y +=3D serio.h
-> -unifdef-y +=3D shm.h
-> -unifdef-y +=3D shm_signal.h
-> -unifdef-y +=3D signal.h
-> -unifdef-y +=3D smb_fs.h
-> -unifdef-y +=3D smb.h
-> -unifdef-y +=3D smb_mount.h
-> -unifdef-y +=3D socket.h
-> -unifdef-y +=3D sonet.h
-> -unifdef-y +=3D sonypi.h
-> -unifdef-y +=3D soundcard.h
-> -unifdef-y +=3D stat.h
-> -unifdef-y +=3D stddef.h
-> -unifdef-y +=3D string.h
-> -unifdef-y +=3D swab.h
-> -unifdef-y +=3D synclink.h
-> -unifdef-y +=3D sysctl.h
-> -unifdef-y +=3D tcp.h
-> -unifdef-y +=3D time.h
-> -unifdef-y +=3D timex.h
-> -unifdef-y +=3D tty.h
-> -unifdef-y +=3D types.h
-> -unifdef-y +=3D udp.h
-> -unifdef-y +=3D uinput.h
-> -unifdef-y +=3D uio.h
-> -unifdef-y +=3D unistd.h
-> -unifdef-y +=3D usbdevice_fs.h
-> -unifdef-y +=3D utsname.h
-> -unifdef-y +=3D vhost.h
-> -unifdef-y +=3D vbus_pci.h
-> -unifdef-y +=3D venet.h
-> -unifdef-y +=3D videodev2.h
-> -unifdef-y +=3D videodev.h
-> -unifdef-y +=3D virtio_config.h
-> -unifdef-y +=3D virtio_ids.h
-> -unifdef-y +=3D virtio_blk.h
-> -unifdef-y +=3D virtio_net.h
-> -unifdef-y +=3D virtio_9p.h
-> -unifdef-y +=3D virtio_balloon.h
-> -unifdef-y +=3D virtio_console.h
-> -unifdef-y +=3D virtio_pci.h
-> -unifdef-y +=3D virtio_ring.h
-> -unifdef-y +=3D virtio_rng.h
-> -unifdef-y +=3D vt.h
-> -unifdef-y +=3D wait.h
-> -unifdef-y +=3D wanrouter.h
-> -unifdef-y +=3D watchdog.h
-> -unifdef-y +=3D wireless.h
-> -unifdef-y +=3D xattr.h
-> -unifdef-y +=3D xfrm.h
-> -
-> -objhdr-y +=3D version.h
-> +header-y +=3D vhost.h
-> +header-y +=3D videodev2.h
-> +header-y +=3D virtio_9p.h
-> +header-y +=3D virtio_balloon.h
-> +header-y +=3D virtio_blk.h
-> +header-y +=3D virtio_config.h
-> +header-y +=3D virtio_console.h
-> +header-y +=3D virtio_ids.h
-> +header-y +=3D virtio_net.h
-> +header-y +=3D virtio_pci.h
-> +header-y +=3D virtio_ring.h
-> +header-y +=3D virtio_rng.h
-> +header-y +=3D vt.h
-> +header-y +=3D wait.h
-> +header-y +=3D wanrouter.h
-> +header-y +=3D watchdog.h
->  header-y +=3D wimax.h
-> -header-y +=3D wimax/
-> +header-y +=3D wireless.h
-> +header-y +=3D x25.h
-> +header-y +=3D xattr.h
-> +header-y +=3D xfrm.h
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
 
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups (if any), it is also built with powerpc allnoconfig (32 and
+64 bit), ppc44x_defconfig and allyesconfig (minus
+CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
+and sparc64 defconfig. These builds also have
+CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
+CONFIG_DEBUG_INFO disabled when necessary.
 
---Apple-Mail-6--315157671
-content-type: application/pgp-signature; x-mac-type=70674453;
-	name=PGP.sig
-content-description: This is a digitally signed message part
-content-disposition: inline; filename=PGP.sig
-content-transfer-encoding: 7bit
+Below is a summary of the state of the merge.
+
+We are up to 183 trees (counting Linus' and 26 trees of patches pending
+for Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Randy Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master
+Merging fixes/fixes
+Merging arm-current/master
+Merging m68k-current/for-linus
+Merging powerpc-merge/merge
+Merging sparc-current/master
+Merging scsi-rc-fixes/master
+Merging net-current/master
+Merging sound-current/for-linus
+Merging pci-current/for-linus
+Merging wireless-current/master
+Merging kbuild-current/rc-fixes
+Merging driver-core.current/driver-core-linus
+Merging tty.current/tty-linus
+Merging usb.current/usb-linus
+Merging staging.current/staging-linus
+Merging cpufreq-current/fixes
+Merging input-current/for-linus
+Merging md-current/for-linus
+Merging audit-current/for-linus
+Merging crypto-current/master
+Merging ide-curent/master
+Merging dwmw2/master
+Merging sh-current/sh-fixes-for-linus
+Merging rmobile-current/rmobile-fixes-for-linus
+Merging fbdev-current/fbdev-fixes-for-linus
+Merging gcl-current/merge
+Merging arm/devel
+Merging davinci/davinci-next
+Merging i.MX/for-next
+Merging linux-spec/for-next
+Merging msm/for-next
+Merging omap/for-next
+CONFLICT (content): Merge conflict in arch/arm/plat-omap/Kconfig
+Merging pxa/for-next
+Merging samsung/next-samsung
+Merging s5p/for-next
+Merging tegra/for-next
+CONFLICT (content): Merge conflict in arch/arm/mach-tegra/timer.c
+Merging ux500-core/ux500-core
+Merging avr32/avr32-arch
+Merging blackfin/for-linus
+Merging cris/for-next
+Merging ia64/test
+Merging m68k/for-next
+Merging m68knommu/for-next
+Merging microblaze/next
+Merging mips/mips-for-linux-next
+Merging parisc/next
+Merging powerpc/next
+Merging 4xx/next
+Merging 52xx-and-virtex/next
+Merging galak/next
+Merging s390/features
+Merging sh/sh-latest
+CONFLICT (content): Merge conflict in arch/sh/kernel/cpu/sh2a/clock-sh7201.c
+Merging rmobile/rmobile-latest
+CONFLICT (content): Merge conflict in arch/arm/mach-shmobile/Kconfig
+Applying: rmobile: merge fixup for clkdev changes
+Merging sparc/master
+Merging tile/master
+Merging xtensa/master
+CONFLICT (content): Merge conflict in arch/xtensa/configs/iss_defconfig
+Merging ceph/for-next
+Merging cifs/master
+Merging configfs/linux-next
+Merging ecryptfs/next
+Merging ext3/for_next
+Merging ext4/next
+Merging fatfs/master
+Merging fuse/for-next
+Merging gfs2/master
+Merging hfsplus/for-next
+Merging jfs/next
+Merging logfs/master
+CONFLICT (content): Merge conflict in fs/logfs/logfs.h
+Merging nfs/linux-next
+Merging nfsd/nfsd-next
+Merging nilfs2/for-next
+Merging ocfs2/linux-next
+Merging omfs/for-next
+Merging squashfs/master
+Merging udf/for_next
+Merging v9fs/for-next
+Merging ubifs/linux-next
+Merging xfs/master
+Merging vfs/for-next
+Merging vfs-scale/vfs-scale-working
+CONFLICT (content): Merge conflict in fs/cifs/dir.c
+CONFLICT (content): Merge conflict in fs/fuse/inode.c
+CONFLICT (content): Merge conflict in fs/hfsplus/hfsplus_fs.h
+CONFLICT (content): Merge conflict in fs/hfsplus/unicode.c
+Merging pci/linux-next
+Merging hid/for-next
+Merging quilt/i2c
+Merging bjdooks-i2c/next-i2c
+Merging quilt/jdelvare-hwmon
+Merging hwmon-staging/hwmon-next
+Merging quilt/kernel-doc
+Merging v4l-dvb/master
+Merging kbuild/for-next
+Merging kconfig/for-next
+Merging ide/master
+Merging libata/NEXT
+Merging infiniband/for-next
+Merging acpi/test
+Merging idle-test/idle-test
+Merging ieee1394/for-next
+Merging ubi/linux-next
+Merging kvm/linux-next
+Merging dlm/next
+Merging swiotlb/master
+Merging ibft/master
+Merging scsi/master
+Merging async_tx/next
+Merging net/master
+CONFLICT (content): Merge conflict in net/9p/protocol.c
+Merging wireless/master
+Merging bluetooth/master
+CONFLICT (content): Merge conflict in net/bluetooth/Makefile
+Merging mtd/master
+Merging crypto/master
+Merging sound-asoc/for-next
+CONFLICT (rename/modify): Merge conflict in sound/soc/samsung/smdk_wm8580.c
+CONFLICT (rename/modify): Merge conflict in sound/soc/samsung/smdk_wm9713.c
+CONFLICT (add/add): Merge conflict in arch/arm/plat-samsung/dev-asocdma.c
+Merging sound/for-next
+Merging cpufreq/next
+Merging quilt/rr
+Merging input/next
+CONFLICT (content): Merge conflict in drivers/input/keyboard/Kconfig
+CONFLICT (content): Merge conflict in include/linux/input.h
+[master 4f0dfca] Revert "Input: wacom_w8001 - support pen or touch only dev=
+ices"
+Merging lsm/for-next
+Merging block/for-next
+Merging quilt/device-mapper
+Merging embedded/master
+Merging firmware/master
+Merging pcmcia/master
+Merging battery/master
+Merging leds/for-mm
+CONFLICT (content): Merge conflict in drivers/leds/Kconfig
+Merging backlight/for-mm
+Merging mmc/mmc-next
+Merging kgdb/kgdb-next
+Merging slab/for-next
+Merging uclinux/for-next
+Merging md/for-next
+Merging mfd/for-next
+CONFLICT (content): Merge conflict in drivers/mfd/Makefile
+CONFLICT (content): Merge conflict in drivers/mfd/wm8994-core.c
+Merging hdlc/hdlc-next
+Merging drm/drm-next
+Merging fbdev/master
+CONFLICT (content): Merge conflict in drivers/video/sh_mobile_lcdcfb.c
+Merging viafb/viafb-next
+Merging omap_dss2/for-next
+Merging voltage/for-next
+CONFLICT (content): Merge conflict in drivers/regulator/core.c
+CONFLICT (content): Merge conflict in drivers/regulator/mc13783-regulator.c
+Merging security-testing/next
+Merging selinux/master
+Merging lblnet/master
+Merging agp/agp-next
+Merging watchdog/master
+Merging bdev/master
+Merging dwmw2-iommu/master
+Merging cputime/cputime
+Merging osd/linux-next
+Merging jc_docs/docs-next
+Merging nommu/master
+Merging trivial/for-next
+Merging audit/for-next
+Merging suspend/linux-next
+Merging fsnotify/for-next
+Merging irda/for-next
+Merging catalin/for-next
+Merging alacrity/linux-next
+CONFLICT (content): Merge conflict in drivers/Makefile
+CONFLICT (content): Merge conflict in include/linux/Kbuild
+CONFLICT (content): Merge conflict in lib/Kconfig
+Merging i7core_edac/linux_next
+Merging i7300_edac/linux_next
+Merging devicetree/next-devicetree
+Merging spi/next-spi
+Merging tip/auto-latest
+Merging rcu/rcu/next
+Merging oprofile/for-next
+Merging xen/upstream/xen
+Merging swiotlb-xen/master
+CONFLICT (content): Merge conflict in drivers/xen/Kconfig
+CONFLICT (content): Merge conflict in drivers/xen/Makefile
+Merging xen-pvhvm/linux-next
+Merging edac-amd/for-next
+Merging percpu/for-next
+Merging workqueues/for-next
+CONFLICT (content): Merge conflict in Documentation/feature-removal-schedul=
+e.txt
+CONFLICT (content): Merge conflict in drivers/media/video/bt8xx/bttv-input.c
+CONFLICT (content): Merge conflict in drivers/rtc/rtc-dev.c
+Merging sfi/sfi-test
+Merging asm-generic/next
+Merging drivers-x86/linux-next
+Merging hwpoison/hwpoison
+Merging sysctl/master
+Merging driver-core/driver-core-next
+Merging tty/tty-next
+[master 1bbc74f] Revert "drivers: serial: apbuart: Handle OF failures grace=
+fully"
+Merging usb/usb-next
+CONFLICT (content): Merge conflict in arch/arm/mach-omap2/Kconfig
+CONFLICT (content): Merge conflict in arch/arm/mach-omap2/clock3xxx_data.c
+CONFLICT (content): Merge conflict in arch/arm/mach-omap2/clock44xx_data.c
+CONFLICT (content): Merge conflict in arch/sh/Kconfig
+Merging staging/staging-next
+Merging slabh/slabh
+Merging bkl-trivial/trivial
+Merging bkl-llseek/llseek
+Merging bkl-vfs/vfs
+Merging bkl-config/config
+CONFLICT (content): Merge conflict in arch/powerpc/kernel/setup_64.c
+CONFLICT (delete/modify): drivers/staging/stradis/Kconfig deleted in HEAD a=
+nd modified in bkl-config/config. Version bkl-config/config of drivers/stag=
+ing/stradis/Kconfig left in tree.
+CONFLICT (content): Merge conflict in include/linux/hardirq.h
+CONFLICT (content): Merge conflict in include/linux/smp_lock.h
+$ git rm -f drivers/staging/stradis/Kconfig
+Merging irqflags/master
+Merging cleancache/linux-next
+CONFLICT (content): Merge conflict in fs/ocfs2/super.c
+CONFLICT (content): Merge conflict in fs/super.c
+CONFLICT (content): Merge conflict in include/linux/fs.h
+CONFLICT (content): Merge conflict in mm/Kconfig
+Merging scsi-post-merge/merge-base:master
+$ git checkout scsi-post-merge/master
+Applying: [SCSI] sd: implement sd_check_events()
+Applying: [SCSI] target: Add LIO target core v4.0.0-rc6
+
+--Signature=_Thu__30_Dec_2010_12_58_19_+1100_7OspajQ.Ga+Y9tYi
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG/MacGPG2 v2.0.14 (Darwin)
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAk0b3soACgkQP5K2CMvXmqFiRACfT11qKdsiU3m/7kgwOJ7M8kN0
-dAwAn2vJbc/iF3fNG0+V3z+tNFjTVTIw
-=0E78
+iQEcBAEBAgAGBQJNG+c7AAoJEDMEi1NhKgbsmygIAJa5BIqvOoCdpQ0wJvRWOF/M
+WGbWVDcOVgkaTUbO3LJSjC1suRof9WPZNZqxxsGn/TjBj2XXYL1jQYIxMGU20Nzx
+3pEJjS3CjJmCr2WFW3ANMYCDSKwP0e7X4fduXdSG+ePbfg7q9beWgMtj9AU6tXlp
+lvWFH82aNd0h8FToKD5jDt5Y9Tv4QuC8iZO0UELiDIChqvI/y+9BQ0zsw+BCQw2R
+HuVFpCvAseC6+rkOIsbJ1ibr5s45hbwFnhWkyRbmx9lkPWowPzlaRb3FcvwE+n8B
+MM8yaGS2wD71lmm7gZh6msUo+bpZdZYzMrnABybTVB89e8ziSDEGS/has0De/PE=
+=gEQl
 -----END PGP SIGNATURE-----
 
---Apple-Mail-6--315157671--
+--Signature=_Thu__30_Dec_2010_12_58_19_+1100_7OspajQ.Ga+Y9tYi--
