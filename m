@@ -1,123 +1,520 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: linux-next: manual merge of the sound tree with the s5p tree
-Date: Thu, 30 Dec 2010 09:54:13 +0900
-Message-ID: <00a401cba7bc$1654d660$42fe8320$%kim@samsung.com>
-References: <s5hk4j0n43g.wl%tiwai@suse.de>
- <004001cba292$3827d2d0$a8777870$%kim@samsung.com>
- <s5hvd2ku49r.wl%tiwai@suse.de>
- <004101cba294$8639de30$92ad9a90$%kim@samsung.com>
- <s5h7hf0tvct.wl%tiwai@suse.de>
- <008f01cba30a$72f5c160$58e14420$%kim@samsung.com>
- <20101224082736.GA31540@flint.arm.linux.org.uk>
- <018b01cba636$6c3a8390$44af8ab0$%kim@samsung.com>
- <20101228153948.GB14860@sirena.org.uk>
- <20101228162330.GA31226@flint.arm.linux.org.uk>
- <20101228164047.GA2417@opensource.wolfsonmicro.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+From: Gregory Haskins <gregory.haskins@gmail.com>
+Subject: Re: linux-next: manual merge of the alacrity tree with the  tree
+Date: Wed, 29 Dec 2010 20:22:18 -0500
+Message-ID: <3FCD0DDB-EDC6-4CF2-A5A9-5C93DBA624AA@gmail.com>
+References: <20101230114332.c19ba13b.sfr@canb.auug.org.au>
+Mime-Version: 1.0 (Apple Message framework v1082)
+Content-Type: multipart/signed; protocol="application/pgp-signature"; micalg=pgp-sha1; boundary="Apple-Mail-6--315157671"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:56910 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754182Ab0L3AyU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 29 Dec 2010 19:54:20 -0500
-In-reply-to: <20101228164047.GA2417@opensource.wolfsonmicro.com>
-Content-language: ko
+Received: from mail-qw0-f46.google.com ([209.85.216.46]:59859 "EHLO
+	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754182Ab0L3BWW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 29 Dec 2010 20:22:22 -0500
+In-Reply-To: <20101230114332.c19ba13b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Russell King' <rmk@arm.linux.org.uk>
-Cc: 'Takashi Iwai' <tiwai@suse.de>, 'Stephen Rothwell' <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Jassi Brar' <jassi.brar@samsung.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Happy New year everyone :-)
+This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
+--Apple-Mail-6--315157671
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 
-Firstly, thanks for Russell and Mark.
+Hi Stephen,
 
-Hmm...
-I thought it's very simple, but it is not. Because needs some peoples'
-another work :-(
+On Dec 29, 2010, at 7:43 PM, Stephen Rothwell wrote:
 
-Anyway, so I decided that will drop/change some commits which occur conflict
-between sound tree and build error in my tree. Already discussed about that
-with Jassi and he agreed.
+> Hi Gregory,
+>=20
+> Today's linux-next merge of the alacrity tree got a conflict in
+> include/linux/Kbuild between various commits from various trees and
+> various commits from the alacrity tree.
+>=20
+> I fixed it up (again - see below).  I must ask, though, since the =
+commits
+> in the alacrity tree have been there since May, is there is any =
+progress
+> towards getting them integrated into Llinus' tree?
 
-Then if possible, will send remained small stuff to Linus during -rc.
+Sorry about all that.  I haven't had a chance to play with that code =
+base for a while and the requisite demand Linus was looking for hasn't =
+been very vocal.  I'd say just drop my tree for now if its a nuisance, =
+and I will re-post it to you once I have a chance to give it some love.
 
-Thank you so much again ;-)
+Thanks,
+-Greg
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+> --=20
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+>=20
+> diff --cc include/linux/Kbuild
+> index 2296d8b,1a31099..0000000
+> --- a/include/linux/Kbuild
+> +++ b/include/linux/Kbuild
+> @@@ -128,106 -70,43 +128,107 @@@ header-y +=3D fd.
+>  header-y +=3D fdreg.h
+>  header-y +=3D fib_rules.h
+>  header-y +=3D fiemap.h
+> +header-y +=3D filter.h
+>  header-y +=3D firewire-cdev.h
+>  header-y +=3D firewire-constants.h
+> +header-y +=3D flat.h
+> +header-y +=3D fs.h
+>  header-y +=3D fuse.h
+> -header-y +=3D genetlink.h
+> +header-y +=3D futex.h
+> +header-y +=3D gameport.h
+>  header-y +=3D gen_stats.h
+> +header-y +=3D generic_serial.h
+> +header-y +=3D genetlink.h
+>  header-y +=3D gfs2_ondisk.h
+>  header-y +=3D gigaset_dev.h
+> +header-y +=3D hdlc.h
+> +header-y +=3D hdlcdrv.h
+> +header-y +=3D hdreg.h
+> +header-y +=3D hid.h
+> +header-y +=3D hiddev.h
+> +header-y +=3D hidraw.h
+> +header-y +=3D hpet.h
+>  header-y +=3D hysdn_if.h
+> +header-y +=3D i2c-dev.h
+> +header-y +=3D i2c.h
+>  header-y +=3D i2o-dev.h
+>  header-y +=3D i8k.h
+> +header-y +=3D icmp.h
+> +header-y +=3D icmpv6.h
+> +header-y +=3D if.h
+> +header-y +=3D if_addr.h
+>  header-y +=3D if_addrlabel.h
+> +header-y +=3D if_alg.h
+>  header-y +=3D if_arcnet.h
+> +header-y +=3D if_arp.h
+>  header-y +=3D if_bonding.h
+> +header-y +=3D if_bridge.h
+>  header-y +=3D if_cablemodem.h
+> +header-y +=3D if_ec.h
+> +header-y +=3D if_eql.h
+> +header-y +=3D if_ether.h
+>  header-y +=3D if_fc.h
+> -header-y +=3D if.h
+> +header-y +=3D if_fddi.h
+> +header-y +=3D if_frad.h
+>  header-y +=3D if_hippi.h
+>  header-y +=3D if_infiniband.h
+> +header-y +=3D if_link.h
+> +header-y +=3D if_ltalk.h
+>  header-y +=3D if_packet.h
+> +header-y +=3D if_phonet.h
+>  header-y +=3D if_plip.h
+>  header-y +=3D if_ppp.h
+> +header-y +=3D if_pppol2tp.h
+> +header-y +=3D if_pppox.h
+>  header-y +=3D if_slip.h
+>  header-y +=3D if_strip.h
+> +header-y +=3D if_tr.h
+>  header-y +=3D if_tun.h
+> +header-y +=3D if_tunnel.h
+> +header-y +=3D if_vlan.h
+> +header-y +=3D if_x25.h
+> +header-y +=3D igmp.h
+> +header-y +=3D in.h
+> +header-y +=3D in6.h
+>  header-y +=3D in_route.h
+> +header-y +=3D inet_diag.h
+> +header-y +=3D inotify.h
+> +header-y +=3D input.h
+>  header-y +=3D ioctl.h
+> ++header-y +=3D ioq.h
+> +header-y +=3D ip.h
+>  header-y +=3D ip6_tunnel.h
+> +header-y +=3D ip_vs.h
+> +header-y +=3D ipc.h
+> +header-y +=3D ipmi.h
+>  header-y +=3D ipmi_msgdefs.h
+>  header-y +=3D ipsec.h
+> -header-y +=3D ip_vs.h
+> +header-y +=3D ipv6.h
+> +header-y +=3D ipv6_route.h
+>  header-y +=3D ipx.h
+>  header-y +=3D irda.h
+> +header-y +=3D irqnr.h
+> +header-y +=3D isdn.h
+> +header-y +=3D isdn_divertif.h
+> +header-y +=3D isdn_ppp.h
+> +header-y +=3D isdnif.h
+>  header-y +=3D iso_fs.h
+> +header-y +=3D ivtv.h
+> +header-y +=3D ivtvfb.h
+>  header-y +=3D ixjuser.h
+>  header-y +=3D jffs2.h
+> +header-y +=3D joystick.h
+> +header-y +=3D kd.h
+> +header-y +=3D kdev_t.h
+> +header-y +=3D kernel.h
+> +header-y +=3D kernelcapi.h
+> +header-y +=3D keyboard.h
+>  header-y +=3D keyctl.h
+> +header-y +=3D l2tp.h
+>  header-y +=3D limits.h
+> +header-y +=3D llc.h
+> +header-y +=3D loop.h
+> +header-y +=3D lp.h
+>  header-y +=3D magic.h
+>  header-y +=3D major.h
+>  header-y +=3D map_to_7segment.h
+> @@@ -290,104 -136,259 +291,107 @@@ header-y +=3D phantom.
+>  header-y +=3D phonet.h
+>  header-y +=3D pkt_cls.h
+>  header-y +=3D pkt_sched.h
+> +header-y +=3D pktcdvd.h
+> +header-y +=3D pmu.h
+> +header-y +=3D poll.h
+>  header-y +=3D posix_types.h
+>  header-y +=3D ppdev.h
+> +header-y +=3D ppp-comp.h
+> +header-y +=3D ppp_defs.h
+> +header-y +=3D pps.h
+>  header-y +=3D prctl.h
+> -header-y +=3D qnxtypes.h
+> +header-y +=3D ptrace.h
+>  header-y +=3D qnx4_fs.h
+> +header-y +=3D qnxtypes.h
+> +header-y +=3D quota.h
+>  header-y +=3D radeonfb.h
+> +header-y +=3D random.h
+>  header-y +=3D raw.h
+> +header-y +=3D rds.h
+> +header-y +=3D reboot.h
+> +header-y +=3D reiserfs_fs.h
+> +header-y +=3D reiserfs_xattr.h
+>  header-y +=3D resource.h
+> +header-y +=3D rfkill.h
+>  header-y +=3D romfs_fs.h
+>  header-y +=3D rose.h
+> +header-y +=3D route.h
+> +header-y +=3D rtc.h
+> +header-y +=3D rtnetlink.h
+> +header-y +=3D scc.h
+> +header-y +=3D sched.h
+> +header-y +=3D screen_info.h
+> +header-y +=3D sdla.h
+> +header-y +=3D securebits.h
+> +header-y +=3D selinux_netlink.h
+> +header-y +=3D sem.h
+> +header-y +=3D serial.h
+> +header-y +=3D serial_core.h
+>  header-y +=3D serial_reg.h
+> -header-y +=3D smbno.h
+> +header-y +=3D serio.h
+> +header-y +=3D shm.h
+> ++header-y +=3D shm_signal.h
+> +header-y +=3D signal.h
+> +header-y +=3D signalfd.h
+>  header-y +=3D snmp.h
+> +header-y +=3D socket.h
+>  header-y +=3D sockios.h
+>  header-y +=3D som.h
+> +header-y +=3D sonet.h
+> +header-y +=3D sonypi.h
+>  header-y +=3D sound.h
+> +header-y +=3D soundcard.h
+> +header-y +=3D stat.h
+> +header-y +=3D stddef.h
+> +header-y +=3D string.h
+>  header-y +=3D suspend_ioctls.h
+> +header-y +=3D swab.h
+> +header-y +=3D synclink.h
+> +header-y +=3D sysctl.h
+>  header-y +=3D taskstats.h
+> +header-y +=3D tcp.h
+>  header-y +=3D telephony.h
+>  header-y +=3D termios.h
+> +header-y +=3D time.h
+>  header-y +=3D times.h
+> +header-y +=3D timex.h
+>  header-y +=3D tiocl.h
+>  header-y +=3D tipc.h
+>  header-y +=3D tipc_config.h
+>  header-y +=3D toshiba.h
+> +header-y +=3D tty.h
+> +header-y +=3D types.h
+>  header-y +=3D udf_fs_i.h
+> +header-y +=3D udp.h
+> +header-y +=3D uinput.h
+> +header-y +=3D uio.h
+>  header-y +=3D ultrasound.h
+>  header-y +=3D un.h
+> +header-y +=3D unistd.h
+> +header-y +=3D usbdevice_fs.h
+>  header-y +=3D utime.h
+> +header-y +=3D utsname.h
+> ++header-y +=3D vbus_pci.h
+> ++header-y +=3D venet.h
+>  header-y +=3D veth.h
+> -header-y +=3D videotext.h
+> -header-y +=3D x25.h
+> -
+> -unifdef-y +=3D acct.h
+> -unifdef-y +=3D adb.h
+> -unifdef-y +=3D adfs_fs.h
+> -unifdef-y +=3D agpgart.h
+> -ifneq ($(wildcard $(srctree)/arch/$(SRCARCH)/include/asm/a.out.h \
+> -      		  $(srctree)/include/asm-$(SRCARCH)/a.out.h),)
+> -unifdef-y +=3D a.out.h
+> -endif
+> -unifdef-y +=3D apm_bios.h
+> -unifdef-y +=3D atalk.h
+> -unifdef-y +=3D atmdev.h
+> -unifdef-y +=3D atm.h
+> -unifdef-y +=3D atm_tcp.h
+> -unifdef-y +=3D audit.h
+> -unifdef-y +=3D auto_fs.h
+> -unifdef-y +=3D auxvec.h
+> -unifdef-y +=3D binfmts.h
+> -unifdef-y +=3D blktrace_api.h
+> -unifdef-y +=3D capability.h
+> -unifdef-y +=3D capi.h
+> -unifdef-y +=3D cciss_ioctl.h
+> -unifdef-y +=3D cdrom.h
+> -unifdef-y +=3D cm4000_cs.h
+> -unifdef-y +=3D cn_proc.h
+> -unifdef-y +=3D coda.h
+> -unifdef-y +=3D connector.h
+> -unifdef-y +=3D cuda.h
+> -unifdef-y +=3D cyclades.h
+> -unifdef-y +=3D dccp.h
+> -unifdef-y +=3D dlm.h
+> -unifdef-y +=3D dlm_plock.h
+> -unifdef-y +=3D edd.h
+> -unifdef-y +=3D elf.h
+> -unifdef-y +=3D elfcore.h
+> -unifdef-y +=3D errno.h
+> -unifdef-y +=3D errqueue.h
+> -unifdef-y +=3D ethtool.h
+> -unifdef-y +=3D eventpoll.h
+> -unifdef-y +=3D signalfd.h
+> -unifdef-y +=3D ext2_fs.h
+> -unifdef-y +=3D fb.h
+> -unifdef-y +=3D fcntl.h
+> -unifdef-y +=3D filter.h
+> -unifdef-y +=3D flat.h
+> -unifdef-y +=3D futex.h
+> -unifdef-y +=3D fs.h
+> -unifdef-y +=3D gameport.h
+> -unifdef-y +=3D generic_serial.h
+> -unifdef-y +=3D hdlcdrv.h
+> -unifdef-y +=3D hdlc.h
+> -unifdef-y +=3D hdreg.h
+> -unifdef-y +=3D hid.h
+> -unifdef-y +=3D hiddev.h
+> -unifdef-y +=3D hidraw.h
+> -unifdef-y +=3D hpet.h
+> -unifdef-y +=3D i2c.h
+> -unifdef-y +=3D i2c-dev.h
+> -unifdef-y +=3D icmp.h
+> -unifdef-y +=3D icmpv6.h
+> -unifdef-y +=3D if_addr.h
+> -unifdef-y +=3D if_arp.h
+> -unifdef-y +=3D if_bridge.h
+> -unifdef-y +=3D if_ec.h
+> -unifdef-y +=3D if_eql.h
+> -unifdef-y +=3D if_ether.h
+> -unifdef-y +=3D if_fddi.h
+> -unifdef-y +=3D if_frad.h
+> -unifdef-y +=3D if_ltalk.h
+> -unifdef-y +=3D if_link.h
+> -unifdef-y +=3D if_phonet.h
+> -unifdef-y +=3D if_pppol2tp.h
+> -unifdef-y +=3D if_pppox.h
+> -unifdef-y +=3D if_tr.h
+> -unifdef-y +=3D if_tunnel.h
+> -unifdef-y +=3D if_vlan.h
+> -unifdef-y +=3D igmp.h
+> -unifdef-y +=3D inet_diag.h
+> -unifdef-y +=3D in.h
+> -unifdef-y +=3D in6.h
+> -unifdef-y +=3D inotify.h
+> -unifdef-y +=3D input.h
+> -unifdef-y +=3D ioq.h
+> -unifdef-y +=3D ip.h
+> -unifdef-y +=3D ipc.h
+> -unifdef-y +=3D ipmi.h
+> -unifdef-y +=3D ipv6.h
+> -unifdef-y +=3D ipv6_route.h
+> -unifdef-y +=3D isdn.h
+> -unifdef-y +=3D isdnif.h
+> -unifdef-y +=3D isdn_divertif.h
+> -unifdef-y +=3D isdn_ppp.h
+> -unifdef-y +=3D ivtv.h
+> -unifdef-y +=3D ivtvfb.h
+> -unifdef-y +=3D joystick.h
+> -unifdef-y +=3D kdev_t.h
+> -unifdef-y +=3D kd.h
+> -unifdef-y +=3D kernelcapi.h
+> -unifdef-y +=3D kernel.h
+> -unifdef-y +=3D keyboard.h
+> -ifneq ($(wildcard $(srctree)/arch/$(SRCARCH)/include/asm/kvm.h \
+> -      		  $(srctree)/include/asm-$(SRCARCH)/kvm.h),)
+> -unifdef-y +=3D kvm.h
+> -endif
+> -ifneq ($(wildcard $(srctree)/arch/$(SRCARCH)/include/asm/kvm_para.h \
+> -		  $(srctree)/include/asm-$(SRCARCH)/kvm_para.h),)
+> -unifdef-y +=3D kvm_para.h
+> -endif
+> -unifdef-y +=3D llc.h
+> -unifdef-y +=3D loop.h
+> -unifdef-y +=3D lp.h
+> -unifdef-y +=3D mempolicy.h
+> -unifdef-y +=3D mii.h
+> -unifdef-y +=3D mman.h
+> -unifdef-y +=3D mroute.h
+> -unifdef-y +=3D mroute6.h
+> -unifdef-y +=3D msdos_fs.h
+> -unifdef-y +=3D msg.h
+> -unifdef-y +=3D nbd.h
+> -unifdef-y +=3D ncp_fs.h
+> -unifdef-y +=3D ncp.h
+> -unifdef-y +=3D ncp_mount.h
+> -unifdef-y +=3D netdevice.h
+> -unifdef-y +=3D netfilter_bridge.h
+> -unifdef-y +=3D netfilter_decnet.h
+> -unifdef-y +=3D netfilter.h
+> -unifdef-y +=3D netfilter_ipv4.h
+> -unifdef-y +=3D netfilter_ipv6.h
+> -unifdef-y +=3D net.h
+> -unifdef-y +=3D netlink.h
+> -unifdef-y +=3D nfs3.h
+> -unifdef-y +=3D nfs4.h
+> -unifdef-y +=3D nfsacl.h
+> -unifdef-y +=3D nfs_fs.h
+> -unifdef-y +=3D nfs.h
+> -unifdef-y +=3D nfs_idmap.h
+> -unifdef-y +=3D n_r3964.h
+> -unifdef-y +=3D nubus.h
+> -unifdef-y +=3D nvram.h
+> -unifdef-y +=3D oom.h
+> -unifdef-y +=3D parport.h
+> -unifdef-y +=3D patchkey.h
+> -unifdef-y +=3D pci.h
+> -unifdef-y +=3D personality.h
+> -unifdef-y +=3D pktcdvd.h
+> -unifdef-y +=3D pmu.h
+> -unifdef-y +=3D poll.h
+> -unifdef-y +=3D ppp_defs.h
+> -unifdef-y +=3D ppp-comp.h
+> -unifdef-y +=3D pps.h
+> -unifdef-y +=3D ptrace.h
+> -unifdef-y +=3D quota.h
+> -unifdef-y +=3D random.h
+> -unifdef-y +=3D rfkill.h
+> -unifdef-y +=3D irqnr.h
+> -unifdef-y +=3D reboot.h
+> -unifdef-y +=3D reiserfs_fs.h
+> -unifdef-y +=3D reiserfs_xattr.h
+> -unifdef-y +=3D route.h
+> -unifdef-y +=3D rtc.h
+> -unifdef-y +=3D rtnetlink.h
+> -unifdef-y +=3D scc.h
+> -unifdef-y +=3D sched.h
+> -unifdef-y +=3D screen_info.h
+> -unifdef-y +=3D sdla.h
+> -unifdef-y +=3D securebits.h
+> -unifdef-y +=3D selinux_netlink.h
+> -unifdef-y +=3D sem.h
+> -unifdef-y +=3D serial_core.h
+> -unifdef-y +=3D serial.h
+> -unifdef-y +=3D serio.h
+> -unifdef-y +=3D shm.h
+> -unifdef-y +=3D shm_signal.h
+> -unifdef-y +=3D signal.h
+> -unifdef-y +=3D smb_fs.h
+> -unifdef-y +=3D smb.h
+> -unifdef-y +=3D smb_mount.h
+> -unifdef-y +=3D socket.h
+> -unifdef-y +=3D sonet.h
+> -unifdef-y +=3D sonypi.h
+> -unifdef-y +=3D soundcard.h
+> -unifdef-y +=3D stat.h
+> -unifdef-y +=3D stddef.h
+> -unifdef-y +=3D string.h
+> -unifdef-y +=3D swab.h
+> -unifdef-y +=3D synclink.h
+> -unifdef-y +=3D sysctl.h
+> -unifdef-y +=3D tcp.h
+> -unifdef-y +=3D time.h
+> -unifdef-y +=3D timex.h
+> -unifdef-y +=3D tty.h
+> -unifdef-y +=3D types.h
+> -unifdef-y +=3D udp.h
+> -unifdef-y +=3D uinput.h
+> -unifdef-y +=3D uio.h
+> -unifdef-y +=3D unistd.h
+> -unifdef-y +=3D usbdevice_fs.h
+> -unifdef-y +=3D utsname.h
+> -unifdef-y +=3D vhost.h
+> -unifdef-y +=3D vbus_pci.h
+> -unifdef-y +=3D venet.h
+> -unifdef-y +=3D videodev2.h
+> -unifdef-y +=3D videodev.h
+> -unifdef-y +=3D virtio_config.h
+> -unifdef-y +=3D virtio_ids.h
+> -unifdef-y +=3D virtio_blk.h
+> -unifdef-y +=3D virtio_net.h
+> -unifdef-y +=3D virtio_9p.h
+> -unifdef-y +=3D virtio_balloon.h
+> -unifdef-y +=3D virtio_console.h
+> -unifdef-y +=3D virtio_pci.h
+> -unifdef-y +=3D virtio_ring.h
+> -unifdef-y +=3D virtio_rng.h
+> -unifdef-y +=3D vt.h
+> -unifdef-y +=3D wait.h
+> -unifdef-y +=3D wanrouter.h
+> -unifdef-y +=3D watchdog.h
+> -unifdef-y +=3D wireless.h
+> -unifdef-y +=3D xattr.h
+> -unifdef-y +=3D xfrm.h
+> -
+> -objhdr-y +=3D version.h
+> +header-y +=3D vhost.h
+> +header-y +=3D videodev2.h
+> +header-y +=3D virtio_9p.h
+> +header-y +=3D virtio_balloon.h
+> +header-y +=3D virtio_blk.h
+> +header-y +=3D virtio_config.h
+> +header-y +=3D virtio_console.h
+> +header-y +=3D virtio_ids.h
+> +header-y +=3D virtio_net.h
+> +header-y +=3D virtio_pci.h
+> +header-y +=3D virtio_ring.h
+> +header-y +=3D virtio_rng.h
+> +header-y +=3D vt.h
+> +header-y +=3D wait.h
+> +header-y +=3D wanrouter.h
+> +header-y +=3D watchdog.h
+>  header-y +=3D wimax.h
+> -header-y +=3D wimax/
+> +header-y +=3D wireless.h
+> +header-y +=3D x25.h
+> +header-y +=3D xattr.h
+> +header-y +=3D xfrm.h
 
-Mark Brown wrote:
-> On Tue, Dec 28, 2010 at 04:23:30PM +0000, Russell King wrote:
-> > On Tue, Dec 28, 2010 at 03:39:48PM +0000, Mark Brown wrote:
-> 
-> > > Please keep myself and Liam in the CC on all ASoC discussion.
-> 
-> > You weren't included on Stephen's email.  Have you told Stephen which
-> > files he needs to notify you about?  I suspect Stephen operates by
-> > notifying the people who's trees clash, rather than selecting people
-> > based on files.
-> 
-> I suspect so too; the file patterns in MAINTAINERS cover it otherwise
-> (and originally the ASoC tree was actually getting merged first so the
-> right thing would've happened anyway).
-> 
-> > > > Of course, I know you need rebase you tree for it...so sorry for
-> bothering.
-> 
-> > > This isn't going to help as it will just introduce the same duplicate
-> > > commits issue into the sound tree.  I'm still not clear what the
-> > > affected commits actually are but given that Stephen's original report
-> > > indicated that the ASoC changes are subsets of your changes would it
-not
-> > > make sense to just drop the relevant commits from your tree (which
-seems
-> > > to be rebased often, unlike the sound tree which doesn't rebase)?
-> 
-> > I don't think you read what I said (you probably didn't even see it.)
-> 
-> > What Kukjin has already done is looked in the ALSA tree, extracted the
-> > commits he wants from it, committed those into his tree, and based a
-> > pile of work on top of that.
-> 
-> Right, but looking at Stephen's original mail it seems like the bits
-> that are conflicting here are two different commits in the ASoC and
-> Samsung code where the ASoC version is a superset of the Samsung side
-> set.  If that analysis is correct then the ASoC commits will do the
-> right thing once they turn up in the Samsung tree so unless there's a
-> pressing reason for the Samsung versions they could just be dropped for
-> the time being.
-> 
-> > I said "don't do that" because it creates unnecessary duplications in
-> > the git history.  I suggested that if Kukjin needs commits from the ALSA
-> > tree, he asks the ALSA people for a commit in their tree to pull into
-> > his tree to base his code on instead.
-> 
-> Yes, which due to the lack of rebasing is hard to arrange except by
-> merging all of ASoC en masse (which someone already suggested).
-> 
-> > > Another option is to do a second round of merges after both sound and
-> > > ALSA trees with whatever the dependant commits are.
-> 
-> > If Kukjin has code which requires commits from the ALSA tree, and he
-> > doesn't have the ALSA tree, he can't build-test the code in his tree.
-> > Are you really suggesting that people should keep un-build-tested code
-> > in their trees, and push that un-tested code upstream when the dependent
-> > trees have merged?  Are you really suggesting that swathes of commits
-> > should not be bisectable?
-> 
-> No, I'm suggesting that a separate branch be maintained with the
-> affected commits which gets rebased and tested against -next or whatever
-> until everything they need hits the tree they need to be merged via.
-> The bulk of things go in as normal, then the extra commits are added in
-> a second merge later.  This is often required for practical testing when
-> there's a lot of work going on over the tree, even if it can be split up
-> neatly for merge.
-> 
-> This is annoying if it goes on for a long time but given that Linus is
-> likely to release this week that shouldn't be the case, and it assumes
-> the set of affected changes is small.  As I've no idea why the Samsung
-> side of the changes is there I don't know if that is the case or not.
+
+--Apple-Mail-6--315157671
+content-type: application/pgp-signature; x-mac-type=70674453;
+	name=PGP.sig
+content-description: This is a digitally signed message part
+content-disposition: inline; filename=PGP.sig
+content-transfer-encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG/MacGPG2 v2.0.14 (Darwin)
+
+iEYEARECAAYFAk0b3soACgkQP5K2CMvXmqFiRACfT11qKdsiU3m/7kgwOJ7M8kN0
+dAwAn2vJbc/iF3fNG0+V3z+tNFjTVTIw
+=0E78
+-----END PGP SIGNATURE-----
+
+--Apple-Mail-6--315157671--
