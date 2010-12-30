@@ -1,58 +1,83 @@
-From: Ping Cheng <pinglinux@gmail.com>
-Subject: Re: linux-next: build failure after merge of the final tree (input
- tree related)
-Date: Thu, 30 Dec 2010 12:10:38 -0800
-Message-ID: <AANLkTi=icbrfOT_gvEwcLJO94wtuF8QF=aOx8z-LajeB@mail.gmail.com>
-References: <20101229125129.d48fb6fc.sfr@canb.auug.org.au>
-	<20101229023457.GA4206@core.coreip.homeip.net>
-	<20101230105130.5d27a82b.sfr@canb.auug.org.au>
-	<AANLkTik38TzE_L_m8KpG-PmWGPeHjC8FYU=reRN8L7E5@mail.gmail.com>
-	<AANLkTik3M2msXQA2Q--r492Oohph9cD7=JYBWx=vNzg-@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs-scale tree with the  tree
+Date: Fri, 31 Dec 2010 10:54:32 +1100
+Message-ID: <20101231105432.ee0a7488.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:59244 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755041Ab0L3UKk convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 30 Dec 2010 15:10:40 -0500
-In-Reply-To: <AANLkTik3M2msXQA2Q--r492Oohph9cD7=JYBWx=vNzg-@mail.gmail.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:33631 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752105Ab0L3Xyh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 30 Dec 2010 18:54:37 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Nick Piggin <npiggin@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@vger.kernel.org>
 
-On Thu, Dec 30, 2010 at 11:58 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Thu, Dec 30, 2010 at 19:06, Ping Cheng <pinglinux@gmail.com> wrote=
-:
->> On Wed, Dec 29, 2010 at 3:51 PM, Stephen Rothwell <sfr@canb.auug.org=
-=2Eau> wrote:
->>> On Tue, 28 Dec 2010 18:34:58 -0800 Dmitry Torokhov <dmitry.torokhov=
-@gmail.com> wrote:
->>>> On Wed, Dec 29, 2010 at 12:51:29PM +1100, Stephen Rothwell wrote:
->>>> > After merging the final tree, today's linux-next build (powerpc
->>>> > allyesconfig) failed like this:
->>>> >
->>>> > drivers/input/touchscreen/wacom_w8001.c: In function 'w8001_setu=
-p':
->>>> > drivers/input/touchscreen/wacom_w8001.c:287: error: implicit dec=
-laration of function 'mdelay'
->>>> >
->>>> > Caused by commit b8fe15cb1b435928f9967d660e925fe7afb32787 ("Inpu=
-t:
->>>> > wacom_w8001 - support pen or touch only devices"). =A0See Rule 1=
- in
->>>> > Documentation/SubmitChecklist.
->>
->> I do not see the error on my testing systems somehow. Does adding th=
-e
->> following line resolve the issue?
->>
->> #include < include/linux/delay.h>
->
-> "#include <linux/delay.h>", I assume?
+Hi Nick,
 
-You are right. Take it as a typo or copy/paste error ;).
+Today's linux-next merge of the vfs-scale tree got a conflict in
+Documentation/filesystems/Locking between commit
+b83be6f20a0e468f715b14225c9f897538dfe5ad ("update
+Documentation/filesystems/Locking") from Linus' tree and various commits
+from the vfs-scale tree.
 
-Ping
+I fixed it up (as best I could - see below) and can carry the fix as
+necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc Documentation/filesystems/Locking
+index 7686e76,c1a7e72..0000000
+--- a/Documentation/filesystems/Locking
++++ b/Documentation/filesystems/Locking
+@@@ -18,13 -22,15 +22,14 @@@ prototypes
+  	char *(*d_dname)((struct dentry *dentry, char *buffer, int buflen);
+  
+  locking rules:
+- 		dcache_lock	rename_lock	->d_lock	may block
+- d_revalidate:	no		no		no		yes
+- d_hash		no		no		no		yes
+- d_compare:	no		yes		no		no 
+- d_delete:	yes		no		yes		no
+- d_release:	no		no		no		yes
+- d_iput:		no		no		no		yes
+ -	none have BKL
++ 		rename_lock	->d_lock	may block	rcu-walk
++ d_revalidate:	no		no		yes		no
++ d_revalidate_rcu:no		no		yes (ref-walk)	maybe
++ d_hash		no		no		no		maybe
++ d_compare:	yes		no		no		maybe
++ d_delete:	no		yes		no		no
++ d_release:	no		no		yes		no
++ d_iput:		no		no		yes		no
+  d_dname:	no		no		no		no
+  
+  --------------------------- inode_operations --------------------------- 
+@@@ -41,11 -47,12 +46,13 @@@ ata *)
+  	int (*rename) (struct inode *, struct dentry *,
+  			struct inode *, struct dentry *);
+  	int (*readlink) (struct dentry *, char __user *,int);
+ -	int (*follow_link) (struct dentry *, struct nameidata *);
+ +	void * (*follow_link) (struct dentry *, struct nameidata *);
+ +	void (*put_link) (struct dentry *, struct nameidata *, void *);
+  	void (*truncate) (struct inode *);
+- 	int (*permission) (struct inode *, int, struct nameidata *);
++ 	int (*permission) (struct inode *, int);
++ 	int (*permission_rcu) (struct inode *, int, unsigned int);
+  	int (*check_acl)(struct inode *, int);
++ 	int (*check_acl_rcu)(struct inode *, int, unsigned int);
+  	int (*setattr) (struct dentry *, struct iattr *);
+  	int (*getattr) (struct vfsmount *, struct dentry *, struct kstat *);
+  	int (*setxattr) (struct dentry *, const char *,const void *,size_t,int);
+@@@ -74,7 -77,7 +81,8 @@@ put_link:	n
+  truncate:	yes		(see below)
+  setattr:	yes
+  permission:	no
++ permission_rcu: no (may not block if called in rcu-walk mode)
+ +check_acl:	no
+  getattr:	no
+  setxattr:	yes
+  getxattr:	no
