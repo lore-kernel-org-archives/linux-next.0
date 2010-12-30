@@ -1,100 +1,67 @@
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Subject: Re: linux-next: Tree for December 29 (netfilter build errors)
-Date: Thu, 30 Dec 2010 18:07:25 +0100
-Message-ID: <1293728845.7150.336.camel@edumazet-laptop>
-References: <20101229130700.0ef93735.sfr@canb.auug.org.au>
-	 <20101229085300.1ceac200.randy.dunlap@oracle.com>
-	 <AANLkTin8Zc4wkx9BjD0vJSNdne8LVHx=JyeSC2YdKTKH@mail.gmail.com>
-	 <AANLkTikPbKOQseJ8qfoSqv4XWgH5fjbg488jd6_Xv22E@mail.gmail.com>
+From: Ping Cheng <pinglinux@gmail.com>
+Subject: Re: linux-next: build failure after merge of the final tree (input
+ tree related)
+Date: Thu, 30 Dec 2010 10:06:46 -0800
+Message-ID: <AANLkTik38TzE_L_m8KpG-PmWGPeHjC8FYU=reRN8L7E5@mail.gmail.com>
+References: <20101229125129.d48fb6fc.sfr@canb.auug.org.au>
+	<20101229023457.GA4206@core.coreip.homeip.net>
+	<20101230105130.5d27a82b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:47045 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754662Ab0L3RHg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 30 Dec 2010 12:07:36 -0500
-In-Reply-To: <AANLkTikPbKOQseJ8qfoSqv4XWgH5fjbg488jd6_Xv22E@mail.gmail.com>
+Received: from mail-wy0-f174.google.com ([74.125.82.174]:35317 "EHLO
+	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754861Ab0L3SGt convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 30 Dec 2010 13:06:49 -0500
+In-Reply-To: <20101230105130.5d27a82b.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sedat.dilek@gmail.com
-Cc: Changli Gao <xiaosuo@gmail.com>, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, netfilter-devel@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Le jeudi 30 d=C3=A9cembre 2010 =C3=A0 17:47 +0100, Sedat Dilek a =C3=A9=
-crit :
-> On Thu, Dec 30, 2010 at 3:18 AM, Changli Gao <xiaosuo@gmail.com> wrot=
-e:
-> > On Thu, Dec 30, 2010 at 12:53 AM, Randy Dunlap <randy.dunlap@oracle=
-=2Ecom> wrote:
-> >> On Wed, 29 Dec 2010 13:07:00 +1100 Stephen Rothwell wrote:
-> >>
-> >>> Hi all,
-> >>>
-> >>> Changes since 20101228:
-> >>
-> >>
-> >> In file included from linux-next-20101229/net/ipv6/netfilter/nf_de=
-frag_ipv6_hooks.c:22:
-> >> linux-next-20101229/include/net/netfilter/nf_conntrack.h:94: error=
-: field 'ct_general' has incomplete type
-> >> linux-next-20101229/include/net/netfilter/nf_conntrack.h: In funct=
-ion 'nf_ct_get':
-> >> linux-next-20101229/include/net/netfilter/nf_conntrack.h:174: erro=
-r: 'const struct sk_buff' has no member named 'nfct'
-> >> linux-next-20101229/include/net/netfilter/nf_conntrack.h: In funct=
-ion 'nf_ct_put':
-> >> linux-next-20101229/include/net/netfilter/nf_conntrack.h:181: erro=
-r: implicit declaration of function 'nf_conntrack_put'
-> >>  CC      net/ipv6/exthdrs_core.o
-> >> In file included from linux-next-20101229/include/net/netfilter/nf=
-_conntrack_core.h:18,
-> >>                 from linux-next-20101229/net/ipv6/netfilter/nf_def=
-rag_ipv6_hooks.c:26:
-> >> linux-next-20101229/include/net/netfilter/nf_conntrack_ecache.h: I=
-n function 'nf_ct_ecache_ext_add':
-> >> linux-next-20101229/include/net/netfilter/nf_conntrack_ecache.h:35=
-: error: 'struct net' has no member named 'ct'
-> >> In file included from linux-next-20101229/net/ipv6/netfilter/nf_de=
-frag_ipv6_hooks.c:26:
-> >> linux-next-20101229/include/net/netfilter/nf_conntrack_core.h: In =
-function 'nf_conntrack_confirm':
-> >> linux-next-20101229/include/net/netfilter/nf_conntrack_core.h:60: =
-error: 'struct sk_buff' has no member named 'nfct'
-> >> linux-next-20101229/net/ipv6/netfilter/nf_defrag_ipv6_hooks.c: In =
-function 'nf_ct6_defrag_user':
-> >> linux-next-20101229/net/ipv6/netfilter/nf_defrag_ipv6_hooks.c:36: =
-error: 'struct sk_buff' has no member named 'nfct'
-> >> linux-next-20101229/net/ipv6/netfilter/nf_defrag_ipv6_hooks.c:37: =
-error: implicit declaration of function 'nf_ct_zone'
-> >> linux-next-20101229/net/ipv6/netfilter/nf_defrag_ipv6_hooks.c:37: =
-error: 'struct sk_buff' has no member named 'nfct'
-> >> linux-next-20101229/net/ipv6/netfilter/nf_defrag_ipv6_hooks.c: In =
-function 'ipv6_defrag':
-> >> linux-next-20101229/net/ipv6/netfilter/nf_defrag_ipv6_hooks.c:60: =
-error: 'struct sk_buff' has no member named 'nfct'
-> >> linux-next-20101229/net/ipv6/netfilter/nf_defrag_ipv6_hooks.c:60: =
-error: 'struct sk_buff' has no member named 'nfct'
-> >> make[4]: *** [net/ipv6/netfilter/nf_defrag_ipv6_hooks.o] Error 1
-> >> make[3]: *** [net/ipv6/netfilter] Error 2
-> >>
-> >>
-> >>
-> >
-> > This bug has been already fixed in nf-next-2.6:
-> > http://git.kernel.org/?p=3Dlinux/kernel/git/kaber/nf-next-2.6.git;a=
-=3Dcommitdiff;h=3Dae90bdeaeac6b964b7a1e853a90a19f358a9ac20;hp=3Df1c7222=
-95e029eace7960fc687efd5afd67dc555
-> >
-> > Thanks.
-> >
-> > --
-> > Regards,
-> > Changli Gao(xiaosuo@gmail.com)
-> >
->=20
-> Does not look like the nf-next-2.6 is triggered by linux-next... Does
-> this tree passes net-next-2.6 and then enters linux-next?
->=20
+On Wed, Dec 29, 2010 at 3:51 PM, Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> Hi Dmitry,
+>
+> On Tue, 28 Dec 2010 18:34:58 -0800 Dmitry Torokhov <dmitry.torokhov@g=
+mail.com> wrote:
+>>
+>> On Wed, Dec 29, 2010 at 12:51:29PM +1100, Stephen Rothwell wrote:
+>> >
+>> > After merging the final tree, today's linux-next build (powerpc
+>> > allyesconfig) failed like this:
+>> >
+>> > drivers/input/touchscreen/wacom_w8001.c: In function 'w8001_setup'=
+:
+>> > drivers/input/touchscreen/wacom_w8001.c:287: error: implicit decla=
+ration of function 'mdelay'
+>> >
+>> > Caused by commit b8fe15cb1b435928f9967d660e925fe7afb32787 ("Input:
+>> > wacom_w8001 - support pen or touch only devices"). =A0See Rule 1 i=
+n
+>> > Documentation/SubmitChecklist.
 
-Yes it does. Patrick is probably too busy right now to push fixes to
-David.
+I do not see the error on my testing systems somehow. Does adding the
+following line resolve the issue?
+
+#include < include/linux/delay.h>
+
+Ping
+
+>> > I have reverted that commit for today.
+>>
+>> Thank you Stephen, I'll fix this up in my tree.
+>
+> I note that this commit has been redone in your tree (as commit
+> 11a862ed9f04558e222fa15a5fbd76698fed11ff) but there have been no chan=
+ges
+> to it at all (except the commit date).
+>
+> I have reverted that commit from today's linux-next.
+> --
+> Cheers,
+> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
+=2Eorg.au
+> http://www.canb.auug.org.au/~sfr/
+>
