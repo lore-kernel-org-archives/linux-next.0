@@ -1,480 +1,123 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the alacrity tree with the  tree
-Date: Thu, 30 Dec 2010 11:43:32 +1100
-Message-ID: <20101230114332.c19ba13b.sfr@canb.auug.org.au>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: linux-next: manual merge of the sound tree with the s5p tree
+Date: Thu, 30 Dec 2010 09:54:13 +0900
+Message-ID: <00a401cba7bc$1654d660$42fe8320$%kim@samsung.com>
+References: <s5hk4j0n43g.wl%tiwai@suse.de>
+ <004001cba292$3827d2d0$a8777870$%kim@samsung.com>
+ <s5hvd2ku49r.wl%tiwai@suse.de>
+ <004101cba294$8639de30$92ad9a90$%kim@samsung.com>
+ <s5h7hf0tvct.wl%tiwai@suse.de>
+ <008f01cba30a$72f5c160$58e14420$%kim@samsung.com>
+ <20101224082736.GA31540@flint.arm.linux.org.uk>
+ <018b01cba636$6c3a8390$44af8ab0$%kim@samsung.com>
+ <20101228153948.GB14860@sirena.org.uk>
+ <20101228162330.GA31226@flint.arm.linux.org.uk>
+ <20101228164047.GA2417@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57636 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754078Ab0L3Ang (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 29 Dec 2010 19:43:36 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:56910 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754182Ab0L3AyU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 29 Dec 2010 19:54:20 -0500
+In-reply-to: <20101228164047.GA2417@opensource.wolfsonmicro.com>
+Content-language: ko
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Gregory Haskins <gregory.haskins@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Russell King' <rmk@arm.linux.org.uk>
+Cc: 'Takashi Iwai' <tiwai@suse.de>, 'Stephen Rothwell' <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Jassi Brar' <jassi.brar@samsung.com>
 
-Hi Gregory,
+Happy New year everyone :-)
 
-Today's linux-next merge of the alacrity tree got a conflict in
-include/linux/Kbuild between various commits from various trees and
-various commits from the alacrity tree.
+Firstly, thanks for Russell and Mark.
 
-I fixed it up (again - see below).  I must ask, though, since the commits
-in the alacrity tree have been there since May, is there is any progress
-towards getting them integrated into Llinus' tree?
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Hmm...
+I thought it's very simple, but it is not. Because needs some peoples'
+another work :-(
 
-diff --cc include/linux/Kbuild
-index 2296d8b,1a31099..0000000
---- a/include/linux/Kbuild
-+++ b/include/linux/Kbuild
-@@@ -128,106 -70,43 +128,107 @@@ header-y += fd.
-  header-y += fdreg.h
-  header-y += fib_rules.h
-  header-y += fiemap.h
- +header-y += filter.h
-  header-y += firewire-cdev.h
-  header-y += firewire-constants.h
- +header-y += flat.h
- +header-y += fs.h
-  header-y += fuse.h
- -header-y += genetlink.h
- +header-y += futex.h
- +header-y += gameport.h
-  header-y += gen_stats.h
- +header-y += generic_serial.h
- +header-y += genetlink.h
-  header-y += gfs2_ondisk.h
-  header-y += gigaset_dev.h
- +header-y += hdlc.h
- +header-y += hdlcdrv.h
- +header-y += hdreg.h
- +header-y += hid.h
- +header-y += hiddev.h
- +header-y += hidraw.h
- +header-y += hpet.h
-  header-y += hysdn_if.h
- +header-y += i2c-dev.h
- +header-y += i2c.h
-  header-y += i2o-dev.h
-  header-y += i8k.h
- +header-y += icmp.h
- +header-y += icmpv6.h
- +header-y += if.h
- +header-y += if_addr.h
-  header-y += if_addrlabel.h
- +header-y += if_alg.h
-  header-y += if_arcnet.h
- +header-y += if_arp.h
-  header-y += if_bonding.h
- +header-y += if_bridge.h
-  header-y += if_cablemodem.h
- +header-y += if_ec.h
- +header-y += if_eql.h
- +header-y += if_ether.h
-  header-y += if_fc.h
- -header-y += if.h
- +header-y += if_fddi.h
- +header-y += if_frad.h
-  header-y += if_hippi.h
-  header-y += if_infiniband.h
- +header-y += if_link.h
- +header-y += if_ltalk.h
-  header-y += if_packet.h
- +header-y += if_phonet.h
-  header-y += if_plip.h
-  header-y += if_ppp.h
- +header-y += if_pppol2tp.h
- +header-y += if_pppox.h
-  header-y += if_slip.h
-  header-y += if_strip.h
- +header-y += if_tr.h
-  header-y += if_tun.h
- +header-y += if_tunnel.h
- +header-y += if_vlan.h
- +header-y += if_x25.h
- +header-y += igmp.h
- +header-y += in.h
- +header-y += in6.h
-  header-y += in_route.h
- +header-y += inet_diag.h
- +header-y += inotify.h
- +header-y += input.h
-  header-y += ioctl.h
-++header-y += ioq.h
- +header-y += ip.h
-  header-y += ip6_tunnel.h
- +header-y += ip_vs.h
- +header-y += ipc.h
- +header-y += ipmi.h
-  header-y += ipmi_msgdefs.h
-  header-y += ipsec.h
- -header-y += ip_vs.h
- +header-y += ipv6.h
- +header-y += ipv6_route.h
-  header-y += ipx.h
-  header-y += irda.h
- +header-y += irqnr.h
- +header-y += isdn.h
- +header-y += isdn_divertif.h
- +header-y += isdn_ppp.h
- +header-y += isdnif.h
-  header-y += iso_fs.h
- +header-y += ivtv.h
- +header-y += ivtvfb.h
-  header-y += ixjuser.h
-  header-y += jffs2.h
- +header-y += joystick.h
- +header-y += kd.h
- +header-y += kdev_t.h
- +header-y += kernel.h
- +header-y += kernelcapi.h
- +header-y += keyboard.h
-  header-y += keyctl.h
- +header-y += l2tp.h
-  header-y += limits.h
- +header-y += llc.h
- +header-y += loop.h
- +header-y += lp.h
-  header-y += magic.h
-  header-y += major.h
-  header-y += map_to_7segment.h
-@@@ -290,104 -136,259 +291,107 @@@ header-y += phantom.
-  header-y += phonet.h
-  header-y += pkt_cls.h
-  header-y += pkt_sched.h
- +header-y += pktcdvd.h
- +header-y += pmu.h
- +header-y += poll.h
-  header-y += posix_types.h
-  header-y += ppdev.h
- +header-y += ppp-comp.h
- +header-y += ppp_defs.h
- +header-y += pps.h
-  header-y += prctl.h
- -header-y += qnxtypes.h
- +header-y += ptrace.h
-  header-y += qnx4_fs.h
- +header-y += qnxtypes.h
- +header-y += quota.h
-  header-y += radeonfb.h
- +header-y += random.h
-  header-y += raw.h
- +header-y += rds.h
- +header-y += reboot.h
- +header-y += reiserfs_fs.h
- +header-y += reiserfs_xattr.h
-  header-y += resource.h
- +header-y += rfkill.h
-  header-y += romfs_fs.h
-  header-y += rose.h
- +header-y += route.h
- +header-y += rtc.h
- +header-y += rtnetlink.h
- +header-y += scc.h
- +header-y += sched.h
- +header-y += screen_info.h
- +header-y += sdla.h
- +header-y += securebits.h
- +header-y += selinux_netlink.h
- +header-y += sem.h
- +header-y += serial.h
- +header-y += serial_core.h
-  header-y += serial_reg.h
- -header-y += smbno.h
- +header-y += serio.h
- +header-y += shm.h
-++header-y += shm_signal.h
- +header-y += signal.h
- +header-y += signalfd.h
-  header-y += snmp.h
- +header-y += socket.h
-  header-y += sockios.h
-  header-y += som.h
- +header-y += sonet.h
- +header-y += sonypi.h
-  header-y += sound.h
- +header-y += soundcard.h
- +header-y += stat.h
- +header-y += stddef.h
- +header-y += string.h
-  header-y += suspend_ioctls.h
- +header-y += swab.h
- +header-y += synclink.h
- +header-y += sysctl.h
-  header-y += taskstats.h
- +header-y += tcp.h
-  header-y += telephony.h
-  header-y += termios.h
- +header-y += time.h
-  header-y += times.h
- +header-y += timex.h
-  header-y += tiocl.h
-  header-y += tipc.h
-  header-y += tipc_config.h
-  header-y += toshiba.h
- +header-y += tty.h
- +header-y += types.h
-  header-y += udf_fs_i.h
- +header-y += udp.h
- +header-y += uinput.h
- +header-y += uio.h
-  header-y += ultrasound.h
-  header-y += un.h
- +header-y += unistd.h
- +header-y += usbdevice_fs.h
-  header-y += utime.h
- +header-y += utsname.h
-++header-y += vbus_pci.h
-++header-y += venet.h
-  header-y += veth.h
- -header-y += videotext.h
- -header-y += x25.h
- -
- -unifdef-y += acct.h
- -unifdef-y += adb.h
- -unifdef-y += adfs_fs.h
- -unifdef-y += agpgart.h
- -ifneq ($(wildcard $(srctree)/arch/$(SRCARCH)/include/asm/a.out.h \
- -      		  $(srctree)/include/asm-$(SRCARCH)/a.out.h),)
- -unifdef-y += a.out.h
- -endif
- -unifdef-y += apm_bios.h
- -unifdef-y += atalk.h
- -unifdef-y += atmdev.h
- -unifdef-y += atm.h
- -unifdef-y += atm_tcp.h
- -unifdef-y += audit.h
- -unifdef-y += auto_fs.h
- -unifdef-y += auxvec.h
- -unifdef-y += binfmts.h
- -unifdef-y += blktrace_api.h
- -unifdef-y += capability.h
- -unifdef-y += capi.h
- -unifdef-y += cciss_ioctl.h
- -unifdef-y += cdrom.h
- -unifdef-y += cm4000_cs.h
- -unifdef-y += cn_proc.h
- -unifdef-y += coda.h
- -unifdef-y += connector.h
- -unifdef-y += cuda.h
- -unifdef-y += cyclades.h
- -unifdef-y += dccp.h
- -unifdef-y += dlm.h
- -unifdef-y += dlm_plock.h
- -unifdef-y += edd.h
- -unifdef-y += elf.h
- -unifdef-y += elfcore.h
- -unifdef-y += errno.h
- -unifdef-y += errqueue.h
- -unifdef-y += ethtool.h
- -unifdef-y += eventpoll.h
- -unifdef-y += signalfd.h
- -unifdef-y += ext2_fs.h
- -unifdef-y += fb.h
- -unifdef-y += fcntl.h
- -unifdef-y += filter.h
- -unifdef-y += flat.h
- -unifdef-y += futex.h
- -unifdef-y += fs.h
- -unifdef-y += gameport.h
- -unifdef-y += generic_serial.h
- -unifdef-y += hdlcdrv.h
- -unifdef-y += hdlc.h
- -unifdef-y += hdreg.h
- -unifdef-y += hid.h
- -unifdef-y += hiddev.h
- -unifdef-y += hidraw.h
- -unifdef-y += hpet.h
- -unifdef-y += i2c.h
- -unifdef-y += i2c-dev.h
- -unifdef-y += icmp.h
- -unifdef-y += icmpv6.h
- -unifdef-y += if_addr.h
- -unifdef-y += if_arp.h
- -unifdef-y += if_bridge.h
- -unifdef-y += if_ec.h
- -unifdef-y += if_eql.h
- -unifdef-y += if_ether.h
- -unifdef-y += if_fddi.h
- -unifdef-y += if_frad.h
- -unifdef-y += if_ltalk.h
- -unifdef-y += if_link.h
- -unifdef-y += if_phonet.h
- -unifdef-y += if_pppol2tp.h
- -unifdef-y += if_pppox.h
- -unifdef-y += if_tr.h
- -unifdef-y += if_tunnel.h
- -unifdef-y += if_vlan.h
- -unifdef-y += igmp.h
- -unifdef-y += inet_diag.h
- -unifdef-y += in.h
- -unifdef-y += in6.h
- -unifdef-y += inotify.h
- -unifdef-y += input.h
- -unifdef-y += ioq.h
- -unifdef-y += ip.h
- -unifdef-y += ipc.h
- -unifdef-y += ipmi.h
- -unifdef-y += ipv6.h
- -unifdef-y += ipv6_route.h
- -unifdef-y += isdn.h
- -unifdef-y += isdnif.h
- -unifdef-y += isdn_divertif.h
- -unifdef-y += isdn_ppp.h
- -unifdef-y += ivtv.h
- -unifdef-y += ivtvfb.h
- -unifdef-y += joystick.h
- -unifdef-y += kdev_t.h
- -unifdef-y += kd.h
- -unifdef-y += kernelcapi.h
- -unifdef-y += kernel.h
- -unifdef-y += keyboard.h
- -ifneq ($(wildcard $(srctree)/arch/$(SRCARCH)/include/asm/kvm.h \
- -      		  $(srctree)/include/asm-$(SRCARCH)/kvm.h),)
- -unifdef-y += kvm.h
- -endif
- -ifneq ($(wildcard $(srctree)/arch/$(SRCARCH)/include/asm/kvm_para.h \
- -		  $(srctree)/include/asm-$(SRCARCH)/kvm_para.h),)
- -unifdef-y += kvm_para.h
- -endif
- -unifdef-y += llc.h
- -unifdef-y += loop.h
- -unifdef-y += lp.h
- -unifdef-y += mempolicy.h
- -unifdef-y += mii.h
- -unifdef-y += mman.h
- -unifdef-y += mroute.h
- -unifdef-y += mroute6.h
- -unifdef-y += msdos_fs.h
- -unifdef-y += msg.h
- -unifdef-y += nbd.h
- -unifdef-y += ncp_fs.h
- -unifdef-y += ncp.h
- -unifdef-y += ncp_mount.h
- -unifdef-y += netdevice.h
- -unifdef-y += netfilter_bridge.h
- -unifdef-y += netfilter_decnet.h
- -unifdef-y += netfilter.h
- -unifdef-y += netfilter_ipv4.h
- -unifdef-y += netfilter_ipv6.h
- -unifdef-y += net.h
- -unifdef-y += netlink.h
- -unifdef-y += nfs3.h
- -unifdef-y += nfs4.h
- -unifdef-y += nfsacl.h
- -unifdef-y += nfs_fs.h
- -unifdef-y += nfs.h
- -unifdef-y += nfs_idmap.h
- -unifdef-y += n_r3964.h
- -unifdef-y += nubus.h
- -unifdef-y += nvram.h
- -unifdef-y += oom.h
- -unifdef-y += parport.h
- -unifdef-y += patchkey.h
- -unifdef-y += pci.h
- -unifdef-y += personality.h
- -unifdef-y += pktcdvd.h
- -unifdef-y += pmu.h
- -unifdef-y += poll.h
- -unifdef-y += ppp_defs.h
- -unifdef-y += ppp-comp.h
- -unifdef-y += pps.h
- -unifdef-y += ptrace.h
- -unifdef-y += quota.h
- -unifdef-y += random.h
- -unifdef-y += rfkill.h
- -unifdef-y += irqnr.h
- -unifdef-y += reboot.h
- -unifdef-y += reiserfs_fs.h
- -unifdef-y += reiserfs_xattr.h
- -unifdef-y += route.h
- -unifdef-y += rtc.h
- -unifdef-y += rtnetlink.h
- -unifdef-y += scc.h
- -unifdef-y += sched.h
- -unifdef-y += screen_info.h
- -unifdef-y += sdla.h
- -unifdef-y += securebits.h
- -unifdef-y += selinux_netlink.h
- -unifdef-y += sem.h
- -unifdef-y += serial_core.h
- -unifdef-y += serial.h
- -unifdef-y += serio.h
- -unifdef-y += shm.h
- -unifdef-y += shm_signal.h
- -unifdef-y += signal.h
- -unifdef-y += smb_fs.h
- -unifdef-y += smb.h
- -unifdef-y += smb_mount.h
- -unifdef-y += socket.h
- -unifdef-y += sonet.h
- -unifdef-y += sonypi.h
- -unifdef-y += soundcard.h
- -unifdef-y += stat.h
- -unifdef-y += stddef.h
- -unifdef-y += string.h
- -unifdef-y += swab.h
- -unifdef-y += synclink.h
- -unifdef-y += sysctl.h
- -unifdef-y += tcp.h
- -unifdef-y += time.h
- -unifdef-y += timex.h
- -unifdef-y += tty.h
- -unifdef-y += types.h
- -unifdef-y += udp.h
- -unifdef-y += uinput.h
- -unifdef-y += uio.h
- -unifdef-y += unistd.h
- -unifdef-y += usbdevice_fs.h
- -unifdef-y += utsname.h
- -unifdef-y += vhost.h
- -unifdef-y += vbus_pci.h
- -unifdef-y += venet.h
- -unifdef-y += videodev2.h
- -unifdef-y += videodev.h
- -unifdef-y += virtio_config.h
- -unifdef-y += virtio_ids.h
- -unifdef-y += virtio_blk.h
- -unifdef-y += virtio_net.h
- -unifdef-y += virtio_9p.h
- -unifdef-y += virtio_balloon.h
- -unifdef-y += virtio_console.h
- -unifdef-y += virtio_pci.h
- -unifdef-y += virtio_ring.h
- -unifdef-y += virtio_rng.h
- -unifdef-y += vt.h
- -unifdef-y += wait.h
- -unifdef-y += wanrouter.h
- -unifdef-y += watchdog.h
- -unifdef-y += wireless.h
- -unifdef-y += xattr.h
- -unifdef-y += xfrm.h
- -
- -objhdr-y += version.h
- +header-y += vhost.h
- +header-y += videodev2.h
- +header-y += virtio_9p.h
- +header-y += virtio_balloon.h
- +header-y += virtio_blk.h
- +header-y += virtio_config.h
- +header-y += virtio_console.h
- +header-y += virtio_ids.h
- +header-y += virtio_net.h
- +header-y += virtio_pci.h
- +header-y += virtio_ring.h
- +header-y += virtio_rng.h
- +header-y += vt.h
- +header-y += wait.h
- +header-y += wanrouter.h
- +header-y += watchdog.h
-  header-y += wimax.h
- -header-y += wimax/
- +header-y += wireless.h
- +header-y += x25.h
- +header-y += xattr.h
- +header-y += xfrm.h
+Anyway, so I decided that will drop/change some commits which occur conflict
+between sound tree and build error in my tree. Already discussed about that
+with Jassi and he agreed.
+
+Then if possible, will send remained small stuff to Linus during -rc.
+
+Thank you so much again ;-)
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+Mark Brown wrote:
+> On Tue, Dec 28, 2010 at 04:23:30PM +0000, Russell King wrote:
+> > On Tue, Dec 28, 2010 at 03:39:48PM +0000, Mark Brown wrote:
+> 
+> > > Please keep myself and Liam in the CC on all ASoC discussion.
+> 
+> > You weren't included on Stephen's email.  Have you told Stephen which
+> > files he needs to notify you about?  I suspect Stephen operates by
+> > notifying the people who's trees clash, rather than selecting people
+> > based on files.
+> 
+> I suspect so too; the file patterns in MAINTAINERS cover it otherwise
+> (and originally the ASoC tree was actually getting merged first so the
+> right thing would've happened anyway).
+> 
+> > > > Of course, I know you need rebase you tree for it...so sorry for
+> bothering.
+> 
+> > > This isn't going to help as it will just introduce the same duplicate
+> > > commits issue into the sound tree.  I'm still not clear what the
+> > > affected commits actually are but given that Stephen's original report
+> > > indicated that the ASoC changes are subsets of your changes would it
+not
+> > > make sense to just drop the relevant commits from your tree (which
+seems
+> > > to be rebased often, unlike the sound tree which doesn't rebase)?
+> 
+> > I don't think you read what I said (you probably didn't even see it.)
+> 
+> > What Kukjin has already done is looked in the ALSA tree, extracted the
+> > commits he wants from it, committed those into his tree, and based a
+> > pile of work on top of that.
+> 
+> Right, but looking at Stephen's original mail it seems like the bits
+> that are conflicting here are two different commits in the ASoC and
+> Samsung code where the ASoC version is a superset of the Samsung side
+> set.  If that analysis is correct then the ASoC commits will do the
+> right thing once they turn up in the Samsung tree so unless there's a
+> pressing reason for the Samsung versions they could just be dropped for
+> the time being.
+> 
+> > I said "don't do that" because it creates unnecessary duplications in
+> > the git history.  I suggested that if Kukjin needs commits from the ALSA
+> > tree, he asks the ALSA people for a commit in their tree to pull into
+> > his tree to base his code on instead.
+> 
+> Yes, which due to the lack of rebasing is hard to arrange except by
+> merging all of ASoC en masse (which someone already suggested).
+> 
+> > > Another option is to do a second round of merges after both sound and
+> > > ALSA trees with whatever the dependant commits are.
+> 
+> > If Kukjin has code which requires commits from the ALSA tree, and he
+> > doesn't have the ALSA tree, he can't build-test the code in his tree.
+> > Are you really suggesting that people should keep un-build-tested code
+> > in their trees, and push that un-tested code upstream when the dependent
+> > trees have merged?  Are you really suggesting that swathes of commits
+> > should not be bisectable?
+> 
+> No, I'm suggesting that a separate branch be maintained with the
+> affected commits which gets rebased and tested against -next or whatever
+> until everything they need hits the tree they need to be merged via.
+> The bulk of things go in as normal, then the extra commits are added in
+> a second merge later.  This is often required for practical testing when
+> there's a lot of work going on over the tree, even if it can be split up
+> neatly for merge.
+> 
+> This is annoying if it goes on for a long time but given that Linus is
+> likely to release this week that shouldn't be the case, and it assumes
+> the set of affected changes is small.  As I've no idea why the Samsung
+> side of the changes is there I don't know if that is the case or not.
