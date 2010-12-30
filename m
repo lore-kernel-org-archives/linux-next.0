@@ -1,67 +1,54 @@
-From: Ping Cheng <pinglinux@gmail.com>
-Subject: Re: linux-next: build failure after merge of the final tree (input
- tree related)
-Date: Thu, 30 Dec 2010 10:06:46 -0800
-Message-ID: <AANLkTik38TzE_L_m8KpG-PmWGPeHjC8FYU=reRN8L7E5@mail.gmail.com>
-References: <20101229125129.d48fb6fc.sfr@canb.auug.org.au>
-	<20101229023457.GA4206@core.coreip.homeip.net>
-	<20101230105130.5d27a82b.sfr@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@xenotime.net>
+Subject: [PATCH -next] staging: usbvideo/vicam depends on USB
+Date: Thu, 30 Dec 2010 10:23:38 -0800
+Message-ID: <20101230102338.540a42c5.rdunlap@xenotime.net>
+References: <20101230125819.351debfc.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:35317 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754861Ab0L3SGt convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 30 Dec 2010 13:06:49 -0500
-In-Reply-To: <20101230105130.5d27a82b.sfr@canb.auug.org.au>
+Received: from xenotime.net ([72.52.115.56]:42534 "HELO xenotime.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
+	id S1754905Ab0L3SXl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 30 Dec 2010 13:23:41 -0500
+Received: from chimera.site ([173.50.240.230]) by xenotime.net for <linux-next@vger.kernel.org>; Thu, 30 Dec 2010 10:23:38 -0800
+In-Reply-To: <20101230125819.351debfc.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org
 
-On Wed, Dec 29, 2010 at 3:51 PM, Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> Hi Dmitry,
->
-> On Tue, 28 Dec 2010 18:34:58 -0800 Dmitry Torokhov <dmitry.torokhov@g=
-mail.com> wrote:
->>
->> On Wed, Dec 29, 2010 at 12:51:29PM +1100, Stephen Rothwell wrote:
->> >
->> > After merging the final tree, today's linux-next build (powerpc
->> > allyesconfig) failed like this:
->> >
->> > drivers/input/touchscreen/wacom_w8001.c: In function 'w8001_setup'=
-:
->> > drivers/input/touchscreen/wacom_w8001.c:287: error: implicit decla=
-ration of function 'mdelay'
->> >
->> > Caused by commit b8fe15cb1b435928f9967d660e925fe7afb32787 ("Input:
->> > wacom_w8001 - support pen or touch only devices"). =A0See Rule 1 i=
-n
->> > Documentation/SubmitChecklist.
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-I do not see the error on my testing systems somehow. Does adding the
-following line resolve the issue?
+Fix build errors by adding "depends on USB":
 
-#include < include/linux/delay.h>
+ERROR: "usb_register_driver" [drivers/staging/usbvideo/vicam.ko] undefined!
+ERROR: "usb_bulk_msg" [drivers/staging/usbvideo/vicam.ko] undefined!
+ERROR: "usb_control_msg" [drivers/staging/usbvideo/vicam.ko] undefined!
+ERROR: "usb_deregister" [drivers/staging/usbvideo/vicam.ko] undefined!
+ERROR: "usb_get_dev" [drivers/staging/usbvideo/usbvideo.ko] undefined!
+ERROR: "usb_put_dev" [drivers/staging/usbvideo/usbvideo.ko] undefined!
+ERROR: "usb_free_urb" [drivers/staging/usbvideo/usbvideo.ko] undefined!
+ERROR: "usb_submit_urb" [drivers/staging/usbvideo/usbvideo.ko] undefined!
+ERROR: "usb_set_interface" [drivers/staging/usbvideo/usbvideo.ko] undefined!
+ERROR: "usb_kill_urb" [drivers/staging/usbvideo/usbvideo.ko] undefined!
+ERROR: "usb_register_driver" [drivers/staging/usbvideo/usbvideo.ko] undefined!
+ERROR: "usb_deregister" [drivers/staging/usbvideo/usbvideo.ko] undefined!
+ERROR: "usb_alloc_urb" [drivers/staging/usbvideo/usbvideo.ko] undefined!
 
-Ping
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/staging/usbvideo/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->> > I have reverted that commit for today.
->>
->> Thank you Stephen, I'll fix this up in my tree.
->
-> I note that this commit has been redone in your tree (as commit
-> 11a862ed9f04558e222fa15a5fbd76698fed11ff) but there have been no chan=
-ges
-> to it at all (except the commit date).
->
-> I have reverted that commit from today's linux-next.
-> --
-> Cheers,
-> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr@canb.auug=
-=2Eorg.au
-> http://www.canb.auug.org.au/~sfr/
->
+--- linux-next-20101230.orig/drivers/staging/usbvideo/Kconfig
++++ linux-next-20101230/drivers/staging/usbvideo/Kconfig
+@@ -3,7 +3,7 @@ config VIDEO_USBVIDEO
+ 
+ config USB_VICAM
+ 	tristate "USB 3com HomeConnect (aka vicam) support (DEPRECATED)"
+-	depends on VIDEO_DEV && VIDEO_V4L2_COMMON
++	depends on VIDEO_DEV && VIDEO_V4L2_COMMON && USB
+ 	select VIDEO_USBVIDEO
+ 	---help---
+ 	  Say Y here if you have 3com homeconnect camera (vicam).
