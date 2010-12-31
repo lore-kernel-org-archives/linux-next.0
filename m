@@ -1,45 +1,53 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: linux-next: manual merge of the sound-asoc tree with the s5p tree
-Date: Fri, 31 Dec 2010 10:59:47 +0900
-Message-ID: <011301cba88e$69bff000$3d3fd000$%kim@samsung.com>
-References: <20101231115609.53355fc7.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the percpu tree with the tip tree
+Date: Fri, 31 Dec 2010 13:55:23 +1100
+Message-ID: <20101231135523.481cd14d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__31_Dec_2010_13_55_23_+1100_YNYE_HrIRjEihu5e"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:64189 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752629Ab0LaB74 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 30 Dec 2010 20:59:56 -0500
-In-reply-to: <20101231115609.53355fc7.sfr@canb.auug.org.au>
-Content-language: ko
+Received: from chilli.pcug.org.au ([203.10.76.44]:44635 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751757Ab0LaCzl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 30 Dec 2010 21:55:41 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: 'Stephen Rothwell' <sfr@canb.auug.org.au>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Liam Girdwood' <lrg@slimlogic.co.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, 'Jassi Brar' <jassi.brar@samsung.com>
+To: Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Don Zickus <dzickus@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
-Stephen Rothwell wrote:
-> 
-> Hi all,
-> 
-Hi :-)
+--Signature=_Fri__31_Dec_2010_13_55_23_+1100_YNYE_HrIRjEihu5e
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Today's linux-next merge of the sound-asoc tree got a conflict in
-> arch/arm/plat-samsung/include/plat/devs.h between commit
-> 1b6e8eda6f0e7cd4f28e522a5e77e76f6985af9d ("Merge branch 'next-s5pv310'
-> into for-next") from the s5p tree and commit
-> 83e37b8e400ca51cc97946815b3055daacd92fa8 ("ARM: Samsung: Define common
-> audio-dma device") from the sound-asoc tree.
-> 
-Oops, sorry for bothering again :-(
-I will re-merge it in my for-next for avoiding conflict.
+Hi all,
 
-> I fixed it up (see below) and can carry the fix as necessary.
+Today's linux-next merge of the percpu tree got a conflict in
+arch/x86/kernel/apic/nmi.c between commit
+5f2b0ba4d94b3ac23cbc4b7f675d98eb677a760a ("x86, nmi_watchdog: Remove the
+old nmi_watchdog") from the tip tree and a couple of commits from the
+percpu tree.
 
-Thanks for your information and Happy New year!
+The former commit removes the file, so I did that.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+--Signature=_Fri__31_Dec_2010_13_55_23_+1100_YNYE_HrIRjEihu5e
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNHUYbAAoJEDMEi1NhKgbs+UoH/1PjwFMHIMhjNF5JdZ/xws1J
+oAh8W9bslK90AsSZ3xhTnnMvFJOP1OVRcOAtlxRZ0+/GdCVzo3oAO5WFX2bwOtEp
+ID5lPOzJ9OJwGEgpQbD6wTiBQa8a1IyWhnXIuHyp5xuiLVWHoVaxcz7sCaahBkHk
+968DQUqgk+gX0GzYf4CRQyL98zPmV1CA96ycIrU2JyNWKuusYYBDcGC7yYJ5j0+h
+nvENB7C8iQMyCLd1+wsmq1kY+v7h97MT5gvbuhhJ7pAYi8TXouleV/MjsZq24add
+D/KS4Bi4mRCeapvmYlmz0/Ms+b9fktj9OJiI2bJ09knRZMDKXu8HNKwU7fUvqf0=
+=fJE2
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__31_Dec_2010_13_55_23_+1100_YNYE_HrIRjEihu5e--
