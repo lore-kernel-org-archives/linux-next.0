@@ -1,160 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the sound-asoc tree with the s5p tree
-Date: Fri, 31 Dec 2010 11:56:09 +1100
-Message-ID: <20101231115609.53355fc7.sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the v4l-dvb tree
+Date: Fri, 31 Dec 2010 11:59:55 +1100
+Message-ID: <20101231115955.f6a11505.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__31_Dec_2010_11_59_55_+1100_NQEh8hBSOqR29vEc"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54008 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:34062 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750875Ab0LaA4P (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 30 Dec 2010 19:56:15 -0500
+	id S1751255Ab0LaBAA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 30 Dec 2010 20:00:00 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jassi Brar <jassi.brar@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi all,
+--Signature=_Fri__31_Dec_2010_11_59_55_+1100_NQEh8hBSOqR29vEc
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the sound-asoc tree got a conflict in
-arch/arm/plat-samsung/include/plat/devs.h between commit
-1b6e8eda6f0e7cd4f28e522a5e77e76f6985af9d ("Merge branch 'next-s5pv310'
-into for-next") from the s5p tree and commit
-83e37b8e400ca51cc97946815b3055daacd92fa8 ("ARM: Samsung: Define common
-audio-dma device") from the sound-asoc tree.
+Hi Mauro,
 
-I fixed it up (see below) and can carry the fix as necessary.
--- 
+After merging the v4l-dvb tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
+
+drivers/media/video/ivtv/ivtv-i2c.c: In function 'get_key_adaptec':
+drivers/media/video/ivtv/ivtv-i2c.c:170: warning: cast from pointer to inte=
+ger of different size
+drivers/media/video/ivtv/ivtv-i2c.c:171: warning: cast from pointer to inte=
+ger of different size
+
+Introduced by commit e1e2c57565635310209566a31a300e593f74cc22 ("[media]
+ivtv: Add Adaptec Remote Controller").
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/arm/plat-samsung/include/plat/devs.h
-index 7aba430,e9e3b6e..0000000
---- a/arch/arm/plat-samsung/include/plat/devs.h
-+++ b/arch/arm/plat-samsung/include/plat/devs.h
-@@@ -49,59 -53,44 +49,58 @@@ extern struct platform_device s3c_devic
-  extern struct platform_device s3c_device_i2c5;
-  extern struct platform_device s3c_device_i2c6;
-  extern struct platform_device s3c_device_i2c7;
- +extern struct platform_device s3c_device_iis;
- +extern struct platform_device s3c_device_lcd;
- +extern struct platform_device s3c_device_nand;
- +extern struct platform_device s3c_device_ohci;
- +extern struct platform_device s3c_device_onenand;
-- extern struct platform_device s3c_device_pcm;
-  extern struct platform_device s3c_device_rtc;
- -extern struct platform_device s3c_device_adc;
-  extern struct platform_device s3c_device_sdi;
- -extern struct platform_device s3c_device_iis;
- -extern struct platform_device s3c_device_hwmon;
- -extern struct platform_device s3c_device_hsmmc0;
- -extern struct platform_device s3c_device_hsmmc1;
- -extern struct platform_device s3c_device_hsmmc2;
- -extern struct platform_device s3c_device_hsmmc3;
- -extern struct platform_device s3c_device_cfcon;
- -
-  extern struct platform_device s3c_device_spi0;
-  extern struct platform_device s3c_device_spi1;
- +extern struct platform_device s3c_device_ts;
- +extern struct platform_device s3c_device_timer[];
- +extern struct platform_device s3c_device_usbgadget;
- +extern struct platform_device s3c_device_usb_hsotg;
- +extern struct platform_device s3c_device_wdt;
-  
- -extern struct platform_device s5pc100_device_spi0;
- -extern struct platform_device s5pc100_device_spi1;
- -extern struct platform_device s5pc100_device_spi2;
- -extern struct platform_device s5pv210_device_spi0;
- -extern struct platform_device s5pv210_device_spi1;
- +extern struct platform_device s5p_device_fimc0;
- +extern struct platform_device s5p_device_fimc1;
- +extern struct platform_device s5p_device_fimc2;
- +extern struct platform_device s5p_device_mipi_csis0;
- +extern struct platform_device s5p_device_mipi_csis1;
- +extern struct platform_device s5p_device_onenand;
- +
- +extern struct platform_device s5p6440_device_iis;
- +extern struct platform_device s5p6440_device_pcm;
-  extern struct platform_device s5p6440_device_spi0;
-  extern struct platform_device s5p6440_device_spi1;
- -extern struct platform_device s5p6450_device_spi0;
- -extern struct platform_device s5p6450_device_spi1;
-  
- -extern struct platform_device s3c_device_hwmon;
- +extern struct platform_device s5p6442_device_iis0;
- +extern struct platform_device s5p6442_device_iis1;
- +extern struct platform_device s5p6442_device_pcm0;
- +extern struct platform_device s5p6442_device_pcm1;
- +extern struct platform_device s5p6442_device_spi;
-  
- -extern struct platform_device s3c_device_nand;
- -extern struct platform_device s3c_device_onenand;
- -extern struct platform_device s3c64xx_device_onenand1;
- -extern struct platform_device s5p_device_onenand;
- +extern struct platform_device s5p6450_device_iis0;
- +extern struct platform_device s5p6450_device_iis1;
- +extern struct platform_device s5p6450_device_iis2;
- +extern struct platform_device s5p6450_device_pcm0;
- +extern struct platform_device s5p6450_device_spi0;
- +extern struct platform_device s5p6450_device_spi1;
-  
- -extern struct platform_device s3c_device_usbgadget;
- -extern struct platform_device s3c_device_usb_hsotg;
- +extern struct platform_device s5pc100_device_ac97;
- +extern struct platform_device s5pc100_device_iis0;
- +extern struct platform_device s5pc100_device_iis1;
- +extern struct platform_device s5pc100_device_iis2;
- +extern struct platform_device s5pc100_device_pcm0;
- +extern struct platform_device s5pc100_device_pcm1;
- +extern struct platform_device s5pc100_device_spdif;
- +extern struct platform_device s5pc100_device_spi0;
- +extern struct platform_device s5pc100_device_spi1;
- +extern struct platform_device s5pc100_device_spi2;
-  
-  extern struct platform_device s5pv210_device_ac97;
- -extern struct platform_device s5pv210_device_pcm0;
- -extern struct platform_device s5pv210_device_pcm1;
- -extern struct platform_device s5pv210_device_pcm2;
-  extern struct platform_device s5pv210_device_iis0;
-  extern struct platform_device s5pv210_device_iis1;
-  extern struct platform_device s5pv210_device_iis2;
-@@@ -116,13 -100,36 +115,14 @@@ extern struct platform_device s5pv310_d
-  extern struct platform_device s5pv310_device_i2s0;
-  extern struct platform_device s5pv310_device_i2s1;
-  extern struct platform_device s5pv310_device_i2s2;
- +extern struct platform_device s5pv310_device_pcm0;
- +extern struct platform_device s5pv310_device_pcm1;
- +extern struct platform_device s5pv310_device_pcm2;
- +extern struct platform_device s5pv310_device_pd[];
-  extern struct platform_device s5pv310_device_spdif;
-  
- -extern struct platform_device s5p6442_device_pcm0;
- -extern struct platform_device s5p6442_device_pcm1;
- -extern struct platform_device s5p6442_device_iis0;
- -extern struct platform_device s5p6442_device_iis1;
- -extern struct platform_device s5p6442_device_spi;
- -
- -extern struct platform_device s5p6440_device_pcm;
- -extern struct platform_device s5p6440_device_iis;
- -
- -extern struct platform_device s5p6450_device_iis0;
- -extern struct platform_device s5p6450_device_pcm0;
- -
- -extern struct platform_device s5pc100_device_ac97;
- -extern struct platform_device s5pc100_device_pcm0;
- -extern struct platform_device s5pc100_device_pcm1;
- -extern struct platform_device s5pc100_device_iis0;
- -extern struct platform_device s5pc100_device_iis1;
- -extern struct platform_device s5pc100_device_iis2;
- -extern struct platform_device s5pc100_device_spdif;
- -
-  extern struct platform_device samsung_device_keypad;
- -
- -extern struct platform_device s5p_device_fimc0;
- -extern struct platform_device s5p_device_fimc1;
- -extern struct platform_device s5p_device_fimc2;
-++extern struct platform_device samsung_asoc_dma;
-  
-  /* s3c2440 specific devices */
-  
+--Signature=_Fri__31_Dec_2010_11_59_55_+1100_NQEh8hBSOqR29vEc
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNHSsLAAoJEDMEi1NhKgbsgvUH/RpcaYQmShLoBTsVLBjUkR2Z
+DK8t05xHgV4vxUxb1UHfyOtVQKcb9B43OJGPoRhExpyxFkXcCnRrsnRofxB07iZL
+prHLpwBtvpxxSU/YCLWLm7pKE4GV7J7Z+oCUzEW66dzhdWPPpUkXJP5lsIKUPDsg
+sQtt548QY5d+hwCcKehn7sM9RT+0SP4NN7732mL870gARvc79gORlgFTe2k7CfbS
+qAy86ewJyL8ky4rIFStw9zOEFQ3dXWQ2SbkJSgoACOa8vpqw/eMdvqQ3VSQmf4Xl
+dPQc7C0DdzfyO4aqfgQhikvMRyKIIwP+KwcZvlaJgepND8enB2GzBSWTEdI2HGg=
+=59Lz
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__31_Dec_2010_11_59_55_+1100_NQEh8hBSOqR29vEc--
