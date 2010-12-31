@@ -1,73 +1,35 @@
-From: Sedat Dilek <sedat.dilek@googlemail.com>
-Subject: Re: linux-next: Tree for December 31
-Date: Fri, 31 Dec 2010 10:21:12 +0100
-Message-ID: <AANLkTikZa2K7e-yCP7x0u4DKUak7VYitYznfpaJEz0H_@mail.gmail.com>
-References: <20101231145827.7cfa13f9.sfr@canb.auug.org.au>
-	<AANLkTinJgXYhzZz-V8krP-6vR2cC2drMjPEUnrD5r_dX@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: linux-next: manual merge of the percpu tree with the tip tree
+Date: Fri, 31 Dec 2010 12:17:12 +0100
+Message-ID: <20101231111712.GF18831@htj.dyndns.org>
+References: <20101231135546.73f318bc.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=0016364ef320c51b8a0498b15240
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:39098 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750894Ab0LaJVN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 31 Dec 2010 04:21:13 -0500
-In-Reply-To: <AANLkTinJgXYhzZz-V8krP-6vR2cC2drMjPEUnrD5r_dX@mail.gmail.com>
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:57059 "EHLO
+	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752075Ab0LaLRT (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 31 Dec 2010 06:17:19 -0500
+Content-Disposition: inline
+In-Reply-To: <20101231135546.73f318bc.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Anca Emanuel <anca.emanuel@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Nick Piggin <npiggin@kernel.dk>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jack Steiner <steiner@sgi.com>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
---0016364ef320c51b8a0498b15240
-Content-Type: text/plain; charset=UTF-8
+On Fri, Dec 31, 2010 at 01:55:46PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the percpu tree got a conflict in
+> arch/x86/kernel/apic/x2apic_uv_x.c between commit
+> d8850ba425d9823d3184bd52f065899dac4689f9 ("x86, UV: Fix the effect of
+> extra bits in the hub nodeid register") from the tip tree and commit
+> 0a3aee0da4402aa19b66e458038533c896fb80c6 ("x86: Use this_cpu_ops to
+> optimize code") from the percpu tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary.
 
-On Fri, Dec 31, 2010 at 8:51 AM, Anca Emanuel <anca.emanuel@gmail.com> wrote:
-> I did:
-> mkdir next
-> git clone git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> cd linux-next
-> (make an kernel)
-> after that:
-> git fetch --tags
-> git remote update
->
-> today is 31, and my version on linux-next is still 30.
->
->
-> uname -a
-> Linux ubuntu 2.6.37-rc8-next-20101230+ #1 SMP Fri Dec 31 08:00:39 EET
-> 2010 i686 GNU/Linux
->
-> The problem: Nouveau is not loaded.
->
-> Attached dmesg from next and 2.6.37-rc8.
->
+Thank you.  Looks good to me.
 
-[1] contains:
--next-20101231
-
-I prefer to wipe the localversion-next file (see attached file).
-
-You have to rebuild each time your extra-modules on kernel-upgrade.
-Debian has dkms package which rebuilds all extra-modules automagically.
-
-- Sedat -
-
-[1] http://git.kernel.org/?p=linux/kernel/git/next/linux-next.git;a=blob;f=localversion-next;h=c39c506d10f3aad45388947c0a052eacd5eea4f4;hb=bfa221f25c0ec816f725c3a145bda4ee65a277ff
-
---0016364ef320c51b8a0498b15240
-Content-Type: text/x-diff; charset=US-ASCII; name="Remove-localversion-next.patch"
-Content-Disposition: attachment; filename="Remove-localversion-next.patch"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_gicvfcsq1
-
-RnJvbSBhYTY1MTQ2ODY1YzI4MmRiMmYxNmE0YTJkOGIzOTExNmJmNDRhN2ZkIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBTZWRhdCBEaWxlayA8c2VkYXQuZGlsZWtAZ21haWwuY29tPgpE
-YXRlOiBNb24sIDE4IE9jdCAyMDEwIDIyOjQ4OjM4ICswMjAwClN1YmplY3Q6IFtQQVRDSF0gUmVt
-b3ZlIGxvY2FsdmVyc2lvbi1uZXh0CgotLS0KIGxvY2FsdmVyc2lvbi1uZXh0IHwgICAgMSAtCiAx
-IGZpbGVzIGNoYW5nZWQsIDAgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbnMoLSkKIGRlbGV0ZSBt
-b2RlIDEwMDY0NCBsb2NhbHZlcnNpb24tbmV4dAoKZGlmZiAtLWdpdCBhL2xvY2FsdmVyc2lvbi1u
-ZXh0IGIvbG9jYWx2ZXJzaW9uLW5leHQKZGVsZXRlZCBmaWxlIG1vZGUgMTAwNjQ0CmluZGV4IGQx
-ZWIxMWMuLjAwMDAwMDAKLS0tIGEvbG9jYWx2ZXJzaW9uLW5leHQKKysrIC9kZXYvbnVsbApAQCAt
-MSArMCwwIEBACi0tbmV4dC0yMDEwMTIzMQotLSAKMS43LjIuMwoK
---0016364ef320c51b8a0498b15240--
+-- 
+tejun
