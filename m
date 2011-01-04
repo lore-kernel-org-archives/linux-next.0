@@ -1,56 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the trivial tree with the net tree
-Date: Tue, 4 Jan 2011 14:22:29 +1100
-Message-ID: <20110104142229.7aa6b99f.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the percpu tree
+Date: Tue, 4 Jan 2011 15:21:05 +1100
+Message-ID: <20110104152105.5cc7c3a9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__4_Jan_2011_14_22_29_+1100_/8_j/CFdUkJsWHjQ"
+ boundary="Signature=_Tue__4_Jan_2011_15_21_05_+1100_phgk2IuRv_jJiS6Y"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58435 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:44606 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750730Ab1ADDWk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 3 Jan 2011 22:22:40 -0500
+	id S1751150Ab1ADEVP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 3 Jan 2011 23:21:15 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Justin P. Mattock" <justinmattock@gmail.com>, Wey-Yi Guy <wey-yi.w.guy@intel.com>, "John W. Linville" <linville@tuxdriver.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__4_Jan_2011_14_22_29_+1100_/8_j/CFdUkJsWHjQ
+--Signature=_Tue__4_Jan_2011_15_21_05_+1100_phgk2IuRv_jJiS6Y
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jiri,
+Hi all,
 
-Today's linux-next merge of the trivial tree got a conflict in
-drivers/net/wireless/iwlwifi/iwl-core.c between commit
-81baf6ec9c190ae128748cf2a026bff5cb811b70 ("iwlwifi: Legacy isr only used
-by legacy devices") from the net tree and commit
-62e45c14fb9a978dca6c7a5dc8372cc8ea2f42c8 ("wireless: comment typo fix
-diable -> disable") from the trivial tree.
+After merging the percpu tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-The former moves the code modified by the latter to
-drivers/net/wireless/iwlwifi/iwl-legacy.c. I didn't bother refixing the
-typo there.
+arch/x86/kernel/cpu/mcheck/therm_throt.c: In function 'intel_thermal_interr=
+upt':
+arch/x86/kernel/cpu/mcheck/therm_throt.c:368: error: implicit declaration o=
+f function 'this_cpu_has'
+
+Caused by commit 6ac0bb7148b93fb40bccba5dff06d51a3e3ea283 ("x86: use
+this_cpu_has for thermal_interrupt").
+
+this_cpu_has() does not exist anywhere except in this introduced usage.
+
+I have used the percpu tree from next-20101231 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__4_Jan_2011_14_22_29_+1100_/8_j/CFdUkJsWHjQ
+--Signature=_Tue__4_Jan_2011_15_21_05_+1100_phgk2IuRv_jJiS6Y
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNIpJ1AAoJEDMEi1NhKgbs8k8IAI71YoakYlgQyAfQel4oXG5L
-lQTcAYk7E8YYlb6JZcWHj3Vga8kmmOC4FEI4AKL9UOyH6v9Fks8yVDM0ad5bH2rv
-v5N2rEvWocgjhqXlH2RWuo9imeOboCBFCRFGPk3gzXMCHlUoNBLdW3GgfNlLI6zs
-VD1YeWKwJSmRrPlFhf4KZxIqXx2p6N7T+9Ofsym9G1rJcRbnPAHHgEgauVae4UDU
-6S08TiLmvlCL+ws3i0CrLIWM9wgQm+I4BnvA1Ae4z1DT8bfuTg9Ju4g0z6OAYkCY
-qoPRk/cYu/DOqLehOoVHPn+Q9IumqfQA9F/NKdEAjoGmved1qyZYvMo2W1Gpdko=
-=KR9m
+iQEcBAEBAgAGBQJNIqAxAAoJEDMEi1NhKgbs4nMIAJjwGTLOo3n5tT7pk91W5mBp
+dqfog6S2mT8OW2f4o0mg3GT6KAKYgrYM8kH/eTMVlKGB0dJTepJWiZuZ1CNeRkEP
+gYHtOLqKWetw8VNXNTLO6/gepg90gEz4l1dk7RQE/R/wykK+rRFyZ6cxHXEpbsYt
+33egJNilyK7Xr+OgObITXYSGfU9kPBt5YhT+xoxwbgj/8790ETJHZ4YEaJz9kuUY
+UKGs2SBNN+onzGIR5ufV1kqgsSvL9vdTjQRs5fVvIbLfq1lY1E1QD1XIMCBhNByZ
+szu96+OZluZBPZxjuhn8Q4oLF627ScAMgzBtDeNOJ0t2pyw+iFl0/pbKvs9Q0V4=
+=Cx87
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__4_Jan_2011_14_22_29_+1100_/8_j/CFdUkJsWHjQ--
+--Signature=_Tue__4_Jan_2011_15_21_05_+1100_phgk2IuRv_jJiS6Y--
