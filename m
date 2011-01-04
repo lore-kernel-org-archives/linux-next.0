@@ -1,43 +1,61 @@
-From: Nick Piggin <npiggin@kernel.dk>
-Subject: Re: linux-next: manual merge of the vfs-scale tree with the v9fs
- tree
-Date: Tue, 4 Jan 2011 16:52:30 +1100
-Message-ID: <20110104055230.GA3402@amd>
-References: <20110104124054.c767a4ee.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [PATCH -next] thermal: depends on NET
+Date: Tue, 4 Jan 2011 09:10:06 -0800
+Message-ID: <20110104091006.159f1c9c.randy.dunlap@oracle.com>
+References: <20101213163607.0b0a7c3a.sfr@canb.auug.org.au>
+	<20101213112033.d0060e6c.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ipmail05.adl6.internode.on.net ([150.101.137.143]:53016 "EHLO
-	ipmail05.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750956Ab1ADFwg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Jan 2011 00:52:36 -0500
-Content-Disposition: inline
-In-Reply-To: <20110104124054.c767a4ee.sfr@canb.auug.org.au>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:58950 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751342Ab1ADRKZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Jan 2011 12:10:25 -0500
+In-Reply-To: <20101213112033.d0060e6c.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Nick Piggin <npiggin@kernel.dk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>, Venkateswararao Jujjuri <jvrao@linux.vnet.ibm.com>, Eric Van Hensbergen <ericvh@gmail.com>
+To: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, akpm <akpm@linux-foundation.org>, Zhang Rui <rui.zhang@intel.com>, Zimny Lech <napohybelskurwysynom2010@gmail.com>
 
-On Tue, Jan 04, 2011 at 12:40:54PM +1100, Stephen Rothwell wrote:
-> Hi Nick,
+On Mon, 13 Dec 2010 11:20:33 -0800 Randy Dunlap wrote:
+
+This patch is still needed in linux-next 20110104.
+
+
+> From: Randy Dunlap <randy.dunlap@oracle.com>
 > 
-> Today's linux-next merge of the vfs-scale tree got a conflict in
-> fs/9p/vfs_inode.c between commit 3d21652a1d23591e7f0bbbbedae29ce78c2c1113
-> ("fs/9p: Move dotl inode operations into a seperate file") from the v9fs
-> tree and various commits from the vfs-scale tree.
+> ERROR: "genl_register_family" [drivers/thermal/thermal_sys.ko] undefined!
+> ERROR: "genl_unregister_family" [drivers/thermal/thermal_sys.ko] undefined!
+> ERROR: "init_net" [drivers/thermal/thermal_sys.ko] undefined!
+> ERROR: "__alloc_skb" [drivers/thermal/thermal_sys.ko] undefined!
+> ERROR: "netlink_broadcast" [drivers/thermal/thermal_sys.ko] undefined!
+> ERROR: "kfree_skb" [drivers/thermal/thermal_sys.ko] undefined!
+> ERROR: "genl_register_mc_group" [drivers/thermal/thermal_sys.ko] undefined!
+> ERROR: "nla_reserve" [drivers/thermal/thermal_sys.ko] undefined!
+> ERROR: "skb_put" [drivers/thermal/thermal_sys.ko] undefined!
 > 
-> I fixed it up by using the v9fs changes to that file and then applying
-> the following merge fixup patch (which I can carry as necessary).
+> Reported-by: Zimny Lech <napohybelskurwysynom2010@gmail.com>
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> Cc: Zhang Rui <rui.zhang@intel.com>
+> ---
+>  drivers/thermal/Kconfig |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> --- linux-next-20101213.orig/drivers/thermal/Kconfig
+> +++ linux-next-20101213/drivers/thermal/Kconfig
+> @@ -4,6 +4,7 @@
+>  
+>  menuconfig THERMAL
+>  	tristate "Generic Thermal sysfs driver"
+> +	depends on NET
+>  	help
+>  	  Generic Thermal Sysfs driver offers a generic mechanism for
+>  	  thermal management. Usually it's made up of one or more thermal
+> --
 
-Thanks Stephen.
 
- 
-> Someone will need to fix this up before one of these trees is merged by
-> Linus, or to send this merge fix to Linus.
-
-If Linus does pull vfs-scale, and if it is before the v9fs tree, I can
-help with the conversion. Otherwise I will be happy to fix up fallout
-in my tree.
-
-Thanks,
-Nick
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
+desserts:  http://www.xenotime.net/linux/recipes/
