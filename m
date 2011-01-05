@@ -1,158 +1,54 @@
-From: "Venkateswararao Jujjuri (JV)" <jvrao@linux.vnet.ibm.com>
-Subject: Re: linux-next: manual merge of the vfs-scale tree with the v9fs
- tree
-Date: Tue, 04 Jan 2011 10:16:07 -0800
-Message-ID: <4D2363E7.30101@linux.vnet.ibm.com>
-References: <20110104124054.c767a4ee.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the devicetree tree with the sparc tree
+Date: Wed, 5 Jan 2011 13:35:57 +1100
+Message-ID: <20110105133557.dae27abf.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__5_Jan_2011_13_35_57_+1100_yuatZMu4RLABM2Nn"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e33.co.us.ibm.com ([32.97.110.151]:41776 "EHLO
-	e33.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751037Ab1ADSQS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 4 Jan 2011 13:16:18 -0500
-In-Reply-To: <20110104124054.c767a4ee.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:45628 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751064Ab1AECgM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 4 Jan 2011 21:36:12 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Nick Piggin <npiggin@kernel.dk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>, Eric Van Hensbergen <ericvh@gmail.com>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>, David Miller <davem@davemloft.net>, Andres Salomon <dilinger@queued.net>
 
-On 1/3/2011 5:40 PM, Stephen Rothwell wrote:
-> Hi Nick,
-> 
-> Today's linux-next merge of the vfs-scale tree got a conflict in
-> fs/9p/vfs_inode.c between commit 3d21652a1d23591e7f0bbbbedae29ce78c2c1113
-> ("fs/9p: Move dotl inode operations into a seperate file") from the v9fs
-> tree and various commits from the vfs-scale tree.
-> 
-> I fixed it up by using the v9fs changes to that file and then applying
-> the following merge fixup patch (which I can carry as necessary).
-> 
-> Someone will need to fix this up before one of these trees is merged by
-> Linus, or to send this merge fix to Linus.
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 4 Jan 2011 12:33:54 +1100
-> Subject: [PATCH] v9fs: merge fix for changes in the vfs-scale tree
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  fs/9p/vfs_inode_dotl.c |   22 +++++++++++-----------
->  1 files changed, 11 insertions(+), 11 deletions(-)
-> 
-> diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
-> index 38d5880..9dd534b 100644
-> --- a/fs/9p/vfs_inode_dotl.c
-> +++ b/fs/9p/vfs_inode_dotl.c
-> @@ -78,11 +78,11 @@ static struct dentry *v9fs_dentry_from_dir_inode(struct inode *inode)
->  {
->  	struct dentry *dentry;
-> 
-> -	spin_lock(&dcache_lock);
-> +	spin_lock(&inode->i_lock);
->  	/* Directory should have only one entry. */
->  	BUG_ON(S_ISDIR(inode->i_mode) && !list_is_singular(&inode->i_dentry));
->  	dentry = list_entry(inode->i_dentry.next, struct dentry, d_alias);
-> -	spin_unlock(&dcache_lock);
-> +	spin_unlock(&inode->i_lock);
+--Signature=_Wed__5_Jan_2011_13_35_57_+1100_yuatZMu4RLABM2Nn
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Are we doing away with dcache_lock?
+Hi Grant,
 
-I am not sure if the i_lock can serve the same purpose..but looks like with the
-current code
-there may not need any lock around this code. Aneesh/Eric do you guys have any
-comments?
+Today's linux-next merge of the devicetree tree got a conflict in
+arch/sparc/prom/tree_32.c between commit
+1f42be484ffc5559a29466c82adac7dd472d4439 ("sparc: remove unused prom tree
+functions") from the sparc tree and commit
+4a3a255289e7e322b8044286cce85031990f888a ("sparc: explicitly cast
+negative phandle checks to s32") from the devicetree tree.
 
+The former removes the code modified by the latter, so I just removed it.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
->  	return dentry;
->  }
-> 
-> @@ -215,7 +215,7 @@ v9fs_vfs_create_dotl(struct inode *dir, struct dentry *dentry, int omode,
->  				err);
->  			goto error;
->  		}
-> -		dentry->d_op = &v9fs_cached_dentry_operations;
-> +		d_set_d_op(dentry, &v9fs_cached_dentry_operations);
+--Signature=_Wed__5_Jan_2011_13_35_57_+1100_yuatZMu4RLABM2Nn
+Content-Type: application/pgp-signature
 
-Assuming that this is a macro to the same operation.. rest of the changes look
-fine to me.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-Thanks,
-JV
+iQEcBAEBAgAGBQJNI9kOAAoJEDMEi1NhKgbse8MH/0X4lcpEfHn56M/dSSIYirnd
+YchFCcgoXAyy0gLYqS1oI72G92B4AIbrUutArA/B6+8oSA/U6LAQrz+GnoA48h36
+iioRc8w+enVqBAJx8zQ0cYcVpCqQf4w/rA8beKrLOM3s/peoVTf4U8TKiUWDnBxM
++iAYnpl+Bbk6rLjoISPasKrNA8K2M0f6mHQ/3TL/z9deT8BVJ3jHWjdtSIwtuGWB
+llSsM3Hon1kSpdzAblmTsN+zFZ2dGa0QVcZgjeMWAoqAfudj4QA1dc+vuFL4MRfP
+ULHriRrw+SwgXNugwPIrdpDqEYYtIcDna/THhnejDLxBqTkh3QiifrEQOxY4hUo=
+=nx2f
+-----END PGP SIGNATURE-----
 
->  		d_instantiate(dentry, inode);
->  		err = v9fs_fid_add(dentry, fid);
->  		if (err < 0)
-> @@ -233,7 +233,7 @@ v9fs_vfs_create_dotl(struct inode *dir, struct dentry *dentry, int omode,
->  			err = PTR_ERR(inode);
->  			goto error;
->  		}
-> -		dentry->d_op = &v9fs_dentry_operations;
-> +		d_set_d_op(dentry, &v9fs_dentry_operations);
->  		d_instantiate(dentry, inode);
->  	}
->  	/* Now set the ACL based on the default value */
-> @@ -331,7 +331,7 @@ static int v9fs_vfs_mkdir_dotl(struct inode *dir,
->  				err);
->  			goto error;
->  		}
-> -		dentry->d_op = &v9fs_cached_dentry_operations;
-> +		d_set_d_op(dentry, &v9fs_cached_dentry_operations);
->  		d_instantiate(dentry, inode);
->  		err = v9fs_fid_add(dentry, fid);
->  		if (err < 0)
-> @@ -348,7 +348,7 @@ static int v9fs_vfs_mkdir_dotl(struct inode *dir,
->  			err = PTR_ERR(inode);
->  			goto error;
->  		}
-> -		dentry->d_op = &v9fs_dentry_operations;
-> +		d_set_d_op(dentry, &v9fs_dentry_operations);
->  		d_instantiate(dentry, inode);
->  	}
->  	/* Now set the ACL based on the default value */
-> @@ -589,7 +589,7 @@ v9fs_vfs_symlink_dotl(struct inode *dir, struct dentry *dentry,
->  					err);
->  			goto error;
->  		}
-> -		dentry->d_op = &v9fs_cached_dentry_operations;
-> +		d_set_d_op(dentry, &v9fs_cached_dentry_operations);
->  		d_instantiate(dentry, inode);
->  		err = v9fs_fid_add(dentry, fid);
->  		if (err < 0)
-> @@ -602,7 +602,7 @@ v9fs_vfs_symlink_dotl(struct inode *dir, struct dentry *dentry,
->  			err = PTR_ERR(inode);
->  			goto error;
->  		}
-> -		dentry->d_op = &v9fs_dentry_operations;
-> +		d_set_d_op(dentry, &v9fs_dentry_operations);
->  		d_instantiate(dentry, inode);
->  	}
-> 
-> @@ -678,7 +678,7 @@ v9fs_vfs_link_dotl(struct dentry *old_dentry, struct inode *dir,
->  		ihold(old_dentry->d_inode);
->  	}
-> 
-> -	dentry->d_op = old_dentry->d_op;
-> +	d_set_d_op(dentry, old_dentry->d_op);
->  	d_instantiate(dentry, old_dentry->d_inode);
-> 
->  	return err;
-> @@ -757,7 +757,7 @@ v9fs_vfs_mknod_dotl(struct inode *dir, struct dentry *dentry, int omode,
->  				err);
->  			goto error;
->  		}
-> -		dentry->d_op = &v9fs_cached_dentry_operations;
-> +		d_set_d_op(dentry, &v9fs_cached_dentry_operations);
->  		d_instantiate(dentry, inode);
->  		err = v9fs_fid_add(dentry, fid);
->  		if (err < 0)
-> @@ -773,7 +773,7 @@ v9fs_vfs_mknod_dotl(struct inode *dir, struct dentry *dentry, int omode,
->  			err = PTR_ERR(inode);
->  			goto error;
->  		}
-> -		dentry->d_op = &v9fs_dentry_operations;
-> +		d_set_d_op(dentry, &v9fs_dentry_operations);
->  		d_instantiate(dentry, inode);
->  	}
->  	/* Now set the ACL based on the default value */
+--Signature=_Wed__5_Jan_2011_13_35_57_+1100_yuatZMu4RLABM2Nn--
