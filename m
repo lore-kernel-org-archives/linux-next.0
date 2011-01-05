@@ -1,57 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the percpu tree with the tip tree
-Date: Wed, 5 Jan 2011 13:54:16 +1100
-Message-ID: <20110105135416.e87b4c26.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (wireless
+ tree related)
+Date: Wed, 5 Jan 2011 15:10:13 +1100
+Message-ID: <20110105151013.3b833539.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__5_Jan_2011_15_10_13_+1100_A0X5fLo2wlo/.=Jf"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:39931 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35800 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751141Ab1AECyX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 4 Jan 2011 21:54:23 -0500
+	id S1751089Ab1AEEKU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 4 Jan 2011 23:10:20 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>, Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Renninger <trenn@suse.de>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bruno Randolf <br1@einfach.org>
+
+--Signature=_Wed__5_Jan_2011_15_10_13_+1100_A0X5fLo2wlo/.=Jf
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the percpu tree got a conflict in
-arch/x86/kernel/process.c between commit
-25e41933b58777f2d020c3b0186b430ea004ec28 ("perf: Clean up power events by
-introducing new, more generic ones") from the tip tree and commit
-7b543a5334ff4ea2e3ad3b777fc23cdb8072a988 ("x86: Replace uses of
-current_cpu_data with this_cpu ops") from the percpu tree.
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
--- 
+drivers/net/wireless/ath/ath9k/built-in.o:(.bss+0x13dc): multiple definitio=
+n of `modparam_nohwcrypt'
+drivers/net/wireless/ath/ath5k/built-in.o:(.bss+0x844c): first defined here
+
+Caused by commit cd2c5486526b744fb505e18c9d981b35feaf283a ("ath5k: Move
+mac80211 functions into new file").  This is what you get for using
+unqualified global names ...
+
+I reverted that commit for today.  The references in ath9k should
+probably be qualified as well.
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/x86/kernel/process.c
-index c852041,dae1c07..0000000
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@@ -444,9 -444,8 +444,9 @@@ EXPORT_SYMBOL_GPL(cpu_idle_wait)
-  void mwait_idle_with_hints(unsigned long ax, unsigned long cx)
-  {
-  	trace_power_start(POWER_CSTATE, (ax>>4)+1, smp_processor_id());
- +	trace_cpu_idle((ax>>4)+1, smp_processor_id());
-  	if (!need_resched()) {
-- 		if (cpu_has(&current_cpu_data, X86_FEATURE_CLFLUSH_MONITOR))
-+ 		if (cpu_has(__this_cpu_ptr(&cpu_info), X86_FEATURE_CLFLUSH_MONITOR))
-  			clflush((void *)&current_thread_info()->flags);
-  
-  		__monitor((void *)&current_thread_info()->flags, 0, 0);
-@@@ -461,8 -460,7 +461,8 @@@ static void mwait_idle(void
-  {
-  	if (!need_resched()) {
-  		trace_power_start(POWER_CSTATE, 1, smp_processor_id());
- +		trace_cpu_idle(1, smp_processor_id());
-- 		if (cpu_has(&current_cpu_data, X86_FEATURE_CLFLUSH_MONITOR))
-+ 		if (cpu_has(__this_cpu_ptr(&cpu_info), X86_FEATURE_CLFLUSH_MONITOR))
-  			clflush((void *)&current_thread_info()->flags);
-  
-  		__monitor((void *)&current_thread_info()->flags, 0, 0);
+--Signature=_Wed__5_Jan_2011_15_10_13_+1100_A0X5fLo2wlo/.=Jf
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNI+8lAAoJEDMEi1NhKgbsc10H/3DoMNn8YjgGwfphiGsST+wK
+bd5ZPot7N25antGK/JgfvelZzUi1qGe2nyZ/W+ulihfWPBYk0m1O+txePiqjuVur
+0f7718ywwQd6T9TfRIA9SqD2LBpq10R4iQ/X+6/e+gyKcUwNICzVMo/EmY+QYsYy
+blo2toO2tOxCRpiYAliPPAmqBCd59B5/IX2AkGroHMWFzYhATV1QBxIWaW5LmrwH
+8s6bcDUsAiiCFiOXLFkMGADpsERLEKU0/URGHH5rdHMEXSuZ66qWCRGdL9pWC602
+rLV4etzqEKy+ggkjMSBSzPkWNfabv4wm5kwh6FX++/y7OprLXNs6FT34Dxg6yug=
+=vFD8
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__5_Jan_2011_15_10_13_+1100_A0X5fLo2wlo/.=Jf--
