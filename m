@@ -1,150 +1,118 @@
-From: "Venkateswararao Jujjuri (JV)" <jvrao@linux.vnet.ibm.com>
-Subject: Re: linux-next: manual merge of the vfs-scale tree with the v9fs
- tree
-Date: Wed, 05 Jan 2011 15:05:24 -0800
-Message-ID: <4D24F934.7010803@linux.vnet.ibm.com>
-References: <20110104124054.c767a4ee.sfr@canb.auug.org.au> <4D2363E7.30101@linux.vnet.ibm.com> <20110105064425.GA3161@amd>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: patchwork.kernel.org down
+Date: Wed, 5 Jan 2011 15:48:18 -0800
+Message-ID: <20110105154818.56b9976c.randy.dunlap@oracle.com>
+References: <AANLkTik4ktaeyDG3ihh-YRB+WVLxA46wSLOgWy6iY_68@mail.gmail.com>
+	<20101220204936.GA21290@huya.qualcomm.com>
+	<4D0FFC4B.9050301@kernel.org>
+	<ada62u3dkv2.fsf@cisco.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e6.ny.us.ibm.com ([32.97.182.146]:55056 "EHLO e6.ny.us.ibm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751373Ab1AEXF3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 5 Jan 2011 18:05:29 -0500
-In-Reply-To: <20110105064425.GA3161@amd>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Nick Piggin <npiggin@kernel.dk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>, Eric Van Hensbergen <ericvh@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <ada62u3dkv2.fsf@cisco.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Roland Dreier <rdreier@cisco.com>
+Cc: "J.H." <warthog9@kernel.org>, David Brown <davidb@codeaurora.org>, sedat.dilek@gmail.com, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, ftpadmin@kernel.org, webmaster@kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On 1/4/2011 10:44 PM, Nick Piggin wrote:
-> On Tue, Jan 04, 2011 at 10:16:07AM -0800, Venkateswararao Jujjuri (JV) wrote:
->> On 1/3/2011 5:40 PM, Stephen Rothwell wrote:
->>> Hi Nick,
->>>
->>> Today's linux-next merge of the vfs-scale tree got a conflict in
->>> fs/9p/vfs_inode.c between commit 3d21652a1d23591e7f0bbbbedae29ce78c2c1113
->>> ("fs/9p: Move dotl inode operations into a seperate file") from the v9fs
->>> tree and various commits from the vfs-scale tree.
->>>
->>> I fixed it up by using the v9fs changes to that file and then applying
->>> the following merge fixup patch (which I can carry as necessary).
->>>
->>> Someone will need to fix this up before one of these trees is merged by
->>> Linus, or to send this merge fix to Linus.
->>>
->>> From: Stephen Rothwell <sfr@canb.auug.org.au>
->>> Date: Tue, 4 Jan 2011 12:33:54 +1100
->>> Subject: [PATCH] v9fs: merge fix for changes in the vfs-scale tree
->>>
->>> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
->>> ---
->>>  fs/9p/vfs_inode_dotl.c |   22 +++++++++++-----------
->>>  1 files changed, 11 insertions(+), 11 deletions(-)
->>>
->>> diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
->>> index 38d5880..9dd534b 100644
->>> --- a/fs/9p/vfs_inode_dotl.c
->>> +++ b/fs/9p/vfs_inode_dotl.c
->>> @@ -78,11 +78,11 @@ static struct dentry *v9fs_dentry_from_dir_inode(struct inode *inode)
->>>  {
->>>  	struct dentry *dentry;
->>>
->>> -	spin_lock(&dcache_lock);
->>> +	spin_lock(&inode->i_lock);
->>>  	/* Directory should have only one entry. */
->>>  	BUG_ON(S_ISDIR(inode->i_mode) && !list_is_singular(&inode->i_dentry));
->>>  	dentry = list_entry(inode->i_dentry.next, struct dentry, d_alias);
->>> -	spin_unlock(&dcache_lock);
->>> +	spin_unlock(&inode->i_lock);
->>
->> Are we doing away with dcache_lock?
+On Wed, 05 Jan 2011 14:52:17 -0800 Roland Dreier wrote:
+
+>  > More excitement from https://bugzilla.kernel.org/show_bug.cgi?id=20702
+>  > 
+>  > Anyone want to take a stab at it?  I know I'd be appreciative.  I am
+>  > running a debug kernel with everything I could find and enable I even
+>  > remotely thought might prove helpful.  Nothing has jumped out yet though.
 > 
-> It's on its last legs...
+> A little late, but perhaps running with the patch below might help us
+> make a bit of progress.  The idea is to dump the last /proc/net file
+> opened and closed, so we can at least have a clue as to where the crash
+> is coming from.  This should add lines like 
 > 
+>     last procfs open:  /proc/2443/net/arp
+>     last procfs close: /proc/2443/net/arp
 > 
->> I am not sure if the i_lock can serve the same purpose..but looks like with the
->> current code
->> there may not need any lock around this code. Aneesh/Eric do you guys have any
->> comments?
+> to the oops output, so maybe we can zero in on things after you get a
+> crash with this applied.
 > 
-> Well first of all, why do you say i_lock can't serve the same purpose?
-
-What I mean is i_lock is not equivalent to dcache_lock in generic sense.
-
-> Removing locks is well and good, but if i_lock doesn't work here, then
-> I've made a mistake either fudnamentally in the dcache, or with a
-> particular pattern that v9fs uses -- either way it has to be understood.
+>  - R.
 > 
+> diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
+> index 6e8752c..c67b8d6 100644
+> --- a/arch/x86/kernel/dumpstack.c
+> +++ b/arch/x86/kernel/dumpstack.c
+> @@ -18,6 +18,7 @@
+>  
+>  #include <asm/stacktrace.h>
+>  
+> +void procfs_printk_last_file(void);
+>  
+>  int panic_on_unrecovered_nmi;
+>  int panic_on_io_nmi;
+> @@ -283,6 +284,7 @@ int __kprobes __die(const char *str, struct pt_regs *regs, long err)
+>  #endif
+>  	printk("\n");
+>  	sysfs_printk_last_file();
+> +	procfs_printk_last_file();
+>  	if (notify_die(DIE_OOPS, str, regs, err,
+>  			current->thread.trap_no, SIGSEGV) == NOTIFY_STOP)
+>  		return 1;
+> diff --git a/fs/proc/proc_net.c b/fs/proc/proc_net.c
+> index 9020ac1..1801cc1 100644
+> --- a/fs/proc/proc_net.c
+> +++ b/fs/proc/proc_net.c
+> @@ -26,6 +26,14 @@
+>  
+>  #include "internal.h"
+>  
+> +/* used in crash dumps to help with debugging */
+> +static char last_procfs_open[PATH_MAX];
+> +static char last_procfs_close[PATH_MAX];
+> +void procfs_printk_last_file(void)
+> +{
+> +	printk(KERN_EMERG "last procfs open:  %s\n", last_procfs_open);
+> +	printk(KERN_EMERG "last procfs close: %s\n", last_procfs_close);
 
-Initially we had a version where we walk up the d_parent to construct
-the complete path and corresponding fids for the entire path for 9P purpose.
-As we are walking we thought of using big hammer to lock the entire dcache.
-Later we used read/write locks to protect race between v9fs_fid_lookup and
-rename operations.
-Hence I don't think we need to protect this with  dcache_lock.
-But having i_lock around this code looks good to me.
+Let's not mislead the reader of a crash dump, please.  How about:
 
-> dcache lock removal of course isn't done ad-hoc. These two patches
-> specifically are the ones which aim to replace this particular instance
-> of locking:
++	printk(KERN_EMERG "last /proc..net open:  %s\n", last_procfs_open);
++	printk(KERN_EMERG "last /proc..net close: %s\n", last_procfs_close);
 
-While reading patches below...
-> 
-> http://git.kernel.org/?p=linux/kernel/git/npiggin/linux-npiggin.git;a=commit;h=5d30c20d47023b95b2a0d4820917dba8ba218d1a
 
-@@ -271,9 +271,11 @@ static struct dentry *v9fs_dentry_from_dir_inode(struct
-inode *inode)
-        struct dentry *dentry;
+> +}
+>  
+>  static struct net *get_proc_net(const struct inode *inode)
+>  {
+> @@ -37,9 +45,14 @@ int seq_open_net(struct inode *ino, struct file *f,
+>  {
+>  	struct net *net;
+>  	struct seq_net_private *p;
+> +	char *n;
+>  
+>  	BUG_ON(size < sizeof(*p));
+>  
+> +	n = d_path(&f->f_path, last_procfs_open, sizeof(last_procfs_open));
+> +	if (!IS_ERR(n))
+> +		memmove(last_procfs_open, n, strlen(n) + 1);
+> +
+>  	net = get_proc_net(ino);
+>  	if (net == NULL)
+>  		return -ENXIO;
+> @@ -83,6 +96,11 @@ EXPORT_SYMBOL_GPL(single_open_net);
+>  int seq_release_net(struct inode *ino, struct file *f)
+>  {
+>  	struct seq_file *seq;
+> +	char *n;
+> +
+> +	n = d_path(&f->f_path, last_procfs_close, sizeof(last_procfs_close));
+> +	if (!IS_ERR(n))
+> +		memmove(last_procfs_close, n, strlen(n) + 1);
+>  
+>  	seq = f->private_data;
+>  
+> --
 
-        spin_lock(&dcache_lock);
-+       spin_lock(&dcache_inode_lock);
-        /* Directory should have only one entry. */
-        BUG_ON(S_ISDIR(inode->i_mode) && !list_is_singular(&inode->i_dentry));
-        dentry = list_entry(inode->i_dentry.next, struct dentry, d_alias);
-+       spin_unlock(&dcache_inode_lock);
-        spin_unlock(&dcache_lock);
-        return dentry;
-> http://git.kernel.org/?p=linux/kernel/git/npiggin/linux-npiggin.git;a=commit;h=ef4953a772e04aef8cf5b94a9b70ffbb12b576e2
-> 
-@@ -277,11 +277,11 @@ static struct dentry *v9fs_dentry_from_dir_inode(struct
-inode *inode)
- {
-        struct dentry *dentry;
 
--       spin_lock(&dcache_inode_lock);
-+       spin_lock(&inode->i_lock);
-        /* Directory should have only one entry. */
-        BUG_ON(S_ISDIR(inode->i_mode) && !list_is_singular(&inode->i_dentry));
-        dentry = list_entry(inode->i_dentry.next, struct dentry, d_alias);
--       spin_unlock(&dcache_inode_lock);
-+       spin_unlock(&inode->i_lock);
-        return dentry;
- }
-
-Wondering if there is another patch in between to take out the dcache_lock.
-
-Anyway, Changes in this patch look good to me and sorry for the confusion.
-
-Thanks,
-JV
-> 
->>>  	return dentry;
->>>  }
->>>
->>> @@ -215,7 +215,7 @@ v9fs_vfs_create_dotl(struct inode *dir, struct dentry *dentry, int omode,
->>>  				err);
->>>  			goto error;
->>>  		}
->>> -		dentry->d_op = &v9fs_cached_dentry_operations;
->>> +		d_set_d_op(dentry, &v9fs_cached_dentry_operations);
->>
->> Assuming that this is a macro to the same operation.. rest of the changes look
->> fine to me.
-> 
-> Yes it's equivalent.
-> 
-> Thanks,
-> Nick
-> 
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
