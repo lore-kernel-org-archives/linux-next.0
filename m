@@ -1,58 +1,94 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs-scale tree with the xfs tree
-Date: Thu, 6 Jan 2011 12:10:56 +1100
-Message-ID: <20110106121056.0758b16f.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the bjdooks-i2c tree with the arm tree
+Date: Thu, 6 Jan 2011 13:31:07 +1100
+Message-ID: <20110106133107.463c3e60.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44298 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35115 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751312Ab1AFBK7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 5 Jan 2011 20:10:59 -0500
+	id S1753797Ab1AFCbN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 5 Jan 2011 21:31:13 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Nick Piggin <npiggin@kernel.dk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Dirk Brandewie <dirk.brandewie@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Eric Miao <eric.y.miao@gmail.com>
 
-Hi Nick,
+Hi Ben,
 
-Today's linux-next merge of the vfs-scale tree got a conflict in
-fs/xfs/xfs_iget.c between commits
-d95b7aaf9ab6738bef1ebcc52ab66563085e44ac ("xfs: rcu free inodes") and
-1a3e8f3da09c7082d25b512a0ffe569391e4c09a ("xfs: convert inode cache
-lookups to use RCU locking") from the xfs tree and commit
-bb3e8c37a0af21d0a8fe54a0b0f17aca16335a82 ("fs: icache RCU free inodes")
-from the vfs-scale tree.
+Today's linux-next merge of the bjdooks-i2c tree got a conflict in
+arch/arm/mach-pxa/pxa27x.c, arch/arm/mach-pxa/pxa3xx.c and
+arch/arm/mach-pxa/trizeps4.c between commit
+ad68bb9f7a3cd47396635a5e3895215af57579da ("ARM: pxa: Access SMEMC via
+virtual addresses") from the arm tree and commit
+0a56f28ec486273d84d25571573908344aa67176 ("arm/pxa2xx: reorganize I2C
+files") from the bjdooks-i2c tree.
 
-OK, so looking at this, the first xfs tree patch above does the same as
-the vfs-scale tree patch (just using i_dentry instead of the (union
-eqivalent) i_rcu.  I fixed it up (see below - the diff does not show that
-__xfs_inode_free has been removed) and can carry the fix as necessary.
+I fixed it up (see below) and can carry the fix as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc fs/xfs/xfs_iget.c
-index 3ecad00,d7de5a3..0000000
---- a/fs/xfs/xfs_iget.c
-+++ b/fs/xfs/xfs_iget.c
-@@@ -157,17 -145,7 +156,17 @@@ xfs_inode_free
-  	ASSERT(!spin_is_locked(&ip->i_flags_lock));
-  	ASSERT(completion_done(&ip->i_flush));
+diff --cc arch/arm/mach-pxa/pxa27x.c
+index b2130b7,1c77e89..0000000
+--- a/arch/arm/mach-pxa/pxa27x.c
++++ b/arch/arm/mach-pxa/pxa27x.c
+@@@ -17,9 -17,8 +17,10 @@@
+  #include <linux/suspend.h>
+  #include <linux/platform_device.h>
+  #include <linux/sysdev.h>
+ +#include <linux/io.h>
++ #include <linux/i2c/pxa-i2c.h>
   
- +	/*
- +	 * Because we use RCU freeing we need to ensure the inode always
- +	 * appears to be reclaimed with an invalid inode number when in the
- +	 * free state. The ip->i_flags_lock provides the barrier against lookup
- +	 * races.
- +	 */
- +	spin_lock(&ip->i_flags_lock);
- +	ip->i_flags = XFS_IRECLAIM;
- +	ip->i_ino = 0;
- +	spin_unlock(&ip->i_flags_lock);
-- 	call_rcu((struct rcu_head *)&VFS_I(ip)->i_dentry, __xfs_inode_free);
-+ 	call_rcu(&ip->i_vnode.i_rcu, xfs_inode_free_callback);
-  }
+ +#include <asm/mach/map.h>
+  #include <mach/hardware.h>
+  #include <asm/irq.h>
+  #include <mach/irqs.h>
+@@@ -29,10 -28,7 +30,8 @@@
+  #include <mach/ohci.h>
+  #include <mach/pm.h>
+  #include <mach/dma.h>
+ +#include <mach/smemc.h>
   
-  /*
+- #include <plat/i2c.h>
+- 
+  #include "generic.h"
+  #include "devices.h"
+  #include "clock.h"
+diff --cc arch/arm/mach-pxa/pxa3xx.c
+index e14818f,c9d9729..0000000
+--- a/arch/arm/mach-pxa/pxa3xx.c
++++ b/arch/arm/mach-pxa/pxa3xx.c
+@@@ -21,8 -21,8 +21,9 @@@
+  #include <linux/irq.h>
+  #include <linux/io.h>
+  #include <linux/sysdev.h>
++ #include <linux/i2c/pxa-i2c.h>
+  
+ +#include <asm/mach/map.h>
+  #include <mach/hardware.h>
+  #include <mach/gpio.h>
+  #include <mach/pxa3xx-regs.h>
+@@@ -31,8 -31,6 +32,7 @@@
+  #include <mach/pm.h>
+  #include <mach/dma.h>
+  #include <mach/regs-intc.h>
+ +#include <mach/smemc.h>
+- #include <plat/i2c.h>
+  
+  #include "generic.h"
+  #include "devices.h"
+diff --cc arch/arm/mach-pxa/trizeps4.c
+index 43fc9ca,995e671..0000000
+--- a/arch/arm/mach-pxa/trizeps4.c
++++ b/arch/arm/mach-pxa/trizeps4.c
+@@@ -47,8 -47,6 +47,7 @@@
+  #include <mach/mmc.h>
+  #include <mach/irda.h>
+  #include <mach/ohci.h>
+ +#include <mach/smemc.h>
+- #include <plat/i2c.h>
+  
+  #include "generic.h"
+  #include "devices.h"
