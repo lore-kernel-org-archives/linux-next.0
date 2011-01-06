@@ -1,94 +1,29 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the bjdooks-i2c tree with the arm tree
-Date: Thu, 6 Jan 2011 13:31:07 +1100
-Message-ID: <20110106133107.463c3e60.sfr@canb.auug.org.au>
+From: Roland Dreier <rdreier@cisco.com>
+Subject: Re: patchwork.kernel.org down
+Date: Wed, 05 Jan 2011 18:58:49 -0800
+Message-ID: <adawrmid9g6.fsf@cisco.com>
+References: <AANLkTik4ktaeyDG3ihh-YRB+WVLxA46wSLOgWy6iY_68@mail.gmail.com>
+	<20101220204936.GA21290@huya.qualcomm.com>
+	<4D0FFC4B.9050301@kernel.org> <ada62u3dkv2.fsf@cisco.com>
+	<20110105154818.56b9976c.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35115 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753797Ab1AFCbN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 5 Jan 2011 21:31:13 -0500
+Received: from sj-iport-5.cisco.com ([171.68.10.87]:46483 "EHLO
+	sj-iport-5.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753800Ab1AFC7I (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Jan 2011 21:59:08 -0500
+In-Reply-To: <20110105154818.56b9976c.randy.dunlap@oracle.com> (Randy Dunlap's
+	message of "Wed, 5 Jan 2011 15:48:18 -0800")
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ben Dooks <ben-linux@fluff.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Dirk Brandewie <dirk.brandewie@gmail.com>, Marek Vasut <marek.vasut@gmail.com>, Eric Miao <eric.y.miao@gmail.com>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: "J.H." <warthog9@kernel.org>, David Brown <davidb@codeaurora.org>, sedat.dilek@gmail.com, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, ftpadmin@kernel.org, webmaster@kernel.org
 
-Hi Ben,
+ > Let's not mislead the reader of a crash dump, please.  How about:
 
-Today's linux-next merge of the bjdooks-i2c tree got a conflict in
-arch/arm/mach-pxa/pxa27x.c, arch/arm/mach-pxa/pxa3xx.c and
-arch/arm/mach-pxa/trizeps4.c between commit
-ad68bb9f7a3cd47396635a5e3895215af57579da ("ARM: pxa: Access SMEMC via
-virtual addresses") from the arm tree and commit
-0a56f28ec486273d84d25571573908344aa67176 ("arm/pxa2xx: reorganize I2C
-files") from the bjdooks-i2c tree.
+ > +	printk(KERN_EMERG "last /proc..net open:  %s\n", last_procfs_open);
+ > +	printk(KERN_EMERG "last /proc..net close: %s\n", last_procfs_close);
 
-I fixed it up (see below) and can carry the fix as necessary.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc arch/arm/mach-pxa/pxa27x.c
-index b2130b7,1c77e89..0000000
---- a/arch/arm/mach-pxa/pxa27x.c
-+++ b/arch/arm/mach-pxa/pxa27x.c
-@@@ -17,9 -17,8 +17,10 @@@
-  #include <linux/suspend.h>
-  #include <linux/platform_device.h>
-  #include <linux/sysdev.h>
- +#include <linux/io.h>
-+ #include <linux/i2c/pxa-i2c.h>
-  
- +#include <asm/mach/map.h>
-  #include <mach/hardware.h>
-  #include <asm/irq.h>
-  #include <mach/irqs.h>
-@@@ -29,10 -28,7 +30,8 @@@
-  #include <mach/ohci.h>
-  #include <mach/pm.h>
-  #include <mach/dma.h>
- +#include <mach/smemc.h>
-  
-- #include <plat/i2c.h>
-- 
-  #include "generic.h"
-  #include "devices.h"
-  #include "clock.h"
-diff --cc arch/arm/mach-pxa/pxa3xx.c
-index e14818f,c9d9729..0000000
---- a/arch/arm/mach-pxa/pxa3xx.c
-+++ b/arch/arm/mach-pxa/pxa3xx.c
-@@@ -21,8 -21,8 +21,9 @@@
-  #include <linux/irq.h>
-  #include <linux/io.h>
-  #include <linux/sysdev.h>
-+ #include <linux/i2c/pxa-i2c.h>
-  
- +#include <asm/mach/map.h>
-  #include <mach/hardware.h>
-  #include <mach/gpio.h>
-  #include <mach/pxa3xx-regs.h>
-@@@ -31,8 -31,6 +32,7 @@@
-  #include <mach/pm.h>
-  #include <mach/dma.h>
-  #include <mach/regs-intc.h>
- +#include <mach/smemc.h>
-- #include <plat/i2c.h>
-  
-  #include "generic.h"
-  #include "devices.h"
-diff --cc arch/arm/mach-pxa/trizeps4.c
-index 43fc9ca,995e671..0000000
---- a/arch/arm/mach-pxa/trizeps4.c
-+++ b/arch/arm/mach-pxa/trizeps4.c
-@@@ -47,8 -47,6 +47,7 @@@
-  #include <mach/mmc.h>
-  #include <mach/irda.h>
-  #include <mach/ohci.h>
- +#include <mach/smemc.h>
-- #include <plat/i2c.h>
-  
-  #include "generic.h"
-  #include "devices.h"
+Fair enough... to be clear I wasn't proposing this patch be merged
+anywhere -- it's just for debugging this kernel.org crash.'
