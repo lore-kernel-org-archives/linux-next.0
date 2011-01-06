@@ -1,115 +1,103 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree (tty
- tree related)
-Date: Thu, 6 Jan 2011 14:27:10 +1100
-Message-ID: <20110106142710.a0a04883.sfr@canb.auug.org.au>
-References: <20101217171120.295b0c0c.sfr@canb.auug.org.au>
-	<20101217070431.GA25192@kroah.com>
-	<alpine.LFD.2.00.1012171107310.12146@localhost6.localdomain6>
+From: Eric Miao <eric.y.miao@gmail.com>
+Subject: Re: linux-next: manual merge of the bjdooks-i2c tree with the arm tree
+Date: Thu, 6 Jan 2011 11:29:15 +0800
+Message-ID: <AANLkTi=SmAOxTKmP5w-GKbx1mEDAXAJs7Cv58tRV-AOk@mail.gmail.com>
+References: <20110106133107.463c3e60.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__6_Jan_2011_14_27_10_+1100_+L+WgKxsEyi8NzF+"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <alpine.LFD.2.00.1012171107310.12146@localhost6.localdomain6>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:42557 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754159Ab1AFD3g convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Jan 2011 22:29:36 -0500
+In-Reply-To: <20110106133107.463c3e60.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Ben Dooks <ben-linux@fluff.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Dirk Brandewie <dirk.brandewie@gmail.com>, Marek Vasut <marek.vasut@gmail.com>
 
---Signature=_Thu__6_Jan_2011_14_27_10_+1100_+L+WgKxsEyi8NzF+
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-HI Greg,
-
-On Fri, 17 Dec 2010 11:16:17 +0100 (CET) Thomas Gleixner <tglx@linutronix.d=
-e> wrote:
+On Thu, Jan 6, 2011 at 10:31 AM, Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> Hi Ben,
 >
-> On Thu, 16 Dec 2010, Greg KH wrote:
-> > On Fri, Dec 17, 2010 at 05:11:20PM +1100, Stephen Rothwell wrote:
-> > > Hi Greg,
-> > >=20
-> > > After merging the final tree, today's linux-next build (powerpc
-> > > allyesconfig) failed like this:
-> > >=20
-> > > drivers/serial/apbuart.c:596: error: conflicting types for 'grlib_apb=
-uart_configure'
-> > > drivers/serial/apbuart.c:523: note: previous declaration of 'grlib_ap=
-buart_configure' was here
-> > >=20
-> > > Caused by commit 35c64e5d13c3d7d8c4ad061ad5e20498b9160c24 ("drivers:
-> > > serial: apbuart: Handle OF failures gracefully").  This build has
-> > > CONFIG_SERIAL_GRLIB_GAISLER_APBUART_CONSOLE set ...
-> > >=20
-> > > I have reverted this commit for today.
-> >=20
-> > Ugh.  Thomas, care to send me a patch?
->=20
-> Sorry, I missed the console part. Patch below.
+> Today's linux-next merge of the bjdooks-i2c tree got a conflict in
+> arch/arm/mach-pxa/pxa27x.c, arch/arm/mach-pxa/pxa3xx.c and
+> arch/arm/mach-pxa/trizeps4.c between commit
+> ad68bb9f7a3cd47396635a5e3895215af57579da ("ARM: pxa: Access SMEMC via
+> virtual addresses") from the arm tree and commit
+> 0a56f28ec486273d84d25571573908344aa67176 ("arm/pxa2xx: reorganize I2C
+> files") from the bjdooks-i2c tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary.
 
-Ping?
+Thanks Stephen, that looks sane to me.
 
-> Thanks,
->=20
-> 	tglx
-> ---
-> Subject: drivers: serial: apbuart: Fixup apbuart_console_init()
-> From: Thomas Gleixner <tglx@linutronix.de>
-> Date: Fri, 17 Dec 2010 11:09:49 +0100
->=20
-> commit 35c64e5d (drivers: serial: apbuart: Handle OF failures
-> gracefully) missed that the modified grlib_apbuart_configure()
-> function is called from apbuart_console_init() as well.
->=20
-> Fix the fallout.
->=20
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> ---
->  drivers/serial/apbuart.c |    5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->=20
-> Index: linux-2.6-tip/drivers/serial/apbuart.c
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> --- linux-2.6-tip.orig/drivers/serial/apbuart.c
-> +++ linux-2.6-tip/drivers/serial/apbuart.c
-> @@ -520,11 +520,12 @@ static struct console grlib_apbuart_cons
->  };
-> =20
-> =20
-> -static void grlib_apbuart_configure(void);
-> +static int grlib_apbuart_configure(void);
-> =20
->  static int __init apbuart_console_init(void)
->  {
-> -	grlib_apbuart_configure();
-> +	if (grlib_apbuart_configure())
-> +		return -ENODEV;
->  	register_console(&grlib_apbuart_console);
->  	return 0;
->  }
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__6_Jan_2011_14_27_10_+1100_+L+WgKxsEyi8NzF+
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNJTaOAAoJEDMEi1NhKgbsUnIH/RnPGiufxnNI/hShYw/py1dR
-yanGoDgsT1Ie5doFpgtVzL5IjkKPs4s5md80ABrObNgOOGQ+26Hh6uCOmZbIAIzd
-LGDHJmQdJ91WXM9KCxSI7pEFS0YiabvzjRHIffcmpBlU2Fp9GJ/uKIXIGN03MdKD
-QtBZbc1spV1p8aosa3wXsKcSn+eqGpBaj48oLKWz3r1MF6mOqSgBLrgPVA+FxzL5
-pkew7jdGhEOlMf5SHhJ+lFF5mszBaCipGtZsDO3ttcYTRNVSRar+mdAwHBc6KqAC
-8V1N0PsV3DjpYg9QbkQIx9JTNO0CbSABcjsGbgHpJdS6kc16Q/ga1gPTjEC6AfY=
-=Js4C
------END PGP SIGNATURE-----
-
---Signature=_Thu__6_Jan_2011_14_27_10_+1100_+L+WgKxsEyi8NzF+--
+> --
+> Cheers,
+> Stephen Rothwell =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0sfr@canb.auug.org.au
+>
+> diff --cc arch/arm/mach-pxa/pxa27x.c
+> index b2130b7,1c77e89..0000000
+> --- a/arch/arm/mach-pxa/pxa27x.c
+> +++ b/arch/arm/mach-pxa/pxa27x.c
+> @@@ -17,9 -17,8 +17,10 @@@
+> =C2=A0#include <linux/suspend.h>
+> =C2=A0#include <linux/platform_device.h>
+> =C2=A0#include <linux/sysdev.h>
+> =C2=A0+#include <linux/io.h>
+> + #include <linux/i2c/pxa-i2c.h>
+>
+> =C2=A0+#include <asm/mach/map.h>
+> =C2=A0#include <mach/hardware.h>
+> =C2=A0#include <asm/irq.h>
+> =C2=A0#include <mach/irqs.h>
+> @@@ -29,10 -28,7 +30,8 @@@
+> =C2=A0#include <mach/ohci.h>
+> =C2=A0#include <mach/pm.h>
+> =C2=A0#include <mach/dma.h>
+> =C2=A0+#include <mach/smemc.h>
+>
+> - #include <plat/i2c.h>
+> -
+> =C2=A0#include "generic.h"
+> =C2=A0#include "devices.h"
+> =C2=A0#include "clock.h"
+> diff --cc arch/arm/mach-pxa/pxa3xx.c
+> index e14818f,c9d9729..0000000
+> --- a/arch/arm/mach-pxa/pxa3xx.c
+> +++ b/arch/arm/mach-pxa/pxa3xx.c
+> @@@ -21,8 -21,8 +21,9 @@@
+> =C2=A0#include <linux/irq.h>
+> =C2=A0#include <linux/io.h>
+> =C2=A0#include <linux/sysdev.h>
+> + #include <linux/i2c/pxa-i2c.h>
+>
+> =C2=A0+#include <asm/mach/map.h>
+> =C2=A0#include <mach/hardware.h>
+> =C2=A0#include <mach/gpio.h>
+> =C2=A0#include <mach/pxa3xx-regs.h>
+> @@@ -31,8 -31,6 +32,7 @@@
+> =C2=A0#include <mach/pm.h>
+> =C2=A0#include <mach/dma.h>
+> =C2=A0#include <mach/regs-intc.h>
+> =C2=A0+#include <mach/smemc.h>
+> - #include <plat/i2c.h>
+>
+> =C2=A0#include "generic.h"
+> =C2=A0#include "devices.h"
+> diff --cc arch/arm/mach-pxa/trizeps4.c
+> index 43fc9ca,995e671..0000000
+> --- a/arch/arm/mach-pxa/trizeps4.c
+> +++ b/arch/arm/mach-pxa/trizeps4.c
+> @@@ -47,8 -47,6 +47,7 @@@
+> =C2=A0#include <mach/mmc.h>
+> =C2=A0#include <mach/irda.h>
+> =C2=A0#include <mach/ohci.h>
+> =C2=A0+#include <mach/smemc.h>
+> - #include <plat/i2c.h>
+>
+> =C2=A0#include "generic.h"
+> =C2=A0#include "devices.h"
+>
