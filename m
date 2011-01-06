@@ -1,51 +1,30 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the final tree (tty
- tree related)
-Date: Thu, 6 Jan 2011 10:45:17 -0800
-Message-ID: <20110106184517.GA15901@kroah.com>
-References: <20101217171120.295b0c0c.sfr@canb.auug.org.au>
- <20101217070431.GA25192@kroah.com>
- <alpine.LFD.2.00.1012171107310.12146@localhost6.localdomain6>
- <20110106142710.a0a04883.sfr@canb.auug.org.au>
+From: Nishanth Menon <nm@ti.com>
+Subject: Re: linux-next: manual merge of the usb tree with the omap tree
+Date: Thu, 06 Jan 2011 14:24:25 -0600
+Message-ID: <4D2624F9.9090100@ti.com>
+References: <20101223171859.f6842045.sfr@canb.auug.org.au>	<4D139517.3010608@ti.com>	<AANLkTi=pTNg2iWN+=uEv=CyZHHCoddF51pmmCMjPeMUF@mail.gmail.com>	<4ce0f816f951f24ca3de9c84d9f70842@mail.gmail.com>	<4D25E313.4060202@heeltoe.com>	<8B3471BB-CB3F-4CE6-B523-D9C5E87B9CEC@dominion.thruhere.net>	<87pqs9vqya.fsf@ti.com> <4D260812.3010605@ti.com> <871v4pvpvg.fsf@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20110106142710.a0a04883.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from na3sys009aog106.obsmtp.com ([74.125.149.77]:54604 "EHLO
+	na3sys009aog106.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751622Ab1AFUYa (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Jan 2011 15:24:30 -0500
+In-Reply-To: <871v4pvpvg.fsf@ti.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Kevin Hilman <khilman@ti.com>
+Cc: Koen Kooi <koen@dominion.thruhere.net>, Brad Parker <brad@heeltoe.com>, Anand Gadiyar <gadiyar@ti.com>, Ming Lei <tom.leiming@gmail.com>, Benoit Cousson <b-cousson@ti.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Paul Walmsley <paul@pwsan.com>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
 
-On Thu, Jan 06, 2011 at 02:27:10PM +1100, Stephen Rothwell wrote:
-> HI Greg,
-> 
-> On Fri, 17 Dec 2010 11:16:17 +0100 (CET) Thomas Gleixner <tglx@linutronix.de> wrote:
-> >
-> > On Thu, 16 Dec 2010, Greg KH wrote:
-> > > On Fri, Dec 17, 2010 at 05:11:20PM +1100, Stephen Rothwell wrote:
-> > > > Hi Greg,
-> > > > 
-> > > > After merging the final tree, today's linux-next build (powerpc
-> > > > allyesconfig) failed like this:
-> > > > 
-> > > > drivers/serial/apbuart.c:596: error: conflicting types for 'grlib_apbuart_configure'
-> > > > drivers/serial/apbuart.c:523: note: previous declaration of 'grlib_apbuart_configure' was here
-> > > > 
-> > > > Caused by commit 35c64e5d13c3d7d8c4ad061ad5e20498b9160c24 ("drivers:
-> > > > serial: apbuart: Handle OF failures gracefully").  This build has
-> > > > CONFIG_SERIAL_GRLIB_GAISLER_APBUART_CONSOLE set ...
-> > > > 
-> > > > I have reverted this commit for today.
-> > > 
-> > > Ugh.  Thomas, care to send me a patch?
-> > 
-> > Sorry, I missed the console part. Patch below.
-> 
-> Ping?
+Kevin Hilman had written, on 01/06/2011 12:38 PM, the following:
+[..]
+> Feel free to break it up if you prefer, but IMO it would be mergable as
+just for the record, posted the same here:
+http://marc.info/?l=linux-omap&m=129434370207879&w=2
 
-Ick, sorry about this, I've now applied this.
+[..]
 
-thanks for the reminder.
-
-greg k-h
+-- 
+Regards,
+Nishanth Menon
