@@ -1,103 +1,72 @@
-From: Eric Miao <eric.y.miao@gmail.com>
-Subject: Re: linux-next: manual merge of the bjdooks-i2c tree with the arm tree
-Date: Thu, 6 Jan 2011 11:29:15 +0800
-Message-ID: <AANLkTi=SmAOxTKmP5w-GKbx1mEDAXAJs7Cv58tRV-AOk@mail.gmail.com>
-References: <20110106133107.463c3e60.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the percpu tree
+Date: Thu, 6 Jan 2011 15:18:15 +1100
+Message-ID: <20110106151815.9e5c2a1e.sfr@canb.auug.org.au>
+References: <20110104152105.5cc7c3a9.sfr@canb.auug.org.au>
+	<20110104051314.GA6748@mtj.dyndns.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__6_Jan_2011_15_18_15_+1100_=L4SgHQHIKYoFWP4"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:42557 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754159Ab1AFD3g convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Jan 2011 22:29:36 -0500
-In-Reply-To: <20110106133107.463c3e60.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:55462 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752221Ab1AFESZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 5 Jan 2011 23:18:25 -0500
+In-Reply-To: <20110104051314.GA6748@mtj.dyndns.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Ben Dooks <ben-linux@fluff.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Dirk Brandewie <dirk.brandewie@gmail.com>, Marek Vasut <marek.vasut@gmail.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Jan 6, 2011 at 10:31 AM, Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> Hi Ben,
->
-> Today's linux-next merge of the bjdooks-i2c tree got a conflict in
-> arch/arm/mach-pxa/pxa27x.c, arch/arm/mach-pxa/pxa3xx.c and
-> arch/arm/mach-pxa/trizeps4.c between commit
-> ad68bb9f7a3cd47396635a5e3895215af57579da ("ARM: pxa: Access SMEMC via
-> virtual addresses") from the arm tree and commit
-> 0a56f28ec486273d84d25571573908344aa67176 ("arm/pxa2xx: reorganize I2C
-> files") from the bjdooks-i2c tree.
->
-> I fixed it up (see below) and can carry the fix as necessary.
+--Signature=_Thu__6_Jan_2011_15_18_15_+1100_=L4SgHQHIKYoFWP4
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks Stephen, that looks sane to me.
+Hi Tejun,
 
-> --
-> Cheers,
-> Stephen Rothwell =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0sfr@canb.auug.org.au
+On Tue, 4 Jan 2011 06:13:14 +0100 Tejun Heo <tj@kernel.org> wrote:
 >
-> diff --cc arch/arm/mach-pxa/pxa27x.c
-> index b2130b7,1c77e89..0000000
-> --- a/arch/arm/mach-pxa/pxa27x.c
-> +++ b/arch/arm/mach-pxa/pxa27x.c
-> @@@ -17,9 -17,8 +17,10 @@@
-> =C2=A0#include <linux/suspend.h>
-> =C2=A0#include <linux/platform_device.h>
-> =C2=A0#include <linux/sysdev.h>
-> =C2=A0+#include <linux/io.h>
-> + #include <linux/i2c/pxa-i2c.h>
->
-> =C2=A0+#include <asm/mach/map.h>
-> =C2=A0#include <mach/hardware.h>
-> =C2=A0#include <asm/irq.h>
-> =C2=A0#include <mach/irqs.h>
-> @@@ -29,10 -28,7 +30,8 @@@
-> =C2=A0#include <mach/ohci.h>
-> =C2=A0#include <mach/pm.h>
-> =C2=A0#include <mach/dma.h>
-> =C2=A0+#include <mach/smemc.h>
->
-> - #include <plat/i2c.h>
-> -
-> =C2=A0#include "generic.h"
-> =C2=A0#include "devices.h"
-> =C2=A0#include "clock.h"
-> diff --cc arch/arm/mach-pxa/pxa3xx.c
-> index e14818f,c9d9729..0000000
-> --- a/arch/arm/mach-pxa/pxa3xx.c
-> +++ b/arch/arm/mach-pxa/pxa3xx.c
-> @@@ -21,8 -21,8 +21,9 @@@
-> =C2=A0#include <linux/irq.h>
-> =C2=A0#include <linux/io.h>
-> =C2=A0#include <linux/sysdev.h>
-> + #include <linux/i2c/pxa-i2c.h>
->
-> =C2=A0+#include <asm/mach/map.h>
-> =C2=A0#include <mach/hardware.h>
-> =C2=A0#include <mach/gpio.h>
-> =C2=A0#include <mach/pxa3xx-regs.h>
-> @@@ -31,8 -31,6 +32,7 @@@
-> =C2=A0#include <mach/pm.h>
-> =C2=A0#include <mach/dma.h>
-> =C2=A0#include <mach/regs-intc.h>
-> =C2=A0+#include <mach/smemc.h>
-> - #include <plat/i2c.h>
->
-> =C2=A0#include "generic.h"
-> =C2=A0#include "devices.h"
-> diff --cc arch/arm/mach-pxa/trizeps4.c
-> index 43fc9ca,995e671..0000000
-> --- a/arch/arm/mach-pxa/trizeps4.c
-> +++ b/arch/arm/mach-pxa/trizeps4.c
-> @@@ -47,8 -47,6 +47,7 @@@
-> =C2=A0#include <mach/mmc.h>
-> =C2=A0#include <mach/irda.h>
-> =C2=A0#include <mach/ohci.h>
-> =C2=A0+#include <mach/smemc.h>
-> - #include <plat/i2c.h>
->
-> =C2=A0#include "generic.h"
-> =C2=A0#include "devices.h"
->
+> On Tue, Jan 04, 2011 at 03:21:05PM +1100, Stephen Rothwell wrote:
+> > After merging the percpu tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> >=20
+> > arch/x86/kernel/cpu/mcheck/therm_throt.c: In function 'intel_thermal_in=
+terrupt':
+> > arch/x86/kernel/cpu/mcheck/therm_throt.c:368: error: implicit declarati=
+on of function 'this_cpu_has'
+> >=20
+> > Caused by commit 6ac0bb7148b93fb40bccba5dff06d51a3e3ea283 ("x86: use
+> > this_cpu_has for thermal_interrupt").
+> >=20
+> > this_cpu_has() does not exist anywhere except in this introduced usage.
+> >=20
+> > I have used the percpu tree from next-20101231 for today.
+>=20
+> My apologies.  I forgot an earlier patch to introduce this_cpu_has()
+> macro.  I've reverted the offending commit.
+
+But that revert is not in your published for-next branch yet.  I have
+manually reverted that commit for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__6_Jan_2011_15_18_15_+1100_=L4SgHQHIKYoFWP4
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNJUKHAAoJEDMEi1NhKgbsi0IIAJ4wl3B0O/gRcrms4rTXKT+v
+BRY2sjLFJ898QbFhYyKicaovioM3RWJu4aO9PtLUpAbFF1X7VFhmfQixl/TfIteP
+h14KryAoS/YgS9er5vWtKbMlMjwGpQ5pg53des5SwKVdzU1FpK1c9e1LUNBkP0AD
+kOCJqCe3pdSyxaqGvoV+G7GeAoLWKCPt9hZFYltDhJYRevITSRC7S78vLW3C6y2D
+gPeJgs2ZYnTuNmsfOEZk6vjrYRB70sLPjUWIidg8+34cZ1HljBqBB+e0o4i53K4O
+sjPhSixMHstgFiVfqzeXBIDob/DOKdSrbWFSKWqN281k+JxkFlbvVfbRGrBT6Ms=
+=EuyS
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__6_Jan_2011_15_18_15_+1100_=L4SgHQHIKYoFWP4--
