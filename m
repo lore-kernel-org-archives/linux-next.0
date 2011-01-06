@@ -1,62 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the nfsd tree with Linus' tree
-Date: Thu, 6 Jan 2011 11:47:17 +1100
-Message-ID: <20110106114717.32cd3a25.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs-scale tree with the xfs tree
+Date: Thu, 6 Jan 2011 12:10:56 +1100
+Message-ID: <20110106121056.0758b16f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "J. Bruce Fields" <bfields@fieldses.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:44298 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751312Ab1AFBK7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 5 Jan 2011 20:10:59 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Nick Piggin <npiggin@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
 
-Hi all,
+Hi Nick,
 
-Today's linux-next merge of the nfsd tree got a conflict in
-Documentation/filesystems/Locking between commit
-b83be6f20a0e468f715b14225c9f897538dfe5ad ("update
-Documentation/filesystems/Locking") from Linus' tree and commit
-e63eb9375089f9d2041305d04c3f33a194e0e014 ("nfsd4: eliminate lease delete
-callback") from the nfsd tree.
+Today's linux-next merge of the vfs-scale tree got a conflict in
+fs/xfs/xfs_iget.c between commits
+d95b7aaf9ab6738bef1ebcc52ab66563085e44ac ("xfs: rcu free inodes") and
+1a3e8f3da09c7082d25b512a0ffe569391e4c09a ("xfs: convert inode cache
+lookups to use RCU locking") from the xfs tree and commit
+bb3e8c37a0af21d0a8fe54a0b0f17aca16335a82 ("fs: icache RCU free inodes")
+from the vfs-scale tree.
 
-I fixed it up (see below) and can carry the fix as necessary.
+OK, so looking at this, the first xfs tree patch above does the same as
+the vfs-scale tree patch (just using i_dentry instead of the (union
+eqivalent) i_rcu.  I fixed it up (see below - the diff does not show that
+__xfs_inode_free has been removed) and can carry the fix as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc Documentation/filesystems/Locking
-index 33fa3e5,075be12..0000000
---- a/Documentation/filesystems/Locking
-+++ b/Documentation/filesystems/Locking
-@@@ -337,22 -327,17 +337,20 @@@ fl_release_private:	maybe		n
-  prototypes:
-  	int (*fl_compare_owner)(struct file_lock *, struct file_lock *);
-  	void (*fl_notify)(struct file_lock *);  /* unblock callback */
- +	int (*fl_grant)(struct file_lock *, struct file_lock *, int);
-- 	void (*fl_release_private)(struct file_lock *);
-  	void (*fl_break)(struct file_lock *); /* break_lease callback */
- +	int (*fl_mylease)(struct file_lock *, struct file_lock *);
- +	int (*fl_change)(struct file_lock **, int);
+diff --cc fs/xfs/xfs_iget.c
+index 3ecad00,d7de5a3..0000000
+--- a/fs/xfs/xfs_iget.c
++++ b/fs/xfs/xfs_iget.c
+@@@ -157,17 -145,7 +156,17 @@@ xfs_inode_free
+  	ASSERT(!spin_is_locked(&ip->i_flags_lock));
+  	ASSERT(completion_done(&ip->i_flush));
   
-  locking rules:
- -			BKL	may block
- -fl_compare_owner:	yes	no
- -fl_notify:		yes	no
- -fl_break:		yes	no
- -
- -	Currently only NFSD and NLM provide instances of this class. None of the
- -them block. If you have out-of-tree instances - please, show up. Locking
- -in that area will change.
- +			file_lock_lock	may block
- +fl_compare_owner:	yes		no
- +fl_notify:		yes		no
- +fl_grant:		no		no
-- fl_release_private:	maybe		no
- +fl_break:		yes		no
- +fl_mylease:		yes		no
- +fl_change		yes		no
- +
-  --------------------------- buffer_head -----------------------------------
-  prototypes:
-  	void (*b_end_io)(struct buffer_head *bh, int uptodate);
+ +	/*
+ +	 * Because we use RCU freeing we need to ensure the inode always
+ +	 * appears to be reclaimed with an invalid inode number when in the
+ +	 * free state. The ip->i_flags_lock provides the barrier against lookup
+ +	 * races.
+ +	 */
+ +	spin_lock(&ip->i_flags_lock);
+ +	ip->i_flags = XFS_IRECLAIM;
+ +	ip->i_ino = 0;
+ +	spin_unlock(&ip->i_flags_lock);
+- 	call_rcu((struct rcu_head *)&VFS_I(ip)->i_dentry, __xfs_inode_free);
++ 	call_rcu(&ip->i_vnode.i_rcu, xfs_inode_free_callback);
+  }
+  
+  /*
