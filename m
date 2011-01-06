@@ -1,66 +1,37 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (drm tree
- related)
-Date: Thu, 6 Jan 2011 16:03:09 +1100
-Message-ID: <20110106160309.7c8e0d16.sfr@canb.auug.org.au>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: linux-next: build failure after merge of the percpu tree
+Date: Wed, 5 Jan 2011 21:11:20 -0800
+Message-ID: <20110106051120.GA21315@mtj.dyndns.org>
+References: <20110104152105.5cc7c3a9.sfr@canb.auug.org.au>
+ <20110104051314.GA6748@mtj.dyndns.org>
+ <20110106151815.9e5c2a1e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46699 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750726Ab1AFFDP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 6 Jan 2011 00:03:15 -0500
+Received: from mail-yw0-f46.google.com ([209.85.213.46]:33111 "EHLO
+	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750735Ab1AFFLy (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Jan 2011 00:11:54 -0500
+Content-Disposition: inline
+In-Reply-To: <20110106151815.9e5c2a1e.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Dave,
+Hello, again.
 
-After merging the final tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+On Thu, Jan 06, 2011 at 03:18:15PM +1100, Stephen Rothwell wrote:
+> > My apologies.  I forgot an earlier patch to introduce this_cpu_has()
+> > macro.  I've reverted the offending commit.
+> 
+> But that revert is not in your published for-next branch yet.  I have
+> manually reverted that commit for today.
 
-drivers/gpu/drm/radeon/radeon_device.c: In function 'radeon_device_init':
-drivers/gpu/drm/radeon/radeon_device.c:783: error: too many arguments to function 'vga_switcheroo_register_client'
+Ah, embarrassing.  I updated for-2.6.38 but forgot to update for-next
+accordingly.  Fixed.
 
-The i386 defconfig build also failed like this:
-
-drivers/gpu/drm/i915/i915_dma.c: In function 'i915_load_modeset_init':
-drivers/gpu/drm/i915/i915_dma.c:1239: error: too many arguments to function 'vga_switcheroo_register_client'
-
-Caused by commit 8d608aa6295242fe4c4b6105b8c59c6a5b232d89
-("vga_switcheroo: add reprobe hook for fbcon to recheck connected
-outputs") which forgot to update the prototype of
-vga_switcheroo_register_client() for the non CONFIG_VGA_SWITCHEROO case.
-
-I applied the following patch for today.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 6 Jan 2011 15:58:44 +1100
-Subject: [PATCH] vga_switcheroo: fix prototype for non CONFIG_VGA_SWITCHEROO build
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- include/linux/vga_switcheroo.h |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/include/linux/vga_switcheroo.h b/include/linux/vga_switcheroo.h
-index f80fa9d..4b9a7f5 100644
---- a/include/linux/vga_switcheroo.h
-+++ b/include/linux/vga_switcheroo.h
-@@ -49,6 +49,7 @@ int vga_switcheroo_process_delayed_switch(void);
- static inline void vga_switcheroo_unregister_client(struct pci_dev *dev) {}
- static inline int vga_switcheroo_register_client(struct pci_dev *dev,
- 					  void (*set_gpu_state)(struct pci_dev *dev, enum vga_switcheroo_state),
-+					  void (*reprobe)(struct pci_dev *dev),
- 					  bool (*can_switch)(struct pci_dev *dev)) { return 0; }
- static inline void vga_switcheroo_client_fb_set(struct pci_dev *dev, struct fb_info *info) {}
- static inline int vga_switcheroo_register_handler(struct vga_switcheroo_handler *handler) { return 0; }
--- 
-1.7.2.3
+Thank you.
 
 -- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+tejun
