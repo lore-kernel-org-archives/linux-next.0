@@ -1,72 +1,66 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the percpu tree
-Date: Thu, 6 Jan 2011 15:18:15 +1100
-Message-ID: <20110106151815.9e5c2a1e.sfr@canb.auug.org.au>
-References: <20110104152105.5cc7c3a9.sfr@canb.auug.org.au>
-	<20110104051314.GA6748@mtj.dyndns.org>
+From: Dave Chinner <david@fromorbit.com>
+Subject: Re: linux-next: manual merge of the vfs-scale tree with the xfs
+ tree
+Date: Thu, 6 Jan 2011 15:50:14 +1100
+Message-ID: <20110106045014.GE8322@dastard>
+References: <20110106121056.0758b16f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__6_Jan_2011_15_18_15_+1100_=L4SgHQHIKYoFWP4"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55462 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752221Ab1AFESZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 5 Jan 2011 23:18:25 -0500
-In-Reply-To: <20110104051314.GA6748@mtj.dyndns.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-
---Signature=_Thu__6_Jan_2011_15_18_15_+1100_=L4SgHQHIKYoFWP4
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20110106121056.0758b16f.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Nick Piggin <npiggin@kernel.dk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Chinner <dchinner@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Tejun,
+On Thu, Jan 06, 2011 at 12:10:56PM +1100, Stephen Rothwell wrote:
+> Hi Nick,
+> 
+> Today's linux-next merge of the vfs-scale tree got a conflict in
+> fs/xfs/xfs_iget.c between commits
+> d95b7aaf9ab6738bef1ebcc52ab66563085e44ac ("xfs: rcu free inodes") and
+> 1a3e8f3da09c7082d25b512a0ffe569391e4c09a ("xfs: convert inode cache
+> lookups to use RCU locking") from the xfs tree and commit
+> bb3e8c37a0af21d0a8fe54a0b0f17aca16335a82 ("fs: icache RCU free inodes")
+> from the vfs-scale tree.
+> 
+> OK, so looking at this, the first xfs tree patch above does the same as
+> the vfs-scale tree patch (just using i_dentry instead of the (union
+> eqivalent) i_rcu.  I fixed it up (see below - the diff does not show that
+> __xfs_inode_free has been removed) and can carry the fix as necessary.
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --cc fs/xfs/xfs_iget.c
+> index 3ecad00,d7de5a3..0000000
+> --- a/fs/xfs/xfs_iget.c
+> +++ b/fs/xfs/xfs_iget.c
+> @@@ -157,17 -145,7 +156,17 @@@ xfs_inode_free
+>   	ASSERT(!spin_is_locked(&ip->i_flags_lock));
+>   	ASSERT(completion_done(&ip->i_flush));
+>   
+>  +	/*
+>  +	 * Because we use RCU freeing we need to ensure the inode always
+>  +	 * appears to be reclaimed with an invalid inode number when in the
+>  +	 * free state. The ip->i_flags_lock provides the barrier against lookup
+>  +	 * races.
+>  +	 */
+>  +	spin_lock(&ip->i_flags_lock);
+>  +	ip->i_flags = XFS_IRECLAIM;
+>  +	ip->i_ino = 0;
+>  +	spin_unlock(&ip->i_flags_lock);
+> - 	call_rcu((struct rcu_head *)&VFS_I(ip)->i_dentry, __xfs_inode_free);
+> + 	call_rcu(&ip->i_vnode.i_rcu, xfs_inode_free_callback);
 
-On Tue, 4 Jan 2011 06:13:14 +0100 Tejun Heo <tj@kernel.org> wrote:
->
-> On Tue, Jan 04, 2011 at 03:21:05PM +1100, Stephen Rothwell wrote:
-> > After merging the percpu tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
-> >=20
-> > arch/x86/kernel/cpu/mcheck/therm_throt.c: In function 'intel_thermal_in=
-terrupt':
-> > arch/x86/kernel/cpu/mcheck/therm_throt.c:368: error: implicit declarati=
-on of function 'this_cpu_has'
-> >=20
-> > Caused by commit 6ac0bb7148b93fb40bccba5dff06d51a3e3ea283 ("x86: use
-> > this_cpu_has for thermal_interrupt").
-> >=20
-> > this_cpu_has() does not exist anywhere except in this introduced usage.
-> >=20
-> > I have used the percpu tree from next-20101231 for today.
->=20
-> My apologies.  I forgot an earlier patch to introduce this_cpu_has()
-> macro.  I've reverted the offending commit.
+The fixed up call_rcu() shoul dbe:
 
-But that revert is not in your published for-next branch yet.  I have
-manually reverted that commit for today.
---=20
++	call_rcu(&VFS_I(ip)->i_rcu, xfs_inode_free_callback);
+
 Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__6_Jan_2011_15_18_15_+1100_=L4SgHQHIKYoFWP4
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNJUKHAAoJEDMEi1NhKgbsi0IIAJ4wl3B0O/gRcrms4rTXKT+v
-BRY2sjLFJ898QbFhYyKicaovioM3RWJu4aO9PtLUpAbFF1X7VFhmfQixl/TfIteP
-h14KryAoS/YgS9er5vWtKbMlMjwGpQ5pg53des5SwKVdzU1FpK1c9e1LUNBkP0AD
-kOCJqCe3pdSyxaqGvoV+G7GeAoLWKCPt9hZFYltDhJYRevITSRC7S78vLW3C6y2D
-gPeJgs2ZYnTuNmsfOEZk6vjrYRB70sLPjUWIidg8+34cZ1HljBqBB+e0o4i53K4O
-sjPhSixMHstgFiVfqzeXBIDob/DOKdSrbWFSKWqN281k+JxkFlbvVfbRGrBT6Ms=
-=EuyS
------END PGP SIGNATURE-----
-
---Signature=_Thu__6_Jan_2011_15_18_15_+1100_=L4SgHQHIKYoFWP4--
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
