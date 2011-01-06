@@ -1,368 +1,319 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for January 6
-Date: Thu, 6 Jan 2011 17:29:41 +1100
-Message-ID: <20110106172941.388cfb2b.sfr@canb.auug.org.au>
+From: Ming Lei <tom.leiming@gmail.com>
+Subject: Re: linux-next: manual merge of the usb tree with the omap tree
+Date: Thu, 6 Jan 2011 23:02:00 +0800
+Message-ID: <AANLkTi=pTNg2iWN+=uEv=CyZHHCoddF51pmmCMjPeMUF@mail.gmail.com>
+References: <20101223171859.f6842045.sfr@canb.auug.org.au>
+	<4D139517.3010608@ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__6_Jan_2011_17_29_41_+1100_eG3bkdGvt4bpz9M+"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35007 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752599Ab1AFG3w (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 6 Jan 2011 01:29:52 -0500
+Received: from mail-wy0-f174.google.com ([74.125.82.174]:34552 "EHLO
+	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752911Ab1AFPCD convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Jan 2011 10:02:03 -0500
+In-Reply-To: <4D139517.3010608@ti.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: "Cousson, Benoit" <b-cousson@ti.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Paul Walmsley <paul@pwsan.com>, Greg KH <greg@kroah.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Gadiyar, Anand" <gadiyar@ti.com>, "Balbi, Felipe" <balbi@ti.com>, Tony Lindgren <tony@atomide.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
 
---Signature=_Thu__6_Jan_2011_17_29_41_+1100_eG3bkdGvt4bpz9M+
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Hi all,
+2010/12/24 Cousson, Benoit <b-cousson@ti.com>:
+> + Paul "the omap clock guru".
+>
+> At first glance, that seems almost good.
+> Except for a couple of nodes that seems to lose their 3630 support.
+>
+> I'm just wondering why the original usb clock node is
+> kept after the introduction of the "ehci-omap.0" clock
+> node. But this is anyway harmless.
+>
+> What commits are generating this conflict?
+>
+> On 12/23/2010 7:18 AM, Stephen Rothwell wrote:
+>> Hi Greg,
+>>
+>> Today's linux-next merge of the usb tree got a conflict in
+>> arch/arm/mach-omap2/clock3xxx_data.c and
+>> arch/arm/mach-omap2/clock44xx_data.c between various commits from th=
+e omap
+>> tree and various commits from the usb tree.
+>>
+>> I did a quick fix (which may be completely wrong - see below).
+>
+>> diff --cc arch/arm/mach-omap2/clock3xxx_data.c
+>> index 9ab817e,0579604..0000000
+>> --- a/arch/arm/mach-omap2/clock3xxx_data.c
+>> +++ b/arch/arm/mach-omap2/clock3xxx_data.c
+>> @@@ -3275,17 -3267,18 +3275,18 @@@ static struct omap_clk omap3xxx_c=
+lks[]
+>> =A0 =A0 =A0 CLK(NULL, =A0 =A0 =A0 "gfx_l3_ick", =A0 &gfx_l3_ick, =A0=
+ =A0CK_3430ES1),
+>> =A0 =A0 =A0 CLK(NULL, =A0 =A0 =A0 "gfx_cg1_ck", =A0 &gfx_cg1_ck, =A0=
+ =A0CK_3430ES1),
+>> =A0 =A0 =A0 CLK(NULL, =A0 =A0 =A0 "gfx_cg2_ck", =A0 &gfx_cg2_ck, =A0=
+ =A0CK_3430ES1),
+>> =A0- =A0 =A0CLK(NULL, =A0 =A0 =A0 "sgx_fck", =A0 =A0 =A0&sgx_fck, =A0=
+ =A0 =A0 CK_3430ES2 | CK_3517),
+>> =A0- =A0 =A0CLK(NULL, =A0 =A0 =A0 "sgx_ick", =A0 =A0 =A0&sgx_ick, =A0=
+ =A0 =A0 CK_3430ES2 | CK_3517),
+>> =A0+ =A0 =A0CLK(NULL, =A0 =A0 =A0 "sgx_fck", =A0 =A0 =A0&sgx_fck, =A0=
+ =A0 =A0 CK_3430ES2PLUS | CK_3517 | CK_36XX),
+>> =A0+ =A0 =A0CLK(NULL, =A0 =A0 =A0 "sgx_ick", =A0 =A0 =A0&sgx_ick, =A0=
+ =A0 =A0 CK_3430ES2PLUS | CK_3517 | CK_36XX),
+>> =A0 =A0 =A0 CLK(NULL, =A0 =A0 =A0 "d2d_26m_fck", =A0&d2d_26m_fck, =A0=
+ CK_3430ES1),
+>> =A0- =A0 =A0CLK(NULL, =A0 =A0 =A0 "modem_fck", =A0 =A0&modem_fck, =A0=
+ =A0 CK_343X),
+>> =A0- =A0 =A0CLK(NULL, =A0 =A0 =A0 "sad2d_ick", =A0 =A0&sad2d_ick, =A0=
+ =A0 CK_343X),
+>> =A0- =A0 =A0CLK(NULL, =A0 =A0 =A0 "mad2d_ick", =A0 =A0&mad2d_ick, =A0=
+ =A0 CK_343X),
+>> =A0+ =A0 =A0CLK(NULL, =A0 =A0 =A0 "modem_fck", =A0 =A0&modem_fck, =A0=
+ =A0 CK_34XX | CK_36XX),
+>> =A0+ =A0 =A0CLK(NULL, =A0 =A0 =A0 "sad2d_ick", =A0 =A0&sad2d_ick, =A0=
+ =A0 CK_34XX | CK_36XX),
+>> =A0+ =A0 =A0CLK(NULL, =A0 =A0 =A0 "mad2d_ick", =A0 =A0&mad2d_ick, =A0=
+ =A0 CK_34XX | CK_36XX),
+>> =A0 =A0 =A0 CLK(NULL, =A0 =A0 =A0 "gpt10_fck", =A0 =A0&gpt10_fck, =A0=
+ =A0 CK_3XXX),
+>> =A0 =A0 =A0 CLK(NULL, =A0 =A0 =A0 "gpt11_fck", =A0 =A0&gpt11_fck, =A0=
+ =A0 CK_3XXX),
+>> =A0- =A0 =A0CLK(NULL, =A0 =A0 =A0 "cpefuse_fck", =A0&cpefuse_fck, =A0=
+ CK_3430ES2 | CK_AM35XX),
+>> =A0- =A0 =A0CLK(NULL, =A0 =A0 =A0 "ts_fck", =A0 =A0 =A0 &ts_fck, =A0=
+ =A0 =A0 =A0CK_3430ES2 | CK_AM35XX),
+>> =A0- =A0 =A0CLK(NULL, =A0 =A0 =A0 "usbtll_fck", =A0 &usbtll_fck, =A0=
+ =A0CK_3430ES2 | CK_AM35XX),
+>> =A0+ =A0 =A0CLK(NULL, =A0 =A0 =A0 "cpefuse_fck", =A0&cpefuse_fck, =A0=
+ CK_3430ES2PLUS | CK_AM35XX | CK_36XX),
+>> =A0+ =A0 =A0CLK(NULL, =A0 =A0 =A0 "ts_fck", =A0 =A0 =A0 &ts_fck, =A0=
+ =A0 =A0 =A0CK_3430ES2PLUS | CK_AM35XX | CK_36XX),
+>> =A0+ =A0 =A0CLK(NULL, =A0 =A0 =A0 "usbtll_fck", =A0 &usbtll_fck, =A0=
+ =A0CK_3430ES2PLUS | CK_AM35XX | CK_36XX),
+>
+> That one could be removed after the introduction of the following one=
+ if the
+> clk_get(dev, "usbtll_fck") API is used.
+>
+>> + =A0 =A0 CLK("ehci-omap.0", =A0 =A0 =A0"usbtll_fck", =A0 &usbtll_fc=
+k, =A0 =A0CK_3430ES2 | CK_AM35XX),
+>
+> If only that one is kept it should be:
+> + =A0 =A0 =A0 CLK("ehci-omap.0", =A0 =A0 =A0"usbtll_fck", =A0 &usbtll=
+_fck, =A0 =A0CK_3430ES2PLUS | CK_AM35XX | CK_36XX),
+>
+> Assuming that one of the conflicting commits was trying to add the 36=
+30 support.
+>
+>> =A0 =A0 =A0 CLK("omap-mcbsp.1", =A0 =A0 "prcm_fck", =A0 =A0 &core_96=
+m_fck, =A0CK_3XXX),
+>> =A0 =A0 =A0 CLK("omap-mcbsp.5", =A0 =A0 "prcm_fck", =A0 =A0 &core_96=
+m_fck, =A0CK_3XXX),
+>> =A0 =A0 =A0 CLK(NULL, =A0 =A0 =A0 "core_96m_fck", &core_96m_fck, =A0=
+CK_3XXX),
+>> @@@ -3309,26 -3302,27 +3310,27 @@@
+>> =A0 =A0 =A0 CLK(NULL, =A0 =A0 =A0 "core_12m_fck", &core_12m_fck, =A0=
+CK_3XXX),
+>> =A0 =A0 =A0 CLK("omap_hdq.0", "fck", =A0 =A0 =A0 =A0&hdq_fck, =A0 =A0=
+ =A0 CK_3XXX),
+>> =A0 =A0 =A0 CLK(NULL, =A0 =A0 =A0 "ssi_ssr_fck", =A0&ssi_ssr_fck_343=
+0es1, =A0 CK_3430ES1),
+>> =A0- =A0 =A0CLK(NULL, =A0 =A0 =A0 "ssi_ssr_fck", =A0&ssi_ssr_fck_343=
+0es2, =A0 CK_3430ES2),
+>> =A0+ =A0 =A0CLK(NULL, =A0 =A0 =A0 "ssi_ssr_fck", =A0&ssi_ssr_fck_343=
+0es2, =A0 CK_3430ES2PLUS | CK_36XX),
+>> =A0 =A0 =A0 CLK(NULL, =A0 =A0 =A0 "ssi_sst_fck", =A0&ssi_sst_fck_343=
+0es1, =A0 CK_3430ES1),
+>> =A0- =A0 =A0CLK(NULL, =A0 =A0 =A0 "ssi_sst_fck", =A0&ssi_sst_fck_343=
+0es2, =A0 CK_3430ES2),
+>> =A0+ =A0 =A0CLK(NULL, =A0 =A0 =A0 "ssi_sst_fck", =A0&ssi_sst_fck_343=
+0es2, =A0 CK_3430ES2PLUS | CK_36XX),
+>> =A0 =A0 =A0 CLK(NULL, =A0 =A0 =A0 "core_l3_ick", =A0&core_l3_ick, =A0=
+ CK_3XXX),
+>> - =A0 =A0 CLK("musb_hdrc", =A0 =A0 =A0 =A0"ick", =A0&hsotgusb_ick_34=
+30es1, =A0CK_3430ES1),
+>> - =A0 =A0 CLK("musb_hdrc", =A0 =A0 =A0 =A0"ick", =A0&hsotgusb_ick_34=
+30es2, =A0CK_3430ES2PLUS | CK_36XX),
+>> + =A0 =A0 CLK("musb-omap2430", =A0 =A0"ick", =A0&hsotgusb_ick_3430es=
+1, =A0CK_3430ES1),
+>> =A0- =A0 =A0CLK("musb-omap2430", =A0 =A0"ick", =A0&hsotgusb_ick_3430=
+es2, =A0CK_3430ES2),
+>> ++ =A0 =A0CLK("musb-omap2430", =A0 =A0"ick", =A0&hsotgusb_ick_3430es=
+2, =A0CK_3430ES2PLUS | CK_36XX),
+>> =A0 =A0 =A0 CLK(NULL, =A0 =A0 =A0 "sdrc_ick", =A0 =A0 &sdrc_ick, =A0=
+ =A0 =A0CK_3XXX),
+>> =A0 =A0 =A0 CLK(NULL, =A0 =A0 =A0 "gpmc_fck", =A0 =A0 &gpmc_fck, =A0=
+ =A0 =A0CK_3XXX),
+>> =A0- =A0 =A0CLK(NULL, =A0 =A0 =A0 "security_l3_ick", &security_l3_ic=
+k, CK_343X),
+>> =A0- =A0 =A0CLK(NULL, =A0 =A0 =A0 "pka_ick", =A0 =A0 =A0&pka_ick, =A0=
+ =A0 =A0 CK_343X),
+>> =A0+ =A0 =A0CLK(NULL, =A0 =A0 =A0 "security_l3_ick", &security_l3_ic=
+k, CK_34XX | CK_36XX),
+>> =A0+ =A0 =A0CLK(NULL, =A0 =A0 =A0 "pka_ick", =A0 =A0 =A0&pka_ick, =A0=
+ =A0 =A0 CK_34XX | CK_36XX),
+>> =A0 =A0 =A0 CLK(NULL, =A0 =A0 =A0 "core_l4_ick", =A0&core_l4_ick, =A0=
+ CK_3XXX),
+>> =A0- =A0 =A0CLK(NULL, =A0 =A0 =A0 "usbtll_ick", =A0 &usbtll_ick, =A0=
+ =A0CK_3430ES2 | CK_AM35XX),
+>> =A0+ =A0 =A0CLK(NULL, =A0 =A0 =A0 "usbtll_ick", =A0 &usbtll_ick, =A0=
+ =A0CK_3430ES2PLUS | CK_AM35XX | CK_36XX),
+>> + =A0 =A0 CLK("ehci-omap.0", =A0 =A0 =A0"usbtll_ick", =A0 &usbtll_ic=
+k, =A0 =A0CK_3430ES2 | CK_AM35XX),
+>
+> ditto, should probably be:
+> =A0+ =A0 =A0 =A0CLK("ehci-omap.0", =A0 =A0 =A0"usbtll_ick", =A0 &usbt=
+ll_ick, =A0 =A0CK_3430ES2PLUS | CK_AM35XX | CK_36XX),
+>
+>> =A0- =A0 =A0CLK("mmci-omap-hs.2", =A0 "ick", =A0&mmchs3_ick, =A0 =A0=
+CK_3430ES2 | CK_AM35XX),
+>> =A0- =A0 =A0CLK(NULL, =A0 =A0 =A0 "icr_ick", =A0 =A0 =A0&icr_ick, =A0=
+ =A0 =A0 CK_343X),
+>> =A0- =A0 =A0CLK("omap-aes", "ick", =A0&aes2_ick, =A0 =A0 =A0CK_343X)=
+,
+>> =A0- =A0 =A0CLK("omap-sham", =A0 =A0 =A0 =A0"ick", =A0&sha12_ick, =A0=
+ =A0 CK_343X),
+>> =A0- =A0 =A0CLK(NULL, =A0 =A0 =A0 "des2_ick", =A0 =A0 &des2_ick, =A0=
+ =A0 =A0CK_343X),
+>> =A0+ =A0 =A0CLK("mmci-omap-hs.2", =A0 "ick", =A0&mmchs3_ick, =A0 =A0=
+CK_3430ES2PLUS | CK_AM35XX | CK_36XX),
+>> =A0+ =A0 =A0CLK(NULL, =A0 =A0 =A0 "icr_ick", =A0 =A0 =A0&icr_ick, =A0=
+ =A0 =A0 CK_34XX | CK_36XX),
+>> =A0+ =A0 =A0CLK("omap-aes", "ick", =A0&aes2_ick, =A0 =A0 =A0CK_34XX =
+| CK_36XX),
+>> =A0+ =A0 =A0CLK("omap-sham", =A0 =A0 =A0 =A0"ick", =A0&sha12_ick, =A0=
+ =A0 CK_34XX | CK_36XX),
+>> =A0+ =A0 =A0CLK(NULL, =A0 =A0 =A0 "des2_ick", =A0 =A0 &des2_ick, =A0=
+ =A0 =A0CK_34XX | CK_36XX),
+>> =A0 =A0 =A0 CLK("mmci-omap-hs.1", =A0 "ick", =A0&mmchs2_ick, =A0 =A0=
+CK_3XXX),
+>> =A0 =A0 =A0 CLK("mmci-omap-hs.0", =A0 "ick", =A0&mmchs1_ick, =A0 =A0=
+CK_3XXX),
+>> =A0- =A0 =A0CLK(NULL, =A0 =A0 =A0 "mspro_ick", =A0 =A0&mspro_ick, =A0=
+ =A0 CK_343X),
+>> =A0+ =A0 =A0CLK(NULL, =A0 =A0 =A0 "mspro_ick", =A0 =A0&mspro_ick, =A0=
+ =A0 CK_34XX | CK_36XX),
+>> =A0 =A0 =A0 CLK("omap_hdq.0", "ick", =A0 =A0 =A0 =A0&hdq_ick, =A0 =A0=
+ =A0 CK_3XXX),
+>> =A0 =A0 =A0 CLK("omap2_mcspi.4", "ick", =A0 =A0 &mcspi4_ick, =A0 =A0=
+CK_3XXX),
+>> =A0 =A0 =A0 CLK("omap2_mcspi.3", "ick", =A0 =A0 &mcspi3_ick, =A0 =A0=
+CK_3XXX),
+>> @@@ -3361,14 -3355,17 +3363,17 @@@
+>> =A0 =A0 =A0 CLK("omapdss", =A0"video_fck", =A0 =A0&dss_96m_fck, =A0 =
+CK_3XXX),
+>> =A0 =A0 =A0 CLK("omapdss", =A0"dss2_fck", =A0 =A0 &dss2_alwon_fck, C=
+K_3XXX),
+>> =A0 =A0 =A0 CLK("omapdss", =A0"ick", =A0 =A0 =A0 =A0 =A0&dss_ick_343=
+0es1, =A0 =A0 =A0 CK_3430ES1),
+>> =A0- =A0 =A0CLK("omapdss", =A0"ick", =A0 =A0 =A0 =A0 =A0&dss_ick_343=
+0es2, =A0 =A0 =A0 CK_3430ES2 | CK_AM35XX),
+>> =A0- =A0 =A0CLK(NULL, =A0 =A0 =A0 "cam_mclk", =A0 =A0 &cam_mclk, =A0=
+ =A0 =A0CK_343X),
+>> =A0- =A0 =A0CLK(NULL, =A0 =A0 =A0 "cam_ick", =A0 =A0 =A0&cam_ick, =A0=
+ =A0 =A0 CK_343X),
+>> =A0- =A0 =A0CLK(NULL, =A0 =A0 =A0 "csi2_96m_fck", &csi2_96m_fck, =A0=
+CK_343X),
+>> =A0- =A0 =A0CLK(NULL, =A0 =A0 =A0 "usbhost_120m_fck", &usbhost_120m_=
+fck, CK_3430ES2 | CK_AM35XX),
+>> =A0+ =A0 =A0CLK("omapdss", =A0"ick", =A0 =A0 =A0 =A0 =A0&dss_ick_343=
+0es2, =A0 =A0 =A0 CK_3430ES2PLUS | CK_AM35XX | CK_36XX),
+>> =A0+ =A0 =A0CLK(NULL, =A0 =A0 =A0 "cam_mclk", =A0 =A0 &cam_mclk, =A0=
+ =A0 =A0CK_34XX | CK_36XX),
+>> =A0+ =A0 =A0CLK(NULL, =A0 =A0 =A0 "cam_ick", =A0 =A0 =A0&cam_ick, =A0=
+ =A0 =A0 CK_34XX | CK_36XX),
+>> =A0+ =A0 =A0CLK(NULL, =A0 =A0 =A0 "csi2_96m_fck", &csi2_96m_fck, =A0=
+CK_34XX | CK_36XX),
+>> =A0+ =A0 =A0CLK(NULL, =A0 =A0 =A0 "usbhost_120m_fck", &usbhost_120m_=
+fck, CK_3430ES2PLUS | CK_AM35XX | CK_36XX),
+>> + =A0 =A0 CLK("ehci-omap.0", =A0 =A0 =A0"hs_fck", &usbhost_120m_fck,=
+ CK_3430ES2 | CK_AM35XX),
+>
+> ditto
+>
+>> =A0- =A0 =A0CLK(NULL, =A0 =A0 =A0 "usbhost_48m_fck", &usbhost_48m_fc=
+k, CK_3430ES2 | CK_AM35XX),
+>> =A0+ =A0 =A0CLK(NULL, =A0 =A0 =A0 "usbhost_48m_fck", &usbhost_48m_fc=
+k, CK_3430ES2PLUS | CK_AM35XX | CK_36XX),
+>> + =A0 =A0 CLK("ehci-omap.0", =A0 =A0 =A0"fs_fck", &usbhost_48m_fck, =
+CK_3430ES2 | CK_AM35XX),
+>
+> ditto
+>
+>> =A0- =A0 =A0CLK(NULL, =A0 =A0 =A0 "usbhost_ick", =A0&usbhost_ick, =A0=
+ CK_3430ES2 | CK_AM35XX),
+>> =A0+ =A0 =A0CLK(NULL, =A0 =A0 =A0 "usbhost_ick", =A0&usbhost_ick, =A0=
+ CK_3430ES2PLUS | CK_AM35XX | CK_36XX),
+>> + =A0 =A0 CLK("ehci-omap.0", =A0 =A0 =A0"usbhost_ick", =A0&usbhost_i=
+ck, =A0 CK_3430ES2 | CK_AM35XX),
+>
+> ditto
+>
+>> =A0- =A0 =A0CLK(NULL, =A0 =A0 =A0 "usim_fck", =A0 =A0 &usim_fck, =A0=
+ =A0 =A0CK_3430ES2),
+>> =A0+ =A0 =A0CLK(NULL, =A0 =A0 =A0 "usim_fck", =A0 =A0 &usim_fck, =A0=
+ =A0 =A0CK_3430ES2PLUS | CK_36XX),
+>> =A0 =A0 =A0 CLK(NULL, =A0 =A0 =A0 "gpt1_fck", =A0 =A0 &gpt1_fck, =A0=
+ =A0 =A0CK_3XXX),
+>> =A0 =A0 =A0 CLK(NULL, =A0 =A0 =A0 "wkup_32k_fck", &wkup_32k_fck, =A0=
+CK_3XXX),
+>> =A0 =A0 =A0 CLK(NULL, =A0 =A0 =A0 "gpio1_dbck", =A0 &gpio1_dbck, =A0=
+ =A0CK_3XXX),
+>> diff --cc arch/arm/mach-omap2/clock44xx_data.c
+>> index c426adc,bfcd19f..0000000
+>> --- a/arch/arm/mach-omap2/clock44xx_data.c
+>> +++ b/arch/arm/mach-omap2/clock44xx_data.c
+>> @@@ -3198,6 -2937,10 +3198,7 @@@ static struct omap_clk omap44xx_clk=
+s[]
+>> =A0 =A0 =A0 CLK(NULL, =A0 =A0 =A0 "uart3_fck", =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0&uart3_fck, =A0 =A0 CK_443X),
+>> =A0 =A0 =A0 CLK(NULL, =A0 =A0 =A0 "uart4_fck", =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0&uart4_fck, =A0 =A0 CK_443X),
+>> =A0 =A0 =A0 CLK(NULL, =A0 =A0 =A0 "usb_host_fs_fck", =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0&usb_host_fs_fck, =A0 =A0 =A0 CK_443X),
+>> + =A0 =A0 CLK("ehci-omap.0", =A0 =A0 =A0"fs_fck", =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 &usb_host_fs_fck, =A0 =A0 =A0 CK_443X),
+>> =A0- =A0 =A0CLK(NULL, =A0 =A0 =A0 "usb_host_hs_utmi_p3_clk", =A0 =A0=
+ =A0&usb_host_hs_utmi_p3_clk, =A0 =A0 =A0 CK_443X),
+>> =A0- =A0 =A0CLK(NULL, =A0 =A0 =A0 "usb_host_hs_hsic60m_p1_clk", =A0 =
+&usb_host_hs_hsic60m_p1_clk, =A0 =A0CK_443X),
+>> =A0- =A0 =A0CLK(NULL, =A0 =A0 =A0 "usb_host_hs_hsic60m_p2_clk", =A0 =
+&usb_host_hs_hsic60m_p2_clk, =A0 =A0CK_443X),
+>
+> I'm not sure these 3 nodes should be removed. AFAIR, they were just s=
+lightly moved in lo branch.
 
-[The mirroring of this out to the kernel.org servers is being slow]
+Even with the fixes above, ehci on my beagle xM/Panda still doesn't wor=
+k
+with 2.6.37-next-20110106+, follows the failure messages:
 
-Changes since 20110105:
+[   57.918182] bus: 'platform': really_probe: probing driver ehci-omap
+with device ehci-omap.0
+[   57.918243] ehci-omap ehci-omap.0: failed to get ehci port0 regulato=
+r
+[   57.918273] ehci-omap ehci-omap.0: failed to get ehci port1 regulato=
+r
+[   57.918304] ehci-omap ehci-omap.0: starting TI EHCI USB Controller
+[   57.918457] ehci-omap ehci-omap.0: OMAP UHH_REVISION 0x10
+[   57.918487] ehci-omap ehci-omap.0: TLL RESET DONE
+[   57.918487] ehci-omap ehci-omap.0: OMAP3 ES version > ES2.1
+[   57.918518] ehci-omap ehci-omap.0: UHH setup done, uhh_hostconfig=3D=
+31c
+[   58.922302] ehci-omap ehci-omap.0: phy reset operation timed out
+[   59.930114] ehci-omap ehci-omap.0: phy reset operation timed out
+[   59.930145] ehci-omap ehci-omap.0: reset hcs_params 0x1313 dbg=3D0
+cc=3D1 pcc=3D3 ordered ports=3D3
+[   59.930175] ehci-omap ehci-omap.0: reset hcc_params 0016 thresh 1
+uframes 256/512/1024 park
+[   59.930206] ehci-omap ehci-omap.0: OMAP-EHCI Host Controller
+[   59.936218] drivers/usb/core/inode.c: creating file 'devices'
+[   59.936279] drivers/usb/core/inode.c: creating file '001'
 
-The nfsd tree gained a conflict against Linus' tree.
+Any ideas?
 
-The vfs-scale lost a conflict but gained another against the xfs tree.
-
-The bjdooks-i2c tree gained conflicts against the arm tree.
-
-The wireless tree lost its build failure.
-
-The drm tree gained a build failure for which I applied a patch.
-
-The percpu tree still has its build failure so I reverted a commit.
-
-The tty tree still has its build failure for which I reverted a commit.
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
-and sparc64 defconfig. These builds also have
-CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
-CONFIG_DEBUG_INFO disabled when necessary.
-
-Below is a summary of the state of the merge.
-
-We are up to 184 trees (counting Linus' and 26 trees of patches pending
-for Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Randy Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
+thanks,
 --=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging fixes/fixes
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/rc-fixes
-Merging driver-core.current/driver-core-linus
-Merging tty.current/tty-linus
-Merging usb.current/usb-linus
-Merging staging.current/staging-linus
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging ide-curent/master
-Merging dwmw2/master
-Merging sh-current/sh-fixes-for-linus
-Merging rmobile-current/rmobile-fixes-for-linus
-Merging fbdev-current/fbdev-fixes-for-linus
-Merging gcl-current/merge
-Merging arm/devel
-Merging davinci/davinci-next
-Merging i.MX/for-next
-Merging linux-spec/for-next
-Merging msm/for-next
-Merging omap/for-next
-CONFLICT (content): Merge conflict in arch/arm/plat-omap/Kconfig
-Merging pxa/for-next
-Merging samsung/next-samsung
-Merging s5p/for-next
-Merging tegra/for-next
-CONFLICT (content): Merge conflict in arch/arm/mach-tegra/timer.c
-Merging ux500-core/ux500-core
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-Merging m68knommu/for-next
-Merging microblaze/next
-Merging mips/mips-for-linux-next
-Merging parisc/next
-Merging powerpc/next
-Merging 4xx/next
-Merging 52xx-and-virtex/next
-Merging galak/next
-Merging s390/features
-Merging sh/sh-latest
-CONFLICT (content): Merge conflict in arch/sh/kernel/cpu/sh2a/clock-sh7201.c
-Merging rmobile/rmobile-latest
-CONFLICT (content): Merge conflict in arch/arm/mach-shmobile/Kconfig
-Applying: rmobile: merge fixup for clkdev changes
-Merging sparc/master
-Merging tile/master
-Merging xtensa/master
-CONFLICT (content): Merge conflict in arch/xtensa/configs/iss_defconfig
-Merging ceph/for-next
-Merging cifs/master
-Merging configfs/linux-next
-Merging ecryptfs/next
-Merging ext3/for_next
-Merging ext4/next
-Merging fatfs/master
-Merging fuse/for-next
-Merging gfs2/master
-Merging hfsplus/for-next
-Merging jfs/next
-Merging logfs/master
-CONFLICT (content): Merge conflict in fs/logfs/logfs.h
-Merging nfs/linux-next
-Merging nfsd/nfsd-next
-CONFLICT (content): Merge conflict in Documentation/filesystems/Locking
-Merging nilfs2/for-next
-Merging ocfs2/linux-next
-Merging omfs/for-next
-Merging squashfs/master
-Merging udf/for_next
-Merging v9fs/for-next
-Merging ubifs/linux-next
-Merging xfs/master
-Merging vfs/for-next
-Merging vfs-scale/vfs-scale-working
-CONFLICT (content): Merge conflict in fs/9p/vfs_inode.c
-CONFLICT (content): Merge conflict in fs/cifs/dir.c
-CONFLICT (content): Merge conflict in fs/fuse/inode.c
-CONFLICT (content): Merge conflict in fs/hfsplus/hfsplus_fs.h
-CONFLICT (content): Merge conflict in fs/hfsplus/unicode.c
-CONFLICT (content): Merge conflict in fs/xfs/xfs_iget.c
-Applying: v9fs: merge fix for changes in the vfs-scale tree
-Merging pci/linux-next
-Merging hid/for-next
-Merging quilt/i2c
-Merging bjdooks-i2c/next-i2c
-CONFLICT (content): Merge conflict in arch/arm/mach-pxa/pxa27x.c
-CONFLICT (content): Merge conflict in arch/arm/mach-pxa/pxa3xx.c
-CONFLICT (content): Merge conflict in arch/arm/mach-pxa/trizeps4.c
-Merging quilt/jdelvare-hwmon
-Merging hwmon-staging/hwmon-next
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-Merging kbuild/for-next
-Merging kconfig/for-next
-Merging ide/master
-Merging libata/NEXT
-Merging infiniband/for-next
-Merging acpi/test
-Merging idle-test/idle-test
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/linux-next
-Merging dlm/next
-Merging swiotlb/master
-Merging ibft/master
-Merging scsi/master
-Merging async_tx/next
-Merging net/master
-CONFLICT (content): Merge conflict in drivers/net/skge.c
-CONFLICT (content): Merge conflict in drivers/net/sky2.c
-CONFLICT (content): Merge conflict in net/9p/protocol.c
-Merging wireless/master
-CONFLICT (content): Merge conflict in net/bluetooth/Makefile
-Merging bluetooth/master
-Merging mtd/master
-Merging crypto/master
-Merging sound-asoc/for-next
-Merging sound/for-next
-Merging cpufreq/next
-Merging quilt/rr
-Merging input/next
-CONFLICT (content): Merge conflict in drivers/input/keyboard/Kconfig
-CONFLICT (content): Merge conflict in include/linux/input.h
-Merging input-mt/next
-Merging lsm/for-next
-Merging block/for-next
-Merging quilt/device-mapper
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-CONFLICT (content): Merge conflict in drivers/leds/Kconfig
-Merging backlight/for-mm
-Merging mmc/mmc-next
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-CONFLICT (content): Merge conflict in drivers/mfd/Makefile
-CONFLICT (content): Merge conflict in drivers/mfd/wm8994-core.c
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging fbdev/master
-CONFLICT (content): Merge conflict in drivers/video/sh_mobile_lcdcfb.c
-Merging viafb/viafb-next
-Merging omap_dss2/for-next
-Merging voltage/for-next
-CONFLICT (content): Merge conflict in drivers/regulator/core.c
-CONFLICT (content): Merge conflict in drivers/regulator/mc13783-regulator.c
-Merging security-testing/next
-Merging selinux/master
-Merging lblnet/master
-Merging agp/agp-next
-Merging watchdog/master
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-CONFLICT (content): Merge conflict in drivers/net/wireless/iwlwifi/iwl-core=
-.c
-CONFLICT (content): Merge conflict in fs/ext4/ext4.h
-Merging audit/for-next
-Merging suspend/linux-next
-Merging fsnotify/for-next
-Merging irda/for-next
-Merging catalin/for-next
-Merging alacrity/linux-next
-CONFLICT (content): Merge conflict in drivers/Makefile
-CONFLICT (content): Merge conflict in include/linux/Kbuild
-CONFLICT (content): Merge conflict in lib/Kconfig
-Merging i7core_edac/linux_next
-Merging i7300_edac/linux_next
-Merging devicetree/next-devicetree
-CONFLICT (content): Merge conflict in arch/sparc/prom/tree_32.c
-CONFLICT (content): Merge conflict in drivers/mtd/Kconfig
-Merging spi/next-spi
-CONFLICT (rename/delete): Rename arch/arm/mach-pxa/include/mach/pxa2xx_spi.=
-h->include/linux/spi/pxa2xx_spi.h in HEAD and deleted in spi/next-spi
-CONFLICT (content): Merge conflict in arch/arm/mach-pxa/devices.c
-CONFLICT (content): Merge conflict in arch/arm/mach-pxa/poodle.c
-CONFLICT (content): Merge conflict in arch/arm/mach-pxa/z2.c
-Merging tip/auto-latest
-Merging rcu/rcu/next
-Merging oprofile/for-next
-Merging xen/upstream/xen
-Merging swiotlb-xen/master
-CONFLICT (content): Merge conflict in drivers/xen/Kconfig
-CONFLICT (content): Merge conflict in drivers/xen/Makefile
-Merging xen-pvhvm/linux-next
-Merging edac-amd/for-next
-Merging percpu/for-next
-CONFLICT (delete/modify): arch/x86/kernel/apic/nmi.c deleted in HEAD and mo=
-dified in percpu/for-next. Version percpu/for-next of arch/x86/kernel/apic/=
-nmi.c left in tree.
-CONFLICT (content): Merge conflict in arch/x86/kernel/apic/x2apic_uv_x.c
-CONFLICT (content): Merge conflict in arch/x86/kernel/process.c
-$ git rm -f arch/x86/kernel/apic/nmi.c
-[master eacfd5c] Revert "x86: use this_cpu_has for thermal_interrupt"
-Merging workqueues/for-next
-CONFLICT (content): Merge conflict in Documentation/feature-removal-schedul=
-e.txt
-CONFLICT (content): Merge conflict in drivers/media/video/bt8xx/bttv-input.c
-CONFLICT (content): Merge conflict in drivers/rtc/rtc-dev.c
-Merging sfi/sfi-test
-Merging asm-generic/next
-Merging drivers-x86/linux-next
-Merging hwpoison/hwpoison
-Merging sysctl/master
-Merging driver-core/driver-core-next
-Merging tty/tty-next
-[master 180abf7] Revert "drivers: serial: apbuart: Handle OF failures grace=
-fully"
-Merging usb/usb-next
-CONFLICT (content): Merge conflict in arch/arm/mach-omap2/Kconfig
-CONFLICT (content): Merge conflict in arch/arm/mach-omap2/clock3xxx_data.c
-CONFLICT (content): Merge conflict in arch/arm/mach-omap2/clock44xx_data.c
-CONFLICT (content): Merge conflict in arch/sh/Kconfig
-CONFLICT (content): Merge conflict in drivers/usb/Kconfig
-CONFLICT (content): Merge conflict in drivers/usb/host/ehci-hcd.c
-Merging staging/staging-next
-Merging slabh/slabh
-Merging bkl-trivial/trivial
-Merging bkl-llseek/llseek
-Merging bkl-vfs/vfs
-Merging bkl-config/config
-CONFLICT (content): Merge conflict in arch/powerpc/kernel/setup_64.c
-CONFLICT (delete/modify): drivers/staging/stradis/Kconfig deleted in HEAD a=
-nd modified in bkl-config/config. Version bkl-config/config of drivers/stag=
-ing/stradis/Kconfig left in tree.
-CONFLICT (content): Merge conflict in fs/nfsd/nfs4state.c
-CONFLICT (content): Merge conflict in include/linux/hardirq.h
-CONFLICT (content): Merge conflict in include/linux/smp_lock.h
-$ git rm -f drivers/staging/stradis/Kconfig
-Merging irqflags/master
-Merging cleancache/linux-next
-CONFLICT (content): Merge conflict in fs/ocfs2/super.c
-CONFLICT (content): Merge conflict in fs/super.c
-CONFLICT (content): Merge conflict in include/linux/fs.h
-CONFLICT (content): Merge conflict in mm/Kconfig
-Merging scsi-post-merge/merge-base:master
-$ git checkout scsi-post-merge/master
-Applying: [SCSI] sd: implement sd_check_events()
-Applying: [SCSI] sd,sr: kill compat SDEV_MEDIA_CHANGE event
-Applying: [SCSI] target: Add LIO target core v4.0.0-rc6
-Applying: vga_switcheroo: fix prototype for non CONFIG_VGA_SWITCHEROO build
-
---Signature=_Thu__6_Jan_2011_17_29_41_+1100_eG3bkdGvt4bpz9M+
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNJWFVAAoJEDMEi1NhKgbskm4H/2HmAXqzFyIUYKB6N9pH8XZo
-07xnzDhqTYelZzaLGJdkHocuCgKIrz8W0CnxftnfnWAxRG2uZMQPA9nANP1U1OvW
-GDNdsiivjuHWNuGM+VJB8lGL9t/gNkjiQWGAWXyaObBwHsWutIG5a9zTUj8RjDX4
-knM4WPgge/pX1KboXnB0MOKtmxtFF/1KIcLlI+QuRDejgTijaQthnkgKPlZEPjzs
-d3hAKYWeqrW4L3vo+mxZTX8lsjFaMsvT2XBDE9YJpgeVqjx6e+TfMJXn/ltrIyHT
-s92tRo2Ji/3d3KAL249DTClaujYg3h0f8Jq1Wf75naSbBLMpFvMyOIsGjXpGjvg=
-=Y1i4
------END PGP SIGNATURE-----
-
---Signature=_Thu__6_Jan_2011_17_29_41_+1100_eG3bkdGvt4bpz9M+--
+Lei Ming
