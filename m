@@ -1,70 +1,51 @@
-From: Kevin Hilman <khilman@ti.com>
-Subject: Re: linux-next: manual merge of the usb tree with the omap tree
-Date: Thu, 06 Jan 2011 10:38:59 -0800
-Message-ID: <871v4pvpvg.fsf@ti.com>
-References: <20101223171859.f6842045.sfr@canb.auug.org.au>
-	<4D139517.3010608@ti.com>
-	<AANLkTi=pTNg2iWN+=uEv=CyZHHCoddF51pmmCMjPeMUF@mail.gmail.com>
-	<4ce0f816f951f24ca3de9c84d9f70842@mail.gmail.com>
-	<4D25E313.4060202@heeltoe.com>
-	<8B3471BB-CB3F-4CE6-B523-D9C5E87B9CEC@dominion.thruhere.net>
-	<87pqs9vqya.fsf@ti.com> <4D260812.3010605@ti.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the final tree (tty
+ tree related)
+Date: Thu, 6 Jan 2011 10:45:17 -0800
+Message-ID: <20110106184517.GA15901@kroah.com>
+References: <20101217171120.295b0c0c.sfr@canb.auug.org.au>
+ <20101217070431.GA25192@kroah.com>
+ <alpine.LFD.2.00.1012171107310.12146@localhost6.localdomain6>
+ <20110106142710.a0a04883.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from na3sys009aog109.obsmtp.com ([74.125.149.201]:60044 "EHLO
-	na3sys009aog109.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753105Ab1AFSjF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Jan 2011 13:39:05 -0500
-In-Reply-To: <4D260812.3010605@ti.com> (Nishanth Menon's message of "Thu, 06
-	Jan 2011 12:21:06 -0600")
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Nishanth Menon <nm@ti.com>
-Cc: Koen Kooi <koen@dominion.thruhere.net>, Brad Parker <brad@heeltoe.com>, Anand Gadiyar <gadiyar@ti.com>, Ming Lei <tom.leiming@gmail.com>, Benoit Cousson <b-cousson@ti.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Paul Walmsley <paul@pwsan.com>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20110106142710.a0a04883.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Nishanth Menon <nm@ti.com> writes:
+On Thu, Jan 06, 2011 at 02:27:10PM +1100, Stephen Rothwell wrote:
+> HI Greg,
+> 
+> On Fri, 17 Dec 2010 11:16:17 +0100 (CET) Thomas Gleixner <tglx@linutronix.de> wrote:
+> >
+> > On Thu, 16 Dec 2010, Greg KH wrote:
+> > > On Fri, Dec 17, 2010 at 05:11:20PM +1100, Stephen Rothwell wrote:
+> > > > Hi Greg,
+> > > > 
+> > > > After merging the final tree, today's linux-next build (powerpc
+> > > > allyesconfig) failed like this:
+> > > > 
+> > > > drivers/serial/apbuart.c:596: error: conflicting types for 'grlib_apbuart_configure'
+> > > > drivers/serial/apbuart.c:523: note: previous declaration of 'grlib_apbuart_configure' was here
+> > > > 
+> > > > Caused by commit 35c64e5d13c3d7d8c4ad061ad5e20498b9160c24 ("drivers:
+> > > > serial: apbuart: Handle OF failures gracefully").  This build has
+> > > > CONFIG_SERIAL_GRLIB_GAISLER_APBUART_CONSOLE set ...
+> > > > 
+> > > > I have reverted this commit for today.
+> > > 
+> > > Ugh.  Thomas, care to send me a patch?
+> > 
+> > Sorry, I missed the console part. Patch below.
+> 
+> Ping?
 
-> Kevin Hilman had written, on 01/06/2011 12:15 PM, the following:
->> Koen Kooi <koen@dominion.thruhere.net> writes:
->>
->>> Op 6 jan 2011, om 16:43 heeft Brad Parker het volgende geschreven:
->>>
->>>> It's probably expected, but I can't get the EHCI USB port  to work
->>>> on a beagle board XM (36xx) using the current omap tree.
->>>>
->>>> It this most likely due to these clock issues?
->>> You need this patch: http://thread.gmane.org/gmane.linux.ports.arm.omap/47807/
->>>
->>> I'm currently too lazy to split it up like Nishant wants as I don't
->>> see the point splitting for the sake of splitting.--
->>
->> IMO, it doesn't need to be split up.
->>
->> But it does have to fix the other comments I made on the same thread[1]
->>
->> 1) add a descriptive changelog, and
->> 2) Cc linux-arm-kernel
->
-> Kevin,
-> there are four things being done in the patch:
-> a) fix GPIO number for EHCI power on
-> b) fix GPIO number for DVI reset line
-> c) switch on DVI
-> d) switch on Camera
->
-> I have split the first 2 up. I just splitting the (c) up when I
-> noticed the code is confusing - I will reply in thread to the original
-> patch.
->
-> I apologize, but I disagree - as far as I see it, these are separate
-> changes being done.
+Ick, sorry about this, I've now applied this.
 
-Sure, but there are all tiny and isolated.  For me, what's missing is
-just a changlog describing all the changes.
+thanks for the reminder.
 
-Feel free to break it up if you prefer, but IMO it would be mergable as
-a single patch if there was a descriptive changelog actually mentioning 
-all the changes made (as you just did above.)
-
-Kevin
+greg k-h
