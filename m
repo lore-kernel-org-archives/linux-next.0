@@ -1,29 +1,115 @@
-From: Roland Dreier <rdreier@cisco.com>
-Subject: Re: patchwork.kernel.org down
-Date: Wed, 05 Jan 2011 18:58:49 -0800
-Message-ID: <adawrmid9g6.fsf@cisco.com>
-References: <AANLkTik4ktaeyDG3ihh-YRB+WVLxA46wSLOgWy6iY_68@mail.gmail.com>
-	<20101220204936.GA21290@huya.qualcomm.com>
-	<4D0FFC4B.9050301@kernel.org> <ada62u3dkv2.fsf@cisco.com>
-	<20110105154818.56b9976c.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the final tree (tty
+ tree related)
+Date: Thu, 6 Jan 2011 14:27:10 +1100
+Message-ID: <20110106142710.a0a04883.sfr@canb.auug.org.au>
+References: <20101217171120.295b0c0c.sfr@canb.auug.org.au>
+	<20101217070431.GA25192@kroah.com>
+	<alpine.LFD.2.00.1012171107310.12146@localhost6.localdomain6>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from sj-iport-5.cisco.com ([171.68.10.87]:46483 "EHLO
-	sj-iport-5.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753800Ab1AFC7I (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 5 Jan 2011 21:59:08 -0500
-In-Reply-To: <20110105154818.56b9976c.randy.dunlap@oracle.com> (Randy Dunlap's
-	message of "Wed, 5 Jan 2011 15:48:18 -0800")
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: "J.H." <warthog9@kernel.org>, David Brown <davidb@codeaurora.org>, sedat.dilek@gmail.com, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, ftpadmin@kernel.org, webmaster@kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__6_Jan_2011_14_27_10_+1100_+L+WgKxsEyi8NzF+"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <alpine.LFD.2.00.1012171107310.12146@localhost6.localdomain6>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
- > Let's not mislead the reader of a crash dump, please.  How about:
+--Signature=_Thu__6_Jan_2011_14_27_10_+1100_+L+WgKxsEyi8NzF+
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- > +	printk(KERN_EMERG "last /proc..net open:  %s\n", last_procfs_open);
- > +	printk(KERN_EMERG "last /proc..net close: %s\n", last_procfs_close);
+HI Greg,
 
-Fair enough... to be clear I wasn't proposing this patch be merged
-anywhere -- it's just for debugging this kernel.org crash.'
+On Fri, 17 Dec 2010 11:16:17 +0100 (CET) Thomas Gleixner <tglx@linutronix.d=
+e> wrote:
+>
+> On Thu, 16 Dec 2010, Greg KH wrote:
+> > On Fri, Dec 17, 2010 at 05:11:20PM +1100, Stephen Rothwell wrote:
+> > > Hi Greg,
+> > >=20
+> > > After merging the final tree, today's linux-next build (powerpc
+> > > allyesconfig) failed like this:
+> > >=20
+> > > drivers/serial/apbuart.c:596: error: conflicting types for 'grlib_apb=
+uart_configure'
+> > > drivers/serial/apbuart.c:523: note: previous declaration of 'grlib_ap=
+buart_configure' was here
+> > >=20
+> > > Caused by commit 35c64e5d13c3d7d8c4ad061ad5e20498b9160c24 ("drivers:
+> > > serial: apbuart: Handle OF failures gracefully").  This build has
+> > > CONFIG_SERIAL_GRLIB_GAISLER_APBUART_CONSOLE set ...
+> > >=20
+> > > I have reverted this commit for today.
+> >=20
+> > Ugh.  Thomas, care to send me a patch?
+>=20
+> Sorry, I missed the console part. Patch below.
+
+Ping?
+
+> Thanks,
+>=20
+> 	tglx
+> ---
+> Subject: drivers: serial: apbuart: Fixup apbuart_console_init()
+> From: Thomas Gleixner <tglx@linutronix.de>
+> Date: Fri, 17 Dec 2010 11:09:49 +0100
+>=20
+> commit 35c64e5d (drivers: serial: apbuart: Handle OF failures
+> gracefully) missed that the modified grlib_apbuart_configure()
+> function is called from apbuart_console_init() as well.
+>=20
+> Fix the fallout.
+>=20
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> ---
+>  drivers/serial/apbuart.c |    5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>=20
+> Index: linux-2.6-tip/drivers/serial/apbuart.c
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> --- linux-2.6-tip.orig/drivers/serial/apbuart.c
+> +++ linux-2.6-tip/drivers/serial/apbuart.c
+> @@ -520,11 +520,12 @@ static struct console grlib_apbuart_cons
+>  };
+> =20
+> =20
+> -static void grlib_apbuart_configure(void);
+> +static int grlib_apbuart_configure(void);
+> =20
+>  static int __init apbuart_console_init(void)
+>  {
+> -	grlib_apbuart_configure();
+> +	if (grlib_apbuart_configure())
+> +		return -ENODEV;
+>  	register_console(&grlib_apbuart_console);
+>  	return 0;
+>  }
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__6_Jan_2011_14_27_10_+1100_+L+WgKxsEyi8NzF+
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNJTaOAAoJEDMEi1NhKgbsUnIH/RnPGiufxnNI/hShYw/py1dR
+yanGoDgsT1Ie5doFpgtVzL5IjkKPs4s5md80ABrObNgOOGQ+26Hh6uCOmZbIAIzd
+LGDHJmQdJ91WXM9KCxSI7pEFS0YiabvzjRHIffcmpBlU2Fp9GJ/uKIXIGN03MdKD
+QtBZbc1spV1p8aosa3wXsKcSn+eqGpBaj48oLKWz3r1MF6mOqSgBLrgPVA+FxzL5
+pkew7jdGhEOlMf5SHhJ+lFF5mszBaCipGtZsDO3ttcYTRNVSRar+mdAwHBc6KqAC
+8V1N0PsV3DjpYg9QbkQIx9JTNO0CbSABcjsGbgHpJdS6kc16Q/ga1gPTjEC6AfY=
+=Js4C
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__6_Jan_2011_14_27_10_+1100_+L+WgKxsEyi8NzF+--
