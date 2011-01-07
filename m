@@ -1,68 +1,33 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Subject: Re: [-next] ERROR: "strchr" [drivers/target/target_core_mod.ko]
-	undefined!
-Date: Fri, 07 Jan 2011 13:04:34 -0800
-Message-ID: <1294434274.2895.146.camel@haakon2.linux-iscsi.org>
-References: <AANLkTinhrj38rbEt7ds971D9g-UF+xS0jmzO7X15ZaLn@mail.gmail.com>
-	 <1294415045.4895.16.camel@mulgrave.site>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging tree with the fbdev
+ tree
+Date: Fri, 7 Jan 2011 14:39:42 -0800
+Message-ID: <20110107223942.GA19793@kroah.com>
+References: <20110107133511.bcfc1e85.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linux-iscsi.org ([67.23.28.174]:49176 "EHLO
-	linux-iscsi.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752425Ab1AGVKd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 7 Jan 2011 16:10:33 -0500
-In-Reply-To: <1294415045.4895.16.camel@mulgrave.site>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <James.Bottomley@suse.de>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, scsi <linux-scsi@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20110107133511.bcfc1e85.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mundt <lethal@linux-sh.org>, Joe Perches <joe@perches.com>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, 2011-01-07 at 09:44 -0600, James Bottomley wrote:
-> On Fri, 2011-01-07 at 11:57 +0100, Geert Uytterhoeven wrote:
-> > Since a few days, linux-next shows:
-> > 
-> > | ERROR: "strchr" [drivers/target/target_core_mod.ko] undefined!
-> > 
-> > in m68k allmodconfig builds
-> > (http://kisskb.ellerman.id.au/kisskb/buildresult/3754323/).
-> > 
-> > I guess this is caused by the following 3 calls to strstr():
-> > 
-> > drivers/target/target_core_configfs.c:
-> > +       ptr = strstr(page, "1");
-> > 
-> > +       str = strstr(buf, "_");
-> > 
-> > +       str2 = strstr(str+1, "_");
-> > 
-> > Some versions of gcc replace calls to strstr() with single-character
-> > "needle" string parameters by calls to strchr() behind our back.
-> > This causes linking errors if strchr() is defined as an inline function
-> > in <asm/string.h> (e.g. on m68k).
-> > 
-> > You can prevent this by explicitly calling strchr() instead.
-> > 
-> > Cfr. commit 59d309f9c8ef0bd01bf93cc0e758f1d810417bdb
-> > ("kgdb: Replace strstr() by strchr() for single-character needles).
-> > 
-> > Gr{oetje,eeting}s,
+On Fri, Jan 07, 2011 at 01:35:11PM +1100, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> Surely the fix for this is not to inline it in m68k? If gcc is growing
-> the capability to make these types of transformations, it's not going to
-> stop at single entry string strstr().
+> Today's linux-next merge of the staging tree got a conflict in
+> drivers/video/udlfb.c between commit realloc_framebuffer ("video: udlfb:
+> Kill off special printk wrappers, use pr_fmt()") from the fbdev tree and
+> commit 5b84cc781058bb452f869d84bb24442ec51948c4 ("staging: Use vzalloc")
+> from the staging tree.
 > 
-> If you want to keep the fast inline, there is a way (which I forget) to
-> drop an external reference as well, just in case.
+> Another commit in the fbdev tree moves this file out of staging (from
+> drivers/staging/udlfb/udlfb.c).
 > 
+> I fixed it up (see below) and can carry the fix as necessary.
 
-Hi guys,
+Patch looks good to me, thanks for doing this.
 
-So I really don't have a strong perference here, but would tend to agree
-with James that this should probably be fixed in m68k..  If this is too
-much of an pain for you Geert I am happy to make this change.
-
-Thanks!
-
---nab
+greg k-h
