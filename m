@@ -1,50 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the fbdev tree
-Date: Fri, 7 Jan 2011 13:35:11 +1100
-Message-ID: <20110107133511.bcfc1e85.sfr@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the final tree (ext3 tree
+ related)
+Date: Fri, 7 Jan 2011 14:04:14 +1100
+Message-ID: <20110107140414.43d5b980.sfr@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__7_Jan_2011_14_04_14_+1100_.EPpf+g2_I7yzAJl"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jan Kara <jack@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Czerner <lczerner@redhat.com>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Fri__7_Jan_2011_14_04_14_+1100_.EPpf+g2_I7yzAJl
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59255 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753209Ab1AGCfR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 6 Jan 2011 21:35:17 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mundt <lethal@linux-sh.org>, Joe Perches <joe@perches.com>
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi Jan,
 
-Today's linux-next merge of the staging tree got a conflict in
-drivers/video/udlfb.c between commit realloc_framebuffer ("video: udlfb:
-Kill off special printk wrappers, use pr_fmt()") from the fbdev tree and
-commit 5b84cc781058bb452f869d84bb24442ec51948c4 ("staging: Use vzalloc")
-from the staging tree.
+After merging the final tree, today's linux-next build (powerpc
+ppc44x_defconfig) produced these warnings:
 
-Another commit in the fbdev tree moves this file out of staging (from
-drivers/staging/udlfb/udlfb.c).
+fs/ext3/balloc.c: In function 'ext3_get_group_no_and_offset':
+fs/ext3/balloc.c:53: warning: comparison of distinct pointer types lacks a =
+cast
+fs/ext3/balloc.c:53: warning: right shift count >=3D width of type
+fs/ext3/balloc.c:53: warning: passing argument 1 of '__div64_32' from incom=
+patible pointer type
+include/asm-generic/div64.h:35: note: expected 'uint64_t *' but argument is=
+ of type 'ext3_fsblk_t *'
 
-I fixed it up (see below) and can carry the fix as necessary.
--- 
+Caused by commit 3e5eb5c509e311fdea2468be913ec264edd4f617 ("ext3: Add
+batched discard support for ext3").
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/video/udlfb.c
-index 020589a,8dd21e0..0000000
---- a/drivers/video/udlfb.c
-+++ b/drivers/video/udlfb.c
-@@@ -1128,9 -1163,9 +1128,9 @@@ static int dlfb_realloc_framebuffer(str
-  		 * But with imperfect damage info we may send pixels over USB
-  		 * that were, in fact, unchanged - wasting limited USB bandwidth
-  		 */
-- 		new_back = vmalloc(new_len);
-+ 		new_back = vzalloc(new_len);
-  		if (!new_back)
-- 			pr_info("No shadow/backing buffer allcoated\n");
- -			dl_info("No shadow/backing buffer allocated\n");
-++			pr_info("No shadow/backing buffer allocated\n");
-  		else {
-  			if (dev->backing_buffer)
-  				vfree(dev->backing_buffer);
+--Signature=_Fri__7_Jan_2011_14_04_14_+1100_.EPpf+g2_I7yzAJl
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNJoKuAAoJEDMEi1NhKgbsdCAIAIDuEGuN/p52szV6V2REkk8B
+H1wusQ8JlUxUw6uuLSdU61vTuHVVjvtOZXWINzsd0hjJsIRypYDWm+WNIOrA6of3
+IEKP6d6KLWb9qNUKsFag/LWfTpiE5Ifd7nee6uPCbqhPDrWvlbqwGuGn+ATAV2dd
+htj10uLFOfIFv1Laq8SI3l20w6fvkaIhZSWVJE4bIjrD3AWxyrkrnBsOkeX50xq9
+Rox4iOQPlh3O8JdYNgYx6JYLKTVQh3h0hisNl++j9gw9+5JMlHFwBr/25gRhnoGN
+fYUNEvXpFvci0CW2lqvTwJuGxgnx2/QAqR9gX/JmRfkBkhDSamUt2yZqTtdVhKI=
+=X3kk
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__7_Jan_2011_14_04_14_+1100_.EPpf+g2_I7yzAJl--
