@@ -1,59 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the ia64 tree
-Date: Fri, 7 Jan 2011 11:21:43 +1100
-Message-ID: <20110107112143.2960451d.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the security-testing tree with the net
+ tree
+Date: Fri, 7 Jan 2011 11:44:00 +1100
+Message-ID: <20110107114400.e4d1d33b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__7_Jan_2011_11_21_43_+1100_SEMz5nL+hln/nI55"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53967 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:49831 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753695Ab1AGAVv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 6 Jan 2011 19:21:51 -0500
+	id S1751523Ab1AGAoE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 6 Jan 2011 19:44:04 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: James Morris <jmorris@namei.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
 
---Signature=_Fri__7_Jan_2011_11_21_43_+1100_SEMz5nL+hln/nI55
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi James,
 
-Hi Tony,
+Today's linux-next merge of the security-testing tree got a conflict in
+security/smack/smack_lsm.c between commit
+3610cda53f247e176bcbb7a7cca64bc53b12acdb ("af_unix: Avoid socket->sk NULL
+OOPS in stream connect security hooks") from the net tree and commit
+b4e0d5f0791bd6dd12a1c1edea0340969c7c1f90 ("Smack: UDS revision") from the
+security-testing tree.
 
-After merging the ia64 tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
-
-fs/pstore/inode.c: In function 'init_pstore_fs':
-fs/pstore/inode.c:266: warning: ignoring return value of 'sysfs_create_file=
-', declared with attribute warn_unused_result
-
-This warning has been there for some time, I just didn't notice it among
-all the other earnings we get :-(
-
-Caused by commit ca01d6dd2d7a2652000307520777538740efc286 ("pstore: new
-filesystem interface to platform persistent storage").
-
---=20
+I fixed it up (I think - see below) and can carry the fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__7_Jan_2011_11_21_43_+1100_SEMz5nL+hln/nI55
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNJlyXAAoJEDMEi1NhKgbskXIH/ieuiiNTAJZOz96I6Dy/S2cl
-8Ev6ON6rcaAqlv6pVYa0bvLn/CUEwTh5laKi/XsgC7+/0Aqfx0m7Xo2OzrTYHSPA
-vnOSXl4dMQ/g1UszEg42ejlp4eFqlh6ZmGQDS7cyI8UR6CMVMXVDs0G7HUJ+RM5b
-AWuVv+NyGTiHdJa4eF4EaNheAnTeknN6OBTh7Qmexy8tOc/JzmuwjVtrZYDI0/Sn
-4RPjfwh2fp2gdggSTibjs827iEAO3TtlAmhvoN9abzMCitFRDphKWMNboJesby66
-e59+WyLOV5aqofb3guzPrrKVNe+Ta/Lf46204xbZ1sxDj2YoaZDCZtrIOa8cRZc=
-=wUv8
------END PGP SIGNATURE-----
-
---Signature=_Fri__7_Jan_2011_11_21_43_+1100_SEMz5nL+hln/nI55--
+diff --cc security/smack/smack_lsm.c
+index ccb71a0,05dc4da..0000000
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@@ -2415,17 -2534,21 +2534,21 @@@ static int smack_setprocattr(struct tas
+   * Return 0 if a subject with the smack of sock could access
+   * an object with the smack of other, otherwise an error code
+   */
+ -static int smack_unix_stream_connect(struct socket *sock,
+ -				     struct socket *other, struct sock *newsk)
+ +static int smack_unix_stream_connect(struct sock *sock,
+ +				     struct sock *other, struct sock *newsk)
+  {
+- 	struct inode *sp = SOCK_INODE(sock->sk_socket);
+- 	struct inode *op = SOCK_INODE(other->sk_socket);
+ -	struct socket_smack *ssp = sock->sk->sk_security;
+ -	struct socket_smack *osp = other->sk->sk_security;
+++	struct socket_smack *ssp = sock->sk_security;
+++	struct socket_smack *osp = other->sk_security;
+  	struct smk_audit_info ad;
++ 	int rc = 0;
+  
+  	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_NET);
+ -	smk_ad_setfield_u_net_sk(&ad, other->sk);
+ +	smk_ad_setfield_u_net_sk(&ad, other);
+- 	return smk_access(smk_of_inode(sp), smk_of_inode(op),
+- 				 MAY_READWRITE, &ad);
++ 
++ 	if (!capable(CAP_MAC_OVERRIDE))
++ 		rc = smk_access(ssp->smk_out, osp->smk_in, MAY_WRITE, &ad);
++ 
++ 	return rc;
+  }
+  
+  /**
