@@ -1,67 +1,40 @@
-From: Sedat Dilek <sedat.dilek@googlemail.com>
-Subject: Re: linux-next: build failure after merge of the block tree
-Date: Fri, 7 Jan 2011 19:20:16 +0100
-Message-ID: <AANLkTimpfhc+CpxBW1xtHxuU7jN3ix_fh36jjXTxDnxM@mail.gmail.com>
-References: <20110107110513.30776114.sfr@canb.auug.org.au>
-	<4D26C179.7030704@kernel.dk>
-	<AANLkTinyaZfsYv43046LWgu8U3kg6_79y+PTFO1RxtnY@mail.gmail.com>
-	<20110107231748.76170ff3.sfr@canb.auug.org.au>
-	<AANLkTimpVMLGBnP33Ro8MBtW3GJjskg0bBK717Xf-Mh_@mail.gmail.com>
-	<20110108012211.1e19f0f7.sfr@canb.auug.org.au>
-	<4D272C54.5010406@kernel.dk>
-	<AANLkTim_Su1XTvvpFvPqv1xpkkUA3PEVDEVpXaODjYpt@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+From: "Gadiyar, Anand" <gadiyar@ti.com>
+Subject: Re: linux-next: manual merge of the usb tree with the omap tree
+Date: Sat, 8 Jan 2011 00:24:24 +0530
+Message-ID: <AANLkTiku=1-NftQGkOiG0Sm5Fp1-Szqe+39kzWz+4dAC@mail.gmail.com>
+References: <20101223171859.f6842045.sfr@canb.auug.org.au> <4D139517.3010608@ti.com>
+ <AANLkTi=pTNg2iWN+=uEv=CyZHHCoddF51pmmCMjPeMUF@mail.gmail.com>
+ <4ce0f816f951f24ca3de9c84d9f70842@mail.gmail.com> <AANLkTimA5UOVn6+xe0ofV1F3_XhAP0daBvOAX2k1u_dU@mail.gmail.com>
+ <AANLkTimzQ1PHN986fqPF0yjd1M+390nSUDYJ65pu0z_f@mail.gmail.com>
+ <4D271E0E.8050401@ti.com> <AANLkTikLQRHyp-TS_idEp5Fr74qC3vDoMqqsAA2v_oV8@mail.gmail.com>
+ <c822ad4569a9dc865b5ccf39e12c828b@mail.gmail.com> <f853a77e2aebea4130fc486bdbf4aa06@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qy0-f181.google.com ([209.85.216.181]:36482 "EHLO
-	mail-qy0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755114Ab1AGSUR convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 7 Jan 2011 13:20:17 -0500
-In-Reply-To: <AANLkTim_Su1XTvvpFvPqv1xpkkUA3PEVDEVpXaODjYpt@mail.gmail.com>
+Received: from na3sys009aog109.obsmtp.com ([74.125.149.201]:34240 "EHLO
+	na3sys009aog109.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752151Ab1AGSyp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 7 Jan 2011 13:54:45 -0500
+In-Reply-To: <f853a77e2aebea4130fc486bdbf4aa06@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Anand Gadiyar <gadiyar@ti.com>, Ming Lei <tom.leiming@gmail.com>
+Cc: Benoit Cousson <b-cousson@ti.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Paul Walmsley <paul@pwsan.com>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
 
-On Fri, Jan 7, 2011 at 7:04 PM, Sedat Dilek <sedat.dilek@googlemail.com=
-> wrote:
-> On Fri, Jan 7, 2011 at 4:08 PM, Jens Axboe <axboe@kernel.dk> wrote:
->> On 2011-01-07 15:22, Stephen Rothwell wrote:
->>> Hi,
->>>
->>> On Fri, 7 Jan 2011 14:19:33 +0100 Sedat Dilek <sedat.dilek@googlema=
-il.com> wrote:
->>>>
->>>> Hmm, I have pulled-in freshly from linux-2.6-block#for-next after =
-you
->>>> published latest linux-next (next-20110107).
->>>> So, I guessed the (reported) issue is fixed, now.
->>>
->>> No, the commit that caused the warnings was removed when I went bac=
-k to
->>> using the block tree from next-20110106. =C2=A0So it will come back=
- unless
->>> fixed.
->>
->> It is fixed in linux-2.6-block#for-next as-of earlier today, so if S=
-edat
->> pulled from there it should be gone.
->>
->> --
->> Jens Axboe
->>
->>
+On Fri, Jan 7, 2011 at 8:50 PM, Anand Gadiyar <gadiyar@ti.com> wrote:
+> Update: I disabled CONFIG_OMAP_RESET_CLOCKS and the PHY and other
+> connected devices enumerate just fine. Could you try this out on
+> your board as well?
 >
-> I guess 0002 should fix it, its not the case (patch + "big diff" atta=
-ched).
+> I'll look deeper and see if there are some required clocks that are
+> accidentally getting turned off.
 >
-> - Sedat -
->
-[...]
 
-Missing "blktrace: add missing probe argument to block_bio_complete" pa=
-tch.
+A final update from today: It appears that disabling auxclk3_ck causes
+EHCI to fail. I'm not sure what this clock feeds, and will need to look it
+up. Keeping this clock alive is sufficient to get the hub to enumerate.
 
-- Sedat -
+I would've looked it up, but got booted out by a fire alarm drill. I'll
+take a look tomorrow and cook up a fix.
+
+- Anand
