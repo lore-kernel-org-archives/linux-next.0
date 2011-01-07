@@ -1,82 +1,50 @@
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: linux-next: build warnings after merge of the block tree
-Date: Thu, 6 Jan 2011 20:49:45 -0500
-Message-ID: <20110107014945.GA5109@Krystal>
-References: <20110107110229.c586455a.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the fbdev tree
+Date: Fri, 7 Jan 2011 13:35:11 +1100
+Message-ID: <20110107133511.bcfc1e85.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="/04w6evG8XlLl3ft"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.openrapids.net ([64.15.138.104]:39228 "EHLO
-	blackscsi.openrapids.net" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1754975Ab1AGBts (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 6 Jan 2011 20:49:48 -0500
-Content-Disposition: inline
-In-Reply-To: <20110107110229.c586455a.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:59255 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753209Ab1AGCfR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 6 Jan 2011 21:35:17 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeff Moyer <jmoyer@redhat.com>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mundt <lethal@linux-sh.org>, Joe Perches <joe@perches.com>
 
+Hi Greg,
 
---/04w6evG8XlLl3ft
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Today's linux-next merge of the staging tree got a conflict in
+drivers/video/udlfb.c between commit realloc_framebuffer ("video: udlfb:
+Kill off special printk wrappers, use pr_fmt()") from the fbdev tree and
+commit 5b84cc781058bb452f869d84bb24442ec51948c4 ("staging: Use vzalloc")
+from the staging tree.
 
-* Stephen Rothwell (sfr@canb.auug.org.au) wrote:
-> Hi Jens,
->=20
-> After merging the block tree, today's linux-next build (powerpc
-> ppc64_defconfig) produced these warnings:
+Another commit in the fbdev tree moves this file out of staging (from
+drivers/staging/udlfb/udlfb.c).
 
-Sorry about this, I will issue a patch that updates the blktrace code
-according to the new callback prototype expected right away.
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Thanks,
-
-Mathieu
-
->=20
-> kernel/trace/blktrace.c: In function 'blk_register_tracepoints':
-> kernel/trace/blktrace.c:999: warning: passing argument 1 of 'register_tra=
-ce_block_bio_complete' from incompatible pointer type
-> include/trace/events/block.h:240: note: expected 'void (*)(void *, struct=
- request_queue *, struct bio *, int)' but argument is of type 'void (*)(voi=
-d *, struct request_queue *, struct bio *)'
-> kernel/trace/blktrace.c: In function 'blk_unregister_tracepoints':
-> kernel/trace/blktrace.c:1038: warning: passing argument 1 of 'unregister_=
-trace_block_bio_complete' from incompatible pointer type
-> include/trace/events/block.h:240: note: expected 'void (*)(void *, struct=
- request_queue *, struct bio *, int)' but argument is of type 'void (*)(voi=
-d *, struct request_queue *, struct bio *)'
->=20
-> Probably caused by commit de983a7bfcb7c020901ca6e2314cf55a4207ab5a
-> ("block: trace event block fix unassigned field").
-> --=20
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
-
-
-
---=20
-Mathieu Desnoyers
-Operating System Efficiency R&D Consultant
-EfficiOS Inc.
-http://www.efficios.com
-
---/04w6evG8XlLl3ft
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iD8DBQFNJnE5PyWo/juummgRAr9AAKCWeOJ9AKGyJfWjuMh9auUGboH4WgCeKYbB
-HxlbKTJ8HBFuYTyKKQD52lo=
-=+7ep
------END PGP SIGNATURE-----
-
---/04w6evG8XlLl3ft--
+diff --cc drivers/video/udlfb.c
+index 020589a,8dd21e0..0000000
+--- a/drivers/video/udlfb.c
++++ b/drivers/video/udlfb.c
+@@@ -1128,9 -1163,9 +1128,9 @@@ static int dlfb_realloc_framebuffer(str
+  		 * But with imperfect damage info we may send pixels over USB
+  		 * that were, in fact, unchanged - wasting limited USB bandwidth
+  		 */
+- 		new_back = vmalloc(new_len);
++ 		new_back = vzalloc(new_len);
+  		if (!new_back)
+- 			pr_info("No shadow/backing buffer allcoated\n");
+ -			dl_info("No shadow/backing buffer allocated\n");
+++			pr_info("No shadow/backing buffer allocated\n");
+  		else {
+  			if (dev->backing_buffer)
+  				vfree(dev->backing_buffer);
