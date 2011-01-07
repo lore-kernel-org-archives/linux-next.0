@@ -1,50 +1,68 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: linux-next: manual merge of the usb tree with the omap tree
-Date: Fri, 7 Jan 2011 21:24:43 +0200
-Message-ID: <20110107192443.GE2272@legolas.emea.dhcp.ti.com>
-References: <4D139517.3010608@ti.com>
- <AANLkTi=pTNg2iWN+=uEv=CyZHHCoddF51pmmCMjPeMUF@mail.gmail.com>
- <4ce0f816f951f24ca3de9c84d9f70842@mail.gmail.com>
- <AANLkTimA5UOVn6+xe0ofV1F3_XhAP0daBvOAX2k1u_dU@mail.gmail.com>
- <AANLkTimzQ1PHN986fqPF0yjd1M+390nSUDYJ65pu0z_f@mail.gmail.com>
- <4D271E0E.8050401@ti.com>
- <AANLkTikLQRHyp-TS_idEp5Fr74qC3vDoMqqsAA2v_oV8@mail.gmail.com>
- <c822ad4569a9dc865b5ccf39e12c828b@mail.gmail.com>
- <f853a77e2aebea4130fc486bdbf4aa06@mail.gmail.com>
- <AANLkTiku=1-NftQGkOiG0Sm5Fp1-Szqe+39kzWz+4dAC@mail.gmail.com>
-Reply-To: balbi@ti.com
+From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Subject: Re: [-next] ERROR: "strchr" [drivers/target/target_core_mod.ko]
+	undefined!
+Date: Fri, 07 Jan 2011 13:04:34 -0800
+Message-ID: <1294434274.2895.146.camel@haakon2.linux-iscsi.org>
+References: <AANLkTinhrj38rbEt7ds971D9g-UF+xS0jmzO7X15ZaLn@mail.gmail.com>
+	 <1294415045.4895.16.camel@mulgrave.site>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from na3sys009aog105.obsmtp.com ([74.125.149.75]:57395 "EHLO
-	na3sys009aog105.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753137Ab1AGTYs (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 7 Jan 2011 14:24:48 -0500
-Content-Disposition: inline
-In-Reply-To: <AANLkTiku=1-NftQGkOiG0Sm5Fp1-Szqe+39kzWz+4dAC@mail.gmail.com>
+Received: from mail.linux-iscsi.org ([67.23.28.174]:49176 "EHLO
+	linux-iscsi.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752425Ab1AGVKd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 7 Jan 2011 16:10:33 -0500
+In-Reply-To: <1294415045.4895.16.camel@mulgrave.site>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Gadiyar, Anand" <gadiyar@ti.com>
-Cc: Ming Lei <tom.leiming@gmail.com>, Benoit Cousson <b-cousson@ti.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Paul Walmsley <paul@pwsan.com>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
+To: James Bottomley <James.Bottomley@suse.de>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, scsi <linux-scsi@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>, linux-kernel@vger.kernel.org
 
-On Sat, Jan 08, 2011 at 12:24:24AM +0530, Gadiyar, Anand wrote:
-> On Fri, Jan 7, 2011 at 8:50 PM, Anand Gadiyar <gadiyar@ti.com> wrote:
-> > Update: I disabled CONFIG_OMAP_RESET_CLOCKS and the PHY and other
-> > connected devices enumerate just fine. Could you try this out on
-> > your board as well?
-> >
-> > I'll look deeper and see if there are some required clocks that are
-> > accidentally getting turned off.
-> >
+On Fri, 2011-01-07 at 09:44 -0600, James Bottomley wrote:
+> On Fri, 2011-01-07 at 11:57 +0100, Geert Uytterhoeven wrote:
+> > Since a few days, linux-next shows:
+> > 
+> > | ERROR: "strchr" [drivers/target/target_core_mod.ko] undefined!
+> > 
+> > in m68k allmodconfig builds
+> > (http://kisskb.ellerman.id.au/kisskb/buildresult/3754323/).
+> > 
+> > I guess this is caused by the following 3 calls to strstr():
+> > 
+> > drivers/target/target_core_configfs.c:
+> > +       ptr = strstr(page, "1");
+> > 
+> > +       str = strstr(buf, "_");
+> > 
+> > +       str2 = strstr(str+1, "_");
+> > 
+> > Some versions of gcc replace calls to strstr() with single-character
+> > "needle" string parameters by calls to strchr() behind our back.
+> > This causes linking errors if strchr() is defined as an inline function
+> > in <asm/string.h> (e.g. on m68k).
+> > 
+> > You can prevent this by explicitly calling strchr() instead.
+> > 
+> > Cfr. commit 59d309f9c8ef0bd01bf93cc0e758f1d810417bdb
+> > ("kgdb: Replace strstr() by strchr() for single-character needles).
+> > 
+> > Gr{oetje,eeting}s,
 > 
-> A final update from today: It appears that disabling auxclk3_ck causes
-> EHCI to fail. I'm not sure what this clock feeds, and will need to look it
-> up. Keeping this clock alive is sufficient to get the hub to enumerate.
+> Surely the fix for this is not to inline it in m68k? If gcc is growing
+> the capability to make these types of transformations, it's not going to
+> stop at single entry string strstr().
 > 
-> I would've looked it up, but got booted out by a fire alarm drill. I'll
-> take a look tomorrow and cook up a fix.
+> If you want to keep the fast inline, there is a way (which I forget) to
+> drop an external reference as well, just in case.
+> 
 
-Good finding :-) Thanks a lot :-)
+Hi guys,
 
--- 
-balbi
+So I really don't have a strong perference here, but would tend to agree
+with James that this should probably be fixed in m68k..  If this is too
+much of an pain for you Geert I am happy to make this change.
+
+Thanks!
+
+--nab
