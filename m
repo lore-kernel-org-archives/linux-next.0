@@ -1,55 +1,53 @@
-From: Anand Gadiyar <gadiyar@ti.com>
-Subject: RE: linux-next: manual merge of the usb tree with the omap tree
-Date: Fri, 7 Jan 2011 20:50:53 +0530
-Message-ID: <f853a77e2aebea4130fc486bdbf4aa06@mail.gmail.com>
-References: <20101223171859.f6842045.sfr@canb.auug.org.au><4D139517.3010608@ti.com><AANLkTi=pTNg2iWN+=uEv=CyZHHCoddF51pmmCMjPeMUF@mail.gmail.com><4ce0f816f951f24ca3de9c84d9f70842@mail.gmail.com><AANLkTimA5UOVn6+xe0ofV1F3_XhAP0daBvOAX2k1u_dU@mail.gmail.com><AANLkTimzQ1PHN986fqPF0yjd1M+390nSUDYJ65pu0z_f@mail.gmail.com><4D271E0E.8050401@ti.com>
- <AANLkTikLQRHyp-TS_idEp5Fr74qC3vDoMqqsAA2v_oV8@mail.gmail.com> <c822ad4569a9dc865b5ccf39e12c828b@mail.gmail.com>
+From: James Bottomley <James.Bottomley@suse.de>
+Subject: Re: [-next] ERROR: "strchr" [drivers/target/target_core_mod.ko]
+ undefined!
+Date: Fri, 07 Jan 2011 09:44:04 -0600
+Message-ID: <1294415045.4895.16.camel@mulgrave.site>
+References: <AANLkTinhrj38rbEt7ds971D9g-UF+xS0jmzO7X15ZaLn@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <c822ad4569a9dc865b5ccf39e12c828b@mail.gmail.com>
+In-Reply-To: <AANLkTinhrj38rbEt7ds971D9g-UF+xS0jmzO7X15ZaLn@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Anand Gadiyar <gadiyar@ti.com>, Ming Lei <tom.leiming@gmail.com>
-Cc: Benoit Cousson <b-cousson@ti.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Paul Walmsley <paul@pwsan.com>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Nicholas Bellinger <nab@linux-iscsi.org>, scsi <linux-scsi@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Ming Lei wrote:
-> Ming Lei wrote:
-> > 2011/1/7 Anand Gadiyar <gadiyar@ti.com>:
-> > > Hi Ming Lei,
-> > >
-> > > I'm able to reproduce this on my panda, and I have it working as of
-> > > linux-next-20101221 (the last version I tested last year) and
-failing
-> > > on linux-next-20101227 (which was the very next linux-next release).
-> > >
-> > > Not sure why, but my Panda manages to get the VID:PID of the hub as
-> > > well, while yours does not even get there.
-> > >
-> > > I may need a few more hours to debug this, unless someone beats me
-> > > to it. ;)
-> >
-> > Is it caused by the below?
-> >
-> > [   46.580200] ehci-omap ehci-omap.0: failed to get ehci port0
-regulator
-> >
->
-> Nope. We don't set up any regulators for the PHY on Panda (at least not
-> yet).
->
-> And the working case (next-20101221) has the same log.
->
-> I suspect the PHY doesn't get reset for the proper duration; I'm looking
-> for something in that area. (Another option is to bisect between the two
-> versions, but I'm not sure if that's any easier).
->
+On Fri, 2011-01-07 at 11:57 +0100, Geert Uytterhoeven wrote:
+> Since a few days, linux-next shows:
+> 
+> | ERROR: "strchr" [drivers/target/target_core_mod.ko] undefined!
+> 
+> in m68k allmodconfig builds
+> (http://kisskb.ellerman.id.au/kisskb/buildresult/3754323/).
+> 
+> I guess this is caused by the following 3 calls to strstr():
+> 
+> drivers/target/target_core_configfs.c:
+> +       ptr = strstr(page, "1");
+> 
+> +       str = strstr(buf, "_");
+> 
+> +       str2 = strstr(str+1, "_");
+> 
+> Some versions of gcc replace calls to strstr() with single-character
+> "needle" string parameters by calls to strchr() behind our back.
+> This causes linking errors if strchr() is defined as an inline function
+> in <asm/string.h> (e.g. on m68k).
+> 
+> You can prevent this by explicitly calling strchr() instead.
+> 
+> Cfr. commit 59d309f9c8ef0bd01bf93cc0e758f1d810417bdb
+> ("kgdb: Replace strstr() by strchr() for single-character needles).
+> 
+> Gr{oetje,eeting}s,
 
-Update: I disabled CONFIG_OMAP_RESET_CLOCKS and the PHY and other
-connected devices enumerate just fine. Could you try this out on
-your board as well?
+Surely the fix for this is not to inline it in m68k? If gcc is growing
+the capability to make these types of transformations, it's not going to
+stop at single entry string strstr().
 
-I'll look deeper and see if there are some required clocks that are
-accidentally getting turned off.
+If you want to keep the fast inline, there is a way (which I forget) to
+drop an external reference as well, just in case.
 
-- Anand
+James
