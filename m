@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings after merge of the block tree
-Date: Fri, 7 Jan 2011 11:02:29 +1100
-Message-ID: <20110107110229.c586455a.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the block tree
+Date: Fri, 7 Jan 2011 11:05:13 +1100
+Message-ID: <20110107110513.30776114.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__7_Jan_2011_11_02_29_+1100_LMIwVyk8S9Sqrqfh"
+ boundary="Signature=_Fri__7_Jan_2011_11_05_13_+1100_Ghyg12MvjJJnxlfs"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51276 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:51342 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753156Ab1AGACl (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 6 Jan 2011 19:02:41 -0500
+	id S1751675Ab1AGAFW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 6 Jan 2011 19:05:22 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeff Moyer <jmoyer@redhat.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Fri__7_Jan_2011_11_02_29_+1100_LMIwVyk8S9Sqrqfh
+--Signature=_Fri__7_Jan_2011_11_05_13_+1100_Ghyg12MvjJJnxlfs
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,41 +24,58 @@ Content-Transfer-Encoding: quoted-printable
 Hi Jens,
 
 After merging the block tree, today's linux-next build (powerpc
-ppc64_defconfig) produced these warnings:
+ppc64_defconfig) failed like this:
 
-kernel/trace/blktrace.c: In function 'blk_register_tracepoints':
-kernel/trace/blktrace.c:999: warning: passing argument 1 of 'register_trace=
-_block_bio_complete' from incompatible pointer type
-include/trace/events/block.h:240: note: expected 'void (*)(void *, struct r=
-equest_queue *, struct bio *, int)' but argument is of type 'void (*)(void =
-*, struct request_queue *, struct bio *)'
-kernel/trace/blktrace.c: In function 'blk_unregister_tracepoints':
-kernel/trace/blktrace.c:1038: warning: passing argument 1 of 'unregister_tr=
-ace_block_bio_complete' from incompatible pointer type
-include/trace/events/block.h:240: note: expected 'void (*)(void *, struct r=
-equest_queue *, struct bio *, int)' but argument is of type 'void (*)(void =
-*, struct request_queue *, struct bio *)'
+arch/powerpc/platforms/built-in.o: In function `.pmf_get_function':
+(.text+0x723c): undefined reference to `.kref_get'
+arch/powerpc/platforms/built-in.o: In function `.pmf_unregister_driver':
+(.text+0x72c8): undefined reference to `.kref_get'
+arch/powerpc/platforms/built-in.o: In function `.pmf_do_functions':
+(.text+0x793c): undefined reference to `.kref_get'
+arch/powerpc/platforms/built-in.o: In function `.__pmf_find_function':
+(.text+0x7c80): undefined reference to `.kref_get'
+arch/powerpc/platforms/built-in.o: In function `.pmf_register_driver':
+(.text+0x8044): undefined reference to `.kref_get'
+arch/powerpc/platforms/built-in.o:(.text+0x8310): more undefined references=
+ to `.kref_get' follow
+lib/lib.a(kref.o):(__ksymtab+0x10): undefined reference to `kref_get'
+drivers/built-in.o: In function `.get_current_tty':
+(.text+0x60970): undefined reference to `.kref_get'
+drivers/built-in.o: In function `.__proc_set_tty':
+tty_io.c:(.text+0x61624): undefined reference to `.kref_get'
+drivers/built-in.o: In function `.tty_init_dev':
+(.text+0x64d2c): undefined reference to `.kref_get'
+drivers/built-in.o: In function `.tty_open':
+tty_io.c:(.text+0x64ee4): undefined reference to `.kref_get'
+tty_io.c:(.text+0x64f20): undefined reference to `.kref_get'
+drivers/built-in.o:tty_io.c:(.text+0x64f58): more undefined references to `=
+.kref_get' follow
 
-Probably caused by commit de983a7bfcb7c020901ca6e2314cf55a4207ab5a
-("block: trace event block fix unassigned field").
+Caused by commit 15454034cb3021d8bb9d21b4f35072a809197fdd ("block: add
+internal hd part table references") which removes kref_get() instead of
+kref_test_and_get()!
+
+This really wasn't tested, right?
+
+I have used the block tree from next-20110106 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__7_Jan_2011_11_02_29_+1100_LMIwVyk8S9Sqrqfh
+--Signature=_Fri__7_Jan_2011_11_05_13_+1100_Ghyg12MvjJJnxlfs
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNJlgVAAoJEDMEi1NhKgbsowkH/150slHcEKzsA1v/Y3Ew9ecf
-iFXpJjOPLzLOJdufWQFX+QQFyRDin4E1sA0oxb/3dRididlFyte6Zg6eSfFfvvzh
-OL9ZITy7MQjSKxh4ZluExTO+CRT4kcKFf/hG1lh6NIa47ELxqDvQ3FV9gHVIxUKv
-BDN6NgfLTXcSyOgeFxOLex+uySCmXfe9KxscNveCCd49ZEMToxSbY4lXkAdOp7Yj
-iRKdkW48x2jeMVykT3fiMfpBVjecWf3w+wHXj4WggNlC7erg7rE2jcCuTwZyBYPQ
-j0/JACqDeJQe1+OHHpNZcGkrNVRarGKQnSeiCwwksBJU7SgV0wGw9SM4ZWbspQU=
-=Enlq
+iQEcBAEBAgAGBQJNJli5AAoJEDMEi1NhKgbsWAAH/jPZLsPI6msIebXnBOtSWif0
+WsmUYQoeOgiVW9QLjOWCYgiMDF5TN8OnthmZ1zf1cSDotII+IKUdsmR1BpPfi6VA
+rD+bwEgjhJcPty00so+k0kRrnFf+EzOUiOX+7EtGe/J0c/g0QGScW6X6MH0uy1i9
+XWcB7Q8Y/E2EPLRszZfb3od6OsK6h2T6FEeVLUUOkUSflgKr8R8DB3+cC4v2sjiy
+I94cy/9BIdvuEISyw6IT4GUlkeR7DEbiM/Z46jZYtqMvADXhM/EOc87qF1oGR4fR
+vniXcrxll6AnOAzYFWKP4wYLkF8VoRSvWD46OlHdPzWerzO+1FR2t4capiBHmw4=
+=nebS
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__7_Jan_2011_11_02_29_+1100_LMIwVyk8S9Sqrqfh--
+--Signature=_Fri__7_Jan_2011_11_05_13_+1100_Ghyg12MvjJJnxlfs--
