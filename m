@@ -1,46 +1,63 @@
-From: Ming Lei <tom.leiming@gmail.com>
-Subject: Re: linux-next: manual merge of the usb tree with the omap tree
-Date: Fri, 7 Jan 2011 22:15:45 +0800
-Message-ID: <AANLkTikLQRHyp-TS_idEp5Fr74qC3vDoMqqsAA2v_oV8@mail.gmail.com>
-References: <20101223171859.f6842045.sfr@canb.auug.org.au>
-	<4D139517.3010608@ti.com>
-	<AANLkTi=pTNg2iWN+=uEv=CyZHHCoddF51pmmCMjPeMUF@mail.gmail.com>
-	<4ce0f816f951f24ca3de9c84d9f70842@mail.gmail.com>
-	<AANLkTimA5UOVn6+xe0ofV1F3_XhAP0daBvOAX2k1u_dU@mail.gmail.com>
-	<AANLkTimzQ1PHN986fqPF0yjd1M+390nSUDYJ65pu0z_f@mail.gmail.com>
-	<4D271E0E.8050401@ti.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the block tree
+Date: Sat, 8 Jan 2011 01:22:11 +1100
+Message-ID: <20110108012211.1e19f0f7.sfr@canb.auug.org.au>
+References: <20110107110513.30776114.sfr@canb.auug.org.au>
+	<4D26C179.7030704@kernel.dk>
+	<AANLkTinyaZfsYv43046LWgu8U3kg6_79y+PTFO1RxtnY@mail.gmail.com>
+	<20110107231748.76170ff3.sfr@canb.auug.org.au>
+	<AANLkTimpVMLGBnP33Ro8MBtW3GJjskg0bBK717Xf-Mh_@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Sat__8_Jan_2011_01_22_11_+1100_91nnHwaZBJ5k_2pw"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:57225 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752633Ab1AGOPr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 7 Jan 2011 09:15:47 -0500
-In-Reply-To: <4D271E0E.8050401@ti.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:36873 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753534Ab1AGOWX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 7 Jan 2011 09:22:23 -0500
+In-Reply-To: <AANLkTimpVMLGBnP33Ro8MBtW3GJjskg0bBK717Xf-Mh_@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Anand Gadiyar <gadiyar@ti.com>
-Cc: Benoit Cousson <b-cousson@ti.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Paul Walmsley <paul@pwsan.com>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
+To: sedat.dilek@gmail.com
+Cc: Sedat Dilek <sedat.dilek@googlemail.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Jens Axboe <axboe@kernel.dk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Anand,
+--Signature=_Sat__8_Jan_2011_01_22_11_+1100_91nnHwaZBJ5k_2pw
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-2011/1/7 Anand Gadiyar <gadiyar@ti.com>:
-> Hi Ming Lei,
+Hi,
+
+On Fri, 7 Jan 2011 14:19:33 +0100 Sedat Dilek <sedat.dilek@googlemail.com> =
+wrote:
 >
-> I'm able to reproduce this on my panda, and I have it working as of
-> linux-next-20101221 (the last version I tested last year) and failing
-> on linux-next-20101227 (which was the very next linux-next release).
->
-> Not sure why, but my Panda manages to get the VID:PID of the hub as
-> well, while yours does not even get there.
->
-> I may need a few more hours to debug this, unless someone beats me
-> to it. ;)
+> Hmm, I have pulled-in freshly from linux-2.6-block#for-next after you
+> published latest linux-next (next-20110107).
+> So, I guessed the (reported) issue is fixed, now.
 
-Is it caused by the below?
+No, the commit that caused the warnings was removed when I went back to
+using the block tree from next-20110106.  So it will come back unless
+fixed.
 
-[   46.580200] ehci-omap ehci-omap.0: failed to get ehci port0 regulator
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-thanks,
--- 
-Lei Ming
+--Signature=_Sat__8_Jan_2011_01_22_11_+1100_91nnHwaZBJ5k_2pw
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNJyGTAAoJEDMEi1NhKgbstd4H/2jQzCcWw6jm5va7h8bF3aGH
+ijv/UjpdVYC81UQoaXNGgDyRCrGa1ykFcWJenvKdOueJAeOK3QxvCR2T/Y4BPdgz
+DWDAvtKl4ttFD0phmzKP8FCP9Ak+qmRpcQHRAzJq9aJsW0r5gAmwSBCfQZRO4hYk
+fbZs1jPCtX2rHIxABznqMPWcikJYhNl4DxQnzk5d0GEeq66zYtzrtt5DJCaWhgqq
+sBNuHSEjRexHqAfBJQ5g6Ww/6yTbAAAn2J9aWVNnfo1ziHfLPvQcrq7kZXGzrWMx
+DwukcFeWvntKjTV5g5MBbsjH3HhEQcYg6T9v/qxvGcUk6oUYXIOxt21eKh+u8r4=
+=dnhQ
+-----END PGP SIGNATURE-----
+
+--Signature=_Sat__8_Jan_2011_01_22_11_+1100_91nnHwaZBJ5k_2pw--
