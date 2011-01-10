@@ -1,34 +1,279 @@
-From: Roland Dreier <rdreier@cisco.com>
-Subject: Re: patchwork.kernel.org down
-Date: Mon, 10 Jan 2011 12:53:20 -0800
-Message-ID: <adasjx07a67.fsf@cisco.com>
-References: <AANLkTik4ktaeyDG3ihh-YRB+WVLxA46wSLOgWy6iY_68@mail.gmail.com>
-	<20101220204936.GA21290@huya.qualcomm.com>
-	<4D0FFC4B.9050301@kernel.org> <ada62u3dkv2.fsf@cisco.com>
-	<adaei8k8ubh.fsf@cisco.com> <4D2B664F.7050106@kernel.org>
+From: Eric Van Hensbergen <ericvh@gmail.com>
+Subject: Re: linux-next: manual merge of the vfs-scale tree with the v9fs tree
+Date: Mon, 10 Jan 2011 15:49:37 -0600
+Message-ID: <AANLkTikGhYYJCUGjPDEbCDamDnmwh5O4_ZWmHDY7=BNK@mail.gmail.com>
+References: <20110104124054.c767a4ee.sfr@canb.auug.org.au>
+	<4D2363E7.30101@linux.vnet.ibm.com>
+	<20110105064425.GA3161@amd>
+	<4D24F934.7010803@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from sj-iport-4.cisco.com ([171.68.10.86]:28994 "EHLO
-	sj-iport-4.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752061Ab1AJUxl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Jan 2011 15:53:41 -0500
-In-Reply-To: <4D2B664F.7050106@kernel.org> (J. H.'s message of "Mon, 10 Jan
-	2011 12:04:31 -0800")
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:39728 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752874Ab1AJVtj convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Jan 2011 16:49:39 -0500
+In-Reply-To: <4D24F934.7010803@linux.vnet.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "J.H." <warthog9@kernel.org>
-Cc: David Brown <davidb@codeaurora.org>, sedat.dilek@gmail.com, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, ftpadmin@kernel.org, webmaster@kernel.org
+To: Nick Piggin <nickpiggin@yahoo.com.au>
+Cc: jvrao@linux.vnet.ibm.com, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>, V9FS Developers <v9fs-developer@lists.sourceforge.net>
 
- > I haven't added it to 20702 yet as I haven't had time to confirm if it's
- > the same issue, but at first glance it looks it.  My plan is to compile
- > up a mainline kernel, with the above patch, and with debugging turned on
- > and to capture as much as I can from that.
+Hmm...
 
-By the way, it is probably a good idea to boot with "slub_debug=FZP" to
-make sure that slub debugging is turned on at runtime (unless you're
-building at kernel with CONFIG_SLUB_DEBUG_ON=y, which I'm sure Fedora
-doesn't do).  The crashes you're seeing definitely look like corruption
-in the allocator.
+I've merged up our for-next patch series with Linus' tree which now
+has the vfs-scalability patches in it.
+Unfortunately, it seems something has been introduced which changes
+underlying assumptions in the v9fs code causing certain operations to
+fail with a segfault in the dentry code.  We are digging into now and
+will keep folks apprised of the situation.  Some quick checks have
+shown that the problem wasn't there in 2.6.37 but are in linus' tree
+as of today.  I'm in the process of bisecting further -- it may not be
+the fault of the concerns below, but I figured I should post and let
+folks know about the problem.
 
- - R.
+=46or what its worth, here's the failure we see:
+sh-2.05b# mount -t 9p 10.0.2.2 /mnt -o port=3D5670
+[   49.044605] mount used greatest stack depth: 4664 bytes left
+sh-2.05b# ls /mnt
+bin    dev         initrd.img.old  lost+found  n1   opt   selinux  usr
+boot   etc         lib             media       n2   proc  srv      var
+cdrom  home        lib32           mnt         nas  root  sys      vmli=
+nuz
+csrv   initrd.img  lib64           n0          net  sbin  tmp      vmli=
+nuz.old
+sh-2.05b# ls /mnt/tmp
+cscope.9130  error.txt  ns.ericvh.:1  orbit-gdm  pulse-PKdhtXMmr18n
+sh-2.05b# cd /mnt/tmp
+sh-2.05b# ls -l
+total 1
+drwx------    1 501      266594          0 Jan  7 14:54 cscope.9130
+-rw-r--r--    1 501      266594        806 Jan  7 15:03 error.txt
+drwx------    1 501      266594          0 Jan  6 21:19 ns.ericvh.:1
+drwx------    1 114      124             0 Jan  6 21:24 orbit-gdm
+drwx------    1 114      124             0 Jan  6 21:09 pulse-PKdhtXMmr=
+18n
+sh-2.05b# mkdir test
+[   61.764123] ------------[ cut here ]------------
+[   61.765045] kernel BUG at /home/ericvh/src/linux/v9fs-devel/fs/dcach=
+e.c:1358!
+[   61.765045] invalid opcode: 0000 [#1] SMP
+[   61.765045] last sysfs file:
+[   61.765045] CPU 0
+[   61.765045] Pid: 853, comm: mkdir Not tainted 2.6.37+ #124 /Bochs
+[   61.765045] RIP: 0010:[<ffffffff8111dda8>]  [<ffffffff8111dda8>]
+d_set_d_op+0xb/0x58
+[   61.765045] RSP: 0000:ffff880016a0bdb8  EFLAGS: 00010282
+[   61.765045] RAX: ffff880016d43440 RBX: ffff880016d4a9c0 RCX: ffff880=
+017b23880
+[   61.765045] RDX: 0000000000000000 RSI: ffffffff81636d40 RDI: ffff880=
+016d4a9c0
+[   61.765045] RBP: ffff880016a0bdb8 R08: 0000000000004000 R09: ffff880=
+016a0bcf8
+[   61.765045] R10: 0000000000000004 R11: ffff880017925d30 R12: ffff880=
+016946d80
+[   61.765045] R13: ffff880016946de0 R14: 0000000000000000 R15: ffff880=
+016a0c400
+[   61.765045] FS:  0000000000000000(0000) GS:ffff880017c00000(0000)
+knlGS:0000000000000000
+[   61.765045] CS:  0010 DS: 002b ES: 002b CR0: 000000008005003b
+[   61.765045] CR2: 00000000f76f23c0 CR3: 0000000016814000 CR4: 0000000=
+0000006f0
+[   61.765045] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000=
+000000000
+[   61.765045] DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000=
+000000400
+[   61.765045] Process mkdir (pid: 853, threadinfo ffff880016a0a000,
+task ffff88001695a490)
+[   61.765045] Stack:
+[   61.765045]  ffff880016a0be28 ffffffff812071bc ffff880016d43440
+800001ed00000000
+[   61.765045]  0000000000000000 ffff880016d42fc0 0000000000000000
+ffff880016d4a9f8
+[   61.765045]  0000000000000000 ffff880016d42fc0 ffff880016d4a9c0
+ffff880016a0c400
+[   61.765045] Call Trace:
+[   61.765045]  [<ffffffff812071bc>] v9fs_create+0x21e/0x273
+[   61.765045]  [<ffffffff812075a5>] v9fs_vfs_mkdir+0x77/0x9a
+[   61.765045]  [<ffffffff81117b68>] vfs_mkdir+0x5a/0x96
+[   61.765045]  [<ffffffff81119c7c>] sys_mkdirat+0x91/0xe2
+[   61.765045]  [<ffffffff81119ce0>] sys_mkdir+0x13/0x15
+[   61.765045]  [<ffffffff810599b3>] ia32_sysret+0x0/0x5
+[   61.765045] Code: cc 39 53 20 0f 84 4a ff ff ff eb e5 31 db 48 83
+c4 48 48 89 d8 5b 41 5c 41 5d 41 5e 41 5f c9 c3 48 83 7f 60 00 55 48
+89 e5 74 04 <0f> 0b eb fe 66 f7 07 00 f0 74 04 0f 0b eb fe 48 85 f6 48
+89 77
+[   61.765045] RIP  [<ffffffff8111dda8>] d_set_d_op+0xb/0x58
+[   61.765045]  RSP <ffff880016a0bdb8>
+[   61.802265] ---[ end trace af62980550ad7d9c ]---
+Segmentation fault
+
+
+On Wed, Jan 5, 2011 at 5:05 PM, Venkateswararao Jujjuri (JV)
+<jvrao@linux.vnet.ibm.com> wrote:
+> On 1/4/2011 10:44 PM, Nick Piggin wrote:
+>> On Tue, Jan 04, 2011 at 10:16:07AM -0800, Venkateswararao Jujjuri (J=
+V) wrote:
+>>> On 1/3/2011 5:40 PM, Stephen Rothwell wrote:
+>>>> Hi Nick,
+>>>>
+>>>> Today's linux-next merge of the vfs-scale tree got a conflict in
+>>>> fs/9p/vfs_inode.c between commit 3d21652a1d23591e7f0bbbbedae29ce78=
+c2c1113
+>>>> ("fs/9p: Move dotl inode operations into a seperate file") from th=
+e v9fs
+>>>> tree and various commits from the vfs-scale tree.
+>>>>
+>>>> I fixed it up by using the v9fs changes to that file and then appl=
+ying
+>>>> the following merge fixup patch (which I can carry as necessary).
+>>>>
+>>>> Someone will need to fix this up before one of these trees is merg=
+ed by
+>>>> Linus, or to send this merge fix to Linus.
+>>>>
+>>>> From: Stephen Rothwell <sfr@canb.auug.org.au>
+>>>> Date: Tue, 4 Jan 2011 12:33:54 +1100
+>>>> Subject: [PATCH] v9fs: merge fix for changes in the vfs-scale tree
+>>>>
+>>>> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+>>>> ---
+>>>> =A0fs/9p/vfs_inode_dotl.c | =A0 22 +++++++++++-----------
+>>>> =A01 files changed, 11 insertions(+), 11 deletions(-)
+>>>>
+>>>> diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
+>>>> index 38d5880..9dd534b 100644
+>>>> --- a/fs/9p/vfs_inode_dotl.c
+>>>> +++ b/fs/9p/vfs_inode_dotl.c
+>>>> @@ -78,11 +78,11 @@ static struct dentry *v9fs_dentry_from_dir_ino=
+de(struct inode *inode)
+>>>> =A0{
+>>>> =A0 =A0 struct dentry *dentry;
+>>>>
+>>>> - =A0 spin_lock(&dcache_lock);
+>>>> + =A0 spin_lock(&inode->i_lock);
+>>>> =A0 =A0 /* Directory should have only one entry. */
+>>>> =A0 =A0 BUG_ON(S_ISDIR(inode->i_mode) && !list_is_singular(&inode-=
+>i_dentry));
+>>>> =A0 =A0 dentry =3D list_entry(inode->i_dentry.next, struct dentry,=
+ d_alias);
+>>>> - =A0 spin_unlock(&dcache_lock);
+>>>> + =A0 spin_unlock(&inode->i_lock);
+>>>
+>>> Are we doing away with dcache_lock?
+>>
+>> It's on its last legs...
+>>
+>>
+>>> I am not sure if the i_lock can serve the same purpose..but looks l=
+ike with the
+>>> current code
+>>> there may not need any lock around this code. Aneesh/Eric do you gu=
+ys have any
+>>> comments?
+>>
+>> Well first of all, why do you say i_lock can't serve the same purpos=
+e?
+>
+> What I mean is i_lock is not equivalent to dcache_lock in generic sen=
+se.
+>
+>> Removing locks is well and good, but if i_lock doesn't work here, th=
+en
+>> I've made a mistake either fudnamentally in the dcache, or with a
+>> particular pattern that v9fs uses -- either way it has to be underst=
+ood.
+>>
+>
+> Initially we had a version where we walk up the d_parent to construct
+> the complete path and corresponding fids for the entire path for 9P p=
+urpose.
+> As we are walking we thought of using big hammer to lock the entire d=
+cache.
+> Later we used read/write locks to protect race between v9fs_fid_looku=
+p and
+> rename operations.
+> Hence I don't think we need to protect this with =A0dcache_lock.
+> But having i_lock around this code looks good to me.
+>
+>> dcache lock removal of course isn't done ad-hoc. These two patches
+>> specifically are the ones which aim to replace this particular insta=
+nce
+>> of locking:
+>
+> While reading patches below...
+>>
+>> http://git.kernel.org/?p=3Dlinux/kernel/git/npiggin/linux-npiggin.gi=
+t;a=3Dcommit;h=3D5d30c20d47023b95b2a0d4820917dba8ba218d1a
+>
+> @@ -271,9 +271,11 @@ static struct dentry *v9fs_dentry_from_dir_inode=
+(struct
+> inode *inode)
+> =A0 =A0 =A0 =A0struct dentry *dentry;
+>
+> =A0 =A0 =A0 =A0spin_lock(&dcache_lock);
+> + =A0 =A0 =A0 spin_lock(&dcache_inode_lock);
+> =A0 =A0 =A0 =A0/* Directory should have only one entry. */
+> =A0 =A0 =A0 =A0BUG_ON(S_ISDIR(inode->i_mode) && !list_is_singular(&in=
+ode->i_dentry));
+> =A0 =A0 =A0 =A0dentry =3D list_entry(inode->i_dentry.next, struct den=
+try, d_alias);
+> + =A0 =A0 =A0 spin_unlock(&dcache_inode_lock);
+> =A0 =A0 =A0 =A0spin_unlock(&dcache_lock);
+> =A0 =A0 =A0 =A0return dentry;
+>> http://git.kernel.org/?p=3Dlinux/kernel/git/npiggin/linux-npiggin.gi=
+t;a=3Dcommit;h=3Def4953a772e04aef8cf5b94a9b70ffbb12b576e2
+>>
+> @@ -277,11 +277,11 @@ static struct dentry *v9fs_dentry_from_dir_inod=
+e(struct
+> inode *inode)
+> =A0{
+> =A0 =A0 =A0 =A0struct dentry *dentry;
+>
+> - =A0 =A0 =A0 spin_lock(&dcache_inode_lock);
+> + =A0 =A0 =A0 spin_lock(&inode->i_lock);
+> =A0 =A0 =A0 =A0/* Directory should have only one entry. */
+> =A0 =A0 =A0 =A0BUG_ON(S_ISDIR(inode->i_mode) && !list_is_singular(&in=
+ode->i_dentry));
+> =A0 =A0 =A0 =A0dentry =3D list_entry(inode->i_dentry.next, struct den=
+try, d_alias);
+> - =A0 =A0 =A0 spin_unlock(&dcache_inode_lock);
+> + =A0 =A0 =A0 spin_unlock(&inode->i_lock);
+> =A0 =A0 =A0 =A0return dentry;
+> =A0}
+>
+> Wondering if there is another patch in between to take out the dcache=
+_lock.
+>
+> Anyway, Changes in this patch look good to me and sorry for the confu=
+sion.
+>
+> Thanks,
+> JV
+>>
+>>>> =A0 =A0 return dentry;
+>>>> =A0}
+>>>>
+>>>> @@ -215,7 +215,7 @@ v9fs_vfs_create_dotl(struct inode *dir, struct=
+ dentry *dentry, int omode,
+>>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 err);
+>>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto error;
+>>>> =A0 =A0 =A0 =A0 =A0 =A0 }
+>>>> - =A0 =A0 =A0 =A0 =A0 dentry->d_op =3D &v9fs_cached_dentry_operati=
+ons;
+>>>> + =A0 =A0 =A0 =A0 =A0 d_set_d_op(dentry, &v9fs_cached_dentry_opera=
+tions);
+>>>
+>>> Assuming that this is a macro to the same operation.. rest of the c=
+hanges look
+>>> fine to me.
+>>
+>> Yes it's equivalent.
+>>
+>> Thanks,
+>> Nick
+>>
+>
+>
+>
