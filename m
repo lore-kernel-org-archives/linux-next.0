@@ -1,47 +1,60 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH] arm: omap4: pandaboard: turn on PHY reference clock at
- init
-Date: Mon, 10 Jan 2011 11:12:01 -0800
-Message-ID: <20110110191201.GG4957@atomide.com>
-References: <1294670535-9059-1-git-send-email-gadiyar@ti.com>
- <alpine.DEB.2.00.1101101152040.5731@utopia.booyaka.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mho-01-ewr.mailhop.org ([204.13.248.71]:39534 "EHLO
-	mho-01-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752029Ab1AJTMJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Jan 2011 14:12:09 -0500
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.00.1101101152040.5731@utopia.booyaka.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Paul Walmsley <paul@pwsan.com>
-Cc: Anand Gadiyar <gadiyar@ti.com>, linux-omap@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH <gregkh@suse.de>, Felipe Balbi <balbi@ti.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Benoit Cousson <b-cousson@ti.com>
+From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Subject: [PATCH] configfs: change depends -> select SYSFS
+Date: Mon, 10 Jan 2011 11:45:08 -0800
+Message-ID: <1294688708-24986-1-git-send-email-nab@linux-iscsi.org>
+Return-path: <linux-scsi-owner@vger.kernel.org>
+Sender: linux-scsi-owner@vger.kernel.org
+To: Joel Becker <joel.becker@oracle.com>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Randy Dunlap <randy.dunlap@oracle.com>, James Bottomley <James.Bottomley@suse.de>, Stephen Rothwell <sfr@canb.auug.org.au>, Nicholas Bellinger <nab@linux-iscsi.org>
+List-Id: linux-next.vger.kernel.org
 
-* Paul Walmsley <paul@pwsan.com> [110110 10:51]:
-> On Mon, 10 Jan 2011, Anand Gadiyar wrote:
-> 
-> > The SMSC 3320 USB PHY on the OMAP4 Pandaboard needs a 19.2 MHz
-> > reference clock. This clock is provided from the OMAP4's fref_clk3
-> > pad.
-> > 
-> > Recent changes to clock44xx_data.c made the clock framework aware
-> > of the existence of these fref_clk[i] lines. If the option
-> > CONFIG_OMAP_RESET_CLOCKS is enabled in the kernel, then the
-> > clock framework will turn these clocks off during bootup.
-> > 
-> > Explicitly request and keep this clock enabled at init for the
-> > Pandaboard, so that the PHY receives this clock at all times.
-> > 
-> > Reported-by: Ming Lei <tom.leiming@gmail.com>
-> > Signed-off-by: Anand Gadiyar <gadiyar@ti.com>
-> > Cc: Benoit Cousson <b-cousson@ti.com>
-> > Cc: Paul Walmsley <paul@pwsan.com>
-> > Cc: Tony Lindgren <tony@atomide.com>
-> 
-> Reviewed-by: Paul Walmsley <paul@pwsan.com>
+From: Nicholas Bellinger <nab@linux-iscsi.org>
 
-Will queue as a fix.
+Hi Joel,
 
-Tony
+This is a fix for linux-next that Randy reported over the holidays but has not
+made it in just yet.   Please have a look and give your signoff at your earliest
+convience.
+
+Thanks!
+
+----------------------------------------------------------------------------------
+
+This patch changes configfs to select SYSFS to fix the following:
+
+warning: (TARGET_CORE && GFS2_FS) selects CONFIGFS_FS which has unmet direct dependencies (SYSFS)
+
+This patch also fixes whitespace breakage in the 'help' section.
+
+Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
+Signed-off-by: Nicholas A. Bellinger <nab@linux-iscsi.org>
+---
+ fs/configfs/Kconfig |   14 +++++++-------
+ 1 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/fs/configfs/Kconfig b/fs/configfs/Kconfig
+index 13587cc..0e4bd23 100644
+--- a/fs/configfs/Kconfig
++++ b/fs/configfs/Kconfig
+@@ -1,11 +1,11 @@
+ config CONFIGFS_FS
+ 	tristate "Userspace-driven configuration filesystem"
+-	depends on SYSFS
++	select SYSFS
+ 	help
+-	  configfs is a ram-based filesystem that provides the converse
+-	  of sysfs's functionality. Where sysfs is a filesystem-based
+-	  view of kernel objects, configfs is a filesystem-based manager
+-	  of kernel objects, or config_items.
++	configfs is a RAM-based filesystem that provides the converse
++	of sysfs's functionality. Where sysfs is a filesystem-based
++	view of kernel objects, configfs is a filesystem-based manager
++	of kernel objects, or config_items.
+ 
+-	  Both sysfs and configfs can and should exist together on the
+-	  same system. One is not a replacement for the other.
++	Both sysfs and configfs can and should exist together on the
++	same system. One is not a replacement for the other.
+-- 
+1.7.3.5
+
