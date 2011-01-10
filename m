@@ -1,41 +1,69 @@
-From: James Morris <jmorris@namei.org>
-Subject: Re: linux-next: manual merge of the security-testing tree with the
- net tree
-Date: Mon, 10 Jan 2011 09:48:58 +1100 (EST)
-Message-ID: <alpine.LRH.2.00.1101100948490.20106@tundra.namei.org>
-References: <20110107114400.e4d1d33b.sfr@canb.auug.org.au> <4D2666D0.9060802@schaufler-ca.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build warnings after merge of the tty tree
+Date: Mon, 10 Jan 2011 11:49:59 +1100
+Message-ID: <20110110114959.691c20f1.sfr@canb.auug.org.au>
+References: <20101221181158.53f62590.sfr@canb.auug.org.au>
+	<20101221194204.GA11611@kroah.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__10_Jan_2011_11_49_59_+1100_PS_x3pP2t25j2HwG"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from tundra.namei.org ([65.99.196.166]:54298 "EHLO tundra.namei.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:53482 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752439Ab1AIWtM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 9 Jan 2011 17:49:12 -0500
-In-Reply-To: <4D2666D0.9060802@schaufler-ca.com>
+	id S1752086Ab1AJAuI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 9 Jan 2011 19:50:08 -0500
+In-Reply-To: <20101221194204.GA11611@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kay Sievers <kay.sievers@vrfy.org>, Linus <torvalds@linux-foundation.org>
 
-On Thu, 6 Jan 2011, Casey Schaufler wrote:
+--Signature=_Mon__10_Jan_2011_11_49_59_+1100_PS_x3pP2t25j2HwG
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On 1/6/2011 4:44 PM, Stephen Rothwell wrote:
-> > Hi James,
-> >
-> > Today's linux-next merge of the security-testing tree got a conflict in
-> > security/smack/smack_lsm.c between commit
-> > 3610cda53f247e176bcbb7a7cca64bc53b12acdb ("af_unix: Avoid socket->sk NULL
-> > OOPS in stream connect security hooks") from the net tree and commit
-> > b4e0d5f0791bd6dd12a1c1edea0340969c7c1f90 ("Smack: UDS revision") from the
-> > security-testing tree.
-> >
-> > I fixed it up (I think - see below) and can carry the fix as necessary.
-> 
-> The change looks like it addresses the change in interface. Thank you.
+Hi Greg, Kay,
 
-Thanks, applied.
+On Tue, 21 Dec 2010 11:42:04 -0800 Greg KH <greg@kroah.com> wrote:
+>
+> On Tue, Dec 21, 2010 at 06:11:58PM +1100, Stephen Rothwell wrote:
+> >=20
+> > After merging the tty tree, today's linux-next build (powerpc
+> > ppc64_defconfig) produced these warnings:
+> >=20
+> > drivers/tty/tty_io.c: In function 'tty_init':
+> > drivers/tty/tty_io.c:3309: warning: ignoring return value of 'device_cr=
+eate_file', declared with attribute warn_unused_result
+> > drivers/tty/vt/vt.c: In function 'vty_init':
+> > drivers/tty/vt/vt.c:2997: warning: ignoring return value of 'device_cre=
+ate_file', declared with attribute warn_unused_result
+> >=20
+> > Introduced by commit fbc92a3455577ab17615cbcb91826399061bd789 ("tty: add
+> > 'active' sysfs attribute to tty0 and console device").
+>=20
+> Oops, Kay, care to make up a patch to fix these warnings?
 
+These warnings are now in Linus' tree ...
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
--- 
-James Morris
-<jmorris@namei.org>
+--Signature=_Mon__10_Jan_2011_11_49_59_+1100_PS_x3pP2t25j2HwG
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNKle3AAoJEDMEi1NhKgbsSk4H/1Pxi/lnAdBWK1TgNcGFChN0
+XciycWwaoqIWZdFy08OhO1BMTRzbibs8Ul0xuZ/OEh+6EJY+s9tWLFjMr3sNvLhT
+Zq4rz7gVSn2um7f4SB6bflq4fu5V8Sc5BtU5ACQHVa4TInv5FC1yGjwR7fAAbVqT
+kiryrzBb294uO3kAM+2jlOjLtcGjOCY+Z/p+u/BPdTRTKZelvlyPW1WVWaFIYU7N
+VlU0o2c6MAOeIeAAHyXeDyceHB9GMFnLBHYQTU99tB2dVRLrf45FkguPUQKqqA4S
+Frx2NfJ2MqUXMnS5HhfDR+x2DL/oJdpDBIFP3UKtpJ8QrtOs4mK/o/th17m/PTw=
+=t7Xg
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__10_Jan_2011_11_49_59_+1100_PS_x3pP2t25j2HwG--
