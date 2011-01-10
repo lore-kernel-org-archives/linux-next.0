@@ -1,51 +1,77 @@
-From: Tony Luck <tony.luck@gmail.com>
-Subject: Re: WARNING: at kernel/workqueue.c [was: mmotm 2011-01-06-15-41 uploaded]
-Date: Mon, 10 Jan 2011 15:36:09 -0800
-Message-ID: <AANLkTimeUN9m-roDmsfaMaiD4wZw1wETYsf+dONjpmyj@mail.gmail.com>
-References: <201101070014.p070Egpo023959@imap1.linux-foundation.org>
-	<4D2ADD43.2020702@gmail.com>
-	<AANLkTin7h=R0cfzpeuvpTAGRFCsFocJezpW7Riz5Za4z@mail.gmail.com>
+From: Joel Becker <jlbec@evilplan.org>
+Subject: Re: [PATCH] configfs: change depends -> select SYSFS
+Date: Mon, 10 Jan 2011 15:46:41 -0800
+Message-ID: <20110110234640.GC4879@mail.oracle.com>
+References: <1294688708-24986-1-git-send-email-nab@linux-iscsi.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-iw0-f174.google.com ([209.85.214.174]:42701 "EHLO
-	mail-iw0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751831Ab1AJXgK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Jan 2011 18:36:10 -0500
-In-Reply-To: <AANLkTin7h=R0cfzpeuvpTAGRFCsFocJezpW7Riz5Za4z@mail.gmail.com>
+Received: from zeniv.linux.org.uk ([195.92.253.2]:41462 "EHLO
+	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751292Ab1AJXqs (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Jan 2011 18:46:48 -0500
+Content-Disposition: inline
+In-Reply-To: <1294688708-24986-1-git-send-email-nab@linux-iscsi.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Minchan Kim <minchan.kim@gmail.com>
-Cc: Jiri Slaby <jirislaby@gmail.com>, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, mm-commits@vger.kernel.org, Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: Joel Becker <joel.becker@oracle.com>, linux-scsi <linux-scsi@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Randy Dunlap <randy.dunlap@oracle.com>, James Bottomley <James.Bottomley@suse.de>, Stephen Rothwell <sfr@canb.auug.org.au>
 
-> Here it is, too.
-> mmotm-01-06
+On Mon, Jan 10, 2011 at 11:45:08AM -0800, Nicholas A. Bellinger wrote:
+> This patch changes configfs to select SYSFS to fix the following:
+> 
+> warning: (TARGET_CORE && GFS2_FS) selects CONFIGFS_FS which has unmet direct dependencies (SYSFS)
 
-Also in today's linux-next (tag: next-20110110) on ia64:
+	If others are selecting CONFIGFS_FS, I'm thinking that this must
+go in.  So
 
+Acked-by: Joel Becker <jlbec@evilplan.org>
 
-------------[ cut here ]------------
-WARNING: at kernel/workqueue.c:1202 worker_enter_idle+0x3f0/0x4a0()
-Hardware name: server rx2620
-Modules linked in:
+> 
+> This patch also fixes whitespace breakage in the 'help' section.
+> 
+> Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
+> Signed-off-by: Nicholas A. Bellinger <nab@linux-iscsi.org>
+> ---
+>  fs/configfs/Kconfig |   14 +++++++-------
+>  1 files changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/configfs/Kconfig b/fs/configfs/Kconfig
+> index 13587cc..0e4bd23 100644
+> --- a/fs/configfs/Kconfig
+> +++ b/fs/configfs/Kconfig
+> @@ -1,11 +1,11 @@
+>  config CONFIGFS_FS
+>  	tristate "Userspace-driven configuration filesystem"
+> -	depends on SYSFS
+> +	select SYSFS
+>  	help
+> -	  configfs is a ram-based filesystem that provides the converse
+> -	  of sysfs's functionality. Where sysfs is a filesystem-based
+> -	  view of kernel objects, configfs is a filesystem-based manager
+> -	  of kernel objects, or config_items.
+> +	configfs is a RAM-based filesystem that provides the converse
+> +	of sysfs's functionality. Where sysfs is a filesystem-based
+> +	view of kernel objects, configfs is a filesystem-based manager
+> +	of kernel objects, or config_items.
+>  
+> -	  Both sysfs and configfs can and should exist together on the
+> -	  same system. One is not a replacement for the other.
+> +	Both sysfs and configfs can and should exist together on the
+> +	same system. One is not a replacement for the other.
+> -- 
+> 1.7.3.5
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-fsdevel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-Call Trace:
- [<a000000100014cb0>] show_stack+0x50/0xa0
-                                sp=e0000040600d7c30 bsp=e0000040600d0dd0
- [<a000000100bcaa20>] dump_stack+0x30/0x50
-                                sp=e0000040600d7e00 bsp=e0000040600d0db8
- [<a000000100082260>] warn_slowpath_common+0xc0/0x100
-                                sp=e0000040600d7e00 bsp=e0000040600d0d78
- [<a0000001000822e0>] warn_slowpath_null+0x40/0x60
-                                sp=e0000040600d7e00 bsp=e0000040600d0d50
- [<a0000001000b0830>] worker_enter_idle+0x3f0/0x4a0
-                                sp=e0000040600d7e00 bsp=e0000040600d0d28
- [<a0000001000b2c80>] worker_thread+0x8c0/0x980
-                                sp=e0000040600d7e00 bsp=e0000040600d0c28
- [<a0000001000c08c0>] kthread+0x120/0x160
-                                sp=e0000040600d7e00 bsp=e0000040600d0be8
- [<a000000100012ef0>] kernel_thread_helper+0x30/0x60
-                                sp=e0000040600d7e30 bsp=e0000040600d0bc0
- [<a00000010000a0c0>] start_kernel_thread+0x20/0x40
-                                sp=e0000040600d7e30 bsp=e0000040600d0bc0
----[ end trace 7e2fb881ec0622f8 ]---
+-- 
+
+Life's Little Instruction Book #451
+
+	"Don't be afraid to say, 'I'm sorry.'"
+
+			http://www.jlbec.org/
+			jlbec@evilplan.org
