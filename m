@@ -1,67 +1,56 @@
-From: Guenter Roeck <guenter.roeck@ericsson.com>
-Subject: Re: linux-next: manual merge of the hwmon-staging tree with the
- jdelvare-hwmon tree
-Date: Mon, 10 Jan 2011 03:11:44 -0800
-Message-ID: <20110110111144.GA29501@ericsson.com>
-References: <20110110132057.bc5d54a0.sfr@canb.auug.org.au>
- <20110110034638.GA28007@ericsson.com>
- <20110110095743.7616b7b3@endymion.delvare>
- <20110110101623.GA29314@ericsson.com>
- <20110110114750.7e1849ea@endymion.delvare>
+From: Philippe De Muyter <phdm@macqel.be>
+Subject: [PATCH] watchdog,m68knommu: allow M548x watchdog compilation only
+	for M548x
+Date: Mon, 10 Jan 2011 13:27:35 +0100
+Message-ID: <20110110122735.GA23114@frolo.macqel>
+References: <20110110141250.78947d61.sfr@canb.auug.org.au> <20110110072750.GL3801@infomag.iguana.be>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from imr3.ericy.com ([198.24.6.13]:53988 "EHLO imr3.ericy.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752359Ab1AJLMA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 10 Jan 2011 06:12:00 -0500
+Received: from mailrelay010.isp.belgacom.be ([195.238.6.177]:8296 "EHLO
+	mailrelay010.isp.belgacom.be" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753197Ab1AJM1v (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 10 Jan 2011 07:27:51 -0500
 Content-Disposition: inline
-In-Reply-To: <20110110114750.7e1849ea@endymion.delvare>
+In-Reply-To: <20110110072750.GL3801@infomag.iguana.be>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jean Delvare <khali@linux-fr.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Joe Perches <joe@perches.com>, Juerg Haefliger <juergh@gmail.com>
+To: Wim Van Sebroeck <wim@iguana.be>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Jan 10, 2011 at 05:47:50AM -0500, Jean Delvare wrote:
-> On Mon, 10 Jan 2011 02:16:23 -0800, Guenter Roeck wrote:
-> > On Mon, Jan 10, 2011 at 03:57:43AM -0500, Jean Delvare wrote:
-> > > Let's be good citizens and sort out the conflict before sending the
-> > > patches to Linus. I shall pick the pr_fmt change patch in my own tree.
-> > > 
-> > > But where do I pick it?
-> > > ftp://pub.kernel.org/pub/linux/kernel/people/groeck/linux-staging/ is
-> > > no longer relevant, right? Maybe you can delete it altogether to clear
-> > > up the confusion. Care to point me to somewhere I can download the
-> > > pr_fmt change patch?
-> > > 
-> > Try again; I updated it.
-> > 
-> > hwmon-next/0007-hwmon-dme1737-Use-pr_fmt-and-pr_-level.patch
-> 
-> Hmm, apparently syncing is down or slow, I don't see it yet. Will look
-> again later.
-> 
-> > In general, I keep my git tree up to date.
-> > 
-> > git://git.kernel.org/pub/scm/linux/kernel/git/groeck/staging.git
-> > 
-> > You can get it from there as well.
-> > 
-> > > As for sending your patches to Linus for 2.6.38, yes, please send them
-> > > as soon as possible. I am still not done processing all the mails I
-> > > received during my vacation, and I must send my i2c patches too, so
-> > > it's better if you don't wait for me and send your patches first.
-> > > 
-> > Ok. Do you want me to take out the dme1737 patch ?
-> 
-> If you send your patches to Linus today, it doesn't actually make a
-> difference. So, whatever is easier for you.
-> 
-Ok, let's do it that way.
+Hi Wim and Stephen,
 
-Sorry for the whole trouble. The patches you applied do not follow
-Documentation/CodingStyle, and I did not want to apply them without your
-approval. I thought I sent you a note, but looks like that got lost in my own
-vacation.
+On Mon, Jan 10, 2011 at 08:27:50AM +0100, Wim Van Sebroeck wrote:
+> Hi Stephen,
+> 
+> > After merging the watchdog tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> 
+> This driver is for the m68K architecture. I apparently missed checking
+> the dependancy in Kconfig. I'll fix it today.
 
-Guenter
+Here is my attempt :
+
+allow M548x watchdog compilation only for M548x
+
+Signed-off-by: Philippe De Muyter <phdm@macqel.be>
+---
+ drivers/watchdog/Kconfig |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+index b742f8b..d54bea0 100644
+--- a/drivers/watchdog/Kconfig
++++ b/drivers/watchdog/Kconfig
+@@ -831,7 +831,7 @@ config SBC_EPX_C3_WATCHDOG
+ 
+ config M548x_WATCHDOG 
+  	tristate "MCF548x watchdog support" 
+- 	depends on WATCHDOG 
++ 	depends on M548x
+  	help 
+  	  To compile this driver as a module, choose M here: the 
+  	  module will be called m548x_wdt.
+-- 
+1.7.1
