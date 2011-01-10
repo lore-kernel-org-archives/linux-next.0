@@ -1,112 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the watchdog tree
-Date: Mon, 10 Jan 2011 14:12:50 +1100
-Message-ID: <20110110141250.78947d61.sfr@canb.auug.org.au>
+From: Guenter Roeck <guenter.roeck@ericsson.com>
+Subject: Re: linux-next: manual merge of the hwmon-staging tree with the
+ jdelvare-hwmon tree
+Date: Sun, 9 Jan 2011 19:46:38 -0800
+Message-ID: <20110110034638.GA28007@ericsson.com>
+References: <20110110132057.bc5d54a0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__10_Jan_2011_14_12_50_+1100_yl4GBABhPkETLAWj"
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20110110132057.bc5d54a0.sfr@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Wim Van Sebroeck <wim@iguana.be>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Philippe De Muyter <phdm@macqel.be>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Joe Perches <joe@perches.com>, Juerg Haefliger <juergh@gmail.com>, Jean Delvare <khali@linux-fr.org>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__10_Jan_2011_14_12_50_+1100_yl4GBABhPkETLAWj
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sun, Jan 09, 2011 at 09:20:57PM -0500, Stephen Rothwell wrote:
+> Hi Guenter,
+> 
+> Today's linux-next merge of the hwmon-staging tree got a conflict in
+> drivers/hwmon/dme1737.c between commit
+> b7f2a5c8c9190fcf0126d43972a8ad37eb98f5d0 ("hwmon: (dme1737) Minor
+> cleanups") from the jdelvare-hwmon tree and commit
+> 9c6e13b411cf0f656b7d7a78ec35bf0069f631bb ("hwmon: (dme1737) Use pr_fmt
+> and pr_<level>") from the hwmon-staging tree.
+> 
+> Just context changes.  I fixed it up (see below) and can carry the fix as
+> necessary.
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+Hi Stephen,
 
-Hi Wim,
+thanks for the note. I suspected that would happen - sorry for the trouble.
 
-After merging the watchdog tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Jean, do you want to take Joe's pr_fmt change from my tree and apply it to yours,
+or should we just wait until the first of the trees was merged into Linus' tree ?
+If the latter, do you want to send your patches to Linus first, or should I go first ?
+I am ready to go.
 
-drivers/watchdog/m548x_wdt.c:31:26: error: asm/coldfire.h: No such file or =
-directory
-drivers/watchdog/m548x_wdt.c:32:26: error: asm/m548xsim.h: No such file or =
-directory
-drivers/watchdog/m548x_wdt.c:33:26: error: asm/m548xgpt.h: No such file or =
-directory
-drivers/watchdog/m548x_wdt.c: In function 'wdt_enable':
-drivers/watchdog/m548x_wdt.c:47: error: implicit declaration of function '_=
-_raw_readl'
-drivers/watchdog/m548x_wdt.c:47: error: 'MCF_MBAR' undeclared (first use in=
- this function)
-drivers/watchdog/m548x_wdt.c:47: error: (Each undeclared identifier is repo=
-rted only once
-drivers/watchdog/m548x_wdt.c:47: error: for each function it appears in.)
-drivers/watchdog/m548x_wdt.c:47: error: 'MCF_GPT_GMS0' undeclared (first us=
-e in this function)
-drivers/watchdog/m548x_wdt.c:48: error: 'MCF_GPT_GMS_TMS_GPIO' undeclared (=
-first use in this function)
-drivers/watchdog/m548x_wdt.c:49: error: 'MCF_GPT_GMS_GPIO_MASK' undeclared =
-(first use in this function)
-drivers/watchdog/m548x_wdt.c:50: error: 'MCF_GPT_GMS_OD' undeclared (first =
-use in this function)
-drivers/watchdog/m548x_wdt.c:53: error: implicit declaration of function '_=
-_raw_writel'
-drivers/watchdog/m548x_wdt.c:54: error: implicit declaration of function 'M=
-CF_GPT_GCIR_PRE'
-drivers/watchdog/m548x_wdt.c:54: error: 'MCF_BUSCLK' undeclared (first use =
-in this function)
-drivers/watchdog/m548x_wdt.c:55: error: implicit declaration of function 'M=
-CF_GPT_GCIR_CNT'
-drivers/watchdog/m548x_wdt.c:55: error: 'MCF_GPT_GCIR0' undeclared (first u=
-se in this function)
-drivers/watchdog/m548x_wdt.c:56: error: implicit declaration of function 'M=
-CF_GPT_GMS_OCPW'
-drivers/watchdog/m548x_wdt.c:56: error: 'MCF_GPT_GMS_WDEN' undeclared (firs=
-t use in this function)
-drivers/watchdog/m548x_wdt.c:56: error: 'MCF_GPT_GMS_CE' undeclared (first =
-use in this function)
-drivers/watchdog/m548x_wdt.c: In function 'wdt_disable':
-drivers/watchdog/m548x_wdt.c:65: error: 'MCF_MBAR' undeclared (first use in=
- this function)
-drivers/watchdog/m548x_wdt.c:65: error: 'MCF_GPT_GMS0' undeclared (first us=
-e in this function)
-drivers/watchdog/m548x_wdt.c:66: error: 'MCF_GPT_GMS_WDEN' undeclared (firs=
-t use in this function)
-drivers/watchdog/m548x_wdt.c:66: error: 'MCF_GPT_GMS_CE' undeclared (first =
-use in this function)
-drivers/watchdog/m548x_wdt.c: In function 'wdt_keepalive':
-drivers/watchdog/m548x_wdt.c:74: error: 'MCF_MBAR' undeclared (first use in=
- this function)
-drivers/watchdog/m548x_wdt.c:74: error: 'MCF_GPT_GMS0' undeclared (first us=
-e in this function)
-drivers/watchdog/m548x_wdt.c: In function 'm548x_wdt_init':
-drivers/watchdog/m548x_wdt.c:197: error: 'MCF_MBAR' undeclared (first use i=
-n this function)
-drivers/watchdog/m548x_wdt.c:197: error: 'MCF_GPT_GCIR0' undeclared (first =
-use in this function)
-drivers/watchdog/m548x_wdt.c: In function 'm548x_wdt_exit':
-drivers/watchdog/m548x_wdt.c:211: error: 'MCF_MBAR' undeclared (first use i=
-n this function)
-drivers/watchdog/m548x_wdt.c:211: error: 'MCF_GPT_GCIR0' undeclared (first =
-use in this function)
-
-Caused by commit 91bb5dc5d42f400e18766f32a84ae585f61553a9 ("watchdog: Add
-MCF548x watchdog driver").
-
-I have used the watchdog tree from next-20110107 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__10_Jan_2011_14_12_50_+1100_yl4GBABhPkETLAWj
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNKnkyAAoJEDMEi1NhKgbs768IAJj60MIL8/vRNLafhFaJ0wKO
-fbDbwoqbnVycIXHg+9fCO+siDfbftSRZbqzKH2AxFHGxDOO/D+GP7ThVDNxJ6mVN
-g7/weZjcaNP5xjMYjuKkVm+XVUhIKnhjdkh1lb6TvPHFxdwWZKlwBDbmyV4xpLNE
-z7gS1hwPkXSNQFBmEI1VtBaGXOqH8qoUUpCy20bHtJ6wHTO9Zqp5Z3+XDbOXwtsM
-TvPYEj1vCO7rZ90JS+IqyUYIFDK08WifWWwueZuYzoKjC86Vs/zSy2HQGummIT9f
-X3wyir4gQTs/vv8lSkmcnSyA6o+n3g4Cn8Q0Cy3A0TpO0LTlV+DfZ5I0E6d7/JM=
-=XgKf
------END PGP SIGNATURE-----
-
---Signature=_Mon__10_Jan_2011_14_12_50_+1100_yl4GBABhPkETLAWj--
+Thanks,
+Guenter
