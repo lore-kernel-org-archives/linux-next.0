@@ -1,56 +1,40 @@
-From: Philippe De Muyter <phdm@macqel.be>
-Subject: [PATCH] watchdog,m68knommu: allow M548x watchdog compilation only
-	for M548x
-Date: Mon, 10 Jan 2011 13:27:35 +0100
-Message-ID: <20110110122735.GA23114@frolo.macqel>
-References: <20110110141250.78947d61.sfr@canb.auug.org.au> <20110110072750.GL3801@infomag.iguana.be>
+From: Ming Lei <tom.leiming@gmail.com>
+Subject: Re: linux-next: manual merge of the usb tree with the omap tree
+Date: Mon, 10 Jan 2011 21:53:54 +0800
+Message-ID: <AANLkTimakCyo5WB4v677-y+V=EO3nPiMTh+msnxkJiwH@mail.gmail.com>
+References: <20101223171859.f6842045.sfr@canb.auug.org.au>
+	<4D139517.3010608@ti.com>
+	<AANLkTi=pTNg2iWN+=uEv=CyZHHCoddF51pmmCMjPeMUF@mail.gmail.com>
+	<4ce0f816f951f24ca3de9c84d9f70842@mail.gmail.com>
+	<AANLkTimA5UOVn6+xe0ofV1F3_XhAP0daBvOAX2k1u_dU@mail.gmail.com>
+	<AANLkTimzQ1PHN986fqPF0yjd1M+390nSUDYJ65pu0z_f@mail.gmail.com>
+	<4D271E0E.8050401@ti.com>
+	<AANLkTikLQRHyp-TS_idEp5Fr74qC3vDoMqqsAA2v_oV8@mail.gmail.com>
+	<c822ad4569a9dc865b5ccf39e12c828b@mail.gmail.com>
+	<f853a77e2aebea4130fc486bdbf4aa06@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailrelay010.isp.belgacom.be ([195.238.6.177]:8296 "EHLO
-	mailrelay010.isp.belgacom.be" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753197Ab1AJM1v (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 10 Jan 2011 07:27:51 -0500
-Content-Disposition: inline
-In-Reply-To: <20110110072750.GL3801@infomag.iguana.be>
+Received: from mail-ww0-f44.google.com ([74.125.82.44]:36751 "EHLO
+	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752045Ab1AJNx4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Jan 2011 08:53:56 -0500
+In-Reply-To: <f853a77e2aebea4130fc486bdbf4aa06@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Wim Van Sebroeck <wim@iguana.be>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Anand Gadiyar <gadiyar@ti.com>
+Cc: Benoit Cousson <b-cousson@ti.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Paul Walmsley <paul@pwsan.com>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
 
-Hi Wim and Stephen,
+Hi,
 
-On Mon, Jan 10, 2011 at 08:27:50AM +0100, Wim Van Sebroeck wrote:
-> Hi Stephen,
-> 
-> > After merging the watchdog tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
-> 
-> This driver is for the m68K architecture. I apparently missed checking
-> the dependancy in Kconfig. I'll fix it today.
+2011/1/7 Anand Gadiyar <gadiyar@ti.com>:
 
-Here is my attempt :
+> Update: I disabled CONFIG_OMAP_RESET_CLOCKS and the PHY and other
+> connected devices enumerate just fine. Could you try this out on
+> your board as well?
 
-allow M548x watchdog compilation only for M548x
+Yes, it does work for me if CONFIG_OMAP_RESET_CLOCKS is disabled.
 
-Signed-off-by: Philippe De Muyter <phdm@macqel.be>
----
- drivers/watchdog/Kconfig |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index b742f8b..d54bea0 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -831,7 +831,7 @@ config SBC_EPX_C3_WATCHDOG
- 
- config M548x_WATCHDOG 
-  	tristate "MCF548x watchdog support" 
-- 	depends on WATCHDOG 
-+ 	depends on M548x
-  	help 
-  	  To compile this driver as a module, choose M here: the 
-  	  module will be called m548x_wdt.
+thanks,
 -- 
-1.7.1
+Lei Ming
