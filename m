@@ -1,35 +1,59 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for January 10 (x86/e820)
-Date: Mon, 10 Jan 2011 08:56:24 -0800
-Message-ID: <20110110085624.5765860a.randy.dunlap@oracle.com>
-References: <20110110154947.31c3eac7.sfr@canb.auug.org.au>
+Subject: Re: [PATCH -next] thermal: depends on NET
+Date: Mon, 10 Jan 2011 09:00:59 -0800
+Message-ID: <20110110090059.6f4d739d.randy.dunlap@oracle.com>
+References: <20101213163607.0b0a7c3a.sfr@canb.auug.org.au>
+	<20101213112033.d0060e6c.randy.dunlap@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:34479 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753434Ab1AJQ5A (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Jan 2011 11:57:00 -0500
-In-Reply-To: <20110110154947.31c3eac7.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, x86@kernel.org
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <20101213112033.d0060e6c.randy.dunlap@oracle.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: linux-acpi@vger.kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, akpm <akpm@linux-foundation.org>, Zhang Rui <rui.zhang@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Zimny Lech <napohybelskurwysynom2010@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 10 Jan 2011 15:49:47 +1100 Stephen Rothwell wrote:
+On Mon, 13 Dec 2010 11:20:33 -0800 Randy Dunlap wrote:
 
-> Hi all,
+This is still needed in linux-next 20110110.
+
+Adding linux-acpi.
+
+Ping.  Is anybody there?  It has only been 4 weeks now with no reply...
+
+
+
+> From: Randy Dunlap <randy.dunlap@oracle.com>
 > 
-> Reminder: do not add any v2.6.39 material to your linux-next included
-> trees until after v2.6.38-rc1 is released.
+> ERROR: "genl_register_family" [drivers/thermal/thermal_sys.ko] undefined!
+> ERROR: "genl_unregister_family" [drivers/thermal/thermal_sys.ko] undefined!
+> ERROR: "init_net" [drivers/thermal/thermal_sys.ko] undefined!
+> ERROR: "__alloc_skb" [drivers/thermal/thermal_sys.ko] undefined!
+> ERROR: "netlink_broadcast" [drivers/thermal/thermal_sys.ko] undefined!
+> ERROR: "kfree_skb" [drivers/thermal/thermal_sys.ko] undefined!
+> ERROR: "genl_register_mc_group" [drivers/thermal/thermal_sys.ko] undefined!
+> ERROR: "nla_reserve" [drivers/thermal/thermal_sys.ko] undefined!
+> ERROR: "skb_put" [drivers/thermal/thermal_sys.ko] undefined!
 > 
-> Changes since 20110107:
-
-
-When CONFIG_ACPI is not enabled:
-
-arch/x86/kernel/e820.c:734: error:implicit declaration of function 'suspend_nvs_register'
+> Reported-by: Zimny Lech <napohybelskurwysynom2010@gmail.com>
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> Cc: Zhang Rui <rui.zhang@intel.com>
+> ---
+>  drivers/thermal/Kconfig |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> --- linux-next-20101213.orig/drivers/thermal/Kconfig
+> +++ linux-next-20101213/drivers/thermal/Kconfig
+> @@ -4,6 +4,7 @@
+>  
+>  menuconfig THERMAL
+>  	tristate "Generic Thermal sysfs driver"
+> +	depends on NET
+>  	help
+>  	  Generic Thermal Sysfs driver offers a generic mechanism for
+>  	  thermal management. Usually it's made up of one or more thermal
+> --
 
 
 ---
