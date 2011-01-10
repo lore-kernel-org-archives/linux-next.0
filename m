@@ -1,77 +1,55 @@
-From: Joel Becker <jlbec@evilplan.org>
-Subject: Re: [PATCH] configfs: change depends -> select SYSFS
-Date: Mon, 10 Jan 2011 15:46:41 -0800
-Message-ID: <20110110234640.GC4879@mail.oracle.com>
-References: <1294688708-24986-1-git-send-email-nab@linux-iscsi.org>
+From: Kees Cook <kees.cook@canonical.com>
+Subject: Re: [PATCH 3/3 V13] RO/NX protection for loadable kernel
+Date: Mon, 10 Jan 2011 15:49:59 -0800
+Message-ID: <20110110234959.GE4979@outflux.net>
+References: <4CE2F914.9070106@free.fr>
+ <24422.1290656467@localhost>
+ <20101126182355.62615dff@mat-laptop>
+ <20101208221951.GO5750@outflux.net>
+ <20101211001857.4c5e0794@mat-laptop>
+ <20101222124019.GG10809@elte.hu>
+ <34428.1293053719@localhost>
+ <AANLkTin55DXcQnK3NY7y-v8TXj5w-XT2rTJo9p90tj4g@mail.gmail.com>
+ <20110107130426.GA24259@elte.hu>
+ <20110108122455.38d31524@mat-laptop>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:41462 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751292Ab1AJXqs (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 10 Jan 2011 18:46:48 -0500
+Received: from smtp.outflux.net ([198.145.64.163]:43056 "EHLO smtp.outflux.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751710Ab1AJXur (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 10 Jan 2011 18:50:47 -0500
 Content-Disposition: inline
-In-Reply-To: <1294688708-24986-1-git-send-email-nab@linux-iscsi.org>
+In-Reply-To: <20110108122455.38d31524@mat-laptop>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Cc: Joel Becker <joel.becker@oracle.com>, linux-scsi <linux-scsi@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Randy Dunlap <randy.dunlap@oracle.com>, James Bottomley <James.Bottomley@suse.de>, Stephen Rothwell <sfr@canb.auug.org.au>
+To: matthieu castet <castet.matthieu@free.fr>
+Cc: Ingo Molnar <mingo@elte.hu>, Xiaotian Feng <xtfeng@gmail.com>, Valdis.Kletnieks@vt.edu, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Rusty Russell <rusty@rustcorp.com.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>, Siarhei Liakh <sliakh.lkml@gmail.com>, Steven Rostedt <rostedt@goodmis.org>
 
-On Mon, Jan 10, 2011 at 11:45:08AM -0800, Nicholas A. Bellinger wrote:
-> This patch changes configfs to select SYSFS to fix the following:
-> 
-> warning: (TARGET_CORE && GFS2_FS) selects CONFIGFS_FS which has unmet direct dependencies (SYSFS)
+Hi,
 
-	If others are selecting CONFIGFS_FS, I'm thinking that this must
-go in.  So
+I was just shown this[1] on Xen from an Ubuntu bug report[2].
 
-Acked-by: Joel Becker <jlbec@evilplan.org>
+[    1.230382] NX-protecting the kernel data: 3884k
+[    1.231002] BUG: unable to handle kernel paging request at c1782ae0
+...
+[    1.231145] Call Trace:
+[    1.231152]  [<c0138481>] ? __change_page_attr+0x2c1/0x370
+[    1.231161]  [<c02163a1>] ? __purge_vmap_area_lazy+0xc1/0x180
+[    1.231169]  [<c013857c>] ? __change_page_attr_set_clr+0x4c/0xb0
+[    1.231176]  [<c0138838>] ? change_page_attr_set_clr+0x128/0x300
+[    1.231183]  [<c010798e>] ? __raw_callee_save_xen_restore_fl+0x6/0x8
+[    1.231192]  [<c0159ca1>] ? vprintk+0x171/0x3f0
+[    1.231198]  [<c0138bdf>] ? set_memory_nx+0x5f/0x70
 
-> 
-> This patch also fixes whitespace breakage in the 'help' section.
-> 
-> Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
-> Signed-off-by: Nicholas A. Bellinger <nab@linux-iscsi.org>
-> ---
->  fs/configfs/Kconfig |   14 +++++++-------
->  1 files changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/configfs/Kconfig b/fs/configfs/Kconfig
-> index 13587cc..0e4bd23 100644
-> --- a/fs/configfs/Kconfig
-> +++ b/fs/configfs/Kconfig
-> @@ -1,11 +1,11 @@
->  config CONFIGFS_FS
->  	tristate "Userspace-driven configuration filesystem"
-> -	depends on SYSFS
-> +	select SYSFS
->  	help
-> -	  configfs is a ram-based filesystem that provides the converse
-> -	  of sysfs's functionality. Where sysfs is a filesystem-based
-> -	  view of kernel objects, configfs is a filesystem-based manager
-> -	  of kernel objects, or config_items.
-> +	configfs is a RAM-based filesystem that provides the converse
-> +	of sysfs's functionality. Where sysfs is a filesystem-based
-> +	view of kernel objects, configfs is a filesystem-based manager
-> +	of kernel objects, or config_items.
->  
-> -	  Both sysfs and configfs can and should exist together on the
-> -	  same system. One is not a replacement for the other.
-> +	Both sysfs and configfs can and should exist together on the
-> +	same system. One is not a replacement for the other.
-> -- 
-> 1.7.3.5
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-fsdevel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+Does Xen have different size page table allocations or something weird?
+
+-Kees
+
+[1] http://launchpadlibrarian.net/61853131/natty-failed-boot-ec2.txt
+[2] https://bugs.launchpad.net/ubuntu/+source/linux/+bug/699828
 
 -- 
-
-Life's Little Instruction Book #451
-
-	"Don't be afraid to say, 'I'm sorry.'"
-
-			http://www.jlbec.org/
-			jlbec@evilplan.org
+Kees Cook
+Ubuntu Security Team
