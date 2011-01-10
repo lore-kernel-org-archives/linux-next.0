@@ -1,61 +1,40 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH -next] thermal: depends on NET
-Date: Mon, 10 Jan 2011 09:00:59 -0800
-Message-ID: <20110110090059.6f4d739d.randy.dunlap@oracle.com>
-References: <20101213163607.0b0a7c3a.sfr@canb.auug.org.au>
-	<20101213112033.d0060e6c.randy.dunlap@oracle.com>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: linux-next: build warnings after merge of the final tree (ext3
+ tree related)
+Date: Mon, 10 Jan 2011 18:29:19 +0100
+Message-ID: <20110110172919.GC4904@quack.suse.cz>
+References: <20110107140414.43d5b980.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20101213112033.d0060e6c.randy.dunlap@oracle.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: linux-acpi@vger.kernel.org
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, akpm <akpm@linux-foundation.org>, Zhang Rui <rui.zhang@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Zimny Lech <napohybelskurwysynom2010@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from cantor2.suse.de ([195.135.220.15]:58558 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753063Ab1AJR3Y (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 10 Jan 2011 12:29:24 -0500
+Content-Disposition: inline
+In-Reply-To: <20110107140414.43d5b980.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jan Kara <jack@suse.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Czerner <lczerner@redhat.com>
 
-On Mon, 13 Dec 2010 11:20:33 -0800 Randy Dunlap wrote:
+  Hi Stephen,
 
-This is still needed in linux-next 20110110.
-
-Adding linux-acpi.
-
-Ping.  Is anybody there?  It has only been 4 weeks now with no reply...
-
-
-
-> From: Randy Dunlap <randy.dunlap@oracle.com>
+On Fri 07-01-11 14:04:14, Stephen Rothwell wrote:
+> After merging the final tree, today's linux-next build (powerpc
+> ppc44x_defconfig) produced these warnings:
 > 
-> ERROR: "genl_register_family" [drivers/thermal/thermal_sys.ko] undefined!
-> ERROR: "genl_unregister_family" [drivers/thermal/thermal_sys.ko] undefined!
-> ERROR: "init_net" [drivers/thermal/thermal_sys.ko] undefined!
-> ERROR: "__alloc_skb" [drivers/thermal/thermal_sys.ko] undefined!
-> ERROR: "netlink_broadcast" [drivers/thermal/thermal_sys.ko] undefined!
-> ERROR: "kfree_skb" [drivers/thermal/thermal_sys.ko] undefined!
-> ERROR: "genl_register_mc_group" [drivers/thermal/thermal_sys.ko] undefined!
-> ERROR: "nla_reserve" [drivers/thermal/thermal_sys.ko] undefined!
-> ERROR: "skb_put" [drivers/thermal/thermal_sys.ko] undefined!
+> fs/ext3/balloc.c: In function 'ext3_get_group_no_and_offset':
+> fs/ext3/balloc.c:53: warning: comparison of distinct pointer types lacks a cast
+> fs/ext3/balloc.c:53: warning: right shift count >= width of type
+> fs/ext3/balloc.c:53: warning: passing argument 1 of '__div64_32' from incompatible pointer type
+> include/asm-generic/div64.h:35: note: expected 'uint64_t *' but argument is of type 'ext3_fsblk_t *'
 > 
-> Reported-by: Zimny Lech <napohybelskurwysynom2010@gmail.com>
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> Cc: Zhang Rui <rui.zhang@intel.com>
-> ---
->  drivers/thermal/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> --- linux-next-20101213.orig/drivers/thermal/Kconfig
-> +++ linux-next-20101213/drivers/thermal/Kconfig
-> @@ -4,6 +4,7 @@
->  
->  menuconfig THERMAL
->  	tristate "Generic Thermal sysfs driver"
-> +	depends on NET
->  	help
->  	  Generic Thermal Sysfs driver offers a generic mechanism for
->  	  thermal management. Usually it's made up of one or more thermal
-> --
+> Caused by commit 3e5eb5c509e311fdea2468be913ec264edd4f617 ("ext3: Add
+> batched discard support for ext3").
+  Thanks for spotting this. It should be fixed in my tree now.
 
-
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+									Honza
+-- 
+Jan Kara <jack@suse.cz>
+SUSE Labs, CR
