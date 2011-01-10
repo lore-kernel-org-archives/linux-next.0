@@ -1,39 +1,76 @@
 From: Anand Gadiyar <gadiyar@ti.com>
-Subject: Re: linux-next: manual merge of the usb tree with the omap tree
-Date: Mon, 10 Jan 2011 19:39:24 +0530
-Message-ID: <4D2B1314.3010901@ti.com>
-References: <20101223171859.f6842045.sfr@canb.auug.org.au>	<4D139517.3010608@ti.com>	<AANLkTi=pTNg2iWN+=uEv=CyZHHCoddF51pmmCMjPeMUF@mail.gmail.com>	<4ce0f816f951f24ca3de9c84d9f70842@mail.gmail.com>	<AANLkTimA5UOVn6+xe0ofV1F3_XhAP0daBvOAX2k1u_dU@mail.gmail.com>	<AANLkTimzQ1PHN986fqPF0yjd1M+390nSUDYJ65pu0z_f@mail.gmail.com>	<4D271E0E.8050401@ti.com>	<AANLkTikLQRHyp-TS_idEp5Fr74qC3vDoMqqsAA2v_oV8@mail.gmail.com>	<c822ad4569a9dc865b5ccf39e12c828b@mail.gmail.com>	<f853a77e2aebea4130fc486bdbf4aa06@mail.gmail.com> <AANLkTimakCyo5WB4v677-y+V=EO3nPiMTh+msnxkJiwH@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH] arm: omap4: pandaboard: turn on PHY reference clock at init
+Date: Mon, 10 Jan 2011 20:12:15 +0530
+Message-ID: <1294670535-9059-1-git-send-email-gadiyar@ti.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from na3sys009aog102.obsmtp.com ([74.125.149.69]:41734 "EHLO
-	na3sys009aog102.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753765Ab1AJOJc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 10 Jan 2011 09:09:32 -0500
-In-Reply-To: <AANLkTimakCyo5WB4v677-y+V=EO3nPiMTh+msnxkJiwH@mail.gmail.com>
+Received: from bear.ext.ti.com ([192.94.94.41]:42741 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754150Ab1AJOmm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 10 Jan 2011 09:42:42 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ming Lei <tom.leiming@gmail.com>
-Cc: Benoit Cousson <b-cousson@ti.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Paul Walmsley <paul@pwsan.com>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
+To: linux-omap@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Greg KH <gregkh@suse.de>, Felipe Balbi <balbi@ti.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Anand Gadiyar <gadiyar@ti.com>, Benoit Cousson <b-cousson@ti.com>, Paul Walmsley <paul@pwsan.com>, Tony Lindgren <tony@atomide.com>
 
-On 1/10/2011 7:23 PM, Ming Lei wrote:
-> Hi,
-> 
-> 2011/1/7 Anand Gadiyar <gadiyar@ti.com>:
-> 
->> Update: I disabled CONFIG_OMAP_RESET_CLOCKS and the PHY and other
->> connected devices enumerate just fine. Could you try this out on
->> your board as well?
-> 
-> Yes, it does work for me if CONFIG_OMAP_RESET_CLOCKS is disabled.
-> 
-> thanks,
+The SMSC 3320 USB PHY on the OMAP4 Pandaboard needs a 19.2 MHz
+reference clock. This clock is provided from the OMAP4's fref_clk3
+pad.
 
-Great, patch coming up in a few minutes.
+Recent changes to clock44xx_data.c made the clock framework aware
+of the existence of these fref_clk[i] lines. If the option
+CONFIG_OMAP_RESET_CLOCKS is enabled in the kernel, then the
+clock framework will turn these clocks off during bootup.
 
-I figured out why we need auxclk3 - the PHY's reference clock
-is provided by it.
+Explicitly request and keep this clock enabled at init for the
+Pandaboard, so that the PHY receives this clock at all times.
+
+Reported-by: Ming Lei <tom.leiming@gmail.com>
+Signed-off-by: Anand Gadiyar <gadiyar@ti.com>
+Cc: Benoit Cousson <b-cousson@ti.com>
+Cc: Paul Walmsley <paul@pwsan.com>
+Cc: Tony Lindgren <tony@atomide.com>
+---
+Tony,
+
+The clock database changes were merged just before Christmas, so
+we did not detect this sooner. Would be nice to get this merged in
+the -rc series, so that we get EHCI and ethernet functional on the Panda.
+
+Ming Lei,
+
+Could you please test this and confirm it fixes the issue for you?
 
 - Anand
+
+ arch/arm/mach-omap2/board-omap4panda.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+Index: linux-2.6/arch/arm/mach-omap2/board-omap4panda.c
+===================================================================
+--- linux-2.6.orig/arch/arm/mach-omap2/board-omap4panda.c
++++ linux-2.6/arch/arm/mach-omap2/board-omap4panda.c
+@@ -19,6 +19,7 @@
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+ #include <linux/platform_device.h>
++#include <linux/clk.h>
+ #include <linux/io.h>
+ #include <linux/leds.h>
+ #include <linux/gpio.h>
+@@ -95,7 +96,16 @@ static const struct ehci_hcd_omap_platfo
+ static void __init omap4_ehci_init(void)
+ {
+ 	int ret;
++	struct clk *phy_ref_clk;
+ 
++	/* FREF_CLK3 provides the 19.2 MHz reference clock to the PHY */
++	phy_ref_clk = clk_get(NULL, "auxclk3_ck");
++	if (IS_ERR(phy_ref_clk)) {
++		pr_err("Cannot request auxclk3\n");
++		goto error1;
++	}
++	clk_set_rate(phy_ref_clk, 19200000);
++	clk_enable(phy_ref_clk);
+ 
+ 	/* disable the power to the usb hub prior to init */
+ 	ret = gpio_request(GPIO_HUB_POWER, "hub_power");
