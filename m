@@ -1,62 +1,64 @@
-From: Sedat Dilek <sedat.dilek@googlemail.com>
-Subject: [squashfs-xz] 2.6.38?
-Date: Tue, 11 Jan 2011 10:03:11 +0100
-Message-ID: <AANLkTi=0xR7oPz5OZ9PKM9madm0RUU1-Lrgo9BCEPmZ_@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: WARNING: at kernel/workqueue.c [was: mmotm 2011-01-06-15-41
+ uploaded]
+Date: Tue, 11 Jan 2011 15:32:44 +0100
+Message-ID: <20110111143244.GC30607@htj.dyndns.org>
+References: <201101070014.p070Egpo023959@imap1.linux-foundation.org>
+ <4D2ADD43.2020702@gmail.com>
+ <AANLkTin7h=R0cfzpeuvpTAGRFCsFocJezpW7Riz5Za4z@mail.gmail.com>
+ <AANLkTimeUN9m-roDmsfaMaiD4wZw1wETYsf+dONjpmyj@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=000e0ce0da0a9d740d04998e5a63
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:47111 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753015Ab1AKJDM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Jan 2011 04:03:12 -0500
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:38765 "EHLO
+	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756016Ab1AKOct (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Jan 2011 09:32:49 -0500
+Content-Disposition: inline
+In-Reply-To: <AANLkTimeUN9m-roDmsfaMaiD4wZw1wETYsf+dONjpmyj@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org
-Cc: Phillip Lougher <phillip@lougher.demon.co.uk>
+To: Tony Luck <tony.luck@gmail.com>
+Cc: Minchan Kim <minchan.kim@gmail.com>, Jiri Slaby <jirislaby@gmail.com>, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-next@vger.kernel.org
 
---000e0ce0da0a9d740d04998e5a63
-Content-Type: text/plain; charset=UTF-8
+On Mon, Jan 10, 2011 at 03:36:09PM -0800, Tony Luck wrote:
+> > Here it is, too.
+> > mmotm-01-06
+> 
+> Also in today's linux-next (tag: next-20110110) on ia64:
+> 
+> 
+> ------------[ cut here ]------------
+> WARNING: at kernel/workqueue.c:1202 worker_enter_idle+0x3f0/0x4a0()
+> Hardware name: server rx2620
+> Modules linked in:
+> 
+> Call Trace:
+>  [<a000000100014cb0>] show_stack+0x50/0xa0
+>                                 sp=e0000040600d7c30 bsp=e0000040600d0dd0
+>  [<a000000100bcaa20>] dump_stack+0x30/0x50
+>                                 sp=e0000040600d7e00 bsp=e0000040600d0db8
+>  [<a000000100082260>] warn_slowpath_common+0xc0/0x100
+>                                 sp=e0000040600d7e00 bsp=e0000040600d0d78
+>  [<a0000001000822e0>] warn_slowpath_null+0x40/0x60
+>                                 sp=e0000040600d7e00 bsp=e0000040600d0d50
+>  [<a0000001000b0830>] worker_enter_idle+0x3f0/0x4a0
+>                                 sp=e0000040600d7e00 bsp=e0000040600d0d28
+>  [<a0000001000b2c80>] worker_thread+0x8c0/0x980
+>                                 sp=e0000040600d7e00 bsp=e0000040600d0c28
+>  [<a0000001000c08c0>] kthread+0x120/0x160
+>                                 sp=e0000040600d7e00 bsp=e0000040600d0be8
+>  [<a000000100012ef0>] kernel_thread_helper+0x30/0x60
+>                                 sp=e0000040600d7e30 bsp=e0000040600d0bc0
+>  [<a00000010000a0c0>] start_kernel_thread+0x20/0x40
+>                                 sp=e0000040600d7e30 bsp=e0000040600d0bc0
+> ---[ end trace 7e2fb881ec0622f8 ]---
 
-Hi,
+Ah, of course, it's commit 21ec12364bb78b72ad36b94269c64b3ee31b038f
+(workqueue: remove noop condition check in worker_clr_flags()).  The
+condition it removes is not a noop.  Reverting it.
 
-it would be cool to see the squashfs-xz patches from [1] in 2.6.38?
-A lot of distributions use it in combination with AUFS for their
-Linux-live-systems.
+Thank you.
 
-I have pulled the squashfs-xz tree into linux-next (next-20110111) and
-git could automagically solve the conflicts.
-But I had to add attached fix.
-
-
-Kind Regards,
-- Sedat -
-
-
-[1] http://git.kernel.org/?p=linux/kernel/git/pkl/squashfs-xz.git;a=summary
-
---000e0ce0da0a9d740d04998e5a63
-Content-Type: text/x-patch; charset=US-ASCII;
-	name="0001-squashfs-xz-Fix-misplaced-endif-after-merge.patch"
-Content-Disposition: attachment;
-	filename="0001-squashfs-xz-Fix-misplaced-endif-after-merge.patch"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_giskp3ey0
-
-RnJvbSBkODRlMGFlMjkzODIwMDBkNTRhYzFmMjlkOTA5OWM2MGNjZGZhMzdkIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBTZWRhdCBEaWxlayA8c2VkYXQuZGlsZWtAZ21haWwuY29tPgpE
-YXRlOiBUdWUsIDExIEphbiAyMDExIDA5OjE3OjM2ICswMTAwClN1YmplY3Q6IFtQQVRDSF0gc3F1
-YXNoZnMteHo6IEZpeCBtaXNwbGFjZWQgZW5kaWYgYWZ0ZXIgbWVyZ2UKCgpTaWduZWQtb2ZmLWJ5
-OiBTZWRhdCBEaWxlayA8c2VkYXQuZGlsZWtAZ21haWwuY29tPgotLS0KIGZzL3NxdWFzaGZzL2Rl
-Y29tcHJlc3Nvci5jIHwgICAgMiArLQogMSBmaWxlcyBjaGFuZ2VkLCAxIGluc2VydGlvbnMoKyks
-IDEgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZnMvc3F1YXNoZnMvZGVjb21wcmVzc29yLmMg
-Yi9mcy9zcXVhc2hmcy9kZWNvbXByZXNzb3IuYwppbmRleCBiN2I4YzQwLi5lMDNkZTBhIDEwMDY0
-NAotLS0gYS9mcy9zcXVhc2hmcy9kZWNvbXByZXNzb3IuYworKysgYi9mcy9zcXVhc2hmcy9kZWNv
-bXByZXNzb3IuYwpAQCAtNTksMTEgKzU5LDExIEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgc3F1YXNo
-ZnNfZGVjb21wcmVzc29yICpkZWNvbXByZXNzb3JbXSA9IHsKIAkmc3F1YXNoZnNfemxpYl9jb21w
-X29wcywKIAkmc3F1YXNoZnNfbHpvX2NvbXBfb3BzLAogCSZzcXVhc2hmc19sem1hX3Vuc3VwcG9y
-dGVkX2NvbXBfb3BzLAotI2VuZGlmCiAjaWZkZWYgQ09ORklHX1NRVUFTSEZTX1haCiAJJnNxdWFz
-aGZzX3h6X2NvbXBfb3BzLAogI2Vsc2UKIAkmc3F1YXNoZnNfeHpfdW5zdXBwb3J0ZWRfY29tcF9v
-cHMsCisjZW5kaWYKIAkmc3F1YXNoZnNfdW5rbm93bl9jb21wX29wcwogfTsKIAotLSAKMS43LjQu
-cmMwCgo=
---000e0ce0da0a9d740d04998e5a63--
+-- 
+tejun
