@@ -1,55 +1,53 @@
-From: Kees Cook <kees.cook@canonical.com>
-Subject: Re: [PATCH 3/3 V13] RO/NX protection for loadable kernel
-Date: Mon, 10 Jan 2011 15:49:59 -0800
-Message-ID: <20110110234959.GE4979@outflux.net>
-References: <4CE2F914.9070106@free.fr>
- <24422.1290656467@localhost>
- <20101126182355.62615dff@mat-laptop>
- <20101208221951.GO5750@outflux.net>
- <20101211001857.4c5e0794@mat-laptop>
- <20101222124019.GG10809@elte.hu>
- <34428.1293053719@localhost>
- <AANLkTin55DXcQnK3NY7y-v8TXj5w-XT2rTJo9p90tj4g@mail.gmail.com>
- <20110107130426.GA24259@elte.hu>
- <20110108122455.38d31524@mat-laptop>
+From: "J.H." <warthog9@kernel.org>
+Subject: Re: patchwork.kernel.org down
+Date: Mon, 10 Jan 2011 16:45:18 -0800
+Message-ID: <4D2BA81E.50600@kernel.org>
+References: <AANLkTik4ktaeyDG3ihh-YRB+WVLxA46wSLOgWy6iY_68@mail.gmail.com>	<20101220204936.GA21290@huya.qualcomm.com>	<4D0FFC4B.9050301@kernel.org> <ada62u3dkv2.fsf@cisco.com>	<adaei8k8ubh.fsf@cisco.com> <4D2B664F.7050106@kernel.org> <ada1v4k8pnw.fsf@cisco.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.outflux.net ([198.145.64.163]:43056 "EHLO smtp.outflux.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751710Ab1AJXur (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 10 Jan 2011 18:50:47 -0500
-Content-Disposition: inline
-In-Reply-To: <20110108122455.38d31524@mat-laptop>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: matthieu castet <castet.matthieu@free.fr>
-Cc: Ingo Molnar <mingo@elte.hu>, Xiaotian Feng <xtfeng@gmail.com>, Valdis.Kletnieks@vt.edu, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Rusty Russell <rusty@rustcorp.com.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>, Siarhei Liakh <sliakh.lkml@gmail.com>, Steven Rostedt <rostedt@goodmis.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <ada1v4k8pnw.fsf@cisco.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Roland Dreier <rdreier@cisco.com>
+Cc: David Brown <davidb@codeaurora.org>, sedat.dilek@gmail.com, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, ftpadmin@kernel.org, webmaster@kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi,
+On 01/10/2011 12:33 PM, Roland Dreier wrote:
+>  > Not yet, I'm adding it in this afternoon.  I did the upgrade to Fedora
+>  > 14 (and thus 2.6.35.10) and seem to be getting, if not the same bug, a
+>  > darned similar one:
+>  > 
+>  > http://pastebin.osuosl.org/36644
+> 
+> Actually that looks pretty different; the trace is
+> 
+>  put_ldisc+0x8d/0xb4
+>  tty_ldisc_reinit+0x43/0x5c
+>  tty_ldisc_hangup+0x10d/0x19d
+>  do_tty_hangup+0x108/0x343
+>  ? __raw_local_irq_save+0x1d/0x23
+>  tty_vhangup_self+0x27/0x34
+>  sys_vhangup+0x22/0x29
+>  system_call_fastpath+0x16/0x1b
+> 
+> which doesn't involve any /proc/net file being closed at all.
+> 
+> Hmm...
 
-I was just shown this[1] on Xen from an Ubuntu bug report[2].
+My thoughts on why it was possibly similar is that it happens
 
-[    1.230382] NX-protecting the kernel data: 3884k
-[    1.231002] BUG: unable to handle kernel paging request at c1782ae0
-...
-[    1.231145] Call Trace:
-[    1.231152]  [<c0138481>] ? __change_page_attr+0x2c1/0x370
-[    1.231161]  [<c02163a1>] ? __purge_vmap_area_lazy+0xc1/0x180
-[    1.231169]  [<c013857c>] ? __change_page_attr_set_clr+0x4c/0xb0
-[    1.231176]  [<c0138838>] ? change_page_attr_set_clr+0x128/0x300
-[    1.231183]  [<c010798e>] ? __raw_callee_save_xen_restore_fl+0x6/0x8
-[    1.231192]  [<c0159ca1>] ? vprintk+0x171/0x3f0
-[    1.231198]  [<c0138bdf>] ? set_memory_nx+0x5f/0x70
+[  793.932076] kernel BUG at mm/slub.c:2834!
 
+where as 20702 is
 
-Does Xen have different size page table allocations or something weird?
+kernel BUG at mm/slub.c:2835!
 
--Kees
+the rest didn't line up, and like I said I haven't specifically dug into it.
 
-[1] http://launchpadlibrarian.net/61853131/natty-failed-boot-ec2.txt
-[2] https://bugs.launchpad.net/ubuntu/+source/linux/+bug/699828
+As a note I did end up with a full panic in the last hour, but nothing
+got recorded (sadly).  I'm working on getting the kernel compiled up
+with everything now so hopefully I'll start getting some additional data
+to share.
 
--- 
-Kees Cook
-Ubuntu Security Team
+- John 'Warthog9' Hawley
