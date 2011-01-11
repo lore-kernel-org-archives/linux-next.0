@@ -1,53 +1,61 @@
-From: "J.H." <warthog9@kernel.org>
-Subject: Re: patchwork.kernel.org down
-Date: Mon, 10 Jan 2011 16:45:18 -0800
-Message-ID: <4D2BA81E.50600@kernel.org>
-References: <AANLkTik4ktaeyDG3ihh-YRB+WVLxA46wSLOgWy6iY_68@mail.gmail.com>	<20101220204936.GA21290@huya.qualcomm.com>	<4D0FFC4B.9050301@kernel.org> <ada62u3dkv2.fsf@cisco.com>	<adaei8k8ubh.fsf@cisco.com> <4D2B664F.7050106@kernel.org> <ada1v4k8pnw.fsf@cisco.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (sound tree
+ related)
+Date: Tue, 11 Jan 2011 13:20:30 +1100
+Message-ID: <20110111132030.3179e682.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <ada1v4k8pnw.fsf@cisco.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Roland Dreier <rdreier@cisco.com>
-Cc: David Brown <davidb@codeaurora.org>, sedat.dilek@gmail.com, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, ftpadmin@kernel.org, webmaster@kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:43976 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753504Ab1AKCUf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 10 Jan 2011 21:20:35 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Clemens Ladisch <clemens@ladisch.de>
 
-On 01/10/2011 12:33 PM, Roland Dreier wrote:
->  > Not yet, I'm adding it in this afternoon.  I did the upgrade to Fedora
->  > 14 (and thus 2.6.35.10) and seem to be getting, if not the same bug, a
->  > darned similar one:
->  > 
->  > http://pastebin.osuosl.org/36644
-> 
-> Actually that looks pretty different; the trace is
-> 
->  put_ldisc+0x8d/0xb4
->  tty_ldisc_reinit+0x43/0x5c
->  tty_ldisc_hangup+0x10d/0x19d
->  do_tty_hangup+0x108/0x343
->  ? __raw_local_irq_save+0x1d/0x23
->  tty_vhangup_self+0x27/0x34
->  sys_vhangup+0x22/0x29
->  system_call_fastpath+0x16/0x1b
-> 
-> which doesn't involve any /proc/net file being closed at all.
-> 
-> Hmm...
+Hi all,
 
-My thoughts on why it was possibly similar is that it happens
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-[  793.932076] kernel BUG at mm/slub.c:2834!
+sound/pci/oxygen/xonar_dg.c: In function 'dg_output_enable':
+sound/pci/oxygen/xonar_dg.c:138: error: implicit declaration of function 'msleep'
 
-where as 20702 is
+Caused by commit 66410bfdf14f7c2ad3b2d4a8adeab41d368b6f05 ("ALSA: oxygen:
+add Xonar DG support").
 
-kernel BUG at mm/slub.c:2835!
+See Rule 1 in Documentation/SubmitChecklist.
 
-the rest didn't line up, and like I said I haven't specifically dug into it.
+I added the following patch for today:
 
-As a note I did end up with a full panic in the last hour, but nothing
-got recorded (sadly).  I'm working on getting the kernel compiled up
-with everything now so hopefully I'll start getting some additional data
-to share.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 11 Jan 2011 13:17:16 +1100
+Subject: [PATCH] ALSA: include delay.h for msleep in Xonar DG support
 
-- John 'Warthog9' Hawley
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ sound/pci/oxygen/xonar_dg.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/sound/pci/oxygen/xonar_dg.c b/sound/pci/oxygen/xonar_dg.c
+index cc610ac1..dd45cf4 100644
+--- a/sound/pci/oxygen/xonar_dg.c
++++ b/sound/pci/oxygen/xonar_dg.c
+@@ -40,6 +40,7 @@
+  */
+ 
+ #include <linux/pci.h>
++#include <linux/delay.h>
+ #include <sound/control.h>
+ #include <sound/core.h>
+ #include <sound/info.h>
+-- 
+1.7.2.3
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
