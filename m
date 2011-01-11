@@ -1,64 +1,51 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: WARNING: at kernel/workqueue.c [was: mmotm 2011-01-06-15-41
- uploaded]
-Date: Tue, 11 Jan 2011 15:32:44 +0100
-Message-ID: <20110111143244.GC30607@htj.dyndns.org>
-References: <201101070014.p070Egpo023959@imap1.linux-foundation.org>
- <4D2ADD43.2020702@gmail.com>
- <AANLkTin7h=R0cfzpeuvpTAGRFCsFocJezpW7Riz5Za4z@mail.gmail.com>
- <AANLkTimeUN9m-roDmsfaMaiD4wZw1wETYsf+dONjpmyj@mail.gmail.com>
+From: <Narendra_K@Dell.com>
+Subject: Re: linux-next: build failure after merge of the pci tree
+Date: Tue, 11 Jan 2011 20:48:21 +0530
+Message-ID: <20110111154214.GA16157@fedora14-r610.oslab.blr.amer.dell.com>
+References: <20110110125411.2f45fd2f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:38765 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756016Ab1AKOct (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Jan 2011 09:32:49 -0500
-Content-Disposition: inline
-In-Reply-To: <AANLkTimeUN9m-roDmsfaMaiD4wZw1wETYsf+dONjpmyj@mail.gmail.com>
+Received: from ausxippc101.us.dell.com ([143.166.85.207]:33889 "EHLO
+	ausxippc101.us.dell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756093Ab1AKPSz convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 11 Jan 2011 10:18:55 -0500
+In-Reply-To: <20110110125411.2f45fd2f.sfr@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tony Luck <tony.luck@gmail.com>
-Cc: Minchan Kim <minchan.kim@gmail.com>, Jiri Slaby <jirislaby@gmail.com>, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-next@vger.kernel.org
+To: sfr@canb.auug.org.au
+Cc: jbarnes@virtuousgeek.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Narendra_K@Dell.com, Jordan_Hargrave@Dell.com, Matt_Domsch@Dell.com
 
-On Mon, Jan 10, 2011 at 03:36:09PM -0800, Tony Luck wrote:
-> > Here it is, too.
-> > mmotm-01-06
+On Mon, Jan 10, 2011 at 07:24:11AM +0530, Stephen Rothwell wrote:
+> Hi Jesse,
 > 
-> Also in today's linux-next (tag: next-20110110) on ia64:
+> After merging the pci tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
 > 
+> drivers/built-in.o: In function `T.647':
+> pci-label.c:(.text+0x28514): undefined reference to `utf16s_to_utf8s'
 > 
-> ------------[ cut here ]------------
-> WARNING: at kernel/workqueue.c:1202 worker_enter_idle+0x3f0/0x4a0()
-> Hardware name: server rx2620
-> Modules linked in:
+> Caused by commit a6247cd4be20cb5439db5cb7b0b6cc67fdc8e2a2 ("PCI: export
+> ACPI _DSM provided firmware instance number and string to sysfs").
 > 
-> Call Trace:
->  [<a000000100014cb0>] show_stack+0x50/0xa0
->                                 sp=e0000040600d7c30 bsp=e0000040600d0dd0
->  [<a000000100bcaa20>] dump_stack+0x30/0x50
->                                 sp=e0000040600d7e00 bsp=e0000040600d0db8
->  [<a000000100082260>] warn_slowpath_common+0xc0/0x100
->                                 sp=e0000040600d7e00 bsp=e0000040600d0d78
->  [<a0000001000822e0>] warn_slowpath_null+0x40/0x60
->                                 sp=e0000040600d7e00 bsp=e0000040600d0d50
->  [<a0000001000b0830>] worker_enter_idle+0x3f0/0x4a0
->                                 sp=e0000040600d7e00 bsp=e0000040600d0d28
->  [<a0000001000b2c80>] worker_thread+0x8c0/0x980
->                                 sp=e0000040600d7e00 bsp=e0000040600d0c28
->  [<a0000001000c08c0>] kthread+0x120/0x160
->                                 sp=e0000040600d7e00 bsp=e0000040600d0be8
->  [<a000000100012ef0>] kernel_thread_helper+0x30/0x60
->                                 sp=e0000040600d7e30 bsp=e0000040600d0bc0
->  [<a00000010000a0c0>] start_kernel_thread+0x20/0x40
->                                 sp=e0000040600d7e30 bsp=e0000040600d0bc0
-> ---[ end trace 7e2fb881ec0622f8 ]---
+> I have used the pci tree from next-20110107 for today.
 
-Ah, of course, it's commit 21ec12364bb78b72ad36b94269c64b3ee31b038f
-(workqueue: remove noop condition check in worker_clr_flags()).  The
-condition it removes is not a noop.  Reverting it.
+[ It looks like my earlier post did not hit the lists, so reposting ]
 
-Thank you.
+Hi, 
 
--- 
-tejun
+I did a git pull of linux-next-20110110 (topmost commit is 
+4c897f27ad2668534f719202a3b88abe8ec31011) and applied the patch. With 
+CONFIG_DMI and CONFIG_ACPI both set, I did not encounter this build failure. 
+The definition for `utf16s_to_utf8s' is available in 'include/linux/nls.h' 
+which is included in 'drivers/pci/pci-label.c' and the build succeeded. Sorry 
+if I am missing something here.
+
+Stephen,
+
+Could you share the .config which caused this build failure ?
+
+With regards,
+Narendra K
