@@ -1,50 +1,78 @@
-From: matthieu castet <castet.matthieu@free.fr>
-Subject: Re: [PATCH 3/3 V13] RO/NX protection for loadable kernel
-Date: Tue, 11 Jan 2011 23:42:47 +0100
-Message-ID: <4D2CDCE7.6030002@free.fr>
-References: <4CE2F914.9070106@free.fr> <24422.1290656467@localhost> <20101126182355.62615dff@mat-laptop> <20101208221951.GO5750@outflux.net> <20101211001857.4c5e0794@mat-laptop> <20101222124019.GG10809@elte.hu> <34428.1293053719@localhost> <AANLkTin55DXcQnK3NY7y-v8TXj5w-XT2rTJo9p90tj4g@mail.gmail.com> <20110107130426.GA24259@elte.hu> <20110108122455.38d31524@mat-laptop> <20110110234959.GE4979@outflux.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the pci tree
+Date: Wed, 12 Jan 2011 10:12:25 +1100
+Message-ID: <20110112101225.e5a96937.sfr@canb.auug.org.au>
+References: <20110110125411.2f45fd2f.sfr@canb.auug.org.au>
+	<20110111154214.GA16157@fedora14-r610.oslab.blr.amer.dell.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-security-module-owner@vger.kernel.org>
-In-Reply-To: <20110110234959.GE4979@outflux.net>
-Sender: linux-security-module-owner@vger.kernel.org
-To: Kees Cook <kees.cook@canonical.com>
-Cc: Ingo Molnar <mingo@elte.hu>, Xiaotian Feng <xtfeng@gmail.com>, Valdis.Kletnieks@vt.edu, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Rusty Russell <rusty@rustcorp.com.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>, Siarhei Liakh <sliakh.lkml@gmail.com>, Steven Rostedt <rostedt@goodmis.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__12_Jan_2011_10_12_25_+1100_XV8d4+kX6.cgmS=y"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:48562 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752122Ab1AKXMc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 11 Jan 2011 18:12:32 -0500
+In-Reply-To: <20110111154214.GA16157@fedora14-r610.oslab.blr.amer.dell.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Narendra_K@Dell.com
+Cc: jbarnes@virtuousgeek.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jordan_Hargrave@Dell.com, Matt_Domsch@Dell.com
 
-Kees Cook a =E9crit :
-> Hi,
->=20
-> I was just shown this[1] on Xen from an Ubuntu bug report[2].
->=20
-> [    1.230382] NX-protecting the kernel data: 3884k
-> [    1.231002] BUG: unable to handle kernel paging request at c1782ae=
-0
-> ...
-> [    1.231145] Call Trace:
-> [    1.231152]  [<c0138481>] ? __change_page_attr+0x2c1/0x370
-> [    1.231161]  [<c02163a1>] ? __purge_vmap_area_lazy+0xc1/0x180
-> [    1.231169]  [<c013857c>] ? __change_page_attr_set_clr+0x4c/0xb0
-> [    1.231176]  [<c0138838>] ? change_page_attr_set_clr+0x128/0x300
-> [    1.231183]  [<c010798e>] ? __raw_callee_save_xen_restore_fl+0x6/0=
-x8
-> [    1.231192]  [<c0159ca1>] ? vprintk+0x171/0x3f0
-> [    1.231198]  [<c0138bdf>] ? set_memory_nx+0x5f/0x70
->=20
->=20
-> Does Xen have different size page table allocations or something weir=
-d?
->=20
-Note that this one isn't related to this one but to "Add NX protection =
-for kernel data".
+--Signature=_Wed__12_Jan_2011_10_12_25_+1100_XV8d4+kX6.cgmS=y
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-But have no idea how xen page table work.
+Hi Narendra,
 
-Matthieu
---
-To unsubscribe from this list: send the line "unsubscribe linux-securit=
-y-module" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On Tue, 11 Jan 2011 20:48:21 +0530 <Narendra_K@Dell.com> wrote:
+>
+> On Mon, Jan 10, 2011 at 07:24:11AM +0530, Stephen Rothwell wrote:
+> >=20
+> > After merging the pci tree, today's linux-next build (x86_64 allmodconf=
+ig)
+> > failed like this:
+> >=20
+> > drivers/built-in.o: In function `T.647':
+> > pci-label.c:(.text+0x28514): undefined reference to `utf16s_to_utf8s'
+> >=20
+> > Caused by commit a6247cd4be20cb5439db5cb7b0b6cc67fdc8e2a2 ("PCI: export
+> > ACPI _DSM provided firmware instance number and string to sysfs").
+> >=20
+> > I have used the pci tree from next-20110107 for today.
+>=20
+> I did a git pull of linux-next-20110110 (topmost commit is=20
+> 4c897f27ad2668534f719202a3b88abe8ec31011) and applied the patch. With=20
+> CONFIG_DMI and CONFIG_ACPI both set, I did not encounter this build failu=
+re.=20
+> The definition for `utf16s_to_utf8s' is available in 'include/linux/nls.h=
+'=20
+> which is included in 'drivers/pci/pci-label.c' and the build succeeded. S=
+orry=20
+> if I am missing something here.
+
+I did an x86_64 allmodconfig build (see above) which has CONFIG_NLS=3Dm and
+so utf16s_to_utf8s is not available to built in code ...
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__12_Jan_2011_10_12_25_+1100_XV8d4+kX6.cgmS=y
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNLOPZAAoJEDMEi1NhKgbs+pMH/Rq8qrEuWh7bf5HyzIxc/75K
+DMVHwiGOdQ1QYvFTqolaV4/uNwu/46me8aYEgFfCRINynZaTLbg/tYQDPgeh4kaH
+D18zkyZQO2JqjDWM1XIOQ0fBNK9RxgHOQ0w2o85FDGUzuy4WoUzJHMlf+UBgGGwm
+Ynf5DleqQfH5fULq6u89605DJiRYooudml9I7ZsSmIVCGnVxWxe/MOO/Vei5osvk
+qZxXeTl11ISRM8xMzVRi+MXWNWytIJ2b8lxBdpMorAqNCvqFxkwYt7/PeLcXzvwO
+sbNRCdlqwoSuw8p/kZ+yqiee/8rm2z9tPM8VWCp+CjY/bUBn5Y5JToxAKPQHYn8=
+=mzDD
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__12_Jan_2011_10_12_25_+1100_XV8d4+kX6.cgmS=y--
