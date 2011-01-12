@@ -1,45 +1,28 @@
-From: Randy Dunlap <randy.dunlap@Oracle.com>
-Subject: Re: on builds/randconfigs
-Date: Wed, 12 Jan 2011 14:54:53 -0800
-Message-ID: <4D2E313D.3040209@oracle.com>
-References: <20101213163607.0b0a7c3a.sfr@canb.auug.org.au> <alpine.LFD.2.02.1101121257580.18873@x980> <20110112131800.d64c1a86.akpm@linux-foundation.org> <201101122224.54330.rjw@sisk.pl> <alpine.LFD.2.02.1101121654000.19754@x980>
+From: Alasdair G Kergon <agk@redhat.com>
+Subject: Re: [dm-devel] linux-next: Tree for January 12 (dm-crypt)
+Date: Wed, 12 Jan 2011 23:12:15 +0000
+Message-ID: <20110112231215.GC9501@agk-dp.fab.redhat.com>
+References: <20110112141822.c29314c4.sfr@canb.auug.org.au> <20110112100121.ba610465.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:45334 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751484Ab1ALW5P (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 12 Jan 2011 17:57:15 -0500
-In-Reply-To: <alpine.LFD.2.02.1101121654000.19754@x980>
+Received: from mx1.redhat.com ([209.132.183.28]:26017 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751648Ab1ALXMc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 12 Jan 2011 18:12:32 -0500
+Content-Disposition: inline
+In-Reply-To: <20110112100121.ba610465.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Len Brown <lenb@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Andrew Morton <akpm@linux-foundation.org>, linux-acpi@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Zhang Rui <rui.zhang@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Zimny Lech <napohybelskurwysynom2010@gmail.com>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, dm-devel@redhat.com, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On 01/12/11 13:58, Len Brown wrote:
->>> These unusable config combinations should be prevented via Kconfig. 
->>> That prevents users from selecting them, which otherwise adds to
->>> our workload and to theirs.  It also prevents false-positives
->>> during our useful randconfig testing.
->>
->> But it is kind of difficult to achieve IMhO.  For example, there are options
->> that are only SELECTed if something else is set, but randconfig doesn't seem
->> to care.
-
-s/randconfig/kconfig/
-
-
-> Kconfig select needs to be fixed so that it is not possible to
-> select something if that something's dependencies are not met.
+On Wed, Jan 12, 2011 at 10:01:21AM -0800, Randy Dunlap wrote:
+> When CONFIG_LBDAF is not enabled (build on i386):
+> (sector_t is 32 bits)
 > 
-> This long standing issue is independent of randconfig,
-> but Randy can probably attest that a measurable portion
-> of the randconfig failures are due to this bug.
+> drivers/md/dm-crypt.c:568: warning:right shift count >= width of type
+ 
+Thanks - being fixed.
 
-Certainly.  At least now we have a kconfig warning on this class of
-problem.
-
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+Alasdair
