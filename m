@@ -1,78 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the pci tree
-Date: Wed, 12 Jan 2011 10:12:25 +1100
-Message-ID: <20110112101225.e5a96937.sfr@canb.auug.org.au>
-References: <20110110125411.2f45fd2f.sfr@canb.auug.org.au>
-	<20110111154214.GA16157@fedora14-r610.oslab.blr.amer.dell.com>
+From: Liam Girdwood <lrg@slimlogic.co.uk>
+Subject: Re: [PATCH] ASoC: tpa6130a2: Fix compiler warning
+Date: Wed, 12 Jan 2011 00:53:58 +0000
+Message-ID: <1294793638.3338.482.camel@odin>
+References: <1293527779-32580-1-git-send-email-peter.ujfalusi@nokia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__12_Jan_2011_10_12_25_+1100_XV8d4+kX6.cgmS=y"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48562 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752122Ab1AKXMc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 11 Jan 2011 18:12:32 -0500
-In-Reply-To: <20110111154214.GA16157@fedora14-r610.oslab.blr.amer.dell.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Narendra_K@Dell.com
-Cc: jbarnes@virtuousgeek.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jordan_Hargrave@Dell.com, Matt_Domsch@Dell.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1293527779-32580-1-git-send-email-peter.ujfalusi@nokia.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Sender: alsa-devel-bounces@alsa-project.org
+Errors-To: alsa-devel-bounces@alsa-project.org
+To: Peter Ujfalusi <peter.ujfalusi@nokia.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, alsa-devel@alsa-project.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Wed__12_Jan_2011_10_12_25_+1100_XV8d4+kX6.cgmS=y
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, 2010-12-28 at 11:16 +0200, Peter Ujfalusi wrote:
+> sound/soc/codecs/tpa6130a2.c: In function 'tpa6130a2_add_controls':
+> sound/soc/codecs/tpa6130a2.c:342: warning: unused variable 'dapm'
+> 
+> Introduced by commit 39646871a47fd8808c08de0ce7d7ca8393af2805 ("ASoC:
+> tpa6130a2: Replace DAPM code with direct interface").
+> 
+> The DAPM code has been removed from the driver, but the
+> dapm struct remained.
+> 
+> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@nokia.com>
+> ---
+>  sound/soc/codecs/tpa6130a2.c |    1 -
+>  1 files changed, 0 insertions(+), 1 deletions(-)
+> 
+> diff --git a/sound/soc/codecs/tpa6130a2.c b/sound/soc/codecs/tpa6130a2.c
+> index 0a99f31..1f1ac81 100644
+> --- a/sound/soc/codecs/tpa6130a2.c
+> +++ b/sound/soc/codecs/tpa6130a2.c
+> @@ -339,7 +339,6 @@ EXPORT_SYMBOL_GPL(tpa6130a2_stereo_enable);
+>  int tpa6130a2_add_controls(struct snd_soc_codec *codec)
+>  {
+>  	struct	tpa6130a2_data *data;
+> -	struct snd_soc_dapm_context *dapm = &codec->dapm;
+>  
+>  	if (tpa6130a2_client == NULL)
+>  		return -ENODEV;
 
-Hi Narendra,
+Applied.
 
-On Tue, 11 Jan 2011 20:48:21 +0530 <Narendra_K@Dell.com> wrote:
->
-> On Mon, Jan 10, 2011 at 07:24:11AM +0530, Stephen Rothwell wrote:
-> >=20
-> > After merging the pci tree, today's linux-next build (x86_64 allmodconf=
-ig)
-> > failed like this:
-> >=20
-> > drivers/built-in.o: In function `T.647':
-> > pci-label.c:(.text+0x28514): undefined reference to `utf16s_to_utf8s'
-> >=20
-> > Caused by commit a6247cd4be20cb5439db5cb7b0b6cc67fdc8e2a2 ("PCI: export
-> > ACPI _DSM provided firmware instance number and string to sysfs").
-> >=20
-> > I have used the pci tree from next-20110107 for today.
->=20
-> I did a git pull of linux-next-20110110 (topmost commit is=20
-> 4c897f27ad2668534f719202a3b88abe8ec31011) and applied the patch. With=20
-> CONFIG_DMI and CONFIG_ACPI both set, I did not encounter this build failu=
-re.=20
-> The definition for `utf16s_to_utf8s' is available in 'include/linux/nls.h=
-'=20
-> which is included in 'drivers/pci/pci-label.c' and the build succeeded. S=
-orry=20
-> if I am missing something here.
+Thanks
 
-I did an x86_64 allmodconfig build (see above) which has CONFIG_NLS=3Dm and
-so utf16s_to_utf8s is not available to built in code ...
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__12_Jan_2011_10_12_25_+1100_XV8d4+kX6.cgmS=y
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNLOPZAAoJEDMEi1NhKgbs+pMH/Rq8qrEuWh7bf5HyzIxc/75K
-DMVHwiGOdQ1QYvFTqolaV4/uNwu/46me8aYEgFfCRINynZaTLbg/tYQDPgeh4kaH
-D18zkyZQO2JqjDWM1XIOQ0fBNK9RxgHOQ0w2o85FDGUzuy4WoUzJHMlf+UBgGGwm
-Ynf5DleqQfH5fULq6u89605DJiRYooudml9I7ZsSmIVCGnVxWxe/MOO/Vei5osvk
-qZxXeTl11ISRM8xMzVRi+MXWNWytIJ2b8lxBdpMorAqNCvqFxkwYt7/PeLcXzvwO
-sbNRCdlqwoSuw8p/kZ+yqiee/8rm2z9tPM8VWCp+CjY/bUBn5Y5JToxAKPQHYn8=
-=mzDD
------END PGP SIGNATURE-----
-
---Signature=_Wed__12_Jan_2011_10_12_25_+1100_XV8d4+kX6.cgmS=y--
+Liam
+-- 
+Freelance Developer, SlimLogic Ltd
+ASoC and Voltage Regulator Maintainer.
+http://www.slimlogic.co.uk
