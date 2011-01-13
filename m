@@ -1,61 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: on builds/randconfigs (was: [PATCH -next] thermal: depends on
- NET)
-Date: Thu, 13 Jan 2011 11:44:46 +1100
-Message-ID: <20110113114446.cba7a01f.sfr@canb.auug.org.au>
-References: <20101213163607.0b0a7c3a.sfr@canb.auug.org.au>
-	<alpine.LFD.2.02.1101121257580.18873@x980>
-	<20110112131800.d64c1a86.akpm@linux-foundation.org>
-	<201101122224.54330.rjw@sisk.pl>
-	<alpine.LFD.2.02.1101121654000.19754@x980>
+Subject: linux-next: manual merge of the fbdev tree with the omap tree
+Date: Thu, 13 Jan 2011 12:58:11 +1100
+Message-ID: <20110113125811.d651c695.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__13_Jan_2011_11_44_46_+1100_zmrtz.6A9nI0lFb9"
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <alpine.LFD.2.02.1101121654000.19754@x980>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Len Brown <lenb@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Andrew Morton <akpm@linux-foundation.org>, Randy Dunlap <randy.dunlap@oracle.com>, linux-acpi@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Zimny Lech <napohybelskurwysynom2010@gmail.com>, Michal Marek <mmarek@suse.cz>, Steven Rostedt <rostedt@goodmis.org>, Linus <torvalds@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Thu__13_Jan_2011_11_44_46_+1100_zmrtz.6A9nI0lFb9
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:48008 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755250Ab1AMB6R (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 12 Jan 2011 20:58:17 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Paul Mundt <lethal@linux-sh.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Koen Kooi <koen@beagleboard.org>, Nishanth Menon <nm@ti.com>, Tony Lindgren <tony@atomide.com>, Bryan Wu <bryan.wu@canonical.com>, Tomi Valkeinen <tomi.valkeinen@nokia.com>
 
-Hi all,
+Hi Paul,
 
-On Wed, 12 Jan 2011 16:58:26 -0500 (EST) Len Brown <lenb@kernel.org> wrote:
->
-> Kconfig select needs to be fixed so that it is not possible to
-> select something if that something's dependencies are not met.
+Today's linux-next merge of the fbdev tree got a conflict in
+arch/arm/mach-omap2/board-omap3beagle.c between commit
+f8362d215549c66066f78e67c033dd370ae50322 ("omap3: beaglexm: fix DVI reset
+GPIO") from the omap tree and commit
+89747c9141cd750a610974d93f71492922b8cbd7 ("OMAP: use generic DPI panel
+driver in board files") from the fbdev tree.
 
-So, should the config step fail if such a thing is attempted, or just not
-honour the "select"?
-
-BTW, Linus asked me to investigate the alternative of having "select"
-(recursively) automatically set the dependencies if they are not already
-set ...
-
---=20
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__13_Jan_2011_11_44_46_+1100_zmrtz.6A9nI0lFb9
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNLkr/AAoJEDMEi1NhKgbstocH/1ekmaRvF96s6Bb6j2kdqjxK
-NIRjyXSVORvubLeseJ5pvHRsikHyfYtlJyQrYuikvc5jFlM8T30OyhJ6eSBb1M+A
-4xX7a+oTV7jF1xdeD7zNbJJNwStpSO47uwfrQvwjh9xteL9CAy973351FggUa0J7
-txLRLhs650WVl0K0ejnWmQNKyVqLVOAToRWAqGBBFKDrVkifeweLFbGBWDkyNmZj
-YHQEFaneQ4mg7bVxIAz4JUtEMQ0roKMW2lO/xVUXvRE8gHYs1fnxRiHKoYZRf/yu
-+z7+M3lnPlAY54AU+EIx1ThFGT9ZCpSkI+QMIKZ7i6zQxJFaJ+yM/DvGvUERpsQ=
-=7cyQ
------END PGP SIGNATURE-----
-
---Signature=_Thu__13_Jan_2011_11_44_46_+1100_zmrtz.6A9nI0lFb9--
+diff --cc arch/arm/mach-omap2/board-omap3beagle.c
+index 2ed8040,a4fe8e1..0000000
+--- a/arch/arm/mach-omap2/board-omap3beagle.c
++++ b/arch/arm/mach-omap2/board-omap3beagle.c
+@@@ -197,11 -204,10 +204,10 @@@ static struct panel_generic_dpi_data dv
+  static struct omap_dss_device beagle_dvi_device = {
+  	.type = OMAP_DISPLAY_TYPE_DPI,
+  	.name = "dvi",
+- 	.driver_name = "generic_panel",
++ 	.driver_name = "generic_dpi_panel",
++ 	.data = &dvi_panel,
+  	.phy.dpi.data_lines = 24,
+ -	.reset_gpio = 170,
+ +	.reset_gpio = -EINVAL,
+- 	.platform_enable = beagle_enable_dvi,
+- 	.platform_disable = beagle_disable_dvi,
+  };
+  
+  static struct omap_dss_device beagle_tv_device = {
