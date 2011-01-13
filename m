@@ -1,44 +1,54 @@
-From: Jesse Barnes <jbarnes@virtuousgeek.org>
-Subject: Re: CONFIG_NLS=m resulting in undefined reference to
- utf16s_to_utf8s causing build failure
-Date: Thu, 13 Jan 2011 07:55:56 -0800
-Message-ID: <20110113075556.789ac3c3@jbarnes-vaio.home>
-References: <20110112203414.GA5657@fedora14-r610.oslab.blr.amer.dell.com>
-	<20110112160229.7b8d82c1@jbarnes-desktop>
-	<alpine.LFD.2.02.1101122217370.19754@x980>
+From: Nishanth Menon <nm@ti.com>
+Subject: Re: linux-next: manual merge of the fbdev tree with the omap tree
+Date: Thu, 13 Jan 2011 10:06:34 -0600
+Message-ID: <4D2F230A.4060401@ti.com>
+References: <20110113125811.d651c695.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cpoproxy1-pub.bluehost.com ([69.89.21.11]:33714 "HELO
-	cpoproxy1-pub.bluehost.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with SMTP id S1757190Ab1AMP4D (ORCPT
+Received: from na3sys009aog112.obsmtp.com ([74.125.149.207]:50380 "EHLO
+	na3sys009aog112.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932517Ab1AMQGp (ORCPT
 	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 13 Jan 2011 10:56:03 -0500
-In-Reply-To: <alpine.LFD.2.02.1101122217370.19754@x980>
+	Thu, 13 Jan 2011 11:06:45 -0500
+In-Reply-To: <20110113125811.d651c695.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Len Brown <lenb@kernel.org>
-Cc: Narendra_K@Dell.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, Matt_Domsch@Dell.com, Charles_Rose@Dell.com, Surya_Prabhakar@Dell.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Koen Kooi <koen@beagleboard.org>, Tomi Valkeinen <tomi.valkeinen@nokia.com>
+Cc: Paul Mundt <lethal@linux-sh.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Bryan Wu <bryan.wu@canonical.com>
 
-On Wed, 12 Jan 2011 22:23:55 -0500 (EST)
-Len Brown <lenb@kernel.org> wrote:
-> > So there's no other ACPI code that depends on this function?  I'd hate
-> > to make PCI depend on NLS, so assuming ACPI doesn't need it (in which
-> > case the select or depend should be there), I guess it should be pulled
-> > into a common file that will always be included.
+Stephen Rothwell had written, on 01/12/2011 07:58 PM, the following:
+> Hi Paul,
 > 
-> No, nothing in the ACPI code uses utf16s_to_utf8s.
+> Today's linux-next merge of the fbdev tree got a conflict in
+> arch/arm/mach-omap2/board-omap3beagle.c between commit
+> f8362d215549c66066f78e67c033dd370ae50322 ("omap3: beaglexm: fix DVI reset
+> GPIO") from the omap tree and commit
+> 89747c9141cd750a610974d93f71492922b8cbd7 ("OMAP: use generic DPI panel
+> driver in board files") from the fbdev tree.
 > 
-> I don't know anything about NLS, but it appears to be
-> something that file systems (befs, cifs, fat, hfs, isofs, jfs, etc)
-> use to to support native languages.
-> 
-> BTW. I don't understand why pci-label.o appears twice above.
-> It used to be just the 2nd one, that depends on CONFIG_DMI.
+> Just context changes.  I fixed it up (see below) and can carry the fix as
+> necessary.
 
-Ok, I'll drop this patch for now then since I haven't seen a fix yet
-and need to get Linus the rest of the changes.
+> diff --cc arch/arm/mach-omap2/board-omap3beagle.c
+> index 2ed8040,a4fe8e1..0000000
+> --- a/arch/arm/mach-omap2/board-omap3beagle.c
+> +++ b/arch/arm/mach-omap2/board-omap3beagle.c
+> @@@ -197,11 -204,10 +204,10 @@@ static struct panel_generic_dpi_data dv
+>   static struct omap_dss_device beagle_dvi_device = {
+>   	.type = OMAP_DISPLAY_TYPE_DPI,
+>   	.name = "dvi",
+> - 	.driver_name = "generic_panel",
+> + 	.driver_name = "generic_dpi_panel",
+> + 	.data = &dvi_panel,
+>   	.phy.dpi.data_lines = 24,
+>  -	.reset_gpio = 170,
+>  +	.reset_gpio = -EINVAL,
+> - 	.platform_enable = beagle_enable_dvi,
+> - 	.platform_disable = beagle_disable_dvi,
+Thanks. Looks fine to me.
 
-Thanks,
-Jesse
+-- 
+Regards,
+Nishanth Menon
