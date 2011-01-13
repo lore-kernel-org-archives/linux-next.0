@@ -1,79 +1,66 @@
-From: <Narendra_K@Dell.com>
-Subject: Re: CONFIG_NLS=m resulting in undefined reference to
- utf16s_to_utf8s causing build failure
-Date: Thu, 13 Jan 2011 22:16:03 +0530
-Message-ID: <20110113170952.GA6598@fedora14-r610.oslab.blr.amer.dell.com>
-References: <20110112203414.GA5657@fedora14-r610.oslab.blr.amer.dell.com>
- <20110112160229.7b8d82c1@jbarnes-desktop>
- <alpine.LFD.2.02.1101122217370.19754@x980>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure in Linus' tree
+Date: Fri, 14 Jan 2011 10:43:10 +1100
+Message-ID: <20110114104310.d975c69c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__14_Jan_2011_10_43_10_+1100_otONrIGegB+hn8P1"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ausc60ps301.us.dell.com ([143.166.148.206]:32755 "EHLO
-	ausc60ps301.us.dell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756934Ab1AMQrc convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 13 Jan 2011 11:47:32 -0500
-In-Reply-To: <alpine.LFD.2.02.1101122217370.19754@x980>
-Content-Language: en-US
+Received: from chilli.pcug.org.au ([203.10.76.44]:58838 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752291Ab1AMXnU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 13 Jan 2011 18:43:20 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: lenb@kernel.org
-Cc: jbarnes@virtuousgeek.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, Matt_Domsch@Dell.com, Charles_Rose@Dell.com, Surya_Prabhakar@Dell.com
+To: Al Viro <viro@zeniv.linux.org.uk>, Linus <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Jan 13, 2011 at 08:53:55AM +0530, Len Brown wrote:
-> 
-> > > drivers/built-in.o: In function `dsm_label_utf16s_to_utf8s':
-> > > /usr/src/Linux-Next/linux-next/drivers/pci/pci-label.c:195: undefined reference to `utf16s_to_utf8s'
-> > > make: *** [.tmp_vmlinux1] Error 1
-> > > 
-> > > The drivers/pci/pci-label.c is compiled as part of vmlinux as defined by
-> > > the makefile drivers/pci/Makefile. 
-> > > 
-> > > #
-> > > # ACPI Related PCI FW Functions
-> > > # ACPI _DSM provided firmware instance and string name
-> > > #
-> > > obj-$(CONFIG_ACPI)    += pci-acpi.o pci-label.o
-> > > 
-> > > # SMBIOS provided firmware instance and labels
-> > > obj-$(CONFIG_DMI)    += pci-label.o
-> > > 
-> > > This could be prevented by one of the following methods -
-> > > 
-> > > * forcing CONFIG_NLS=y if CONFIG_PCI=y 
-> > > * move `utf16s_to_utf8s' out of nls_base.c to a new file to be always
-> > > built into vmlinux
-> > > 
-> > > Please correct me if i missed something here and let me know what would be the right
-> > > way to fix this build failure.
-> > 
-> > So there's no other ACPI code that depends on this function?  I'd hate
-> > to make PCI depend on NLS, so assuming ACPI doesn't need it (in which
-> > case the select or depend should be there), I guess it should be pulled
-> > into a common file that will always be included.
-> 
-> No, nothing in the ACPI code uses utf16s_to_utf8s.
+--Signature=_Fri__14_Jan_2011_10_43_10_+1100_otONrIGegB+hn8P1
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Len,
+Hi all,
 
-Thanks for the information.
+While building Linus' tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-> 
-> I don't know anything about NLS, but it appears to be
-> something that file systems (befs, cifs, fat, hfs, isofs, jfs, etc)
-> use to to support native languages.
-> 
-> BTW. I don't understand why pci-label.o appears twice above.
-> It used to be just the 2nd one, that depends on CONFIG_DMI.
-> 
+fs/ecryptfs/main.c:144: error: expected '=3D', ',', ';', 'asm' or '__attrib=
+ute__' before '*' token
+fs/ecryptfs/main.c: In function 'ecryptfs_interpose':
+fs/ecryptfs/main.c:204: error: implicit declaration of function 'ecryptfs_g=
+et_inode'
+fs/ecryptfs/main.c:204: warning: initialization makes pointer from integer =
+without a cast
+fs/ecryptfs/main.c:206: error: expected ')' before 'return'
+fs/ecryptfs/main.c:212: error: expected expression before '}' token
+fs/ecryptfs/main.c: In function 'ecryptfs_mount':
+fs/ecryptfs/main.c:569: warning: assignment makes pointer from integer with=
+out a cast
 
-Support has been added to export ACPI _DSM provided firmware instance
-number and string, defined in 'PCI Firmware Specification Revision 3.1' 
-section 4.6.7.( DSM for Naming a PCI or PCI Express Device Under
-Operating Systems) to sysfs. So we need to compile pci-labe.c if either
-of CONFIG_DMI or CONFIG_ACPI is set. When ACPI _DSM is available it
-takes priority.
+Caused by commit 66cb76666d69502fe982990b2cff5b6d607fd3b1 ("sanitize
+ecryptfs ->mount()") which was obviously not even build tested.  :-(
 
-With regards,
-Narendra K 
+I have just reverted that commit for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__14_Jan_2011_10_43_10_+1100_otONrIGegB+hn8P1
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNL44OAAoJEDMEi1NhKgbsIvQH/1GJlJ6noxVQaQs8BDamHJ+c
+g/EXdOmGW37AKkr0x4cX433NQA5KY/J0NNicl8Wz6MgN6B6adQYOZcN+0i/EMjkQ
+YaTZyZBJK0WjhuUEMb3wvMPHxCwORGpNnIS4ofZvH7FVHZWgnPRoG3vUDIVJ0Bdj
+aEbl4LBmRH0RQtSw7ys1aKwgVIR+DKX17eDowLugBbHqpipJYh5dUx3rSTd77yWF
+IA5BfR3uU9IWHFL61gWSL3CVDpHKZx0RaO6rtv08YyCUUWQhFJJsRkxKXB6vB8cy
+f4KoT5N2V0ExddJZDN3ZfW7bBEbmybtkQoI6rSVph9FjDR9rBQr0tNWqoMtUo9g=
+=kPhm
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__14_Jan_2011_10_43_10_+1100_otONrIGegB+hn8P1--
