@@ -1,65 +1,57 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: on builds/randconfigs (was: [PATCH -next] thermal: depends on
- NET)
-Date: Thu, 13 Jan 2011 14:48:03 +1100
-Message-ID: <20110113144803.ab311f36.sfr@canb.auug.org.au>
-References: <20101213163607.0b0a7c3a.sfr@canb.auug.org.au>
-	<alpine.LFD.2.02.1101121257580.18873@x980>
-	<20110112131800.d64c1a86.akpm@linux-foundation.org>
-	<201101122224.54330.rjw@sisk.pl>
-	<alpine.LFD.2.02.1101121654000.19754@x980>
-	<20110113114446.cba7a01f.sfr@canb.auug.org.au>
-	<1294890340.26623.383.camel@gandalf.stny.rr.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: on builds/randconfigs (was: [PATCH -next] thermal: depends on NET)
+Date: Wed, 12 Jan 2011 20:08:42 -0800
+Message-ID: <AANLkTikJjg330KDvOZZ4agg2dZV6np-rW06=PEuZRSPa@mail.gmail.com>
+References: <20101213163607.0b0a7c3a.sfr@canb.auug.org.au> <alpine.LFD.2.02.1101121257580.18873@x980>
+ <20110112131800.d64c1a86.akpm@linux-foundation.org> <201101122224.54330.rjw@sisk.pl>
+ <alpine.LFD.2.02.1101121654000.19754@x980> <20110113114446.cba7a01f.sfr@canb.auug.org.au>
+ <1294890340.26623.383.camel@gandalf.stny.rr.com> <20110113144803.ab311f36.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__13_Jan_2011_14_48_03_+1100_17ZRlN9txrA8Vv26"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49917 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750978Ab1AMDsN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 12 Jan 2011 22:48:13 -0500
-In-Reply-To: <1294890340.26623.383.camel@gandalf.stny.rr.com>
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:41773 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752136Ab1AMEJg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 12 Jan 2011 23:09:36 -0500
+In-Reply-To: <20110113144803.ab311f36.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, Andrew Morton <akpm@linux-foundation.org>, Randy Dunlap <randy.dunlap@oracle.com>, linux-acpi@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Zimny Lech <napohybelskurwysynom2010@gmail.com>, Michal Marek <mmarek@suse.cz>, Linus <torvalds@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, Andrew Morton <akpm@linux-foundation.org>, Randy Dunlap <randy.dunlap@oracle.com>, linux-acpi@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Zimny Lech <napohybelskurwysynom2010@gmail.com>, Michal Marek <mmarek@suse.cz>
 
---Signature=_Thu__13_Jan_2011_14_48_03_+1100_17ZRlN9txrA8Vv26
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Steve,
-
-On Wed, 12 Jan 2011 22:45:40 -0500 Steven Rostedt <rostedt@goodmis.org> wro=
-te:
+On Wed, Jan 12, 2011 at 7:48 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Steve,
 >
-> What happens if you have foo depends on bar || fib ?
->=20
-> Do you automatically enable bar and fib?
+> On Wed, 12 Jan 2011 22:45:40 -0500 Steven Rostedt <rostedt@goodmis.org> wrote:
+>>
+>> What happens if you have foo depends on bar || fib ?
+>>
+>> Do you automatically enable bar and fib?
+>
+> The plan was to error out and let the user decide ... or behave as we do
+> and just warn?
 
-The plan was to error out and let the user decide ... or behave as we do
-and just warn?
+One thing to notice is that a lot of the "a || b" conditionals tend to
+be cases where one of the expressions is a known constant 'y'.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+In other words, the most common case of "a || b" tends to be things
+like "X86 || MIPS || POWER.." or possibly "PCI || ISA", where one of
+the options will have been hard-coded by the initial architecture
+config file - and would generally not be something that the user sets
+at all.
 
---Signature=_Thu__13_Jan_2011_14_48_03_+1100_17ZRlN9txrA8Vv26
-Content-Type: application/pgp-signature
+Now that may not be _universally_ true, but a quick grep certainly
+supports the notion that that is a very common case.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+So I think we want the rule to be:
 
-iQEcBAEBAgAGBQJNLnXzAAoJEDMEi1NhKgbscz8H/iavKAqEV0vwH0OJLBvuvNJk
-H6v2XR1FXZnFTAxwhqBkhKXFHPyr6o/O6pqiyXRjIIjs0cnmJwd3JTGeqEemtuq1
-rl5JxuqkSRDvV9kYkkX8dJDHGflGFs71jvS7ujLOjr0pUiNauPONEugIIB+ACDXr
-yJRdteM8oMLNNffXzeMtueupDEg+xqkOCS9dyQXvSSFpHf5iS5PlUKgIH3Q8p3pw
-qb4fKxdlCIj1etfQ5CV7xEiCWNaZyFmG5HonfW7CBEZWJjqFtV/JL9XdGrw8Ccdk
-0Rz9YgDKjlj1oinf4ewBrWodrNWFd/HwwFTYFEPymMfG7EvZSkyELklMlYFtRPA=
-=uAh8
------END PGP SIGNATURE-----
+ - check all entries in the "||" chain - and if one of them is already
+set to 'y', then just ignore the dependency as trivially fulfilled
 
---Signature=_Thu__13_Jan_2011_14_48_03_+1100_17ZRlN9txrA8Vv26--
+ - if all are 'n' or unknown, error out (or warn)
+
+and I think there won't be all that many cases where people get the
+error in practice.
+
+                      Linus
