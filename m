@@ -1,37 +1,50 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build warnings in Linus' tree
-Date: Thu, 13 Jan 2011 17:06:07 -0800
-Message-ID: <20110114010607.GA27486@kroah.com>
-References: <20110114110952.bb7d6f37.sfr@canb.auug.org.au>
- <20110113161700.a82a0ae2.akpm@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the cleancache tree with Linus' tree
+Date: Fri, 14 Jan 2011 12:12:07 +1100
+Message-ID: <20110114121207.8d9d33ad.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:59639 "EHLO coco.kroah.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35322 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752343Ab1ANBHB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 13 Jan 2011 20:07:01 -0500
-Content-Disposition: inline
-In-Reply-To: <20110113161700.a82a0ae2.akpm@linux-foundation.org>
+	id S1752343Ab1ANBML (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 13 Jan 2011 20:12:11 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>, Linus <torvalds@linux-foundation.org>
+To: Dan Magenheimer <dan.magenheimer@oracle.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
 
-On Thu, Jan 13, 2011 at 04:17:00PM -0800, Andrew Morton wrote:
-> On Fri, 14 Jan 2011 11:09:52 +1100
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
-> > drivers/net/wireless/p54/p54spi.c:642: warning: ignoring return value of 'gpio_direction_input', declared with attribute warn_unused_result
-> > 
-> > Introduced by commit 0fdae42d361bbb431ca0ab0efed5126a94821177 ("gpiolib:
-> > annotate gpio-intialization with __must_check").
-> 
-> Complete brainfart - I meant to drop that patch ages ago.
+Hi Dan,
 
-Ick, yeah, that patch isn't ok to go in as-is, all of the callers need
-to be fixed up first, which is what I thought we had agreed on...
+Today's linux-next merge of the cleancache tree got a conflict in
+include/linux/fs.h between commit
+c8aebb0c9f8c7471643d5f8ba68328de8013005f ("per-superblock default
+->d_op") from Linus' tree and commit
+8b53f238859d3fca74c4c52ee1af8d6b5daafcc5 ("fs: add field to superblock to
+support cleancache") from the cleancache tree.
 
-thanks,
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-greg k-h
+diff --cc include/linux/fs.h
+index ed6ee47,c52bab0..0000000
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@@ -1422,8 -1384,12 +1422,13 @@@ struct super_block 
+  	 * Saved mount options for lazy filesystems using
+  	 * generic_show_options()
+  	 */
+ -	char *s_options;
+ +	char __rcu *s_options;
+ +	const struct dentry_operations *s_d_op; /* default d_op for dentries */
++ 
++ 	/*
++ 	 * Saved pool identifier for cleancache (-1 means none)
++ 	 */
++ 	int cleancache_poolid;
+  };
+  
+  extern struct timespec current_fs_time(struct super_block *sb);
