@@ -1,50 +1,71 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the cleancache tree with Linus' tree
-Date: Fri, 14 Jan 2011 12:12:07 +1100
-Message-ID: <20110114121207.8d9d33ad.sfr@canb.auug.org.au>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: linux-next: build failure in Linus' tree
+Date: Thu, 13 Jan 2011 17:24:17 -0800
+Message-ID: <AANLkTi=auk_ejRxzSj-bbFJz4gTCfK79qRe8JeFH2T8z@mail.gmail.com>
+References: <20110114104310.d975c69c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary=00221532c77826ea0d0499c44cf5
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35322 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752343Ab1ANBML (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 13 Jan 2011 20:12:11 -0500
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:35037 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752034Ab1ANBZN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Thu, 13 Jan 2011 20:25:13 -0500
+In-Reply-To: <20110114104310.d975c69c.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dan Magenheimer <dan.magenheimer@oracle.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Dan,
+--00221532c77826ea0d0499c44cf5
+Content-Type: text/plain; charset=ISO-8859-1
 
-Today's linux-next merge of the cleancache tree got a conflict in
-include/linux/fs.h between commit
-c8aebb0c9f8c7471643d5f8ba68328de8013005f ("per-superblock default
-->d_op") from Linus' tree and commit
-8b53f238859d3fca74c4c52ee1af8d6b5daafcc5 ("fs: add field to superblock to
-support cleancache") from the cleancache tree.
+On Thu, Jan 13, 2011 at 3:43 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> While building Linus' tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Ok, I applied the attached, which makes it all build. I don't actually
+have a ecryptfs filesystem to test with, though.
 
-diff --cc include/linux/fs.h
-index ed6ee47,c52bab0..0000000
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@@ -1422,8 -1384,12 +1422,13 @@@ struct super_block 
-  	 * Saved mount options for lazy filesystems using
-  	 * generic_show_options()
-  	 */
- -	char *s_options;
- +	char __rcu *s_options;
- +	const struct dentry_operations *s_d_op; /* default d_op for dentries */
-+ 
-+ 	/*
-+ 	 * Saved pool identifier for cleancache (-1 means none)
-+ 	 */
-+ 	int cleancache_poolid;
-  };
-  
-  extern struct timespec current_fs_time(struct super_block *sb);
+Bad Al. Bad, bad Al.
+
+                        Linus
+
+--00221532c77826ea0d0499c44cf5
+Content-Type: text/x-patch; charset=US-ASCII; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+X-Attachment-Id: f_giwenkvy1
+
+Y29tbWl0IDYyNTRiMzJiNTc5MWU0N2JhMWM2NzlkMDIzZjI2OTg1ZmEzNDc1NWEKQXV0aG9yOiBM
+aW51cyBUb3J2YWxkcyA8dG9ydmFsZHNAbGludXgtZm91bmRhdGlvbi5vcmc+CkRhdGU6ICAgVGh1
+IEphbiAxMyAxNzoxOTozOCAyMDExIC0wODAwCgogICAgZWNyeXB0ZnM6IGZpeCBicm9rZW4gYnVp
+bGQKICAgIAogICAgU3RlcGhlbiBSb3Rod2VsbCByZXBvcnRzIHRoYXQgdGhlIHZmcyBtZXJnZSBi
+cm9rZSB0aGUgYnVpbGQgb2YgZWNyeXB0ZnMuCiAgICBUaGUgYnJlYWthZ2UgY29tZXMgZnJvbSBj
+b21taXQgNjZjYjc2NjY2ZDY5ICgic2FuaXRpemUgZWNyeXB0ZnMKICAgIC0+bW91bnQoKSIpIHdo
+aWNoIHdhcyBvYnZpb3VzbHkgbm90IGV2ZW4gYnVpbGQgdGVzdGVkLiBUc3NrLCB0c3NrLCBBbC4K
+ICAgIAogICAgVGhpcyBpcyB0aGUgbWluaW1hbCBidWlsZCBmaXh1cCBmb3IgdGhlIHNpdHVhdGlv
+biwgYWx0aG91Z2ggSSBkb24ndCBoYXZlCiAgICBhIGZpbGVzeXN0ZW0gdG8gYWN0dWFsbHkgdGVz
+dCBpdCB3aXRoLgogICAgCiAgICBSZXBvcnRlZC1ieTogU3RlcGhlbiBSb3Rod2VsbCA8c2ZyQGNh
+bmIuYXV1Zy5vcmcuYXU+CiAgICBDYzogQWwgVmlybyA8dmlyb0B6ZW5pdi5saW51eC5vcmcudWs+
+CiAgICBTaWduZWQtb2ZmLWJ5OiBMaW51cyBUb3J2YWxkcyA8dG9ydmFsZHNAbGludXgtZm91bmRh
+dGlvbi5vcmc+Ci0tLQogZnMvZWNyeXB0ZnMvbWFpbi5jIHwgICAgNSArKy0tLQogMSBmaWxlcyBj
+aGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZnMv
+ZWNyeXB0ZnMvbWFpbi5jIGIvZnMvZWNyeXB0ZnMvbWFpbi5jCmluZGV4IDllZDQ3NjkuLmQzYjI4
+YWIgMTAwNjQ0Ci0tLSBhL2ZzL2VjcnlwdGZzL21haW4uYworKysgYi9mcy9lY3J5cHRmcy9tYWlu
+LmMKQEAgLTE0MSwxMyArMTQxLDEyIEBAIGludCBlY3J5cHRmc19pbml0X3BlcnNpc3RlbnRfZmls
+ZShzdHJ1Y3QgZGVudHJ5ICplY3J5cHRmc19kZW50cnkpCiAJcmV0dXJuIHJjOwogfQogCi1zdGF0
+aWMgaW5vZGUgKmVjcnlwdGZzX2dldF9pbm9kZShzdHJ1Y3QgaW5vZGUgKmxvd2VyX2lub2RlLAor
+c3RhdGljIHN0cnVjdCBpbm9kZSAqZWNyeXB0ZnNfZ2V0X2lub2RlKHN0cnVjdCBpbm9kZSAqbG93
+ZXJfaW5vZGUsCiAJCSAgICAgICBzdHJ1Y3Qgc3VwZXJfYmxvY2sgKnNiKQogewogCXN0cnVjdCBp
+bm9kZSAqaW5vZGU7CiAJaW50IHJjID0gMDsKIAotCWxvd2VyX2lub2RlID0gbG93ZXJfZGVudHJ5
+LT5kX2lub2RlOwogCWlmIChsb3dlcl9pbm9kZS0+aV9zYiAhPSBlY3J5cHRmc19zdXBlcmJsb2Nr
+X3RvX2xvd2VyKHNiKSkgewogCQlyYyA9IC1FWERFVjsKIAkJZ290byBvdXQ7CkBAIC0yMDIsNyAr
+MjAxLDcgQEAgaW50IGVjcnlwdGZzX2ludGVycG9zZShzdHJ1Y3QgZGVudHJ5ICpsb3dlcl9kZW50
+cnksIHN0cnVjdCBkZW50cnkgKmRlbnRyeSwKIHsKIAlzdHJ1Y3QgaW5vZGUgKmxvd2VyX2lub2Rl
+ID0gbG93ZXJfZGVudHJ5LT5kX2lub2RlOwogCXN0cnVjdCBpbm9kZSAqaW5vZGUgPSBlY3J5cHRm
+c19nZXRfaW5vZGUobG93ZXJfaW5vZGUsIHNiKTsKLQlpZiAoSVNfRVJSKGlub2RlKQorCWlmIChJ
+U19FUlIoaW5vZGUpKQogCQlyZXR1cm4gUFRSX0VSUihpbm9kZSk7CiAJaWYgKGZsYWdzICYgRUNS
+WVBURlNfSU5URVJQT1NFX0ZMQUdfRF9BREQpCiAJCWRfYWRkKGRlbnRyeSwgaW5vZGUpOwo=
+--00221532c77826ea0d0499c44cf5--
