@@ -1,146 +1,69 @@
-From: Andrea Arcangeli <aarcange@redhat.com>
-Subject: Re: sparc32 build failure [Was: linux-next: build failure after
- merge of the final tree]
-Date: Sat, 15 Jan 2011 19:26:05 +0100
-Message-ID: <20110115182605.GW9506@random.random>
-References: <20110115131027.2c07ccb0.sfr@canb.auug.org.au>
- <20110115042753.GS9506@random.random>
- <20110115162019.GA8136@merkur.ravnborg.org>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: build failure after merge of the final tree (linus' tree related)
+Date: Sat, 15 Jan 2011 21:01:57 +0100
+Message-ID: <201101152101.57533.rjw@sisk.pl>
+References: <20110115133412.58b8cd89.sfr@canb.auug.org.au> <201101151419.16758.rjw@sisk.pl> <20110116024434.3a5ccabb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:52930 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753695Ab1AOS0X (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 15 Jan 2011 13:26:23 -0500
-Content-Disposition: inline
-In-Reply-To: <20110115162019.GA8136@merkur.ravnborg.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Sam Ravnborg <sam@ravnborg.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, sparclinux <sparclinux@vger.kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, "Luck, Tony" <tony.luck@intel.com>, linux-arch@vger.kernel.org, James Bottomley <James.Bottomley@HansenPartnership.com>
+Content-Type: Text/Plain;
+  charset="iso-8859-2"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <20110116024434.3a5ccabb.sfr@canb.auug.org.au>
+Sender: linux-pci-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ozan Caglayan <ozan@pardus.org.tr>, Linus <torvalds@linux-foundation.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, linux-pci@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hello everyone,
+On Saturday, January 15, 2011, Stephen Rothwell wrote:
+> Hi Raphael,
+> 
+> On Sat, 15 Jan 2011 14:19:16 +0100 "Rafael J. Wysocki" <rjw@sisk.pl> wrote:
+> >
+> > It looks like the non-CONFIG_ACPI version of acpi_find_root_bridge_handle()
+> > is just not necessary any more, because acpi_find_root_bridge_handle() is only
+> > used in code that depends on CONFIG_ACPI.
+> > 
+> > A patch removing it is appended, please test.
+> 
+> That fixes the compile error for my powerpc allyesconfig build.
+> And my x86_64 allmodconfig and i386 defconfig builds still work.
 
-On Sat, Jan 15, 2011 at 05:20:20PM +0100, Sam Ravnborg wrote:
-> Can we get the build fixed ASAP or do we wait for David to comment on this?
+Cool, thanks.
 
-I think sparc32 problem is pmd is an array. So now I built a sparc64
-compiler and built with ARCH=sparc32.
+It goes again below, with a changelog.
 
-$ file vmlinux
-vmlinux: ELF 32-bit MSB relocatable, SPARC, version 1 (SYSV), not stripped
+Thanks,
+Rafael
 
-I got it to build (the zImage won't build on my environment for some
-assembly issue in arch/sparc/boot/btfix.S but that shall not be
-related to this, all it matters is the final linking of vmlinux is
-successful).
-
-So to fix this once and for all, please apply this below patch. If
-this works no change to any arch is required (ia64 could also revert
-the __pmd definition if they prefer, not that it makes any relevant
-difference for ia64 other than being more consistent with most other
-archs).
-
-Only the arm build fix from James most certainly is still needed in
-addition to this.
-
-Sorry again for this build issue.
-Andrea
-
-==========
-Subject: remove pmdp_get_and_clear/pmdp_clear_flush/pmdp_splitting_flush methods when THP=n
-
-From: Andrea Arcangeli <aarcange@redhat.com>
-
-pmdp_get_and_clear/pmdp_clear_flush/pmdp_splitting_flush were trapped
-as BUG() and they were defined only to diminish the risk of build
-issues on not-x86 archs and to be consistent with the generic pte
-methods previously defined in include/asm-generic/pgtable.h.
-
-But they are causing more trouble than they were supposed to solve, so
-it's simpler not to define them when THP is off.
-
-This is also correcting the export of pmdp_splitting_flush which is
-currently unused (x86 isn't using the generic implementation in
-mm/pgtable-generic.c and no other arch needs that [yet]).
-
-Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
 ---
+From: Rafael J. Wysocki <rjw@sisk.pl>
+Subject: PCI / ACPI: Fix build of the AER driver for !CONFIG_ACPI
 
-diff --git a/drivers/staging/vme/bridges/Module.symvers b/drivers/staging/vme/bridges/Module.symvers
-deleted file mode 100644
-index e69de29..0000000
-diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
-index f1eddf7..31b6188 100644
---- a/include/asm-generic/pgtable.h
-+++ b/include/asm-generic/pgtable.h
-@@ -87,14 +87,6 @@ static inline pmd_t pmdp_get_and_clear(struct mm_struct *mm,
- 	pmd_clear(mm, address, pmdp);
- 	return pmd;
- })
--#else /* CONFIG_TRANSPARENT_HUGEPAGE */
--static inline pmd_t pmdp_get_and_clear(struct mm_struct *mm,
--				       unsigned long address,
--				       pmd_t *pmdp)
--{
--	BUG();
--	return __pmd(0);
--}
- #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
- #endif
- 
-@@ -163,9 +155,9 @@ static inline void pmdp_set_wrprotect(struct mm_struct *mm,
- #endif
- 
- #ifndef __HAVE_ARCH_PMDP_SPLITTING_FLUSH
--extern pmd_t pmdp_clear_flush(struct vm_area_struct *vma,
--			      unsigned long address,
--			      pmd_t *pmdp);
-+extern pmd_t pmdp_splitting_flush(struct vm_area_struct *vma,
-+				  unsigned long address,
-+				  pmd_t *pmdp);
- #endif
- 
- #ifndef __HAVE_ARCH_PTE_SAME
-diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
-index d030548..0369f5b 100644
---- a/mm/pgtable-generic.c
-+++ b/mm/pgtable-generic.c
-@@ -92,32 +92,29 @@ pte_t ptep_clear_flush(struct vm_area_struct *vma, unsigned long address,
- #endif
- 
- #ifndef __HAVE_ARCH_PMDP_CLEAR_FLUSH
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
- pmd_t pmdp_clear_flush(struct vm_area_struct *vma, unsigned long address,
- 		       pmd_t *pmdp)
- {
- 	pmd_t pmd;
--#ifndef CONFIG_TRANSPARENT_HUGEPAGE
--	BUG();
--#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
- 	VM_BUG_ON(address & ~HPAGE_PMD_MASK);
- 	pmd = pmdp_get_and_clear(vma->vm_mm, address, pmdp);
- 	flush_tlb_range(vma, address, address + HPAGE_PMD_SIZE);
- 	return pmd;
+After commit 415e12b (PCI/ACPI: Request _OSC control once for each
+root bridge (v3)) include/linux/pci-acpi.h is included by
+drivers/pci/pcie/aer/aerdrv.c and if CONFIG_ACPI is unset, the
+bogus and unnecessary alternative definition of
+acpi_find_root_bridge_handle() causes a build error to occur.
+
+Remove the offending piece of garbage.
+
+Reported-and-tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Rafael J. Wysocki <rjw@sisk.pl>
+---
+ include/linux/pci-acpi.h |    3 ---
+ 1 file changed, 3 deletions(-)
+
+Index: linux-2.6/include/linux/pci-acpi.h
+===================================================================
+--- linux-2.6.orig/include/linux/pci-acpi.h
++++ linux-2.6/include/linux/pci-acpi.h
+@@ -35,9 +35,6 @@ static inline acpi_handle acpi_pci_get_b
+ 	return acpi_get_pci_rootbridge_handle(pci_domain_nr(pbus),
+ 					      pbus->number);
  }
-+#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+-#else
+-static inline acpi_handle acpi_find_root_bridge_handle(struct pci_dev *pdev)
+-{ return NULL; }
  #endif
  
- #ifndef __HAVE_ARCH_PMDP_SPLITTING_FLUSH
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
- pmd_t pmdp_splitting_flush(struct vm_area_struct *vma, unsigned long address,
- 			   pmd_t *pmdp)
- {
--#ifdef CONFIG_TRANSPARENT_HUGEPAGE
- 	pmd_t pmd = pmd_mksplitting(*pmdp);
- 	VM_BUG_ON(address & ~HPAGE_PMD_MASK);
- 	set_pmd_at(vma->vm_mm, address, pmdp, pmd);
- 	/* tlb flush only to serialize against gup-fast */
- 	flush_tlb_range(vma, address, address + HPAGE_PMD_SIZE);
--#else /* CONFIG_TRANSPARENT_HUGEPAGE */
--	BUG();
--#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
- }
-+#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
- #endif
+ #ifdef CONFIG_ACPI_APEI
