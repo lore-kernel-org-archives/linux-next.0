@@ -1,195 +1,146 @@
-From: "Guan Xuetao" <guanxuetao@mprc.pku.edu.cn>
-Subject: Request for unicore32 architecture codes to merge into linux-next
-Date: Sun, 16 Jan 2011 01:00:31 +0800
-Message-ID: <004901cbb4d5$b9bb1370$2d313a50$@mprc.pku.edu.cn>
+From: Andrea Arcangeli <aarcange@redhat.com>
+Subject: Re: sparc32 build failure [Was: linux-next: build failure after
+ merge of the final tree]
+Date: Sat, 15 Jan 2011 19:26:05 +0100
+Message-ID: <20110115182605.GW9506@random.random>
+References: <20110115131027.2c07ccb0.sfr@canb.auug.org.au>
+ <20110115042753.GS9506@random.random>
+ <20110115162019.GA8136@merkur.ravnborg.org>
 Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arch-owner@vger.kernel.org>
-Content-Language: zh-cn
-Sender: linux-arch-owner@vger.kernel.org
-To: sfr@canb.auug.org.au, Arnd Bergmann <arnd@arndb.de>, gregkh@suse.de, jbarnes@virtuousgeek.org, dmitry.torokhov@gmail.com, dtor@mail.ru, rubini@cvml.unipv.it
-Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:52930 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753695Ab1AOS0X (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 15 Jan 2011 13:26:23 -0500
+Content-Disposition: inline
+In-Reply-To: <20110115162019.GA8136@merkur.ravnborg.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, sparclinux <sparclinux@vger.kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, "Luck, Tony" <tony.luck@intel.com>, linux-arch@vger.kernel.org, James Bottomley <James.Bottomley@HansenPartnership.com>
 
-Hi,
+Hello everyone,
 
-I want to merge unicore32 repo into linux-next tree, the position is (unicore32 branch):
-  git://git.kernel.org/pub/scm/linux/kernel/git/epip/linux-2.6-unicore32.git
+On Sat, Jan 15, 2011 at 05:20:20PM +0100, Sam Ravnborg wrote:
+> Can we get the build fixed ASAP or do we wait for David to comment on this?
 
-Signed-off-by: Guan Xuetao <gxt@mprc.pku.edu.cn>
+I think sparc32 problem is pmd is an array. So now I built a sparc64
+compiler and built with ARCH=sparc32.
+
+$ file vmlinux
+vmlinux: ELF 32-bit MSB relocatable, SPARC, version 1 (SYSV), not stripped
+
+I got it to build (the zImage won't build on my environment for some
+assembly issue in arch/sparc/boot/btfix.S but that shall not be
+related to this, all it matters is the final linking of vmlinux is
+successful).
+
+So to fix this once and for all, please apply this below patch. If
+this works no change to any arch is required (ia64 could also revert
+the __pmd definition if they prefer, not that it makes any relevant
+difference for ia64 other than being more consistent with most other
+archs).
+
+Only the arm build fix from James most certainly is still needed in
+addition to this.
+
+Sorry again for this build issue.
+Andrea
+
+==========
+Subject: remove pmdp_get_and_clear/pmdp_clear_flush/pmdp_splitting_flush methods when THP=n
+
+From: Andrea Arcangeli <aarcange@redhat.com>
+
+pmdp_get_and_clear/pmdp_clear_flush/pmdp_splitting_flush were trapped
+as BUG() and they were defined only to diminish the risk of build
+issues on not-x86 archs and to be consistent with the generic pte
+methods previously defined in include/asm-generic/pgtable.h.
+
+But they are causing more trouble than they were supposed to solve, so
+it's simpler not to define them when THP is off.
+
+This is also correcting the export of pmdp_splitting_flush which is
+currently unused (x86 isn't using the generic implementation in
+mm/pgtable-generic.c and no other arch needs that [yet]).
+
+Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
 ---
- MAINTAINERS                                   |    8 +
- arch/unicore32/.gitignore                     |   21 +
- arch/unicore32/Kconfig                        |  248 +++
- arch/unicore32/Kconfig.debug                  |   68 +
- arch/unicore32/Makefile                       |   97 ++
- arch/unicore32/boot/Makefile                  |   47 +
- arch/unicore32/boot/compressed/Makefile       |   68 +
- arch/unicore32/boot/compressed/head.S         |  204 +++
- arch/unicore32/boot/compressed/misc.c         |  126 ++
- arch/unicore32/boot/compressed/piggy.S.in     |    6 +
- arch/unicore32/boot/compressed/vmlinux.lds.in |   61 +
- arch/unicore32/configs/debug_defconfig        |  210 +++
- arch/unicore32/configs/nb0916_defconfig       |  202 +++
- arch/unicore32/include/asm/Kbuild             |    2 +
- arch/unicore32/include/asm/assembler.h        |  131 ++
- arch/unicore32/include/asm/bitops.h           |   47 +
- arch/unicore32/include/asm/byteorder.h        |   24 +
- arch/unicore32/include/asm/cache.h            |   27 +
- arch/unicore32/include/asm/cacheflush.h       |  211 +++
- arch/unicore32/include/asm/checksum.h         |   41 +
- arch/unicore32/include/asm/cpu-single.h       |   45 +
- arch/unicore32/include/asm/cputype.h          |   33 +
- arch/unicore32/include/asm/delay.h            |   52 +
- arch/unicore32/include/asm/dma-mapping.h      |  124 ++
- arch/unicore32/include/asm/dma.h              |   23 +
- arch/unicore32/include/asm/elf.h              |   94 ++
- arch/unicore32/include/asm/fpstate.h          |   26 +
- arch/unicore32/include/asm/fpu-ucf64.h        |   53 +
- arch/unicore32/include/asm/futex.h            |  143 ++
- arch/unicore32/include/asm/gpio.h             |  103 ++
- arch/unicore32/include/asm/hwcap.h            |   32 +
- arch/unicore32/include/asm/io.h               |   52 +
- arch/unicore32/include/asm/irq.h              |  107 ++
- arch/unicore32/include/asm/irqflags.h         |   53 +
- arch/unicore32/include/asm/linkage.h          |   22 +
- arch/unicore32/include/asm/memblock.h         |   46 +
- arch/unicore32/include/asm/memory.h           |  123 ++
- arch/unicore32/include/asm/mmu.h              |   17 +
- arch/unicore32/include/asm/mmu_context.h      |   87 +
- arch/unicore32/include/asm/mutex.h            |   20 +
- arch/unicore32/include/asm/page.h             |   80 +
- arch/unicore32/include/asm/pci.h              |   46 +
- arch/unicore32/include/asm/pgalloc.h          |  110 ++
- arch/unicore32/include/asm/pgtable-hwdef.h    |   55 +
- arch/unicore32/include/asm/pgtable.h          |  317 ++++
- arch/unicore32/include/asm/processor.h        |   92 ++
- arch/unicore32/include/asm/ptrace.h           |  176 +++
- arch/unicore32/include/asm/sigcontext.h       |   29 +
- arch/unicore32/include/asm/stacktrace.h       |   31 +
- arch/unicore32/include/asm/string.h           |   38 +
- arch/unicore32/include/asm/suspend.h          |   30 +
- arch/unicore32/include/asm/system.h           |  161 ++
- arch/unicore32/include/asm/thread_info.h      |  154 ++
- arch/unicore32/include/asm/timex.h            |   34 +
- arch/unicore32/include/asm/tlb.h              |   98 ++
- arch/unicore32/include/asm/tlbflush.h         |  195 +++
- arch/unicore32/include/asm/traps.h            |   21 +
- arch/unicore32/include/asm/uaccess.h          |   47 +
- arch/unicore32/include/asm/unistd.h           |   18 +
- arch/unicore32/include/mach/PKUnity.h         |  104 ++
- arch/unicore32/include/mach/bitfield.h        |   24 +
- arch/unicore32/include/mach/dma.h             |   41 +
- arch/unicore32/include/mach/hardware.h        |   45 +
- arch/unicore32/include/mach/map.h             |   20 +
- arch/unicore32/include/mach/memory.h          |   58 +
- arch/unicore32/include/mach/ocd.h             |   36 +
- arch/unicore32/include/mach/pm.h              |   43 +
- arch/unicore32/include/mach/regs-ac97.h       |   32 +
- arch/unicore32/include/mach/regs-dmac.h       |   81 +
- arch/unicore32/include/mach/regs-gpio.h       |   70 +
- arch/unicore32/include/mach/regs-i2c.h        |   63 +
- arch/unicore32/include/mach/regs-intc.h       |   28 +
- arch/unicore32/include/mach/regs-nand.h       |   79 +
- arch/unicore32/include/mach/regs-ost.h        |   92 ++
- arch/unicore32/include/mach/regs-pci.h        |   94 ++
- arch/unicore32/include/mach/regs-pm.h         |  126 ++
- arch/unicore32/include/mach/regs-ps2.h        |   20 +
- arch/unicore32/include/mach/regs-resetc.h     |   34 +
- arch/unicore32/include/mach/regs-rtc.h        |   37 +
- arch/unicore32/include/mach/regs-sdc.h        |  156 ++
- arch/unicore32/include/mach/regs-spi.h        |   98 ++
- arch/unicore32/include/mach/regs-uart.h       |    3 +
- arch/unicore32/include/mach/regs-umal.h       |  229 +++
- arch/unicore32/include/mach/regs-unigfx.h     |  200 +++
- arch/unicore32/include/mach/uncompress.h      |   34 +
- arch/unicore32/kernel/Makefile                |   34 +
- arch/unicore32/kernel/asm-offsets.c           |  112 ++
- arch/unicore32/kernel/clock.c                 |  388 +++++
- arch/unicore32/kernel/cpu-ucv2.c              |   93 ++
- arch/unicore32/kernel/debug-macro.S           |   89 ++
- arch/unicore32/kernel/debug.S                 |   85 +
- arch/unicore32/kernel/dma.c                   |  180 +++
- arch/unicore32/kernel/early_printk.c          |   59 +
- arch/unicore32/kernel/elf.c                   |   38 +
- arch/unicore32/kernel/entry.S                 |  824 ++++++++++
- arch/unicore32/kernel/fpu-ucf64.c             |  126 ++
- arch/unicore32/kernel/gpio.c                  |  122 ++
- arch/unicore32/kernel/head.S                  |  252 +++
- arch/unicore32/kernel/hibernate.c             |  160 ++
- arch/unicore32/kernel/hibernate_asm.S         |  117 ++
- arch/unicore32/kernel/init_task.c             |   44 +
- arch/unicore32/kernel/irq.c                   |  426 +++++
- arch/unicore32/kernel/ksyms.c                 |   99 ++
- arch/unicore32/kernel/ksyms.h                 |   15 +
- arch/unicore32/kernel/module.c                |  152 ++
- arch/unicore32/kernel/pci.c                   |  404 +++++
- arch/unicore32/kernel/pm.c                    |  123 ++
- arch/unicore32/kernel/process.c               |  389 +++++
- arch/unicore32/kernel/ptrace.c                |  598 +++++++
- arch/unicore32/kernel/puv3-core.c             |  260 ++++
- arch/unicore32/kernel/puv3-nb0916.c           |  175 +++
- arch/unicore32/kernel/puv3-smw0919.c          |  115 ++
- arch/unicore32/kernel/pwm.c                   |  263 ++++
- arch/unicore32/kernel/rtc.c                   |  380 +++++
- arch/unicore32/kernel/setup.c                 |  360 +++++
- arch/unicore32/kernel/setup.h                 |   30 +
- arch/unicore32/kernel/signal.c                |  494 ++++++
- arch/unicore32/kernel/sleep.S                 |  202 +++
- arch/unicore32/kernel/stacktrace.c            |  131 ++
- arch/unicore32/kernel/sys.c                   |  126 ++
- arch/unicore32/kernel/time.c                  |  148 ++
- arch/unicore32/kernel/traps.c                 |  333 ++++
- arch/unicore32/kernel/vmlinux.lds.S           |   61 +
- arch/unicore32/lib/Makefile                   |   27 +
- arch/unicore32/lib/backtrace.S                |  163 ++
- arch/unicore32/lib/clear_user.S               |   57 +
- arch/unicore32/lib/copy_from_user.S           |  108 ++
- arch/unicore32/lib/copy_page.S                |   39 +
- arch/unicore32/lib/copy_template.S            |  214 +++
- arch/unicore32/lib/copy_to_user.S             |   96 ++
- arch/unicore32/lib/delay.S                    |   51 +
- arch/unicore32/lib/findbit.S                  |   98 ++
- arch/unicore32/lib/strncpy_from_user.S        |   45 +
- arch/unicore32/lib/strnlen_user.S             |   42 +
- arch/unicore32/mm/Kconfig                     |   50 +
- arch/unicore32/mm/Makefile                    |   15 +
- arch/unicore32/mm/alignment.c                 |  523 +++++++
- arch/unicore32/mm/cache-ucv2.S                |  212 +++
- arch/unicore32/mm/dma-swiotlb.c               |   34 +
- arch/unicore32/mm/extable.c                   |   24 +
- arch/unicore32/mm/fault.c                     |  479 ++++++
- arch/unicore32/mm/flush.c                     |   98 ++
- arch/unicore32/mm/init.c                      |  517 ++++++
- arch/unicore32/mm/iomap.c                     |   56 +
- arch/unicore32/mm/ioremap.c                   |  261 ++++
- arch/unicore32/mm/mm.h                        |   39 +
- arch/unicore32/mm/mmu.c                       |  533 +++++++
- arch/unicore32/mm/pgd.c                       |  102 ++
- arch/unicore32/mm/proc-macros.S               |  145 ++
- arch/unicore32/mm/proc-syms.c                 |   23 +
- arch/unicore32/mm/proc-ucv2.S                 |  134 ++
- arch/unicore32/mm/tlb-ucv2.S                  |   89 ++
- drivers/input/keyboard/Kconfig                |   11 +
- drivers/input/keyboard/atkbd.c                |    4 +
- drivers/input/mouse/psmouse-base.c            |   41 +
- drivers/input/serio/i8042.h                   |    2 +
- drivers/pci/Makefile                          |    1 +
- drivers/staging/puv3/Kconfig                  |  125 ++
- drivers/staging/puv3/Makefile                 |   22 +
- drivers/staging/puv3/TODO                     |    7 +
- drivers/staging/puv3/i8042-ucio.h             |   89 ++
- drivers/staging/puv3/puv3-atkbd.h             |   43 +
- drivers/staging/puv3/puv3_ac97.c              |  369 +++++
- drivers/staging/puv3/puv3_i2c.c               |  309 ++++
- drivers/staging/puv3/puv3_pcm.c               |  435 ++++++
- drivers/staging/puv3/puv3_pcm.h               |   28 +
- drivers/staging/puv3/puv3_umal.c              | 2069 +++++++++++++++++++++++++
- drivers/staging/puv3/puv3_unifb.c             |  965 ++++++++++++
- include/asm-generic/ftrace.h                  |   16 +
- include/asm-generic/sizes.h                   |   47 +
- include/asm-generic/uaccess.h                 |    8 +-
- include/linux/fb.h                            |    2 +
- 172 files changed, 23554 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/staging/vme/bridges/Module.symvers b/drivers/staging/vme/bridges/Module.symvers
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
+index f1eddf7..31b6188 100644
+--- a/include/asm-generic/pgtable.h
++++ b/include/asm-generic/pgtable.h
+@@ -87,14 +87,6 @@ static inline pmd_t pmdp_get_and_clear(struct mm_struct *mm,
+ 	pmd_clear(mm, address, pmdp);
+ 	return pmd;
+ })
+-#else /* CONFIG_TRANSPARENT_HUGEPAGE */
+-static inline pmd_t pmdp_get_and_clear(struct mm_struct *mm,
+-				       unsigned long address,
+-				       pmd_t *pmdp)
+-{
+-	BUG();
+-	return __pmd(0);
+-}
+ #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+ #endif
+ 
+@@ -163,9 +155,9 @@ static inline void pmdp_set_wrprotect(struct mm_struct *mm,
+ #endif
+ 
+ #ifndef __HAVE_ARCH_PMDP_SPLITTING_FLUSH
+-extern pmd_t pmdp_clear_flush(struct vm_area_struct *vma,
+-			      unsigned long address,
+-			      pmd_t *pmdp);
++extern pmd_t pmdp_splitting_flush(struct vm_area_struct *vma,
++				  unsigned long address,
++				  pmd_t *pmdp);
+ #endif
+ 
+ #ifndef __HAVE_ARCH_PTE_SAME
+diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
+index d030548..0369f5b 100644
+--- a/mm/pgtable-generic.c
++++ b/mm/pgtable-generic.c
+@@ -92,32 +92,29 @@ pte_t ptep_clear_flush(struct vm_area_struct *vma, unsigned long address,
+ #endif
+ 
+ #ifndef __HAVE_ARCH_PMDP_CLEAR_FLUSH
++#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+ pmd_t pmdp_clear_flush(struct vm_area_struct *vma, unsigned long address,
+ 		       pmd_t *pmdp)
+ {
+ 	pmd_t pmd;
+-#ifndef CONFIG_TRANSPARENT_HUGEPAGE
+-	BUG();
+-#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+ 	VM_BUG_ON(address & ~HPAGE_PMD_MASK);
+ 	pmd = pmdp_get_and_clear(vma->vm_mm, address, pmdp);
+ 	flush_tlb_range(vma, address, address + HPAGE_PMD_SIZE);
+ 	return pmd;
+ }
++#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+ #endif
+ 
+ #ifndef __HAVE_ARCH_PMDP_SPLITTING_FLUSH
++#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+ pmd_t pmdp_splitting_flush(struct vm_area_struct *vma, unsigned long address,
+ 			   pmd_t *pmdp)
+ {
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+ 	pmd_t pmd = pmd_mksplitting(*pmdp);
+ 	VM_BUG_ON(address & ~HPAGE_PMD_MASK);
+ 	set_pmd_at(vma->vm_mm, address, pmdp, pmd);
+ 	/* tlb flush only to serialize against gup-fast */
+ 	flush_tlb_range(vma, address, address + HPAGE_PMD_SIZE);
+-#else /* CONFIG_TRANSPARENT_HUGEPAGE */
+-	BUG();
+-#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+ }
++#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+ #endif
