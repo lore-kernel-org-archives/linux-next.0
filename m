@@ -1,53 +1,105 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the xen tree with Linus tree
-Date: Sat, 15 Jan 2011 12:05:44 +1100
-Message-ID: <20110115120544.98a1f091.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the cleancache tree with Linus' tree
+Date: Sat, 15 Jan 2011 12:44:51 +1100
+Message-ID: <20110115124451.19c32122.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sat__15_Jan_2011_12_05_44_+1100_lVrfyAeP.knEwynh"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59136 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:50627 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751981Ab1AOBFx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 14 Jan 2011 20:05:53 -0500
+	id S1751081Ab1AOBoz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 14 Jan 2011 20:44:55 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jeremy Fitzhardinge <jeremy@goop.org>, Xen Devel <Xen-devel@lists.xensource.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To: Dan Magenheimer <dan.magenheimer@oracle.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrea Arcangeli <aarcange@redhat.com>, Andrew Morton <akpm@linux-foundation.org>
 
---Signature=_Sat__15_Jan_2011_12_05_44_+1100_lVrfyAeP.knEwynh
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Dan,
 
-Hi all,
+Today's linux-next merge of the cleancache tree got a conflict in
+mm/Kconfig between various transparent huge page commits from Linus' tree
+and commit 83137a5649ec8a0bb769c68024b0532733087482 ("mm: cleancache core
+ops functions and config") from the cleancache tree.
 
-Today's linux-next merge of the xen tree got a conflict in
-drivers/xen/Kconfig, drivers/xen/gntdev.c and include/xen/gntdev.h
-between various commits Linus' tree and various commits from the xen tree.
-
-As previously discussed, I have dropped the xen tree for today (as it
-contains an older version of the changes that were merged into Linus'
-tree).
---=20
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Sat__15_Jan_2011_12_05_44_+1100_lVrfyAeP.knEwynh
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNMPLoAAoJEDMEi1NhKgbsHWQH/0YoS5Lw23JD28G2FK0wpVbI
-+aBXmAVtwQU96W1OD1BKy3QDxmSJ7an5s5YOm1wDnKGb8esXSfOm8DoQfxYbZe7b
-iFx57F9QT9h8qaBQZtRjcxj6tADnWIHG61b4ObPNjgM8eXiQAU6OMSFEnBOUb8v5
-a94LElKhT0tPMOadZQ9A4fxtd8juC8iuuZXyvlSf2jni/LwjdEsfyU1FAHWOdZtD
-W5qpJU/2InmlySguY3eUATtzegHkWqO7S9e0gQ2VKwsvclFZsRG0+rLlsa7vELGk
-JicdqxHhnwcoOaHEj5ugMnDxuuuU6PjJdBc07jbg3VHPgKCv4wi2FpdqcgCoopE=
-=VWs6
------END PGP SIGNATURE-----
-
---Signature=_Sat__15_Jan_2011_12_05_44_+1100_lVrfyAeP.knEwynh--
+diff --cc mm/Kconfig
+index 3ad483b,9ee0751..0000000
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@@ -302,48 -302,24 +302,70 @@@ config NOMMU_INITIAL_TRIM_EXCES
+  
+  	  See Documentation/nommu-mmap.txt for more information.
+  
+ +config TRANSPARENT_HUGEPAGE
+ +	bool "Transparent Hugepage Support"
+ +	depends on X86 && MMU
+ +	select COMPACTION
+ +	help
+ +	  Transparent Hugepages allows the kernel to use huge pages and
+ +	  huge tlb transparently to the applications whenever possible.
+ +	  This feature can improve computing performance to certain
+ +	  applications by speeding up page faults during memory
+ +	  allocation, by reducing the number of tlb misses and by speeding
+ +	  up the pagetable walking.
+ +
+ +	  If memory constrained on embedded, you may want to say N.
+ +
+ +choice
+ +	prompt "Transparent Hugepage Support sysfs defaults"
+ +	depends on TRANSPARENT_HUGEPAGE
+ +	default TRANSPARENT_HUGEPAGE_ALWAYS
+ +	help
+ +	  Selects the sysfs defaults for Transparent Hugepage Support.
+ +
+ +	config TRANSPARENT_HUGEPAGE_ALWAYS
+ +		bool "always"
+ +	help
+ +	  Enabling Transparent Hugepage always, can increase the
+ +	  memory footprint of applications without a guaranteed
+ +	  benefit but it will work automatically for all applications.
+ +
+ +	config TRANSPARENT_HUGEPAGE_MADVISE
+ +		bool "madvise"
+ +	help
+ +	  Enabling Transparent Hugepage madvise, will only provide a
+ +	  performance improvement benefit to the applications using
+ +	  madvise(MADV_HUGEPAGE) but it won't risk to increase the
+ +	  memory footprint of applications without a guaranteed
+ +	  benefit.
+ +endchoice
+ +
+ +#
+ +# UP and nommu archs use km based percpu allocator
+ +#
+ +config NEED_PER_CPU_KM
+ +	depends on !SMP
+ +	bool
+ +	default y
+++
++ config CLEANCACHE
++ 	bool "Enable cleancache pseudo-RAM driver to cache clean pages"
++ 	default y
++ 	help
++ 	  Cleancache can be thought of as a page-granularity victim cache
++ 	  for clean pages that the kernel's pageframe replacement algorithm
++ 	  (PFRA) would like to keep around, but can't since there isn't enough
++ 	  memory.  So when the PFRA "evicts" a page, it first attempts to put
++ 	  it into a synchronous concurrency-safe page-oriented pseudo-RAM
++ 	  device (such as Xen's Transcendent Memory, aka "tmem") which is not
++ 	  directly accessible or addressable by the kernel and is of unknown
++ 	  (and possibly time-varying) size.  And when a cleancache-enabled
++ 	  filesystem wishes to access a page in a file on disk, it first
++ 	  checks cleancache to see if it already contains it; if it does,
++ 	  the page is copied into the kernel and a disk access is avoided.
++ 	  When a pseudo-RAM device is available, a significant I/O reduction
++ 	  may be achieved.  When none is available, all cleancache calls
++ 	  are reduced to a single pointer-compare-against-NULL resulting
++ 	  in a negligible performance hit.
++ 
++ 	  If unsure, say Y to enable cleancache
