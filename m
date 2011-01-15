@@ -1,76 +1,75 @@
-From: Vegard Nossum <vegard.nossum@gmail.com>
-Subject: Re: on builds/randconfigs
-Date: Sat, 15 Jan 2011 13:24:59 +0100
-Message-ID: <AANLkTinpjHZgKhLN19kn=0o6aXbMAJEooEUtHSxGyotm@mail.gmail.com>
-References: <20101213163607.0b0a7c3a.sfr@canb.auug.org.au>
-	<alpine.LFD.2.02.1101121257580.18873@x980>
-	<20110112131800.d64c1a86.akpm@linux-foundation.org>
-	<201101122224.54330.rjw@sisk.pl>
-	<alpine.LFD.2.02.1101121654000.19754@x980>
-	<4D2EEEAA.7040200@suse.cz>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: build failure after merge of the final tree (linus' tree related)
+Date: Sat, 15 Jan 2011 14:19:16 +0100
+Message-ID: <201101151419.16758.rjw@sisk.pl>
+References: <20110115133412.58b8cd89.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: Text/Plain;
+  charset="iso-8859-2"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-px0-f174.google.com ([209.85.212.174]:46796 "EHLO
-	mail-px0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752877Ab1AOMY7 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 15 Jan 2011 07:24:59 -0500
-In-Reply-To: <4D2EEEAA.7040200@suse.cz>
+Received: from ogre.sisk.pl ([217.79.144.158]:38368 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752911Ab1AONUB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 15 Jan 2011 08:20:01 -0500
+In-Reply-To: <20110115133412.58b8cd89.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michal Marek <mmarek@suse.cz>
-Cc: Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, Andrew Morton <akpm@linux-foundation.org>, Randy Dunlap <randy.dunlap@oracle.com>, linux-acpi@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Zhang Rui <rui.zhang@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Zimn@jasper.es, Arnaud Lacombe <lacombar@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ozan Caglayan <ozan@pardus.org.tr>, Jesse Barnes <jbarnes@virtuousgeek.org>, Linus <torvalds@linux-foundation.org>
 
-On 13 January 2011 13:23, Michal Marek <mmarek@suse.cz> wrote:
-> On 12.1.2011 22:58, Len Brown wrote:
->>>> These unusable config combinations should be prevented via Kconfig=
-=2E
->>>> That prevents users from selecting them, which otherwise adds to
->>>> our workload and to theirs. =C2=A0It also prevents false-positives
->>>> during our useful randconfig testing.
->>>
->>> But it is kind of difficult to achieve IMhO. =C2=A0For example, the=
-re are options
->>> that are only SELECTed if something else is set, but randconfig doe=
-sn't seem
->>> to care.
->>
->> Kconfig select needs to be fixed so that it is not possible to
->> select something if that something's dependencies are not met.
->
-> Right now, it issues a warning in such case. I think changing it to a
-> fatal error would be too premature, not long ago there were a couple =
-of
-> annoying false positives.
->
-> But from the rest of the thread, I conclude that you actually meant "=
-not
-> possible to select something if that something's dependencies CANNOT =
-be
-> met", i.e. automatically select dependencies if that is possible. Tha=
-t
-> was actually one of the goals of Vegard Nossum's GSoC poject last yea=
-r,
-> but I haven't heard of any outcome yet. Vegard, is there something we
-> could use, be it code or mistakes we could learn from?
+On Saturday, January 15, 2011, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> In file included from drivers/pci/pcie/aer/aerdrv.c:20:
+> include/linux/pci-acpi.h:39: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'acpi_find_root_bridge_handle'
+> 
+> Caused by commit 415e12b2379239973feab91850b0dce985c6058a ("PCI/ACPI:
+> Request _OSC control once for each root bridge (v3)").  (Yet another
+> patch not seen in linux-next until merged into Linus' tree.  In this case
+> the breakage was not seen because the new part of the pci tree was
+> excluded from linux-next for several days because of another commit that
+> broke my builds.
 
-Maybe I am wrong, but doesn't conf_write() actually take care of this
-when it does that sym_calc_value() for all the symbols? Or maybe
-that's the problem (i.e. that it doesn't).
+Ah.  I thought it was in linux-next. :-(
 
-Current satconfig code can be changed to produce random configs (that
-nevertheless respect the user's choices) with a 1-line patch. But
-there are some other issues to be worked out, mainly that conf_write()
-doesn't respect all the choices that the SAT solver made. There could
-be several reasons for that: 1. satconfig doesn't deal with
-hex/int/string values and relies on conf_write() to fill in those
-(this is a plain old bug), 2. the translation into boolean logic is
-subtly wrong, perhaps a corner case or something like that, and/or 3.
-conf_write() does something wrong.
+> That other commit was only excluded from the pci tree
+> just before being sent to Linus :-()
+> 
+> This is the non CONFIG_ACPI version of acpi_find_root_bridge_handle()
+> which returns an acpi_handle.  pci-acpi.h is now always included in
+> drivers/pci/pcie/aer/aerdrv.c.
+> 
+> I tried ifef'ing out the inclusion of pci-acpi.h, but that only made
+> matters worse.  I have just left it for today.  Please fix.
 
-I'll be happy to give a tour of the satconfig code if you or anybody
-else would like to start hacking on it.
+It looks like the non-CONFIG_ACPI version of acpi_find_root_bridge_handle()
+is just not necessary any more, because acpi_find_root_bridge_handle() is only
+used in code that depends on CONFIG_ACPI.
 
+A patch removing it is appended, please test.
 
-Vegard
+Thanks,
+Rafael
+
+---
+ include/linux/pci-acpi.h |    3 ---
+ 1 file changed, 3 deletions(-)
+
+Index: linux-2.6/include/linux/pci-acpi.h
+===================================================================
+--- linux-2.6.orig/include/linux/pci-acpi.h
++++ linux-2.6/include/linux/pci-acpi.h
+@@ -35,9 +35,6 @@ static inline acpi_handle acpi_pci_get_b
+ 	return acpi_get_pci_rootbridge_handle(pci_domain_nr(pbus),
+ 					      pbus->number);
+ }
+-#else
+-static inline acpi_handle acpi_find_root_bridge_handle(struct pci_dev *pdev)
+-{ return NULL; }
+ #endif
+ 
+ #ifdef CONFIG_ACPI_APEI
