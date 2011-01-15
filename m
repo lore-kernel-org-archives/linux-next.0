@@ -1,67 +1,61 @@
-From: Andrea Arcangeli <aarcange@redhat.com>
-Subject: Re: linux-next: build failure after merge of the final tree
-Date: Sat, 15 Jan 2011 05:27:53 +0100
-Message-ID: <20110115042753.GS9506@random.random>
-References: <20110115131027.2c07ccb0.sfr@canb.auug.org.au>
+From: Sedat Dilek <sedat.dilek@googlemail.com>
+Subject: Re: linux-next: Tree for January 15 (Call Trace in fs/dcache.c + autofs4)
+Date: Sat, 15 Jan 2011 08:39:48 +0100
+Message-ID: <AANLkTik4JfjBEurjX4T3sAtGf9CPJvQYkV5aZWgE=XD1@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:30838 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751848Ab1AOE2D (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 14 Jan 2011 23:28:03 -0500
-Content-Disposition: inline
-In-Reply-To: <20110115131027.2c07ccb0.sfr@canb.auug.org.au>
+Received: from mail-qw0-f46.google.com ([209.85.216.46]:48999 "EHLO
+	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750986Ab1AOHjt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 15 Jan 2011 02:39:49 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds <torvalds@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
 
-Hello,
-
-On Sat, Jan 15, 2011 at 01:10:27PM +1100, Stephen Rothwell wrote:
+On Sat, Jan 15, 2011 at 3:44 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > Hi all,
-> 
-> After merging the final tree, today's linux-next build (sparc32 defconfig)
-> failed like this:
-> 
-> In file included from arch/sparc/include/asm/pgtable_32.h:455,
->                  from arch/sparc/include/asm/pgtable.h:6,
->                  from include/linux/mm.h:41,
->                  from arch/sparc/kernel/process_32.c:17:
-> include/asm-generic/pgtable.h: In function 'pmdp_get_and_clear':
-> include/asm-generic/pgtable.h:96: error: implicit declaration of function '__pmd'
-> include/asm-generic/pgtable.h:96: error: incompatible types when returning type 'int' but 'pmd_t' was expected
-> 
-> and *lots* more.
-> 
-> Caused by commit e2cda322648122dc400c85ada80eaddbc612ef6a ("thp: add pmd
-> mangling generic functions").  This has already been reported broken in
-> other architectures as well.
-> 
-> I have just left it for today.
+>
+> Reminder: do not add any v2.6.39 material to your linux-next included
+> trees until after v2.6.38-rc1 is released.
+>
+> Changes since 20110114:
+>
 
-See arch/sparc/include/asm/page_32.h
+Just reporting as I see this Call Trace in my dmesg, not sure which of
+the trees is causing it.
 
-/* #define __pmd(x)        ((pmd_t) { (x) } ) */ /* XXX procedure with loop */
-/* #define __pmd(x)        (x) */ /* XXX later */
+- Sedat -
 
+[    5.324728] ------------[ cut here ]------------
+[    5.324779] WARNING: at
+/home/sd/src/linux-2.6/linux-2.6.37/debian/build/source_i386_none/fs/dcache.c:1360
+d_set_d_op+0x27/0x8f()
+[    5.324830] Hardware name: 2374SG6
+[    5.324863] Modules linked in: autofs4 ext4 mbcache jbd2 crc16
+dm_mod usbhid hid uas usb_storage sg sd_mod sr_mod cdrom crc_t10dif
+ata_generic ata_piix libata uhci_hcd ehci_hcd usbcore scsi_mod thermal
+e1000 thermal_sys floppy nls_base [last unloaded: scsi_wait_scan]
+[    5.325555] Pid: 1, comm: systemd Not tainted
+2.6.37-next20110115.dileks.1-686-iniza #1
+[    5.325602] Call Trace:
+[    5.325641]  [<c1031327>] ? warn_slowpath_common+0x65/0x7a
+[    5.325679]  [<c10d45a1>] ? d_set_d_op+0x27/0x8f
+[    5.325716]  [<c103134b>] ? warn_slowpath_null+0xf/0x13
+[    5.325753]  [<c10d45a1>] ? d_set_d_op+0x27/0x8f
+[    5.325794]  [<f86dc5ff>] ? autofs4_fill_super+0x1a5/0x292 [autofs4]
+[    5.325834]  [<c10c8d70>] ? sget+0x131/0x142
+[    5.325870]  [<c10c8dbb>] ? mount_nodev+0x3a/0x62
+[    5.325908]  [<f86dc000>] ? autofs_mount+0x0/0x14 [autofs4]
+[    5.325946]  [<f86dc010>] ? autofs_mount+0x10/0x14 [autofs4]
+[    5.325984]  [<f86dc45a>] ? autofs4_fill_super+0x0/0x292 [autofs4]
+[    5.326023]  [<c10c8a83>] ? vfs_kern_mount+0x99/0x193
+[    5.326060]  [<c10c8bbe>] ? do_kern_mount+0x2f/0xb0
+[    5.326097]  [<c10db5bb>] ? do_mount+0x1ab/0x1d1
+[    5.326134]  [<c10db67f>] ? sys_mount+0x61/0x8f
+[    5.326173]  [<c1002fdf>] ? sysenter_do_call+0x12/0x28
+[    5.326209] ---[ end trace 425b18696c1ee13e ]---
 
-Not sure why __pmd is commented out on sparc32 (it isn't in sparc64,
-this is why sparc looked like building ok in a earlier report).
-
-Removing those two comments at first glance should fix the build, but
-I don't understand the comment, so I'm unsure if it's safe and what
-"XXX later" means. Overall this __pmd(0) thing is just a fake.  We've
-to return some dummy pmd_t structure to build, because the function
-returns a pmd_t, there's a BUG() before __pmd is evaluated, but I
-didn't think of a better way yet than to return __pmd(0).
-
-static inline pmd_t pmdp_get_and_clear(struct mm_struct *mm,
-       	      	    			             unsigned long
-       	      	    			             address,
-						     pmd_t *pmdp)
-{
-	BUG();
-	return __pmd(0);
-}
+- EOT -
