@@ -1,62 +1,26 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree (linus'
- tree related)
-Date: Sun, 16 Jan 2011 02:44:34 +1100
-Message-ID: <20110116024434.3a5ccabb.sfr@canb.auug.org.au>
-References: <20110115133412.58b8cd89.sfr@canb.auug.org.au>
-	<201101151419.16758.rjw@sisk.pl>
+From: Michal Marek <mmarek@suse.cz>
+Subject: Re: on builds/randconfigs
+Date: Sat, 15 Jan 2011 17:09:35 +0100
+Message-ID: <4D31C6BF.4000402@suse.cz>
+References: <20101213163607.0b0a7c3a.sfr@canb.auug.org.au>	<alpine.LFD.2.02.1101121257580.18873@x980>	<20110112131800.d64c1a86.akpm@linux-foundation.org>	<201101122224.54330.rjw@sisk.pl>	<alpine.LFD.2.02.1101121654000.19754@x980>	<4D2EEEAA.7040200@suse.cz> <AANLkTinpjHZgKhLN19kn=0o6aXbMAJEooEUtHSxGyotm@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sun__16_Jan_2011_02_44_34_+1100_+rn4Bzohlg.aYF3W"
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57938 "EHLO smtps.tip.net.au"
+Received: from cantor2.suse.de ([195.135.220.15]:38817 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753192Ab1AOPon (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 15 Jan 2011 10:44:43 -0500
-In-Reply-To: <201101151419.16758.rjw@sisk.pl>
+	id S1751173Ab1AOQF7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 15 Jan 2011 11:05:59 -0500
+In-Reply-To: <AANLkTinpjHZgKhLN19kn=0o6aXbMAJEooEUtHSxGyotm@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ozan Caglayan <ozan@pardus.org.tr>, Jesse Barnes <jbarnes@virtuousgeek.org>, Linus <torvalds@linux-foundation.org>
+To: Vegard Nossum <vegard.nossum@gmail.com>
+Cc: Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, Andrew Morton <akpm@linux-foundation.org>, Randy Dunlap <randy.dunlap@oracle.com>, linux-acpi@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Zhang Rui <rui.zhang@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Zimn@jasper.es, Arnaud Lacombe <lacombar@gmail.com>
 
---Signature=_Sun__16_Jan_2011_02_44_34_+1100_+rn4Bzohlg.aYF3W
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Dne 15.1.2011 13:24, Vegard Nossum napsal(a):
+> I'll be happy to give a tour of the satconfig code if you or anybody
+> else would like to start hacking on it.
 
-Hi Raphael,
+Sure, I'm interested!
 
-On Sat, 15 Jan 2011 14:19:16 +0100 "Rafael J. Wysocki" <rjw@sisk.pl> wrote:
->
-> It looks like the non-CONFIG_ACPI version of acpi_find_root_bridge_handle=
-()
-> is just not necessary any more, because acpi_find_root_bridge_handle() is=
- only
-> used in code that depends on CONFIG_ACPI.
->=20
-> A patch removing it is appended, please test.
-
-That fixes the compile error for my powerpc allyesconfig build.
-And my x86_64 allmodconfig and i386 defconfig builds still work.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Sun__16_Jan_2011_02_44_34_+1100_+rn4Bzohlg.aYF3W
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNMcDiAAoJEDMEi1NhKgbscU8IAIoaRW3UaF79vKeVgQBQLqCE
-KZPAhuEFBgl9EZ3blSxCoMvcjcQ3cQQl+gknYQ1rcDGUQUtnspH8iGQTJlkJ9w7f
-+pUK+l4tROIqeUq/icxCp+zIt4O0sYHbMw3BqLrm8h8AmkKDsAZJX6K1rS1tDlsf
-OUnA4H2vBtYdh4OYAxXfYfk+G8g3D9U9H7bzlY4WzVErLRBXJXW2iFc6I79LHhMw
-8l2B6q7VE5kX9+Lw87eDX1Z58VrD3zR0j3YOL6eDNI08KVhCyAqF41tpQExd+xlt
-rzR5gLI0XP7aX8zVFON9Y+Ng09KoV0BaUD+VOx+r5dYFM1Umlzy4Ig4VGCV0Eec=
-=xvq6
------END PGP SIGNATURE-----
-
---Signature=_Sun__16_Jan_2011_02_44_34_+1100_+rn4Bzohlg.aYF3W--
+Michal
