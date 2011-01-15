@@ -1,61 +1,109 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure in Linus' tree
-Date: Sat, 15 Jan 2011 10:40:04 +1100
-Message-ID: <20110115104004.64335bc5.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ecryptfs tree with Linus' tree
+Date: Sat, 15 Jan 2011 11:15:35 +1100
+Message-ID: <20110115111535.c919c470.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41560 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:46287 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752536Ab1ANXkI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 14 Jan 2011 18:40:08 -0500
+	id S1751320Ab1AOAPk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 14 Jan 2011 19:15:40 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
+To: Tyler Hicks <tyhicks@linux.vnet.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Roberto Sassu <roberto.sassu@polito.it>
 
-Hi all,
+Hi Tyler,
 
-While building Linus' tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the ecryptfs tree got a conflict in
+fs/ecryptfs/main.c between commit
+66cb76666d69502fe982990b2cff5b6d607fd3b1 ("sanitize ecryptfs ->mount()")
+from Linus' tree and commit c65b788ce32e9cd1c7d221551275774f1aa83084
+("ecryptfs: missing initialization of the superblock 'magic' field") from
+the ecryptfs tree.
 
-ERROR: "arbitrary_virt_to_machine" [drivers/xen/xen-gntdev.ko] undefined!
-
-Caused by commit ba5d1012292403c8037adf4a54c4ec50dfe846c4 ("xen/gntdev:
-stop using "token" argument").
-
-I have applied this patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Sat, 15 Jan 2011 10:36:26 +1100
-Subject: [PATCH] xen: export arbitrary_virt_to_machine
-
-fixes build error:
-
-ERROR: "arbitrary_virt_to_machine" [drivers/xen/xen-gntdev.ko] undefined!
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/x86/xen/mmu.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/arch/x86/xen/mmu.c b/arch/x86/xen/mmu.c
-index 7575e55..5e92b61 100644
---- a/arch/x86/xen/mmu.c
-+++ b/arch/x86/xen/mmu.c
-@@ -201,6 +201,7 @@ xmaddr_t arbitrary_virt_to_machine(void *vaddr)
- 	offset = address & ~PAGE_MASK;
- 	return XMADDR(((phys_addr_t)pte_mfn(*pte) << PAGE_SHIFT) + offset);
- }
-+EXPORT_SYMBOL_GPL(arbitrary_virt_to_machine);
- 
- void make_lowmem_page_readonly(void *vaddr)
- {
--- 
-1.7.2.3
-
+I fixed it up (I think - see below) and can carry the fix as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+
+diff --cc fs/ecryptfs/main.c
+index d3b28ab,70009a7..0000000
+--- a/fs/ecryptfs/main.c
++++ b/fs/ecryptfs/main.c
+@@@ -546,54 -587,34 +546,55 @@@ static struct dentry *ecryptfs_mount(st
+  	/* ->kill_sb() will take care of sbi after that point */
+  	sbi = NULL;
+  	s->s_op = &ecryptfs_sops;
+ +	s->s_d_op = &ecryptfs_dops;
+  
+ -	rc = -ENOMEM;
+ -	s->s_root = d_alloc(NULL, &(const struct qstr) {
+ -			     .hash = 0,.name = "/",.len = 1});
+ +	err = "Reading sb failed";
+ +	rc = kern_path(dev_name, LOOKUP_FOLLOW | LOOKUP_DIRECTORY, &path);
+ +	if (rc) {
+ +		ecryptfs_printk(KERN_WARNING, "kern_path() failed\n");
+ +		goto out1;
+ +	}
+ +	if (path.dentry->d_sb->s_type == &ecryptfs_fs_type) {
+ +		rc = -EINVAL;
+ +		printk(KERN_ERR "Mount on filesystem of type "
+ +			"eCryptfs explicitly disallowed due to "
+ +			"known incompatibilities\n");
+ +		goto out_free;
+ +	}
+ +	ecryptfs_set_superblock_lower(s, path.dentry->d_sb);
+ +	s->s_maxbytes = path.dentry->d_sb->s_maxbytes;
+ +	s->s_blocksize = path.dentry->d_sb->s_blocksize;
+++	s->s_magic = ECRYPTFS_SUPER_MAGIC;
+ +
+ +	inode = ecryptfs_get_inode(path.dentry->d_inode, s);
+ +	rc = PTR_ERR(inode);
+ +	if (IS_ERR(inode))
+ +		goto out_free;
+ +
+ +	s->s_root = d_alloc_root(inode);
+  	if (!s->s_root) {
+ -		deactivate_locked_super(s);
+ -		goto out;
+ +		iput(inode);
+ +		rc = -ENOMEM;
+ +		goto out_free;
+  	}
+ -	s->s_root->d_op = &ecryptfs_dops;
+ -	s->s_root->d_sb = s;
+ -	s->s_root->d_parent = s->s_root;
+  
+ +	rc = -ENOMEM;
+  	root_info = kmem_cache_zalloc(ecryptfs_dentry_info_cache, GFP_KERNEL);
+ -	if (!root_info) {
+ -		deactivate_locked_super(s);
+ -		goto out;
+ -	}
+ +	if (!root_info)
+ +		goto out_free;
+ +
+  	/* ->kill_sb() will take care of root_info */
+  	ecryptfs_set_dentry_private(s->s_root, root_info);
+ +	ecryptfs_set_dentry_lower(s->s_root, path.dentry);
+ +	ecryptfs_set_dentry_lower_mnt(s->s_root, path.mnt);
+ +
+  	s->s_flags |= MS_ACTIVE;
+ -	rc = ecryptfs_read_super(s, dev_name);
+ -	if (rc) {
+ -		deactivate_locked_super(s);
+ -		err = "Reading sb failed";
+ -		goto out;
+ -	}
+  	return dget(s->s_root);
+  
+ +out_free:
+ +	path_put(&path);
+ +out1:
+ +	deactivate_locked_super(s);
+  out:
+  	if (sbi) {
+  		ecryptfs_destroy_mount_crypt_stat(&sbi->mount_crypt_stat);
