@@ -1,73 +1,90 @@
-From: Ben Dooks <ben@trinity.fluff.org>
-Subject: Re: linux-next: manual merge of the bjdooks-i2c tree with Linus'
-	tree
-Date: Mon, 17 Jan 2011 00:49:59 +0000
-Message-ID: <20110117004958.GC5432@trinity.fluff.org>
-References: <20110117111700.7fefe690.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Tree for January 17
+Date: Mon, 17 Jan 2011 12:14:44 +1100
+Message-ID: <20110117121444.24452592.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:49273 "EHLO trinity.fluff.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751417Ab1AQAuG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 16 Jan 2011 19:50:06 -0500
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__17_Jan_2011_12_14_44_+1100_X3vadKChVdc_a/Ib"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Mon__17_Jan_2011_12_14_44_+1100_X3vadKChVdc_a/Ib
+Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
-In-Reply-To: <20110117111700.7fefe690.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Ben Dooks <ben-linux@fluff.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lennert Buytenhek <buytenh@wantstofly.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 17, 2011 at 11:17:00AM +1100, Stephen Rothwell wrote:
-> Hi Ben,
-> 
-> Today's linux-next merge of the bjdooks-i2c tree got a conflict in
-> arch/arm/mach-pxa/pxa27x.c between commit
-> a3f4c927d379cfaa597bc8ff75dc9d28f8d9200e ("ARM: PXA SoCs: irq_data
-> conversion") from Linus' tree and commit
-> 0a56f28ec486273d84d25571573908344aa67176 ("arm/pxa2xx: reorganize I2C
-> files") from the bjdooks-i2c tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary.
-> 
-> Ben, is that stuff going into 2.6.38?  If so, please get Linus to pull it
-> as it has quite a few conflicts (especially this one commit) ...
+Hi all,
 
-I'll check with RMK on this and sort it out tomorrow.
- 
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc arch/arm/mach-pxa/pxa27x.c
-> index 987301f,1c77e89..0000000
-> --- a/arch/arm/mach-pxa/pxa27x.c
-> +++ b/arch/arm/mach-pxa/pxa27x.c
-> @@@ -17,10 -17,8 +17,11 @@@
->   #include <linux/suspend.h>
->   #include <linux/platform_device.h>
->   #include <linux/sysdev.h>
->  +#include <linux/io.h>
->  +#include <linux/irq.h>
-> + #include <linux/i2c/pxa-i2c.h>
->   
->  +#include <asm/mach/map.h>
->   #include <mach/hardware.h>
->   #include <asm/irq.h>
->   #include <mach/irqs.h>
-> @@@ -30,10 -28,7 +31,8 @@@
->   #include <mach/ohci.h>
->   #include <mach/pm.h>
->   #include <mach/dma.h>
->  +#include <mach/smemc.h>
->   
-> - #include <plat/i2c.h>
-> - 
->   #include "generic.h"
->   #include "devices.h"
->   #include "clock.h"
+Reminder: do not add any v2.6.39 material to your linux-next included
+trees until after v2.6.38-rc1 is released.
 
--- 
-Ben Dooks, ben@fluff.org, http://www.fluff.org/ben/
+Changes since 20110115:
 
-Large Hadron Colada: A large Pina Colada that makes the universe disappear.
+Dropped tree: xen
+
+Linus' tree lost its build failures.
+
+The bjdooks-i2c tree gained a conflict against Linus' tree.
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
+(see below).
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log files
+in the Next directory.  Between each merge, the tree was built with
+a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
+final fixups (if any), it is also built with powerpc allnoconfig (32 and
+64 bit), ppc44x_defconfig and allyesconfig (minus
+CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
+and sparc64 defconfig. These builds also have
+CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
+CONFIG_DEBUG_INFO disabled when necessary.
+
+Below is a summary of the state of the merge.
+
+We are up to 184 trees (counting Linus' and 26 trees of patches pending
+for Linus' tree), more are welcome (even if they are currently empty).
+Thanks to those who have contributed, and to those who haven't, please do.
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Randy Dunlap for doing many randconfig builds.
+
+There is a wiki covering stuff to do with linux-next at
+http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__17_Jan_2011_12_14_44_+1100_X3vadKChVdc_a/Ib
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNM5gEAAoJEDMEi1NhKgbs+hYIAIUXLGYtbaSUnCSNs5WQuvR1
+V+2d8A7AKYSgRAwFkmwOsBc7XN7s3OoF44CpVQBID7GXaYgJobASqVjGBm5yHrnD
+c0gWBCCBamVnVNlwWQpsUfWQmms3EhcPzBi9r44FVxIfeI2LZYJ0jh6tISjK888w
+0IpRBpivNxumBpfxGgKm8Z9trHH6JDVh3X3F2ouwarEATn0qqQxRzTaQ6l8fgDxk
+Z+VBl0lnpkYshaFI4+y5vYV3BBtQruGnvzcGrvBtq7ZbZEWC1IEAwpvGyuryzpZ/
+Ggy7tkhBE8jaHKEe+YTMXYRRDP9m4WZOTRB0iq46xIvf8Mgq/vYfcHj0BB7QYR4=
+=wL6I
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__17_Jan_2011_12_14_44_+1100_X3vadKChVdc_a/Ib--
