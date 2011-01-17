@@ -1,90 +1,172 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for January 17
-Date: Mon, 17 Jan 2011 12:14:44 +1100
-Message-ID: <20110117121444.24452592.sfr@canb.auug.org.au>
+From: <Narendra_K@Dell.com>
+Subject: Re: [PATCH] Fix build failure when CONFIG_NLS is set to 'm' by
+ allmodconfig
+Date: Mon, 17 Jan 2011 11:28:48 -0800
+Message-ID: <20110117195215.GA2708@fedora14-r610.oslab.blr.amer.dell.com>
+References: <20110112203414.GA5657@fedora14-r610.oslab.blr.amer.dell.com>
+ <20110112160229.7b8d82c1@jbarnes-desktop>
+ <alpine.LFD.2.02.1101122217370.19754@x980>
+ <20110113075556.789ac3c3@jbarnes-vaio.home>
+ <20110113162755.GA5872@fedora14-r610.oslab.blr.amer.dell.com>
+ <20110114154458.GA18289@fedora14-r610.oslab.blr.amer.dell.com>
+ <20110115080949.62176a3c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__17_Jan_2011_12_14_44_+1100_X3vadKChVdc_a/Ib"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ausc60ps301.us.dell.com ([143.166.148.206]:38725 "EHLO
+	ausc60ps301.us.dell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752603Ab1AQT3w convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 17 Jan 2011 14:29:52 -0500
+In-Reply-To: <20110115080949.62176a3c.sfr@canb.auug.org.au>
+Content-Language: en-US
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: sfr@canb.auug.org.au
+Cc: jbarnes@virtuousgeek.org, lenb@kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Matt_Domsch@Dell.com, Charles_Rose@Dell.com, Surya_Prabhakar@Dell.com
 
---Signature=_Mon__17_Jan_2011_12_14_44_+1100_X3vadKChVdc_a/Ib
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sat, Jan 15, 2011 at 02:39:49AM +0530, Stephen Rothwell wrote:
+> Hi Narendra,
+> 
+> On Fri, 14 Jan 2011 20:52:42 +0530 <Narendra_K@Dell.com> wrote:
+> >
+> > This patch addresses the build failure described in this thread by
+> > compiling fs/nls/nls_base.c always into vmlinux, thus making the base
+> > nls functions available always.
+> 
+> Even on platforms that don't support ACPI or DMI ...
+> 
+> > From: Narendra K <narendra_k@dell.com>
+> > Subject: [PATCH] Fix build failure when CONFIG_NLS is set to 'm' by allmodconfig
+> > 
+> > This patch fixes the following build breakage introduced by the patch
+> > PCI:export ACPI _DSM provided firmware instance number and string to sysfs.
+> > (previously commit a6247cd4be20cb5439db5cb7b0b6cc67fdc8e2a2).
+> > 
+> > http://marc.info/?l=linux-pci&m=129313294112736&w=1
+> > 
+> > drivers/built-in.o: In function `T.647':
+> > pci-label.c:(.text+0x28514): undefined reference to `utf16s_to_utf8s'
+> > 
+> > This happens because 'make allmodconfig' sets CONFIG_NLS=m and makes
+> > 'utf16s_to_utf8s` unavailable to drivers/pci/pci-label.o which is built
+> > into vmlinux.
+> > 
+> > This is fixed by making fs/nls/nls_base.c always compile as part of
+> > vmlinux thus making the base nls functions available always.
+> > +++ b/fs/nls/Makefile
+> > @@ -2,7 +2,7 @@
+> >  # Makefile for native language support
+> >  #
+> >  
+> > -obj-$(CONFIG_NLS)		+= nls_base.o
+> > +obj-y				+= nls_base.o
+> 
+> You should really restrict this to CONFIG_ACPI || CONFIG_DMI ||
+> CONFIG_NLS ... maybe create a CONFIG_NLS_BASE that is selected by ACPI,
+> DMI and NLS?
 
-Hi all,
+Hi Stephen,
 
-Reminder: do not add any v2.6.39 material to your linux-next included
-trees until after v2.6.38-rc1 is released.
+Thank you for the suggestions. 
 
-Changes since 20110115:
+I agree with your suggestion that we should compile nls_base.o
+conditionally, only when ACPI || DMI || NLS. I have introduced a bew
+config option CONFIG_NLS_BASE and made ACPI, DMI and NLS select it.
 
-Dropped tree: xen
+V1 -> V2:
 
-Linus' tree lost its build failures.
+1. Conditionally compile fs/nls/nls_base.c by introducing a new config
+option CONFIG_NLS_BASE, which is selected by (ACPI || DMI || NLS).
+Behavior of the rest of the files under fs/nls is not changed.
 
-The bjdooks-i2c tree gained a conflict against Linus' tree.
+From: Narendra K <narendra_k@dell.com>
+Subject: [PATCH V2] Fix build failure when CONFIG_NLS is set to 'm' by allmodconfig
 
-----------------------------------------------------------------------------
+This patch fixes the following build breakage introduced by the patch
+PCI:export ACPI _DSM provided firmware instance number and string to sysfs.
+(previously commit a6247cd4be20cb5439db5cb7b0b6cc67fdc8e2a2).
 
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
+http://marc.info/?l=linux-pci&m=129313294112736&w=1
 
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
-and sparc64 defconfig. These builds also have
-CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
-CONFIG_DEBUG_INFO disabled when necessary.
+drivers/built-in.o: In function `T.647':
+pci-label.c:(.text+0x28514): undefined reference to `utf16s_to_utf8s'
 
-Below is a summary of the state of the merge.
+This happens because 'make allmodconfig' sets CONFIG_NLS=m and makes
+'utf16s_to_utf8s` unavailable to drivers/pci/pci-label.o which is built
+into vmlinux.
 
-We are up to 184 trees (counting Linus' and 26 trees of patches pending
-for Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
+This is fixed by making fs/nls/nls_base.c compile conditionally into
+vmlinux by introducing a new config option CONFIG_NLS_BASE which is
+selected by (ACPI || DMI || NLS). This makes
 
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
+Signed-off-by: Narendra K <narendra_k@dell.com>
+---
+ fs/Makefile     |    2 +-
+ fs/nls/Kconfig  |   14 ++++++++++++++
+ fs/nls/Makefile |    2 +-
+ 3 files changed, 16 insertions(+), 2 deletions(-)
 
-Thanks to Randy Dunlap for doing many randconfig builds.
+diff --git a/fs/Makefile b/fs/Makefile
+index a7f7cef..1e78b9b 100644
+--- a/fs/Makefile
++++ b/fs/Makefile
+@@ -86,7 +86,7 @@ obj-$(CONFIG_NFS_FS)		+= nfs/
+ obj-$(CONFIG_EXPORTFS)		+= exportfs/
+ obj-$(CONFIG_NFSD)		+= nfsd/
+ obj-$(CONFIG_LOCKD)		+= lockd/
+-obj-$(CONFIG_NLS)		+= nls/
++obj-y				+= nls/
+ obj-$(CONFIG_SYSV_FS)		+= sysv/
+ obj-$(CONFIG_CIFS)		+= cifs/
+ obj-$(CONFIG_NCP_FS)		+= ncpfs/
+diff --git a/fs/nls/Kconfig b/fs/nls/Kconfig
+index a39edc4..2fb92e5 100644
+--- a/fs/nls/Kconfig
++++ b/fs/nls/Kconfig
+@@ -4,6 +4,7 @@
+ 
+ menuconfig NLS
+ 	tristate "Native language support"
++	select NLS_BASE
+ 	---help---
+ 	  The base Native Language Support. A number of filesystems
+ 	  depend on it (e.g. FAT, JOLIET, NT, BEOS filesystems), as well
+@@ -17,6 +18,19 @@ menuconfig NLS
+ 
+ if NLS
+ 
++config NLS_BASE
++	bool "Base NLS functions"
++	depends on ACPI || DMI
++	default y
++	---help---
++	  The base NLS support functions which handle unicode traslations.
++
++	  If unsure, say Y.
++
++	  This config option is selected by ACPI && DMI && NLS as the
++	  functions defined here are needed in vmlinux and if built as
++	  module cause build issues.
++
+ config NLS_DEFAULT
+ 	string "Default NLS Option"
+ 	default "iso8859-1"
+diff --git a/fs/nls/Makefile b/fs/nls/Makefile
+index f499dd7..dde741f 100644
+--- a/fs/nls/Makefile
++++ b/fs/nls/Makefile
+@@ -2,7 +2,7 @@
+ # Makefile for native language support
+ #
+ 
+-obj-$(CONFIG_NLS)		+= nls_base.o
++obj-$(CONFIG_NLS_BASE)		+= nls_base.o
+ 
+ obj-$(CONFIG_NLS_CODEPAGE_437)	+= nls_cp437.o
+ obj-$(CONFIG_NLS_CODEPAGE_737)	+= nls_cp737.o
+-- 
+1.7.3.1
 
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__17_Jan_2011_12_14_44_+1100_X3vadKChVdc_a/Ib
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNM5gEAAoJEDMEi1NhKgbs+hYIAIUXLGYtbaSUnCSNs5WQuvR1
-V+2d8A7AKYSgRAwFkmwOsBc7XN7s3OoF44CpVQBID7GXaYgJobASqVjGBm5yHrnD
-c0gWBCCBamVnVNlwWQpsUfWQmms3EhcPzBi9r44FVxIfeI2LZYJ0jh6tISjK888w
-0IpRBpivNxumBpfxGgKm8Z9trHH6JDVh3X3F2ouwarEATn0qqQxRzTaQ6l8fgDxk
-Z+VBl0lnpkYshaFI4+y5vYV3BBtQruGnvzcGrvBtq7ZbZEWC1IEAwpvGyuryzpZ/
-Ggy7tkhBE8jaHKEe+YTMXYRRDP9m4WZOTRB0iq46xIvf8Mgq/vYfcHj0BB7QYR4=
-=wL6I
------END PGP SIGNATURE-----
-
---Signature=_Mon__17_Jan_2011_12_14_44_+1100_X3vadKChVdc_a/Ib--
+With regards,
+Narendra K
