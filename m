@@ -1,75 +1,62 @@
-From: "Guan Xuetao" <guanxuetao@mprc.pku.edu.cn>
-Subject: RE: Request for unicore32 architecture codes to merge into linux-next
-Date: Sun, 16 Jan 2011 23:35:29 +0800
-Message-ID: <005901cbb593$04c7e420$0e57ac60$@mprc.pku.edu.cn>
-References: <004901cbb4d5$b9bb1370$2d313a50$@mprc.pku.edu.cn> <20110115220809.GC19872@core.coreip.homeip.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the bjdooks-i2c tree with Linus' tree
+Date: Mon, 17 Jan 2011 11:17:00 +1100
+Message-ID: <20110117111700.7fefe690.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="US-ASCII"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110115220809.GC19872@core.coreip.homeip.net>
-Content-Language: zh-cn
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Dmitry Torokhov' <dmitry.torokhov@gmail.com>
-Cc: sfr@canb.auug.org.au, 'Arnd Bergmann' <arnd@arndb.de>, gregkh@suse.de, jbarnes@virtuousgeek.org, rubini@cvml.unipv.it, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:47999 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751138Ab1AQARH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 16 Jan 2011 19:17:07 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lennert Buytenhek <buytenh@wantstofly.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
+Hi Ben,
 
+Today's linux-next merge of the bjdooks-i2c tree got a conflict in
+arch/arm/mach-pxa/pxa27x.c between commit
+a3f4c927d379cfaa597bc8ff75dc9d28f8d9200e ("ARM: PXA SoCs: irq_data
+conversion") from Linus' tree and commit
+0a56f28ec486273d84d25571573908344aa67176 ("arm/pxa2xx: reorganize I2C
+files") from the bjdooks-i2c tree.
 
-> -----Original Message-----
-> From: Dmitry Torokhov [mailto:dmitry.torokhov@gmail.com]
-> Sent: Sunday, January 16, 2011 6:08 AM
-> To: Guan Xuetao
-> Cc: sfr@canb.auug.org.au; Arnd Bergmann; gregkh@suse.de; jbarnes@virtuousgeek.org; rubini@cvml.unipv.it; linux-
-> arch@vger.kernel.org; linux-kernel@vger.kernel.org; linux-fbdev@vger.kernel.org; linux-next@vger.kernel.org
-> Subject: Re: Request for unicore32 architecture codes to merge into linux-next
-> 
-> Hi,
-> 
-> On Sun, Jan 16, 2011 at 01:00:31AM +0800, Guan Xuetao wrote:
-> > Hi,
-> >
-> > I want to merge unicore32 repo into linux-next tree, the position is (unicore32 branch):
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/epip/linux-2.6-unicore32.git
-> >
-> 
-> Have these changes been reviewed at all? Looking at the input parts I
-> doubt it... We try _really_ hard to avoid sprinkling arch #ifedefs in
-> the common code.
-Many people helped me to review the patchset in linux-arch and linux-kernel mailist.
-For ps2 driver, perhaps I should not introduce bugfix for the machine, so I remove the additional
-modification, and only i8042 is necessary.
-The patchset is rebased, and git dir and branch name remain the same.
-Please update.
-> 
-> So, for input:
-> 
-> - how big is the difference between standard keytable and the one you
->   are introducing? Looks like you are just adding 5 new keys that are
->   not critical for booting. So please just update keymap from userpsace
->   as we do for countless laptops and keyboards out there.
-I understand.
-And I remove the keytable.
+I fixed it up (see below) and can carry the fix as necessary.
 
-> 
-> - Trying to enable mouse 1000 times can lead to loooong delays. Have
->   you tried to figure out why you need the loop?
-> 
-> - What kind of mice can be connected to teh devices? I am concerned that
->   your super-strict protocol checks will cause more harm then good (i do
->   not believe they are valied in general case, overflow is just and
->   additional bit).
-> 
-> Please split changes related into logically separated patches and post
-> them on linux-input@vger.kernel.org (along with linux-kernel if you
-> prefer) for review and comments.
-> 
-> Thanks.
-> 
-> --
-> Dmitry
+Ben, is that stuff going into 2.6.38?  If so, please get Linus to pull it
+as it has quite a few conflicts (especially this one commit) ...
 
-Thanks Dmitry.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Guan Xuetao
+diff --cc arch/arm/mach-pxa/pxa27x.c
+index 987301f,1c77e89..0000000
+--- a/arch/arm/mach-pxa/pxa27x.c
++++ b/arch/arm/mach-pxa/pxa27x.c
+@@@ -17,10 -17,8 +17,11 @@@
+  #include <linux/suspend.h>
+  #include <linux/platform_device.h>
+  #include <linux/sysdev.h>
+ +#include <linux/io.h>
+ +#include <linux/irq.h>
++ #include <linux/i2c/pxa-i2c.h>
+  
+ +#include <asm/mach/map.h>
+  #include <mach/hardware.h>
+  #include <asm/irq.h>
+  #include <mach/irqs.h>
+@@@ -30,10 -28,7 +31,8 @@@
+  #include <mach/ohci.h>
+  #include <mach/pm.h>
+  #include <mach/dma.h>
+ +#include <mach/smemc.h>
+  
+- #include <plat/i2c.h>
+- 
+  #include "generic.h"
+  #include "devices.h"
+  #include "clock.h"
