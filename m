@@ -1,67 +1,41 @@
-From: Paul Mundt <lethal@linux-sh.org>
-Subject: Re: Request for unicore32 architecture codes to merge into linux-next
-Date: Tue, 18 Jan 2011 18:53:10 +0900
-Message-ID: <20110118095309.GA18773@linux-sh.org>
-References: <004901cbb4d5$b9bb1370$2d313a50$@mprc.pku.edu.cn> <20110118043323.GF2122@linux-sh.org> <01b501cbb6ef$3299f2a0$97cdd7e0$@mprc.pku.edu.cn> <20110118091032.GA18525@linux-sh.org> <01bf01cbb6f2$cdba4a70$692edf50$@mprc.pku.edu.cn>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for January 18 (__modver_version_show)
+Date: Tue, 18 Jan 2011 09:17:49 -0800
+Message-ID: <20110118091749.ac5823df.randy.dunlap@oracle.com>
+References: <20110118122139.6c2a6f2f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-arch-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <01bf01cbb6f2$cdba4a70$692edf50$@mprc.pku.edu.cn>
-Sender: linux-arch-owner@vger.kernel.org
-To: Guan Xuetao <guanxuetao@mprc.pku.edu.cn>
-Cc: sfr@canb.auug.org.au, 'Arnd Bergmann' <arnd@arndb.de>, gregkh@suse.de, jbarnes@virtuousgeek.org, dmitry.torokhov@gmail.com, dtor@mail.ru, rubini@cvml.unipv.it, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:47897 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752397Ab1ARRSW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 18 Jan 2011 12:18:22 -0500
+In-Reply-To: <20110118122139.6c2a6f2f.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Tue, Jan 18, 2011 at 05:33:44PM +0800, Guan Xuetao wrote:
-> > -----Original Message-----
-> > From: linux-next-owner@vger.kernel.org [mailto:linux-next-owner@vger.kernel.org] On Behalf Of Paul Mundt
-> > Sent: Tuesday, January 18, 2011 5:11 PM
-> > To: Guan Xuetao
-> > Cc: sfr@canb.auug.org.au; 'Arnd Bergmann'; gregkh@suse.de; jbarnes@virtuousgeek.org; dmitry.torokhov@gmail.com; dtor@mail.ru;
-> > rubini@cvml.unipv.it; linux-arch@vger.kernel.org; linux-kernel@vger.kernel.org; linux-fbdev@vger.kernel.org; linux-
-> > next@vger.kernel.org
-> > Subject: Re: Request for unicore32 architecture codes to merge into linux-next
-> > 
-> > On Tue, Jan 18, 2011 at 05:07:41PM +0800, Guan Xuetao wrote:
-> > > IMO, the whole architecture specific codes need to be merged first, and only some
-> > > necessary drivers are included under staging. Then, I could split the staging drivers
-> > > into corresponding mail-list, and then, additional drivers.
-> > > Otherwise, there are no architecture basic for drivers review.
-> > >
-> > That's of course fine so long as the driver changes are reasonably
-> > self-contained. The situation we want to avoid is that you end up with
-> > drivers that depend on some private infrastructure of API where not
-> > enough context is provided when the two are decoupled.
-> > 
-> > In any event, the architecture bits are the most self-contained and have
-> > had the most review of anything in this series of patches, so it probably
-> > makes sense to work on getting those bits integrated and then dealing
-> > with the rest incrementally.
-> Then, I should:
-> 1. merge reviewed arch dir and reviewed drivers (for now, i8042)
-> 2. submit staging drivers to review
-> Am I right?
+On Tue, 18 Jan 2011 12:21:39 +1100 Stephen Rothwell wrote:
+
+> Hi all,
 > 
-That would at least make it easier to get parts of it merged while the
-drivers get reviewed and reworked. If enough people are content with the
-state of the architecture patches then there is no reason why they can't
-be pulled in to -next once it's open for .39 changes. The drivers can
-then gradually find their way in to -next via subsystem trees.
+> Reminder: do not add any v2.6.39 material to your linux-next included
+> trees until after v2.6.38-rc1 is released.
+> 
+> Changes since 20110115:
 
->From my point of view (though I don't believe I'm a minority in this),
-staging/ in general should be a last resort for new drivers. Since you
-are at least actively replying and making changes that have been
-requested, there should really be no need to go the staging route for
-any of the drivers at all.
 
-On the other hand, if it turns out you have a big chunk of crazed and
-incomprehensible infrastructure like an interpreter or something equally
-perverse in the middle somewhere that everything depends on, that does of
-course complicate things and limit your options somewhat, but those sorts
-of things are hopefully corner cases (I admit the fact that you're
-linking libc in to the kernel has rather scared me away from reviewing
-the rest of the patches under closer scrutiny). Your goal in general
-should be to avoid staging completely and submit small logically isolated
-components that can be reviewed and merged wholly independently of
-anything else.
+I'm seeing this on several builds (i386 and x86_64):
+
+lib/built-in.o:(__modver+0x8): undefined reference to `__modver_version_show'
+lib/built-in.o:(__modver+0x2c): undefined reference to `__modver_version_show'
+
+It looks like the compiler or linker is dropping that function from the
+build since it cannot see any references to it...
+At least __modver_version_show is not in the kernel/params.o file.
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
