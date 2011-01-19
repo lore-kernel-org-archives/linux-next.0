@@ -1,98 +1,65 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the rr tree
-Date: Wed, 19 Jan 2011 15:42:10 +1100
-Message-ID: <20110119154210.435453e4.sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for January 18 (__modver_version_show)
+Date: Wed, 19 Jan 2011 16:09:51 +1100
+Message-ID: <20110119160951.2a14d0a0.sfr@canb.auug.org.au>
+References: <20110118122139.6c2a6f2f.sfr@canb.auug.org.au>
+	<20110118091749.ac5823df.randy.dunlap@oracle.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__19_Jan_2011_15_42_10_+1100_o8NOkkl5.=gUXM_p"
+ boundary="Signature=_Wed__19_Jan_2011_16_09_51_+1100_Quqw1Uz9UoGNtGS0"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52835 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:59387 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751770Ab1ASEmT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 18 Jan 2011 23:42:19 -0500
+	id S1750712Ab1ASFJ5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 19 Jan 2011 00:09:57 -0500
+In-Reply-To: <20110118091749.ac5823df.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rusty Russell <rusty@rustcorp.com.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@stericsson.com>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Wed__19_Jan_2011_15_42_10_+1100_o8NOkkl5.=gUXM_p
+--Signature=_Wed__19_Jan_2011_16_09_51_+1100_Quqw1Uz9UoGNtGS0
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rusty,
+Hi Randy,
 
-After merging the rr tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+On Tue, 18 Jan 2011 09:17:49 -0800 Randy Dunlap <randy.dunlap@oracle.com> w=
+rote:
+>
+> I'm seeing this on several builds (i386 and x86_64):
+>=20
+> lib/built-in.o:(__modver+0x8): undefined reference to `__modver_version_s=
+how'
+> lib/built-in.o:(__modver+0x2c): undefined reference to `__modver_version_=
+show'
+>=20
+> It looks like the compiler or linker is dropping that function from the
+> build since it cannot see any references to it...
+> At least __modver_version_show is not in the kernel/params.o file.
 
-net/dsa/dsa.c:432: error: two or more data types in declaration specifiers
+Do these builds have CONFIG_SYSFS set?
 
-Lines 431-433 of that file are:
-
-MODULE_AUTHOR("Lennert Buytenhek <buytenh@wantstofly.org>")
-MODULE_DESCRIPTION("Driver for Distributed Switch Architecture switch chips=
-");
-MODULE_LICENSE("GPL");
-
-Presumably caused by commit b64781e8e2b0f480affb170460cbfb3b11fa9e5d
-("param: add null statement to compiled-in module params").  I wonder how
-many more build errors this change may provoke.  Please try to find them
-and fix them before adding this change, thanks.
-
-I used the version of the rr tree from next-20110118 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
-P.S. (some of these may just be in linux-next)
-$ git grep '^[ 	]*MODULE_.*)[ 	]*$'
-drivers/media/dvb/dvb-core/dvbdev.h:	MODULE_PARM_DESC(adapter_nr, "DVB adap=
-ter numbers")
-drivers/net/arm/ks8695net.c:MODULE_AUTHOR("Simtec Electronics")
-drivers/platform/x86/thinkpad_acpi.c:	MODULE_ALIAS("dmi:bvnIBM:bvr" __type =
-"ET??WW*")
-drivers/usb/atm/xusbatm.c:	MODULE_PARM_DESC(name, desc)
-drivers/usb/gadget/f_mass_storage.c:	MODULE_PARM_DESC(prefix ## name, desc)
-drivers/usb/gadget/f_mass_storage.c:	MODULE_PARM_DESC(prefix ## name, desc)
-include/linux/blkdev.h:	MODULE_ALIAS("block-major-" __stringify(major) "-" =
-__stringify(minor))
-include/linux/blkdev.h:	MODULE_ALIAS("block-major-" __stringify(major) "-*")
-include/linux/device.h:	MODULE_ALIAS("char-major-" __stringify(major) "-" _=
-_stringify(minor))
-include/linux/device.h:	MODULE_ALIAS("char-major-" __stringify(major) "-*")
-include/linux/isapnp.h:		MODULE_GENERIC_TABLE(isapnp_card, name)
-include/linux/module.h:  MODULE_GENERIC_TABLE(type##_device,name)
-include/linux/net.h:	MODULE_ALIAS("net-pf-" __stringify(proto))
-include/linux/net.h:	MODULE_ALIAS("net-pf-" __stringify(pf) "-proto-" __str=
-ingify(proto))
-include/linux/netfilter/nfnetlink.h:	MODULE_ALIAS("nfnetlink-subsys-" __str=
-ingify(subsys))
-include/linux/tty_ldisc.h:	MODULE_ALIAS("tty-ldisc-" __stringify(ldisc))
-include/net/netfilter/nf_conntrack.h:        MODULE_ALIAS("nfct-helper-" he=
-lper)
-include/net/xfrm.h:	MODULE_ALIAS("xfrm-mode-" __stringify(family) "-" __str=
-ingify(encap))
-include/net/xfrm.h:	MODULE_ALIAS("xfrm-type-" __stringify(family) "-" __str=
-ingify(proto))
-include/scsi/scsi_device.h:	MODULE_ALIAS("scsi:t-" __stringify(type) "*")
-include/sound/minors.h:	MODULE_ALIAS("sound-service-?-" __stringify(type))
-net/dsa/dsa.c:MODULE_AUTHOR("Lennert Buytenhek <buytenh@wantstofly.org>")
-
---Signature=_Wed__19_Jan_2011_15_42_10_+1100_o8NOkkl5.=gUXM_p
+--Signature=_Wed__19_Jan_2011_16_09_51_+1100_Quqw1Uz9UoGNtGS0
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNNmuiAAoJEDMEi1NhKgbsX/UH/2qb+RibPMc0wxnyV8p8y0g0
-+r6gyc+ln7yEjXnZstO1CfkRfzRrxxo7FJE6nNROvaxcK72/vSqfKaDQeIdvefId
-8sYlCuPmBMdO2gjqUuGDq/HwJzaOAJf6R3ZhJtFSatwhwvvDHrdPcguZcGzARd9l
-bKUSIJczQf/+Zz0rxUAPo+kQJUTUmdNQgyufnXb3f72l35hGihT8cvJQv6O5Xe52
-hD0FNVquEo0Syhpe/U6A5YkNeqR/hZP4Dbw0c7phq1RWylKJBxxHk+tHzzAbZg7A
-omt6n61bWF8OS5Mc5DwnWEbnQC89oXMUnsNahgp10viiURGmTFMy3F6dUi8DNO8=
-=gHsY
+iQEcBAEBAgAGBQJNNnIfAAoJEDMEi1NhKgbscfwH+wVVDnvmi6zPZYGJPR90oDm8
+yRDZFikgUrN3/OA5slDl4XLooz+pSrKCVsbytc2eFKBPrWCWCzldOFJTlnihiF0r
+T1JdC4vRZgaoQxjlJaKl9JkSW+AKNgDX48SLSHJJ9803Sitisy9byqK8LeFLTEfC
+meRrJq2pItZXqayL33wA+PnHVnOlDDLyeWSKfZPgASya1XV0cxC+kgjA4+tmWhiG
+k2USwjF03Leef72kVLPp25jrcO4bYojS2OUoWYTNZ2B0I2NAb5BXwqy1jWE1AWPd
+Kpl8Px5fbvmVpeCajEnYCljnTehrC6/cO3+PeqnDULeSxrjupmralYm4V20Ye54=
+=AiqY
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__19_Jan_2011_15_42_10_+1100_o8NOkkl5.=gUXM_p--
+--Signature=_Wed__19_Jan_2011_16_09_51_+1100_Quqw1Uz9UoGNtGS0--
