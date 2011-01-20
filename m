@@ -1,68 +1,40 @@
-From: <Narendra_K@Dell.com>
-Subject: Re: [PATCH] Fix build failure when CONFIG_NLS is set to 'm' by
- allmodconfig
-Date: Thu, 20 Jan 2011 10:41:50 -0800
-Message-ID: <20110120190459.GA30978@fedora14-r610.oslab.blr.amer.dell.com>
-References: <20110112203414.GA5657@fedora14-r610.oslab.blr.amer.dell.com>
- <20110112160229.7b8d82c1@jbarnes-desktop>
- <alpine.LFD.2.02.1101122217370.19754@x980>
- <20110113075556.789ac3c3@jbarnes-vaio.home>
- <20110113162755.GA5872@fedora14-r610.oslab.blr.amer.dell.com>
- <20110114154458.GA18289@fedora14-r610.oslab.blr.amer.dell.com>
- <20110115080949.62176a3c.sfr@canb.auug.org.au>
- <20110117195215.GA2708@fedora14-r610.oslab.blr.amer.dell.com>
+From: Jesse Barnes <jbarnes@virtuousgeek.org>
+Subject: Re: Request for unicore32 architecture codes to merge into
+ linux-next
+Date: Thu, 20 Jan 2011 11:42:16 -0800
+Message-ID: <20110120114216.4b23182a@jbarnes-desktop>
+References: <004901cbb4d5$b9bb1370$2d313a50$@mprc.pku.edu.cn>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ausc60ps301.us.dell.com ([143.166.148.206]:14075 "EHLO
-	ausc60ps301.us.dell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752186Ab1ATSnk convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 20 Jan 2011 13:43:40 -0500
-In-Reply-To: <20110117195215.GA2708@fedora14-r610.oslab.blr.amer.dell.com>
-Content-Language: en-US
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: jbarnes@virtuousgeek.org, lenb@kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Matt_Domsch@Dell.com, Charles_Rose@Dell.com, Surya_Prabhakar@Dell.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arch-owner@vger.kernel.org>
+In-Reply-To: <004901cbb4d5$b9bb1370$2d313a50$@mprc.pku.edu.cn>
+Sender: linux-arch-owner@vger.kernel.org
+To: Guan Xuetao <guanxuetao@mprc.pku.edu.cn>
+Cc: sfr@canb.auug.org.au, Arnd Bergmann <arnd@arndb.de>, gregkh@suse.de, dmitry.torokhov@gmail.com, dtor@mail.ru, rubini@cvml.unipv.it, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Jan 18, 2011 at 12:58:48AM +0530, K, Narendra wrote:
-> On Sat, Jan 15, 2011 at 02:39:49AM +0530, Stephen Rothwell wrote:
-> > Hi Narendra,
-> > 
-> > On Fri, 14 Jan 2011 20:52:42 +0530 <Narendra_K@Dell.com> wrote:
-> > >
-> > > This patch addresses the build failure described in this thread by
-> > > compiling fs/nls/nls_base.c always into vmlinux, thus making the base
-> > > nls functions available always.
-> > 
-> > Even on platforms that don't support ACPI or DMI ...
-> > 
-> > You should really restrict this to CONFIG_ACPI || CONFIG_DMI ||
-> > CONFIG_NLS ... maybe create a CONFIG_NLS_BASE that is selected by ACPI,
-> > DMI and NLS?
-> 
-> Hi Stephen,
-> 
-> Thank you for the suggestions. 
-> 
-> I agree with your suggestion that we should compile nls_base.o
-> conditionally, only when ACPI || DMI || NLS. I have introduced a bew
-> config option CONFIG_NLS_BASE and made ACPI, DMI and NLS select it.
-> 
-> V1 -> V2:
-> 
-> 1. Conditionally compile fs/nls/nls_base.c by introducing a new config
-> option CONFIG_NLS_BASE, which is selected by (ACPI || DMI || NLS).
-> Behavior of the rest of the files under fs/nls is not changed.
-> 
-> From: Narendra K <narendra_k@dell.com>
-> Subject: [PATCH V2] Fix build failure when CONFIG_NLS is set to 'm' by allmodconfig
+On Sun, 16 Jan 2011 01:00:31 +0800
+"Guan Xuetao" <guanxuetao@mprc.pku.edu.cn> wrote:
 
-Hi,
+> Hi,
+> 
+> I want to merge unicore32 repo into linux-next tree, the position is (unicore32 branch):
+>   git://git.kernel.org/pub/scm/linux/kernel/git/epip/linux-2.6-unicore32.git
+> 
+> Signed-off-by: Guan Xuetao <gxt@mprc.pku.edu.cn>
+> ---
 
-Please let me know if there are any concerns with Version 2 of the patch.
-If it looks good please consider it for inclusion.
+Took a quick look at the PCI parts, looks like you have a pretty big
+DMA restriction.
 
-With regards,
-Narendra K
+You could provide your own dma map ops and make the allocator a bit
+smarter about where it gets memory (preferentially allocating from the
+DMA'able region, which you could hide).  Or do you find that swiotlb
+does ok in general?
+
+Other than that you had pretty tiny bits of enabling code, I assume
+they work on your platform (config space access & setup, etc.).
+
+-- 
+Jesse Barnes, Intel Open Source Technology Center
