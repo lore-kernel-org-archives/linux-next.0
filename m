@@ -1,315 +1,128 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for January 21
-Date: Fri, 21 Jan 2011 13:27:07 +1100
-Message-ID: <20110121132707.27768675.sfr@canb.auug.org.au>
+From: Xiaotian Feng <xtfeng@gmail.com>
+Subject: Re: [PATCH 3/3 V13] RO/NX protection for loadable kernel
+Date: Fri, 21 Jan 2011 10:35:49 +0800
+Message-ID: <AANLkTim8S4=xsafHLeHQH-sSZYyn0VmnFEtM_KRpRDNX@mail.gmail.com>
+References: <4CE2F914.9070106@free.fr>
+	<24422.1290656467@localhost>
+	<20101126182355.62615dff@mat-laptop>
+	<20101208221951.GO5750@outflux.net>
+	<20101211001857.4c5e0794@mat-laptop>
+	<20101222124019.GG10809@elte.hu>
+	<34428.1293053719@localhost>
+	<AANLkTin55DXcQnK3NY7y-v8TXj5w-XT2rTJo9p90tj4g@mail.gmail.com>
+	<4D389BC0.8080900@free.fr>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__21_Jan_2011_13_27_07_+1100_JTcri9si5gIIbwxc"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:54158 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753889Ab1AUC1P (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 20 Jan 2011 21:27:15 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-security-module-owner@vger.kernel.org>
+In-Reply-To: <4D389BC0.8080900@free.fr>
+Sender: linux-security-module-owner@vger.kernel.org
+To: matthieu castet <castet.matthieu@free.fr>
+Cc: Valdis.Kletnieks@vt.edu, Ingo Molnar <mingo@elte.hu>, Kees Cook <kees.cook@canonical.com>, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Rusty Russell <rusty@rustcorp.com.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>, Siarhei Liakh <sliakh.lkml@gmail.com>, Steven Rostedt <rostedt@goodmis.org>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__21_Jan_2011_13_27_07_+1100_JTcri9si5gIIbwxc
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Jan 21, 2011 at 4:32 AM, matthieu castet
+<castet.matthieu@free.fr> wrote:
+> Xiaotian Feng a =C3=A9crit :
+>>
+>> On Thu, Dec 23, 2010 at 5:35 AM, =C2=A0<Valdis.Kletnieks@vt.edu> wro=
+te:
+>>>
+>>> On Wed, 22 Dec 2010 13:40:19 +0100, Ingo Molnar said:
+>>>>
+>>>> * mat <castet.matthieu@free.fr> wrote:
+>>>>
+>>>>> Le Wed, 8 Dec 2010 14:19:51 -0800,
+>>>>> Kees Cook <kees.cook@canonical.com> a =C3=A9crit :
+>>>>>
+>>>>>> On Fri, Nov 26, 2010 at 06:23:55PM +0100, mat wrote:
+>>>>>>>
+>>>>>>> could you try the attached patch ?
+>>>>>>>
+>>>>>>> on module load, we sort the __jump_table section. So we should =
+make
+>>>>>>> it writable.
+>>>>>>>
+>>>>>>>
+>>>>>>> Matthieu
+>>>>>>> diff --git a/arch/x86/include/asm/jump_label.h
+>>>>>>> b/arch/x86/include/asm/jump_label.h index f52d42e..574dbc2 1006=
+44
+>>>>>>> --- a/arch/x86/include/asm/jump_label.h
+>>>>>>> +++ b/arch/x86/include/asm/jump_label.h
+>>>>>>> @@ -14,7 +14,7 @@
+>>>>>>> =C2=A0 =C2=A0 =C2=A0 =C2=A0do
+>>>>>>> { =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 \ asm
+>>>>>>> goto("1:" =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 \
+>>>>>>> JUMP_LABEL_INITIAL_NOP =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0\
+>>>>>>> - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 ".pushsection __jump_table, =C2=A0\"a\" \n\t"\
+>>>>>>> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 ".pushsection __jump_table, =C2=A0\"aw\" \n\t"\
+>>>>>>> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0_ASM_PTR "1b, %l[" #label "], %c0 \n\t" \
+>>>>>>> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0".popsection \n\t" =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0\
+>>>>>>> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0: : =C2=A0"i" (key) : =C2=A0: label);
+>>>>>>> \
+>>>>>>
+>>>>>> Acked-by: Kees Cook <kees.cook@canonical.com>
+>>>>>>
+>>>>>> Can this please get committed to tip?
+>>>>>
+>>>>> I think it is not need anymore with =C2=A0Steven Rostedt patch [1=
+]
+>>>>>
+>>>>> Matthieu
+>>>>>
+>>>>> [1]
+>>>>>>>
+>>>>>>> Here we set the text read only before we call the notifiers. Th=
+e
+>>>>>>> function tracer changes the calls to mcount into nops via a not=
+ifier
+>>>>>>> call so this must be done after the module notifiers.
+>>>>
+>>>> What's the status of this bug?
+>>>>
+>>>> If we still need the patch then please submit it standalone with a
+>>>> proper subject
+>>>> line, with acks/signoffs added, etc.
+>>>
+>>> Steve Rostedt's patch that moves the setting of the page permission=
+s
+>>> seems to
+>>> make this patch no longer necessary. =C2=A0I tripped over this same=
+ issue, but
+>>> the
+>>> version in the latest -mmotm does not need it, as it includes Steve=
+'s
+>>> fix.
+>>>
+>>
+>> I'm facing a boot failure (panic'ed on remove_jump_label_module_init=
+)
+>> on 2.6.37 (latest commit 3c0cb7c), which is 100% reproducible.
+>> With this patch applied, I can boot my machine successfully, so I do
+>> think this patch is needed.
+>>
+> Could you confirm that this patch fix the problem ?
+>
 
-Hi all,
+Yes, I already applied this patch, and my system works fine now.
 
-The next linux-next tree will be created on January 31.  Quite a few
-people will be paddling around at LCA, so hopefully there will not be too
-much to cope with when I get back.
-
-Changes since 20110120:
-
-Dropped tree: xen
-
-The net tree gained a build failure so I used the version from
-next-20110120.
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
-and sparc64 defconfig. These builds also have
-CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
-CONFIG_DEBUG_INFO disabled when necessary.
-
-Below is a summary of the state of the merge.
-
-We are up to 186 trees (counting Linus' and 28 trees of patches pending
-for Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Randy Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging fixes/fixes
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging 52xx-and-virtex-current/powerpc/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/rc-fixes
-Merging driver-core.current/driver-core-linus
-Merging tty.current/tty-linus
-Merging usb.current/usb-linus
-Merging staging.current/staging-linus
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging ide-curent/master
-Merging dwmw2/master
-Merging sh-current/sh-fixes-for-linus
-Merging rmobile-current/rmobile-fixes-for-linus
-Merging fbdev-current/fbdev-fixes-for-linus
-Merging devicetree-current/devicetree/merge
-Merging spi-current/spi/merge
-Merging arm/devel
-Merging davinci/davinci-next
-Merging i.MX/for-next
-Merging linux-spec/for-next
-Merging msm/for-next
-Merging omap/for-next
-Merging pxa/for-next
-Merging samsung/next-samsung
-Merging s5p/for-next
-Merging tegra/for-next
-CONFLICT (content): Merge conflict in arch/arm/mach-tegra/timer.c
-Merging ux500-core/ux500-core
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-Merging m68knommu/for-next
-Merging microblaze/next
-Merging mips/mips-for-linux-next
-Merging parisc/for-next
-Merging powerpc/next
-Merging 4xx/next
-Merging 52xx-and-virtex/powerpc/next
-Merging galak/next
-Merging s390/features
-Merging sh/sh-latest
-Merging rmobile/rmobile-latest
-Merging sparc/master
-Merging tile/master
-Merging xtensa/master
-CONFLICT (content): Merge conflict in arch/xtensa/configs/iss_defconfig
-Merging ceph/for-next
-Merging cifs/master
-Merging configfs/linux-next
-Merging ecryptfs/next
-Merging ext3/for_next
-Merging ext4/next
-Merging fatfs/master
-Merging fuse/for-next
-Merging gfs2/master
-Merging hfsplus/for-next
-Merging jfs/next
-Merging logfs/master
-CONFLICT (content): Merge conflict in fs/logfs/logfs.h
-Merging nfs/linux-next
-Merging nfsd/nfsd-next
-Merging nilfs2/for-next
-Merging ocfs2/linux-next
-Merging omfs/for-next
-Merging squashfs/master
-Merging udf/for_next
-Merging v9fs/for-next
-Merging ubifs/linux-next
-Merging xfs/master
-Merging vfs/for-next
-Merging vfs-scale/vfs-scale-working
-Merging pci/linux-next
-Merging hid/for-next
-Merging quilt/i2c
-Merging bjdooks-i2c/next-i2c
-CONFLICT (rename/rename): Rename "arch/arm/mach-pxa/include/mach/pxa2xx_spi=
-.h"->"arch/arm/mach-s5pv310/include/mach/dma.h" in branch "HEAD" rename "ar=
-ch/arm/mach-pxa/include/mach/pxa2xx_spi.h"->"include/linux/spi/pxa2xx_spi.h=
-" in "bjdooks-i2c/next-i2c"
-CONFLICT (content): Merge conflict in arch/arm/mach-pxa/devices.c
-CONFLICT (content): Merge conflict in arch/arm/mach-pxa/poodle.c
-CONFLICT (content): Merge conflict in arch/arm/mach-pxa/pxa27x.c
-CONFLICT (content): Merge conflict in arch/arm/mach-pxa/pxa3xx.c
-CONFLICT (content): Merge conflict in arch/arm/mach-pxa/trizeps4.c
-CONFLICT (content): Merge conflict in arch/arm/mach-pxa/z2.c
-$ git rm -f arch/arm/mach-pxa/include/mach/pxa2xx_spi.h
-Merging quilt/jdelvare-hwmon
-Merging hwmon-staging/hwmon-next
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-Merging kbuild/for-next
-Merging kconfig/for-next
-Merging ide/master
-Merging libata/NEXT
-Merging infiniband/for-next
-Merging acpi/test
-Merging idle-test/idle-test
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/linux-next
-Merging dlm/next
-Merging swiotlb/master
-Merging ibft/master
-Merging scsi/master
-Merging async_tx/next
-Merging net/master
-$ git reset --hard HEAD^
-Merging refs/next/20110120/net
-Merging wireless/master
-Merging bluetooth/master
-Merging mtd/master
-Merging crypto/master
-Merging sound/for-next
-Merging sound-asoc/for-next
-Merging cpufreq/next
-Merging quilt/rr
-Merging input/next
-Merging input-mt/next
-Merging lsm/for-next
-Merging block/for-next
-Merging quilt/device-mapper
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-CONFLICT (content): Merge conflict in drivers/leds/Kconfig
-Merging backlight/for-mm
-Merging mmc/mmc-next
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging fbdev/master
-Merging viafb/viafb-next
-Merging omap_dss2/for-next
-Merging voltage/for-next
-Merging security-testing/next
-Merging selinux/master
-Merging lblnet/master
-Merging agp/agp-next
-Merging watchdog/master
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-Merging audit/for-next
-Merging suspend/linux-next
-Merging fsnotify/for-next
-Merging irda/for-next
-Merging catalin/for-next
-Merging alacrity/linux-next
-CONFLICT (content): Merge conflict in drivers/Makefile
-CONFLICT (content): Merge conflict in include/linux/Kbuild
-CONFLICT (content): Merge conflict in lib/Kconfig
-Merging i7core_edac/linux_next
-Merging i7300_edac/linux_next
-Merging devicetree/devicetree/next
-Merging spi/spi/next
-Merging tip/auto-latest
-Merging rcu/rcu/next
-Merging oprofile/for-next
-Merging swiotlb-xen/master
-Merging xen-pvhvm/linux-next
-CONFLICT (content): Merge conflict in arch/x86/include/asm/xen/page.h
-Merging edac-amd/for-next
-Merging percpu/for-next
-Merging workqueues/for-next
-Merging sfi/sfi-test
-Merging asm-generic/next
-Merging drivers-x86/linux-next
-Merging hwpoison/hwpoison
-Merging sysctl/master
-Merging driver-core/driver-core-next
-Merging tty/tty-next
-Merging usb/usb-next
-Merging staging/staging-next
-Merging slabh/slabh
-Merging bkl-trivial/trivial
-Merging bkl-llseek/llseek
-Merging bkl-vfs/vfs
-Merging bkl-config/config
-CONFLICT (content): Merge conflict in arch/powerpc/kernel/setup_64.c
-CONFLICT (delete/modify): drivers/staging/stradis/Kconfig deleted in HEAD a=
-nd modified in bkl-config/config. Version bkl-config/config of drivers/stag=
-ing/stradis/Kconfig left in tree.
-CONFLICT (content): Merge conflict in fs/nfsd/nfs4state.c
-CONFLICT (content): Merge conflict in include/linux/hardirq.h
-CONFLICT (content): Merge conflict in include/linux/smp_lock.h
-$ git rm -f drivers/staging/stradis/Kconfig
-Merging irqflags/master
-Merging cleancache/linux-next
-CONFLICT (content): Merge conflict in fs/ocfs2/super.c
-CONFLICT (content): Merge conflict in fs/super.c
-CONFLICT (content): Merge conflict in include/linux/fs.h
-CONFLICT (content): Merge conflict in mm/Kconfig
-Merging scsi-post-merge/merge-base:master
-$ git checkout scsi-post-merge/master
-
---Signature=_Fri__21_Jan_2011_13_27_07_+1100_JTcri9si5gIIbwxc
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNOO77AAoJEDMEi1NhKgbsTuYH/1gsiBt2gcGpEMN6KlQ+OYSA
-BMwknqAThrud+CE8AzpEv5fAtBz4KvnUlhXcKNHIk2cuy/i2ScGpCtUJijVtQRuL
-bf8bFBYX74Ige6eC1218wK4Xiw9SGLG5QPqQ4TPXT0UeywazcM5iWP/ktp+4XrJ0
-u/DkssOmTv0NNVUSH4gSlaYgHLFnFTwtPzTtqVgj/oTbPWpW/OUNh/AFpKaqoMIA
-SGF8QkunopjIHzUilppg2S2U5pSItdsO1YM9o0eRN2tXW9S94Nhw1Myk9RJPTCWn
-v0+8BSzjTaN66Ls9snGRtSNGHZMrn8tuemlpsKMlXf7M2CnyuVE5L0YAfvlUKDU=
-=kqMV
------END PGP SIGNATURE-----
-
---Signature=_Fri__21_Jan_2011_13_27_07_+1100_JTcri9si5gIIbwxc--
+>
+> Matthieu
+>
+--
+To unsubscribe from this list: send the line "unsubscribe linux-securit=
+y-module" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
