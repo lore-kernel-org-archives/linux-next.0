@@ -1,95 +1,44 @@
-From: Sedat Dilek <sedat.dilek@googlemail.com>
-Subject: Re: [Intel-gfx] [PATCH 2/5] i915: Add native backlight control
-Date: Fri, 21 Jan 2011 10:04:18 +0100
-Message-ID: <AANLkTikuTi=t9+1nYNAx7uco+SriD4wwOiNXsYVizwDM@mail.gmail.com>
-References: <AANLkTimogiJMKkcgfOCJHxpyZHcB36+xzRFgkqWPOiv_@mail.gmail.com>
-	<20110120215502.2305532b.akpm@linux-foundation.org>
-Reply-To: sedat.dilek@gmail.com
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Re: linux-next: build warning safter merge of the swiotlb-xen tree
+Date: Fri, 21 Jan 2011 09:28:02 -0500
+Message-ID: <20110121142802.GB27319@dumpdata.com>
+References: <20110121124159.135c7f5f.sfr@canb.auug.org.au>
+ <4D3949E4.9010407@canonical.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qy0-f174.google.com ([209.85.216.174]:56443 "EHLO
-	mail-qy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753431Ab1AUJET convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 21 Jan 2011 04:04:19 -0500
-In-Reply-To: <20110120215502.2305532b.akpm@linux-foundation.org>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:46371 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752721Ab1AUO3y (ORCPT
+	<rfc822;<linux-next@vger.kernel.org>>);
+	Fri, 21 Jan 2011 09:29:54 -0500
+Content-Disposition: inline
+In-Reply-To: <4D3949E4.9010407@canonical.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Matthew Garrett <mjg@redhat.com>, DRI <dri-devel@lists.freedesktop.org>, intel-gfx@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+To: Stefan Bader <stefan.bader@canonical.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Jan 21, 2011 at 6:55 AM, Andrew Morton
-<akpm@linux-foundation.org> wrote:
-> On Fri, 21 Jan 2011 06:36:54 +0100 Sedat Dilek <sedat.dilek@googlemai=
-l.com> wrote:
->
->> ( Original posting from [1] )
->>
->> I have the backlight-type patchset for months in my patch-series (an=
-d
->> maintained them if necessary against daily linux-next).
->> Also the last series from 14-Jan-2011 (see 1-5 patch from [2] and th=
-e
->> following ones at dri-devel ML).
->>
->> If you couldn't find the updated v2 radeon-backlight-type patch, her=
-e
->> the extract from my patch-series:
->> ...
->> # Patch from <https://patchwork.kernel.org/patch/491351/>
->> + backlight-type/v2-drm-radeon-kms-Expose-backlight-class-device-for=
--legacy-LVDS-encoder.patch
->> ...
->>
->> I can only speak for the radeon(-KMS) part with
->> CONFIG_BACKLIGHT_CLASS_DEVICE=3Dy set and against linux-next: It wor=
-ked,
->> it works.
->>
->> I am a bit angry that someone of the "big 5" gets immediately an
->> answer where mine is ignored [3].
->
-> Well, who were they sent to?
->
-> If it was dri-devel then perhaps the people there felt it was
-> inappropriate to their tree, or they were all busy fixing
-> 100000000000000 regressions.
->
-> If it was Richard then he's been distracted by other things for some
-> time, which is why I recently started handling backlight and leds
-> patches.
->
-> If it was me then kick me, but I don't think it was.
->
-> In general, if you think that patches aren't getting attention then l=
-et
-> me know and send them to me - harassing people for you is part of my
-> job description.
->
->> So dear Mr. AKPM, if you can standstill for a few moments to answer
->> only one of my questions, through which kernel-tree will this patchs=
-et
->> walk trough?
->
-> leds and backlight patches are presently getting merged into my tree
-> and I'm sending them into Linus. =C2=A0I make sure that Richard sees =
-them
-> all and when he finds time he helps review them for us.
->
-> They should turn up in linux-next too - we're working on that.
->
->
-> This particular patch series is theoretically a bit late for 2.6.38,
-> but if anyone thinks that's a wrong decision, feel free to explain wh=
-y.
->
->
+On Fri, Jan 21, 2011 at 09:55:00AM +0100, Stefan Bader wrote:
+> On 01/21/2011 02:41 AM, Stephen Rothwell wrote:
+> > Hi Konrad,
+> > 
+> > After merging the swiotlb-xen tree, today's linux-next build (x86_64
+> > allmodconfig) produced these warnings:
+> > 
+> > arch/x86/xen/p2m.c: In function 'xen_build_dynamic_phys_to_machine':
+> > arch/x86/xen/p2m.c:251: warning: passing argument 1 of 'p2m_init' from incompatible pointer type
+> > arch/x86/xen/p2m.c:121: note: expected 'long unsigned int *' but argument is of type 'long unsigned int **'
+> > arch/x86/xen/p2m.c:254: warning: assignment makes pointer from integer without a cast
+> > arch/x86/xen/p2m.c:256: warning: assignment from incompatible pointer type
+> > 
+> > Introduced by commit fc0976e2c086e6e518e32dcafedb5a2ba3ea297d ("xen: p2m:
+> > correctly initialize partial p2m leave").
+> > 
+> Sorry about that. For some reason I was blinded to the fact that p2m holds longs
+> not pointers. And "unfortunately" it works either way. The following update
+> would remove the warnings. Not sure it can still be folded into the original patch.
 
-Short answer:
-No need to kick anybody.
-As I said I am using the patchset for a long time, so I am just fine
-seeing them in 2.6.38.
-( Feel free to add a Tested-by... to all five patches. )
+No trouble. Folded it in the original patch you submitted and fixed the tree up.
 
-- Sedat -
+Thank you for being diligent about this.
