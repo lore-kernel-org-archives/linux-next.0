@@ -1,129 +1,52 @@
-From: matthieu castet <castet.matthieu@free.fr>
-Subject: Re: [PATCH 3/3 V13] RO/NX protection for loadable kernel
-Date: Thu, 20 Jan 2011 21:32:00 +0100
-Message-ID: <4D389BC0.8080900@free.fr>
-References: <4CE2F914.9070106@free.fr>	<24422.1290656467@localhost>	<20101126182355.62615dff@mat-laptop>	<20101208221951.GO5750@outflux.net>	<20101211001857.4c5e0794@mat-laptop>	<20101222124019.GG10809@elte.hu>	<34428.1293053719@localhost> <AANLkTin55DXcQnK3NY7y-v8TXj5w-XT2rTJo9p90tj4g@mail.gmail.com>
+From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Subject: linux-next: build warning after merge of the cifs tree
+Date: Fri, 21 Jan 2011 12:05:24 +1100
+Message-ID: <20110121120524.23dcf86d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------050706020502070606060903"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp6-g21.free.fr ([212.27.42.6]:41781 "EHLO smtp6-g21.free.fr"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753006Ab1ATUcM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 20 Jan 2011 15:32:12 -0500
-In-Reply-To: <AANLkTin55DXcQnK3NY7y-v8TXj5w-XT2rTJo9p90tj4g@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Xiaotian Feng <xtfeng@gmail.com>
-Cc: Valdis.Kletnieks@vt.edu, Ingo Molnar <mingo@elte.hu>, Kees Cook <kees.cook@canonical.com>, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-next@vger.kernel.org, Arjan van de Ven <arjan@infradead.org>, James Morris <jmorris@namei.org>, Andrew Morton <akpm@linux-foundation.org>, Andi Kleen <ak@muc.de>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Rusty Russell <rusty@rustcorp.com.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Jones <davej@redhat.com>, Siarhei Liakh <sliakh.lkml@gmail.com>, Steven Rostedt <rostedt@goodmis.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__21_Jan_2011_12_05_24_+1100_GjcL2gQO./gwcLLs"
+Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jeff Layton <jlayton-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Suresh Jayaraman <sjayaraman-l3A5Bk7waGM@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------050706020502070606060903
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+--Signature=_Fri__21_Jan_2011_12_05_24_+1100_GjcL2gQO./gwcLLs
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Xiaotian Feng a écrit :
-> On Thu, Dec 23, 2010 at 5:35 AM,  <Valdis.Kletnieks@vt.edu> wrote:
->> On Wed, 22 Dec 2010 13:40:19 +0100, Ingo Molnar said:
->>> * mat <castet.matthieu@free.fr> wrote:
->>>
->>>> Le Wed, 8 Dec 2010 14:19:51 -0800,
->>>> Kees Cook <kees.cook@canonical.com> a écrit :
->>>>
->>>>> On Fri, Nov 26, 2010 at 06:23:55PM +0100, mat wrote:
->>>>>> could you try the attached patch ?
->>>>>>
->>>>>> on module load, we sort the __jump_table section. So we should make
->>>>>> it writable.
->>>>>>
->>>>>>
->>>>>> Matthieu
->>>>>> diff --git a/arch/x86/include/asm/jump_label.h
->>>>>> b/arch/x86/include/asm/jump_label.h index f52d42e..574dbc2 100644
->>>>>> --- a/arch/x86/include/asm/jump_label.h
->>>>>> +++ b/arch/x86/include/asm/jump_label.h
->>>>>> @@ -14,7 +14,7 @@
->>>>>>         do
->>>>>> {                                                       \ asm
->>>>>> goto("1:"                                       \
->>>>>> JUMP_LABEL_INITIAL_NOP                  \
->>>>>> -                       ".pushsection __jump_table,  \"a\" \n\t"\
->>>>>> +                       ".pushsection __jump_table,  \"aw\" \n\t"\
->>>>>>                         _ASM_PTR "1b, %l[" #label "], %c0 \n\t" \
->>>>>>                         ".popsection \n\t"                      \
->>>>>>                         : :  "i" (key) :  : label);
->>>>>> \
->>>>> Acked-by: Kees Cook <kees.cook@canonical.com>
->>>>>
->>>>> Can this please get committed to tip?
->>>> I think it is not need anymore with  Steven Rostedt patch [1]
->>>>
->>>> Matthieu
->>>>
->>>> [1]
->>>>>> Here we set the text read only before we call the notifiers. The
->>>>>> function tracer changes the calls to mcount into nops via a notifier
->>>>>> call so this must be done after the module notifiers.
->>> What's the status of this bug?
->>>
->>> If we still need the patch then please submit it standalone with a proper subject
->>> line, with acks/signoffs added, etc.
->> Steve Rostedt's patch that moves the setting of the page permissions seems to
->> make this patch no longer necessary.  I tripped over this same issue, but the
->> version in the latest -mmotm does not need it, as it includes Steve's fix.
->>
-> 
-> I'm facing a boot failure (panic'ed on remove_jump_label_module_init)
-> on 2.6.37 (latest commit 3c0cb7c), which is 100% reproducible.
-> With this patch applied, I can boot my machine successfully, so I do
-> think this patch is needed.
-> 
-Could you confirm that this patch fix the problem ?
+Hi all,
 
+After merging the cifs tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
 
-Matthieu
+fs/cifs/cifssmb.c: In function 'CIFSSMBEcho':
+fs/cifs/cifssmb.c:740: warning: large integer implicitly truncated to unsig=
+ned type
 
---------------050706020502070606060903
-Content-Type: text/x-diff;
- name="0001-Fix-jump-table-in-module-init-section.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline;
- filename="0001-Fix-jump-table-in-module-init-section.patch"
+Introduced by commit 766fdbb57fdb1e53bc34c431103e95383d7f13ba ("cifs: add
+ability to send an echo request").
 
->From 0eeba453aaba0ebff86f0a7ad9bfb8afbde0c0dc Mon Sep 17 00:00:00 2001
-From: Matthieu CASTET <castet.matthieu@free.fr>
-Date: Thu, 20 Jan 2011 21:25:03 +0100
-Subject: [PATCH] Fix jump table in module init section
+--=20
+Cheers,
+Stephen Rothwell                    sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
+http://www.canb.auug.org.au/~sfr/
 
-If we use jump table in module init, there are marked
-as removed in __jump_table section after init is done.
+--Signature=_Fri__21_Jan_2011_12_05_24_+1100_GjcL2gQO./gwcLLs
+Content-Type: application/pgp-signature
 
-But we already applied ro permissions on the module, so
-we can't modify a read only section (crash in
-remove_jump_label_module_init).
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-Make the __jump_table section rw.
+iQEcBAEBAgAGBQJNONvUAAoJEDMEi1NhKgbscaMH/3zBhJ22dWbfQms1Yc3o5yLb
+cvzKHAcAALzde9zb2MHX1Dtgphzxg/Ud2nHUGmU9sQiOwC4P+RD50YaGu/Dds8uU
+0oGO0GFZpHCXIf9QddZ1LsWhStxLSMEWr9pl1+H+6LmTZJ7BXWagPEaxE3k3zXPq
+jUbcZ/M60kG21GBMLzpohW2wmFg/xTWBOol1lbEdg2KU4zIIveq6I/Uut3IY1/lX
+TOq6BuRiPDi9bkjMIGPME35AtExkYx7IoL5zzmpb2PV988cLLvJlT9/phNyM5qvY
+2Bv1zf+8kwAmjcUkxp3OWJLXrTiW171xXfqpj1uBnZrzLPbWkQtgH28ZryT4X3U=
+=mcZp
+-----END PGP SIGNATURE-----
 
-Signed-off-by: Matthieu CASTET <castet.matthieu@free.fr>
----
- arch/x86/include/asm/jump_label.h |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/arch/x86/include/asm/jump_label.h b/arch/x86/include/asm/jump_label.h
-index f52d42e..574dbc2 100644
---- a/arch/x86/include/asm/jump_label.h
-+++ b/arch/x86/include/asm/jump_label.h
-@@ -14,7 +14,7 @@
- 	do {							\
- 		asm goto("1:"					\
- 			JUMP_LABEL_INITIAL_NOP			\
--			".pushsection __jump_table,  \"a\" \n\t"\
-+			".pushsection __jump_table,  \"aw\" \n\t"\
- 			_ASM_PTR "1b, %l[" #label "], %c0 \n\t" \
- 			".popsection \n\t"			\
- 			: :  "i" (key) :  : label);		\
--- 
-1.7.2.3
-
-
---------------050706020502070606060903--
+--Signature=_Fri__21_Jan_2011_12_05_24_+1100_GjcL2gQO./gwcLLs--
