@@ -1,44 +1,31 @@
 From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: Re: linux-next: build warning safter merge of the swiotlb-xen tree
-Date: Fri, 21 Jan 2011 09:28:02 -0500
-Message-ID: <20110121142802.GB27319@dumpdata.com>
-References: <20110121124159.135c7f5f.sfr@canb.auug.org.au>
- <4D3949E4.9010407@canonical.com>
+Subject: Change name from swiotlb-xen to xen-two tree and branches.
+Date: Fri, 21 Jan 2011 11:45:01 -0500
+Message-ID: <20110121164501.GB29131@dumpdata.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:46371 "EHLO
+Received: from rcsinet10.oracle.com ([148.87.113.121]:26425 "EHLO
 	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752721Ab1AUO3y (ORCPT
+	with ESMTP id S1754297Ab1AUQqs (ORCPT
 	<rfc822;<linux-next@vger.kernel.org>>);
-	Fri, 21 Jan 2011 09:29:54 -0500
+	Fri, 21 Jan 2011 11:46:48 -0500
 Content-Disposition: inline
-In-Reply-To: <4D3949E4.9010407@canonical.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stefan Bader <stefan.bader@canonical.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Jan 21, 2011 at 09:55:00AM +0100, Stefan Bader wrote:
-> On 01/21/2011 02:41 AM, Stephen Rothwell wrote:
-> > Hi Konrad,
-> > 
-> > After merging the swiotlb-xen tree, today's linux-next build (x86_64
-> > allmodconfig) produced these warnings:
-> > 
-> > arch/x86/xen/p2m.c: In function 'xen_build_dynamic_phys_to_machine':
-> > arch/x86/xen/p2m.c:251: warning: passing argument 1 of 'p2m_init' from incompatible pointer type
-> > arch/x86/xen/p2m.c:121: note: expected 'long unsigned int *' but argument is of type 'long unsigned int **'
-> > arch/x86/xen/p2m.c:254: warning: assignment makes pointer from integer without a cast
-> > arch/x86/xen/p2m.c:256: warning: assignment from incompatible pointer type
-> > 
-> > Introduced by commit fc0976e2c086e6e518e32dcafedb5a2ba3ea297d ("xen: p2m:
-> > correctly initialize partial p2m leave").
-> > 
-> Sorry about that. For some reason I was blinded to the fact that p2m holds longs
-> not pointers. And "unfortunately" it works either way. The following update
-> would remove the warnings. Not sure it can still be folded into the original patch.
+Hey Stephen,
 
-No trouble. Folded it in the original patch you submitted and fixed the tree up.
+I was wondering if you would be OK change the name and branch
+of one of my trees?
 
-Thank you for being diligent about this.
+In the past the git://git.kernel.org/pub/scm/linux/kernel/git/konrad/xen.git
+was called 'swiotlb-xen' but it has expanded since I've took the role
+of Xen co-maintainer.
+
+Would you be OK changing the name from swiotlb-xen to 'xen-two' and
+pulling from #linux-next branch instead of #master please?
+
+I wonder if there is a better name than 'xen-two'?
