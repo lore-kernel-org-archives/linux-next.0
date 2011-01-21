@@ -1,61 +1,61 @@
-From: Jeff Layton <jlayton@redhat.com>
-Subject: Re: linux-next: build warning after merge of the cifs tree
-Date: Thu, 20 Jan 2011 20:20:50 -0500
-Message-ID: <20110120202050.0bc68484@corrin.poochiereds.net>
-References: <20110121120524.23dcf86d.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning safter merge of the swiotlb-xen tree
+Date: Fri, 21 Jan 2011 12:41:59 +1100
+Message-ID: <20110121124159.135c7f5f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=PGP-SHA1;
- boundary="Sig_/uqCs2g1h2CJkLD0mcJt57XJ"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__21_Jan_2011_12_41_59_+1100_c7ne_pRzLecPJevX"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:15786 "EHLO mx1.redhat.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:40226 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751412Ab1AUBRs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 20 Jan 2011 20:17:48 -0500
-In-Reply-To: <20110121120524.23dcf86d.sfr@canb.auug.org.au>
+	id S1752372Ab1AUBmI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 20 Jan 2011 20:42:08 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Steve French <smfrench@gmail.com>, linux-cifs@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Suresh Jayaraman <sjayaraman@suse.de>
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan Bader <stefan.bader@canonical.com>
 
---Sig_/uqCs2g1h2CJkLD0mcJt57XJ
+--Signature=_Fri__21_Jan_2011_12_41_59_+1100_c7ne_pRzLecPJevX
 Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, 21 Jan 2011 12:05:24 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi Konrad,
 
-> Hi all,
->=20
-> After merging the cifs tree, today's linux-next build (powerpc
-> ppc64_defconfig) produced this warning:
->=20
-> fs/cifs/cifssmb.c: In function 'CIFSSMBEcho':
-> fs/cifs/cifssmb.c:740: warning: large integer implicitly truncated to uns=
-igned type
->=20
-> Introduced by commit 766fdbb57fdb1e53bc34c431103e95383d7f13ba ("cifs: add
-> ability to send an echo request").
->=20
+After merging the swiotlb-xen tree, today's linux-next build (x86_64
+allmodconfig) produced these warnings:
 
-Oh duh -- <forehead slap>...
+arch/x86/xen/p2m.c: In function 'xen_build_dynamic_phys_to_machine':
+arch/x86/xen/p2m.c:251: warning: passing argument 1 of 'p2m_init' from inco=
+mpatible pointer type
+arch/x86/xen/p2m.c:121: note: expected 'long unsigned int *' but argument i=
+s of type 'long unsigned int **'
+arch/x86/xen/p2m.c:254: warning: assignment makes pointer from integer with=
+out a cast
+arch/x86/xen/p2m.c:256: warning: assignment from incompatible pointer type
 
-        smb->hdr.WordCount =3D cpu_to_le16(1);
-
-...and WordCount is u8. I'll send Steve a fix tomorrow...
+Introduced by commit fc0976e2c086e6e518e32dcafedb5a2ba3ea297d ("xen: p2m:
+correctly initialize partial p2m leave").
 
 --=20
-Jeff Layton <jlayton@redhat.com>
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---Sig_/uqCs2g1h2CJkLD0mcJt57XJ
-Content-Type: application/pgp-signature; name=signature.asc
-Content-Disposition: attachment; filename=signature.asc
+--Signature=_Fri__21_Jan_2011_12_41_59_+1100_c7ne_pRzLecPJevX
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.16 (GNU/Linux)
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-iEYEARECAAYFAk0433YACgkQojH4PzJJfGU1DwCgh4gQcKxKEaR0IJtG1ta1K6T9
-G/oAnRmNToo9dyeev285r08Fc3kLEdBm
-=qnSQ
+iQEcBAEBAgAGBQJNOORnAAoJEDMEi1NhKgbsHgsH/05xtNQniRUVReDvEODiNNep
+QMkdyqO9LYhuk4CELE1ZaPyecaHrdG+dtOV/Lmmg1nkn42TKtjPpDkc9nwb6HY2C
+eYQNslVsar2VNdU0MeDhSZGDeJudzicBiZGy0+aHp8TdN49sKDqGnRL2Ks6M+fAE
+VuJjJJjolM/hEqNAuQkFq1A0m/Zzg2Iu0HzwgcAtEreqDVdNk4M9JTff/3DOJpqY
+0rKiixgGXOf9s/OojPEWwB+G9rdVeubXogCA/3anzeREyilnOrIz10sfMGoxdUBb
+9qp7HOU01qaL6TSiHtD2Ju0MebuDbtJtJ2Ha2b4hmx2e0UY9uIZkuCKDNE783z8=
+=nydy
 -----END PGP SIGNATURE-----
 
---Sig_/uqCs2g1h2CJkLD0mcJt57XJ--
+--Signature=_Fri__21_Jan_2011_12_41_59_+1100_c7ne_pRzLecPJevX--
