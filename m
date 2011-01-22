@@ -1,63 +1,39 @@
-From: "Guan Xuetao" <guanxuetao@mprc.pku.edu.cn>
-Subject: RE: Request for unicore32 architecture codes to merge into linux-next
-Date: Sat, 22 Jan 2011 10:17:16 +0800
-Message-ID: <013801cbb9da$7f9bff10$7ed3fd30$@mprc.pku.edu.cn>
-References: <004901cbb4d5$b9bb1370$2d313a50$@mprc.pku.edu.cn> <20110120114216.4b23182a@jbarnes-desktop>
+From: Sedat Dilek <sedat.dilek@googlemail.com>
+Subject: Re: Change name from swiotlb-xen to xen-two tree and branches.
+Date: Sat, 22 Jan 2011 10:34:03 +0100
+Message-ID: <AANLkTi=0g9BOKbtMKFK-gaNojmj7AZhTaqoyhnELVySn@mail.gmail.com>
+References: <20110121164501.GB29131@dumpdata.com>
+	<20110122120941.20aec5de.sfr@canb.auug.org.au>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mprc.pku.edu.cn ([162.105.203.9]:57659 "EHLO mprc.pku.edu.cn"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754399Ab1AVCRv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 21 Jan 2011 21:17:51 -0500
-In-Reply-To: <20110120114216.4b23182a@jbarnes-desktop>
-Content-Language: zh-cn
+Received: from mail-qy0-f181.google.com ([209.85.216.181]:59142 "EHLO
+	mail-qy0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751289Ab1AVJeG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 22 Jan 2011 04:34:06 -0500
+In-Reply-To: <20110122120941.20aec5de.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: 'Jesse Barnes' <jbarnes@virtuousgeek.org>
-Cc: sfr@canb.auug.org.au, 'Arnd Bergmann' <arnd@arndb.de>, gregkh@suse.de, dmitry.torokhov@gmail.com, dtor@mail.ru, rubini@cvml.unipv.it, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
+On Sat, Jan 22, 2011 at 2:09 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Konrad,
+>
+> On Fri, 21 Jan 2011 11:45:01 -0500 Konrad Rzeszutek Wilk <konrad.wilk@oracle.com> wrote:
+[...]
+>> Would you be OK changing the name from swiotlb-xen to 'xen-two' and
+>> pulling from #linux-next branch instead of #master please?
+>
+> All done - but my next tree will not be built until Jan 31 ...
+>
 
+It would be great to have a linux-next based on 2.6.38-rc2 before LCA-2011.
+The only conflict I had to solve was in "arch/x86/xen/p2m.c" (for
+details see [1]).
 
-> -----Original Message-----
-> From: Jesse Barnes [mailto:jbarnes@virtuousgeek.org]
-> Sent: Friday, January 21, 2011 3:42 AM
-> To: Guan Xuetao
-> Cc: sfr@canb.auug.org.au; Arnd Bergmann; gregkh@suse.de; dmitry.torokhov@gmail.com; dtor@mail.ru; rubini@cvml.unipv.it; linux-
-> arch@vger.kernel.org; linux-kernel@vger.kernel.org; linux-fbdev@vger.kernel.org; linux-next@vger.kernel.org
-> Subject: Re: Request for unicore32 architecture codes to merge into linux-next
-> 
-> On Sun, 16 Jan 2011 01:00:31 +0800
-> "Guan Xuetao" <guanxuetao@mprc.pku.edu.cn> wrote:
-> 
-> > Hi,
-> >
-> > I want to merge unicore32 repo into linux-next tree, the position is (unicore32 branch):
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/epip/linux-2.6-unicore32.git
-> >
-> > Signed-off-by: Guan Xuetao <gxt@mprc.pku.edu.cn>
-> > ---
-> 
-> Took a quick look at the PCI parts, looks like you have a pretty big
-> DMA restriction.
-Yes, only 128MB low memory could be used as dma space for pci devices.
-> 
-> You could provide your own dma map ops and make the allocator a bit
-> smarter about where it gets memory (preferentially allocating from the
-> DMA'able region, which you could hide).  Or do you find that swiotlb
-> does ok in general?
-Swiotlb works well. For almost all functions are provided by IPs inside the SoC,
-the dma function is used mainly through amba/axi bus,  not pci bus.
+- Sedat -
 
-> 
-> Other than that you had pretty tiny bits of enabling code, I assume
-> they work on your platform (config space access & setup, etc.).
-Yes.
-> 
-> --
-> Jesse Barnes, Intel Open Source Technology Center
-Thanks Jesse
-
-Guan Xuetao
+[1] "xen: p2m: correctly initialize partial p2m leaf"
+http://git.kernel.org/?p=linux/kernel/git/torvalds/linux-2.6.git;a=commit;h=8e1b4cf2108488ccfb9a3e7ed7cd85a435e01d4b
