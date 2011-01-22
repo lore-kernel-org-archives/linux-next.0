@@ -1,39 +1,186 @@
-From: Sedat Dilek <sedat.dilek@googlemail.com>
-Subject: Re: Change name from swiotlb-xen to xen-two tree and branches.
-Date: Sat, 22 Jan 2011 10:34:03 +0100
-Message-ID: <AANLkTi=0g9BOKbtMKFK-gaNojmj7AZhTaqoyhnELVySn@mail.gmail.com>
-References: <20110121164501.GB29131@dumpdata.com>
-	<20110122120941.20aec5de.sfr@canb.auug.org.au>
-Reply-To: sedat.dilek@gmail.com
+From: Xuetao Guan <epip.guan@gmail.com>
+Subject: Request (2nd) for unicore32 architecture codes to merge into linux-next
+Date: Sat, 22 Jan 2011 21:52:11 +0800
+Message-ID: <AANLkTimKUV=RQezzME9qUUQjUjnHt9Qe79hOpK-cFC3i@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qy0-f181.google.com ([209.85.216.181]:59142 "EHLO
-	mail-qy0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751289Ab1AVJeG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 22 Jan 2011 04:34:06 -0500
-In-Reply-To: <20110122120941.20aec5de.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: dmitry.torokhov@gmail.com, sfr@canb.auug.org.au, arnd@arndb.de, gregkh@suse.de, dtor@mail.ru, jbarnes@virtuousgeek.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Sat, Jan 22, 2011 at 2:09 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Konrad,
->
-> On Fri, 21 Jan 2011 11:45:01 -0500 Konrad Rzeszutek Wilk <konrad.wilk@oracle.com> wrote:
-[...]
->> Would you be OK changing the name from swiotlb-xen to 'xen-two' and
->> pulling from #linux-next branch instead of #master please?
->
-> All done - but my next tree will not be built until Jan 31 ...
->
+From: Guan Xuetao <gxt@mprc.pku.edu.cn>
 
-It would be great to have a linux-next based on 2.6.38-rc2 before LCA-2011.
-The only conflict I had to solve was in "arch/x86/xen/p2m.c" (for
-details see [1]).
+I want to merge unicore32 repo into linux-next tree, the position is
+(unicore32 branch):
+  git://git.kernel.org/pub/scm/linux/kernel/git/epip/linux-2.6-unicore32.git
 
-- Sedat -
+Changes from previous version:
+ 1. remove drivers/staging files for advice from Paul and Liqin, only
+remaining Kconfig
+ by renaming it to arch/unicore32/Kconfig.puv3.
+ 2. modify i8042 driver by help from Dmitry.
 
-[1] "xen: p2m: correctly initialize partial p2m leaf"
-http://git.kernel.org/?p=linux/kernel/git/torvalds/linux-2.6.git;a=commit;h=8e1b4cf2108488ccfb9a3e7ed7cd85a435e01d4b
+Signed-off-by: Guan Xuetao <gxt@mprc.pku.edu.cn>
+---
+ MAINTAINERS                                   |   14 +
+ arch/unicore32/.gitignore                     |   21 +
+ arch/unicore32/Kconfig                        |  248 ++++++++
+ arch/unicore32/Kconfig.debug                  |   68 ++
+ arch/unicore32/Kconfig.puv3                   |  125 ++++
+ arch/unicore32/Makefile                       |   97 +++
+ arch/unicore32/boot/Makefile                  |   47 ++
+ arch/unicore32/boot/compressed/Makefile       |   68 ++
+ arch/unicore32/boot/compressed/head.S         |  204 ++++++
+ arch/unicore32/boot/compressed/misc.c         |  126 ++++
+ arch/unicore32/boot/compressed/piggy.S.in     |    6 +
+ arch/unicore32/boot/compressed/vmlinux.lds.in |   61 ++
+ arch/unicore32/configs/debug_defconfig        |  210 +++++++
+ arch/unicore32/configs/nb0916_defconfig       |  202 ++++++
+ arch/unicore32/include/asm/Kbuild             |    2 +
+ arch/unicore32/include/asm/assembler.h        |  131 ++++
+ arch/unicore32/include/asm/bitops.h           |   47 ++
+ arch/unicore32/include/asm/byteorder.h        |   24 +
+ arch/unicore32/include/asm/cache.h            |   27 +
+ arch/unicore32/include/asm/cacheflush.h       |  211 +++++++
+ arch/unicore32/include/asm/checksum.h         |   41 ++
+ arch/unicore32/include/asm/cpu-single.h       |   45 ++
+ arch/unicore32/include/asm/cputype.h          |   33 +
+ arch/unicore32/include/asm/delay.h            |   52 ++
+ arch/unicore32/include/asm/dma-mapping.h      |  124 ++++
+ arch/unicore32/include/asm/dma.h              |   23 +
+ arch/unicore32/include/asm/elf.h              |   94 +++
+ arch/unicore32/include/asm/fpstate.h          |   26 +
+ arch/unicore32/include/asm/fpu-ucf64.h        |   53 ++
+ arch/unicore32/include/asm/futex.h            |  143 +++++
+ arch/unicore32/include/asm/gpio.h             |  103 +++
+ arch/unicore32/include/asm/hwcap.h            |   32 +
+ arch/unicore32/include/asm/io.h               |   52 ++
+ arch/unicore32/include/asm/irq.h              |  107 ++++
+ arch/unicore32/include/asm/irqflags.h         |   53 ++
+ arch/unicore32/include/asm/linkage.h          |   22 +
+ arch/unicore32/include/asm/memblock.h         |   46 ++
+ arch/unicore32/include/asm/memory.h           |  123 ++++
+ arch/unicore32/include/asm/mmu.h              |   17 +
+ arch/unicore32/include/asm/mmu_context.h      |   87 +++
+ arch/unicore32/include/asm/mutex.h            |   20 +
+ arch/unicore32/include/asm/page.h             |   80 +++
+ arch/unicore32/include/asm/pci.h              |   46 ++
+ arch/unicore32/include/asm/pgalloc.h          |  110 ++++
+ arch/unicore32/include/asm/pgtable-hwdef.h    |   55 ++
+ arch/unicore32/include/asm/pgtable.h          |  317 ++++++++++
+ arch/unicore32/include/asm/processor.h        |   92 +++
+ arch/unicore32/include/asm/ptrace.h           |  176 ++++++
+ arch/unicore32/include/asm/sigcontext.h       |   29 +
+ arch/unicore32/include/asm/stacktrace.h       |   31 +
+ arch/unicore32/include/asm/string.h           |   38 ++
+ arch/unicore32/include/asm/suspend.h          |   30 +
+ arch/unicore32/include/asm/system.h           |  161 +++++
+ arch/unicore32/include/asm/thread_info.h      |  154 +++++
+ arch/unicore32/include/asm/timex.h            |   34 +
+ arch/unicore32/include/asm/tlb.h              |   98 +++
+ arch/unicore32/include/asm/tlbflush.h         |  195 ++++++
+ arch/unicore32/include/asm/traps.h            |   21 +
+ arch/unicore32/include/asm/uaccess.h          |   47 ++
+ arch/unicore32/include/asm/unistd.h           |   18 +
+ arch/unicore32/include/mach/PKUnity.h         |  104 ++++
+ arch/unicore32/include/mach/bitfield.h        |   24 +
+ arch/unicore32/include/mach/dma.h             |   41 ++
+ arch/unicore32/include/mach/hardware.h        |   45 ++
+ arch/unicore32/include/mach/map.h             |   20 +
+ arch/unicore32/include/mach/memory.h          |   58 ++
+ arch/unicore32/include/mach/ocd.h             |   36 ++
+ arch/unicore32/include/mach/pm.h              |   43 ++
+ arch/unicore32/include/mach/regs-ac97.h       |   32 +
+ arch/unicore32/include/mach/regs-dmac.h       |   81 +++
+ arch/unicore32/include/mach/regs-gpio.h       |   70 +++
+ arch/unicore32/include/mach/regs-i2c.h        |   63 ++
+ arch/unicore32/include/mach/regs-intc.h       |   28 +
+ arch/unicore32/include/mach/regs-nand.h       |   79 +++
+ arch/unicore32/include/mach/regs-ost.h        |   92 +++
+ arch/unicore32/include/mach/regs-pci.h        |   94 +++
+ arch/unicore32/include/mach/regs-pm.h         |  126 ++++
+ arch/unicore32/include/mach/regs-ps2.h        |   20 +
+ arch/unicore32/include/mach/regs-resetc.h     |   34 +
+ arch/unicore32/include/mach/regs-rtc.h        |   37 ++
+ arch/unicore32/include/mach/regs-sdc.h        |  156 +++++
+ arch/unicore32/include/mach/regs-spi.h        |   98 +++
+ arch/unicore32/include/mach/regs-uart.h       |    3 +
+ arch/unicore32/include/mach/regs-umal.h       |  229 +++++++
+ arch/unicore32/include/mach/regs-unigfx.h     |  200 ++++++
+ arch/unicore32/include/mach/uncompress.h      |   34 +
+ arch/unicore32/kernel/Makefile                |   34 +
+ arch/unicore32/kernel/asm-offsets.c           |  112 ++++
+ arch/unicore32/kernel/clock.c                 |  388 ++++++++++++
+ arch/unicore32/kernel/cpu-ucv2.c              |   93 +++
+ arch/unicore32/kernel/debug-macro.S           |   89 +++
+ arch/unicore32/kernel/debug.S                 |   85 +++
+ arch/unicore32/kernel/dma.c                   |  180 ++++++
+ arch/unicore32/kernel/early_printk.c          |   59 ++
+ arch/unicore32/kernel/elf.c                   |   38 ++
+ arch/unicore32/kernel/entry.S                 |  824 +++++++++++++++++++++++++
+ arch/unicore32/kernel/fpu-ucf64.c             |  126 ++++
+ arch/unicore32/kernel/gpio.c                  |  122 ++++
+ arch/unicore32/kernel/head.S                  |  252 ++++++++
+ arch/unicore32/kernel/hibernate.c             |  160 +++++
+ arch/unicore32/kernel/hibernate_asm.S         |  117 ++++
+ arch/unicore32/kernel/init_task.c             |   44 ++
+ arch/unicore32/kernel/irq.c                   |  426 +++++++++++++
+ arch/unicore32/kernel/ksyms.c                 |   99 +++
+ arch/unicore32/kernel/ksyms.h                 |   15 +
+ arch/unicore32/kernel/module.c                |  152 +++++
+ arch/unicore32/kernel/pci.c                   |  404 ++++++++++++
+ arch/unicore32/kernel/pm.c                    |  123 ++++
+ arch/unicore32/kernel/process.c               |  389 ++++++++++++
+ arch/unicore32/kernel/ptrace.c                |  598 ++++++++++++++++++
+ arch/unicore32/kernel/puv3-core.c             |  270 ++++++++
+ arch/unicore32/kernel/puv3-nb0916.c           |  175 ++++++
+ arch/unicore32/kernel/puv3-smw0919.c          |  115 ++++
+ arch/unicore32/kernel/pwm.c                   |  263 ++++++++
+ arch/unicore32/kernel/rtc.c                   |  380 ++++++++++++
+ arch/unicore32/kernel/setup.c                 |  360 +++++++++++
+ arch/unicore32/kernel/setup.h                 |   30 +
+ arch/unicore32/kernel/signal.c                |  494 +++++++++++++++
+ arch/unicore32/kernel/sleep.S                 |  202 ++++++
+ arch/unicore32/kernel/stacktrace.c            |  131 ++++
+ arch/unicore32/kernel/sys.c                   |  126 ++++
+ arch/unicore32/kernel/time.c                  |  148 +++++
+ arch/unicore32/kernel/traps.c                 |  333 ++++++++++
+ arch/unicore32/kernel/vmlinux.lds.S           |   61 ++
+ arch/unicore32/lib/Makefile                   |   27 +
+ arch/unicore32/lib/backtrace.S                |  163 +++++
+ arch/unicore32/lib/clear_user.S               |   57 ++
+ arch/unicore32/lib/copy_from_user.S           |  108 ++++
+ arch/unicore32/lib/copy_page.S                |   39 ++
+ arch/unicore32/lib/copy_template.S            |  214 +++++++
+ arch/unicore32/lib/copy_to_user.S             |   96 +++
+ arch/unicore32/lib/delay.S                    |   51 ++
+ arch/unicore32/lib/findbit.S                  |   98 +++
+ arch/unicore32/lib/strncpy_from_user.S        |   45 ++
+ arch/unicore32/lib/strnlen_user.S             |   42 ++
+ arch/unicore32/mm/Kconfig                     |   50 ++
+ arch/unicore32/mm/Makefile                    |   15 +
+ arch/unicore32/mm/alignment.c                 |  523 ++++++++++++++++
+ arch/unicore32/mm/cache-ucv2.S                |  212 +++++++
+ arch/unicore32/mm/dma-swiotlb.c               |   34 +
+ arch/unicore32/mm/extable.c                   |   24 +
+ arch/unicore32/mm/fault.c                     |  479 ++++++++++++++
+ arch/unicore32/mm/flush.c                     |   98 +++
+ arch/unicore32/mm/init.c                      |  517 ++++++++++++++++
+ arch/unicore32/mm/iomap.c                     |   56 ++
+ arch/unicore32/mm/ioremap.c                   |  261 ++++++++
+ arch/unicore32/mm/mm.h                        |   39 ++
+ arch/unicore32/mm/mmu.c                       |  533 ++++++++++++++++
+ arch/unicore32/mm/pgd.c                       |  102 +++
+ arch/unicore32/mm/proc-macros.S               |  145 +++++
+ arch/unicore32/mm/proc-syms.c                 |   23 +
+ arch/unicore32/mm/proc-ucv2.S                 |  134 ++++
+ arch/unicore32/mm/tlb-ucv2.S                  |   89 +++
+ drivers/input/serio/i8042-unicore32io.h       |   70 +++
+ drivers/input/serio/i8042.h                   |    2 +
+ drivers/pci/Makefile                          |    1 +
+ include/asm-generic/ftrace.h                  |   16 +
+ include/asm-generic/sizes.h                   |   47 ++
+ include/asm-generic/uaccess.h                 |    8 +-
+ 159 files changed, 19246 insertions(+), 3 deletions(-)
