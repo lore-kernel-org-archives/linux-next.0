@@ -1,68 +1,63 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Change name from swiotlb-xen to xen-two tree and branches.
-Date: Sat, 22 Jan 2011 12:09:41 +1100
-Message-ID: <20110122120941.20aec5de.sfr@canb.auug.org.au>
-References: <20110121164501.GB29131@dumpdata.com>
+From: "Guan Xuetao" <guanxuetao@mprc.pku.edu.cn>
+Subject: RE: Request for unicore32 architecture codes to merge into linux-next
+Date: Sat, 22 Jan 2011 10:17:16 +0800
+Message-ID: <013801cbb9da$7f9bff10$7ed3fd30$@mprc.pku.edu.cn>
+References: <004901cbb4d5$b9bb1370$2d313a50$@mprc.pku.edu.cn> <20110120114216.4b23182a@jbarnes-desktop>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Sat__22_Jan_2011_12_09_41_+1100_0lveTnDHZ_z4Fe0c"
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56760 "EHLO smtps.tip.net.au"
+Received: from mprc.pku.edu.cn ([162.105.203.9]:57659 "EHLO mprc.pku.edu.cn"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753750Ab1AVBJs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 21 Jan 2011 20:09:48 -0500
-In-Reply-To: <20110121164501.GB29131@dumpdata.com>
+	id S1754399Ab1AVCRv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 21 Jan 2011 21:17:51 -0500
+In-Reply-To: <20110120114216.4b23182a@jbarnes-desktop>
+Content-Language: zh-cn
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: 'Jesse Barnes' <jbarnes@virtuousgeek.org>
+Cc: sfr@canb.auug.org.au, 'Arnd Bergmann' <arnd@arndb.de>, gregkh@suse.de, dmitry.torokhov@gmail.com, dtor@mail.ru, rubini@cvml.unipv.it, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-next@vger.kernel.org
 
---Signature=_Sat__22_Jan_2011_12_09_41_+1100_0lveTnDHZ_z4Fe0c
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Konrad,
 
-On Fri, 21 Jan 2011 11:45:01 -0500 Konrad Rzeszutek Wilk <konrad.wilk@oracl=
-e.com> wrote:
->
-> I was wondering if you would be OK change the name and branch
-> of one of my trees?
->=20
-> In the past the git://git.kernel.org/pub/scm/linux/kernel/git/konrad/xen.=
-git
-> was called 'swiotlb-xen' but it has expanded since I've took the role
-> of Xen co-maintainer.
->=20
-> Would you be OK changing the name from swiotlb-xen to 'xen-two' and
-> pulling from #linux-next branch instead of #master please?
+> -----Original Message-----
+> From: Jesse Barnes [mailto:jbarnes@virtuousgeek.org]
+> Sent: Friday, January 21, 2011 3:42 AM
+> To: Guan Xuetao
+> Cc: sfr@canb.auug.org.au; Arnd Bergmann; gregkh@suse.de; dmitry.torokhov@gmail.com; dtor@mail.ru; rubini@cvml.unipv.it; linux-
+> arch@vger.kernel.org; linux-kernel@vger.kernel.org; linux-fbdev@vger.kernel.org; linux-next@vger.kernel.org
+> Subject: Re: Request for unicore32 architecture codes to merge into linux-next
+> 
+> On Sun, 16 Jan 2011 01:00:31 +0800
+> "Guan Xuetao" <guanxuetao@mprc.pku.edu.cn> wrote:
+> 
+> > Hi,
+> >
+> > I want to merge unicore32 repo into linux-next tree, the position is (unicore32 branch):
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/epip/linux-2.6-unicore32.git
+> >
+> > Signed-off-by: Guan Xuetao <gxt@mprc.pku.edu.cn>
+> > ---
+> 
+> Took a quick look at the PCI parts, looks like you have a pretty big
+> DMA restriction.
+Yes, only 128MB low memory could be used as dma space for pci devices.
+> 
+> You could provide your own dma map ops and make the allocator a bit
+> smarter about where it gets memory (preferentially allocating from the
+> DMA'able region, which you could hide).  Or do you find that swiotlb
+> does ok in general?
+Swiotlb works well. For almost all functions are provided by IPs inside the SoC,
+the dma function is used mainly through amba/axi bus,  not pci bus.
 
-All done - but my next tree will not be built until Jan 31 ...
+> 
+> Other than that you had pretty tiny bits of enabling code, I assume
+> they work on your platform (config space access & setup, etc.).
+Yes.
+> 
+> --
+> Jesse Barnes, Intel Open Source Technology Center
+Thanks Jesse
 
-> I wonder if there is a better name than 'xen-two'?
-
-If you think of one, let me know.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Sat__22_Jan_2011_12_09_41_+1100_0lveTnDHZ_z4Fe0c
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNOi5VAAoJEDMEi1NhKgbsFckH/i0W977KxMLSeHOHfRo+liGk
-VAzJs7/+/pe66Pbisy3Kii0aKFI3sLgsS63nGeOrM2z2W+lMksVgPWXq7ezpZ0CG
-Yq9feve9P3ZsSd8FHX6h7/NdnVxn7Kip3rfvearA9D4GKfy2Kq14bo7IUxnetVAF
-RGXvFJUmiZANn7EIx99DvRWgZQL3vztgbSQXkrYfilrDUvOxvK6mDNXJOpO/8l2T
-zV5ccXjc8l2ewaMiMKBGQv53APeRs7hzsKSqa3ZD2nhjUQsSUGWdxlE2yI3JJc5H
-REhxZL5VqkiI369jbI7S3vaMHUZ+k6Oq48/gYoTZRoh5W4BLZl7VEC7PXCqVb5E=
-=iASd
------END PGP SIGNATURE-----
-
---Signature=_Sat__22_Jan_2011_12_09_41_+1100_0lveTnDHZ_z4Fe0c--
+Guan Xuetao
