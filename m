@@ -1,47 +1,43 @@
-From: "Guan Xuetao" <guanxuetao@mprc.pku.edu.cn>
-Subject: RE: Request (2nd) for unicore32 architecture codes to merge into linux-next
-Date: Mon, 24 Jan 2011 10:50:14 +0800
-Message-ID: <00c801cbbb71$6d7eb4b0$487c1e10$@mprc.pku.edu.cn>
-References: <AANLkTimKUV=RQezzME9qUUQjUjnHt9Qe79hOpK-cFC3i@mail.gmail.com> <20110123094622.5b047d65.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: Tree for December 20 (acpi_video)
+Date: Wed, 26 Jan 2011 12:42:03 +0100
+Message-ID: <20110126114203.GA16754@elte.hu>
+References: <20101220200013.df8fbc88.sfr@canb.auug.org.au>
+ <20101220085340.7ba098b9.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mprc.pku.edu.cn ([162.105.203.9]:38230 "EHLO mprc.pku.edu.cn"
+Received: from mx3.mail.elte.hu ([157.181.1.138]:49370 "EHLO mx3.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752942Ab1AXCul (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 23 Jan 2011 21:50:41 -0500
-In-Reply-To: <20110123094622.5b047d65.sfr@canb.auug.org.au>
-Content-Language: zh-cn
+	id S1751487Ab1AZLmX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 26 Jan 2011 06:42:23 -0500
+Content-Disposition: inline
+In-Reply-To: <20101220085340.7ba098b9.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: 'Stephen Rothwell' <sfr@canb.auug.org.au>, 'Xuetao Guan' <epip.guan@gmail.com>
-Cc: dmitry.torokhov@gmail.com, arnd@arndb.de, gregkh@suse.de, dtor@mail.ru, jbarnes@virtuousgeek.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>, Len Brown <lenb@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Luming Yu <luming.yu@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-acpi@vger.kernel.org
 
 
+* Randy Dunlap <randy.dunlap@oracle.com> wrote:
 
-> -----Original Message-----
-> From: linux-next-owner@vger.kernel.org [mailto:linux-next-owner@vger.kernel.org] On Behalf Of Stephen Rothwell
-> Sent: Sunday, January 23, 2011 6:46 AM
-> To: Xuetao Guan
-> Cc: dmitry.torokhov@gmail.com; arnd@arndb.de; gregkh@suse.de; dtor@mail.ru; jbarnes@virtuousgeek.org; linux-
-> next@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: Re: Request (2nd) for unicore32 architecture codes to merge into linux-next
+> On Mon, 20 Dec 2010 20:00:13 +1100 Stephen Rothwell wrote:
 > 
-> Hi,
+> > Hi all,
+> > 
+> > [The mirroring on kernel.org is running slowly]
+> > 
+> > Changes since 20101217:
 > 
-> On Sat, 22 Jan 2011 21:52:11 +0800 Xuetao Guan <epip.guan@gmail.com> wrote:
-> >
-> > From: Guan Xuetao <gxt@mprc.pku.edu.cn>
-> >
-> > I want to merge unicore32 repo into linux-next tree, the position is
-> > (unicore32 branch):
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/epip/linux-2.6-unicore32.git
 > 
-> I will add this when I start doing linux-next release again on Jan 31.
-Thanks.
+> ERROR: "thermal_cooling_device_register" [drivers/acpi/video.ko] undefined!
+> ERROR: "thermal_cooling_device_unregister" [drivers/acpi/video.ko] undefined!
 
-Btw: I am very sorry for duplicated emails for my mailserver's problem.
+This bug has been reported two months ago, one month ago, it has been ignored twice 
+and now the bug has been pushed upstream and it's triggering there as well.
 
-Guan Xuetao
+What's going on?
+
+Thanks,
+
+	Ingo
