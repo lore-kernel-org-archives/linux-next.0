@@ -1,52 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings after merge of the tip tree
-Date: Mon, 31 Jan 2011 15:27:56 +1100
-Message-ID: <20110131152756.0f1b1026.sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the idle-test tree
+Date: Mon, 31 Jan 2011 15:37:32 +1100
+Message-ID: <20110131153732.4df2f066.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__31_Jan_2011_15_27_56_+1100_4/R2I5RY=V00dg0e"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Venkatesh Pallipadi <venki@google.com>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Mon__31_Jan_2011_15_37_32_+1100_CwhWlqi2cRzXu2UG"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:48698 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752037Ab1AaEhj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 30 Jan 2011 23:37:39 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Len Brown <lenb@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__31_Jan_2011_15_27_56_+1100_4/R2I5RY=V00dg0e
+--Signature=_Mon__31_Jan_2011_15_37_32_+1100_CwhWlqi2cRzXu2UG
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Len,
 
-After merging the tip tree, today's linux-next build (powerpc
-ppc64_defconfig) produced these warnings:
+After merging the idle-test tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-kernel/sched.c:3719: warning: 'irqtime_account_idle_ticks' defined but not =
-used
-kernel/sched.c:3720: warning: 'irqtime_account_process_tick' defined but no=
-t used
+drivers/idle/intel_idle.c: In function 'intel_idle_cpuidle_devices_init':
+drivers/idle/intel_idle.c:467: warning: passing argument 1 of 'smp_call_fun=
+ction' from incompatible pointer type
+include/linux/smp.h:73: note: expected 'smp_call_func_t' but argument is of=
+ type 'long int (*)(void *)'
 
-Introduced by commit abb74cefa9c682fb38ba86c17ca3c86fed6cc464 ("sched:
-Export ns irqtimes through /proc/stat").
+Introduced by commit 080c9ff973b4f3683293abf8e8bf66b4f082fe65
+("intel_idle: disable HW auto-demotion by default").
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__31_Jan_2011_15_27_56_+1100_4/R2I5RY=V00dg0e
+--Signature=_Mon__31_Jan_2011_15_37_32_+1100_CwhWlqi2cRzXu2UG
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNRjpMAAoJEDMEi1NhKgbsUnYIAJc2ipk13OB+L5TLc9hgmMcM
-qE5RrjyhH3KaiFM7qSFu3VBjb4DIQsw8ZlOLhzDSy9Gff0zPJ3HxStKEQM3r+R12
-b26ETBwZufJcsTeK601eK2++WUv+naX+yJomLtAaEmAseg0Nv3RAtb9v/XxZOnQW
-s1pHCsOu/ePSSZxQPI3LjUuAOo8KU63KMjWSJRy94b6BemdNnDWLhaVM113PxZ3F
-0zQ7LdB0BJYHgD1iRs6nFbrY0A6NDVCC1KyUw3eEBxtUkIsDO1xLoOfSrqtXM9Kj
-YYNiOe7L8YOzlQPr3qEWuuj/5rloLzHeK/pAOgC8VYbYEI/jwAzD2rFBH73JzNk=
-=q983
+iQEcBAEBAgAGBQJNRjyMAAoJEDMEi1NhKgbs33wH/RSBQa8nwUwMvM9VIe/PayMc
+BeS4dpuPazRHA3N27Y37MCEAlxkk8WlO8c48RBZ4p69xdDit20tXwqXa10DaIuaR
+hdUk6EmjNorFOJ6GaDWznhd7p8SrpRn6Gw6WTdz9/f7SBElF1evkeh7e1gVXjoyq
++sX2/T51yjrNQ++meFj9c5jvj0Z2chiJEahzyoXQCui7jMNFmdgk7ysMAFeYzGgt
+f74qTZbxYMySFlYatgL3dbXX7FcR9+wkrB4vb568nhvkFWZ0DBfapCGZb0HoBQc8
+pQNSSkalw+1KZs2mocMLwGA6mQT5ooJuRTPGvur8PH4mDsFT8SZsTEX1BsSgL2Y=
+=Rs5H
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__31_Jan_2011_15_27_56_+1100_4/R2I5RY=V00dg0e--
+--Signature=_Mon__31_Jan_2011_15_37_32_+1100_CwhWlqi2cRzXu2UG--
