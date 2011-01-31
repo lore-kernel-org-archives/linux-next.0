@@ -1,75 +1,35 @@
-From: Pavel Shilovsky <piastry@etersoft.ru>
-Subject: Re: [PATCH] cifs: fix compiler warning about incompatible pointer
- type (try #3)
-Date: Mon, 31 Jan 2011 15:52:10 +0300
-Message-ID: <AANLkTin6-BkS23c-Bpa3e7gVdZSBzwD-XtRRkZN3WBSQ@mail.gmail.com>
-References: <4D4693CF.9090903@suse.de>
-	<1296475779-19357-1-git-send-email-piastry@etersoft.ru>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Re: linux-next: Tree for January 31
+Date: Mon, 31 Jan 2011 12:05:06 -0500
+Message-ID: <20110131170506.GA11939@dumpdata.com>
+References: <20110131174113.8199f901.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:65285 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755805Ab1AaMwL convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 31 Jan 2011 07:52:11 -0500
-In-Reply-To: <1296475779-19357-1-git-send-email-piastry@etersoft.ru>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:41797 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751858Ab1AaRGO (ORCPT
+	<rfc822;<linux-next@vger.kernel.org>>);
+	Mon, 31 Jan 2011 12:06:14 -0500
+Content-Disposition: inline
+In-Reply-To: <20110131174113.8199f901.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Steve French <smfrench@gmail.com>, Suresh Jayaraman <sjayaraman@suse.de>
-Cc: linux-cifs@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeff Layton <jlayton@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Jeremy Fitzhardinge <jeremy@goop.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-2011/1/31 Pavel Shilovsky <piastry@etersoft.ru>:
-> fs/cifs/file.c: In function =91cifs_iovec_write=92:
-> fs/cifs/file.c:1740:9: warning: passing argument 6 of =91CIFSSMBWrite=
-2=92 from incompatible pointer type
-> fs/cifs/cifsproto.h:343:12: note: expected =91unsigned int *=92 but a=
-rgument is of type =91size_t *=92
->
-> Signed-off-by: Suresh Jayaraman <sjayaraman@suse.de>
-> Signed-off-by: Pavel Shilovsky <piastry@etersoft.ru>
-> ---
-> =A0fs/cifs/file.c | =A0 10 ++++++----
-> =A01 files changed, 6 insertions(+), 4 deletions(-)
->
-> diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-> index 0de17c1..d8338e7 100644
-> --- a/fs/cifs/file.c
-> +++ b/fs/cifs/file.c
-> @@ -1667,9 +1667,10 @@ static ssize_t
-> =A0cifs_iovec_write(struct file *file, const struct iovec *iov,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 unsigned long nr_segs, loff_t *poffse=
-t)
-> =A0{
-> - =A0 =A0 =A0 size_t total_written =3D 0, written =3D 0;
-> - =A0 =A0 =A0 unsigned long num_pages, npages;
-> - =A0 =A0 =A0 size_t copied, len, cur_len, i;
-> + =A0 =A0 =A0 unsigned int written;
-> + =A0 =A0 =A0 ssize_t total_written =3D 0;
-> + =A0 =A0 =A0 unsigned long num_pages, npages, i;
-> + =A0 =A0 =A0 size_t copied, len, cur_len;
-> =A0 =A0 =A0 =A0struct kvec *to_send;
-> =A0 =A0 =A0 =A0struct page **pages;
-> =A0 =A0 =A0 =A0struct iov_iter it;
-> @@ -1825,7 +1826,8 @@ cifs_iovec_read(struct file *file, const struct=
- iovec *iov,
-> =A0{
-> =A0 =A0 =A0 =A0int rc;
-> =A0 =A0 =A0 =A0int xid;
-> - =A0 =A0 =A0 unsigned int total_read, bytes_read =3D 0;
-> + =A0 =A0 =A0 ssize_t total_read;
-> + =A0 =A0 =A0 unsigned int bytes_read =3D 0;
-> =A0 =A0 =A0 =A0size_t len, cur_len;
-> =A0 =A0 =A0 =A0int iov_offset =3D 0;
-> =A0 =A0 =A0 =A0struct cifs_sb_info *cifs_sb;
-> --
-> 1.7.1
->
->
+On Mon, Jan 31, 2011 at 05:41:13PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20110121:
+> 
+> New tree: unicore32
+> 
+> Renamed tree: swiotlb-xen to xen-two
 
-Let's drop this one according to [PATCH] cifs: clean up some compiler
-warnings patch.
+Sweet. Thank you.
+> 
+> Dropped tree: xen
 
---=20
-Best regards,
-Pavel Shilovsky.
+Uh, why? Jeremy's tree should be OK now? Did something not
+compile correctly? 
