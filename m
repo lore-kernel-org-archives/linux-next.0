@@ -1,52 +1,37 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH] Fix linux-next warning from abb74cef
-Date: Mon, 31 Jan 2011 12:25:28 -0800
-Message-ID: <20110131122528.050a4c23.randy.dunlap@oracle.com>
-References: <20110131113820.193a89c5.rdunlap@xenotime.net>
-	<1296505006-26660-1-git-send-email-venki@google.com>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: linux-next: Tree for January 31 (ip_vs)
+Date: Tue, 1 Feb 2011 08:18:47 +1100
+Message-ID: <20110131211846.GH2389@verge.net.au>
+References: <20110131174113.8199f901.sfr@canb.auug.org.au>
+ <20110131101829.b842da44.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:22997 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756222Ab1AaU1r (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 31 Jan 2011 15:27:47 -0500
-In-Reply-To: <1296505006-26660-1-git-send-email-venki@google.com>
+Received: from kirsty.vergenet.net ([202.4.237.240]:50055 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751536Ab1AaVSv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 31 Jan 2011 16:18:51 -0500
+Content-Disposition: inline
+In-Reply-To: <20110131101829.b842da44.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Venkatesh Pallipadi <venki@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Jaswinder Singh <jaswinderlinux@gmail.com>, Randy Dunlap <rdunlap@xenotime.net>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, netdev <netdev@vger.kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Mon, 31 Jan 2011 12:16:46 -0800 Venkatesh Pallipadi wrote:
-
-> Thanks. Updated to address comments from Randy.
+On Mon, Jan 31, 2011 at 10:18:29AM -0800, Randy Dunlap wrote:
+> On Mon, 31 Jan 2011 17:41:13 +1100 Stephen Rothwell wrote:
 > 
-> Yes. Patch below should fix the problem.
+> > Hi all,
+> > 
+> > Changes since 20110121:
+> > 
+> > The net tree lost its build failure.
 > 
-> Fix below warning -
->  Introduced by commit abb74cefa9c682fb38ba86c17ca3c86fed6cc464 ("sched:
->  Export ns irqtimes through /proc/stat").
-
-Thanks, Venki.
-
-Maybe next time we can even get a descriptive $subject.  ;)
-(I'm not requesting that you resend this patch.)
-
-
-> After merging the tip tree, today's linux-next build (powerpc
-> ppc64_defconfig) produced these warnings:
 > 
-> kernel/sched.c:3719: warning: 'irqtime_account_idle_ticks' defined but not used
-> kernel/sched.c:3720: warning: 'irqtime_account_process_tick' defined but not used
+> When CONFIG_SYSCTL is not enabled:
 > 
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Venkatesh Pallipadi <venki@google.com>
-> ---
->  kernel/sched.c |   64 ++++++++++++++++++++++++++++----------------------------
->  1 files changed, 32 insertions(+), 32 deletions(-)
+> net/netfilter/ipvs/ip_vs_core.c:1891: warning: format '%lu' expects type 'long unsigned int', but argument 2 has type 'unsigned int'
+> ERROR: "unregister_net_sysctl_table" [net/netfilter/ipvs/ip_vs.ko] undefined!
+> ERROR: "register_net_sysctl_table" [net/netfilter/ipvs/ip_vs.ko] undefined!
 
-
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+Thanks, I'm looking into it.
