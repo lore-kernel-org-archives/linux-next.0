@@ -1,57 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the suspend tree
-Date: Mon, 31 Jan 2011 15:07:30 +1100
-Message-ID: <20110131150730.14b05bef.sfr@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the tip tree
+Date: Mon, 31 Jan 2011 15:27:56 +1100
+Message-ID: <20110131152756.0f1b1026.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__31_Jan_2011_15_07_30_+1100_zwfy0hoNeYUiGi37"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59646 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752534Ab1AaEHi (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 30 Jan 2011 23:07:38 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+ boundary="Signature=_Mon__31_Jan_2011_15_27_56_+1100_4/R2I5RY=V00dg0e"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Venkatesh Pallipadi <venki@google.com>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__31_Jan_2011_15_07_30_+1100_zwfy0hoNeYUiGi37
+--Signature=_Mon__31_Jan_2011_15_27_56_+1100_4/R2I5RY=V00dg0e
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rafael,
+Hi all,
 
-After merging the suspend tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+After merging the tip tree, today's linux-next build (powerpc
+ppc64_defconfig) produced these warnings:
 
-In file included from drivers/base/core.c:27:
-drivers/base/power/power.h: In function 'rpm_sysfs_remove':
-drivers/base/power/power.h:71: error: parameter name omitted
+kernel/sched.c:3719: warning: 'irqtime_account_idle_ticks' defined but not =
+used
+kernel/sched.c:3720: warning: 'irqtime_account_process_tick' defined but no=
+t used
 
-Caused by commit e70e026805c518b1a6e11bc867b14815ac4426df ("PM: Do not
-create wakeup sysfs files for devices that cannot wake up").
-
-I have used the version of the suspend tree from next-20110121 for today.
+Introduced by commit abb74cefa9c682fb38ba86c17ca3c86fed6cc464 ("sched:
+Export ns irqtimes through /proc/stat").
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__31_Jan_2011_15_07_30_+1100_zwfy0hoNeYUiGi37
+--Signature=_Mon__31_Jan_2011_15_27_56_+1100_4/R2I5RY=V00dg0e
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNRjWCAAoJEDMEi1NhKgbs3TwH/0wQALdIg2s1BUrXmdoRFy0l
-6ip/Hlmoo6heIe3rsSitiR++pV/Pv9ETKk+U9yR9cAbMeyVZB4zux7LCY42GHIGy
-u2dKe15qHr3EHSGARA1/fyi1HvGJvHRo9U0mg4lpXkPeaDy0HhJSeTtdAyxLFkoN
-kBDKgl3ZYTy34xwL2eGxVeNfADma8HSJoekaQeHFSoN0OSws2OfL7gjjuFb5UhMn
-rDc6tSEWz4IfBDGrqunDoZtgIdbw6ezVa2f/kZm6JU+v/hLeL4mmhrYyTy8S+t2G
-vOykCT+EfQRI5IDH4z/A26JGAw6x8yTPI/mSe5vxRwVOrypgOsAfTQNeBFwPvBk=
-=VuFK
+iQEcBAEBAgAGBQJNRjpMAAoJEDMEi1NhKgbsUnYIAJc2ipk13OB+L5TLc9hgmMcM
+qE5RrjyhH3KaiFM7qSFu3VBjb4DIQsw8ZlOLhzDSy9Gff0zPJ3HxStKEQM3r+R12
+b26ETBwZufJcsTeK601eK2++WUv+naX+yJomLtAaEmAseg0Nv3RAtb9v/XxZOnQW
+s1pHCsOu/ePSSZxQPI3LjUuAOo8KU63KMjWSJRy94b6BemdNnDWLhaVM113PxZ3F
+0zQ7LdB0BJYHgD1iRs6nFbrY0A6NDVCC1KyUw3eEBxtUkIsDO1xLoOfSrqtXM9Kj
+YYNiOe7L8YOzlQPr3qEWuuj/5rloLzHeK/pAOgC8VYbYEI/jwAzD2rFBH73JzNk=
+=q983
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__31_Jan_2011_15_07_30_+1100_zwfy0hoNeYUiGi37--
+--Signature=_Mon__31_Jan_2011_15_27_56_+1100_4/R2I5RY=V00dg0e--
