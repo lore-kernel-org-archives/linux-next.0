@@ -1,86 +1,75 @@
-From: Jeff Layton <jlayton@redhat.com>
-Subject: Re: linux-next: build warning after merge of the cifs tree
-Date: Mon, 31 Jan 2011 07:29:27 -0500
-Message-ID: <20110131072927.75a11bc5@tlielax.poochiereds.net>
-References: <20110131133038.ab3aa826.sfr@canb.auug.org.au>
-	<4D4693CF.9090903@suse.de>
+From: Pavel Shilovsky <piastry@etersoft.ru>
+Subject: Re: [PATCH] cifs: fix compiler warning about incompatible pointer
+ type (try #3)
+Date: Mon, 31 Jan 2011 15:52:10 +0300
+Message-ID: <AANLkTin6-BkS23c-Bpa3e7gVdZSBzwD-XtRRkZN3WBSQ@mail.gmail.com>
+References: <4D4693CF.9090903@suse.de>
+	<1296475779-19357-1-git-send-email-piastry@etersoft.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:15506 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752452Ab1AaM3h (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 31 Jan 2011 07:29:37 -0500
-In-Reply-To: <4D4693CF.9090903@suse.de>
+Received: from mail-ww0-f44.google.com ([74.125.82.44]:65285 "EHLO
+	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755805Ab1AaMwL convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 31 Jan 2011 07:52:11 -0500
+In-Reply-To: <1296475779-19357-1-git-send-email-piastry@etersoft.ru>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Suresh Jayaraman <sjayaraman@suse.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Steve French <smfrench@gmail.com>, linux-cifs@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pavel Shilovsky <piastryyy@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Steve French <smfrench@gmail.com>, Suresh Jayaraman <sjayaraman@suse.de>
+Cc: linux-cifs@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jeff Layton <jlayton@redhat.com>
 
-On Mon, 31 Jan 2011 16:19:51 +0530
-Suresh Jayaraman <sjayaraman@suse.de> wrote:
-
-> On 01/31/2011 08:00 AM, Stephen Rothwell wrote:
-> > Hi all,
-> >=20
-> > After merging the cifs tree, today's linux-next build (powerpc
-> > ppc64_defconfig) produced this warning:
-> >=20
-> > fs/cifs/file.c: In function 'cifs_iovec_write':
-> > fs/cifs/file.c:1740: warning: passing argument 6 of 'CIFSSMBWrite2'=
- from incompatible pointer type
-> > fs/cifs/cifsproto.h:343: note: expected 'unsigned int *' but argume=
-nt is of type 'size_t *'
-> >=20
-> > Introduced by commit 72432ffcf555decbbae47f1be338e1d2f210aa69 ("CIF=
-S:
-> > Implement cifs_strict_writev (try #4)").
-> >=20
->=20
-> The following patch should silence that warning.
->=20
-> From: Suresh Jayaraman <sjayaraman@suse.de>
-> Subject: [PATCH] cifs: fix compiler warning about incompatible pointe=
-r type
->=20
+2011/1/31 Pavel Shilovsky <piastry@etersoft.ru>:
 > fs/cifs/file.c: In function =91cifs_iovec_write=92:
 > fs/cifs/file.c:1740:9: warning: passing argument 6 of =91CIFSSMBWrite=
 2=92 from incompatible pointer type
 > fs/cifs/cifsproto.h:343:12: note: expected =91unsigned int *=92 but a=
 rgument is of type =91size_t *=92
->=20
-> Cc: Pavel Shilovsky <piastryyy@gmail.com>
+>
 > Signed-off-by: Suresh Jayaraman <sjayaraman@suse.de>
+> Signed-off-by: Pavel Shilovsky <piastry@etersoft.ru>
 > ---
->  fs/cifs/file.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
->=20
+> =A0fs/cifs/file.c | =A0 10 ++++++----
+> =A01 files changed, 6 insertions(+), 4 deletions(-)
+>
 > diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-> index 0de17c1..2a3c5d8 100644
+> index 0de17c1..d8338e7 100644
 > --- a/fs/cifs/file.c
 > +++ b/fs/cifs/file.c
-> @@ -1667,7 +1667,7 @@ static ssize_t
->  cifs_iovec_write(struct file *file, const struct iovec *iov,
->  		 unsigned long nr_segs, loff_t *poffset)
->  {
-> -	size_t total_written =3D 0, written =3D 0;
-> +	unsigned int total_written =3D 0, written =3D 0;
->  	unsigned long num_pages, npages;
->  	size_t copied, len, cur_len, i;
->  	struct kvec *to_send;
+> @@ -1667,9 +1667,10 @@ static ssize_t
+> =A0cifs_iovec_write(struct file *file, const struct iovec *iov,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 unsigned long nr_segs, loff_t *poffse=
+t)
+> =A0{
+> - =A0 =A0 =A0 size_t total_written =3D 0, written =3D 0;
+> - =A0 =A0 =A0 unsigned long num_pages, npages;
+> - =A0 =A0 =A0 size_t copied, len, cur_len, i;
+> + =A0 =A0 =A0 unsigned int written;
+> + =A0 =A0 =A0 ssize_t total_written =3D 0;
+> + =A0 =A0 =A0 unsigned long num_pages, npages, i;
+> + =A0 =A0 =A0 size_t copied, len, cur_len;
+> =A0 =A0 =A0 =A0struct kvec *to_send;
+> =A0 =A0 =A0 =A0struct page **pages;
+> =A0 =A0 =A0 =A0struct iov_iter it;
+> @@ -1825,7 +1826,8 @@ cifs_iovec_read(struct file *file, const struct=
+ iovec *iov,
+> =A0{
+> =A0 =A0 =A0 =A0int rc;
+> =A0 =A0 =A0 =A0int xid;
+> - =A0 =A0 =A0 unsigned int total_read, bytes_read =3D 0;
+> + =A0 =A0 =A0 ssize_t total_read;
+> + =A0 =A0 =A0 unsigned int bytes_read =3D 0;
+> =A0 =A0 =A0 =A0size_t len, cur_len;
+> =A0 =A0 =A0 =A0int iov_offset =3D 0;
+> =A0 =A0 =A0 =A0struct cifs_sb_info *cifs_sb;
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-cifs"=
- in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 1.7.1
+>
+>
 
-I fixed this a few days ago along with a number of other compiler
-warnings in:
-
-    [PATCH] cifs: clean up some compiler warnings
-
-=2E..just waiting for Steve to merge it.
+Let's drop this one according to [PATCH] cifs: clean up some compiler
+warnings patch.
 
 --=20
-Jeff Layton <jlayton@redhat.com>
+Best regards,
+Pavel Shilovsky.
