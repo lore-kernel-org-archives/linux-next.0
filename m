@@ -1,44 +1,158 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tty.current tree with Linus' tree
-Date: Mon, 31 Jan 2011 12:46:33 +1100
-Message-ID: <20110131124633.3f49a8f9.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the msm tree with the arm tree
+Date: Mon, 31 Jan 2011 13:14:01 +1100
+Message-ID: <20110131131401.5d6c7646.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Torben Hohn <torbenh@gmx.de>, Kay Sievers <kay.sievers@vrfy.org>, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:59856 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752400Ab1AaCOF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 30 Jan 2011 21:14:05 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Brown <davidb@codeaurora.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Stepan Moskovchenko <stepanm@codeaurora.org>
 
-Hi Greg,
+Hi David,
 
-Today's linux-next merge of the tty.current tree got a conflict in
-drivers/tty/tty_io.c between commit
-ac751efa6a0d70f2c9daef5c7e3a92270f5c2dff ("console: rename
-acquire/release_console_sem() to console_lock/unlock()") from Linus' tree
-and commit a2a6a822adc2a91c677cb60e9bc6ffe26fa90e9f ("tty: use
-for_each_console() and WARN() on sysfs failures") from the tty.current
-tree.
+Today's linux-next merge of the msm tree got conflicts in
+arch/arm/mach-msm/board-msm7x27.c, arch/arm/mach-msm/board-msm7x30.c,
+arch/arm/mach-msm/board-qsd8x50.c and arch/arm/mach-msm/board-sapphire.c
+between commit eda53d6d032effb653410b79e1b49e652a881744 ("ARM: P2V: avoid
+initializers and assembly using PHYS_OFFSET") from the arm tree and
+commit 07a3cc4814f790354d4c7be2c9dc6143a714a07a ("msm: Clean up useless
+ifdefs") from the msm tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
+I fixed it up (see below) and can carry the fix as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc drivers/tty/tty_io.c
-index 6158eae,dae6fc9..0000000
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@@ -3256,8 -3256,8 +3256,8 @@@ static ssize_t show_cons_active(struct 
-  	struct console *c;
-  	ssize_t count = 0;
+diff --cc arch/arm/mach-msm/board-msm7x27.c
+index 08fcd40,16d7580..0000000
+--- a/arch/arm/mach-msm/board-msm7x27.c
++++ b/arch/arm/mach-msm/board-msm7x27.c
+@@@ -130,9 -130,7 +130,7 @@@ static void __init msm7x2x_map_io(void
+  }
   
- -	acquire_console_sem();
- +	console_lock();
-- 	for (c = console_drivers; c; c = c->next) {
-+ 	for_each_console(c) {
-  		if (!c->device)
-  			continue;
-  		if (!c->write)
+  MACHINE_START(MSM7X27_SURF, "QCT MSM7x27 SURF")
+- #ifdef CONFIG_MSM_DEBUG_UART
+- #endif
+ -	.boot_params	= PHYS_OFFSET + 0x100,
+ +	.boot_params	= PLAT_PHYS_OFFSET + 0x100,
+  	.map_io		= msm7x2x_map_io,
+  	.init_irq	= msm7x2x_init_irq,
+  	.init_machine	= msm7x2x_init,
+@@@ -140,9 -138,7 +138,7 @@@
+  MACHINE_END
+  
+  MACHINE_START(MSM7X27_FFA, "QCT MSM7x27 FFA")
+- #ifdef CONFIG_MSM_DEBUG_UART
+- #endif
+ -	.boot_params	= PHYS_OFFSET + 0x100,
+ +	.boot_params	= PLAT_PHYS_OFFSET + 0x100,
+  	.map_io		= msm7x2x_map_io,
+  	.init_irq	= msm7x2x_init_irq,
+  	.init_machine	= msm7x2x_init,
+@@@ -150,9 -146,7 +146,7 @@@
+  MACHINE_END
+  
+  MACHINE_START(MSM7X25_SURF, "QCT MSM7x25 SURF")
+- #ifdef CONFIG_MSM_DEBUG_UART
+- #endif
+ -	.boot_params	= PHYS_OFFSET + 0x100,
+ +	.boot_params	= PLAT_PHYS_OFFSET + 0x100,
+  	.map_io		= msm7x2x_map_io,
+  	.init_irq	= msm7x2x_init_irq,
+  	.init_machine	= msm7x2x_init,
+@@@ -160,9 -154,7 +154,7 @@@
+  MACHINE_END
+  
+  MACHINE_START(MSM7X25_FFA, "QCT MSM7x25 FFA")
+- #ifdef CONFIG_MSM_DEBUG_UART
+- #endif
+ -	.boot_params	= PHYS_OFFSET + 0x100,
+ +	.boot_params	= PLAT_PHYS_OFFSET + 0x100,
+  	.map_io		= msm7x2x_map_io,
+  	.init_irq	= msm7x2x_init_irq,
+  	.init_machine	= msm7x2x_init,
+diff --cc arch/arm/mach-msm/board-msm7x30.c
+index 25db8fd,dc9fac1..0000000
+--- a/arch/arm/mach-msm/board-msm7x30.c
++++ b/arch/arm/mach-msm/board-msm7x30.c
+@@@ -83,9 -105,7 +105,7 @@@ static void __init msm7x30_map_io(void
+  }
+  
+  MACHINE_START(MSM7X30_SURF, "QCT MSM7X30 SURF")
+- #ifdef CONFIG_MSM_DEBUG_UART
+- #endif
+ -	.boot_params = PHYS_OFFSET + 0x100,
+ +	.boot_params = PLAT_PHYS_OFFSET + 0x100,
+  	.map_io = msm7x30_map_io,
+  	.init_irq = msm7x30_init_irq,
+  	.init_machine = msm7x30_init,
+@@@ -93,9 -113,7 +113,7 @@@
+  MACHINE_END
+  
+  MACHINE_START(MSM7X30_FFA, "QCT MSM7X30 FFA")
+- #ifdef CONFIG_MSM_DEBUG_UART
+- #endif
+ -	.boot_params = PHYS_OFFSET + 0x100,
+ +	.boot_params = PLAT_PHYS_OFFSET + 0x100,
+  	.map_io = msm7x30_map_io,
+  	.init_irq = msm7x30_init_irq,
+  	.init_machine = msm7x30_init,
+@@@ -103,9 -121,7 +121,7 @@@
+  MACHINE_END
+  
+  MACHINE_START(MSM7X30_FLUID, "QCT MSM7X30 FLUID")
+- #ifdef CONFIG_MSM_DEBUG_UART
+- #endif
+ -	.boot_params = PHYS_OFFSET + 0x100,
+ +	.boot_params = PLAT_PHYS_OFFSET + 0x100,
+  	.map_io = msm7x30_map_io,
+  	.init_irq = msm7x30_init_irq,
+  	.init_machine = msm7x30_init,
+diff --cc arch/arm/mach-msm/board-qsd8x50.c
+index 15c2bbd,b464d48..0000000
+--- a/arch/arm/mach-msm/board-qsd8x50.c
++++ b/arch/arm/mach-msm/board-qsd8x50.c
+@@@ -116,9 -195,7 +195,7 @@@ static void __init qsd8x50_init(void
+  }
+  
+  MACHINE_START(QSD8X50_SURF, "QCT QSD8X50 SURF")
+- #ifdef CONFIG_MSM_DEBUG_UART
+- #endif
+ -	.boot_params = PHYS_OFFSET + 0x100,
+ +	.boot_params = PLAT_PHYS_OFFSET + 0x100,
+  	.map_io = qsd8x50_map_io,
+  	.init_irq = qsd8x50_init_irq,
+  	.init_machine = qsd8x50_init,
+@@@ -126,9 -203,7 +203,7 @@@
+  MACHINE_END
+  
+  MACHINE_START(QSD8X50A_ST1_5, "QCT QSD8X50A ST1.5")
+- #ifdef CONFIG_MSM_DEBUG_UART
+- #endif
+ -	.boot_params = PHYS_OFFSET + 0x100,
+ +	.boot_params = PLAT_PHYS_OFFSET + 0x100,
+  	.map_io = qsd8x50_map_io,
+  	.init_irq = qsd8x50_init_irq,
+  	.init_machine = qsd8x50_init,
+diff --cc arch/arm/mach-msm/board-sapphire.c
+index 83604f5,6781ca8..0000000
+--- a/arch/arm/mach-msm/board-sapphire.c
++++ b/arch/arm/mach-msm/board-sapphire.c
+@@@ -105,9 -105,7 +105,7 @@@ static void __init sapphire_map_io(void
+  
+  MACHINE_START(SAPPHIRE, "sapphire")
+  /* Maintainer: Brian Swetland <swetland@google.com> */
+- #ifdef CONFIG_MSM_DEBUG_UART
+- #endif
+ -	.boot_params    = PHYS_OFFSET + 0x100,
+ +	.boot_params    = PLAT_PHYS_OFFSET + 0x100,
+  	.fixup          = sapphire_fixup,
+  	.map_io         = sapphire_map_io,
+  	.init_irq       = sapphire_init_irq,
