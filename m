@@ -1,53 +1,39 @@
-From: "Arend van Spriel" <arend@broadcom.com>
-Subject: Re: linux-next: manual merge of the staging tree with the
- staging.current tree
-Date: Mon, 31 Jan 2011 09:52:03 +0100
-Message-ID: <op.vp5z8zyj3ri7v4@arend-laptop>
-References: <20110131160926.27223d25.sfr@canb.auug.org.au>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: build failure after merge of the suspend tree
+Date: Mon, 31 Jan 2011 11:12:02 +0100
+Message-ID: <201101311112.02432.rjw@sisk.pl>
+References: <20110131150730.14b05bef.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8;
- format=flowed;
- delsp=yes
+Content-Type: Text/Plain;
+  charset="iso-8859-2"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mms2.broadcom.com ([216.31.210.18]:1261 "EHLO mms2.broadcom.com"
+Received: from ogre.sisk.pl ([217.79.144.158]:51429 "EHLO ogre.sisk.pl"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755253Ab1AaIwU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 31 Jan 2011 03:52:20 -0500
-In-Reply-To: <20110131160926.27223d25.sfr@canb.auug.org.au>
+	id S1752666Ab1AaKMZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 31 Jan 2011 05:12:25 -0500
+In-Reply-To: <20110131150730.14b05bef.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Stephen,
+On Monday, January 31, 2011, Stephen Rothwell wrote:
+> Hi Rafael,
+> 
+> After merging the suspend tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> In file included from drivers/base/core.c:27:
+> drivers/base/power/power.h: In function 'rpm_sysfs_remove':
+> drivers/base/power/power.h:71: error: parameter name omitted
+> 
+> Caused by commit e70e026805c518b1a6e11bc867b14815ac4426df ("PM: Do not
+> create wakeup sysfs files for devices that cannot wake up").
+> 
+> I have used the version of the suspend tree from next-20110121 for today.
 
-On Mon, 31 Jan 2011 06:09:26 +0100, Stephen Rothwell  
-<sfr@canb.auug.org.au> wrote:
+Should be fixed now.
 
-> Hi Greg,
->
-> Today's linux-next merge of the staging tree got a conflict in
-> drivers/staging/brcm80211/brcmsmac/wl_mac80211.c,
-> drivers/staging/brcm80211/sys/wlc_mac80211.c and
-> drivers/staging/brcm80211/sys/wlc_mac80211.c (these three files names are
-> the same file, it has been renamed twice, I think ..) between
-
-wl_mac80211.c and wlc_mac80211.c are different source files. The driver  
-source
-tree has been restructured in the staging-next branch and files that were
-located in brcm80211/sys are moved to brcm80211/brcmsmac.
-
->
-> I fixed it up (see below) and can carry the fix as necessary.
-
-The fix looks ok and I also verified the wl_mac80211.c in linux-next on
-gitweb.
-
-Regards,
-Arend van Spriel
--- 
-"The most merciful thing in the world, I think, is the inability of the  
-human
-mind to correlate all its contents." - "The Call of Cthulhu"
+Thanks,
+Rafael
