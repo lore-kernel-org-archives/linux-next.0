@@ -1,63 +1,35 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb tree with the arm tree
-Date: Mon, 31 Jan 2011 15:53:46 +1100
-Message-ID: <20110131155346.d824d38a.sfr@canb.auug.org.au>
+From: Jaswinder Singh <jaswinderlinux@gmail.com>
+Subject: Re: linux-next: build warnings after merge of the tip tree
+Date: Mon, 31 Jan 2011 10:38:35 +0530
+Message-ID: <AANLkTi=+VtHwRMkxq+BK3wRDE9fiAZCy=5dypn45o=Hz@mail.gmail.com>
+References: <20110131152756.0f1b1026.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Yuan-Hsin Chen <yhchen@faraday-tech.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-gx0-f174.google.com ([209.85.161.174]:59835 "EHLO
+	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750698Ab1AaFIg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 31 Jan 2011 00:08:36 -0500
+In-Reply-To: <20110131152756.0f1b1026.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Venkatesh Pallipadi <venki@google.com>
 
-Hi Greg,
+Hello,
 
-Today's linux-next merge of the usb tree got a conflict in
-drivers/usb/gadget/Kconfig between commit
-82e6923e1862428b755ec306b3dbccf926849314 ("ARM: lh7a40x: remove
-unmaintained platform support") from the arm tree and commit
-0fe6f1d1f612035d78d8d195bbc3485a341386d5 ("usb: udc: add Faraday fusb300
-driver") from the usb tree.
+On Mon, Jan 31, 2011 at 9:57 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> After merging the tip tree, today's linux-next build (powerpc
+> ppc64_defconfig) produced these warnings:
+>
+> kernel/sched.c:3719: warning: 'irqtime_account_idle_ticks' defined but not used
+> kernel/sched.c:3720: warning: 'irqtime_account_process_tick' defined but not used
+>
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+These functions should move inside ifndef CONFIG_VIRT_CPU_ACCOUNTING
 
-diff --cc drivers/usb/gadget/Kconfig
-index 88d191b,4845539..0000000
---- a/drivers/usb/gadget/Kconfig
-+++ b/drivers/usb/gadget/Kconfig
-@@@ -176,6 -176,30 +176,18 @@@ config USB_FSL_USB
-  	default USB_GADGET
-  	select USB_GADGET_SELECTED
-  
-+ config USB_GADGET_FUSB300
-+ 	boolean "Faraday FUSB300 USB Peripheral Controller"
-+ 	select USB_GADGET_DUALSPEED
-+ 	help
-+ 	   Faraday usb device controller FUSB300 driver
-+ 
-+ config USB_FUSB300
-+ 	tristate
-+ 	depends on USB_GADGET_FUSB300
-+ 	default USB_GADGET
-+ 	select USB_GADGET_SELECTED
-+ 
- -config USB_GADGET_LH7A40X
- -	boolean "LH7A40X"
- -	depends on ARCH_LH7A40X
- -	help
- -	   This driver provides USB Device Controller driver for LH7A40x
- -
- -config USB_LH7A40X
- -	tristate
- -	depends on USB_GADGET_LH7A40X
- -	default USB_GADGET
- -	select USB_GADGET_SELECTED
- -
-  config USB_GADGET_OMAP
-  	boolean "OMAP USB Device Controller"
-  	depends on ARCH_OMAP
+Thanks,
+--
+Jaswinder Singh.
