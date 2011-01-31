@@ -1,53 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the tip tree
-Date: Mon, 31 Jan 2011 15:42:59 +1100
-Message-ID: <20110131154259.dca1f7e6.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the arm tree
+Date: Mon, 31 Jan 2011 15:53:46 +1100
+Message-ID: <20110131155346.d824d38a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__31_Jan_2011_15_42_59_+1100_4uQ69K9JSwul3z3O"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fenghua Yu <fenghua.yu@intel.com>, Michal Marek <mmarek@suse.cz>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk@arm.linux.org.uk>, Yuan-Hsin Chen <yhchen@faraday-tech.com>
 List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__31_Jan_2011_15_42_59_+1100_4uQ69K9JSwul3z3O
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Greg,
 
-Hi all,
+Today's linux-next merge of the usb tree got a conflict in
+drivers/usb/gadget/Kconfig between commit
+82e6923e1862428b755ec306b3dbccf926849314 ("ARM: lh7a40x: remove
+unmaintained platform support") from the arm tree and commit
+0fe6f1d1f612035d78d8d195bbc3485a341386d5 ("usb: udc: add Faraday fusb300
+driver") from the usb tree.
 
-After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
-
-x86_64-linux-gcc: arch/x86/lib/memmove_64.c: No such file or directory
-
-Caused by commit 9599ec0471deae24044241e2173090d2cbc0e899 ("x86-64, mem:
-Convert memmove() to assembly file and fix return value bug") interacting
-with our build system.
-
-After removing arch/x86/lib/.memmove_64.o.cmd (left over from the build
-before merging the tip tree) from my object tree, it built correctly.
---=20
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__31_Jan_2011_15_42_59_+1100_4uQ69K9JSwul3z3O
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNRj3TAAoJEDMEi1NhKgbsrzEH/1KBzOydqaC0qHpHERoxFqZr
-ccQu1ajFjwfilG9V4eSVQRpolbi4D3uYRvlX5ksMYwGqGmIZ2TWNx2VgJTyb9xr1
-5RXd6JkuSdMOj7g5kdcUc+njXUROLV49w13JTZW1Xregc+zQfx7VfEL+oJ8lfJ4n
-MC3N1pb/Jk6n+HErcLJmw0sRV6nt4Wp4e+7G9H+I/h7W+ky4JkRwM2v8SlLMTgmE
-hvqOWFgu72ycOGBvQb/5Fg76BRFUpi2vnsNgMh5MATrUwhOo8vj7Ucc+qlCU+wGO
-oWxBEh1LkwpgXCU1Bj/PrY8ctejc5uVwQlz3kPLfioR7dPBt4TlR66Vd/nLri3c=
-=JAqb
------END PGP SIGNATURE-----
-
---Signature=_Mon__31_Jan_2011_15_42_59_+1100_4uQ69K9JSwul3z3O--
+diff --cc drivers/usb/gadget/Kconfig
+index 88d191b,4845539..0000000
+--- a/drivers/usb/gadget/Kconfig
++++ b/drivers/usb/gadget/Kconfig
+@@@ -176,6 -176,30 +176,18 @@@ config USB_FSL_USB
+  	default USB_GADGET
+  	select USB_GADGET_SELECTED
+  
++ config USB_GADGET_FUSB300
++ 	boolean "Faraday FUSB300 USB Peripheral Controller"
++ 	select USB_GADGET_DUALSPEED
++ 	help
++ 	   Faraday usb device controller FUSB300 driver
++ 
++ config USB_FUSB300
++ 	tristate
++ 	depends on USB_GADGET_FUSB300
++ 	default USB_GADGET
++ 	select USB_GADGET_SELECTED
++ 
+ -config USB_GADGET_LH7A40X
+ -	boolean "LH7A40X"
+ -	depends on ARCH_LH7A40X
+ -	help
+ -	   This driver provides USB Device Controller driver for LH7A40x
+ -
+ -config USB_LH7A40X
+ -	tristate
+ -	depends on USB_GADGET_LH7A40X
+ -	default USB_GADGET
+ -	select USB_GADGET_SELECTED
+ -
+  config USB_GADGET_OMAP
+  	boolean "OMAP USB Device Controller"
+  	depends on ARCH_OMAP
