@@ -1,39 +1,66 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: linux-next: build failure after merge of the suspend tree
-Date: Mon, 31 Jan 2011 11:12:02 +0100
-Message-ID: <201101311112.02432.rjw@sisk.pl>
-References: <20110131150730.14b05bef.sfr@canb.auug.org.au>
+From: Suresh Jayaraman <sjayaraman@suse.de>
+Subject: Re: linux-next: build warning after merge of the cifs tree
+Date: Mon, 31 Jan 2011 16:19:51 +0530
+Message-ID: <4D4693CF.9090903@suse.de>
+References: <20110131133038.ab3aa826.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-2"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:51429 "EHLO ogre.sisk.pl"
+Received: from cantor2.suse.de ([195.135.220.15]:55616 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752666Ab1AaKMZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 31 Jan 2011 05:12:25 -0500
-In-Reply-To: <20110131150730.14b05bef.sfr@canb.auug.org.au>
+	id S1755263Ab1AaKuw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 31 Jan 2011 05:50:52 -0500
+In-Reply-To: <20110131133038.ab3aa826.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Steve French <smfrench@gmail.com>
+Cc: linux-cifs@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pavel Shilovsky <piastryyy@gmail.com>, Jeff Layton <jlayton@redhat.com>
 
-On Monday, January 31, 2011, Stephen Rothwell wrote:
-> Hi Rafael,
-> 
-> After merging the suspend tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> In file included from drivers/base/core.c:27:
-> drivers/base/power/power.h: In function 'rpm_sysfs_remove':
-> drivers/base/power/power.h:71: error: parameter name omitted
-> 
-> Caused by commit e70e026805c518b1a6e11bc867b14815ac4426df ("PM: Do not
-> create wakeup sysfs files for devices that cannot wake up").
-> 
-> I have used the version of the suspend tree from next-20110121 for today.
+On 01/31/2011 08:00 AM, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> After merging the cifs tree, today's linux-next build (powerpc
+> ppc64_defconfig) produced this warning:
+>=20
+> fs/cifs/file.c: In function 'cifs_iovec_write':
+> fs/cifs/file.c:1740: warning: passing argument 6 of 'CIFSSMBWrite2' f=
+rom incompatible pointer type
+> fs/cifs/cifsproto.h:343: note: expected 'unsigned int *' but argument=
+ is of type 'size_t *'
+>=20
+> Introduced by commit 72432ffcf555decbbae47f1be338e1d2f210aa69 ("CIFS:
+> Implement cifs_strict_writev (try #4)").
+>=20
 
-Should be fixed now.
+The following patch should silence that warning.
 
-Thanks,
-Rafael
+=46rom: Suresh Jayaraman <sjayaraman@suse.de>
+Subject: [PATCH] cifs: fix compiler warning about incompatible pointer =
+type
+
+fs/cifs/file.c: In function =91cifs_iovec_write=92:
+fs/cifs/file.c:1740:9: warning: passing argument 6 of =91CIFSSMBWrite2=92=
+ from incompatible pointer type
+fs/cifs/cifsproto.h:343:12: note: expected =91unsigned int *=92 but arg=
+ument is of type =91size_t *=92
+
+Cc: Pavel Shilovsky <piastryyy@gmail.com>
+Signed-off-by: Suresh Jayaraman <sjayaraman@suse.de>
+---
+ fs/cifs/file.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+index 0de17c1..2a3c5d8 100644
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -1667,7 +1667,7 @@ static ssize_t
+ cifs_iovec_write(struct file *file, const struct iovec *iov,
+ 		 unsigned long nr_segs, loff_t *poffset)
+ {
+-	size_t total_written =3D 0, written =3D 0;
++	unsigned int total_written =3D 0, written =3D 0;
+ 	unsigned long num_pages, npages;
+ 	size_t copied, len, cur_len, i;
+ 	struct kvec *to_send;
