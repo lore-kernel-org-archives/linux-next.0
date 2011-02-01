@@ -1,149 +1,92 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: [PATCH 4/5] IPVS: Allow compilation with CONFIG_SYSCTL disabled
-Date: Tue,  1 Feb 2011 21:07:47 +1100
-Message-ID: <1296554868-17002-5-git-send-email-horms@verge.net.au>
-References: <1296554868-17002-1-git-send-email-horms@verge.net.au>
-Return-path: <lvs-devel-owner@vger.kernel.org>
-In-Reply-To: <1296554868-17002-1-git-send-email-horms@verge.net.au>
-Sender: lvs-devel-owner@vger.kernel.org
-To: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, lvs-devel@vger.kernel.org
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Hans Schillstrom <hans@schillstrom.com>, Patrick McHardy <kaber@trash.net>, Simon Horman <horms@verge.net.au>
-List-Id: linux-next.vger.kernel.org
+From: Sedat Dilek <sedat.dilek@googlemail.com>
+Subject: =?UTF-8?B?UmU6IGxpbnV4LW5leHQ6IFRyZWUgZm9yIEZlYnJ1YXJ5IDEgWyBzdGFnaW5nL3VzYnZpZA==?=
+	=?UTF-8?B?ZW8vdmljYW0uYzogZXJyb3I6IGV4cGVjdGVkIOKAmDvigJkgYmVmb3JlIOKAmCnigJkgdG9rZW4gXQ==?=
+Date: Tue, 1 Feb 2011 12:58:48 +0100
+Message-ID: <AANLkTin_a-y2RGrgR5kmei=japaKKE6uyuyDcR8PCYrb@mail.gmail.com>
+References: <AANLkTi=wj05GrQ2r-GAbaX1zSQzMN8FJV_2d7c-kv33L@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-qy0-f174.google.com ([209.85.216.174]:44290 "EHLO
+	mail-qy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754633Ab1BAL6u convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Feb 2011 06:58:50 -0500
+In-Reply-To: <AANLkTi=wj05GrQ2r-GAbaX1zSQzMN8FJV_2d7c-kv33L@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Timo von Holtz <tvh@informatik.uni-kiel.de>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Greg KH <gregkh@suse.de>, Stephen Rothwell <sfr@canb.auug.org.au>
 
-This is a rather naieve approach to allowing PVS to compile with
-CONFIG_SYSCTL disabled.  I am working on a more comprehensive patch which
-will remove compilation of all sysctl-related IPVS code when CONFIG_SYSCTL
-is disabled.
+On Tue, Feb 1, 2011 at 9:32 AM, Sedat Dilek <sedat.dilek@googlemail.com=
+> wrote:
+> On Tue, Feb 1, 2011 at 5:34 AM, Stephen Rothwell <sfr@canb.auug.org.a=
+u> wrote:
+>> Hi all,
+>>
+>> Changes since 20110131:
+>>
+>> Dropped tree: xen
+>>
+>> The tty.current tree lost its conflict.
+>>
+>> The slab tree still has its build failure so I used the version from
+>> next-20110121.
+>>
+>> The suspend tree lost its build failure.
+>>
+>> The sparc64 defconfig build has been fixed.
+>>
+>> The powerpc allyesconfig build has been broken by some obscure bloat=
+ing
+>> of the low memory code.
+>>
+>> --------------------------------------------------------------------=
+--------
+>
+> [ CC greg-kh ]
+>
+> Build error:
+> ...
+> drivers/staging/usbvideo/vicam.c:222:57: error: expected =E2=80=98;=E2=
+=80=99 before =E2=80=98)=E2=80=99 token
+> drivers/staging/usbvideo/vicam.c:222:57: error: expected statement
+> before =E2=80=98)=E2=80=99 token
+> ...
+>
+> This should be fixed by:
+>
+> Index: linux-next-20110201/drivers/staging/usbvideo/vicam.c
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> --- linux-next-20110201.orig/drivers/staging/usbvideo/vicam.c
+> +++ linux-next-20110201/drivers/staging/usbvideo/vicam.c
+> @@ -219,7 +219,7 @@ set_camera_power(struct vicam_camera *ca
+> =C2=A0{
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0int status;
+>
+> - =C2=A0 =C2=A0 =C2=A0 status =3D send_control_msg(cam, 0x50, state, =
+0, NULL, 0));
+> + =C2=A0 =C2=A0 =C2=A0 status =3D send_control_msg(cam, 0x50, state, =
+0, NULL, 0);
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0if (status < 0)
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return status;
+>
+> - Sedat -
+>
 
-Cc: Hans Schillstrom <hans@schillstrom.com>
-Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
-Signed-off-by: Simon Horman <horms@verge.net.au>
----
- net/netfilter/ipvs/ip_vs_ctl.c   |   14 +++++++++-----
- net/netfilter/ipvs/ip_vs_lblc.c  |   20 ++++++++++----------
- net/netfilter/ipvs/ip_vs_lblcr.c |   20 ++++++++++----------
- 3 files changed, 29 insertions(+), 25 deletions(-)
+[ Changed... TO Timo von Holtz + CC sfr ]
 
-diff --git a/net/netfilter/ipvs/ip_vs_ctl.c b/net/netfilter/ipvs/ip_vs_ctl.c
-index d7c2fa8..c73b0c8 100644
---- a/net/netfilter/ipvs/ip_vs_ctl.c
-+++ b/net/netfilter/ipvs/ip_vs_ctl.c
-@@ -3552,10 +3552,15 @@ int __net_init __ip_vs_control_init(struct net *net)
- 	tbl[idx++].data = &ipvs->sysctl_nat_icmp_send;
- 
- 
-+#ifdef CONFIG_SYSCTL
- 	ipvs->sysctl_hdr = register_net_sysctl_table(net, net_vs_ctl_path,
- 						     tbl);
--	if (ipvs->sysctl_hdr == NULL)
--		goto err_reg;
-+	if (ipvs->sysctl_hdr == NULL) {
-+		if (!net_eq(net, &init_net))
-+			kfree(tbl);
-+		goto err_dup;
-+	}
-+#endif
- 	ip_vs_new_estimator(net, ipvs->tot_stats);
- 	ipvs->sysctl_tbl = tbl;
- 	/* Schedule defense work */
-@@ -3563,9 +3568,6 @@ int __net_init __ip_vs_control_init(struct net *net)
- 	schedule_delayed_work(&ipvs->defense_work, DEFENSE_TIMER_PERIOD);
- 	return 0;
- 
--err_reg:
--	if (!net_eq(net, &init_net))
--		kfree(tbl);
- err_dup:
- 	free_percpu(ipvs->cpustats);
- err_alloc:
-@@ -3581,7 +3583,9 @@ static void __net_exit __ip_vs_control_cleanup(struct net *net)
- 	ip_vs_kill_estimator(net, ipvs->tot_stats);
- 	cancel_delayed_work_sync(&ipvs->defense_work);
- 	cancel_work_sync(&ipvs->defense_work.work);
-+#ifdef CONFIG_SYSCTL
- 	unregister_net_sysctl_table(ipvs->sysctl_hdr);
-+#endif
- 	proc_net_remove(net, "ip_vs_stats_percpu");
- 	proc_net_remove(net, "ip_vs_stats");
- 	proc_net_remove(net, "ip_vs");
-diff --git a/net/netfilter/ipvs/ip_vs_lblc.c b/net/netfilter/ipvs/ip_vs_lblc.c
-index d5bec33..00b5ffa 100644
---- a/net/netfilter/ipvs/ip_vs_lblc.c
-+++ b/net/netfilter/ipvs/ip_vs_lblc.c
-@@ -554,33 +554,33 @@ static int __net_init __ip_vs_lblc_init(struct net *net)
- 						sizeof(vs_vars_table),
- 						GFP_KERNEL);
- 		if (ipvs->lblc_ctl_table == NULL)
--			goto err_dup;
-+			return -ENOMEM;
- 	} else
- 		ipvs->lblc_ctl_table = vs_vars_table;
- 	ipvs->sysctl_lblc_expiration = 24*60*60*HZ;
- 	ipvs->lblc_ctl_table[0].data = &ipvs->sysctl_lblc_expiration;
- 
-+#ifdef CONFIG_SYSCTL
- 	ipvs->lblc_ctl_header =
- 		register_net_sysctl_table(net, net_vs_ctl_path,
- 					  ipvs->lblc_ctl_table);
--	if (!ipvs->lblc_ctl_header)
--		goto err_reg;
-+	if (!ipvs->lblc_ctl_header) {
-+		if (!net_eq(net, &init_net))
-+			kfree(ipvs->lblc_ctl_table);
-+		return -ENOMEM;
-+	}
-+#endif
- 
- 	return 0;
--
--err_reg:
--	if (!net_eq(net, &init_net))
--		kfree(ipvs->lblc_ctl_table);
--
--err_dup:
--	return -ENOMEM;
- }
- 
- static void __net_exit __ip_vs_lblc_exit(struct net *net)
- {
- 	struct netns_ipvs *ipvs = net_ipvs(net);
- 
-+#ifdef CONFIG_SYSCTL
- 	unregister_net_sysctl_table(ipvs->lblc_ctl_header);
-+#endif
- 
- 	if (!net_eq(net, &init_net))
- 		kfree(ipvs->lblc_ctl_table);
-diff --git a/net/netfilter/ipvs/ip_vs_lblcr.c b/net/netfilter/ipvs/ip_vs_lblcr.c
-index 61ae8cf..bfa25f1 100644
---- a/net/netfilter/ipvs/ip_vs_lblcr.c
-+++ b/net/netfilter/ipvs/ip_vs_lblcr.c
-@@ -754,33 +754,33 @@ static int __net_init __ip_vs_lblcr_init(struct net *net)
- 						sizeof(vs_vars_table),
- 						GFP_KERNEL);
- 		if (ipvs->lblcr_ctl_table == NULL)
--			goto err_dup;
-+			return -ENOMEM;
- 	} else
- 		ipvs->lblcr_ctl_table = vs_vars_table;
- 	ipvs->sysctl_lblcr_expiration = 24*60*60*HZ;
- 	ipvs->lblcr_ctl_table[0].data = &ipvs->sysctl_lblcr_expiration;
- 
-+#ifdef CONFIG_SYSCTL
- 	ipvs->lblcr_ctl_header =
- 		register_net_sysctl_table(net, net_vs_ctl_path,
- 					  ipvs->lblcr_ctl_table);
--	if (!ipvs->lblcr_ctl_header)
--		goto err_reg;
-+	if (!ipvs->lblcr_ctl_header) {
-+		if (!net_eq(net, &init_net))
-+			kfree(ipvs->lblcr_ctl_table);
-+		return -ENOMEM;
-+	}
-+#endif
- 
- 	return 0;
--
--err_reg:
--	if (!net_eq(net, &init_net))
--		kfree(ipvs->lblcr_ctl_table);
+Just FYI:
+
+The problem was introduced in staging-next GIT branch:
+
+commit 046d747e0d2cb597e0b6fa4a79c32b43e97ed792
+"taging: usbvideo: vicam: fixed some coding style issues"
+
+- Sedat -
+
+[1] http://git.kernel.org/?p=3Dlinux/kernel/git/gregkh/staging-2.6.git;=
+a=3Dcommit;h=3D046d747e0d2cb597e0b6fa4a79c32b43e97ed792
