@@ -1,8 +1,8 @@
 From: <Narendra_K@Dell.com>
 Subject: Re: [PATCH] Fix build failure when CONFIG_NLS is set to 'm' by
  allmodconfig
-Date: Tue, 1 Feb 2011 08:28:55 -0800
-Message-ID: <20110201165116.GA29873@fedora14-r610.oslab.blr.amer.dell.com>
+Date: Tue, 1 Feb 2011 08:59:53 -0800
+Message-ID: <20110201172238.GB30095@fedora14-r610.oslab.blr.amer.dell.com>
 References: <20110112160229.7b8d82c1@jbarnes-desktop>
  <alpine.LFD.2.02.1101122217370.19754@x980>
  <20110113075556.789ac3c3@jbarnes-vaio.home>
@@ -17,19 +17,18 @@ Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ausxippc101.us.dell.com ([143.166.85.207]:16943 "EHLO
+Received: from ausxippc101.us.dell.com ([143.166.85.207]:32931 "EHLO
 	ausxippc101.us.dell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751439Ab1BAQ3Y convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Feb 2011 11:29:24 -0500
+	with ESMTP id S1752469Ab1BARA2 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Feb 2011 12:00:28 -0500
 In-Reply-To: <20110128084518.7783091e@jbarnes-desktop>
 Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: jbarnes@virtuousgeek.org
+To: jbarnes@virtuousgeek.org, viro@zeniv.linux.org.uk
 Cc: sfr@canb.auug.org.au, lenb@kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Matt_Domsch@Dell.com, Charles_Rose@Dell.com, Surya_Prabhakar@Dell.com
 
 On Fri, Jan 28, 2011 at 10:15:18PM +0530, Jesse Barnes wrote:
-> > > > > 
 > > > > > Even on platforms that don't support ACPI or DMI ...
 > > > > > 
 > > > > > You should really restrict this to CONFIG_ACPI || CONFIG_DMI ||
@@ -66,12 +65,14 @@ On Fri, Jan 28, 2011 at 10:15:18PM +0530, Jesse Barnes wrote:
 > I think the fs stuff will have to get an ack from Al.  If he doesn't
 > like it, see my earlier mail for another suggestion.
 
+[Resending as i missed copying Al]
+
 Hi Al,
 
 Please let me know if there are any concerns with this patch. If not,
 please ack this patch.
 
-I have attached the patch here for your reference -
+I have attached the patch here for your reference.
 
 From: Narendra K <narendra_k@dell.com>
 Subject: [PATCH] Fix build failure when CONFIG_NLS is set to 'm' by allmodconfig
