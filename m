@@ -1,34 +1,57 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: [PATCH 1/4] IPVS: use z modifier for sizeof() argument
-Date: Tue,  1 Feb 2011 11:14:12 +1100
-Message-ID: <1296519255-10602-2-git-send-email-horms@verge.net.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [GIT PULL nf-next-2.6] IPVS build fixes and clean-ups
+Date: Mon, 31 Jan 2011 16:50:09 -0800
+Message-ID: <20110131165009.66999952.randy.dunlap@oracle.com>
 References: <1296519255-10602-1-git-send-email-horms@verge.net.au>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:40411 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753147Ab1BAAv6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 31 Jan 2011 19:51:58 -0500
 In-Reply-To: <1296519255-10602-1-git-send-email-horms@verge.net.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, lvs-devel@vger.kernel.org
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Hans Schillstrom <hans@schillstrom.com>, Patrick McHardy <kaber@trash.net>, Simon Horman <horms@verge.net.au>
-List-Id: linux-next.vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Simon Horman <horms@verge.net.au>
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, lvs-devel@vger.kernel.org, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Hans Schillstrom <hans@schillstrom.com>, Patrick McHardy <kaber@trash.net>
 
-Cc: Hans Schillstrom <hans@schillstrom.com>
-Reported-by: Randy Dunlap <randy.dunlap@oracle.com>
-Signed-off-by: Simon Horman <horms@verge.net.au>
+On Tue,  1 Feb 2011 11:14:11 +1100 Simon Horman wrote:
+
+> Hi,
+> 
+> This short patch series addresses two linux-next build problems
+> raised by Randy Dunlap:
+> 
+> * net/netfilter/ipvs/ip_vs_core.c:1891: warning: format '%lu' expects type 'long unsigned int', but argument 2 has type 'unsigned int'
+> * ERROR: "unregister_net_sysctl_table" [net/netfilter/ipvs/ip_vs.ko]
+>   ERROR: "register_net_sysctl_table" [net/netfilter/ipvs/ip_vs.ko] undefined!
+> 
+> The remainder of the changset is cleanups that I noticed along the way.
+
+These 4 patches build successfully for me.
+However, I do see these warnings (sorry I missed them earlier):
+
+WARNING: net/netfilter/ipvs/ip_vs.o(.init.text+0x161): Section mismatch in reference from the function init_module() to the function .exit.text:ip_vs_sync_cleanup()
+WARNING: net/netfilter/ipvs/ip_vs.o(.init.text+0x161): Section mismatch in reference from the function init_module() to the function .exit.text:ip_vs_sync_cleanup()
+
+
+Thanks for the patch series.
+
+> The changes are available at
+> git://git.kernel.org/pub/scm/linux/kernel/git/horms/lvs-test-2.6.git master
+> 
+> They are currently compile-tested only.
+> 
+>  include/net/ip_vs.h              |    2 --
+>  net/netfilter/ipvs/ip_vs_core.c  |    2 +-
+>  net/netfilter/ipvs/ip_vs_ctl.c   |   17 +++++++++--------
+>  net/netfilter/ipvs/ip_vs_lblc.c  |   20 ++++++++++----------
+>  net/netfilter/ipvs/ip_vs_lblcr.c |   20 ++++++++++----------
+>  5 files changed, 30 insertions(+), 31 deletions(-)
+
+
 ---
- net/netfilter/ipvs/ip_vs_core.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/net/netfilter/ipvs/ip_vs_core.c b/net/netfilter/ipvs/ip_vs_core.c
-index d889f4f..4d06617 100644
---- a/net/netfilter/ipvs/ip_vs_core.c
-+++ b/net/netfilter/ipvs/ip_vs_core.c
-@@ -1887,7 +1887,7 @@ static int __net_init __ip_vs_init(struct net *net)
- 	ipvs->gen = atomic_read(&ipvs_netns_cnt);
- 	atomic_inc(&ipvs_netns_cnt);
- 	net->ipvs = ipvs;
--	printk(KERN_INFO "IPVS: Creating netns size=%lu id=%d\n",
-+	printk(KERN_INFO "IPVS: Creating netns size=%zu id=%d\n",
- 			 sizeof(struct netns_ipvs), ipvs->gen);
- 	return 0;
- }
--- 
-1.7.2.3
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
