@@ -1,65 +1,57 @@
-From: "Guan Xuetao" <gxt@mprc.pku.edu.cn>
-Subject: RE: Request (2nd) for unicore32 architecture codes to merge into linux-next
-Date: Tue, 1 Feb 2011 13:05:09 +0800
-Message-ID: <015d01cbc1cd$9b01e440$d105acc0$@mprc.pku.edu.cn>
-References: <AANLkTimKUV=RQezzME9qUUQjUjnHt9Qe79hOpK-cFC3i@mail.gmail.com> <20110201093852.32c951b6.sfr@canb.auug.org.au>
+From: "Gadiyar, Anand" <gadiyar@ti.com>
+Subject: linux-next-20100201 - OMAP2+ defconfig broken with CONFIG_DEBUG_LL
+Date: Tue, 1 Feb 2011 11:09:52 +0530
+Message-ID: <AANLkTinF+dpKvuRztChBM01MAjgL-foGp_yVq3uC9ghu@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mprc.pku.edu.cn ([162.105.203.9]:53530 "EHLO mprc.pku.edu.cn"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750846Ab1BAFFu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 1 Feb 2011 00:05:50 -0500
-In-Reply-To: <20110201093852.32c951b6.sfr@canb.auug.org.au>
-Content-Language: zh-cn
+Received: from na3sys009aog114.obsmtp.com ([74.125.149.211]:54505 "EHLO
+	na3sys009aog114.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750859Ab1BAFkO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Feb 2011 00:40:14 -0500
+Received: by mail-wy0-f182.google.com with SMTP id 19so6373216wyf.41
+        for <linux-next@vger.kernel.org>; Mon, 31 Jan 2011 21:40:13 -0800 (PST)
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: 'Stephen Rothwell' <sfr@canb.auug.org.au>, 'Xuetao Guan' <epip.guan@gmail.com>
-Cc: dmitry.torokhov@gmail.com, arnd@arndb.de, gregkh@suse.de, dtor@mail.ru, jbarnes@virtuousgeek.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org
 
+Hi all,
 
-> -----Original Message-----
-> From: linux-next-owner@vger.kernel.org [mailto:linux-next-owner@vger.kernel.org] On Behalf Of Stephen Rothwell
-> Sent: Tuesday, February 01, 2011 6:39 AM
-> To: Xuetao Guan
-> Cc: dmitry.torokhov@gmail.com; arnd@arndb.de; gregkh@suse.de; dtor@mail.ru; jbarnes@virtuousgeek.org; linux-
-> next@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: Re: Request (2nd) for unicore32 architecture codes to merge into linux-next
-> 
-> Hi,
-> 
-> On Sat, 22 Jan 2011 21:52:11 +0800 Xuetao Guan <epip.guan@gmail.com> wrote:
-> >
-> > I want to merge unicore32 repo into linux-next tree, the position is
-> > (unicore32 branch):
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/epip/linux-2.6-unicore32.git
-> 
-> Included from next-20110131.
-> 
-> Thanks for adding your subsystem tree as a participant of linux-next.  As
-> you may know, this is not a judgment of your code.  The purpose of
-> linux-next is for integration testing and to lower the impact of
-> conflicts between subsystems in the next merge window.
-> 
-> You will need to ensure that the patches/commits in your tree/series have
-> been:
->      * submitted under GPL v2 (or later) and include the Contributor's
-> 	Signed-off-by,
->      * posted to the relevant mailing list,
->      * reviewed by you (or another maintainer of your subsystem tree),
->      * successfully unit tested, and
->      * destined for the current or next Linux merge window.
-> 
-> Basically, this should be just what you would send to Linus (or ask him
-> to fetch).  It is allowed to be rebased if you deem it necessary.
-> 
-> --
-> Cheers,
-> Stephen Rothwell
-> sfr@canb.auug.org.au
+I tried to build linux-next as of 20100201 with omap2plus_defconfig. In addition
+I turned on CONFIG_DEBUG_LL and hit the following error.
 
-Thanks.
+  AS      arch/arm/kernel/debug.o
+arch/arm/kernel/debug.S: Assembler messages:
+arch/arm/kernel/debug.S:174: Error: garbage following instruction --
+`ldreq r1,=
+__virt_to_phys(omap_uart_phys)'
+arch/arm/kernel/debug.S:174: Error: garbage following instruction --
+`ldrne r1,=
+__phys_to_virt((0x80000000+0x3ffc))'
+arch/arm/kernel/debug.S:174: Error: garbage following instruction --
+`ldreq r2,=
+__virt_to_phys(omap_uart_phys)'
+arch/arm/kernel/debug.S:174: Error: garbage following instruction --
+`ldreq r2,=
+__virt_to_phys(omap_uart_phys)'
+arch/arm/kernel/debug.S:178: Error: garbage following instruction --
+`ldreq r2,=
+__virt_to_phys(omap_uart_lsr)'
+arch/arm/kernel/debug.S:190: Error: garbage following instruction --
+`ldreq r1,=
+__virt_to_phys(omap_uart_phys)'
+arch/arm/kernel/debug.S:190: Error: garbage following instruction --
+`ldrne r1,=
+__phys_to_virt((0x80000000+0x3ffc))'
+arch/arm/kernel/debug.S:190: Error: garbage following instruction --
+`ldreq r2,=
+__virt_to_phys(omap_uart_phys)'
+arch/arm/kernel/debug.S:190: Error: garbage following instruction --
+`ldreq r2,=
+__virt_to_phys(omap_uart_phys)'
+make[1]: *** [arch/arm/kernel/debug.o] Error 1
+make: *** [arch/arm/kernel] Error 2
 
-Guan Xuetao
+Will try and bisect this down later. Just reporting for now.
+
+- Anand
