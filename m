@@ -1,111 +1,76 @@
-From: Santosh Shilimkar <santosh.shilimkar@ti.com>
-Subject: RE: linux-next-20100201 - OMAP2+ defconfig broken with CONFIG_DEBUG_LL
-Date: Tue, 1 Feb 2011 14:56:13 +0530
-Message-ID: <7f99b6fa52967d67bf45d4e8aa7db1e8@mail.gmail.com>
-References: <AANLkTinF+dpKvuRztChBM01MAjgL-foGp_yVq3uC9ghu@mail.gmail.com>
-	<4af2a35f6d08ddcb33eb86aa3c784fb5@mail.gmail.com>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: [GIT PULL nf-next-2.6] IPVS build fixes and clean-ups
+Date: Tue, 1 Feb 2011 21:04:21 +1100
+Message-ID: <20110201100421.GA13325@verge.net.au>
+References: <1296519255-10602-1-git-send-email-horms@verge.net.au>
+ <20110131165009.66999952.randy.dunlap@oracle.com>
+ <20110201040634.GA2351@verge.net.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <4af2a35f6d08ddcb33eb86aa3c784fb5@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Anand Gadiyar <gadiyar@ti.com>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:56777 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751916Ab1BAKEZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Feb 2011 05:04:25 -0500
+Content-Disposition: inline
+In-Reply-To: <20110201040634.GA2351@verge.net.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, lvs-devel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Hans Schillstrom <hans@schillstrom.com>, Patrick McHardy <kaber@trash.net>
 
-> -----Original Message-----
-> From: linux-arm-kernel-bounces@lists.infradead.org [mailto:linux-
-> arm-kernel-bounces@lists.infradead.org] On Behalf Of Anand Gadiyar
-> Sent: Tuesday, February 01, 2011 2:54 PM
-> To: linux-arm-kernel@lists.infradead.org; linux-
-> next@vger.kernel.org; Russell King - ARM Linux
-> Subject: RE: linux-next-20100201 - OMAP2+ defconfig broken with
-> CONFIG_DEBUG_LL
->
-> Gadiyar, Anand wrote:
-> > Hi all,
-> >
-> > I tried to build linux-next as of 20100201 with
-> > omap2plus_defconfig. In addition
-> > I turned on CONFIG_DEBUG_LL and hit the following error.
-> >
-> >   AS      arch/arm/kernel/debug.o
-> > arch/arm/kernel/debug.S: Assembler messages:
-> > arch/arm/kernel/debug.S:174: Error: garbage following instruction
-> --
-> > `ldreq r1,=
-> > __virt_to_phys(omap_uart_phys)'
-> > arch/arm/kernel/debug.S:174: Error: garbage following instruction
-> --
-> > `ldrne r1,=
-> > __phys_to_virt((0x80000000+0x3ffc))'
-> > arch/arm/kernel/debug.S:174: Error: garbage following instruction
-> --
-> > `ldreq r2,=
-> > __virt_to_phys(omap_uart_phys)'
-> > arch/arm/kernel/debug.S:174: Error: garbage following instruction
-> --
-> > `ldreq r2,=
-> > __virt_to_phys(omap_uart_phys)'
-> > arch/arm/kernel/debug.S:178: Error: garbage following instruction
-> --
-> > `ldreq r2,=
-> > __virt_to_phys(omap_uart_lsr)'
-> > arch/arm/kernel/debug.S:190: Error: garbage following instruction
-> --
-> > `ldreq r1,=
-> > __virt_to_phys(omap_uart_phys)'
-> > arch/arm/kernel/debug.S:190: Error: garbage following instruction
-> --
-> > `ldrne r1,=
-> > __phys_to_virt((0x80000000+0x3ffc))'
-> > arch/arm/kernel/debug.S:190: Error: garbage following instruction
-> --
-> > `ldreq r2,=
-> > __virt_to_phys(omap_uart_phys)'
-> > arch/arm/kernel/debug.S:190: Error: garbage following instruction
-> --
-> > `ldreq r2,=
-> > __virt_to_phys(omap_uart_phys)'
-> > make[1]: *** [arch/arm/kernel/debug.o] Error 1
-> > make: *** [arch/arm/kernel] Error 2
-> >
-> > Will try and bisect this down later. Just reporting for now.
-> >
->
-> Hi Russell,
->
-> This appears to be introduced after this commit from you:
->
-> 8397c0703b5aa99fdb7c4e5177c4e2fc3b97c835 is the first bad commit
-> commit 8397c0703b5aa99fdb7c4e5177c4e2fc3b97c835
-> Author: Russell King <rmk+kernel@arm.linux.org.uk>
-> Date:   Tue Jan 4 19:09:43 2011 +0000
->
->     ARM: P2V: introduce phys_to_virt/virt_to_phys runtime patching
->
->     This idea came from Nicolas, Eric Miao produced an initial
-> version,
->     which was then rewritten into this.
->
-> The build failure seems to be omap-specific; I don't see this when
-> I build a mx51_defconfig for instance, but I do get a similar error
-> when building for omap1_defconfig.
->
-> I'll try and dig deeper.
->
-This is known and Russell has already pointed this
-out even before patch for dynamic p2v were merged.
+On Tue, Feb 01, 2011 at 03:06:37PM +1100, Simon Horman wrote:
+> On Mon, Jan 31, 2011 at 04:50:09PM -0800, Randy Dunlap wrote:
+> > On Tue,  1 Feb 2011 11:14:11 +1100 Simon Horman wrote:
+> > 
+> > > Hi,
+> > > 
+> > > This short patch series addresses two linux-next build problems
+> > > raised by Randy Dunlap:
+> > > 
+> > > * net/netfilter/ipvs/ip_vs_core.c:1891: warning: format '%lu' expects type 'long unsigned int', but argument 2 has type 'unsigned int'
+> > > * ERROR: "unregister_net_sysctl_table" [net/netfilter/ipvs/ip_vs.ko]
+> > >   ERROR: "register_net_sysctl_table" [net/netfilter/ipvs/ip_vs.ko] undefined!
+> > > 
+> > > The remainder of the changset is cleanups that I noticed along the way.
+> > 
+> > These 4 patches build successfully for me.
+> > However, I do see these warnings (sorry I missed them earlier):
+> > 
+> > WARNING: net/netfilter/ipvs/ip_vs.o(.init.text+0x161): Section mismatch in reference from the function init_module() to the function .exit.text:ip_vs_sync_cleanup()
+> > WARNING: net/netfilter/ipvs/ip_vs.o(.init.text+0x161): Section mismatch in reference from the function init_module() to the function .exit.text:ip_vs_sync_cleanup()
+> 
+> Thanks, I'll look into that. I will be travelling for a good portion of the
+> next day and a bit so I apologise in advance if that delays my next patch.
 
-OMAP LL debug code needs to be fixed.
+Hi,
 
-Regards,
-Santosh
+I the following patch seems to be the right fix for this to me.
+I will send an amended pull request.
+
+IPVS: Remove ip_vs_sync_cleanup from section __exit
+
+ip_vs_sync_cleanup() may be called from ip_vs_init() on error
+and thus needs to be accesible from section __init
+
+Reporte-by: Randy Dunlap <randy.dunlap@oracle.com>
+Signed-off-by: Simon Horman <horms@verge.net.au>
+---
+ net/netfilter/ipvs/ip_vs_sync.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/net/netfilter/ipvs/ip_vs_sync.c b/net/netfilter/ipvs/ip_vs_sync.c
+index d5a6e64..2a2a836 100644
+--- a/net/netfilter/ipvs/ip_vs_sync.c
++++ b/net/netfilter/ipvs/ip_vs_sync.c
+@@ -1686,7 +1686,7 @@ int __init ip_vs_sync_init(void)
+ 	return register_pernet_subsys(&ipvs_sync_ops);
+ }
+ 
+-void __exit ip_vs_sync_cleanup(void)
++void ip_vs_sync_cleanup(void)
+ {
+ 	unregister_pernet_subsys(&ipvs_sync_ops);
+ }
+-- 
+1.7.2.3
