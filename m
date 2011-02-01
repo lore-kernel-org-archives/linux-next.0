@@ -1,29 +1,84 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: linux-next-20100201 - OMAP2+ defconfig broken with
-	CONFIG_DEBUG_LL
-Date: Tue, 1 Feb 2011 09:22:39 +0000
-Message-ID: <20110201092238.GA31015@n2100.arm.linux.org.uk>
+From: Anand Gadiyar <gadiyar@ti.com>
+Subject: RE: linux-next-20100201 - OMAP2+ defconfig broken with CONFIG_DEBUG_LL
+Date: Tue, 1 Feb 2011 14:53:47 +0530
+Message-ID: <4af2a35f6d08ddcb33eb86aa3c784fb5@mail.gmail.com>
 References: <AANLkTinF+dpKvuRztChBM01MAjgL-foGp_yVq3uC9ghu@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:49369 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751935Ab1BAJWy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Feb 2011 04:22:54 -0500
-Content-Disposition: inline
+Received: from na3sys009aog105.obsmtp.com ([74.125.149.75]:45920 "EHLO
+	na3sys009aog105.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751752Ab1BAJXu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Feb 2011 04:23:50 -0500
+Received: by mail-ww0-f42.google.com with SMTP id 17so4532280wwi.1
+        for <linux-next@vger.kernel.org>; Tue, 01 Feb 2011 01:23:49 -0800 (PST)
 In-Reply-To: <AANLkTinF+dpKvuRztChBM01MAjgL-foGp_yVq3uC9ghu@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Gadiyar, Anand" <gadiyar@ti.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>
 
-On Tue, Feb 01, 2011 at 11:09:52AM +0530, Gadiyar, Anand wrote:
+Gadiyar, Anand wrote:
 > Hi all,
-> 
-> I tried to build linux-next as of 20100201 with omap2plus_defconfig. In addition
+>
+> I tried to build linux-next as of 20100201 with
+> omap2plus_defconfig. In addition
 > I turned on CONFIG_DEBUG_LL and hit the following error.
+>
+>   AS      arch/arm/kernel/debug.o
+> arch/arm/kernel/debug.S: Assembler messages:
+> arch/arm/kernel/debug.S:174: Error: garbage following instruction --
+> `ldreq r1,=
+> __virt_to_phys(omap_uart_phys)'
+> arch/arm/kernel/debug.S:174: Error: garbage following instruction --
+> `ldrne r1,=
+> __phys_to_virt((0x80000000+0x3ffc))'
+> arch/arm/kernel/debug.S:174: Error: garbage following instruction --
+> `ldreq r2,=
+> __virt_to_phys(omap_uart_phys)'
+> arch/arm/kernel/debug.S:174: Error: garbage following instruction --
+> `ldreq r2,=
+> __virt_to_phys(omap_uart_phys)'
+> arch/arm/kernel/debug.S:178: Error: garbage following instruction --
+> `ldreq r2,=
+> __virt_to_phys(omap_uart_lsr)'
+> arch/arm/kernel/debug.S:190: Error: garbage following instruction --
+> `ldreq r1,=
+> __virt_to_phys(omap_uart_phys)'
+> arch/arm/kernel/debug.S:190: Error: garbage following instruction --
+> `ldrne r1,=
+> __phys_to_virt((0x80000000+0x3ffc))'
+> arch/arm/kernel/debug.S:190: Error: garbage following instruction --
+> `ldreq r2,=
+> __virt_to_phys(omap_uart_phys)'
+> arch/arm/kernel/debug.S:190: Error: garbage following instruction --
+> `ldreq r2,=
+> __virt_to_phys(omap_uart_phys)'
+> make[1]: *** [arch/arm/kernel/debug.o] Error 1
+> make: *** [arch/arm/kernel] Error 2
+>
+> Will try and bisect this down later. Just reporting for now.
+>
 
-No need to bisect.  Tony knows about it.  It's the OMAP debug code using
-what was a macro in assembly, which becomes a C function with the dynamic
-P2V patches.
+Hi Russell,
+
+This appears to be introduced after this commit from you:
+
+8397c0703b5aa99fdb7c4e5177c4e2fc3b97c835 is the first bad commit
+commit 8397c0703b5aa99fdb7c4e5177c4e2fc3b97c835
+Author: Russell King <rmk+kernel@arm.linux.org.uk>
+Date:   Tue Jan 4 19:09:43 2011 +0000
+
+    ARM: P2V: introduce phys_to_virt/virt_to_phys runtime patching
+
+    This idea came from Nicolas, Eric Miao produced an initial version,
+    which was then rewritten into this.
+
+The build failure seems to be omap-specific; I don't see this when
+I build a mx51_defconfig for instance, but I do get a similar error
+when building for omap1_defconfig.
+
+I'll try and dig deeper.
+
+Thanks in advance for any pointers.
+
+- Anand
