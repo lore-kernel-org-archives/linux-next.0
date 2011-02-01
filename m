@@ -1,57 +1,67 @@
-From: "Gadiyar, Anand" <gadiyar@ti.com>
-Subject: linux-next-20100201 - OMAP2+ defconfig broken with CONFIG_DEBUG_LL
-Date: Tue, 1 Feb 2011 11:09:52 +0530
-Message-ID: <AANLkTinF+dpKvuRztChBM01MAjgL-foGp_yVq3uC9ghu@mail.gmail.com>
+From: Sedat Dilek <sedat.dilek@googlemail.com>
+Subject: =?UTF-8?B?UmU6IGxpbnV4LW5leHQ6IFRyZWUgZm9yIEZlYnJ1YXJ5IDEgWyBzdGFnaW5nL3VzYnZpZA==?=
+	=?UTF-8?B?ZW8vdmljYW0uYzogZXJyb3I6IGV4cGVjdGVkIOKAmDvigJkgYmVmb3JlIOKAmCnigJkgdG9rZW4gXQ==?=
+Date: Tue, 1 Feb 2011 09:32:51 +0100
+Message-ID: <AANLkTi=wj05GrQ2r-GAbaX1zSQzMN8FJV_2d7c-kv33L@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from na3sys009aog114.obsmtp.com ([74.125.149.211]:54505 "EHLO
-	na3sys009aog114.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750859Ab1BAFkO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Feb 2011 00:40:14 -0500
-Received: by mail-wy0-f182.google.com with SMTP id 19so6373216wyf.41
-        for <linux-next@vger.kernel.org>; Mon, 31 Jan 2011 21:40:13 -0800 (PST)
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Greg KH <gregkh@suse.de>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+On Tue, Feb 1, 2011 at 5:34 AM, Stephen Rothwell <sfr@canb.auug.org.au>=
+ wrote:
+> Hi all,
+>
+> Changes since 20110131:
+>
+> Dropped tree: xen
+>
+> The tty.current tree lost its conflict.
+>
+> The slab tree still has its build failure so I used the version from
+> next-20110121.
+>
+> The suspend tree lost its build failure.
+>
+> The sparc64 defconfig build has been fixed.
+>
+> The powerpc allyesconfig build has been broken by some obscure bloati=
+ng
+> of the low memory code.
+>
+> ---------------------------------------------------------------------=
+-------
 
-I tried to build linux-next as of 20100201 with omap2plus_defconfig. In addition
-I turned on CONFIG_DEBUG_LL and hit the following error.
+[ CC greg-kh ]
 
-  AS      arch/arm/kernel/debug.o
-arch/arm/kernel/debug.S: Assembler messages:
-arch/arm/kernel/debug.S:174: Error: garbage following instruction --
-`ldreq r1,=
-__virt_to_phys(omap_uart_phys)'
-arch/arm/kernel/debug.S:174: Error: garbage following instruction --
-`ldrne r1,=
-__phys_to_virt((0x80000000+0x3ffc))'
-arch/arm/kernel/debug.S:174: Error: garbage following instruction --
-`ldreq r2,=
-__virt_to_phys(omap_uart_phys)'
-arch/arm/kernel/debug.S:174: Error: garbage following instruction --
-`ldreq r2,=
-__virt_to_phys(omap_uart_phys)'
-arch/arm/kernel/debug.S:178: Error: garbage following instruction --
-`ldreq r2,=
-__virt_to_phys(omap_uart_lsr)'
-arch/arm/kernel/debug.S:190: Error: garbage following instruction --
-`ldreq r1,=
-__virt_to_phys(omap_uart_phys)'
-arch/arm/kernel/debug.S:190: Error: garbage following instruction --
-`ldrne r1,=
-__phys_to_virt((0x80000000+0x3ffc))'
-arch/arm/kernel/debug.S:190: Error: garbage following instruction --
-`ldreq r2,=
-__virt_to_phys(omap_uart_phys)'
-arch/arm/kernel/debug.S:190: Error: garbage following instruction --
-`ldreq r2,=
-__virt_to_phys(omap_uart_phys)'
-make[1]: *** [arch/arm/kernel/debug.o] Error 1
-make: *** [arch/arm/kernel] Error 2
+Build error:
+=2E..
+drivers/staging/usbvideo/vicam.c:222:57: error: expected =E2=80=98;=E2=80=
+=99 before =E2=80=98)=E2=80=99 token
+drivers/staging/usbvideo/vicam.c:222:57: error: expected statement
+before =E2=80=98)=E2=80=99 token
+=2E..
 
-Will try and bisect this down later. Just reporting for now.
+This should be fixed by:
 
-- Anand
+Index: linux-next-20110201/drivers/staging/usbvideo/vicam.c
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+--- linux-next-20110201.orig/drivers/staging/usbvideo/vicam.c
++++ linux-next-20110201/drivers/staging/usbvideo/vicam.c
+@@ -219,7 +219,7 @@ set_camera_power(struct vicam_camera *ca
+ {
+        int status;
+
+-       status =3D send_control_msg(cam, 0x50, state, 0, NULL, 0));
++       status =3D send_control_msg(cam, 0x50, state, 0, NULL, 0);
+        if (status < 0)
+                return status;
+
+- Sedat -
