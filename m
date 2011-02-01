@@ -1,32 +1,36 @@
-From: Patrick McHardy <kaber@trash.net>
-Subject: Re: [PATCH 5/5] IPVS: Remove ip_vs_sync_cleanup from section 	__exit
-Date: Tue, 01 Feb 2011 18:31:20 +0100
-Message-ID: <4D484368.9060904@trash.net>
-References: <7j2t3lt.e4ea73185e9c52a3d68dc337ed04b422@obelix.schillstrom.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for February 1 (sound/soc)
+Date: Tue, 1 Feb 2011 09:32:56 -0800
+Message-ID: <20110201093256.f5ff0252.randy.dunlap@oracle.com>
+References: <20110201153403.b3a251a3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from stinky.trash.net ([213.144.137.162]:46401 "EHLO
-	stinky.trash.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755713Ab1BARbW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Feb 2011 12:31:22 -0500
-In-Reply-To: <7j2t3lt.e4ea73185e9c52a3d68dc337ed04b422@obelix.schillstrom.com>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:52586 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752241Ab1BARdx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Feb 2011 12:33:53 -0500
+In-Reply-To: <20110201153403.b3a251a3.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Hans Schillstrom <hans@schillstrom.com>
-Cc: Simon Horman <horms@verge.net.au>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, lvs-devel@vger.kernel.org, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Liam Girdwood <lrg@slimlogic.co.uk>, Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Am 01.02.2011 18:12, schrieb Hans Schillstrom:
->> [PATCH 5/5] IPVS: Remove ip_vs_sync_cleanup from section __exit
->> >
->> >ip_vs_sync_cleanup() may be called from ip_vs_init() on error
->> >and thus needs to be accesible from section __init
->> >
->> >Reporte-by: Randy Dunlap <randy.dunlap@oracle.com>
->> >Signed-off-by: Simon Horman <horms@verge.net.au>
-> Signed-off-by: Hans Schillstrom <hans@schillstrom.com>
-> Tested-by: Hans Schillstrom <hans@schillstrom.com>
+On Tue, 1 Feb 2011 15:34:03 +1100 Stephen Rothwell wrote:
+
+> Hi all,
 > 
+> Changes since 20110131:
 
-Applied, thanks.
+
+When CONFIG_PM_SLEEP is not enabled:
+
+sound/soc/soc-core.c:1785: error: 'soc_resume_deferred' undeclared (first use in this function)
+
+That function call is surrounded by CONFIG_PM but the function itself is
+surrounded by CONFIG_PM_SLEEP.
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
