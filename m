@@ -1,39 +1,42 @@
-From: NeilBrown <neilb@suse.de>
-Subject: Re: linux-next: build failure after merge of the md-current tree
-Date: Wed, 2 Feb 2011 11:58:13 +1100
-Message-ID: <20110202115813.1ee7ab4d@notabene.brown>
-References: <20110202112519.7a4d2bd3.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: [PATCH] gpu/stub: fix acpi_video build error, fix stub kconfig
+ dependencies
+Date: Wed, 2 Feb 2011 02:35:05 +0100
+Message-ID: <20110202013505.GD30557@elte.hu>
+References: <20101220200013.df8fbc88.sfr@canb.auug.org.au>
+ <20101220085340.7ba098b9.randy.dunlap@oracle.com>
+ <20110126114203.GA16754@elte.hu>
+ <20110201120323.GA6714@elte.hu>
+ <20110201111728.cb786487.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110202112519.7a4d2bd3.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-acpi-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20110201111728.cb786487.randy.dunlap@oracle.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Len Brown <lenb@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Luming Yu <luming.yu@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-acpi@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, "Rafael J. Wysocki" <rjw@sisk.pl>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, 2 Feb 2011 11:25:19 +1100 Stephen Rothwell <sfr@canb.auug.org.au>
-wrote:
 
-> Hi Neil,
-> 
-> After merging the md-current tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> drivers/md/md.c: In function 'slot_store':
-> drivers/md/md.c:2466: error: 'mddev' undeclared (first use in this function)
-> 
-> Caused by commit 778f14598b2924e92790ddd8a167424d2894ffb0 ("md: Don't
-> allow slot_store while resync/recovery is happening").
-> 
-> Please build test your tree before publishing it.
-> 
-> I have used the md-current tree from next-20110201 for today.
-> 
+* Randy Dunlap <randy.dunlap@oracle.com> wrote:
 
-Ouch... I blame the heat!!
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> The comments under "config STUB_POULSBO" are close to correct,
+> but they are not being followed.  This patch updates them to reflect
+> the requirements for THERMAL.
+> 
+> This build error is caused by STUB_POULSBO selecting ACPI_VIDEO
+> when ACPI_VIDEO's config requirements are not met.
+> 
+> ERROR: "thermal_cooling_device_register" [drivers/acpi/video.ko] undefined!
+> ERROR: "thermal_cooling_device_unregister" [drivers/acpi/video.ko] undefined!
+> 
+> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 
-Fix now, thanks.
+Works fine here - thanks Randy!
 
-NeilBrown
+Tested-by: Ingo Molnar <mingo@elte.hu>
+
+	Ingo
