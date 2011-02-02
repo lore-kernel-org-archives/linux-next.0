@@ -1,65 +1,51 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: linux-next: Tree for February 1 (ip_vs)
-Date: Thu, 3 Feb 2011 07:31:59 +0900
-Message-ID: <20110202223159.GB2248@verge.net.au>
-References: <20110201153403.b3a251a3.sfr@canb.auug.org.au>
- <20110201091620.64536300.randy.dunlap@oracle.com>
+From: David Brown <davidb@codeaurora.org>
+Subject: Re: linux-next: manual merge of the msm tree with the arm tree
+Date: Wed, 02 Feb 2011 14:46:40 -0800
+Message-ID: <8yar5bq5a27.fsf@huya.qualcomm.com>
+References: <20110131131401.5d6c7646.sfr@canb.auug.org.au>
+	<8ya4o8m70jp.fsf@huya.qualcomm.com> <20110202194359.GC27065@kroah.com>
+	<20110202200030.GA26104@flint.arm.linux.org.uk>
+	<20110202203252.GD28479@kroah.com>
+	<20110202204453.GB26104@flint.arm.linux.org.uk>
+	<alpine.LFD.2.00.1102021557530.8212@xanadu.home>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20110201091620.64536300.randy.dunlap@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, netdev <netdev@vger.kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from wolverine02.qualcomm.com ([199.106.114.251]:41281 "EHLO
+	wolverine02.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753312Ab1BBWql (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Feb 2011 17:46:41 -0500
+In-Reply-To: <alpine.LFD.2.00.1102021557530.8212@xanadu.home> (Nicolas Pitre's
+	message of "Wed, 02 Feb 2011 16:47:12 -0500 (EST)")
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Nicolas Pitre <nico@fluxnic.net>
+Cc: Greg KH <greg@kroah.com>, Russell King <rmk@arm.linux.org.uk>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, Stepan Moskovchenko <stepanm@codeaurora.org>
 
-On Tue, Feb 01, 2011 at 09:16:20AM -0800, Randy Dunlap wrote:
-> On Tue, 1 Feb 2011 15:34:03 +1100 Stephen Rothwell wrote:
-> 
-> > Hi all,
-> > 
-> > Changes since 20110131:
-> 
-> 
-> When CONFIG_IP_VS_PROTO_TCP is not set:
-> 
-> net/netfilter/ipvs/ip_vs_proto_sctp.c:1104: error: 'struct netns_ipvs' has no member named 'tcp_app_lock'
-> net/netfilter/ipvs/ip_vs_proto_sctp.c:1104: error: 'struct netns_ipvs' has no member named 'tcp_app_lock'
+On Wed, Feb 02 2011, Nicolas Pitre wrote:
 
-Thanks, the following patch should resolve this problem.
-Hans, could you verify this change?
+> The actual problem here is that some people, notably the msm folks, are 
+> bypassing the maintainer hierarchy and going straight to Linus for their 
+> pull requests instead of asking RMK to pull.  We once debated this at 
+> some point and it was agreed that completely independent SOC specific 
+> code with no dependencies on the common ARM code _could_ go straight to 
+> Linus directly if they crave for it.  But in this case:
+>
+> 1) the conflict is obviously simple
+>
+> 2) the conflict resolution is just as obvious
+>
+> 3) and Stephen is able and willing to carry this conflict resolution for 
+>    the foreseeable future until this all gets merged in mainline.
+>
+> So... WTF is the actual problem here?
 
-The change is available at
-git://git.kernel.org/pub/scm/linux/kernel/git/horms/lvs-test-2.6.git master
+I hadn't really brought this up as a problem, but was mostly wondering
+if it was ok to just have Stephen carry the conflict resolution until
+the next merge window.  The rest of the comments came from Greg.
 
+David
 
-From: Simon Horman <horms@verge.net.au>
-
-IPVS: Use correct lock in SCTP module
-
-Use sctp_app_lock instead of tcp_app_lock in the SCTP protocol module.
-
-This appears to be a typo introduced by the netns changes.
-
-Cc: Hans Schillstrom <hans@schillstrom.com>
-Signed-off-by: Simon Horman <horms@verge.net.au>
----
- net/netfilter/ipvs/ip_vs_proto_sctp.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/net/netfilter/ipvs/ip_vs_proto_sctp.c b/net/netfilter/ipvs/ip_vs_proto_sctp.c
-index fb2d04a..b027ccc 100644
---- a/net/netfilter/ipvs/ip_vs_proto_sctp.c
-+++ b/net/netfilter/ipvs/ip_vs_proto_sctp.c
-@@ -1101,7 +1101,7 @@ static void __ip_vs_sctp_init(struct net *net, struct ip_vs_proto_data *pd)
- 	struct netns_ipvs *ipvs = net_ipvs(net);
- 
- 	ip_vs_init_hash_table(ipvs->sctp_apps, SCTP_APP_TAB_SIZE);
--	spin_lock_init(&ipvs->tcp_app_lock);
-+	spin_lock_init(&ipvs->sctp_app_lock);
- 	pd->timeout_table = ip_vs_create_timeout_table((int *)sctp_timeouts,
- 							sizeof(sctp_timeouts));
- }
 -- 
-1.7.2.3
+Sent by an employee of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
