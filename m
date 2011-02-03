@@ -1,28 +1,34 @@
-From: Patrick McHardy <kaber@trash.net>
-Subject: Re: [GIT PULL] IPVS SCTP lock fix
-Date: Thu, 03 Feb 2011 13:10:24 +0100
-Message-ID: <4D4A9B30.8010805@trash.net>
-References: <1296733925-23131-1-git-send-email-horms@verge.net.au>
+From: Christoph Lameter <cl@linux.com>
+Subject: Re: linux-next: build failure after merge of the slab tree
+Date: Thu, 3 Feb 2011 09:19:54 -0600 (CST)
+Message-ID: <alpine.DEB.2.00.1102030919380.6519@router.home>
+References: <20110131144246.dfa2abe3.sfr@canb.auug.org.au> <1296502339.30654.13.camel@jaguar>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from stinky.trash.net ([213.144.137.162]:55144 "EHLO
-	stinky.trash.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756333Ab1BCMK2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Feb 2011 07:10:28 -0500
-In-Reply-To: <1296733925-23131-1-git-send-email-horms@verge.net.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Simon Horman <horms@verge.net.au>
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, lvs-devel@vger.kernel.org, Randy Dunlap <randy.dunlap@oracle.com>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1296502339.30654.13.camel@jaguar>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pekka Enberg <penberg@cs.helsinki.fi>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Theodore Tso <tytso@MIT.EDU>
+List-Id: linux-next.vger.kernel.org
 
-Am 03.02.2011 12:52, schrieb Simon Horman:
-> Hi Patrick,
-> 
-> please consider pulling
-> git://git.kernel.org/pub/scm/linux/kernel/git/horms/lvs-test-2.6.git for-patrick
-> which contains a single patch to the IPVS SCTP module so that
-> it uses the correct lock.
+On Mon, 31 Jan 2011, Pekka Enberg wrote:
 
-Pulled, thanks Simon.
+> On Mon, 2011-01-31 at 14:42 +1100, Stephen Rothwell wrote:
+> > Hi all,
+> >
+> > After merging the slab tree, today's linux-next build (powerpc
+> > ppc64_defconfig) failed like this:
+> >
+> > fs/ext4/mballoc.c: In function 'ext4_exit_mballoc':
+> > fs/ext4/mballoc.c:2750: error: implicit declaration of function 'kmem_cache_name'
+> > fs/ext4/mballoc.c:2750: warning: cast to pointer from integer of different size
+> >
+> > Caused by commit 63310467a3d1ed6a0460ec1f4268126cd1ceec2e ("mm: Remove
+> > support for kmem_cache_name()").  Clearly the last user has not gone, yet.
+> >
+> > I have used the version of the slab tree from next-20110121 for today.
+>
+> Christoph, Ted? Should I revert the patch from slab.git?
+
+Maybe the ext4 patch is not in -next yet?
