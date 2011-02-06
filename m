@@ -1,43 +1,69 @@
-From: David Brown <davidb@codeaurora.org>
-Subject: Re: linux-next: manual merge of the msm tree with the arm tree
-Date: Fri, 04 Feb 2011 12:38:01 -0800
-Message-ID: <8yawrlfzgba.fsf@huya.qualcomm.com>
-References: <20110131131401.5d6c7646.sfr@canb.auug.org.au>
-	<8ya4o8m70jp.fsf@huya.qualcomm.com> <20110202194359.GC27065@kroah.com>
-	<20110202200030.GA26104@flint.arm.linux.org.uk>
-	<20110202203252.GD28479@kroah.com>
-	<20110202204453.GB26104@flint.arm.linux.org.uk>
-	<alpine.LFD.2.00.1102021557530.8212@xanadu.home>
-	<1296839855.4078.12.camel@m0nster>
-	<alpine.LFD.2.00.1102041421310.12104@xanadu.home>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: Request (2nd) for unicore32 architecture codes to merge into
+ linux-next
+Date: Sun, 6 Feb 2011 23:06:13 +0100 (CET)
+Message-ID: <alpine.LFD.2.00.1102062254560.31804@localhost6.localdomain6>
+References: <01c701cbba0f$08185800$18490800$@mprc.pku.edu.cn>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from wolverine01.qualcomm.com ([199.106.114.254]:59547 "EHLO
-	wolverine01.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751431Ab1BDUiC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Feb 2011 15:38:02 -0500
-In-Reply-To: <alpine.LFD.2.00.1102041421310.12104@xanadu.home> (Nicolas
-	Pitre's message of "Fri, 04 Feb 2011 14:40:04 -0500 (EST)")
+Received: from www.tglx.de ([62.245.132.106]:48424 "EHLO www.tglx.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753295Ab1BFWGe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 6 Feb 2011 17:06:34 -0500
+In-Reply-To: <01c701cbba0f$08185800$18490800$@mprc.pku.edu.cn>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Nicolas Pitre <nico@fluxnic.net>
-Cc: Daniel Walker <dwalker@codeaurora.org>, Greg KH <greg@kroah.com>, Russell King <rmk@arm.linux.org.uk>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, Stepan Moskovchenko <stepanm@codeaurora.org>, linux-arm-msm@vger.kernel.org
+To: Guan Xuetao <guanxuetao@mprc.pku.edu.cn>
+Cc: sfr@canb.auug.org.au, Arnd Bergmann <arnd@arndb.de>, gregkh@suse.de, jbarnes@virtuousgeek.org, dmitry.torokhov@gmail.com, dtor@mail.ru, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-On Fri, Feb 04 2011, Nicolas Pitre wrote:
+On Sat, 22 Jan 2011, Guan Xuetao wrote:
 
-> Maybe this would be nicer to Russell and others performing wide ranging 
-> changes to the ARM code if the msm tree was more visible downstream, and 
-> potentially help to avoid making a mountain out of a mole hill.
+> Hi, I want to merge unicore32 repo into linux-next tree, the
+> position is (unicore32 branch):
 
-Currently, the msm tree is in linux-next, and the URL is in the
-MAINTAINER's file.  The only want to make it more visible would be to
-give frequent pull requests to RMK, which would create extra work for
-him.  I think I just need to come up with the right balance of how often
-to give the tree to RMK.
+Sorry for late reply.
+ 
+>  arch/unicore32/kernel/time.c                  |  148 +++++
 
-David
+static struct clock_event_device ckevt_puv3_osmr0 ...
+#ifdef CONFIG_ARCH_FPGA
+        .shift          = 18, /* correct shift val: 16, but warn_on_slowpath */
+#else
+        .shift          = 30,
+#endif
 
--- 
-Sent by an employee of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+....
+        ckevt_puv3_osmr0.mult =
+                div_sc(CLOCK_TICK_RATE, NSEC_PER_SEC, ckevt_puv3_osmr0.shift);
+
+Please use the function which calculates the optimizes mult/shift
+values for you depending on the clock frequency.
+
+clockevents_calc_mult_shift() is your friend.
+
+>  arch/unicore32/kernel/irq.c                   |  426 +++++++++++++
+
+Please convert your irq_chips to the new function pointers:
+
+       .mask -> .irq_mask
+       ...
+
+The new functions replace the "unsigned int irq" argument with
+"struct irq_data *d".
+
+So conversion for your chips is simply
+
+s/unsigned int irq/struct irq_data *d/
+
+and 
+
+s/irq/d->irq/ in the implementation.
+
+Then your arch should select: GENERIC_HARDIRQS_NO_DEPRECATED
+
+Otherwise I'm happy with your irq and time related patches.
+
+Thanks,
+
+	tglx
