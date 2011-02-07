@@ -1,46 +1,32 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] kobject.h: fix build when CONFIG_HOTPLUG is disabled
-Date: Sun, 6 Feb 2011 21:57:18 -0800
-Message-ID: <20110206215718.185b6262.randy.dunlap@oracle.com>
-References: <20110207161902.a4c36e08.sfr@canb.auug.org.au>
+From: Michael =?ISO-8859-1?Q?B=FCsch?= <mb@bu3sch.de>
+Subject: Re: [PATCH] Fix SSB chipcommon HT/ALP avail bits layout and usage
+Date: Mon, 07 Feb 2011 20:55:56 +0100
+Message-ID: <1297108556.18125.1.camel@maggie>
+References: <1297107730.32607.10.camel@dev.znau.edu.ua>
+	 (sfid-20110207_204928_918460_412E3BD6)
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:65090 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751485Ab1BGF54 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Feb 2011 00:57:56 -0500
-In-Reply-To: <20110207161902.a4c36e08.sfr@canb.auug.org.au>
+Received: from 80-190-117-144.ip-home.de ([80.190.117.144]:57033 "EHLO
+	bu3sch.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752038Ab1BGUcT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 7 Feb 2011 15:32:19 -0500
+In-Reply-To: <1297107730.32607.10.camel@dev.znau.edu.ua> (sfid-20110207_204928_918460_412E3BD6)
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: George Kashperko <george@znau.edu.ua>
+Cc: linux-next@vger.kernel.org
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+On Mon, 2011-02-07 at 21:42 +0200, George Kashperko wrote: 
+> BCM4328 chipcommon have different CLKCTLST register HT and ALP availability
+> bits' layout comparing to other BCM chips. 4328 HT/ALP availability bits are
+> 16/17 whereas other BCM chips' HT/ALP availability bits are 17/16. Therefore
+> current pmu pll initialization code forces active low power clock for all
+> non-4328 chips instead of switching HT clock on.
+> Patch also fixes typo in ALP avail define description.
 
-When CONFIG_HOTPLUG is not enabled, the inline function add_uevent_var()
-needs to have its __attribute__ before the function name/parameters,
-otherwise there are syntax errors.
+Where did you get the knowledge that the bits are swapped on 4328 from?
 
-linux-next-20110207/include/linux/kobject.h:232: error: expected ',' or ';' before '{' token
-
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- include/linux/kobject.h |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
---- linux/include/linux/kobject.h.ORG	2011-02-06 21:47:23.000000000 -0800
-+++ linux/include/linux/kobject.h	2011-02-06 21:44:56.000000000 -0800
-@@ -226,9 +226,8 @@
- 				      char *envp[])
- { return 0; }
- 
--static inline int add_uevent_var(struct kobj_uevent_env *env,
--				 const char *format, ...)
--	__attribute__((format(printf, 2, 3)))
-+static inline __attribute__((format(printf, 2, 3)))
-+int add_uevent_var(struct kobj_uevent_env *env, const char *format, ...)
- { return 0; }
- 
- static inline int kobject_action_type(const char *buf, size_t count,
+-- 
+Greetings Michael.
