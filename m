@@ -1,69 +1,55 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: Request (2nd) for unicore32 architecture codes to merge into
- linux-next
-Date: Sun, 6 Feb 2011 23:06:13 +0100 (CET)
-Message-ID: <alpine.LFD.2.00.1102062254560.31804@localhost6.localdomain6>
-References: <01c701cbba0f$08185800$18490800$@mprc.pku.edu.cn>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with Linus' tree
+Date: Mon, 7 Feb 2011 15:08:02 +1100
+Message-ID: <20110207150802.4869bd47.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__7_Feb_2011_15_08_02_+1100_/Vt213cPf1UUj6ZP"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from www.tglx.de ([62.245.132.106]:48424 "EHLO www.tglx.de"
+Received: from chilli.pcug.org.au ([203.10.76.44]:43814 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753295Ab1BFWGe (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 6 Feb 2011 17:06:34 -0500
-In-Reply-To: <01c701cbba0f$08185800$18490800$@mprc.pku.edu.cn>
+	id S1754361Ab1BGEIJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 6 Feb 2011 23:08:09 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Guan Xuetao <guanxuetao@mprc.pku.edu.cn>
-Cc: sfr@canb.auug.org.au, Arnd Bergmann <arnd@arndb.de>, gregkh@suse.de, jbarnes@virtuousgeek.org, dmitry.torokhov@gmail.com, dtor@mail.ru, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andiry Xu <andiry.xu@amd.com>, Alex He <alex.he@amd.com>
 
-On Sat, 22 Jan 2011, Guan Xuetao wrote:
+--Signature=_Mon__7_Feb_2011_15_08_02_+1100_/Vt213cPf1UUj6ZP
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi, I want to merge unicore32 repo into linux-next tree, the
-> position is (unicore32 branch):
+Hi Greg,
 
-Sorry for late reply.
- 
->  arch/unicore32/kernel/time.c                  |  148 +++++
+Today's linux-next merge of the usb tree got a conflict in
+drivers/usb/host/ehci-pci.c between commit
+baab93afc2844b68d57b0dcca5e1d34c5d7cf411 ("USB: EHCI: ASPM quirk of ISOC
+on AMD Hudson") from Linus' tree and commit
+b7d5b439b7a40dd0a0202fe1c118615a3fcc3b25 ("USB host: Move AMD PLL quirk
+to pci-quirks.c") from the usb tree.
 
-static struct clock_event_device ckevt_puv3_osmr0 ...
-#ifdef CONFIG_ARCH_FPGA
-        .shift          = 18, /* correct shift val: 16, but warn_on_slowpath */
-#else
-        .shift          = 30,
-#endif
+I just use the version from the usb tree, but this may need fixing up in
+pci-quirks.c.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-....
-        ckevt_puv3_osmr0.mult =
-                div_sc(CLOCK_TICK_RATE, NSEC_PER_SEC, ckevt_puv3_osmr0.shift);
+--Signature=_Mon__7_Feb_2011_15_08_02_+1100_/Vt213cPf1UUj6ZP
+Content-Type: application/pgp-signature
 
-Please use the function which calculates the optimizes mult/shift
-values for you depending on the clock frequency.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-clockevents_calc_mult_shift() is your friend.
+iQEcBAEBAgAGBQJNT3AiAAoJEDMEi1NhKgbsv9cIAJPixP1CcDbHWoD8F688SMvy
+yEejCi2GesIFuy+/V2UsM38fmnO4A0/bQ9Jcp81KWO8dwo+8Dt7Y+jKNN1Bc/JQv
+DJl/+yAjjf1UrTD6E129ahI2h/ycw8wZ3zKZOpJu+fcbQx0EQ7gScL5bV+gPeOLq
+lf6ADvFdFVJAGVkxBOspaQ5Qk6WdkBdBNvfoXM4o1z65EB2E3ONGlbZQo3asgOhM
+pIb7NgQAUknyuLop4F8115idBlDv9aV3E3vWuMgyvcJrOdDKu30lFkuQ1x0IXMHL
+TZ5NwIZigzMzbdR2kXkNVHuSb9hRqEFS8QXxw5hn5hvLaDhZOrtdit5ep41kMoY=
+=VTJJ
+-----END PGP SIGNATURE-----
 
->  arch/unicore32/kernel/irq.c                   |  426 +++++++++++++
-
-Please convert your irq_chips to the new function pointers:
-
-       .mask -> .irq_mask
-       ...
-
-The new functions replace the "unsigned int irq" argument with
-"struct irq_data *d".
-
-So conversion for your chips is simply
-
-s/unsigned int irq/struct irq_data *d/
-
-and 
-
-s/irq/d->irq/ in the implementation.
-
-Then your arch should select: GENERIC_HARDIRQS_NO_DEPRECATED
-
-Otherwise I'm happy with your irq and time related patches.
-
-Thanks,
-
-	tglx
+--Signature=_Mon__7_Feb_2011_15_08_02_+1100_/Vt213cPf1UUj6ZP--
