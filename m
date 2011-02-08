@@ -1,71 +1,68 @@
-From: George Kashperko <george@znau.edu.ua>
-Subject: Re: [PATCH] Fix SSB chipcommon HT/ALP avail bits layout and usage
-Date: Mon, 07 Feb 2011 23:14:03 +0200
-Message-ID: <1297113243.32607.31.camel@dev.znau.edu.ua>
-References: <1297107730.32607.10.camel@dev.znau.edu.ua>
-	 (sfid-20110207_204928_918460_412E3BD6)  <1297108556.18125.1.camel@maggie>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the drivers-x86 tree
+Date: Tue, 8 Feb 2011 14:45:22 +1100
+Message-ID: <20110208144522.ecea74db.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__8_Feb_2011_14_45_22_+1100_eJ+XS2ArLGQDjqk/"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.academy.zt.ua ([82.207.120.245]:34590 "EHLO
-	mail.academy.zt.ua" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754744Ab1BGVVT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Feb 2011 16:21:19 -0500
-Received: from [10.0.2.42] by mail.academy.zt.ua (Cipher SSLv3:RC4-MD5:128) (MDaemon PRO v11.0.3)
-	with ESMTP id md50000019491.msg
-	for <linux-next@vger.kernel.org>; Mon, 07 Feb 2011 23:20:45 +0200
-In-Reply-To: <1297108556.18125.1.camel@maggie>
+Received: from chilli.pcug.org.au ([203.10.76.44]:36162 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750762Ab1BHDpc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 7 Feb 2011 22:45:32 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: Michael =?ISO-8859-1?Q?B=FCsch?= <mb@bu3sch.de>
+To: Matthew Garrett <mjg59@srcf.ucam.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Corentin Chary <corentincj@iksaif.net>
 
-BCM4328 chipcommon have different CLKCTLST register HT and ALP availability
-bits' layout comparing to other BCM chips. 4328 HT/ALP availability bits are
-16/17 whereas other BCM chips' HT/ALP availability bits are 17/16. Therefore
-current pmu pll initialization code forces active low power clock for all
-non-4328 chips instead of switching HT clock on.
-Knowledge on different bits layout goes from Broadcom's code available from
-GPL'ed firmwares for newer 4716/18 socs and also from staging bcm80211 drivers.
-You can check definitions and usage for CCS_ALPAVAIL/CCS_HTAVAIL and
-CCS0_ALPAVAIL/CCS0_HTAVAIL (defined in hndsoc.h) in Broadcom's pmu
-initialization code (see hndpmu.c) to see this difference.
-Patch also fixes typo in ALP avail define description.
-Signed-off-by: George Kashperko <george@znau.edu.ua>
----
- drivers/ssb/driver_chipcommon_pmu.c       |    4 ++--
- include/linux/ssb/ssb_driver_chipcommon.h |    6 ++++--
- 2 files changed, 6 insertions(+), 4 deletions(-)
---- linux-next-20110203.orig/drivers/ssb/driver_chipcommon_pmu.c	2011-02-01 05:05:49.000000000 +0200
-+++ linux-next-20110203/drivers/ssb/driver_chipcommon_pmu.c	2011-02-07 19:18:06.000000000 +0200
-@@ -132,12 +132,12 @@ static void ssb_pmu0_pllinit_r0(struct s
- 	}
- 	for (i = 1500; i; i--) {
- 		tmp = chipco_read32(cc, SSB_CHIPCO_CLKCTLST);
--		if (!(tmp & SSB_CHIPCO_CLKCTLST_HAVEHT))
-+		if (!(tmp & SSB_CHIPCO_CLKCTLST_HAVEHT_4328))
- 			break;
- 		udelay(10);
- 	}
- 	tmp = chipco_read32(cc, SSB_CHIPCO_CLKCTLST);
--	if (tmp & SSB_CHIPCO_CLKCTLST_HAVEHT)
-+	if (tmp & SSB_CHIPCO_CLKCTLST_HAVEHT_4328)
- 		ssb_printk(KERN_EMERG PFX "Failed to turn the PLL off!\n");
- 
- 	/* Set PDIV in PLL control 0. */
---- linux-next-20110203.orig/include/linux/ssb/ssb_driver_chipcommon.h	2011-02-01 05:05:49.000000000 +0200
-+++ linux-next-20110203/include/linux/ssb/ssb_driver_chipcommon.h	2011-02-07 19:43:22.000000000 +0200
-@@ -189,8 +189,10 @@
- #define  SSB_CHIPCO_CLKCTLST_HAVEALPREQ	0x00000008 /* ALP available request */
- #define  SSB_CHIPCO_CLKCTLST_HAVEHTREQ	0x00000010 /* HT available request */
- #define  SSB_CHIPCO_CLKCTLST_HWCROFF	0x00000020 /* Force HW clock request off */
--#define  SSB_CHIPCO_CLKCTLST_HAVEHT	0x00010000 /* HT available */
--#define  SSB_CHIPCO_CLKCTLST_HAVEALP	0x00020000 /* APL available */
-+#define  SSB_CHIPCO_CLKCTLST_HAVEALP	0x00010000 /* ALP available */
-+#define  SSB_CHIPCO_CLKCTLST_HAVEHT	0x00020000 /* HT available */
-+#define  SSB_CHIPCO_CLKCTLST_HAVEHT_4328	0x00010000 /* HT available on 4328 */
-+#define  SSB_CHIPCO_CLKCTLST_HAVEALP_4328	0x00020000/* ALP available on 4328 */
- #define SSB_CHIPCO_HW_WORKAROUND	0x01E4 /* Hardware workaround (rev >= 20) */
- #define SSB_CHIPCO_UART0_DATA		0x0300
- #define SSB_CHIPCO_UART0_IMR		0x0304
+--Signature=_Tue__8_Feb_2011_14_45_22_+1100_eJ+XS2ArLGQDjqk/
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Matthew,
+
+After merging the drivers-x86 tree, today's linux-next build (x86_64_allmod=
+config)
+failed like this:
+
+drivers/platform/x86/eeepc-wmi.c:118: error: 'KEY_CAMERA_ZOOMIN' undeclared=
+ here (not in a function)
+drivers/platform/x86/eeepc-wmi.c:124: error: 'KEY_CAMERA_ZOOMOUT' undeclare=
+d here (not in a function)
+drivers/platform/x86/eeepc-wmi.c:125: error: 'KEY_CAMERA_UP' undeclared her=
+e (not in a function)
+drivers/platform/x86/eeepc-wmi.c:126: error: 'KEY_CAMERA_DOWN' undeclared h=
+ere (not in a function)
+drivers/platform/x86/eeepc-wmi.c:127: error: 'KEY_CAMERA_LEFT' undeclared h=
+ere (not in a function)
+drivers/platform/x86/eeepc-wmi.c:128: error: 'KEY_CAMERA_RIGHT' undeclared =
+here (not in a function)
+
+Caused by commit 8e077c067a95956859341cd0caddabd99371c7b7 ("eeepc-wmi:
+add camera keys").  Presumably a missing update to a header file ...
+
+I have used the drivers-x86 tree from next-20110207 for today.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__8_Feb_2011_14_45_22_+1100_eJ+XS2ArLGQDjqk/
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNULxSAAoJEDMEi1NhKgbs5GIH/ArrcCW6G+bIWdbHwGqlOWKX
+g7h0cqu04ezCZnPEwCXtoFbaKoqBRyrCU2MvKvyRNK12ue7TYza21X6OH7TJXwt0
+Nl2NjbGxJEILW4kHr9YJVMe7UyStybnmKl7uFw26rIOZGMz9s0ztwr2nvBPxJUj8
+WMZPzESYYMF5a4bjtqTH6q1Z2EDZSVJ+Y3mD7jKPWucXnsbPoW8HuMRg3cVZTvqs
+xO7BdbhjCIvlCbXgCtVRo0cmnEEPH49HzJRPSNOKAZycrPcu3jqp8ptll0kQqFTj
+1allZ/8EbNlRJdm6cradydN4g5PWbk6TzdA3w2RjVUw2EshJsz/7qQVzNPe/ZFk=
+=K8z2
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__8_Feb_2011_14_45_22_+1100_eJ+XS2ArLGQDjqk/--
