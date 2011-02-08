@@ -1,18 +1,24 @@
 From: Christoph Lameter <cl@linux.com>
 Subject: Re: linux-next: build failure after merge of the slab tree
-Date: Tue, 8 Feb 2011 09:53:42 -0600 (CST)
-Message-ID: <alpine.DEB.2.00.1102080952490.13202@router.home>
-References: <20110131144246.dfa2abe3.sfr@canb.auug.org.au> <1296502339.30654.13.camel@jaguar> <alpine.DEB.2.00.1102030919380.6519@router.home>
+Date: Tue, 8 Feb 2011 09:55:48 -0600 (CST)
+Message-ID: <alpine.DEB.2.00.1102080954330.13649@router.home>
+References: <20110131144246.dfa2abe3.sfr@canb.auug.org.au> <1296502339.30654.13.camel@jaguar> <alpine.DEB.2.00.1102030919380.6519@router.home> <alpine.DEB.2.00.1102080952490.13202@router.home>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <alpine.DEB.2.00.1102030919380.6519@router.home>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp106.prem.mail.ac4.yahoo.com ([76.13.13.45]:39299 "HELO
+	smtp106.prem.mail.ac4.yahoo.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with SMTP id S1753283Ab1BHPzv (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 8 Feb 2011 10:55:51 -0500
+In-Reply-To: <alpine.DEB.2.00.1102080952490.13202@router.home>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Pekka Enberg <penberg@cs.helsinki.fi>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Theodore Tso <tytso@MIT.EDU>
-List-Id: linux-next.vger.kernel.org
 
-Here is a patch to fix ext4 (and slab)
+Argh. I accidentally sent an older version of the patch. This one is the
+tested one.
+
 
 Subject: ext4: Remove use of kmem_cache_name
 
@@ -64,7 +70,7 @@ Index: linux-2.6/fs/ext4/mballoc.c
 Index: linux-2.6/mm/slab.c
 ===================================================================
 --- linux-2.6.orig/mm/slab.c	2011-02-08 09:06:38.000000000 -0600
-+++ linux-2.6/mm/slab.c	2011-02-08 09:09:48.000000000 -0600
++++ linux-2.6/mm/slab.c	2011-02-08 09:25:39.000000000 -0600
 @@ -2005,6 +2005,7 @@ static void __kmem_cache_destroy(struct
  			kfree(l3);
  		}
@@ -79,7 +85,7 @@ Index: linux-2.6/mm/slab.c
  	cachep->ctor = ctor;
 -	cachep->name = name;
 +	if (slab_is_available())
-+		cachep->name = strdup(name);
++		cachep->name = kstrdup(name, GFP_KERNEL);
 +	else
 +		/* Will never be freed so it does not matter */
 +		cachep->name = name;
