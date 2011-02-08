@@ -1,36 +1,89 @@
-From: Ted Ts'o <tytso@mit.edu>
+From: Sedat Dilek <sedat.dilek@googlemail.com>
 Subject: Re: linux-next: build failure after merge of the slab tree
-Date: Tue, 8 Feb 2011 11:50:28 -0500
-Message-ID: <20110208165028.GA9533@thunk.org>
+Date: Tue, 8 Feb 2011 18:11:04 +0100
+Message-ID: <AANLkTi=Hykzpb+oK7HOXJCCNwpgRRbsJNuXz-2Uc9WbB@mail.gmail.com>
 References: <20110131144246.dfa2abe3.sfr@canb.auug.org.au>
- <1296502339.30654.13.camel@jaguar>
- <alpine.DEB.2.00.1102030919380.6519@router.home>
- <alpine.DEB.2.00.1102080952490.13202@router.home>
- <alpine.DEB.2.00.1102080954330.13649@router.home>
+	<1296502339.30654.13.camel@jaguar>
+	<alpine.DEB.2.00.1102030919380.6519@router.home>
+	<alpine.DEB.2.00.1102080952490.13202@router.home>
+	<alpine.DEB.2.00.1102080954330.13649@router.home>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-qy0-f174.google.com ([209.85.216.174]:62358 "EHLO
+	mail-qy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755155Ab1BHRLF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 8 Feb 2011 12:11:05 -0500
 In-Reply-To: <alpine.DEB.2.00.1102080954330.13649@router.home>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Christoph Lameter <cl@linux.com>
-Cc: Pekka Enberg <penberg@cs.helsinki.fi>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Cc: Pekka Enberg <penberg@cs.helsinki.fi>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Theodore Tso <tytso@mit.edu>, sandeen@redhat.com
 
-On Tue, Feb 08, 2011 at 09:55:48AM -0600, Christoph Lameter wrote:
-> Argh. I accidentally sent an older version of the patch. This one is the
-> tested one.
-> 
-> Subject: ext4: Remove use of kmem_cache_name
-> 
-> Remove the use of kmem_cache_name from ext4. In order to do that we need to
-> strdup the name of the cache passed to kmem_cache_create.
-
-There is a patch for this that Eric Sandeen has done which I've pushed
-to Linus already.
-
-Part of the problem is that some of the slab allocators call strdup,
-and some don't.  So the only solution is to pass in a const,
-statically allocated name.....
-
-							- Ted
+T24gVHVlLCBGZWIgOCwgMjAxMSBhdCA0OjU1IFBNLCBDaHJpc3RvcGggTGFtZXRlciA8Y2xAbGlu
+dXguY29tPiB3cm90ZToKPiBBcmdoLiBJIGFjY2lkZW50YWxseSBzZW50IGFuIG9sZGVyIHZlcnNp
+b24gb2YgdGhlIHBhdGNoLiBUaGlzIG9uZSBpcyB0aGUKPiB0ZXN0ZWQgb25lLgo+Cj4KPiBTdWJq
+ZWN0OiBleHQ0OiBSZW1vdmUgdXNlIG9mIGttZW1fY2FjaGVfbmFtZQo+Cj4gUmVtb3ZlIHRoZSB1
+c2Ugb2Yga21lbV9jYWNoZV9uYW1lIGZyb20gZXh0NC4gSW4gb3JkZXIgdG8gZG8gdGhhdCB3ZSBu
+ZWVkIHRvCj4gc3RyZHVwIHRoZSBuYW1lIG9mIHRoZSBjYWNoZSBwYXNzZWQgdG8ga21lbV9jYWNo
+ZV9jcmVhdGUuCj4KPiBTaWduZWQtb2ZmLWJ5OiBDaHJpc3RvcGggTGFtZXRlciA8Y2xAbGludXgu
+Y29tPgo+Cj4KPiAtLS0KPiDCoGZzL2V4dDQvbWJhbGxvYy5jIHwgwqAgMTIgKystLS0tLS0tLS0t
+Cj4gwqBtbS9zbGFiLmMgwqAgwqAgwqAgwqAgfCDCoCDCoDcgKysrKysrLQo+IMKgMiBmaWxlcyBj
+aGFuZ2VkLCA4IGluc2VydGlvbnMoKyksIDExIGRlbGV0aW9ucygtKQo+Cj4gSW5kZXg6IGxpbnV4
+LTIuNi9mcy9leHQ0L21iYWxsb2MuYwo+ID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0KPiAtLS0gbGludXgtMi42Lm9yaWcv
+ZnMvZXh0NC9tYmFsbG9jLmMgwqAgwqAyMDExLTAyLTA4IDA5OjAyOjQwLjAwMDAwMDAwMCAtMDYw
+MAo+ICsrKyBsaW51eC0yLjYvZnMvZXh0NC9tYmFsbG9jLmMgMjAxMS0wMi0wOCAwOToxMToxNi4w
+MDAwMDAwMDAgLTA2MDAKPiBAQCAtMjQ0OCwxNSArMjQ0OCwxMCBAQCBpbnQgZXh0NF9tYl9pbml0
+KHN0cnVjdCBzdXBlcl9ibG9jayAqc2IsCj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBiYl9jb3VudGVyc1tzYi0+c19ibG9ja3NpemVf
+Yml0cyArIDJdKTsKPgo+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgc3ByaW50ZihuYW1lLCAiZXh0
+NF9ncm91cGluZm9fJWQiLCBzYi0+c19ibG9ja3NpemVfYml0cyk7Cj4gLSDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCBuYW1lcCA9IGtzdHJkdXAobmFtZSwgR0ZQX0tFUk5FTCk7Cj4gLSDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCBpZiAoIW5hbWVwKSB7Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCByZXQgPSAtRU5PTUVNOwo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+Z290byBvdXQ7Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCB9Cj4KPiDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoC8qIE5lZWQgdG8gZnJlZSB0aGUga21lbV9jYWNoZV9uYW1lKCkgd2hlbiB3ZQo+IMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgICogZGVzdHJveSB0aGUgc2xhYiAqLwo+IC0gwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgY2FjaGVwID0ga21lbV9jYWNoZV9jcmVhdGUobmFtZXAsIGxlbiwgMCwKPiAr
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIGNhY2hlcCA9IGttZW1fY2FjaGVfY3JlYXRlKG5hbWUsIGxl
+biwgMCwKPiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCBTTEFCX1JFQ0xBSU1fQUNDT1VOVCwgTlVMTCk7Cj4gwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqBpZiAoIWNhY2hlcCkgewo+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgcmV0ID0gLUVOT01FTTsKPiBAQCAtMjc0NiwxMSArMjc0MSw4IEBAIHZvaWQgZXh0
+NF9leGl0X21iYWxsb2Modm9pZCkKPgo+IMKgIMKgIMKgIMKgZm9yIChpID0gMDsgaSA8IE5SX0dS
+UElORk9fQ0FDSEVTOyBpKyspIHsKPiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoHN0cnVjdCBrbWVt
+X2NhY2hlICpjYWNoZXAgPSBleHQ0X2dyb3VwaW5mb19jYWNoZXNbaV07Cj4gLSDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCBpZiAoY2FjaGVwKSB7Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCBjaGFyICpuYW1lID0gKGNoYXIgKilrbWVtX2NhY2hlX25hbWUoY2FjaGVwKTsKPiArIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIGlmIChjYWNoZXApCj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqBrbWVtX2NhY2hlX2Rlc3Ryb3koY2FjaGVwKTsKPiAtIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIGtmcmVlKG5hbWUpOwo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+fQo+IMKgIMKgIMKgIMKgfQo+IMKgIMKgIMKgIMKgZXh0NF9yZW1vdmVfZGVidWdmc19lbnRyeSgp
+Owo+IMKgfQo+IEluZGV4OiBsaW51eC0yLjYvbW0vc2xhYi5jCj4gPT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQo+IC0tLSBs
+aW51eC0yLjYub3JpZy9tbS9zbGFiLmMgwqAgwqAyMDExLTAyLTA4IDA5OjA2OjM4LjAwMDAwMDAw
+MCAtMDYwMAo+ICsrKyBsaW51eC0yLjYvbW0vc2xhYi5jIDIwMTEtMDItMDggMDk6MjU6MzkuMDAw
+MDAwMDAwIC0wNjAwCj4gQEAgLTIwMDUsNiArMjAwNSw3IEBAIHN0YXRpYyB2b2lkIF9fa21lbV9j
+YWNoZV9kZXN0cm95KHN0cnVjdAo+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+a2ZyZWUobDMpOwo+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgfQo+IMKgIMKgIMKgIMKgfQo+ICsg
+wqAgwqAgwqAga2ZyZWUoY2FjaGVwLT5uYW1lKTsKPiDCoCDCoCDCoCDCoGttZW1fY2FjaGVfZnJl
+ZSgmY2FjaGVfY2FjaGUsIGNhY2hlcCk7Cj4gwqB9Cj4KPiBAQCAtMjQxMiw3ICsyNDEzLDExIEBA
+IGttZW1fY2FjaGVfY3JlYXRlIChjb25zdCBjaGFyICpuYW1lLCBzaXoKPiDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoEJVR19PTihaRVJPX09SX05VTExfUFRSKGNhY2hlcC0+c2xhYnBfY2FjaGUpKTsK
+PiDCoCDCoCDCoCDCoH0KPiDCoCDCoCDCoCDCoGNhY2hlcC0+Y3RvciA9IGN0b3I7Cj4gLSDCoCDC
+oCDCoCBjYWNoZXAtPm5hbWUgPSBuYW1lOwo+ICsgwqAgwqAgwqAgaWYgKHNsYWJfaXNfYXZhaWxh
+YmxlKCkpCj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCBjYWNoZXAtPm5hbWUgPSBrc3RyZHVwKG5h
+bWUsIEdGUF9LRVJORUwpOwo+ICsgwqAgwqAgwqAgZWxzZQo+ICsgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgLyogV2lsbCBuZXZlciBiZSBmcmVlZCBzbyBpdCBkb2VzIG5vdCBtYXR0ZXIgKi8KPiArIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIGNhY2hlcC0+bmFtZSA9IG5hbWU7Cj4KPiDCoCDCoCDCoCDCoGlm
+IChzZXR1cF9jcHVfY2FjaGUoY2FjaGVwLCBnZnApKSB7Cj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqBfX2ttZW1fY2FjaGVfZGVzdHJveShjYWNoZXApOwo+CgpJc24ndCB0aGUgZnMvZXh0NCBwYXJ0
+IG9ic29sZXRlIGJ5IEVyaWMncyAiZXh0NDogbWFrZSBncnBpbmZvIHNsYWIKY2FjaGUgbmFtZXMg
+c3RhdGljIj8KVGhlIG1lbnRpb25uZWQgcGF0Y2ggaXMgcGVuZGluZyBpbiBleHQ0LmdpdCN7bWFz
+dGVyLCBmb3JfbGludXN9IFsxXS4KClNob3VsZG4ndCB0aGlzIHBhdGNoIHJlZHVjZWQgdG8gdGhl
+IG1tL3NsYWIgcGFydD8KCi0gU2VkYXQgLQoKClsxXSBodHRwOi8vZ2l0Lmtlcm5lbC5vcmcvP3A9
+bGludXgva2VybmVsL2dpdC90eXRzby9leHQ0LmdpdDthPWNvbW1pdDtoPTExNTEwNDYwNTYyZmIz
+ZmExYjA2MWVkNGQ3MzUwY2NkYzM5YTk4NGYK
