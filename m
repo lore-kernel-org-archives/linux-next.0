@@ -1,315 +1,88 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for February 8
-Date: Tue, 8 Feb 2011 16:18:57 +1100
-Message-ID: <20110208161857.ee3a92c0.sfr@canb.auug.org.au>
+From: Christoph Lameter <cl@linux.com>
+Subject: Re: linux-next: build failure after merge of the slab tree
+Date: Tue, 8 Feb 2011 09:53:42 -0600 (CST)
+Message-ID: <alpine.DEB.2.00.1102080952490.13202@router.home>
+References: <20110131144246.dfa2abe3.sfr@canb.auug.org.au> <1296502339.30654.13.camel@jaguar> <alpine.DEB.2.00.1102030919380.6519@router.home>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__8_Feb_2011_16_18_57_+1100_h97W1ZDPKh1Y04.T"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48836 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750701Ab1BHFTG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 8 Feb 2011 00:19:06 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <alpine.DEB.2.00.1102030919380.6519@router.home>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pekka Enberg <penberg@cs.helsinki.fi>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Theodore Tso <tytso@MIT.EDU>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__8_Feb_2011_16_18_57_+1100_h97W1ZDPKh1Y04.T
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Here is a patch to fix ext4 (and slab)
 
-Hi all,
+Subject: ext4: Remove use of kmem_cache_name
 
-Changes since 20110207:
+Remove the use of kmem_cache_name from ext4. In order to do that we need to
+strdup the name of the cache passed to kmem_cache_create.
 
-Dropped tree: xen
+Signed-off-by: Christoph Lameter <cl@linux.com>
 
-The drivers-x86 tree gained a build failure so I used the version from
-next-20110207.
 
-The powerpc allyesconfig build is still broken by some obscure bloating
-of the low memory code.
+---
+ fs/ext4/mballoc.c |   12 ++----------
+ mm/slab.c         |    7 ++++++-
+ 2 files changed, 8 insertions(+), 11 deletions(-)
 
-----------------------------------------------------------------------------
+Index: linux-2.6/fs/ext4/mballoc.c
+===================================================================
+--- linux-2.6.orig/fs/ext4/mballoc.c	2011-02-08 09:02:40.000000000 -0600
++++ linux-2.6/fs/ext4/mballoc.c	2011-02-08 09:11:16.000000000 -0600
+@@ -2448,15 +2448,10 @@ int ext4_mb_init(struct super_block *sb,
+ 					bb_counters[sb->s_blocksize_bits + 2]);
 
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
+ 		sprintf(name, "ext4_groupinfo_%d", sb->s_blocksize_bits);
+-		namep = kstrdup(name, GFP_KERNEL);
+-		if (!namep) {
+-			ret = -ENOMEM;
+-			goto out;
+-		}
 
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
-and sparc64 defconfig. These builds also have
-CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
-CONFIG_DEBUG_INFO disabled when necessary.
+ 		/* Need to free the kmem_cache_name() when we
+ 		 * destroy the slab */
+-		cachep = kmem_cache_create(namep, len, 0,
++		cachep = kmem_cache_create(name, len, 0,
+ 					     SLAB_RECLAIM_ACCOUNT, NULL);
+ 		if (!cachep) {
+ 			ret = -ENOMEM;
+@@ -2746,11 +2741,8 @@ void ext4_exit_mballoc(void)
 
-Below is a summary of the state of the merge.
+ 	for (i = 0; i < NR_GRPINFO_CACHES; i++) {
+ 		struct kmem_cache *cachep = ext4_groupinfo_caches[i];
+-		if (cachep) {
+-			char *name = (char *)kmem_cache_name(cachep);
++		if (cachep)
+ 			kmem_cache_destroy(cachep);
+-			kfree(name);
+-		}
+ 	}
+ 	ext4_remove_debugfs_entry();
+ }
+Index: linux-2.6/mm/slab.c
+===================================================================
+--- linux-2.6.orig/mm/slab.c	2011-02-08 09:06:38.000000000 -0600
++++ linux-2.6/mm/slab.c	2011-02-08 09:09:48.000000000 -0600
+@@ -2005,6 +2005,7 @@ static void __kmem_cache_destroy(struct
+ 			kfree(l3);
+ 		}
+ 	}
++	kfree(cachep->name);
+ 	kmem_cache_free(&cache_cache, cachep);
+ }
 
-We are up to 186 trees (counting Linus' and 28 trees of patches pending
-for Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
+@@ -2412,7 +2413,11 @@ kmem_cache_create (const char *name, siz
+ 		BUG_ON(ZERO_OR_NULL_PTR(cachep->slabp_cache));
+ 	}
+ 	cachep->ctor = ctor;
+-	cachep->name = name;
++	if (slab_is_available())
++		cachep->name = strdup(name);
++	else
++		/* Will never be freed so it does not matter */
++		cachep->name = name;
 
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Randy Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging fixes/fixes
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging 52xx-and-virtex-current/powerpc/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging kbuild-current/rc-fixes
-Merging driver-core.current/driver-core-linus
-Merging tty.current/tty-linus
-Merging usb.current/usb-linus
-Merging staging.current/staging-linus
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging ide-curent/master
-Merging dwmw2/master
-Merging sh-current/sh-fixes-for-linus
-Merging rmobile-current/rmobile-fixes-for-linus
-Merging fbdev-current/fbdev-fixes-for-linus
-Merging devicetree-current/devicetree/merge
-Merging spi-current/spi/merge
-Merging arm/for-next
-Merging davinci/davinci-next
-Merging i.MX/for-next
-Merging linux-spec/for-next
-Merging msm/for-next
-CONFLICT (content): Merge conflict in arch/arm/mach-msm/board-msm7x27.c
-CONFLICT (content): Merge conflict in arch/arm/mach-msm/board-msm7x30.c
-CONFLICT (content): Merge conflict in arch/arm/mach-msm/board-qsd8x50.c
-CONFLICT (content): Merge conflict in arch/arm/mach-msm/board-sapphire.c
-CONFLICT (content): Merge conflict in arch/arm/mach-msm/include/mach/memory=
-.h
-Merging omap/for-next
-Merging pxa/for-next
-Merging samsung/next-samsung
-Merging s5p/for-next
-Merging tegra/for-next
-CONFLICT (content): Merge conflict in arch/arm/mach-tegra/timer.c
-Merging ux500-core/ux500-core
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-Merging m68knommu/for-next
-Merging microblaze/next
-Merging mips/mips-for-linux-next
-Merging parisc/for-next
-Merging powerpc/next
-Merging 4xx/next
-Merging 52xx-and-virtex/powerpc/next
-Merging galak/next
-Merging s390/features
-Merging sh/sh-latest
-Merging rmobile/rmobile-latest
-Merging sparc/master
-Merging tile/master
-Merging unicore32/unicore32
-Merging xtensa/master
-CONFLICT (content): Merge conflict in arch/xtensa/configs/iss_defconfig
-Merging ceph/for-next
-Merging cifs/master
-Merging configfs/linux-next
-Merging ecryptfs/next
-Merging ext3/for_next
-Merging ext4/next
-Merging fatfs/master
-Merging fuse/for-next
-Merging gfs2/master
-Merging hfsplus/for-next
-Merging jfs/next
-Merging logfs/master
-CONFLICT (content): Merge conflict in fs/logfs/logfs.h
-Merging nfs/linux-next
-Merging nfsd/nfsd-next
-Merging nilfs2/for-next
-Merging ocfs2/linux-next
-Merging omfs/for-next
-Merging squashfs/master
-Merging udf/for_next
-Merging v9fs/for-next
-Merging ubifs/linux-next
-Merging xfs/master
-Merging vfs/for-next
-Merging vfs-scale/vfs-scale-working
-Merging pci/linux-next
-Merging hid/for-next
-Merging quilt/i2c
-Merging bjdooks-i2c/next-i2c
-Merging quilt/jdelvare-hwmon
-Merging hwmon-staging/hwmon-next
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-Merging kbuild/for-next
-Merging kconfig/for-next
-Merging ide/master
-Merging libata/NEXT
-Merging infiniband/for-next
-Merging acpi/test
-Merging idle-test/idle-test
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/linux-next
-Merging dlm/next
-Merging swiotlb/master
-Merging ibft/master
-Merging scsi/master
-Merging async_tx/next
-Merging net/master
-CONFLICT (content): Merge conflict in Documentation/feature-removal-schedul=
-e.txt
-Merging wireless/master
-Merging bluetooth/master
-Merging mtd/master
-Merging crypto/master
-Merging sound/for-next
-Merging sound-asoc/for-next
-Merging cpufreq/next
-Merging quilt/rr
-Merging input/next
-Merging input-mt/next
-Merging lsm/for-next
-Merging block/for-next
-Merging quilt/device-mapper
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-CONFLICT (content): Merge conflict in drivers/leds/Kconfig
-Merging backlight/for-mm
-Merging mmc/mmc-next
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging fbdev/master
-Merging viafb/viafb-next
-Merging omap_dss2/for-next
-Merging voltage/for-next
-Merging security-testing/next
-Merging selinux/master
-Merging lblnet/master
-Merging agp/agp-next
-Merging watchdog/master
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-Merging audit/for-next
-Merging suspend/linux-next
-Merging fsnotify/for-next
-Merging irda/for-next
-Merging catalin/for-next
-Merging alacrity/linux-next
-CONFLICT (content): Merge conflict in drivers/Makefile
-CONFLICT (content): Merge conflict in include/linux/Kbuild
-CONFLICT (content): Merge conflict in lib/Kconfig
-Merging i7core_edac/linux_next
-Merging i7300_edac/linux_next
-Merging devicetree/devicetree/next
-Merging spi/spi/next
-Merging tip/auto-latest
-Merging rcu/rcu/next
-Merging oprofile/for-next
-Merging xen-two/linux-next
-Merging xen-pvhvm/linux-next
-CONFLICT (content): Merge conflict in arch/x86/include/asm/xen/page.h
-Merging edac-amd/for-next
-Merging percpu/for-next
-Merging workqueues/for-next
-Merging sfi/sfi-test
-Merging asm-generic/next
-Merging drivers-x86/linux-next
-$ git reset --hard HEAD^
-Merging refs/next/20110207/drivers-x86
-Merging hwpoison/hwpoison
-Merging sysctl/master
-Merging driver-core/driver-core-next
-Merging tty/tty-next
-CONFLICT (content): Merge conflict in drivers/tty/serial/Kconfig
-Merging usb/usb-next
-CONFLICT (content): Merge conflict in drivers/usb/gadget/Kconfig
-CONFLICT (content): Merge conflict in drivers/usb/host/ehci-pci.c
-Merging staging/staging-next
-Merging slabh/slabh
-Merging bkl-trivial/trivial
-Merging bkl-llseek/llseek
-Merging bkl-vfs/vfs
-Merging bkl-config/config
-CONFLICT (content): Merge conflict in arch/powerpc/kernel/setup_64.c
-CONFLICT (delete/modify): drivers/staging/stradis/Kconfig deleted in HEAD a=
-nd modified in bkl-config/config. Version bkl-config/config of drivers/stag=
-ing/stradis/Kconfig left in tree.
-CONFLICT (content): Merge conflict in fs/nfsd/nfs4state.c
-CONFLICT (content): Merge conflict in include/linux/hardirq.h
-CONFLICT (content): Merge conflict in include/linux/smp_lock.h
-$ git rm -f drivers/staging/stradis/Kconfig
-Merging irqflags/master
-Merging cleancache/linux-next
-CONFLICT (content): Merge conflict in fs/ocfs2/super.c
-CONFLICT (content): Merge conflict in fs/super.c
-CONFLICT (content): Merge conflict in include/linux/fs.h
-CONFLICT (content): Merge conflict in mm/Kconfig
-Merging scsi-post-merge/merge-base:master
-$ git checkout scsi-post-merge/master
-
---Signature=_Tue__8_Feb_2011_16_18_57_+1100_h97W1ZDPKh1Y04.T
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNUNJBAAoJEDMEi1NhKgbsfHwH/i5ag5cwSccj6b/7i+TkzPVJ
-xlvomP1+Uh946ZrDWgPAbNcafLqI8P4sySBSYneA64sxsuQMmJeHboyeroeTCihd
-S5/hqqyf5f4Tz5wtlMnCrts11KaaaUPXLsptB1Xjab4v0yCjvdIN4uoirHSeNxxR
-JzaUPeySQvwkwELP1DXXAD/sOBnEkE8fKgllE5CpbJiUzjd6DYuWizAoSG39qJry
-PuHmigGkN/tq3dsDMEiU4yMxUbRgsZiWlJNFLjOdMVMnYpQU9UHCifYRslLFeMCU
-BWUias0kXsJXFgU2LGwY06uHWPLSXDCM2o4HaM/WT3HOe5V6IyTdu5sL+GUcuJ8=
-=8X4l
------END PGP SIGNATURE-----
-
---Signature=_Tue__8_Feb_2011_16_18_57_+1100_h97W1ZDPKh1Y04.T--
+ 	if (setup_cpu_cache(cachep, gfp)) {
+ 		__kmem_cache_destroy(cachep);
