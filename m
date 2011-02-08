@@ -1,29 +1,50 @@
-From: Christoph Lameter <cl@linux.com>
-Subject: Re: linux-next: build failure after merge of the slab tree
-Date: Tue, 8 Feb 2011 11:44:45 -0600 (CST)
-Message-ID: <alpine.DEB.2.00.1102081144170.15931@router.home>
-References: <20110131144246.dfa2abe3.sfr@canb.auug.org.au> <1296502339.30654.13.camel@jaguar> <alpine.DEB.2.00.1102030919380.6519@router.home> <alpine.DEB.2.00.1102080952490.13202@router.home> <alpine.DEB.2.00.1102080954330.13649@router.home>
- <AANLkTi=Hykzpb+oK7HOXJCCNwpgRRbsJNuXz-2Uc9WbB@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: drivers/input/touchscreen/ads7846.c:959: error: 'GPIOF_DIR_IN' undeclared
+Date: Tue, 8 Feb 2011 21:03:27 +0100
+Message-ID: <AANLkTim2706Negrvd-ektbNMLwucM9M0icphb_uFY_9D@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp105.prem.mail.ac4.yahoo.com ([76.13.13.44]:23749 "HELO
-	smtp105.prem.mail.ac4.yahoo.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with SMTP id S1755229Ab1BHRot (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 8 Feb 2011 12:44:49 -0500
-In-Reply-To: <AANLkTi=Hykzpb+oK7HOXJCCNwpgRRbsJNuXz-2Uc9WbB@mail.gmail.com>
+Received: from mail-ew0-f46.google.com ([209.85.215.46]:63987 "EHLO
+	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755617Ab1BHUD3 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 8 Feb 2011 15:03:29 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sedat Dilek <sedat.dilek@googlemail.com>
-Cc: Pekka Enberg <penberg@cs.helsinki.fi>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Theodore Tso <tytso@mit.edu>, sandeen@redhat.com
+To: Sourav Poddar <sourav.poddar@ti.com>, Wolfram Sang <w.sang@pengutronix.de>, Dmitry Torokhov <dtor@mail.ru>
+Cc: Linux-Next <linux-next@vger.kernel.org>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 8 Feb 2011, Sedat Dilek wrote:
+linux-next/m68k-allmodconfig/m68k:
+http://kisskb.ellerman.id.au/kisskb/buildresult/3899710/
 
-> Isn't the fs/ext4 part obsolete by Eric's "ext4: make grpinfo slab
-> cache names static"?
-> The mentionned patch is pending in ext4.git#{master, for_linus} [1].
->
-> Shouldn't this patch reduced to the mm/slab part?
+drivers/input/touchscreen/ads7846.c:959: error: 'GPIOF_DIR_IN'
+undeclared (first use in this function)
+drivers/input/touchscreen/ads7846.c:959: error: (Each undeclared
+identifier is reported only once
+drivers/input/touchscreen/ads7846.c:959: error: for each function it
+appears in.)
+make[4]: *** [drivers/input/touchscreen/ads7846.o] Error 1
 
-If Eric fixed it with string constants then we do not need the slab part
-either.
+As of commit e9b6e245c727767e6d64cb3dd47a0c6982aa5d23
+("Input: ads7846 - use gpio_request_one to configure pendown_gpio"), th=
+is
+driver should depend on GENERIC_GPIO?
+Else <linux/gpio.h> doesn't include <asm/gpio.h>, and we never see the
+definition of GPIOF_DIR_IN.
+
+Gr{oetje,eeting}s,
+
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
+
+In personal conversations with technical people, I call myself a hacker=
+=2E But
+when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
