@@ -1,56 +1,81 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the workqueues tree
-Date: Wed, 9 Feb 2011 15:12:04 +1100
-Message-ID: <20110209151204.efef8089.sfr@canb.auug.org.au>
+From: "Xu, Andiry" <Andiry.Xu@amd.com>
+Subject: RE: linux-next: manual merge of the usb tree with Linus' tree
+Date: Wed, 9 Feb 2011 13:42:36 +0800
+Message-ID: <2DEEA3AB13739D45A22ADDB5086AEA0BF08682@sshaexmb1.amd.com>
+References: <20110207150802.4869bd47.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__9_Feb_2011_15_12_04_+1100_kYJiCje4O+7mAkv7"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56885 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756021Ab1BIEMN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 8 Feb 2011 23:12:13 -0500
+Received: from am1ehsobe006.messaging.microsoft.com ([213.199.154.209]:29924
+	"EHLO AM1EHSOBE006.bigfish.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750898Ab1BIFmq convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 9 Feb 2011 00:42:46 -0500
+Content-Class: urn:content-classes:message
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "He, Alex" <Alex.He@amd.com>, Alan Stern <stern@rowland.harvard.edu>
 
---Signature=_Wed__9_Feb_2011_15_12_04_+1100_kYJiCje4O+7mAkv7
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Hi Tejun,
+I just found that the patch is already in linux-next branch.
 
-After merging the workqueues tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+The patch "USB host: Move AMD PLL quirk to pci-quirks.c" already covers
+the patch "USB: EHCI: ASPM quirk of ISOC on AMD Hudson", so with the
+quirk moving patch, the EHCI ASPM patch is not needed. When I submit the
+quirk moving patchset, the EHCI ASPM patch has not been merged into
+linux-next. Sorry for the confliction.
 
-kernel/built-in.o:(.toc1+0x14c0): undefined reference to `system_freezeable=
-_wq'
+Do I still need to resend the quirk moving patchset? 
 
-Caused by commit de62c151df9b6568c67977920267392c432f340a ("workqueue:
-add system_freezeable_wq").
+Thanks & Best regards,
+Andiry
+ 
 
-I have used the workqueues tree from next-20110208 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__9_Feb_2011_15_12_04_+1100_kYJiCje4O+7mAkv7
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNUhQUAAoJEDMEi1NhKgbsYEYIAIdIQJWpjoJt4geJtzJT3wDo
-6g/HtsN60dXQ/XL/wkn8WGGthUpWMUn0qsaTf8mfrhkTEBpcITeQ5p01YYLmUahF
-u8/gy9I0tjY68Jznoz5q5Kz3H1Dqpz381ZdRxvZ476TRXf9lUcKaa16PNs/Kdwnb
-abNRVIqeiwsUKXqNiFP7gSDSGQUABQzYufKzkyratlPI2Zz2qyhiiL/zJUDBlM4Z
-S35LSian0pyODmtMqLH549Y9PBk1qH3PbmXaW+44Xc0+QeQoa+TUIH8JLQsFUk+0
-DdVJleCUs85bmzPY0oCHxvEyGyPS1LaqDZJrSwB7MZ+F41lSh63AaKaEMLPePQ0=
-=rBgg
------END PGP SIGNATURE-----
-
---Signature=_Wed__9_Feb_2011_15_12_04_+1100_kYJiCje4O+7mAkv7--
+> -----Original Message-----
+> From: Xu, Andiry
+> Sent: Wednesday, February 09, 2011 10:31 AM
+> To: 'Stephen Rothwell'; Greg KH
+> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; He,
+Alex;
+> 'Alan Stern'
+> Subject: RE: linux-next: manual merge of the usb tree with Linus' tree
+> 
+> Hi,
+> 
+> I'll resend the PLL quirk moving patchset based on the latest
+linux-next
+> tree.
+> 
+> Thanks & Best regards,
+> Andiry
+> 
+> > -----Original Message-----
+> > From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
+> > Sent: Monday, February 07, 2011 12:08 PM
+> > To: Greg KH
+> > Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Xu,
+Andiry;
+> > He, Alex
+> > Subject: linux-next: manual merge of the usb tree with Linus' tree
+> >
+> > Hi Greg,
+> >
+> > Today's linux-next merge of the usb tree got a conflict in
+> > drivers/usb/host/ehci-pci.c between commit
+> > baab93afc2844b68d57b0dcca5e1d34c5d7cf411 ("USB: EHCI: ASPM quirk of
+ISOC
+> > on AMD Hudson") from Linus' tree and commit
+> > b7d5b439b7a40dd0a0202fe1c118615a3fcc3b25 ("USB host: Move AMD PLL
+quirk
+> > to pci-quirks.c") from the usb tree.
+> >
+> > I just use the version from the usb tree, but this may need fixing
+up in
+> > pci-quirks.c.
+> > --
+> > Cheers,
+> > Stephen Rothwell                    sfr@canb.auug.org.au
+> > http://www.canb.auug.org.au/~sfr/
