@@ -1,53 +1,64 @@
-From: Wolfram Sang <w.sang@pengutronix.de>
-Subject: Re: drivers/input/touchscreen/ads7846.c:959: error: 'GPIOF_DIR_IN'
- undeclared
-Date: Tue, 8 Feb 2011 22:20:46 +0100
-Message-ID: <20110208212046.GA29410@pengutronix.de>
-References: <AANLkTim2706Negrvd-ektbNMLwucM9M0icphb_uFY_9D@mail.gmail.com>
- <20110208211035.GC16527@core.coreip.homeip.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree with the net-current tree
+Date: Wed, 9 Feb 2011 11:56:09 +1100
+Message-ID: <20110209115609.79932942.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="zYM0uCDKw75PZbzx"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:56287 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752530Ab1BHVUv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 8 Feb 2011 16:20:51 -0500
-Content-Disposition: inline
-In-Reply-To: <20110208211035.GC16527@core.coreip.homeip.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Sourav Poddar <sourav.poddar@ti.com>, Linux-Next <linux-next@vger.kernel.org>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jesse Brandeburg <jesse.brandeburg@intel.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>, Bruce Allan <bruce.w.allan@intel.com>
+List-Id: linux-next.vger.kernel.org
 
+Hi all,
 
---zYM0uCDKw75PZbzx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Today's linux-next merge of the net tree got a conflict in
+drivers/net/e1000e/netdev.c between commit
+463342741222c79469303cdab8ce99c8bc2d80e8 ("e1000e: tx_timeout should not
+increment for non-hang events") from the net-current tree and commit
+90da06692532541a38f9857972e1fd6b1cdfb45a ("e1000e: reduce scope of some
+variables, remove unnecessary ones") from the net tree.
 
-On Tue, Feb 08, 2011 at 01:10:36PM -0800, Dmitry Torokhov wrote:
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-> Crap, sorry about that, I'll fix it up tonight.
-
-I had the same issue while working on some other gpio-cleanup.
-I am just about to finish a patch.
-
---=20
-Pengutronix e.K.                           | Wolfram Sang                |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-
---zYM0uCDKw75PZbzx
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-Content-Disposition: inline
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEARECAAYFAk1Rs64ACgkQD27XaX1/VRviUQCfft151XDHdTwdby8L39uMwkuZ
-0VsAoIQZKwV83uRaGRLTQR9lyLX1YtQs
-=FSnh
------END PGP SIGNATURE-----
-
---zYM0uCDKw75PZbzx--
+diff --cc drivers/net/e1000e/netdev.c
+index 3065870,5b916b0..0000000
+--- a/drivers/net/e1000e/netdev.c
++++ b/drivers/net/e1000e/netdev.c
+@@@ -4299,20 -4303,18 +4303,17 @@@ link_up
+  
+  	e1000e_update_adaptive(&adapter->hw);
+  
+- 	if (!netif_carrier_ok(netdev)) {
+- 		tx_pending = (e1000_desc_unused(tx_ring) + 1 <
+- 			       tx_ring->count);
+- 		if (tx_pending) {
+- 			/*
+- 			 * We've lost link, so the controller stops DMA,
+- 			 * but we've got queued Tx work that's never going
+- 			 * to get done, so reset controller to flush Tx.
+- 			 * (Do the reset outside of interrupt context).
+- 			 */
+- 			schedule_work(&adapter->reset_task);
+- 			/* return immediately since reset is imminent */
+- 			return;
+- 		}
++ 	if (!netif_carrier_ok(netdev) &&
++ 	    (e1000_desc_unused(tx_ring) + 1 < tx_ring->count)) {
++ 		/*
++ 		 * We've lost link, so the controller stops DMA,
++ 		 * but we've got queued Tx work that's never going
++ 		 * to get done, so reset controller to flush Tx.
++ 		 * (Do the reset outside of interrupt context).
++ 		 */
+ -		adapter->tx_timeout_count++;
++ 		schedule_work(&adapter->reset_task);
++ 		/* return immediately since reset is imminent */
++ 		return;
+  	}
+  
+  	/* Simple mode for Interrupt Throttle Rate (ITR) */
