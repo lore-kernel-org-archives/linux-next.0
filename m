@@ -1,55 +1,46 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tty tree with the m68knommu tree
-Date: Thu, 10 Feb 2011 16:29:14 +1100
-Message-ID: <20110210162914.eec2f4b5.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the
+ staging.current tree
+Date: Thu, 10 Feb 2011 16:35:27 +1100
+Message-ID: <20110210163527.3b2cc580.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__10_Feb_2011_16_29_14_+1100_gjoGMJuoLfyT.1W7"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:56960 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:47203 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751005Ab1BJF3U (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 10 Feb 2011 00:29:20 -0500
+	id S1750833Ab1BJFf1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 10 Feb 2011 00:35:27 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Ungerer <gerg@uclinux.org>, Tejun Heo <tj@kernel.org>
-
---Signature=_Thu__10_Feb_2011_16_29_14_+1100_gjoGMJuoLfyT.1W7
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nitin Gupta <ngupta@vflare.org>, Robert Jennings <rcj@linux.vnet.ibm.com>
 
 Hi Greg,
 
-Today's linux-next merge of the tty tree got a conflict in
-drivers/tty/serial/68328serial.c between commit
-abf67e214f867d16df6a9c4ac7d8fc0b98ebad97 ("m68knommu: fix derefernce of
-port.tty") from the m68knommu tree and commit
-f094298bae5f5d0e1cb3bff4621aae7ef486812a ("68328serial: remove unsed
-m68k_serial->tqueue_hangup") from the tty tree.
+Today's linux-next merge of the staging tree got a conflict in
+drivers/staging/zram/zram_drv.c between commit
+5414e557fca545614ceedc3d3496f747457e2e3b ("staging: zram: fix data
+corruption issue") from the staging.current tree and commit
+2787f959d6c5fb258d964218ac75346019f49ee9 ("zram: Return zero'd pages on
+new reads") from the staging tree.
 
-I just used the latter since it removed some of the code modified by the
-former.
---=20
+I fixed it up (I think - see below) and can carry the fix as necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__10_Feb_2011_16_29_14_+1100_gjoGMJuoLfyT.1W7
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNU3eqAAoJEDMEi1NhKgbs/PsH/0rwIhl+ojA/NxrQDo/TaIgY
-lB1tkTAl7yIhKGDArDl1/9QIREuSw4ueR4U6byyCcYDA40rP08MoNonTHNzkVOrX
-K0nn9jedTmakJNfW5aGptte7H0lh5qoCsHD6HqJXTZ1Ux/wEfJDS1stKa47zps6m
-U2WSj+dycgD/Ir2OXZmdRJtYXnbdEEqramZNYcvg4/UG10fy1ZM3ZwEery0ETIBu
-zK9ff6VT7R8XWboLPofmjmhY6ddodc+EtTnvpW8u/GLzbehlGjZ2xCID70hGt284
-RIL14jUKzXL0HwhgeoJGgDRjycYXHFcHJcv82DBAVco9U06GB4JcGzTO2JCrm1Q=
-=3+Oa
------END PGP SIGNATURE-----
-
---Signature=_Thu__10_Feb_2011_16_29_14_+1100_gjoGMJuoLfyT.1W7--
+diff --cc drivers/staging/zram/zram_drv.c
+index 4bd8cbd,1017d6d..0000000
+--- a/drivers/staging/zram/zram_drv.c
++++ b/drivers/staging/zram/zram_drv.c
+@@@ -235,8 -237,7 +238,8 @@@ static void zram_read(struct zram *zram
+  		if (unlikely(!zram->table[index].page)) {
+  			pr_debug("Read before write: sector=%lu, size=%u",
+  				(ulong)(bio->bi_sector), bio->bi_size);
+- 			/* Do nothing */
++ 			handle_zero_page(page);
+ +			index++;
+  			continue;
+  		}
+  
