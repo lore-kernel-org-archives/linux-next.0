@@ -1,53 +1,48 @@
-From: Nitin Gupta <ngupta@vflare.org>
-Subject: Re: linux-next: Tree for February 10 (zcache)
-Date: Fri, 11 Feb 2011 02:35:26 +0530
-Message-ID: <4D545316.2030809@vflare.org>
-References: <20110210180525.54ec83e9.sfr@canb.auug.org.au> <20110210110037.39f4b7b3.randy.dunlap@oracle.com>
+From: Greg Ungerer <gerg@snapgear.com>
+Subject: Re: linux-next: manual merge of the tty tree with the m68knommu tree
+Date: Fri, 11 Feb 2011 07:04:37 +1000
+Message-ID: <4D5452E5.9080304@snapgear.com>
+References: <20110210162914.eec2f4b5.sfr@canb.auug.org.au> <20110210185115.GB15944@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vx0-f174.google.com ([209.85.220.174]:40851 "EHLO
-	mail-vx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751296Ab1BJVEu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Feb 2011 16:04:50 -0500
-In-Reply-To: <20110210110037.39f4b7b3.randy.dunlap@oracle.com>
+Received: from sncsmrelay2.nai.com ([67.97.80.206]:34402 "EHLO
+	sncsmrelay2.nai.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757011Ab1BJVI1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Feb 2011 16:08:27 -0500
+In-Reply-To: <20110210185115.GB15944@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@ORACLE.COM>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Dan Magenheimer <dan.magenheimer@ORACLE.COM>
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Ungerer <gerg@uclinux.org>, Tejun Heo <tj@kernel.org>
 
-On 02/11/2011 12:30 AM, Randy Dunlap wrote:
-> On Thu, 10 Feb 2011 18:05:25 +1100 Stephen Rothwell wrote:
->
->> Hi all,
+On 11/02/11 04:51, Greg KH wrote:
+> On Thu, Feb 10, 2011 at 04:29:14PM +1100, Stephen Rothwell wrote:
+>> Hi Greg,
 >>
->> [The kernel.org mirroring is being slow ...]
+>> Today's linux-next merge of the tty tree got a conflict in
+>> drivers/tty/serial/68328serial.c between commit
+>> abf67e214f867d16df6a9c4ac7d8fc0b98ebad97 ("m68knommu: fix derefernce of
+>> port.tty") from the m68knommu tree and commit
+>> f094298bae5f5d0e1cb3bff4621aae7ef486812a ("68328serial: remove unsed
+>> m68k_serial->tqueue_hangup") from the tty tree.
 >>
->> Changes since 20110209:
+>> I just used the latter since it removed some of the code modified by the
+>> former.
 >
->
-> ZCACHE=m
-> ZRAM is not enabled (since BLOCK is not enabled)
->
-> ERROR: "xv_malloc" [drivers/staging/zcache/zcache.ko] undefined!
-> ERROR: "tmem_put" [drivers/staging/zcache/zcache.ko] undefined!
-> ERROR: "tmem_new_pool" [drivers/staging/zcache/zcache.ko] undefined!
-> ERROR: "tmem_get" [drivers/staging/zcache/zcache.ko] undefined!
-> ERROR: "tmem_flush_object" [drivers/staging/zcache/zcache.ko] undefined!
-> ERROR: "tmem_destroy_pool" [drivers/staging/zcache/zcache.ko] undefined!
-> ERROR: "xv_free" [drivers/staging/zcache/zcache.ko] undefined!
-> ERROR: "xv_get_object_size" [drivers/staging/zcache/zcache.ko] undefined!
-> ERROR: "tmem_flush_page" [drivers/staging/zcache/zcache.ko] undefined!
->
-> Also, in zcache/Kconfig, there is:
-> 	select XVMALLOC
-> but that kconfig symbol does not exist.  What should that be?
->
+> Sounds fine, thanks.
+
+The fix in commit abf67e214f867d16df6a9c4ac7d8fc0b98ebad97 ("m68knommu:
+fix derefernce of port.tty") are needed to get that file to compile.
+So I will be sending that to Linus for 2.6.38 (ie very soon).
+
+Regards
+Greg
 
 
-Just posted fix for this:
-https://lkml.org/lkml/2011/2/10/367
-
-Thanks,
-Nitin
+------------------------------------------------------------------------
+Greg Ungerer  --  Principal Engineer        EMAIL:     gerg@snapgear.com
+SnapGear Group, McAfee                      PHONE:       +61 7 3435 2888
+8 Gardner Close                             FAX:         +61 7 3217 5323
+Milton, QLD, 4064, Australia                WEB: http://www.SnapGear.com
