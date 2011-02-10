@@ -1,38 +1,49 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: linux-next: build failure after merge of the xen-two tree
-Date: Thu, 10 Feb 2011 13:24:58 +0100 (CET)
-Message-ID: <alpine.LFD.2.00.1102101322450.31804@localhost6.localdomain6>
-References: <20110210154648.8b3b994e.sfr@canb.auug.org.au>
+From: Robert Jennings <rcj@linux.vnet.ibm.com>
+Subject: Re: linux-next: manual merge of the staging tree with the
+ staging.current tree
+Date: Thu, 10 Feb 2011 08:43:00 -0600
+Message-ID: <20110210144300.GA15465@linux.vnet.ibm.com>
+References: <20110210163527.3b2cc580.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110210154648.8b3b994e.sfr@canb.auug.org.au>
+Content-Disposition: inline
+In-Reply-To: <20110210163527.3b2cc580.sfr@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nitin Gupta <ngupta@vflare.org>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, 10 Feb 2011, Stephen Rothwell wrote:
-
-> Hi Konrad,
+* Stephen Rothwell (sfr@canb.auug.org.au) wrote:
+> Hi Greg,
 > 
-> After merging the xen-two tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+> Today's linux-next merge of the staging tree got a conflict in
+> drivers/staging/zram/zram_drv.c between commit
+> 5414e557fca545614ceedc3d3496f747457e2e3b ("staging: zram: fix data
+> corruption issue") from the staging.current tree and commit
+> 2787f959d6c5fb258d964218ac75346019f49ee9 ("zram: Return zero'd pages on
+> new reads") from the staging tree.
 > 
-> drivers/gpio/langwell_gpio.c: In function 'lnw_irq_handler':
-> drivers/gpio/langwell_gpio.c:210: error: 'struct irq_desc' has no member named 'chip'
-> drivers/gpio/langwell_gpio.c:211: error: 'struct irq_desc' has no member named 'chip'
+> I fixed it up (I think - see below) and can carry the fix as necessary.
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
 > 
-> Caused by commit e22ff7614860bc282ba1eb25440d8fc56975e357 ("xen:
-> Interrupt cleanups").
+> diff --cc drivers/staging/zram/zram_drv.c
+> index 4bd8cbd,1017d6d..0000000
+> --- a/drivers/staging/zram/zram_drv.c
+> +++ b/drivers/staging/zram/zram_drv.c
+> @@@ -235,8 -237,7 +238,8 @@@ static void zram_read(struct zram *zram
+>   		if (unlikely(!zram->table[index].page)) {
+>   			pr_debug("Read before write: sector=%lu, size=%u",
+>   				(ulong)(bio->bi_sector), bio->bi_size);
+> - 			/* Do nothing */
+> + 			handle_zero_page(page);
+>  +			index++;
+>   			continue;
+>   		}
+>   
 
-Argh, it selects:
+This is correct, thanks.
 
-+       select GENERIC_HARDIRQS_NO_DEPRECATED
-
-Konrad, I merily asked you to test XEN with that flag set, not to
-apply the change.
-
-Thanks,
-
-	tglx
+--Rob Jennings
