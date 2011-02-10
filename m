@@ -1,59 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the xen-two tree
-Date: Thu, 10 Feb 2011 15:46:48 +1100
-Message-ID: <20110210154648.8b3b994e.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tty tree with the m68knommu tree
+Date: Thu, 10 Feb 2011 16:29:14 +1100
+Message-ID: <20110210162914.eec2f4b5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__10_Feb_2011_15_46_48_+1100_xqNk3X5Wvb3N5A70"
+ boundary="Signature=_Thu__10_Feb_2011_16_29_14_+1100_gjoGMJuoLfyT.1W7"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:40895 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:56960 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755627Ab1BJEqv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 9 Feb 2011 23:46:51 -0500
+	id S1751005Ab1BJF3U (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 10 Feb 2011 00:29:20 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Ungerer <gerg@uclinux.org>, Tejun Heo <tj@kernel.org>
 
---Signature=_Thu__10_Feb_2011_15_46_48_+1100_xqNk3X5Wvb3N5A70
+--Signature=_Thu__10_Feb_2011_16_29_14_+1100_gjoGMJuoLfyT.1W7
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Konrad,
+Hi Greg,
 
-After merging the xen-two tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the tty tree got a conflict in
+drivers/tty/serial/68328serial.c between commit
+abf67e214f867d16df6a9c4ac7d8fc0b98ebad97 ("m68knommu: fix derefernce of
+port.tty") from the m68knommu tree and commit
+f094298bae5f5d0e1cb3bff4621aae7ef486812a ("68328serial: remove unsed
+m68k_serial->tqueue_hangup") from the tty tree.
 
-drivers/gpio/langwell_gpio.c: In function 'lnw_irq_handler':
-drivers/gpio/langwell_gpio.c:210: error: 'struct irq_desc' has no member na=
-med 'chip'
-drivers/gpio/langwell_gpio.c:211: error: 'struct irq_desc' has no member na=
-med 'chip'
-
-Caused by commit e22ff7614860bc282ba1eb25440d8fc56975e357 ("xen:
-Interrupt cleanups").
-
-I have used the version of the xen-two tree from next-20110209 for today.
+I just used the latter since it removed some of the code modified by the
+former.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__10_Feb_2011_15_46_48_+1100_xqNk3X5Wvb3N5A70
+--Signature=_Thu__10_Feb_2011_16_29_14_+1100_gjoGMJuoLfyT.1W7
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNU224AAoJEDMEi1NhKgbsZ7IH/2EJbZsENGxTGA55TX8/5FUZ
-AJSlrbsp8qZtFNeCXUD6ImZKLQLoWihSrSS2tXYmH3m3T4qjjoZLfXYLpSDduemz
-ifjk/OZnZJ6ZHCH1U2hSrqzPSvSyKM8+wiBfL42NrIAywt1DSMLLF0CK1kyQVNcU
-DF71w+nVvoscD4GcCLT+zjpVn6SwFaWyxUhfHiF7FU1wsM37ryA6ndFC7vurq4wY
-R1tTz7P5JxQSH06PuVE0XwqPV6iWdUx7DN8xLPFpDstLoqvJAbYXTOPUNZGojiUu
-WA57XlyYM36zCeAw096pgKJsI2/gb2hOZ00awvcu57XEGPGJiJbPQLHZjNpjjY8=
-=+SCN
+iQEcBAEBAgAGBQJNU3eqAAoJEDMEi1NhKgbs/PsH/0rwIhl+ojA/NxrQDo/TaIgY
+lB1tkTAl7yIhKGDArDl1/9QIREuSw4ueR4U6byyCcYDA40rP08MoNonTHNzkVOrX
+K0nn9jedTmakJNfW5aGptte7H0lh5qoCsHD6HqJXTZ1Ux/wEfJDS1stKa47zps6m
+U2WSj+dycgD/Ir2OXZmdRJtYXnbdEEqramZNYcvg4/UG10fy1ZM3ZwEery0ETIBu
+zK9ff6VT7R8XWboLPofmjmhY6ddodc+EtTnvpW8u/GLzbehlGjZ2xCID70hGt284
+RIL14jUKzXL0HwhgeoJGgDRjycYXHFcHJcv82DBAVco9U06GB4JcGzTO2JCrm1Q=
+=3+Oa
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__10_Feb_2011_15_46_48_+1100_xqNk3X5Wvb3N5A70--
+--Signature=_Thu__10_Feb_2011_16_29_14_+1100_gjoGMJuoLfyT.1W7--
