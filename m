@@ -1,37 +1,58 @@
-From: David Miller <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>
-Subject: Re: [PATCH -next] can: softing_cs needs slab.h
-Date: Wed, 09 Feb 2011 12:43:53 -0800 (PST)
-Message-ID: <20110209.124353.104047600.davem@davemloft.net>
-References: <20110209170225.94eae681.sfr@canb.auug.org.au>
-	<20110209084456.802370fa.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@au1.ibm.com>
+Subject: linux-next: manual merge of the xen-two tree with the tip tree
+Date: Thu, 10 Feb 2011 14:55:28 +1100
+Message-ID: <20110210145528.95c90b63.sfr@au1.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <socketcan-core-bounces-0fE9KPoRgkgATYTw5x5z8w@public.gmane.org>
-In-Reply-To: <20110209084456.802370fa.randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <https://lists.berlios.de/mailman/options/socketcan-core>,
-	<mailto:socketcan-core-request-0fE9KPoRgkgATYTw5x5z8w@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.berlios.de/pipermail/socketcan-core>
-List-Post: <mailto:socketcan-core-0fE9KPoRgkgATYTw5x5z8w@public.gmane.org>
-List-Help: <mailto:socketcan-core-request-0fE9KPoRgkgATYTw5x5z8w@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.berlios.de/mailman/listinfo/socketcan-core>,
-	<mailto:socketcan-core-request-0fE9KPoRgkgATYTw5x5z8w@public.gmane.org?subject=subscribe>
-Sender: socketcan-core-bounces-0fE9KPoRgkgATYTw5x5z8w@public.gmane.org
-Errors-To: socketcan-core-bounces-0fE9KPoRgkgATYTw5x5z8w@public.gmane.org
-To: randy.dunlap-veTT2BtV2gBXrIkS9f7CXA@public.gmane.org
-Cc: socketcan-core-0fE9KPoRgkgATYTw5x5z8w@public.gmane.org, sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__10_Feb_2011_14_55_28_+1100_qyFY07p2UL58zaqe"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from e23smtp08.au.ibm.com ([202.81.31.141]:52007 "EHLO
+	e23smtp08.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753892Ab1BJDzc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 9 Feb 2011 22:55:32 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
-From: Randy Dunlap <randy.dunlap-veTT2BtV2gBXrIkS9f7CXA@public.gmane.org>
-Date: Wed, 9 Feb 2011 08:44:56 -0800
+--Signature=_Thu__10_Feb_2011_14_55_28_+1100_qyFY07p2UL58zaqe
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-> 
-> softing_cs.c uses kzalloc & kfree, so it needs to include linux/slab.h.
-> 
-> drivers/net/can/softing/softing_cs.c:234: error: implicit declaration of function 'kfree'
-> drivers/net/can/softing/softing_cs.c:271: error: implicit declaration of function 'kzalloc'
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Hi Konrad,
 
-Applied, thanks Randy.
+Today's linux-next merge of the xen-two tree got a conflict in
+kernel/irq/manage.c between commit
+dc5f219e88294b93009eef946251251ffffb6d60 ("genirq: Add
+IRQF_FORCE_RESUME") from the tip tree and commit
+c6c5596743c2a333a8e31b0247f44cd367484a5e ("genirq: Add
+IRQF_FORCE_RESUME") from the xen-two tree.
+
+Despite having the same Author time stamps, these commits are not quite the
+same.  I used the version from the tip tree which kept the line:
+
+		desc->status &=3D ~IRQ_SUSPENDED;
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__10_Feb_2011_14_55_28_+1100_qyFY07p2UL58zaqe
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNU2GwAAoJEDMEi1NhKgbsHJ8IAIvoYEdoob1NyNO0hrKm/nV5
+OzzPpigLFxeIcRBil5QOep7LCceNyfqwu73azYffSaZ0HLHyV+EplJVnNKFrONCb
+OthgnQqqo40oEtXDzZsiggZzNqP+9nZa+vhhv4kzE/f2orWHM4vXVQrGFODT1LKP
+QdnO8LejbuWbaxB7CoHIwbKZKhJbOlTQ0N0YyQEHIOhtFvWM60Y9Xe5Ty4sjfa2B
+Ny7DU9Ez3VmeJjfQ7Aqb2T/ZQaQrbLng1P5n8ALU2rrQOq2weLpyVnu2kxWCyWvd
+ObgFvSJ5jbJTITmE/svckgVJ/6ffZykh1ICXtZZJGWEZYu8tweFgaWcMVaGbW/E=
+=+cDo
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__10_Feb_2011_14_55_28_+1100_qyFY07p2UL58zaqe--
