@@ -1,28 +1,40 @@
 From: Dmitry Torokhov <dtor@vmware.com>
 Subject: Re: linux-next: boot problen with next-20110211
-Date: Thu, 10 Feb 2011 22:57:31 -0800
-Message-ID: <20110211065731.GA8861@dtor-ws.eng.vmware.com>
+Date: Thu, 10 Feb 2011 23:06:42 -0800
+Message-ID: <20110211070642.GA9512@dtor-ws.eng.vmware.com>
 References: <20110211172254.8aa4d816.sfr@canb.auug.org.au>
+ <20110211065731.GA8861@dtor-ws.eng.vmware.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from [65.115.85.73] ([65.115.85.73]:40160 "EHLO
+	smtp-outbound-2.vmware.com" rhost-flags-FAIL-FAIL-OK-OK)
+	by vger.kernel.org with ESMTP id S1752146Ab1BKHHi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 11 Feb 2011 02:07:38 -0500
 Content-Disposition: inline
-In-Reply-To: <20110211172254.8aa4d816.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20110211065731.GA8861@dtor-ws.eng.vmware.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: Rusty Russell <rusty@rustcorp.com.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
-
-On Thu, Feb 10, 2011 at 10:22:54PM -0800, Stephen Rothwell wrote:
+On Thu, Feb 10, 2011 at 10:57:31PM -0800, Dmitry Torokhov wrote:
+> Hi Stephen,
 > 
-> Maybe the module parameter alignment patches?  That is a very strange
-> parameter name (it is the same in the other messages).
+> On Thu, Feb 10, 2011 at 10:22:54PM -0800, Stephen Rothwell wrote:
+> > 
+> > Maybe the module parameter alignment patches?  That is a very strange
+> > parameter name (it is the same in the other messages).
+> 
+> Yes, I think it is... I wonder why I did not see it locally.  Let me try
+> to fix that...
+> 
 
-Yes, I think it is... I wonder why I did not see it locally.  Let me try
-to fix that...
+Gah, it is better Rusty drops the module param alignment patch so I can
+redo it properly. The module case is completely broken as it still
+operates with assumption that __param section contains full structures
+and not pointers.
 
-Thanks,
-
+-- 
 Dmitry
