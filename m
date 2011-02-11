@@ -1,64 +1,35 @@
-From: Borislav Petkov <bp@amd64.org>
-Subject: Re: linux-next: manual merge of the edac-amd tree with the tip tree
-Date: Fri, 11 Feb 2011 09:47:41 +0100
-Message-ID: <20110211084741.GA18661@aftab>
-References: <20110211142835.5ef24abe.sfr@canb.auug.org.au>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: linux-next: manual merge of the percpu tree with the tip tree
+Date: Fri, 11 Feb 2011 10:52:18 +0100
+Message-ID: <20110211095218.GQ3770@htj.dyndns.org>
+References: <20110211145810.bdea73a3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from s15228384.onlinehome-server.info ([87.106.30.177]:44811 "EHLO
-	mail.x86-64.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753750Ab1BKIrT (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 11 Feb 2011 03:47:19 -0500
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:37969 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755425Ab1BKJwY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 11 Feb 2011 04:52:24 -0500
 Content-Disposition: inline
-In-Reply-To: <20110211142835.5ef24abe.sfr@canb.auug.org.au>
+In-Reply-To: <20110211145810.bdea73a3.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Rosenfeld, Hans" <Hans.Rosenfeld@amd.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Beulich <JBeulich@novell.com>, Shaohua Li <shaohua.li@intel.com>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
-Hey Stephen,
-
-On Thu, Feb 10, 2011 at 10:28:35PM -0500, Stephen Rothwell wrote:
-> Hi Borislav,
+On Fri, Feb 11, 2011 at 02:58:10PM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Today's linux-next merge of the edac-amd tree got a conflict in
-> include/linux/pci_ids.h between commit
-> 41b2610c3443e6c4760e61fc10eef73f96f9f6a5 ("x86, amd: Extend AMD
-> northbridge caching code to support "Link Control" devices") from the tip
-> tree and commit 3d019f87099415f5f0a2f75b6f828db17e6e9445 ("PCI: Rename
-> CPU PCI id define") from the edac-amd tree.
+> Today's linux-next merge of the percpu tree got a conflict in
+> arch/x86/kernel/vmlinux.lds.S between commit
+> 94d1ac8b55799be10487fff9766cce6d6628462a ("x86: Reduce back the alignment
+> of the per-CPU data section") from the tip tree and commit
+> 19df0c2fef010e94e90df514aaf4e73f6b80145c ("percpu: align percpu
+> readmostly subsection to cacheline") from the percpu tree.
 > 
-> Just context changes.  I fixed it up (see below) and can carry the fix as
-> necessary.
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> 
-> diff --cc include/linux/pci_ids.h
-> index 5aaf45e,5411e7b..0000000
-> --- a/include/linux/pci_ids.h
-> +++ b/include/linux/pci_ids.h
-> @@@ -517,8 -517,7 +517,8 @@@
->   #define PCI_DEVICE_ID_AMD_11H_NB_DRAM	0x1302
->   #define PCI_DEVICE_ID_AMD_11H_NB_MISC	0x1303
->   #define PCI_DEVICE_ID_AMD_11H_NB_LINK	0x1304
-> - #define PCI_DEVICE_ID_AMD_15H_NB_MISC	0x1603
-> + #define PCI_DEVICE_ID_AMD_15H_NB_F3	0x1603
->  +#define PCI_DEVICE_ID_AMD_15H_NB_LINK	0x1604
+> I fixed it up (see below) and can carry the fix as necessary.
 
-Yeah, we decided to call all CPU PCI devices on F15h and later simply by
-their PCI function numbers for simplicity. I'll fix the .._LINK thing
-when all the merging settles after .39-rc1.
-
-Thanks.
+Thanks.  Looks good to me.
 
 -- 
-Regards/Gruss,
-Boris.
-
-Advanced Micro Devices GmbH
-Einsteinring 24, 85609 Dornach
-General Managers: Alberto Bozzo, Andrew Bowd
-Registration: Dornach, Gemeinde Aschheim, Landkreis Muenchen
-Registergericht Muenchen, HRB Nr. 43632
+tejun
