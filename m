@@ -1,62 +1,65 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the i2c tree (arm tree
- interaction)
-Date: Fri, 11 Feb 2011 11:45:14 +1100
-Message-ID: <20110211114514.67f377b9.sfr@canb.auug.org.au>
+From: "Guan Xuetao" <gxt@mprc.pku.edu.cn>
+Subject: RE: Request (2nd) for unicore32 architecture codes to merge into linux-next
+Date: Fri, 11 Feb 2011 11:18:40 +0800
+Message-ID: <022d01cbc99a$63717e80$2a547b80$@mprc.pku.edu.cn>
+References: <01c701cbba0f$08185800$18490800$@mprc.pku.edu.cn> <alpine.LFD.2.00.1102062254560.31804@localhost6.localdomain6>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain;
+	charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43899 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751546Ab1BKApW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 10 Feb 2011 19:45:22 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jean Delvare <khali@linux-fr.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ondrej Zary <linux@rainbow-software.org>, Russell King <rmk@arm.linux.org.uk>
+Return-path: <linux-arch-owner@vger.kernel.org>
+In-Reply-To: <alpine.LFD.2.00.1102062254560.31804@localhost6.localdomain6>
+Content-Language: zh-cn
+Sender: linux-arch-owner@vger.kernel.org
+To: 'Thomas Gleixner' <tglx@linutronix.de>, 'Guan Xuetao' <guanxuetao@mprc.pku.edu.cn>
+Cc: sfr@canb.auug.org.au, 'Arnd Bergmann' <arnd@arndb.de>, gregkh@suse.de, jbarnes@virtuousgeek.org, dmitry.torokhov@gmail.com, dtor@mail.ru, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Jean,
 
-After merging the i2c tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
 
-drivers/video/cyber2000fb.c:51:26: error: linux/i2c-id.h: No such file or directory
+> >  arch/unicore32/kernel/time.c                  |  148 +++++
+> 
+> static struct clock_event_device ckevt_puv3_osmr0 ...
+> #ifdef CONFIG_ARCH_FPGA
+>         .shift          = 18, /* correct shift val: 16, but warn_on_slowpath */
+> #else
+>         .shift          = 30,
+> #endif
+> 
+> ....
+>         ckevt_puv3_osmr0.mult =
+>                 div_sc(CLOCK_TICK_RATE, NSEC_PER_SEC, ckevt_puv3_osmr0.shift);
+> 
+> Please use the function which calculates the optimizes mult/shift
+> values for you depending on the clock frequency.
+> 
+> clockevents_calc_mult_shift() is your friend.
+> 
+> >  arch/unicore32/kernel/irq.c                   |  426 +++++++++++++
+> 
+> Please convert your irq_chips to the new function pointers:
+> 
+>        .mask -> .irq_mask
+>        ...
+> 
+> The new functions replace the "unsigned int irq" argument with
+> "struct irq_data *d".
+> 
+> So conversion for your chips is simply
+> 
+> s/unsigned int irq/struct irq_data *d/
+> 
+> and
+> 
+> s/irq/d->irq/ in the implementation.
+> 
+> Then your arch should select: GENERIC_HARDIRQS_NO_DEPRECATED
+> 
+> Otherwise I'm happy with your irq and time related patches.
+> 
+> Thanks,
+> 
+> 	tglx
+Thanks Thomas. I will apply the advice and test it lator.
 
-Caused by commit 06bc0fe05c62297e1db2979d591770459439866e ("i2c: Get rid
-of <linux/i2c-id.h>") interacting with commit
-8749b1ad69f91be1f5735563c7f235f802c7ea7d ("VIDEO: cyberpro: add I2C
-support") from the arm tree.
-
-I applied the following fix up patch for today.  Russell, this could be
-applied in the arm tree as there is nothing relevant in that header file
-even in Linus' tree.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 11 Feb 2011 11:41:35 +1100
-Subject: [PATCH] VIDEO: cyberpro: remove obsolate include
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/video/cyber2000fb.c |    1 -
- 1 files changed, 0 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/video/cyber2000fb.c b/drivers/video/cyber2000fb.c
-index 44db875..8503807 100644
---- a/drivers/video/cyber2000fb.c
-+++ b/drivers/video/cyber2000fb.c
-@@ -48,7 +48,6 @@
- #include <linux/init.h>
- #include <linux/io.h>
- #include <linux/i2c.h>
--#include <linux/i2c-id.h>
- #include <linux/i2c-algo-bit.h>
- 
- #include <asm/pgtable.h>
--- 
-1.7.2.3
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+Guan Xuetao
