@@ -1,40 +1,65 @@
-From: Dmitry Torokhov <dtor@vmware.com>
-Subject: Re: linux-next: boot problen with next-20110211
-Date: Thu, 10 Feb 2011 23:06:42 -0800
-Message-ID: <20110211070642.GA9512@dtor-ws.eng.vmware.com>
-References: <20110211172254.8aa4d816.sfr@canb.auug.org.au>
- <20110211065731.GA8861@dtor-ws.eng.vmware.com>
+From: Jean Delvare <khali@linux-fr.org>
+Subject: Re: linux-next: build failure after merge of the i2c tree (arm tree
+  interaction)
+Date: Fri, 11 Feb 2011 09:16:05 +0100
+Message-ID: <20110211091605.367d75aa@endymion.delvare>
+References: <20110211114514.67f377b9.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from [65.115.85.73] ([65.115.85.73]:40160 "EHLO
-	smtp-outbound-2.vmware.com" rhost-flags-FAIL-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S1752146Ab1BKHHi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Fri, 11 Feb 2011 02:07:38 -0500
-Content-Disposition: inline
-In-Reply-To: <20110211065731.GA8861@dtor-ws.eng.vmware.com>
+Received: from zone0.gcu-squad.org ([212.85.147.21]:46718 "EHLO
+	services.gcu-squad.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751211Ab1BKIQS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 11 Feb 2011 03:16:18 -0500
+In-Reply-To: <20110211114514.67f377b9.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Rusty Russell <rusty@rustcorp.com.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ondrej Zary <linux@rainbow-software.org>, Russell King <rmk@arm.linux.org.uk>
 
-On Thu, Feb 10, 2011 at 10:57:31PM -0800, Dmitry Torokhov wrote:
-> Hi Stephen,
+On Fri, 11 Feb 2011 11:45:14 +1100, Stephen Rothwell wrote:
+> Hi Jean,
 > 
-> On Thu, Feb 10, 2011 at 10:22:54PM -0800, Stephen Rothwell wrote:
-> > 
-> > Maybe the module parameter alignment patches?  That is a very strange
-> > parameter name (it is the same in the other messages).
+> After merging the i2c tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
 > 
-> Yes, I think it is... I wonder why I did not see it locally.  Let me try
-> to fix that...
+> drivers/video/cyber2000fb.c:51:26: error: linux/i2c-id.h: No such file or directory
 > 
+> Caused by commit 06bc0fe05c62297e1db2979d591770459439866e ("i2c: Get rid
+> of <linux/i2c-id.h>") interacting with commit
+> 8749b1ad69f91be1f5735563c7f235f802c7ea7d ("VIDEO: cyberpro: add I2C
+> support") from the arm tree.
+> 
+> I applied the following fix up patch for today.  Russell, this could be
+> applied in the arm tree as there is nothing relevant in that header file
+> even in Linus' tree.
 
-Gah, it is better Rusty drops the module param alignment patch so I can
-redo it properly. The module case is completely broken as it still
-operates with assumption that __param section contains full structures
-and not pointers.
+Yes, the patch is correct and applying it to the arm tree is the right
+thing to do.
 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 11 Feb 2011 11:41:35 +1100
+> Subject: [PATCH] VIDEO: cyberpro: remove obsolate include
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/video/cyber2000fb.c |    1 -
+>  1 files changed, 0 insertions(+), 1 deletions(-)
+> 
+> diff --git a/drivers/video/cyber2000fb.c b/drivers/video/cyber2000fb.c
+> index 44db875..8503807 100644
+> --- a/drivers/video/cyber2000fb.c
+> +++ b/drivers/video/cyber2000fb.c
+> @@ -48,7 +48,6 @@
+>  #include <linux/init.h>
+>  #include <linux/io.h>
+>  #include <linux/i2c.h>
+> -#include <linux/i2c-id.h>
+>  #include <linux/i2c-algo-bit.h>
+>  
+>  #include <asm/pgtable.h>
+
+Thanks,
 -- 
-Dmitry
+Jean Delvare
