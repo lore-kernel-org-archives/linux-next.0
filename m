@@ -1,35 +1,43 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: linux-next: manual merge of the percpu tree with the tip tree
-Date: Fri, 11 Feb 2011 10:52:18 +0100
-Message-ID: <20110211095218.GQ3770@htj.dyndns.org>
-References: <20110211145810.bdea73a3.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for February 11 (build errors/warnings)
+Date: Fri, 11 Feb 2011 22:42:26 -0800
+Message-ID: <20110211224226.f1fb1ef9.randy.dunlap@oracle.com>
+References: <20110211164713.51c102c5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-fx0-f46.google.com ([209.85.161.46]:37969 "EHLO
-	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755425Ab1BKJwY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 11 Feb 2011 04:52:24 -0500
-Content-Disposition: inline
-In-Reply-To: <20110211145810.bdea73a3.sfr@canb.auug.org.au>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:34881 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750950Ab1BLGn3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 12 Feb 2011 01:43:29 -0500
+In-Reply-To: <20110211164713.51c102c5.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Rusty Russell <rusty@rustcorp.com.au>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Beulich <JBeulich@novell.com>, Shaohua Li <shaohua.li@intel.com>, Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Fri, Feb 11, 2011 at 02:58:10PM +1100, Stephen Rothwell wrote:
+On Fri, 11 Feb 2011 16:47:13 +1100 Stephen Rothwell wrote:
+
 > Hi all,
 > 
-> Today's linux-next merge of the percpu tree got a conflict in
-> arch/x86/kernel/vmlinux.lds.S between commit
-> 94d1ac8b55799be10487fff9766cce6d6628462a ("x86: Reduce back the alignment
-> of the per-CPU data section") from the tip tree and commit
-> 19df0c2fef010e94e90df514aaf4e73f6b80145c ("percpu: align percpu
-> readmostly subsection to cacheline") from the percpu tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary.
+> Changes since 20110210:
 
-Thanks.  Looks good to me.
+(no time for patches today)
 
--- 
-tejun
+
+drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c:2315: error: too few arguments to function 'ieee80211_channel_to_frequency'
+
+sound/pci/asihpi/hpi6205.c:2090: warning: format '%ld' expects type 'long int', but argument 3 has type 'unsigned int'
+
+sound/pci/asihpi/hpi6205.c:2090: warning: format '%ld' expects type 'long int', but argument 3 has type 'unsigned int'
+
+drivers/staging/wlan-ng/prism2fw.c:1116: warning: the frame size of 4304 bytes is larger than 2048 bytes
+drivers/staging/wlan-ng/cfg80211.c:709: warning: initialization from incompatible pointer type
+
+drivers/tty/n_gsm.c:535: warning: zero-length gnu_printf format string
+
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
