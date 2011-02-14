@@ -1,23 +1,23 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [PATCH -next] PCI: fix tlan build when CONFIG_PCI is not
- enabled
-Date: Mon, 14 Feb 2011 12:39:32 -0800 (PST)
-Message-ID: <20110214.123932.39170183.davem@davemloft.net>
-References: <20110214181137.ee8d4c08.sfr@canb.auug.org.au>
-	<20110214122750.e1e03bc8.randy.dunlap@oracle.com>
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH -next] PCI: fix tlan build when CONFIG_PCI is not enabled
+Date: Mon, 14 Feb 2011 23:32:16 +0200
+Message-ID: <4D599F60.4010800@iki.fi>
+References: <20110214181137.ee8d4c08.sfr@canb.auug.org.au> <20110214122750.e1e03bc8.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp.nokia.com ([147.243.1.47]:58998 "EHLO mgw-sa01.nokia.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750877Ab1BNVcz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 14 Feb 2011 16:32:55 -0500
 In-Reply-To: <20110214122750.e1e03bc8.randy.dunlap@oracle.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: randy.dunlap@oracle.com
-Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-pci@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, jbarnes@virtuousgeek.org, sakari.ailus@iki.fi
-List-Id: linux-next.vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, netdev <netdev@vger.kernel.org>, linux-pci@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, davem@davemloft.net, Jesse Barnes <jbarnes@virtuousgeek.org>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Date: Mon, 14 Feb 2011 12:27:50 -0800
-
+Randy Dunlap wrote:
 > From: Randy Dunlap <randy.dunlap@oracle.com>
 > 
 > When CONFIG_PCI is not enabled, tlan.c has a build error:
@@ -29,4 +29,21 @@ Date: Mon, 14 Feb 2011 12:27:50 -0800
 > Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 > Cc: Sakari Ailus <sakari.ailus@iki.fi>
 
-Acked-by: David S. Miller <davem@davemloft.net>
+Hi Randy,
+
+I think this issue in tlan driver was caused by my recent patch which
+added the suspend/resume support to tlan:
+
+<URL:http://marc.info/?l=linux-netdev&m=129564436110754&w=3>
+
+There apparently are tlan cards which are EISA (not PCI) which I forgot
+when writing the patch. The suspend/resume has been only tested with PCI
+as I have no EISA bus (let alone EISA tlan card!).
+
+I'm going to send a fix to the tlan driver in any case.
+
+Regards,
+
+-- 
+Sakari Ailus
+sakari.ailus@iki.fi
