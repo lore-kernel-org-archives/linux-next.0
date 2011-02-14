@@ -1,48 +1,61 @@
-From: Sakari Ailus <sakari.ailus@iki.fi>
-Subject: Re: [PATCH -next] PCI: fix tlan build when CONFIG_PCI is not enabled
-Date: Tue, 15 Feb 2011 00:02:59 +0200
-Message-ID: <4D59A693.2080106@iki.fi>
-References: <20110214181137.ee8d4c08.sfr@canb.auug.org.au> <20110214122750.e1e03bc8.randy.dunlap@oracle.com> <4D599F60.4010800@iki.fi>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: build failure after merge of the drivers-x86 tree
+Date: Mon, 14 Feb 2011 23:42:12 +0100
+Message-ID: <201102142342.12767.rjw@sisk.pl>
+References: <20110214163944.53c1241d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <4D599F60.4010800@iki.fi>
-Sender: netdev-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, netdev <netdev@vger.kernel.org>, linux-pci@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, davem@davemloft.net, Jesse Barnes <jbarnes@virtuousgeek.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ogre.sisk.pl ([217.79.144.158]:44522 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751472Ab1BNWmV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 14 Feb 2011 17:42:21 -0500
+In-Reply-To: <20110214163944.53c1241d.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Matthew Garrett <mjg59@srcf.ucam.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Len Brown <lenb@kernel.org>, Paul Fox <pgf@laptop.org>
 
-Sakari Ailus wrote:
-> Randy Dunlap wrote:
->> From: Randy Dunlap<randy.dunlap@oracle.com>
->>
->> When CONFIG_PCI is not enabled, tlan.c has a build error:
->> drivers/net/tlan.c:503: error: implicit declaration of function 'pci_wake_from_d3'
->>
->> so add an inline function stub for this function to pci.h when
->> PCI is not enabled, similar to other stubbed PCI functions.
->>
->> Signed-off-by: Randy Dunlap<randy.dunlap@oracle.com>
->> Cc: Sakari Ailus<sakari.ailus@iki.fi>
->
-> Hi Randy,
->
-> I think this issue in tlan driver was caused by my recent patch which
-> added the suspend/resume support to tlan:
->
-> <URL:http://marc.info/?l=linux-netdev&m=129564436110754&w=3>
->
-> There apparently are tlan cards which are EISA (not PCI) which I forgot
-> when writing the patch. The suspend/resume has been only tested with PCI
-> as I have no EISA bus (let alone EISA tlan card!).
+On Monday, February 14, 2011, Stephen Rothwell wrote:
+> Hi Matthew,
+> 
+> After merging the drivers-x86 tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> drivers/platform/x86/xo15-ebook.c: In function 'ebook_switch_add':
+> drivers/platform/x86/xo15-ebook.c:136: error: 'struct acpi_device_wakeup' has no member named 'run_wake_count'
+> 
+> Caused by commit f160ad4c2a720411a136db7b867c3b4b868b8933 ("OLPC XO-1.5
+> ebook switch driver") interacting with commit
+> 0cab2dcf9963b1a7ed32e730384e1e8925b099cd ("ACPI: Remove the
+> wakeup.run_wake_count device field") from the acpi tree.
+> 
+> I have applied this merge fix patch:
 
-Right; so I suppose there's no PM support in EISA anyway. Other pci 
-functions appear to be no-ops when CONFIG_PCI isn't defined so this 
-patch seems right to me --- and no changes are needed in the tlan driver.
+The fix is correct, thanks Stephen!
 
-Acked-by: Sakari Ailus <sakari.ailus@iki.fi>
+Rafael
 
--- 
-Sakari Ailus
-sakari.ailus@iki.fi
+
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 14 Feb 2011 16:36:41 +1100
+> Subject: [PATCH] OLPC: fix for removal of run_wak_count
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/platform/x86/xo15-ebook.c |    1 -
+>  1 files changed, 0 insertions(+), 1 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/xo15-ebook.c b/drivers/platform/x86/xo15-ebook.c
+> index 2343bb3..c1372ed 100644
+> --- a/drivers/platform/x86/xo15-ebook.c
+> +++ b/drivers/platform/x86/xo15-ebook.c
+> @@ -133,7 +133,6 @@ static int ebook_switch_add(struct acpi_device *device)
+>  		/* Button's GPE is run-wake GPE */
+>  		acpi_enable_gpe(device->wakeup.gpe_device,
+>  				device->wakeup.gpe_number);
+> -		device->wakeup.run_wake_count++;
+>  		device_set_wakeup_enable(&device->dev, true);
+>  	}
