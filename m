@@ -1,88 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for February 10
-Date: Mon, 14 Feb 2011 10:16:53 +1100
-Message-ID: <20110214101653.1b159114.sfr@canb.auug.org.au>
-References: <20110210180525.54ec83e9.sfr@canb.auug.org.au>
-	<alpine.LFD.2.02.1102110000090.3384@x980>
+Subject: linux-next: manual merge of the ext4 tree with Linus'  tree
+Date: Mon, 14 Feb 2011 13:19:48 +1100
+Message-ID: <20110214131948.85c625c0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__14_Feb_2011_10_16_53_+1100_vHQ8/0g3ln6BFn/N"
+ boundary="Signature=_Mon__14_Feb_2011_13_19_48_+1100_=kR5Xv.UPhNH4QOJ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36542 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:45662 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755156Ab1BMXQ7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 13 Feb 2011 18:16:59 -0500
-In-Reply-To: <alpine.LFD.2.02.1102110000090.3384@x980>
+	id S1753810Ab1BNCTz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 13 Feb 2011 21:19:55 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Len Brown <lenb@kernel.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Theodore Tso <tytso@MIT.EDU>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Sandeen <sandeen@redhat.com>
 
---Signature=_Mon__14_Feb_2011_10_16_53_+1100_vHQ8/0g3ln6BFn/N
+--Signature=_Mon__14_Feb_2011_13_19_48_+1100_=kR5Xv.UPhNH4QOJ
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Len,
+Hi Ted,
 
-On Fri, 11 Feb 2011 00:05:25 -0500 (EST) Len Brown <lenb@kernel.org> wrote:
->
-> Please add this branch
->=20
-> master.kernel.org:/pub/scm/linux/kernel/git/lenb/linux-idle-2.6.git tools
->=20
-> It is a branch for the stuff in tools/power/
+Today's linux-next merge of the ext4 tree got a conflict in
+fs/ext4/mballoc.c between commit 2892c15ddda6a76dc10b7499e56c0f3b892e5a69
+("ext4: make grpinfo slab cache names static") from Linus' tree and
+commit 63a1555068c51e47fcdd3c097e9891ac88e86184 ("ext4: make grpinfo slab
+cache names static") from the ext4 tree.
 
-Added from today.
-
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
-
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-	Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
+I used the version from Linus' tree (since that one was updated).
 --=20
 Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Legal Stuff:
-By participating in linux-next, your subsystem tree contributions are
-public and will be included in the linux-next trees.  You may be sent
-e-mail messages indicating errors or other issues when the
-patches/commits from your subsystem tree are merged and tested in
-linux-next.  These messages may also be cross-posted to the linux-next
-mailing list, the linux-kernel mailing list, etc.  The linux-next tree
-project and IBM (my employer) make no warranties regarding the linux-next
-project, the testing procedures, the results, the e-mails, etc.  If you
-don't agree to these ground rules, let me know and I'll remove your tree
-from participation in linux-next.
-
---Signature=_Mon__14_Feb_2011_10_16_53_+1100_vHQ8/0g3ln6BFn/N
+--Signature=_Mon__14_Feb_2011_13_19_48_+1100_=kR5Xv.UPhNH4QOJ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNWGZlAAoJEDMEi1NhKgbst3wH/0dy/NykPD7yTnOhLYzSaCsj
-dT4/IY1I7SxWDlFg6jGzp8NHnnnGNNtSIQRCiOWf++hnXMaEd3pc/aIEeCxCOlrx
-vMlwS5/k7HRmIT1TfrO7vvEMFIAf0v+NQJPrrYOj+jzRQcH71mv2brobcDi5IeK6
-ZyAt429Ll+e9KV6SPHlflYztE9SAtwZgi21+h43+YNom/VkiXnDMuq2a2KqHH0Qe
-5i2F7copvsQFcU9YJw7RHU4yFzA1qyM5dTaWquIQjl27FvFbz9N99rYw+oZCTLWC
-yJX03kaykHXp0yPt8hWEJPOrln3OWKH44G8qR0iUTTEgrOAymDGyGHZN4R0zxK4=
-=RZBH
+iQEcBAEBAgAGBQJNWJFEAAoJEDMEi1NhKgbsm1MH/0f1KXFg7TFmR69gMokMRr2h
+I/mCd3qmqVL+/iM/9b/kShT00j5m8Jg/r6xpEPq4O7TJBa9yRRJv8Z08DfELGUOy
+UQdngXCc5PWUD37vibD0KKm+1YyVGn67/WUfTM4ZJuZv+Qh1x7O7F5ZiIZVqN7B6
+LQUXlhpuXpFAzn+vf5kohxtxuYsMTg2CZEFZv4ls8ojD3RlwepVBgBS6cgSwTA9L
+jU6/nJFa59pJ71Cib6EtlfroKWxQ3C8aRAR9Ls5OMPOovZ1ncj0n7prDT/AuisPs
+GG1smDCJZ3HPpYINXC8zKgV1v4vxNQi0M4KNYTcMptBZYZfgWpbGHPQYKrS4Stg=
+=VEJo
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__14_Feb_2011_10_16_53_+1100_vHQ8/0g3ln6BFn/N--
+--Signature=_Mon__14_Feb_2011_13_19_48_+1100_=kR5Xv.UPhNH4QOJ--
