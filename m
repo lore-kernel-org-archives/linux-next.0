@@ -1,53 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the ext4 tree with Linus'  tree
-Date: Mon, 14 Feb 2011 13:19:48 +1100
-Message-ID: <20110214131948.85c625c0.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the drivers-x86 tree
+Date: Mon, 14 Feb 2011 16:39:44 +1100
+Message-ID: <20110214163944.53c1241d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__14_Feb_2011_13_19_48_+1100_=kR5Xv.UPhNH4QOJ"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45662 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:45430 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753810Ab1BNCTz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 13 Feb 2011 21:19:55 -0500
+	id S1750764Ab1BNFkA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 14 Feb 2011 00:40:00 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Theodore Tso <tytso@MIT.EDU>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Sandeen <sandeen@redhat.com>
+To: Matthew Garrett <mjg59@srcf.ucam.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, Len Brown <lenb@kernel.org>, Paul Fox <pgf@laptop.org>
 
---Signature=_Mon__14_Feb_2011_13_19_48_+1100_=kR5Xv.UPhNH4QOJ
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Matthew,
 
-Hi Ted,
+After merging the drivers-x86 tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Today's linux-next merge of the ext4 tree got a conflict in
-fs/ext4/mballoc.c between commit 2892c15ddda6a76dc10b7499e56c0f3b892e5a69
-("ext4: make grpinfo slab cache names static") from Linus' tree and
-commit 63a1555068c51e47fcdd3c097e9891ac88e86184 ("ext4: make grpinfo slab
-cache names static") from the ext4 tree.
+drivers/platform/x86/xo15-ebook.c: In function 'ebook_switch_add':
+drivers/platform/x86/xo15-ebook.c:136: error: 'struct acpi_device_wakeup' has no member named 'run_wake_count'
 
-I used the version from Linus' tree (since that one was updated).
---=20
+Caused by commit f160ad4c2a720411a136db7b867c3b4b868b8933 ("OLPC XO-1.5
+ebook switch driver") interacting with commit
+0cab2dcf9963b1a7ed32e730384e1e8925b099cd ("ACPI: Remove the
+wakeup.run_wake_count device field") from the acpi tree.
+
+I have applied this merge fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 14 Feb 2011 16:36:41 +1100
+Subject: [PATCH] OLPC: fix for removal of run_wak_count
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/platform/x86/xo15-ebook.c |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/platform/x86/xo15-ebook.c b/drivers/platform/x86/xo15-ebook.c
+index 2343bb3..c1372ed 100644
+--- a/drivers/platform/x86/xo15-ebook.c
++++ b/drivers/platform/x86/xo15-ebook.c
+@@ -133,7 +133,6 @@ static int ebook_switch_add(struct acpi_device *device)
+ 		/* Button's GPE is run-wake GPE */
+ 		acpi_enable_gpe(device->wakeup.gpe_device,
+ 				device->wakeup.gpe_number);
+-		device->wakeup.run_wake_count++;
+ 		device_set_wakeup_enable(&device->dev, true);
+ 	}
+ 
+-- 
+1.7.2.3
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__14_Feb_2011_13_19_48_+1100_=kR5Xv.UPhNH4QOJ
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNWJFEAAoJEDMEi1NhKgbsm1MH/0f1KXFg7TFmR69gMokMRr2h
-I/mCd3qmqVL+/iM/9b/kShT00j5m8Jg/r6xpEPq4O7TJBa9yRRJv8Z08DfELGUOy
-UQdngXCc5PWUD37vibD0KKm+1YyVGn67/WUfTM4ZJuZv+Qh1x7O7F5ZiIZVqN7B6
-LQUXlhpuXpFAzn+vf5kohxtxuYsMTg2CZEFZv4ls8ojD3RlwepVBgBS6cgSwTA9L
-jU6/nJFa59pJ71Cib6EtlfroKWxQ3C8aRAR9Ls5OMPOovZ1ncj0n7prDT/AuisPs
-GG1smDCJZ3HPpYINXC8zKgV1v4vxNQi0M4KNYTcMptBZYZfgWpbGHPQYKrS4Stg=
-=VEJo
------END PGP SIGNATURE-----
-
---Signature=_Mon__14_Feb_2011_13_19_48_+1100_=kR5Xv.UPhNH4QOJ--
