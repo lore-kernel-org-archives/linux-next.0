@@ -1,36 +1,56 @@
-From: Rusty Russell <rusty@rustcorp.com.au>
-Subject: Re: [next-20110214] Kernel-modules with unknown parameter
-Date: Tue, 15 Feb 2011 10:30:26 +1030
-Message-ID: <201102151030.26956.rusty@rustcorp.com.au>
-References: <AANLkTimM1Tmws46DUyoNGsn+P8WN1XPsRu=L8yPzd=xU@mail.gmail.com> <AANLkTikO=5zBCvPbd2MXqgzE_mvnabTtH_e2C5_5bpQv@mail.gmail.com> <AANLkTinFOPc+BM8cnPE3SLt7Dc2TFOw1v+bntFu01hpO@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the bluetooth tree
+Date: Tue, 15 Feb 2011 13:16:15 +1100
+Message-ID: <20110215131615.39f30d8a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__15_Feb_2011_13_16_15_+1100_GWTpjdYxO87W6YDX"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:44166 "EHLO ozlabs.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:52250 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751997Ab1BOAA3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 14 Feb 2011 19:00:29 -0500
-In-Reply-To: <AANLkTinFOPc+BM8cnPE3SLt7Dc2TFOw1v+bntFu01hpO@mail.gmail.com>
+	id S1752521Ab1BOCQX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 14 Feb 2011 21:16:23 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sedat.dilek@gmail.com
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <randy.dunlap@oracle.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: "Gustavo F. Padovan" <padovan@profusion.mobi>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 14 Feb 2011 11:45:59 pm Sedat Dilek wrote:
-> >> Any idea what's going on? Stephen, Randy noticed the same like me?
+--Signature=_Tue__15_Feb_2011_13_16_15_+1100_GWTpjdYxO87W6YDX
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Dmitry broke module parameters with a "trivial" transform which turned out
-not to be.
+Hi Gustavo,
 
-I wasn't paying enough attention, and let it through.
+After merging the bluetooth tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-> My damn brain can't understand - looking at the series file in [2] -
-> why the hell the "possible" patch [3] is not included in linux-next?
+ERROR: "l2cap_load" [net/bluetooth/cmtp/cmtp.ko] undefined!
 
-There are markers in the series file, which indicate what goes into
-linux-next.
+Caused by commit de5b38d18ca4f3f8b8e297211c3226c2a63226fe ("Bluetooth:
+remove l2cap_load() hack").
 
+I havbe used the version of the bluetooth tree from next-20110214 for
+today.
+--=20
 Cheers,
-Rusty.
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__15_Feb_2011_13_16_15_+1100_GWTpjdYxO87W6YDX
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNWeHvAAoJEDMEi1NhKgbsTSEIAJMvkeabqg7Y6dobnrsnmNxH
+pEw3WMp7qLpb8KKkbPbJ+P597tJDYk9DrP6C6qyT4AaqNkgEwS8gGc3bSuhQPzCX
+TxAVAo46bAcofuLurkl/Ux8ZWT1QX17586ZCdG3AqmbWVS9+9IHQzBm1Syxa8cer
+UhvNLYeXw+51gav7ZaI2jhV9OpRLr/1UYPGF7obzucWBT4UnmQ9o7QymLutvfMm7
+NVbAyyxDPAktgXErq69DsaG8PumY6P/NtWtPSZLboPujC8Ovb7iUjZPwxfluqNkk
+Pbw1jR0A8ybwi8/G6pEiEZvDvlHfl+1bYl4DxDBALzdDFhGfTPX+f3Zhyxv1I90=
+=6eya
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__15_Feb_2011_13_16_15_+1100_GWTpjdYxO87W6YDX--
