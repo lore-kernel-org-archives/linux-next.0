@@ -1,62 +1,95 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Date: Tue, 15 Feb 2011 13:33:42 +1100
-Message-ID: <20110215133342.daa93f5e.sfr@canb.auug.org.au>
+From: Sedat Dilek <sedat.dilek@googlemail.com>
+Subject: Re: [next-20110214] Kernel-modules with unknown parameter
+Date: Tue, 15 Feb 2011 04:34:24 +0100
+Message-ID: <AANLkTi=NG+KTGh57oR6Ahq34PohdL5FQFsV+7=4a-J1Z@mail.gmail.com>
+References: <AANLkTimM1Tmws46DUyoNGsn+P8WN1XPsRu=L8yPzd=xU@mail.gmail.com>
+	<AANLkTikO=5zBCvPbd2MXqgzE_mvnabTtH_e2C5_5bpQv@mail.gmail.com>
+	<AANLkTinFOPc+BM8cnPE3SLt7Dc2TFOw1v+bntFu01hpO@mail.gmail.com>
+	<201102151030.26956.rusty@rustcorp.com.au>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__15_Feb_2011_13_33_42_+1100_sRknwcMrTRmfxe9A"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:42016 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752620Ab1BOCdu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 14 Feb 2011 21:33:50 -0500
+Received: from mail-qw0-f46.google.com ([209.85.216.46]:48243 "EHLO
+	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751192Ab1BODeZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 14 Feb 2011 22:34:25 -0500
+In-Reply-To: <201102151030.26956.rusty@rustcorp.com.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rusty Russell <rusty@rustcorp.com.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <randy.dunlap@oracle.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
---Signature=_Tue__15_Feb_2011_13_33_42_+1100_sRknwcMrTRmfxe9A
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Feb 15, 2011 at 1:00 AM, Rusty Russell <rusty@rustcorp.com.au> wrote:
+> On Mon, 14 Feb 2011 11:45:59 pm Sedat Dilek wrote:
+>> >> Any idea what's going on? Stephen, Randy noticed the same like me?
+>
+> Dmitry broke module parameters with a "trivial" transform which turned out
+> not to be.
+>
+> I wasn't paying enough attention, and let it through.
+>
+>> My damn brain can't understand - looking at the series file in [2] -
+>> why the hell the "possible" patch [3] is not included in linux-next?
+>
+> There are markers in the series file, which indicate what goes into
+> linux-next.
+>
+> Cheers,
+> Rusty.
+>
 
-Hi all,
+Thanks for the explanations, it makes things seen from the
+patch-management side a bit clearer.
+ ( Not sure if the series files was modified in the meantime. )
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Here for documentation-purposes-only (partially extracted):
 
-sound/soc/codecs/wm8903.c:376: error: redefinition of 'wm8903_dcs_event'
-sound/soc/codecs/wm8903.c:279: note: previous definition of 'wm8903_dcs_eve=
-nt' was here
-sound/soc/codecs/wm8903.c:398: error: redefinition of 'wm8903_seq_notifier'
-sound/soc/codecs/wm8903.c:301: note: previous definition of 'wm8903_seq_not=
-ifier' was here
+[ http://ozlabs.org/~rusty/kernel/rr-latest/series ]
 
-It looks like commit "ASoC: Actively manage WM8903 DC servo
-configuration" has been applied twice as commits c5b6a9feaeb0 and
-8e715c3194e4.
+# NEXT_PATCHES_START
+# MM_PATCHES_START
+# Trivial compilation fixes.
 
-I have used the version of the sound-asoc tree from next-20110214 for
-today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__15_Feb_2011_13_33_42_+1100_sRknwcMrTRmfxe9A
-Content-Type: application/pgp-signature
+## for-linus
+virtio:virtio-net-add_schedule_check_to_napi_enable_call.patch
+## for-linus end
+module:deal_with_alignment_issues_in_built_in_versions.patch
+module:do_not_hide_modver_version_show_declaration_behind_ifdef.patch
+virtio:blk_allow_re_reading_config_space_at_runtime.patch
+# MM_PATCHES_END
+# NEXT_PATCHES_END
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+[ / http://ozlabs.org/~rusty/kernel/rr-latest/series ]
 
-iQEcBAEBAgAGBQJNWeYGAAoJEDMEi1NhKgbst4MH/RwLNIYxY+9WdA7CPce1Z6Gj
-d9y5D/pugA/tzAiD8HsuW9AIsvVF5gF4QNrx7T5ixXUGY1fI8Pz5u47uMoQZNpFm
-DZ7K1qRtYkF1ZWby1Y0JGD0UUGps8K5xum82mvfBzJXJFff07o61JzYvJZtqHXX+
-zXoGlIeOgctm6RHCvprpNwevffv9NfIwhyEl+4R2XZHFkQJkZN+ERQDCLJynaU6G
-oyMS3jgq/XzpjVx0OJoZ6A4y1qYzoVKsPR1ES3TQWJ3WRw6ugh7TXNvMw86g2XZm
-/6wryWwFYm+640IyApqyx/2/2Q3oKgHKreyfrFVsUaPW5CCgZW+kigDbbLUuz4g=
-=Sa/K
------END PGP SIGNATURE-----
+So, I looked again into my own askings:
 
---Signature=_Tue__15_Feb_2011_13_33_42_+1100_sRknwcMrTRmfxe9A--
+[ QUOTE ]
+With this "evidence material" I "tig-ged" into the commits in my local
+linux-next GIT repo, which revealed more:
+
+2011-02-14 14:17 Stephen Rothwell   Merge branch 'quilt/rr'
+*****
+2011-02-11 10:37 Rusty Russell      module: deal with alignment issues
+in built-in module parameters FIX
+*****
+2011-02-07 16:02 Dmitry Torokhov    module: deal with alignment issues
+in built-in module parameters
+2011-02-01 21:43 Christoph Hellwig  virtio_blk: allow re-reading
+config space at runtime
+2011-02-07 16:02 Dmitry Torokhov    module: do not hide
+__modver_version_show declaration behind ifdef
+2011-02-07 16:02 Dmitry Torokhov    module: deal with alignment issues
+in built-in module versions
+[ /QUOTE ]
+
+Looks to me, the FIXUP patch marked with ***** was not really applied
+to linux-next?
+Also, this fixup patch is no more in Rusty's series file.
+Is that all correct now?
+As I confirmed with "module-fix-fallout-from-alignment.patch"
+(aka	module:deal_with_alignment_issues_in_built_in_parameters.patch)
+my world is OK.
+
+- Sedat -
