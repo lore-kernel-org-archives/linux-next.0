@@ -1,108 +1,107 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Sedat Dilek <sedat.dilek@googlemail.com>
 Subject: Re: [next-20110214] Kernel-modules with unknown parameter
-Date: Tue, 15 Feb 2011 14:58:49 +1100
-Message-ID: <20110215145849.81116623.sfr@canb.auug.org.au>
+Date: Tue, 15 Feb 2011 05:14:24 +0100
+Message-ID: <AANLkTin1LV5yOH9C=dzftd=cvqOJH3+OMJOiLhwzVL29@mail.gmail.com>
 References: <AANLkTimM1Tmws46DUyoNGsn+P8WN1XPsRu=L8yPzd=xU@mail.gmail.com>
 	<AANLkTikO=5zBCvPbd2MXqgzE_mvnabTtH_e2C5_5bpQv@mail.gmail.com>
 	<AANLkTinFOPc+BM8cnPE3SLt7Dc2TFOw1v+bntFu01hpO@mail.gmail.com>
 	<201102151030.26956.rusty@rustcorp.com.au>
 	<AANLkTi=NG+KTGh57oR6Ahq34PohdL5FQFsV+7=4a-J1Z@mail.gmail.com>
+	<20110215145849.81116623.sfr@canb.auug.org.au>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__15_Feb_2011_14_58_49_+1100_A5pRGvMYmour.Xns"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <AANLkTi=NG+KTGh57oR6Ahq34PohdL5FQFsV+7=4a-J1Z@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: sedat.dilek@gmail.com
-Cc: Sedat Dilek <sedat.dilek@googlemail.com>, Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Randy Dunlap <randy.dunlap@oracle.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-qy0-f174.google.com ([209.85.216.174]:42528 "EHLO
+	mail-qy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751398Ab1BOEOZ convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 14 Feb 2011 23:14:25 -0500
+In-Reply-To: <20110215145849.81116623.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Randy Dunlap <randy.dunlap@oracle.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
---Signature=_Tue__15_Feb_2011_14_58_49_+1100_A5pRGvMYmour.Xns
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Sedat,
-
-On Tue, 15 Feb 2011 04:34:24 +0100 Sedat Dilek <sedat.dilek@googlemail.com>=
- wrote:
+On Tue, Feb 15, 2011 at 4:58 AM, Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> Hi Sedat,
 >
-> On Tue, Feb 15, 2011 at 1:00 AM, Rusty Russell <rusty@rustcorp.com.au> wr=
-ote:
-> > On Mon, 14 Feb 2011 11:45:59 pm Sedat Dilek wrote:
-> >> >> Any idea what's going on? Stephen, Randy noticed the same like me?
-> >
-> > Dmitry broke module parameters with a "trivial" transform which turned =
-out
-> > not to be.
-> >
-> > I wasn't paying enough attention, and let it through.
-> >
-> >> My damn brain can't understand - looking at the series file in [2] -
-> >> why the hell the "possible" patch [3] is not included in linux-next?
-> >
-> > There are markers in the series file, which indicate what goes into
-> > linux-next.
->=20
-> Thanks for the explanations, it makes things seen from the
-> patch-management side a bit clearer.
->  ( Not sure if the series files was modified in the meantime. )
->=20
-> Here for documentation-purposes-only (partially extracted):
->=20
-> [ http://ozlabs.org/~rusty/kernel/rr-latest/series ]
->=20
-> # NEXT_PATCHES_START
-> # MM_PATCHES_START
-> # Trivial compilation fixes.
->=20
->=20
-> ## for-linus
-> virtio:virtio-net-add_schedule_check_to_napi_enable_call.patch
-> ## for-linus end
-> module:deal_with_alignment_issues_in_built_in_versions.patch
-> module:do_not_hide_modver_version_show_declaration_behind_ifdef.patch
-> virtio:blk_allow_re_reading_config_space_at_runtime.patch
-> # MM_PATCHES_END
-> # NEXT_PATCHES_END
->=20
-> [ / http://ozlabs.org/~rusty/kernel/rr-latest/series ]
+> On Tue, 15 Feb 2011 04:34:24 +0100 Sedat Dilek <sedat.dilek@googlemai=
+l.com> wrote:
+>>
+>> On Tue, Feb 15, 2011 at 1:00 AM, Rusty Russell <rusty@rustcorp.com.a=
+u> wrote:
+>> > On Mon, 14 Feb 2011 11:45:59 pm Sedat Dilek wrote:
+>> >> >> Any idea what's going on? Stephen, Randy noticed the same like=
+ me?
+>> >
+>> > Dmitry broke module parameters with a "trivial" transform which tu=
+rned out
+>> > not to be.
+>> >
+>> > I wasn't paying enough attention, and let it through.
+>> >
+>> >> My damn brain can't understand - looking at the series file in [2=
+] -
+>> >> why the hell the "possible" patch [3] is not included in linux-ne=
+xt?
+>> >
+>> > There are markers in the series file, which indicate what goes int=
+o
+>> > linux-next.
+>>
+>> Thanks for the explanations, it makes things seen from the
+>> patch-management side a bit clearer.
+>> =C2=A0( Not sure if the series files was modified in the meantime. )
+>>
+>> Here for documentation-purposes-only (partially extracted):
+>>
+>> [ http://ozlabs.org/~rusty/kernel/rr-latest/series ]
+>>
+>> # NEXT_PATCHES_START
+>> # MM_PATCHES_START
+>> # Trivial compilation fixes.
+>>
+>>
+>> ## for-linus
+>> virtio:virtio-net-add_schedule_check_to_napi_enable_call.patch
+>> ## for-linus end
+>> module:deal_with_alignment_issues_in_built_in_versions.patch
+>> module:do_not_hide_modver_version_show_declaration_behind_ifdef.patc=
+h
+>> virtio:blk_allow_re_reading_config_space_at_runtime.patch
+>> # MM_PATCHES_END
+>> # NEXT_PATCHES_END
+>>
+>> [ / http://ozlabs.org/~rusty/kernel/rr-latest/series ]
+>
+> That is how it looks today. =C2=A0Yesterday, the patch
+> module:deal_with_alignment_issues_in_built_in_parameters.patch
+> was also included and that is what caused the problem.
+>
+>> Looks to me, the FIXUP patch marked with ***** was not really applie=
+d
+>> to linux-next?
+>
+> No, instead the breaking patch (above) was removed from Rusty's
+> linux-next series today.
+>
+>> Also, this fixup patch is no more in Rusty's series file.
+>> Is that all correct now?
+>
+> Rusty has a new version of the above patch which includes the fix (I
+> assume) but it is not included in linux-next today.
+>
+> --
+> Cheers,
+> Stephen Rothwell =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0sfr@canb.auug.org.au
+> http://www.canb.auug.org.au/~sfr/
+>
 
-That is how it looks today.  Yesterday, the patch
-module:deal_with_alignment_issues_in_built_in_parameters.patch
-was also included and that is what caused the problem.
+Hmm, would be nice to have a clarification or a confirmation after
+compilation and kernel-modules are loaded correctly on i386 (amd64)
+arch(s).
 
-> Looks to me, the FIXUP patch marked with ***** was not really applied
-> to linux-next?
-
-No, instead the breaking patch (above) was removed from Rusty's
-linux-next series today.
-
-> Also, this fixup patch is no more in Rusty's series file.
-> Is that all correct now?
-
-Rusty has a new version of the above patch which includes the fix (I
-assume) but it is not included in linux-next today.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__15_Feb_2011_14_58_49_+1100_A5pRGvMYmour.Xns
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNWfn5AAoJEDMEi1NhKgbse2UH/RhBoyPV2mnQTgb211n10Fu9
-vzOmsxYSFAnZxFNpVjOjqvLmf8ZW5i49XX5GRgOuxRamXvh2fY5bdxw3yl+jd5Wg
-Cx43z/zv0W09flRrQWRiWYYVBTB4a5jkmRR7N92QEbaUuvfOSTT8mnxFAtJhWqb+
-sa/pga17qTqgX3Bxut4P40RkJ5CuXFOlWo071WY0mmFRKYd5bZp3mQmnJkiEQa4d
-ogt5VmjLE8Q3glj0tF794JEGfg2JGfrAQ+K0s7/yc6sSu2YZoG/CxQeQjVx2zGDY
-/f8iwj1c225nudRdsjCStC5a/mls7KujOOOCw6Ejhq3LAzauUvjJAmelcb343iA=
-=eIIK
------END PGP SIGNATURE-----
-
---Signature=_Tue__15_Feb_2011_14_58_49_+1100_A5pRGvMYmour.Xns--
+- Sedat -
