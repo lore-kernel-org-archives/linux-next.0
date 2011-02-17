@@ -1,64 +1,69 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the workqueues tree
-Date: Thu, 17 Feb 2011 14:33:21 +1100
-Message-ID: <20110217143321.78f52ec5.sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Date: Thu, 17 Feb 2011 14:47:43 +1100
+Message-ID: <20110217144743.2db26b27.sfr@canb.auug.org.au>
+References: <20110131154259.dca1f7e6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__17_Feb_2011_14_33_21_+1100_q_b9UNTnQmuruP5D"
+ boundary="Signature=_Thu__17_Feb_2011_14_47_43_+1100_5mj=Ly8IEcbYmQj4"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47052 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:36254 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752546Ab1BQDdb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Feb 2011 22:33:31 -0500
+	id S1754254Ab1BQDrx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 16 Feb 2011 22:47:53 -0500
+In-Reply-To: <20110131154259.dca1f7e6.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fenghua Yu <fenghua.yu@intel.com>, Michal Marek <mmarek@suse.cz>
 
---Signature=_Thu__17_Feb_2011_14_33_21_+1100_q_b9UNTnQmuruP5D
+--Signature=_Thu__17_Feb_2011_14_47_43_+1100_5mj=Ly8IEcbYmQj4
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Tejun,
+Hi all,
 
-After merging the workqueues tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+On Mon, 31 Jan 2011 15:42:59 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+>=20
+> x86_64-linux-gcc: arch/x86/lib/memmove_64.c: No such file or directory
+>=20
+> Caused by commit 9599ec0471deae24044241e2173090d2cbc0e899 ("x86-64, mem:
+> Convert memmove() to assembly file and fix return value bug") interacting
+> with our build system.
+>=20
+> After removing arch/x86/lib/.memmove_64.o.cmd (left over from the build
+> before merging the tip tree) from my object tree, it built correctly.
 
-kernel/workqueue.c: In function 'init_workqueues':
-kernel/workqueue.c:3780: error: 'WQ_FREEZEABLE' undeclared (first use in th=
-is function)
+I am still getting this (of course).
 
-Caused by commit 58a69cb47ec6991bf006a3e5d202e8571b0327a4 ("workqueue,
-freezer: unify spelling of 'freeze' + 'able' to 'freezable'") being
-mismerged with commit 4149efb22da66e326fc48baf80d628834509f7f0
-("workqueue: add system_freezeable_wq") which added another use of
-WQ_FREEZEABLE.
+Michal, is there anything that the kbuild system can do for us here?
+Basically we have changed from using a .c file to generate a .o to using
+a .S but the build system does not regenerate the .cmd file.
 
-Please do at least simple build testing before submitting to
-linux-next ...
-
-I have used the version of the workqueues tree from next-20110216 for
-today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__17_Feb_2011_14_33_21_+1100_q_b9UNTnQmuruP5D
+--Signature=_Thu__17_Feb_2011_14_47_43_+1100_5mj=Ly8IEcbYmQj4
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.10 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNXJcBAAoJEDMEi1NhKgbs4T4H/Rj7IYmnhkAtlZWjMkYOB+7J
-3rr4lfgKIz8PTKYntZ1V4gvyb0EPNjo46qzGeeAtA3hT4Ec3ZZsR19l41sAwGogC
-FIBZ3sw3JrHLMIcygp7gmzgbgjzWRSfugscmaO+VmdBimpC/2yQlwBbMGsmSUBZl
-YDpAO7K8/rwzvNA2FF9c7IvOTA7NgC1/O7WvxeQ8jYPtk1+88KJgj7IaQEYEMvdS
-2BARuJ1aCjt7T5GSQoTmfHhntEOqo9nNpGLjGf18/aH6JEtbUR2rZH79AklnTuXG
-t+GxreCIaAviQYuPkvZrjYY6eGvLWy69TKWpc3XhrDQKXF29WhfP88HScKWqQD8=
-=m4Le
+iQEcBAEBAgAGBQJNXJpfAAoJEDMEi1NhKgbsS7MH/1JoyxFEvYcsvb00pNS/4PvC
+rqGX8bkK9caxhyKr7VDlFbv8TOFeC1Udp4IhkCM+9xtiBqmgw3cdO8eTNnjJFsjz
+hHyJF0PwiXKw9C8O6S6rcssyL14zQiFFaPjcoGmSJe4JHM1hqs5JT3exGDjDrewP
+kY7cMNa4B5r2PxBAeJ3tQy1n1zLaLD0wNsO1dI5wBFnUR+k6wBBPqliP+nrGGii1
+9RlpWKuSdnq1tOOf7X+qOYysAKxawBc7o2iPtQUc3PQujWWVMs7bK6mbtYlHOgED
+Isrexy25UAvuvl3aigKycXB2VB0HKk/zjtGl3O8c7zKKnAxQ0bmD/cCUJaEm4EQ=
+=FNcR
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__17_Feb_2011_14_33_21_+1100_q_b9UNTnQmuruP5D--
+--Signature=_Thu__17_Feb_2011_14_47_43_+1100_5mj=Ly8IEcbYmQj4--
