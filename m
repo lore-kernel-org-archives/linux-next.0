@@ -1,44 +1,44 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] platform/x86: intel_mid_powerbutton needs INPUT
-Date: Wed, 16 Feb 2011 14:31:02 -0800
-Message-ID: <20110216143102.04bc6754.randy.dunlap@oracle.com>
-References: <20110216165321.c8238ed5.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the omap_dss2 tree with the omap tree
+Date: Thu, 17 Feb 2011 13:10:19 +1100
+Message-ID: <20110217131019.62ca3c27.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110216165321.c8238ed5.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Hong Liu <hong.liu@intel.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Matthew Garrett <mjg@redhat.com>, platform-driver-x86@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:53767 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755497Ab1BQCKZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 16 Feb 2011 21:10:25 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Tomi Valkeinen <tomi.valkeinen@nokia.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Charulatha V <charu@ti.com>, "Govindraj.R" <govindraj.raja@ti.com>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org, Senthilvadivu Guruswamy <svadivu@ti.com>, Sumit Semwal <sumit.semwal@ti.com>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+Hi Tomi,
 
-intel_mid_powerbtn.c uses input interfaces, so it should depend
-on INPUT to fix build errors when CONFIG_INPUT is not enabled:
+Today's linux-next merge of the omap_dss2 tree got a conflict in
+arch/arm/mach-omap2/omap_hwmod_2430_data.c between commit
+1ae9e33689d1346f7f85845857639a923e0796e3 ("OMAP2430: hwmod data: Add
+McSPI") from the omap tree and commit
+452e3eed4ee6eb8d61b290dad53d48508a3438d8 ("OMAP2430: hwmod data: add DSS
+DISPC RFBI VENC") from the omap_dss2 tree.
 
-intel_mid_powerbtn.c:(.text+0x56ca8f): undefined reference to `input_event'
-intel_mid_powerbtn.c:(.devinit.text+0x2e7b4): undefined reference to `input_allocate_device'
-intel_mid_powerbtn.c:(.devinit.text+0x2e7ff): undefined reference to `input_set_capability'
-intel_mid_powerbtn.c:(.devinit.text+0x2e84a): undefined reference to `input_register_device'
-intel_mid_powerbtn.c:(.devinit.text+0x2e88b): undefined reference to `input_free_device'
-intel_mid_powerbtn.c:(.devexit.text+0x42f0): undefined reference to `input_unregister_device'
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Hong Liu <hong.liu@intel.com>
----
- drivers/platform/x86/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- linux-next-20110216.orig/drivers/platform/x86/Kconfig
-+++ linux-next-20110216/drivers/platform/x86/Kconfig
-@@ -607,7 +607,7 @@ config INTEL_MFLD_THERMAL
- 
- config INTEL_MID_POWER_BUTTON
- 	tristate "power button driver for Intel MID platforms"
--	depends on INTEL_SCU_IPC
-+	depends on INTEL_SCU_IPC && INPUT
- 	help
- 	  This driver handles the power button on the Intel MID platforms.
- 
+diff --cc arch/arm/mach-omap2/omap_hwmod_2430_data.c
+index 60fe4aa,1ef3f3f..0000000
+--- a/arch/arm/mach-omap2/omap_hwmod_2430_data.c
++++ b/arch/arm/mach-omap2/omap_hwmod_2430_data.c
+@@@ -18,7 -18,7 +18,8 @@@
+  #include <plat/serial.h>
+  #include <plat/i2c.h>
+  #include <plat/gpio.h>
+ +#include <plat/mcspi.h>
++ #include <plat/l3_2xxx.h>
+  
+  #include "omap_hwmod_common_data.h"
+  
