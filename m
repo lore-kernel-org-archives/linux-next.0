@@ -1,39 +1,53 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: linux-next: build failure after merge of the workqueues tree
-Date: Thu, 17 Feb 2011 10:23:26 +0100
-Message-ID: <20110217092326.GM19830@htj.dyndns.org>
-References: <20110217143321.78f52ec5.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: [kbuild] Re: linux-next: build failure after merge of the tip tree
+Date: Thu, 17 Feb 2011 13:43:04 +0100
+Message-ID: <20110217124304.GA27504@elte.hu>
+References: <20110131154259.dca1f7e6.sfr@canb.auug.org.au>
+ <20110217144743.2db26b27.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:37796 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751095Ab1BQJXb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Feb 2011 04:23:31 -0500
+Received: from mx2.mail.elte.hu ([157.181.151.9]:57042 "EHLO mx2.mail.elte.hu"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756308Ab1BQMnV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 17 Feb 2011 07:43:21 -0500
 Content-Disposition: inline
-In-Reply-To: <20110217143321.78f52ec5.sfr@canb.auug.org.au>
+In-Reply-To: <20110217144743.2db26b27.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fenghua Yu <fenghua.yu@intel.com>, Michal Marek <mmarek@suse.cz>
 
-Hello,
 
-On Thu, Feb 17, 2011 at 02:33:21PM +1100, Stephen Rothwell wrote:
-> Caused by commit 58a69cb47ec6991bf006a3e5d202e8571b0327a4 ("workqueue,
-> freezer: unify spelling of 'freeze' + 'able' to 'freezable'") being
-> mismerged with commit 4149efb22da66e326fc48baf80d628834509f7f0
-> ("workqueue: add system_freezeable_wq") which added another use of
-> WQ_FREEZEABLE.
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+> Hi all,
 > 
-> Please do at least simple build testing before submitting to
-> linux-next ...
+> On Mon, 31 Jan 2011 15:42:59 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+> > failed like this:
+> > 
+> > x86_64-linux-gcc: arch/x86/lib/memmove_64.c: No such file or directory
+> > 
+> > Caused by commit 9599ec0471deae24044241e2173090d2cbc0e899 ("x86-64, mem:
+> > Convert memmove() to assembly file and fix return value bug") interacting
+> > with our build system.
+> > 
+> > After removing arch/x86/lib/.memmove_64.o.cmd (left over from the build
+> > before merging the tip tree) from my object tree, it built correctly.
+> 
+> I am still getting this (of course).
 
-Yeap, please feel free to call me an idiot.  After verifying the
-original branch, I completely forgot merge could introduce this type
-of silent conflicts.  I apologize for the late screwups.
+You reported this as a -tip build failure - but it appears to be some sort of kbuild 
+bug/artifact, right? There was a leftover .memmove_64.o.cmd file from an old tree.
 
-Thank you.
+When jumping between kernel versions via git checkout a 'make mrproper' is generally 
+needed. In most cases 'make' will figure things out but it's not always guaranteed.
 
--- 
-tejun
+So for example there are version transitions where a stale include/asm links could 
+cause build problems.
+
+Thanks,
+
+	Ingo
