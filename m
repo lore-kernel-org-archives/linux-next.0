@@ -1,46 +1,49 @@
-From: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
-Subject: [-next] ERROR: "usb_unanchor_urb" [drivers/net/wireless/rtlwifi/rtlwifi.ko]
- undefined!
-Date: Thu, 17 Feb 2011 13:56:14 +0100 (CET)
-Message-ID: <alpine.DEB.2.00.1102171354200.16788@ayla.of.borg>
+From: Michal Marek <mmarek@suse.cz>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Date: Thu, 17 Feb 2011 14:18:18 +0100
+Message-ID: <4D5D201A.8090304@suse.cz>
+References: <20110131154259.dca1f7e6.sfr@canb.auug.org.au> <20110217144743.2db26b27.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: George <george0505-Rasf1IRRPZFBDgjK7y7TUQ@public.gmane.org>, Larry Finger <Larry.Finger-tQ5ms3gMjBLk1uMJSBkQmQ@public.gmane.org>George <george0505-Rasf1IRRPZFBDgjK7y7TUQ@public.gmane.org>, "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>
-Cc: linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-2
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from cantor.suse.de ([195.135.220.2]:47228 "EHLO mx1.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753886Ab1BQNSV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 17 Feb 2011 08:18:21 -0500
+In-Reply-To: <20110217144743.2db26b27.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fenghua Yu <fenghua.yu@intel.com>
 
-m68k/allmodconfig:
+On 17.2.2011 04:47, Stephen Rothwell wrote:
+> Hi all,
+> 
+> On Mon, 31 Jan 2011 15:42:59 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>
+>> After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+>> failed like this:
+>>
+>> x86_64-linux-gcc: arch/x86/lib/memmove_64.c: No such file or directory
+>>
+>> Caused by commit 9599ec0471deae24044241e2173090d2cbc0e899 ("x86-64, mem:
+>> Convert memmove() to assembly file and fix return value bug") interacting
+>> with our build system.
+>>
+>> After removing arch/x86/lib/.memmove_64.o.cmd (left over from the build
+>> before merging the tip tree) from my object tree, it built correctly.
+> 
+> I am still getting this (of course).
+> 
+> Michal, is there anything that the kbuild system can do for us here?
+> Basically we have changed from using a .c file to generate a .o to using
+> a .S but the build system does not regenerate the .cmd file.
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/3914133/
+_Maybe_ we could work around it by letting fixdep remove the actual
+source file from the list of dependencies in the .cmd file. The
+dependency on the .c / .S / whatever file is given by the Makefiles, the
+.cmd file is only needed for additional dependencies on headers. Let's
+see what else breaks then ;).
 
-ERROR: "usb_unanchor_urb" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
-ERROR: "usb_control_msg" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
-ERROR: "usb_submit_urb" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
-ERROR: "usb_get_dev" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
-ERROR: "usb_kill_anchored_urbs" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
-ERROR: "usb_put_dev" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
-ERROR: "usb_free_urb" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
-ERROR: "usb_anchor_urb" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
-ERROR: "usb_alloc_urb" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
-make[2]: *** [__modpost] Error 1
-make[1]: *** [modules] Error 2
-make: *** [sub-make] Error 2
-
-The USB-part of rtlwifi should depend on CONFIG_USB.
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Michal
