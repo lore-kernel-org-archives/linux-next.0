@@ -1,66 +1,72 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Fri, 18 Feb 2011 09:47:54 +1100
-Message-ID: <20110218094754.0436a60a.sfr@canb.auug.org.au>
-References: <20110131154259.dca1f7e6.sfr@canb.auug.org.au>
-	<20110217144743.2db26b27.sfr@canb.auug.org.au>
-	<4D5D201A.8090304@suse.cz>
-	<20110217150200.GA32177@sepie.suse.cz>
+Subject: linux-next: manual merge of the net tree with the net-current tree
+Date: Fri, 18 Feb 2011 12:20:16 +1100
+Message-ID: <20110218122016.bc3d6470.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__18_Feb_2011_09_47_54_+1100_5OXtcYP7aCBQOdat"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41493 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:32850 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753721Ab1BQWsE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 17 Feb 2011 17:48:04 -0500
-In-Reply-To: <20110217150200.GA32177@sepie.suse.cz>
+	id S1754581Ab1BRBUW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 17 Feb 2011 20:20:22 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michal Marek <mmarek@suse.cz>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fenghua Yu <fenghua.yu@intel.com>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jesse Brandeburg <jesse.brandeburg@intel.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 
---Signature=_Fri__18_Feb_2011_09_47_54_+1100_5OXtcYP7aCBQOdat
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-Hi Michal,
+Today's linux-next merge of the net tree got a conflict in
+drivers/net/e1000e/netdev.c between commit
+713b3c9e4c1a6da6b45da6474ed554ed0a48de69 ("e1000e: flush all writebacks
+before unload") from the net-current tree and commit
+67fd4fcb78a7ced369a6bd8a131ec8c65ebd2bbb ("e1000e: convert to stats64")
+from the net tree.
 
-On Thu, 17 Feb 2011 16:02:00 +0100 Michal Marek <mmarek@suse.cz> wrote:
->
-> > _Maybe_ we could work around it by letting fixdep remove the actual
-> > source file from the list of dependencies in the .cmd file. The
-> > dependency on the .c / .S / whatever file is given by the Makefiles, the
-> > .cmd file is only needed for additional dependencies on headers. Let's
-> > see what else breaks then ;).
->=20
-> It seems to work for me. Can you try the patch below? It needs to be
-> applied before merging 9599ec0 to have any effect.
-
-Thanks, I will apply this as a fix on top of Linus' tree before I merge
-anything else.  It looks simple enough that Linus may take it as a fix
-right now.   Better to convince ourselves first, though, right?
-
---=20
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__18_Feb_2011_09_47_54_+1100_5OXtcYP7aCBQOdat
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNXaWaAAoJEDMEi1NhKgbs+58H/2x9q9i49DCV5AAT8YCXwqRS
-IbZKf0GkQ3d2JZiO20k28iJ7leZOMd+7wl4s0ZtYnwIl/pDx7YM5Ba1f4kJdw7j+
-saZ2v/CEbisBYjVjGfxZ0gy1OrG180hFqs1rdSFn2GF2lCkZVIZj0imeYt2WGYTT
-56d4dQ5uywaMfxCK9h2zF1thF1sclsw1evekK/neb6YhAk39wbZOUb/+TpnmyUfT
-bRQaXkA9XC6H2rrDowmBprvLD/ivYJbpkbQPkYMkHeR6lF/EQ8CukIXa+HjFrpFV
-xyn/bxZpR4TS7JkXmdXyjqnk29k4KWi45X9tw1AL3aPBWW/7u/iu/mcIvKtzyVs=
-=OCZC
------END PGP SIGNATURE-----
-
---Signature=_Fri__18_Feb_2011_09_47_54_+1100_5OXtcYP7aCBQOdat--
+diff --cc drivers/net/e1000e/netdev.c
+index 3fa110d,7cedfeb..0000000
+--- a/drivers/net/e1000e/netdev.c
++++ b/drivers/net/e1000e/netdev.c
+@@@ -3344,21 -3335,8 +3341,23 @@@ int e1000e_up(struct e1000_adapter *ada
+  	return 0;
+  }
+  
+ +static void e1000e_flush_descriptors(struct e1000_adapter *adapter)
+ +{
+ +	struct e1000_hw *hw = &adapter->hw;
+ +
+ +	if (!(adapter->flags2 & FLAG2_DMA_BURST))
+ +		return;
+ +
+ +	/* flush pending descriptor writebacks to memory */
+ +	ew32(TIDV, adapter->tx_int_delay | E1000_TIDV_FPD);
+ +	ew32(RDTR, adapter->rx_int_delay | E1000_RDTR_FPD);
+ +
+ +	/* execute the writes immediately */
+ +	e1e_flush();
+ +}
+ +
++ static void e1000e_update_stats(struct e1000_adapter *adapter);
++ 
+  void e1000e_down(struct e1000_adapter *adapter)
+  {
+  	struct net_device *netdev = adapter->netdev;
+@@@ -4179,11 -4154,7 +4186,10 @@@ static void e1000_watchdog_task(struct 
+  	struct e1000_ring *tx_ring = adapter->tx_ring;
+  	struct e1000_hw *hw = &adapter->hw;
+  	u32 link, tctl;
+- 	int tx_pending = 0;
+  
+ +	if (test_bit(__E1000_DOWN, &adapter->state))
+ +		return;
+ +
+  	link = e1000e_has_link(adapter);
+  	if ((netif_carrier_ok(netdev)) && link) {
+  		/* Cancel scheduled suspend requests. */
