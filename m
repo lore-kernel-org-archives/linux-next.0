@@ -1,72 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree with the net-current tree
-Date: Fri, 18 Feb 2011 12:20:16 +1100
-Message-ID: <20110218122016.bc3d6470.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the omap_dss2 tree with the  tree
+Date: Fri, 18 Feb 2011 13:19:38 +1100
+Message-ID: <20110218131938.d7b27a31.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__18_Feb_2011_13_19_38_+1100_qEFMQ/_IEO8Fl5RJ"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:32850 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:37560 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754581Ab1BRBUW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 17 Feb 2011 20:20:22 -0500
+	id S1752378Ab1BRCTp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 17 Feb 2011 21:19:45 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jesse Brandeburg <jesse.brandeburg@intel.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+To: Tomi Valkeinen <tomi.valkeinen@nokia.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benoit Cousson <b-cousson@ti.com>, Mayuresh Janorkar <mayur@ti.com>, Senthilvadivu Guruswamy <svadivu@ti.com>, Sumit Semwal <sumit.semwal@ti.com>
 
-Hi all,
+--Signature=_Fri__18_Feb_2011_13_19_38_+1100_qEFMQ/_IEO8Fl5RJ
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the net tree got a conflict in
-drivers/net/e1000e/netdev.c between commit
-713b3c9e4c1a6da6b45da6474ed554ed0a48de69 ("e1000e: flush all writebacks
-before unload") from the net-current tree and commit
-67fd4fcb78a7ced369a6bd8a131ec8c65ebd2bbb ("e1000e: convert to stats64")
-from the net tree.
+Hi Tomi,
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
--- 
+Today's linux-next merge of the omap_dss2 tree got a conflict in
+arch/arm/mach-omap2/omap_hwmod_44xx_data.c between commit
+d63bd74fbb5fb2161d9cb90cd7a93a2c5db47c63 ("OMAP4: hwmod data: Add DSS,
+DISPC, DSI1&2, RFBI, HDMI and VENC") from the omap tree and commit
+cb93d0b00acd5e5ada8ddd4c8719d4aa390515d2 ("OMAP4: hwmod data: add DSS
+DISPC DSI1,2 RFBI HDMI VENC") from the omap_dss2 tree.
+
+So these two commits with essentially the same commit messages and author
+dates are quite different :-(.  I used the version from the omap tree.
+Please sort this out.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/net/e1000e/netdev.c
-index 3fa110d,7cedfeb..0000000
---- a/drivers/net/e1000e/netdev.c
-+++ b/drivers/net/e1000e/netdev.c
-@@@ -3344,21 -3335,8 +3341,23 @@@ int e1000e_up(struct e1000_adapter *ada
-  	return 0;
-  }
-  
- +static void e1000e_flush_descriptors(struct e1000_adapter *adapter)
- +{
- +	struct e1000_hw *hw = &adapter->hw;
- +
- +	if (!(adapter->flags2 & FLAG2_DMA_BURST))
- +		return;
- +
- +	/* flush pending descriptor writebacks to memory */
- +	ew32(TIDV, adapter->tx_int_delay | E1000_TIDV_FPD);
- +	ew32(RDTR, adapter->rx_int_delay | E1000_RDTR_FPD);
- +
- +	/* execute the writes immediately */
- +	e1e_flush();
- +}
- +
-+ static void e1000e_update_stats(struct e1000_adapter *adapter);
-+ 
-  void e1000e_down(struct e1000_adapter *adapter)
-  {
-  	struct net_device *netdev = adapter->netdev;
-@@@ -4179,11 -4154,7 +4186,10 @@@ static void e1000_watchdog_task(struct 
-  	struct e1000_ring *tx_ring = adapter->tx_ring;
-  	struct e1000_hw *hw = &adapter->hw;
-  	u32 link, tctl;
-- 	int tx_pending = 0;
-  
- +	if (test_bit(__E1000_DOWN, &adapter->state))
- +		return;
- +
-  	link = e1000e_has_link(adapter);
-  	if ((netif_carrier_ok(netdev)) && link) {
-  		/* Cancel scheduled suspend requests. */
+--Signature=_Fri__18_Feb_2011_13_19_38_+1100_qEFMQ/_IEO8Fl5RJ
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNXdc6AAoJEDMEi1NhKgbsi1cH/jYN5STZSTgIF/RxKqSpRa0O
+iKh3RkYHJkFUCIMKrBn4BcuVNCpFnNjNuPcxOAjQDpdhHtrVfHD9Bd3OfQq0GPZ4
+UYegDNgQ0OrtbaCAY71Dg3IyVb8EHO4a4ZD3C5klCQ6EDDDbULuGNX2IF78y/py6
+1Pk1gqyvzeO6RiDveBVaovj661pdOaDSHMMFafdO58ZZAlMZuWhrmdwgRuVUzFBj
+tIZt/7kz2er8GgogF+flEC3NVCIaopNL+LymqRmeMuap+68sy+GobjOi/bvjBr1/
+swGI9ryCc9uEejgrU40YJaVDbEMpG6YQaPTFFyNiKrUPPFuoOO62X/Yjk1p0ydk=
+=Y3Vl
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__18_Feb_2011_13_19_38_+1100_qEFMQ/_IEO8Fl5RJ--
