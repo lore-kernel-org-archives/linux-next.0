@@ -1,36 +1,39 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: linux-next: build failure after merge of the workqueues tree
-Date: Fri, 18 Feb 2011 10:07:25 +0100
-Message-ID: <20110218090725.GA21209@htj.dyndns.org>
-References: <20110218145747.f4b26b91.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging tree with the
+ staging.current tree
+Date: Fri, 18 Feb 2011 12:13:30 -0800
+Message-ID: <20110218201330.GA20347@kroah.com>
+References: <20110210163527.3b2cc580.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from kroah.org ([198.145.64.141]:43938 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758504Ab1BRUNg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 18 Feb 2011 15:13:36 -0500
 Content-Disposition: inline
-In-Reply-To: <20110218145747.f4b26b91.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20110210163527.3b2cc580.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nitin Gupta <ngupta@vflare.org>, Robert Jennings <rcj@linux.vnet.ibm.com>
 
-Hello,
-
-On Fri, Feb 18, 2011 at 02:57:47PM +1100, Stephen Rothwell wrote:
-> drivers/input/input-polldev.c: In function 'input_polldev_init':
-> drivers/input/input-polldev.c:259: error: 'WQ_FREEZEABLE' undeclared (first use in this function)
+On Thu, Feb 10, 2011 at 04:35:27PM +1100, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> Caused by commit 58a69cb47ec6991bf006a3e5d202e8571b0327a4 ("workqueue,
-> freezer: unify spelling of 'freeze' + 'able' to 'freezable'") interacting
-> with commit 8fb3f6f6bf6e17e97712d216f230ba05f2e88ed8 ("Input:
-> input-polldev - create workqueue upfront") from the input tree.
+> Today's linux-next merge of the staging tree got a conflict in
+> drivers/staging/zram/zram_drv.c between commit
+> 5414e557fca545614ceedc3d3496f747457e2e3b ("staging: zram: fix data
+> corruption issue") from the staging.current tree and commit
+> 2787f959d6c5fb258d964218ac75346019f49ee9 ("zram: Return zero'd pages on
+> new reads") from the staging tree.
 > 
-> I applied the following fix up patch (and can carry it as necessary):
+> I fixed it up (I think - see below) and can carry the fix as necessary.
 
-Yeah, looks good to me.  I already sent pull request for the rename to
-Linus so once it gets pulled, Dmitry should be able to pull in the
-mainline and resolve the conflict there.
+I've merge Linus's tree into the staging-next tree now and took this
+resolution and pushed it back out so you should not have any more
+problems.
 
-Thank you.
+thanks,
 
--- 
-tejun
+greg k-h
