@@ -1,38 +1,35 @@
 From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging tree with the
- staging.current tree
-Date: Fri, 18 Feb 2011 12:13:30 -0800
-Message-ID: <20110218201330.GA20347@kroah.com>
-References: <20110210163527.3b2cc580.sfr@canb.auug.org.au>
+Subject: Re: [PATCH] Allow sharing xvmalloc for zram and zcache
+Date: Fri, 18 Feb 2011 13:25:42 -0800
+Message-ID: <20110218212542.GI796@kroah.com>
+References: <1297371646-11604-1-git-send-email-ngupta@vflare.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:43938 "EHLO coco.kroah.org"
+Received: from kroah.org ([198.145.64.141]:41543 "EHLO coco.kroah.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758504Ab1BRUNg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 18 Feb 2011 15:13:36 -0500
+	id S1753389Ab1BRVbc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 18 Feb 2011 16:31:32 -0500
 Content-Disposition: inline
-In-Reply-To: <20110210163527.3b2cc580.sfr@canb.auug.org.au>
+In-Reply-To: <1297371646-11604-1-git-send-email-ngupta@vflare.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nitin Gupta <ngupta@vflare.org>, Robert Jennings <rcj@linux.vnet.ibm.com>
+To: Nitin Gupta <ngupta@vflare.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Dan Magenheimer <dan.magenheimer@oracle.com>, Randy Dunlap <randy.dunlap@oracle.com>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 
-On Thu, Feb 10, 2011 at 04:35:27PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
+On Thu, Feb 10, 2011 at 04:00:46PM -0500, Nitin Gupta wrote:
+> Both zram and zcache use xvmalloc allocator. If xvmalloc
+> is compiled separately for both of them, we will get linker
+> error if they are both selected as "built-in". We can also
+> get linker error regarding missing xvmalloc symbols if zram
+> is not built.
 > 
-> Today's linux-next merge of the staging tree got a conflict in
-> drivers/staging/zram/zram_drv.c between commit
-> 5414e557fca545614ceedc3d3496f747457e2e3b ("staging: zram: fix data
-> corruption issue") from the staging.current tree and commit
-> 2787f959d6c5fb258d964218ac75346019f49ee9 ("zram: Return zero'd pages on
-> new reads") from the staging tree.
+> So, we now compile xvmalloc separately and export its symbols
+> which are then used by both of zram and zcache.
 > 
-> I fixed it up (I think - see below) and can carry the fix as necessary.
+> Signed-off-by: Nitin Gupta <ngupta@vflare.org>
 
-I've merge Linus's tree into the staging-next tree now and took this
-resolution and pushed it back out so you should not have any more
-problems.
+This doesn't apply to my tree, care to respin it and resend?
 
 thanks,
 
