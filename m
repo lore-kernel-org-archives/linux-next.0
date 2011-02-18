@@ -1,36 +1,71 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: [PATCH] Allow sharing xvmalloc for zram and zcache
-Date: Fri, 18 Feb 2011 13:25:42 -0800
-Message-ID: <20110218212542.GI796@kroah.com>
-References: <1297371646-11604-1-git-send-email-ngupta@vflare.org>
+From: Sedat Dilek <sedat.dilek@googlemail.com>
+Subject: Re: [PATCH 00/11] [resend] drm core and radeon patches for -next
+Date: Fri, 18 Feb 2011 23:08:34 +0100
+Message-ID: <AANLkTimK3zk4mZXJyR9L7gS-MN-vZDgRx8nMpOpGRhJR@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:41543 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753389Ab1BRVbc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 18 Feb 2011 16:31:32 -0500
-Content-Disposition: inline
-In-Reply-To: <1297371646-11604-1-git-send-email-ngupta@vflare.org>
+Received: from mail-qy0-f174.google.com ([209.85.216.174]:63848 "EHLO
+	mail-qy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753307Ab1BRWIf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 18 Feb 2011 17:08:35 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Nitin Gupta <ngupta@vflare.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Dan Magenheimer <dan.magenheimer@oracle.com>, Randy Dunlap <randy.dunlap@oracle.com>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: DRI <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Dave Airlie <airlied@gmail.com>
 
-On Thu, Feb 10, 2011 at 04:00:46PM -0500, Nitin Gupta wrote:
-> Both zram and zcache use xvmalloc allocator. If xvmalloc
-> is compiled separately for both of them, we will get linker
-> error if they are both selected as "built-in". We can also
-> get linker error regarding missing xvmalloc symbols if zram
-> is not built.
-> 
-> So, we now compile xvmalloc separately and export its symbols
-> which are then used by both of zram and zcache.
-> 
-> Signed-off-by: Nitin Gupta <ngupta@vflare.org>
+[ QUOTE ]
+Hi Dave,
 
-This doesn't apply to my tree, care to respin it and resend?
+Here are the patches I've talked about on irc for .39.
 
-thanks,
+Patches 1-5 is the "make drm_mm_node embeddable" series. Just the drm core
+part, without the patches for i915 (they need to be redone). Chris
+Wilson very much likes what these will to do drm/i915. Thomas Hellstrom
+cautioned not to go crazy and embed drm_mm_node everywhere (especially in
+ttm_bo_object), because the drm_mm allocator is not adequate everwhere and
+embedding might just create future obstacles for the Right Thing. Like
+switching to idr, as vmgfx already has already done for a few things.
 
-greg k-h
+Patches 6-8 embed the gem bo object into the radeon bo object. Changes
+since first submission:
+- Resolve conflict with pageflip code (resulted in a null-pointer deref).
+- Align bo size to PAGE_SIZE (the r600/evergreen kms blit code didn't do
+  this, upsetting the more paranoid gem code).
+
+Patches 9-11 finish my radeon asic header cleanup that I've started a while
+back. Reviewed by Alex Deucher, I've dropped the 3 small patches he
+objected.
+
+Tested on my usual array of machines (which now also includes an HD5750 and
+a HD 4350 and a g73 from nvidia ;).
+
+Please review and consider merging for next.
+
+Thanks, Daniel
+
+Daniel Vetter (11):
+  drm/nouveau: don't munge in drm_mm internals
+  drm: mm: track free areas implicitly
+  drm: mm: extract node insert helper functions
+  drm: mm: add api for embedding struct drm_mm_node
+  drm: mm: add helper to unwind scan state
+  drm/radeon: embed struct drm_gem_object
+  drm/radeon: introduce gem_to_radeon_bo helper
+  drm/radeon: kill radeon_bo->gobj pointer
+  radeon: consolidate asic-specific function decls for r600 & later
+  radeon: kill decls for inline functions
+  radeon: move blit functions to radeon_asic.h
+...
+[ /QUOTE ]
+
+Tested successfully against linux-next (next-20110218) on a radeon
+RV250 gfxcard.
+It would be nice to see Daniel's (missing) patchset(s) finally in one
+of Dave's drm-2.6 GIT branches.
+I had the previous (splitted in multiple little) patchsets running
+here againt linux-next for such a long time.
+So go go go!
+
+- Sedat -
