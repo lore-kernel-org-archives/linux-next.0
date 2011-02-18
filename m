@@ -1,50 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the omap_dss2 tree with the omap tree
-Date: Fri, 18 Feb 2011 13:25:15 +1100
-Message-ID: <20110218132515.e071230f.sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Date: Fri, 18 Feb 2011 14:54:11 +1100
+Message-ID: <20110218145411.24bf7ad7.sfr@canb.auug.org.au>
+References: <20110131154259.dca1f7e6.sfr@canb.auug.org.au>
+	<20110217144743.2db26b27.sfr@canb.auug.org.au>
+	<4D5D201A.8090304@suse.cz>
+	<20110217150200.GA32177@sepie.suse.cz>
+	<20110218094754.0436a60a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__18_Feb_2011_14_54_11_+1100_lcTy8DMOXhEwQz=6"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59904 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:57871 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750908Ab1BRCZS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 17 Feb 2011 21:25:18 -0500
+	id S1751641Ab1BRDyX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 17 Feb 2011 22:54:23 -0500
+In-Reply-To: <20110218094754.0436a60a.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tomi Valkeinen <tomi.valkeinen@nokia.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org, Senthilvadivu Guruswamy <svadivu@ti.com>, Sumit Semwal <sumit.semwal@ti.com>
+To: Michal Marek <mmarek@suse.cz>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fenghua Yu <fenghua.yu@intel.com>
 
-Hi Tomi,
+--Signature=_Fri__18_Feb_2011_14_54_11_+1100_lcTy8DMOXhEwQz=6
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the omap_dss2 tree got a conflict in
-arch/arm/mach-omap2/board-am3517evm.c between commit
-3dc3bad6f1b316d79d9d1d596a590b5097cb3dc4 ("ARM: OMAP2: use early init
-hook") from the omap tree and commit
-603aa0662c26ad05c3ecf1b912f8bebf76dab73d ("OMAP2, 3: DSS2: board files:
-replace platform_device_register with omap_display_init()") from the
-omap_dss2 tree.
+Hi Michal,
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
--- 
+On Fri, 18 Feb 2011 09:47:54 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> On Thu, 17 Feb 2011 16:02:00 +0100 Michal Marek <mmarek@suse.cz> wrote:
+> >
+> > > _Maybe_ we could work around it by letting fixdep remove the actual
+> > > source file from the list of dependencies in the .cmd file. The
+> > > dependency on the .c / .S / whatever file is given by the Makefiles, =
+the
+> > > .cmd file is only needed for additional dependencies on headers. Let's
+> > > see what else breaks then ;).
+> >=20
+> > It seems to work for me. Can you try the patch below? It needs to be
+> > applied before merging 9599ec0 to have any effect.
+>=20
+> Thanks, I will apply this as a fix on top of Linus' tree before I merge
+> anything else.  It looks simple enough that Linus may take it as a fix
+> right now.   Better to convince ourselves first, though, right?
+
+That patch fixed the problem for me and has caused no obvious problems.
+
+Acked-by: Stephen Rothwell <sfr@canb.auug.org.au>
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/arm/mach-omap2/board-am3517evm.c
-index d0d0f55,548f524..0000000
---- a/arch/arm/mach-omap2/board-am3517evm.c
-+++ b/arch/arm/mach-omap2/board-am3517evm.c
-@@@ -392,11 -384,7 +384,7 @@@ static struct omap_dss_board_info am351
-  static struct omap_board_config_kernel am3517_evm_config[] __initdata = {
-  };
-  
-- static struct platform_device *am3517_evm_devices[] __initdata = {
-- 	&am3517_evm_dss_device,
-- };
-- 
- -static void __init am3517_evm_init_irq(void)
- +static void __init am3517_evm_init_early(void)
-  {
-  	omap_board_config = am3517_evm_config;
-  	omap_board_config_size = ARRAY_SIZE(am3517_evm_config);
+--Signature=_Fri__18_Feb_2011_14_54_11_+1100_lcTy8DMOXhEwQz=6
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNXe1jAAoJEDMEi1NhKgbsfkYH+wRmp2/MD0HNeOqXddVSF/yw
+zR6hyaovNE/R1kOv2CtaBKVfNRMP15uI816Z8pJKvBXVRXF/bSd/LvsbppjUf3Aq
+65NDhX4OWxiIFWesHcvBjwAumIO58ZRle2qvjT33y8u7SNrxKKQpWDJkoQ9AGR22
+pJdbtce9MpBEaOugr7sRlJm84zqICsRy7UJLtbUOeIKdLc6Mf4jvz/fK71ZDyUEg
+5rIEaQ7GNwQloTs4RkxKhLax8/B0dCGMcZmbC6cK+RPMuSnEiwYJLxSAcaYgeNj/
++0QJK/zkc2x98t8oaWXMsfPxRWqYI9pWy/mnrX//zBlCJWKR7wTG3YvWP3xjElY=
+=Ky1R
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__18_Feb_2011_14_54_11_+1100_lcTy8DMOXhEwQz=6--
