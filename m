@@ -1,43 +1,45 @@
-From: Nitin Gupta <ngupta@vflare.org>
-Subject: Re: [PATCH] Allow sharing xvmalloc for zram and zcache
-Date: Sat, 19 Feb 2011 04:05:38 +0530
-Message-ID: <4D5EF43A.5040905@vflare.org>
-References: <1297371646-11604-1-git-send-email-ngupta@vflare.org> <20110218212542.GI796@kroah.com>
+From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH -next] wl12xx: fix sdio_test kconfig/build errors
+Date: Fri, 18 Feb 2011 17:25:36 -0800
+Message-ID: <20110218172536.970b5b39.randy.dunlap@oracle.com>
+References: <20110217162650.092e77c3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:41700 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753589Ab1BRWfF (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 18 Feb 2011 17:35:05 -0500
-In-Reply-To: <20110218212542.GI796@kroah.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Dan Magenheimer <dan.magenheimer@oracle.com>, Randy Dunlap <randy.dunlap@oracle.com>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20110217162650.092e77c3.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org
+Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Luciano Coelho <luciano.coelho-xNZwKgViW5gAvxtiuMwx3w@public.gmane.org>, Roger Quadros <roger.quadros-xNZwKgViW5gAvxtiuMwx3w@public.gmane.org>, akpm <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-On 02/19/2011 02:55 AM, Greg KH wrote:
-> On Thu, Feb 10, 2011 at 04:00:46PM -0500, Nitin Gupta wrote:
->> Both zram and zcache use xvmalloc allocator. If xvmalloc
->> is compiled separately for both of them, we will get linker
->> error if they are both selected as "built-in". We can also
->> get linker error regarding missing xvmalloc symbols if zram
->> is not built.
->>
->> So, we now compile xvmalloc separately and export its symbols
->> which are then used by both of zram and zcache.
->>
->> Signed-off-by: Nitin Gupta<ngupta@vflare.org>
->
-> This doesn't apply to my tree, care to respin it and resend?
->
+From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
 
+The wl12xx sdio_test code uses wl12xx_get_platform_data, which is
+only present when WL12*_SDIO is enabled, so make WL12XX_SDIO_TEST
+depend on WL12XX_SDIO so that the needed interface will be present.
 
-The new patch:
-https://lkml.org/lkml/2011/2/18/340
+sdio_test.c:(.devinit.text+0x13178): undefined reference to `wl12xx_get_platform_data'
 
-applies to staging-next branch of the staging-2.6 tree.
+Signed-off-by: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Cc: Luciano Coelho <luciano.coelho-xNZwKgViW5gAvxtiuMwx3w@public.gmane.org>
+Cc: Roger Quadros <roger.quadros-xNZwKgViW5gAvxtiuMwx3w@public.gmane.org>
+---
+ drivers/net/wireless/wl12xx/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Nitin
+--- linux-next-20110217.orig/drivers/net/wireless/wl12xx/Kconfig
++++ linux-next-20110217/drivers/net/wireless/wl12xx/Kconfig
+@@ -54,7 +54,7 @@ config WL12XX_SDIO
+ 
+ config WL12XX_SDIO_TEST
+ 	tristate "TI wl12xx SDIO testing support"
+-	depends on WL12XX && MMC
++	depends on WL12XX && MMC && WL12XX_SDIO
+ 	default n
+ 	---help---
+ 	  This module adds support for the SDIO bus testing with the
+--
+To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
