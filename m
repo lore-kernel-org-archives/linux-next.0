@@ -1,46 +1,33 @@
-From: Jean Delvare <khali@linux-fr.org>
-Subject: Re: linux-next: build warnings after merge of the i2c tree
-Date: Mon, 21 Feb 2011 10:58:58 +0100
-Message-ID: <20110221105858.197cbf1d@endymion.delvare>
-References: <20110221153522.8a0b29bf.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for February 21 (usb/serial)
+Date: Mon, 21 Feb 2011 09:57:32 -0800
+Message-ID: <20110221095732.b3842652.randy.dunlap@oracle.com>
+References: <20110221182134.09abd232.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zone0.gcu-squad.org ([212.85.147.21]:24658 "EHLO
-	services.gcu-squad.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753186Ab1BUJ7K (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 21 Feb 2011 04:59:10 -0500
-In-Reply-To: <20110221153522.8a0b29bf.sfr@canb.auug.org.au>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:59552 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751299Ab1BUR5o (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 21 Feb 2011 12:57:44 -0500
+In-Reply-To: <20110221182134.09abd232.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, lud <linux-usb@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-Hi Stephen,
+On Mon, 21 Feb 2011 18:21:34 +1100 Stephen Rothwell wrote:
 
-On Mon, 21 Feb 2011 15:35:22 +1100, Stephen Rothwell wrote:
-> Hi Jean,
+> Hi all,
 > 
-> After merging the tip tree, today's linux-next build (powerpc
-> ppc64_defconfig) produced these warnings:
-> 
-> drivers/i2c/i2c-core.c: In function 'i2c_do_add_adapter':
-> drivers/i2c/i2c-core.c:799: warning: 'attach_adapter' is deprecated (declared at include/linux/i2c.h:149)
-> drivers/i2c/i2c-core.c:804: warning: 'attach_adapter' is deprecated (declared at include/linux/i2c.h:149)
-> drivers/i2c/i2c-core.c: In function 'i2c_do_del_adapter':
-> drivers/i2c/i2c-core.c:985: warning: 'detach_adapter' is deprecated (declared at include/linux/i2c.h:150)
-> drivers/i2c/i2c-core.c:988: warning: 'detach_adapter' is deprecated (declared at include/linux/i2c.h:150)
-> 
-> Introduced by commit 95529c656b97b08c7a92504f98650a229f03ae04 ("i2c:
-> Deprecate i2c_driver.attach_adapter and .detach_adapter").  We normally
-> fix up as many uses of an interface as possible before deprecating it ...
+> Changes since 20110218:
 
-These are the core locations where the deprecated callbacks are called.
-Ideally they would _not_ emit warnings, are these are legitimate and
-can't be removed before all drivers relying on these callbacks have
-been fixed. If there is a way to silent these warnings, please let me
-know, as I don't know of any.
 
--- 
-Jean Delvare
+When CONFIG_PM_RUNTIME is not enabled:
+
+drivers/usb/serial/usb_wwan.c:702: error: 'struct dev_pm_info' has no member named 'usage_count'
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
