@@ -1,50 +1,29 @@
-From: "John W. Linville" <linville@tuxdriver.com>
-Subject: Re: [PATCH -next] wl12xx: fix sdio_test kconfig/build errors
-Date: Mon, 21 Feb 2011 15:25:39 -0500
-Message-ID: <20110221202538.GK9650@tuxdriver.com>
-References: <20110217162650.092e77c3.sfr@canb.auug.org.au>
- <20110218172536.970b5b39.randy.dunlap@oracle.com>
+From: Ilya Yanok <yanok@emcraft.com>
+Subject: Re: linux-next: build warning after merge of the driver-core tree
+Date: Mon, 21 Feb 2011 23:18:31 +0300
+Message-ID: <4D62C897.5020707@emcraft.com>
+References: <20110221170226.c43175f7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20110218172536.970b5b39.randy.dunlap@oracle.com>
+In-Reply-To: <20110221170226.c43175f7.sfr@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-wireless@vger.kernel.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Luciano Coelho <luciano.coelho@nokia.com>, Roger Quadros <roger.quadros@nokia.com>, akpm <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Luca, I'm merging this one...
+Hi Stephen, Greg,
 
-On Fri, Feb 18, 2011 at 05:25:36PM -0800, Randy Dunlap wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
-> 
-> The wl12xx sdio_test code uses wl12xx_get_platform_data, which is
-> only present when WL12*_SDIO is enabled, so make WL12XX_SDIO_TEST
-> depend on WL12XX_SDIO so that the needed interface will be present.
-> 
-> sdio_test.c:(.devinit.text+0x13178): undefined reference to `wl12xx_get_platform_data'
-> 
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> Cc: Luciano Coelho <luciano.coelho@nokia.com>
-> Cc: Roger Quadros <roger.quadros@nokia.com>
-> ---
->  drivers/net/wireless/wl12xx/Kconfig |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> --- linux-next-20110217.orig/drivers/net/wireless/wl12xx/Kconfig
-> +++ linux-next-20110217/drivers/net/wireless/wl12xx/Kconfig
-> @@ -54,7 +54,7 @@ config WL12XX_SDIO
->  
->  config WL12XX_SDIO_TEST
->  	tristate "TI wl12xx SDIO testing support"
-> -	depends on WL12XX && MMC
-> +	depends on WL12XX && MMC && WL12XX_SDIO
->  	default n
->  	---help---
->  	  This module adds support for the SDIO bus testing with the
-> 
+On 21.02.2011 09:02, Stephen Rothwell wrote:
+> After merging the driver-core tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+>
+> drivers/net/dnet.c: In function 'dnet_mii_init':
+> drivers/net/dnet.c:340: warning: passing argument 1 of 'platform_set_drvdata' from incompatible pointer type
+> include/linux/platform_device.h:138: note: expected 'struct platform_device *' but argument is of type 'struct net_device *'
 
--- 
-John W. Linville		Someday the world will need a hero, and you
-linville@tuxdriver.com			might be all we have.  Be ready.
+It's actually a bug in the driver. Thanks for reporting. I'll send the 
+patch as a follow up.
+
+Regards, Ilya.
