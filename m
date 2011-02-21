@@ -1,43 +1,46 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH wq#for-2.6.39] workqueue: fix build failure introduced
- by s/freezeable/freezable/
-Date: Mon, 21 Feb 2011 10:10:09 +0100
-Message-ID: <20110221091009.GF31267@htj.dyndns.org>
-References: <20110221090354.GE31267@htj.dyndns.org>
+From: Jean Delvare <khali@linux-fr.org>
+Subject: Re: linux-next: build warnings after merge of the i2c tree
+Date: Mon, 21 Feb 2011 10:58:58 +0100
+Message-ID: <20110221105858.197cbf1d@endymion.delvare>
+References: <20110221153522.8a0b29bf.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bw0-f52.google.com ([209.85.214.52]:48080 "EHLO
-	mail-bw0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752234Ab1BUJKO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 21 Feb 2011 04:10:14 -0500
-Content-Disposition: inline
-In-Reply-To: <20110221090354.GE31267@htj.dyndns.org>
+Received: from zone0.gcu-squad.org ([212.85.147.21]:24658 "EHLO
+	services.gcu-squad.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753186Ab1BUJ7K (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 21 Feb 2011 04:59:10 -0500
+In-Reply-To: <20110221153522.8a0b29bf.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Feb 21, 2011 at 10:03:54AM +0100, Tejun Heo wrote:
-> new usage of the flag.  The combination of the two creates a build
-> failure after merge.  Fix it by renaming all freezeables to
-> freezables.
+Hi Stephen,
+
+On Mon, 21 Feb 2011 15:35:22 +1100, Stephen Rothwell wrote:
+> Hi Jean,
 > 
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
-> I pulled mainline into wq#for-2.6.39 and applied the build fix.
-> #for-next updated accordingly.  Dmitry, please feel free to pull in
-> the following branch for system_wq_freezable.  The branch is stable.
-> HEAD is 6c9e293a1f (workqueue: fix build failure introduced by
-> s/freezeable/freezable/).
+> After merging the tip tree, today's linux-next build (powerpc
+> ppc64_defconfig) produced these warnings:
 > 
->  git://git.kernel.org/pub/scm/linux/kernel/git/tj/wq.git for-2.6.39
+> drivers/i2c/i2c-core.c: In function 'i2c_do_add_adapter':
+> drivers/i2c/i2c-core.c:799: warning: 'attach_adapter' is deprecated (declared at include/linux/i2c.h:149)
+> drivers/i2c/i2c-core.c:804: warning: 'attach_adapter' is deprecated (declared at include/linux/i2c.h:149)
+> drivers/i2c/i2c-core.c: In function 'i2c_do_del_adapter':
+> drivers/i2c/i2c-core.c:985: warning: 'detach_adapter' is deprecated (declared at include/linux/i2c.h:150)
+> drivers/i2c/i2c-core.c:988: warning: 'detach_adapter' is deprecated (declared at include/linux/i2c.h:150)
+> 
+> Introduced by commit 95529c656b97b08c7a92504f98650a229f03ae04 ("i2c:
+> Deprecate i2c_driver.attach_adapter and .detach_adapter").  We normally
+> fix up as many uses of an interface as possible before deprecating it ...
 
-Updated commit message (the first line went missing because it started
-with #fixes-2.6.38), the new HEAD is 24d51add74.
-
-Thanks.
+These are the core locations where the deprecated callbacks are called.
+Ideally they would _not_ emit warnings, are these are legitimate and
+can't be removed before all drivers relying on these callbacks have
+been fixed. If there is a way to silent these warnings, please let me
+know, as I don't know of any.
 
 -- 
-tejun
+Jean Delvare
