@@ -1,49 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the hwmon-staging tree with the
+From: Guenter Roeck <guenter.roeck@ericsson.com>
+Subject: Re: linux-next: manual merge of the hwmon-staging tree with the
  jdelvare-hwmon tree
-Date: Mon, 21 Feb 2011 12:19:44 +1100
-Message-ID: <20110221121944.57f2ecfb.sfr@canb.auug.org.au>
+Date: Sun, 20 Feb 2011 18:17:08 -0800
+Message-ID: <20110221021708.GA7096@ericsson.com>
+References: <20110221121944.57f2ecfb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55719 "EHLO smtps.tip.net.au"
+Received: from imr3.ericy.com ([198.24.6.13]:38120 "EHLO imr3.ericy.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755398Ab1BUBTs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 20 Feb 2011 20:19:48 -0500
+	id S1752100Ab1BUCRb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 20 Feb 2011 21:17:31 -0500
+Content-Disposition: inline
+In-Reply-To: <20110221121944.57f2ecfb.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Guenter Roeck <guenter.roeck@ericsson.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jean Delvare <khali@linux-fr.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jean Delvare <khali@linux-fr.org>
 
-Hi Guenter,
+On Sun, Feb 20, 2011 at 08:19:44PM -0500, Stephen Rothwell wrote:
+> Hi Guenter,
+> 
+> Today's linux-next merge of the hwmon-staging tree got a conflict in
+> drivers/hwmon/Makefile between commits
+> bb6cd76e2364b13de54314aeadd9f61b75335caa ("Let Kconfig handle lis3lv02d
+> dependencies") and d8f00f1b531b25ac96a39385617ff1718bc8474b ("Move
+> lis3lv02d drivers to drivers/misc") from the jdelvare-hwmon tree and
+> commit 2c37a4a61ef4efaa7a802e0757d783d9b54ad064 ("hwmon: Add support for
+> Lineage Compact Power Line PEM devices") from the hwmon-staging tree.
+> 
+> Just context changes.  I fixed it up (see below) and can carry the fix as
+> necessary.
 
-Today's linux-next merge of the hwmon-staging tree got a conflict in
-drivers/hwmon/Makefile between commits
-bb6cd76e2364b13de54314aeadd9f61b75335caa ("Let Kconfig handle lis3lv02d
-dependencies") and d8f00f1b531b25ac96a39385617ff1718bc8474b ("Move
-lis3lv02d drivers to drivers/misc") from the jdelvare-hwmon tree and
-commit 2c37a4a61ef4efaa7a802e0757d783d9b54ad064 ("hwmon: Add support for
-Lineage Compact Power Line PEM devices") from the hwmon-staging tree.
+Hi Stephen,
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+yes, it would be great if you can carry the fix if it doesn't make too much trouble.
+I don't see an easy way around it.
 
-diff --cc drivers/hwmon/Makefile
-index 753117c,4681981..0000000
---- a/drivers/hwmon/Makefile
-+++ b/drivers/hwmon/Makefile
-@@@ -62,6 -62,10 +62,7 @@@ obj-$(CONFIG_SENSORS_JC42)	+= jc42.
-  obj-$(CONFIG_SENSORS_JZ4740)	+= jz4740-hwmon.o
-  obj-$(CONFIG_SENSORS_K8TEMP)	+= k8temp.o
-  obj-$(CONFIG_SENSORS_K10TEMP)	+= k10temp.o
-+ obj-$(CONFIG_SENSORS_LINEAGE)	+= lineage-pem.o
- -obj-$(CONFIG_SENSORS_LIS3LV02D) += lis3lv02d.o hp_accel.o
- -obj-$(CONFIG_SENSORS_LIS3_SPI)	+= lis3lv02d.o lis3lv02d_spi.o
- -obj-$(CONFIG_SENSORS_LIS3_I2C)	+= lis3lv02d.o lis3lv02d_i2c.o
-  obj-$(CONFIG_SENSORS_LM63)	+= lm63.o
-  obj-$(CONFIG_SENSORS_LM70)	+= lm70.o
-  obj-$(CONFIG_SENSORS_LM73)	+= lm73.o
+Thanks,
+Guenter
