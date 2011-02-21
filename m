@@ -1,50 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the trivial tree with the
- jdelvare-hwmon tree
-Date: Mon, 21 Feb 2011 14:43:00 +1100
-Message-ID: <20110221144300.9509d241.sfr@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the i2c tree
+Date: Mon, 21 Feb 2011 15:35:22 +1100
+Message-ID: <20110221153522.8a0b29bf.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__21_Feb_2011_15_35_22_+1100_hbvJwkYQ88cKR+mx"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35293 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35687 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755671Ab1BUDnG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 20 Feb 2011 22:43:06 -0500
+	id S1755627Ab1BUEfd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 20 Feb 2011 23:35:33 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Harry Wei <jiaweiwei.xiyou@gmail.com>, Jean Delvare <khali@linux-fr.org>
+To: Jean Delvare <khali@linux-fr.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Jiri,
+--Signature=_Mon__21_Feb_2011_15_35_22_+1100_hbvJwkYQ88cKR+mx
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the trivial tree got a conflict in
-MAINTAINERS between commit d8f00f1b531b25ac96a39385617ff1718bc8474b
-("Move lis3lv02d drivers to drivers/misc") from the jdelvare-hwmon tree
-and commit a23ce6da9677d245aa0aadc99f4197030350ab54 ("MAINTAINERS: fix
-sorting") from the trivial tree.
+Hi Jean,
 
-I fixed it up (see below) and can carry the fix as necessary.
--- 
+After merging the tip tree, today's linux-next build (powerpc
+ppc64_defconfig) produced these warnings:
+
+drivers/i2c/i2c-core.c: In function 'i2c_do_add_adapter':
+drivers/i2c/i2c-core.c:799: warning: 'attach_adapter' is deprecated (declar=
+ed at include/linux/i2c.h:149)
+drivers/i2c/i2c-core.c:804: warning: 'attach_adapter' is deprecated (declar=
+ed at include/linux/i2c.h:149)
+drivers/i2c/i2c-core.c: In function 'i2c_do_del_adapter':
+drivers/i2c/i2c-core.c:985: warning: 'detach_adapter' is deprecated (declar=
+ed at include/linux/i2c.h:150)
+drivers/i2c/i2c-core.c:988: warning: 'detach_adapter' is deprecated (declar=
+ed at include/linux/i2c.h:150)
+
+Introduced by commit 95529c656b97b08c7a92504f98650a229f03ae04 ("i2c:
+Deprecate i2c_driver.attach_adapter and .detach_adapter").  We normally
+fix up as many uses of an interface as possible before deprecating it ...
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc MAINTAINERS
-index af304df,b6d6d51..0000000
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@@ -3887,6 -3881,12 +3888,12 @@@ L:	linux-security-module@vger.kernel.or
-  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/chrisw/lsm-2.6.git
-  S:	Supported
-  
-+ LIS3LV02D ACCELEROMETER DRIVER
-+ M:	Eric Piel <eric.piel@tremplin-utc.net>
-+ S:	Maintained
- -F:	Documentation/hwmon/lis3lv02d
- -F:	drivers/hwmon/lis3lv02d.*
-++F:	Documentation/misc-devices/lis3lv02d
-++F:	drivers/misc/lis3lv02d/
-+ 
-  LLC (802.2)
-  M:	Arnaldo Carvalho de Melo <acme@ghostprotocols.net>
-  S:	Maintained
+--Signature=_Mon__21_Feb_2011_15_35_22_+1100_hbvJwkYQ88cKR+mx
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNYeuKAAoJEDMEi1NhKgbswjsH/2PtI4ewaU8atDO/IRh3Gy5I
+fUFzkvbxKaVeP/NtlFlf60uUsiEifzmRogqFkncqVkbRBXd+Yot4A8CTkWdBFkwL
+AUZ9llOii0CSEskxAgAH6nP2Vo5+fCuZTDTbjEnTFUdj9L2bA73kKMcamTBEgYkG
+Q2OvEWppfiXNg3tuPjnWGfqTxNgBc22bjexmY3X3PA1F1NxE4Sj2LZ99imsxRyJZ
+/nLNeDGtPhn8Jn1+kKcU3iaIVtn9bftKC3evznbRv1ETnkI1UI38lKa8wIzCyvN1
+uXHQ6G8x0KHjkARwnyCTvsWZmKg8XcBLDbd0o1QBbxP1YHcjU/O2kZPPqBKLyA0=
+=A5zY
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__21_Feb_2011_15_35_22_+1100_hbvJwkYQ88cKR+mx--
