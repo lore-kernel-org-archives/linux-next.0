@@ -1,87 +1,75 @@
-From: Huang Ying <ying.huang@intel.com>
-Subject: Re: linux-next: build failure after merge of the final tree (kvm
- tree related)
-Date: Mon, 21 Feb 2011 16:10:27 +0800
-Message-ID: <1298275827.13816.3.camel@yhuang-dev>
-References: <20110221175658.2dc4d1ac.sfr@canb.auug.org.au>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: linux-next: manual merge of the omap_dss2 tree with the omap
+ tree
+Date: Mon, 21 Feb 2011 10:47:42 +0200
+Message-ID: <1298278062.4931.19.camel@deskari>
+References: <20110221141650.71b433b7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:36036 "EHLO mga09.intel.com"
+Received: from bear.ext.ti.com ([192.94.94.41]:48934 "EHLO bear.ext.ti.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752609Ab1BUIKa (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 21 Feb 2011 03:10:30 -0500
-In-Reply-To: <20110221175658.2dc4d1ac.sfr@canb.auug.org.au>
+	id S1750936Ab1BUIrw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 21 Feb 2011 03:47:52 -0500
+In-Reply-To: <20110221141650.71b433b7.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Avi Kivity <avi@qumranet.com>, Marcelo Tosatti <mtosatti@redhat.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Miller <davem@davemloft.net>, Andrew Morton <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Tony Lindgren <tony@atomide.com>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "Guruswamy, Senthilvadivu" <svadivu@ti.com>
 
-Hi, Stephen,
+Hi Stephen and Tony,
 
-On Mon, 2011-02-21 at 14:56 +0800, Stephen Rothwell wrote:
-> Hi all,
+On Sun, 2011-02-20 at 21:16 -0600, Stephen Rothwell wrote:
+> Hi Tomi,
 > 
-> After merging the final tree, today's linux-next build (sparc64 defconfig)
-> failed like this:
+> Today's linux-next merge of the omap_dss2 tree got a conflict in
+> arch/arm/mach-omap2/board-3430sdp.c between commits
+> e109f171e2f4128e867b3445c369c18830c73751 ("omap3sdp: Fix regulator
+> mapping for ads7846 TS controller") and
+> 6b272c098f64f0451d2b19bb911d65c6cd11cfc7 ("omap3sdp: clean regulator
+> supply mapping in board file") from the omap tree and various commits
+> from the omap_dss2 tree.
 > 
-> mm/memory.c: In function '__get_user_pages':
-> mm/memory.c:1584: error: 'EHWPOISON' undeclared (first use in this function)
+> So, I have no idea how to fix this up ... Can you guys come to some
+> argreement about who does what, please?  I have ended up with the merge
+> fix below, but I have no idea if it will even build, much less be
+> semantically correct, sorry.
 > 
-> Caused by commit b1c4f2836370f5c8207d4c61e91c93bd6a4ce27a ("mm: make
-> __get_user_pages return -EHWPOISON for HWPOISON page optionally") from
-> the kvm tree.
-> 
-> Not all architectures use include/asm-generic/errno.h ...
+> Do these trees get merged separately by Linus?  If not, then maybe I
+> should just be merging the one tree that combines all the omap work and
+> let you guys figure out the merge mess.
 
-Thanks for reminding.  Does the patch as follow fixes the issue?
+No, linux-omap tree is merged directly by Linus, and my display
+subsystem tree goes through Paul Mundt's fbdev tree.
 
-Best Regards,
-Huang Ying
+In theory the DSS tree should be just a driver, and there shouldn't be
+conflicts with any other tree. In practice it seems that there are quite
+often arch/arm/mach-omap2/ changes, which then conflict with linux-omap
+tree. And especially in this and the next merge windows, as there are
+lots of new OMAP4 code going in.
 
----
- arch/alpha/include/asm/errno.h  |    2 ++
- arch/mips/include/asm/errno.h   |    2 ++
- arch/parisc/include/asm/errno.h |    2 ++
- arch/sparc/include/asm/errno.h  |    2 ++
- 4 files changed, 8 insertions(+)
+It would be nice to get all arch omap changes through Tony's tree, and
+DSS changes through my tree. But more often than not the changes depend
+on each other, and applying just the other would break the kernel.
 
---- a/arch/parisc/include/asm/errno.h
-+++ b/arch/parisc/include/asm/errno.h
-@@ -122,4 +122,6 @@
- 
- #define	ERFKILL		256	/* Operation not possible due to RF-kill */
- 
-+#define EHWPOISON	257	/* Memory page has hardware error */
-+
- #endif
---- a/arch/sparc/include/asm/errno.h
-+++ b/arch/sparc/include/asm/errno.h
-@@ -112,4 +112,6 @@
- 
- #define	ERFKILL		134	/* Operation not possible due to RF-kill */
- 
-+#define EHWPOISON	135	/* Memory page has hardware error */
-+
- #endif
---- a/arch/alpha/include/asm/errno.h
-+++ b/arch/alpha/include/asm/errno.h
-@@ -122,4 +122,6 @@
- 
- #define	ERFKILL		138	/* Operation not possible due to RF-kill */
- 
-+#define EHWPOISON	139	/* Memory page has hardware error */
-+
- #endif
---- a/arch/mips/include/asm/errno.h
-+++ b/arch/mips/include/asm/errno.h
-@@ -121,6 +121,8 @@
- 
- #define	ERFKILL		167	/* Operation not possible due to RF-kill */
- 
-+#define EHWPOISON	168	/* Memory page has hardware error */
-+
- #define EDQUOT		1133	/* Quota exceeded */
- 
- #ifdef __KERNEL__
+I see the following options to fix this:
+
+1) DSS tree would go through Tony, not through Paul. I think Tony is not
+in favor of this.
+2) I would keep DSS tree based on top of some (semi-)stable branch from
+linux-omap (which?), and rebase/merge quite often to keep the tree
+conflict free. I would also need to wait until Tony's tree is merged
+into Linus' tree before sending a pull request for DSS tree.
+3) Remove DSS tree from linux-next to prevent this conflict mess. I
+would wait until Tony's tree is pulled, rebase/merge and fix the
+conflicts, and send a pull request.
+
+None of these is perfect, but perhaps the second one could be the best.
+We would still get the benefit of linux-next, without putting any more
+burden on Tony.
+
+Tony, do you have such a semi-stable branch I could use as a base? Or
+any other ideas?
+
+ Tomi
