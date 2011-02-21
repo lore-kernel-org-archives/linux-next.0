@@ -1,45 +1,49 @@
-From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH -next] wl12xx: fix sdio_test kconfig/build errors
-Date: Fri, 18 Feb 2011 17:25:36 -0800
-Message-ID: <20110218172536.970b5b39.randy.dunlap@oracle.com>
-References: <20110217162650.092e77c3.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the hwmon-staging tree with the
+ jdelvare-hwmon tree
+Date: Mon, 21 Feb 2011 12:19:44 +1100
+Message-ID: <20110221121944.57f2ecfb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20110217162650.092e77c3.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org
-Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Luciano Coelho <luciano.coelho-xNZwKgViW5gAvxtiuMwx3w@public.gmane.org>, Roger Quadros <roger.quadros-xNZwKgViW5gAvxtiuMwx3w@public.gmane.org>, akpm <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:55719 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755398Ab1BUBTs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 20 Feb 2011 20:19:48 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Guenter Roeck <guenter.roeck@ericsson.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jean Delvare <khali@linux-fr.org>
 
-From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Hi Guenter,
 
-The wl12xx sdio_test code uses wl12xx_get_platform_data, which is
-only present when WL12*_SDIO is enabled, so make WL12XX_SDIO_TEST
-depend on WL12XX_SDIO so that the needed interface will be present.
+Today's linux-next merge of the hwmon-staging tree got a conflict in
+drivers/hwmon/Makefile between commits
+bb6cd76e2364b13de54314aeadd9f61b75335caa ("Let Kconfig handle lis3lv02d
+dependencies") and d8f00f1b531b25ac96a39385617ff1718bc8474b ("Move
+lis3lv02d drivers to drivers/misc") from the jdelvare-hwmon tree and
+commit 2c37a4a61ef4efaa7a802e0757d783d9b54ad064 ("hwmon: Add support for
+Lineage Compact Power Line PEM devices") from the hwmon-staging tree.
 
-sdio_test.c:(.devinit.text+0x13178): undefined reference to `wl12xx_get_platform_data'
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Signed-off-by: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Luciano Coelho <luciano.coelho-xNZwKgViW5gAvxtiuMwx3w@public.gmane.org>
-Cc: Roger Quadros <roger.quadros-xNZwKgViW5gAvxtiuMwx3w@public.gmane.org>
----
- drivers/net/wireless/wl12xx/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- linux-next-20110217.orig/drivers/net/wireless/wl12xx/Kconfig
-+++ linux-next-20110217/drivers/net/wireless/wl12xx/Kconfig
-@@ -54,7 +54,7 @@ config WL12XX_SDIO
- 
- config WL12XX_SDIO_TEST
- 	tristate "TI wl12xx SDIO testing support"
--	depends on WL12XX && MMC
-+	depends on WL12XX && MMC && WL12XX_SDIO
- 	default n
- 	---help---
- 	  This module adds support for the SDIO bus testing with the
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --cc drivers/hwmon/Makefile
+index 753117c,4681981..0000000
+--- a/drivers/hwmon/Makefile
++++ b/drivers/hwmon/Makefile
+@@@ -62,6 -62,10 +62,7 @@@ obj-$(CONFIG_SENSORS_JC42)	+= jc42.
+  obj-$(CONFIG_SENSORS_JZ4740)	+= jz4740-hwmon.o
+  obj-$(CONFIG_SENSORS_K8TEMP)	+= k8temp.o
+  obj-$(CONFIG_SENSORS_K10TEMP)	+= k10temp.o
++ obj-$(CONFIG_SENSORS_LINEAGE)	+= lineage-pem.o
+ -obj-$(CONFIG_SENSORS_LIS3LV02D) += lis3lv02d.o hp_accel.o
+ -obj-$(CONFIG_SENSORS_LIS3_SPI)	+= lis3lv02d.o lis3lv02d_spi.o
+ -obj-$(CONFIG_SENSORS_LIS3_I2C)	+= lis3lv02d.o lis3lv02d_i2c.o
+  obj-$(CONFIG_SENSORS_LM63)	+= lm63.o
+  obj-$(CONFIG_SENSORS_LM70)	+= lm70.o
+  obj-$(CONFIG_SENSORS_LM73)	+= lm73.o
