@@ -1,83 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the driver-core tree
-Date: Mon, 21 Feb 2011 16:50:23 +1100
-Message-ID: <20110221165023.c3216b96.sfr@canb.auug.org.au>
-References: <20110221163727.0addb3ab.sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the driver-core tree
+Date: Mon, 21 Feb 2011 17:02:26 +1100
+Message-ID: <20110221170226.c43175f7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__21_Feb_2011_16_50_23_+1100__z7p7feV1xp9kDhe"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53386 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752698Ab1BUFub (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 21 Feb 2011 00:50:31 -0500
-In-Reply-To: <20110221163727.0addb3ab.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+ boundary="Signature=_Mon__21_Feb_2011_17_02_26_+1100_zuUUFtN+lJFISuP."
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Kim B. Heino" <Kim.Heino@bluegiga.com>, Alessandro Zummo <a.zummo@towertech.it>, Andrew Morton <akpm@linux-foundation.org>, Mark Jackson <mpfj@mimc.co.uk>, Dennis Aberilla <denzzzhome@yahoo.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>, Ilya Yanok <yanok@emcraft.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Mon__21_Feb_2011_16_50_23_+1100__z7p7feV1xp9kDhe
+--Signature=_Mon__21_Feb_2011_17_02_26_+1100_zuUUFtN+lJFISuP.
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-On Mon, 21 Feb 2011 16:37:27 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the driver-core tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
->=20
-> drivers/rtc/rtc-m41t94.c: In function 'm41t94_remove':
-> drivers/rtc/rtc-m41t94.c:139: warning: passing argument 1 of 'platform_ge=
-t_drvdata' from incompatible pointer type
-> include/linux/platform_device.h:133: note: expected 'const struct platfor=
-m_device *' but argument is of type 'struct spi_device *'
->=20
-> Revealed by commit 71d642908d4e8e7a2a4a6e0490432e719ff466d5 ("Driver
-> core: convert platform_{get,set}_drvdata to static inline functions").
-> The warning is in code introduced by commit
-> 8fc2c767b06067b417c565c4e75731e68ed41fd8 ("rtc: add support for ST M41T94
-> SPI RTC").
+After merging the driver-core tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-There are also:
+drivers/net/dnet.c: In function 'dnet_mii_init':
+drivers/net/dnet.c:340: warning: passing argument 1 of 'platform_set_drvdat=
+a' from incompatible pointer type
+include/linux/platform_device.h:138: note: expected 'struct platform_device=
+ *' but argument is of type 'struct net_device *'
 
-drivers/rtc/rtc-ds1390.c: In function 'ds1390_remove':
-drivers/rtc/rtc-ds1390.c:161: warning: passing argument 1 of 'platform_get_=
-drvdata' from incompatible pointer type
-
-Introduced in commit 06de18085122b873012cb23f043e2bdcf5f50923 ("rtc: add
-Dallas DS1390/93/94 RTC chips").
-
-drivers/rtc/rtc-ds3234.c: In function 'ds3234_remove':
-drivers/rtc/rtc-ds3234.c:161: warning: passing argument 1 of 'platform_get_=
-drvdata' from incompatible pointer type
-
-Introduced in commit 2f9b75e09ec3f62f2ebecec0ac9aec58656c2459 ("rtc: add
-device driver for Dallas DS3234 SPI RTC chip").
-
-
+Revealed by commit 71d642908d4e8e7a2a4a6e0490432e719ff466d5 ("Driver
+core: convert platform_{get,set}_drvdata to static inline functions").
+Introduced by commit 4796417417a62e2ae83d92cb92e1ecf9ec67b5f5 ("dnet:
+Dave DNET ethernet controller driver (updated)").
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__21_Feb_2011_16_50_23_+1100__z7p7feV1xp9kDhe
+--Signature=_Mon__21_Feb_2011_17_02_26_+1100_zuUUFtN+lJFISuP.
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNYf0fAAoJEDMEi1NhKgbsV+YH/Ru+WO6aDz2Wjk9BkzNH6lJZ
-spyk2aeQe5pOdM0MuLSM/le9aJBU5ZoN8ZhdoUXuv8z1RGXJ+N12PFs/zJp9TtkP
-i8IhLaKUa0iU2hMxiZqOL2DwaTEA0ZX0p9giQmpO+QTZU/cyjjChadF2E47sfKZf
-HpAqZK7HduuTme4b1yMuZ6g6/vvqEHAdJYXV0ZfUGXfIwuOnYGDqPXVd0YbjiPqU
-WAm4n2NQpfpu0BXLlFvzmUTgqZZN5otcx3ZDqtUNPRH6ucqooh8Sy3RP9GS50AIr
-Yr6tjQznbuR4ZKypX36GWdJ3XWnxwNjvk2scngxWH6olobFFYdXRS8uqCD4VwaI=
-=ci2O
+iQEcBAEBAgAGBQJNYf/yAAoJEDMEi1NhKgbszosH/3TrbJUsYqDikPQFxnk1FuAm
+AfB7gonSdoDfT0kF1Q0c0V3h3sRKiHA175kkV3Hq9olbjsqKgYLbfB6JHznV8iTL
+l/Nd4RXlTTHiUPu2q2x3cI/fNMPE20dAaipuBYHa72qH6rNZ3JFjyqlqToPG4/IX
+Vd5x5hWZ5nyuxZ0vV8ARz4kHpgNZv4cbaLRq3E/t2zqFKEGcrp5rtqkoxhHYP5Ow
++rPg7zLVPXB2r0xegwDvDr2v8VtPJ36h80bveUA1b9xNZh43oqufEZvt5djDlh27
+c4krt+iD9bJbEfsgnc943Q3yYlRD8OPbBqeWoNZxWH1mIJgvrYCSMRdbTmRoGR0=
+=ebad
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__21_Feb_2011_16_50_23_+1100__z7p7feV1xp9kDhe--
+--Signature=_Mon__21_Feb_2011_17_02_26_+1100_zuUUFtN+lJFISuP.--
