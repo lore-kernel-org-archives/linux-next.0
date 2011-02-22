@@ -1,56 +1,57 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] staging: fix olpc_dcon kconfig and build errors
-Date: Mon, 21 Feb 2011 14:39:08 -0800
-Message-ID: <20110221143908.96e03b3c.randy.dunlap@oracle.com>
-References: <20110221182134.09abd232.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the v9fs tree
+Date: Tue, 22 Feb 2011 11:53:40 +1100
+Message-ID: <20110222115340.da48b908.sfr@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__22_Feb_2011_11_53_40_+1100_h0LMVhcEvmnCOfwG"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:57034 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751840Ab1BVAxu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 21 Feb 2011 19:53:50 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Eric Van Hensbergen <ericvh@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Venkateswararao Jujjuri (JV)" <jvrao@linux.vnet.ibm.com>
+
+--Signature=_Tue__22_Feb_2011_11_53_40_+1100_h0LMVhcEvmnCOfwG
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110221182134.09abd232.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh <greg@kroah.com>, driverdevel <devel@driverdev.osuosl.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andres Salomon <dilinger@queued.net>, Chris Ball <cjb@laptop.org>, Jon Nettleton <jon.nettleton@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+Hi Eric,
 
-drivers/staging/olpc_dcon/olpc_dcon_xo_1_5.c:106: error: 'acpi_gbl_FADT' undeclared (first use in this function)
+After merging the v9fs tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Fixing that one gives:
+ERROR: "p9_payload_gup" [net/9p/9pnet_virtio.ko] undefined!
+ERROR: "p9_nr_pages" [net/9p/9pnet_virtio.ko] undefined!
+ERROR: "p9_release_req_pages" [net/9p/9pnet_virtio.ko] undefined!
 
-ERROR: "backlight_device_register" [drivers/staging/olpc_dcon/olpc-dcon.ko] undefined!
-ERROR: "registered_fb" [drivers/staging/olpc_dcon/olpc-dcon.ko] undefined!
-ERROR: "lock_fb_info" [drivers/staging/olpc_dcon/olpc-dcon.ko] undefined!
-ERROR: "backlight_device_unregister" [drivers/staging/olpc_dcon/olpc-dcon.ko] undefined!
-ERROR: "num_registered_fb" [drivers/staging/olpc_dcon/olpc-dcon.ko] undefined!
-ERROR: "fb_blank" [drivers/staging/olpc_dcon/olpc-dcon.ko] undefined!
+Caused by commit ac8c81621fe5176f1bb18730e5db2e347af08255 ("[net/9p] Add
+gup/zero_copy support to VirtIO transport layer").
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Greg Kroah-Hartman <greg@kroah.com>
-Cc: Andres Salomon <dilinger@queued.net>
-Cc: Chris Ball <cjb@laptop.org>
-Cc: Jon Nettleton <jon.nettleton@gmail.com>
----
- drivers/staging/olpc_dcon/Kconfig |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I have used the v9fs tree from next-20110221 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
---- linux-next-20110221.orig/drivers/staging/olpc_dcon/Kconfig
-+++ linux-next-20110221/drivers/staging/olpc_dcon/Kconfig
-@@ -1,6 +1,6 @@
- config FB_OLPC_DCON
- 	tristate "One Laptop Per Child Display CONtroller support"
--	depends on OLPC
-+	depends on OLPC && FB
- 	select I2C
- 	---help---
- 	  Add support for the OLPC XO DCON controller.  This controller is
-@@ -19,7 +19,7 @@ config FB_OLPC_DCON_1
- 
- config FB_OLPC_DCON_1_5
- 	bool "OLPC XO-1.5 DCON support"
--	depends on FB_OLPC_DCON
-+	depends on FB_OLPC_DCON && ACPI
- 	default y
- 	---help---
- 	  Enable support for the DCON in XO-1.5 model laptops.  The kernel
+--Signature=_Tue__22_Feb_2011_11_53_40_+1100_h0LMVhcEvmnCOfwG
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNYwkUAAoJEDMEi1NhKgbs21kIAJ1y8qTBmvoidCtMiBzF6mas
+kEHfz++WDRis9zfsWzlqEAOMPWDa6xdn9CzFhkGL65R7fT/QmT8dRndH84Y1UxHJ
+Ewsy0iNFBaQIHdAFRTKIIPxHH/2NcmRUdDiU/iBOZgC2cIPzld6zl7Qy4IJ2BXzU
+aKQ6BlCDnpKnLsv5whO71CKkIm2nDUHMBtxlEDBNqetyMiM7C3fY778oxzPhDvEW
+EoRR3pv/GbOvF7uyr7MX/lbPUqrmwZdnhDd3cFtj8U/B6kwmLQpTVJdC2gCSpmbT
+OHHQy9OwBOJcMLWx1GXx+iDB52tF4L536pxV8klmt3JS/YPYTMJywUT9Rty/U1U=
+=Ak3p
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__22_Feb_2011_11_53_40_+1100_h0LMVhcEvmnCOfwG--
