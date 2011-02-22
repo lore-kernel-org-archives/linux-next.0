@@ -1,47 +1,29 @@
-From: "Gustavo F. Padovan" <padovan@profusion.mobi>
-Subject: Re: [PATCH -next] bluetooth: fix build break
-Date: Tue, 22 Feb 2011 09:14:22 -0300
-Message-ID: <20110222121422.GA2249@joana>
-References: <1298358789-13202-1-git-send-email-gadiyar@ti.com>
+From: "Coelho, Luciano" <coelho-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH -next] wl12xx: fix sdio_test kconfig/build errors
+Date: Tue, 22 Feb 2011 14:32:40 +0200
+Message-ID: <AANLkTi=M77+wuEa1Dc-+vA_-caY9p1Ft_5s4aQ7CDSjQ@mail.gmail.com>
+References: <20110217162650.092e77c3.sfr@canb.auug.org.au>
+	<20110218172536.970b5b39.randy.dunlap@oracle.com>
+	<20110221202538.GK9650@tuxdriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-yx0-f174.google.com ([209.85.213.174]:46840 "EHLO
-	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754115Ab1BVMOK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Feb 2011 07:14:10 -0500
-Content-Disposition: inline
-In-Reply-To: <1298358789-13202-1-git-send-email-gadiyar@ti.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Anand Gadiyar <gadiyar@ti.com>
-Cc: linux-bluetooth@vger.kernel.org, linux-next@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20110221202538.GK9650-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>
+Cc: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Luciano Coelho <luciano.coelho-xNZwKgViW5gAvxtiuMwx3w@public.gmane.org>, Roger Quadros <roger.quadros-xNZwKgViW5gAvxtiuMwx3w@public.gmane.org>, akpm <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Anand,
+On Mon, Feb 21, 2011 at 10:25 PM, John W. Linville
+<linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org> wrote:
+> Luca, I'm merging this one...
 
-* Anand Gadiyar <gadiyar@ti.com> [2011-02-22 12:43:09 +0530]:
-
-> Linux-next as of 20110217 complains when building for OMAP1.
-> 
->   LD      vmlinux
-> `hci_sock_cleanup' referenced in section `.init.text' of net/built-in.o: defined in discarded section `.exit.text' of net/built-in.o
-> `hci_sock_cleanup' referenced in section `.init.text' of net/built-in.o: defined in discarded section `.exit.text' of net/built-in.o
-> make: *** [vmlinux] Error 1
-> 
-> A recent patch by Gustavo (Bluetooth: Merge L2CAP and SCO modules
-> into bluetooth.ko) introduced this by calling the hci_sock_cleanup
-> function in the error path of bt_init.
-> 
-> Fix this by dropping the __exit marking for hci_sock_cleanup.
-> 
-> Signed-off-by: Anand Gadiyar <gadiyar@ti.com>
-> Cc: Gustavo F. Padovan <padovan@profusion.mobi>
-> ---
->  net/bluetooth/hci_sock.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-I didn't catch on my system, applied. Thanks for fixing this.
+Thanks, John!
 
 -- 
-Gustavo F. Padovan
-http://profusion.mobi
+Cheers,
+Luca.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
