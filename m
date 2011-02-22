@@ -1,42 +1,76 @@
-From: Anand Gadiyar <gadiyar-l0cyMroinI0@public.gmane.org>
-Subject: [PATCH -next] bluetooth: fix build break
-Date: Tue, 22 Feb 2011 12:43:09 +0530
-Message-ID: <1298358789-13202-1-git-send-email-gadiyar@ti.com>
-Return-path: <linux-bluetooth-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-bluetooth-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-bluetooth-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Anand Gadiyar <gadiyar-l0cyMroinI0@public.gmane.org>, "Gustavo F. Padovan" <padovan-Y3ZbgMPKUGA34EUeqzHoZw@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (wireless
+ tree related)
+Date: Tue, 22 Feb 2011 18:15:19 +1100
+Message-ID: <20110222181519.7a020eb3.sfr@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:44345 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752246Ab1BVHPZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 22 Feb 2011 02:15:25 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, George <george0505@realtek.com>, Larry Finger <Larry.Finger@lwfinger.net>
 
-Linux-next as of 20110217 complains when building for OMAP1.
+Hi all,
 
-  LD      vmlinux
-`hci_sock_cleanup' referenced in section `.init.text' of net/built-in.o: defined in discarded section `.exit.text' of net/built-in.o
-`hci_sock_cleanup' referenced in section `.init.text' of net/built-in.o: defined in discarded section `.exit.text' of net/built-in.o
-make: *** [vmlinux] Error 1
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-A recent patch by Gustavo (Bluetooth: Merge L2CAP and SCO modules
-into bluetooth.ko) introduced this by calling the hci_sock_cleanup
-function in the error path of bt_init.
+drivers/net/wireless/rtlwifi/rtl8192cu/sw.c: In function 'rtl92cu_init_sw_vars':
+drivers/net/wireless/rtlwifi/rtl8192cu/sw.c:60: error: implicit declaration of function 'vmalloc'
+drivers/net/wireless/rtlwifi/rtl8192cu/sw.c:60: warning: assignment makes pointer from integer without a cast
+drivers/net/wireless/rtlwifi/rtl8192cu/sw.c: In function 'rtl92cu_deinit_sw_vars':
+drivers/net/wireless/rtlwifi/rtl8192cu/sw.c:74: error: implicit declaration of function 'vfree'
 
-Fix this by dropping the __exit marking for hci_sock_cleanup.
+Caused by commit 442888c706e90634c4cc3441751b43115a7d8506 ("rtlwifi:
+rtl8192cu: Add routines dm, fw, led and sw").  Missing an include of
+linux/vmalloc.h.  See Rule 1 in Documentation/SubmitChecklist.
 
-Signed-off-by: Anand Gadiyar <gadiyar-l0cyMroinI0@public.gmane.org>
-Cc: Gustavo F. Padovan <padovan-Y3ZbgMPKUGA34EUeqzHoZw@public.gmane.org>
+I added the following patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 22 Feb 2011 17:29:04 +1100
+Subject: [PATCH] rtlwifi: include vmalloc.h for needed routines
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- net/bluetooth/hci_sock.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/rtlwifi/rtl8192cu/sw.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-Index: linux-omap-usb/net/bluetooth/hci_sock.c
-===================================================================
---- linux-omap-usb.orig/net/bluetooth/hci_sock.c
-+++ linux-omap-usb/net/bluetooth/hci_sock.c
-@@ -861,7 +861,7 @@ error:
- 	return err;
- }
+diff --git a/drivers/net/wireless/rtlwifi/rtl8192cu/sw.c b/drivers/net/wireless/rtlwifi/rtl8192cu/sw.c
+index 4e937e0..c69861e 100644
+--- a/drivers/net/wireless/rtlwifi/rtl8192cu/sw.c
++++ b/drivers/net/wireless/rtlwifi/rtl8192cu/sw.c
+@@ -27,6 +27,8 @@
+  *
+  *****************************************************************************/
  
--void __exit hci_sock_cleanup(void)
-+void hci_sock_cleanup(void)
- {
- 	if (bt_sock_unregister(BTPROTO_HCI) < 0)
- 		BT_ERR("HCI socket unregistration failed");
++#include <linux/vmalloc.h>
++
+ #include "../wifi.h"
+ #include "../core.h"
+ #include "../usb.h"
+-- 
+1.7.4.1
+
+but then got:
+
+drivers/net/wireless/rtlwifi/rtl8192cu/built-in.o: In function `rtl92c_phy_sw_chnl':
+(.opd+0xf30): multiple definition of `rtl92c_phy_sw_chnl'
+drivers/net/wireless/rtlwifi/rtl8192ce/built-in.o:(.opd+0xb70): first defined here
+drivers/net/wireless/rtlwifi/rtl8192cu/built-in.o: In function `rtl92c_fill_h2c_cmd':
+(.opd+0x288): multiple definition of `rtl92c_fill_h2c_cmd'
+drivers/net/wireless/rtlwifi/rtl8192ce/built-in.o:(.opd+0x288): first defined here
+
+and lots more.
+
+So I have used the wireless tree from next-20110221 for today.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
