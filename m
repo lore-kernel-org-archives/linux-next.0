@@ -1,37 +1,37 @@
-From: Mattia Dongili <malattia@linux.it>
-Subject: Re: linux-next: build failure after merge of the drivers-x86 tree
-Date: Tue, 22 Feb 2011 15:26:53 +0900
-Message-ID: <a8c6f32c-ccb5-4f65-b537-8bd1c11f7336@email.android.com>
-References: <20110222162206.c3fb0636.sfr@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from static-220-247-10-204.b-man.svips.gol.ne.jp ([220.247.10.204]:49996
-	"EHLO smtp.kamineko.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750790Ab1BVGfP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Feb 2011 01:35:15 -0500
-In-Reply-To: <20110222162206.c3fb0636.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Matthew Garrett <mjg59@srcf.ucam.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Anand Gadiyar <gadiyar-l0cyMroinI0@public.gmane.org>
+Subject: [PATCH 2/2] i2c: i2c-omap: make dev_pm_ops a const struct
+Date: Tue, 22 Feb 2011 12:21:27 +0530
+Message-ID: <1298357487-10966-2-git-send-email-gadiyar@ti.com>
+References: <1298357487-10966-1-git-send-email-gadiyar@ti.com>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1298357487-10966-1-git-send-email-gadiyar-l0cyMroinI0@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Anand Gadiyar <gadiyar-l0cyMroinI0@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
+dev_pm_ops is normally a const struct. Update the structure
+in this driver accordingly.
 
+Signed-off-by: Anand Gadiyar <gadiyar-l0cyMroinI0@public.gmane.org>
+Cc: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+---
+Checkpatch complained about this when I generated the previous patch.
+So I thought I might as well fix it up.
 
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+ drivers/i2c/busses/i2c-omap.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->Hi Matthew,
->
->After merging the drivers-x86 tree, today's linux-next build (x86_64
->allmodconfig) failed like this:
-
-Apologies, I didn't test my code with
-DEBUG_LOCK_ALLOC=y.
-I'll send a fix in as soon as I get around a usable network
-connection.
-
--- 
-mattia
-:wq
+Index: linux-omap-usb/drivers/i2c/busses/i2c-omap.c
+===================================================================
+--- linux-omap-usb.orig/drivers/i2c/busses/i2c-omap.c
++++ linux-omap-usb/drivers/i2c/busses/i2c-omap.c
+@@ -1156,7 +1156,7 @@ static int omap_i2c_resume(struct device
+ 	return 0;
+ }
+ 
+-static struct dev_pm_ops omap_i2c_pm = {
++static const struct dev_pm_ops omap_i2c_pm = {
+ 	.suspend = omap_i2c_suspend,
+ 	.resume = omap_i2c_resume,
+ };
