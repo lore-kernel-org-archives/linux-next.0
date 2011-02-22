@@ -1,88 +1,55 @@
-From: "Venkateswararao Jujjuri (JV)" <jvrao@linux.vnet.ibm.com>
-Subject: Re: linux-next: build failure after merge of the v9fs tree
-Date: Tue, 22 Feb 2011 08:48:09 -0800
-Message-ID: <4D63E8C9.4060009@linux.vnet.ibm.com>
-References: <20110222115340.da48b908.sfr@canb.auug.org.au> <4D63479F.3060603@linux.vnet.ibm.com> <20110222163016.aac65a7a.sfr@canb.auug.org.au> <4D635618.3@linux.vnet.ibm.com> <AANLkTik1cmehfLENCYb8GYPLbM6PWUCzqtp74xD2YbVR@mail.gmail.com>
+From: Michal Marek <mmarek-AlSwsSmVLrQ@public.gmane.org>
+Subject: linux-next packages for openSUSE
+Date: Tue, 22 Feb 2011 18:36:42 +0100
+Message-ID: <4D63F42A.8010803@suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-2
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <AANLkTik1cmehfLENCYb8GYPLbM6PWUCzqtp74xD2YbVR@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Eric Van Hensbergen <ericvh@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <opensuse-kernel+bounces-2417-glsk-opensuse-kernel=m.gmane.org-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org>
+List-Post: <mailto:opensuse-kernel-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org>
+List-Help: <mailto:opensuse-kernel+help-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org>
+List-Subscribe: <mailto:opensuse-kernel+subscribe-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org>
+List-Unsubscribe: <mailto:opensuse-kernel+unsubscribe-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org>
+List-Owner: <mailto:opensuse-kernel+owner-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org>
+List-Archive: <http://lists.opensuse.org/opensuse-kernel/>
+To: opensuse-kernel <opensuse-kernel-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-next.vger.kernel.org
 
-On 2/22/2011 6:57 AM, Eric Van Hensbergen wrote:
-> JV - you should be able to check this just by building with allmod
-> config.  I'll accept a pull immediately if this is the fix.
+Hi,
 
-Yeah; it works fine with this patch.
+If you are using opensuse and want to contribute to kernel development
+by testing the linux-next tree, reporting bugs and verifying fixes, you
+now have a convenient way:
 
-Thanks,
-JV
+# zypper addrepo --refresh \
+ http://download.opensuse.org/repositories/Kernel:/linux-next/standard \
+ linux-next
+# zypper install --from linux-next kernel-vanilla
 
-> 
->         -eric
-> 
-> 
-> On Tue, Feb 22, 2011 at 12:22 AM, Venkateswararao Jujjuri (JV)
-> <jvrao@linux.vnet.ibm.com> wrote:
->> On 2/21/2011 9:30 PM, Stephen Rothwell wrote:
->>> Hi,
->>>
->>> On Mon, 21 Feb 2011 21:20:31 -0800 "Venkateswararao Jujjuri (JV)" <jvrao@linux.vnet.ibm.com> wrote:
->>>>
->>>> On 2/21/2011 4:53 PM, Stephen Rothwell wrote:
->>>>>
->>>>> After merging the v9fs tree, today's linux-next build (x86_64
->>>>> allmodconfig) failed like this:
->>>>>
->>>>> ERROR: "p9_payload_gup" [net/9p/9pnet_virtio.ko] undefined!
->>>>> ERROR: "p9_nr_pages" [net/9p/9pnet_virtio.ko] undefined!
->>>>> ERROR: "p9_release_req_pages" [net/9p/9pnet_virtio.ko] undefined!
->>>>
->>>> These functions are defined by commit 249951bf66816128a7698caa826425e299494c82
->>>> ([net/9p] Preparation and helper functions for zero copy)
->>>
->>> Yes, they are - but they are not exported to modules.
->>
->> Thanks; Can you please check if this patch fixes your issue?
->>
->> diff --git a/net/9p/trans_common.c b/net/9p/trans_common.c
->> index ca705f1..da7c2cd 100644
->> --- a/net/9p/trans_common.c
->> +++ b/net/9p/trans_common.c
->> @@ -13,6 +13,7 @@
->>  */
->>
->>  #include <linux/slab.h>
->> + #include <linux/module.h>
->>  #include <net/9p/9p.h>
->>  #include <net/9p/client.h>
->>  #include <linux/scatterlist.h>
->> @@ -32,6 +33,7 @@ p9_release_req_pages(struct trans_rpage_info *rpinfo)
->>                i++;
->>        }
->>  }
->> +EXPORT_SYMBOL(p9_release_req_pages);
->>
->>  /**
->>  * p9_nr_pages - Return number of pages needed to accomodate the payload.
->> @@ -45,6 +47,7 @@ p9_nr_pages(struct p9_req_t *req)
->>                        PAGE_SIZE - 1) >> PAGE_SHIFT;
->>        return end_page - start_page;
->>  }
->> +EXPORT_SYMBOL(p9_nr_pages);
->>
->>  /**
->>  * payload_gup - Translates user buffer into kernel pages and
->> @@ -91,3 +94,4 @@ p9_payload_gup(struct p9_req_t *req, size_t *pdata_off, int *p
->>        }
->>        return 0;
->>  }
->> +EXPORT_SYMBOL(p9_payload_gup);
->>
->>
->>
->>
+and then just do 'zypper install kernel-vanilla' (*) every day. The
+packages are updated daily by a script and fixed by me as necessary, so
+they might be lagging behind at times. The config is previous config +
+allmodconfig for new options, so some unwanted debug options can creep
+in occasionally. The build logs are here:
+
+https://build.opensuse.org/project/monitor?project=Kernel%3Alinux-next
+
+the configs are here:
+
+http://gitorious.org/opensuse/kernel-source/trees/linux-next/config
+
+Please report installation and config issues to
+opensuse-kernel-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org, everything else should go to the upstream
+mailing lists as usual.
+
+Happy testing.
+
+Oh, and there are also builds of latest Linus' tree and latest stable:
+http://download.opensuse.org/repositories/Kernel:/vanilla/standard/
+http://download.opensuse.org/repositories/Kernel:/stable/openSUSE_Factory/
+
+Michal
+
+(*) The name kernel-vanilla might be a bit confusing; in the suse build
+scripts it means "upstream kernel without suse patches", not necessarily
+Linus' kernel.
