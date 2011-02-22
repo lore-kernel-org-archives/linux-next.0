@@ -1,57 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the v9fs tree
-Date: Tue, 22 Feb 2011 11:53:40 +1100
-Message-ID: <20110222115340.da48b908.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the mfd tree
+Date: Tue, 22 Feb 2011 14:20:05 +1100
+Message-ID: <20110222142005.946468ee.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__22_Feb_2011_11_53_40_+1100_h0LMVhcEvmnCOfwG"
+ boundary="Signature=_Tue__22_Feb_2011_14_20_05_+1100_uFx4c+j_aWkvfbkf"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57034 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:50262 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751840Ab1BVAxu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 21 Feb 2011 19:53:50 -0500
+	id S1753025Ab1BVDUO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 21 Feb 2011 22:20:14 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Eric Van Hensbergen <ericvh@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Venkateswararao Jujjuri (JV)" <jvrao@linux.vnet.ibm.com>
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arun Murthy <arun.murthy@stericsson.com>
 
---Signature=_Tue__22_Feb_2011_11_53_40_+1100_h0LMVhcEvmnCOfwG
+--Signature=_Tue__22_Feb_2011_14_20_05_+1100_uFx4c+j_aWkvfbkf
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Eric,
+Hi Samuel,
 
-After merging the v9fs tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-ERROR: "p9_payload_gup" [net/9p/9pnet_virtio.ko] undefined!
-ERROR: "p9_nr_pages" [net/9p/9pnet_virtio.ko] undefined!
-ERROR: "p9_release_req_pages" [net/9p/9pnet_virtio.ko] undefined!
+drivers/mfd/ab8500-gpadc.c:20:36: error: linux/mfd/ab8500-gpadc.h: No such =
+file or directory
 
-Caused by commit ac8c81621fe5176f1bb18730e5db2e347af08255 ("[net/9p] Add
-gup/zero_copy support to VirtIO transport layer").
+Caused by commit 38a7f5349d3820b3603384733cd2f35913f923ea ("mfd: Add new
+ab8500 GPADC driver"). Looks like an include file was forgotten.
 
-I have used the v9fs tree from next-20110221 for today.
+I have used the mfd tree form next-20110221 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__22_Feb_2011_11_53_40_+1100_h0LMVhcEvmnCOfwG
+--Signature=_Tue__22_Feb_2011_14_20_05_+1100_uFx4c+j_aWkvfbkf
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNYwkUAAoJEDMEi1NhKgbs21kIAJ1y8qTBmvoidCtMiBzF6mas
-kEHfz++WDRis9zfsWzlqEAOMPWDa6xdn9CzFhkGL65R7fT/QmT8dRndH84Y1UxHJ
-Ewsy0iNFBaQIHdAFRTKIIPxHH/2NcmRUdDiU/iBOZgC2cIPzld6zl7Qy4IJ2BXzU
-aKQ6BlCDnpKnLsv5whO71CKkIm2nDUHMBtxlEDBNqetyMiM7C3fY778oxzPhDvEW
-EoRR3pv/GbOvF7uyr7MX/lbPUqrmwZdnhDd3cFtj8U/B6kwmLQpTVJdC2gCSpmbT
-OHHQy9OwBOJcMLWx1GXx+iDB52tF4L536pxV8klmt3JS/YPYTMJywUT9Rty/U1U=
-=Ak3p
+iQEcBAEBAgAGBQJNYytlAAoJEDMEi1NhKgbs39AH/04gZg0jezwfB+ONHdWS+ao4
+w+t3mkWqIh6VtFs+qHtvrUby7xmAketRhNgXuRxFQmSFvoWDnWHsK4qaEe+2O1Rz
+zRPqedZrsyjiGAFHnY0vVaZDG0MC0N3ED9m7VifH+pvYGSZOEuXc2kMw892nulBO
+lsHgPZkNBW8iZxe+d4etKNFab0W96kMACkmwCqTHdM/R90ze2gIRzuZ+7gCViT4F
+J4W2BntpPk3c5wocvnFwx3FGBb/OjG0PpVwspQkXCYC5aZqeGY+f03ENZyKnGTcG
+PGcuIWF8dR1SqUb3KqcbazOLH+QQKJIFY+tsQjXgTJralQ5eYnLOq5mC54DRMV8=
+=AnHX
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__22_Feb_2011_11_53_40_+1100_h0LMVhcEvmnCOfwG--
+--Signature=_Tue__22_Feb_2011_14_20_05_+1100_uFx4c+j_aWkvfbkf--
