@@ -1,60 +1,42 @@
-From: Anand Gadiyar <gadiyar@ti.com>
-Subject: [PATCH 1/2] i2c: i2c-omap: fix build break with CONFIG_SUSPEND=n
-Date: Tue, 22 Feb 2011 12:21:26 +0530
-Message-ID: <1298357487-10966-1-git-send-email-gadiyar@ti.com>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:34684 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752246Ab1BVGvn (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Feb 2011 01:51:43 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-i2c@vger.kernel.org, linux-next@vger.kernel.org
-Cc: Sourav Poddar <sourav.poddar@ti.com>, Anand Gadiyar <gadiyar@ti.com>, Ben Dooks <ben-linux@fluff.org>
+From: Anand Gadiyar <gadiyar-l0cyMroinI0@public.gmane.org>
+Subject: [PATCH -next] bluetooth: fix build break
+Date: Tue, 22 Feb 2011 12:43:09 +0530
+Message-ID: <1298358789-13202-1-git-send-email-gadiyar@ti.com>
+Return-path: <linux-bluetooth-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-bluetooth-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-bluetooth-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Anand Gadiyar <gadiyar-l0cyMroinI0@public.gmane.org>, "Gustavo F. Padovan" <padovan-Y3ZbgMPKUGA34EUeqzHoZw@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-From: Sourav Poddar <sourav.poddar@ti.com>
+Linux-next as of 20110217 complains when building for OMAP1.
 
-When CONFIG_SUSPEND=n, we get the following build break when
-building for OMAP targets. Fix this.
+  LD      vmlinux
+`hci_sock_cleanup' referenced in section `.init.text' of net/built-in.o: defined in discarded section `.exit.text' of net/built-in.o
+`hci_sock_cleanup' referenced in section `.init.text' of net/built-in.o: defined in discarded section `.exit.text' of net/built-in.o
+make: *** [vmlinux] Error 1
 
-  CC      drivers/i2c/busses/i2c-omap.o
-drivers/i2c/busses/i2c-omap.c:1173: error: lvalue required as unary '&' operand
-make[1]: *** [drivers/i2c/busses/i2c-omap.o] Error 1
-make: *** [drivers/i2c/busses/] Error 2
+A recent patch by Gustavo (Bluetooth: Merge L2CAP and SCO modules
+into bluetooth.ko) introduced this by calling the hci_sock_cleanup
+function in the error path of bt_init.
 
-Signed-off-by: Sourav Poddar <sourav.poddar@ti.com>
-Signed-off-by: Anand Gadiyar <gadiyar@ti.com>
-Cc: Ben Dooks <ben-linux@fluff.org>
---
-This is a fix for a trivial build error, seen with linux-next
-as of 20110217.
+Fix this by dropping the __exit marking for hci_sock_cleanup.
 
- drivers/i2c/busses/i2c-omap.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Signed-off-by: Anand Gadiyar <gadiyar-l0cyMroinI0@public.gmane.org>
+Cc: Gustavo F. Padovan <padovan-Y3ZbgMPKUGA34EUeqzHoZw@public.gmane.org>
+---
+ net/bluetooth/hci_sock.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Index: linux-omap-usb/drivers/i2c/busses/i2c-omap.c
+Index: linux-omap-usb/net/bluetooth/hci_sock.c
 ===================================================================
---- linux-omap-usb.orig/drivers/i2c/busses/i2c-omap.c
-+++ linux-omap-usb/drivers/i2c/busses/i2c-omap.c
-@@ -1156,10 +1156,11 @@ static int omap_i2c_resume(struct device
- 	return 0;
+--- linux-omap-usb.orig/net/bluetooth/hci_sock.c
++++ linux-omap-usb/net/bluetooth/hci_sock.c
+@@ -861,7 +861,7 @@ error:
+ 	return err;
  }
  
--static struct dev_pm_ops omap_i2c_pm_ops = {
-+static struct dev_pm_ops omap_i2c_pm = {
- 	.suspend = omap_i2c_suspend,
- 	.resume = omap_i2c_resume,
- };
-+#define omap_i2c_pm_ops (&omap_i2c_pm)
- #else
- #define omap_i2c_pm_ops NULL
- #endif
-@@ -1170,7 +1171,7 @@ static struct platform_driver omap_i2c_d
- 	.driver		= {
- 		.name	= "omap_i2c",
- 		.owner	= THIS_MODULE,
--		.pm     = &omap_i2c_pm_ops,
-+		.pm     = omap_i2c_pm_ops,
- 	},
- };
- 
+-void __exit hci_sock_cleanup(void)
++void hci_sock_cleanup(void)
+ {
+ 	if (bt_sock_unregister(BTPROTO_HCI) < 0)
+ 		BT_ERR("HCI socket unregistration failed");
