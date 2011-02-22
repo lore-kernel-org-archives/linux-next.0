@@ -1,66 +1,85 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the v9fs tree
-Date: Tue, 22 Feb 2011 16:30:16 +1100
-Message-ID: <20110222163016.aac65a7a.sfr@canb.auug.org.au>
-References: <20110222115340.da48b908.sfr@canb.auug.org.au>
-	<4D63479F.3060603@linux.vnet.ibm.com>
+Subject: Re: linux-next: build warnings after merge of the i2c tree
+Date: Tue, 22 Feb 2011 17:17:20 +1100
+Message-ID: <20110222171720.59019382.sfr@canb.auug.org.au>
+References: <20110221153522.8a0b29bf.sfr@canb.auug.org.au>
+	<20110221105858.197cbf1d@endymion.delvare>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Tue__22_Feb_2011_16_30_16_+1100_u4pApsgCM/RGPsrE"
+ boundary="Signature=_Tue__22_Feb_2011_17_17_20_+1100__c.eOzT1h_orepO_"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:41855 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:45615 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751316Ab1BVFaX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 22 Feb 2011 00:30:23 -0500
-In-Reply-To: <4D63479F.3060603@linux.vnet.ibm.com>
+	id S1751052Ab1BVGR3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 22 Feb 2011 01:17:29 -0500
+In-Reply-To: <20110221105858.197cbf1d@endymion.delvare>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Venkateswararao Jujjuri (JV)" <jvrao@linux.vnet.ibm.com>
-Cc: Eric Van Hensbergen <ericvh@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jean Delvare <khali@linux-fr.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Tue__22_Feb_2011_16_30_16_+1100_u4pApsgCM/RGPsrE
+--Signature=_Tue__22_Feb_2011_17_17_20_+1100__c.eOzT1h_orepO_
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Jean,
 
-On Mon, 21 Feb 2011 21:20:31 -0800 "Venkateswararao Jujjuri (JV)" <jvrao@li=
-nux.vnet.ibm.com> wrote:
+On Mon, 21 Feb 2011 10:58:58 +0100 Jean Delvare <khali@linux-fr.org> wrote:
 >
-> On 2/21/2011 4:53 PM, Stephen Rothwell wrote:
+> On Mon, 21 Feb 2011 15:35:22 +1100, Stephen Rothwell wrote:
+> > Hi Jean,
 > >=20
-> > After merging the v9fs tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
+> > After merging the tip tree, today's linux-next build (powerpc
+> > ppc64_defconfig) produced these warnings:
 > >=20
-> > ERROR: "p9_payload_gup" [net/9p/9pnet_virtio.ko] undefined!
-> > ERROR: "p9_nr_pages" [net/9p/9pnet_virtio.ko] undefined!
-> > ERROR: "p9_release_req_pages" [net/9p/9pnet_virtio.ko] undefined!
+> > drivers/i2c/i2c-core.c: In function 'i2c_do_add_adapter':
+> > drivers/i2c/i2c-core.c:799: warning: 'attach_adapter' is deprecated (de=
+clared at include/linux/i2c.h:149)
+> > drivers/i2c/i2c-core.c:804: warning: 'attach_adapter' is deprecated (de=
+clared at include/linux/i2c.h:149)
+> > drivers/i2c/i2c-core.c: In function 'i2c_do_del_adapter':
+> > drivers/i2c/i2c-core.c:985: warning: 'detach_adapter' is deprecated (de=
+clared at include/linux/i2c.h:150)
+> > drivers/i2c/i2c-core.c:988: warning: 'detach_adapter' is deprecated (de=
+clared at include/linux/i2c.h:150)
+> >=20
+> > Introduced by commit 95529c656b97b08c7a92504f98650a229f03ae04 ("i2c:
+> > Deprecate i2c_driver.attach_adapter and .detach_adapter").  We normally
+> > fix up as many uses of an interface as possible before deprecating it .=
+..
 >=20
-> These functions are defined by commit 249951bf66816128a7698caa826425e2994=
-94c82
-> ([net/9p] Preparation and helper functions for zero copy)
+> These are the core locations where the deprecated callbacks are called.
+> Ideally they would _not_ emit warnings, are these are legitimate and
+> can't be removed before all drivers relying on these callbacks have
+> been fixed. If there is a way to silent these warnings, please let me
+> know, as I don't know of any.
 
-Yes, they are - but they are not exported to modules.
+You could build just that file with -Wno-deprecated-declarations, or put
+the deprecated stuff into another file that is built with that flag.
+We did the latter with pci_find_device (see commit e8b553bf4b19c "PCI:
+disable pci_find_device warnings when deprecated pci functions are
+enabled").
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Tue__22_Feb_2011_16_30_16_+1100_u4pApsgCM/RGPsrE
+--Signature=_Tue__22_Feb_2011_17_17_20_+1100__c.eOzT1h_orepO_
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNY0noAAoJEDMEi1NhKgbsvCgH/2CkVR+842yOk2nlgDw92+8g
-oGX5uSdOBKXzt0yy31FT1UN0PorMbOt5A+aLq1OaVS7caVfxyn5OSfr5ngPLyqYK
-ZH9zPEevU411JNy+QcLjXsTXSmwW8u3vewc4v6y8c48rgUdM16YIFdaUeoTPWImv
-MeAK38lC0dMmcpFn6u74RJS+L+0AzW4pSh0bIBW1w0Qj1QHcG/RO1O5r+g5TTolu
-n6zvHpF0GHxGOUhxZvOoygG/1RVBO4ni5OGtDpnmb01Fimfr5TFuMrLWTBAkbIDO
-SB2n8O63JoInnMJUKVLSi/2sFUndW44CIbmmdzYoCLA3kl2VVun2E31CMKfrgJc=
-=kjZC
+iQEcBAEBAgAGBQJNY1TwAAoJEDMEi1NhKgbssBcH/ikDtTGsGtcnY26ln33A+dIY
+jzgNzsPqWniy5CgG7gauR+/SwoTYxxr8tZvStRdRZxcJdSu/Dpbx3H+tUIbG3I6n
+8yJLM52D1+VAOndmjuci3jQPhNV+3MXQJRzYR6lqC12Af0WlfvHS4X50nAQd5QyP
+hhy7S5jo2sAE7vEqBTvNvfridjnBxgzI5GDdBAfiHKAL0vkNba8Gf9T/bkv6pNs9
++rGg6VVLwH7BRWlX/TDhw3WFhIoq22YV21SrRLpOh9cwzNxItei+I6eZ0syiqN9I
+fZLPujm7eZc3/1G+y6yNeMJTfLnN0TVG4qIemtoEYCYMgI5ablfhWXYVGBqhqjU=
+=OdbM
 -----END PGP SIGNATURE-----
 
---Signature=_Tue__22_Feb_2011_16_30_16_+1100_u4pApsgCM/RGPsrE--
+--Signature=_Tue__22_Feb_2011_17_17_20_+1100__c.eOzT1h_orepO_--
