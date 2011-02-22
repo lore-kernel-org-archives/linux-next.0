@@ -1,30 +1,90 @@
-From: Matthew Garrett <mjg59@srcf.ucam.org>
-Subject: Re: linux-next: build failure after merge of the drivers-x86 tree
-Date: Tue, 22 Feb 2011 14:34:34 +0000
-Message-ID: <20110222143434.GA9720@srcf.ucam.org>
-References: <20110222162206.c3fb0636.sfr@canb.auug.org.au> <a8c6f32c-ccb5-4f65-b537-8bd1c11f7336@email.android.com> <20110222114601.GA936@kamineko.org>
+From: Eric Van Hensbergen <ericvh@gmail.com>
+Subject: Re: linux-next: build failure after merge of the v9fs tree
+Date: Tue, 22 Feb 2011 08:57:26 -0600
+Message-ID: <AANLkTik1cmehfLENCYb8GYPLbM6PWUCzqtp74xD2YbVR@mail.gmail.com>
+References: <20110222115340.da48b908.sfr@canb.auug.org.au>
+	<4D63479F.3060603@linux.vnet.ibm.com>
+	<20110222163016.aac65a7a.sfr@canb.auug.org.au>
+	<4D635618.3@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cavan.codon.org.uk ([93.93.128.6]:60565 "EHLO
-	cavan.codon.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753266Ab1BVOen (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Feb 2011 09:34:43 -0500
-Content-Disposition: inline
-In-Reply-To: <20110222114601.GA936@kamineko.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mattia Dongili <malattia@linux.it>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, platform-driver-x86 <platform-driver-x86@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4D635618.3@linux.vnet.ibm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Venkateswararao Jujjuri (JV)" <jvrao@linux.vnet.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Feb 22, 2011 at 08:46:01PM +0900, Mattia Dongili wrote:
+JV - you should be able to check this just by building with allmod
+config.  I'll accept a pull immediately if this is the fix.
 
-> how does linux-next work? should this patch be a separate commit or can
-> it be folded into the offending one?
+        -eric
 
-I'll fold it into the offending one and repush. Sorry about the 
-breakage, Stephen - I don't have DEBUG_ALLOC enabled so didn't see the 
-failure. Do you build with a defined configuration I can test against?
 
--- 
-Matthew Garrett | mjg59@srcf.ucam.org
+On Tue, Feb 22, 2011 at 12:22 AM, Venkateswararao Jujjuri (JV)
+<jvrao@linux.vnet.ibm.com> wrote:
+> On 2/21/2011 9:30 PM, Stephen Rothwell wrote:
+>> Hi,
+>>
+>> On Mon, 21 Feb 2011 21:20:31 -0800 "Venkateswararao Jujjuri (JV)" <j=
+vrao@linux.vnet.ibm.com> wrote:
+>>>
+>>> On 2/21/2011 4:53 PM, Stephen Rothwell wrote:
+>>>>
+>>>> After merging the v9fs tree, today's linux-next build (x86_64
+>>>> allmodconfig) failed like this:
+>>>>
+>>>> ERROR: "p9_payload_gup" [net/9p/9pnet_virtio.ko] undefined!
+>>>> ERROR: "p9_nr_pages" [net/9p/9pnet_virtio.ko] undefined!
+>>>> ERROR: "p9_release_req_pages" [net/9p/9pnet_virtio.ko] undefined!
+>>>
+>>> These functions are defined by commit 249951bf66816128a7698caa82642=
+5e299494c82
+>>> ([net/9p] Preparation and helper functions for zero copy)
+>>
+>> Yes, they are - but they are not exported to modules.
+>
+> Thanks; Can you please check if this patch fixes your issue?
+>
+> diff --git a/net/9p/trans_common.c b/net/9p/trans_common.c
+> index ca705f1..da7c2cd 100644
+> --- a/net/9p/trans_common.c
+> +++ b/net/9p/trans_common.c
+> @@ -13,6 +13,7 @@
+> =A0*/
+>
+> =A0#include <linux/slab.h>
+> + #include <linux/module.h>
+> =A0#include <net/9p/9p.h>
+> =A0#include <net/9p/client.h>
+> =A0#include <linux/scatterlist.h>
+> @@ -32,6 +33,7 @@ p9_release_req_pages(struct trans_rpage_info *rpinf=
+o)
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0i++;
+> =A0 =A0 =A0 =A0}
+> =A0}
+> +EXPORT_SYMBOL(p9_release_req_pages);
+>
+> =A0/**
+> =A0* p9_nr_pages - Return number of pages needed to accomodate the pa=
+yload.
+> @@ -45,6 +47,7 @@ p9_nr_pages(struct p9_req_t *req)
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0PAGE_SIZE - 1) >> PAGE=
+_SHIFT;
+> =A0 =A0 =A0 =A0return end_page - start_page;
+> =A0}
+> +EXPORT_SYMBOL(p9_nr_pages);
+>
+> =A0/**
+> =A0* payload_gup - Translates user buffer into kernel pages and
+> @@ -91,3 +94,4 @@ p9_payload_gup(struct p9_req_t *req, size_t *pdata_=
+off, int *p
+> =A0 =A0 =A0 =A0}
+> =A0 =A0 =A0 =A0return 0;
+> =A0}
+> +EXPORT_SYMBOL(p9_payload_gup);
+>
+>
+>
+>
