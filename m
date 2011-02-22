@@ -1,73 +1,37 @@
-From: "Venkateswararao Jujjuri (JV)" <jvrao@linux.vnet.ibm.com>
-Subject: Re: linux-next: build failure after merge of the v9fs tree
-Date: Mon, 21 Feb 2011 22:22:16 -0800
-Message-ID: <4D635618.3@linux.vnet.ibm.com>
-References: <20110222115340.da48b908.sfr@canb.auug.org.au> <4D63479F.3060603@linux.vnet.ibm.com> <20110222163016.aac65a7a.sfr@canb.auug.org.au>
+From: Mattia Dongili <malattia@linux.it>
+Subject: Re: linux-next: build failure after merge of the drivers-x86 tree
+Date: Tue, 22 Feb 2011 15:26:53 +0900
+Message-ID: <a8c6f32c-ccb5-4f65-b537-8bd1c11f7336@email.android.com>
+References: <20110222162206.c3fb0636.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e7.ny.us.ibm.com ([32.97.182.137]:41337 "EHLO e7.ny.us.ibm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750728Ab1BVGWr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 22 Feb 2011 01:22:47 -0500
-In-Reply-To: <20110222163016.aac65a7a.sfr@canb.auug.org.au>
+Received: from static-220-247-10-204.b-man.svips.gol.ne.jp ([220.247.10.204]:49996
+	"EHLO smtp.kamineko.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750790Ab1BVGfP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Feb 2011 01:35:15 -0500
+In-Reply-To: <20110222162206.c3fb0636.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Eric Van Hensbergen <ericvh@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Matthew Garrett <mjg59@srcf.ucam.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 2/21/2011 9:30 PM, Stephen Rothwell wrote:
-> Hi,
-> 
-> On Mon, 21 Feb 2011 21:20:31 -0800 "Venkateswararao Jujjuri (JV)" <jvrao@linux.vnet.ibm.com> wrote:
->>
->> On 2/21/2011 4:53 PM, Stephen Rothwell wrote:
->>>
->>> After merging the v9fs tree, today's linux-next build (x86_64
->>> allmodconfig) failed like this:
->>>
->>> ERROR: "p9_payload_gup" [net/9p/9pnet_virtio.ko] undefined!
->>> ERROR: "p9_nr_pages" [net/9p/9pnet_virtio.ko] undefined!
->>> ERROR: "p9_release_req_pages" [net/9p/9pnet_virtio.ko] undefined!
->>
->> These functions are defined by commit 249951bf66816128a7698caa826425e299494c82
->> ([net/9p] Preparation and helper functions for zero copy)
-> 
-> Yes, they are - but they are not exported to modules.
 
-Thanks; Can you please check if this patch fixes your issue?
 
-diff --git a/net/9p/trans_common.c b/net/9p/trans_common.c
-index ca705f1..da7c2cd 100644
---- a/net/9p/trans_common.c
-+++ b/net/9p/trans_common.c
-@@ -13,6 +13,7 @@
-  */
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
- #include <linux/slab.h>
-+ #include <linux/module.h>
- #include <net/9p/9p.h>
- #include <net/9p/client.h>
- #include <linux/scatterlist.h>
-@@ -32,6 +33,7 @@ p9_release_req_pages(struct trans_rpage_info *rpinfo)
-                i++;
-        }
- }
-+EXPORT_SYMBOL(p9_release_req_pages);
+>Hi Matthew,
+>
+>After merging the drivers-x86 tree, today's linux-next build (x86_64
+>allmodconfig) failed like this:
 
- /**
-  * p9_nr_pages - Return number of pages needed to accomodate the payload.
-@@ -45,6 +47,7 @@ p9_nr_pages(struct p9_req_t *req)
-                        PAGE_SIZE - 1) >> PAGE_SHIFT;
-        return end_page - start_page;
- }
-+EXPORT_SYMBOL(p9_nr_pages);
+Apologies, I didn't test my code with
+DEBUG_LOCK_ALLOC=y.
+I'll send a fix in as soon as I get around a usable network
+connection.
 
- /**
-  * payload_gup - Translates user buffer into kernel pages and
-@@ -91,3 +94,4 @@ p9_payload_gup(struct p9_req_t *req, size_t *pdata_off, int *p
-        }
-        return 0;
- }
-+EXPORT_SYMBOL(p9_payload_gup);
+-- 
+mattia
+:wq
