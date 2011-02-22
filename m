@@ -1,90 +1,67 @@
-From: Eric Van Hensbergen <ericvh@gmail.com>
-Subject: Re: linux-next: build failure after merge of the v9fs tree
-Date: Tue, 22 Feb 2011 08:57:26 -0600
-Message-ID: <AANLkTik1cmehfLENCYb8GYPLbM6PWUCzqtp74xD2YbVR@mail.gmail.com>
-References: <20110222115340.da48b908.sfr@canb.auug.org.au>
-	<4D63479F.3060603@linux.vnet.ibm.com>
-	<20110222163016.aac65a7a.sfr@canb.auug.org.au>
-	<4D635618.3@linux.vnet.ibm.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Subject: Re: linux-next: build failure after merge of the final tree (wireless
+ tree related)
+Date: Tue, 22 Feb 2011 09:45:01 -0600
+Message-ID: <4D63D9FD.1080101@lwfinger.net>
+References: <20110222181519.7a020eb3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4D635618.3@linux.vnet.ibm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Venkateswararao Jujjuri (JV)" <jvrao@linux.vnet.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-qw0-f46.google.com ([209.85.216.46]:58802 "EHLO
+	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754314Ab1BVPpG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Feb 2011 10:45:06 -0500
+In-Reply-To: <20110222181519.7a020eb3.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "John W. Linville" <linville@tuxdriver.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, George <george0505@realtek.com>
 
-JV - you should be able to check this just by building with allmod
-config.  I'll accept a pull immediately if this is the fix.
+On 02/22/2011 01:15 AM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> drivers/net/wireless/rtlwifi/rtl8192cu/sw.c: In function 'rtl92cu_init_sw_vars':
+> drivers/net/wireless/rtlwifi/rtl8192cu/sw.c:60: error: implicit declaration of function 'vmalloc'
+> drivers/net/wireless/rtlwifi/rtl8192cu/sw.c:60: warning: assignment makes pointer from integer without a cast
+> drivers/net/wireless/rtlwifi/rtl8192cu/sw.c: In function 'rtl92cu_deinit_sw_vars':
+> drivers/net/wireless/rtlwifi/rtl8192cu/sw.c:74: error: implicit declaration of function 'vfree'
+> 
+> Caused by commit 442888c706e90634c4cc3441751b43115a7d8506 ("rtlwifi:
+> rtl8192cu: Add routines dm, fw, led and sw").  Missing an include of
+> linux/vmalloc.h.  See Rule 1 in Documentation/SubmitChecklist.
+> 
+> I added the following patch:
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 22 Feb 2011 17:29:04 +1100
+> Subject: [PATCH] rtlwifi: include vmalloc.h for needed routines
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/net/wireless/rtlwifi/rtl8192cu/sw.c |    2 ++
+>  1 files changed, 2 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/net/wireless/rtlwifi/rtl8192cu/sw.c b/drivers/net/wireless/rtlwifi/rtl8192cu/sw.c
+> index 4e937e0..c69861e 100644
+> --- a/drivers/net/wireless/rtlwifi/rtl8192cu/sw.c
+> +++ b/drivers/net/wireless/rtlwifi/rtl8192cu/sw.c
+> @@ -27,6 +27,8 @@
+>   *
+>   *****************************************************************************/
+>  
+> +#include <linux/vmalloc.h>
+> +
+>  #include "../wifi.h"
+>  #include "../core.h"
+>  #include "../usb.h"
 
-        -eric
+I had gotten private mail yesterday about the missing vmalloc.h include.
 
+It will take me a while to set up an allyes configuration to find the other
+problems.
 
-On Tue, Feb 22, 2011 at 12:22 AM, Venkateswararao Jujjuri (JV)
-<jvrao@linux.vnet.ibm.com> wrote:
-> On 2/21/2011 9:30 PM, Stephen Rothwell wrote:
->> Hi,
->>
->> On Mon, 21 Feb 2011 21:20:31 -0800 "Venkateswararao Jujjuri (JV)" <j=
-vrao@linux.vnet.ibm.com> wrote:
->>>
->>> On 2/21/2011 4:53 PM, Stephen Rothwell wrote:
->>>>
->>>> After merging the v9fs tree, today's linux-next build (x86_64
->>>> allmodconfig) failed like this:
->>>>
->>>> ERROR: "p9_payload_gup" [net/9p/9pnet_virtio.ko] undefined!
->>>> ERROR: "p9_nr_pages" [net/9p/9pnet_virtio.ko] undefined!
->>>> ERROR: "p9_release_req_pages" [net/9p/9pnet_virtio.ko] undefined!
->>>
->>> These functions are defined by commit 249951bf66816128a7698caa82642=
-5e299494c82
->>> ([net/9p] Preparation and helper functions for zero copy)
->>
->> Yes, they are - but they are not exported to modules.
->
-> Thanks; Can you please check if this patch fixes your issue?
->
-> diff --git a/net/9p/trans_common.c b/net/9p/trans_common.c
-> index ca705f1..da7c2cd 100644
-> --- a/net/9p/trans_common.c
-> +++ b/net/9p/trans_common.c
-> @@ -13,6 +13,7 @@
-> =A0*/
->
-> =A0#include <linux/slab.h>
-> + #include <linux/module.h>
-> =A0#include <net/9p/9p.h>
-> =A0#include <net/9p/client.h>
-> =A0#include <linux/scatterlist.h>
-> @@ -32,6 +33,7 @@ p9_release_req_pages(struct trans_rpage_info *rpinf=
-o)
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0i++;
-> =A0 =A0 =A0 =A0}
-> =A0}
-> +EXPORT_SYMBOL(p9_release_req_pages);
->
-> =A0/**
-> =A0* p9_nr_pages - Return number of pages needed to accomodate the pa=
-yload.
-> @@ -45,6 +47,7 @@ p9_nr_pages(struct p9_req_t *req)
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0PAGE_SIZE - 1) >> PAGE=
-_SHIFT;
-> =A0 =A0 =A0 =A0return end_page - start_page;
-> =A0}
-> +EXPORT_SYMBOL(p9_nr_pages);
->
-> =A0/**
-> =A0* payload_gup - Translates user buffer into kernel pages and
-> @@ -91,3 +94,4 @@ p9_payload_gup(struct p9_req_t *req, size_t *pdata_=
-off, int *p
-> =A0 =A0 =A0 =A0}
-> =A0 =A0 =A0 =A0return 0;
-> =A0}
-> +EXPORT_SYMBOL(p9_payload_gup);
->
->
->
->
+Larry
