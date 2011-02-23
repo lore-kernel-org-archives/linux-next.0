@@ -1,56 +1,36 @@
-From: Corentin Chary <corentin.chary@gmail.com>
-Subject: Re: [PATCH -next] eeepc-wmi: kconfig changes to fix build errors
-Date: Wed, 23 Feb 2011 08:01:12 +0100
-Message-ID: <AANLkTinb4f5QLRQ8kfiSkjdx9YzZpdYk-=YD9Qmejz+g@mail.gmail.com>
-References: <20110222183437.ec2807bf.sfr@canb.auug.org.au>
-	<20110222134735.0bfbec8b.randy.dunlap@oracle.com>
+From: Wim Van Sebroeck <wim@iguana.be>
+Subject: Re: linux-next: manual merge of the watchdog tree with the sh tree
+Date: Wed, 23 Feb 2011 08:42:55 +0100
+Message-ID: <20110223074255.GL3790@infomag.iguana.be>
+References: <20110223143446.8646373f.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ew0-f46.google.com ([209.85.215.46]:36153 "EHLO
-	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750795Ab1BWHBO convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Feb 2011 02:01:14 -0500
-In-Reply-To: <20110222134735.0bfbec8b.randy.dunlap@oracle.com>
+Received: from mailrelay009.isp.belgacom.be ([195.238.6.176]:27012 "EHLO
+	mailrelay009.isp.belgacom.be" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752297Ab1BWHm6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 23 Feb 2011 02:42:58 -0500
+Content-Disposition: inline
+In-Reply-To: <20110223143446.8646373f.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Matthew Garrett <mjg@redhat.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mundt <lethal@linux-sh.org>
 
-On Tue, Feb 22, 2011 at 10:47 PM, Randy Dunlap <randy.dunlap@oracle.com=
-> wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
->
-> Fix eeepc-wmi build when CONFIG_HOTPLUG_PCI is not enabled:
->
-> eeepc-wmi.c:(.text+0x3bc5e9): undefined reference to `pci_hp_deregist=
-er'
-> eeepc-wmi.c:(.text+0x3bcca4): undefined reference to `__pci_hp_regist=
-er'
->
-> Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-> ---
-> =C2=A0drivers/platform/x86/Kconfig | =C2=A0 =C2=A01 +
-> =C2=A01 file changed, 1 insertion(+)
->
-> --- linux-next-20110222.orig/drivers/platform/x86/Kconfig
-> +++ linux-next-20110222/drivers/platform/x86/Kconfig
-> @@ -447,6 +447,7 @@ config EEEPC_WMI
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0depends on EXPERIMENTAL
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0depends on BACKLIGHT_CLASS_DEVICE
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0depends on RFKILL || RFKILL =3D n
-> + =C2=A0 =C2=A0 =C2=A0 depends on HOTPLUG_PCI
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0select INPUT_SPARSEKMAP
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0select LEDS_CLASS
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0select NEW_LEDS
->
+Hi Stephen,
 
-Sorry for that...
+> Today's linux-next merge of the watchdog tree got a conflict in
+> drivers/watchdog/shwdt.c between commits b1fa888e0124 ("watchdog: shwdt:
+> Kill off mmap stub and superfluous comments") and 8f5585ec3d17
+> ("watchdog: shwdt: driver model conversion") from the sh tree and commit
+> e273d97a2281 ("watchdog: cleanup spaces before tabs") from the watchdog
+> tree.
+> 
+> The spaces seem to have been cleaned up in the former patches, so I used
+> the sh tree version of this file.
 
-Acked-by: Corentin Chary <corentin.chary@gmail.com>
+I will redo that patch tonight so that you don't have any issues with it tomorrow.
 
-
---=20
-Corentin Chary
-http://xf.iksaif.net
+Thanks,
+Wim.
