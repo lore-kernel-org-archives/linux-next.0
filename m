@@ -1,65 +1,89 @@
-From: Matthew Garrett <mjg59@srcf.ucam.org>
-Subject: Re: [PATCH] Fix build failure when CONFIG_NLS is set to 'm' by
-	allmodconfig
-Date: Wed, 23 Feb 2011 13:17:34 +0000
-Message-ID: <20110223131734.GA6275@srcf.ucam.org>
-References: <20110223131536.GA16707@fedora14-r610.blr.amer.dell.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the omap_dss2 tree with the  tree
+Date: Thu, 24 Feb 2011 14:23:16 +1100
+Message-ID: <20110224142316.6706625a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cavan.codon.org.uk ([93.93.128.6]:35732 "EHLO
-	cavan.codon.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754335Ab1BWNR5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Feb 2011 08:17:57 -0500
-Content-Disposition: inline
-In-Reply-To: <20110223131536.GA16707@fedora14-r610.blr.amer.dell.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:37022 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932071Ab1BXDXU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 23 Feb 2011 22:23:20 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Narendra_K@Dell.com
-Cc: viro@zeniv.linux.org.uk, jbarnes@virtuousgeek.org, sfr@canb.auug.org.au, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Shyam_Iyer@Dell.com, Matt_Domsch@Dell.com, Charles_Rose@Dell.com, Jordan_Hargrave@Dell.com
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rajendra Nayak <rnayak@ti.com>, Tony Lindgren <tony@atomide.com>, Senthilvadivu Guruswamy <svadivu@ti.com>
 
-On Wed, Feb 23, 2011 at 06:24:31PM +0530, Narendra_K@Dell.com wrote:
+Hi Tomi,
 
-> This patch fixes the following build breakage introduced by the patch
-> '[PATCH V3] Export ACPI _DSM provided firmware instance number and string to
-> sysfs'.
+Today's linux-next merge of the omap_dss2 tree got a conflict in
+arch/arm/mach-omap2/board-3430sdp.c between commit
+73a92aa4f1d6786eaa5b4e637eee648db0dfd7a7 ("omap3sdp: clean regulator
+supply mapping in board file") from the omap tree and commit
+b3e0ccec47b179b0d3a7bfdb9df7112e508b009c ("OMAP2,3 DSS2 Change driver
+name to omap_display") from the omap_dss2 tree.
 
-First, you should include this as part of your original patch so that 
-the build doesn't break during bisection.
+I fixed it up (see below) and can carry this fix as necessary (though I
+have no idea if it is correct).
 
-> This is fixed by making fs/nls/nls_base.c compile conditionally into
-> vmlinux by introducing a new config option CONFIG_NLS_BASE which is
-> selected by (ACPI || DMI || NLS).
-
-Why?
-
-> -obj-$(CONFIG_NLS)		+= nls/
-> +obj-y				+= nls/
-
-You seem to have just broken building any of the NLS code as modules.
-
->  menuconfig NLS
->  	tristate "Native language support"
-> +	select NLS_BASE
-
-All CONFIG_NLS does is build nls_base.
-
-> +config NLS_BASE
-> +	bool "Base NLS functions"
-> +	depends on ACPI || DMI
-
-What in this code depends on ACPI or DMI?
-
-> -obj-$(CONFIG_NLS)		+= nls_base.o
-> +obj-$(CONFIG_NLS_BASE)		+= nls_base.o
-
-And why make this change?
-
-Just have something like
-
-select NLS if (ACPI || DMI)
-
-in drivers/pci/Kconfig.
-
+[The merge today did, however, lose most of the other conflicts, thanks]
 -- 
-Matthew Garrett | mjg59@srcf.ucam.org
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/arm/mach-omap2/board-3430sdp.c
+index 8950ecc,b4b89fd..0000000
+--- a/arch/arm/mach-omap2/board-3430sdp.c
++++ b/arch/arm/mach-omap2/board-3430sdp.c
+@@@ -307,9 -307,9 +307,6 @@@ static struct omap_dss_board_info sdp34
+  	.default_device	= &sdp3430_lcd_device,
+  };
+  
+--static struct regulator_consumer_supply sdp3430_vdda_dac_supply =
+- 	REGULATOR_SUPPLY("vdda_dac", "omapdss");
+- 
+ -	REGULATOR_SUPPLY("vdda_dac", "omap_venc");
+ -
+  static struct omap_board_config_kernel sdp3430_config[] __initdata = {
+  };
+  
+@@@ -393,34 -412,6 +390,36 @@@ static struct twl4030_madc_platform_dat
+  	.irq_line	= 1,
+  };
+  
+ +/* regulator consumer mappings */
+ +
+ +/* ads7846 on SPI */
+ +static struct regulator_consumer_supply sdp3430_vaux3_supplies[] = {
+ +	REGULATOR_SUPPLY("vcc", "spi1.0"),
+ +};
+ +
+ +static struct regulator_consumer_supply sdp3430_vdda_dac_supplies[] = {
+- 	REGULATOR_SUPPLY("vdda_dac", "omapdss"),
+++	REGULATOR_SUPPLY("vdda_dac", "omap_venc"),
+ +};
+ +
+++
+ +/* VPLL2 for digital video outputs */
+ +static struct regulator_consumer_supply sdp3430_vpll2_supplies[] = {
+- 	REGULATOR_SUPPLY("vdds_dsi", "omapdss"),
+++	REGULATOR_SUPPLY("vdds_dsi", "omap_display"),
+++	REGULATOR_SUPPLY("vdds_dsi", "omap_dsi1"),
+ +};
+ +
+ +static struct regulator_consumer_supply sdp3430_vmmc1_supplies[] = {
+ +	REGULATOR_SUPPLY("vmmc", "mmci-omap-hs.0"),
+ +};
+ +
+ +static struct regulator_consumer_supply sdp3430_vsim_supplies[] = {
+ +	REGULATOR_SUPPLY("vmmc_aux", "mmci-omap-hs.0"),
+ +};
+ +
+ +static struct regulator_consumer_supply sdp3430_vmmc2_supplies[] = {
+ +	REGULATOR_SUPPLY("vmmc", "mmci-omap-hs.1"),
+ +};
+ +
+  /*
+   * Apply all the fixed voltages since most versions of U-Boot
+   * don't bother with that initialization.
