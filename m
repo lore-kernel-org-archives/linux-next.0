@@ -1,69 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tty tree with Linus' tree
-Date: Thu, 24 Feb 2011 16:34:39 +1100
-Message-ID: <20110224163439.05352f9b.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the tty tree
+Date: Thu, 24 Feb 2011 16:40:48 +1100
+Message-ID: <20110224164048.4d884c1d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__24_Feb_2011_16_40_48_+1100_yh5ZHsP6zc9nLgg."
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35154 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:53267 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751202Ab1BXFeo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 24 Feb 2011 00:34:44 -0500
+	id S1751537Ab1BXFkx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 24 Feb 2011 00:40:53 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Amit Shah <amit.shah@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+
+--Signature=_Thu__24_Feb_2011_16_40_48_+1100_yh5ZHsP6zc9nLgg.
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-Today's linux-next merge of the tty tree got a conflict in
-drivers/char/Makefile between commit
-51df0acc3d76cf41d5496ef044cc5717ab5c7f71 ("virtio: console: Move file
-back to drivers/char/") from Linus' tree and commit
-a6afd9f3e819de4795fcd356e5bfad446e4323f2 ("tty: move a number of tty
-drivers from drivers/char/ to drivers/tty/") (and later ones) from the tty
-tree.
+After merging the tty tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary.
--- 
+scripts/Makefile.modbuiltin:25: drivers/char/pcmcia/ipwireless/Makefile: No=
+ such file or directory
+make[5]: *** No rule to make target `drivers/char/pcmcia/ipwireless/Makefil=
+e'.  Stop.
+
+Caused by commit 282361a046edd9d58a134f358a3f65a7cb8655d9 ("tty: move
+ipwireless driver from drivers/char/pcmcia/ to drivers/tty/") which
+neglected to remove mention of ipwireless from
+drivers/char/pcmcia/Makefile.
+
+I have used the tty tree from next-20110223 for today.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/char/Makefile
-index 8238f89,3ca1f62..0000000
---- a/drivers/char/Makefile
-+++ b/drivers/char/Makefile
-@@@ -5,32 -5,7 +5,8 @@@
-  obj-y				+= mem.o random.o
-  obj-$(CONFIG_TTY_PRINTK)	+= ttyprintk.o
-  obj-y				+= misc.o
-- obj-$(CONFIG_BFIN_JTAG_COMM)	+= bfin_jtag_comm.o
-- obj-$(CONFIG_MVME147_SCC)	+= generic_serial.o vme_scc.o
-- obj-$(CONFIG_MVME162_SCC)	+= generic_serial.o vme_scc.o
-- obj-$(CONFIG_BVME6000_SCC)	+= generic_serial.o vme_scc.o
-- obj-$(CONFIG_ROCKETPORT)	+= rocket.o
-- obj-$(CONFIG_SERIAL167)		+= serial167.o
-- obj-$(CONFIG_CYCLADES)		+= cyclades.o
-- obj-$(CONFIG_STALLION)		+= stallion.o
-- obj-$(CONFIG_ISTALLION)		+= istallion.o
-- obj-$(CONFIG_NOZOMI)		+= nozomi.o
-- obj-$(CONFIG_DIGIEPCA)		+= epca.o
-- obj-$(CONFIG_SPECIALIX)		+= specialix.o
-- obj-$(CONFIG_MOXA_INTELLIO)	+= moxa.o
-- obj-$(CONFIG_A2232)		+= ser_a2232.o generic_serial.o
-  obj-$(CONFIG_ATARI_DSP56K)	+= dsp56k.o
-- obj-$(CONFIG_MOXA_SMARTIO)	+= mxser.o
-- obj-$(CONFIG_COMPUTONE)		+= ip2/
-- obj-$(CONFIG_RISCOM8)		+= riscom8.o
-- obj-$(CONFIG_ISI)		+= isicom.o
-- obj-$(CONFIG_SYNCLINK)		+= synclink.o
-- obj-$(CONFIG_SYNCLINKMP)	+= synclinkmp.o
-- obj-$(CONFIG_SYNCLINK_GT)	+= synclink_gt.o
-- obj-$(CONFIG_AMIGA_BUILTIN_SERIAL) += amiserial.o
-- obj-$(CONFIG_SX)		+= sx.o generic_serial.o
-- obj-$(CONFIG_RIO)		+= rio/ generic_serial.o
- +obj-$(CONFIG_VIRTIO_CONSOLE)	+= virtio_console.o
-  obj-$(CONFIG_RAW_DRIVER)	+= raw.o
-  obj-$(CONFIG_SGI_SNSC)		+= snsc.o snsc_event.o
-  obj-$(CONFIG_MSPEC)		+= mspec.o
+--Signature=_Thu__24_Feb_2011_16_40_48_+1100_yh5ZHsP6zc9nLgg.
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNZe9gAAoJEDMEi1NhKgbsJ4sH/079+UczzZ6qM+LNA1HuQMxi
+JXWVhMb4l7ABYZXpKM+PgcBDKiCJXz/ZVpV9hZtZm7llhnjbQEknyZnv12HAne5n
+iBrBEWGMtlASoMfeqyITbw5/YsxHwgnesuWQGaqNNbaiWJryl4Be2kKwhionkKxZ
+eNrhsZkS3p1Pp65zxEVyWuCwbRztBTI4LMPdyyDGNi/MP+GOii9TTYFiCooS4ovx
+/JQQdCuCF5TMM/qVeZNdAC08zAX6gbGQyifTqwUG86LG1qvFTUgkt1eRdP4Gjuhj
+7NLy28YizimlOCPkhZXPtu1wAOBzBirUgDKcfc2VauniKIG8tebHNdWrnQ1XFwE=
+=SHXT
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__24_Feb_2011_16_40_48_+1100_yh5ZHsP6zc9nLgg.--
