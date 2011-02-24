@@ -1,45 +1,37 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: linux-next: manual merge of the omap_dss2 tree with the  tree
-Date: Thu, 24 Feb 2011 10:52:38 +0200
-Message-ID: <1298537558.16119.33.camel@deskari>
-References: <20110224142316.6706625a.sfr@canb.auug.org.au>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: linux-next: manual merge of the tip tree with the acpi tree
+Date: Thu, 24 Feb 2011 11:29:52 +0100
+Message-ID: <201102241129.53232.rjw@sisk.pl>
+References: <20110224155221.4f35f728.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:34047 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752070Ab1BXIwx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Feb 2011 03:52:53 -0500
-In-Reply-To: <20110224142316.6706625a.sfr@canb.auug.org.au>
+Received: from ogre.sisk.pl ([217.79.144.158]:54692 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753025Ab1BXKaU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 24 Feb 2011 05:30:20 -0500
+In-Reply-To: <20110224155221.4f35f728.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Nayak, Rajendra" <rnayak@ti.com>, Tony Lindgren <tony@atomide.com>, "Guruswamy, Senthilvadivu" <svadivu@ti.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Len Brown <lenb@kernel.org>
 
-Hi,
-
-On Wed, 2011-02-23 at 21:23 -0600, Stephen Rothwell wrote:
-> Hi Tomi,
+On Thursday, February 24, 2011, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Today's linux-next merge of the omap_dss2 tree got a conflict in
-> arch/arm/mach-omap2/board-3430sdp.c between commit
-> 73a92aa4f1d6786eaa5b4e637eee648db0dfd7a7 ("omap3sdp: clean regulator
-> supply mapping in board file") from the omap tree and commit
-> b3e0ccec47b179b0d3a7bfdb9df7112e508b009c ("OMAP2,3 DSS2 Change driver
-> name to omap_display") from the omap_dss2 tree.
+> Today's linux-next merge of the tip tree got a conflict in
+> arch/x86/kernel/acpi/sleep.c between commit
+> a69fa313606a51cee99d802c14895330948f60c8 ("ACPI / PM: Drop
+> acpi_restore_state_mem()") from the acpi tree and commit
+> d1ee433539ea5963a8f946f3428b335d1c5fdb20 ("x86, trampoline: Use the
+> unified trampoline setup for ACPI wakeup") from the tip tree.
 > 
-> I fixed it up (see below) and can carry this fix as necessary (though I
-> have no idea if it is correct).
-> 
-> [The merge today did, however, lose most of the other conflicts, thanks]
+> Just context (I think).
 
-It seems there was a small conflict resolution error when Tony merged my
-patches (an extra regulator supply was left in the code). I fixed that
-and rebased my tree on Tony's for-linus branch.
+Yes.  The ACPI tree renames a function that the x86 tree modifies.
 
-So I hope that now we're finally free of non-trivial conflicts =).
+> I fixed it up (see below) and can carry the fix as necessary.
 
-Thanks again.
-
- Tomi
+Please do, thanks!
