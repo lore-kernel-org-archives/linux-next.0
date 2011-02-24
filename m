@@ -1,118 +1,69 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the acpi tree
-Date: Thu, 24 Feb 2011 15:52:21 +1100
-Message-ID: <20110224155221.4f35f728.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tty tree with Linus' tree
+Date: Thu, 24 Feb 2011 16:34:39 +1100
+Message-ID: <20110224163439.05352f9b.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58767 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35154 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752138Ab1BXEwb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 23 Feb 2011 23:52:31 -0500
+	id S1751202Ab1BXFeo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 24 Feb 2011 00:34:44 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, Len Brown <lenb@kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Amit Shah <amit.shah@redhat.com>
 
-Hi all,
+Hi Greg,
 
-Today's linux-next merge of the tip tree got a conflict in
-arch/x86/kernel/acpi/sleep.c between commit
-a69fa313606a51cee99d802c14895330948f60c8 ("ACPI / PM: Drop
-acpi_restore_state_mem()") from the acpi tree and commit
-d1ee433539ea5963a8f946f3428b335d1c5fdb20 ("x86, trampoline: Use the
-unified trampoline setup for ACPI wakeup") from the tip tree.
+Today's linux-next merge of the tty tree got a conflict in
+drivers/char/Makefile between commit
+51df0acc3d76cf41d5496ef044cc5717ab5c7f71 ("virtio: console: Move file
+back to drivers/char/") from Linus' tree and commit
+a6afd9f3e819de4795fcd356e5bfad446e4323f2 ("tty: move a number of tty
+drivers from drivers/char/ to drivers/tty/") (and later ones) from the tty
+tree.
 
-Just context (I think).  I fixed it up (see below) and can carry the fix
-as necessary.
+I fixed it up (see below) and can carry the fix as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/x86/kernel/acpi/sleep.c
-index 5f1b747,4572c58..0000000
---- a/arch/x86/kernel/acpi/sleep.c
-+++ b/arch/x86/kernel/acpi/sleep.c
-@@@ -33,22 -29,17 +29,17 @@@ static char temp_stack[4096]
-   *
-   * Create an identity mapped page table and copy the wakeup routine to
-   * low memory.
--  *
--  * Note that this is too late to change acpi_wakeup_address.
-   */
- -int acpi_save_state_mem(void)
- +int acpi_suspend_lowlevel(void)
-  {
-  	struct wakeup_header *header;
-+ 	/* address in low memory of the wakeup routine. */
-+ 	char *acpi_realmode;
-  
-- 	if (!acpi_realmode) {
-- 		printk(KERN_ERR "Could not allocate memory during boot, "
-- 		       "S3 disabled\n");
-- 		return -ENOMEM;
-- 	}
-- 	memcpy((void *)acpi_realmode, &wakeup_code_start, WAKEUP_SIZE);
-+ 	acpi_realmode = TRAMPOLINE_SYM(acpi_wakeup_code);
-  
-- 	header = (struct wakeup_header *)(acpi_realmode + HEADER_OFFSET);
-- 	if (header->signature != 0x51ee1111) {
-+ 	header = (struct wakeup_header *)(acpi_realmode + WAKEUP_HEADER_OFFSET);
-+ 	if (header->signature != WAKEUP_HEADER_SIGNATURE) {
-  		printk(KERN_ERR "wakeup header does not match\n");
-  		return -EINVAL;
-  	}
-@@@ -111,45 -99,13 +100,6 @@@
-  	return 0;
-  }
-  
-- /**
--  * acpi_reserve_wakeup_memory - do _very_ early ACPI initialisation
--  *
--  * We allocate a page from the first 1MB of memory for the wakeup
--  * routine for when we come back from a sleep state. The
--  * runtime allocator allows specification of <16MB pages, but not
--  * <1MB pages.
--  */
-- void __init acpi_reserve_wakeup_memory(void)
-- {
-- 	phys_addr_t mem;
-- 
-- 	if ((&wakeup_code_end - &wakeup_code_start) > WAKEUP_SIZE) {
-- 		printk(KERN_ERR
-- 		       "ACPI: Wakeup code way too big, S3 disabled.\n");
-- 		return;
-- 	}
-- 
-- 	mem = memblock_find_in_range(0, 1<<20, WAKEUP_SIZE, PAGE_SIZE);
-- 
-- 	if (mem == MEMBLOCK_ERROR) {
-- 		printk(KERN_ERR "ACPI: Cannot allocate lowmem, S3 disabled.\n");
-- 		return;
-- 	}
-- 	acpi_realmode = (unsigned long) phys_to_virt(mem);
-- 	acpi_wakeup_address = mem;
-- 	memblock_x86_reserve_range(mem, mem + WAKEUP_SIZE, "ACPI WAKEUP");
-- }
-- 
-- int __init acpi_configure_wakeup_memory(void)
-- {
-- 	if (acpi_realmode)
-- 		set_memory_x(acpi_realmode, WAKEUP_SIZE >> PAGE_SHIFT);
-- 
-- 	return 0;
-- }
-- arch_initcall(acpi_configure_wakeup_memory);
-- 
-- 
- -/*
- - * acpi_restore_state - undo effects of acpi_save_state_mem
- - */
- -void acpi_restore_state_mem(void)
- -{
- -}
- -
-  static int __init acpi_sleep_setup(char *str)
-  {
-  	while ((str != NULL) && (*str != '\0')) {
+diff --cc drivers/char/Makefile
+index 8238f89,3ca1f62..0000000
+--- a/drivers/char/Makefile
++++ b/drivers/char/Makefile
+@@@ -5,32 -5,7 +5,8 @@@
+  obj-y				+= mem.o random.o
+  obj-$(CONFIG_TTY_PRINTK)	+= ttyprintk.o
+  obj-y				+= misc.o
+- obj-$(CONFIG_BFIN_JTAG_COMM)	+= bfin_jtag_comm.o
+- obj-$(CONFIG_MVME147_SCC)	+= generic_serial.o vme_scc.o
+- obj-$(CONFIG_MVME162_SCC)	+= generic_serial.o vme_scc.o
+- obj-$(CONFIG_BVME6000_SCC)	+= generic_serial.o vme_scc.o
+- obj-$(CONFIG_ROCKETPORT)	+= rocket.o
+- obj-$(CONFIG_SERIAL167)		+= serial167.o
+- obj-$(CONFIG_CYCLADES)		+= cyclades.o
+- obj-$(CONFIG_STALLION)		+= stallion.o
+- obj-$(CONFIG_ISTALLION)		+= istallion.o
+- obj-$(CONFIG_NOZOMI)		+= nozomi.o
+- obj-$(CONFIG_DIGIEPCA)		+= epca.o
+- obj-$(CONFIG_SPECIALIX)		+= specialix.o
+- obj-$(CONFIG_MOXA_INTELLIO)	+= moxa.o
+- obj-$(CONFIG_A2232)		+= ser_a2232.o generic_serial.o
+  obj-$(CONFIG_ATARI_DSP56K)	+= dsp56k.o
+- obj-$(CONFIG_MOXA_SMARTIO)	+= mxser.o
+- obj-$(CONFIG_COMPUTONE)		+= ip2/
+- obj-$(CONFIG_RISCOM8)		+= riscom8.o
+- obj-$(CONFIG_ISI)		+= isicom.o
+- obj-$(CONFIG_SYNCLINK)		+= synclink.o
+- obj-$(CONFIG_SYNCLINKMP)	+= synclinkmp.o
+- obj-$(CONFIG_SYNCLINK_GT)	+= synclink_gt.o
+- obj-$(CONFIG_AMIGA_BUILTIN_SERIAL) += amiserial.o
+- obj-$(CONFIG_SX)		+= sx.o generic_serial.o
+- obj-$(CONFIG_RIO)		+= rio/ generic_serial.o
+ +obj-$(CONFIG_VIRTIO_CONSOLE)	+= virtio_console.o
+  obj-$(CONFIG_RAW_DRIVER)	+= raw.o
+  obj-$(CONFIG_SGI_SNSC)		+= snsc.o snsc_event.o
+  obj-$(CONFIG_MSPEC)		+= mspec.o
