@@ -1,35 +1,55 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: linux-next: manual merge of the omap_dss2 tree with the omap
- tree
-Date: Thu, 24 Feb 2011 13:23:39 -0800
-Message-ID: <20110224212339.GM20560@atomide.com>
-References: <20110221141650.71b433b7.sfr@canb.auug.org.au>
- <1298278062.4931.19.camel@deskari>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the tty tree with Linus' tree
+Date: Fri, 25 Feb 2011 16:11:24 +1100
+Message-ID: <20110225161124.665ac4e9.sfr@canb.auug.org.au>
+References: <20110224163439.05352f9b.sfr@canb.auug.org.au>
+	<20110224193947.GA15044@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__25_Feb_2011_16_11_24_+1100_D2xPZJcQWjRKnH8C"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mho-01-ewr.mailhop.org ([204.13.248.71]:20106 "EHLO
-	mho-01-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932139Ab1BXVXp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Feb 2011 16:23:45 -0500
-Content-Disposition: inline
-In-Reply-To: <1298278062.4931.19.camel@deskari>
+Received: from chilli.pcug.org.au ([203.10.76.44]:51433 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750753Ab1BYFLa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 25 Feb 2011 00:11:30 -0500
+In-Reply-To: <20110224193947.GA15044@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "Guruswamy, Senthilvadivu" <svadivu@ti.com>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Amit Shah <amit.shah@redhat.com>
 
-Hi,
+--Signature=_Fri__25_Feb_2011_16_11_24_+1100_D2xPZJcQWjRKnH8C
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-* Tomi Valkeinen <tomi.valkeinen@ti.com> [110221 00:46]:
-> 
-> Tony, do you have such a semi-stable branch I could use as a base? Or
-> any other ideas?
+Hi Greg,
 
-I guess you already figured this out.. The omap-for-linus branch should
-have immutable commits. So you can merge with the earliest commit that
-does the job for you from there.
+On Thu, 24 Feb 2011 11:39:47 -0800 Greg KH <greg@kroah.com> wrote:
+>
+> Thanks, I've merge 2.6.38-rc6 into tty-next so this, and another merge
+> issue, should now be resolved.
 
-Regards,
+Thanks.  The tree still has its build failure, though.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Tony
+--Signature=_Fri__25_Feb_2011_16_11_24_+1100_D2xPZJcQWjRKnH8C
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNZzn8AAoJEDMEi1NhKgbsqTQH/2XcNfkUp7uXzThREWqDJ7SU
+NLrlXKxRNRNR0B7AET/WGb3iryS+uKJWHZK/ZioeXP3RTF+VLQFykDINcd+8tw9E
+mNPZrBHsYpo78LmM/kBKyMCcCFwKPxMmqRhbKTyA9VmdPj7sZxZIbAuajN3WhuK9
+LYvq+rflAP7W0SpPPH+vlm3qLA4wCB41c7+8Ut0KT67Vn0vbqkR005T5x8n00bIt
+mCRmBsp4dj70tPEmKSnLzJcLjyvU7dgORCog7+BC9jufrXd5PkdLXNC+QiYqKYl6
+8fpI2AsuJjy7U3dIHpFp3lZyVzDcsOP2CznlpdfvoTfQIsyAt57+ChYXW80ailo=
+=47pV
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__25_Feb_2011_16_11_24_+1100_D2xPZJcQWjRKnH8C--
