@@ -1,38 +1,33 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the tty tree
-Date: Fri, 25 Feb 2011 09:54:42 -0800
-Message-ID: <20110225175442.GB13406@kroah.com>
-References: <20110224164048.4d884c1d.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for February 25 (mm/slub.c)
+Date: Fri, 25 Feb 2011 10:52:05 -0800
+Message-ID: <20110225105205.5a1309bb.randy.dunlap@oracle.com>
+References: <20110225175924.a95d616d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:56505 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753434Ab1BYRzv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 25 Feb 2011 12:55:51 -0500
-Content-Disposition: inline
-In-Reply-To: <20110224164048.4d884c1d.sfr@canb.auug.org.au>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:37299 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756230Ab1BYSw5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 25 Feb 2011 13:52:57 -0500
+In-Reply-To: <20110225175924.a95d616d.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-mm@kvack.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Thu, Feb 24, 2011 at 04:40:48PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> After merging the tty tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> scripts/Makefile.modbuiltin:25: drivers/char/pcmcia/ipwireless/Makefile: No such file or directory
-> make[5]: *** No rule to make target `drivers/char/pcmcia/ipwireless/Makefile'.  Stop.
-> 
-> Caused by commit 282361a046edd9d58a134f358a3f65a7cb8655d9 ("tty: move
-> ipwireless driver from drivers/char/pcmcia/ to drivers/tty/") which
-> neglected to remove mention of ipwireless from
-> drivers/char/pcmcia/Makefile.
-> 
-> I have used the tty tree from next-20110223 for today.
+On Fri, 25 Feb 2011 17:59:24 +1100 Stephen Rothwell wrote:
 
-Now fixed, thanks.
+> Hi all,
+> 
+> Changes since 20110224:
 
-greg k-h
+
+when CONFIG_SLUB_DEBUG is not enabled:
+
+mm/slub.c:2728: error: implicit declaration of function 'slab_ksize'
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
