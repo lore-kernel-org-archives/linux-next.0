@@ -1,42 +1,53 @@
-From: Pekka Enberg <penberg@kernel.org>
-Subject: Re: [PATCH] slub: fix ksize() build error
-Date: Sun, 27 Feb 2011 12:07:41 +0200
-Message-ID: <AANLkTimAC8VmpQ1ZAAAy1Wu5ZHffcDqp96MyzRoywjTc@mail.gmail.com>
-References: <20110225105205.5a1309bb.randy.dunlap@oracle.com>
-	<1298747426-8236-1-git-send-email-mk@lab.zgora.pl>
-	<alpine.DEB.2.00.1102262132320.12215@chino.kir.corp.google.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the v4l-dvb tree
+Date: Mon, 28 Feb 2011 12:05:01 +1100
+Message-ID: <20110228120501.eb6840e0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <alpine.DEB.2.00.1102262132320.12215@chino.kir.corp.google.com>
-Sender: owner-linux-mm@kvack.org
-To: David Rientjes <rientjes@google.com>
-Cc: Mariusz Kozlowski <mk@lab.zgora.pl>, Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Eric Dumazet <eric.dumazet@gmail.com>, linux-next@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, Christoph Lameter <cl@linux.com>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__28_Feb_2011_12_05_01_+1100_L4H2MS2tqHh.4wws"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>
 List-Id: linux-next.vger.kernel.org
 
-Hi,
+--Signature=_Mon__28_Feb_2011_12_05_01_+1100_L4H2MS2tqHh.4wws
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[ Please CC me for slab allocator patches in the future. ]
+Hi Mauro,
 
-On Sun, Feb 27, 2011 at 7:32 AM, David Rientjes <rientjes@google.com> wrote:
-> On Sat, 26 Feb 2011, Mariusz Kozlowski wrote:
->
->> mm/slub.c: In function 'ksize':
->> mm/slub.c:2728: error: implicit declaration of function 'slab_ksize'
->>
->> slab_ksize() needs to go out of CONFIG_SLUB_DEBUG section.
->>
->> Signed-off-by: Mariusz Kozlowski <mk@lab.zgora.pl>
->
-> Acked-by: David Rientjes <rientjes@google.com>
+After merging the v4l-dvb tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Applied, thanks!
+drivers/video/matrox/matroxfb_base.c: In function 'matroxfb_ioctl':
+drivers/video/matrox/matroxfb_base.c:1155: error: 'VIDIOC_S_CTRL_OLD' undec=
+lared (first use in this function)
 
-                      Pekka
+Caused by commit 0ff69fe7cebb65856eba7feb3fd76fb4ba365bf8 ("[media] v4l:
+removal of old, obsolete ioctls"). grep is your friend ...
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+I have used the v4l-dvb tree from next-20110225 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__28_Feb_2011_12_05_01_+1100_L4H2MS2tqHh.4wws
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNavS9AAoJEDMEi1NhKgbsLwkH+wcVxbHaAF65HAT246X56icc
+Yd0ONtNsEgSA8jS/CADodYKIzN/y/N0u0Hz7XRtlFKa72KVUGlByODQA2jiUAyzi
+nInT0MsDBYJPFuOaGexD41bSnzcPRj6osdihDKolhjFSnMpYdg2UKRZBboxsx0qD
+rd+POoJRaHueBDM79b9Znm/j5cpEG75pnjGF6bXuFBvbfQBMl2fL7j/xnhtkoTol
+VxW3yOSi1Vdkjn3ex2CqPysOiJGWwHhQGPjRv3nRfY3xQ3BL/JW/KpiSg7/tN25I
+zPr5mKa3iNsJcU+au8aUJ9HyGnEcDCXRyx+1BBmRknP16cO5gi/48vHgry0wAJs=
+=n9iY
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__28_Feb_2011_12_05_01_+1100_L4H2MS2tqHh.4wws--
