@@ -1,61 +1,51 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the sound and sound-asoc
- trees
-Date: Mon, 28 Feb 2011 14:15:28 +1100
-Message-ID: <20110228141528.00fc4ab4.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the trivial tree with Linus' tree
+Date: Mon, 28 Feb 2011 15:21:53 +1100
+Message-ID: <20110228152153.25e94457.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__28_Feb_2011_14_15_28_+1100_xII_2PrqpdYDclos"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:45081 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58293 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752166Ab1B1DPk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 27 Feb 2011 22:15:40 -0500
+	id S1752303Ab1B1EWA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 27 Feb 2011 23:22:00 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zeng Zhaoming <zhaoming.zeng@freescale.com>
+To: Jiri Kosina <jkosina@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Davide Libenzi <davidel@xmailserver.org>, Daniel Baluta <daniel.baluta@gmail.com>
 
---Signature=_Mon__28_Feb_2011_14_15_28_+1100_xII_2PrqpdYDclos
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Jiri,
 
-Hi all,
+Today's linux-next merge of the trivial tree got a conflict in
+fs/eventpoll.c between commit 22bacca48a1755f79b7e0f192ddb9fbb7fc6e64e
+("epoll: prevent creating circular epoll structures") from Linus' tree
+and commit bf6a41db7726e6c09b9c6ac993457b7260473406 ("fs/eventpoll.c: fix
+spelling") from the trivial tree.
 
-After merging the sound tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
-
-sound/soc/codecs/sgtl5000.c:30:27: error: mach/hardware.h: No such file or =
-directory
-
-Caused by commit 9b34e6cc3bc2bf826c078c93c81b46f6c08da25f ("ASoC: Add
-Freescale SGTL5000 codec support").  Maybe it needs restricting to a
-particular architecture?
-
-I have used the sound tree from next-20110225 for today.
-
-This also affected the sound-asoc tree so I have used the next-20110225
-version of that as well.
---=20
+Just context.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__28_Feb_2011_14_15_28_+1100_xII_2PrqpdYDclos
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNaxNQAAoJEDMEi1NhKgbsUloH/16G4nOhv5dmCp4S+TlU9z9d
-L+6ATnrB2lC4YlonGhi6q/6Nc6k3H1dt5W2roSFSmEq8nk0kWD7ogk6NBfDPJX29
-q7DexLHGRQ2vJ4gsTdcI6hP6ay179rxkxKE53vY6gnxhk7nCQoLbu3yfFGLpbfqs
-xi/suX35DxR4Rai1CqvqbdF4bKR2fUmy23F9T8GKaSSQuvqrrSAQihw/0KjBmK9h
-6LNG8Nn7ONfsPOMu3ybphd8kZN2/q63xW/LlWU8X2FDuV1yuZM9QGePF//drIcU0
-Z00SjHWZGEuqqEfMJrazWwgIk42YCAzRN7V/OPxB07N7zH7J8rz6U3uK7Ohmgeg=
-=e+Yq
------END PGP SIGNATURE-----
-
---Signature=_Mon__28_Feb_2011_14_15_28_+1100_xII_2PrqpdYDclos--
+diff --cc fs/eventpoll.c
+index 4a09af9,7513066..0000000
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@@ -62,14 -62,7 +62,14 @@@
+   * This mutex is acquired by ep_free() during the epoll file
+   * cleanup path and it is also acquired by eventpoll_release_file()
+   * if a file has been pushed inside an epoll set and it is then
+-  * close()d without a previous call toepoll_ctl(EPOLL_CTL_DEL).
++  * close()d without a previous call to epoll_ctl(EPOLL_CTL_DEL).
+ + * It is also acquired when inserting an epoll fd onto another epoll
+ + * fd. We do this so that we walk the epoll tree and ensure that this
+ + * insertion does not create a cycle of epoll file descriptors, which
+ + * could lead to deadlock. We need a global mutex to prevent two
+ + * simultaneous inserts (A into B and B into A) from racing and
+ + * constructing a cycle without either insert observing that it is
+ + * going to.
+   * It is possible to drop the "ep->mtx" and to use the global
+   * mutex "epmutex" (together with "ep->lock") to have it working,
+   * but having "ep->mtx" will make the interface more scalable.
