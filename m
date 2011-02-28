@@ -1,112 +1,64 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH upstream build breakage] acpi: several drivers depend on NET
-Date: Mon, 28 Feb 2011 09:03:32 -0800
-Message-ID: <20110228090332.9ffe2087.randy.dunlap@oracle.com>
-References: <20101220200013.df8fbc88.sfr@canb.auug.org.au>
-	<20101220085340.7ba098b9.randy.dunlap@oracle.com>
-	<20110126114203.GA16754@elte.hu>
-	<20110201120323.GA6714@elte.hu>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: "John W. Linville" <linville@tuxdriver.com>
+Subject: [PATCH] rtlwifi: usb parts should depend on CONFIG_USB
+Date: Mon, 28 Feb 2011 14:48:20 -0500
+Message-ID: <1298922500-21632-1-git-send-email-linville@tuxdriver.com>
+References: <alpine.DEB.2.00.1102171354200.16788@ayla.of.borg>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:19040 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752312Ab1B1RGK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Feb 2011 12:06:10 -0500
-In-Reply-To: <20110201120323.GA6714@elte.hu>
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:37916 "EHLO
+	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754428Ab1B1UAn (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Feb 2011 15:00:43 -0500
+In-Reply-To: <alpine.DEB.2.00.1102171354200.16788@ayla.of.borg>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: Len Brown <lenb@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Luming Yu <luming.yu@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-acpi@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, "Rafael J. Wysocki" <rjw@sisk.pl>
+To: linux-wireless@vger.kernel.org
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Larry Finger <Larry.Finger@lwfinger.net>, George <george0505@realtek.com>, linux-next@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
 
-On Tue, 1 Feb 2011 13:03:23 +0100 Ingo Molnar wrote:
+ERROR: "usb_unanchor_urb" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
+ERROR: "usb_control_msg" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
+ERROR: "usb_submit_urb" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
+ERROR: "usb_get_dev" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
+ERROR: "usb_kill_anchored_urbs" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
+ERROR: "usb_put_dev" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
+ERROR: "usb_free_urb" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
+ERROR: "usb_anchor_urb" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
+ERROR: "usb_alloc_urb" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
+make[2]: *** [__modpost] Error 1
+make[1]: *** [modules] Error 2
+make: *** [sub-make] Error 2
 
-> * Ingo Molnar <mingo@elte.hu> wrote:
-> 
-> > * Randy Dunlap <randy.dunlap@oracle.com> wrote:
-> > 
-> > > On Mon, 20 Dec 2010 20:00:13 +1100 Stephen Rothwell wrote:
-> > > 
-> > > > Hi all,
-> > > > 
-> > > > [The mirroring on kernel.org is running slowly]
-> > > > 
-> > > > Changes since 20101217:
-> > > 
-> > > ERROR: "thermal_cooling_device_register" [drivers/acpi/video.ko] undefined!
-> > > ERROR: "thermal_cooling_device_unregister" [drivers/acpi/video.ko] undefined!
-> > 
-> > This bug has been reported two months ago, one month ago, it has been ignored twice 
-> > and now the bug has been pushed upstream and it's triggering there as well.
-> > 
-> > What's going on?
-> 
-> *Tap*, *tap*, is this thing on? :)
-> 
-> acpi-video is still build-broken upstream, as of .38-rc3:
-> 
->    MODPOST 651 modules
->  ERROR: "thermal_cooling_device_register" [drivers/acpi/video.ko] undefined!
->  ERROR: "thermal_cooling_device_unregister" [drivers/acpi/video.ko] undefined!
->  WARNING: modpost: Found 37 section mismatch(es).
->  To see full details build your kernel with:
->  'make CONFIG_DEBUG_SECTION_MISMATCH=y'
->  make[1]: *** [__modpost] Error 1
->  make: *** [modules] Error 2
-> 
-> Triggers in about 10% of all randconfig builds. Config attached.
+The USB-part of rtlwifi should depend on CONFIG_USB.
 
-
-From: Randy Dunlap <randy.dunlap@oracle.com>
-
-Several ACPI drivers select THERMAL, but THERMAL depends on NET
-(for netlink).  Fix build breakage by making the ACPI drivers
-also depend on NET.
-
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: John W. Linville <linville@tuxdriver.com>
 ---
- drivers/acpi/Kconfig |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/wireless/rtlwifi/Makefile |    7 +++++--
+ 1 files changed, 5 insertions(+), 2 deletions(-)
 
-This is what is needed to fix the breakage, but it seems
-that Len does not care.
-It would be better just to eliminate the netlink dependency.
-
-
---- linux-next-20110228.orig/drivers/acpi/Kconfig
-+++ linux-next-20110228/drivers/acpi/Kconfig
-@@ -163,7 +163,7 @@ config ACPI_BUTTON
- config ACPI_VIDEO
- 	tristate "Video"
- 	depends on X86 && BACKLIGHT_CLASS_DEVICE && VIDEO_OUTPUT_CONTROL
--	depends on INPUT
-+	depends on INPUT && NET
- 	select THERMAL
- 	help
- 	  This driver implements the ACPI Extensions For Display Adapters
-@@ -177,6 +177,7 @@ config ACPI_VIDEO
+diff --git a/drivers/net/wireless/rtlwifi/Makefile b/drivers/net/wireless/rtlwifi/Makefile
+index 9192fd5..27355be 100644
+--- a/drivers/net/wireless/rtlwifi/Makefile
++++ b/drivers/net/wireless/rtlwifi/Makefile
+@@ -7,8 +7,7 @@ rtlwifi-objs	:=		\
+ 		efuse.o		\
+ 		ps.o		\
+ 		rc.o		\
+-		regd.o		\
+-		usb.o
++		regd.o
  
- config ACPI_FAN
- 	tristate "Fan"
-+	depends on NET
- 	select THERMAL
- 	default y
- 	help
-@@ -195,6 +196,7 @@ config ACPI_DOCK
+ rtl8192c_common-objs +=		\
  
- config ACPI_PROCESSOR
- 	tristate "Processor"
-+	depends on NET
- 	select THERMAL
- 	select CPU_IDLE
- 	default y
-@@ -238,7 +240,7 @@ config ACPI_PROCESSOR_AGGREGATOR
+@@ -16,6 +15,10 @@ ifeq ($(CONFIG_PCI),y)
+ rtlwifi-objs	+= pci.o
+ endif
  
- config ACPI_THERMAL
- 	tristate "Thermal Zone"
--	depends on ACPI_PROCESSOR
-+	depends on ACPI_PROCESSOR && NET
- 	select THERMAL
- 	default y
- 	help
++ifeq ($(CONFIG_USB),y)
++rtlwifi-objs	+= usb.o
++endif
++
+ obj-$(CONFIG_RTL8192C_COMMON)	+= rtl8192c/
+ obj-$(CONFIG_RTL8192CE)		+= rtl8192ce/
+ obj-$(CONFIG_RTL8192CU)		+= rtl8192cu/
+-- 
+1.7.4
