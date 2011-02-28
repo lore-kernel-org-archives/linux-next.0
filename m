@@ -1,101 +1,61 @@
-From: Huang Ying <ying.huang@intel.com>
-Subject: Re: linux-next: build failure after merge of the final tree (kvm
- tree related)
-Date: Mon, 28 Feb 2011 10:28:44 +0800
-Message-ID: <1298860124.27725.2.camel@yhuang-dev>
-References: <20110221175658.2dc4d1ac.sfr@canb.auug.org.au>
-	 <20110228131556.3822f3ca.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound and sound-asoc
+ trees
+Date: Mon, 28 Feb 2011 14:15:28 +1100
+Message-ID: <20110228141528.00fc4ab4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__28_Feb_2011_14_15_28_+1100_xII_2PrqpdYDclos"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:8010 "EHLO mga01.intel.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:45081 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752056Ab1B1C25 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 27 Feb 2011 21:28:57 -0500
-In-Reply-To: <20110228131556.3822f3ca.sfr@canb.auug.org.au>
+	id S1752166Ab1B1DPk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 27 Feb 2011 22:15:40 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Avi Kivity <avi@qumranet.com>, Marcelo Tosatti <mtosatti@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Miller <davem@davemloft.net>, Andrew Morton <akpm@linux-foundation.org>
+To: Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zeng Zhaoming <zhaoming.zeng@freescale.com>
 
-Hi, Avi and Marcelo,
+--Signature=_Mon__28_Feb_2011_14_15_28_+1100_xII_2PrqpdYDclos
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2011-02-28 at 10:15 +0800, Stephen Rothwell wrote:
-> Hi All,
-> 
-> On Mon, 21 Feb 2011 17:56:58 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > After merging the final tree, today's linux-next build (sparc64 defconfig)
-> > failed like this:
-> > 
-> > mm/memory.c: In function '__get_user_pages':
-> > mm/memory.c:1584: error: 'EHWPOISON' undeclared (first use in this function)
-> > 
-> > Caused by commit b1c4f2836370f5c8207d4c61e91c93bd6a4ce27a ("mm: make
-> > __get_user_pages return -EHWPOISON for HWPOISON page optionally") from
-> > the kvm tree.
-> > 
-> > Not all architectures use include/asm-generic/errno.h ...
-> > 
-> > I have reverted that commit (and commits
-> > d47b742c5661385b927c03188549b2d2004b80f4 "KVM: Replace
-> > is_hwpoison_address with __get_user_pages" and
-> > eef8839430b72deac59e9ec51eb56c44512fcc66 "mm: remove is_hwpoison_address"
-> > which depend on it) for today.
-> 
-> I am still doing those reverts ...
+Hi all,
 
-Can you merge the fixes following the email into my original EHWPOISON
-patch to check if that fixes linux-next issue?
+After merging the sound tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Or you prefer I resend the patchset?
+sound/soc/codecs/sgtl5000.c:30:27: error: mach/hardware.h: No such file or =
+directory
 
-Best Regards,
-Huang Ying
+Caused by commit 9b34e6cc3bc2bf826c078c93c81b46f6c08da25f ("ASoC: Add
+Freescale SGTL5000 codec support").  Maybe it needs restricting to a
+particular architecture?
 
----
- arch/alpha/include/asm/errno.h  |    2 ++
- arch/mips/include/asm/errno.h   |    2 ++
- arch/parisc/include/asm/errno.h |    2 ++
- arch/sparc/include/asm/errno.h  |    2 ++
- 4 files changed, 8 insertions(+)
+I have used the sound tree from next-20110225 for today.
 
---- a/arch/parisc/include/asm/errno.h
-+++ b/arch/parisc/include/asm/errno.h
-@@ -122,4 +122,6 @@
- 
- #define	ERFKILL		256	/* Operation not possible due to RF-kill */
- 
-+#define EHWPOISON	257	/* Memory page has hardware error */
-+
- #endif
---- a/arch/sparc/include/asm/errno.h
-+++ b/arch/sparc/include/asm/errno.h
-@@ -112,4 +112,6 @@
- 
- #define	ERFKILL		134	/* Operation not possible due to RF-kill */
- 
-+#define EHWPOISON	135	/* Memory page has hardware error */
-+
- #endif
---- a/arch/alpha/include/asm/errno.h
-+++ b/arch/alpha/include/asm/errno.h
-@@ -122,4 +122,6 @@
- 
- #define	ERFKILL		138	/* Operation not possible due to RF-kill */
- 
-+#define EHWPOISON	139	/* Memory page has hardware error */
-+
- #endif
---- a/arch/mips/include/asm/errno.h
-+++ b/arch/mips/include/asm/errno.h
-@@ -121,6 +121,8 @@
- 
- #define	ERFKILL		167	/* Operation not possible due to RF-kill */
- 
-+#define EHWPOISON	168	/* Memory page has hardware error */
-+
- #define EDQUOT		1133	/* Quota exceeded */
- 
- #ifdef __KERNEL__
+This also affected the sound-asoc tree so I have used the next-20110225
+version of that as well.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__28_Feb_2011_14_15_28_+1100_xII_2PrqpdYDclos
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNaxNQAAoJEDMEi1NhKgbsUloH/16G4nOhv5dmCp4S+TlU9z9d
+L+6ATnrB2lC4YlonGhi6q/6Nc6k3H1dt5W2roSFSmEq8nk0kWD7ogk6NBfDPJX29
+q7DexLHGRQ2vJ4gsTdcI6hP6ay179rxkxKE53vY6gnxhk7nCQoLbu3yfFGLpbfqs
+xi/suX35DxR4Rai1CqvqbdF4bKR2fUmy23F9T8GKaSSQuvqrrSAQihw/0KjBmK9h
+6LNG8Nn7ONfsPOMu3ybphd8kZN2/q63xW/LlWU8X2FDuV1yuZM9QGePF//drIcU0
+Z00SjHWZGEuqqEfMJrazWwgIk42YCAzRN7V/OPxB07N7zH7J8rz6U3uK7Ohmgeg=
+=e+Yq
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__28_Feb_2011_14_15_28_+1100_xII_2PrqpdYDclos--
