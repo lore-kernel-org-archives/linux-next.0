@@ -1,183 +1,71 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH upstream build breakage] acpi: several drivers depend on NET
-Date: Mon, 28 Feb 2011 23:42:59 +0100
-Message-ID: <201102282342.59407.rjw@sisk.pl>
-References: <20101220200013.df8fbc88.sfr@canb.auug.org.au> <20110228090332.9ffe2087.randy.dunlap@oracle.com> <201102282137.15390.rjw@sisk.pl>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Elimination of of_platform_bus_type remains in devicetree/next
+Date: Tue, 1 Mar 2011 10:47:45 +1100
+Message-ID: <20110301104745.0b35f8be.sfr@canb.auug.org.au>
+References: <AANLkTim6fuYhPLRjwt814RjxV4Yp-tv4LQ6DBhdgGiDP@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <201102282137.15390.rjw@sisk.pl>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Ingo Molnar <mingo@elte.hu>, Len Brown <lenb@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Luming Yu <luming.yu@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-acpi@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__1_Mar_2011_10_47_45_+1100_SXfQheGbo15/N.VA"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:39834 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753489Ab1B1Xrz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 28 Feb 2011 18:47:55 -0500
+In-Reply-To: <AANLkTim6fuYhPLRjwt814RjxV4Yp-tv4LQ6DBhdgGiDP@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next <linux-next@vger.kernel.org>, devicetree-discuss <devicetree-discuss@lists.ozlabs.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-On Monday, February 28, 2011, Rafael J. Wysocki wrote:
-> On Monday, February 28, 2011, Randy Dunlap wrote:
-> > On Tue, 1 Feb 2011 13:03:23 +0100 Ingo Molnar wrote:
-> > 
-> > > * Ingo Molnar <mingo@elte.hu> wrote:
-> > > 
-> > > > * Randy Dunlap <randy.dunlap@oracle.com> wrote:
-> > > > 
-> > > > > On Mon, 20 Dec 2010 20:00:13 +1100 Stephen Rothwell wrote:
-> > > > > 
-> > > > > > Hi all,
-> > > > > > 
-> > > > > > [The mirroring on kernel.org is running slowly]
-> > > > > > 
-> > > > > > Changes since 20101217:
-> > > > > 
-> > > > > ERROR: "thermal_cooling_device_register" [drivers/acpi/video.ko] undefined!
-> > > > > ERROR: "thermal_cooling_device_unregister" [drivers/acpi/video.ko] undefined!
-> > > > 
-> > > > This bug has been reported two months ago, one month ago, it has been ignored twice 
-> > > > and now the bug has been pushed upstream and it's triggering there as well.
-> > > > 
-> > > > What's going on?
-> > > 
-> > > *Tap*, *tap*, is this thing on? :)
-> > > 
-> > > acpi-video is still build-broken upstream, as of .38-rc3:
-> > > 
-> > >    MODPOST 651 modules
-> > >  ERROR: "thermal_cooling_device_register" [drivers/acpi/video.ko] undefined!
-> > >  ERROR: "thermal_cooling_device_unregister" [drivers/acpi/video.ko] undefined!
-> > >  WARNING: modpost: Found 37 section mismatch(es).
-> > >  To see full details build your kernel with:
-> > >  'make CONFIG_DEBUG_SECTION_MISMATCH=y'
-> > >  make[1]: *** [__modpost] Error 1
-> > >  make: *** [modules] Error 2
-> > > 
-> > > Triggers in about 10% of all randconfig builds. Config attached.
-> > 
-> > 
-> > From: Randy Dunlap <randy.dunlap@oracle.com>
-> > 
-> > Several ACPI drivers select THERMAL, but THERMAL depends on NET
-> > (for netlink).  Fix build breakage by making the ACPI drivers
-> > also depend on NET.
-> 
-> Well, making ACPI_FAN depend on NET seems to be a kind of an overstretch to me.
-> A proper fix would be to disable the netlink interface in THERMAL when
-> NET is unset, I guess.  I'll see what can be done to that end (although I had
-> hoped that the people who introduced the breakage would handle it).
+--Signature=_Tue__1_Mar_2011_10_47_45_+1100_SXfQheGbo15/N.VA
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-OK, please check if the appended patch helps.  Admittedly, I only built it
-with CONFIG_NET set, so caveat emptor.
+Hi Grant,
 
-Thanks,
-Rafael
+On Mon, 28 Feb 2011 13:59:37 -0700 Grant Likely <grant.likely@secretlab.ca>=
+ wrote:
+>
+> I've just pushed a big change out to my devicetree/next branch which
+> removes most users of of_platform_driver.  This gets rid of almost all
+> the remaining users.  ibmebus and macintosh are the last holdouts, but
+> they're pretty isolated and don't use the ugly shim that was in
+> drivers/of/platform.c.
 
+Yeah, I saw all those patches - looked pretty good.
 
----
- drivers/thermal/Kconfig       |    1 -
- drivers/thermal/thermal_sys.c |   40 +++++++++++++++++++++-------------------
- include/linux/thermal.h       |    8 ++++++++
- 3 files changed, 29 insertions(+), 20 deletions(-)
+> This change very likely will break a few things.  I've done my best to
+> test it over many configurations, but I make no guarantees.  I've also
+> performed a test merge with linux-next, and am checking it for
+> breakage now.  You might want to move devicetree/next to the back of
+> the queue for your merge tonight (or whatever else you like to do to
+> mitigate damage).  :)
+>=20
+> Let me know if it causes you any problems.
 
-Index: linux-2.6/drivers/thermal/thermal_sys.c
-===================================================================
---- linux-2.6.orig/drivers/thermal/thermal_sys.c
-+++ linux-2.6/drivers/thermal/thermal_sys.c
-@@ -62,20 +62,6 @@ static DEFINE_MUTEX(thermal_list_lock);
- 
- static unsigned int thermal_event_seqnum;
- 
--static struct genl_family thermal_event_genl_family = {
--	.id = GENL_ID_GENERATE,
--	.name = THERMAL_GENL_FAMILY_NAME,
--	.version = THERMAL_GENL_VERSION,
--	.maxattr = THERMAL_GENL_ATTR_MAX,
--};
--
--static struct genl_multicast_group thermal_event_mcgrp = {
--	.name = THERMAL_GENL_MCAST_GROUP_NAME,
--};
--
--static int genetlink_init(void);
--static void genetlink_exit(void);
--
- static int get_idr(struct idr *idr, struct mutex *lock, int *id)
- {
- 	int err;
-@@ -1225,6 +1211,18 @@ void thermal_zone_device_unregister(stru
- 
- EXPORT_SYMBOL(thermal_zone_device_unregister);
- 
-+#ifdef CONFIG_NET
-+static struct genl_family thermal_event_genl_family = {
-+	.id = GENL_ID_GENERATE,
-+	.name = THERMAL_GENL_FAMILY_NAME,
-+	.version = THERMAL_GENL_VERSION,
-+	.maxattr = THERMAL_GENL_ATTR_MAX,
-+};
-+
-+static struct genl_multicast_group thermal_event_mcgrp = {
-+	.name = THERMAL_GENL_MCAST_GROUP_NAME,
-+};
-+
- int generate_netlink_event(u32 orig, enum events event)
- {
- 	struct sk_buff *skb;
-@@ -1301,6 +1299,15 @@ static int genetlink_init(void)
- 	return result;
- }
- 
-+static void genetlink_exit(void)
-+{
-+	genl_unregister_family(&thermal_event_genl_family);
-+}
-+#else /* !CONFIG_NET */
-+static inline int genetlink_init(void) { return 0; }
-+static inline void genetlink_exit(void) {}
-+#endif /* !CONFIG_NET */
-+
- static int __init thermal_init(void)
- {
- 	int result = 0;
-@@ -1316,11 +1323,6 @@ static int __init thermal_init(void)
- 	return result;
- }
- 
--static void genetlink_exit(void)
--{
--	genl_unregister_family(&thermal_event_genl_family);
--}
--
- static void __exit thermal_exit(void)
- {
- 	class_unregister(&thermal_class);
-Index: linux-2.6/include/linux/thermal.h
-===================================================================
---- linux-2.6.orig/include/linux/thermal.h
-+++ linux-2.6/include/linux/thermal.h
-@@ -172,6 +172,14 @@ void thermal_zone_device_update(struct t
- struct thermal_cooling_device *thermal_cooling_device_register(char *, void *,
- 		const struct thermal_cooling_device_ops *);
- void thermal_cooling_device_unregister(struct thermal_cooling_device *);
-+
-+#ifdef CONFIG_NET
- extern int generate_netlink_event(u32 orig, enum events event);
-+#else
-+static inline int generate_netlink_event(u32 orig, enum events event)
-+{
-+	return 0;
-+}
-+#endif
- 
- #endif /* __THERMAL_H__ */
-Index: linux-2.6/drivers/thermal/Kconfig
-===================================================================
---- linux-2.6.orig/drivers/thermal/Kconfig
-+++ linux-2.6/drivers/thermal/Kconfig
-@@ -4,7 +4,6 @@
- 
- menuconfig THERMAL
- 	tristate "Generic Thermal sysfs driver"
--	depends on NET
- 	help
- 	  Generic Thermal Sysfs driver offers a generic mechanism for
- 	  thermal management. Usually it's made up of one or more thermal
+I will just use yesterday's tree if it breaks obviously.  Thanks for the
+heads up.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__1_Mar_2011_10_47_45_+1100_SXfQheGbo15/N.VA
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNbDQhAAoJEDMEi1NhKgbs56gH/3WAl/pbySzaTGJ8fFyAZVD1
+OGwGiwwjMOOkTc4TFW45OnGcGeosAyizhVz+bHYm4lbvYpBupo+7aAb7DMSUL/f8
+tVZZ0ND4xqz0eg8blkv/x0gFkX4MB/plsg5MQWMb41N9b9vWhIgNGGqpMikYP1aO
+D/kv9Ca+2vspWAlwYLBt5UQ1xyQs9KmbFZrB8kOeU+3jhe1BSWJpJzHuCaKnaIBX
+rh88I0RkSkQ/LNjhNGHpQAPsZFhGQS3Pdla/S4ylX6l0MYKuJJIaY6zPeVsRQHn4
+ej1uFedkg2UoYc8NfDarDAwXOC6T9n6TknsZAzQqpvYDod0uAbf71AHV7iy4+Qw=
+=6Zye
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__1_Mar_2011_10_47_45_+1100_SXfQheGbo15/N.VA--
