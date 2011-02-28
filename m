@@ -1,65 +1,183 @@
-From: Larry Finger <Larry.Finger-tQ5ms3gMjBLk1uMJSBkQmQ@public.gmane.org>
-Subject: Re: [PATCH] rtlwifi: usb parts should depend on CONFIG_USB
-Date: Mon, 28 Feb 2011 15:27:44 -0600
-Message-ID: <4D6C1350.6050903@lwfinger.net>
-References: <alpine.DEB.2.00.1102171354200.16788@ayla.of.borg>	 <1298922500-21632-1-git-send-email-linville@tuxdriver.com>	 <1298923731.10109.0.camel@jlt3.sipsolutions.net>	 <20110228201357.GF2515@tuxdriver.com>  <4D6C10B0.2090402@lwfinger.net> <1298928111.12230.0.camel@jlt3.sipsolutions.net>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: [PATCH upstream build breakage] acpi: several drivers depend on NET
+Date: Mon, 28 Feb 2011 23:42:59 +0100
+Message-ID: <201102282342.59407.rjw@sisk.pl>
+References: <20101220200013.df8fbc88.sfr@canb.auug.org.au> <20110228090332.9ffe2087.randy.dunlap@oracle.com> <201102282137.15390.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1298928111.12230.0.camel-8upI4CBIZJIJvtFkdXX2HixXY32XiHfO@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>
-Cc: "John W. Linville" <linville-2XuSBdqkA4R54TAoqtyWWQ@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, George <george0505-Rasf1IRRPZFBDgjK7y7TUQ@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <201102282137.15390.rjw@sisk.pl>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Ingo Molnar <mingo@elte.hu>, Len Brown <lenb@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Luming Yu <luming.yu@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-acpi@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
-On 02/28/2011 03:21 PM, Johannes Berg wrote:
-> On Mon, 2011-02-28 at 15:16 -0600, Larry Finger wrote:
->> On 02/28/2011 02:13 PM, John W. Linville wrote:
->>> On Mon, Feb 28, 2011 at 09:08:51PM +0100, Johannes Berg wrote:
->>>> On Mon, 2011-02-28 at 14:48 -0500, John W. Linville wrote:
->>>>>
->>>>> +ifeq ($(CONFIG_USB),y)
->>>>> +rtlwifi-objs	+= usb.o
->>>>> +endif
->>>>
->>>> That reads weird, shouldn't
->>>>
->>>> rtlwifi-$(CONFIG_USB) += usb.o
->>>>
->>>> do? Or more likely actually use CONFIG_RTL8192CU?
->>>
->>> Maybe...really just following what Larry already had there for pci...?
->>
->> Yes, and that was wrong too.
->>
->> It could be either as Johannes wrote it, or
->
-> No, what I said won't work for m either, since you'd get
->
-> rtlwifi-m += usb.o
->
-> Though you can make that work by adding $(rtlwifi-m) manually to the
-> list of objects later.
+On Monday, February 28, 2011, Rafael J. Wysocki wrote:
+> On Monday, February 28, 2011, Randy Dunlap wrote:
+> > On Tue, 1 Feb 2011 13:03:23 +0100 Ingo Molnar wrote:
+> > 
+> > > * Ingo Molnar <mingo@elte.hu> wrote:
+> > > 
+> > > > * Randy Dunlap <randy.dunlap@oracle.com> wrote:
+> > > > 
+> > > > > On Mon, 20 Dec 2010 20:00:13 +1100 Stephen Rothwell wrote:
+> > > > > 
+> > > > > > Hi all,
+> > > > > > 
+> > > > > > [The mirroring on kernel.org is running slowly]
+> > > > > > 
+> > > > > > Changes since 20101217:
+> > > > > 
+> > > > > ERROR: "thermal_cooling_device_register" [drivers/acpi/video.ko] undefined!
+> > > > > ERROR: "thermal_cooling_device_unregister" [drivers/acpi/video.ko] undefined!
+> > > > 
+> > > > This bug has been reported two months ago, one month ago, it has been ignored twice 
+> > > > and now the bug has been pushed upstream and it's triggering there as well.
+> > > > 
+> > > > What's going on?
+> > > 
+> > > *Tap*, *tap*, is this thing on? :)
+> > > 
+> > > acpi-video is still build-broken upstream, as of .38-rc3:
+> > > 
+> > >    MODPOST 651 modules
+> > >  ERROR: "thermal_cooling_device_register" [drivers/acpi/video.ko] undefined!
+> > >  ERROR: "thermal_cooling_device_unregister" [drivers/acpi/video.ko] undefined!
+> > >  WARNING: modpost: Found 37 section mismatch(es).
+> > >  To see full details build your kernel with:
+> > >  'make CONFIG_DEBUG_SECTION_MISMATCH=y'
+> > >  make[1]: *** [__modpost] Error 1
+> > >  make: *** [modules] Error 2
+> > > 
+> > > Triggers in about 10% of all randconfig builds. Config attached.
+> > 
+> > 
+> > From: Randy Dunlap <randy.dunlap@oracle.com>
+> > 
+> > Several ACPI drivers select THERMAL, but THERMAL depends on NET
+> > (for netlink).  Fix build breakage by making the ACPI drivers
+> > also depend on NET.
+> 
+> Well, making ACPI_FAN depend on NET seems to be a kind of an overstretch to me.
+> A proper fix would be to disable the netlink interface in THERMAL when
+> NET is unset, I guess.  I'll see what can be done to that end (although I had
+> hoped that the people who introduced the breakage would handle it).
 
-I just tested it. As you say, your solution only works for y, not m.
+OK, please check if the appended patch helps.  Admittedly, I only built it
+with CONFIG_NET set, so caveat emptor.
 
-I think this is what is needed:
+Thanks,
+Rafael
 
--ifeq ($(CONFIG_PCI),y)
-+ifneq ($(CONFIG_PCI),)
-  rtlwifi-objs   += pci.o
-  endif
 
-+ifneq ($(CONFIG_USB),)
-+rtlwifi-objs   += usb.o
-+endif
+---
+ drivers/thermal/Kconfig       |    1 -
+ drivers/thermal/thermal_sys.c |   40 +++++++++++++++++++++-------------------
+ include/linux/thermal.h       |    8 ++++++++
+ 3 files changed, 29 insertions(+), 20 deletions(-)
+
+Index: linux-2.6/drivers/thermal/thermal_sys.c
+===================================================================
+--- linux-2.6.orig/drivers/thermal/thermal_sys.c
++++ linux-2.6/drivers/thermal/thermal_sys.c
+@@ -62,20 +62,6 @@ static DEFINE_MUTEX(thermal_list_lock);
+ 
+ static unsigned int thermal_event_seqnum;
+ 
+-static struct genl_family thermal_event_genl_family = {
+-	.id = GENL_ID_GENERATE,
+-	.name = THERMAL_GENL_FAMILY_NAME,
+-	.version = THERMAL_GENL_VERSION,
+-	.maxattr = THERMAL_GENL_ATTR_MAX,
+-};
+-
+-static struct genl_multicast_group thermal_event_mcgrp = {
+-	.name = THERMAL_GENL_MCAST_GROUP_NAME,
+-};
+-
+-static int genetlink_init(void);
+-static void genetlink_exit(void);
+-
+ static int get_idr(struct idr *idr, struct mutex *lock, int *id)
+ {
+ 	int err;
+@@ -1225,6 +1211,18 @@ void thermal_zone_device_unregister(stru
+ 
+ EXPORT_SYMBOL(thermal_zone_device_unregister);
+ 
++#ifdef CONFIG_NET
++static struct genl_family thermal_event_genl_family = {
++	.id = GENL_ID_GENERATE,
++	.name = THERMAL_GENL_FAMILY_NAME,
++	.version = THERMAL_GENL_VERSION,
++	.maxattr = THERMAL_GENL_ATTR_MAX,
++};
 +
-
-At least it works wit PCI=y and USB=m.
-
-Larry
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
++static struct genl_multicast_group thermal_event_mcgrp = {
++	.name = THERMAL_GENL_MCAST_GROUP_NAME,
++};
++
+ int generate_netlink_event(u32 orig, enum events event)
+ {
+ 	struct sk_buff *skb;
+@@ -1301,6 +1299,15 @@ static int genetlink_init(void)
+ 	return result;
+ }
+ 
++static void genetlink_exit(void)
++{
++	genl_unregister_family(&thermal_event_genl_family);
++}
++#else /* !CONFIG_NET */
++static inline int genetlink_init(void) { return 0; }
++static inline void genetlink_exit(void) {}
++#endif /* !CONFIG_NET */
++
+ static int __init thermal_init(void)
+ {
+ 	int result = 0;
+@@ -1316,11 +1323,6 @@ static int __init thermal_init(void)
+ 	return result;
+ }
+ 
+-static void genetlink_exit(void)
+-{
+-	genl_unregister_family(&thermal_event_genl_family);
+-}
+-
+ static void __exit thermal_exit(void)
+ {
+ 	class_unregister(&thermal_class);
+Index: linux-2.6/include/linux/thermal.h
+===================================================================
+--- linux-2.6.orig/include/linux/thermal.h
++++ linux-2.6/include/linux/thermal.h
+@@ -172,6 +172,14 @@ void thermal_zone_device_update(struct t
+ struct thermal_cooling_device *thermal_cooling_device_register(char *, void *,
+ 		const struct thermal_cooling_device_ops *);
+ void thermal_cooling_device_unregister(struct thermal_cooling_device *);
++
++#ifdef CONFIG_NET
+ extern int generate_netlink_event(u32 orig, enum events event);
++#else
++static inline int generate_netlink_event(u32 orig, enum events event)
++{
++	return 0;
++}
++#endif
+ 
+ #endif /* __THERMAL_H__ */
+Index: linux-2.6/drivers/thermal/Kconfig
+===================================================================
+--- linux-2.6.orig/drivers/thermal/Kconfig
++++ linux-2.6/drivers/thermal/Kconfig
+@@ -4,7 +4,6 @@
+ 
+ menuconfig THERMAL
+ 	tristate "Generic Thermal sysfs driver"
+-	depends on NET
+ 	help
+ 	  Generic Thermal Sysfs driver offers a generic mechanism for
+ 	  thermal management. Usually it's made up of one or more thermal
