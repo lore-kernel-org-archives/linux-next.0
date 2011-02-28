@@ -1,51 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the trivial tree with Linus' tree
-Date: Mon, 28 Feb 2011 15:21:53 +1100
-Message-ID: <20110228152153.25e94457.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the bkl-config tree with the tty tree
+Date: Mon, 28 Feb 2011 17:40:07 +1100
+Message-ID: <20110228174007.b6faf01e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58293 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752303Ab1B1EWA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 27 Feb 2011 23:22:00 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Davide Libenzi <davidel@xmailserver.org>, Daniel Baluta <daniel.baluta@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH <greg@kroah.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Jiri,
+Hi Arnd,
 
-Today's linux-next merge of the trivial tree got a conflict in
-fs/eventpoll.c between commit 22bacca48a1755f79b7e0f192ddb9fbb7fc6e64e
-("epoll: prevent creating circular epoll structures") from Linus' tree
-and commit bf6a41db7726e6c09b9c6ac993457b7260473406 ("fs/eventpoll.c: fix
-spelling") from the trivial tree.
+Today's linux-next merge of the bkl-config tree got a conflict in
+drivers/staging/Kconfig between commits
+4a6514e6d096716fb7bedf238efaaca877e2a7e8 ("tty: move obsolete and broken
+tty drivers to drivers/staging/tty/") and
+4c37705877e74c02c968735c2eee0f84914cf557 ("tty: move obsolete and broken
+generic_serial drivers to drivers/staging/generic_serial/") from the tty
+tree and commit a3ba01b63468c925518da2da0ac3be11358f60cb ("BKL: move
+CONFIG_BKL to staging") from the bkl-config tree.
 
-Just context.  I fixed it up (see below) and can carry the fix as
-necessary.
+I fixed it up (see below) and can carry the fix as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc fs/eventpoll.c
-index 4a09af9,7513066..0000000
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@@ -62,14 -62,7 +62,14 @@@
-   * This mutex is acquired by ep_free() during the epoll file
-   * cleanup path and it is also acquired by eventpoll_release_file()
-   * if a file has been pushed inside an epoll set and it is then
--  * close()d without a previous call toepoll_ctl(EPOLL_CTL_DEL).
-+  * close()d without a previous call to epoll_ctl(EPOLL_CTL_DEL).
- + * It is also acquired when inserting an epoll fd onto another epoll
- + * fd. We do this so that we walk the epoll tree and ensure that this
- + * insertion does not create a cycle of epoll file descriptors, which
- + * could lead to deadlock. We need a global mutex to prevent two
- + * simultaneous inserts (A into B and B into A) from racing and
- + * constructing a cycle without either insert observing that it is
- + * going to.
-   * It is possible to drop the "ep->mtx" and to use the global
-   * mutex "epmutex" (together with "ep->lock") to have it working,
-   * but having "ep->mtx" will make the interface more scalable.
+diff --cc drivers/staging/Kconfig
+index fc751e3,5adf537..0000000
+--- a/drivers/staging/Kconfig
++++ b/drivers/staging/Kconfig
+@@@ -41,10 -41,17 +41,21 @@@ config STAGING_EXCLUDE_BUIL
+  
+  if !STAGING_EXCLUDE_BUILD
+  
++ config BKL
++ 	bool "Include drivers that depend on the Big Kernel Lock" if (SMP || PREEMPT)
++ 	default !(SMP || PREEMPT)
++ 	help
++ 	  This is the traditional lock that is used in old code instead
++ 	  of proper locking. All drivers that use the BKL should depend
++ 	  on this symbol.
++ 	  A small number of drivers still require this. All drivers that
++ 	  use the BKL should be changed to a better serialisation method
++ 	  or they will be removed in 2.6.39.
++ 
+ +source "drivers/staging/tty/Kconfig"
+ +
+ +source "drivers/staging/generic_serial/Kconfig"
+ +
+  source "drivers/staging/et131x/Kconfig"
+  
+  source "drivers/staging/slicoss/Kconfig"
