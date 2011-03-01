@@ -1,123 +1,74 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mfd tree with the i.MX tree
-Date: Tue, 1 Mar 2011 14:54:36 +1100
-Message-ID: <20110301145436.b1ae1923.sfr@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the mfd tree
+Date: Tue, 1 Mar 2011 15:42:30 +1100
+Message-ID: <20110301154230.df32be17.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__1_Mar_2011_15_42_30_+1100_soykBIbCO58_B0Rx"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57573 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:46095 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752835Ab1CADyq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 28 Feb 2011 22:54:46 -0500
+	id S1753582Ab1CAEmj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 28 Feb 2011 23:42:39 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andres Salomon <dilinger@queued.net>, David Jander <david@protonic.nl>, Sascha Hauer <s.hauer@pengutronix.de>, =?UTF-8?B?IlV3ZSBLbGVpbmUtS8O2bmlnIg==?= <u.kleine-koenig@pengutronix.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andres Salomon <dilinger@queued.net>
+
+--Signature=_Tue__1_Mar_2011_15_42_30_+1100_soykBIbCO58_B0Rx
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi Samuel,
 
-Today's linux-next merge of the mfd tree got a conflict in
-arch/arm/mach-imx/mach-mx27_3ds.c arch/arm/mach-imx/mach-pcm038.c
-arch/arm/mach-mx3/mach-mx31_3ds.c arch/arm/mach-mx3/mach-mx31moboard.c
-between commit 5836372e8a0ba5cc633f61bc0484ee20c86f4b36 ("ARM: imx+mx3:
-convert to mc13xxx MFD") from the i.MX tree and commit
-e84e545d47d26644275a79fe5ebc1797bcb80910 ("mfd: mfd_cell is now
-implicitly available to mc13xxx drivers") from the mfd tree.
+After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
+produced these warnings:
 
-I fixed it up (I think - see below) and can carry the fix as necessary.
--- 
+drivers/video/tmiofb.c: In function 'tmiofb_hw_init':
+drivers/video/tmiofb.c:270: warning: initialization discards qualifiers fro=
+m pointer target type
+drivers/video/tmiofb.c: In function 'tmiofb_hw_mode':
+drivers/video/tmiofb.c:314: warning: initialization discards qualifiers fro=
+m pointer target type
+drivers/video/tmiofb.c:314: warning: unused variable 'cell'
+drivers/video/tmiofb.c: In function 'tmiofb_probe':
+drivers/video/tmiofb.c:683: warning: initialization discards qualifiers fro=
+m pointer target type
+drivers/video/tmiofb.c: In function 'tmiofb_remove':
+drivers/video/tmiofb.c:811: warning: initialization discards qualifiers fro=
+m pointer target type
+drivers/video/tmiofb.c: In function 'tmiofb_suspend':
+drivers/video/tmiofb.c:941: warning: initialization discards qualifiers fro=
+m pointer target type
+drivers/video/tmiofb.c: In function 'tmiofb_resume':
+drivers/video/tmiofb.c:973: warning: initialization discards qualifiers fro=
+m pointer target type
+
+Introduced by commits 2a79bb1d72f5ac22dff96de340d90d512f852ecb ("mfd:
+mfd_cell is now implicitly available to tc6393xb drivers") and
+b6361637190e6cb7acb84509499942ada69e7136 ("fb: Use mfd_data instead of
+driver_data for tmio-fb").
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/arm/mach-imx/mach-mx27_3ds.c
-index ba88417,4bf1962..0000000
---- a/arch/arm/mach-imx/mach-mx27_3ds.c
-+++ b/arch/arm/mach-imx/mach-mx27_3ds.c
-@@@ -231,10 -227,13 +231,13 @@@ static struct mc13xxx_regulator_init_da
-  };
-  
-  /* MC13783 */
- -static struct mc13783_platform_data mc13783_pdata = {
- +static struct mc13xxx_platform_data mc13783_pdata __initdata = {
-- 	.regulators = mx27_3ds_regulators,
-- 	.num_regulators = ARRAY_SIZE(mx27_3ds_regulators),
-+ 	.regulators = {
-+ 		.regulators = mx27_3ds_regulators,
-+ 		.num_regulators = ARRAY_SIZE(mx27_3ds_regulators),
-+ 
-+ 	},
- -	.flags  = MC13783_USE_REGULATOR,
- +	.flags  = MC13XXX_USE_REGULATOR,
-  };
-  
-  /* SPI */
-diff --cc arch/arm/mach-imx/mach-pcm038.c
-index 38c7708,c4c8fb1..0000000
---- a/arch/arm/mach-imx/mach-pcm038.c
-+++ b/arch/arm/mach-imx/mach-pcm038.c
-@@@ -262,11 -262,13 +262,13 @@@ static struct mc13xxx_regulator_init_da
-  	},
-  };
-  
- -static struct mc13783_platform_data pcm038_pmic = {
- +static struct mc13xxx_platform_data pcm038_pmic = {
-- 	.regulators = pcm038_regulators,
-- 	.num_regulators = ARRAY_SIZE(pcm038_regulators),
-+ 	.regulators = {
-+ 		.regulators = pcm038_regulators,
-+ 		.num_regulators = ARRAY_SIZE(pcm038_regulators),
-+ 	},
- -	.flags = MC13783_USE_ADC | MC13783_USE_REGULATOR |
- -		 MC13783_USE_TOUCHSCREEN,
- +	.flags = MC13XXX_USE_ADC | MC13XXX_USE_REGULATOR |
- +		 MC13XXX_USE_TOUCHSCREEN,
-  };
-  
-  static struct spi_board_info pcm038_spi_board_info[] __initdata = {
-diff --cc arch/arm/mach-mx3/mach-mx31_3ds.c
-index b7d0953,88516af..0000000
---- a/arch/arm/mach-mx3/mach-mx31_3ds.c
-+++ b/arch/arm/mach-mx3/mach-mx31_3ds.c
-@@@ -152,10 -156,12 +152,13 @@@ static struct mc13xxx_regulator_init_da
-  };
-  
-  /* MC13783 */
- +static struct mc13xxx_platform_data mc13783_pdata __initdata = {
-- 	.regulators = mx31_3ds_regulators,
-- 	.num_regulators = ARRAY_SIZE(mx31_3ds_regulators),
-- 	.flags  = MC13XXX_USE_REGULATOR | MC13XXX_USE_TOUCHSCREEN
-+ static struct mc13783_platform_data mc13783_pdata = {
-+ 	.regulators = {
-+ 		.regulators = mx31_3ds_regulators,
-+ 		.num_regulators = ARRAY_SIZE(mx31_3ds_regulators),
-+ 	},
- -	.flags  = MC13783_USE_REGULATOR | MC13783_USE_TOUCHSCREEN,
-++	.flags  = MC13XXX_USE_REGULATOR | MC13XXX_USE_TOUCHSCREEN,
-  };
-  
-  /* SPI */
-diff --cc arch/arm/mach-mx3/mach-mx31moboard.c
-index 845d0b6,3a9c589..0000000
---- a/arch/arm/mach-mx3/mach-mx31moboard.c
-+++ b/arch/arm/mach-mx3/mach-mx31moboard.c
-@@@ -267,12 -267,14 +267,14 @@@ static struct mc13783_leds_platform_dat
-  	.tc2_period = MC13783_LED_PERIOD_10MS,
-  };
-  
- -static struct mc13783_platform_data moboard_pmic = {
- +static struct mc13xxx_platform_data moboard_pmic = {
-- 	.regulators = moboard_regulators,
-- 	.num_regulators = ARRAY_SIZE(moboard_regulators),
-+ 	.regulators = {
-+ 		.regulators = moboard_regulators,
-+ 		.num_regulators = ARRAY_SIZE(moboard_regulators),
-+ 	},
-  	.leds = &moboard_leds,
- -	.flags = MC13783_USE_REGULATOR | MC13783_USE_RTC |
- -		MC13783_USE_ADC | MC13783_USE_LED,
- +	.flags = MC13XXX_USE_REGULATOR | MC13XXX_USE_RTC |
- +		MC13XXX_USE_ADC | MC13XXX_USE_LED,
-  };
-  
-  static struct spi_board_info moboard_spi_board_info[] __initdata = {
+--Signature=_Tue__1_Mar_2011_15_42_30_+1100_soykBIbCO58_B0Rx
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNbHk2AAoJEDMEi1NhKgbsYRsH/jCd5Hr3XqDG9k0R7lCxTZbS
+S55jZiPqQyOASWWzwNajxyGmXVxBcAcsHmxeeRcQ9Gu/tVDkUdqbOzeskDDSnGKH
+q0PXzW8pjOmg0qHzcWrTQ7oojlrWrhkjNK1lnIjS8Dnpzg9CF5cHPJ2/kHve0We8
+vyq6HRD8KFEUJq1br7DYEYimefyoF05IcsBnNB1sXMrGIZePjULY0MyL5NaO0zt6
+2OvAYLfAbC3or0YIpRzZ7SCpxC5qhILRcamo2CO309fwDiPoHJukixbmtsP1GX8u
+qNgi25xw+W1UWYMbpoyfGmR3waye8PRb1aaubBx8180MEKZjXWj8FTODmU9cFjw=
+=m03S
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__1_Mar_2011_15_42_30_+1100_soykBIbCO58_B0Rx--
