@@ -1,65 +1,56 @@
-From: "John W. Linville" <linville@tuxdriver.com>
-Subject: [PATCH v2] rtlwifi: usb parts should depend on CONFIG_USB
-Date: Tue,  1 Mar 2011 13:53:02 -0500
-Message-ID: <1299005582-7197-1-git-send-email-linville@tuxdriver.com>
-References: <4D6C1350.6050903@lwfinger.net>
+From: Pekka Enberg <penberg@kernel.org>
+Subject: Re: linux-next: Tree for March 1 (staging/winbond)
+Date: Tue, 1 Mar 2011 21:10:23 +0200
+Message-ID: <AANLkTimX0zvBEMxedXnhXiaxwEKHmm_Tu6fiZQkahZrC@mail.gmail.com>
+References: <20110301181119.f1c7a9c3.sfr@canb.auug.org.au>
+	<20110301104924.071044ef.randy.dunlap@oracle.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:54910 "EHLO
-	smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756787Ab1CATDC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Mar 2011 14:03:02 -0500
-In-Reply-To: <4D6C1350.6050903@lwfinger.net>
+Received: from mail-yi0-f46.google.com ([209.85.218.46]:44483 "EHLO
+	mail-yi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752651Ab1CATKY convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Mar 2011 14:10:24 -0500
+In-Reply-To: <20110301104924.071044ef.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-wireless@vger.kernel.org
-Cc: Larry Finger <Larry.Finger@lwfinger.net>, Johannes Berg <johannes@sipsolutions.net>, Geert Uytterhoeven <geert@linux-m68k.org>, George <george0505@realtek.com>, linux-next@vger.kernel.org, "John W. Linville" <linville@tuxdriver.com>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, gregkh@suse.de
 
-ERROR: "usb_unanchor_urb" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
-ERROR: "usb_control_msg" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
-ERROR: "usb_submit_urb" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
-ERROR: "usb_get_dev" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
-ERROR: "usb_kill_anchored_urbs" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
-ERROR: "usb_put_dev" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
-ERROR: "usb_free_urb" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
-ERROR: "usb_anchor_urb" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
-ERROR: "usb_alloc_urb" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
-make[2]: *** [__modpost] Error 1
-make[1]: *** [modules] Error 2
-make: *** [sub-make] Error 2
+On Tue, Mar 1, 2011 at 8:49 PM, Randy Dunlap <randy.dunlap@oracle.com> =
+wrote:
+> On Tue, 1 Mar 2011 18:11:19 +1100 Stephen Rothwell wrote:
+>
+>> Hi all,
+>>
+>> Changes since 20110228:
+>
+>
+> commit ddee7e28e7d5e4ba2b8537c6a59b035745c250bb
+> Author: Pekka Enberg <penberg@kernel.org>
+> Date: =A0 Sun Nov 28 23:00:01 2010 +0200
+> =A0 =A0Staging: w35und: Remove empty sysdef.h header
+>
+>
+> This header should not have been empty, since in
+>
+> commit 412dc7f368bf10a8049a8a4c41abbfd0108742e7
+> Author: Randy Dunlap <randy.dunlap@oracle.com>
+> Date: =A0 Fri Nov 19 09:30:18 2010 -0800
+> =A0 =A0staging: fix winbond build, needs delay.h
+>
+> I added delay.h to it. =A0And now we have the same build
+> errors that I fixed last November:
+>
+> drivers/staging/winbond/phy_calibration.c:986: error: implicit declar=
+ation of function 'msleep'
+> drivers/staging/winbond/phy_calibration.c:1555: error: implicit decla=
+ration of function 'udelay'
+> drivers/staging/winbond/reg.c:893: error: implicit declaration of fun=
+ction 'msleep'
+> drivers/staging/winbond/reg.c:1169: error: implicit declaration of fu=
+nction 'udelay'
 
-The USB-part of rtlwifi should depend on CONFIG_USB.
-
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: John W. Linville <linville@tuxdriver.com>
----
- drivers/net/wireless/rtlwifi/Makefile |    9 ++++++---
- 1 files changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/wireless/rtlwifi/Makefile b/drivers/net/wireless/rtlwifi/Makefile
-index 9192fd5..ec9393f 100644
---- a/drivers/net/wireless/rtlwifi/Makefile
-+++ b/drivers/net/wireless/rtlwifi/Makefile
-@@ -7,15 +7,18 @@ rtlwifi-objs	:=		\
- 		efuse.o		\
- 		ps.o		\
- 		rc.o		\
--		regd.o		\
--		usb.o
-+		regd.o
- 
- rtl8192c_common-objs +=		\
- 
--ifeq ($(CONFIG_PCI),y)
-+ifneq ($(CONFIG_PCI),)
- rtlwifi-objs	+= pci.o
- endif
- 
-+ifneq ($(CONFIG_USB),)
-+rtlwifi-objs	+= usb.o
-+endif
-+
- obj-$(CONFIG_RTL8192C_COMMON)	+= rtl8192c/
- obj-$(CONFIG_RTL8192CE)		+= rtl8192ce/
- obj-$(CONFIG_RTL8192CU)		+= rtl8192cu/
--- 
-1.7.4
+Strange. I didn't see the problem. We should add delay.h to
+phy_calibration.c and reg.c instead. Care to make a patch?
