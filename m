@@ -1,74 +1,31 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings after merge of the mfd tree
-Date: Tue, 1 Mar 2011 15:42:30 +1100
-Message-ID: <20110301154230.df32be17.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: [build fix] ACPI: Fix build for CONFIG_NET unset
+Date: Tue, 1 Mar 2011 07:17:31 +0100
+Message-ID: <20110301061731.GA9344@elte.hu>
+References: <20101220200013.df8fbc88.sfr@canb.auug.org.au>
+ <201102282342.59407.rjw@sisk.pl>
+ <4D6C370F.1040104@oracle.com>
+ <201103010112.19835.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__1_Mar_2011_15_42_30_+1100_soykBIbCO58_B0Rx"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46095 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753582Ab1CAEmj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 28 Feb 2011 23:42:39 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andres Salomon <dilinger@queued.net>
-
---Signature=_Tue__1_Mar_2011_15_42_30_+1100_soykBIbCO58_B0Rx
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-acpi-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <201103010112.19835.rjw@sisk.pl>
+Sender: linux-acpi-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, Len Brown <lenb@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Luming Yu <luming.yu@intel.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-acpi@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Samuel,
 
-After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
-produced these warnings:
+* Rafael J. Wysocki <rjw@sisk.pl> wrote:
 
-drivers/video/tmiofb.c: In function 'tmiofb_hw_init':
-drivers/video/tmiofb.c:270: warning: initialization discards qualifiers fro=
-m pointer target type
-drivers/video/tmiofb.c: In function 'tmiofb_hw_mode':
-drivers/video/tmiofb.c:314: warning: initialization discards qualifiers fro=
-m pointer target type
-drivers/video/tmiofb.c:314: warning: unused variable 'cell'
-drivers/video/tmiofb.c: In function 'tmiofb_probe':
-drivers/video/tmiofb.c:683: warning: initialization discards qualifiers fro=
-m pointer target type
-drivers/video/tmiofb.c: In function 'tmiofb_remove':
-drivers/video/tmiofb.c:811: warning: initialization discards qualifiers fro=
-m pointer target type
-drivers/video/tmiofb.c: In function 'tmiofb_suspend':
-drivers/video/tmiofb.c:941: warning: initialization discards qualifiers fro=
-m pointer target type
-drivers/video/tmiofb.c: In function 'tmiofb_resume':
-drivers/video/tmiofb.c:973: warning: initialization discards qualifiers fro=
-m pointer target type
+> From: Rafael J. Wysocki <rjw@sisk.pl>
+> Subject: ACPI: Fix build for CONFIG_NET unset
 
-Introduced by commits 2a79bb1d72f5ac22dff96de340d90d512f852ecb ("mfd:
-mfd_cell is now implicitly available to tc6393xb drivers") and
-b6361637190e6cb7acb84509499942ada69e7136 ("fb: Use mfd_data instead of
-driver_data for tmio-fb").
+Acked-by: Ingo Molnar <mingo@elte.hu>
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+(I also changed the subject line to signal that a patch has been submitted.)
 
---Signature=_Tue__1_Mar_2011_15_42_30_+1100_soykBIbCO58_B0Rx
-Content-Type: application/pgp-signature
+Thanks,
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNbHk2AAoJEDMEi1NhKgbsYRsH/jCd5Hr3XqDG9k0R7lCxTZbS
-S55jZiPqQyOASWWzwNajxyGmXVxBcAcsHmxeeRcQ9Gu/tVDkUdqbOzeskDDSnGKH
-q0PXzW8pjOmg0qHzcWrTQ7oojlrWrhkjNK1lnIjS8Dnpzg9CF5cHPJ2/kHve0We8
-vyq6HRD8KFEUJq1br7DYEYimefyoF05IcsBnNB1sXMrGIZePjULY0MyL5NaO0zt6
-2OvAYLfAbC3or0YIpRzZ7SCpxC5qhILRcamo2CO309fwDiPoHJukixbmtsP1GX8u
-qNgi25xw+W1UWYMbpoyfGmR3waye8PRb1aaubBx8180MEKZjXWj8FTODmU9cFjw=
-=m03S
------END PGP SIGNATURE-----
-
---Signature=_Tue__1_Mar_2011_15_42_30_+1100_soykBIbCO58_B0Rx--
+	Ingo
