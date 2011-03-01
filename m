@@ -1,71 +1,69 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
-Date: Tue, 01 Mar 2011 08:21:49 -0300
-Message-ID: <4D6CD6CD.90200@infradead.org>
-References: <20110228120501.eb6840e0.sfr@canb.auug.org.au> <201102280828.11058.hverkuil@xs4all.nl>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (devicetree tree related)
+Date: Tue, 1 Mar 2011 09:41:45 -0700
+Message-ID: <AANLkTi=emhx8tZ-SqZok7oMPpcXiYUr+b1t3CMgeAxao@mail.gmail.com>
+References: <20110301175425.50296d21.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:54253 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753794Ab1CALWC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Mar 2011 06:22:02 -0500
-In-Reply-To: <201102280828.11058.hverkuil@xs4all.nl>
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:47037 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756567Ab1CAQmG convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Mar 2011 11:42:06 -0500
+In-Reply-To: <20110301175425.50296d21.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Em 28-02-2011 04:28, Hans Verkuil escreveu:
-> On Monday, February 28, 2011 02:05:01 Stephen Rothwell wrote:
->> Hi Mauro,
->>
->> After merging the v4l-dvb tree, today's linux-next build (powerpc
->> ppc64_defconfig) failed like this:
->>
->> drivers/video/matrox/matroxfb_base.c: In function 'matroxfb_ioctl':
->> drivers/video/matrox/matroxfb_base.c:1155: error: 'VIDIOC_S_CTRL_OLD' undeclared (first use in this function)
->>
->> Caused by commit 0ff69fe7cebb65856eba7feb3fd76fb4ba365bf8 ("[media] v4l:
->> removal of old, obsolete ioctls"). grep is your friend ...
->>
->> I have used the v4l-dvb tree from next-20110225 for today.
->>
-> 
-> Mauro,
-> 
-> Here is the trivial fix for this. Must remember next time that matrox borrows
-> some of the V4L2 API.
+On Mon, Feb 28, 2011 at 11:54 PM, Stephen Rothwell <sfr@canb.auug.org.a=
+u> wrote:
+> Hi Grant,
+>
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+>
+> drivers/mtd/nand/pasemi_nand.c:221: error: variable 'pasemi_nand_driv=
+er' has initializer but incomplete type
+> drivers/mtd/nand/pasemi_nand.c:223: error: unknown field 'driver' spe=
+cified in initializer
+> drivers/mtd/nand/pasemi_nand.c:223: error: extra brace group at end o=
+f initializer
+> drivers/mtd/nand/pasemi_nand.c:223: error: (near initialization for '=
+pasemi_nand_driver')
+> drivers/mtd/nand/pasemi_nand.c:227: warning: excess elements in struc=
+t initializer
+> drivers/mtd/nand/pasemi_nand.c:227: warning: (near initialization for=
+ 'pasemi_nand_driver')
+> drivers/mtd/nand/pasemi_nand.c:228: error: unknown field 'probe' spec=
+ified in initializer
+> drivers/mtd/nand/pasemi_nand.c:228: warning: excess elements in struc=
+t initializer
+> drivers/mtd/nand/pasemi_nand.c:228: warning: (near initialization for=
+ 'pasemi_nand_driver')
+> drivers/mtd/nand/pasemi_nand.c:229: error: unknown field 'remove' spe=
+cified in initializer
+> drivers/mtd/nand/pasemi_nand.c:229: warning: excess elements in struc=
+t initializer
+> drivers/mtd/nand/pasemi_nand.c:229: warning: (near initialization for=
+ 'pasemi_nand_driver')
+> drivers/mtd/nand/pasemi_nand.c: In function 'pasemi_nand_init':
+> drivers/mtd/nand/pasemi_nand.c:234: warning: passing argument 1 of 'p=
+latform_driver_register' from incompatible pointer type
+> include/linux/platform_device.h:124: note: expected 'struct platform_=
+driver *' but argument is of type 'struct latform_driver *'
+> drivers/mtd/nand/pasemi_nand.c: In function 'pasemi_nand_exit':
+> drivers/mtd/nand/pasemi_nand.c:240: warning: passing argument 1 of 'p=
+latform_driver_unregister' from incompatible pointer type
+> include/linux/platform_device.h:125: note: expected 'struct platform_=
+driver *' but argument is of type 'struct latform_driver *'
+>
+> Caused by commit ac677e82cd5c031a010458304821bb8b1e47cf24 ("dt: Elimi=
+nate
+> of_platform_{,un}register_driver"). =A0Looks like a typo to me :-)
 
-Yes, patch is trivial, but your patch is incomplete ;) The correct one is attached.
-Btw, videodev2.h still have the definitions for VIDIOC_*_OLD. So, I'm preparing a
-more complete patch removing the docbook definitions for it.
+Indeed!  Fix pushed out.  Thanks.
 
----
-
-matrox: Remove definition for the legacy VIDIOC_*_OLD ioctls
-
-Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
-
-diff --git a/drivers/video/matrox/matroxfb_base.c b/drivers/video/matrox/matroxfb_base.c
-index a082deb..8c9dbac 100644
---- a/drivers/video/matrox/matroxfb_base.c
-+++ b/drivers/video/matrox/matroxfb_base.c
-@@ -101,8 +101,6 @@
- 
- #include <linux/version.h>
- 
--#define __OLD_VIDIOC_
--
- #include "matroxfb_base.h"
- #include "matroxfb_misc.h"
- #include "matroxfb_accel.h"
-@@ -1152,7 +1150,6 @@ static int matroxfb_ioctl(struct fb_info *info,
- 					return -EFAULT;
- 				return err;
- 			}
--		case VIDIOC_S_CTRL_OLD:
- 		case VIDIOC_S_CTRL:
- 			{
- 				struct v4l2_control ctrl;
+g.
