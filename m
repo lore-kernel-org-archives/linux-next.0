@@ -1,43 +1,63 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: manual merge of the bkl-config tree with the tty tree
-Date: Tue, 1 Mar 2011 23:24:27 +0100
-Message-ID: <201103012324.27725.arnd@arndb.de>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the bkl-config tree with the tty
+ tree
+Date: Wed, 2 Mar 2011 10:13:57 +1100
+Message-ID: <20110302101357.7d2a3d81.sfr@canb.auug.org.au>
 References: <20110228174007.b6faf01e.sfr@canb.auug.org.au>
+	<201103012324.27725.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__2_Mar_2011_10_13_57_+1100_MH9D7RK5fo5Bewch"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.8]:58249 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756496Ab1CAWYi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Mar 2011 17:24:38 -0500
-In-Reply-To: <20110228174007.b6faf01e.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:49633 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757298Ab1CAXOG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 1 Mar 2011 18:14:06 -0500
+In-Reply-To: <201103012324.27725.arnd@arndb.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Arnd Bergmann <arnd@arndb.de>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH <greg@kroah.com>
 
-Hi Stephen,
+--Signature=_Wed__2_Mar_2011_10_13_57_+1100_MH9D7RK5fo5Bewch
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Monday 28 February 2011 07:40:07 Stephen Rothwell wrote:
-> Today's linux-next merge of the bkl-config tree got a conflict in
-> drivers/staging/Kconfig between commits
-> 4a6514e6d096716fb7bedf238efaaca877e2a7e8 ("tty: move obsolete and broken
-> tty drivers to drivers/staging/tty/") and
-> 4c37705877e74c02c968735c2eee0f84914cf557 ("tty: move obsolete and broken
-> generic_serial drivers to drivers/staging/generic_serial/") from the tty
-> tree and commit a3ba01b63468c925518da2da0ac3be11358f60cb ("BKL: move
-> CONFIG_BKL to staging") from the bkl-config tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary.
+Hi Arnd,
 
-I have cleared the branch in my repository now, since the contents
-were very outdated. I have a newer branch named 'final' with all the patches
-that are needed on top of -next to kill the BKL for good.
+On Tue, 1 Mar 2011 23:24:27 +0100 Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> I have cleared the branch in my repository now, since the contents
+> were very outdated. I have a newer branch named 'final' with all the patc=
+hes
+> that are needed on top of -next to kill the BKL for good.
 
-I'll send the patches out for review again and if everyone is happy,
-I can update the config branch so they get into -next.
+Thanks for that.
 
+> I'll send the patches out for review again and if everyone is happy,
+> I can update the config branch so they get into -next.
 
-	Arnd
+So can I remove the bkl-trivial, bkl-llseek and bkl-vfs trees?
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Wed__2_Mar_2011_10_13_57_+1100_MH9D7RK5fo5Bewch
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNbX21AAoJEDMEi1NhKgbsUeMH+gPed1pVafgryq0txT7kHfDR
+xnE/D/XnX24Qh8HQuHaFTdNgwitOyz3pshcXu+r7AJSGGbMxg/yIM0kGPc4j4gro
+GVga8YQOjWV6hfFIoUY44I/WCwYG1seo/ay24elEdaZwz7tnBjFw1FLUuq3+xRpj
+dDrSeRs3yxOHFfXmXR2cvTNptey9VLJ7yHVGUBk7Ra/tU5K1NMJZ6c7rwsPs8y/b
+PK5NwVp5B05OytTJJHrVww9emLoUhgUUi2mi6QFMs5yWbm/8SaiHeds7IlOSWkwd
+DuhlhRpA9XWQAvSTICwKK2pvcwxClqh7XGbXVeneZgo+4k9p93o8dcG7DBksMVU=
+=8yHa
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__2_Mar_2011_10_13_57_+1100_MH9D7RK5fo5Bewch--
