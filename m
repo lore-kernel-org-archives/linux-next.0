@@ -1,59 +1,85 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] staging/brcm80211: fix printk format warnings
-Date: Tue, 1 Mar 2011 16:29:48 -0800
-Message-ID: <20110301162948.34c28d6e.randy.dunlap@oracle.com>
-References: <20110301181119.f1c7a9c3.sfr@canb.auug.org.au>
+From: "Mr. henry" <henmoralendingfirm1@gmail.com>
+Subject: (unknown)
+Date: Wed, 2 Mar 2011 01:48:36 +0200 (EET)
+Message-ID: <34343.41.204.224.12.1299023316.squirrel__13334.1701039628$1299028215$gmane$org@89.238.215.26>
+Reply-To: henmoralendingfirm@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:59147 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756266Ab1CBAbJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Mar 2011 19:31:09 -0500
-In-Reply-To: <20110301181119.f1c7a9c3.sfr@canb.auug.org.au>
+Received: from mail.vilaumitel.ro ([89.238.215.26]:57883 "EHLO
+	mail.vilaumitel.ro" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757650Ab1CBBKG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Mar 2011 20:10:06 -0500
+Subject: 
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, driverdevel <devel@driverdev.osuosl.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+Van sz=FCks=E9ge a hitel b=E1rmilyen c=E9lra? Van egy p=E9nz=FCgyi prob=
+l=E9ma? Nem
+sz=FCks=E9g van a p=E9nz=FCgyi megold=E1s? Mr. Henrik
+ hitelek a megold=E1s toall a p=E9nz=FCgyi probl=E9m=E1kat, mi hitelek =
+k=F6nnyen,
+olcs=F3, =E9s gyors. =CDrjon nek=FCnk ma, hogy a k=F6lcs=F6nt, amire v=E1=
+gytok, akkor
+int=E9zkedik minden olyan k=F6lcs=F6n, hogy megfeleljen a k=F6lts=E9gve=
+t=E9s mind=F6ssze
+3%-os kamat. Ha
+=E9rdekli, l=E9pjen vel=FCnk kapcsolatba immediately.Optional Hitel A v=
+=E9delem
+lehet&#337;v=E9 teszi,
+hogy megfeleljen a hitelt=F6rleszt=E9s, ha nem tud dolgozni, betegs=E9g=
+ miatt,
+baleset vagy
+munkan=E9lk=FClis=E9g. Csak akkor vegye ki az =E9rt=E9kes biztos=EDt=E1=
+st, ha alkalmazni
+az =D6n k=F6lcs=F6nt,
+eml=E9kszem, hogy elmondja nek=FCnk, ha azt szeretn=E9, hogy
+henmoralendingfirm@gmail.com
 
-drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c:1379: warning: format '%d' expects type 'int', but argument 3 has type 'size_t'
-drivers/staging/brcm80211/sys/wl_mac80211.c:1827: warning: format '%d' expects type 'int', but argument 3 has type 'size_t'
-drivers/staging/brcm80211/sys/wl_mac80211.c:1832: warning: format '%d' expects type 'int', but argument 3 has type 'size_t'
+* HITEL JELENTKEZ=C9SI LAP *
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c |    2 +-
- drivers/staging/brcm80211/sys/wl_mac80211.c      |    4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+* Teljes n=E9v ............*
 
---- linux-next-20110301.orig/drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c
-+++ linux-next-20110301/drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c
-@@ -1376,7 +1376,7 @@ wl_cfg80211_connect(struct wiphy *wiphy,
- 	memcpy(&join_params.params.bssid, &ether_bcast, ETH_ALEN);
- 
- 	wl_ch_to_chanspec(wl->channel, &join_params, &join_params_size);
--	WL_DBG("join_param_size %d\n", join_params_size);
-+	WL_DBG("join_param_size %zd\n", join_params_size);
- 
- 	if (join_params.ssid.SSID_len < IEEE80211_MAX_SSID_LEN) {
- 		WL_DBG("ssid \"%s\", len (%d)\n",
---- linux-next-20110301.orig/drivers/staging/brcm80211/sys/wl_mac80211.c
-+++ linux-next-20110301/drivers/staging/brcm80211/sys/wl_mac80211.c
-@@ -1824,12 +1824,12 @@ int wl_check_firmwares(struct wl_info *w
- 			WL_ERROR("%s: invalid bin/hdr fw\n", __func__);
- 			rc = -EBADF;
- 		} else if (fw_hdr->size % sizeof(struct wl_fw_hdr)) {
--			WL_ERROR("%s: non integral fw hdr file size %d/%zu\n",
-+			WL_ERROR("%s: non integral fw hdr file size %zd/%zu\n",
- 				 __func__, fw_hdr->size,
- 				 sizeof(struct wl_fw_hdr));
- 			rc = -EBADF;
- 		} else if (fw->size < MIN_FW_SIZE || fw->size > MAX_FW_SIZE) {
--			WL_ERROR("%s: out of bounds fw file size %d\n",
-+			WL_ERROR("%s: out of bounds fw file size %zd\n",
- 				 __func__, fw->size);
- 			rc = -EBADF;
- 		} else {
+* Otthoni c=EDm ....................... ..*
+
+* Sz=FClet=E9si d=E1tum ......................*
+
+* Telefonsz=E1m ...................*
+
+* MOBIL sz=E1m, ha ..............*
+
+* HITEL sz=FCks=E9ges mennyis=E9g .................*
+
+* FAX .................*
+
+* =C1llampolg=E1rs=E1g ..................*
+
+* ORSZ=C1G ........................*
+
+* SZAKMA ....................*
+
+* SEX ..................................*
+
+* F=C9RFI .............................*
+
+* FEMAL .........................*
+
+* V=C1L=C1S HA ......................*
+
+* Legk=F6zelebbi hozz=E1tartoz=F3 .......................*
+
+* N=C9V .......................... ...*
+
+* Sz=FClet=E9si d=E1tum .....................*
+
+* C=C9LJA K=D6LCS=D6NZ=C9S .......................... .......*
+
+* A k=F6lcs=F6n id&#337;tartam=E1t ........................*
+
+* ID .......................*
+
+* A =DCdv=F6zlettel *
+
+
+* Mr. henry *
