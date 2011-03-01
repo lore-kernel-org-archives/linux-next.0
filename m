@@ -1,82 +1,75 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for March 1 (staging/winbond)
-Date: Tue, 1 Mar 2011 11:39:30 -0800
-Message-ID: <20110301113930.69d7d992.randy.dunlap@oracle.com>
-References: <20110301181119.f1c7a9c3.sfr@canb.auug.org.au>
-	<20110301104924.071044ef.randy.dunlap@oracle.com>
-	<AANLkTimX0zvBEMxedXnhXiaxwEKHmm_Tu6fiZQkahZrC@mail.gmail.com>
-	<20110301111922.69b0d8c1.randy.dunlap@oracle.com>
-	<AANLkTimayi4tSe=r1HOPgpcSucBWC7SoBV1ocmV5LEs4@mail.gmail.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Subject: Re: [PATCH v2] rtlwifi: usb parts should depend on CONFIG_USB
+Date: Tue, 01 Mar 2011 13:54:58 -0600
+Message-ID: <4D6D4F12.4000403@lwfinger.net>
+References: <4D6C1350.6050903@lwfinger.net> <1299005582-7197-1-git-send-email-linville@tuxdriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:22642 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757234Ab1CATjq convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Mar 2011 14:39:46 -0500
-In-Reply-To: <AANLkTimayi4tSe=r1HOPgpcSucBWC7SoBV1ocmV5LEs4@mail.gmail.com>
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:42940 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752647Ab1CATzK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Mar 2011 14:55:10 -0500
+In-Reply-To: <1299005582-7197-1-git-send-email-linville@tuxdriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Pekka Enberg <penberg@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, gregkh@suse.de
+To: "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-wireless@vger.kernel.org, Johannes Berg <johannes@sipsolutions.net>, Geert Uytterhoeven <geert@linux-m68k.org>, George <george0505@realtek.com>, linux-next@vger.kernel.org
 
-On Tue, 1 Mar 2011 21:35:59 +0200 Pekka Enberg wrote:
+On 03/01/2011 12:53 PM, John W. Linville wrote:
+> ERROR: "usb_unanchor_urb" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
+> ERROR: "usb_control_msg" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
+> ERROR: "usb_submit_urb" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
+> ERROR: "usb_get_dev" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
+> ERROR: "usb_kill_anchored_urbs" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
+> ERROR: "usb_put_dev" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
+> ERROR: "usb_free_urb" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
+> ERROR: "usb_anchor_urb" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
+> ERROR: "usb_alloc_urb" [drivers/net/wireless/rtlwifi/rtlwifi.ko] undefined!
+> make[2]: *** [__modpost] Error 1
+> make[1]: *** [modules] Error 2
+> make: *** [sub-make] Error 2
+>
+> The USB-part of rtlwifi should depend on CONFIG_USB.
+>
+> Reported-by: Geert Uytterhoeven<geert@linux-m68k.org>
+> Signed-off-by: John W. Linville<linville@tuxdriver.com>
+> ---
+>   drivers/net/wireless/rtlwifi/Makefile |    9 ++++++---
+>   1 files changed, 6 insertions(+), 3 deletions(-)
+>
 
-> On Tue, Mar 1, 2011 at 9:19 PM, Randy Dunlap <randy.dunlap@oracle.com=
-> wrote:
-> > On Tue, 1 Mar 2011 21:10:23 +0200 Pekka Enberg wrote:
-> >
-> >> On Tue, Mar 1, 2011 at 8:49 PM, Randy Dunlap <randy.dunlap@oracle.=
-com> wrote:
-> >> > On Tue, 1 Mar 2011 18:11:19 +1100 Stephen Rothwell wrote:
-> >> >
-> >> >> Hi all,
-> >> >>
-> >> >> Changes since 20110228:
-> >> >
-> >> >
-> >> > commit ddee7e28e7d5e4ba2b8537c6a59b035745c250bb
-> >> > Author: Pekka Enberg <penberg@kernel.org>
-> >> > Date: =A0 Sun Nov 28 23:00:01 2010 +0200
-> >> > =A0 =A0Staging: w35und: Remove empty sysdef.h header
-> >> >
-> >> >
-> >> > This header should not have been empty, since in
-> >> >
-> >> > commit 412dc7f368bf10a8049a8a4c41abbfd0108742e7
-> >> > Author: Randy Dunlap <randy.dunlap@oracle.com>
-> >> > Date: =A0 Fri Nov 19 09:30:18 2010 -0800
-> >> > =A0 =A0staging: fix winbond build, needs delay.h
-> >> >
-> >> > I added delay.h to it. =A0And now we have the same build
-> >> > errors that I fixed last November:
-> >> >
-> >> > drivers/staging/winbond/phy_calibration.c:986: error: implicit d=
-eclaration of function 'msleep'
-> >> > drivers/staging/winbond/phy_calibration.c:1555: error: implicit =
-declaration of function 'udelay'
-> >> > drivers/staging/winbond/reg.c:893: error: implicit declaration o=
-f function 'msleep'
-> >> > drivers/staging/winbond/reg.c:1169: error: implicit declaration =
-of function 'udelay'
-> >>
-> >> Strange. I didn't see the problem. We should add delay.h to
-> >> phy_calibration.c and reg.c instead. Care to make a patch?
-> >> --
-> >
-> > No thanks, I'll let the staging people do that.
->=20
-> Hmm, commit cecf826df8648c843ea8db63b1f82c154a74db36 ("staging:
-> winbond: needs <linux/delay.h> for msleep and friends") should fix it=
-=2E
-> Isn't it in linux-next yet?
+John,
 
-I'll have to let GregKH answer that.
+If you change the commit message to indicate that you also fixed the case where 
+CONFIG_PCI is m, then ACK.
 
-Where is the commit ID from?
+Larry
 
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your cod=
-e ***
+> diff --git a/drivers/net/wireless/rtlwifi/Makefile b/drivers/net/wireless/rtlwifi/Makefile
+> index 9192fd5..ec9393f 100644
+> --- a/drivers/net/wireless/rtlwifi/Makefile
+> +++ b/drivers/net/wireless/rtlwifi/Makefile
+> @@ -7,15 +7,18 @@ rtlwifi-objs	:=		\
+>   		efuse.o		\
+>   		ps.o		\
+>   		rc.o		\
+> -		regd.o		\
+> -		usb.o
+> +		regd.o
+>
+>   rtl8192c_common-objs +=		\
+>
+> -ifeq ($(CONFIG_PCI),y)
+> +ifneq ($(CONFIG_PCI),)
+>   rtlwifi-objs	+= pci.o
+>   endif
+>
+> +ifneq ($(CONFIG_USB),)
+> +rtlwifi-objs	+= usb.o
+> +endif
+> +
+>   obj-$(CONFIG_RTL8192C_COMMON)	+= rtl8192c/
+>   obj-$(CONFIG_RTL8192CE)		+= rtl8192ce/
+>   obj-$(CONFIG_RTL8192CU)		+= rtl8192cu/
