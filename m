@@ -1,46 +1,71 @@
-From: David Jander <david.jander@protonic.nl>
-Subject: Re: linux-next: manual merge of the mfd tree with the i.MX tree
-Date: Tue, 1 Mar 2011 09:35:28 +0100
-Message-ID: <20110301093528.00184f93@archvile>
-References: <20110301145436.b1ae1923.sfr@canb.auug.org.au>
+From: Mauro Carvalho Chehab <mchehab@infradead.org>
+Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
+Date: Tue, 01 Mar 2011 08:21:49 -0300
+Message-ID: <4D6CD6CD.90200@infradead.org>
+References: <20110228120501.eb6840e0.sfr@canb.auug.org.au> <201102280828.11058.hverkuil@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-15
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from protonic.xs4all.nl ([213.84.116.84]:11736 "EHLO protonic.prtnl"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1755643Ab1CAJC1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 1 Mar 2011 04:02:27 -0500
-In-Reply-To: <20110301145436.b1ae1923.sfr@canb.auug.org.au>
+Received: from casper.infradead.org ([85.118.1.10]:54253 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753794Ab1CALWC (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Mar 2011 06:22:02 -0500
+In-Reply-To: <201102280828.11058.hverkuil@xs4all.nl>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andres Salomon <dilinger@queued.net>, David Jander <david@protonic.nl>, Sascha Hauer <s.hauer@pengutronix.de>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-
-Hi Stephen,
-
-On Tue, 1 Mar 2011 14:54:36 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Today's linux-next merge of the mfd tree got a conflict in
-> arch/arm/mach-imx/mach-mx27_3ds.c arch/arm/mach-imx/mach-pcm038.c
-> arch/arm/mach-mx3/mach-mx31_3ds.c arch/arm/mach-mx3/mach-mx31moboard.c
-> between commit 5836372e8a0ba5cc633f61bc0484ee20c86f4b36 ("ARM: imx+mx3:
-> convert to mc13xxx MFD") from the i.MX tree and commit
-> e84e545d47d26644275a79fe5ebc1797bcb80910 ("mfd: mfd_cell is now
-> implicitly available to mc13xxx drivers") from the mfd tree.
+Em 28-02-2011 04:28, Hans Verkuil escreveu:
+> On Monday, February 28, 2011 02:05:01 Stephen Rothwell wrote:
+>> Hi Mauro,
+>>
+>> After merging the v4l-dvb tree, today's linux-next build (powerpc
+>> ppc64_defconfig) failed like this:
+>>
+>> drivers/video/matrox/matroxfb_base.c: In function 'matroxfb_ioctl':
+>> drivers/video/matrox/matroxfb_base.c:1155: error: 'VIDIOC_S_CTRL_OLD' undeclared (first use in this function)
+>>
+>> Caused by commit 0ff69fe7cebb65856eba7feb3fd76fb4ba365bf8 ("[media] v4l:
+>> removal of old, obsolete ioctls"). grep is your friend ...
+>>
+>> I have used the v4l-dvb tree from next-20110225 for today.
+>>
 > 
-> I fixed it up (I think - see below) and can carry the fix as necessary.
+> Mauro,
+> 
+> Here is the trivial fix for this. Must remember next time that matrox borrows
+> some of the V4L2 API.
 
-Your fix seems correct, although I fear I am too dumb to understand why commit
-e84e545d47d26644275a79fe5ebc1797bcb80910 introduces this extra struct
-nesting.... AFAICS gcc will end up doing the same as without the extra nest.
+Yes, patch is trivial, but your patch is incomplete ;) The correct one is attached.
+Btw, videodev2.h still have the definitions for VIDIOC_*_OLD. So, I'm preparing a
+more complete patch removing the docbook definitions for it.
 
-Btw, include/linux/mfd/mc13783.h should end up disappearing after you're done
-merging... I hope so.
+---
 
-Best regards,
+matrox: Remove definition for the legacy VIDIOC_*_OLD ioctls
 
--- 
-David Jander
-Protonic Holland.
+Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
+
+diff --git a/drivers/video/matrox/matroxfb_base.c b/drivers/video/matrox/matroxfb_base.c
+index a082deb..8c9dbac 100644
+--- a/drivers/video/matrox/matroxfb_base.c
++++ b/drivers/video/matrox/matroxfb_base.c
+@@ -101,8 +101,6 @@
+ 
+ #include <linux/version.h>
+ 
+-#define __OLD_VIDIOC_
+-
+ #include "matroxfb_base.h"
+ #include "matroxfb_misc.h"
+ #include "matroxfb_accel.h"
+@@ -1152,7 +1150,6 @@ static int matroxfb_ioctl(struct fb_info *info,
+ 					return -EFAULT;
+ 				return err;
+ 			}
+-		case VIDIOC_S_CTRL_OLD:
+ 		case VIDIOC_S_CTRL:
+ 			{
+ 				struct v4l2_control ctrl;
