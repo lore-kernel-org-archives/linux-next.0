@@ -1,37 +1,59 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: manual merge of the bkl-config tree with the tty tree
-Date: Wed, 2 Mar 2011 00:16:53 +0100
-Message-ID: <201103020016.53993.arnd@arndb.de>
-References: <20110228174007.b6faf01e.sfr@canb.auug.org.au> <201103012324.27725.arnd@arndb.de> <20110302101357.7d2a3d81.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the bkl-config tree with the tty
+ tree
+Date: Wed, 2 Mar 2011 10:24:53 +1100
+Message-ID: <20110302102453.b66ed95f.sfr@canb.auug.org.au>
+References: <20110228174007.b6faf01e.sfr@canb.auug.org.au>
+	<201103012324.27725.arnd@arndb.de>
+	<20110302101357.7d2a3d81.sfr@canb.auug.org.au>
+	<201103020016.53993.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110302101357.7d2a3d81.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Wed__2_Mar_2011_10_24_53_+1100_9CrEUg=wLPc_M=eN"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:36406 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755084Ab1CAXY7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 1 Mar 2011 18:24:59 -0500
+In-Reply-To: <201103020016.53993.arnd@arndb.de>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH <greg@kroah.com>
-List-Id: linux-next.vger.kernel.org
 
-On Wednesday 02 March 2011 00:13:57 Stephen Rothwell wrote:
-> On Tue, 1 Mar 2011 23:24:27 +0100 Arnd Bergmann <arnd@arndb.de> wrote:
-> >
-> > I have cleared the branch in my repository now, since the contents
-> > were very outdated. I have a newer branch named 'final' with all the patches
-> > that are needed on top of -next to kill the BKL for good.
-> 
-> Thanks for that.
+--Signature=_Wed__2_Mar_2011_10_24_53_+1100_9CrEUg=wLPc_M=eN
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Arnd,
+
+On Wed, 2 Mar 2011 00:16:53 +0100 Arnd Bergmann <arnd@arndb.de> wrote:
 >
-> > I'll send the patches out for review again and if everyone is happy,
-> > I can update the config branch so they get into -next.
+> > So can I remove the bkl-trivial, bkl-llseek and bkl-vfs trees?
+>=20
+> Yes.
 
-Small update: I've added part of the series to the config branch
-already, just the patches that already have Acked-by:s from the
-maintainers, but no other tree to go through.
- 
-> So can I remove the bkl-trivial, bkl-llseek and bkl-vfs trees?
+Thanks.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Yes.
+--Signature=_Wed__2_Mar_2011_10_24_53_+1100_9CrEUg=wLPc_M=eN
+Content-Type: application/pgp-signature
 
-	Arnd
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNbYBFAAoJEDMEi1NhKgbsrv0H/2tA3ophjlfa5ONkwIXfCK4o
+LTlLq6mySuZkvWlDQEH0jmvySVSrfwg4myJ6vihYeKPo5cY7AOUsn7hkBIB+xWue
+uw//pH2VZWfQ9NwJunN6v3igi2LnJzGZdVcH2od4gSd66y4QNBI3QTLSEdBFNvfn
+CyyaNFWweRdq/aFaQ27yh3j/x50tnmRwD5tOwEiJ0u1ZObtbmBIFBWEHGPqz3ZP8
+1HRn9Wuav4Go7SsHOhg38ZiaHBkGdh9TR2LFigURVJKkyoOzQ3IajaWvESvst4bw
+65rvp+1lTGrKlpuCrGJLr2D6DIl8VdcT3T/tJ34IfIBmr3/tSJUQ5bJ8dQB6zu8=
+=pDrS
+-----END PGP SIGNATURE-----
+
+--Signature=_Wed__2_Mar_2011_10_24_53_+1100_9CrEUg=wLPc_M=eN--
