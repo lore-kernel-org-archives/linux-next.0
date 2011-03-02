@@ -1,58 +1,32 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the arm tree
-Date: Thu, 3 Mar 2011 01:13:35 +1100
-Message-ID: <20110303011335.7a8dc21a.sfr@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the usb tree with the omap tree
+Date: Wed, 2 Mar 2011 09:23:22 -0500
+Message-ID: <20110302142322.GA2889@kroah.com>
+References: <20110302165746.814a45a3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Thu__3_Mar_2011_01_13_35_+1100_JgXfiWeOzq8By3Xn"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52797 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751246Ab1CBONq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 2 Mar 2011 09:13:46 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@arm.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Pitre <nicolas.pitre@linaro.org>
-
---Signature=_Thu__3_Mar_2011_01_13_35_+1100_JgXfiWeOzq8By3Xn
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20110302165746.814a45a3.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hema HK <hemahk@ti.com>, Felipe Balbi <balbi@ti.com>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org, Thomas Weber <weber@corscience.de>
+List-Id: linux-next.vger.kernel.org
 
-Hi Russell,
+On Wed, Mar 02, 2011 at 04:57:46PM +1100, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the usb tree got a conflict in
+> drivers/usb/musb/musb_core.h between commit
+> 59b479e0985f0b795d68331d6443a7f89c47768d ("omap: Start using
+> CONFIG_SOC_OMAP") from the omap tree and commit
+> da68ccec210c45eb99e461ad31b499b4e7043c41 ("usb: musb: Remove platform
+> context save/restore API") from the usb tree.
+> 
+> The latter removed the code modified by the former, so I did that.
 
-After merging the final tree, the linux-next 20110228 build (lots of arm
-configs) failed like this:
+Thanks.  I'll let Felipe handle all of these omap merge issues, as I
+thought the reason I was going to take these patches from him was to
+prevent issues like this from happening :)
 
-stat: cannot stat `arch/arm/boot/compressed/../Image': No such file or dire=
-ctory
-gcc-4.4.0-nolibc/arm-linux/bin/arm-linux-ld:--defsym _image_size=3D: syntax=
- error
-
-Presumably caused by commit d239b1dc093d551046a909920b5310c1d1e308c1
-("ARM: 6746/1: remove the 4x expansion presumption while decompressing
-the kernel").
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Thu__3_Mar_2011_01_13_35_+1100_JgXfiWeOzq8By3Xn
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNblCPAAoJEDMEi1NhKgbsK08IAJ+e4xHa/imQAzzACKPGWHsU
-CBrWsSzK0KydCz+LWk6F75+phIOa+jagaElZBEjZHeipAshZLmKJTU/BmT+jJm/X
-bmW8ywo3AjUa73Nhv+oEQWQM/lDGO12qOF4qvaguoH3a1iHHBRiDaHCXS2oAuiqM
-B3TgFCePpK+X2fG0VKnprmqgjmqXiPGgj3nmfdL276XT6mCFexBUOSqEAfTD9CiC
-4qImG1UuzUv8+MunTwvRZaFPps/Y4HKe87PoHlpOQCtzX94C02TqoufDWbZm0MYr
-FdkoTYOC9pwmZA9ZBPR1anrP0N1RGW/HgLfrPKhHSB+l91XDk40HpXEqLkhcFg8=
-=HA8c
------END PGP SIGNATURE-----
-
---Signature=_Thu__3_Mar_2011_01_13_35_+1100_JgXfiWeOzq8By3Xn--
+greg k-h
