@@ -1,53 +1,62 @@
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-Subject: Re: linux-next: build failure after merge of the arm tree
-Date: Wed, 2 Mar 2011 10:55:30 -0500 (EST)
-Message-ID: <alpine.LFD.2.00.1103021049480.13483@xanadu.home>
-References: <20110303011335.7a8dc21a.sfr@canb.auug.org.au>
+From: david@protonic.nl
+Subject: Re: linux-next: manual merge of the mfd tree with the i.MX tree
+Date: Wed, 2 Mar 2011 18:56:05 +0100 (CET)
+Message-ID: <33012.84.56.74.117.1299088565.squirrel@protonic.xs4all.nl>
+References: <20110301145436.b1ae1923.sfr@canb.auug.org.au>
+    <20110301093528.00184f93@archvile>
+    <20110302183143.c52ecc00.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:52357 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751384Ab1CBPzf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Mar 2011 10:55:35 -0500
-In-Reply-To: <20110303011335.7a8dc21a.sfr@canb.auug.org.au>
+Received: from protonic.xs4all.nl ([213.84.116.84]:21094 "EHLO protonic.prtnl"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1756065Ab1CBR6H (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 2 Mar 2011 12:58:07 -0500
+In-Reply-To: <20110302183143.c52ecc00.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Russell King <rmk@arm.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: David Jander <david.jander@protonic.nl>, Samuel Ortiz <sameo@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andres Salomon <dilinger@queued.net>, David Jander <david@protonic.nl>, Sascha Hauer <s.hauer@pengutronix.de>, Uwe =?iso-8859-1?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
 
-On Thu, 3 Mar 2011, Stephen Rothwell wrote:
+> Hi David,
+>
+> On Tue, 1 Mar 2011 09:35:28 +0100 David Jander <david.jander@protonic.nl>
+> wrote:
+>>
+>> Your fix seems correct, although I fear I am too dumb to understand why
+>> commit
+>> e84e545d47d26644275a79fe5ebc1797bcb80910 introduces this extra struct
+>> nesting.... AFAICS gcc will end up doing the same as without the extra
+>> nest.
+>
+> Thanks.
+>
+>> Btw, include/linux/mfd/mc13783.h should end up disappearing after you're
+>> done
+>> merging... I hope so.
+>
+> That file is still included by several others:
+>
+> $ git grep -w mfd/mc13783.h
+> arch/arm/mach-imx/mach-mx27_3ds.c:#include <linux/mfd/mc13783.h>
+> arch/arm/mach-imx/mach-pcm038.c:#include <linux/mfd/mc13783.h>
+> arch/arm/mach-mx3/mach-mx31_3ds.c:#include <linux/mfd/mc13783.h>
+> arch/arm/mach-mx3/mach-mx31lilly.c:#include <linux/mfd/mc13783.h>
+> arch/arm/mach-mx3/mach-mx31lite.c:#include <linux/mfd/mc13783.h>
+> arch/arm/mach-mx3/mach-mx31moboard.c:#include <linux/mfd/mc13783.h>
+> drivers/hwmon/mc13783-adc.c:#include <linux/mfd/mc13783.h>
+> drivers/input/touchscreen/mc13783_ts.c:#include <linux/mfd/mc13783.h>
+> drivers/leds/leds-mc13783.c:#include <linux/mfd/mc13783.h>
+> drivers/mfd/mc13xxx-core.c:#include <linux/mfd/mc13783.h>
+> drivers/regulator/mc13783-regulator.c:#include <linux/mfd/mc13783.h>
 
-> Hi Russell,
-> 
-> After merging the final tree, the linux-next 20110228 build (lots of arm
-> configs) failed like this:
-> 
-> stat: cannot stat `arch/arm/boot/compressed/../Image': No such file or directory
-> gcc-4.4.0-nolibc/arm-linux/bin/arm-linux-ld:--defsym _image_size=: syntax error
-> 
-> Presumably caused by commit d239b1dc093d551046a909920b5310c1d1e308c1
-> ("ARM: 6746/1: remove the 4x expansion presumption while decompressing
-> the kernel").
+These should all be either removed or changed to mc13xxx.h by subsequent
+patches.
+Sascha, where is the rest?
+AFAICR, I already fixed all of these...
 
-The fix would be this:
+Best Regards,
 
-diff --git a/arch/arm/boot/compressed/Makefile b/arch/arm/boot/compressed/Makefile
-index 9d328be..3c0c68f 100644
---- a/arch/arm/boot/compressed/Makefile
-+++ b/arch/arm/boot/compressed/Makefile
-@@ -84,7 +84,7 @@ EXTRA_CFLAGS  := -fpic -fno-builtin
- EXTRA_AFLAGS  := -Wa,-march=all
- 
- # Provide size of uncompressed kernel to the decompressor via a linker symbol.
--LDFLAGS_vmlinux := --defsym _image_size=$(shell stat -c "%s" $(obj)/../Image)
-+LDFLAGS_vmlinux = --defsym _image_size=$(shell stat -c "%s" $(obj)/../Image)
- # Supply ZRELADDR to the decompressor via a linker symbol.
- ifneq ($(CONFIG_AUTO_ZRELADDR),y)
- LDFLAGS_vmlinux += --defsym zreladdr=$(ZRELADDR)
-
-Russell: can you fold this fix in the original patch, or do you prefer I 
-send you this fix separately?
-
-
-Nicolas
+-- 
+David Jander
