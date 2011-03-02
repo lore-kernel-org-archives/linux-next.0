@@ -1,123 +1,55 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the wireless tree
-Date: Wed, 2 Mar 2011 17:27:54 +1100
-Message-ID: <20110302172754.412dca34.sfr@canb.auug.org.au>
+From: david@protonic.nl
+Subject: Re: linux-next: manual merge of the mfd tree with the i.MX tree
+Date: Wed, 2 Mar 2011 07:43:39 +0100 (CET)
+Message-ID: <37329.84.56.74.117.1299048219.squirrel@protonic.xs4all.nl>
+References: <20110301145436.b1ae1923.sfr@canb.auug.org.au>
+    <20110301093528.00184f93@archvile> <20110301113930.4743a13c@debxo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49558 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751853Ab1CBG2D (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 2 Mar 2011 01:28:03 -0500
+Received: from protonic.xs4all.nl ([213.84.116.84]:18386 "EHLO protonic.prtnl"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1750831Ab1CBHPr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 2 Mar 2011 02:15:47 -0500
+In-Reply-To: <20110301113930.4743a13c@debxo>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>, "John W. Linville" <linville@tuxdriver.com>, Arend van Spriel <arend@broadcom.com>, Roland Vossen <rvossen@broadcom.com>
+To: Andres Salomon <dilinger@queued.net>
+Cc: David Jander <david.jander@protonic.nl>, Stephen Rothwell <sfr@canb.auug.org.au>, Samuel Ortiz <sameo@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Jander <david@protonic.nl>, Sascha Hauer <s.hauer@pengutronix.de>, Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
 
-Hi Greg,
+> On Tue, 1 Mar 2011 09:35:28 +0100
+> David Jander <david.jander@protonic.nl> wrote:
+>
+>>
+>> Hi Stephen,
+>>
+>> On Tue, 1 Mar 2011 14:54:36 +1100
+>> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> > Today's linux-next merge of the mfd tree got a conflict in
+>> > arch/arm/mach-imx/mach-mx27_3ds.c arch/arm/mach-imx/mach-pcm038.c
+>> > arch/arm/mach-mx3/mach-mx31_3ds.c
+>> > arch/arm/mach-mx3/mach-mx31moboard.c between commit
+>> > 5836372e8a0ba5cc633f61bc0484ee20c86f4b36 ("ARM: imx+mx3: convert to
+>> > mc13xxx MFD") from the i.MX tree and commit
+>> > e84e545d47d26644275a79fe5ebc1797bcb80910 ("mfd: mfd_cell is now
+>> > implicitly available to mc13xxx drivers") from the mfd tree.
+>> >
+>> > I fixed it up (I think - see below) and can carry the fix as
+>> > necessary.
+>>
+>> Your fix seems correct, although I fear I am too dumb to understand
+>> why commit e84e545d47d26644275a79fe5ebc1797bcb80910 introduces this
+>> extra struct nesting.... AFAICS gcc will end up doing the same as
+>> without the extra nest.
+>
+> It was requested in this thread:
+> https://patchwork.kernel.org/patch/551441/
 
-Today's linux-next merge of the staging tree got a conflict in
-drivers/staging/brcm80211/brcmsmac/wl_mac80211.c between commit
-7bb4568372856688bc070917265bce0b88bb7d4d ("mac80211: make tx() operation
-return void") from the wireless tree (where this file is called
-drivers/staging/brcm80211/sys/wl_mac80211.c) and commits
-62b54dca17ef40116491b0ca27ca35fbe9daedc6 ("staging: brcm80211: cleanup
-function prototypes in header files") and
-55182a10063c40eda4dc5afecff712e5c3617ffc ("staging: brcm80211: cosmetic
-changes") from the staging tree.
+Ah, ok. I thought this change was somehow necessary for your patch to
+work. I would have expected a separate patch otherwise.
 
-I fixed it up (see below) and can carry the fix as necessary.
+Best regards,
+
 -- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/staging/brcm80211/brcmsmac/wl_mac80211.c
-index 6363077,6059e4c..0000000
---- a/drivers/staging/brcm80211/brcmsmac/wl_mac80211.c
-+++ b/drivers/staging/brcm80211/brcmsmac/wl_mac80211.c
-@@@ -104,7 -75,16 +75,13 @@@ static int wl_request_fw(struct wl_inf
-  static void wl_release_fw(struct wl_info *wl);
-  
-  /* local prototypes */
- -static int wl_start(struct sk_buff *skb, struct wl_info *wl);
- -static int wl_start_int(struct wl_info *wl, struct ieee80211_hw *hw,
- -			struct sk_buff *skb);
-  static void wl_dpc(unsigned long data);
-+ static irqreturn_t wl_isr(int irq, void *dev_id);
-+ 
-+ static int __devinit wl_pci_probe(struct pci_dev *pdev,
-+ 				  const struct pci_device_id *ent);
-+ static void wl_remove(struct pci_dev *pdev);
-+ static void wl_free(struct wl_info *wl);
-  
-  MODULE_AUTHOR("Broadcom Corporation");
-  MODULE_DESCRIPTION("Broadcom 802.11n wireless LAN driver.");
-@@@ -132,6 -110,9 +107,8 @@@ module_param(phymsglevel, int, 0)
-  
-  #define HW_TO_WL(hw)	 (hw->priv)
-  #define WL_TO_HW(wl)	  (wl->pub->ieee_hw)
-+ 
-+ /* MAC80211 callback functions */
- -static int wl_ops_tx(struct ieee80211_hw *hw, struct sk_buff *skb);
-  static int wl_ops_start(struct ieee80211_hw *hw);
-  static void wl_ops_stop(struct ieee80211_hw *hw);
-  static int wl_ops_add_interface(struct ieee80211_hw *hw,
-@@@ -161,17 -142,22 +138,21 @@@ static void wl_ops_sta_notify(struct ie
-  static int wl_ops_conf_tx(struct ieee80211_hw *hw, u16 queue,
-  			  const struct ieee80211_tx_queue_params *params);
-  static u64 wl_ops_get_tsf(struct ieee80211_hw *hw);
-- static int wl_sta_add(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
-+ static int wl_ops_sta_add(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
-  		      struct ieee80211_sta *sta);
-- static int wl_sta_remove(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
-+ static int wl_ops_sta_remove(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
-  			 struct ieee80211_sta *sta);
-- static int wl_ampdu_action(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
-- 			   enum ieee80211_ampdu_mlme_action action,
-- 			   struct ieee80211_sta *sta, u16 tid, u16 *ssn);
-+ static int wl_ops_ampdu_action(struct ieee80211_hw *hw,
-+ 			       struct ieee80211_vif *vif,
-+ 			       enum ieee80211_ampdu_mlme_action action,
-+ 			       struct ieee80211_sta *sta, u16 tid, u16 *ssn,
-+ 			       u8 buf_size);
-+ static void wl_ops_rfkill_poll(struct ieee80211_hw *hw);
-  
- -static int wl_ops_tx(struct ieee80211_hw *hw, struct sk_buff *skb)
- +static void wl_ops_tx(struct ieee80211_hw *hw, struct sk_buff *skb)
-  {
- -	int status;
-  	struct wl_info *wl = hw->priv;
-+ 
-  	WL_LOCK(wl);
-  	if (!wl->pub->up) {
-  		WL_ERROR("ops->tx called while down\n");
-@@@ -1319,6 -1401,28 +1395,9 @@@ static void wl_free(struct wl_info *wl
-  	osl_detach(osh);
-  }
-  
-+ /*
- - * transmit a packet
- - * precondition: perimeter lock has been acquired
- - */
- -static int BCMFASTPATH wl_start(struct sk_buff *skb, struct wl_info *wl)
- -{
- -	if (!wl)
- -		return -ENETDOWN;
- -
- -	return wl_start_int(wl, WL_TO_HW(wl), skb);
- -}
- -
- -static int BCMFASTPATH
- -wl_start_int(struct wl_info *wl, struct ieee80211_hw *hw, struct sk_buff *skb)
- -{
- -	wlc_sendpkt_mac80211(wl->wlc, skb, hw);
- -	return NETDEV_TX_OK;
- -}
- -
- -/*
-+  * precondition: perimeter lock has been acquired
-+  */
-  void wl_txflowcontrol(struct wl_info *wl, struct wl_if *wlif, bool state,
-  		      int prio)
-  {
+David Jander
