@@ -1,45 +1,53 @@
-From: "Arend van Spriel" <arend@broadcom.com>
-Subject: Re: linux-next: manual merge of the staging tree with the
- wireless tree
-Date: Wed, 2 Mar 2011 16:39:04 +0100
-Message-ID: <op.vrp23ens3ri7v4@arend-laptop>
-References: <20110302172754.412dca34.sfr@canb.auug.org.au>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+Subject: Re: linux-next: build failure after merge of the arm tree
+Date: Wed, 2 Mar 2011 10:55:30 -0500 (EST)
+Message-ID: <alpine.LFD.2.00.1103021049480.13483@xanadu.home>
+References: <20110303011335.7a8dc21a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8;
- format=flowed;
- delsp=yes
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110302172754.412dca34.sfr@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Johannes Berg <johannes.berg@intel.com>, "John W. Linville" <linville@tuxdriver.com>, Roland Vossen <rvossen@broadcom.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-qw0-f46.google.com ([209.85.216.46]:52357 "EHLO
+	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751384Ab1CBPzf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Mar 2011 10:55:35 -0500
+In-Reply-To: <20110303011335.7a8dc21a.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Russell King <rmk@arm.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 02 Mar 2011 07:27:54 +0100, Stephen Rothwell  
-<sfr@canb.auug.org.au> wrote:
+On Thu, 3 Mar 2011, Stephen Rothwell wrote:
 
-> Hi Greg,
->
-> Today's linux-next merge of the staging tree got a conflict in
-> drivers/staging/brcm80211/brcmsmac/wl_mac80211.c between commit
-> 7bb4568372856688bc070917265bce0b88bb7d4d ("mac80211: make tx() operation
-> return void") from the wireless tree (where this file is called
-> drivers/staging/brcm80211/sys/wl_mac80211.c) and commits
-> 62b54dca17ef40116491b0ca27ca35fbe9daedc6 ("staging: brcm80211: cleanup
-> function prototypes in header files") and
-> 55182a10063c40eda4dc5afecff712e5c3617ffc ("staging: brcm80211: cosmetic
-> changes") from the staging tree.
->
-> I fixed it up (see below) and can carry the fix as necessary.
+> Hi Russell,
+> 
+> After merging the final tree, the linux-next 20110228 build (lots of arm
+> configs) failed like this:
+> 
+> stat: cannot stat `arch/arm/boot/compressed/../Image': No such file or directory
+> gcc-4.4.0-nolibc/arm-linux/bin/arm-linux-ld:--defsym _image_size=: syntax error
+> 
+> Presumably caused by commit d239b1dc093d551046a909920b5310c1d1e308c1
+> ("ARM: 6746/1: remove the 4x expansion presumption while decompressing
+> the kernel").
 
-I saw functions being removed. Checked the modified wl_ops_tx on  
-git.kernel.org and it looks fine to me.
+The fix would be this:
 
-Thanks,
-AvS
--- 
-"The most merciful thing in the world, I think, is the inability of the  
-human
-mind to correlate all its contents." - "The Call of Cthulhu"
+diff --git a/arch/arm/boot/compressed/Makefile b/arch/arm/boot/compressed/Makefile
+index 9d328be..3c0c68f 100644
+--- a/arch/arm/boot/compressed/Makefile
++++ b/arch/arm/boot/compressed/Makefile
+@@ -84,7 +84,7 @@ EXTRA_CFLAGS  := -fpic -fno-builtin
+ EXTRA_AFLAGS  := -Wa,-march=all
+ 
+ # Provide size of uncompressed kernel to the decompressor via a linker symbol.
+-LDFLAGS_vmlinux := --defsym _image_size=$(shell stat -c "%s" $(obj)/../Image)
++LDFLAGS_vmlinux = --defsym _image_size=$(shell stat -c "%s" $(obj)/../Image)
+ # Supply ZRELADDR to the decompressor via a linker symbol.
+ ifneq ($(CONFIG_AUTO_ZRELADDR),y)
+ LDFLAGS_vmlinux += --defsym zreladdr=$(ZRELADDR)
+
+Russell: can you fold this fix in the original patch, or do you prefer I 
+send you this fix separately?
+
+
+Nicolas
