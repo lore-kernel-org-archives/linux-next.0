@@ -1,85 +1,27 @@
-From: "Mr. henry" <henmoralendingfirm1@gmail.com>
-Subject: (unknown)
-Date: Wed, 2 Mar 2011 01:49:20 +0200 (EET)
-Message-ID: <36343.41.204.224.12.1299023360.squirrel__10826.4139191762$1299028393$gmane$org@89.238.215.26>
-Reply-To: henmoralendingfirm@gmail.com
+From: Joe Perches <joe@perches.com>
+Subject: RFC: Removing old tags, reducing the git size of -next.
+Date: Tue, 01 Mar 2011 20:22:26 -0800
+Message-ID: <1299039746.4208.28.camel@Joe-Laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.vilaumitel.ro ([89.238.215.26]:35863 "EHLO
-	mail.vilaumitel.ro" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757675Ab1CBBNC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Mar 2011 20:13:02 -0500
-Subject: 
+Received: from mail.perches.com ([173.55.12.10]:4030 "EHLO mail.perches.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757821Ab1CBEW2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 1 Mar 2011 23:22:28 -0500
+Received: from [192.168.1.162] (unknown [192.168.1.162])
+	by mail.perches.com (Postfix) with ESMTP id 8DB8824368
+	for <linux-next@vger.kernel.org>; Tue,  1 Mar 2011 20:22:19 -0800 (PST)
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
+To: linux-next <linux-next@vger.kernel.org>
 
-Van sz=FCks=E9ge a hitel b=E1rmilyen c=E9lra? Van egy p=E9nz=FCgyi prob=
-l=E9ma? Nem
-sz=FCks=E9g van a p=E9nz=FCgyi megold=E1s? Mr. Henrik
- hitelek a megold=E1s toall a p=E9nz=FCgyi probl=E9m=E1kat, mi hitelek =
-k=F6nnyen,
-olcs=F3, =E9s gyors. =CDrjon nek=FCnk ma, hogy a k=F6lcs=F6nt, amire v=E1=
-gytok, akkor
-int=E9zkedik minden olyan k=F6lcs=F6n, hogy megfeleljen a k=F6lts=E9gve=
-t=E9s mind=F6ssze
-3%-os kamat. Ha
-=E9rdekli, l=E9pjen vel=FCnk kapcsolatba immediately.Optional Hitel A v=
-=E9delem
-lehet&#337;v=E9 teszi,
-hogy megfeleljen a hitelt=F6rleszt=E9s, ha nem tud dolgozni, betegs=E9g=
- miatt,
-baleset vagy
-munkan=E9lk=FClis=E9g. Csak akkor vegye ki az =E9rt=E9kes biztos=EDt=E1=
-st, ha alkalmazni
-az =D6n k=F6lcs=F6nt,
-eml=E9kszem, hogy elmondja nek=FCnk, ha azt szeretn=E9, hogy
-henmoralendingfirm@gmail.com
+I personally do not find git history to be very useful
+for the next tree.  The collected next tree history
+also makes the repository fairly large and unwieldy to
+use on smaller development systems.
 
-* HITEL JELENTKEZ=C9SI LAP *
-
-* Teljes n=E9v ............*
-
-* Otthoni c=EDm ....................... ..*
-
-* Sz=FClet=E9si d=E1tum ......................*
-
-* Telefonsz=E1m ...................*
-
-* MOBIL sz=E1m, ha ..............*
-
-* HITEL sz=FCks=E9ges mennyis=E9g .................*
-
-* FAX .................*
-
-* =C1llampolg=E1rs=E1g ..................*
-
-* ORSZ=C1G ........................*
-
-* SZAKMA ....................*
-
-* SEX ..................................*
-
-* F=C9RFI .............................*
-
-* FEMAL .........................*
-
-* V=C1L=C1S HA ......................*
-
-* Legk=F6zelebbi hozz=E1tartoz=F3 .......................*
-
-* N=C9V .......................... ...*
-
-* Sz=FClet=E9si d=E1tum .....................*
-
-* C=C9LJA K=D6LCS=D6NZ=C9S .......................... .......*
-
-* A k=F6lcs=F6n id&#337;tartam=E1t ........................*
-
-* ID .......................*
-
-* A =DCdv=F6zlettel *
-
-
-* Mr. henry *
+Would it be reasonable to create a separate history tree
+for -next every once in awhile and have say a maximum of
+a few weeks of next history in the current tree?
