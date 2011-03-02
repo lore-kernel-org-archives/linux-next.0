@@ -1,64 +1,73 @@
-From: Mariusz Kozlowski <mk@lab.zgora.pl>
-Subject: [PATCH] [SCSI] bnx2fc: fix build error when !CONFIG_MODULES
-Date: Wed,  2 Mar 2011 23:10:03 +0100
-Message-ID: <1299103803-32594-1-git-send-email-mk@lab.zgora.pl>
-References: <20110302182740.e4dfd79f.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH -next] staging/brcm80211: fix printk format warnings
+Date: Thu, 3 Mar 2011 10:36:20 +1100
+Message-ID: <20110303103620.6b3c463f.sfr@canb.auug.org.au>
+References: <20110301181119.f1c7a9c3.sfr@canb.auug.org.au>
+	<20110301162948.34c28d6e.randy.dunlap@oracle.com>
+	<20110302210511.GA20798@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__3_Mar_2011_10_36_20_+1100_rp904KFcoJYszMJm"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from unix.wroclaw.pl ([94.23.28.62]:35288 "EHLO unix.wroclaw.pl"
+Received: from chilli.pcug.org.au ([203.10.76.44]:60431 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757516Ab1CBWKa (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 2 Mar 2011 17:10:30 -0500
-In-Reply-To: <20110302182740.e4dfd79f.sfr@canb.auug.org.au>
+	id S1755036Ab1CBXgb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 2 Mar 2011 18:36:31 -0500
+In-Reply-To: <20110302210511.GA20798@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "James E.J. Bottomley" <James.Bottomley@suse.de>, Bhanu Prakash Gollapudi <bprakash@broadcom.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Mariusz Kozlowski <mk@lab.zgora.pl>
+To: Greg KH <greg@kroah.com>
+Cc: Randy Dunlap <randy.dunlap@oracle.com>, gregkh@suse.de, driverdevel <devel@driverdev.osuosl.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-drivers/scsi/bnx2fc/bnx2fc_fcoe.c:1815: error: dereferencing pointer to=
- incomplete type
-drivers/scsi/bnx2fc/bnx2fc_fcoe.c:1815: error: =E2=80=98MODULE_STATE_LI=
-VE=E2=80=99 undeclared (first use in this function)
+--Signature=_Thu__3_Mar_2011_10_36_20_+1100_rp904KFcoJYszMJm
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Mariusz Kozlowski <mk@lab.zgora.pl>
----
- drivers/scsi/bnx2fc/bnx2fc_fcoe.c |    4 ++++
- 1 files changed, 4 insertions(+), 0 deletions(-)
+Hi Greg,
 
-diff --git a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c b/drivers/scsi/bnx2fc/bn=
-x2fc_fcoe.c
-index e476e87..689db39 100644
---- a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
-+++ b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
-@@ -1812,10 +1812,12 @@ static int bnx2fc_disable(struct net_device *ne=
-tdev)
-=20
- 	mutex_lock(&bnx2fc_dev_lock);
-=20
-+#ifdef CONFIG_SCSI_BNX2X_FCOE_MODULE
- 	if (THIS_MODULE->state !=3D MODULE_STATE_LIVE) {
- 		rc =3D -ENODEV;
- 		goto nodev;
- 	}
-+#endif
-=20
- 	/* obtain physical netdev */
- 	if (netdev->priv_flags & IFF_802_1Q_VLAN)
-@@ -1875,10 +1877,12 @@ static int bnx2fc_enable(struct net_device *net=
-dev)
- 	BNX2FC_MISC_DBG("Entered %s\n", __func__);
- 	mutex_lock(&bnx2fc_dev_lock);
-=20
-+#ifdef CONFIG_SCSI_BNX2X_FCOE_MODULE
- 	if (THIS_MODULE->state !=3D MODULE_STATE_LIVE) {
- 		rc =3D -ENODEV;
- 		goto nodev;
- 	}
-+#endif
-=20
- 	/* obtain physical netdev */
- 	if (netdev->priv_flags & IFF_802_1Q_VLAN)
+On Wed, 2 Mar 2011 16:05:11 -0500 Greg KH <greg@kroah.com> wrote:
+>
+> On Tue, Mar 01, 2011 at 04:29:48PM -0800, Randy Dunlap wrote:
+> > From: Randy Dunlap <randy.dunlap@oracle.com>
+> >=20
+> > drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c:1379: warning: format =
+'%d' expects type 'int', but argument 3 has type 'size_t'
+> > drivers/staging/brcm80211/sys/wl_mac80211.c:1827: warning: format '%d' =
+expects type 'int', but argument 3 has type 'size_t'
+> > drivers/staging/brcm80211/sys/wl_mac80211.c:1832: warning: format '%d' =
+expects type 'int', but argument 3 has type 'size_t'
+> >=20
+> > Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+> > Acked-by: Roland Vossen <rvossen@broadcom.com>
+> > ---
+> >  drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c |    2 +-
+> >  drivers/staging/brcm80211/sys/wl_mac80211.c      |    4 ++--
+>=20
+> This file doesn't apply to my tree at all.
+
+Maybe due to conflict resolutions in my tree (assuming that Randy based
+his patch in linux-next).
+
 --=20
-1.7.0.4
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__3_Mar_2011_10_36_20_+1100_rp904KFcoJYszMJm
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNbtR0AAoJEDMEi1NhKgbsayYH/Rtm68FxFeFTVcS7KLmn1NC4
+BgH6yp+a+rVc7n2GshhILwBASCBrgGzDkATW2QqZ6zcfrP2JUQQuxxUXPsRaAqEe
+RSNb2AIx3XOJr5KhcYxuC8Vg/bUNs/xrLqSpXAMmaXOTX0A0YrjksUJc4xMSIjal
+E1sCtWwpuiBaQTxWHzhFJhShcwEuHP1vPPYUgK7xUbm7l8f8MP2m2+rI7IHJJH0X
+l84SECQVrwfM+8Au2WvequGRnVBwhK4Wg6dOvVmZFGMvHUKj1aFmGqG4jqlv8S4W
+SHU1folv0T6ejmmY0JXqD2jyFY+hTVWpZeaJx03Ep1RlK0TsGs/6TA7wwc0d8ng=
+=ob/J
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__3_Mar_2011_10_36_20_+1100_rp904KFcoJYszMJm--
