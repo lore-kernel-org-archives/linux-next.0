@@ -1,31 +1,58 @@
-From: "Roland Vossen" <rvossen@broadcom.com>
-Subject: Re: [PATCH -next] staging/brcm80211: fix printk format warnings
-Date: Wed, 2 Mar 2011 15:07:20 +0100
-Message-ID: <4D6E4F18.4060505@broadcom.com>
-References: <20110301181119.f1c7a9c3.sfr@canb.auug.org.au>
- <20110301162948.34c28d6e.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the arm tree
+Date: Thu, 3 Mar 2011 01:13:35 +1100
+Message-ID: <20110303011335.7a8dc21a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=iso-8859-1;
- format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__3_Mar_2011_01_13_35_+1100_JgXfiWeOzq8By3Xn"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mms1.broadcom.com ([216.31.210.17]:2449 "EHLO mms1.broadcom.com"
+Received: from chilli.pcug.org.au ([203.10.76.44]:52797 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751138Ab1CBOHe (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 2 Mar 2011 09:07:34 -0500
-In-Reply-To: <20110301162948.34c28d6e.randy.dunlap@oracle.com>
+	id S1751246Ab1CBONq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 2 Mar 2011 09:13:46 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "gregkh@suse.de" <gregkh@suse.de>, driverdevel <devel@driverdev.osuosl.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Arend Van Spriel <arend@broadcom.com>
+To: Russell King <rmk@arm.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Pitre <nicolas.pitre@linaro.org>
 
-> drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c:1379: warning: format '%d' expects type 'int', but argument 3 has type 'size_t'
-> drivers/staging/brcm80211/sys/wl_mac80211.c:1827: warning: format '%d' expects type 'int', but argument 3 has type 'size_t'
-> drivers/staging/brcm80211/sys/wl_mac80211.c:1832: warning: format '%d' expects type 'int', but argument 3 has type 'size_t'
->
-> Signed-off-by: Randy Dunlap<randy.dunlap@oracle.com>
+--Signature=_Thu__3_Mar_2011_01_13_35_+1100_JgXfiWeOzq8By3Xn
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Roland Vossen<rvossen@broadcom.com>
+Hi Russell,
 
-Thanks Randy.
+After merging the final tree, the linux-next 20110228 build (lots of arm
+configs) failed like this:
+
+stat: cannot stat `arch/arm/boot/compressed/../Image': No such file or dire=
+ctory
+gcc-4.4.0-nolibc/arm-linux/bin/arm-linux-ld:--defsym _image_size=3D: syntax=
+ error
+
+Presumably caused by commit d239b1dc093d551046a909920b5310c1d1e308c1
+("ARM: 6746/1: remove the 4x expansion presumption while decompressing
+the kernel").
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Thu__3_Mar_2011_01_13_35_+1100_JgXfiWeOzq8By3Xn
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNblCPAAoJEDMEi1NhKgbsK08IAJ+e4xHa/imQAzzACKPGWHsU
+CBrWsSzK0KydCz+LWk6F75+phIOa+jagaElZBEjZHeipAshZLmKJTU/BmT+jJm/X
+bmW8ywo3AjUa73Nhv+oEQWQM/lDGO12qOF4qvaguoH3a1iHHBRiDaHCXS2oAuiqM
+B3TgFCePpK+X2fG0VKnprmqgjmqXiPGgj3nmfdL276XT6mCFexBUOSqEAfTD9CiC
+4qImG1UuzUv8+MunTwvRZaFPps/Y4HKe87PoHlpOQCtzX94C02TqoufDWbZm0MYr
+FdkoTYOC9pwmZA9ZBPR1anrP0N1RGW/HgLfrPKhHSB+l91XDk40HpXEqLkhcFg8=
+=HA8c
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__3_Mar_2011_01_13_35_+1100_JgXfiWeOzq8By3Xn--
