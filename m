@@ -1,59 +1,59 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the bkl-config tree with the tty
- tree
-Date: Wed, 2 Mar 2011 10:24:53 +1100
-Message-ID: <20110302102453.b66ed95f.sfr@canb.auug.org.au>
-References: <20110228174007.b6faf01e.sfr@canb.auug.org.au>
-	<201103012324.27725.arnd@arndb.de>
-	<20110302101357.7d2a3d81.sfr@canb.auug.org.au>
-	<201103020016.53993.arnd@arndb.de>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] staging/brcm80211: fix printk format warnings
+Date: Tue, 1 Mar 2011 16:29:48 -0800
+Message-ID: <20110301162948.34c28d6e.randy.dunlap@oracle.com>
+References: <20110301181119.f1c7a9c3.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__2_Mar_2011_10_24_53_+1100_9CrEUg=wLPc_M=eN"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:36406 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755084Ab1CAXY7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 1 Mar 2011 18:24:59 -0500
-In-Reply-To: <201103020016.53993.arnd@arndb.de>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:59147 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756266Ab1CBAbJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Mar 2011 19:31:09 -0500
+In-Reply-To: <20110301181119.f1c7a9c3.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Greg KH <greg@kroah.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, driverdevel <devel@driverdev.osuosl.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Wed__2_Mar_2011_10_24_53_+1100_9CrEUg=wLPc_M=eN
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Hi Arnd,
+drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c:1379: warning: format '%d' expects type 'int', but argument 3 has type 'size_t'
+drivers/staging/brcm80211/sys/wl_mac80211.c:1827: warning: format '%d' expects type 'int', but argument 3 has type 'size_t'
+drivers/staging/brcm80211/sys/wl_mac80211.c:1832: warning: format '%d' expects type 'int', but argument 3 has type 'size_t'
 
-On Wed, 2 Mar 2011 00:16:53 +0100 Arnd Bergmann <arnd@arndb.de> wrote:
->
-> > So can I remove the bkl-trivial, bkl-llseek and bkl-vfs trees?
->=20
-> Yes.
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c |    2 +-
+ drivers/staging/brcm80211/sys/wl_mac80211.c      |    4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-Thanks.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__2_Mar_2011_10_24_53_+1100_9CrEUg=wLPc_M=eN
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNbYBFAAoJEDMEi1NhKgbsrv0H/2tA3ophjlfa5ONkwIXfCK4o
-LTlLq6mySuZkvWlDQEH0jmvySVSrfwg4myJ6vihYeKPo5cY7AOUsn7hkBIB+xWue
-uw//pH2VZWfQ9NwJunN6v3igi2LnJzGZdVcH2od4gSd66y4QNBI3QTLSEdBFNvfn
-CyyaNFWweRdq/aFaQ27yh3j/x50tnmRwD5tOwEiJ0u1ZObtbmBIFBWEHGPqz3ZP8
-1HRn9Wuav4Go7SsHOhg38ZiaHBkGdh9TR2LFigURVJKkyoOzQ3IajaWvESvst4bw
-65rvp+1lTGrKlpuCrGJLr2D6DIl8VdcT3T/tJ34IfIBmr3/tSJUQ5bJ8dQB6zu8=
-=pDrS
------END PGP SIGNATURE-----
-
---Signature=_Wed__2_Mar_2011_10_24_53_+1100_9CrEUg=wLPc_M=eN--
+--- linux-next-20110301.orig/drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c
++++ linux-next-20110301/drivers/staging/brcm80211/brcmfmac/wl_cfg80211.c
+@@ -1376,7 +1376,7 @@ wl_cfg80211_connect(struct wiphy *wiphy,
+ 	memcpy(&join_params.params.bssid, &ether_bcast, ETH_ALEN);
+ 
+ 	wl_ch_to_chanspec(wl->channel, &join_params, &join_params_size);
+-	WL_DBG("join_param_size %d\n", join_params_size);
++	WL_DBG("join_param_size %zd\n", join_params_size);
+ 
+ 	if (join_params.ssid.SSID_len < IEEE80211_MAX_SSID_LEN) {
+ 		WL_DBG("ssid \"%s\", len (%d)\n",
+--- linux-next-20110301.orig/drivers/staging/brcm80211/sys/wl_mac80211.c
++++ linux-next-20110301/drivers/staging/brcm80211/sys/wl_mac80211.c
+@@ -1824,12 +1824,12 @@ int wl_check_firmwares(struct wl_info *w
+ 			WL_ERROR("%s: invalid bin/hdr fw\n", __func__);
+ 			rc = -EBADF;
+ 		} else if (fw_hdr->size % sizeof(struct wl_fw_hdr)) {
+-			WL_ERROR("%s: non integral fw hdr file size %d/%zu\n",
++			WL_ERROR("%s: non integral fw hdr file size %zd/%zu\n",
+ 				 __func__, fw_hdr->size,
+ 				 sizeof(struct wl_fw_hdr));
+ 			rc = -EBADF;
+ 		} else if (fw->size < MIN_FW_SIZE || fw->size > MAX_FW_SIZE) {
+-			WL_ERROR("%s: out of bounds fw file size %d\n",
++			WL_ERROR("%s: out of bounds fw file size %zd\n",
+ 				 __func__, fw->size);
+ 			rc = -EBADF;
+ 		} else {
