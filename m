@@ -1,141 +1,43 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: linux-next: manual merge of the usb tree with the omap tree
-Date: Thu, 3 Mar 2011 19:39:42 +0200
-Message-ID: <20110303173942.GA2293@legolas.emea.dhcp.ti.com>
-References: <20110302165755.b45124c8.sfr@canb.auug.org.au>
- <20110303084829.GB2644@legolas.emea.dhcp.ti.com>
- <20110303160209.GB13709@kroah.com>
-Reply-To: balbi@ti.com
+From: Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Subject: Re: linux-next: Tree for February 21 (usb/serial)
+Date: Thu, 3 Mar 2011 13:51:52 -0800
+Message-ID: <20110303135152.c4b53da1.randy.dunlap@oracle.com>
+References: <20110221182134.09abd232.sfr@canb.auug.org.au>
+	<20110221095732.b3842652.randy.dunlap@oracle.com>
+	<201102212130.01789.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="ZPt4rx8FFjLCG7dd"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from na3sys009aog116.obsmtp.com ([74.125.149.240]:38058 "EHLO
-	na3sys009aog116.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1758221Ab1CCRjr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Mar 2011 12:39:47 -0500
-Content-Disposition: inline
-In-Reply-To: <20110303160209.GB13709@kroah.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Felipe Balbi <balbi@ti.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anand Gadiyar <gadiyar@ti.com>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org, Keshava Munegowda <keshava_mgowda@ti.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <201102212130.01789.rjw-KKrjLPT3xs0@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: lud <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
+On Mon, 21 Feb 2011 21:30:01 +0100 Rafael J. Wysocki wrote:
 
---ZPt4rx8FFjLCG7dd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Thu, Mar 03, 2011 at 08:02:09AM -0800, Greg KH wrote:
-> On Thu, Mar 03, 2011 at 10:48:29AM +0200, Felipe Balbi wrote:
-> > On Wed, Mar 02, 2011 at 04:57:55PM +1100, Stephen Rothwell wrote:
-> > > Hi Greg,
-> > > 
-> > > Today's linux-next merge of the usb tree got a conflict in
-> > > arch/arm/mach-omap2/board-4430sdp.c between commit
-> > > 1dbea0f5e23b6c647db72fa4a048cb7140625e13 ("arm: omap4: 4430sdp: drop ehci
-> > > support") from the omap tree and commit
-> > > 181b250cf53233a7a7c6d7e1e9df402506712e93 ("arm: omap: usb: create common
-> > > enums and structures for ehci and ohci") from the usb tree.
-> > > 
-> > > The former removed the code modified by the latter, so I did that.
+> On Monday, February 21, 2011, Randy Dunlap wrote:
+> > On Mon, 21 Feb 2011 18:21:34 +1100 Stephen Rothwell wrote:
 > > 
-> > This can be fixed if Greg applies this patch:
+> > > Hi all,
+> > > 
+> > > Changes since 20110218:
 > > 
-> > commit 076bfacd5bba0f2e419474488c8f8c060c7799d8
-> > Author: Anand Gadiyar <gadiyar@ti.com>
-> > Date:   Wed Feb 16 16:47:19 2011 +0530
+> > 
+> > When CONFIG_PM_RUNTIME is not enabled:
+> > 
+> > drivers/usb/serial/usb_wwan.c:702: error: 'struct dev_pm_info' has no member named 'usage_count'
 > 
-> Care to provide it to me in a format that I can apply it?  :)
+> This looks like a bug in the driver that shouldn't access this field directly.
 
-heh, my bad. It's attached.
 
--- 
-balbi
+This build error is still with us in linux-next 2011.0303.
 
---ZPt4rx8FFjLCG7dd
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment; filename="0001-arm-omap4-4430sdp-drop-ehci-support.diff"
-
->From 076bfacd5bba0f2e419474488c8f8c060c7799d8 Mon Sep 17 00:00:00 2001
-From: Anand Gadiyar <gadiyar@ti.com>
-Date: Wed, 16 Feb 2011 16:47:19 +0530
-Subject: [PATCH] arm: omap4: 4430sdp: drop ehci support
-Organization: Texas Instruments\n
-
-Most revisions of the OMAP4 Blaze/SDP platform do not have
-the EHCI signals routed by default. The pads are routed
-for the alternate HSI functionality instead, and explicit
-board modifications are needed to route the signals to
-the USB PHY on the board.
-
-Also, turning on the PHY connected to the EHCI port causes
-a board reboot during bootup due to an unintended short
-on the rails - this affects many initial revisions of the
-board, and needs a minor board mod to fix (or as a
-workaround, one should not attempt to power on the
-USB PHY).
-
-Given that these boards need explicit board mods to even
-get EHCI working (separate from the accidental short above),
-we should not attempt to enable EHCI by default.
-
-So drop the EHCI support from the board files for the
-Blaze/SDP platforms.
-
-Signed-off-by: Anand Gadiyar <gadiyar@ti.com>
-Cc: Keshava Munegowda <keshava_mgowda@ti.com>
-Cc: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Felipe Balbi <balbi@ti.com>
 ---
- arch/arm/mach-omap2/board-4430sdp.c |   19 -------------------
- 1 files changed, 0 insertions(+), 19 deletions(-)
-
-diff --git a/arch/arm/mach-omap2/board-4430sdp.c b/arch/arm/mach-omap2/board-4430sdp.c
-index 1230121..f603f3b 100644
---- a/arch/arm/mach-omap2/board-4430sdp.c
-+++ b/arch/arm/mach-omap2/board-4430sdp.c
-@@ -44,7 +44,6 @@
- #define ETH_KS8851_IRQ			34
- #define ETH_KS8851_POWER_ON		48
- #define ETH_KS8851_QUART		138
--#define OMAP4SDP_MDM_PWR_EN_GPIO	157
- #define OMAP4_SFH7741_SENSOR_OUTPUT_GPIO	184
- #define OMAP4_SFH7741_ENABLE_GPIO		188
- 
-@@ -251,16 +250,6 @@ static void __init omap_4430sdp_init_irq(void)
- 	gic_init_irq();
- }
- 
--static const struct usbhs_omap_board_data usbhs_bdata __initconst = {
--	.port_mode[0]	= OMAP_EHCI_PORT_MODE_PHY,
--	.port_mode[1]	= OMAP_USBHS_PORT_MODE_UNUSED,
--	.port_mode[2]	= OMAP_USBHS_PORT_MODE_UNUSED,
--	.phy_reset	= false,
--	.reset_gpio_port[0]  = -EINVAL,
--	.reset_gpio_port[1]  = -EINVAL,
--	.reset_gpio_port[2]  = -EINVAL,
--};
--
- static struct omap_musb_board_data musb_board_data = {
- 	.interface_type		= MUSB_INTERFACE_UTMI,
- 	.mode			= MUSB_OTG,
-@@ -577,14 +566,6 @@ static void __init omap_4430sdp_init(void)
- 	omap_serial_init();
- 	omap4_twl6030_hsmmc_init(mmc);
- 
--	/* Power on the ULPI PHY */
--	status = gpio_request(OMAP4SDP_MDM_PWR_EN_GPIO, "USBB1 PHY VMDM_3V3");
--	if (status)
--		pr_err("%s: Could not get USBB1 PHY GPIO\n", __func__);
--	else
--		gpio_direction_output(OMAP4SDP_MDM_PWR_EN_GPIO, 1);
--
--	usbhs_init(&usbhs_bdata);
- 	usb_musb_init(&musb_board_data);
- 
- 	status = omap_ethernet_init();
--- 
-1.7.4.rc2
-
-
---ZPt4rx8FFjLCG7dd--
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
