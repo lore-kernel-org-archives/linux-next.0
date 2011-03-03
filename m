@@ -1,44 +1,34 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the usb tree with the omap tree
-Date: Thu, 3 Mar 2011 08:02:09 -0800
-Message-ID: <20110303160209.GB13709@kroah.com>
-References: <20110302165755.b45124c8.sfr@canb.auug.org.au>
- <20110303084829.GB2644@legolas.emea.dhcp.ti.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [PATCH -next] staging/brcm80211: fix printk format warnings
+Date: Thu, 03 Mar 2011 08:08:36 -0800
+Message-ID: <4D6FBD04.6090702@oracle.com>
+References: <20110301181119.f1c7a9c3.sfr@canb.auug.org.au> <20110301162948.34c28d6e.randy.dunlap@oracle.com> <20110302210511.GA20798@kroah.com> <20110303103620.6b3c463f.sfr@canb.auug.org.au> <20110303072028.GA21427@sdf-MacBook>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kroah.org ([198.145.64.141]:39146 "EHLO coco.kroah.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754244Ab1CCQFU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 3 Mar 2011 11:05:20 -0500
-Content-Disposition: inline
-In-Reply-To: <20110303084829.GB2644@legolas.emea.dhcp.ti.com>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:40523 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751707Ab1CCQJM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Mar 2011 11:09:12 -0500
+In-Reply-To: <20110303072028.GA21427@sdf-MacBook>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Felipe Balbi <balbi@ti.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anand Gadiyar <gadiyar@ti.com>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org, Keshava Munegowda <keshava_mgowda@ti.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, driverdevel <devel@driverdev.osuosl.org>, gregkh@suse.de, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Thu, Mar 03, 2011 at 10:48:29AM +0200, Felipe Balbi wrote:
-> On Wed, Mar 02, 2011 at 04:57:55PM +1100, Stephen Rothwell wrote:
-> > Hi Greg,
-> > 
-> > Today's linux-next merge of the usb tree got a conflict in
-> > arch/arm/mach-omap2/board-4430sdp.c between commit
-> > 1dbea0f5e23b6c647db72fa4a048cb7140625e13 ("arm: omap4: 4430sdp: drop ehci
-> > support") from the omap tree and commit
-> > 181b250cf53233a7a7c6d7e1e9df402506712e93 ("arm: omap: usb: create common
-> > enums and structures for ehci and ohci") from the usb tree.
-> > 
-> > The former removed the code modified by the latter, so I did that.
-> 
-> This can be fixed if Greg applies this patch:
-> 
-> commit 076bfacd5bba0f2e419474488c8f8c060c7799d8
-> Author: Anand Gadiyar <gadiyar@ti.com>
-> Date:   Wed Feb 16 16:47:19 2011 +0530
+On 03/02/11 23:20, Stanislav Fomichev wrote:
+>> Maybe due to conflict resolutions in my tree (assuming that Randy based
+>> his patch in linux-next).
+> We don't have brcm80211/sys/ directory (it was renamed to
+> brcm80211/brcmsmac); so it's based on the wrong/outdated tree.
 
-Care to provide it to me in a format that I can apply it?  :)
+It was based on linux-next of 2011-0301, which is what the patch email
+was in reply to.
 
-thanks,
+> And I suppose these errors are already fixed.
 
-greg k-h
+Good to know.  Thanks.
+
+-- 
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
