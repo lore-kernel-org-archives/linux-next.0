@@ -1,54 +1,47 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the i.MX tree with the arm tree
-Date: Fri, 4 Mar 2011 10:36:10 +1100
-Message-ID: <20110304103610.b55f4ca4.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the s5p tree with the i.MX tree
+Date: Fri, 4 Mar 2011 10:42:06 +1100
+Message-ID: <20110304104206.d2feadef.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:42402 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:48290 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752628Ab1CCXgQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 3 Mar 2011 18:36:16 -0500
+	id S1758739Ab1CCXmI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 3 Mar 2011 18:42:08 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?IlV3ZSBLbGVpbmUtS8O2bmlnIg==?= <u.kleine-koenig@pengutronix.de>, Russell King <rmk@arm.linux.org.uk>, Wolfram Sang <w.sang@pengutronix.de>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Zhao <richard.zhao@freescale.com>, Sascha Hauer <s.hauer@pengutronix.de>
 
-Hi Sascha,
+Hi Kukjin,
 
-Today's linux-next merge of the i.MX tree got a conflict in
-arch/arm/mach-mxs/gpio.c between commit
-bf0c11183fc3a2acce56d2b53f2a117322bd3c3b ("ARM: 6744/1: mxs: irq_data
-conversion") from the arm tree and commit
-6bc4e4b309f83caa7a5ec2e6b5715bb7c2cb6879 ("arm: mxs: add irq_chip-name
-for GPIO IRQs") from the i.MX tree.
+Today's linux-next merge of the s5p tree got a conflict in
+arch/arm/mm/Kconfig between commit
+4d2f13be1e370a670c1cae20c194d5ce961e0fa5 ("ARM: imx3x: clean up
+ARCH_MX3X") from the i.MX tree and commit
+10606aadb046d008c88d1a99b309357ca33d590e ("ARM: EXYNOS4: Update Kconfig
+and Makefile for the new ARCH_EXYNOS4") from the s5p tree.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
+Just context changes. I fixed it up (see below) and can carry the fix as
 necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc arch/arm/mach-mxs/gpio.c
-index 61991e4,5120ab5..0000000
---- a/arch/arm/mach-mxs/gpio.c
-+++ b/arch/arm/mach-mxs/gpio.c
-@@@ -182,11 -182,12 +182,12 @@@ static int mxs_gpio_set_wake_irq(struc
-  }
-  
-  static struct irq_chip gpio_irq_chip = {
-+ 	.name = "mxs gpio",
- -	.ack = mxs_gpio_ack_irq,
- -	.mask = mxs_gpio_mask_irq,
- -	.unmask = mxs_gpio_unmask_irq,
- -	.set_type = mxs_gpio_set_irq_type,
- -	.set_wake = mxs_gpio_set_wake_irq,
- +	.irq_ack = mxs_gpio_ack_irq,
- +	.irq_mask = mxs_gpio_mask_irq,
- +	.irq_unmask = mxs_gpio_unmask_irq,
- +	.irq_set_type = mxs_gpio_set_irq_type,
- +	.irq_set_wake = mxs_gpio_set_wake_irq,
-  };
-  
-  static void mxs_set_gpio_direction(struct gpio_chip *chip, unsigned offset,
+diff --cc arch/arm/mm/Kconfig
+index 08daea9,0f59e54..0000000
+--- a/arch/arm/mm/Kconfig
++++ b/arch/arm/mm/Kconfig
+@@@ -819,8 -811,8 +819,8 @@@ config CACHE_FEROCEON_L2_WRITETHROUG
+  config CACHE_L2X0
+  	bool "Enable the L2x0 outer cache controller"
+  	depends on REALVIEW_EB_ARM11MP || MACH_REALVIEW_PB11MP || MACH_REALVIEW_PB1176 || \
+ -		   REALVIEW_EB_A9MP || ARCH_MX35 || ARCH_MX31 || MACH_REALVIEW_PBX || \
+ +		   REALVIEW_EB_A9MP || SOC_IMX35 || SOC_IMX31 || MACH_REALVIEW_PBX || \
+- 		   ARCH_NOMADIK || ARCH_OMAP4 || ARCH_S5PV310 || ARCH_TEGRA || \
++ 		   ARCH_NOMADIK || ARCH_OMAP4 || ARCH_EXYNOS4 || ARCH_TEGRA || \
+  		   ARCH_U8500 || ARCH_VEXPRESS_CA9X4 || ARCH_SHMOBILE
+  	default y
+  	select OUTER_CACHE
