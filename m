@@ -1,63 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the unicore32 tree with the i.MX tree
-Date: Thu, 3 Mar 2011 11:52:10 +1100
-Message-ID: <20110303115210.b0e8786b.sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
+Date: Thu, 3 Mar 2011 12:37:29 +1100
+Message-ID: <20110303123729.f416608a.sfr@canb.auug.org.au>
+References: <20110228120501.eb6840e0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__3_Mar_2011_12_37_29_+1100_g4Jm/aLZJgxd9u_m"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58037 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:57233 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752608Ab1CCAwP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 2 Mar 2011 19:52:15 -0500
+	id S1753539Ab1CCBhg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 2 Mar 2011 20:37:36 -0500
+In-Reply-To: <20110228120501.eb6840e0.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Xuetao Guan <epip.guan@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, GuanXuetao <gxt@mprc.pku.edu.cn>, Sascha Hauer <s.hauer@pengutronix.de>
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>
 
-Hi Xuetao,
+--Signature=_Thu__3_Mar_2011_12_37_29_+1100_g4Jm/aLZJgxd9u_m
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the unicore32 tree got a conflict in
-drivers/video/Kconfig between commit
-657df5cdfd525648a04b3db69eaa1ba8eb1baf87 ("video: Add i.MX23/28
-framebuffer driver") from the i.MX tree and commit
-a336d8ba89b5afe129cb9178f26216b22d6beb63 ("unicore32 machine related: add
-frame buffer driver for pkunity-v3 soc") from the unicore32 tree.
+Hi Mauro,
 
-Just overlapping additions.  I fixed it up (see below) and can carry the
-fix as necessary.
--- 
+On Mon, 28 Feb 2011 12:05:01 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the v4l-dvb tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+>=20
+> drivers/video/matrox/matroxfb_base.c: In function 'matroxfb_ioctl':
+> drivers/video/matrox/matroxfb_base.c:1155: error: 'VIDIOC_S_CTRL_OLD' und=
+eclared (first use in this function)
+>=20
+> Caused by commit 0ff69fe7cebb65856eba7feb3fd76fb4ba365bf8 ("[media] v4l:
+> removal of old, obsolete ioctls"). grep is your friend ...
+>=20
+> I have used the v4l-dvb tree from next-20110225 for today.
+
+I am still getting this ...
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc drivers/video/Kconfig
-index 8a2f8cf,ec55a87..0000000
---- a/drivers/video/Kconfig
-+++ b/drivers/video/Kconfig
-@@@ -2320,15 -2365,17 +2320,26 @@@ config FB_JZ474
-  	help
-  	  Framebuffer support for the JZ4740 SoC.
-  
- +config FB_MXS
- +	tristate "MXS LCD framebuffer support"
- +	depends on FB && ARCH_MXS
- +	select FB_CFB_FILLRECT
- +	select FB_CFB_COPYAREA
- +	select FB_CFB_IMAGEBLIT
- +	help
- +	  Framebuffer support for the MXS SoC.
- +
-+ config FB_PUV3_UNIGFX
-+ 	tristate "PKUnity v3 Unigfx framebuffer support"
-+ 	depends on FB && UNICORE32 && ARCH_PUV3
-+ 	select FB_SYS_FILLRECT
-+ 	select FB_SYS_COPYAREA
-+ 	select FB_SYS_IMAGEBLIT
-+ 	select FB_SYS_FOPS
-+ 	help
-+ 	  Choose this option if you want to use the Unigfx device as a
-+ 	  framebuffer device. Without the support of PCI & AGP.
-+ 
-  source "drivers/video/omap/Kconfig"
-  source "drivers/video/omap2/Kconfig"
-  
+--Signature=_Thu__3_Mar_2011_12_37_29_+1100_g4Jm/aLZJgxd9u_m
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNbvDZAAoJEDMEi1NhKgbsCm0IAI3xUxWy8i9cjSr24perEf36
+mumNInj+Jc9uhax3A+yzuF7r6/kVVXyZF5lw/b5wCz18mDej8B59PEFFIGkjKTGc
++lzKit7QRfDfzzujf7QHdKhMjbdew8egcRLuCjHbjd4iZ6W8NPH8YFlvZka5C5VH
+OWlMkHQ/AL3S1S3W93UUHwLQoWTocj+nPRPBfnALrCinLdoGaAyQEmBTB4YEObrs
+yp4z/2zUnMVrEF+A7mfVGJiQabxDc8UfmAR0tic5Pv0TzEOcnPZAgc45IZJCwlOU
+LSlBSaSrQpdFHxZ289w3+SeHL4sRr4XmTa0lGAWW/3YmmvNKBKK8Qo8UTifE/aQ=
+=xxPo
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__3_Mar_2011_12_37_29_+1100_g4Jm/aLZJgxd9u_m--
