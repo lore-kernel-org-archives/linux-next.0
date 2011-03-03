@@ -1,64 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
-Date: Thu, 3 Mar 2011 12:37:29 +1100
-Message-ID: <20110303123729.f416608a.sfr@canb.auug.org.au>
-References: <20110228120501.eb6840e0.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree with the net-current tree
+Date: Thu, 3 Mar 2011 13:40:35 +1100
+Message-ID: <20110303134035.53cf0296.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__3_Mar_2011_12_37_29_+1100_g4Jm/aLZJgxd9u_m"
+ boundary="Signature=_Thu__3_Mar_2011_13_40_35_+1100_h_H1da+YW9q49tce"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57233 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:35606 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753539Ab1CCBhg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 2 Mar 2011 20:37:36 -0500
-In-Reply-To: <20110228120501.eb6840e0.sfr@canb.auug.org.au>
+	id S932179Ab1CCCkl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 2 Mar 2011 21:40:41 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Kravkov <dmitry@broadcom.com>, Yaniv Rosner <yanivr@broadcom.com>, Eilon Greenstein <eilong@broadcom.com>
 
---Signature=_Thu__3_Mar_2011_12_37_29_+1100_g4Jm/aLZJgxd9u_m
+--Signature=_Thu__3_Mar_2011_13_40_35_+1100_h_H1da+YW9q49tce
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mauro,
+Hi all,
 
-On Mon, 28 Feb 2011 12:05:01 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the v4l-dvb tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
->=20
-> drivers/video/matrox/matroxfb_base.c: In function 'matroxfb_ioctl':
-> drivers/video/matrox/matroxfb_base.c:1155: error: 'VIDIOC_S_CTRL_OLD' und=
-eclared (first use in this function)
->=20
-> Caused by commit 0ff69fe7cebb65856eba7feb3fd76fb4ba365bf8 ("[media] v4l:
-> removal of old, obsolete ioctls"). grep is your friend ...
->=20
-> I have used the v4l-dvb tree from next-20110225 for today.
+Today's linux-next merge of the net tree got a conflict in
+drivers/net/bnx2x/bnx2x.h between commit
+b746f7e52fe33ce66ea0cf6127838eff507839ff ("bnx2x: update driver version
+to 1.62.00-6") from the net-current tree and commit
+6b28ff3be829a851378551245fd6b3f9bf93b0ad ("bnx2x: Update bnx2x version to
+1.62.11-0") from the net tree.
 
-I am still getting this ...
+Obvious, really :-)  I used the version from the net tree.
+
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__3_Mar_2011_12_37_29_+1100_g4Jm/aLZJgxd9u_m
+--Signature=_Thu__3_Mar_2011_13_40_35_+1100_h_H1da+YW9q49tce
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNbvDZAAoJEDMEi1NhKgbsCm0IAI3xUxWy8i9cjSr24perEf36
-mumNInj+Jc9uhax3A+yzuF7r6/kVVXyZF5lw/b5wCz18mDej8B59PEFFIGkjKTGc
-+lzKit7QRfDfzzujf7QHdKhMjbdew8egcRLuCjHbjd4iZ6W8NPH8YFlvZka5C5VH
-OWlMkHQ/AL3S1S3W93UUHwLQoWTocj+nPRPBfnALrCinLdoGaAyQEmBTB4YEObrs
-yp4z/2zUnMVrEF+A7mfVGJiQabxDc8UfmAR0tic5Pv0TzEOcnPZAgc45IZJCwlOU
-LSlBSaSrQpdFHxZ289w3+SeHL4sRr4XmTa0lGAWW/3YmmvNKBKK8Qo8UTifE/aQ=
-=xxPo
+iQEcBAEBAgAGBQJNbv+jAAoJEDMEi1NhKgbs/YMH/j5XYeM2mZXfIGAtkaY+3wck
+4uw3BZuKV3FT8sOtfhSeBwQZ1Am2UXYt7HyQqFtXWy2NuMSZQM6AyuSTkWVGgR0Z
+sFpzpYJCjLNMuBrLTZx0XqGbEUTYzSenvPCOBV+3u+MMjR/sLW4I88lSmDMpikgT
+RT1olnqYnLaQtEtxVB4B/u8I3bWJuZkiUPqOh+FO8Zt10Fd+9zIht3YjwV2wmvZK
+9LG8Bex2CiHAzQXsauKSws+tnTY4H/nntpEjb9apyt88/Udm0J0KnhYJet14uIfi
+CZsUB6RWm4UM0YK53Y3A6dH9LQLY1pdycjr5+KLllc+ThG6zEmdwdacKWsxTqgo=
+=X6NZ
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__3_Mar_2011_12_37_29_+1100_g4Jm/aLZJgxd9u_m--
+--Signature=_Thu__3_Mar_2011_13_40_35_+1100_h_H1da+YW9q49tce--
