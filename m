@@ -1,32 +1,30 @@
 From: Greg KH <greg@kroah.com>
 Subject: Re: linux-next: manual merge of the staging tree with the v4l-dvb
  tree
-Date: Fri, 4 Mar 2011 09:14:03 -0800
-Message-ID: <20110304171403.GF22173@kroah.com>
-References: <20110304163911.034f7f27.sfr@canb.auug.org.au>
+Date: Fri, 4 Mar 2011 09:12:40 -0800
+Message-ID: <20110304171240.GB22173@kroah.com>
+References: <20110304163841.fa243eef.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20110304163911.034f7f27.sfr@canb.auug.org.au>
+In-Reply-To: <20110304163841.fa243eef.sfr@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>, "Igor M. Liplianin" <liplianin@me.by>, Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Mauro Carvalho Chehab <mchehab@redhat.com>, Timo von Holtz <tvh@informatik.uni-kiel.de>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Mar 04, 2011 at 04:39:11PM +1100, Stephen Rothwell wrote:
+On Fri, Mar 04, 2011 at 04:38:41PM +1100, Stephen Rothwell wrote:
 > Hi Greg,
 > 
 > Today's linux-next merge of the staging tree got a conflict in
-> drivers/staging/Makefile between commit
-> a1256092a1e87511c977a3d0ef96151cda77e5c9 ("[media] Altera FPGA firmware
-> download module") from the v4l-dvb tree and commit
-> 0867b42113ec4eb8646eb361b15cbcfb741ddf5b ("staging: gma500: Intel GMA500
-> staging driver") from the staging tree.
+> drivers/staging/usbvideo/usbvideo.c between commit
+> af6302700e87a883481c342001ef81b77641bf98 ([media] staging-usbvideo:
+> remove"") from the v4l-dvb tree and commit  ("Staging: usbvideo:
+> usbvideo: fixed some coding style issues") from the staging tree.
 > 
-> One of the reasons I dislike unrelated white space changes ... I fixed it
-> up (see below) and can carry the fix as necessary.
+> I removed the file.
 
-Looks good, thanks.
+Thanks, that's the correct thing to do.
 
 greg k-h
