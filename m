@@ -1,22 +1,18 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the staging tree with the v4l-dvb tree
-Date: Fri, 4 Mar 2011 16:38:41 +1100
-Message-ID: <20110304163841.fa243eef.sfr@canb.auug.org.au>
+Date: Fri, 4 Mar 2011 16:38:56 +1100
+Message-ID: <20110304163856.7ce5d15d.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__4_Mar_2011_16_38_41_+1100_wR+nY66=zHxpoAVG"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60455 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750703Ab1CDFiu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 4 Mar 2011 00:38:50 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+ boundary="Signature=_Fri__4_Mar_2011_16_38_56_+1100_4h3BMBhd+B/Sof=C"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Mauro Carvalho Chehab <mchehab@redhat.com>, Timo von Holtz <tvh@informatik.uni-kiel.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@redhat.com>, Timo von Holtz <tvh@informatik.uni-kiel.de>
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Fri__4_Mar_2011_16_38_41_+1100_wR+nY66=zHxpoAVG
+--Signature=_Fri__4_Mar_2011_16_38_56_+1100_4h3BMBhd+B/Sof=C
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,30 +20,31 @@ Content-Transfer-Encoding: quoted-printable
 Hi Greg,
 
 Today's linux-next merge of the staging tree got a conflict in
-drivers/staging/usbvideo/usbvideo.c between commit
-af6302700e87a883481c342001ef81b77641bf98 ([media] staging-usbvideo:
-remove"") from the v4l-dvb tree and commit  ("Staging: usbvideo:
-usbvideo: fixed some coding style issues") from the staging tree.
+drivers/staging/dabusb/dabusb.c and drivers/staging/dabusb/dabusb.h
+between commit f8f4a7f5c1219571acf55f3889138b594e5b3b68 ("[media] dabusb:
+remove obsolete driver") from the v4l-dvb tree and commit
+868788278eaa5b841ec1a810b41e156f5fba0ab5 ("Staging: dabusb: fixed coding
+style issues") from the staging tree.
 
-I removed the file.
+I removed the files.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__4_Mar_2011_16_38_41_+1100_wR+nY66=zHxpoAVG
+--Signature=_Fri__4_Mar_2011_16_38_56_+1100_4h3BMBhd+B/Sof=C
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNcHrhAAoJEDMEi1NhKgbsWfoIAJm7uFzHqDudxW36ypGMH7R7
-N9V81DeDZZN+G0J3MKCY2eyvwsgSoc7367QUHg3Bj3aJ8zjDj+pXo4wUHfIniYaY
-lhFMpdO7Zb7m4POLrHHxlgrBbP91GInU7aTbntUh0BgT1vPiAbn41bYXSUXeUy48
-qZ/ITUgnQTGR+ArGpR+udd9v/AWLLBZGfLUNxTdX21+JDr/g9UUa3LUcDV8qLr6o
-LhhfOZEX5E9P6a1w+D6aRV9GCYMhj+sdQTZ0Ltnh9uMcGTpeud0FXs0NW27tXTvM
-0lN8F+W/n3sLzcN3YRiWWz8PnoW4lLtuHzFz9CjqoGN1TPFPU1f5/EtPiteq2T8=
-=V5yH
+iQEcBAEBAgAGBQJNcHrwAAoJEDMEi1NhKgbsf88IAIMo6QqKIy62W29k1O8CwifJ
+t6Ne/JcR088/nEmyjCUMnBkraa0FVfzeV5D+N2M4ecwutxkeOGBqJjnd9TUoYYcL
+f+wS58y52gMgOYJRbmUN+JyVgsW6sHQ0Rgvpw0ZWs3yz35tUFvz4se1w7Gx0XuUi
+EObWOu1v79TJ0T70ccRQDcEhE10sQS6B77f3So6hLy0Yn9nzzYfWyhylbP14eSQX
+cJ8PF6xp1IhzLjeTGUTbaSA2d92MH4mU1roB7a2guZ8+lCqIaaP4+UZzzIC+uSZq
+sT2iOTGo7SGWmK+5QewTZ75Yt+SQU/0W62BFHKeJvTBFRAhheRlEEuPMoaXC870=
+=WBgu
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__4_Mar_2011_16_38_41_+1100_wR+nY66=zHxpoAVG--
+--Signature=_Fri__4_Mar_2011_16_38_56_+1100_4h3BMBhd+B/Sof=C--
