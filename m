@@ -1,52 +1,34 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: [PATCH] net: Enter net/ipv6/ even if CONFIG_IPV6=n
-Date: Fri, 04 Mar 2011 09:01:54 -0800
-Message-ID: <4D711B02.2060200@oracle.com>
-References: <20110210180525.54ec83e9.sfr@canb.auug.org.au> <20110210095210.6fcf3011.randy.dunlap@oracle.com> <4D58DB20.5060401@trash.net> <20110303135414.bfcabb2a.randy.dunlap@oracle.com> <20110304093507.GG10761@canuck.infradead.org>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the usb tree with the i.MX tree
+Date: Fri, 4 Mar 2011 09:12:15 -0800
+Message-ID: <20110304171215.GA22173@kroah.com>
+References: <20110304155800.b48993d7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:30098 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751723Ab1CDRDS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Mar 2011 12:03:18 -0500
-In-Reply-To: <20110304093507.GG10761@canuck.infradead.org>
+Received: from kroah.org ([198.145.64.141]:38573 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759768Ab1CDROc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 4 Mar 2011 12:14:32 -0500
+Content-Disposition: inline
+In-Reply-To: <20110304155800.b48993d7.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: davem@davemloft.net, Patrick McHardy <kaber@trash.net>, Stephen Rothwell <sfr@canb.auug.org.au>, netdev@vger.kernel.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Zhao <richard.zhao@freescale.com>, Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <fabio.estevam@freescale.com>
 
-On 03/04/11 01:35, Thomas Graf wrote:
-> exthdrs_core.c and addrconf_core.c in net/ipv6/ contain bits which
-> must be made available even if IPv6 is disabled.
+On Fri, Mar 04, 2011 at 03:58:00PM +1100, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> net/ipv6/Makefile already correctly includes them if CONFIG_IPV6=n
-> but net/Makefile prevents entering the subdirectory.
+> Today's linux-next merge of the usb tree got a conflict in
+> drivers/usb/gadget/fsl_mxc_udc.c between commit
+> 4d2f13be1e370a670c1cae20c194d5ce961e0fa5 ("ARM: imx3x: clean up
+> ARCH_MX3X") from the i.MX tree and commit
+> a51ea8cc9cfcfd719240455ff8f217b4f165d1d0 ("usb: gadget/fsl_mxc_udc:
+> Detect the CPU type in run-time") from the usb tree.
 > 
-> Signed-off-by: Thomas Graf <tgraf@infradead.org>
+> The latter is a superset of the former, so I used that.
 
-Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
+Thanks, I appreciate it.
 
-Thanks.
-
-> 
-> diff --git a/net/Makefile b/net/Makefile
-> index a3330eb..a51d946 100644
-> --- a/net/Makefile
-> +++ b/net/Makefile
-> @@ -19,9 +19,7 @@ obj-$(CONFIG_NETFILTER)		+= netfilter/
->  obj-$(CONFIG_INET)		+= ipv4/
->  obj-$(CONFIG_XFRM)		+= xfrm/
->  obj-$(CONFIG_UNIX)		+= unix/
-> -ifneq ($(CONFIG_IPV6),)
-> -obj-y				+= ipv6/
-> -endif
-> +obj-$(CONFIG_NET)		+= ipv6/
->  obj-$(CONFIG_PACKET)		+= packet/
->  obj-$(CONFIG_NET_KEY)		+= key/
->  obj-$(CONFIG_BRIDGE)		+= bridge/
-
-
--- 
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+greg k-h
