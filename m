@@ -1,58 +1,73 @@
-From: Mauro Carvalho Chehab <mchehab@redhat.com>
-Subject: Re: linux-next: manual merge of the staging tree with the v4l-dvb
- tree
-Date: Fri, 04 Mar 2011 14:54:24 -0300
-Message-ID: <4D712750.1070402@redhat.com>
-References: <20110304163905.ed6dd630.sfr@canb.auug.org.au> <20110304171343.GE22173@kroah.com>
+From: Jesse Barnes <jbarnes@virtuousgeek.org>
+Subject: Re: [PATCH] Fix build failure when CONFIG_NLS is set to 'm' by
+ allmodconfig
+Date: Fri, 4 Mar 2011 10:15:09 -0800
+Message-ID: <20110304101509.7eef7475@jbarnes-desktop>
+References: <20110223131536.GA16707@fedora14-r610.blr.amer.dell.com>
+	<20110223131734.GA6275@srcf.ucam.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110304171343.GE22173@kroah.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>, "Igor M. Liplianin" <liplianin@me.by>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Ben Gamari <bgamari.foss@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from oproxy2-pub.bluehost.com ([67.222.39.60]:36513 "HELO
+	oproxy2-pub.bluehost.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1759896Ab1CDSPY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Mar 2011 13:15:24 -0500
+In-Reply-To: <20110223131734.GA6275@srcf.ucam.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Matthew Garrett <mjg59@srcf.ucam.org>
+Cc: Narendra_K@Dell.com, viro@zeniv.linux.org.uk, sfr@canb.auug.org.au, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Shyam_Iyer@Dell.com, Matt_Domsch@Dell.com, Charles_Rose@Dell.com, Jordan_Hargrave@Dell.com
 
-Hi Greg,
+On Wed, 23 Feb 2011 13:17:34 +0000
+Matthew Garrett <mjg59@srcf.ucam.org> wrote:
 
-Em 04-03-2011 14:13, Greg KH escreveu:
-> On Fri, Mar 04, 2011 at 04:39:05PM +1100, Stephen Rothwell wrote:
->> Hi Greg,
->>
->> Today's linux-next merge of the staging tree got a conflict in
->> drivers/staging/Kconfig between commit
->> a1256092a1e87511c977a3d0ef96151cda77e5c9 ("[media] Altera FPGA firmware
->> download module") from the v4l-dvb tree and commit
->> 0867b42113ec4eb8646eb361b15cbcfb741ddf5b ("staging: gma500: Intel GMA500
->> staging driver") from the staging tree.
->>
->> I fixed it up (see below) and can carry the fix as necessary.
+> On Wed, Feb 23, 2011 at 06:24:31PM +0530, Narendra_K@Dell.com wrote:
 > 
-> That looks correct.
+> > This patch fixes the following build breakage introduced by the patch
+> > '[PATCH V3] Export ACPI _DSM provided firmware instance number and string to
+> > sysfs'.
 > 
-> Mauro, what is this driver and why is it added to the staging tree?
+> First, you should include this as part of your original patch so that 
+> the build doesn't break during bisection.
+> 
+> > This is fixed by making fs/nls/nls_base.c compile conditionally into
+> > vmlinux by introducing a new config option CONFIG_NLS_BASE which is
+> > selected by (ACPI || DMI || NLS).
+> 
+> Why?
+> 
+> > -obj-$(CONFIG_NLS)		+= nls/
+> > +obj-y				+= nls/
+> 
+> You seem to have just broken building any of the NLS code as modules.
+> 
+> >  menuconfig NLS
+> >  	tristate "Native language support"
+> > +	select NLS_BASE
+> 
+> All CONFIG_NLS does is build nls_base.
+> 
+> > +config NLS_BASE
+> > +	bool "Base NLS functions"
+> > +	depends on ACPI || DMI
+> 
+> What in this code depends on ACPI or DMI?
+> 
+> > -obj-$(CONFIG_NLS)		+= nls_base.o
+> > +obj-$(CONFIG_NLS_BASE)		+= nls_base.o
+> 
+> And why make this change?
+> 
+> Just have something like
+> 
+> select NLS if (ACPI || DMI)
+> 
+> in drivers/pci/Kconfig.
 
-This driver implements the FPGA programming logic for a firmware required
-by a DVB driver, and was proposed initially for 2.6.37 inclusion. During the
-2.6.38 development cycle, it suffered several revisions, based on our input
-at the media and lkml mailing lists, where Igor fixed all CodingStyle issues.
+Narendra, can you send me an updated patch including the build fix?
+Either using this approach or the other one I outlined in my other mail.
 
-In the last minute, during 2.6.38 merge window, two developers (Laurent and Ben) 
-[1] complained against adding a driver for loading FPGA firmware as-is. So, I
-decided to add it, for now, at staging, to avoid needing to postpone a long series 
-of patches again just because of that, especially since a series of DVB-C devices
-are without support on Linux without this patch series, and there are very few
-DVB-C devices currently supported.
-
-The Altera driver is compliant with CodingStyle, and, from my side, it is ok
-to move it to drivers/others, but it doesn't hurt to give some time for Ben and 
-Laurent to propose alternative way of implementing the firmware request logic.
-
-If nothing happens until 2.6.40 merge window, I think we should go forward and
-move it to the proper place.
-
-Cheers,
-Mauro
-
-[1] http://www.mail-archive.com/linux-media@vger.kernel.org/msg26422.html
+Thanks,
+-- 
+Jesse Barnes, Intel Open Source Technology Center
