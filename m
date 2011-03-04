@@ -1,54 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb tree with the i.MX tree
-Date: Fri, 4 Mar 2011 15:58:00 +1100
-Message-ID: <20110304155800.b48993d7.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the v4l-dvb tree
+Date: Fri, 4 Mar 2011 16:38:41 +1100
+Message-ID: <20110304163841.fa243eef.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Fri__4_Mar_2011_15_58_00_+1100_ZNkDYleLJkHWrzVO"
+ boundary="Signature=_Fri__4_Mar_2011_16_38_41_+1100_wR+nY66=zHxpoAVG"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:47973 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:60455 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758483Ab1CDE6J (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 3 Mar 2011 23:58:09 -0500
+	id S1750703Ab1CDFiu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 4 Mar 2011 00:38:50 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Zhao <richard.zhao@freescale.com>, Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <fabio.estevam@freescale.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, Mauro Carvalho Chehab <mchehab@redhat.com>, Timo von Holtz <tvh@informatik.uni-kiel.de>
 
---Signature=_Fri__4_Mar_2011_15_58_00_+1100_ZNkDYleLJkHWrzVO
+--Signature=_Fri__4_Mar_2011_16_38_41_+1100_wR+nY66=zHxpoAVG
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-Today's linux-next merge of the usb tree got a conflict in
-drivers/usb/gadget/fsl_mxc_udc.c between commit
-4d2f13be1e370a670c1cae20c194d5ce961e0fa5 ("ARM: imx3x: clean up
-ARCH_MX3X") from the i.MX tree and commit
-a51ea8cc9cfcfd719240455ff8f217b4f165d1d0 ("usb: gadget/fsl_mxc_udc:
-Detect the CPU type in run-time") from the usb tree.
+Today's linux-next merge of the staging tree got a conflict in
+drivers/staging/usbvideo/usbvideo.c between commit
+af6302700e87a883481c342001ef81b77641bf98 ([media] staging-usbvideo:
+remove"") from the v4l-dvb tree and commit  ("Staging: usbvideo:
+usbvideo: fixed some coding style issues") from the staging tree.
 
-The latter is a superset of the former, so I used that.
+I removed the file.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Fri__4_Mar_2011_15_58_00_+1100_ZNkDYleLJkHWrzVO
+--Signature=_Fri__4_Mar_2011_16_38_41_+1100_wR+nY66=zHxpoAVG
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNcHFYAAoJEDMEi1NhKgbsiNoH/iwt1PKuLmyEDxRZBiTQ02Or
-PwRKPLnDMjL9Zzf+YONGTyG8an8Vk4sBNiGNVNxjClmF1jYhwgi6uBMok1spa7A6
-E1AUqDXTRI2nENIMcJUtiiwbGyDzX2pVjn4+JZyiKIaEI1ORmO9KVo+pKykGGna6
-RdPh7Vh42FVpcDbA9oa8aRrK44BqvYkmz9yUZq070s/Jxz98E6SIea0S3UFLTJ5+
-XAAybcrkSMQmKeVMGJbtF4fekkGGGggty53/Ayu9mdDpx1icLzdaHuOS4kSmKwMp
-YGdKExkGtUsvQFn1up4Of6f06X0USakn48PGZkNBhR+l1voKZkNuYTJfg7u2fnE=
-=aVN7
+iQEcBAEBAgAGBQJNcHrhAAoJEDMEi1NhKgbsWfoIAJm7uFzHqDudxW36ypGMH7R7
+N9V81DeDZZN+G0J3MKCY2eyvwsgSoc7367QUHg3Bj3aJ8zjDj+pXo4wUHfIniYaY
+lhFMpdO7Zb7m4POLrHHxlgrBbP91GInU7aTbntUh0BgT1vPiAbn41bYXSUXeUy48
+qZ/ITUgnQTGR+ArGpR+udd9v/AWLLBZGfLUNxTdX21+JDr/g9UUa3LUcDV8qLr6o
+LhhfOZEX5E9P6a1w+D6aRV9GCYMhj+sdQTZ0Ltnh9uMcGTpeud0FXs0NW27tXTvM
+0lN8F+W/n3sLzcN3YRiWWz8PnoW4lLtuHzFz9CjqoGN1TPFPU1f5/EtPiteq2T8=
+=V5yH
 -----END PGP SIGNATURE-----
 
---Signature=_Fri__4_Mar_2011_15_58_00_+1100_ZNkDYleLJkHWrzVO--
+--Signature=_Fri__4_Mar_2011_16_38_41_+1100_wR+nY66=zHxpoAVG--
