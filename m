@@ -1,46 +1,53 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: linux-next: Tree for February 21 (usb/serial)
-Date: Fri, 4 Mar 2011 10:04:38 -0500 (EST)
-Message-ID: <Pine.LNX.4.44L0.1103040953380.1812-100000@iolanthe.rowland.org>
-References: <20110303135152.c4b53da1.randy.dunlap@oracle.com>
+From: Andres Salomon <dilinger@queued.net>
+Subject: [PATCH] ARM: mx51_efika: update platform data for new mfd changes
+Date: Fri, 4 Mar 2011 08:06:53 -0800
+Message-ID: <20110304080653.3f2c3f19@debxo>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from iolanthe.rowland.org ([192.131.102.54]:50973 "HELO
-	iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1759734Ab1CDPEl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Mar 2011 10:04:41 -0500
-In-Reply-To: <20110303135152.c4b53da1.randy.dunlap@oracle.com>
+Received: from LUNGE.MIT.EDU ([18.54.1.69]:39879 "EHLO lunge.queued.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752232Ab1CDQHD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 4 Mar 2011 11:07:03 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Oliver Neukum <oliver@neukum.org>, Randy Dunlap <randy.dunlap@oracle.com>
-Cc: lud <linux-usb@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: Sascha Hauer <kernel@pengutronix.de>, Amit Kucheria <amit.kucheria@canonical.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
 
-On Thu, 3 Mar 2011, Randy Dunlap wrote:
+Note that this relies on stuff currently in mfd's next tree, but this
+is also a newer driver.  I'm not sure which tree it should go through,
+as it's a problem that shows up in next.
 
-> On Mon, 21 Feb 2011 21:30:01 +0100 Rafael J. Wysocki wrote:
-> 
-> > On Monday, February 21, 2011, Randy Dunlap wrote:
-> > > On Mon, 21 Feb 2011 18:21:34 +1100 Stephen Rothwell wrote:
-> > > 
-> > > > Hi all,
-> > > > 
-> > > > Changes since 20110218:
-> > > 
-> > > 
-> > > When CONFIG_PM_RUNTIME is not enabled:
-> > > 
-> > > drivers/usb/serial/usb_wwan.c:702: error: 'struct dev_pm_info' has no member named 'usage_count'
-> > 
-> > This looks like a bug in the driver that shouldn't access this field directly.
-> 
-> 
-> This build error is still with us in linux-next 2011.0303.
 
-Since Oliver added this bug in commit
-16871dcac74c63227aa92e0012f3004a648c2062 (usb_wwan: error case of
-resume), he should be the person to fix it.  The logic there is not 
-clear to me; I don't know how it ought to be changed.  Would replacing 
-it with a call to usb_autopm_put_interface_no_suspend() be good enough?
 
-Alan Stern
+From: Andres Salomon <dilinger@queued.net>
+
+MFD changes in c738892f cause the mc13xxx_platform_data struct
+to change.  This changes one more (new) user of it, fixing a build
+error.
+
+Signed-off-by: Andres Salomon <dilinger@queued.net>
+---
+ arch/arm/mach-mx5/mx51_efika.c |    6 ++++--
+ 1 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/mach-mx5/mx51_efika.c b/arch/arm/mach-mx5/mx51_efika.c
+index 74991c9..6451fb4 100644
+--- a/arch/arm/mach-mx5/mx51_efika.c
++++ b/arch/arm/mach-mx5/mx51_efika.c
+@@ -572,8 +572,10 @@ static struct mc13xxx_regulator_init_data mx51_efika_regulators[] = {
+ 
+ static struct mc13xxx_platform_data mx51_efika_mc13892_data = {
+ 	.flags = MC13XXX_USE_RTC | MC13XXX_USE_REGULATOR,
+-	.num_regulators = ARRAY_SIZE(mx51_efika_regulators),
+-	.regulators = mx51_efika_regulators,
++	.regulators = {
++		.num_regulators = ARRAY_SIZE(mx51_efika_regulators),
++		.regulators = mx51_efika_regulators,
++	},
+ };
+ 
+ static struct spi_board_info mx51_efika_spi_board_info[] __initdata = {
+-- 
+1.7.2.3
