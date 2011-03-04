@@ -1,47 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the s5p tree with the i.MX tree
-Date: Fri, 4 Mar 2011 10:42:06 +1100
-Message-ID: <20110304104206.d2feadef.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree with the i.MX tree
+Date: Fri, 4 Mar 2011 12:31:35 +1100
+Message-ID: <20110304123135.f3389022.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__4_Mar_2011_12_31_35_+1100_hSFvZdtrw/e5NjL="
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:48290 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:38403 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758739Ab1CCXmI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 3 Mar 2011 18:42:08 -0500
+	id S1751120Ab1CDBbp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 3 Mar 2011 20:31:45 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Zhao <richard.zhao@freescale.com>, Sascha Hauer <s.hauer@pengutronix.de>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Zhao <richard.zhao@freescale.com>, Sascha Hauer <s.hauer@pengutronix.de>, =?UTF-8?B?IlV3ZSBLbGVpbmUtS8O2bmlnIg==?= <u.kleine-koenig@pengutronix.de>
 
-Hi Kukjin,
+--Signature=_Fri__4_Mar_2011_12_31_35_+1100_hSFvZdtrw/e5NjL=
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the s5p tree got a conflict in
-arch/arm/mm/Kconfig between commit
+Hi all,
+
+Today's linux-next merge of the net tree got a conflict in
+drivers/net/Kconfig between commit
 4d2f13be1e370a670c1cae20c194d5ce961e0fa5 ("ARM: imx3x: clean up
 ARCH_MX3X") from the i.MX tree and commit
-10606aadb046d008c88d1a99b309357ca33d590e ("ARM: EXYNOS4: Update Kconfig
-and Makefile for the new ARCH_EXYNOS4") from the s5p tree.
+085e79ed88351d2f3cbf257ff4fc00394792da18 (net/fec: consolidate all i.MX
+options to CONFIG_ARM"") from the net tree.
 
-Just context changes. I fixed it up (see below) and can carry the fix as
-necessary.
--- 
+The latter seems to be a superset of the former, so I used that.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc arch/arm/mm/Kconfig
-index 08daea9,0f59e54..0000000
---- a/arch/arm/mm/Kconfig
-+++ b/arch/arm/mm/Kconfig
-@@@ -819,8 -811,8 +819,8 @@@ config CACHE_FEROCEON_L2_WRITETHROUG
-  config CACHE_L2X0
-  	bool "Enable the L2x0 outer cache controller"
-  	depends on REALVIEW_EB_ARM11MP || MACH_REALVIEW_PB11MP || MACH_REALVIEW_PB1176 || \
- -		   REALVIEW_EB_A9MP || ARCH_MX35 || ARCH_MX31 || MACH_REALVIEW_PBX || \
- +		   REALVIEW_EB_A9MP || SOC_IMX35 || SOC_IMX31 || MACH_REALVIEW_PBX || \
-- 		   ARCH_NOMADIK || ARCH_OMAP4 || ARCH_S5PV310 || ARCH_TEGRA || \
-+ 		   ARCH_NOMADIK || ARCH_OMAP4 || ARCH_EXYNOS4 || ARCH_TEGRA || \
-  		   ARCH_U8500 || ARCH_VEXPRESS_CA9X4 || ARCH_SHMOBILE
-  	default y
-  	select OUTER_CACHE
+--Signature=_Fri__4_Mar_2011_12_31_35_+1100_hSFvZdtrw/e5NjL=
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNcED3AAoJEDMEi1NhKgbsFAwIAJHWqhRIUGaGnuk0UFZMm1X3
+OJS/js8Hrxe82lyK9N5hQa/m1nehw/ONFaYUy/PIF4WKGiJ+t+kutORiYjo7Be2e
+fA3BYS7mjoF5/usxQz550U9wDLFnuexifIgS0g7fKWjlbiFbogNRZXI4iYIxN1ak
+mGcoyB4MomPWgYWHjPY0IUdN6dPDlQncVwI/5hV3wpRK7XJVD0OQhr2S4hlKlzq1
+oEViuNw+BvLXfbM/hagrHK9LFNt8mSiHiFuDTk2bAfdkhzEgh5rmDkbu8Jcq3+iR
+mhKnMPzVsgdb0GFBHk+PkvdfCWAIyJerAx+A34G0mTRfnMSRjCB+KFIzGd9a5+0=
+=Xi+s
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__4_Mar_2011_12_31_35_+1100_hSFvZdtrw/e5NjL=--
