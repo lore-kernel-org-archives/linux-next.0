@@ -1,41 +1,32 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] staging: altera-jtag needs delay.h
-Date: Fri, 4 Mar 2011 17:35:28 -0800
-Message-ID: <20110304173528.60c04f76.randy.dunlap@oracle.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH -next] soc: sgtl5000 uses regulator interfaces
+Date: Sat, 5 Mar 2011 11:29:36 +0000
+Message-ID: <20110305112936.GA30187@opensource.wolfsonmicro.com>
 References: <20110304180027.20deb6c4.sfr@canb.auug.org.au>
+ <20110304173357.23d36116.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:53180 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751852Ab1CEBhs (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Mar 2011 20:37:48 -0500
-In-Reply-To: <20110304180027.20deb6c4.sfr@canb.auug.org.au>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:57460 "EHLO
+	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752642Ab1CEL3P (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 5 Mar 2011 06:29:15 -0500
+Content-Disposition: inline
+In-Reply-To: <20110304173357.23d36116.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "Igor M. Liplianin" <liplianin@netup.ru>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Zeng Zhaoming <zhaoming.zeng@freescale.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Liam Girdwood <lrg@slimlogic.co.uk>, alsa-devel@alsa-project.org
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+On Fri, Mar 04, 2011 at 05:33:57PM -0800, Randy Dunlap wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+> 
+> sgtl5000 uses regulator interfaces, so make selecting it depend
+> on REGULATOR.
+> 
+> sgtl5000.c:(.text+0x4ae33): undefined reference to `regulator_unregister'
+> sgtl5000.c:(.text+0x4af41): undefined reference to `rdev_get_drvdata'
+> sgtl5000.c:(.text+0x4b191): undefined reference to `regulator_register'
 
-altera-jtag.c needs to include <linux/delay.h> to fix a build error:
-
-drivers/staging/altera-stapl/altera-jtag.c:398: error: implicit declaration of function 'udelay'
-
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Igor M. Liplianin <liplianin@netup.ru>
----
- drivers/staging/altera-stapl/altera-jtag.c |    1 +
- 1 file changed, 1 insertion(+)
-
---- linux-next-20110304.orig/drivers/staging/altera-stapl/altera-jtag.c
-+++ linux-next-20110304/drivers/staging/altera-stapl/altera-jtag.c
-@@ -23,6 +23,7 @@
-  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-  */
- 
-+#include <linux/delay.h>
- #include <linux/firmware.h>
- #include <linux/slab.h>
- #include <staging/altera.h>
+Since the regulator on the device is optional this isn't the best fix,
+the code should be updated to support building without regulator.  
