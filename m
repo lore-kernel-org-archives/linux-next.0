@@ -1,49 +1,41 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] soc: sgtl5000 uses regulator interfaces
-Date: Fri, 4 Mar 2011 17:33:57 -0800
-Message-ID: <20110304173357.23d36116.randy.dunlap@oracle.com>
+Subject: [PATCH -next] staging: altera-jtag needs delay.h
+Date: Fri, 4 Mar 2011 17:35:28 -0800
+Message-ID: <20110304173528.60c04f76.randy.dunlap@oracle.com>
 References: <20110304180027.20deb6c4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:53180 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751852Ab1CEBhs (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 4 Mar 2011 20:37:48 -0500
 In-Reply-To: <20110304180027.20deb6c4.sfr@canb.auug.org.au>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Zeng Zhaoming <zhaoming.zeng@freescale.com>
-Cc: alsa-devel@alsa-project.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Liam@alsa-project.org, Girdwood <lrg@slimlogic.co.uk>
-List-Id: linux-next.vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "Igor M. Liplianin" <liplianin@netup.ru>
 
 From: Randy Dunlap <randy.dunlap@oracle.com>
 
-sgtl5000 uses regulator interfaces, so make selecting it depend
-on REGULATOR.
+altera-jtag.c needs to include <linux/delay.h> to fix a build error:
 
-sgtl5000.c:(.text+0x4ae33): undefined reference to `regulator_unregister'
-sgtl5000.c:(.text+0x4af41): undefined reference to `rdev_get_drvdata'
-sgtl5000.c:(.text+0x4b191): undefined reference to `regulator_register'
+drivers/staging/altera-stapl/altera-jtag.c:398: error: implicit declaration of function 'udelay'
 
 Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Zeng Zhaoming <zhaoming.zeng@freescale.com>
+Cc: Igor M. Liplianin <liplianin@netup.ru>
 ---
- sound/soc/codecs/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/altera-stapl/altera-jtag.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- linux-next-20110304.orig/sound/soc/codecs/Kconfig
-+++ linux-next-20110304/sound/soc/codecs/Kconfig
-@@ -33,7 +33,7 @@ config SND_SOC_ALL_CODECS
- 	select SND_SOC_MAX98088 if I2C
- 	select SND_SOC_MAX9877 if I2C
- 	select SND_SOC_PCM3008
--	select SND_SOC_SGTL5000 if I2C
-+	select SND_SOC_SGTL5000 if I2C && REGULATOR
- 	select SND_SOC_SN95031 if INTEL_SCU_IPC
- 	select SND_SOC_SPDIF
- 	select SND_SOC_SSM2602 if I2C
+--- linux-next-20110304.orig/drivers/staging/altera-stapl/altera-jtag.c
++++ linux-next-20110304/drivers/staging/altera-stapl/altera-jtag.c
+@@ -23,6 +23,7 @@
+  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+  */
+ 
++#include <linux/delay.h>
+ #include <linux/firmware.h>
+ #include <linux/slab.h>
+ #include <staging/altera.h>
