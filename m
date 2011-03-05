@@ -1,61 +1,46 @@
-From: Zeng Zhaoming <zengzm.kernel@gmail.com>
-Subject: Re: [PATCH -next] soc: sgtl5000 uses regulator interfaces
-Date: Sat, 5 Mar 2011 20:41:38 +0800
-Message-ID: <AANLkTikivW3+V4QYh9Nt9FGXTefZiN9WbpAvGVeBJHNN@mail.gmail.com>
-References: <20110304180027.20deb6c4.sfr@canb.auug.org.au>
-	<20110304173357.23d36116.randy.dunlap@oracle.com>
-	<20110305112936.GA30187@opensource.wolfsonmicro.com>
+From: Jesper Juhl <jj@chaosbits.net>
+Subject: Duplicate patches in the tree
+Date: Sat, 5 Mar 2011 21:45:19 +0100 (CET)
+Message-ID: <alpine.LNX.2.00.1103052113270.32044@swampdragon.chaosbits.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-gy0-f174.google.com ([209.85.160.174]:32933 "EHLO
-	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751109Ab1CEMlj convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 5 Mar 2011 07:41:39 -0500
-In-Reply-To: <20110305112936.GA30187@opensource.wolfsonmicro.com>
+Received: from swampdragon.chaosbits.net ([90.184.90.115]:13345 "EHLO
+	swampdragon.chaosbits.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752197Ab1CEUpx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 5 Mar 2011 15:45:53 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Randy Dunlap <randy.dunlap@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Zeng Zhaoming <zhaoming.zeng@freescale.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Liam Girdwood <lrg@slimlogic.co.uk>, alsa-devel@alsa-project.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org
 
-On Sat, Mar 5, 2011 at 7:29 PM, Mark Brown
-<broonie@opensource.wolfsonmicro.com> wrote:
-> On Fri, Mar 04, 2011 at 05:33:57PM -0800, Randy Dunlap wrote:
->> From: Randy Dunlap <randy.dunlap@oracle.com>
->>
->> sgtl5000 uses regulator interfaces, so make selecting it depend
->> on REGULATOR.
->>
->> sgtl5000.c:(.text+0x4ae33): undefined reference to `regulator_unregi=
-ster'
->> sgtl5000.c:(.text+0x4af41): undefined reference to `rdev_get_drvdata=
-'
->> sgtl5000.c:(.text+0x4b191): undefined reference to `regulator_regist=
-er'
->
+Hi Stephen
 
-hi=EF=BC=8C Thanks for the report.
+I noticed something currious today in linux-next. 
+There are, what looks to me like, duplicate patches with different commit 
+id's but identical contents. Perhaps this is just a git artefact that I 
+don't know about, but it seemed currious enough that I thought I'd ask.
 
-> Since the regulator on the device is optional this isn't the best fix=
-,
-> the code should be updated to support building without regulator.
+The two patches are these (from 'git log'):
 
-I will fix the code. If regulator not enabled, and the optional
-regulator not provided externally,
-a warning message will print out, and internal regulator will set
-directly by write register.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kerne=
-l" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =C2=A0http://vger.kernel.org/majordomo-info.ht=
-ml
-> Please read the FAQ at =C2=A0http://www.tux.org/lkml/
->
+commit a9c3809db31be860db4e8ecf8ab359159c935a3b
+Author: Jesper Juhl <jj@chaosbits.net>
+Date:   Wed Feb 23 23:45:55 2011 +0100
 
+commit 4b2f67d756cf4a5ed8e8d11caa7dcea06c41a09e
+Author: Jesper Juhl <jj@chaosbits.net>
+Date:   Wed Feb 23 23:45:55 2011 +0100
 
+They are completely identical except for the commit id.
 
---=20
-Best Regards
-=C2=A0 =C2=A0 Zeng Zhaoming
+If I do a 'git log drivers/regulator/mc13xxx-regulator-core.c' I only see 
+commit 4b2f67d756cf4a5ed8e8d11caa7dcea06c41a09e .
+
+Please enlighten me if this is perfectly normal and not a problem. 
+Currently I'm a bit puzzled by two commit id's showing up for the same 
+change..
+
+-- 
+Jesper Juhl <jj@chaosbits.net>            http://www.chaosbits.net/
+Plain text mails only, please.
+Don't top-post http://www.catb.org/~esr/jargon/html/T/top-post.html
