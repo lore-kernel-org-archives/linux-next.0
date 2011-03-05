@@ -1,64 +1,49 @@
-From: Mauro Carvalho Chehab <mchehab@redhat.com>
-Subject: Re: linux-next: manual merge of the staging tree with the v4l-dvb
- tree
-Date: Fri, 04 Mar 2011 19:17:35 -0300
-Message-ID: <4D7164FF.5090602@redhat.com>
-References: <20110304163905.ed6dd630.sfr@canb.auug.org.au> <20110304171343.GE22173@kroah.com> <4D712750.1070402@redhat.com> <20110304212336.GB27425@kroah.com>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] soc: sgtl5000 uses regulator interfaces
+Date: Fri, 4 Mar 2011 17:33:57 -0800
+Message-ID: <20110304173357.23d36116.randy.dunlap@oracle.com>
+References: <20110304180027.20deb6c4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:34093 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932445Ab1CDWSA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 4 Mar 2011 17:18:00 -0500
-In-Reply-To: <20110304212336.GB27425@kroah.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>, "Igor M. Liplianin" <liplianin@me.by>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Ben Gamari <bgamari.foss@gmail.com>
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20110304180027.20deb6c4.sfr@canb.auug.org.au>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Sender: alsa-devel-bounces@alsa-project.org
+Errors-To: alsa-devel-bounces@alsa-project.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Zeng Zhaoming <zhaoming.zeng@freescale.com>
+Cc: alsa-devel@alsa-project.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Liam@alsa-project.org, Girdwood <lrg@slimlogic.co.uk>
+List-Id: linux-next.vger.kernel.org
 
-Em 04-03-2011 18:23, Greg KH escreveu:
-> On Fri, Mar 04, 2011 at 02:54:24PM -0300, Mauro Carvalho Chehab wrote:
->> Hi Greg,
->>
->> Em 04-03-2011 14:13, Greg KH escreveu:
->>> On Fri, Mar 04, 2011 at 04:39:05PM +1100, Stephen Rothwell wrote:
->>>> Hi Greg,
->>>>
->>>> Today's linux-next merge of the staging tree got a conflict in
->>>> drivers/staging/Kconfig between commit
->>>> a1256092a1e87511c977a3d0ef96151cda77e5c9 ("[media] Altera FPGA firmware
->>>> download module") from the v4l-dvb tree and commit
->>>> 0867b42113ec4eb8646eb361b15cbcfb741ddf5b ("staging: gma500: Intel GMA500
->>>> staging driver") from the staging tree.
->>>>
->>>> I fixed it up (see below) and can carry the fix as necessary.
->>>
->>> That looks correct.
->>>
->>> Mauro, what is this driver and why is it added to the staging tree?
->>
->> This driver implements the FPGA programming logic for a firmware required
->> by a DVB driver, and was proposed initially for 2.6.37 inclusion. During the
->> 2.6.38 development cycle, it suffered several revisions, based on our input
->> at the media and lkml mailing lists, where Igor fixed all CodingStyle issues.
->>
->> In the last minute, during 2.6.38 merge window, two developers (Laurent and Ben) 
->> [1] complained against adding a driver for loading FPGA firmware as-is. So, I
->> decided to add it, for now, at staging, to avoid needing to postpone a long series 
->> of patches again just because of that, especially since a series of DVB-C devices
->> are without support on Linux without this patch series, and there are very few
->> DVB-C devices currently supported.
->>
->> The Altera driver is compliant with CodingStyle, and, from my side, it is ok
->> to move it to drivers/others, but it doesn't hurt to give some time for Ben and 
->> Laurent to propose alternative way of implementing the firmware request logic.
->>
->> If nothing happens until 2.6.40 merge window, I think we should go forward and
->> move it to the proper place.
-> 
-> Ok, thanks, I'll defer any patches for this code to you.
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Ok, thanks!
-Mauro.
+sgtl5000 uses regulator interfaces, so make selecting it depend
+on REGULATOR.
+
+sgtl5000.c:(.text+0x4ae33): undefined reference to `regulator_unregister'
+sgtl5000.c:(.text+0x4af41): undefined reference to `rdev_get_drvdata'
+sgtl5000.c:(.text+0x4b191): undefined reference to `regulator_register'
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Zeng Zhaoming <zhaoming.zeng@freescale.com>
+---
+ sound/soc/codecs/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20110304.orig/sound/soc/codecs/Kconfig
++++ linux-next-20110304/sound/soc/codecs/Kconfig
+@@ -33,7 +33,7 @@ config SND_SOC_ALL_CODECS
+ 	select SND_SOC_MAX98088 if I2C
+ 	select SND_SOC_MAX9877 if I2C
+ 	select SND_SOC_PCM3008
+-	select SND_SOC_SGTL5000 if I2C
++	select SND_SOC_SGTL5000 if I2C && REGULATOR
+ 	select SND_SOC_SN95031 if INTEL_SCU_IPC
+ 	select SND_SOC_SPDIF
+ 	select SND_SOC_SSM2602 if I2C
