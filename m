@@ -1,34 +1,31 @@
-From: Mariusz Kozlowski <mk@lab.zgora.pl>
-Subject: Re: linux-next: Tree for March 7
-Date: Mon, 7 Mar 2011 20:05:37 +0100
-Message-ID: <20110307190537.GA5694@mako-laptop>
-References: <20110307180547.0cd7b9eb.sfr@canb.auug.org.au>
+From: Sedat Dilek <sedat.dilek@googlemail.com>
+Subject: Re: linux-next: Tree for March 7 (BROKEN iwlwifi)
+Date: Mon, 7 Mar 2011 20:30:14 +0100
+Message-ID: <AANLkTik68fcAgBBFYxW_PRuWoF1LS87SPLnihG2ASZN=@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from unix.wroclaw.pl ([94.23.28.62]:35619 "EHLO unix.wroclaw.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752815Ab1CGTFm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 7 Mar 2011 14:05:42 -0500
-Content-Disposition: inline
-In-Reply-To: <20110307180547.0cd7b9eb.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Narendra K <narendra_k@dell.com>, linux-pci@vger.kernel.org
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stanislaw Gruszka <sgruszka@redhat.com>, wireless <linux-wireless@vger.kernel.org>, John Linville <linville@tuxdriver.com>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Mar 07, 2011 at 06:05:47PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20110304:
+linux-next (next-20110307) has still this build-failure with iwlwifi
+which was already reported and a fix was offered by Stanislaw.
+(JFYI: Build-host is a Debian/sid i386 system.)
 
-drivers/pci/pci-label.c: In function 'pci_create_firmware_label_files':
-drivers/pci/pci-label.c:366: error: implicit declaration of function 'device_has_dsm'
+/home/sd/src/linux-2.6/linux-2.6.38-rc7/debian/build/source_i386_none/drivers/net/wireless/iwlwifi/iwl-rx.c:
+In function 'iwl_rx_card_state_notif':
+/home/sd/src/linux-2.6/linux-2.6.38-rc7/debian/build/source_i386_none/drivers/net/wireless/iwlwifi/iwl-rx.c:778:3:
+error: 'TASK_INTERRUPTIBLE' undeclared (first use in this function)
+/home/sd/src/linux-2.6/linux-2.6.38-rc7/debian/build/source_i386_none/drivers/net/wireless/iwlwifi/iwl-rx.c:778:3:
+note: each undeclared identifier is reported only once for each
+function it appears in
+make[8]: *** [drivers/net/wireless/iwlwifi/iwl-rx.o] Error 1
+make[8]: *** Waiting for unfinished jobs....
 
-Fails for !CONFIG_ACPI.
+- Sedat -
 
-pci_create_firmware_label_files() uses device_has_dsm() which definition
-is under #ifdef CONFIG_ACPI.
-
--- 
-Mariusz Kozlowski
+[1] iwlwifi-fix-iwl-rx.c-compilation.patch
+https://patchwork.kernel.org/patch/614961
