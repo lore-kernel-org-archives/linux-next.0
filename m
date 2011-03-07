@@ -1,144 +1,69 @@
-From: Sedat Dilek <sedat.dilek@googlemail.com>
-Subject: Re: linux-next: manual merge of the block tree with Linus' tree
-Date: Mon, 7 Mar 2011 13:26:23 +0100
-Message-ID: <AANLkTin+OCtg5-0Tx8urH7bk1ZO2_N05-vQeLFbO36hy@mail.gmail.com>
-References: <20110307131958.84a5d818.sfr@canb.auug.org.au>
-	<20110307063618.GA10365@mtj.dyndns.org>
-	<4D749A81.50809@kernel.dk>
-	<AANLkTim0qwr-L9RLRDtoZBrFBWGJ1ze9LMxr9dTmdrr9@mail.gmail.com>
-	<20110307104747.GH20499@htj.dyndns.org>
-	<AANLkTinBx5Z9Gp7ZTcbbTMCZZ4Z68-vMBP9yOX-k15EA@mail.gmail.com>
-	<4D74BE7C.4050701@kernel.dk>
-	<AANLkTi=9AUSv0rJtudgnEBERaCLpyHhVmcUY9mZUa8H-@mail.gmail.com>
-	<4D74C101.1030204@kernel.dk>
-	<AANLkTim=ftTzEX9arXjpPhs8XPbUCzZ2BJ3pOdxL+bNF@mail.gmail.com>
-	<4D74C5AD.6020400@kernel.dk>
-Reply-To: sedat.dilek@gmail.com
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Kernelspace firmware loaders (was: linux-next: manual merge of the staging tree with the v4l-dvb tree)
+Date: Mon, 7 Mar 2011 15:07:36 +0100
+Message-ID: <201103071507.37378.laurent.pinchart@ideasonboard.com>
+References: <20110304163905.ed6dd630.sfr@canb.auug.org.au> <20110304171343.GE22173@kroah.com> <4D712750.1070402@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:57268 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750987Ab1CGM0Y (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Mar 2011 07:26:24 -0500
-In-Reply-To: <4D74C5AD.6020400@kernel.dk>
+Received: from perceval.ideasonboard.com ([95.142.166.194]:41666 "EHLO
+	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753127Ab1CGOHQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Mar 2011 09:07:16 -0500
+In-Reply-To: <4D712750.1070402@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Tejun Heo <tj@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>, "Igor M. Liplianin" <liplianin@me.by>, Ben Gamari <bgamari.foss@gmail.com>
 
-Thanks, I will wait till tommorrow with a new build of linux-next
-(looks like this is one of this "manic mondays" and... more coffee).
+On Friday 04 March 2011 18:54:24 Mauro Carvalho Chehab wrote:
+> Em 04-03-2011 14:13, Greg KH escreveu:
+> > On Fri, Mar 04, 2011 at 04:39:05PM +1100, Stephen Rothwell wrote:
+> >> Today's linux-next merge of the staging tree got a conflict in
+> >> drivers/staging/Kconfig between commit
+> >> a1256092a1e87511c977a3d0ef96151cda77e5c9 ("[media] Altera FPGA firmware
+> >> download module") from the v4l-dvb tree and commit
+> >> 0867b42113ec4eb8646eb361b15cbcfb741ddf5b ("staging: gma500: Intel GMA500
+> >> staging driver") from the staging tree.
+> >> 
+> >> I fixed it up (see below) and can carry the fix as necessary.
+> > 
+> > That looks correct.
+> > 
+> > Mauro, what is this driver and why is it added to the staging tree?
+> 
+> This driver implements the FPGA programming logic for a firmware required
+> by a DVB driver, and was proposed initially for 2.6.37 inclusion. During
+> the 2.6.38 development cycle, it suffered several revisions, based on our
+> input at the media and lkml mailing lists, where Igor fixed all
+> CodingStyle issues.
+> 
+> In the last minute, during 2.6.38 merge window, two developers (Laurent and
+> Ben) [1] complained against adding a driver for loading FPGA firmware
+> as-is. So, I decided to add it, for now, at staging, to avoid needing to
+> postpone a long series of patches again just because of that, especially
+> since a series of DVB-C devices are without support on Linux without this
+> patch series, and there are very few DVB-C devices currently supported.
+> 
+> The Altera driver is compliant with CodingStyle, and, from my side, it is
+> ok to move it to drivers/others, but it doesn't hurt to give some time for
+> Ben and Laurent to propose alternative way of implementing the firmware
+> request logic.
+> 
+> If nothing happens until 2.6.40 merge window, I think we should go forward
+> and move it to the proper place.
 
-Just looked in the meantime trough WildWildWeb and found a new
-tig-0.17 which I could built successfully against ncurses-5.8 and this
-was more important.
+What's the policy regarding firmware loaders in kernelspace vs. userspace ? 
+JTAG is a quite complex protocol, and we already have lots of JTAG libraries 
+in userspace (http://urjtag.org/ seems to be the most popular one). We also 
+have userspace firmware loaders (such as fxload for the Cypress EZ USB 
+microcontrollers). Do we need a kernelspace JTAG implementation ?
 
-- Sedat -
+> [1] http://www.mail-archive.com/linux-media@vger.kernel.org/msg26422.html
 
-On 3/7/11, Jens Axboe <axboe@kernel.dk> wrote:
-> On 2011-03-07 12:35, Sedat Dilek wrote:
->> On 3/7/11, Jens Axboe <axboe@kernel.dk> wrote:
->>> On 2011-03-07 12:25, Sedat Dilek wrote:
->>>> On 3/7/11, Jens Axboe <axboe@kernel.dk> wrote:
->>>>> On 2011-03-07 12:14, Sedat Dilek wrote:
->>>>>> On 3/7/11, Tejun Heo <tj@kernel.org> wrote:
->>>>>>> On Mon, Mar 07, 2011 at 11:41:23AM +0100, Sedat Dilek wrote:
->>>>>>>> $ git log -1 | cat
->>>>>>>> commit c45165cd2c77843f24ca18af54044303dc2a81ab
->>>>>>>> Author: Stephen Rothwell <sfr@canb.auug.org.au>
->>>>>>>> Date:   Mon Mar 7 17:38:41 2011 +1100
->>>>>>>>
->>>>>>>>     Add linux-next specific files for 20110307
->>>>>>>>
->>>>>>>>     Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
->>>>>>>>
->>>>>>>> $ git pull
->>>>>>>> git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-2.6-block.git
->>>>>>>> for-next
->>>>>>>> remote: Counting objects: 158, done.
->>>>>>>> remote: Compressing objects: 100% (89/89), done.
->>>>>>>> remote: Total 106 (delta 87), reused 21 (delta 17)
->>>>>>>> Receiving objects: 100% (106/106), 23.33 KiB, done.
->>>>>>>> Resolving deltas: 100% (87/87), completed with 34 local objects.
->>>>>>>> From
->>>>>>>> git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-2.6-block
->>>>>>>>  * branch            for-next   -> FETCH_HEAD
->>>>>>>> warning: too many files (created: 1120 deleted: 637), skipping
->>>>>>>> inexact
->>>>>>>> rename detection
->>>>>>>> warning: too many files (created: 974 deleted: 462), skipping
->>>>>>>> inexact
->>>>>>>> rename detection
->>>>>>>> Auto-merging block/blk-core.c
->>>>>>>> Auto-merging block/blk-flush.c
->>>>>>>> CONFLICT (content): Merge conflict in block/blk-flush.c
->>>>>>>> Auto-merging block/cfq-iosched.c
->>>>>>>> CONFLICT (content): Merge conflict in block/cfq-iosched.c
->>>>>>>> Automatic merge failed; fix conflicts and then commit the result.
->>>>>>>
->>>>>>> Ummm... don't those conflicts come from Stephen's commits?  You would
->>>>>>> need to revert the merge and fixup commits and then pull in the block
->>>>>>> branch.
->>>>>>>
->>>>>>> Thanks.
->>>>>>>
->>>>>>> --
->>>>>>> tejun
->>>>>>>
->>>>>>
->>>>>> I have reverted the merge-fix from Stephen "[PATCH] block: update for
->>>>>> __blk_run_queue() API update" which changed block/blk-flush.c, this
->>>>>> remains:
->>>>>> ...
->>>>>> CONFLICT (content): Merge conflict in block/cfq-iosched.c
->>>>>>
->>>>>> As it is 12p.m. and sun shining, my decision and direction is clear:
->>>>>> Lunch + City.
->>>>>
->>>>> Just checked here, I can pull my for-next cleanly into Linus' master.
->>>>> What is the block tree for-next branch sha?
->>>>>
->>>>> --
->>>>> Jens Axboe
->>>>>
->>>>>
->>>>
->>>> No, I tried to merge your for-next into linux-next (which will happen
->>>> with tomorrows linux-next).
->>>>
->>>> [ linux-2.6-block.git#for-next ]
->>>> commit b873c5d692d4d5453cceed18bb06c62bb1a73ac0
->>>> "Merge branch 'block-for-2.6.39-core' of
->>>> ssh:///linux/kernel/git/tj/misc into for-2.6.39/core"
->>>
->>> linux-next should not have any CFQ changes that don't come from for-next
->>> from the linux block tree. Are you pulling it into a linux-next that
->>> already have some of the block changes?
->>>
->>> --
->>> Jens Axboe
->>>
->>>
->>
->> I have reverted the manual merge-fix from Stephen as pointed out by Tejun.
->>
->> As tig (utility) is broken with ncurses-5.8 in Debian/sid I currently
->> can't look through the commits.
->> So, I can't say if there were further modifications by merging block
->> stuff into linux-next.
->> I have added the last 5 commits to block/cfq-iosched.c as TXT.
->
-> OK, I see Stephen already pointed out where things have gone wrong. I
-> try to ensure that it'll merge into Linus' git cleanly, so I know that
-> Stephen wont run into problems. Sometimes things will get fast tracked
-> into Linus' git and I don't update for-next in time, that's when
-> problems arise.
->
-> linux-next is a new tree everyday, you can't pull from it like you would
-> other development trees.
->
-> --
-> Jens Axboe
->
->
+-- 
+Regards,
+
+Laurent Pinchart
