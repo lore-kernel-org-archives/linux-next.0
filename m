@@ -1,7 +1,7 @@
-From: Sedat Dilek <sedat.dilek@googlemail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: manual merge of the block tree with Linus' tree
-Date: Mon, 7 Mar 2011 12:35:19 +0100
-Message-ID: <AANLkTim=ftTzEX9arXjpPhs8XPbUCzZ2BJ3pOdxL+bNF@mail.gmail.com>
+Date: Mon, 7 Mar 2011 22:38:07 +1100
+Message-ID: <20110307223807.10e8686c.sfr@canb.auug.org.au>
 References: <20110307131958.84a5d818.sfr@canb.auug.org.au>
 	<20110307063618.GA10365@mtj.dyndns.org>
 	<4D749A81.50809@kernel.dk>
@@ -9,184 +9,105 @@ References: <20110307131958.84a5d818.sfr@canb.auug.org.au>
 	<20110307104747.GH20499@htj.dyndns.org>
 	<AANLkTinBx5Z9Gp7ZTcbbTMCZZ4Z68-vMBP9yOX-k15EA@mail.gmail.com>
 	<4D74BE7C.4050701@kernel.dk>
-	<AANLkTi=9AUSv0rJtudgnEBERaCLpyHhVmcUY9mZUa8H-@mail.gmail.com>
-	<4D74C101.1030204@kernel.dk>
-Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=00163649a965f6800c049de2e351
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__7_Mar_2011_22_38_07_+1100_h_EmHebMdyquW_Kh"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qy0-f181.google.com ([209.85.216.181]:48641 "EHLO
-	mail-qy0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752484Ab1CGLfU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Mar 2011 06:35:20 -0500
-In-Reply-To: <4D74C101.1030204@kernel.dk>
+Received: from chilli.pcug.org.au ([203.10.76.44]:53933 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750844Ab1CGLiQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 7 Mar 2011 06:38:16 -0500
+In-Reply-To: <4D74BE7C.4050701@kernel.dk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Jens Axboe <axboe@kernel.dk>
-Cc: Tejun Heo <tj@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: sedat.dilek@gmail.com, Sedat Dilek <sedat.dilek@googlemail.com>, Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---00163649a965f6800c049de2e351
-Content-Type: text/plain; charset=UTF-8
+--Signature=_Mon__7_Mar_2011_22_38_07_+1100_h_EmHebMdyquW_Kh
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 3/7/11, Jens Axboe <axboe@kernel.dk> wrote:
-> On 2011-03-07 12:25, Sedat Dilek wrote:
->> On 3/7/11, Jens Axboe <axboe@kernel.dk> wrote:
->>> On 2011-03-07 12:14, Sedat Dilek wrote:
->>>> On 3/7/11, Tejun Heo <tj@kernel.org> wrote:
->>>>> On Mon, Mar 07, 2011 at 11:41:23AM +0100, Sedat Dilek wrote:
->>>>>> $ git log -1 | cat
->>>>>> commit c45165cd2c77843f24ca18af54044303dc2a81ab
->>>>>> Author: Stephen Rothwell <sfr@canb.auug.org.au>
->>>>>> Date:   Mon Mar 7 17:38:41 2011 +1100
->>>>>>
->>>>>>     Add linux-next specific files for 20110307
->>>>>>
->>>>>>     Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
->>>>>>
->>>>>> $ git pull
->>>>>> git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-2.6-block.git
->>>>>> for-next
->>>>>> remote: Counting objects: 158, done.
->>>>>> remote: Compressing objects: 100% (89/89), done.
->>>>>> remote: Total 106 (delta 87), reused 21 (delta 17)
->>>>>> Receiving objects: 100% (106/106), 23.33 KiB, done.
->>>>>> Resolving deltas: 100% (87/87), completed with 34 local objects.
->>>>>> From
->>>>>> git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-2.6-block
->>>>>>  * branch            for-next   -> FETCH_HEAD
->>>>>> warning: too many files (created: 1120 deleted: 637), skipping inexact
->>>>>> rename detection
->>>>>> warning: too many files (created: 974 deleted: 462), skipping inexact
->>>>>> rename detection
->>>>>> Auto-merging block/blk-core.c
->>>>>> Auto-merging block/blk-flush.c
->>>>>> CONFLICT (content): Merge conflict in block/blk-flush.c
->>>>>> Auto-merging block/cfq-iosched.c
->>>>>> CONFLICT (content): Merge conflict in block/cfq-iosched.c
->>>>>> Automatic merge failed; fix conflicts and then commit the result.
->>>>>
->>>>> Ummm... don't those conflicts come from Stephen's commits?  You would
->>>>> need to revert the merge and fixup commits and then pull in the block
->>>>> branch.
->>>>>
->>>>> Thanks.
->>>>>
->>>>> --
->>>>> tejun
->>>>>
->>>>
->>>> I have reverted the merge-fix from Stephen "[PATCH] block: update for
->>>> __blk_run_queue() API update" which changed block/blk-flush.c, this
->>>> remains:
->>>> ...
->>>> CONFLICT (content): Merge conflict in block/cfq-iosched.c
->>>>
->>>> As it is 12p.m. and sun shining, my decision and direction is clear:
->>>> Lunch + City.
->>>
->>> Just checked here, I can pull my for-next cleanly into Linus' master.
->>> What is the block tree for-next branch sha?
->>>
->>> --
->>> Jens Axboe
->>>
->>>
->>
->> No, I tried to merge your for-next into linux-next (which will happen
->> with tomorrows linux-next).
->>
->> [ linux-2.6-block.git#for-next ]
->> commit b873c5d692d4d5453cceed18bb06c62bb1a73ac0
->> "Merge branch 'block-for-2.6.39-core' of
->> ssh:///linux/kernel/git/tj/misc into for-2.6.39/core"
+Hi Jens,
+
+On Mon, 07 Mar 2011 12:16:12 +0100 Jens Axboe <axboe@kernel.dk> wrote:
 >
-> linux-next should not have any CFQ changes that don't come from for-next
-> from the linux block tree. Are you pulling it into a linux-next that
-> already have some of the block changes?
->
-> --
-> Jens Axboe
->
->
+> On 2011-03-07 12:14, Sedat Dilek wrote:
+> > On 3/7/11, Tejun Heo <tj@kernel.org> wrote:
+> >> On Mon, Mar 07, 2011 at 11:41:23AM +0100, Sedat Dilek wrote:
+> >>> $ git log -1 | cat
+> >>> commit c45165cd2c77843f24ca18af54044303dc2a81ab
+> >>> Author: Stephen Rothwell <sfr@canb.auug.org.au>
+> >>> Date:   Mon Mar 7 17:38:41 2011 +1100
+> >>>
+> >>>     Add linux-next specific files for 20110307
+> >>>
+> >>>     Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> >>>
+> >>> $ git pull
+> >>> git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-2.6-block.g=
+it
+> >>> for-next
+> >>> remote: Counting objects: 158, done.
+> >>> remote: Compressing objects: 100% (89/89), done.
+> >>> remote: Total 106 (delta 87), reused 21 (delta 17)
+> >>> Receiving objects: 100% (106/106), 23.33 KiB, done.
+> >>> Resolving deltas: 100% (87/87), completed with 34 local objects.
+> >>> From git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-2.6-bl=
+ock
+> >>>  * branch            for-next   -> FETCH_HEAD
+> >>> warning: too many files (created: 1120 deleted: 637), skipping inexact
+> >>> rename detection
+> >>> warning: too many files (created: 974 deleted: 462), skipping inexact
+> >>> rename detection
+> >>> Auto-merging block/blk-core.c
+> >>> Auto-merging block/blk-flush.c
+> >>> CONFLICT (content): Merge conflict in block/blk-flush.c
+> >>> Auto-merging block/cfq-iosched.c
+> >>> CONFLICT (content): Merge conflict in block/cfq-iosched.c
+> >>> Automatic merge failed; fix conflicts and then commit the result.
+> >>
+> >> Ummm... don't those conflicts come from Stephen's commits?  You would
+> >> need to revert the merge and fixup commits and then pull in the block
+> >> branch.
+> >=20
+> > I have reverted the merge-fix from Stephen "[PATCH] block: update for
+> > __blk_run_queue() API update" which changed block/blk-flush.c, this
+> > remains:
+> > ...
+> > CONFLICT (content): Merge conflict in block/cfq-iosched.c
 
-I have reverted the manual merge-fix from Stephen as pointed out by Tejun.
+This is a different conflict that git resolved on its own.
 
-As tig (utility) is broken with ncurses-5.8 in Debian/sid I currently
-can't look through the commits.
-So, I can't say if there were further modifications by merging block
-stuff into linux-next.
-I have added the last 5 commits to block/cfq-iosched.c as TXT.
+> > As it is 12p.m. and sun shining, my decision and direction is clear:
+> > Lunch + City.
+>=20
+> Just checked here, I can pull my for-next cleanly into Linus' master.
+> What is the block tree for-next branch sha?
 
-- Sedat -
+This the correct test, trying to remerge a tree into linux-next is bound
+to have some conflicts.
 
---00163649a965f6800c049de2e351
-Content-Type: text/plain; charset=US-ASCII;
-	name="last-5-commits-to-block_cfq-iosched-c.txt"
-Content-Disposition: attachment;
-	filename="last-5-commits-to-block_cfq-iosched-c.txt"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: file1
+I will let you know tomorrow, but I expect no problems.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Y29tbWl0IGZlY2VhYWRkNzVjMDM1YWQyOTk5YjkxMjY2YzRmM2NkM2M5MjhkN2QKTWVyZ2U6IDBj
-NTRhZDAgNzYzNDE0YgpBdXRob3I6IFN0ZXBoZW4gUm90aHdlbGwgPHNmckBjYW5iLmF1dWcub3Jn
-LmF1PgpEYXRlOiAgIE1vbiBNYXIgNyAxMzoxOTo0NyAyMDExICsxMTAwCgogICAgTWVyZ2UgcmVt
-b3RlLXRyYWNraW5nIGJyYW5jaCAnYmxvY2svZm9yLW5leHQnCiAgICAKICAgIENvbmZsaWN0czoK
-ICAgIAlibG9jay9ibGstZmx1c2guYwoKY29tbWl0IDE2NTRlNzQxMWExYWQ0OTk5ZmU3ODkwZWY1
-MWQyYTJiYmIxZmNmNzYKQXV0aG9yOiBUZWp1biBIZW8gPHRqQGtlcm5lbC5vcmc+CkRhdGU6ICAg
-V2VkIE1hciAyIDA4OjQ4OjA1IDIwMTEgLTA1MDAKCiAgICBibG9jazogYWRkIEBmb3JjZV9rYmxv
-Y2tkIHRvIF9fYmxrX3J1bl9xdWV1ZSgpCiAgICAKICAgIF9fYmxrX3J1bl9xdWV1ZSgpIGF1dG9t
-YXRpY2FsbHkgZWl0aGVyIGNhbGxzIHEtPnJlcXVlc3RfZm4oKSBkaXJlY3RseQogICAgb3Igc2No
-ZWR1bGVzIGtibG9ja2QgZGVwZW5kaW5nIG9uIHdoZXRoZXIgdGhlIGZ1bmN0aW9uIGlzIHJlY3Vy
-c2VkLgogICAgYmxrLWZsdXNoIGltcGxlbWVudGF0aW9uIG5lZWRzIHRvIGJlIGFibGUgdG8gZXhw
-bGljaXRseSBjaG9vc2UKICAgIGtibG9ja2QuICBBZGQgQGZvcmNlX2tibG9ja2QuCiAgICAKICAg
-IEFsbCB0aGUgY3VycmVudCB1c2VycyBhcmUgY29udmVydGVkIHRvIHNwZWNpZnkgJWZhbHNlIGZv
-ciB0aGUKICAgIHBhcmFtZXRlciBhbmQgdGhpcyBwYXRjaCBkb2Vzbid0IGludHJvZHVjZSBhbnkg
-YmVoYXZpb3IgY2hhbmdlLgogICAgCiAgICBzdGFibGU6IFRoaXMgaXMgcHJlcmVxdWlzaXRlIGZv
-ciBmaXhpbmcgaWRlIG9vcHMgY2F1c2VkIGJ5IHRoZSBuZXcKICAgICAgICAgICAgYmxrLWZsdXNo
-IGltcGxlbWVudGF0aW9uLgogICAgCiAgICBTaWduZWQtb2ZmLWJ5OiBUZWp1biBIZW8gPHRqQGtl
-cm5lbC5vcmc+CiAgICBDYzogSmFuIEJldWxpY2ggPEpCZXVsaWNoQG5vdmVsbC5jb20+CiAgICBD
-YzogSmFtZXMgQm90dG9tbGV5IDxKYW1lcy5Cb3R0b21sZXlASGFuc2VuUGFydG5lcnNoaXAuY29t
-PgogICAgQ2M6IHN0YWJsZUBrZXJuZWwub3JnCiAgICBTaWduZWQtb2ZmLWJ5OiBKZW5zIEF4Ym9l
-IDxqYXhib2VAZnVzaW9uaW8uY29tPgoKY29tbWl0IDc2MzQxNGIxMzJhYjlkNmY4ZTIzNjU3YTg3
-Y2MxZGM4MjNkMWUzNGUKTWVyZ2U6IDYxNDhhNDcgYzE4Njc5NApBdXRob3I6IEplbnMgQXhib2Ug
-PGpheGJvZUBmdXNpb25pby5jb20+CkRhdGU6ICAgRnJpIEZlYiAxMSAxMToxMToyOSAyMDExICsw
-MTAwCgogICAgTWVyZ2UgYnJhbmNoICdmb3ItMi42LjM5L2NvcmUnIGludG8gZm9yLW5leHQKICAg
-IAogICAgQ29uZmxpY3RzOgogICAgCWJsb2NrL2NmcS1pb3NjaGVkLmMKICAgIAogICAgU2lnbmVk
-LW9mZi1ieTogSmVucyBBeGJvZSA8amF4Ym9lQGZ1c2lvbmlvLmNvbT4KCmNvbW1pdCBjMTg2Nzk0
-ZGJiNDY2YjQ1Y2Y0MGY5NDJmMmQwOWQ2ZDViNGIwZTQyCkF1dGhvcjogTWlrZSBTbml0emVyIDxz
-bml0emVyQHJlZGhhdC5jb20+CkRhdGU6ICAgRnJpIEZlYiAxMSAxMTowODowMCAyMDExICswMTAw
-CgogICAgYmxvY2s6IHNoYXJlIHJlcXVlc3QgZmx1c2ggZmllbGRzIHdpdGggIGVsZXZhdG9yX3By
-aXZhdGUKICAgIAogICAgRmx1c2ggcmVxdWVzdHMgYXJlIG5ldmVyIHB1dCBvbiB0aGUgSU8gc2No
-ZWR1bGVyLiAgQ29udmVydCByZXF1ZXN0CiAgICBzdHJ1Y3R1cmUncyBlbGV2YXRvcl9wcml2YXRl
-KiBpbnRvIGFuIGFycmF5IGFuZCBoYXZlIHRoZSBmbHVzaCBmaWVsZHMKICAgIHNoYXJlIGEgdW5p
-b24gd2l0aCBpdC4KICAgIAogICAgUmVjbGFpbSB0aGUgc3BhY2UgbG9zdCBpbiAnc3RydWN0IHJl
-cXVlc3QnIGJ5IG1vdmluZyAnY29tcGxldGlvbl9kYXRhJwogICAgYmFjayBpbiB0aGUgdW5pb24g
-d2l0aCAncmJfbm9kZScuCiAgICAKICAgIFNpZ25lZC1vZmYtYnk6IE1pa2UgU25pdHplciA8c25p
-dHplckByZWRoYXQuY29tPgogICAgQWNrZWQtYnk6IFZpdmVrIEdveWFsIDx2Z295YWxAcmVkaGF0
-LmNvbT4KICAgIEFja2VkLWJ5OiBUZWp1biBIZW8gPHRqQGtlcm5lbC5vcmc+CiAgICBTaWduZWQt
-b2ZmLWJ5OiBKZW5zIEF4Ym9lIDxqYXhib2VAZnVzaW9uaW8uY29tPgoKY29tbWl0IDAyYThmMDFi
-NWE5ZjM5NmQwMzI3OTc3YWY0YzIzMmQwZjk0YzQ1ZmQKQXV0aG9yOiBKdXN0aW4gVGVyQXZlc3Qg
-PHRlcmF2ZXN0QGdvb2dsZS5jb20+CkRhdGU6ICAgV2VkIEZlYiA5IDE0OjIwOjAzIDIwMTEgKzAx
-MDAKCiAgICBjZnEtaW9zY2hlZDogRG9uJ3Qgd2FpdCBpZiBxdWV1ZSBhbHJlYWR5IGhhcyByZXF1
-ZXN0cy4KICAgIAogICAgQ29tbWl0IDc2NjdhYTA2MzA0MDdiYzA3ZGMzOGRjYzc5ZDI5Y2MwYTY1
-NTUzYzEgYWRkZWQgbG9naWMgdG8gd2FpdCBmb3IKICAgIHRoZSBsYXN0IHF1ZXVlIG9mIHRoZSBn
-cm91cCB0byBiZWNvbWUgYnVzeSAoaGF2ZSBhdCBsZWFzdCBvbmUgcmVxdWVzdCksCiAgICBzbyB0
-aGF0IHRoZSBncm91cCBkb2VzIG5vdCBsb3NlIG91dCBmb3Igbm90IGJlaW5nIGNvbnRpbnVvdXNs
-eQogICAgYmFja2xvZ2dlZC4gVGhlIGNvbW1pdCBkaWQgbm90IGNoZWNrIGZvciB0aGUgY29uZGl0
-aW9uIHRoYXQgdGhlIGxhc3QKICAgIHF1ZXVlIGFscmVhZHkgaGFzIHNvbWUgcmVxdWVzdHMuIEFz
-IGEgcmVzdWx0LCBpZiB0aGUgcXVldWUgYWxyZWFkeSBoYXMKICAgIHJlcXVlc3RzLCB3YWl0X2J1
-c3kgaXMgc2V0LiBMYXRlciBvbiwgY2ZxX3NlbGVjdF9xdWV1ZSgpIGNoZWNrcyB0aGUKICAgIGZs
-YWcsIGFuZCBkZWNpZGVzIHRoYXQgc2luY2UgdGhlIHF1ZXVlIGhhcyBhIHJlcXVlc3Qgbm93IGFu
-ZCB3YWl0X2J1c3kKICAgIGlzIHNldCwgdGhlIHF1ZXVlIGlzIGV4cGlyZWQuICBUaGlzIHJlc3Vs
-dHMgaW4gZWFybHkgZXhwaXJhdGlvbiBvZiB0aGUKICAgIHF1ZXVlLgogICAgCiAgICBUaGlzIHBh
-dGNoIGZpeGVzIHRoZSBwcm9ibGVtIGJ5IGFkZGluZyBhIGNoZWNrIHRvIHNlZSBpZiBxdWV1ZSBh
-bHJlYWR5CiAgICBoYXMgcmVxdWVzdHMuIElmIGl0IGRvZXMsIHdhaXRfYnVzeSBpcyBub3Qgc2V0
-LiBBcyBhIHJlc3VsdCwgdGltZSBzbGljZXMKICAgIGRvIG5vdCBleHBpcmUgZWFybHkuCiAgICAK
-ICAgIFRoZSBxdWV1ZXMgd2l0aCBtb3JlIHRoYW4gb25lIHJlcXVlc3QgYXJlIHVzdWFsbHkgYnVm
-ZmVyZWQgd3JpdGVycy4KICAgIFRlc3Rpbmcgc2hvd3MgaW1wcm92ZW1lbnQgaW4gaXNvbGF0aW9u
-IGJldHdlZW4gYnVmZmVyZWQgd3JpdGVycy4KICAgIAogICAgQ2M6IHN0YWJsZUBrZXJuZWwub3Jn
-CiAgICBTaWduZWQtb2ZmLWJ5OiBKdXN0aW4gVGVyQXZlc3QgPHRlcmF2ZXN0QGdvb2dsZS5jb20+
-CiAgICBSZXZpZXdlZC1ieTogR3VpIEppYW5mZW5nIDxndWlqaWFuZmVuZ0Bjbi5mdWppdHN1LmNv
-bT4KICAgIEFja2VkLWJ5OiBWaXZlayBHb3lhbCA8dmdveWFsQHJlZGhhdC5jb20+CiAgICBTaWdu
-ZWQtb2ZmLWJ5OiBKZW5zIEF4Ym9lIDxqYXhib2VAZnVzaW9uaW8uY29tPgo=
---00163649a965f6800c049de2e351--
+--Signature=_Mon__7_Mar_2011_22_38_07_+1100_h_EmHebMdyquW_Kh
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNdMOfAAoJEDMEi1NhKgbseUMH/A+pLMQd5lItGZMwq3+CrfW6
+qs9MpKu/8HSZpNhfRyqltlub/2sCt6jXm6qw/2XWnzoc27EZ5v+fwXTS6eWiDt9P
+LtiCkAzcn6WYbJWIBQTmQvAp2xL4+hMDcfpJoMNh/q7NV7B1xs66cablOvzg2vSc
+ICmbUnxQoPdn7afZ6IYzIuwe3jQ1fzNA8GCf3FqQqRnxMHKhlHgumszqek2e4Myt
+2T9sOEoVh09vwlKb5OxIy7QCD8phgMsRUHwJ/bgSilzvW6kNTNOrDx4agdf5MR3O
+opmlQiEhw2O3XpUAHTKEKKyQk1gzuYNTDUvQtzkKQ83wSg8vfW6BzessVxmc1NU=
+=WNe4
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__7_Mar_2011_22_38_07_+1100_h_EmHebMdyquW_Kh--
