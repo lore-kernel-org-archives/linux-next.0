@@ -1,37 +1,31 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: [PATCH V4] Export ACPI _DSM provided firmware instance number
- and string name to sysfs
-Date: Mon, 7 Mar 2011 11:56:16 -0800
-Message-ID: <20110307195616.GA14888@kroah.com>
-References: <20110223125741.GA16473@fedora14-r610.blr.amer.dell.com>
- <20110302172508.GA2794@fedora14-r610.oslab.blr.amer.dell.com>
- <20110304104314.26265021@jbarnes-desktop>
- <AANLkTimz662+L6eYJm2gh0NwWOxxzQV3503bcs-GMFGu@mail.gmail.com>
- <20110307200512.GA22450@fedora14-r610.oslab.blr.amer.dell.com>
+From: Mariusz Kozlowski <mk@lab.zgora.pl>
+Subject: Re: [PATCH] [SCSI] bnx2fc: fix build error when !CONFIG_MODULES
+Date: Mon, 7 Mar 2011 21:16:10 +0100
+Message-ID: <20110307201610.GA9032@mako-laptop>
+References: <20110302182740.e4dfd79f.sfr@canb.auug.org.au>
+ <1299103803-32594-1-git-send-email-mk@lab.zgora.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from unix.wroclaw.pl ([94.23.28.62]:56065 "EHLO unix.wroclaw.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752668Ab1CGUQR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 7 Mar 2011 15:16:17 -0500
 Content-Disposition: inline
-In-Reply-To: <20110307200512.GA22450@fedora14-r610.oslab.blr.amer.dell.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Narendra_K@Dell.com
-Cc: a.beregalov@gmail.com, linux-next@vger.kernel.org, jbarnes@virtuousgeek.org, linux-pci@vger.kernel.org, linux-hotplug@vger.kernel.org, netdev@vger.kernel.org, mjg@redhat.com, Matt_Domsch@Dell.com, Charles_Rose@Dell.com, Jordan_Hargrave@Dell.com, Shyam_Iyer@Dell.com, sfr@canb.auug.org.au
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <1299103803-32594-1-git-send-email-mk@lab.zgora.pl>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "James E.J. Bottomley" <James.Bottomley@suse.de>, Bhanu Prakash Gollapudi <bprakash@broadcom.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Mariusz Kozlowski <mk@lab.zgora.pl>
 
-On Mon, Mar 07, 2011 at 11:44:52AM -0800, Narendra_K@Dell.com wrote:
-> --- a/drivers/pci/pci-label.c
-> +++ b/drivers/pci/pci-label.c
-> @@ -29,7 +29,9 @@
->  #include <linux/nls.h>
->  #include <linux/acpi.h>
->  #include <linux/pci-acpi.h>
-> +#ifdef CONFIG_ACPI
->  #include <acpi/acpi_drivers.h>
-> +#endif
+On Wed, Mar 02, 2011 at 11:10:03PM +0100, Mariusz Kozlowski wrote:
+> drivers/scsi/bnx2fc/bnx2fc_fcoe.c:1815: error: dereferencing pointer =
+to incomplete type
+> drivers/scsi/bnx2fc/bnx2fc_fcoe.c:1815: error: =E2=80=98MODULE_STATE_=
+LIVE=E2=80=99 undeclared (first use in this function)
 
-You should never need a #ifdef in a .c file for an include file.  If so,
-something is really wrong.
+Hm. Still there in next-20110307. Is this patch wrong or..?
 
-thanks,
-
-greg k-h
+--=20
+Mariusz Kozlowski
