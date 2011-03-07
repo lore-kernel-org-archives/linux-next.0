@@ -1,43 +1,73 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: linux-next: manual merge of the block tree with Linus' tree
-Date: Mon, 07 Mar 2011 09:42:41 +0100
-Message-ID: <4D749A81.50809@kernel.dk>
-References: <20110307131958.84a5d818.sfr@canb.auug.org.au> <20110307063618.GA10365@mtj.dyndns.org>
+From: Sascha Hauer <s.hauer@pengutronix.de>
+Subject: Re: [PATCH] ARM: mx51_efika: update platform data for new mfd
+ changes
+Date: Mon, 7 Mar 2011 09:53:58 +0100
+Message-ID: <20110307085358.GM29521@pengutronix.de>
+References: <20110304080653.3f2c3f19@debxo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 0122700014.0.fullrate.dk ([95.166.99.235]:40361 "EHLO kernel.dk"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751430Ab1CGImm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 7 Mar 2011 03:42:42 -0500
-In-Reply-To: <20110307063618.GA10365@mtj.dyndns.org>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:53549 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751728Ab1CGIyV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Mar 2011 03:54:21 -0500
+Content-Disposition: inline
+In-Reply-To: <20110304080653.3f2c3f19@debxo>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andres Salomon <dilinger@queued.net>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, Sascha Hauer <kernel@pengutronix.de>, Amit Kucheria <amit.kucheria@canonical.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Uwe =?iso-8859-15?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
 
-On 2011-03-07 07:36, Tejun Heo wrote:
-> Hello, Stephen, Jens.
-> 
-> On Mon, Mar 07, 2011 at 01:19:58PM +1100, Stephen Rothwell wrote:
->> Today's linux-next merge of the block tree got a conflict in
->> block/blk-flush.c between commit 255bb490c8c27eed484d538efe6ef6a7473bd3f6
->> ("block: blk-flush shouldn't call directly into q->request_fn()
->> __blk_run_queue()") from the  tree and commit
->> ae1b1539622fb46e51b4d13b3f9e5f4c713f86ae ("block: reimplement FLUSH/FUA
->> to support merge") from the block tree.
->>
->> The latter rewrote a large part of the file, so I just used that.  If
->> this is not correct, please fix it up in the block tree.
-> 
-> I sent Jens a merge commit which should fix this yesterday.
-> 
->  http://thread.gmane.org/gmane.linux.kernel/1101766/focus=1108915
-> 
-> So, the merge problem should go away soonish.
+On Fri, Mar 04, 2011 at 08:06:53AM -0800, Andres Salomon wrote:
+> Note that this relies on stuff currently in mfd's next tree, but this
+> is also a newer driver.  I'm not sure which tree it should go through,
+> as it's a problem that shows up in next.
 
-Merged now, so this conflict should be gone from linux-next as of now.
+Please ping me again when the mfd tree is in Linus master. I see no
+other chance fixing this on my side other than removing regulator
+support for efika completely for now. So I guess you have to live with
+the compile breakage for some time.
+
+Sascha
+
+> 
+> 
+> 
+> From: Andres Salomon <dilinger@queued.net>
+> 
+> MFD changes in c738892f cause the mc13xxx_platform_data struct
+> to change.  This changes one more (new) user of it, fixing a build
+> error.
+> 
+> Signed-off-by: Andres Salomon <dilinger@queued.net>
+> ---
+>  arch/arm/mach-mx5/mx51_efika.c |    6 ++++--
+>  1 files changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/mach-mx5/mx51_efika.c b/arch/arm/mach-mx5/mx51_efika.c
+> index 74991c9..6451fb4 100644
+> --- a/arch/arm/mach-mx5/mx51_efika.c
+> +++ b/arch/arm/mach-mx5/mx51_efika.c
+> @@ -572,8 +572,10 @@ static struct mc13xxx_regulator_init_data mx51_efika_regulators[] = {
+>  
+>  static struct mc13xxx_platform_data mx51_efika_mc13892_data = {
+>  	.flags = MC13XXX_USE_RTC | MC13XXX_USE_REGULATOR,
+> -	.num_regulators = ARRAY_SIZE(mx51_efika_regulators),
+> -	.regulators = mx51_efika_regulators,
+> +	.regulators = {
+> +		.num_regulators = ARRAY_SIZE(mx51_efika_regulators),
+> +		.regulators = mx51_efika_regulators,
+> +	},
+>  };
+>  
+>  static struct spi_board_info mx51_efika_spi_board_info[] __initdata = {
+> -- 
+> 1.7.2.3
+> 
+> 
 
 -- 
-Jens Axboe
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
