@@ -1,84 +1,115 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+From: "Igor M. Liplianin" <liplianin@me.by>
 Subject: Re: Kernelspace firmware loaders (was: linux-next: manual merge of the staging tree with the v4l-dvb tree)
-Date: Mon, 7 Mar 2011 17:51:27 +0100
-Message-ID: <201103071751.28477.laurent.pinchart@ideasonboard.com>
-References: <20110304163905.ed6dd630.sfr@canb.auug.org.au> <201103071507.37378.laurent.pinchart@ideasonboard.com> <20110307161658.GA9088@kroah.com>
+Date: Mon, 7 Mar 2011 19:40:28 +0200
+Message-ID: <201103071940.29074.liplianin@me.by>
+References: <20110304163905.ed6dd630.sfr@canb.auug.org.au> <20110307161658.GA9088@kroah.com> <201103071751.28477.laurent.pinchart@ideasonboard.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: Text/Plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([95.142.166.194]:52356 "EHLO
-	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752889Ab1CGQvK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Mar 2011 11:51:10 -0500
-In-Reply-To: <20110307161658.GA9088@kroah.com>
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:47188 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753751Ab1CGRkS convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Mar 2011 12:40:18 -0500
+In-Reply-To: <201103071751.28477.laurent.pinchart@ideasonboard.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Mauro Carvalho Chehab <mchehab@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>, "Igor M. Liplianin" <liplianin@me.by>, Ben Gamari <bgamari.foss@gmail.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Greg KH <greg@kroah.com>, Mauro Carvalho Chehab <mchehab@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>, Ben Gamari <bgamari.foss@gmail.com>
 
-Hi Greg,
+=D0=92 =D1=81=D0=BE=D0=BE=D0=B1=D1=89=D0=B5=D0=BD=D0=B8=D0=B8 =D0=BE=D1=
+=82 7 =D0=BC=D0=B0=D1=80=D1=82=D0=B0 2011 18:51:27 =D0=B0=D0=B2=D1=82=D0=
+=BE=D1=80 Laurent Pinchart =D0=BD=D0=B0=D0=BF=D0=B8=D1=81=D0=B0=D0=BB:
+> Hi Greg,
+>=20
+> On Monday 07 March 2011 17:16:58 Greg KH wrote:
+> > On Mon, Mar 07, 2011 at 03:07:36PM +0100, Laurent Pinchart wrote:
+> > > On Friday 04 March 2011 18:54:24 Mauro Carvalho Chehab wrote:
+> > > > Em 04-03-2011 14:13, Greg KH escreveu:
+> > > > > On Fri, Mar 04, 2011 at 04:39:05PM +1100, Stephen Rothwell wr=
+ote:
+> > > > >> Today's linux-next merge of the staging tree got a conflict =
+in
+> > > > >> drivers/staging/Kconfig between commit
+> > > > >> a1256092a1e87511c977a3d0ef96151cda77e5c9 ("[media] Altera FP=
+GA
+> > > > >> firmware download module") from the v4l-dvb tree and commit
+> > > > >> 0867b42113ec4eb8646eb361b15cbcfb741ddf5b ("staging: gma500: =
+Intel
+> > > > >> GMA500 staging driver") from the staging tree.
+> > > > >>=20
+> > > > >> I fixed it up (see below) and can carry the fix as necessary=
+=2E
+> > > > >=20
+> > > > > That looks correct.
+> > > > >=20
+> > > > > Mauro, what is this driver and why is it added to the staging=
+ tree?
+> > > >=20
+> > > > This driver implements the FPGA programming logic for a firmwar=
+e
+> > > > required by a DVB driver, and was proposed initially for 2.6.37
+> > > > inclusion. During the 2.6.38 development cycle, it suffered sev=
+eral
+> > > > revisions, based on our input at the media and lkml mailing lis=
+ts,
+> > > > where Igor fixed all CodingStyle issues.
+> > > >=20
+> > > > In the last minute, during 2.6.38 merge window, two developers
+> > > > (Laurent and Ben) [1] complained against adding a driver for lo=
+ading
+> > > > FPGA firmware as-is. So, I decided to add it, for now, at stagi=
+ng,
+> > > > to avoid needing to postpone a long series of patches again jus=
+t
+> > > > because of that, especially since a series of DVB-C devices are
+> > > > without support on Linux without this patch series, and there a=
+re
+> > > > very few DVB-C devices currently supported.
+> > > >=20
+> > > > The Altera driver is compliant with CodingStyle, and, from my s=
+ide,
+> > > > it is ok to move it to drivers/others, but it doesn't hurt to g=
+ive
+> > > > some time for Ben and Laurent to propose alternative way of
+> > > > implementing the firmware request logic.
+> > > >=20
+> > > > If nothing happens until 2.6.40 merge window, I think we should=
+ go
+> > > > forward and move it to the proper place.
+> > >=20
+> > > What's the policy regarding firmware loaders in kernelspace vs.
+> > > userspace ? JTAG is a quite complex protocol, and we already have=
+ lots
+> > > of JTAG libraries in userspace (http://urjtag.org/ seems to be th=
+e
+> > > most popular one). We also have userspace firmware loaders (such =
+as
+> > > fxload for the Cypress EZ USB microcontrollers). Do we need a
+> > > kernelspace JTAG implementation ?
+> > >=20
+> > > > [1]
+> > > > http://www.mail-archive.com/linux-media@vger.kernel.org/msg2642=
+2.html
+> >=20
+> > If the code is just a "pass-through" to the hardware, I have no
+> > objection to the driver being in the kernel, if it needs to be in o=
+rder
+> > to control the hardware properly.
+>=20
+> The code implements a JTAG TAP state machine with a bit-banging algor=
+ithm,
+> including direct parallel port (LPT) access, and a bitcode interprete=
+r for
+LPT access procedure included for historical reason, on early developme=
+nt stages it was used for=20
+program FPGA, then we swithed to cx23885 GPIO's. Developer can choose(d=
+evelop) his own procedure=20
+for JTAG pins access.
 
-On Monday 07 March 2011 17:16:58 Greg KH wrote:
-> On Mon, Mar 07, 2011 at 03:07:36PM +0100, Laurent Pinchart wrote:
-> > On Friday 04 March 2011 18:54:24 Mauro Carvalho Chehab wrote:
-> > > Em 04-03-2011 14:13, Greg KH escreveu:
-> > > > On Fri, Mar 04, 2011 at 04:39:05PM +1100, Stephen Rothwell wrote:
-> > > >> Today's linux-next merge of the staging tree got a conflict in
-> > > >> drivers/staging/Kconfig between commit
-> > > >> a1256092a1e87511c977a3d0ef96151cda77e5c9 ("[media] Altera FPGA
-> > > >> firmware download module") from the v4l-dvb tree and commit
-> > > >> 0867b42113ec4eb8646eb361b15cbcfb741ddf5b ("staging: gma500: Intel
-> > > >> GMA500 staging driver") from the staging tree.
-> > > >> 
-> > > >> I fixed it up (see below) and can carry the fix as necessary.
-> > > > 
-> > > > That looks correct.
-> > > > 
-> > > > Mauro, what is this driver and why is it added to the staging tree?
-> > > 
-> > > This driver implements the FPGA programming logic for a firmware
-> > > required by a DVB driver, and was proposed initially for 2.6.37
-> > > inclusion. During the 2.6.38 development cycle, it suffered several
-> > > revisions, based on our input at the media and lkml mailing lists,
-> > > where Igor fixed all CodingStyle issues.
-> > > 
-> > > In the last minute, during 2.6.38 merge window, two developers (Laurent
-> > > and Ben) [1] complained against adding a driver for loading FPGA
-> > > firmware as-is. So, I decided to add it, for now, at staging, to avoid
-> > > needing to postpone a long series of patches again just because of
-> > > that, especially since a series of DVB-C devices are without support
-> > > on Linux without this patch series, and there are very few DVB-C
-> > > devices currently supported.
-> > > 
-> > > The Altera driver is compliant with CodingStyle, and, from my side, it
-> > > is ok to move it to drivers/others, but it doesn't hurt to give some
-> > > time for Ben and Laurent to propose alternative way of implementing
-> > > the firmware request logic.
-> > > 
-> > > If nothing happens until 2.6.40 merge window, I think we should go
-> > > forward and move it to the proper place.
-> > 
-> > What's the policy regarding firmware loaders in kernelspace vs. userspace
-> > ? JTAG is a quite complex protocol, and we already have lots of JTAG
-> > libraries in userspace (http://urjtag.org/ seems to be the most popular
-> > one). We also have userspace firmware loaders (such as fxload for the
-> > Cypress EZ USB microcontrollers). Do we need a kernelspace JTAG
-> > implementation ?
-> > 
-> > > [1]
-> > > http://www.mail-archive.com/linux-media@vger.kernel.org/msg26422.html
-> 
-> If the code is just a "pass-through" to the hardware, I have no
-> objection to the driver being in the kernel, if it needs to be in order
-> to control the hardware properly.
+> the files generated by the Altera FPGA proprietary development tools.
+So, we used this tools. And the code is from widely opened sources.
 
-The code implements a JTAG TAP state machine with a bit-banging algorithm, 
-including direct parallel port (LPT) access, and a bitcode interpreter for the 
-files generated by the Altera FPGA proprietary development tools.
-
--- 
-Regards,
-
-Laurent Pinchart
+--=20
+Igor M. Liplianin
+Microsoft Windows Free Zone - Linux used for all Computing Tasks
