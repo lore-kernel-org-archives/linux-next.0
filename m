@@ -1,7 +1,7 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: manual merge of the block tree with Linus' tree
-Date: Mon, 7 Mar 2011 22:38:07 +1100
-Message-ID: <20110307223807.10e8686c.sfr@canb.auug.org.au>
+Date: Mon, 7 Mar 2011 22:42:17 +1100
+Message-ID: <20110307224217.154735b4.sfr@canb.auug.org.au>
 References: <20110307131958.84a5d818.sfr@canb.auug.org.au>
 	<20110307063618.GA10365@mtj.dyndns.org>
 	<4D749A81.50809@kernel.dk>
@@ -9,105 +9,55 @@ References: <20110307131958.84a5d818.sfr@canb.auug.org.au>
 	<20110307104747.GH20499@htj.dyndns.org>
 	<AANLkTinBx5Z9Gp7ZTcbbTMCZZ4Z68-vMBP9yOX-k15EA@mail.gmail.com>
 	<4D74BE7C.4050701@kernel.dk>
+	<AANLkTi=9AUSv0rJtudgnEBERaCLpyHhVmcUY9mZUa8H-@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__7_Mar_2011_22_38_07_+1100_h_EmHebMdyquW_Kh"
+ boundary="Signature=_Mon__7_Mar_2011_22_42_17_+1100_O.slXhpNw.CkufU3"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53933 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:59112 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750844Ab1CGLiQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 7 Mar 2011 06:38:16 -0500
-In-Reply-To: <4D74BE7C.4050701@kernel.dk>
+	id S1750731Ab1CGLmX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 7 Mar 2011 06:42:23 -0500
+In-Reply-To: <AANLkTi=9AUSv0rJtudgnEBERaCLpyHhVmcUY9mZUa8H-@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: sedat.dilek@gmail.com, Sedat Dilek <sedat.dilek@googlemail.com>, Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: sedat.dilek@gmail.com
+Cc: Sedat Dilek <sedat.dilek@googlemail.com>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Mon__7_Mar_2011_22_38_07_+1100_h_EmHebMdyquW_Kh
+--Signature=_Mon__7_Mar_2011_22_42_17_+1100_O.slXhpNw.CkufU3
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jens,
+Hi Sedat,
 
-On Mon, 07 Mar 2011 12:16:12 +0100 Jens Axboe <axboe@kernel.dk> wrote:
+On Mon, 7 Mar 2011 12:25:23 +0100 Sedat Dilek <sedat.dilek@googlemail.com> =
+wrote:
 >
-> On 2011-03-07 12:14, Sedat Dilek wrote:
-> > On 3/7/11, Tejun Heo <tj@kernel.org> wrote:
-> >> On Mon, Mar 07, 2011 at 11:41:23AM +0100, Sedat Dilek wrote:
-> >>> $ git log -1 | cat
-> >>> commit c45165cd2c77843f24ca18af54044303dc2a81ab
-> >>> Author: Stephen Rothwell <sfr@canb.auug.org.au>
-> >>> Date:   Mon Mar 7 17:38:41 2011 +1100
-> >>>
-> >>>     Add linux-next specific files for 20110307
-> >>>
-> >>>     Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> >>>
-> >>> $ git pull
-> >>> git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-2.6-block.g=
-it
-> >>> for-next
-> >>> remote: Counting objects: 158, done.
-> >>> remote: Compressing objects: 100% (89/89), done.
-> >>> remote: Total 106 (delta 87), reused 21 (delta 17)
-> >>> Receiving objects: 100% (106/106), 23.33 KiB, done.
-> >>> Resolving deltas: 100% (87/87), completed with 34 local objects.
-> >>> From git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-2.6-bl=
-ock
-> >>>  * branch            for-next   -> FETCH_HEAD
-> >>> warning: too many files (created: 1120 deleted: 637), skipping inexact
-> >>> rename detection
-> >>> warning: too many files (created: 974 deleted: 462), skipping inexact
-> >>> rename detection
-> >>> Auto-merging block/blk-core.c
-> >>> Auto-merging block/blk-flush.c
-> >>> CONFLICT (content): Merge conflict in block/blk-flush.c
-> >>> Auto-merging block/cfq-iosched.c
-> >>> CONFLICT (content): Merge conflict in block/cfq-iosched.c
-> >>> Automatic merge failed; fix conflicts and then commit the result.
-> >>
-> >> Ummm... don't those conflicts come from Stephen's commits?  You would
-> >> need to revert the merge and fixup commits and then pull in the block
-> >> branch.
-> >=20
-> > I have reverted the merge-fix from Stephen "[PATCH] block: update for
-> > __blk_run_queue() API update" which changed block/blk-flush.c, this
-> > remains:
-> > ...
-> > CONFLICT (content): Merge conflict in block/cfq-iosched.c
+> No, I tried to merge your for-next into linux-next (which will happen
+> with tomorrows linux-next).
 
-This is a different conflict that git resolved on its own.
-
-> > As it is 12p.m. and sun shining, my decision and direction is clear:
-> > Lunch + City.
->=20
-> Just checked here, I can pull my for-next cleanly into Linus' master.
-> What is the block tree for-next branch sha?
-
-This the correct test, trying to remerge a tree into linux-next is bound
-to have some conflicts.
-
-I will let you know tomorrow, but I expect no problems.
+No, it won't.  Each day I start with Linus' tree and merge all the other
+trees.  Doing it the other way would lead to a real mess.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__7_Mar_2011_22_38_07_+1100_h_EmHebMdyquW_Kh
+--Signature=_Mon__7_Mar_2011_22_42_17_+1100_O.slXhpNw.CkufU3
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNdMOfAAoJEDMEi1NhKgbseUMH/A+pLMQd5lItGZMwq3+CrfW6
-qs9MpKu/8HSZpNhfRyqltlub/2sCt6jXm6qw/2XWnzoc27EZ5v+fwXTS6eWiDt9P
-LtiCkAzcn6WYbJWIBQTmQvAp2xL4+hMDcfpJoMNh/q7NV7B1xs66cablOvzg2vSc
-ICmbUnxQoPdn7afZ6IYzIuwe3jQ1fzNA8GCf3FqQqRnxMHKhlHgumszqek2e4Myt
-2T9sOEoVh09vwlKb5OxIy7QCD8phgMsRUHwJ/bgSilzvW6kNTNOrDx4agdf5MR3O
-opmlQiEhw2O3XpUAHTKEKKyQk1gzuYNTDUvQtzkKQ83wSg8vfW6BzessVxmc1NU=
-=WNe4
+iQEcBAEBAgAGBQJNdMSZAAoJEDMEi1NhKgbsn+QH/jBpZ1R53lnDwO+2tXsnzPtQ
+Lw9yItqDSJa9FTM5EFFalSIlS00kuYODTC3SzbhnvhtZRQR6XayjhA1J7lTIHw/P
+A8vcAo9kKp4lr7zViIJt7YBqkjBQfNC0nQT9+rmPuiEZdh9hMKc3yiIro0EusePv
+HK7CiuYH+XihCC03mzLZFodWuHXM/g5QE6X8PWmcy2YPuC4/nB+srwFQUJEQZHy3
+24IKiYFXY1XZ4yrBoIm+WkwEhj1NjMCVtgJ0zWQ6x4G6JJdJJmHZklW9/IROrHts
+g09enWubYelDNxbmLJQseZcFqUJzFcoVtGkbirqZMYN70bemMjaKw92JyMlkdpc=
+=ngDq
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__7_Mar_2011_22_38_07_+1100_h_EmHebMdyquW_Kh--
+--Signature=_Mon__7_Mar_2011_22_42_17_+1100_O.slXhpNw.CkufU3--
