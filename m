@@ -1,55 +1,37 @@
-From: <Narendra_K@Dell.com>
-Subject: Re: [PATCH V4] Export ACPI _DSM provided firmware instance number
- and string name to sysfs
-Date: Mon, 7 Mar 2011 12:55:56 -0800
-Message-ID: <20110307211552.GA11016@fedora14-r610.oslab.blr.amer.dell.com>
-References: <20110223125741.GA16473@fedora14-r610.blr.amer.dell.com>
- <20110302172508.GA2794@fedora14-r610.oslab.blr.amer.dell.com>
- <20110304104314.26265021@jbarnes-desktop>
- <AANLkTimz662+L6eYJm2gh0NwWOxxzQV3503bcs-GMFGu@mail.gmail.com>
- <20110307200512.GA22450@fedora14-r610.oslab.blr.amer.dell.com>
- <20110307195616.GA14888@kroah.com>
+From: "Bhanu Gollapudi" <bprakash@broadcom.com>
+Subject: Re: [PATCH] [SCSI] bnx2fc: fix build error when !CONFIG_MODULES
+Date: Mon, 7 Mar 2011 15:54:35 -0800
+Message-ID: <1299542075.5232.5.camel@LTSJC-BPRAKASH.corp.ad.broadcom.com>
+References: <20110302182740.e4dfd79f.sfr@canb.auug.org.au>
+ <1299103803-32594-1-git-send-email-mk@lab.zgora.pl>
+ <20110307201610.GA9032@mako-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=cp1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ausc60ps301.us.dell.com ([143.166.148.206]:9321 "EHLO
-	ausc60ps301.us.dell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751261Ab1CGU4U (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Mar 2011 15:56:20 -0500
-In-Reply-To: <20110307195616.GA14888@kroah.com>
-Content-Language: en-US
+Received: from mms1.broadcom.com ([216.31.210.17]:3179 "EHLO mms1.broadcom.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752121Ab1CGXyr convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Mar 2011 18:54:47 -0500
+In-Reply-To: <20110307201610.GA9032@mako-laptop>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: greg@kroah.com
-Cc: a.beregalov@gmail.com, linux-next@vger.kernel.org, jbarnes@virtuousgeek.org, linux-pci@vger.kernel.org, linux-hotplug@vger.kernel.org, netdev@vger.kernel.org, mjg@redhat.com, Matt_Domsch@Dell.com, Charles_Rose@Dell.com, Jordan_Hargrave@Dell.com, Shyam_Iyer@Dell.com, sfr@canb.auug.org.au
+To: Mariusz Kozlowski <mk@lab.zgora.pl>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "James E.J. Bottomley" <James.Bottomley@suse.de>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-T24gVHVlLCBNYXIgMDgsIDIwMTEgYXQgMDE6MjY6MTZBTSArMDUzMCwgR3JlZyBLSCB3cm90ZToN
-Cj4gT24gTW9uLCBNYXIgMDcsIDIwMTEgYXQgMTE6NDQ6NTJBTSAtMDgwMCwgTmFyZW5kcmFfS0BE
-ZWxsLmNvbSB3cm90ZToNCj4gPiAtLS0gYS9kcml2ZXJzL3BjaS9wY2ktbGFiZWwuYw0KPiA+ICsr
-KyBiL2RyaXZlcnMvcGNpL3BjaS1sYWJlbC5jDQo+ID4gQEAgLTI5LDcgKzI5LDkgQEANCj4gPiAg
-I2luY2x1ZGUgPGxpbnV4L25scy5oPg0KPiA+ICAjaW5jbHVkZSA8bGludXgvYWNwaS5oPg0KPiA+
-ICAjaW5jbHVkZSA8bGludXgvcGNpLWFjcGkuaD4NCj4gPiArI2lmZGVmIENPTkZJR19BQ1BJDQo+
-ID4gICNpbmNsdWRlIDxhY3BpL2FjcGlfZHJpdmVycy5oPg0KPiA+ICsjZW5kaWYNCj4gDQo+IFlv
-dSBzaG91bGQgbmV2ZXIgbmVlZCBhICNpZmRlZiBpbiBhIC5jIGZpbGUgZm9yIGFuIGluY2x1ZGUg
-ZmlsZS4gIElmIHNvLA0KPiBzb21ldGhpbmcgaXMgcmVhbGx5IHdyb25nLg0KDQpJIGFncmVlLiBB
-bHNvLCBpIHJlYWxpemVkIHRoYXQgdGhlIGluY2x1ZGUgd2FzIG5vdCByZXF1aXJlZCB0byBhZGRy
-ZXNzIHRoZQ0KcmVwb3J0ZWQgZXJyb3IuIFBsZWFzZSBmaW5kIHRoZSByZXZpc2VkIHBhdGNoIGhl
-cmUuDQoNCkZyb206IE5hcmVuZHJhIEsgPG5hcmVuZHJhX2tAZGVsbC5jb20+DQpTdWJqZWN0OiBb
-UEFUQ0hdIEZpeCBjb21waWxhdGlvbiBlcnJvciB3aGVuIENPTkZJR19BQ1BJIGlzIHVuc2V0DQoN
-ClRoaXMgcGF0Y2ggZml4ZXMgY29tcGlsYXRpb24gZXJyb3IgZGVzY2liZWQgYmVsb3cgaW50cm9k
-dWNlZCBieQ0KdGhlIGNvbW1pdCA2MDU4OTg5YmFkMDViODJlNzhiYWFjY2U2OWVjMTRmMjdhMTFi
-NWZkDQoNCmRyaXZlcnMvcGNpL3BjaS1sYWJlbC5jOiBJbiBmdW5jdGlvbiDigJhwY2lfY3JlYXRl
-X2Zpcm13YXJlX2xhYmVsX2ZpbGVz4oCZOg0KZHJpdmVycy9wY2kvcGNpLWxhYmVsLmM6MzY2OjI6
-IGVycm9yOiBpbXBsaWNpdCBkZWNsYXJhdGlvbiBvZiBmdW5jdGlvbiDigJhkZXZpY2VfaGFzX2Rz
-beKAmQ0KDQpTaWduZWQtb2ZmLWJ5OiBOYXJlbmRyYSBLIDxuYXJlbmRyYV9rQGRlbGwuY29tPg0K
-LS0tDQogZHJpdmVycy9wY2kvcGNpLWxhYmVsLmMgfCAgICA2ICsrKysrKw0KIDEgZmlsZXMgY2hh
-bmdlZCwgNiBpbnNlcnRpb25zKCspLCAwIGRlbGV0aW9ucygtKQ0KDQpkaWZmIC0tZ2l0IGEvZHJp
-dmVycy9wY2kvcGNpLWxhYmVsLmMgYi9kcml2ZXJzL3BjaS9wY2ktbGFiZWwuYw0KaW5kZXggODI0
-ZTI0Ny4uOGM4MDEzOCAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvcGNpL3BjaS1sYWJlbC5jDQorKysg
-Yi9kcml2ZXJzL3BjaS9wY2ktbGFiZWwuYw0KQEAgLTE3NCw2ICsxNzQsMTIgQEAgcGNpX3JlbW92
-ZV9hY3BpX2luZGV4X2xhYmVsX2ZpbGVzKHN0cnVjdCBwY2lfZGV2ICpwZGV2KQ0KIAlyZXR1cm4g
-LTE7DQogfQ0KIA0KK3N0YXRpYyBpbmxpbmUgYm9vbA0KK2RldmljZV9oYXNfZHNtKHN0cnVjdCBk
-ZXZpY2UgKmRldikNCit7DQorCXJldHVybiBmYWxzZTsNCit9DQorDQogI2Vsc2UNCiANCiBzdGF0
-aWMgY29uc3QgY2hhciBkZXZpY2VfbGFiZWxfZHNtX3V1aWRbXSA9IHsNCi0tIA0KMS43LjMuMQ0K
-DQpXaXRoIHJlZ2FyZHMsDQpOYXJlbmRyYSBL
+On Mon, 2011-03-07 at 12:16 -0800, Mariusz Kozlowski wrote:=20
+> On Wed, Mar 02, 2011 at 11:10:03PM +0100, Mariusz Kozlowski wrote:
+> > drivers/scsi/bnx2fc/bnx2fc_fcoe.c:1815: error: dereferencing pointe=
+r to incomplete type
+> > drivers/scsi/bnx2fc/bnx2fc_fcoe.c:1815: error: =91MODULE_STATE_LIVE=
+=92 undeclared (first use in this function)
+>=20
+> Hm. Still there in next-20110307. Is this patch wrong or..?
+>=20
+
+James,
+
+Here is my ack for this patch.
+
+Thanks,
+Bhanu
