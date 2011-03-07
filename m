@@ -1,31 +1,36 @@
-From: Mariusz Kozlowski <mk@lab.zgora.pl>
-Subject: Re: [PATCH] [SCSI] bnx2fc: fix build error when !CONFIG_MODULES
-Date: Mon, 7 Mar 2011 21:16:10 +0100
-Message-ID: <20110307201610.GA9032@mako-laptop>
-References: <20110302182740.e4dfd79f.sfr@canb.auug.org.au>
- <1299103803-32594-1-git-send-email-mk@lab.zgora.pl>
+From: David Miller <davem@davemloft.net>
+Subject: Re: [PATCH] net: Enter net/ipv6/ even if CONFIG_IPV6=n
+Date: Mon, 07 Mar 2011 12:51:19 -0800 (PST)
+Message-ID: <20110307.125119.260081518.davem@davemloft.net>
+References: <20110303135414.bfcabb2a.randy.dunlap@oracle.com>
+	<20110304093507.GG10761@canuck.infradead.org>
+	<4D711B02.2060200@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from unix.wroclaw.pl ([94.23.28.62]:56065 "EHLO unix.wroclaw.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752668Ab1CGUQR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 7 Mar 2011 15:16:17 -0500
-Content-Disposition: inline
-In-Reply-To: <1299103803-32594-1-git-send-email-mk@lab.zgora.pl>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:32840
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752008Ab1CGUum (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Mar 2011 15:50:42 -0500
+In-Reply-To: <4D711B02.2060200@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "James E.J. Bottomley" <James.Bottomley@suse.de>, Bhanu Prakash Gollapudi <bprakash@broadcom.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Mariusz Kozlowski <mk@lab.zgora.pl>
+To: randy.dunlap@oracle.com
+Cc: kaber@trash.net, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org
 
-On Wed, Mar 02, 2011 at 11:10:03PM +0100, Mariusz Kozlowski wrote:
-> drivers/scsi/bnx2fc/bnx2fc_fcoe.c:1815: error: dereferencing pointer =
-to incomplete type
-> drivers/scsi/bnx2fc/bnx2fc_fcoe.c:1815: error: =E2=80=98MODULE_STATE_=
-LIVE=E2=80=99 undeclared (first use in this function)
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Date: Fri, 04 Mar 2011 09:01:54 -0800
 
-Hm. Still there in next-20110307. Is this patch wrong or..?
+> On 03/04/11 01:35, Thomas Graf wrote:
+>> exthdrs_core.c and addrconf_core.c in net/ipv6/ contain bits which
+>> must be made available even if IPv6 is disabled.
+>> 
+>> net/ipv6/Makefile already correctly includes them if CONFIG_IPV6=n
+>> but net/Makefile prevents entering the subdirectory.
+>> 
+>> Signed-off-by: Thomas Graf <tgraf@infradead.org>
+> 
+> Acked-by: Randy Dunlap <randy.dunlap@oracle.com>
 
---=20
-Mariusz Kozlowski
+Applied, thanks.
