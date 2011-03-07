@@ -1,51 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the block tree with Linus' tree
-Date: Mon, 7 Mar 2011 13:19:58 +1100
-Message-ID: <20110307131958.84a5d818.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the block tree
+Date: Mon, 7 Mar 2011 13:39:57 +1100
+Message-ID: <20110307133957.3b9d814c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__7_Mar_2011_13_19_58_+1100_ndk+pu9uKp1Ld_J8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:48215 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753848Ab1CGCkA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 6 Mar 2011 21:40:00 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Jens Axboe <axboe@kernel.dk>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Mon__7_Mar_2011_13_19_58_+1100_ndk+pu9uKp1Ld_J8
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 Hi Jens,
 
-Today's linux-next merge of the block tree got a conflict in
-block/blk-flush.c between commit 255bb490c8c27eed484d538efe6ef6a7473bd3f6
-("block: blk-flush shouldn't call directly into q->request_fn()
-__blk_run_queue()") from the  tree and commit
-ae1b1539622fb46e51b4d13b3f9e5f4c713f86ae ("block: reimplement FLUSH/FUA
-to support merge") from the block tree.
+After merging the block tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-The latter rewrote a large part of the file, so I just used that.  If
-this is not correct, please fix it up in the block tree.
---=20
+block/blk-flush.c: In function 'flush_end_io':
+block/blk-flush.c:217: error: too few arguments to function '__blk_run_queue'
+block/blk-flush.c: In function 'flush_data_end_io':
+block/blk-flush.c:271: error: too few arguments to function '__blk_run_queue'
+
+Caused by commit ae1b1539622fb46e51b4d13b3f9e5f4c713f86ae ("block:
+reimplement FLUSH/FUA to support merge") interacting with commit
+1654e7411a1ad4999fe7890ef51d2a2bbb1fcf76 ("block: add @force_kblockd to
+__blk_run_queue()") from Linus' tree.  My merge fix up was obviously not
+sufficient.
+
+I added this merge fix patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 7 Mar 2011 13:27:04 +1100
+Subject: [PATCH] block: update for __blk_run_queue() API update
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ block/blk-flush.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/block/blk-flush.c b/block/blk-flush.c
+index a867e3f..f9b0228 100644
+--- a/block/blk-flush.c
++++ b/block/blk-flush.c
+@@ -214,7 +214,7 @@ static void flush_end_io(struct request *flush_rq, int error)
+ 
+ 	/* after populating an empty queue, kick it to avoid stall */
+ 	if (queued && was_empty)
+-		__blk_run_queue(q);
++		__blk_run_queue(q, false);
+ }
+ 
+ /**
+@@ -268,7 +268,7 @@ static void flush_data_end_io(struct request *rq, int error)
+ 
+ 	/* after populating an empty queue, kick it to avoid stall */
+ 	if (blk_flush_complete_seq(rq, REQ_FSEQ_DATA, error) && was_empty)
+-		__blk_run_queue(q);
++		__blk_run_queue(q, false);
+ }
+ 
+ /**
+-- 
+1.7.4.1
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__7_Mar_2011_13_19_58_+1100_ndk+pu9uKp1Ld_J8
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNdEDOAAoJEDMEi1NhKgbsM0oH/2W1MH9RcYzgOhzbvyS5DaG0
-PYCfz0i6OkSnD9l5u/fWFEvokdILZXVEGaXxNAONrqJHPAnKCqqJiH69mXs4gqRm
-/mEsAgGmVWk08ZOIZen5xrm8VqdEOS9oe5V3/yAvk/oNGglC4k+qog2epPzNTBZd
-rbvffz6CoasntrM+9i+fxPDBWB8XfgSUT7tQ+pjU7xcbz1pNWxfiGgCWFZ++yv1Q
-qqC5PIJ8wS5V3mARihqoIF6/+RtNMdY3VYdoLXQeLc0Doqtmq+5oSuQi+JwXVuzx
-hdGAoeSS80J3kfHsbQhe+v0GoAneJTtibqo+vS/blAfTjW90fLRBtDb7s/bFphA=
-=VPWc
------END PGP SIGNATURE-----
-
---Signature=_Mon__7_Mar_2011_13_19_58_+1100_ndk+pu9uKp1Ld_J8--
