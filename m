@@ -1,50 +1,68 @@
-From: Mariusz Kozlowski <mk@lab.zgora.pl>
-Subject: [PATCH] staging/hv: add missing include causing build error
-Date: Mon,  7 Mar 2011 20:34:30 +0100
-Message-ID: <1299526470-8988-1-git-send-email-mk@lab.zgora.pl>
-References: <20110307180547.0cd7b9eb.sfr@canb.auug.org.au>
+From: <Narendra_K@Dell.com>
+Subject: Re: [PATCH V4] Export ACPI _DSM provided firmware instance number
+ and string name to sysfs
+Date: Mon, 7 Mar 2011 11:44:52 -0800
+Message-ID: <20110307200512.GA22450@fedora14-r610.oslab.blr.amer.dell.com>
+References: <20110223125741.GA16473@fedora14-r610.blr.amer.dell.com>
+ <20110302172508.GA2794@fedora14-r610.oslab.blr.amer.dell.com>
+ <20110304104314.26265021@jbarnes-desktop>
+ <AANLkTimz662+L6eYJm2gh0NwWOxxzQV3503bcs-GMFGu@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from unix.wroclaw.pl ([94.23.28.62]:38813 "EHLO unix.wroclaw.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755627Ab1CGTen (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 7 Mar 2011 14:34:43 -0500
-In-Reply-To: <20110307180547.0cd7b9eb.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg Kroah-Hartman <gregkh@suse.de>
-Cc: Hank Janssen <hjanssen@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, Mariusz Kozlowski <mk@lab.zgora.pl>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <AANLkTimz662+L6eYJm2gh0NwWOxxzQV3503bcs-GMFGu@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-pci-owner@vger.kernel.org
+To: a.beregalov@gmail.com, linux-next@vger.kernel.org
+Cc: jbarnes@virtuousgeek.org, linux-pci@vger.kernel.org, linux-hotplug@vger.kernel.org, netdev@vger.kernel.org, mjg@redhat.com, Matt_Domsch@Dell.com, Charles_Rose@Dell.com, Jordan_Hargrave@Dell.com, Shyam_Iyer@Dell.com, sfr@canb.auug.org.au
+List-Id: linux-next.vger.kernel.org
 
-This fixes following build error:
-
-In file included from drivers/staging/hv/channel.h:28,
-                 from drivers/staging/hv/vmbus_private.h:30,
-                 from drivers/staging/hv/hv.c:28:
-drivers/staging/hv/channel_mgmt.h:234: error: field =E2=80=98work=E2=80=
-=99 has incomplete type
-
-Signed-off-by: Mariusz Kozlowski <mk@lab.zgora.pl>
----
-
-=46ound with randconfig on x86.
-
- drivers/staging/hv/channel_mgmt.h |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/staging/hv/channel_mgmt.h b/drivers/staging/hv/cha=
-nnel_mgmt.h
-index 3368bf1..96f74e2 100644
---- a/drivers/staging/hv/channel_mgmt.h
-+++ b/drivers/staging/hv/channel_mgmt.h
-@@ -27,6 +27,7 @@
-=20
- #include <linux/list.h>
- #include <linux/timer.h>
-+#include <linux/workqueue.h>
- #include "ring_buffer.h"
- #include "vmbus_channel_interface.h"
- #include "vmbus_packet_format.h"
---=20
-1.7.0.4
+T24gTW9uLCBNYXIgMDcsIDIwMTEgYXQgMTE6MzQ6MDVQTSArMDUzMCwgQWxleGFuZGVyIEJlcmVn
+YWxvdiB3cm90ZToNCj4gT24gNCBNYXJjaCAyMDExIDIxOjQzLCBKZXNzZSBCYXJuZXMgPGpiYXJu
+ZXNAdmlydHVvdXNnZWVrLm9yZz4gd3JvdGU6DQo+ID4gT24gV2VkLCAyIE1hciAyMDExIDIyOjM0
+OjE3ICswNTMwDQo+ID4gPE5hcmVuZHJhX0tARGVsbC5jb20+IHdyb3RlOg0KPiA+DQo+ID4+IE9u
+IFdlZCwgRmViIDIzLCAyMDExIGF0IDA2OjA2OjQyUE0gKzA1MzAsIEssIE5hcmVuZHJhIHdyb3Rl
+Og0KPiA+PiA+IEhlbGxvLA0KPiA+PiA+DQo+ID4+ID4gVGhpcyBwYXRjaCBleHBvcnRzIEFDUEkg
+X0RTTSBwcm92aWRlZCBmaXJtd2FyZSBpbnN0YW5jZSBudW1iZXIgYW5kDQo+ID4+ID4gc3RyaW5n
+IG5hbWUgdG8gc3lzZnMuDQo+ID4+ID4NCj4gPj4gPiBWMSAtPiBWMjoNCj4gPj4gPiBUaGUgYXR0
+cmlidXRlICdpbmRleCcgaXMgY2hhbmdlZCB0byAnYWNwaV9pbmRleCcgYXMgdGhlIHNlbWFudGlj
+cyBvZg0KPiA+PiA+IFNNQklPUyBwcm92aWRlZCBkZXZpY2UgdHlwZSBpbnN0YW5jZSBhbmQgQUNQ
+SSBfRFNNIHByb3ZpZGVkIGZpcm13YXJlDQo+ID4+ID4gaW5zdGFuY2UgbnVtYmVyIGFyZSBkaWZm
+ZXJlbnQuDQo+ID4+ID4NCj4gPj4gPiBWMiAtPiBWMzoNCj4gPj4gPiBNYXR0aGV3IEdhcnJldHQg
+cG9pbnRlZCBvdXQgdGhhdCAnc3lzZnNfY3JlYXRlX2dyb3VwcycgZG9lcyByZXR1cm4gYW4NCj4g
+Pj4gPiBlcnJvciB3aGVuIHRoZXJlIGFyZSBubyBBQ1BJIF9EU00gYXR0cmlidXRlcyBhdmFpbGFi
+bGUgYW5kIGJlY2F1c2Ugb2YNCj4gPj4gPiB0aGF0IHRoZSBmYWxsYmFjayB0byBTTUJJT1Mgd2ls
+bCBub3QgaGFwcGVuLiBBcyBhIHJlc3VsdCBTTUJJT1MgcHJvdmlkZWQNCj4gPj4gPiBhdHRyaWJ1
+dGVzIGFyZSBub3QgY3JlYXRlZC4gVGhpcyB2ZXJzaW9uIG9mIHRoZSBwYXRjaCBhZGRyZXNzZXMg
+dGhlIGlzc3VlLg0KPiA+PiA+DQo+ID4+DQo+ID4+IFYzIC0+IFY0Og0KPiA+PiBTZWxlY3QgTkxT
+IGlmIChETUkgfHwgQUNQSSkgaW4gZHJpdmVycy9wY2kvS2NvbmZpZyB0byBwcmV2ZW50IGJ1aWxk
+DQo+ID4+IGJyZWFrYWdlIGZyb20gYW4gJ2FsbG1vZGNvbmZpZycNCj4gPg0KPiA+IEFwcGxpZWQs
+IGZpbmdlcnMgY3Jvc3NlZCB0aGlzIHRpbWUuIDopDQo+ID4NCj4gDQo+IEhpLA0KPiANCj4gSXQg
+Y2Fubm90IGJlIGNvbXBpbGVkIGlmIENPTkZJR19BQ1BJIGlzIG5vdCBzZXQuDQo+IA0KPiBkcml2
+ZXJzL3BjaS9wY2ktbGFiZWwuYzogSW4gZnVuY3Rpb24gJ3BjaV9jcmVhdGVfZmlybXdhcmVfbGFi
+ZWxfZmlsZXMnOg0KPiBkcml2ZXJzL3BjaS9wY2ktbGFiZWwuYzozNjY6MjogZXJyb3I6IGltcGxp
+Y2l0IGRlY2xhcmF0aW9uIG9mIGZ1bmN0aW9uDQo+ICdkZXZpY2VfaGFzX2RzbScNCg0KSGVsbG8s
+DQoNClNvcnJ5IGZvciB0aGUgaW5jb252ZW5pZW5jZS4gUGxlYXNlIGZpbmQgdGhlIGZpeCBoZXJl
+IC0NCg0KRnJvbTogTmFyZW5kcmEgSyA8bmFyZW5kcmFfa0BkZWxsLmNvbT4NClN1YmplY3Q6IFtQ
+QVRDSF0gRml4IGNvbXBpbGF0aW9uIGVycm9yIHdoZW4gQ09ORklHX0FDUEkgdW5zZXQNCg0KVGhp
+cyBwYXRjaCBmaXhlcyBjb21waWxhdGlvbiBlcnJvciBkZXNjaWJlZCBiZWxvdyBpbnRyb2R1Y2Vk
+IGJ5DQp0aGUgY29tbWl0IDYwNTg5ODliYWQwNWI4MmU3OGJhYWNjZTY5ZWMxNGYyN2ExMWI1ZmQN
+Cg0KZHJpdmVycy9wY2kvcGNpLWxhYmVsLmM6IEluIGZ1bmN0aW9uIOKAmHBjaV9jcmVhdGVfZmly
+bXdhcmVfbGFiZWxfZmlsZXPigJk6DQpkcml2ZXJzL3BjaS9wY2ktbGFiZWwuYzozNjY6MjogZXJy
+b3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uIG9mIGZ1bmN0aW9uIOKAmGRldmljZV9oYXNfZHNt4oCZ
+DQoNClNpZ25lZC1vZmYtYnk6IE5hcmVuZHJhIEsgPG5hcmVuZHJhX2tAZGVsbC5jb20+DQotLS0N
+CiBkcml2ZXJzL3BjaS9wY2ktbGFiZWwuYyB8ICAgIDggKysrKysrKysNCiAxIGZpbGVzIGNoYW5n
+ZWQsIDggaW5zZXJ0aW9ucygrKSwgMCBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvcGNpL3BjaS1sYWJlbC5jIGIvZHJpdmVycy9wY2kvcGNpLWxhYmVsLmMNCmluZGV4IDgyNGUy
+NDcuLjgyZmQ3M2QgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL3BjaS9wY2ktbGFiZWwuYw0KKysrIGIv
+ZHJpdmVycy9wY2kvcGNpLWxhYmVsLmMNCkBAIC0yOSw3ICsyOSw5IEBADQogI2luY2x1ZGUgPGxp
+bnV4L25scy5oPg0KICNpbmNsdWRlIDxsaW51eC9hY3BpLmg+DQogI2luY2x1ZGUgPGxpbnV4L3Bj
+aS1hY3BpLmg+DQorI2lmZGVmIENPTkZJR19BQ1BJDQogI2luY2x1ZGUgPGFjcGkvYWNwaV9kcml2
+ZXJzLmg+DQorI2VuZGlmDQogI2luY2x1ZGUgPGFjcGkvYWNwaV9idXMuaD4NCiAjaW5jbHVkZSAi
+cGNpLmgiDQogDQpAQCAtMTc0LDYgKzE3NiwxMiBAQCBwY2lfcmVtb3ZlX2FjcGlfaW5kZXhfbGFi
+ZWxfZmlsZXMoc3RydWN0IHBjaV9kZXYgKnBkZXYpDQogCXJldHVybiAtMTsNCiB9DQogDQorc3Rh
+dGljIGlubGluZSBib29sDQorZGV2aWNlX2hhc19kc20oc3RydWN0IGRldmljZSAqZGV2KQ0KK3sN
+CisJcmV0dXJuIGZhbHNlOw0KK30NCisNCiAjZWxzZQ0KIA0KIHN0YXRpYyBjb25zdCBjaGFyIGRl
+dmljZV9sYWJlbF9kc21fdXVpZFtdID0gew0KLS0gDQoxLjcuMy4xDQoNCldpdGggcmVnYXJkcywN
+Ck5hcmVuZHJhIEs=
