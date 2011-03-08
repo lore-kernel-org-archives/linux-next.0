@@ -1,70 +1,117 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: RFC: Removing old tags, reducing the git size of -next.
-Date: Wed, 9 Mar 2011 03:23:32 +1100
-Message-ID: <20110309032332.da40748b.sfr@canb.auug.org.au>
-References: <1299039746.4208.28.camel@Joe-Laptop>
-	<20110302165447.f47fd4b2.sfr@canb.auug.org.au>
-	<4D764B59.1060801@suse.cz>
+From: "Alexander van Heukelum" <heukelum@fastmail.fm>
+Subject: Re: linux-next: Tree for March 8 (BROKEN: arch/x86/kernel/entry_32.S?
+ Debian's binutils/as?)
+Date: Tue, 08 Mar 2011 18:27:49 +0100
+Message-ID: <1299605269.29313.1427511237@webmail.messagingengine.com>
+References: <AANLkTin2H9=NWp5G6N6_e=bxBTh2eS1dbUxOjT6xX98C@mail.gmail.com><AANLkTik_Cb7tXheZNOBjqnoQc4MSL1LnDtFGFP5mqZRi@mail.gmail.com><AANLkTinBv__n7k3Z=EJWv1fdQScyB7AJV0SsYJE0mCwQ@mail.gmail.com><AANLkTiknsT1iQzUQ_oBiOORaqWBFyk2BaLq_xu9C5E_G@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__9_Mar_2011_03_23_32_+1100_ED16z_5jfT5l0SEZ"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:39697 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754507Ab1CHQXn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 8 Mar 2011 11:23:43 -0500
-In-Reply-To: <4D764B59.1060801@suse.cz>
+Received: from out5.smtp.messagingengine.com ([66.111.4.29]:59190 "EHLO
+	out5.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750909Ab1CHRgp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 8 Mar 2011 12:36:45 -0500
+In-Reply-To: <AANLkTiknsT1iQzUQ_oBiOORaqWBFyk2BaLq_xu9C5E_G@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michal Marek <mmarek@suse.cz>
-Cc: Joe Perches <joe@perches.com>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, users@kernel.org
+To: sedat.dilek@gmail.com, Ingo Molnar <mingo@elte.hu>
+Cc: linux-next <linux-next@vger.kernel.org>, psomas@cslab.ece.ntua.gr, Jan Beulich <JBeulich@novell.com>, "H. Peter Anvin" <hpa@zytor.com>, "H.J. Lu" <hjl.tools@gmail.com>
 
---Signature=_Wed__9_Mar_2011_03_23_32_+1100_ED16z_5jfT5l0SEZ
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, 08 Mar 2011 16:42 +0100, "Sedat Dilek" <sedat.dilek@googlemail.com> wrote:
+> On 3/8/11, Sedat Dilek <sedat.dilek@googlemail.com> wrote:
+> > On 3/8/11, H.J. Lu <hjl.tools@gmail.com> wrote:
+> >> On Tue, Mar 8, 2011 at 2:44 AM, Sedat Dilek <sedat.dilek@googlemail.com>
+> >> wrote:
+> >>> Hi,
+> >>>
+> >>> my build of linux-next (next-20110308, the same with the one from
+> >>> yesterday) is broken.
+> >>> (I translated the German output.)
+> >>>
+> >>> [ build.log ]
+> >>>  AS      arch/x86/kernel/entry_32.o
+> >>> /home/sd/src/linux-2.6/linux-2.6.38-rc7/debian/build/source_i386_none/arch/x86/kernel/entry_32.S:
+> >>> Assembler messages:
+> >>> /home/sd/src/linux-2.6/linux-2.6.38-rc7/debian/build/source_i386_none/arch/x86/kernel/entry_32.S:1421:
+> >>> Error: .size expression does not evaluate to a constant
+> >>> make[6]: *** [arch/x86/kernel/entry_32.o] Fehler 1 (Error 1)
+> >>> make[5]: *** [arch/x86/kernel] Fehler 2 (Error 2)
+> >>> make[4]: *** [arch/x86] Fehler 2 (Error 2)
+> >>> make[4]: *** Warte auf noch nicht beendete Prozesse... (Waiting for
+> >>> unfinished jobs...)
+> >>>
+> >>
+> >> This is a kernel bug.  Please use the latest binutils from CVS.
+> >> It will tell you which symbol causes this.
+> >>
+> >>
+> >> --
+> >> H.J.
+> >>
+> >
+> > Yeah, I have cherry-picked these two upstream commits before you have
+> > mentionned it...
+> >
+> > 0001-Mention-symbol-name-in-non-constant-.size-expression.patch
+> >        (Cherry-picked from commit b9521fc0be7945fc842ce1197e241a023378125d)
+> > 0002-Revert-the-last-change-on-gas-elf-bad-size.err.patch
+> >        (Cherry-picked from commit cbd141bb69f791de7ea1581abe7afb34f0c61288)
+> >
+> > ... and have built with them a new binutils Debian package.
+> >
+> > The error looks now like this (sorry for the German output):
+> > ...
+> >   AS      arch/x86/kernel/entry_32.o
+> > /home/sd/src/linux-2.6/linux-2.6.38-rc7/debian/build/source_i386_none/arch/x86/kernel/entry_32.S:
+> > Assembler messages:
+> > /home/sd/src/linux-2.6/linux-2.6.38-rc7/debian/build/source_i386_none/arch/x86/kernel/entry_32.S:1421:
+> > Error: .size expression with symbol `apf_page_fault' does not evaluate
+> > to a constant
+> > make[6]: *** [arch/x86/kernel/entry_32.o] Fehler 1
+> > make[5]: *** [arch/x86/kernel] Fehler 2
+> > make[5]: *** Warte auf noch nicht beendete Prozesse...
+> >
+> > Anyway, before more riddling around it would be very helpful to have a
+> > clear pointer if there is a fix around... That building, testing and
+> > installing took me now several hours.
+> > And... yeah, backports to 2.21-branch appreciated.
+> >
+> > - Sedat -
+> >
+> 
+> After a quick look into the source, it seems attached patch fixes the
+> issue.
+> Is that OK?
 
-Hi Michal,
+Hi Sedat,
 
-On Tue, 08 Mar 2011 16:29:29 +0100 Michal Marek <mmarek@suse.cz> wrote:
->
-> FWIW, I use the following setup for linux-next:
->=20
-> [remote "linux-next"]
->         url =3D
-> git://git.kernel.org/pub/scm/linux/kernel/git/sfr/linux-next.git
+The patch ( https://lkml.org/lkml/2011/3/8/203 ) is ok, feel free to add
+Acked-by: Alexander van Heukelum <heukelum@fastmail.fm>
 
-This should now be
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(its the same repository, just a more generic name).
+Better description might be something like:
 
->         fetch =3D +refs/heads/master:refs/heads/linux-next
->         fetch =3D +refs/heads/stable:refs/remotes/linux-next/stable
->         tagopt =3D --no-tags
->=20
-> and fetch the next-* tags manually only when I need them.
+i386: Fix mismatched ENTRY/END pair.
 
-That should all continue to work.
+Under CONFIG_KVM_GUEST=y, the following part of entry_32.S causes a compile failure.
 
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+1409 #ifdef CONFIG_KVM_GUEST
+1410 ENTRY(async_page_fault)
+1411         RING0_EC_FRAME
+1412         pushl $do_async_page_fault
+1413         CFI_ADJUST_CFA_OFFSET 4
+1414         jmp error_code
+1415         CFI_ENDPROC
+1416 END(apf_page_fault)
+1417 #endif
 
---Signature=_Wed__9_Mar_2011_03_23_32_+1100_ED16z_5jfT5l0SEZ
-Content-Type: application/pgp-signature
+Replace apf_page_fault with async_page_fault, as intended.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+Greetings,
+    Alexander
 
-iQEbBAEBAgAGBQJNdlgEAAoJEDMEi1NhKgbsbkAH9REL9UBpRgM7CYC/62HfzxHn
-0Yx1BZX7Z1EO87vwrOPYSnO5PAxD6rOxtP2UpLjHFKD4JZiRDIlYt5dwATvz8XxF
-N1nPhyCLnaA4XOoGEyr4qVLdaXloZIzHbyic1TIQdYl2NW7lSWWzhFsBV8eAlWPz
-/k7ZRlbmNssYeEIIjZ80bQh2sfcfoVLJXfmkBY2a9caNS7XyvUZ03VerW4CXhxp1
-6YwNFPxHfAQts7teapMSnBS2p3o4jGMpUUzhLMkByPbO+U5WVj8kJB5ByjeIqsaG
-qBuZZTQNnYssi6HZhMuBoR/XYW8E1jIlzj9E/Vya7pRO9JtB0tpAIovKb/Xeaw==
-=jLVJ
------END PGP SIGNATURE-----
-
---Signature=_Wed__9_Mar_2011_03_23_32_+1100_ED16z_5jfT5l0SEZ--
+> - Sedat -
+> 
+> Email had 1 attachment:
+> + 0001-x86-Fix-build-failure-with-binutils-as-from-upstream.patch
+>   1k (text/x-patch)
