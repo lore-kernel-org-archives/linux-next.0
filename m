@@ -1,43 +1,94 @@
-From: Trond Myklebust <trond.myklebust@fys.uio.no>
-Subject: Re: linux-next: build failure after merge of the nfs tree
-Date: Tue, 08 Mar 2011 13:58:31 -0500
-Message-ID: <1299610712.3602.15.camel@heimdal.trondhjem.org>
-References: <20110308120753.8adb3ff6.sfr@canb.auug.org.au>
+From: "Zou, Yi" <yi.zou@intel.com>
+Subject: RE: [PATCH] [SCSI] bnx2fc: fix build error when !CONFIG_MODULES
+Date: Tue, 8 Mar 2011 11:36:53 -0800
+Message-ID: <7C88852EF6F99F4EB538472FCFEBE222014F6FE66D@orsmsx509.amr.corp.intel.com>
+References: <20110302182740.e4dfd79f.sfr@canb.auug.org.au>
+	 <1299103803-32594-1-git-send-email-mk@lab.zgora.pl>
+	 <20110307201610.GA9032@mako-laptop>
+	 <1299542075.5232.5.camel@LTSJC-BPRAKASH.corp.ad.broadcom.com>
+	 <1299543497.15955.108.camel@mulgrave.site> <1299546546.1689.40.camel@fritz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-out1.uio.no ([129.240.10.57]:60429 "EHLO mail-out1.uio.no"
+Received: from mga09.intel.com ([134.134.136.24]:45527 "EHLO mga09.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753080Ab1CHTMM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 8 Mar 2011 14:12:12 -0500
-In-Reply-To: <20110308120753.8adb3ff6.sfr@canb.auug.org.au>
+	id S1754436Ab1CHThO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 8 Mar 2011 14:37:14 -0500
+In-Reply-To: <1299546546.1689.40.camel@fritz>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frank Filz <ffilzlnx@us.ibm.com>, Jeff Layton <jlayton@redhat.com>
+To: "Love, Robert W" <robert.w.love@intel.com>, James Bottomley <James.Bottomley@suse.de>
+Cc: Bhanu Gollapudi <bprakash@broadcom.com>, Mariusz Kozlowski <mk@lab.zgora.pl>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 
-On Tue, 2011-03-08 at 12:07 +1100, Stephen Rothwell wrote: 
-> Hi Trond,
-> 
-> After merging the nfs tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> fs/nfs/inode.c: In function 'nfs_compat_user_ino64':
-> fs/nfs/inode.c:93: error: 'compat_ulong_t' undeclared (first use in this function)
-> fs/nfs/inode.c:93: error: expected ';' before 'ino'
-> fs/nfs/inode.c:100: error: 'ino' undeclared (first use in this function)
-> 
-> Caused by commit 5fa1ca22302da56ffa568e847100e80be90cc602 ("(try3-resend)
-> Fix nfs_compat_user_ino64 so it doesn't cause problems if bit 31 or 63
-> are set in fileid").
-> 
-> I have used the nfs tree from next-20110307 for today.
-
-Thanks Stephen!
-
-It looks to me as if we need to add a '#include <compat.h>'. I'll fix up
-the patch...
-
-Cheers
-  Trond
+PiBPbiBNb24sIDIwMTEtMDMtMDcgYXQgMTY6MTggLTA4MDAsIEphbWVzIEJvdHRvbWxleSB3cm90
+ZToNCj4gPiBPbiBNb24sIDIwMTEtMDMtMDcgYXQgMTU6NTQgLTA4MDAsIEJoYW51IEdvbGxhcHVk
+aSB3cm90ZToNCj4gPiA+IE9uIE1vbiwgMjAxMS0wMy0wNyBhdCAxMjoxNiAtMDgwMCwgTWFyaXVz
+eiBLb3psb3dza2kgd3JvdGU6DQo+ID4gPiA+IE9uIFdlZCwgTWFyIDAyLCAyMDExIGF0IDExOjEw
+OjAzUE0gKzAxMDAsIE1hcml1c3ogS296bG93c2tpIHdyb3RlOg0KPiA+ID4gPiA+IGRyaXZlcnMv
+c2NzaS9ibngyZmMvYm54MmZjX2Zjb2UuYzoxODE1OiBlcnJvcjogZGVyZWZlcmVuY2luZw0KPiBw
+b2ludGVyIHRvIGluY29tcGxldGUgdHlwZQ0KPiA+ID4gPiA+IGRyaXZlcnMvc2NzaS9ibngyZmMv
+Ym54MmZjX2Zjb2UuYzoxODE1OiBlcnJvcjoNCj4g4oCYTU9EVUxFX1NUQVRFX0xJVkXigJkgdW5k
+ZWNsYXJlZCAoZmlyc3QgdXNlIGluIHRoaXMgZnVuY3Rpb24pDQo+ID4gPiA+DQo+ID4gPiA+IEht
+LiBTdGlsbCB0aGVyZSBpbiBuZXh0LTIwMTEwMzA3LiBJcyB0aGlzIHBhdGNoIHdyb25nIG9yLi4/
+DQo+ID4gPiA+DQo+ID4gPg0KPiA+ID4gSmFtZXMsDQo+ID4gPg0KPiA+ID4gSGVyZSBpcyBteSBh
+Y2sgZm9yIHRoaXMgcGF0Y2guDQo+ID4NCj4gPiBPSywgc28gdGhlIHBhdGNoIGlzIGFjdHVhbGx5
+IHdyb25nIGJlY2F1c2UgYWRkaW5nICNpZmRlZnMgb24gbW9kdWxlcyBpbg0KPiA+IGZpbGVzIHJl
+YWxseSBpbXBlZGVzIHJlYWRhYmlsaXR5LiAgVGhlIGJ1ZyBpcyB1c2luZyBhIGRpcmVjdCBkZXJl
+ZiBvbg0KPiA+IG1vZHVsZSBzdGF0ZSBpbnN0ZWFkIG9mIG9uZSBvZiB0aGUgQVBJcyB3aGljaCB3
+b3JrIGluIHRoZSBub24tbW9kdWxhcg0KPiA+IGNhc2UsIG5hbWVseSB0cnlfbW9kdWxlX2dldCgp
+LiBUaGF0IG1lYW5zIHRoZSBvdGhlciB0d28gbmVlZCB0byBjb21lDQo+IG91dA0KPiA+IGFuZCBi
+ZSByZXdvcmtlZCAocGx1cyBhbGwgdGhlIG90aGVycyBpbiBmY29lKS4NCj4gPg0KPiA+IFJld29y
+a2VkIGxvb2tzIGxpa2UgaXQgbWlnaHQgYmUgYSBiaWdnZXIgaXRlbSB0aGFuIGJueDJmYy4gIElm
+IGFueSBvZg0KPiA+IHRob3NlIHRlc3RzIGlzIGV2ZXIgcmVsZXZhbnQsIGl0IG1lYW5zIHdlIGhh
+dmUgYSByYWNlIGluIHRoZQ0KPiA+IGZjb2VfdHJhbnNwb3J0IGJlY2F1c2UgaXQgc2hvdWxkbid0
+IGJlIGNhbGxpbmcgZnVuY3Rpb24gcG9pbnRlcnMgb24gYQ0KPiA+IGR5aW5nIG1vZHVsZSAodW5s
+ZXNzIGl0IHdhbnRzIHRvIHRyaWdnZXIgYW4gb29wcykuDQo+ID4NCj4gPiBTbywgd2h5IGFyZSB5
+b3UgdHJ5aW5nIHRvIGRvIHRoaXMgaW4gdGhlIGZpcnN0IHBsYWNlPw0KPiA+DQo+IEZpcnN0LCBm
+Y29lLmMgc3RhcnRlZCB3aXRoIHRoZXNlIGNoZWNrcy4gSGVyZSBpcyBhIGNvbW1lbnQgaW4gZmNv
+ZS5jIGF0DQo+IHRoZSBwb2ludCBvZiBvbmUgb2YgdGhlIGNoZWNrcy4NCj4gDQo+IC8qDQo+ICAq
+IE1ha2Ugc3VyZSB0aGUgbW9kdWxlIGhhcyBiZWVuIGluaXRpYWxpemVkLCBhbmQgaXMgbm90IGFi
+b3V0IHRvIGJlDQo+ICAqIHJlbW92ZWQuICBNb2R1bGUgcGFyYW10ZXIgc3lzZnMgZmlsZXMgYXJl
+IHdyaXRhYmxlIGJlZm9yZSB0aGUNCj4gICogbW9kdWxlX2luaXQgZnVuY3Rpb24gaXMgY2FsbGVk
+IGFuZCBhZnRlciBtb2R1bGVfZXhpdC4NCj4gICovDQo+IA0KPiBJIGRvbid0IGtub3cgdGhlIGNv
+cnJlY3Qgd2F5IHRvIGZpeCB0aGF0IHJhY2UgaXMsIGJ1dCB3ZSBtYXkgYmUgcGFzdCB0aGUNCj4g
+bmVlZCB0byBmaXggaXQgaW4gdGhlIExMRHMuDQo+IA0KPiBOZXh0LCB0aGUgZmNvZSB0cmFuc3Bv
+cnQgd2FzIGFkZGVkLiBTaW5jZSBpdCAobGliZmNvZS5rbykgaXMgbm93IGNhbGxpbmcNCj4gd2hh
+dCB1c2VkIHRvIGJlIHRoZSBmY29lLmtvIHN5c2ZzIGVudHJ5IHBvaW50cyBJIGRvbid0IHRoaW5r
+IHRoZSBwcm9ibGVtDQo+IGV4aXN0cyBpbiBmY29lLmMgb3IgaW4gYm54MmZjX2Zjb2UuYywgdGhl
+IHByb2JsZW0gc2hvdWxkIGJlIGluIHRoZSBmY29lDQo+IHRyYW5zcG9ydCBjb2RlLCBhcyBKYW1l
+cyBzdWdnZXN0ZWQuDQo+IA0KPiBUaGUgZmNvZSB0cmFuc3BvcnQgY29kZSBhbHJlYWR5IGhhcyB0
+aGVzZSBjaGVja3MgdG8gcHJvdGVjdCBhZ2FpbnN0DQo+IHN5c2ZzIGZpbGVzIGJlaW5nIHdyaXRh
+YmxlIGJlZm9yZSBtb2R1bGUgaW5pdGlhbGl6YXRpb24gaXMgY29tcGxldGUuIEl0DQo+IHVzZXMg
+dGhlIGZ0X211dGV4IHRvIHByb3RlY3QgdGhlIGxpc3Qgb2YgdHJhbnNwb3J0cyhMTERzKSBzbyB3
+aGVuDQo+ICdjcmVhdGUnIGlzIGNhbGxlZCBpdCBrbm93cyB0aGF0IHRoZSB0cmFuc3BvcnQgaXMg
+c3RpbGwgdGhlcmUgdG8gY2FsbA0KPiBkb3duIHRvLiBJdCBob2xkcyB0aGUgZnRfbXV0ZXggdW50
+aWwgdGhlIExMRCdzICdjcmVhdGUnIHJvdXRpbmUgcmV0dXJucy4NCj4gVGhlIHRyYW5zcG9ydHMo
+TExEcykgc2hvdWxkIGJlIGRldGFjaGluZyB0aGVtc2VsdmVzIGZyb20gdGhlIGZjb2UNCj4gdHJh
+bnNwb3J0IGxheWVyIGJlZm9yZSB0aGV5IGV4aXQuIGZjb2VfdHJhbnNwb3J0X2RldGFjaCB3aWxs
+IHRyeSB0bw0KPiBhY3F1aXJlIHRoZSBmdF9tdXRleCBhbmQgYmxvY2sgdW50aWwgdGhlICdjcmVh
+dGUnIGNhbGwgcmV0dXJucyBhbmQNCj4gcmVsZWFzZXMgdGhlIGZ0X211dGV4LiBJIHRoaW5rIHRo
+aXMgZW5zdXJlcyB0aGF0IHRoZSB0cmFuc3BvcnQoTExEKSB3aWxsDQo+IGJlIGZpbmUgd2hlbiB0
+aGUgZmNvZSB0cmFuc3BvcnQgY2FsbHMgaXQuDQo+IA0KPiBNeSBmZWVsaW5nIGlzIHRoYXQgdGhl
+c2UgY2hlY2tzIGFyZSBzdGlsbCBuZWVkZWQgaW4gdGhlIGZjb2UgdHJhbnNwb3J0LA0KPiBidXQg
+bm90IGluIHRoZSBMTERzLiBJZiBzb21lb25lIGNhbiBzdWdnZXN0IGEgYmV0dGVyIHdheSB0byBw
+cm90ZWN0DQo+IGFnYWluc3Qgd3JpdGFibGUgc3lzZnMgZmlsZXMgd2hlbiB0aGUgbW9kdWxlIGhh
+c24ndCBmaW5pc2hlZA0KPiBpbml0aWFsaXppbmcsIHdlIHNob3VsZCBkbyB0aGF0IGluc3RlYWQg
+b2YgdGhlIGlmZGVmcy4NCj4gDQo+IEhvcGUgdGhpcyBoZWxwcywNCj4gDQo+IC8vUm9iDQo+IA0K
+PiBGWUk6IG1uYyBhc2tlZCBhYm91dCB0aGlzIGNvZGUgYW5kIHRoZSB0cnlsb2NrIGNvZGUgaW4g
+ZmNvZSBhbmQgbGliZmNvZS4NCj4gSSBoYXZlIHBhdGNoZXMgaW4gb3VyIGludGVybmFsIHZhbGlk
+YXRpb24gdG8gcmVtb3ZlIHRoZSB0cnlsb2NrIHVzYWdlLA0KPiBidXQgSSBkb24ndCBoYXZlIHBh
+dGNoZXMgdG8gZml4IHRoZSBtb2R1bGUgc3RhdGUgY2hlY2tpbmcuDQo+IA0KWWVhaCwgdGhpcyBs
+b2dpYyB3YXMgZnJvbSBvcmlnaW5hbCBmaXhpbmcgcmFjZSBjb25kaXRpb24gaW4gZmNvZS5rbywg
+bm90ZQ0KdGhhdCB3ZSBkbyBuZWVkIGNoZWNrIHRoZSBNT0RVTEVfU1RBVEVfTElWRSwgdHJ5X21v
+ZHVsZV9nZXQoKSBpcyBub3Qgd2hhdA0Kd2Ugd2FudGVkLCBwbHVzIG1vZHVsZV9pc19saXZlICgp
+IGNoZWNrcyBpZiBpdCBpcyAhR09JTkcuIEFueXdheSwgSSBkb24ndA0KdGhpbmsgdGhpcyBpcyBu
+ZWVkZWQgYW55IG1vcmUgZm9yIGluZGl2aWR1YWwgZmNvZSB0cmFuc3BvcnQgZHJpdmVyLCBlLmcu
+LA0KZmNvZS5rbyBvciBibngyZmMsIGFzIHRoZSByYWNlIGlzIG5vdyBmb3Igc3lzZnMgb2YgbGli
+ZmNvZS4NCg0KSSB3aWxsIHNlbmQgb3V0IGEgcGF0Y2ggdG8gY2xlYW4gdXAgdGhlIGZjb2UuYyBm
+b3IgdGhpcy4NCg0KVGhhbmtzLA0KeWkNCg0KDQoNCg0KDQoNCj4gLS0NCj4gVG8gdW5zdWJzY3Jp
+YmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LXNjc2ki
+IGluDQo+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3Jn
+DQo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jk
+b21vLWluZm8uaHRtbA0K
