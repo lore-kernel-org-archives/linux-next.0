@@ -1,69 +1,43 @@
-From: Sedat Dilek <sedat.dilek@googlemail.com>
-Subject: [PATCH] x86: Fix mismatched ENTRY/END pair
-Date: Tue,  8 Mar 2011 19:39:03 +0100
-Message-ID: <1299609543-18549-1-git-send-email-sedat.dilek@gmail.com>
+From: Trond Myklebust <trond.myklebust@fys.uio.no>
+Subject: Re: linux-next: build failure after merge of the nfs tree
+Date: Tue, 08 Mar 2011 13:58:31 -0500
+Message-ID: <1299610712.3602.15.camel@heimdal.trondhjem.org>
+References: <20110308120753.8adb3ff6.sfr@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:34556 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753889Ab1CHSjU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 8 Mar 2011 13:39:20 -0500
+Received: from mail-out1.uio.no ([129.240.10.57]:60429 "EHLO mail-out1.uio.no"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753080Ab1CHTMM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 8 Mar 2011 14:12:12 -0500
+In-Reply-To: <20110308120753.8adb3ff6.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Cc: Sedat Dilek <sedat.dilek@gmail.com>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, "H.J. Lu" <hjl.tools@gmail.com>, Jan Beulich <JBeulich@novell.com>, Stratos Psomadakis <psomas@cslab.ece.ntua.gr>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frank Filz <ffilzlnx@us.ibm.com>, Jeff Layton <jlayton@redhat.com>
 
-With CONFIG_KVM_GUEST=y, the following part of entry_32.S causes this compile failure:
-[...]
-AS      arch/x86/kernel/entry_32.o
-arch/x86/kernel/entry_32.S: Assembler messages:
-arch/x86/kernel/entry_32.S:1421: Error: .size expression with symbol `apf_page_fault' does not evaluate to a constant
+On Tue, 2011-03-08 at 12:07 +1100, Stephen Rothwell wrote: 
+> Hi Trond,
+> 
+> After merging the nfs tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> fs/nfs/inode.c: In function 'nfs_compat_user_ino64':
+> fs/nfs/inode.c:93: error: 'compat_ulong_t' undeclared (first use in this function)
+> fs/nfs/inode.c:93: error: expected ';' before 'ino'
+> fs/nfs/inode.c:100: error: 'ino' undeclared (first use in this function)
+> 
+> Caused by commit 5fa1ca22302da56ffa568e847100e80be90cc602 ("(try3-resend)
+> Fix nfs_compat_user_ino64 so it doesn't cause problems if bit 31 or 63
+> are set in fileid").
+> 
+> I have used the nfs tree from next-20110307 for today.
 
-1409 #ifdef CONFIG_KVM_GUEST
-1410 ENTRY(async_page_fault)
-1411         RING0_EC_FRAME
-1412         pushl $do_async_page_fault
-1413         CFI_ADJUST_CFA_OFFSET 4
-1414         jmp error_code
-1415         CFI_ENDPROC
-1416 END(apf_page_fault)
-1417 #endif
+Thanks Stephen!
 
-Replace apf_page_fault with async_page_fault, as intended.
+It looks to me as if we need to add a '#include <compat.h>'. I'll fix up
+the patch...
 
-The problem occured with a binutils including PR gas/12519.
-An output like above can be seen with a binutils from upstream containing:
-commit b9521fc0be7945fc842ce1197e241a023378125d
-"Mention symbol name in non-constant .size expression."
-
-The issue was introduced by:
-commit 631bc4878220932fe67fc46fc7cf7cccdb1ec597
-"KVM: Handle async PF in a guest."
-
-Thanks Alexander for providing a more descriptive text.
-
-Acked-by: Alexander van Heukelum <heukelum@fastmail.fm>
-CC: Ingo Molnar <mingo@elte.hu>
-CC: H. Peter Anvin <hpa@zytor.com>
-CC: H.J. Lu <hjl.tools@gmail.com>
-CC: Jan Beulich <JBeulich@novell.com>
-CC: Stratos Psomadakis <psomas@cslab.ece.ntua.gr>
-Signed-off-by: Sedat Dilek <sedat.dilek@gmail.com>
----
- arch/x86/kernel/entry_32.S |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/arch/x86/kernel/entry_32.S b/arch/x86/kernel/entry_32.S
-index 2878821..f7cffb2 100644
---- a/arch/x86/kernel/entry_32.S
-+++ b/arch/x86/kernel/entry_32.S
-@@ -1412,7 +1412,7 @@ ENTRY(async_page_fault)
- 	pushl_cfi $do_async_page_fault
- 	jmp error_code
- 	CFI_ENDPROC
--END(apf_page_fault)
-+END(async_page_fault)
- #endif
- 
- /*
--- 
-1.7.4.1
+Cheers
+  Trond
