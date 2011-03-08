@@ -1,94 +1,185 @@
-From: "Zou, Yi" <yi.zou@intel.com>
-Subject: RE: [PATCH] [SCSI] bnx2fc: fix build error when !CONFIG_MODULES
-Date: Tue, 8 Mar 2011 11:36:53 -0800
-Message-ID: <7C88852EF6F99F4EB538472FCFEBE222014F6FE66D@orsmsx509.amr.corp.intel.com>
-References: <20110302182740.e4dfd79f.sfr@canb.auug.org.au>
-	 <1299103803-32594-1-git-send-email-mk@lab.zgora.pl>
-	 <20110307201610.GA9032@mako-laptop>
-	 <1299542075.5232.5.camel@LTSJC-BPRAKASH.corp.ad.broadcom.com>
-	 <1299543497.15955.108.camel@mulgrave.site> <1299546546.1689.40.camel@fritz>
+From: "Alexander van Heukelum" <heukelum@fastmail.fm>
+Subject: Re: linux-next: Tree for March 8 (BROKEN: arch/x86/kernel/entry_32.S?
+ Debian's binutils/as?)
+Date: Tue, 08 Mar 2011 21:25:39 +0100
+Message-ID: <1299615939.25628.1427572905@webmail.messagingengine.com>
+References: <AANLkTin2H9=NWp5G6N6_e=bxBTh2eS1dbUxOjT6xX98C@mail.gmail.com><AANLkTik_Cb7tXheZNOBjqnoQc4MSL1LnDtFGFP5mqZRi@mail.gmail.com><AANLkTinBv__n7k3Z=EJWv1fdQScyB7AJV0SsYJE0mCwQ@mail.gmail.com><AANLkTiknsT1iQzUQ_oBiOORaqWBFyk2BaLq_xu9C5E_G@mail.gmail.com><1299605269.29313.1427511237@webmail.messagingengine.com>
+ <AANLkTi=6YstJxad41knR4Q9WN3wYKikPv-g1i3kg3HS1@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:45527 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754436Ab1CHThO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 8 Mar 2011 14:37:14 -0500
-In-Reply-To: <1299546546.1689.40.camel@fritz>
-Content-Language: en-US
+Received: from out5.smtp.messagingengine.com ([66.111.4.29]:36219 "EHLO
+	out5.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753549Ab1CHUZk convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 8 Mar 2011 15:25:40 -0500
+In-Reply-To: <AANLkTi=6YstJxad41knR4Q9WN3wYKikPv-g1i3kg3HS1@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Love, Robert W" <robert.w.love@intel.com>, James Bottomley <James.Bottomley@suse.de>
-Cc: Bhanu Gollapudi <bprakash@broadcom.com>, Mariusz Kozlowski <mk@lab.zgora.pl>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: sedat.dilek@gmail.com
+Cc: Ingo Molnar <mingo@elte.hu>, linux-next <linux-next@vger.kernel.org>, psomas@cslab.ece.ntua.gr, Jan Beulich <JBeulich@novell.com>, "H. Peter Anvin" <hpa@zytor.com>, "H.J. Lu" <hjl.tools@gmail.com>
 
-PiBPbiBNb24sIDIwMTEtMDMtMDcgYXQgMTY6MTggLTA4MDAsIEphbWVzIEJvdHRvbWxleSB3cm90
-ZToNCj4gPiBPbiBNb24sIDIwMTEtMDMtMDcgYXQgMTU6NTQgLTA4MDAsIEJoYW51IEdvbGxhcHVk
-aSB3cm90ZToNCj4gPiA+IE9uIE1vbiwgMjAxMS0wMy0wNyBhdCAxMjoxNiAtMDgwMCwgTWFyaXVz
-eiBLb3psb3dza2kgd3JvdGU6DQo+ID4gPiA+IE9uIFdlZCwgTWFyIDAyLCAyMDExIGF0IDExOjEw
-OjAzUE0gKzAxMDAsIE1hcml1c3ogS296bG93c2tpIHdyb3RlOg0KPiA+ID4gPiA+IGRyaXZlcnMv
-c2NzaS9ibngyZmMvYm54MmZjX2Zjb2UuYzoxODE1OiBlcnJvcjogZGVyZWZlcmVuY2luZw0KPiBw
-b2ludGVyIHRvIGluY29tcGxldGUgdHlwZQ0KPiA+ID4gPiA+IGRyaXZlcnMvc2NzaS9ibngyZmMv
-Ym54MmZjX2Zjb2UuYzoxODE1OiBlcnJvcjoNCj4g4oCYTU9EVUxFX1NUQVRFX0xJVkXigJkgdW5k
-ZWNsYXJlZCAoZmlyc3QgdXNlIGluIHRoaXMgZnVuY3Rpb24pDQo+ID4gPiA+DQo+ID4gPiA+IEht
-LiBTdGlsbCB0aGVyZSBpbiBuZXh0LTIwMTEwMzA3LiBJcyB0aGlzIHBhdGNoIHdyb25nIG9yLi4/
-DQo+ID4gPiA+DQo+ID4gPg0KPiA+ID4gSmFtZXMsDQo+ID4gPg0KPiA+ID4gSGVyZSBpcyBteSBh
-Y2sgZm9yIHRoaXMgcGF0Y2guDQo+ID4NCj4gPiBPSywgc28gdGhlIHBhdGNoIGlzIGFjdHVhbGx5
-IHdyb25nIGJlY2F1c2UgYWRkaW5nICNpZmRlZnMgb24gbW9kdWxlcyBpbg0KPiA+IGZpbGVzIHJl
-YWxseSBpbXBlZGVzIHJlYWRhYmlsaXR5LiAgVGhlIGJ1ZyBpcyB1c2luZyBhIGRpcmVjdCBkZXJl
-ZiBvbg0KPiA+IG1vZHVsZSBzdGF0ZSBpbnN0ZWFkIG9mIG9uZSBvZiB0aGUgQVBJcyB3aGljaCB3
-b3JrIGluIHRoZSBub24tbW9kdWxhcg0KPiA+IGNhc2UsIG5hbWVseSB0cnlfbW9kdWxlX2dldCgp
-LiBUaGF0IG1lYW5zIHRoZSBvdGhlciB0d28gbmVlZCB0byBjb21lDQo+IG91dA0KPiA+IGFuZCBi
-ZSByZXdvcmtlZCAocGx1cyBhbGwgdGhlIG90aGVycyBpbiBmY29lKS4NCj4gPg0KPiA+IFJld29y
-a2VkIGxvb2tzIGxpa2UgaXQgbWlnaHQgYmUgYSBiaWdnZXIgaXRlbSB0aGFuIGJueDJmYy4gIElm
-IGFueSBvZg0KPiA+IHRob3NlIHRlc3RzIGlzIGV2ZXIgcmVsZXZhbnQsIGl0IG1lYW5zIHdlIGhh
-dmUgYSByYWNlIGluIHRoZQ0KPiA+IGZjb2VfdHJhbnNwb3J0IGJlY2F1c2UgaXQgc2hvdWxkbid0
-IGJlIGNhbGxpbmcgZnVuY3Rpb24gcG9pbnRlcnMgb24gYQ0KPiA+IGR5aW5nIG1vZHVsZSAodW5s
-ZXNzIGl0IHdhbnRzIHRvIHRyaWdnZXIgYW4gb29wcykuDQo+ID4NCj4gPiBTbywgd2h5IGFyZSB5
-b3UgdHJ5aW5nIHRvIGRvIHRoaXMgaW4gdGhlIGZpcnN0IHBsYWNlPw0KPiA+DQo+IEZpcnN0LCBm
-Y29lLmMgc3RhcnRlZCB3aXRoIHRoZXNlIGNoZWNrcy4gSGVyZSBpcyBhIGNvbW1lbnQgaW4gZmNv
-ZS5jIGF0DQo+IHRoZSBwb2ludCBvZiBvbmUgb2YgdGhlIGNoZWNrcy4NCj4gDQo+IC8qDQo+ICAq
-IE1ha2Ugc3VyZSB0aGUgbW9kdWxlIGhhcyBiZWVuIGluaXRpYWxpemVkLCBhbmQgaXMgbm90IGFi
-b3V0IHRvIGJlDQo+ICAqIHJlbW92ZWQuICBNb2R1bGUgcGFyYW10ZXIgc3lzZnMgZmlsZXMgYXJl
-IHdyaXRhYmxlIGJlZm9yZSB0aGUNCj4gICogbW9kdWxlX2luaXQgZnVuY3Rpb24gaXMgY2FsbGVk
-IGFuZCBhZnRlciBtb2R1bGVfZXhpdC4NCj4gICovDQo+IA0KPiBJIGRvbid0IGtub3cgdGhlIGNv
-cnJlY3Qgd2F5IHRvIGZpeCB0aGF0IHJhY2UgaXMsIGJ1dCB3ZSBtYXkgYmUgcGFzdCB0aGUNCj4g
-bmVlZCB0byBmaXggaXQgaW4gdGhlIExMRHMuDQo+IA0KPiBOZXh0LCB0aGUgZmNvZSB0cmFuc3Bv
-cnQgd2FzIGFkZGVkLiBTaW5jZSBpdCAobGliZmNvZS5rbykgaXMgbm93IGNhbGxpbmcNCj4gd2hh
-dCB1c2VkIHRvIGJlIHRoZSBmY29lLmtvIHN5c2ZzIGVudHJ5IHBvaW50cyBJIGRvbid0IHRoaW5r
-IHRoZSBwcm9ibGVtDQo+IGV4aXN0cyBpbiBmY29lLmMgb3IgaW4gYm54MmZjX2Zjb2UuYywgdGhl
-IHByb2JsZW0gc2hvdWxkIGJlIGluIHRoZSBmY29lDQo+IHRyYW5zcG9ydCBjb2RlLCBhcyBKYW1l
-cyBzdWdnZXN0ZWQuDQo+IA0KPiBUaGUgZmNvZSB0cmFuc3BvcnQgY29kZSBhbHJlYWR5IGhhcyB0
-aGVzZSBjaGVja3MgdG8gcHJvdGVjdCBhZ2FpbnN0DQo+IHN5c2ZzIGZpbGVzIGJlaW5nIHdyaXRh
-YmxlIGJlZm9yZSBtb2R1bGUgaW5pdGlhbGl6YXRpb24gaXMgY29tcGxldGUuIEl0DQo+IHVzZXMg
-dGhlIGZ0X211dGV4IHRvIHByb3RlY3QgdGhlIGxpc3Qgb2YgdHJhbnNwb3J0cyhMTERzKSBzbyB3
-aGVuDQo+ICdjcmVhdGUnIGlzIGNhbGxlZCBpdCBrbm93cyB0aGF0IHRoZSB0cmFuc3BvcnQgaXMg
-c3RpbGwgdGhlcmUgdG8gY2FsbA0KPiBkb3duIHRvLiBJdCBob2xkcyB0aGUgZnRfbXV0ZXggdW50
-aWwgdGhlIExMRCdzICdjcmVhdGUnIHJvdXRpbmUgcmV0dXJucy4NCj4gVGhlIHRyYW5zcG9ydHMo
-TExEcykgc2hvdWxkIGJlIGRldGFjaGluZyB0aGVtc2VsdmVzIGZyb20gdGhlIGZjb2UNCj4gdHJh
-bnNwb3J0IGxheWVyIGJlZm9yZSB0aGV5IGV4aXQuIGZjb2VfdHJhbnNwb3J0X2RldGFjaCB3aWxs
-IHRyeSB0bw0KPiBhY3F1aXJlIHRoZSBmdF9tdXRleCBhbmQgYmxvY2sgdW50aWwgdGhlICdjcmVh
-dGUnIGNhbGwgcmV0dXJucyBhbmQNCj4gcmVsZWFzZXMgdGhlIGZ0X211dGV4LiBJIHRoaW5rIHRo
-aXMgZW5zdXJlcyB0aGF0IHRoZSB0cmFuc3BvcnQoTExEKSB3aWxsDQo+IGJlIGZpbmUgd2hlbiB0
-aGUgZmNvZSB0cmFuc3BvcnQgY2FsbHMgaXQuDQo+IA0KPiBNeSBmZWVsaW5nIGlzIHRoYXQgdGhl
-c2UgY2hlY2tzIGFyZSBzdGlsbCBuZWVkZWQgaW4gdGhlIGZjb2UgdHJhbnNwb3J0LA0KPiBidXQg
-bm90IGluIHRoZSBMTERzLiBJZiBzb21lb25lIGNhbiBzdWdnZXN0IGEgYmV0dGVyIHdheSB0byBw
-cm90ZWN0DQo+IGFnYWluc3Qgd3JpdGFibGUgc3lzZnMgZmlsZXMgd2hlbiB0aGUgbW9kdWxlIGhh
-c24ndCBmaW5pc2hlZA0KPiBpbml0aWFsaXppbmcsIHdlIHNob3VsZCBkbyB0aGF0IGluc3RlYWQg
-b2YgdGhlIGlmZGVmcy4NCj4gDQo+IEhvcGUgdGhpcyBoZWxwcywNCj4gDQo+IC8vUm9iDQo+IA0K
-PiBGWUk6IG1uYyBhc2tlZCBhYm91dCB0aGlzIGNvZGUgYW5kIHRoZSB0cnlsb2NrIGNvZGUgaW4g
-ZmNvZSBhbmQgbGliZmNvZS4NCj4gSSBoYXZlIHBhdGNoZXMgaW4gb3VyIGludGVybmFsIHZhbGlk
-YXRpb24gdG8gcmVtb3ZlIHRoZSB0cnlsb2NrIHVzYWdlLA0KPiBidXQgSSBkb24ndCBoYXZlIHBh
-dGNoZXMgdG8gZml4IHRoZSBtb2R1bGUgc3RhdGUgY2hlY2tpbmcuDQo+IA0KWWVhaCwgdGhpcyBs
-b2dpYyB3YXMgZnJvbSBvcmlnaW5hbCBmaXhpbmcgcmFjZSBjb25kaXRpb24gaW4gZmNvZS5rbywg
-bm90ZQ0KdGhhdCB3ZSBkbyBuZWVkIGNoZWNrIHRoZSBNT0RVTEVfU1RBVEVfTElWRSwgdHJ5X21v
-ZHVsZV9nZXQoKSBpcyBub3Qgd2hhdA0Kd2Ugd2FudGVkLCBwbHVzIG1vZHVsZV9pc19saXZlICgp
-IGNoZWNrcyBpZiBpdCBpcyAhR09JTkcuIEFueXdheSwgSSBkb24ndA0KdGhpbmsgdGhpcyBpcyBu
-ZWVkZWQgYW55IG1vcmUgZm9yIGluZGl2aWR1YWwgZmNvZSB0cmFuc3BvcnQgZHJpdmVyLCBlLmcu
-LA0KZmNvZS5rbyBvciBibngyZmMsIGFzIHRoZSByYWNlIGlzIG5vdyBmb3Igc3lzZnMgb2YgbGli
-ZmNvZS4NCg0KSSB3aWxsIHNlbmQgb3V0IGEgcGF0Y2ggdG8gY2xlYW4gdXAgdGhlIGZjb2UuYyBm
-b3IgdGhpcy4NCg0KVGhhbmtzLA0KeWkNCg0KDQoNCg0KDQoNCj4gLS0NCj4gVG8gdW5zdWJzY3Jp
-YmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LXNjc2ki
-IGluDQo+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3Jn
-DQo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jk
-b21vLWluZm8uaHRtbA0K
+On Tue, 08 Mar 2011 18:53 +0100, "Sedat Dilek" <sedat.dilek@googlemail.=
+com> wrote:
+> On Tue, Mar 8, 2011 at 6:27 PM, Alexander van Heukelum
+> <heukelum@fastmail.fm> wrote:
+> > On Tue, 08 Mar 2011 16:42 +0100, "Sedat Dilek" <sedat.dilek@googlem=
+ail.com> wrote:
+> >> On 3/8/11, Sedat Dilek <sedat.dilek@googlemail.com> wrote:
+> >> > On 3/8/11, H.J. Lu <hjl.tools@gmail.com> wrote:
+> >> >> On Tue, Mar 8, 2011 at 2:44 AM, Sedat Dilek <sedat.dilek@google=
+mail.com>
+> >> >> wrote:
+> >> >>> Hi,
+> >> >>>
+> >> >>> my build of linux-next (next-20110308, the same with the one f=
+rom
+> >> >>> yesterday) is broken.
+> >> >>> (I translated the German output.)
+> >> >>>
+> >> >>> [ build.log ]
+> >> >>> =C2=A0AS =C2=A0 =C2=A0 =C2=A0arch/x86/kernel/entry_32.o
+> >> >>> /home/sd/src/linux-2.6/linux-2.6.38-rc7/debian/build/source_i3=
+86_none/arch/x86/kernel/entry_32.S:
+> >> >>> Assembler messages:
+> >> >>> /home/sd/src/linux-2.6/linux-2.6.38-rc7/debian/build/source_i3=
+86_none/arch/x86/kernel/entry_32.S:1421:
+> >> >>> Error: .size expression does not evaluate to a constant
+> >> >>> make[6]: *** [arch/x86/kernel/entry_32.o] Fehler 1 (Error 1)
+> >> >>> make[5]: *** [arch/x86/kernel] Fehler 2 (Error 2)
+> >> >>> make[4]: *** [arch/x86] Fehler 2 (Error 2)
+> >> >>> make[4]: *** Warte auf noch nicht beendete Prozesse... (Waitin=
+g for
+> >> >>> unfinished jobs...)
+> >> >>>
+> >> >>
+> >> >> This is a kernel bug. =C2=A0Please use the latest binutils from=
+ CVS.
+> >> >> It will tell you which symbol causes this.
+> >> >>
+> >> >>
+> >> >> --
+> >> >> H.J.
+> >> >>
+> >> >
+> >> > Yeah, I have cherry-picked these two upstream commits before you=
+ have
+> >> > mentionned it...
+> >> >
+> >> > 0001-Mention-symbol-name-in-non-constant-.size-expression.patch
+> >> > =C2=A0 =C2=A0 =C2=A0 =C2=A0(Cherry-picked from commit b9521fc0be=
+7945fc842ce1197e241a023378125d)
+> >> > 0002-Revert-the-last-change-on-gas-elf-bad-size.err.patch
+> >> > =C2=A0 =C2=A0 =C2=A0 =C2=A0(Cherry-picked from commit cbd141bb69=
+f791de7ea1581abe7afb34f0c61288)
+> >> >
+> >> > ... and have built with them a new binutils Debian package.
+> >> >
+> >> > The error looks now like this (sorry for the German output):
+> >> > ...
+> >> > =C2=A0 AS =C2=A0 =C2=A0 =C2=A0arch/x86/kernel/entry_32.o
+> >> > /home/sd/src/linux-2.6/linux-2.6.38-rc7/debian/build/source_i386=
+_none/arch/x86/kernel/entry_32.S:
+> >> > Assembler messages:
+> >> > /home/sd/src/linux-2.6/linux-2.6.38-rc7/debian/build/source_i386=
+_none/arch/x86/kernel/entry_32.S:1421:
+> >> > Error: .size expression with symbol `apf_page_fault' does not ev=
+aluate
+> >> > to a constant
+> >> > make[6]: *** [arch/x86/kernel/entry_32.o] Fehler 1
+> >> > make[5]: *** [arch/x86/kernel] Fehler 2
+> >> > make[5]: *** Warte auf noch nicht beendete Prozesse...
+> >> >
+> >> > Anyway, before more riddling around it would be very helpful to =
+have a
+> >> > clear pointer if there is a fix around... That building, testing=
+ and
+> >> > installing took me now several hours.
+> >> > And... yeah, backports to 2.21-branch appreciated.
+> >> >
+> >> > - Sedat -
+> >> >
+> >>
+> >> After a quick look into the source, it seems attached patch fixes =
+the
+> >> issue.
+> >> Is that OK?
+> >
+> > Hi Sedat,
+> >
+> > The patch ( https://lkml.org/lkml/2011/3/8/203 ) is ok, feel free t=
+o add
+> > Acked-by: Alexander van Heukelum <heukelum@fastmail.fm>
+> >
+> > Better description might be something like:
+> >
+> > i386: Fix mismatched ENTRY/END pair.
+> >
+> > Under CONFIG_KVM_GUEST=3Dy, the following part of entry_32.S causes=
+ a compile failure.
+> >
+> > 1409 #ifdef CONFIG_KVM_GUEST
+> > 1410 ENTRY(async_page_fault)
+> > 1411 =C2=A0 =C2=A0 =C2=A0 =C2=A0 RING0_EC_FRAME
+> > 1412 =C2=A0 =C2=A0 =C2=A0 =C2=A0 pushl $do_async_page_fault
+> > 1413 =C2=A0 =C2=A0 =C2=A0 =C2=A0 CFI_ADJUST_CFA_OFFSET 4
+> > 1414 =C2=A0 =C2=A0 =C2=A0 =C2=A0 jmp error_code
+> > 1415 =C2=A0 =C2=A0 =C2=A0 =C2=A0 CFI_ENDPROC
+> > 1416 END(apf_page_fault)
+> > 1417 #endif
+> >
+> > Replace apf_page_fault with async_page_fault, as intended.
+> >
+> > Greetings,
+> > =C2=A0 =C2=A0Alexander
+> >
+> >> - Sedat -
+> >>
+> >> Email had 1 attachment:
+> >> + 0001-x86-Fix-build-failure-with-binutils-as-from-upstream.patch
+> >> =C2=A0 1k (text/x-patch)
+> >
+>=20
+> As I said, quick view on the code, quick fix :-).
+>=20
+> Your description is definitive more meaningful.
+> I can refresh my patch and add your ACK.
+>=20
+> Anyway, I continued after dinner and with the above patch I ran into
+> the next problem:
+> [ build.log ]
+> ...
+>   AS      arch/x86/kernel/acpi/wakeup_rm.o
+> /home/sd/src/linux-2.6/linux-2.6.38-rc7/debian/build/source_i386_none=
+/arch/x86/kernel/acpi/wakeup_rm.S:
+> Assembler messages:
+> /home/sd/src/linux-2.6/linux-2.6.38-rc7/debian/build/source_i386_none=
+/arch/x86/kernel/acpi/wakeup_rm.S:12:
+> Error: .size expression with symbol `wakeup_code_start' does not
+> evaluate to a constant
+
+No idea what's wrong there. But my version of wakeup_rm.S has only 10 l=
+ines...
+
+     1  /*
+     2   * Wrapper script for the realmode binary as a transport object
+     3   * before copying to low memory.
+     4   */
+     5          .section ".rodata","a"
+     6          .globl  wakeup_code_start, wakeup_code_end
+     7  wakeup_code_start:
+     8          .incbin "arch/x86/kernel/acpi/realmode/wakeup.bin"
+     9  wakeup_code_end:
+    10          .size   wakeup_code_start, .-wakeup_code_start
+
+And it compiles just fine.
+The fix for entry_32.S is valid, though, and necessary for mainline.
+
+Greetings,
+    Alexander
+
+> I am unsure how to fix that and open for feedback.
+>=20
+> - Sedat -
+>=20
