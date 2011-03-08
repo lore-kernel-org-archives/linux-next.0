@@ -1,52 +1,56 @@
-From: James Bottomley <James.Bottomley@suse.de>
-Subject: Re: [PATCH] [SCSI] bnx2fc: fix build error when !CONFIG_MODULES
-Date: Mon, 07 Mar 2011 18:18:17 -0600
-Message-ID: <1299543497.15955.108.camel@mulgrave.site>
-References: <20110302182740.e4dfd79f.sfr@canb.auug.org.au>
-	 <1299103803-32594-1-git-send-email-mk@lab.zgora.pl>
-	 <20110307201610.GA9032@mako-laptop>
-	 <1299542075.5232.5.camel@LTSJC-BPRAKASH.corp.ad.broadcom.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the nfs tree
+Date: Tue, 8 Mar 2011 12:07:53 +1100
+Message-ID: <20110308120753.8adb3ff6.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor.suse.de ([195.135.220.2]:44355 "EHLO mx1.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750754Ab1CHAS0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 7 Mar 2011 19:18:26 -0500
-In-Reply-To: <1299542075.5232.5.camel@LTSJC-BPRAKASH.corp.ad.broadcom.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Bhanu Gollapudi <bprakash@broadcom.com>
-Cc: Mariusz Kozlowski <mk@lab.zgora.pl>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__8_Mar_2011_12_07_53_+1100_Kv6gVELRy4XmCOHp"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frank Filz <ffilzlnx@us.ibm.com>, Jeff Layton <jlayton@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 2011-03-07 at 15:54 -0800, Bhanu Gollapudi wrote:
-> On Mon, 2011-03-07 at 12:16 -0800, Mariusz Kozlowski wrote:=20
-> > On Wed, Mar 02, 2011 at 11:10:03PM +0100, Mariusz Kozlowski wrote:
-> > > drivers/scsi/bnx2fc/bnx2fc_fcoe.c:1815: error: dereferencing poin=
-ter to incomplete type
-> > > drivers/scsi/bnx2fc/bnx2fc_fcoe.c:1815: error: =E2=80=98MODULE_ST=
-ATE_LIVE=E2=80=99 undeclared (first use in this function)
-> >=20
-> > Hm. Still there in next-20110307. Is this patch wrong or..?
-> >=20
->=20
-> James,
->=20
-> Here is my ack for this patch.
+--Signature=_Tue__8_Mar_2011_12_07_53_+1100_Kv6gVELRy4XmCOHp
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-OK, so the patch is actually wrong because adding #ifdefs on modules in
-files really impedes readability.  The bug is using a direct deref on
-module state instead of one of the APIs which work in the non-modular
-case, namely try_module_get(). That means the other two need to come ou=
-t
-and be reworked (plus all the others in fcoe).
+Hi Trond,
 
-Reworked looks like it might be a bigger item than bnx2fc.  If any of
-those tests is ever relevant, it means we have a race in the
-fcoe_transport because it shouldn't be calling function pointers on a
-dying module (unless it wants to trigger an oops).
+After merging the nfs tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-So, why are you trying to do this in the first place?
+fs/nfs/inode.c: In function 'nfs_compat_user_ino64':
+fs/nfs/inode.c:93: error: 'compat_ulong_t' undeclared (first use in this fu=
+nction)
+fs/nfs/inode.c:93: error: expected ';' before 'ino'
+fs/nfs/inode.c:100: error: 'ino' undeclared (first use in this function)
 
-James
+Caused by commit 5fa1ca22302da56ffa568e847100e80be90cc602 ("(try3-resend)
+Fix nfs_compat_user_ino64 so it doesn't cause problems if bit 31 or 63
+are set in fileid").
+
+I have used the nfs tree from next-20110307 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__8_Mar_2011_12_07_53_+1100_Kv6gVELRy4XmCOHp
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNdYFpAAoJEDMEi1NhKgbsqkYH/1zoeijluaTx+7nn/2NsS63D
+BqaxW4MezzwXedcGj1xi7PxGNAkojCBe58PXvXk05OXw0KrE1RW/yFyqW3o7M8PI
+aSRC1GU+bW6fGz8LbYdJDHhgjo0b5yqDI5tYAeyz6srylt76XvdXmwS2jesE17Gb
+AwONZwtuXVEzgXZL8KJBIzPrPBwuEaREp7U3T3I5EQ32iGk9RW05xbCm6FrjmP7G
+6AYkOpfzpi5mjErk6natecEGKsTLcQHpMcvVBKG+YPQx6LpgqGXycgbbmhr922bO
+XO7DuvJT+DXAB5S+w9/TV6bKn/qz0OWCi6Fz/ePSOLYCVqoS7FIRh7KLsXFTER4=
+=78rC
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__8_Mar_2011_12_07_53_+1100_Kv6gVELRy4XmCOHp--
