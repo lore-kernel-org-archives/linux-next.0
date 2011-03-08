@@ -1,57 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net tree with the net-current tree
-Date: Tue, 8 Mar 2011 14:09:57 +1100
-Message-ID: <20110308140957.8a894312.sfr@canb.auug.org.au>
+From: Andres Salomon <dilinger@queued.net>
+Subject: Re: [PATCH] ARM: mx51_efika: update platform data for new mfd
+ changes
+Date: Tue, 8 Mar 2011 05:32:26 +0000
+Message-ID: <20110308053226.7300e65d@debxo>
+References: <20110304080653.3f2c3f19@debxo>
+	<4D710FF9.6040305@ru.mvista.com>
+	<20110304083822.0f40d120@debxo>
+	<4D713670.70506@ru.mvista.com>
+	<20110307144700.GF1829@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:49150 "EHLO smtps.tip.net.au"
+Received: from LUNGE.MIT.EDU ([18.54.1.69]:48154 "EHLO lunge.queued.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753933Ab1CHDKC (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 7 Mar 2011 22:10:02 -0500
+	id S1751281Ab1CHFbr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 8 Mar 2011 00:31:47 -0500
+In-Reply-To: <20110307144700.GF1829@sirena.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Kravkov <dmitry@broadcom.com>, Eilon Greenstein <eilong@broadcom.com>, Vladislav Zolotarov <vladz@broadcom.com>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Sergei Shtylyov <sshtylyov@mvista.com>, Samuel Ortiz <sameo@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Amit Kucheria <amit.kucheria@canonical.com>, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Sascha Hauer <kernel@pengutronix.de>, Uwe Kleine-K?nig <u.kleine-koenig@pengutronix.de>, linux-arm-kernel@lists.infradead.org
 
-Hi all,
+On Mon, 7 Mar 2011 14:47:00 +0000
+Mark Brown <broonie@opensource.wolfsonmicro.com> wrote:
 
-Today's linux-next merge of the net tree got a conflict in
-drivers/net/bnx2x/bnx2x_cmn.c between commit
-e3835b99333eb3ac7222f6fc0af5cae46074ac49 ("bnx2x: (NPAR) prevent HW
-access in D3 state") from the net-current tree and commit
-6e30dd4e3935ddb4e7dd27d5be7a6e5504e64a27 (bnx2x: Proper
-netdev->ndo_set_rx_mode() implementation"") from the net tree.
+> On Fri, Mar 04, 2011 at 09:58:56PM +0300, Sergei Shtylyov wrote:
+> > Andres Salomon wrote:
+> 
+> >>>> MFD changes in c738892f cause the mc13xxx_platform_data struct
+> 
+> >>>     Linus asks to also specify the commit summary in parens.
+> 
+> >> Also, what?  If there are changes to how patches should be
+> >> submitted, please provide a reference
+> >> (Documentation/SubmittingPatches should be updated, as well).
+> 
+> >    I have no time to rummage in the mail archives, sorry.
+> 
+> There's been multiple discussions of this.  The issue is that commit
+> IDs only mean something in specific trees and go bad if someone
+> rebases, and they aren't legibile by humans (so even if the commit is
+> in something like Linus' tree the reader still needs a git repository
+> to figure out what changes are being talked about).
 
-Just overlapping additions (I think).  I have fixed it up (see below) and
-can carry the fix as necessary.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc drivers/net/bnx2x/bnx2x_cmn.c
-index a71b329,b01b622..0000000
---- a/drivers/net/bnx2x/bnx2x_cmn.c
-+++ b/drivers/net/bnx2x/bnx2x_cmn.c
-@@@ -1481,11 -1489,15 +1506,20 @@@ int bnx2x_nic_load(struct bnx2x *bp, in
-  
-  	bnx2x_set_eth_mac(bp, 1);
-  
- +	if (bp->pending_max) {
- +		bnx2x_update_max_mf_config(bp, bp->pending_max);
- +		bp->pending_max = 0;
- +	}
- +
-+ 	/* Clear MC configuration */
-+ 	if (CHIP_IS_E1(bp))
-+ 		bnx2x_invalidate_e1_mc_list(bp);
-+ 	else
-+ 		bnx2x_invalidate_e1h_mc_list(bp);
-+ 
-+ 	/* Clear UC lists configuration */
-+ 	bnx2x_invalidate_uc_list(bp);
-+ 
-  	if (bp->port.pmf)
-  		bnx2x_initial_phy_init(bp, load_mode);
-  
+Ah, thanks, that makes sense.  Sergei's original statement was unclear
+("...instead of just the commit ID" would've helped).
