@@ -1,47 +1,72 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm tree with Linus' tree
-Date: Wed, 9 Mar 2011 14:41:23 +1100
-Message-ID: <20110309144123.bb46f902.sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build failure after merge of the net tree
+Date: Tue, 08 Mar 2011 22:45:51 -0800 (PST)
+Message-ID: <20110308.224551.226764517.davem@davemloft.net>
+References: <20110309134234.32cd09b7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:48374
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752829Ab1CIGpO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 9 Mar 2011 01:45:14 -0500
+In-Reply-To: <20110309134234.32cd09b7.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, emil.s.tantilov@intel.com, stephen.s.ko@intel.com, jeffrey.t.kirsher@intel.com
 
-Hi Dave,
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 9 Mar 2011 13:42:34 +1100
 
-Today's linux-next merge of the drm tree got a conflict in
-drivers/gpu/drm/nouveau/nouveau_mem.c between commit
-ef1b287169cd3d1e428c8ed8222e0bbf733d5dbb ("drm/nouveau: fix regression
-causing ttm to not be able to evict vram") from Linus' tree and commit
-8f7286f8e4e80f7b868ba3d117ae900f0d207cbe ("drm/nv50: support for
-compression") from the drm tree.
+> Hi all,
+> 
+> After merging the net tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+> 
+> drivers/net/ixgbe/ixgbe_mbx.c: In function 'ixgbe_init_mbx_params_pf':
+> drivers/net/ixgbe/ixgbe_mbx.c:456: error: 'struct ixgbe_mbx_info' has no member named 'udelay'
+> 
+> Caused by commit d7c8a29fc8bd20ba45ec2f52577ed04a988a9500 ("ixgbe:
+> improve logic in ixgbe_init_mbx_params_pf").
+> 
+> I am wondering if that was ever built ...
+> 
+> I have used the net tree from next-20110308 for today.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Probably two minutes after you pulled this a fix went in:
 
-diff --cc drivers/gpu/drm/nouveau/nouveau_mem.c
-index b0fb9bd,63b9040..0000000
---- a/drivers/gpu/drm/nouveau/nouveau_mem.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_mem.c
-@@@ -724,11 -740,9 +740,11 @@@ nouveau_vram_manager_new(struct ttm_mem
-  
-  	ret = vram->get(dev, mem->num_pages << PAGE_SHIFT,
-  			mem->page_alignment << PAGE_SHIFT, size_nc,
-- 			(nvbo->tile_flags >> 8) & 0xff, &node);
-+ 			(nvbo->tile_flags >> 8) & 0x3ff, &node);
- -	if (ret)
- -		return ret;
- +	if (ret) {
- +		mem->mm_node = NULL;
- +		return (ret == -ENOSPC) ? 0 : ret;
- +	}
-  
-  	node->page_shift = 12;
-  	if (nvbo->vma.node)
+commit 5217e8794619ac0a29151f29be20c7d6188303ba
+Author: Andy Gospodarek <andy@greyhouse.net>
+Date:   Tue Mar 8 14:26:00 2011 -0800
+
+    ixgbe: fix compile failure in ixgbe_init_mbx_params_pf
+    
+    This commit:
+    
+        commit d7c8a29fc8bd20ba45ec2f52577ed04a988a9500
+        Author: Emil Tantilov <emil.s.tantilov@intel.com>
+        Date:   Thu Mar 3 09:25:02 2011 +0000
+    
+            ixgbe: improve logic in ixgbe_init_mbx_params_pf
+    
+    incorrectly added a line that accessed mbx->udelay.  I'm sure the intent
+    was mbx->usec_delay.  This patch fixes the compilation error.
+    
+    Signed-off-by: Andy Gospodarek <andy@greyhouse.net>
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+
+diff --git a/drivers/net/ixgbe/ixgbe_mbx.c b/drivers/net/ixgbe/ixgbe_mbx.c
+index 3cf8aec..c7ed82e 100644
+--- a/drivers/net/ixgbe/ixgbe_mbx.c
++++ b/drivers/net/ixgbe/ixgbe_mbx.c
+@@ -453,7 +453,7 @@ void ixgbe_init_mbx_params_pf(struct ixgbe_hw *hw)
+ 		return;
+ 
+ 	mbx->timeout = 0;
+-	mbx->udelay = 0;
++	mbx->usec_delay = 0;
+ 
+ 	mbx->stats.msgs_tx = 0;
+ 	mbx->stats.msgs_rx = 0;
