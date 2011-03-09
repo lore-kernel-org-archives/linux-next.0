@@ -1,79 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the net tree with the net-current
- tree
-Date: Wed, 9 Mar 2011 11:11:13 +1100
-Message-ID: <20110309111113.883972ba.sfr@canb.auug.org.au>
-References: <20110308140957.8a894312.sfr@canb.auug.org.au>
-	<1299577473.17233.41.camel@lb-tlvb-dmitry>
+Subject: linux-next: build failure after merge of the net tree
+Date: Wed, 9 Mar 2011 13:42:34 +1100
+Message-ID: <20110309134234.32cd09b7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Wed__9_Mar_2011_11_11_13_+1100_+WUkRSi=TV3KgM.8"
+ boundary="Signature=_Wed__9_Mar_2011_13_42_34_+1100_q_6aJhYADQy8Noqn"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46964 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:57658 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756548Ab1CIAL0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 8 Mar 2011 19:11:26 -0500
-In-Reply-To: <1299577473.17233.41.camel@lb-tlvb-dmitry>
+	id S932073Ab1CICml (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 8 Mar 2011 21:42:41 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dmitry Kravkov <dmitry@broadcom.com>
-Cc: David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Eilon Greenstein <eilong@broadcom.com>, Vladislav Zolotarov <vladz@broadcom.com>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Emil Tantilov <emil.s.tantilov@intel.com>, Stephen Ko <stephen.s.ko@intel.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 
---Signature=_Wed__9_Mar_2011_11_11_13_+1100_+WUkRSi=TV3KgM.8
+--Signature=_Wed__9_Mar_2011_13_42_34_+1100_q_6aJhYADQy8Noqn
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dmitry,
+Hi all,
 
-On Tue, 8 Mar 2011 11:44:33 +0200 "Dmitry Kravkov" <dmitry@broadcom.com> wr=
-ote:
->
-> You are correct it's just an addition and it does not really matter
-> where to do this. But the merge pushed new code in the middle
-> of MAC configuration between MAC and multicast list.
-> It's clearer to put it at the end of MAC/ML/UL block:
-> ---
->  drivers/net/bnx2x/bnx2x_cmn.c |    5 +++++
->  1 files changed, 5 insertions(+), 0 deletions(-)
->=20
-> diff --git a/drivers/net/bnx2x/bnx2x_cmn.c b/drivers/net/bnx2x/bnx2x_cmn.c
-> index b01b622..9e37675 100644
-> --- a/drivers/net/bnx2x/bnx2x_cmn.c
-> +++ b/drivers/net/bnx2x/bnx2x_cmn.c
-> @@ -1498,6 +1498,11 @@ int bnx2x_nic_load(struct bnx2x *bp, int load_mode)
->  	/* Clear UC lists configuration */
->  	bnx2x_invalidate_uc_list(bp);
-> =20
-> +	if (bp->pending_max) {
-> +		bnx2x_update_max_mf_config(bp, bp->pending_max);
-> +		bp->pending_max =3D 0;
-> +	}
-> +
->  	if (bp->port.pmf)
->  		bnx2x_initial_phy_init(bp, load_mode);
+After merging the net tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-OK, thanks.  I have changed the conflict resolution to do that.
+drivers/net/ixgbe/ixgbe_mbx.c: In function 'ixgbe_init_mbx_params_pf':
+drivers/net/ixgbe/ixgbe_mbx.c:456: error: 'struct ixgbe_mbx_info' has no me=
+mber named 'udelay'
 
+Caused by commit d7c8a29fc8bd20ba45ec2f52577ed04a988a9500 ("ixgbe:
+improve logic in ixgbe_init_mbx_params_pf").
+
+I am wondering if that was ever built ...
+
+I have used the net tree from next-20110308 for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__9_Mar_2011_11_11_13_+1100_+WUkRSi=TV3KgM.8
+--Signature=_Wed__9_Mar_2011_13_42_34_+1100_q_6aJhYADQy8Noqn
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNdsWhAAoJEDMEi1NhKgbs59YH/ifwsP88QypKpEWACWH2Ca8N
-E0cT0cxrM6dHRcAvV0WhJbDu3PUzgcPjN9/Fum3xGkm00XfB4rgSGEsPfYh3/phX
-7wdpN70O0dG+WEs3ZioFY8BGYJ4pKyDtmVw1J4d6wkdr2lVRvriUqkabbHHl+3un
-LM5a1Gqs+tKlf8UjSftNGkuU8xMYuKXoVIwZwNAqpOMoxIRy/6f2gJkaAKT/tlmu
-Bksig3NMTJj8ohsUHk8hMNHD/OswYK/spOEjerGY8QKLfCJZM1oQ+XTXDuRIIl0O
-XDS3ZRsF1TC1K4PrqheRF1loQwGPtj08dZlVtDMiHHJgmmvjuZAvzqI6Uwba+78=
-=OasS
+iQEcBAEBAgAGBQJNdukaAAoJEDMEi1NhKgbsr+kIAJQ7ZguNcXxFFkWSh8s6gl97
+8tSqQWUKb+4s2otmNCFhxS2WcLsdwVZu3lcGZ2H3qBYw5Z8z8z+0nPQbN4q6q2Vj
+WVcdUxyIQATkIyHIKTaoD30Oa7cfxoLkUht7Dbfle8C4g+EGczORU+egYo/1klQw
+Y1Z6VnsJ13qEnHUbWCHlLihIUyxShUNLYshP1XIToItD4sRzFqM0exSLJu0GsvFB
+qlVlqpiEwMhnQV1BtsDfcITTSMAkASbdiii9V0a2TKHoc/Id2m8rp7kfTVRzFz03
+Uvn233opF4GO6//RDmdV8aUw1oFmw3zBQCXobrgW7CQ3qPfSG8WkIKNuh3o9G0c=
+=ZqgV
 -----END PGP SIGNATURE-----
 
---Signature=_Wed__9_Mar_2011_11_11_13_+1100_+WUkRSi=TV3KgM.8--
+--Signature=_Wed__9_Mar_2011_13_42_34_+1100_q_6aJhYADQy8Noqn--
