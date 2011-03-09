@@ -1,365 +1,273 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for March 9
-Date: Wed, 9 Mar 2011 18:08:45 +1100
-Message-ID: <20110309180845.52a9c130.sfr@canb.auug.org.au>
+From: Ingo Molnar <mingo@elte.hu>
+Subject: Re: linux-next: Tree for March 8 (BROKEN:
+ arch/x86/kernel/entry_32.S? Debian's binutils/as?)
+Date: Wed, 9 Mar 2011 09:51:50 +0100
+Message-ID: <20110309085150.GC21294@elte.hu>
+References: <AANLkTin2H9=NWp5G6N6_e=bxBTh2eS1dbUxOjT6xX98C@mail.gmail.com>
+ <AANLkTik_Cb7tXheZNOBjqnoQc4MSL1LnDtFGFP5mqZRi@mail.gmail.com>
+ <AANLkTinBv__n7k3Z=EJWv1fdQScyB7AJV0SsYJE0mCwQ@mail.gmail.com>
+ <AANLkTiknsT1iQzUQ_oBiOORaqWBFyk2BaLq_xu9C5E_G@mail.gmail.com>
+ <1299605269.29313.1427511237@webmail.messagingengine.com>
+ <AANLkTi=6YstJxad41knR4Q9WN3wYKikPv-g1i3kg3HS1@mail.gmail.com>
+ <1299615939.25628.1427572905@webmail.messagingengine.com>
+ <AANLkTimBMP1jiuEEUwmKKVNZcZnrkFxFA_YBcLmkEFJM@mail.gmail.com>
+ <AANLkTikpMAXfG5aNWo8x7pKKppaQiE-U8qjFaG0B2azV@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__9_Mar_2011_18_08_45_+1100_Byr8d5giXh8vDadM"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43306 "EHLO smtps.tip.net.au"
+Received: from mx3.mail.elte.hu ([157.181.1.138]:50920 "EHLO mx3.mail.elte.hu"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751050Ab1CIHI6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 9 Mar 2011 02:08:58 -0500
+	id S1752874Ab1CIIwF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 9 Mar 2011 03:52:05 -0500
+Content-Disposition: inline
+In-Reply-To: <AANLkTikpMAXfG5aNWo8x7pKKppaQiE-U8qjFaG0B2azV@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: "H.J. Lu" <hjl.tools@gmail.com>
+Cc: sedat.dilek@gmail.com, Sedat Dilek <sedat.dilek@googlemail.com>, Alexander van Heukelum <heukelum@fastmail.fm>, linux-next <linux-next@vger.kernel.org>, psomas@cslab.ece.ntua.gr, Jan Beulich <JBeulich@novell.com>, "H. Peter Anvin" <hpa@zytor.com>, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
 
---Signature=_Wed__9_Mar_2011_18_08_45_+1100_Byr8d5giXh8vDadM
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+* H.J. Lu <hjl.tools@gmail.com> wrote:
 
-Changes since 20110308:
+> On Tue, Mar 8, 2011 at 12:33 PM, Sedat Dilek <sedat.dilek@googlemail.=
+com> wrote:
+> > On Tue, Mar 8, 2011 at 9:25 PM, Alexander van Heukelum
+> > <heukelum@fastmail.fm> wrote:
+> >> On Tue, 08 Mar 2011 18:53 +0100, "Sedat Dilek" <sedat.dilek@google=
+mail.com> wrote:
+> >>> On Tue, Mar 8, 2011 at 6:27 PM, Alexander van Heukelum
+> >>> <heukelum@fastmail.fm> wrote:
+> >>> > On Tue, 08 Mar 2011 16:42 +0100, "Sedat Dilek" <sedat.dilek@goo=
+glemail.com> wrote:
+> >>> >> On 3/8/11, Sedat Dilek <sedat.dilek@googlemail.com> wrote:
+> >>> >> > On 3/8/11, H.J. Lu <hjl.tools@gmail.com> wrote:
+> >>> >> >> On Tue, Mar 8, 2011 at 2:44 AM, Sedat Dilek <sedat.dilek@go=
+oglemail.com>
+> >>> >> >> wrote:
+> >>> >> >>> Hi,
+> >>> >> >>>
+> >>> >> >>> my build of linux-next (next-20110308, the same with the o=
+ne from
+> >>> >> >>> yesterday) is broken.
+> >>> >> >>> (I translated the German output.)
+> >>> >> >>>
+> >>> >> >>> [ build.log ]
+> >>> >> >>> =A0AS =A0 =A0 =A0arch/x86/kernel/entry_32.o
+> >>> >> >>> /home/sd/src/linux-2.6/linux-2.6.38-rc7/debian/build/sourc=
+e_i386_none/arch/x86/kernel/entry_32.S:
+> >>> >> >>> Assembler messages:
+> >>> >> >>> /home/sd/src/linux-2.6/linux-2.6.38-rc7/debian/build/sourc=
+e_i386_none/arch/x86/kernel/entry_32.S:1421:
+> >>> >> >>> Error: .size expression does not evaluate to a constant
+> >>> >> >>> make[6]: *** [arch/x86/kernel/entry_32.o] Fehler 1 (Error =
+1)
+> >>> >> >>> make[5]: *** [arch/x86/kernel] Fehler 2 (Error 2)
+> >>> >> >>> make[4]: *** [arch/x86] Fehler 2 (Error 2)
+> >>> >> >>> make[4]: *** Warte auf noch nicht beendete Prozesse... (Wa=
+iting for
+> >>> >> >>> unfinished jobs...)
+> >>> >> >>>
+> >>> >> >>
+> >>> >> >> This is a kernel bug. =A0Please use the latest binutils fro=
+m CVS.
+> >>> >> >> It will tell you which symbol causes this.
+> >>> >> >>
+> >>> >> >>
+> >>> >> >> --
+> >>> >> >> H.J.
+> >>> >> >>
+> >>> >> >
+> >>> >> > Yeah, I have cherry-picked these two upstream commits before=
+ you have
+> >>> >> > mentionned it...
+> >>> >> >
+> >>> >> > 0001-Mention-symbol-name-in-non-constant-.size-expression.pa=
+tch
+> >>> >> > =A0 =A0 =A0 =A0(Cherry-picked from commit b9521fc0be7945fc84=
+2ce1197e241a023378125d)
+> >>> >> > 0002-Revert-the-last-change-on-gas-elf-bad-size.err.patch
+> >>> >> > =A0 =A0 =A0 =A0(Cherry-picked from commit cbd141bb69f791de7e=
+a1581abe7afb34f0c61288)
+> >>> >> >
+> >>> >> > ... and have built with them a new binutils Debian package.
+> >>> >> >
+> >>> >> > The error looks now like this (sorry for the German output):
+> >>> >> > ...
+> >>> >> > =A0 AS =A0 =A0 =A0arch/x86/kernel/entry_32.o
+> >>> >> > /home/sd/src/linux-2.6/linux-2.6.38-rc7/debian/build/source_=
+i386_none/arch/x86/kernel/entry_32.S:
+> >>> >> > Assembler messages:
+> >>> >> > /home/sd/src/linux-2.6/linux-2.6.38-rc7/debian/build/source_=
+i386_none/arch/x86/kernel/entry_32.S:1421:
+> >>> >> > Error: .size expression with symbol `apf_page_fault' does no=
+t evaluate
+> >>> >> > to a constant
+> >>> >> > make[6]: *** [arch/x86/kernel/entry_32.o] Fehler 1
+> >>> >> > make[5]: *** [arch/x86/kernel] Fehler 2
+> >>> >> > make[5]: *** Warte auf noch nicht beendete Prozesse...
+> >>> >> >
+> >>> >> > Anyway, before more riddling around it would be very helpful=
+ to have a
+> >>> >> > clear pointer if there is a fix around... That building, tes=
+ting and
+> >>> >> > installing took me now several hours.
+> >>> >> > And... yeah, backports to 2.21-branch appreciated.
+> >>> >> >
+> >>> >> > - Sedat -
+> >>> >> >
+> >>> >>
+> >>> >> After a quick look into the source, it seems attached patch fi=
+xes the
+> >>> >> issue.
+> >>> >> Is that OK?
+> >>> >
+> >>> > Hi Sedat,
+> >>> >
+> >>> > The patch ( https://lkml.org/lkml/2011/3/8/203 ) is ok, feel fr=
+ee to add
+> >>> > Acked-by: Alexander van Heukelum <heukelum@fastmail.fm>
+> >>> >
+> >>> > Better description might be something like:
+> >>> >
+> >>> > i386: Fix mismatched ENTRY/END pair.
+> >>> >
+> >>> > Under CONFIG_KVM_GUEST=3Dy, the following part of entry_32.S ca=
+uses a compile failure.
+> >>> >
+> >>> > 1409 #ifdef CONFIG_KVM_GUEST
+> >>> > 1410 ENTRY(async_page_fault)
+> >>> > 1411 =A0 =A0 =A0 =A0 RING0_EC_FRAME
+> >>> > 1412 =A0 =A0 =A0 =A0 pushl $do_async_page_fault
+> >>> > 1413 =A0 =A0 =A0 =A0 CFI_ADJUST_CFA_OFFSET 4
+> >>> > 1414 =A0 =A0 =A0 =A0 jmp error_code
+> >>> > 1415 =A0 =A0 =A0 =A0 CFI_ENDPROC
+> >>> > 1416 END(apf_page_fault)
+> >>> > 1417 #endif
+> >>> >
+> >>> > Replace apf_page_fault with async_page_fault, as intended.
+> >>> >
+> >>> > Greetings,
+> >>> > =A0 =A0Alexander
+> >>> >
+> >>> >> - Sedat -
+> >>> >>
+> >>> >> Email had 1 attachment:
+> >>> >> + 0001-x86-Fix-build-failure-with-binutils-as-from-upstream.pa=
+tch
+> >>> >> =A0 1k (text/x-patch)
+> >>> >
+> >>>
+> >>> As I said, quick view on the code, quick fix :-).
+> >>>
+> >>> Your description is definitive more meaningful.
+> >>> I can refresh my patch and add your ACK.
+> >>>
+> >>> Anyway, I continued after dinner and with the above patch I ran i=
+nto
+> >>> the next problem:
+> >>> [ build.log ]
+> >>> ...
+> >>> =A0 AS =A0 =A0 =A0arch/x86/kernel/acpi/wakeup_rm.o
+> >>> /home/sd/src/linux-2.6/linux-2.6.38-rc7/debian/build/source_i386_=
+none/arch/x86/kernel/acpi/wakeup_rm.S:
+> >>> Assembler messages:
+> >>> /home/sd/src/linux-2.6/linux-2.6.38-rc7/debian/build/source_i386_=
+none/arch/x86/kernel/acpi/wakeup_rm.S:12:
+> >>> Error: .size expression with symbol `wakeup_code_start' does not
+> >>> evaluate to a constant
+> >>
+> >> No idea what's wrong there. But my version of wakeup_rm.S has only=
+ 10 lines...
+> >>
+> >> =A0 =A0 1 =A0/*
+> >> =A0 =A0 2 =A0 * Wrapper script for the realmode binary as a transp=
+ort object
+> >> =A0 =A0 3 =A0 * before copying to low memory.
+> >> =A0 =A0 4 =A0 */
+> >> =A0 =A0 5 =A0 =A0 =A0 =A0 =A0.section ".rodata","a"
+> >> =A0 =A0 6 =A0 =A0 =A0 =A0 =A0.globl =A0wakeup_code_start, wakeup_c=
+ode_end
+> >> =A0 =A0 7 =A0wakeup_code_start:
+> >> =A0 =A0 8 =A0 =A0 =A0 =A0 =A0.incbin "arch/x86/kernel/acpi/realmod=
+e/wakeup.bin"
+> >> =A0 =A0 9 =A0wakeup_code_end:
+> >> =A0 =A010 =A0 =A0 =A0 =A0 =A0.size =A0 wakeup_code_start, .-wakeup=
+_code_start
+> >>
+> >> And it compiles just fine.
+> >> The fix for entry_32.S is valid, though, and necessary for mainlin=
+e.
+> >>
+> >> Greetings,
+> >> =A0 =A0Alexander
+> >>
+> >>> I am unsure how to fix that and open for feedback.
+> >>>
+> >>> - Sedat -
+> >>>
+> >>
+> >
+> > The file in linux-next (next-20110308) looks different (the above c=
+ode
+> > looks more logical to me)
+> >
+> > [ arch/x86/kernel/acpi/wakeup_rm.S ]
+> >
+> > /*
+> > =A0* Wrapper script for the realmode binary as a transport object
+> > =A0* before copying to low memory.
+> > =A0*/
+> > #include <asm/page_types.h>
+> >
+> > =A0 =A0 =A0 =A0.section ".x86_trampoline","a"
+> > =A0 =A0 =A0 =A0.balign PAGE_SIZE
+> > =A0 =A0 =A0 =A0.globl =A0acpi_wakeup_code
+> > acpi_wakeup_code:
+> > =A0 =A0 =A0 =A0.incbin "arch/x86/kernel/acpi/realmode/wakeup.bin"
+> > =A0 =A0 =A0 =A0.size =A0 wakeup_code_start, .-wakeup_code_start
+> >
+>=20
+> Those are simply wrong.  2.6.38-rc8 is OK.
 
-Dropped tree: xen
+2.6.37-rc8 is not OK: for example commit 631bc4878220932fe67fc46fc7cf7c=
+ccdb1ec597 is=20
+already upstream and if you enable KVM you see a broken kernel build wi=
+th new=20
+binutils. This is from 2.6.38-rc8:
 
-The nfs tree lost its build failure.
+ #ifdef CONFIG_KVM_GUEST
+ ENTRY(async_page_fault)
+        RING0_EC_FRAME
+        pushl $do_async_page_fault
+        CFI_ADJUST_CFA_OFFSET 4
+        jmp error_code
+        CFI_ENDPROC
+ END(apf_page_fault)
+ #endif
 
-The net tree gained a build failure, so I used the version from
-next-20110308.
+Yes, the .size directive not matching up is technically a bug, but it w=
+as not=20
+checked by binutils before, for *years* - and you cannot just flip a sw=
+itch and=20
+break who knows how much code.
 
-The drm tree gained a conflict against Linus' tree.
+You need to at least emit a warning for some time to give people a *cha=
+nce* to fix=20
+bugs - not just stuff an incompatible binutils down their throat and br=
+eak the=20
+kernel build for thousands of commits and break bisection.
 
-The powerpc allyesconfig build is still broken by some obscure bloating
-of the low memory code.
+This binutils change is breaking numerous upstream kernel builds (and i=
+s making=20
+bisection with new binutils impossible) for no particular good reason: =
+binutils was=20
+capable to figure out the symbol name before this change.
 
-----------------------------------------------------------------------------
+At minimum you need to *understand* that what you are doing is an incom=
+patible=20
+change and is disruptive to others ...
 
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
+Thanks,
 
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
-and sparc64 defconfig. These builds also have
-CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
-CONFIG_DEBUG_INFO disabled when necessary.
-
-Below is a summary of the state of the merge.
-
-We are up to 184 trees (counting Linus' and 28 trees of patches pending
-for Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Randy Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging fixes/fixes
-Merging kbuild-current/rc-fixes
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging 52xx-and-virtex-current/powerpc/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging driver-core.current/driver-core-linus
-Merging tty.current/tty-linus
-Merging usb.current/usb-linus
-Merging staging.current/staging-linus
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging ide-curent/master
-Merging dwmw2/master
-Merging sh-current/sh-fixes-for-linus
-Merging rmobile-current/rmobile-fixes-for-linus
-Merging fbdev-current/fbdev-fixes-for-linus
-Merging devicetree-current/devicetree/merge
-Merging spi-current/spi/merge
-Merging arm/for-next
-Merging davinci/davinci-next
-Merging i.MX/for-next
-CONFLICT (content): Merge conflict in arch/arm/mach-mxs/gpio.c
-Merging linux-spec/for-next
-Merging msm/for-next
-CONFLICT (content): Merge conflict in arch/arm/mach-msm/board-msm7x27.c
-CONFLICT (content): Merge conflict in arch/arm/mach-msm/board-msm7x30.c
-CONFLICT (content): Merge conflict in arch/arm/mach-msm/board-qsd8x50.c
-CONFLICT (content): Merge conflict in arch/arm/mach-msm/board-sapphire.c
-CONFLICT (content): Merge conflict in arch/arm/mach-msm/include/mach/memory=
-.h
-Merging omap/for-next
-Merging pxa/for-next
-Merging samsung/next-samsung
-Merging s5p/for-next
-CONFLICT (content): Merge conflict in arch/arm/mm/Kconfig
-Merging tegra/for-next
-Merging ux500-core/ux500-core
-CONFLICT (content): Merge conflict in arch/arm/configs/u8500_defconfig
-CONFLICT (content): Merge conflict in arch/arm/mach-ux500/cpu-db8500.c
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-Merging m68knommu/for-next
-Merging microblaze/next
-Merging mips/mips-for-linux-next
-Merging parisc/for-next
-Merging powerpc/next
-Merging 4xx/next
-Merging 52xx-and-virtex/powerpc/next
-Merging galak/next
-Merging s390/features
-Merging sh/sh-latest
-Merging rmobile/rmobile-latest
-Merging sparc/master
-Merging tile/master
-Merging unicore32/unicore32
-CONFLICT (content): Merge conflict in drivers/video/Kconfig
-Merging xtensa/master
-CONFLICT (content): Merge conflict in arch/xtensa/configs/iss_defconfig
-Merging ceph/for-next
-Merging cifs/master
-Merging configfs/linux-next
-Merging ecryptfs/next
-Merging ext3/for_next
-Merging ext4/next
-Merging fatfs/master
-Merging fuse/for-next
-Merging gfs2/master
-Merging hfsplus/for-next
-Merging jfs/next
-Merging logfs/master
-CONFLICT (content): Merge conflict in fs/logfs/logfs.h
-Merging nfs/linux-next
-Merging nfsd/nfsd-next
-Merging nilfs2/for-next
-Merging ocfs2/linux-next
-Merging omfs/for-next
-Merging squashfs/master
-Merging udf/for_next
-Merging v9fs/for-next
-Merging ubifs/linux-next
-Merging xfs/master
-Merging vfs/for-next
-Merging vfs-scale/vfs-scale-working
-Merging pci/linux-next
-Merging hid/for-next
-Merging quilt/i2c
-Merging bjdooks-i2c/next-i2c
-Merging quilt/jdelvare-hwmon
-Merging hwmon-staging/hwmon-next
-CONFLICT (content): Merge conflict in drivers/hwmon/Makefile
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-Merging kbuild/for-next
-Merging kconfig/for-next
-Merging ide/master
-Merging libata/NEXT
-Merging infiniband/for-next
-Merging acpi/test
-CONFLICT (content): Merge conflict in arch/alpha/Kconfig
-CONFLICT (content): Merge conflict in arch/parisc/Kconfig
-CONFLICT (content): Merge conflict in arch/sparc/Kconfig
-Merging idle-test/idle-test
-Merging powertools/tools-test
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/linux-next
-Merging dlm/next
-Merging swiotlb/master
-Merging ibft/master
-Merging scsi/master
-CONFLICT (content): Merge conflict in drivers/scsi/libsas/sas_ata.c
-CONFLICT (content): Merge conflict in drivers/scsi/libsas/sas_scsi_host.c
-Merging async_tx/next
-Merging net/master
-CONFLICT (content): Merge conflict in drivers/net/Kconfig
-CONFLICT (content): Merge conflict in drivers/net/bnx2x/bnx2x_cmn.c
-CONFLICT (content): Merge conflict in lib/Makefile
-$ git reset --hard HEAD^
-Merging refs/next/20110308/net
-CONFLICT (content): Merge conflict in drivers/net/Kconfig
-CONFLICT (content): Merge conflict in drivers/net/bnx2x/bnx2x_cmn.c
-CONFLICT (content): Merge conflict in lib/Makefile
-[master ef987f9] Merge commit 'refs/next/20110308/net'
-Merging wireless/master
-Merging bluetooth/master
-Merging mtd/master
-Merging crypto/master
-Merging sound/for-next
-Merging sound-asoc/for-next
-Merging cpufreq/next
-Merging quilt/rr
-Merging input/next
-Merging input-mt/next
-Merging lsm/for-next
-Merging block/for-next
-Merging quilt/device-mapper
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-CONFLICT (content): Merge conflict in drivers/leds/Kconfig
-Merging backlight/for-mm
-Merging mmc/mmc-next
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-CONFLICT (content): Merge conflict in arch/arm/mach-imx/mach-mx27_3ds.c
-CONFLICT (content): Merge conflict in arch/arm/mach-imx/mach-pcm038.c
-CONFLICT (content): Merge conflict in arch/arm/mach-mx3/mach-mx31_3ds.c
-CONFLICT (content): Merge conflict in arch/arm/mach-mx3/mach-mx31moboard.c
-CONFLICT (content): Merge conflict in drivers/mfd/davinci_voicecodec.c
-CONFLICT (content): Merge conflict in drivers/mfd/ucb1x00-ts.c
-CONFLICT (content): Merge conflict in drivers/mfd/wm8994-core.c
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-CONFLICT (content): Merge conflict in drivers/gpu/drm/nouveau/nouveau_mem.c
-Merging fbdev/master
-Merging viafb/viafb-next
-Merging omap_dss2/for-next
-Merging voltage/for-next
-Merging security-testing/next
-Merging selinux/master
-Merging lblnet/master
-Merging agp/agp-next
-Merging watchdog/master
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-CONFLICT (content): Merge conflict in MAINTAINERS
-CONFLICT (content): Merge conflict in fs/eventpoll.c
-Merging audit/for-next
-Merging suspend/linux-next
-Merging fsnotify/for-next
-Merging irda/for-next
-Merging catalin/for-next
-Merging alacrity/linux-next
-CONFLICT (content): Merge conflict in drivers/Makefile
-CONFLICT (content): Merge conflict in include/linux/Kbuild
-CONFLICT (content): Merge conflict in lib/Kconfig
-Merging i7core_edac/linux_next
-Merging i7300_edac/linux_next
-Merging devicetree/devicetree/next
-Merging spi/spi/next
-Merging tip/auto-latest
-CONFLICT (content): Merge conflict in arch/x86/kernel/acpi/sleep.c
-Merging rcu/rcu/next
-Merging oprofile/for-next
-Merging xen-two/linux-next
-Merging xen-pvhvm/linux-next
-Merging edac-amd/for-next
-CONFLICT (content): Merge conflict in include/linux/pci_ids.h
-Merging percpu/for-next
-CONFLICT (content): Merge conflict in arch/x86/kernel/vmlinux.lds.S
-Merging workqueues/for-next
-Merging sfi/sfi-test
-Merging asm-generic/next
-Merging drivers-x86/linux-next
-CONFLICT (content): Merge conflict in drivers/hwmon/lm85.c
-Applying: OLPC: fix for removal of run_wake_count
-Merging hwpoison/hwpoison
-Merging sysctl/master
-Merging driver-core/driver-core-next
-Merging tty/tty-next
-CONFLICT (content): Merge conflict in drivers/tty/serial/Kconfig
-CONFLICT (content): Merge conflict in drivers/tty/serial/Makefile
-Merging usb/usb-next
-CONFLICT (content): Merge conflict in arch/arm/mach-omap2/board-omap3evm.c
-CONFLICT (content): Merge conflict in arch/arm/mach-omap2/board-overo.c
-CONFLICT (content): Merge conflict in arch/arm/mach-omap2/clock3xxx_data.c
-CONFLICT (content): Merge conflict in arch/arm/mach-omap2/usb-musb.c
-CONFLICT (content): Merge conflict in arch/arm/plat-omap/include/plat/usb.h
-CONFLICT (content): Merge conflict in drivers/usb/gadget/Kconfig
-CONFLICT (content): Merge conflict in drivers/usb/gadget/fsl_mxc_udc.c
-CONFLICT (content): Merge conflict in drivers/usb/musb/musb_core.h
-Merging staging/staging-next
-CONFLICT (content): Merge conflict in drivers/staging/Kconfig
-CONFLICT (content): Merge conflict in drivers/staging/Makefile
-CONFLICT (content): Merge conflict in drivers/staging/brcm80211/brcmsmac/wl=
-_mac80211.c
-CONFLICT (delete/modify): drivers/staging/dabusb/dabusb.c deleted in HEAD a=
-nd modified in staging/staging-next. Version staging/staging-next of driver=
-s/staging/dabusb/dabusb.c left in tree.
-CONFLICT (delete/modify): drivers/staging/dabusb/dabusb.h deleted in HEAD a=
-nd modified in staging/staging-next. Version staging/staging-next of driver=
-s/staging/dabusb/dabusb.h left in tree.
-CONFLICT (content): Merge conflict in drivers/staging/easycap/easycap_ioctl=
-.c
-CONFLICT (delete/modify): drivers/staging/usbvideo/usbvideo.c deleted in HE=
-AD and modified in staging/staging-next. Version staging/staging-next of dr=
-ivers/staging/usbvideo/usbvideo.c left in tree.
-CONFLICT (delete/modify): drivers/staging/usbvideo/vicam.c deleted in HEAD =
-and modified in staging/staging-next. Version staging/staging-next of drive=
-rs/staging/usbvideo/vicam.c left in tree.
-$ git rm -f drivers/staging/usbvideo/usbvideo.c
-$ git rm -f drivers/staging/usbvideo/vicam.c
-$ git rm -f drivers/staging/dabusb/dabusb.c drivers/staging/dabusb/dabusb.h
-Merging slabh/slabh
-Merging bkl-config/config
-Merging cleancache/linux-next
-CONFLICT (content): Merge conflict in fs/ocfs2/super.c
-CONFLICT (content): Merge conflict in fs/super.c
-CONFLICT (content): Merge conflict in include/linux/fs.h
-CONFLICT (content): Merge conflict in mm/Kconfig
-Merging scsi-post-merge/merge-base:master
-$ git checkout scsi-post-merge/master
-
---Signature=_Wed__9_Mar_2011_18_08_45_+1100_Byr8d5giXh8vDadM
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNdyd9AAoJEDMEi1NhKgbsCNcIAI9rgDbsZhGrwxN+hRDOgmHY
-pEEJytX6C1HR3HlHoR3dqRRH0Gdg+c5Yvd62F7gHLUl1Gw7t7q3Xd2Hky5/ji5dP
-rl2V14ADlmG4F3da13/Muif2HnFJegajs17kgFuDsLiE3AZsaNgOUXdcU5B7g6Un
-7CRKDR5y8WHR+vBnwaNukXE1hZgtqctX5jADEHh+rqw8EZac9E1Ce+c/eMTNiPtx
-xJEp5IXgijzvmPGYY00Yqtd4VqLhfr+pfrr08N2FqFaezm6TN/UjHbPRtEVblbcB
-nUE8YsYS+s7Wjq1xbmWvypF9WiyJY3tjJ7parsXoXp8or4YwEOgll9pfl/POCf8=
-=BIqq
------END PGP SIGNATURE-----
-
---Signature=_Wed__9_Mar_2011_18_08_45_+1100_Byr8d5giXh8vDadM--
+	Ingo
