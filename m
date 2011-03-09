@@ -1,69 +1,144 @@
-From: "H.J. Lu" <hjl.tools@gmail.com>
-Subject: Re: linux-next: Tree for March 8 (BROKEN: arch/x86/kernel/entry_32.S?
- Debian's binutils/as?)
-Date: Wed, 9 Mar 2011 11:04:56 -0800
-Message-ID: <AANLkTinCzzqq6KC5H1Gad7a99dkp_x-cc8f3FHnXdjLJ@mail.gmail.com>
-References: <AANLkTik_Cb7tXheZNOBjqnoQc4MSL1LnDtFGFP5mqZRi@mail.gmail.com>
-	<AANLkTinBv__n7k3Z=EJWv1fdQScyB7AJV0SsYJE0mCwQ@mail.gmail.com>
-	<AANLkTiknsT1iQzUQ_oBiOORaqWBFyk2BaLq_xu9C5E_G@mail.gmail.com>
-	<1299605269.29313.1427511237@webmail.messagingengine.com>
-	<AANLkTi=6YstJxad41knR4Q9WN3wYKikPv-g1i3kg3HS1@mail.gmail.com>
-	<1299615939.25628.1427572905@webmail.messagingengine.com>
-	<AANLkTimBMP1jiuEEUwmKKVNZcZnrkFxFA_YBcLmkEFJM@mail.gmail.com>
-	<AANLkTikpMAXfG5aNWo8x7pKKppaQiE-U8qjFaG0B2azV@mail.gmail.com>
-	<20110309085150.GC21294@elte.hu>
-	<AANLkTiks9o18LRS46CrYHBXzq_6U-v-CqK=0Fzc4Tuco@mail.gmail.com>
-	<20110309160241.GC31249@elte.hu>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: Kernelspace firmware loaders (was: linux-next: manual merge of the staging tree with the v4l-dvb tree)
+Date: Wed, 9 Mar 2011 23:11:39 +0100
+Message-ID: <201103092311.42936.laurent.pinchart@ideasonboard.com>
+References: <20110304163905.ed6dd630.sfr@canb.auug.org.au> <201103071751.28477.laurent.pinchart@ideasonboard.com> <201103071940.29074.liplianin@me.by>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-iw0-f174.google.com ([209.85.214.174]:42728 "EHLO
-	mail-iw0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750698Ab1CITE5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 9 Mar 2011 14:04:57 -0500
-In-Reply-To: <20110309160241.GC31249@elte.hu>
+Received: from perceval.ideasonboard.com ([95.142.166.194]:58485 "EHLO
+	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753881Ab1CIWLk convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 9 Mar 2011 17:11:40 -0500
+In-Reply-To: <201103071940.29074.liplianin@me.by>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: sedat.dilek@gmail.com, Sedat Dilek <sedat.dilek@googlemail.com>, Alexander van Heukelum <heukelum@fastmail.fm>, linux-next <linux-next@vger.kernel.org>, psomas@cslab.ece.ntua.gr, Jan Beulich <JBeulich@novell.com>, "H. Peter Anvin" <hpa@zytor.com>, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
+To: "Igor M. Liplianin" <liplianin@me.by>
+Cc: Greg KH <greg@kroah.com>, Mauro Carvalho Chehab <mchehab@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>, Ben Gamari <bgamari.foss@gmail.com>
 
-On Wed, Mar 9, 2011 at 8:02 AM, Ingo Molnar <mingo@elte.hu> wrote:
->
->> > This binutils change is breaking numerous upstream kernel builds (and is making
->> > bisection with new binutils impossible) for no particular good reason: binutils
->> > was capable to figure out the symbol name before this change.
->>
->> That is totally false. The old assembler just generates incorrect size and It
->> couldn't read the programmer's mind to find the correct symbol name.
->
-> Still it didnt make the kernel not build and it did not make the kernel not boot. It
-> at most confused some ELF symbol table - which the kernel does not need.
->
-> So all i'm trying to point out to you is that you appear to be seeing the world in a
-> very binary way: 'broken' versus 'correct' and that it can be rather harmful if you
-> project that binary view on the real world that in reality is not binary but is
-> shades of grey.
->
-> You are turning a benign ELF symbol table detail (that does not affect the kernel's
-> ability to boot/work) into a hard build breakage and bisection barrier, covering
-> hundreds of commits.
+Hi Igor,
 
-The original assembler change didn't mention the bogus symbol name
-in error message, which is very unhelpful. I changed the assembler to
-print out the bogus symbol name in error message. It should be very
-trivial to identify the bogus kernel assembly codes.
+On Monday 07 March 2011 18:40:28 Igor M. Liplianin wrote:
+> =D0=92 =D1=81=D0=BE=D0=BE=D0=B1=D1=89=D0=B5=D0=BD=D0=B8=D0=B8 =D0=BE=D1=
+=82 7 =D0=BC=D0=B0=D1=80=D1=82=D0=B0 2011 18:51:27 =D0=B0=D0=B2=D1=82=D0=
+=BE=D1=80 Laurent Pinchart =D0=BD=D0=B0=D0=BF=D0=B8=D1=81=D0=B0=D0=BB:
+> > On Monday 07 March 2011 17:16:58 Greg KH wrote:
+> > > On Mon, Mar 07, 2011 at 03:07:36PM +0100, Laurent Pinchart wrote:
+> > > > On Friday 04 March 2011 18:54:24 Mauro Carvalho Chehab wrote:
+> > > > > Em 04-03-2011 14:13, Greg KH escreveu:
+> > > > > > On Fri, Mar 04, 2011 at 04:39:05PM +1100, Stephen Rothwell =
+wrote:
+> > > > > >> Today's linux-next merge of the staging tree got a conflic=
+t in
+> > > > > >> drivers/staging/Kconfig between commit
+> > > > > >> a1256092a1e87511c977a3d0ef96151cda77e5c9 ("[media] Altera =
+=46PGA
+> > > > > >> firmware download module") from the v4l-dvb tree and commi=
+t
+> > > > > >> 0867b42113ec4eb8646eb361b15cbcfb741ddf5b ("staging: gma500=
+:
+> > > > > >> Intel GMA500 staging driver") from the staging tree.
+> > > > > >>=20
+> > > > > >> I fixed it up (see below) and can carry the fix as necessa=
+ry.
+> > > > > >=20
+> > > > > > That looks correct.
+> > > > > >=20
+> > > > > > Mauro, what is this driver and why is it added to the stagi=
+ng
+> > > > > > tree?
+> > > > >=20
+> > > > > This driver implements the FPGA programming logic for a firmw=
+are
+> > > > > required by a DVB driver, and was proposed initially for 2.6.=
+37
+> > > > > inclusion. During the 2.6.38 development cycle, it suffered s=
+everal
+> > > > > revisions, based on our input at the media and lkml mailing l=
+ists,
+> > > > > where Igor fixed all CodingStyle issues.
+> > > > >=20
+> > > > > In the last minute, during 2.6.38 merge window, two developer=
+s
+> > > > > (Laurent and Ben) [1] complained against adding a driver for
+> > > > > loading FPGA firmware as-is. So, I decided to add it, for now=
+, at
+> > > > > staging, to avoid needing to postpone a long series of patche=
+s
+> > > > > again just because of that, especially since a series of DVB-=
+C
+> > > > > devices are without support on Linux without this patch serie=
+s,
+> > > > > and there are very few DVB-C devices currently supported.
+> > > > >=20
+> > > > > The Altera driver is compliant with CodingStyle, and, from my=
+ side,
+> > > > > it is ok to move it to drivers/others, but it doesn't hurt to=
+ give
+> > > > > some time for Ben and Laurent to propose alternative way of
+> > > > > implementing the firmware request logic.
+> > > > >=20
+> > > > > If nothing happens until 2.6.40 merge window, I think we shou=
+ld go
+> > > > > forward and move it to the proper place.
+> > > >=20
+> > > > What's the policy regarding firmware loaders in kernelspace vs.
+> > > > userspace ? JTAG is a quite complex protocol, and we already ha=
+ve
+> > > > lots of JTAG libraries in userspace (http://urjtag.org/ seems t=
+o be
+> > > > the most popular one). We also have userspace firmware loaders =
+(such
+> > > > as fxload for the Cypress EZ USB microcontrollers). Do we need =
+a
+> > > > kernelspace JTAG implementation ?
+> > > >=20
+> > > > > [1]
+> > > > > http://www.mail-archive.com/linux-media@vger.kernel.org/msg26=
+422.ht
+> > > > > ml
+> > >=20
+> > > If the code is just a "pass-through" to the hardware, I have no
+> > > objection to the driver being in the kernel, if it needs to be in=
+ order
+> > > to control the hardware properly.
+> >=20
+> > The code implements a JTAG TAP state machine with a bit-banging
+> > algorithm, including direct parallel port (LPT) access, and a bitco=
+de
+> > interpreter for
+>=20
+> LPT access procedure included for historical reason, on early develop=
+ment
+> stages it was used for program FPGA, then we swithed to cx23885 GPIO'=
+s.
+> Developer can choose(develop) his own procedure for JTAG pins access.
 
-> I'm not denying that it's buggy code - I'm just asking you to *PLEASE* at minimum
-> acknowledge that surprise flag days that turn a before-benign condition into a fatal
-> build failure suck to everyone else outside your own little universe.
->
+Shouldn't LPT support be removed then ?
 
-There is no way for assembler to know if a bug in input source code is
-"benign" or
-not. For assembler, a bug in input is a bug in input.  Assembly programmers
-should appreciate this assembler change for helping him/her catch such bugs
-in his/her codes.
+> > the files generated by the Altera FPGA proprietary development tool=
+s.
+>=20
+> So, we used this tools. And the code is from widely opened sources.
 
+Are we going to add support for all proprietary (and standard ?) FPGA f=
+ile=20
+formats, with FPGA programming algorithms from multiple vendors, and TA=
+P=20
+access support at various levels (not all JTAG interfaces can be contro=
+lled at=20
+the bit-banging level, some use higher level commands) to the kernel ? =
+That=20
+would be a big amount of complex code, for very little benefit.
 
--- 
-H.J.
+You could simplify this by going for a single file format across multip=
+le=20
+devices from multiple vendors, such as XSVF, but I'm not sure it's a go=
+od=20
+solution either.
+
+--=20
+Regards,
+
+Laurent Pinchart
