@@ -1,71 +1,53 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: Tree for March 8 (BROKEN:
- arch/x86/kernel/entry_32.S? Debian's binutils/as?)
-Date: Wed, 9 Mar 2011 17:02:41 +0100
-Message-ID: <20110309160241.GC31249@elte.hu>
-References: <AANLkTik_Cb7tXheZNOBjqnoQc4MSL1LnDtFGFP5mqZRi@mail.gmail.com>
- <AANLkTinBv__n7k3Z=EJWv1fdQScyB7AJV0SsYJE0mCwQ@mail.gmail.com>
- <AANLkTiknsT1iQzUQ_oBiOORaqWBFyk2BaLq_xu9C5E_G@mail.gmail.com>
- <1299605269.29313.1427511237@webmail.messagingengine.com>
- <AANLkTi=6YstJxad41knR4Q9WN3wYKikPv-g1i3kg3HS1@mail.gmail.com>
- <1299615939.25628.1427572905@webmail.messagingengine.com>
- <AANLkTimBMP1jiuEEUwmKKVNZcZnrkFxFA_YBcLmkEFJM@mail.gmail.com>
- <AANLkTikpMAXfG5aNWo8x7pKKppaQiE-U8qjFaG0B2azV@mail.gmail.com>
- <20110309085150.GC21294@elte.hu>
- <AANLkTiks9o18LRS46CrYHBXzq_6U-v-CqK=0Fzc4Tuco@mail.gmail.com>
+From: Mariusz Kozlowski <mk@lab.zgora.pl>
+Subject: Re: linux-next: Tree for March 7
+Date: Wed, 9 Mar 2011 17:45:48 +0100
+Message-ID: <20110309164548.GA2230@mako-laptop>
+References: <20110307180547.0cd7b9eb.sfr@canb.auug.org.au>
+ <20110307190537.GA5694@mako-laptop>
+ <20110307201215.GB22450@fedora14-r610.oslab.blr.amer.dell.com>
+ <20110308205732.GA17743@mako-laptop>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:35641 "EHLO mx3.mail.elte.hu"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755636Ab1CIQCv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 9 Mar 2011 11:02:51 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <AANLkTiks9o18LRS46CrYHBXzq_6U-v-CqK=0Fzc4Tuco@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "H.J. Lu" <hjl.tools@gmail.com>
-Cc: sedat.dilek@gmail.com, Sedat Dilek <sedat.dilek@googlemail.com>, Alexander van Heukelum <heukelum@fastmail.fm>, linux-next <linux-next@vger.kernel.org>, psomas@cslab.ece.ntua.gr, Jan Beulich <JBeulich@novell.com>, "H. Peter Anvin" <hpa@zytor.com>, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
+In-Reply-To: <20110308205732.GA17743@mako-laptop>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Narendra_K@Dell.com
+Cc: mk@lab.zgora.pl, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-
-* H.J. Lu <hjl.tools@gmail.com> wrote:
-
-> > Yes, the .size directive not matching up is technically a bug, but it was not 
-> > checked by binutils before, for *years* - and you cannot just flip a switch and 
-> > break who knows how much code.
-> >
-> > You need to at least emit a warning for some time to give people a *chance* to 
-> > fix bugs - not just stuff an incompatible binutils down their throat and break 
-> > the kernel build for thousands of commits and break bisection.
+On Tue, Mar 08, 2011 at 09:57:32PM +0100, Mariusz Kozlowski wrote:
+> On Mon, Mar 07, 2011 at 11:52:04AM -0800, Narendra_K@Dell.com wrote:
+> > On Tue, Mar 08, 2011 at 12:35:37AM +0530, Mariusz Kozlowski wrote:
+> > > On Mon, Mar 07, 2011 at 06:05:47PM +1100, Stephen Rothwell wrote:
+> > > > Hi all,
+> > > > 
+> > > > Changes since 20110304:
+> > > 
+> > > drivers/pci/pci-label.c: In function 'pci_create_firmware_label_files':
+> > > drivers/pci/pci-label.c:366: error: implicit declaration of function 'device_has_dsm'
+> > > 
+> > > Fails for !CONFIG_ACPI.
+> > > 
+> > > pci_create_firmware_label_files() uses device_has_dsm() which definition
+> > > is under #ifdef CONFIG_ACPI.
+> > > 
+> > 
+> > Hello,
+> > 
+> > Sorry for the inconvenience. I sent a fix for this just now.
+> > 
+> > http://marc.info/?l=linux-next&m=129952710415436&w=2
 > 
-> If kernel doesn't use/need symbol size, don't put it in assembly code.
-
-What does that have to do with the question i raised: that of binutils backwards 
-(in)compatibility to be able to build the Linux kernel?
-
-> > This binutils change is breaking numerous upstream kernel builds (and is making 
-> > bisection with new binutils impossible) for no particular good reason: binutils 
-> > was capable to figure out the symbol name before this change.
+> One more thing poped up today:
 > 
-> That is totally false. The old assembler just generates incorrect size and It 
-> couldn't read the programmer's mind to find the correct symbol name.
+> drivers/built-in.o: In function `dsm_label_utf16s_to_utf8s':
+> /home/linux/linux-2.6/drivers/pci/pci-label.c:193: undefined
+> reference to `utf16s_to_utf8s'
+> 
+> Linker fails when CONFIG_NLS != y.
 
-Still it didnt make the kernel not build and it did not make the kernel not boot. It 
-at most confused some ELF symbol table - which the kernel does not need.
+I see it was already reported earlier so sorry for the noise.
 
-So all i'm trying to point out to you is that you appear to be seeing the world in a 
-very binary way: 'broken' versus 'correct' and that it can be rather harmful if you 
-project that binary view on the real world that in reality is not binary but is 
-shades of grey.
-
-You are turning a benign ELF symbol table detail (that does not affect the kernel's 
-ability to boot/work) into a hard build breakage and bisection barrier, covering 
-hundreds of commits.
-
-I'm not denying that it's buggy code - I'm just asking you to *PLEASE* at minimum 
-acknowledge that surprise flag days that turn a before-benign condition into a fatal 
-build failure suck to everyone else outside your own little universe.
-
-Thanks,
-
-	Ingo
+-- 
+Mariusz Kozlowski
