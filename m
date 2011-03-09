@@ -1,59 +1,47 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the net tree
-Date: Wed, 9 Mar 2011 13:42:34 +1100
-Message-ID: <20110309134234.32cd09b7.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Date: Wed, 9 Mar 2011 14:41:23 +1100
+Message-ID: <20110309144123.bb46f902.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__9_Mar_2011_13_42_34_+1100_q_6aJhYADQy8Noqn"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:57658 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932073Ab1CICml (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 8 Mar 2011 21:42:41 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Emil Tantilov <emil.s.tantilov@intel.com>, Stephen Ko <stephen.s.ko@intel.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-
---Signature=_Wed__9_Mar_2011_13_42_34_+1100_q_6aJhYADQy8Noqn
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi Dave,
 
-After merging the net tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+Today's linux-next merge of the drm tree got a conflict in
+drivers/gpu/drm/nouveau/nouveau_mem.c between commit
+ef1b287169cd3d1e428c8ed8222e0bbf733d5dbb ("drm/nouveau: fix regression
+causing ttm to not be able to evict vram") from Linus' tree and commit
+8f7286f8e4e80f7b868ba3d117ae900f0d207cbe ("drm/nv50: support for
+compression") from the drm tree.
 
-drivers/net/ixgbe/ixgbe_mbx.c: In function 'ixgbe_init_mbx_params_pf':
-drivers/net/ixgbe/ixgbe_mbx.c:456: error: 'struct ixgbe_mbx_info' has no me=
-mber named 'udelay'
-
-Caused by commit d7c8a29fc8bd20ba45ec2f52577ed04a988a9500 ("ixgbe:
-improve logic in ixgbe_init_mbx_params_pf").
-
-I am wondering if that was ever built ...
-
-I have used the net tree from next-20110308 for today.
---=20
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
 
---Signature=_Wed__9_Mar_2011_13_42_34_+1100_q_6aJhYADQy8Noqn
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNdukaAAoJEDMEi1NhKgbsr+kIAJQ7ZguNcXxFFkWSh8s6gl97
-8tSqQWUKb+4s2otmNCFhxS2WcLsdwVZu3lcGZ2H3qBYw5Z8z8z+0nPQbN4q6q2Vj
-WVcdUxyIQATkIyHIKTaoD30Oa7cfxoLkUht7Dbfle8C4g+EGczORU+egYo/1klQw
-Y1Z6VnsJ13qEnHUbWCHlLihIUyxShUNLYshP1XIToItD4sRzFqM0exSLJu0GsvFB
-qlVlqpiEwMhnQV1BtsDfcITTSMAkASbdiii9V0a2TKHoc/Id2m8rp7kfTVRzFz03
-Uvn233opF4GO6//RDmdV8aUw1oFmw3zBQCXobrgW7CQ3qPfSG8WkIKNuh3o9G0c=
-=ZqgV
------END PGP SIGNATURE-----
-
---Signature=_Wed__9_Mar_2011_13_42_34_+1100_q_6aJhYADQy8Noqn--
+diff --cc drivers/gpu/drm/nouveau/nouveau_mem.c
+index b0fb9bd,63b9040..0000000
+--- a/drivers/gpu/drm/nouveau/nouveau_mem.c
++++ b/drivers/gpu/drm/nouveau/nouveau_mem.c
+@@@ -724,11 -740,9 +740,11 @@@ nouveau_vram_manager_new(struct ttm_mem
+  
+  	ret = vram->get(dev, mem->num_pages << PAGE_SHIFT,
+  			mem->page_alignment << PAGE_SHIFT, size_nc,
+- 			(nvbo->tile_flags >> 8) & 0xff, &node);
++ 			(nvbo->tile_flags >> 8) & 0x3ff, &node);
+ -	if (ret)
+ -		return ret;
+ +	if (ret) {
+ +		mem->mm_node = NULL;
+ +		return (ret == -ENOSPC) ? 0 : ret;
+ +	}
+  
+  	node->page_shift = 12;
+  	if (nvbo->vma.node)
