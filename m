@@ -1,68 +1,52 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure lin Linus' tree
-Date: Thu, 10 Mar 2011 11:25:43 +1100
-Message-ID: <20110310112543.5ae7fb7e.sfr@canb.auug.org.au>
+From: <Jordan_Hargrave@Dell.com>
+Subject: RE: [PATCH V4] Export ACPI _DSM provided firmware instance number
+ and string name to sysfs
+Date: Wed, 9 Mar 2011 18:35:24 -0600
+Message-ID: <5B3AAEAF6B46EA4D955DF7AD46C2C48502C2A7A9@AUSX7MCPS303.AMER.DELL.COM>
+References: <20110223125741.GA16473@fedora14-r610.blr.amer.dell.com>
+ <20110302172508.GA2794@fedora14-r610.oslab.blr.amer.dell.com>
+ <20110304104314.26265021@jbarnes-desktop>
+ <AANLkTimz662+L6eYJm2gh0NwWOxxzQV3503bcs-GMFGu@mail.gmail.com>
+ <20110307200512.GA22450@fedora14-r610.oslab.blr.amer.dell.com>
+ <20110307195616.GA14888@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46614 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751740Ab1CJAZv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 9 Mar 2011 19:25:51 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Linus <torvalds@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <20110307195616.GA14888@kroah.com>
+Content-Language: en-US
+Sender: linux-pci-owner@vger.kernel.org
+To: greg@kroah.com, Narendra_K@Dell.com
+Cc: a.beregalov@gmail.com, linux-next@vger.kernel.org, jbarnes@virtuousgeek.org, linux-pci@vger.kernel.org, linux-hotplug@vger.kernel.org, netdev@vger.kernel.org, mjg@redhat.com, Matt_Domsch@Dell.com, Charles_Rose@Dell.com, Shyam_Iyer@Dell.com, sfr@canb.auug.org.au
+List-Id: linux-next.vger.kernel.org
 
-Hi Linus,
+That happens though for CONFIG_XXXX, though usually the include file is further down in the #ifdef region.
 
-After merging the spi-current tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
 
-include/linux/sysctl.h:28: included file 'linux/rcupdate.h' is not exported
+--jordan hargrave
+Dell Enterprise Linux Engineering
 
-Caused by commit dfef6dcd35cb ("unf*ck proc_sysctl ->d_compare()").
+-----Original Message-----
+From: Greg KH [mailto:greg@kroah.com] 
+Sent: Monday, March 07, 2011 1:56 PM
+To: K, Narendra
+Cc: a.beregalov@gmail.com; linux-next@vger.kernel.org; jbarnes@virtuousgeek.org; linux-pci@vger.kernel.org; linux-hotplug@vger.kernel.org; netdev@vger.kernel.org; mjg@redhat.com; Domsch, Matt; Rose, Charles; Hargrave, Jordan; Iyer, Shyam; sfr@canb.auug.org.au
+Subject: Re: [PATCH V4] Export ACPI _DSM provided firmware instance number and string name to sysfs
 
-I applied this patch for today:
+On Mon, Mar 07, 2011 at 11:44:52AM -0800, Narendra_K@Dell.com wrote:
+> --- a/drivers/pci/pci-label.c
+> +++ b/drivers/pci/pci-label.c
+> @@ -29,7 +29,9 @@
+>  #include <linux/nls.h>
+>  #include <linux/acpi.h>
+>  #include <linux/pci-acpi.h>
+> +#ifdef CONFIG_ACPI
+>  #include <acpi/acpi_drivers.h>
+> +#endif
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 10 Mar 2011 11:14:17 +1100
-Subject: [PATCH] sysctl: the include of rcupdate.h is only needed in the kernel
+You should never need a #ifdef in a .c file for an include file.  If so,
+something is really wrong.
 
-Fixes this built error:
+thanks,
 
-include/linux/sysctl.h:28: included file 'linux/rcupdate.h' is not exported
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- include/linux/sysctl.h |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
-index bb7c2b0..11684d9 100644
---- a/include/linux/sysctl.h
-+++ b/include/linux/sysctl.h
-@@ -25,7 +25,6 @@
- #include <linux/kernel.h>
- #include <linux/types.h>
- #include <linux/compiler.h>
--#include <linux/rcupdate.h>
- 
- struct completion;
- 
-@@ -931,6 +930,7 @@ enum
- 
- #ifdef __KERNEL__
- #include <linux/list.h>
-+#include <linux/rcupdate.h>
- 
- /* For the /proc/sys support */
- struct ctl_table;
--- 
-1.7.4.1
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+greg k-h
