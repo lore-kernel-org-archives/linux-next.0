@@ -1,42 +1,44 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: linux-next: build failure lin Linus' tree
-Date: Thu, 10 Mar 2011 00:54:58 +0000
-Message-ID: <20110310005458.GD22723@ZenIV.linux.org.uk>
-References: <20110310112543.5ae7fb7e.sfr@canb.auug.org.au>
+From: Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: linux-next: build failure after merge of the cifs tree
+Date: Wed, 9 Mar 2011 19:03:09 -0600
+Message-ID: <AANLkTim72ezchng-hks10HvQOjB_yk1_8x7xYZ+DVZox@mail.gmail.com>
+References: <20110310114315.eb9aec89.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:53420 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753045Ab1CJAzD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 9 Mar 2011 19:55:03 -0500
-Content-Disposition: inline
-In-Reply-To: <20110310112543.5ae7fb7e.sfr@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20110310114315.eb9aec89.sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Cc: linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Shirish Pargaonkar <shirishpargaonkar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Mar 10, 2011 at 11:25:43AM +1100, Stephen Rothwell wrote:
-> Hi Linus,
-> 
-> After merging the spi-current tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> include/linux/sysctl.h:28: included file 'linux/rcupdate.h' is not exported
-> 
-> Caused by commit dfef6dcd35cb ("unf*ck proc_sysctl ->d_compare()").
-> 
-> I applied this patch for today:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Thu, 10 Mar 2011 11:14:17 +1100
-> Subject: [PATCH] sysctl: the include of rcupdate.h is only needed in the kernel
-> 
-> Fixes this built error:
-> 
-> include/linux/sysctl.h:28: included file 'linux/rcupdate.h' is not exported
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+=46ixed in cifs-2.6.git now. Trivial.   Shirish missed an ifdef.
 
-ACKed-by: Al Viro <viro@zeniv.linux.org.uk>
+
+On Wed, Mar 9, 2011 at 6:43 PM, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>=
+ wrote:
+> Hi all,
+>
+> After merging the cifs tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+>
+> ERROR: ".set_cifs_acl" [fs/cifs/cifs.ko] undefined!
+>
+> Caused by commit 30091b5571eb ("cifs: Allow to set extended attribute
+> cifs_acl (try #2)").
+>
+> I have used the cifs tree from next-20110309 for today.
+> --
+> Cheers,
+> Stephen Rothwell =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sfr-3FnU+UHB4dPYtjvyW6yDsg@public.gmane.org=
+=2Eorg.au
+> http://www.canb.auug.org.au/~sfr/
+>
+
+
+
+--=20
+Thanks,
+
+Steve
