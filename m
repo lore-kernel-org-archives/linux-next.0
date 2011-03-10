@@ -1,40 +1,87 @@
-From: "Jan Beulich" <jbeulich@novell.com>
-Subject: Re: linux-next: Tree for March 8 (BROKEN:
-	 arch/x86/kernel/entry_32.S? (Offensive Word Found In Message)
-	 Debian's binutils/as?)
-Date: Thu, 10 Mar 2011 19:57:52 +0000
-Message-ID: <4D792D41020000780006C482@vpn.id2.novell.com>
+From: <Shyam_Iyer@Dell.com>
+Subject: RE: [PATCH V4] Export ACPI _DSM provided firmware instance number
+ and string name to sysfs
+Date: Fri, 11 Mar 2011 03:35:56 +0530
+Message-ID: <DBFB1B45AF80394ABD1C807E9F28D157026585D732@BLRX7MCDC203.AMER.DELL.COM>
+References: <20110223125741.GA16473@fedora14-r610.blr.amer.dell.com>
+ <20110302172508.GA2794@fedora14-r610.oslab.blr.amer.dell.com>
+ <20110304104314.26265021@jbarnes-desktop>
+ <AANLkTimz662+L6eYJm2gh0NwWOxxzQV3503bcs-GMFGu@mail.gmail.com>
+ <20110307200512.GA22450@fedora14-r610.oslab.blr.amer.dell.com>
+ <20110307195616.GA14888@kroah.com>
+ <20110307211552.GA11016@fedora14-r610.oslab.blr.amer.dell.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-next-owner@vger.kernel.org>
-Content-Disposition: inline
+Received: from ausc60pc101.us.dell.com ([143.166.85.206]:9259 "EHLO
+	ausc60pc101.us.dell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753248Ab1CJWGJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Mar 2011 17:06:09 -0500
+In-Reply-To: <20110307211552.GA11016@fedora14-r610.oslab.blr.amer.dell.com>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: mingo@elte.hu, hjl.tools@gmail.com
-Cc: psomas@cslab.ece.ntua.gr, heukelum@fastmail.fm, sedat.dilek@gmail.com, sedat.dilek@googlemail.com, akpm@linux-foundation.org, torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, hpa@zytor.com
+To: Narendra_K@Dell.com, greg@kroah.com
+Cc: a.beregalov@gmail.com, linux-next@vger.kernel.org, jbarnes@virtuousgeek.org, linux-pci@vger.kernel.org, linux-hotplug@vger.kernel.org, netdev@vger.kernel.org, mjg@redhat.com, Matt_Domsch@Dell.com, Charles_Rose@Dell.com, Jordan_Hargrave@Dell.com, sfr@canb.auug.org.au
 
->>> "H.J. Lu"  03/09/11 8:05 PM >>>
->On Wed, Mar 9, 2011 at 8:02 AM, Ingo Molnar  wrote:
->> I'm not denying that it's buggy code - I'm just asking you to *PLEASE* at minimum
->> acknowledge that surprise flag days that turn a before-benign condition into a fatal
->> build failure suck to everyone else outside your own little universe.
->>
->
->There is no way for assembler to know if a bug in input source code is
->"benign" or
->not. For assembler, a bug in input is a bug in input.  Assembly programmers
->should appreciate this assembler change for helping him/her catch such bugs
->in his/her codes.
-
-I can only support Ingo here, particularly since the bug fixed in gas
-is very unlikely to affect functionality of anyone's code - it's rather
-that debuggability would have suffered. Clearly, as Ingo says, a
-warning would have been enough for the next couple of years (in
-my opinion, actually forever for that very reason), or at least a
-diagnostic that's an error by default and can be turned into a
-warning by the user. After all, it's not like the assembler couldn't
-continue past that point (it can simply ignore the bogus directive),
-but it ought to be only that condition which should cause an error.
-
-Jan
+DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEssIE5hcmVuZHJhDQo+IFNl
+bnQ6IE1vbmRheSwgTWFyY2ggMDcsIDIwMTEgMzo1NiBQTQ0KPiBUbzogR3JlZyBLSA0KPiBDYzog
+YS5iZXJlZ2Fsb3ZAZ21haWwuY29tOyBsaW51eC1uZXh0QHZnZXIua2VybmVsLm9yZzsNCj4gamJh
+cm5lc0B2aXJ0dW91c2dlZWsub3JnOyBsaW51eC1wY2lAdmdlci5rZXJuZWwub3JnOyBsaW51eC0N
+Cj4gaG90cGx1Z0B2Z2VyLmtlcm5lbC5vcmc7IG5ldGRldkB2Z2VyLmtlcm5lbC5vcmc7IG1qZ0By
+ZWRoYXQuY29tOw0KPiBEb21zY2gsIE1hdHQ7IFJvc2UsIENoYXJsZXM7IEhhcmdyYXZlLCBKb3Jk
+YW47IEl5ZXIsIFNoeWFtOw0KPiBzZnJAY2FuYi5hdXVnLm9yZy5hdQ0KPiBTdWJqZWN0OiBSZTog
+W1BBVENIIFY0XSBFeHBvcnQgQUNQSSBfRFNNIHByb3ZpZGVkIGZpcm13YXJlIGluc3RhbmNlDQo+
+IG51bWJlciBhbmQgc3RyaW5nIG5hbWUgdG8gc3lzZnMNCj4gDQo+IE9uIFR1ZSwgTWFyIDA4LCAy
+MDExIGF0IDAxOjI2OjE2QU0gKzA1MzAsIEdyZWcgS0ggd3JvdGU6DQo+ID4gT24gTW9uLCBNYXIg
+MDcsIDIwMTEgYXQgMTE6NDQ6NTJBTSAtMDgwMCwgTmFyZW5kcmFfS0BEZWxsLmNvbSB3cm90ZToN
+Cj4gPiA+IC0tLSBhL2RyaXZlcnMvcGNpL3BjaS1sYWJlbC5jDQo+ID4gPiArKysgYi9kcml2ZXJz
+L3BjaS9wY2ktbGFiZWwuYw0KPiA+ID4gQEAgLTI5LDcgKzI5LDkgQEANCj4gPiA+ICAjaW5jbHVk
+ZSA8bGludXgvbmxzLmg+DQo+ID4gPiAgI2luY2x1ZGUgPGxpbnV4L2FjcGkuaD4NCj4gPiA+ICAj
+aW5jbHVkZSA8bGludXgvcGNpLWFjcGkuaD4NCj4gPiA+ICsjaWZkZWYgQ09ORklHX0FDUEkNCj4g
+PiA+ICAjaW5jbHVkZSA8YWNwaS9hY3BpX2RyaXZlcnMuaD4NCj4gPiA+ICsjZW5kaWYNCj4gPg0K
+PiA+IFlvdSBzaG91bGQgbmV2ZXIgbmVlZCBhICNpZmRlZiBpbiBhIC5jIGZpbGUgZm9yIGFuIGlu
+Y2x1ZGUgZmlsZS4gIElmDQo+IHNvLA0KPiA+IHNvbWV0aGluZyBpcyByZWFsbHkgd3JvbmcuDQo+
+IA0KPiBJIGFncmVlLiBBbHNvLCBpIHJlYWxpemVkIHRoYXQgdGhlIGluY2x1ZGUgd2FzIG5vdCBy
+ZXF1aXJlZCB0byBhZGRyZXNzDQo+IHRoZQ0KPiByZXBvcnRlZCBlcnJvci4gUGxlYXNlIGZpbmQg
+dGhlIHJldmlzZWQgcGF0Y2ggaGVyZS4NCj4gDQo+IEZyb206IE5hcmVuZHJhIEsgPG5hcmVuZHJh
+X2tAZGVsbC5jb20+DQo+IFN1YmplY3Q6IFtQQVRDSF0gRml4IGNvbXBpbGF0aW9uIGVycm9yIHdo
+ZW4gQ09ORklHX0FDUEkgaXMgdW5zZXQNCj4gDQo+IFRoaXMgcGF0Y2ggZml4ZXMgY29tcGlsYXRp
+b24gZXJyb3IgZGVzY2liZWQgYmVsb3cgaW50cm9kdWNlZCBieQ0KPiB0aGUgY29tbWl0IDYwNTg5
+ODliYWQwNWI4MmU3OGJhYWNjZTY5ZWMxNGYyN2ExMWI1ZmQNCj4gDQo+IGRyaXZlcnMvcGNpL3Bj
+aS1sYWJlbC5jOiBJbiBmdW5jdGlvbiDigJhwY2lfY3JlYXRlX2Zpcm13YXJlX2xhYmVsX2ZpbGVz
+4oCZOg0KPiBkcml2ZXJzL3BjaS9wY2ktbGFiZWwuYzozNjY6MjogZXJyb3I6IGltcGxpY2l0IGRl
+Y2xhcmF0aW9uIG9mIGZ1bmN0aW9uDQo+IOKAmGRldmljZV9oYXNfZHNt4oCZDQo+IA0KPiBTaWdu
+ZWQtb2ZmLWJ5OiBOYXJlbmRyYSBLIDxuYXJlbmRyYV9rQGRlbGwuY29tPg0KPiAtLS0NCj4gIGRy
+aXZlcnMvcGNpL3BjaS1sYWJlbC5jIHwgICAgNiArKysrKysNCj4gIDEgZmlsZXMgY2hhbmdlZCwg
+NiBpbnNlcnRpb25zKCspLCAwIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvcGNpL3BjaS1sYWJlbC5jIGIvZHJpdmVycy9wY2kvcGNpLWxhYmVsLmMNCj4gaW5kZXggODI0
+ZTI0Ny4uOGM4MDEzOCAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9wY2kvcGNpLWxhYmVsLmMNCj4g
+KysrIGIvZHJpdmVycy9wY2kvcGNpLWxhYmVsLmMNCj4gQEAgLTE3NCw2ICsxNzQsMTIgQEAgcGNp
+X3JlbW92ZV9hY3BpX2luZGV4X2xhYmVsX2ZpbGVzKHN0cnVjdCBwY2lfZGV2DQo+ICpwZGV2KQ0K
+PiAgCXJldHVybiAtMTsNCj4gIH0NCj4gDQo+ICtzdGF0aWMgaW5saW5lIGJvb2wNCj4gK2Rldmlj
+ZV9oYXNfZHNtKHN0cnVjdCBkZXZpY2UgKmRldikNCj4gK3sNCj4gKwlyZXR1cm4gZmFsc2U7DQo+
+ICt9DQo+ICsNCj4gICNlbHNlDQo+IA0KPiAgc3RhdGljIGNvbnN0IGNoYXIgZGV2aWNlX2xhYmVs
+X2RzbV91dWlkW10gPSB7DQo+IC0tDQo+IDEuNy4zLjENCj4gDQo+IFdpdGggcmVnYXJkcywNCj4g
+TmFyZW5kcmEgSw0KDQpTbyB0aGlzIHdvcmtzIGFuZCBmaXhlcyB0aGUgYWRkaXRpb25hbCBidWls
+ZCBmYWlsdXJlLg0KDQpJIHRlc3RlZCB3aXRoIENPTkZJR19BQ1BJIHNldC91bnNldCBhbmQgd2l0
+aCAibWFrZSBhbGxtb2Rjb25maWciDQoNCkFkZGl0aW9uYWxseSBJIGZvdW5kIHRoYXQgaW5jbHVk
+aW5nIGFjcGkvYXBjaV9kcml2ZXJzLmggaXMgbm90IG5lY2Vzc2FyeSBhbmQgaW50cm9kdWNlcyB0
+aGVzZSB3YXJuaW5ncy4uDQoNClRoZSBiZWxvdyBwYXRjaCBmaXhlcyB0aGUgYWRkaXRpb25hbCB3
+YXJuaWdzLi4NCg0KSW4gZmlsZSBpbmNsdWRlZCBmcm9tIGRyaXZlcnMvcGNpL3BjaS1sYWJlbC5j
+OjMyOg0KaW5jbHVkZS9hY3BpL2FjcGlfZHJpdmVycy5oOjEwMzogd2FybmluZzog4oCYc3RydWN0
+IGFjcGlfZGV2aWNl4oCZIGRlY2xhcmVkIGluc2lkZSBwYXJhbWV0ZXIgbGlzdA0KaW5jbHVkZS9h
+Y3BpL2FjcGlfZHJpdmVycy5oOjEwMzogd2FybmluZzogaXRzIHNjb3BlIGlzIG9ubHkgdGhpcyBk
+ZWZpbml0aW9uIG9yIGRlY2xhcmF0aW9uLCB3aGljaCBpcyBwcm9iYWJseSBub3Qgd2hhdCB5b3Ug
+d2FudA0KaW5jbHVkZS9hY3BpL2FjcGlfZHJpdmVycy5oOjEwNzogd2FybmluZzog4oCYc3RydWN0
+IGFjcGlfcGNpX3Jvb3TigJkgZGVjbGFyZWQgaW5zaWRlIHBhcmFtZXRlciBsaXN0DQoNClNpZ25l
+ZC1vZmYtYnk6IFNoeWFtIEl5ZXIgPHNoeWFtX2l5ZXJAZGVsbC5jb20+DQotLS0NCiBkcml2ZXJz
+L3BjaS9wY2ktbGFiZWwuYyB8ICAgIDEgLQ0KIDEgZmlsZXMgY2hhbmdlZCwgMCBpbnNlcnRpb25z
+KCspLCAxIGRlbGV0aW9ucygtKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9wY2kvcGNpLWxhYmVs
+LmMgYi9kcml2ZXJzL3BjaS9wY2ktbGFiZWwuYw0KaW5kZXggYmY0ZWJlZS4uNDg4YjBjZSAxMDA2
+NDQNCi0tLSBhL2RyaXZlcnMvcGNpL3BjaS1sYWJlbC5jDQorKysgYi9kcml2ZXJzL3BjaS9wY2kt
+bGFiZWwuYw0KQEAgLTI5LDcgKzI5LDYgQEANCiAjaW5jbHVkZSA8bGludXgvbmxzLmg+DQogI2lu
+Y2x1ZGUgPGxpbnV4L2FjcGkuaD4NCiAjaW5jbHVkZSA8bGludXgvcGNpLWFjcGkuaD4NCi0jaW5j
+bHVkZSA8YWNwaS9hY3BpX2RyaXZlcnMuaD4NCiAjaW5jbHVkZSA8YWNwaS9hY3BpX2J1cy5oPg0K
+ICNpbmNsdWRlICJwY2kuaCINCg0KLS0gDQoxLjcuMQ0K
