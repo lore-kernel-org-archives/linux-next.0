@@ -1,62 +1,40 @@
-From: "H.J. Lu" <hjl.tools@gmail.com>
-Subject: Re: linux-next: Tree for March 8 (BROKEN: arch/x86/kernel/entry_32.S?
- Debian's binutils/as?)
-Date: Thu, 10 Mar 2011 07:54:22 -0800
-Message-ID: <AANLkTim_oy_X9DGvyzyN3Y6w0YWp2CCy+dsMKCHob_cU@mail.gmail.com>
-References: <AANLkTiknsT1iQzUQ_oBiOORaqWBFyk2BaLq_xu9C5E_G@mail.gmail.com>
-	<1299605269.29313.1427511237@webmail.messagingengine.com>
-	<AANLkTi=6YstJxad41knR4Q9WN3wYKikPv-g1i3kg3HS1@mail.gmail.com>
-	<1299615939.25628.1427572905@webmail.messagingengine.com>
-	<AANLkTimBMP1jiuEEUwmKKVNZcZnrkFxFA_YBcLmkEFJM@mail.gmail.com>
-	<AANLkTikpMAXfG5aNWo8x7pKKppaQiE-U8qjFaG0B2azV@mail.gmail.com>
-	<20110309085150.GC21294@elte.hu>
-	<AANLkTiks9o18LRS46CrYHBXzq_6U-v-CqK=0Fzc4Tuco@mail.gmail.com>
-	<20110309160241.GC31249@elte.hu>
-	<AANLkTinCzzqq6KC5H1Gad7a99dkp_x-cc8f3FHnXdjLJ@mail.gmail.com>
-	<20110310071709.GG9289@elte.hu>
+From: "Jan Beulich" <jbeulich@novell.com>
+Subject: Re: linux-next: Tree for March 8 (BROKEN:
+	 arch/x86/kernel/entry_32.S? (Offensive Word Found In Message)
+	 Debian's binutils/as?)
+Date: Thu, 10 Mar 2011 19:57:52 +0000
+Message-ID: <4D792D41020000780006C482@vpn.id2.novell.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-iw0-f174.google.com ([209.85.214.174]:43718 "EHLO
-	mail-iw0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751188Ab1CJP4N (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Mar 2011 10:56:13 -0500
-In-Reply-To: <20110310071709.GG9289@elte.hu>
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@elte.hu>
-Cc: sedat.dilek@gmail.com, Sedat Dilek <sedat.dilek@googlemail.com>, Alexander van Heukelum <heukelum@fastmail.fm>, linux-next <linux-next@vger.kernel.org>, psomas@cslab.ece.ntua.gr, Jan Beulich <JBeulich@novell.com>, "H. Peter Anvin" <hpa@zytor.com>, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
+To: mingo@elte.hu, hjl.tools@gmail.com
+Cc: psomas@cslab.ece.ntua.gr, heukelum@fastmail.fm, sedat.dilek@gmail.com, sedat.dilek@googlemail.com, akpm@linux-foundation.org, torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, hpa@zytor.com
 
-On Wed, Mar 9, 2011 at 11:17 PM, Ingo Molnar <mingo@elte.hu> wrote:
-
-> Your "it's simple to fix" argument misses that point: i was talking about bisection
-> breakage, and during bisection of kernel bugs we dive back into older versions of
-> the code.
+>>> "H.J. Lu"  03/09/11 8:05 PM >>>
+>On Wed, Mar 9, 2011 at 8:02 AM, Ingo Molnar  wrote:
+>> I'm not denying that it's buggy code - I'm just asking you to *PLEASE* at minimum
+>> acknowledge that surprise flag days that turn a before-benign condition into a fatal
+>> build failure suck to everyone else outside your own little universe.
+>>
 >
-> It does not matter that you declare the .size directive bogus. It is buggy and yes
-> i've already queued up the fixes and i apprecitate them being fixed, but that's
-> immaterial to the compatibility argument i made: BINUTILS BUILT THE KERNEL FINE
-> BEFORE.
->
-> If you do changes to a major component of the build environment of thousands of free
-> software projects you *must* consider the real-life compatbility effects of your
-> change on others, not just your own motivation.
->
-> If you do that you need to at least UNDERSTAND what i'm talking about. It scares the
-> heck out of me that we are here at mail #20 with a *very* simple compatibility
-> scenario and the maintainer of a major piece of free software infrastructure *still*
-> does not understand this very simple argument. How the heck will you be able to
-> handle more complex cases of compatibility in a responsible way?
->
+>There is no way for assembler to know if a bug in input source code is
+>"benign" or
+>not. For assembler, a bug in input is a bug in input.  Assembly programmers
+>should appreciate this assembler change for helping him/her catch such bugs
+>in his/her codes.
 
-If I understand it correctly, the issue here is in some cases, for whatever
-reason, the assembly input files can't be changed even if they are incorrect.
-On the other hand, this is the incorrect assembly input as far as assembler
-is concern.  You can write a simple assembly wrapper to fix the assembly input
-before sending it to the real assembler.  Yes, it may be a hassle.  I guess
-it is the price you may have to pay when you can't fix your code.
+I can only support Ingo here, particularly since the bug fixed in gas
+is very unlikely to affect functionality of anyone's code - it's rather
+that debuggability would have suffered. Clearly, as Ingo says, a
+warning would have been enough for the next couple of years (in
+my opinion, actually forever for that very reason), or at least a
+diagnostic that's an error by default and can be turned into a
+warning by the user. After all, it's not like the assembler couldn't
+continue past that point (it can simply ignore the bogus directive),
+but it ought to be only that condition which should cause an error.
 
-FWIW, I can provide the assembler wrapper if needed.
-
--- 
-H.J.
+Jan
