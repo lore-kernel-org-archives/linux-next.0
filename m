@@ -1,88 +1,68 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: Kernelspace firmware loaders (was: linux-next: manual merge of the staging tree with the v4l-dvb tree)
-Date: Wed, 9 Mar 2011 23:30:59 +0100
-Message-ID: <201103092331.00774.laurent.pinchart@ideasonboard.com>
-References: <20110304163905.ed6dd630.sfr@canb.auug.org.au> <20110307161658.GA9088@kroah.com> <AANLkTi=Yavz4=KYNgsR02yTmBU_+BigC9qCSdX4SrTF2@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure lin Linus' tree
+Date: Thu, 10 Mar 2011 11:25:43 +1100
+Message-ID: <20110310112543.5ae7fb7e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([95.142.166.194]:37729 "EHLO
-	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750814Ab1CIWai (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 9 Mar 2011 17:30:38 -0500
-In-Reply-To: <AANLkTi=Yavz4=KYNgsR02yTmBU_+BigC9qCSdX4SrTF2@mail.gmail.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:46614 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751740Ab1CJAZv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 9 Mar 2011 19:25:51 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Greg KH <greg@kroah.com>, Mauro Carvalho Chehab <mchehab@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>, "Igor M. Liplianin" <liplianin@me.by>, Ben Gamari <bgamari.foss@gmail.com>
+To: Linus <torvalds@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
 
 Hi Linus,
 
-On Monday 07 March 2011 17:39:43 Linus Torvalds wrote:
-> On Mon, Mar 7, 2011 at 8:16 AM, Greg KH <greg@kroah.com> wrote:
-> > If the code is just a "pass-through" to the hardware, I have no
-> > objection to the driver being in the kernel, if it needs to be in order
-> > to control the hardware properly.
-> 
-> .. or even if it doesn't "need to be", and you _could_ do it in user space.
-> 
-> We've had tons of problems with user space breakage and version skew
-> etc. It's often been a total pain to have user space-vs-kernel
-> components that support one version but not the other, making it hard
-> to upgrade the kernel independently of other things. The whole
-> experience with X-vs-drm has been very painful.
-> 
-> There are two cases where user-space drivers work fine:
-> 
->  (a) if there is no kernel component to them at all. Think "this
-> driver would work on not just Linux, but on FreeBSD and UnixWare".
-> Examples of this would be the original X approach.
-> 
->  (b) if there's a kernel driver which exports an interface that is
-> specified by the hardware (NOT specified by some "abstraction" layer),
-> and where the kernel just exports an interface and doesn't expect
-> anything back (ie the kernel is _strictly_ the lower-level driver,
-> there is no two-way "user space helps kernel" crap)
-> 
->      A reasonable example of this would be the USB user space drivers:
-> the kernel interface is clearly _below_ (so the kernel does not depend
-> on user space), and the defined not by some crazy software interface,
-> but by the USB hardware standard.
-> 
-> But any other kind of mixing is just a big pain. Having a user-space
-> thing to set things up for a kernel driver is crazy crap. It
-> inevitably leads to "one or the other is broken, and people working on
-> one piece aren't the same people working on the other". Just don't do
-> it. Every time it's done, it leads to problems. You need special
-> programs to set things up etc. It's just f*cked up.
-> 
-> (An example of why it's crazy crap: it inevitably means that the
-> kernel can not "resume" a device. Because it now needs user space help
-> to get the device going again. Crazy. Don't do it. It's shit).
+After merging the spi-current tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I agree with you on the pain introduced by mixing drivers with userspace 
-helpers. However, I'm still concerned about having a full JTAG stack in the 
-kernel.
+include/linux/sysctl.h:28: included file 'linux/rcupdate.h' is not exported
 
-The Altera JTAG driver is basically a firmware loader. There's nothing wrong 
-with firmare loaders in the kernel per-se, we have plenty of them and they 
-usually request firmware data from userspace (hopefully specially crafted for 
-the Linux driver, or pre-processed when the firmware is extracted from a 
-Windows driver) and more of less dump it to the device.
+Caused by commit dfef6dcd35cb ("unf*ck proc_sysctl ->d_compare()").
 
-Now, if a vendor provided a firmware in the form of a Java bytecode file, 
-requiring the kernel driver to implement a JVM to load the firmware into the 
-device, would you accept it ? JTAG is not Java, but it still requires several 
-non-trivial layers, from controller drivers (we need to support multiple APIs 
-there, as controllers can range from simple bit-banging adapters to more 
-complex and faster devices with a higher level interface) to binary firmware 
-interpreters (and I'm really talking about intepreters here, not just parsers 
-- the Altera firmware file requires a VM) with of course incompatible vendor-
-specific formats.
+I applied this patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 10 Mar 2011 11:14:17 +1100
+Subject: [PATCH] sysctl: the include of rcupdate.h is only needed in the kernel
+
+Fixes this built error:
+
+include/linux/sysctl.h:28: included file 'linux/rcupdate.h' is not exported
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/sysctl.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
+index bb7c2b0..11684d9 100644
+--- a/include/linux/sysctl.h
++++ b/include/linux/sysctl.h
+@@ -25,7 +25,6 @@
+ #include <linux/kernel.h>
+ #include <linux/types.h>
+ #include <linux/compiler.h>
+-#include <linux/rcupdate.h>
+ 
+ struct completion;
+ 
+@@ -931,6 +930,7 @@ enum
+ 
+ #ifdef __KERNEL__
+ #include <linux/list.h>
++#include <linux/rcupdate.h>
+ 
+ /* For the /proc/sys support */
+ struct ctl_table;
+-- 
+1.7.4.1
 
 -- 
-Regards,
-
-Laurent Pinchart
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
