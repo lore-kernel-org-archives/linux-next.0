@@ -1,51 +1,57 @@
-From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Subject: linux-next: build failure after merge of the cifs tree
-Date: Thu, 10 Mar 2011 11:43:15 +1100
-Message-ID: <20110310114315.eb9aec89.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the nfsd tree
+Date: Thu, 10 Mar 2011 11:53:31 +1100
+Message-ID: <20110310115331.10a95d57.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__10_Mar_2011_11_43_15_+1100_p_jO0g5ZOu2LlNO0"
-Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Shirish Pargaonkar <shirishpargaonkar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+ boundary="Signature=_Thu__10_Mar_2011_11_53_31_+1100_Jdn1VghIVlGBtS2O"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:52760 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752406Ab1CJAxh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 9 Mar 2011 19:53:37 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "J. Bruce Fields" <bfields@fieldses.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Thu__10_Mar_2011_11_43_15_+1100_p_jO0g5ZOu2LlNO0
+--Signature=_Thu__10_Mar_2011_11_53_31_+1100_Jdn1VghIVlGBtS2O
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Bruce,
 
-After merging the cifs tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+After merging the nfsd tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
 
-ERROR: ".set_cifs_acl" [fs/cifs/cifs.ko] undefined!
+net/sunrpc/svcauth_unix.c: In function 'unix_domain_find':
+net/sunrpc/svcauth_unix.c:58: warning: passing argument 1 of 'svcauth_unix_=
+domain_release' from incompatible pointer type
+net/sunrpc/svcauth_unix.c:41: note: expected 'struct auth_domain *' but arg=
+ument is of type 'struct unix_domain *'
 
-Caused by commit 30091b5571eb ("cifs: Allow to set extended attribute
-cifs_acl (try #2)").
-
-I have used the cifs tree from next-20110309 for today.
+Introduced by commit 8b3e07ac908d ("svcrpc: fix rare race on unix_domain
+creation").
 --=20
 Cheers,
-Stephen Rothwell                    sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
+Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__10_Mar_2011_11_43_15_+1100_p_jO0g5ZOu2LlNO0
+--Signature=_Thu__10_Mar_2011_11_53_31_+1100_Jdn1VghIVlGBtS2O
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNeB6jAAoJEDMEi1NhKgbs4AYH/2xabeEUr0iCZVING14WMTXK
-YjWC1i7ENdNMmeX0OrCNg2wc91uwydNK8sWB7/0TipTLOC930rIDcr2EOQSU+BGK
-+4+gXyeh9EPi5OKSWxBee0s2je1QKS/NybURIA8nOpJQ27kgSzyqKBsBuy656hjt
-MTTGbVrT+ky72/df9A4dehGU7Bgrf4fRALVqNVZUC3Dk4LZ19LyRtlv5ml4Xl24c
-7YKQZvMj6yFfQdTKIttNyc4pykKAsZ59/X1my5YDRYo6NPGkNGlD2VZAAsRb7ng/
-VltX9rRk4OSwK7kGE74BlvSXaYj68b9V3e/UtSMeZqyplOcwnFzCJvo6WdUVru8=
-=BuHA
+iQEcBAEBAgAGBQJNeCELAAoJEDMEi1NhKgbs9SAH/jOFrd38fx9xYZDdmj9wZl6r
+d9AMmwdxg3eAdyL0VgukfTfNna+Lv36rBQtL+qv53KkbS26+L9yB7h/fQRzy37VJ
+Zls5nnNkgDL3BNODo9023B2za3vHcJVzvwoOIobdzNgS0rRIfYn35zvOLE9Rehoc
+kHwPOz3kSi64Zj7DTu75/d2sSoVKtwb93BrVU/E26dPEnuSOsT7pzJksRSIYhmSI
+TUqOIzrNUPHAR1FfQsjqMlmftCw5RG/FdJM2fEIYP/jyofel3ugiQn+4q5fBoZmK
+lbLJgURujzo1CMptEAlO9DWDGmQNADMkIcpEPN8Pep58RKtGjNt31gvHy03wfZM=
+=SAyX
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__10_Mar_2011_11_43_15_+1100_p_jO0g5ZOu2LlNO0--
+--Signature=_Thu__10_Mar_2011_11_53_31_+1100_Jdn1VghIVlGBtS2O--
