@@ -1,52 +1,51 @@
-From: <Jordan_Hargrave@Dell.com>
-Subject: RE: [PATCH V4] Export ACPI _DSM provided firmware instance number
- and string name to sysfs
-Date: Wed, 9 Mar 2011 18:35:24 -0600
-Message-ID: <5B3AAEAF6B46EA4D955DF7AD46C2C48502C2A7A9@AUSX7MCPS303.AMER.DELL.COM>
-References: <20110223125741.GA16473@fedora14-r610.blr.amer.dell.com>
- <20110302172508.GA2794@fedora14-r610.oslab.blr.amer.dell.com>
- <20110304104314.26265021@jbarnes-desktop>
- <AANLkTimz662+L6eYJm2gh0NwWOxxzQV3503bcs-GMFGu@mail.gmail.com>
- <20110307200512.GA22450@fedora14-r610.oslab.blr.amer.dell.com>
- <20110307195616.GA14888@kroah.com>
+From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Subject: linux-next: build failure after merge of the cifs tree
+Date: Thu, 10 Mar 2011 11:43:15 +1100
+Message-ID: <20110310114315.eb9aec89.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <20110307195616.GA14888@kroah.com>
-Content-Language: en-US
-Sender: linux-pci-owner@vger.kernel.org
-To: greg@kroah.com, Narendra_K@Dell.com
-Cc: a.beregalov@gmail.com, linux-next@vger.kernel.org, jbarnes@virtuousgeek.org, linux-pci@vger.kernel.org, linux-hotplug@vger.kernel.org, netdev@vger.kernel.org, mjg@redhat.com, Matt_Domsch@Dell.com, Charles_Rose@Dell.com, Shyam_Iyer@Dell.com, sfr@canb.auug.org.au
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__10_Mar_2011_11_43_15_+1100_p_jO0g5ZOu2LlNO0"
+Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Shirish Pargaonkar <shirishpargaonkar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
-That happens though for CONFIG_XXXX, though usually the include file is further down in the #ifdef region.
+--Signature=_Thu__10_Mar_2011_11_43_15_+1100_p_jO0g5ZOu2LlNO0
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
---jordan hargrave
-Dell Enterprise Linux Engineering
+After merging the cifs tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
------Original Message-----
-From: Greg KH [mailto:greg@kroah.com] 
-Sent: Monday, March 07, 2011 1:56 PM
-To: K, Narendra
-Cc: a.beregalov@gmail.com; linux-next@vger.kernel.org; jbarnes@virtuousgeek.org; linux-pci@vger.kernel.org; linux-hotplug@vger.kernel.org; netdev@vger.kernel.org; mjg@redhat.com; Domsch, Matt; Rose, Charles; Hargrave, Jordan; Iyer, Shyam; sfr@canb.auug.org.au
-Subject: Re: [PATCH V4] Export ACPI _DSM provided firmware instance number and string name to sysfs
+ERROR: ".set_cifs_acl" [fs/cifs/cifs.ko] undefined!
 
-On Mon, Mar 07, 2011 at 11:44:52AM -0800, Narendra_K@Dell.com wrote:
-> --- a/drivers/pci/pci-label.c
-> +++ b/drivers/pci/pci-label.c
-> @@ -29,7 +29,9 @@
->  #include <linux/nls.h>
->  #include <linux/acpi.h>
->  #include <linux/pci-acpi.h>
-> +#ifdef CONFIG_ACPI
->  #include <acpi/acpi_drivers.h>
-> +#endif
+Caused by commit 30091b5571eb ("cifs: Allow to set extended attribute
+cifs_acl (try #2)").
 
-You should never need a #ifdef in a .c file for an include file.  If so,
-something is really wrong.
+I have used the cifs tree from next-20110309 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org
+http://www.canb.auug.org.au/~sfr/
 
-thanks,
+--Signature=_Thu__10_Mar_2011_11_43_15_+1100_p_jO0g5ZOu2LlNO0
+Content-Type: application/pgp-signature
 
-greg k-h
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNeB6jAAoJEDMEi1NhKgbs4AYH/2xabeEUr0iCZVING14WMTXK
+YjWC1i7ENdNMmeX0OrCNg2wc91uwydNK8sWB7/0TipTLOC930rIDcr2EOQSU+BGK
++4+gXyeh9EPi5OKSWxBee0s2je1QKS/NybURIA8nOpJQ27kgSzyqKBsBuy656hjt
+MTTGbVrT+ky72/df9A4dehGU7Bgrf4fRALVqNVZUC3Dk4LZ19LyRtlv5ml4Xl24c
+7YKQZvMj6yFfQdTKIttNyc4pykKAsZ59/X1my5YDRYo6NPGkNGlD2VZAAsRb7ng/
+VltX9rRk4OSwK7kGE74BlvSXaYj68b9V3e/UtSMeZqyplOcwnFzCJvo6WdUVru8=
+=BuHA
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__10_Mar_2011_11_43_15_+1100_p_jO0g5ZOu2LlNO0--
