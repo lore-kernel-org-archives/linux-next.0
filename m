@@ -1,40 +1,68 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
+From: Jens Axboe <axboe@kernel.dk>
 Subject: Re: linux-next: Tree for March 11 (block/mm/fs)
-Date: Fri, 11 Mar 2011 09:53:25 -0800
-Message-ID: <20110311095325.10ec7383.randy.dunlap@oracle.com>
-References: <20110311184115.33404b77.sfr@canb.auug.org.au>
+Date: Fri, 11 Mar 2011 20:18:48 +0100
+Message-ID: <4D7A7598.4020301@kernel.dk>
+References: <20110311184115.33404b77.sfr@canb.auug.org.au> <20110311095325.10ec7383.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:35942 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751019Ab1CKRyU (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 11 Mar 2011 12:54:20 -0500
-In-Reply-To: <20110311184115.33404b77.sfr@canb.auug.org.au>
+Received: from 0122700014.0.fullrate.dk ([95.166.99.235]:60143 "EHLO kernel.dk"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753256Ab1CKTSu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 11 Mar 2011 14:18:50 -0500
+In-Reply-To: <20110311095325.10ec7383.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
-On Fri, 11 Mar 2011 18:41:15 +1100 Stephen Rothwell wrote:
-
-> Hi all,
+On 2011-03-11 18:53, Randy Dunlap wrote:
+> On Fri, 11 Mar 2011 18:41:15 +1100 Stephen Rothwell wrote:
 > 
-> Changes since 20110310:
+>> Hi all,
+>>
+>> Changes since 20110310:
+>>
+>> The block tree lost its build failure but gained another for which I
+>> applied a patch.
 > 
-> The block tree lost its build failure but gained another for which I
-> applied a patch.
+> 
+> When CONFIG_BLOCK is not enabled:
+> 
+> mm/filemap.c:1257: error: storage size of 'plug' isn't known
+> mm/filemap.c:2450: error: storage size of 'plug' isn't known
+> mm/readahead.c:112: error: storage size of 'plug' isn't known
+> fs/aio.c:1625: error: storage size of 'plug' isn't known
 
+Thanks Randy, I fixed it up.
 
-When CONFIG_BLOCK is not enabled:
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 91fa428..16a902f 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -1297,15 +1297,18 @@ static inline long nr_blockdev_pages(void)
+ 	return 0;
+ }
+ 
+-static inline void blk_start_plug(struct list_head *list)
++struct blk_plug {
++};
++
++static inline void blk_start_plug(struct blk_plug *plug)
+ {
+ }
+ 
+-static inline void blk_finish_plug(struct list_head *list)
++static inline void blk_finish_plug(struct blk_plug *plug)
+ {
+ }
+ 
+-static inline void blk_flush_plug(struct task_struct *tsk)
++static inline void blk_flush_plug(struct task_struct *task)
+ {
+ }
+ 
 
-mm/filemap.c:1257: error: storage size of 'plug' isn't known
-mm/filemap.c:2450: error: storage size of 'plug' isn't known
-mm/readahead.c:112: error: storage size of 'plug' isn't known
-fs/aio.c:1625: error: storage size of 'plug' isn't known
-
-
----
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+-- 
+Jens Axboe
