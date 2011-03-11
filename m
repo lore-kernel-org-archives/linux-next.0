@@ -1,46 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the workqueues tree with the block tree
-Date: Fri, 11 Mar 2011 16:28:05 +1100
-Message-ID: <20110311162805.ca739319.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the s5p tree
+Date: Fri, 11 Mar 2011 17:09:12 +1100
+Message-ID: <20110311170912.0fb48cf4.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__11_Mar_2011_17_09_12_+1100_=1pb6Y+zVt1UU24n"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:50224 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:56009 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750775Ab1CKF2M (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 11 Mar 2011 00:28:12 -0500
+	id S1751785Ab1CKGJX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 11 Mar 2011 01:09:23 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jens Axboe <jaxboe@fusionio.com>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, Kukjin Kim <kgene.kim@samsung.com>
 
-Hi Tejun,
+--Signature=_Fri__11_Mar_2011_17_09_12_+1100_=1pb6Y+zVt1UU24n
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Today's linux-next merge of the workqueues tree got a conflict in
-fs/aio.c between commit cf15900e1209 ("aio: remove request submission
-batching") from the block tree and commit d37adaa15962 ("fs/aio: aio_wq
-isn't used in memory reclaim path") from the workqueues tree.
+Hi Greg,
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
--- 
+Today's linux-next merge of the usb tree got a conflict in
+arch/arm/mach-s3c2440/mach-gta02.c between commit 326d05c15f7f ("ARM:
+S3C2440: Request usb pullup pin before using it on GTA02") from the s5p
+tree and commit e27c3c5c7e0f ("ARM: s3c24xx: Switch to common GPIO
+controlled UDC pullup implementation") from the usb tree.
+
+The latter commit removes the function gta02_udc_command() which is
+modified by the former.  I removed the function.
+
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc fs/aio.c
-index a936b7f,8007bd6..0000000
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@@ -75,8 -85,9 +75,8 @@@ static int __init aio_setup(void
-  	kiocb_cachep = KMEM_CACHE(kiocb, SLAB_HWCACHE_ALIGN|SLAB_PANIC);
-  	kioctx_cachep = KMEM_CACHE(kioctx,SLAB_HWCACHE_ALIGN|SLAB_PANIC);
-  
-- 	aio_wq = create_workqueue("aio");
-+ 	aio_wq = alloc_workqueue("aio", 0, 1);	/* used to limit concurrency */
- -	abe_pool = mempool_create_kmalloc_pool(1, sizeof(struct aio_batch_entry));
- -	BUG_ON(!aio_wq || !abe_pool);
- +	BUG_ON(!aio_wq);
-  
-  	pr_debug("aio_setup: sizeof(struct page) = %d\n", (int)sizeof(struct page));
-  
+--Signature=_Fri__11_Mar_2011_17_09_12_+1100_=1pb6Y+zVt1UU24n
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNebyIAAoJEDMEi1NhKgbsqkUH/3Ot+cg/7Qc4ANbeLdrVtPUV
++Zc/M8irj0UThpNtsLSNX4S2WYpY+67q+bA5O8mFSd6eqTfakLJ/G95+1VYt84U3
+FdUmpXM+cC+sjecjKwR6iDq5Gemehk7dNirbYBQpJXNwAy8dX/X+jYT+z52ySfLu
+0h/05WiyI1DUjXrmrSNqzhsMUKtCD5sK2Q6geJLDGpn9RbNhuPMV/oU6c3wjrkRR
+al4uJMrXkSPnR9+iowoeBwTvc1EZBZexEs+KzB8zUgUIqpVYB1ptrTrdAzLFLw7C
+NA7wsREJmh3RnBiKrW6pwajmKFTolQ+C6ndrXvaGiMPbGqXalwRxlMizGE0apPE=
+=b904
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__11_Mar_2011_17_09_12_+1100_=1pb6Y+zVt1UU24n--
