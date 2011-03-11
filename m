@@ -1,68 +1,43 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: linux-next: Tree for March 11 (block/mm/fs)
-Date: Fri, 11 Mar 2011 20:18:48 +0100
-Message-ID: <4D7A7598.4020301@kernel.dk>
-References: <20110311184115.33404b77.sfr@canb.auug.org.au> <20110311095325.10ec7383.randy.dunlap@oracle.com>
+From: Samuel Ortiz <sameo@linux.intel.com>
+Subject: Re: [PATCH] ARM: mx51_efika: update platform data for new mfd
+ changes
+Date: Fri, 11 Mar 2011 21:44:05 +0100
+Message-ID: <20110311204405.GE20247@sortiz-mobl>
+References: <20110304080653.3f2c3f19@debxo>
+ <20110307085358.GM29521@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 0122700014.0.fullrate.dk ([95.166.99.235]:60143 "EHLO kernel.dk"
+Received: from mga01.intel.com ([192.55.52.88]:6939 "EHLO mga01.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753256Ab1CKTSu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 11 Mar 2011 14:18:50 -0500
-In-Reply-To: <20110311095325.10ec7383.randy.dunlap@oracle.com>
+	id S1755226Ab1CKUoH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 11 Mar 2011 15:44:07 -0500
+Content-Disposition: inline
+In-Reply-To: <20110307085358.GM29521@pengutronix.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Andres Salomon <dilinger@queued.net>, Sascha Hauer <kernel@pengutronix.de>, Amit Kucheria <amit.kucheria@canonical.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
 
-On 2011-03-11 18:53, Randy Dunlap wrote:
-> On Fri, 11 Mar 2011 18:41:15 +1100 Stephen Rothwell wrote:
-> 
->> Hi all,
->>
->> Changes since 20110310:
->>
->> The block tree lost its build failure but gained another for which I
->> applied a patch.
-> 
-> 
-> When CONFIG_BLOCK is not enabled:
-> 
-> mm/filemap.c:1257: error: storage size of 'plug' isn't known
-> mm/filemap.c:2450: error: storage size of 'plug' isn't known
-> mm/readahead.c:112: error: storage size of 'plug' isn't known
-> fs/aio.c:1625: error: storage size of 'plug' isn't known
+Hi Sascha,
 
-Thanks Randy, I fixed it up.
+On Mon, Mar 07, 2011 at 09:53:58AM +0100, Sascha Hauer wrote:
+> On Fri, Mar 04, 2011 at 08:06:53AM -0800, Andres Salomon wrote:
+> > Note that this relies on stuff currently in mfd's next tree, but this
+> > is also a newer driver.  I'm not sure which tree it should go through,
+> > as it's a problem that shows up in next.
+> 
+> Please ping me again when the mfd tree is in Linus master. I see no
+> other chance fixing this on my side other than removing regulator
+> support for efika completely for now. So I guess you have to live with
+> the compile breakage for some time.
+It would probably make sense for me to carry this driver then. Sascha, would
+you be ok with it ? If that's so, could you please point me at a git commit
+from your tree ?
 
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 91fa428..16a902f 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -1297,15 +1297,18 @@ static inline long nr_blockdev_pages(void)
- 	return 0;
- }
- 
--static inline void blk_start_plug(struct list_head *list)
-+struct blk_plug {
-+};
-+
-+static inline void blk_start_plug(struct blk_plug *plug)
- {
- }
- 
--static inline void blk_finish_plug(struct list_head *list)
-+static inline void blk_finish_plug(struct blk_plug *plug)
- {
- }
- 
--static inline void blk_flush_plug(struct task_struct *tsk)
-+static inline void blk_flush_plug(struct task_struct *task)
- {
- }
- 
+Cheers,
+Samuel.
 
 -- 
-Jens Axboe
+Intel Open Source Technology Centre
+http://oss.intel.com/
