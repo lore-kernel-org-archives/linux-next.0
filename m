@@ -1,49 +1,46 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: linux-next: manual merge of the cpufreq tree with the s5p tree
-Date: Fri, 11 Mar 2011 12:48:31 +0900
-Message-ID: <00f101cbdf9f$361b1610$a2514230$%kim@samsung.com>
-References: <20110311133542.8ffb094e.sfr@au1.ibm.com>
- <20110311143230.c5d65b3c.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the workqueues tree with the block tree
+Date: Fri, 11 Mar 2011 16:28:05 +1100
+Message-ID: <20110311162805.ca739319.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:27174 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751077Ab1CKDsm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Mar 2011 22:48:42 -0500
-In-reply-to: <20110311143230.c5d65b3c.sfr@canb.auug.org.au>
-Content-language: ko
+Received: from chilli.pcug.org.au ([203.10.76.44]:50224 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750775Ab1CKF2M (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 11 Mar 2011 00:28:12 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: 'Stephen Rothwell' <sfr@canb.auug.org.au>, 'Dave Jones' <davej@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "'Rafael J. Wysocki'" <rjw@sisk.pl>
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jens Axboe <jaxboe@fusionio.com>
 
-Stephen Rothwell wrote:
-> 
-> Hi all,
-> 
-> On Fri, 11 Mar 2011 13:35:42 +1100 Stephen Rothwell <sfr@au1.ibm.com>
-wrote:
-> >
-> 
-> Please do not reply to the sender address on the preceding email (the
-> ibm.com one), please reply to this one instead.  Sorry for the
-> inconvenience.
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
-> http://www.canb.auug.org.au/~sfr/
+Hi Tejun,
 
-Oops, sorry. I did :(
-I read this after that.
+Today's linux-next merge of the workqueues tree got a conflict in
+fs/aio.c between commit cf15900e1209 ("aio: remove request submission
+batching") from the block tree and commit d37adaa15962 ("fs/aio: aio_wq
+isn't used in memory reclaim path") from the workqueues tree.
 
-Sorry for bothering....
+Just context changes.  I fixed it up (see below) and can carry the fix as
+necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
 
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+diff --cc fs/aio.c
+index a936b7f,8007bd6..0000000
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@@ -75,8 -85,9 +75,8 @@@ static int __init aio_setup(void
+  	kiocb_cachep = KMEM_CACHE(kiocb, SLAB_HWCACHE_ALIGN|SLAB_PANIC);
+  	kioctx_cachep = KMEM_CACHE(kioctx,SLAB_HWCACHE_ALIGN|SLAB_PANIC);
+  
+- 	aio_wq = create_workqueue("aio");
++ 	aio_wq = alloc_workqueue("aio", 0, 1);	/* used to limit concurrency */
+ -	abe_pool = mempool_create_kmalloc_pool(1, sizeof(struct aio_batch_entry));
+ -	BUG_ON(!aio_wq || !abe_pool);
+ +	BUG_ON(!aio_wq);
+  
+  	pr_debug("aio_setup: sizeof(struct page) = %d\n", (int)sizeof(struct page));
+  
