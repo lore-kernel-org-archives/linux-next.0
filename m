@@ -1,26 +1,61 @@
-From: "Guo, M." <M.Guo@tue.nl>
-Subject: Your mailbox has exceeded the storage limit
-Date: Thu, 10 Mar 2011 23:04:59 +0100
-Message-ID: <FBE9DDA18F01844A8CB6D36AAFC2D6E6018407DF4DC1@EXCHANGE11.campus.tue.nl>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the nfs tree
+Date: Fri, 11 Mar 2011 11:22:12 +1100
+Message-ID: <20110311112212.67557e19.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__11_Mar_2011_11_22_12_+1100_8F_qG1p.lNIz_xqV"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailhost.tue.nl ([131.155.2.19]:53849 "EHLO mailhost.tue.nl"
+Received: from chilli.pcug.org.au ([203.10.76.44]:55619 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751158Ab1CJWOM convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Mar 2011 17:14:12 -0500
-Content-Language: en-US
+	id S1751251Ab1CKAWU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 10 Mar 2011 19:22:20 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "info@upgrade.org" <info@upgrade.org>
+To: Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
+--Signature=_Fri__11_Mar_2011_11_22_12_+1100_8F_qG1p.lNIz_xqV
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Dear Customer,
+Hi Trond,
 
-Your mailbox has exceeded the storage limit which is 20GB as set by your administrator,you are currently running on 20.9GB,you may not be able to send or receive new mail until you re-validate your mailbox. Click the Link below to re-validate your mailbox.
+After merging the nfs tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Re-validate Your Mailbox Now<https://spreadsheets.google.com/viewform?formkey=dHBnZmNwS1phTURPYmRNQU93ajZFOVE6MQ>
+In file included from fs/nfs/client.c:45:
+fs/nfs/nfs4_fs.h: In function 'nfs4_schedule_session_recovery':
+fs/nfs/nfs4_fs.h:303: error: parameter name omitted
 
-*Important*
-NOTE: FAILURE CAN RESULT TO PERMANENT ACCOUNT SUSPENSION.
+Caused by commit 13ffe1da57fb ("NFSv4/4.1: Fix
+nfs4_schedule_state_recovery abuses").
+
+If you add code that is obviously affected by config options, it is worth
+while build testing with and without those options ... in this case
+CONFIG_NFS_V4_1 is not set.
+
+I have used the nfs tree from next-20110310 for today.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__11_Mar_2011_11_22_12_+1100_8F_qG1p.lNIz_xqV
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNeWs0AAoJEDMEi1NhKgbscmIIAIhLBTg7p4eI9+BLubzFhQd8
+SmisYxMlTJTEuVZXWVoCVGYFyOtQX5dw+4UlM7vch7zGtaJSs2RFGgofiYQMQS4Q
+YfmkIROcycLMSM1VmJs11XdRDYCUc0H0Zkj9O6Cme4xnGMMl1pL79JOGrpIdAa9s
+SyR6/lzQRzHZS2Nxmk0PsspQ38hZ9T2nf6uzdyXNTiB5n5WACglF5m7w/cNf4hQr
+DOEmiWPeunxSFMId6YnePttKDnn+teg8bLvpt3SDWef+MI6by4f7+lYe0l2ue5BK
+X9IruK+8ZuZ1Waks6rYcOtjLg5C8OY838qkx7kQgyRS1JfxqK+/QoQ1s8CQ2ruE=
+=VDt3
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__11_Mar_2011_11_22_12_+1100_8F_qG1p.lNIz_xqV--
