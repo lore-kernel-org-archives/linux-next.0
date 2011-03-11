@@ -1,61 +1,52 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the nfs tree
-Date: Fri, 11 Mar 2011 11:22:12 +1100
-Message-ID: <20110311112212.67557e19.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH 1/2 -next] usb-storage: ene_ub6250 depends on USB_STORAGE
+Date: Thu, 10 Mar 2011 16:48:36 -0800
+Message-ID: <20110310164836.1a39509c.randy.dunlap@oracle.com>
+References: <20110310180934.95f4f607.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__11_Mar_2011_11_22_12_+1100_8F_qG1p.lNIz_xqV"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55619 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751251Ab1CKAWU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 10 Mar 2011 19:22:20 -0500
+Received: from rcsinet10.oracle.com ([148.87.113.121]:49299 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753347Ab1CKAuc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Mar 2011 19:50:32 -0500
+In-Reply-To: <20110310180934.95f4f607.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Trond Myklebust <trond.myklebust@fys.uio.no>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
---Signature=_Fri__11_Mar_2011_11_22_12_+1100_8F_qG1p.lNIz_xqV
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Hi Trond,
+Fix ene_ub6250 build: it uses usb_storage driver interfaces, so it
+should depend on USB_STORAGE.
 
-After merging the nfs tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+ene_ub6250.c:(.text+0x14ff19): undefined reference to `usb_stor_reset_resume'
+ene_ub6250.c:(.text+0x14ffb1): undefined reference to `usb_stor_bulk_transfer_buf'
+ene_ub6250.c:(.text+0x14ffdd): undefined reference to `usb_stor_bulk_srb'
+ene_ub6250.c:(.text+0x14fff1): undefined reference to `usb_stor_bulk_transfer_sg'
+ene_ub6250.c:(.text+0x1503dd): undefined reference to `usb_stor_set_xfer_buf'
+ene_ub6250.c:(.text+0x15048e): undefined reference to `usb_stor_access_xfer_buf'
+ene_ub6250.c:(.text+0x150723): undefined reference to `usb_stor_probe1'
+ene_ub6250.c:(.text+0x150795): undefined reference to `usb_stor_probe2'
+ene_ub6250.c:(.text+0x1507af): undefined reference to `usb_stor_disconnect'
+drivers/built-in.o:(.data+0x10224): undefined reference to `usb_stor_suspend'
+drivers/built-in.o:(.data+0x10230): undefined reference to `usb_stor_pre_reset'
+drivers/built-in.o:(.data+0x10234): undefined reference to `usb_stor_post_reset'
 
-In file included from fs/nfs/client.c:45:
-fs/nfs/nfs4_fs.h: In function 'nfs4_schedule_session_recovery':
-fs/nfs/nfs4_fs.h:303: error: parameter name omitted
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/usb/storage/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
-Caused by commit 13ffe1da57fb ("NFSv4/4.1: Fix
-nfs4_schedule_state_recovery abuses").
-
-If you add code that is obviously affected by config options, it is worth
-while build testing with and without those options ... in this case
-CONFIG_NFS_V4_1 is not set.
-
-I have used the nfs tree from next-20110310 for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__11_Mar_2011_11_22_12_+1100_8F_qG1p.lNIz_xqV
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNeWs0AAoJEDMEi1NhKgbscmIIAIhLBTg7p4eI9+BLubzFhQd8
-SmisYxMlTJTEuVZXWVoCVGYFyOtQX5dw+4UlM7vch7zGtaJSs2RFGgofiYQMQS4Q
-YfmkIROcycLMSM1VmJs11XdRDYCUc0H0Zkj9O6Cme4xnGMMl1pL79JOGrpIdAa9s
-SyR6/lzQRzHZS2Nxmk0PsspQ38hZ9T2nf6uzdyXNTiB5n5WACglF5m7w/cNf4hQr
-DOEmiWPeunxSFMId6YnePttKDnn+teg8bLvpt3SDWef+MI6by4f7+lYe0l2ue5BK
-X9IruK+8ZuZ1Waks6rYcOtjLg5C8OY838qkx7kQgyRS1JfxqK+/QoQ1s8CQ2ruE=
-=VDt3
------END PGP SIGNATURE-----
-
---Signature=_Fri__11_Mar_2011_11_22_12_+1100_8F_qG1p.lNIz_xqV--
+--- linux-next-20110310.orig/drivers/usb/storage/Kconfig
++++ linux-next-20110310/drivers/usb/storage/Kconfig
+@@ -212,6 +212,7 @@ config USB_LIBUSUAL
+ config USB_STORAGE_ENE_UB6250
+ 	tristate "USB ENE card reader support"
+ 	depends on USB && SCSI
++	depends on USB_STORAGE
+ 	---help---
+ 	  Say Y here if you wish to control a ENE SD Card reader.
+ 	  To use SM/MS card, please build driver/staging/keucr/keucr.ko
