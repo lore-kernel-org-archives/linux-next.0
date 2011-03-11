@@ -1,40 +1,65 @@
-From: Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: linux-next: manual merge of the usb tree with the s5p tree
-Date: Fri, 11 Mar 2011 07:39:40 +0100
-Message-ID: <4D79C3AC.7090900@metafoo.de>
-References: <20110311170912.0fb48cf4.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (block tree
+ related)
+Date: Fri, 11 Mar 2011 17:58:30 +1100
+Message-ID: <20110311175830.29a387b2.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailhost.informatik.uni-hamburg.de ([134.100.9.70]:46607 "EHLO
-	mailhost.informatik.uni-hamburg.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751278Ab1CKGig (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Fri, 11 Mar 2011 01:38:36 -0500
-In-Reply-To: <20110311170912.0fb48cf4.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:41317 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751030Ab1CKG6e (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 11 Mar 2011 01:58:34 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lars Ellenberg <lars.ellenberg@linbit.com>, Philipp Reisner <philipp.reisner@linbit.com>
 
-On 03/11/2011 07:09 AM, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the usb tree got a conflict in
-> arch/arm/mach-s3c2440/mach-gta02.c between commit 326d05c15f7f ("ARM:
-> S3C2440: Request usb pullup pin before using it on GTA02") from the s5p
-> tree and commit e27c3c5c7e0f ("ARM: s3c24xx: Switch to common GPIO
-> controlled UDC pullup implementation") from the usb tree.
-> 
-> The latter commit removes the function gta02_udc_command() which is
-> modified by the former.  I removed the function.
-> 
+Hi all,
 
-Hi
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-Kukjin could you drop 326d05c15f7f ("ARM: S3C2440: Request usb pullup pin
-before using it on GTA02") from your tree? It has been superseded by the other
-commit in Gregs tree.
+drivers/char/tpm/tpm_tis.c:96: warning: 'is_itpm' defined but not used
+drivers/block/drbd/drbd_bitmap.c: In function '__bm_change_bits_to':
+drivers/block/drbd/drbd_bitmap.c:1287: error: implicit declaration of function 'generic___test_and_set_le_bit'
+drivers/block/drbd/drbd_bitmap.c:1289: error: implicit declaration of function 'generic___test_and_clear_le_bit'
+drivers/block/drbd/drbd_bitmap.c: In function 'drbd_bm_test_bit':
+drivers/block/drbd/drbd_bitmap.c:1438: error: implicit declaration of function 'generic_test_le_bit'
 
-- Lars
+Caused by commit 4b0715f09655 ("drbd: allow petabyte storage on 64bit
+arch").
+
+I have applied this patch for today (surely there is a better way):
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 11 Mar 2011 17:54:54 +1100
+Subject: [PATCH] drbd: need include for bitops functions declarations
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/block/drbd/drbd_bitmap.c |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/block/drbd/drbd_bitmap.c b/drivers/block/drbd/drbd_bitmap.c
+index b62dd5f..f0ae63d 100644
+--- a/drivers/block/drbd/drbd_bitmap.c
++++ b/drivers/block/drbd/drbd_bitmap.c
+@@ -28,6 +28,9 @@
+ #include <linux/drbd.h>
+ #include <linux/slab.h>
+ #include <asm/kmap_types.h>
++
++#include <asm-generic/bitops/le.h>
++
+ #include "drbd_int.h"
+ 
+ 
+-- 
+1.7.4.1
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
