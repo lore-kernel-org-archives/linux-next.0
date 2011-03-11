@@ -1,39 +1,19 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [next] xfs: error: called object 'panic' is not a function
-Date: Fri, 11 Mar 2011 13:21:52 +0100
-Message-ID: <AANLkTi=Hg4s5kEMQZu_KGePf4W_7jAFm0_WifM9W3PR6@mail.gmail.com>
+From: Matthew Garrett <mjg59@srcf.ucam.org>
+Subject: Re: [PATCH -next] eeepc-wmi: kconfig changes to fix build errors
+Date: Fri, 11 Mar 2011 17:31:17 +0000
+Message-ID: <20110311173117.GD16652@srcf.ucam.org>
+References: <20110222183437.ec2807bf.sfr@canb.auug.org.au> <20110222134735.0bfbec8b.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20110222134735.0bfbec8b.randy.dunlap@oracle.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: xfs-masters@oss.sgi.com, xfs@oss.sgi.com
-Cc: Linux-Next <linux-next@vger.kernel.org>, linux-kernel@vger.kernel.org
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Corentin Chary <corentincj@iksaif.net>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/3977742/:
+Applied, thanks.
 
-| fs/xfs/linux-2.6/xfs_message.c:116: error: called object 'panic' is
-not a function
-| make[3]: *** [fs/xfs/linux-2.6/xfs_message.o] Error 1
-
-Lemme guess, the problem fixed by commit
-cf78859f520f8275318f47d7864f4459d940cb6b (xfs: Do not name variables "p=
-anic")
-has reincarnated somewhere else?
-
-Gr{oetje,eeting}s,
-
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
-
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
+-- 
+Matthew Garrett | mjg59@srcf.ucam.org
