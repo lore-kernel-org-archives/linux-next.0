@@ -1,54 +1,49 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the cpufreq tree with the s5p tree
-Date: Fri, 11 Mar 2011 14:32:30 +1100
-Message-ID: <20110311143230.c5d65b3c.sfr@canb.auug.org.au>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: linux-next: manual merge of the cpufreq tree with the s5p tree
+Date: Fri, 11 Mar 2011 12:46:30 +0900
+Message-ID: <00e901cbdf9e$f0842510$d18c6f30$%kim@samsung.com>
 References: <20110311133542.8ffb094e.sfr@au1.ibm.com>
+ <20110311024101.GA29265@redhat.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Fri__11_Mar_2011_14_32_30_+1100_p4z/H6wFIVQP+ok4"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:43702 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751374Ab1CKDcs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 10 Mar 2011 22:32:48 -0500
-In-Reply-To: <20110311133542.8ffb094e.sfr@au1.ibm.com>
+Received: from mailout3.samsung.com ([203.254.224.33]:36919 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751077Ab1CKDsM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Mar 2011 22:48:12 -0500
+In-reply-to: <20110311024101.GA29265@redhat.com>
+Content-language: ko
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Jones <davej@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, Kukjin Kim <kgene.kim@samsung.com>
+To: 'Dave Jones' <davej@redhat.com>, 'Stephen Rothwell' <sfr@au1.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "'Rafael J. Wysocki'" <rjw@sisk.pl>
 
---Signature=_Fri__11_Mar_2011_14_32_30_+1100_p4z/H6wFIVQP+ok4
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Dave Jones wrote:
+> 
+> On Fri, Mar 11, 2011 at 01:35:42PM +1100, Stephen Rothwell wrote:
+>  > Hi Dave,
+>  >
+>  > Today's linux-next merge of the cpufreq tree got a conflict in
+>  > arch/arm/mach-exynos4/cpufreq.c between commit 7d30e8b3815f ("ARM:
+>  > EXYNOS4: Add EXYNOS4 CPU initialization support") from the s5p tree and
+>  > commit 44033b9c940e ([CPUFREQ] Remove the pm_message_t argument from
+>  > driver suspend"") from the cpufreq tree (where this file is called
+>  > arch/arm/mach-s5pv310/cpufreq.c).
+>  >
+>  > Just context changes.  I fixed it up (see below) and can carry the fix
+as
+>  > necessary.
+> 
+> Yep, Looks fine to me. thanks.
+> 
+> 	Dave
 
-Hi all,
+Of course, it's ok to me too.
+Thanks.
 
-On Fri, 11 Mar 2011 13:35:42 +1100 Stephen Rothwell <sfr@au1.ibm.com> wrote:
->
-
-Please do not reply to the sender address on the preceding email (the
-ibm.com one), please reply to this one instead.  Sorry for the
-inconvenience.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Fri__11_Mar_2011_14_32_30_+1100_p4z/H6wFIVQP+ok4
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNeZfOAAoJEDMEi1NhKgbsaXUH/RrHjjBMBx33g6EBoAgiMXqE
-UGiRafcVXJa/g1pnCD9WzSQCmgAtJ10c4ClKSk3Q5oyr4hdi6TTZ6FrTaU2isEuv
-ppGq+zmycGnlVfSzSZ2QJc1/lhwHxR2dy+ks0N79Z/fY0hfatcLPH+TXf4ryzubM
-7Wl297k7Xxzn8XCOiHp0+Jst/2IXgZuHmrnD4rpm6EoeOhzN+917o0/diZb66CGA
-uPj5HDrID/wOvR4nheP+OMn/jXpFNrBzZBSHXpReU1gPF2BFpjFUBWoxYPOUbAJM
-Sd9mMHoaEwh0MOALLtqsYTuZPedGkJSbjO3SNTTzHLBQ4cd2gw2kTeHG+di7E2c=
-=F5W4
------END PGP SIGNATURE-----
-
---Signature=_Fri__11_Mar_2011_14_32_30_+1100_p4z/H6wFIVQP+ok4--
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
