@@ -1,94 +1,55 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the vfs tree
-Date: Mon, 14 Mar 2011 19:11:47 +1100
-Message-ID: <20110314191147.28939ece.sfr@canb.auug.org.au>
+From: Lars Ellenberg <lars.ellenberg@linbit.com>
+Subject: Re: linux-next: build failure after merge of the final tree (block
+ tree  related)
+Date: Mon, 14 Mar 2011 09:33:22 +0100
+Message-ID: <20110314083322.GA11932@barkeeper1-xen.linbit>
+References: <20110311175830.29a387b2.sfr@canb.auug.org.au>
+ <4D79CB66.2020302@kernel.dk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:50986 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754599Ab1CNILz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 14 Mar 2011 04:11:55 -0400
+Received: from mail09.linbit.com ([212.69.161.110]:34349 "EHLO
+	mail09.linbit.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752284Ab1CNId1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 14 Mar 2011 04:33:27 -0400
+Content-Disposition: inline
+In-Reply-To: <4D79CB66.2020302@kernel.dk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>, Al Viro <viro@ZenIV.linux.org.uk>, Richard Cochran <richard.cochran@omicron.at>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Philipp Reisner <philipp.reisner@linbit.com>, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org
 
-Hi all,
+On Fri, Mar 11, 2011 at 08:12:38AM +0100, Jens Axboe wrote:
+> On 2011-03-11 07:58, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > After merging the final tree, today's linux-next build (powerpc
+> > allyesconfig) failed like this:
+> > 
+> > drivers/char/tpm/tpm_tis.c:96: warning: 'is_itpm' defined but not used
+> > drivers/block/drbd/drbd_bitmap.c: In function '__bm_change_bits_to':
+> > drivers/block/drbd/drbd_bitmap.c:1287: error: implicit declaration of function 'generic___test_and_set_le_bit'
+> > drivers/block/drbd/drbd_bitmap.c:1289: error: implicit declaration of function 'generic___test_and_clear_le_bit'
+> > drivers/block/drbd/drbd_bitmap.c: In function 'drbd_bm_test_bit':
+> > drivers/block/drbd/drbd_bitmap.c:1438: error: implicit declaration of function 'generic_test_le_bit'
+> > 
+> > Caused by commit 4b0715f09655 ("drbd: allow petabyte storage on 64bit
+> > arch").
+> > 
+> > I have applied this patch for today (surely there is a better way):
+> 
+> Thanks for not dropping it, I'll let the drbd guys send in a proper fix
+> and get it committed.
 
-Today's linux-next merge of the tip tree got a conflict in
-arch/x86/ia32/ia32entry.S, arch/x86/include/asm/unistd_32.h,
-arch/x86/include/asm/unistd_64.h and arch/x86/kernel/syscall_table_32.S
-between commits 349f36689b3c ("x86: Add new syscalls for x86_32") and
-204a06adf8cb ("x86: Add new syscalls for x86_64") from the vfs tree and
-commit ce26efdefa5e ("x86: Add clock_adjtime for x86") from the tip tree.
+Should that be fixed by adding
+#include <asm-generic/bitops/le.h>
+to 
+arch/powerpc/include/asm/bitops.h
+(and arch/s390/include/asm/bitops.h, possibly others?)
 
-Just overlapping additions of syscalls.  I fixed it up (see below) and
-can carry the fix as necessary.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Or are we expected to include that ourselves, directly?
 
-diff --cc arch/x86/ia32/ia32entry.S
-index 98d353e,9dc128f..0000000
---- a/arch/x86/ia32/ia32entry.S
-+++ b/arch/x86/ia32/ia32entry.S
-@@@ -851,6 -844,5 +844,7 @@@ ia32_sys_call_table
-  	.quad sys_fanotify_init
-  	.quad sys32_fanotify_mark
-  	.quad sys_prlimit64		/* 340 */
- +	.quad sys_name_to_handle_at
- +	.quad compat_sys_open_by_handle_at
-+ 	.quad compat_sys_clock_adjtime
-  ia32_syscall_end:
-diff --cc arch/x86/include/asm/unistd_32.h
-index f4c4973,b6f73f1..0000000
---- a/arch/x86/include/asm/unistd_32.h
-+++ b/arch/x86/include/asm/unistd_32.h
-@@@ -346,12 -346,11 +346,13 @@@
-  #define __NR_fanotify_init	338
-  #define __NR_fanotify_mark	339
-  #define __NR_prlimit64		340
- -#define __NR_clock_adjtime	341
- +#define __NR_name_to_handle_at	341
- +#define __NR_open_by_handle_at  342
-++#define __NR_clock_adjtime	343
-  
-  #ifdef __KERNEL__
-  
-- #define NR_syscalls 343
- -#define NR_syscalls 342
-++#define NR_syscalls 344
-  
-  #define __ARCH_WANT_IPC_PARSE_VERSION
-  #define __ARCH_WANT_OLD_READDIR
-diff --cc arch/x86/include/asm/unistd_64.h
-index 81a3d5b,5ee3085..0000000
---- a/arch/x86/include/asm/unistd_64.h
-+++ b/arch/x86/include/asm/unistd_64.h
-@@@ -669,10 -669,8 +669,12 @@@ __SYSCALL(__NR_fanotify_init, sys_fanot
-  __SYSCALL(__NR_fanotify_mark, sys_fanotify_mark)
-  #define __NR_prlimit64				302
-  __SYSCALL(__NR_prlimit64, sys_prlimit64)
- -#define __NR_clock_adjtime			303
- +#define __NR_name_to_handle_at			303
- +__SYSCALL(__NR_name_to_handle_at, sys_name_to_handle_at)
- +#define __NR_open_by_handle_at			304
- +__SYSCALL(__NR_open_by_handle_at, sys_open_by_handle_at)
-++#define __NR_clock_adjtime			305
-+ __SYSCALL(__NR_clock_adjtime, sys_clock_adjtime)
-  
-  #ifndef __NO_STUBS
-  #define __ARCH_WANT_OLD_READDIR
-diff --cc arch/x86/kernel/syscall_table_32.S
-index c314b21,68c7b9a..0000000
---- a/arch/x86/kernel/syscall_table_32.S
-+++ b/arch/x86/kernel/syscall_table_32.S
-@@@ -340,5 -340,4 +340,6 @@@ ENTRY(sys_call_table
-  	.long sys_fanotify_init
-  	.long sys_fanotify_mark
-  	.long sys_prlimit64		/* 340 */
- +	.long sys_name_to_handle_at
- +	.long sys_open_by_handle_at
-+ 	.long sys_clock_adjtime
+We probably need to select CONFIG_GENERIC_FIND_NEXT_BIT
+from our Kconfig as well?
+
+	Lars
