@@ -1,55 +1,55 @@
-From: Lars Ellenberg <lars.ellenberg@linbit.com>
-Subject: Re: linux-next: build failure after merge of the final tree (block
- tree  related)
-Date: Mon, 14 Mar 2011 09:33:22 +0100
-Message-ID: <20110314083322.GA11932@barkeeper1-xen.linbit>
-References: <20110311175830.29a387b2.sfr@canb.auug.org.au>
- <4D79CB66.2020302@kernel.dk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the slab tree
+Date: Mon, 14 Mar 2011 20:02:47 +1100
+Message-ID: <20110314200247.92ae2bd7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__14_Mar_2011_20_02_47_+1100_Gxy_v39ui041lTFb"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail09.linbit.com ([212.69.161.110]:34349 "EHLO
-	mail09.linbit.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752284Ab1CNId1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 14 Mar 2011 04:33:27 -0400
-Content-Disposition: inline
-In-Reply-To: <4D79CB66.2020302@kernel.dk>
+Received: from chilli.pcug.org.au ([203.10.76.44]:41738 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752286Ab1CNJC4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 14 Mar 2011 05:02:56 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Philipp Reisner <philipp.reisner@linbit.com>, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org
+To: Pekka Enberg <penberg@cs.helsinki.fi>, Christoph Lameter <cl@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Mar 11, 2011 at 08:12:38AM +0100, Jens Axboe wrote:
-> On 2011-03-11 07:58, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > After merging the final tree, today's linux-next build (powerpc
-> > allyesconfig) failed like this:
-> > 
-> > drivers/char/tpm/tpm_tis.c:96: warning: 'is_itpm' defined but not used
-> > drivers/block/drbd/drbd_bitmap.c: In function '__bm_change_bits_to':
-> > drivers/block/drbd/drbd_bitmap.c:1287: error: implicit declaration of function 'generic___test_and_set_le_bit'
-> > drivers/block/drbd/drbd_bitmap.c:1289: error: implicit declaration of function 'generic___test_and_clear_le_bit'
-> > drivers/block/drbd/drbd_bitmap.c: In function 'drbd_bm_test_bit':
-> > drivers/block/drbd/drbd_bitmap.c:1438: error: implicit declaration of function 'generic_test_le_bit'
-> > 
-> > Caused by commit 4b0715f09655 ("drbd: allow petabyte storage on 64bit
-> > arch").
-> > 
-> > I have applied this patch for today (surely there is a better way):
-> 
-> Thanks for not dropping it, I'll let the drbd guys send in a proper fix
-> and get it committed.
+--Signature=_Mon__14_Mar_2011_20_02_47_+1100_Gxy_v39ui041lTFb
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Should that be fixed by adding
-#include <asm-generic/bitops/le.h>
-to 
-arch/powerpc/include/asm/bitops.h
-(and arch/s390/include/asm/bitops.h, possibly others?)
+Hi all,
 
-Or are we expected to include that ourselves, directly?
+After merging the slab tree, today's linux-next build (powerpc
+allnoconfig) produced this warning:
 
-We probably need to select CONFIG_GENERIC_FIND_NEXT_BIT
-from our Kconfig as well?
+mm/slub.c: In function 'slab_free':
+mm/slub.c:2124: warning: label 'redo' defined but not used
 
-	Lars
+Introduced by commit 8a5ec0ba42c4 ("Lockless (and preemptless) fastpaths
+for slub").
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__14_Mar_2011_20_02_47_+1100_Gxy_v39ui041lTFb
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNfdm3AAoJEDMEi1NhKgbsv0EIAJkuAS5RqE4xnNeMiZ4juE49
+I/CDMconVUVhLHcs3WUkRNIqq9LlTrZVGPH7oxvPmp9Cqg//Ow1fTTLweKeTYYJn
+fwNYlufgEipEBgTvU5rht8G2vpFxyd3u1bVGbClcCT2WrUGHcRur0Ic0rPmCMlEf
+HcDuxHh9k+HN6wTuC57qMQClsMld4+g5eESNxLpQDcGMxHLZ0toCwz2k7VCPsZO8
+bvO6e01EUy5MZ+jiEQTVmRa7KZt2/bsmYT7FJSKXLz7pBv1rZ5kfO1lAX8+WYrhS
+3th1l2XzTowMr9SH7Uu90L+rKsKXGuLK1ROuJhLF13HDDyZSZBw4uA913tUzULw=
+=s9L/
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__14_Mar_2011_20_02_47_+1100_Gxy_v39ui041lTFb--
