@@ -1,50 +1,63 @@
-From: Ben Hutchings <bhutchings@solarflare.com>
-Subject: Re: linux-next: build failure after merge of the net tree
-Date: Mon, 14 Mar 2011 04:59:38 +0000
-Message-ID: <1300078778.3962.22.camel@localhost>
-References: <20110314152456.b49b2693.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the block tree
+Date: Mon, 14 Mar 2011 16:19:19 +1100
+Message-ID: <20110314161919.15e6d983.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__14_Mar_2011_16_19_19_+1100_pi37OvzeRJPvB/Ve"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.solarflare.com ([216.237.3.220]:53647 "EHLO
-	exchange.solarflare.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751760Ab1CNE7q (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 14 Mar 2011 00:59:46 -0400
-In-Reply-To: <20110314152456.b49b2693.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:39135 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752314Ab1CNFTa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 14 Mar 2011 01:19:30 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jarkko Lavinen <jarkko.lavinen@nokia.com>, David Woodhouse <David.Woodhouse@intel.com>
 
-On Mon, 2011-03-14 at 15:24 +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the net tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> kernel/irq/manage.c: In function 'irq_affinity_notify':
-> kernel/irq/manage.c:182: error: 'struct irq_desc' has no member named 'affinity'
-> 
-> Caused by commit cd7eab44e994 ("genirq: Add IRQ affinity notifiers")
-> (which is also in the tip tree).  I am guessing that there is a fix for
-> this also in the tip tree ... yep commit 1fb0ef31f428 ("genirq: Fix
-> affinity notifier fallout").
-> 
-> I tried using the net tree from next-20110311 for today but that had the
-> same problem.  So I merged the above fix commit from the tip tree.
-> 
-> I have no idea why this has suddenly become a problem in the net tree.
+--Signature=_Mon__14_Mar_2011_16_19_19_+1100_pi37OvzeRJPvB/Ve
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Commit cd7eab44e994 ("genirq: Add IRQ affinity notifiers") was a
-prerequisite for some changes in networking.  Thomas Gleixner applied it
-on a branch of its own so that David Miller could pull just that commit
-into net-next-2.6.  Of course, this means net-next-2.6 doesn't have the
-later fix (and won't for a while).
+Hi Jens,
 
-Ben.
+After merging the block tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
--- 
-Ben Hutchings, Senior Software Engineer, Solarflare Communications
-Not speaking for my employer; that's the marketing department's job.
-They asked us to note that Solarflare product names are trademarked.
+drivers/mtd/mtd_blkdevs.c: In function 'mtd_blktrans_cease_background':
+drivers/mtd/mtd_blkdevs.c:127: error: implicit declaration of function 'elv=
+_queue_empty'
+
+Caused by commit 7eaceaccab5f ("block: remove per-queue plugging")
+interacting with commit c7519dbf6f4b ("mtd_blkdevs: Add background
+processing support") from the mtd tree.
+
+I have no idea how to fix this up, so I have reverted the above commit
+from them mtd tree (along with commits a32159024620 "mtd: Add mtdswap
+block driver" and 89d8d32060de "mtd: fix printf format warnings, mostly
+lack of %zd for size_t, in mtdswap" that depend on it).
+
+Jens, maybe you could advise the mtd guys.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Mon__14_Mar_2011_16_19_19_+1100_pi37OvzeRJPvB/Ve
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNfaVXAAoJEDMEi1NhKgbscBcH/i7m9rmFclEsha93WvWIh+Ym
+JSOpsavdTE76gYEqN6ENe5AOSB2xeAtOShXAW3qUsCx/udes0wnUu8C8mGnXGANq
+G102oDCr66chKKVsVDd5wl1eioi+/Q2YbfhNQlFRqwgro3nDAwesaC2PxgHkcOP7
+0hk5FKW4iNe/mR/84rcaeL9xkut4yckhslhE+BVEv2J9u+AyuvigwjB1rcW2sUWP
+je0jr3fxCJakr6f56XaXkiytf2WEdLZrmiS2ZZEpKhBulkWM67vRzipD3ehlUusn
+KX2APnOwgyRvyIocuh2hQ+s9CsJFqQg7b0xReYWTXatwLG5T5j+R0pUCF/B/OBI=
+=ksrx
+-----END PGP SIGNATURE-----
+
+--Signature=_Mon__14_Mar_2011_16_19_19_+1100_pi37OvzeRJPvB/Ve--
