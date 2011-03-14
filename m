@@ -1,71 +1,62 @@
-From: Ingo Molnar <mingo@elte.hu>
-Subject: Re: linux-next: Tree for March 8 (BROKEN:
- arch/x86/kernel/entry_32.S? Debian's binutils/as?)
-Date: Sat, 12 Mar 2011 09:25:57 +0100
-Message-ID: <20110312082557.GA28952@elte.hu>
-References: <AANLkTi=6YstJxad41knR4Q9WN3wYKikPv-g1i3kg3HS1@mail.gmail.com>
- <1299615939.25628.1427572905@webmail.messagingengine.com>
- <AANLkTimBMP1jiuEEUwmKKVNZcZnrkFxFA_YBcLmkEFJM@mail.gmail.com>
- <AANLkTikpMAXfG5aNWo8x7pKKppaQiE-U8qjFaG0B2azV@mail.gmail.com>
- <20110309085150.GC21294@elte.hu>
- <AANLkTiks9o18LRS46CrYHBXzq_6U-v-CqK=0Fzc4Tuco@mail.gmail.com>
- <20110309160241.GC31249@elte.hu>
- <AANLkTinCzzqq6KC5H1Gad7a99dkp_x-cc8f3FHnXdjLJ@mail.gmail.com>
- <20110310071709.GG9289@elte.hu>
- <AANLkTim_oy_X9DGvyzyN3Y6w0YWp2CCy+dsMKCHob_cU@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net tree
+Date: Mon, 14 Mar 2011 15:24:56 +1100
+Message-ID: <20110314152456.b49b2693.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Mon__14_Mar_2011_15_24_56_+1100_FzgnEkGE9v5sPp+n"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3.mail.elte.hu ([157.181.1.138]:33325 "EHLO mx3.mail.elte.hu"
+Received: from chilli.pcug.org.au ([203.10.76.44]:59533 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751508Ab1CLI0I (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 12 Mar 2011 03:26:08 -0500
-Content-Disposition: inline
-In-Reply-To: <AANLkTim_oy_X9DGvyzyN3Y6w0YWp2CCy+dsMKCHob_cU@mail.gmail.com>
+	id S1750867Ab1CNEZJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 14 Mar 2011 00:25:09 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "H.J. Lu" <hjl.tools@gmail.com>
-Cc: sedat.dilek@gmail.com, Sedat Dilek <sedat.dilek@googlemail.com>, Alexander van Heukelum <heukelum@fastmail.fm>, linux-next <linux-next@vger.kernel.org>, psomas@cslab.ece.ntua.gr, Jan Beulich <JBeulich@novell.com>, "H. Peter Anvin" <hpa@zytor.com>, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Hutchings <bhutchings@solarflare.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
+--Signature=_Mon__14_Mar_2011_15_24_56_+1100_FzgnEkGE9v5sPp+n
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-* H.J. Lu <hjl.tools@gmail.com> wrote:
+Hi all,
 
-> If I understand it correctly, the issue here is in some cases, for whatever 
-> reason, the assembly input files can't be changed even if they are incorrect.
+After merging the net tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Correct - not having to change the source code is *very* important during testing 
-and in particular during bisection testing.
+kernel/irq/manage.c: In function 'irq_affinity_notify':
+kernel/irq/manage.c:182: error: 'struct irq_desc' has no member named 'affi=
+nity'
 
-This binutils change broke the kernel build (and hence bisection) for over 130,000 
-existing commits (none of which can be changed - history is append-only immutable), 
-on CONFIG_XEN=y x86-64 kernels.
+Caused by commit cd7eab44e994 ("genirq: Add IRQ affinity notifiers")
+(which is also in the tip tree).  I am guessing that there is a fix for
+this also in the tip tree ... yep commit 1fb0ef31f428 ("genirq: Fix
+affinity notifier fallout").
 
-Kernel bisection works like this:
+I tried using the net tree from next-20110311 for today but that had the
+same problem.  So I merged the above fix commit from the tip tree.
 
-   git bisect good v2.6.27
-   git bisect  bad v2.6.37
+I have no idea why this has suddenly become a problem in the net tree.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-The kernel gets rebuilt and tested by the tester at every commit that the bisection 
-mechanism comes up with. Mid-section commits get marked either 'git bisect bad' or 
-'git bisect good', depending on whether the bug is experienced or not.
+--Signature=_Mon__14_Mar_2011_15_24_56_+1100_FzgnEkGE9v5sPp+n
+Content-Type: application/pgp-signature
 
-Try it on a kernel repo, you can clone/track it:
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-   http://people.redhat.com/mingo/tip.git/README
+iQEcBAEBAgAGBQJNfZiYAAoJEDMEi1NhKgbs+DAIAIOgo7NgsH5GEsKVOtFodbSM
+Amykwyyxypt7reVWKUREs+VvnD/BVmjgZNJyGgwGzjgeNup8KwtM0fFuLWnu10A8
+4oaXMVq57gKb3ac6gI/7k/OzxsqBgCCKIyzpVErniLcRIKExfDnIpQABXOkZddNy
+aoDkKbsHKmid+/aecMgHs18cF3eBb7jVagegWIpemzgW7rYagJTZzcICZFfxOurq
+DpnQVAznb7uJu+HOtf2OMzr2Jiy7JGrZK9ld6sTIOODpoVKrBx25bxee3tQZk7Tz
+B6DcYwvWZ08YhLJqR4309mZXCYkBOeewyHDXNn7nO/BDmVqsMtQBP8926yTt1E8=
+=58DL
+-----END PGP SIGNATURE-----
 
-The Linux kernel has over 200,000 commits currently, with about 10,000 new commits 
-per new release. Bisection can easily go 'back in time' a few ten thousand commits 
-and can end up on any of those commits (depending on the kind of bug that is being 
-bisected).
-
-You can try out the commands above. Please try it and mark commits good/bad randomly 
-and see where you end up. You can end up *anywhere* within the 130,000+ commits 
-bisection windo.
-
-This CONFIG_XEN=y example shows why it's a *seriously* bad idea for build 
-infrastructure to introduce build failures out of the blue. We want build
-*warnings* to allow code that built fine before to still build.
-
-Thanks,
-
-	Ingo
+--Signature=_Mon__14_Mar_2011_15_24_56_+1100_FzgnEkGE9v5sPp+n--
