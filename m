@@ -1,56 +1,44 @@
-From: Lennert Buytenhek <buytenh@wantstofly.org>
-Subject: [PATCH] langwell_gpio: fix CONFIG_GENERIC_HARDIRQS_NO_DEPRECATED build
-Date: Mon, 14 Mar 2011 11:46:51 +0100
-Message-ID: <20110314104651.GZ16649@mail.wantstofly.org>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (powerpc tree related)
+Date: Tue, 15 Mar 2011 07:37:54 +1100
+Message-ID: <1300135074.22236.788.camel@pasglop>
+References: <20110314203827.4b61818e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fw.wantstofly.org ([80.101.37.227]:45195 "EHLO
-	mail.wantstofly.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750964Ab1CNKqw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 14 Mar 2011 06:46:52 -0400
-Content-Disposition: inline
+Received: from gate.crashing.org ([63.228.1.57]:58709 "EHLO gate.crashing.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751368Ab1CNUiW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 14 Mar 2011 16:38:22 -0400
+In-Reply-To: <20110314203827.4b61818e.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Grant Likely <grant.likely@secretlab.ca>, linux-kernel@vger.kernel.org
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lennert Buytenhek <buytenh@secretlab.ca>, Grant Likely <grant.likely@secretlab.ca>, Thomas Gleixner <tglx@linutronix.de>
 
-When CONFIG_GENERIC_HARDIRQS_NO_DEPRECATED is defined, struct irq_desc
-no longer contains a ->chip member pointing to the corresponding struct
-irq_chip, leading to the following build error:
+On Mon, 2011-03-14 at 20:38 +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> drivers/gpio/langwell_gpio.c: In function 'lnw_irq_handler':
+> drivers/gpio/langwell_gpio.c:210: error: 'struct irq_desc' has no member named 'chip'
+> drivers/gpio/langwell_gpio.c:211: error: 'struct irq_desc' has no member named 'chip'
+> 
+> Caused by commit 17b9f9e2653a ("powerpc: Enable
+> GENERIC_HARDIRQS_NO_DEPRECATED") enabling
+> CONFIG_GENERIC_HARDIRQS_NO_DEPRECATED for powerpc without previously
+> fixing up the above driver.
+> 
+> I have reverted that commit for today.
 
-	drivers/gpio/langwell_gpio.c: In function 'lnw_irq_handler':
-	drivers/gpio/langwell_gpio.c:210: error: 'struct irq_desc' has no member named 'chip'
-	drivers/gpio/langwell_gpio.c:211: error: 'struct irq_desc' has no member named 'chip'
+Except that the above driver has nothing to do with powerpc, it's some
+Intel Moorestown stuff...
 
-Fix this up by using get_irq_desc_chip(desc) to get the irq_chip,
-instead of trying to get it via desc->chip directly.
+It should be fixed regardless I suppose, CC'ing Thomas.
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Lennert Buytenhek <buytenh@secretlab.ca>
-
-diff --git a/drivers/gpio/langwell_gpio.c b/drivers/gpio/langwell_gpio.c
-index 54d70a4..56eb66a 100644
---- a/drivers/gpio/langwell_gpio.c
-+++ b/drivers/gpio/langwell_gpio.c
-@@ -191,6 +191,7 @@ static void lnw_irq_handler(unsigned irq, struct irq_desc *desc)
- 	u32 base, gpio;
- 	void __iomem *gedr;
- 	u32 gedr_v;
-+	struct irq_chip *chip;
- 
- 	/* check GPIO controller to check which pin triggered the interrupt */
- 	for (base = 0; base < lnw->chip.ngpio; base += 32) {
-@@ -207,8 +208,9 @@ static void lnw_irq_handler(unsigned irq, struct irq_desc *desc)
- 		writel(gedr_v, gedr);
- 	}
- 
--	if (desc->chip->irq_eoi)
--		desc->chip->irq_eoi(irq_get_irq_data(irq));
-+	chip = get_irq_desc_chip(desc);
-+	if (chip->irq_eoi)
-+		chip->irq_eoi(irq_get_irq_data(irq));
- 	else
- 		dev_warn(lnw->chip.dev, "missing EOI handler for irq %d\n", irq);
- 
----
+Cheers,
+Ben.
