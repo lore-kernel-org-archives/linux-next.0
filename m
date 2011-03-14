@@ -1,62 +1,50 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the net tree
-Date: Mon, 14 Mar 2011 15:24:56 +1100
-Message-ID: <20110314152456.b49b2693.sfr@canb.auug.org.au>
+From: Ben Hutchings <bhutchings@solarflare.com>
+Subject: Re: linux-next: build failure after merge of the net tree
+Date: Mon, 14 Mar 2011 04:59:38 +0000
+Message-ID: <1300078778.3962.22.camel@localhost>
+References: <20110314152456.b49b2693.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__14_Mar_2011_15_24_56_+1100_FzgnEkGE9v5sPp+n"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:59533 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750867Ab1CNEZJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 14 Mar 2011 00:25:09 -0400
+Received: from mail.solarflare.com ([216.237.3.220]:53647 "EHLO
+	exchange.solarflare.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751760Ab1CNE7q (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 14 Mar 2011 00:59:46 -0400
+In-Reply-To: <20110314152456.b49b2693.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ben Hutchings <bhutchings@solarflare.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 
---Signature=_Mon__14_Mar_2011_15_24_56_+1100_FzgnEkGE9v5sPp+n
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 2011-03-14 at 15:24 +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the net tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> kernel/irq/manage.c: In function 'irq_affinity_notify':
+> kernel/irq/manage.c:182: error: 'struct irq_desc' has no member named 'affinity'
+> 
+> Caused by commit cd7eab44e994 ("genirq: Add IRQ affinity notifiers")
+> (which is also in the tip tree).  I am guessing that there is a fix for
+> this also in the tip tree ... yep commit 1fb0ef31f428 ("genirq: Fix
+> affinity notifier fallout").
+> 
+> I tried using the net tree from next-20110311 for today but that had the
+> same problem.  So I merged the above fix commit from the tip tree.
+> 
+> I have no idea why this has suddenly become a problem in the net tree.
 
-Hi all,
+Commit cd7eab44e994 ("genirq: Add IRQ affinity notifiers") was a
+prerequisite for some changes in networking.  Thomas Gleixner applied it
+on a branch of its own so that David Miller could pull just that commit
+into net-next-2.6.  Of course, this means net-next-2.6 doesn't have the
+later fix (and won't for a while).
 
-After merging the net tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Ben.
 
-kernel/irq/manage.c: In function 'irq_affinity_notify':
-kernel/irq/manage.c:182: error: 'struct irq_desc' has no member named 'affi=
-nity'
-
-Caused by commit cd7eab44e994 ("genirq: Add IRQ affinity notifiers")
-(which is also in the tip tree).  I am guessing that there is a fix for
-this also in the tip tree ... yep commit 1fb0ef31f428 ("genirq: Fix
-affinity notifier fallout").
-
-I tried using the net tree from next-20110311 for today but that had the
-same problem.  So I merged the above fix commit from the tip tree.
-
-I have no idea why this has suddenly become a problem in the net tree.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Mon__14_Mar_2011_15_24_56_+1100_FzgnEkGE9v5sPp+n
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNfZiYAAoJEDMEi1NhKgbs+DAIAIOgo7NgsH5GEsKVOtFodbSM
-Amykwyyxypt7reVWKUREs+VvnD/BVmjgZNJyGgwGzjgeNup8KwtM0fFuLWnu10A8
-4oaXMVq57gKb3ac6gI/7k/OzxsqBgCCKIyzpVErniLcRIKExfDnIpQABXOkZddNy
-aoDkKbsHKmid+/aecMgHs18cF3eBb7jVagegWIpemzgW7rYagJTZzcICZFfxOurq
-DpnQVAznb7uJu+HOtf2OMzr2Jiy7JGrZK9ld6sTIOODpoVKrBx25bxee3tQZk7Tz
-B6DcYwvWZ08YhLJqR4309mZXCYkBOeewyHDXNn7nO/BDmVqsMtQBP8926yTt1E8=
-=58DL
------END PGP SIGNATURE-----
-
---Signature=_Mon__14_Mar_2011_15_24_56_+1100_FzgnEkGE9v5sPp+n--
+-- 
+Ben Hutchings, Senior Software Engineer, Solarflare Communications
+Not speaking for my employer; that's the marketing department's job.
+They asked us to note that Solarflare product names are trademarked.
