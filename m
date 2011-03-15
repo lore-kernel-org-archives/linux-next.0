@@ -1,62 +1,52 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the final tree
- (jdelvare-hwmon  tree related)
-Date: Tue, 15 Mar 2011 21:22:26 +1100
-Message-ID: <20110315212226.7e940b51.sfr@canb.auug.org.au>
-References: <20110315192428.ce74a177.sfr@canb.auug.org.au>
-	<4D7F2609.3080508@redhat.com>
-	<20110315103228.30233acc@endymion.delvare>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: linux-next: build failure after merge of the net tree
+Date: Tue, 15 Mar 2011 11:29:18 +0100 (CET)
+Message-ID: <alpine.LFD.2.00.1103151128070.2787@localhost6.localdomain6>
+References: <20110314170546.af552b4e.sfr@canb.auug.org.au> <alpine.LFD.2.00.1103141053020.2787@localhost6.localdomain6> <20110315113049.a6112494.sfr@canb.auug.org.au> <20110314.210712.226761233.davem@davemloft.net>
+ <20110315172558.a11642e7.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__15_Mar_2011_21_22_26_+1100_LVN.W+dJdC3IIpol"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58555 "EHLO smtps.tip.net.au"
+Received: from www.tglx.de ([62.245.132.106]:44060 "EHLO www.tglx.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755702Ab1COKWf (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 15 Mar 2011 06:22:35 -0400
-In-Reply-To: <20110315103228.30233acc@endymion.delvare>
+	id S1755412Ab1COKaP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 15 Mar 2011 06:30:15 -0400
+In-Reply-To: <20110315172558.a11642e7.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jean Delvare <khali@linux-fr.org>
-Cc: Hans de Goede <hdegoede@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, bhutchings@solarflare.com, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, mingo@elte.hu, hpa@zytor.com, peterz@infradead.org
 
---Signature=_Tue__15_Mar_2011_21_22_26_+1100_LVN.W+dJdC3IIpol
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, 15 Mar 2011, Stephen Rothwell wrote:
 
-Hi Jean,
+> Hi Dave,
+> 
+> On Mon, 14 Mar 2011 21:07:12 -0700 (PDT) David Miller <davem@davemloft.net> wrote:
+> >
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Date: Tue, 15 Mar 2011 11:30:49 +1100
+> > 
+> > > So, if you merge the commit 1fb0ef31f428 ("genirq: Fix affinity notifier
+> > > fallout") from the tip tree, you will get exactly one new commit and will
+> > > fix your tree properly with no adverse effect on anyone else.
+> > 
+> > Thomas, how would you like me to do this?  Do you want to put that
+> > commit on a branch for me to pull from or should I apply it
+> > directly?
+> 
+> That commit is already the head of the irq/numa branch in the tip tree
+> (it is also on the irq/core branch).
+> 
+> Please merge that rather than cherry-picking the commit as that will
+> minimise the possibility of conflicts.  Pulling the irq/numa branch will
+> get you just that one fixup commit (as you have already merged up to the
+> immediately preceding commit).
+> 
+> I assume this makes sense, Thomas?  I just did a merge of the actual
+> fixup commit after merging the net tree.
 
-On Tue, 15 Mar 2011 10:32:28 +0100 Jean Delvare <khali@linux-fr.org> wrote:
->
-> Stephen, sorry for the inconvenience, both Hans and myself build-tested
-> the new code on an architecture where <linux/delay.h> gets included
-> implicitly, so we didn't notice it was missing.
+Yes. irq/numa should do the trick.
 
-It happens.  It seems that delay.h is almost always the one that is
-forgotten.  X86 builds include it implicitly but powerpc doesn't.
+Thanks,
 
-I wonder if we could concoct a nice checkpatch test for it.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__15_Mar_2011_21_22_26_+1100_LVN.W+dJdC3IIpol
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNfz3iAAoJEDMEi1NhKgbs3BEH/2jJzho5CMzoia9o085x7rpZ
-DmdnkEibscMe+ztzSYAh/mx+/2eNTHPfqNN8QOk9G5hPY7Q1CRe/TC/S0AeVbuwc
-6+vCGuR/4fAiBMFCXOyP5El2zWBsk7ZgeiDpOaOo+dfjWjQqd559xSma4XioOhLZ
-xsHAWM+xo0QnnV0yLcFbn8RYyKM87d7JQNaG41M6QBqg5hjIaiClpMwd5rU82pzW
-nvV5qrApI1TqUYtxyMzvVWDCnK7Xt1kvkfuReQiIok3OnyMxjEiKxWkaqJUceWTD
-Gt0z9qvRh6DjEIr5XXqjH27dECT4+JoIDRZC1ab0TITZCFp0dTQ0lUUmTXyHXBg=
-=mzoh
------END PGP SIGNATURE-----
-
---Signature=_Tue__15_Mar_2011_21_22_26_+1100_LVN.W+dJdC3IIpol--
+	tglx
