@@ -1,45 +1,62 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: build failure after merge of the bkl-config tree
-Date: Tue, 15 Mar 2011 13:59:12 +0100
-Message-ID: <201103151359.12569.arnd@arndb.de>
-References: <20110315184845.1a411e67.sfr@canb.auug.org.au>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Re: linux-next: manual merge of the xen-two tree with the tip tree
+Date: Tue, 15 Mar 2011 09:50:04 -0400
+Message-ID: <20110315135004.GB3432@dumpdata.com>
+References: <20110315172833.4fd17a0c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.187]:59375 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757626Ab1COM7Z (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Mar 2011 08:59:25 -0400
-In-Reply-To: <20110315184845.1a411e67.sfr@canb.auug.org.au>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:47416 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757395Ab1CONu7 (ORCPT
+	<rfc822;<linux-next@vger.kernel.org>>);
+	Tue, 15 Mar 2011 09:50:59 -0400
+Content-Disposition: inline
+In-Reply-To: <20110315172833.4fd17a0c.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Adamson <andros@netapp.com>, Boaz Harrosh <bharrosh@panasas.com>, Dean Hildebrand <dhildeb@us.ibm.com>, Fred Isaman <iisaman@citi.umich.edu>, Mike Sager <sager@netapp.com>, Fred Isaman <iisaman@netapp.com>, Mingyang Guo <guomingyang@nrchpc.ac.cn>, Ricardo Labiaga <Ricardo.Labiaga@netapp.com>, Tao Guo <guotao@nrchpc.ac.cn>, Benny Halevy <bhalevy@panasas.com>, Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Ian Campbell <ian.campbell@citrix.com>
 
-On Tuesday 15 March 2011, Stephen Rothwell wrote:
-> After merging the bkl-config tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
+On Tue, Mar 15, 2011 at 05:28:33PM +1100, Stephen Rothwell wrote:
+> Hi Konrad,
 > 
-> fs/nfs/read.c:21:28: error: linux/smp_lock.h: No such file or directory
+> Today's linux-next merge of the xen-two tree got a conflict in
+> arch/x86/pci/xen.c between commit 2c778651f73d ("x86: Cleanup the genirq
+> name space") from the tip tree and commit bf480d952bcf ("xen: events:
+> separate MSI PIRQ allocation from PIRQ binding to IRQ") from the xen-two
+> tree.  Commit f420e010edd8 ("xen: events: push set_irq_msi down into
+> xen_create_msi_irq") then moved the code modified by the tip tree commit
+> into drivers/xen/events.c.
 > 
-> Caused by commit 64419a9b2093 ("NFSv4.1: generic read") from the nfs tree
-> interacting with commit 4ba8216cd905 ("BKL: That's all, folks") from the
-> bkl-config tree.
-> 
-> I couldn't see that this include file was needed, so I applied the patch
-> below (which Trond could apply to his tree, I am pretty sure).  (I am not
-> sure why module.h is included either.)
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 15 Mar 2011 18:37:09 +1100
-> Subject: [PATCH] nfs: BKL is no longer needed, so remove the include
-> 
+> I fixed it up (I think - see below) and can carry the fix as necessary (I
+> used the xen-two tree's version of arch/x86/pci/xen.c).
 
-The fix is good. I have one patch in bkl-config that removes all instances
-of #include <linux/smp_lock.h> treewide. Obviously that doesn't
-help where new ones creep in, so we have to eliminate them one
-by one.
+Looks good. Thank you for following the trail down the patch changes.
 
-	Arnd
+
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
+> 
+> diff --git a/drivers/xen/events.c b/drivers/xen/events.c
+> index 62e5237..934a3b1 100644
+> --- a/drivers/xen/events.c
+> +++ b/drivers/xen/events.c
+> @@ -692,7 +692,7 @@ int xen_bind_pirq_msi_to_irq(struct pci_dev *dev, struct msi_desc *msidesc,
+>  				      handle_level_irq, name);
+>  
+>  	xen_irq_info_pirq_init(irq, 0, pirq, 0, vector, 0);
+> -	ret = set_irq_msi(irq, msidesc);
+> +	ret = irq_set_msi_desc(irq, msidesc);
+>  	if (ret < 0)
+>  		goto error_irq;
+>  out:
+> -- 
+> 1.7.4.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
