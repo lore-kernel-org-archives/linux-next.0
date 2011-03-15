@@ -1,62 +1,57 @@
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: Re: linux-next: manual merge of the xen-two tree with the tip tree
-Date: Tue, 15 Mar 2011 09:50:04 -0400
-Message-ID: <20110315135004.GB3432@dumpdata.com>
-References: <20110315172833.4fd17a0c.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: Tree for February 21 (usb/serial)
+Date: Tue, 15 Mar 2011 08:36:26 -0700
+Message-ID: <20110315083626.67d85f55.randy.dunlap@oracle.com>
+References: <20110303135152.c4b53da1.randy.dunlap@oracle.com>
+	<Pine.LNX.4.44L0.1103040953380.1812-100000@iolanthe.rowland.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:47416 "EHLO
+Received: from rcsinet10.oracle.com ([148.87.113.121]:20378 "EHLO
 	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757395Ab1CONu7 (ORCPT
-	<rfc822;<linux-next@vger.kernel.org>>);
-	Tue, 15 Mar 2011 09:50:59 -0400
-Content-Disposition: inline
-In-Reply-To: <20110315172833.4fd17a0c.sfr@canb.auug.org.au>
+	with ESMTP id S1758022Ab1COPhE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Mar 2011 11:37:04 -0400
+In-Reply-To: <Pine.LNX.4.44L0.1103040953380.1812-100000@iolanthe.rowland.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Ian Campbell <ian.campbell@citrix.com>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Oliver Neukum <oliver@neukum.org>, lud <linux-usb@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>
 
-On Tue, Mar 15, 2011 at 05:28:33PM +1100, Stephen Rothwell wrote:
-> Hi Konrad,
-> 
-> Today's linux-next merge of the xen-two tree got a conflict in
-> arch/x86/pci/xen.c between commit 2c778651f73d ("x86: Cleanup the genirq
-> name space") from the tip tree and commit bf480d952bcf ("xen: events:
-> separate MSI PIRQ allocation from PIRQ binding to IRQ") from the xen-two
-> tree.  Commit f420e010edd8 ("xen: events: push set_irq_msi down into
-> xen_create_msi_irq") then moved the code modified by the tip tree commit
-> into drivers/xen/events.c.
-> 
-> I fixed it up (I think - see below) and can carry the fix as necessary (I
-> used the xen-two tree's version of arch/x86/pci/xen.c).
+On Fri, 4 Mar 2011 10:04:38 -0500 (EST) Alan Stern wrote:
 
-Looks good. Thank you for following the trail down the patch changes.
-
-
-> -- 
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
+> On Thu, 3 Mar 2011, Randy Dunlap wrote:
 > 
-> diff --git a/drivers/xen/events.c b/drivers/xen/events.c
-> index 62e5237..934a3b1 100644
-> --- a/drivers/xen/events.c
-> +++ b/drivers/xen/events.c
-> @@ -692,7 +692,7 @@ int xen_bind_pirq_msi_to_irq(struct pci_dev *dev, struct msi_desc *msidesc,
->  				      handle_level_irq, name);
->  
->  	xen_irq_info_pirq_init(irq, 0, pirq, 0, vector, 0);
-> -	ret = set_irq_msi(irq, msidesc);
-> +	ret = irq_set_msi_desc(irq, msidesc);
->  	if (ret < 0)
->  		goto error_irq;
->  out:
-> -- 
-> 1.7.4.1
+> > On Mon, 21 Feb 2011 21:30:01 +0100 Rafael J. Wysocki wrote:
+> > 
+> > > On Monday, February 21, 2011, Randy Dunlap wrote:
+> > > > On Mon, 21 Feb 2011 18:21:34 +1100 Stephen Rothwell wrote:
+> > > > 
+> > > > > Hi all,
+> > > > > 
+> > > > > Changes since 20110218:
+> > > > 
+> > > > 
+> > > > When CONFIG_PM_RUNTIME is not enabled:
+> > > > 
+> > > > drivers/usb/serial/usb_wwan.c:702: error: 'struct dev_pm_info' has no member named 'usage_count'
+> > > 
+> > > This looks like a bug in the driver that shouldn't access this field directly.
+> > 
+> > 
+> > This build error is still with us in linux-next 2011.0303.
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+> Since Oliver added this bug in commit
+> 16871dcac74c63227aa92e0012f3004a648c2062 (usb_wwan: error case of
+> resume), he should be the person to fix it.  The logic there is not 
+> clear to me; I don't know how it ought to be changed.  Would replacing 
+> it with a call to usb_autopm_put_interface_no_suspend() be good enough?
+
+Hi Oliver,
+
+This build problem still happens with linux-next 2011.0315.
+Please send a fix for it.
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
