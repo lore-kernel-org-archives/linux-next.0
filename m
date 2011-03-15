@@ -1,52 +1,70 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: linux-next: build failure after merge of the net tree
-Date: Tue, 15 Mar 2011 11:29:18 +0100 (CET)
-Message-ID: <alpine.LFD.2.00.1103151128070.2787@localhost6.localdomain6>
-References: <20110314170546.af552b4e.sfr@canb.auug.org.au> <alpine.LFD.2.00.1103141053020.2787@localhost6.localdomain6> <20110315113049.a6112494.sfr@canb.auug.org.au> <20110314.210712.226761233.davem@davemloft.net>
- <20110315172558.a11642e7.sfr@canb.auug.org.au>
+From: Trond Myklebust <Trond.Myklebust@netapp.com>
+Subject: Re: linux-next: build failure after merge of the bkl-config tree
+Date: Tue, 15 Mar 2011 08:46:33 -0400
+Message-ID: <1300193193.9321.1.camel@lade.trondhjem.org>
+References: <20110315184845.1a411e67.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from www.tglx.de ([62.245.132.106]:44060 "EHLO www.tglx.de"
+Received: from mx2.netapp.com ([216.240.18.37]:35229 "EHLO mx2.netapp.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755412Ab1COKaP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 15 Mar 2011 06:30:15 -0400
-In-Reply-To: <20110315172558.a11642e7.sfr@canb.auug.org.au>
+	id S1757475Ab1COMqi convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Mar 2011 08:46:38 -0400
+In-Reply-To: <20110315184845.1a411e67.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, bhutchings@solarflare.com, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, mingo@elte.hu, hpa@zytor.com, peterz@infradead.org
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Adamson <andros@netapp.com>, Boaz Harrosh <bharrosh@panasas.com>, Dean Hildebrand <dhildeb@us.ibm.com>, Fred Isaman <iisaman@citi.umich.edu>, Mike Sager <sager@netapp.com>, Fred Isaman <iisaman@netapp.com>, Mingyang Guo <guomingyang@nrchpc.ac.cn>, Ricardo Labiaga <Ricardo.Labiaga@netapp.com>, Tao Guo <guotao@nrchpc.ac.cn>, Benny Halevy <bhalevy@panasas.com>
 
-On Tue, 15 Mar 2011, Stephen Rothwell wrote:
-
-> Hi Dave,
+On Tue, 2011-03-15 at 18:48 +1100, Stephen Rothwell wrote:
+> Hi Arnd,
 > 
-> On Mon, 14 Mar 2011 21:07:12 -0700 (PDT) David Miller <davem@davemloft.net> wrote:
-> >
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Date: Tue, 15 Mar 2011 11:30:49 +1100
-> > 
-> > > So, if you merge the commit 1fb0ef31f428 ("genirq: Fix affinity notifier
-> > > fallout") from the tip tree, you will get exactly one new commit and will
-> > > fix your tree properly with no adverse effect on anyone else.
-> > 
-> > Thomas, how would you like me to do this?  Do you want to put that
-> > commit on a branch for me to pull from or should I apply it
-> > directly?
+> After merging the bkl-config tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
 > 
-> That commit is already the head of the irq/numa branch in the tip tree
-> (it is also on the irq/core branch).
+> fs/nfs/read.c:21:28: error: linux/smp_lock.h: No such file or directory
 > 
-> Please merge that rather than cherry-picking the commit as that will
-> minimise the possibility of conflicts.  Pulling the irq/numa branch will
-> get you just that one fixup commit (as you have already merged up to the
-> immediately preceding commit).
+> Caused by commit 64419a9b2093 ("NFSv4.1: generic read") from the nfs tree
+> interacting with commit 4ba8216cd905 ("BKL: That's all, folks") from the
+> bkl-config tree.
 > 
-> I assume this makes sense, Thomas?  I just did a merge of the actual
-> fixup commit after merging the net tree.
+> I couldn't see that this include file was needed, so I applied the patch
+> below (which Trond could apply to his tree, I am pretty sure).  (I am not
+> sure why module.h is included either.)
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 15 Mar 2011 18:37:09 +1100
+> Subject: [PATCH] nfs: BKL is no longer needed, so remove the include
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  fs/nfs/read.c |    1 -
+>  1 files changed, 0 insertions(+), 1 deletions(-)
+> 
+> diff --git a/fs/nfs/read.c b/fs/nfs/read.c
+> index 4b764c6..7cded2b 100644
+> --- a/fs/nfs/read.c
+> +++ b/fs/nfs/read.c
+> @@ -18,7 +18,6 @@
+>  #include <linux/sunrpc/clnt.h>
+>  #include <linux/nfs_fs.h>
+>  #include <linux/nfs_page.h>
+> -#include <linux/smp_lock.h>
+>  #include <linux/module.h>
+>  
+>  #include <asm/system.h>
+> -- 
+> 1.7.4.1
 
-Yes. irq/numa should do the trick.
+Thanks Stephen! Applied to the nfs-for-2.6.39 tree.
 
-Thanks,
+Cheers
+  Trond
+-- 
+Trond Myklebust
+Linux NFS client maintainer
 
-	tglx
+NetApp
+Trond.Myklebust@netapp.com
+www.netapp.com
