@@ -1,77 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the net tree
-Date: Tue, 15 Mar 2011 11:30:49 +1100
-Message-ID: <20110315113049.a6112494.sfr@canb.auug.org.au>
-References: <20110314152456.b49b2693.sfr@canb.auug.org.au>
-	<1300078778.3962.22.camel@localhost>
-	<20110314163135.f366742e.sfr@canb.auug.org.au>
-	<20110313.225312.193696949.davem@davemloft.net>
-	<20110314170546.af552b4e.sfr@canb.auug.org.au>
-	<alpine.LFD.2.00.1103141053020.2787@localhost6.localdomain6>
+Subject: linux-next: build failure after merge of the drm tree
+Date: Tue, 15 Mar 2011 14:49:08 +1100
+Message-ID: <20110315144908.c245696a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__15_Mar_2011_11_30_49_+1100_edbgPSVLqaAkCy/j"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <alpine.LFD.2.00.1103141053020.2787@localhost6.localdomain6>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>
-Cc: Thomas Gleixner <tglx@linutronix.de>, bhutchings@solarflare.com, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, mingo@elte.hu, hpa@zytor.com, peterz@infradead.org
-List-Id: linux-next.vger.kernel.org
-
---Signature=_Tue__15_Mar_2011_11_30_49_+1100_edbgPSVLqaAkCy/j
 Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from chilli.pcug.org.au ([203.10.76.44]:45593 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750913Ab1CODtN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 14 Mar 2011 23:49:13 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Deucher <alexdeucher@gmail.com>
 
 Hi Dave,
 
-On Mon, 14 Mar 2011 10:56:12 +0100 (CET) Thomas Gleixner <tglx@linutronix.d=
-e> wrote:
->
-> On Mon, 14 Mar 2011, Stephen Rothwell wrote:
->=20
-> > On Sun, 13 Mar 2011 22:53:12 -0700 (PDT) David Miller <davem@davemloft.=
-net> wrote:
-> > >
-> > > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > Date: Mon, 14 Mar 2011 16:31:35 +1100
-> > >=20
-> > > > Maybe some config option changed ...
-> > >=20
-> > > Perhaps GENERIC_HARDIRQS_NO_DEPRECATED?
-> >=20
-> > Yep, that has been turned on for powerpc now.  I guess you will have the
-> > same problem on sparc64 of you merge the net-next and sparc trees ...
->=20
-> Yeah, powerpc alone compiles with GENERIC_HARDIRQS_NO_DEPRECATED as it
-> does not have that notify commit.
->=20
-> If you add net which has that notify commit, but not the fix it
-> breaks. I wonder whether Dave should pick that fix into net.
+After merging the drm tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-So, if you merge the commit 1fb0ef31f428 ("genirq: Fix affinity notifier
-fallout") from the tip tree, you will get exactly one new commit and will
-fix your tree properly with no adverse effect on anyone else.
+drivers/gpu/drm/radeon/ni.c: In function 'cayman_cp_enable':
+drivers/gpu/drm/radeon/ni.c:1042: error: 'struct radeon_mc' has no member named 'active_vram_size'
 
---=20
+Caused by commit 0c88a02ef6b7 ("drm/radeon/kms: add support for CP setup
+on cayman asics") interacting with commit 5359533801e3 ("drm/radeon: fix
+problem with changing active VRAM size. (v2)") from Linus' tree.
+
+I allied the following fix up patch for today (I am not sure if it is
+correct).
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 15 Mar 2011 14:44:59 +1100
+Subject: [PATCH] drm/radeon/kms: update for active_vram_size removal
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/gpu/drm/radeon/ni.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/gpu/drm/radeon/ni.c b/drivers/gpu/drm/radeon/ni.c
+index 8c199c4..7aade20 100644
+--- a/drivers/gpu/drm/radeon/ni.c
++++ b/drivers/gpu/drm/radeon/ni.c
+@@ -1039,7 +1039,7 @@ static void cayman_cp_enable(struct radeon_device *rdev, bool enable)
+ 	if (enable)
+ 		WREG32(CP_ME_CNTL, 0);
+ 	else {
+-		rdev->mc.active_vram_size = rdev->mc.visible_vram_size;
++		radeon_ttm_set_active_vram_size(rdev, rdev->mc.visible_vram_size);
+ 		WREG32(CP_ME_CNTL, (CP_ME_HALT | CP_PFP_HALT));
+ 		WREG32(SCRATCH_UMSK, 0);
+ 	}
+-- 
+1.7.4.1
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__15_Mar_2011_11_30_49_+1100_edbgPSVLqaAkCy/j
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNfrM5AAoJEDMEi1NhKgbs1hIH/R2B+1tFMRMT1S+inCilrv2Z
-A89FIHGU4aWQBhgQgCLc7ks1xw49XVJyamysDlnagwhK+z3ouQxiahepHyUIkHWq
-/eUqPAaEiFiECeHpLWBd8l3tTe1bUHt87RbYiDj/ocXUvsW07cTlxHjBd6/dgFIM
-dblnofbn2Ao0qCbDUSsoR+3F6zvruvyDKQ0+1XWbxZffFQpWEYQa4IyZDRSEkNdW
-gNtpZ27883FzzZZuwWupDzPMSNnAFe+eV1w6fwVYTz1Pr+vpoYe3QiTdKrKrgFJ/
-Icka/zV6bwnoVzQgFtyX6O/pu1hpjCt8HtLg1C4SXVMq92W2ACV8ekytoxeSyCU=
-=GaG+
------END PGP SIGNATURE-----
-
---Signature=_Tue__15_Mar_2011_11_30_49_+1100_edbgPSVLqaAkCy/j--
