@@ -1,61 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the bkl-config tree
-Date: Tue, 15 Mar 2011 18:48:45 +1100
-Message-ID: <20110315184845.1a411e67.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree
+ (jdelvare-hwmon tree related)
+Date: Tue, 15 Mar 2011 19:24:28 +1100
+Message-ID: <20110315192428.ce74a177.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__15_Mar_2011_19_24_28_+1100_IVD6P5ZWNyTxwMAC"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:60462 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:51266 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750836Ab1COHsx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 15 Mar 2011 03:48:53 -0400
+	id S1754699Ab1COIYr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 15 Mar 2011 04:24:47 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Adamson <andros@netapp.com>, Boaz Harrosh <bharrosh@panasas.com>, Dean Hildebrand <dhildeb@us.ibm.com>, Fred Isaman <iisaman@citi.umich.edu>, Mike Sager <sager@netapp.com>, Fred Isaman <iisaman@netapp.com>, Mingyang Guo <guomingyang@nrchpc.ac.cn>, Ricardo Labiaga <Ricardo.Labiaga@netapp.com>, Tao Guo <guotao@nrchpc.ac.cn>Andy Adamson <andros@netapp.com>, Benny Halevy <bhalevy@panasas.com>, Trond Myklebust <trond.myklebust@fys.uio.no>
+To: Jean Delvare <khali@linux-fr.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>
 
-Hi Arnd,
+--Signature=_Tue__15_Mar_2011_19_24_28_+1100_IVD6P5ZWNyTxwMAC
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-After merging the bkl-config tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Hi all,
 
-fs/nfs/read.c:21:28: error: linux/smp_lock.h: No such file or directory
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-Caused by commit 64419a9b2093 ("NFSv4.1: generic read") from the nfs tree
-interacting with commit 4ba8216cd905 ("BKL: That's all, folks") from the
-bkl-config tree.
+drivers/hwmon/sch5627.c: In function 'sch5627_read_virtual_reg':
+drivers/hwmon/sch5627.c:179: error: implicit declaration of function 'mslee=
+p'
 
-I couldn't see that this include file was needed, so I applied the patch
-below (which Trond could apply to his tree, I am pretty sure).  (I am not
-sure why module.h is included either.)
+Caused by commit 19803daeb145 ("hwmon: New driver for SMSC SCH5627").
+See Rule 1 in Documentation/SubmitChecklist.
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 15 Mar 2011 18:37:09 +1100
-Subject: [PATCH] nfs: BKL is no longer needed, so remove the include
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/nfs/read.c |    1 -
- 1 files changed, 0 insertions(+), 1 deletions(-)
-
-diff --git a/fs/nfs/read.c b/fs/nfs/read.c
-index 4b764c6..7cded2b 100644
---- a/fs/nfs/read.c
-+++ b/fs/nfs/read.c
-@@ -18,7 +18,6 @@
- #include <linux/sunrpc/clnt.h>
- #include <linux/nfs_fs.h>
- #include <linux/nfs_page.h>
--#include <linux/smp_lock.h>
- #include <linux/module.h>
- 
- #include <asm/system.h>
--- 
-1.7.4.1
-
-
--- 
+I have reverted that commit for today.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__15_Mar_2011_19_24_28_+1100_IVD6P5ZWNyTxwMAC
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNfyI8AAoJEDMEi1NhKgbsamkH/3X58iz955srOssiHFEtZ0iD
+KYWIEpvOzMhBqpPA+3fKTo/aTiqFsy7CJ2TQ8cRt/tj9wGVFiNCUDQuqd+c6IFh0
+jPMBE1mkxD2hyle3MCNJvUyGZs/9uL2TfHJk6lsBTCaLoIgMiYqLums9CiNSvM2Z
+40cySuXLznLAeSnmxI8nby0je5CPOpHByPGiqMq3owcy4bjd1v36Srj9TFrn+nVa
+extxwRPAppsfh88LYoAovtlIyb+LD2CQIUkGRIBquGfthW2GjEpgCATGNGKKpfWZ
+8NyxOWBVJdHj7aJeuTxUCWfuURUpi3QehBDZIAjMHBHaUR+tnMQy9K8CJKOYeIs=
+=/FA6
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__15_Mar_2011_19_24_28_+1100_IVD6P5ZWNyTxwMAC--
