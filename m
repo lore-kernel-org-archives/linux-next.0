@@ -1,44 +1,56 @@
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: Re: linux-next: Tree for March 15 (xen/events.c)
-Date: Tue, 15 Mar 2011 16:45:07 -0400
-Message-ID: <20110315204507.GA11472@dumpdata.com>
-References: <20110315194543.a5d56c0c.sfr@canb.auug.org.au>
- <20110315084429.465cea61.randy.dunlap@oracle.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build failure after merge of the net tree
+Date: Tue, 15 Mar 2011 15:07:14 -0700 (PDT)
+Message-ID: <20110315.150714.245386974.davem@davemloft.net>
+References: <20110314.210712.226761233.davem@davemloft.net>
+	<20110315172558.a11642e7.sfr@canb.auug.org.au>
+	<alpine.LFD.2.00.1103151128070.2787@localhost6.localdomain6>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20110315084429.465cea61.randy.dunlap@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:44202
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1757595Ab1COWGh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 15 Mar 2011 18:06:37 -0400
+In-Reply-To: <alpine.LFD.2.00.1103151128070.2787@localhost6.localdomain6>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: tglx@linutronix.de
+Cc: sfr@canb.auug.org.au, bhutchings@solarflare.com, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, mingo@elte.hu, hpa@zytor.com, peterz@infradead.org
 
-On Tue, Mar 15, 2011 at 08:44:29AM -0700, Randy Dunlap wrote:
-> On Tue, 15 Mar 2011 19:45:43 +1100 Stephen Rothwell wrote:
-> 
-> > Hi all,
-> > 
-> > Changes since 20110314:
-> > 
-> > Dropped tree: xen
-> 
-> 
-> Hm, maybe this is already fixed in the dropped tree?
+From: Thomas Gleixner <tglx@linutronix.de>
+Date: Tue, 15 Mar 2011 11:29:18 +0100 (CET)
 
-Nope..
+> On Tue, 15 Mar 2011, Stephen Rothwell wrote:
 > 
-> linux-next-20110315/drivers/xen/events.c:396: error: 'struct irq_data' has no member named 'affinity'
+>> Hi Dave,
+>> 
+>> On Mon, 14 Mar 2011 21:07:12 -0700 (PDT) David Miller <davem@davemloft.net> wrote:
+>> >
+>> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+>> > Date: Tue, 15 Mar 2011 11:30:49 +1100
+>> > 
+>> > > So, if you merge the commit 1fb0ef31f428 ("genirq: Fix affinity notifier
+>> > > fallout") from the tip tree, you will get exactly one new commit and will
+>> > > fix your tree properly with no adverse effect on anyone else.
+>> > 
+>> > Thomas, how would you like me to do this?  Do you want to put that
+>> > commit on a branch for me to pull from or should I apply it
+>> > directly?
+>> 
+>> That commit is already the head of the irq/numa branch in the tip tree
+>> (it is also on the irq/core branch).
+>> 
+>> Please merge that rather than cherry-picking the commit as that will
+>> minimise the possibility of conflicts.  Pulling the irq/numa branch will
+>> get you just that one fixup commit (as you have already merged up to the
+>> immediately preceding commit).
+>> 
+>> I assume this makes sense, Thomas?  I just did a merge of the actual
+>> fixup commit after merging the net tree.
 > 
-> when CONFIG_SMP is not enabled.
+> Yes. irq/numa should do the trick.
 
-but I got a fixed queue up in xen-two. Thanks for pointing this out!
-> 
-> ---
-> ~Randy
-> *** Remember to use Documentation/SubmitChecklist when testing your code ***
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+Great, I'll do that now.
