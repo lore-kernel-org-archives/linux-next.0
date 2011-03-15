@@ -1,25 +1,24 @@
-From: Trond Myklebust <Trond.Myklebust@netapp.com>
+From: Arnd Bergmann <arnd@arndb.de>
 Subject: Re: linux-next: build failure after merge of the bkl-config tree
-Date: Tue, 15 Mar 2011 08:46:33 -0400
-Message-ID: <1300193193.9321.1.camel@lade.trondhjem.org>
+Date: Tue, 15 Mar 2011 13:59:12 +0100
+Message-ID: <201103151359.12569.arnd@arndb.de>
 References: <20110315184845.1a411e67.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.netapp.com ([216.240.18.37]:35229 "EHLO mx2.netapp.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757475Ab1COMqi convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Mar 2011 08:46:38 -0400
+Received: from moutng.kundenserver.de ([212.227.126.187]:59375 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757626Ab1COM7Z (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Mar 2011 08:59:25 -0400
 In-Reply-To: <20110315184845.1a411e67.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Adamson <andros@netapp.com>, Boaz Harrosh <bharrosh@panasas.com>, Dean Hildebrand <dhildeb@us.ibm.com>, Fred Isaman <iisaman@citi.umich.edu>, Mike Sager <sager@netapp.com>, Fred Isaman <iisaman@netapp.com>, Mingyang Guo <guomingyang@nrchpc.ac.cn>, Ricardo Labiaga <Ricardo.Labiaga@netapp.com>, Tao Guo <guotao@nrchpc.ac.cn>, Benny Halevy <bhalevy@panasas.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Adamson <andros@netapp.com>, Boaz Harrosh <bharrosh@panasas.com>, Dean Hildebrand <dhildeb@us.ibm.com>, Fred Isaman <iisaman@citi.umich.edu>, Mike Sager <sager@netapp.com>, Fred Isaman <iisaman@netapp.com>, Mingyang Guo <guomingyang@nrchpc.ac.cn>, Ricardo Labiaga <Ricardo.Labiaga@netapp.com>, Tao Guo <guotao@nrchpc.ac.cn>, Benny Halevy <bhalevy@panasas.com>, Trond Myklebust <trond.myklebust@fys.uio.no>
 
-On Tue, 2011-03-15 at 18:48 +1100, Stephen Rothwell wrote:
-> Hi Arnd,
-> 
+On Tuesday 15 March 2011, Stephen Rothwell wrote:
 > After merging the bkl-config tree, today's linux-next build (powerpc
 > ppc64_defconfig) failed like this:
 > 
@@ -37,34 +36,10 @@ On Tue, 2011-03-15 at 18:48 +1100, Stephen Rothwell wrote:
 > Date: Tue, 15 Mar 2011 18:37:09 +1100
 > Subject: [PATCH] nfs: BKL is no longer needed, so remove the include
 > 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  fs/nfs/read.c |    1 -
->  1 files changed, 0 insertions(+), 1 deletions(-)
-> 
-> diff --git a/fs/nfs/read.c b/fs/nfs/read.c
-> index 4b764c6..7cded2b 100644
-> --- a/fs/nfs/read.c
-> +++ b/fs/nfs/read.c
-> @@ -18,7 +18,6 @@
->  #include <linux/sunrpc/clnt.h>
->  #include <linux/nfs_fs.h>
->  #include <linux/nfs_page.h>
-> -#include <linux/smp_lock.h>
->  #include <linux/module.h>
->  
->  #include <asm/system.h>
-> -- 
-> 1.7.4.1
 
-Thanks Stephen! Applied to the nfs-for-2.6.39 tree.
+The fix is good. I have one patch in bkl-config that removes all instances
+of #include <linux/smp_lock.h> treewide. Obviously that doesn't
+help where new ones creep in, so we have to eliminate them one
+by one.
 
-Cheers
-  Trond
--- 
-Trond Myklebust
-Linux NFS client maintainer
-
-NetApp
-Trond.Myklebust@netapp.com
-www.netapp.com
+	Arnd
