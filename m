@@ -1,37 +1,41 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Re: linux-next: Tree for March 15 (xen/events.c)
-Date: Tue, 15 Mar 2011 08:44:29 -0700
-Message-ID: <20110315084429.465cea61.randy.dunlap@oracle.com>
-References: <20110315194543.a5d56c0c.sfr@canb.auug.org.au>
+Subject: [PATCH -next RESEND/still needed] staging: altera-jtag needs
+ delay.h
+Date: Tue, 15 Mar 2011 09:48:59 -0700
+Message-ID: <20110315094859.21da133f.randy.dunlap@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:58072 "EHLO
+Received: from rcsinet10.oracle.com ([148.87.113.121]:45289 "EHLO
 	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756429Ab1COPol (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Mar 2011 11:44:41 -0400
-In-Reply-To: <20110315194543.a5d56c0c.sfr@canb.auug.org.au>
+	with ESMTP id S932139Ab1COQtQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Mar 2011 12:49:16 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jeremy Fitzhardinge <jeremy.fitzhardinge@citrix.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "Igor M. Liplianin" <liplianin@netup.ru>
 
-On Tue, 15 Mar 2011 19:45:43 +1100 Stephen Rothwell wrote:
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-> Hi all,
-> 
-> Changes since 20110314:
-> 
-> Dropped tree: xen
+altera-jtag.c needs to include <linux/delay.h> to fix a build error:
 
+drivers/staging/altera-stapl/altera-jtag.c:398: error: implicit declaration of function 'udelay'
 
-Hm, maybe this is already fixed in the dropped tree?
-
-linux-next-20110315/drivers/xen/events.c:396: error: 'struct irq_data' has no member named 'affinity'
-
-when CONFIG_SMP is not enabled.
-
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Igor M. Liplianin <liplianin@netup.ru>
 ---
-~Randy
-*** Remember to use Documentation/SubmitChecklist when testing your code ***
+ drivers/staging/altera-stapl/altera-jtag.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- linux-next-20110304.orig/drivers/staging/altera-stapl/altera-jtag.c
++++ linux-next-20110304/drivers/staging/altera-stapl/altera-jtag.c
+@@ -23,6 +23,7 @@
+  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+  */
+ 
++#include <linux/delay.h>
+ #include <linux/firmware.h>
+ #include <linux/slab.h>
+ #include <staging/altera.h>
+--
