@@ -1,51 +1,86 @@
-From: Sascha Hauer <s.hauer@pengutronix.de>
-Subject: Re: [PATCH] ARM: mx51_efika: update platform data for new mfd
- changes
-Date: Tue, 15 Mar 2011 09:33:58 +0100
-Message-ID: <20110315083358.GI29521@pengutronix.de>
-References: <20110304080653.3f2c3f19@debxo>
- <20110307085358.GM29521@pengutronix.de>
- <20110311204405.GE20247@sortiz-mobl>
+From: Hans de Goede <hdegoede@redhat.com>
+Subject: Re: linux-next: build failure after merge of the final tree (jdelvare-hwmon
+ tree related)
+Date: Tue, 15 Mar 2011 09:40:41 +0100
+Message-ID: <4D7F2609.3080508@redhat.com>
+References: <20110315192428.ce74a177.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/mixed;
+ boundary="------------020301000309030604090703"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:54593 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754980Ab1COIeS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Mar 2011 04:34:18 -0400
-Content-Disposition: inline
-In-Reply-To: <20110311204405.GE20247@sortiz-mobl>
+Received: from mx1.redhat.com ([209.132.183.28]:13462 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754980Ab1COIix (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 15 Mar 2011 04:38:53 -0400
+In-Reply-To: <20110315192428.ce74a177.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: Andres Salomon <dilinger@queued.net>, Sascha Hauer <kernel@pengutronix.de>, Amit Kucheria <amit.kucheria@canonical.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Uwe =?iso-8859-15?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jean Delvare <khali@linux-fr.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi samuel,
+This is a multi-part message in MIME format.
+--------------020301000309030604090703
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 11, 2011 at 09:44:05PM +0100, Samuel Ortiz wrote:
-> Hi Sascha,
-> 
-> On Mon, Mar 07, 2011 at 09:53:58AM +0100, Sascha Hauer wrote:
-> > On Fri, Mar 04, 2011 at 08:06:53AM -0800, Andres Salomon wrote:
-> > > Note that this relies on stuff currently in mfd's next tree, but this
-> > > is also a newer driver.  I'm not sure which tree it should go through,
-> > > as it's a problem that shows up in next.
-> > 
-> > Please ping me again when the mfd tree is in Linus master. I see no
-> > other chance fixing this on my side other than removing regulator
-> > support for efika completely for now. So I guess you have to live with
-> > the compile breakage for some time.
-> It would probably make sense for me to carry this driver then. Sascha, would
-> you be ok with it ? If that's so, could you please point me at a git commit
-> from your tree ?
+Hi,
 
-The file which is changed only got created in my tree, so no way for you
-to apply it.
+On 03/15/2011 09:24 AM, Stephen Rothwell wrote:
+> Hi all,
+>
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+>
+> drivers/hwmon/sch5627.c: In function 'sch5627_read_virtual_reg':
+> drivers/hwmon/sch5627.c:179: error: implicit declaration of function 'msleep'
+>
+> Caused by commit 19803daeb145 ("hwmon: New driver for SMSC SCH5627").
+> See Rule 1 in Documentation/SubmitChecklist.
+>
+> I have reverted that commit for today.
 
-Sascha
+The attached patch should fix this, Jean can you please add this to your
+tree? Note feel free to merge it into the initial patch adding the sch5627 driver
+if you prefer.
 
+Thanks & Regards,
+
+Hans
+
+--------------020301000309030604090703
+Content-Type: text/plain;
+ name="0001-hwmon-sch5627-include-linux-delay.h-for-msleep-proto.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename*0="0001-hwmon-sch5627-include-linux-delay.h-for-msleep-proto.pa";
+ filename*1="tch"
+
+>From a5ffc5ddcdb230fcb10fe6c80ebe043c25763416 Mon Sep 17 00:00:00 2001
+From: Hans de Goede <hdegoede@redhat.com>
+Date: Tue, 15 Mar 2011 09:37:47 +0100
+Subject: [PATCH] hwmon/sch5627: include linux/delay.h for msleep prototype
+
+This should fix sch5627 breaking the building of linux-next
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+---
+ drivers/hwmon/sch5627.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/hwmon/sch5627.c b/drivers/hwmon/sch5627.c
+index 0001331..9a51dcc 100644
+--- a/drivers/hwmon/sch5627.c
++++ b/drivers/hwmon/sch5627.c
+@@ -30,6 +30,7 @@
+ #include <linux/mutex.h>
+ #include <linux/io.h>
+ #include <linux/acpi.h>
++#include <linux/delay.h>
+ 
+ #define DRVNAME "sch5627"
+ #define DEVNAME DRVNAME /* We only support one model */
 -- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+1.7.3.2
+
+
+--------------020301000309030604090703--
