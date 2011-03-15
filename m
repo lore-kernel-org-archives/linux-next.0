@@ -1,51 +1,62 @@
-From: Jean Delvare <khali@linux-fr.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the final tree
  (jdelvare-hwmon  tree related)
-Date: Tue, 15 Mar 2011 10:32:28 +0100
-Message-ID: <20110315103228.30233acc@endymion.delvare>
+Date: Tue, 15 Mar 2011 21:22:26 +1100
+Message-ID: <20110315212226.7e940b51.sfr@canb.auug.org.au>
 References: <20110315192428.ce74a177.sfr@canb.auug.org.au>
 	<4D7F2609.3080508@redhat.com>
+	<20110315103228.30233acc@endymion.delvare>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__15_Mar_2011_21_22_26_+1100_LVN.W+dJdC3IIpol"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zone0.gcu-squad.org ([212.85.147.21]:24478 "EHLO
-	services.gcu-squad.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752841Ab1COJcp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Mar 2011 05:32:45 -0400
-In-Reply-To: <4D7F2609.3080508@redhat.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:58555 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755702Ab1COKWf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 15 Mar 2011 06:22:35 -0400
+In-Reply-To: <20110315103228.30233acc@endymion.delvare>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jean Delvare <khali@linux-fr.org>
+Cc: Hans de Goede <hdegoede@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, 15 Mar 2011 09:40:41 +0100, Hans de Goede wrote:
-> Hi,
-> 
-> On 03/15/2011 09:24 AM, Stephen Rothwell wrote:
-> > Hi all,
-> >
-> > After merging the final tree, today's linux-next build (powerpc
-> > allyesconfig) failed like this:
-> >
-> > drivers/hwmon/sch5627.c: In function 'sch5627_read_virtual_reg':
-> > drivers/hwmon/sch5627.c:179: error: implicit declaration of function 'msleep'
-> >
-> > Caused by commit 19803daeb145 ("hwmon: New driver for SMSC SCH5627").
-> > See Rule 1 in Documentation/SubmitChecklist.
-> >
-> > I have reverted that commit for today.
-> 
-> The attached patch should fix this, Jean can you please add this to your
-> tree? Note feel free to merge it into the initial patch adding the sch5627 driver
-> if you prefer.
+--Signature=_Tue__15_Mar_2011_21_22_26_+1100_LVN.W+dJdC3IIpol
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the fix, I've merged it in the original patch (to preserve
-bisectability) and pushed it for next linux-next.
+Hi Jean,
 
-Stephen, sorry for the inconvenience, both Hans and myself build-tested
-the new code on an architecture where <linux/delay.h> gets included
-implicitly, so we didn't notice it was missing.
+On Tue, 15 Mar 2011 10:32:28 +0100 Jean Delvare <khali@linux-fr.org> wrote:
+>
+> Stephen, sorry for the inconvenience, both Hans and myself build-tested
+> the new code on an architecture where <linux/delay.h> gets included
+> implicitly, so we didn't notice it was missing.
 
--- 
-Jean Delvare
+It happens.  It seems that delay.h is almost always the one that is
+forgotten.  X86 builds include it implicitly but powerpc doesn't.
+
+I wonder if we could concoct a nice checkpatch test for it.
+
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Tue__15_Mar_2011_21_22_26_+1100_LVN.W+dJdC3IIpol
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNfz3iAAoJEDMEi1NhKgbs3BEH/2jJzho5CMzoia9o085x7rpZ
+DmdnkEibscMe+ztzSYAh/mx+/2eNTHPfqNN8QOk9G5hPY7Q1CRe/TC/S0AeVbuwc
+6+vCGuR/4fAiBMFCXOyP5El2zWBsk7ZgeiDpOaOo+dfjWjQqd559xSma4XioOhLZ
+xsHAWM+xo0QnnV0yLcFbn8RYyKM87d7JQNaG41M6QBqg5hjIaiClpMwd5rU82pzW
+nvV5qrApI1TqUYtxyMzvVWDCnK7Xt1kvkfuReQiIok3OnyMxjEiKxWkaqJUceWTD
+Gt0z9qvRh6DjEIr5XXqjH27dECT4+JoIDRZC1ab0TITZCFp0dTQ0lUUmTXyHXBg=
+=mzoh
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__15_Mar_2011_21_22_26_+1100_LVN.W+dJdC3IIpol--
