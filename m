@@ -1,58 +1,51 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree
- (jdelvare-hwmon tree related)
-Date: Tue, 15 Mar 2011 19:24:28 +1100
-Message-ID: <20110315192428.ce74a177.sfr@canb.auug.org.au>
+From: Sascha Hauer <s.hauer@pengutronix.de>
+Subject: Re: [PATCH] ARM: mx51_efika: update platform data for new mfd
+ changes
+Date: Tue, 15 Mar 2011 09:33:58 +0100
+Message-ID: <20110315083358.GI29521@pengutronix.de>
+References: <20110304080653.3f2c3f19@debxo>
+ <20110307085358.GM29521@pengutronix.de>
+ <20110311204405.GE20247@sortiz-mobl>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__15_Mar_2011_19_24_28_+1100_IVD6P5ZWNyTxwMAC"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51266 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754699Ab1COIYr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 15 Mar 2011 04:24:47 -0400
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:54593 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754980Ab1COIeS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Mar 2011 04:34:18 -0400
+Content-Disposition: inline
+In-Reply-To: <20110311204405.GE20247@sortiz-mobl>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jean Delvare <khali@linux-fr.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: Andres Salomon <dilinger@queued.net>, Sascha Hauer <kernel@pengutronix.de>, Amit Kucheria <amit.kucheria@canonical.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Uwe =?iso-8859-15?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
 
---Signature=_Tue__15_Mar_2011_19_24_28_+1100_IVD6P5ZWNyTxwMAC
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi samuel,
 
-Hi all,
+On Fri, Mar 11, 2011 at 09:44:05PM +0100, Samuel Ortiz wrote:
+> Hi Sascha,
+> 
+> On Mon, Mar 07, 2011 at 09:53:58AM +0100, Sascha Hauer wrote:
+> > On Fri, Mar 04, 2011 at 08:06:53AM -0800, Andres Salomon wrote:
+> > > Note that this relies on stuff currently in mfd's next tree, but this
+> > > is also a newer driver.  I'm not sure which tree it should go through,
+> > > as it's a problem that shows up in next.
+> > 
+> > Please ping me again when the mfd tree is in Linus master. I see no
+> > other chance fixing this on my side other than removing regulator
+> > support for efika completely for now. So I guess you have to live with
+> > the compile breakage for some time.
+> It would probably make sense for me to carry this driver then. Sascha, would
+> you be ok with it ? If that's so, could you please point me at a git commit
+> from your tree ?
 
-After merging the final tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+The file which is changed only got created in my tree, so no way for you
+to apply it.
 
-drivers/hwmon/sch5627.c: In function 'sch5627_read_virtual_reg':
-drivers/hwmon/sch5627.c:179: error: implicit declaration of function 'mslee=
-p'
+Sascha
 
-Caused by commit 19803daeb145 ("hwmon: New driver for SMSC SCH5627").
-See Rule 1 in Documentation/SubmitChecklist.
-
-I have reverted that commit for today.
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__15_Mar_2011_19_24_28_+1100_IVD6P5ZWNyTxwMAC
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNfyI8AAoJEDMEi1NhKgbsamkH/3X58iz955srOssiHFEtZ0iD
-KYWIEpvOzMhBqpPA+3fKTo/aTiqFsy7CJ2TQ8cRt/tj9wGVFiNCUDQuqd+c6IFh0
-jPMBE1mkxD2hyle3MCNJvUyGZs/9uL2TfHJk6lsBTCaLoIgMiYqLums9CiNSvM2Z
-40cySuXLznLAeSnmxI8nby0je5CPOpHByPGiqMq3owcy4bjd1v36Srj9TFrn+nVa
-extxwRPAppsfh88LYoAovtlIyb+LD2CQIUkGRIBquGfthW2GjEpgCATGNGKKpfWZ
-8NyxOWBVJdHj7aJeuTxUCWfuURUpi3QehBDZIAjMHBHaUR+tnMQy9K8CJKOYeIs=
-=/FA6
------END PGP SIGNATURE-----
-
---Signature=_Tue__15_Mar_2011_19_24_28_+1100_IVD6P5ZWNyTxwMAC--
+-- 
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
