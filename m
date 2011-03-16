@@ -1,57 +1,31 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] uml: fix tty interface warnings
-Date: Tue, 15 Mar 2011 17:22:08 -0700
-Message-ID: <20110315172208.82934b13.randy.dunlap@oracle.com>
+From: =?UTF-8?Q?Am=C3=A9rico_Wang?= <xiyou.wangcong@gmail.com>
+Subject: Re: [PATCH -next] uml: fix tty interface warnings
+Date: Wed, 16 Mar 2011 11:38:03 +0800
+Message-ID: <AANLkTi=yDHaeosLpyuCjTJ8hZA8Q4bzHCmKK0J1Giunz@mail.gmail.com>
 References: <20110315194543.a5d56c0c.sfr@canb.auug.org.au>
+	<20110315172208.82934b13.randy.dunlap@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:33237 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756361Ab1CPAWf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Mar 2011 20:22:35 -0400
-In-Reply-To: <20110315194543.a5d56c0c.sfr@canb.auug.org.au>
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:42208 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751043Ab1CPDiE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Mar 2011 23:38:04 -0400
+In-Reply-To: <20110315172208.82934b13.randy.dunlap@oracle.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jeff Dike <jdike@addtoit.com>, user-mode-linux-devel@lists.sourceforge.net
+To: Randy Dunlap <randy.dunlap@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jeff Dike <jdike@addtoit.com>, user-mode-linux-devel@lists.sourceforge.net
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+On Wed, Mar 16, 2011 at 8:22 AM, Randy Dunlap <randy.dunlap@oracle.com> wrote:
+> From: Randy Dunlap <randy.dunlap@oracle.com>
+>
+> Fix tty interface warnings in arch/um:
+>
+> arch/um/drivers/stdio_console.c:122: warning: initialization from incompatible pointer type
+> arch/um/drivers/ssl.c:139: warning: initialization from incompatible pointer type
+>
 
-Fix tty interface warnings in arch/um:
+Acked-by: WANG Cong <xiyou.wangcong@gmail.com>
 
-arch/um/drivers/stdio_console.c:122: warning: initialization from incompatible pointer type
-arch/um/drivers/ssl.c:139: warning: initialization from incompatible pointer type
-
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc:	Jeff Dike <jdike@addtoit.com>
-Cc:	user-mode-linux-devel@lists.sourceforge.net
----
- arch/um/drivers/line.c        |    3 +--
- arch/um/include/shared/line.h |    2 +-
- 2 files changed, 2 insertions(+), 3 deletions(-)
-
---- linux-next-20110315.orig/arch/um/drivers/line.c
-+++ linux-next-20110315/arch/um/drivers/line.c
-@@ -255,8 +255,7 @@ static const struct {
- 	{ KDSIGACCEPT, KERN_INFO,  "KDSIGACCEPT" },
- };
- 
--int line_ioctl(struct tty_struct *tty, struct file * file,
--	       unsigned int cmd, unsigned long arg)
-+int line_ioctl(struct tty_struct *tty, unsigned int cmd, unsigned long arg)
- {
- 	int ret;
- 	int i;
---- linux-next-20110315.orig/arch/um/include/shared/line.h
-+++ linux-next-20110315/arch/um/include/shared/line.h
-@@ -77,7 +77,7 @@ extern int line_chars_in_buffer(struct t
- extern void line_flush_buffer(struct tty_struct *tty);
- extern void line_flush_chars(struct tty_struct *tty);
- extern int line_write_room(struct tty_struct *tty);
--extern int line_ioctl(struct tty_struct *tty, struct file * file,
-+extern int line_ioctl(struct tty_struct *tty,
- 		      unsigned int cmd, unsigned long arg);
- extern void line_throttle(struct tty_struct *tty);
- extern void line_unthrottle(struct tty_struct *tty);
+Thanks.
