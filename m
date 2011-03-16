@@ -1,33 +1,45 @@
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: linux-next: manual merge of the tip tree with Linus' tree
-Date: Wed, 16 Mar 2011 09:50:06 +0100
-Message-ID: <4D8079BE.6050505@linutronix.de>
-References: <20110316160842.493967db.sfr@canb.auug.org.au>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: linux-next: build failure after merge of the final tree (ubi
+ tree related)
+Date: Wed, 16 Mar 2011 21:15:08 +1100
+Message-ID: <1300270508.22236.1168.camel@pasglop>
+References: <20110316175041.67c4f371.sfr@canb.auug.org.au>
+	 <1300260170.2817.4.camel@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from www.tglx.de ([62.245.132.106]:59728 "EHLO www.tglx.de"
+Received: from gate.crashing.org ([63.228.1.57]:49605 "EHLO gate.crashing.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751578Ab1CPIu2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Mar 2011 04:50:28 -0400
-In-Reply-To: <20110316160842.493967db.sfr@canb.auug.org.au>
+	id S1752270Ab1CPKPh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 16 Mar 2011 06:15:37 -0400
+In-Reply-To: <1300260170.2817.4.camel@localhost>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Artem.Bityutskiy@nokia.com
+Cc: ext Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
 
-Stephen Rothwell wrote:
-> Hi all,
-Hi Stephen,
+On Wed, 2011-03-16 at 09:22 +0200, Artem Bityutskiy wrote:
+> On Wed, 2011-03-16 at 17:50 +1100, ext Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > After merging the final tree, today's linux-next build (powerpc
+> > allyesconfig) failed like this:
+> > 
+> > drivers/mtd/ubi/io.c: In function 'ubi_dbg_check_write':
+> > drivers/mtd/ubi/io.c:1348: error: 'PAGE_KERNEL' undeclared (first use in this function)
+> > drivers/mtd/ubi/io.c: In function 'ubi_dbg_check_all_ff':
+> > drivers/mtd/ubi/io.c:1412: error: 'PAGE_KERNEL' undeclared (first use in this function)
+> > 
+> > Caused by commit 823ed5091113 ("UBI: allocate write checking buffer on demand").
+> > 
+> > I don't know how to fix this, so I have left it for today.
+> 
+> Hmm, strange, include <linux/vmalloc.h> should be enough to use
+> __vmalloc with 'PAGE_KERNEL' AFAICS, and we have this include... I'll
+> try to look better.
 
-> Today's linux-next merge of the tip tree got a conflict in
-> arch/x86/platform/ce4100/ce4100.c between commit 03150171dcf9 ("x86:
-> ce4100: Set pci ops via callback instead of module init") from Linus'
-> tree and commit 1fa4163bdc19 ("x86: ce4100: Use OF to setup devices")
-> from the tip tree.
+Try adding asm/pgtable.h 
 
-I just looked and Linus already pulled and fixed it up by himself. Thanks
-for letting me know.
-
-Sebastian
+Cheers,
+Ben.
