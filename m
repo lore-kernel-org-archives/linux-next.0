@@ -1,50 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with Linus' tree
-Date: Wed, 16 Mar 2011 16:08:42 +1100
-Message-ID: <20110316160842.493967db.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree (sound tree
+ related)
+Date: Wed, 16 Mar 2011 17:39:28 +1100
+Message-ID: <20110316173928.6481eda5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:53385 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:57182 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751060Ab1CPFIp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Mar 2011 01:08:45 -0400
+	id S1751315Ab1CPGjf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 16 Mar 2011 02:39:35 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Clemens Ladisch <clemens@ladisch.de>, Stefan Richter <stefanr@s5r6.in-berlin.de>, Jay Fenlason <fenlason@redhat.com>
 
 Hi all,
 
-Today's linux-next merge of the tip tree got a conflict in
-arch/x86/platform/ce4100/ce4100.c between commit 03150171dcf9 ("x86:
-ce4100: Set pci ops via callback instead of module init") from Linus'
-tree and commit 1fa4163bdc19 ("x86: ce4100: Use OF to setup devices")
-from the tip tree.
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-I fixed it up (see below) and can carry the fix as necessary.  However, I
-have no idea if the final setup of x86_init.pci.init_irq is correct.
-Hopefully this will be fixed up in the tip tree before it is sent to
-Linus.
+sound/firewire/fcp.c: In function 'fcp_avc_transaction':
+sound/firewire/fcp.c:103: error: implicit declaration of function 'msleep'
+
+Caused by commit 31ef9134eb52 ("ALSA: add LaCie FireWire Speakers/Griffin
+FireWave Surround driver").  See Rule 1 from
+Documentation/SubmitChecklist.
+
+I have added this patch for today:
+
+>From d238d290ba37e4a31929e6d3f6a08c187b537628 Mon Sep 17 00:00:00 2001
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 16 Mar 2011 17:35:53 +1100
+Subject: [PATCH] ALSA: msleep needs delay.h
+
+fixes this error:
+
+sound/firewire/fcp.c: In function 'fcp_avc_transaction':
+sound/firewire/fcp.c:103: error: implicit declaration of function 'msleep'
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ sound/firewire/fcp.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/sound/firewire/fcp.c b/sound/firewire/fcp.c
+index c20bd9c..ec578b5 100644
+--- a/sound/firewire/fcp.c
++++ b/sound/firewire/fcp.c
+@@ -13,6 +13,7 @@
+ #include <linux/sched.h>
+ #include <linux/spinlock.h>
+ #include <linux/wait.h>
++#include <linux/delay.h>
+ #include "fcp.h"
+ #include "lib.h"
+ 
+-- 
+1.7.4.1
+
+
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
-
-diff --cc arch/x86/platform/ce4100/ce4100.c
-index cd6f184,68c0dbc..0000000
---- a/arch/x86/platform/ce4100/ce4100.c
-+++ b/arch/x86/platform/ce4100/ce4100.c
-@@@ -15,9 -15,11 +15,12 @@@
-  #include <linux/serial_reg.h>
-  #include <linux/serial_8250.h>
-  
- +#include <asm/ce4100.h>
-+ #include <asm/prom.h>
-  #include <asm/setup.h>
-+ #include <asm/i8259.h>
-  #include <asm/io.h>
-+ #include <asm/io_apic.h>
-  
-  static int ce4100_i8042_detect(void)
-  {
+http://www.canb.auug.org.au/~sfr/
