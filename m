@@ -1,31 +1,92 @@
-From: =?UTF-8?Q?Am=C3=A9rico_Wang?= <xiyou.wangcong@gmail.com>
-Subject: Re: [PATCH -next] uml: fix tty interface warnings
-Date: Wed, 16 Mar 2011 11:38:03 +0800
-Message-ID: <AANLkTi=yDHaeosLpyuCjTJ8hZA8Q4bzHCmKK0J1Giunz@mail.gmail.com>
-References: <20110315194543.a5d56c0c.sfr@canb.auug.org.au>
-	<20110315172208.82934b13.randy.dunlap@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the devicetree tree with the galak tree
+Date: Wed, 16 Mar 2011 15:46:53 +1100
+Message-ID: <20110316154653.c178910a.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:42208 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751043Ab1CPDiE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Mar 2011 23:38:04 -0400
-In-Reply-To: <20110315172208.82934b13.randy.dunlap@oracle.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:43296 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750799Ab1CPEq6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 16 Mar 2011 00:46:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Jeff Dike <jdike@addtoit.com>, user-mode-linux-devel@lists.sourceforge.net
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Scott Wood <scottwood@freescale.com>, Kumar Gala <galak@kernel.crashing.org>
 
-On Wed, Mar 16, 2011 at 8:22 AM, Randy Dunlap <randy.dunlap@oracle.com> wrote:
-> From: Randy Dunlap <randy.dunlap@oracle.com>
->
-> Fix tty interface warnings in arch/um:
->
-> arch/um/drivers/stdio_console.c:122: warning: initialization from incompatible pointer type
-> arch/um/drivers/ssl.c:139: warning: initialization from incompatible pointer type
->
+Hi Grant,
 
-Acked-by: WANG Cong <xiyou.wangcong@gmail.com>
+Today's linux-next merge of the devicetree tree got a conflict in
+arch/powerpc/sysdev/fsl_msi.c between commit 6820fead714d
+("powerpc/fsl_msi: Handle msi-available-ranges better") from the galak
+tree and commit 000061245a67 ("dt/powerpc: Eliminate users of of_platform_
+{,un}register_driver") from the devicetree tree.
 
-Thanks.
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc arch/powerpc/sysdev/fsl_msi.c
+index 8d6b074,ee6a8a5..0000000
+--- a/arch/powerpc/sysdev/fsl_msi.c
++++ b/arch/powerpc/sysdev/fsl_msi.c
+@@@ -274,48 -273,23 +274,51 @@@ static int fsl_of_msi_remove(struct pla
+  	return 0;
+  }
+  
+ +static int __devinit fsl_msi_setup_hwirq(struct fsl_msi *msi,
+ +					 struct platform_device *dev,
+ +					 int offset, int irq_index)
+ +{
+ +	struct fsl_msi_cascade_data *cascade_data = NULL;
+ +	int virt_msir;
+ +
+ +	virt_msir = irq_of_parse_and_map(dev->dev.of_node, irq_index);
+ +	if (virt_msir == NO_IRQ) {
+ +		dev_err(&dev->dev, "%s: Cannot translate IRQ index %d\n",
+ +			__func__, irq_index);
+ +		return 0;
+ +	}
+ +
+ +	cascade_data = kzalloc(sizeof(struct fsl_msi_cascade_data), GFP_KERNEL);
+ +	if (!cascade_data) {
+ +		dev_err(&dev->dev, "No memory for MSI cascade data\n");
+ +		return -ENOMEM;
+ +	}
+ +
+ +	msi->msi_virqs[irq_index] = virt_msir;
+ +	cascade_data->index = offset + irq_index;
+ +	cascade_data->msi_data = msi;
+ +	set_irq_data(virt_msir, cascade_data);
+ +	set_irq_chained_handler(virt_msir, fsl_msi_cascade);
+ +
+ +	return 0;
+ +}
+ +
+- static int __devinit fsl_of_msi_probe(struct platform_device *dev,
+- 				const struct of_device_id *match)
++ static int __devinit fsl_of_msi_probe(struct platform_device *dev)
+  {
+  	struct fsl_msi *msi;
+  	struct resource res;
+ -	int err, i, count;
+ +	int err, i, j, irq_index, count;
+  	int rc;
+ -	int virt_msir;
+  	const u32 *p;
+- 	struct fsl_msi_feature *features = match->data;
++ 	struct fsl_msi_feature *features;
+ -	struct fsl_msi_cascade_data *cascade_data = NULL;
+  	int len;
+  	u32 offset;
+ +	static const u32 all_avail[] = { 0, NR_MSI_IRQS };
+  
++ 	if (!dev->dev.of_match)
++ 		return -EINVAL;
++ 	features = dev->dev.of_match->data;
++ 
+  	printk(KERN_DEBUG "Setting up Freescale MSI support\n");
+  
+  	msi = kzalloc(sizeof(struct fsl_msi), GFP_KERNEL);
