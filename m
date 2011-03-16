@@ -1,43 +1,45 @@
-From: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
-Subject: Re: linux-next: build failure after merge of the final tree (ubi
- tree related)
-Date: Wed, 16 Mar 2011 13:48:39 +0200
-Message-ID: <1300276119.2817.9.camel@localhost>
-References: <20110316175041.67c4f371.sfr@canb.auug.org.au>
-Reply-To: Artem.Bityutskiy@nokia.com
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (jdelvare-hwmon tree related)
+Date: Wed, 16 Mar 2011 09:16:44 -0700
+Message-ID: <20110316091644.d050115e.randy.dunlap@oracle.com>
+References: <20110315192428.ce74a177.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.nokia.com ([147.243.128.24]:49762 "EHLO mgw-da01.nokia.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751290Ab1CPLw0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Mar 2011 07:52:26 -0400
-In-Reply-To: <20110316175041.67c4f371.sfr@canb.auug.org.au>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:23824 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751441Ab1CPQRQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Mar 2011 12:17:16 -0400
+In-Reply-To: <20110315192428.ce74a177.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
+Cc: Jean Delvare <khali@linux-fr.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>
 
-On Wed, 2011-03-16 at 17:50 +1100, Stephen Rothwell wrote:
+On Tue, 15 Mar 2011 19:24:28 +1100 Stephen Rothwell wrote:
+
+> Hi all,
+> 
 > After merging the final tree, today's linux-next build (powerpc
 > allyesconfig) failed like this:
->=20
-> drivers/mtd/ubi/io.c: In function 'ubi_dbg_check_write':
-> drivers/mtd/ubi/io.c:1348: error: 'PAGE_KERNEL' undeclared (first use=
- in this function)
-> drivers/mtd/ubi/io.c: In function 'ubi_dbg_check_all_ff':
-> drivers/mtd/ubi/io.c:1412: error: 'PAGE_KERNEL' undeclared (first use=
- in this function)
->=20
-> Caused by commit 823ed5091113 ("UBI: allocate write checking buffer o=
-n demand").
->=20
-> I don't know how to fix this, so I have left it for today.
+> 
+> drivers/hwmon/sch5627.c: In function 'sch5627_read_virtual_reg':
+> drivers/hwmon/sch5627.c:179: error: implicit declaration of function 'msleep'
+> 
+> Caused by commit 19803daeb145 ("hwmon: New driver for SMSC SCH5627").
+> See Rule 1 in Documentation/SubmitChecklist.
+> 
+> I have reverted that commit for today.
 
-=46ixed, sorry for the hassle and thank you!
 
---=20
-Best Regards,
-Artem Bityutskiy (=D0=90=D1=80=D1=82=D1=91=D0=BC =D0=91=D0=B8=D1=82=D1=8E=
-=D1=86=D0=BA=D0=B8=D0=B9)
+linux-next-20110316/drivers/i2c/busses/i2c-designware-core.c:321: error: implicit declaration of function 'mdelay'
+
+linux-next-20110316/drivers/staging/altera-stapl/altera-jtag.c:398: error: implicit declaration of function 'udelay'
+
+patch has been posted for altera-jtag.c, but not merged.
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
