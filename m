@@ -1,41 +1,43 @@
-From: Jean Delvare <khali@linux-fr.org>
-Subject: Re: linux-next: build failure after merge of the final tree
- (jdelvare-hwmon  tree related)
-Date: Wed, 16 Mar 2011 12:30:30 +0100
-Message-ID: <20110316123030.68bdbdcb@endymion.delvare>
-References: <20110315192428.ce74a177.sfr@canb.auug.org.au>
-	<4D7F2609.3080508@redhat.com>
-	<20110315103228.30233acc@endymion.delvare>
-	<20110315212226.7e940b51.sfr@canb.auug.org.au>
+From: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
+Subject: Re: linux-next: build failure after merge of the final tree (ubi
+ tree related)
+Date: Wed, 16 Mar 2011 13:48:39 +0200
+Message-ID: <1300276119.2817.9.camel@localhost>
+References: <20110316175041.67c4f371.sfr@canb.auug.org.au>
+Reply-To: Artem.Bityutskiy@nokia.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zone0.gcu-squad.org ([212.85.147.21]:3662 "EHLO
-	services.gcu-squad.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751853Ab1CPLaz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Mar 2011 07:30:55 -0400
-In-Reply-To: <20110315212226.7e940b51.sfr@canb.auug.org.au>
+Received: from smtp.nokia.com ([147.243.128.24]:49762 "EHLO mgw-da01.nokia.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751290Ab1CPLw0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 16 Mar 2011 07:52:26 -0400
+In-Reply-To: <20110316175041.67c4f371.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Hans de Goede <hdegoede@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
 
-On Tue, 15 Mar 2011 21:22:26 +1100, Stephen Rothwell wrote:
-> Hi Jean,
-> 
-> On Tue, 15 Mar 2011 10:32:28 +0100 Jean Delvare <khali@linux-fr.org> wrote:
-> >
-> > Stephen, sorry for the inconvenience, both Hans and myself build-tested
-> > the new code on an architecture where <linux/delay.h> gets included
-> > implicitly, so we didn't notice it was missing.
-> 
-> It happens.  It seems that delay.h is almost always the one that is
-> forgotten.  X86 builds include it implicitly but powerpc doesn't.
-> 
-> I wonder if we could concoct a nice checkpatch test for it.
+On Wed, 2011-03-16 at 17:50 +1100, Stephen Rothwell wrote:
+> After merging the final tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+>=20
+> drivers/mtd/ubi/io.c: In function 'ubi_dbg_check_write':
+> drivers/mtd/ubi/io.c:1348: error: 'PAGE_KERNEL' undeclared (first use=
+ in this function)
+> drivers/mtd/ubi/io.c: In function 'ubi_dbg_check_all_ff':
+> drivers/mtd/ubi/io.c:1412: error: 'PAGE_KERNEL' undeclared (first use=
+ in this function)
+>=20
+> Caused by commit 823ed5091113 ("UBI: allocate write checking buffer o=
+n demand").
+>=20
+> I don't know how to fix this, so I have left it for today.
 
-Would certainly be a good idea, yes. Probably not trivial though.
+=46ixed, sorry for the hassle and thank you!
 
--- 
-Jean Delvare
+--=20
+Best Regards,
+Artem Bityutskiy (=D0=90=D1=80=D1=82=D1=91=D0=BC =D0=91=D0=B8=D1=82=D1=8E=
+=D1=86=D0=BA=D0=B8=D0=B9)
