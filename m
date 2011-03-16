@@ -1,61 +1,104 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the final tree (ubi tree
+Subject: linux-next: build failure after merge of the final tree (vfs tree
  related)
-Date: Wed, 16 Mar 2011 17:50:41 +1100
-Message-ID: <20110316175041.67c4f371.sfr@canb.auug.org.au>
+Date: Wed, 16 Mar 2011 18:09:27 +1100
+Message-ID: <20110316180927.701543d5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__16_Mar_2011_17_50_41_+1100_sK/33jNIqrHlMsb9"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:55153 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:43441 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751656Ab1CPGuw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Mar 2011 02:50:52 -0400
+	id S1751710Ab1CPHJd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 16 Mar 2011 03:09:33 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Artem Bityutskiy <Artem.Bityutskiy@nokia.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, linuxppc-dev@lists.ozlabs.org
-
---Signature=_Wed__16_Mar_2011_17_50_41_+1100_sK/33jNIqrHlMsb9
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
 Hi all,
 
-After merging the final tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+After merging the final tree, today's linux-next build (sparc64 defconfig)
+failed like this:
 
-drivers/mtd/ubi/io.c: In function 'ubi_dbg_check_write':
-drivers/mtd/ubi/io.c:1348: error: 'PAGE_KERNEL' undeclared (first use in th=
-is function)
-drivers/mtd/ubi/io.c: In function 'ubi_dbg_check_all_ff':
-drivers/mtd/ubi/io.c:1412: error: 'PAGE_KERNEL' undeclared (first use in th=
-is function)
+fs/fcntl.c: In function 'fcntl_init':
+fs/fcntl.c:838: error: size of array 'type name' is negative
 
-Caused by commit 823ed5091113 ("UBI: allocate write checking buffer on dema=
-nd").
+This is:
 
-I don't know how to fix this, so I have left it for today.
---=20
+        BUILD_BUG_ON(19 - 1 /* for O_RDONLY being 0 */ != HWEIGHT32(
+                O_RDONLY        | O_WRONLY      | O_RDWR        |
+                O_CREAT         | O_EXCL        | O_NOCTTY      |
+                O_TRUNC         | O_APPEND      | /* O_NONBLOCK | */
+                __O_SYNC        | O_DSYNC       | FASYNC        |
+                O_DIRECT        | O_LARGEFILE   | O_DIRECTORY   |
+                O_NOFOLLOW      | O_NOATIME     | O_CLOEXEC     |
+                __FMODE_EXEC    | O_PATH
+                ));
+
+in fcntl_init().
+
+Caused by commit 1abf0c718f15 ("New kind of open files - "location
+only".") from the vfs tree.  The new O_PATH valuse clashes with O_NOATIME
+on sparc and O_CLOEXEC on alpha and parisc.
+
+I applied this patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 16 Mar 2011 18:02:46 +1100
+Subject: [PATCH] vfs: add nonconflicting values for O_PATH
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/alpha/include/asm/fcntl.h  |    2 ++
+ arch/parisc/include/asm/fcntl.h |    2 ++
+ arch/sparc/include/asm/fcntl.h  |    2 ++
+ 3 files changed, 6 insertions(+), 0 deletions(-)
+
+diff --git a/arch/alpha/include/asm/fcntl.h b/arch/alpha/include/asm/fcntl.h
+index 70145cb..1b71ca7 100644
+--- a/arch/alpha/include/asm/fcntl.h
++++ b/arch/alpha/include/asm/fcntl.h
+@@ -31,6 +31,8 @@
+ #define __O_SYNC	020000000
+ #define O_SYNC		(__O_SYNC|O_DSYNC)
+ 
++#define O_PATH		040000000
++
+ #define F_GETLK		7
+ #define F_SETLK		8
+ #define F_SETLKW	9
+diff --git a/arch/parisc/include/asm/fcntl.h b/arch/parisc/include/asm/fcntl.h
+index f357fc6..0304b92 100644
+--- a/arch/parisc/include/asm/fcntl.h
++++ b/arch/parisc/include/asm/fcntl.h
+@@ -19,6 +19,8 @@
+ #define O_NOFOLLOW	000000200 /* don't follow links */
+ #define O_INVISIBLE	004000000 /* invisible I/O, for DMAPI/XDSM */
+ 
++#define O_PATH		020000000
++
+ #define F_GETLK64	8
+ #define F_SETLK64	9
+ #define F_SETLKW64	10
+diff --git a/arch/sparc/include/asm/fcntl.h b/arch/sparc/include/asm/fcntl.h
+index 38f37b33..d0b83f6 100644
+--- a/arch/sparc/include/asm/fcntl.h
++++ b/arch/sparc/include/asm/fcntl.h
+@@ -34,6 +34,8 @@
+ #define __O_SYNC	0x800000
+ #define O_SYNC		(__O_SYNC|O_DSYNC)
+ 
++#define O_PATH		0x1000000
++
+ #define F_GETOWN	5	/*  for sockets. */
+ #define F_SETOWN	6	/*  for sockets. */
+ #define F_GETLK		7
+-- 
+1.7.4.1
+
+
+-- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__16_Mar_2011_17_50_41_+1100_sK/33jNIqrHlMsb9
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNgF3BAAoJEDMEi1NhKgbsXy4H/2S0dcFSLT/PEKRDUuAzUn5s
-U6hIcjOTRE6ZqSbsjyb3x7yodg+m3f36K9bqbbpXe3yoAU0nlLpQwBy7QQCuLx4n
-YP0h/a2KedulYf2LHBf+jCI+tkfTYTLPxsoc+L8wK8Comu/lf8FONPXhGGLGVbhD
-a70IVo0P5ZkQzpJnyY4hIQGr1oGPkj8fLnQjv1JRpCD06AgNS9FRcFL7Hoq7cdoi
-pjbTT3V7nYL8A4wMmQz6mcifig3681CsrQAr0AT7YuJBRHVgUJHqHhEtNrV8t/lu
-LCG1Mt6oVR2VeTWgvVMCGtaDAA3c61SBXSsTTCmiijery07r8GOOtgUU3GugUPw=
-=7r7z
------END PGP SIGNATURE-----
-
---Signature=_Wed__16_Mar_2011_17_50_41_+1100_sK/33jNIqrHlMsb9--
