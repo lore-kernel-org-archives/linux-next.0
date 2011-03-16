@@ -1,57 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the tip tree with Linus' tree
-Date: Wed, 16 Mar 2011 22:02:28 +1100
-Message-ID: <20110316220228.70f7514c.sfr@canb.auug.org.au>
-References: <20110316160842.493967db.sfr@canb.auug.org.au>
-	<4D8079BE.6050505@linutronix.de>
+From: Jean Delvare <khali@linux-fr.org>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (jdelvare-hwmon  tree related)
+Date: Wed, 16 Mar 2011 12:30:30 +0100
+Message-ID: <20110316123030.68bdbdcb@endymion.delvare>
+References: <20110315192428.ce74a177.sfr@canb.auug.org.au>
+	<4D7F2609.3080508@redhat.com>
+	<20110315103228.30233acc@endymion.delvare>
+	<20110315212226.7e940b51.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Wed__16_Mar_2011_22_02_28_+1100_HwXBK7fDDcD+rBhy"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:58222 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752080Ab1CPLCi (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Mar 2011 07:02:38 -0400
-In-Reply-To: <4D8079BE.6050505@linutronix.de>
+Received: from zone0.gcu-squad.org ([212.85.147.21]:3662 "EHLO
+	services.gcu-squad.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751853Ab1CPLaz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Mar 2011 07:30:55 -0400
+In-Reply-To: <20110315212226.7e940b51.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Hans de Goede <hdegoede@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
---Signature=_Wed__16_Mar_2011_22_02_28_+1100_HwXBK7fDDcD+rBhy
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, 15 Mar 2011 21:22:26 +1100, Stephen Rothwell wrote:
+> Hi Jean,
+> 
+> On Tue, 15 Mar 2011 10:32:28 +0100 Jean Delvare <khali@linux-fr.org> wrote:
+> >
+> > Stephen, sorry for the inconvenience, both Hans and myself build-tested
+> > the new code on an architecture where <linux/delay.h> gets included
+> > implicitly, so we didn't notice it was missing.
+> 
+> It happens.  It seems that delay.h is almost always the one that is
+> forgotten.  X86 builds include it implicitly but powerpc doesn't.
+> 
+> I wonder if we could concoct a nice checkpatch test for it.
 
-Hi Sebastian,
+Would certainly be a good idea, yes. Probably not trivial though.
 
-On Wed, 16 Mar 2011 09:50:06 +0100 Sebastian Andrzej Siewior <bigeasy@linut=
-ronix.de> wrote:
->
-> I just looked and Linus already pulled and fixed it up by himself. Thanks
-> for letting me know.
-
-And he fixed it much better than I did :-)
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Wed__16_Mar_2011_22_02_28_+1100_HwXBK7fDDcD+rBhy
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNgJjEAAoJEDMEi1NhKgbspYcH/j3dq5GIRhtV2o2w2ozlkM5r
-F7PE+9/WyIf2vu3CtnAuIQundsB6iWjG2+8iA90HfIxBMMCuNEjeh4qPK9YrJBGl
-CLbpprPYIi/Uqq9PHvEC9p0zziMiRCS1M2jdEaFZkZwOqXXfbD0BiYXO5WVdxRET
-FwZvuvv6HU14NCu6aNY+ZD/hFoadbjCBU1LQVDZVrj6DHsix5RpYzaJP1zhYzK3j
-EeqvUO24B0kKF1JbT25neR/0ZmhC+6/WVXShzyxyOOGRHI9PQUElyDgVylVT3FRL
-eSfpCmzub4Tbpqa+L8ogx60W9xqdwH+opajKp8rFhcnneAbYWZbv8mppkwkXYpI=
-=OIs0
------END PGP SIGNATURE-----
-
---Signature=_Wed__16_Mar_2011_22_02_28_+1100_HwXBK7fDDcD+rBhy--
+-- 
+Jean Delvare
