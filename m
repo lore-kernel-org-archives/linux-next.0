@@ -1,56 +1,37 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the net tree
-Date: Tue, 15 Mar 2011 15:07:14 -0700 (PDT)
-Message-ID: <20110315.150714.245386974.davem@davemloft.net>
-References: <20110314.210712.226761233.davem@davemloft.net>
-	<20110315172558.a11642e7.sfr@canb.auug.org.au>
-	<alpine.LFD.2.00.1103151128070.2787@localhost6.localdomain6>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: [PATCH -next] usb: fix ips1760-hcd printk format warning
+Date: Tue, 15 Mar 2011 17:09:10 -0700
+Message-ID: <20110315170910.9b6f1c58.randy.dunlap@oracle.com>
+References: <20110315194543.a5d56c0c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:44202
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1757595Ab1COWGh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 15 Mar 2011 18:06:37 -0400
-In-Reply-To: <alpine.LFD.2.00.1103151128070.2787@localhost6.localdomain6>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: tglx@linutronix.de
-Cc: sfr@canb.auug.org.au, bhutchings@solarflare.com, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, mingo@elte.hu, hpa@zytor.com, peterz@infradead.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20110315194543.a5d56c0c.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, lud <linux-usb@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Sebastian Siewior <bigeasy@linutronix.de>
+List-Id: linux-next.vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
-Date: Tue, 15 Mar 2011 11:29:18 +0100 (CET)
+From: Randy Dunlap <randy.dunlap@oracle.com>
 
-> On Tue, 15 Mar 2011, Stephen Rothwell wrote:
-> 
->> Hi Dave,
->> 
->> On Mon, 14 Mar 2011 21:07:12 -0700 (PDT) David Miller <davem@davemloft.net> wrote:
->> >
->> > From: Stephen Rothwell <sfr@canb.auug.org.au>
->> > Date: Tue, 15 Mar 2011 11:30:49 +1100
->> > 
->> > > So, if you merge the commit 1fb0ef31f428 ("genirq: Fix affinity notifier
->> > > fallout") from the tip tree, you will get exactly one new commit and will
->> > > fix your tree properly with no adverse effect on anyone else.
->> > 
->> > Thomas, how would you like me to do this?  Do you want to put that
->> > commit on a branch for me to pull from or should I apply it
->> > directly?
->> 
->> That commit is already the head of the irq/numa branch in the tip tree
->> (it is also on the irq/core branch).
->> 
->> Please merge that rather than cherry-picking the commit as that will
->> minimise the possibility of conflicts.  Pulling the irq/numa branch will
->> get you just that one fixup commit (as you have already merged up to the
->> immediately preceding commit).
->> 
->> I assume this makes sense, Thomas?  I just did a merge of the actual
->> fixup commit after merging the net tree.
-> 
-> Yes. irq/numa should do the trick.
+Fix printk format build warning and grammar typo on same line.
 
-Great, I'll do that now.
+drivers/usb/host/isp1760-hcd.c:300: warning: format '%lu' expects type 'long unsigned int', but argument 4 has type 'size_t'
+
+Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
+---
+ drivers/usb/host/isp1760-hcd.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20110315.orig/drivers/usb/host/isp1760-hcd.c
++++ linux-next-20110315/drivers/usb/host/isp1760-hcd.c
+@@ -295,7 +295,7 @@ static void alloc_mem(struct usb_hcd *hc
+ 	}
+ 
+ 	dev_err(hcd->self.controller,
+-				"%s: Can not allocate %lu bytes of memory\n"
++				"%s: Cannot allocate %zu bytes of memory\n"
+ 				"Current memory map:\n",
+ 				__func__, qtd->length);
+ 	for (i = 0; i < BLOCKS; i++) {
