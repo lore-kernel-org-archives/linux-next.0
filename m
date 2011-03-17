@@ -1,71 +1,57 @@
-From: "J. Bruce Fields" <bfields@fieldses.org>
-Subject: Re: linux-next: build warning after merge of the nfsd tree
-Date: Thu, 17 Mar 2011 14:09:28 -0400
-Message-ID: <20110317180928.GF30180@fieldses.org>
-References: <20110310115331.10a95d57.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning in Linus' tree
+Date: Fri, 18 Mar 2011 10:04:18 +1100
+Message-ID: <20110318100418.6556c92c.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__18_Mar_2011_10_04_18_+1100_Q7uStZrPoxj+6nhz"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fieldses.org ([174.143.236.118]:52986 "EHLO fieldses.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:58291 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754927Ab1CQSJ3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 17 Mar 2011 14:09:29 -0400
-Content-Disposition: inline
-In-Reply-To: <20110310115331.10a95d57.sfr@canb.auug.org.au>
+	id S1754971Ab1CQXE2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 17 Mar 2011 19:04:28 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Roland Dreier <roland@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Hal Rosenstock <hal.rosenstock@gmail.com>, Eric Dumazet <eric.dumazet@gmail.com>, Tejun Heo <tj@kernel.org>, Changli Gao <xiaosuo@gmail.com>, linux-rdma@vger.kernel.org
 
-On Thu, Mar 10, 2011 at 11:53:31AM +1100, Stephen Rothwell wrote:
-> Hi Bruce,
-> 
-> After merging the nfsd tree, today's linux-next build (powerpc
-> ppc64_defconfig) produced this warning:
-> 
-> net/sunrpc/svcauth_unix.c: In function 'unix_domain_find':
-> net/sunrpc/svcauth_unix.c:58: warning: passing argument 1 of 'svcauth_unix_domain_release' from incompatible pointer type
-> net/sunrpc/svcauth_unix.c:41: note: expected 'struct auth_domain *' but argument is of type 'struct unix_domain *'
-> 
-> Introduced by commit 8b3e07ac908d ("svcrpc: fix rare race on unix_domain
-> creation").
+--Signature=_Fri__18_Mar_2011_10_04_18_+1100_Q7uStZrPoxj+6nhz
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Should be fixed, thanks for the report.
+Hi all,
 
---b.
+After merging the Linus' tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
 
-commit 352b5d13c0684ba8cd103aa20cb74f105334562a
-Author: J. Bruce Fields <bfields@redhat.com>
-Date:   Wed Mar 9 22:40:30 2011 -0500
+drivers/infiniband/core/addr.c: In function 'addr4_resolve':
+drivers/infiniband/core/addr.c:188: warning: 'ret' may be used uninitialize=
+d in this function
 
-    svcrpc: fix bad argument in unix_domain_find
-    
-    "After merging the nfsd tree, today's linux-next build (powerpc
-    ppc64_defconfig) produced this warning:
-    
-    net/sunrpc/svcauth_unix.c: In function 'unix_domain_find':
-    net/sunrpc/svcauth_unix.c:58: warning: passing argument 1 of
-    +'svcauth_unix_domain_release' from incompatible pointer type
-    net/sunrpc/svcauth_unix.c:41: note: expected 'struct auth_domain *' but
-    argument
-    +is of type 'struct unix_domain *'
-    
-    Introduced by commit 8b3e07ac908d ("svcrpc: fix rare race on unix_domain
-    creation")."
-    
-    Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-    Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+I didn't notice this one before, sorry.
 
-diff --git a/net/sunrpc/svcauth_unix.c b/net/sunrpc/svcauth_unix.c
-index d100bf2..c8e1021 100644
---- a/net/sunrpc/svcauth_unix.c
-+++ b/net/sunrpc/svcauth_unix.c
-@@ -55,7 +55,7 @@ struct auth_domain *unix_domain_find(char *name)
- 	while(1) {
- 		if (rv) {
- 			if (new && rv != &new->h)
--				svcauth_unix_domain_release(new);
-+				svcauth_unix_domain_release(&new->h);
- 
- 			if (rv->flavour != &svcauth_unix) {
- 				auth_domain_put(rv);
+I don't know what introduced it, but the third if statement in the
+function will make us use "ret" uninitialised.
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__18_Mar_2011_10_04_18_+1100_Q7uStZrPoxj+6nhz
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNgpNyAAoJEDMEi1NhKgbsvJ8H/RG5X3ZUgtexwYrofgyqw4YU
+kRROlLz9Dy/CH0v9rV+S/xLvnxSGume1XjOEVVT/LI4bA5NbeSDwpZ55ZlJ/DyCi
+cYnGC+4GrLvUDqJ9zA5ekP93MBbevzq9icaZDa9ndZiA5o+QAh53rwShieZd25Rw
+6vc1gbYJ2boYLuSEzWF5VPpWaevvblpYMd7EuFbqBTvoGARu1yogUraKQsmLGGp8
++EQ0lHOZutWe8sDTVwuoZkGQ/MHQYq1JpGl95pNgEo6X0ekulXtuH0LHmqPff38D
+aTI6SpkpSxJqxKUFicHGO8gdBkF6AShekxJP15cE77wUEutNFSixDfi4upFOTEs=
+=X7KB
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__18_Mar_2011_10_04_18_+1100_Q7uStZrPoxj+6nhz--
