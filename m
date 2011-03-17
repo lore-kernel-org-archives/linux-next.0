@@ -1,64 +1,78 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: build failure after merge of the final tree
- (jdelvare-hwmon tree related)
-Date: Thu, 17 Mar 2011 13:18:00 +0100
-Message-ID: <AANLkTin46NLhP+0mmYELkD8zeC5o32H=-jXkySZ4R_dj@mail.gmail.com>
-References: <20110315192428.ce74a177.sfr@canb.auug.org.au>
-	<4D7F2609.3080508@redhat.com>
-	<20110315103228.30233acc@endymion.delvare>
-	<20110315212226.7e940b51.sfr@canb.auug.org.au>
+From: Philipp Reisner <philipp.reisner@linbit.com>
+Subject: Re: linux-next: build failure after merge of the final tree (block tree  related)
+Date: Thu, 17 Mar 2011 15:01:32 +0100
+Message-ID: <201103171501.32703.philipp.reisner@linbit.com>
+References: <20110311175830.29a387b2.sfr@canb.auug.org.au> <20110317103131.6c6be7a5.sfr@canb.auug.org.au> <4D81DFA4.7000204@kernel.dk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: Text/Plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-fx0-f46.google.com ([209.85.161.46]:45146 "EHLO
-	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754118Ab1CQMSC convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Mar 2011 08:18:02 -0400
-In-Reply-To: <20110315212226.7e940b51.sfr@canb.auug.org.au>
+Received: from mail09.linbit.com ([212.69.161.110]:47371 "EHLO
+	mail09.linbit.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750779Ab1CQOBj convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Mar 2011 10:01:39 -0400
+In-Reply-To: <4D81DFA4.7000204@kernel.dk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jean Delvare <khali@linux-fr.org>, Hans de Goede <hdegoede@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lars Ellenberg <lars.ellenberg@linbit.com>
 
-On Tue, Mar 15, 2011 at 11:22, Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
-> On Tue, 15 Mar 2011 10:32:28 +0100 Jean Delvare <khali@linux-fr.org> =
-wrote:
->> Stephen, sorry for the inconvenience, both Hans and myself build-tes=
-ted
->> the new code on an architecture where <linux/delay.h> gets included
->> implicitly, so we didn't notice it was missing.
->
-> It happens. =C2=A0It seems that delay.h is almost always the one that=
- is
-> forgotten. =C2=A0X86 builds include it implicitly but powerpc doesn't=
-=2E
->
-> I wonder if we could concoct a nice checkpatch test for it.
+Am Donnerstag, 17. M=E4rz 2011, um 11:17:08 schrieb Jens Axboe:
+> On 2011-03-17 00:31, Stephen Rothwell wrote:
+> > Hi Jens,
+> >=20
+> > On Fri, 11 Mar 2011 08:12:38 +0100 Jens Axboe <axboe@kernel.dk> wro=
+te:
+> >> On 2011-03-11 07:58, Stephen Rothwell wrote:
+> >>> After merging the final tree, today's linux-next build (powerpc
+> >>> allyesconfig) failed like this:
+> >>>=20
+> >>> drivers/char/tpm/tpm_tis.c:96: warning: 'is_itpm' defined but not=
+ used
+> >>> drivers/block/drbd/drbd_bitmap.c: In function '__bm_change_bits_t=
+o':
+> >>> drivers/block/drbd/drbd_bitmap.c:1287: error: implicit declaratio=
+n of
+> >>> function 'generic___test_and_set_le_bit'
+> >>> drivers/block/drbd/drbd_bitmap.c:1289: error: implicit declaratio=
+n of
+> >>> function 'generic___test_and_clear_le_bit'
+> >>> drivers/block/drbd/drbd_bitmap.c: In function 'drbd_bm_test_bit':
+> >>> drivers/block/drbd/drbd_bitmap.c:1438: error: implicit declaratio=
+n of
+> >>> function 'generic_test_le_bit'
+> >>>=20
+> >>> Caused by commit 4b0715f09655 ("drbd: allow petabyte storage on 6=
+4bit
+> >>> arch").
+> >>=20
+> >>> I have applied this patch for today (surely there is a better way=
+):
+> >> Thanks for not dropping it, I'll let the drbd guys send in a prope=
+r fix
+> >> and get it committed.
+> >=20
+> > Ping?
+>=20
+> Lars, please send me a fix for this ASAP. It's holding up the block
+> merge.
 
-Or remove the implicit includes on x86...
+Hi Jens,
 
-$ git grep delay\\.h arch/x86/include/
-arch/x86/include/asm/apic.h:#include <linux/delay.h>
-arch/x86/include/asm/dma.h:#include <linux/delay.h>
-arch/x86/include/asm/i8259.h:#include <linux/delay.h>
-$
+Please use Stephen's patch for the merge. It is perfectly valid.
 
-At first sight, apic.h and dmah.h don't seem to need it.
+Lars is in the progress of preparing a suggestion for a much
+broader cleanup/fix for the little-endian bitops topic.
 
-Gr{oetje,eeting}s,
+But that should not delay the the block merge, nor is it necessary
+for the drbd updates. He plans to have that ready by tomorrow.
 
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 Geert
+Best,
+ Phil
+--=20
+: Dipl-Ing Philipp Reisner
+: LINBIT | Your Way to High Availability
+: Tel: +43-1-8178292-50, Fax: +43-1-8178292-82
+: http://www.linbit.com
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
-m68k.org
-
-In personal conversations with technical people, I call myself a hacker=
-=2E But
-when I'm talking to journalists I just say "programmer" or something li=
-ke that.
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
+DRBD(R) and LINBIT(R) are registered trademarks of LINBIT, Austria.
