@@ -1,22 +1,22 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the v4l-dvb tree
-Date: Thu, 17 Mar 2011 11:29:32 +1100
-Message-ID: <20110317112932.ded8cbf1.sfr@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the v4l-dvb tree
+Date: Thu, 17 Mar 2011 11:33:51 +1100
+Message-ID: <20110317113351.9cd177e0.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Thu__17_Mar_2011_11_29_32_+1100_wi59DSNBDCrn+GAy"
+ boundary="Signature=_Thu__17_Mar_2011_11_33_51_+1100_byjG=F8QQUC_XSu4"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:34216 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:59560 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752327Ab1CQA3l (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Mar 2011 20:29:41 -0400
+	id S1752260Ab1CQAeC (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 16 Mar 2011 20:34:02 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Manjunatha Halli <manjunatha_halli@ti.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Igor M. Liplianin" <liplianin@me.by>
 
---Signature=_Thu__17_Mar_2011_11_29_32_+1100_wi59DSNBDCrn+GAy
+--Signature=_Thu__17_Mar_2011_11_33_51_+1100_byjG=F8QQUC_XSu4
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,33 +24,35 @@ Content-Transfer-Encoding: quoted-printable
 Hi Mauro,
 
 After merging the v4l-dvb tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+allmodconfig) produced these warnings:
 
-drivers/media/radio/wl128x/fmdrv_common.c: In function 'recv_tasklet':
-drivers/media/radio/wl128x/fmdrv_common.c:274: warning: format '%d' expects=
- type 'int', but argument 4 has type 'long unsigned int'
+drivers/media/video/cx23885/altera-ci.c: In function 'altera_hw_filt_init':
+drivers/media/video/cx23885/altera-ci.c:671: warning: cast from pointer to =
+integer of different size
+drivers/media/video/cx23885/altera-ci.c: In function 'altera_ci_init':
+drivers/media/video/cx23885/altera-ci.c:739: warning: cast from pointer to =
+integer of different size
 
-Introduced by commit 38b9da379627 ("[media] drivers:media:radio: wl128x:
-FM Driver Common sources").
-
+Introduced by commit 1b47d80abafb ("[media] Altera FPGA based CI driver
+module").
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Thu__17_Mar_2011_11_29_32_+1100_wi59DSNBDCrn+GAy
+--Signature=_Thu__17_Mar_2011_11_33_51_+1100_byjG=F8QQUC_XSu4
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNgVXsAAoJEDMEi1NhKgbsaKYH/0vNaf7XtdFZDMMojwpmynAY
-/hLEVubUKOWA03nfnZ9YIa9XVzT+g0EVB+8tTCiZdJ1u+Po+bnJ0nvgKcgVIay4m
-7HQpF8uBU38CF8nSwNz8aI2plJ1IxwIndOtC6eI3Ap+8uqA0GwAXEmR2cGxzcJKg
-JOiEts6w0V+LZvM3mVSRXDTa3Za/qZnUKxoh5url7nHq+CMSTQWZS8rqYgdIuI4c
-tj6EnoaoLREY6VuEB9/m8kf51mvJZX0/JhC3aqw+Pejn6+9s/ykxVsT/Efxv9EIs
-dW5fLFJAv40c0CNhiw2KCFyXwFvlQ75jkf/L5aNvAqVP6jXCvXHL7B2x7ZnA9xU=
-=STG5
+iQEcBAEBAgAGBQJNgVbvAAoJEDMEi1NhKgbskiUH/it56jlSCJpkeNTZTyKwjzFH
+zoZ3dV7jw72fIp+TwmMh/TXcd6eGe1rQrI2w9oL7ijmMQBSMzFWl9Nodot+06z7a
+xMYVRLE6uxI3mevQ4r/PerdopmzYdOMgZWw0yzJDv3g8jUypYjL6IaKWMmDWomEj
+241ayCCPUIkVvMZmzxYNnJG1KoURE7kalmFWvk23iiRWHh1a6NZ7tpkqHLyvIjCw
+RFUW27CGmWziwDnCHQQ5vxJcO15WhLBC3J8M8FJo8mo3wG8DmwpBc/xF++goM/Fg
+v+gHq6fzD05Yo9mDeecfcw53CJ1EowZ85jHqMqG1Z+4ivEhWBqACYuXlD0LGX+Y=
+=xmf2
 -----END PGP SIGNATURE-----
 
---Signature=_Thu__17_Mar_2011_11_29_32_+1100_wi59DSNBDCrn+GAy--
+--Signature=_Thu__17_Mar_2011_11_33_51_+1100_byjG=F8QQUC_XSu4--
