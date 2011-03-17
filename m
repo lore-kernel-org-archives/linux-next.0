@@ -1,54 +1,51 @@
-From: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
-Subject: Re: [next] i2c-designware build errors
-Date: Thu, 17 Mar 2011 12:58:42 +0100
-Message-ID: <AANLkTimbk8vk7bV2255=fOSXgodnxi2Z9ySKHuOVnYvW@mail.gmail.com>
-References: <AANLkTikWRAOAzPgwmzn8UrbKZx4r90smruAayWTPd68t@mail.gmail.com>
-	<AANLkTimCwOhpwrLx1c5wdGzmkxB7pH=k6Wg1iQgj07VJ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next: build failure after merge of the final tree
+ (jdelvare-hwmon tree related)
+Date: Thu, 17 Mar 2011 13:18:00 +0100
+Message-ID: <AANLkTin46NLhP+0mmYELkD8zeC5o32H=-jXkySZ4R_dj@mail.gmail.com>
+References: <20110315192428.ce74a177.sfr@canb.auug.org.au>
+	<4D7F2609.3080508@redhat.com>
+	<20110315103228.30233acc@endymion.delvare>
+	<20110315212226.7e940b51.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <AANLkTimCwOhpwrLx1c5wdGzmkxB7pH=k6Wg1iQgj07VJ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: sedat.dilek-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: Sedat Dilek <sedat.dilek-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>, Dirk Brandewie <dirk.brandewie-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux-Next <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Randy Dunlap <randy.dunlap-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:45146 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754118Ab1CQMSC convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Mar 2011 08:18:02 -0400
+In-Reply-To: <20110315212226.7e940b51.sfr@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jean Delvare <khali@linux-fr.org>, Hans de Goede <hdegoede@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Mar 17, 2011 at 12:15, Sedat Dilek <sedat.dilek-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>=
- wrote:
-> On Thu, Mar 17, 2011 at 11:58 AM, Geert Uytterhoeven
-> <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org> wrote:
->> http://kisskb.ellerman.id.au/kisskb/buildresult/4002561/:
->>
->> drivers/i2c/busses/i2c-designware-core.c:321: error: implicit
->> declaration of function 'mdelay'
->> drivers/i2c/busses/i2c-designware-pcidrv.c:256: error: implicit
->> declaration of function 'pci_request_region'
->> drivers/i2c/busses/i2c-designware-pcidrv.c:338: error: implicit
->> declaration of function 'pci_release_region'
->>
->> i2c-designware-core.c needs to include <linux/delay.h>
->> CONFIG_I2C_DESIGNWARE_PCI should depend on CONFIG_PCI
->>
->> Gr{oetje,eeting}s,
->>
->> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 Geert
->>
->> --
->> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@lin=
-ux-m68k.org
->>
+On Tue, Mar 15, 2011 at 11:22, Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+> On Tue, 15 Mar 2011 10:32:28 +0100 Jean Delvare <khali@linux-fr.org> =
+wrote:
+>> Stephen, sorry for the inconvenience, both Hans and myself build-tes=
+ted
+>> the new code on an architecture where <linux/delay.h> gets included
+>> implicitly, so we didn't notice it was missing.
 >
-> Just FYI:
-> Randy sent already a patch for this issue "[PATCH -next] i2c:
-> designware-pcidrv depends on PCI" [1].
+> It happens. =C2=A0It seems that delay.h is almost always the one that=
+ is
+> forgotten. =C2=A0X86 builds include it implicitly but powerpc doesn't=
+=2E
 >
-> - Sedat -
->
-> [1] http://marc.info/?l=3Dlinux-next&m=3D130030077521605&w=3D2
+> I wonder if we could concoct a nice checkpatch test for it.
 
-Ah, sorry, my initial search didn't reveal any patches yet...
+Or remove the implicit includes on x86...
+
+$ git grep delay\\.h arch/x86/include/
+arch/x86/include/asm/apic.h:#include <linux/delay.h>
+arch/x86/include/asm/dma.h:#include <linux/delay.h>
+arch/x86/include/asm/i8259.h:#include <linux/delay.h>
+$
+
+At first sight, apic.h and dmah.h don't seem to need it.
 
 Gr{oetje,eeting}s,
 
