@@ -1,37 +1,44 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: linux-next: build failure after merge of the block tree
-Date: Thu, 17 Mar 2011 11:45:35 +0100
-Message-ID: <4D81E64F.2020909@kernel.dk>
-References: <20110314161919.15e6d983.sfr@canb.auug.org.au>	 <20110317103218.ca7f63bf.sfr@canb.auug.org.au> <4D81E010.1090808@kernel.dk> <1300358170.2589.50.camel@macbook.infradead.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [next] i2c-designware build errors
+Date: Thu, 17 Mar 2011 11:58:07 +0100
+Message-ID: <AANLkTikWRAOAzPgwmzn8UrbKZx4r90smruAayWTPd68t@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 0122700014.0.fullrate.dk ([95.166.99.235]:36391 "EHLO kernel.dk"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752881Ab1CQKph (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 17 Mar 2011 06:45:37 -0400
-In-Reply-To: <1300358170.2589.50.camel@macbook.infradead.org>
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:59792 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752614Ab1CQK6J convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Mar 2011 06:58:09 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Woodhouse <david.woodhouse@intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jarkko Lavinen <jarkko.lavinen@nokia.com>
+To: Dirk Brandewie <dirk.brandewie@gmail.com>, Ben Dooks <ben-linux@fluff.org>
+Cc: linux-i2c@vger.kernel.org, Linux-Next <linux-next@vger.kernel.org>
 
-On 2011-03-17 11:36, David Woodhouse wrote:
-> On Thu, 2011-03-17 at 10:18 +0000, Jens Axboe wrote:
->>
->> Can you point me at the commit in question? Generally,
->> elv_queue_empty()
->> can be replaced by blk_peek_request(). 
-> 
-> The interesting commit is this one:
-> http://git.infradead.org/mtd-2.6.git/commitdiff/c7519dbf6
-> 
-> The point of it is to enable this
-> http://git.infradead.org/mtd-2.6.git/commitdiff/a32159024
+http://kisskb.ellerman.id.au/kisskb/buildresult/4002561/:
 
-OK, can you commit a change just changing that to blk_peek_request()?
-That'll avoid the conflict.
+drivers/i2c/busses/i2c-designware-core.c:321: error: implicit
+declaration of function 'mdelay'
+drivers/i2c/busses/i2c-designware-pcidrv.c:256: error: implicit
+declaration of function 'pci_request_region'
+drivers/i2c/busses/i2c-designware-pcidrv.c:338: error: implicit
+declaration of function 'pci_release_region'
 
--- 
-Jens Axboe
+i2c-designware-core.c needs to include <linux/delay.h>
+CONFIG_I2C_DESIGNWARE_PCI should depend on CONFIG_PCI
+
+Gr{oetje,eeting}s,
+
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
+
+In personal conversations with technical people, I call myself a hacker=
+=2E But
+when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0 -- Linus Torvalds
