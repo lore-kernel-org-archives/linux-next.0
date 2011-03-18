@@ -1,40 +1,36 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build warning in Linus' tree
-Date: Thu, 17 Mar 2011 18:13:36 -0700 (PDT)
-Message-ID: <20110317.181336.226775410.davem@davemloft.net>
-References: <20110318100418.6556c92c.sfr@canb.auug.org.au>
+From: Guenter Roeck <guenter.roeck@ericsson.com>
+Subject: Re: linux-next: manual merge of the kbuild tree with the
+ hwmon-staging tree
+Date: Thu, 17 Mar 2011 20:50:31 -0700
+Message-ID: <20110318035031.GA8242@ericsson.com>
+References: <20110318114836.04c76926.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:33086
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755787Ab1CRBM6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 17 Mar 2011 21:12:58 -0400
-In-Reply-To: <20110318100418.6556c92c.sfr@canb.auug.org.au>
+Received: from imr4.ericy.com ([198.24.6.8]:50872 "EHLO imr4.ericy.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755972Ab1CRDvH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 17 Mar 2011 23:51:07 -0400
+Content-Disposition: inline
+In-Reply-To: <20110318114836.04c76926.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: roland@kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, hal.rosenstock@gmail.com, eric.dumazet@gmail.com, tj@kernel.org, xiaosuo@gmail.com, linux-rdma@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Michal Marek <mmarek@suse.cz>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, matt mooney <mfm@muteddisk.com>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 18 Mar 2011 10:04:18 +1100
+Hi Stephen,
 
-> Hi all,
+On Thu, Mar 17, 2011 at 08:48:36PM -0400, Stephen Rothwell wrote:
+> Hi Michal,
 > 
-> After merging the Linus' tree, today's linux-next build (powerpc
-> ppc64_defconfig) produced this warning:
+> Today's linux-next merge of the kbuild tree got a conflict in
+> drivers/hwmon/Makefile between commit 442aba78728e ("hwmon: PMBus device
+> driver") from the hwmon-staging tree and commit 5c39e31195f4 ("hwmon:
+> change to new flag variable") from the kbuild tree.
 > 
-> drivers/infiniband/core/addr.c: In function 'addr4_resolve':
-> drivers/infiniband/core/addr.c:188: warning: 'ret' may be used uninitialized in this function
-> 
-> I didn't notice this one before, sorry.
-> 
-> I don't know what introduced it, but the third if statement in the
-> function will make us use "ret" uninitialised.
 
-It was the ipv4 route lookup interface changes.
+Linus merged the hwmon-staging tree, so the conflicts should hopefully
+be resolved in a day or so.
 
-Roland has received a fix already, and will merge it via the infiniband
-tree.
+Thanks,
+Guenter
