@@ -1,51 +1,34 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kbuild tree with the hwmon-staging
- tree
-Date: Fri, 18 Mar 2011 11:48:36 +1100
-Message-ID: <20110318114836.04c76926.sfr@canb.auug.org.au>
+From: David Miller <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>
+Subject: Re: [PATCH] rdma/addr: Initialize ret to fix build warning
+Date: Thu, 17 Mar 2011 18:12:03 -0700 (PDT)
+Message-ID: <20110317.181203.193711655.davem@davemloft.net>
+References: <20110318100418.6556c92c.sfr@canb.auug.org.au>
+	<CF9C39F99A89134C9CF9C4CCB68B8DDF25CCC10249@orsmsx501.amr.corp.intel.com>
+	<AANLkTikB=ZQQG18sDbD2kfFMWdVuUqnzYWOf7KtuBKVc@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:39498 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751829Ab1CRAso (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 17 Mar 2011 20:48:44 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Michal Marek <mmarek@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, matt mooney <mfm@muteddisk.com>, Guenter Roeck <guenter.roeck@ericsson.com>
+Return-path: <linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <AANLkTikB=ZQQG18sDbD2kfFMWdVuUqnzYWOf7KtuBKVc-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, eric.dumazet-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, xiaosuo-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Michal,
+From: Roland Dreier <roland-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Date: Thu, 17 Mar 2011 16:56:27 -0700
 
-Today's linux-next merge of the kbuild tree got a conflict in
-drivers/hwmon/Makefile between commit 442aba78728e ("hwmon: PMBus device
-driver") from the hwmon-staging tree and commit 5c39e31195f4 ("hwmon:
-change to new flag variable") from the kbuild tree.
+> On Thu, Mar 17, 2011 at 4:35 PM, Hefty, Sean <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org> wrote:
+>> Commit b23dd4fe42b455af5c6e20966b7d6959fa8352ea (ipv4: Make output
+>> route lookup return rtable directly) resulted in leaving
+>> ret uninitialized, where it may later be returned.
+> 
+> Looks good to me, I'll merge this.
 
-Just context changes.  I fixed it up (see below) and can carry the fix as
-necessary.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+Thanks Roland.
 
-diff --cc drivers/hwmon/Makefile
-index aaf6ca9,974f9cc..0000000
---- a/drivers/hwmon/Makefile
-+++ b/drivers/hwmon/Makefile
-@@@ -114,14 -112,5 +114,12 @@@ obj-$(CONFIG_SENSORS_W83L786NG)	+= w83l
-  obj-$(CONFIG_SENSORS_WM831X)	+= wm831x-hwmon.o
-  obj-$(CONFIG_SENSORS_WM8350)	+= wm8350-hwmon.o
-  
- +# PMBus drivers
- +obj-$(CONFIG_PMBUS)		+= pmbus_core.o
- +obj-$(CONFIG_SENSORS_PMBUS)	+= pmbus.o
- +obj-$(CONFIG_SENSORS_MAX16064)	+= max16064.o
- +obj-$(CONFIG_SENSORS_MAX34440)	+= max34440.o
- +obj-$(CONFIG_SENSORS_MAX8688)	+= max8688.o
- +
-- ifeq ($(CONFIG_HWMON_DEBUG_CHIP),y)
-- EXTRA_CFLAGS += -DDEBUG
-- endif
-+ ccflags-$(CONFIG_HWMON_DEBUG_CHIP) := -DDEBUG
-  
+Acked-by: David S. Miller <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>
+--
+To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
