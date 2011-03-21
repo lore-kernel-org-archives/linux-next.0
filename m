@@ -1,27 +1,34 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next: manual merge of the mfd tree with Linus' tree
-Date: Mon, 21 Mar 2011 09:21:34 +0100
-Message-ID: <AANLkTikoF9fkZshaoop7gfuCKjjtUjbwwOG6hWyeGCHJ@mail.gmail.com>
-References: <20110321122615.8a639909.sfr@canb.auug.org.au>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: Re: linux-next: manual merge of the block tree with Linus' tree
+Date: Mon, 21 Mar 2011 10:48:34 +0100
+Message-ID: <4D871EF2.7010801@kernel.dk>
+References: <20110321114306.3d91bfb5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:35106 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751963Ab1CUIVf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 21 Mar 2011 04:21:35 -0400
-In-Reply-To: <20110321122615.8a639909.sfr@canb.auug.org.au>
+Received: from 0122700014.0.fullrate.dk ([95.166.99.235]:32947 "EHLO kernel.dk"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751953Ab1CUJsg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 21 Mar 2011 05:48:36 -0400
+In-Reply-To: <20110321114306.3d91bfb5.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Samuel Ortiz <sameo@linux.intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Philippe Langlais <philippe.langlais@linaro.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
 
-2011/3/21 Stephen Rothwell <sfr@canb.auug.org.au>:
+On 2011-03-21 01:43, Stephen Rothwell wrote:
+> Hi Jens,
+> 
+> Today's linux-next merge of the block tree got a conflict in fs/super.c
+> between commit 9d412a43c3b2 ("vfs: split off vfsmount-related parts of
+> vfs_kern_mount()") from Linus' tree and commit 95f28604a65b ("fs: assign
+> sb->s_bdi to default_backing_dev_info if the bdi is going away") from the
+> block tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary.
 
-> I fixed them up (see below) and can carry the fix as necessary.
+Thanks Stephen, your fixup is (obviously) correct.
 
-Fix looks correct, Sam if you push this to the MFD tree before
-the pull request I'll be happy.
-
-Yours,
-Linus Walleij
+-- 
+Jens Axboe
