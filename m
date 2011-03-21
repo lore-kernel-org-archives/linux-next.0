@@ -1,360 +1,611 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for March 21
-Date: Mon, 21 Mar 2011 14:40:38 +1100
-Message-ID: <20110321144038.830fa54b.sfr@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Mon__21_Mar_2011_14_40_38_+1100_cuwpWiKzyVYm4/kZ"
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: [PATCH v7] MAX8997/8966 MFD: Add IRQ control feature
+Date: Mon, 21 Mar 2011 17:08:24 +0900
+Message-ID: <1300694904-29856-1-git-send-email-myungjoo.ham@samsung.com>
+References: <20110321135910.267f367f.sfr@canb.auug.org.au>
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46489 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752681Ab1CUDkr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 20 Mar 2011 23:40:47 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:48685 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751381Ab1CUII0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 21 Mar 2011 04:08:26 -0400
+In-reply-to: <20110321135910.267f367f.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Samuel Ortiz <sameo@linux.intel.com>, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Kyungmin Park <kyungmin.park@samsung.com>, myungjoo.ham@gmail.com
 
---Signature=_Mon__21_Mar_2011_14_40_38_+1100_cuwpWiKzyVYm4/kZ
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch enables IRQ handling for MAX8997/8966 chips.
 
-Hi all,
+Please note that Fuel-Gauge-related IRQs are not implemented in this
+initial release. The fuel gauge module in MAX8997 is identical to
+MAX17042, which is already in Linux kernel. In order to use the
+already-existing MAX17042 driver for fuel gauge module in MAX8997, the
+main interrupt handler of MAX8997 should relay related interrupts to
+MAX17042 driver. However, in order to do this, we need to modify
+MAX17042 driver as well because MAX17042 driver does not have any
+interrupt handlers for now. We are not going to implement this in this
+initial release as it is not crucial in basic operations of MAX8997.
 
-Reminder: do not add any of your changes for v2.6.40 to your linux-next
-included branches until after v2.6.39-rc1 is released.
+Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+--
+The changes from previous patch
+v7
+removed RTC patch from the series as applied
+with comments from Stephen
+	- Removed dependencies on not setting
+	"CONFIG_GENERIC_HARDIRQS_NO_DEPRECATED"
+v6
+with comments from Samuel
+	- IRQ register bit values use macros
+corrected GPIO interrupt handling
+RTC configuration bit values use macros
+v5
+with comments from Mark
+	- Style updated for PMIC
+	- Revised side-effect calculation
+	In the range given, choose a setting without side-effect
+	then, choose a setting with the least side-effect if allowed.
+Added comments on FUEL-GAUGE issue in IRQ
 
-Lots of conflicts are rising to the top :-)
+v4
+with comments from Randy:
+	- Spelling errors in Kconfig
+with comments from Minsung Kim:
+	- RTC month bit error.
 
-Changes since 20110317:
+v3
+with comments from Joe:
+	- Style updated for IRQ and RTC
+with comments from Mark
+	- Style updated for RTC and PMIC
+Merged support for RTC and IRQ
 
-Dropped tree: xen
+v2
+with comments from Samuel:
+	- Style updated for MFD
+with comments from Mark:
+	- Updated API for next and 2.6.38
+	- Style updated for regulators
+Support for hibernation
+Support for bulk register access
+Corrected register names
+Added RTC/IRQ registers
+LDO access bug fixed
+Support for regulator suspend state control
+---
+ drivers/mfd/Makefile                |    2 +-
+ drivers/mfd/max8997-irq.c           |  425 +++++++++++++++++++++++++++++++++++
+ include/linux/mfd/max8997-private.h |   21 ++
+ include/linux/mfd/max8997.h         |    7 +-
+ 4 files changed, 452 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/mfd/max8997-irq.c
 
-Linus' tree lost its build failure.
-
-The arm tree lost its conflict.
-
-The msm tree lost its conflicts.
-
-The omap tree lost its conflicts.
-
-The powerpc tree lost its conflict.
-
-The tile tree lost its conflict.
-
-The hwmon-staging tree lost its conflict.
-
-The acpi tree lost some of its conflicts.
-
-The scsi tree lost its conflicts.
-
-The cpufreq tree lost its conflict.
-
-The block tree gained a conflict against Linus' tree.
-
-The mfd tree gained a conflict against Linus' tree and a build failure
-for which I reverted a commit.
-
-The trivial tree lost its conflicts.
-
-The xen-two tree lost its conflict.
-
-The powerpc allyesconfig build is still broken by some obscure bloating
-of the low memory code.
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/v2.6/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" as mentioned in the FAQ on the wiki
-(see below).
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log files
-in the Next directory.  Between each merge, the tree was built with
-a ppc64_defconfig for powerpc and an allmodconfig for x86_64. After the
-final fixups (if any), it is also built with powerpc allnoconfig (32 and
-64 bit), ppc44x_defconfig and allyesconfig (minus
-CONFIG_PROFILE_ALL_BRANCHES - this fails its final link) and i386, sparc
-and sparc64 defconfig. These builds also have
-CONFIG_ENABLE_WARN_DEPRECATED, CONFIG_ENABLE_MUST_CHECK and
-CONFIG_DEBUG_INFO disabled when necessary.
-
-Below is a summary of the state of the merge.
-
-We are up to 183 trees (counting Linus' and 28 trees of patches pending
-for Linus' tree), more are welcome (even if they are currently empty).
-Thanks to those who have contributed, and to those who haven't, please do.
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Randy Dunlap for doing many randconfig builds.
-
-There is a wiki covering stuff to do with linux-next at
-http://linux.f-seidel.de/linux-next/pmwiki/ .  Thanks to Frank Seidel.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master
-Merging fixes/fixes
-Merging kbuild-current/rc-fixes
-Merging arm-current/master
-Merging m68k-current/for-linus
-Merging powerpc-merge/merge
-Merging 52xx-and-virtex-current/powerpc/merge
-Merging sparc-current/master
-Merging scsi-rc-fixes/master
-Merging net-current/master
-Merging sound-current/for-linus
-Merging pci-current/for-linus
-Merging wireless-current/master
-Merging driver-core.current/driver-core-linus
-Merging tty.current/tty-linus
-Merging usb.current/usb-linus
-Merging staging.current/staging-linus
-Merging cpufreq-current/fixes
-Merging input-current/for-linus
-Merging md-current/for-linus
-Merging audit-current/for-linus
-Merging crypto-current/master
-Merging ide-curent/master
-Merging dwmw2/master
-Merging sh-current/sh-fixes-for-linus
-Merging rmobile-current/rmobile-fixes-for-linus
-Merging fbdev-current/fbdev-fixes-for-linus
-Merging devicetree-current/devicetree/merge
-Merging spi-current/spi/merge
-Merging arm/for-next
-Merging davinci/davinci-next
-Merging i.MX/for-next
-CONFLICT (content): Merge conflict in arch/arm/mach-mxs/mach-mx28evk.c
-Merging linux-spec/for-next
-Merging msm/for-next
-Merging omap/for-next
-Merging pxa/for-next
-Merging samsung/next-samsung
-Merging s5p/for-next
-Merging tegra/for-next
-Merging ux500-core/ux500-core
-CONFLICT (content): Merge conflict in arch/arm/configs/u8500_defconfig
-Merging avr32/avr32-arch
-Merging blackfin/for-linus
-Merging cris/for-next
-Merging ia64/test
-Merging m68k/for-next
-Merging m68knommu/for-next
-Merging microblaze/next
-Merging mips/mips-for-linux-next
-Merging parisc/for-next
-Merging powerpc/next
-Merging 4xx/next
-Merging 52xx-and-virtex/powerpc/next
-Merging galak/next
-Merging s390/features
-Merging sh/sh-latest
-Merging rmobile/rmobile-latest
-Merging sparc/master
-Merging tile/master
-Merging unicore32/unicore32
-Merging xtensa/master
-CONFLICT (content): Merge conflict in arch/xtensa/configs/iss_defconfig
-Merging ceph/for-next
-Merging cifs/master
-Merging configfs/linux-next
-Merging ecryptfs/next
-Merging ext3/for_next
-Merging ext4/next
-Merging fatfs/master
-Merging fuse/for-next
-Merging gfs2/master
-Merging hfsplus/for-next
-Merging jfs/next
-Merging logfs/master
-CONFLICT (content): Merge conflict in fs/logfs/logfs.h
-Merging nfs/linux-next
-Merging nfsd/nfsd-next
-Merging nilfs2/for-next
-Merging ocfs2/linux-next
-Merging omfs/for-next
-Merging squashfs/master
-Merging udf/for_next
-Merging v9fs/for-next
-Merging ubifs/linux-next
-Merging xfs/master
-Merging vfs/for-next
-Merging vfs-scale/vfs-scale-working
-Merging pci/linux-next
-Merging hid/for-next
-Merging quilt/i2c
-Merging bjdooks-i2c/next-i2c
-Merging quilt/jdelvare-hwmon
-Merging hwmon-staging/hwmon-next
-Merging quilt/kernel-doc
-Merging v4l-dvb/master
-CONFLICT (content): Merge conflict in drivers/staging/Kconfig
-CONFLICT (content): Merge conflict in drivers/staging/Makefile
-CONFLICT (delete/modify): drivers/staging/dabusb/dabusb.c deleted in v4l-dv=
-b/master and modified in HEAD. Version HEAD of drivers/staging/dabusb/dabus=
-b.c left in tree.
-CONFLICT (delete/modify): drivers/staging/dabusb/dabusb.h deleted in v4l-dv=
-b/master and modified in HEAD. Version HEAD of drivers/staging/dabusb/dabus=
-b.h left in tree.
-CONFLICT (content): Merge conflict in drivers/staging/easycap/easycap_ioctl=
-.c
-CONFLICT (delete/modify): drivers/staging/usbvideo/usbvideo.c deleted in v4=
-l-dvb/master and modified in HEAD. Version HEAD of drivers/staging/usbvideo=
-/usbvideo.c left in tree.
-CONFLICT (delete/modify): drivers/staging/usbvideo/vicam.c deleted in v4l-d=
-vb/master and modified in HEAD. Version HEAD of drivers/staging/usbvideo/vi=
-cam.c left in tree.
-$ git rm -f drivers/staging/usbvideo/usbvideo.c
-$ git rm -f drivers/staging/usbvideo/vicam.c
-$ git rm -f drivers/staging/dabusb/dabusb.c drivers/staging/dabusb/dabusb.h
-Merging kbuild/for-next
-CONFLICT (content): Merge conflict in drivers/hwmon/Makefile
-Merging kconfig/for-next
-Merging ide/master
-Merging libata/NEXT
-Merging infiniband/for-next
-Merging acpi/test
-CONFLICT (content): Merge conflict in arch/x86/kernel/acpi/sleep.c
-Merging idle-test/idle-test
-Merging powertools/tools-test
-Merging ieee1394/for-next
-Merging ubi/linux-next
-Merging kvm/linux-next
-Merging dlm/next
-Merging swiotlb/master
-Merging ibft/master
-Merging scsi/master
-Merging async_tx/next
-Merging net/master
-Merging wireless/master
-Merging bluetooth/master
-Merging mtd/master
-[master 0000b7e] Revert "mtd: fix printf format warnings, mostly lack of %z=
-d for size_t, in mtdswap"
-[master c83c6b5] Revert "mtd: Add mtdswap block driver"
-[master 1999b8c] Revert "mtd_blkdevs: Add background processing support"
-Merging crypto/master
-Merging sound/for-next
-Merging sound-asoc/for-next
-Merging cpufreq/next
-Merging quilt/rr
-Merging input/next
-Merging input-mt/next
-Merging lsm/for-next
-Merging block/for-next
-CONFLICT (content): Merge conflict in fs/aio.c
-CONFLICT (content): Merge conflict in fs/super.c
-Merging quilt/device-mapper
-Merging embedded/master
-Merging firmware/master
-Merging pcmcia/master
-Merging battery/master
-Merging leds/for-mm
-CONFLICT (content): Merge conflict in drivers/leds/Kconfig
-Merging backlight/for-mm
-Merging mmc/mmc-next
-Merging kgdb/kgdb-next
-Merging slab/for-next
-Merging uclinux/for-next
-Merging md/for-next
-Merging mfd/for-next
-CONFLICT (content): Merge conflict in arch/arm/mach-imx/mach-mx27_3ds.c
-CONFLICT (content): Merge conflict in arch/arm/mach-imx/mach-pcm038.c
-CONFLICT (content): Merge conflict in arch/arm/mach-mx3/mach-mx31_3ds.c
-CONFLICT (content): Merge conflict in arch/arm/mach-mx3/mach-mx31moboard.c
-CONFLICT (content): Merge conflict in arch/arm/mach-ux500/board-mop500-regu=
-lators.c
-CONFLICT (content): Merge conflict in arch/arm/mach-ux500/board-mop500.c
-CONFLICT (content): Merge conflict in drivers/gpio/Kconfig
-Merging hdlc/hdlc-next
-Merging drm/drm-next
-Merging fbdev/master
-Merging viafb/viafb-next
-Merging omap_dss2/for-next
-CONFLICT (content): Merge conflict in arch/arm/mach-omap2/board-overo.c
-Merging voltage/for-next
-Merging security-testing/next
-Merging selinux/master
-Merging lblnet/master
-Merging agp/agp-next
-Merging watchdog/master
-Merging bdev/master
-Merging dwmw2-iommu/master
-Merging cputime/cputime
-Merging osd/linux-next
-Merging jc_docs/docs-next
-Merging nommu/master
-Merging trivial/for-next
-Merging audit/for-next
-Merging suspend/linux-next
-Merging fsnotify/for-next
-Merging irda/for-next
-Merging alacrity/linux-next
-CONFLICT (content): Merge conflict in drivers/Makefile
-CONFLICT (content): Merge conflict in include/linux/Kbuild
-CONFLICT (content): Merge conflict in lib/Kconfig
-Merging i7core_edac/linux_next
-Merging i7300_edac/linux_next
-Merging devicetree/devicetree/next
-Merging spi/spi/next
-Merging tip/auto-latest
-Merging rcu/rcu/next
-Merging oprofile/for-next
-Merging xen-two/linux-next
-Merging xen-pvhvm/linux-next
-Merging edac-amd/for-next
-CONFLICT (content): Merge conflict in include/linux/pci_ids.h
-Merging percpu/for-next
-Merging workqueues/for-next
-Merging sfi/sfi-test
-Merging asm-generic/next
-Merging drivers-x86/linux-next
-Applying: OLPC: fix for removal of run_wake_count
-Merging hwpoison/hwpoison
-Merging sysctl/master
-Merging driver-core/driver-core-next
-Merging tty/tty-next
-Merging usb/usb-next
-Merging staging/staging-next
-Merging slabh/slabh
-Merging bkl-config/config
-Merging cleancache/linux-next
-CONFLICT (content): Merge conflict in fs/ocfs2/super.c
-CONFLICT (content): Merge conflict in fs/super.c
-CONFLICT (content): Merge conflict in include/linux/fs.h
-CONFLICT (content): Merge conflict in mm/Kconfig
-Merging scsi-post-merge/merge-base:master
-$ git checkout scsi-post-merge/master
-[master d7f2ee7] Revert "mfd: Add MAX8997/8966 IRQ control feature"
-
---Signature=_Mon__21_Mar_2011_14_40_38_+1100_cuwpWiKzyVYm4/kZ
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNhsi2AAoJEDMEi1NhKgbsbW0H/2lyJpybWZ7z4orgN6deFlDF
-9kuR1OL6qSuZIpwEqgCSqnJhCC4+LghfsltyeqB17XSfq9vzkMmjTwSnW5Zglw21
-AgkPxjiZivSEco/5zs+t0cRmJCtIFpE995uPXKXu2mso9UuCrboZkjyviDjzJGDy
-qtwZE9sXH+ZTJXygK3n/bPgRyYIF7xvhS1gWvxz9H8y5do9PRx2tEDFMOJcw7mXH
-9GHiKV+qmoashin7GqzZePmGF3KbkLjF1RZYLQMLnf2JLBhhGDNw7lohOWXmkqFu
-S3NSbn1fUtp/gVzU7YkCGmzCwMVbPnlCw4yRlX4EEAH2qw4YWwaZVTBTCR1ulqA=
-=QLVW
------END PGP SIGNATURE-----
-
---Signature=_Mon__21_Mar_2011_14_40_38_+1100_cuwpWiKzyVYm4/kZ--
+diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+index f6662e3..4cff10c 100644
+--- a/drivers/mfd/Makefile
++++ b/drivers/mfd/Makefile
+@@ -60,7 +60,7 @@ obj-$(CONFIG_UCB1400_CORE)	+= ucb1400_core.o
+ obj-$(CONFIG_PMIC_DA903X)	+= da903x.o
+ max8925-objs			:= max8925-core.o max8925-i2c.o
+ obj-$(CONFIG_MFD_MAX8925)	+= max8925.o
+-obj-$(CONFIG_MFD_MAX8997)	+= max8997.o
++obj-$(CONFIG_MFD_MAX8997)	+= max8997.o max8997-irq.o
+ obj-$(CONFIG_MFD_MAX8998)	+= max8998.o max8998-irq.o
+ 
+ pcf50633-objs			:= pcf50633-core.o pcf50633-irq.o
+diff --git a/drivers/mfd/max8997-irq.c b/drivers/mfd/max8997-irq.c
+new file mode 100644
+index 0000000..b9894ba
+--- /dev/null
++++ b/drivers/mfd/max8997-irq.c
+@@ -0,0 +1,425 @@
++/*
++ * max8997-irq.c - Interrupt controller support for MAX8997
++ *
++ * Copyright (C) 2011 Samsung Electronics Co.Ltd
++ * MyungJoo Ham <myungjoo.ham@samsung.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++ *
++ * This driver is based on max8998-irq.c
++ */
++
++#include <linux/err.h>
++#include <linux/irq.h>
++#include <linux/interrupt.h>
++#include <linux/mfd/max8997.h>
++#include <linux/mfd/max8997-private.h>
++
++static const u8 max8997_mask_reg[] = {
++	[PMIC_INT1] = MAX8997_REG_INT1MSK,
++	[PMIC_INT2] = MAX8997_REG_INT2MSK,
++	[PMIC_INT3] = MAX8997_REG_INT3MSK,
++	[PMIC_INT4] = MAX8997_REG_INT4MSK,
++	[FUEL_GAUGE] = MAX8997_REG_INVALID,
++	[MUIC_INT1] = MAX8997_MUIC_REG_INTMASK1,
++	[MUIC_INT2] = MAX8997_MUIC_REG_INTMASK2,
++	[MUIC_INT3] = MAX8997_MUIC_REG_INTMASK3,
++	[GPIO_LOW] = MAX8997_REG_INVALID,
++	[GPIO_HI] = MAX8997_REG_INVALID,
++	[FLASH_STATUS] = MAX8997_REG_INVALID,
++};
++
++static struct i2c_client *get_i2c(struct max8997_dev *max8997,
++				enum max8997_irq_source src)
++{
++	switch (src) {
++	case PMIC_INT1 ... PMIC_INT4:
++		return max8997->i2c;
++	case FUEL_GAUGE:
++		return NULL;
++	case MUIC_INT1 ... MUIC_INT3:
++		return max8997->muic;
++	case GPIO_LOW ... GPIO_HI:
++		return max8997->i2c;
++	case FLASH_STATUS:
++		return max8997->i2c;
++	default:
++		return ERR_PTR(-EINVAL);
++	}
++
++	return ERR_PTR(-EINVAL);
++}
++
++struct max8997_irq_data {
++	int mask;
++	enum max8997_irq_source group;
++};
++
++#define DECLARE_IRQ(idx, _group, _mask)		\
++	[(idx)] = { .group = (_group), .mask = (_mask) }
++static const struct max8997_irq_data max8997_irqs[] = {
++	DECLARE_IRQ(MAX8997_PMICIRQ_PWRONR,	PMIC_INT1, 1 << 0),
++	DECLARE_IRQ(MAX8997_PMICIRQ_PWRONF,	PMIC_INT1, 1 << 1),
++	DECLARE_IRQ(MAX8997_PMICIRQ_PWRON1SEC,	PMIC_INT1, 1 << 3),
++	DECLARE_IRQ(MAX8997_PMICIRQ_JIGONR,	PMIC_INT1, 1 << 4),
++	DECLARE_IRQ(MAX8997_PMICIRQ_JIGONF,	PMIC_INT1, 1 << 5),
++	DECLARE_IRQ(MAX8997_PMICIRQ_LOWBAT2,	PMIC_INT1, 1 << 6),
++	DECLARE_IRQ(MAX8997_PMICIRQ_LOWBAT1,	PMIC_INT1, 1 << 7),
++
++	DECLARE_IRQ(MAX8997_PMICIRQ_JIGR,	PMIC_INT2, 1 << 0),
++	DECLARE_IRQ(MAX8997_PMICIRQ_JIGF,	PMIC_INT2, 1 << 1),
++	DECLARE_IRQ(MAX8997_PMICIRQ_MR,		PMIC_INT2, 1 << 2),
++	DECLARE_IRQ(MAX8997_PMICIRQ_DVS1OK,	PMIC_INT2, 1 << 3),
++	DECLARE_IRQ(MAX8997_PMICIRQ_DVS2OK,	PMIC_INT2, 1 << 4),
++	DECLARE_IRQ(MAX8997_PMICIRQ_DVS3OK,	PMIC_INT2, 1 << 5),
++	DECLARE_IRQ(MAX8997_PMICIRQ_DVS4OK,	PMIC_INT2, 1 << 6),
++
++	DECLARE_IRQ(MAX8997_PMICIRQ_CHGINS,	PMIC_INT3, 1 << 0),
++	DECLARE_IRQ(MAX8997_PMICIRQ_CHGRM,	PMIC_INT3, 1 << 1),
++	DECLARE_IRQ(MAX8997_PMICIRQ_DCINOVP,	PMIC_INT3, 1 << 2),
++	DECLARE_IRQ(MAX8997_PMICIRQ_TOPOFFR,	PMIC_INT3, 1 << 3),
++	DECLARE_IRQ(MAX8997_PMICIRQ_CHGRSTF,	PMIC_INT3, 1 << 5),
++	DECLARE_IRQ(MAX8997_PMICIRQ_MBCHGTMEXPD,	PMIC_INT3, 1 << 7),
++
++	DECLARE_IRQ(MAX8997_PMICIRQ_RTC60S,	PMIC_INT4, 1 << 0),
++	DECLARE_IRQ(MAX8997_PMICIRQ_RTCA1,	PMIC_INT4, 1 << 1),
++	DECLARE_IRQ(MAX8997_PMICIRQ_RTCA2,	PMIC_INT4, 1 << 2),
++	DECLARE_IRQ(MAX8997_PMICIRQ_SMPL_INT,	PMIC_INT4, 1 << 3),
++	DECLARE_IRQ(MAX8997_PMICIRQ_RTC1S,	PMIC_INT4, 1 << 4),
++	DECLARE_IRQ(MAX8997_PMICIRQ_WTSR,	PMIC_INT4, 1 << 5),
++
++	DECLARE_IRQ(MAX8997_MUICIRQ_ADCError,	MUIC_INT1, 1 << 2),
++	DECLARE_IRQ(MAX8997_MUICIRQ_ADCLow,	MUIC_INT1, 1 << 1),
++	DECLARE_IRQ(MAX8997_MUICIRQ_ADC,	MUIC_INT1, 1 << 0),
++
++	DECLARE_IRQ(MAX8997_MUICIRQ_VBVolt,	MUIC_INT2, 1 << 4),
++	DECLARE_IRQ(MAX8997_MUICIRQ_DBChg,	MUIC_INT2, 1 << 3),
++	DECLARE_IRQ(MAX8997_MUICIRQ_DCDTmr,	MUIC_INT2, 1 << 2),
++	DECLARE_IRQ(MAX8997_MUICIRQ_ChgDetRun,	MUIC_INT2, 1 << 1),
++	DECLARE_IRQ(MAX8997_MUICIRQ_ChgTyp,	MUIC_INT2, 1 << 0),
++
++	DECLARE_IRQ(MAX8997_MUICIRQ_OVP,	MUIC_INT3, 1 << 2),
++};
++
++#ifdef CONFIG_GENERIC_HARDIRQS_NO_DEPRECATED
++static void max8997_irq_lock(struct irq_data *data)
++{
++	struct max8997_dev *max8997 = get_irq_chip_data(data->irq);
++
++	mutex_lock(&max8997->irqlock);
++}
++
++static void max8997_irq_sync_unlock(struct irq_data *data)
++{
++	struct max8997_dev *max8997 = get_irq_chip_data(data->irq);
++	int i;
++
++	for (i = 0; i < MAX8997_IRQ_GROUP_NR; i++) {
++		u8 mask_reg = max8997_mask_reg[i];
++		struct i2c_client *i2c = get_i2c(max8997, i);
++
++		if (mask_reg == MAX8997_REG_INVALID ||
++				IS_ERR_OR_NULL(i2c))
++			continue;
++		max8997->irq_masks_cache[i] = max8997->irq_masks_cur[i];
++
++		max8997_write_reg(i2c, max8997_mask_reg[i],
++				max8997->irq_masks_cur[i]);
++	}
++
++	mutex_unlock(&max8997->irqlock);
++}
++
++static void max8997_irq_mask(struct irq_data *data)
++{
++	max8997->irq_masks_cur[irq_data->group] |= irq_data->mask;
++}
++
++static void max8997_irq_unmask(struct irq_data *data)
++{
++	max8997->irq_masks_cur[irq_data->group] &= ~irq_data->mask;
++}
++
++#else /* CONFIG_GENERIC_HARDIRQS_NO_DEPRECATED */
++static const inline struct max8997_irq_data *
++irq_to_max8997_irq(struct max8997_dev *max8997, int irq)
++{
++	return &max8997_irqs[irq - max8997->irq_base];
++}
++
++static void max8997_irq_lock(unsigned int irq)
++{
++	struct max8997_dev *max8997 = get_irq_chip_data(irq);
++
++	mutex_lock(&max8997->irqlock);
++}
++
++static void max8997_irq_sync_unlock(unsigned int irq)
++{
++	struct max8997_dev *max8997 = get_irq_chip_data(irq);
++	int i;
++
++	for (i = 0; i < MAX8997_IRQ_GROUP_NR; i++) {
++		u8 mask_reg = max8997_mask_reg[i];
++		struct i2c_client *i2c = get_i2c(max8997, i);
++
++		if (mask_reg == MAX8997_REG_INVALID ||
++				IS_ERR_OR_NULL(i2c))
++			continue;
++		max8997->irq_masks_cache[i] = max8997->irq_masks_cur[i];
++
++		max8997_write_reg(i2c, max8997_mask_reg[i],
++				max8997->irq_masks_cur[i]);
++	}
++
++	mutex_unlock(&max8997->irqlock);
++}
++
++static void max8997_irq_mask(unsigned int irq)
++{
++	struct max8997_dev *max8997 = get_irq_chip_data(irq);
++	const struct max8997_irq_data *irq_data = irq_to_max8997_irq(max8997,
++									irq);
++
++	max8997->irq_masks_cur[irq_data->group] |= irq_data->mask;
++}
++
++static void max8997_irq_unmask(unsigned int irq)
++{
++	struct max8997_dev *max8997 = get_irq_chip_data(irq);
++	const struct max8997_irq_data *irq_data = irq_to_max8997_irq(max8997,
++									irq);
++
++	max8997->irq_masks_cur[irq_data->group] &= ~irq_data->mask;
++}
++#endif /* CONFIG_GENERIC_HARDIRQS_NO_DEPRECATED */
++
++static struct irq_chip max8997_irq_chip = {
++	.name			= "max8997",
++#ifdef CONFIG_GENERIC_HARDIRQS_NO_DEPRECATED
++	.irq_bus_lock		= max8997_irq_lock,
++	.irq_bus_sync_unlock	= max8997_irq_sync_unlock,
++	.irq_mask		= max8997_irq_mask,
++	.irq_unmask		= max8997_irq_unmask,
++#else /* CONFIG_GENERIC_HARDIRQS_NO_DEPRECATED */
++	.bus_lock		= max8997_irq_lock,
++	.bus_sync_unlock	= max8997_irq_sync_unlock,
++	.mask			= max8997_irq_mask,
++	.unmask			= max8997_irq_unmask,
++#endif /* CONFIG_GENERIC_HARDIRQS_NO_DEPRECATED */
++};
++
++#define MAX8997_IRQSRC_PMIC		(1 << 1)
++#define MAX8997_IRQSRC_FUELGAUGE	(1 << 2)
++#define MAX8997_IRQSRC_MUIC		(1 << 3)
++#define MAX8997_IRQSRC_GPIO		(1 << 4)
++#define MAX8997_IRQSRC_FLASH		(1 << 5)
++static irqreturn_t max8997_irq_thread(int irq, void *data)
++{
++	struct max8997_dev *max8997 = data;
++	u8 irq_reg[MAX8997_IRQ_GROUP_NR] = {};
++	u8 irq_src;
++	int ret;
++	int i;
++
++	ret = max8997_read_reg(max8997->i2c, MAX8997_REG_INTSRC, &irq_src);
++	if (ret < 0) {
++		dev_err(max8997->dev, "Failed to read interrupt source: %d\n",
++				ret);
++		return IRQ_NONE;
++	}
++
++	if (irq_src & MAX8997_IRQSRC_PMIC) {
++		/* PMIC INT1 ~ INT4 */
++		max8997_bulk_read(max8997->i2c, MAX8997_REG_INT1, 4,
++				&irq_reg[PMIC_INT1]);
++	}
++	if (irq_src & MAX8997_IRQSRC_FUELGAUGE) {
++		/*
++		 * TODO: FUEL GAUGE
++		 *
++		 * This is to be supported by Max17042 driver. When
++		 * an interrupt incurs here, it should be relayed to a
++		 * Max17042 device that is connected (probably by
++		 * platform-data). However, we do not have interrupt
++		 * handling in Max17042 driver currently. The Max17042 IRQ
++		 * driver should be ready to be used as a stand-alone device and
++		 * a Max8997-dependent device. Because it is not ready in
++		 * Max17042-side and it is not too critical in operating
++		 * Max8997, we do not implement this in initial releases.
++		 */
++		irq_reg[FUEL_GAUGE] = 0;
++	}
++	if (irq_src & MAX8997_IRQSRC_MUIC) {
++		/* MUIC INT1 ~ INT3 */
++		max8997_bulk_read(max8997->muic, MAX8997_MUIC_REG_INT1, 3,
++				&irq_reg[MUIC_INT1]);
++	}
++	if (irq_src & MAX8997_IRQSRC_GPIO) {
++		/* GPIO Interrupt */
++		u8 gpio_info[MAX8997_NUM_GPIO];
++
++		irq_reg[GPIO_LOW] = 0;
++		irq_reg[GPIO_HI] = 0;
++
++		max8997_bulk_read(max8997->i2c, MAX8997_REG_GPIOCNTL1,
++				MAX8997_NUM_GPIO, gpio_info);
++		for (i = 0; i < MAX8997_NUM_GPIO; i++) {
++			bool interrupt = false;
++
++			switch (gpio_info[i] & MAX8997_GPIO_INT_MASK) {
++			case MAX8997_GPIO_INT_BOTH:
++				if (max8997->gpio_status[i] != gpio_info[i])
++					interrupt = true;
++				break;
++			case MAX8997_GPIO_INT_RISE:
++				if ((max8997->gpio_status[i] != gpio_info[i]) &&
++				    (gpio_info[i] & MAX8997_GPIO_DATA_MASK))
++					interrupt = true;
++				break;
++			case MAX8997_GPIO_INT_FALL:
++				if ((max8997->gpio_status[i] != gpio_info[i]) &&
++				    !(gpio_info[i] & MAX8997_GPIO_DATA_MASK))
++					interrupt = true;
++				break;
++			default:
++				break;
++			}
++
++			if (interrupt) {
++				if (i < 8)
++					irq_reg[GPIO_LOW] |= (1 << i);
++				else
++					irq_reg[GPIO_HI] |= (1 << (i - 8));
++			}
++
++		}
++	}
++	if (irq_src & MAX8997_IRQSRC_FLASH) {
++		/* Flash Status Interrupt */
++		ret = max8997_read_reg(max8997->i2c, MAX8997_REG_FLASHSTATUS,
++				&irq_reg[FLASH_STATUS]);
++	}
++
++	/* Apply masking */
++	for (i = 0; i < MAX8997_IRQ_GROUP_NR; i++)
++		irq_reg[i] &= ~max8997->irq_masks_cur[i];
++
++	/* Report */
++	for (i = 0; i < MAX8997_IRQ_NR; i++) {
++		if (irq_reg[max8997_irqs[i].group] & max8997_irqs[i].mask)
++			handle_nested_irq(max8997->irq_base + i);
++	}
++
++	return IRQ_HANDLED;
++}
++
++int max8997_irq_resume(struct max8997_dev *max8997)
++{
++	if (max8997->irq && max8997->irq_base)
++		max8997_irq_thread(max8997->irq_base, max8997);
++	return 0;
++}
++
++int max8997_irq_init(struct max8997_dev *max8997)
++{
++	int i;
++	int cur_irq;
++	int ret;
++	u8 val;
++
++	if (!max8997->irq) {
++		dev_warn(max8997->dev, "No interrupt specified.\n");
++		max8997->irq_base = 0;
++		return 0;
++	}
++
++	if (!max8997->irq_base) {
++		dev_err(max8997->dev, "No interrupt base specified.\n");
++		return 0;
++	}
++
++	mutex_init(&max8997->irqlock);
++
++	/* Mask individual interrupt sources */
++	for (i = 0; i < MAX8997_IRQ_GROUP_NR; i++) {
++		struct i2c_client *i2c;
++
++		max8997->irq_masks_cur[i] = 0xff;
++		max8997->irq_masks_cache[i] = 0xff;
++		i2c = get_i2c(max8997, i);
++
++		if (IS_ERR_OR_NULL(i2c))
++			continue;
++		if (max8997_mask_reg[i] == MAX8997_REG_INVALID)
++			continue;
++
++		max8997_write_reg(i2c, max8997_mask_reg[i], 0xff);
++	}
++
++	for (i = 0; i < MAX8997_NUM_GPIO; i++) {
++		max8997->gpio_status[i] = (max8997_read_reg(max8997->i2c,
++						MAX8997_REG_GPIOCNTL1 + i,
++						&val)
++					& MAX8997_GPIO_DATA_MASK) ?
++					true : false;
++	}
++
++	/* Register with genirq */
++	for (i = 0; i < MAX8997_IRQ_NR; i++) {
++		cur_irq = i + max8997->irq_base;
++		set_irq_chip_data(cur_irq, max8997);
++		set_irq_chip_and_handler(cur_irq, &max8997_irq_chip,
++				handle_edge_irq);
++		set_irq_nested_thread(cur_irq, 1);
++#ifdef CONFIG_ARM
++		set_irq_flags(cur_irq, IRQF_VALID);
++#else
++		set_irq_noprobe(cur_irq);
++#endif
++	}
++
++	ret = request_threaded_irq(max8997->irq, NULL, max8997_irq_thread,
++			IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
++			"max8997-irq", max8997);
++
++	if (ret) {
++		dev_err(max8997->dev, "Failed to request IRQ %d: %d\n",
++				max8997->irq, ret);
++		return ret;
++	}
++
++	if (!max8997->ono)
++		return 0;
++
++	ret = request_threaded_irq(max8997->ono, NULL, max8997_irq_thread,
++			IRQF_TRIGGER_FALLING | IRQF_TRIGGER_RISING |
++			IRQF_ONESHOT, "max8997-ono", max8997);
++
++	if (ret)
++		dev_err(max8997->dev, "Failed to request ono-IRQ %d: %d\n",
++				max8997->ono, ret);
++
++	return 0;
++}
++
++void max8997_irq_exit(struct max8997_dev *max8997)
++{
++	if (max8997->ono)
++		free_irq(max8997->ono, max8997);
++
++	if (max8997->irq)
++		free_irq(max8997->irq, max8997);
++}
+diff --git a/include/linux/mfd/max8997-private.h b/include/linux/mfd/max8997-private.h
+index 93a9477..69d1010 100644
+--- a/include/linux/mfd/max8997-private.h
++++ b/include/linux/mfd/max8997-private.h
+@@ -24,6 +24,8 @@
+ 
+ #include <linux/i2c.h>
+ 
++#define MAX8997_REG_INVALID	(0xff)
++
+ enum max8997_pmic_reg {
+ 	MAX8997_REG_PMIC_ID0	= 0x00,
+ 	MAX8997_REG_PMIC_ID1	= 0x01,
+@@ -313,6 +315,7 @@ enum max8997_irq {
+ #define MAX8997_REG_BUCK2DVS(x)	(MAX8997_REG_BUCK2DVS1 + (x) - 1)
+ #define MAX8997_REG_BUCK5DVS(x)	(MAX8997_REG_BUCK5DVS1 + (x) - 1)
+ 
++#define MAX8997_NUM_GPIO	12
+ struct max8997_dev {
+ 	struct device *dev;
+ 	struct i2c_client *i2c; /* 0xcc / PMIC, Battery Control, and FLASH */
+@@ -324,11 +327,19 @@ struct max8997_dev {
+ 	int type;
+ 	struct platform_device *battery; /* battery control (not fuel gauge) */
+ 
++	int irq;
++	int ono;
++	int irq_base;
+ 	bool wakeup;
++	struct mutex irqlock;
++	int irq_masks_cur[MAX8997_IRQ_GROUP_NR];
++	int irq_masks_cache[MAX8997_IRQ_GROUP_NR];
+ 
+ 	/* For hibernation */
+ 	u8 reg_dump[MAX8997_REG_PMIC_END + MAX8997_MUIC_REG_END +
+ 		MAX8997_HAPTIC_REG_END];
++
++	bool gpio_status[MAX8997_NUM_GPIO];
+ };
+ 
+ enum max8997_types {
+@@ -336,6 +347,10 @@ enum max8997_types {
+ 	TYPE_MAX8966,
+ };
+ 
++extern int max8997_irq_init(struct max8997_dev *max8997);
++extern void max8997_irq_exit(struct max8997_dev *max8997);
++extern int max8997_irq_resume(struct max8997_dev *max8997);
++
+ extern int max8997_read_reg(struct i2c_client *i2c, u8 reg, u8 *dest);
+ extern int max8997_bulk_read(struct i2c_client *i2c, u8 reg, int count,
+ 				u8 *buf);
+@@ -344,4 +359,10 @@ extern int max8997_bulk_write(struct i2c_client *i2c, u8 reg, int count,
+ 				u8 *buf);
+ extern int max8997_update_reg(struct i2c_client *i2c, u8 reg, u8 val, u8 mask);
+ 
++#define MAX8997_GPIO_INT_BOTH	(0x3 << 4)
++#define MAX8997_GPIO_INT_RISE	(0x2 << 4)
++#define MAX8997_GPIO_INT_FALL	(0x1 << 4)
++
++#define MAX8997_GPIO_INT_MASK	(0x3 << 4)
++#define MAX8997_GPIO_DATA_MASK	(0x1 << 2)
+ #endif /*  __LINUX_MFD_MAX8997_PRIV_H */
+diff --git a/include/linux/mfd/max8997.h b/include/linux/mfd/max8997.h
+index cb671b3..60931d0 100644
+--- a/include/linux/mfd/max8997.h
++++ b/include/linux/mfd/max8997.h
+@@ -78,8 +78,11 @@ struct max8997_regulator_data {
+ };
+ 
+ struct max8997_platform_data {
+-	bool wakeup;
+-	/* IRQ: Not implemented */
++	/* IRQ */
++	int irq_base;
++	int ono;
++	int wakeup;
++
+ 	/* ---- PMIC ---- */
+ 	struct max8997_regulator_data *regulators;
+ 	int num_regulators;
+-- 
+1.7.1
