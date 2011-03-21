@@ -1,70 +1,224 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the block tree with Linus' tree
-Date: Mon, 21 Mar 2011 11:43:06 +1100
-Message-ID: <20110321114306.3d91bfb5.sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the mfd tree with Linus' tree
+Date: Mon, 21 Mar 2011 12:26:15 +1100
+Message-ID: <20110321122615.8a639909.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:38589 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:33160 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751849Ab1CUAnP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 20 Mar 2011 20:43:15 -0400
+	id S1752290Ab1CUB0V (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 20 Mar 2011 21:26:21 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+To: Samuel Ortiz <sameo@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Philippe Langlais <philippe.langlais@linaro.org>
 
-Hi Jens,
+Hi Samuel,
 
-Today's linux-next merge of the block tree got a conflict in fs/super.c
-between commit 9d412a43c3b2 ("vfs: split off vfsmount-related parts of
-vfs_kern_mount()") from Linus' tree and commit 95f28604a65b ("fs: assign
-sb->s_bdi to default_backing_dev_info if the bdi is going away") from the
-block tree.
+Today's linux-next merge of the mfd tree got a conflict in
+arch/arm/mach-ux500/board-mop500-regulators.c and
+arch/arm/mach-ux500/board-mop500.c between commits d1de85a23144
+("mach-ux500: add a few AB8500 regulator consumers v3") and a71b819b6edf
+("mach-ux500: platform data for SFH7741 proximity sensor driver") from
+Linus' tree and commit 00423735a08e ("mach-ux500: configure board for the
+TPS61052 regulator v2") from the mfd tree.
 
-I fixed it up (see below) and can carry the fix as necessary.
+I fixed them up (see below) and can carry the fix as necessary.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 
-diff --cc fs/super.c
-index e848649,0d89e93..0000000
---- a/fs/super.c
-+++ b/fs/super.c
-@@@ -928,17 -989,25 +929,18 @@@ mount_fs(struct file_system_type *type
-  			goto out_free_secdata;
-  	}
+diff --cc arch/arm/mach-ux500/board-mop500-regulators.c
+index 875c91b,0825012..0000000
+--- a/arch/arm/mach-ux500/board-mop500-regulators.c
++++ b/arch/arm/mach-ux500/board-mop500-regulators.c
+@@@ -13,55 -13,30 +13,79 @@@
+  #include <linux/regulator/ab8500.h>
+  #include "board-mop500-regulators.h"
   
- -	if (type->mount) {
- -		root = type->mount(type, flags, name, data);
- -		if (IS_ERR(root)) {
- -			error = PTR_ERR(root);
- -			goto out_free_secdata;
- -		}
- -		mnt->mnt_root = root;
- -		mnt->mnt_sb = root->d_sb;
- -	} else {
- -		error = type->get_sb(type, flags, name, data, mnt);
- -		if (error < 0)
- -			goto out_free_secdata;
- +	root = type->mount(type, flags, name, data);
- +	if (IS_ERR(root)) {
- +		error = PTR_ERR(root);
- +		goto out_free_secdata;
-  	}
- -	BUG_ON(!mnt->mnt_sb);
- -	WARN_ON(!mnt->mnt_sb->s_bdi);
- -	WARN_ON(mnt->mnt_sb->s_bdi == &default_backing_dev_info);
- -	mnt->mnt_sb->s_flags |= MS_BORN;
- +	sb = root->d_sb;
- +	BUG_ON(!sb);
- +	WARN_ON(!sb->s_bdi);
-++	WARN_ON(sb->s_bdi == &default_backing_dev_info);
- +	sb->s_flags |= MS_BORN;
++ /*
++  * TPS61052 regulator
++  */
++ static struct regulator_consumer_supply tps61052_vaudio_consumers[] = {
++ 	/*
++ 	 * Boost converter supply to raise voltage on audio speaker, this
++ 	 * is actually connected to three pins, VInVhfL (left amplifier)
++ 	 * VInVhfR (right amplifier) and VIntDClassInt - all three must
++ 	 * be connected to the same voltage.
++ 	 */
++ 	REGULATOR_SUPPLY("vintdclassint", "ab8500-codec.0"),
++ };
++ 
++ struct regulator_init_data tps61052_regulator = {
++ 	.constraints = {
++ 		.name = "vaudio-hf",
++ 		.min_uV = 4500000,
++ 		.max_uV = 4500000,
++ 		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++ 	},
++ 	.num_consumer_supplies = ARRAY_SIZE(tps61052_vaudio_consumers),
++ 	.consumer_supplies = tps61052_vaudio_consumers,
++ };
++ 
+ +static struct regulator_consumer_supply ab8500_vaux1_consumers[] = {
+ +	/* External displays, connector on board 2v5 power supply */
+ +	REGULATOR_SUPPLY("vaux12v5", "mcde.0"),
+ +	/* SFH7741 proximity sensor */
+ +	REGULATOR_SUPPLY("vcc", "gpio-keys.0"),
+ +	/* BH1780GLS ambient light sensor */
+ +	REGULATOR_SUPPLY("vcc", "2-0029"),
+ +	/* lsm303dlh accelerometer */
+ +	REGULATOR_SUPPLY("vdd", "3-0018"),
+ +	/* lsm303dlh magnetometer */
+ +	REGULATOR_SUPPLY("vdd", "3-001e"),
+ +	/* Rohm BU21013 Touchscreen devices */
+ +	REGULATOR_SUPPLY("avdd", "3-005c"),
+ +	REGULATOR_SUPPLY("avdd", "3-005d"),
+ +	/* Synaptics RMI4 Touchscreen device */
+ +	REGULATOR_SUPPLY("vdd", "3-004b"),
+ +};
+ +
+ +static struct regulator_consumer_supply ab8500_vaux2_consumers[] = {
+ +	/* On-board eMMC power */
+ +	REGULATOR_SUPPLY("vmmc", "sdi4"),
+ +	/* AB8500 audio codec */
+ +	REGULATOR_SUPPLY("vcc-N2158", "ab8500-codec.0"),
+ +};
+ +
+ +static struct regulator_consumer_supply ab8500_vaux3_consumers[] = {
+ +	/* External MMC slot power */
+ +	REGULATOR_SUPPLY("vmmc", "sdi0"),
+ +};
+ +
+ +static struct regulator_consumer_supply ab8500_vtvout_consumers[] = {
+ +	/* TV-out DENC supply */
+ +	REGULATOR_SUPPLY("vtvout", "ab8500-denc.0"),
+ +	/* Internal general-purpose ADC */
+ +	REGULATOR_SUPPLY("vddadc", "ab8500-gpadc.0"),
+ +};
+ +
+ +static struct regulator_consumer_supply ab8500_vintcore_consumers[] = {
+ +	/* SoC core supply, no device */
+ +	REGULATOR_SUPPLY("v-intcore", NULL),
+ +	/* USB Transciever */
+ +	REGULATOR_SUPPLY("vddulpivio18", "ab8500-usb.0"),
+ +};
+ +
+ +static struct regulator_consumer_supply ab8500_vana_consumers[] = {
+ +	/* External displays, connector on board, 1v8 power supply */
+ +	REGULATOR_SUPPLY("vsmps2", "mcde.0"),
+ +};
+ +
+  /* AB8500 regulators */
+  struct regulator_init_data ab8500_regulators[AB8500_NUM_REGULATORS] = {
+  	/* supplies to the display/camera */
+diff --cc arch/arm/mach-ux500/board-mop500.c
+index 8790d98,1e75d7e..0000000
+--- a/arch/arm/mach-ux500/board-mop500.c
++++ b/arch/arm/mach-ux500/board-mop500.c
+@@@ -21,9 -20,7 +21,10 @@@
+  #include <linux/spi/spi.h>
+  #include <linux/mfd/ab8500.h>
+  #include <linux/mfd/tc3589x.h>
+ +#include <linux/leds-lp5521.h>
+ +#include <linux/input.h>
+ +#include <linux/gpio_keys.h>
++ #include <linux/mfd/tps6105x.h>
   
- -	error = security_sb_kern_mount(mnt->mnt_sb, flags, secdata);
- +	error = security_sb_kern_mount(sb, flags, secdata);
-  	if (error)
-  		goto out_sb;
+  #include <asm/mach-types.h>
+  #include <asm/mach/arch.h>
+@@@ -65,7 -104,26 +66,16 @@@ struct platform_device ab8500_device = 
+  	.resource = ab8500_resources,
+  };
   
+ -static struct pl022_ssp_controller ssp0_platform_data = {
+ -	.bus_id = 0,
+ -	/* pl022 not yet supports dma */
+ -	.enable_dma = 0,
+ -	/* on this platform, gpio 31,142,144,214 &
+ -	 * 224 are connected as chip selects
+ -	 */
+ -	.num_chipselect = 5,
+ -};
+ -
+  /*
++  * TPS61052
++  */
++ 
++ static struct tps6105x_platform_data mop500_tps61052_data = {
++ 	.mode = TPS6105X_MODE_VOLTAGE,
++ 	.regulator_data = &tps61052_regulator,
++ };
++ 
++ /*
+   * TC35892
+   */
+  
+@@@ -85,60 -143,14 +95,64 @@@ static struct tc3589x_platform_data mop
+  	.irq_base	= MOP500_EGPIO_IRQ_BASE,
+  };
+  
+ +static struct lp5521_led_config lp5521_pri_led[] = {
+ +       [0] = {
+ +	       .chan_nr = 0,
+ +	       .led_current = 0x2f,
+ +	       .max_current = 0x5f,
+ +       },
+ +       [1] = {
+ +	       .chan_nr = 1,
+ +	       .led_current = 0x2f,
+ +	       .max_current = 0x5f,
+ +       },
+ +       [2] = {
+ +	       .chan_nr = 2,
+ +	       .led_current = 0x2f,
+ +	       .max_current = 0x5f,
+ +       },
+ +};
+ +
+ +static struct lp5521_platform_data __initdata lp5521_pri_data = {
+ +       .label = "lp5521_pri",
+ +       .led_config     = &lp5521_pri_led[0],
+ +       .num_channels   = 3,
+ +       .clock_mode     = LP5521_CLOCK_EXT,
+ +};
+ +
+ +static struct lp5521_led_config lp5521_sec_led[] = {
+ +       [0] = {
+ +	       .chan_nr = 0,
+ +	       .led_current = 0x2f,
+ +	       .max_current = 0x5f,
+ +       },
+ +       [1] = {
+ +	       .chan_nr = 1,
+ +	       .led_current = 0x2f,
+ +	       .max_current = 0x5f,
+ +       },
+ +       [2] = {
+ +	       .chan_nr = 2,
+ +	       .led_current = 0x2f,
+ +	       .max_current = 0x5f,
+ +       },
+ +};
+ +
+ +static struct lp5521_platform_data __initdata lp5521_sec_data = {
+ +       .label = "lp5521_sec",
+ +       .led_config     = &lp5521_sec_led[0],
+ +       .num_channels   = 3,
+ +       .clock_mode     = LP5521_CLOCK_EXT,
+ +};
+ +
+  static struct i2c_board_info mop500_i2c0_devices[] = {
+  	{
++ 		I2C_BOARD_INFO("tps61052", 0x33),
++ 		.platform_data  = &mop500_tps61052_data,
++ 	},
++ 	{
+  		I2C_BOARD_INFO("tc3589x", 0x42),
+ -		.irq            = NOMADIK_GPIO_TO_IRQ(217),
+ +		.irq		= NOMADIK_GPIO_TO_IRQ(217),
+  		.platform_data  = &mop500_tc35892_data,
+  	},
+  };
