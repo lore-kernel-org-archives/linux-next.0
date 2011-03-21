@@ -1,66 +1,73 @@
-From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next] staging/rtl81*: build as loadable modules only
-Date: Mon, 21 Mar 2011 08:51:43 -0700
-Message-ID: <20110321085143.8eccf9bb.randy.dunlap@oracle.com>
-References: <20110321144038.830fa54b.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the block tree
+Date: Tue, 22 Mar 2011 10:33:00 +1100
+Message-ID: <20110322103300.c934a540.sfr@canb.auug.org.au>
+References: <20110314161919.15e6d983.sfr@canb.auug.org.au>
+	<20110317103218.ca7f63bf.sfr@canb.auug.org.au>
+	<4D81E010.1090808@kernel.dk>
+	<1300358170.2589.50.camel@macbook.infradead.org>
+	<4D81E64F.2020909@kernel.dk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Tue__22_Mar_2011_10_33_00_+1100_zB1BGkGCxpF5TIBL"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:34165 "EHLO
-	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751438Ab1CUPv6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 21 Mar 2011 11:51:58 -0400
-In-Reply-To: <20110321144038.830fa54b.sfr@canb.auug.org.au>
+Received: from chilli.pcug.org.au ([203.10.76.44]:49623 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755636Ab1CUXdJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 21 Mar 2011 19:33:09 -0400
+In-Reply-To: <4D81E64F.2020909@kernel.dk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, driverdevel <devel@driverdev.osuosl.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+To: David Woodhouse <david.woodhouse@intel.com>
+Cc: Jens Axboe <axboe@kernel.dk>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jarkko Lavinen <jarkko.lavinen@nokia.com>
 
-From: Randy Dunlap <randy.dunlap@oracle.com>
+--Signature=_Tue__22_Mar_2011_10_33_00_+1100_zB1BGkGCxpF5TIBL
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-These 3 drivers contain much duplicated (triplicated) code, so
-building them as built-in results in many errors like:
+Hi Guys,
 
-(.text+0x1b160): multiple definition of `ieee80211_sta_ps_sleep'
+On Thu, 17 Mar 2011 11:45:35 +0100 Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 2011-03-17 11:36, David Woodhouse wrote:
+> > On Thu, 2011-03-17 at 10:18 +0000, Jens Axboe wrote:
+> >>
+> >> Can you point me at the commit in question? Generally,
+> >> elv_queue_empty()
+> >> can be replaced by blk_peek_request().=20
+> >=20
+> > The interesting commit is this one:
+> > http://git.infradead.org/mtd-2.6.git/commitdiff/c7519dbf6
+> >=20
+> > The point of it is to enable this
+> > http://git.infradead.org/mtd-2.6.git/commitdiff/a32159024
+>=20
+> OK, can you commit a change just changing that to blk_peek_request()?
+> That'll avoid the conflict.
 
-Prevent this configuration by making them all buildable only as
-loadable modules (similar to the vt665[56] patch last week).
+I am still reverting those three commits from the mtd tree ...  David, I
+assume that you are going to want to ask Linus to merge the mtd tree at
+some point soon?
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
----
- drivers/staging/rtl8187se/Kconfig |    1 +
- drivers/staging/rtl8192e/Kconfig  |    1 +
- drivers/staging/rtl8192u/Kconfig  |    1 +
- 3 files changed, 3 insertions(+)
+--Signature=_Tue__22_Mar_2011_10_33_00_+1100_zB1BGkGCxpF5TIBL
+Content-Type: application/pgp-signature
 
---- linux-next-20110321.orig/drivers/staging/rtl8187se/Kconfig
-+++ linux-next-20110321/drivers/staging/rtl8187se/Kconfig
-@@ -1,6 +1,7 @@
- config R8187SE
- 	tristate "RealTek RTL8187SE Wireless LAN NIC driver"
- 	depends on PCI && WLAN
-+	depends on m
- 	select WIRELESS_EXT
- 	select WEXT_PRIV
- 	select EEPROM_93CX6
---- linux-next-20110321.orig/drivers/staging/rtl8192e/Kconfig
-+++ linux-next-20110321/drivers/staging/rtl8192e/Kconfig
-@@ -1,6 +1,7 @@
- config RTL8192E
- 	tristate "RealTek RTL8192E Wireless LAN NIC driver"
- 	depends on PCI && WLAN
-+	depends on m
- 	select WIRELESS_EXT
- 	select WEXT_PRIV
- 	select CRYPTO
---- linux-next-20110321.orig/drivers/staging/rtl8192u/Kconfig
-+++ linux-next-20110321/drivers/staging/rtl8192u/Kconfig
-@@ -1,6 +1,7 @@
- config RTL8192U
- 	tristate "RealTek RTL8192U Wireless LAN NIC driver"
- 	depends on PCI && WLAN && USB
-+	depends on m
- 	select WIRELESS_EXT
- 	select WEXT_PRIV
- 	select CRYPTO
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNh+AsAAoJEDMEi1NhKgbsgj8H/j8xgt9/yaPKWbY8Zvqqa9/M
+WyII1zfhoI0lIXj6pRhac3AbiQgrumUnk+7Cc7fBpvatwVRvhWgXEJKIVNE84gqD
+tYmIj06ase+h58zcg9Ma4w/kiA0/Id+tNu8KkR6IeAkn/lnYz1XGowt2HcG2pp+V
+qtf9FTLDYa6B7dHzm1vRhjqu5qA0LAQMHmm8XirgUrwJMiU944IUWuc7GeK6t5Cp
+cvPJWzE32TIWEDxsojfFLU0AKrkcb8TYD2i1HT3lzPSEuOaY4bH7lXWsV9h4ITS3
+mEmRlshJiAyC1zf4goIzDBA/9o8VgtPTrj8AVhqgbiKjTvDN5S9wMZx1XBLt/Vg=
+=YyJk
+-----END PGP SIGNATURE-----
+
+--Signature=_Tue__22_Mar_2011_10_33_00_+1100_zB1BGkGCxpF5TIBL--
