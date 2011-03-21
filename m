@@ -1,35 +1,70 @@
-From: Michal Marek <mmarek@suse.cz>
-Subject: Re: linux-next: manual merge of the kbuild tree with the hwmon-staging
- tree
-Date: Fri, 18 Mar 2011 12:22:10 +0100
-Message-ID: <4D834062.5040001@suse.cz>
-References: <20110318114836.04c76926.sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the block tree with Linus' tree
+Date: Mon, 21 Mar 2011 11:43:06 +1100
+Message-ID: <20110321114306.3d91bfb5.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:54210 "EHLO mx2.suse.de"
+Received: from chilli.pcug.org.au ([203.10.76.44]:38589 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752975Ab1CRLWN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 18 Mar 2011 07:22:13 -0400
-In-Reply-To: <20110318114836.04c76926.sfr@canb.auug.org.au>
+	id S1751849Ab1CUAnP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 20 Mar 2011 20:43:15 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, matt mooney <mfm@muteddisk.com>, Guenter Roeck <guenter.roeck@ericsson.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
 
-On 18.3.2011 01:48, Stephen Rothwell wrote:
-> Hi Michal,
-> 
-> Today's linux-next merge of the kbuild tree got a conflict in
-> drivers/hwmon/Makefile between commit 442aba78728e ("hwmon: PMBus device
-> driver") from the hwmon-staging tree and commit 5c39e31195f4 ("hwmon:
-> change to new flag variable") from the kbuild tree.
-> 
-> Just context changes.  I fixed it up (see below) and can carry the fix as
-> necessary.
+Hi Jens,
 
-I am aware of the conflict, but as you say, it is just changed context.
+Today's linux-next merge of the block tree got a conflict in fs/super.c
+between commit 9d412a43c3b2 ("vfs: split off vfsmount-related parts of
+vfs_kern_mount()") from Linus' tree and commit 95f28604a65b ("fs: assign
+sb->s_bdi to default_backing_dev_info if the bdi is going away") from the
+block tree.
 
-Thanks,
-Michal
+I fixed it up (see below) and can carry the fix as necessary.
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc fs/super.c
+index e848649,0d89e93..0000000
+--- a/fs/super.c
++++ b/fs/super.c
+@@@ -928,17 -989,25 +929,18 @@@ mount_fs(struct file_system_type *type
+  			goto out_free_secdata;
+  	}
+  
+ -	if (type->mount) {
+ -		root = type->mount(type, flags, name, data);
+ -		if (IS_ERR(root)) {
+ -			error = PTR_ERR(root);
+ -			goto out_free_secdata;
+ -		}
+ -		mnt->mnt_root = root;
+ -		mnt->mnt_sb = root->d_sb;
+ -	} else {
+ -		error = type->get_sb(type, flags, name, data, mnt);
+ -		if (error < 0)
+ -			goto out_free_secdata;
+ +	root = type->mount(type, flags, name, data);
+ +	if (IS_ERR(root)) {
+ +		error = PTR_ERR(root);
+ +		goto out_free_secdata;
+  	}
+ -	BUG_ON(!mnt->mnt_sb);
+ -	WARN_ON(!mnt->mnt_sb->s_bdi);
+ -	WARN_ON(mnt->mnt_sb->s_bdi == &default_backing_dev_info);
+ -	mnt->mnt_sb->s_flags |= MS_BORN;
+ +	sb = root->d_sb;
+ +	BUG_ON(!sb);
+ +	WARN_ON(!sb->s_bdi);
+++	WARN_ON(sb->s_bdi == &default_backing_dev_info);
+ +	sb->s_flags |= MS_BORN;
+  
+ -	error = security_sb_kern_mount(mnt->mnt_sb, flags, secdata);
+ +	error = security_sb_kern_mount(sb, flags, secdata);
+  	if (error)
+  		goto out_sb;
+  
