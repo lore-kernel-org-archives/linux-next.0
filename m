@@ -1,75 +1,59 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
-Date: Tue, 22 Mar 2011 04:54:21 -0300
-Message-ID: <4D8855AD.8040804@infradead.org>
-References: <20110322121409.f4bb8a4e.sfr@canb.auug.org.au>
+From: Samuel Ortiz <sameo@linux.intel.com>
+Subject: Re: linux-next: manual merge of the spi tree with the mfd tree
+Date: Tue, 22 Mar 2011 12:05:31 +0100
+Message-ID: <20110322110530.GC2351@sortiz-mobl>
+References: <20110318154017.e45aa888.sfr@canb.auug.org.au>
+ <20110318051627.GE18545@angua.secretlab.ca>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:37899 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755053Ab1CVHy0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 22 Mar 2011 03:54:26 -0400
-In-Reply-To: <20110322121409.f4bb8a4e.sfr@canb.auug.org.au>
+Received: from mga02.intel.com ([134.134.136.20]:32736 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754582Ab1CVLFf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 22 Mar 2011 07:05:35 -0400
+Content-Disposition: inline
+In-Reply-To: <20110318051627.GE18545@angua.secretlab.ca>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Denis Turischev <denis@compulab.co.il>, Thomas Gleixner <tglx@linutronix.de>
 
-Em 21-03-2011 22:14, Stephen Rothwell escreveu:
-> Hi Mauro,
+Hi Grant,
+
+On Thu, Mar 17, 2011 at 11:16:27PM -0600, Grant Likely wrote:
+> On Fri, Mar 18, 2011 at 03:40:17PM +1100, Stephen Rothwell wrote:
+> > Hi Grant,
+> > 
+> > Today's linux-next merge of the spi tree got a conflict in
+> > drivers/gpio/Kconfig between commit 390ff13830e5 ("gpio: Add Tunnel Creek
+> > support to sch_gpio") from the mfd tree and commit 61ab3fe57e45 ("gpio;
+> > Make Intel chipset gpio drivers depend on x86") from the spi tree.
+> > 
+> > Just context changes.  I fixed it up (see below) and can carry the fix as
+> > necessary.  I am assuming that the Tunnel Creek stuff should also depend
+> > on X86?
 > 
-> After merging the v4l-dvb tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+> It would appear so.  Thanks Stephen.
+I fixed the merge issue in my tree now, since Grant's GPIO bits are in it
+seems.
+
+
+> BTW Samuel, looking at the commit message for 390ff13830e5:
 > 
-> drivers/media/media-devnode.c:40:28: error: linux/smp_lock.h: No such file or directory
-
-It got removed by this commit: 4ba8216cd90560bc402f52076f64d8546e8aefcb.
-
-There's no reason for the header to be there at media-devnode.c, as it doesn't use
-BKL.
-
+> commit 390ff13830e5bcc4f8585b396e3d15b1c04c0282
+> Author: Denis Turischev <denis@compulab.co.il>
+> Date:   Mon Mar 14 12:53:05 2011 +0200
+> [...]
+>     Signed-off-by: Denis Turischev <denis@compulab.co.il>
+>     Signed-off-by: Samuel Ortiz <sameo@linux.intel.com>
 > 
-> Caused by commit cb3c186e31be ("[media] media: Media device node
-> support").  The BKL is no more ...
-> 
-> Why is a patch with Author date 2009-12-09 turning up in linux-next today?
+> My Acked-by seems to be missing from the commit log.
+This was a temporary commit pushed to my tree before getting your ACK. Commit
+10022449a9d0ff4deeae1b8fddae3e35d62b7958 should have it now.
 
-Because the Media Controller stuff is under development since 2008, but it took a long
-time to be mature enough to be merged.
+Cheers,
+Samuel.
 
-> 
-> I have used the v4l-dvb tree from next-20110321 for today.
-> 
-
-The fix patch is as simple as the enclosed one. I'm folding it together with the
-original changeset (cb3c186e31be), in order to avoid bisect issues.
-
-Thanks!
-Mauro
-
--
-
-commit 1941c46894a60f4c5365fdcce9258f86d3691ae3
-Author: Mauro Carvalho Chehab <mchehab@redhat.com>
-Date:   Tue Mar 22 04:43:47 2011 -0300
-
-    [media] media-devnode: Don't include linux/smp_lock.h
-    
-    drivers/media/media-devnode.c:40:28: error: linux/smp_lock.h: No such file or directory
-    
-    Signed-off-by: Mauro Carvalho Chehab <mchehab@redhat.com>
-
-diff --git a/drivers/media/media-devnode.c b/drivers/media/media-devnode.c
-index 5509984..af5263c 100644
---- a/drivers/media/media-devnode.c
-+++ b/drivers/media/media-devnode.c
-@@ -37,7 +37,6 @@
- #include <linux/kmod.h>
- #include <linux/slab.h>
- #include <linux/mm.h>
--#include <linux/smp_lock.h>
- #include <linux/string.h>
- #include <linux/types.h>
- #include <linux/uaccess.h>
+-- 
+Intel Open Source Technology Centre
+http://oss.intel.com/
