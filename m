@@ -1,55 +1,37 @@
 From: Samuel Ortiz <sameo@linux.intel.com>
-Subject: Re: linux-next: manual merge of the spi tree with the mfd tree
-Date: Tue, 22 Mar 2011 12:05:31 +0100
-Message-ID: <20110322110530.GC2351@sortiz-mobl>
-References: <20110318154017.e45aa888.sfr@canb.auug.org.au>
- <20110318051627.GE18545@angua.secretlab.ca>
+Subject: Re: linux-next: manual merge of the mfd tree with Linus' tree
+Date: Tue, 22 Mar 2011 12:08:46 +0100
+Message-ID: <20110322110845.GD2351@sortiz-mobl>
+References: <20110321122615.8a639909.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:32736 "EHLO mga02.intel.com"
+Received: from mga03.intel.com ([143.182.124.21]:42270 "EHLO mga03.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754582Ab1CVLFf (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 22 Mar 2011 07:05:35 -0400
+	id S1755332Ab1CVLIt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 22 Mar 2011 07:08:49 -0400
 Content-Disposition: inline
-In-Reply-To: <20110318051627.GE18545@angua.secretlab.ca>
+In-Reply-To: <20110321122615.8a639909.sfr@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Denis Turischev <denis@compulab.co.il>, Thomas Gleixner <tglx@linutronix.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Philippe Langlais <philippe.langlais@linaro.org>
 
-Hi Grant,
+Hi Stephen,
 
-On Thu, Mar 17, 2011 at 11:16:27PM -0600, Grant Likely wrote:
-> On Fri, Mar 18, 2011 at 03:40:17PM +1100, Stephen Rothwell wrote:
-> > Hi Grant,
-> > 
-> > Today's linux-next merge of the spi tree got a conflict in
-> > drivers/gpio/Kconfig between commit 390ff13830e5 ("gpio: Add Tunnel Creek
-> > support to sch_gpio") from the mfd tree and commit 61ab3fe57e45 ("gpio;
-> > Make Intel chipset gpio drivers depend on x86") from the spi tree.
-> > 
-> > Just context changes.  I fixed it up (see below) and can carry the fix as
-> > necessary.  I am assuming that the Tunnel Creek stuff should also depend
-> > on X86?
+On Mon, Mar 21, 2011 at 12:26:15PM +1100, Stephen Rothwell wrote:
+> Hi Samuel,
 > 
-> It would appear so.  Thanks Stephen.
-I fixed the merge issue in my tree now, since Grant's GPIO bits are in it
-seems.
-
-
-> BTW Samuel, looking at the commit message for 390ff13830e5:
-> 
-> commit 390ff13830e5bcc4f8585b396e3d15b1c04c0282
-> Author: Denis Turischev <denis@compulab.co.il>
-> Date:   Mon Mar 14 12:53:05 2011 +0200
-> [...]
->     Signed-off-by: Denis Turischev <denis@compulab.co.il>
->     Signed-off-by: Samuel Ortiz <sameo@linux.intel.com>
-> 
-> My Acked-by seems to be missing from the commit log.
-This was a temporary commit pushed to my tree before getting your ACK. Commit
-10022449a9d0ff4deeae1b8fddae3e35d62b7958 should have it now.
+> Today's linux-next merge of the mfd tree got a conflict in
+> arch/arm/mach-ux500/board-mop500-regulators.c and
+> arch/arm/mach-ux500/board-mop500.c between commits d1de85a23144
+> ("mach-ux500: add a few AB8500 regulator consumers v3") and a71b819b6edf
+> ("mach-ux500: platform data for SFH7741 proximity sensor driver") from
+> Linus' tree and commit 00423735a08e ("mach-ux500: configure board for the
+> TPS61052 regulator v2") from the mfd tree.
+As per Linus Walleij request, I dropped commit 00423735a08e from my for-next
+branch. So this should be fixed now.
+Thanks again for the heads up.
 
 Cheers,
 Samuel.
