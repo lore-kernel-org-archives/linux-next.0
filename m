@@ -1,51 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the cleancache tree with Linus' tree
-Date: Thu, 24 Mar 2011 13:55:24 +1100
-Message-ID: <20110324135524.261bb5a9.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree
+Date: Thu, 24 Mar 2011 14:30:19 +1100
+Message-ID: <20110324143019.cce06baa.sfr@canb.auug.org.au>
 Mime-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__24_Mar_2011_14_30_19_+1100_VsxSfFmQEEBdV2V1"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, David Rientjes <rientjes@google.com>
+List-Id: linux-next.vger.kernel.org
+
+--Signature=_Thu__24_Mar_2011_14_30_19_+1100_VsxSfFmQEEBdV2V1
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:46674 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932115Ab1CXCza (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 23 Mar 2011 22:55:30 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Dan Magenheimer <dan.magenheimer@oracle.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Minchan Kim <minchan.kim@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Linus <torvalds@linux-foundation.org>
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Dan,
+Hi all,
 
-Today's linux-next merge of the cleancache tree got a conflict in
-mm/truncate.c between commit 5adc7b518b54 ("mm: truncate: change
-remove_from_page_cache") from Linus' tree and commit 03e838947c8a
-("mm/fs: add hooks to support cleancache") from the cleancache tree.
+After merging the final tree, today's linux-next build (sparc32 defconfig)
+failed like this:
 
-I fixed it up (see below) but am really not sure of the fix.  I can carry
-this fix as necessary.
+lib/lib.a(show_mem.o): In function `show_mem':
+show_mem.c:(.text+0x1f4): multiple definition of `show_mem'
+arch/sparc/mm/built-in.o:(.text+0xd70): first defined here
 
-Is this stuff going to be merged into Linus' tree this time round?
--- 
+This has been reported elsewhere, caused by commit ddd588b5dd55 ("oom:
+suppress nodes that are not allowed from meminfo on oom kill").
+
+I presume that this will be fixed soon, and so have left it as is.
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
 
-diff --cc mm/truncate.c
-index a956675,cd94607..0000000
---- a/mm/truncate.c
-+++ b/mm/truncate.c
-@@@ -106,8 -108,13 +108,12 @@@ truncate_complete_page(struct address_s
-  	cancel_dirty_page(page, PAGE_CACHE_SIZE);
-  
-  	clear_page_mlock(page);
- -	remove_from_page_cache(page);
-  	ClearPageMappedToDisk(page);
- +	delete_from_page_cache(page);
-+ 	/* this must be after the remove_from_page_cache which
-+ 	 * calls cleancache_put_page (and note page->mapping is now NULL)
-+ 	 */
-+ 	cleancache_flush_page(mapping, page);
- -	page_cache_release(page);	/* pagecache ref */
-  	return 0;
-  }
-  
+--Signature=_Thu__24_Mar_2011_14_30_19_+1100_VsxSfFmQEEBdV2V1
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNirrLAAoJEDMEi1NhKgbs4RMH/2/Z8Zi/2htq1LI+funfSy4y
+v1Tf4on0em8r22x+HJ+SSTkg2Lv4jKYYl9dt6m279JReHdOD3huUJnGlKWuoWZZO
+tCcLPrrzvxsemR/awwPOyjgVns/fsZ8VjkS2TRJXKWJFbU692Uk5FVHUlG3BnhlR
+8HTxMdba8RLhRnWTwquzljCcCgLNFnTJfC+5izYyVCPdY2i7N3E+B+YpLKJOgt1n
+7Wlo5T4XwCYuQCcH1rh+n+FwatdU+/hvnhTddtlCBLuITKqPmkw2dMj5HIdXtYW5
+jrLK1IRD4cj0hWN6YN36TzP3rv+QddcNkThwnZDptNK7cgUUJDLFxdImUzY/xI4=
+=kmww
+-----END PGP SIGNATURE-----
+
+--Signature=_Thu__24_Mar_2011_14_30_19_+1100_VsxSfFmQEEBdV2V1--
