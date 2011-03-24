@@ -1,56 +1,102 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: build failure after merge of the final tree
-Date: Wed, 23 Mar 2011 21:13:46 -0700
-Message-ID: <20110323211346.9ae51356.akpm@linux-foundation.org>
-References: <20110324143019.cce06baa.sfr@canb.auug.org.au>
+From: Minchan Kim <minchan.kim@gmail.com>
+Subject: Re: linux-next: manual merge of the cleancache tree with Linus' tree
+Date: Thu, 24 Mar 2011 14:38:10 +0900
+Message-ID: <AANLkTikagME334Y6PH4P_Nybf_h=fov5CiNBAY7KxYyN@mail.gmail.com>
+References: <20110324135524.261bb5a9.sfr@canb.auug.org.au>
+	<20110323205615.6984f974.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:49444 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1749667Ab1CXER6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Thu, 24 Mar 2011 00:17:58 -0400
-In-Reply-To: <20110324143019.cce06baa.sfr@canb.auug.org.au>
+Received: from mail-iw0-f174.google.com ([209.85.214.174]:64925 "EHLO
+	mail-iw0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751565Ab1CXFiL convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Mar 2011 01:38:11 -0400
+In-Reply-To: <20110323205615.6984f974.akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, David Rientjes <rientjes@google.com>, "Luck, Tony" <tony.luck@intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Dan Magenheimer <dan.magenheimer@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus <torvalds@linux-foundation.org>
 
-On Thu, 24 Mar 2011 14:30:19 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Thu, Mar 24, 2011 at 12:56 PM, Andrew Morton
+<akpm@linux-foundation.org> wrote:
+> On Thu, 24 Mar 2011 13:55:24 +1100 Stephen Rothwell <sfr@canb.auug.or=
+g.au> wrote:
+>
+>> Hi Dan,
+>>
+>> Today's linux-next merge of the cleancache tree got a conflict in
+>> mm/truncate.c between commit 5adc7b518b54 ("mm: truncate: change
+>> remove_from_page_cache") from Linus' tree and commit 03e838947c8a
+>> ("mm/fs: add hooks to support cleancache") from the cleancache tree.
+>>
+>> I fixed it up (see below) but am really not sure of the fix. =C2=A0I=
+ can carry
+>> this fix as necessary.
+>>
+>> Is this stuff going to be merged into Linus' tree this time round?
+>> --
+>> Cheers,
+>> Stephen Rothwell =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0sfr@canb.auug.org.au
+>>
+>> diff --cc mm/truncate.c
+>> index a956675,cd94607..0000000
+>> --- a/mm/truncate.c
+>> +++ b/mm/truncate.c
+>> @@@ -106,8 -108,13 +108,12 @@@ truncate_complete_page(struct address=
+_s
+>> =C2=A0 =C2=A0 =C2=A0 cancel_dirty_page(page, PAGE_CACHE_SIZE);
+>>
+>> =C2=A0 =C2=A0 =C2=A0 clear_page_mlock(page);
+>> =C2=A0- =C2=A0 =C2=A0remove_from_page_cache(page);
+>> =C2=A0 =C2=A0 =C2=A0 ClearPageMappedToDisk(page);
+>> =C2=A0+ =C2=A0 =C2=A0delete_from_page_cache(page);
+>> + =C2=A0 =C2=A0 /* this must be after the remove_from_page_cache whi=
+ch
+>> + =C2=A0 =C2=A0 =C2=A0* calls cleancache_put_page (and note page->ma=
+pping is now NULL)
+>> + =C2=A0 =C2=A0 =C2=A0*/
+>> + =C2=A0 =C2=A0 cleancache_flush_page(mapping, page);
+>> =C2=A0- =C2=A0 =C2=A0page_cache_release(page); =C2=A0 =C2=A0 =C2=A0 =
+/* pagecache ref */
+>> =C2=A0 =C2=A0 =C2=A0 return 0;
+>> =C2=A0 }
+>
+> I did the cleancache_flush_page() before the delete_from_page_cache()=
+,
+> in case the delete_from_page_cache() freed the page. =C2=A0I didn't a=
+ctually
+> check whether that makes sense though.
 
-> Hi all,
-> 
-> After merging the final tree, today's linux-next build (sparc32 defconfig)
-> failed like this:
-> 
-> lib/lib.a(show_mem.o): In function `show_mem':
-> show_mem.c:(.text+0x1f4): multiple definition of `show_mem'
-> arch/sparc/mm/built-in.o:(.text+0xd70): first defined here
+I am not sure cleancache's put and flush semantic.
+If I understand rightly with old __remove_from_page_cache's comment,
+maybe cleancache_flush_page is to invalidate the page.(If I understand
+right, I hope the name is changed to cleancache_invalidate_page)
 
-I discovered this on ia64 today.
+"        /*
+         * if we're uptodate, flush out into the cleancache, otherwise
+         * invalidate any existing cleancache entries.  We can't leave
+         * stale data around in the cleancache once our page is gone
+         */
+        if (PageUptodate(page))
+                cleancache_put_page(page);
+        else
+                cleancache_flush_page(mapping, page); "
 
-> This has been reported elsewhere, caused by commit ddd588b5dd55 ("oom:
-> suppress nodes that are not allowed from meminfo on oom kill").
-> 
+So I think cleancache_flush_page should be done after
+delete_from_page_cache because delete_from_page_cache calls
+cleancache_put_page(maybe this function would flush the content of
+memory into cleancache's target) before we invalidates the page.
 
-Yeah, this is tricky.  The addition of the symbol __show_mem caused the
-linker to newly take lib/show_mem.o out of lib/lib.a, whereas
-previously that object file would have been omitted from the build
-altogether.  Even though we compile it!
+And it should not be a problem in case the delete_from_page_cache
+freed the page since cleancache should have a reference the page but I
+didn't check cleancahe always has a reference of page. If it isn't,
+it's a critical problem.
 
-Making show_mem() __weak would "fix" it, but it's still wrong.  Given
-that architectures can implement private versions of show_mem(), the
-patch was wrong to call the generic version (renamed to __show_mem) at
-all.
+Dan, Could you comment this?
 
-So...  a suitable fix would be to remove __show_mem and to add the
-extra arg to show_mem() itself then fix up all callers and to fix up
-all implementations to honour "filter".
 
-Meanwhile, ddd588b5dd55f143203799 reverts cleanly and I'd suggest we do
-that.
-
-The dependence on linker .a handling is just gross and we should clean
-that up.  CONFIG_ARCH_HAS_SHOW_MEM or something.
+--=20
+Kind regards,
+Minchan Kim
