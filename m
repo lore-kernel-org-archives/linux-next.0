@@ -1,76 +1,59 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the Linus' tree
-Date: Fri, 25 Mar 2011 12:35:35 +1100
-Message-ID: <20110325123535.f980dfe8.sfr@canb.auug.org.au>
+From: Sedat Dilek <sedat.dilek@googlemail.com>
+Subject: Re: linux-next: Tree for March 24 (BUG: soft lockup - CPU#0 stuck for
+ 63s! [kworker/0:1:7764])
+Date: Fri, 25 Mar 2011 02:40:57 +0100
+Message-ID: <AANLkTimhvxO=5GOenagc=F2hyzt-7yLSgDhQbWVuffsD@mail.gmail.com>
+References: <AANLkTik0tLsZCmcf8JNBtyePnKZzfoyA9SWH9k51+cc8@mail.gmail.com>
+	<AANLkTi=gUTJs58mBkyLrvbtob=x=k6gD8-QR1HA61g+Q@mail.gmail.com>
+	<641556B1566641C0A286D4F2F1383DAD@hacdom.okisemi.com>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44255 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754610Ab1CYBfi (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 24 Mar 2011 21:35:38 -0400
+Received: from mail-qy0-f174.google.com ([209.85.216.174]:63503 "EHLO
+	mail-qy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932206Ab1CYBk6 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Mar 2011 21:40:58 -0400
+In-Reply-To: <641556B1566641C0A286D4F2F1383DAD@hacdom.okisemi.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Akinobu Mita <akinobu.mita@gmail.com>, Mauro Carvalho Chehab <mchehab@redhat.com>, "Juan J. Garcia de Soria" <skandalfo@gmail.com>, Jarod Wilson <jarod@redhat.com>
+To: Tomoya MORINAGA <tomoya-linux@dsn.okisemi.com>
+Cc: linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <randy.dunlap@oracle.com>, Vinod Koul <vinod.koul@intel.com>, Toshiharu Okada <toshiharu-linux@dsn.okisemi.com>
 
-Hi all,
+On Fri, Mar 25, 2011 at 1:08 AM, Tomoya MORINAGA
+<tomoya-linux@dsn.okisemi.com> wrote:
+> Hi =C2=A0Sedat,
+>
+> We have used this DMA driver(include this patch) on linux-2.6.35/37.
+> However I haven't seen the issue yet.
+>
+> I want to know more information.
+> Do you mean that it takes 63 more seconds for boot-completing
+> when using this patch and pch_dma is integrated as built-in ?
+>
+> Thanks,
+> -----------------------------------------
+> Tomoya MORINAGA
+> OKI SEMICONDUCTOR CO., LTD.
+>
 
-In Linus' tree, today's linux-next build (x86_64 allmodconfig) failed
-like this:
+I jumped back to the kernel from which I thought it was making
+problems and run it several hours.
+Unfortunately, I haven't seen any call-traces in the syslogs like befor=
+e.
+So, I could reproduce the errors.
+I am sorry for the noise abd will have an eye on the issue.
+( So, reverting the patch did not really helped. )
 
-drivers/media/rc/ite-cir.c: In function 'ite_decode_bytes':
-drivers/media/rc/ite-cir.c:190: error: implicit declaration of function 'generic_find_next_le_bit'
-drivers/media/rc/ite-cir.c:199: error: implicit declaration of function 'generic_find_next_zero_le_bit'
+- Sedat -
 
-Caused by commit 620a32bba4a2 ("[media] rc: New rc-based ite-cir driver
-for several ITE CIRs") interacting with commit c4945b9ed472
-("asm-generic: rename generic little-endian bitops functions").
-
-I applied the patch below for today.
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 25 Mar 2011 12:30:05 +1100
-Subject: [PATCH] [media] rc: update for bitop name changes
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/media/rc/ite-cir.c |    6 +++---
- 1 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/media/rc/ite-cir.c b/drivers/media/rc/ite-cir.c
-index 9be6a83..ac0e42b 100644
---- a/drivers/media/rc/ite-cir.c
-+++ b/drivers/media/rc/ite-cir.c
-@@ -187,7 +187,7 @@ static void ite_decode_bytes(struct ite_dev *dev, const u8 * data, int
- 	sample_period = dev->params.sample_period;
- 	ldata = (unsigned long *)data;
- 	size = length << 3;
--	next_one = generic_find_next_le_bit(ldata, size, 0);
-+	next_one = find_next_bit_le(ldata, size, 0);
- 	if (next_one > 0) {
- 		ev.pulse = true;
- 		ev.duration =
-@@ -196,14 +196,14 @@ static void ite_decode_bytes(struct ite_dev *dev, const u8 * data, int
- 	}
- 
- 	while (next_one < size) {
--		next_zero = generic_find_next_zero_le_bit(ldata, size, next_one + 1);
-+		next_zero = find_next_zero_bit_le(ldata, size, next_one + 1);
- 		ev.pulse = false;
- 		ev.duration = ITE_BITS_TO_NS(next_zero - next_one, sample_period);
- 		ir_raw_event_store_with_filter(dev->rdev, &ev);
- 
- 		if (next_zero < size) {
- 			next_one =
--			    generic_find_next_le_bit(ldata,
-+			    find_next_bit_le(ldata,
- 						     size,
- 						     next_zero + 1);
- 			ev.pulse = true;
--- 
-1.7.4.1
+>> -----Original Message-----
+>> From: Sedat Dilek [mailto:sedat.dilek@googlemail.com]
+>> Sent: Friday, March 25, 2011 12:10 AM
+>> To: linux-next; LKML
+>> Cc: Stephen Rothwell; Randy Dunlap; Vinod Koul; Tomoya MORINAGA
+>> Subject: Re: linux-next: Tree for March 24 (BUG: soft lockup
+>> - CPU#0 stuck for 63s! [kworker/0:1:7764])
+>
+>
