@@ -1,68 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the drivers-x86 tree
-Date: Fri, 25 Mar 2011 15:44:21 +1100
-Message-ID: <20110325154421.1c328ee2.sfr@canb.auug.org.au>
-References: <20110214163944.53c1241d.sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the rcu tree
+Date: Fri, 25 Mar 2011 16:05:39 +1100
+Message-ID: <20110325160539.659fe452.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__25_Mar_2011_16_05_39_+1100_lwq+CmccrqN8yD7I"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:52511 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:53973 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751028Ab1CYEob (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 25 Mar 2011 00:44:31 -0400
-In-Reply-To: <20110214163944.53c1241d.sfr@canb.auug.org.au>
+	id S1751088Ab1CYFFq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 25 Mar 2011 01:05:46 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Matthew Garrett <mjg59@srcf.ucam.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, Len Brown <lenb@kernel.org>, Paul Fox <pgf@laptop.org>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Paul E. McKenney" <paul.mckenney@linaro.org>
 
-Hi Matthew,
+--Signature=_Fri__25_Mar_2011_16_05_39_+1100_lwq+CmccrqN8yD7I
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 14 Feb 2011 16:39:44 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> After merging the drivers-x86 tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> drivers/platform/x86/xo15-ebook.c: In function 'ebook_switch_add':
-> drivers/platform/x86/xo15-ebook.c:136: error: 'struct acpi_device_wakeup' has no member named 'run_wake_count'
-> 
-> Caused by commit f160ad4c2a720411a136db7b867c3b4b868b8933 ("OLPC XO-1.5
-> ebook switch driver") interacting with commit
-> 0cab2dcf9963b1a7ed32e730384e1e8925b099cd ("ACPI: Remove the
-> wakeup.run_wake_count device field") from the acpi tree.
+Hi Paul,
 
-This acpi commit has now been merged into Linus' tree (as commit
-5190726765b4) so the patch below can now be applied to the drivers-x86
-tree (after merging Linus' tree).  Or should be sent to Linus along with
-your merge request.
+After merging the rcu tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 14 Feb 2011 16:36:41 +1100
-Subject: [PATCH] OLPC: fix for removal of run_wake_count
+kernel/softirq.c:62: warning: excess elements in array initializer
+kernel/softirq.c:62: warning: (near initialization for 'softirq_to_name')
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/platform/x86/xo15-ebook.c |    1 -
- 1 files changed, 0 insertions(+), 1 deletions(-)
-
-diff --git a/drivers/platform/x86/xo15-ebook.c b/drivers/platform/x86/xo15-ebook.c
-index 2343bb3..c1372ed 100644
---- a/drivers/platform/x86/xo15-ebook.c
-+++ b/drivers/platform/x86/xo15-ebook.c
-@@ -133,7 +133,6 @@ static int ebook_switch_add(struct acpi_device *device)
- 		/* Button's GPE is run-wake GPE */
- 		acpi_enable_gpe(device->wakeup.gpe_device,
- 				device->wakeup.gpe_number);
--		device->wakeup.run_wake_count++;
- 		device_set_wakeup_enable(&device->dev, true);
- 	}
- 
--- 
-1.7.2.3
-
-
--- 
+Introduced by commit 0ac7e739ad17 ("rcu: move TREE_RCU from softirq to
+kthread").
+--=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__25_Mar_2011_16_05_39_+1100_lwq+CmccrqN8yD7I
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNjCKjAAoJEDMEi1NhKgbsefAH/AnBZJRMc7GbOQYTNE0QWLbq
+1J2TFwMVTMfCsPL0JEYpY1ue8KT78ze7Jk36y9kg4H6r8qHhadMktpl1PRTEDIQv
+YvShI90jQLPg4q9BywkdbLID/yfOjV5ga6+Ua/np9TD21djTDU0YBMUZWqf5yV1g
+uTkth6vqhUbp2S+L7yc+fKroGkzK545NpbcYEelkDjyWpruMAQf6YEVGPLMPz3P4
+BP8ZhsJYXbgbd1N1JCUMD0vNfXJB2zuTplWm4+MWxHZ8uPv9+UyZpkW5PNksEjX0
+0ZS36P6KURFcwkSi95LUIrcfExmWMAfMwfVRjjLxxRlXCHrr4vBh8qtEEysfPXU=
+=aWnF
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__25_Mar_2011_16_05_39_+1100_lwq+CmccrqN8yD7I--
