@@ -1,50 +1,38 @@
-From: Ted Ts'o <tytso@mit.edu>
-Subject: Re: linux-next: manual merge of the ext4 tree with Linus' tree
-Date: Fri, 25 Mar 2011 15:58:56 -0400
-Message-ID: <20110325195856.GF2548@thunk.org>
-References: <20110325125643.91510e0e.sfr@canb.auug.org.au>
- <20110325144544.GF1409@htj.dyndns.org>
+From: John Linn <John.Linn@xilinx.com>
+Subject: xilinx linux-next tree addition request
+Date: Fri, 25 Mar 2011 14:35:12 -0600
+Message-ID: <58f8b399-ac49-484c-9e99-d23bcda08a8b@VA3EHSMHS024.ehs.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from li9-11.members.linode.com ([67.18.176.11]:47926 "EHLO
-	test.thunk.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753142Ab1CYT7L (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 25 Mar 2011 15:59:11 -0400
-Content-Disposition: inline
-In-Reply-To: <20110325144544.GF1409@htj.dyndns.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mingming Cao <cmm@us.ibm.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Class: urn:content-classes:message
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Grant Likely <grant.likely@secretlab.ca>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Mar 25, 2011 at 03:45:44PM +0100, Tejun Heo wrote:
-> Both are about the same conversion but the one using alloc_workqueue()
-> is better because 1. create_singlethread_workqueue() is going away and
-> 2. it doesn't require strict ordering among queued works.
-> 
-> Ted, what do you think?
+Hi Stephen,
 
-Agreed.  And it looks like Linus agreed as well:
+I have a tree I'd like to see show up in linux-next: 
 
-diff --cc fs/ext4/super.c
-index 203f9e4,ccfa686..22546ad
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@@ -3511,12 -3514,7 +3516,12 @@@ static int ext4_fill_super(struct super
-        percpu_counter_set(&sbi->s_dirtyblocks_counter, 0);
-  
-  no_journal:
- -      EXT4_SB(sb)->dio_unwritten_wq = create_singlethread_workqueue("ext4-dio-
- +      /*
- +       * The maximum number of concurrent works can be high and
- +       * concurrency isn't really necessary.  Limit it to 1.
- +       */
- +      EXT4_SB(sb)->dio_unwritten_wq =
--               alloc_workqueue("ext4-dio-unwritten", WQ_MEM_RECLAIM, 1);
-++              alloc_workqueue("ext4-dio-unwritten", WQ_MEM_RECLAIM | WQ_UNBOUND, 1);
-        if (!EXT4_SB(sb)->dio_unwritten_wq) {
-                printk(KERN_ERR "EXT4-fs: failed to create DIO workqueue\n");
-                goto failed_mount_wq;
+git://git.xilinx.com/linux-2.6-xlnx.git arm-next 
 
-						- Ted
+After v2.6.39-rc1 is released, it will contain Xilinx ARM work intended
+for the 2.6.40 merge window.  Everything in there has been posted,
+reviewed, fixed, etc...
+
+If order makes a difference, it would be best if it's after Russell's
+tree as it could have dependencies on stuff in his tree.
+
+It is only Linus's linux-2.6 tree right now, but I wanted to get this
+all staged up and ready.
+
+Thanks,
+John   
+
+
+
+
+
+This email and any attachments are intended for the sole use of the named recipient(s) and contain(s) confidential information that may be proprietary, privileged or copyrighted under applicable law. If you are not the intended recipient, do not read, copy, or forward this email message or any attachments. Delete this email message and any attachments immediately.
