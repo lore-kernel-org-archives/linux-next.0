@@ -1,59 +1,55 @@
-From: Sedat Dilek <sedat.dilek@googlemail.com>
-Subject: Re: linux-next: Tree for March 24 (BUG: soft lockup - CPU#0 stuck for
- 63s! [kworker/0:1:7764])
-Date: Fri, 25 Mar 2011 02:40:57 +0100
-Message-ID: <AANLkTimhvxO=5GOenagc=F2hyzt-7yLSgDhQbWVuffsD@mail.gmail.com>
-References: <AANLkTik0tLsZCmcf8JNBtyePnKZzfoyA9SWH9k51+cc8@mail.gmail.com>
-	<AANLkTi=gUTJs58mBkyLrvbtob=x=k6gD8-QR1HA61g+Q@mail.gmail.com>
-	<641556B1566641C0A286D4F2F1383DAD@hacdom.okisemi.com>
-Reply-To: sedat.dilek@gmail.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ext4 tree with Linus' tree
+Date: Fri, 25 Mar 2011 12:56:43 +1100
+Message-ID: <20110325125643.91510e0e.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Fri__25_Mar_2011_12_56_43_+1100_g9Vbag9zgkR+G2c6"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qy0-f174.google.com ([209.85.216.174]:63503 "EHLO
-	mail-qy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932206Ab1CYBk6 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Mar 2011 21:40:58 -0400
-In-Reply-To: <641556B1566641C0A286D4F2F1383DAD@hacdom.okisemi.com>
+Received: from chilli.pcug.org.au ([203.10.76.44]:38604 "EHLO smtps.tip.net.au"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933857Ab1CYB4x (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 24 Mar 2011 21:56:53 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tomoya MORINAGA <tomoya-linux@dsn.okisemi.com>
-Cc: linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <randy.dunlap@oracle.com>, Vinod Koul <vinod.koul@intel.com>, Toshiharu Okada <toshiharu-linux@dsn.okisemi.com>
+To: Theodore Tso <tytso@MIT.EDU>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mingming Cao <cmm@us.ibm.com>, Tejun Heo <tj@kernel.org>
 
-On Fri, Mar 25, 2011 at 1:08 AM, Tomoya MORINAGA
-<tomoya-linux@dsn.okisemi.com> wrote:
-> Hi =C2=A0Sedat,
->
-> We have used this DMA driver(include this patch) on linux-2.6.35/37.
-> However I haven't seen the issue yet.
->
-> I want to know more information.
-> Do you mean that it takes 63 more seconds for boot-completing
-> when using this patch and pch_dma is integrated as built-in ?
->
-> Thanks,
-> -----------------------------------------
-> Tomoya MORINAGA
-> OKI SEMICONDUCTOR CO., LTD.
->
+--Signature=_Fri__25_Mar_2011_12_56_43_+1100_g9Vbag9zgkR+G2c6
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I jumped back to the kernel from which I thought it was making
-problems and run it several hours.
-Unfortunately, I haven't seen any call-traces in the syslogs like befor=
-e.
-So, I could reproduce the errors.
-I am sorry for the noise abd will have an eye on the issue.
-( So, reverting the patch did not really helped. )
+Hi Ted,
 
-- Sedat -
+Today's linux-next merge of the ext4 tree got a conflict in
+fs/ext4/super.c between commit fd89d5f2030a ("ext4: convert to
+alloc_workqueue()") from Linus' tree and commit 198868f35de9 ("ext4: Use
+single thread to perform DIO unwritten convertion") from the ext4 tree.
 
->> -----Original Message-----
->> From: Sedat Dilek [mailto:sedat.dilek@googlemail.com]
->> Sent: Friday, March 25, 2011 12:10 AM
->> To: linux-next; LKML
->> Cc: Stephen Rothwell; Randy Dunlap; Vinod Koul; Tomoya MORINAGA
->> Subject: Re: linux-next: Tree for March 24 (BUG: soft lockup
->> - CPU#0 stuck for 63s! [kworker/0:1:7764])
->
->
+I just used the ext4 tree version.
+
+P.S. Ted, that ext4 tree commit has no SOB from you even though you are
+the committer ...
+--=20
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+http://www.canb.auug.org.au/~sfr/
+
+--Signature=_Fri__25_Mar_2011_12_56_43_+1100_g9Vbag9zgkR+G2c6
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJNi/ZbAAoJEDMEi1NhKgbsLAAH/A3ESk24dNt/MufzJ2UKM1Mm
+bhPQUnD5F9nuDISZT4pIAJvYRagAUInWkMZHcAxWWvi2r6Y39MkpdKELLjpFdWxp
+ZqmxoKk/NQSlTIw3BS2Kjyz19ELrrgmpPQHcvBPyJNE3BqbGATvHgQuJQ80Azw1B
+cASftQbj/YWfv6bCFGAafRl5ip4mUmaULoN57lNzrcInI1CncPaXRludNRxTTeY/
+FLoINBAbT2IqphPuwHl7wsuuWl7yQ2AtCAP9bAcThYgxtqqKPOM+wS8UkE+HStcT
+X0+nN1CHNseUtbXoItb1+mKq3qEaq2BOkrEKZgaZ8R+iUQrZ1UvriN7Yemh3m5Q=
+=3mB3
+-----END PGP SIGNATURE-----
+
+--Signature=_Fri__25_Mar_2011_12_56_43_+1100_g9Vbag9zgkR+G2c6--
