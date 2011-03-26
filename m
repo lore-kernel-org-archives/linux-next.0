@@ -1,8 +1,8 @@
 From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 Subject: Re: linux-next: Tree for March 25 (Call trace:
  RCU|workqueues|block|VFS|ext4 related?)
-Date: Sat, 26 Mar 2011 08:53:16 -0700
-Message-ID: <20110326155316.GY2322@linux.vnet.ibm.com>
+Date: Sat, 26 Mar 2011 09:02:29 -0700
+Message-ID: <20110326160229.GZ2322@linux.vnet.ibm.com>
 References: <AANLkTimg-DVXUOrrRZCggZiaajSJWi=onWUxUrnnGXQB@mail.gmail.com>
  <AANLkTima-bYDkHDfSSAGJFmeRedBQ-VyaAdE7gfhHb3J@mail.gmail.com>
  <20110325155516.GA27484@feather>
@@ -12,24 +12,20 @@ References: <AANLkTimg-DVXUOrrRZCggZiaajSJWi=onWUxUrnnGXQB@mail.gmail.com>
  <20110325174855.GR2322@linux.vnet.ibm.com>
  <AANLkTin9HxOTwavbtbsMd0quYsEvhDNmuO5kOpquqoF=@mail.gmail.com>
  <20110326034210.GX2322@linux.vnet.ibm.com>
- <AANLkTimnx27HCKKKv8Le5x7j096VzLgJ70bXM8Rki=9a@mail.gmail.com>
+ <AANLkTi=zJZ26i14D-kyWQ1uqUPifrv+DN4So4+fC5V=d@mail.gmail.com>
 Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e36.co.us.ibm.com ([32.97.110.154]:35851 "EHLO
-	e36.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751888Ab1CZPx1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 26 Mar 2011 11:53:27 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <AANLkTimnx27HCKKKv8Le5x7j096VzLgJ70bXM8Rki=9a@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+In-Reply-To: <AANLkTi=zJZ26i14D-kyWQ1uqUPifrv+DN4So4+fC5V=d@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: sedat.dilek@gmail.com
 Cc: Josh Triplett <josh@joshtriplett.org>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <randy.dunlap@oracle.com>, Theodore Ts'o <tytso@mit.edu>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Nick Piggin <npiggin@kernel.dk>
+List-Id: linux-next.vger.kernel.org
 
-On Sat, Mar 26, 2011 at 09:11:29AM +0100, Sedat Dilek wrote:
+On Sat, Mar 26, 2011 at 01:34:53PM +0100, Sedat Dilek wrote:
 > On Sat, Mar 26, 2011 at 4:42 AM, Paul E. McKenney
 > <paulmck@linux.vnet.ibm.com> wrote:
 > > On Fri, Mar 25, 2011 at 08:42:14PM +0100, Sedat Dilek wrote:
@@ -362,194 +358,91 @@ _RCU
 > > CONFIG_TREE_RCU=3Dy" and thought that you were hinting that you had
 > > been running with something other than TREE_RCU.
 > >
+> >> - Sedat -
+> >>
 >=20
-> I could suppress RCU STALL warning via sysfs, but the complete system
-> is just freaky.
-> With doing a simple tar (without compression!) job, I can't use my we=
-bbrowser.
+> Just FYI: Changed to the following settings:
+>=20
+> - Enable Preemptible Kernel (Low-Latency Desktop)
+> - Enable Preemptible tree-based hierarchical RCU
+> - Enable RCU priority boosting
+> - Reset RCU CPU stall timeout to default (60 seconds)
+>=20
+> So far I see no RCU stalls in the logs and my system runs as expected=
+=2E
+> ( I have noticed here some "stalling" in the webbrowser, but I can do
+> my daily business. )
 
-Then it does sound like the RCU stall warnings really are locating a
-legitimate problem, despite the strange stack trace.
+OK, good to see some progress!
 
-> Selecting TINY_RCU means no CONFIG_SMP!
-> (OK, I can hack the Kconfig dependency to change this.)
+Is there a runaway process consuming CPU?  The reason that I ask is tha=
+t
+an infinite loop in the kernel can result in a stall when PREEMPT=3Dn
+but is less likely to if PREEMPT=3Dy.  Could you please check with "top=
+",
+"ps", or whatever?
 
-Yes, TINY_RCU is designed to be UP-only.  Please do not try it in an
-SMP kernel.  It will break badly.
+> I am not sure what the change to PREEMPT exactly mean in the end.
+> ( Let's work with this new kernel and carefully check for possible
+> side-effects. )
+> For example CONFIG_RCU_FAST_NO_HZ=3Dy is now dropped, where the Kconf=
+ig
+> descriptive text says some words on better energy saving. For a
+> notebook this is no good.
 
-> I am thinking of distributions, shall they offer another linux-kernel
-> binary especially for UP machines?
-> Somehow ridiculuous.
+CONFIG_RCU_FAST_NO_HZ is of no use on a uniprocessor system, so OK
+to disable it.  But are you saying that CONFIG_RCU_FAST_NO_HZ=3Dy
+results in problems that are removed by CONFIG_RCU_FAST_NO_HZ=3Dn?
+That would be a surprise, and I need to know if this is the case.
 
-No, they should continue to do what they are currently doing.  TINY_RCU
-is primarily for embedded systems.
+> I have also questions to some Kconfig dependencies, for example why I
+> can't select TREE_PREEMPT_RCU if CONFIG_PREEMPT_VOLUNTARY=3Dy, etc.
+> Intended?
 
-> I still haven't get some hints to play with the timeouts, so I tried
-> CONFIG_RCU_CPU_STALL_TIMEOUT=3D120 (default according to Kconfig entr=
-y
-> is 60).
-> Can this really help here. Why?
-> I had a closer look into my logs, there I saw a max jiffies of
-> t=3D780510 (six digits!)
+Yes.  There is no point in TREE_PREEMPT_RCU unless PREEMPT=3Dy.
 
-Yow!  That is a very long stall.
+> Maybe I collect all my askings in a separate email to RCU folks and M=
+L
+> and do not disturb further people from other sub-trees.
+>=20
+> I enjoyed to read the numerous docs in Documentation/RCU/ (and notice=
+d
+> some typos as well).
+> The RCU folk gave the word "FAQ" a new meaning: Frequenty Asked
+> Questions & Q*uiz* :-).
+>=20
+> Thanks for the helpful hints and explanations from the RCU folks!
 
-> /var/log/syslog.1:Mar 25 18:09:15 tbox kernel: [ 3221.112034] INFO:
-> rcu_sched_state detected stall on CPU 0 (t=3D780510 jiffies)
-> And I asked for the common play between HZ and RCU values in
-> kernel-config parameters.
-> Currently, I have CONFIG_HZ_250=3Dy.
-> Can you enlighten me. please.
-
-CONFIG_HZ_250 is entirely reasonable.
-
-> I have the impression that even I could disable "old"
-> CONFIG_RCU_CPU_STALL_DETECTOR value, this stalling here has other
-> reasons.
-
-The stall detector used to be disabled by default. =20
-
-You were running something that worked -- what exactly was that?
-
-> BROKEN ACPI? Might be... But what about supporting such systems (with
-> quirks or whatever)?
-
-Or a messed up commit.
-
-							Thanx, Paul
+Glad you liked them!  ;-)
 
 > - Sedat -
 >=20
-> P.S.: I have attached all jiffies values from my today's and
-> yesterday's syslogs and my last used kernel-config.
+> P.S.: Current RCU and HZ kernel-config settings
 >=20
-> >> - Sedat -
-> >> --
-> >> To unsubscribe from this list: send the line "unsubscribe linux-ke=
-rnel" in
-> >> the body of a message to majordomo@vger.kernel.org
-> >> More majordomo info at =A0http://vger.kernel.org/majordomo-info.ht=
-ml
-> >> Please read the FAQ at =A0http://www.tux.org/lkml/
-> >
+> # grep RCU /boot/config-$(uname -r)
+> # RCU Subsystem
+> CONFIG_TREE_PREEMPT_RCU=3Dy
+> CONFIG_PREEMPT_RCU=3Dy
+> CONFIG_RCU_TRACE=3Dy
+> CONFIG_RCU_FANOUT=3D32
+> # CONFIG_RCU_FANOUT_EXACT is not set
+> CONFIG_TREE_RCU_TRACE=3Dy
+> CONFIG_RCU_BOOST=3Dy
+> CONFIG_RCU_BOOST_PRIO=3D1
+> CONFIG_RCU_BOOST_DELAY=3D500
+> # CONFIG_SPARSE_RCU_POINTER is not set
+> # CONFIG_RCU_TORTURE_TEST is not set
+> CONFIG_RCU_CPU_STALL_TIMEOUT=3D60
+> CONFIG_RCU_CPU_STALL_VERBOSE=3Dy
+>=20
+> # grep _HZ /boot/config-$(uname -r)
+> CONFIG_NO_HZ=3Dy
+> # CONFIG_HZ_100 is not set
+> CONFIG_HZ_250=3Dy
+> # CONFIG_HZ_300 is not set
+> # CONFIG_HZ_1000 is not set
+> CONFIG_HZ=3D250
 
-> /var/log/syslog:Mar 26 00:36:55 tbox kernel: [  589.064031] INFO: rcu=
-_sched_state detected stall on CPU 0 (t=3D120030 jiffies)
-> /var/log/syslog:Mar 26 00:42:55 tbox kernel: [  949.184032] INFO: rcu=
-_sched_state detected stall on CPU 0 (t=3D210060 jiffies)
-> /var/log/syslog:Mar 26 00:48:55 tbox kernel: [ 1309.304033] INFO: rcu=
-_sched_state detected stall on CPU 0 (t=3D300090 jiffies)
-> /var/log/syslog:Mar 26 01:11:09 tbox kernel: [  208.416034] INFO: rcu=
-_sched_state detected stall on CPU 0 (t=3D30000 jiffies)
-> /var/log/syslog:Mar 26 01:16:30 tbox kernel: [  154.532013] INFO: rcu=
-_sched_state detected stall on CPU 0 (t=3D30000 jiffies)
-> /var/log/syslog.1:Mar 25 10:57:04 tbox kernel: [  157.340021] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D15000 jiffies)
-> /var/log/syslog.1:Mar 25 11:00:04 tbox kernel: [  337.460033] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D60030 jiffies)
-> /var/log/syslog.1:Mar 25 11:03:05 tbox kernel: [  517.580032] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D105060 jiffies)
-> /var/log/syslog.1:Mar 25 11:06:05 tbox kernel: [  697.700033] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D150090 jiffies)
-> /var/log/syslog.1:Mar 25 11:09:05 tbox kernel: [  877.820034] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D195120 jiffies)
-> /var/log/syslog.1:Mar 25 11:12:05 tbox kernel: [ 1057.940032] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D240150 jiffies)
-> /var/log/syslog.1:Mar 25 11:15:05 tbox kernel: [ 1238.060029] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D285180 jiffies)
-> /var/log/syslog.1:Mar 25 11:18:05 tbox kernel: [ 1418.180033] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D330210 jiffies)
-> /var/log/syslog.1:Mar 25 11:21:05 tbox kernel: [ 1598.300034] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D375240 jiffies)
-> /var/log/syslog.1:Mar 25 11:24:05 tbox kernel: [ 1778.420018] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D420270 jiffies)
-> /var/log/syslog.1:Mar 25 11:27:06 tbox kernel: [ 1958.540024] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D465300 jiffies)
-> /var/log/syslog.1:Mar 25 11:30:06 tbox kernel: [ 2138.660008] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D510330 jiffies)
-> /var/log/syslog.1:Mar 25 11:33:06 tbox kernel: [ 2318.780033] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D555360 jiffies)
-> /var/log/syslog.1:Mar 25 13:54:55 tbox kernel: [  273.224044] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D15000 jiffies)
-> /var/log/syslog.1:Mar 25 13:57:56 tbox kernel: [  453.344036] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D60030 jiffies)
-> /var/log/syslog.1:Mar 25 14:00:56 tbox kernel: [  633.464043] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D105060 jiffies)
-> /var/log/syslog.1:Mar 25 14:03:56 tbox kernel: [  813.584031] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D150090 jiffies)
-> /var/log/syslog.1:Mar 25 14:06:56 tbox kernel: [  993.704031] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D195120 jiffies)
-> /var/log/syslog.1:Mar 25 14:09:56 tbox kernel: [ 1173.824042] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D240150 jiffies)
-> /var/log/syslog.1:Mar 25 14:12:56 tbox kernel: [ 1353.944020] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D285180 jiffies)
-> /var/log/syslog.1:Mar 25 14:15:56 tbox kernel: [ 1534.064033] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D330210 jiffies)
-> /var/log/syslog.1:Mar 25 14:18:56 tbox kernel: [ 1714.184033] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D375240 jiffies)
-> /var/log/syslog.1:Mar 25 14:21:56 tbox kernel: [ 1894.304038] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D420270 jiffies)
-> /var/log/syslog.1:Mar 25 14:24:57 tbox kernel: [ 2074.424033] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D465300 jiffies)
-> /var/log/syslog.1:Mar 25 17:18:13 tbox kernel: [  159.072032] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D15000 jiffies)
-> /var/log/syslog.1:Mar 25 17:21:13 tbox kernel: [  339.192034] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D60030 jiffies)
-> /var/log/syslog.1:Mar 25 17:24:13 tbox kernel: [  519.312032] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D105060 jiffies)
-> /var/log/syslog.1:Mar 25 17:27:13 tbox kernel: [  699.432033] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D150090 jiffies)
-> /var/log/syslog.1:Mar 25 17:30:14 tbox kernel: [  879.552031] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D195120 jiffies)
-> /var/log/syslog.1:Mar 25 17:33:14 tbox kernel: [ 1059.672035] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D240150 jiffies)
-> /var/log/syslog.1:Mar 25 17:36:14 tbox kernel: [ 1239.792026] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D285180 jiffies)
-> /var/log/syslog.1:Mar 25 17:39:14 tbox kernel: [ 1419.912036] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D330210 jiffies)
-> /var/log/syslog.1:Mar 25 17:42:14 tbox kernel: [ 1600.032035] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D375240 jiffies)
-> /var/log/syslog.1:Mar 25 17:45:14 tbox kernel: [ 1780.152033] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D420270 jiffies)
-> /var/log/syslog.1:Mar 25 17:48:14 tbox kernel: [ 1960.272034] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D465300 jiffies)
-> /var/log/syslog.1:Mar 25 17:51:14 tbox kernel: [ 2140.392012] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D510330 jiffies)
-> /var/log/syslog.1:Mar 25 17:54:15 tbox kernel: [ 2320.512031] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D555360 jiffies)
-> /var/log/syslog.1:Mar 25 17:57:15 tbox kernel: [ 2500.632036] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D600390 jiffies)
-> /var/log/syslog.1:Mar 25 18:00:15 tbox kernel: [ 2680.751704] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D645420 jiffies)
-> /var/log/syslog.1:Mar 25 18:03:15 tbox kernel: [ 2860.872032] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D690450 jiffies)
-> /var/log/syslog.1:Mar 25 18:06:15 tbox kernel: [ 3040.992034] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D735480 jiffies)
-> /var/log/syslog.1:Mar 25 18:09:15 tbox kernel: [ 3221.112034] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D780510 jiffies)
-> /var/log/syslog.1:Mar 25 20:37:17 tbox kernel: [  162.424039] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D15000 jiffies)
-> /var/log/syslog.1:Mar 25 20:40:17 tbox kernel: [  342.544034] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D60030 jiffies)
-> /var/log/syslog.1:Mar 25 20:43:17 tbox kernel: [  522.664036] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D105060 jiffies)
-> /var/log/syslog.1:Mar 25 20:46:17 tbox kernel: [  702.784032] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D150090 jiffies)
-> /var/log/syslog.1:Mar 25 20:49:17 tbox kernel: [  882.904036] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D195120 jiffies)
-> /var/log/syslog.1:Mar 25 20:52:17 tbox kernel: [ 1063.024052] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D240150 jiffies)
-> /var/log/syslog.1:Mar 25 20:55:17 tbox kernel: [ 1243.144034] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D285180 jiffies)
-> /var/log/syslog.1:Mar 25 20:58:17 tbox kernel: [ 1423.264034] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D330210 jiffies)
-> /var/log/syslog.1:Mar 25 21:01:18 tbox kernel: [ 1603.384032] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D375240 jiffies)
-> /var/log/syslog.1:Mar 25 21:04:18 tbox kernel: [ 1783.504018] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D420270 jiffies)
-> /var/log/syslog.1:Mar 25 21:07:18 tbox kernel: [ 1963.624034] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D465300 jiffies)
-> /var/log/syslog.1:Mar 25 21:10:19 tbox kernel: [ 2143.744028] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D510330 jiffies)
-> /var/log/syslog.1:Mar 26 00:30:55 tbox kernel: [  228.944029] INFO: r=
-cu_sched_state detected stall on CPU 0 (t=3D30000 jiffies)
+OK, thank you for the info!
+
+							Thanx, Paul
