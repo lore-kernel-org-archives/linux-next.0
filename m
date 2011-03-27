@@ -1,374 +1,457 @@
-From: Sedat Dilek <sedat.dilek@googlemail.com>
-Subject: Re: linux-next: Tree for March 25 (Call trace: RCU|workqueues|block|VFS|ext4
- related?)
-Date: Sat, 26 Mar 2011 23:15:22 +0100
-Message-ID: <AANLkTikzLm+ArYkG20F41JOgfNygfdhxC0+A4tV4ez-R@mail.gmail.com>
-References: <AANLkTimg-DVXUOrrRZCggZiaajSJWi=onWUxUrnnGXQB@mail.gmail.com>
-	<AANLkTima-bYDkHDfSSAGJFmeRedBQ-VyaAdE7gfhHb3J@mail.gmail.com>
-	<20110325155516.GA27484@feather>
-	<20110325164236.GP2322@linux.vnet.ibm.com>
-	<AANLkTim08Ff==7mY9fuU8tUJrTmEhZ+PrsJSQO5PKOH6@mail.gmail.com>
-	<AANLkTi=N6Z0bDg1YXVFkUbv7phM8XvQ5U3=vS6Ej8Af5@mail.gmail.com>
-	<20110325174855.GR2322@linux.vnet.ibm.com>
-	<AANLkTin9HxOTwavbtbsMd0quYsEvhDNmuO5kOpquqoF=@mail.gmail.com>
-	<20110326034210.GX2322@linux.vnet.ibm.com>
-	<AANLkTi=zJZ26i14D-kyWQ1uqUPifrv+DN4So4+fC5V=d@mail.gmail.com>
-	<20110326160229.GZ2322@linux.vnet.ibm.com>
-Reply-To: sedat.dilek@gmail.com
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: linux-next: Tree for March 25 (Call trace:
+ RCU|workqueues|block|VFS|ext4 related?)
+Date: Sat, 26 Mar 2011 17:09:00 -0700
+Message-ID: <20110327000900.GB2322@linux.vnet.ibm.com>
+References: <20110325155516.GA27484@feather>
+ <20110325164236.GP2322@linux.vnet.ibm.com>
+ <AANLkTim08Ff==7mY9fuU8tUJrTmEhZ+PrsJSQO5PKOH6@mail.gmail.com>
+ <AANLkTi=N6Z0bDg1YXVFkUbv7phM8XvQ5U3=vS6Ej8Af5@mail.gmail.com>
+ <20110325174855.GR2322@linux.vnet.ibm.com>
+ <AANLkTin9HxOTwavbtbsMd0quYsEvhDNmuO5kOpquqoF=@mail.gmail.com>
+ <20110326034210.GX2322@linux.vnet.ibm.com>
+ <AANLkTi=zJZ26i14D-kyWQ1uqUPifrv+DN4So4+fC5V=d@mail.gmail.com>
+ <20110326160229.GZ2322@linux.vnet.ibm.com>
+ <AANLkTikzLm+ArYkG20F41JOgfNygfdhxC0+A4tV4ez-R@mail.gmail.com>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=0016364184bdf1b544049f6a0ba4
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20110326160229.GZ2322@linux.vnet.ibm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: paulmck@linux.vnet.ibm.com
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from e34.co.us.ibm.com ([32.97.110.152]:35795 "EHLO
+	e34.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752133Ab1C0AJL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 26 Mar 2011 20:09:11 -0400
+Content-Disposition: inline
+In-Reply-To: <AANLkTikzLm+ArYkG20F41JOgfNygfdhxC0+A4tV4ez-R@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: sedat.dilek@gmail.com
 Cc: Josh Triplett <josh@joshtriplett.org>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <randy.dunlap@oracle.com>, Theodore Ts'o <tytso@mit.edu>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Nick Piggin <npiggin@kernel.dk>
-List-Id: linux-next.vger.kernel.org
 
---0016364184bdf1b544049f6a0ba4
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On Sat, Mar 26, 2011 at 11:15:22PM +0100, Sedat Dilek wrote:
+> On Sat, Mar 26, 2011 at 5:02 PM, Paul E. McKenney
+> <paulmck@linux.vnet.ibm.com> wrote:
+> > On Sat, Mar 26, 2011 at 01:34:53PM +0100, Sedat Dilek wrote:
+> [...]
+> >> Just FYI: Changed to the following settings:
+> >>
+> >> - Enable Preemptible Kernel (Low-Latency Desktop)
+> >> - Enable Preemptible tree-based hierarchical RCU
+> >> - Enable RCU priority boosting
+> >> - Reset RCU CPU stall timeout to default (60 seconds)
+> >>
+> >> So far I see no RCU stalls in the logs and my system runs as expec=
+ted.
+> >> ( I have noticed here some "stalling" in the webbrowser, but I can=
+ do
+> >> my daily business. )
+> >
+> > OK, good to see some progress!
+> >
+>=20
+> On 1st impression thing went fine, but after a while jobs like openin=
+g
+> several tabs in firefox or doing a simple df command stalled the
+> machine. No, my system even got frozen and required a brutal reset.
+>=20
+> >From the logs (more see file-attachment):
+>=20
+> Mar 26 19:58:40 tbox kernel: [ 1440.640060] INFO: task systemd:1
+> blocked for more than 120 seconds.
+> Mar 26 19:58:40 tbox kernel: [ 1440.640074] "echo 0 >
+> /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>=20
+> Following it -> NOPE
+> $ echo 0 > /proc/sys/kernel/hung_task_timeout_secs
 
-On Sat, Mar 26, 2011 at 5:02 PM, Paul E. McKenney
-<paulmck@linux.vnet.ibm.com> wrote:
-> On Sat, Mar 26, 2011 at 01:34:53PM +0100, Sedat Dilek wrote:
-[...]
->> Just FYI: Changed to the following settings:
->>
->> - Enable Preemptible Kernel (Low-Latency Desktop)
->> - Enable Preemptible tree-based hierarchical RCU
->> - Enable RCU priority boosting
->> - Reset RCU CPU stall timeout to default (60 seconds)
->>
->> So far I see no RCU stalls in the logs and my system runs as expected.
->> ( I have noticed here some "stalling" in the webbrowser, but I can do
->> my daily business. )
->
-> OK, good to see some progress!
->
+These are tasks that are blocked, not tasks that are consuming CPU.
 
-On 1st impression thing went fine, but after a while jobs like opening
-several tabs in firefox or doing a simple df command stalled the
-machine. No, my system even got frozen and required a brutal reset.
+> > Is there a runaway process consuming CPU? =A0The reason that I ask =
+is that
+> > an infinite loop in the kernel can result in a stall when PREEMPT=3D=
+n
+> > but is less likely to if PREEMPT=3Dy. =A0Could you please check wit=
+h "top",
+> > "ps", or whatever?
+>=20
+> Unsure what you mean by this, as you can see from the logs, it's not
+> only one special task "stalling".
+> BTW, I have systemd here running.
 
->From the logs (more see file-attachment):
+Right.  But I need to know if there are tasks consuming lots of CPU,
+which is different than tasks that are stalled for a long time.  Look
+at the message: it says "blocked for more than 120 seconds", not
+"running for more than 120 seconds".
 
-Mar 26 19:58:40 tbox kernel: [ 1440.640060] INFO: task systemd:1
-blocked for more than 120 seconds.
-Mar 26 19:58:40 tbox kernel: [ 1440.640074] "echo 0 >
-/proc/sys/kernel/hung_task_timeout_secs" disables this message.
+=46or example, if one of the RCU kthreads is consuming lots of CPU, tha=
+t
+would tell me that I should look for an RCU bug (and yank the patches
+from -next in the meantime).  On the other hand, if some other task is
+consuming lots of CPU, then that would be a hint as to where to find
+the bug.
 
-Following it -> NOPE
-$ echo 0 > /proc/sys/kernel/hung_task_timeout_secs
+> >> I am not sure what the change to PREEMPT exactly mean in the end.
+> >> ( Let's work with this new kernel and carefully check for possible
+> >> side-effects. )
+> >> For example CONFIG_RCU_FAST_NO_HZ=3Dy is now dropped, where the Kc=
+onfig
+> >> descriptive text says some words on better energy saving. For a
+> >> notebook this is no good.
+> >
+> > CONFIG_RCU_FAST_NO_HZ is of no use on a uniprocessor system, so OK
+> > to disable it. =A0But are you saying that CONFIG_RCU_FAST_NO_HZ=3Dy
+> > results in problems that are removed by CONFIG_RCU_FAST_NO_HZ=3Dn?
+> > That would be a surprise, and I need to know if this is the case.
+>=20
+> In my current setup (PREEMPT and TREE_PREEMPT_RCU)
+> CONFIG_RCU_FAST_NO_HZ is not considered and set via Kconfig-system
+> (see excerpt below).
+> But when you say for UP it is of no use, I need no more info.
 
-> Is there a runaway process consuming CPU? =C2=A0The reason that I ask is =
-that
-> an infinite loop in the kernel can result in a stall when PREEMPT=3Dn
-> but is less likely to if PREEMPT=3Dy. =C2=A0Could you please check with "=
-top",
-> "ps", or whatever?
->
+OK, "of no use" is overstating things a bit.  But CONFIG_RCU_FAST_NO_HZ=
+'s
+main purpose is to get the last CPU into dyntick-idle state
+(CONFIG_NO_HZ), which is most useful if the system has several CPUs.
 
-Unsure what you mean by this, as you can see from the logs, it's not
-only one special task "stalling".
-BTW, I have systemd here running.
+> Might be good to add some recommended (and/or useless) kernel-config
+> settings to RCU/UP.txt?
+>=20
+> [ init/Kconfig ]
+> config RCU_FAST_NO_HZ
+>         bool "Accelerate last non-dyntick-idle CPU's grace periods"
+>         depends on TREE_RCU && NO_HZ && SMP
+>         default n
 
->> I am not sure what the change to PREEMPT exactly mean in the end.
->> ( Let's work with this new kernel and carefully check for possible
->> side-effects. )
->> For example CONFIG_RCU_FAST_NO_HZ=3Dy is now dropped, where the Kconfig
->> descriptive text says some words on better energy saving. For a
->> notebook this is no good.
->
-> CONFIG_RCU_FAST_NO_HZ is of no use on a uniprocessor system, so OK
-> to disable it. =C2=A0But are you saying that CONFIG_RCU_FAST_NO_HZ=3Dy
-> results in problems that are removed by CONFIG_RCU_FAST_NO_HZ=3Dn?
-> That would be a surprise, and I need to know if this is the case.
->
+The "depends on TREE_RCU && NO_HZ && SMP" already excludes it from
+UP kernel builds, so no need to document.
 
-In my current setup (PREEMPT and TREE_PREEMPT_RCU)
-CONFIG_RCU_FAST_NO_HZ is not considered and set via Kconfig-system
-(see excerpt below).
-But when you say for UP it is of no use, I need no more info.
-Might be good to add some recommended (and/or useless) kernel-config
-settings to RCU/UP.txt?
+> >> I have also questions to some Kconfig dependencies, for example wh=
+y I
+> >> can't select TREE_PREEMPT_RCU if CONFIG_PREEMPT_VOLUNTARY=3Dy, etc=
+=2E
+> >> Intended?
+> >
+> > Yes. =A0There is no point in TREE_PREEMPT_RCU unless PREEMPT=3Dy.
+> >
+>=20
+> OK.
+>=20
+> >> Maybe I collect all my askings in a separate email to RCU folks an=
+d ML
+> >> and do not disturb further people from other sub-trees.
+> >>
+> >> I enjoyed to read the numerous docs in Documentation/RCU/ (and not=
+iced
+> >> some typos as well).
+> >> The RCU folk gave the word "FAQ" a new meaning: Frequenty Asked
+> >> Questions & Q*uiz* :-).
+> >>
+> >> Thanks for the helpful hints and explanations from the RCU folks!
+> >
+> > Glad you liked them! =A0;-)
+> >
+>=20
+> Other sub-trees lack of no good or up2date docs.
+>=20
+> >> - Sedat -
+> >>
+> >> P.S.: Current RCU and HZ kernel-config settings
+> >>
+> >> # grep RCU /boot/config-$(uname -r)
+> >> # RCU Subsystem
+> >> CONFIG_TREE_PREEMPT_RCU=3Dy
+> >> CONFIG_PREEMPT_RCU=3Dy
+> >> CONFIG_RCU_TRACE=3Dy
+> >> CONFIG_RCU_FANOUT=3D32
+> >> # CONFIG_RCU_FANOUT_EXACT is not set
+> >> CONFIG_TREE_RCU_TRACE=3Dy
+> >> CONFIG_RCU_BOOST=3Dy
+> >> CONFIG_RCU_BOOST_PRIO=3D1
+> >> CONFIG_RCU_BOOST_DELAY=3D500
+> >> # CONFIG_SPARSE_RCU_POINTER is not set
+> >> # CONFIG_RCU_TORTURE_TEST is not set
+> >> CONFIG_RCU_CPU_STALL_TIMEOUT=3D60
+> >> CONFIG_RCU_CPU_STALL_VERBOSE=3Dy
+> >>
+> >> # grep _HZ /boot/config-$(uname -r)
+> >> CONFIG_NO_HZ=3Dy
+> >> # CONFIG_HZ_100 is not set
+> >> CONFIG_HZ_250=3Dy
+> >> # CONFIG_HZ_300 is not set
+> >> # CONFIG_HZ_1000 is not set
+> >> CONFIG_HZ=3D250
+> >
+> > OK, thank you for the info!
+> >
+>=20
+> N.P.
+>=20
+> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0Thanx, Paul
+> >
+>=20
+> I guees I will revert step-by-step the RCU commits in linux-next and =
+report.
+> This weekend I wanted to enhance Debian's live-cd framework with
+> overlayfs support and a customized kernel.
+> But then came RCU :-(.
 
-[ init/Kconfig ]
-config RCU_FAST_NO_HZ
-        bool "Accelerate last non-dyntick-idle CPU's grace periods"
-        depends on TREE_RCU && NO_HZ && SMP
-        default n
+Well, if it turns out to be a problem in RCU I will certainly apologize=
+=2E
 
->> I have also questions to some Kconfig dependencies, for example why I
->> can't select TREE_PREEMPT_RCU if CONFIG_PREEMPT_VOLUNTARY=3Dy, etc.
->> Intended?
->
-> Yes. =C2=A0There is no point in TREE_PREEMPT_RCU unless PREEMPT=3Dy.
->
+> Can you say some words to kfree_rcu.2011.03.25b (rcu/kfree_rcu) GIT b=
+ranch(es)?
 
-OK.
+These are just applying Lia Jiangshan's kfree_rcu() to a number of plac=
+es
+in the kernel.  You can safely ignore them.
 
->> Maybe I collect all my askings in a separate email to RCU folks and ML
->> and do not disturb further people from other sub-trees.
->>
->> I enjoyed to read the numerous docs in Documentation/RCU/ (and noticed
->> some typos as well).
->> The RCU folk gave the word "FAQ" a new meaning: Frequenty Asked
->> Questions & Q*uiz* :-).
->>
->> Thanks for the helpful hints and explanations from the RCU folks!
->
-> Glad you liked them! =C2=A0;-)
->
+								Thanx, Paul
 
-Other sub-trees lack of no good or up2date docs.
+> - Sedat -
 
->> - Sedat -
->>
->> P.S.: Current RCU and HZ kernel-config settings
->>
->> # grep RCU /boot/config-$(uname -r)
->> # RCU Subsystem
->> CONFIG_TREE_PREEMPT_RCU=3Dy
->> CONFIG_PREEMPT_RCU=3Dy
->> CONFIG_RCU_TRACE=3Dy
->> CONFIG_RCU_FANOUT=3D32
->> # CONFIG_RCU_FANOUT_EXACT is not set
->> CONFIG_TREE_RCU_TRACE=3Dy
->> CONFIG_RCU_BOOST=3Dy
->> CONFIG_RCU_BOOST_PRIO=3D1
->> CONFIG_RCU_BOOST_DELAY=3D500
->> # CONFIG_SPARSE_RCU_POINTER is not set
->> # CONFIG_RCU_TORTURE_TEST is not set
->> CONFIG_RCU_CPU_STALL_TIMEOUT=3D60
->> CONFIG_RCU_CPU_STALL_VERBOSE=3Dy
->>
->> # grep _HZ /boot/config-$(uname -r)
->> CONFIG_NO_HZ=3Dy
->> # CONFIG_HZ_100 is not set
->> CONFIG_HZ_250=3Dy
->> # CONFIG_HZ_300 is not set
->> # CONFIG_HZ_1000 is not set
->> CONFIG_HZ=3D250
->
-> OK, thank you for the info!
->
-
-N.P.
-
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0Thanx, Paul
->
-
-I guees I will revert step-by-step the RCU commits in linux-next and report=
-.
-This weekend I wanted to enhance Debian's live-cd framework with
-overlayfs support and a customized kernel.
-But then came RCU :-(.
-
-Can you say some words to kfree_rcu.2011.03.25b (rcu/kfree_rcu) GIT branch(=
-es)?
-
-- Sedat -
-
---0016364184bdf1b544049f6a0ba4
-Content-Type: text/plain; charset=US-ASCII; name="syslog-hung_task_timeout_secs.txt"
-Content-Disposition: attachment;
-	filename="syslog-hung_task_timeout_secs.txt"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_glr2xom70
-
-TWFyIDI2IDAwOjQ1OjA3IHRib3gga2VybmVsOiBbIDEwODAuNTg4MTAyXSBJTkZPOiB0YXNrIHVt
-b3VudDoyMDkxIGJsb2NrZWQgZm9yIG1vcmUgdGhhbiAxMjAgc2Vjb25kcy4KTWFyIDI2IDAwOjQ1
-OjA3IHRib3gga2VybmVsOiBbIDEwODAuNTg4MTE0XSAiZWNobyAwID4gL3Byb2Mvc3lzL2tlcm5l
-bC9odW5nX3Rhc2tfdGltZW91dF9zZWNzIiBkaXNhYmxlcyB0aGlzIG1lc3NhZ2UuCi0tCk1hciAy
-NiAwMDo0NzowNyB0Ym94IGtlcm5lbDogWyAxMjAwLjU4ODEwM10gSU5GTzogdGFzayB1bW91bnQ6
-MjA5MSBibG9ja2VkIGZvciBtb3JlIHRoYW4gMTIwIHNlY29uZHMuCk1hciAyNiAwMDo0NzowNyB0
-Ym94IGtlcm5lbDogWyAxMjAwLjU4ODExNl0gImVjaG8gMCA+IC9wcm9jL3N5cy9rZXJuZWwvaHVu
-Z190YXNrX3RpbWVvdXRfc2VjcyIgZGlzYWJsZXMgdGhpcyBtZXNzYWdlLgotLQpNYXIgMjYgMDA6
-NDk6MDcgdGJveCBrZXJuZWw6IFsgMTMyMC41ODgxMDJdIElORk86IHRhc2sgdW1vdW50OjIwOTEg
-YmxvY2tlZCBmb3IgbW9yZSB0aGFuIDEyMCBzZWNvbmRzLgpNYXIgMjYgMDA6NDk6MDcgdGJveCBr
-ZXJuZWw6IFsgMTMyMC41ODgxMTVdICJlY2hvIDAgPiAvcHJvYy9zeXMva2VybmVsL2h1bmdfdGFz
-a190aW1lb3V0X3NlY3MiIGRpc2FibGVzIHRoaXMgbWVzc2FnZS4KLS0KTWFyIDI2IDAwOjUxOjA3
-IHRib3gga2VybmVsOiBbIDE0NDAuNTg4MTAwXSBJTkZPOiB0YXNrIHVtb3VudDoyMDkxIGJsb2Nr
-ZWQgZm9yIG1vcmUgdGhhbiAxMjAgc2Vjb25kcy4KTWFyIDI2IDAwOjUxOjA3IHRib3gga2VybmVs
-OiBbIDE0NDAuNTg4MTE0XSAiZWNobyAwID4gL3Byb2Mvc3lzL2tlcm5lbC9odW5nX3Rhc2tfdGlt
-ZW91dF9zZWNzIiBkaXNhYmxlcyB0aGlzIG1lc3NhZ2UuCi0tCk1hciAyNiAwMDo1MzowNyB0Ym94
-IGtlcm5lbDogWyAxNTYwLjU4ODEwMV0gSU5GTzogdGFzayB1bW91bnQ6MjA5MSBibG9ja2VkIGZv
-ciBtb3JlIHRoYW4gMTIwIHNlY29uZHMuCk1hciAyNiAwMDo1MzowNyB0Ym94IGtlcm5lbDogWyAx
-NTYwLjU4ODExNF0gImVjaG8gMCA+IC9wcm9jL3N5cy9rZXJuZWwvaHVuZ190YXNrX3RpbWVvdXRf
-c2VjcyIgZGlzYWJsZXMgdGhpcyBtZXNzYWdlLgotLQpNYXIgMjYgMDA6NTU6MDcgdGJveCBrZXJu
-ZWw6IFsgMTY4MC41ODgxNDhdIElORk86IHRhc2sgdW1vdW50OjIwOTEgYmxvY2tlZCBmb3IgbW9y
-ZSB0aGFuIDEyMCBzZWNvbmRzLgpNYXIgMjYgMDA6NTU6MDcgdGJveCBrZXJuZWw6IFsgMTY4MC41
-ODgxNjFdICJlY2hvIDAgPiAvcHJvYy9zeXMva2VybmVsL2h1bmdfdGFza190aW1lb3V0X3NlY3Mi
-IGRpc2FibGVzIHRoaXMgbWVzc2FnZS4KLS0KTWFyIDI2IDAwOjU3OjA3IHRib3gga2VybmVsOiBb
-IDE4MDAuNTg4MTAxXSBJTkZPOiB0YXNrIHVtb3VudDoyMDkxIGJsb2NrZWQgZm9yIG1vcmUgdGhh
-biAxMjAgc2Vjb25kcy4KTWFyIDI2IDAwOjU3OjA3IHRib3gga2VybmVsOiBbIDE4MDAuNTg4MTE0
-XSAiZWNobyAwID4gL3Byb2Mvc3lzL2tlcm5lbC9odW5nX3Rhc2tfdGltZW91dF9zZWNzIiBkaXNh
-YmxlcyB0aGlzIG1lc3NhZ2UuCi0tCk1hciAyNiAwMDo1OTowOCB0Ym94IGtlcm5lbDogWyAxOTIw
-LjU4ODEwOF0gSU5GTzogdGFzayB1bW91bnQ6MjA5MSBibG9ja2VkIGZvciBtb3JlIHRoYW4gMTIw
-IHNlY29uZHMuCk1hciAyNiAwMDo1OTowOCB0Ym94IGtlcm5lbDogWyAxOTIwLjU4ODEyMl0gImVj
-aG8gMCA+IC9wcm9jL3N5cy9rZXJuZWwvaHVuZ190YXNrX3RpbWVvdXRfc2VjcyIgZGlzYWJsZXMg
-dGhpcyBtZXNzYWdlLgotLQpNYXIgMjYgMDE6MDE6MDcgdGJveCBrZXJuZWw6IFsgMjA0MC41ODgx
-MDJdIElORk86IHRhc2sgdW1vdW50OjIwOTEgYmxvY2tlZCBmb3IgbW9yZSB0aGFuIDEyMCBzZWNv
-bmRzLgpNYXIgMjYgMDE6MDE6MDcgdGJveCBrZXJuZWw6IFsgMjA0MC41ODgxMTVdICJlY2hvIDAg
-PiAvcHJvYy9zeXMva2VybmVsL2h1bmdfdGFza190aW1lb3V0X3NlY3MiIGRpc2FibGVzIHRoaXMg
-bWVzc2FnZS4KLS0KTWFyIDI2IDAxOjAzOjA3IHRib3gga2VybmVsOiBbIDIxNjAuNTg4MTAyXSBJ
-TkZPOiB0YXNrIHVtb3VudDoyMDkxIGJsb2NrZWQgZm9yIG1vcmUgdGhhbiAxMjAgc2Vjb25kcy4K
-TWFyIDI2IDAxOjAzOjA3IHRib3gga2VybmVsOiBbIDIxNjAuNTg4MTE1XSAiZWNobyAwID4gL3By
-b2Mvc3lzL2tlcm5lbC9odW5nX3Rhc2tfdGltZW91dF9zZWNzIiBkaXNhYmxlcyB0aGlzIG1lc3Nh
-Z2UuCi0tCk1hciAyNiAxMzoyMDowMCB0Ym94IGtlcm5lbDogWyAxMDgwLjY0MDE3MF0gSU5GTzog
-dGFzayBzeXN0ZW1kOjEgYmxvY2tlZCBmb3IgbW9yZSB0aGFuIDEyMCBzZWNvbmRzLgpNYXIgMjYg
-MTM6MjA6MDAgdGJveCBrZXJuZWw6IFsgMTA4MC42NDAxODRdICJlY2hvIDAgPiAvcHJvYy9zeXMv
-a2VybmVsL2h1bmdfdGFza190aW1lb3V0X3NlY3MiIGRpc2FibGVzIHRoaXMgbWVzc2FnZS4KLS0K
-TWFyIDI2IDEzOjIwOjAwIHRib3gga2VybmVsOiBbIDEwODAuNjQwNzA4XSBJTkZPOiB0YXNrIGtk
-ZWQ0OjEzNjcgYmxvY2tlZCBmb3IgbW9yZSB0aGFuIDEyMCBzZWNvbmRzLgpNYXIgMjYgMTM6MjA6
-MDAgdGJveCBrZXJuZWw6IFsgMTA4MC42NDA3MTddICJlY2hvIDAgPiAvcHJvYy9zeXMva2VybmVs
-L2h1bmdfdGFza190aW1lb3V0X3NlY3MiIGRpc2FibGVzIHRoaXMgbWVzc2FnZS4KLS0KTWFyIDI2
-IDEzOjIwOjAwIHRib3gga2VybmVsOiBbIDEwODAuNjQxMTE2XSBJTkZPOiB0YXNrIHNkOmV4ZWM6
-MTkwNCBibG9ja2VkIGZvciBtb3JlIHRoYW4gMTIwIHNlY29uZHMuCk1hciAyNiAxMzoyMDowMCB0
-Ym94IGtlcm5lbDogWyAxMDgwLjY0MTEyNV0gImVjaG8gMCA+IC9wcm9jL3N5cy9rZXJuZWwvaHVu
-Z190YXNrX3RpbWVvdXRfc2VjcyIgZGlzYWJsZXMgdGhpcyBtZXNzYWdlLgotLQpNYXIgMjYgMTM6
-MjA6MDAgdGJveCBrZXJuZWw6IFsgMTA4MC42NDE0ODhdIElORk86IHRhc2sgY3JvbjoxOTA1IGJs
-b2NrZWQgZm9yIG1vcmUgdGhhbiAxMjAgc2Vjb25kcy4KTWFyIDI2IDEzOjIwOjAwIHRib3gga2Vy
-bmVsOiBbIDEwODAuNjQxNDk3XSAiZWNobyAwID4gL3Byb2Mvc3lzL2tlcm5lbC9odW5nX3Rhc2tf
-dGltZW91dF9zZWNzIiBkaXNhYmxlcyB0aGlzIG1lc3NhZ2UuCi0tCk1hciAyNiAxMzoyMjowMCB0
-Ym94IGtlcm5lbDogWyAxMjAwLjY0MDA1OF0gSU5GTzogdGFzayBzeXN0ZW1kOjEgYmxvY2tlZCBm
-b3IgbW9yZSB0aGFuIDEyMCBzZWNvbmRzLgpNYXIgMjYgMTM6MjI6MDAgdGJveCBrZXJuZWw6IFsg
-MTIwMC42NDAwNzFdICJlY2hvIDAgPiAvcHJvYy9zeXMva2VybmVsL2h1bmdfdGFza190aW1lb3V0
-X3NlY3MiIGRpc2FibGVzIHRoaXMgbWVzc2FnZS4KLS0KTWFyIDI2IDEzOjIyOjAwIHRib3gga2Vy
-bmVsOiBbIDEyMDAuNjQwNTkyXSBJTkZPOiB0YXNrIGtkZWQ0OjEzNjcgYmxvY2tlZCBmb3IgbW9y
-ZSB0aGFuIDEyMCBzZWNvbmRzLgpNYXIgMjYgMTM6MjI6MDAgdGJveCBrZXJuZWw6IFsgMTIwMC42
-NDA2MDJdICJlY2hvIDAgPiAvcHJvYy9zeXMva2VybmVsL2h1bmdfdGFza190aW1lb3V0X3NlY3Mi
-IGRpc2FibGVzIHRoaXMgbWVzc2FnZS4KLS0KTWFyIDI2IDEzOjIyOjAwIHRib3gga2VybmVsOiBb
-IDEyMDAuNjQxMDAwXSBJTkZPOiB0YXNrIHNkOmV4ZWM6MTkwNCBibG9ja2VkIGZvciBtb3JlIHRo
-YW4gMTIwIHNlY29uZHMuCk1hciAyNiAxMzoyMjowMCB0Ym94IGtlcm5lbDogWyAxMjAwLjY0MTAw
-OV0gImVjaG8gMCA+IC9wcm9jL3N5cy9rZXJuZWwvaHVuZ190YXNrX3RpbWVvdXRfc2VjcyIgZGlz
-YWJsZXMgdGhpcyBtZXNzYWdlLgotLQpNYXIgMjYgMTM6MjI6MDAgdGJveCBrZXJuZWw6IFsgMTIw
-MC42NDEzNzJdIElORk86IHRhc2sgY3JvbjoxOTA1IGJsb2NrZWQgZm9yIG1vcmUgdGhhbiAxMjAg
-c2Vjb25kcy4KTWFyIDI2IDEzOjIyOjAwIHRib3gga2VybmVsOiBbIDEyMDAuNjQxMzgxXSAiZWNo
-byAwID4gL3Byb2Mvc3lzL2tlcm5lbC9odW5nX3Rhc2tfdGltZW91dF9zZWNzIiBkaXNhYmxlcyB0
-aGlzIG1lc3NhZ2UuCi0tCk1hciAyNiAxMzoyNDowMCB0Ym94IGtlcm5lbDogWyAxMzIwLjY0MDA1
-NV0gSU5GTzogdGFzayBzeXN0ZW1kOjEgYmxvY2tlZCBmb3IgbW9yZSB0aGFuIDEyMCBzZWNvbmRz
-LgpNYXIgMjYgMTM6MjQ6MDAgdGJveCBrZXJuZWw6IFsgMTMyMC42NDAwNjhdICJlY2hvIDAgPiAv
-cHJvYy9zeXMva2VybmVsL2h1bmdfdGFza190aW1lb3V0X3NlY3MiIGRpc2FibGVzIHRoaXMgbWVz
-c2FnZS4KLS0KTWFyIDI2IDEzOjI0OjAwIHRib3gga2VybmVsOiBbIDEzMjAuNjQwNjAyXSBJTkZP
-OiB0YXNrIGtkZWQ0OjEzNjcgYmxvY2tlZCBmb3IgbW9yZSB0aGFuIDEyMCBzZWNvbmRzLgpNYXIg
-MjYgMTM6MjQ6MDAgdGJveCBrZXJuZWw6IFsgMTMyMC42NDA2MTFdICJlY2hvIDAgPiAvcHJvYy9z
-eXMva2VybmVsL2h1bmdfdGFza190aW1lb3V0X3NlY3MiIGRpc2FibGVzIHRoaXMgbWVzc2FnZS4K
-LS0KTWFyIDI2IDE0OjA5OjMxIHRib3gga2VybmVsOiBbICA0ODAuNjQwMDU1XSBJTkZPOiB0YXNr
-IHN5c3RlbWQ6MSBibG9ja2VkIGZvciBtb3JlIHRoYW4gMTIwIHNlY29uZHMuCk1hciAyNiAxNDow
-OTozMSB0Ym94IGtlcm5lbDogWyAgNDgwLjY0MDA2OF0gImVjaG8gMCA+IC9wcm9jL3N5cy9rZXJu
-ZWwvaHVuZ190YXNrX3RpbWVvdXRfc2VjcyIgZGlzYWJsZXMgdGhpcyBtZXNzYWdlLgotLQpNYXIg
-MjYgMTQ6MTE6MzEgdGJveCBrZXJuZWw6IFsgIDYwMC42NDAwNTVdIElORk86IHRhc2sgc3lzdGVt
-ZDoxIGJsb2NrZWQgZm9yIG1vcmUgdGhhbiAxMjAgc2Vjb25kcy4KTWFyIDI2IDE0OjExOjMxIHRi
-b3gga2VybmVsOiBbICA2MDAuNjQwMDY4XSAiZWNobyAwID4gL3Byb2Mvc3lzL2tlcm5lbC9odW5n
-X3Rhc2tfdGltZW91dF9zZWNzIiBkaXNhYmxlcyB0aGlzIG1lc3NhZ2UuCi0tCk1hciAyNiAxNDox
-MzozMSB0Ym94IGtlcm5lbDogWyAgNzIwLjY0MDA1NF0gSU5GTzogdGFzayBzeXN0ZW1kOjEgYmxv
-Y2tlZCBmb3IgbW9yZSB0aGFuIDEyMCBzZWNvbmRzLgpNYXIgMjYgMTQ6MTM6MzEgdGJveCBrZXJu
-ZWw6IFsgIDcyMC42NDAwNjhdICJlY2hvIDAgPiAvcHJvYy9zeXMva2VybmVsL2h1bmdfdGFza190
-aW1lb3V0X3NlY3MiIGRpc2FibGVzIHRoaXMgbWVzc2FnZS4KLS0KTWFyIDI2IDE0OjE1OjMxIHRi
-b3gga2VybmVsOiBbICA4NDAuNjQwMDY3XSBJTkZPOiB0YXNrIHN5c3RlbWQ6MSBibG9ja2VkIGZv
-ciBtb3JlIHRoYW4gMTIwIHNlY29uZHMuCk1hciAyNiAxNDoxNTozMSB0Ym94IGtlcm5lbDogWyAg
-ODQwLjY0MDA4MF0gImVjaG8gMCA+IC9wcm9jL3N5cy9rZXJuZWwvaHVuZ190YXNrX3RpbWVvdXRf
-c2VjcyIgZGlzYWJsZXMgdGhpcyBtZXNzYWdlLgotLQpNYXIgMjYgMTQ6MzA6MTIgdGJveCBrZXJu
-ZWw6IFsgIDg0MC42NDQwNzFdIElORk86IHRhc2sga3dvcmtlci91OjE6MTczIGJsb2NrZWQgZm9y
-IG1vcmUgdGhhbiAxMjAgc2Vjb25kcy4KTWFyIDI2IDE0OjMwOjEyIHRib3gga2VybmVsOiBbICA4
-NDAuNjQ0MDg1XSAiZWNobyAwID4gL3Byb2Mvc3lzL2tlcm5lbC9odW5nX3Rhc2tfdGltZW91dF9z
-ZWNzIiBkaXNhYmxlcyB0aGlzIG1lc3NhZ2UuCi0tCk1hciAyNiAxNDozMDoxMiB0Ym94IGtlcm5l
-bDogWyAgODQwLjY0NTIwNF0gSU5GTzogdGFzayBmaXJlZm94LWJpbjoxOTQwIGJsb2NrZWQgZm9y
-IG1vcmUgdGhhbiAxMjAgc2Vjb25kcy4KTWFyIDI2IDE0OjMwOjEyIHRib3gga2VybmVsOiBbICA4
-NDAuNjQ1MjEzXSAiZWNobyAwID4gL3Byb2Mvc3lzL2tlcm5lbC9odW5nX3Rhc2tfdGltZW91dF9z
-ZWNzIiBkaXNhYmxlcyB0aGlzIG1lc3NhZ2UuCi0tCk1hciAyNiAxNDozMDoxMiB0Ym94IGtlcm5l
-bDogWyAgODQwLjY0NTgyOV0gSU5GTzogdGFzayBmaXJlZm94LWJpbjoxOTQ3IGJsb2NrZWQgZm9y
-IG1vcmUgdGhhbiAxMjAgc2Vjb25kcy4KTWFyIDI2IDE0OjMwOjEyIHRib3gga2VybmVsOiBbICA4
-NDAuNjQ1ODM5XSAiZWNobyAwID4gL3Byb2Mvc3lzL2tlcm5lbC9odW5nX3Rhc2tfdGltZW91dF9z
-ZWNzIiBkaXNhYmxlcyB0aGlzIG1lc3NhZ2UuCi0tCk1hciAyNiAxNDozMDoxMiB0Ym94IGtlcm5l
-bDogWyAgODQwLjY0NjQ0MV0gSU5GTzogdGFzayBmaXJlZm94LWJpbjoxOTQ5IGJsb2NrZWQgZm9y
-IG1vcmUgdGhhbiAxMjAgc2Vjb25kcy4KTWFyIDI2IDE0OjMwOjEyIHRib3gga2VybmVsOiBbICA4
-NDAuNjQ2NDUwXSAiZWNobyAwID4gL3Byb2Mvc3lzL2tlcm5lbC9odW5nX3Rhc2tfdGltZW91dF9z
-ZWNzIiBkaXNhYmxlcyB0aGlzIG1lc3NhZ2UuCi0tCk1hciAyNiAxNDozMDoxMiB0Ym94IGtlcm5l
-bDogWyAgODQwLjY0NzA1M10gSU5GTzogdGFzayBrd29ya2VyLzA6MToxOTI2IGJsb2NrZWQgZm9y
-IG1vcmUgdGhhbiAxMjAgc2Vjb25kcy4KTWFyIDI2IDE0OjMwOjEyIHRib3gga2VybmVsOiBbICA4
-NDAuNjQ3MDYyXSAiZWNobyAwID4gL3Byb2Mvc3lzL2tlcm5lbC9odW5nX3Rhc2tfdGltZW91dF9z
-ZWNzIiBkaXNhYmxlcyB0aGlzIG1lc3NhZ2UuCi0tCk1hciAyNiAxOTozMTo0NSB0Ym94IGtlcm5l
-bDogWyAgMzYwLjY0MDA1Ml0gSU5GTzogdGFzayBrd29ya2VyLzA6MToyMCBibG9ja2VkIGZvciBt
-b3JlIHRoYW4gMTIwIHNlY29uZHMuCk1hciAyNiAxOTozMTo0NSB0Ym94IGtlcm5lbDogWyAgMzYw
-LjY0MDA1OV0gImVjaG8gMCA+IC9wcm9jL3N5cy9rZXJuZWwvaHVuZ190YXNrX3RpbWVvdXRfc2Vj
-cyIgZGlzYWJsZXMgdGhpcyBtZXNzYWdlLgotLQpNYXIgMjYgMTk6MzE6NDUgdGJveCBrZXJuZWw6
-IFsgIDM2MC42NDAyNjVdIElORk86IHRhc2sga3dvcmtlci91OjE6MTkwIGJsb2NrZWQgZm9yIG1v
-cmUgdGhhbiAxMjAgc2Vjb25kcy4KTWFyIDI2IDE5OjMxOjQ1IHRib3gga2VybmVsOiBbICAzNjAu
-NjQwMjY4XSAiZWNobyAwID4gL3Byb2Mvc3lzL2tlcm5lbC9odW5nX3Rhc2tfdGltZW91dF9zZWNz
-IiBkaXNhYmxlcyB0aGlzIG1lc3NhZ2UuCi0tCk1hciAyNiAxOTozMTo0NSB0Ym94IGtlcm5lbDog
-WyAgMzYwLjY0MDcyMV0gSU5GTzogdGFzayBmaXJlZm94LWJpbjoxOTk0IGJsb2NrZWQgZm9yIG1v
-cmUgdGhhbiAxMjAgc2Vjb25kcy4KTWFyIDI2IDE5OjMxOjQ1IHRib3gga2VybmVsOiBbICAzNjAu
-NjQwNzI1XSAiZWNobyAwID4gL3Byb2Mvc3lzL2tlcm5lbC9odW5nX3Rhc2tfdGltZW91dF9zZWNz
-IiBkaXNhYmxlcyB0aGlzIG1lc3NhZ2UuCi0tCk1hciAyNiAxOTozMTo0NSB0Ym94IGtlcm5lbDog
-WyAgMzYwLjY0MDk0NV0gSU5GTzogdGFzayBmaXJlZm94LWJpbjoyMDA5IGJsb2NrZWQgZm9yIG1v
-cmUgdGhhbiAxMjAgc2Vjb25kcy4KTWFyIDI2IDE5OjMxOjQ1IHRib3gga2VybmVsOiBbICAzNjAu
-NjQwOTQ4XSAiZWNobyAwID4gL3Byb2Mvc3lzL2tlcm5lbC9odW5nX3Rhc2tfdGltZW91dF9zZWNz
-IiBkaXNhYmxlcyB0aGlzIG1lc3NhZ2UuCi0tCk1hciAyNiAxOTozMTo0NSB0Ym94IGtlcm5lbDog
-WyAgMzYwLjY0MTE0M10gSU5GTzogdGFzayBmaXJlZm94LWJpbjoyMDEwIGJsb2NrZWQgZm9yIG1v
-cmUgdGhhbiAxMjAgc2Vjb25kcy4KTWFyIDI2IDE5OjMxOjQ1IHRib3gga2VybmVsOiBbICAzNjAu
-NjQxMTQ2XSAiZWNobyAwID4gL3Byb2Mvc3lzL2tlcm5lbC9odW5nX3Rhc2tfdGltZW91dF9zZWNz
-IiBkaXNhYmxlcyB0aGlzIG1lc3NhZ2UuCi0tCk1hciAyNiAxOTozMTo0NSB0Ym94IGtlcm5lbDog
-WyAgMzYwLjY0MTM1Ml0gSU5GTzogdGFzayBmaXJlZm94LWJpbjoyMDExIGJsb2NrZWQgZm9yIG1v
-cmUgdGhhbiAxMjAgc2Vjb25kcy4KTWFyIDI2IDE5OjMxOjQ1IHRib3gga2VybmVsOiBbICAzNjAu
-NjQxMzU1XSAiZWNobyAwID4gL3Byb2Mvc3lzL2tlcm5lbC9odW5nX3Rhc2tfdGltZW91dF9zZWNz
-IiBkaXNhYmxlcyB0aGlzIG1lc3NhZ2UuCi0tCk1hciAyNiAxOTozMTo0NSB0Ym94IGtlcm5lbDog
-WyAgMzYwLjY0MTU3Nl0gSU5GTzogdGFzayBzdToyMDE1IGJsb2NrZWQgZm9yIG1vcmUgdGhhbiAx
-MjAgc2Vjb25kcy4KTWFyIDI2IDE5OjMxOjQ1IHRib3gga2VybmVsOiBbICAzNjAuNjQxNTc5XSAi
-ZWNobyAwID4gL3Byb2Mvc3lzL2tlcm5lbC9odW5nX3Rhc2tfdGltZW91dF9zZWNzIiBkaXNhYmxl
-cyB0aGlzIG1lc3NhZ2UuCi0tCk1hciAyNiAxOTozMzo0NSB0Ym94IGtlcm5lbDogWyAgNDgwLjY0
-MDA1M10gSU5GTzogdGFzayBzeXN0ZW1kOjEgYmxvY2tlZCBmb3IgbW9yZSB0aGFuIDEyMCBzZWNv
-bmRzLgpNYXIgMjYgMTk6MzM6NDUgdGJveCBrZXJuZWw6IFsgIDQ4MC42NDAwNjZdICJlY2hvIDAg
-PiAvcHJvYy9zeXMva2VybmVsL2h1bmdfdGFza190aW1lb3V0X3NlY3MiIGRpc2FibGVzIHRoaXMg
-bWVzc2FnZS4KLS0KTWFyIDI2IDE5OjMzOjQ1IHRib3gga2VybmVsOiBbICA0ODAuNjQwNTE0XSBJ
-TkZPOiB0YXNrIGt3b3JrZXIvMDoxOjIwIGJsb2NrZWQgZm9yIG1vcmUgdGhhbiAxMjAgc2Vjb25k
-cy4KTWFyIDI2IDE5OjMzOjQ1IHRib3gga2VybmVsOiBbICA0ODAuNjQwNTIzXSAiZWNobyAwID4g
-L3Byb2Mvc3lzL2tlcm5lbC9odW5nX3Rhc2tfdGltZW91dF9zZWNzIiBkaXNhYmxlcyB0aGlzIG1l
-c3NhZ2UuCi0tCk1hciAyNiAxOTozMzo0NSB0Ym94IGtlcm5lbDogWyAgNDgwLjY0MTAxNF0gSU5G
-TzogdGFzayBrd29ya2VyL3U6MToxOTAgYmxvY2tlZCBmb3IgbW9yZSB0aGFuIDEyMCBzZWNvbmRz
-LgpNYXIgMjYgMTk6MzM6NDUgdGJveCBrZXJuZWw6IFsgIDQ4MC42NDEwMjRdICJlY2hvIDAgPiAv
-cHJvYy9zeXMva2VybmVsL2h1bmdfdGFza190aW1lb3V0X3NlY3MiIGRpc2FibGVzIHRoaXMgbWVz
-c2FnZS4KLS0KTWFyIDI2IDE5OjUyOjQwIHRib3gga2VybmVsOiBbIDEwODAuNjQwMDYyXSBJTkZP
-OiB0YXNrIHN5c3RlbWQ6MSBibG9ja2VkIGZvciBtb3JlIHRoYW4gMTIwIHNlY29uZHMuCk1hciAy
-NiAxOTo1Mjo0MCB0Ym94IGtlcm5lbDogWyAxMDgwLjY0MDA3NV0gImVjaG8gMCA+IC9wcm9jL3N5
-cy9rZXJuZWwvaHVuZ190YXNrX3RpbWVvdXRfc2VjcyIgZGlzYWJsZXMgdGhpcyBtZXNzYWdlLgot
-LQpNYXIgMjYgMTk6NTI6NDAgdGJveCBrZXJuZWw6IFsgMTA4MC42NDA2MTJdIElORk86IHRhc2sg
-a2RlZDQ6MTUxNCBibG9ja2VkIGZvciBtb3JlIHRoYW4gMTIwIHNlY29uZHMuCk1hciAyNiAxOTo1
-Mjo0MCB0Ym94IGtlcm5lbDogWyAxMDgwLjY0MDYyMV0gImVjaG8gMCA+IC9wcm9jL3N5cy9rZXJu
-ZWwvaHVuZ190YXNrX3RpbWVvdXRfc2VjcyIgZGlzYWJsZXMgdGhpcyBtZXNzYWdlLgotLQpNYXIg
-MjYgMTk6NTI6NDAgdGJveCBrZXJuZWw6IFsgMTA4MC42NDEwMzNdIElORk86IHRhc2sgc2Q6ZXhl
-YzoxOTc4IGJsb2NrZWQgZm9yIG1vcmUgdGhhbiAxMjAgc2Vjb25kcy4KTWFyIDI2IDE5OjUyOjQw
-IHRib3gga2VybmVsOiBbIDEwODAuNjQxMDQyXSAiZWNobyAwID4gL3Byb2Mvc3lzL2tlcm5lbC9o
-dW5nX3Rhc2tfdGltZW91dF9zZWNzIiBkaXNhYmxlcyB0aGlzIG1lc3NhZ2UuCi0tCk1hciAyNiAx
-OTo1NDo0MCB0Ym94IGtlcm5lbDogWyAxMjAwLjY0MDA1NV0gSU5GTzogdGFzayBzeXN0ZW1kOjEg
-YmxvY2tlZCBmb3IgbW9yZSB0aGFuIDEyMCBzZWNvbmRzLgpNYXIgMjYgMTk6NTQ6NDAgdGJveCBr
-ZXJuZWw6IFsgMTIwMC42NDAwNjhdICJlY2hvIDAgPiAvcHJvYy9zeXMva2VybmVsL2h1bmdfdGFz
-a190aW1lb3V0X3NlY3MiIGRpc2FibGVzIHRoaXMgbWVzc2FnZS4KLS0KTWFyIDI2IDE5OjU0OjQw
-IHRib3gga2VybmVsOiBbIDEyMDAuNjQwNjA0XSBJTkZPOiB0YXNrIGtkZWQ0OjE1MTQgYmxvY2tl
-ZCBmb3IgbW9yZSB0aGFuIDEyMCBzZWNvbmRzLgpNYXIgMjYgMTk6NTQ6NDAgdGJveCBrZXJuZWw6
-IFsgMTIwMC42NDA2MTNdICJlY2hvIDAgPiAvcHJvYy9zeXMva2VybmVsL2h1bmdfdGFza190aW1l
-b3V0X3NlY3MiIGRpc2FibGVzIHRoaXMgbWVzc2FnZS4KLS0KTWFyIDI2IDE5OjU0OjQwIHRib3gg
-a2VybmVsOiBbIDEyMDAuNjQxMDI2XSBJTkZPOiB0YXNrIHNkOmV4ZWM6MTk3OCBibG9ja2VkIGZv
-ciBtb3JlIHRoYW4gMTIwIHNlY29uZHMuCk1hciAyNiAxOTo1NDo0MCB0Ym94IGtlcm5lbDogWyAx
-MjAwLjY0MTAzNV0gImVjaG8gMCA+IC9wcm9jL3N5cy9rZXJuZWwvaHVuZ190YXNrX3RpbWVvdXRf
-c2VjcyIgZGlzYWJsZXMgdGhpcyBtZXNzYWdlLgotLQpNYXIgMjYgMTk6NTY6NDAgdGJveCBrZXJu
-ZWw6IFsgMTMyMC42NDAwNTldIElORk86IHRhc2sgc3lzdGVtZDoxIGJsb2NrZWQgZm9yIG1vcmUg
-dGhhbiAxMjAgc2Vjb25kcy4KTWFyIDI2IDE5OjU2OjQwIHRib3gga2VybmVsOiBbIDEzMjAuNjQw
-MDcyXSAiZWNobyAwID4gL3Byb2Mvc3lzL2tlcm5lbC9odW5nX3Rhc2tfdGltZW91dF9zZWNzIiBk
-aXNhYmxlcyB0aGlzIG1lc3NhZ2UuCi0tCk1hciAyNiAxOTo1Njo0MCB0Ym94IGtlcm5lbDogWyAx
-MzIwLjY0MDYwN10gSU5GTzogdGFzayBrZGVkNDoxNTE0IGJsb2NrZWQgZm9yIG1vcmUgdGhhbiAx
-MjAgc2Vjb25kcy4KTWFyIDI2IDE5OjU2OjQwIHRib3gga2VybmVsOiBbIDEzMjAuNjQwNjE2XSAi
-ZWNobyAwID4gL3Byb2Mvc3lzL2tlcm5lbC9odW5nX3Rhc2tfdGltZW91dF9zZWNzIiBkaXNhYmxl
-cyB0aGlzIG1lc3NhZ2UuCi0tCk1hciAyNiAxOTo1Njo0MCB0Ym94IGtlcm5lbDogWyAxMzIwLjY0
-MTAyN10gSU5GTzogdGFzayBzZDpleGVjOjE5NzggYmxvY2tlZCBmb3IgbW9yZSB0aGFuIDEyMCBz
-ZWNvbmRzLgpNYXIgMjYgMTk6NTY6NDAgdGJveCBrZXJuZWw6IFsgMTMyMC42NDEwMzZdICJlY2hv
-IDAgPiAvcHJvYy9zeXMva2VybmVsL2h1bmdfdGFza190aW1lb3V0X3NlY3MiIGRpc2FibGVzIHRo
-aXMgbWVzc2FnZS4KLS0KTWFyIDI2IDE5OjU4OjQwIHRib3gga2VybmVsOiBbIDE0NDAuNjQwMDYw
-XSBJTkZPOiB0YXNrIHN5c3RlbWQ6MSBibG9ja2VkIGZvciBtb3JlIHRoYW4gMTIwIHNlY29uZHMu
-Ck1hciAyNiAxOTo1ODo0MCB0Ym94IGtlcm5lbDogWyAxNDQwLjY0MDA3NF0gImVjaG8gMCA+IC9w
-cm9jL3N5cy9rZXJuZWwvaHVuZ190YXNrX3RpbWVvdXRfc2VjcyIgZGlzYWJsZXMgdGhpcyBtZXNz
-YWdlLgo=
---0016364184bdf1b544049f6a0ba4--
+> Mar 26 00:45:07 tbox kernel: [ 1080.588102] INFO: task umount:2091 bl=
+ocked for more than 120 seconds.
+> Mar 26 00:45:07 tbox kernel: [ 1080.588114] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 00:47:07 tbox kernel: [ 1200.588103] INFO: task umount:2091 bl=
+ocked for more than 120 seconds.
+> Mar 26 00:47:07 tbox kernel: [ 1200.588116] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 00:49:07 tbox kernel: [ 1320.588102] INFO: task umount:2091 bl=
+ocked for more than 120 seconds.
+> Mar 26 00:49:07 tbox kernel: [ 1320.588115] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 00:51:07 tbox kernel: [ 1440.588100] INFO: task umount:2091 bl=
+ocked for more than 120 seconds.
+> Mar 26 00:51:07 tbox kernel: [ 1440.588114] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 00:53:07 tbox kernel: [ 1560.588101] INFO: task umount:2091 bl=
+ocked for more than 120 seconds.
+> Mar 26 00:53:07 tbox kernel: [ 1560.588114] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 00:55:07 tbox kernel: [ 1680.588148] INFO: task umount:2091 bl=
+ocked for more than 120 seconds.
+> Mar 26 00:55:07 tbox kernel: [ 1680.588161] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 00:57:07 tbox kernel: [ 1800.588101] INFO: task umount:2091 bl=
+ocked for more than 120 seconds.
+> Mar 26 00:57:07 tbox kernel: [ 1800.588114] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 00:59:08 tbox kernel: [ 1920.588108] INFO: task umount:2091 bl=
+ocked for more than 120 seconds.
+> Mar 26 00:59:08 tbox kernel: [ 1920.588122] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 01:01:07 tbox kernel: [ 2040.588102] INFO: task umount:2091 bl=
+ocked for more than 120 seconds.
+> Mar 26 01:01:07 tbox kernel: [ 2040.588115] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 01:03:07 tbox kernel: [ 2160.588102] INFO: task umount:2091 bl=
+ocked for more than 120 seconds.
+> Mar 26 01:03:07 tbox kernel: [ 2160.588115] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 13:20:00 tbox kernel: [ 1080.640170] INFO: task systemd:1 bloc=
+ked for more than 120 seconds.
+> Mar 26 13:20:00 tbox kernel: [ 1080.640184] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 13:20:00 tbox kernel: [ 1080.640708] INFO: task kded4:1367 blo=
+cked for more than 120 seconds.
+> Mar 26 13:20:00 tbox kernel: [ 1080.640717] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 13:20:00 tbox kernel: [ 1080.641116] INFO: task sd:exec:1904 b=
+locked for more than 120 seconds.
+> Mar 26 13:20:00 tbox kernel: [ 1080.641125] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 13:20:00 tbox kernel: [ 1080.641488] INFO: task cron:1905 bloc=
+ked for more than 120 seconds.
+> Mar 26 13:20:00 tbox kernel: [ 1080.641497] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 13:22:00 tbox kernel: [ 1200.640058] INFO: task systemd:1 bloc=
+ked for more than 120 seconds.
+> Mar 26 13:22:00 tbox kernel: [ 1200.640071] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 13:22:00 tbox kernel: [ 1200.640592] INFO: task kded4:1367 blo=
+cked for more than 120 seconds.
+> Mar 26 13:22:00 tbox kernel: [ 1200.640602] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 13:22:00 tbox kernel: [ 1200.641000] INFO: task sd:exec:1904 b=
+locked for more than 120 seconds.
+> Mar 26 13:22:00 tbox kernel: [ 1200.641009] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 13:22:00 tbox kernel: [ 1200.641372] INFO: task cron:1905 bloc=
+ked for more than 120 seconds.
+> Mar 26 13:22:00 tbox kernel: [ 1200.641381] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 13:24:00 tbox kernel: [ 1320.640055] INFO: task systemd:1 bloc=
+ked for more than 120 seconds.
+> Mar 26 13:24:00 tbox kernel: [ 1320.640068] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 13:24:00 tbox kernel: [ 1320.640602] INFO: task kded4:1367 blo=
+cked for more than 120 seconds.
+> Mar 26 13:24:00 tbox kernel: [ 1320.640611] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 14:09:31 tbox kernel: [  480.640055] INFO: task systemd:1 bloc=
+ked for more than 120 seconds.
+> Mar 26 14:09:31 tbox kernel: [  480.640068] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 14:11:31 tbox kernel: [  600.640055] INFO: task systemd:1 bloc=
+ked for more than 120 seconds.
+> Mar 26 14:11:31 tbox kernel: [  600.640068] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 14:13:31 tbox kernel: [  720.640054] INFO: task systemd:1 bloc=
+ked for more than 120 seconds.
+> Mar 26 14:13:31 tbox kernel: [  720.640068] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 14:15:31 tbox kernel: [  840.640067] INFO: task systemd:1 bloc=
+ked for more than 120 seconds.
+> Mar 26 14:15:31 tbox kernel: [  840.640080] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 14:30:12 tbox kernel: [  840.644071] INFO: task kworker/u:1:17=
+3 blocked for more than 120 seconds.
+> Mar 26 14:30:12 tbox kernel: [  840.644085] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 14:30:12 tbox kernel: [  840.645204] INFO: task firefox-bin:19=
+40 blocked for more than 120 seconds.
+> Mar 26 14:30:12 tbox kernel: [  840.645213] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 14:30:12 tbox kernel: [  840.645829] INFO: task firefox-bin:19=
+47 blocked for more than 120 seconds.
+> Mar 26 14:30:12 tbox kernel: [  840.645839] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 14:30:12 tbox kernel: [  840.646441] INFO: task firefox-bin:19=
+49 blocked for more than 120 seconds.
+> Mar 26 14:30:12 tbox kernel: [  840.646450] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 14:30:12 tbox kernel: [  840.647053] INFO: task kworker/0:1:19=
+26 blocked for more than 120 seconds.
+> Mar 26 14:30:12 tbox kernel: [  840.647062] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 19:31:45 tbox kernel: [  360.640052] INFO: task kworker/0:1:20=
+ blocked for more than 120 seconds.
+> Mar 26 19:31:45 tbox kernel: [  360.640059] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 19:31:45 tbox kernel: [  360.640265] INFO: task kworker/u:1:19=
+0 blocked for more than 120 seconds.
+> Mar 26 19:31:45 tbox kernel: [  360.640268] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 19:31:45 tbox kernel: [  360.640721] INFO: task firefox-bin:19=
+94 blocked for more than 120 seconds.
+> Mar 26 19:31:45 tbox kernel: [  360.640725] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 19:31:45 tbox kernel: [  360.640945] INFO: task firefox-bin:20=
+09 blocked for more than 120 seconds.
+> Mar 26 19:31:45 tbox kernel: [  360.640948] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 19:31:45 tbox kernel: [  360.641143] INFO: task firefox-bin:20=
+10 blocked for more than 120 seconds.
+> Mar 26 19:31:45 tbox kernel: [  360.641146] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 19:31:45 tbox kernel: [  360.641352] INFO: task firefox-bin:20=
+11 blocked for more than 120 seconds.
+> Mar 26 19:31:45 tbox kernel: [  360.641355] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 19:31:45 tbox kernel: [  360.641576] INFO: task su:2015 blocke=
+d for more than 120 seconds.
+> Mar 26 19:31:45 tbox kernel: [  360.641579] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 19:33:45 tbox kernel: [  480.640053] INFO: task systemd:1 bloc=
+ked for more than 120 seconds.
+> Mar 26 19:33:45 tbox kernel: [  480.640066] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 19:33:45 tbox kernel: [  480.640514] INFO: task kworker/0:1:20=
+ blocked for more than 120 seconds.
+> Mar 26 19:33:45 tbox kernel: [  480.640523] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 19:33:45 tbox kernel: [  480.641014] INFO: task kworker/u:1:19=
+0 blocked for more than 120 seconds.
+> Mar 26 19:33:45 tbox kernel: [  480.641024] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 19:52:40 tbox kernel: [ 1080.640062] INFO: task systemd:1 bloc=
+ked for more than 120 seconds.
+> Mar 26 19:52:40 tbox kernel: [ 1080.640075] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 19:52:40 tbox kernel: [ 1080.640612] INFO: task kded4:1514 blo=
+cked for more than 120 seconds.
+> Mar 26 19:52:40 tbox kernel: [ 1080.640621] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 19:52:40 tbox kernel: [ 1080.641033] INFO: task sd:exec:1978 b=
+locked for more than 120 seconds.
+> Mar 26 19:52:40 tbox kernel: [ 1080.641042] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 19:54:40 tbox kernel: [ 1200.640055] INFO: task systemd:1 bloc=
+ked for more than 120 seconds.
+> Mar 26 19:54:40 tbox kernel: [ 1200.640068] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 19:54:40 tbox kernel: [ 1200.640604] INFO: task kded4:1514 blo=
+cked for more than 120 seconds.
+> Mar 26 19:54:40 tbox kernel: [ 1200.640613] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 19:54:40 tbox kernel: [ 1200.641026] INFO: task sd:exec:1978 b=
+locked for more than 120 seconds.
+> Mar 26 19:54:40 tbox kernel: [ 1200.641035] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 19:56:40 tbox kernel: [ 1320.640059] INFO: task systemd:1 bloc=
+ked for more than 120 seconds.
+> Mar 26 19:56:40 tbox kernel: [ 1320.640072] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 19:56:40 tbox kernel: [ 1320.640607] INFO: task kded4:1514 blo=
+cked for more than 120 seconds.
+> Mar 26 19:56:40 tbox kernel: [ 1320.640616] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 19:56:40 tbox kernel: [ 1320.641027] INFO: task sd:exec:1978 b=
+locked for more than 120 seconds.
+> Mar 26 19:56:40 tbox kernel: [ 1320.641036] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
+> --
+> Mar 26 19:58:40 tbox kernel: [ 1440.640060] INFO: task systemd:1 bloc=
+ked for more than 120 seconds.
+> Mar 26 19:58:40 tbox kernel: [ 1440.640074] "echo 0 > /proc/sys/kerne=
+l/hung_task_timeout_secs" disables this message.
