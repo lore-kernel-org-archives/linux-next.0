@@ -1,60 +1,44 @@
-From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Subject: [PATCH] mmc: SDHI should depend on SUPERH || ARCH_SHMOBILE
-Date: Mon, 28 Mar 2011 09:16:33 +0200 (CEST)
-Message-ID: <Pine.LNX.4.64.1103280913170.6625@axis700.grange>
-References: <20110328131018.96742ebb.sfr@canb.auug.org.au>
+From: Christoph Hellwig <hch@lst.de>
+Subject: Re: [xfs-masters] linux-next: manual merge of the xfs tree with
+	Linus' tree
+Date: Mon, 28 Mar 2011 12:47:53 +0200
+Message-ID: <20110328104753.GA27327@lst.de>
+References: <20110328122148.1b48a742.sfr@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <20110328131018.96742ebb.sfr@canb.auug.org.au>
-Sender: linux-mmc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20110328122148.1b48a742.sfr@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Chris Ball <cjb@laptop.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sh@vger.kernel.org, linux-mmc@vger.kernel.org
+Cc: David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com, Jens Axboe <jaxboe@fusionio.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Fix build breakage on platforms, not providing readsw and writesw
-functions, e.g., on x86(_64).
-
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
----
-
-Subject: Re: linux-next: build failure after merge of the mmc tree
-
-On Mon, 28 Mar 2011, Stephen Rothwell wrote:
-
-> Hi Chris,
+On Mon, Mar 28, 2011 at 12:21:48PM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> After merging the mmc tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
+> Today's linux-next merge of the xfs tree got a conflict in
+> fs/xfs/linux-2.6/xfs_buf.c between commit 7eaceaccab5f ("block: remove
+> per-queue plugging") from Linus' tree and commit 0e6e847ffe37 ("xfs: stop
+> using the page cache to back the buffer cache") from the xfs tree.
 > 
-> drivers/mmc/host/tmio_mmc_pio.c: In function 'sd_ctrl_read16_rep':
-> drivers/mmc/host/tmio_mmc_pio.c:56: error: implicit declaration of function 'readsw'
-> drivers/mmc/host/tmio_mmc_pio.c: In function 'sd_ctrl_write16_rep':
-> drivers/mmc/host/tmio_mmc_pio.c:73: error: implicit declaration of function 'writesw'
+> I assume that these changes (on both sides) were discussed somewhere, but
+> maybe not clearly enough?
 > 
-> Presumably caused by commit b6147490e6aa ("mmc: tmio: split core
-> functionality, DMA and MFD glue").
+> I have no idea how to fix this, so I tried to just use the xfs tree
+> version for today.  That failed like this:
 > 
-> I have used the mmc tree from next-20110325 for tdoay.
+> fs/xfs/linux-2.6/xfs_buf.c: In function 'xfs_buf_lock':
+> fs/xfs/linux-2.6/xfs_buf.c:923: error: implicit declaration of function 'blk_run_backing_dev'
+> 
+> So I used the xfs tree from next-20110325 for today.
 
-Stephen, please verify, that this fixes your problem.
+What XFS does is to replace blk_run_address_space, which was a wrapper
+around blk_run_backing_dev with a direct call to blk_run_backing_dev,
+as there change means we don't have the address_space around anymore.
 
- drivers/mmc/host/Kconfig |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+Jens' tree removes both these functions, and introduces blk_flush_plug
+as a sort-of replacement.  Sticking to the variant from Jens' tree / mainline
+with blk_flush_plug is the correct thing here for this case.
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 0b03cee..94df405 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -452,6 +452,7 @@ config MMC_TMIO
- 
- config MMC_SDHI
- 	tristate "SH-Mobile SDHI SD/SDIO controller support"
-+	depends on SUPERH || ARCH_SHMOBILE
- 	select MMC_TMIO_CORE
- 	help
- 	  This provides support for the SDHI SD/SDIO controller found in
--- 
-1.7.2.5
-
+Where there more conflicts than just this?
