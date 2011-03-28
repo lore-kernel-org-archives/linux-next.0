@@ -1,40 +1,64 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: [PATCH -next RESEND] usb: fix isp1760-hcd printk format warning
-Date: Mon, 28 Mar 2011 08:48:45 -0700
-Message-ID: <20110328084845.2384a368.randy.dunlap@oracle.com>
+Subject: [PATCH -next RESEND] staging/rtl81*: build as loadable modules only
+Date: Mon, 28 Mar 2011 08:51:04 -0700
+Message-ID: <20110328085104.97d049ba.randy.dunlap@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from rcsinet10.oracle.com ([148.87.113.121]:60293 "EHLO
+Received: from rcsinet10.oracle.com ([148.87.113.121]:63141 "EHLO
 	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753819Ab1C1PtG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Mar 2011 11:49:06 -0400
+	with ESMTP id S1754464Ab1C1PvQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Mar 2011 11:51:16 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, lud <linux-usb@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Sebastian Siewior <bigeasy@linutronix.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, driverdevel <devel@driverdev.osuosl.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 
 From: Randy Dunlap <randy.dunlap@oracle.com>
 
-Fix printk format build warning and grammar typo on same line.
+These 3 drivers contain much duplicated (triplicated) code, so
+building them as built-in results in many errors like:
 
-drivers/usb/host/isp1760-hcd.c:300: warning: format '%lu' expects type 'long unsigned int', but argument 4 has type 'size_t'
+(.text+0x1b160): multiple definition of `ieee80211_sta_ps_sleep'
+
+Prevent this configuration by making them all buildable only as
+loadable modules (similar to the vt665[56] patch last week).
 
 Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
 ---
- drivers/usb/host/isp1760-hcd.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/rtl8187se/Kconfig |    1 +
+ drivers/staging/rtl8192e/Kconfig  |    1 +
+ drivers/staging/rtl8192u/Kconfig  |    1 +
+ 3 files changed, 3 insertions(+)
 
---- linux-next-20110315.orig/drivers/usb/host/isp1760-hcd.c
-+++ linux-next-20110315/drivers/usb/host/isp1760-hcd.c
-@@ -295,7 +295,7 @@ static void alloc_mem(struct usb_hcd *hc
- 	}
- 
- 	dev_err(hcd->self.controller,
--				"%s: Can not allocate %lu bytes of memory\n"
-+				"%s: Cannot allocate %zu bytes of memory\n"
- 				"Current memory map:\n",
- 				__func__, qtd->length);
- 	for (i = 0; i < BLOCKS; i++) {
---
+--- linux-next-20110321.orig/drivers/staging/rtl8187se/Kconfig
++++ linux-next-20110321/drivers/staging/rtl8187se/Kconfig
+@@ -1,6 +1,7 @@
+ config R8187SE
+ 	tristate "RealTek RTL8187SE Wireless LAN NIC driver"
+ 	depends on PCI && WLAN
++	depends on m
+ 	select WIRELESS_EXT
+ 	select WEXT_PRIV
+ 	select EEPROM_93CX6
+--- linux-next-20110321.orig/drivers/staging/rtl8192e/Kconfig
++++ linux-next-20110321/drivers/staging/rtl8192e/Kconfig
+@@ -1,6 +1,7 @@
+ config RTL8192E
+ 	tristate "RealTek RTL8192E Wireless LAN NIC driver"
+ 	depends on PCI && WLAN
++	depends on m
+ 	select WIRELESS_EXT
+ 	select WEXT_PRIV
+ 	select CRYPTO
+--- linux-next-20110321.orig/drivers/staging/rtl8192u/Kconfig
++++ linux-next-20110321/drivers/staging/rtl8192u/Kconfig
+@@ -1,6 +1,7 @@
+ config RTL8192U
+ 	tristate "RealTek RTL8192U Wireless LAN NIC driver"
+ 	depends on PCI && WLAN && USB
++	depends on m
+ 	select WIRELESS_EXT
+ 	select WEXT_PRIV
+ 	select CRYPTO
