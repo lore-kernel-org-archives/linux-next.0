@@ -1,41 +1,40 @@
 From: Randy Dunlap <randy.dunlap@oracle.com>
-Subject: Fw: [PATCH -next RESEND/still needed] staging: altera-jtag needs
- delay.h
-Date: Mon, 28 Mar 2011 08:23:05 -0700
-Message-ID: <20110328082305.c6fa41d9.randy.dunlap@oracle.com>
+Subject: [PATCH -next RESEND] usb: fix isp1760-hcd printk format warning
+Date: Mon, 28 Mar 2011 08:48:45 -0700
+Message-ID: <20110328084845.2384a368.randy.dunlap@oracle.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-media@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "Igor M. Liplianin" <liplianin@netup.ru>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:60293 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753819Ab1C1PtG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Mar 2011 11:49:06 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, gregkh@suse.de, lud <linux-usb@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Sebastian Siewior <bigeasy@linutronix.de>
 
 From: Randy Dunlap <randy.dunlap@oracle.com>
 
-altera-jtag.c needs to include <linux/delay.h> to fix a build error:
+Fix printk format build warning and grammar typo on same line.
 
-drivers/staging/altera-stapl/altera-jtag.c:398: error: implicit declaration of function 'udelay'
+drivers/usb/host/isp1760-hcd.c:300: warning: format '%lu' expects type 'long unsigned int', but argument 4 has type 'size_t'
 
 Signed-off-by: Randy Dunlap <randy.dunlap@oracle.com>
-Cc: Igor M. Liplianin <liplianin@netup.ru>
 ---
- drivers/staging/altera-stapl/altera-jtag.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/host/isp1760-hcd.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Somehow I was supposed to know to send this to Mauro instead of to Greg,
-but I don't see anything in drivers/staging/altera-stapl/ that says that.
-
-
---- linux-next-20110304.orig/drivers/staging/altera-stapl/altera-jtag.c
-+++ linux-next-20110304/drivers/staging/altera-stapl/altera-jtag.c
-@@ -23,6 +23,7 @@
-  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-  */
+--- linux-next-20110315.orig/drivers/usb/host/isp1760-hcd.c
++++ linux-next-20110315/drivers/usb/host/isp1760-hcd.c
+@@ -295,7 +295,7 @@ static void alloc_mem(struct usb_hcd *hc
+ 	}
  
-+#include <linux/delay.h>
- #include <linux/firmware.h>
- #include <linux/slab.h>
- #include <staging/altera.h>
+ 	dev_err(hcd->self.controller,
+-				"%s: Can not allocate %lu bytes of memory\n"
++				"%s: Cannot allocate %zu bytes of memory\n"
+ 				"Current memory map:\n",
+ 				__func__, qtd->length);
+ 	for (i = 0; i < BLOCKS; i++) {
 --
