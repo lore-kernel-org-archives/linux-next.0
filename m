@@ -1,28 +1,83 @@
-From: Christoph Hellwig <hch@lst.de>
-Subject: Re: [xfs-masters] linux-next: manual merge of the xfs tree with
-	Linus' tree
-Date: Mon, 28 Mar 2011 15:44:40 +0200
-Message-ID: <20110328134440.GA31780@lst.de>
-References: <20110328122148.1b48a742.sfr@canb.auug.org.au> <20110328104753.GA27327@lst.de> <20110329003725.7815c2a3.sfr@canb.auug.org.au>
+From: Randy Dunlap <randy.dunlap@oracle.com>
+Subject: Re: [PATCH] Fix build failure when CONFIG_NLS is set to 'm' by
+ allmodconfig
+Date: Mon, 28 Mar 2011 08:02:20 -0700
+Message-ID: <20110328080220.1390d28e.randy.dunlap@oracle.com>
+References: <20110223131536.GA16707@fedora14-r610.blr.amer.dell.com>
+	<20110223131734.GA6275@srcf.ucam.org>
+	<20110304101509.7eef7475@jbarnes-desktop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from verein.lst.de ([213.95.11.211]:51487 "EHLO newverein.lst.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753939Ab1C1Nol (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 28 Mar 2011 09:44:41 -0400
-Content-Disposition: inline
-In-Reply-To: <20110329003725.7815c2a3.sfr@canb.auug.org.au>
+Received: from rcsinet10.oracle.com ([148.87.113.121]:61564 "EHLO
+	rcsinet10.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752247Ab1C1PCi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 28 Mar 2011 11:02:38 -0400
+In-Reply-To: <20110304101509.7eef7475@jbarnes-desktop>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Christoph Hellwig <hch@lst.de>, David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com, Jens Axboe <jaxboe@fusionio.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jesse Barnes <jbarnes@virtuousgeek.org>
+Cc: Matthew Garrett <mjg59@srcf.ucam.org>, Narendra_K@Dell.com, viro@zeniv.linux.org.uk, sfr@canb.auug.org.au, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Shyam_Iyer@Dell.com, Matt_Domsch@Dell.com, Charles_Rose@Dell.com, Jordan_Hargrave@Dell.com
 
-On Tue, Mar 29, 2011 at 12:37:25AM +1100, Stephen Rothwell wrote:
-> So does that mean that the whole xfs tree commit can be removed/ignored?
-> That is a bit of a pain to do in a merge (especially considering that
-> there is another commit in the xfs tree that changes that file.  If the
-> whole commit is no longer needed, maybe it could be dropped from the xfs
-> tree or reverted.
+On Fri, 4 Mar 2011 10:15:09 -0800 Jesse Barnes wrote:
 
-No, that change is just a small part of the commit.
+> On Wed, 23 Feb 2011 13:17:34 +0000
+> Matthew Garrett <mjg59@srcf.ucam.org> wrote:
+> 
+> > On Wed, Feb 23, 2011 at 06:24:31PM +0530, Narendra_K@Dell.com wrote:
+> > 
+> > > This patch fixes the following build breakage introduced by the patch
+> > > '[PATCH V3] Export ACPI _DSM provided firmware instance number and string to
+> > > sysfs'.
+> > 
+> > First, you should include this as part of your original patch so that 
+> > the build doesn't break during bisection.
+> > 
+> > > This is fixed by making fs/nls/nls_base.c compile conditionally into
+> > > vmlinux by introducing a new config option CONFIG_NLS_BASE which is
+> > > selected by (ACPI || DMI || NLS).
+> > 
+> > Why?
+> > 
+> > > -obj-$(CONFIG_NLS)		+= nls/
+> > > +obj-y				+= nls/
+> > 
+> > You seem to have just broken building any of the NLS code as modules.
+> > 
+> > >  menuconfig NLS
+> > >  	tristate "Native language support"
+> > > +	select NLS_BASE
+> > 
+> > All CONFIG_NLS does is build nls_base.
+> > 
+> > > +config NLS_BASE
+> > > +	bool "Base NLS functions"
+> > > +	depends on ACPI || DMI
+> > 
+> > What in this code depends on ACPI or DMI?
+> > 
+> > > -obj-$(CONFIG_NLS)		+= nls_base.o
+> > > +obj-$(CONFIG_NLS_BASE)		+= nls_base.o
+> > 
+> > And why make this change?
+> > 
+> > Just have something like
+> > 
+> > select NLS if (ACPI || DMI)
+> > 
+> > in drivers/pci/Kconfig.
+> 
+> Narendra, can you send me an updated patch including the build fix?
+> Either using this approach or the other one I outlined in my other mail.
+
+
+This driver still has build failures in linux-next 20110328.
+
+pci-label.c:(.text+0x9a40): undefined reference to `utf16s_to_utf8s'
+
+CONFIG_NLS=m
+
+---
+~Randy
+*** Remember to use Documentation/SubmitChecklist when testing your code ***
