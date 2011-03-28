@@ -1,63 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the xfs tree with Linus' tree
-Date: Mon, 28 Mar 2011 12:21:48 +1100
-Message-ID: <20110328122148.1b48a742.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the mmc tree
+Date: Mon, 28 Mar 2011 13:10:18 +1100
+Message-ID: <20110328131018.96742ebb.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__28_Mar_2011_12_21_48_+1100_=LIa9Bz6Z/i51/Hw"
+ boundary="Signature=_Mon__28_Mar_2011_13_10_18_+1100_qi=OX9N35.Lf57Fu"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:44416 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:51424 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752553Ab1C1BV5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 27 Mar 2011 21:21:57 -0400
+	id S1753251Ab1C1CKd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 27 Mar 2011 22:10:33 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jens Axboe <jaxboe@fusionio.com>
+To: Chris Ball <cjb@laptop.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Guennadi Liakhovetski <g.liakhovetski@gmx.de>
 
---Signature=_Mon__28_Mar_2011_12_21_48_+1100_=LIa9Bz6Z/i51/Hw
+--Signature=_Mon__28_Mar_2011_13_10_18_+1100_qi=OX9N35.Lf57Fu
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Chris,
 
-Today's linux-next merge of the xfs tree got a conflict in
-fs/xfs/linux-2.6/xfs_buf.c between commit 7eaceaccab5f ("block: remove
-per-queue plugging") from Linus' tree and commit 0e6e847ffe37 ("xfs: stop
-using the page cache to back the buffer cache") from the xfs tree.
+After merging the mmc tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-I assume that these changes (on both sides) were discussed somewhere, but
-maybe not clearly enough?
+drivers/mmc/host/tmio_mmc_pio.c: In function 'sd_ctrl_read16_rep':
+drivers/mmc/host/tmio_mmc_pio.c:56: error: implicit declaration of function=
+ 'readsw'
+drivers/mmc/host/tmio_mmc_pio.c: In function 'sd_ctrl_write16_rep':
+drivers/mmc/host/tmio_mmc_pio.c:73: error: implicit declaration of function=
+ 'writesw'
 
-I have no idea how to fix this, so I tried to just use the xfs tree
-version for today.  That failed like this:
+Presumably caused by commit b6147490e6aa ("mmc: tmio: split core
+functionality, DMA and MFD glue").
 
-fs/xfs/linux-2.6/xfs_buf.c: In function 'xfs_buf_lock':
-fs/xfs/linux-2.6/xfs_buf.c:923: error: implicit declaration of function 'bl=
-k_run_backing_dev'
-
-So I used the xfs tree from next-20110325 for today.
-
+I have used the mmc tree from next-20110325 for tdoay.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__28_Mar_2011_12_21_48_+1100_=LIa9Bz6Z/i51/Hw
+--Signature=_Mon__28_Mar_2011_13_10_18_+1100_qi=OX9N35.Lf57Fu
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNj+KsAAoJEDMEi1NhKgbsVo0H/1MTib0r0CN5jaNXlBGWRo0M
-mlIlqbk6seWpNP56LgiUsxLWo/Lrmc6BvFtWb1bDqm493ajBdIJOBhZFuwssdXvt
-F6H+PRn7Ehc/sUXMkp8/fe2YfLyc7R0MqMHRsQcaMfZkg8vbTptORCwLV86toIol
-yxnB9gO5FAE013Qxsxu9/4OU/8FPb+XDrDuRMIlWhkd55aMu1nwRzfQOdnP2zXTm
-S280GJEs52Je35tEDrC/bfkWZQHZoJyTO2yvQVhcV5vCUNcFjq3N+UNAlvxlNRxG
-R3W3UsUQt2Yf2ELIAALupTYEWikRDr07PtXOO9q+E52bOfhZ4Ot8k9Vtuv/RU/E=
-=CIbv
+iQEcBAEBAgAGBQJNj+4KAAoJEDMEi1NhKgbsdO8H/077H8NhTQkSwLv3sBV/GAV2
+3ffyZxYZDu9YhdiZ1LyQ8C3YTG+TOGn4+rOY2whqcaTx7yZN9utmip81KrIlsrFl
+DchOCCiHWgm5JpEh36Fs/wQZTwp89wbH1hwWQbW/wT16LwMF5KpkiG5tc4UD+tIc
+q2RN6Vf8/ZW3FAboGBLZburcgr+7xw6D2jcarI9kWl/Jiz3ebEA/fKMF9th62Et2
+r8GygCkjNfPJOtdVpGXCWH3pQ9ttZxIpYluj08ifFt2lHjFMQZmdeFiiS2sjeJ1S
+9f3Bdr4He7uJFg1osJyKNzuHnmSWnrdkks7vZwXw86nSr4ySeRyw2UJvASf8jlM=
+=RZrO
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__28_Mar_2011_12_21_48_+1100_=LIa9Bz6Z/i51/Hw--
+--Signature=_Mon__28_Mar_2011_13_10_18_+1100_qi=OX9N35.Lf57Fu--
