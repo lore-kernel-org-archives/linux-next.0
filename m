@@ -1,60 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the mmc tree
-Date: Mon, 28 Mar 2011 13:10:18 +1100
-Message-ID: <20110328131018.96742ebb.sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the final tree
+Date: Mon, 28 Mar 2011 14:44:58 +1100
+Message-ID: <20110328144458.efedbefc.sfr@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; protocol="application/pgp-signature";
  micalg="PGP-SHA1";
- boundary="Signature=_Mon__28_Mar_2011_13_10_18_+1100_qi=OX9N35.Lf57Fu"
+ boundary="Signature=_Mon__28_Mar_2011_14_44_58_+1100_Weuuod5m44OZ3ANX"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:51424 "EHLO smtps.tip.net.au"
+Received: from chilli.pcug.org.au ([203.10.76.44]:44169 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753251Ab1C1CKd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 27 Mar 2011 22:10:33 -0400
+	id S1753381Ab1C1DpI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 27 Mar 2011 23:45:08 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Chris Ball <cjb@laptop.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+To: Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Maxim Levitsky <maximlevitsky@gmail.com>
 
---Signature=_Mon__28_Mar_2011_13_10_18_+1100_qi=OX9N35.Lf57Fu
+--Signature=_Mon__28_Mar_2011_14_44_58_+1100_Weuuod5m44OZ3ANX
 Content-Type: text/plain; charset=US-ASCII
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Chris,
+Hi all,
 
-After merging the mmc tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+After merging the final tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-drivers/mmc/host/tmio_mmc_pio.c: In function 'sd_ctrl_read16_rep':
-drivers/mmc/host/tmio_mmc_pio.c:56: error: implicit declaration of function=
- 'readsw'
-drivers/mmc/host/tmio_mmc_pio.c: In function 'sd_ctrl_write16_rep':
-drivers/mmc/host/tmio_mmc_pio.c:73: error: implicit declaration of function=
- 'writesw'
+drivers/memstick/host/r592.c:26: error: 'enable_dma' redeclared as differen=
+t kind of symbol
+arch/powerpc/include/asm/dma.h:189: note: previous definition of 'enable_dm=
+a' was here
 
-Presumably caused by commit b6147490e6aa ("mmc: tmio: split core
-functionality, DMA and MFD glue").
+Caused by commit 926341250102 ("memstick: add driver for Ricoh R5C592
+card reader").
 
-I have used the mmc tree from next-20110325 for tdoay.
+enable_dma() is also defined in a few other architectures including x86
+(presumably asm/dma.h does not get included there).
+
+I just reverted that commit for today.
 --=20
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
 http://www.canb.auug.org.au/~sfr/
 
---Signature=_Mon__28_Mar_2011_13_10_18_+1100_qi=OX9N35.Lf57Fu
+--Signature=_Mon__28_Mar_2011_14_44_58_+1100_Weuuod5m44OZ3ANX
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQEcBAEBAgAGBQJNj+4KAAoJEDMEi1NhKgbsdO8H/077H8NhTQkSwLv3sBV/GAV2
-3ffyZxYZDu9YhdiZ1LyQ8C3YTG+TOGn4+rOY2whqcaTx7yZN9utmip81KrIlsrFl
-DchOCCiHWgm5JpEh36Fs/wQZTwp89wbH1hwWQbW/wT16LwMF5KpkiG5tc4UD+tIc
-q2RN6Vf8/ZW3FAboGBLZburcgr+7xw6D2jcarI9kWl/Jiz3ebEA/fKMF9th62Et2
-r8GygCkjNfPJOtdVpGXCWH3pQ9ttZxIpYluj08ifFt2lHjFMQZmdeFiiS2sjeJ1S
-9f3Bdr4He7uJFg1osJyKNzuHnmSWnrdkks7vZwXw86nSr4ySeRyw2UJvASf8jlM=
-=RZrO
+iQEcBAEBAgAGBQJNkAQ6AAoJEDMEi1NhKgbs6gIH/1t5qXVkVmjj1Vf1B2irRUyk
+1BNvtu/m8+JJK4UVi7cpZ3hIP9fP33MyOrUrVpJpQ92JhhfL0xtEr16VxQ7AzydZ
+3ryEdnIKs7xyiqpkI0C2jFD9/yAeQwFsYnRYO1pLy12fl33Dta0QV7Rq7qVbajcC
+d4MRubVjlCoZnrAT9HLMDDaO245E1iPYSZP70QsI/qNvDjjkYFuzBY0jGRRLHGK6
+vFSjftC4+ESie4mOF8eUsRBuV9XQOCl8lg6+SvfRMRKTbgzQXOTEK0RBGQ4tIBFC
+Q5hHKhZT5VaW1WAxBQ1oZq5dVlVQRyji0ctHR7DDthIcWYyRCMuaEsxwOcsqXu8=
+=QfzV
 -----END PGP SIGNATURE-----
 
---Signature=_Mon__28_Mar_2011_13_10_18_+1100_qi=OX9N35.Lf57Fu--
+--Signature=_Mon__28_Mar_2011_14_44_58_+1100_Weuuod5m44OZ3ANX--
