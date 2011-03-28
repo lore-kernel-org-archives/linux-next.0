@@ -1,94 +1,54 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [xfs-masters] linux-next: manual merge of the xfs tree with
- Linus' tree
-Date: Tue, 29 Mar 2011 00:37:25 +1100
-Message-ID: <20110329003725.7815c2a3.sfr@canb.auug.org.au>
-References: <20110328122148.1b48a742.sfr@canb.auug.org.au>
-	<20110328104753.GA27327@lst.de>
+From: Chris Ball <cjb@laptop.org>
+Subject: Re: [PATCH] mmc: SDHI should depend on SUPERH || ARCH_SHMOBILE
+Date: Mon, 28 Mar 2011 09:39:04 -0400
+Message-ID: <m3lizzicuf.fsf@pullcord.laptop.org>
+References: <20110328131018.96742ebb.sfr@canb.auug.org.au>
+	<Pine.LNX.4.64.1103280913170.6625@axis700.grange>
 Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__29_Mar_2011_00_37_25_+1100_OTu8VdaRoREkp7OX"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from chilli.pcug.org.au ([203.10.76.44]:35588 "EHLO smtps.tip.net.au"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753156Ab1C1Nhh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 28 Mar 2011 09:37:37 -0400
-In-Reply-To: <20110328104753.GA27327@lst.de>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: David Chinner <david@fromorbit.com>, xfs-masters@oss.sgi.com, Jens Axboe <jaxboe@fusionio.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <Pine.LNX.4.64.1103280913170.6625@axis700.grange> (Guennadi
+	Liakhovetski's message of "Mon, 28 Mar 2011 09:16:33 +0200 (CEST)")
+Sender: linux-sh-owner@vger.kernel.org
+To: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-sh@vger.kernel.org, linux-mmc@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
---Signature=_Tue__29_Mar_2011_00_37_25_+1100_OTu8VdaRoREkp7OX
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Hi Christoph,
-
-On Mon, 28 Mar 2011 12:47:53 +0200 Christoph Hellwig <hch@lst.de> wrote:
+On Mon, Mar 28 2011, Guennadi Liakhovetski wrote:
+> Fix build breakage on platforms, not providing readsw and writesw
+> functions, e.g., on x86(_64).
 >
-> On Mon, Mar 28, 2011 at 12:21:48PM +1100, Stephen Rothwell wrote:
-> >=20
-> > Today's linux-next merge of the xfs tree got a conflict in
-> > fs/xfs/linux-2.6/xfs_buf.c between commit 7eaceaccab5f ("block: remove
-> > per-queue plugging") from Linus' tree and commit 0e6e847ffe37 ("xfs: st=
-op
-> > using the page cache to back the buffer cache") from the xfs tree.
-> >=20
-> > I assume that these changes (on both sides) were discussed somewhere, b=
-ut
-> > maybe not clearly enough?
-> >=20
-> > I have no idea how to fix this, so I tried to just use the xfs tree
-> > version for today.  That failed like this:
-> >=20
-> > fs/xfs/linux-2.6/xfs_buf.c: In function 'xfs_buf_lock':
-> > fs/xfs/linux-2.6/xfs_buf.c:923: error: implicit declaration of function=
- 'blk_run_backing_dev'
-> >=20
-> > So I used the xfs tree from next-20110325 for today.
->=20
-> What XFS does is to replace blk_run_address_space, which was a wrapper
-> around blk_run_backing_dev with a direct call to blk_run_backing_dev,
-> as there change means we don't have the address_space around anymore.
->=20
-> Jens' tree removes both these functions, and introduces blk_flush_plug
-> as a sort-of replacement.  Sticking to the variant from Jens' tree / main=
-line
-> with blk_flush_plug is the correct thing here for this case.
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+> ---
+>
+> Subject: Re: linux-next: build failure after merge of the mmc tree
+>
+> On Mon, 28 Mar 2011, Stephen Rothwell wrote:
+>
+>> Hi Chris,
+>> 
+>> After merging the mmc tree, today's linux-next build (x86_64 allmodconfig)
+>> failed like this:
+>> 
+>> drivers/mmc/host/tmio_mmc_pio.c: In function 'sd_ctrl_read16_rep':
+>> drivers/mmc/host/tmio_mmc_pio.c:56: error: implicit declaration of function 'readsw'
+>> drivers/mmc/host/tmio_mmc_pio.c: In function 'sd_ctrl_write16_rep':
+>> drivers/mmc/host/tmio_mmc_pio.c:73: error: implicit declaration of function 'writesw'
+>> 
+>> Presumably caused by commit b6147490e6aa ("mmc: tmio: split core
+>> functionality, DMA and MFD glue").
+>> 
+>> I have used the mmc tree from next-20110325 for tdoay.
+>
+> Stephen, please verify, that this fixes your problem.
 
-So does that mean that the whole xfs tree commit can be removed/ignored?
-That is a bit of a pain to do in a merge (especially considering that
-there is another commit in the xfs tree that changes that file.  If the
-whole commit is no longer needed, maybe it could be dropped from the xfs
-tree or reverted.
+I've verified the fix and pushed it to mmc-next, so this should be fixed
+tomorrow.  Thanks!
 
-> Where there more conflicts than just this?
-
-No, the only conflicts (I am pretty sure) were on the lines with the
-changed calls.  There was, of course, quite a few other changes in that
-commit in the xfs tree.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__29_Mar_2011_00_37_25_+1100_OTu8VdaRoREkp7OX
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJNkI8VAAoJEDMEi1NhKgbstGEH/i+r/GXy1PIAkgux6/zs4NDz
-h4m+kg5CtgTG3I1hR2Kpd3phNo6PY7dZB0mzHfKf8tWrVkAMrlrI4IYPxkd1T7ll
-DzCR8HY+CJhU6yFYwMYKNm5aGayXKZaydYY/NCNVxGHOaURg+pv9zNDGQlMFrXJ8
-kmXwcXKNqBQhvD7VWtLSs3tLaB7wjraxZhTCr3Ex3kJKi0vWToUMQBGGwWK6tSAt
-+wZDSpwwFQTgMrOPN08koDLOo4h4KjxuqnU1XKxANftl7zrZaXaF29PncXRTlVir
-WMDWweUpdLEFd3Q9uj8L9DVkX527nuh2Pv1R1vdwBDnOIebxuxxzaGUCumow0YY=
-=j3vq
------END PGP SIGNATURE-----
-
---Signature=_Tue__29_Mar_2011_00_37_25_+1100_OTu8VdaRoREkp7OX--
+- Chris.
+-- 
+Chris Ball   <cjb@laptop.org>   <http://printf.net/>
+One Laptop Per Child
